@@ -1,0 +1,41 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** BrowserProcessHandler.cpp
+**
+** Author:
+** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
+
+#include "UrsinePrecompiled.h"
+
+#include "BrowserProcessHandler.h"
+#include "UIConfig.h"
+
+namespace Ursine
+{
+    namespace UI
+    {
+        void BrowserProcessHandler::OnContextInitialized(void)
+        {
+
+        }
+
+        void BrowserProcessHandler::OnBeforeChildProcessLaunch(
+            CefRefPtr<CefCommandLine> command_line)
+        {
+            
+        }
+
+        void BrowserProcessHandler::OnRenderProcessThreadCreated(
+            CefRefPtr<CefListValue> extra_info)
+        {
+
+        }
+    }
+}
