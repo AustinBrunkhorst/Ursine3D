@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** DigiPen Institute of Technology 2014
 **
 ** UrsineMath.hpp
 **
@@ -13,10 +13,8 @@
 
 #pragma once
 
-#include "UrsineLogTools.h"
-
 #include <math.h>
-#include <exception>
+#include <stdlib.h>
 
 namespace Ursine
 {
@@ -25,7 +23,7 @@ namespace Ursine
         template<typename T>
         inline bool IsZero(T value)
         {
-            return (value < Math::Epsilon) && (value > -Math::Epsilon);
+            return (value <= Math::Epsilon) && (value >= -Math::Epsilon);
         }
 
         template<typename T1, typename T2>
@@ -47,10 +45,12 @@ namespace Ursine
         inline T Clamp(T value, T min, T max)
         {
             if (!IsFiniteNumber(value))
+            {
                 if (value < 0)
                     value = min;
                 else
                     value = max;
+            }
 
             return (value > max) ? max : ((value < min) ? min : value);
         }
@@ -97,8 +97,6 @@ namespace Ursine
 
         inline float fastSqrt(float val)
         {
-            UAssert(val >= 0.0f, "sqrt of negative number.");
-
             if (val == 0.0f)
                 return 0.0f;
 
