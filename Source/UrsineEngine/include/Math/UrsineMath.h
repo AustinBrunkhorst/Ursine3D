@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** DigiPen Institute of Technology 2014
 **
 ** UrsineMath.h
 **
@@ -13,11 +13,13 @@
 
 #pragma once
 
+#include <limits>
+
 namespace Ursine
 {
     namespace Math
     {
-        const double Epsilon = 0.0001;
+        const float Epsilon = 0.0001f;
         const float PI = 3.14159265f;
         const float PI_DIV_2 = PI / 2.0f;
         const float PI_2 = PI * 2;
