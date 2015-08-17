@@ -1,0 +1,263 @@
+fileFormatVersion: 2
+guid: 949b79002c2450d41b6aac7af849bebd
+timeCreated: 1439765068
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Head_JNT
+    100002: HeadNub_JNT
+    100004: ikHandle1
+    100006: L_Ankle_IK
+    100008: L_Arm
+    100010: L_Clavicle
+    100012: L_Elbow_JNT
+    100014: L_FootCon2
+    100016: L_FootJNT
+    100018: L_Hand_IK
+    100020: L_Hand_JNT
+    100022: L_KneeJNT
+    100024: L_Leg
+    100026: L_Shoulder_JNT
+    100028: L_ThighJNT
+    100030: L_ToeJNT
+    100032: L_WristJoint
+    100034: Mesh
+    100036: Neck01_JNT
+    100038: Neck02_JNT
+    100040: Pelvis_JNT
+    100042: //RootNode
+    100044: R_Ankle_IK
+    100046: R_Arm
+    100048: R_Arm 1
+    100050: R_Clavicle
+    100052: R_Elbow_JNT1
+    100054: R_FootCon2
+    100056: R_FootJNT
+    100058: R_Hand_JNT1
+    100060: R_KneeJNT
+    100062: R_Leg1
+    100064: R_ThighJNT
+    100066: R_ToeJNT
+    100068: R_WristJoint1
+    100070: Root_JNT
+    100072: Spine01_JNT
+    100074: Spine02_JNT
+    100076: Spine03_JNT
+    100078: WorldController
+    400000: Head_JNT
+    400002: HeadNub_JNT
+    400004: ikHandle1
+    400006: L_Ankle_IK
+    400008: L_Arm
+    400010: L_Clavicle
+    400012: L_Elbow_JNT
+    400014: L_FootCon2
+    400016: L_FootJNT
+    400018: L_Hand_IK
+    400020: L_Hand_JNT
+    400022: L_KneeJNT
+    400024: L_Leg
+    400026: L_Shoulder_JNT
+    400028: L_ThighJNT
+    400030: L_ToeJNT
+    400032: L_WristJoint
+    400034: Mesh
+    400036: Neck01_JNT
+    400038: Neck02_JNT
+    400040: Pelvis_JNT
+    400042: //RootNode
+    400044: R_Ankle_IK
+    400046: R_Arm
+    400048: R_Arm 1
+    400050: R_Clavicle
+    400052: R_Elbow_JNT1
+    400054: R_FootCon2
+    400056: R_FootJNT
+    400058: R_Hand_JNT1
+    400060: R_KneeJNT
+    400062: R_Leg1
+    400064: R_ThighJNT
+    400066: R_ToeJNT
+    400068: R_WristJoint1
+    400070: Root_JNT
+    400072: Spine01_JNT
+    400074: Spine02_JNT
+    400076: Spine03_JNT
+    400078: WorldController
+    4300000: Mesh
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Mesh
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Mesh
+        weight: 1
+      - path: WorldController
+        weight: 1
+      - path: WorldController/Root_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/L_Arm
+        weight: 1
+      - path: WorldController/Root_JNT/L_Arm/L_Hand_IK
+        weight: 1
+      - path: WorldController/Root_JNT/L_Leg
+        weight: 1
+      - path: WorldController/Root_JNT/L_Leg/L_FootCon2
+        weight: 1
+      - path: WorldController/Root_JNT/L_Leg/L_FootCon2/L_Ankle_IK
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/L_ThighJNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/L_ThighJNT/L_KneeJNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/L_ThighJNT/L_KneeJNT/L_FootJNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/L_ThighJNT/L_KneeJNT/L_FootJNT/L_ToeJNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/R_ThighJNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/R_ThighJNT/R_KneeJNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/R_ThighJNT/R_KneeJNT/R_FootJNT
+        weight: 1
+      - path: WorldController/Root_JNT/Pelvis_JNT/R_ThighJNT/R_KneeJNT/R_FootJNT/R_ToeJNT
+        weight: 1
+      - path: WorldController/Root_JNT/R_Arm
+        weight: 1
+      - path: WorldController/Root_JNT/R_Arm/ikHandle1
+        weight: 1
+      - path: WorldController/Root_JNT/R_Leg1
+        weight: 1
+      - path: WorldController/Root_JNT/R_Leg1/R_FootCon2
+        weight: 1
+      - path: WorldController/Root_JNT/R_Leg1/R_FootCon2/R_Ankle_IK
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/L_Clavicle
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/L_Clavicle/L_Shoulder_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/L_Clavicle/L_Shoulder_JNT/L_Elbow_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/L_Clavicle/L_Shoulder_JNT/L_Elbow_JNT/L_WristJoint
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/L_Clavicle/L_Shoulder_JNT/L_Elbow_JNT/L_WristJoint/L_Hand_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/Neck02_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/Neck02_JNT/Head_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/Neck02_JNT/Head_JNT/HeadNub_JNT
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/R_Clavicle
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/R_Clavicle/R_Arm
+          1
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/R_Clavicle/R_Arm
+          1/R_Elbow_JNT1
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/R_Clavicle/R_Arm
+          1/R_Elbow_JNT1/R_WristJoint1
+        weight: 1
+      - path: WorldController/Root_JNT/Spine01_JNT/Spine02_JNT/Spine03_JNT/Neck01_JNT/R_Clavicle/R_Arm
+          1/R_Elbow_JNT1/R_WristJoint1/R_Hand_JNT1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
