@@ -173,14 +173,14 @@ namespace Ursine
         glUseProgramObjectARB( program );
     }
 
-    void Shader::SetUniform(const std::string &name, const Vector2 &vector)
+    void Shader::SetUniform(const std::string &name, const Vec2 &vector)
     {
-        SetUniform( name, vector.x, vector.y );
+        SetUniform( name, vector.X(), vector.Y() );
     }
 
-    void Shader::SetUniform(const std::string &name, const Vector3 &vector)
+    void Shader::SetUniform(const std::string &name, const Vec3 &vector)
     {
-        SetUniform( name, vector.x, vector.y, vector.z );
+        SetUniform( name, vector.X(), vector.Y(), vector.Z() );
     }
 
     void Shader::SetUniform(const std::string &name, const Color &color)
@@ -188,7 +188,7 @@ namespace Ursine
         SetUniform( name, color.r, color.g, color.b, color.a );
     }
 
-    void Shader::SetUniform(const std::string &name, const Matrix3 &transform)
+    void Shader::SetUniform(const std::string &name, const Mat3 &transform)
     {
         if (!m_shaderProgram)
             return;
@@ -213,7 +213,7 @@ namespace Ursine
         glUseProgramObjectARB( program );
     }
 
-    void Shader::SetUniform(const std::string &name, const Matrix4 &transform)
+    void Shader::SetUniform(const std::string &name, const Mat4 &transform)
     {
         if (!m_shaderProgram)
             return;

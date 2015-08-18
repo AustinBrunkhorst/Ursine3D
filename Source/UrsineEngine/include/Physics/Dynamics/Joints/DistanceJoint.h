@@ -56,7 +56,7 @@ namespace Ursine
         DistanceJoint *SetDistance(float distance);
 
         // Set the anchor that body will rotate around in local coordinates
-        DistanceJoint *SetAnchor(uint body_index, const Vector2 &anchor);
+        DistanceJoint *SetAnchor(uint body_index, const Vec2 &anchor);
             
         DistanceJoint *SetMaxDistanceOnly(bool flag);
             
@@ -72,11 +72,11 @@ namespace Ursine
         float _distance;
 
         // The anchor that the bodies will rotate around
-        Vector2 _anchor[2];
+        Vec2 _anchor[2];
 
         // The transformed anchors in world space (updated each frame)
         // Used for limiting matrix multiplications
-        Vector2 _trans_anchor[2];
+        Vec2 _trans_anchor[2];
 
         // flag saying whether or not the rotation is locked for the two bodies
         bool _rot_locked[2];

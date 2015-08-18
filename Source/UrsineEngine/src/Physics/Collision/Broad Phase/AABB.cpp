@@ -20,7 +20,7 @@ namespace Ursine
             
     }
 
-    AABB::AABB(const Vector2 &low_bound, const Vector2 &up_bound)
+    AABB::AABB(const Vec2 &low_bound, const Vec2 &up_bound)
         : low_bound(low_bound)
         , up_bound(up_bound)
     {
@@ -42,9 +42,9 @@ namespace Ursine
     // From Real-Time CollisionDetection, p179.
     bool AABB::RayCast(RayCastOutput &output, const RayCastInput &input)
     {
-        Vector2 tl = { low_bound.x, up_bound.y };
-        Vector2 br = { up_bound.x, low_bound.y };
-        Vector2 norm;
+        Vec2 tl = { low_bound.X(), up_bound.Y() };
+        Vec2 br = { up_bound.X(), low_bound.Y() };
+        Vec2 norm;
         float t = Math::MAX_FLOAT;
         float temp;
 
@@ -88,7 +88,7 @@ namespace Ursine
             }
         }
 
-        if (norm != Vector2())
+        if (norm != Vec2())
         {
             output.normal = norm;
             output.fraction = t;

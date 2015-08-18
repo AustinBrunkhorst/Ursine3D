@@ -11,8 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "Quat.h"
-#include "Vec3.h"
+#include "UrsinePrecompiled.h"
 
 namespace Ursine
 {

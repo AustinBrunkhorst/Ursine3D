@@ -42,7 +42,7 @@ namespace Ursine
 
         void applyCurrentCamera(void);
         void applyBlendMode(const BlendMode &mode);
-        void applyTransform(const Matrix3 &transform);
+        void applyTransform(const Mat3 &transform);
         void applyTexture(const Texture2D *texture);
         void applyShader(const Shader *shader);
 

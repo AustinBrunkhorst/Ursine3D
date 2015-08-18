@@ -14,7 +14,7 @@
 #pragma once
 
 #include <vector>
-#include "Vector2.h"
+#include "Vec2.h"
 #include "TransformComponent.h"
 
 namespace Ursine
@@ -35,7 +35,7 @@ namespace Ursine
 
         // Find the index of the incident
         // edge based on the nomal
-        uint FindIndex(const Vector2 &normal) const;
+        uint FindIndex(const Vec2 &normal) const;
 
         bool is_colliding;
 

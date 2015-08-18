@@ -42,7 +42,7 @@ namespace Ursine
 
             // differentiate to find this frame's approximate velocity
             // V = delta_pos / delta_time
-            body->SetVelocity(Vector2(delta / _dt));
+            body->SetVelocity(Vec2(delta / _dt));
         }
     }
 }

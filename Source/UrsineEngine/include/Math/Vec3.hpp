@@ -29,9 +29,9 @@ namespace Ursine
     }
 
     INLINE Vec3::Vec3(const Vec3 &value)
-            : x(value.x)
-            , y(value.y)
-            , z(value.z)
+            : x(value.X())
+            , y(value.Y())
+            , z(value.Z())
     {
 #ifdef USE_SSE
         w = 0.0f;
@@ -121,9 +121,9 @@ namespace Ursine
         float original_x = x;
         float original_y = y;
 
-        x = y          * other.z - other.y * z;
-        y = z          * other.x - other.z * original_x;
-        z = original_x * other.y - other.x * original_y;
+        x = y          * other.Z() - other.Y() * z;
+        y = z          * other.X() - other.Z() * original_x;
+        z = original_x * other.Y() - other.X() * original_y;
 #endif
     }
 
@@ -148,9 +148,9 @@ namespace Ursine
         v = _mm_add_ss(v, z);
         return _mm_cvtss_f32(v);
 #else
-        return( (a.x * (b.y * c.z - b.z * c.y)) +
-                (a.y * (b.z * c.x - b.x * c.z)) +
-                (a.z * (b.x * c.y - b.y * c.x)) );
+        return( (a.X() * (b.Y() * c.Z() - b.Z() * c.Y())) +
+                (a.Y() * (b.Z() * c.X() - b.X() * c.Z())) +
+                (a.Z() * (b.X() * c.Y() - b.Y() * c.X())) );
 #endif
     }
 
@@ -167,9 +167,9 @@ namespace Ursine
         return Vec3(_mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3)));
 #else
         return {
-            vec1.y * vec2.z - vec2.y * vec1.z,
-            vec1.z * vec2.x - vec2.z * vec1.x,
-            vec1.x * vec2.y - vec2.x * vec1.y
+            vec1.Y() * vec2.Z() - vec2.Y() * vec1.Z(),
+            vec1.Z() * vec2.X() - vec2.Z() * vec1.X(),
+            vec1.X() * vec2.Y() - vec2.X() * vec1.Y()
         };
 #endif
     }
@@ -213,7 +213,7 @@ namespace Ursine
 
         _mm_dp_ps(z, y, 0x55);
 #else
-        return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
+        return vec1.X() * vec2.X() + vec1.Y() * vec2.Y() + vec1.Z() * vec2.Z();
 #endif
     }
 
@@ -242,9 +242,9 @@ namespace Ursine
 #ifdef USE_SSE
         m128 = _mm_max_ps(m128, other.m128);
 #else
-        x = Math::Max(x, other.x);
-        y = Math::Max(y, other.y);
-        z = Math::Max(z, other.z);
+        x = Math::Max(x, other.X());
+        y = Math::Max(y, other.Y());
+        z = Math::Max(z, other.Z());
 #endif
     }
 
@@ -254,9 +254,9 @@ namespace Ursine
         return Vec3(_mm_max_ps(vec1.m128, vec2.m128));
 #else
         return {
-            Math::Max(vec1.x, vec2.x),
-            Math::Max(vec1.y, vec2.y),
-            Math::Max(vec1.z, vec2.z)
+            Math::Max(vec1.X(), vec2.X()),
+            Math::Max(vec1.Y(), vec2.Y()),
+            Math::Max(vec1.Z(), vec2.Z())
         };
 #endif
     }
@@ -266,9 +266,9 @@ namespace Ursine
 #ifdef USE_SSE
         m128 = _mm_min_ps(m128, other.m128);
 #else
-        x = Math::Min(x, other.x);
-        y = Math::Min(y, other.y);
-        z = Math::Min(z, other.z);
+        x = Math::Min(x, other.X());
+        y = Math::Min(y, other.Y());
+        z = Math::Min(z, other.Z());
 #endif
     }
 
@@ -278,9 +278,9 @@ namespace Ursine
         return Vec3(_mm_min_ps(vec1.m128, vec2.m128));
 #else
         return {
-            Math::Min(vec1.x, vec2.x),
-            Math::Min(vec1.y, vec2.y),
-            Math::Min(vec1.z, vec2.z)
+            Math::Min(vec1.X(), vec2.X()),
+            Math::Min(vec1.Y(), vec2.Y()),
+            Math::Min(vec1.Z(), vec2.Z())
         };
 #endif
     }
@@ -363,9 +363,9 @@ namespace Ursine
 #ifdef USE_SSE
         return (0xf == _mm_movemask_ps(_mm_cmpeq_ps(m128, rhs.m128)));
 #else
-        return Math::IsEqual(x, rhs.x) &&
-               Math::IsEqual(y, rhs.y) &&
-               Math::IsEqual(z, rhs.z);
+        return Math::IsEqual(x, rhs.X()) &&
+               Math::IsEqual(y, rhs.Y()) &&
+               Math::IsEqual(z, rhs.Z());
 #endif
     }
 
@@ -380,9 +380,9 @@ namespace Ursine
         return Vec3(_mm_add_ps(m128, rhs.m128));
 #else
         return {
-            x + rhs.x,
-            y + rhs.y,
-            z + rhs.z
+            x + rhs.X(),
+            y + rhs.Y(),
+            z + rhs.Z()
         };
 #endif
     }
@@ -405,9 +405,9 @@ namespace Ursine
         return Vec3(_mm_sub_ps(m128, rhs.m128));
 #else
         return {
-            x - rhs.x,
-            y - rhs.y,
-            z - rhs.z
+            x - rhs.X(),
+            y - rhs.Y(),
+            z - rhs.Z()
         };
 #endif
     }
@@ -418,9 +418,9 @@ namespace Ursine
         return Vec3(_mm_mul_ps(m128, rhs.m128));
 #else
         return {
-            x * rhs.x,
-            y * rhs.y,
-            z * rhs.z
+            x * rhs.X(),
+            y * rhs.Y(),
+            z * rhs.Z()
         };
 #endif
     }
@@ -444,9 +444,9 @@ namespace Ursine
         return Vec3(_mm_mul_ps(_mm_set1_ps(lhs), rhs.m128));
 #else
         return {
-            rhs.x * lhs,
-            rhs.y * lhs,
-            rhs.z * lhs
+            rhs.X() * lhs,
+            rhs.Y() * lhs,
+            rhs.Z() * lhs
         };
 #endif
     }
@@ -457,9 +457,9 @@ namespace Ursine
         return Vec3(_mm_and_ps(_mm_div_ps(m128, rhs.m128), FFF0Mask));
 #else
         return {
-            x / rhs.x,
-            y / rhs.y,
-            z / rhs.z
+            x / rhs.X(),
+            y / rhs.Y(),
+            z / rhs.Z()
         };
 #endif
     }
@@ -484,9 +484,9 @@ namespace Ursine
 #ifdef USE_SSE
         m128 = rhs.m128;
 #else
-        x = rhs.x;
-        y = rhs.y;
-        z = rhs.z;
+        x = rhs.X();
+        y = rhs.Y();
+        z = rhs.Z();
 #endif
         return *this;
     }
@@ -496,9 +496,9 @@ namespace Ursine
 #ifdef USE_SSE
         m128 = _mm_add_ps(m128, rhs.m128);
 #else
-        x += rhs.x;
-        y += rhs.y;
-        z += rhs.z;
+        x += rhs.X();
+        y += rhs.Y();
+        z += rhs.Z();
 #endif
 
         return *this;
@@ -509,9 +509,9 @@ namespace Ursine
 #ifdef USE_SSE
         m128 = _mm_sub_ps(m128, rhs.m128);
 #else
-        x -= rhs.x;
-        y -= rhs.y;
-        z -= rhs.z;
+        x -= rhs.X();
+        y -= rhs.Y();
+        z -= rhs.Z();
 #endif
 
         return *this;
@@ -522,9 +522,9 @@ namespace Ursine
 #ifdef USE_SSE
         m128 = _mm_mul_ps(m128, rhs.m128);
 #else
-        x *= rhs.x;
-        y *= rhs.y;
-        z *= rhs.z;
+        x *= rhs.X();
+        y *= rhs.Y();
+        z *= rhs.Z();
 #endif
 
         return *this;
@@ -548,9 +548,9 @@ namespace Ursine
 #ifdef USE_SSE
         m128 = _mm_and_ps(_mm_div_ps(m128, rhs.m128), FFF0Mask);
 #else
-        x /= rhs.x;
-        y /= rhs.y;
-        z /= rhs.z;
+        x /= rhs.X();
+        y /= rhs.Y();
+        z /= rhs.Z();
 #endif
 
         return *this;

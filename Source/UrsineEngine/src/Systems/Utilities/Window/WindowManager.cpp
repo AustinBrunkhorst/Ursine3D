@@ -70,17 +70,17 @@ namespace Ursine
         gWindowManager = nullptr;
     }
 
-    const Vector2 &WindowManager::GetSize(void) const
+    const Vec2 &WindowManager::GetSize(void) const
     {
         return m_size;
     }
 
-    void WindowManager::SetSize(const Vector2 &size)
+    void WindowManager::SetSize(const Vec2 &size)
     {
         auto centerOld = m_location + m_size * 0.5f;
 
-        auto width = static_cast<int>( size.x );
-        auto height = static_cast<int>( size.y );
+        auto width = static_cast<int>( size.X() );
+        auto height = static_cast<int>( size.Y() );
 
         SDL_SetWindowSize( m_handle, width, height );
 
@@ -93,16 +93,16 @@ namespace Ursine
         Dispatch( WM_RESIZE, &resize );
     }
 
-    const Vector2 &WindowManager::GetLocation(void) const
+    const Vec2 &WindowManager::GetLocation(void) const
     {
         return m_location;
     }
 
-    void WindowManager::SetLocation(const Vector2 &location)
+    void WindowManager::SetLocation(const Vec2 &location)
     {
         SDL_SetWindowPosition(m_handle,
-            static_cast<int>( location.x ),
-            static_cast<int>( location.y )
+            static_cast<int>( location.X() ),
+            static_cast<int>( location.Y() )
         );
 
         m_location = location;

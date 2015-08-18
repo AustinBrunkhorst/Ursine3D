@@ -11,7 +11,7 @@ namespace Ursine
         {
             Shader _shader;
 
-            Matrix3 _world_to_NDC;
+            Mat3 _world_to_NDC;
 
             GLuint _buffer_vao;
             GLuint _buffer_vbo;

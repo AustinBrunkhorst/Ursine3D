@@ -1,20 +1,20 @@
 #pragma once
 
-#include "Vector2.h"
+#include "Vec2.h"
 #include "Color.h"
 
 namespace Ursine
 {
     struct Vertex
     {
-        Vector2 position;
+        Vec2 position;
         Color color;
-        Vector2 uv;
+        Vec2 uv;
 
         Vertex(void);
-        Vertex(const Vector2 &position);
-        Vertex(const Vector2 &position, const Color &color);
-        Vertex(const Vector2 &position, const Vector2 &uv);
-        Vertex(const Vector2 &position, const Color &color, const Vector2 &uv);
+        Vertex(const Vec2 &position);
+        Vertex(const Vec2 &position, const Color &color);
+        Vertex(const Vec2 &position, const Vec2 &uv);
+        Vertex(const Vec2 &position, const Color &color, const Vec2 &uv);
     };
 }

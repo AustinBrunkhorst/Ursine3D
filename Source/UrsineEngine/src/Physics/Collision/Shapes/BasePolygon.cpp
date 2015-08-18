@@ -15,7 +15,7 @@
 
 namespace Ursine
 {
-    BasePolygon::BasePolygon(const std::string &path, const std::vector<Vector2> &points, VERTEX_ORDER vert_order)
+    BasePolygon::BasePolygon(const std::string &path, const std::vector<Vec2> &points, VERTEX_ORDER vert_order)
         : Asset(path)
     {
         vertices = points;
@@ -23,11 +23,11 @@ namespace Ursine
         // compute normals
         if (vert_order == VERTEX_ORDER_CCW)
         {
-            Matrix3 rot = Matrix3(-Math::PI_DIV_2);
+            Mat3 rot = Mat3(-Math::PI_DIV_2);
             for (uint32 i = 0; i < points.size(); ++i)
             {
 
-                Vector2 normal;
+                Vec2 normal;
 
                 if (i == points.size() - 1)
                     normal = points[0] - points[i];
@@ -35,15 +35,15 @@ namespace Ursine
                     normal = points[i + 1] - points[i];
 
                 normal = rot.TransformVector(normal);
-                normals.push_back(normal.Normalize());
+                normals.push_back(Vec2::Normalize(normal));
             }
         }
         else
         {
-            Matrix3 rot = Matrix3(Math::PI_DIV_2);
+            Mat3 rot = Mat3(Math::PI_DIV_2);
             for (uint32 i = 0; i < points.size(); ++i)
             {
-                Vector2 normal;
+                Vec2 normal;
 
                 if (i == points.size() - 1)
                     normal = points[0] - points[i];
@@ -51,7 +51,7 @@ namespace Ursine
                     normal = points[i + 1] - points[i];
 
                 normal = rot.TransformVector(normal);
-                normals.push_back(normal.Normalize());
+                normals.push_back(Vec2::Normalize(normal));
             }
         }
     }
@@ -75,7 +75,7 @@ namespace Ursine
             "Error parsing Mesh (%s).\n%s", name.c_str(), error.c_str());
 
         // this is where we store out verts
-        std::vector<Vector2> verts;
+        std::vector<Vec2> verts;
 
         for (auto &vector : mesh.array_items())
         {

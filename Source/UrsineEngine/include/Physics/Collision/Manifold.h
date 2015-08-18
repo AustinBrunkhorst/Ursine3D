@@ -14,7 +14,7 @@
 #pragma once
 
 #include "SimulationConfig.h"
-#include "Vector2.h"
+#include "Vec2.h"
 #include "Entity.h"
 
 #include <vector>
@@ -44,16 +44,16 @@ namespace Ursine
         Contact(void);
 
         // Points Of Contact world and model coordinates
-        Vector2 point;
+        Vec2 point;
 
         // Information reguarding the incident edges
         ContactInfo info;
 
         // Contact normal (from A to B)
-        Vector2 normal;
+        Vec2 normal;
 
         // BodyA and bodyB's relative vectors
-        Vector2 rel_a, rel_b;
+        Vec2 rel_a, rel_b;
 
         // Depth of penetration
         float pen_depth;

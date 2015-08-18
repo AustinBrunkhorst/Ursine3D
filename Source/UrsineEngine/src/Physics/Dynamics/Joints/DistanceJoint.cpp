@@ -38,12 +38,12 @@ namespace Ursine
     {
         static const float damp_factor = 0.1f;
 
-        Vector2 dir = _trans_anchor[1] - _trans_anchor[0];
+        Vec2 dir = _trans_anchor[1] - _trans_anchor[0];
         float distance = dir.Length();
         dir.Normalize();
 
-        float rel_vel = Vector2::Dot(
-            Vector2(_body[1]->GetVelocity() - _body[0]->GetVelocity()),
+        float rel_vel = Vec2::Dot(
+            Vec2(_body[1]->GetVelocity() - _body[0]->GetVelocity()),
             dir
         );
 
@@ -56,7 +56,7 @@ namespace Ursine
 
             float impulse = remove / (_body[0]->_inv_mass + _body[1]->_inv_mass);
 
-            Vector2 I = dir * impulse * damp_factor * _spring_constant;
+            Vec2 I = dir * impulse * damp_factor * _spring_constant;
                 
             if (_rot_locked[0])
                 _body[0]->AddLinearImpulse(I);
@@ -91,7 +91,7 @@ namespace Ursine
         return this;
     }
 
-    DistanceJoint* DistanceJoint::SetAnchor(uint body_index, const Vector2 &anchor)
+    DistanceJoint* DistanceJoint::SetAnchor(uint body_index, const Vec2 &anchor)
     {
         UAssert(body_index < 2, "Must provide a valid index (0, 1)");
             

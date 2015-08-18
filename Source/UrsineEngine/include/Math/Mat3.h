@@ -11,6 +11,8 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
+#pragma once
+
 #include "Vec3.h"
 #include "Vec2.h"
 
@@ -121,6 +123,9 @@ namespace Ursine
         // Transforms a point and accounts for perspective divide
         Vec2 TransformPointAndDiv(const Vec2 &point) const;
         void TransformPointAndDivInplace(Vec2 &point) const;
+
+		// 2D camera matrix
+		void SetWorldToCamera(float width, float height, float rotation, const Vec2 &trans);
 
         std::string ToString(void) const;
 

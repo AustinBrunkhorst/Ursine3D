@@ -278,8 +278,8 @@ namespace Ursine
 
                     auto size = page->texture->GetSize();
 
-                    page->width = static_cast<int>(size.x);
-                    page->height = static_cast<int>(size.y);
+                    page->width = static_cast<int>(size.X());
+                    page->height = static_cast<int>(size.Y());
 
                     delete []path;
                 }

@@ -42,8 +42,8 @@ namespace Ursine
     }
 
     void Ellipse::Set(float rotation,
-                        const Vector2 &dimensions,
-                        const Vector2 &position)
+                        const Vec2 &dimensions,
+                        const Vec2 &position)
     {
         _rotation = rotation;
         _dimensions = dimensions;
@@ -55,26 +55,26 @@ namespace Ursine
         static const float FATNESS = 1.2f;
         AABB bound;
 
-        _position = Vector2(transform.PositionWC());
-        _dimensions = Vector2(transform.ScaleWC());
+        _position = Vec2(transform.PositionWC());
+        _dimensions = Vec2(transform.ScaleWC());
         _rotation = transform.RootRotation2D();
 
         // store the cosine and sine of the rotation
         Math::SinCos(_rotation, _s, _c);
 
-        if (_dimensions.x == _dimensions.y)
+        if (_dimensions.X() == _dimensions.Y())
         {
             bound.low_bound = _position - _dimensions;
             bound.up_bound = _position + _dimensions;
         }
         else
         {
-            Vector2 extent = Vector2(
-                GetSupport(Vector2(1, 0)).x,
-                GetSupport(Vector2(0, 1)).y
+            Vec2 extent = Vec2(
+                GetSupport(Vec2(1, 0)).X(),
+                GetSupport(Vec2(0, 1)).Y()
             );
 
-            Vector2 dimensions = (extent - _position) * FATNESS;
+            Vec2 dimensions = (extent - _position) * FATNESS;
 
             bound.low_bound = _position - dimensions;
             bound.up_bound = _position + dimensions;
@@ -83,12 +83,12 @@ namespace Ursine
         return bound;
     }
 
-    Vector2 Ellipse::GetSupport(const Vector2 &direction) const
+    Vec2 Ellipse::GetSupport(const Vec2 &direction) const
     {
-        Vector2 support;
+        Vec2 support;
 
         // circle case
-        if (Math::IsEqual(_dimensions.x, _dimensions.y))
+        if (Math::IsEqual(_dimensions.X(), _dimensions.Y()))
         {
             float theta = direction.Angle()
                 , s
@@ -96,8 +96,8 @@ namespace Ursine
 
             Math::SinCos(theta, s, c);
 
-            support.x = _dimensions.x * c;
-            support.y = _dimensions.x * s;
+            support.X() = _dimensions.X() * c;
+            support.Y() = _dimensions.X() * s;
         }
         // ellipse case
         else
@@ -108,36 +108,36 @@ namespace Ursine
 
             Math::SinCos(theta, s, c);
 
-            support.x = _dimensions.x * c * _c - _dimensions.y * s * _s;
-            support.y = _dimensions.x * c * _s + _dimensions.y * s * _c;
+            support.X() = _dimensions.X() * c * _c - _dimensions.Y() * s * _s;
+            support.Y() = _dimensions.X() * c * _s + _dimensions.Y() * s * _c;
         }
 
         return _position + support;
     }
 
-    void Ellipse::ComputeMass(ECS::Transform &transform, Vector2 &center,
+    void Ellipse::ComputeMass(ECS::Transform &transform, Vec2 &center,
                               float &area, float &inertia)
     {
-        float ellipse_area = Math::PI * _dimensions.x * _dimensions.y;
-        center += Vector2(transform.LocalPosition());
+        float ellipse_area = Math::PI * _dimensions.X() * _dimensions.Y();
+        center += Vec2(transform.LocalPosition());
         area += ellipse_area;
-        inertia += ellipse_area * (0.5f * _dimensions.x * _dimensions.y);
+        inertia += ellipse_area * (0.5f * _dimensions.X() * _dimensions.Y());
     }
 
     bool Ellipse::RayCast(RayCastOutput &output, const RayCastInput &input)
     {
-        Matrix3 rot = Matrix3(-_rotation);
-        Vector2 P1 = rot.TransformPoint(input.p1 - _position);
-        Vector2 P2 = rot.TransformPoint(input.p2 - _position);
-        Vector2 dir = P2 - P1;
-        float DX2 = _dimensions.x * _dimensions.x;
-        float DY2 = _dimensions.y * _dimensions.y;
-        float A = ((dir.x * dir.x) / DX2) +
-                    ((dir.y * dir.y) / DY2);
-        float B = ((2 * P1.x * dir.x) / DX2) +
-                    ((2 * P1.y * dir.y) / DY2);
-        float C = ((P1.x * P1.x) / DX2) +
-                    ((P1.y * P1.y) / DY2) - 1;
+        Mat3 rot = Mat3(-_rotation);
+        Vec2 P1 = rot.TransformPoint(input.p1 - _position);
+        Vec2 P2 = rot.TransformPoint(input.p2 - _position);
+        Vec2 dir = P2 - P1;
+        float DX2 = _dimensions.X() * _dimensions.X();
+        float DY2 = _dimensions.Y() * _dimensions.Y();
+        float A = ((dir.X() * dir.X()) / DX2) +
+                    ((dir.Y() * dir.Y()) / DY2);
+        float B = ((2 * P1.X() * dir.X()) / DX2) +
+                    ((2 * P1.Y() * dir.Y()) / DY2);
+        float C = ((P1.X() * P1.X()) / DX2) +
+                    ((P1.Y() * P1.Y()) / DY2) - 1;
 
         float determ = (B * B) - (4 * A * C);
 
@@ -165,8 +165,8 @@ namespace Ursine
         }
 
         // calculate the normal
-        Vector2 hit = (input.p1 + (input.p2 - input.p1) * output.fraction);
-        output.normal = Vector2::Normalize(hit - _position);
+        Vec2 hit = (input.p1 + (input.p2 - input.p1) * output.fraction);
+        output.normal = Vec2::Normalize(hit - _position);
         return true;
     }
 }

@@ -24,13 +24,13 @@ namespace Ursine
     class Edge
     {
     public:
-        Edge(const Vector2 &point_0, const Vector2 &point_1, const Vector2 &normal);
+        Edge(const Vec2 &point_0, const Vec2 &point_1, const Vec2 &normal);
         Edge(const Edge &other);
 
-        Vector2 GetDirection();
+        Vec2 GetDirection();
 
-        const Vector2 &p0, &p1;
-        const Vector2 &norm;
+        const Vec2 &p0, &p1;
+        const Vec2 &norm;
 
     };
 
@@ -49,9 +49,9 @@ namespace Ursine
 
         AABB TransformShape(ECS::Transform &transform) override;
 
-        Vector2 GetSupport(const Vector2 &direction) const override;
+        Vec2 GetSupport(const Vec2 &direction) const override;
 
-        void ComputeMass(ECS::Transform &transform, Vector2 &center,
+        void ComputeMass(ECS::Transform &transform, Vec2 &center,
                             float &area, float &inertia) override;
 
         bool RayCast(RayCastOutput &output, const RayCastInput &input);
@@ -68,8 +68,8 @@ namespace Ursine
         // the verts and normals above are for.
         const BasePolygon *_base_polygon;
 
-        std::vector<Vector2> _verts;   //[0][1] [1][2] [2][3] [3][0]  This is how the two arrays work together
-        std::vector<Vector2> _normals; // [0]    [1]    [2]    [3]
+        std::vector<Vec2> _verts;   //[0][1] [1][2] [2][3] [3][0]  This is how the two arrays work together
+        std::vector<Vec2> _normals; // [0]    [1]    [2]    [3]
 
         std::string _name;
     };

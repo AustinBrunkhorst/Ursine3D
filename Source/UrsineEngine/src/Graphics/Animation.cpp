@@ -100,8 +100,8 @@ namespace Ursine
         // frame changed
         if (_frame_index != last_index)
         {
-            _uv_offset.x = (_frame_index % _frames_per_line) * _uv_scale.x;
-            _uv_offset.y = (_frame_index / _frames_per_line) * _uv_scale.y;
+            _uv_offset.X() = (_frame_index % _frames_per_line) * _uv_scale.X();
+            _uv_offset.Y() = (_frame_index / _frames_per_line) * _uv_scale.Y();
 
             _frame_changed = true;
 
@@ -124,12 +124,12 @@ namespace Ursine
         return _texture;
     }
 
-    const Vector2 &Animation::GetUVOffset(void)
+    const Vec2 &Animation::GetUVOffset(void)
     {
         return _uv_offset;
     }
 
-    const Vector2 &Animation::GetUVScale(void)
+    const Vec2 &Animation::GetUVScale(void)
     {
         return _uv_scale;
     }
@@ -169,7 +169,7 @@ namespace Ursine
         UAssert(!frame_width.is_null(),
             "Animation missing frame width property.\n%s", name.c_str());
 
-        JsonSerializer::Deserialize(frame_width, animation->_frame_size.x);
+        JsonSerializer::Deserialize(frame_width, animation->_frame_size.X());
 
         auto &frame_count = json["frame_count"];
 
@@ -189,16 +189,16 @@ namespace Ursine
         JsonSerializer::Deserialize(json["ping_pong"], animation->_ping_pong, false);
 
         animation->_frames_per_line = 
-            static_cast<uint32>(animation->_texture->m_size.x / animation->_frame_size.x);
+            static_cast<uint32>(animation->_texture->m_size.X() / animation->_frame_size.X());
 
-        animation->_frame_size.y = animation->_texture->m_size.y / 
+        animation->_frame_size.Y() = animation->_texture->m_size.Y() / 
             (static_cast<float>(animation->_frame_count) / animation->_frames_per_line);
 
-        animation->_uv_scale.x =
-            animation->_frame_size.x / animation->_texture->m_size.x;
+        animation->_uv_scale.X() =
+            animation->_frame_size.X() / animation->_texture->m_size.X();
 
-        animation->_uv_scale.y = 
-            animation->_frame_size.y / animation->_texture->m_size.y;
+        animation->_uv_scale.Y() = 
+            animation->_frame_size.Y() / animation->_texture->m_size.Y();
 
         return animation;
     }

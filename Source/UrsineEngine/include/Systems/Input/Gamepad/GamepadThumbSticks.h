@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "Vector2.h"
+#include "Vec2.h"
 #include "GamepadDeadzoneType.h"
 
 #include "UrsineTypes.h"
@@ -28,18 +28,18 @@ namespace Ursine
 
         const static float VALUE_MAX;
 
-        Vector2 m_left;
-        Vector2 m_right;
+        Vec2 m_left;
+        Vec2 m_right;
 
         void setLeft(int16 x, int16 y);
         void setRight(int16 x, int16 y);
 
-        void setLeft(const Vector2 &left);
-        void setRight(const Vector2 &right);
+        void setLeft(const Vec2 &left);
+        void setRight(const Vec2 &right);
 
         void applyDeadZone(GamepadDeadZoneType type, float size);
     public:
-        const Vector2 &Left(void) const;
-        const Vector2 &Right(void) const;
+        const Vec2 &Left(void) const;
+        const Vec2 &Right(void) const;
     };
 }

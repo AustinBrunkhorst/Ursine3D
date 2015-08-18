@@ -103,28 +103,28 @@ namespace Ursine
 
             positionalCorrection(c);
 
-            Vector2 rel_a = c.point - a->GetCenterOfMass();
-            Vector2 rel_b = c.point - b->GetCenterOfMass();
+            Vec2 rel_a = c.point - a->GetCenterOfMass();
+            Vec2 rel_b = c.point - b->GetCenterOfMass();
 
             // compute normal mass
-            float rna = Vector2::Dot(rel_a, c.normal);
-            float rnb = Vector2::Dot(rel_b, c.normal);
+            float rna = Vec2::Dot(rel_a, c.normal);
+            float rnb = Vec2::Dot(rel_b, c.normal);
             float denom = a->_inv_mass + b->_inv_mass;
             denom += a->_inv_inertia *
-                (Vector2::Dot(rel_a, rel_a) - rna * rna) +
+                (Vec2::Dot(rel_a, rel_a) - rna * rna) +
                 b->_inv_inertia *
-                (Vector2::Dot(rel_b, rel_b) - rnb * rnb);
+                (Vec2::Dot(rel_b, rel_b) - rnb * rnb);
             c.mass_norm = Math::IsZero(denom) ? 0.0f : 1.0f / denom;
 
             // compute tangent mass
-            Vector2 tan = Vector2::Cross(c.normal, 1.0f);
-            float rta = Vector2::Dot(rel_a, tan);
-            float rtb = Vector2::Dot(rel_b, tan);
+            Vec2 tan = Vec2::Cross(1.0f, c.normal);
+            float rta = Vec2::Dot(rel_a, tan);
+            float rtb = Vec2::Dot(rel_b, tan);
             denom = a->_inv_mass + b->_inv_mass;
             denom += a->_inv_inertia *
-                (Vector2::Dot(rel_a, rel_a) - rta * rta) +
+                (Vec2::Dot(rel_a, rel_a) - rta * rta) +
                 b->_inv_inertia *
-                (Vector2::Dot(rel_b, rel_b) - rtb * rtb);
+                (Vec2::Dot(rel_b, rel_b) - rtb * rtb);
             c.mass_tan = Math::IsZero(denom) ? 0.0f : 1.0f / denom;
 
             c.bias = -bias_factor * inv_dt * Math::Min(0.0f, (-c.pen_depth) + pen_slop);
@@ -134,7 +134,7 @@ namespace Ursine
                 c.bias = bias_threshold;
 
             // apply initial accumulated impulse
-            Vector2 impulse = c.norm_imp * c.normal + c.tang_imp * tan;
+            Vec2 impulse = c.norm_imp * c.normal + c.tang_imp * tan;
 
             impulse = impulse * e;
 
@@ -153,11 +153,11 @@ namespace Ursine
             c.rel_b = c.point - b->GetCenterOfMass();
 
             // Calculate relative velocity
-            Vector2 rel_v = b->_velocity + Vector2::Cross(b->_angular_velocity, c.rel_b) -
-                a->_velocity - Vector2::Cross(a->_angular_velocity, c.rel_a);
+            Vec2 rel_v = b->_velocity + Vec2::Cross(b->_angular_velocity, c.rel_b) -
+                a->_velocity - Vec2::Cross(a->_angular_velocity, c.rel_a);
 
             // Calculate the velocity along the normal (normal impulse)
-            float contact_vel = Vector2::Dot(rel_v, c.normal);
+            float contact_vel = Vec2::Dot(rel_v, c.normal);
 
             // Calculate the accumulated impulse
             float impulse = c.mass_norm * (-contact_vel + c.bias);
@@ -170,20 +170,20 @@ namespace Ursine
             impulse = c.norm_imp - prev;
 
             // Calculate the contact impulse
-            Vector2 contact_impulse = impulse * c.normal;
+            Vec2 contact_impulse = impulse * c.normal;
 
             // Apply the contact impulse
             a->AddLinearImpulseAtPosition(-contact_impulse, c.point);
             b->AddLinearImpulseAtPosition(contact_impulse, c.point);
 
             // Relative velocity at contact
-            rel_v = b->_velocity + Vector2::Cross(b->_angular_velocity, c.rel_b) -
-                a->_velocity - Vector2::Cross(a->_angular_velocity, c.rel_a);
+            rel_v = b->_velocity + Vec2::Cross(b->_angular_velocity, c.rel_b) -
+                a->_velocity - Vec2::Cross(a->_angular_velocity, c.rel_a);
 
-            Vector2 tang = Vector2::Cross(c.normal, 1.0f);
+            Vec2 tang = Vec2::Cross(1.0f, c.normal);
 
             // Calculate the velocity along the tangent (tangent impulse)
-            float tangent_vel = Vector2::Dot(rel_v, tang);
+            float tangent_vel = Vec2::Dot(rel_v, tang);
 
             // Calculate the accumulated impulse
             impulse = c.mass_tan * (-tangent_vel);
@@ -199,7 +199,7 @@ namespace Ursine
             impulse = c.tang_imp - prev;
 
             // Apply the impulse
-            Vector2 tangent_impulse = impulse * tang;
+            Vec2 tangent_impulse = impulse * tang;
 
             a->AddLinearImpulseAtPosition(-tangent_impulse, c.point);
             b->AddLinearImpulseAtPosition(tangent_impulse, c.point);
@@ -213,37 +213,37 @@ namespace Ursine
 
         if (a->body_type == BODY_TYPE_DYNAMIC && a->_inv_mass != 0.0f)
         {
-            Vector2 scale = Vector2(a->_transform->ScaleWC());
+            Vec2 scale = Vec2(a->_transform->ScaleWC());
 
-            float avg_scale = (scale.x + scale.y) / 2.0f;
+            float avg_scale = (scale.X() + scale.Y()) / 2.0f;
 
             // if we're penetrating past the threshold
             if (contact.pen_depth / avg_scale >= ratio_threshold)
             {
                 if (a->_pos_locked)
-                    a->_transform->AddRootPosition(Vector3(
+                    a->_transform->AddRootPosition(Vec3(
                         -contact.normal * contact.pen_depth * damp_factor, 0
                     ));
                 else
-                    a->_transform->AddPositionWC(Vector3(
+                    a->_transform->AddPositionWC(Vec3(
                         -contact.normal * contact.pen_depth * damp_factor, 0
                     ));
             }
         }
         if (b->body_type == BODY_TYPE_DYNAMIC && b->_inv_mass != 0.0f)
         {
-            Vector2 scale = Vector2(b->_transform->ScaleWC());
+            Vec2 scale = Vec2(b->_transform->ScaleWC());
 
-            float avg_scale = (scale.x + scale.y) / 2.0f;
+            float avg_scale = (scale.X() + scale.Y()) / 2.0f;
 
             if (contact.pen_depth / avg_scale > ratio_threshold)
             {
                 if (b->_pos_locked)
-                    b->_transform->AddRootPosition(Vector3(
+                    b->_transform->AddRootPosition(Vec3(
                         contact.normal * contact.pen_depth * damp_factor, 0
                     ));
                 else
-                    b->_transform->AddPositionWC(Vector3(
+                    b->_transform->AddPositionWC(Vec3(
                         contact.normal * contact.pen_depth * damp_factor, 0
                     ));
             }
@@ -277,12 +277,12 @@ namespace Ursine
             // positionally correct based on the penetration depth
             if (a_type == BODY_TYPE_KINEMATIC_SOLVE)
                 a_trans->AddRootPosition(
-                    Vector3(-contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
+                    Vec3(-contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
                 );
 
             if (b_type == BODY_TYPE_KINEMATIC_SOLVE)
                 b_trans->AddRootPosition(
-                    Vector3(contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
+                    Vec3(contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
                 ); 
 
         }

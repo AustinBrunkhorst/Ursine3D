@@ -28,8 +28,8 @@ namespace Ursine
         void Press(GamepadButton button) const;
         void Release(GamepadButton button) const;
 
-        void SetStickLeft(const Vector2 &left) const;
-        void SetStickRight(const Vector2 &right) const;
+        void SetStickLeft(const Vec2 &left) const;
+        void SetStickRight(const Vec2 &right) const;
 
         void SetTriggerLeft(float left) const;
         void SetTriggerRight(float right) const;

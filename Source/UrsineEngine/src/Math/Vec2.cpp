@@ -11,9 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "Vec2.h"
-#include "Vec3.h"
-#include <sstream>
+#include "UrsinePrecompiled.h"
 
 namespace Ursine
 {

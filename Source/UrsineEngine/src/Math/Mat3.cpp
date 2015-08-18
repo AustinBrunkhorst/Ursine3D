@@ -11,10 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "Mat3.h"
-#include "Mat4.h"
-
-#include <sstream>
+#include "UrsinePrecompiled.h"
 
 namespace Ursine
 {

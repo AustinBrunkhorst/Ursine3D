@@ -11,13 +11,15 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
+#pragma once
+
 #include "Vec4.h"
 #include "Vec3.h"
 
 namespace Ursine
 {
-    // Forward Declaration
-    class Mat3;
+	// Forward Declaration
+	class Mat3;
 
     ALIGNED16(class) Mat4
     {

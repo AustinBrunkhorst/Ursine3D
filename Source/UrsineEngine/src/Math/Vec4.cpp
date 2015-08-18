@@ -11,16 +11,14 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "Vec3.h"
-#include "Vec4.h"
-#include <sstream>
+#include "UrsinePrecompiled.h"
 
 namespace Ursine
 {
     Vec4::Vec4(const Vec3 &value, float W)
-        : x(value.x)
-        , y(value.y)
-        , z(value.z)
+        : x(value.X())
+        , y(value.Y())
+        , z(value.Z())
         , w(W) { }
 
     // Public Methods

@@ -46,7 +46,7 @@ namespace Ursine
             delete shape;
     }
 
-    uint Collider::FindIndex(const Vector2 &normal) const
+    uint Collider::FindIndex(const Vec2 &normal) const
     {
         if (shape->type == POLYGON)
         {
@@ -55,7 +55,7 @@ namespace Ursine
             uint i = 0;
             for (auto &edge : poly->edges)
             {
-                if (Vector2::SameDirection(normal, edge.norm))
+                if (Vec2::SameDirection(normal, edge.norm))
                     return i;
                 
                 ++i;
@@ -79,16 +79,16 @@ namespace Ursine
 
         Json::object position;
         position["x"] 
-            = Json(static_cast<double>(transform.LocalPosition().x));
+            = Json(static_cast<double>(transform.LocalPosition().X()));
         position["y"]
-            = Json(static_cast<double>(transform.LocalPosition().y));
+            = Json(static_cast<double>(transform.LocalPosition().Y()));
         object["position"] = position;
 
         Json::object scale;
         scale["x"]
-            = Json(static_cast<double>(transform.LocalScale().x));
+            = Json(static_cast<double>(transform.LocalScale().X()));
         scale["y"]
-            = Json(static_cast<double>(transform.LocalScale().y));
+            = Json(static_cast<double>(transform.LocalScale().Y()));
         object["scale"] = scale;
 
         Json::object rotation;
@@ -161,7 +161,7 @@ namespace Ursine
             collider->shape = ellipse;
             ellipse->Set(transform.RootRotation2D(),
                          { x, y },
-                         Vector2(transform.LocalPosition()));
+                         Vec2(transform.LocalPosition()));
         }
 
         auto &children = data["children"];

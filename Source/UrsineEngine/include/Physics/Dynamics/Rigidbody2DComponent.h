@@ -19,7 +19,7 @@
 
 #include "Component.h"
 #include "TimeSpan.h"
-#include "Vector2.h"
+#include "Vec2.h"
 #include "Shape.h"
 #include "Collider.h"
 #include "AABB.h"
@@ -67,20 +67,20 @@ namespace Ursine
             void OnInitialize(void) override;
 
             // Apply force to the center of mass.
-            void AddForce(const Vector2 &force);
+            void AddForce(const Vec2 &force);
 
             // Apply force at a world position.  If this isn't
             // the center of mass, this will affect angular velocity.
-            void AddForceAtPosition(const Vector2 &force, const Vector2 &position);
+            void AddForceAtPosition(const Vec2 &force, const Vec2 &position);
 
             // Apply an impulse to the center of mass. This will
             // immediately modify the velocity.
-            void AddLinearImpulse(const Vector2 &impulse);
+            void AddLinearImpulse(const Vec2 &impulse);
 
             // Apply an impulse at a world position. This will 
             // immediately modify the velocity.  If the position isn't
             // the center of mass, this will affect angular velocity.
-            void AddLinearImpulseAtPosition(const Vector2 &impulse, const Vector2 &position);
+            void AddLinearImpulseAtPosition(const Vec2 &impulse, const Vec2 &position);
 
             // Apply an angular impulse
             void AddAngularImpulse(float impulse);
@@ -88,23 +88,23 @@ namespace Ursine
             // This affects the angular velocity
             void AddTorque(float torque);
 
-            void AddAcceleration(const Vector2 &acceleration);
+            void AddAcceleration(const Vec2 &acceleration);
 
             void SetDensity(float density);
 
-            void SetVelocity(const Vector2 &velocity);
-            void AddVelocity(const Vector2 &velocity);
+            void SetVelocity(const Vec2 &velocity);
+            void AddVelocity(const Vec2 &velocity);
 
-            Vector2 GetVelocity(void);
+            Vec2 GetVelocity(void);
 
-            void SetVelocityAtPosition(const Vector2 &velocity, const Vector2 &position);
+            void SetVelocityAtPosition(const Vec2 &velocity, const Vec2 &position);
 
             void SetAngularVelocity(float velocity);
 
             void SetEventable(bool eventable);
 
             // move the rigid body to a position (in world space) over a specified time
-            void Move(const Vector2 &position, const TimeSpan &time);
+            void Move(const Vec2 &position, const TimeSpan &time);
 
             // move the rigid body to a certain rotation
             void Rotate(float radians, float time);
@@ -113,7 +113,7 @@ namespace Ursine
             void ComputeMass(void);
 
             // Returns the center of mass in world coordinates
-            Vector2 GetCenterOfMass(void);
+            Vec2 GetCenterOfMass(void);
 
             const AABB &GetAABB(void) const;
 
@@ -176,14 +176,14 @@ namespace Ursine
             AABB updateChildren(Colliders &children, bool reset = false);
 
             // compute the mass of all children
-            void computeMassOfColliders(Colliders &colliders, Vector2 &center, 
+            void computeMassOfColliders(Colliders &colliders, Vec2 &center, 
                                         float &area, float &inertia, unsigned &collider_count);
 
             // the owner of the rigidbody's transform
             Transform *_transform;
 
             // the center of mass (computer in ComputeMass)
-            Vector2 _c_mass;
+            Vec2 _c_mass;
 
             SerializerAllow(RigidBody2D, colliders);
             Colliders colliders;
@@ -193,12 +193,12 @@ namespace Ursine
             BodyType body_type;
 
             // linear velocity
-            Vector2 _velocity;
+            Vec2 _velocity;
             // angular velocity in radians
             float _angular_velocity;
 
             // force to be applied to the velocity
-            Vector2 _force;
+            Vec2 _force;
             // torque to be applied to the angular velocity
             float _torque;
 

@@ -48,12 +48,12 @@ namespace Ursine
             RenderEffectType effect;
 
             // top left
-            Vector2 _uv_start;
+            Vec2 _uv_start;
 
             // bottom right
-            Vector2 _uv_end;
+            Vec2 _uv_end;
 
-            Vector2 _uv_scale;
+            Vec2 _uv_scale;
         public:
             Renderable(void);
 
@@ -79,14 +79,14 @@ namespace Ursine
             const Color &GetTint(void) const;
             void SetTint(const Color &tint);
 
-            const Vector2 &GetUVOffset(void) const;
-            const Vector2 &GetUVScale(void) const;
+            const Vec2 &GetUVOffset(void) const;
+            const Vec2 &GetUVScale(void) const;
 
-            void SetUVOffset(const Vector2 &offset);
-            void SetUVScale(const Vector2 &scale);
+            void SetUVOffset(const Vec2 &offset);
+            void SetUVScale(const Vec2 &scale);
 
             URSINE_TODO("this will be removed after actual graphics pipeline is finalized");
-            const Vector2 &GetUVEnd(void);
+            const Vec2 &GetUVEnd(void);
         };
     }
 }

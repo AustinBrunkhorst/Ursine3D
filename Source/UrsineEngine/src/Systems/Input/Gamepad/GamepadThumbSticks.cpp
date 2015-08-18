@@ -19,43 +19,43 @@ namespace Ursine
 {
     const float GamepadThumbSticks::VALUE_MAX = 32767.0f;
 
-    const Vector2 &GamepadThumbSticks::Left(void) const
+    const Vec2 &GamepadThumbSticks::Left(void) const
     {
         return m_left;
     }
 
-    const Vector2 &GamepadThumbSticks::Right(void) const
+    const Vec2 &GamepadThumbSticks::Right(void) const
     {
         return m_right;
     }
 
     void GamepadThumbSticks::setLeft(int16 x, int16 y)
     {
-        m_left.x = x / VALUE_MAX;
-        m_left.y = y / VALUE_MAX;
+        m_left.X() = x / VALUE_MAX;
+        m_left.Y() = y / VALUE_MAX;
     }
 
     void GamepadThumbSticks::setRight(int16 x, int16 y)
     {
-        m_right.x = x / VALUE_MAX;
-        m_right.y = y / VALUE_MAX;
+        m_right.X() = x / VALUE_MAX;
+        m_right.Y() = y / VALUE_MAX;
     }
 
-    void GamepadThumbSticks::setLeft(const Vector2 &left)
+    void GamepadThumbSticks::setLeft(const Vec2 &left)
     {
         m_left =
         {
-            Math::Clamp( left.x, -1.0f, 1.0f ),
-            Math::Clamp( left.y, -1.0f, 1.0f )
+            Math::Clamp( left.X(), -1.0f, 1.0f ),
+            Math::Clamp( left.Y(), -1.0f, 1.0f )
         };
     }
 
-    void GamepadThumbSticks::setRight(const Vector2 &right)
+    void GamepadThumbSticks::setRight(const Vec2 &right)
     {
         m_right =
         {
-            Math::Clamp( right.x, -1.0f, 1.0f ),
-            Math::Clamp( right.y, -1.0f, 1.0f )
+            Math::Clamp( right.X(), -1.0f, 1.0f ),
+            Math::Clamp( right.Y(), -1.0f, 1.0f )
         };
     }
 
@@ -66,23 +66,23 @@ namespace Ursine
             case DZ_NONE:
                 break;
             case DZ_INDEPENDENT_AXES:
-                if (abs( m_left.x ) < size)
-                    m_left.x = 0.0f;
-                if (abs( m_left.y ) < size)
-                    m_left.y = 0.0f;
-                if (abs( m_right.x ) < size)
-                    m_right.x = 0.0f;
-                if (abs( m_right.y ) < size)
-                    m_right.y = 0.0f;
+                if (abs( m_left.X() ) < size)
+                    m_left.X() = 0.0f;
+                if (abs( m_left.Y() ) < size)
+                    m_left.Y() = 0.0f;
+                if (abs( m_right.X() ) < size)
+                    m_right.X() = 0.0f;
+                if (abs( m_right.Y() ) < size)
+                    m_right.Y() = 0.0f;
                 break;
             case DZ_CIRCULAR:
                 const float size_squared = size * size;
 
                 if (m_left.LengthSquared( ) < size_squared)
-                    m_left = Vector2::Zero( );
+                    m_left = Vec2::Zero( );
 
                 if (m_right.LengthSquared( ) < size_squared)
-                    m_right = Vector2::Zero( );
+                    m_right = Vec2::Zero( );
                 break;
         }
     }

@@ -264,8 +264,8 @@ namespace Ursine
             if (gMouseManager->IsButtonDown( MBTN_RIGHT ))
                 Utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
-            e.x = static_cast<int>( args->position.x );
-            e.y = static_cast<int>( args->position.y );
+            e.x = static_cast<int>( args->position.X() );
+            e.y = static_cast<int>( args->position.Y() );
 
             m_browser->GetHost( )->SendMouseMoveEvent( e, false );
         }
@@ -287,8 +287,8 @@ namespace Ursine
             if (gMouseManager->IsButtonDown( MBTN_RIGHT ))
                 Utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
-            e.x = static_cast<int>( args->position.x );
-            e.y = static_cast<int>( args->position.y );
+            e.x = static_cast<int>( args->position.X() );
+            e.y = static_cast<int>( args->position.Y() );
 
             m_browser->GetHost( )->SendMouseClickEvent( e,
                 mapMouseButton( args->button ),
@@ -318,12 +318,12 @@ namespace Ursine
 
             auto &position = gMouseManager->GetPosition( );
 
-            e.x = static_cast<int>( position.x );
-            e.y = static_cast<int>( position.y );
+            e.x = static_cast<int>( position.X() );
+            e.y = static_cast<int>( position.Y() );
 
             m_browser->GetHost( )->SendMouseWheelEvent( e,
-                static_cast<int>( args->delta.x * speed ),
-                static_cast<int>( args->delta.y * speed ) );
+                static_cast<int>( args->delta.X() * speed ),
+                static_cast<int>( args->delta.Y() * speed ) );
         }
 
         inline void View::onWindowFocus(EVENT_HANDLER(WindowManager))

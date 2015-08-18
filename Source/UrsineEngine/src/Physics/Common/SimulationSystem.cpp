@@ -316,7 +316,7 @@ namespace Ursine
 
                 // Apply velocities
                 if (!body->_pos_locked)
-                    trans->AddPosition(Vector3(_dt * body->_velocity, 0));
+                    trans->AddPosition(Vec3(_dt * body->_velocity, 0));
 
                 if (!body->_rot_locked)
                     trans->AddRotation2D(_dt * body->_angular_velocity);
@@ -377,20 +377,20 @@ namespace Ursine
             RayCastInput right;
             RayCastOutput out;
 
-            top.p1 = { region.low_bound.x, region.up_bound.y };
-            top.p2 = { region.up_bound.x, region.up_bound.y };
+            top.p1 = { region.low_bound.X(), region.up_bound.Y() };
+            top.p2 = { region.up_bound.X(), region.up_bound.Y() };
             top.max_fraction = 1.0f;
 
-            bot.p1 = { region.low_bound.x, region.low_bound.y };
-            bot.p2 = { region.up_bound.x, region.low_bound.y };
+            bot.p1 = { region.low_bound.X(), region.low_bound.Y() };
+            bot.p2 = { region.up_bound.X(), region.low_bound.Y() };
             bot.max_fraction = 1.0f;
 
-            left.p1 = { region.low_bound.x, region.up_bound.y };
-            left.p2 = { region.low_bound.x, region.low_bound.y };
+            left.p1 = { region.low_bound.X(), region.up_bound.Y() };
+            left.p2 = { region.low_bound.X(), region.low_bound.Y() };
             left.max_fraction = 1.0f;
             
-            right.p1 = { region.up_bound.x, region.up_bound.y };
-            right.p2 = { region.up_bound.x, region.low_bound.y };
+            right.p1 = { region.up_bound.X(), region.up_bound.Y() };
+            right.p2 = { region.up_bound.X(), region.low_bound.Y() };
             right.max_fraction = 1.0f;
 
             // iterate through all bodies

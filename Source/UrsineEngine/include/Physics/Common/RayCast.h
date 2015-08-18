@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "Vector2.h"
+#include "Vec2.h"
 #include "Utils.h"
 
 namespace Ursine
@@ -27,7 +27,7 @@ namespace Ursine
     class RayCastInput
     {
     public:
-        Vector2 p1, p2;
+        Vec2 p1, p2;
         float max_fraction;
     };
 
@@ -40,7 +40,7 @@ namespace Ursine
             : fraction(0.0f)
             , entity(nullptr) { }
 
-        Vector2 normal;
+        Vec2 normal;
         float fraction;
         ECS::Entity *entity;
     };

@@ -29,8 +29,8 @@ namespace Ursine
         // OpenGL context for the current window
         SDL_GLContext m_glContext;
 
-        Vector2 m_size;
-        Vector2 m_location;
+        Vec2 m_size;
+        Vec2 m_location;
 
         Color m_bgColor;
 
@@ -44,11 +44,11 @@ namespace Ursine
 
         ~WindowManager(void);
 
-        const Vector2 &GetSize(void) const;
-        void SetSize(const Vector2 &size);
+        const Vec2 &GetSize(void) const;
+        void SetSize(const Vec2 &size);
 
-        const Vector2 &GetLocation(void) const;
-        void SetLocation(const Vector2 &location);
+        const Vec2 &GetLocation(void) const;
+        void SetLocation(const Vec2 &location);
         void SetLocationCentered(void);
 
         bool IsFocused(void) const;

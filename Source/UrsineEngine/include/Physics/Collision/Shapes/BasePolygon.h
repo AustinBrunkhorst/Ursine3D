@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "Vector2.h"
+#include "Vec2.h"
 #include "ContentManager.h"
 
 #include <vector>
@@ -32,11 +32,11 @@ namespace Ursine
     public:
         static const BasePolygon *Get(const std::string &path);
 
-        std::vector<Vector2> vertices;
-        std::vector<Vector2> normals;
+        std::vector<Vec2> vertices;
+        std::vector<Vec2> normals;
 
         BasePolygon(const std::string &path,
-                    const std::vector<Vector2> &points,
+                    const std::vector<Vec2> &points,
                     VERTEX_ORDER vert_order = VERTEX_ORDER_CCW);
     };
 

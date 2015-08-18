@@ -70,22 +70,22 @@ namespace Ursine
             auto position = m_vertices[i].position;
 
             // update left and right
-            if (position.x < bounds.low_bound.x)
-                bounds.low_bound.x = position.x;
-            else if (position.x > bounds.up_bound.x)
-                bounds.up_bound.x = position.x;
+            if (position.X() < bounds.low_bound.X())
+                bounds.low_bound.X() = position.X();
+            else if (position.X() > bounds.up_bound.X())
+                bounds.up_bound.X() = position.X();
 
             // update top and bottom
-            if (position.y < bounds.low_bound.y)
-                bounds.low_bound.y = position.y;
-            else if (position.y > bounds.up_bound.y)
-                bounds.up_bound.y = position.y;
+            if (position.Y() < bounds.low_bound.Y())
+                bounds.low_bound.Y() = position.Y();
+            else if (position.Y() > bounds.up_bound.Y())
+                bounds.up_bound.Y() = position.Y();
         }
 
         return bounds;
     }
 
-    void VertexArray::Draw(RenderTarget &target, RenderState state) const
+    void VertexArray::Draw(RenderTarget &target, const RenderState &state) const
     {
         if (!m_vertices.empty())
             target.Draw( m_vertices.data(), m_vertices.size(), m_type, state );

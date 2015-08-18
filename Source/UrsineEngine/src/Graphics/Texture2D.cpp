@@ -85,22 +85,22 @@ namespace Ursine
             "Failed to load texture.\n%s",
             filename.c_str())
 
-        Vector2 realSize {
+        Vec2 realSize {
             static_cast<float>(surface->w),
             static_cast<float>(surface->h)
         };
 
-        Vector2 size {
+        Vec2 size {
             static_cast<float>(getValidSize(surface->w)),
             static_cast<float>(getValidSize(surface->h))
         };
 
         auto maxSize = getMaxSize( );
 
-        UAssert(size.x < maxSize && size.y < maxSize,
+        UAssert(size.X() < maxSize && size.Y() < maxSize,
             "Texture size too large (%i, %i) max is (%i, %i).",
-            static_cast<int>(size.x),
-            static_cast<int>(size.y),
+            static_cast<int>(size.X()),
+            static_cast<int>(size.Y()),
             maxSize,
             maxSize);
 
@@ -186,7 +186,7 @@ namespace Ursine
         return m_uniqueID;
     }
 
-    const Vector2 &Texture2D::GetSize(void) const
+    const Vec2 &Texture2D::GetSize(void) const
     {
         return m_size;
     }

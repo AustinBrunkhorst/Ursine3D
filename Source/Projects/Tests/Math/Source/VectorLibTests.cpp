@@ -1,9 +1,9 @@
 #define CATCH_CONFIG_MAIN
-#include "../../../Testing/catch.hpp"
+#include "../dep/Testing/include/catch.hpp"
 
-#include "../NewMath/Vec2.h"
-#include "../NewMath/Vec3.h"
-#include "../NewMath/Vec4.h"
+#include "Vec2.h"
+#include "Vec3.h"
+#include "Vec4.h"
 
 using namespace Ursine;
 

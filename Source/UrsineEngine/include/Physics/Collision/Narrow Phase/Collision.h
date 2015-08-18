@@ -46,7 +46,7 @@ namespace Ursine
         static void Collide(Contacts &contacts, ECS::RigidBody2D *a, ECS::RigidBody2D *b);
 
         static bool RaySegmentIntersection(const RayCastInput &input, 
-                                           const Vector2 &p_0, const Vector2 &p_1, 
+                                           const Vec2 &p_0, const Vec2 &p_1, 
                                            float &t);
 
         // Send collision events for both interacting bodies

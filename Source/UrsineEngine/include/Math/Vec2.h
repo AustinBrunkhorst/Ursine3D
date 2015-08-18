@@ -57,6 +57,8 @@ namespace Ursine
         static float Cross(const Vec2 &vec1, const Vec2 &vec2);
         static Vec2 Cross(float value, const Vec2 &vec);
 
+		static Vec2 TripleProduct(const Vec2 &vec1, const Vec2 &vec2, const Vec2 &vec3);
+
         float Distance(const Vec2 &other) const;
         static float Distance(const Vec2 &vec1, const Vec2 &vec2);
 

@@ -70,12 +70,12 @@ namespace Ursine
 
         float Zone::GetWidth(void)
         {
-            return width * _transform->ScaleWC().x;
+            return width * _transform->ScaleWC().X();
         }
 
         float Zone::GetHeight(void)
         {
-            return height * _transform->ScaleWC().y;
+            return height * _transform->ScaleWC().Y();
         }
 
         bool Zone::Contains(AABB const& aabb)
@@ -85,13 +85,13 @@ namespace Ursine
 
         void Zone::UpdateAABB(void)
         {
-            Vector2 center = Vector2(_transform->PositionWC());
+            Vec2 center = Vec2(_transform->PositionWC());
 
             float w = GetWidth()
                 , h = GetHeight();
 
-            _aabb.low_bound.Set(center.x - w, center.y - h);
-            _aabb.up_bound.Set(center.x + w, center.y + h);
+            _aabb.low_bound.Set(center.X() - w, center.Y() - h);
+            _aabb.up_bound.Set(center.X() + w, center.Y() + h);
         }
     }
 

@@ -1,8 +1,8 @@
 #define CATCH_CONFIG_MAIN
-#include "../../../Testing/catch.hpp"
+#include "../dep/Testing/include/catch.hpp"
 
-#include "../NewMath/Mat3.h"
-#include "../NewMath/Mat4.h"
+#include "Mat3.h"
+#include "Mat4.h"
 
 using namespace Ursine;
 

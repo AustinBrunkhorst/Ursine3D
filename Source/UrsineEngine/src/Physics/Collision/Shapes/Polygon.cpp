@@ -57,8 +57,8 @@ namespace Ursine
     // return the encompassing AABB of the shape
     AABB Polygon::TransformShape(ECS::Transform &transform)
     {
-        Matrix3 normal_mat = transform.MatrixNoScalar();
-        Matrix3 vert_mat = transform.Matrix();
+        Mat3 normal_mat = transform.MatrixNoScalar();
+        Mat3 vert_mat = transform.Matrix();
 
         // Find the farthest x and y value to make our box with
         AABB bounds;
@@ -72,14 +72,14 @@ namespace Ursine
         {
             _verts[i] = vert_mat.TransformPoint(_base_polygon->vertices[i]);
 
-            if (_verts[i].x > bounds.up_bound.x)
-                bounds.up_bound.x = _verts[i].x;
-            if (_verts[i].y > bounds.up_bound.y)
-                bounds.up_bound.y = _verts[i].y;
-            if (_verts[i].x < bounds.low_bound.x)
-                bounds.low_bound.x = _verts[i].x;
-            if (_verts[i].y < bounds.low_bound.y)
-                bounds.low_bound.y = _verts[i].y;
+            if (_verts[i].X() > bounds.up_bound.X())
+                bounds.up_bound.X() = _verts[i].X();
+            if (_verts[i].Y() > bounds.up_bound.Y())
+                bounds.up_bound.Y() = _verts[i].Y();
+            if (_verts[i].X() < bounds.low_bound.X())
+                bounds.low_bound.X() = _verts[i].X();
+            if (_verts[i].Y() < bounds.low_bound.Y())
+                bounds.low_bound.Y() = _verts[i].Y();
         }
 
         // transform the normals
@@ -89,14 +89,14 @@ namespace Ursine
         return bounds;
     }
 
-    Vector2 Polygon::GetSupport(const Vector2 &direction) const
+    Vec2 Polygon::GetSupport(const Vec2 &direction) const
     {
         int best_vert_index = 0;
         float largest_projection = -Math::MAX_FLOAT;
 
         for (int i = 0, size = _verts.size(); i < size; ++i)
         {
-            float projection = Vector2::Dot(_verts[i], direction);
+            float projection = Vec2::Dot(_verts[i], direction);
             if (projection > largest_projection)
             {
                 largest_projection = projection;
@@ -107,20 +107,20 @@ namespace Ursine
         return _verts[best_vert_index];
     }
 
-    void Polygon::ComputeMass(ECS::Transform &transform, Vector2 &center,
+    void Polygon::ComputeMass(ECS::Transform &transform, Vec2 &center,
                               float &area, float &inertia)
     {
         static const float inv3 = 1.0f / 3.0f;
-        std::vector<Vector2> verts;
-        Vector2 scale = Vector2(transform.ScaleWC());
-        Matrix3 scale_mat = Matrix3(scale.x, scale.y);
+        std::vector<Vec2> verts;
+        Vec2 scale = Vec2(transform.ScaleWC());
+        Mat3 scale_mat = Mat3(scale.X(), scale.Y());
 
         // scale the object space vertices
         for (auto &vert : _base_polygon->vertices)
             verts.push_back(scale_mat.TransformPoint(vert));
 
-        Vector2 origin;
-        Vector2 collider_center;
+        Vec2 origin;
+        Vec2 collider_center;
         float collider_area = 0;
 
         // This puts the origin inside of the shape.
@@ -135,19 +135,19 @@ namespace Ursine
             // Triangle vertices, third vertex is the center (0, 0)
             // moving the verts centered around the object's position 
             // to be centered around the origin.
-            Vector2 point_1(verts[i] - origin);
+            Vec2 point_1(verts[i] - origin);
             uint j = i + 1 < size ? i + 1 : 0;
-            Vector2 point_2(verts[j] - origin);
+            Vec2 point_2(verts[j] - origin);
 
-            float D = Vector2::Cross(point_1, point_2);
+            float D = Vec2::Cross(point_1, point_2);
             float A = 0.5f * D;
 
             collider_area += A;
 
             collider_center += A * inv3 * (point_1 + point_2);
 
-            float intx2 = point_1.x * point_1.x + point_2.x * point_1.x + point_2.x * point_2.x;
-            float inty2 = point_1.y * point_1.y + point_2.y * point_1.y + point_2.y * point_2.y;
+            float intx2 = point_1.X() * point_1.X() + point_2.X() * point_1.X() + point_2.X() * point_2.X();
+            float inty2 = point_1.Y() * point_1.Y() + point_2.Y() * point_1.Y() + point_2.Y() * point_2.Y();
 
             inertia += (0.25f * inv3 * D) * (intx2 + inty2);
         }
@@ -209,7 +209,7 @@ namespace Ursine
         return false;
     }
 
-    Edge::Edge(const Vector2 &point_0, const Vector2 &point_1, const Vector2 &normal)
+    Edge::Edge(const Vec2 &point_0, const Vec2 &point_1, const Vec2 &normal)
         : p0(point_0)
         , p1(point_1)
         , norm(normal)
@@ -225,7 +225,7 @@ namespace Ursine
 
     }
 
-    Vector2 Edge::GetDirection()
+    Vec2 Edge::GetDirection()
     {
         return this->p1 - this->p0;
     }
