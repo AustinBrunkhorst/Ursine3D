@@ -11,6 +11,9 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
+// use spaces for tabs
+// 4 spaces / tab
+
 // lowercase, words delimited by underscore (no camel case)
 namespace namespace_name
 {
@@ -105,8 +108,7 @@ int main(void)
 
     namespace_name::ClassName myClass;
 
-    // function invocation arguments are padded
-    // with spaces
+    // function invocation arguments are padded with spaces
 
     myClass.PublicMethod( );
 
@@ -116,6 +118,12 @@ int main(void)
 
     // index operators are also padded
     int value = justAnArray[ 3 ];
+    
+    // basically anything that has function invocation style uses padding
+    int casted = static_cast<int>( 5.3f );
+    
+    // AVOID c-style casts
+    int anotherCasted = (int)5.3f;
 
     // prefer prefix increment/decrement over postfix
     for (int i = 0; i < 10; ++i) { }
@@ -126,14 +134,15 @@ int main(void)
     // prefer range-based for loops when possible
     for (auto value : justAVector) { }
 
-    // absolutely use "auto" type deduction when
-    // possible.
+    // absolutely use "auto" type deduction when possible
     auto anotherValue = justAVector[ 2 ];
 
-    // use */& coupled with these types
-    // when using auto
+    // use */& coupled with these types when using auto
     auto *ptrValue = &justAVector[ 0 ];
     auto &refValue = justAVector[ 1 ];
+    
+    // use nullptr instead of 0, NULL, etc
+    ptrValue = nullptr;
 
     // use a lot of newlines so sections of code don't get too cluttered
 
@@ -151,7 +160,8 @@ int main(void)
         refValue = 6;
     }
 
-    // UNDESIRABLE
+    // UNDESIRABLE. Basically all lines in a scope should be padded with newlines
+    // (excluding the first and last lines in a scope)
 
     for (auto value : justAVector)
     {
