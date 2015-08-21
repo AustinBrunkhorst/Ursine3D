@@ -1,9 +1,19 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** FileWatcher.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <windows.h>
-
-#define WIN32_LEAN_AND_MEAN
-#define WIN64_LEAN_AND_MEAN
 
 #include <string>
 #include <vector>
@@ -36,7 +46,9 @@ namespace Ursine
         *  @param recursive if we should recursively go through directories
         *  @return pointer to the filewatcher
         */
-        static FileWatcher *StartFileWatch( std::string path, std::string extension, void( *callback )(const std::string), WatchMode mode = ON_MODIFICATION, unsigned sleepTime = 1000, bool recursive = false );
+        static FileWatcher *StartFileWatch( std::string path, std::string extension, 
+                                            void( *callback )(const std::string), WatchMode mode = ON_MODIFICATION, 
+                                            unsigned sleepTime = 1000, bool recursive = false );
 
         /** @brief begins a file watcher, using a class method as the callback
         *
@@ -49,7 +61,9 @@ namespace Ursine
         *  @param recursive if we should recursively go through directories
         *  @return pointer to the file watcher
         */
-        static FileWatcher *StartFileWatch( std::string path, std::string extension, void(T::*classFunc)(const std::string), T *callbackCaller, WatchMode mode = ON_MODIFICATION, unsigned sleepTime = 1000, bool recursive = false );
+        static FileWatcher *StartFileWatch( std::string path, std::string extension, void(T::*classFunc)(const std::string), 
+                                            T *callbackCaller, WatchMode mode = ON_MODIFICATION, unsigned sleepTime = 1000, 
+                                            bool recursive = false );
 
         /** @brief permanently stop a file watcher
         *
