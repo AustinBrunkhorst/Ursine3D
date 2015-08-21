@@ -29,7 +29,7 @@ namespace Ursine
     {
 #ifdef CONFIG_DEBUG
 
-		UAssert( IsValid( ), "Invalid function invocation" );
+        UAssert( IsValid( ), "Invalid function invocation" );
 
 #endif
         

@@ -4,5 +4,5 @@
 
 namespace Ursine
 {
-	FrameBuffer::FrameBuffer(void) { }
+    FrameBuffer::FrameBuffer(void) { }
 }

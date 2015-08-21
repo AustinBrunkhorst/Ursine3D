@@ -6,6 +6,6 @@ namespace Ursine
 {
     class FrameBuffer : public RenderTarget
     {
-		FrameBuffer(void);
+        FrameBuffer(void);
     };
 }

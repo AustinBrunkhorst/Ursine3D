@@ -21,7 +21,7 @@ namespace Ursine
     TimerManager *gTimerManager = nullptr;
 
     TimerManager::TimerManager(void)
-		: _next_id(0)
+        : _next_id(0)
     {
         gTimerManager = this;
     }

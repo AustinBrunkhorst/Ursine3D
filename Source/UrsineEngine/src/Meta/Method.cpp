@@ -30,12 +30,12 @@ namespace Ursine
     {
 #ifdef CONFIG_DEBUG
 
-		UAssert( IsValid( ), "Invalid method invoked" );
+        UAssert( IsValid( ), "Invalid method invoked" );
 
 #endif
 
-		UAssert( instance.GetType( ) == m_classType, 
-			"Incompatible method invoked with instance" );
+        UAssert( instance.GetType( ) == m_classType, 
+            "Incompatible method invoked with instance" );
 
         return m_invoker( instance, arguments );
     }

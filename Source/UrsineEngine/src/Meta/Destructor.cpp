@@ -26,11 +26,11 @@ namespace Ursine
 
     void Destructor::Invoke(Variant &instance) const
     {
-		UAssert( IsValid( ), 
-			"Invalid constructor invoked" );
+        UAssert( IsValid( ), 
+            "Invalid constructor invoked" );
 
-		UAssert( m_classType == instance.GetType( ), 
-			"Destructor called on incompatible type" );
+        UAssert( m_classType == instance.GetType( ), 
+            "Destructor called on incompatible type" );
         
         m_invoker( instance );
 
