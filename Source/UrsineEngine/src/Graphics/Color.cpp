@@ -187,13 +187,13 @@ namespace Ursine
         
     }
 
-    Color::Color(const Vec3 &value)
+    Color::Color(const SVec3 &value)
         : Color(value.X(), value.Y(), value.Z(), 1.0f)
     {
         
     }
 
-    Color::Color(const Vec4 &value)
+    Color::Color(const SVec4 &value)
         : Color(value.X(), value.Y(), value.Z(), value.w)
     {
         
@@ -228,14 +228,14 @@ namespace Ursine
         return static_cast<uint8>(a * 255u);
     }
 
-    Vec3 Color::ToVector3(void) const
+    SVec3 Color::ToVector3(void) const
     {
-        return Vec3(r, g, b);
+        return SVec3(r, g, b);
     }
 
-    Vec4 Color::ToVector4(void) const
+    SVec4 Color::ToVector4(void) const
     {
-        return Vec4(r, g, b, a);
+        return SVec4(r, g, b, a);
     }
 
     uint32 Color::ToHex(void) const

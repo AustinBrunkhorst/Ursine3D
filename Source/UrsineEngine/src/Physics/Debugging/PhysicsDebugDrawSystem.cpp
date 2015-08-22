@@ -99,7 +99,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawColliders(const std::vector<Collider*> colliders, const Mat3 &mat)
+        void PhysicsDebugDrawer::drawColliders(const std::vector<Collider*> colliders, const SMat3 &mat)
         {
             for (auto collider : colliders)
             {
@@ -115,7 +115,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawPolygon(const Polygon &polygon, bool is_colliding, const Mat3 &mat)
+        void PhysicsDebugDrawer::drawPolygon(const Polygon &polygon, bool is_colliding, const SMat3 &mat)
         {
             Vec2 temp[2];
 
@@ -141,7 +141,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawEllipse(const Ellipse &ellipse, bool is_colliding, const Mat3 &mat)
+        void PhysicsDebugDrawer::drawEllipse(const Ellipse &ellipse, bool is_colliding, const SMat3 &mat)
         {
             static const float NUM_SEGMENTS = 30;
             static const float INC = Math::PI_2 / NUM_SEGMENTS;
@@ -157,9 +157,9 @@ namespace Ursine
 
             for (int i = 0; i < NUM_SEGMENTS; ++i)
             {
-                temp[0] = mat.TransformPoint(ellipse.GetSupport(Mat3(theta).TransformVector({ 1, 0 })));
+                temp[0] = mat.TransformPoint(ellipse.GetSupport(SMat3(theta).TransformVector({ 1, 0 })));
                 theta += INC;
-                temp[1] = mat.TransformPoint(ellipse.GetSupport(Mat3(theta).TransformVector({ 1, 0 })));
+                temp[1] = mat.TransformPoint(ellipse.GetSupport(SMat3(theta).TransformVector({ 1, 0 })));
 
                 glVertex2f(temp[0].X(), temp[0].Y());
                 glVertex2f(temp[1].X(), temp[1].Y());
@@ -167,14 +167,14 @@ namespace Ursine
 
             // draw from inside to outside
             temp[0] = mat.TransformPoint(position);
-            position = position + Mat3(ellipse._rotation).TransformVector({ ellipse._dimensions.X(), 0 });
+            position = position + SMat3(ellipse._rotation).TransformVector({ ellipse._dimensions.X(), 0 });
             temp[1] = mat.TransformPoint(position);
 
             glVertex2f(temp[0].X(), temp[0].Y());
             glVertex2f(temp[1].X(), temp[1].Y());
         }
 
-        void PhysicsDebugDrawer::drawContactPoints(const Mat3 &mat)
+        void PhysicsDebugDrawer::drawContactPoints(const SMat3 &mat)
         {
             glBegin(GL_POINTS);
 
@@ -186,7 +186,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawJoints(const Mat3 &mat)
+        void PhysicsDebugDrawer::drawJoints(const SMat3 &mat)
         {
             const float dist_line_len = 1.0f;
 
@@ -246,7 +246,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawRays(const Mat3 &mat)
+        void PhysicsDebugDrawer::drawRays(const SMat3 &mat)
         {
             const float dt = _world->GetDelta();
             static const float normal_size = 1;
@@ -283,7 +283,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawAABB(const AABB &aabb, const Mat3 &mat)
+        void PhysicsDebugDrawer::drawAABB(const AABB &aabb, const SMat3 &mat)
         {
             // Draw the bounding box
             const Vec2 &up_bound = aabb.up_bound;
@@ -305,7 +305,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawCenterOfMass(const Vec2 &COM, const Mat3 &mat)
+        void PhysicsDebugDrawer::drawCenterOfMass(const Vec2 &COM, const SMat3 &mat)
         {
             Vec2 temp_points[4] =
             { mat.TransformPoint(COM + Vec2(0.2f, 0))
@@ -323,7 +323,7 @@ namespace Ursine
             Vec2 size = gWindowManager->GetSize();
             Vec2 top_l = camera.ScreenToWorld({ 0, 0 }),
                     bot_r = camera.ScreenToWorld(size);
-            const Mat3 &matrix = camera.GetWorldToNDC();
+            const SMat3 &matrix = camera.GetWorldToNDC();
 
             int min_x = (int)top_l.X(),
                 max_x = (int)bot_r.X(),
@@ -385,7 +385,7 @@ namespace Ursine
                 glBegin(GL_LINES);
                 glEnable(GL_LINE_SMOOTH);
 
-                const Mat3 &matrix = _world->GetCamera().GetWorldToNDC();
+                const SMat3 &matrix = _world->GetCamera().GetWorldToNDC();
 
                 // draw rigid bodies
                 for (auto entity : _bodies)

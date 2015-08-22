@@ -10,7 +10,7 @@ namespace Ursine
         auto trans = particle->GetTransform();
         auto emitter_trans = GetEmitter()->GetOwner()->GetTransform();
 
-        auto center = emitter_trans->PositionWC();
+        Vec3 center = emitter_trans->PositionWC();
         float scale_x = emitter_trans->ScaleWC().X();
 
         float start = scale_x * _start.GetValue(),

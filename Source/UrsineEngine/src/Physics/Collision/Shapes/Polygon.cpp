@@ -57,8 +57,8 @@ namespace Ursine
     // return the encompassing AABB of the shape
     AABB Polygon::TransformShape(ECS::Transform &transform)
     {
-        Mat3 normal_mat = transform.MatrixNoScalar();
-        Mat3 vert_mat = transform.Matrix();
+        SMat3 normal_mat = transform.MatrixNoScalar();
+        SMat3 vert_mat = transform.Matrix();
 
         // Find the farthest x and y value to make our box with
         AABB bounds;
@@ -113,7 +113,7 @@ namespace Ursine
         static const float inv3 = 1.0f / 3.0f;
         std::vector<Vec2> verts;
         Vec2 scale = Vec2(transform.ScaleWC());
-        Mat3 scale_mat = Mat3(scale.X(), scale.Y());
+        SMat3 scale_mat = SMat3(scale.X(), scale.Y());
 
         // scale the object space vertices
         for (auto &vert : _base_polygon->vertices)

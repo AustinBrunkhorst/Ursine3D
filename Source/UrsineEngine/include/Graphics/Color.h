@@ -15,7 +15,7 @@
 
 #include "UrsineTypes.h"
 
-#include "Vec4.h"
+#include "SVec4.h"
 
 #include "Json.h"
 
@@ -182,10 +182,10 @@ namespace Ursine
         Color(const Color &color, float alpha);
 
         // Constructs a color from a vector3 (r, g, b)
-        Color(const Vec3 &value);
+        Color(const SVec3 &value);
         
         // Constructs a color from a vector4 (r, g, b, a)
-        Color(const Vec4 &value);
+        Color(const SVec4 &value);
 
         // Constructs a color from a hexadecimal value: 0xAARRGGBB
         Color(uint32 hex);
@@ -202,11 +202,11 @@ namespace Ursine
         // Alpha value from 0 to 255
         byte ByteA(void) const;
 
-        // Converts the color to a Vec3 (r, g, b)
-        Vec3 ToVector3(void) const;
+        // Converts the color to a SVec3 (r, g, b)
+        SVec3 ToVector3(void) const;
 
-        // Converts the color to a Vec4 (r, g, b, a)
-        Vec4 ToVector4(void) const;
+        // Converts the color to a SVec4 (r, g, b, a)
+        SVec4 ToVector4(void) const;
 
         // Converts the color to its hexadecimal representation
         uint32 ToHex(void) const;

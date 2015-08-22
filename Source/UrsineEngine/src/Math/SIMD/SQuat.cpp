@@ -16,34 +16,34 @@
 namespace Ursine
 {
     // Constructors
-    Quat::Quat(float angle, const Vec3 &axis)
+    SQuat::SQuat(float angle, const SVec3 &axis)
     {
         SetAngleAxis(angle, axis);
     }
 
-    Quat::Quat(const Vec3& from, const Vec3& to)
+    SQuat::SQuat(const SVec3& from, const SVec3& to)
     {
         SetFromTo(from, to);
     }
 
-    Quat::Quat(float z_angle, float x_angle, float y_angle)
+    SQuat::SQuat(float z_angle, float x_angle, float y_angle)
     {
         SetEulerAngles(z_angle, x_angle, y_angle);
     }
 
-    Quat::Quat(float X, float Y, float Z, float W)
-        : Vec4(X, Y, Z, W) { }
+    SQuat::SQuat(float X, float Y, float Z, float W)
+        : SVec4(X, Y, Z, W) { }
 
     // Properties
-    const Quat &Quat::Identity(void)
+    const SQuat &SQuat::Identity(void)
     {
-        static const Quat identity(0.0f, 0.0f, 0.0f, 1.0f);
+        static const SQuat identity(0.0f, 0.0f, 0.0f, 1.0f);
 
         return identity;
     }
 
     // Public Methods
-    float Quat::GetAngle(const Quat &other) const
+    float SQuat::GetAngle(const SQuat &other) const
     {
         float scalar = sqrt(LengthSquared() * other.LengthSquared());
 
@@ -52,7 +52,7 @@ namespace Ursine
         return acos(Dot(other) / scalar);
     }
 
-    float Quat::GetAngleShortestPath(void) const
+    float SQuat::GetAngleShortestPath(void) const
     {
         float angle;
 
@@ -64,7 +64,7 @@ namespace Ursine
         return angle;
     }
 
-    float Quat::GetAngleShortestPath(const Quat& other)
+    float SQuat::GetAngleShortestPath(const SQuat& other)
     {
         float angle = sqrt(LengthSquared() * other.LengthSquared());
 
@@ -76,26 +76,26 @@ namespace Ursine
             return acos(Dot(other) / angle) * 2.0f;
     }
 
-    Vec3 Quat::GetAxis() const
+    SVec3 SQuat::GetAxis() const
     {
         float scalar_2 = 1.0f - w * w;
 
         if (Math::IsZero(scalar_2))
-            return Vec3(0.0f, 1.0f, 0.0f);
+            return SVec3(0.0f, 1.0f, 0.0f);
         
         float scalar = 1.0f / sqrt(scalar_2);
 
-        return Vec3(x * scalar, y * scalar, z * scalar);
+        return SVec3(x * scalar, y * scalar, z * scalar);
     }
 
-    float Quat::GetAngle() const
+    float SQuat::GetAngle() const
     {
         float angle = 2.0f * acos(w);
 
         return angle;
     }
 
-    void Quat::GetAngleAxis(float &angle, Vec3 &axis) const
+    void SQuat::GetAngleAxis(float &angle, SVec3 &axis) const
     {
         // angle
         angle = 2.0f * acos(w);
@@ -111,7 +111,7 @@ namespace Ursine
         axis.Set(x * scalar, y * scalar, z * scalar);
     }
 
-    void Quat::SetAngleAxis(float angle, const Vec3 &axis)
+    void SQuat::SetAngleAxis(float angle, const SVec3 &axis)
     {
         float s = sin(0.5f * angle);
         float c = cos(0.5f * angle);
@@ -123,7 +123,7 @@ namespace Ursine
     }
 
 
-    void Quat::SetEulerAngles(float z_angle, float x_angle, float y_angle)
+    void SQuat::SetEulerAngles(float z_angle, float x_angle, float y_angle)
     {
         float half_y = y_angle * 0.5f;
         float half_x = x_angle * 0.5f;
@@ -141,37 +141,37 @@ namespace Ursine
             cos_z * cos_x * cos_y + sin_z * sin_x * sin_y);
     }
 
-    void Quat::SetFromTo(const Vec3& from, const Vec3& to)
+    void SQuat::SetFromTo(const SVec3& from, const SVec3& to)
     {
         // Source: http://lolengine.net/blog/2013/09/18/beautiful-maths-quaternion-from-vectors
 
         float norm_uv = sqrt(from.Dot(from) * to.Dot(to));
         float real_part = norm_uv + from.Dot(to);
-        Vec3 v;
+        SVec3 v;
 
         if (real_part < Math::Epsilon * norm_uv)
         {
             // If from and to are exactly opposite, rotate 180 degrees
             // around an arbitrary orthogonal axis.  Normalization happens later.
             real_part = 0.0f;
-            v = abs(from.X()) > abs(from.Z()) ? Vec3(-from.Y(), from.X(), 0.0f)
-                                              : Vec3(0.0f, -from.Z(), from.Y());
+            v = abs(from.X()) > abs(from.Z()) ? SVec3(-from.Y(), from.X(), 0.0f)
+                                              : SVec3(0.0f, -from.Z(), from.Y());
         }
         else
         {
-            v = Vec3::Cross(from, to);
+            v = SVec3::Cross(from, to);
         }
 
         Set(v.X(), v.Y(), v.Z(), real_part);
         Normalize();
     }
 
-    Quat Quat::GetInverse() const
+    SQuat SQuat::GetInverse() const
     {
-        return Quat(-x, -y, -z, w);
+        return SQuat(-x, -y, -z, w);
     }
 
-    Quat Quat::Slerp(const Quat& other, float t) const
+    SQuat SQuat::Slerp(const SQuat& other, float t) const
     {
         float mag = sqrt(LengthSquared() * other.LengthSquared());
 
@@ -189,7 +189,7 @@ namespace Ursine
             float d = 1.0f / sin(theta);
             float s0 = sin((1.0f - t) * theta);
 
-            return Quat(
+            return SQuat(
                 (x * s0 + other.X() * s1) * d,
                 (y * s0 + other.Y() * s1) * d,
                 (z * s0 + other.Z() * s1) * d,
@@ -200,7 +200,7 @@ namespace Ursine
             return *this;
     }
 
-    void Quat::Slerp(const Quat& other, float t, Quat& result) const
+    void SQuat::Slerp(const SQuat& other, float t, SQuat& result) const
     {
         float mag = sqrt(LengthSquared() * other.LengthSquared());
 
@@ -229,18 +229,18 @@ namespace Ursine
             result = *this;
     }
 
-    Vec3 Quat::Rotate(const Vec3 &vec)
+    SVec3 SQuat::Rotate(const SVec3 &vec)
     {
-        Quat q = *this * vec;
+        SQuat q = *this * vec;
 
         q *= GetInverse();
 
-        return Vec3(q.X(), q.Y(), q.Z());
+        return SVec3(q.X(), q.Y(), q.Z());
     }
 
-    void Quat::Rotate(const Vec3& vec, Vec3& result)
+    void SQuat::Rotate(const SVec3& vec, SVec3& result)
     {
-        Quat q = *this * vec;
+        SQuat q = *this * vec;
 
         q *= GetInverse();
 
@@ -248,7 +248,7 @@ namespace Ursine
     }
 
     // Operators
-    const Quat &Quat::operator*=(const Quat &q)
+    const SQuat &SQuat::operator*=(const SQuat &q)
     {
         Set(
             w * q.X() + x * q.W() + y * q.Z() - z * q.Y(),
@@ -260,9 +260,9 @@ namespace Ursine
         return *this;
     }
 
-    Quat Quat::operator*(const Quat &rhs)
+    SQuat SQuat::operator*(const SQuat &rhs)
     {
-        return Quat(
+        return SQuat(
             w * rhs.X() + x * rhs.W() + y * rhs.Z() - z * rhs.Y(),
             w * rhs.Y() + y * rhs.W() + z * rhs.X() - x * rhs.Z(),
             w * rhs.Z() + z * rhs.W() + x * rhs.Y() - y * rhs.X(),
@@ -270,9 +270,9 @@ namespace Ursine
         );
     }
 
-    Quat Quat::operator*(const Vec3& rhs)
+    SQuat SQuat::operator*(const SVec3& rhs)
     {
-        return Quat(
+        return SQuat(
             w * rhs.X() + y * rhs.Z() - z * rhs.Y(),
             w * rhs.Y() + z * rhs.X() - x * rhs.Z(),
             w * rhs.Z() + x * rhs.Y() - y * rhs.X(),

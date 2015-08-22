@@ -3,50 +3,29 @@
 
 namespace Ursine
 {
-#ifdef USE_SSE
-    INLINE Vec3::Vec3(const SIMDvec &value)
-        : m128(value) { }
-#endif
-
     INLINE Vec3::Vec3(float X, float Y, float Z)
             : x(X)
             , y(Y)
             , z(Z)
-    {
-#ifdef USE_SSE
-        w = 0.0f;
-#endif
-    }
+    { }
 
     INLINE Vec3::Vec3(float value)
             : x(value)
             , y(value)
             , z(value)
-    {
-#ifdef USE_SSE
-        w = 0.0f;
-#endif
-    }
+    { }
 
     INLINE Vec3::Vec3(const Vec3 &value)
             : x(value.X())
             , y(value.Y())
             , z(value.Z())
-    {
-#ifdef USE_SSE
-        w = 0.0f;
-#endif
-    }
+    { }
 
     INLINE Vec3::Vec3(void)
             : x(0.0f)
             , y(0.0f)
             , z(0.0f)
-    {
-#ifdef USE_SSE
-        w = 0.0f;
-#endif
-    }
+    { }
 
     // Properties
     INLINE const Vec3 &Vec3::Zero(void)
@@ -87,13 +66,9 @@ namespace Ursine
     // Public Methods
     INLINE void Vec3::Set(float X, float Y, float Z)
     {
-#ifdef USE_SSE
-        m128 = _mm_set_ps(0.0f, Z, Y, X);
-#else
         x = X;
         y = Y;
         z = Z;
-#endif
     }
 
     INLINE void Vec3::Clamp(const Vec3 &min, const Vec3 &max)
@@ -108,70 +83,28 @@ namespace Ursine
 
     INLINE void Vec3::Cross(const Vec3 &other)
     {
-#ifdef USE_SSE
-        auto t = _mm_shuffle_ps(m128, m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-        auto v = _mm_shuffle_ps(other.m128, other.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-
-        v = _mm_mul_ps(v, m128);
-        t = _mm_mul_ps(t, other.m128);
-        v = _mm_sub_ps(v, t);
-
-        m128 = _mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3));
-#else
         float original_x = x;
         float original_y = y;
 
         x = y          * other.Z() - other.Y() * z;
         y = z          * other.X() - other.Z() * original_x;
         z = original_x * other.Y() - other.X() * original_y;
-#endif
     }
 
     INLINE float Vec3::TripleProduct(const Vec3& a, const Vec3& b, const Vec3& c)
     {
-#ifdef USE_SSE
-        // cross
-        auto t = _mm_shuffle_ps(b.m128, b.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-        auto v = _mm_shuffle_ps(c.m128, c.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-
-        v = _mm_mul_ps(v, b.m128);
-        t = _mm_mul_ps(t, c.m128);
-        v = _mm_sub_ps(v, t);
-
-        v = _mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3));
-
-        // dot
-        v = _mm_mul_ps(v, a.m128);
-        auto z = _mm_movehl_ps(v, v);
-        auto y = _mm_shuffle_ps(v, v, 0x55);
-        v = _mm_add_ss(v, y);
-        v = _mm_add_ss(v, z);
-        return _mm_cvtss_f32(v);
-#else
         return( (a.X() * (b.Y() * c.Z() - b.Z() * c.Y())) +
                 (a.Y() * (b.Z() * c.X() - b.X() * c.Z())) +
                 (a.Z() * (b.X() * c.Y() - b.Y() * c.X())) );
-#endif
     }
 
     INLINE Vec3 Vec3::Cross(const Vec3 &vec1, const Vec3 &vec2)
     {
-#ifdef USE_SSE
-        auto t = _mm_shuffle_ps(vec1.m128, vec1.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-        auto v = _mm_shuffle_ps(vec2.m128, vec2.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-
-        v = _mm_mul_ps(v, vec1.m128);
-        t = _mm_mul_ps(t, vec2.m128);
-        v = _mm_sub_ps(v, t);
-
-        return Vec3(_mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3)));
-#else
         return {
             vec1.Y() * vec2.Z() - vec2.Y() * vec1.Z(),
             vec1.Z() * vec2.X() - vec2.Z() * vec1.X(),
             vec1.X() * vec2.Y() - vec2.X() * vec1.Y()
         };
-#endif
     }
 
     INLINE float Vec3::Distance(const Vec3 &other) const
@@ -201,20 +134,7 @@ namespace Ursine
 
     INLINE float Vec3::Dot(const Vec3 &vec1, const Vec3 &vec2)
     {
-#ifdef USE_SSE
-        auto v = _mm_mul_ps(vec1.m128, vec2.m128);
-        auto z = _mm_movehl_ps(v, v);
-        auto y = _mm_shuffle_ps(v, v, 0x55);
-
-        v = _mm_add_ss(v, y);
-        v = _mm_add_ss(v, z);
-
-        return _mm_cvtss_f32(v);
-
-        _mm_dp_ps(z, y, 0x55);
-#else
         return vec1.X() * vec2.X() + vec1.Y() * vec2.Y() + vec1.Z() * vec2.Z();
-#endif
     }
 
     INLINE float Vec3::Length(void) const
@@ -239,50 +159,34 @@ namespace Ursine
 
     INLINE void Vec3::Max(const Vec3 &other)
     {
-#ifdef USE_SSE
-        m128 = _mm_max_ps(m128, other.m128);
-#else
         x = Math::Max(x, other.X());
         y = Math::Max(y, other.Y());
         z = Math::Max(z, other.Z());
-#endif
     }
 
     INLINE Vec3 Vec3::Max(const Vec3 &vec1, const Vec3 &vec2)
     {
-#ifdef USE_SSE
-        return Vec3(_mm_max_ps(vec1.m128, vec2.m128));
-#else
         return {
             Math::Max(vec1.X(), vec2.X()),
             Math::Max(vec1.Y(), vec2.Y()),
             Math::Max(vec1.Z(), vec2.Z())
         };
-#endif
     }
 
     INLINE void Vec3::Min(const Vec3 &other)
     {
-#ifdef USE_SSE
-        m128 = _mm_min_ps(m128, other.m128);
-#else
         x = Math::Min(x, other.X());
         y = Math::Min(y, other.Y());
         z = Math::Min(z, other.Z());
-#endif
     }
 
     INLINE Vec3 Vec3::Min(const Vec3 &vec1, const Vec3 &vec2)
     {
-#ifdef USE_SSE
-        return Vec3(_mm_min_ps(vec1.m128, vec2.m128));
-#else
         return {
             Math::Min(vec1.X(), vec2.X()),
             Math::Min(vec1.Y(), vec2.Y()),
             Math::Min(vec1.Z(), vec2.Z())
         };
-#endif
     }
 
     INLINE void Vec3::Normalize(void)
@@ -360,13 +264,9 @@ namespace Ursine
     // Operators
     INLINE bool Vec3::operator==(const Vec3 &rhs) const
     {
-#ifdef USE_SSE
-        return (0xf == _mm_movemask_ps(_mm_cmpeq_ps(m128, rhs.m128)));
-#else
         return Math::IsEqual(x, rhs.X()) &&
                Math::IsEqual(y, rhs.Y()) &&
                Math::IsEqual(z, rhs.Z());
-#endif
     }
 
     INLINE bool Vec3::operator!=(const Vec3 &rhs) const
@@ -376,182 +276,126 @@ namespace Ursine
 
     INLINE Vec3 Vec3::operator+(const Vec3 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec3(_mm_add_ps(m128, rhs.m128));
-#else
         return {
             x + rhs.X(),
             y + rhs.Y(),
             z + rhs.Z()
         };
-#endif
     }
 
     INLINE Vec3 Vec3::operator-(void) const
     {
-#ifdef USE_SSE
-        // flip the sign bit (not safe with NaNs)
-        return Vec3(_mm_xor_ps(m128, _mm_set1_ps(-0.0f)));
-#else
         return {
             -x, -y, -z
         };
-#endif
     }
 
     INLINE Vec3 Vec3::operator-(const Vec3 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec3(_mm_sub_ps(m128, rhs.m128));
-#else
         return {
             x - rhs.X(),
             y - rhs.Y(),
             z - rhs.Z()
         };
-#endif
     }
 
     INLINE Vec3 Vec3::operator*(const Vec3 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec3(_mm_mul_ps(m128, rhs.m128));
-#else
         return {
             x * rhs.X(),
             y * rhs.Y(),
             z * rhs.Z()
         };
-#endif
     }
 
     INLINE Vec3 Vec3::operator*(float rhs) const
     {
-#ifdef USE_SSE
-        return Vec3(_mm_mul_ps(m128, _mm_set1_ps(rhs)));
-#else
         return {
             x * rhs,
             y * rhs,
             z * rhs
         };
-#endif
     }
 
     INLINE Vec3 operator*(float lhs, const Vec3 &rhs)
     {
-#ifdef USE_SSE
-        return Vec3(_mm_mul_ps(_mm_set1_ps(lhs), rhs.m128));
-#else
         return {
             rhs.X() * lhs,
             rhs.Y() * lhs,
             rhs.Z() * lhs
         };
-#endif
     }
 
     INLINE Vec3 Vec3::operator/(const Vec3 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec3(_mm_and_ps(_mm_div_ps(m128, rhs.m128), FFF0Mask));
-#else
         return {
             x / rhs.X(),
             y / rhs.Y(),
             z / rhs.Z()
         };
-#endif
     }
 
     INLINE Vec3 Vec3::operator/(float rhs) const
     {
         float inv = 1.0f / rhs;
 
-#ifdef USE_SSE
-        return Vec3(_mm_mul_ps(m128, _mm_set1_ps(inv)));
-#else
         return {
             x * inv,
             y * inv,
             z * inv
         };
-#endif
     }
 
     INLINE const Vec3 &Vec3::operator=(const Vec3 &rhs)
     {
-#ifdef USE_SSE
-        m128 = rhs.m128;
-#else
         x = rhs.X();
         y = rhs.Y();
         z = rhs.Z();
-#endif
+
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator+=(const Vec3 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_add_ps(m128, rhs.m128);
-#else
         x += rhs.X();
         y += rhs.Y();
         z += rhs.Z();
-#endif
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator-=(const Vec3 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_sub_ps(m128, rhs.m128);
-#else
         x -= rhs.X();
         y -= rhs.Y();
         z -= rhs.Z();
-#endif
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator*=(const Vec3 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, rhs.m128);
-#else
         x *= rhs.X();
         y *= rhs.Y();
         z *= rhs.Z();
-#endif
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator*=(float rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, _mm_set1_ps(rhs));
-#else
         x *= rhs;
         y *= rhs;
         z *= rhs;
-#endif
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator/=(const Vec3 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_and_ps(_mm_div_ps(m128, rhs.m128), FFF0Mask);
-#else
         x /= rhs.X();
         y /= rhs.Y();
         z /= rhs.Z();
-#endif
 
         return *this;
     }
@@ -560,13 +404,9 @@ namespace Ursine
     {
         float inv = 1.0f / rhs;
 
-#ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, _mm_set1_ps(inv));
-#else
         x *= inv;
         y *= inv;
         z *= inv;
-#endif
 
         return *this;
     }

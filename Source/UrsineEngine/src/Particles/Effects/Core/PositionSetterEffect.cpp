@@ -11,7 +11,7 @@ namespace Ursine
         auto emitter_pos = emitter_trans->PositionWC();
 
         particle_trans->SetPositionWC({
-            emitter_trans->ToWorld(Vec3(_randomizer.GetValue(), _randomizer.GetValue(), 1))
+            emitter_trans->ToWorld(SVec3(_randomizer.GetValue(), _randomizer.GetValue(), 1))
         });
     }
 }

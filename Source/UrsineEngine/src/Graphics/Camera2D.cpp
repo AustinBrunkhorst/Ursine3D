@@ -154,22 +154,22 @@ namespace Ursine
         m_zoomConstrained = constrained;
     }
 
-    const Mat3 &Camera2D::GetWorldToCamera(void)
+    const SMat3 &Camera2D::GetWorldToCamera(void)
     {
         return m_worldToCamera;
     }
 
-    const Mat3 &Camera2D::GetCameraToNDC(void)
+    const SMat3 &Camera2D::GetCameraToNDC(void)
     {
         return m_cameraToNDC;
     }
 
-    const Mat3 &Camera2D::GetWorldToNDC(void)
+    const SMat3 &Camera2D::GetWorldToNDC(void)
     {
         return m_worldToNDC;
     }
 
-    const Mat3 &Camera2D::GetNDCToScreen(void)
+    const SMat3 &Camera2D::GetNDCToScreen(void)
     {
         return m_ndcToScreen;
     }
@@ -181,7 +181,7 @@ namespace Ursine
 
     Vec2 Camera2D::CameraToWorld(const Vec2 &point)
     {
-        return Mat3::Inverse(GetWorldToCamera()).TransformPoint(point);
+        return SMat3::Inverse(GetWorldToCamera()).TransformPoint(point);
     }
 
     Vec2 Camera2D::WorldToNDC(const Vec2 &point)
@@ -191,7 +191,7 @@ namespace Ursine
 
     Vec2 Camera2D::NDCToWorld(const Vec2 &point)
     {
-        return Mat3::Inverse(GetWorldToNDC()).TransformPoint(point);
+        return SMat3::Inverse(GetWorldToNDC()).TransformPoint(point);
     }
 
     Vec2 Camera2D::NDCToScreen(const Vec2 &point)
@@ -201,7 +201,7 @@ namespace Ursine
 
     Vec2 Camera2D::ScreenToNDC(const Vec2 &point)
     {
-        return Mat3::Inverse(GetNDCToScreen()).TransformPoint(point);
+        return SMat3::Inverse(GetNDCToScreen()).TransformPoint(point);
     }
 
     Vec2 Camera2D::WorldToScreen(const Vec2 &point)
@@ -211,7 +211,7 @@ namespace Ursine
 
     Vec2 Camera2D::ScreenToWorld(const Vec2 &point)
     {
-        return Mat3::Inverse(GetNDCToScreen() * GetWorldToNDC()).TransformPoint(point);
+        return SMat3::Inverse(GetNDCToScreen() * GetWorldToNDC()).TransformPoint(point);
     }
 
     void Camera2D::updatePosition(void)
@@ -251,18 +251,18 @@ namespace Ursine
             float aspect = m_viewportSize.X() / m_viewportSize.Y();
 
             m_cameraToNDC.SetColumns(
-                Vec3(2.0f, 0, 0),
-                Vec3(0, 2.0f * aspect, 0),
-                Vec3(0, 0, 1));
+                SVec3(2.0f, 0, 0),
+                SVec3(0, 2.0f * aspect, 0),
+                SVec3(0, 0, 1));
         }
         else
         {
             float aspect = m_viewportSize.Y() / m_viewportSize.X();
 
             m_cameraToNDC.SetColumns(
-                Vec3(2.0f * aspect, 0, 0),
-                Vec3(0, 2.0f, 0),
-                Vec3(0, 0, 1));
+                SVec3(2.0f * aspect, 0, 0),
+                SVec3(0, 2.0f, 0),
+                SVec3(0, 0, 1));
         }
 
         // update world to ndc
@@ -270,8 +270,8 @@ namespace Ursine
 
         // update ndc to screen
         m_ndcToScreen.SetRows(
-            Vec3(m_viewportSize.X() / 2.0f, 0, m_viewportSize.X() / 2.0f),
-            Vec3(0, -m_viewportSize.Y() / 2.0f, m_viewportSize.Y() / 2.0f),
-            Vec3(0, 0, 1));
+            SVec3(m_viewportSize.X() / 2.0f, 0, m_viewportSize.X() / 2.0f),
+            SVec3(0, -m_viewportSize.Y() / 2.0f, m_viewportSize.Y() / 2.0f),
+            SVec3(0, 0, 1));
     }
 }

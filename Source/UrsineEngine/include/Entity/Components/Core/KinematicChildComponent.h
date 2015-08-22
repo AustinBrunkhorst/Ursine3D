@@ -28,7 +28,7 @@ namespace Ursine
             friend class KinematicChildSystem;
 
             // The last frames position
-            Vec3 _last_position;
+            SVec3 _last_position;
 
         public:
             KinematicChild(void);

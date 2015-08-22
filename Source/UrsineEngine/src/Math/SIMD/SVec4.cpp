@@ -15,26 +15,26 @@
 
 namespace Ursine
 {
-	Vec4::Vec4(const SVec4 &value)
-		: x(value.X())
-		, y(value.Y())
-		, z(value.Z())
-		, w(value.w) { }
-
-    Vec4::Vec4(const Vec3 &value, float W)
+    SVec4::SVec4(const SVec3 &value, float W)
         : x(value.X())
         , y(value.Y())
         , z(value.Z())
         , w(W) { }
 
-	Vec4::Vec4(const SVec3 &value, float W)
+	SVec4::SVec4(const Vec3 &value, float W)
 		: x(value.X())
 		, y(value.Y())
 		, z(value.Z())
 		, w(W) { }
 
+	SVec4::SVec4(const Vec4 &value)
+		: x(value.X())
+		, y(value.Y())
+		, z(value.Z())
+		, w(value.w) { }
+
     // Public Methods
-    void Vec4::Clean(void)
+    void SVec4::Clean(void)
     {
         x = Math::IsZero(x) ? 0.0f : x;
         y = Math::IsZero(y) ? 0.0f : y;
@@ -42,7 +42,7 @@ namespace Ursine
         w = Math::IsZero(w) ? 0.0f : w;
     }
 
-    std::string Vec4::ToString(void) const
+    std::string SVec4::ToString(void) const
     {
         std::ostringstream x_cvt;
         x_cvt << x;

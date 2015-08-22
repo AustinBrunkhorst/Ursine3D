@@ -75,14 +75,14 @@ namespace Ursine
             PhysicsDebugDrawer(World *world);
             ~PhysicsDebugDrawer(void);
 
-            void drawColliders(Colliders colliders, const Mat3 &mat);
-            void drawPolygon(const Polygon &polygon, bool is_colliding, const Mat3 &mat);
-            void drawEllipse(const Ellipse &ellipse, bool is_colliding, const Mat3 &mat);
-            void drawContactPoints(const Mat3 &mat);
-            void drawJoints(const Mat3 &mat);
-            void drawRays(const Mat3 &mat);
-            void drawAABB(const AABB &aabb, const Mat3 &mat);
-            void drawCenterOfMass(const Vec2 &COM, const Mat3 &mat);
+            void drawColliders(Colliders colliders, const SMat3 &mat);
+            void drawPolygon(const Polygon &polygon, bool is_colliding, const SMat3 &mat);
+            void drawEllipse(const Ellipse &ellipse, bool is_colliding, const SMat3 &mat);
+            void drawContactPoints(const SMat3 &mat);
+            void drawJoints(const SMat3 &mat);
+            void drawRays(const SMat3 &mat);
+            void drawAABB(const AABB &aabb, const SMat3 &mat);
+            void drawCenterOfMass(const Vec2 &COM, const SMat3 &mat);
             void drawGrid(Camera2D &camera);
 
             void addContactPoint(const Vec2 &point);

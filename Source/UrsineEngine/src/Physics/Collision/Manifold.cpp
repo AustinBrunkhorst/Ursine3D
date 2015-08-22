@@ -221,11 +221,11 @@ namespace Ursine
             if (contact.pen_depth / avg_scale >= ratio_threshold)
             {
                 if (a->_pos_locked)
-                    a->_transform->AddRootPosition(Vec3(
+                    a->_transform->AddRootPosition(SVec3(
                         -contact.normal * contact.pen_depth * damp_factor, 0
                     ));
                 else
-                    a->_transform->AddPositionWC(Vec3(
+                    a->_transform->AddPositionWC(SVec3(
                         -contact.normal * contact.pen_depth * damp_factor, 0
                     ));
             }
@@ -239,11 +239,11 @@ namespace Ursine
             if (contact.pen_depth / avg_scale > ratio_threshold)
             {
                 if (b->_pos_locked)
-                    b->_transform->AddRootPosition(Vec3(
+                    b->_transform->AddRootPosition(SVec3(
                         contact.normal * contact.pen_depth * damp_factor, 0
                     ));
                 else
-                    b->_transform->AddPositionWC(Vec3(
+                    b->_transform->AddPositionWC(SVec3(
                         contact.normal * contact.pen_depth * damp_factor, 0
                     ));
             }
@@ -277,12 +277,12 @@ namespace Ursine
             // positionally correct based on the penetration depth
             if (a_type == BODY_TYPE_KINEMATIC_SOLVE)
                 a_trans->AddRootPosition(
-                    Vec3(-contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
+                    SVec3(-contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
                 );
 
             if (b_type == BODY_TYPE_KINEMATIC_SOLVE)
                 b_trans->AddRootPosition(
-                    Vec3(contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
+                    SVec3(contact.normal * contact.pen_depth * DAMP_FACTOR * RATIO, 0)
                 ); 
 
         }

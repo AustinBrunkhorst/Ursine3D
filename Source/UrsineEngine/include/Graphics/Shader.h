@@ -40,12 +40,12 @@ namespace Ursine
         void SetUniform(const std::string &name, float x, float y, float z, float w);
 
         void SetUniform(const std::string &name, const Vec2 &vector);
-        void SetUniform(const std::string &name, const Vec3 &vector);
+        void SetUniform(const std::string &name, const SVec3 &vector);
 
         void SetUniform(const std::string &name, const Color &color);
 
-        void SetUniform(const std::string &name, const Mat3 &transform);
-        void SetUniform(const std::string &name, const Mat4 &transform);
+        void SetUniform(const std::string &name, const SMat3 &transform);
+        void SetUniform(const std::string &name, const SMat4 &transform);
 
         void SetUniform(const std::string &name, const Texture2D *texture);
         void SetUniform(const std::string &name, CurrentTextureType);

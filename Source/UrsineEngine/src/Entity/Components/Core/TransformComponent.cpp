@@ -104,7 +104,7 @@ namespace Ursine
             // Set the child's new local positions
             child->SetPosition(ToLocal(child->position));
             child->SetRotation(child->rotation - rotation);
-            Vec3 new_scale = child->scale / scale;
+            SVec3 new_scale = child->scale / scale;
             child->SetScale(new_scale);
         }
 
@@ -179,15 +179,15 @@ namespace Ursine
             _children.clear();
         }
 
-        const Mat3 &Transform::Matrix(void)
+        const SMat3 &Transform::Matrix(void)
         {
             if (_dirty)
             {
                 if (parent)
                     _local_to_world = parent->Matrix() *
-                        Mat3(Vec2(position), rotation.Z(), Vec2(scale));
+                        SMat3(Vec2(position), rotation.Z(), Vec2(scale));
                 else
-                    _local_to_world = Mat3(Vec2(position), rotation.Z(), Vec2(scale));
+                    _local_to_world = SMat3(Vec2(position), rotation.Z(), Vec2(scale));
 
                 _dirty = false;
             }
@@ -195,19 +195,19 @@ namespace Ursine
             return _local_to_world;
         }
 
-        Mat3 Transform::MatrixNoScalar(void)
+        SMat3 Transform::MatrixNoScalar(void)
         {
             if (parent)
-                return parent->MatrixNoScalar() * Mat3(Vec2(position), rotation.Z(), Vec2::One());
+                return parent->MatrixNoScalar() * SMat3(Vec2(position), rotation.Z(), Vec2::One());
             else
-                return Mat3(Vec2(position), rotation.Z(), Vec2::One());
+                return SMat3(Vec2(position), rotation.Z(), Vec2::One());
         }
 
-        const Mat3 &Transform::WorldToLocalMatrix(void)
+        const SMat3 &Transform::WorldToLocalMatrix(void)
         {
             if (_dirty)
             {
-                _world_to_local = Mat3::Inverse(Matrix());
+                _world_to_local = SMat3::Inverse(Matrix());
 
                 _dirty = false;
             }
@@ -285,7 +285,7 @@ namespace Ursine
             _dirty = true;
 
             if (root != this)
-                _world_position = root->ToWorld(Vec3(position.X(), position.Y(), 1));
+                _world_position = root->ToWorld(SVec3(position.X(), position.Y(), 1));
             else
                 _world_position = position;
 
@@ -303,9 +303,9 @@ namespace Ursine
             rotation.Z() = Math::Wrap(rotation.Z(), 0.0f, Math::PI_2);
 
             if (root != this)
-                _world_rotation = root->_world_rotation * Mat3(rotation.Z());
+                _world_rotation = root->_world_rotation * SMat3(rotation.Z());
             else
-                _world_rotation = Mat3(rotation.Z());
+                _world_rotation = SMat3(rotation.Z());
 
             for (Transform *child : _children)
                 child->updateWorldRotation();

@@ -11,11 +11,11 @@ namespace Ursine
     public:
         RenderState(void);
         RenderState(const BlendMode &blendMode);
-        RenderState(const Mat3 &transform);
+        RenderState(const SMat3 &transform);
         RenderState(const Texture2D *texture);
         RenderState(const Shader *shader);
         RenderState(const BlendMode &blendMode, 
-            const Mat3 &transform, 
+            const SMat3 &transform, 
             const Texture2D *texture, 
             const Shader *shader);
 
@@ -23,7 +23,7 @@ namespace Ursine
         static const RenderState Default;
 
         BlendMode blendMode;
-        Mat3 transform;
+        SMat3 transform;
         const Texture2D *texture;
         const Shader *shader;
     };

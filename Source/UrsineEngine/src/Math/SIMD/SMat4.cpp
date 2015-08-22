@@ -2,7 +2,7 @@
 ** Team Bear King
 ** DigiPen Institute of Technology 2015
 **
-** Mat4.cpp
+** SMat4.cpp
 **
 ** Author:
 ** - Jordan Ellis - J.Ellis@digipen.edu
@@ -16,12 +16,12 @@
 namespace Ursine
 {
     // Constructors
-	Mat4::Mat4(const SMat4 &other)
+	SMat4::SMat4(const Mat4 &other)
 	{
 		memcpy(m, other.m, sizeof(m));
 	}
 
-    Mat4::Mat4(const Mat3 &mat)
+    SMat4::SMat4(const SMat3 &mat)
     {
         Set(
             mat.m[0][0], mat.m[0][1], mat.m[0][2], 0.0f,
@@ -31,18 +31,18 @@ namespace Ursine
         );
     }
 
-	Mat4::Mat4(const SMat3 &mat)
+	SMat4::SMat4(const Mat3 &mat)
 	{
 		Set(
 			mat.m[0][0], mat.m[0][1], mat.m[0][2], 0.0f,
 			mat.m[1][0], mat.m[1][1], mat.m[1][2], 0.0f,
 			mat.m[2][0], mat.m[2][1], mat.m[2][2], 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
-			);
+		);
 	}
 
     // Public Methods
-    std::string Mat4::ToString(void) const
+    std::string SMat4::ToString(void) const
     {
         std::ostringstream M00, M01, M02, M03,
                            M10, M11, M12, M13,

@@ -126,7 +126,7 @@ namespace Ursine
 
     bool Ellipse::RayCast(RayCastOutput &output, const RayCastInput &input)
     {
-        Mat3 rot = Mat3(-_rotation);
+        SMat3 rot = SMat3(-_rotation);
         Vec2 P1 = rot.TransformPoint(input.p1 - _position);
         Vec2 P2 = rot.TransformPoint(input.p2 - _position);
         Vec2 dir = P2 - P1;

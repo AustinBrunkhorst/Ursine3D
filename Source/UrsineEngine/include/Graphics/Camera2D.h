@@ -73,16 +73,16 @@ namespace Ursine
         Vec2 m_constraintsZoom = Vec2::UnitY();
 
         // World to camera matrix
-        Mat3 m_worldToCamera;
+        SMat3 m_worldToCamera;
 
         // Camera to NDC matrix
-        Mat3 m_cameraToNDC;
+        SMat3 m_cameraToNDC;
 
         // World to NDC matrix
-        Mat3 m_worldToNDC;
+        SMat3 m_worldToNDC;
 
         // NDC to screen matrix
-        Mat3 m_ndcToScreen;
+        SMat3 m_ndcToScreen;
 
         void updatePosition(void);
 
@@ -127,10 +127,10 @@ namespace Ursine
         void SetZoomConstraints(const Vec2 &constraints);
         void SetZoomConstraints(bool constrained);
 
-        const Mat3 &GetWorldToCamera(void);
-        const Mat3 &GetCameraToNDC(void);
-        const Mat3 &GetWorldToNDC(void);
-        const Mat3 &GetNDCToScreen(void);
+        const SMat3 &GetWorldToCamera(void);
+        const SMat3 &GetCameraToNDC(void);
+        const SMat3 &GetWorldToNDC(void);
+        const SMat3 &GetNDCToScreen(void);
 
         Vec2 WorldToCamera(const Vec2 &point);
         Vec2 CameraToWorld(const Vec2 &point);

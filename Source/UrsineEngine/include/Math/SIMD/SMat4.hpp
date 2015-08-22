@@ -4,15 +4,15 @@
 namespace Ursine
 {
     // Constructors
-    INLINE Mat4::Mat4(void)
-        : Mat4(Identity()) { }
+    INLINE SMat4::SMat4(void)
+        : SMat4(Identity()) { }
 
-    INLINE Mat4::Mat4(const Mat4 &other)
+    INLINE SMat4::SMat4(const SMat4 &other)
     {
         memcpy(m, other.m, sizeof(m));
     }
 
-    INLINE Mat4::Mat4(const Vec4 &r0, const Vec4 &r1, const Vec4 &r2, const Vec4 &r3)
+    INLINE SMat4::SMat4(const SVec4 &r0, const SVec4 &r1, const SVec4 &r2, const SVec4 &r3)
     {
         m[0] = r0;
         m[1] = r1;
@@ -20,7 +20,7 @@ namespace Ursine
         m[3] = r3;
     }
 
-    INLINE Mat4::Mat4(float M00, float M01, float M02, float M03,
+    INLINE SMat4::SMat4(float M00, float M01, float M02, float M03,
         float M10, float M11, float M12, float M13,
         float M20, float M21, float M22, float M23,
         float M30, float M31, float M32, float M33)
@@ -33,7 +33,7 @@ namespace Ursine
             );
     }
 
-    INLINE Mat4::Mat4(float x_scalar, float y_scalar, float z_scalar)
+    INLINE SMat4::SMat4(float x_scalar, float y_scalar, float z_scalar)
     {
         Set(
             x_scalar, 0.0f, 0.0f, 0.0f,
@@ -43,7 +43,7 @@ namespace Ursine
             );
     }
 
-    INLINE Mat4::Mat4(const Vec3 &translation)
+    INLINE SMat4::SMat4(const SVec3 &translation)
     {
         Set(
             1.0f, 0.0f, 0.0f, translation.X(),
@@ -54,9 +54,9 @@ namespace Ursine
     }
 
     // Properties
-    INLINE const Mat4 &Mat4::Identity(void)
+    INLINE const SMat4 &SMat4::Identity(void)
     {
-        static const Mat4 identity(1.0f, 0.0f, 0.0f, 0.0f,
+        static const SMat4 identity(1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f, 0.0f,
             0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
@@ -65,28 +65,123 @@ namespace Ursine
     }
 
     // Private Methods
-    INLINE float Mat4::dotCol0(const Vec4 &row) const
+    INLINE float SMat4::dotCol0(const SVec4 &row) const
     {
-        return row.Dot(Vec4(m[0][0], m[1][0], m[2][0], m[3][0]));
+        return row.Dot(SVec4(m[0][0], m[1][0], m[2][0], m[3][0]));
     }
 
-    INLINE float Mat4::dotCol1(const Vec4 &row) const
+    INLINE float SMat4::dotCol1(const SVec4 &row) const
     {
-        return row.Dot(Vec4(m[0][1], m[1][1], m[2][1], m[3][1]));
+        return row.Dot(SVec4(m[0][1], m[1][1], m[2][1], m[3][1]));
     }
 
-    INLINE float Mat4::dotCol2(const Vec4 &row) const
+    INLINE float SMat4::dotCol2(const SVec4 &row) const
     {
-        return row.Dot(Vec4(m[0][2], m[1][2], m[2][2], m[3][2]));
+        return row.Dot(SVec4(m[0][2], m[1][2], m[2][2], m[3][2]));
     }
 
-    INLINE float Mat4::dotCol3(const Vec4 &row) const
+    INLINE float SMat4::dotCol3(const SVec4 &row) const
     {
-        return row.Dot(Vec4(m[0][3], m[1][3], m[2][3], m[3][3]));
+        return row.Dot(SVec4(m[0][3], m[1][3], m[2][3], m[3][3]));
     }
 
-    INLINE void Mat4::invert(const float *src, float *dest)
+    INLINE void SMat4::invert(const float *src, float *dest)
     {
+#ifdef USE_SSE
+        // Source: ftp://download.intel.com/design/PentiumIII/sml/24504301.pdf
+
+        SIMDvec
+            minor0 = _mm_set1_ps(0.0f),
+            minor1 = _mm_set1_ps(0.0f),
+            minor2 = _mm_set1_ps(0.0f),
+            minor3 = _mm_set1_ps(0.0f),
+            row0 = _mm_set1_ps(0.0f),
+            row1 = _mm_set1_ps(0.0f),
+            row2 = _mm_set1_ps(0.0f),
+            row3 = _mm_set1_ps(0.0f),
+            det = _mm_set1_ps(0.0f),
+            tmp1 = _mm_set1_ps(0.0f);
+
+        tmp1 = _mm_loadh_pi(_mm_loadl_pi(tmp1, (__m64*)(src)), (__m64*)(src + 4));
+        row1 = _mm_loadh_pi(_mm_loadl_pi(row1, (__m64*)(src + 8)), (__m64*)(src + 12));
+        row0 = _mm_shuffle_ps(tmp1, row1, 0x88);
+        row1 = _mm_shuffle_ps(row1, tmp1, 0xDD);
+        tmp1 = _mm_loadh_pi(_mm_loadl_pi(tmp1, (__m64*)(src + 2)), (__m64*)(src + 6));
+        row3 = _mm_loadh_pi(_mm_loadl_pi(row3, (__m64*)(src + 10)), (__m64*)(src + 14));
+        row2 = _mm_shuffle_ps(tmp1, row3, 0x88);
+        row3 = _mm_shuffle_ps(row3, tmp1, 0xDD);
+        // -----------------------------------------------
+        tmp1 = _mm_mul_ps(row2, row3);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0xB1);
+        minor0 = _mm_mul_ps(row1, tmp1);
+        minor1 = _mm_mul_ps(row0, tmp1);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0x4E);
+        minor0 = _mm_sub_ps(_mm_mul_ps(row1, tmp1), minor0);
+        minor1 = _mm_sub_ps(_mm_mul_ps(row0, tmp1), minor1);
+        minor1 = _mm_shuffle_ps(minor1, minor1, 0x4E);
+        // -----------------------------------------------
+        tmp1 = _mm_mul_ps(row1, row2);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0xB1);
+        minor0 = _mm_add_ps(_mm_mul_ps(row3, tmp1), minor0);
+        minor3 = _mm_mul_ps(row0, tmp1);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0x4E);
+        minor0 = _mm_sub_ps(minor0, _mm_mul_ps(row3, tmp1));
+        minor3 = _mm_sub_ps(_mm_mul_ps(row0, tmp1), minor3);
+        minor3 = _mm_shuffle_ps(minor3, minor3, 0x4E);
+        // -----------------------------------------------
+        tmp1 = _mm_mul_ps(_mm_shuffle_ps(row1, row1, 0x4E), row3);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0xB1);
+        row2 = _mm_shuffle_ps(row2, row2, 0x4E);
+        minor0 = _mm_add_ps(_mm_mul_ps(row2, tmp1), minor0);
+        minor2 = _mm_mul_ps(row0, tmp1);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0x4E);
+        minor0 = _mm_sub_ps(minor0, _mm_mul_ps(row2, tmp1));
+        minor2 = _mm_sub_ps(_mm_mul_ps(row0, tmp1), minor2);
+        minor2 = _mm_shuffle_ps(minor2, minor2, 0x4E);
+        // -----------------------------------------------
+        tmp1 = _mm_mul_ps(row0, row1);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0xB1);
+        minor2 = _mm_add_ps(_mm_mul_ps(row3, tmp1), minor2);
+        minor3 = _mm_sub_ps(_mm_mul_ps(row2, tmp1), minor3);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0x4E);
+        minor2 = _mm_sub_ps(_mm_mul_ps(row3, tmp1), minor2);
+        minor3 = _mm_sub_ps(minor3, _mm_mul_ps(row2, tmp1));
+        // -----------------------------------------------
+        tmp1 = _mm_mul_ps(row0, row3);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0xB1);
+        minor1 = _mm_sub_ps(minor1, _mm_mul_ps(row2, tmp1));
+        minor2 = _mm_add_ps(_mm_mul_ps(row1, tmp1), minor2);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0x4E);
+        minor1 = _mm_add_ps(_mm_mul_ps(row2, tmp1), minor1);
+        minor2 = _mm_sub_ps(minor2, _mm_mul_ps(row1, tmp1));
+        // -----------------------------------------------
+        tmp1 = _mm_mul_ps(row0, row2);
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0xB1);
+        minor1 = _mm_add_ps(_mm_mul_ps(row3, tmp1), minor1);
+        minor3 = _mm_sub_ps(minor3, _mm_mul_ps(row1, tmp1));
+        tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0x4E);
+        minor1 = _mm_sub_ps(minor1, _mm_mul_ps(row3, tmp1));
+        minor3 = _mm_add_ps(_mm_mul_ps(row1, tmp1), minor3);
+        // -----------------------------------------------
+        det = _mm_mul_ps(row0, minor0);
+        det = _mm_add_ps(_mm_shuffle_ps(det, det, 0x4E), det);
+        det = _mm_add_ss(_mm_shuffle_ps(det, det, 0xB1), det);
+        tmp1 = _mm_rcp_ss(det);
+        det = _mm_sub_ss(_mm_add_ss(tmp1, tmp1), _mm_mul_ss(det, _mm_mul_ss(tmp1, tmp1)));
+        det = _mm_shuffle_ps(det, det, 0x00);
+        minor0 = _mm_mul_ps(det, minor0);
+        _mm_storel_pi((__m64*)(dest), minor0);
+        _mm_storeh_pi((__m64*)(dest + 2), minor0);
+        minor1 = _mm_mul_ps(det, minor1);
+        _mm_storel_pi((__m64*)(dest + 4), minor1);
+        _mm_storeh_pi((__m64*)(dest + 6), minor1);
+        minor2 = _mm_mul_ps(det, minor2);
+        _mm_storel_pi((__m64*)(dest + 8), minor2);
+        _mm_storeh_pi((__m64*)(dest + 10), minor2);
+        minor3 = _mm_mul_ps(det, minor3);
+        _mm_storel_pi((__m64*)(dest + 12), minor3);
+        _mm_storeh_pi((__m64*)(dest + 14), minor3);
+#else
         // Source: http://www.mesa3d.org/
         const float *m = src;
 
@@ -213,10 +308,11 @@ namespace Ursine
 
         for (i = 0; i < 16; i++)
             dest[i] = inv[i] * det;
+#endif
     }
 
     // TODO: Implement this
-    /*INLINE void Mat4::invertFast(const float *src, float *dest)
+    /*INLINE void SMat4::invertFast(const float *src, float *dest)
     {
         // TODO: create SIMD accelerated version of this code
 
@@ -248,7 +344,7 @@ namespace Ursine
     }*/
 
     // Public Methods
-    INLINE void Mat4::Clean(void)
+    INLINE void SMat4::Clean(void)
     {
         m[0].Clean();
         m[1].Clean();
@@ -256,7 +352,7 @@ namespace Ursine
         m[3].Clean();
     }
 
-    INLINE void Mat4::Set(float M00, float M01, float M02, float M03,
+    INLINE void SMat4::Set(float M00, float M01, float M02, float M03,
         float M10, float M11, float M12, float M13,
         float M20, float M21, float M22, float M23,
         float M30, float M31, float M32, float M33)
@@ -267,12 +363,12 @@ namespace Ursine
         m[3].Set(M30, M31, M32, M33);
     }
 
-    INLINE void Mat4::Translate(const Vec3 &translation)
+    INLINE void SMat4::Translate(const SVec3 &translation)
     {
         Translate(*this, translation);
     }
 
-    INLINE void Mat4::Translate(Mat4 &mat, const Vec3 &translation)
+    INLINE void SMat4::Translate(SMat4 &mat, const SVec3 &translation)
     {
         mat.Set(
             1.0f, 0.0f, 0.0f, translation.X(),
@@ -282,12 +378,12 @@ namespace Ursine
             );
     }
 
-    INLINE void Mat4::RotationZXY(float z_angle, float x_angle, float y_angle)
+    INLINE void SMat4::RotationZXY(float z_angle, float x_angle, float y_angle)
     {
         RotationZXY(*this, z_angle, x_angle, y_angle);
     }
 
-    INLINE void Mat4::RotationZXY(Mat4 &mat, float z_angle, float x_angle, float y_angle)
+    INLINE void SMat4::RotationZXY(SMat4 &mat, float z_angle, float x_angle, float y_angle)
     {
         float cx, sx, cy, sy, cz, sz;
 
@@ -307,12 +403,12 @@ namespace Ursine
             );
     }
 
-    INLINE void Mat4::Scale(const Vec3 &scale)
+    INLINE void SMat4::Scale(const SVec3 &scale)
     {
         Scale(*this, scale);
     }
 
-    INLINE void Mat4::Scale(Mat4 &mat, const Vec3 &scale)
+    INLINE void SMat4::Scale(SMat4 &mat, const SVec3 &scale)
     {
         mat.Set(
             scale.X(), 0.0f, 0.0f, 0.0f,
@@ -322,12 +418,12 @@ namespace Ursine
             );
     }
 
-    INLINE void Mat4::Scale(const Vec4 &scale)
+    INLINE void SMat4::Scale(const SVec4 &scale)
     {
         Scale(*this, scale);
     }
 
-    INLINE void Mat4::Scale(Mat4 &mat, const Vec4 &scale)
+    INLINE void SMat4::Scale(SMat4 &mat, const SVec4 &scale)
     {
         mat.Set(
             scale.X(), 0.0f, 0.0f, 0.0f,
@@ -337,12 +433,12 @@ namespace Ursine
             );
     }
 
-    INLINE void Mat4::Transpose(void)
+    INLINE void SMat4::Transpose(void)
     {
         Transpose(*this);
     }
 
-    INLINE void Mat4::Transpose(Mat4 &mat)
+    INLINE void SMat4::Transpose(SMat4 &mat)
     {
         // swap m[0][1] and m[1][0]
         float temp = mat.m[0][1];
@@ -375,12 +471,12 @@ namespace Ursine
         mat.m[3][2] = temp;
     }
 
-    INLINE Mat4 Mat4::Transpose(void) const
+    INLINE SMat4 SMat4::Transpose(void) const
     {
         return Transpose(*this);
     }
 
-    INLINE Mat4 Mat4::Transpose(const Mat4 &mat)
+    INLINE SMat4 SMat4::Transpose(const SMat4 &mat)
     {
         return{
             mat.m[0][0], mat.m[1][0], mat.m[2][0], mat.m[3][0],
@@ -390,60 +486,60 @@ namespace Ursine
         };
     }
 
-    INLINE void Mat4::Inverse(void)
+    INLINE void SMat4::Inverse(void)
     {
         Inverse(*this);
     }
 
-    INLINE void Mat4::Inverse(Mat4 &mat)
+    INLINE void SMat4::Inverse(SMat4 &mat)
     {
         invert(&mat.m[0][0], &mat.m[0][0]);
     }
 
-    INLINE Mat4 Mat4::Inverse(void) const
+    INLINE SMat4 SMat4::Inverse(void) const
     {
         return Inverse(*this);
     }
 
-    INLINE Mat4 Mat4::Inverse(const Mat4 &mat)
+    INLINE SMat4 SMat4::Inverse(const SMat4 &mat)
     {
-        Mat4 result;
+        SMat4 result;
 
         invert(mat.m[0].GetFloatPtr(), &result.m[0][0]);
 
         return result;
     }
 
-    /*INLINE void Mat4::InverseFast(void)
+    /*INLINE void SMat4::InverseFast(void)
     {
         InverseFast(*this);
     }
 
-    INLINE void Mat4::InverseFast(Mat4 &mat)
+    INLINE void SMat4::InverseFast(SMat4 &mat)
     {
         invertFast(&mat.m[0][0], &mat.m[0][0]);
     }
 
-    INLINE Mat4 Mat4::InverseFast(void) const
+    INLINE SMat4 SMat4::InverseFast(void) const
     {
         return InverseFast(*this);
     }
 
-    INLINE Mat4 Mat4::InverseFast(const Mat4 &mat)
+    INLINE SMat4 SMat4::InverseFast(const SMat4 &mat)
     {
-        Mat4 result;
+        SMat4 result;
 
         invertFast(mat.m[0].GetFloatPtr(), &result.m[0][0]);
 
         return result;
     }*/
 
-    INLINE float Mat4::Determinant(void) const
+    INLINE float SMat4::Determinant(void) const
     {
         return Determinant(*this);
     }
 
-    INLINE float Mat4::Determinant(const Mat4 &mat)
+    INLINE float SMat4::Determinant(const SMat4 &mat)
     {
         // Source: http://www.mesa3d.org/
         const float *m = mat.m[0].GetFloatPtr();
@@ -565,7 +661,7 @@ namespace Ursine
         return m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
     }
 
-    INLINE void Mat4::SetRows(const Vec4 &r0, const Vec4 &r1, const Vec4 &r2, const Vec4 &r3)
+    INLINE void SMat4::SetRows(const SVec4 &r0, const SVec4 &r1, const SVec4 &r2, const SVec4 &r3)
     {
         m[0] = r0;
         m[1] = r1;
@@ -573,7 +669,7 @@ namespace Ursine
         m[3] = r3;
     }
 
-    INLINE void Mat4::GetRows(Vec4 &r0, Vec4 &r1, Vec4 &r2, Vec4 &r3) const
+    INLINE void SMat4::GetRows(SVec4 &r0, SVec4 &r1, SVec4 &r2, SVec4 &r3) const
     {
         r0 = m[0];
         r1 = m[1];
@@ -581,18 +677,18 @@ namespace Ursine
         r3 = m[3];
     }
 
-    INLINE void Mat4::SetRow(uint i, const Vec4 &row)
+    INLINE void SMat4::SetRow(uint i, const SVec4 &row)
     {
         m[i] = row;
     }
 
-    INLINE Vec4 Mat4::GetRow(uint i) const
+    INLINE SVec4 SMat4::GetRow(uint i) const
     {
         return m[i];
     }
 
 
-    INLINE void Mat4::SetColumns(const Vec4 &c0, const Vec4 &c1, const Vec4 &c2, const Vec4 &c3)
+    INLINE void SMat4::SetColumns(const SVec4 &c0, const SVec4 &c1, const SVec4 &c2, const SVec4 &c3)
     {
         Set(
             c0.X(), c1.X(), c2.X(), c3.X(),
@@ -602,7 +698,7 @@ namespace Ursine
             );
     }
 
-    INLINE void Mat4::GetColumns(Vec4 &c0, Vec4 &c1, Vec4 &c2, Vec4 &c3) const
+    INLINE void SMat4::GetColumns(SVec4 &c0, SVec4 &c1, SVec4 &c2, SVec4 &c3) const
     {
         c0.Set(m[0][0], m[1][0], m[2][0], m[3][0]);
         c1.Set(m[0][1], m[1][1], m[2][1], m[3][1]);
@@ -610,7 +706,7 @@ namespace Ursine
         c3.Set(m[0][3], m[1][3], m[2][3], m[3][3]);
     }
 
-    INLINE void Mat4::SetColumn(uint i, const Vec4 &column)
+    INLINE void SMat4::SetColumn(uint i, const SVec4 &column)
     {
         auto &mat = *this;
 
@@ -620,14 +716,14 @@ namespace Ursine
         mat(3, i) = column.W();
     }
 
-    INLINE Vec4 Mat4::GetColumn(uint i) const
+    INLINE SVec4 SMat4::GetColumn(uint i) const
     {
         auto &mat = *this;
 
         return{ mat(0, i), mat(1, i), mat(2, i), mat(3, i) };
     }
 
-    INLINE Vec3 Mat4::TransformVector(const Vec3 &vector) const
+    INLINE SVec3 SMat4::TransformVector(const SVec3 &vector) const
     {
         float x = vector.X();
         float y = vector.Y();
@@ -640,7 +736,7 @@ namespace Ursine
         };
     }
 
-    INLINE void Mat4::TransformVectorInplace(Vec3 &vector) const
+    INLINE void SMat4::TransformVectorInplace(SVec3 &vector) const
     {
         float x = vector.X();
         float y = vector.Y();
@@ -651,7 +747,7 @@ namespace Ursine
         vector.Z() = m[2][0] * x + m[2][1] * y + m[2][2] * z;
     }
 
-    INLINE Vec3 Mat4::TransformPoint(const Vec3 &point) const
+    INLINE SVec3 SMat4::TransformPoint(const SVec3 &point) const
     {
         float x = point.X();
         float y = point.Y();
@@ -664,7 +760,7 @@ namespace Ursine
         };
     }
 
-    INLINE void Mat4::TransformPointInplace(Vec3 &point) const
+    INLINE void SMat4::TransformPointInplace(SVec3 &point) const
     {
         float x = point.X();
         float y = point.Y();
@@ -675,7 +771,7 @@ namespace Ursine
         point.Z() = m[2][0] * x + m[2][1] * y + m[2][2] * z + m[2][3];
     }
 
-    INLINE Vec3 Mat4::TransformPointAndDiv(const Vec3 &point) const
+    INLINE SVec3 SMat4::TransformPointAndDiv(const SVec3 &point) const
     {
         float x = point.X();
         float y = point.Y();
@@ -690,7 +786,7 @@ namespace Ursine
         };
     }
 
-    INLINE void Mat4::TransformPointAndDivInplace(Vec3 &point) const
+    INLINE void SMat4::TransformPointAndDivInplace(SVec3 &point) const
     {
         float x = point.X();
         float y = point.Y();
@@ -704,23 +800,23 @@ namespace Ursine
     }
 
     // Accessors
-    INLINE float &Mat4::operator()(uint row, uint column)
+    INLINE float &SMat4::operator()(uint row, uint column)
     {
         return m[row][column];
     }
 
-    INLINE float Mat4::operator()(uint row, uint column) const
+    INLINE float SMat4::operator()(uint row, uint column) const
     {
         return m[row][column];
     }
 
-    INLINE const float* Mat4::GetFloatPtr(void) const
+    INLINE const float* SMat4::GetFloatPtr(void) const
     {
         return m[0].GetFloatPtr();
     }
 
     // Operators
-    INLINE Mat4 Mat4::operator*(const Mat4 &rhs) const
+    INLINE SMat4 SMat4::operator*(const SMat4 &rhs) const
     {
         return{
             rhs.dotCol0(m[0]), rhs.dotCol1(m[0]), rhs.dotCol2(m[0]), rhs.dotCol3(m[0]),
@@ -730,7 +826,7 @@ namespace Ursine
         };
     }
 
-    INLINE Mat4 Mat4::operator*(float rhs) const
+    INLINE SMat4 SMat4::operator*(float rhs) const
     {
         return{
             m[0] * rhs,
@@ -740,7 +836,7 @@ namespace Ursine
         };
     }
 
-    INLINE Vec4 Mat4::operator*(const Vec4 &rhs) const
+    INLINE SVec4 SMat4::operator*(const SVec4 &rhs) const
     {
         return{
             m[0].Dot(rhs),
@@ -750,7 +846,7 @@ namespace Ursine
         };
     }
 
-    INLINE Mat4 Mat4::operator+(const Mat4 &rhs) const
+    INLINE SMat4 SMat4::operator+(const SMat4 &rhs) const
     {
         auto &rhs_m = rhs.m;
 
@@ -762,7 +858,7 @@ namespace Ursine
         };
     }
 
-    INLINE Mat4 Mat4::operator-(const Mat4 &rhs) const
+    INLINE SMat4 SMat4::operator-(const SMat4 &rhs) const
     {
         auto &rhs_m = rhs.m;
 
@@ -774,7 +870,7 @@ namespace Ursine
         };
     }
 
-    INLINE const Mat4 &Mat4::operator=(const Mat4 &rhs)
+    INLINE const SMat4 &SMat4::operator=(const SMat4 &rhs)
     {
         auto &rhs_m = rhs.m;
 
@@ -786,7 +882,7 @@ namespace Ursine
         return *this;
     }
 
-    INLINE const Mat4 &Mat4::operator*=(const Mat4 &rhs)
+    INLINE const SMat4 &SMat4::operator*=(const SMat4 &rhs)
     {
         Set(
             rhs.dotCol0(m[0]), rhs.dotCol1(m[0]), rhs.dotCol2(m[0]), rhs.dotCol3(m[0]),
@@ -798,7 +894,7 @@ namespace Ursine
         return *this;
     }
 
-    INLINE const Mat4 &Mat4::operator*=(float rhs)
+    INLINE const SMat4 &SMat4::operator*=(float rhs)
     {
         m[0] *= rhs;
         m[1] *= rhs;
@@ -808,7 +904,7 @@ namespace Ursine
         return *this;
     }
 
-    INLINE const Mat4 &Mat4::operator+=(const Mat4 &rhs)
+    INLINE const SMat4 &SMat4::operator+=(const SMat4 &rhs)
     {
         auto &rhs_m = rhs.m;
 
@@ -820,7 +916,7 @@ namespace Ursine
         return *this;
     }
 
-    INLINE const Mat4 &Mat4::operator-=(const Mat4 &rhs)
+    INLINE const SMat4 &SMat4::operator-=(const SMat4 &rhs)
     {
         auto &rhs_m = rhs.m;
 
@@ -832,7 +928,7 @@ namespace Ursine
         return *this;
     }
 
-    INLINE bool Mat4::operator==(const Mat4 &rhs) const
+    INLINE bool SMat4::operator==(const SMat4 &rhs) const
     {
         bool result = true;
         auto &rhs_m = rhs.m;
@@ -845,7 +941,7 @@ namespace Ursine
         return result;
     }
 
-    INLINE bool Mat4::operator!=(const Mat4 &rhs) const
+    INLINE bool SMat4::operator!=(const SMat4 &rhs) const
     {
         return !(*this == rhs);
     }

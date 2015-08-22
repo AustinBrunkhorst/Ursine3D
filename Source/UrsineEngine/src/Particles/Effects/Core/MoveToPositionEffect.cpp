@@ -10,9 +10,9 @@ namespace Ursine
         auto emitter_trans = GetEmitter()->GetOwner()->GetTransform();
         Vec3 start_pos, middle_pos, end_pos;
 
-        start_pos = emitter_trans->ToWorld(Vec3(_start.GetValue(), _start.GetValue(), 1));
-        middle_pos = emitter_trans->ToWorld(Vec3(_middle.GetValue(), _middle.GetValue(), 1));
-        end_pos = emitter_trans->ToWorld(Vec3(_end.GetValue(), _end.GetValue(), 1));
+        start_pos = emitter_trans->ToWorld(SVec3(_start.GetValue(), _start.GetValue(), 1));
+        middle_pos = emitter_trans->ToWorld(SVec3(_middle.GetValue(), _middle.GetValue(), 1));
+        end_pos = emitter_trans->ToWorld(SVec3(_end.GetValue(), _end.GetValue(), 1));
 
         // set the starting position
         particle_trans->SetPositionWC(start_pos);

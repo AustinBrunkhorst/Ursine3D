@@ -3,11 +3,6 @@
 
 namespace Ursine
 {
-#ifdef USE_SSE
-    INLINE Vec4::Vec4(const SIMDvec& value)
-        : m128(value) { }
-#endif
-
     INLINE Vec4::Vec4(void)
         : x(0.0f)
         , y(0.0f)
@@ -78,14 +73,10 @@ namespace Ursine
     // Public Methods
     INLINE void Vec4::Set(float X, float Y, float Z, float W)
     {
-#ifdef USE_SSE
-        m128 = _mm_set_ps(W, Z, Y, X);
-#else
         x = X;
         y = Y;
         z = Z;
         w = W;
-#endif
     }
 
     INLINE void Vec4::Clamp(const Vec4 &min, const Vec4 &max)
@@ -125,20 +116,8 @@ namespace Ursine
 
     INLINE float Vec4::Dot(const Vec4 &vec1, const Vec4 &vec2)
     {
-#ifdef USE_SSE
-        auto v = _mm_mul_ps(vec1.m128, vec2.m128);
-        auto y = _mm_shuffle_ps(v, v, SHUFFLE(3, 2, 1, 0));
-
-        v = _mm_add_ps(v, y);
-
-        auto w = _mm_shuffle_ps(y, y, SHUFFLE(2, 3, 0, 1));
-
-        Vec4 answer = Vec4(_mm_add_ps(y, w));
-        return answer.X() + answer.Y();
-#else
         return vec1.X() * vec2.X() + vec1.Y() * vec2.Y() +
                vec1.Z() * vec2.Z() + vec1.w * vec2.w;
-#endif
     }
 
     INLINE float Vec4::Length(void) const
@@ -163,54 +142,38 @@ namespace Ursine
 
     INLINE void Vec4::Max(const Vec4 &other)
     {
-#ifdef USE_SSE
-        m128 = _mm_max_ps(m128, other.m128);
-#else
         x = Math::Max(x, other.X());
         y = Math::Max(y, other.Y());
         z = Math::Max(z, other.Z());
         w = Math::Max(w, other.w);
-#endif
     }
 
     INLINE Vec4 Vec4::Max(const Vec4 &vec1, const Vec4 &vec2)
     {
-#ifdef USE_SSE
-        return Vec4(_mm_max_ps(vec1.m128, vec2.m128));
-#else
         return{
             Math::Max(vec1.X(), vec2.X()),
             Math::Max(vec1.Y(), vec2.Y()),
             Math::Max(vec1.Z(), vec2.Z()),
             Math::Max(vec1.w, vec2.w)
         };
-#endif
     }
 
     INLINE void Vec4::Min(const Vec4 &other)
     {
-#ifdef USE_SSE
-        m128 = _mm_min_ps(m128, other.m128);
-#else
         x = Math::Min(x, other.X());
         y = Math::Min(y, other.Y());
         z = Math::Min(z, other.Z());
         w = Math::Min(w, other.w);
-#endif
     }
 
     INLINE Vec4 Vec4::Min(const Vec4 &vec1, const Vec4 &vec2)
     {
-#ifdef USE_SSE
-        return Vec4(_mm_min_ps(vec1.m128, vec2.m128));
-#else
         return{
             Math::Min(vec1.X(), vec2.X()),
             Math::Min(vec1.Y(), vec2.Y()),
             Math::Min(vec1.Z(), vec2.Z()),
             Math::Min(vec1.w, vec2.w)
         };
-#endif
     }
 
     INLINE void Vec4::Normalize(void)
@@ -298,18 +261,10 @@ namespace Ursine
     // Operators
     INLINE bool Vec4::operator==(const Vec4 &rhs) const
     {
-#ifdef USE_SSE
-        SIMDvec dif = _mm_sub_ps(m128, rhs.m128);
-        SIMDvec ep = _mm_set1_ps(Math::Epsilon);
-        SIMDvec neg_ep = _mm_set1_ps(-Math::Epsilon);
-
-        return (0xf == _mm_movemask_ps(_mm_and_ps(_mm_cmpgt_ps(ep, dif), _mm_cmplt_ps(neg_ep, dif))));
-#else
         return Math::IsEqual(x, rhs.X()) &&
                Math::IsEqual(y, rhs.Y()) &&
                Math::IsEqual(z, rhs.Z()) &&
                Math::IsEqual(w, rhs.w);
-#endif
     }
 
     INLINE bool Vec4::operator!=(const Vec4 &rhs) const
@@ -319,196 +274,139 @@ namespace Ursine
 
     INLINE Vec4 Vec4::operator+(const Vec4 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec4(_mm_add_ps(m128, rhs.m128));
-#else
         return {
             x + rhs.X(),
             y + rhs.Y(),
             z + rhs.Z(),
             w + rhs.w
         };
-#endif
     }
 
     INLINE Vec4 Vec4::operator-(void) const
     {
-#ifdef USE_SSE
-        // flip the sign bit (not safe with NaNs)
-        return Vec4(_mm_xor_ps(m128, _mm_set1_ps(-0.0f)));
-#else
         return {
             -x, -y, -z, -w
         };
-#endif
     }
 
     INLINE Vec4 Vec4::operator-(const Vec4 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec4(_mm_sub_ps(m128, rhs.m128));
-#else
         return {
             x - rhs.X(),
             y - rhs.Y(),
             z - rhs.Z(),
             w - rhs.w
         };
-#endif
     }
 
     INLINE Vec4 Vec4::operator*(const Vec4 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec4(_mm_mul_ps(m128, rhs.m128));
-#else
         return {
             x * rhs.X(),
             y * rhs.Y(),
             z * rhs.Z(),
             w * rhs.w
         };
-#endif
     }
 
     INLINE Vec4 Vec4::operator*(float rhs) const
     {
-#ifdef USE_SSE
-        return Vec4(_mm_mul_ps(m128, _mm_set1_ps(rhs)));
-#else
         return {
             x * rhs,
             y * rhs,
             z * rhs,
             w * rhs
         };
-#endif
     }
 
     INLINE Vec4 operator*(float lhs, const Vec4 &rhs)
     {
-#ifdef USE_SSE
-        return Vec4(_mm_mul_ps(_mm_set1_ps(lhs), rhs.m128));
-#else
         return {
             rhs.X() * lhs,
             rhs.Y() * lhs,
             rhs.Z() * lhs,
             rhs.w * lhs
         };
-#endif
     }
 
     INLINE Vec4 Vec4::operator/(const Vec4 &rhs) const
     {
-#ifdef USE_SSE
-        return Vec4(_mm_div_ps(m128, rhs.m128));
-#else
         return {
             x / rhs.X(),
             y / rhs.Y(),
             z / rhs.Z(),
             w / rhs.w
         };
-#endif
     }
 
     INLINE Vec4 Vec4::operator/(float rhs) const
     {
         float inv = 1.0f / rhs;
 
-#ifdef USE_SSE
-        return Vec4(_mm_mul_ps(m128, _mm_set1_ps(inv)));
-#else
         return {
             x * inv,
             y * inv,
             z * inv,
             w * inv
         };
-#endif
     }
 
     INLINE const Vec4 &Vec4::operator=(const Vec4 &rhs)
     {
-#ifdef USE_SSE
-        m128 = rhs.m128;
-#else
         x = rhs.X();
         y = rhs.Y();
         z = rhs.Z();
         w = rhs.w;
-#endif
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator+=(const Vec4 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_add_ps(m128, rhs.m128);
-#else
         x += rhs.X();
         y += rhs.Y();
         z += rhs.Z();
         w += rhs.w;
-#endif
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator-=(const Vec4 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_sub_ps(m128, rhs.m128);
-#else
         x -= rhs.X();
         y -= rhs.Y();
         z -= rhs.Z();
         w -= rhs.w;
-#endif
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator*=(const Vec4 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, rhs.m128);
-#else
         x *= rhs.X();
         y *= rhs.Y();
         z *= rhs.Z();
         w *= rhs.w;
-#endif
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator*=(float rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, _mm_set1_ps(rhs));
-#else
         x *= rhs;
         y *= rhs;
         z *= rhs;
         w *= rhs;
-#endif
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator/=(const Vec4 &rhs)
     {
-#ifdef USE_SSE
-        m128 = _mm_div_ps(m128, rhs.m128);
-#else
         x /= rhs.X();
         y /= rhs.Y();
         z /= rhs.Z();
         w /= rhs.w;
-#endif
 
         return *this;
     }
@@ -517,14 +415,10 @@ namespace Ursine
     {
         float inv = 1.0f / rhs;
 
-#ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, _mm_set1_ps(inv));
-#else
         x *= inv;
         y *= inv;
         z *= inv;
         w *= inv;
-#endif
 
         return *this;
     }

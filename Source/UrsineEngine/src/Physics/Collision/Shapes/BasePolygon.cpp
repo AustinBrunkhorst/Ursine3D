@@ -23,7 +23,7 @@ namespace Ursine
         // compute normals
         if (vert_order == VERTEX_ORDER_CCW)
         {
-            Mat3 rot = Mat3(-Math::PI_DIV_2);
+            SMat3 rot = SMat3(-Math::PI_DIV_2);
             for (uint32 i = 0; i < points.size(); ++i)
             {
 
@@ -40,7 +40,7 @@ namespace Ursine
         }
         else
         {
-            Mat3 rot = Mat3(Math::PI_DIV_2);
+            SMat3 rot = SMat3(Math::PI_DIV_2);
             for (uint32 i = 0; i < points.size(); ++i)
             {
                 Vec2 normal;

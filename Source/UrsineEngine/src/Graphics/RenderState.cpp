@@ -20,7 +20,7 @@ namespace Ursine
         
     }
 
-    RenderState::RenderState(const Mat3 &transform)
+    RenderState::RenderState(const SMat3 &transform)
         : blendMode( BlendAlpha )
         , transform( transform )
         , texture( nullptr )
@@ -45,7 +45,7 @@ namespace Ursine
         
     }
 
-    RenderState::RenderState(const BlendMode &blendMode, const Mat3 &transform, const Texture2D *texture, const Shader *shader)
+    RenderState::RenderState(const BlendMode &blendMode, const SMat3 &transform, const Texture2D *texture, const Shader *shader)
         : blendMode( blendMode )
         , transform( transform )
         , texture( texture )

@@ -14,17 +14,17 @@ namespace Ursine
         float start_angle = _start_angle.GetValue();
         float start_radius = _start_radius.GetValue();
 
-        start_pos = emitter_trans->ToWorld(Vec3(Vec2::AngleVec(start_angle) * start_radius, 1));
+        start_pos = emitter_trans->ToWorld(SVec3(Vec2::AngleVec(start_angle) * start_radius, 1));
 
         float middle_angle = _middle_angle.GetValue();
         float middle_radius = _middle_radius.GetValue();
 
-        middle_pos = emitter_trans->ToWorld(Vec3(Vec2::AngleVec(middle_angle) * middle_radius, 1));
+        middle_pos = emitter_trans->ToWorld(SVec3(Vec2::AngleVec(middle_angle) * middle_radius, 1));
 
         float end_angle = _end_angle.GetValue();
         float end_radius = _end_radius.GetValue();
 
-        end_pos = emitter_trans->ToWorld(Vec3(Vec2::AngleVec(end_angle) * end_radius, 1));
+        end_pos = emitter_trans->ToWorld(SVec3(Vec2::AngleVec(end_angle) * end_radius, 1));
 
         // set the starting position
         particle_trans->SetPositionWC(start_pos);

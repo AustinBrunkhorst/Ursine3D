@@ -21,33 +21,30 @@ namespace Ursine
 {
     // Forward declaration
     class Vec2;
+	class SVec3;
     class Vec4;
+	class SVec4;
 
-    ALIGNED16(class) Vec3
+    class Vec3
     {
         friend class Vec2;
+		friend class SVec3;
         friend class Vec4;
+		friend class SVec4;
 
-#ifdef USE_SSE
-        union
-        {
-            SIMDvec m128;
-            struct { float x, y, z, w; };
-        };
-
-        explicit Vec3(const SIMDvec &value);
-#else
         float x, y, z;
-#endif
 
     public:
         // Constructors
         Vec3(void);
         Vec3(const Vec3 &value);
+		Vec3(const SVec3 &value);
         explicit Vec3(float value);
         Vec3(float X, float Y, float Z);
         Vec3(const Vec2 &value, float Z);
+
         explicit Vec3(const Vec4 &value);
+		explicit Vec3(const SVec4 &value);
         
         // Properties
         static const Vec3 &Zero(void);
@@ -133,3 +130,4 @@ namespace Ursine
 }
 
 #include "Vec3.hpp"
+

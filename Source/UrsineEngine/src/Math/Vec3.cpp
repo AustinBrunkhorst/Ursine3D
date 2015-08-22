@@ -15,25 +15,29 @@
 
 namespace Ursine
 {
+	Vec3::Vec3(const SVec3 &value)
+		: x(value.X())
+		, y(value.Y())
+		, z(value.Z())
+	{ }
+
     Vec3::Vec3(const Vec2 &value, float Z)
             : x(value.X())
             , y(value.Y())
             , z(Z)
-    {
-#ifdef USE_SSE
-        w = 0.0f;
-#endif
-    }
+    { }
 
     Vec3::Vec3(const Vec4 &value)
             : x(value.X())
             , y(value.Y())
             , z(value.Z())
-    {
-#ifdef USE_SSE
-        w = 0.0f;
-#endif
-    }
+    { }
+
+	Vec3::Vec3(const SVec4 &value)
+			: x(value.X())
+			, y(value.Y())
+			, z(value.Z())
+	{ }
 
     // Public Methods
     void Vec3::Clean(void)

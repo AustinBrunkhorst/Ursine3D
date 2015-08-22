@@ -316,7 +316,7 @@ namespace Ursine
 
                 // Apply velocities
                 if (!body->_pos_locked)
-                    trans->AddPosition(Vec3(_dt * body->_velocity, 0));
+                    trans->AddPosition(SVec3(_dt * body->_velocity, 0));
 
                 if (!body->_rot_locked)
                     trans->AddRotation2D(_dt * body->_angular_velocity);

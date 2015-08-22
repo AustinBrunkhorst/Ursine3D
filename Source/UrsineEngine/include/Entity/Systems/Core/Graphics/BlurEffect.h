@@ -16,7 +16,7 @@ namespace Ursine
             GLuint _buffer_vbo;
 
 
-            Mat3 _world_to_ndc;
+            SMat3 _world_to_ndc;
 
         public:
             BlurEffect(void);

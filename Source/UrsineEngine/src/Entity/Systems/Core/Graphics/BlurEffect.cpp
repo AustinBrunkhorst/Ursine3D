@@ -80,7 +80,7 @@ namespace Ursine
             auto height = texture->GetSize().Y();
 
             // calculate our model view matrix
-            Mat3 model_view = _world_to_ndc * renderable->GetOwner()->GetTransform()->Matrix();
+            SMat3 model_view = _world_to_ndc * renderable->GetOwner()->GetTransform()->Matrix();
 
             Shader::Bind(&_x_shader);
 

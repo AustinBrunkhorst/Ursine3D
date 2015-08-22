@@ -16,12 +16,12 @@
 namespace Ursine
 {
     // Constructors
-	Mat3::Mat3(const SMat3 &mat)
+	SMat3::SMat3(const Mat3 &other)
 	{
-		memcpy(m, mat.m, sizeof(m));
+		memcpy(m, other.m, sizeof(m));
 	}
 
-    Mat3::Mat3(const Mat4 &mat)
+    SMat3::SMat3(const SMat4 &mat)
     {
         Set(
             mat.m[0][0], mat.m[0][1], mat.m[0][2],
@@ -30,17 +30,17 @@ namespace Ursine
         );
     }
 
-	Mat3::Mat3(const SMat4 &mat)
+	SMat3::SMat3(const Mat4 &mat)
 	{
 		Set(
 			mat.m[0][0], mat.m[0][1], mat.m[0][2],
 			mat.m[1][0], mat.m[1][1], mat.m[1][2],
 			mat.m[2][0], mat.m[2][1], mat.m[2][2]
-		);
+			);
 	}
-    
+
     // Public Methods
-    std::string Mat3::ToString(void) const
+    std::string SMat3::ToString(void) const
     {
         std::ostringstream M00, M01, M02,
                            M10, M11, M12,

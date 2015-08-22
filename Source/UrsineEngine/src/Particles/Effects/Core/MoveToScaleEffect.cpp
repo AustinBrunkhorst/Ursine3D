@@ -16,15 +16,15 @@ namespace Ursine
             float middle_value = _middle.GetValue();
             float end_value = _end.GetValue();
             
-            start_scale = emitter_scale * Vec3(start_value, start_value, 0);
-            middle_scale = emitter_scale * Vec3(middle_value, middle_value, 0);
-            end_scale = emitter_scale * Vec3(end_value, end_value, 0);
+            start_scale = emitter_scale * SVec3(start_value, start_value, 0);
+            middle_scale = emitter_scale * SVec3(middle_value, middle_value, 0);
+            end_scale = emitter_scale * SVec3(end_value, end_value, 0);
         }
         else
         {
-            start_scale = emitter_scale * Vec3(_start.GetValue(), _start.GetValue(), 0);
-            middle_scale = emitter_scale * Vec3(_middle.GetValue(), _middle.GetValue(), 0);
-            end_scale = emitter_scale * Vec3(_end.GetValue(), _end.GetValue(), 0);
+            start_scale = emitter_scale * SVec3(_start.GetValue(), _start.GetValue(), 0);
+            middle_scale = emitter_scale * SVec3(_middle.GetValue(), _middle.GetValue(), 0);
+            end_scale = emitter_scale * SVec3(_end.GetValue(), _end.GetValue(), 0);
         }
 
         // set the starting scale

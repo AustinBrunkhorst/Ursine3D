@@ -15,7 +15,11 @@
 
 namespace Ursine
 {
-    Vec2::Vec2(const Vec3 &value)
+	Vec2::Vec2(const Vec3 &value)
+		: x(value.x)
+		, y(value.y) { }
+
+    Vec2::Vec2(const SVec3 &value)
         : x(value.x)
         , y(value.y) { }
 

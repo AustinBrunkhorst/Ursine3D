@@ -21,12 +21,16 @@ namespace Ursine
 {
     // Forward declaration
     class Vec3;
-    class Vec4;
+	class SVec3;
+	class Vec4;
+	class SVec4;
 
     class Vec2
     {
         friend class Vec3;
+		friend class SVec3;
         friend class Vec4;
+		friend class SVec4;
 
         float x, y;
 
@@ -37,6 +41,7 @@ namespace Ursine
         Vec2(float X, float Y);
         explicit Vec2(float value);
         explicit Vec2(const Vec3 &value);
+		explicit Vec2(const SVec3 &value);
         
         // Properties
         static const Vec2 &Zero(void);
@@ -132,3 +137,4 @@ namespace Ursine
 }
 
 #include "Vec2.hpp"
+

@@ -62,7 +62,7 @@ namespace Ursine
         void SetDerpFile(const char *file_name);
         // value should be a 0 - 1 value (it will be interpreted by this function)
         void SetParameter(AudioParam &param, float value);
-        void Set3DParameter(const Vec3 &listener, const Vec3 &emitter);
+        void Set3DParameter(const SVec3 &listener, const SVec3 &emitter);
 
         inline const std::string &GetEvent() const;
         inline int GetWeight() const;

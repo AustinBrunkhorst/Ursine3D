@@ -17,9 +17,9 @@
 #define TRANSFORM_COMPONENT_H
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "Vec3.h"
+#include "SVec3.h"
 #include "Vec2.h"
-#include "Mat3.h"
+#include "SMat3.h"
 #include "Component.h"
 
 namespace Ursine
@@ -29,25 +29,25 @@ namespace Ursine
         class Transform : public Component
         {
             // World coordinates.
-            Vec3 _world_position,
+            SVec3 _world_position,
                     _world_scale;
-            Mat3 _world_rotation;
+            SMat3 _world_rotation;
 
             SerializerAllow(Transform, position);
             SerializerAllow(Transform, rotation);
             SerializerAllow(Transform, scale);
 
             // Local coordinates (coordinates in relation to the parent).
-            Vec3 position,
+            SVec3 position,
                     // Euler angles will be used (in radians).
                     rotation,
                     scale;
 
             // Transformation from local space into world space.
-            Mat3 _local_to_world;
+            SMat3 _local_to_world;
 
             // Transformation from world space into local space.
-            Mat3 _world_to_local;
+            SMat3 _world_to_local;
 
             // The top most transform in the hierarchy.
             // If this is the top most, root == this.
@@ -91,40 +91,40 @@ namespace Ursine
             ////////////////////////////////////////////////////////////////////
 
             // Set the position of the Root
-            inline void SetRootPosition(const Vec3 &position);
-            inline void AddRootPosition(const Vec3 &position);
+            inline void SetRootPosition(const SVec3 &position);
+            inline void AddRootPosition(const SVec3 &position);
 
             // Set the local position
-            inline void SetPosition(const Vec3 &position);
-            inline void AddPosition(const Vec3 &position);
+            inline void SetPosition(const SVec3 &position);
+            inline void AddPosition(const SVec3 &position);
 
             // Set the position in world coordinates, neglecting the parent's scale
-            inline void SetPositionWC(const Vec3 &position);
-            inline void AddPositionWC(const Vec3 &position);
+            inline void SetPositionWC(const SVec3 &position);
+            inline void AddPositionWC(const SVec3 &position);
 
             // Get the position in world coordinates
-            inline const Vec3 &PositionWC(void) const;
+            inline const SVec3 &PositionWC(void) const;
 
             // Get the local position
-            inline const Vec3 &LocalPosition(void) const;
+            inline const SVec3 &LocalPosition(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Rotation
             ////////////////////////////////////////////////////////////////////
 
             // Set the rotation of the Root
-            inline void SetRootRotation(const Vec3 &rotation);
-            inline void AddRootRotation(const Vec3 &rotation);
+            inline void SetRootRotation(const SVec3 &rotation);
+            inline void AddRootRotation(const SVec3 &rotation);
 
             // Set the local rotation
-            inline void SetRotation(const Vec3 &rotation);
-            inline void AddRotation(const Vec3 &rotation);
+            inline void SetRotation(const SVec3 &rotation);
+            inline void AddRotation(const SVec3 &rotation);
 
             // Get the rotation matrix in world coordinates
-            inline const Mat3 &RotationWC(void) const;
+            inline const SMat3 &RotationWC(void) const;
 
             // Get the local rotation
-            inline const Vec3 &LocalRotation(void) const;
+            inline const SVec3 &LocalRotation(void) const;
 
             // Set the root's 2D rotation
             inline void SetRootRotation2D(float radians);
@@ -147,22 +147,22 @@ namespace Ursine
             ////////////////////////////////////////////////////////////////////
 
             // Set the scale of the Root
-            inline void SetRootScale(const Vec3 &scale);
-            inline void AddRootScale(const Vec3 &scale);
+            inline void SetRootScale(const SVec3 &scale);
+            inline void AddRootScale(const SVec3 &scale);
 
             // Set the local scale
-            inline void SetScale(const Vec3 &scale);
-            inline void AddScale(const Vec3 &scale);
+            inline void SetScale(const SVec3 &scale);
+            inline void AddScale(const SVec3 &scale);
 
             // Set the scale in world coordinates, neglecting the parent's scale
-            inline void SetScaleWC(const Vec3 &scale);
-            inline void AddScaleWC(const Vec3 &scale);
+            inline void SetScaleWC(const SVec3 &scale);
+            inline void AddScaleWC(const SVec3 &scale);
 
             // Get the scale of the object in world coordinates
-            inline const Vec3 &ScaleWC(void) const;
+            inline const SVec3 &ScaleWC(void) const;
 
             // Get the local scale of the object
-            inline const Vec3 &LocalScale(void) const;
+            inline const SVec3 &LocalScale(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Matrix
@@ -170,14 +170,14 @@ namespace Ursine
 
             inline bool Dirty(void) const;
 
-            const Mat3 &Matrix(void);
-            Mat3 MatrixNoScalar(void);
-            const Mat3 &WorldToLocalMatrix(void);
+            const SMat3 &Matrix(void);
+            SMat3 MatrixNoScalar(void);
+            const SMat3 &WorldToLocalMatrix(void);
 
-            inline Vec3 ToLocal(const Vec3 &point);
+            inline SVec3 ToLocal(const SVec3 &point);
             inline Vec2 ToLocal(const Vec2 &point);
 
-            inline Vec3 ToWorld(const Vec3 &point);
+            inline SVec3 ToWorld(const SVec3 &point);
             inline Vec2 ToWorld(const Vec2 &point);
 
             void LookAt2D(Vec2 point);
