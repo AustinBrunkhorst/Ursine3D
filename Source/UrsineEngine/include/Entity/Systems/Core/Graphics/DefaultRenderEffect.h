@@ -23,6 +23,8 @@ namespace Ursine
             void Bind(World *world) override;
             void Render(Renderable *renderable) override;
             void UnBind(void) override;
+
+			ALLOW_ALIGNED_ALLOC(16)
         };
     }
 }

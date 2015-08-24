@@ -24,6 +24,7 @@ namespace Ursine
 	class Vec3;
     class SVec4;
 	class Vec4;
+	class SMat4;
 
     ALIGNED16(class) SVec3
     {
@@ -31,6 +32,7 @@ namespace Ursine
 		friend class Vec3;
         friend class SVec4;
 		friend class Vec4;
+		friend class SMat4;
 
 #ifdef USE_SSE
         union
@@ -99,8 +101,16 @@ namespace Ursine
         void Normalize(void);
         static SVec3 Normalize(const SVec3 &vec);
 
+		static void Orthonormalize(SVec3 &vec1, SVec3 &vec2, SVec3 &vec3);
+
         void Reflect(const SVec3 &normal);
         static SVec3 Reflect(const SVec3 &vec, const SVec3 &normal);
+
+		// This vector must be normalized
+		void ProjectToNorm(const SVec3 &normal);
+
+		// Vector must be normalized
+		static SVec3 ProjectToNorm(const SVec3 &vec, const SVec3 &normal);
 
         std::string ToString(void) const;
 
@@ -135,6 +145,8 @@ namespace Ursine
         const SVec3 &operator*=(float rhs);
         const SVec3 &operator/=(const SVec3 &rhs);
         const SVec3 &operator/=(float rhs);
+
+		ALLOW_ALIGNED_ALLOC(16)
     };
 }
 

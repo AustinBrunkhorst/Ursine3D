@@ -170,7 +170,38 @@ namespace Ursine
             );
     }
 
-    INLINE void SMat3::Scale(const Vec2 &scale)
+	INLINE SVec3 SMat3::GetRotationXYZ() const
+	{
+		float x, y, z;
+
+		if (m[2][1] < 1.f)
+		{
+			if (m[2][1] > -1.f)
+			{
+				x = asin(m[2][1]);
+				z = atan2(-m[0][1], m[1][1]);
+				y = atan2(-m[2][0], m[2][2]);
+			}
+			else
+			{
+				// Not a unique solution.
+				x = -Math::PI / 2.f;
+				z = -atan2(-m[0][2], m[0][0]);
+				y = 0;
+			}
+		}
+		else
+		{
+			// Not a unique solution.
+			x = Math::PI / 2.f;
+			z = atan2(m[0][2], m[0][0]);
+			y = 0;
+		}
+
+		return { x, y, z };
+	}
+
+	INLINE void SMat3::Scale(const Vec2 &scale)
     {
         Scale(*this, scale);
     }
@@ -214,6 +245,58 @@ namespace Ursine
             scale_x * s, scale_y * c, translation.Y(),
             0.0f, 0.0f, 1.0f
             );
+    }
+
+	INLINE void SMat3::SetLookAt(const SVec3& targetDirection, const SVec3& localForward, const SVec3& localUp, const SVec3& worldUp)
+    {
+		// Generate the third basis vector in the local space.
+		SVec3 localRight = SVec3::Cross(localUp, localForward);
+		localRight.Normalize();
+
+		// A. Now we have an orthonormal linear basis { localRight, localUp, localForward } for the object local space.
+
+		// Generate the third basis vector for the world space.
+		SVec3 worldRight = SVec3::Cross(worldUp, targetDirection);
+		worldRight.Normalize();
+
+		// Since the input worldUp vector is not necessarily perpendicular to the targetDirection vector,
+		// we need to compute the real world space up vector that the "head" of the object will point
+		// towards when the model is looking towards the desired target direction.
+		SVec3 perpWorldUp = SVec3::Cross(targetDirection, worldRight);
+		perpWorldUp.Normalize();
+
+		// B. Now we have an orthonormal linear basis { worldRight, perpWorldUp, targetDirection } for the desired target orientation.
+
+		// We want to build a matrix M that performs the following mapping:
+		// 1. localRight must be mapped to worldRight.        (M * localRight = worldRight)
+		// 2. localUp must be mapped to perpWorldUp.          (M * localUp = perpWorldUp)
+		// 3. localForward must be mapped to targetDirection. (M * localForward = targetDirection)
+		// i.e. we want to map the basis A to basis B.
+
+		// This matrix M exists, and it is an orthonormal rotation matrix with a determinant of +1, because
+		// the bases A and B are orthonormal with the same handedness.
+
+		// Below, use the notation that (a,b,c) is a 3x3 matrix with a as its first column, b second, and c third.
+
+		// By algebraic manipulation, we can rewrite conditions 1, 2 and 3 in a matrix form:
+		//        M * (localRight, localUp, localForward) = (worldRight, perpWorldUp, targetDirection)
+		// or     M = (worldRight, perpWorldUp, targetDirection) * (localRight, localUp, localForward)^{-1}.
+		// or     M = m1 * m2, where
+
+		// m1 equals (worldRight, perpWorldUp, targetDirection):
+		SMat3 m1;
+		m1.SetColumns(worldRight, perpWorldUp, targetDirection);
+
+		// and m2 equals (localRight, localUp, localForward)^{-1}:
+		SMat3 m2(localRight, localUp, localForward);
+		// Above we used the shortcut that for an orthonormal matrix M, M^{-1} = M^T. So set the rows
+		// and not the columns to directly produce the transpose, i.e. the inverse of (localRight, localUp, localForward).
+
+		// Compute final M.
+		*this = m1 * m2;
+
+		// And fix any numeric stability issues by re-orthonormalizing the result.
+		Orthonormalize();
     }
 
     INLINE void SMat3::Transpose(void)
@@ -312,6 +395,17 @@ namespace Ursine
         float cofactor6 = mat.m[0][1] * mat.m[1][2] - mat.m[0][2] * mat.m[1][1];
 
         return mat.m[0][0] * cofactor0 + mat.m[1][0] * cofactor3 + mat.m[2][0] * cofactor6;
+    }
+
+	INLINE void SMat3::Orthonormalize(void)
+    {
+		SVec3 c0, c1, c2;
+
+		GetColumns(c0, c1, c2);
+
+		SVec3::Orthonormalize(c0, c1, c2);
+
+		SetColumns(c0, c1, c2);
     }
 
     INLINE void SMat3::SetRows(const SVec3 &r0, const SVec3 &r1, const SVec3 &r2)

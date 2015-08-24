@@ -48,6 +48,8 @@ namespace Ursine
         AABB aabb;
 
         Colliders children;
+
+		ALLOW_ALIGNED_ALLOC(16)
     };
 
     extern template

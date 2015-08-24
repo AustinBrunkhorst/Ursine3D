@@ -53,6 +53,11 @@ namespace Ursine
             );
     }
 
+	INLINE SMat4::SMat4(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale)
+    {
+		setTRS(translation, rotation, scale);
+    }
+
     // Properties
     INLINE const SMat4 &SMat4::Identity(void)
     {
@@ -343,6 +348,22 @@ namespace Ursine
         dest[11] = -dest[8] * src[3] - dest[9] * src[7] - dest[10] * src[11];
     }*/
 
+	INLINE void SMat4::setRotation(const SQuat &quat)
+    {
+		// assume2(q.IsNormalized(1e-3f), q.ToString(), q.LengthSq());
+		const float x = quat.X(); const float y = quat.Y(); const float z = quat.Z(); const float w = quat.W();
+		m[0][0] = 1 - 2 * (y*y + z*z); m[0][1] = 2 * (x*y - z*w); m[0][2] = 2 * (x*z + y*w);
+		m[1][0] = 2 * (x*y + z*w); m[1][1] = 1 - 2 * (x*x + z*z); m[1][2] = 2 * (y*z - x*w);
+		m[2][0] = 2 * (x*z - y*w); m[2][1] = 2 * (y*z + x*w); m[2][2] = 1 - 2 * (x*x + y*y);
+    }
+
+	INLINE void SMat4::setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale)
+    {
+		*this = SMat4(rotation) * SMat4(scale);
+
+		SetColumn(3, SVec4(translation, 1.0f));
+    }
+
     // Public Methods
     INLINE void SMat4::Clean(void)
     {
@@ -376,6 +397,13 @@ namespace Ursine
             0.0f, 0.0f, 1.0f, translation.Z(),
             0.0f, 0.0f, 0.0f, 1.0f
             );
+    }
+
+	INLINE void SMat4::Rotation(const SQuat &quat)
+    {
+		setRotation(quat);
+		SetRow(3, SVec4(0, 0, 0, 1));
+		SetColumn(3, SVec4(0, 0, 0, 1));
     }
 
     INLINE void SMat4::RotationZXY(float z_angle, float x_angle, float y_angle)
@@ -431,6 +459,11 @@ namespace Ursine
             0.0f, 0.0f, scale.Z(), 0.0f,
             0.0f, 0.0f, 0.0f, scale.W()
             );
+    }
+
+	INLINE void SMat4::TRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale)
+    {
+		setTRS(translation, rotation, scale);
     }
 
     INLINE void SMat4::Transpose(void)
@@ -797,6 +830,70 @@ namespace Ursine
         point.X() = inv_div * (m[0][0] * x + m[0][1] * y + m[0][2] * z + m[0][3]);
         point.Y() = inv_div * (m[1][0] * x + m[1][1] * y + m[1][2] * z + m[1][3]);
         point.Z() = inv_div * (m[2][0] * x + m[2][1] * y + m[2][2] * z + m[2][3]);
+    }
+
+	INLINE void SMat4::D3DOrthoProjLH(float n, float f, float h, float v)
+    {
+		m[0][0] = 2.f / h; m[0][1] = 0;       m[0][2] = 0;             m[0][3] = 0.f;
+		m[1][0] = 0;       m[1][1] = 2.f / v; m[1][2] = 0;             m[1][3] = 0.f;
+		m[2][0] = 0;       m[2][1] = 0;       m[2][2] = 1.f / (f - n); m[2][3] = n / (n - f);
+		m[3][0] = 0;       m[3][1] = 0;       m[3][2] = 0.f;           m[3][3] = 1.f;
+    }
+
+	INLINE void SMat4::D3DOrthoProjRH(float n, float f, float h, float v)
+    {
+	    m[0][0] = 2.f / h; m[0][1] = 0;       m[0][2] = 0;           m[0][3] = 0.f;
+	    m[1][0] = 0;       m[1][1] = 2.f / v; m[1][2] = 0;           m[1][3] = 0.f;
+	    m[2][0] = 0;       m[2][1] = 0;       m[2][2] = 1.f / (n-f); m[2][3] = n / (n-f);
+	    m[3][0] = 0;       m[3][1] = 0;       m[3][2] = 0.f;         m[3][3] = 1.f;
+    }
+
+	INLINE void SMat4::D3DPerspProjLH(float n, float f, float h, float v)
+    {
+	    m[0][0] = 2.f * n / h; m[0][1] = 0;           m[0][2] = 0;           m[0][3] = 0.f;
+	    m[1][0] = 0;           m[1][1] = 2.f * n / v; m[1][2] = 0;           m[1][3] = 0.f;
+	    m[2][0] = 0;           m[2][1] = 0;           m[2][2] = f / (f-n);   m[2][3] = n * f / (n-f);
+	    m[3][0] = 0;           m[3][1] = 0;           m[3][2] = 1.f;         m[3][3] = 0.f;
+    }
+
+	INLINE void SMat4::D3DPerspProjRH(float n, float f, float h, float v)
+    {
+	    m[0][0] = 2.f * n / h; m[0][1] = 0;           m[0][2] = 0;           m[0][3] = 0.f;
+	    m[1][0] = 0;           m[1][1] = 2.f * n / v; m[1][2] = 0;           m[1][3] = 0.f;
+	    m[2][0] = 0;           m[2][1] = 0;           m[2][2] = f / (n-f);   m[2][3] = n * f / (n-f);
+	    m[3][0] = 0;           m[3][1] = 0;           m[3][2] = -1.f;        m[3][3] = 0.f;
+    }
+
+	INLINE void SMat4::OGLOrthoProjLH(float n, float f, float h, float v)
+    {
+	    m[0][0] = 2.f / h; m[0][1] = 0;       m[0][2] = 0;           m[0][3] = 0.f;
+	    m[1][0] = 0;       m[1][1] = 2.f / v; m[1][2] = 0;           m[1][3] = 0.f;
+	    m[2][0] = 0;       m[2][1] = 0;       m[2][2] = 2.f / (f-n); m[2][3] = (f+n) / (n-f);
+	    m[3][0] = 0;       m[3][1] = 0;       m[3][2] = 0;           m[3][3] = 1.f;
+    }
+
+	INLINE void SMat4::OGLOrthoProjRH(float n, float f, float h, float v)
+    {
+	    m[0][0] = 2.f / h; m[0][1] = 0;       m[0][2] = 0;           m[0][3] = 0.f;
+		m[1][0] = 0;       m[1][1] = 2.f / v; m[1][2] = 0;           m[1][3] = 0.f;
+		m[2][0] = 0;       m[2][1] = 0;       m[2][2] = 2.f / (n-f); m[2][3] = (f+n) / (n-f);
+		m[3][0] = 0;       m[3][1] = 0;       m[3][2] = 0;           m[3][3] = 1.f;
+    }
+
+	INLINE void SMat4::OGLPerspProjLH(float n, float f, float h, float v)
+    {
+	    m[0][0] = 2.f *n / h;  m[0][1] = 0;           m[0][2] = 0;              m[0][3] = 0.f;
+		m[1][0] = 0;           m[1][1] = 2.f * n / v; m[1][2] = 0;              m[1][3] = 0.f;
+		m[2][0] = 0;           m[2][1] = 0;           m[2][2] = (n+f) / (f-n);  m[2][3] = 2.f*n*f / (n-f);
+		m[3][0] = 0;           m[3][1] = 0;           m[3][2] = 1.f;            m[3][3] = 0.f;
+    }
+
+	INLINE void SMat4::OGLPerspProjRH(float n, float f, float h, float v)
+    {
+	    m[0][0] = 2.f *n / h;  m[0][1] = 0;           m[0][2] = 0;              m[0][3] = 0.f;
+	    m[1][0] = 0;           m[1][1] = 2.f * n / v; m[1][2] = 0;              m[1][3] = 0.f;
+	    m[2][0] = 0;           m[2][1] = 0;           m[2][2] = (n+f) / (n-f);  m[2][3] = 2.f*n*f / (n-f);
+	    m[3][0] = 0;           m[3][1] = 0;           m[3][2] = -1.f;           m[3][3] = 0.f;
     }
 
     // Accessors

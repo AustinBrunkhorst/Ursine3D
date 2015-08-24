@@ -39,7 +39,16 @@ namespace Ursine
 			);
 	}
 
-    // Public Methods
+	SMat3::SMat3(const SQuat& q)
+	{
+		// TODO: assume(q.IsNormalized())
+		const float x = q.X(); const float y = q.Y(); const float z = q.Z(); const float w = q.W();
+		m[0][0] = 1 - 2 * (y*y + z*z); m[0][1] = 2 * (x*y - z*w); m[0][2] = 2 * (x*z + y*w);
+		m[1][0] = 2 * (x*y + z*w); m[1][1] = 1 - 2 * (x*x + z*z); m[1][2] = 2 * (y*z - x*w);
+		m[2][0] = 2 * (x*z - y*w); m[2][1] = 2 * (y*z + x*w); m[2][2] = 1 - 2 * (x*x + y*y);
+	}
+
+	// Public Methods
     std::string SMat3::ToString(void) const
     {
         std::ostringstream M00, M01, M02,

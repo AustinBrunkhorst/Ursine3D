@@ -15,6 +15,7 @@
 
 #include "SVec4.h"
 #include "SVec3.h"
+#include "SQuat.h"
 
 namespace Ursine
 {
@@ -44,6 +45,9 @@ namespace Ursine
         static void invert(const float *src, float *dest);
         // TODO: static void invertFast(const float *src, float *dest);
 
+		void setRotation(const SQuat &quat);
+		void setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
+
     public:
         // Generic Constructors
         SMat4(void);
@@ -51,21 +55,18 @@ namespace Ursine
 		explicit SMat4(const Mat4 &other);
         explicit SMat4(const SMat3 &mat);
 		explicit SMat4(const Mat3 &mat);
+		explicit SMat4(const SQuat &quat);
+		SMat4(const SQuat &quat, const SVec3 &trans);
         SMat4(const SVec4 &r0, const SVec4 &r1, const SVec4 &r2, const SVec4 &r3);
         SMat4(float m00, float m01, float m02, float m03,
-             float m10, float m11, float m12, float m13,
-             float m20, float m21, float m22, float m23,
-             float m30, float m31, float m32, float m33);
+              float m10, float m11, float m12, float m13,
+              float m20, float m21, float m22, float m23,
+              float m30, float m31, float m32, float m33);
 
         // 3D Homogenous Constructors
         SMat4(float x_scalar, float y_scalar, float z_scalar); // Scalar
         explicit SMat4(const SVec3 &translation); // Translation
-        // TODO: Add rotation of 3D points and vectors (Euler and quat?)
-        // TODO: Add TRS constructor
-
-        // Non Homogenous Transformations
-        // TODO: Perspective Projection
-        // TODO: Orthogonal Projection
+		SMat4(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
 
         // Properties
         static const SMat4 &Identity(void);
@@ -81,8 +82,7 @@ namespace Ursine
         void Translate(const SVec3 &translation);
         static void Translate(SMat4 &mat, const SVec3 &translation);
 
-        // TODO: Rotation(SQuat &quat)
-        // TODO: static Rotation(SQuat &quat)
+		void Rotation(const SQuat &quat);
 
         void RotationZXY(float z_angle, float x_angle, float y_angle);
         static void RotationZXY(SMat4 &mat, float z_angle, float x_angle, float y_angle);
@@ -93,8 +93,7 @@ namespace Ursine
         void Scale(const SVec4 &scale);
         static void Scale(SMat4 &mat, const SVec4 &scale);
 
-        // TODO: void TRS(const SVec3 &translation, SQuat &rotation, const SVec3 &scale);
-        // TODO: static void TRS(const SVec3 &translation, SQuat &rotation, const SVec3 &scale);
+		void TRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
 
         void Transpose(void);
         static void Transpose(SMat4 &mat);
@@ -143,6 +142,35 @@ namespace Ursine
         SVec3 TransformPointAndDiv(const SVec3 &point) const;
         void TransformPointAndDivInplace(SVec3 &point) const;
 
+		// Identical to D3DXMatrixOrthoLH, except transposed to account for Matrix * vector convention
+		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205346(v=vs.85).aspx
+		void D3DOrthoProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		
+		// Identical to D3DXMatrixOrthoRH, except transposed to account for Matrix * vector convention
+		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205349(v=vs.85).aspx
+		void D3DOrthoProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+		// Identical to D3DXMatrixPerspectiveLH, except transposed to account for Matrix * vector convention
+		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205352(v=vs.85).aspx
+		void D3DPerspProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+		// Identical to D3DXMatrixPerspectiveRH, except transposed to account for Matrix * vector convention
+		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205355(v=vs.85).aspx
+		void D3DPerspProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+		// Computes a left-handed orthographic projection matrix for OpenGL
+		void OGLOrthoProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+		// Computes a right-handed orthographic projection matrix for OpenGL
+		void OGLOrthoProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+		// Computes a left-handed perspective projection matrix for OpenGL
+		void OGLPerspProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+		// Computes a right-handed perspective projection matrix for OpenGL
+		void OGLPerspProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+
         std::string ToString(void) const;
 
         // Accessors
@@ -163,6 +191,8 @@ namespace Ursine
         const SMat4 &operator-=(const SMat4 &rhs);
         bool operator==(const SMat4 &rhs) const;
         bool operator!=(const SMat4 &rhs) const;
+
+		ALLOW_ALIGNED_ALLOC(16)
     };
 }
 

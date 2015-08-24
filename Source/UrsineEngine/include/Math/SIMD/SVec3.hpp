@@ -295,6 +295,18 @@ namespace Ursine
         return vec / Length(vec);
     }
 
+	INLINE void SVec3::Orthonormalize(SVec3 &vec1, SVec3 &vec2, SVec3 &vec3)
+    {
+		vec1.Normalize();
+		vec2 -= ProjectToNorm(vec2, vec1);
+
+		vec2.Normalize();
+		vec3 -= ProjectToNorm(vec3, vec1);
+		vec3 -= ProjectToNorm(vec3, vec2);
+
+		vec3.Normalize();
+    }
+
     INLINE void SVec3::Reflect(const SVec3 &normal)
     {
         // i - (2 * n * dot(i, n))
@@ -309,6 +321,18 @@ namespace Ursine
         float k = 2.0f * Dot(vec, normal);
 
         return vec - (normal * k);
+    }
+
+	INLINE void SVec3::ProjectToNorm(const SVec3 &normal)
+    {
+		// TODO: assume(IsNormalized())
+		*this = normal * Dot(normal);
+    }
+
+	INLINE SVec3 SVec3::ProjectToNorm(const SVec3 &direction, const SVec3 &normal)
+    {
+		// TODO: assume(direction.IsNormalized())
+		return normal * direction.Dot(normal);
     }
 
     // Accessors

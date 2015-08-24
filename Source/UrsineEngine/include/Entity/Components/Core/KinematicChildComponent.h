@@ -35,6 +35,8 @@ namespace Ursine
             ~KinematicChild(void);
 
             void OnInitialize(void) override;
+
+			ALLOW_ALIGNED_ALLOC(16)
         };
     }
 }

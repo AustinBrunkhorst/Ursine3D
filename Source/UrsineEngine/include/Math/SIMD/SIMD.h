@@ -13,7 +13,18 @@
 
 #pragma once
 
-// TODO: Aligned allocation
+// Aligned allocation
+
+// aligned allocation
+#define ALLOW_ALIGNED_ALLOC(alignment) \
+void* operator new(size_t sz) \
+{ \
+	return _aligned_malloc(sz, alignment); \
+} \
+void operator delete(void* ptr) \
+{ \
+	_aligned_free(ptr); \
+}
 
 // SIMD setup for Windows environment
 #ifdef _WIN32

@@ -228,6 +228,8 @@ namespace Ursine
             // hierarchy, and forwards the specified args.
             template<class ComponentType, typename... Args>
             void ApplyChildren(void (ComponentType::*)(Args...), Args&&...);
+
+			ALLOW_ALIGNED_ALLOC(16)
         };
     }
 }

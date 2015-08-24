@@ -18,10 +18,11 @@
 
 namespace Ursine
 {
-    // Forward Declaration
+	// Forward Declaration
     class SMat4;
 	class Mat4;
 	class Mat3;
+	class SQuat;
 
     ALIGNED16(class) SMat3
     {
@@ -46,6 +47,7 @@ namespace Ursine
 		explicit SMat3(const Mat3 &other);
         explicit SMat3(const SMat4 &mat);
 		explicit SMat3(const Mat4 &mat);
+		explicit SMat3(const SQuat &quat);
         SMat3(const SVec3 &r0, const SVec3 &r1, const SVec3 &r2);
         SMat3(float m00, float m01, float m02,
              float m10, float m11, float m12,
@@ -81,6 +83,8 @@ namespace Ursine
         void RotationZXY(float z_angle, float x_angle, float y_angle);
         static void RotationZXY(SMat3 &mat, float z_angle, float x_angle, float y_angle);
 
+		SVec3 GetRotationXYZ(void) const;
+
         void Scale(const Vec2 &scale);
         static void Scale(SMat3 &mat, const Vec2 &scale);
 
@@ -89,6 +93,8 @@ namespace Ursine
 
         void TRS(const Vec2 &translation, float radians, const Vec2 &scale);
         static void TRS(SMat3 &mat, const Vec2 &translation, float radians, const Vec2 &scale);
+
+		void SetLookAt(const SVec3& targetDirection, const SVec3& localForward, const SVec3& localUp, const SVec3& worldUp);
 
         void Transpose(void);
         static void Transpose(SMat3 &mat);
@@ -105,6 +111,9 @@ namespace Ursine
 
         float Determinant(void) const;
         static float Determinant(const SMat3 &mat);
+
+		// Normalize all columns and make them orthogonal to eachother
+		void Orthonormalize(void);
 
         void SetRows(const SVec3 &r0, const SVec3 &r1, const SVec3 &r2);
         void GetRows(SVec3 &r0, SVec3 &r1, SVec3 &r2) const;
@@ -153,6 +162,8 @@ namespace Ursine
         const SMat3 &operator-=(const SMat3 &rhs);
         bool operator==(const SMat3 &rhs) const;
         bool operator!=(const SMat3 &rhs) const;
+
+		ALLOW_ALIGNED_ALLOC(16)
     };
 }
 

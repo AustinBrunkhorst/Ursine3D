@@ -132,6 +132,8 @@ namespace Ursine
         const SVec4 &operator*=(float rhs);
         const SVec4 &operator/=(const SVec4 &rhs);
         const SVec4 &operator/=(float rhs);
+
+		ALLOW_ALIGNED_ALLOC(16)
     };
 }
 

@@ -15,7 +15,50 @@
 
 namespace Ursine
 {
-    // Constructors
+	void SQuat::set(const SMat3& m)
+	{
+		// The rotation matrix is of form: (Eric Lengyel's Mathematics for 3D Game Programming and Computer Graphics 2nd ed., p. 92)
+		// 1 - 2y^2 - 2z^2        2xy - 2wz            2xz + 2wy
+		//    2xy + 2wz        1 - 2x^2 - 2z^2         2yz - 2wx
+		//    2xz - 2wy           2yz + 2wx         1 - 2x^2 - 2y^2
+
+		float r = m(0, 0) + m(1, 1) + m(2, 2); // The element w is easiest picked up as a sum of the diagonals.
+											   // Above, r == 3 - 4(x^2+y^2+z^2) == 4(1-x^2-y^2-z^2) - 1 == 4*w^2 - 1.
+		if (r > 0) // In this case, |w| > 1/2.
+		{
+			w = sqrt(r + 1.f) * 0.5f; // We have two choices for the sign of w, arbitrarily pick the positive.
+			float inv4w = 1.f / (4.f * w);
+			x = (m(2, 1) - m(1, 2)) * inv4w;
+			y = (m(0, 2) - m(2, 0)) * inv4w;
+			z = (m(1, 0) - m(0, 1)) * inv4w;
+		}
+		else if (m(0, 0) > m(1, 1) && m(0, 0) > m(2, 2)) // If |q.x| is larger than |q.y| and |q.z|, extract it first. This gives
+		{                                                // best stability, and we know below x can't be zero.
+			x = sqrt(1.f + m(0, 0) - m(1, 1) - m(2, 2)) * 0.5f; // We have two choices for the sign of x, arbitrarily pick the positive.
+			const float x4 = 1.f / (4.f * x);
+			y = (m(0, 1) + m(1, 0)) * x4;
+			z = (m(0, 2) + m(2, 0)) * x4;
+			w = (m(2, 1) - m(1, 2)) * x4;
+		}
+		else if (m(1, 1) > m(2, 2)) // |q.y| is larger than |q.x| and |q.z|
+		{
+			y = sqrt(1.f + m(1, 1) - m(0, 0) - m(2, 2)) * 0.5f; // We have two choices for the sign of y, arbitrarily pick the positive.
+			const float y4 = 1.f / (4.f * y);
+			x = (m(0, 1) + m(1, 0)) * y4;
+			z = (m(1, 2) + m(2, 1)) * y4;
+			w = (m(0, 2) - m(2, 0)) * y4;
+		}
+		else // |q.z| is larger than |q.x| or |q.y|
+		{
+			z = sqrt(1.f + m(2, 2) - m(0, 0) - m(1, 1)) * 0.5f; // We have two choices for the sign of z, arbitrarily pick the positive.
+			const float z4 = 1.f / (4.f * z);
+			x = (m(0, 2) + m(2, 0)) * z4;
+			y = (m(1, 2) + m(2, 1)) * z4;
+			w = (m(1, 0) - m(0, 1)) * z4;
+		}
+	}
+
+	// Constructors
     SQuat::SQuat(float angle, const SVec3 &axis)
     {
         SetAngleAxis(angle, axis);
@@ -26,13 +69,18 @@ namespace Ursine
         SetFromTo(from, to);
     }
 
-    SQuat::SQuat(float z_angle, float x_angle, float y_angle)
+    SQuat::SQuat(float x_angle, float y_angle, float z_angle)
     {
-        SetEulerAngles(z_angle, x_angle, y_angle);
+        SetEulerAngles(SVec3(x_angle, y_angle, z_angle));
     }
 
     SQuat::SQuat(float X, float Y, float Z, float W)
         : SVec4(X, Y, Z, W) { }
+
+	SQuat::SQuat(const SMat3 &rotationMatrix)
+	{
+		set(rotationMatrix);
+	}
 
     // Properties
     const SQuat &SQuat::Identity(void)
@@ -123,11 +171,11 @@ namespace Ursine
     }
 
 
-    void SQuat::SetEulerAngles(float z_angle, float x_angle, float y_angle)
+    void SQuat::SetEulerAngles(const SVec3 &euler)
     {
-        float half_y = y_angle * 0.5f;
-        float half_x = x_angle * 0.5f;
-        float half_z = z_angle * 0.5f;
+        float half_y = euler.Y() * 0.5f;
+        float half_x = euler.X() * 0.5f;
+        float half_z = euler.Z() * 0.5f;
         float cos_y = cos(half_y);
         float sin_y = sin(half_y);
         float cos_x = cos(half_x);
@@ -141,7 +189,12 @@ namespace Ursine
             cos_z * cos_x * cos_y + sin_z * sin_x * sin_y);
     }
 
-    void SQuat::SetFromTo(const SVec3& from, const SVec3& to)
+	SVec3 SQuat::GetEulerAngles() const
+	{
+		return SMat3(*this).GetRotationXYZ();
+	}
+
+	void SQuat::SetFromTo(const SVec3& from, const SVec3& to)
     {
         // Source: http://lolengine.net/blog/2013/09/18/beautiful-maths-quaternion-from-vectors
 
@@ -229,25 +282,57 @@ namespace Ursine
             result = *this;
     }
 
-    SVec3 SQuat::Rotate(const SVec3 &vec)
+	SVec3 SQuat::SlerpVector(const SVec3& from, const SVec3& to, float t)
+	{
+		if (t <= 0.0f)
+			return from;
+		if (t >= 1.0f)
+			return to;
+
+		SQuat q(from, to);
+
+		q.Slerp(Identity(), t, q);
+
+		return q * from;
+	}
+
+	SVec3 SQuat::Rotate(const SVec3 &vec)
     {
-        SQuat q = *this * vec;
+		SVec3 result;
 
-        q *= GetInverse();
+		Rotate(vec, result);
 
-        return SVec3(q.X(), q.Y(), q.Z());
+		return result;
     }
 
     void SQuat::Rotate(const SVec3& vec, SVec3& result)
     {
-        SQuat q = *this * vec;
+		SVec3 qv(x, y, z);
 
-        q *= GetInverse();
-
-        result.Set(q.X(), q.Y(), q.Z());
+		result = (2.0f * w) * (SVec3::Cross(qv, vec));
+		result += ((w * w) - qv.Dot(qv)) * vec;
+		result += (2.0f * (qv.Dot(vec))) * qv;
     }
 
-    // Operators
+	void SQuat::SetLookAt(const SVec3& targetDirection, const SVec3& localForward, const SVec3& localUp, const SVec3& worldUp)
+	{
+		SMat3 mat;
+
+		mat.SetLookAt(targetDirection, localForward, localUp, worldUp);
+
+		set(mat);
+	}
+
+	SQuat SQuat::LookAt(const SVec3& targetDirection, const SVec3& localForward, const SVec3& localUp, const SVec3& worldUp)
+	{
+		SMat3 mat;
+
+		mat.SetLookAt(targetDirection, localForward, localUp, worldUp);
+
+		return SQuat(mat);
+	}
+
+	// Operators
     const SQuat &SQuat::operator*=(const SQuat &q)
     {
         Set(
@@ -270,14 +355,9 @@ namespace Ursine
         );
     }
 
-    SQuat SQuat::operator*(const SVec3& rhs)
+    SVec3 SQuat::operator*(const SVec3& rhs)
     {
-        return SQuat(
-            w * rhs.X() + y * rhs.Z() - z * rhs.Y(),
-            w * rhs.Y() + z * rhs.X() - x * rhs.Z(),
-            w * rhs.Z() + x * rhs.Y() - y * rhs.X(),
-           -x * rhs.X() - y * rhs.Y() - z * rhs.Z()
-        );
+		return Rotate(rhs);
     }
 
 }
