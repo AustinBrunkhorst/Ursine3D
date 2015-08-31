@@ -5,26 +5,26 @@
 namespace Ursine
 {
     Vertex::Vertex(void)
-        : position(Vector2::Zero())
+        : position(Vec2::Zero())
         , color(Color::White)
-        , uv(Vector2::Zero()) { }
+        , uv(Vec2::Zero()) { }
 
-    Vertex::Vertex(const Vector2 &position)
+    Vertex::Vertex(const Vec2 &position)
         : position(position)
         , color(Color::White)
-        , uv(Vector2::Zero()) { }
+        , uv(Vec2::Zero()) { }
 
-    Vertex::Vertex(const Vector2 &position, const Color &color)
+    Vertex::Vertex(const Vec2 &position, const Color &color)
         : position(position)
         , color(color)
-        , uv(Vector2::Zero()) { }
+        , uv(Vec2::Zero()) { }
 
-    Vertex::Vertex(const Vector2 &position, const Vector2 &uv)
+    Vertex::Vertex(const Vec2 &position, const Vec2 &uv)
         : position(position)
         , color(Color::White)
         , uv(uv) { }
 
-    Vertex::Vertex(const Vector2 &position, const Color &color, const Vector2 &uv)
+    Vertex::Vertex(const Vec2 &position, const Color &color, const Vec2 &uv)
         : position(position)
         , color(color)
         , uv(uv) { }

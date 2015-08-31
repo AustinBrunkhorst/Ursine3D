@@ -11,7 +11,7 @@ namespace Ursine
         auto emitter_scale = emitter_trans->ScaleWC();
 
         particle_trans->SetScaleWC({
-            emitter_scale * Vector3(_randomizer.GetValue(), _randomizer.GetValue(), 0)
+            emitter_scale * SVec3(_randomizer.GetValue(), _randomizer.GetValue(), 0)
         });
     }
 }

@@ -68,8 +68,8 @@ namespace Ursine
 
             auto &size = gWindowManager->GetSize();
 
-            bounds.width = static_cast<int>(size.x);
-            bounds.height = static_cast<int>(size.y);
+            bounds.width = static_cast<int>(size.X());
+            bounds.height = static_cast<int>(size.Y());
 
             return true;
         }

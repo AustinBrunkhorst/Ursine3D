@@ -34,6 +34,6 @@ namespace Ursine
         ECS::Entity *other;
 
         // the point at which they have collided
-        Vector2 at;
+        Vec2 at;
     };
 }

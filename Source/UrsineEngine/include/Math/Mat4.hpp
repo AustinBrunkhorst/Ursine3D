@@ -87,6 +87,8 @@ namespace Ursine
 
     INLINE void Mat4::invert(const float *src, float *dest)
     {
+<<<<<<< HEAD
+=======
 #ifdef USE_SSE
         // Source: ftp://download.intel.com/design/PentiumIII/sml/24504301.pdf
 
@@ -182,6 +184,7 @@ namespace Ursine
         _mm_storel_pi((__m64*)(dest + 12), minor3);
         _mm_storeh_pi((__m64*)(dest + 14), minor3);
 #else
+>>>>>>> master
         // Source: http://www.mesa3d.org/
         const float *m = src;
 
@@ -308,7 +311,10 @@ namespace Ursine
 
         for (i = 0; i < 16; i++)
             dest[i] = inv[i] * det;
+<<<<<<< HEAD
+=======
 #endif
+>>>>>>> master
     }
 
     // TODO: Implement this

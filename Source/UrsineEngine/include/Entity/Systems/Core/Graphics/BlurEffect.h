@@ -16,7 +16,7 @@ namespace Ursine
             GLuint _buffer_vbo;
 
 
-            Matrix3 _world_to_ndc;
+            SMat3 _world_to_ndc;
 
         public:
             BlurEffect(void);
@@ -25,6 +25,8 @@ namespace Ursine
             void Bind(World *world) override;
             void Render(Renderable *renderable) override;
             void UnBind(void) override;
+
+			ALLOW_ALIGNED_ALLOC(16)
         };
     }
 }

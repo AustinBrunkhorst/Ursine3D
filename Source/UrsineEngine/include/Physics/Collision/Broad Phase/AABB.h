@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "Vector2.h"
+#include "Vec2.h"
 #include "RayCast.h"
 
 namespace Ursine
@@ -25,14 +25,14 @@ namespace Ursine
     {
     public:
         AABB(void);
-        AABB(const Vector2 &low_bound, const Vector2 &up_bound);
+        AABB(const Vec2 &low_bound, const Vec2 &up_bound);
         AABB(const AABB &other);
 
         ~AABB(void);
 
-        inline Vector2 GetSize(void) const;
+        inline Vec2 GetSize(void) const;
 
-        inline Vector2 GetCenter(void) const;
+        inline Vec2 GetCenter(void) const;
 
         inline float GetPerimeter(void) const;
 
@@ -51,9 +51,9 @@ namespace Ursine
         bool RayCast(RayCastOutput &output, const RayCastInput &input);
 
         // lower vertex
-        Vector2 low_bound;
+        Vec2 low_bound;
         // upper vertex
-        Vector2 up_bound;
+        Vec2 up_bound;
     };
 }
 

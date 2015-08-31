@@ -18,7 +18,7 @@
 
 #include "AnimationEvent.h"
 
-#include "Vector2.h"
+#include "Vec2.h"
 
 #include "JsonSerializer.h"
 
@@ -47,7 +47,7 @@ namespace Ursine
         uint32 _frames_per_line;
 
         // size of each frame
-        Vector2 _frame_size;
+        Vec2 _frame_size;
 
         // duration elapsed in the current frame (proportional to frame_duration)
         float _frame_elapsed;
@@ -56,10 +56,10 @@ namespace Ursine
         float _frame_duration;
 
         // used to normalize frame size and offset to UV coordinates
-        Vector2 _uv_scale;
+        Vec2 _uv_scale;
 
         // offset in uv coordinates
-        Vector2 _uv_offset;
+        Vec2 _uv_offset;
 
         // determines if the animation loops
         bool _loop;
@@ -89,8 +89,8 @@ namespace Ursine
 
         Texture2D *GetTexture(void);
 
-        const Vector2 &GetUVOffset(void);
-        const Vector2 &GetUVScale(void);
+        const Vec2 &GetUVOffset(void);
+        const Vec2 &GetUVScale(void);
 
         URSINE_TODO("Remove this");
         bool FrameChanged(void) const;

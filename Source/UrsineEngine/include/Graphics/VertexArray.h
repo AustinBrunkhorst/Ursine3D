@@ -13,7 +13,7 @@ namespace Ursine
 
         std::vector<Vertex> m_vertices;
 
-        void Draw(RenderTarget &target, RenderState state) const override;
+        void Draw(RenderTarget &target, const RenderState &state) const override;
 
     public:
         VertexArray(void);

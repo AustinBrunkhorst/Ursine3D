@@ -167,7 +167,7 @@ namespace Ursine
         }
 
         void RigidBody2D::computeMassOfColliders(Colliders &colliders,
-            Vector2 &center, float &area, float &inertia, unsigned &collider_count)
+            Vec2 &center, float &area, float &inertia, unsigned &collider_count)
         {
             for (auto &collider : colliders)
             {
@@ -190,7 +190,7 @@ namespace Ursine
             }
 
             // calculate the centroid and moment of inertia
-            Vector2 center(0.0f, 0.0f); // centroid
+            Vec2 center(0.0f, 0.0f); // centroid
             float area = 0.0f;
             float inertia = 0.0f;
             unsigned collider_count = 0;
@@ -215,12 +215,12 @@ namespace Ursine
             }
         }
 
-        Vector2 RigidBody2D::GetCenterOfMass()
+        Vec2 RigidBody2D::GetCenterOfMass()
         {
             return _transform->Root()->MatrixNoScalar().TransformPoint(_c_mass);
         }
 
-        void RigidBody2D::AddForce(const Vector2 &force)
+        void RigidBody2D::AddForce(const Vec2 &force)
         {
             if (body_type != BODY_TYPE_DYNAMIC || _pos_locked)
                 return;
@@ -229,26 +229,26 @@ namespace Ursine
             _force += force;
 
             // check for infinite values
-            if (!Math::IsFiniteNumber(_force.x))
-                _force.x = 0.0f;
-            if (!Math::IsFiniteNumber(_force.y))
-                _force.y = 0.0f;
+            if (!Math::IsFiniteNumber(_force.X()))
+                _force.X() = 0.0f;
+            if (!Math::IsFiniteNumber(_force.Y()))
+                _force.Y() = 0.0f;
         }
 
-        void RigidBody2D::AddForceAtPosition(const Vector2 &force, const Vector2 &position)
+        void RigidBody2D::AddForceAtPosition(const Vec2 &force, const Vec2 &position)
         {
             if (body_type != BODY_TYPE_DYNAMIC)
                 return;
 
             AddForce(force);
 
-            Vector2 com = GetCenterOfMass();
+            Vec2 com = GetCenterOfMass();
 
             // create torque based on the given position
-            AddTorque(Vector2::Cross(position - com, force));
+            AddTorque(Vec2::Cross(position - com, force));
         }
 
-        void RigidBody2D::AddLinearImpulse(const Vector2 &impulse)
+        void RigidBody2D::AddLinearImpulse(const Vec2 &impulse)
         {
             if (body_type != BODY_TYPE_DYNAMIC || _pos_locked)
                 return;
@@ -257,17 +257,17 @@ namespace Ursine
             SetVelocity(_velocity + _inv_mass * impulse);
         }
 
-        void RigidBody2D::AddLinearImpulseAtPosition(const Vector2 &impulse, const Vector2 &position)
+        void RigidBody2D::AddLinearImpulseAtPosition(const Vec2 &impulse, const Vec2 &position)
         {
             if (body_type != BODY_TYPE_DYNAMIC)
                 return;
 
             SetVelocity(_velocity + _inv_mass * impulse);
 
-            Vector2 com = GetCenterOfMass();
+            Vec2 com = GetCenterOfMass();
 
             SetAngularVelocity(
-                _angular_velocity + _inv_inertia * Vector2::Cross(position - com, impulse)
+                _angular_velocity + _inv_inertia * Vec2::Cross(position - com, impulse)
             );
         }
 
@@ -291,7 +291,7 @@ namespace Ursine
                 _torque = 0.0f;
         }
 
-        void RigidBody2D::AddAcceleration(const Vector2 &acceleration)
+        void RigidBody2D::AddAcceleration(const Vec2 &acceleration)
         {
             if (body_type != BODY_TYPE_DYNAMIC || _pos_locked)
                 return;
@@ -311,44 +311,44 @@ namespace Ursine
             ComputeMass();
         }
 
-        void RigidBody2D::SetVelocity(const Vector2 &velocity)
+        void RigidBody2D::SetVelocity(const Vec2 &velocity)
         {
             if (body_type == BODY_TYPE_STATIC || _pos_locked)
                 return;
 
             _velocity = {
-                Math::Clamp(velocity.x, -_vel_cap, _vel_cap),
-                Math::Clamp(velocity.y, -_vel_cap, _vel_cap)
+                Math::Clamp(velocity.X(), -_vel_cap, _vel_cap),
+                Math::Clamp(velocity.Y(), -_vel_cap, _vel_cap)
             };
         }
 
-        void RigidBody2D::AddVelocity(const Vector2 &velocity)
+        void RigidBody2D::AddVelocity(const Vec2 &velocity)
         {
             if (body_type == BODY_TYPE_STATIC || _pos_locked)
                 return;
 
             _velocity = {
-                Math::Clamp(_velocity.x + velocity.x, -_vel_cap, _vel_cap),
-                Math::Clamp(_velocity.y + velocity.y, -_vel_cap, _vel_cap)
+                Math::Clamp(_velocity.X() + velocity.X(), -_vel_cap, _vel_cap),
+                Math::Clamp(_velocity.Y() + velocity.Y(), -_vel_cap, _vel_cap)
             };
         }
 
-        Vector2 RigidBody2D::GetVelocity(void)
+        Vec2 RigidBody2D::GetVelocity(void)
         {
             return _velocity;
         }
 
-        void RigidBody2D::SetVelocityAtPosition(const Vector2 &velocity, const Vector2 &Position)
+        void RigidBody2D::SetVelocityAtPosition(const Vec2 &velocity, const Vec2 &Position)
         {
             if (body_type == BODY_TYPE_STATIC)
                 return;
 
             SetVelocity(velocity);
 
-            Vector2 com = GetCenterOfMass();
+            Vec2 com = GetCenterOfMass();
 
             SetAngularVelocity(
-                _inv_inertia * Vector2::Cross(Position - com, velocity)
+                _inv_inertia * Vec2::Cross(Position - com, velocity)
             );
         }
 
@@ -365,12 +365,12 @@ namespace Ursine
             sends_events = eventable;
         }
 
-        void RigidBody2D::Move(const Vector2 &position, const TimeSpan &time)
+        void RigidBody2D::Move(const Vec2 &position, const TimeSpan &time)
         {
-            Vector2 delta = position - Vector2(_transform->PositionWC());
-            Vector2 start;
+            Vec2 delta = position - Vec2(_transform->PositionWC());
+            Vec2 start;
             float seconds = static_cast<float>(time.Milliseconds()) / 1000.0f;
-            Vector2 target = 2 * delta * (1.0f / seconds);
+            Vec2 target = 2 * delta * (1.0f / seconds);
 
             // reset the velocity
             SetVelocity({ 0, 0 });

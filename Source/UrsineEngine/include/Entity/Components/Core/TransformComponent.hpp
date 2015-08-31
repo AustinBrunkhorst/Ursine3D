@@ -19,31 +19,31 @@ namespace Ursine
 {
     namespace ECS
     {
-        inline void Transform::SetRootPosition(const Vector3 &position)
+        inline void Transform::SetRootPosition(const SVec3 &position)
         {
             root->SetPosition(position);
         }
 
-        inline void Transform::AddRootPosition(const Vector3 &position)
+        inline void Transform::AddRootPosition(const SVec3 &position)
         {
             root->AddPosition(position);
         }
 
-        inline void Transform::SetPosition(const Vector3 &position)
+        inline void Transform::SetPosition(const SVec3 &position)
         {
             this->position = position;
 
             updateWorldPosition();
         }
 
-        inline void Transform::AddPosition(const Vector3 &position)
+        inline void Transform::AddPosition(const SVec3 &position)
         {
             this->position += position;
 
             updateWorldPosition();
         }
 
-        inline void Transform::SetPositionWC(const Vector3 &position)
+        inline void Transform::SetPositionWC(const SVec3 &position)
         {
             if (parent)
             {
@@ -57,17 +57,17 @@ namespace Ursine
             updateWorldPosition();
         }
 
-        inline const Vector3 &Transform::PositionWC(void) const
+        inline const SVec3 &Transform::PositionWC(void) const
         {
             return _world_position;
         }
 
-        inline const Vector3 &Transform::LocalPosition(void) const
+        inline const SVec3 &Transform::LocalPosition(void) const
         {
             return position;
         }
 
-        inline void Transform::AddPositionWC(const Vector3 &position)
+        inline void Transform::AddPositionWC(const SVec3 &position)
         {
             if (parent)
             {
@@ -81,36 +81,36 @@ namespace Ursine
             updateWorldPosition();
         }
 
-        inline void Transform::SetRootRotation(const Vector3 &rotation)
+        inline void Transform::SetRootRotation(const SVec3 &rotation)
         {
             root->SetRotation(rotation);
         }
 
-        inline void Transform::AddRootRotation(const Vector3 &rotation)
+        inline void Transform::AddRootRotation(const SVec3 &rotation)
         {
             root->AddRotation(rotation);
         }
 
-        inline void Transform::SetRotation(const Vector3 &rotation)
+        inline void Transform::SetRotation(const SVec3 &rotation)
         {
             this->rotation = rotation;
 
             updateWorldRotation();
         }
 
-        inline void Transform::AddRotation(const Vector3 &rotation)
+        inline void Transform::AddRotation(const SVec3 &rotation)
         {
             this->rotation += rotation;
 
             updateWorldRotation();
         }
 
-        inline const Matrix3 &Transform::RotationWC(void) const
+        inline const SMat3 &Transform::RotationWC(void) const
         {
             return _world_rotation;
         }
 
-        inline const Vector3 &Transform::LocalRotation(void) const
+        inline const SVec3 &Transform::LocalRotation(void) const
         {
             return rotation;
         }
@@ -127,14 +127,14 @@ namespace Ursine
 
         inline void Transform::SetRotation2D(float radians)
         {
-            rotation.z = radians;
+            rotation.Z() = radians;
 
             updateWorldRotation();
         }
 
         inline void Transform::AddRotation2D(float radians)
         {
-            rotation.z += radians;
+            rotation.Z() += radians;
 
             updateWorldRotation();
         }
@@ -144,48 +144,48 @@ namespace Ursine
             return root->LocalRotation2D();
         }
 
-        inline Vector2 Transform::RootRotation2DVec(void) const
+        inline Vec2 Transform::RootRotation2DVec(void) const
         {
-            return Vector2(cos(root->LocalRotation2D()),
+            return Vec2(cos(root->LocalRotation2D()),
                            sin(root->LocalRotation2D()));
         }
 
         inline float Transform::LocalRotation2D(void) const
         {
-            return rotation.z;
+            return rotation.Z();
         }
 
-        inline Vector2 Transform::LocalRotation2DVec(void) const
+        inline Vec2 Transform::LocalRotation2DVec(void) const
         {
-            return Vector2(cos(rotation.z),
-                           sin(rotation.z));
+            return Vec2(cos(rotation.Z()),
+                           sin(rotation.Z()));
         }
 
-        inline void Transform::SetRootScale(const Vector3 &scale)
+        inline void Transform::SetRootScale(const SVec3 &scale)
         {
             root->SetScale(scale);
         }
 
-        inline void Transform::AddRootScale(const Vector3 &scale)
+        inline void Transform::AddRootScale(const SVec3 &scale)
         {
             root->AddScale(scale);
         }
 
-        inline void Transform::SetScale(const Vector3 &scale)
+        inline void Transform::SetScale(const SVec3 &scale)
         {
             this->scale = scale;
 
             updateWorldScale();
         }
 
-        inline void Transform::AddScale(const Vector3 &scale)
+        inline void Transform::AddScale(const SVec3 &scale)
         {
             this->scale += scale;
 
             updateWorldScale();
         }
 
-        inline void Transform::SetScaleWC(const Vector3 &scale)
+        inline void Transform::SetScaleWC(const SVec3 &scale)
         {
             if (parent)
             {
@@ -199,7 +199,7 @@ namespace Ursine
             updateWorldScale();
         }
 
-        inline void Transform::AddScaleWC(const Vector3 &scale)
+        inline void Transform::AddScaleWC(const SVec3 &scale)
         {
             if (parent)
             {
@@ -213,32 +213,32 @@ namespace Ursine
             updateWorldScale();
         }
 
-        inline const Vector3 &Transform::ScaleWC(void) const
+        inline const SVec3 &Transform::ScaleWC(void) const
         {
             return _world_scale;
         }
 
-        inline const Vector3 &Transform::LocalScale(void) const
+        inline const SVec3 &Transform::LocalScale(void) const
         {
             return scale;
         }
 
-        inline Vector3 Transform::ToLocal(const Vector3 &point)
+        inline SVec3 Transform::ToLocal(const SVec3 &point)
         {
-            return WorldToLocalMatrix() * Vector3(point.x, point.y, 1.0f);
+            return WorldToLocalMatrix() * SVec3(point.X(), point.Y(), 1.0f);
         }
 
-        inline Vector2 Transform::ToLocal(const Vector2 &point)
+        inline Vec2 Transform::ToLocal(const Vec2 &point)
         {
             return WorldToLocalMatrix().TransformPoint(point);
         }
 
-        inline Vector3 Transform::ToWorld(const Vector3 &point)
+        inline SVec3 Transform::ToWorld(const SVec3 &point)
         {
             return Matrix() * point;
         }
 
-        inline Vector2 Transform::ToWorld(const Vector2 &point)
+        inline Vec2 Transform::ToWorld(const Vec2 &point)
         {
             return Matrix().TransformPoint(point);
         }

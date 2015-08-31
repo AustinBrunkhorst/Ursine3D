@@ -10,11 +10,11 @@ namespace Ursine
         WaveEffect::WaveEffect(void)
             : _time(0.0f)
         {
-            static const Vector2 quad[] = {
-                Vector2(-1, -1),
-                Vector2(1, -1),
-                Vector2(1, 1),
-                Vector2(-1, 1)
+            static const Vec2 quad[] = {
+                Vec2(-1, -1),
+                Vec2(1, -1),
+                Vec2(1, 1),
+                Vec2(-1, 1)
             };
 
             _shader.LoadFromFile("Assets/Shaders/simple_quad.vert", "Assets/Shaders/wave.frag");

@@ -19,7 +19,7 @@
 
 #include "JsonSerializer.h"
 
-#include "Vector2.h"
+#include "Vec2.h"
 
 namespace Ursine
 {
@@ -29,8 +29,8 @@ namespace Ursine
     {
         friend class ContentManager;
 
-        Vector2 m_size;
-        Vector2 m_realSize;
+        Vec2 m_size;
+        Vec2 m_realSize;
 
         TextureID m_id;
 
@@ -50,7 +50,7 @@ namespace Ursine
         TextureID GetID(void) const;
         uint64 GetUniqueID(void) const;
 
-        const Vector2 &GetSize(void) const;
+        const Vec2 &GetSize(void) const;
 
         TextureFilterMode GetFilterMode(void) const;
         void SetFilterMode(TextureFilterMode mode);

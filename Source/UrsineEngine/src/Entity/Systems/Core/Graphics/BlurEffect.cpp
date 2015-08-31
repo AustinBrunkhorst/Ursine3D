@@ -10,11 +10,11 @@ namespace Ursine
     {
         BlurEffect::BlurEffect(void)
         {
-            static const Vector2 quad[] = {
-                Vector2(-1, -1),
-                Vector2(1, -1),
-                Vector2(1, 1),
-                Vector2(-1, 1)
+            static const Vec2 quad[] = {
+                Vec2(-1, -1),
+                Vec2(1, -1),
+                Vec2(1, 1),
+                Vec2(-1, 1)
             };
 
             // compile shaders
@@ -76,11 +76,11 @@ namespace Ursine
         void BlurEffect::Render(Renderable *renderable)
         {
             auto texture = renderable->GetTexture();
-            auto width = texture->GetSize().x;
-            auto height = texture->GetSize().y;
+            auto width = texture->GetSize().X();
+            auto height = texture->GetSize().Y();
 
             // calculate our model view matrix
-            Matrix3 model_view = _world_to_ndc * renderable->GetOwner()->GetTransform()->Matrix();
+            SMat3 model_view = _world_to_ndc * renderable->GetOwner()->GetTransform()->Matrix();
 
             Shader::Bind(&_x_shader);
 

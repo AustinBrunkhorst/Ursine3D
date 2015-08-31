@@ -40,22 +40,22 @@ namespace Ursine
         updateMatrices();
     }
 
-    const Vector2 &Camera2D::GetPosition(void)
+    const Vec2 &Camera2D::GetPosition(void)
     {
         return m_position;
     }
 
-    void Camera2D::SetTargetPosition(const Vector2 &position)
+    void Camera2D::SetTargetPosition(const Vec2 &position)
     {
         m_positionTarget = position;
     }
 
-    const Vector2 &Camera2D::GetRawPosition(void)
+    const Vec2 &Camera2D::GetRawPosition(void)
     {
         return m_positionRaw;
     }
 
-    void Camera2D::SetRawPosition(const Vector2 &position)
+    void Camera2D::SetRawPosition(const Vec2 &position)
     {
         m_positionRaw = position;
 
@@ -71,7 +71,7 @@ namespace Ursine
     void Camera2D::SetZoom(float zoom)
     {
         if (m_zoomConstrained)
-            m_zoom = Math::Clamp(zoom, m_constraintsZoom.x, m_constraintsZoom.y);
+            m_zoom = Math::Clamp(zoom, m_constraintsZoom.X(), m_constraintsZoom.Y());
         else
             m_zoom = zoom;
     }
@@ -81,22 +81,22 @@ namespace Ursine
         m_zoomTarget = zoom;
     }
 
-    const Vector2 &Camera2D::GetMoveSpeed(void)
+    const Vec2 &Camera2D::GetMoveSpeed(void)
     {
         return m_speedMove;
     }
 
-    void Camera2D::SetMoveSpeed(const Vector2 &speed)
+    void Camera2D::SetMoveSpeed(const Vec2 &speed)
     {
         m_speedMove = speed;
     }
 
-    const Vector2 &Camera2D::GetShakeSpeed(void)
+    const Vec2 &Camera2D::GetShakeSpeed(void)
     {
         return m_speedShake;
     }
 
-    void Camera2D::SetShakeSpeed(const Vector2 &speed)
+    void Camera2D::SetShakeSpeed(const Vec2 &speed)
     {
         m_speedShake = speed;
     }
@@ -138,12 +138,12 @@ namespace Ursine
         m_boundsConstrained = constrained;
     }
 
-    const Vector2 &Camera2D::GetZoomConstraints(void)
+    const Vec2 &Camera2D::GetZoomConstraints(void)
     {
         return m_constraintsZoom;
     }
 
-    void Camera2D::SetZoomConstraints(const Vector2 &constraints)
+    void Camera2D::SetZoomConstraints(const Vec2 &constraints)
     {
         m_zoomConstrained = true;
         m_constraintsZoom = constraints;
@@ -154,74 +154,74 @@ namespace Ursine
         m_zoomConstrained = constrained;
     }
 
-    const Matrix3 &Camera2D::GetWorldToCamera(void)
+    const SMat3 &Camera2D::GetWorldToCamera(void)
     {
         return m_worldToCamera;
     }
 
-    const Matrix3 &Camera2D::GetCameraToNDC(void)
+    const SMat3 &Camera2D::GetCameraToNDC(void)
     {
         return m_cameraToNDC;
     }
 
-    const Matrix3 &Camera2D::GetWorldToNDC(void)
+    const SMat3 &Camera2D::GetWorldToNDC(void)
     {
         return m_worldToNDC;
     }
 
-    const Matrix3 &Camera2D::GetNDCToScreen(void)
+    const SMat3 &Camera2D::GetNDCToScreen(void)
     {
         return m_ndcToScreen;
     }
 
-    Vector2 Camera2D::WorldToCamera(const Vector2 &point)
+    Vec2 Camera2D::WorldToCamera(const Vec2 &point)
     {
         return GetWorldToCamera().TransformPoint(point);
     }
 
-    Vector2 Camera2D::CameraToWorld(const Vector2 &point)
+    Vec2 Camera2D::CameraToWorld(const Vec2 &point)
     {
-        return Matrix3::Inverse(GetWorldToCamera()).TransformPoint(point);
+        return SMat3::Inverse(GetWorldToCamera()).TransformPoint(point);
     }
 
-    Vector2 Camera2D::WorldToNDC(const Vector2 &point)
+    Vec2 Camera2D::WorldToNDC(const Vec2 &point)
     {
         return GetWorldToNDC().TransformPoint(point);
     }
 
-    Vector2 Camera2D::NDCToWorld(const Vector2 &point)
+    Vec2 Camera2D::NDCToWorld(const Vec2 &point)
     {
-        return Matrix3::Inverse(GetWorldToNDC()).TransformPoint(point);
+        return SMat3::Inverse(GetWorldToNDC()).TransformPoint(point);
     }
 
-    Vector2 Camera2D::NDCToScreen(const Vector2 &point)
+    Vec2 Camera2D::NDCToScreen(const Vec2 &point)
     {
         return m_ndcToScreen.TransformPoint(point);
     }
 
-    Vector2 Camera2D::ScreenToNDC(const Vector2 &point)
+    Vec2 Camera2D::ScreenToNDC(const Vec2 &point)
     {
-        return Matrix3::Inverse(GetNDCToScreen()).TransformPoint(point);
+        return SMat3::Inverse(GetNDCToScreen()).TransformPoint(point);
     }
 
-    Vector2 Camera2D::WorldToScreen(const Vector2 &point)
+    Vec2 Camera2D::WorldToScreen(const Vec2 &point)
     {
         return NDCToScreen(WorldToNDC(point));
     }
 
-    Vector2 Camera2D::ScreenToWorld(const Vector2 &point)
+    Vec2 Camera2D::ScreenToWorld(const Vec2 &point)
     {
-        return Matrix3::Inverse(GetNDCToScreen() * GetWorldToNDC()).TransformPoint(point);
+        return SMat3::Inverse(GetNDCToScreen() * GetWorldToNDC()).TransformPoint(point);
     }
 
     void Camera2D::updatePosition(void)
     {
         float shake_pi = m_shakeAnimation * Math::PI;
 
-        Vector2 shake
+        Vec2 shake
         {
-            cosf(m_speedShake.x * shake_pi) * m_shakeAmplitude,
-            sinf(m_speedShake.y * shake_pi) * m_shakeAmplitude * VERTICAL_SCALAR
+            cosf(m_speedShake.X() * shake_pi) * m_shakeAmplitude,
+            sinf(m_speedShake.Y() * shake_pi) * m_shakeAmplitude * VERTICAL_SCALAR
         };
 
         m_position = m_positionRaw + shake;
@@ -229,16 +229,16 @@ namespace Ursine
 
     void Camera2D::applyBoundConstraints(void)
     {
-        m_positionRaw.x = Math::Clamp(m_positionRaw.x, 
-            m_constraintsBounds.low_bound.x, m_constraintsBounds.up_bound.x);
+        m_positionRaw.X() = Math::Clamp(m_positionRaw.X(), 
+            m_constraintsBounds.low_bound.X(), m_constraintsBounds.up_bound.X());
 
-        m_positionRaw.y = Math::Clamp(m_positionRaw.y, 
-            m_constraintsBounds.low_bound.y, m_constraintsBounds.up_bound.y);
+        m_positionRaw.Y() = Math::Clamp(m_positionRaw.Y(), 
+            m_constraintsBounds.low_bound.Y(), m_constraintsBounds.up_bound.Y());
     }
 
     void Camera2D::applyZoomConstraints(void)
     {
-        m_zoom = Math::Clamp(m_zoom, m_constraintsZoom.x, m_constraintsZoom.y);
+        m_zoom = Math::Clamp(m_zoom, m_constraintsZoom.X(), m_constraintsZoom.Y());
     }
 
     void Camera2D::updateMatrices(void)
@@ -246,23 +246,23 @@ namespace Ursine
         m_worldToCamera.SetWorldToCamera(m_zoom, m_zoom, m_rotation, m_position);
 
         // update camera to ndc
-        if (m_viewportSize.x > m_viewportSize.y)
+        if (m_viewportSize.X() > m_viewportSize.Y())
         {
-            float aspect = m_viewportSize.x / m_viewportSize.y;
+            float aspect = m_viewportSize.X() / m_viewportSize.Y();
 
             m_cameraToNDC.SetColumns(
-                Vector3(2.0f, 0, 0),
-                Vector3(0, 2.0f * aspect, 0),
-                Vector3(0, 0, 1));
+                SVec3(2.0f, 0, 0),
+                SVec3(0, 2.0f * aspect, 0),
+                SVec3(0, 0, 1));
         }
         else
         {
-            float aspect = m_viewportSize.y / m_viewportSize.x;
+            float aspect = m_viewportSize.Y() / m_viewportSize.X();
 
             m_cameraToNDC.SetColumns(
-                Vector3(2.0f * aspect, 0, 0),
-                Vector3(0, 2.0f, 0),
-                Vector3(0, 0, 1));
+                SVec3(2.0f * aspect, 0, 0),
+                SVec3(0, 2.0f, 0),
+                SVec3(0, 0, 1));
         }
 
         // update world to ndc
@@ -270,8 +270,8 @@ namespace Ursine
 
         // update ndc to screen
         m_ndcToScreen.SetRows(
-            Vector3(m_viewportSize.x / 2.0f, 0, m_viewportSize.x / 2.0f),
-            Vector3(0, -m_viewportSize.y / 2.0f, m_viewportSize.y / 2.0f),
-            Vector3(0, 0, 1));
+            SVec3(m_viewportSize.X() / 2.0f, 0, m_viewportSize.X() / 2.0f),
+            SVec3(0, -m_viewportSize.Y() / 2.0f, m_viewportSize.Y() / 2.0f),
+            SVec3(0, 0, 1));
     }
 }

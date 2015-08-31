@@ -40,10 +40,10 @@ namespace Ursine
         virtual AABB TransformShape(ECS::Transform &transform) = 0;
 
         // return a support point in the specified direction
-        virtual Vector2 GetSupport(const Vector2 &direction) const = 0;
+        virtual Vec2 GetSupport(const Vec2 &direction) const = 0;
 
         // compute the mass of this shape
-        virtual void ComputeMass(ECS::Transform &transform, Vector2 &center,
+        virtual void ComputeMass(ECS::Transform &transform, Vec2 &center,
                                  float &area, float &inertia) = 0;
 
         virtual bool RayCast(RayCastOutput &output, const RayCastInput &input) = 0;

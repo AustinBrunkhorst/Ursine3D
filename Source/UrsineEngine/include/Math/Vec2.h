@@ -21,12 +21,24 @@ namespace Ursine
 {
     // Forward declaration
     class Vec3;
+<<<<<<< HEAD
+	class SVec3;
+	class Vec4;
+	class SVec4;
+=======
     class Vec4;
+>>>>>>> master
 
     class Vec2
     {
         friend class Vec3;
+<<<<<<< HEAD
+		friend class SVec3;
         friend class Vec4;
+		friend class SVec4;
+=======
+        friend class Vec4;
+>>>>>>> master
 
         float x, y;
 
@@ -37,6 +49,10 @@ namespace Ursine
         Vec2(float X, float Y);
         explicit Vec2(float value);
         explicit Vec2(const Vec3 &value);
+<<<<<<< HEAD
+		explicit Vec2(const SVec3 &value);
+=======
+>>>>>>> master
         
         // Properties
         static const Vec2 &Zero(void);
@@ -57,6 +73,11 @@ namespace Ursine
         static float Cross(const Vec2 &vec1, const Vec2 &vec2);
         static Vec2 Cross(float value, const Vec2 &vec);
 
+<<<<<<< HEAD
+		static Vec2 TripleProduct(const Vec2 &vec1, const Vec2 &vec2, const Vec2 &vec3);
+
+=======
+>>>>>>> master
         float Distance(const Vec2 &other) const;
         static float Distance(const Vec2 &vec1, const Vec2 &vec2);
 
@@ -130,3 +151,7 @@ namespace Ursine
 }
 
 #include "Vec2.hpp"
+<<<<<<< HEAD
+
+=======
+>>>>>>> master

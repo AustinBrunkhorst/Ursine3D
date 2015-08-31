@@ -28,13 +28,15 @@ namespace Ursine
             friend class KinematicChildSystem;
 
             // The last frames position
-            Vector3 _last_position;
+            SVec3 _last_position;
 
         public:
             KinematicChild(void);
             ~KinematicChild(void);
 
             void OnInitialize(void) override;
+
+			ALLOW_ALIGNED_ALLOC(16)
         };
     }
 }

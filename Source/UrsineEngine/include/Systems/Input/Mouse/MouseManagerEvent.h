@@ -4,7 +4,7 @@
 
 #include "MouseButton.h"
 
-#include "Vector2.h"
+#include "Vec2.h"
 
 namespace Ursine
 {
@@ -25,13 +25,13 @@ namespace Ursine
         MouseButton button;
 
         // Position of the mouse when this event occurs
-        Vector2 position;
+        Vec2 position;
 
         // Number of times this button was clicked. 
         // (1 is single click, 2 is double, etc)
         uint8 clicks;
 
-        MouseButtonArgs(bool state, MouseButton button, const Vector2 &position, uint8 clicks)
+        MouseButtonArgs(bool state, MouseButton button, const Vec2 &position, uint8 clicks)
             : state(state)
             , button(button)
             , position(position)
@@ -41,13 +41,13 @@ namespace Ursine
     struct MouseMoveArgs : public EventArgs
     {
         // New position of the mouse
-        Vector2 position;
+        Vec2 position;
 
         // Change in position of the mouse since 
         // last motion event or mouse update
-        Vector2 position_delta;
+        Vec2 position_delta;
 
-        MouseMoveArgs(const Vector2 &position, const Vector2 &position_delta)
+        MouseMoveArgs(const Vec2 &position, const Vec2 &position_delta)
             : position(position)
             , position_delta(position_delta) { }
     };
@@ -55,9 +55,9 @@ namespace Ursine
     struct MouseScrollArgs : public EventArgs
     {
         // Scroll wheel horizontal and vertical change
-        Vector2 delta;
+        Vec2 delta;
 
-        MouseScrollArgs(const Vector2 &delta)
+        MouseScrollArgs(const Vec2 &delta)
             : delta(delta) { }
     };
 }

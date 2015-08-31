@@ -17,8 +17,8 @@
 #include "AudioDataBaseClasses.h"
 
 
-const Ursine::Vector3 MAX_BOUNDS = Ursine::Vector3(2400, 2400, 400);
-const Ursine::Vector3 FMOD_MAX_BOUNDS = Ursine::Vector3(20, 20, 20);
+const Ursine::SVec3 MAX_BOUNDS = Ursine::SVec3(2400, 2400, 400);
+const Ursine::SVec3 FMOD_MAX_BOUNDS = Ursine::SVec3(20, 20, 20);
 namespace Ursine
 {
     static void setAttributesDefault(FMOD_3D_ATTRIBUTES &attributes)
@@ -169,12 +169,12 @@ namespace Ursine
         }
     }
 
-    void AudioEmitter::Set3DParameter(Vector3 const& listener, Vector3 const& emitter)
+    void AudioEmitter::Set3DParameter(SVec3 const& listener, SVec3 const& emitter)
     {
-        Vector3 dist = emitter - listener;
+        SVec3 dist = emitter - listener;
         dist = (dist / MAX_BOUNDS) * FMOD_MAX_BOUNDS;
 
-        _attributes.position = { dist.x, dist.y, dist.z };
+        _attributes.position = { dist.X(), dist.Y(), dist.Z() };
 
         if (_event._instance)
             FMODERRCHK(_event._instance->set3DAttributes(&_attributes));

@@ -40,19 +40,19 @@ namespace Ursine
 
         _state_current = SDL_GetMouseState(&x, &y);
 
-        Vector2 position(static_cast<float>(x), static_cast<float>(y));
+        Vec2 position(static_cast<float>(x), static_cast<float>(y));
 
         _position_delta = _position - position;
 
         _position = position;
     }
 
-    const Vector2 &MouseManager::GetPosition(void) const
+    const Vec2 &MouseManager::GetPosition(void) const
     {
         return _position;
     }
 
-    const Vector2 &MouseManager::GetPositionDelta(void) const
+    const Vec2 &MouseManager::GetPositionDelta(void) const
     {
         return _position_delta;
     }
@@ -95,7 +95,7 @@ namespace Ursine
 
         MouseButtonArgs e(true, 
             static_cast<MouseButton>(args->data->button.button), 
-            Vector2(static_cast<float>(args->data->button.x), static_cast<float>(args->data->button.y)),
+            Vec2(static_cast<float>(args->data->button.x), static_cast<float>(args->data->button.y)),
             args->data->button.clicks);
 
         Dispatch(MM_BUTTON_DOWN, &e);
@@ -107,7 +107,7 @@ namespace Ursine
 
         MouseButtonArgs e(false,
             static_cast<MouseButton>(args->data->button.button),
-            Vector2(static_cast<float>(args->data->button.x), static_cast<float>(args->data->button.y)),
+            Vec2(static_cast<float>(args->data->button.x), static_cast<float>(args->data->button.y)),
             args->data->button.clicks);
 
         Dispatch(MM_BUTTON_UP, &e);
@@ -118,8 +118,8 @@ namespace Ursine
         EVENT_ATTRS(Application, InternalApplicationArgs);
 
         MouseMoveArgs e(
-            Vector2(static_cast<float>(args->data->motion.x), static_cast<float>(args->data->motion.y)),
-            Vector2(static_cast<float>(args->data->motion.xrel), static_cast<float>(args->data->motion.yrel)));
+            Vec2(static_cast<float>(args->data->motion.x), static_cast<float>(args->data->motion.y)),
+            Vec2(static_cast<float>(args->data->motion.xrel), static_cast<float>(args->data->motion.yrel)));
 
         Dispatch(MM_MOVE, &e);
     }
@@ -129,7 +129,7 @@ namespace Ursine
         EVENT_ATTRS(Application, InternalApplicationArgs);
 
         MouseScrollArgs e(
-            Vector2(static_cast<float>(args->data->wheel.x), static_cast<float>(args->data->wheel.y)));
+            Vec2(static_cast<float>(args->data->wheel.x), static_cast<float>(args->data->wheel.y)));
 
         Dispatch(MM_SCROLL, &e);
     }

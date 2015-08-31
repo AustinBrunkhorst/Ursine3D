@@ -11,17 +11,36 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
+#pragma once
+
 #include "Vec3.h"
 #include "Vec2.h"
+#include "SMat3.h"
+=======
+#include "Vec3.h"
+#include "Vec2.h"
+>>>>>>> master
 
 namespace Ursine
 {
     // Forward Declaration
     class Mat4;
+<<<<<<< HEAD
+	class SMat4;
+	class SMat3;
+
+    class Mat3
+    {
+        friend class Mat4;
+		friend class SMat4;
+		friend class SMat3;
+=======
 
     ALIGNED16(class) Mat3
     {
         friend class Mat4;
+>>>>>>> master
 
         // Row Major
         // http://en.wikipedia.org/wiki/Row-major_order
@@ -37,7 +56,13 @@ namespace Ursine
         // Generic Constructors
         Mat3(void);
         Mat3(const Mat3 &other);
+<<<<<<< HEAD
+		explicit Mat3(const SMat3 &other);
         explicit Mat3(const Mat4 &mat);
+		explicit Mat3(const SMat4 &mat);
+=======
+        explicit Mat3(const Mat4 &mat);
+>>>>>>> master
         Mat3(const Vec3 &r0, const Vec3 &r1, const Vec3 &r2);
         Mat3(float m00, float m01, float m02,
              float m10, float m11, float m12,
@@ -122,6 +147,12 @@ namespace Ursine
         Vec2 TransformPointAndDiv(const Vec2 &point) const;
         void TransformPointAndDivInplace(Vec2 &point) const;
 
+<<<<<<< HEAD
+		// 2D camera matrix
+		void SetWorldToCamera(float width, float height, float rotation, const Vec2 &trans);
+
+=======
+>>>>>>> master
         std::string ToString(void) const;
 
         // Accessors

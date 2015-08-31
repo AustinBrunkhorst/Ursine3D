@@ -35,14 +35,14 @@ namespace Ursine
         Ellipse *Clone(void) const override;
 
         void Set(float rotation, 
-                    const Vector2 &dimensions,
-                    const Vector2 &position);
+                    const Vec2 &dimensions,
+                    const Vec2 &position);
 
         AABB TransformShape(ECS::Transform &transform) override;
 
-        Vector2 GetSupport(const Vector2 &direction) const override;
+        Vec2 GetSupport(const Vec2 &direction) const override;
 
-        void ComputeMass(ECS::Transform &transform, Vector2 &center,
+        void ComputeMass(ECS::Transform &transform, Vec2 &center,
                          float &area, float &inertia);
 
         bool RayCast(RayCastOutput &output, const RayCastInput &input);
@@ -50,8 +50,8 @@ namespace Ursine
     private:
         // rotation, width and hight, and position of the ellipse
         float _rotation;
-        Vector2 _dimensions;
-        Vector2 _position;
+        Vec2 _dimensions;
+        Vec2 _position;
 
         // stored cosine and sine of the rotation
         float _c, _s;

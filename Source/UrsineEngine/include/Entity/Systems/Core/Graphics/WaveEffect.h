@@ -11,7 +11,7 @@ namespace Ursine
         {
             Shader _shader;
 
-            Matrix3 _world_to_NDC;
+            SMat3 _world_to_NDC;
 
             GLuint _buffer_vao;
             GLuint _buffer_vbo;
@@ -25,6 +25,8 @@ namespace Ursine
             void Bind(World *world) override;
             void Render(Renderable *renderable) override;
             void UnBind(void) override;
+
+			ALLOW_ALIGNED_ALLOC(16)
         };
     }
 }

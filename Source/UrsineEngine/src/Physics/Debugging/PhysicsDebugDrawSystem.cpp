@@ -99,7 +99,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawColliders(const std::vector<Collider*> colliders, const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawColliders(const std::vector<Collider*> colliders, const SMat3 &mat)
         {
             for (auto collider : colliders)
             {
@@ -115,9 +115,9 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawPolygon(const Polygon &polygon, bool is_colliding, const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawPolygon(const Polygon &polygon, bool is_colliding, const SMat3 &mat)
         {
-            Vector2 temp[2];
+            Vec2 temp[2];
 
             for(auto edge : polygon.edges)
             {
@@ -129,19 +129,19 @@ namespace Ursine
                 else
                     glColor3f(1.0f, 1.0f, 1.0f);
 
-                glVertex2f(temp[0].x, temp[0].y);
-                glVertex2f(temp[1].x, temp[1].y);
+                glVertex2f(temp[0].X(), temp[0].Y());
+                glVertex2f(temp[1].X(), temp[1].Y());
 
-                Vector2 mid_p = temp[0] + ((temp[1] - temp[0]) / 2.0f);
-                Vector2 mid_plus_norm = mid_p + mat.TransformVector(0.5f * edge.norm);
+                Vec2 mid_p = temp[0] + ((temp[1] - temp[0]) / 2.0f);
+                Vec2 mid_plus_norm = mid_p + mat.TransformVector(0.5f * edge.norm);
 
                 glColor3f(0.0f, 1.0f, 0.0f);
-                glVertex2f(mid_p.x, mid_p.y);
-                glVertex2f(mid_plus_norm.x, mid_plus_norm.y);
+                glVertex2f(mid_p.X(), mid_p.Y());
+                glVertex2f(mid_plus_norm.X(), mid_plus_norm.Y());
             }
         }
 
-        void PhysicsDebugDrawer::drawEllipse(const Ellipse &ellipse, bool is_colliding, const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawEllipse(const Ellipse &ellipse, bool is_colliding, const SMat3 &mat)
         {
             static const float NUM_SEGMENTS = 30;
             static const float INC = Math::PI_2 / NUM_SEGMENTS;
@@ -152,47 +152,47 @@ namespace Ursine
                 glColor3f(1.0f, 1.0f, 1.0f);
 
             float theta = 0;
-            Vector2 position = ellipse. _position;
-            Vector2 temp[2];
+            Vec2 position = ellipse. _position;
+            Vec2 temp[2];
 
             for (int i = 0; i < NUM_SEGMENTS; ++i)
             {
-                temp[0] = mat.TransformPoint(ellipse.GetSupport(Matrix3(theta).TransformVector({ 1, 0 })));
+                temp[0] = mat.TransformPoint(ellipse.GetSupport(SMat3(theta).TransformVector({ 1, 0 })));
                 theta += INC;
-                temp[1] = mat.TransformPoint(ellipse.GetSupport(Matrix3(theta).TransformVector({ 1, 0 })));
+                temp[1] = mat.TransformPoint(ellipse.GetSupport(SMat3(theta).TransformVector({ 1, 0 })));
 
-                glVertex2f(temp[0].x, temp[0].y);
-                glVertex2f(temp[1].x, temp[1].y);
+                glVertex2f(temp[0].X(), temp[0].Y());
+                glVertex2f(temp[1].X(), temp[1].Y());
             }
 
             // draw from inside to outside
             temp[0] = mat.TransformPoint(position);
-            position = position + Matrix3(ellipse._rotation).TransformVector({ ellipse._dimensions.x, 0 });
+            position = position + SMat3(ellipse._rotation).TransformVector({ ellipse._dimensions.X(), 0 });
             temp[1] = mat.TransformPoint(position);
 
-            glVertex2f(temp[0].x, temp[0].y);
-            glVertex2f(temp[1].x, temp[1].y);
+            glVertex2f(temp[0].X(), temp[0].Y());
+            glVertex2f(temp[1].X(), temp[1].Y());
         }
 
-        void PhysicsDebugDrawer::drawContactPoints(const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawContactPoints(const SMat3 &mat)
         {
             glBegin(GL_POINTS);
 
             for (auto &point : _contacts)
             {
-                Vector2 new_point = mat.TransformPoint(point);
+                Vec2 new_point = mat.TransformPoint(point);
 
-                glVertex2f(new_point.x, new_point.y);
+                glVertex2f(new_point.X(), new_point.Y());
             }
         }
 
-        void PhysicsDebugDrawer::drawJoints(const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawJoints(const SMat3 &mat)
         {
             const float dist_line_len = 1.0f;
 
             glColor3f(0.0f, 1.0f, 0.0f);
 
-            Vector2 temp[6];
+            Vec2 temp[6];
 
             for (uint i = 0, size = _simulation->_joints.size(); i < size; ++i)
             {
@@ -203,18 +203,19 @@ namespace Ursine
                     temp[0] = mat.TransformPoint(joint->_trans_anchor[0]);
                     temp[1] = mat.TransformPoint(joint->_trans_anchor[1]);
 
-                    glVertex2f(temp[0].x, temp[0].y);
-                    glVertex2f(temp[1].x, temp[1].y);
+                    glVertex2f(temp[0].X(), temp[0].Y());
+                    glVertex2f(temp[1].X(), temp[1].Y());
 
                     temp[2] = joint->_trans_anchor[0];
                     temp[3] = joint->_trans_anchor[1];
 
-                    float distance = Vector2::Distance(temp[2], temp[3]);
+                    float distance = Vec2::Distance(temp[2], temp[3]);
 
                     if (distance > joint->_distance)
                     {
                         // draw the distance lines for the joint
-                        Vector2 dir = (temp[3] - temp[2]).Normalize();
+                        Vec2 dir = temp[3] - temp[2];
+						dir.Normalize();
 
                         float diff = distance - joint->_distance;
                         diff /= 2.0f;
@@ -223,19 +224,19 @@ namespace Ursine
                         temp[3] = temp[3] - (dir * diff);
 
                         // get the tangent vector
-                        dir = Vector2::Cross(dir, 1.0f);
+                        dir = Vec2::Cross(1.0f, dir);
 
                         temp[4] = mat.TransformPoint(temp[2] + (dir * dist_line_len));
                         temp[5] = mat.TransformPoint(temp[2] - (dir * dist_line_len));
 
-                        glVertex2f(temp[4].x, temp[4].y);
-                        glVertex2f(temp[5].x, temp[5].y);
+                        glVertex2f(temp[4].X(), temp[4].Y());
+                        glVertex2f(temp[5].X(), temp[5].Y());
 
                         temp[4] = mat.TransformPoint(temp[3] + (dir * dist_line_len));
                         temp[5] = mat.TransformPoint(temp[3] - (dir * dist_line_len));
 
-                        glVertex2f(temp[4].x, temp[4].y);
-                        glVertex2f(temp[5].x, temp[5].y);
+                        glVertex2f(temp[4].X(), temp[4].Y());
+                        glVertex2f(temp[5].X(), temp[5].Y());
                     }
 
                     continue;
@@ -245,33 +246,33 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawRays(const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawRays(const SMat3 &mat)
         {
             const float dt = _world->GetDelta();
             static const float normal_size = 1;
 
             glColor3f(0.0f, 0.4f, 1.0f);
 
-            Vector2 temp[3];
+            Vec2 temp[3];
 
             auto &ray = _rays.begin();
 
             while (ray != _rays.end())
             {
-                Vector2 dir = ray->input.p2 - ray->input.p1;
-                Vector2 end_p = ray->input.p1 + dir * ray->output.fraction;
+                Vec2 dir = ray->input.p2 - ray->input.p1;
+                Vec2 end_p = ray->input.p1 + dir * ray->output.fraction;
 
                 temp[0] = mat.TransformPoint(ray->input.p1);
                 temp[1] = mat.TransformPoint(end_p);
                 temp[2] = mat.TransformPoint(end_p + (ray->output.normal * normal_size));
 
                 glColor3f(0.0f, 0.4f, 1.0f);
-                glVertex2f(temp[0].x, temp[0].y);
-                glVertex2f(temp[1].x, temp[1].y);
+                glVertex2f(temp[0].X(), temp[0].Y());
+                glVertex2f(temp[1].X(), temp[1].Y());
 
                 glColor3f(1.0f, 1.0f, 1.0f);
-                glVertex2f(temp[1].x, temp[1].y);
-                glVertex2f(temp[2].x, temp[2].y);
+                glVertex2f(temp[1].X(), temp[1].Y());
+                glVertex2f(temp[2].X(), temp[2].Y());
 
                 ray->time += dt;
 
@@ -282,52 +283,52 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::drawAABB(const AABB &aabb, const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawAABB(const AABB &aabb, const SMat3 &mat)
         {
             // Draw the bounding box
-            const Vector2 &up_bound = aabb.up_bound;
-            const Vector2 &low_bound = aabb.low_bound;
+            const Vec2 &up_bound = aabb.up_bound;
+            const Vec2 &low_bound = aabb.low_bound;
             
-            Vector2 temp[4];
+            Vec2 temp[4];
             temp[0] = mat.TransformPoint(up_bound);
-            temp[1] = mat.TransformPoint({ up_bound.x, low_bound.y });
+            temp[1] = mat.TransformPoint({ up_bound.X(), low_bound.Y() });
             temp[2] = mat.TransformPoint(low_bound);
-            temp[3] = mat.TransformPoint({ low_bound.x, up_bound.y });
+            temp[3] = mat.TransformPoint({ low_bound.X(), up_bound.Y() });
 
             glColor3f(0.0f, 0.0f, 1.0f);
 
             for (int i = 0; i < 4; ++i)
             {
                 int j = i + 1 == 4 ? 0 : i + 1;
-                glVertex2f(temp[i].x, temp[i].y);
-                glVertex2f(temp[j].x, temp[j].y);
+                glVertex2f(temp[i].X(), temp[i].Y());
+                glVertex2f(temp[j].X(), temp[j].Y());
             }
         }
 
-        void PhysicsDebugDrawer::drawCenterOfMass(const Vector2 &COM, const Matrix3 &mat)
+        void PhysicsDebugDrawer::drawCenterOfMass(const Vec2 &COM, const SMat3 &mat)
         {
-            Vector2 temp_points[4] =
-            { mat.TransformPoint(COM + Vector2(0.2f, 0))
-            , mat.TransformPoint(COM - Vector2(0.2f, 0))
-            , mat.TransformPoint(COM + Vector2(0, 0.2f))
-            , mat.TransformPoint(COM - Vector2(0, 0.2f)) };
+            Vec2 temp_points[4] =
+            { mat.TransformPoint(COM + Vec2(0.2f, 0))
+            , mat.TransformPoint(COM - Vec2(0.2f, 0))
+            , mat.TransformPoint(COM + Vec2(0, 0.2f))
+            , mat.TransformPoint(COM - Vec2(0, 0.2f)) };
 
             glColor3f(0.0f, 0.0f, 1.0f);
             for (int i = 0; i < 4; ++i)
-                glVertex2f(temp_points[i].x, temp_points[i].y);
+                glVertex2f(temp_points[i].X(), temp_points[i].Y());
         }
 
         void PhysicsDebugDrawer::drawGrid(Camera2D &camera)
         {
-            Vector2 size = gWindowManager->GetSize();
-            Vector2 top_l = camera.ScreenToWorld({ 0, 0 }),
+            Vec2 size = gWindowManager->GetSize();
+            Vec2 top_l = camera.ScreenToWorld({ 0, 0 }),
                     bot_r = camera.ScreenToWorld(size);
-            const Matrix3 &matrix = camera.GetWorldToNDC();
+            const SMat3 &matrix = camera.GetWorldToNDC();
 
-            int min_x = (int)top_l.x,
-                max_x = (int)bot_r.x,
-                min_y = (int)bot_r.y,
-                max_y = (int)top_l.y;
+            int min_x = (int)top_l.X(),
+                max_x = (int)bot_r.X(),
+                min_y = (int)bot_r.Y(),
+                max_y = (int)top_l.Y();
 
 
             glColor3f(0.9f, 0.9f, 0.9f);
@@ -335,33 +336,33 @@ namespace Ursine
             glEnable(GL_LINE_SMOOTH);
 
 
-            Vector2 p0, p1;
-            Vector2 temp[2];
+            Vec2 p0, p1;
+            Vec2 temp[2];
 
-            p0.y = max_y + 1.0f; p1.y = min_y - 1.0f;
+            p0.Y() = max_y + 1.0f; p1.Y() = min_y - 1.0f;
 
             for (int i = min_x; i <= max_x; ++i)
             {
-                p0.x = p1.x = (float)i;
+                p0.X() = p1.X() = (float)i;
 
                 temp[0] = matrix.TransformPoint(p0);
                 temp[1] = matrix.TransformPoint(p1);
 
-                glVertex2f(temp[0].x, temp[0].y);
-                glVertex2f(temp[1].x, temp[1].y);
+                glVertex2f(temp[0].X(), temp[0].Y());
+                glVertex2f(temp[1].X(), temp[1].Y());
             }
 
-            p0.x = min_x - 1.0f; p1.x = max_x + 1.0f;
+            p0.X() = min_x - 1.0f; p1.X() = max_x + 1.0f;
 
             for (int i = min_y; i <= max_y; ++i)
             {
-                p0.y = p1.y = (float)i;
+                p0.Y() = p1.Y() = (float)i;
 
                 temp[0] = matrix.TransformPoint(p0);
                 temp[1] = matrix.TransformPoint(p1);
 
-                glVertex2f(temp[0].x, temp[0].y);
-                glVertex2f(temp[1].x, temp[1].y);
+                glVertex2f(temp[0].X(), temp[0].Y());
+                glVertex2f(temp[1].X(), temp[1].Y());
             }
 
             glColor3f(1.0f, 1.0f, 1.0f);
@@ -384,7 +385,7 @@ namespace Ursine
                 glBegin(GL_LINES);
                 glEnable(GL_LINE_SMOOTH);
 
-                const Matrix3 &matrix = _world->GetCamera().GetWorldToNDC();
+                const SMat3 &matrix = _world->GetCamera().GetWorldToNDC();
 
                 // draw rigid bodies
                 for (auto entity : _bodies)
@@ -430,7 +431,7 @@ namespace Ursine
             }
         }
 
-        void PhysicsDebugDrawer::addContactPoint(const Vector2 &point)
+        void PhysicsDebugDrawer::addContactPoint(const Vec2 &point)
         {
             //_contacts.push_back(point);
         }

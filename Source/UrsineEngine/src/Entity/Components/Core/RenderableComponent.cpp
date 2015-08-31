@@ -99,29 +99,29 @@ namespace Ursine
             this->tint = tint;
         }
 
-        const Vector2 &Renderable::GetUVOffset(void) const
+        const Vec2 &Renderable::GetUVOffset(void) const
         {
             return _uv_start;
         }
 
-        const Vector2 &Renderable::GetUVScale(void) const
+        const Vec2 &Renderable::GetUVScale(void) const
         {
             return _uv_scale;
         }
 
-        void Renderable::SetUVOffset(const Vector2 &offset)
+        void Renderable::SetUVOffset(const Vec2 &offset)
         {
             _uv_start = offset;
             _uv_end = offset + _uv_scale;
         }
 
-        void Renderable::SetUVScale(const Vector2 &scale)
+        void Renderable::SetUVScale(const Vec2 &scale)
         {
             _uv_scale = scale;
             _uv_end = _uv_start + scale;
         }
 
-        const Vector2 &Renderable::GetUVEnd(void)
+        const Vec2 &Renderable::GetUVEnd(void)
         {
             return _uv_end;
         }

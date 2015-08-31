@@ -92,12 +92,18 @@
 
 #include "UrsineMath.h"
 
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
+#include "Vec2.h"
+#include "Vec3.h"
+#include "Vec4.h"
+#include "Mat3.h"
+#include "Mat4.h"
 
-#include "Matrix3.h"
-#include "Matrix4.h"
+#include "SIMD.h"
+#include "SVec3.h"
+#include "SVec4.h"
+#include "SMat3.h"
+#include "SMat4.h"
+#include "SQuat.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics Components

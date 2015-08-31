@@ -11,6 +11,6 @@ namespace Ursine
     public:
         virtual ~Drawable(void) { }
 
-        virtual void Draw(RenderTarget &target, RenderState states) const = 0;
+        virtual void Draw(RenderTarget &target, const RenderState &states) const = 0;
     };
 }

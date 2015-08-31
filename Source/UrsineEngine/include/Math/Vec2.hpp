@@ -16,8 +16,13 @@ namespace Ursine
         , y(value) { }
 
     INLINE Vec2::Vec2(const Vec2 &value)
+<<<<<<< HEAD
+        : x(value.X())
+        , y(value.Y()) { }
+=======
         : x(value.x)
         , y(value.y) { }
+>>>>>>> master
 
     // Properties
     INLINE const Vec2 &Vec2::Zero(void)
@@ -116,14 +121,31 @@ namespace Ursine
 
     INLINE float Vec2::Cross(const Vec2 &vec1, const Vec2 &vec2)
     {
+<<<<<<< HEAD
+        return vec1.X() * vec2.Y() - vec1.Y() * vec2.X();
+=======
         return vec1.x * vec2.y - vec1.y * vec2.x;
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::Cross(float value, const Vec2 &vec)
     {
+<<<<<<< HEAD
+        return{ -value * vec.Y(), value * vec.X() };
+    }
+
+	INLINE Vec2 Vec2::TripleProduct(const Vec2 &vec1, const Vec2 &vec2, const Vec2 &vec3)
+	{
+		// shortcut for triple cross product
+		// (A x B) x C == B * A.Dot(C) - C * A.Dot(B)
+		return (vec2 * Dot(vec1, vec3)) - (vec3 * Dot(vec1, vec2));
+	}
+
+=======
         return{ -value * vec.y, value * vec.x };
     }
 
+>>>>>>> master
     INLINE float Vec2::Distance(const Vec2 &other) const
     {
         return Distance(*this, other);
@@ -141,7 +163,11 @@ namespace Ursine
 
     INLINE float Vec2::DistanceSquared(const Vec2 &vec1, const Vec2 &vec2)
     {
+<<<<<<< HEAD
+        float a = vec1.X() - vec2.X(), b = vec1.Y() - vec2.Y();
+=======
         float a = vec1.x - vec2.x, b = vec1.y - vec2.y;
+>>>>>>> master
 
         return a * a + b * b;
     }
@@ -153,7 +179,11 @@ namespace Ursine
 
     INLINE float Vec2::Dot(const Vec2 &vec1, const Vec2 &vec2)
     {
+<<<<<<< HEAD
+        return vec1.X() * vec2.X() + vec1.Y() * vec2.Y();
+=======
         return vec1.x * vec2.x + vec1.y * vec2.y;
+>>>>>>> master
     }
 
     INLINE float Vec2::Length(void) const
@@ -174,7 +204,11 @@ namespace Ursine
 
     INLINE float Vec2::LengthSquared(const Vec2 &vec)
     {
+<<<<<<< HEAD
+        return vec.X() * vec.X() + vec.Y() * vec.Y();
+=======
         return vec.x * vec.x + vec.y * vec.y;
+>>>>>>> master
     }
 
     INLINE float Vec2::Angle(void) const
@@ -184,7 +218,11 @@ namespace Ursine
 
     INLINE float Vec2::Angle(const Vec2 &vec)
     {
+<<<<<<< HEAD
+        float angle = atan2f(vec.Y(), vec.X());
+=======
         float angle = atan2f(vec.y, vec.x);
+>>>>>>> master
 
         angle = Math::Wrap(angle, 0.0f, Math::PI_2);
 
@@ -203,29 +241,49 @@ namespace Ursine
 
     INLINE void Vec2::Max(const Vec2 &other)
     {
+<<<<<<< HEAD
+        x = Math::Max(x, other.X());
+        y = Math::Max(y, other.Y());
+=======
         x = Math::Max(x, other.x);
         y = Math::Max(y, other.y);
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::Max(const Vec2 &vec1, const Vec2 &vec2)
     {
         return{
+<<<<<<< HEAD
+            Math::Max(vec1.X(), vec2.X()),
+            Math::Max(vec1.Y(), vec2.Y())
+=======
             Math::Max(vec1.x, vec2.x),
             Math::Max(vec1.y, vec2.y)
+>>>>>>> master
         };
     }
 
     INLINE void Vec2::Min(const Vec2 &other)
     {
+<<<<<<< HEAD
+        x = Math::Min(x, other.X());
+        y = Math::Min(y, other.Y());
+=======
         x = Math::Min(x, other.x);
         y = Math::Min(y, other.y);
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::Min(const Vec2 &vec1, const Vec2 &vec2)
     {
         return{
+<<<<<<< HEAD
+            Math::Min(vec1.X(), vec2.X()),
+            Math::Min(vec1.Y(), vec2.Y())
+=======
             Math::Min(vec1.x, vec2.x),
             Math::Min(vec1.y, vec2.y)
+>>>>>>> master
         };
     }
 
@@ -245,7 +303,11 @@ namespace Ursine
         float len = vec.Length();
 
         if (len != 0.0f)
+<<<<<<< HEAD
+            return{ vec.X() / len, vec.Y() / len };
+=======
             return{ vec.x / len, vec.y / len };
+>>>>>>> master
 
         return vec;
     }
@@ -289,7 +351,11 @@ namespace Ursine
     // Operators
     INLINE bool Vec2::operator==(const Vec2 &rhs) const
     {
+<<<<<<< HEAD
+        return Math::IsEqual(x, rhs.X()) && Math::IsEqual(y, rhs.Y());
+=======
         return Math::IsEqual(x, rhs.x) && Math::IsEqual(y, rhs.y);
+>>>>>>> master
     }
 
     INLINE bool Vec2::operator!=(const Vec2 &rhs) const
@@ -299,7 +365,11 @@ namespace Ursine
 
     INLINE Vec2 Vec2::operator+(const Vec2 &rhs) const
     {
+<<<<<<< HEAD
+        return{ x + rhs.X(), y + rhs.Y() };
+=======
         return{ x + rhs.x, y + rhs.y };
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::operator-(void) const
@@ -309,12 +379,20 @@ namespace Ursine
 
     INLINE Vec2 Vec2::operator-(const Vec2 &rhs) const
     {
+<<<<<<< HEAD
+        return{ x - rhs.X(), y - rhs.Y() };
+=======
         return{ x - rhs.x, y - rhs.y };
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::operator*(const Vec2 &rhs) const
     {
+<<<<<<< HEAD
+        return{ x * rhs.X(), y * rhs.Y() };
+=======
         return{ x * rhs.x, y * rhs.y };
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::operator*(float rhs) const
@@ -324,12 +402,20 @@ namespace Ursine
 
     INLINE Vec2 operator*(float lhs, const Vec2 &rhs)
     {
+<<<<<<< HEAD
+        return{ rhs.X() * lhs, rhs.Y() * lhs };
+=======
         return{ rhs.x * lhs, rhs.y * lhs };
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::operator/(const Vec2 &rhs) const
     {
+<<<<<<< HEAD
+        return{ x / rhs.X(), y / rhs.Y() };
+=======
         return{ x / rhs.x, y / rhs.y };
+>>>>>>> master
     }
 
     INLINE Vec2 Vec2::operator/(float rhs) const
@@ -341,32 +427,52 @@ namespace Ursine
 
     INLINE const Vec2 &Vec2::operator=(const Vec2 &rhs)
     {
+<<<<<<< HEAD
+        x = rhs.X();
+        y = rhs.Y();
+=======
         x = rhs.x;
         y = rhs.y;
+>>>>>>> master
 
         return *this;
     }
 
     INLINE const Vec2 &Vec2::operator+=(const Vec2 &rhs)
     {
+<<<<<<< HEAD
+        x += rhs.X();
+        y += rhs.Y();
+=======
         x += rhs.x;
         y += rhs.y;
+>>>>>>> master
 
         return *this;
     }
 
     INLINE const Vec2 &Vec2::operator-=(const Vec2 &rhs)
     {
+<<<<<<< HEAD
+        x -= rhs.X();
+        y -= rhs.Y();
+=======
         x -= rhs.x;
         y -= rhs.y;
+>>>>>>> master
 
         return *this;
     }
 
     INLINE const Vec2 &Vec2::operator*=(const Vec2 &rhs)
     {
+<<<<<<< HEAD
+        x *= rhs.X();
+        y *= rhs.Y();
+=======
         x *= rhs.x;
         y *= rhs.y;
+>>>>>>> master
 
         return *this;
     }
@@ -381,8 +487,13 @@ namespace Ursine
 
     INLINE const Vec2 &Vec2::operator/=(const Vec2 &rhs)
     {
+<<<<<<< HEAD
+        x /= rhs.X();
+        y /= rhs.Y();
+=======
         x /= rhs.x;
         y /= rhs.y;
+>>>>>>> master
 
         return *this;
     }

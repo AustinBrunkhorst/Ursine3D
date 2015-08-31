@@ -105,7 +105,7 @@ namespace Ursine
             // since vertices are transformed, 
             // we must use an identity transform to render them
             if (!m_cache.useVertexCache)
-                applyTransform( Matrix3::Identity( ) );
+                applyTransform( SMat3::Identity( ) );
         }
         else
         {
@@ -217,7 +217,7 @@ namespace Ursine
         // apply the default state values
         
         applyBlendMode( BlendAlpha );
-        applyTransform( Matrix3::Identity() );
+        applyTransform( SMat3::Identity() );
 
         applyTexture( nullptr );
         
@@ -270,7 +270,7 @@ namespace Ursine
         m_cache.lastBlendMode = mode;
     }
 
-    void RenderTarget::applyTransform(const Matrix3 &transform)
+    void RenderTarget::applyTransform(const SMat3 &transform)
     {
         glLoadMatrixf( transform.GetFloatPtr( ) );
     }

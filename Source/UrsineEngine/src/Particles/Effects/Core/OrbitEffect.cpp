@@ -10,8 +10,8 @@ namespace Ursine
         auto trans = particle->GetTransform();
         auto emitter_trans = GetEmitter()->GetOwner()->GetTransform();
 
-        auto center = emitter_trans->PositionWC();
-        float scale_x = emitter_trans->ScaleWC().x;
+        Vec3 center = emitter_trans->PositionWC();
+        float scale_x = emitter_trans->ScaleWC().X();
 
         float start = scale_x * _start.GetValue(),
               middle = scale_x * _middle.GetValue(),
@@ -40,8 +40,8 @@ namespace Ursine
             float radius = data->GetRadius();
 
             trans->SetPositionWC({
-                center.x + cos(t) * radius,
-                center.y + sin(t) * radius,
+                center.X() + cos(t) * radius,
+                center.Y() + sin(t) * radius,
                 0
             });
         };
@@ -53,8 +53,8 @@ namespace Ursine
 
         // set initial position
         trans->SetPositionWC({
-            center.x + cos(start_radians) * data->GetRadius(),
-            center.y + sin(start_radians) * data->GetRadius(),
+            center.X() + cos(start_radians) * data->GetRadius(),
+            center.Y() + sin(start_radians) * data->GetRadius(),
             0
         });
 

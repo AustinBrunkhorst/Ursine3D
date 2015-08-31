@@ -58,7 +58,7 @@ namespace Ursine
         gGamepadManager->Dispatch( GP_BUTTON_UP, &e );
     }
 
-    void VirtualGamepad::SetStickLeft(const Vector2 &left) const
+    void VirtualGamepad::SetStickLeft(const Vec2 &left) const
     {
         auto gamepad = gGamepadManager->getVirtualGamepad( m_index );
 
@@ -67,7 +67,7 @@ namespace Ursine
         gamepad->state.m_sticksCurrent.setLeft( left );
     }
 
-    void VirtualGamepad::SetStickRight(const Vector2 &right) const
+    void VirtualGamepad::SetStickRight(const Vec2 &right) const
     {
         auto gamepad = gGamepadManager->getVirtualGamepad( m_index );
 

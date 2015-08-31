@@ -18,10 +18,10 @@ namespace Ursine
         uint32 _state_current;
 
         // position of the mouse
-        Vector2 _position;
+        Vec2 _position;
 
         // change in position of the mouse since the last frame
-        Vector2 _position_delta;
+        Vec2 _position_delta;
 
         void onButtonDown(EVENT_HANDLER(Application));
         void onButtonUp(EVENT_HANDLER(Application));
@@ -36,8 +36,8 @@ namespace Ursine
 
         void Update(void) override;
 
-        const Vector2 &GetPosition(void) const;
-        const Vector2 &GetPositionDelta(void) const;
+        const Vec2 &GetPosition(void) const;
+        const Vec2 &GetPositionDelta(void) const;
 
         bool IsButtonDown(MouseButton button) const;
         bool IsButtonUp(MouseButton button) const;

@@ -11,17 +11,35 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
+#pragma once
+
+=======
+>>>>>>> master
 #include "Vec4.h"
 #include "Vec3.h"
 
 namespace Ursine
 {
+<<<<<<< HEAD
+	// Forward Declaration
+	class Mat3;
+	class SMat3;
+	class SMat4;
+
+    class Mat4
+    {
+        friend class Mat3;
+		friend class SMat3;
+		friend class SMat4;
+=======
     // Forward Declaration
     class Mat3;
 
     ALIGNED16(class) Mat4
     {
         friend class Mat3;
+>>>>>>> master
 
         // Row Major
         // http://en.wikipedia.org/wiki/Row-major_order
@@ -42,7 +60,13 @@ namespace Ursine
         // Generic Constructors
         Mat4(void);
         Mat4(const Mat4 &other);
+<<<<<<< HEAD
+		explicit Mat4(const SMat4 &other);
         explicit Mat4(const Mat3 &mat);
+		explicit Mat4(const SMat3 &mat);
+=======
+        explicit Mat4(const Mat3 &mat);
+>>>>>>> master
         Mat4(const Vec4 &r0, const Vec4 &r1, const Vec4 &r2, const Vec4 &r3);
         Mat4(float m00, float m01, float m02, float m03,
              float m10, float m11, float m12, float m13,
@@ -73,8 +97,13 @@ namespace Ursine
         void Translate(const Vec3 &translation);
         static void Translate(Mat4 &mat, const Vec3 &translation);
 
+<<<<<<< HEAD
+        // TODO: Rotation(SQuat &quat)
+        // TODO: static Rotation(SQuat &quat)
+=======
         // TODO: Rotation(Quat &quat)
         // TODO: static Rotation(Quat &quat)
+>>>>>>> master
 
         void RotationZXY(float z_angle, float x_angle, float y_angle);
         static void RotationZXY(Mat4 &mat, float z_angle, float x_angle, float y_angle);
@@ -85,8 +114,13 @@ namespace Ursine
         void Scale(const Vec4 &scale);
         static void Scale(Mat4 &mat, const Vec4 &scale);
 
+<<<<<<< HEAD
+        // TODO: void TRS(const Vec3 &translation, SQuat &rotation, const Vec3 &scale);
+        // TODO: static void TRS(const Vec3 &translation, SQuat &rotation, const Vec3 &scale);
+=======
         // TODO: void TRS(const Vec3 &translation, Quat &rotation, const Vec3 &scale);
         // TODO: static void TRS(const Vec3 &translation, Quat &rotation, const Vec3 &scale);
+>>>>>>> master
 
         void Transpose(void);
         static void Transpose(Mat4 &mat);
