@@ -11,7 +11,6 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-<<<<<<< HEAD
 #include "UrsinePrecompiled.h"
 
 namespace Ursine
@@ -21,15 +20,6 @@ namespace Ursine
 		, y(value.y) { }
 
     Vec2::Vec2(const SVec3 &value)
-=======
-#include "Vec2.h"
-#include "Vec3.h"
-#include <sstream>
-
-namespace Ursine
-{
-    Vec2::Vec2(const Vec3 &value)
->>>>>>> master
         : x(value.x)
         , y(value.y) { }
 

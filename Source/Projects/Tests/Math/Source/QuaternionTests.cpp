@@ -21,9 +21,27 @@ TEST_CASE("SQuat: Equality Operator")
 	REQUIRE( quat0 != quat5 );
 }
 
-TEST_CASE("SQuat: Conjugate")
+TEST_CASE("SQuat: Quaternion Multiplication")
 {
+	SQuat one(1.f, 0.f, 0.f, 0.f);
+	SQuat i(0.f, 1.f, 0.f, 0.f);
+	SQuat j(0.f, 0.f, 1.f, 0.f);
+	SQuat k(0.f, 0.f, 0.f, 1.f);
+
+	/*SQuat hi = i * i;
+	SQuat hii = -one;
+
+	REQUIRE(i * i == -one);
+	REQUIRE(j * j == -one);
+	REQUIRE(k * k == -one);
+	REQUIRE(i * j * k == -one);
 	
+	REQUIRE(i * j == k);
+	REQUIRE(j * i == -k);
+	REQUIRE(j * k == i);
+	REQUIRE(k * j == -i);
+	REQUIRE(k * i == j);
+	REQUIRE(i * k == -j);*/
 }
 
 
