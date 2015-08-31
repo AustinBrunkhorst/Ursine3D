@@ -433,6 +433,7 @@ namespace Ursine
         point.X() = inv_div * (m[0][0] * x + m[0][1] * y + m[0][2]);
         point.Y() = inv_div * (m[1][0] * x + m[1][1] * y + m[1][2]);
     }
+<<<<<<< HEAD
 
 	INLINE void Mat3::SetWorldToCamera(float width, float height, float rotation, const Vec2 &trans)
 	{
@@ -454,6 +455,8 @@ namespace Ursine
 		);
 	}
 
+=======
+>>>>>>> master
     // Accessors
     INLINE float &Mat3::operator()(uint row, uint column)
     {

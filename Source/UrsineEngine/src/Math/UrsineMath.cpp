@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "UrsinePrecompiled.h"
+#include "UrsineMath.h"
 
 namespace Ursine
 {

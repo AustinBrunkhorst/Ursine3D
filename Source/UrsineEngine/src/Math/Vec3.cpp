@@ -11,6 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 #include "UrsinePrecompiled.h"
 
 namespace Ursine
@@ -38,6 +39,35 @@ namespace Ursine
 			, y(value.Y())
 			, z(value.Z())
 	{ }
+=======
+#include "Vec3.h"
+#include "Vec2.h"
+#include "Vec4.h"
+#include "UrsineMath.h"
+#include <sstream>
+
+namespace Ursine
+{
+    Vec3::Vec3(const Vec2 &value, float Z)
+            : x(value.x)
+            , y(value.y)
+            , z(Z)
+    {
+#ifdef USE_SSE
+        w = 0.0f;
+#endif
+    }
+
+    Vec3::Vec3(const Vec4 &value)
+            : x(value.x)
+            , y(value.y)
+            , z(value.z)
+    {
+#ifdef USE_SSE
+        w = 0.0f;
+#endif
+    }
+>>>>>>> master
 
     // Public Methods
     void Vec3::Clean(void)

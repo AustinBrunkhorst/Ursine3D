@@ -11,16 +11,26 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 #include "UrsinePrecompiled.h"
+=======
+#include "Mat4.h"
+#include "Mat3.h"
+
+#include <sstream>
+>>>>>>> master
 
 namespace Ursine
 {
     // Constructors
+<<<<<<< HEAD
 	Mat4::Mat4(const SMat4 &other)
 	{
 		memcpy(m, other.m, sizeof(m));
 	}
 
+=======
+>>>>>>> master
     Mat4::Mat4(const Mat3 &mat)
     {
         Set(
@@ -31,6 +41,7 @@ namespace Ursine
         );
     }
 
+<<<<<<< HEAD
 	Mat4::Mat4(const SMat3 &mat)
 	{
 		Set(
@@ -41,6 +52,8 @@ namespace Ursine
 			);
 	}
 
+=======
+>>>>>>> master
     // Public Methods
     std::string Mat4::ToString(void) const
     {
