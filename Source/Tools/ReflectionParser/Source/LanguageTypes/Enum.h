@@ -1,0 +1,33 @@
+#pragma once
+
+#include "LanguageType.h"
+
+#include "LanguageTypes/Global.h"
+
+namespace language_types
+{
+    class Enum : public LanguageType
+    {
+    public:
+        struct Value
+        {
+            Value(Enum *parent, const Cursor &cursor);
+
+            std::string key;
+            std::string value;
+        };
+
+        friend struct Value;
+
+        Enum(const Cursor &cursor, const Namespace &currentNamespace);
+
+        static void LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace);
+
+    private:
+        std::string m_name;
+        std::string m_displayName;
+        std::string m_qualifiedName;
+
+        std::vector<Value> m_values;
+    };
+}

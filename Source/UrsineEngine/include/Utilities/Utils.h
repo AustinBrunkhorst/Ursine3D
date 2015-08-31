@@ -56,6 +56,11 @@ namespace Ursine
 
         inline int ASCIIHexToInt(char val);
 
+        void Join(
+            const std::vector<std::string> &input,
+            const std::string &joiner,
+            std::string &output);
+
         class NoCopy
         {
         protected:

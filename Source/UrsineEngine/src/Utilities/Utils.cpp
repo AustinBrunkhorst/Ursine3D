@@ -36,6 +36,20 @@ namespace Ursine
 {
     namespace Utils
     {
+        void Join(const std::vector<std::string> &input, const std::string &joiner, std::string &output)
+        {
+            // nothing to join
+            if (input.empty( ))
+                return;
+
+            // append element with joiner
+            for (size_t i = 0; i < input.size( ) - 1; ++i)
+                output += input[ i ] + joiner;
+
+            // append last element without joiner
+            output += input.back( );
+        }
+
         std::string MediaPath(const std::string &file, MediaType type)
         {
             switch (type)

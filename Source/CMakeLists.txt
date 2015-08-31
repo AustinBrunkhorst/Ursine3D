@@ -44,6 +44,8 @@ set(FMOD_DIR       "${ENGINE_DEP_DIR}/FMOD")
 
 set(BENCHMARKS_DIR "${ENGINE_DEP_DIR}/Benchmarks")
 
+set(CLANG_DIR "${ENGINE_DEP_DIR}/Clang")
+
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
 
@@ -58,6 +60,9 @@ find_package(FMOD REQUIRED
 
 find_package(BENCHMARKS REQUIRED
     HINTS ${BENCHMARKS_DIR})
+
+find_package(Clang REQUIRED
+    HINTS ${CLANG_DIR})
 
 # ------------------------------------------------------------------------------
 # Global Compiler Definitions
@@ -134,9 +139,17 @@ endif ()
 
 add_subdirectory("UrsineEngine")
 
-# all projects in Projects directory
+# all projects to build
 
-file(GLOB_RECURSE projects ${CMAKE_SOURCE_DIR}/Projects/CMakeLists.txt)
+set(projects "")
+
+# projects
+file(GLOB_RECURSE projects_files ${CMAKE_SOURCE_DIR}/Projects/CMakeLists.txt)
+set(projects ${projects} ${projects_files})
+
+# tools
+file(GLOB_RECURSE tools_files ${CMAKE_SOURCE_DIR}/Tools/CMakeLists.txt)
+set(projects ${projects} ${tools_files})
 
 foreach (project ${projects})
     get_filename_component(project_dir ${project} DIRECTORY)

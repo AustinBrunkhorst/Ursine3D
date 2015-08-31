@@ -11,11 +11,6 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "UrsinePrecompiled.h"
-
-#include "FileWatcher.h"
-
-
 template<typename T>
 unsigned FileWatcher<T>::m_watcherCount = 0;          // how many watchers are currently running
 
