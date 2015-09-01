@@ -26,5 +26,7 @@ protected:
     // generated in the reflection database
     bool m_constPtrTypeEnabled;
 
+    CX_CXXAccessSpecifier m_accessModifier;
+
 private:
 };

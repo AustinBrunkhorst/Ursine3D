@@ -34,5 +34,13 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
 
 void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace)
 {
-    URSINE_TODO( "..." );
+    for (auto &child : cursor.GetChildren( ))
+    {
+        if (child.GetKind( ) == CXCursor_EnumConstantDecl)
+        {
+            output.emplace_back( 
+                new Global( child, currentNamespace, nullptr ) 
+            );
+        }
+    }
 }

@@ -25,26 +25,42 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
         switch (child.GetKind( ))
         {
         case CXCursor_CXXBaseSpecifier:
-            m_baseClasses.emplace_back( child );
+            m_baseClasses.emplace_back( 
+                new BaseClass( child ) 
+            );
             break;
         // constructor
         case CXCursor_Constructor:
-            m_constructors.emplace_back( child, currentNamespace );
+            m_constructors.emplace_back( 
+                new Constructor( child, currentNamespace ) 
+            );
             break;
         // field
         case CXCursor_FieldDecl:
-            m_fields.emplace_back( child, currentNamespace );
+            m_fields.emplace_back( 
+                new Field( child, currentNamespace )
+            );
             break;
         // static field
         case CXCursor_VarDecl:
-            m_staticFields.emplace_back( child, Namespace( ), this );
+            m_staticFields.emplace_back( 
+                new Global( child, Namespace( ), this ) 
+            );
             break;
         // method / static method
         case CXCursor_CXXMethod:
             if (child.IsStatic( )) 
-                m_staticMethods.emplace_back( child, Namespace( ), this );
+            { 
+                m_staticMethods.emplace_back( 
+                    new Function( child, Namespace( ), this ) 
+                );
+            }
             else 
-                m_methods.emplace_back( child, currentNamespace );
+            { 
+                m_methods.emplace_back( 
+                    new Method( child, currentNamespace ) 
+                );
+            }
             break;
         default:
             break;
@@ -54,5 +70,21 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
 
 Class::~Class(void)
 {
+    for (auto *baseClass : m_baseClasses)
+        delete baseClass;
 
+    for (auto *constructor : m_constructors)
+        delete constructor;
+
+    for (auto *field : m_fields)
+        delete field;
+
+    for (auto *staticField : m_staticFields)
+        delete staticField;
+
+    for (auto *method : m_methods)
+        delete method;
+
+    for (auto *staticMethod : m_staticMethods)
+        delete staticMethod;
 }

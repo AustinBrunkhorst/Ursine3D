@@ -50,7 +50,7 @@ namespace ursine
 
             std::string message = "Please contact a developer with the debug trace.";
 
-            auto wdir = utils::GetWorkingDirectory();
+            auto wdir = utils::GetWorkingDirectory( );
 
             if (!wdir.empty())
             {
@@ -60,8 +60,15 @@ namespace ursine
                 message += URSINE_ERROR_LOG_FILE;
             }
 
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                "Unexpected Crash", message.c_str(), nullptr);
+        #ifdef PLATFORM_WINDOWS
+
+            MessageBox( nullptr, "Unexpected Crash", message.c_str( ), MB_OK | MB_ICONERROR );
+
+        #else
+
+            URSINE_TODO( "Add messageboxes for this platform" );
+
+        #endif
         }
 
         void Initialize(void)

@@ -14,7 +14,7 @@ endmacro ()
 
 macro (ursine_default_project project_name)
     ursine_parse_arguments(PROJ 
-        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON" 
+        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE" 
         "NO_ENGINE;PARSE_SOURCE_GROUPS;RECURSIVE_INCLUDES;INCLUDE_INSTALLER" 
         ${ARGN})
     
@@ -234,13 +234,23 @@ macro (ursine_default_project project_name)
     endforeach ()
 
     if (MSVC)
+        # default to console as subsytem if not defined
+        if ("${PROJ_SUBSYSTEM_DEBUG}" STREQUAL "")
+            set(PROJ_SUBSYSTEM_DEBUG "CONSOLE")
+        endif ()
+
+        # default to window as subsytem if not defined
+        if ("${PROJ_SUBSYSTEM_RELEASE}" STREQUAL "")
+            set(PROJ_SUBSYSTEM_RELEASE "WINDOWS")
+        endif ()
+
         set_target_properties(${project_name} PROPERTIES LINK_FLAGS_DEBUG
-            "/SUBSYSTEM:CONSOLE
+            "/SUBSYSTEM:${PROJ_SUBSYSTEM_DEBUG}
             /NODEFAULTLIB:msvcrt.lib"
         )
     
         set_target_properties(${project_name} PROPERTIES LINK_FLAGS_RELEASE
-            "/SUBSYSTEM:WINDOWS
+            "/SUBSYSTEM:${PROJ_SUBSYSTEM_RELEASE}
             /NODEFAULTLIB:msvcrtd.lib"
         )
     endif ()

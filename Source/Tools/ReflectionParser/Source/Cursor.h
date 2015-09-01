@@ -19,10 +19,11 @@ public:
     bool IsDefinition(void) const;
     bool IsStatic(void) const;
 
-    CX_CXXAccessSpecifier GetAccessSpecifier(void) const;
+    CX_CXXAccessSpecifier GetAccessModifier(void) const;
     CX_StorageClass GetStorageClass(void) const;
 
     CursorType GetType(void) const;
+    CursorType GetReturnType(void) const;
 
     List GetChildren(void) const;
     void VisitChildren(Visitor visitor, void *data = nullptr);

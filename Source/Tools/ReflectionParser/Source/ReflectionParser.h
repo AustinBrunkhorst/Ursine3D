@@ -16,6 +16,8 @@ public:
     ReflectionParser(const ReflectionOptions &options);
     ~ReflectionParser(void);
 
+    void Parse(void);
+
 private:
     ReflectionOptions m_options;
 

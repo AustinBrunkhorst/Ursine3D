@@ -26,13 +26,13 @@ private:
     std::string m_displayName;
     std::string m_qualifiedName;
 
-    std::vector<BaseClass> m_baseClasses;
+    std::vector<BaseClass*> m_baseClasses;
         
-    std::vector<Constructor> m_constructors;
+    std::vector<Constructor*> m_constructors;
 
-    std::vector<Field> m_fields;
-    std::vector<Global> m_staticFields;
+    std::vector<Field*> m_fields;
+    std::vector<Global*> m_staticFields;
 
-    std::vector<Method> m_methods;
-    std::vector<Function> m_staticMethods;
+    std::vector<Method*> m_methods;
+    std::vector<Function*> m_staticMethods;
 };

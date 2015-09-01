@@ -51,11 +51,11 @@ namespace ursine
 
         SDL_GetWindowSize( m_handle, &a, &b );
 
-        m_size.Set( a, b );
+        m_size.Set( static_cast<float>( a ), static_cast<float>( b ) );
 
         SDL_GetWindowPosition( m_handle, &a, &b );
 
-        m_location.Set( a, b );
+        m_location.Set( static_cast<float>( a ), static_cast<float>( b ) );
     }
 
     WindowManager::~WindowManager(void)
@@ -118,7 +118,7 @@ namespace ursine
 
         SDL_GetWindowPosition( m_handle, &x, &y );
 
-        m_location.Set( x, y );
+        m_location.Set( static_cast<float>( x ), static_cast<float>( y ) );
     }
 
     bool WindowManager::IsFocused(void) const
@@ -253,7 +253,7 @@ namespace ursine
                 int width = args->data->window.data1;
                 int height = args->data->window.data2;
 
-                m_size.Set( width, height );
+                m_size.Set( static_cast<float>( width ), static_cast<float>( height ) );
 
                 WindowResizeArgs e( width, height );
 
@@ -261,7 +261,10 @@ namespace ursine
             }
             case SDL_WINDOWEVENT_MOVED:
             {
-                m_location.Set( args->data->window.data1, args->data->window.data2 );
+                m_location.Set( 
+                    static_cast<float>( args->data->window.data1 ), 
+                    static_cast<float>( args->data->window.data2 )
+                );
             }
                 break;
             case SDL_WINDOWEVENT_FOCUS_GAINED:

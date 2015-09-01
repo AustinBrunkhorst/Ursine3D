@@ -21,8 +21,36 @@
 
 ReflectionParser::ReflectionParser(const ReflectionOptions &options)
     : m_options( options )
+    , m_index( nullptr )
+    , m_translationUnit( nullptr )
 {
-    m_index = clang_createIndex( true, false );
+   
+}
+
+ReflectionParser::~ReflectionParser(void)
+{
+    for (auto *klass : m_classes)
+        delete klass;
+
+    for (auto *global : m_globals)
+        delete global;
+
+    for (auto *globalFunction : m_globalFunctions)
+        delete globalFunction;
+
+    for (auto *enewm : m_enums)
+        delete enewm;
+
+    if (m_translationUnit)
+        clang_disposeTranslationUnit( m_translationUnit );
+
+    if (m_index)
+        clang_disposeIndex( m_index );
+}
+
+void ReflectionParser::Parse(void)
+{
+     m_index = clang_createIndex( true, false );
 
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
         m_index,
@@ -50,24 +78,6 @@ ReflectionParser::ReflectionParser(const ReflectionOptions &options)
     tempNamespace.clear( );
 
     buildEnums( cursor, tempNamespace );
-}
-
-ReflectionParser::~ReflectionParser(void)
-{
-    for (auto klass : m_classes)
-        delete klass;
-
-    for (auto global : m_globals)
-        delete global;
-
-    for (auto globalFunction : m_globalFunctions)
-        delete globalFunction;
-
-    for (auto enewm : m_enums)
-        delete enewm;
-
-    clang_disposeTranslationUnit( m_translationUnit );
-    clang_disposeIndex( m_index );
 }
 
 void ReflectionParser::buildClasses(const Cursor &cursor, Namespace &currentNamespace)

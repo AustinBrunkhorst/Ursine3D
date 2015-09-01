@@ -4,6 +4,7 @@
 
 Constructor::Constructor(const Cursor &cursor, const Namespace &currentNamespace)
     : LanguageType( cursor, currentNamespace )
+    , Invokable( cursor )
 {
         
 }
