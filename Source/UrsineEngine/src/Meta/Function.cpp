@@ -4,35 +4,38 @@
 
 namespace ursine
 {
-    Function::Function(void)
-        : Invokable( "INVALID" )
-        , m_parentType( { Type::Invalid } ) { }
-
-    const Function &Function::Invalid(void)
+    namespace meta
     {
-        static Function invalid;
+        Function::Function(void)
+            : Invokable( "INVALID" )
+            , m_parentType( { Type::Invalid } ) { }
 
-        return invalid;
-    }
+        const Function &Function::Invalid(void)
+        {
+            static Function invalid;
 
-    Type Function::GetParentType(void) const
-    {
-        return m_parentType;
-    }
+            return invalid;
+        }
 
-    bool Function::IsValid(void) const
-    {
-        return m_invoker != nullptr;
-    }
+        Type Function::GetParentType(void) const
+        {
+            return m_parentType;
+        }
 
-    Variant Function::InvokeVariadic(ArgumentList &arguments) const
-    {
-#ifdef CONFIG_DEBUG
+        bool Function::IsValid(void) const
+        {
+            return m_invoker != nullptr;
+        }
 
-        UAssert( IsValid( ), "Invalid function invocation" );
+        Variant Function::InvokeVariadic(ArgumentList &arguments) const
+        {
+        #ifdef CONFIG_DEBUG
 
-#endif
+            UAssert( IsValid( ), "Invalid function invocation" );
+
+        #endif
         
-        return m_invoker( arguments );
+            return m_invoker( arguments );
+        }
     }
 }

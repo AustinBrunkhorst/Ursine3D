@@ -9,32 +9,35 @@
 
 namespace ursine
 {
-    class Field : public MetaContainer
+    namespace meta
     {
-    public:
-        typedef std::function<Variant(const Variant &)> Getter;
-        typedef std::function<void(Variant &, const Variant &)> Setter;
+        class Field : public MetaContainer
+        {
+        public:
+            typedef std::function<Variant(const Variant &)> Getter;
+            typedef std::function<void(Variant &, const Variant &)> Setter;
 
-        Field(void);
-        Field(const std::string &name, Type type, Type classType, Getter getter, Setter setter);
+            Field(void);
+            Field(const std::string &name, Type type, Type classType, Getter getter, Setter setter);
 
-        bool IsValid(void) const;
-        bool IsReadOnly(void) const;
+            bool IsValid(void) const;
+            bool IsReadOnly(void) const;
 
-        Type GetType(void) const;
-        Type GetClassType(void) const;
+            Type GetType(void) const;
+            Type GetClassType(void) const;
 
-        const std::string &GetName(void) const;
+            const std::string &GetName(void) const;
 
-        Variant GetValue(Variant &instance) const;
-        void SetValue(Variant &instance, const Variant &value) const;
-    private:
-        Type m_type;
-        Type m_classType;
+            Variant GetValue(Variant &instance) const;
+            void SetValue(Variant &instance, const Variant &value) const;
+        private:
+            Type m_type;
+            Type m_classType;
 
-        std::string m_name;
+            std::string m_name;
 
-        Getter m_getter;
-        Setter m_setter;
-    };
+            Getter m_getter;
+            Setter m_setter;
+        };
+    }
 }

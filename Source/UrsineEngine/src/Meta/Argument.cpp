@@ -8,38 +8,41 @@
 
 namespace ursine
 {
-    Argument::Argument(void)
-        : m_type( { Type::Invalid } )
-        , m_data( nullptr ) { }
-
-    Argument::Argument(const Argument &rhs) 
-        : m_type( rhs.m_type )
-        , m_data( rhs.m_data ) { }
-
-    Argument::Argument(Variant &obj) 
-        : m_type( obj.GetType( ) )
-        , m_data( obj.getPtr( ) ) { }
-
-    Argument::Argument(const Variant &obj) 
-        : m_type( obj.GetType( ) )
-        , m_data( obj.getPtr( ) ) { }
-
-    Argument &Argument::operator=(const Argument &rhs) 
+    namespace meta
     {
-        m_data = rhs.m_data;
+        Argument::Argument(void)
+            : m_type( { Type::Invalid } )
+            , m_data( nullptr ) { }
 
-        const_cast<Type&>( m_type ) = rhs.m_type;
+        Argument::Argument(const Argument &rhs) 
+            : m_type( rhs.m_type )
+            , m_data( rhs.m_data ) { }
 
-        return *this;
-    }
+        Argument::Argument(Variant &obj) 
+            : m_type( obj.GetType( ) )
+            , m_data( obj.getPtr( ) ) { }
 
-    Type Argument::GetType(void) const
-    {
-        return m_type;
-    }
+        Argument::Argument(const Variant &obj) 
+            : m_type( obj.GetType( ) )
+            , m_data( obj.getPtr( ) ) { }
 
-    void *Argument::GetPtr(void) const
-    {
-        return const_cast<void *>( m_data );
+        Argument &Argument::operator=(const Argument &rhs) 
+        {
+            m_data = rhs.m_data;
+
+            const_cast<Type&>( m_type ) = rhs.m_type;
+
+            return *this;
+        }
+
+        Type Argument::GetType(void) const
+        {
+            return m_type;
+        }
+
+        void *Argument::GetPtr(void) const
+        {
+            return const_cast<void *>( m_data );
+        }
     }
 }

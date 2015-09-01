@@ -4,17 +4,20 @@
 
 namespace ursine
 {
-    class MetaContainer
+    namespace meta
     {
-    public:
-        MetaManager &GetMeta(void);
+        class MetaContainer
+        {
+        public:
+            MetaManager &GetMeta(void);
 
-    private:
-        MetaContainer &operator=(const MetaContainer &rhs) = delete;
+        private:
+            MetaContainer &operator=(const MetaContainer &rhs) = delete;
 
-        friend class ReflectionDatabase;
-        friend struct TypeData;
+            friend class ReflectionDatabase;
+            friend struct TypeData;
 
-        MetaManager m_meta;
-    };
+            MetaManager m_meta;
+        };
+    }
 }

@@ -71,7 +71,7 @@ namespace ursine
     void Camera2D::SetZoom(float zoom)
     {
         if (m_zoomConstrained)
-            m_zoom = Math::Clamp(zoom, m_constraintsZoom.X(), m_constraintsZoom.Y());
+            m_zoom = math::Clamp(zoom, m_constraintsZoom.X(), m_constraintsZoom.Y());
         else
             m_zoom = zoom;
     }
@@ -216,7 +216,7 @@ namespace ursine
 
     void Camera2D::updatePosition(void)
     {
-        float shake_pi = m_shakeAnimation * Math::PI;
+        float shake_pi = m_shakeAnimation * math::PI;
 
         Vec2 shake
         {
@@ -229,16 +229,16 @@ namespace ursine
 
     void Camera2D::applyBoundConstraints(void)
     {
-        m_positionRaw.X() = Math::Clamp(m_positionRaw.X(), 
+        m_positionRaw.X() = math::Clamp(m_positionRaw.X(), 
             m_constraintsBounds.low_bound.X(), m_constraintsBounds.up_bound.X());
 
-        m_positionRaw.Y() = Math::Clamp(m_positionRaw.Y(), 
+        m_positionRaw.Y() = math::Clamp(m_positionRaw.Y(), 
             m_constraintsBounds.low_bound.Y(), m_constraintsBounds.up_bound.Y());
     }
 
     void Camera2D::applyZoomConstraints(void)
     {
-        m_zoom = Math::Clamp(m_zoom, m_constraintsZoom.X(), m_constraintsZoom.Y());
+        m_zoom = math::Clamp(m_zoom, m_constraintsZoom.X(), m_constraintsZoom.Y());
     }
 
     void Camera2D::updateMatrices(void)

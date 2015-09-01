@@ -4,36 +4,39 @@
 
 namespace ursine
 {
-    class Type;
-    class Variant;
-
-    class Argument
+    namespace meta
     {
-    public:
-        Argument(void);
-        Argument(const Argument &rhs);
-        Argument(Variant &obj);
-        Argument(const Variant &obj);
+        class Type;
+        class Variant;
 
-        template<typename T>
-        Argument(const T &data);
+        class Argument
+        {
+        public:
+            Argument(void);
+            Argument(const Argument &rhs);
+            Argument(Variant &obj);
+            Argument(const Variant &obj);
 
-        template<typename T>
-        Argument(T &data);
+            template<typename T>
+            Argument(const T &data);
 
-        Argument &operator=(const Argument &rhs);
+            template<typename T>
+            Argument(T &data);
 
-        Type GetType(void) const;
+            Argument &operator=(const Argument &rhs);
 
-        void *GetPtr(void) const;
+            Type GetType(void) const;
 
-        template<typename T>
-        T &GetValue(void) const;
+            void *GetPtr(void) const;
 
-    private:
-        const Type m_type;
-        const void *m_data;
-    };
+            template<typename T>
+            T &GetValue(void) const;
+
+        private:
+            const Type m_type;
+            const void *m_data;
+        };
+    }
 }
 
 #include "Impl/Argument.hpp"

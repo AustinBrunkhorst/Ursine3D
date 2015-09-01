@@ -1,7 +1,7 @@
 
 #include <string.h>
 
-namespace Ursine
+namespace ursine
 {
     // Constructors
     INLINE Mat3::Mat3(void)
@@ -137,7 +137,7 @@ namespace Ursine
     INLINE void Mat3::Rotation(Mat3 &mat, float radians)
     {
         float s, c;
-        Math::SinCos(radians, s, c);
+        math::SinCos(radians, s, c);
 
         mat.Set(
             c, -s, 0.0f,
@@ -155,9 +155,9 @@ namespace Ursine
     {
         float cx, sx, cy, sy, cz, sz;
 
-        Math::SinCos(x_angle, sx, cx);
-        Math::SinCos(y_angle, sy, cy);
-        Math::SinCos(z_angle, sz, cz);
+        math::SinCos(x_angle, sx, cx);
+        math::SinCos(y_angle, sy, cy);
+        math::SinCos(z_angle, sz, cz);
 
         float cycz = cy * cz;
         float sxsy = sx * sy;
@@ -207,7 +207,7 @@ namespace Ursine
     {
         float scale_x = scale.X(), scale_y = scale.Y();
         float s, c;
-        Math::SinCos(radians, s, c);
+        math::SinCos(radians, s, c);
 
         mat.Set(
             scale_x * c, -scale_y * s, translation.X(),
@@ -415,7 +415,7 @@ namespace Ursine
         float x = point.X();
         float y = point.Y();
         float z = m[2][0] * x + m[2][1] * y + m[2][2];
-        float inv_div = Math::IsZero(z) ? 1.0f : 1.0f / z;
+        float inv_div = math::IsZero(z) ? 1.0f : 1.0f / z;
 
         return{
             inv_div * (m[0][0] * x + m[0][1] * y + m[0][2]),
@@ -428,7 +428,7 @@ namespace Ursine
         float x = point.X();
         float y = point.Y();
         float z = m[2][0] * x + m[2][1] * y + m[2][2];
-        float inv_div = Math::IsZero(z) ? 1.0f : 1.0f / z;
+        float inv_div = math::IsZero(z) ? 1.0f : 1.0f / z;
 
         point.X() = inv_div * (m[0][0] * x + m[0][1] * y + m[0][2]);
         point.Y() = inv_div * (m[1][0] * x + m[1][1] * y + m[1][2]);
@@ -437,7 +437,7 @@ namespace Ursine
 	INLINE void Mat3::SetWorldToCamera(float width, float height, float rotation, const Vec2 &trans)
 	{
 		float c, s;
-		Math::SinCos(-rotation, s, c);
+		math::SinCos(-rotation, s, c);
 
 		float c_2 = c * c, s_2 = s * s
 			, A = c / (c_2 + s_2)

@@ -15,7 +15,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         const char * const kSpaceEventEntered = "s-ent";
         const char * const kSpaceEventExited = "s-ext";

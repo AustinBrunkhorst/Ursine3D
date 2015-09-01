@@ -13,37 +13,40 @@
 
 namespace ursine
 {
-    class Method 
-        : public MetaContainer
-        , public Invokable
+    namespace meta
     {
-    public:
-        typedef std::function<Variant(Variant&, ArgumentList&)> Invoker;
+        class Method
+            : public MetaContainer
+            , public Invokable
+        {
+        public:
+            typedef std::function<Variant(Variant&, ArgumentList&)> Invoker;
 
-        Method(void);
+            Method(void);
 
-        template<class ClassType, typename ReturnType, typename ...ArgTypes>
-        Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...), Invoker invoker);
+            template<class ClassType, typename ReturnType, typename ...ArgTypes>
+            Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...), Invoker invoker);
 
-        template<class ClassType, typename ReturnType, typename ...ArgTypes>
-        Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...)const, Invoker invoker);
+            template<class ClassType, typename ReturnType, typename ...ArgTypes>
+            Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...)const, Invoker invoker);
 
-        static const Method &Invalid(void);
+            static const Method &Invalid(void);
 
-        Type GetClassType(void) const;
+            Type GetClassType(void) const;
 
-        bool IsValid(void) const;
+            bool IsValid(void) const;
 
-        Variant Invoke(Variant &instance, ArgumentList &arguments) const;
+            Variant Invoke(Variant &instance, ArgumentList &arguments) const;
 
-        template<typename ...Args>
-        Variant Invoke(Variant &instance, Args &&...args) const;
+            template<typename ...Args>
+            Variant Invoke(Variant &instance, Args &&...args) const;
 
-    private:
-        Type m_classType;
+        private:
+            Type m_classType;
 
-        Invoker m_invoker;
-    };
+            Invoker m_invoker;
+        };
+    }
 }
 
 #include "Impl/Method.hpp"

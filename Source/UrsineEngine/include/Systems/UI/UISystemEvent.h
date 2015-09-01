@@ -15,7 +15,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         enum UISystemEvent
         {

@@ -7,48 +7,51 @@
 
 namespace ursine
 {
-    template<typename T>
-    Type Type::Get(void)
+    namespace meta
     {
-        return { TypeInfo< CleanedType< T > >::ID };
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    Type Type::Get(T &&obj)
-    {
-        return { TypeInfo< CleanedType< T > >::ID };
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-
-    template<typename ... Args>
-    Variant Type::Create(Args &&...args) const
-    {
-        static InvokableSignature signature;
-
-        static bool initial = true;
-
-        if (initial)
+        template<typename T>
+        Type Type::Get(void)
         {
-            TypeUnpacker<Args...>::Apply( signature );
-
-            initial = false;
+            return { TypeInfo< CleanedType< T > >::ID };
         }
 
-        auto &constructor = GetConstructor( signature );
+        ////////////////////////////////////////////////////////////////////////
 
-        ArgumentList arguments { std::forward<Args>( args )... };
+        template<typename T>
+        Type Type::Get(T &&obj)
+        {
+            return { TypeInfo< CleanedType< T > >::ID };
+        }
 
-        return constructor.Invoke( arguments );
-    }
+        ////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////
+        template<typename ... Args>
+        Variant Type::Create(Args &&...args) const
+        {
+            static InvokableSignature signature;
 
-    template<typename T>
-    bool Type::DerivesFrom(void) const
-    {
-        return DerivesFrom( Get<T>( ) );
+            static bool initial = true;
+
+            if (initial)
+            {
+                TypeUnpacker<Args...>::Apply( signature );
+
+                initial = false;
+            }
+
+            auto &constructor = GetConstructor( signature );
+
+            ArgumentList arguments { std::forward<Args>( args )... };
+
+            return constructor.Invoke( arguments );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+
+        template<typename T>
+        bool Type::DerivesFrom(void) const
+        {
+            return DerivesFrom( Get<T>( ) );
+        }
     }
 }

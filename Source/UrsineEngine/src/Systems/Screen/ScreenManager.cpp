@@ -285,7 +285,7 @@ namespace ursine
         if (!screen)
             return;
 
-        UI::SpaceMessageArgs args(name, data);
+        ui::SpaceMessageArgs args(name, data);
 
         screen->ui.Dispatch(name, &args);
     }

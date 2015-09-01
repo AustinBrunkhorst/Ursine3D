@@ -170,19 +170,19 @@ namespace ursine
     }
 
     Color::Color(float red, float green, float blue, float alpha)
-        : r(Math::Clamp(red, 0.0f, 1.0f))
-        , g(Math::Clamp(green, 0.0f, 1.0f))
-        , b(Math::Clamp(blue, 0.0f, 1.0f))
-        , a(Math::Clamp(alpha, 0.0f, 1.0f))
+        : r(math::Clamp(red, 0.0f, 1.0f))
+        , g(math::Clamp(green, 0.0f, 1.0f))
+        , b(math::Clamp(blue, 0.0f, 1.0f))
+        , a(math::Clamp(alpha, 0.0f, 1.0f))
     {
         
     }
 
     Color::Color(const Color &color, float alpha)
-        : r(Math::Clamp(color.r, 0.0f, 1.0f))
-        , g(Math::Clamp(color.g, 0.0f, 1.0f))
-        , b(Math::Clamp(color.b, 0.0f, 1.0f))
-        , a(Math::Clamp(alpha, 0.0f, 1.0f))
+        : r(math::Clamp(color.r, 0.0f, 1.0f))
+        , g(math::Clamp(color.g, 0.0f, 1.0f))
+        , b(math::Clamp(color.b, 0.0f, 1.0f))
+        , a(math::Clamp(alpha, 0.0f, 1.0f))
     {
         
     }
@@ -301,7 +301,7 @@ namespace ursine
         }
     }
 
-    namespace Math
+    namespace math
     {
         template<>
         Color Lerp(const Color &a, const Color &b, float percent)

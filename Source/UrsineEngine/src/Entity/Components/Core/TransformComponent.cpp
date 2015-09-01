@@ -298,9 +298,9 @@ namespace ursine
             _dirty = true;
 
             // wrap rotations
-            rotation.X() = Math::Wrap(rotation.X(), 0.0f, Math::PI_2);
-            rotation.Y() = Math::Wrap(rotation.Y(), 0.0f, Math::PI_2);
-            rotation.Z() = Math::Wrap(rotation.Z(), 0.0f, Math::PI_2);
+            rotation.X() = math::Wrap(rotation.X(), 0.0f, math::PI_2);
+            rotation.Y() = math::Wrap(rotation.Y(), 0.0f, math::PI_2);
+            rotation.Z() = math::Wrap(rotation.Z(), 0.0f, math::PI_2);
 
             if (root != this)
                 _world_rotation = root->_world_rotation * SMat3(rotation.Z());

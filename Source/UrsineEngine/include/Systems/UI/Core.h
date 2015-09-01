@@ -24,7 +24,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         class Core
             : public CefApp

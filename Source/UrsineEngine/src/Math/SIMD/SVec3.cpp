@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     SVec3::SVec3(const Vec2 &value, float Z)
             : x(value.X())
@@ -58,9 +58,9 @@ namespace Ursine
     // Public Methods
     void SVec3::Clean(void)
     {
-        x = Math::IsZero(x) ? 0.0f : x;
-        y = Math::IsZero(y) ? 0.0f : y;
-        z = Math::IsZero(z) ? 0.0f : z;
+        x = math::IsZero(x) ? 0.0f : x;
+        y = math::IsZero(y) ? 0.0f : y;
+        z = math::IsZero(z) ? 0.0f : z;
     }
 
     std::string SVec3::ToString(void) const

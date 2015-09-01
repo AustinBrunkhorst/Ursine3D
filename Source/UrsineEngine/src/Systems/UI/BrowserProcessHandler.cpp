@@ -19,7 +19,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         void BrowserProcessHandler::OnContextInitialized(void)
         {

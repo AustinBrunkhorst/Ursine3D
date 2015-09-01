@@ -20,7 +20,7 @@
 
 namespace ursine
 {
-    namespace FMOD_S = FMOD::Studio;
+    namespace fmod_s = FMOD::Studio;
 
     void FMODERRCHK(FMOD_RESULT result);
 }

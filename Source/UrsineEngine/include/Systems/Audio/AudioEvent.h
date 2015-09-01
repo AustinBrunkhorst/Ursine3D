@@ -33,8 +33,8 @@ namespace ursine
 
     private:
         PlayMode _mode;
-        FMOD_S::EventDescription **_description;
-        FMOD_S::EventInstance *_instance;
+        fmod_s::EventDescription **_description;
+        fmod_s::EventInstance *_instance;
         bool _playing;
         float _volume;
         float _pitch;

@@ -4,39 +4,42 @@
 
 namespace ursine
 {
-    Method::Method(void)
-        : Invokable( "INVALID" )
-        , m_classType( { Type::Invalid } )
-        , m_invoker( nullptr ) { }
-
-    const Method &Method::Invalid(void)
+    namespace meta
     {
-        static Method invalid;
+        Method::Method(void)
+            : Invokable( "INVALID" )
+            , m_classType( { Type::Invalid } )
+            , m_invoker( nullptr ) { }
 
-        return invalid;
-    }
+        const Method &Method::Invalid(void)
+        {
+            static Method invalid;
 
-    Type Method::GetClassType(void) const
-    {
-        return m_classType;
-    }
+            return invalid;
+        }
 
-    bool Method::IsValid(void) const
-    {
-        return m_invoker != nullptr;
-    }
+        Type Method::GetClassType(void) const
+        {
+            return m_classType;
+        }
 
-    Variant Method::Invoke(Variant &instance, ArgumentList &arguments) const
-    {
-#ifdef CONFIG_DEBUG
+        bool Method::IsValid(void) const
+        {
+            return m_invoker != nullptr;
+        }
 
-        UAssert( IsValid( ), "Invalid method invoked" );
+        Variant Method::Invoke(Variant &instance, ArgumentList &arguments) const
+        {
+        #ifdef CONFIG_DEBUG
 
-#endif
+            UAssert( IsValid( ), "Invalid method invoked" );
 
-        UAssert( instance.GetType( ) == m_classType, 
-            "Incompatible method invoked with instance" );
+        #endif
 
-        return m_invoker( instance, arguments );
+            UAssert( instance.GetType( ) == m_classType, 
+                "Incompatible method invoked with instance" );
+
+            return m_invoker( instance, arguments );
+        }
     }
 }

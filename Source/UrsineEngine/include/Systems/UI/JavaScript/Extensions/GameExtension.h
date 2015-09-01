@@ -21,7 +21,7 @@ namespace ursine
 {
     class AudioEmitter;
 
-    namespace UI
+    namespace ui
     {
         class GameExtension : public JavaScriptExtension
         {

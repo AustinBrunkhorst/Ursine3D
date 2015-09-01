@@ -224,7 +224,7 @@ namespace ursine
     extern template
     void JsonSerializer::Deserialize(const Json &data, std::vector<Color> &out);
 
-    namespace Math
+    namespace math
     {
         extern template
         Color Lerp(const Color &a, const Color &b, float percent);

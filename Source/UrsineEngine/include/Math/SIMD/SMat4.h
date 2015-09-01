@@ -17,7 +17,7 @@
 #include "SVec3.h"
 #include "SQuat.h"
 
-namespace Ursine
+namespace ursine
 {
 	// Forward Declaration
 	class SMat3;

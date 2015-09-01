@@ -60,7 +60,7 @@ namespace ursine
         _rotation = transform.RootRotation2D();
 
         // store the cosine and sine of the rotation
-        Math::SinCos(_rotation, _s, _c);
+        math::SinCos(_rotation, _s, _c);
 
         if (_dimensions.X() == _dimensions.Y())
         {
@@ -88,13 +88,13 @@ namespace ursine
         Vec2 support;
 
         // circle case
-        if (Math::IsEqual(_dimensions.X(), _dimensions.Y()))
+        if (math::IsEqual(_dimensions.X(), _dimensions.Y()))
         {
             float theta = direction.Angle()
                 , s
                 , c;
 
-            Math::SinCos(theta, s, c);
+            math::SinCos(theta, s, c);
 
             support.X() = _dimensions.X() * c;
             support.Y() = _dimensions.X() * s;
@@ -106,7 +106,7 @@ namespace ursine
                 , s
                 , c;
 
-            Math::SinCos(theta, s, c);
+            math::SinCos(theta, s, c);
 
             support.X() = _dimensions.X() * c * _c - _dimensions.Y() * s * _s;
             support.Y() = _dimensions.X() * c * _s + _dimensions.Y() * s * _c;
@@ -118,7 +118,7 @@ namespace ursine
     void Ellipse::ComputeMass(ecs::Transform &transform, Vec2 &center,
                               float &area, float &inertia)
     {
-        float ellipse_area = Math::PI * _dimensions.X() * _dimensions.Y();
+        float ellipse_area = math::PI * _dimensions.X() * _dimensions.Y();
         center += Vec2(transform.LocalPosition());
         area += ellipse_area;
         inertia += ellipse_area * (0.5f * _dimensions.X() * _dimensions.Y());
@@ -143,7 +143,7 @@ namespace ursine
 
         if (determ < 0.0f)
             return false;
-        else if (Math::IsEqual(determ, 0.0f))
+        else if (math::IsEqual(determ, 0.0f))
         {
             float t = -B / (2 * A);
 
@@ -155,10 +155,10 @@ namespace ursine
         else
         {
             // Two possibilities
-            float t_0 = (-B + Math::fastSqrt(determ)) / (2 * A);
-            float t_1 = (-B - Math::fastSqrt(determ)) / (2 * A);
+            float t_0 = (-B + math::fastSqrt(determ)) / (2 * A);
+            float t_1 = (-B - math::fastSqrt(determ)) / (2 * A);
 
-            output.fraction = Math::Min(t_0, t_1);
+            output.fraction = math::Min(t_0, t_1);
 
             if (output.fraction > input.max_fraction)
                 return false;

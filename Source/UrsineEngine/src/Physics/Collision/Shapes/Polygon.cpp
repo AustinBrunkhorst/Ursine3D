@@ -92,7 +92,7 @@ namespace ursine
     Vec2 Polygon::GetSupport(const Vec2 &direction) const
     {
         int best_vert_index = 0;
-        float largest_projection = -Math::MAX_FLOAT;
+        float largest_projection = -math::MAX_FLOAT;
 
         for (int i = 0, size = _verts.size(); i < size; ++i)
         {
@@ -182,12 +182,12 @@ namespace ursine
 
     bool Polygon::RayCast(RayCastOutput &output, const RayCastInput &input)
     {
-        float t = Math::MAX_FLOAT;
+        float t = math::MAX_FLOAT;
         int index = -1;
 
         for (unsigned i = 0, size = edges.size(); i < size; ++i)
         {
-            float temp = Math::MAX_FLOAT;
+            float temp = math::MAX_FLOAT;
 
             if (Collision::RaySegmentIntersection(input, edges[i].p0, edges[i].p1, temp))
             {

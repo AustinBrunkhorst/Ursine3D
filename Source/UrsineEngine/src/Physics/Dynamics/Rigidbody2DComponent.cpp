@@ -229,9 +229,9 @@ namespace ursine
             _force += force;
 
             // check for infinite values
-            if (!Math::IsFiniteNumber(_force.X()))
+            if (!math::IsFiniteNumber(_force.X()))
                 _force.X() = 0.0f;
-            if (!Math::IsFiniteNumber(_force.Y()))
+            if (!math::IsFiniteNumber(_force.Y()))
                 _force.Y() = 0.0f;
         }
 
@@ -287,7 +287,7 @@ namespace ursine
             _torque += torque;
 
             // check for infinite values
-            if (!Math::IsFiniteNumber(_torque))
+            if (!math::IsFiniteNumber(_torque))
                 _torque = 0.0f;
         }
 
@@ -317,8 +317,8 @@ namespace ursine
                 return;
 
             _velocity = {
-                Math::Clamp(velocity.X(), -_vel_cap, _vel_cap),
-                Math::Clamp(velocity.Y(), -_vel_cap, _vel_cap)
+                math::Clamp(velocity.X(), -_vel_cap, _vel_cap),
+                math::Clamp(velocity.Y(), -_vel_cap, _vel_cap)
             };
         }
 
@@ -328,8 +328,8 @@ namespace ursine
                 return;
 
             _velocity = {
-                Math::Clamp(_velocity.X() + velocity.X(), -_vel_cap, _vel_cap),
-                Math::Clamp(_velocity.Y() + velocity.Y(), -_vel_cap, _vel_cap)
+                math::Clamp(_velocity.X() + velocity.X(), -_vel_cap, _vel_cap),
+                math::Clamp(_velocity.Y() + velocity.Y(), -_vel_cap, _vel_cap)
             };
         }
 
@@ -357,7 +357,7 @@ namespace ursine
             if (body_type == BODY_TYPE_STATIC || _rot_locked)
                 return;
 
-            _angular_velocity = Math::Clamp(velocity, -_ang_vel_cap, _ang_vel_cap);
+            _angular_velocity = math::Clamp(velocity, -_ang_vel_cap, _ang_vel_cap);
         }
 
         void RigidBody2D::SetEventable(bool eventable)
@@ -380,7 +380,7 @@ namespace ursine
 
             _move_tween = GetOwner()->GetTweens().Create()
                 .BeginGroup()
-                    .Setter(this, &RigidBody2D::SetVelocity, start, target, time, Ease::CubicOut)
+                    .Setter(this, &RigidBody2D::SetVelocity, start, target, time, ease::CubicOut)
                 .EndGroup();
         }
 
@@ -394,12 +394,12 @@ namespace ursine
             if (body_type != BODY_TYPE_DYNAMIC || _rot_locked)
                 return;
 
-            radians = Math::Wrap(radians, 0.0f, Math::PI_2);
+            radians = math::Wrap(radians, 0.0f, math::PI_2);
 
             float theta = radians - _transform->RootRotation2D();
             float vel = _angular_velocity;
 
-            theta = Math::Wrap(theta, -Math::PI, Math::PI);
+            theta = math::Wrap(theta, -math::PI, math::PI);
 
             // reset the angular velocity
             _angular_velocity = 0;

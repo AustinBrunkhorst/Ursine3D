@@ -4,23 +4,26 @@
 
 namespace ursine
 {
-    struct TypeData;
-
-    template<typename T>
-    struct TypeInfo
+    namespace meta
     {
-        static TypeID ID;
-        static bool Defined;
+        struct TypeData;
 
-        static void Register(TypeID id, TypeData &data, bool beingDefined);
+        template<typename T>
+        struct TypeInfo
+        {
+            static TypeID ID;
+            static bool Defined;
 
-    private:
-        template<typename U = T>
-        static void applyTrivialAttributes(TypeData &data, typename std::enable_if< !std::is_trivial<U>::value >::type* = nullptr);
-        
-        template<typename U = T>
-        static void applyTrivialAttributes(TypeData &data, typename std::enable_if< std::is_trivial<U>::value >::type* = nullptr);
-    };
+            static void Register(TypeID id, TypeData &data, bool beingDefined);
+
+        private:
+            template<typename U = T>
+            static void applyTrivialAttributes(TypeData &data, typename std::enable_if< !std::is_trivial<U>::value >::type* = nullptr);
+
+            template<typename U = T>
+            static void applyTrivialAttributes(TypeData &data, typename std::enable_if< std::is_trivial<U>::value >::type* = nullptr);
+        };
+    }
 }
 
 #include "Impl/TypeInfo.hpp"

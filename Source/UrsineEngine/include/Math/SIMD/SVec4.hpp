@@ -1,7 +1,7 @@
 #include <math.h>
 #include "UrsineMath.h"
 
-namespace Ursine
+namespace ursine
 {
 #ifdef USE_SSE
     INLINE SVec4::SVec4(const SIMDvec& value)
@@ -300,8 +300,8 @@ namespace Ursine
     {
 #ifdef USE_SSE
         SIMDvec dif = _mm_sub_ps(m128, rhs.m128);
-        SIMDvec ep = _mm_set1_ps(Math::Epsilon);
-        SIMDvec neg_ep = _mm_set1_ps(-Math::Epsilon);
+        SIMDvec ep = _mm_set1_ps(math::Epsilon);
+        SIMDvec neg_ep = _mm_set1_ps(-math::Epsilon);
 
         return (0xf == _mm_movemask_ps(_mm_and_ps(_mm_cmpgt_ps(ep, dif), _mm_cmplt_ps(neg_ep, dif))));
 #else

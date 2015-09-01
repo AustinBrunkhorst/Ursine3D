@@ -7,33 +7,36 @@
 
 namespace ursine
 {
-    class Type;
-    class Variant;
-    class Argument;
-
-    class EnumBase
+    namespace meta
     {
-    public:
-        EnumBase(const std::string &name, TypeID owner);
+        class Type;
+        class Variant;
+        class Argument;
 
-        virtual ~EnumBase(void) { }
+        class EnumBase
+        {
+        public:
+            EnumBase(const std::string &name, TypeID owner);
 
-        virtual Type GetType(void) const = 0;
-        virtual Type GetUnderlyingType(void) const = 0;
+            virtual ~EnumBase(void) { }
 
-        virtual std::vector<std::string> GetKeys(void) const = 0;
-        virtual std::vector<Variant> GetValues(void) const = 0;
+            virtual Type GetType(void) const = 0;
+            virtual Type GetUnderlyingType(void) const = 0;
 
-        virtual std::string GetKey(const Argument &value) const = 0;
-        virtual Variant GetValue(const std::string &key) const = 0;
+            virtual std::vector<std::string> GetKeys(void) const = 0;
+            virtual std::vector<Variant> GetValues(void) const = 0;
 
-        Type GetParentType(void) const;
+            virtual std::string GetKey(const Argument &value) const = 0;
+            virtual Variant GetValue(const std::string &key) const = 0;
 
-        const std::string &GetName(void) const;
+            Type GetParentType(void) const;
 
-    private:
-        Type m_parentType;
+            const std::string &GetName(void) const;
 
-        std::string m_name;
-    };
+        private:
+            Type m_parentType;
+
+            std::string m_name;
+        };
+    }
 }

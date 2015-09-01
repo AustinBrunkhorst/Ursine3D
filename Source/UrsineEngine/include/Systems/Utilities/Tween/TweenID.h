@@ -50,14 +50,14 @@ namespace ursine
         TweenID &Property(Type &input,
             Type target, 
             const TimeSpan &duration, 
-            Ease::Function ease = Ease::Linear);
+            ease::Function ease = ease::Linear);
 
         template<typename SetterFN, class Type>
         TweenID &Setter(SetterFN setter,
             Type start,
             Type target,
             const TimeSpan &duration,
-            Ease::Function ease = Ease::Linear);
+            ease::Function ease = ease::Linear);
 
         template<class ClassType, typename SetterFN, class Type>
         TweenID &Setter(ClassType *object,
@@ -65,7 +65,7 @@ namespace ursine
             Type start,
             Type target,
             const TimeSpan &duration,
-            Ease::Function ease = Ease::Linear);
+            ease::Function ease = ease::Linear);
 
         // Creates a delay in the tween
         TweenID &Delay(const TimeSpan &duration);

@@ -6,108 +6,111 @@
 
 namespace ursine
 {
-    TypeData::TypeData(void)
-        : isEnum( false )
-        , isPrimitive( false )
-        , isPointer( false )
-        , isClass( false )
-        , enumeration( nullptr )
-        , name( name ) { }
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    TypeData::TypeData(const std::string &name)
-        : isEnum( false )
-        , isPrimitive( false )
-        , isPointer( false )
-        , isClass( false )
-        , enumeration( nullptr )
-        , name( name ) { }
-
-    TypeData::~TypeData(void)
+    namespace meta
     {
-        // free allocated enum container
-        delete enumeration.m_base;
+        TypeData::TypeData(void)
+            : isEnum( false )
+            , isPrimitive( false )
+            , isPointer( false )
+            , isClass( false )
+            , enumeration( nullptr )
+            , name( name ) { }
 
-        enumeration.m_base = nullptr;
-    }
+        ////////////////////////////////////////////////////////////////////////////
 
-    void TypeData::LoadBaseClasses(ReflectionDatabase &db, TypeID thisType, const std::initializer_list<Type> &classes)
-    {
-        for (auto &base : classes)
+        TypeData::TypeData(const std::string &name)
+            : isEnum( false )
+            , isPrimitive( false )
+            , isPointer( false )
+            , isClass( false )
+            , enumeration( nullptr )
+            , name( name ) { }
+
+        TypeData::~TypeData(void)
         {
-            // skip invalid types
-            if (base.m_id == Type::Invalid)
-                continue;
+            // free allocated enum container
+            delete enumeration.m_base;
 
-            baseClasses.insert( base );
-
-            // add this type to the base type's derived classes
-            db.types[ base.m_id ].derivedClasses.insert( thisType );
+            enumeration.m_base = nullptr;
         }
-    }
 
-    ////////////////////////////////////////////////////////////////////////////
+        void TypeData::LoadBaseClasses(ReflectionDatabase &db, TypeID thisType, const std::initializer_list<Type> &classes)
+        {
+            for (auto &base : classes)
+            {
+                // skip invalid types
+                if (base.m_id == Type::Invalid)
+                    continue;
 
-    const Constructor &TypeData::GetConstructor(const InvokableSignature &signature)
-    {
-        auto search = constructors.find( signature );
+                baseClasses.insert( base );
 
-        if (search == constructors.end( ))
-            return Constructor::Invalid( );
+                // add this type to the base type's derived classes
+                db.types[ base.m_id ].derivedClasses.insert( thisType );
+            }
+        }
 
-        return search->second;
-    }
+        ////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////
+        const Constructor &TypeData::GetConstructor(const InvokableSignature &signature)
+        {
+            auto search = constructors.find( signature );
 
-    const Method &TypeData::GetMethod(const std::string &name)
-    {
-        auto &base = methods[ name ];
+            if (search == constructors.end( ))
+                return Constructor::Invalid( );
 
-        if (!base.size( ))
-            return Method::Invalid( );
+            return search->second;
+        }
 
-        return base.begin( )->second;
-    }
+        ////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////
+        const Method &TypeData::GetMethod(const std::string &name)
+        {
+            auto &base = methods[ name ];
 
-    const Method &TypeData::GetMethod(const std::string &name, const InvokableSignature &signature)
-    {
-        auto &base = methods[ name ];
+            if (!base.size( ))
+                return Method::Invalid( );
 
-        auto search = base.find( signature );
+            return base.begin( )->second;
+        }
 
-        if (search == base.end( ))
-            return Method::Invalid( );
+        ////////////////////////////////////////////////////////////////////////////
 
-        return search->second;
-    }
+        const Method &TypeData::GetMethod(const std::string &name, const InvokableSignature &signature)
+        {
+            auto &base = methods[ name ];
 
-    ////////////////////////////////////////////////////////////////////////////
+            auto search = base.find( signature );
 
-    const Function &TypeData::GetStaticMethod(const std::string &name)
-    {
-        auto &base = staticMethods[ name ];
+            if (search == base.end( ))
+                return Method::Invalid( );
 
-        if (!base.size( ))
-            return Function::Invalid( );
+            return search->second;
+        }
 
-        return base.begin( )->second;
-    }
+        ////////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////////
+        const Function &TypeData::GetStaticMethod(const std::string &name)
+        {
+            auto &base = staticMethods[ name ];
 
-    const Function &TypeData::GetStaticMethod(const std::string &name, const InvokableSignature &signature)
-    {
-        auto &base = staticMethods[ name ];
+            if (!base.size( ))
+                return Function::Invalid( );
 
-        auto search = base.find( signature );
+            return base.begin( )->second;
+        }
 
-        if (search == base.end( ))
-            return Function::Invalid( );
+        ////////////////////////////////////////////////////////////////////////////
 
-        return search->second;
+        const Function &TypeData::GetStaticMethod(const std::string &name, const InvokableSignature &signature)
+        {
+            auto &base = staticMethods[ name ];
+
+            auto search = base.find( signature );
+
+            if (search == base.end( ))
+                return Function::Invalid( );
+
+            return search->second;
+        }
     }
 }

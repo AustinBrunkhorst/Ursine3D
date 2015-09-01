@@ -36,7 +36,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         View::View(void)
             : m_initialized( false ) { }

@@ -26,10 +26,10 @@ namespace ursine
         // The GUID file
         const char *_fGUID;
         // The FMOD system pointer
-        FMOD_S::System *_system;
+        fmod_s::System *_system;
         FMOD::System *_low_system;
         // The hash map containing all playable events
-        std::unordered_map<std::string, FMOD_S::EventDescription*> _event_desc_map;
+        std::unordered_map<std::string, fmod_s::EventDescription*> _event_desc_map;
         std::vector<AudioEmitter*> _loading_queue;
 
         // These are used for direct playback of events without needing an emitter

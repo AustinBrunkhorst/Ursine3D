@@ -19,7 +19,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         class RenderProcessHandler : public CefRenderProcessHandler
         {

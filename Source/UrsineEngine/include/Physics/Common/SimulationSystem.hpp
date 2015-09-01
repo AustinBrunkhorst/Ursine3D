@@ -7,7 +7,7 @@ namespace ursine
         bool Simulation::RayCast(RayCastOutput &output, const RayCastInput &input,
                                  const LayerMask &mask, PredicateFN predicate)
         {
-            float lowest_fraction = Math::MAX_FLOAT;
+            float lowest_fraction = math::MAX_FLOAT;
             bool hit_flag = false;
             RayCastOutput temp_output;
             output.fraction = input.max_fraction;

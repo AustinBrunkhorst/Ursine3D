@@ -2,23 +2,26 @@
 
 namespace ursine
 {
-    template<class... Types>
-    struct TypeUnpacker { };
-
-    template<>
-    struct TypeUnpacker<>
+    namespace meta
     {
-        static void Apply(Type::List &types) { }
-    };
+        template<class... Types>
+        struct TypeUnpacker { };
 
-    template<class First, class... Types>
-    struct TypeUnpacker<First, Types...>
-    {
-        static void Apply(Type::List &types)
+        template<>
+        struct TypeUnpacker<>
         {
-            types.emplace_back( Type::Get<First>( ) );
+            static void Apply(Type::List &types) { }
+        };
 
-            TypeUnpacker<Types...>::Apply( types );
-        }
-    };
+        template<class First, class... Types>
+        struct TypeUnpacker<First, Types...>
+        {
+            static void Apply(Type::List &types)
+            {
+                types.emplace_back( Type::Get<First>( ) );
+
+                TypeUnpacker<Types...>::Apply( types );
+            }
+        };
+    }
 }

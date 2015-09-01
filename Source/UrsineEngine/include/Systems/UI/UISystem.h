@@ -27,7 +27,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         class UISystem
             : public System
@@ -65,4 +65,4 @@ namespace ursine
     }
 }
 
-DISABLE_RUNNABLE_METHOD_REFCOUNT(ursine::UI::UISystem);
+DISABLE_RUNNABLE_METHOD_REFCOUNT(ursine::ui::UISystem);

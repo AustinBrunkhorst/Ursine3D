@@ -15,7 +15,7 @@
 
 namespace ursine
 {
-    namespace Ease
+    namespace ease
     {
         typedef float(*Function)(float t);
 
@@ -102,8 +102,8 @@ namespace ursine
     }
 
     extern template
-    Json JsonSerializer::Serialize(Ease::Function &instance);
+    Json JsonSerializer::Serialize(ease::Function &instance);
 
     extern template
-    void JsonSerializer::Deserialize(const Json &data, Ease::Function &out);
+    void JsonSerializer::Deserialize(const Json &data, ease::Function &out);
 }

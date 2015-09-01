@@ -20,7 +20,7 @@ namespace ursine
 {
     class Screen;
 
-    namespace UI
+    namespace ui
     {
         class Space : public EventDispatcher<std::string>
         {

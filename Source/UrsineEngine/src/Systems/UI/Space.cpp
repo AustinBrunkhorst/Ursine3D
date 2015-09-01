@@ -21,7 +21,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         Space::Space(const std::string &name)
             : EventDispatcher(this)

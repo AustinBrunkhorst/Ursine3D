@@ -132,12 +132,12 @@ namespace ursine
         float x = static_cast<float>(scale["x"].number_value());
         float y = static_cast<float>(scale["y"].number_value());
 
-        UAssert(!Math::IsZero(x) && !Math::IsZero(y),
+        UAssert(!math::IsZero(x) && !math::IsZero(y),
             "Scale components cannot be zero on colliders.");
 
         transform.SetScale({
-            Math::IsZero(x) ? 1 : x,
-            Math::IsZero(y) ? 1 : y,
+            math::IsZero(x) ? 1 : x,
+            math::IsZero(y) ? 1 : y,
             0});
 
         const Json &rot = data["rotation"];

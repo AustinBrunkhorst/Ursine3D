@@ -33,14 +33,14 @@ namespace ursine
         TweenGrouped &Property(Type &input,
             Type target,
             const TimeSpan &duration,
-            Ease::Function ease = Ease::Linear);
+            ease::Function ease = ease::Linear);
 
         template<typename SetterFN, class Type>
         TweenGrouped &Setter(SetterFN setter,
             Type start,
             Type target,
             const TimeSpan &duration,
-            Ease::Function ease = Ease::Linear);
+            ease::Function ease = ease::Linear);
 
         template<class ClassType, typename SetterFN, class Type>
         TweenGrouped &Setter(ClassType *object,
@@ -48,7 +48,7 @@ namespace ursine
             Type start,
             Type target,
             const TimeSpan &duration,
-            Ease::Function ease = Ease::Linear);
+            ease::Function ease = ease::Linear);
 
         // Creates a delay in the tween
         TweenGrouped &Delay(const TimeSpan &duration);

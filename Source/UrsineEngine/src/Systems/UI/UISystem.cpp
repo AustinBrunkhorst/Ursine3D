@@ -22,7 +22,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         namespace
         {

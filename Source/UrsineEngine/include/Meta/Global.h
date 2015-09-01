@@ -9,32 +9,35 @@
 
 namespace ursine
 {
-    class Global : public MetaContainer
+    namespace meta
     {
-    public:
-        typedef std::function<Variant(void)> Getter;
-        typedef std::function<void(const Argument &)> Setter;
+        class Global : public MetaContainer
+        {
+        public:
+            typedef std::function<Variant(void)> Getter;
+            typedef std::function<void(const Argument &)> Setter;
 
-        Global(void);
-        Global(const std::string &name, Type type, Getter getter, Setter setter, Type parentType = Type::Invalid);
+            Global(void);
+            Global(const std::string &name, Type type, Getter getter, Setter setter, Type parentType = Type::Invalid);
 
-        bool IsValid(void) const;
-        bool IsReadOnly(void) const;
+            bool IsValid(void) const;
+            bool IsReadOnly(void) const;
 
-        Type GetType(void) const;
-        Type GetParentType(void) const;
+            Type GetType(void) const;
+            Type GetParentType(void) const;
 
-        const std::string &GetName(void) const;
+            const std::string &GetName(void) const;
 
-        Variant GetValue(void) const;
-        void SetValue(const Argument &value) const;
-    private:
-        Type m_type;
-        Type m_parentType;
+            Variant GetValue(void) const;
+            void SetValue(const Argument &value) const;
+        private:
+            Type m_type;
+            Type m_parentType;
 
-        std::string m_name;
+            std::string m_name;
 
-        Getter m_getter;
-        Setter m_setter;
-    };
+            Getter m_getter;
+            Setter m_setter;
+        };
+    }
 }

@@ -22,10 +22,10 @@ private:
     CXIndex m_index;
     CXTranslationUnit m_translationUnit;
 
-    std::vector<language_types::Class*> m_classes;
-    std::vector<language_types::Global*> m_globals;
-    std::vector<language_types::Function*> m_globalFunctions;
-    std::vector<language_types::Enum*> m_enums;
+    std::vector<Class*> m_classes;
+    std::vector<Global*> m_globals;
+    std::vector<Function*> m_globalFunctions;
+    std::vector<Enum*> m_enums;
 
     void buildClasses(const Cursor &cursor, Namespace &currentNamespace);
     void buildGlobals(const Cursor &cursor, Namespace &currentNamespace);

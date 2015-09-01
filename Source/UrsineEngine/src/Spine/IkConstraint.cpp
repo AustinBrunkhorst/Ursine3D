@@ -52,7 +52,7 @@ namespace ursine
 
             float rotation = bone->GetRotation();
 
-            float rotationIK = Math::RadiansToDegrees(atan2(targetY - bone->GetWorldY(), targetX - bone->GetWorldX()));
+            float rotationIK = math::RadiansToDegrees(atan2(targetY - bone->GetWorldY(), targetX - bone->GetWorldX()));
 
             if (bone->GetWorldFlipX() != (bone->GetWorldFlipY() != (Bone::IsYDown() ? 1 : 0)))
                 rotationIK = -rotationIK;
@@ -129,7 +129,7 @@ namespace ursine
 
             if (cosDenom < 0.0001f)
             {
-                child->SetRotationIK(childRotation + (Math::RadiansToDegrees(atan2(targetY, targetX)) - parentRotation - childRotation) * alpha);
+                child->SetRotationIK(childRotation + (math::RadiansToDegrees(atan2(targetY, targetX)) - parentRotation - childRotation) * alpha);
                 return;
             }
 
@@ -144,7 +144,7 @@ namespace ursine
             adjacent = len1 + len2 * cos;
             opposite = len2 * sin(childAngle);
             parentAngle = atan2(targetY * adjacent - targetX * opposite, targetX * adjacent + targetY * opposite);
-            rotation = Math::RadiansToDegrees(parentAngle - offset) - parentRotation;
+            rotation = math::RadiansToDegrees(parentAngle - offset) - parentRotation;
 
             if (rotation > 180)
                 rotation -= 360;
@@ -152,7 +152,7 @@ namespace ursine
                 rotation += 360;
 
             parent->SetRotationIK(parentRotation + rotation * alpha);
-            rotation = Math::RadiansToDegrees(childAngle + offset) - childRotation;
+            rotation = math::RadiansToDegrees(childAngle + offset) - childRotation;
 
             if (rotation > 180)
                 rotation -= 360;

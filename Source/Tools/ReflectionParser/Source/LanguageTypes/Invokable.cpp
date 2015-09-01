@@ -2,10 +2,7 @@
 
 #include "LanguageTypes/Invokable.h"
 
-namespace language_types
+Invokable::Invokable(const Cursor &cursor, const Namespace &currentNamespace)
 {
-    Invokable::Invokable(const Cursor &cursor, const Namespace &currentNamespace)
-    {
 
-    }
 }

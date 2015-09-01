@@ -18,7 +18,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         bool ResourceBundleHandler::GetLocalizedString(int message_id,
             CefString &string)

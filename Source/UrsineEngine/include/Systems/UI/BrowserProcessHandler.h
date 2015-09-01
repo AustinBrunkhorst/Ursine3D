@@ -17,7 +17,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         class BrowserProcessHandler : public CefBrowserProcessHandler
         {

@@ -45,7 +45,7 @@ namespace ursine
         Vec2 tl = { low_bound.X(), up_bound.Y() };
         Vec2 br = { up_bound.X(), low_bound.Y() };
         Vec2 norm;
-        float t = Math::MAX_FLOAT;
+        float t = math::MAX_FLOAT;
         float temp;
 
         // top side

@@ -90,9 +90,9 @@ namespace ursine
         inline int ASCIIHexToInt(char val)
         {
             if (val <= '9')
-                return Math::Clamp<int>(val - '0', 0, 9);
+                return math::Clamp<int>(val - '0', 0, 9);
                 
-            return Math::Clamp<int>((val - 'A') + 10, 10, 16);
+            return math::Clamp<int>((val - 'A') + 10, 10, 16);
         }
     }
 }

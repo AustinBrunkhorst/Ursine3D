@@ -4,7 +4,10 @@
 
 namespace ursine
 {
-    class Argument;
+    namespace meta
+    {
+        class Argument;
 
-    typedef std::vector<Argument> ArgumentList;
+        typedef std::vector<Argument> ArgumentList;
+    }
 }

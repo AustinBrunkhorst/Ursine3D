@@ -7,7 +7,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         struct SpaceMessageArgs : public EventArgs
         {

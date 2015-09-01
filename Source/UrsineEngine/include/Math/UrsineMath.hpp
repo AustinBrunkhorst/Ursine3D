@@ -18,18 +18,18 @@
 
 namespace ursine
 {
-    namespace Math
+    namespace math
     {
         template<typename T>
         inline bool IsZero(T value)
         {
-            return (value <= Math::Epsilon) && (value >= -Math::Epsilon);
+            return (value <= math::Epsilon) && (value >= -math::Epsilon);
         }
 
         template<typename T1, typename T2>
         inline bool IsEqual(T1 a, T2 b)
         {
-            return ((a >= b) ? (a - b) : (b - a)) < Math::Epsilon;
+            return ((a >= b) ? (a - b) : (b - a)) < math::Epsilon;
         }
 
         // for use on doubles and floats

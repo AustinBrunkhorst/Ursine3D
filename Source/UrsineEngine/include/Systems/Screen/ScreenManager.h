@@ -22,7 +22,7 @@ namespace ursine
     class Screen;
     class OverlayScreen;
 
-    namespace UI
+    namespace ui
     {
         class Space;
     }

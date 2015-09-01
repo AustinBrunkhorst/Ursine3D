@@ -6,75 +6,78 @@
 
 namespace ursine
 {
-    ReflectionDatabase::ReflectionDatabase(void)
-        : types( 1 )
-        , m_nextID( 1 )
+    namespace meta
     {
-        types[ Type::Invalid ].name = "UNKNOWN";
-    }
+        ReflectionDatabase::ReflectionDatabase(void)
+            : types( 1 )
+            , m_nextID( 1 )
+        {
+            types[ Type::Invalid ].name = "UNKNOWN";
+        }
 
-    ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-    ReflectionDatabase::~ReflectionDatabase(void) { }
+        ReflectionDatabase::~ReflectionDatabase(void) { }
 
-    ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-    ReflectionDatabase &ReflectionDatabase::Instance(void)
-    {
-        static ReflectionDatabase instance;
+        ReflectionDatabase &ReflectionDatabase::Instance(void)
+        {
+            static ReflectionDatabase instance;
 
-        return instance;
-    }
+            return instance;
+        }
 
-    ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-    TypeID ReflectionDatabase::AllocateType(const std::string &name)
-    {
-        auto search = ids.find( name );
+        TypeID ReflectionDatabase::AllocateType(const std::string &name)
+        {
+            auto search = ids.find( name );
 
-        // already defined
-        if (search != ids.end( ))
-            return Type::Invalid;
+            // already defined
+            if (search != ids.end( ))
+                return Type::Invalid;
 
-        types.emplace_back( name );
+            types.emplace_back( name );
 
-        auto id = m_nextID++;
+            auto id = m_nextID++;
 
-        ids[ name ] = id;
+            ids[ name ] = id;
 
-        return id;
-    }
+            return id;
+        }
 
-    ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-    const Function &ReflectionDatabase::GetGlobalFunction(const std::string &name)
-    {
-        auto &base = globalFunctions[ name ];
+        const Function &ReflectionDatabase::GetGlobalFunction(const std::string &name)
+        {
+            auto &base = globalFunctions[ name ];
 
-        if (!base.size( ))
-            return Function::Invalid( );
+            if (!base.size( ))
+                return Function::Invalid( );
 
-        return base.begin( )->second;
-    }
+            return base.begin( )->second;
+        }
 
-    ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-    const Function &ReflectionDatabase::GetGlobalFunction(const std::string &name, const InvokableSignature &signature)
-    {
-        auto &base = globalFunctions[ name ];
+        const Function &ReflectionDatabase::GetGlobalFunction(const std::string &name, const InvokableSignature &signature)
+        {
+            auto &base = globalFunctions[ name ];
 
-        auto search = base.find( signature );
+            auto search = base.find( signature );
 
-        if (search == base.end( ))
-            return Function::Invalid( );
+            if (search == base.end( ))
+                return Function::Invalid( );
 
-        return search->second;
-    }
+            return search->second;
+        }
 
-    ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-    ReflectionDatabase::Initializer::Initializer(std::function<void()> initializer)
-    {
-        initializer( );
+        ReflectionDatabase::Initializer::Initializer(std::function<void()> initializer)
+        {
+            initializer( );
+        }
     }
 }

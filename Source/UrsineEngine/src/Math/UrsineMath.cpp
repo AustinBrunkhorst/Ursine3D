@@ -15,7 +15,7 @@
 
 namespace ursine
 {
-    namespace Math
+    namespace math
     {
         void SinCos(float radians, float &sin_value, float &cos_value)
         {

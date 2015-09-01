@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     // Constructors
 	Mat3::Mat3(const SMat3 &mat)

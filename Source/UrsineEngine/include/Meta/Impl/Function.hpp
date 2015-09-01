@@ -1,21 +1,24 @@
 namespace ursine
 {
-    template<typename ReturnType, typename ...ArgTypes>
-    Function::Function(const std::string &name, ReturnType(*type)(ArgTypes...), Invoker invoker, Type parentType)
-        : Invokable( name )
-        , m_parentType( parentType )
-        , m_invoker( invoker )
+    namespace meta
     {
-        TypeUnpacker<ArgTypes...>::Apply( m_signature );
-    }
+        template<typename ReturnType, typename ...ArgTypes>
+        Function::Function(const std::string &name, ReturnType(*type)(ArgTypes...), Invoker invoker, Type parentType)
+            : Invokable( name )
+            , m_parentType( parentType )
+            , m_invoker( invoker )
+        {
+            TypeUnpacker<ArgTypes...>::Apply( m_signature );
+        }
 
-    ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-    template<typename ...Args>
-    Variant Function::Invoke(Args &&...args) const
-    {
-        ArgumentList arguments { std::forward<Args>( args )... };
+        template<typename ...Args>
+        Variant Function::Invoke(Args &&...args) const
+        {
+            ArgumentList arguments { std::forward<Args>( args )... };
 
-        return InvokeVariadic( arguments );
+            return InvokeVariadic( arguments );
+        }
     }
 }

@@ -21,7 +21,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         class View
             : public Renderer

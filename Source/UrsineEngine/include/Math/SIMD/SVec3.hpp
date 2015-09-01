@@ -1,7 +1,7 @@
 #include <math.h>
 #include "UrsineMath.h"
 
-namespace Ursine
+namespace ursine
 {
 #ifdef USE_SSE
     INLINE SVec3::SVec3(const SIMDvec &value)

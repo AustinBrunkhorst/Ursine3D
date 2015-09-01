@@ -28,7 +28,7 @@ using namespace std::placeholders;
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         // this context, args, exception [out]
         typedef std::function<CefRefPtr<CefV8Value>(

@@ -47,7 +47,7 @@ namespace ursine
         return _id;
     }
 
-    UI::Space &Screen::GetUI(void)
+    ui::Space &Screen::GetUI(void)
     {
         return ui;
     }

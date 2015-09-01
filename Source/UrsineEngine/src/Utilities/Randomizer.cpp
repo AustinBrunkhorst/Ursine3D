@@ -20,7 +20,7 @@ namespace ursine
 
     float Randomizer::GetValue(void) const
     {
-        return Math::Rand(_min, _max);
+        return math::Rand(_min, _max);
     }
 
     float Randomizer::GetMin(void) const

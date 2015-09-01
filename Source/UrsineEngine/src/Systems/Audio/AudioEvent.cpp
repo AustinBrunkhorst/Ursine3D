@@ -121,7 +121,7 @@ namespace ursine
 
     void AudioEvent::playFireForget()
     {
-        FMOD_S::EventInstance *temp_instance;
+        fmod_s::EventInstance *temp_instance;
 
         FMODERRCHK((*_description)->createInstance(&temp_instance));
 
@@ -153,7 +153,7 @@ namespace ursine
 
         for (int i = 0; i < num_params; ++i)
         {
-            FMOD_S::ParameterInstance *param, *temp_param;
+            fmod_s::ParameterInstance *param, *temp_param;
             FMODERRCHK(_instance->getParameterByIndex(i, &param));
             FMODERRCHK(temp_instance->getParameterByIndex(i, &temp_param));
             

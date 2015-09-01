@@ -72,7 +72,7 @@ ReflectionParser::~ReflectionParser(void)
 
 void ReflectionParser::buildClasses(const Cursor &cursor, Namespace &currentNamespace)
 {
-    for (auto child : cursor.GetChildren( ))
+    for (auto &child : cursor.GetChildren( ))
     {
         auto kind = child.GetKind( );
 
@@ -80,7 +80,7 @@ void ReflectionParser::buildClasses(const Cursor &cursor, Namespace &currentName
         if (child.IsDefinition( ) && (kind == CXCursor_ClassDecl || kind == CXCursor_StructDecl))
         {
             m_classes.emplace_back( 
-                new language_types::Class( child, currentNamespace )
+                new Class( child, currentNamespace )
             );
         }
         
@@ -90,7 +90,7 @@ void ReflectionParser::buildClasses(const Cursor &cursor, Namespace &currentName
 
 void ReflectionParser::buildGlobals(const Cursor &cursor, Namespace &currentNamespace)
 {
-    for (auto child : cursor.GetChildren( ))
+    for (auto &child : cursor.GetChildren( ))
     {
         // skip static globals (hidden)
         if (child.GetStorageClass( ) == CX_SC_Static)
@@ -102,7 +102,7 @@ void ReflectionParser::buildGlobals(const Cursor &cursor, Namespace &currentName
         if (kind == CXCursor_VarDecl) 
         {
             m_globals.emplace_back( 
-                new language_types::Global( child, currentNamespace ) 
+                new Global( child, currentNamespace ) 
             );
         }
 
@@ -112,7 +112,7 @@ void ReflectionParser::buildGlobals(const Cursor &cursor, Namespace &currentName
 
 void ReflectionParser::buildGlobalFunctions(const Cursor &cursor, Namespace &currentNamespace)
 {
-    for (auto child : cursor.GetChildren( ))
+    for (auto &child : cursor.GetChildren( ))
     {
         // skip static globals (hidden)
         if (child.GetStorageClass( ) == CX_SC_Static)
@@ -124,7 +124,7 @@ void ReflectionParser::buildGlobalFunctions(const Cursor &cursor, Namespace &cur
         if (kind == CXCursor_FunctionDecl) 
         {
             m_globalFunctions.emplace_back( 
-                new language_types::Function( child, currentNamespace ) 
+                new Function( child, currentNamespace ) 
             );
         }
 
@@ -134,7 +134,7 @@ void ReflectionParser::buildGlobalFunctions(const Cursor &cursor, Namespace &cur
 
 void ReflectionParser::buildEnums(const Cursor &cursor, Namespace &currentNamespace)
 {
-    for (auto child : cursor.GetChildren( ))
+    for (auto &child : cursor.GetChildren( ))
     {
         auto kind = child.GetKind( );
 
@@ -145,12 +145,12 @@ void ReflectionParser::buildEnums(const Cursor &cursor, Namespace &currentNamesp
             if (child.GetType( ).GetDisplayName( ).find( "anonymous enum at" ) != std::string::npos)
             {
                 // anonymous enums are just loaded as globals with each of their values
-                language_types::Enum::LoadAnonymous( m_globals, child, currentNamespace );
+                Enum::LoadAnonymous( m_globals, child, currentNamespace );
             }
             else
             {
                 m_enums.emplace_back( 
-                    new language_types::Enum( child, currentNamespace ) 
+                    new Enum( child, currentNamespace ) 
                 );
             }
         }

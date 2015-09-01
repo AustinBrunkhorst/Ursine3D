@@ -18,7 +18,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         bool JavaScriptExtension::Execute(const CefString &name,
             CefRefPtr<CefV8Value> object,

@@ -43,7 +43,7 @@ namespace ursine
         Collision::Collide(contacts, a, b);
 
         // set the friction and restitution values
-        e = Math::Max(a->restitution, b->restitution);
+        e = math::Max(a->restitution, b->restitution);
         f = sqrt(a->friction * b->friction);
     }
 
@@ -114,7 +114,7 @@ namespace ursine
                 (Vec2::Dot(rel_a, rel_a) - rna * rna) +
                 b->_inv_inertia *
                 (Vec2::Dot(rel_b, rel_b) - rnb * rnb);
-            c.mass_norm = Math::IsZero(denom) ? 0.0f : 1.0f / denom;
+            c.mass_norm = math::IsZero(denom) ? 0.0f : 1.0f / denom;
 
             // compute tangent mass
             Vec2 tan = Vec2::Cross(1.0f, c.normal);
@@ -125,9 +125,9 @@ namespace ursine
                 (Vec2::Dot(rel_a, rel_a) - rta * rta) +
                 b->_inv_inertia *
                 (Vec2::Dot(rel_b, rel_b) - rtb * rtb);
-            c.mass_tan = Math::IsZero(denom) ? 0.0f : 1.0f / denom;
+            c.mass_tan = math::IsZero(denom) ? 0.0f : 1.0f / denom;
 
-            c.bias = -bias_factor * inv_dt * Math::Min(0.0f, (-c.pen_depth) + pen_slop);
+            c.bias = -bias_factor * inv_dt * math::Min(0.0f, (-c.pen_depth) + pen_slop);
 
             // clamp the bias, resolves shooting out objects when correcting overlap
             if (c.bias > bias_threshold)
@@ -164,7 +164,7 @@ namespace ursine
 
             // Clamp the total accumulated impulse
             float prev = c.norm_imp;
-            c.norm_imp = Math::Max(prev + impulse, 0.0f);
+            c.norm_imp = math::Max(prev + impulse, 0.0f);
 
             // Apply the remainder
             impulse = c.norm_imp - prev;
@@ -193,7 +193,7 @@ namespace ursine
 
             // Clamp the friction
             prev = c.tang_imp;
-            c.tang_imp = Math::Clamp(prev + impulse, -max_friction, max_friction);
+            c.tang_imp = math::Clamp(prev + impulse, -max_friction, max_friction);
 
             // Apply the remainder
             impulse = c.tang_imp - prev;

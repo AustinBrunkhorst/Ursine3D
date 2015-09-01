@@ -49,7 +49,7 @@ namespace ursine
             _world_to_NDC = world->GetCamera().GetWorldToNDC();
             _time += gApplication->GetDelta() * 0.05f;
 
-            _time = Math::Wrap(_time, 0.0f, 1.0f);
+            _time = math::Wrap(_time, 0.0f, 1.0f);
 
             Texture2D::Bind(nullptr);
 
@@ -76,7 +76,7 @@ namespace ursine
             glBindTexture(GL_TEXTURE_2D, texture->GetID());
 
             _shader.SetUniform("center", 0.5f, 0.5f);
-            _shader.SetUniform("time", Ease::SineInOut(_time));
+            _shader.SetUniform("time", ease::SineInOut(_time));
             _shader.SetUniform("tint", renderable->GetTint());
             
             glDrawArrays(GL_QUADS, 0, 4);

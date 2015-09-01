@@ -32,18 +32,18 @@ namespace ursine
 
     inline void AABB::Combine(const AABB &other)
     {
-        low_bound = Vec2(Math::Min(low_bound.X(), other.low_bound.X())
-                          , Math::Min(low_bound.Y(), other.low_bound.Y()));
-        up_bound = Vec2(Math::Max(up_bound.X(), other.up_bound.X())
-                          , Math::Max(up_bound.Y(), other.up_bound.Y()));
+        low_bound = Vec2(math::Min(low_bound.X(), other.low_bound.X())
+                          , math::Min(low_bound.Y(), other.low_bound.Y()));
+        up_bound = Vec2(math::Max(up_bound.X(), other.up_bound.X())
+                          , math::Max(up_bound.Y(), other.up_bound.Y()));
     }
 
     inline void AABB::Combine(const AABB &one, const AABB &two)
     {
-        low_bound = Vec2(Math::Min(one.low_bound.X(), two.low_bound.X())
-                          , Math::Min(one.low_bound.Y(), two.low_bound.Y()));
-        up_bound = Vec2(Math::Max(one.up_bound.X(), two.up_bound.X())
-                          , Math::Max(one.up_bound.Y(), two.up_bound.Y()));
+        low_bound = Vec2(math::Min(one.low_bound.X(), two.low_bound.X())
+                          , math::Min(one.low_bound.Y(), two.low_bound.Y()));
+        up_bound = Vec2(math::Max(one.up_bound.X(), two.up_bound.X())
+                          , math::Max(one.up_bound.Y(), two.up_bound.Y()));
     }
 
     inline bool AABB::Contains(const AABB &other) const

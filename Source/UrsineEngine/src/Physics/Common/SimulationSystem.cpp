@@ -341,7 +341,7 @@ namespace ursine
         void Simulation::onUpdate(EVENT_HANDLER(SystemManager))
         {
             // Determine dt
-            _dt = Math::Min(DT, _world->GetDelta());
+            _dt = math::Min(DT, _world->GetDelta());
 
             // Step (1) Collision detection
             generateManifolds();

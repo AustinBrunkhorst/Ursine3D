@@ -3,11 +3,8 @@
 #include "Cursor.h"
 #include "Namespace.h"
 
-namespace language_types
+class Invokable
 {
-    class Invokable
-    {
-    public:
-        Invokable(const Cursor &cursor, const Namespace &currentNamespace);
-    };
-}
+public:
+    Invokable(const Cursor &cursor, const Namespace &currentNamespace);
+};

@@ -18,7 +18,7 @@
 #include <string>
 #include "SVec4.h"
 
-namespace Ursine
+namespace ursine
 {
     class SVec3;
 	class SMat4;

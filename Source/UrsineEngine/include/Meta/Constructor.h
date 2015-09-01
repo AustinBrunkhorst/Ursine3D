@@ -8,34 +8,37 @@
 
 namespace ursine
 {
-    class Type;
-
-    class Constructor 
-        : public MetaContainer
-        , public Invokable
+    namespace meta
     {
-    public:
-        typedef std::function<Variant(ArgumentList&)> Invoker;
+        class Type;
 
-        Constructor(void);
-        Constructor(Type classType, InvokableSignature signature, Invoker invoker);
+        class Constructor
+            : public MetaContainer
+            , public Invokable
+        {
+        public:
+            typedef std::function<Variant(ArgumentList&)> Invoker;
 
-        static const Constructor &Invalid(void);
+            Constructor(void);
+            Constructor(Type classType, InvokableSignature signature, Invoker invoker);
 
-        Type GetClassType(void) const;
+            static const Constructor &Invalid(void);
 
-        bool IsValid(void) const;
+            Type GetClassType(void) const;
 
-        Variant InvokeVariadic(ArgumentList &arguments) const;
+            bool IsValid(void) const;
 
-        template<typename ...Args>
-        Variant Invoke(Args &&...args) const;
+            Variant InvokeVariadic(ArgumentList &arguments) const;
 
-    private:
-        Type m_classType;
+            template<typename ...Args>
+            Variant Invoke(Args &&...args) const;
 
-        Invoker m_invoker;
-    };
+        private:
+            Type m_classType;
+
+            Invoker m_invoker;
+        };
+    }
 }
 
 #include "Impl/Constructor.hpp"

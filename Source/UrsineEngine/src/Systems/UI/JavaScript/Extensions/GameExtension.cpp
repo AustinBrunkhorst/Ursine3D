@@ -26,7 +26,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         GameExtension::GameExtension(void)
         {

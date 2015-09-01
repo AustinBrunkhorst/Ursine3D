@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
 	void SQuat::set(const SMat3& m)
 	{
@@ -128,7 +128,7 @@ namespace Ursine
     {
         float scalar_2 = 1.0f - w * w;
 
-        if (Math::IsZero(scalar_2))
+        if (math::IsZero(scalar_2))
             return SVec3(0.0f, 1.0f, 0.0f);
         
         float scalar = 1.0f / sqrt(scalar_2);
@@ -151,7 +151,7 @@ namespace Ursine
         // axis
         float scalar_2 = 1.0f - w * w;
 
-        if (Math::IsZero(scalar_2))
+        if (math::IsZero(scalar_2))
             axis.Set(0.0f, 1.0f, 0.0f);
 
         float scalar = 1.0f / sqrt(scalar_2);
@@ -202,7 +202,7 @@ namespace Ursine
         float real_part = norm_uv + from.Dot(to);
         SVec3 v;
 
-        if (real_part < Math::Epsilon * norm_uv)
+        if (real_part < math::Epsilon * norm_uv)
         {
             // If from and to are exactly opposite, rotate 180 degrees
             // around an arbitrary orthogonal axis.  Normalization happens later.

@@ -59,7 +59,7 @@ namespace ursine
             float localX2 = localX + region_width * regionScaleX;
             float localY2 = localY + region_height * regionScaleY;
 
-            float radians = Math::DegreesToRadians(rotation);
+            float radians = math::DegreesToRadians(rotation);
             float cosine = cos(radians), sine = sin(radians);
 
             float localXCos = localX * cosine + x;

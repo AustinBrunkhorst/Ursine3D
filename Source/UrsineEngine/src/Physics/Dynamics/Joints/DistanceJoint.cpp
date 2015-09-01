@@ -120,7 +120,7 @@ namespace ursine
 
         _rot_locked[body_index] = true;
 
-        _rot_anchor[body_index] = Math::Wrap(world_rotation, 0.0f, Math::PI_2);
+        _rot_anchor[body_index] = math::Wrap(world_rotation, 0.0f, math::PI_2);
 
         return this;
     }

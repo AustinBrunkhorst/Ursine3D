@@ -4,54 +4,57 @@
 
 namespace ursine
 {
-    Global::Global(void)
-        : m_type { Type::Invalid }
-        , m_parentType { Type::Invalid }
-        , m_name( "INVALID" )
-        , m_getter( nullptr ) 
-        , m_setter( nullptr ) { }
-
-    Global::Global(const std::string &name, Type type, Getter getter, Setter setter, Type parentType) 
-        : m_type( type )
-        , m_parentType( parentType ) 
-        , m_name( name ) 
-        , m_getter( getter )
-        , m_setter( setter ) { }
-
-    bool Global::IsValid(void) const
+    namespace meta
     {
-        return m_getter != nullptr;
-    }
+        Global::Global(void)
+            : m_type { Type::Invalid }
+            , m_parentType { Type::Invalid }
+            , m_name( "INVALID" )
+            , m_getter( nullptr ) 
+            , m_setter( nullptr ) { }
 
-    bool Global::IsReadOnly(void) const
-    {
-        return m_setter == nullptr;
-    }
+        Global::Global(const std::string &name, Type type, Getter getter, Setter setter, Type parentType) 
+            : m_type( type )
+            , m_parentType( parentType ) 
+            , m_name( name ) 
+            , m_getter( getter )
+            , m_setter( setter ) { }
 
-    Type Global::GetType(void) const
-    {
-        return m_type;
-    }
+        bool Global::IsValid(void) const
+        {
+            return m_getter != nullptr;
+        }
 
-    Type Global::GetParentType(void) const
-    {
-        return m_parentType;
-    }
+        bool Global::IsReadOnly(void) const
+        {
+            return m_setter == nullptr;
+        }
 
-    const std::string &Global::GetName(void) const
-    {
-        return m_name;
-    }
+        Type Global::GetType(void) const
+        {
+            return m_type;
+        }
 
-    Variant Global::GetValue(void) const
-    {
-        return m_getter( );
-    }
+        Type Global::GetParentType(void) const
+        {
+            return m_parentType;
+        }
 
-    void Global::SetValue(const Argument &value) const
-    {
-        // read only?
-        if (m_setter != nullptr)
-            m_setter( value );
+        const std::string &Global::GetName(void) const
+        {
+            return m_name;
+        }
+
+        Variant Global::GetValue(void) const
+        {
+            return m_getter( );
+        }
+
+        void Global::SetValue(const Argument &value) const
+        {
+            // read only?
+            if (m_setter != nullptr)
+                m_setter( value );
+        }
     }
 }

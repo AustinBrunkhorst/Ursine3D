@@ -5,10 +5,13 @@
 
 namespace ursine
 {
-    class Type;
+    namespace meta
+    {
+        class Type;
 
-    typedef std::vector<Type> InvokableSignature;
+        typedef std::vector<Type> InvokableSignature;
 
-    template<typename T>
-    using InvokableOverloadMap = std::unordered_multimap<InvokableSignature, T>;
+        template<typename T>
+        using InvokableOverloadMap = std::unordered_multimap<InvokableSignature, T>;
+    }
 }

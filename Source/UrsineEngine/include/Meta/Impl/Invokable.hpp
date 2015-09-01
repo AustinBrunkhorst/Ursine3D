@@ -4,9 +4,9 @@
 namespace std
 {
     template<>
-    struct hash<ursine::InvokableSignature>
+    struct hash<ursine::meta::InvokableSignature>
     {
-        size_t operator()(const ursine::InvokableSignature &signature) const
+        size_t operator()(const ursine::meta::InvokableSignature &signature) const
         {
             size_t seed = 0;
 
@@ -20,20 +20,23 @@ namespace std
 
 namespace ursine
 {
-    template<typename ...Types>
-    InvokableSignature Invokable::CreateSignature(void)
+    namespace meta
     {
-        static InvokableSignature signature;
-
-        static auto initial = true;
-
-        if (initial)
+        template<typename ...Types>
+        InvokableSignature Invokable::CreateSignature(void)
         {
-            TypeUnpacker<Types...>::Apply( signature );
+            static InvokableSignature signature;
 
-            initial = false;
+            static auto initial = true;
+
+            if (initial)
+            {
+                TypeUnpacker<Types...>::Apply( signature );
+
+                initial = false;
+            }
+
+            return signature;
         }
-
-        return signature;
     }
 }

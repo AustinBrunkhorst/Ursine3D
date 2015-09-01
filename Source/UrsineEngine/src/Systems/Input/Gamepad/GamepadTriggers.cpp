@@ -29,21 +29,21 @@ namespace ursine
 
     void GamepadTriggers::setLeft(int16 value)
     {
-        _left = Math::Clamp(value / VALUE_MAX, 0.0f, 1.0f);
+        _left = math::Clamp(value / VALUE_MAX, 0.0f, 1.0f);
     }
 
     void GamepadTriggers::setRight(int16 value)
     {
-        _right = Math::Clamp(value / VALUE_MAX, 0.0f, 1.0f);
+        _right = math::Clamp(value / VALUE_MAX, 0.0f, 1.0f);
     }
 
     void GamepadTriggers::setLeft(float value)
     {
-        _left = Math::Clamp(value, 0.0f, 1.0f);
+        _left = math::Clamp(value, 0.0f, 1.0f);
     }
 
     void GamepadTriggers::setRight(float value)
     {
-        _right = Math::Clamp(value, 0.0f, 1.0f);
+        _right = math::Clamp(value, 0.0f, 1.0f);
     }
 }

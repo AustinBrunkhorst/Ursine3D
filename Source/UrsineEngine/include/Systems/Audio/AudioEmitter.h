@@ -33,7 +33,7 @@ namespace ursine
         // attributes for 3D 
         FMOD_3D_ATTRIBUTES _attributes;
 
-        void initEvent(FMOD_S::EventDescription **description);
+        void initEvent(fmod_s::EventDescription **description);
         void copy(const AudioEmitter &other);
 
     public:

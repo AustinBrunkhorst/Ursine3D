@@ -18,7 +18,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         bool BrowserMessageHandler::OnQuery(
             CefRefPtr<CefBrowser> browser,

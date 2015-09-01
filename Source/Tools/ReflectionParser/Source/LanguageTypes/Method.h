@@ -2,11 +2,8 @@
 
 #include "LanguageType.h"
 
-namespace language_types
+class Method : public LanguageType
 {
-    class Method : public LanguageType
-    {
-    public:
-        Method(const Cursor &cursor, const Namespace &currentNamespace);
-    };
-}
+public:
+    Method(const Cursor &cursor, const Namespace &currentNamespace);
+};

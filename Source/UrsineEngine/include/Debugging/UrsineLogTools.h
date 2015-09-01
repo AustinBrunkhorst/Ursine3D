@@ -70,11 +70,11 @@
 #define URSINE_FFL __FILE__, __FUNCTION__, __LINE__
 
 #if (URSINE_OUTPUT_CONSOLE | URSINE_OUTPUT_FILE)
-    #define UAssert(assertion, ...) if(!(assertion)) { ursine::LogTools::Assert(URSINE_FFL,##__VA_ARGS__); }
-    #define UError(message, ...) ursine::LogTools::Error(URSINE_FFL, message,##__VA_ARGS__)
+    #define UAssert(assertion, ...) if(!(assertion)) { ursine::logging::Assert(URSINE_FFL,##__VA_ARGS__); }
+    #define UError(message, ...) ursine::logging::Error(URSINE_FFL, message,##__VA_ARGS__)
 
     #if (URSINE_OUTPUT_WARNINGS)
-        #define UWarning(message, ...) ursine::LogTools::Warning(URSINE_FFL, message,##__VA_ARGS__)
+        #define UWarning(message, ...) ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__)
     #else
         #define UWarning(message, ...)
     #endif

@@ -243,7 +243,7 @@ namespace ursine
                 world_flip_x = skeletonFlipX ^ flip_x;
                 world_flip_y = skeletonFlipY ^ flip_y;
             }
-            radians = Math::DegreesToRadians(world_rotation);
+            radians = math::DegreesToRadians(world_rotation);
             cosine = cos(radians);
             sine = sin(radians);
             if (world_flip_x)

@@ -6,14 +6,14 @@ namespace ursine
     TweenID &TweenID::Property(Type &input,
         Type target,
         const TimeSpan &duration,
-        Ease::Function ease)
+        ease::Function ease)
     {
         Type start = input;
         auto input_ptr = &input;
 
         doProperty(duration, [=](float percent) mutable 
         {
-            *input_ptr = Math::Lerp(start, target, ease(percent));
+            *input_ptr = math::Lerp(start, target, ease(percent));
         });
 
         return *this;
@@ -24,11 +24,11 @@ namespace ursine
         Type start,
         Type target,
         const TimeSpan &duration,
-        Ease::Function ease)
+        ease::Function ease)
     {
         doProperty(duration, [=](float percent) mutable 
         {
-            setter(Math::Lerp(start, target, ease(percent)));
+            setter(math::Lerp(start, target, ease(percent)));
         });
 
         return *this;
@@ -40,13 +40,13 @@ namespace ursine
         Type start,
         Type target,
         const TimeSpan &duration,
-        Ease::Function ease)
+        ease::Function ease)
     {
         auto functor = std::bind(setter, object, std::placeholders::_1);
 
         doProperty(duration, [=](float percent) mutable
         {
-            functor(Math::Lerp(start, target, ease(percent)));
+            functor(math::Lerp(start, target, ease(percent)));
         });
 
         return *this;

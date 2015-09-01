@@ -17,7 +17,7 @@
 #include "SIMD.h"
 #include <string>
 
-namespace Ursine
+namespace ursine
 {
     // Foward declaration
     class SVec3;

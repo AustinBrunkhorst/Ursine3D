@@ -49,7 +49,7 @@ namespace ursine
         // calculate the total amount of radians we're going to move
         TimeSpan total_timespan = _first_delay + _first_duration + _second_delay + _second_duration;
         float total_radians = _speed * total_timespan.Seconds();
-        float start_radians = Math::Rand(0.0f, Math::PI_2);
+        float start_radians = math::Rand(0.0f, math::PI_2);
 
         // set initial position
         trans->SetPositionWC({

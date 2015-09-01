@@ -45,8 +45,8 @@ namespace ursine
     {
         m_left =
         {
-            Math::Clamp( left.X(), -1.0f, 1.0f ),
-            Math::Clamp( left.Y(), -1.0f, 1.0f )
+            math::Clamp( left.X(), -1.0f, 1.0f ),
+            math::Clamp( left.Y(), -1.0f, 1.0f )
         };
     }
 
@@ -54,8 +54,8 @@ namespace ursine
     {
         m_right =
         {
-            Math::Clamp( right.X(), -1.0f, 1.0f ),
-            Math::Clamp( right.Y(), -1.0f, 1.0f )
+            math::Clamp( right.X(), -1.0f, 1.0f ),
+            math::Clamp( right.Y(), -1.0f, 1.0f )
         };
     }
 

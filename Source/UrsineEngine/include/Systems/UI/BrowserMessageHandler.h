@@ -19,7 +19,7 @@ using ursine::int64;
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         class BrowserMessageHandler : public CefMessageRouterBrowserSide::Handler
         {

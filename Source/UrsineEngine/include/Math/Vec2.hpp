@@ -1,6 +1,6 @@
 #include "UrsineMath.h"
 
-namespace Ursine
+namespace ursine
 {
     // Constructors
     INLINE Vec2::Vec2(void)
@@ -193,14 +193,14 @@ namespace Ursine
     {
         float angle = atan2f(vec.Y(), vec.X());
 
-        angle = Math::Wrap(angle, 0.0f, Math::PI_2);
+        angle = math::Wrap(angle, 0.0f, math::PI_2);
 
         return angle;
     }
 
     INLINE Vec2 Vec2::AngleVec(float radians)
     {
-        radians = Math::Wrap(radians, 0.0f, Math::PI_2);
+        radians = math::Wrap(radians, 0.0f, math::PI_2);
 
         return{
             static_cast<float>(cos(radians)),
@@ -210,29 +210,29 @@ namespace Ursine
 
     INLINE void Vec2::Max(const Vec2 &other)
     {
-        x = Math::Max(x, other.X());
-        y = Math::Max(y, other.Y());
+        x = math::Max(x, other.X());
+        y = math::Max(y, other.Y());
     }
 
     INLINE Vec2 Vec2::Max(const Vec2 &vec1, const Vec2 &vec2)
     {
         return{
-            Math::Max(vec1.X(), vec2.X()),
-            Math::Max(vec1.Y(), vec2.Y())
+            math::Max(vec1.X(), vec2.X()),
+            math::Max(vec1.Y(), vec2.Y())
         };
     }
 
     INLINE void Vec2::Min(const Vec2 &other)
     {
-        x = Math::Min(x, other.X());
-        y = Math::Min(y, other.Y());
+        x = math::Min(x, other.X());
+        y = math::Min(y, other.Y());
     }
 
     INLINE Vec2 Vec2::Min(const Vec2 &vec1, const Vec2 &vec2)
     {
         return{
-            Math::Min(vec1.X(), vec2.X()),
-            Math::Min(vec1.Y(), vec2.Y())
+            math::Min(vec1.X(), vec2.X()),
+            math::Min(vec1.Y(), vec2.Y())
         };
     }
 
@@ -296,7 +296,7 @@ namespace Ursine
     // Operators
     INLINE bool Vec2::operator==(const Vec2 &rhs) const
     {
-        return Math::IsEqual(x, rhs.X()) && Math::IsEqual(y, rhs.Y());
+        return math::IsEqual(x, rhs.X()) && math::IsEqual(y, rhs.Y());
     }
 
     INLINE bool Vec2::operator!=(const Vec2 &rhs) const

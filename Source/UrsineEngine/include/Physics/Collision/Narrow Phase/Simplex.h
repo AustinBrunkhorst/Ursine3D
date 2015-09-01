@@ -27,7 +27,7 @@ namespace ursine
         size_t index_0, index_1;
 
         SimplexEdge()
-            : distance(Math::MAX_FLOAT)
+            : distance(math::MAX_FLOAT)
             , normal(Vec2::Zero())
         { }
     };

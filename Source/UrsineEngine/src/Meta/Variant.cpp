@@ -6,86 +6,89 @@
 
 namespace ursine
 {
-    Variant::Variant(void)
-        : m_base( nullptr ) { }
-
-    Variant::Variant(const Variant &rhs)
-        : m_base( rhs.m_base ? rhs.m_base->Clone( ) : nullptr ) { }
-
-    Variant::Variant(Variant &&rhs)
-        : m_base( rhs.m_base )
+    namespace meta
     {
-        rhs.m_base = nullptr;
-    }
+        Variant::Variant(void)
+            : m_base( nullptr ) { }
 
-    Variant::~Variant(void)
-    {
-        delete m_base;
-    }
+        Variant::Variant(const Variant &rhs)
+            : m_base( rhs.m_base ? rhs.m_base->Clone( ) : nullptr ) { }
 
-    Variant &Variant::operator=(Variant &&rhs)
-    {
-        rhs.Swap( *this );
+        Variant::Variant(Variant &&rhs)
+            : m_base( rhs.m_base )
+        {
+            rhs.m_base = nullptr;
+        }
 
-        Variant( ).Swap( rhs );
+        Variant::~Variant(void)
+        {
+            delete m_base;
+        }
 
-        return *this;
-    }
+        Variant &Variant::operator=(Variant &&rhs)
+        {
+            rhs.Swap( *this );
 
-    Variant &Variant::operator=(const Variant &rhs)
-    {
-        Variant( rhs ).Swap( *this );
+            Variant( ).Swap( rhs );
 
-        return *this;
-    }
+            return *this;
+        }
 
-    Variant::operator bool(void) const 
-    {
-        return m_base != nullptr;
-    }
+        Variant &Variant::operator=(const Variant &rhs)
+        {
+            Variant( rhs ).Swap( *this );
 
-    Type Variant::GetType(void) const
-    {
-        return m_base ? m_base->GetType( ) : Type::Invalid;
-    }
+            return *this;
+        }
 
-    int Variant::ToInt(void) const
-    {
-        return m_base ? m_base->ToInt( ) : int( );
-    }
+        Variant::operator bool(void) const 
+        {
+            return m_base != nullptr;
+        }
 
-    bool Variant::ToBool(void) const
-    {
-        return m_base ? m_base->ToBool( ) : bool( );
-    }
+        Type Variant::GetType(void) const
+        {
+            return m_base ? m_base->GetType( ) : Type::Invalid;
+        }
 
-    float Variant::ToFloat(void) const
-    {
-        return m_base ? m_base->ToFloat( ) : float( );
-    }
+        int Variant::ToInt(void) const
+        {
+            return m_base ? m_base->ToInt( ) : int( );
+        }
 
-    double Variant::ToDouble(void) const
-    {
-        return m_base ? m_base->ToDouble( ) : double( );
-    }
+        bool Variant::ToBool(void) const
+        {
+            return m_base ? m_base->ToBool( ) : bool( );
+        }
 
-    std::string Variant::ToString(void) const
-    {
-        return m_base ? m_base->ToString( ) : std::string( );
-    }
+        float Variant::ToFloat(void) const
+        {
+            return m_base ? m_base->ToFloat( ) : float( );
+        }
 
-    void Variant::Swap(Variant &other)
-    {
-        std::swap( m_base, other.m_base );
-    }
+        double Variant::ToDouble(void) const
+        {
+            return m_base ? m_base->ToDouble( ) : double( );
+        }
 
-    bool Variant::IsValid(void) const
-    {
-        return m_base != nullptr;
-    }
+        std::string Variant::ToString(void) const
+        {
+            return m_base ? m_base->ToString( ) : std::string( );
+        }
 
-    void *Variant::getPtr(void) const
-    {
-        return m_base ? m_base->GetPtr( ) : nullptr;
+        void Variant::Swap(Variant &other)
+        {
+            std::swap( m_base, other.m_base );
+        }
+
+        bool Variant::IsValid(void) const
+        {
+            return m_base != nullptr;
+        }
+
+        void *Variant::getPtr(void) const
+        {
+            return m_base ? m_base->GetPtr( ) : nullptr;
+        }
     }
 }

@@ -1,27 +1,30 @@
 namespace ursine
 {
-    template<typename GlobalType>
-    void ReflectionDatabase::AddGlobal(const std::string &name, Global::Getter getter, Global::Setter setter, const MetaManager::Initializer &meta)
+    namespace meta
     {
-        Global global {
-            name,
-            Type::Get<GlobalType>( ),
-            getter,
-            setter
-        };
+        template<typename GlobalType>
+        void ReflectionDatabase::AddGlobal(const std::string &name, Global::Getter getter, Global::Setter setter, const MetaManager::Initializer &meta)
+        {
+            Global global {
+                name,
+                Type::Get<GlobalType>( ),
+                getter,
+                setter
+            };
 
-        global.m_meta = meta;
+            global.m_meta = meta;
 
-        globals.emplace( name, global );
-    }
+            globals.emplace( name, global );
+        }
 
-    template<typename FunctionType, typename FunctionInvoker>
-    void ReflectionDatabase::AddGlobalFunction(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta)
-    {
-        Function function( name, type, invoker );
+        template<typename FunctionType, typename FunctionInvoker>
+        void ReflectionDatabase::AddGlobalFunction(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta)
+        {
+            Function function( name, type, invoker );
 
-        function.m_meta = meta;
+            function.m_meta = meta;
 
-        globalFunctions[ name ].emplace( function.GetSignature( ), function );
+            globalFunctions[ name ].emplace( function.GetSignature( ), function );
+        }
     }
 }

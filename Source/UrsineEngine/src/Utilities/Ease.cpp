@@ -17,7 +17,7 @@
 
 namespace ursine
 {
-    namespace Ease
+    namespace ease
     {
         Function GetFunction(Type type)
         {
@@ -190,17 +190,17 @@ namespace ursine
 
         float SineIn(float t)
         {
-            return sinf((t - 1.0f) * Math::PI_DIV_2) + 1.0f;
+            return sinf((t - 1.0f) * math::PI_DIV_2) + 1.0f;
         }
 
         float SineOut(float t)
         {
-            return sinf(t * Math::PI_DIV_2);
+            return sinf(t * math::PI_DIV_2);
         }
 
         float SineInOut(float t)
         {
-            return 0.5f * (1.0f - cosf(t * Math::PI));
+            return 0.5f * (1.0f - cosf(t * math::PI));
         }
 
         float CircularIn(float t)
@@ -244,32 +244,32 @@ namespace ursine
 
         float ElasticIn(float t)
         {
-            return sinf(13.0f * Math::PI_DIV_2 * t) * powf(2.0f, 10.0f * (t - 1.0f));
+            return sinf(13.0f * math::PI_DIV_2 * t) * powf(2.0f, 10.0f * (t - 1.0f));
         }
 
         float ElasticOut(float t)
         {
-            return sinf(-13.0f * Math::PI_DIV_2 * (t + 1.0f)) * powf(2.0f, -10.0f * t) + 1.0f;
+            return sinf(-13.0f * math::PI_DIV_2 * (t + 1.0f)) * powf(2.0f, -10.0f * t) + 1.0f;
         }
 
         float ElasticInOut(float t)
         {
             if (t < 0.5f)
-                return 0.5f * sinf(13.0f * Math::PI_DIV_2 * (2.0f * t)) * powf(2.0f, 10.0f * ((2.0f * t) - 1.0f));
+                return 0.5f * sinf(13.0f * math::PI_DIV_2 * (2.0f * t)) * powf(2.0f, 10.0f * ((2.0f * t) - 1.0f));
 
-            return 0.5f * (sinf(-13.0f * Math::PI_DIV_2 * ((2.0f * t - 1.0f) + 1.0f)) * powf(2.0f, -10.0f * (2.0f * t - 1.0f)) + 2.0f);
+            return 0.5f * (sinf(-13.0f * math::PI_DIV_2 * ((2.0f * t - 1.0f) + 1.0f)) * powf(2.0f, -10.0f * (2.0f * t - 1.0f)) + 2.0f);
         }
 
         float BackIn(float t)
         {
-            return t * t * t - t * sinf(t * Math::PI);
+            return t * t * t - t * sinf(t * math::PI);
         }
 
         float BackOut(float t)
         {
             float f = (1.0f - t);
 
-            return 1.0f - (f * f * f - f * sinf(f * Math::PI));
+            return 1.0f - (f * f * f - f * sinf(f * math::PI));
         }
 
         float BackInOut(float t)
@@ -278,12 +278,12 @@ namespace ursine
             {
                 float f = 2.0f * t;
 
-                return 0.5f * (f * f * f - f * sinf(f * Math::PI));
+                return 0.5f * (f * f * f - f * sinf(f * math::PI));
             }
 
             float f = (1.0f - (2.0f * t - 1.0f));
 
-            return 0.5f * (1.0f - (f * f * f - f * sinf(f * Math::PI))) + 0.5f;
+            return 0.5f * (1.0f - (f * f * f - f * sinf(f * math::PI))) + 0.5f;
         }
 
         float BounceIn(float t)
@@ -315,14 +315,14 @@ namespace ursine
     }
 
     template<>
-    Json JsonSerializer::Serialize(Ease::Function &instance)
+    Json JsonSerializer::Serialize(ease::Function &instance)
     {
-        return Json( static_cast<int>( Ease::GetType( instance ) ) );
+        return Json( static_cast<int>( ease::GetType( instance ) ) );
     }
 
     template<>
-    void JsonSerializer::Deserialize(const Json &data, Ease::Function &out)
+    void JsonSerializer::Deserialize(const Json &data, ease::Function &out)
     {
-        out = Ease::GetFunction( static_cast<Ease::Type>( data.int_value( ) ) );
+        out = ease::GetFunction( static_cast<ease::Type>( data.int_value( ) ) );
     }
 }

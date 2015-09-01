@@ -2,16 +2,13 @@
 
 #include "LanguageType.h"
 
-namespace language_types
+class Class;
+
+class Function : public LanguageType
 {
-    class Class;
+public:
+    Function(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
 
-    class Function : public LanguageType
-    {
-    public:
-        Function(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
-
-    private:
-        Class *m_parent;
-    };
-}
+private:
+    Class *m_parent;
+};

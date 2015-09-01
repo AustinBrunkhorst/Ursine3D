@@ -17,7 +17,7 @@
 #include "SIMD.h"
 #include <string>
 
-namespace Ursine
+namespace ursine
 {
     // Forward declaration
     class Vec3;

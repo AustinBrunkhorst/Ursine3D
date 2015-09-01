@@ -180,7 +180,7 @@ namespace ursine
             FMODERRCHK(_event._instance->set3DAttributes(&_attributes));
     }
 
-    void AudioEmitter::initEvent(FMOD_S::EventDescription **description)
+    void AudioEmitter::initEvent(fmod_s::EventDescription **description)
     {
         // Set pointer to description
         _event._description = description;

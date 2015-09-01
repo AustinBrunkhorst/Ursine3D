@@ -1,7 +1,7 @@
 
 #include <string.h>
 
-namespace Ursine
+namespace ursine
 {
     // Constructors
     INLINE Mat4::Mat4(void)
@@ -291,9 +291,9 @@ namespace Ursine
     {
         float cx, sx, cy, sy, cz, sz;
 
-        Math::SinCos(x_angle, sx, cx);
-        Math::SinCos(y_angle, sy, cy);
-        Math::SinCos(z_angle, sz, cz);
+        math::SinCos(x_angle, sx, cx);
+        math::SinCos(y_angle, sy, cy);
+        math::SinCos(z_angle, sz, cz);
 
         float cycz = cy * cz;
         float sxsy = sx * sy;
@@ -681,7 +681,7 @@ namespace Ursine
         float y = point.Y();
         float z = point.Z();
         float w = m[3][0] * x + m[3][1] * y + m[3][2] * z + m[3][3];
-        float inv_div = Math::IsZero(w) ? 1.0f : 1.0f / w;
+        float inv_div = math::IsZero(w) ? 1.0f : 1.0f / w;
 
         return{
             inv_div * (m[0][0] * x + m[0][1] * y + m[0][2] * z + m[0][3]),
@@ -696,7 +696,7 @@ namespace Ursine
         float y = point.Y();
         float z = point.Z();
         float w = m[3][0] * x + m[3][1] * y + m[3][2] * z + m[3][3];
-        float inv_div = Math::IsZero(w) ? 1.0f : 1.0f / w;
+        float inv_div = math::IsZero(w) ? 1.0f : 1.0f / w;
 
         point.X() = inv_div * (m[0][0] * x + m[0][1] * y + m[0][2] * z + m[0][3]);
         point.Y() = inv_div * (m[1][0] * x + m[1][1] * y + m[1][2] * z + m[1][3]);

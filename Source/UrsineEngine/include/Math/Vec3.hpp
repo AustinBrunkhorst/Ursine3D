@@ -1,7 +1,7 @@
 #include <math.h>
 #include "UrsineMath.h"
 
-namespace Ursine
+namespace ursine
 {
     INLINE Vec3::Vec3(float X, float Y, float Z)
             : x(X)
@@ -159,33 +159,33 @@ namespace Ursine
 
     INLINE void Vec3::Max(const Vec3 &other)
     {
-        x = Math::Max(x, other.X());
-        y = Math::Max(y, other.Y());
-        z = Math::Max(z, other.Z());
+        x = math::Max(x, other.X());
+        y = math::Max(y, other.Y());
+        z = math::Max(z, other.Z());
     }
 
     INLINE Vec3 Vec3::Max(const Vec3 &vec1, const Vec3 &vec2)
     {
         return {
-            Math::Max(vec1.X(), vec2.X()),
-            Math::Max(vec1.Y(), vec2.Y()),
-            Math::Max(vec1.Z(), vec2.Z())
+            math::Max(vec1.X(), vec2.X()),
+            math::Max(vec1.Y(), vec2.Y()),
+            math::Max(vec1.Z(), vec2.Z())
         };
     }
 
     INLINE void Vec3::Min(const Vec3 &other)
     {
-        x = Math::Min(x, other.X());
-        y = Math::Min(y, other.Y());
-        z = Math::Min(z, other.Z());
+        x = math::Min(x, other.X());
+        y = math::Min(y, other.Y());
+        z = math::Min(z, other.Z());
     }
 
     INLINE Vec3 Vec3::Min(const Vec3 &vec1, const Vec3 &vec2)
     {
         return {
-            Math::Min(vec1.X(), vec2.X()),
-            Math::Min(vec1.Y(), vec2.Y()),
-            Math::Min(vec1.Z(), vec2.Z())
+            math::Min(vec1.X(), vec2.X()),
+            math::Min(vec1.Y(), vec2.Y()),
+            math::Min(vec1.Z(), vec2.Z())
         };
     }
 
@@ -264,9 +264,9 @@ namespace Ursine
     // Operators
     INLINE bool Vec3::operator==(const Vec3 &rhs) const
     {
-        return Math::IsEqual(x, rhs.X()) &&
-               Math::IsEqual(y, rhs.Y()) &&
-               Math::IsEqual(z, rhs.Z());
+        return math::IsEqual(x, rhs.X()) &&
+               math::IsEqual(y, rhs.Y()) &&
+               math::IsEqual(z, rhs.Z());
     }
 
     INLINE bool Vec3::operator!=(const Vec3 &rhs) const

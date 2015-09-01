@@ -8,34 +8,31 @@
 #include "LanguageTypes/Method.h"
 #include "LanguageTypes/Function.h"
 
-namespace language_types
+struct BaseClass
 {
-    struct BaseClass
-    {
-        BaseClass(const Cursor &cursor);
+    BaseClass(const Cursor &cursor);
 
-        std::string name;
-    };
+    std::string name;
+};
 
-    class Class : public LanguageType
-    {
-    public:
-        Class(const Cursor &cursor, const Namespace &currentNamespace);
-        ~Class(void);
+class Class : public LanguageType
+{
+public:
+    Class(const Cursor &cursor, const Namespace &currentNamespace);
+    ~Class(void);
 
-    private:
-        std::string m_name;
-        std::string m_displayName;
-        std::string m_qualifiedName;
+private:
+    std::string m_name;
+    std::string m_displayName;
+    std::string m_qualifiedName;
 
-        std::vector<BaseClass> m_baseClasses;
+    std::vector<BaseClass> m_baseClasses;
         
-        std::vector<Constructor> m_constructors;
+    std::vector<Constructor> m_constructors;
 
-        std::vector<Field> m_fields;
-        std::vector<Global> m_staticFields;
+    std::vector<Field> m_fields;
+    std::vector<Global> m_staticFields;
 
-        std::vector<Method> m_methods;
-        std::vector<Function> m_staticMethods;
-    };
-}
+    std::vector<Method> m_methods;
+    std::vector<Function> m_staticMethods;
+};

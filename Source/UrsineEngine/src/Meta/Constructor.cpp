@@ -6,40 +6,43 @@
 
 namespace ursine
 {
-    Constructor::Constructor(void)
-        : Invokable( "INVALID" )
-        , m_classType( { Type::Invalid } )
-        , m_invoker( nullptr ) { }
-
-    Constructor::Constructor(Type classType, InvokableSignature signature, Invoker invoker)
-        : Invokable( "constructor" )
-        , m_classType( classType )
-        , m_invoker( invoker )
+    namespace meta
     {
-        m_signature = signature;
-    }
+        Constructor::Constructor(void)
+            : Invokable( "INVALID" )
+            , m_classType( { Type::Invalid } )
+            , m_invoker( nullptr ) { }
 
-    const Constructor &Constructor::Invalid(void)
-    {
-        static Constructor invalid;
+        Constructor::Constructor(Type classType, InvokableSignature signature, Invoker invoker)
+            : Invokable( "constructor" )
+            , m_classType( classType )
+            , m_invoker( invoker )
+        {
+            m_signature = signature;
+        }
 
-        return invalid;
-    }
+        const Constructor &Constructor::Invalid(void)
+        {
+            static Constructor invalid;
 
-    Type Constructor::GetClassType(void) const
-    {
-        return m_classType;
-    }
+            return invalid;
+        }
 
-    bool Constructor::IsValid(void) const
-    {
-        return m_invoker != nullptr;
-    }
+        Type Constructor::GetClassType(void) const
+        {
+            return m_classType;
+        }
 
-    Variant Constructor::InvokeVariadic(ArgumentList &arguments) const
-    {
-        UAssert( IsValid( ), "Invalid constructor invoked" );
+        bool Constructor::IsValid(void) const
+        {
+            return m_invoker != nullptr;
+        }
 
-        return m_invoker( arguments );
+        Variant Constructor::InvokeVariadic(ArgumentList &arguments) const
+        {
+            UAssert( IsValid( ), "Invalid constructor invoked" );
+
+            return m_invoker( arguments );
+        }
     }
 }

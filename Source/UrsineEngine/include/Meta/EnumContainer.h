@@ -8,27 +8,30 @@
 
 namespace ursine
 {
-    template<typename EnumType>
-    class EnumContainer : public EnumBase
+    namespace meta
     {
-    public:
-        typedef std::unordered_map<std::string, EnumType> Table;
-        
-        EnumContainer(const std::string &name, const Table &table);
-        EnumContainer(const std::string &name, const Table &table, TypeID owner);
+        template<typename EnumType>
+        class EnumContainer : public EnumBase
+        {
+        public:
+            typedef std::unordered_map<std::string, EnumType> Table;
 
-        Type GetType(void) const override;
-        Type GetUnderlyingType(void) const override;
+            EnumContainer(const std::string &name, const Table &table);
+            EnumContainer(const std::string &name, const Table &table, TypeID owner);
 
-        std::vector<std::string> GetKeys(void) const override;
-        std::vector<Variant> GetValues(void) const override;
+            Type GetType(void) const override;
+            Type GetUnderlyingType(void) const override;
 
-        std::string GetKey(const Argument &value) const override;
-        Variant GetValue(const std::string &key) const override;
+            std::vector<std::string> GetKeys(void) const override;
+            std::vector<Variant> GetValues(void) const override;
 
-    private:
-        Table m_table;
-    };
+            std::string GetKey(const Argument &value) const override;
+            Variant GetValue(const std::string &key) const override;
+
+        private:
+            Table m_table;
+        };
+    }
 }
 
 #include "Impl/EnumContainer.hpp"

@@ -7,25 +7,28 @@
 
 namespace ursine
 {
-    class Type;
-
-    class Invokable
+    namespace meta
     {
-    public:
-        Invokable(const std::string &name);
+        class Type;
 
-        template<typename ...Types>
-        static InvokableSignature CreateSignature(void);
+        class Invokable
+        {
+        public:
+            Invokable(const std::string &name);
 
-        const InvokableSignature &GetSignature(void) const;
+            template<typename ...Types>
+            static InvokableSignature CreateSignature(void);
 
-        const std::string &GetName(void) const;
+            const InvokableSignature &GetSignature(void) const;
 
-    protected:
-        std::string m_name;
+            const std::string &GetName(void) const;
 
-        InvokableSignature m_signature;
-    };
+        protected:
+            std::string m_name;
+
+            InvokableSignature m_signature;
+        };
+    }
 }
 
 #include "Impl/Invokable.hpp"

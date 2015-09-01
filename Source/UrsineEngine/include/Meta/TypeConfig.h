@@ -4,8 +4,11 @@
 
 namespace ursine
 {
-    template<typename T>
-    using CleanedType = typename std::remove_cv< typename std::remove_reference< T >::type >::type;
+    namespace meta
+    {
+        template<typename T>
+        using CleanedType = typename std::remove_cv< typename std::remove_reference< T >::type >::type;
 
-    typedef unsigned TypeID;
+        typedef unsigned TypeID;
+    }
 }

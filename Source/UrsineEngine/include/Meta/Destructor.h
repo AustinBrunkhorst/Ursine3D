@@ -6,27 +6,30 @@
 
 namespace ursine
 {
-    class Destructor : public Invokable
+    namespace meta
     {
-    public:
-        typedef std::function<void(Variant &)> Invoker;
+        class Destructor : public Invokable
+        {
+        public:
+            typedef std::function<void(Variant &)> Invoker;
 
-        Destructor(void);
-        Destructor(Type classType, Invoker invoker);
+            Destructor(void);
+            Destructor(Type classType, Invoker invoker);
 
-        static const Destructor &Invalid(void);
+            static const Destructor &Invalid(void);
 
-        Type GetClassType(void) const;
+            Type GetClassType(void) const;
 
-        bool IsValid(void) const;
+            bool IsValid(void) const;
 
-        void Invoke(Variant &instance) const;
+            void Invoke(Variant &instance) const;
 
-    private:
-        Type m_classType;
+        private:
+            Type m_classType;
 
-        Invoker m_invoker;
-    };
+            Invoker m_invoker;
+        };
+    }
 }
 
 #include "Impl/Destructor.hpp"

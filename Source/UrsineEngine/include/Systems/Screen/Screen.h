@@ -39,7 +39,7 @@ namespace ursine
         void setID(ScreenID id);
 
     protected:
-        UI::Space ui;
+        ui::Space ui;
 
         // Called when this screen becomes the "current" screen in the screen manager
         virtual void OnEntered(const Json &data);
@@ -72,7 +72,7 @@ namespace ursine
         ScreenID GetID(void) const;
 
         // Gets the UI space for this screen
-        UI::Space &GetUI(void);
+        ui::Space &GetUI(void);
 
         // Determines if this screen has input focus
         bool HasInputFocus(void) const;

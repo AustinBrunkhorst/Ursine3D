@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     SVec4::SVec4(const SVec3 &value, float W)
         : x(value.X())
@@ -36,10 +36,10 @@ namespace Ursine
     // Public Methods
     void SVec4::Clean(void)
     {
-        x = Math::IsZero(x) ? 0.0f : x;
-        y = Math::IsZero(y) ? 0.0f : y;
-        z = Math::IsZero(z) ? 0.0f : z;
-        w = Math::IsZero(w) ? 0.0f : w;
+        x = math::IsZero(x) ? 0.0f : x;
+        y = math::IsZero(y) ? 0.0f : y;
+        z = math::IsZero(z) ? 0.0f : z;
+        w = math::IsZero(w) ? 0.0f : w;
     }
 
     std::string SVec4::ToString(void) const

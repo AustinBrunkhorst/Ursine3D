@@ -7,17 +7,20 @@
 
 namespace ursine
 {
-    EnumBase::EnumBase(const std::string &name, TypeID owner)
-        : m_parentType( owner )
-        , m_name( name ) { }
-
-    Type EnumBase::GetParentType(void) const
+    namespace meta
     {
-        return m_parentType;
-    }
+        EnumBase::EnumBase(const std::string &name, TypeID owner)
+            : m_parentType( owner )
+            , m_name( name ) { }
 
-    const std::string &EnumBase::GetName(void) const
-    {
-        return m_name;
+        Type EnumBase::GetParentType(void) const
+        {
+            return m_parentType;
+        }
+
+        const std::string &EnumBase::GetName(void) const
+        {
+            return m_name;
+        }
     }
 }

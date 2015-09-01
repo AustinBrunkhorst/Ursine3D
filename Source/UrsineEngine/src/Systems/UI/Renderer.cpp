@@ -21,7 +21,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         Renderer::Renderer(void)
         {

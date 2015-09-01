@@ -16,92 +16,95 @@
 
 namespace ursine
 {
-    struct TypeData
+    namespace meta
     {
-        bool isEnum : 1;
-        bool isPrimitive : 1;
-        bool isPointer : 1;
-        bool isClass : 1;
+        struct TypeData
+        {
+            bool isEnum : 1;
+            bool isPrimitive : 1;
+            bool isPointer : 1;
+            bool isClass : 1;
 
-        Enum enumeration;
+            Enum enumeration;
 
-        Type::Set baseClasses;
-        Type::Set derivedClasses;
+            Type::Set baseClasses;
+            Type::Set derivedClasses;
 
-        std::string name;
+            std::string name;
 
-        Destructor destructor;
+            Destructor destructor;
 
-        MetaManager meta;
+            MetaManager meta;
 
-        std::unordered_map<InvokableSignature, Constructor> constructors;
+            std::unordered_map<InvokableSignature, Constructor> constructors;
 
-        std::unordered_map<std::string, Field> fields;
-        std::unordered_map<std::string, Global> staticFields;
+            std::unordered_map<std::string, Field> fields;
+            std::unordered_map<std::string, Global> staticFields;
 
-        std::unordered_map<std::string, InvokableOverloadMap<Method>> methods;
-        std::unordered_map<std::string, InvokableOverloadMap<Function>> staticMethods;
+            std::unordered_map<std::string, InvokableOverloadMap<Method>> methods;
+            std::unordered_map<std::string, InvokableOverloadMap<Function>> staticMethods;
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
-        
-        TypeData(void);
-        TypeData(const std::string &name);
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
 
-        ~TypeData(void);
+            TypeData(void);
+            TypeData(const std::string &name);
 
-        void LoadBaseClasses(ReflectionDatabase &db, TypeID thisType, const std::initializer_list<Type> &classes);
+            ~TypeData(void);
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+            void LoadBaseClasses(ReflectionDatabase &db, TypeID thisType, const std::initializer_list<Type> &classes);
 
-        template<typename ClassType, typename ...Args>
-        void AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta);
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
 
-        const Constructor &GetConstructor(const InvokableSignature &signature);
+            template<typename ClassType, typename ...Args>
+            void AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta);
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+            const Constructor &GetConstructor(const InvokableSignature &signature);
 
-        template<typename ClassType>
-        void SetDestructor(void);
-        
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
 
-        template<typename ClassType, typename FieldType>
-        void AddField(const std::string &name, Field::Getter getter, Field::Setter setter, const MetaManager::Initializer &meta);
+            template<typename ClassType>
+            void SetDestructor(void);
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
 
-        template<typename ClassType, typename FieldType>
-        void AddStaticField(const std::string &name, Global::Getter getter, Global::Setter setter, const MetaManager::Initializer &meta);
+            template<typename ClassType, typename FieldType>
+            void AddField(const std::string &name, Field::Getter getter, Field::Setter setter, const MetaManager::Initializer &meta);
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
 
-        template<typename MethodType, typename MethodInvoker>
-        void AddMethod(const std::string &name, MethodType type, MethodInvoker invoker, const MetaManager::Initializer &meta);
+            template<typename ClassType, typename FieldType>
+            void AddStaticField(const std::string &name, Global::Getter getter, Global::Setter setter, const MetaManager::Initializer &meta);
 
-        const Method &GetMethod(const std::string &name);
-        const Method &GetMethod(const std::string &name, const InvokableSignature &signature);
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+            template<typename MethodType, typename MethodInvoker>
+            void AddMethod(const std::string &name, MethodType type, MethodInvoker invoker, const MetaManager::Initializer &meta);
 
-        template<typename ClassType, typename FunctionType, typename FunctionInvoker>
-        void AddStaticMethod(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta);
+            const Method &GetMethod(const std::string &name);
+            const Method &GetMethod(const std::string &name, const InvokableSignature &signature);
 
-        const Function &GetStaticMethod(const std::string &name);
-        const Function &GetStaticMethod(const std::string &name, const InvokableSignature &signature);
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
 
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+            template<typename ClassType, typename FunctionType, typename FunctionInvoker>
+            void AddStaticMethod(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta);
 
-        template<typename EnumType>
-        void SetEnum(const std::string &name, const typename EnumContainer<EnumType>::Table &table);
-    };
+            const Function &GetStaticMethod(const std::string &name);
+            const Function &GetStaticMethod(const std::string &name, const InvokableSignature &signature);
+
+            ////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////
+
+            template<typename EnumType>
+            void SetEnum(const std::string &name, const typename EnumContainer<EnumType>::Table &table);
+        };
+    }
 }
 
 #include "Impl/TypeData.hpp"

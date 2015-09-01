@@ -35,10 +35,10 @@ namespace ursine
     // storing only 0f - 1f values
     DERPFile::Bar::Bar(int beat_0, int beat_1, int beat_2, int beat_3)
     {
-        _beats[0] = Math::Clamp<int>(beat_0, 0, _beatMaxValue) / (float)_beatMaxValue;
-        _beats[1] = Math::Clamp<int>(beat_1, 0, _beatMaxValue) / (float)_beatMaxValue;
-        _beats[2] = Math::Clamp<int>(beat_2, 0, _beatMaxValue) / (float)_beatMaxValue;
-        _beats[3] = Math::Clamp<int>(beat_3, 0, _beatMaxValue) / (float)_beatMaxValue;
+        _beats[0] = math::Clamp<int>(beat_0, 0, _beatMaxValue) / (float)_beatMaxValue;
+        _beats[1] = math::Clamp<int>(beat_1, 0, _beatMaxValue) / (float)_beatMaxValue;
+        _beats[2] = math::Clamp<int>(beat_2, 0, _beatMaxValue) / (float)_beatMaxValue;
+        _beats[3] = math::Clamp<int>(beat_3, 0, _beatMaxValue) / (float)_beatMaxValue;
     }
 
     // returns 0 - 1 value representing that specific beats intensity

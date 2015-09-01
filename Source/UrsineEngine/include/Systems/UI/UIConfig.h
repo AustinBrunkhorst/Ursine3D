@@ -15,7 +15,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         // Name of the global game instance in JavaScript
         const char * const kGameInstanceName = "Game";

@@ -13,8 +13,8 @@
 
 namespace ursine
 {
-    static void parse_Banks(FMOD_S::System *system, std::ifstream &file);
-    static void load_Bank(FMOD_S::System *system, std::string &bank_s);
+    static void parse_Banks(fmod_s::System *system, std::ifstream &file);
+    static void load_Bank(fmod_s::System *system, std::string &bank_s);
 
     static int emitterSort(const void *emitter1, const void *emitter2);
 
@@ -29,7 +29,7 @@ namespace ursine
         gAudioManager = this;
 
         // Initialize the system
-        FMODERRCHK(FMOD_S::System::create(&_system));
+        FMODERRCHK(fmod_s::System::create(&_system));
         FMODERRCHK(_system->initialize(512, 0, 0, nullptr));
         FMODERRCHK(_system->getLowLevelSystem(&_low_system));
 
@@ -121,12 +121,12 @@ namespace ursine
             // load events in the queue
             for (AudioEmitter *emitter : _loading_queue)
             {
-                FMOD_S::EventDescription *description;
+                fmod_s::EventDescription *description;
 
                 // check for the event description already being loaded
                 if (_event_desc_map.find(emitter->_event_name) == _event_desc_map.end())
                 {
-                    FMOD_S::ID id;
+                    fmod_s::ID id;
 
                     // load event description from FMOD
                     FMODERRCHK(_system->lookupID(emitter->_event_name.c_str(), &id));
@@ -151,7 +151,7 @@ namespace ursine
 
     void AudioManager::StopAll(bool fade_out)
     {
-        FMOD_S::EventInstance *buffer[125];
+        fmod_s::EventInstance *buffer[125];
 
         for (auto itr : _event_desc_map)
         {
@@ -171,7 +171,7 @@ namespace ursine
 
     void AudioManager::SetMasterVolume(float volume)
     {
-        FMOD_S::EventInstance *buffer[125];
+        fmod_s::EventInstance *buffer[125];
 
         for (auto itr : _event_desc_map)
         {
@@ -239,7 +239,7 @@ namespace ursine
         return stream;
     }
 
-    static void parse_Banks(FMOD_S::System *system, std::ifstream &file)
+    static void parse_Banks(fmod_s::System *system, std::ifstream &file)
     {
         // string for extraction
         std::string str;
@@ -269,9 +269,9 @@ namespace ursine
         load_Bank(system, str = "Master Bank.strings.bank");
     }
 
-    static void load_Bank(FMOD_S::System *system, std::string &bank_s)
+    static void load_Bank(fmod_s::System *system, std::string &bank_s)
     {
-        FMOD_S::Bank *bank = NULL;
+        fmod_s::Bank *bank = NULL;
         FMODERRCHK(system->loadBankFile(MediaPath(bank_s, utils::TYPE_AUDIO).c_str(),
             FMOD_STUDIO_LOAD_BANK_NORMAL, &bank));
     }

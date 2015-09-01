@@ -1,7 +1,7 @@
 #include <math.h>
 #include "UrsineMath.h"
 
-namespace Ursine
+namespace ursine
 {
     INLINE Vec4::Vec4(void)
         : x(0.0f)
@@ -142,37 +142,37 @@ namespace Ursine
 
     INLINE void Vec4::Max(const Vec4 &other)
     {
-        x = Math::Max(x, other.X());
-        y = Math::Max(y, other.Y());
-        z = Math::Max(z, other.Z());
-        w = Math::Max(w, other.w);
+        x = math::Max(x, other.X());
+        y = math::Max(y, other.Y());
+        z = math::Max(z, other.Z());
+        w = math::Max(w, other.w);
     }
 
     INLINE Vec4 Vec4::Max(const Vec4 &vec1, const Vec4 &vec2)
     {
         return{
-            Math::Max(vec1.X(), vec2.X()),
-            Math::Max(vec1.Y(), vec2.Y()),
-            Math::Max(vec1.Z(), vec2.Z()),
-            Math::Max(vec1.w, vec2.w)
+            math::Max(vec1.X(), vec2.X()),
+            math::Max(vec1.Y(), vec2.Y()),
+            math::Max(vec1.Z(), vec2.Z()),
+            math::Max(vec1.w, vec2.w)
         };
     }
 
     INLINE void Vec4::Min(const Vec4 &other)
     {
-        x = Math::Min(x, other.X());
-        y = Math::Min(y, other.Y());
-        z = Math::Min(z, other.Z());
-        w = Math::Min(w, other.w);
+        x = math::Min(x, other.X());
+        y = math::Min(y, other.Y());
+        z = math::Min(z, other.Z());
+        w = math::Min(w, other.w);
     }
 
     INLINE Vec4 Vec4::Min(const Vec4 &vec1, const Vec4 &vec2)
     {
         return{
-            Math::Min(vec1.X(), vec2.X()),
-            Math::Min(vec1.Y(), vec2.Y()),
-            Math::Min(vec1.Z(), vec2.Z()),
-            Math::Min(vec1.w, vec2.w)
+            math::Min(vec1.X(), vec2.X()),
+            math::Min(vec1.Y(), vec2.Y()),
+            math::Min(vec1.Z(), vec2.Z()),
+            math::Min(vec1.w, vec2.w)
         };
     }
 
@@ -261,10 +261,10 @@ namespace Ursine
     // Operators
     INLINE bool Vec4::operator==(const Vec4 &rhs) const
     {
-        return Math::IsEqual(x, rhs.X()) &&
-               Math::IsEqual(y, rhs.Y()) &&
-               Math::IsEqual(z, rhs.Z()) &&
-               Math::IsEqual(w, rhs.w);
+        return math::IsEqual(x, rhs.X()) &&
+               math::IsEqual(y, rhs.Y()) &&
+               math::IsEqual(z, rhs.Z()) &&
+               math::IsEqual(w, rhs.w);
     }
 
     INLINE bool Vec4::operator!=(const Vec4 &rhs) const

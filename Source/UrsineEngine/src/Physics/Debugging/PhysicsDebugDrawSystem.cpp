@@ -144,7 +144,7 @@ namespace ursine
         void PhysicsDebugDrawer::drawEllipse(const Ellipse &ellipse, bool is_colliding, const SMat3 &mat)
         {
             static const float NUM_SEGMENTS = 30;
-            static const float INC = Math::PI_2 / NUM_SEGMENTS;
+            static const float INC = math::PI_2 / NUM_SEGMENTS;
 
             if (is_colliding)
                 glColor3f(1.0f, 0.0f, 0.0f);

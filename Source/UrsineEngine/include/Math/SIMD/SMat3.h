@@ -16,7 +16,7 @@
 #include "SVec3.h"
 #include "Vec2.h"
 
-namespace Ursine
+namespace ursine
 {
 	// Forward Declaration
     class SMat4;

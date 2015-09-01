@@ -19,7 +19,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         RenderProcessHandler::RenderProcessHandler(void) { }
 

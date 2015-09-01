@@ -19,7 +19,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         class JavaScriptExtension : public CefV8Handler
         {

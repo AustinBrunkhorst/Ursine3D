@@ -15,7 +15,7 @@
 
 #include "Joint.h"
 
-namespace Spring
+namespace spring
 {
     const float STEEL = 1.0f;
     const float ROPE = 0.025f;

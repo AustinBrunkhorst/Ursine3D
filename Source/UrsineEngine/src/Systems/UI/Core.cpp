@@ -17,7 +17,7 @@
 
 namespace ursine
 {
-    namespace UI
+    namespace ui
     {
         Core::Core(void)
         {
