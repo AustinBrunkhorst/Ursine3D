@@ -16,7 +16,7 @@
 #include "Tween.h"
 #include "TweenManager.h"
 
-namespace Ursine
+namespace ursine
 {
     Tween::Tween(TweenGroupID group)
         : _group(group)

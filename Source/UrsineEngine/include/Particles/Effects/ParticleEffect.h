@@ -17,18 +17,18 @@
 #include "ParticleEffectRegistrar.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class ParticleEmitter;
     }
 
     class ParticleEffect
     {
-        friend class ECS::ParticleEmitter;
+        friend class ecs::ParticleEmitter;
 
-        ECS::ParticleEmitter *_emitter;
+        ecs::ParticleEmitter *_emitter;
 
         ParticleEffectTypeID _type_id;
 
@@ -50,7 +50,7 @@ namespace Ursine
         virtual void OnRemove(void) { }
 
         // override this function and implement your initialization code
-        virtual void InitializeParticle(ECS::Entity *particle) const = 0;
+        virtual void InitializeParticle(ecs::Entity *particle) const = 0;
 
         ////////////////////////////////////
         // Reflection related
@@ -62,7 +62,7 @@ namespace Ursine
 
         inline const std::string &GetName(void) const;
 
-        inline ECS::ParticleEmitter *GetEmitter(void) const;
+        inline ecs::ParticleEmitter *GetEmitter(void) const;
 
         // Determines if this effect is of the specified type
         template <class ParticleEffectType>

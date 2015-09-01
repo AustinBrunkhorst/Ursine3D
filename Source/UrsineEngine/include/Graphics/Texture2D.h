@@ -21,10 +21,10 @@
 
 #include "Vec2.h"
 
-namespace Ursine
+namespace ursine
 {
     class Texture2D 
-        : public Utils::NoCopy
+        : public utils::NoCopy
         , public Asset
     {
         friend class ContentManager;

@@ -6,7 +6,7 @@
 #include "ParticleEffect.h"
 #include "Texture2D.h"
 
-namespace Ursine
+namespace ursine
 {
     class TextureSetterEffect : public ParticleEffect
     {
@@ -17,7 +17,7 @@ namespace Ursine
         TextureSetterEffect(void)
             : BaseParticleEffect() { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
     };
 }
 
@@ -30,7 +30,7 @@ namespace Ursine
 #ifndef TEXTURE_SETTER_REGISTERED
 #define TEXTURE_SETTER_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(TextureSetterEffect);
     RegisterParticleEffectData(TextureSetterEffect, _textures, "textures");

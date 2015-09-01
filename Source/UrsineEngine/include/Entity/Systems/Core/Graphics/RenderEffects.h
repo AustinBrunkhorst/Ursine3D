@@ -4,9 +4,9 @@
 #include "BlurEffect.h"
 #include "WaveEffect.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class RenderEffect;
 

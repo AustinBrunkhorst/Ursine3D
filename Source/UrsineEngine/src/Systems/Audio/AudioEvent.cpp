@@ -15,7 +15,7 @@
 
 #include "AudioEvent.h"
 
-namespace Ursine
+namespace ursine
 {
     AudioEvent::AudioEvent()
         : _mode(PLAY_FIRE_FORGET)

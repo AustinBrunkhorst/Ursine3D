@@ -19,9 +19,9 @@
 #include "FilterSystem.h"
 #include "SystemRegistrar.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class AnimationSystem : public FilterSystem
         {
@@ -44,9 +44,9 @@ namespace Ursine
 #ifndef ANIMATION_SYSTEM_REGISTERED
 #define ANIMATION_SYSTEM_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterEntitySystem(AnimationSystem)
     }

@@ -20,9 +20,9 @@
 
 #include "Texture2D.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         AnimationComponent::AnimationComponent(void)
             : BaseComponent()

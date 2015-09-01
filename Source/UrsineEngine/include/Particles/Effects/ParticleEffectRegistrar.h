@@ -24,9 +24,9 @@
 
 #include <unordered_map>
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class ParticleEmitter;
     }

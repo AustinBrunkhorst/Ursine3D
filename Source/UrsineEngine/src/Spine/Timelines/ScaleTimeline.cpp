@@ -3,9 +3,9 @@
 #include "Spine/Timelines/ScaleTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         ScaleTimeline::ScaleTimeline(int frame_count)
             : BaseTimeline(SP_TIMELINE_SCALE, frame_count, 3) { }

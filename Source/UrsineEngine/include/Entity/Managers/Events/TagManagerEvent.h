@@ -17,9 +17,9 @@
 
 #include <string>
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         enum TagManagerEvent
         {

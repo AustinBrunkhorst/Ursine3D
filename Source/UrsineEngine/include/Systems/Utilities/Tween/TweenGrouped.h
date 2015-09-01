@@ -4,7 +4,7 @@
 
 #include "Ease.h"
 
-namespace Ursine
+namespace ursine
 {
     class TweenGrouped : public TweenItem
     {

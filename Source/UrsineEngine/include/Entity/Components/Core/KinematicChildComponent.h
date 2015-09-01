@@ -19,9 +19,9 @@
 
 #include "Component.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class KinematicChild : public Component
         {
@@ -48,9 +48,9 @@ namespace Ursine
 #ifdef REGISTER_COMPONENTS
 #ifndef KINEMATIC_CHILD_REGISTERED
 #define KINEMATIC_CHILD_REGISTERED
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(KinematicChild);
         //RegisterComponentData(AnimationComponent, current);

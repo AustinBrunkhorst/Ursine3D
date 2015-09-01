@@ -16,7 +16,7 @@
 #include "EventArgs.h"
 #include "Entity/Entity.h"
 
-namespace Ursine
+namespace ursine
 {
     enum CollisionEvents
     {
@@ -31,7 +31,7 @@ namespace Ursine
     struct CollisionEventArgs : public EventArgs
     {
         // the other entity involved in the collision
-        ECS::Entity *other;
+        ecs::Entity *other;
 
         // the point at which they have collided
         Vec2 at;

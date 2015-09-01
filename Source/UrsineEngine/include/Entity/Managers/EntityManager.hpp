@@ -13,9 +13,9 @@
 
 #include "Component.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template<class ComponentType>
         void EntityManager::AddComponent(Entity *entity, ComponentType *component)

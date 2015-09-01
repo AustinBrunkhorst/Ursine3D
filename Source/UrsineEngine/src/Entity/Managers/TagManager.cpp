@@ -16,9 +16,9 @@
 #include "TagManager.h"
 #include "EntityManager.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         TagManager::TagManager(World *world)
             : WorldManager(world)

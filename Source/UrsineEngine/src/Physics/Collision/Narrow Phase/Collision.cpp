@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     void Support(const Collider &collider_A, const Collider &collider_B, const Vec2 &direction,
                  Vec2 &support, Vec2 &support_A, Vec2 &support_B)
@@ -212,8 +212,8 @@ namespace Ursine
         }
     }
 
-    void Collision::compareColliders(Collider *collider_a, ECS::RigidBody2D *a,
-                                     Collider *collider_b, ECS::RigidBody2D *b,
+    void Collision::compareColliders(Collider *collider_a, ecs::RigidBody2D *a,
+                                     Collider *collider_b, ecs::RigidBody2D *b,
                                      Contacts &contacts)
     {
         if (IsColliding(*collider_a, *collider_b, contacts))
@@ -222,8 +222,8 @@ namespace Ursine
         }
     }
 
-    void Collision::compareColliderAndTree(Collider *collider, ECS::RigidBody2D *a,
-                                           Colliders &tree, ECS::RigidBody2D *b,
+    void Collision::compareColliderAndTree(Collider *collider, ecs::RigidBody2D *a,
+                                           Colliders &tree, ecs::RigidBody2D *b,
                                            Contacts &contacts)
     {
         // recursively check the collider with each branch in the given tree
@@ -234,8 +234,8 @@ namespace Ursine
         }
     }
 
-    void Collision::handleNarrowPhase(Colliders &tree_a, ECS::RigidBody2D *a, 
-                                        Colliders &tree_b, ECS::RigidBody2D *b,
+    void Collision::handleNarrowPhase(Colliders &tree_a, ecs::RigidBody2D *a, 
+                                        Colliders &tree_b, ecs::RigidBody2D *b,
                                         Contacts &contacts)
     {
         // recursively check each branch with every other branch
@@ -246,7 +246,7 @@ namespace Ursine
         }
     }
 
-    void Collision::Collide(Contacts &contacts, ECS::RigidBody2D *a, ECS::RigidBody2D *b)
+    void Collision::Collide(Contacts &contacts, ecs::RigidBody2D *a, ecs::RigidBody2D *b)
     {
         // check the broad phase of both rigid bodies
         if (a->_aabb.Overlap(b->_aabb))
@@ -280,7 +280,7 @@ namespace Ursine
             return false;
     }
 
-    void Collision::SendEvents(ECS::RigidBody2D *a, ECS::RigidBody2D *b,
+    void Collision::SendEvents(ecs::RigidBody2D *a, ecs::RigidBody2D *b,
                                Manifold &manifold, CollisionEvents event)
     {
         CollisionEventArgs e;
@@ -288,8 +288,8 @@ namespace Ursine
         if (event != COLLISION_ENDED)
             e.at = manifold.contacts[0].point;
 
-        ECS::Entity *e_a = a->GetOwner();
-        ECS::Entity *e_b = b->GetOwner();
+        ecs::Entity *e_a = a->GetOwner();
+        ecs::Entity *e_b = b->GetOwner();
 
         if (e_a && e_b && e_a->IsAvailable() && e_b->IsAvailable() &&
             a->sends_events && b->sends_events)

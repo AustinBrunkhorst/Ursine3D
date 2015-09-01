@@ -22,7 +22,7 @@
 
 #include "UrsineTypes.h"
 
-namespace Ursine
+namespace ursine
 {
     class KeyboardManager 
         : public System

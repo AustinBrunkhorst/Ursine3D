@@ -1,6 +1,6 @@
 #include <UrsinePrecompiled.h>
 
-namespace Ursine
+namespace ursine
 {
     LayerID::LayerID(uint64 value)
         : _id(value)

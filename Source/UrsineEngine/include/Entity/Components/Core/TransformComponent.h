@@ -22,9 +22,9 @@
 #include "SMat3.h"
 #include "Component.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class Transform : public Component
         {
@@ -243,9 +243,9 @@ namespace Ursine
 #ifdef REGISTER_COMPONENTS
 #ifndef TRANSFORM_REGISTERED
 #define TRANSFORM_REGISTERED
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(Transform);
         RegisterComponentData(Transform, position);

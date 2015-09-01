@@ -8,7 +8,7 @@
 #include <vector>
 #include <set>
 
-namespace Ursine
+namespace ursine
 {
     class Variant;
     class Enum;

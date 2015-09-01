@@ -15,7 +15,7 @@
 
 #include "TweenManager.h"
 
-namespace Ursine
+namespace ursine
 {
     TweenManager *gTweenManager = nullptr;
 

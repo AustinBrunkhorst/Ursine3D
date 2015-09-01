@@ -20,9 +20,9 @@
 #include <unordered_map>
 #include "ParticleEffect.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         enum IntervalType
         {
@@ -118,10 +118,10 @@ namespace Ursine
     }
 
     extern template
-    Json JsonSerializer::Serialize(ECS::IntervalType &instance);
+    Json JsonSerializer::Serialize(ecs::IntervalType &instance);
 
     extern template
-    void JsonSerializer::Deserialize(const Json &data, ECS::IntervalType &out);
+    void JsonSerializer::Deserialize(const Json &data, ecs::IntervalType &out);
 
     extern template
     Json JsonSerializer::Serialize(ParticleEffectVector &instance);
@@ -141,9 +141,9 @@ namespace Ursine
 #ifndef PARTICLE_EMITTER_REGISTERED
 #define PARTICLE_EMITTER_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(ParticleEmitter);
         RegisterComponentData(ParticleEmitter, _effects, "effects");

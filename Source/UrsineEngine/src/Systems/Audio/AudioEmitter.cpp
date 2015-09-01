@@ -17,9 +17,9 @@
 #include "AudioDataBaseClasses.h"
 
 
-const Ursine::SVec3 MAX_BOUNDS = Ursine::SVec3(2400, 2400, 400);
-const Ursine::SVec3 FMOD_MAX_BOUNDS = Ursine::SVec3(20, 20, 20);
-namespace Ursine
+const ursine::SVec3 MAX_BOUNDS = ursine::SVec3(2400, 2400, 400);
+const ursine::SVec3 FMOD_MAX_BOUNDS = ursine::SVec3(20, 20, 20);
+namespace ursine
 {
     static void setAttributesDefault(FMOD_3D_ATTRIBUTES &attributes)
     {

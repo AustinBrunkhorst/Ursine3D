@@ -2,11 +2,11 @@
 #include "TextureSetterEffect.h"
 #include "RenderableComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    void TextureSetterEffect::InitializeParticle(ECS::Entity *particle) const
+    void TextureSetterEffect::InitializeParticle(ecs::Entity *particle) const
     {
-        auto renderable = particle->GetComponent<ECS::Renderable>();
+        auto renderable = particle->GetComponent<ecs::Renderable>();
 
         uint index = rand() % _textures.size();
 

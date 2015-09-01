@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     // maximum length of a filename
     const int MAX_FILE_LENGTH = 256;

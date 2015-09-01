@@ -6,7 +6,7 @@
 #include "ParticleEffect.h"
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     class LifeSpanEffect : public ParticleEffect
     {
@@ -18,7 +18,7 @@ namespace Ursine
             : BaseParticleEffect()
             , _life_span(1) { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
     };
 }
 
@@ -31,7 +31,7 @@ namespace Ursine
 #ifndef LIFE_SPAN_REGISTERED
 #define LIFE_SPAN_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(LifeSpanEffect);
     RegisterParticleEffectData(LifeSpanEffect, _life_span, "life_span");

@@ -11,9 +11,9 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template<class Type>
         Type *SystemManager::AddSystem(void)

@@ -2,7 +2,7 @@
 
 #include "MetaManager.h"
 
-namespace Ursine
+namespace ursine
 {
     class MetaContainer
     {

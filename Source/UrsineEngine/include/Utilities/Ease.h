@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     namespace Ease
     {

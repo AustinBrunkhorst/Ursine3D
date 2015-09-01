@@ -6,7 +6,7 @@
 #include "ParticleEffect.h"
 #include "Randomizer.h"
 
-namespace Ursine
+namespace ursine
 {
     class PositionSetterEffect : public ParticleEffect
     {
@@ -17,7 +17,7 @@ namespace Ursine
         PositionSetterEffect(void)
             : BaseParticleEffect() { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
     };
 }
 
@@ -30,7 +30,7 @@ namespace Ursine
 #ifndef POSITION_SETTER_REGISTERED
 #define POSITION_SETTER_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(PositionSetterEffect);
     RegisterParticleEffectData(PositionSetterEffect, _randomizer, "randomizer");

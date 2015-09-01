@@ -17,7 +17,7 @@
 #include "ParticleEffectRegistrar.h"
 #include "ParticleEffect.h"
 
-namespace Ursine
+namespace ursine
 {
     ParticleEffect *ParticleEffectRegistrar::Instantiate(const std::string &name)
     {

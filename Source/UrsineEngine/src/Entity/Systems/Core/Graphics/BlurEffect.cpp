@@ -4,9 +4,9 @@
 
 #include "RenderableComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         BlurEffect::BlurEffect(void)
         {

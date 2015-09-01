@@ -19,7 +19,7 @@
 
 #include "Json.h"
 
-namespace Ursine
+namespace ursine
 {
     Animation::Animation(const std::string &path)
         : Asset(path)

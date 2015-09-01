@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace Ursine
+namespace ursine
 {
     class MetaManager
     {

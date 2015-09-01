@@ -1,4 +1,4 @@
-namespace Ursine
+namespace ursine
 {
     template<typename GlobalType>
     void ReflectionDatabase::AddGlobal(const std::string &name, Global::Getter getter, Global::Setter setter, const MetaManager::Initializer &meta)

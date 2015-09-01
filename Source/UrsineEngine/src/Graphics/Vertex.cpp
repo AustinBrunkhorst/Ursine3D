@@ -2,7 +2,7 @@
 
 #include "Vertex.h"
 
-namespace Ursine
+namespace ursine
 {
     Vertex::Vertex(void)
         : position(Vec2::Zero())

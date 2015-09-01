@@ -17,7 +17,7 @@
 #include "Vec2.h"
 #include "TransformComponent.h"
 
-namespace Ursine
+namespace ursine
 {
     // Forward declarations
     class Collider;
@@ -42,7 +42,7 @@ namespace Ursine
         // The shape of the collider
         Shape *shape;
 
-        ECS::Transform transform;
+        ecs::Transform transform;
 
         // The bounding AABB around this collider
         AABB aabb;

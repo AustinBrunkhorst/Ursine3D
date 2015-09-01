@@ -20,7 +20,7 @@
 #include "KeyboardManager.h"
 #include "MouseManager.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

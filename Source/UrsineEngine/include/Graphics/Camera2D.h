@@ -19,7 +19,7 @@
 
 #include "AABB.h"
 
-namespace Ursine
+namespace ursine
 {
     class Camera2D
     {

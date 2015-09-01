@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class SpinePolygon
         {

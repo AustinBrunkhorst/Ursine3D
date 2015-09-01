@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     inline const std::string &AudioEmitter::GetEvent() const
     {

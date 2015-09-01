@@ -1,6 +1,6 @@
 #include <iostream>
 
-namespace Ursine
+namespace ursine
 {
     template<typename ClassType, typename ... Args>
     void TypeData::AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta)

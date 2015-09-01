@@ -9,7 +9,7 @@
 
 #include <SDL_video.h>
 
-namespace Ursine
+namespace ursine
 {
     class WindowManager
         : public System

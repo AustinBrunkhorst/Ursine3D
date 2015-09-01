@@ -15,7 +15,7 @@
 
 #include <functional>
 
-namespace Ursine
+namespace ursine
 {
     typedef std::function<void(void)> TweenCallback;
 

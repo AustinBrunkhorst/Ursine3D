@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     const int SIMULATION_PRIORITY = -50;
     const int IMPULSE_ITERATIONS = 15;

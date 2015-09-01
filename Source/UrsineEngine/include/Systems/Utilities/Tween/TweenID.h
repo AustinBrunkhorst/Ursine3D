@@ -7,7 +7,7 @@
 
 #include "Ease.h"
 
-namespace Ursine
+namespace ursine
 {
     class TweenID
     {

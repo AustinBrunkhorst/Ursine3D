@@ -25,7 +25,7 @@
 #include "AABB.h"
 #include "LayerMask.h"
 
-namespace Ursine
+namespace ursine
 {
     // The RigidBody2D's body type
     // kinematic = zero mass, non-zero velocity, moved by system
@@ -48,15 +48,15 @@ namespace Ursine
     class Manifold;
     class DistanceJoint;
 
-    namespace ECS
+    namespace ecs
     {
         class RigidBody2D : public Component
         {
             friend class PhysicsDebugDrawer;
             friend class Simulation;
-            friend class Ursine::Collision;
-            friend class Ursine::Manifold;
-            friend class Ursine::DistanceJoint;
+            friend class ursine::Collision;
+            friend class ursine::Manifold;
+            friend class ursine::DistanceJoint;
 
         public:
             explicit RigidBody2D(BodyType type = BODY_TYPE_DYNAMIC);
@@ -267,9 +267,9 @@ namespace Ursine
 #ifndef RIGIDBODY2D_REGISTERED
 #define RIGIDBODY2D_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(RigidBody2D);
         RegisterComponentData(RigidBody2D, colliders);

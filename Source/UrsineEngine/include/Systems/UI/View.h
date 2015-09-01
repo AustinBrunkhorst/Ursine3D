@@ -19,7 +19,7 @@
 
 #include <cef_client.h>
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

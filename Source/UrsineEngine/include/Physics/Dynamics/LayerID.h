@@ -2,7 +2,7 @@
 
 #include "Utils.h"
 
-namespace Ursine
+namespace ursine
 {
     class LayerID
     {

@@ -3,9 +3,9 @@
 #include "WaveEffect.h"
 #include "RenderableComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         WaveEffect::WaveEffect(void)
             : _time(0.0f)

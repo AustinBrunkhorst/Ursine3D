@@ -2,7 +2,7 @@
 
 #include "Field.h"
 
-namespace Ursine
+namespace ursine
 {
     Field::Field(void)
         : m_type( { Type::Invalid } ) 

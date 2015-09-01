@@ -5,49 +5,49 @@
 namespace
 {
     // converts a BlendMode::Factor constant to the corresponding OpenGL constant
-    uint32 factorToGlConstant(Ursine::BlendMode::Factor blendFactor)
+    uint32 factorToGlConstant(ursine::BlendMode::Factor blendFactor)
     {
         switch (blendFactor)
         {
         default:
-        case Ursine::BlendMode::Zero:             
+        case ursine::BlendMode::Zero:             
             return GL_ZERO;
-        case Ursine::BlendMode::One:              
+        case ursine::BlendMode::One:              
             return GL_ONE;
-        case Ursine::BlendMode::SrcColor:         
+        case ursine::BlendMode::SrcColor:         
             return GL_SRC_COLOR;
-        case Ursine::BlendMode::OneMinusSrcColor: 
+        case ursine::BlendMode::OneMinusSrcColor: 
             return GL_ONE_MINUS_SRC_COLOR;
-        case Ursine::BlendMode::DstColor:         
+        case ursine::BlendMode::DstColor:         
             return GL_DST_COLOR;
-        case Ursine::BlendMode::OneMinusDstColor: 
+        case ursine::BlendMode::OneMinusDstColor: 
             return GL_ONE_MINUS_DST_COLOR;
-        case Ursine::BlendMode::SrcAlpha:         
+        case ursine::BlendMode::SrcAlpha:         
             return GL_SRC_ALPHA;
-        case Ursine::BlendMode::OneMinusSrcAlpha: 
+        case ursine::BlendMode::OneMinusSrcAlpha: 
             return GL_ONE_MINUS_SRC_ALPHA;
-        case Ursine::BlendMode::DstAlpha:         
+        case ursine::BlendMode::DstAlpha:         
             return GL_DST_ALPHA;
-        case Ursine::BlendMode::OneMinusDstAlpha: 
+        case ursine::BlendMode::OneMinusDstAlpha: 
             return GL_ONE_MINUS_DST_ALPHA;
         }
     }
 
     // converts a BlendMode::BlendEquation constant to the corresponding OpenGL constant
-    uint32 equationToGlConstant(Ursine::BlendMode::Equation blendEquation)
+    uint32 equationToGlConstant(ursine::BlendMode::Equation blendEquation)
     {
         switch (blendEquation)
         {
         default:
-        case Ursine::BlendMode::Add:            
+        case ursine::BlendMode::Add:            
             return GL_FUNC_ADD;
-        case Ursine::BlendMode::Subtract:        
+        case ursine::BlendMode::Subtract:        
             return GL_FUNC_SUBTRACT;
         }
     }
 }
 
-namespace Ursine
+namespace ursine
 {
     RenderTarget::RenderTarget(void)
     {

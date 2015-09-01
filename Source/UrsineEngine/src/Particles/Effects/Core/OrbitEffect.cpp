@@ -3,9 +3,9 @@
 #include "OrbitDataComponent.h"
 #include "ParticleEmitterComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    void OrbitEffect::InitializeParticle(ECS::Entity *particle) const
+    void OrbitEffect::InitializeParticle(ecs::Entity *particle) const
     {
         auto trans = particle->GetTransform();
         auto emitter_trans = GetEmitter()->GetOwner()->GetTransform();
@@ -18,7 +18,7 @@ namespace Ursine
               end = scale_x * _end.GetValue();
 
         // set the starting radius
-        auto data = particle->AddComponent<ECS::OrbitData>(start);
+        auto data = particle->AddComponent<ecs::OrbitData>(start);
 
         // create the tween
         particle->GetTweens().Create()
@@ -26,13 +26,13 @@ namespace Ursine
                 .Delay(_first_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(data, &ECS::OrbitData::SetRadius, start, middle, _first_duration)
+                .Setter(data, &ecs::OrbitData::SetRadius, start, middle, _first_duration)
             .EndGroup()
             .BeginGroup()
                 .Delay(_second_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(data, &ECS::OrbitData::SetRadius, middle, end, _second_duration)
+                .Setter(data, &ecs::OrbitData::SetRadius, middle, end, _second_duration)
             .EndGroup();
         
         // rotate the object about the emitter's position at the given radius

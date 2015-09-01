@@ -17,9 +17,9 @@
 #include "ComponentConfig.h"
 #include "JsonSerializer.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template<class Type>
         class ComponentType final

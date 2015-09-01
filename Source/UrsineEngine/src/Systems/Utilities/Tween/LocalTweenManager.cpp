@@ -3,7 +3,7 @@
 #include "LocalTweenManager.h"
 #include "TweenManager.h"
 
-namespace Ursine
+namespace ursine
 {
     LocalTweenManager::LocalTweenManager(TweenGroupID default_group)
         : _default_group(default_group)

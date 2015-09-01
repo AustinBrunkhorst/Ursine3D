@@ -18,7 +18,7 @@
 #include <vector>
 #include <mutex>
 
-namespace Ursine
+namespace ursine
 {
     class MemoryWatcher
     {

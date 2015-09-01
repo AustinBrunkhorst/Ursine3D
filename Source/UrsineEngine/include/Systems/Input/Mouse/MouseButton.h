@@ -2,7 +2,7 @@
 
 #include "SDL_mouse.h"
 
-namespace Ursine 
+namespace ursine 
 {
     enum MouseButton
     {

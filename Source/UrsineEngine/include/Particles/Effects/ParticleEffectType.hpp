@@ -14,7 +14,7 @@
 
 #include "ParticleEffectRegistrar.h"
 
-namespace Ursine
+namespace ursine
 {
     template<class Type>
     ParticleEffectTypeID ParticleEffectType<Type>::ID = 0;

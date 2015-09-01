@@ -16,7 +16,7 @@
 #include "EventConfig.h"
 #include "EventArgs.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename DispatcherType, typename ListenerType>
     class ChainableEventOperator

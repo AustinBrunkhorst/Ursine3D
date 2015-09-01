@@ -26,9 +26,9 @@
 #include "GroupManager.h"
 #include "UtilityManager.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         World::World(void)
             : _loaded(false)

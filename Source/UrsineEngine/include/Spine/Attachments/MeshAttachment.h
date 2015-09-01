@@ -4,11 +4,11 @@
 #include "Spine/Atlas.h"
 #include "Spine/Slot.h"
 
-namespace Ursine
+namespace ursine
 {
     class SkeletonRenderer;
 
-    namespace Spine
+    namespace spine
     {
         class MeshAttachment : public Attachment
         {

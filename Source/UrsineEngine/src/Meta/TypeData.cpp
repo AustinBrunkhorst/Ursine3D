@@ -4,7 +4,7 @@
 
 #include "ReflectionDatabase.h"
 
-namespace Ursine
+namespace ursine
 {
     TypeData::TypeData(void)
         : isEnum( false )

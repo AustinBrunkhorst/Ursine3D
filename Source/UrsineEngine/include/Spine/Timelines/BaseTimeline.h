@@ -2,9 +2,9 @@
 
 #include "Spine/Timelines/CurveTimeline.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class BaseTimeline : public CurveTimeline
         {

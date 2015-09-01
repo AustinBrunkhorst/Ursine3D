@@ -20,7 +20,7 @@
 #include "Component.h"
 #include "AABB.h"
 
-namespace Ursine
+namespace ursine
 {
     enum ZoneType
     {
@@ -28,7 +28,7 @@ namespace Ursine
         ZONE_COUNT
     };
 
-    namespace ECS
+    namespace ecs
     {
         class Zone : public Component
         {
@@ -79,9 +79,9 @@ namespace Ursine
 #ifdef REGISTER_COMPONENTS
 #ifndef ZONE_REGISTERED
 #define ZONE_REGISTERED
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(Zone);
         RegisterComponentData(Zone, type);

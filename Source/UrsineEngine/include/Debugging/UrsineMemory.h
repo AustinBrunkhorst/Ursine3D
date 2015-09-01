@@ -36,21 +36,21 @@ inline void* operator new(unsigned int size, const char *filename, int line)
 
     UAssert(pointer, "Bad allocation.");
 
-    Ursine::MemoryWatcher::Add(pointer, size, filename, line);
+    ursine::MemoryWatcher::Add(pointer, size, filename, line);
 
     return pointer;
 }
 
 inline void operator delete(void *pointer)
 {
-    Ursine::MemoryWatcher::Remove(pointer);
+    ursine::MemoryWatcher::Remove(pointer);
 
     free(pointer);
 }
 
 inline void operator delete(void *pointer, const char *filename, int line)
 {
-    Ursine::MemoryWatcher::Remove(pointer);
+    ursine::MemoryWatcher::Remove(pointer);
 
     free(pointer);
 }

@@ -24,10 +24,10 @@ namespace Spring
     const float BUNGIE_CABLE = 0.00005f;
 }
 
-namespace Ursine
+namespace ursine
 {
     // Forward declarations
-    namespace ECS
+    namespace ecs
     {
         class PhysicsDebugDrawer;
         class RigidBody2D;
@@ -35,10 +35,10 @@ namespace Ursine
 
     class DistanceJoint : public Joint
     {
-        friend class ECS::PhysicsDebugDrawer;
+        friend class ecs::PhysicsDebugDrawer;
 
     public:            
-        DistanceJoint(ECS::RigidBody2D *body_0, ECS::RigidBody2D *body_1, 
+        DistanceJoint(ecs::RigidBody2D *body_0, ecs::RigidBody2D *body_1, 
                       float distance, bool max_distance_only = false);
 
         ~DistanceJoint(void) override;
@@ -66,7 +66,7 @@ namespace Ursine
 
     private:
         // The bodies' transform components
-        ECS::Transform *_trans[2];
+        ecs::Transform *_trans[2];
 
         // The distance we solve for
         float _distance;

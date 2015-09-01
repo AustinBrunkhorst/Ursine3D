@@ -2,13 +2,13 @@
 
 #include "Spine/SkeletonJson.h"
 #include "Spine/SpineJson.h"
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
 #include <stdio.h>
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         static float toColor(const char *value, int index)
         {
@@ -538,7 +538,7 @@ namespace Ursine
 
         SkeletonData *SkeletonJson::ReadFile(const char *path)
         {
-            auto json = *Ursine::gContentManager->LoadText(path);
+            auto json = *ursine::gContentManager->LoadText(path);
 
             return ReadData(json.c_str());
         }

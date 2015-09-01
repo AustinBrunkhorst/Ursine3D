@@ -5,9 +5,9 @@
 #include "Spine/Skin.h"
 #include "Spine/IkConstraint.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class Skeleton
         {

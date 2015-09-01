@@ -15,7 +15,7 @@
 
 #include "AudioHelpers.h"
 
-namespace Ursine
+namespace ursine
 {
     void FMODERRCHK(FMOD_RESULT result)
     {

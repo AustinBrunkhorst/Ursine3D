@@ -21,9 +21,9 @@
 #include "WorldConfig.h"
 #include "EntityConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Json WorldSerializer::Serialize(World *entity) const
         {

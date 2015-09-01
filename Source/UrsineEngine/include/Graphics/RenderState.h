@@ -4,7 +4,7 @@
 #include "Texture2D.h"
 #include "Shader.h"
 
-namespace Ursine
+namespace ursine
 {
     class RenderState
     {

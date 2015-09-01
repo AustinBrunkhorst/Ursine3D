@@ -18,7 +18,7 @@
 
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     class Timer
     {

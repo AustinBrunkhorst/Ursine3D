@@ -64,7 +64,7 @@ namespace
     }
 }
 
-namespace Ursine
+namespace ursine
 {
     Texture2D::Texture2D(const std::string &path)
         : Asset( path )

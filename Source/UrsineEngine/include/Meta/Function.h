@@ -7,7 +7,7 @@
 
 #include <functional>
 
-namespace Ursine
+namespace ursine
 {
     class Function
         : public MetaContainer

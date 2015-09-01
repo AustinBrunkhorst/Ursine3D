@@ -16,7 +16,7 @@
 
 #include "BrowserMessageHandler.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

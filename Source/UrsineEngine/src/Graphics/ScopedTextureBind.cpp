@@ -2,7 +2,7 @@
 
 #include "ScopedTextureBind.h"
 
-namespace Ursine
+namespace ursine
 {
     ScopedTextureBind::ScopedTextureBind(void)
     {

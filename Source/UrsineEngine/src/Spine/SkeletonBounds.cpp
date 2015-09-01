@@ -1,12 +1,12 @@
 #include "UrsinePrecompiled.h"
 
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
 #include <limits.h>
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         SkeletonBounds::SkeletonBounds(void) {}
 

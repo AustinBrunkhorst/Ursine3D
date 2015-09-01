@@ -16,7 +16,7 @@
 
 #include "ParticleEffectConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     struct ParticleEffectReflection
     {

@@ -14,9 +14,9 @@
 
 #include "SystemType.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template<class Type>
         void SystemRegistrar::Register(const char *name, SystemFactory factory, bool auto_add)

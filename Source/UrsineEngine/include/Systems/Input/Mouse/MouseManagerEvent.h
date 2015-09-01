@@ -6,7 +6,7 @@
 
 #include "Vec2.h"
 
-namespace Ursine
+namespace ursine
 {
     enum MouseManagerEvent
     {

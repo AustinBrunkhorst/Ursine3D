@@ -22,9 +22,9 @@
 
 #include "Utils.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         // we need a low priority because we want to update last
         RenderSystem::RenderSystem(World *world)
@@ -74,7 +74,7 @@ namespace Ursine
             container_old.erase(
                 find( lower, container_old.end( ), owner ));
 
-            Utils::InsertionSort( container_new, owner, compareTexture );
+            utils::InsertionSort( container_new, owner, compareTexture );
         }
 
         void RenderSystem::OnTextureChanged(Entity *owner, Renderable *component)
@@ -99,7 +99,7 @@ namespace Ursine
                     [renderable->GetLayer( )]
                     [renderable->GetEffect( )];
 
-                Utils::InsertionSort( container, args->entity, compareTexture );
+                utils::InsertionSort( container, args->entity, compareTexture );
             }
         }
 

@@ -5,7 +5,7 @@
 #include "TweenDelay.h"
 #include "TweenCall.h"
 
-namespace Ursine
+namespace ursine
 {
     TweenGrouped::TweenGrouped(uint32 owner)
         : _owner(owner)

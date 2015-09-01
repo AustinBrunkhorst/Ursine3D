@@ -19,7 +19,7 @@
 
 #include <deque>
 
-namespace Ursine
+namespace ursine
 {
     class Tween
     {

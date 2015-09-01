@@ -15,9 +15,9 @@
 
 #include "SystemRegistrar.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         SystemTypeID SystemRegistrar::_next_id = 0;
         SystemTypeMask SystemRegistrar::_next_mask = 1;

@@ -2,7 +2,7 @@
 
 #include "Destructor.h"
 
-namespace Ursine
+namespace ursine
 {
     Destructor::Destructor(void)
         : Invokable( "INVALID" )

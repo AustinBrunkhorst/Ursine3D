@@ -23,7 +23,7 @@
 #include <unordered_map>
 
 // Lists the parameters for an Eventable type
-#define EVENT_HANDLER(type) void *_sender, const Ursine::EventArgs *_args
+#define EVENT_HANDLER(type) void *_sender, const ursine::EventArgs *_args
 
 // Casts an event sender to the appropriate type
 #define EVENT_SENDER(type, name) type *name = static_cast<type *>(_sender)
@@ -34,7 +34,7 @@
 // Automatically casts the event parameters to the appropriate type (Sender, Arguments)
 #define EVENT_ATTRS(send_type, arg_type) EVENT_SENDER(send_type, sender); EVENT_ARGS(arg_type, args)
 
-namespace Ursine
+namespace ursine
 {
     template<typename Key = std::string>
     class EventDispatcher

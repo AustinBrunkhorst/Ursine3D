@@ -18,9 +18,9 @@
 #include "World.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         EntitySystem::EntitySystem(World *world, SystemPriority priority) 
             : _priority(priority)

@@ -15,9 +15,9 @@
 
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         inline void Transform::SetRootPosition(const SVec3 &position)
         {

@@ -13,10 +13,10 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     // Forward declarations
-    namespace ECS
+    namespace ecs
     {
         class Simulation;
         class RigidBody2D;
@@ -24,7 +24,7 @@ namespace Ursine
 
     class Joint
     {
-        friend class ECS::Simulation;
+        friend class ecs::Simulation;
 
     public:
         virtual ~Joint(void) { }
@@ -37,6 +37,6 @@ namespace Ursine
 
     protected:
         // Two bodies being connected
-        ECS::RigidBody2D *_body[2];
+        ecs::RigidBody2D *_body[2];
     };
 }

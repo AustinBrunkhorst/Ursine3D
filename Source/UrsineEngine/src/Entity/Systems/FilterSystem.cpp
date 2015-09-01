@@ -17,9 +17,9 @@
 #include "FilterSystem.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         FilterSystem::FilterSystem(World *world, const Filter &filter, SystemPriority priority)
             : EntitySystem(world, priority)
@@ -34,7 +34,7 @@ namespace Ursine
 
             auto entity = args->entity;
 
-            auto contains = Utils::IsFlagSet(GetTypeMask(), entity->_system_mask);
+            auto contains = utils::IsFlagSet(GetTypeMask(), entity->_system_mask);
             auto interests = _filter.Matches(entity);
             auto removed = args->event_type == EM_COMPONENT_REMOVED;
 

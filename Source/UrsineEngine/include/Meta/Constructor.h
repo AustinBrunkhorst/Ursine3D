@@ -6,7 +6,7 @@
 
 #include <functional>
 
-namespace Ursine
+namespace ursine
 {
     class Type;
 

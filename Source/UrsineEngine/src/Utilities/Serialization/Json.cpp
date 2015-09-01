@@ -27,7 +27,7 @@
 #include <cstdio>
 #include <limits>
 
-namespace Ursine
+namespace ursine
 {
     static const int max_depth = 200;
 
@@ -196,7 +196,7 @@ namespace Ursine
 
         void dump(string &out) const override
         {
-            Ursine::dump(m_value, out);
+            ursine::dump(m_value, out);
         }
     };
 

@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         int BinarySearch(float *values, int values_length, float target, int step);
 

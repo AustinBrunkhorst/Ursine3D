@@ -2,7 +2,7 @@
 
 #include "Function.h"
 
-namespace Ursine
+namespace ursine
 {
     Function::Function(void)
         : Invokable( "INVALID" )

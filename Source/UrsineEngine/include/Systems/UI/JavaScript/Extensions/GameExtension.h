@@ -17,7 +17,7 @@
 
 #include <mutex>
 
-namespace Ursine
+namespace ursine
 {
     class AudioEmitter;
 

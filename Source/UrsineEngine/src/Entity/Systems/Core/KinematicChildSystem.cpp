@@ -2,9 +2,9 @@
 
 #include "KinematicChildSystem.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         KinematicChildSystem::KinematicChildSystem(World *world)
             : FilterSystem(world, Filter().All<KinematicChild, RigidBody2D>(),

@@ -17,7 +17,7 @@
 
 #include "WindowManager.h"
 
-namespace Ursine
+namespace ursine
 {
     Application *gApplication = nullptr;
 
@@ -40,8 +40,8 @@ namespace Ursine
 
         // set the working directory to the directory of the executable.
         // this avoids problems with the debugger in Visual Studio
-        Utils::SetWorkingDirectory(
-            Utils::DirectoryName( argv[ 0 ] )
+        utils::SetWorkingDirectory(
+            utils::DirectoryName( argv[ 0 ] )
         );
     }
 

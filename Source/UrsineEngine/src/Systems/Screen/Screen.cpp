@@ -20,7 +20,7 @@
 
 #include "ScreenManager.h"
 
-namespace Ursine
+namespace ursine
 {
     Screen::Screen(bool is_overlay, const std::string &space_name)
         : _is_overlay(is_overlay)

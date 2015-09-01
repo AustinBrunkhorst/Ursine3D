@@ -16,9 +16,9 @@
 #include "ComponentRegistrar.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Component *ComponentRegistrar::Instantiate(const std::string &name)
         {

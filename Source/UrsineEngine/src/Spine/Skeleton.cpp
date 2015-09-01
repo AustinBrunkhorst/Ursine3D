@@ -4,9 +4,9 @@
 
 #include <string.h>
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         Skeleton::Skeleton(SkeletonData *Data)
             : bone_cache_count(0)

@@ -6,7 +6,7 @@
 #include <SDL_video.h>
 #include <SDL_syswm.h>
 
-namespace Ursine
+namespace ursine
 {
     WindowManager *gWindowManager = nullptr;
 
@@ -26,10 +26,10 @@ namespace Ursine
         m_handle = SDL_CreateWindow( title, x, y, width, height,
             SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | window_flags );
 
-        if (Utils::IsFlagSet( window_flags, SDL_WINDOW_FULLSCREEN ))
+        if (utils::IsFlagSet( window_flags, SDL_WINDOW_FULLSCREEN ))
             m_isFullscreen = true;
 
-        if (Utils::IsFlagSet( window_flags, SDL_WINDOW_FULLSCREEN_DESKTOP ))
+        if (utils::IsFlagSet( window_flags, SDL_WINDOW_FULLSCREEN_DESKTOP ))
             m_isFullscreen = true;
 
         // create a GL context with the window

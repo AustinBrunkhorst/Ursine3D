@@ -18,9 +18,9 @@
 #include "Filter.h"
 #include "TransformComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         ////////////////////////////////////////////////////////////////////////
         // Constructors/Destructors
@@ -203,7 +203,7 @@ namespace Ursine
 
             clearComponents( entity, true );
 
-            Utils::FlagUnset( entity->_flags, Entity::ACTIVE );
+            utils::FlagUnset( entity->_flags, Entity::ACTIVE );
 
             _active.erase( find( _active.begin( ), _active.end( ), entity ) );
 
@@ -369,7 +369,7 @@ namespace Ursine
                 // the queue to remove (based on instance id)
                 // this is so components with dependencies are deleted in the correct order
                 if (entity->HasComponent( 1ull << i ))
-                    Utils::InsertionSort( to_remove, _component_types[ i ][ id ], CompareComponents );
+                    utils::InsertionSort( to_remove, _component_types[ i ][ id ], CompareComponents );
             }
 
             auto const remove_count = to_remove.size( );

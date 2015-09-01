@@ -47,9 +47,9 @@
 #define SPINE_JSON_DEBUG 0
 #endif
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
 
         static const char *ep;

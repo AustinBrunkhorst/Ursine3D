@@ -17,7 +17,7 @@
 
 #include "Timer.h"
 
-namespace Ursine
+namespace ursine
 {
     class TimerManager : public System
     {

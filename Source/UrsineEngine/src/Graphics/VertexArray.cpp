@@ -4,7 +4,7 @@
 
 #include "RenderTarget.h"
 
-namespace Ursine
+namespace ursine
 {
     VertexArray::VertexArray(void)
         : m_type( VA_POINTS ) { }

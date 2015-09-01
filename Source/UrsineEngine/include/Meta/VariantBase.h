@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace Ursine
+namespace ursine
 {
     class Type;
 

@@ -20,9 +20,9 @@
 #include "LocalTimerManager.h"
 #include "LocalTweenManager.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         // forward declarations
         class World;
@@ -44,8 +44,8 @@ namespace Ursine
         protected:
             World *_world;
 
-            Ursine::LocalTimerManager _timers;
-            Ursine::LocalTweenManager _tweens;
+            ursine::LocalTimerManager _timers;
+            ursine::LocalTweenManager _tweens;
 
             // Called when the system is initialized
             virtual void OnInitialize(void) { }

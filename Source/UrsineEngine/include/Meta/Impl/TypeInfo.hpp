@@ -3,7 +3,7 @@
 // unused template parameters
 #pragma warning(disable : 4544)
 
-namespace Ursine
+namespace ursine
 {
     template<typename T>
     TypeID TypeInfo<T>::ID = Type::Invalid;

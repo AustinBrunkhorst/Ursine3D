@@ -17,9 +17,9 @@
 #include "Filter.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Filter::Filter(void) 
             : _mask_one(0)

@@ -13,7 +13,7 @@
 
 #include "UrsineMath.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace Math
     {

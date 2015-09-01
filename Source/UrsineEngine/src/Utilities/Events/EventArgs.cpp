@@ -15,7 +15,7 @@
 
 #include "EventArgs.h"
 
-namespace Ursine
+namespace ursine
 {
     const EventArgs *EventArgs::Empty = nullptr;
 }

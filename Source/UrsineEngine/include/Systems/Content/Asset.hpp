@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-namespace Ursine
+namespace ursine
 {
     inline const std::string &Asset::GetPath(void) const
     {

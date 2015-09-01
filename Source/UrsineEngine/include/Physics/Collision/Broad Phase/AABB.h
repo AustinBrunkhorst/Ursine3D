@@ -16,7 +16,7 @@
 #include "Vec2.h"
 #include "RayCast.h"
 
-namespace Ursine
+namespace ursine
 {
     #define AABB_EXTENSION 0.1f
     #define AABB_MULTIPLIER 2.0f

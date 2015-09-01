@@ -14,9 +14,9 @@
 
 #include "Application.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         inline float World::GetDelta(void) const
         {

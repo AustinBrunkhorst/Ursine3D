@@ -18,9 +18,9 @@
 
 #include "GroupManagerEvent.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class GroupManager final 
             : public WorldManager

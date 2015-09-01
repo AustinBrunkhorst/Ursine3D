@@ -15,7 +15,7 @@
 
 #include "MacroUtils.h"
 
-namespace Ursine
+namespace ursine
 {
     enum ConsoleColor
     {

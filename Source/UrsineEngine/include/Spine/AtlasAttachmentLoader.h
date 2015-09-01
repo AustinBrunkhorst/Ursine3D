@@ -3,9 +3,9 @@
 #include "Spine/AttachmentLoader.h"
 #include "Spine/Atlas.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class AtlasAttachmentLoader : public AttachmentLoader
         {

@@ -19,7 +19,7 @@
 
 #include "FrameRateController.h"
 
-namespace Ursine
+namespace ursine
 {
     class Application 
         : public SystemContainer

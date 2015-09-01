@@ -2,9 +2,9 @@
 
 #include "RenderEffects.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RenderEffect *GetRenderEffect(RenderEffectType type)
         {

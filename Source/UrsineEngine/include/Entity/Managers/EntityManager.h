@@ -31,9 +31,9 @@
 #include <array>
 #include <deque>
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         // forward declarations
         class Component;

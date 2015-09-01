@@ -15,7 +15,7 @@
 
 #include "Timer.h"
 
-namespace Ursine
+namespace ursine
 {
     class LocalTimerManager
     {

@@ -17,7 +17,7 @@
 
 #include "EventArgs.h"
 
-namespace Ursine
+namespace ursine
 {
     struct InternalApplicationArgs : public EventArgs
     {

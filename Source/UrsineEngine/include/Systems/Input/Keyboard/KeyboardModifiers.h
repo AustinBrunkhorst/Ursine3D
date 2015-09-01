@@ -2,7 +2,7 @@
 
 #include <SDL_keycode.h>
 
-namespace Ursine
+namespace ursine
 {
     enum KeyboardModifiers
     {

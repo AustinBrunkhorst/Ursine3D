@@ -17,9 +17,9 @@
 #include "RenderSystem.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Renderable::Renderable(void)
             : BaseComponent()

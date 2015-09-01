@@ -20,7 +20,7 @@ namespace
     }
 }
 
-namespace Ursine
+namespace ursine
 {
     Shader::CurrentTextureType Shader::CurrentTexture;
 

@@ -19,7 +19,7 @@
 
 #include "UISystem.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

@@ -15,7 +15,7 @@
 
 #include "Core.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

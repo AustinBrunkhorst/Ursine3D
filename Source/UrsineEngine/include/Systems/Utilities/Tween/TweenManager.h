@@ -17,7 +17,7 @@
 
 #include "Tween.h"
 
-namespace Ursine
+namespace ursine
 {
     class TweenManager : public System
     {

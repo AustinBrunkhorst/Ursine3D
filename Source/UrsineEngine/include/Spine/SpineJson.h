@@ -22,9 +22,9 @@
 
 /* Esoteric Software: Removed everything except parsing, shorter method names, more get methods, double to float, formatted. */
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
 
 #ifndef SPINE_JSON_H_

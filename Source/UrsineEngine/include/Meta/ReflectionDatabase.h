@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace Ursine
+namespace ursine
 {
     class ReflectionDatabase
     {

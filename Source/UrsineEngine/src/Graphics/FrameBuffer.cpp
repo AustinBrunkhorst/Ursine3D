@@ -2,7 +2,7 @@
 
 #include "FrameBuffer.h"
 
-namespace Ursine
+namespace ursine
 {
     FrameBuffer::FrameBuffer(void) { }
 }

@@ -13,9 +13,9 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RigidBody2D::RigidBody2D(BodyType type)
             : BaseComponent()

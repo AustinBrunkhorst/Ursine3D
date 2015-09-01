@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     Contact::Contact(void)
         : norm_imp(0.0f)
@@ -26,9 +26,9 @@ namespace Ursine
             
     }
 
-    Manifold::Manifold(ECS::RigidBody2D *A, ECS::RigidBody2D *B)
+    Manifold::Manifold(ecs::RigidBody2D *A, ecs::RigidBody2D *B)
     {
-        ECS::EntityUniqueID id_a = A->GetOwner()->GetUniqueID(),
+        ecs::EntityUniqueID id_a = A->GetOwner()->GetUniqueID(),
                             id_b = B->GetOwner()->GetUniqueID();
 
         if (id_a < id_b)
@@ -250,7 +250,7 @@ namespace Ursine
         }
     }
 
-    KinematicManifold::KinematicManifold(ECS::RigidBody2D *a, ECS::RigidBody2D *b)
+    KinematicManifold::KinematicManifold(ecs::RigidBody2D *a, ecs::RigidBody2D *b)
         : Manifold(a, b)
     {
 
@@ -293,7 +293,7 @@ namespace Ursine
         b->UpdateBody();
     }
 
-    ManifoldKey::ManifoldKey(ECS::EntityUniqueID a, ECS::EntityUniqueID b)
+    ManifoldKey::ManifoldKey(ecs::EntityUniqueID a, ecs::EntityUniqueID b)
     {
         if (a < b)
         {

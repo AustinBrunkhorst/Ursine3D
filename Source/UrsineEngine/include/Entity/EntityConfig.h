@@ -17,9 +17,9 @@
 
 #include <vector>
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class Entity;
 

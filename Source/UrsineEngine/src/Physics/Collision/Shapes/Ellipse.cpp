@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     Ellipse::Ellipse(void)
         : _rotation(0.0f)
@@ -50,7 +50,7 @@ namespace Ursine
         _position = position;
     }
 
-    AABB Ellipse::TransformShape(ECS::Transform &transform)
+    AABB Ellipse::TransformShape(ecs::Transform &transform)
     {
         static const float FATNESS = 1.2f;
         AABB bound;
@@ -115,7 +115,7 @@ namespace Ursine
         return _position + support;
     }
 
-    void Ellipse::ComputeMass(ECS::Transform &transform, Vec2 &center,
+    void Ellipse::ComputeMass(ecs::Transform &transform, Vec2 &center,
                               float &area, float &inertia)
     {
         float ellipse_area = Math::PI * _dimensions.X() * _dimensions.Y();

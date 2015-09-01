@@ -13,7 +13,7 @@
 
 #include "ScreenFactory.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename ScreenType>
     void ScreenManager::RegisterScreenFactory(const std::string &name)

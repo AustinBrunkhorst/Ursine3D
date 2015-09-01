@@ -16,10 +16,10 @@
 #include "CollisionEventArgs.h"
 #include "Manifold.h"
 
-namespace Ursine
+namespace ursine
 {
     // Forward declarations
-    namespace ECS
+    namespace ecs
     {
         class RigidBody2D;
     }
@@ -28,29 +28,29 @@ namespace Ursine
     class Collision
     {
         // Run narrow phase detection on two colliders
-        static void compareColliders(Collider *collider_a, ECS::RigidBody2D *a,
-                                     Collider *collider_b, ECS::RigidBody2D *b,
+        static void compareColliders(Collider *collider_a, ecs::RigidBody2D *a,
+                                     Collider *collider_b, ecs::RigidBody2D *b,
                                      Contacts &contacts);
 
         // Run narrow phase detection with collider and tree
-        static void compareColliderAndTree(Collider *collider, ECS::RigidBody2D *a,
-                                           Colliders &tree, ECS::RigidBody2D *b,
+        static void compareColliderAndTree(Collider *collider, ecs::RigidBody2D *a,
+                                           Colliders &tree, ecs::RigidBody2D *b,
                                            Contacts &contacts);
 
         // Run narrow phase detection with both collider trees
-        static void handleNarrowPhase(Colliders &tree_a, ECS::RigidBody2D *a,
-                                      Colliders &tree_b, ECS::RigidBody2D *b, 
+        static void handleNarrowPhase(Colliders &tree_a, ecs::RigidBody2D *a,
+                                      Colliders &tree_b, ecs::RigidBody2D *b, 
                                       Contacts &contacts);
 
     public:
-        static void Collide(Contacts &contacts, ECS::RigidBody2D *a, ECS::RigidBody2D *b);
+        static void Collide(Contacts &contacts, ecs::RigidBody2D *a, ecs::RigidBody2D *b);
 
         static bool RaySegmentIntersection(const RayCastInput &input, 
                                            const Vec2 &p_0, const Vec2 &p_1, 
                                            float &t);
 
         // Send collision events for both interacting bodies
-        static void SendEvents(ECS::RigidBody2D *a, ECS::RigidBody2D *b,
+        static void SendEvents(ecs::RigidBody2D *a, ecs::RigidBody2D *b,
                                Manifold &manifold, CollisionEvents event);
 
         // Set all colliders in the tree to false

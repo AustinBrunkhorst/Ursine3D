@@ -15,7 +15,7 @@
 
 #include "KeyboardKey.h"
 
-namespace Ursine
+namespace ursine
 {
     enum KeyboardManagerEvent
     {

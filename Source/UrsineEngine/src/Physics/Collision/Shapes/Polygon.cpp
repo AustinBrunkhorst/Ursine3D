@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     Polygon::Polygon()
     {
@@ -55,7 +55,7 @@ namespace Ursine
     }
 
     // return the encompassing AABB of the shape
-    AABB Polygon::TransformShape(ECS::Transform &transform)
+    AABB Polygon::TransformShape(ecs::Transform &transform)
     {
         SMat3 normal_mat = transform.MatrixNoScalar();
         SMat3 vert_mat = transform.Matrix();
@@ -107,7 +107,7 @@ namespace Ursine
         return _verts[best_vert_index];
     }
 
-    void Polygon::ComputeMass(ECS::Transform &transform, Vec2 &center,
+    void Polygon::ComputeMass(ecs::Transform &transform, Vec2 &center,
                               float &area, float &inertia)
     {
         static const float inv3 = 1.0f / 3.0f;

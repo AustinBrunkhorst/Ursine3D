@@ -5,7 +5,7 @@
 
 #include "Drawable.h"
 
-namespace Ursine
+namespace ursine
 {
     class VertexArray : public Drawable
     {

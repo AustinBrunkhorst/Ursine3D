@@ -6,7 +6,7 @@
 
 #include "Variant.h"
 
-namespace Ursine
+namespace ursine
 {
     Argument::Argument(void)
         : m_type( { Type::Invalid } )

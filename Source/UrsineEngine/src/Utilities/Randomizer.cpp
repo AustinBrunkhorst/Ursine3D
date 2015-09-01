@@ -2,7 +2,7 @@
 
 #include "Randomizer.h"
 
-namespace Ursine
+namespace ursine
 {
     Randomizer::Randomizer(void)
         : _min(0)

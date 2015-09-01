@@ -16,9 +16,9 @@
 #include "Vec2.h"
 #include "Utils.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class Entity;
     }
@@ -42,6 +42,6 @@ namespace Ursine
 
         Vec2 normal;
         float fraction;
-        ECS::Entity *entity;
+        ecs::Entity *entity;
     };
 }

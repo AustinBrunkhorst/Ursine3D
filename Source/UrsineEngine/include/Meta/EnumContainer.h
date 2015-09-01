@@ -6,7 +6,7 @@
 
 #include <unordered_map>
 
-namespace Ursine
+namespace ursine
 {
     template<typename EnumType>
     class EnumContainer : public EnumBase

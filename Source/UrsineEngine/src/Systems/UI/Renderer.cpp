@@ -19,7 +19,7 @@
 
 #include <GL/glew.h>
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

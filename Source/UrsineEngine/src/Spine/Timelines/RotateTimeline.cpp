@@ -3,9 +3,9 @@
 #include "Spine/Timelines/RotateTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         RotateTimeline::RotateTimeline(int frame_count)
             : BaseTimeline(SP_TIMELINE_ROTATE, frame_count, 2) {}

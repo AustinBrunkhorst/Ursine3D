@@ -16,7 +16,7 @@
 #include "Timer.h"
 #include "TimerManager.h"
 
-namespace Ursine
+namespace ursine
 {
     Timer::Timer(const TimeSpan &duration, TimerGroupID group)
         : _group(group)

@@ -25,7 +25,7 @@
 
 #include <vector>
 
-namespace Ursine
+namespace ursine
 {
     class GamepadManager 
         : public System

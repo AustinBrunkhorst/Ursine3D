@@ -20,7 +20,7 @@
 
 #include <unordered_map>
 
-namespace Ursine
+namespace ursine
 {
     // Forward declarations
     class Joint;
@@ -28,7 +28,7 @@ namespace Ursine
     class Manifold;
     class ManifoldKey;
 
-    namespace ECS
+    namespace ecs
     {
         class Simulation
             : public EntitySystem
@@ -143,9 +143,9 @@ namespace Ursine
 #ifndef SIMULATION_SYSTEM_REGISTERED
 #define SIMULATION_SYSTEM_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterEntitySystem(Simulation);
     }

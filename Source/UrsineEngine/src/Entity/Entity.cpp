@@ -20,9 +20,9 @@
 #include "GroupManager.h"
 #include "UtilityManager.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         ////////////////////////////////////////////////////////////////////////
         // Contructors
@@ -48,7 +48,7 @@ namespace Ursine
             if (_flags != ACTIVE)
                 return;
 
-            Utils::FlagSet(_flags, DELETING);
+            utils::FlagSet(_flags, DELETING);
 
             _world->deleteEntity(this);
         }
@@ -65,12 +65,12 @@ namespace Ursine
 
         bool Entity::IsDeleting(void) const
         {
-            return Utils::IsFlagSet(_flags, DELETING);
+            return utils::IsFlagSet(_flags, DELETING);
         }
 
         bool Entity::IsActive(void) const
         {
-            return Utils::IsFlagSet(_flags, ACTIVE);
+            return utils::IsFlagSet(_flags, ACTIVE);
         }
 
         bool Entity::IsAvailable(void) const
@@ -147,7 +147,7 @@ namespace Ursine
 
         bool Entity::HasComponent(ComponentTypeMask mask) const
         {
-            return Utils::IsFlagSet(_type_mask, mask);
+            return utils::IsFlagSet(_type_mask, mask);
         }
 
         Component *Entity::GetComponent(ComponentTypeID id) const
@@ -180,22 +180,22 @@ namespace Ursine
         
         void Entity::setSystem(ComponentTypeMask mask)
         {
-            Utils::FlagSet(_system_mask, mask);
+            utils::FlagSet(_system_mask, mask);
         }
 
         void Entity::unsetSystem(ComponentTypeMask mask)
         {
-            Utils::FlagUnset(_system_mask, mask);
+            utils::FlagUnset(_system_mask, mask);
         }
 
         void Entity::setType(ComponentTypeMask mask)
         {
-            Utils::FlagSet(_type_mask, mask);
+            utils::FlagSet(_type_mask, mask);
         }
 
         void Entity::unsetType(ComponentTypeMask mask)
         {
-            Utils::FlagUnset(_type_mask, mask);
+            utils::FlagUnset(_type_mask, mask);
         }
 
         void Entity::reset(void)

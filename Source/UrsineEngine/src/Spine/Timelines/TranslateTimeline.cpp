@@ -3,9 +3,9 @@
 #include "Spine/Timelines/TranslateTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         TranslateTimeline::TranslateTimeline(int frame_count)
             : BaseTimeline(SP_TIMELINE_SCALE, frame_count, 3) {}

@@ -5,7 +5,7 @@
 
 #include "Constructor.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename T>
     Type Type::Get(void)

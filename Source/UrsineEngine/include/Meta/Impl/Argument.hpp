@@ -1,6 +1,6 @@
 #include "Type.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename T>
     Argument::Argument(const T &data)

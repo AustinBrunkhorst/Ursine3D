@@ -15,7 +15,7 @@
 
 #include "TimedTween.h"
 
-namespace Ursine
+namespace ursine
 {
     class TweenProperty :
         public TimedTween,

@@ -16,28 +16,28 @@
 #include "UrsineTypes.h"
 
 // Gets the unique id of this entity system type
-#define GetEntitySystemID(system_type) Ursine::ECS::SystemRegistrar::GetID<system_type>()
+#define GetEntitySystemID(system_type) ursine::ecs::SystemRegistrar::GetID<system_type>()
 
 // Registers a system with the registrar using magic
 #define RegisterEntitySystem(system_type, ...)                                                                               \
-    static Ursine::ECS::EntitySystem *_factory_##system_type(Ursine::ECS::World *world)                                      \
+    static ursine::ecs::EntitySystem *_factory_##system_type(ursine::ecs::World *world)                                      \
     {                                                                                                                        \
-        return static_cast<Ursine::ECS::EntitySystem*>(new system_type(world));                                              \
+        return static_cast<ursine::ecs::EntitySystem*>(new system_type(world));                                              \
     }                                                                                                                        \
-    volatile static Ursine::ECS::SystemType<system_type> _##system_type(#system_type, _factory_##system_type,##__VA_ARGS__); \
+    volatile static ursine::ecs::SystemType<system_type> _##system_type(#system_type, _factory_##system_type,##__VA_ARGS__); \
                                                                                                                 
 
 // Gets the unique mask for this entity system type
-#define GetEntitySystemMask(system_type) Ursine::ECS::SystemRegistrar::GetMask<system_type>()
+#define GetEntitySystemMask(system_type) ursine::ecs::SystemRegistrar::GetMask<system_type>()
 
 // Determines if a system of this type has been registered
-#define IsEntitySystemRegistered(system_type) Ursine::ECS::SystemRegistrar::IsRegistered<system_type>()
+#define IsEntitySystemRegistered(system_type) ursine::ecs::SystemRegistrar::IsRegistered<system_type>()
 
 #define GetEntitySystem(system_type) Manager<SystemManager>()->System<system_type>()
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         // forward declarations
         class EntitySystem;

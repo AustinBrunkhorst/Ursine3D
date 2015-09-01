@@ -15,7 +15,7 @@
 
 #include <limits>
 
-namespace Ursine
+namespace ursine
 {
     namespace Math
     {

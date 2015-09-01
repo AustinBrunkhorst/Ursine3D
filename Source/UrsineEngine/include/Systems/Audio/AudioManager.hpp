@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     // get the GUID containing file's name
     inline const char *AudioManager::GetfGUID() const

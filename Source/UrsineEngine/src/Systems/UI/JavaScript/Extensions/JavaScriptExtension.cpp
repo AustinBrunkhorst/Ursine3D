@@ -16,7 +16,7 @@
 
 #include "JavaScriptExtension.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

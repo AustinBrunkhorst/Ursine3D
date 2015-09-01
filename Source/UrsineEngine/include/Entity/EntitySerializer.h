@@ -15,11 +15,11 @@
 
 #include <unordered_map>
 
-namespace Ursine
+namespace ursine
 {
     class Json;
 
-    namespace ECS
+    namespace ecs
     {
         class Entity;
         class EntityManager;

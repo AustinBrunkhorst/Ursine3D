@@ -15,7 +15,7 @@
 
 #include "UrsineConsole.h"
 
-namespace Ursine
+namespace ursine
 {
     void SetConsoleColor(ConsoleColor color)
     {

@@ -22,7 +22,7 @@
 // Registers an effect with the registrar.
 // IMPORTANT: this must be done in the effects header file.
 #define RegisterParticleEffect(effect_type)                   \
-    volatile static Ursine::ParticleEffectType<effect_type>   \
+    volatile static ursine::ParticleEffectType<effect_type>   \
         register_##effect_type(#effect_type);                 \
 
 // Intellisense is a silly guy
@@ -32,21 +32,21 @@
 #define RegisterParticleEffectData(effect_type, member_name, ...)
 #else
 #define RegisterParticleEffectData(effect_type, member_name, ...)                                  \
-    static void *access_##effect_type##member_name(const Ursine::ParticleEffect *instance)         \
+    static void *access_##effect_type##member_name(const ursine::ParticleEffect *instance)         \
     {                                                                                              \
         return (void*)(&((const effect_type*)instance)->member_name);                              \
     }                                                                                              \
-    static Ursine::Json serialize_##effect_type##member_name(void *instance)                       \
+    static ursine::Json serialize_##effect_type##member_name(void *instance)                       \
     {                                                                                              \
-        return Ursine::JsonSerializer::Serialize(                                                  \
+        return ursine::JsonSerializer::Serialize(                                                  \
             *static_cast<decltype(effect_type::member_name)*>(instance));                          \
     }                                                                                              \
-    static void deserialize_##effect_type##member_name(const Ursine::Json &data, void *instance)   \
+    static void deserialize_##effect_type##member_name(const ursine::Json &data, void *instance)   \
     {                                                                                              \
-        Ursine::JsonSerializer::Deserialize(data,                                                  \
+        ursine::JsonSerializer::Deserialize(data,                                                  \
             *static_cast<decltype(effect_type::member_name)*>(instance));                          \
     }                                                                                              \
-    volatile static Ursine::ParticleEffectType<effect_type>                                        \
+    volatile static ursine::ParticleEffectType<effect_type>                                        \
         register_member_##effect_type##member_name(                                                \
             #member_name,                                                                          \
             access_##effect_type##member_name,                                                     \
@@ -58,22 +58,22 @@
 
 // Allows the serializer to access private effect data. Use this before
 // any private fields in the class you wish to allow access.
-#define ParticleEffectSerializerAllow(effect_type, member_name) friend void *access_##effect_type##member_name(const Ursine::ParticleEffect * const instance)
+#define ParticleEffectSerializerAllow(effect_type, member_name) friend void *access_##effect_type##member_name(const ursine::ParticleEffect * const instance)
 
 // Gets the unique id of this component type
-#define GetParticleEffectID(effect_type) Ursine::ParticleEffectRegistrar::GetID<effect_type>()
+#define GetParticleEffectID(effect_type) ursine::ParticleEffectRegistrar::GetID<effect_type>()
 
 // Gets the unique mask for this effect type
-#define GetParticleEffectMask(effect_type) Ursine::ParticleEffectRegistrar::GetMask<effect_type>()
+#define GetParticleEffectMask(effect_type) ursine::ParticleEffectRegistrar::GetMask<effect_type>()
 
 // Determines if a particle effect of this type has been registered
-#define IsParticleEffectRegistered(effect_type) Ursine::ParticleEffectRegistrar::IsRegistered<effect_type>()
+#define IsParticleEffectRegistered(effect_type) ursine::ParticleEffectRegistrar::IsRegistered<effect_type>()
 
 // Cleaner way of calling a base component constructor in the member 
 // initialization list (used to assign the component type id)
-#define BaseParticleEffect() Ursine::ParticleEffect(GetParticleEffectID(std::remove_reference<decltype(*this)>::type))
+#define BaseParticleEffect() ursine::ParticleEffect(GetParticleEffectID(std::remove_reference<decltype(*this)>::type))
 
-namespace Ursine
+namespace ursine
 {
     class JsonSerializer;
     class ParticleEffect;

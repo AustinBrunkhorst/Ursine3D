@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     class Randomizer
     {

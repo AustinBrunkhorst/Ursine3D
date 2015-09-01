@@ -7,7 +7,7 @@
 #include "Randomizer.h"
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     class MoveToPositionEffect : public ParticleEffect
     {
@@ -31,7 +31,7 @@ namespace Ursine
             , _second_delay(1)
             , _second_duration(1) { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
     };
 }
 
@@ -44,7 +44,7 @@ namespace Ursine
 #ifndef MOVE_TO_POSITION_REGISTERED
 #define MOVE_TO_POSITION_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(MoveToPositionEffect);
     RegisterParticleEffectData(MoveToPositionEffect, _start,            "start");

@@ -7,7 +7,7 @@
 #include "Randomizer.h"
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     class MoveToCircleEffect : public ParticleEffect
     {
@@ -36,7 +36,7 @@ namespace Ursine
             , _second_delay(1)
             , _second_duration(1) { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
 
         void SetMiddleRadius(Randomizer randomizer);
         void SetMiddleAngle(Randomizer randomizer);
@@ -52,7 +52,7 @@ namespace Ursine
 #ifndef MOVE_TO_CIRCLE_REGISTERED
 #define MOVE_TO_CIRCLE_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(MoveToCircleEffect);
     RegisterParticleEffectData(MoveToCircleEffect, _start_angle, "start_angle");

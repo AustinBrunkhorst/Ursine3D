@@ -2,9 +2,9 @@
 #include "MoveToScaleEffect.h"
 #include "ParticleEmitterComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    void MoveToScaleEffect::InitializeParticle(ECS::Entity *particle) const
+    void MoveToScaleEffect::InitializeParticle(ecs::Entity *particle) const
     {
         auto particle_trans = particle->GetTransform();
         Vec3 start_scale, middle_scale, end_scale;
@@ -36,13 +36,13 @@ namespace Ursine
                 .Delay(_first_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(particle_trans, &ECS::Transform::SetScaleWC, start_scale, middle_scale, _first_duration)
+                .Setter(particle_trans, &ecs::Transform::SetScaleWC, start_scale, middle_scale, _first_duration)
             .EndGroup()
             .BeginGroup()
                 .Delay(_second_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(particle_trans, &ECS::Transform::SetScaleWC, middle_scale, end_scale, _second_duration)
+                .Setter(particle_trans, &ecs::Transform::SetScaleWC, middle_scale, end_scale, _second_duration)
             .EndGroup();
     }
 }

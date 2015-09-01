@@ -1,8 +1,8 @@
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
-    DistanceJoint::DistanceJoint(ECS::RigidBody2D *body_0, ECS::RigidBody2D *body_1,
+    DistanceJoint::DistanceJoint(ecs::RigidBody2D *body_0, ecs::RigidBody2D *body_1,
         float distance, bool max_distance_only)
         : _distance(distance)
         , _max_distance_only(max_distance_only)

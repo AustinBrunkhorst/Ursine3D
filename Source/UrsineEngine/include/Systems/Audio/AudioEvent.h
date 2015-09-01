@@ -16,7 +16,7 @@
 #include <string>
 #include "AudioHelpers.h"
 
-namespace Ursine
+namespace ursine
 {
     enum PlayMode
     {

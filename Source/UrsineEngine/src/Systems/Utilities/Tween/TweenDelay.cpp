@@ -17,7 +17,7 @@
 
 #include "TweenDelay.h"
 
-namespace Ursine
+namespace ursine
 {
     TweenDelay::TweenDelay(const TimeSpan &duration)
         : TimedTween(duration)

@@ -26,7 +26,7 @@
 
 using namespace std::placeholders;
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

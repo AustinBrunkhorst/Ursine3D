@@ -14,7 +14,7 @@
 #include "Enum.h"
 #include "EnumContainer.h"
 
-namespace Ursine
+namespace ursine
 {
     struct TypeData
     {

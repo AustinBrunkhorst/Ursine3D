@@ -1,4 +1,4 @@
-namespace Ursine
+namespace ursine
 {
     template<typename DataType>
     Json JsonSerializer::Serialize(DataType &instance)

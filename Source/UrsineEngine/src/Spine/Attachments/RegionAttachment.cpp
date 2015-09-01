@@ -1,10 +1,10 @@
 #include "UrsinePrecompiled.h"
 
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         RegionAttachment::RegionAttachment(const char *name)
             : Attachment(name, SP_ATTACHMENT_REGION)

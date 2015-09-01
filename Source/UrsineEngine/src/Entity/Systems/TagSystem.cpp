@@ -15,9 +15,9 @@
 
 #include "TagSystem.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         TagSystem::TagSystem(World *world, SystemPriority priority)
             : EntitySystem(world, priority)

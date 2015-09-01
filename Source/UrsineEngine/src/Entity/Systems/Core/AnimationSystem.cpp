@@ -19,9 +19,9 @@
 
 #include "Animation.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         AnimationSystem::AnimationSystem(World *world)
             : FilterSystem(world, Filter().All<AnimationComponent, Renderable>())

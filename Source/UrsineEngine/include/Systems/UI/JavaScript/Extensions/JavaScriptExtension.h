@@ -17,7 +17,7 @@
 
 #define JS_SRC(...) #__VA_ARGS__
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

@@ -12,7 +12,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-namespace Ursine
+namespace ursine
 {
     template<class Type>
     void ParticleEffectRegistrar::Register(const char *name)

@@ -34,7 +34,7 @@
 #endif
 #endif
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {
@@ -130,7 +130,7 @@ namespace Ursine
 
             SetConsoleColor( CC_TEXT_BRIGHT_YELLOW );
 
-            auto filename = Utils::FileName( source );
+            auto filename = utils::FileName( source );
 
             if (!filename.empty( ))
             {
@@ -205,7 +205,7 @@ namespace Ursine
             // CTRL + SHIFT + J
             if (args->state &&
                 args->repeat == 0 &&
-                Utils::IsFlagSet( e.modifiers, EVENTFLAG_CONTROL_DOWN | EVENTFLAG_SHIFT_DOWN ) &&
+                utils::IsFlagSet( e.modifiers, EVENTFLAG_CONTROL_DOWN | EVENTFLAG_SHIFT_DOWN ) &&
                 e.windows_key_code == KEY_J)
             {
                 std::string debug_url( "http://localhost:" );
@@ -256,13 +256,13 @@ namespace Ursine
             e.modifiers = getKeyModifiers( );
 
             if (gMouseManager->IsButtonDown( MBTN_LEFT ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_LEFT_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_LEFT_MOUSE_BUTTON );
 
             if (gMouseManager->IsButtonDown( MBTN_MIDDLE ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_MIDDLE_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_MIDDLE_MOUSE_BUTTON );
 
             if (gMouseManager->IsButtonDown( MBTN_RIGHT ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
             e.x = static_cast<int>( args->position.X() );
             e.y = static_cast<int>( args->position.Y() );
@@ -279,13 +279,13 @@ namespace Ursine
             e.modifiers = getKeyModifiers( );
 
             if (gMouseManager->IsButtonDown( MBTN_LEFT ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_LEFT_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_LEFT_MOUSE_BUTTON );
 
             if (gMouseManager->IsButtonDown( MBTN_MIDDLE ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_MIDDLE_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_MIDDLE_MOUSE_BUTTON );
 
             if (gMouseManager->IsButtonDown( MBTN_RIGHT ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
             e.x = static_cast<int>( args->position.X() );
             e.y = static_cast<int>( args->position.Y() );
@@ -308,13 +308,13 @@ namespace Ursine
             e.modifiers = getKeyModifiers( );
 
             if (gMouseManager->IsButtonDown( MBTN_LEFT ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_LEFT_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_LEFT_MOUSE_BUTTON );
 
             if (gMouseManager->IsButtonDown( MBTN_MIDDLE ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_MIDDLE_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_MIDDLE_MOUSE_BUTTON );
 
             if (gMouseManager->IsButtonDown( MBTN_RIGHT ))
-                Utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
+                utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
             auto &position = gMouseManager->GetPosition( );
 
@@ -362,32 +362,32 @@ namespace Ursine
             uint32 modifiers = 0;
 
             if (state & KMD_CTRL)
-                Utils::FlagSet( modifiers, EVENTFLAG_CONTROL_DOWN );
+                utils::FlagSet( modifiers, EVENTFLAG_CONTROL_DOWN );
 
             if (state & KMD_SHIFT)
-                Utils::FlagSet( modifiers, EVENTFLAG_SHIFT_DOWN );
+                utils::FlagSet( modifiers, EVENTFLAG_SHIFT_DOWN );
 
             if (state & KMD_ALT)
-                Utils::FlagSet( modifiers, EVENTFLAG_ALT_DOWN );
+                utils::FlagSet( modifiers, EVENTFLAG_ALT_DOWN );
 
             if (state & KMD_NUM)
-                Utils::FlagSet( modifiers, EVENTFLAG_NUM_LOCK_ON );
+                utils::FlagSet( modifiers, EVENTFLAG_NUM_LOCK_ON );
 
             if (state & KMD_NUM)
-                Utils::FlagSet( modifiers, EVENTFLAG_CAPS_LOCK_ON );
+                utils::FlagSet( modifiers, EVENTFLAG_CAPS_LOCK_ON );
 
-            if (Utils::IsFlagSet( state, KMD_LCTRL ) ||
-                Utils::IsFlagSet( state, KMD_LALT ) ||
-                Utils::IsFlagSet( state, KMD_LSHIFT ))
+            if (utils::IsFlagSet( state, KMD_LCTRL ) ||
+                utils::IsFlagSet( state, KMD_LALT ) ||
+                utils::IsFlagSet( state, KMD_LSHIFT ))
             {
-                Utils::FlagSet( modifiers, EVENTFLAG_IS_LEFT );
+                utils::FlagSet( modifiers, EVENTFLAG_IS_LEFT );
             }
 
-            if (Utils::IsFlagSet( state, KMD_RCTRL ) ||
-                Utils::IsFlagSet( state, KMD_RALT ) ||
-                Utils::IsFlagSet( state, KMD_RSHIFT ))
+            if (utils::IsFlagSet( state, KMD_RCTRL ) ||
+                utils::IsFlagSet( state, KMD_RALT ) ||
+                utils::IsFlagSet( state, KMD_RSHIFT ))
             {
-                Utils::FlagSet( modifiers, EVENTFLAG_IS_RIGHT );
+                utils::FlagSet( modifiers, EVENTFLAG_IS_RIGHT );
             }
 
             return modifiers;

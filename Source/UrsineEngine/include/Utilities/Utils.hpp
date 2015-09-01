@@ -13,9 +13,9 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
-    namespace Utils
+    namespace utils
     {
         template<typename T>
         void Swap(T &a, T &b)

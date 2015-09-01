@@ -17,7 +17,7 @@
 #include "GamepadTriggers.h"
 #include "GamepadButton.h"
 
-namespace Ursine
+namespace ursine
 {
     class GamepadState
     {

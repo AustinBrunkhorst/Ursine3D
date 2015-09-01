@@ -1,10 +1,10 @@
 #include "UrsinePrecompiled.h"
 
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         Slot::Slot(SlotData *Data, Bone *Bone)
             : data(Data)

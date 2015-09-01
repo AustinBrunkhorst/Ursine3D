@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
 #define DECLARE_STANDARD_VARIANT(type)                                     \
     template<>                                                             \

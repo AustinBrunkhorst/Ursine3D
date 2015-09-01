@@ -2,9 +2,9 @@
 #include "ScaleSetterEffect.h"
 #include "ParticleEmitterComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    void ScaleSetterEffect::InitializeParticle(ECS::Entity *particle) const
+    void ScaleSetterEffect::InitializeParticle(ecs::Entity *particle) const
     {
         auto particle_trans = particle->GetTransform();
         auto emitter_trans = GetEmitter()->GetOwner()->GetTransform();

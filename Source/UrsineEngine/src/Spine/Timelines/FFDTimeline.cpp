@@ -3,9 +3,9 @@
 #include "Spine/Timelines/FFDTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         FFDTimeline::FFDTimeline(int framesCount, int frameVerticesCount)
             : CurveTimeline(SP_TIMELINE_FFD, framesCount)

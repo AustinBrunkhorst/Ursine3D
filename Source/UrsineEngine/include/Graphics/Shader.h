@@ -2,9 +2,9 @@
 
 #include "Texture2D.h"
 
-namespace Ursine
+namespace ursine
 {
-    class Shader : public Utils::NoCopy
+    class Shader : public utils::NoCopy
     {
     public:
         enum Type

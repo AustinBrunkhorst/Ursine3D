@@ -16,7 +16,7 @@
 #include "ScreenConfig.h"
 #include "SpaceConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     class Screen;
 

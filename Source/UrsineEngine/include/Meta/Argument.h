@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace Ursine
+namespace ursine
 {
     class Type;
     class Variant;

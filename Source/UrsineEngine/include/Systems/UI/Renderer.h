@@ -15,7 +15,7 @@
 
 #include <cef_render_handler.h>
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

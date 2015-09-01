@@ -22,7 +22,7 @@
 // Registers a component with the registrar.
 // IMPORTANT: this must be done in the components header file.
 #define RegisterComponent(component_type)                     \
-    volatile static Ursine::ECS::ComponentType<component_type>\
+    volatile static ursine::ecs::ComponentType<component_type>\
         register_##component_type(#component_type);           \
 
 // Intellisense is a silly guy
@@ -32,21 +32,21 @@
 #define RegisterComponentData(component_type, member_name, ...)
 #else
 #define RegisterComponentData(component_type, member_name, ...)                                    \
-    static void *access_##component_type##member_name(const Ursine::ECS::Component *instance)      \
+    static void *access_##component_type##member_name(const ursine::ecs::Component *instance)      \
     {                                                                                              \
         return (void*)(&((const component_type*)instance)->member_name);                           \
     }                                                                                              \
-    static Ursine::Json serialize_##component_type##member_name(void *instance)                    \
+    static ursine::Json serialize_##component_type##member_name(void *instance)                    \
     {                                                                                              \
-        return Ursine::JsonSerializer::Serialize(                                                  \
+        return ursine::JsonSerializer::Serialize(                                                  \
             *static_cast<decltype(component_type::member_name)*>(instance));                       \
     }                                                                                              \
-    static void deserialize_##component_type##member_name(const Ursine::Json &data, void *instance)\
+    static void deserialize_##component_type##member_name(const ursine::Json &data, void *instance)\
     {                                                                                              \
-        Ursine::JsonSerializer::Deserialize(data,                                                  \
+        ursine::JsonSerializer::Deserialize(data,                                                  \
             *static_cast<decltype(component_type::member_name)*>(instance));                       \
     }                                                                                              \
-    volatile static Ursine::ECS::ComponentType<component_type>                                     \
+    volatile static ursine::ecs::ComponentType<component_type>                                     \
         register_member_##component_type##member_name(                                             \
             #member_name,                                                                          \
             access_##component_type##member_name,                                                  \
@@ -62,26 +62,26 @@
 
 // Allows the serializer to access private component data. Use this before
 // any private fields in the class you wish to allow access.
-#define SerializerAllow(component_type, member_name) friend void *access_##component_type##member_name(const Ursine::ECS::Component * const instance)
+#define SerializerAllow(component_type, member_name) friend void *access_##component_type##member_name(const ursine::ecs::Component * const instance)
 
 // Gets the unique id of this component type
-#define GetComponentID(component_type) Ursine::ECS::ComponentRegistrar::GetID<component_type>()
+#define GetComponentID(component_type) ursine::ecs::ComponentRegistrar::GetID<component_type>()
 
 // Gets the unique mask for this component type
-#define GetComponentMask(component_type) Ursine::ECS::ComponentRegistrar::GetMask<component_type>()
+#define GetComponentMask(component_type) ursine::ecs::ComponentRegistrar::GetMask<component_type>()
 
 // Determines if a component of this type has been registered
-#define IsComponentRegistered(component_type) Ursine::ECS::ComponentRegistrar::IsRegistered<component_type>()
+#define IsComponentRegistered(component_type) ursine::ecs::ComponentRegistrar::IsRegistered<component_type>()
 
 // Cleaner way of calling a base component constructor in the member 
 // initialization list (used to assign the component type id)
-#define BaseComponent() Ursine::ECS::Component(GetComponentID(std::remove_reference<decltype(*this)>::type))
+#define BaseComponent() ursine::ecs::Component(GetComponentID(std::remove_reference<decltype(*this)>::type))
 
-namespace Ursine
+namespace ursine
 {
     class JsonSerializer;
 
-    namespace ECS
+    namespace ecs
     {
         class Component;
 

@@ -16,7 +16,7 @@
 #include "TimerManager.h"
 #include "TimerID.h"
 
-namespace Ursine
+namespace ursine
 {
     TimerManager *gTimerManager = nullptr;
 

@@ -15,9 +15,9 @@
 
 #include "EntitySystem.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class TagSystem : public EntitySystem
         {

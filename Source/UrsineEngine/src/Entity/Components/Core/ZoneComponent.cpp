@@ -16,9 +16,9 @@
 #include "ZoneComponent.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Zone::Zone()
             : BaseComponent()

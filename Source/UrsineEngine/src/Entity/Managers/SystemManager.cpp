@@ -15,9 +15,9 @@
 
 #include "SystemManager.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         SystemManager::SystemManager(World *world)
             : WorldManager(world)

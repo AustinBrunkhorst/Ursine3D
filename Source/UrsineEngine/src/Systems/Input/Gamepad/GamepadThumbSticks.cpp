@@ -15,7 +15,7 @@
 
 #include "GamepadThumbSticks.h"
 
-namespace Ursine
+namespace ursine
 {
     const float GamepadThumbSticks::VALUE_MAX = 32767.0f;
 

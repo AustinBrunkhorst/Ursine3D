@@ -15,7 +15,7 @@
 
 #include "GamepadManager.h"
 
-namespace Ursine
+namespace ursine
 {
     GamepadManager *gGamepadManager = nullptr;
 
@@ -204,7 +204,7 @@ namespace Ursine
 
     bool GamepadManager::IsVirtual(GamepadIndex index)
     {
-        return Utils::IsFlagSet( index, VirtualGamepad::INDEX_FLAG );
+        return utils::IsFlagSet( index, VirtualGamepad::INDEX_FLAG );
     }
 
     GamepadIndex GamepadManager::IndexFromVirtual(GamepadIndex index)

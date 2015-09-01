@@ -17,7 +17,7 @@ namespace utils
     {
         std::string name;
 
-        Ursine::Utils::Join( currentNamespace, "::", name );
+        ursine::utils::Join( currentNamespace, "::", name );
 
         if (!currentNamespace.empty( ))
             name += "::";

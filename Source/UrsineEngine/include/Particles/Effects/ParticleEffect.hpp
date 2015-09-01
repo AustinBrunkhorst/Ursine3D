@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-namespace Ursine
+namespace ursine
 {
     ParticleEffect::ParticleEffect(ParticleEffectTypeID type_id)
         : _type_id(type_id)
@@ -27,7 +27,7 @@ namespace Ursine
         return _type_mask;
     }
 
-    ECS::ParticleEmitter *ParticleEffect::GetEmitter(void) const
+    ecs::ParticleEmitter *ParticleEffect::GetEmitter(void) const
     {
         return _emitter;
     }

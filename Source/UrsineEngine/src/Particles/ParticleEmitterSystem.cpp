@@ -3,9 +3,9 @@
 #include "ParticleEmitterComponent.h"
 #include "RenderableComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         ParticleEmitterSystem::ParticleEmitterSystem(World *world)
             : FilterSystem(world, Filter().All<ParticleEmitter>())

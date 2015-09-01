@@ -13,9 +13,9 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Simulation::Simulation(World *world)
             : EntitySystem(world, SIMULATION_PRIORITY)
@@ -460,7 +460,7 @@ namespace Ursine
             id_1 = body_1->GetOwner()->GetUniqueID();
 
             if (id_0 > id_1)
-                Utils::Swap(id_0, id_1);
+                utils::Swap(id_0, id_1);
         }
 
     }

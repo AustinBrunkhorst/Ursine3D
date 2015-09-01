@@ -4,7 +4,7 @@
 
 #include "GamepadManager.h"
 
-namespace Ursine
+namespace ursine
 {
     VirtualGamepad::VirtualGamepad(void)
         : m_index(0) { }

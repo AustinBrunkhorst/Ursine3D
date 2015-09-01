@@ -23,12 +23,12 @@
 #include <string>
 #include <type_traits>
 
-namespace Ursine
+namespace ursine
 {
     class LocalTimerManager;
     class LocalTweenManager;
 
-    namespace ECS
+    namespace ecs
     {
         // forward declarations
         class World;

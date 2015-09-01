@@ -2,7 +2,7 @@
 
 #include "JavaScriptAccessor.h"
 
-namespace Ursine
+namespace ursine
 {
     JavaScriptAccessor::JavaScriptAccessor(const Object &object) 
         : _object(object) {}

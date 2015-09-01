@@ -16,9 +16,9 @@
 #include "GroupManager.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         GroupManager::GroupManager(World *world)
             : WorldManager(world)

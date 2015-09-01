@@ -3,11 +3,11 @@
 #include "Texture2D.h"
 #include "AtlasConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     class SkeletonRenderer;
 
-    namespace Spine
+    namespace spine
     {
         class AtlasPage
         {
@@ -24,7 +24,7 @@ namespace Ursine
             AtlasWrap u_wrap;
             AtlasWrap v_wrap;
 
-            Ursine::Texture2D *texture;
+            ursine::Texture2D *texture;
 
             int width;
             int height;

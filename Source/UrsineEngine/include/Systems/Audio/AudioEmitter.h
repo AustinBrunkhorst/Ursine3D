@@ -17,7 +17,7 @@
 #include <DERPFile.h>
 #include <AudioDataBaseClasses.h>
 
-namespace Ursine
+namespace ursine
 {
     class AudioEmitter
     {

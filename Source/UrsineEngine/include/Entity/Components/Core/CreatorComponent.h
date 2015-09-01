@@ -19,9 +19,9 @@
 
 #include "EntityConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class CreatorComponent : public Component
         {
@@ -47,9 +47,9 @@ namespace Ursine
 #ifndef CREATOR_COMPONENT_REGISTERED
 #define CREATOR_COMPONENT_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(CreatorComponent);
     }

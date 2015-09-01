@@ -17,7 +17,7 @@
 
 #include "TweenProperty.h"
 
-namespace Ursine
+namespace ursine
 {
     TweenProperty::TweenProperty(const TimeSpan &duration, TweenPercentageCallback updater)
         : TimedTween(duration)

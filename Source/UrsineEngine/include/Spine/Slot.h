@@ -4,9 +4,9 @@
 #include "Spine/Attachment.h"
 #include "Spine/SlotData.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         struct Slot
         {

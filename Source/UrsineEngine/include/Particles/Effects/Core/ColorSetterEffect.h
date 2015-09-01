@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ParticleEffect.h"
 
-namespace Ursine
+namespace ursine
 {
     class ColorSetterEffect : public ParticleEffect
     {
@@ -15,7 +15,7 @@ namespace Ursine
         ColorSetterEffect(void)
             : BaseParticleEffect() { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
     };
 }
 
@@ -28,7 +28,7 @@ namespace Ursine
 #ifndef COLOR_SETTER_EFFECT_REGISTERED
 #define COLOR_SETTER_EFFECT_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(ColorSetterEffect);
     RegisterParticleEffectData(ColorSetterEffect, _colors, "colors");

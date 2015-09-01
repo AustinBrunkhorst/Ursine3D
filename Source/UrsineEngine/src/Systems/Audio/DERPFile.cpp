@@ -15,7 +15,7 @@
 #include <DERPFile.h>
 #include "DERPFile.h"
 
-namespace Ursine
+namespace ursine
 {
 
     //////////////////////
@@ -86,8 +86,8 @@ namespace Ursine
             int min, sec;
 
             str = data.substr(data.length() - 5, 5);
-            min = Utils::StringToNumber<int>(str.substr(0, 2));
-            sec = Utils::StringToNumber<int>(str.substr(3, 2));
+            min = utils::StringToNumber<int>(str.substr(0, 2));
+            sec = utils::StringToNumber<int>(str.substr(3, 2));
 
             _ms_time_limit = (min * 60000) + (sec * 1000);
 
@@ -99,10 +99,10 @@ namespace Ursine
         {
             str = data.substr(start_pos, Bar::GetBeatsPerBar());
 
-            int beat_0 = Utils::ASCIIHexToInt(str[0]),
-                beat_1 = Utils::ASCIIHexToInt(str[1]),
-                beat_2 = Utils::ASCIIHexToInt(str[2]),
-                beat_3 = Utils::ASCIIHexToInt(str[3]);
+            int beat_0 = utils::ASCIIHexToInt(str[0]),
+                beat_1 = utils::ASCIIHexToInt(str[1]),
+                beat_2 = utils::ASCIIHexToInt(str[2]),
+                beat_3 = utils::ASCIIHexToInt(str[3]);
 
             _bars.push_back(Bar(beat_0, beat_1, beat_2, beat_3));
 
@@ -185,7 +185,7 @@ namespace Ursine
 
         // getting the first line (BPM)
         getline(file, str);
-        _mspb = (int)(1000 / (Utils::StringToNumber<int>(str) / 60.0f));
+        _mspb = (int)(1000 / (utils::StringToNumber<int>(str) / 60.0f));
 
         // Getting the second line (play mode)
         getline(file, str);

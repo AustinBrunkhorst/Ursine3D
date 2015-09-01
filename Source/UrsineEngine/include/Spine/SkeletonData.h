@@ -7,9 +7,9 @@
 #include "Spine/SpineAnimation.h"
 #include "Spine/IkConstraintData.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         struct SkeletonData
         {

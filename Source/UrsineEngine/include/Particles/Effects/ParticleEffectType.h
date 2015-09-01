@@ -17,7 +17,7 @@
 #include "ParticleEffectConfig.h"
 #include "JsonSerializer.h"
 
-namespace Ursine
+namespace ursine
 {
     template <class Type>
     class ParticleEffectType final

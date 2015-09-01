@@ -4,9 +4,9 @@
 #include "Spine/Atlas.h"
 #include "Spine/Slot.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class BoundingBoxAttachment : public Attachment
         {

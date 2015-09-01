@@ -1,7 +1,7 @@
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template<class EffectType, typename... Args>
         EffectType *ParticleEmitter::AddEffect(Args&&... args)
@@ -52,7 +52,7 @@ namespace Ursine
 
                     _effects.erase(_effects.front() + i);
 
-                    Utils::FlagUnset(_mask, GetParticleEffectMask(EffectType));
+                    utils::FlagUnset(_mask, GetParticleEffectMask(EffectType));
 
                     return;
                 }
@@ -62,7 +62,7 @@ namespace Ursine
         template<class EffectType>
         bool ParticleEmitter::HasEffect(void)
         {
-            return Utils::IsFlagSet(_mask, GetParticleEffectMask(EffectType));
+            return utils::IsFlagSet(_mask, GetParticleEffectMask(EffectType));
         }
     }
 }

@@ -17,9 +17,9 @@
 #include "Component.h"
 #include "EntityConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         void ComponentSerializer::Serialize(Json &target, const Component *component)
         {

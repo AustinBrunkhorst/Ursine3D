@@ -6,7 +6,7 @@
 
 #include "UrsineTypes.h"
 
-namespace Ursine
+namespace ursine
 {
     class MouseManager 
         : public System

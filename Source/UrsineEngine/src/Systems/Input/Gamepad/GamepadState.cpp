@@ -15,7 +15,7 @@
 
 #include "GamepadState.h"
 
-namespace Ursine
+namespace ursine
 {
     GamepadState::GamepadState(void)
     {

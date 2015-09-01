@@ -16,7 +16,7 @@
 
 #include "Color.h"
 
-namespace Ursine
+namespace ursine
 {
     #pragma region Predefined Colors
     const Color Color::TransparentBlack(0);

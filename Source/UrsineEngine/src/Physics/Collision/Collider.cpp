@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     Collider::Collider()
         : shape(nullptr)
@@ -119,7 +119,7 @@ namespace Ursine
     {
         static std::string path = "Assets/Meshes/";
 
-        ECS::Transform &transform = collider->transform;
+        ecs::Transform &transform = collider->transform;
 
         const Json &pos = data["position"];
 

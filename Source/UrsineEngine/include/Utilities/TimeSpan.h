@@ -17,7 +17,7 @@
 #include "JsonSerializer.h"
 #include <limits>
 
-namespace Ursine
+namespace ursine
 {
     class TimeSpan
     {

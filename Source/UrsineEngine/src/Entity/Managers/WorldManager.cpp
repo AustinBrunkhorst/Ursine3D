@@ -16,9 +16,9 @@
 #include "WorldManager.h"
 #include "World.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         WorldManager::WorldManager(World *world)
             : _world(world) { }

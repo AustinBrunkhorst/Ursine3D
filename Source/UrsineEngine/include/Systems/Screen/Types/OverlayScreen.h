@@ -15,7 +15,7 @@
 
 #include "Screen.h"
 
-namespace Ursine
+namespace ursine
 {
     class OverlayScreen 
         : public Screen

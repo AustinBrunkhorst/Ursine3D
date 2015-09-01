@@ -15,17 +15,17 @@
 
 #include "Shape.h"
 
-namespace Ursine
+namespace ursine
 {
     // Forward declarations
-    namespace ECS
+    namespace ecs
     {
         class PhysicsDebugDrawer;
     }
 
     class Ellipse : public Shape
     {
-        friend class ECS::PhysicsDebugDrawer;
+        friend class ecs::PhysicsDebugDrawer;
 
     public:
         Ellipse(void);
@@ -38,11 +38,11 @@ namespace Ursine
                     const Vec2 &dimensions,
                     const Vec2 &position);
 
-        AABB TransformShape(ECS::Transform &transform) override;
+        AABB TransformShape(ecs::Transform &transform) override;
 
         Vec2 GetSupport(const Vec2 &direction) const override;
 
-        void ComputeMass(ECS::Transform &transform, Vec2 &center,
+        void ComputeMass(ecs::Transform &transform, Vec2 &center,
                          float &area, float &inertia);
 
         bool RayCast(RayCastOutput &output, const RayCastInput &input);

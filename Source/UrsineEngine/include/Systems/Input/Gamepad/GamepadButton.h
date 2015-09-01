@@ -15,7 +15,7 @@
 
 #include <SDL_gamecontroller.h>
 
-namespace Ursine
+namespace ursine
 {
     enum GamepadButton
     {

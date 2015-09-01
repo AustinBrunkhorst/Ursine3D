@@ -25,9 +25,9 @@
 
 #include "Color.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         enum RenderEffectType;
 
@@ -100,9 +100,9 @@ namespace Ursine
 #ifdef REGISTER_COMPONENTS
 #ifndef RENDERABLE_REGISTERED
 #define RENDERABLE_REGISTERED
-namespace Ursine
+namespace ursine
 {
-    namespace ECS 
+    namespace ecs 
     {
         RegisterComponent(Renderable);
         RegisterComponentData(Renderable, texture);

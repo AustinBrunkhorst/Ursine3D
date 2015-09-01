@@ -13,7 +13,7 @@
 
 #include "Utils.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename AssetType>
     AssetType *ContentManager::Loader(const std::string &name, uint32 flags)
@@ -38,9 +38,9 @@ namespace Ursine
         static_assert(std::is_base_of<Asset, AssetType>::value,
             "Type specified is not an asset!");
 
-        std::string normalized = Utils::NormalizePath(name);
+        std::string normalized = utils::NormalizePath(name);
 
-        if (Utils::IsFlagSet(flags, FORCE_LOAD))
+        if (utils::IsFlagSet(flags, FORCE_LOAD))
         {
             goto hard_load;
         }
@@ -51,7 +51,7 @@ namespace Ursine
             if (asset == _cache.end())
                 goto hard_load;
 
-            if (Utils::IsFlagSet(flags, COPY))
+            if (utils::IsFlagSet(flags, COPY))
             {
                 auto copy = Copier<AssetType>(static_cast<AssetType*>(asset->second), flags);
 
@@ -68,7 +68,7 @@ namespace Ursine
 
         _cache.insert(std::make_pair(normalized, static_cast<Asset*>(load)));
 
-        if (Utils::IsFlagSet(flags, COPY))
+        if (utils::IsFlagSet(flags, COPY))
         {
             load = Copier<AssetType>(load, flags);
 

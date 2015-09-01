@@ -2,7 +2,7 @@
 
 #include "Global.h"
 
-namespace Ursine
+namespace ursine
 {
     Global::Global(void)
         : m_type { Type::Invalid }

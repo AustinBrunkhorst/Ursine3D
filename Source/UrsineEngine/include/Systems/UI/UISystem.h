@@ -25,7 +25,7 @@
 #include <cef_app.h>
 #include <cef_runnable.h>
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {
@@ -65,4 +65,4 @@ namespace Ursine
     }
 }
 
-DISABLE_RUNNABLE_METHOD_REFCOUNT(Ursine::UI::UISystem);
+DISABLE_RUNNABLE_METHOD_REFCOUNT(ursine::UI::UISystem);

@@ -27,9 +27,9 @@
 #include <map>
 #include <array>
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class Renderable;
 
@@ -76,9 +76,9 @@ namespace Ursine
 #ifndef RENDER_SYSTEM_REGISTERED
 #define RENDER_SYSTEM_REGISTERED
 
-namespace Ursine 
+namespace ursine 
 { 
-    namespace ECS 
+    namespace ecs 
     {
         RegisterEntitySystem(RenderSystem);
     } 

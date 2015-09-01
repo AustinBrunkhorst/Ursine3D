@@ -15,7 +15,7 @@
 
 #include "Screen.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename ScreenType>
     Screen *ScreenFactory(void);

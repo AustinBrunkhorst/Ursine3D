@@ -16,7 +16,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-namespace Ursine
+namespace ursine
 {
     namespace Math
     {

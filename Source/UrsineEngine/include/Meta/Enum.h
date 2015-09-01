@@ -2,7 +2,7 @@
 
 #include "EnumBase.h"
 
-namespace Ursine
+namespace ursine
 {
     class Enum
     {

@@ -2,7 +2,7 @@
 
 #include "LayerID.h"
 
-namespace Ursine
+namespace ursine
 {
     class LayerMask
     {

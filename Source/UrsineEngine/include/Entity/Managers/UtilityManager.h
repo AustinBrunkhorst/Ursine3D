@@ -2,9 +2,9 @@
 
 #include "WorldManager.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class Entity;
 

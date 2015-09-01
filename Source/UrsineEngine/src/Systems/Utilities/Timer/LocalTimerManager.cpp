@@ -17,7 +17,7 @@
 
 #include "TimerManager.h"
 
-namespace Ursine
+namespace ursine
 {
     LocalTimerManager::LocalTimerManager(TimerGroupID default_group)
         : _default_group(default_group)

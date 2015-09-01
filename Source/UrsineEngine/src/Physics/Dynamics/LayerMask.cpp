@@ -1,6 +1,6 @@
 #include <UrsinePrecompiled.h>
 
-namespace Ursine
+namespace ursine
 {
     LayerMask::LayerMask(void)
     {
@@ -26,7 +26,7 @@ namespace Ursine
         uint64 id_mask = 0;
         id_mask |= uint64(1) << id.ID();
 
-        return Utils::IsFlagSet(_mask, id_mask);
+        return utils::IsFlagSet(_mask, id_mask);
     }
 
     template <>
@@ -37,7 +37,7 @@ namespace Ursine
 
         for (uint64 i = 0; i < 64; ++i)
         {
-            if (Utils::IsFlagSet(mask, 1 << i))
+            if (utils::IsFlagSet(mask, 1 << i))
             {
                 // push i
                 mask_array.push_back(Json(static_cast<int>(i)));

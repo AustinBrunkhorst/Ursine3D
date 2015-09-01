@@ -2,16 +2,16 @@
 #include "MoveToColorEffect.h"
 #include "RenderableComponent.h"
 
-namespace Ursine
+namespace ursine
 {
     void MoveToColorEffect::AddStartColor(const Color &color)
     {
         _start.push_back(color);
     }
 
-    void MoveToColorEffect::InitializeParticle(ECS::Entity *particle) const
+    void MoveToColorEffect::InitializeParticle(ecs::Entity *particle) const
     {
-        auto renderable = particle->GetComponent<ECS::Renderable>();
+        auto renderable = particle->GetComponent<ecs::Renderable>();
 
         Color start_color, middle_color, end_color;
 
@@ -41,13 +41,13 @@ namespace Ursine
                 .Delay(_first_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(renderable, &ECS::Renderable::SetTint, start_color, middle_color, _first_duration)
+                .Setter(renderable, &ecs::Renderable::SetTint, start_color, middle_color, _first_duration)
             .EndGroup()
             .BeginGroup()
                 .Delay(_second_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(renderable, &ECS::Renderable::SetTint, middle_color, end_color, _second_duration)
+                .Setter(renderable, &ecs::Renderable::SetTint, middle_color, end_color, _second_duration)
             .EndGroup();
     }
 }

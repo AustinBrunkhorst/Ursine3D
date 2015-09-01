@@ -3,9 +3,9 @@
 #include "Spine/Timelines/AttachmentTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         AttachmentTimeline::AttachmentTimeline(int frame_count)
             : Timeline(SP_TIMELINE_ATTACHMENT)

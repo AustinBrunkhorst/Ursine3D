@@ -16,7 +16,7 @@
 
 #include "Json.h"
 
-namespace Ursine
+namespace ursine
 {
     class ParticleEffect;
 

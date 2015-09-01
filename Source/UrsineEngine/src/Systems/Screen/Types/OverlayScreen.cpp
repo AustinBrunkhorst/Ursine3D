@@ -15,7 +15,7 @@
 
 #include "OverlayScreen.h"
 
-namespace Ursine
+namespace ursine
 {
     OverlayScreen::OverlayScreen(const std::string &name)
         : Screen(true, name) { }

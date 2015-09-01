@@ -24,7 +24,7 @@
 
 #include "AudioEmitter.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

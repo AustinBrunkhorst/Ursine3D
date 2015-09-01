@@ -15,9 +15,9 @@
 
 #include "TransformComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Transform::Transform(void)
             : BaseComponent()

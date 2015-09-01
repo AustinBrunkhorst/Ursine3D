@@ -19,10 +19,10 @@
 
 #include <vector>
 
-namespace Ursine
+namespace ursine
 {
     // Forward declaration
-    namespace ECS
+    namespace ecs
     {
         class RigidBody2D;
     }
@@ -77,7 +77,7 @@ namespace Ursine
     class Manifold
     {
     public:
-        Manifold(ECS::RigidBody2D *a, ECS::RigidBody2D *b);
+        Manifold(ecs::RigidBody2D *a, ecs::RigidBody2D *b);
 
         // Merge the new contacts with the old
         void Update(Contacts &new_contacts);
@@ -88,7 +88,7 @@ namespace Ursine
 
         Contacts contacts;
 
-        ECS::RigidBody2D *a, *b;
+        ecs::RigidBody2D *a, *b;
 
         // Average restitution
         float e;
@@ -104,7 +104,7 @@ namespace Ursine
     class KinematicManifold : public Manifold
     {
     public:
-        KinematicManifold(ECS::RigidBody2D *a, ECS::RigidBody2D *b);
+        KinematicManifold(ecs::RigidBody2D *a, ecs::RigidBody2D *b);
 
         // Solves onces for the intersection of the two bodies.
         void Solve(void);
@@ -113,7 +113,7 @@ namespace Ursine
     class ManifoldKey
     {
     public:
-        ManifoldKey(ECS::EntityUniqueID a, ECS::EntityUniqueID b);
+        ManifoldKey(ecs::EntityUniqueID a, ecs::EntityUniqueID b);
         inline bool operator<(const ManifoldKey &rhs) const
         {
             if (a < rhs.a)
@@ -125,7 +125,7 @@ namespace Ursine
             return false;
         }
 
-        ECS::EntityUniqueID a, b;
+        ecs::EntityUniqueID a, b;
     };
 
     typedef std::pair<ManifoldKey, Manifold> ManifoldPair;

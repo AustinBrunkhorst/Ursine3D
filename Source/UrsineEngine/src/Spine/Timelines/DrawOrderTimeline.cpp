@@ -3,9 +3,9 @@
 #include "Spine/Timelines/DrawOrderTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         DrawOrderTimeline::DrawOrderTimeline(int framesCount, int slotsCount)
             : Timeline(SP_TIMELINE_DRAWORDER)

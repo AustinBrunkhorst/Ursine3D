@@ -1,12 +1,12 @@
 #include "UrsinePrecompiled.h"
 
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
 #include <ctype.h>
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         struct Str
         {
@@ -274,7 +274,7 @@ namespace Ursine
                         page->v_wrap = *str.begin == 'x' ? SP_ATLAS_CLAMPTOEDGE : (*str.begin == 'y' ? SP_ATLAS_REPEAT : SP_ATLAS_REPEAT);
                     }
 
-                    page->texture = Ursine::gContentManager->Load<Ursine::Texture2D>(path);
+                    page->texture = ursine::gContentManager->Load<ursine::Texture2D>(path);
 
                     auto size = page->texture->GetSize();
 
@@ -380,11 +380,11 @@ namespace Ursine
 
         Atlas *Atlas::CreateFromFile(const char *path)
         {
-            auto normalized = Ursine::Utils::NormalizePath(path);
+            auto normalized = ursine::utils::NormalizePath(path);
 
-            auto dir = Ursine::Utils::DirectoryName(normalized);
+            auto dir = ursine::utils::DirectoryName(normalized);
 
-            auto data = Ursine::gContentManager->LoadText(normalized);
+            auto data = ursine::gContentManager->LoadText(normalized);
 
             return new Atlas(data->c_str(), data->length(), dir.c_str());
         }

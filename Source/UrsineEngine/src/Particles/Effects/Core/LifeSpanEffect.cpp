@@ -3,9 +3,9 @@
 #include "LifeSpanEffect.h"
 #include "ParticleEmitterComponent.h"
 
-namespace Ursine
+namespace ursine
 {    
-    void LifeSpanEffect::InitializeParticle(ECS::Entity *particle) const
+    void LifeSpanEffect::InitializeParticle(ecs::Entity *particle) const
     {
         particle->GetTimers().Create(_life_span).Completed([=]
         {

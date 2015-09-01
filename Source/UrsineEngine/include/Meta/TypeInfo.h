@@ -2,7 +2,7 @@
 
 #include "TypeConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     struct TypeData;
 

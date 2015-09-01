@@ -37,9 +37,9 @@
     #define URSINE_DEBUG_BREAK()
 #endif
 
-namespace Ursine
+namespace ursine
 {
-    namespace LogTools
+    namespace logging
     {
         int ExitCode = EXIT_SUCCESS;
 
@@ -50,7 +50,7 @@ namespace Ursine
 
             std::string message = "Please contact a developer with the debug trace.";
 
-            auto wdir = Utils::GetWorkingDirectory();
+            auto wdir = utils::GetWorkingDirectory();
 
             if (!wdir.empty())
             {
@@ -79,7 +79,7 @@ namespace Ursine
 
             SetConsoleColor(CC_TEXT_WHITE);
 
-            fprintf(handle, "%s\n", Utils::FileName(file).c_str());
+            fprintf(handle, "%s\n", utils::FileName(file).c_str());
 
             SetConsoleColor(CC_TEXT_GREEN);
 
@@ -173,7 +173,7 @@ namespace Ursine
             SetConsoleColor(CC_TEXT_WHITE);
 
             fprintf(handle, "%s\n\n",
-                Utils::NormalizePath(Utils::GetWorkingDirectory()).c_str());
+                utils::NormalizePath(utils::GetWorkingDirectory()).c_str());
         }
 
         void ExitError(void)

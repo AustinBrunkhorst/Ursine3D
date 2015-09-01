@@ -2,7 +2,7 @@
 
 struct SDL_Window;
 
-namespace Ursine
+namespace ursine
 {
     typedef SDL_Window WindowHandle;
 }

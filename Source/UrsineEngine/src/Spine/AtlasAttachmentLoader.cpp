@@ -1,10 +1,10 @@
 #include "UrsinePrecompiled.h"
 
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         AtlasAttachmentLoader::AtlasAttachmentLoader(Atlas *atlas)
             : atlas(atlas)

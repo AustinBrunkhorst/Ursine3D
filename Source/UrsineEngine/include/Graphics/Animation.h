@@ -22,7 +22,7 @@
 
 #include "JsonSerializer.h"
 
-namespace Ursine
+namespace ursine
 {
     class Texture2D;
 

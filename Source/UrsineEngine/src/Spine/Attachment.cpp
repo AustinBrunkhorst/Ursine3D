@@ -1,10 +1,10 @@
 #include "UrsinePrecompiled.h"
 
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         Attachment::Attachment(const char *name, AttachmentType type)
             : name(name)
@@ -17,6 +17,5 @@ namespace Ursine
         {
 
         }
-
     }
 }

@@ -3,7 +3,7 @@
 #include "JavaScriptConfig.h"
 #include "JavaScriptAccessor.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace
     {

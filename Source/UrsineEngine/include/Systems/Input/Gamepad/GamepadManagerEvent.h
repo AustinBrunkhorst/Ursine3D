@@ -17,7 +17,7 @@
 #include "GamepadButton.h"
 #include "GamepadState.h"
 
-namespace Ursine
+namespace ursine
 {
     enum GamepadManagerEvent
     {

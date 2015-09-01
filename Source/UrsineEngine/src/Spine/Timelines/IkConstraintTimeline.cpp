@@ -3,9 +3,9 @@
 #include "Spine/Timelines/IkConstraintTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         IkConstraintTimeline::IkConstraintTimeline(int framesCount)
             : BaseTimeline(SP_TIMELINE_IKCONSTRAINT, framesCount, 3)

@@ -15,7 +15,7 @@
 
 #include "ContentManager.h"
 
-namespace Ursine
+namespace ursine
 {
     ContentManager *gContentManager = nullptr;
 

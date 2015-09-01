@@ -11,9 +11,9 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         Component::Component(ComponentTypeID type_id) 
             : _type_id(type_id)

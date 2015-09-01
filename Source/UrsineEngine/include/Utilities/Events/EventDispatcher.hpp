@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-namespace Ursine
+namespace ursine
 {
     template<typename Key>
     EventDispatcher<Key>::EventDispatcher(void)

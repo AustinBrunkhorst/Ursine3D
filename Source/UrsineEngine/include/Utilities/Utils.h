@@ -21,9 +21,9 @@
 #include <vector>
 #include <algorithm>
 
-namespace Ursine
+namespace ursine
 {
-    namespace Utils
+    namespace utils
     {
         template<typename T>
         inline void Swap(T &a, T &b);

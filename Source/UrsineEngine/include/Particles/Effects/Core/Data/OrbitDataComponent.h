@@ -16,9 +16,9 @@
 #define ORBIT_DATA_COMPONENT_H
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class OrbitData : public Component
         {
@@ -45,9 +45,9 @@ namespace Ursine
 #ifndef ORBIT_DATA_COMPONENT_REGISTERED
 #define ORBIT_DATA_COMPONENT_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(OrbitData);
         RegisterComponentData(OrbitData, _radius, "radius");

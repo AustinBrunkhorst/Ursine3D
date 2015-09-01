@@ -3,9 +3,9 @@
 #include "OrbitDataComponent.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         OrbitData::OrbitData(void)
             : BaseComponent()

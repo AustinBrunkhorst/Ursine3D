@@ -19,9 +19,9 @@
 
 #include "AudioEmitter.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class AudioEmitters : public Component
         {
@@ -51,9 +51,9 @@ namespace Ursine
 #ifdef REGISTER_COMPONENTS
 #ifndef AUDIO_EMITTERS_REGISTERED
 #define AUDIO_EMITTERS_REGISTERED
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(AudioEmitters);
         //RegisterComponentData(AudioEmitters, _emitters);

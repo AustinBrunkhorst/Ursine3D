@@ -32,9 +32,9 @@
 #include <unistd.h>
 #endif
 
-namespace Ursine
+namespace ursine
 {
-    namespace Utils
+    namespace utils
     {
         void Join(const std::vector<std::string> &input, const std::string &joiner, std::string &output)
         {

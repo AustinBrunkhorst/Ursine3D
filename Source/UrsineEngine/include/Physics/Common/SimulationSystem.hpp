@@ -1,7 +1,7 @@
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template <typename PredicateFN>
         bool Simulation::RayCast(RayCastOutput &output, const RayCastInput &input,

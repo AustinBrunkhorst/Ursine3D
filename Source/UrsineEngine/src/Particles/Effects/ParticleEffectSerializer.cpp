@@ -18,7 +18,7 @@
 #include "ParticleEffectRegistrar.h"
 #include "ParticleEffectConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     Json ParticleEffectSerializer::Serialize(const ParticleEffect *effect)
     {

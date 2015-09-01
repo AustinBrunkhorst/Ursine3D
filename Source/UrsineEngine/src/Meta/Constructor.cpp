@@ -4,7 +4,7 @@
 
 #include "Constructor.h"
 
-namespace Ursine
+namespace ursine
 {
     Constructor::Constructor(void)
         : Invokable( "INVALID" )

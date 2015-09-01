@@ -17,7 +17,7 @@
 
 #include "TweenCall.h"
 
-namespace Ursine
+namespace ursine
 {
     TweenCall::TweenCall(TweenCallback callback) 
         : _callback(callback) { }

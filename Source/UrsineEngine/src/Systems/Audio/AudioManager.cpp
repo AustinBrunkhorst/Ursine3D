@@ -11,7 +11,7 @@
 #include "AudioEmitter.h"
 #include "Utils.h"
 
-namespace Ursine
+namespace ursine
 {
     static void parse_Banks(FMOD_S::System *system, std::ifstream &file);
     static void load_Bank(FMOD_S::System *system, std::string &bank_s);
@@ -33,7 +33,7 @@ namespace Ursine
         FMODERRCHK(_system->initialize(512, 0, 0, nullptr));
         FMODERRCHK(_system->getLowLevelSystem(&_low_system));
 
-        auto path = MediaPath(_fGUID, Utils::TYPE_GUIDs);
+        auto path = MediaPath(_fGUID, utils::TYPE_GUIDs);
 
         // open file, and parse to populate the event_desc_map
         std::ifstream infile(path.c_str());
@@ -272,7 +272,7 @@ namespace Ursine
     static void load_Bank(FMOD_S::System *system, std::string &bank_s)
     {
         FMOD_S::Bank *bank = NULL;
-        FMODERRCHK(system->loadBankFile(MediaPath(bank_s, Utils::TYPE_AUDIO).c_str(),
+        FMODERRCHK(system->loadBankFile(MediaPath(bank_s, utils::TYPE_AUDIO).c_str(),
             FMOD_STUDIO_LOAD_BANK_NORMAL, &bank));
     }
 

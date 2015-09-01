@@ -1,6 +1,6 @@
 #include "Variant.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename ...Args>
     Variant Constructor::Invoke(Args &&...args) const

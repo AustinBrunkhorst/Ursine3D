@@ -2,7 +2,7 @@
 
 #include "JsonSerializer.h"
 
-namespace Ursine
+namespace ursine
 {
     JsonSerializer::JsonSerializer(Serializer serialize, Deserializer deserialize)
         : SerializeFn(serialize)

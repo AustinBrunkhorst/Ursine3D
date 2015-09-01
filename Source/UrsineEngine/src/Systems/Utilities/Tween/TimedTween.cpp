@@ -15,7 +15,7 @@
 
 #include "TimedTween.h"
 
-namespace Ursine
+namespace ursine
 {
     TimedTween::TimedTween(const TimeSpan &duration)
         : _duration(duration)

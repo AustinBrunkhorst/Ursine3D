@@ -3,9 +3,9 @@
 #include "Spine/Timelines/CurveTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         CurveTimeline::CurveTimeline(TimelineType type, int frame_count)
             : Timeline(type)

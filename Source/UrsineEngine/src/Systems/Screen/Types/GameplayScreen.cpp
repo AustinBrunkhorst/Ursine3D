@@ -18,7 +18,7 @@
 #include "TimerManager.h"
 #include "TweenManager.h"
 
-namespace Ursine
+namespace ursine
 {
     GameplayScreen::GameplayScreen(const std::string &space_name)
         : Screen(false, space_name)
@@ -28,7 +28,7 @@ namespace Ursine
 
     void GameplayScreen::OnFocusChanged(bool state)
     {
-        ECS::ScreenFocusArgs args(state);
+        ecs::ScreenFocusArgs args(state);
 
         if (state)
         {
@@ -41,8 +41,8 @@ namespace Ursine
             gTweenManager->Pause(kTweenGroupGameplay);
         }
 
-        world.Manager<ECS::SystemManager>()->
-            Dispatch(ECS::SM_SCREEN_FOCUS_CHANGED, &args);
+        world.Manager<ecs::SystemManager>()->
+            Dispatch(ecs::SM_SCREEN_FOCUS_CHANGED, &args);
     }
 
     void GameplayScreen::Update(void)

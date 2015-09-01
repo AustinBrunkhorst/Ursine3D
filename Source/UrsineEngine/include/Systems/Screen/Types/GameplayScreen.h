@@ -13,12 +13,12 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     class GameplayScreen : public Screen
     {
     protected:
-        ECS::World world;
+        ecs::World world;
 
     public:
         GameplayScreen(const std::string &space_name);

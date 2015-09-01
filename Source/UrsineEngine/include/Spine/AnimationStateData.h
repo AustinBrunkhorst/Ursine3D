@@ -4,9 +4,9 @@
 #include "Spine/SpineAnimation.h"
 #include "Spine/SkeletonData.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class AnimationStateData
         {

@@ -16,7 +16,7 @@
 
 #include "EventArgs.h"
 
-namespace Ursine
+namespace ursine
 {
     enum AnimationEvent
     {

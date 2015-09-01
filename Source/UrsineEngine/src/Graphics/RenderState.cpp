@@ -2,7 +2,7 @@
 
 #include "RenderState.h"
 
-namespace Ursine
+namespace ursine
 {
     RenderState::RenderState(void)
         : blendMode( BlendAlpha )

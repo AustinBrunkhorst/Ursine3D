@@ -15,7 +15,7 @@
 
 #include "UrsineTypes.h"
 
-namespace Ursine
+namespace ursine
 {
     typedef uint GamepadIndex;
 }

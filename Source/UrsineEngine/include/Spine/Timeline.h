@@ -3,9 +3,9 @@
 #include "Spine/Event.h"
 #include "Spine/Skeleton.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         enum TimelineType
         {

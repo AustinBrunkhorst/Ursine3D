@@ -15,7 +15,7 @@
 
 #include <vector>
 
-namespace Ursine
+namespace ursine
 {
     class DERPFile {
     private:

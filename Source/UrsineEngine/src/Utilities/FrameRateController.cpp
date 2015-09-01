@@ -15,7 +15,7 @@
 
 #include "FrameRateController.h"
 
-namespace Ursine
+namespace ursine
 {
     FrameRateController::FrameRateController(void)
         : m_dt( 1.0f )

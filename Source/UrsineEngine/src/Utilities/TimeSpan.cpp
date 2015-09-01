@@ -15,7 +15,7 @@
 
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     const TimeSpan TimeSpan::MaxValue(MaxMilliSeconds);
     const TimeSpan TimeSpan::MinValue(MinMilliSeconds);

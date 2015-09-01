@@ -20,9 +20,9 @@
 #include "Component.h"
 #include "Animation.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class AnimationComponent : public Component
         {
@@ -57,9 +57,9 @@ namespace Ursine
 #ifdef REGISTER_COMPONENTS
 #ifndef ANIMATION_REGISTERED
 #define ANIMATION_REGISTERED
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterComponent(AnimationComponent);
         RegisterComponentData(AnimationComponent, current);

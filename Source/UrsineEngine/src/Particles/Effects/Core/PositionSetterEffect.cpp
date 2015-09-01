@@ -2,9 +2,9 @@
 #include "PositionSetterEffect.h"
 #include "ParticleEmitterComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    void PositionSetterEffect::InitializeParticle(ECS::Entity *particle) const
+    void PositionSetterEffect::InitializeParticle(ecs::Entity *particle) const
     {
         auto particle_trans = particle->GetTransform();
         auto emitter_trans = GetEmitter()->GetOwner()->GetTransform();

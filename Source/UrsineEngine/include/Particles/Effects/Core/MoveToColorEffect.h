@@ -7,7 +7,7 @@
 #include "Color.h"
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     class MoveToColorEffect : public ParticleEffect
     {
@@ -31,7 +31,7 @@ namespace Ursine
             , _second_delay(1)
             , _second_duration(1) { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
 
         void AddStartColor(const Color &color);
     };
@@ -46,7 +46,7 @@ namespace Ursine
 #ifndef MOVE_TO_COLOR_REGISTERED
 #define MOVE_TO_COLOR_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(MoveToColorEffect);
     RegisterParticleEffectData(MoveToColorEffect, _start,           "start");

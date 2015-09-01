@@ -2,7 +2,7 @@
 
 #include "RenderTarget.h"
 
-namespace Ursine
+namespace ursine
 {
     class FrameBuffer : public RenderTarget
     {

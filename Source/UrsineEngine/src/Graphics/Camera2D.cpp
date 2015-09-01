@@ -16,7 +16,7 @@
 
 #include "Camera2D.h"
 
-namespace Ursine
+namespace ursine
 {
     void Camera2D::Update(void)
     {

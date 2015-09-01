@@ -1,6 +1,6 @@
 #include "VariantContainer.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename T>
     Variant::Variant(T &data)

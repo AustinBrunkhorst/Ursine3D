@@ -3,7 +3,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace Ursine
+namespace ursine
 {
     class Type;
 

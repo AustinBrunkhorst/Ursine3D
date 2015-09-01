@@ -4,7 +4,7 @@
 
 #include "Variant.h"
 
-namespace Ursine
+namespace ursine
 {
     Enum::Enum(const EnumBase *base)
         : m_base( base ) { }

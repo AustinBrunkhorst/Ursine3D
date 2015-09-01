@@ -4,9 +4,9 @@
 namespace std
 {
     template<>
-    struct hash<Ursine::InvokableSignature>
+    struct hash<ursine::InvokableSignature>
     {
-        size_t operator()(const Ursine::InvokableSignature &signature) const
+        size_t operator()(const ursine::InvokableSignature &signature) const
         {
             size_t seed = 0;
 
@@ -18,7 +18,7 @@ namespace std
     };
 }
 
-namespace Ursine
+namespace ursine
 {
     template<typename ...Types>
     InvokableSignature Invokable::CreateSignature(void)

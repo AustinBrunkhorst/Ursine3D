@@ -15,7 +15,7 @@
 
 #include <string>
 
-namespace Ursine
+namespace ursine
 {
     class Asset
     {

@@ -15,7 +15,7 @@
 
 #include "SystemContainer.h"
 
-namespace Ursine
+namespace ursine
 {
     SystemContainer::SystemContainer(void)
         : m_paused( false ) { }

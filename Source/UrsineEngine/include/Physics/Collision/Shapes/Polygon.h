@@ -19,7 +19,7 @@
 #include "Shape.h"
 #include "TransformComponent.h"
 
-namespace Ursine
+namespace ursine
 {
     class Edge
     {
@@ -47,11 +47,11 @@ namespace Ursine
 
         const std::string GetName(void) const;
 
-        AABB TransformShape(ECS::Transform &transform) override;
+        AABB TransformShape(ecs::Transform &transform) override;
 
         Vec2 GetSupport(const Vec2 &direction) const override;
 
-        void ComputeMass(ECS::Transform &transform, Vec2 &center,
+        void ComputeMass(ecs::Transform &transform, Vec2 &center,
                             float &area, float &inertia) override;
 
         bool RayCast(RayCastOutput &output, const RayCastInput &input);

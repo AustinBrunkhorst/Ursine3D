@@ -2,7 +2,7 @@
 
 #include "VariantBase.h"
 
-namespace Ursine
+namespace ursine
 {
     template<typename T>
     class VariantContainer : public VariantBase

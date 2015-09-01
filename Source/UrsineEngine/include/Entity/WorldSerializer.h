@@ -13,11 +13,11 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     class Json;
 
-    namespace ECS
+    namespace ecs
     {
         class World;
 

@@ -19,13 +19,13 @@
 #include "FilterSystem.h"
 #include "EntityManager.h"
 
-namespace Ursine
+namespace ursine
 {
     // Forward declaration
     class Polygon;
     class Ellipse;
 
-    namespace ECS
+    namespace ecs
     {
         // amount of time the ray is drawn on screen
         #define RAY_CAST_DEBUG_TIMER 2.0f
@@ -50,7 +50,7 @@ namespace Ursine
 
         class PhysicsDebugDrawer 
             : public EntitySystem
-            , public Utils::NoCopy
+            , public utils::NoCopy
         {
             bool _draw_colliders;
             bool _draw_aabbs;
@@ -103,9 +103,9 @@ namespace Ursine
 #ifndef PHYSICS_DEBUG_DRAW_REGISTERED
 #define PHYSICS_DEBUG_DRAW_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterEntitySystem(PhysicsDebugDrawer)
     }

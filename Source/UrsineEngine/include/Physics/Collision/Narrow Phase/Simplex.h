@@ -16,7 +16,7 @@
 #include "Vec2.h"
 #include "Utils.h"
 
-namespace Ursine
+namespace ursine
 {
     struct SimplexEdge
     {

@@ -13,7 +13,7 @@
 
 #include "ReflectionDatabase.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace
     {

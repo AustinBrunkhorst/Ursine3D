@@ -18,9 +18,9 @@
 
 #include "FilterSystem.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class ParticleEmitterSystem : public FilterSystem
         {
@@ -48,9 +48,9 @@ namespace Ursine
 #ifndef PARTICLE_EMITTER_SYSTEM_REGISTERED
 #define PARTICLE_EMITTER_SYSTEM_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterEntitySystem(ParticleEmitterSystem);
     }

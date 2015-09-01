@@ -1,12 +1,12 @@
 #include "UrsinePrecompiled.h"
 
-#include "Spine/spine.h"
+#include "Spine/Spine.h"
 
 #include <string.h>
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         SkeletonData::SkeletonData(void)
             : width(0)

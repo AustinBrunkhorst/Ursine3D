@@ -3,9 +3,9 @@
 #include "Spine/Timelines/FlipTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         FlipTimeline::FlipTimeline(int framesCount, bool x)
             : Timeline(x ? SP_TIMELINE_FLIPX : SP_TIMELINE_FLIPY)

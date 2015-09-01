@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-namespace Ursine
+namespace ursine
 {
     MetaManager::MetaManager(void) { }
 

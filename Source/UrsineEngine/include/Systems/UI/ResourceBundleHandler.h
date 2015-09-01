@@ -15,7 +15,7 @@
 
 #include <cef_app.h>
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

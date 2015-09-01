@@ -17,7 +17,7 @@
 
 #include "ScreenConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     class Screen;
     class OverlayScreen;

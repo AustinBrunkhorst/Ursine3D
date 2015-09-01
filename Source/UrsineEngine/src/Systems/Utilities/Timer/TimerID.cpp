@@ -16,7 +16,7 @@
 #include "TimerID.h"
 #include "TimerManager.h"
 
-namespace Ursine
+namespace ursine
 {
     // overflow will make this large, and thus invalid (will never conflict
     // with a real ID)

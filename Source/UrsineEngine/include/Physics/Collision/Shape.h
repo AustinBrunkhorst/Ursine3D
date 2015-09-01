@@ -16,7 +16,7 @@
 #include "AABB.h"
 #include "RayCast.h"
 
-namespace Ursine
+namespace ursine
 {
     enum ShapeType
     {
@@ -37,13 +37,13 @@ namespace Ursine
         void Set(T) = 0;
 
         // return the encumpasing AABB of the shape
-        virtual AABB TransformShape(ECS::Transform &transform) = 0;
+        virtual AABB TransformShape(ecs::Transform &transform) = 0;
 
         // return a support point in the specified direction
         virtual Vec2 GetSupport(const Vec2 &direction) const = 0;
 
         // compute the mass of this shape
-        virtual void ComputeMass(ECS::Transform &transform, Vec2 &center,
+        virtual void ComputeMass(ecs::Transform &transform, Vec2 &center,
                                  float &area, float &inertia) = 0;
 
         virtual bool RayCast(RayCastOutput &output, const RayCastInput &input) = 0;

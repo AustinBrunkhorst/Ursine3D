@@ -2,9 +2,9 @@
 
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         int BinarySearch(float *values, int valuesLength, float target, int step)
         {

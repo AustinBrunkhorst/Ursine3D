@@ -13,9 +13,9 @@
 
 #include "UrsineConsole.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace LogTools
+    namespace logging
     {
         template<typename... Args>
         void Assert(URSINE_FFL_ARGS, URSINE_LOG_FORMATTED)

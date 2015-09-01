@@ -4,7 +4,7 @@
 
 #include "Type.h"
 
-namespace Ursine
+namespace ursine
 {
     ReflectionDatabase::ReflectionDatabase(void)
         : types( 1 )

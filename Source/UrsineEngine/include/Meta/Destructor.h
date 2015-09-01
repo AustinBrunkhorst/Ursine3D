@@ -4,7 +4,7 @@
 
 #include <functional>
 
-namespace Ursine
+namespace ursine
 {
     class Destructor : public Invokable
     {

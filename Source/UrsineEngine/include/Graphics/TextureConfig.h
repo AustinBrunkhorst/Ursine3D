@@ -2,7 +2,7 @@
 
 #include "GraphicsConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     typedef GLuint TextureID;
 

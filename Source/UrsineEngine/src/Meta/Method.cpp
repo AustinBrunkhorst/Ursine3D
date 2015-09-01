@@ -2,7 +2,7 @@
 
 #include "Method.h"
 
-namespace Ursine
+namespace ursine
 {
     Method::Method(void)
         : Invokable( "INVALID" )

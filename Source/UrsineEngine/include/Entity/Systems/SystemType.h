@@ -15,9 +15,9 @@
 
 #include "SystemConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template<class Type>
         struct SystemType final

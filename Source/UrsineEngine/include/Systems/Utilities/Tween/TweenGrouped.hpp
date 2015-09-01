@@ -1,4 +1,4 @@
-namespace Ursine
+namespace ursine
 {
     template<class Type>
     TweenGrouped &TweenGrouped::Property(Type &input,

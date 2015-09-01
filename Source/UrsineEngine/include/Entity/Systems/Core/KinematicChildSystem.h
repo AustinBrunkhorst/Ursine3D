@@ -18,9 +18,9 @@
 
 #include "FilterSystem.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class KinematicChildSystem : public FilterSystem
         {
@@ -45,9 +45,9 @@ namespace Ursine
 #ifndef KINEMATIC_CHILD_SYSTEM_REGISTERED
 #define KINEMATIC_CHILD_SYSTEM_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RegisterEntitySystem(KinematicChildSystem);
     }

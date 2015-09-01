@@ -4,9 +4,9 @@
 #include "ParticleEmitterSystem.h"
 #include "ParticleEffectSerializer.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         ParticleEmitter::ParticleEmitter(void)
             : BaseComponent()
@@ -58,7 +58,7 @@ namespace Ursine
             for (auto &effect : _effects)
             {
                 effect->_emitter = this;
-                Utils::FlagSet(_mask, effect->GetTypeMask());
+                utils::FlagSet(_mask, effect->GetTypeMask());
                 effect->OnInitialize();
             }
         }
@@ -118,30 +118,30 @@ namespace Ursine
 
         void ParticleEmitter::addEffect(ParticleEffect *effect)
         {
-            UAssert(!Utils::IsFlagSet(_mask, effect->GetTypeMask()),
+            UAssert(!utils::IsFlagSet(_mask, effect->GetTypeMask()),
                 "Effect already exists.");
 
             effect->_emitter = this;
 
             _effects.push_back(effect);
 
-            Utils::FlagSet(_mask, effect->GetTypeMask());
+            utils::FlagSet(_mask, effect->GetTypeMask());
 
             effect->OnInitialize();
         }
     }
 
     template<>
-    Json JsonSerializer::Serialize(ECS::IntervalType &instance)
+    Json JsonSerializer::Serialize(ecs::IntervalType &instance)
     {
         return Json(static_cast<int>(instance));
     }
 
     template<>
-    void JsonSerializer::Deserialize(const Json &data, ECS::IntervalType &out)
+    void JsonSerializer::Deserialize(const Json &data, ecs::IntervalType &out)
     {
         UAssert(data.is_number(), "Interval type must be serialized as an integer value.");
-        out = ECS::IntervalType(data.int_value());
+        out = ecs::IntervalType(data.int_value());
     }
 
     template<>

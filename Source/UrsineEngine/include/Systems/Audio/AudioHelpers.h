@@ -18,7 +18,7 @@
 #include <fmod_studio_common.h>
 #include <stdio.h>
 
-namespace Ursine
+namespace ursine
 {
     namespace FMOD_S = FMOD::Studio;
 

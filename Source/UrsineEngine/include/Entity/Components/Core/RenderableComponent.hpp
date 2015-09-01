@@ -13,9 +13,9 @@
 
 #include "RenderSystem.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         RenderLayer Renderable::GetLayer(void)
         {

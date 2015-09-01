@@ -2,7 +2,7 @@
 
 #include "MouseManager.h"
 
-namespace Ursine
+namespace ursine
 {
     MouseManager *gMouseManager = nullptr;
 
@@ -59,24 +59,24 @@ namespace Ursine
 
     bool MouseManager::IsButtonDown(MouseButton button) const
     {
-        return Utils::IsFlagSet(_state_current, SDL_BUTTON(button));
+        return utils::IsFlagSet(_state_current, SDL_BUTTON(button));
     }
 
     bool MouseManager::IsButtonUp(MouseButton button) const
     {
-        return !(Utils::IsFlagSet(_state_current, SDL_BUTTON(button)));
+        return !(utils::IsFlagSet(_state_current, SDL_BUTTON(button)));
     }
 
     bool MouseManager::IsButtonTriggeredDown(MouseButton button) const
     {
-        return !Utils::IsFlagSet(_state_last, SDL_BUTTON(button)) &&
-             Utils::IsFlagSet(_state_current, SDL_BUTTON(button));
+        return !utils::IsFlagSet(_state_last, SDL_BUTTON(button)) &&
+             utils::IsFlagSet(_state_current, SDL_BUTTON(button));
     }
 
     bool MouseManager::IsButtonTriggeredUp(MouseButton button) const
     {
-        return !Utils::IsFlagSet(_state_current, SDL_BUTTON(button)) &&
-            Utils::IsFlagSet(_state_last, SDL_BUTTON(button));
+        return !utils::IsFlagSet(_state_current, SDL_BUTTON(button)) &&
+            utils::IsFlagSet(_state_last, SDL_BUTTON(button));
     }
 
     void MouseManager::ShowCursor(bool show) const

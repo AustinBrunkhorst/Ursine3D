@@ -2,9 +2,9 @@
 
 #include "Spine/Timelines/BaseTimeline.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         BaseTimeline::BaseTimeline(TimelineType type, int frame_count, int frame_size)
             : CurveTimeline(type, frame_count)

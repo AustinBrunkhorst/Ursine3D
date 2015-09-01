@@ -18,9 +18,9 @@
 #include "WindowManager.h"
 #include <GL/glew.h>
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         // We want to draw after the render system draws
         PhysicsDebugDrawer::PhysicsDebugDrawer(World *world)

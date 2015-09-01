@@ -1,4 +1,4 @@
-namespace Ursine
+namespace ursine
 {
     template<typename EnumType>
     EnumContainer<EnumType>::EnumContainer(const std::string &name, const Table &table)

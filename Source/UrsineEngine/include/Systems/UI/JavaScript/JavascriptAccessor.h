@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     class JavaScriptAccessor : public CefV8Accessor
     {

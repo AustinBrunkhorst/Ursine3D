@@ -21,7 +21,7 @@
 
 #include "Utils.h"
 
-namespace Ursine
+namespace ursine
 {
     struct Color
     {

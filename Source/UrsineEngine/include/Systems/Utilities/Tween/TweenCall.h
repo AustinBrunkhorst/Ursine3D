@@ -16,7 +16,7 @@
 #include "TweenItem.h"
 #include "TweenConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     class TweenCall : public TweenItem
     {

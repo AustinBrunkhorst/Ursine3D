@@ -19,7 +19,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace Ursine
+namespace ursine
 {
     enum VERTEX_ORDER
     {

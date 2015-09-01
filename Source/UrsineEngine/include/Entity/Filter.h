@@ -15,9 +15,9 @@
 
 #include "ComponentConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         // forward declarations
         class Entity;

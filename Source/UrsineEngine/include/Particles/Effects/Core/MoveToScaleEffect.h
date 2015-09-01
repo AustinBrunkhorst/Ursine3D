@@ -7,7 +7,7 @@
 #include "Randomizer.h"
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     class MoveToScaleEffect : public ParticleEffect
     {
@@ -34,7 +34,7 @@ namespace Ursine
             , _second_delay(1)
             , _second_duration(1) { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
     };
 }
 
@@ -47,7 +47,7 @@ namespace Ursine
 #ifndef MOVE_TO_SCALE_REGISTERED
 #define MOVE_TO_SCALE_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(MoveToScaleEffect);
     RegisterParticleEffectData(MoveToScaleEffect, _uniform_scaling, "uniform_scaling");

@@ -10,7 +10,7 @@
 #include "VertexArrayType.h"
 #include "Vertex.h"
 
-namespace Ursine
+namespace ursine
 {
     class RenderTarget
     {

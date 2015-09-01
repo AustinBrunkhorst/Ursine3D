@@ -3,9 +3,9 @@
 #include "Spine/Attachment.h"
 #include "Spine/Skin.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class AttachmentLoader
         {

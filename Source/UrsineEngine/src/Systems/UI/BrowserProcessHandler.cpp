@@ -17,7 +17,7 @@
 #include "BrowserProcessHandler.h"
 #include "UIConfig.h"
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

@@ -3,7 +3,7 @@
 #include "Vec2.h"
 #include "Color.h"
 
-namespace Ursine
+namespace ursine
 {
     struct Vertex
     {

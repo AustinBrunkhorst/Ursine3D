@@ -24,9 +24,9 @@
 
 #include "Json.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         EntitySerializer::~EntitySerializer(void)
         {

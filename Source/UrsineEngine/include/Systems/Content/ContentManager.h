@@ -20,7 +20,7 @@
 #include <unordered_map>
 #include <memory>
 
-namespace Ursine
+namespace ursine
 {
     class ContentManager : public System
     {

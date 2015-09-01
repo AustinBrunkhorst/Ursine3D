@@ -4,9 +4,9 @@
 #include "Spine/Skeleton.h"
 #include "Spine/SpinePolygon.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class SkeletonBounds
         {

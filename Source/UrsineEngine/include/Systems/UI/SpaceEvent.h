@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

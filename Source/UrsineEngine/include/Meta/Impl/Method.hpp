@@ -1,6 +1,6 @@
 #include "TypeUnpacker.hpp"
 
-namespace Ursine
+namespace ursine
 {
     template<class ClassType, typename ReturnType, typename ...ArgTypes>
     Method::Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...), Invoker invoker)

@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     ///////////////////////////////////////////////////////////////////
     // Generated base class definitions

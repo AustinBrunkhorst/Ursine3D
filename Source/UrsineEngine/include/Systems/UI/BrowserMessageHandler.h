@@ -15,9 +15,9 @@
 
 #include <wrapper/cef_message_router.h>
 
-using Ursine::int64;
+using ursine::int64;
 
-namespace Ursine
+namespace ursine
 {
     namespace UI
     {

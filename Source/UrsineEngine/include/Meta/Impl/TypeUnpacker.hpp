@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Ursine
+namespace ursine
 {
     template<class... Types>
     struct TypeUnpacker { };

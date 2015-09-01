@@ -2,9 +2,9 @@
 
 #include "UtilityManager.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         UtilityManager::UtilityManager(World *world)
             : WorldManager(world) { }

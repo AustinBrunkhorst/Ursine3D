@@ -15,7 +15,7 @@
 
 #include "System.h"
 
-namespace Ursine
+namespace ursine
 {
     System::System(bool update_on_pause)
         : m_updateOnPause(update_on_pause)

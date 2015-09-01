@@ -3,9 +3,9 @@
 #include "RenderEffect.h"
 #include "Shader.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         class BlurEffect : public RenderEffect
         {

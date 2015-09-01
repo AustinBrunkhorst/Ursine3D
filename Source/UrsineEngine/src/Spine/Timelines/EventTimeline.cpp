@@ -3,9 +3,9 @@
 #include "Spine/Timelines/EventTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         EventTimeline::EventTimeline(int frame_count)
             : Timeline(SP_TIMELINE_EVENT)

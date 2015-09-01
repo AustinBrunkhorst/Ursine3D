@@ -16,9 +16,9 @@
 #include "CreatorComponent.h"
 #include "Entity.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         CreatorComponent::CreatorComponent(void)
             : BaseComponent()

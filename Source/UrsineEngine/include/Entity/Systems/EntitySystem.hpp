@@ -14,9 +14,9 @@
 
 #include "SystemRegistrar.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         inline SystemTypeID EntitySystem::GetTypeID(void)
         {

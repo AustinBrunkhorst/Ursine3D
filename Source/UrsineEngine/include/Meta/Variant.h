@@ -7,7 +7,7 @@
 #include <vector>
 #include <memory>
 
-namespace Ursine
+namespace ursine
 {
     class Variant
     {

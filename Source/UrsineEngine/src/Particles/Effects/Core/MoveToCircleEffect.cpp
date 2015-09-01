@@ -2,9 +2,9 @@
 #include "MoveToCircleEffect.h"
 #include "ParticleEmitterComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    void MoveToCircleEffect::InitializeParticle(ECS::Entity *particle) const
+    void MoveToCircleEffect::InitializeParticle(ecs::Entity *particle) const
     {
         auto particle_trans = particle->GetTransform();
         auto emitter_trans = GetEmitter()->GetOwner()->GetTransform();
@@ -35,13 +35,13 @@ namespace Ursine
                 .Delay(_first_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(particle_trans, &ECS::Transform::SetPositionWC, start_pos, middle_pos, _first_duration)
+                .Setter(particle_trans, &ecs::Transform::SetPositionWC, start_pos, middle_pos, _first_duration)
             .EndGroup()
             .BeginGroup()
                 .Delay(_second_delay)
             .EndGroup()
             .BeginGroup()
-                .Setter(particle_trans, &ECS::Transform::SetPositionWC, middle_pos, end_pos, _second_duration)
+                .Setter(particle_trans, &ecs::Transform::SetPositionWC, middle_pos, end_pos, _second_duration)
             .EndGroup();
     }
 

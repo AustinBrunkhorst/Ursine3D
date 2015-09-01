@@ -7,7 +7,7 @@
 #include "Randomizer.h"
 #include "TimeSpan.h"
 
-namespace Ursine
+namespace ursine
 {
     class OrbitEffect : public ParticleEffect
     {
@@ -35,7 +35,7 @@ namespace Ursine
             , _second_delay(1)
             , _second_duration(1) { }
 
-        void InitializeParticle(ECS::Entity *particle) const override;
+        void InitializeParticle(ecs::Entity *particle) const override;
     };
 }
 
@@ -48,7 +48,7 @@ namespace Ursine
 #ifndef ORBIT_REGISTERED
 #define ORBIT_REGISTERED
 
-namespace Ursine
+namespace ursine
 {
     RegisterParticleEffect(OrbitEffect);
     RegisterParticleEffectData(OrbitEffect, _start,           "start");

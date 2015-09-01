@@ -5,7 +5,7 @@
 #include "Variant.h"
 #include "Argument.h"
 
-namespace Ursine
+namespace ursine
 {
     EnumBase::EnumBase(const std::string &name, TypeID owner)
         : m_parentType( owner )

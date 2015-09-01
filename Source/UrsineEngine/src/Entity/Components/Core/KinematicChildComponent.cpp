@@ -2,9 +2,9 @@
 
 #include "KinematicChildComponent.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         KinematicChild::KinematicChild(void)
             : BaseComponent()

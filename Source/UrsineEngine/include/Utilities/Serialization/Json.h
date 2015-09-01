@@ -31,7 +31,7 @@
 #define noexcept _NOEXCEPT
 #endif
 
-namespace Ursine
+namespace ursine
 {
     class JsonValue;
 

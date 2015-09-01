@@ -1,4 +1,4 @@
-namespace Ursine
+namespace ursine
 {
     template<typename ReturnType, typename ...ArgTypes>
     Function::Function(const std::string &name, ReturnType(*type)(ArgTypes...), Invoker invoker, Type parentType)

@@ -12,7 +12,7 @@
 #include "AudioEvent.h"
 #include "System.h"
 
-namespace Ursine
+namespace ursine
 {
     class AudioManager : public System
     {

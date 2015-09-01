@@ -1,6 +1,6 @@
 #include "TweenProperty.h"
 
-namespace Ursine
+namespace ursine
 {
     template<class Type>
     TweenID &TweenID::Property(Type &input,

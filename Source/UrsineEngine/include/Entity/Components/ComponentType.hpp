@@ -13,9 +13,9 @@
 
 #include "ComponentRegistrar.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         template<class Type>
         ComponentTypeID ComponentType<Type>::ID = 0;

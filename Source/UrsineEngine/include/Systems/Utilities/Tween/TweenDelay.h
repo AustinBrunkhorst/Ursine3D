@@ -16,7 +16,7 @@
 #include "TweenItem.h"
 #include "TimedTween.h"
 
-namespace Ursine
+namespace ursine
 {
     class TweenDelay 
         : public TimedTween

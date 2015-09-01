@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
     BasePolygon::BasePolygon(const std::string &path, const std::vector<Vec2> &points, VERTEX_ORDER vert_order)
         : Asset(path)

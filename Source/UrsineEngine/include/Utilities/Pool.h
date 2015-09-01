@@ -20,7 +20,7 @@
 #include <stack>
 #include <typeinfo>
 
-namespace Ursine
+namespace ursine
 {
     typedef unsigned Index;
 

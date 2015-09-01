@@ -3,9 +3,9 @@
 #include "Spine/Timelines/ColorTimeline.h"
 #include "Spine/SpineAnimationConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         ColorTimeline::ColorTimeline(int frames_count)
             : BaseTimeline(SP_TIMELINE_COLOR, frames_count, 5)

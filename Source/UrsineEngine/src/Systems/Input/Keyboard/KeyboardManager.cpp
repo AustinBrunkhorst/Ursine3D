@@ -17,7 +17,7 @@
 
 #include <SDL_keyboard.h>
 
-namespace Ursine
+namespace ursine
 {   
     KeyboardManager *gKeyboardManager = nullptr;
 

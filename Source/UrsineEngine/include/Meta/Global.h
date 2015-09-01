@@ -7,7 +7,7 @@
 #include <vector>
 #include <functional>
 
-namespace Ursine
+namespace ursine
 {
     class Global : public MetaContainer
     {

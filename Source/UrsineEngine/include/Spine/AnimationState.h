@@ -6,11 +6,11 @@
 #include "Spine/TrackEntry.h"
 #include "Spine/Event.h"
 
-namespace Ursine
+namespace ursine
 {
     class SkeletonRenderer;
 
-    namespace Spine
+    namespace spine
     {
         class AnimationState
         {

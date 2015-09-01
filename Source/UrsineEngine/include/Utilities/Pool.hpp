@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-namespace Ursine
+namespace ursine
 {
     template<class Owner, typename Object>
     Pool<Owner, Object>::Handle::Handle(const Handle &other)

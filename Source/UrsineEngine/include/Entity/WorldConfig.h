@@ -15,9 +15,9 @@
 
 #include <string>
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         const std::string kWorldKeySystems = "systems";
         const std::string kWorldKeyAttributes = "attributes";

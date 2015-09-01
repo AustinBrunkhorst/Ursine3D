@@ -15,7 +15,7 @@
 
 #include "GamepadTriggers.h"
 
-namespace Ursine
+namespace ursine
 {
     float GamepadTriggers::Left(void) const
     {

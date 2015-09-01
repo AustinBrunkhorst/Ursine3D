@@ -22,7 +22,7 @@
 
 #include "SpaceEvent.h"
 
-namespace Ursine
+namespace ursine
 {
     ScreenManager *gScreenManager = nullptr;
 

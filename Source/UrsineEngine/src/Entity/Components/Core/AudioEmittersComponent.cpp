@@ -1,8 +1,8 @@
 #include "UrsinePrecompiled.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace ECS
+    namespace ecs
     {
         AudioEmitters::AudioEmitters(void)
             : BaseComponent()

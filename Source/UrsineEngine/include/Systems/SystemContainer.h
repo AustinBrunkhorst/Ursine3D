@@ -15,7 +15,7 @@
 
 #include "System.h"
 
-namespace Ursine
+namespace ursine
 {
     class SystemContainer
     {

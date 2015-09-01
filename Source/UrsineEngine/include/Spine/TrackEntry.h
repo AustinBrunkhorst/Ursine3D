@@ -2,9 +2,9 @@
 
 #include "AnimationStateConfig.h"
 
-namespace Ursine
+namespace ursine
 {
-    namespace Spine
+    namespace spine
     {
         class SpineAnimation;
 

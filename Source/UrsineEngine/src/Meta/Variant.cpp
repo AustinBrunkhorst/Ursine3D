@@ -4,7 +4,7 @@
 
 #include "Type.h"
 
-namespace Ursine
+namespace ursine
 {
     Variant::Variant(void)
         : m_base( nullptr ) { }

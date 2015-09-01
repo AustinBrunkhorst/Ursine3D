@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 
-namespace Ursine
+namespace ursine
 {
     void MemoryWatcher::Add(void *pointer, size_t size, const char *file, unsigned line)
     {

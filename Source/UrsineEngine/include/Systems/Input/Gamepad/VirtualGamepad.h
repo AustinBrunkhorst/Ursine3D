@@ -3,7 +3,7 @@
 #include "GamepadIndex.h"
 #include "GamepadButton.h"
 
-namespace Ursine
+namespace ursine
 {
     class GamepadManager;
 
