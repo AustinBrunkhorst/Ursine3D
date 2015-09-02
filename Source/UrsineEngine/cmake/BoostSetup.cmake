@@ -2,9 +2,9 @@ set(_boost_root "${ENGINE_DEP_DIR}/Boost")
 set(BOOST_INCLUDEDIR "${_boost_root}/include")
 set(BOOST_LIBRARYDIR "${_boost_root}/lib")
 
-set(BOOST_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_USE_MULTITHREADED ON)
-set(BOOST_USE_STATIC_RUNTIME OFF)
+set(BOOST_USE_STATIC_RUNTIME ON)
 set(BOOST_NO_SYSTEM_PATHS ON)
 set(BOOST_ALL_NO_LIB ON)
 

@@ -5,28 +5,14 @@
 
 #include <iostream>
 
-int fatalError(const std::string &error);
+void fatalError(const std::string &error);
+
+void parse(const po::variables_map &cmdLine);
 
 int main(int argc, char *argv[])
 {
-    if (argc < 4)
-    {
-        std::stringstream error;
-
-        error << "Expecting at least 4 arguments." << std::endl;
-        error << "[target name], ";
-        error << "[source file], ";
-        error << "[output header file], ";
-        error << "[output source file] ";
-        error << "[, compiler flags ...]" << std::endl;
-
-        return fatalError( error.str( ) );
-    }
-
     // misc initialization
     {
-        ursine::logging::Initialize( );
-
         // path to the executable
         auto exeDir = fs::path( argv[ 0 ] );
 
@@ -34,12 +20,63 @@ int main(int argc, char *argv[])
         fs::current_path( exeDir.parent_path( ) );
     }
 
+    // parse command line
+    try 
+    {
+        po::options_description program( "Ursine3D Reflection Parser" );
+
+        program.add_options( )
+            ( "help,h", "Displays help information." )
+            ( "target-name,t", po::value<std::string>( )->required( ), "Input target project name." )
+            ( "source-in,i", po::value<std::string>( )->required( ), "Source file (header) to compile reflection data from." )
+            ( "header-out,a", po::value<std::string>( )->required( ), "Output generated C++ header file." )
+            ( "source-out,b", po::value<std::string>( )->required( ), "Output generated C++ source file." )
+            ( "flag,f", po::value<std::vector<std::string>>( )->multitoken( ), "Optional list of flags to pass to the compiler." );
+
+        po::variables_map cmdLine;
+
+        po::store( po::parse_command_line( argc, argv, program ), cmdLine );
+
+        if (cmdLine.count( "help" )) 
+        {
+            std::cout << program << std::endl;
+
+            return 0;
+        }
+
+        po::notify( cmdLine );
+
+        parse( cmdLine );
+    }
+    catch (std::exception &e) 
+    {
+        std::cerr << "error: " << e.what( ) << std::endl;
+
+        return EXIT_FAILURE;
+    }
+    catch (...) 
+    {
+        std::cerr << "Unhandled exception occurred!" << std::endl;
+    }
+
+    return 0;
+}
+
+void fatalError(const std::string &error)
+{
+    std::cerr << error << std::endl;
+
+    exit( EXIT_FAILURE );
+}
+
+void parse(const po::variables_map &cmdLine)
+{
     ReflectionOptions options;
 
-    options.targetName = argv[ 1 ];
-    options.sourceFile = argv[ 2 ];
-    options.outputHeaderFile = argv[ 3 ];
-    options.outputSourceFile = argv[ 4 ];
+    options.targetName = cmdLine.at( "target-name" ).as<std::string>( );
+    options.sourceFile = cmdLine.at( "source-in" ).as<std::string>( );
+    options.outputHeaderFile = cmdLine.at( "header-out" ).as<std::string>( );
+    options.outputSourceFile = cmdLine.at( "source-out" ).as<std::string>( );
 
     // default arguments
     options.arguments =
@@ -49,6 +86,14 @@ int main(int argc, char *argv[])
         "-std=c++11"
     } };
 
+    if (cmdLine.count( "flag" ))
+    {
+        auto flags = cmdLine.at( "flag" ).as<std::vector<std::string>>( );
+
+        for (auto flag : flags)
+            options.arguments.emplace_back( flag.c_str( ) );
+    }
+    
     ReflectionParser parser( options );
 
     parser.Parse( );
@@ -58,14 +103,14 @@ int main(int argc, char *argv[])
         auto headerTemplateText = utils::LoadText( "Templates/Header.mustache" );
 
         if (!headerTemplateText)
-            return fatalError( "Unable to load header template." );
+            fatalError( "Unable to load header template." );
 
         TemplateData headerTemplateData { TemplateData::Type::Object };
 
         headerTemplateData[ "targetName" ] = options.targetName;
         headerTemplateData[ "sourceFile" ] = options.sourceFile;
 
-        MustacheTemplate headerTemplate { *headerTemplateText };
+        MustacheTemplate headerTemplate{ *headerTemplateText };
 
         if (!headerTemplate.isValid( ))
         {
@@ -74,7 +119,7 @@ int main(int argc, char *argv[])
             error << "Error compiling header template." << std::endl;
             error << headerTemplate.errorMessage( );
 
-            return fatalError( error.str( ) );
+            fatalError( error.str( ) );
         }
 
         auto output = headerTemplate.render( headerTemplateData );
@@ -85,7 +130,7 @@ int main(int argc, char *argv[])
         auto sourceTemplateText = utils::LoadText( "Templates/Source.mustache" );
 
         if (!sourceTemplateText)
-            return fatalError( "Unable to load source template." );
+            fatalError( "Unable to load source template." );
 
         TemplateData sourceTemplateData { TemplateData::Type::Object };
 
@@ -98,18 +143,9 @@ int main(int argc, char *argv[])
             error << "Error compiling source template." << std::endl;
             error << sourceTemplate.errorMessage( );
 
-            return fatalError( error.str( ) );
+            fatalError( error.str( ) );
         }
 
         auto output = sourceTemplate.render( sourceTemplateData );
     }
-
-    return 0;
-}
-
-int fatalError(const std::string &error)
-{
-    std::cerr << error << std::endl;
-
-    return EXIT_FAILURE;
 }

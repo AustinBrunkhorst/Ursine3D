@@ -54,6 +54,9 @@ set(URSINE_RESOURCES "${URSINE_RESOURCES}" PARENT_SCOPE)
 file(GLOB_RECURSE URSINE_SRC ${URSINE_DIR_SOURCE}/*.cpp)
 file(GLOB_RECURSE URSINE_INC ${URSINE_DIR_INCLUDE}/*.h ${URSINE_DIR_INCLUDE}/*.hpp)
 
+# disable exceptions for this project
+add_definitions(-D_HAS_EXCEPTIONS=0)
+
 add_library(UrsineEngine STATIC ${URSINE_SRC} ${URSINE_INC})
 
 ursine_recursive_includes(

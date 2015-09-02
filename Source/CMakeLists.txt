@@ -91,10 +91,10 @@ else ()
     )
 endif ()
 
-add_definitions(
-    # disable exceptions
-    -D_HAS_EXCEPTIONS=0
-)
+#add_definitions(
+#    # disable exceptions
+#    -D_HAS_EXCEPTIONS=0
+#)
 
 # ------------------------------------------------------------------------------
 # General Installer Settings

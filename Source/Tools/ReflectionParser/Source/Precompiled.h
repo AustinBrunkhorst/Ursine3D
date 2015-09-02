@@ -13,6 +13,7 @@
 #include <UrsineLogTools.h>
 
 #include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
 
 #include "MetaUtils.h"
 #include "MetaDataConfig.h"
@@ -23,3 +24,4 @@ using MustacheTemplate = Mustache::Mustache<std::string>;
 using TemplateData = Mustache::Data<std::string>;
 
 namespace fs = boost::filesystem;
+namespace po = boost::program_options;
