@@ -10,6 +10,8 @@ public:
     int GetArgumentCount(void) const;
     CursorType GetArgument(unsigned index) const;
 
+    CursorType GetCanonicalType(void) const;
+
     bool IsConst(void) const;
 
 private:

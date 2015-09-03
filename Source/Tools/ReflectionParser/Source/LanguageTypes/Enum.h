@@ -18,6 +18,9 @@ public:
     friend struct Value;
 
     Enum(const Cursor &cursor, const Namespace &currentNamespace);
+    virtual ~Enum(void) { }
+
+    TemplateData CompileTemplate(void) const override;
 
     static void LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace);
 
@@ -27,4 +30,6 @@ private:
     std::string m_qualifiedName;
 
     std::vector<Value> m_values;
+
+    bool isAccessible(void) const;
 };

@@ -18,6 +18,9 @@ public:
 
     void Parse(void);
 
+    std::string GenerateHeader(const std::string &tmpl) const;
+    std::string GenerateSource(const std::string &tmpl) const;
+
 private:
     ReflectionOptions m_options;
 
@@ -33,4 +36,9 @@ private:
     void buildGlobals(const Cursor &cursor, Namespace &currentNamespace);
     void buildGlobalFunctions(const Cursor &cursor, Namespace &currentNamespace);
     void buildEnums(const Cursor &cursor, Namespace &currentNamespace);
+
+    TemplateData compileClassTemplates(void) const;
+    TemplateData compileGlobalTemplates(void) const;
+    TemplateData compileGlobalFunctionTemplates(void) const;
+    TemplateData compileEnumTemplates(void) const;
 };

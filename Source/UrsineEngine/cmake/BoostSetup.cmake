@@ -16,6 +16,7 @@ find_package(Boost 1.59.0 REQUIRED
 	system
 	filesystem
 	program_options
+	regex
 )
 
 # use the variable format for ursine_project( ) dependency info

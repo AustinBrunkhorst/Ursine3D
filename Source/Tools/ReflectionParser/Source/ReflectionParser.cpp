@@ -54,7 +54,7 @@ void ReflectionParser::Parse(void)
 
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
         m_index,
-        m_options.sourceFile.c_str( ),
+        m_options.inputSourceFile.c_str( ),
         m_options.arguments.size( ),
         m_options.arguments.data( ),
         0,
@@ -78,6 +78,65 @@ void ReflectionParser::Parse(void)
     tempNamespace.clear( );
 
     buildEnums( cursor, tempNamespace );
+}
+
+std::string ReflectionParser::GenerateHeader(const std::string &tmpl) const
+{
+    TemplateData headerData { TemplateData::Type::Object };
+
+    // general options
+
+    headerData[ "targetName" ] = m_options.targetName;
+    headerData[ "inputSourceFile" ] = m_options.inputSourceFile;
+    headerData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
+    headerData[ "outpuSourceFile" ] = m_options.outputSourceFile;
+
+    MustacheTemplate headerTemplate { tmpl };
+
+    if (!headerTemplate.isValid( ))
+    {
+        std::stringstream error;
+
+        error << "Unable to compile header template." << std::endl;
+        error << headerTemplate.errorMessage( );
+
+        throw std::exception( error.str( ).c_str( ) );
+    }
+
+    return headerTemplate.render( headerData );
+}
+
+std::string ReflectionParser::GenerateSource(const std::string &tmpl) const
+{
+    TemplateData sourceData { TemplateData::Type::Object };
+
+    // general options
+
+    sourceData[ "targetName" ] = m_options.targetName;
+    sourceData[ "inputSourceFile" ] = m_options.inputSourceFile;
+    sourceData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
+    sourceData[ "outpuSourceFile" ] = m_options.outputSourceFile;
+
+    // language type data
+
+    sourceData[ "class" ] = compileClassTemplates( );
+    sourceData[ "global" ] = compileGlobalTemplates( );
+    sourceData[ "globalFunction" ] = compileGlobalFunctionTemplates( );
+    sourceData[ "enum" ] = compileEnumTemplates( );
+
+    MustacheTemplate sourceTemplate { tmpl };
+
+    if (!sourceTemplate.isValid( ))
+    {
+        std::stringstream error;
+
+        error << "Unable to compile header template." << std::endl;
+        error << sourceTemplate.errorMessage( );
+
+        throw std::exception( error.str( ).c_str( ) );
+    }
+
+    return sourceTemplate.render( sourceData );
 }
 
 void ReflectionParser::buildClasses(const Cursor &cursor, Namespace &currentNamespace)
@@ -167,4 +226,44 @@ void ReflectionParser::buildEnums(const Cursor &cursor, Namespace &currentNamesp
 
         RECURSE_NAMESPACES( kind, child, buildEnums, currentNamespace );
     }
+}
+
+TemplateData ReflectionParser::compileClassTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *klass : m_classes)
+        data << klass->CompileTemplate( );
+
+    return data;
+}
+
+TemplateData ReflectionParser::compileGlobalTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *global : m_globals)
+        data << global->CompileTemplate( );
+
+    return data;
+}
+
+TemplateData ReflectionParser::compileGlobalFunctionTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *globalFunction : m_globalFunctions)
+        data << globalFunction->CompileTemplate( );
+
+    return data;
+}
+
+TemplateData ReflectionParser::compileEnumTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *enewm : m_enums)
+        data << enewm->CompileTemplate( );
+
+    return data;
 }

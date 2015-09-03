@@ -12,6 +12,8 @@ public:
 
     const MetaDataManager &GetMetaData(void) const;
 
+    virtual TemplateData CompileTemplate(void) const = 0;
+
 protected:
     MetaDataManager m_metaData;
 

@@ -44,6 +44,11 @@ bool Cursor::IsDefinition(void) const
     return clang_isCursorDefinition( m_handle ) ? true : false;
 }
 
+bool Cursor::IsConst(void) const
+{
+    return clang_CXXMethod_isConst( m_handle ) ? true : false;
+}
+
 bool Cursor::IsStatic(void) const
 {
     return clang_CXXMethod_isStatic( m_handle ) ? true : false;

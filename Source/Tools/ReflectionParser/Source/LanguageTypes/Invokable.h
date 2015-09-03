@@ -15,3 +15,5 @@ protected:
 
     Signature m_signature;
 };
+
+const auto kReturnTypeVoid = "void";

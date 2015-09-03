@@ -17,10 +17,18 @@ struct BaseClass
 
 class Class : public LanguageType
 {
+    // to access m_qualifiedName
+    friend class Global;
+    friend class Function;
+    friend class Method;
+    friend class Constructor;
+    friend class Field;
+
 public:
     Class(const Cursor &cursor, const Namespace &currentNamespace);
-    ~Class(void);
+    virtual ~Class(void);
 
+    TemplateData CompileTemplate(void) const override;
 private:
     std::string m_name;
     std::string m_displayName;
@@ -35,4 +43,6 @@ private:
 
     std::vector<Method*> m_methods;
     std::vector<Function*> m_staticMethods;
+
+    bool isAccessible(void) const;
 };

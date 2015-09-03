@@ -17,6 +17,7 @@ public:
     std::string GetMangledName(void) const;
 
     bool IsDefinition(void) const;
+    bool IsConst(void) const;
     bool IsStatic(void) const;
 
     CX_CXXAccessSpecifier GetAccessModifier(void) const;

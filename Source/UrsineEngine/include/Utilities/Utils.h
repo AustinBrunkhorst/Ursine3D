@@ -21,6 +21,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <boost/regex.hpp>
+
 namespace ursine
 {
     namespace utils
@@ -60,6 +62,11 @@ namespace ursine
             const std::vector<std::string> &input,
             const std::string &joiner,
             std::string &output);
+
+        void Split(
+            const std::string &input, 
+            const boost::regex &delimiter, 
+            std::vector<std::string> &output);
 
         class NoCopy
         {

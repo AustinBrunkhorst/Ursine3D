@@ -32,13 +32,13 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
         // constructor
         case CXCursor_Constructor:
             m_constructors.emplace_back( 
-                new Constructor( child, currentNamespace ) 
+                new Constructor( child, currentNamespace, this ) 
             );
             break;
         // field
         case CXCursor_FieldDecl:
             m_fields.emplace_back( 
-                new Field( child, currentNamespace )
+                new Field( child, currentNamespace, this )
             );
             break;
         // static field
@@ -58,7 +58,7 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
             else 
             { 
                 m_methods.emplace_back( 
-                    new Method( child, currentNamespace ) 
+                    new Method( child, currentNamespace, this ) 
                 );
             }
             break;
@@ -87,4 +87,93 @@ Class::~Class(void)
 
     for (auto *staticMethod : m_staticMethods)
         delete staticMethod;
+}
+
+TemplateData Class::CompileTemplate(void) const
+{
+    TemplateData data { TemplateData::Type::Object };
+
+    data[ "displayName" ] = m_displayName;
+    data[ "qualifiedName" ] = m_qualifiedName;
+    data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
+    data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
+    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
+
+    // base classes
+    {
+        TemplateData baseClasses { TemplateData::Type::List };
+
+        int i = 0;
+
+        for (auto &baseClass : m_baseClasses)
+        {
+            TemplateData item { TemplateData::Type::List };
+
+            item[ "name" ] = baseClass->name;
+            item[ "isLast" ] = utils::TemplateBool( i == m_baseClasses.size( ) - 1 );
+
+            baseClasses << item;
+
+            ++i;
+        }
+
+        data[ "baseClass" ] = baseClasses;
+    }
+
+    // constructors
+    {
+        TemplateData constructors { TemplateData::Type::List };
+
+        for (auto *ctor : m_constructors)
+            constructors << ctor->CompileTemplate( );
+
+        data[ "constructor" ] = constructors;
+    }
+
+    // fields
+    {
+        TemplateData fields { TemplateData::Type::List };
+
+        for (auto *field : m_fields)
+            fields << field->CompileTemplate( );
+
+        data[ "field" ] = fields;
+    }
+
+    // static fields
+    {
+        TemplateData staticFields { TemplateData::Type::List };
+
+        for (auto *staticField : m_staticFields)
+            staticFields << staticField->CompileTemplate( );
+
+        data[ "staticField" ] = staticFields;
+    }
+
+    // static fields
+    {
+        TemplateData methods { TemplateData::Type::List };
+
+        for (auto *method : m_methods)
+            methods << method->CompileTemplate( );
+
+        data[ "method" ] = methods;
+    }
+
+    // static fields
+    {
+        TemplateData staticMethods { TemplateData::Type::List };
+
+        for (auto *staticMethod : m_staticMethods)
+            staticMethods << staticMethod->CompileTemplate( );
+
+        data[ "staticMethod" ] = staticMethods;
+    }
+
+    return data;
+}
+
+bool Class::isAccessible(void) const
+{
+    return m_metaData.GetFlag( kMetaEnable );
 }

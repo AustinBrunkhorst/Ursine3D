@@ -32,6 +32,40 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     }
 }
 
+TemplateData Enum::CompileTemplate(void) const
+{
+    TemplateData data { TemplateData::Type::Object };
+
+    data[ "displayName" ] = m_displayName;
+    data[ "qualifiedName" ] = m_qualifiedName;
+    data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
+    data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
+    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
+
+    TemplateData members { TemplateData::Type::List };
+
+    int i = 0;
+
+    for (auto &value : m_values)
+    {
+        TemplateData member { TemplateData::Type::Object };
+
+        member[ "key" ] = value.key;
+        member[ "value" ] = value.value;
+        member[ "isLast" ] = utils::TemplateBool( i == m_values.size( ) - 1 );
+
+        members << member;
+
+        ++i;
+    }
+
+    data[ "member" ] = members;
+
+    m_metaData.CompileTemplateData( data );
+
+    return data;
+}
+
 void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace)
 {
     for (auto &child : cursor.GetChildren( ))
@@ -43,4 +77,9 @@ void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, con
             );
         }
     }
+}
+
+bool Enum::isAccessible(void) const
+{
+    return !m_metaData.GetFlag( kMetaDisable );
 }

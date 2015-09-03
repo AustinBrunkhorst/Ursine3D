@@ -50,6 +50,19 @@ namespace ursine
             output += input.back( );
         }
 
+        void Split(const std::string &input, const boost::regex &delimiter, std::vector<std::string> &output)
+        {
+            boost::sregex_token_iterator i( input.begin( ), input.end( ), delimiter, -1 );
+            boost::sregex_token_iterator j;
+
+            while (i != j)
+            {
+                output.emplace_back( (*i).str( ) );
+
+                ++i;
+            }
+        }
+
         std::string MediaPath(const std::string &file, MediaType type)
         {
             switch (type)
