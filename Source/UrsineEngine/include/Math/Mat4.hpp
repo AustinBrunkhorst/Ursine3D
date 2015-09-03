@@ -282,18 +282,22 @@ namespace ursine
             );
     }
 
-    INLINE void Mat4::RotationZXY(float z_angle, float x_angle, float y_angle)
+	INLINE void Mat4::RotationZXY(float z_degrees, float x_degrees, float y_degrees)
     {
-        RotationZXY(*this, z_angle, x_angle, y_angle);
+		RotationZXY(*this, z_degrees, x_degrees, y_degrees);
     }
 
-    INLINE void Mat4::RotationZXY(Mat4 &mat, float z_angle, float x_angle, float y_angle)
+	INLINE void Mat4::RotationZXY(Mat4 &mat, float z_degrees, float x_degrees, float y_degrees)
     {
         float cx, sx, cy, sy, cz, sz;
 
-        math::SinCos(x_angle, sx, cx);
-        math::SinCos(y_angle, sy, cy);
-        math::SinCos(z_angle, sz, cz);
+		float x = math::DegreesToRadians(x_degrees);
+		float y = math::DegreesToRadians(y_degrees);
+		float z = math::DegreesToRadians(z_degrees);
+
+        math::SinCos(x, sx, cx);
+        math::SinCos(y, sy, cy);
+		math::SinCos(z, sz, cz);
 
         float cycz = cy * cz;
         float sxsy = sx * sy;

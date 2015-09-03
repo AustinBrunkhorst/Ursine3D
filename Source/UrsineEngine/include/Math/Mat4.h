@@ -84,8 +84,8 @@ namespace ursine
         // TODO: Rotation(SQuat &quat)
         // TODO: static Rotation(SQuat &quat)
 
-        void RotationZXY(float z_angle, float x_angle, float y_angle);
-        static void RotationZXY(Mat4 &mat, float z_angle, float x_angle, float y_angle);
+		void RotationZXY(float z_degrees, float x_degrees, float y_degrees);
+		static void RotationZXY(Mat4 &mat, float z_degrees, float x_degrees, float y_degrees);
 
         void Scale(const Vec3 &scale);
         static void Scale(Mat4 &mat, const Vec3 &scale);

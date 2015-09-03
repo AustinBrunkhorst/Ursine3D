@@ -30,9 +30,9 @@ namespace ursine
             );
     }
 
-    INLINE Mat3::Mat3(float radians)
+    INLINE Mat3::Mat3(float degrees)
     {
-        Rotation(*this, radians);
+		Rotation(*this, degrees);
     }
 
     INLINE Mat3::Mat3(float x_scalar, float y_scalar)
@@ -53,9 +53,9 @@ namespace ursine
             );
     }
 
-    INLINE Mat3::Mat3(const Vec2 &translation, float radians, const Vec2 &scale)
+    INLINE Mat3::Mat3(const Vec2 &translation, float degrees, const Vec2 &scale)
     {
-        TRS(*this, translation, radians, scale);
+		TRS(*this, translation, degrees, scale);
     }
 
     INLINE Mat3::Mat3(const Vec3 &scale)
@@ -67,9 +67,9 @@ namespace ursine
             );
     }
 
-    INLINE Mat3::Mat3(float z_angle, float x_angle, float y_angle)
+    INLINE Mat3::Mat3(float z_degrees, float x_degrees, float y_degrees)
     {
-        RotationZXY(*this, z_angle, x_angle, y_angle);
+		RotationZXY(*this, z_degrees, x_degrees, y_degrees);
     }
 
     // Properties
@@ -129,15 +129,15 @@ namespace ursine
             );
     }
 
-    INLINE void Mat3::Rotation(float radians)
+	INLINE void Mat3::Rotation(float degrees)
     {
-        Rotation(*this, radians);
+		Rotation(*this, degrees);
     }
 
-    INLINE void Mat3::Rotation(Mat3 &mat, float radians)
+	INLINE void Mat3::Rotation(Mat3 &mat, float degrees)
     {
         float s, c;
-        math::SinCos(radians, s, c);
+        math::SinCos(math::DegreesToRadians(degrees), s, c);
 
         mat.Set(
             c, -s, 0.0f,
@@ -151,13 +151,17 @@ namespace ursine
         RotationZXY(*this, z_angle, x_angle, y_angle);
     }
 
-    INLINE void Mat3::RotationZXY(Mat3 &mat, float z_angle, float x_angle, float y_angle)
+	INLINE void Mat3::RotationZXY(Mat3 &mat, float z_degrees, float x_degrees, float y_degrees)
     {
         float cx, sx, cy, sy, cz, sz;
 
-        math::SinCos(x_angle, sx, cx);
-        math::SinCos(y_angle, sy, cy);
-        math::SinCos(z_angle, sz, cz);
+		float x = math::DegreesToRadians(x_degrees);
+		float y = math::DegreesToRadians(y_degrees);
+		float z = math::DegreesToRadians(z_degrees);
+
+        math::SinCos(x, sx, cx);
+        math::SinCos(y, sy, cy);
+        math::SinCos(z, sz, cz);
 
         float cycz = cy * cz;
         float sxsy = sx * sy;
@@ -198,16 +202,16 @@ namespace ursine
             );
     }
 
-    INLINE void Mat3::TRS(const Vec2 &translation, float radians, const Vec2 &scale)
+	INLINE void Mat3::TRS(const Vec2 &translation, float degrees, const Vec2 &scale)
     {
-        TRS(*this, translation, radians, scale);
+		TRS(*this, translation, degrees, scale);
     }
 
-    INLINE void Mat3::TRS(Mat3 &mat, const Vec2 &translation, float radians, const Vec2 &scale)
+	INLINE void Mat3::TRS(Mat3 &mat, const Vec2 &translation, float degrees, const Vec2 &scale)
     {
         float scale_x = scale.X(), scale_y = scale.Y();
         float s, c;
-        math::SinCos(radians, s, c);
+        math::SinCos(math::DegreesToRadians(degrees), s, c);
 
         mat.Set(
             scale_x * c, -scale_y * s, translation.X(),

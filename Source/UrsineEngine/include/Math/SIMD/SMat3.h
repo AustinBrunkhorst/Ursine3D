@@ -54,14 +54,14 @@ namespace ursine
              float m20, float m21, float m22);
         
         // 2D Homogeneous Constructors
-        explicit SMat3(float radians); // Rotation
+        explicit SMat3(float degrees); // Rotation
         SMat3(float x_scalar, float y_scalar); // Scalar
         explicit SMat3(const Vec2 &translation); // Translation
-        SMat3(const Vec2 &translation, float radians, const Vec2 &scale); // Translation/Rotation/Scalar
+		SMat3(const Vec2 &translation, float degrees, const Vec2 &scale); // Translation/Rotation/Scalar
 
         // 3D Transformations (Scale and Rotation only)
         explicit SMat3(const SVec3 &scale); // X, Y, Z Scalar
-        SMat3(float z_angle, float x_angle, float y_angle); // Euler Rotation About The Z -> X -> Y axis
+		SMat3(float z_degrees, float x_degrees, float y_degrees); // Euler Rotation About The Z -> X -> Y axis
 
         // Properties
         static const SMat3 &Identity(void);
@@ -76,13 +76,14 @@ namespace ursine
         void Translate(const Vec2 &translation);
         static void Translate(SMat3 &mat, const Vec2 &translation);
 
-        void Rotation(float radians);
-        static void Rotation(SMat3 &mat, float radians);
+		void Rotation(float degrees);
+		static void Rotation(SMat3 &mat, float degrees);
 
         // Euler Axis Rotation
-        void RotationZXY(float z_angle, float x_angle, float y_angle);
-        static void RotationZXY(SMat3 &mat, float z_angle, float x_angle, float y_angle);
+		void RotationZXY(float z_degrees, float x_degrees, float y_degrees);
+		static void RotationZXY(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees);
 
+		// Get the euler angles in degrees
 		SVec3 GetRotationXYZ(void) const;
 
         void Scale(const Vec2 &scale);
@@ -91,10 +92,11 @@ namespace ursine
         void Scale(const SVec3 &scale);
         static void Scale(SMat3 &mat, const SVec3 &scale);
 
-        void TRS(const Vec2 &translation, float radians, const Vec2 &scale);
-        static void TRS(SMat3 &mat, const Vec2 &translation, float radians, const Vec2 &scale);
+		void TRS(const Vec2 &translation, float degrees, const Vec2 &scale);
+		static void TRS(SMat3 &mat, const Vec2 &translation, float degrees, const Vec2 &scale);
 
 		void SetLookAt(const SVec3& targetDirection, const SVec3& localForward, const SVec3& localUp, const SVec3& worldUp);
+		void SetLookAt(const SVec3& targetDirection, const SVec3& worldUp = SVec3::UnitY());
 
         void Transpose(void);
         static void Transpose(SMat3 &mat);

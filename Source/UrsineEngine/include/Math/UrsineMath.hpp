@@ -117,12 +117,14 @@ namespace ursine
 
         inline float RadiansToDegrees(float radians)
         {
-            return radians * 180 / PI;
+			static const float scalar = 180.0f / PI;
+            return radians * scalar;
         }
 
         inline float DegreesToRadians(float degrees)
         {
-            return degrees * PI / 180;
+			static const float scalar = PI / 180.0f;
+            return degrees * scalar;
         }
     }
 }

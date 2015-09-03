@@ -58,10 +58,13 @@ namespace ursine
 		}
 	}
 
+	SQuat::SQuat( )
+		: SQuat(0.0f, 0.0f, 0.0f, 1.0f)	{ }
+
 	// Constructors
-    SQuat::SQuat(float angle, const SVec3 &axis)
+    SQuat::SQuat(float degrees, const SVec3 &axis)
     {
-        SetAngleAxis(angle, axis);
+		SetAngleAxis(degrees, axis);
     }
 
     SQuat::SQuat(const SVec3& from, const SVec3& to)
@@ -69,9 +72,9 @@ namespace ursine
         SetFromTo(from, to);
     }
 
-    SQuat::SQuat(float x_angle, float y_angle, float z_angle)
+    SQuat::SQuat(float x_degrees, float y_degrees, float z_degrees)
     {
-        SetEulerAngles(SVec3(x_angle, y_angle, z_angle));
+        SetEulerAngles(SVec3(x_degrees, y_degrees, z_degrees));
     }
 
     SQuat::SQuat(float X, float Y, float Z, float W)
@@ -97,31 +100,7 @@ namespace ursine
 
         // TODO: UAssert(scalar != 0.0f)
 
-        return acos(Dot(other) / scalar);
-    }
-
-    float SQuat::GetAngleShortestPath(void) const
-    {
-        float angle;
-
-        if (LengthSquared() < 0.0f)
-            angle = 2.0f * acos(w);
-        else
-            angle = 2.0f * acos(-w);
-
-        return angle;
-    }
-
-    float SQuat::GetAngleShortestPath(const SQuat& other)
-    {
-        float angle = sqrt(LengthSquared() * other.LengthSquared());
-
-        // TODO: UAssert(angle != 0.0f);
-
-        if (Dot(other) < 0)
-            return acos(Dot(-other) / angle) * 2.0f;
-        else
-            return acos(Dot(other) / angle) * 2.0f;
+        return math::RadiansToDegrees(acos(Dot(other) / scalar)) * 2.0f;
     }
 
     SVec3 SQuat::GetAxis() const
@@ -140,13 +119,13 @@ namespace ursine
     {
         float angle = 2.0f * acos(w);
 
-        return angle;
+		return math::RadiansToDegrees(angle);
     }
 
-    void SQuat::GetAngleAxis(float &angle, SVec3 &axis) const
+	void SQuat::GetAngleAxis(float &degrees, SVec3 &axis) const
     {
         // angle
-        angle = 2.0f * acos(w);
+		degrees = math::RadiansToDegrees(2.0f * acos(w));
 
         // axis
         float scalar_2 = 1.0f - w * w;
@@ -159,29 +138,31 @@ namespace ursine
         axis.Set(x * scalar, y * scalar, z * scalar);
     }
 
-    void SQuat::SetAngleAxis(float angle, const SVec3 &axis)
+    void SQuat::SetAngleAxis(float degrees, const SVec3 &axis)
     {
-        float s = sin(0.5f * angle);
-        float c = cos(0.5f * angle);
+		auto norm = SVec3::Normalize(axis);
+		float radians_2 = math::DegreesToRadians(degrees) * 0.5f;
+		auto s = sin(radians_2);
+		auto c = cos(radians_2);
 
-        Set(axis.X() * s,
-            axis.Y() * s,
-            axis.Z() * s,
+        Set(norm.X() * s,
+			norm.Y() * s,
+			norm.Z() * s,
             c);
     }
 
 
     void SQuat::SetEulerAngles(const SVec3 &euler)
     {
-        float half_y = euler.Y() * 0.5f;
-        float half_x = euler.X() * 0.5f;
-        float half_z = euler.Z() * 0.5f;
-        float cos_y = cos(half_y);
-        float sin_y = sin(half_y);
-        float cos_x = cos(half_x);
-        float sin_x = sin(half_x);
-        float cos_z = cos(half_z);
-        float sin_z = sin(half_z);
+        auto half_y = math::DegreesToRadians(euler.Y() * 0.5f);
+        auto half_x = math::DegreesToRadians(euler.X() * 0.5f);
+        auto half_z = math::DegreesToRadians(euler.Z() * 0.5f);
+        auto cos_y = cos(half_y);
+        auto sin_y = sin(half_y);
+        auto cos_x = cos(half_x);
+        auto sin_x = sin(half_x);
+        auto cos_z = cos(half_z);
+        auto sin_z = sin(half_z);
 
         Set(cos_z * sin_x * cos_y + sin_z * cos_x * sin_y,
             cos_z * cos_x * sin_y - sin_z * sin_x * cos_y,
@@ -191,7 +172,17 @@ namespace ursine
 
 	SVec3 SQuat::GetEulerAngles() const
 	{
-		return SMat3(*this).GetRotationXYZ();
+		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+
+		float x_radians = atan2f(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
+		float y_radians = asinf(2.0f * (w * y - z * x));
+		float z_radians = atan2f(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
+
+		return {
+			math::RadiansToDegrees(x_radians),
+			math::RadiansToDegrees(y_radians),
+			math::RadiansToDegrees(z_radians)
+		};
 	}
 
 	void SQuat::SetFromTo(const SVec3& from, const SVec3& to)
@@ -226,38 +217,18 @@ namespace ursine
 
     SQuat SQuat::Slerp(const SQuat& other, float t) const
     {
-        float mag = sqrt(LengthSquared() * other.LengthSquared());
+		SQuat result;
 
-        // TODO: UAssert(magnitude > 0.0f);
+		Slerp(other, t, result);
 
-        float product = Dot(other) / mag;
-
-        if (fabsf(product) < 1.0f)
-        {
-            // take care of long angle case: http://en.wikipedia.org/wiki/Slerp
-            float sign = (product < 0.0f) ? -1.0f : 1.0f;
-
-            float theta = acos(sign * product);
-            float s1 = sin(sign * t * theta);
-            float d = 1.0f / sin(theta);
-            float s0 = sin((1.0f - t) * theta);
-
-            return SQuat(
-                (x * s0 + other.X() * s1) * d,
-                (y * s0 + other.Y() * s1) * d,
-                (z * s0 + other.Z() * s1) * d,
-                (w * s0 + other.W() * s1) * d
-            );
-        }
-        else
-            return *this;
+		return result;
     }
 
     void SQuat::Slerp(const SQuat& other, float t, SQuat& result) const
     {
         float mag = sqrt(LengthSquared() * other.LengthSquared());
 
-        // TODO: UAssert(magnitude > 0.0f);
+		UAssert(mag > 0.0f, "The magnitude cannot be zero.");
 
         float product = Dot(other) / mag;
 
@@ -281,20 +252,6 @@ namespace ursine
         else
             result = *this;
     }
-
-	SVec3 SQuat::SlerpVector(const SVec3& from, const SVec3& to, float t)
-	{
-		if (t <= 0.0f)
-			return from;
-		if (t >= 1.0f)
-			return to;
-
-		SQuat q(from, to);
-
-		q.Slerp(Identity(), t, q);
-
-		return q * from;
-	}
 
 	SVec3 SQuat::Rotate(const SVec3 &vec)
     {
@@ -323,11 +280,29 @@ namespace ursine
 		set(mat);
 	}
 
+	void SQuat::SetLookAt( const SVec3& targetDirection, const SVec3& worldUp )
+	{
+		SMat3 mat;
+
+		mat.SetLookAt(targetDirection, worldUp);
+
+		set(mat);
+	}
+
 	SQuat SQuat::LookAt(const SVec3& targetDirection, const SVec3& localForward, const SVec3& localUp, const SVec3& worldUp)
 	{
 		SMat3 mat;
 
 		mat.SetLookAt(targetDirection, localForward, localUp, worldUp);
+
+		return SQuat(mat);
+	}
+
+	SQuat SQuat::LookAt( const SVec3& targetDirection, const SVec3& worldUp )
+	{
+		SMat3 mat;
+
+		mat.SetLookAt(targetDirection, worldUp);
 
 		return SQuat(mat);
 	}
@@ -359,5 +334,4 @@ namespace ursine
     {
 		return Rotate(rhs);
     }
-
 }

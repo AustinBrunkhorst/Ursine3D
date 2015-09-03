@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 ursine_default_project(
-    Math
+    Math-QuaternionTests
     FOLDER "Tests"
     TYPE EXE
     SOURCE_DIR "Source"

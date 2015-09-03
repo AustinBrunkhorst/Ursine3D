@@ -6,7 +6,7 @@
 #include "SMat4.h"
 #include "Mat4.h"
 
-using namespace Ursine;
+using namespace ursine;
 
 /////////////////////////////////////////////////////////
 // Construction Tests
@@ -66,7 +66,7 @@ TEST_CASE("SMat3: Individual Element Constructor")
 
 TEST_CASE("SMat3: 2D Rotation Constructor")
 {
-    SMat3 mat(Math::PI / 4.0f);
+    SMat3 mat(45.0f);
 
     REQUIRE(mat(0, 0) == 0.707106781f); REQUIRE(mat(0, 1) == -0.707106781f); REQUIRE(mat(0, 2) == 0.0f);
     REQUIRE(mat(1, 0) == 0.707106781f); REQUIRE(mat(1, 1) == 0.707106781f);  REQUIRE(mat(1, 2) == 0.0f);
@@ -93,10 +93,10 @@ TEST_CASE("SMat3: 2D Translation Constructor")
 
 TEST_CASE("SMat3: 2D TRS Constructor")
 {
-    SMat3 mat(Vec2(1.0f, 2.0f), Math::PI / 4.0f, Vec2(1.0f, 2.0f));
+    SMat3 mat(Vec2(1.0f, 2.0f), 45.0f, Vec2(1.0f, 2.0f));
 
-    REQUIRE(Math::IsEqual(mat(0, 0), sqrt(2.0f) / 2.0f)); REQUIRE(Math::IsEqual(mat(0, 1), -sqrt(2.0f))); REQUIRE(mat(0, 2) == 1.0f);
-    REQUIRE(Math::IsEqual(mat(1, 0), sqrt(2.0f) / 2.0f)); REQUIRE(Math::IsEqual(mat(1, 1), sqrt(2.0f)));  REQUIRE(mat(1, 2) == 2.0f);
+    REQUIRE(math::IsEqual(mat(0, 0), sqrt(2.0f) / 2.0f)); REQUIRE(math::IsEqual(mat(0, 1), -sqrt(2.0f))); REQUIRE(mat(0, 2) == 1.0f);
+    REQUIRE(math::IsEqual(mat(1, 0), sqrt(2.0f) / 2.0f)); REQUIRE(math::IsEqual(mat(1, 1), sqrt(2.0f)));  REQUIRE(mat(1, 2) == 2.0f);
     REQUIRE(mat(2, 0) == 0.0f);                           REQUIRE(mat(2, 1) == 0.0f);                     REQUIRE(mat(2, 2) == 1.0f);
 }
 
@@ -111,11 +111,11 @@ TEST_CASE("SMat3: 3D Scale Constructor")
 
 TEST_CASE("SMat3: 3D Euler Rotation Constructor")
 {
-    SMat3 mat(Math::PI/4.0f, Math::PI/4.0f, Math::PI/4.0f);
+    SMat3 mat(45.0f, 45.0f, 45.0f);
 
-    REQUIRE(Math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(Math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(Math::IsEqual(mat(0, 2), 0.5f));
-    REQUIRE(Math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(Math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(Math::IsEqual(mat(1, 2), -0.707107f));
-    REQUIRE(Math::IsEqual(mat(2, 0), -0.146447f)); REQUIRE(Math::IsEqual(mat(2, 1), 0.853553f));  REQUIRE(Math::IsEqual(mat(2, 2), 0.5f));
+    REQUIRE(math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(math::IsEqual(mat(0, 2), 0.5f));
+    REQUIRE(math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(math::IsEqual(mat(1, 2), -0.707107f));
+    REQUIRE(math::IsEqual(mat(2, 0), -0.146447f)); REQUIRE(math::IsEqual(mat(2, 1), 0.853553f));  REQUIRE(math::IsEqual(mat(2, 2), 0.5f));
 }
 
 TEST_CASE("SMat4: Default Constructor")
@@ -549,9 +549,9 @@ TEST_CASE("SMat4: Matrix Comparison Operator")
 
 TEST_CASE("SMat3: Clean Function")
 {
-    SMat3 mat(Math::Epsilon, Math::Epsilon, Math::Epsilon,
-             Math::Epsilon, Math::Epsilon, Math::Epsilon,
-             Math::Epsilon, Math::Epsilon, Math::Epsilon);
+    SMat3 mat(math::Epsilon, math::Epsilon, math::Epsilon,
+             math::Epsilon, math::Epsilon, math::Epsilon,
+             math::Epsilon, math::Epsilon, math::Epsilon);
 
     mat.Clean();
 
@@ -575,7 +575,7 @@ TEST_CASE("SMat3: Rotation Function")
 {
     SMat3 mat;
 
-    mat.Rotation(Math::PI / 4.0f);
+    mat.Rotation(45.0f);
 
     REQUIRE(mat(0, 0) == 0.707106781f); REQUIRE(mat(0, 1) == -0.707106781f); REQUIRE(mat(0, 2) == 0.0f);
     REQUIRE(mat(1, 0) == 0.707106781f); REQUIRE(mat(1, 1) == 0.707106781f);  REQUIRE(mat(1, 2) == 0.0f);
@@ -586,11 +586,11 @@ TEST_CASE("SMat3: Euler Rotation Function")
 {
     SMat3 mat;
 
-    mat.RotationZXY(Math::PI/4.0f, Math::PI/4.0f, Math::PI/4.0f);
+    mat.RotationZXY(45.0f, 45.0f, 45.0f);
 
-    REQUIRE(Math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(Math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(Math::IsEqual(mat(0, 2), 0.5f));
-    REQUIRE(Math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(Math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(Math::IsEqual(mat(1, 2), -0.707107f));
-    REQUIRE(Math::IsEqual(mat(2, 0), -0.146447f)); REQUIRE(Math::IsEqual(mat(2, 1), 0.853553f));  REQUIRE(Math::IsEqual(mat(2, 2), 0.5f));
+    REQUIRE(math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(math::IsEqual(mat(0, 2), 0.5f));
+    REQUIRE(math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(math::IsEqual(mat(1, 2), -0.707107f));
+    REQUIRE(math::IsEqual(mat(2, 0), -0.146447f)); REQUIRE(math::IsEqual(mat(2, 1), 0.853553f));  REQUIRE(math::IsEqual(mat(2, 2), 0.5f));
 }
 
 TEST_CASE("SMat3: Scale Function")
@@ -614,10 +614,10 @@ TEST_CASE("SMat3: TRS Function")
 {
     SMat3 mat;
 
-    mat.TRS(Vec2(1.0f, 2.0f), Math::PI / 4.0f, Vec2(1.0f, 2.0f));
+    mat.TRS(Vec2(1.0f, 2.0f), 45.0f, Vec2(1.0f, 2.0f));
 
-    REQUIRE(Math::IsEqual(mat(0, 0), sqrt(2.0f) / 2.0f)); REQUIRE(Math::IsEqual(mat(0, 1), -sqrt(2.0f))); REQUIRE(mat(0, 2) == 1.0f);
-    REQUIRE(Math::IsEqual(mat(1, 0), sqrt(2.0f) / 2.0f)); REQUIRE(Math::IsEqual(mat(1, 1), sqrt(2.0f)));  REQUIRE(mat(1, 2) == 2.0f);
+    REQUIRE(math::IsEqual(mat(0, 0), sqrt(2.0f) / 2.0f)); REQUIRE(math::IsEqual(mat(0, 1), -sqrt(2.0f))); REQUIRE(mat(0, 2) == 1.0f);
+    REQUIRE(math::IsEqual(mat(1, 0), sqrt(2.0f) / 2.0f)); REQUIRE(math::IsEqual(mat(1, 1), sqrt(2.0f)));  REQUIRE(mat(1, 2) == 2.0f);
     REQUIRE(mat(2, 0) == 0.0f);                           REQUIRE(mat(2, 1) == 0.0f);                     REQUIRE(mat(2, 2) == 1.0f);
 }
 
@@ -829,10 +829,10 @@ TEST_CASE("SMat3: Transform Point And Divide Function")
 
 TEST_CASE("SMat4: Clean Function")
 {
-    SMat4 mat(Math::Epsilon, Math::Epsilon, Math::Epsilon, Math::Epsilon,
-             Math::Epsilon, Math::Epsilon, Math::Epsilon, Math::Epsilon,
-             Math::Epsilon, Math::Epsilon, Math::Epsilon, Math::Epsilon,
-             Math::Epsilon, Math::Epsilon, Math::Epsilon, Math::Epsilon);
+    SMat4 mat(math::Epsilon, math::Epsilon, math::Epsilon, math::Epsilon,
+             math::Epsilon, math::Epsilon, math::Epsilon, math::Epsilon,
+             math::Epsilon, math::Epsilon, math::Epsilon, math::Epsilon,
+             math::Epsilon, math::Epsilon, math::Epsilon, math::Epsilon);
 
     mat.Clean();
 
@@ -858,11 +858,11 @@ TEST_CASE("SMat4: Euler Rotation Function")
 {
     SMat4 mat;
 
-    mat.RotationZXY(Math::PI/4.0f, Math::PI/4.0f, Math::PI/4.0f);
+    mat.RotationZXY(45.0f, 45.0f, 45.0f);
 
-    REQUIRE(Math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(Math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(Math::IsEqual(mat(0, 2), 0.5f));       REQUIRE(mat(0, 3) == 0.0f);
-    REQUIRE(Math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(Math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(Math::IsEqual(mat(1, 2), -0.707107f)); REQUIRE(mat(1, 3) == 0.0f);
-    REQUIRE(Math::IsEqual(mat(2, 0), -0.146447f)); REQUIRE(Math::IsEqual(mat(2, 1), 0.853553f));  REQUIRE(Math::IsEqual(mat(2, 2), 0.5f));       REQUIRE(mat(2, 3) == 0.0f);
+    REQUIRE(math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(math::IsEqual(mat(0, 2), 0.5f));       REQUIRE(mat(0, 3) == 0.0f);
+    REQUIRE(math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(math::IsEqual(mat(1, 2), -0.707107f)); REQUIRE(mat(1, 3) == 0.0f);
+    REQUIRE(math::IsEqual(mat(2, 0), -0.146447f)); REQUIRE(math::IsEqual(mat(2, 1), 0.853553f));  REQUIRE(math::IsEqual(mat(2, 2), 0.5f));       REQUIRE(mat(2, 3) == 0.0f);
     REQUIRE(mat(3, 0) == 0.0f); REQUIRE(mat(3, 1) == 0.0f); REQUIRE(mat(3, 2) == 0.0f); REQUIRE(mat(3, 3) == 1.0f);
 }
 
@@ -927,7 +927,7 @@ TEST_CASE("SMat4: Inverse Fast Function")
 {
     /*SMat4 foo = SMat4(SVec3(1.0f, 2.0f, 3.0f)) * SMat4(1.0f, 2.0f, 3.0f);
     SMat4 bar;
-    bar.RotationZXY(Math::PI/4.0f, Math::PI/4.0f, Math::PI/4.0f);
+    bar.RotationZXY(45.0f, 45.0f, 45.0f);
     SMat4 mat = foo * bar;
     const SMat4 const_mat(mat);
     SMat4 answer(0.853553f, 0.25f, -0.048816f, -1.20711f,

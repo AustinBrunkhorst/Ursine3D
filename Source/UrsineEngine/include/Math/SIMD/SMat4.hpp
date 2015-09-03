@@ -406,18 +406,18 @@ namespace ursine
 		SetColumn(3, SVec4(0, 0, 0, 1));
     }
 
-    INLINE void SMat4::RotationZXY(float z_angle, float x_angle, float y_angle)
+	INLINE void SMat4::RotationZXY(float z_degrees, float x_degrees, float y_degrees)
     {
-        RotationZXY(*this, z_angle, x_angle, y_angle);
+		RotationZXY(*this, z_degrees, x_degrees, y_degrees);
     }
 
-    INLINE void SMat4::RotationZXY(SMat4 &mat, float z_angle, float x_angle, float y_angle)
+	INLINE void SMat4::RotationZXY(SMat4 &mat, float z_degrees, float x_degrees, float y_degrees)
     {
         float cx, sx, cy, sy, cz, sz;
 
-        math::SinCos(x_angle, sx, cx);
-        math::SinCos(y_angle, sy, cy);
-        math::SinCos(z_angle, sz, cz);
+		math::SinCos(math::DegreesToRadians(x_degrees), sx, cx);
+		math::SinCos(math::DegreesToRadians(y_degrees), sy, cy);
+		math::SinCos(math::DegreesToRadians(z_degrees), sz, cz);
 
         float cycz = cy * cz;
         float sxsy = sx * sy;

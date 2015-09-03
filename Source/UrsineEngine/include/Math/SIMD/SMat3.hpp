@@ -20,8 +20,8 @@ namespace ursine
     }
 
     INLINE SMat3::SMat3(float m00, float m01, float m02,
-        float m10, float m11, float m12,
-        float m20, float m21, float m22)
+						float m10, float m11, float m12,
+						float m20, float m21, float m22)
     {
         Set(
             m00, m01, m02,
@@ -30,9 +30,9 @@ namespace ursine
             );
     }
 
-    INLINE SMat3::SMat3(float radians)
+	INLINE SMat3::SMat3(float degrees)
     {
-        Rotation(*this, radians);
+		Rotation(*this, degrees);
     }
 
     INLINE SMat3::SMat3(float x_scalar, float y_scalar)
@@ -53,9 +53,9 @@ namespace ursine
             );
     }
 
-    INLINE SMat3::SMat3(const Vec2 &translation, float radians, const Vec2 &scale)
+	INLINE SMat3::SMat3(const Vec2 &translation, float degrees, const Vec2 &scale)
     {
-        TRS(*this, translation, radians, scale);
+		TRS(*this, translation, degrees, scale);
     }
 
     INLINE SMat3::SMat3(const SVec3 &scale)
@@ -67,9 +67,9 @@ namespace ursine
             );
     }
 
-    INLINE SMat3::SMat3(float z_angle, float x_angle, float y_angle)
+	INLINE SMat3::SMat3(float z_degrees, float x_degrees, float y_degrees)
     {
-        RotationZXY(*this, z_angle, x_angle, y_angle);
+		RotationZXY(*this, z_degrees, x_degrees, y_degrees);
     }
 
     // Properties
@@ -129,15 +129,15 @@ namespace ursine
             );
     }
 
-    INLINE void SMat3::Rotation(float radians)
+	INLINE void SMat3::Rotation(float degrees)
     {
-        Rotation(*this, radians);
+		Rotation(*this, degrees);
     }
 
-    INLINE void SMat3::Rotation(SMat3 &mat, float radians)
+	INLINE void SMat3::Rotation(SMat3 &mat, float degrees)
     {
         float s, c;
-        math::SinCos(radians, s, c);
+        math::SinCos(math::DegreesToRadians(degrees), s, c);
 
         mat.Set(
             c, -s, 0.0f,
@@ -146,18 +146,22 @@ namespace ursine
             );
     }
 
-    INLINE void SMat3::RotationZXY(float z_angle, float x_angle, float y_angle)
+	INLINE void SMat3::RotationZXY(float z_degrees, float x_degrees, float y_degrees)
     {
-        RotationZXY(*this, z_angle, x_angle, y_angle);
+		RotationZXY(*this, z_degrees, x_degrees, y_degrees);
     }
 
-    INLINE void SMat3::RotationZXY(SMat3 &mat, float z_angle, float x_angle, float y_angle)
+	INLINE void SMat3::RotationZXY(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees)
     {
         float cx, sx, cy, sy, cz, sz;
 
-        math::SinCos(x_angle, sx, cx);
-        math::SinCos(y_angle, sy, cy);
-        math::SinCos(z_angle, sz, cz);
+		float x = math::DegreesToRadians(x_degrees);
+		float y = math::DegreesToRadians(y_degrees);
+		float z = math::DegreesToRadians(z_degrees);
+
+		math::SinCos(x, sx, cx);
+		math::SinCos(y, sy, cy);
+		math::SinCos(z, sz, cz);
 
         float cycz = cy * cz;
         float sxsy = sx * sy;
@@ -198,7 +202,11 @@ namespace ursine
 			y = 0;
 		}
 
-		return { x, y, z };
+		return { 
+			math::RadiansToDegrees(x), 
+			math::RadiansToDegrees(y), 
+			math::RadiansToDegrees(z) 
+		};
 	}
 
 	INLINE void SMat3::Scale(const Vec2 &scale)
@@ -229,16 +237,16 @@ namespace ursine
             );
     }
 
-    INLINE void SMat3::TRS(const Vec2 &translation, float radians, const Vec2 &scale)
+	INLINE void SMat3::TRS(const Vec2 &translation, float degrees, const Vec2 &scale)
     {
-        TRS(*this, translation, radians, scale);
+		TRS(*this, translation, degrees, scale);
     }
 
-    INLINE void SMat3::TRS(SMat3 &mat, const Vec2 &translation, float radians, const Vec2 &scale)
+	INLINE void SMat3::TRS(SMat3 &mat, const Vec2 &translation, float degrees, const Vec2 &scale)
     {
         float scale_x = scale.X(), scale_y = scale.Y();
         float s, c;
-        math::SinCos(radians, s, c);
+		math::SinCos(math::DegreesToRadians(degrees), s, c);
 
         mat.Set(
             scale_x * c, -scale_y * s, translation.X(),
@@ -299,7 +307,12 @@ namespace ursine
 		Orthonormalize();
     }
 
-    INLINE void SMat3::Transpose(void)
+	INLINE void SMat3::SetLookAt( const SVec3& targetDirection, const SVec3& worldUp )
+	{
+		SetLookAt(targetDirection, SVec3::UnitZ(), SVec3::UnitY(), worldUp);
+	}
+
+	INLINE void SMat3::Transpose(void)
     {
         Transpose(*this);
     }

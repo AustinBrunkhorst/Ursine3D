@@ -7,7 +7,7 @@
 #include "SVec3.h"
 #include "SVec4.h"
 
-using namespace Ursine;
+using namespace ursine;
 
 /////////////////////////////////////////////////////////
 // Construction Tests
@@ -766,7 +766,7 @@ TEST_CASE("Vec2: Distance Functions")
 {
     Vec2 foo(0.0f, 1.0f);
     Vec2 bar(1.0f, 0.0f);
-    float answer_1 = Math::SQRT_2;
+    float answer_1 = math::SQRT_2;
     float result_1 = foo.Distance(bar);
     float result_2 = Vec2::Distance(foo, bar);
 
@@ -774,10 +774,10 @@ TEST_CASE("Vec2: Distance Functions")
     float result_3 = foo.DistanceSquared(bar);
     float result_4 = Vec2::DistanceSquared(foo, bar);
 
-    REQUIRE(Math::IsEqual(answer_1, result_1));
-    REQUIRE(Math::IsEqual(answer_1, result_2));
-    REQUIRE(Math::IsEqual(answer_2, result_3));
-    REQUIRE(Math::IsEqual(answer_2, result_4));
+    REQUIRE(math::IsEqual(answer_1, result_1));
+    REQUIRE(math::IsEqual(answer_1, result_2));
+    REQUIRE(math::IsEqual(answer_2, result_3));
+    REQUIRE(math::IsEqual(answer_2, result_4));
 }
 
 TEST_CASE("Vec2: Dot Product Functions")
@@ -797,31 +797,31 @@ TEST_CASE("Vec2: Length Functions")
     Vec2 foo(1.0f);
     float result_1 = foo.Length();
     float result_2 = Vec2::Length(foo);
-    float answer_1 = Math::SQRT_2;
+    float answer_1 = math::SQRT_2;
 
     float result_3 = foo.LengthSquared();
     float result_4 = Vec2::LengthSquared(foo);
     float answer_2 = 2.0f;
 
-    REQUIRE(Math::IsEqual(answer_1, result_1));
-    REQUIRE(Math::IsEqual(answer_1, result_2));
-    REQUIRE(Math::IsEqual(answer_2, result_3));
-    REQUIRE(Math::IsEqual(answer_2, result_4));
+    REQUIRE(math::IsEqual(answer_1, result_1));
+    REQUIRE(math::IsEqual(answer_1, result_2));
+    REQUIRE(math::IsEqual(answer_2, result_3));
+    REQUIRE(math::IsEqual(answer_2, result_4));
 }
 
 TEST_CASE("Vec2: Angle Functions")
 {
     Vec2 foo(1.0f);
     Vec2 bar(0.0f, 1.0f);
-    float answer_1 = Math::PI / 4.0f;
-    float answer_2 = Math::PI_DIV_2;
+    float answer_1 = math::PI / 4.0f;
+    float answer_2 = math::PI_DIV_2;
     float result_1 = foo.Angle();
     float result_2 = Vec2::Angle(foo);
     float result_3 = bar.Angle();
     float result_4 = Vec2::Angle(bar);
 
     Vec2 answer_3 = Vec2::Normalize(-foo);
-    Vec2 result_5 = Vec2::AngleVec(Math::PI + (Math::PI / 4.0f));
+    Vec2 result_5 = Vec2::AngleVec(math::PI + (math::PI / 4.0f));
 
     REQUIRE(answer_1 == result_1);
     REQUIRE(answer_1 == result_2);
@@ -952,7 +952,7 @@ TEST_CASE("SVec3: Distance Functions")
 {
     SVec3 foo(0.0f, 1.0f, 0.0f);
     SVec3 bar(1.0f, 0.0f, 0.0f);
-    float answer_1 = Math::SQRT_2;
+    float answer_1 = math::SQRT_2;
     float result_1 = foo.Distance(bar);
     float result_2 = SVec3::Distance(foo, bar);
 
@@ -960,10 +960,10 @@ TEST_CASE("SVec3: Distance Functions")
     float result_3 = foo.DistanceSquared(bar);
     float result_4 = SVec3::DistanceSquared(foo, bar);
 
-    REQUIRE(Math::IsEqual(answer_1, result_1));
-    REQUIRE(Math::IsEqual(answer_1, result_2));
-    REQUIRE(Math::IsEqual(answer_2, result_3));
-    REQUIRE(Math::IsEqual(answer_2, result_4));
+    REQUIRE(math::IsEqual(answer_1, result_1));
+    REQUIRE(math::IsEqual(answer_1, result_2));
+    REQUIRE(math::IsEqual(answer_2, result_3));
+    REQUIRE(math::IsEqual(answer_2, result_4));
 }
 
 TEST_CASE("SVec3: Dot Product Functions")
@@ -995,10 +995,10 @@ TEST_CASE("SVec3: Length Functions")
     float result_4 = SVec3::LengthSquared(foo);
     float answer_2 = answer_1 * answer_1;
 
-    REQUIRE(Math::IsEqual(answer_1, result_1));
-    REQUIRE(Math::IsEqual(answer_1, result_2));
-    REQUIRE(Math::IsEqual(answer_2, result_3));
-    REQUIRE(Math::IsEqual(answer_2, result_4));
+    REQUIRE(math::IsEqual(answer_1, result_1));
+    REQUIRE(math::IsEqual(answer_1, result_2));
+    REQUIRE(math::IsEqual(answer_2, result_3));
+    REQUIRE(math::IsEqual(answer_2, result_4));
 }
 
 TEST_CASE("SVec3: Max & Min Functions")
@@ -1076,7 +1076,7 @@ TEST_CASE("SVec4: Distance Functions")
 {
     SVec4 foo(0.0f, 1.0f, 0.0f, 0.0f);
     SVec4 bar(1.0f, 0.0f, 0.0f, 0.0f);
-    float answer_1 = Math::SQRT_2;
+    float answer_1 = math::SQRT_2;
     float result_1 = foo.Distance(bar);
     float result_2 = SVec4::Distance(foo, bar);
 
@@ -1084,10 +1084,10 @@ TEST_CASE("SVec4: Distance Functions")
     float result_3 = foo.DistanceSquared(bar);
     float result_4 = SVec4::DistanceSquared(foo, bar);
 
-    REQUIRE(Math::IsEqual(answer_1, result_1));
-    REQUIRE(Math::IsEqual(answer_1, result_2));
-    REQUIRE(Math::IsEqual(answer_2, result_3));
-    REQUIRE(Math::IsEqual(answer_2, result_4));
+    REQUIRE(math::IsEqual(answer_1, result_1));
+    REQUIRE(math::IsEqual(answer_1, result_2));
+    REQUIRE(math::IsEqual(answer_2, result_3));
+    REQUIRE(math::IsEqual(answer_2, result_4));
 }
 
 TEST_CASE("SVec4: Dot Product Functions")
@@ -1119,10 +1119,10 @@ TEST_CASE("SVec4: Length Functions")
     float result_4 = SVec4::LengthSquared(foo);
     float answer_2 = answer_1 * answer_1;
 
-    REQUIRE(Math::IsEqual(answer_1, result_1));
-    REQUIRE(Math::IsEqual(answer_1, result_2));
-    REQUIRE(Math::IsEqual(answer_2, result_3));
-    REQUIRE(Math::IsEqual(answer_2, result_4));
+    REQUIRE(math::IsEqual(answer_1, result_1));
+    REQUIRE(math::IsEqual(answer_1, result_2));
+    REQUIRE(math::IsEqual(answer_2, result_3));
+    REQUIRE(math::IsEqual(answer_2, result_4));
 }
 
 TEST_CASE("SVec4: Max & Min Functions")

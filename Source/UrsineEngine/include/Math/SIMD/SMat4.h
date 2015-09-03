@@ -84,8 +84,8 @@ namespace ursine
 
 		void Rotation(const SQuat &quat);
 
-        void RotationZXY(float z_angle, float x_angle, float y_angle);
-        static void RotationZXY(SMat4 &mat, float z_angle, float x_angle, float y_angle);
+		void RotationZXY(float z_degrees, float x_degrees, float y_degrees);
+		static void RotationZXY(SMat4 &mat, float z_degrees, float x_degrees, float y_degrees);
 
         void Scale(const SVec3 &scale);
         static void Scale(SMat4 &mat, const SVec3 &scale);

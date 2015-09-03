@@ -53,14 +53,14 @@ namespace ursine
              float m20, float m21, float m22);
         
         // 2D Homogeneous Constructors
-        explicit Mat3(float radians); // Rotation
+        explicit Mat3(float degrees); // Rotation
         Mat3(float x_scalar, float y_scalar); // Scalar
         explicit Mat3(const Vec2 &translation); // Translation
-        Mat3(const Vec2 &translation, float radians, const Vec2 &scale); // Translation/Rotation/Scalar
+		Mat3(const Vec2 &translation, float degrees, const Vec2 &scale); // Translation/Rotation/Scalar
 
         // 3D Transformations (Scale and Rotation only)
         explicit Mat3(const Vec3 &scale); // X, Y, Z Scalar
-        Mat3(float z_angle, float x_angle, float y_angle); // Euler Rotation About The Z -> X -> Y axis
+		Mat3(float z_degrees, float x_degrees, float y_degrees); // Euler Rotation About The Z -> X -> Y axis
 
         // Properties
         static const Mat3 &Identity(void);
@@ -75,12 +75,12 @@ namespace ursine
         void Translate(const Vec2 &translation);
         static void Translate(Mat3 &mat, const Vec2 &translation);
 
-        void Rotation(float radians);
-        static void Rotation(Mat3 &mat, float radians);
+        void Rotation(float degrees);
+		static void Rotation(Mat3 &mat, float degrees);
 
         // Euler Axis Rotation
-        void RotationZXY(float z_angle, float x_angle, float y_angle);
-        static void RotationZXY(Mat3 &mat, float z_angle, float x_angle, float y_angle);
+		void RotationZXY(float z_degrees, float x_degrees, float y_degrees);
+		static void RotationZXY(Mat3 &mat, float z_degrees, float x_degrees, float y_degrees);
 
         void Scale(const Vec2 &scale);
         static void Scale(Mat3 &mat, const Vec2 &scale);
@@ -88,8 +88,8 @@ namespace ursine
         void Scale(const Vec3 &scale);
         static void Scale(Mat3 &mat, const Vec3 &scale);
 
-        void TRS(const Vec2 &translation, float radians, const Vec2 &scale);
-        static void TRS(Mat3 &mat, const Vec2 &translation, float radians, const Vec2 &scale);
+		void TRS(const Vec2 &translation, float degrees, const Vec2 &scale);
+		static void TRS(Mat3 &mat, const Vec2 &translation, float degrees, const Vec2 &scale);
 
         void Transpose(void);
         static void Transpose(Mat3 &mat);

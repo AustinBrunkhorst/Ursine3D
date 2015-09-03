@@ -17,11 +17,13 @@
 #include "UrsineTypes.h"
 #include <string>
 #include "SVec4.h"
+#include "SVec3.h"
 
 namespace ursine
 {
     class SVec3;
 	class SMat4;
+	class SMat3;
 
     class SQuat : public SVec4
     {        
@@ -32,9 +34,10 @@ namespace ursine
 
     public:
         // Constructors
-        SQuat(float angle, const SVec3 &axis);
-        SQuat(const SVec3 &from, const SVec3 &to);
-        SQuat(float x_angle, float y_angle, float z_angle);
+		SQuat();
+		SQuat(float degrees, const SVec3 &axis);
+		SQuat(const SVec3 &from, const SVec3 &to);
+        SQuat(float x_degrees, float y_degrees, float z_degrees);
         SQuat(float X, float Y, float Z, float W);
 		explicit SQuat(const SMat3 &rotationMatrix);
 
@@ -43,30 +46,25 @@ namespace ursine
 
         // Public Methods
 
-        // Return the HALF angle between this quaternion and the other
+        // Return the angle between this quaternion and the other in degrees
         float GetAngle(const SQuat &other) const;
-
-        float GetAngleShortestPath(void) const;
-
-        // Return the shortest angle between this quaternion and the other
-        float GetAngleShortestPath(const SQuat &other);
 
         // Return the axis of rotation represented by this quaternion
         SVec3 GetAxis(void) const;
 
-        // Return the angle of rotation represented by this quaternion
+        // Return the angle of rotation represented by this quaternion in degrees
         float GetAngle(void) const;
 
         // Get the angle and axis
-        void GetAngleAxis(float &angle, SVec3 &axis) const;
+		void GetAngleAxis(float &degrees, SVec3 &axis) const;
 
-        // Represent a rotation around an axis by a certain amount
-        void SetAngleAxis(float angle, const SVec3 &axis);
+        // Represent a rotation around an axis by a certain amount in degrees
+        void SetAngleAxis(float degrees, const SVec3 &axis);
 
-        // Set the euler angle rotation (X, Y, Z)
-		void SetEulerAngles(const SVec3 &euler);;
+        // Set the euler angle rotation (X, Y, Z) in degrees
+		void SetEulerAngles(const SVec3 &euler);
 
-		// Get the euler angles this rotation represents (X, Y, Z)
+		// Get the euler angles this rotation represents (X, Y, Z) in degrees
 		SVec3 GetEulerAngles(void) const;
 
         // Represent a rotation FROM a vec -> TO a vec
@@ -80,19 +78,17 @@ namespace ursine
         SQuat Slerp(const SQuat &other, float t) const;
         void Slerp(const SQuat &other, float t, SQuat &result) const;
 
-		// Spherical linear interpolation betweeen two given vectors
-		// if t == 0, the result is from, if t == 1, the result is to.
-		static SVec3 SlerpVector(const SVec3 &from, const SVec3 &to, float t);
-
         // Rotate a given vector by this quaternion
         SVec3 Rotate(const SVec3 &vec);
         void Rotate(const SVec3 &vec, SVec3 &result);
 
         // A LookAt quaternion is a quaternion that orients an object to face towards a specified target direction.
 		void SetLookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
-
-        // Create a LookAt quaternion
+		void SetLookAt(const SVec3 &targetDirection, const SVec3 &worldUp = SVec3::UnitY());
+        
+		// Create a LookAt quaternion
         static SQuat LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
+		static SQuat LookAt(const SVec3 &targetDirection, const SVec3 &worldUp = SVec3::UnitY());
 
         // Operators
         const SQuat &operator*=(const SQuat &q);
