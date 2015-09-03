@@ -30,24 +30,6 @@ namespace ursine
 		friend class Mat3;
 		friend class Mat4;
 
-        // Row Major
-        // http://en.wikipedia.org/wiki/Row-major_order
-        // Each vector represents one row of the 4x4 matrix
-        SVec4 m[4];
-
-        // helpers for column dot row
-        float dotCol0(const SVec4 &row) const;
-        float dotCol1(const SVec4 &row) const;
-        float dotCol2(const SVec4 &row) const;
-        float dotCol3(const SVec4 &row) const;
-
-        // helper for inverse (eleminating duplicate code)
-        static void invert(const float *src, float *dest);
-        // TODO: static void invertFast(const float *src, float *dest);
-
-		void setRotation(const SQuat &quat);
-		void setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
-
     public:
         // Generic Constructors
         SMat4(void);
@@ -192,7 +174,26 @@ namespace ursine
         bool operator==(const SMat4 &rhs) const;
         bool operator!=(const SMat4 &rhs) const;
 
-		ALLOW_ALIGNED_ALLOC(16)
+		ALLOW_ALIGNED_ALLOC(16);
+
+	private:
+		// Row Major
+		// http://en.wikipedia.org/wiki/Row-major_order
+		// Each vector represents one row of the 4x4 matrix
+		SVec4 m[4];
+
+		// helpers for column dot row
+		float dotCol0(const SVec4 &row) const;
+		float dotCol1(const SVec4 &row) const;
+		float dotCol2(const SVec4 &row) const;
+		float dotCol3(const SVec4 &row) const;
+
+		// helper for inverse (eleminating duplicate code)
+		static void invert(const float *src, float *dest);
+		// TODO: static void invertFast(const float *src, float *dest);
+
+		void setRotation(const SQuat &quat);
+		void setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
     };
 }
 

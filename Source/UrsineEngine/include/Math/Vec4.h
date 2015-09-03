@@ -26,12 +26,9 @@ namespace ursine
 
     class Vec4
     {
-    protected:
-        friend class Vec3;
+		friend class Vec3;
 		friend class SVec3;
 		friend class SVec4;
-        
-        float x, y, z, w;
 
     public:
         // Constructors
@@ -121,6 +118,9 @@ namespace ursine
         const Vec4 &operator*=(float rhs);
         const Vec4 &operator/=(const Vec4 &rhs);
         const Vec4 &operator/=(float rhs);
+
+	protected:
+		float m_x, m_y, m_z, m_w;
     };
 }
 

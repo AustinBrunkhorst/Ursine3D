@@ -32,8 +32,6 @@ namespace ursine
         friend class Vec4;
 		friend class SVec4;
 
-        float x, y;
-
     public:
         // Constructors
         Vec2(void);
@@ -133,6 +131,9 @@ namespace ursine
         const Vec2 &operator*=(float rhs);
         const Vec2 &operator/=(const Vec2 &rhs);
         const Vec2 &operator/=(float rhs);
+
+	private:
+		float m_x, m_y;
     };
 }
 

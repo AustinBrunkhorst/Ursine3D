@@ -26,35 +26,35 @@ namespace ursine
 											   // Above, r == 3 - 4(x^2+y^2+z^2) == 4(1-x^2-y^2-z^2) - 1 == 4*w^2 - 1.
 		if (r > 0) // In this case, |w| > 1/2.
 		{
-			w = sqrt(r + 1.f) * 0.5f; // We have two choices for the sign of w, arbitrarily pick the positive.
-			float inv4w = 1.f / (4.f * w);
-			x = (m(2, 1) - m(1, 2)) * inv4w;
-			y = (m(0, 2) - m(2, 0)) * inv4w;
-			z = (m(1, 0) - m(0, 1)) * inv4w;
+			m_w = sqrt(r + 1.f) * 0.5f; // We have two choices for the sign of w, arbitrarily pick the positive.
+			float inv4w = 1.f / (4.f * m_w);
+			m_x = (m(2, 1) - m(1, 2)) * inv4w;
+			m_y = (m(0, 2) - m(2, 0)) * inv4w;
+			m_z = (m(1, 0) - m(0, 1)) * inv4w;
 		}
 		else if (m(0, 0) > m(1, 1) && m(0, 0) > m(2, 2)) // If |q.x| is larger than |q.y| and |q.z|, extract it first. This gives
 		{                                                // best stability, and we know below x can't be zero.
-			x = sqrt(1.f + m(0, 0) - m(1, 1) - m(2, 2)) * 0.5f; // We have two choices for the sign of x, arbitrarily pick the positive.
-			const float x4 = 1.f / (4.f * x);
-			y = (m(0, 1) + m(1, 0)) * x4;
-			z = (m(0, 2) + m(2, 0)) * x4;
-			w = (m(2, 1) - m(1, 2)) * x4;
+			m_x = sqrt(1.f + m(0, 0) - m(1, 1) - m(2, 2)) * 0.5f; // We have two choices for the sign of x, arbitrarily pick the positive.
+			const float x4 = 1.f / (4.f * m_x);
+			m_y = (m(0, 1) + m(1, 0)) * x4;
+			m_z = (m(0, 2) + m(2, 0)) * x4;
+			m_w = (m(2, 1) - m(1, 2)) * x4;
 		}
 		else if (m(1, 1) > m(2, 2)) // |q.y| is larger than |q.x| and |q.z|
 		{
-			y = sqrt(1.f + m(1, 1) - m(0, 0) - m(2, 2)) * 0.5f; // We have two choices for the sign of y, arbitrarily pick the positive.
-			const float y4 = 1.f / (4.f * y);
-			x = (m(0, 1) + m(1, 0)) * y4;
-			z = (m(1, 2) + m(2, 1)) * y4;
-			w = (m(0, 2) - m(2, 0)) * y4;
+			m_y = sqrt(1.f + m(1, 1) - m(0, 0) - m(2, 2)) * 0.5f; // We have two choices for the sign of y, arbitrarily pick the positive.
+			const float y4 = 1.f / (4.f * m_y);
+			m_x = (m(0, 1) + m(1, 0)) * y4;
+			m_z = (m(1, 2) + m(2, 1)) * y4;
+			m_w = (m(0, 2) - m(2, 0)) * y4;
 		}
 		else // |q.z| is larger than |q.x| or |q.y|
 		{
-			z = sqrt(1.f + m(2, 2) - m(0, 0) - m(1, 1)) * 0.5f; // We have two choices for the sign of z, arbitrarily pick the positive.
-			const float z4 = 1.f / (4.f * z);
-			x = (m(0, 2) + m(2, 0)) * z4;
-			y = (m(1, 2) + m(2, 1)) * z4;
-			w = (m(1, 0) - m(0, 1)) * z4;
+			m_z = sqrt(1.f + m(2, 2) - m(0, 0) - m(1, 1)) * 0.5f; // We have two choices for the sign of z, arbitrarily pick the positive.
+			const float z4 = 1.f / (4.f * m_z);
+			m_x = (m(0, 2) + m(2, 0)) * z4;
+			m_y = (m(1, 2) + m(2, 1)) * z4;
+			m_w = (m(1, 0) - m(0, 1)) * z4;
 		}
 	}
 
@@ -105,19 +105,19 @@ namespace ursine
 
     SVec3 SQuat::GetAxis() const
     {
-        float scalar_2 = 1.0f - w * w;
+        float scalar_2 = 1.0f - m_w * m_w;
 
         if (math::IsZero(scalar_2))
             return SVec3(0.0f, 1.0f, 0.0f);
         
         float scalar = 1.0f / sqrt(scalar_2);
 
-        return SVec3(x * scalar, y * scalar, z * scalar);
+        return SVec3(m_x * scalar, m_y * scalar, m_z * scalar);
     }
 
     float SQuat::GetAngle() const
     {
-        float angle = 2.0f * acos(w);
+        float angle = 2.0f * acos(m_w);
 
 		return math::RadiansToDegrees(angle);
     }
@@ -125,17 +125,17 @@ namespace ursine
 	void SQuat::GetAngleAxis(float &degrees, SVec3 &axis) const
     {
         // angle
-		degrees = math::RadiansToDegrees(2.0f * acos(w));
+		degrees = math::RadiansToDegrees(2.0f * acos(m_w));
 
         // axis
-        float scalar_2 = 1.0f - w * w;
+        float scalar_2 = 1.0f - m_w * m_w;
 
         if (math::IsZero(scalar_2))
             axis.Set(0.0f, 1.0f, 0.0f);
 
         float scalar = 1.0f / sqrt(scalar_2);
 
-        axis.Set(x * scalar, y * scalar, z * scalar);
+        axis.Set(m_x * scalar, m_y * scalar, m_z * scalar);
     }
 
     void SQuat::SetAngleAxis(float degrees, const SVec3 &axis)
@@ -174,9 +174,9 @@ namespace ursine
 	{
 		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
-		float x_radians = atan2f(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
-		float y_radians = asinf(2.0f * (w * y - z * x));
-		float z_radians = atan2f(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
+		float x_radians = atan2f(2.0f * (m_w * m_x + m_y * m_z), 1.0f - 2.0f * (m_x * m_x + m_y * m_y));
+		float y_radians = asinf(2.0f * (m_w * m_y - m_z * m_x));
+		float z_radians = atan2f(2.0f * (m_w * m_z + m_x * m_y), 1.0f - 2.0f * (m_y * m_y + m_z * m_z));
 
 		return {
 			math::RadiansToDegrees(x_radians),
@@ -212,7 +212,7 @@ namespace ursine
 
     SQuat SQuat::GetInverse() const
     {
-        return SQuat(-x, -y, -z, w);
+        return SQuat(-m_x, -m_y, -m_z, m_w);
     }
 
     SQuat SQuat::Slerp(const SQuat& other, float t) const
@@ -243,10 +243,10 @@ namespace ursine
             float s0 = sin((1.0f - t) * theta);
 
             result.Set(
-                (x * s0 + other.X() * s1) * d,
-                (y * s0 + other.Y() * s1) * d,
-                (z * s0 + other.Z() * s1) * d,
-                (w * s0 + other.W() * s1) * d
+                (m_x * s0 + other.X() * s1) * d,
+                (m_y * s0 + other.Y() * s1) * d,
+                (m_z * s0 + other.Z() * s1) * d,
+                (m_w * s0 + other.W() * s1) * d
             );
         }
         else
@@ -264,10 +264,10 @@ namespace ursine
 
     void SQuat::Rotate(const SVec3& vec, SVec3& result)
     {
-		SVec3 qv(x, y, z);
+		SVec3 qv(m_x, m_y, m_z);
 
-		result = (2.0f * w) * (SVec3::Cross(qv, vec));
-		result += ((w * w) - qv.Dot(qv)) * vec;
+		result = (2.0f * m_w) * (SVec3::Cross(qv, vec));
+		result += ((m_w * m_w) - qv.Dot(qv)) * vec;
 		result += (2.0f * (qv.Dot(vec))) * qv;
     }
 
@@ -311,10 +311,10 @@ namespace ursine
     const SQuat &SQuat::operator*=(const SQuat &q)
     {
         Set(
-            w * q.X() + x * q.W() + y * q.Z() - z * q.Y(),
-            w * q.Y() + y * q.W() + z * q.X() - x * q.Z(),
-            w * q.Z() + z * q.W() + x * q.Y() - y * q.X(),
-            w * q.W() - x * q.X() - y * q.Y() - z * q.Z()
+            m_w * q.X() + m_x * q.W() + m_y * q.Z() - m_z * q.Y(),
+            m_w * q.Y() + m_y * q.W() + m_z * q.X() - m_x * q.Z(),
+            m_w * q.Z() + m_z * q.W() + m_x * q.Y() - m_y * q.X(),
+            m_w * q.W() - m_x * q.X() - m_y * q.Y() - m_z * q.Z()
         );
 
         return *this;
@@ -323,10 +323,10 @@ namespace ursine
     SQuat SQuat::operator*(const SQuat &rhs)
     {
         return SQuat(
-            w * rhs.X() + x * rhs.W() + y * rhs.Z() - z * rhs.Y(),
-            w * rhs.Y() + y * rhs.W() + z * rhs.X() - x * rhs.Z(),
-            w * rhs.Z() + z * rhs.W() + x * rhs.Y() - y * rhs.X(),
-            w * rhs.W() - x * rhs.X() - y * rhs.Y() - z * rhs.Z()
+            m_w * rhs.X() + m_x * rhs.W() + m_y * rhs.Z() - m_z * rhs.Y(),
+            m_w * rhs.Y() + m_y * rhs.W() + m_z * rhs.X() - m_x * rhs.Z(),
+            m_w * rhs.Z() + m_z * rhs.W() + m_x * rhs.Y() - m_y * rhs.X(),
+            m_w * rhs.W() - m_x * rhs.X() - m_y * rhs.Y() - m_z * rhs.Z()
         );
     }
 

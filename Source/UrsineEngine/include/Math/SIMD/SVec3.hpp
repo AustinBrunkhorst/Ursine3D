@@ -5,46 +5,46 @@ namespace ursine
 {
 #ifdef USE_SSE
     INLINE SVec3::SVec3(const SIMDvec &value)
-        : m128(value) { }
+        : m_128(value) { }
 #endif
 
     INLINE SVec3::SVec3(float X, float Y, float Z)
-            : x(X)
-            , y(Y)
-            , z(Z)
+            : m_x(X)
+            , m_y(Y)
+            , m_z(Z)
     {
 #ifdef USE_SSE
-        w = 0.0f;
+        m_w = 0.0f;
 #endif
     }
 
     INLINE SVec3::SVec3(float value)
-            : x(value)
-            , y(value)
-            , z(value)
+            : m_x(value)
+            , m_y(value)
+            , m_z(value)
     {
 #ifdef USE_SSE
-        w = 0.0f;
+        m_w = 0.0f;
 #endif
     }
 
     INLINE SVec3::SVec3(const SVec3 &value)
-            : x(value.X())
-            , y(value.Y())
-            , z(value.Z())
+            : m_x(value.X())
+            , m_y(value.Y())
+            , m_z(value.Z())
     {
 #ifdef USE_SSE
-        w = 0.0f;
+        m_w = 0.0f;
 #endif
     }
 
     INLINE SVec3::SVec3(void)
-            : x(0.0f)
-            , y(0.0f)
-            , z(0.0f)
+            : m_x(0.0f)
+            , m_y(0.0f)
+            , m_z(0.0f)
     {
 #ifdef USE_SSE
-        w = 0.0f;
+        m_w = 0.0f;
 #endif
     }
 
@@ -88,11 +88,11 @@ namespace ursine
     INLINE void SVec3::Set(float X, float Y, float Z)
     {
 #ifdef USE_SSE
-        m128 = _mm_set_ps(0.0f, Z, Y, X);
+        m_128 = _mm_set_ps(0.0f, Z, Y, X);
 #else
-        x = X;
-        y = Y;
-        z = Z;
+        m_x = X;
+        m_y = Y;
+        m_z = Z;
 #endif
     }
 
@@ -109,21 +109,21 @@ namespace ursine
     INLINE void SVec3::Cross(const SVec3 &other)
     {
 #ifdef USE_SSE
-        auto t = _mm_shuffle_ps(m128, m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-        auto v = _mm_shuffle_ps(other.m128, other.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
+        auto t = _mm_shuffle_ps(m_128, m_128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
+        auto v = _mm_shuffle_ps(other.m_128, other.m_128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
 
-        v = _mm_mul_ps(v, m128);
-        t = _mm_mul_ps(t, other.m128);
+        v = _mm_mul_ps(v, m_128);
+        t = _mm_mul_ps(t, other.m_128);
         v = _mm_sub_ps(v, t);
 
-        m128 = _mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3));
+        m_128 = _mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3));
 #else
-        float original_x = x;
-        float original_y = y;
+        float original_x = m_x;
+        float original_y = m_y;
 
-        x = y          * other.Z() - other.Y() * z;
-        y = z          * other.X() - other.Z() * original_x;
-        z = original_x * other.Y() - other.X() * original_y;
+        m_x = m_y          * other.Z() - other.Y() * m_z;
+        m_y = m_z          * other.X() - other.Z() * original_x;
+        m_z = original_x * other.Y() - other.X() * original_y;
 #endif
     }
 
@@ -131,17 +131,17 @@ namespace ursine
     {
 #ifdef USE_SSE
         // cross
-        auto t = _mm_shuffle_ps(b.m128, b.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-        auto v = _mm_shuffle_ps(c.m128, c.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
+        auto t = _mm_shuffle_ps(b.m_128, b.m_128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
+        auto v = _mm_shuffle_ps(c.m_128, c.m_128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
 
-        v = _mm_mul_ps(v, b.m128);
-        t = _mm_mul_ps(t, c.m128);
+        v = _mm_mul_ps(v, b.m_128);
+        t = _mm_mul_ps(t, c.m_128);
         v = _mm_sub_ps(v, t);
 
         v = _mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3));
 
         // dot
-        v = _mm_mul_ps(v, a.m128);
+        v = _mm_mul_ps(v, a.m_128);
         auto z = _mm_movehl_ps(v, v);
         auto y = _mm_shuffle_ps(v, v, 0x55);
         v = _mm_add_ss(v, y);
@@ -157,11 +157,11 @@ namespace ursine
     INLINE SVec3 SVec3::Cross(const SVec3 &vec1, const SVec3 &vec2)
     {
 #ifdef USE_SSE
-        auto t = _mm_shuffle_ps(vec1.m128, vec1.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
-        auto v = _mm_shuffle_ps(vec2.m128, vec2.m128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
+        auto t = _mm_shuffle_ps(vec1.m_128, vec1.m_128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
+        auto v = _mm_shuffle_ps(vec2.m_128, vec2.m_128, SHUFFLE(1, 2, 0, 3)); // Y, Z, X, 0
 
-        v = _mm_mul_ps(v, vec1.m128);
-        t = _mm_mul_ps(t, vec2.m128);
+        v = _mm_mul_ps(v, vec1.m_128);
+        t = _mm_mul_ps(t, vec2.m_128);
         v = _mm_sub_ps(v, t);
 
         return SVec3(_mm_shuffle_ps(v, v, SHUFFLE(1, 2, 0, 3)));
@@ -202,7 +202,7 @@ namespace ursine
     INLINE float SVec3::Dot(const SVec3 &vec1, const SVec3 &vec2)
     {
 #ifdef USE_SSE
-        auto v = _mm_mul_ps(vec1.m128, vec2.m128);
+        auto v = _mm_mul_ps(vec1.m_128, vec2.m_128);
         auto z = _mm_movehl_ps(v, v);
         auto y = _mm_shuffle_ps(v, v, 0x55);
 
@@ -240,23 +240,23 @@ namespace ursine
     INLINE void SVec3::Max(const SVec3 &other)
     {
 #ifdef USE_SSE
-        m128 = _mm_max_ps(m128, other.m128);
+        m_128 = _mm_max_ps(m_128, other.m_128);
 #else
-        x = Math::Max(x, other.X());
-        y = Math::Max(y, other.Y());
-        z = Math::Max(z, other.Z());
+        m_x = math::Max(m_x, other.X());
+        m_y = math::Max(m_y, other.Y());
+        m_z = math::Max(m_z, other.Z());
 #endif
     }
 
     INLINE SVec3 SVec3::Max(const SVec3 &vec1, const SVec3 &vec2)
     {
 #ifdef USE_SSE
-        return SVec3(_mm_max_ps(vec1.m128, vec2.m128));
+        return SVec3(_mm_max_ps(vec1.m_128, vec2.m_128));
 #else
         return {
-            Math::Max(vec1.X(), vec2.X()),
-            Math::Max(vec1.Y(), vec2.Y()),
-            Math::Max(vec1.Z(), vec2.Z())
+            math::Max(vec1.X(), vec2.X()),
+            math::Max(vec1.Y(), vec2.Y()),
+            math::Max(vec1.Z(), vec2.Z())
         };
 #endif
     }
@@ -264,23 +264,23 @@ namespace ursine
     INLINE void SVec3::Min(const SVec3 &other)
     {
 #ifdef USE_SSE
-        m128 = _mm_min_ps(m128, other.m128);
+        m_128 = _mm_min_ps(m_128, other.m_128);
 #else
-        x = Math::Min(x, other.X());
-        y = Math::Min(y, other.Y());
-        z = Math::Min(z, other.Z());
+        m_x = math::Min(m_x, other.X());
+        m_y = math::Min(m_y, other.Y());
+        m_z = math::Min(m_z, other.Z());
 #endif
     }
 
     INLINE SVec3 SVec3::Min(const SVec3 &vec1, const SVec3 &vec2)
     {
 #ifdef USE_SSE
-        return SVec3(_mm_min_ps(vec1.m128, vec2.m128));
+        return SVec3(_mm_min_ps(vec1.m_128, vec2.m_128));
 #else
         return {
-            Math::Min(vec1.X(), vec2.X()),
-            Math::Min(vec1.Y(), vec2.Y()),
-            Math::Min(vec1.Z(), vec2.Z())
+            math::Min(vec1.X(), vec2.X()),
+            math::Min(vec1.Y(), vec2.Y()),
+            math::Min(vec1.Z(), vec2.Z())
         };
 #endif
     }
@@ -338,58 +338,58 @@ namespace ursine
     // Accessors
     INLINE float SVec3::X(void) const
     {
-        return x;
+        return m_x;
     }
 
     INLINE float SVec3::Y(void) const
     {
-        return y;
+        return m_y;
     }
 
     INLINE float SVec3::Z(void) const
     {
-        return z;
+        return m_z;
     }
 
     INLINE float &SVec3::X(void)
     {
-        return x;
+        return m_x;
     }
 
     INLINE float &SVec3::Y(void)
     {
-        return y;
+        return m_y;
     }
 
     INLINE float &SVec3::Z(void)
     {
-        return z;
+        return m_z;
     }
 
     INLINE float SVec3::operator[](uint index) const
     {
-        return (&x)[index];
+        return (&m_x)[index];
     }
 
     INLINE float &SVec3::operator[](uint index)
     {
-        return (&x)[index];
+        return (&m_x)[index];
     }
 
     INLINE const float* SVec3::GetFloatPtr(void) const
     {
-        return &x;
+        return &m_x;
     }
 
     // Operators
     INLINE bool SVec3::operator==(const SVec3 &rhs) const
     {
 #ifdef USE_SSE
-        return (0xf == _mm_movemask_ps(_mm_cmpeq_ps(m128, rhs.m128)));
+        return (0xf == _mm_movemask_ps(_mm_cmpeq_ps(m_128, rhs.m_128)));
 #else
-        return Math::IsEqual(x, rhs.X()) &&
-               Math::IsEqual(y, rhs.Y()) &&
-               Math::IsEqual(z, rhs.Z());
+        return math::IsEqual(m_x, rhs.X()) &&
+               math::IsEqual(m_y, rhs.Y()) &&
+               math::IsEqual(m_z, rhs.Z());
 #endif
     }
 
@@ -401,12 +401,12 @@ namespace ursine
     INLINE SVec3 SVec3::operator+(const SVec3 &rhs) const
     {
 #ifdef USE_SSE
-        return SVec3(_mm_add_ps(m128, rhs.m128));
+        return SVec3(_mm_add_ps(m_128, rhs.m_128));
 #else
         return {
-            x + rhs.X(),
-            y + rhs.Y(),
-            z + rhs.Z()
+            m_x + rhs.X(),
+            m_y + rhs.Y(),
+            m_z + rhs.Z()
         };
 #endif
     }
@@ -415,10 +415,10 @@ namespace ursine
     {
 #ifdef USE_SSE
         // flip the sign bit (not safe with NaNs)
-        return SVec3(_mm_xor_ps(m128, _mm_set1_ps(-0.0f)));
+        return SVec3(_mm_xor_ps(m_128, _mm_set1_ps(-0.0f)));
 #else
         return {
-            -x, -y, -z
+            -m_x, -m_y, -m_z
         };
 #endif
     }
@@ -426,12 +426,12 @@ namespace ursine
     INLINE SVec3 SVec3::operator-(const SVec3 &rhs) const
     {
 #ifdef USE_SSE
-        return SVec3(_mm_sub_ps(m128, rhs.m128));
+        return SVec3(_mm_sub_ps(m_128, rhs.m_128));
 #else
         return {
-            x - rhs.X(),
-            y - rhs.Y(),
-            z - rhs.Z()
+            m_x - rhs.X(),
+            m_y - rhs.Y(),
+            m_z - rhs.Z()
         };
 #endif
     }
@@ -439,12 +439,12 @@ namespace ursine
     INLINE SVec3 SVec3::operator*(const SVec3 &rhs) const
     {
 #ifdef USE_SSE
-        return SVec3(_mm_mul_ps(m128, rhs.m128));
+        return SVec3(_mm_mul_ps(m_128, rhs.m_128));
 #else
         return {
-            x * rhs.X(),
-            y * rhs.Y(),
-            z * rhs.Z()
+            m_x * rhs.X(),
+            m_y * rhs.Y(),
+            m_z * rhs.Z()
         };
 #endif
     }
@@ -452,12 +452,12 @@ namespace ursine
     INLINE SVec3 SVec3::operator*(float rhs) const
     {
 #ifdef USE_SSE
-        return SVec3(_mm_mul_ps(m128, _mm_set1_ps(rhs)));
+        return SVec3(_mm_mul_ps(m_128, _mm_set1_ps(rhs)));
 #else
         return {
-            x * rhs,
-            y * rhs,
-            z * rhs
+            m_x * rhs,
+            m_y * rhs,
+            m_z * rhs
         };
 #endif
     }
@@ -465,7 +465,7 @@ namespace ursine
     INLINE SVec3 operator*(float lhs, const SVec3 &rhs)
     {
 #ifdef USE_SSE
-        return SVec3(_mm_mul_ps(_mm_set1_ps(lhs), rhs.m128));
+        return SVec3(_mm_mul_ps(_mm_set1_ps(lhs), rhs.m_128));
 #else
         return {
             rhs.X() * lhs,
@@ -478,12 +478,12 @@ namespace ursine
     INLINE SVec3 SVec3::operator/(const SVec3 &rhs) const
     {
 #ifdef USE_SSE
-        return SVec3(_mm_and_ps(_mm_div_ps(m128, rhs.m128), FFF0Mask));
+        return SVec3(_mm_and_ps(_mm_div_ps(m_128, rhs.m_128), FFF0Mask));
 #else
         return {
-            x / rhs.X(),
-            y / rhs.Y(),
-            z / rhs.Z()
+            m_x / rhs.X(),
+            m_y / rhs.Y(),
+            m_z / rhs.Z()
         };
 #endif
     }
@@ -493,12 +493,12 @@ namespace ursine
         float inv = 1.0f / rhs;
 
 #ifdef USE_SSE
-        return SVec3(_mm_mul_ps(m128, _mm_set1_ps(inv)));
+        return SVec3(_mm_mul_ps(m_128, _mm_set1_ps(inv)));
 #else
         return {
-            x * inv,
-            y * inv,
-            z * inv
+            m_x * inv,
+            m_y * inv,
+            m_z * inv
         };
 #endif
     }
@@ -506,11 +506,11 @@ namespace ursine
     INLINE const SVec3 &SVec3::operator=(const SVec3 &rhs)
     {
 #ifdef USE_SSE
-        m128 = rhs.m128;
+        m_128 = rhs.m_128;
 #else
-        x = rhs.X();
-        y = rhs.Y();
-        z = rhs.Z();
+        m_x = rhs.X();
+        m_y = rhs.Y();
+        m_z = rhs.Z();
 #endif
         return *this;
     }
@@ -518,11 +518,11 @@ namespace ursine
     INLINE const SVec3 &SVec3::operator+=(const SVec3 &rhs)
     {
 #ifdef USE_SSE
-        m128 = _mm_add_ps(m128, rhs.m128);
+        m_128 = _mm_add_ps(m_128, rhs.m_128);
 #else
-        x += rhs.X();
-        y += rhs.Y();
-        z += rhs.Z();
+        m_x += rhs.X();
+        m_y += rhs.Y();
+        m_z += rhs.Z();
 #endif
 
         return *this;
@@ -531,11 +531,11 @@ namespace ursine
     INLINE const SVec3 &SVec3::operator-=(const SVec3 &rhs)
     {
 #ifdef USE_SSE
-        m128 = _mm_sub_ps(m128, rhs.m128);
+        m_128 = _mm_sub_ps(m_128, rhs.m_128);
 #else
-        x -= rhs.X();
-        y -= rhs.Y();
-        z -= rhs.Z();
+        m_x -= rhs.X();
+        m_y -= rhs.Y();
+        m_z -= rhs.Z();
 #endif
 
         return *this;
@@ -544,11 +544,11 @@ namespace ursine
     INLINE const SVec3 &SVec3::operator*=(const SVec3 &rhs)
     {
 #ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, rhs.m128);
+        m_128 = _mm_mul_ps(m_128, rhs.m_128);
 #else
-        x *= rhs.X();
-        y *= rhs.Y();
-        z *= rhs.Z();
+        m_x *= rhs.X();
+        m_y *= rhs.Y();
+        m_z *= rhs.Z();
 #endif
 
         return *this;
@@ -557,11 +557,11 @@ namespace ursine
     INLINE const SVec3 &SVec3::operator*=(float rhs)
     {
 #ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, _mm_set1_ps(rhs));
+        m_128 = _mm_mul_ps(m_128, _mm_set1_ps(rhs));
 #else
-        x *= rhs;
-        y *= rhs;
-        z *= rhs;
+        m_x *= rhs;
+        m_y *= rhs;
+        m_z *= rhs;
 #endif
 
         return *this;
@@ -570,11 +570,11 @@ namespace ursine
     INLINE const SVec3 &SVec3::operator/=(const SVec3 &rhs)
     {
 #ifdef USE_SSE
-        m128 = _mm_and_ps(_mm_div_ps(m128, rhs.m128), FFF0Mask);
+        m_128 = _mm_and_ps(_mm_div_ps(m_128, rhs.m_128), FFF0Mask);
 #else
-        x /= rhs.X();
-        y /= rhs.Y();
-        z /= rhs.Z();
+        m_x /= rhs.X();
+        m_y /= rhs.Y();
+        m_z /= rhs.Z();
 #endif
 
         return *this;
@@ -585,11 +585,11 @@ namespace ursine
         float inv = 1.0f / rhs;
 
 #ifdef USE_SSE
-        m128 = _mm_mul_ps(m128, _mm_set1_ps(inv));
+        m_128 = _mm_mul_ps(m_128, _mm_set1_ps(inv));
 #else
-        x *= inv;
-        y *= inv;
-        z *= inv;
+        m_x *= inv;
+        m_y *= inv;
+        m_z *= inv;
 #endif
 
         return *this;

@@ -16,27 +16,27 @@
 namespace ursine
 {
 	Vec2::Vec2(const Vec3 &value)
-		: x(value.x)
-		, y(value.y) { }
+		: m_x(value.m_x)
+		, m_y(value.m_y) { }
 
     Vec2::Vec2(const SVec3 &value)
-        : x(value.x)
-        , y(value.y) { }
+        : m_x(value.m_x)
+        , m_y(value.m_y) { }
 
     // Public Methods
     void Vec2::Clean(void)
     {
-        x = math::IsZero(x) ? 0.0f : x;
-        y = math::IsZero(y) ? 0.0f : y;
+        m_x = math::IsZero(m_x) ? 0.0f : m_x;
+        m_y = math::IsZero(m_y) ? 0.0f : m_y;
     }
 
     std::string Vec2::ToString(void) const
     {
         std::ostringstream x_cvt;
-        x_cvt << x;
+        x_cvt << m_x;
 
         std::ostringstream y_cvt;
-        y_cvt << y;
+        y_cvt << m_y;
 
         return{ "{" +
                 x_cvt.str() + ", " +

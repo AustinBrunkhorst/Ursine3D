@@ -4,28 +4,28 @@
 namespace ursine
 {
     INLINE Vec4::Vec4(void)
-        : x(0.0f)
-        , y(0.0f)
-        , z(0.0f)
-        , w(0.0f) { }
+        : m_x(0.0f)
+        , m_y(0.0f)
+        , m_z(0.0f)
+        , m_w(0.0f) { }
 
     INLINE Vec4::Vec4(const Vec4 &value)
-        : x(value.X())
-        , y(value.Y())
-        , z(value.Z())
-        , w(value.w) { }
+        : m_x(value.X())
+        , m_y(value.Y())
+        , m_z(value.Z())
+        , m_w(value.m_w) { }
 
     INLINE Vec4::Vec4(float value)
-        : x(value)
-        , y(value)
-        , z(value)
-        , w(value) { }
+        : m_x(value)
+        , m_y(value)
+        , m_z(value)
+        , m_w(value) { }
 
     INLINE Vec4::Vec4(float X, float Y, float Z, float W)
-        : x(X)
-        , y(Y)
-        , z(Z)
-        , w(W) { }
+        : m_x(X)
+        , m_y(Y)
+        , m_z(Z)
+        , m_w(W) { }
 
     // Properties
     INLINE const Vec4 &Vec4::Zero(void)
@@ -73,10 +73,10 @@ namespace ursine
     // Public Methods
     INLINE void Vec4::Set(float X, float Y, float Z, float W)
     {
-        x = X;
-        y = Y;
-        z = Z;
-        w = W;
+        m_x = X;
+        m_y = Y;
+        m_z = Z;
+        m_w = W;
     }
 
     INLINE void Vec4::Clamp(const Vec4 &min, const Vec4 &max)
@@ -117,7 +117,7 @@ namespace ursine
     INLINE float Vec4::Dot(const Vec4 &vec1, const Vec4 &vec2)
     {
         return vec1.X() * vec2.X() + vec1.Y() * vec2.Y() +
-               vec1.Z() * vec2.Z() + vec1.w * vec2.w;
+               vec1.Z() * vec2.Z() + vec1.m_w * vec2.m_w;
     }
 
     INLINE float Vec4::Length(void) const
@@ -142,10 +142,10 @@ namespace ursine
 
     INLINE void Vec4::Max(const Vec4 &other)
     {
-        x = math::Max(x, other.X());
-        y = math::Max(y, other.Y());
-        z = math::Max(z, other.Z());
-        w = math::Max(w, other.w);
+        m_x = math::Max(m_x, other.X());
+        m_y = math::Max(m_y, other.Y());
+        m_z = math::Max(m_z, other.Z());
+        m_w = math::Max(m_w, other.m_w);
     }
 
     INLINE Vec4 Vec4::Max(const Vec4 &vec1, const Vec4 &vec2)
@@ -154,16 +154,16 @@ namespace ursine
             math::Max(vec1.X(), vec2.X()),
             math::Max(vec1.Y(), vec2.Y()),
             math::Max(vec1.Z(), vec2.Z()),
-            math::Max(vec1.w, vec2.w)
+            math::Max(vec1.m_w, vec2.m_w)
         };
     }
 
     INLINE void Vec4::Min(const Vec4 &other)
     {
-        x = math::Min(x, other.X());
-        y = math::Min(y, other.Y());
-        z = math::Min(z, other.Z());
-        w = math::Min(w, other.w);
+        m_x = math::Min(m_x, other.X());
+        m_y = math::Min(m_y, other.Y());
+        m_z = math::Min(m_z, other.Z());
+        m_w = math::Min(m_w, other.m_w);
     }
 
     INLINE Vec4 Vec4::Min(const Vec4 &vec1, const Vec4 &vec2)
@@ -172,7 +172,7 @@ namespace ursine
             math::Min(vec1.X(), vec2.X()),
             math::Min(vec1.Y(), vec2.Y()),
             math::Min(vec1.Z(), vec2.Z()),
-            math::Min(vec1.w, vec2.w)
+            math::Min(vec1.m_w, vec2.m_w)
         };
     }
 
@@ -205,66 +205,66 @@ namespace ursine
     // Accessors
     INLINE float Vec4::X(void) const
     {
-        return x;
+        return m_x;
     }
 
     INLINE float Vec4::Y(void) const
     {
-        return y;
+        return m_y;
     }
 
     INLINE float Vec4::Z(void) const
     {
-        return z;
+        return m_z;
     }
 
     INLINE float Vec4::W(void) const
     {
-        return w;
+        return m_w;
     }
 
     INLINE float &Vec4::X(void)
     {
-        return x;
+        return m_x;
     }
 
     INLINE float &Vec4::Y(void)
     {
-        return y;
+        return m_y;
     }
 
     INLINE float &Vec4::Z(void)
     {
-        return z;
+        return m_z;
     }
 
     INLINE float &Vec4::W(void)
     {
-        return w;
+        return m_w;
     }
 
     INLINE float Vec4::operator[](uint index) const
     {
-        return (&x)[index];
+        return (&m_x)[index];
     }
 
     INLINE float &Vec4::operator[](uint index)
     {
-        return (&x)[index];
+        return (&m_x)[index];
     }
 
     INLINE const float* Vec4::GetFloatPtr(void) const
     {
-        return &x;
+        return &m_x;
     }
 
     // Operators
     INLINE bool Vec4::operator==(const Vec4 &rhs) const
     {
-        return math::IsEqual(x, rhs.X()) &&
-               math::IsEqual(y, rhs.Y()) &&
-               math::IsEqual(z, rhs.Z()) &&
-               math::IsEqual(w, rhs.w);
+        return math::IsEqual(m_x, rhs.X()) &&
+               math::IsEqual(m_y, rhs.Y()) &&
+               math::IsEqual(m_z, rhs.Z()) &&
+               math::IsEqual(m_w, rhs.m_w);
     }
 
     INLINE bool Vec4::operator!=(const Vec4 &rhs) const
@@ -275,47 +275,47 @@ namespace ursine
     INLINE Vec4 Vec4::operator+(const Vec4 &rhs) const
     {
         return {
-            x + rhs.X(),
-            y + rhs.Y(),
-            z + rhs.Z(),
-            w + rhs.w
+            m_x + rhs.X(),
+            m_y + rhs.Y(),
+            m_z + rhs.Z(),
+            m_w + rhs.m_w
         };
     }
 
     INLINE Vec4 Vec4::operator-(void) const
     {
         return {
-            -x, -y, -z, -w
+            -m_x, -m_y, -m_z, -m_w
         };
     }
 
     INLINE Vec4 Vec4::operator-(const Vec4 &rhs) const
     {
         return {
-            x - rhs.X(),
-            y - rhs.Y(),
-            z - rhs.Z(),
-            w - rhs.w
+            m_x - rhs.X(),
+            m_y - rhs.Y(),
+            m_z - rhs.Z(),
+            m_w - rhs.m_w
         };
     }
 
     INLINE Vec4 Vec4::operator*(const Vec4 &rhs) const
     {
         return {
-            x * rhs.X(),
-            y * rhs.Y(),
-            z * rhs.Z(),
-            w * rhs.w
+            m_x * rhs.X(),
+            m_y * rhs.Y(),
+            m_z * rhs.Z(),
+            m_w * rhs.m_w
         };
     }
 
     INLINE Vec4 Vec4::operator*(float rhs) const
     {
         return {
-            x * rhs,
-            y * rhs,
-            z * rhs,
-            w * rhs
+            m_x * rhs,
+            m_y * rhs,
+            m_z * rhs,
+            m_w * rhs
         };
     }
 
@@ -325,17 +325,17 @@ namespace ursine
             rhs.X() * lhs,
             rhs.Y() * lhs,
             rhs.Z() * lhs,
-            rhs.w * lhs
+            rhs.m_w * lhs
         };
     }
 
     INLINE Vec4 Vec4::operator/(const Vec4 &rhs) const
     {
         return {
-            x / rhs.X(),
-            y / rhs.Y(),
-            z / rhs.Z(),
-            w / rhs.w
+            m_x / rhs.X(),
+            m_y / rhs.Y(),
+            m_z / rhs.Z(),
+            m_w / rhs.m_w
         };
     }
 
@@ -344,69 +344,69 @@ namespace ursine
         float inv = 1.0f / rhs;
 
         return {
-            x * inv,
-            y * inv,
-            z * inv,
-            w * inv
+            m_x * inv,
+            m_y * inv,
+            m_z * inv,
+            m_w * inv
         };
     }
 
     INLINE const Vec4 &Vec4::operator=(const Vec4 &rhs)
     {
-        x = rhs.X();
-        y = rhs.Y();
-        z = rhs.Z();
-        w = rhs.w;
+        m_x = rhs.X();
+        m_y = rhs.Y();
+        m_z = rhs.Z();
+        m_w = rhs.m_w;
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator+=(const Vec4 &rhs)
     {
-        x += rhs.X();
-        y += rhs.Y();
-        z += rhs.Z();
-        w += rhs.w;
+        m_x += rhs.X();
+        m_y += rhs.Y();
+        m_z += rhs.Z();
+        m_w += rhs.m_w;
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator-=(const Vec4 &rhs)
     {
-        x -= rhs.X();
-        y -= rhs.Y();
-        z -= rhs.Z();
-        w -= rhs.w;
+        m_x -= rhs.X();
+        m_y -= rhs.Y();
+        m_z -= rhs.Z();
+        m_w -= rhs.m_w;
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator*=(const Vec4 &rhs)
     {
-        x *= rhs.X();
-        y *= rhs.Y();
-        z *= rhs.Z();
-        w *= rhs.w;
+        m_x *= rhs.X();
+        m_y *= rhs.Y();
+        m_z *= rhs.Z();
+        m_w *= rhs.m_w;
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator*=(float rhs)
     {
-        x *= rhs;
-        y *= rhs;
-        z *= rhs;
-        w *= rhs;
+        m_x *= rhs;
+        m_y *= rhs;
+        m_z *= rhs;
+        m_w *= rhs;
 
         return *this;
     }
 
     INLINE const Vec4 &Vec4::operator/=(const Vec4 &rhs)
     {
-        x /= rhs.X();
-        y /= rhs.Y();
-        z /= rhs.Z();
-        w /= rhs.w;
+        m_x /= rhs.X();
+        m_y /= rhs.Y();
+        m_z /= rhs.Z();
+        m_w /= rhs.m_w;
 
         return *this;
     }
@@ -415,10 +415,10 @@ namespace ursine
     {
         float inv = 1.0f / rhs;
 
-        x *= inv;
-        y *= inv;
-        z *= inv;
-        w *= inv;
+        m_x *= inv;
+        m_y *= inv;
+        m_z *= inv;
+        m_w *= inv;
 
         return *this;
     }

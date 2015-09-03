@@ -4,27 +4,27 @@
 namespace ursine
 {
     INLINE Vec3::Vec3(float X, float Y, float Z)
-            : x(X)
-            , y(Y)
-            , z(Z)
+            : m_x(X)
+            , m_y(Y)
+            , m_z(Z)
     { }
 
     INLINE Vec3::Vec3(float value)
-            : x(value)
-            , y(value)
-            , z(value)
+            : m_x(value)
+            , m_y(value)
+            , m_z(value)
     { }
 
     INLINE Vec3::Vec3(const Vec3 &value)
-            : x(value.X())
-            , y(value.Y())
-            , z(value.Z())
+            : m_x(value.X())
+            , m_y(value.Y())
+            , m_z(value.Z())
     { }
 
     INLINE Vec3::Vec3(void)
-            : x(0.0f)
-            , y(0.0f)
-            , z(0.0f)
+            : m_x(0.0f)
+            , m_y(0.0f)
+            , m_z(0.0f)
     { }
 
     // Properties
@@ -66,9 +66,9 @@ namespace ursine
     // Public Methods
     INLINE void Vec3::Set(float X, float Y, float Z)
     {
-        x = X;
-        y = Y;
-        z = Z;
+        m_x = X;
+        m_y = Y;
+        m_z = Z;
     }
 
     INLINE void Vec3::Clamp(const Vec3 &min, const Vec3 &max)
@@ -83,12 +83,12 @@ namespace ursine
 
     INLINE void Vec3::Cross(const Vec3 &other)
     {
-        float original_x = x;
-        float original_y = y;
+        float original_x = m_x;
+        float original_y = m_y;
 
-        x = y          * other.Z() - other.Y() * z;
-        y = z          * other.X() - other.Z() * original_x;
-        z = original_x * other.Y() - other.X() * original_y;
+        m_x = m_y          * other.Z() - other.Y() * m_z;
+        m_y = m_z          * other.X() - other.Z() * original_x;
+        m_z = original_x * other.Y() - other.X() * original_y;
     }
 
     INLINE float Vec3::TripleProduct(const Vec3& a, const Vec3& b, const Vec3& c)
@@ -159,9 +159,9 @@ namespace ursine
 
     INLINE void Vec3::Max(const Vec3 &other)
     {
-        x = math::Max(x, other.X());
-        y = math::Max(y, other.Y());
-        z = math::Max(z, other.Z());
+        m_x = math::Max(m_x, other.X());
+        m_y = math::Max(m_y, other.Y());
+        m_z = math::Max(m_z, other.Z());
     }
 
     INLINE Vec3 Vec3::Max(const Vec3 &vec1, const Vec3 &vec2)
@@ -175,9 +175,9 @@ namespace ursine
 
     INLINE void Vec3::Min(const Vec3 &other)
     {
-        x = math::Min(x, other.X());
-        y = math::Min(y, other.Y());
-        z = math::Min(z, other.Z());
+        m_x = math::Min(m_x, other.X());
+        m_y = math::Min(m_y, other.Y());
+        m_z = math::Min(m_z, other.Z());
     }
 
     INLINE Vec3 Vec3::Min(const Vec3 &vec1, const Vec3 &vec2)
@@ -218,55 +218,55 @@ namespace ursine
     // Accessors
     INLINE float Vec3::X(void) const
     {
-        return x;
+        return m_x;
     }
 
     INLINE float Vec3::Y(void) const
     {
-        return y;
+        return m_y;
     }
 
     INLINE float Vec3::Z(void) const
     {
-        return z;
+        return m_z;
     }
 
     INLINE float &Vec3::X(void)
     {
-        return x;
+        return m_x;
     }
 
     INLINE float &Vec3::Y(void)
     {
-        return y;
+        return m_y;
     }
 
     INLINE float &Vec3::Z(void)
     {
-        return z;
+        return m_z;
     }
 
     INLINE float Vec3::operator[](uint index) const
     {
-        return (&x)[index];
+        return (&m_x)[index];
     }
 
     INLINE float &Vec3::operator[](uint index)
     {
-        return (&x)[index];
+        return (&m_x)[index];
     }
 
     INLINE const float* Vec3::GetFloatPtr(void) const
     {
-        return &x;
+        return &m_x;
     }
 
     // Operators
     INLINE bool Vec3::operator==(const Vec3 &rhs) const
     {
-        return math::IsEqual(x, rhs.X()) &&
-               math::IsEqual(y, rhs.Y()) &&
-               math::IsEqual(z, rhs.Z());
+        return math::IsEqual(m_x, rhs.X()) &&
+               math::IsEqual(m_y, rhs.Y()) &&
+               math::IsEqual(m_z, rhs.Z());
     }
 
     INLINE bool Vec3::operator!=(const Vec3 &rhs) const
@@ -277,43 +277,43 @@ namespace ursine
     INLINE Vec3 Vec3::operator+(const Vec3 &rhs) const
     {
         return {
-            x + rhs.X(),
-            y + rhs.Y(),
-            z + rhs.Z()
+            m_x + rhs.X(),
+            m_y + rhs.Y(),
+            m_z + rhs.Z()
         };
     }
 
     INLINE Vec3 Vec3::operator-(void) const
     {
         return {
-            -x, -y, -z
+            -m_x, -m_y, -m_z
         };
     }
 
     INLINE Vec3 Vec3::operator-(const Vec3 &rhs) const
     {
         return {
-            x - rhs.X(),
-            y - rhs.Y(),
-            z - rhs.Z()
+            m_x - rhs.X(),
+            m_y - rhs.Y(),
+            m_z - rhs.Z()
         };
     }
 
     INLINE Vec3 Vec3::operator*(const Vec3 &rhs) const
     {
         return {
-            x * rhs.X(),
-            y * rhs.Y(),
-            z * rhs.Z()
+            m_x * rhs.X(),
+            m_y * rhs.Y(),
+            m_z * rhs.Z()
         };
     }
 
     INLINE Vec3 Vec3::operator*(float rhs) const
     {
         return {
-            x * rhs,
-            y * rhs,
-            z * rhs
+            m_x * rhs,
+            m_y * rhs,
+            m_z * rhs
         };
     }
 
@@ -329,9 +329,9 @@ namespace ursine
     INLINE Vec3 Vec3::operator/(const Vec3 &rhs) const
     {
         return {
-            x / rhs.X(),
-            y / rhs.Y(),
-            z / rhs.Z()
+            m_x / rhs.X(),
+            m_y / rhs.Y(),
+            m_z / rhs.Z()
         };
     }
 
@@ -340,62 +340,62 @@ namespace ursine
         float inv = 1.0f / rhs;
 
         return {
-            x * inv,
-            y * inv,
-            z * inv
+            m_x * inv,
+            m_y * inv,
+            m_z * inv
         };
     }
 
     INLINE const Vec3 &Vec3::operator=(const Vec3 &rhs)
     {
-        x = rhs.X();
-        y = rhs.Y();
-        z = rhs.Z();
+        m_x = rhs.X();
+        m_y = rhs.Y();
+        m_z = rhs.Z();
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator+=(const Vec3 &rhs)
     {
-        x += rhs.X();
-        y += rhs.Y();
-        z += rhs.Z();
+        m_x += rhs.X();
+        m_y += rhs.Y();
+        m_z += rhs.Z();
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator-=(const Vec3 &rhs)
     {
-        x -= rhs.X();
-        y -= rhs.Y();
-        z -= rhs.Z();
+        m_x -= rhs.X();
+        m_y -= rhs.Y();
+        m_z -= rhs.Z();
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator*=(const Vec3 &rhs)
     {
-        x *= rhs.X();
-        y *= rhs.Y();
-        z *= rhs.Z();
+        m_x *= rhs.X();
+        m_y *= rhs.Y();
+        m_z *= rhs.Z();
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator*=(float rhs)
     {
-        x *= rhs;
-        y *= rhs;
-        z *= rhs;
+        m_x *= rhs;
+        m_y *= rhs;
+        m_z *= rhs;
 
         return *this;
     }
 
     INLINE const Vec3 &Vec3::operator/=(const Vec3 &rhs)
     {
-        x /= rhs.X();
-        y /= rhs.Y();
-        z /= rhs.Z();
+        m_x /= rhs.X();
+        m_y /= rhs.Y();
+        m_z /= rhs.Z();
 
         return *this;
     }
@@ -404,9 +404,9 @@ namespace ursine
     {
         float inv = 1.0f / rhs;
 
-        x *= inv;
-        y *= inv;
-        z *= inv;
+        m_x *= inv;
+        m_y *= inv;
+        m_z *= inv;
 
         return *this;
     }

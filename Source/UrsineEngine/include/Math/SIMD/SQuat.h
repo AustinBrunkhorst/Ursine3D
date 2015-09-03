@@ -14,7 +14,6 @@
 #pragma once
 
 #include "SIMD.h"
-#include "UrsineTypes.h"
 #include <string>
 #include "SVec4.h"
 #include "SVec3.h"
@@ -28,9 +27,6 @@ namespace ursine
     class SQuat : public SVec4
     {        
 		friend class SMat4;
-
-	private:
-		void set(const SMat3 &mat);
 
     public:
         // Constructors
@@ -96,5 +92,8 @@ namespace ursine
         SVec3 operator*(const SVec3 &rhs);
 
 		ALLOW_ALIGNED_ALLOC(16)
+
+	private:
+		void set(const SMat3 &mat);
     };
 }

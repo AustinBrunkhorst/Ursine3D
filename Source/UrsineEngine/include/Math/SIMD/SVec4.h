@@ -26,22 +26,9 @@ namespace ursine
 
     ALIGNED16(class) SVec4
     {
-    protected:
-        friend class SVec3;
+		friend class SVec3;
 		friend class Vec3;
 		friend class Vec4;
-
-#ifdef USE_SSE
-        union
-        {
-            SIMDvec m128;
-            struct { float x, y, z, w; };
-        };
-
-        explicit SVec4(const SIMDvec &value);
-#else
-        float x, y, z, w;
-#endif
 
     public:
         // Constructors
@@ -133,7 +120,20 @@ namespace ursine
         const SVec4 &operator/=(const SVec4 &rhs);
         const SVec4 &operator/=(float rhs);
 
-		ALLOW_ALIGNED_ALLOC(16)
+		ALLOW_ALIGNED_ALLOC(16);
+
+	protected:
+#ifdef USE_SSE
+		union
+		{
+			SIMDvec m_128;
+			struct { float m_x, m_y, m_z, m_w; };
+		};
+
+		explicit SVec4(const SIMDvec &value);
+#else
+		float m_x, m_y, m_z, m_w;
+#endif
     };
 }
 

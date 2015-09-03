@@ -13,19 +13,6 @@
 
 #pragma once
 
-// Aligned allocation
-
-// aligned allocation
-#define ALLOW_ALIGNED_ALLOC(alignment) \
-void* operator new(size_t sz) \
-{ \
-	return _aligned_malloc(sz, alignment); \
-} \
-void operator delete(void* ptr) \
-{ \
-	_aligned_free(ptr); \
-}
-
 // SIMD setup for Windows environment
 #ifdef _WIN32
 /* Windows. -----------------------------------------------------------------*/
@@ -60,6 +47,17 @@ void operator delete(void* ptr) \
 
     #endif // !__MINGW32__
 
+    // aligned allocation
+    #define ALLOW_ALIGNED_ALLOC(alignment) \
+    void* operator new(size_t sz) \
+    { \
+        return _aligned_malloc(sz, alignment); \
+    } \
+    void operator delete(void* ptr) \
+    { \
+        _aligned_free(ptr); \
+    }
+
 /* !Windows. ----------------------------------------------------------------*/
 
 #else
@@ -78,6 +76,20 @@ void operator delete(void* ptr) \
 
         #define USE_SSE
         #include <x86intrin.h>
+
+        // aligned allocation
+        #include <stdlib.h>
+
+        #define ALLOW_ALIGNED_ALLOC(alignment) \
+        void* operator new(size_t sz) \
+        { \
+            void *memptr; posix_memalign(&memptr, alignment, sz); \
+            return memptr; \
+        } \
+        void operator delete(void* ptr) \
+        { \
+            free(ptr); \
+        }
 
     #endif
 

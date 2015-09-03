@@ -194,7 +194,7 @@ namespace ursine
     }
 
     Color::Color(const SVec4 &value)
-        : Color(value.X(), value.Y(), value.Z(), value.w)
+        : Color(value.X(), value.Y(), value.Z(), value.W())
     {
         
     }

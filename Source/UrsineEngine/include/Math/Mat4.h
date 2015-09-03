@@ -29,21 +29,6 @@ namespace ursine
 		friend class SMat3;
 		friend class SMat4;
 
-        // Row Major
-        // http://en.wikipedia.org/wiki/Row-major_order
-        // Each vector represents one row of the 4x4 matrix
-        Vec4 m[4];
-
-        // helpers for column dot row
-        float dotCol0(const Vec4 &row) const;
-        float dotCol1(const Vec4 &row) const;
-        float dotCol2(const Vec4 &row) const;
-        float dotCol3(const Vec4 &row) const;
-
-        // helper for inverse (eleminating duplicate code)
-        static void invert(const float *src, float *dest);
-        // TODO: static void invertFast(const float *src, float *dest);
-
     public:
         // Generic Constructors
         Mat4(void);
@@ -163,6 +148,22 @@ namespace ursine
         const Mat4 &operator-=(const Mat4 &rhs);
         bool operator==(const Mat4 &rhs) const;
         bool operator!=(const Mat4 &rhs) const;
+
+	private:
+		// Row Major
+		// http://en.wikipedia.org/wiki/Row-major_order
+		// Each vector represents one row of the 4x4 matrix
+		Vec4 m[4];
+
+		// helpers for column dot row
+		float dotCol0(const Vec4 &row) const;
+		float dotCol1(const Vec4 &row) const;
+		float dotCol2(const Vec4 &row) const;
+		float dotCol3(const Vec4 &row) const;
+
+		// helper for inverse (eleminating duplicate code)
+		static void invert(const float *src, float *dest);
+		// TODO: static void invertFast(const float *src, float *dest);
     };
 }
 

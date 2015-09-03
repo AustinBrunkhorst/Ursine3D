@@ -30,16 +30,6 @@ namespace ursine
 		friend class SMat4;
 		friend class SMat3;
 
-        // Row Major
-        // http://en.wikipedia.org/wiki/Row-major_order
-        // Each vector represents one row of the 3x3 matrix
-        Vec3 m[3];
-
-        // helpers for column dot row
-        float dotCol0(const Vec3 &row) const;
-        float dotCol1(const Vec3 &row) const;
-        float dotCol2(const Vec3 &row) const;
-
     public:
         // Generic Constructors
         Mat3(void);
@@ -154,6 +144,17 @@ namespace ursine
         const Mat3 &operator-=(const Mat3 &rhs);
         bool operator==(const Mat3 &rhs) const;
         bool operator!=(const Mat3 &rhs) const;
+
+	private:
+		// Row Major
+		// http://en.wikipedia.org/wiki/Row-major_order
+		// Each vector represents one row of the 3x3 matrix
+		Vec3 m[3];
+
+		// helpers for column dot row
+		float dotCol0(const Vec3 &row) const;
+		float dotCol1(const Vec3 &row) const;
+		float dotCol2(const Vec3 &row) const;
     };
 }
 

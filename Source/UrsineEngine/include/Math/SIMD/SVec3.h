@@ -34,18 +34,6 @@ namespace ursine
 		friend class Vec4;
 		friend class SMat4;
 
-#ifdef USE_SSE
-        union
-        {
-            SIMDvec m128;
-            struct { float x, y, z, w; };
-        };
-
-        explicit SVec3(const SIMDvec &value);
-#else
-        float x, y, z;
-#endif
-
     public:
         // Constructors
         SVec3(void);
@@ -146,7 +134,20 @@ namespace ursine
         const SVec3 &operator/=(const SVec3 &rhs);
         const SVec3 &operator/=(float rhs);
 
-		ALLOW_ALIGNED_ALLOC(16)
+		ALLOW_ALIGNED_ALLOC(16);
+
+	private:
+#ifdef USE_SSE
+		union
+		{
+			SIMDvec m_128;
+			struct { float m_x, m_y, m_z, m_w; };
+		};
+
+		explicit SVec3(const SIMDvec &value);
+#else
+		float m_x, m_y, m_z;
+#endif
     };
 }
 

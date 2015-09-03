@@ -16,63 +16,63 @@
 namespace ursine
 {
     SVec3::SVec3(const Vec2 &value, float Z)
-            : x(value.X())
-            , y(value.Y())
-            , z(Z)
+            : m_x(value.X())
+            , m_y(value.Y())
+            , m_z(Z)
     {
 #ifdef USE_SSE
-        w = 0.0f;
+        m_w = 0.0f;
 #endif
     }
 
 	SVec3::SVec3(const Vec3 &value)
-		: x(value.X())
-		, y(value.Y())
-		, z(value.Z())
+		: m_x(value.X())
+		, m_y(value.Y())
+		, m_z(value.Z())
 	{
 #ifdef USE_SSE
-		w = 0.0f;
+		m_w = 0.0f;
 #endif
 	}
 
     SVec3::SVec3(const SVec4 &value)
-            : x(value.X())
-            , y(value.Y())
-            , z(value.Z())
+            : m_x(value.X())
+            , m_y(value.Y())
+            , m_z(value.Z())
     {
 #ifdef USE_SSE
-        w = 0.0f;
+        m_w = 0.0f;
 #endif
     }
 
 	SVec3::SVec3(const Vec4 &value)
-		: x(value.X())
-		, y(value.Y())
-		, z(value.Z())
+		: m_x(value.X())
+		, m_y(value.Y())
+		, m_z(value.Z())
 	{
 #ifdef USE_SSE
-		w = 0.0f;
+		m_w = 0.0f;
 #endif
 	}
 
     // Public Methods
     void SVec3::Clean(void)
     {
-        x = math::IsZero(x) ? 0.0f : x;
-        y = math::IsZero(y) ? 0.0f : y;
-        z = math::IsZero(z) ? 0.0f : z;
+        m_x = math::IsZero(m_x) ? 0.0f : m_x;
+        m_y = math::IsZero(m_y) ? 0.0f : m_y;
+        m_z = math::IsZero(m_z) ? 0.0f : m_z;
     }
 
     std::string SVec3::ToString(void) const
     {
         std::ostringstream x_cvt;
-        x_cvt << x;
+        x_cvt << m_x;
 
         std::ostringstream y_cvt;
-        y_cvt << y;
+        y_cvt << m_y;
 
         std::ostringstream z_cvt;
-        z_cvt << z;
+        z_cvt << m_z;
 
         return{ "{" +
                 x_cvt.str() + ", " +
