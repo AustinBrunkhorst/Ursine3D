@@ -28,7 +28,7 @@ public:
     Class(const Cursor &cursor, const Namespace &currentNamespace);
     virtual ~Class(void);
 
-    TemplateData CompileTemplate(void) const override;
+    TemplateData CompileTemplate(const ReflectionParser *context) const override;
 private:
     std::string m_name;
     std::string m_displayName;

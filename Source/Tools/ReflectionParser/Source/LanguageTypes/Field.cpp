@@ -3,28 +3,6 @@
 #include "LanguageTypes/Class.h"
 #include "LanguageTypes/Field.h"
 
-const TemplateData::PartialType Field::m_getterPartial = [](void)
-{
-    return
-        "{{#hasExplicitGetter}}"
-            "{{& explicitGetter}}( )"
-        "{{/hasExplicitGetter}}"
-        "{{^hasExplicitGetter}}"
-            "instance.{{name}}"
-        "{{/hasExplicitGetter}}";
-};
-
-const TemplateData::PartialType Field::m_setterPartial = [](void)
-{
-    return
-        "{{#hasExplicitSetter}}"
-            "instance.{{& explicitSetter}}( value.GetValue<{{type}}>( ) );"
-        "{{/hasExplicitSetter}}"
-        "{{^hasExplicitSetter}}"
-            "instance.{{name}} = value.GetValue<{{type}}>( );"
-        "{{/hasExplicitSetter}}";
-};
-
 Field::Field(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
     : LanguageType( cursor, currentNamespace )
     , m_isConst( cursor.GetType( ).IsConst( ) )
@@ -42,7 +20,7 @@ Field::Field(const Cursor &cursor, const Namespace &currentNamespace, Class *par
         m_displayName = displayName;
 }
 
-TemplateData Field::CompileTemplate(void) const
+TemplateData Field::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data = { TemplateData::Type::Object };
 
@@ -60,14 +38,14 @@ TemplateData Field::CompileTemplate(void) const
     data[ "isGetterAccessible" ] = utils::TemplateBool( isGetterAccessible( ) );
     data[ "hasExplicitGetter" ] = utils::TemplateBool( m_hasExplicitGetter );
     data[ "explicitGetter" ] = m_metaData.GetProperty( kMetaExplicitGetter );
-    data[ "getterBody" ] = m_getterPartial;
+    data[ "getterBody" ] = context->LoadTemplatePartial( kPartialFieldGetter );
 
     // setter
 
     data[ "isSetterAccessible" ] = utils::TemplateBool( isSetterAccessible( ) );
     data[ "hasExplicitSetter" ] = utils::TemplateBool( m_hasExplicitSetter );
     data[ "explicitSetter" ] = m_metaData.GetProperty( kMetaExplicitSetter );
-    data[ "setterBody" ] = m_setterPartial;
+    data[ "setterBody" ] = context->LoadTemplatePartial( kPartialFieldSetter );
 
     m_metaData.CompileTemplateData( data );
 

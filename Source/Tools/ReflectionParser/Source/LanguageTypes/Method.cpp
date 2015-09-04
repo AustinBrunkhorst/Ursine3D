@@ -17,7 +17,7 @@ Method::Method(const Cursor &cursor, const Namespace &currentNamespace, Class *p
     
 }
 
-TemplateData Method::CompileTemplate(void) const
+TemplateData Method::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data = { TemplateData::Type::Object };
 
@@ -30,7 +30,9 @@ TemplateData Method::CompileTemplate(void) const
     data[ "isVoidReturnType" ] = utils::TemplateBool( m_returnType == kReturnTypeVoid );
 
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-    data[ "invocationBody" ] = getInvocationBody( );
+    data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialMethodInvocation );
+
+    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data );
 
@@ -51,24 +53,4 @@ std::string Method::getQualifiedSignature(void) const
     std::string constNess = m_isConst ? " const" : "";
 
     return (boost::format( "%1%(%2%::*)(%3%)%4%" ) % m_returnType % m_parent->m_qualifiedName % argsList % constNess).str( );
-}
-
-std::string Method::getInvocationBody(void) const
-{
-    std::stringstream body;
-
-    body << m_name << "( ";
-
-    std::vector<std::string> calls;
-
-    for (unsigned i = 0; i < m_signature.size( ); ++i)
-        calls.emplace_back( (boost::format( "args[ %1% ].GetValue<%2%>( )" ) % i % m_signature[ i ]).str( ) );
-
-    std::string joined;
-
-    ursine::utils::Join( calls, ", ", joined );
-
-    body << joined << " )";
-
-    return body.str( );
 }

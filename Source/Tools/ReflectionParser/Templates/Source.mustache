@@ -69,23 +69,17 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
     {{#global}}{{#isAccessible}}
-    db.AddGlobal<{{& type}}>( "{{qualifiedName}}",
-        {{#isGetterAccessible}}
+    db.AddGlobal<{{& type}}>( "{{qualifiedName}}",{{#isGetterAccessible}}
         [](void)
         {
             return m::Variant { {{> getterBody}} };
-        }
-        {{/isGetterAccessible}}
-        {{! if the getter is not accessible, nullptr is used }}
-        {{^isGetterAccessible}}nullptr{{/isGetterAccessible}},
-        {{#isSetterAccessible}}
+        }{{/isGetterAccessible}}{{^isGetterAccessible}}
+        nullptr{{/isGetterAccessible}},{{#isSetterAccessible}}
         [](const m::Variant &value)
         {
             {{> setterBody}}
-        }
-        {{/isSetterAccessible}}
-        {{! if the setter is not accessible, nullptr is used }}
-        {{^isSetterAccessible}}nullptr{{/isSetterAccessible}},
+        }{{/isSetterAccessible}}{{^isSetterAccessible}}
+        nullptr{{/isSetterAccessible}},
         {
             {{> metaDataInitializerList}}
         }
@@ -98,19 +92,13 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     db.AddGlobalFunction( "{{qualifiedName}}",
         static_cast<{{qualifiedSignature}}>( {{qualifiedName}} ),
         [](m::ArgumentList &args)
-        { 
-        {{! no return type, so invoke the function, then return an empty m::Variant}}
-        {{#isVoidReturnType}}
-            {{& invocationBody}};
+        { {{#isVoidReturnType}}
+            {{> invocationBody}};
 
-            return m::Variant { };
-        {{/isVoidReturnType}}
-        {{! return type, so return the result of the invoked function}}
-        {{^isVoidReturnType}}
+            return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
             return m::Variant {
-                {{& invocationBody}}
-            };
-        {{/isVoidReturnType}}
+                {{> invocationBody}}
+            };{{/isVoidReturnType}}
         },
         {
             {{> metaDataInitializerList}}
@@ -160,7 +148,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             };
 
             type.LoadBaseClasses( db, typeID, { 
-                {{#baseClass}} m::Type::Get<{{name}}>( ){{^isLast}},{{/isLast}} {{/baseClass}} 
+                {{#baseClass}}m::Type::Get<{{name}}>( ){{^isLast}},{{/isLast}} {{/baseClass}} 
             } );
 
             // Constructors
@@ -169,7 +157,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 [](m::ArgumentList &args)
                 {
                     return m::Variant { 
-                        {{& invocationBody}}
+                        {{> invocationBody}}
                     };
                 }, 
                 {
@@ -185,8 +173,8 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                     auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
 
                     return m::Variant { {{> getterBody}} };
-                }
-                {{/isGetterAccessible}}{{^isGetterAccessible}}nullptr{{/isGetterAccessible}},{{#isSetterAccessible}}[](m::Variant &obj, const m::Variant &value)
+                }{{/isGetterAccessible}}{{^isGetterAccessible}}nullptr{{/isGetterAccessible}},{{#isSetterAccessible}}
+                [](m::Variant &obj, const m::Variant &value)
                 {
                     auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
 
@@ -199,21 +187,17 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{/isAccessible}}{{/field}}
             // Static Fields
             {{#staticField}}{{#isAccessible}}
-            type.AddStaticField<{{qualifiedName}}, {{type}}>( "{{displayName}}",
-                {{#isGetterAccessible}}
-                [](void)
+            type.AddStaticField<{{parentQualifiedName}}, {{type}}>( "{{displayName}}",
+                {{#isGetterAccessible}}[](void)
                 {
                     return m::Variant { {{> getterBody}} };
-                }
-                {{/isGetterAccessible}}
-                {{! if the getter is not accessible, nullptr is used }}
-                {{^isGetterAccessible}}nullptr{{/isGetterAccessible}},{{#isSetterAccessible}}[](const m::Variant &value)
+                },
+                {{/isGetterAccessible}}{{^isGetterAccessible}}nullptr{{/isGetterAccessible}}{{#isSetterAccessible}}
+                [](const m::Variant &value)
                 {
                     {{> setterBody}}
                 }
-                {{/isSetterAccessible}}
-                {{! if the setter is not accessible, nullptr is used }}
-                {{^isSetterAccessible}}nullptr{{/isSetterAccessible}},
+                {{/isSetterAccessible}}{{^isSetterAccessible}}nullptr{{/isSetterAccessible}},
                 {
                     {{> metaDataInitializerList}}
                 }
@@ -227,15 +211,12 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 { 
                     auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
                     {{#isVoidReturnType}}
-                    instance.{{& invocationBody}};
+                    instance.{{> invocationBody}};
 
-                    return m::Variant { };
-                    {{/isVoidReturnType}}
-                    {{^isVoidReturnType}}
+                    return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
                     return m::Variant {
-                        instance.{{& invocationBody}}
-                    };
-                    {{/isVoidReturnType}}
+                        instance.{{> invocationBody}}
+                    };{{/isVoidReturnType}}
                 },
                 {
                     {{> metaDataInitializerList}}
@@ -244,31 +225,23 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{/isAccessible}}{{/method}}
             // Static Methods
             {{#staticMethod}}{{#isAccessible}}
-            type.AddStaticMethod<{{qualifiedName}}>( "{{name}}",
+            type.AddStaticMethod<{{parentQualifiedName}}>( "{{name}}",
                 static_cast<{{qualifiedSignature}}>( {{parentQualifiedName}}::{{qualifiedName}} ),
                 [](m::ArgumentList &args)
-                { 
-                {{! no return type, so invoke the function, then return an empty m::Variant}}
-                {{#isVoidReturnType}}
-                    {{& invocationBody}};
+                { {{#isVoidReturnType}}
+                    {{parentQualifiedName}}::{{> invocationBody}};
 
-                    return m::Variant { };
-                {{/isVoidReturnType}}
-                {{! return type, so return the result of the invoked function}}
-                {{^isVoidReturnType}}
+                    return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
                     return m::Variant {
-                        {{& invocationBody}}
-                    };
-                {{/isVoidReturnType}}
+                        {{parentQualifiedName}}::{{> invocationBody}}
+                    };{{/isVoidReturnType}}
                 },
                 {
                     {{> metaDataInitializerList}}
                 }
-            );
-            {{/isAccessible}}{{/staticMethod}}
+            );{{/isAccessible}}{{/staticMethod}}
 
             m::TypeInfo<{{qualifiedName}}>::Defined = true;
         }
-    }
-    {{/isAccessible}}{{/class}}
+    }{{/isAccessible}}{{/class}}
 });

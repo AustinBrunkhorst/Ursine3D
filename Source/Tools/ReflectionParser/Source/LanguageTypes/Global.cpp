@@ -3,38 +3,6 @@
 #include "LanguageTypes/Global.h"
 #include "LanguageTypes/Class.h"
 
-const TemplateData::PartialType Global::m_getterPartial = [](void)
-{
-    return
-        "{{#hasExplicitGetter}}"
-            "{{& explicitGetter}}( )"
-        "{{/hasExplicitGetter}}"
-        "{{^hasExplicitGetter}}"
-            "{{#hasParent}}"
-                "{{parentQualifiedName}}::{{name}}"
-            "{{/hasParent}}"
-            "{{^hasParent}}"
-                "{{qualifiedName}}"
-            "{{/hasParent}}"
-        "{{/hasExplicitGetter}}";
-};
-
-const TemplateData::PartialType Global::m_setterPartial = [](void)
-{
-    return
-        "{{#hasExplicitSetter}}"
-            "{{& explicitSetter}}( value.GetValue<{{type}}>( ) );"
-        "{{/hasExplicitSetter}}"
-        "{{^hasExplicitSetter}}"
-            "{{#hasParent}}"
-                "{{parentQualifiedName}}::{{name}} = value.GetValue<{{type}}>( );"
-            "{{/hasParent}}"
-            "{{^hasParent}}"
-                "{{qualifiedName}} = value.GetValue<{{type}}>( );"
-            "{{/hasParent}}"
-        "{{/hasExplicitSetter}}";
-};
-
 Global::Global(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
     : LanguageType( cursor, currentNamespace )
     , m_isConst( cursor.GetType( ).IsConst( ) )
@@ -57,10 +25,11 @@ Global::Global(const Cursor &cursor, const Namespace &currentNamespace, Class *p
     }
 }
 
-TemplateData Global::CompileTemplate(void) const
+TemplateData Global::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data = { TemplateData::Type::Object };
 
+    data[ "name" ] = m_name;
     data[ "displayName" ] = m_displayName;
     data[ "qualifiedName" ] = m_qualifiedName;
     data[ "type" ] = m_type;
@@ -76,14 +45,14 @@ TemplateData Global::CompileTemplate(void) const
     data[ "isGetterAccessible" ] = utils::TemplateBool( isGetterAccessible( ) );
     data[ "hasExplicitGetter" ] = utils::TemplateBool( m_hasExplicitGetter );
     data[ "explicitGetter" ] = m_metaData.GetProperty( kMetaExplicitGetter );
-    data[ "getterBody" ] = m_getterPartial;
+    data[ "getterBody" ] = context->LoadTemplatePartial( kPartialGlobalGetter );
 
     // setter
 
     data[ "isSetterAccessible" ] = utils::TemplateBool( isSetterAccessible( ) );
     data[ "hasExplicitSetter" ] = utils::TemplateBool( m_hasExplicitSetter );
     data[ "explicitSetter" ] = m_metaData.GetProperty( kMetaExplicitSetter );
-    data[ "setterBody" ] = m_setterPartial;
+    data[ "setterBody" ] = context->LoadTemplatePartial( kPartialGlobalSetter );
 
     m_metaData.CompileTemplateData( data );
 
@@ -97,7 +66,7 @@ bool Global::isAccessible(void) const
 
 bool Global::isGetterAccessible(void) const
 {
-    if (m_metaData.GetFlag( kMetaEnable ))
+    if (m_enabled)
     {
         if (m_parent)
             return m_hasExplicitGetter || m_accessModifier == CX_CXXPublic;
@@ -113,7 +82,7 @@ bool Global::isSetterAccessible(void) const
     if (m_isConst)
         return false;
 
-    if (m_metaData.GetFlag( kMetaEnable ))
+    if (m_enabled)
     {
         if (m_parent)
             return m_hasExplicitSetter || m_accessModifier == CX_CXXPublic;

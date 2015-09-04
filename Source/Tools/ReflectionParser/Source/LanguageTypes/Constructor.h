@@ -13,7 +13,7 @@ public:
     Constructor(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
     virtual ~Constructor(void) { } 
 
-    TemplateData CompileTemplate(void) const override;
+    TemplateData CompileTemplate(const ReflectionParser *context) const override;
 
 private:
     Class *m_parent;
@@ -21,5 +21,4 @@ private:
     bool isAccessible(void) const;
 
     std::string getTemplateParameters(void) const;
-    std::string getInvocationBody(void) const;
 };

@@ -6,12 +6,18 @@
 // Classes
 ///////////////////////////////////////////////////////////////////////////////
 
-class Test
+class BaseClass { };
+
+class Test : public BaseClass
 {
 public:
 	double publicField;
 
+    Meta(Enable)
+    static const int StaticField = 5;
+
     Test(void) { }
+    Test(int, double, float) { }
 
 	void Method(void) { }
    
@@ -21,6 +27,9 @@ public:
 	void OverloadedMethod(int) { }
 	void OverloadedMethod(int, int) { }
 	void OverloadedMethod(int, int) const { }
+
+    Meta(Enable)
+    static int StaticMethod(void) { return 0; }
 
 private:
 	int m_privateField;

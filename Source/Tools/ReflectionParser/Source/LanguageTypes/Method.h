@@ -13,7 +13,7 @@ public:
     Method(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
     virtual ~Method(void) { }
 
-    TemplateData CompileTemplate(void) const override;
+    TemplateData CompileTemplate(const ReflectionParser *context) const override;
 
 private:
     bool m_isConst;
@@ -25,5 +25,4 @@ private:
     bool isAccessible(void) const;
 
     std::string getQualifiedSignature(void) const;
-    std::string getInvocationBody(void) const;
 };

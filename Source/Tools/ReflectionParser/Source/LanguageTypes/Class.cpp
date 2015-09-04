@@ -89,7 +89,7 @@ Class::~Class(void)
         delete staticMethod;
 }
 
-TemplateData Class::CompileTemplate(void) const
+TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };
 
@@ -105,9 +105,9 @@ TemplateData Class::CompileTemplate(void) const
 
         int i = 0;
 
-        for (auto &baseClass : m_baseClasses)
+        for (auto *baseClass : m_baseClasses)
         {
-            TemplateData item { TemplateData::Type::List };
+            TemplateData item { TemplateData::Type::Object };
 
             item[ "name" ] = baseClass->name;
             item[ "isLast" ] = utils::TemplateBool( i == m_baseClasses.size( ) - 1 );
@@ -125,7 +125,7 @@ TemplateData Class::CompileTemplate(void) const
         TemplateData constructors { TemplateData::Type::List };
 
         for (auto *ctor : m_constructors)
-            constructors << ctor->CompileTemplate( );
+            constructors << ctor->CompileTemplate( context );
 
         data[ "constructor" ] = constructors;
     }
@@ -135,7 +135,7 @@ TemplateData Class::CompileTemplate(void) const
         TemplateData fields { TemplateData::Type::List };
 
         for (auto *field : m_fields)
-            fields << field->CompileTemplate( );
+            fields << field->CompileTemplate( context );
 
         data[ "field" ] = fields;
     }
@@ -145,7 +145,7 @@ TemplateData Class::CompileTemplate(void) const
         TemplateData staticFields { TemplateData::Type::List };
 
         for (auto *staticField : m_staticFields)
-            staticFields << staticField->CompileTemplate( );
+            staticFields << staticField->CompileTemplate( context );
 
         data[ "staticField" ] = staticFields;
     }
@@ -155,7 +155,7 @@ TemplateData Class::CompileTemplate(void) const
         TemplateData methods { TemplateData::Type::List };
 
         for (auto *method : m_methods)
-            methods << method->CompileTemplate( );
+            methods << method->CompileTemplate( context );
 
         data[ "method" ] = methods;
     }
@@ -165,7 +165,7 @@ TemplateData Class::CompileTemplate(void) const
         TemplateData staticMethods { TemplateData::Type::List };
 
         for (auto *staticMethod : m_staticMethods)
-            staticMethods << staticMethod->CompileTemplate( );
+            staticMethods << staticMethod->CompileTemplate( context );
 
         data[ "staticMethod" ] = staticMethods;
     }
@@ -175,5 +175,5 @@ TemplateData Class::CompileTemplate(void) const
 
 bool Class::isAccessible(void) const
 {
-    return m_metaData.GetFlag( kMetaEnable );
+    return m_enabled;
 }

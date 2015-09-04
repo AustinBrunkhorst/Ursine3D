@@ -49,14 +49,9 @@ int main(int argc, char *argv[])
             "Output generated C++ source file." 
         )
         ( 
-            SWITCH_OPTION( HeaderTemplate ), 
-            po::value<std::string>( )->required( )->default_value( "Templates/Header.mustache" ), 
-            "Optional C++ header template (mustache) file." 
-        )
-        ( 
-            SWITCH_OPTION( SourceTemplate ), 
-            po::value<std::string>( )->required( )->default_value( "Templates/Source.mustache" ), 
-            "Optional C++ source template (mustache) file" 
+            SWITCH_OPTION( TemplateDirectory ), 
+            po::value<std::string>( )->default_value( "Templates/" ), 
+            "Directory that contains the mustache templates." 
         )
         ( 
             SWITCH_OPTION( CompilerFlag ), 
@@ -118,8 +113,7 @@ void parse(const po::variables_map &cmdLine)
             options.arguments.emplace_back( flag.c_str( ) );
     }
 
-    auto tmplHeaderFile = cmdLine.at( kSwitchHeaderTemplate ).as<std::string>( );
-    auto tmplSourceFile = cmdLine.at( kSwitchSourceTemplate ).as<std::string>( );
+    options.templateDirectory = cmdLine.at( kSwitchTemplateDirectory ).as<std::string>( );
     
     ReflectionParser parser( options );
 
@@ -128,9 +122,11 @@ void parse(const po::variables_map &cmdLine)
     // header template
     try
     {
-        auto tmplHeader = utils::LoadText( tmplHeaderFile );
+        std::string headerTemplate;
 
-        utils::WriteText( options.outputHeaderFile, parser.GenerateHeader( *tmplHeader ) );
+        parser.GenerateHeader( headerTemplate );
+
+        utils::WriteText( options.outputHeaderFile, headerTemplate );
     } 
     catch (std::exception &e)
     {
@@ -140,9 +136,11 @@ void parse(const po::variables_map &cmdLine)
     // source template
     try
     {
-        auto tmplSource = utils::LoadText( tmplSourceFile );
+        std::string sourceTemplate;
 
-        utils::WriteText( options.outputSourceFile, parser.GenerateSource( *tmplSource ) );
+        parser.GenerateSource( sourceTemplate );
+
+        utils::WriteText( options.outputSourceFile, sourceTemplate );
     } 
     catch (std::exception &e)
     {

@@ -13,11 +13,10 @@
 #define SWITCH_OPTION(name)                                 \
     ((kSwitch##name) + (kSwitch##name##Shorthand)).c_str( ) \
 
-DEFINE_SWITCH_FULL( Help,           "help",        "h" );
-DEFINE_SWITCH_FULL( TargetName,     "target-name", "t" );
-DEFINE_SWITCH_FULL( InputSource,    "in-source",   "i" );
-DEFINE_SWITCH_FULL( OutputHeader,   "out-header",  "a" );
-DEFINE_SWITCH_FULL( OutputSource,   "out-source",  "b" );
-DEFINE_SWITCH_FULL( HeaderTemplate, "tmpl-header", "x" );
-DEFINE_SWITCH_FULL( SourceTemplate, "tmpl-source", "y" );
-DEFINE_SWITCH_FULL( CompilerFlag,   "flag",        "f" );
+DEFINE_SWITCH_FULL( Help,              "help",           "h" );
+DEFINE_SWITCH_FULL( TargetName,        "target-name",    "t" );
+DEFINE_SWITCH_FULL( InputSource,       "in-source",      "i" );
+DEFINE_SWITCH_FULL( OutputHeader,      "out-header",     "a" );
+DEFINE_SWITCH_FULL( OutputSource,      "out-source",     "b" );
+DEFINE_SWITCH_FULL( TemplateDirectory, "tmpl-directory", "d" );
+DEFINE_SWITCH_FULL( CompilerFlag,      "flag",           "f" );

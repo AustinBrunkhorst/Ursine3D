@@ -9,5 +9,7 @@ struct ReflectionOptions
     std::string outputHeaderFile;
     std::string outputSourceFile;
 
+    std::string templateDirectory;
+
     std::vector<const char *> arguments;
 };

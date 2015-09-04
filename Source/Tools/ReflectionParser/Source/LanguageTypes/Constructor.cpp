@@ -5,8 +5,6 @@
 
 #include <Utils.h>
 
-#include <boost/format.hpp>
-
 Constructor::Constructor(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
     : LanguageType( cursor, currentNamespace )
     , Invokable( cursor )
@@ -15,13 +13,17 @@ Constructor::Constructor(const Cursor &cursor, const Namespace &currentNamespace
         
 }
 
-TemplateData Constructor::CompileTemplate(void) const
+TemplateData Constructor::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };
 
+    data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
+
     data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     data[ "templateParameters" ] = getTemplateParameters( );
-    data[ "invocationBody" ] = getInvocationBody( );
+    data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialConstructorInvocation );
+
+    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data );
 
@@ -45,24 +47,4 @@ std::string Constructor::getTemplateParameters(void) const
 
     // parent type, arg types, ...
     return output;
-}
-
-std::string Constructor::getInvocationBody(void) const
-{
-    std::stringstream body;
-
-    body << m_parent->m_qualifiedName << "(";
-
-    std::vector<std::string> calls;
-
-    for (unsigned i = 0; i < m_signature.size( ); ++i)
-        calls.emplace_back( (boost::format( "args[ %1% ].GetValue<%2%>( )" ) % i % m_signature[ i ]).str( ) );
-
-    std::string joined;
-
-    ursine::utils::Join( calls, ",", joined );
-
-    body << joined << " )";
-
-    return body.str( );
 }

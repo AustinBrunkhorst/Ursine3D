@@ -10,7 +10,7 @@ public:
     Field(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
     virtual ~Field(void) { }
 
-    TemplateData CompileTemplate(void) const override;
+    TemplateData CompileTemplate(const ReflectionParser *context) const override;
 
 private:
     bool m_isConst;
@@ -23,9 +23,6 @@ private:
     std::string m_name;
     std::string m_displayName;
     std::string m_type;
-
-    static const TemplateData::PartialType m_getterPartial;
-    static const TemplateData::PartialType m_setterPartial;
 
     bool isAccessible(void) const;
     bool isGetterAccessible(void) const;

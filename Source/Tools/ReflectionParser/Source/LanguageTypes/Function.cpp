@@ -17,9 +17,9 @@ Function::Function(const Cursor &cursor, const Namespace &currentNamespace, Clas
         
 }
 
-TemplateData Function::CompileTemplate(void) const
+TemplateData Function::CompileTemplate(const ReflectionParser *context) const
 {
-    TemplateData data = { TemplateData::Type::Object };
+    TemplateData data { TemplateData::Type::Object };
 
     data[ "name" ] = m_name;
     data[ "qualifiedName" ] = m_qualifiedName;
@@ -32,7 +32,9 @@ TemplateData Function::CompileTemplate(void) const
     data[ "isVoidReturnType" ] = utils::TemplateBool( m_returnType == kReturnTypeVoid );
 
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-    data[ "invocationBody" ] = getInvocationBody( );
+    data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialFunctionInvocation );
+
+    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data );
 
@@ -44,7 +46,7 @@ bool Function::isAccessible(void) const
     if (m_parent && m_accessModifier != CX_CXXPublic)
         return false;
 
-    return m_metaData.GetFlag( kMetaEnable );
+    return m_enabled;
 }
 
 std::string Function::getQualifiedSignature(void) const
@@ -54,24 +56,4 @@ std::string Function::getQualifiedSignature(void) const
     ursine::utils::Join( m_signature, ", ", argsList );
 
     return (boost::format( "%1%(*)(%2%)" ) % m_returnType % argsList).str( );
-}
-
-std::string Function::getInvocationBody(void) const
-{
-    std::stringstream body;
-
-    body << m_qualifiedName << "( ";
-
-    std::vector<std::string> calls;
-
-    for (unsigned i = 0; i < m_signature.size( ); ++i)
-        calls.emplace_back( (boost::format( "args[ %1% ].GetValue<%2%>( )" ) % i % m_signature[ i ]).str( ) );
-
-    std::string joined;
-
-    ursine::utils::Join( calls, ", ", joined );
-
-    body << joined << " )";
-
-    return body.str( );
 }

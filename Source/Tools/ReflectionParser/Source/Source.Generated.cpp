@@ -13,6 +13,31 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
     
     {
         { // Base Type
+            auto id = db.AllocateType( "BaseClass" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<BaseClass>::Register( id, type, false );
+        }
+        
+        { // Pointer Type
+            auto id = db.AllocateType( "BaseClass*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<BaseClass*>::Register( id, type, false );
+        }
+        
+        
+        { // Const Pointer Type
+            auto id = db.AllocateType( "const BaseClass*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<const BaseClass*>::Register( id, type, false );
+        }
+        
+    }
+    
+    {
+        { // Base Type
             auto id = db.AllocateType( "Test" );
             auto &type = db.types[ id ];
 
@@ -120,22 +145,14 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
     ///////////////////////////////////////////////////////////////////////////
     
     db.AddGlobal<int>( "Global",
-        
         [](void)
         {
             return m::Variant { Global };
-        }
-        
-        
-        ,
-        
+        },
         [](const m::Variant &value)
         {
             Global = value.GetValue<int>( );
-        }
-        
-        
-        ,
+        },
         {
             
         }
@@ -149,19 +166,18 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
         static_cast<int(*)(int, double, float)>( GlobalFunction ),
         [](m::ArgumentList &args)
         { 
-        
-        
-        
-        
             return m::Variant {
                 GlobalFunction( args[ 0 ].GetValue<int>( ), args[ 1 ].GetValue<double>( ), args[ 2 ].GetValue<float>( ) )
             };
-        
         },
         {
             { "A", "B" }, { "OK" }, { "C", "D" }
         }
     );
+
+    auto test = m::Type::GetGlobalFunction( "GlobalFunction" );
+
+    test.GetMeta( ).GetProperty( "Test" )->ToDouble( );
     
     ///////////////////////////////////////////////////////////////////////////
     // Enum Definitions
@@ -230,7 +246,7 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
             };
 
             type.LoadBaseClasses( db, typeID, { 
-                 
+                m::Type::Get<BaseClass>( )  
             } );
 
             // Constructors
@@ -239,7 +255,19 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                 [](m::ArgumentList &args)
                 {
                     return m::Variant { 
-                        Test( )
+                        Test(  )
+                    };
+                }, 
+                {
+                    
+                }
+            );
+            
+            type.AddConstructor<Test, int, double, float>(
+                [](m::ArgumentList &args)
+                {
+                    return m::Variant { 
+                        Test( args[ 0 ].GetValue<int>( ), args[ 1 ].GetValue<double>( ), args[ 2 ].GetValue<float>( ) )
                     };
                 }, 
                 {
@@ -255,8 +283,8 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                     auto &instance = obj.GetValue<Test>( );
 
                     return m::Variant { instance.publicField };
-                }
-                ,[](m::Variant &obj, const m::Variant &value)
+                },
+                [](m::Variant &obj, const m::Variant &value)
                 {
                     auto &instance = obj.GetValue<Test>( );
 
@@ -269,6 +297,17 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
             
             // Static Fields
             
+            type.AddStaticField<Test, const int>( "StaticField",
+                [](void)
+                {
+                    return m::Variant { Test::StaticField };
+                },
+                nullptr,
+                {
+                    
+                }
+            );
+            
             // Methods
             
             type.AddMethod( "Method",
@@ -280,8 +319,6 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                     instance.Method(  );
 
                     return m::Variant { };
-                    
-                    
                 },
                 {
                     
@@ -297,8 +334,6 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                     instance.ConstMethod(  );
 
                     return m::Variant { };
-                    
-                    
                 },
                 {
                     
@@ -314,8 +349,6 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                     instance.OverloadedMethod(  );
 
                     return m::Variant { };
-                    
-                    
                 },
                 {
                     
@@ -328,11 +361,9 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                 { 
                     auto &instance = obj.GetValue<Test>( );
                     
-                    instance.OverloadedMethod( args[ 0 ].GetValue<int>( ) );
+                    instance.OverloadedMethod( args[ 0 ].GetValue<int>( )  );
 
                     return m::Variant { };
-                    
-                    
                 },
                 {
                     
@@ -345,11 +376,9 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                 { 
                     auto &instance = obj.GetValue<Test>( );
                     
-                    instance.OverloadedMethod( args[ 0 ].GetValue<int>( ), args[ 1 ].GetValue<int>( ) );
+                    instance.OverloadedMethod( args[ 0 ].GetValue<int>( ) , args[ 1 ].GetValue<int>( )  );
 
                     return m::Variant { };
-                    
-                    
                 },
                 {
                     
@@ -362,11 +391,9 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
                 { 
                     auto &instance = obj.GetValue<Test>( );
                     
-                    instance.OverloadedMethod( args[ 0 ].GetValue<int>( ), args[ 1 ].GetValue<int>( ) );
+                    instance.OverloadedMethod( args[ 0 ].GetValue<int>( ) , args[ 1 ].GetValue<int>( )  );
 
                     return m::Variant { };
-                    
-                    
                 },
                 {
                     
@@ -375,9 +402,20 @@ m::ReflectionDatabase::Initializer TestInitializer([] {
             
             // Static Methods
             
+            type.AddStaticMethod<Test>( "StaticMethod",
+                static_cast<int(*)()>( Test::StaticMethod ),
+                [](m::ArgumentList &args)
+                { 
+                    return m::Variant {
+                        Test::StaticMethod(  )
+                    };
+                },
+                {
+                    
+                }
+            );
 
             m::TypeInfo<Test>::Defined = true;
         }
     }
-    
 });

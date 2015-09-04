@@ -4,15 +4,17 @@
 #include "Namespace.h"
 
 #include "MetaDataManager.h"
+#include "ReflectionParser.h"
 
 class LanguageType
 {
 public:
     LanguageType(const Cursor &cursor, const Namespace &currentNamespace);
+    virtual ~LanguageType(void) { }
 
     const MetaDataManager &GetMetaData(void) const;
 
-    virtual TemplateData CompileTemplate(void) const = 0;
+    virtual TemplateData CompileTemplate(const ReflectionParser *context) const = 0;
 
 protected:
     MetaDataManager m_metaData;

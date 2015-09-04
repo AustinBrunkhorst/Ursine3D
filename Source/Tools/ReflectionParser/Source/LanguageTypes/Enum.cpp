@@ -32,7 +32,7 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     }
 }
 
-TemplateData Enum::CompileTemplate(void) const
+TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };
 

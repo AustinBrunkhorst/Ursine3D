@@ -19,3 +19,23 @@ Invokable::Invokable(const Cursor &cursor)
         );
     }
 }
+
+TemplateData Invokable::compileSignatureTemplate(void) const
+{
+    TemplateData data { TemplateData::Type::List };
+
+    auto argCount = m_signature.size( );
+
+    for (unsigned i = 0; i < argCount; ++i)
+    {
+        TemplateData argument { TemplateData::Type::Object };
+
+        argument[ "type" ] = m_signature[ i ];
+        argument[ "index" ] = std::to_string( i );
+        argument[ "isLast" ] = utils::TemplateBool( i == argCount - 1 );
+
+        data << argument;
+    }
+
+    return data;
+}
