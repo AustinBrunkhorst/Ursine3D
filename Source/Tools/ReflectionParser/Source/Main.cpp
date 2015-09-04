@@ -54,8 +54,13 @@ int main(int argc, char *argv[])
             "Directory that contains the mustache templates." 
         )
         ( 
-            SWITCH_OPTION( CompilerFlag ), 
-            po::value<std::vector<std::string>>( )->multitoken( ), 
+            SWITCH_OPTION( PrecompiledHeader ), 
+            po::value<std::string>( ), 
+            "Optional name of the precompiled header file for the project." 
+        )
+        ( 
+            SWITCH_OPTION( CompilerFlags ), 
+            po::value<std::vector<std::string>>( )->multitoken( )->required( ), 
             "Optional list of flags to pass to the compiler." 
         );
 
@@ -102,14 +107,17 @@ void parse(const po::variables_map &cmdLine)
         "-x",
         "c++",
         "-std=c++11",
-        "-DREFLECTION_PARSER"
+        "-D__REFLECTION_PARSER__"
     } };
 
-    if (cmdLine.count( kSwitchCompilerFlag ))
-    {
-        auto flags = cmdLine.at( kSwitchCompilerFlag ).as<std::vector<std::string>>( );
+    if (cmdLine.count( kSwitchPrecompiledHeader ))
+        options.precompiledHeader = cmdLine.at( kSwitchPrecompiledHeader ).as<std::string>( );
 
-        for (auto flag : flags)
+    if (cmdLine.count( kSwitchCompilerFlags ))
+    {
+        auto flags = cmdLine.at( kSwitchCompilerFlags ).as<std::vector<std::string>>( );
+
+        for (auto &flag : flags) 
             options.arguments.emplace_back( flag.c_str( ) );
     }
 

@@ -14,14 +14,29 @@ endmacro ()
 
 macro (ursine_default_project project_name)
     ursine_parse_arguments(PROJ 
-        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE" 
-        "NO_ENGINE;PARSE_SOURCE_GROUPS;RECURSIVE_INCLUDES;INCLUDE_INSTALLER" 
+        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE;META_HEADER" 
+        "NO_ENGINE;PARSE_SOURCE_GROUPS;RECURSIVE_INCLUDES;INCLUDE_INSTALLER;BUILD_META" 
         ${ARGN})
     
     project(${project_name} CXX)
+
+    set(build_dir "${CMAKE_CURRENT_BINARY_DIR}")
     
     file(GLOB_RECURSE files_src ${PROJ_SOURCE_DIR}/*.cpp)
     file(GLOB_RECURSE files_inc ${PROJ_INCLUDE_DIR}/*.h ${PROJ_INCLUDE_DIR}/*.hpp)
+
+    if ("${PROJ_BUILD_META}" STREQUAL "TRUE")
+        set(meta_generated_header "${build_dir}/Meta.Generated.h")
+        set(meta_generated_src "${build_dir}/Meta.Generated.cpp")
+
+        # add to the sources
+        list(APPEND files_src ${meta_generated_src})
+        list(APPEND files_inc ${meta_generated_header})
+
+        # create temporary empty files to suppress compilation errors
+        file(WRITE ${meta_generated_header} "")
+        file(WRITE ${meta_generated_src} "")
+    endif ()
 
     set(files_misc "")
 
@@ -254,6 +269,39 @@ macro (ursine_default_project project_name)
             /NODEFAULTLIB:msvcrtd.lib"
         )
     endif ()
+
+    # add reflection parser
+    if ("${PROJ_BUILD_META}" STREQUAL "TRUE")
+        # add the generated files to the source generated source group
+        source_group("Generated" FILES ${meta_generated_header} ${meta_generated_src})
+
+        get_property(directories TARGET ${project_name} PROPERTY INCLUDE_DIRECTORIES)
+
+        set(meta_flags "")
+
+        # build the include directory flags
+        foreach (directory ${directories})
+            set(meta_flags ${meta_flags} "\\-I${directory}")
+        endforeach ()
+
+        if ("${PROJ_PCH_NAME}" STREQUAL "")
+            set(pch_switch "")
+        else ()
+            set(pch_switch "--pch \"${PROJ_PCH_NAME}.h\"")
+        endif ()
+
+        add_custom_command(
+            TARGET ${project_name}
+            PRE_BUILD
+            COMMAND call "$<TARGET_FILE:ReflectionParser>"
+            --target-name "${project_name}"
+            --in-source "${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SOURCE_DIR}/${PROJ_META_HEADER}"
+            --out-header "${meta_generated_header}"
+            --out-source "${meta_generated_src}"
+            ${pch_switch}
+            --flags ${meta_flags}
+        )
+    endif ()
     
     # project folder
     if (NOT "${PROJ_FOLDER}" STREQUAL "")
@@ -262,6 +310,8 @@ macro (ursine_default_project project_name)
     
     # precompiled header
     if (NOT "${PROJ_PCH_NAME}" STREQUAL "")
+        add_definitions(-DPRECOMPILED_HEADER_FILE="${PROJ_PCH_NAME}.h")
+
         ursine_precompiled_header(${project_name}
             ${PROJ_PCH_NAME}.h
             ${PROJ_SOURCE_DIR}/${PROJ_PCH_NAME}.cpp

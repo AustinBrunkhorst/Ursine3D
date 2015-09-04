@@ -52,13 +52,23 @@ ReflectionParser::~ReflectionParser(void)
 
 void ReflectionParser::Parse(void)
 {
-     m_index = clang_createIndex( true, false );
+    m_index = clang_createIndex( true, false );
+
+    std::vector<const char *> arguments;
+
+    for (auto &argument : m_options.arguments)
+    { 
+        // unescape flags
+        boost::algorithm::replace_all( argument, "\\-", "-" );
+
+        arguments.emplace_back( argument.c_str( ) );
+    }
 
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
         m_index,
         m_options.inputSourceFile.c_str( ),
-        m_options.arguments.size( ),
-        m_options.arguments.data( ),
+        arguments.size( ),
+        arguments.data( ),
         0,
         nullptr
     );
@@ -156,6 +166,8 @@ void ReflectionParser::GenerateHeader(std::string &output) const
     headerData[ "inputSourceFile" ] = m_options.inputSourceFile;
     headerData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
     headerData[ "outpuSourceFile" ] = m_options.outputSourceFile;
+    headerData[ "usingPrecompiledHeader" ] = utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+    headerData[ "precompiledHeader" ] = m_options.precompiledHeader;
 
     auto headerTemplate = LoadTemplate( kTemplateHeader );
 
@@ -182,6 +194,8 @@ void ReflectionParser::GenerateSource(std::string &output) const
     sourceData[ "inputSourceFile" ] = m_options.inputSourceFile;
     sourceData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
     sourceData[ "outpuSourceFile" ] = m_options.outputSourceFile;
+    sourceData[ "usingPrecompiledHeader" ] = utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+    sourceData[ "precompiledHeader" ] = m_options.precompiledHeader;
 
     // language type data
 

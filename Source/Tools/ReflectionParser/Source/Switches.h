@@ -19,4 +19,5 @@ DEFINE_SWITCH_FULL( InputSource,       "in-source",      "i" );
 DEFINE_SWITCH_FULL( OutputHeader,      "out-header",     "a" );
 DEFINE_SWITCH_FULL( OutputSource,      "out-source",     "b" );
 DEFINE_SWITCH_FULL( TemplateDirectory, "tmpl-directory", "d" );
-DEFINE_SWITCH_FULL( CompilerFlag,      "flag",           "f" );
+DEFINE_SWITCH_FULL( PrecompiledHeader, "pch",            "p" );
+DEFINE_SWITCH_FULL( CompilerFlags,     "flags",          "f" );

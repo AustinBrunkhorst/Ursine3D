@@ -1,5 +1,5 @@
-#include "Precompiled.h"
-
+{{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
+{{/usingPrecompiledHeader}}
 #include "{{ouputHeaderFile}}"
 
 namespace m = ursine::meta;
@@ -16,14 +16,14 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             auto id = db.AllocateType( "{{displayName}}" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
         }
         {{#ptrTypeEnabled}}
         { // Pointer Type
             auto id = db.AllocateType( "{{displayName}}*" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{qualifiedName}}*>::Register( id, type, false );
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
         }
         {{/ptrTypeEnabled}}
         {{#constPtrTypeEnabled}}
@@ -31,7 +31,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             auto id = db.AllocateType( "const {{displayName}}*" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<const {{qualifiedName}}*>::Register( id, type, false );
+            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
         }
         {{/constPtrTypeEnabled}}
     }
@@ -45,14 +45,14 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             auto id = db.AllocateType( "{{displayName}}" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
         }
         {{#ptrTypeEnabled}}
         { // Pointer Type
             auto id = db.AllocateType( "{{displayName}}*" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{qualifiedName}}*>::Register( id, type, false );
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
         }
         {{/ptrTypeEnabled}}
         {{#constPtrTypeEnabled}}
@@ -60,7 +60,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             auto id = db.AllocateType( "const {{displayName}}*" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<const {{qualifiedName}}*>::Register( id, type, false );
+            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
         }
         {{/constPtrTypeEnabled}}
     }
@@ -69,7 +69,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
     {{#global}}{{#isAccessible}}
-    db.AddGlobal<{{& type}}>( "{{qualifiedName}}",{{#isGetterAccessible}}
+    db.AddGlobal<{{& type}}>( "{{& qualifiedName}}",{{#isGetterAccessible}}
         [](void)
         {
             return m::Variant { {{> getterBody}} };
@@ -89,8 +89,8 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     // Global Functions
     ///////////////////////////////////////////////////////////////////////////
     {{#globalFunction}}{{#isAccessible}}
-    db.AddGlobalFunction( "{{qualifiedName}}",
-        static_cast<{{qualifiedSignature}}>( {{qualifiedName}} ),
+    db.AddGlobalFunction( "{{& qualifiedName}}",
+        static_cast<{{qualifiedSignature}}>( {{& qualifiedName}} ),
         [](m::ArgumentList &args)
         { {{#isVoidReturnType}}
             {{> invocationBody}};
@@ -110,9 +110,9 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     ///////////////////////////////////////////////////////////////////////////
     {{#enum}}{{#isAccessible}}
     {
-        auto typeID = m::TypeInfo<{{qualifiedName}}>::ID;
+        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
 
-        if (typeID != m::Type::Invalid && !m::TypeInfo<{{qualifiedName}}>::Defined)
+        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
         {
             auto &type = db.types[ typeID ];
 
@@ -120,12 +120,12 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 {{> metaDataInitializerList}}
             };
 
-            type.SetEnum<{{qualifiedName}}>( "{{displayName}}", {
+            type.SetEnum<{{& qualifiedName}}>( "{{displayName}}", {
                 {{#member}} { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
                 {{/member}}
             } );
 
-            m::TypeInfo<{{qualifiedName}}>::Defined = true;
+            m::TypeInfo<{{& qualifiedName}}>::Defined = true;
         }
     }
     {{/isAccessible}}{{/enum}}
@@ -134,12 +134,12 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     ///////////////////////////////////////////////////////////////////////////
     {{#class}}{{#isAccessible}}
     /**
-     * {{qualifiedName}}
+     * {{& qualifiedName}}
      */
     {
-        auto typeID = m::TypeInfo<{{qualifiedName}}>::ID;
+        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
 
-        if (typeID != m::Type::Invalid && !m::TypeInfo<{{qualifiedName}}>::Defined)
+        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
         {
             auto &type = db.types[ typeID ];
 
@@ -226,7 +226,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             // Static Methods
             {{#staticMethod}}{{#isAccessible}}
             type.AddStaticMethod<{{parentQualifiedName}}>( "{{name}}",
-                static_cast<{{qualifiedSignature}}>( {{parentQualifiedName}}::{{qualifiedName}} ),
+                static_cast<{{qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
                 [](m::ArgumentList &args)
                 { {{#isVoidReturnType}}
                     {{parentQualifiedName}}::{{> invocationBody}};
@@ -241,7 +241,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 }
             );{{/isAccessible}}{{/staticMethod}}
 
-            m::TypeInfo<{{qualifiedName}}>::Defined = true;
+            m::TypeInfo<{{& qualifiedName}}>::Defined = true;
         }
     }{{/isAccessible}}{{/class}}
 });
