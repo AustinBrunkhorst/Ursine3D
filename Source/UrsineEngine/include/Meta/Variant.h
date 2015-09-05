@@ -46,7 +46,7 @@ namespace ursine
             std::string ToString(void) const;
 
             template<typename T>
-            T &GetValue(void) const;
+            T *GetValue(void) const;
 
             bool IsValid(void) const;
 

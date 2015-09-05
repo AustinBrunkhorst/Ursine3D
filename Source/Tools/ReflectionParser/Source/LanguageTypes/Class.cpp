@@ -2,6 +2,22 @@
 
 #include "LanguageTypes/Class.h"
 
+#include "ReservedTypes.h"
+
+namespace
+{
+    const std::vector<std::string> nativeTypes
+    {
+        kTypeObject,
+        kTypeMetaProperty
+    };
+
+    bool isNativeType(const std::string &qualifiedName)
+    {
+        return std::find( nativeTypes.begin( ), nativeTypes.end( ), qualifiedName ) != nativeTypes.end( );
+    }
+}
+
 BaseClass::BaseClass(const Cursor &cursor)
     : name( cursor.GetType( ).GetDisplayName( ) )
 {
@@ -25,9 +41,15 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
         switch (child.GetKind( ))
         {
         case CXCursor_CXXBaseSpecifier:
-            m_baseClasses.emplace_back( 
-                new BaseClass( child ) 
-            );
+        {
+            auto baseClass = new BaseClass( child );
+
+            m_baseClasses.emplace_back( baseClass );
+
+            // automatically enable the type if not explicitly disabled
+            if (isNativeType( baseClass->name ))
+                m_enabled = !m_metaData.GetFlag( kMetaDisable );
+        }
             break;
         // constructor
         case CXCursor_Constructor:
@@ -107,6 +129,10 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 
         for (auto *baseClass : m_baseClasses)
         {
+            // ignore native types
+            if (isNativeType( baseClass->name ))
+                continue;
+
             TemplateData item { TemplateData::Type::Object };
 
             item[ "name" ] = baseClass->name;

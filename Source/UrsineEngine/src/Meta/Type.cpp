@@ -27,6 +27,11 @@ namespace ursine
 
         ////////////////////////////////////////////////////////////////////////////
 
+        Type::Type(TypeID id)
+            : m_id( id ) { }
+
+        ////////////////////////////////////////////////////////////////////////////
+
         Type::operator bool(void) const
         {
             return m_id != Invalid;
@@ -98,7 +103,8 @@ namespace ursine
 
             List types;
 
-            for (TypeID i = 0; i < count; ++i)
+            // skip the first one, as it's reserved for unknown
+            for (TypeID i = 1; i < count; ++i)
                 types.emplace_back( i );
 
             return types;
@@ -418,10 +424,5 @@ namespace ursine
 
         Type::Type(void)
             : m_id( Invalid ) { }
-
-        ////////////////////////////////////////////////////////////////////////////
-
-        Type::Type(TypeID id)
-            : m_id( id ) { }
     }
 }

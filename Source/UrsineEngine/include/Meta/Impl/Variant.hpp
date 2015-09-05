@@ -37,11 +37,11 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////////
 
         template<typename T>
-        T &Variant::GetValue(void) const
+        T *Variant::GetValue(void) const
         {
             typedef typename std::remove_cv<T>::type ContainerType;
 
-            return static_cast< VariantContainer<ContainerType> *>( m_base )->m_value;
+            return reinterpret_cast<T *>( static_cast< VariantContainer<ContainerType> *>( m_base )->GetPtr( ) );
         }
     }
 }

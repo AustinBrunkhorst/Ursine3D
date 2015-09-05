@@ -19,5 +19,4 @@ private:
     static const TemplateData::PartialType m_tmplInitializerListPartial;
 
     std::vector<Property> extractProperties(const Cursor &cursor) const;
-    std::string trimPropertyName(const std::string &input) const;
 };

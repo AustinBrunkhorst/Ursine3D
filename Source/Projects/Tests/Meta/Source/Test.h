@@ -6,12 +6,57 @@
 // Classes
 ///////////////////////////////////////////////////////////////////////////////
 
+class Range : public ursine::meta::MetaProperty
+{   
+    META_OBJECT
+public:
+    Range(const Range &rhs) { printf( "COPY!\n" ); }
+
+    Range(int min, int max) 
+        : min( min )
+        , max( max ) { }
+
+    int min;
+    int max; 
+};
+
+enum SliderType
+{
+    Horizontal,
+    Vertical
+};
+
+class Slider : public ursine::meta::MetaProperty
+{
+    META_OBJECT
+public:
+    Slider(void) 
+        : type( Horizontal ) { }
+
+    Slider(SliderType type) 
+        : type( type ) { }
+
+    SliderType type;
+};
+
+class Jason : public ursine::meta::Object
+{
+    META_OBJECT
+public:
+    Jason(void) 
+        : myField( 0 ) { }
+
+    Meta(Range(-3000, 50), Slider)
+    int myField;
+};
+
 class BaseClass { };
 
 class Test : public BaseClass
 {
 public:
 	double publicField;
+	double publicField2;
 
     Meta(Enable)
     static const int StaticField = 5;
@@ -37,10 +82,9 @@ private:
 	Test(int, int) { }
 
 	void privateMethod(void) { }
-} Meta(Enable);
+};
 
-class Declaration 
-Meta(Enable);
+class Declaration;
 
 class Disabled { };
 

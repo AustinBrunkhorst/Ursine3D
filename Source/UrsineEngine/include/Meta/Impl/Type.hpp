@@ -1,8 +1,6 @@
 #include "TypeInfo.h"
 #include "TypeUnpacker.hpp"
 
-#include "Variant.h"
-
 #include "Constructor.h"
 
 namespace ursine
@@ -10,17 +8,9 @@ namespace ursine
     namespace meta
     {
         template<typename T>
-        Type Type::Get(void)
-        {
-            return { TypeInfo< CleanedType< T > >::ID };
-        }
-
-        ////////////////////////////////////////////////////////////////////////
-
-        template<typename T>
         Type Type::Get(T &&obj)
         {
-            return { TypeInfo< CleanedType< T > >::ID };
+            return { typeof( T ) };
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -51,7 +41,7 @@ namespace ursine
         template<typename T>
         bool Type::DerivesFrom(void) const
         {
-            return DerivesFrom( Get<T>( ) );
+            return DerivesFrom( typeof( T ) );
         }
     }
 }

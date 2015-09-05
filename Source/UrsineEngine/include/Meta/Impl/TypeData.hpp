@@ -8,7 +8,7 @@ namespace ursine
             InvokableSignature signature = Invokable::CreateSignature<Args...>( );
 
             Constructor ctor {
-                Type::Get<ClassType>() ,
+                typeof( ClassType ),
                 signature,
                 invoker
             };
@@ -24,11 +24,16 @@ namespace ursine
         void TypeData::SetDestructor(void)
         {
             destructor = { 
-                Type::Get<ClassType>( ), 
+                typeof( ClassType ), 
                 [](Variant &instance)
                 {
-                    instance.GetValue<ClassType>( ).~ClassType( );
-                } 
+                    // @@@ TODO:
+                    /*auto dtor = &ClassType::~ClassType;
+
+                    auto ptr = instance.GetValue<ClassType>( );
+
+                    (*ptr.*dtor)( );*/
+                }
             };
         }
 
@@ -39,8 +44,8 @@ namespace ursine
         {
             Field field {
                 name,
-                Type::Get<FieldType>( ),
-                Type::Get<ClassType>( ),
+                typeof( FieldType ),
+                typeof( ClassType ),
                 getter,
                 setter
             };
@@ -55,10 +60,10 @@ namespace ursine
         {
             Global global {
                 name,
-                Type::Get<FieldType>( ),
+                typeof( FieldType ),
                 getter,
                 setter,
-                Type::Get<ClassType>( ),
+                typeof( ClassType ),
             };
 
             global.m_meta = meta;
@@ -81,7 +86,7 @@ namespace ursine
         template<typename ClassType, typename FunctionType, typename FunctionInvoker>
         void TypeData::AddStaticMethod(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta)
         {
-            Function function( name, type, invoker, Type::Get<ClassType>( ) );
+            Function function( name, type, invoker, typeof( ClassType ) );
 
             function.m_meta = meta;
 

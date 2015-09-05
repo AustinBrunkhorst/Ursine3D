@@ -6,7 +6,7 @@ namespace ursine
     {
         template<typename T>
         Argument::Argument(const T &data)
-            : m_type( Type::Get<T>( ) )
+            : m_type( typeof( T ) )
             , m_data( reinterpret_cast<const void*>( std::addressof( data ) ) )
         {
             static_assert( !std::is_same< Argument, T >::value,
@@ -17,7 +17,7 @@ namespace ursine
 
         template<typename T>
         Argument::Argument(T &data)
-            : m_type( Type::Get<T>( ) )
+            : m_type( typeof( T ) )
             , m_data( reinterpret_cast<const void*>( std::addressof( data ) ) )
         {
             static_assert( !std::is_same< Argument, T >::value,

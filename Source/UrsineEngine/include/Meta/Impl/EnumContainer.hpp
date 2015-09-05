@@ -19,7 +19,7 @@ namespace ursine
         template<typename EnumType>
         Type EnumContainer<EnumType>::GetType(void) const
         {
-            return Type::Get<EnumType>( );
+            return typeof( EnumType );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ namespace ursine
         template<typename EnumType>
         Type EnumContainer<EnumType>::GetUnderlyingType(void) const
         {
-            return Type::Get< typename std::underlying_type< EnumType >::type >( );
+            return typeof( typename std::underlying_type< EnumType >::type );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ namespace ursine
             auto type = value.GetType( );
 
             // invalid type
-            if (type != Type::Get<EnumType>( ) &&
-                type != Type::Get<UnderlyingType>( ))
+            if (type != typeof( EnumType ) &&
+                type != typeof( UnderlyingType ))
             {
                 return std::string( );
             }

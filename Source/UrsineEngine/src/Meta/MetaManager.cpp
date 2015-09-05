@@ -12,92 +12,48 @@ namespace ursine
 
         ////////////////////////////////////////////////////////////////////////////
 
-        MetaManager::MetaManager(const std::initializer_list<Property> &properties)
+        MetaManager::MetaManager(const Initializer &properties)
         {
             for (auto &prop : properties)
-                SetProperty( prop );
+            {
+                UAssert( prop.first.IsValid( ), 
+                    "Invalid meta property registered. Make sure the property type is enabled in reflection."
+                );
+
+                SetProperty( prop.first, prop.second );
+            }
+        }
+
+        MetaManager::~MetaManager(void)
+        {
+            URSINE_TODO( "manage leaks" );
+            /*for (auto &prop : m_properties)
+                delete prop.second;*/
         }
 
         ////////////////////////////////////////////////////////////////////////////
 
-        const MetaManager::Property *MetaManager::GetProperty(const std::string &key) const
+        Variant MetaManager::GetProperty(Type type) const
         {
-            auto search = m_properties.find( key );
+            auto search = m_properties.find( type );
 
             if (search == m_properties.end( ))
-                return nullptr;
+                return Variant { };
 
-            return &search->second;
+            return Variant { *search->second };
         }
 
         ////////////////////////////////////////////////////////////////////////////
 
-        bool MetaManager::GetFlag(const std::string &key) const
+        void MetaManager::SetProperty(Type type, const MetaProperty *prop)
         {
-            return m_properties.find( key ) != m_properties.end( );
-        }
+            auto search = m_properties.find( type );
 
-        ////////////////////////////////////////////////////////////////////////////
+            // delete old property if it exists
+            if (search != m_properties.end( ))
+                delete search->second;
 
-        void MetaManager::SetProperty(const Property &prop)
-        {
-            m_properties[ prop.key ] = prop;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
-
-        MetaManager::Property::Property(void) { }
-
-        ////////////////////////////////////////////////////////////////////////////
-
-        MetaManager::Property::Property(const std::string &key, const std::string &value)
-            : key( key )
-            , value( value ) { }
-
-        ////////////////////////////////////////////////////////////////////////////
-
-        int MetaManager::Property::ToInt(void) const
-        {
-            return stoi( value );
-        }
-
-        bool MetaManager::Property::ToBool(void) const
-        {
-            // 0 -> false
-            // 1 -> true
-            // "true" -> true (case insensitive)
-            // "false" -> false (case insensitive)
-
-            if (value == "0")
-                return false;
-
-            if (value == "1")
-                return true;
-
-            auto copy = value;
-
-            // convert to lowercase
-            transform( copy.begin( ), copy.end() , copy.begin( ), ::tolower );
-
-            if (copy == "true")
-                return true;
-
-            return false;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////
-    
-        float MetaManager::Property::ToFloat(void) const
-        {
-            return stof( value );
-        }
-
-        ////////////////////////////////////////////////////////////////////////////
-
-        double MetaManager::Property::ToDouble(void) const
-        {
-            return stod( value );
+            m_properties[ type ] = prop;
         }
     }
 }

@@ -1,7 +1,27 @@
 #pragma once
 
+#include <Macros.h>
+
 #ifdef __REFLECTION_PARSER__
-#define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
+
+#include <Object.h>
+#include <MetaProperty.h>
+
 #else
-#define Meta(...)
+
+#include <Object.h>
+
+#include <Variant.h>
+
+#include <Type.h>
+
+#include <MetaManager.h>
+
+#include <Enum.h>
+#include <Constructor.h>
+#include <Destructor.h>
+#include <Field.h>
+#include <Method.h>
+#include <Function.h>
+
 #endif

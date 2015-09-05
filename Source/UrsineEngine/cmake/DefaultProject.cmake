@@ -60,6 +60,11 @@ macro (ursine_default_project project_name)
             endif ()
         endif ()
 
+        # all projects depend on boost
+        list(APPEND PROJ_DEPENDS Boost)
+
+        list(REMOVE_DUPLICATES PROJ_DEPENDS)
+
         foreach (dependency ${PROJ_DEPENDS})
             # copy shared libraries
             foreach (shared_lib ${${dependency}_SHARED_LIBS})

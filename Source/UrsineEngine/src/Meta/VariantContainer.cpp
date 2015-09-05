@@ -6,6 +6,21 @@
 
 #include <algorithm>
 
+#define REGISTER_STANDARD_VARIANT(type)                         \
+    {                                                           \
+        auto id = db.AllocateType( #type );                     \
+        auto &handle = db.types[ id ];                          \
+                                                                \
+        TypeInfo<type>::Register( id, handle, true );           \
+                                                                \
+        handle.AddConstructor<type, const type &>(              \
+            [](ArgumentList &args)                              \
+            {                                                   \
+                return Variant { args[ 0 ].GetValue<type>( ) }; \
+            }, { }                                              \
+        );                                                      \
+    }                                                           \
+
 namespace ursine
 {
     namespace meta
@@ -22,7 +37,7 @@ namespace ursine
 
         Type VariantContainer<void>::GetType(void) const
         {
-            return Type::Get<void>( );
+            return typeof( void );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -96,7 +111,7 @@ namespace ursine
 
         Type VariantContainer<int>::GetType(void) const
         {
-            return Type::Get<int>( );
+            return typeof( int );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -174,7 +189,7 @@ namespace ursine
 
         Type VariantContainer<bool>::GetType(void) const
         {
-            return Type::Get<bool>( );
+            return typeof( bool );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -252,7 +267,7 @@ namespace ursine
 
         Type VariantContainer<float>::GetType(void) const
         {
-            return Type::Get<float>( );
+            return typeof( float );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -330,7 +345,7 @@ namespace ursine
 
         Type VariantContainer<double>::GetType(void) const
         {
-            return Type::Get<double>( );
+            return typeof( double );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -408,7 +423,7 @@ namespace ursine
 
         Type VariantContainer<std::string>::GetType(void) const
         {
-            return Type::Get<std::string>( );
+            return typeof( std::string );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -484,5 +499,15 @@ namespace ursine
         }
 
         #pragma endregion
+
+        ReflectionDatabase::Initializer StandardVariantInitializer([] {
+            auto &db = ReflectionDatabase::Instance( );
+
+            REGISTER_STANDARD_VARIANT( int );
+            REGISTER_STANDARD_VARIANT( bool );
+            REGISTER_STANDARD_VARIANT( float );
+            REGISTER_STANDARD_VARIANT( double );
+            REGISTER_STANDARD_VARIANT( std::string );
+        });
     }
 }

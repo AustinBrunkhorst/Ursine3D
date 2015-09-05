@@ -30,7 +30,9 @@ namespace ursine
 
             static const TypeID Invalid = 0;
 
+            Type(void);
             Type(const Type &rhs);
+            Type(TypeID id);
 
             operator bool(void) const;
 
@@ -53,10 +55,6 @@ namespace ursine
 
             // Gets a type based on the qualified string name
             static Type Get(const char *name);
-
-            // Gets a type based on it's static type
-            template<typename T>
-            static Type Get(void);
 
             // Gets a type by deducing the type of an object
             template<typename T>
@@ -229,9 +227,6 @@ namespace ursine
             friend class Field;
             friend class Function;
             friend class Global;
-
-            Type(void);
-            Type(TypeID id);
 
             TypeID m_id;
         };

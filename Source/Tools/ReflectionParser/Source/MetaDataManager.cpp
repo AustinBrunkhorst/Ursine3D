@@ -11,7 +11,7 @@ const TemplateData::PartialType MetaDataManager::m_tmplInitializerListPartial = 
 {
     return 
         "{{#metaProperty}}"
-        "{ \"{{& key}}\"{{^ isFlag}}, \"{{& value}}\"{{/isFlag}} }{{^ isLast}}, {{/isLast}}"
+        "std::make_pair( typeof( {{& type}} ), m::MetaPropertyInitializer<{{& type}}>( {{& arguments}} ) ){{^isLast}}, {{/isLast}}\n"
         "{{/metaProperty}}";
 };
 
@@ -71,16 +71,9 @@ void MetaDataManager::CompileTemplateData(TemplateData &data) const
             continue;
         }
 
-        auto key = prop.first;
-        auto value = prop.second;
+        item[ "type" ] = prop.first;;
+        item[ "arguments" ] = prop.second;
 
-        boost::algorithm::replace_all( key, "\"", "\\\"" );
-        boost::algorithm::replace_all( value, "\"", "\\\"" );
-
-        item[ "key" ] = key;
-        item[ "value" ] = value;
-        
-        item[ "isFlag" ] = utils::TemplateBool( value.empty( ) );
         item[ "isLast" ] = utils::TemplateBool( i == propertyCount );
 
         propertyData << item;
@@ -95,55 +88,45 @@ void MetaDataManager::CompileTemplateData(TemplateData &data) const
 std::vector<MetaDataManager::Property> MetaDataManager::extractProperties(const Cursor &cursor) const
 {
     std::vector<Property> properties;
-    std::vector<std::string> subProperties;
 
-    // split by "," that are not contained in double quotes
-    static const boost::regex delimiter( ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)" );
+    static const boost::regex propertyList(
+        // property name
+        "([a-z\\:]+)"
+        // optional whitespace before
+        "(?:\\s*)"
+        // constructor
+        "("
+            // opening paren
+            "\\("
+                // arguments
+                "([^\\)]*)"
+            // closing paren
+            "\\)"
+        // end constructor
+        ")?"
+        // optional comma/whitespace
+        "(?:(\\s|,)*)",
+        boost::regex::icase
+    );
+
+    auto flags = boost::match_default | boost::format_all;
+
+    boost::match_results<std::string::const_iterator> match;
 
     auto meta = cursor.GetDisplayName( );
-    
-    ursine::utils::Split( meta, delimiter, subProperties );
 
-    // split by "=" that are not contained in double quotes
-    static const boost::regex pairDelimiter( "=(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)" );
+    auto start = meta.cbegin( );
 
-    for (auto &prop : subProperties)
+    while (boost::regex_search( start, meta.cend( ), match, propertyList, flags ))
     {
-        std::vector<std::string> pair;
+        auto name = match[ 1 ].str( );
+        auto arguments = match[ 3 ].str( );
 
-        ursine::utils::Split( prop, pairDelimiter, pair );
+        properties.emplace_back( name, arguments );
 
-        // property key
-        auto key = trimPropertyName( pair[ 0 ] );
-
-        boost::algorithm::replace_all( key, "`", "\"" );
-
-        decltype(pair) values( pair.begin( ) + 1, pair.end( ) );
-
-        // rest of the string in the pair
-        std::string value;
-
-        ursine::utils::Join( values, "=", value );
-
-        value = trimPropertyName( value );
-
-        boost::algorithm::replace_all( value, "`", "\"" );
-
-        properties.emplace_back( key, value );
+        // advance the first capture group
+        start += match[ 0 ].length( );
     }
 
     return properties;
-}
-
-std::string MetaDataManager::trimPropertyName(const std::string &input) const
-{
-    auto output( input );
-
-    static const boost::regex whitespace( "\\s(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)" );
-
-    output = boost::regex_replace( output, whitespace, "", boost::match_default | boost::format_all );
-
-    boost::algorithm::replace_all( output, "\"", "" );
-
-    return output;
 }

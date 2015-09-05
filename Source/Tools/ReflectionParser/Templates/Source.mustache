@@ -148,12 +148,12 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             };
 
             type.LoadBaseClasses( db, typeID, { 
-                {{#baseClass}}m::Type::Get<{{name}}>( ){{^isLast}},{{/isLast}} {{/baseClass}} 
+                {{#baseClass}}typeof( {{name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
             } );
 
             // Constructors
             {{#constructor}}{{#isAccessible}}
-            type.AddConstructor<{{templateParameters}}>(
+            type.AddConstructor<{{& templateParameters}}>(
                 [](m::ArgumentList &args)
                 {
                     return m::Variant { 
@@ -170,13 +170,13 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             type.AddField<{{parentQualifiedName}}, {{type}}>( "{{displayName}}",
                 {{#isGetterAccessible}}[](const m::Variant &obj)
                 {
-                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
+                    auto *instance = obj.GetValue<{{parentQualifiedName}}>( );
 
                     return m::Variant { {{> getterBody}} };
                 }{{/isGetterAccessible}}{{^isGetterAccessible}}nullptr{{/isGetterAccessible}},{{#isSetterAccessible}}
                 [](m::Variant &obj, const m::Variant &value)
                 {
-                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
+                    auto *instance = obj.GetValue<{{parentQualifiedName}}>( );
 
                     {{> setterBody}}
                 }{{/isSetterAccessible}}{{^isSetterAccessible}}nullptr{{/isSetterAccessible}},
@@ -209,13 +209,13 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 static_cast<{{qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
                 [](m::Variant &obj, m::ArgumentList &args)
                 { 
-                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
+                    auto *instance = obj.GetValue<{{parentQualifiedName}}>( );
                     {{#isVoidReturnType}}
-                    instance.{{> invocationBody}};
+                    instance->{{> invocationBody}};
 
                     return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
                     return m::Variant {
-                        instance.{{> invocationBody}}
+                        instance->{{> invocationBody}}
                     };{{/isVoidReturnType}}
                 },
                 {

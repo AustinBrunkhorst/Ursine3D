@@ -10,6 +10,8 @@ namespace ursine
         class VariantContainer : public VariantBase
         {
         public:
+            virtual ~VariantContainer(void);
+
             VariantContainer(const T &value);
             VariantContainer(const T &&value);
 
@@ -30,7 +32,7 @@ namespace ursine
 
             VariantContainer &operator=(const VariantContainer &rhs) = delete;
 
-            T m_value;
+            T *m_value;
         };
     }
 }
