@@ -1,12 +1,24 @@
 #include "VariantContainer.h"
+#include "ObjectWrapper.h"
 
 namespace ursine
 {
     namespace meta
     {
+        template <typename T>
+        Variant::Variant(T *data
+            , typename std::enable_if< std::is_base_of<Object, T>::value >::type*
+        )
+            : m_isConst( std::is_const<T>::value )
+            , m_base( new ObjectWrapper( static_cast<Object *>( const_cast< typename std::remove_const<T>::type*>( data ) ) ) )
+        {
+
+        }
+
         template<typename T>
         Variant::Variant(T &data)
-            : m_base( new VariantContainer< CleanedType<T> >( data ) )
+            : m_isConst( false )
+            , m_base( new VariantContainer< CleanedType<T> >( data ) )
         {
         
         }
@@ -14,14 +26,14 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////////
 
         template<typename T>
-        Variant::Variant(T &&data)
-            : m_base( new VariantContainer< CleanedType<T> >( static_cast<T&&>( data ) ) )
+        Variant::Variant(T &&data
+            , typename std::enable_if< !std::is_same<Variant&, T>::value >::type*
+            , typename std::enable_if< !std::is_const<T>::value >::type*
+        )
+            : m_isConst( false )
+            , m_base( new VariantContainer< CleanedType<T> >( static_cast<T&&>( data ) ) )
         {
-            static_assert( !std::is_same< Variant&, T >::value, 
-                "Variant cannot be used in r-value Variant constructor" );
 
-            static_assert( !std::is_const< T >::value,
-                "Type cannot be const" );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -37,11 +49,9 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////////
 
         template<typename T>
-        T *Variant::GetValue(void) const
+        T &Variant::GetValue(void) const
         {
-            typedef typename std::remove_cv<T>::type ContainerType;
-
-            return reinterpret_cast<T *>( static_cast< VariantContainer<ContainerType> *>( m_base )->GetPtr( ) );
+            return *static_cast<T*>( m_base->GetPtr( ) );
         }
     }
 }

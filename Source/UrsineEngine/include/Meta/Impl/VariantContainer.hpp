@@ -5,14 +5,8 @@ namespace ursine
     namespace meta
     {
         template<typename T>
-        VariantContainer<T>::~VariantContainer(void)
-        {
-            delete m_value;
-        }
-
-        template<typename T>
         VariantContainer<T>::VariantContainer(const T &value)
-            : m_value( new T( value ) )
+            : m_value( value )
         {
         
         }
@@ -21,7 +15,7 @@ namespace ursine
 
         template<typename T>
         VariantContainer<T>::VariantContainer(const T &&value)
-            : m_value( new T( std::move( value ) ) )
+            : m_value( std::move( value ) )
         {
         
         }
@@ -79,7 +73,11 @@ namespace ursine
         template<typename T>
         void *VariantContainer<T>::GetPtr(void) const
         {
-            return static_cast<void*>( m_value );
+            return const_cast<void*>(
+                reinterpret_cast<const void*>( 
+                    std::addressof( m_value )
+                )
+            );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -87,7 +85,7 @@ namespace ursine
         template<typename T>
         VariantBase *VariantContainer<T>::Clone(void) const
         {
-            return new VariantContainer<T>( *m_value );
+            return new VariantContainer<T>( m_value );
         }
     }
 }

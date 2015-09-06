@@ -8,8 +8,7 @@ namespace ursine
     {
         class MetaProperty : public Object
         {
-        public:
-            virtual Type GetType(void) const;
+
         };
 
         template<typename PropertyType, typename ...Args>

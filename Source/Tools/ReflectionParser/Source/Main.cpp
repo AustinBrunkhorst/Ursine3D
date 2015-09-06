@@ -5,10 +5,14 @@
 
 #include "Switches.h"
 
+#include <chrono>
+
 void parse(const po::variables_map &cmdLine);
 
 int main(int argc, char *argv[])
 {
+    auto start = std::chrono::system_clock::now( );
+
     // misc initialization
     {
         // path to the executable
@@ -88,6 +92,12 @@ int main(int argc, char *argv[])
         utils::FatalError( "Unhandled exception occurred!" );
     }
 
+    auto duration = std::chrono::system_clock::now( ) - start;
+
+    std::cout << "Completed in " 
+              << std::chrono::duration_cast<std::chrono::milliseconds>( duration ).count( ) 
+              << "ms" << std::endl;
+
     return EXIT_SUCCESS;
 }
 
@@ -123,6 +133,8 @@ void parse(const po::variables_map &cmdLine)
 
     options.templateDirectory = cmdLine.at( kSwitchTemplateDirectory ).as<std::string>( );
     
+    std::cout << "Parsing reflection data for target \"" << options.targetName << "\"" << std::endl;
+
     ReflectionParser parser( options );
 
     parser.Parse( );

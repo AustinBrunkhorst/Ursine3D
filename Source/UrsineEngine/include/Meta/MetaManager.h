@@ -20,6 +20,11 @@ namespace ursine
             > Initializer;
 
             MetaManager(void);
+            MetaManager(const MetaManager &rhs);
+            MetaManager(const MetaManager &&rhs);
+
+            const MetaManager &operator=(const MetaManager &rhs);
+
             MetaManager(const Initializer &properties);
 
             ~MetaManager(void);
@@ -33,6 +38,8 @@ namespace ursine
             void SetProperty(Type type, const MetaProperty *value);
 
         private:
+            void copy(const MetaManager &rhs);
+
             std::map<Type, const MetaProperty *> m_properties;
         };
     }

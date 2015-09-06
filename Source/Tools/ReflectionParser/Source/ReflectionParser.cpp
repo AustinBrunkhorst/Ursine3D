@@ -313,7 +313,10 @@ TemplateData ReflectionParser::compileClassTemplates(void) const
     TemplateData data = { TemplateData::Type::List };
 
     for (auto *klass : m_classes)
-        data << klass->CompileTemplate( this );
+    {
+        if (klass->ShouldCompile( ))
+            data << klass->CompileTemplate( this );
+    }
 
     return data;
 }

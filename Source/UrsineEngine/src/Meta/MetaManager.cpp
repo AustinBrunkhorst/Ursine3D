@@ -10,6 +10,24 @@ namespace ursine
     {
         MetaManager::MetaManager(void) { }
 
+        MetaManager::MetaManager(const MetaManager &rhs)
+        {
+            copy( rhs );
+        }
+
+        MetaManager::MetaManager(const MetaManager &&rhs)
+            : m_properties( std::move( rhs.m_properties ) )
+        {
+
+        }
+
+        const MetaManager &MetaManager::operator=(const MetaManager &rhs)
+        {
+            copy( rhs );
+
+            return *this;
+        }
+
         ////////////////////////////////////////////////////////////////////////////
 
         MetaManager::MetaManager(const Initializer &properties)
@@ -26,9 +44,8 @@ namespace ursine
 
         MetaManager::~MetaManager(void)
         {
-            URSINE_TODO( "manage leaks" );
-            /*for (auto &prop : m_properties)
-                delete prop.second;*/
+            for (auto &prop : m_properties)
+                delete prop.second;
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -40,7 +57,7 @@ namespace ursine
             if (search == m_properties.end( ))
                 return Variant { };
 
-            return Variant { *search->second };
+            return Variant { search->second };
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -54,6 +71,12 @@ namespace ursine
                 delete search->second;
 
             m_properties[ type ] = prop;
+        }
+
+        void MetaManager::copy(const MetaManager& rhs)
+        {
+            for (auto &prop : rhs.m_properties)
+                m_properties[ prop.first ] = static_cast<MetaProperty*>( prop.second->Clone( ) );
         }
     }
 }

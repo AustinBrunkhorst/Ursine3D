@@ -27,12 +27,7 @@ namespace ursine
                 typeof( ClassType ), 
                 [](Variant &instance)
                 {
-                    // @@@ TODO:
-                    /*auto dtor = &ClassType::~ClassType;
-
-                    auto ptr = instance.GetValue<ClassType>( );
-
-                    (*ptr.*dtor)( );*/
+                    instance.GetValue<ClassType>( ).~ClassType( );
                 }
             };
         }

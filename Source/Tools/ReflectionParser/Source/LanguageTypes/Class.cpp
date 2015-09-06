@@ -111,6 +111,11 @@ Class::~Class(void)
         delete staticMethod;
 }
 
+bool Class::ShouldCompile(void) const
+{
+    return !isNativeType( m_qualifiedName );
+}
+
 TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };

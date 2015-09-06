@@ -28,6 +28,8 @@ public:
     Class(const Cursor &cursor, const Namespace &currentNamespace);
     virtual ~Class(void);
 
+    bool ShouldCompile(void) const;
+
     TemplateData CompileTemplate(const ReflectionParser *context) const override;
 private:
     std::string m_name;

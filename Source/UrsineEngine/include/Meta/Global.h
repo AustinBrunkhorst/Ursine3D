@@ -29,7 +29,7 @@ namespace ursine
             const std::string &GetName(void) const;
 
             Variant GetValue(void) const;
-            void SetValue(const Argument &value) const;
+            bool SetValue(const Argument &value) const;
         private:
             Type m_type;
             Type m_parentType;

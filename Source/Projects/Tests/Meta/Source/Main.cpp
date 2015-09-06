@@ -6,24 +6,37 @@
 
 int main(void)
 {
-    auto types = ursine::meta::Type::GetTypes();
+    auto types = ursine::meta::Type::GetTypes( );
 
     for (auto type : types)
         std::cout << type.GetName( ) << std::endl;
 
-    auto jason = typeof( Jason );
+    // from compile type name
+    auto jasonType = typeof( Jason );
 
-    auto field = jason.GetField( "myField" );
+    // or from string name
+    auto rangeType = ursine::meta::Type::Get( "Range" );
 
-    auto range = field.GetMeta( ).GetProperty( typeof( Range ) );
+    auto field = jasonType.GetField( "myField" );
 
-    auto test = range.GetValue<Range>( );
+    auto &meta = field.GetMeta( );
 
-    auto iType = typeof( int );
+    // dynamically getting the properties based on their runtime deduced type
+    auto range = meta.GetProperty( rangeType );
+    auto slider = meta.GetProperty( rangeType );
 
-    auto i = iType.Create( 56 );
+    // dynamic fields
+    auto min = rangeType.GetField( "min" );
+    auto max = rangeType.GetField( "max" );
 
-    auto test2 = *reinterpret_cast<int*>( i.GetValue<double>( ) );
+    // compile time value
+    auto rangeValue = range.GetValue<Range>( );
+
+    // -3000
+    auto dynamicMin = min.GetValue( range ).GetValue<int>( );
+
+    // 50 
+    auto dynamicMax = max.GetValue( range ).GetValue<int>( );
 
     return 0;
 }

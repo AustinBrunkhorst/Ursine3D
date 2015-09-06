@@ -8,10 +8,8 @@
 
 class Range : public ursine::meta::MetaProperty
 {   
-    META_OBJECT
+    META_OBJECT 
 public:
-    Range(const Range &rhs) { printf( "COPY!\n" ); }
-
     Range(int min, int max) 
         : min( min )
         , max( max ) { }

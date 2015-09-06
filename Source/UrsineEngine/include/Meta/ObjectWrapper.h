@@ -6,15 +6,12 @@ namespace ursine
 {
     namespace meta
     {
-        template<typename T>
-        class VariantContainer : public VariantBase
+        class ObjectWrapper : public VariantBase
         {
         public:
-            VariantContainer(const T &value);
-            VariantContainer(const T &&value);
+            ObjectWrapper(Object *instance);
 
             Type GetType(void) const override;
-
             void *GetPtr(void) const override;
 
             int ToInt(void) const override;
@@ -26,14 +23,7 @@ namespace ursine
             VariantBase *Clone(void) const override;
 
         private:
-            friend class Variant;
-
-            VariantContainer &operator=(const VariantContainer &rhs) = delete;
-
-            T m_value;
+            Object *m_object;
         };
     }
 }
-
-#include "Impl/VariantContainer.hpp"
-#include "Impl/VariantContainerStandardTypes.hpp"

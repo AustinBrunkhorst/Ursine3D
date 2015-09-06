@@ -13,14 +13,14 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     {{#class}}
     {
         { // Base Type
-            auto id = db.AllocateType( "{{displayName}}" );
+            auto id = db.AllocateType( "{{& displayName}}" );
             auto &type = db.types[ id ];
 
             m::TypeInfo<{{& qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
         }
         {{#ptrTypeEnabled}}
         { // Pointer Type
-            auto id = db.AllocateType( "{{displayName}}*" );
+            auto id = db.AllocateType( "{{& displayName}}*" );
             auto &type = db.types[ id ];
 
             m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
@@ -28,7 +28,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
         {{/ptrTypeEnabled}}
         {{#constPtrTypeEnabled}}
         { // Const Pointer Type
-            auto id = db.AllocateType( "const {{displayName}}*" );
+            auto id = db.AllocateType( "const {{& displayName}}*" );
             auto &type = db.types[ id ];
 
             m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
@@ -42,14 +42,14 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     {{#enum}}
     {
         { // Base Type
-            auto id = db.AllocateType( "{{displayName}}" );
+            auto id = db.AllocateType( "{{& displayName}}" );
             auto &type = db.types[ id ];
 
             m::TypeInfo<{{& qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
         }
         {{#ptrTypeEnabled}}
         { // Pointer Type
-            auto id = db.AllocateType( "{{displayName}}*" );
+            auto id = db.AllocateType( "{{& displayName}}*" );
             auto &type = db.types[ id ];
 
             m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
@@ -57,7 +57,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
         {{/ptrTypeEnabled}}
         {{#constPtrTypeEnabled}}
         { // Const Pointer Type
-            auto id = db.AllocateType( "const {{displayName}}*" );
+            auto id = db.AllocateType( "const {{& displayName}}*" );
             auto &type = db.types[ id ];
 
             m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
@@ -120,7 +120,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 {{> metaDataInitializerList}}
             };
 
-            type.SetEnum<{{& qualifiedName}}>( "{{displayName}}", {
+            type.SetEnum<{{& qualifiedName}}>( "{{& displayName}}", {
                 {{#member}} { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
                 {{/member}}
             } );
@@ -167,16 +167,16 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{/isAccessible}}{{/constructor}}
             // Fields
             {{#field}}{{#isAccessible}}
-            type.AddField<{{parentQualifiedName}}, {{type}}>( "{{displayName}}",
+            type.AddField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",
                 {{#isGetterAccessible}}[](const m::Variant &obj)
                 {
-                    auto *instance = obj.GetValue<{{parentQualifiedName}}>( );
+                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
 
                     return m::Variant { {{> getterBody}} };
                 }{{/isGetterAccessible}}{{^isGetterAccessible}}nullptr{{/isGetterAccessible}},{{#isSetterAccessible}}
                 [](m::Variant &obj, const m::Variant &value)
                 {
-                    auto *instance = obj.GetValue<{{parentQualifiedName}}>( );
+                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
 
                     {{> setterBody}}
                 }{{/isSetterAccessible}}{{^isSetterAccessible}}nullptr{{/isSetterAccessible}},
@@ -187,7 +187,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{/isAccessible}}{{/field}}
             // Static Fields
             {{#staticField}}{{#isAccessible}}
-            type.AddStaticField<{{parentQualifiedName}}, {{type}}>( "{{displayName}}",
+            type.AddStaticField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",
                 {{#isGetterAccessible}}[](void)
                 {
                     return m::Variant { {{> getterBody}} };
@@ -209,13 +209,13 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 static_cast<{{qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
                 [](m::Variant &obj, m::ArgumentList &args)
                 { 
-                    auto *instance = obj.GetValue<{{parentQualifiedName}}>( );
+                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
                     {{#isVoidReturnType}}
-                    instance->{{> invocationBody}};
+                    instance.{{> invocationBody}};
 
                     return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
                     return m::Variant {
-                        instance->{{> invocationBody}}
+                        instance.{{> invocationBody}}
                     };{{/isVoidReturnType}}
                 },
                 {

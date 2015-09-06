@@ -12,6 +12,7 @@ namespace ursine
             virtual ~Object(void) { }
 
             virtual Type GetType(void) const = 0;
+            virtual Object *Clone(void) const = 0;
         };
     }
 }
