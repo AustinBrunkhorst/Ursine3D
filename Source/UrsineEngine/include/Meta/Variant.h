@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VariantBase.h"
+#include "VariantPolicy.h"
 
 #include "TypeConfig.h"
 
@@ -18,6 +19,7 @@ namespace ursine
 
             template<typename T>
             Variant(T *data
+                , variant_policy::WrapObject
                 , typename std::enable_if< std::is_base_of<Object, T>::value >::type* = nullptr
             );
 

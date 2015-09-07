@@ -57,7 +57,7 @@ namespace ursine
             if (search == m_properties.end( ))
                 return Variant { };
 
-            return Variant { search->second };
+            return Variant { search->second, variant_policy::WrapObject( ) };
         }
 
         ////////////////////////////////////////////////////////////////////////////

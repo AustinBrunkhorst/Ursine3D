@@ -22,6 +22,7 @@ namespace ursine
         {
             types[ Type::Invalid ].name = "UNKNOWN";
 
+            REGISTER_NATIVE_TYPE( void );
             REGISTER_NATIVE_TYPE( int );
             REGISTER_NATIVE_TYPE( bool );
             REGISTER_NATIVE_TYPE( float );

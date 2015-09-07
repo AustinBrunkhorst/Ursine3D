@@ -22,6 +22,7 @@ namespace ursine
             , isPrimitive( false )
             , isPointer( false )
             , isClass( false )
+            , name( name )
             , enumeration { nullptr } { }
 
         TypeData::~TypeData(void)
