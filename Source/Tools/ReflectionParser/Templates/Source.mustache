@@ -162,9 +162,25 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 }, 
                 {
                     {{> metaDataInitializerList}}
-                }
+                },
+                false
             );
             {{/isAccessible}}{{/constructor}}
+            // Dynamic Constructors
+            {{#dynamicConstructor}}{{#isAccessible}}
+            type.AddConstructor<{{& templateParameters}}>(
+                [](m::ArgumentList &args)
+                {
+                    return m::Variant { 
+                        {{> dynamicInvocationBody}}
+                    };
+                }, 
+                {
+                    {{> metaDataInitializerList}}
+                },
+                true
+            );
+            {{/isAccessible}}{{/dynamicConstructor}}
             // Fields
             {{#field}}{{#isAccessible}}
             type.AddField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",

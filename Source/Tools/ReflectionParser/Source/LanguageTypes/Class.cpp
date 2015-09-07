@@ -161,6 +161,7 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
             constructors << ctor->CompileTemplate( context );
 
         data[ "constructor" ] = constructors;
+        data[ "dynamicConstructor" ] = constructors;
     }
 
     // fields

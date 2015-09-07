@@ -36,6 +36,27 @@ namespace ursine
             return constructor.Invoke( arguments );
         }
 
+        template <typename ... Args>
+        Variant Type::CreateDynamic(Args&&... args) const
+        {
+            static InvokableSignature signature;
+
+            static bool initial = true;
+
+            if (initial)
+            {
+                TypeUnpacker<Args...>::Apply( signature );
+
+                initial = false;
+            }
+
+            auto &constructor = GetDynamicConstructor( signature );
+
+            ArgumentList arguments { std::forward<Args>( args )... };
+
+            return constructor.Invoke( arguments );
+        }
+
         ////////////////////////////////////////////////////////////////////////
 
         template<typename T>

@@ -243,6 +243,18 @@ namespace ursine
             return constructor.Invoke( arguments );
         }
 
+        Variant Type::CreateDynamicVariadic(const ArgumentList &arguments) const
+        {
+            InvokableSignature signature;
+
+            for (auto &argument : arguments)
+                signature.emplace_back( argument.GetType( ) );
+
+            auto &constructor = GetDynamicConstructor( signature );
+
+            return constructor.Invoke( arguments );
+        }
+
         ////////////////////////////////////////////////////////////////////////////
 
         void Type::Destroy(Variant &instance) const
@@ -307,9 +319,30 @@ namespace ursine
 
         ////////////////////////////////////////////////////////////////////////////
 
+        std::vector<Constructor> Type::GetDynamicConstructors(void) const
+        {
+             auto &handle = database.types[ m_id ].dynamicConstructors;
+
+            std::vector<Constructor> constructors;
+
+            for (auto &constructor : handle)
+                constructors.emplace_back( constructor.second );
+
+            return constructors;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+
         const Constructor &Type::GetConstructor(const InvokableSignature &signature) const
         {
             return database.types[ m_id ].GetConstructor( signature );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        const Constructor &Type::GetDynamicConstructor(const InvokableSignature &signature) const
+        {
+            return database.types[ m_id ].GetDynamicConstructor( signature );
         }
 
         ////////////////////////////////////////////////////////////////////////////

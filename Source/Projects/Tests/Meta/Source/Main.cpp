@@ -38,5 +38,15 @@ int main(void)
     // 50 
     auto dynamicMax = max.GetValue( range ).GetValue<int>( );
 
+    auto test = jasonType.CreateDynamic( );
+
+    auto type = test.GetType( ).GetName( );
+
+    auto *ok = &test.GetValue<ursine::meta::Object>( );
+
+    Jason *ok2 = static_cast<Jason*>( ok );
+
+    delete ok2;
+      
     return 0;
 }

@@ -62,6 +62,16 @@ namespace ursine
             return search->second;
         }
 
+        const Constructor &TypeData::GetDynamicConstructor(const InvokableSignature &signature)
+        {
+            auto search = dynamicConstructors.find( signature );
+
+            if (search == dynamicConstructors.end( ))
+                return Constructor::Invalid( );
+
+            return search->second;
+        }
+
         ////////////////////////////////////////////////////////////////////////////
 
         const Method &TypeData::GetMethod(const std::string &name)

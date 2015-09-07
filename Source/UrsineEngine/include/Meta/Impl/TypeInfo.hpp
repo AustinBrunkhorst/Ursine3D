@@ -59,7 +59,19 @@ namespace ursine
                     return T( );
                 },
                 // meta info
-                { } 
+                { },
+                false
+            );
+
+             // add the good 'ol dynamic default constructor
+            data.AddConstructor<T>( 
+                [](ArgumentList &args)
+                {
+                    return new T( );
+                },
+                // meta info
+                { },
+                true
             );
         }
 

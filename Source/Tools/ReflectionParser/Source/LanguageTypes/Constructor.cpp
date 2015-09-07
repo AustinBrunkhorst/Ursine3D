@@ -22,6 +22,7 @@ TemplateData Constructor::CompileTemplate(const ReflectionParser *context) const
     data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     data[ "templateParameters" ] = getTemplateParameters( );
     data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialConstructorInvocation );
+    data[ "dynamicInvocationBody" ] = context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
 
     data[ "argument" ] = compileSignatureTemplate( );
 

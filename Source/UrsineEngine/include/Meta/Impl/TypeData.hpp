@@ -3,19 +3,23 @@ namespace ursine
     namespace meta
     {
         template<typename ClassType, typename ... Args>
-        void TypeData::AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta)
+        void TypeData::AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta, bool isDynamic)
         {
             InvokableSignature signature = Invokable::CreateSignature<Args...>( );
 
             Constructor ctor {
                 typeof( ClassType ),
                 signature,
-                invoker
+                invoker,
+                isDynamic
             };
 
             ctor.m_meta = meta;
 
-            constructors.emplace( signature, ctor );
+            if (isDynamic)
+                dynamicConstructors.emplace( signature, ctor );
+            else
+                constructors.emplace( signature, ctor );
         }
 
         ////////////////////////////////////////////////////////////////////////////

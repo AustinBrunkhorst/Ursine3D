@@ -10,11 +10,13 @@ namespace ursine
     {
         Constructor::Constructor(void)
             : Invokable( "INVALID" )
+            , m_isDynamic( false )
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
-        Constructor::Constructor(Type classType, InvokableSignature signature, Invoker invoker)
+        Constructor::Constructor(Type classType, InvokableSignature signature, Invoker invoker, bool isDynamic)
             : Invokable( "constructor" )
+            , m_isDynamic( isDynamic )
             , m_classType( classType )
             , m_invoker( invoker )
         {
@@ -36,6 +38,11 @@ namespace ursine
         bool Constructor::IsValid(void) const
         {
             return m_invoker != nullptr;
+        }
+
+        bool Constructor::IsDynamic(void) const
+        {
+            return m_isDynamic;
         }
 
         Variant Constructor::InvokeVariadic(ArgumentList &arguments) const

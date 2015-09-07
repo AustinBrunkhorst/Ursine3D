@@ -114,11 +114,22 @@ namespace ursine
             // call Invoke( ) manually
             Variant CreateVariadic(const ArgumentList &arguments) const;
 
+            // Instantiates an instance of this type with the given dynamic constructor signature
+            // NOTE: it is much faster to cache the appropriate constructor first, then
+            // call Invoke( ) manually
+            Variant CreateDynamicVariadic(const ArgumentList &arguments) const;
+
             // Instantiates an instance of this type with the given constructor signature
             // NOTE: it is much faster to cache the appropriate constructor first, then
             // call Invoke( ) manually
             template<typename ...Args>
             Variant Create(Args &&...args) const;
+
+            // Instantiates an instance of this type with the given dynamic constructor signature
+            // NOTE: it is much faster to cache the appropriate constructor first, then
+            // call Invoke( ) manually
+            template<typename ...Args>
+            Variant CreateDynamic(Args &&...args) const;
 
             // Deconstructs the given object instance
             void Destroy(Variant &instance) const;
@@ -154,8 +165,14 @@ namespace ursine
             // Gets all constructors for this type assuming it's a class type
             std::vector<Constructor> GetConstructors(void) const;
 
+            // Gets all dynamic constructors for this type assuming it's a class type
+            std::vector<Constructor> GetDynamicConstructors(void) const;
+
             // Gets a constructor for this type with the specified argument signature
-            const Constructor &GetConstructor(const InvokableSignature &signature = InvokableSignature()) const;
+            const Constructor &GetConstructor(const InvokableSignature &signature = InvokableSignature( )) const;
+
+            // Gets a dynamic constuctor for this type with the specified argument signature
+            const Constructor &GetDynamicConstructor(const InvokableSignature &signature = InvokableSignature( )) const;
 
             // Gets the destructor for this type assuming it's a class type
             const Destructor &GetDestructor(void) const;

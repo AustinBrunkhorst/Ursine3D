@@ -41,6 +41,7 @@ namespace ursine
             Destructor destructor;
 
             std::unordered_map<InvokableSignature, Constructor> constructors;
+            std::unordered_map<InvokableSignature, Constructor> dynamicConstructors;
 
             std::unordered_map<std::string, Field> fields;
             std::unordered_map<std::string, Global> staticFields;
@@ -62,9 +63,10 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////////
 
             template<typename ClassType, typename ...Args>
-            void AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta);
+            void AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta, bool isDynamic);
 
             const Constructor &GetConstructor(const InvokableSignature &signature);
+            const Constructor &GetDynamicConstructor(const InvokableSignature &signature);
 
             ////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////
