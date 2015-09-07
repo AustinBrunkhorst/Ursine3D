@@ -36,7 +36,7 @@ TemplateData Function::CompileTemplate(const ReflectionParser *context) const
 
     data[ "argument" ] = compileSignatureTemplate( );
 
-    m_metaData.CompileTemplateData( data );
+    m_metaData.CompileTemplateData( data, context );
 
     return data;
 }

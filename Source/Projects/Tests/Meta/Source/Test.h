@@ -40,12 +40,22 @@ public:
 class Jason : public ursine::meta::Object
 {
     META_OBJECT
+
+    Meta(Getter( "GetX" ))
+    int x;
+
+    Meta(Getter( "GetY" ))
+    int y;
+
 public:
     Jason(void) 
         : myField( 0 ) { }
 
-    Meta(Range(-3000, 50), Slider)
+    Meta(Range( -3000, 50 ), Slider)
     int myField;
+
+    int GetX(void) const { return x; }
+    int GetY(void) const { return y; }
 };
 
 class BaseClass { };

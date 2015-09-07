@@ -29,12 +29,12 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetDisplayName( ) )
     , m_qualifiedName( cursor.GetType( ).GetDisplayName( ) )
 {
-    auto displayName = m_metaData.GetProperty( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_qualifiedName;
     else
-        m_displayName = utils::GetQualifiedName( cursor, currentNamespace );
+        m_displayName = utils::GetQualifiedName( displayName, currentNamespace );
 
     for (auto &child : cursor.GetChildren( ))
     {
@@ -125,6 +125,8 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
     data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
     data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
+
+    m_metaData.CompileTemplateData( data, context );
 
     // base classes
     {

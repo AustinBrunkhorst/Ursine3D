@@ -24,6 +24,9 @@ private:
     std::string m_displayName;
     std::string m_type;
 
+    std::string m_explicitGetter;
+    std::string m_explicitSetter;
+
     bool isAccessible(void) const;
     bool isGetterAccessible(void) const;
     bool isSetterAccessible(void) const;

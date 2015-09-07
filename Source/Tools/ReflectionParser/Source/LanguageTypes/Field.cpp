@@ -6,18 +6,22 @@
 Field::Field(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
     : LanguageType( cursor, currentNamespace )
     , m_isConst( cursor.GetType( ).IsConst( ) )
-    , m_hasExplicitGetter( m_metaData.GetFlag( kMetaExplicitGetter ) )
-    , m_hasExplicitSetter( m_metaData.GetFlag( kMetaExplicitSetter ) )
     , m_parent( parent )
     , m_name( cursor.GetSpelling( ) )
     , m_type( cursor.GetType( ).GetDisplayName( ) )
 {
-    auto displayName = m_metaData.GetProperty( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_name;
     else
         m_displayName = displayName;
+
+    m_explicitGetter = m_metaData.GetNativeString( kMetaExplicitGetter );
+    m_hasExplicitGetter = !m_explicitGetter.empty( );
+
+    m_explicitSetter = m_metaData.GetNativeString( kMetaExplicitSetter );
+    m_hasExplicitSetter = !m_explicitSetter.empty( );
 }
 
 TemplateData Field::CompileTemplate(const ReflectionParser *context) const
@@ -37,17 +41,17 @@ TemplateData Field::CompileTemplate(const ReflectionParser *context) const
 
     data[ "isGetterAccessible" ] = utils::TemplateBool( isGetterAccessible( ) );
     data[ "hasExplicitGetter" ] = utils::TemplateBool( m_hasExplicitGetter );
-    data[ "explicitGetter" ] = m_metaData.GetProperty( kMetaExplicitGetter );
+    data[ "explicitGetter" ] = m_explicitGetter;
     data[ "getterBody" ] = context->LoadTemplatePartial( kPartialFieldGetter );
 
     // setter
 
     data[ "isSetterAccessible" ] = utils::TemplateBool( isSetterAccessible( ) );
     data[ "hasExplicitSetter" ] = utils::TemplateBool( m_hasExplicitSetter );
-    data[ "explicitSetter" ] = m_metaData.GetProperty( kMetaExplicitSetter );
+    data[ "explicitSetter" ] = m_explicitSetter;
     data[ "setterBody" ] = context->LoadTemplatePartial( kPartialFieldSetter );
 
-    m_metaData.CompileTemplateData( data );
+    m_metaData.CompileTemplateData( data, context );
 
     return data;
 }

@@ -14,7 +14,7 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetType( ).GetDisplayName( ) )
     , m_qualifiedName( m_name )
 {
-    auto displayName = m_metaData.GetProperty( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_qualifiedName;
@@ -61,7 +61,7 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
 
     data[ "member" ] = members;
 
-    m_metaData.CompileTemplateData( data );
+    m_metaData.CompileTemplateData( data, context );
 
     return data;
 }

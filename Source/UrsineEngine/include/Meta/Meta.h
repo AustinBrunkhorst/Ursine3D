@@ -2,12 +2,9 @@
 
 #include <Macros.h>
 
-#ifdef __REFLECTION_PARSER__
-
-#include <Object.h>
 #include <MetaProperty.h>
 
-#else
+#ifndef __REFLECTION_PARSER__
 
 #include <Object.h>
 

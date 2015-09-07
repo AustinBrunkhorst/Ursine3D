@@ -257,7 +257,7 @@ namespace ursine
 
         Type Type::GetDecayedType(void) const
         {
-            // TODO:
+            URSINE_TODO( "convert to non pointer/const pointer type" );
             return Type( );
         }
 
@@ -323,7 +323,7 @@ namespace ursine
 
         std::vector<Method> Type::GetMethods(void) const
         {
-            // TODO: recursively get base class methods
+            URSINE_TODO( "recursively get base class methods" );
             return { };
         }
 
@@ -378,7 +378,7 @@ namespace ursine
 
         std::vector<Field> Type::GetFields(void) const
         {
-            // TODO: recursively get base class fields
+            URSINE_TODO( "recursively get base class fields" );
 
             std::vector<Field> fields;
 

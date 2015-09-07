@@ -1,19 +1,9 @@
 #include "Precompiled.h"
 
 #include "MetaDataManager.h"
-
-#include <Utils.h>
+#include "ReflectionParser.h"
 
 #include <boost/regex.hpp>
-#include <boost/algorithm/string/replace.hpp>
-
-const TemplateData::PartialType MetaDataManager::m_tmplInitializerListPartial = [](void)
-{
-    return 
-        "{{#metaProperty}}"
-        "std::make_pair( typeof( {{& type}} ), m::MetaPropertyInitializer<{{& type}}>( {{& arguments}} ) ){{^isLast}}, {{/isLast}}\n"
-        "{{/metaProperty}}";
-};
 
 MetaDataManager::MetaDataManager(const Cursor &cursor)
 {
@@ -40,7 +30,38 @@ bool MetaDataManager::GetFlag(const std::string &key) const
     return m_properties.find( key ) == m_properties.end( ) ? false : true;
 }
 
-void MetaDataManager::CompileTemplateData(TemplateData &data) const
+std::string MetaDataManager::GetNativeString(const std::string &key) const
+{
+    auto search = m_properties.find( key );
+
+    // wasn't set
+    if (search == m_properties.end( ))
+        return "";
+
+    static const boost::regex quotedString(
+        // opening quote
+        "(?:\\s*\")"
+        // actual string contents
+        "([^\"]*)"
+        // closing quote
+        "\"",
+        boost::regex::icase
+    );
+
+    auto &value = search->second;
+    
+    auto flags = boost::match_default | boost::format_all;
+
+    boost::match_results<std::string::const_iterator> match;
+
+    if (boost::regex_search( value.cbegin( ), value.cend( ), match, quotedString, flags ))
+        return match[ 1 ].str( );
+
+    // couldn't find one
+    return "";
+}
+
+void MetaDataManager::CompileTemplateData(TemplateData &data, const ReflectionParser *context) const
 {
     TemplateData propertyData { TemplateData::Type::List };
 
@@ -52,7 +73,10 @@ void MetaDataManager::CompileTemplateData(TemplateData &data) const
         kMetaEnable,
         kMetaDisable,
         kMetaDisablePtrType,
-        kMetaDisableConstPtrType
+        kMetaDisableConstPtrType,
+        kMetaDisplayName,
+        kMetaExplicitGetter,
+        kMetaExplicitSetter
     };
 
     int i = 0;
@@ -82,7 +106,7 @@ void MetaDataManager::CompileTemplateData(TemplateData &data) const
     }
 
     data[ "metaProperty" ] = propertyData;
-    data[ "metaDataInitializerList" ] = m_tmplInitializerListPartial;
+    data[ "metaDataInitializerList" ] = context->LoadTemplatePartial( kPartialMetaInitializerList );
 }
 
 std::vector<MetaDataManager::Property> MetaDataManager::extractProperties(const Cursor &cursor) const

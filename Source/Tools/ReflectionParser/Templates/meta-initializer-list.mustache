@@ -1,1 +1,2 @@
-{{#metaProperty}}{ "{{& key}}"{{^ isFlag}}, "{{& value}}"{{/isFlag}} }{{^ isLast}}, {{/isLast}}{{/metaProperty}}
+{{#metaProperty}}std::make_pair( typeof( {{& type}} ), m::MetaPropertyInitializer<{{& type}}>( {{& arguments}} ) ){{^isLast}}, {{/isLast}}
+{{/metaProperty}}

@@ -25,16 +25,20 @@ namespace ursine
             bool isPointer : 1;
             bool isClass : 1;
 
+            MetaManager meta;
+
+            std::string name;
+
+            // enum type
+
             Enum enumeration;
+
+            // class type
 
             Type::Set baseClasses;
             Type::Set derivedClasses;
 
-            std::string name;
-
             Destructor destructor;
-
-            MetaManager meta;
 
             std::unordered_map<InvokableSignature, Constructor> constructors;
 

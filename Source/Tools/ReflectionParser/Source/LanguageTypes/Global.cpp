@@ -13,7 +13,7 @@ Global::Global(const Cursor &cursor, const Namespace &currentNamespace, Class *p
     , m_qualifiedName( utils::GetQualifiedName( cursor, currentNamespace ) )
     , m_type( cursor.GetType( ).GetDisplayName( ) )
 {
-    auto displayName = m_metaData.GetProperty( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 
     if (displayName.empty( ))
     {
@@ -54,7 +54,7 @@ TemplateData Global::CompileTemplate(const ReflectionParser *context) const
     data[ "explicitSetter" ] = m_metaData.GetProperty( kMetaExplicitSetter );
     data[ "setterBody" ] = context->LoadTemplatePartial( kPartialGlobalSetter );
 
-    m_metaData.CompileTemplateData( data );
+    m_metaData.CompileTemplateData( data, context );
 
     return data;
 }
