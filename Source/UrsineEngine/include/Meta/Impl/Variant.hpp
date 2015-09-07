@@ -18,7 +18,7 @@ namespace ursine
 
         template<typename T>
         Variant::Variant(T &data)
-            : m_isConst( false )
+            : m_isConst( std::is_pointer<T>::value && std::is_const<T>::value )
             , m_base( new VariantContainer< CleanedType<T> >( data ) )
         {
         
