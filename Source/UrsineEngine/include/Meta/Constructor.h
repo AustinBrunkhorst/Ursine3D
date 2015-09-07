@@ -20,13 +20,14 @@ namespace ursine
             typedef std::function<Variant(ArgumentList&)> Invoker;
 
             Constructor(void);
-            Constructor(Type classType, InvokableSignature signature, Invoker invoker);
+            Constructor(Type classType, InvokableSignature signature, Invoker invoker, bool isDynamic);
 
             static const Constructor &Invalid(void);
 
             Type GetClassType(void) const;
 
             bool IsValid(void) const;
+            bool IsDynamic(void) const;
 
             Variant InvokeVariadic(ArgumentList &arguments) const;
 
@@ -34,6 +35,8 @@ namespace ursine
             Variant Invoke(Args &&...args) const;
 
         private:
+            bool m_isDynamic;
+
             Type m_classType;
 
             Invoker m_invoker;

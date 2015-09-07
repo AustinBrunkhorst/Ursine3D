@@ -16,3 +16,23 @@ std::string CursorType::GetDisplayName(void) const
 
     return displayName;
 }
+
+int CursorType::GetArgumentCount(void) const
+{
+    return clang_getNumArgTypes( m_handle );
+}
+
+CursorType CursorType::GetArgument(unsigned index) const
+{
+    return clang_getArgType( m_handle, index );
+}
+
+CursorType CursorType::GetCanonicalType(void) const
+{
+    return clang_getCanonicalType( m_handle );
+}
+
+bool CursorType::IsConst(void) const
+{
+    return clang_isConstQualifiedType( m_handle ) ? true : false;
+}

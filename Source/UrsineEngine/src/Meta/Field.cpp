@@ -50,13 +50,17 @@ namespace ursine
             return m_getter( instance );
         }
 
-        void Field::SetValue(Variant &instance, const Variant &value) const
+        bool Field::SetValue(Variant &instance, const Variant &value) const
         {
             // read only?
-            if (m_setter)
+            if (m_setter && !instance.IsConst( ))
             {
                 m_setter( instance, value );
+
+                return true;
             }
+
+            return false;
         }
     }
 }

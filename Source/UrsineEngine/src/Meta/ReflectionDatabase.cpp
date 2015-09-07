@@ -4,6 +4,14 @@
 
 #include "Type.h"
 
+#define REGISTER_NATIVE_TYPE(type)                    \
+    {                                                 \
+        auto id = AllocateType( #type );              \
+        auto &handle = types[ id ];                   \
+                                                      \
+        TypeInfo<type>::Register( id, handle, true ); \
+    }                                                 \
+
 namespace ursine
 {
     namespace meta
@@ -13,6 +21,13 @@ namespace ursine
             , m_nextID( 1 )
         {
             types[ Type::Invalid ].name = "UNKNOWN";
+
+            REGISTER_NATIVE_TYPE( void );
+            REGISTER_NATIVE_TYPE( int );
+            REGISTER_NATIVE_TYPE( bool );
+            REGISTER_NATIVE_TYPE( float );
+            REGISTER_NATIVE_TYPE( double );
+            REGISTER_NATIVE_TYPE( std::string );
         }
 
         ////////////////////////////////////////////////////////////////////////////

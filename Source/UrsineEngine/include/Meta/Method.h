@@ -35,6 +35,7 @@ namespace ursine
             Type GetClassType(void) const;
 
             bool IsValid(void) const;
+            bool IsConst(void) const;
 
             Variant Invoke(Variant &instance, ArgumentList &arguments) const;
 
@@ -42,6 +43,8 @@ namespace ursine
             Variant Invoke(Variant &instance, Args &&...args) const;
 
         private:
+            bool m_isConst;
+
             Type m_classType;
 
             Invoker m_invoker;

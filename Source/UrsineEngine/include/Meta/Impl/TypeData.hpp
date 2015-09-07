@@ -3,19 +3,23 @@ namespace ursine
     namespace meta
     {
         template<typename ClassType, typename ... Args>
-        void TypeData::AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta)
+        void TypeData::AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta, bool isDynamic)
         {
             InvokableSignature signature = Invokable::CreateSignature<Args...>( );
 
             Constructor ctor {
-                Type::Get<ClassType>() ,
+                typeof( ClassType ),
                 signature,
-                invoker
+                invoker,
+                isDynamic
             };
 
             ctor.m_meta = meta;
 
-            constructors.emplace( signature, ctor );
+            if (isDynamic)
+                dynamicConstructors.emplace( signature, ctor );
+            else
+                constructors.emplace( signature, ctor );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -24,11 +28,11 @@ namespace ursine
         void TypeData::SetDestructor(void)
         {
             destructor = { 
-                Type::Get<ClassType>( ), 
+                typeof( ClassType ), 
                 [](Variant &instance)
                 {
                     instance.GetValue<ClassType>( ).~ClassType( );
-                } 
+                }
             };
         }
 
@@ -39,8 +43,8 @@ namespace ursine
         {
             Field field {
                 name,
-                Type::Get<FieldType>( ),
-                Type::Get<ClassType>( ),
+                typeof( FieldType ),
+                typeof( ClassType ),
                 getter,
                 setter
             };
@@ -55,10 +59,10 @@ namespace ursine
         {
             Global global {
                 name,
-                Type::Get<FieldType>( ),
+                typeof( FieldType ),
                 getter,
                 setter,
-                Type::Get<ClassType>( ),
+                typeof( ClassType ),
             };
 
             global.m_meta = meta;
@@ -81,7 +85,7 @@ namespace ursine
         template<typename ClassType, typename FunctionType, typename FunctionInvoker>
         void TypeData::AddStaticMethod(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta)
         {
-            Function function( name, type, invoker, Type::Get<ClassType>( ) );
+            Function function( name, type, invoker, typeof( ClassType ) );
 
             function.m_meta = meta;
 

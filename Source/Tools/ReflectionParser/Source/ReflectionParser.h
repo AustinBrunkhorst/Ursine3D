@@ -5,16 +5,26 @@
 #include "Cursor.h"
 #include "Namespace.h"
 
-#include "LanguageTypes/Class.h"
-#include "LanguageTypes/Global.h"
-#include "LanguageTypes/Function.h"
-#include "LanguageTypes/Enum.h"
+#include "Templates.h"
+
+class Class;
+class Global;
+class Function;
+class Enum;
 
 class ReflectionParser
 {
 public:
     ReflectionParser(const ReflectionOptions &options);
     ~ReflectionParser(void);
+
+    void Parse(void);
+
+    MustacheTemplate LoadTemplate(const std::string &name) const;
+    TemplateData::PartialType LoadTemplatePartial(const std::string &name) const;
+
+    void GenerateHeader(std::string &output) const;
+    void GenerateSource(std::string &output) const;
 
 private:
     ReflectionOptions m_options;
@@ -27,8 +37,15 @@ private:
     std::vector<Function*> m_globalFunctions;
     std::vector<Enum*> m_enums;
 
+    mutable std::unordered_map<std::string, std::string> m_templatePartialCache;
+
     void buildClasses(const Cursor &cursor, Namespace &currentNamespace);
     void buildGlobals(const Cursor &cursor, Namespace &currentNamespace);
     void buildGlobalFunctions(const Cursor &cursor, Namespace &currentNamespace);
     void buildEnums(const Cursor &cursor, Namespace &currentNamespace);
+
+    TemplateData compileClassTemplates(void) const;
+    TemplateData compileGlobalTemplates(void) const;
+    TemplateData compileGlobalFunctionTemplates(void) const;
+    TemplateData compileEnumTemplates(void) const;
 };

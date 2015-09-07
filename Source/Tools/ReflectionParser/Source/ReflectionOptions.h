@@ -3,6 +3,15 @@
 struct ReflectionOptions
 {
     std::string targetName;
-    std::string sourceFile;
-    std::vector<const char *> arguments;
+
+    std::string inputSourceFile;
+
+    std::string outputHeaderFile;
+    std::string outputSourceFile;
+
+    std::string precompiledHeader;
+
+    std::string templateDirectory;
+
+    std::vector<std::string> arguments;
 };

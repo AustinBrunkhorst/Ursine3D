@@ -9,14 +9,18 @@ namespace ursine
     namespace meta
     {
         Variant::Variant(void)
-            : m_base( nullptr ) { }
+            : m_isConst( true )
+            , m_base( nullptr ) { }
 
         Variant::Variant(const Variant &rhs)
-            : m_base( rhs.m_base ? rhs.m_base->Clone( ) : nullptr ) { }
+            : m_isConst( rhs.m_isConst )
+            , m_base( rhs.m_base ? rhs.m_base->Clone( ) : nullptr ) { }
 
         Variant::Variant(Variant &&rhs)
-            : m_base( rhs.m_base )
+            : m_isConst( rhs.m_isConst )
+            , m_base( rhs.m_base )
         {
+            rhs.m_isConst = true;
             rhs.m_base = nullptr;
         }
 
@@ -84,6 +88,11 @@ namespace ursine
         bool Variant::IsValid(void) const
         {
             return m_base != nullptr;
+        }
+
+        bool Variant::IsConst(void) const
+        {
+            return m_isConst;
         }
 
         void *Variant::getPtr(void) const

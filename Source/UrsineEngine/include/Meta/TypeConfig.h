@@ -2,6 +2,8 @@
 
 #include <type_traits>
 
+#define typeof(type) ursine::meta::Type( ursine::meta::TypeInfo< ursine::meta::CleanedType< type > >::ID )
+
 namespace ursine
 {
     namespace meta

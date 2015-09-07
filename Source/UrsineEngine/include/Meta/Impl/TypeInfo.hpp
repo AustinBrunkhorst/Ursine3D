@@ -31,20 +31,64 @@ namespace ursine
         
             if (beingDefined)
             {
+                addDefaultConstructor( data );
+
                 applyTrivialAttributes( data );
             }
         }
 
         template<typename T>
         template<typename U = T>
-        void TypeInfo<T>::applyTrivialAttributes(TypeData &data, typename std::enable_if< !std::is_trivial<U>::value >::type* = nullptr)
+        void TypeInfo<T>::addDefaultConstructor(TypeData &data
+            , typename std::enable_if< !std::is_trivially_default_constructible<U>::value >::type*
+        )
         {
             // do nothing
         }
 
         template<typename T>
         template<typename U = T>
-        void TypeInfo<T>::applyTrivialAttributes(TypeData &data, typename std::enable_if< std::is_trivial<U>::value >::type* = nullptr)
+        void TypeInfo<T>::addDefaultConstructor(TypeData &data
+            , typename std::enable_if< std::is_trivially_default_constructible<U>::value >::type*
+        )
+        {
+            // add the good 'ol default constructor
+            data.AddConstructor<T>( 
+                [](ArgumentList &args)
+                {
+                    return T( );
+                },
+                // meta info
+                { },
+                false
+            );
+
+             // add the good 'ol dynamic default constructor
+            data.AddConstructor<T>( 
+                [](ArgumentList &args)
+                {
+                    return new T( );
+                },
+                // meta info
+                { },
+                true
+            );
+        }
+
+        template<typename T>
+        template<typename U = T>
+        void TypeInfo<T>::applyTrivialAttributes(TypeData &data
+            , typename std::enable_if< !std::is_trivial<U>::value >::type* = nullptr
+        )
+        {
+            // do nothing
+        }
+
+        template<typename T>
+        template<typename U = T>
+        void TypeInfo<T>::applyTrivialAttributes(TypeData &data
+            , typename std::enable_if< std::is_trivial<U>::value >::type* = nullptr
+        )
         {
             data.SetDestructor<T>( );
         }

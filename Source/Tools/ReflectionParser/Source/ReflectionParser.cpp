@@ -2,10 +2,12 @@
 
 #include "ReflectionParser.h"
 
-#include "Class.h"
-#include "Global.h"
-#include "Function.h"
-#include "Enum.h"
+#include "LanguageTypes/Class.h"
+#include "LanguageTypes/Global.h"
+#include "LanguageTypes/Function.h"
+#include "LanguageTypes/Enum.h"
+
+#include <boost/algorithm/string.hpp>
 
 #define RECURSE_NAMESPACES(kind, cursor, method, ns) \
     if (kind == CXCursor_Namespace)                  \
@@ -21,14 +23,52 @@
 
 ReflectionParser::ReflectionParser(const ReflectionOptions &options)
     : m_options( options )
+    , m_index( nullptr )
+    , m_translationUnit( nullptr )
+{
+   
+}
+
+ReflectionParser::~ReflectionParser(void)
+{
+    for (auto *klass : m_classes)
+        delete klass;
+
+    for (auto *global : m_globals)
+        delete global;
+
+    for (auto *globalFunction : m_globalFunctions)
+        delete globalFunction;
+
+    for (auto *enewm : m_enums)
+        delete enewm;
+
+    if (m_translationUnit)
+        clang_disposeTranslationUnit( m_translationUnit );
+
+    if (m_index)
+        clang_disposeIndex( m_index );
+}
+
+void ReflectionParser::Parse(void)
 {
     m_index = clang_createIndex( true, false );
 
+    std::vector<const char *> arguments;
+
+    for (auto &argument : m_options.arguments)
+    { 
+        // unescape flags
+        boost::algorithm::replace_all( argument, "\\-", "-" );
+
+        arguments.emplace_back( argument.c_str( ) );
+    }
+
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
         m_index,
-        m_options.sourceFile.c_str( ),
-        m_options.arguments.size( ),
-        m_options.arguments.data( ),
+        m_options.inputSourceFile.c_str( ),
+        arguments.size( ),
+        arguments.data( ),
         0,
         nullptr
     );
@@ -52,22 +92,131 @@ ReflectionParser::ReflectionParser(const ReflectionOptions &options)
     buildEnums( cursor, tempNamespace );
 }
 
-ReflectionParser::~ReflectionParser(void)
+MustacheTemplate ReflectionParser::LoadTemplate(const std::string &name) const
 {
-    for (auto klass : m_classes)
-        delete klass;
+    auto path = fs::path( m_options.templateDirectory );
 
-    for (auto global : m_globals)
-        delete global;
+    path.append( name );
 
-    for (auto globalFunction : m_globalFunctions)
-        delete globalFunction;
+    try
+    {
+        return *utils::LoadText( path.string( ) );
+    }
+    catch(std::exception &e)
+    {
+        std::stringstream error;
 
-    for (auto enewm : m_enums)
-        delete enewm;
+        error << "Unable to load template ";
+        error << name << "." << std::endl;
+        error << "-- " << e.what( );
 
-    clang_disposeTranslationUnit( m_translationUnit );
-    clang_disposeIndex( m_index );
+        utils::FatalError( error.str( ) );
+    }
+
+    // this will never happen
+    return { "" };
+}
+
+TemplateData::PartialType ReflectionParser::LoadTemplatePartial(const std::string &name) const
+{
+    auto path = fs::path( m_options.templateDirectory ).append( name ).string( );
+
+    try
+    {
+        auto partialLoader = [=]()
+        {
+            auto cache = m_templatePartialCache.find( path );
+
+            if (cache == m_templatePartialCache.end( ))
+            {
+                auto text = *utils::LoadText( path );
+
+                m_templatePartialCache[ path ] = text;
+
+                return text;
+            }
+                
+            return cache->second;
+        };
+
+        return partialLoader;
+    }
+    catch(std::exception &e)
+    {
+        std::stringstream error;
+
+        error << "Unable to load template partial ";
+        error << name << "." << std::endl;
+        error << "-- " << e.what( );
+
+        utils::FatalError( error.str( ) );
+    }
+
+    // this will never happen
+    return nullptr;
+}
+
+void ReflectionParser::GenerateHeader(std::string &output) const
+{
+    TemplateData headerData { TemplateData::Type::Object };
+
+    // general options
+
+    headerData[ "targetName" ] = m_options.targetName;
+    headerData[ "inputSourceFile" ] = m_options.inputSourceFile;
+    headerData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
+    headerData[ "outpuSourceFile" ] = m_options.outputSourceFile;
+    headerData[ "usingPrecompiledHeader" ] = utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+    headerData[ "precompiledHeader" ] = m_options.precompiledHeader;
+
+    auto headerTemplate = LoadTemplate( kTemplateHeader );
+
+    if (!headerTemplate.isValid( ))
+    {
+        std::stringstream error;
+
+        error << "Unable to compile header template." << std::endl;
+        error << headerTemplate.errorMessage( );
+
+        throw std::exception( error.str( ).c_str( ) );
+    }
+
+    output = headerTemplate.render( headerData );
+}
+
+void ReflectionParser::GenerateSource(std::string &output) const
+{
+    TemplateData sourceData { TemplateData::Type::Object };
+
+    // general options
+
+    sourceData[ "targetName" ] = m_options.targetName;
+    sourceData[ "inputSourceFile" ] = m_options.inputSourceFile;
+    sourceData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
+    sourceData[ "outpuSourceFile" ] = m_options.outputSourceFile;
+    sourceData[ "usingPrecompiledHeader" ] = utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+    sourceData[ "precompiledHeader" ] = m_options.precompiledHeader;
+
+    // language type data
+
+    sourceData[ "class" ] = compileClassTemplates( );
+    sourceData[ "global" ] = compileGlobalTemplates( );
+    sourceData[ "globalFunction" ] = compileGlobalFunctionTemplates( );
+    sourceData[ "enum" ] = compileEnumTemplates( );
+
+    auto sourceTemplate = LoadTemplate( kTemplateSource );
+
+    if (!sourceTemplate.isValid( ))
+    {
+        std::stringstream error;
+
+        error << "Unable to compile header template." << std::endl;
+        error << sourceTemplate.errorMessage( );
+
+        throw std::exception( error.str( ).c_str( ) );
+    }
+
+    output = sourceTemplate.render( sourceData );
 }
 
 void ReflectionParser::buildClasses(const Cursor &cursor, Namespace &currentNamespace)
@@ -157,4 +306,47 @@ void ReflectionParser::buildEnums(const Cursor &cursor, Namespace &currentNamesp
 
         RECURSE_NAMESPACES( kind, child, buildEnums, currentNamespace );
     }
+}
+
+TemplateData ReflectionParser::compileClassTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *klass : m_classes)
+    {
+        if (klass->ShouldCompile( ))
+            data << klass->CompileTemplate( this );
+    }
+
+    return data;
+}
+
+TemplateData ReflectionParser::compileGlobalTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *global : m_globals)
+        data << global->CompileTemplate( this );
+
+    return data;
+}
+
+TemplateData ReflectionParser::compileGlobalFunctionTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *globalFunction : m_globalFunctions)
+        data << globalFunction->CompileTemplate( this );
+
+    return data;
+}
+
+TemplateData ReflectionParser::compileEnumTemplates(void) const
+{
+    TemplateData data = { TemplateData::Type::List };
+
+    for (auto *enewm : m_enums)
+        data << enewm->CompileTemplate( this );
+
+    return data;
 }

@@ -41,9 +41,7 @@ set(SDL2_DIR       "${ENGINE_DEP_DIR}/SDL2")
 set(GLEW_DIR       "${ENGINE_DEP_DIR}/GLEW")
 set(CEF_DIR        "${ENGINE_DEP_DIR}/CEF")
 set(FMOD_DIR       "${ENGINE_DEP_DIR}/FMOD")
-
 set(BENCHMARKS_DIR "${ENGINE_DEP_DIR}/Benchmarks")
-
 set(CLANG_DIR "${ENGINE_DEP_DIR}/Clang")
 
 find_package(SDL2 REQUIRED 
@@ -64,6 +62,10 @@ find_package(BENCHMARKS REQUIRED
 find_package(Clang REQUIRED
     HINTS ${CLANG_DIR})
 
+# boost requires some special attention
+
+include(BoostSetup)
+
 # ------------------------------------------------------------------------------
 # Global Compiler Definitions
 # ------------------------------------------------------------------------------
@@ -80,19 +82,19 @@ if (MSVC)
         "/Zm200" # increased compiler heap memory
     )
     
-    ursine_remove_compile_flags(
-        "/EHsc" # disable exceptions
-    )
+    #ursine_remove_compile_flags(
+    #    "/EHsc" # disable exceptions
+    #)
 else ()
     ursine_add_compile_flags(
         "-std=c++11"
     )
 endif ()
 
-add_definitions(
-    # disable exceptions
-    -D_HAS_EXCEPTIONS=0
-)
+#add_definitions(
+#    # disable exceptions
+#    -D_HAS_EXCEPTIONS=0
+#)
 
 # ------------------------------------------------------------------------------
 # General Installer Settings

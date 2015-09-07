@@ -44,12 +44,17 @@ bool Cursor::IsDefinition(void) const
     return clang_isCursorDefinition( m_handle ) ? true : false;
 }
 
-bool Cursor::IsStatic(void) const
+bool Cursor::IsConst(void) const
 {
-    return clang_CXXMethod_isStatic( m_handle );
+    return clang_CXXMethod_isConst( m_handle ) ? true : false;
 }
 
-CX_CXXAccessSpecifier Cursor::GetAccessSpecifier(void) const
+bool Cursor::IsStatic(void) const
+{
+    return clang_CXXMethod_isStatic( m_handle ) ? true : false;
+}
+
+CX_CXXAccessSpecifier Cursor::GetAccessModifier(void) const
 {
     return clang_getCXXAccessSpecifier( m_handle );
 }
@@ -62,6 +67,11 @@ CX_StorageClass Cursor::GetStorageClass(void) const
 CursorType Cursor::GetType(void) const
 {
     return clang_getCursorType( m_handle );
+}
+
+CursorType Cursor::GetReturnType(void) const
+{
+    return clang_getCursorResultType( m_handle );
 }
 
 Cursor::List Cursor::GetChildren(void) const

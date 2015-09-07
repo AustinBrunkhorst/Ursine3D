@@ -25,7 +25,7 @@ namespace ursine
         template<typename T>
         Type VariantContainer<T>::GetType(void) const
         {
-            return Type::Get<T>( );
+            return typeof( T );
         }
 
         ////////////////////////////////////////////////////////////////////////////

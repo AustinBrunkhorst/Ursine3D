@@ -1,46 +1,48 @@
 #pragma once
 
+#include "MetaProperty.h"
+
 #include <string>
-#include <unordered_map>
+#include <map>
 
 namespace ursine
 {
     namespace meta
     {
+        class Type;
+        class Variant;
+
         class MetaManager
         {
         public:
-            struct Property
-            {
-                std::string key;
-                std::string value;
-
-                Property(void);
-                Property(const std::string &key, const std::string &value = std::string());
-
-                int ToInt(void) const;
-                bool ToBool(void) const;
-                float ToFloat(void) const;
-                double ToDouble(void) const;
-            };
-
-            typedef std::initializer_list<Property> Initializer;
+            typedef std::initializer_list<
+                std::pair<Type, const MetaProperty *>
+            > Initializer;
 
             MetaManager(void);
-            MetaManager(const std::initializer_list<Property> &properties);
+            MetaManager(const MetaManager &rhs);
+            MetaManager(const MetaManager &&rhs);
 
-            // Gets a property with the given key. nullptr is returned 
-            // if the key doesn't exist
-            const Property *GetProperty(const std::string &key) const;
+            const MetaManager &operator=(const MetaManager &rhs);
 
-            // Determines if the given key exists
-            bool GetFlag(const std::string &key) const;
+            MetaManager(const Initializer &properties);
+
+            ~MetaManager(void);
+
+            Variant GetProperty(Type type) const;
+
+            template<typename PropertyType>
+            const PropertyType *GetProperty(void) const;
 
             // Sets the given property
-            void SetProperty(const Property &prop);
+            void SetProperty(Type type, const MetaProperty *value);
 
         private:
-            std::unordered_map<std::string, Property> m_properties;
+            void copy(const MetaManager &rhs);
+
+            std::map<Type, const MetaProperty *> m_properties;
         };
     }
 }
+
+#include "Impl/MetaManager.hpp"

@@ -6,5 +6,16 @@
 class Invokable
 {
 public:
-    Invokable(const Cursor &cursor, const Namespace &currentNamespace);
+    typedef std::vector<std::string> Signature;
+
+    Invokable(const Cursor &cursor);
+
+protected:
+    std::string m_returnType;
+
+    Signature m_signature;
+
+    TemplateData compileSignatureTemplate(void) const;
 };
+
+const auto kReturnTypeVoid = "void";

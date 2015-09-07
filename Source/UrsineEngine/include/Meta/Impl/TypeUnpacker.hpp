@@ -18,7 +18,7 @@ namespace ursine
         {
             static void Apply(Type::List &types)
             {
-                types.emplace_back( Type::Get<First>( ) );
+                types.emplace_back( typeof( First ) );
 
                 TypeUnpacker<Types...>::Apply( types );
             }

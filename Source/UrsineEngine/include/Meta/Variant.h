@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VariantBase.h"
+#include "VariantPolicy.h"
 
 #include "TypeConfig.h"
 
@@ -17,10 +18,19 @@ namespace ursine
             Variant(void);
 
             template<typename T>
+            Variant(T *data
+                , variant_policy::WrapObject
+                , typename std::enable_if< std::is_base_of<Object, T>::value >::type* = nullptr
+            );
+
+            template<typename T>
             Variant(T &data);
 
             template<typename T>
-            Variant(T &&data);
+            Variant(T &&data
+                , typename std::enable_if< !std::is_same<Variant&, T>::value >::type* = nullptr
+                , typename std::enable_if< !std::is_const<T>::value >::type* = nullptr
+            );
 
             Variant(const Variant &rhs);
             Variant(Variant &&rhs);
@@ -49,12 +59,15 @@ namespace ursine
             T &GetValue(void) const;
 
             bool IsValid(void) const;
+            bool IsConst(void) const;
 
         private:
             friend class Argument;
             friend class Destructor;
 
             void *getPtr(void) const;
+
+            bool m_isConst;
 
             VariantBase *m_base;
         };

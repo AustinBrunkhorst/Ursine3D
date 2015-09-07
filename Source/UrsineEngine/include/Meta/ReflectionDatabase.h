@@ -53,6 +53,7 @@ namespace ursine
 
             const Function &GetGlobalFunction(const std::string &name);
             const Function &GetGlobalFunction(const std::string &name, const InvokableSignature &signature);
+
         private:
             TypeID m_nextID;
         };

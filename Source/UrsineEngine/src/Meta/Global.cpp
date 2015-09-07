@@ -50,11 +50,17 @@ namespace ursine
             return m_getter( );
         }
 
-        void Global::SetValue(const Argument &value) const
+        bool Global::SetValue(const Argument &value) const
         {
             // read only?
             if (m_setter != nullptr)
+            {
                 m_setter( value );
+
+                return true;
+            }
+               
+            return false;
         }
     }
 }

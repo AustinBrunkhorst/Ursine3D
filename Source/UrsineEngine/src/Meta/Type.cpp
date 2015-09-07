@@ -27,6 +27,11 @@ namespace ursine
 
         ////////////////////////////////////////////////////////////////////////////
 
+        Type::Type(TypeID id)
+            : m_id( id ) { }
+
+        ////////////////////////////////////////////////////////////////////////////
+
         Type::operator bool(void) const
         {
             return m_id != Invalid;
@@ -98,7 +103,8 @@ namespace ursine
 
             List types;
 
-            for (TypeID i = 0; i < count; ++i)
+            // skip the first one, as it's reserved for unknown
+            for (TypeID i = 1; i < count; ++i)
                 types.emplace_back( i );
 
             return types;
@@ -237,6 +243,18 @@ namespace ursine
             return constructor.Invoke( arguments );
         }
 
+        Variant Type::CreateDynamicVariadic(const ArgumentList &arguments) const
+        {
+            InvokableSignature signature;
+
+            for (auto &argument : arguments)
+                signature.emplace_back( argument.GetType( ) );
+
+            auto &constructor = GetDynamicConstructor( signature );
+
+            return constructor.Invoke( arguments );
+        }
+
         ////////////////////////////////////////////////////////////////////////////
 
         void Type::Destroy(Variant &instance) const
@@ -251,7 +269,7 @@ namespace ursine
 
         Type Type::GetDecayedType(void) const
         {
-            // TODO:
+            URSINE_TODO( "convert to non pointer/const pointer type" );
             return Type( );
         }
 
@@ -301,9 +319,30 @@ namespace ursine
 
         ////////////////////////////////////////////////////////////////////////////
 
+        std::vector<Constructor> Type::GetDynamicConstructors(void) const
+        {
+             auto &handle = database.types[ m_id ].dynamicConstructors;
+
+            std::vector<Constructor> constructors;
+
+            for (auto &constructor : handle)
+                constructors.emplace_back( constructor.second );
+
+            return constructors;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+
         const Constructor &Type::GetConstructor(const InvokableSignature &signature) const
         {
             return database.types[ m_id ].GetConstructor( signature );
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        const Constructor &Type::GetDynamicConstructor(const InvokableSignature &signature) const
+        {
+            return database.types[ m_id ].GetDynamicConstructor( signature );
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -317,7 +356,7 @@ namespace ursine
 
         std::vector<Method> Type::GetMethods(void) const
         {
-            // TODO: recursively get base class methods
+            URSINE_TODO( "recursively get base class methods" );
             return { };
         }
 
@@ -372,7 +411,7 @@ namespace ursine
 
         std::vector<Field> Type::GetFields(void) const
         {
-            // TODO: recursively get base class fields
+            URSINE_TODO( "recursively get base class fields" );
 
             std::vector<Field> fields;
 
@@ -418,10 +457,5 @@ namespace ursine
 
         Type::Type(void)
             : m_id( Invalid ) { }
-
-        ////////////////////////////////////////////////////////////////////////////
-
-        Type::Type(TypeID id)
-            : m_id( id ) { }
     }
 }

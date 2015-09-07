@@ -13,8 +13,7 @@ namespace ursine
             , isPrimitive( false )
             , isPointer( false )
             , isClass( false )
-            , enumeration( nullptr )
-            , name( name ) { }
+            , enumeration { nullptr } { }
 
         ////////////////////////////////////////////////////////////////////////////
 
@@ -23,15 +22,18 @@ namespace ursine
             , isPrimitive( false )
             , isPointer( false )
             , isClass( false )
-            , enumeration( nullptr )
-            , name( name ) { }
+            , name( name )
+            , enumeration { nullptr } { }
 
         TypeData::~TypeData(void)
         {
-            // free allocated enum container
-            delete enumeration.m_base;
+            if (isEnum)
+            {
+                // free allocated enum container
+                delete enumeration.m_base;
 
-            enumeration.m_base = nullptr;
+                enumeration.m_base = nullptr;
+            }
         }
 
         void TypeData::LoadBaseClasses(ReflectionDatabase &db, TypeID thisType, const std::initializer_list<Type> &classes)
@@ -56,6 +58,16 @@ namespace ursine
             auto search = constructors.find( signature );
 
             if (search == constructors.end( ))
+                return Constructor::Invalid( );
+
+            return search->second;
+        }
+
+        const Constructor &TypeData::GetDynamicConstructor(const InvokableSignature &signature)
+        {
+            auto search = dynamicConstructors.find( signature );
+
+            if (search == dynamicConstructors.end( ))
                 return Constructor::Invalid( );
 
             return search->second;

@@ -14,7 +14,7 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetType( ).GetDisplayName( ) )
     , m_qualifiedName( m_name )
 {
-    auto displayName = m_metaData.GetProperty( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_qualifiedName;
@@ -32,7 +32,54 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     }
 }
 
+TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
+{
+    TemplateData data { TemplateData::Type::Object };
+
+    data[ "displayName" ] = m_displayName;
+    data[ "qualifiedName" ] = m_qualifiedName;
+    data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
+    data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
+    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
+
+    TemplateData members { TemplateData::Type::List };
+
+    int i = 0;
+
+    for (auto &value : m_values)
+    {
+        TemplateData member { TemplateData::Type::Object };
+
+        member[ "key" ] = value.key;
+        member[ "value" ] = value.value;
+        member[ "isLast" ] = utils::TemplateBool( i == m_values.size( ) - 1 );
+
+        members << member;
+
+        ++i;
+    }
+
+    data[ "member" ] = members;
+
+    m_metaData.CompileTemplateData( data, context );
+
+    return data;
+}
+
 void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace)
 {
-    URSINE_TODO( "..." );
+    for (auto &child : cursor.GetChildren( ))
+    {
+        if (child.GetKind( ) == CXCursor_EnumConstantDecl)
+        {
+            output.emplace_back( 
+                new Global( child, currentNamespace, nullptr ) 
+            );
+        }
+    }
+}
+
+bool Enum::isAccessible(void) const
+{
+    return !m_metaData.GetFlag( kMetaDisable );
 }

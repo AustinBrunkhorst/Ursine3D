@@ -7,7 +7,7 @@ namespace ursine
         {
             Global global {
                 name,
-                Type::Get<GlobalType>( ),
+                typeof( GlobalType ),
                 getter,
                 setter
             };
