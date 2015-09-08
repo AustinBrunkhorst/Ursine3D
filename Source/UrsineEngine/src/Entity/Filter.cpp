@@ -31,9 +31,9 @@ namespace ursine
             if (!entity)
                 return false;
 
-            return ((_mask_one      & entity->_type_mask) != 0              || _mask_one == 0) &&
-                   ((_mask_contains & entity->_type_mask) == _mask_contains || _mask_contains == 0) &&
-                   ((_mask_exclude  & entity->_type_mask) == 0              || _mask_exclude == 0);
+            return ((_mask_one      & entity->m_typeMask) != 0              || _mask_one == 0) &&
+                   ((_mask_contains & entity->m_typeMask) == _mask_contains || _mask_contains == 0) &&
+                   ((_mask_exclude  & entity->m_typeMask) == 0              || _mask_exclude == 0);
         }
     }
 }

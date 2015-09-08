@@ -29,11 +29,11 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////
         
         Entity::Entity(World *world, EntityUniqueID id) 
-            : _flags(ACTIVE)
-            , _id(id)
-            , _world(world)
-            , _system_mask(0)
-            , _type_mask(0)
+            : m_flags(ACTIVE)
+            , m_id(id)
+            , m_world(world)
+            , m_systemMask(0)
+            , m_typeMask(0)
         {
             
         }
@@ -45,48 +45,48 @@ namespace ursine
         void Entity::Delete(void)
         {
             // it's already being deleted
-            if (_flags != ACTIVE)
+            if (m_flags != ACTIVE)
                 return;
 
-            utils::FlagSet(_flags, DELETING);
+            utils::FlagSet(m_flags, DELETING);
 
-            _world->deleteEntity(this);
+            m_world->deleteEntity(this);
         }
 
         EntityID Entity::GetID(void) const
         {
-            return _id;
+            return m_id;
         }
 
         EntityUniqueID Entity::GetUniqueID(void) const
         {
-            return _unique_id;
+            return m_uniqueID;
         }
 
         bool Entity::IsDeleting(void) const
         {
-            return utils::IsFlagSet(_flags, DELETING);
+            return utils::IsFlagSet(m_flags, DELETING);
         }
 
         bool Entity::IsActive(void) const
         {
-            return utils::IsFlagSet(_flags, ACTIVE);
+            return utils::IsFlagSet(m_flags, ACTIVE);
         }
 
         bool Entity::IsAvailable(void) const
         {
             // active, but not deleting
-            return (_flags & (ACTIVE | DELETING)) == ACTIVE;
+            return (m_flags & (ACTIVE | DELETING)) == ACTIVE;
         }
 
         World *Entity::GetWorld(void) const
         {
-            return _world;
+            return m_world;
         }
 
         Transform *Entity::GetTransform(void) const
         {
-            return _transform;
+            return m_transform;
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -95,12 +95,12 @@ namespace ursine
 
         const std::string &Entity::GetTag(void) const
         {
-            return _world->Manager<TagManager>()->GetTag(this);
+            return m_world->Manager<TagManager>()->GetTag(this);
         }
 
         void Entity::SetTag(const std::string &tag)
         {
-            _world->Manager<TagManager>()->Register(tag, this);
+            m_world->Manager<TagManager>()->Register(tag, this);
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -109,22 +109,22 @@ namespace ursine
 
         const EntityGroupVector &Entity::GetGroups(void) const
         {
-            return _world->Manager<GroupManager>()->GetGroups(this);
+            return m_world->Manager<GroupManager>()->GetGroups(this);
         }
 
         void Entity::AddGroup(const std::string &group)
         {
-            _world->Manager<GroupManager>()->Add(group, this);
+            m_world->Manager<GroupManager>()->Add(group, this);
         }
 
         void Entity::RemoveGroup(const std::string &group)
         {
-            _world->Manager<GroupManager>()->Remove(group, this);
+            m_world->Manager<GroupManager>()->Remove(group, this);
         }
 
         bool Entity::HasGroup(const std::string& group) const
         {
-            return _world->Manager<GroupManager>()->HasGroup(group, this);
+            return m_world->Manager<GroupManager>()->HasGroup(group, this);
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -133,12 +133,12 @@ namespace ursine
 
         LocalTimerManager &Entity::GetTimers(void)
         {
-            return _world->Manager<UtilityManager>()->GetTimers( this );
+            return m_world->Manager<UtilityManager>()->GetTimers( this );
         }
 
         LocalTweenManager &Entity::GetTweens(void)
         {
-            return _world->Manager<UtilityManager>()->GetTweens( this );
+            return m_world->Manager<UtilityManager>()->GetTweens( this );
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -147,22 +147,22 @@ namespace ursine
 
         bool Entity::HasComponent(ComponentTypeMask mask) const
         {
-            return utils::IsFlagSet(_type_mask, mask);
+            return utils::IsFlagSet(m_typeMask, mask);
         }
 
         Component *Entity::GetComponent(ComponentTypeID id) const
         {
-            return _world->Manager<EntityManager>()->GetComponent(this, id);
+            return m_world->Manager<EntityManager>()->GetComponent(this, id);
         }
 
         ComponentVector Entity::GetComponents(void) const
         {
-            return _world->Manager<EntityManager>()->GetComponents(this);
+            return m_world->Manager<EntityManager>()->GetComponents(this);
         }
 
         void Entity::RemoveComponent(ComponentTypeID id)
         {
-            _world->Manager<EntityManager>()->RemoveComponent(this, id);
+            m_world->Manager<EntityManager>()->RemoveComponent(this, id);
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ namespace ursine
 
         void Entity::Dispatch(EventID event, const EventArgs *args)
         {
-            _world->Manager<EntityManager>()->GetEntityEvents(this).Dispatch(event, this, args);
+            m_world->Manager<EntityManager>()->GetEntityEvents(this).Dispatch(event, this, args);
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -180,31 +180,31 @@ namespace ursine
         
         void Entity::setSystem(ComponentTypeMask mask)
         {
-            utils::FlagSet(_system_mask, mask);
+            utils::FlagSet(m_systemMask, mask);
         }
 
         void Entity::unsetSystem(ComponentTypeMask mask)
         {
-            utils::FlagUnset(_system_mask, mask);
+            utils::FlagUnset(m_systemMask, mask);
         }
 
         void Entity::setType(ComponentTypeMask mask)
         {
-            utils::FlagSet(_type_mask, mask);
+            utils::FlagSet(m_typeMask, mask);
         }
 
         void Entity::unsetType(ComponentTypeMask mask)
         {
-            utils::FlagUnset(_type_mask, mask);
+            utils::FlagUnset(m_typeMask, mask);
         }
 
         void Entity::reset(void)
         {
-            _system_mask = 0;
-            _type_mask = 0;
+            m_systemMask = 0;
+            m_typeMask = 0;
 
             // active and not deleting
-            _flags = ACTIVE;
+            m_flags = ACTIVE;
         }
     }
 }

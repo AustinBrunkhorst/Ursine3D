@@ -19,8 +19,10 @@ namespace ursine
 {
     FrameRateController::FrameRateController(void)
         : m_dt( 1.0f )
+        , m_frameDuration( 0 )
         , m_fpsElapsed( 0 )
         , m_fpsTotal( 0 )
+        , m_fps( 0 )
         , m_lastUpdate( 0 )
         , m_currentTime( 0 ) { }
 
@@ -53,12 +55,12 @@ namespace ursine
         while (SDL_GetTicks( ) - m_lastUpdate < m_frameDuration);
     }
 
-    uint32 FrameRateController::GetFPS(void)
+    uint32 FrameRateController::GetFPS(void) const
     {
         return m_fps;
     }
 
-    float FrameRateController::GetDeltaTime(void)
+    float FrameRateController::GetDeltaTime(void) const
     {
         return m_dt;
     }

@@ -79,8 +79,9 @@ namespace ursine
         // passing a nullptr as the class context (bad).
         template<typename Listener>
         ChainableEventOperator<EventDispatcher<Key>, Listener> Listener(Listener *listener = nullptr);
+
     private:
-        void *_default_sender;
+        void *m_defaultSender;
 
         // hash functor that handles integral types
         struct integral_hasher
@@ -88,15 +89,15 @@ namespace ursine
             template <typename T>
             std::size_t operator()(T t) const
             {
-                return static_cast<std::size_t>(t);
+                return static_cast<std::size_t>( t );
             }
         };
 
         // functor type that uses "integral_hasher" if "T" is an enum, otherwise the default
         template <typename T>
-        using hash_type = typename std::conditional<std::is_enum<T>::value, integral_hasher, std::hash<T>>::type;
+        using hash_type = typename std::conditional< std::is_enum<T>::value, integral_hasher, std::hash<T> >::type;
 
-        std::unordered_map<Key, std::vector<Handler>, hash_type<Key>> _events;
+        std::unordered_map<Key, std::vector<Handler>, hash_type<Key>> m_events;
     };
 }
 

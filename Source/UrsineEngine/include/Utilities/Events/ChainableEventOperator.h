@@ -22,17 +22,16 @@ namespace ursine
     class ChainableEventOperator
     {
         // Eventable dispatching events
-        DispatcherType *_dispatcher;
+        DispatcherType *m_dispatcher;
 
         // EventListener listening for events
-        ListenerType *_listener;
+        ListenerType *m_listener;
 
     public:
         ChainableEventOperator(DispatcherType *dispatcher, ListenerType *listener);
 
         // Class member
-        ChainableEventOperator &On(
-            const typename DispatcherType::KeyType &type,
+        ChainableEventOperator &On(const typename DispatcherType::KeyType &type,
             ClassDelegate<ListenerType, EventArgs> delegate);
 
         // Static function

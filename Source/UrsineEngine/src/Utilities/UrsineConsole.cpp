@@ -20,7 +20,9 @@ namespace ursine
     void SetConsoleColor(ConsoleColor color)
     {
     #ifdef PLATFORM_WINDOWS
-        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+
+        SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), color );
+
     #endif
     }
 }

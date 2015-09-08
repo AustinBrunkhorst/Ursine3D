@@ -21,7 +21,7 @@ namespace ursine
 {
     class TimeSpan
     {
-        int _milliseconds;
+        int m_milliseconds;
 
     public:
         static const int MillisPerSecond = 1000;

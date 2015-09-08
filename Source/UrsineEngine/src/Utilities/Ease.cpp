@@ -60,41 +60,41 @@ namespace ursine
 
         Type GetType(Function function)
         {
-            #define map_type(type) if (function == type) return Type::type
+#define map_type(type) if (function == type) return Type::type
 
-            map_type(Linear);
-            map_type(QuadraticIn);
-            map_type(QuadraticOut);
-            map_type(QuadraticInOut);
-            map_type(CubicIn);
-            map_type(CubicOut);
-            map_type(CubicInOut);
-            map_type(QuarticIn);
-            map_type(QuarticOut);
-            map_type(QuarticInOut);
-            map_type(QuinticIn);
-            map_type(QuinticOut);
-            map_type(QuinticInOut);
-            map_type(SineIn);
-            map_type(SineOut);
-            map_type(SineInOut);
-            map_type(CircularIn);
-            map_type(CircularOut);
-            map_type(CircularInOut);
-            map_type(ExponentialIn);
-            map_type(ExponentialOut);
-            map_type(ExponentialInOut);
-            map_type(ElasticIn);
-            map_type(ElasticOut);
-            map_type(ElasticInOut);
-            map_type(BackIn);
-            map_type(BackOut);
-            map_type(BackInOut);
-            map_type(BounceIn);
-            map_type(BounceOut);
-            map_type(BounceInOut);
+            map_type( Linear );
+            map_type( QuadraticIn );
+            map_type( QuadraticOut );
+            map_type( QuadraticInOut );
+            map_type( CubicIn );
+            map_type( CubicOut );
+            map_type( CubicInOut );
+            map_type( QuarticIn );
+            map_type( QuarticOut );
+            map_type( QuarticInOut );
+            map_type( QuinticIn );
+            map_type( QuinticOut );
+            map_type( QuinticInOut );
+            map_type( SineIn );
+            map_type( SineOut );
+            map_type( SineInOut );
+            map_type( CircularIn );
+            map_type( CircularOut );
+            map_type( CircularInOut );
+            map_type( ExponentialIn );
+            map_type( ExponentialOut );
+            map_type( ExponentialInOut );
+            map_type( ElasticIn );
+            map_type( ElasticOut );
+            map_type( ElasticInOut );
+            map_type( BackIn );
+            map_type( BackOut );
+            map_type( BackInOut );
+            map_type( BounceIn );
+            map_type( BounceOut );
+            map_type( BounceInOut );
 
-            #undef map_type
+#undef map_type
 
             return Type::EASE_COUNT;
         }
@@ -190,45 +190,45 @@ namespace ursine
 
         float SineIn(float t)
         {
-            return sinf((t - 1.0f) * math::PI_DIV_2) + 1.0f;
+            return sinf( (t - 1.0f) * math::PI_DIV_2 ) + 1.0f;
         }
 
         float SineOut(float t)
         {
-            return sinf(t * math::PI_DIV_2);
+            return sinf( t * math::PI_DIV_2 );
         }
 
         float SineInOut(float t)
         {
-            return 0.5f * (1.0f - cosf(t * math::PI));
+            return 0.5f * (1.0f - cosf( t * math::PI ));
         }
 
         float CircularIn(float t)
         {
-            return 1.0f - sqrtf(1.0f - (t * t));
+            return 1.0f - sqrtf( 1.0f - (t * t) );
         }
 
         float CircularOut(float t)
         {
-            return sqrtf((2.0f - t) * t);
+            return sqrtf( (2.0f - t) * t );
         }
 
         float CircularInOut(float t)
         {
             if (t < 0.5f)
-                return 0.5f * (1.0f - sqrtf(1.0f - 4.0f * (t * t)));
+                return 0.5f * (1.0f - sqrtf( 1.0f - 4.0f * (t * t) ));
 
-            return 0.5f * (sqrtf(-((2.0f * t) - 3.0f) * ((2.0f * t) - 1.0f)) + 1.0f);
+            return 0.5f * (sqrtf( -((2.0f * t) - 3.0f) * ((2.0f * t) - 1.0f) ) + 1.0f);
         }
 
         float ExponentialIn(float t)
         {
-            return (t == 0.0f) ? t : powf(2.0f, 10.0f * (t - 1.0f));
+            return (t == 0.0f) ? t : powf( 2.0f, 10.0f * (t - 1.0f) );
         }
 
         float ExponentialOut(float t)
         {
-            return (t == 1.0) ? t : 1.0f - powf(2.0f, -10.0f * t);
+            return (t == 1.0) ? t : 1.0f - powf( 2.0f, -10.0f * t );
         }
 
         float ExponentialInOut(float t)
@@ -237,39 +237,39 @@ namespace ursine
                 return t;
 
             if (t < 0.5f)
-                return 0.5f * powf(2.0f, (20.0f * t) - 10.0f);
+                return 0.5f * powf( 2.0f, (20.0f * t) - 10.0f );
 
-            return -0.5f * powf(2.0f, (-20.0f * t) + 10.0f) + 1.0f;
+            return -0.5f * powf( 2.0f, (-20.0f * t) + 10.0f ) + 1.0f;
         }
 
         float ElasticIn(float t)
         {
-            return sinf(13.0f * math::PI_DIV_2 * t) * powf(2.0f, 10.0f * (t - 1.0f));
+            return sinf( 13.0f * math::PI_DIV_2 * t ) * powf( 2.0f, 10.0f * (t - 1.0f) );
         }
 
         float ElasticOut(float t)
         {
-            return sinf(-13.0f * math::PI_DIV_2 * (t + 1.0f)) * powf(2.0f, -10.0f * t) + 1.0f;
+            return sinf( -13.0f * math::PI_DIV_2 * (t + 1.0f) ) * powf( 2.0f, -10.0f * t ) + 1.0f;
         }
 
         float ElasticInOut(float t)
         {
             if (t < 0.5f)
-                return 0.5f * sinf(13.0f * math::PI_DIV_2 * (2.0f * t)) * powf(2.0f, 10.0f * ((2.0f * t) - 1.0f));
+                return 0.5f * sinf( 13.0f * math::PI_DIV_2 * (2.0f * t) ) * powf( 2.0f, 10.0f * ((2.0f * t) - 1.0f) );
 
-            return 0.5f * (sinf(-13.0f * math::PI_DIV_2 * ((2.0f * t - 1.0f) + 1.0f)) * powf(2.0f, -10.0f * (2.0f * t - 1.0f)) + 2.0f);
+            return 0.5f * (sinf( -13.0f * math::PI_DIV_2 * ((2.0f * t - 1.0f) + 1.0f) ) * powf( 2.0f, -10.0f * (2.0f * t - 1.0f) ) + 2.0f);
         }
 
         float BackIn(float t)
         {
-            return t * t * t - t * sinf(t * math::PI);
+            return t * t * t - t * sinf( t * math::PI );
         }
 
         float BackOut(float t)
         {
             float f = (1.0f - t);
 
-            return 1.0f - (f * f * f - f * sinf(f * math::PI));
+            return 1.0f - (f * f * f - f * sinf( f * math::PI ));
         }
 
         float BackInOut(float t)
@@ -278,17 +278,17 @@ namespace ursine
             {
                 float f = 2.0f * t;
 
-                return 0.5f * (f * f * f - f * sinf(f * math::PI));
+                return 0.5f * (f * f * f - f * sinf( f * math::PI ));
             }
 
             float f = (1.0f - (2.0f * t - 1.0f));
 
-            return 0.5f * (1.0f - (f * f * f - f * sinf(f * math::PI))) + 0.5f;
+            return 0.5f * (1.0f - (f * f * f - f * sinf( f * math::PI ))) + 0.5f;
         }
 
         float BounceIn(float t)
         {
-            return 1.0f - BounceOut(1.0f - t);
+            return 1.0f - BounceOut( 1.0f - t );
         }
 
         float BounceOut(float t)
@@ -308,9 +308,9 @@ namespace ursine
         float BounceInOut(float t)
         {
             if (t < 0.5f)
-                return 0.5f * BounceIn(t * 2.0f);
+                return 0.5f * BounceIn( t * 2.0f );
 
-            return 0.5f * BounceIn(t * 2.0f - 1.0f) + 0.5f;
+            return 0.5f * BounceIn( t * 2.0f - 1.0f ) + 0.5f;
         }
     }
 

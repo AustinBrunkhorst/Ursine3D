@@ -17,14 +17,6 @@ namespace ursine
 {
     namespace utils
     {
-        template<typename T>
-        void Swap(T &a, T &b)
-        {
-            T temp = a;
-            a = b;
-            b = temp;
-        }
-
         template<typename A, typename B>
         inline bool IsFlagSet(A value, B flag)
         {
@@ -52,47 +44,23 @@ namespace ursine
         template<typename Container, class Predicate>
         void InsertionSort(Container &v, Predicate predicate)
         {
-            for (auto i = v.begin(); i != v.end(); ++i) 
+            for (auto i = v.begin( ); i != v.end( ); ++i)
             {
-                std::rotate(std::upper_bound(v.begin(), i, *i, predicate), i, i + 1);
+                std::rotate( std::upper_bound( v.begin( ), i, *i, predicate ), i, i + 1 );
             }
         }
 
         template<typename Container, class T, class Predicate>
         void InsertionSort(Container &v, const T &item, Predicate predicate)
         {
-            if (v.empty())
+            if (v.empty( ))
             {
-                v.push_back(item);
+                v.push_back( item );
             }
             else
             {
-                v.insert(std::upper_bound(v.begin(), v.end(), item, predicate), item);
+                v.insert( std::upper_bound( v.begin( ), v.end( ), item, predicate ), item );
             }
-        }
-
-        template<typename T>
-        std::string NumberToString(T number)
-        {
-            std::stringstream ss;
-            ss << number;
-            return ss.str();
-        }
-
-        template<typename T>
-        T StringToNumber(const std::string &text)
-        {
-            std::stringstream ss(text);
-            T result;
-            return ss >> result ? result : 0;
-        }
-
-        inline int ASCIIHexToInt(char val)
-        {
-            if (val <= '9')
-                return math::Clamp<int>(val - '0', 0, 9);
-                
-            return math::Clamp<int>((val - 'A') + 10, 10, 16);
         }
     }
 }

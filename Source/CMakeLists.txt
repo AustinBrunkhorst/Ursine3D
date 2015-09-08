@@ -40,9 +40,8 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 set(SDL2_DIR       "${ENGINE_DEP_DIR}/SDL2")
 set(GLEW_DIR       "${ENGINE_DEP_DIR}/GLEW")
 set(CEF_DIR        "${ENGINE_DEP_DIR}/CEF")
-set(FMOD_DIR       "${ENGINE_DEP_DIR}/FMOD")
 set(BENCHMARKS_DIR "${ENGINE_DEP_DIR}/Benchmarks")
-set(CLANG_DIR "${ENGINE_DEP_DIR}/Clang")
+set(CLANG_DIR      "${ENGINE_DEP_DIR}/Clang")
 
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
@@ -52,9 +51,6 @@ find_package(GLEW REQUIRED
 
 find_package(CEF 3.1750 REQUIRED 
     HINTS ${CEF_DIR})
-
-find_package(FMOD REQUIRED 
-    HINTS ${FMOD_DIR})
 
 find_package(BENCHMARKS REQUIRED
     HINTS ${BENCHMARKS_DIR})

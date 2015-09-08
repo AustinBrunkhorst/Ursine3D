@@ -18,8 +18,6 @@
 
 #include "EntitySerializer.h"
 
-#include "ComponentRegistrar.h"
-
 #include "WorldManager.h"
 
 #include "EventDispatcher.h"
@@ -126,39 +124,40 @@ namespace ursine
 
             // predicate for comparing components based on unique ID
             static bool CompareComponents(const Component *a, const Component *b);
+
         private:
             // components by type
             std::array<ComponentVector, kMaxComponentCount> _component_types;
 
             // inactive entities
-            std::vector<Entity *> _inactive;
+            std::vector<Entity *> m_inactive;
 
             // active entities
-            std::vector<Entity *> _active;
+            std::vector<Entity *> m_active;
 
             // all entities
-            std::deque<Entity> _cache;
+            std::deque<Entity> m_cache;
 
             // entity event handlers
-            std::vector<Entity::EventDispatcher> _events;
+            std::vector<Entity::EventDispatcher> m_events;
 
             // unique id to entity map
-            std::unordered_map<EntityUniqueID, Entity*> _unique;
+            std::unordered_map<EntityUniqueID, Entity*> m_unique;
 
             // next available entity ID
-            EntityID _next_entity_id;
+            EntityID m_nextEntityID;
 
             // next unique entity ID
-            EntityUniqueID _next_entity_uid;
+            EntityUniqueID m_nextEntityUID;
 
             // next unique component unique ID
-            ComponentUniqueID _next_component_uid;
+            ComponentUniqueID m_nextComponentUID;
 
             // path to entity data files
-            std::string _data_path;
+            std::string m_dataPath;
 
             // serializer that handles entities, archetypes, etc.
-            EntitySerializer _serializer;
+            EntitySerializer m_serializer;
 
             // creates an empty entity and adds it to the world
             Entity *create(void);

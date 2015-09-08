@@ -13,9 +13,6 @@
 
 #pragma once
 
-#include "ComponentType.h"
-#include "ComponentRegistrar.h"
-
 namespace ursine
 {
     namespace ecs
@@ -28,18 +25,18 @@ namespace ursine
             friend class EntityManager;
 
             // component type id
-            ComponentTypeID _type_id;
+            ComponentTypeID m_typeID;
 
             // unique instance id
-            ComponentUniqueID _unique_id;
+            ComponentUniqueID m_uniqueID;
             
             // Entity that this component is attached to.
-            Entity *_owner;
+            Entity *m_owner;
 
-            // component type mask (1 << _type_id)
-            ComponentTypeMask _type_mask;
+            // component type mask (1 << m_typeID)
+            ComponentTypeMask m_typeMask;
         public:
-            explicit inline Component(ComponentTypeID type_id);
+            explicit inline Component(ComponentTypeID typeID);
 
             Component(const Component &rhs) = default;
             Component &operator=(const Component &rhs) = default;
@@ -57,9 +54,6 @@ namespace ursine
 
             // Gets the owner of this component. Use it wisely
             inline Entity *GetOwner(void) const;
-
-            // The string name of this component type
-            inline const std::string &GetName(void) const;
 
             // Determines if this component is of the specified type
             template<class ComponentType>

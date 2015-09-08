@@ -22,8 +22,6 @@
 #include "MouseManager.h"
 #include "GamepadManager.h"
 
-#include "AudioEmitter.h"
-
 namespace ursine
 {
     namespace ui
@@ -47,12 +45,6 @@ namespace ursine
                 declare_bind(setFullScreen),
 
                 declare_bind(getTime),
-
-                declare_bind(audioIsPlaying),
-                declare_bind(audioPlay),
-                declare_bind(audioStop),
-                declare_bind(audioGetVolume),
-                declare_bind(audioSetVolume),
 
                 declare_bind(setScreen),
                 declare_bind(addOverlay),
@@ -315,57 +307,6 @@ namespace ursine
 
                 gWindowManager->SetFullScreen( fullscreen );
             });
-
-            return CefV8Value::CreateUndefined( );
-        }
-
-        ////////////////////////////////////////////////////////////////////////
-        // Audio methods
-        ////////////////////////////////////////////////////////////////////////
-
-        JSMethod(GameExtension::audioIsPlaying)
-        {
-            auto name = arguments[ 0 ]->GetStringValue( ).ToString( );
-
-            return CefV8Value::CreateBool( gAudioManager->IsGlobalEventPlaying( name ) );
-        }
-
-        JSMethod(GameExtension::audioPlay)
-        {
-            auto name = arguments[ 0 ]->GetStringValue( ).ToString( );
-
-            std::string error;
-
-            auto data = Json::parse( arguments[ 1 ]->GetStringValue( ).ToString( ), error );
-
-            PlayMode mode = static_cast<PlayMode>( data[ "mode" ].int_value( ) );
-
-            gAudioManager->PlayGlobalEvent( name, 1, mode );
-
-            return CefV8Value::CreateUndefined( );
-        }
-
-        JSMethod(GameExtension::audioStop)
-        {
-            auto name = arguments[ 0 ]->GetStringValue( ).ToString( );
-
-            bool fade = arguments[ 1 ]->GetBoolValue( );
-
-            gAudioManager->StopGlobalEvent( name, fade );
-
-            return CefV8Value::CreateUndefined( );
-        }
-
-        JSMethod(GameExtension::audioGetVolume)
-        {
-            return CefV8Value::CreateDouble( gAudioManager->GetMasterVolume( ) );
-        }
-
-        JSMethod(GameExtension::audioSetVolume)
-        {
-            gAudioManager->SetMasterVolume(
-                static_cast<float>( arguments[ 0 ]->GetDoubleValue( ) )
-            );
 
             return CefV8Value::CreateUndefined( );
         }

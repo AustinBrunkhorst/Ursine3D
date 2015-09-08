@@ -15,11 +15,15 @@ namespace ursine
 {
     template<typename Key>
     EventDispatcher<Key>::EventDispatcher(void)
-        : _default_sender(nullptr) {}
+        : m_defaultSender( nullptr )
+    {
+    }
 
     template<typename Key>
     EventDispatcher<Key>::EventDispatcher(void *default_sender)
-        : _default_sender(default_sender) {}
+        : m_defaultSender( default_sender )
+    {
+    }
 
     template<typename Key>
     template<typename Args>
@@ -27,10 +31,10 @@ namespace ursine
     {
         // does this event already exist? 
         // If not, insert and construct the vector
-        if (_events.find(event) == _events.end())
-            _events.insert(std::make_pair(event, std::vector<Handler>()));
+        if (m_events.find( event ) == m_events.end( ))
+            m_events.insert( std::make_pair( event, std::vector<Handler>( ) ) );
 
-        _events[event].push_back(Handler(delegate));
+        m_events[ event ].push_back( Handler( delegate ) );
     }
 
     template<typename Key>
@@ -39,66 +43,66 @@ namespace ursine
     {
         // does this event already exist? 
         // If not, insert and construct the vector
-        if (_events.find(event) == _events.end())
-            _events.insert(std::make_pair(event, std::vector<Handler>()));
+        if (m_events.find( event ) == m_events.end( ))
+            m_events.insert( std::make_pair( event, std::vector<Handler>( ) ) );
 
-        _events[event].push_back(Handler(context, delegate));
+        m_events[ event ].push_back( Handler( context, delegate ) );
     }
 
     template<typename Key>
     template<typename Args>
     void EventDispatcher<Key>::Disconnect(const Key &event, StaticDelegate<Args> delegate)
     {
-        auto handlers = _events.find(event);
+        auto handlers = m_events.find( event );
 
         // this event doesn't have handlers
-        if (handlers == _events.end())
+        if (handlers == m_events.end( ))
             return;
 
         auto &vector = handlers->second;
 
-        auto handler = find(vector.begin(), vector.end(), Handler(delegate));
+        auto handler = find( vector.begin( ), vector.end( ), Handler( delegate ) );
 
-        if (handler != vector.end())
-            vector.erase(handler);
+        if (handler != vector.end( ))
+            vector.erase( handler );
     }
 
     template<typename Key>
     template<typename Class, typename Args>
     void EventDispatcher<Key>::Disconnect(const Key &event, Class *context, ClassDelegate<Class, Args> delegate)
     {
-        auto handlers = _events.find(event);
+        auto handlers = m_events.find( event );
 
         // this event doesn't have handlers
-        if (handlers == _events.end())
+        if (handlers == m_events.end( ))
             return;
 
         auto &vector = handlers->second;
 
-        auto handler = find(vector.begin(), vector.end(), Handler(context, delegate));
+        auto handler = find( vector.begin( ), vector.end( ), Handler( context, delegate ) );
 
-        if (handler != vector.end())
-            vector.erase(handler);
+        if (handler != vector.end( ))
+            vector.erase( handler );
     }
 
     template<typename Key>
     void EventDispatcher<Key>::Dispatch(const Key &event, const EventArgs *args)
     {
-        Dispatch(event, _default_sender, args);
+        Dispatch( event, m_defaultSender, args );
     }
 
     template<typename Key>
     void EventDispatcher<Key>::Dispatch(const Key &event, void *sender, const EventArgs *args)
     {
         // this event doesn't have a handler
-        if (_events.find(event) == _events.end())
+        if (m_events.find( event ) == m_events.end( ))
             return;
 
-        auto handlers = _events[event];
+        auto handlers = m_events[ event ];
 
-        for (auto it = handlers.begin(); it != handlers.end(); )
+        for (auto it = handlers.begin( ); it != handlers.end( );)
         {
-            (*it)(sender, args);
+            (*it)( sender, args );
 
             ++it;
         }
@@ -107,13 +111,13 @@ namespace ursine
     template<typename Key>
     void EventDispatcher<Key>::ClearHandlers(void)
     {
-        _events.clear();
+        m_events.clear( );
     }
 
     template<typename Key>
     template<typename ListenerType>
     ChainableEventOperator<EventDispatcher<Key>, ListenerType> EventDispatcher<Key>::Listener(ListenerType *listener)
     {
-        return ChainableEventOperator<EventDispatcher<Key>, ListenerType>(this, listener);
+        return ChainableEventOperator<EventDispatcher<Key>, ListenerType>( this, listener );
     }
 }

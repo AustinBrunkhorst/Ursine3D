@@ -15,29 +15,24 @@ namespace ursine
 {
     namespace ecs
     {
-        Component::Component(ComponentTypeID type_id) 
-            : _type_id(type_id)
-            , _owner(nullptr)
-            , _type_mask(1ull << type_id) { }
+        Component::Component(ComponentTypeID typeID) 
+            : m_typeID( typeID )
+            , m_owner( nullptr )
+            , m_typeMask( 1ull << typeID ) { }
 
         ComponentTypeID Component::GetTypeID(void) const
         {
-            return _type_id;
+            return m_typeID;
         }
 
         ComponentTypeMask Component::GetTypeMask(void) const
         {
-            return _type_mask;
+            return m_typeMask;
         }
 
         Entity *Component::GetOwner(void) const
         {
-            return _owner;
-        }
-
-        const std::string &Component::GetName(void) const
-        {
-            return ComponentRegistrar::Reflect(_type_id).name;
+            return m_owner;
         }
 
         template<class ComponentType>
@@ -46,9 +41,9 @@ namespace ursine
             static_assert(std::is_base_of<Component, ComponentType>::value,
                 "The specified type is not a component!");
 
-            static const auto id = GetComponentID(ComponentType);
+            static const auto id = GetComponentID( ComponentType );
 
-            return _type_id == id;
+            return m_typeID == id;
         }
     }
 }

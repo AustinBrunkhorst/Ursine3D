@@ -28,7 +28,7 @@ namespace ursine
 
         void GroupManager::Add(const std::string &group, Entity *entity)
         {
-            auto &groups = _id_map[entity->_unique_id];
+            auto &groups = _id_map[entity->m_uniqueID];
 
             // already have this group
             if (find(groups.begin(), groups.end(), group) != groups.end())
@@ -59,14 +59,14 @@ namespace ursine
 
             entities.erase(search);
 
-            auto &groups = _id_map[entity->_unique_id];
+            auto &groups = _id_map[entity->m_uniqueID];
 
             groups.erase(find(groups.begin(), groups.end(), group));
         }
 
         void GroupManager::Clear(Entity *entity)
         {
-            auto &groups = _id_map[entity->_unique_id];
+            auto &groups = _id_map[entity->m_uniqueID];
 
             while (!groups.empty())
                 Remove(groups.front(), entity);
@@ -79,12 +79,12 @@ namespace ursine
 
         const EntityGroupVector &GroupManager::GetGroups(const Entity *entity)
         {
-            return _id_map[entity->_unique_id];
+            return _id_map[entity->m_uniqueID];
         }
 
         bool GroupManager::HasGroup(const std::string &group, const Entity *entity)
         {
-            auto &groups = _id_map[entity->_unique_id];
+            auto &groups = _id_map[entity->m_uniqueID];
 
             auto search = std::find(groups.begin(), groups.end(), group);
 

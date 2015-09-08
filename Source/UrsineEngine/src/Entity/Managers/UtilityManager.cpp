@@ -13,12 +13,12 @@ namespace ursine
 
         LocalTimerManager &UtilityManager::GetTimers(Entity *entity)
         {
-            return _timers[entity->_unique_id];
+            return _timers[entity->m_uniqueID];
         }
 
         LocalTweenManager &UtilityManager::GetTweens(Entity *entity)
         {
-            return _tweens[entity->_unique_id];
+            return _tweens[entity->m_uniqueID];
         }
 
         void UtilityManager::Clear(Entity* entity)

@@ -25,9 +25,6 @@ namespace ursine
 {
     namespace utils
     {
-        template<typename T>
-        inline void Swap(T &a, T &b);
-
         template<typename A, typename B>
         inline bool IsFlagSet(A value, B flag);
 
@@ -48,14 +45,6 @@ namespace ursine
         template<typename Container, class T, class Predicate>
         void InsertionSort(Container &v, const T &item, Predicate predicate);
 
-        template<typename T>
-        std::string NumberToString(T number);
-
-        template<typename T>
-        T StringToNumber(const std::string &text);
-
-        inline int ASCIIHexToInt(char val);
-
         void Join(
             const std::vector<std::string> &input,
             const std::string &joiner,
@@ -71,27 +60,6 @@ namespace ursine
             NoCopy(const NoCopy &rhs) = delete;
             NoCopy &operator=(const NoCopy &rhs) = delete;
         };
-
-        enum MediaType
-        {
-            TYPE_AUDIO,
-            TYPE_GUIDs
-        };
-
-        std::string MediaPath(const std::string &file, MediaType type);
-        std::string NormalizePath(std::string path);
-
-        // Gets the filename from a path
-        std::string FileName(const std::string &path);
-
-        // Gets the name of the directory for a file
-        std::string DirectoryName(const std::string &filename);
-
-        // Gets the current working directory
-        std::string GetWorkingDirectory(void);
-
-        // Sets the current working directory
-        void SetWorkingDirectory(const std::string &directory);
     }
 }
 

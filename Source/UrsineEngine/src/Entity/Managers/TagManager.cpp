@@ -34,7 +34,7 @@ namespace ursine
 
         const std::string &TagManager::GetTag(const Entity *entity)
         {
-            return _id_map[entity->_unique_id];
+            return _id_map[entity->m_uniqueID];
         }
 
         Entity* TagManager::GetEntity(const std::string &tag) const
@@ -51,7 +51,7 @@ namespace ursine
         #endif
 
             _tags[tag] = entity;
-            _id_map[entity->_unique_id] = tag;
+            _id_map[entity->m_uniqueID] = tag;
 
             TagEventArgs e = { tag, entity };
 
@@ -60,7 +60,7 @@ namespace ursine
 
         void TagManager::UnRegister(Entity *entity)
         {
-            auto tag = _id_map.find(entity->_unique_id);
+            auto tag = _id_map.find(entity->m_uniqueID);
 
             if (tag == _id_map.end())
                 return;

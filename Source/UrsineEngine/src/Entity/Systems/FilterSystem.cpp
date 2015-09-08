@@ -34,7 +34,7 @@ namespace ursine
 
             auto entity = args->entity;
 
-            auto contains = utils::IsFlagSet(GetTypeMask(), entity->_system_mask);
+            auto contains = utils::IsFlagSet(GetTypeMask(), entity->m_systemMask);
             auto interests = _filter.Matches(entity);
             auto removed = args->event_type == EM_COMPONENT_REMOVED;
 

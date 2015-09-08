@@ -28,17 +28,19 @@ namespace ursine
 
         EntityManager::EntityManager(World *world)
             : WorldManager( world )
-            , EventDispatcher( this )
-            , _next_entity_id( 0 )
-            , _next_entity_uid( 0 )
-            , _next_component_uid( 0 )
-            , _data_path( "" ) { }
+              , EventDispatcher( this )
+              , m_nextEntityID( 0 )
+              , m_nextEntityUID( 0 )
+              , m_nextComponentUID( 0 )
+              , m_dataPath( "" )
+        {
+        }
 
         EntityManager::~EntityManager(void)
         {
-            _serializer.ClearCache( );
+            m_serializer.ClearCache( );
 
-            for (auto entity : _active)
+            for (auto entity : m_active)
                 clearComponents( entity );
         }
 
@@ -50,7 +52,7 @@ namespace ursine
         {
             auto entity = create( );
 
-            entity->_transform = entity->AddComponent<Transform>( );
+            entity->m_transform = entity->AddComponent<Transform>( );
 
             dispatchCreated( entity );
 
@@ -61,13 +63,13 @@ namespace ursine
         {
             auto entity = create( );
 
-            _serializer.Deserialize( identifier, this, entity );
+            m_serializer.Deserialize( identifier, this, entity );
 
             auto transform = entity->GetComponent<Transform>( );
 
             // add the transform if it doesn't already exist
-            entity->_transform = transform ? transform :
-                entity->AddComponent<Transform>( );
+            entity->m_transform = transform ? transform :
+                                      entity->AddComponent<Transform>( );
 
             initializeComponents( entity );
 
@@ -80,13 +82,13 @@ namespace ursine
         {
             auto entity = create( );
 
-            _serializer.Deserialize( identifier, merge, this, entity );
+            m_serializer.Deserialize( identifier, merge, this, entity );
 
             auto transform = entity->GetComponent<Transform>( );
 
             // add the transform if it doesn't already exist
-            entity->_transform = transform ? transform :
-                new Transform( ); // <-- change this later
+            entity->m_transform = transform ? transform :
+                                      new Transform( ); // <-- change this later
 
             initializeComponents( entity );
 
@@ -126,7 +128,7 @@ namespace ursine
             if (!entity->HasComponent( 1ull << id ))
                 return nullptr;
 
-            return _component_types[ id ][ entity->_id ];
+            return _component_types[ id ][ entity->m_id ];
         }
 
         ComponentVector EntityManager::GetComponents(const Entity *entity) const
@@ -137,7 +139,7 @@ namespace ursine
             if (!entity)
                 return found;
 
-            const auto entity_id = entity->_id;
+            const auto entity_id = entity->m_id;
 
             for (uint32 i = 0; i < _component_types.size( ); ++i)
             {
@@ -159,9 +161,9 @@ namespace ursine
         {
             EntityVector found;
 
-            for (uint i = 0; i < _active.size( ); ++i)
+            for (uint i = 0; i < m_active.size( ); ++i)
             {
-                auto *entity = _active[ i ];
+                auto *entity = m_active[ i ];
 
                 if (entity && filter.Matches( entity ))
                     found.push_back( entity );
@@ -173,18 +175,18 @@ namespace ursine
         Entity *EntityManager::GetEntity(EntityID id)
         {
             // out of bounds
-            if (id + 1u > _cache.size( ))
+            if (id + 1u > m_cache.size( ))
                 return nullptr;
 
-            return &_cache[ id ];
+            return &m_cache[ id ];
         }
 
         Entity *EntityManager::GetEntityUnique(EntityUniqueID id) const
         {
-            auto found = _unique.find( id );
+            auto found = m_unique.find( id );
 
             // nullptr if not found
-            return (found == _unique.end( )) ? nullptr : found->second;
+            return (found == m_unique.end( )) ? nullptr : found->second;
         }
 
         void EntityManager::BeforeRemove(Entity *entity)
@@ -203,39 +205,39 @@ namespace ursine
 
             clearComponents( entity, true );
 
-            utils::FlagUnset( entity->_flags, Entity::ACTIVE );
+            utils::FlagUnset( entity->m_flags, Entity::ACTIVE );
 
-            _active.erase( find( _active.begin( ), _active.end( ), entity ) );
+            m_active.erase( find( m_active.begin( ), m_active.end( ), entity ) );
 
-            _unique.erase( entity->_unique_id );
+            m_unique.erase( entity->m_uniqueID );
 
-            _inactive.push_back( entity );
+            m_inactive.push_back( entity );
         }
 
         Entity::EventDispatcher &EntityManager::GetEntityEvents(Entity *entity)
         {
-            return _events[ entity->_id ];
+            return m_events[ entity->m_id ];
         }
 
         Json EntityManager::Serialize(Entity *entity) const
         {
-            return _serializer.Serialize( entity );
+            return m_serializer.Serialize( entity );
         }
 
         const std::string &EntityManager::GetDataPath(void) const
         {
-            return _data_path;
+            return m_dataPath;
         }
 
         void EntityManager::SetDataPath(const std::string &path)
         {
-            _data_path = path;
+            m_dataPath = path;
         }
 
         bool EntityManager::CompareComponents(const Component *a, const Component *b)
         {
             // note: descending order
-            return b->_unique_id < a->_unique_id;
+            return b->m_uniqueID < a->m_uniqueID;
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -246,35 +248,35 @@ namespace ursine
         {
             Entity *entity = nullptr;
 
-            EntityUniqueID unique_id = _next_entity_uid++;
+            EntityUniqueID unique_id = m_nextEntityUID++;
 
             // we can't use the available queue
-            if (_inactive.empty( ))
+            if (m_inactive.empty( ))
             {
-                _cache.emplace_back( _world, _next_entity_id++ );
+                m_cache.emplace_back( _world, m_nextEntityID++ );
 
-                entity = &_cache.back( );
+                entity = &m_cache.back( );
 
                 // add a new event listener
-                _events.emplace_back( );
+                m_events.emplace_back( );
             }
             // we can use the queue so just reset and pop the last one
             else
             {
-                entity = _inactive.back( );
+                entity = m_inactive.back( );
 
-                _inactive.pop_back( );
+                m_inactive.pop_back( );
 
                 entity->reset( );
 
                 GetEntityEvents( entity ).ClearHandlers( );
             }
 
-            _active.push_back( entity );
+            m_active.push_back( entity );
 
-            entity->_unique_id = unique_id;
+            entity->m_uniqueID = unique_id;
 
-            _unique[ unique_id ] = entity;
+            m_unique[ unique_id ] = entity;
 
             return entity;
         }
@@ -292,7 +294,7 @@ namespace ursine
 
             ComponentVector &components = _component_types[ component_id ];
 
-            const auto entity_id = entity->_id;
+            const auto entity_id = entity->m_id;
 
             // entity ids are zero based
             if (entity_id + 1u > components.size( ))
@@ -302,8 +304,8 @@ namespace ursine
 
             entity->setType( 1ull << component_id );
 
-            component->_unique_id = _next_component_uid++;
-            component->_owner = entity;
+            component->m_uniqueID = m_nextComponentUID++;
+            component->m_owner = entity;
         }
 
         void EntityManager::removeComponent(Entity *entity, ComponentTypeID id, bool dispatch)
@@ -316,7 +318,7 @@ namespace ursine
 
             entity->unsetType( mask );
 
-            Component *&component = _component_types[ id ][ entity->_id ];
+            Component *&component = _component_types[ id ][ entity->m_id ];
 
             if (dispatch)
             {
@@ -333,7 +335,7 @@ namespace ursine
         void EntityManager::initializeComponents(Entity *entity)
         {
             const auto size = _component_types.size( );
-            const auto id = entity->_id;
+            const auto id = entity->m_id;
 
             ComponentEventArgs args( EM_COMPONENT_ADDED, entity, nullptr );
 
@@ -356,12 +358,13 @@ namespace ursine
         void EntityManager::clearComponents(Entity *entity, bool dispatch)
         {
             const auto size = _component_types.size( );
-            const auto id = entity->_id;
+            const auto id = entity->m_id;
 
             // components to remove
             ComponentVector to_remove;
 
-            URSINE_TODO("optimize this once entity parenting is implemented: start from the deepest child and clear components going up the tree.");
+            URSINE_TODO("optimize this once entity parenting is implemented: start from the deepest child and clear components going up the tree.")
+            ;
 
             for (ComponentTypeID i = 0; i < size; ++i)
             {

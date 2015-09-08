@@ -24,6 +24,3 @@
 #include <TagManager.h>
 #include <GroupManager.h>
 #include <UtilityManager.h>
-
-#include <CoreComponents.h>
-#include <CoreSystems.h>

@@ -36,68 +36,6 @@ namespace ursine
 
         class Entity final
         {
-            enum Flags
-            {
-                DELETING = 1,
-                ACTIVE = 2
-            };
-
-            // entity manager needs to be able to construct entities
-            friend class EntityManager;
-
-            // access ids directly
-            friend class TagManager;
-            friend class GroupManager;
-            friend class UtilityManager;
-
-            // emplace_back access constructor
-            friend class std::allocator<Entity>;
-
-            // access type and system bits
-            friend class Filter;
-
-            // access type and system bits
-            friend class FilterSystem;
-
-            // misc flags for the state of this entity
-            uint32 _flags;
-
-            // active id in the entity manager
-            EntityID _id;
-
-            // unique id in the entity manager
-            EntityUniqueID _unique_id;
-
-            // world it's attached to
-            World *_world;
-
-            // pointer to this entities transform
-            Transform *_transform;
-
-            // systems using this entity
-            ComponentTypeMask _system_mask;
-
-            // components attached to this entity
-            ComponentTypeMask _type_mask;
-
-            // disable copy and assign
-            Entity(const Entity &rhs) = delete;
-            Entity(const Entity &&rhs) = delete;
-            Entity &operator=(const Entity &rhs) = delete;
-
-            Entity(World *world, EntityID id);
-
-            // sets/unsets component systems for this entity (which filter systems own it)
-            void setSystem(ComponentTypeMask mask);
-            void unsetSystem(ComponentTypeMask mask);
-
-            // sets/unsets component types for this entity (which components it has)
-            void setType(ComponentTypeMask mask);
-            void unsetType(ComponentTypeMask mask);
-
-            // resets data for this entity
-            void reset(void);
-
         public:
             typedef uint32 EventID;
             typedef EventDispatcher<EventID> EventDispatcher;
@@ -232,6 +170,69 @@ namespace ursine
             
             template<typename Listener>
             ChainableEventOperator<Entity, Listener> Listener(Listener *listener = nullptr);
+
+        private:
+            enum Flags
+            {
+                DELETING = 1,
+                ACTIVE = 2
+            };
+
+            // entity manager needs to be able to construct entities
+            friend class EntityManager;
+
+            // access ids directly
+            friend class TagManager;
+            friend class GroupManager;
+            friend class UtilityManager;
+
+            // emplace_back access constructor
+            friend class std::allocator<Entity>;
+
+            // access type and system bits
+            friend class Filter;
+
+            // access type and system bits
+            friend class FilterSystem;
+
+            // misc flags for the state of this entity
+            uint32 m_flags;
+
+            // active id in the entity manager
+            EntityID m_id;
+
+            // unique id in the entity manager
+            EntityUniqueID m_uniqueID;
+
+            // world it's attached to
+            World *m_world;
+
+            // pointer to this entities transform
+            Transform *m_transform;
+
+            // systems using this entity
+            ComponentTypeMask m_systemMask;
+
+            // components attached to this entity
+            ComponentTypeMask m_typeMask;
+
+            // disable copy and assign
+            Entity(const Entity &rhs) = delete;
+            Entity(const Entity &&rhs) = delete;
+            Entity &operator=(const Entity &rhs) = delete;
+
+            Entity(World *world, EntityID id);
+
+            // sets/unsets component systems for this entity (which filter systems own it)
+            void setSystem(ComponentTypeMask mask);
+            void unsetSystem(ComponentTypeMask mask);
+
+            // sets/unsets component types for this entity (which components it has)
+            void setType(ComponentTypeMask mask);
+            void unsetType(ComponentTypeMask mask);
+
+            // resets data for this entity
+            void reset(void);
         };
     }
 }

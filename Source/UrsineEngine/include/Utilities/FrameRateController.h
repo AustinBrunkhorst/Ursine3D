@@ -44,8 +44,8 @@ namespace ursine
         void FrameBegin(void);
         void FrameEnd(void);
 
-        uint32 GetFPS(void);
-        float GetDeltaTime(void);
+        uint32 GetFPS(void) const;
+        float GetDeltaTime(void) const;
 
         void SetTargetFPS(uint32 fps);
     };

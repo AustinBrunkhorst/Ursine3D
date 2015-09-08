@@ -15,8 +15,8 @@ namespace ursine
 {
     template<typename DispatcherType, typename ListenerType>
     ChainableEventOperator<DispatcherType, ListenerType>::ChainableEventOperator(DispatcherType *dispatcher, ListenerType *listener)
-        : _dispatcher(dispatcher)
-        , _listener(listener)
+        : m_dispatcher( dispatcher )
+        , m_listener( listener )
     {
         static_assert(std::is_constructible<typename DispatcherType::KeyType>::value,
             "dispatcher is not an Eventable.");
@@ -27,7 +27,7 @@ namespace ursine
         const typename DispatcherType::KeyType &type,
         ClassDelegate<ListenerType, EventArgs> delegate)
     {
-        _dispatcher->template Connect<ListenerType, EventArgs>(type, _listener, delegate);
+        m_dispatcher->template Connect<ListenerType, EventArgs>( type, m_listener, delegate );
 
         return *this;
     }
@@ -37,7 +37,7 @@ namespace ursine
         const typename DispatcherType::KeyType &type,
         StaticDelegate<EventArgs> delegate)
     {
-        _dispatcher->template Connect<EventArgs>(type, delegate);
+        m_dispatcher->template Connect<EventArgs>( type, delegate );
 
         return *this;
     }
@@ -47,7 +47,7 @@ namespace ursine
         const typename DispatcherType::KeyType &type,
         ClassDelegate<ListenerType, EventArgs> delegate)
     {
-        _dispatcher->template Disconnect<ListenerType, EventArgs>(type, _listener, delegate);
+        m_dispatcher->template Disconnect<ListenerType, EventArgs>( type, m_listener, delegate );
 
         return *this;
     }
@@ -57,7 +57,7 @@ namespace ursine
         const typename DispatcherType::KeyType &type,
         StaticDelegate<EventArgs> delegate)
     {
-        _dispatcher->template Disconnect<EventArgs>(type, delegate);
+        m_dispatcher->template Disconnect<EventArgs>( type, delegate );
 
         return *this;
     }
