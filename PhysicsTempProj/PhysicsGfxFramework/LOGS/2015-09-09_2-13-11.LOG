@@ -1,0 +1,97 @@
+--------------------------------------------GFX Log File--------------------------------------------
+                                    Date/Time:2015-09-09_2-13-11
+     Timestamp     |                                    Message                                     
+-------------------|--------------------------------------------------------------------------------
+000000000.00001    | GRAPHICS
+000000000.00032    |   Graphics Config:
+000000000.00053    |     Width: 800
+000000000.00070    |     Height: 600
+000000000.00087    |     Model Path: ../Models/
+000000000.00104    |     Texture Path: ../Textures/
+000000000.00127    |     Shader Path: ../SHADER_BINARY/
+000000000.00142    |     Fullscreen: False
+000000000.00159    |   GPU Info
+000000000.00963    |     Video Card: Intel(R) HD Graphics 4600
+000000000.01000    |     Dedicated Video Memory: 32
+000000000.01023    |     Shared Video Memory: 1760
+000000000.01049    |   Initialize DirectX
+000000000.01158    |     Sample Count: 1
+000000000.01177    |     Sample Quality: 0
+000000000.04529    |     Feature Level: 45312
+000000000.04708    |   Initialize Shaders
+000000000.04745    |     Loading Shader: BasicModelShader
+000000000.04764    |       Shader Types Found:
+000000000.04796    |         Vertex Shader Found
+000000000.05034    |         Pixel Shader Found
+000000000.05209    |     Loading Shader: DiffuseShader
+000000000.05238    |       Shader Types Found:
+000000000.05276    |         Vertex Shader Found
+000000000.05556    |         Pixel Shader Found
+000000000.05860    |     Loading Shader: NormalShader
+000000000.05895    |       Shader Types Found:
+000000000.05935    |         Vertex Shader Found
+000000000.06024    |         Pixel Shader Found
+000000000.06113    |     Loading Shader: DeferredTextureShader
+000000000.06132    |       Shader Types Found:
+000000000.06167    |         Vertex Shader Found
+000000000.06249    |         Pixel Shader Found
+000000000.06343    |     Loading Shader: DeferredDepth
+000000000.06366    |       Shader Types Found:
+000000000.06401    |         Vertex Shader Found
+000000000.06483    |         Pixel Shader Found
+000000000.06594    |     Loading Shader: DeferredDepthNormalMap
+000000000.06616    |       Shader Types Found:
+000000000.06660    |         Vertex Shader Found
+000000000.06748    |         Pixel Shader Found
+000000000.06847    |     Loading Shader: DirectionalLightSource
+000000000.06867    |       Shader Types Found:
+000000000.06902    |         Vertex Shader Found
+000000000.06986    |         Pixel Shader Found
+000000000.07086    |     Loading Shader: PointLightSource
+000000000.07107    |       Shader Types Found:
+000000000.07140    |         Vertex Shader Found
+000000000.07226    |         Pixel Shader Found
+000000000.07329    |     Loading Shader: QuadShader
+000000000.07354    |       Shader Types Found:
+000000000.07390    |         Vertex Shader Found
+000000000.07472    |         Pixel Shader Found
+000000000.07571    |     Loading Shader: UIShader
+000000000.07596    |       Shader Types Found:
+000000000.07633    |         Vertex Shader Found
+000000000.07717    |         Pixel Shader Found
+000000000.07811    |     Loading Shader: PrimitiveShader
+000000000.07832    |       Shader Types Found:
+000000000.07865    |         Vertex Shader Found
+000000000.07935    |         Pixel Shader Found
+000000000.08030    |     Loading Shader: PointShader
+000000000.08054    |       Shader Types Found:
+000000000.08090    |         Vertex Shader Found
+000000000.08175    |         Pixel Shader Found
+000000000.08251    |         Geometry Shader Found
+000000000.08498    |   Initialize Buffers
+000000000.08588    |   Initialize Models
+000000000.14357    |   Initialize Textures
+000000000.14423    |     Texture: UV
+000000000.14453    |       Path: ../Textures/uv.DDS
+000000000.14475    |       Width: 1024
+000000000.14493    |       Height: 1024
+000000000.16105    |     Texture: Skybox
+000000000.16145    |       Path: ../Textures/skybox_texture.DDS
+000000000.16165    |       Width: 1024
+000000000.16187    |       Height: 1024
+000000000.17669    |     Texture: Wire
+000000000.17700    |       Path: ../Textures/wire.DDS
+000000000.17721    |       Width: 1024
+000000000.17741    |       Height: 1024
+000000000.19270    |     Texture: n1
+000000000.19304    |       Path: ../Textures/normal1.DDS
+000000000.19324    |       Width: 256
+000000000.19342    |       Height: 256
+000000000.19459    |     Texture: n2
+000000000.19477    |       Path: ../Textures/normal2.DDS
+000000000.19494    |       Width: 256
+000000000.19509    |       Height: 256
+000000000.19630    |     Texture: n3
+000000000.19646    |       Path: ../Textures/normal3.DDS
+000000000.19663    |       Width: 256
+000000000.19678    |       Height: 256
