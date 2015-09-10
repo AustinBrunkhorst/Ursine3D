@@ -250,6 +250,7 @@ int main( void )
     gfxInterface->RenderObject( floor );
     gfxInterface->RenderObject( model );
     gfxInterface->RenderObject( light );
+    gfxInterface->RenderObject( directLight );
     gfxInterface->RenderScene( 0.016, viewport );
 
     // END OF RENDER CALLS
