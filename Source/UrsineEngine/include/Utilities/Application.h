@@ -15,14 +15,11 @@
 
 #include "InternalApplicationArgs.h"
 
-#include "SystemContainer.h"
-
 #include "FrameRateController.h"
 
 namespace ursine
 {
-    class Application 
-        : public SystemContainer
+    class Application
     {
     protected:
         // command line arguments count
@@ -60,6 +57,4 @@ namespace ursine
         void SetTargetFPS(uint32 fps);
         uint32 GetFPS(void);
     };
-
-    extern Application *gApplication;
 }

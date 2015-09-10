@@ -114,36 +114,6 @@
 #include "SQuat.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-// Physics Components
-///////////////////////////////////////////////////////////////////////////////
-
-#include "AABB.h"
-#include "BasePolygon.h"
-#include "Collider.h"
-#include "CollisionEventArgs.h"
-#include "Collision.h"
-#include "Ellipse.h"
-#include "Manifold.h"
-#include "PhysicsDebugDrawSystem.h"
-#include "Polygon.h"
-#include "RayCast.h"
-#include "Rigidbody2DComponent.h"
-#include "Shape.h"
-#include "Simplex.h"
-#include "SimulationConfig.h"
-#include "SimulationSystem.h"
-#include "DistanceJoint.h"
-#include "LayerID.h"
-#include "LayerMask.h"
-#include "KinematicChildComponent.h"
-
-///////////////////////////////////////////////////////////////////////////////
-// Audio Components
-///////////////////////////////////////////////////////////////////////////////
-
-#include "AudioEmittersComponent.h"
-
-///////////////////////////////////////////////////////////////////////////////
 // Misc Stuff
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -163,6 +133,5 @@
 
 #include "EventDispatcher.h"
 #include "Application.h"
-#include "System.h"
 
 #include "Randomizer.h"

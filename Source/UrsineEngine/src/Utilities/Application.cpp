@@ -19,40 +19,22 @@
 
 namespace ursine
 {
-    Application *gApplication = nullptr;
-
     Application::Application(int argc, char *argv[])
         : m_argc( argc )
         , m_argv( argv )
         , m_isRunning( true )
     {
-        UAssert(!gApplication,
-            "More than one instance of an Application created.");
-
-        gApplication = this;
-
         // default FPS
         SetTargetFPS( 60 );
 
-        SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS | 
+        SDL_Init( SDL_INIT_TIMER | SDL_INIT_EVENTS | 
                  SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | 
                  SDL_INIT_GAMECONTROLLER );
-
-        // set the working directory to the directory of the executable.
-        // this avoids problems with the debugger in Visual Studio
-        utils::SetWorkingDirectory(
-            utils::DirectoryName( argv[ 0 ] )
-        );
     }
 
     Application::~Application(void)
     {
-        // this has to be called before the application is set to nullptr
-        ClearSystems( );
-
         SDL_Quit( );
-
-        gApplication = nullptr;
     }
 
     void Application::Run(void)
@@ -83,7 +65,7 @@ namespace ursine
 #endif
                 glClear( GL_COLOR_BUFFER_BIT );
 
-                UpdateSystems( );
+                // @@@TODO: Dispatch update
 
                 SDL_GL_SwapWindow( gWindowManager->GetHandle( ) );
 #ifdef CONFIG_RELEASE
