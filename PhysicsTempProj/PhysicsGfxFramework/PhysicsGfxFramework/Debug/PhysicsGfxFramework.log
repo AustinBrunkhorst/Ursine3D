@@ -1,15 +1,9 @@
-﻿Build started 9/9/2015 3:00:21 PM.
-     1>Project "C:\Users\Matt\Desktop\PhysicsGfxFramework\PhysicsGfxFramework\PhysicsGfxFramework.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Main.cpp
-         Main.cpp
-     1>c:\users\matt\desktop\physicsgfxframework\physicsgfxframework\main.cpp(238): warning C4305: '+=': truncation from 'double' to 'float'
-     1>c:\users\matt\desktop\physicsgfxframework\physicsgfxframework\main.cpp(253): warning C4305: 'argument': truncation from 'double' to 'float'
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Matt\Desktop\PhysicsGfxFramework\Debug\PhysicsGfxFramework.exe" /INCREMENTAL /NOLOGO Graphics_3D_Proto.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Matt\Desktop\PhysicsGfxFramework\Debug\PhysicsGfxFramework.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Matt\Desktop\PhysicsGfxFramework\Debug\PhysicsGfxFramework.lib" /MACHINE:X86 Debug\Main.obj
-         PhysicsGfxFramework.vcxproj -> C:\Users\Matt\Desktop\PhysicsGfxFramework\Debug\PhysicsGfxFramework.exe
-     1>Done Building Project "C:\Users\Matt\Desktop\PhysicsGfxFramework\PhysicsGfxFramework\PhysicsGfxFramework.vcxproj" (Build target(s)).
+﻿Build started 9/9/2015 3:19:51 PM.
+     1>Project "C:\Users\Jordan\Documents\GitHub\Ursine3D\PhysicsTempProj\PhysicsGfxFramework\PhysicsGfxFramework\PhysicsGfxFramework.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         PhysicsGfxFramework.vcxproj -> C:\Users\Jordan\Documents\GitHub\Ursine3D\PhysicsTempProj\PhysicsGfxFramework\Debug\PhysicsGfxFramework.exe
+     1>Done Building Project "C:\Users\Jordan\Documents\GitHub\Ursine3D\PhysicsTempProj\PhysicsGfxFramework\PhysicsGfxFramework\PhysicsGfxFramework.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.80
+Time Elapsed 00:00:00.08
