@@ -1,0 +1,19 @@
+--------------------------------------------GFX Log File--------------------------------------------
+                                    Date/Time:2015-09-09_0-49-8
+     Timestamp     |                                    Message                                     
+-------------------|--------------------------------------------------------------------------------
+000000000.00001    | GRAPHICS
+000000000.00035    |   Graphics Config:
+000000000.00055    |     Width: 800
+000000000.00074    |     Height: 600
+000000000.00093    |     Model Path: ../Models/
+000000000.00111    |     Texture Path: ../Textures/
+000000000.00134    |     Shader Path: ../SHADER_BINARY/
+000000000.00152    |     Fullscreen: False
+000000000.00170    |   GPU Info
+000000000.00879    |     Video Card: Intel(R) HD Graphics 4600
+000000000.00930    |     Dedicated Video Memory: 32
+000000000.00964    |     Shared Video Memory: 1760
+000000000.00994    |   Initialize DirectX
+000000000.01160    |     Sample Count: 1
+000000000.01200    |     Sample Quality: 0

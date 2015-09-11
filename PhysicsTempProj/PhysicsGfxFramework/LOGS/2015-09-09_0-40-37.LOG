@@ -1,0 +1,103 @@
+--------------------------------------------GFX Log File--------------------------------------------
+                                    Date/Time:2015-09-09_0-40-37
+     Timestamp     |                                    Message                                     
+-------------------|--------------------------------------------------------------------------------
+000000000.00001    | GRAPHICS
+000000000.00035    |   Graphics Config:
+000000000.00054    |     Width: 800
+000000000.00072    |     Height: 600
+000000000.00087    |     Model Path: ../Models/
+000000000.00101    |     Texture Path: ../Textures/
+000000000.00129    |     Shader Path: ../SHADER_BINARY/
+000000000.00145    |     Fullscreen: False
+000000000.00160    |   GPU Info
+000000000.00848    |     Video Card: Intel(R) HD Graphics 4600
+000000000.00887    |     Dedicated Video Memory: 32
+000000000.00913    |     Shared Video Memory: 1760
+000000000.00939    |   Initialize DirectX
+000000000.01048    |     Sample Count: 1
+000000000.01072    |     Sample Quality: 0
+000000000.04394    |     Feature Level: 45312
+000000000.04582    |   Initialize Shaders
+000000000.04634    |     Loading Shader: BasicModelShader
+000000000.04662    |       Shader Types Found:
+000000000.04705    |         Vertex Shader Found
+000000000.04947    |         Pixel Shader Found
+000000000.05153    |     Loading Shader: DiffuseShader
+000000000.05185    |       Shader Types Found:
+000000000.05227    |         Vertex Shader Found
+000000000.05616    |         Pixel Shader Found
+000000000.06002    |     Loading Shader: NormalShader
+000000000.06031    |       Shader Types Found:
+000000000.06072    |         Vertex Shader Found
+000000000.06165    |         Pixel Shader Found
+000000000.06266    |     Loading Shader: DeferredTextureShader
+000000000.06291    |       Shader Types Found:
+000000000.06332    |         Vertex Shader Found
+000000000.06421    |         Pixel Shader Found
+000000000.06523    |     Loading Shader: DeferredDepth
+000000000.06547    |       Shader Types Found:
+000000000.06586    |         Vertex Shader Found
+000000000.06675    |         Pixel Shader Found
+000000000.06780    |     Loading Shader: DeferredDepthNormalMap
+000000000.06805    |       Shader Types Found:
+000000000.06842    |         Vertex Shader Found
+000000000.06934    |         Pixel Shader Found
+000000000.07038    |     Loading Shader: DirectionalLightSource
+000000000.07062    |       Shader Types Found:
+000000000.07098    |         Vertex Shader Found
+000000000.07192    |         Pixel Shader Found
+000000000.07313    |     Loading Shader: PointLightSource
+000000000.07341    |       Shader Types Found:
+000000000.07379    |         Vertex Shader Found
+000000000.07463    |         Pixel Shader Found
+000000000.07577    |     Loading Shader: QuadShader
+000000000.07609    |       Shader Types Found:
+000000000.07650    |         Vertex Shader Found
+000000000.07738    |         Pixel Shader Found
+000000000.07829    |     Loading Shader: UIShader
+000000000.07846    |       Shader Types Found:
+000000000.07881    |         Vertex Shader Found
+000000000.07948    |         Pixel Shader Found
+000000000.08021    |     Loading Shader: PrimitiveShader
+000000000.08036    |       Shader Types Found:
+000000000.08068    |         Vertex Shader Found
+000000000.08126    |         Pixel Shader Found
+000000000.08196    |     Loading Shader: PointShader
+000000000.08212    |       Shader Types Found:
+000000000.08243    |         Vertex Shader Found
+000000000.08302    |         Pixel Shader Found
+000000000.08367    |         Geometry Shader Found
+000000000.08619    |   Initialize Buffers
+000000000.08686    |   Initialize Models
+000000000.12926    |   Initialize Textures
+000000000.12989    |     Texture: UV
+000000000.13009    |       Path: ../Textures/uv.DDS
+000000000.13026    |       Width: 1024
+000000000.13045    |       Height: 1024
+000000000.14397    |     Texture: Skybox
+000000000.14432    |       Path: ../Textures/skybox_texture.DDS
+000000000.14451    |       Width: 1024
+000000000.14472    |       Height: 1024
+000000000.15764    |     Texture: Wire
+000000000.15811    |       Path: ../Textures/wire.DDS
+000000000.15834    |       Width: 1024
+000000000.15863    |       Height: 1024
+000000000.17275    |     Texture: n1
+000000000.17339    |       Path: ../Textures/normal1.DDS
+000000000.17372    |       Width: 256
+000000000.17399    |       Height: 256
+000000000.17585    |     Texture: n2
+000000000.17612    |       Path: ../Textures/normal2.DDS
+000000000.17636    |       Width: 256
+000000000.17653    |       Height: 256
+000000000.17813    |     Texture: n3
+000000000.17833    |       Path: ../Textures/normal3.DDS
+000000000.17850    |       Width: 256
+000000000.17869    |       Height: 256
+000000000.18485    | !!ASSERTION FAILED!!
+000000000.18511    |   Statement: 'vpHandle->ID_ == ID_VIEWPORT'
+000000000.18528    |   Line     : 168
+000000000.18543    |   File     : 'c:\users\matt\desktop\gam300\ursine3dgfx\ursine3d_gfx\bearking gfx source\graphics_3d_proto\viewportmanager.cpp'
+000000000.18557    |   Message  : 'Attempted to use invalid handle to get viewport!'
+000000002.44619    |   RESPONSE : Aborting.
