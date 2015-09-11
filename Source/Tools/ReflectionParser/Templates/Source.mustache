@@ -2,6 +2,14 @@
 {{/usingPrecompiledHeader}}
 #include "{{ouputHeaderFile}}"
 
+#if !defined( URSINE_REFLECTION_INCLUDED )
+
+#include <Utilities/MacroUtils.h>
+
+URSINE_ERROR( "<UrsineReflection.h> must be included in the input header file." )
+
+#endif
+
 namespace m = ursine::meta;
 
 m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
@@ -10,7 +18,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     ///////////////////////////////////////////////////////////////////////////
     // Class Allocations
     ///////////////////////////////////////////////////////////////////////////
-    {{#class}}
+    {{#class}}{{#isAccessible}}
     {
         { // Base Type
             auto id = db.AllocateType( "{{& displayName}}" );
@@ -35,11 +43,11 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
         }
         {{/constPtrTypeEnabled}}
     }
-    {{/class}}
+    {{/isAccessible}}{{/class}}
     ///////////////////////////////////////////////////////////////////////////
     // Enum Allocations
     ///////////////////////////////////////////////////////////////////////////
-    {{#enum}}
+    {{#enum}}{{#isAccessible}}
     {
         { // Base Type
             auto id = db.AllocateType( "{{& displayName}}" );
@@ -64,7 +72,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
         }
         {{/constPtrTypeEnabled}}
     }
-    {{/enum}}
+    {{/isAccessible}}{{/enum}}
     ///////////////////////////////////////////////////////////////////////////
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
@@ -75,7 +83,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             return m::Variant { {{> getterBody}} };
         },{{/isGetterAccessible}}{{^isGetterAccessible}}
         nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
-        [](const m::Variant &value)
+        [](const m::Argument &value)
         {
             {{> setterBody}}
         },{{/isSetterAccessible}}{{^isSetterAccessible}}
@@ -90,7 +98,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     ///////////////////////////////////////////////////////////////////////////
     {{#globalFunction}}{{#isAccessible}}
     db.AddGlobalFunction( "{{& qualifiedName}}",
-        static_cast<{{qualifiedSignature}}>( {{& qualifiedName}} ),
+        static_cast<{{& qualifiedSignature}}>( {{& qualifiedName}} ),
         [](m::ArgumentList &args)
         { {{#isVoidReturnType}}
             {{> invocationBody}};
@@ -148,7 +156,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             };
 
             type.LoadBaseClasses( db, typeID, { 
-                {{#baseClass}}typeof( {{name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
+                {{#baseClass}}typeof( {{& name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
             } );
 
             // Constructors
@@ -205,13 +213,13 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{/isAccessible}}{{/field}}
             // Static Fields
             {{#staticField}}{{#isAccessible}}
-            type.AddStaticField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",
+            type.AddStaticField<{{& parentQualifiedName}}, {{type}}>( "{{& displayName}}",
                 {{#isGetterAccessible}}[](void)
                 {
                     return m::Variant { {{> getterBody}} };
                 },{{/isGetterAccessible}}{{^isGetterAccessible}}
                 nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
-                [](const m::Variant &value)
+                [](const m::Argument &value)
                 {
                     {{> setterBody}}
                 },{{/isSetterAccessible}}{{^isSetterAccessible}}
@@ -224,7 +232,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             // Methods
             {{#method}}{{#isAccessible}}
             type.AddMethod( "{{name}}",
-                static_cast<{{qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
+                static_cast<{{& qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
                 [](m::Variant &obj, m::ArgumentList &args)
                 { 
                     auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
@@ -244,7 +252,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             // Static Methods
             {{#staticMethod}}{{#isAccessible}}
             type.AddStaticMethod<{{parentQualifiedName}}>( "{{name}}",
-                static_cast<{{qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
+                static_cast<{{& qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
                 [](m::ArgumentList &args)
                 { {{#isVoidReturnType}}
                     {{parentQualifiedName}}::{{> invocationBody}};

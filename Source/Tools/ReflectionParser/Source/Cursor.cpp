@@ -74,6 +74,11 @@ CursorType Cursor::GetReturnType(void) const
     return clang_getCursorResultType( m_handle );
 }
 
+CursorType Cursor::GetTypedefType(void) const
+{
+    return clang_getTypedefDeclUnderlyingType( m_handle );
+}
+
 Cursor::List Cursor::GetChildren(void) const
 {
     List children;

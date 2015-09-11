@@ -14,8 +14,8 @@ Invokable::Invokable(const Cursor &cursor)
     {
         auto argument = type.GetArgument( i );
 
-        m_signature.emplace_back( 
-            argument.GetDisplayName( ) 
+        m_signature.emplace_back(
+            argument.GetDisplayName( )
         );
     }
 }

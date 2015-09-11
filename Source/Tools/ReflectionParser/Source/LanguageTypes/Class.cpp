@@ -19,7 +19,7 @@ namespace
 }
 
 BaseClass::BaseClass(const Cursor &cursor)
-    : name( cursor.GetType( ).GetDisplayName( ) )
+    : name( cursor.GetType( ).GetCanonicalType( ).GetDisplayName( ) )
 {
 
 }

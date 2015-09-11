@@ -81,5 +81,5 @@ void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, con
 
 bool Enum::isAccessible(void) const
 {
-    return !m_metaData.GetFlag( kMetaDisable );
+    return m_metaData.GetFlag( kMetaEnable );
 }

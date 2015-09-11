@@ -6,13 +6,13 @@ project(BearKing CXX)
 # Global Settings
 # ------------------------------------------------------------------------------
 
-# directory to UrsineEngine
-set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/UrsineEngine")
+# directory to Ursine3D
+set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/Ursine3D")
 
-# directory to UrsineEngine dependencies
+# directory to Ursine3D dependencies
 set(ENGINE_DEP_DIR "${ENGINE_DIR}/dep")
 
-# directory to UrsineEngine resources
+# directory to Ursine3D resources
 set(ENGINE_RESOURCES_DIR "${ENGINE_DIR}/resources")
 
 # module directory
@@ -135,7 +135,7 @@ endif ()
 
 # engine
 
-add_subdirectory("UrsineEngine")
+add_subdirectory("Ursine3D")
 
 # all projects to build
 

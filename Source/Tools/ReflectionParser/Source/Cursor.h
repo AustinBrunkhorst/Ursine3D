@@ -25,6 +25,7 @@ public:
 
     CursorType GetType(void) const;
     CursorType GetReturnType(void) const;
+    CursorType GetTypedefType(void) const;
 
     List GetChildren(void) const;
     void VisitChildren(Visitor visitor, void *data = nullptr);

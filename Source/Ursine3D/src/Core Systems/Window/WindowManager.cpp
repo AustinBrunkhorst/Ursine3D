@@ -1,0 +1,283 @@
+#include "UrsinePrecompiled.h"
+
+#include "WindowManager.h"
+#include "GamepadManager.h"
+
+#include <SDL_video.h>
+#include <SDL_syswm.h>
+
+namespace ursine
+{
+    WindowManager::WindowManager(const char *title, int width, int height,
+        uint32 window_flags, int x, int y)
+        : EventDispatcher( this )
+        , m_isFocused( true )
+        , m_isFullscreen( false )
+        , m_isShown( false )
+    {
+        // create a window
+        m_handle = SDL_CreateWindow( title, x, y, width, height,
+            SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | window_flags );
+
+        if (utils::IsFlagSet( window_flags, SDL_WINDOW_FULLSCREEN ))
+            m_isFullscreen = true;
+
+        if (utils::IsFlagSet( window_flags, SDL_WINDOW_FULLSCREEN_DESKTOP ))
+            m_isFullscreen = true;
+
+        // create a GL context with the window
+        m_glContext = SDL_GL_CreateContext( m_handle );
+
+        /*gApplication->GetInternalEvents( ).Listener( this )
+            .On( SDL_WINDOWEVENT, &WindowManager::onWindowEvent );*/
+
+        // enable experimental features
+        glewExperimental = GL_TRUE;
+
+        // initialize GLEW
+        glewInit( );
+
+        UAssert(glewIsSupported( "GL_VERSION_3_3" ),
+            "Opengl 3.3+ is required.");
+
+        int a, b;
+
+        SDL_GetWindowSize( m_handle, &a, &b );
+
+        m_size.Set( static_cast<float>( a ), static_cast<float>( b ) );
+
+        SDL_GetWindowPosition( m_handle, &a, &b );
+
+        m_location.Set( static_cast<float>( a ), static_cast<float>( b ) );
+    }
+
+    WindowManager::~WindowManager(void)
+    {
+        /*gApplication->GetInternalEvents( ).Listener( this )
+            .Off( SDL_WINDOWEVENT, &WindowManager::onWindowEvent );*/
+
+        SDL_GL_DeleteContext( m_glContext );
+
+        SDL_DestroyWindow( m_handle );
+    }
+
+    const Vec2 &WindowManager::GetSize(void) const
+    {
+        return m_size;
+    }
+
+    void WindowManager::SetSize(const Vec2 &size)
+    {
+        auto centerOld = m_location + m_size * 0.5f;
+
+        auto width = static_cast<int>( size.X() );
+        auto height = static_cast<int>( size.Y() );
+
+        SDL_SetWindowSize( m_handle, width, height );
+
+        m_size = size;
+
+        SetLocation( centerOld - size * 0.5f );
+
+        WindowResizeArgs resize( width, height );
+
+        Dispatch( WM_RESIZE, &resize );
+    }
+
+    const Vec2 &WindowManager::GetLocation(void) const
+    {
+        return m_location;
+    }
+
+    void WindowManager::SetLocation(const Vec2 &location)
+    {
+        SDL_SetWindowPosition(m_handle,
+            static_cast<int>( location.X() ),
+            static_cast<int>( location.Y() )
+        );
+
+        m_location = location;
+    }
+
+    void WindowManager::SetLocationCentered(void)
+    {
+        SDL_SetWindowPosition( m_handle,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED );
+
+        int x, y;
+
+        SDL_GetWindowPosition( m_handle, &x, &y );
+
+        m_location.Set( static_cast<float>( x ), static_cast<float>( y ) );
+    }
+
+    bool WindowManager::IsFocused(void) const
+    {
+        return m_isFocused;
+    }
+
+    WindowHandle *WindowManager::GetHandle(void)
+    {
+        return m_handle;
+    }
+
+    void *WindowManager::GetPlatformHandle(void)
+    {
+        SDL_SysWMinfo info;
+
+        SDL_GetVersion( &info.version );
+
+        SDL_GetWindowWMInfo( m_handle, &info );
+
+        URSINE_TODO("x-platform")
+        return info.info.win.window;
+    }
+
+    bool WindowManager::IsFullScreen(void) const
+    {
+        return m_isFullscreen;
+    }
+
+    void WindowManager::SetFullScreen(bool fullscreen)
+    {
+        SDL_SetWindowDisplayMode( m_handle, nullptr );
+        SDL_SetWindowFullscreen( m_handle, fullscreen ? SDL_WINDOW_FULLSCREEN : 0 );
+
+        if (!fullscreen)
+            SetLocationCentered( );
+
+        m_isFullscreen = fullscreen;
+    }
+
+    bool WindowManager::IsShown(void) const
+    {
+        return m_isShown;
+    }
+
+    void WindowManager::Show(bool show)
+    {
+        if (show)
+        {
+            SDL_ShowWindow( m_handle );
+        }
+        else
+        {
+            SDL_HideWindow( m_handle );
+        }
+
+        m_isShown = show;
+    }
+
+    int WindowManager::GetDisplayIndex(void) const
+    {
+        return SDL_GetWindowDisplayIndex( m_handle );
+    }
+
+    std::vector<SDL_DisplayMode> WindowManager::GetAvailableDisplayModes(void) const
+    {
+        std::vector<SDL_DisplayMode> modes;
+
+        auto displayIndex = GetDisplayIndex( );
+
+        auto modeCount = SDL_GetNumDisplayModes( displayIndex );
+
+        for (int i = 0; i < modeCount; ++i)
+        {
+            SDL_DisplayMode mode { SDL_PIXELFORMAT_UNKNOWN, 0, 0, 0, 0 };
+
+            SDL_GetDisplayMode( displayIndex, i, &mode );
+
+            modes.emplace_back( mode );
+        }
+
+        return modes;
+    }
+
+    SDL_DisplayMode WindowManager::GetDisplayMode(void) const
+    {
+        SDL_DisplayMode mode;
+
+        SDL_GetWindowDisplayMode( m_handle, &mode );
+
+        return mode;
+    }
+
+    void WindowManager::SetDisplayMode(const SDL_DisplayMode &mode)
+    {
+        SetSize({
+            static_cast<float>( mode.w ),
+            static_cast<float>( mode.h )
+        });
+
+        auto fullscreen = m_isFullscreen;
+
+        // this is absurd, but it works 0_o
+        SetFullScreen( !fullscreen );
+
+        SDL_SetWindowDisplayMode( m_handle, &mode );
+
+        SetFullScreen( fullscreen );
+    }
+
+    void WindowManager::onWindowEvent(EVENT_HANDLER(Application))
+    {
+        EVENT_ATTRS(Application, InternalApplicationArgs);
+
+        switch (args->data->window.event)
+        {
+            case SDL_WINDOWEVENT_RESIZED:
+            {
+                int width = args->data->window.data1;
+                int height = args->data->window.data2;
+
+                m_size.Set( static_cast<float>( width ), static_cast<float>( height ) );
+
+                WindowResizeArgs e( width, height );
+
+                Dispatch( WM_RESIZE, &e );
+            }
+            case SDL_WINDOWEVENT_MOVED:
+            {
+                m_location.Set( 
+                    static_cast<float>( args->data->window.data1 ), 
+                    static_cast<float>( args->data->window.data2 )
+                );
+            }
+                break;
+            case SDL_WINDOWEVENT_FOCUS_GAINED:
+            case SDL_WINDOWEVENT_FOCUS_LOST:
+            {
+                m_isFocused = args->data->window.event
+                    == SDL_WINDOWEVENT_FOCUS_GAINED;
+
+                WindowFocusArgs e( m_isFocused );
+
+                Dispatch( WM_FOCUS_CHANGED, &e );
+            }
+                break;
+        }
+    }
+
+    template<>
+    Json JsonSerializer::Serialize(SDL_DisplayMode &instance)
+    {
+        return Json::object {
+            { "width", instance.w },
+            { "height", instance.h },
+            { "refreshRate", instance.refresh_rate }
+        };
+    }
+
+    template<>
+    void JsonSerializer::Deserialize(const Json &data, SDL_DisplayMode &out)
+    {
+        out.driverdata = nullptr;
+        out.format = 0;
+
+        out.w = data[ "width" ].int_value( );
+        out.h = data[ "height" ].int_value( );
+
+        out.refresh_rate = data[ "refreshRate" ].int_value( );
+    }
+}

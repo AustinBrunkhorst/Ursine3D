@@ -69,5 +69,5 @@ bool Field::isGetterAccessible(void) const
 
 bool Field::isSetterAccessible(void) const
 {
-    return m_hasExplicitSetter || m_accessModifier == CX_CXXPublic;
+    return m_hasExplicitSetter || (!m_isConst && m_accessModifier == CX_CXXPublic);
 }

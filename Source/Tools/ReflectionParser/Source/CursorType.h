@@ -1,5 +1,7 @@
 #pragma once
 
+class Cursor;
+
 class CursorType
 {
 public:
@@ -11,6 +13,10 @@ public:
     CursorType GetArgument(unsigned index) const;
 
     CursorType GetCanonicalType(void) const;
+
+    Cursor GetDeclaration(void) const;
+
+    CXTypeKind GetKind(void) const;
 
     bool IsConst(void) const;
 
