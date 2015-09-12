@@ -21,7 +21,11 @@ namespace ursine
 
         for (auto it = m_created.begin( ); it != m_created.end( );)
         {
-            delete it->second;
+            auto *window = it->second;
+
+            SDL_DestroyWindow( window->m_handle );
+
+            delete window;
 
             it = m_created.erase( it );
         }
@@ -51,11 +55,13 @@ namespace ursine
         return window;
     }
 
-    void WindowManager::destroy(const Window *window)
+    void WindowManager::destroy(Window *window)
     {
         m_created.erase( window->m_id );
 
-        delete window;
+        SDL_DestroyWindow( window->m_handle );
+
+        window->m_handle = nullptr;
     }
 
     void WindowManager::onWindowEvent(EVENT_HANDLER(Application))

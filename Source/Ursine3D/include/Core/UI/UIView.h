@@ -1,37 +1,43 @@
-/* ---------------------------------------------------------------------------
-** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
-**
-** View.h
-**
-** Author:
-** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
-**
-** Contributors:
-** - <list in same format as author if applicable>
-** -------------------------------------------------------------------------*/
-
 #pragma once
+
+#include "Window.h"
 
 #include "UIOpenGLRenderer.h"
 
 #include "MouseButton.h"
 
-#include <cef_client.h>
+#include <include/cef_client.h>
+#include <include/cef_v8.h>
+#include <include/cef_display_handler.h>
 
 namespace ursine
 {
-    class View
-        : public UIOpenGLRenderer
-        , public CefClient
+    class KeyboardManager;
+    class MouseManager;
+
+    class UIView 
+        : public CefClient
         , public CefDisplayHandler
         , public CefV8Handler
+        , public UIOpenGLRenderer
     {
+    public:
+        ~UIView(void);
+
+        const CefRect &GetViewport(void) const;
+        void SetViewport(const CefRect &viewport);
+
+    private:
         friend class UIManager;
 
-        bool m_initialized;
+        Window *m_window;
 
         CefRefPtr<CefBrowser> m_browser;
+
+        KeyboardManager *m_keyboardManager;
+        MouseManager *m_mouseManager;
+
+        UIView(Window *window, const CefBrowserSettings &settings, const std::string &url);
 
         ////////////////////////////////////////////////////////////////////
         // Handler Getters
@@ -60,7 +66,7 @@ namespace ursine
             CefString &exception) override;
 
         ////////////////////////////////////////////////////////////////////
-        // Events
+        // Event Handlers
         ////////////////////////////////////////////////////////////////////
 
         void onKeyboard(EVENT_HANDLER(MouseManager));
@@ -69,24 +75,12 @@ namespace ursine
         void onMouseButton(EVENT_HANDLER(MouseManager));
         void onMouseWheel(EVENT_HANDLER(MouseManager));
 
-        void onWindowFocus(EVENT_HANDLER(WindowManager));
-        void onWindowResize(EVENT_HANDLER(WindowManager));
-
-        ////////////////////////////////////////////////////////////////////
-        // Event Utilities
-        ////////////////////////////////////////////////////////////////////
+        void onWindowFocus(EVENT_HANDLER(Window));
 
         static CefBrowserHost::MouseButtonType mapMouseButton(MouseButton button);
 
-        static uint32 getKeyModifiers(void);
+        uint32 getKeyModifiers(void);
 
-    public:
-        View(void);
-        ~View(void);
-
-        void Initialize(const std::string &url, CefBrowserSettings settings);
-        CefBrowser *GetBrowser(void);
-
-        IMPLEMENT_REFCOUNTING(View);
+        IMPLEMENT_REFCOUNTING(UIVIew);
     };
 }

@@ -198,7 +198,7 @@ namespace ursine
         SetFullScreen( fullscreen );
     }
 
-    void Window::Destroy(void) const
+    void Window::Destroy(void)
     {
         m_manager->destroy( this );
     }

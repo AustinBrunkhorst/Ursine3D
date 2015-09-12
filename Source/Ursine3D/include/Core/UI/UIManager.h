@@ -19,7 +19,9 @@
 #include "UIManagerEvent.h"
 
 #include "Core.h"
-#include "View.h"
+#include "UIView.h"
+
+#include "Window.h"
 
 #include <cef_app.h>
 #include <cef_runnable.h>
@@ -38,15 +40,15 @@ namespace ursine
         UIManager(void);
         ~UIManager(void);
 
-    private:
-        friend class Space;
+        CefRefPtr<UIView> CreateView(Window *window, const std::string &url);
 
+    private:
         CefRefPtr<Core> m_core;
 
         void onAppUpdate(EVENT_HANDLER(Application));
 
         IMPLEMENT_REFCOUNTING(UIManager);
-    };
+    } Meta(Enable);
 }
 
 DISABLE_RUNNABLE_METHOD_REFCOUNT(ursine::UIManager);

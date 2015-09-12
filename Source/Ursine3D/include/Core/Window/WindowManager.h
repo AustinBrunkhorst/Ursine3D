@@ -30,7 +30,7 @@ namespace ursine
 
         std::unordered_map<uint32, Window*> m_created;
 
-        void destroy(const Window *window);
+        void destroy(Window *window);
 
         void onWindowEvent(EVENT_HANDLER(Application));
     } Meta(Enable);

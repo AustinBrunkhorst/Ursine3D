@@ -39,6 +39,7 @@ namespace ursine
         settings.ignore_certificate_errors = true;
         settings.command_line_args_disabled = true;
 
+        URSINE_TODO( "cleanup and create sub process target" );
         settings.single_process = true;
         settings.multi_threaded_message_loop = false;
 
@@ -55,32 +56,35 @@ namespace ursine
 
 #endif
 
+        URSINE_TODO( "configurable handlers" );
         UAssert( CefInitialize( mainArgs, settings, m_core.get( ), nullptr ),
             "Unable to initialize CEF." );
-
-        URSINE_TODO( "move to UIView" );
-        /*CefBrowserSettings window_settings;
-
-        window_settings.webgl = STATE_DISABLED;
-        window_settings.accelerated_compositing = STATE_ENABLED;
-        window_settings.java = STATE_DISABLED;
-        window_settings.plugins = STATE_DISABLED;
-        window_settings.javascript = STATE_ENABLED;
-        window_settings.local_storage = STATE_DISABLED;
-        window_settings.application_cache = STATE_DISABLED;
-        window_settings.databases = STATE_DISABLED;
-        window_settings.caret_browsing = STATE_DISABLED;
-        window_settings.file_access_from_file_urls = STATE_ENABLED;
-        window_settings.universal_access_from_file_urls = STATE_ENABLED;
-
-        m_view->Initialize( path, window_settings );*/
 
         app->Connect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
 
     UIManager::~UIManager(void)
     {
+        Application::Instance->Disconnect( APP_UPDATE, this, &UIManager::onAppUpdate );
+    }
 
+    CefRefPtr<UIView> UIManager::CreateView(Window *window, const std::string &url)
+    {
+        CefBrowserSettings settings;
+
+        settings.webgl = STATE_DISABLED;
+        settings.accelerated_compositing = STATE_ENABLED;
+        settings.java = STATE_DISABLED;
+        settings.plugins = STATE_DISABLED;
+        settings.javascript = STATE_ENABLED;
+        settings.local_storage = STATE_DISABLED;
+        settings.application_cache = STATE_DISABLED;
+        settings.databases = STATE_DISABLED;
+        settings.caret_browsing = STATE_DISABLED;
+        settings.file_access_from_file_urls = STATE_ENABLED;
+        settings.universal_access_from_file_urls = STATE_ENABLED;
+
+        return new UIView( window, settings, url );
     }
 
     void UIManager::onAppUpdate(EVENT_HANDLER(Application))

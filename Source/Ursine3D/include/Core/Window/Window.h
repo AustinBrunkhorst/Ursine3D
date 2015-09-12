@@ -43,7 +43,7 @@ namespace ursine
         SDL_DisplayMode GetDisplayMode(void) const;
         void SetDisplayMode(const SDL_DisplayMode &mode);
 
-        void Destroy(void) const;
+        void Destroy(void);
 
     private:
         friend class WindowManager;

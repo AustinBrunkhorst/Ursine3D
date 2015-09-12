@@ -19,13 +19,16 @@
 
 namespace ursine
 {
-    class Renderer : public CefRenderHandler
+    class UIOpenGLRenderer : public CefRenderHandler
     {
     public:
-        Renderer(void);
-        ~Renderer(void);
+        UIOpenGLRenderer(void);
+        ~UIOpenGLRenderer(void);
 
         void Draw(void);
+
+    protected:
+        CefRect m_viewport;
 
     private:
         GLuint m_textureID;
@@ -55,6 +58,6 @@ namespace ursine
             PaintElementType type, const RectList &regions,
             const void *buffer, int width, int height);
 
-        IMPLEMENT_REFCOUNTING(Renderer);
+        IMPLEMENT_REFCOUNTING(UIOpenGLRenderer);
     };
 }
