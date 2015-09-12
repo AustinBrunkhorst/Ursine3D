@@ -25,6 +25,6 @@ namespace ursine
     public:
         explicit TweenDelay(const TimeSpan &duration);
 
-        bool Update(void) override;
+        bool Update(DeltaTime dt) override;
     };
 }

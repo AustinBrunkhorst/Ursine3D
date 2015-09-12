@@ -18,9 +18,7 @@
 #include "Screen.h"
 #include "OverlayScreen.h"
 
-#include "UISystem.h"
-
-#include "SpaceEvent.h"
+#include "UIManager.h"
 
 namespace ursine
 {
@@ -102,10 +100,6 @@ namespace ursine
 
             // find the screen in the overlays vector 
             auto search = find(_overlays.begin(), _overlays.end(), screen);
-
-            UAssert(search != _overlays.end(),
-                "Overlay in removal queue doesn't exist.\nspace: %s",
-                screen->ui.GetName().c_str());
 
             screen->OnRemoved();
 
@@ -284,10 +278,6 @@ namespace ursine
 
         if (!screen)
             return;
-
-        ui::SpaceMessageArgs args(name, data);
-
-        screen->ui.Dispatch(name, &args);
     }
 
     ScreenID ScreenManager::GetFocusedScreen(void) const

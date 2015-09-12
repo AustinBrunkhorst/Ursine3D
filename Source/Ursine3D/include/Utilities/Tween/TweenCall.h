@@ -20,11 +20,12 @@ namespace ursine
 {
     class TweenCall : public TweenItem
     {
-        TweenCallback _callback;
-
     public:
         TweenCall(TweenCallback callback);
 
-        bool Update(void) override;
+        bool Update(DeltaTime dt) override;
+
+    private:
+        TweenCallback m_callback;
     };
 }

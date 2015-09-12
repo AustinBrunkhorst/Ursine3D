@@ -20,11 +20,11 @@
 namespace ursine
 {
     TweenCall::TweenCall(TweenCallback callback) 
-        : _callback(callback) { }
+        : m_callback( callback ) { }
 
-    bool TweenCall::Update(void)
+    bool TweenCall::Update(DeltaTime dt)
     {
-        _callback();
+        m_callback( );
 
         return true;
     }

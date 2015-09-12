@@ -25,6 +25,11 @@ Global::Global(const Cursor &cursor, const Namespace &currentNamespace, Class *p
     }
 }
 
+bool Global::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
 TemplateData Global::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data = { TemplateData::Type::Object };
@@ -34,7 +39,6 @@ TemplateData Global::CompileTemplate(const ReflectionParser *context) const
     data[ "qualifiedName" ] = m_qualifiedName;
     data[ "type" ] = m_type;
 
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     data[ "hasParent" ] = utils::TemplateBool( !!m_parent );
 
     if (m_parent)

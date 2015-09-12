@@ -19,47 +19,49 @@
 namespace ursine
 {
     Tween::Tween(TweenGroupID group)
-        : _group(group)
-        , _deleting(false)
-        , _paused(false)
-        , _removed(nullptr) {}
+        : m_group( group )
+        , m_deleting( false )
+        , m_paused( false )
+        , m_removed( nullptr ) { }
 
     Tween::~Tween(void)
     {
-        for (auto *item : _items)
+        for (auto *item : m_items)
             delete item;
     }
 
-    void Tween::Update(void)
+    void Tween::Update(DeltaTime dt)
     {
-        if (_items.empty())
+        if (m_items.empty( ))
             return;
 
-        auto current = _items.front();
+        auto current = m_items.front( );
 
-        if (current->Update())
+        if (current->Update( dt ))
         {
             delete current;
 
-            _items.pop_front();
+            m_items.pop_front( );
         }
     }
 
     TweenID Tween::Create(TweenGroupID group)
     {
-        return gTweenManager->create(group);
+        static auto *manager = Application::Instance->GetCoreSystem<TweenManager>( );
+
+        return manager->create( group );
     }
 
     void Tween::add(TweenItem *item)
     {
-        _items.push_back(item);
+        m_items.emplace_back( item );
     }
 
     void Tween::stop(void)
     {
-        for (auto *item : _items)
+        for (auto *item : m_items)
             delete item;
 
-        _items.clear();
+        m_items.clear( );
     }
 }

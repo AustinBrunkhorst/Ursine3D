@@ -20,16 +20,15 @@
 namespace ursine
 {
     TweenDelay::TweenDelay(const TimeSpan &duration)
-        : TimedTween(duration)
+        : TimedTween( duration )
     {
         
     }
 
-    bool TweenDelay::Update(void)
+    bool TweenDelay::Update(DeltaTime dt)
     {
-        URSINE_TODO("...");
-        //elapse( gApplication->GetDelta( ) );
+        elapse( dt );
 
-        return complete();
+        return complete( );
     }
 }

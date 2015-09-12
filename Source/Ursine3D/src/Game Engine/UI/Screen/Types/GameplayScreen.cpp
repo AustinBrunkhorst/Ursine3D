@@ -28,7 +28,7 @@ namespace ursine
 
     void GameplayScreen::OnFocusChanged(bool state)
     {
-        //ecs::ScreenFocusArgs args(state);
+        /*ecs::ScreenFocusArgs args(state);
 
         if (state)
         {
@@ -41,7 +41,7 @@ namespace ursine
             gTweenManager->Pause(kTweenGroupGameplay);
         }
 
-        /*world.Manager<ecs::SystemManager>()->
+        world.Manager<ecs::SystemManager>()->
             Dispatch(ecs::SM_SCREEN_FOCUS_CHANGED, &args);*/
     }
 

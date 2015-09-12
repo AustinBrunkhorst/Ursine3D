@@ -12,6 +12,11 @@ CXCursorKind Cursor::GetKind(void) const
     return m_handle.kind;
 }
 
+Cursor Cursor::GetLexicalParent(void) const
+{
+    return clang_getCursorLexicalParent( m_handle );
+}
+
 std::string Cursor::GetSpelling(void) const
 {
     std::string spelling;

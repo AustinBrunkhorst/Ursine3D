@@ -22,6 +22,4 @@ namespace ursine
     typedef std::function<void(float)> TweenPercentageCallback;
 
     typedef uint32 TweenGroupID;
-
-    const TweenGroupID kTweenGroupGameplay = 7;
 }

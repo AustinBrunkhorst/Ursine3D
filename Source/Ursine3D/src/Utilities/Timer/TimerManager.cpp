@@ -18,112 +18,112 @@
 
 namespace ursine
 {
-    TimerManager *gTimerManager = nullptr;
+    CORE_SYSTEM_DEFINITION( TimerManager );
 
     TimerManager::TimerManager(void)
-        : _next_id(0)
+        : m_nextID( 0 )
     {
-        gTimerManager = this;
+        Application::Instance->Connect( APP_UPDATE, this, &TimerManager::onAppUpdate );
     }
 
     TimerManager::~TimerManager(void)
     {
-        gTimerManager = nullptr;
-    }
-
-    void TimerManager::Update(void)
-    {
-        URSINE_TODO("...");
-        // dt is in terms of seconds
-        auto dt = 1.0f;// gApplication->GetDelta() * TimeSpan::MillisPerSecond;
-
-        for (auto &pair : _timers)
-        {
-            auto &timer = pair.second;
-
-            // deleting or group paused
-            if (timer._deleting || timer._paused || _groups[timer._group])
-                continue;
-
-            timer._elapsed += dt;
-
-            if (timer._elapsed >= timer._duration)
-            {
-                if (timer._repeated)
-                    timer._repeated();
-
-                timer._elapsed = 0.0f;
-
-                // we're repeating forever
-                if (timer._repeat == Timer::REPEAT_FOREVER)
-                    continue;
-
-                // are we done repeating?
-                if (--timer._repeat <= 0)
-                {
-                    if (timer._completed)
-                        timer._completed();
-
-                    cancel(pair.first);
-                }
-            }
-        }
-
-        for (auto &deleted : _deletion_queue)
-            _timers.erase(deleted);
-
-        _deletion_queue.clear();
+        Application::Instance->Disconnect( APP_UPDATE, this, &TimerManager::onAppUpdate );
     }
 
     void TimerManager::Pause(TimerGroupID group)
     {
-        _groups[group] = true;
+        m_groups[ group ] = true;
     }
 
     void TimerManager::Resume(TimerGroupID group)
     {
-        _groups[group] = false;
+        m_groups[ group ] = false;
     }
 
     void TimerManager::Clear(TimerGroupID group)
     {
-        for (auto it = _timers.begin(); it != _timers.end(); )
+        for (auto it = m_timers.begin( ); it != m_timers.end( );)
         {
-            if (it->second._group == group)
-                _timers.erase(it++);
+            if (it->second.m_group == group)
+                m_timers.erase( it++ );
             else
                 ++it;
         }
     }
 
+    void TimerManager::onAppUpdate(EVENT_HANDLER(Application))
+    {
+        EVENT_ATTRS(Application, EventArgs);
+
+        auto dt = sender->GetDeltaTime( );
+
+        for (auto &pair : m_timers)
+        {
+            auto &timer = pair.second;
+
+            // deleting or group paused
+            if (timer.m_deleting || timer.m_paused || m_groups[ timer.m_group ])
+                continue;
+
+            timer.m_elapsed += dt;
+
+            if (timer.m_elapsed >= timer.m_duration)
+            {
+                if (timer.m_repeated)
+                    timer.m_repeated( );
+
+                timer.m_elapsed = 0.0f;
+
+                // we're repeating forever
+                if (timer.m_repeat == Timer::REPEAT_FOREVER)
+                    continue;
+
+                // are we done repeating?
+                if (--timer.m_repeat <= 0)
+                {
+                    if (timer.m_completed)
+                        timer.m_completed( );
+
+                    cancel( pair.first );
+                }
+            }
+        }
+
+        for (auto &deleted : m_deletionQueue)
+            m_timers.erase( deleted );
+
+        m_deletionQueue.clear( );
+    }
+
     TimerID TimerManager::create(const TimeSpan &duration, TimerGroupID group)
     {
-        auto id = _next_id++;
+        auto id = m_nextID++;
 
-        _timers.emplace(std::make_pair(id, Timer(duration, group)));
+        m_timers.emplace( std::make_pair( id, Timer( duration, group ) ) );
 
-        return TimerID(id);
+        return TimerID( this, id );
     }
 
     Timer *TimerManager::get(uint32 id)
     {
-        auto search = _timers.find(id);
+        auto search = m_timers.find( id );
 
-        return search == _timers.end() ? nullptr : &search->second;
+        return search == m_timers.end( ) ? nullptr : &search->second;
     }
 
     void TimerManager::cancel(uint32 id, bool invoke_removed)
     {
-        auto timer = get(id);
+        auto timer = get( id );
 
-        if (timer && !timer->_deleting)
+        if (timer && !timer->m_deleting)
         {
             if (invoke_removed && timer->_removed)
-                timer->_removed();
+                timer->_removed( );
 
-            timer->_deleting = true;
+            timer->m_deleting = true;
 
-            _deletion_queue.push_back(id);
+            m_deletionQueue.push_back( id );
         }
     }
 }

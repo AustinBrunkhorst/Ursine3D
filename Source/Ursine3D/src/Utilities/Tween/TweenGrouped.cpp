@@ -7,31 +7,29 @@
 
 namespace ursine
 {
-    TweenGrouped::TweenGrouped(uint32 owner)
-        : _owner(owner)
-    {
-
-    }
+    TweenGrouped::TweenGrouped(TweenManager *manager, uint32 owner)
+        : m_owner( owner )
+        , m_manager( manager ) { }
 
     TweenGrouped::~TweenGrouped(void)
     {
-        for (auto *item : _items)
+        for (auto *item : m_items)
             delete item;
     }
 
-    bool TweenGrouped::Update(void)
+    bool TweenGrouped::Update(DeltaTime dt)
     {
-        auto it = _items.begin();
+        auto it = m_items.begin( );
 
-        while (it != _items.end())
+        while (it != m_items.end( ))
         {
             auto item = *it;
 
-            if (item->Update())
+            if (item->Update( dt ))
             {
                 delete item;
 
-                it = _items.erase(it);
+                it = m_items.erase( it );
             }
             else
             {
@@ -39,31 +37,31 @@ namespace ursine
             }
         }
 
-        return _items.empty();
+        return m_items.empty( );
     }
 
     TweenGrouped &TweenGrouped::Delay(const TimeSpan &duration)
     {
-        _items.push_back(new TweenDelay(duration));
+        m_items.push_back( new TweenDelay( duration ) );
 
         return *this;
     }
 
     TweenGrouped &TweenGrouped::Call(TweenCallback callback)
     {
-        _items.push_back(new TweenCall(callback));
+        m_items.emplace_back( new TweenCall( callback ) );
 
         return *this;
     }
 
     TweenID TweenGrouped::EndGroup(void) const
     {
-        return TweenID(_owner);
+        return TweenID( m_manager, m_owner );
     }
 
-    void TweenGrouped::doProperty(const TimeSpan &duration, 
-        const TweenPercentageCallback &property_fn)
+    void TweenGrouped::doProperty(const TimeSpan &duration,
+        const TweenPercentageCallback &propertyFN)
     {
-        _items.push_back(new TweenProperty(duration, property_fn));
+        m_items.emplace_back( new TweenProperty( duration, propertyFN ) );
     }
 }

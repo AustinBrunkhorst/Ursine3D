@@ -134,13 +134,13 @@ namespace ursine
 
         LocalTimerManager &Entity::GetTimers(void)
         {
-            return LocalTimerManager( );
+            return LocalTimerManager( nullptr );
             //return m_world->Manager<UtilityManager>()->GetTimers( this );
         }
 
         LocalTweenManager &Entity::GetTweens(void)
         {
-            return LocalTweenManager( );
+            return LocalTweenManager( nullptr );
             //return m_world->Manager<UtilityManager>()->GetTweens( this );
         }
 

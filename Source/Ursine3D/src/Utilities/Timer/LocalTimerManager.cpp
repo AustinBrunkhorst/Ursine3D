@@ -19,56 +19,54 @@
 
 namespace ursine
 {
-    LocalTimerManager::LocalTimerManager(TimerGroupID default_group)
-        : _default_group(default_group)
-    {
-        
-    }
+    LocalTimerManager::LocalTimerManager(TimerManager *manager, TimerGroupID default_group)
+        : m_defaultGroup( default_group )
+        , m_manager( manager ) { }
 
     LocalTimerManager::~LocalTimerManager(void)
     {
-        ClearAll();
+        ClearAll( );
     }
 
     TimerID LocalTimerManager::Create(const TimeSpan &duration)
     {
-        return Create(duration, _default_group);
+        return Create( duration, m_defaultGroup );
     }
 
     TimerID LocalTimerManager::Create(const TimeSpan &duration, TimerGroupID group)
     {
-        auto timer = Timer::Create(duration, group);
+        auto timer = Timer::Create( duration, group );
 
-        _created[timer._id] = timer;
+        m_created[ timer.m_id ] = timer;
 
-        return timer.Removed([=] {
-            _created.erase(timer._id);
-        });
+        return timer.Removed( [=] {
+            m_created.erase( timer.m_id );
+        } );
     }
 
     void LocalTimerManager::ClearAll(void)
     {
-        for (auto &timer : _created)
-            gTimerManager->cancel(timer.second._id, false);
-        
-        if (_created.size())
-            _created.clear();
+        for (auto &timer : m_created)
+            m_manager->cancel( timer.second.m_id, false );
+
+        if (m_created.size( ))
+            m_created.clear( );
     }
 
     void LocalTimerManager::PauseAll(void)
     {
-        for (auto &timer : _created)
-            timer.second.Pause();
+        for (auto &timer : m_created)
+            timer.second.Pause( );
     }
 
     void LocalTimerManager::ResumeAll(void)
     {
-        for (auto &timer : _created)
-            timer.second.Resume();
+        for (auto &timer : m_created)
+            timer.second.Resume( );
     }
 
     void LocalTimerManager::SetDefaultGroup(TimerGroupID group)
     {
-        _default_group = group;
+        m_defaultGroup = group;
     }
 }

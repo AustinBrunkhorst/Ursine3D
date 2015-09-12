@@ -11,25 +11,14 @@ namespace ursine
 {
     class TweenID
     {
-        friend class TweenManager;
-        friend class LocalTweenManager;
-
-        friend class TweenGrouped;
-
-        // id of the tween in the manager
-        uint32 _id;
-
-        TweenID(uint32 id);
-
-        TweenID &Removed(TweenCallback callback);
-
-        void doProperty(const TimeSpan &duration, 
-            const TweenPercentageCallback &property_fn);
     public:
         TweenID(void);
 
+        // Determines if this represents a valid tween
+        bool IsValid(void) const;
+
         // Determines if the tween representing this ID is active (in the TweenManager)
-        bool IsActive(void);
+        bool IsActive(void) const;
 
         // Sets a tween as paused
         void Pause(void);
@@ -81,6 +70,24 @@ namespace ursine
         TweenGrouped &BeginGroup(void) const;
 
         TweenItem *GetCurrentItem(void) const;
+
+    private:
+        friend class TweenManager;
+        friend class LocalTweenManager;
+
+        friend class TweenGrouped;
+
+        // id of the tween in the manager
+        uint32 m_id;
+
+        TweenManager *m_manager;
+
+        TweenID(TweenManager *manager, uint32 id);
+
+        TweenID &Removed(TweenCallback callback);
+
+        void doProperty(const TimeSpan &duration,
+            const TweenPercentageCallback &propertyFN);
     };
 }
 

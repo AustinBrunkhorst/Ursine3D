@@ -17,92 +17,95 @@
 
 namespace ursine
 {
-    TweenManager *gTweenManager = nullptr;
+    CORE_SYSTEM_DEFINITION( TweenManager );
 
     TweenManager::TweenManager(void)
+        : m_nextID( 0 )
     {
-        gTweenManager = this;
+        Application::Instance->Connect( APP_UPDATE, this, &TweenManager::onAppUpdate );
     }
 
     TweenManager::~TweenManager(void)
     {
-        gTweenManager = nullptr;
-    }
-
-    void TweenManager::Update(void)
-    {
-        for (auto &pair : _tweens)
-        {
-            auto &tween = pair.second;
-
-            // deleting or paused?
-            if (tween._deleting || tween._paused || _groups[tween._group])
-                continue;
-
-            tween.Update();
-        }
-
-        // delete those in the deletion queue
-        for (auto &deleted : _deletion_queue)
-            _tweens.erase(deleted);
-
-        _deletion_queue.clear();
+        Application::Instance->Disconnect( APP_UPDATE, this, &TweenManager::onAppUpdate );
     }
 
     void TweenManager::Pause(TweenGroupID group)
     {
-        if (group + 1u <= _groups.size())
-            _groups[group] = true;
+        if (group + 1u <= m_groups.size( ))
+            m_groups[ group ] = true;
     }
 
     void TweenManager::Resume(TweenGroupID group)
     {
-        if (group + 1u <= _groups.size())
-            _groups[group] = false;
+        if (group + 1u <= m_groups.size( ))
+            m_groups[ group ] = false;
     }
 
     void TweenManager::Clear(TweenGroupID group)
     {
-        for (auto it = _tweens.begin(); it != _tweens.end();)
+        for (auto it = m_tweens.begin( ); it != m_tweens.end( );)
         {
-            if (it->second._group == group)
-                _tweens.erase(it++);
+            if (it->second.m_group == group)
+                m_tweens.erase( it++ );
             else
                 ++it;
         }
     }
 
+    void TweenManager::onAppUpdate(EVENT_HANDLER(Application))
+    {
+        EVENT_ATTRS(Application, EventArgs);
+
+        for (auto &pair : m_tweens)
+        {
+            auto &tween = pair.second;
+
+            // deleting or paused?
+            if (tween.m_deleting || tween.m_paused || m_groups[ tween.m_group ])
+                continue;
+
+            tween.Update( sender->GetDeltaTime( ) );
+        }
+
+        // delete those in the deletion queue
+        for (auto &deleted : m_deletionQueue)
+            m_tweens.erase( deleted );
+
+        m_deletionQueue.clear( );
+    }
+
     TweenID TweenManager::create(TweenGroupID group)
     {
-        auto id = _next_id++;
+        auto id = m_nextID++;
 
-        if (group + 1u > _groups.size())
-            _groups.resize(group + 1u, false);
+        if (group + 1u > m_groups.size( ))
+            m_groups.resize( group + 1u, false );
 
-        _tweens.emplace(std::make_pair(id, Tween(group)));
+        m_tweens.emplace( std::make_pair( id, Tween( group ) ) );
 
-        return TweenID(id);
+        return TweenID( this, id );
     }
 
     Tween *TweenManager::get(uint32 id)
     {
-        auto search = _tweens.find(id);
+        auto search = m_tweens.find( id );
 
-        return search == _tweens.end() ? nullptr : &search->second;
+        return search == m_tweens.end( ) ? nullptr : &search->second;
     }
 
     void TweenManager::cancel(uint32 id, bool invoke_removed)
     {
-        auto tween = get(id);
+        auto tween = get( id );
 
-        if (tween && !tween->_deleting)
+        if (tween && !tween->m_deleting)
         {
-            if (invoke_removed && tween->_removed)
-                tween->_removed();
+            if (invoke_removed && tween->m_removed)
+                tween->m_removed( );
 
-            tween->_deleting = true;
+            tween->m_deleting = true;
 
-            _deletion_queue.push_back(id);
+            m_deletionQueue.push_back( id );
         }
     }
 }

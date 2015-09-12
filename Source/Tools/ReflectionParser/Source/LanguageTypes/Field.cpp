@@ -24,6 +24,11 @@ Field::Field(const Cursor &cursor, const Namespace &currentNamespace, Class *par
     m_hasExplicitSetter = !m_explicitSetter.empty( );
 }
 
+bool Field::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
 TemplateData Field::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data = { TemplateData::Type::Object };
@@ -32,7 +37,6 @@ TemplateData Field::CompileTemplate(const ReflectionParser *context) const
     data[ "displayName" ] = m_displayName;
     data[ "type" ] = m_type;
 
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     data[ "hasParent" ] = utils::TemplateBool( !!m_parent );
 
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;

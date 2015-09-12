@@ -19,12 +19,8 @@ namespace ursine
 {
     class LocalTimerManager
     {
-        std::unordered_map<uint32, TimerID> _created;
-
-        TimerGroupID _default_group;
-
     public:
-        LocalTimerManager(TimerGroupID default_group = Timer::GROUP_DEFAULT);
+        LocalTimerManager(TimerManager *manager, TimerGroupID defaultGroup = Timer::GROUP_DEFAULT);
         ~LocalTimerManager(void);
 
         // Creates a timer with the default group defined during construction
@@ -44,5 +40,12 @@ namespace ursine
 
         // Sets the default group ID for this local manager
         void SetDefaultGroup(TimerGroupID group);
+
+    private:
+        TimerGroupID m_defaultGroup;
+
+        TimerManager *m_manager;
+
+        std::unordered_map<uint32, TimerID> m_created;
     };
 }

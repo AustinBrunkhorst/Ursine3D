@@ -12,6 +12,8 @@ public:
 
     CXCursorKind GetKind(void) const;
 
+    Cursor GetLexicalParent(void) const;
+
     std::string GetSpelling(void) const;
     std::string GetDisplayName(void) const;
     std::string GetMangledName(void) const;

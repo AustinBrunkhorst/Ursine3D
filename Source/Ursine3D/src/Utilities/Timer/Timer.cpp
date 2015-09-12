@@ -19,29 +19,25 @@
 namespace ursine
 {
     Timer::Timer(const TimeSpan &duration, TimerGroupID group)
-        : _group(group)
-        , _repeat(0)
-        , _deleting(false)
-        , _paused(false)
-        , _duration(duration)
-        , _elapsed(0.0f)
-        , _repeated(nullptr)
-        , _completed(nullptr)
-        , _removed(nullptr)
-    {
+        : m_group( group )
+        , m_repeat( 0 )
+        , m_deleting( false )
+        , m_paused( false )
+        , m_duration( duration )
+        , m_elapsed( 0.0f )
+        , m_repeated( nullptr )
+        , m_completed( nullptr )
+        , _removed( nullptr ) { }
 
-    }
-
-    Timer::~Timer(void)
-    {
-
-    }
+    Timer::~Timer(void) { }
 
     TimerID Timer::Create(const TimeSpan &duration, TimerGroupID group)
     {
-        UAssert(duration >= TimeSpan::Zero, 
-            "Timer duration must be non-negative.");
+        static auto *manager = Application::Instance->GetCoreSystem<TimerManager>( );
 
-        return gTimerManager->create(duration, group);
+        UAssert (duration >= TimeSpan::Zero,
+            "Timer duration must be non-negative." );
+
+        return manager->create( duration, group );
     }
 }

@@ -16,7 +16,7 @@
 #include "EventDispatcher.h"
 
 #include "ApplicationEvent.h"
-#include "InternalApplicationArgs.h"
+#include "PlatformEventArgs.h"
 
 #include "CoreSystem.h"
 
@@ -25,7 +25,7 @@
 namespace ursine
 {
     class Application 
-        : public EventDispatcher<ApplicationEvent>
+        : public EventDispatcher<ApplicationEventType>
     {
     public:
         static Application *Instance;
@@ -44,6 +44,8 @@ namespace ursine
         bool IsActive(void) const;
         void SetActive(bool active);
 
+        DeltaTime GetDeltaTime(void) const;
+
         FrameRateController &GetFrameRateController(void);
 
         EventDispatcher<uint32> &GetPlatformEvents(void);
@@ -60,6 +62,9 @@ namespace ursine
 
         // command line arguments count
         int m_argc;
+
+        // delta time
+        DeltaTime m_dt;
 
         // command line arguments
         char **m_argv;

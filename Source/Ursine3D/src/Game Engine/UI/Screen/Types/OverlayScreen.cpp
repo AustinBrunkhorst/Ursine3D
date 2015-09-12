@@ -22,6 +22,6 @@ namespace ursine
 
     const std::string &OverlayScreen::GetName(void) const
     {
-        return ui.GetName();
+        return { };
     }
 }

@@ -9,12 +9,12 @@ namespace ursine
         ease::Function ease)
     {
         Type start = input;
-        auto input_ptr = &input;
+        auto *pInput = &input;
 
-        doProperty(duration, [=](float percent) mutable 
+        doProperty( duration, [=](float percent) mutable
         {
-            *input_ptr = math::Lerp(start, target, ease(percent));
-        });
+            **pInput = math::Lerp( start, target, ease( percent ) );
+        } );
 
         return *this;
     }
@@ -26,10 +26,10 @@ namespace ursine
         const TimeSpan &duration,
         ease::Function ease)
     {
-        doProperty(duration, [=](float percent) mutable 
+        doProperty( duration, [=](float percent) mutable
         {
-            setter(math::Lerp(start, target, ease(percent)));
-        });
+            setter( math::Lerp( start, target, ease( percent ) ) );
+        } );
 
         return *this;
     }
@@ -42,12 +42,12 @@ namespace ursine
         const TimeSpan &duration,
         ease::Function ease)
     {
-        auto functor = std::bind(setter, object, std::placeholders::_1);
+        auto functor = std::bind( setter, object, std::placeholders::_1 );
 
-        doProperty(duration, [=](float percent) mutable
+        doProperty( duration, [=](float percent) mutable
         {
-            functor(math::Lerp(start, target, ease(percent)));
-        });
+            functor( math::Lerp( start, target, ease( percent ) ) );
+        } );
 
         return *this;
     }
@@ -55,6 +55,6 @@ namespace ursine
     template<class ClassType, typename CallbackFN, typename... Args>
     TweenID &TweenID::Call(ClassType *object, CallbackFN callback, Args &&... args)
     {
-        return Call(std::bind(callback, object, std::forward<Args>(args)...));
+        return Call( std::bind( callback, object, std::forward<Args>( args )... ) );
     }
 }

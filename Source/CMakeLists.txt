@@ -103,13 +103,13 @@ set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
 
 if (MSVC)
     if (MSVC10)
-        set(vc_version 10)
+        set(VS_VERSION 10)
     elseif (MSVC11)
-        set(vc_version 11)
+        set(VS_VERSION 11)
     elseif (MSVC12)
-        set(vc_version 12)
+        set(VS_VERSION 12)
     elseif (MSVC14)
-        set(vc_version 14)
+        set(VS_VERSION 14)
     endif()
 
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -118,7 +118,7 @@ if (MSVC)
         set(vc_build x86)
     endif ()
 
-    set(vcredist_name "vcredist${vc_version}0_${vc_build}.exe")
+    set(vcredist_name "vcredist${VS_VERSION}0_${vc_build}.exe")
 
     # Visual Studio redistributable runtime libraries
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "

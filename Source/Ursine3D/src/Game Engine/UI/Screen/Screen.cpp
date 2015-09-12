@@ -16,7 +16,7 @@
 
 #include "Screen.h"
 
-#include "UISystem.h"
+#include "UIManager.h"
 
 #include "ScreenManager.h"
 
@@ -27,14 +27,13 @@ namespace ursine
         , _is_focused(false)
         , _state(SS_ACTIVE)
         , _id(0)
-        , ui(space_name)
     {
 
     }
 
     void Screen::Exit(void)
     {
-        ui.Exited();
+        
     }
 
     ScreenState Screen::GetState(void) const
@@ -47,11 +46,6 @@ namespace ursine
         return _id;
     }
 
-    ui::Space &Screen::GetUI(void)
-    {
-        return ui;
-    }
-
     bool Screen::HasInputFocus(void) const
     {
         return _is_focused;
@@ -59,13 +53,11 @@ namespace ursine
 
     void Screen::OnEntered(const Json &data)
     {
-        ui.Entered(data);
+        
     }
 
     void Screen::setID(ScreenID id)
     {
         _id = id;
-
-        ui._owner = id;
     }
 }

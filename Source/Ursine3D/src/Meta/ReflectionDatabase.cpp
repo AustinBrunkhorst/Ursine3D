@@ -12,6 +12,11 @@
         TypeInfo<type>::Register( id, handle, true ); \
     }                                                 \
 
+#define REGISTER_NATIVE_TYPE_VARIANTS(type) \
+    REGISTER_NATIVE_TYPE( type )            \
+    REGISTER_NATIVE_TYPE( type* )           \
+    REGISTER_NATIVE_TYPE( const type*)      \
+
 namespace ursine
 {
     namespace meta
@@ -22,12 +27,12 @@ namespace ursine
         {
             types[ Type::Invalid ].name = "UNKNOWN";
 
-            REGISTER_NATIVE_TYPE( void );
-            REGISTER_NATIVE_TYPE( int );
-            REGISTER_NATIVE_TYPE( bool );
-            REGISTER_NATIVE_TYPE( float );
-            REGISTER_NATIVE_TYPE( double );
-            REGISTER_NATIVE_TYPE( std::string );
+            REGISTER_NATIVE_TYPE_VARIANTS( void );
+            REGISTER_NATIVE_TYPE_VARIANTS( int );
+            REGISTER_NATIVE_TYPE_VARIANTS( bool );
+            REGISTER_NATIVE_TYPE_VARIANTS( float );
+            REGISTER_NATIVE_TYPE_VARIANTS( double );
+            REGISTER_NATIVE_TYPE_VARIANTS( std::string );
         }
 
         ////////////////////////////////////////////////////////////////////////////

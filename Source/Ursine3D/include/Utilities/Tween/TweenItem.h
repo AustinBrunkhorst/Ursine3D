@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include "DeltaTime.h"
+
 namespace ursine
 {
     class TweenItem
@@ -20,6 +22,6 @@ namespace ursine
     public:
         virtual ~TweenItem(void) {}
 
-        virtual bool Update(void) = 0;
+        virtual bool Update(DeltaTime dt) = 0;
     };
 }

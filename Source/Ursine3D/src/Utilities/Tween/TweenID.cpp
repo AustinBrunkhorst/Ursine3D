@@ -10,120 +10,127 @@
 
 namespace ursine
 {
-    // overflow will make this large, and thus invalid (will never conflict
-    // with a real ID)
+    // invalid default constructor
     TweenID::TweenID(void)
-        : _id(-1) {}
+        : m_id( -1 )
+        , m_manager( nullptr ) { }
 
-    TweenID::TweenID(uint32 id)
-        : _id(id) {}
-
-    bool TweenID::IsActive(void)
+    bool TweenID::IsValid(void) const
     {
-        auto tween = gTweenManager->get(_id);
+        return !!m_manager;
+    }
 
-        return tween && !tween->_deleting;
+    TweenID::TweenID(TweenManager *manager, uint32 id)
+        : m_id( id )
+        , m_manager( manager ) { }
+
+    bool TweenID::IsActive(void) const
+    {
+        auto tween = m_manager->get( m_id );
+
+        return tween && !tween->m_deleting;
     }
 
     void TweenID::Pause(void)
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (tween)
-            tween->_paused = true;
+            tween->m_paused = true;
     }
 
     void TweenID::Resume(void)
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (tween)
-            tween->_paused = false;
+            tween->m_paused = false;
     }
 
     void TweenID::Cancel(void) const
     {
-        gTweenManager->cancel(_id);
+        m_manager->cancel( m_id );
     }
 
     bool TweenID::IsPaused(void) const
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (!tween)
             return true;
 
-        return tween->_paused || gTweenManager->_groups[tween->_group];
+        return tween->m_paused || m_manager->m_groups[ tween->m_group ];
     }
 
     TweenID &TweenID::Stop(void)
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (tween)
-            tween->stop();
+            tween->stop( );
 
         return *this;
     }
 
     TweenID &TweenID::Delay(const TimeSpan &duration)
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (tween)
-            tween->add(new TweenDelay(duration));
+            tween->add( new TweenDelay( duration ) );
 
         return *this;
     }
 
     TweenID &TweenID::Call(TweenCallback callback)
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (tween)
-            tween->add(new TweenCall(callback));
+            tween->add( new TweenCall( callback ) );
 
         return *this;
     }
 
     TweenGrouped &TweenID::BeginGroup(void) const
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
-        UAssert(tween, "Cannot create group on invalid or deleted tween.");
+        UAssert( tween,
+            "Cannot create group on invalid or deleted tween." );
 
-        auto grouped = new TweenGrouped(_id);
+        auto grouped = new TweenGrouped( m_manager, m_id );
 
-        tween->add(grouped);
+        tween->add( grouped );
 
         return *grouped;
     }
 
     TweenItem *TweenID::GetCurrentItem(void) const
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (!tween)
             return nullptr;
 
-        return tween->_items.empty( ) ? nullptr : tween->_items.front( );
+        return tween->m_items.empty( ) ? nullptr : tween->m_items.front( );
     }
 
     TweenID &TweenID::Removed(TweenCallback callback)
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (tween)
-            tween->_removed = callback;
+            tween->m_removed = callback;
 
         return *this;
     }
 
     void TweenID::doProperty(const TimeSpan &duration, const TweenPercentageCallback &property_fn)
     {
-        auto tween = gTweenManager->get(_id);
+        auto tween = m_manager->get( m_id );
 
         if (tween)
-            tween->add(new TweenProperty(duration, property_fn));
+            tween->add( new TweenProperty( duration, property_fn ) );
     }
 }

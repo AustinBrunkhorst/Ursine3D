@@ -20,10 +20,4 @@ namespace ursine
     typedef std::function<void(void)> TimerCallback;
 
     typedef int TimerGroupID;
-
-    // arbitrary group ID for timers that are created globally
-    const TimerGroupID kTimerGroupGlobal = -4;
-
-    // arbitrary group ID for timers that are created for gameplay
-    const TimerGroupID kTimerGroupGameplay = 1;
 }

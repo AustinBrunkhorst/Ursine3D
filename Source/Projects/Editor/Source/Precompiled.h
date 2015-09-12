@@ -27,8 +27,13 @@
 // Core Engine Stuff
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <EventDispatcher.h>
+
 #include <UrsineLogTools.h>
 
 #include <UrsineMath.h>
 
 #include <TimeSpan.h>
+
+#include <TweenID.h>
+#include <Tween.h>

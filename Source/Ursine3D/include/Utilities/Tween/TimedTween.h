@@ -17,16 +17,17 @@ namespace ursine
 {
     class TimedTween
     {
-    protected:
-        TimeSpan _duration;
-        TimeSpan _elapsed;
+    public:
+        float GetPercentElapsed(void);
 
-        void elapse(float dt);
+    protected:
+        TimeSpan m_duration;
+        TimeSpan m_elapsed;
+
+        void elapse(DeltaTime dt);
 
         bool complete(void);
 
         TimedTween(const TimeSpan &duration);
-    public:
-        float GetPercentElapsed(void);
     };
 }

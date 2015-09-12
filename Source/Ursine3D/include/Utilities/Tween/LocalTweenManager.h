@@ -6,12 +6,8 @@ namespace ursine
 {
     class LocalTweenManager
     {
-        std::unordered_map<uint32, TweenID> _created;
-
-        uint32 _default_group;
-
     public:
-        LocalTweenManager(TweenGroupID default_group = Tween::GROUP_DEFAULT);
+        LocalTweenManager(TweenManager *manager, TweenGroupID defaultGroup = Tween::GROUP_DEFAULT);
         ~LocalTweenManager(void);
 
         // Creates a timer with the default group defined during construction
@@ -28,5 +24,12 @@ namespace ursine
 
         // Resumes all timers in this manager
         void ResumeAll(void);
+
+    private:
+        uint32 m_defaultGroup;
+
+        TweenManager *m_manager;
+
+        std::unordered_map<uint32, TweenID> m_created;
     };
 }

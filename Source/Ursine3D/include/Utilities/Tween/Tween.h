@@ -23,22 +23,33 @@ namespace ursine
 {
     class Tween
     {
+    public:
+        // Default tween group
+        static const TweenGroupID GROUP_DEFAULT = 0;
+
+        ~Tween(void);
+
+        void Update(DeltaTime dt);
+
+        static TweenID Create(TweenGroupID group = GROUP_DEFAULT);
+
+    private:
         friend class TweenManager;
         friend class TweenID;
 
         // group id (defaults to zero)
-        TweenGroupID _group;
+        TweenGroupID m_group;
 
         // determines if the tween is being deleted from the TweenManager
-        bool _deleting;
+        bool m_deleting;
 
         // determines if the timer will be updated
-        bool _paused;
+        bool m_paused;
 
-        std::deque<TweenItem *> _items;
+        std::deque<TweenItem *> m_items;
 
         // called when this tween is removed (used internally)
-        TweenCallback _removed;
+        TweenCallback m_removed;
 
         Tween(TweenGroupID group);
 
@@ -47,14 +58,5 @@ namespace ursine
 
         // removes all items from this tween
         void stop(void);
-    public:
-        // Default tween group
-        static const TweenGroupID GROUP_DEFAULT = 0;
-
-        ~Tween(void);
-
-        void Update(void);
-
-        static TweenID Create(TweenGroupID group = GROUP_DEFAULT);
     };
 }

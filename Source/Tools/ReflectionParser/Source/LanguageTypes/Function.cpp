@@ -17,6 +17,11 @@ Function::Function(const Cursor &cursor, const Namespace &currentNamespace, Clas
         
 }
 
+bool Function::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
 TemplateData Function::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };
@@ -26,8 +31,6 @@ TemplateData Function::CompileTemplate(const ReflectionParser *context) const
 
     if (m_parent)
         data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
-
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     
     data[ "isVoidReturnType" ] = utils::TemplateBool( m_returnType == kReturnTypeVoid );
 

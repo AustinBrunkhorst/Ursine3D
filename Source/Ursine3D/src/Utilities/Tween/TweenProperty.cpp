@@ -20,22 +20,21 @@
 namespace ursine
 {
     TweenProperty::TweenProperty(const TimeSpan &duration, TweenPercentageCallback updater)
-        : TimedTween(duration)
-        , _property_update(updater)
+        : TimedTween( duration )
+        , m_propertyUpdater( updater )
     {
 
     }
 
-    bool TweenProperty::Update(void)
+    bool TweenProperty::Update(DeltaTime dt)
     {
-        URSINE_TODO("...");
-        //elapse( gApplication->GetDelta( ) );
+        elapse( dt );
 
-        _property_update( GetPercentElapsed( ) );
+        m_propertyUpdater( GetPercentElapsed( ) );
 
-        if (complete())
+        if (complete( ))
         {
-            _property_update( 1.0f );
+            m_propertyUpdater( 1.0f );
 
             return true;
         }

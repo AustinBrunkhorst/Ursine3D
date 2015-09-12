@@ -29,9 +29,15 @@ namespace ursine
     {
         Instance = this;
 
+        // set the executable directory as the working directory
+        fs::current_path( 
+            fs::path( argv[ 0 ] ).parent_path( ) 
+        );
+
         // default FPS
         m_frameRateController.SetTargetFPS( 60 );
 
+        // default sub systems
         SDL_InitSubSystem( SDL_INIT_TIMER | SDL_INIT_EVENTS );
 
         auto systemType = typeof( core::CoreSystem );
@@ -62,6 +68,10 @@ namespace ursine
                 system.GetValue<core::CoreSystem*>( ) 
             );
         }
+
+        // initialize systems after all have been constructed
+        for (auto &system : m_systems)
+            system->OnInitialize( );
     }
 
     Application::~Application(void)
@@ -78,11 +88,13 @@ namespace ursine
     {
         SDL_Event e;
 
-        InternalApplicationArgs internal;
+        PlatformEventArgs internal;
 
         while (m_isRunning)
         {
             m_frameRateController.FrameBegin( );
+
+            m_dt = m_frameRateController.GetDeltaTime( );
 
             while (SDL_PollEvent( &e ))
             {
@@ -131,6 +143,11 @@ namespace ursine
     void Application::SetActive(bool active)
     {
         m_isActive = active;
+    }
+
+    DeltaTime Application::GetDeltaTime(void) const
+    {
+        return m_dt;
     }
 
     FrameRateController &Application::GetFrameRateController(void)

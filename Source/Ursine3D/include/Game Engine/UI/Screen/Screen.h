@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include "Space.h"
-
 #include "ScreenConfig.h"
 
 namespace ursine
@@ -39,8 +37,6 @@ namespace ursine
         void setID(ScreenID id);
 
     protected:
-        ui::Space ui;
-
         // Called when this screen becomes the "current" screen in the screen manager
         virtual void OnEntered(const Json &data);
 
@@ -70,9 +66,6 @@ namespace ursine
 
         // Gets the instance ID of this screen
         ScreenID GetID(void) const;
-
-        // Gets the UI space for this screen
-        ui::Space &GetUI(void);
 
         // Determines if this screen has input focus
         bool HasInputFocus(void) const;

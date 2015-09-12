@@ -18,24 +18,21 @@
 namespace ursine
 {
     TimedTween::TimedTween(const TimeSpan &duration)
-        : _duration(duration)
-        , _elapsed(TimeSpan::Zero)
-    {
-        
-    }
+        : m_duration( duration )
+        , m_elapsed( TimeSpan::Zero ) { }
 
     float TimedTween::GetPercentElapsed(void)
     {
-        return static_cast<float>( _elapsed.Milliseconds( ) ) / _duration.Milliseconds( );
+        return static_cast<float>( m_elapsed.Milliseconds( ) ) / m_duration.Milliseconds( );
     }
 
-    void TimedTween::elapse(float dt)
+    void TimedTween::elapse(DeltaTime dt)
     {
-        _elapsed += TimeSpan::FromSeconds( dt );
+        m_elapsed += TimeSpan::FromSeconds( dt );
     }
 
     bool TimedTween::complete(void)
     {
-        return _elapsed >= _duration;
+        return m_elapsed >= m_duration;
     }
 }

@@ -32,6 +32,11 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     }
 }
 
+bool Enum::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
 TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };
@@ -40,7 +45,6 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
     data[ "qualifiedName" ] = m_qualifiedName;
     data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
     data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
 
     TemplateData members { TemplateData::Type::List };
 

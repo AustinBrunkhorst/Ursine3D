@@ -14,13 +14,14 @@
 #pragma once
 
 #include "UrsineTypes.h"
+#include "DeltaTime.h"
 
 namespace ursine
 {
     class FrameRateController final
     {
         // delta time
-        float m_dt;
+        DeltaTime m_dt;
 
         // duration for each frame (FPS) in milliseconds
         uint32 m_frameDuration;
@@ -47,7 +48,7 @@ namespace ursine
         void FrameEnd(void);
 
         uint32 GetFPS(void) const;
-        float GetDeltaTime(void) const;
+        DeltaTime GetDeltaTime(void) const;
 
         void SetTargetFPS(uint32 fps);
     };

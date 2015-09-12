@@ -18,102 +18,108 @@
 
 namespace ursine
 {
-    // overflow will make this large, and thus invalid (will never conflict
-    // with a real ID)
+    // invalid default constructor
     TimerID::TimerID(void)
-        : _id(-1) {}
+        : m_id( -1 )
+        , m_manager( nullptr ) { }
 
-    TimerID::TimerID(uint32 id)
-        : _id(id) {}
+    TimerID::TimerID(TimerManager *manager, uint32 id)
+        : m_id( id )
+        , m_manager( manager ) { }
 
-    bool TimerID::IsActive(void)
+    bool TimerID::IsValid(void) const
     {
-        auto timer = gTimerManager->get(_id);
+        return !!m_manager;
+    }
 
-        return timer && !timer->_deleting;
+    bool TimerID::IsActive(void) const
+    {
+        auto timer = m_manager->get( m_id );
+
+        return timer && !timer->m_deleting;
     }
 
     bool TimerID::IsPaused(void) const
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
         if (!timer)
             return true;
 
-        return timer->_paused || gTimerManager->_groups[timer->_group];
+        return timer->m_paused || m_manager->m_groups[ timer->m_group ];
     }
 
     void TimerID::Pause(void)
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
         if (timer)
-            timer->_paused = true;
+            timer->m_paused = true;
     }
 
     void TimerID::Resume(void)
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
         if (timer)
-            timer->_paused = false;
+            timer->m_paused = false;
     }
 
     void TimerID::Cancel(void) const
     {
-        gTimerManager->cancel(_id);
+        m_manager->cancel( m_id );
     }
 
     TimerID &TimerID::Repeat(int count)
     {
-        UAssert(count == Timer::REPEAT_FOREVER || count >= 0,
-            "Timer repeation count must be non-negative.");
+        UAssert( count == Timer::REPEAT_FOREVER || count >= 0,
+            "Timer repeation count must be non-negative." );
 
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
         if (timer)
-            timer->_repeat = count;
+            timer->m_repeat = count;
 
         return *this;
     }
 
     TimerID &TimerID::Repeated(TimerCallback callback)
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
         if (timer)
-            timer->_repeated = callback;
+            timer->m_repeated = callback;
 
         return *this;
     }
 
     TimerID &TimerID::Completed(TimerCallback callback)
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
         if (timer)
-            timer->_completed = callback;
+            timer->m_completed = callback;
 
         return *this;
     }
 
     const TimeSpan &TimerID::GetDuration(void) const
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
-        return timer ? timer->_duration : TimeSpan::Zero;
+        return timer ? timer->m_duration : TimeSpan::Zero;
     }
 
     const TimeSpan &TimerID::GetElapsed(void) const
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
-        return timer ? timer->_elapsed : TimeSpan::Zero;
+        return timer ? timer->m_elapsed : TimeSpan::Zero;
     }
 
     TimerID &TimerID::Removed(TimerCallback callback)
     {
-        auto timer = gTimerManager->get(_id);
+        auto timer = m_manager->get( m_id );
 
         if (timer)
             timer->_removed = callback;

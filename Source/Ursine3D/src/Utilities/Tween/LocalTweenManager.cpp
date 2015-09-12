@@ -5,50 +5,48 @@
 
 namespace ursine
 {
-    LocalTweenManager::LocalTweenManager(TweenGroupID default_group)
-        : _default_group(default_group)
-    {
-
-    }
+    LocalTweenManager::LocalTweenManager(TweenManager *manager, TweenGroupID defaultGroup)
+        : m_defaultGroup( defaultGroup )
+        , m_manager( manager ) { }
 
     LocalTweenManager::~LocalTweenManager(void)
     {
-        ClearAll();
+        ClearAll( );
     }
 
     TweenID LocalTweenManager::Create(void)
     {
-        return Create(_default_group);
+        return Create( m_defaultGroup );
     }
 
     TweenID LocalTweenManager::Create(TweenGroupID group)
     {
-        auto tween = Tween::Create(group);
+        auto tween = Tween::Create( group );
 
-        _created[tween._id] = tween;
+        m_created[ tween.m_id ] = tween;
 
-        return tween.Removed([=] {
-            _created.erase(tween._id);
-        });
+        return tween.Removed( [=] {
+            m_created.erase( tween.m_id );
+        } );
     }
 
     void LocalTweenManager::ClearAll(void)
     {
-        for (auto &tween : _created)
-            gTweenManager->cancel(tween.second._id, false);
+        for (auto &tween : m_created)
+            m_manager->cancel( tween.second.m_id, false );
 
-        _created.clear();
+        m_created.clear( );
     }
 
     void LocalTweenManager::PauseAll(void)
     {
-        for (auto &tween : _created)
-            tween.second.Pause();
+        for (auto &tween : m_created)
+            tween.second.Pause( );
     }
 
     void LocalTweenManager::ResumeAll(void)
     {
-        for (auto &tween : _created)
-            tween.second.Resume();
+        for (auto &tween : m_created)
+            tween.second.Resume( );
     }
 }

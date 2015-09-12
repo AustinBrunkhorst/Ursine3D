@@ -21,11 +21,12 @@ namespace ursine
         public TimedTween,
         public TweenItem
     {
-        TweenPercentageCallback _property_update;
-
     public:
         TweenProperty(const TimeSpan &duration, TweenPercentageCallback updater);
 
-        bool Update(void) override;
+        bool Update(DeltaTime dt) override;
+
+    private:
+        TweenPercentageCallback m_propertyUpdater;
     };
 }

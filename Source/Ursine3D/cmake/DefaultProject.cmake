@@ -289,6 +289,12 @@ macro (ursine_default_project project_name)
             set(meta_flags ${meta_flags} "\\-I${directory}")
         endforeach ()
 
+        if (MSVC)
+            set(meta_flags ${meta_flags} "\\-IC:/Program Files (x86)/Microsoft Visual Studio ${VS_VERSION}.0/VC/include")
+        else ()
+            message(FATAL_ERROR "System include directories not implemented for this compiler.")
+        endif ()
+
         if ("${PROJ_PCH_NAME}" STREQUAL "")
             set(pch_switch "")
         else ()

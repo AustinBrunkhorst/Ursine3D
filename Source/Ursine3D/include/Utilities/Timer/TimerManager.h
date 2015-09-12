@@ -21,33 +21,10 @@ namespace ursine
 {
     class TimerManager : public core::CoreSystem
     {
-        friend class Timer;
-        friend class TimerID;
-
-        friend class LocalTimerManager;
-
-        uint32 _next_id;
-
-        std::unordered_map<uint32, Timer> _timers;
-
-        // timers in queue for deletion
-        std::vector<uint32> _deletion_queue;
-
-        // groups and their pause state: true is paused, false is not
-        std::unordered_map<TimerGroupID, bool> _groups;
-
-        TimerID create(const TimeSpan &duration, TimerGroupID group);
-
-        Timer *get(uint32 id);
-
-        void cancel(uint32 id, bool invoke_removed = true);
-
+        CORE_SYSTEM
     public:
         TimerManager(void);
         ~TimerManager(void);
-
-        URSINE_TODO("application event");
-        void Update(void);
 
         // Suspends updating a specific group
         void Pause(TimerGroupID group);
@@ -57,7 +34,29 @@ namespace ursine
 
         // Removes all timers in a specific group
         void Clear(TimerGroupID group = Timer::GROUP_DEFAULT);
-    };
 
-    extern TimerManager *gTimerManager;
+    private:
+        friend class Timer;
+        friend class TimerID;
+
+        friend class LocalTimerManager;
+
+        uint32 m_nextID;
+
+        std::unordered_map<uint32, Timer> m_timers;
+
+        // timers in queue for deletion
+        std::vector<uint32> m_deletionQueue;
+
+        // groups and their pause state: true is paused, false is not
+        std::unordered_map<TimerGroupID, bool> m_groups;
+
+        void onAppUpdate(EVENT_HANDLER(Application));
+
+        TimerID create(const TimeSpan &duration, TimerGroupID group);
+
+        Timer *get(uint32 id);
+
+        void cancel(uint32 id, bool invoke_removed = true);
+    } Meta(Enable);
 }

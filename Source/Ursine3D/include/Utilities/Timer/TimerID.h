@@ -23,22 +23,14 @@ namespace ursine
 {
     class TimerID
     {
-        friend class TimerManager;
-        friend class LocalTimerManager;
-
-        // id of the timer in the manager
-        uint32 _id;
-
-        TimerID(uint32 id);
-       
-        // Sets the removed callback (used by LocalTimerManager)
-        TimerID &Removed(TimerCallback callback);
-        
     public:
         TimerID(void);
 
+        // Determines if the timer is valid
+        bool IsValid(void) const;
+
         // Determines if the timer representing this ID is active (in the TimerManager)
-        bool IsActive(void);
+        bool IsActive(void) const;
 
         // Determines if the timer is paused
         bool IsPaused(void) const;
@@ -67,5 +59,19 @@ namespace ursine
 
         // Gets how much time has elapsed for this timer in milliseconds
         const TimeSpan &GetElapsed(void) const;
+
+    private:
+        friend class TimerManager;
+        friend class LocalTimerManager;
+
+        // id of the timer in the manager
+        uint32 m_id;
+
+        TimerManager *m_manager;
+
+        TimerID(TimerManager *manager, uint32 id);
+
+        // Sets the removed callback (used by LocalTimerManager)
+        TimerID &Removed(TimerCallback callback);
     };
 }
