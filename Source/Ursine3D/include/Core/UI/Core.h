@@ -28,7 +28,6 @@ namespace ursine
         : public CefApp
         , public CefClient
         , public BrowserProcessHandler
-        , public RenderProcessHandler
         , public ResourceBundleHandler
     {
     public:
@@ -42,7 +41,6 @@ namespace ursine
             CefRefPtr<CefCommandLine> command_line) override;
 
         CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler(void) override;
-        CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler(void) override;
         CefRefPtr<CefResourceBundleHandler> GetResourceBundleHandler(void) override;
 
         bool GetLocalizedString(int message_id, CefString &string) override;

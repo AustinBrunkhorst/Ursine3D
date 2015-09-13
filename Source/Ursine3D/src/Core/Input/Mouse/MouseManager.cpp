@@ -8,6 +8,18 @@ namespace ursine
 
     MouseManager::MouseManager(void)
         : EventDispatcher( this )
+        , m_stateLast( 0 )
+        , m_stateCurrent( 0 )
+    {
+        
+    }
+
+    MouseManager::~MouseManager(void)
+    {
+        
+    }
+
+    void MouseManager::OnInitialize(void)
     {
         auto *app = Application::Instance;
 
@@ -20,7 +32,7 @@ namespace ursine
             .On( SDL_MOUSEWHEEL, &MouseManager::onScroll );
     }
 
-    MouseManager::~MouseManager(void)
+    void MouseManager::OnRemove(void)
     {
         auto *app = Application::Instance;
 

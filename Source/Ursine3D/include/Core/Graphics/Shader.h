@@ -2,6 +2,13 @@
 
 #include "Texture2D.h"
 
+#include "Color.h"
+
+#include "SMat3.h"
+#include "SMat4.h"
+
+#include <unordered_map>
+
 namespace ursine
 {
     class Shader : public utils::NoCopy
@@ -15,7 +22,7 @@ namespace ursine
             Fragment
         };
 
-        struct CurrentTextureType {};
+        struct CurrentTextureType { };
 
         Shader(void);
         ~Shader(void);

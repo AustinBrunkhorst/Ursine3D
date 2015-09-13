@@ -157,7 +157,7 @@ namespace ursine
         };
 
         // draw the primitives
-        glDrawArrays( modeMap[type], 0, vertexCount );
+        glDrawArrays( modeMap[ type ], 0, static_cast<GLsizei>( vertexCount ) );
 
         // unbind the shader, if any
         if (state.shader)

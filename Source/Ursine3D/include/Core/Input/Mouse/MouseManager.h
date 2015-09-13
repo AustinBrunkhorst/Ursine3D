@@ -17,6 +17,12 @@ namespace ursine
         MouseManager(void);
         ~MouseManager(void);
 
+        Meta(Disable);
+        void OnInitialize(void) override;
+
+        Meta(Disable);
+        void OnRemove(void) override;
+
         const Vec2 &GetPosition(void) const;
         const Vec2 &GetPositionDelta(void) const;
 

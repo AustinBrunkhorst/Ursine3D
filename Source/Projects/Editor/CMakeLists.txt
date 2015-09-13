@@ -6,6 +6,7 @@ ursine_default_project(Editor
     DEPENDS Boost SDL2 CEF GLEW
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
+    SYM_LINKS "Assets"
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META

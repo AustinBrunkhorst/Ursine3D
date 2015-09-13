@@ -55,6 +55,16 @@ namespace ursine
         return window;
     }
 
+    Window *WindowManager::GetWindow(uint32 windowID)
+    {
+        auto search = m_created.find( windowID );
+
+        if (search == m_created.end( ))
+            return nullptr;
+
+        return search->second;
+    }
+
     void WindowManager::destroy(Window *window)
     {
         m_created.erase( window->m_id );

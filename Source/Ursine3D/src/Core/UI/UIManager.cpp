@@ -39,8 +39,7 @@ namespace ursine
         settings.ignore_certificate_errors = true;
         settings.command_line_args_disabled = true;
 
-        URSINE_TODO( "cleanup and create sub process target" );
-        settings.single_process = true;
+        settings.single_process = false;
         settings.multi_threaded_message_loop = false;
 
 #ifdef CONFIG_DEBUG
@@ -57,7 +56,7 @@ namespace ursine
 #endif
 
         URSINE_TODO( "configurable handlers" );
-        UAssert( CefInitialize( mainArgs, settings, m_core.get( ), nullptr ),
+        UAssert( CefInitialize( mainArgs, settings, m_core, nullptr ),
             "Unable to initialize CEF." );
 
         app->Connect( APP_UPDATE, this, &UIManager::onAppUpdate );
@@ -72,11 +71,13 @@ namespace ursine
     {
         CefBrowserSettings settings;
 
+        settings.windowless_frame_rate = 144;
         settings.webgl = STATE_DISABLED;
-        settings.accelerated_compositing = STATE_ENABLED;
         settings.java = STATE_DISABLED;
         settings.plugins = STATE_DISABLED;
         settings.javascript = STATE_ENABLED;
+        settings.javascript_access_clipboard = STATE_ENABLED;
+        settings.javascript_dom_paste = STATE_ENABLED;
         settings.local_storage = STATE_DISABLED;
         settings.application_cache = STATE_DISABLED;
         settings.databases = STATE_DISABLED;

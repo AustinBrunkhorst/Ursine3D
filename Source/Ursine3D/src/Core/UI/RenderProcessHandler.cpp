@@ -60,10 +60,10 @@ namespace ursine
 
     bool RenderProcessHandler::OnProcessMessageReceived(
         CefRefPtr<CefBrowser> browser,
-        CefProcessId source_process,
+        CefProcessId sourceProcess,
         CefRefPtr<CefProcessMessage> message)
     {
-        if (source_process == PID_BROWSER)
+        if (sourceProcess == PID_BROWSER)
         {
             auto context = browser->GetMainFrame( )->GetV8Context( );
 

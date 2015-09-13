@@ -23,7 +23,7 @@ namespace ursine
     {
     public:
         UIOpenGLRenderer(void);
-        ~UIOpenGLRenderer(void);
+        virtual ~UIOpenGLRenderer(void);
 
         void Draw(void);
 

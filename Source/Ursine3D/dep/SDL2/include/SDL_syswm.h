@@ -52,9 +52,7 @@ struct SDL_SysWMinfo;
 #else
 
 #if defined(SDL_VIDEO_DRIVER_WINDOWS)
-#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
-#endif
 #include <windows.h>
 #endif
 
@@ -85,7 +83,7 @@ struct SDL_SysWMinfo;
 
 #if defined(SDL_VIDEO_DRIVER_COCOA)
 #ifdef __OBJC__
-@class NSWindow;
+#include <Cocoa/Cocoa.h>
 #else
 typedef struct _NSWindow NSWindow;
 #endif
@@ -100,10 +98,10 @@ typedef struct _UIViewController UIViewController;
 #endif
 #endif
 
-#if defined(SDL_VIDEO_DRIVER_ANDROID)
-typedef struct ANativeWindow ANativeWindow;
-typedef void *EGLSurface;
+#if defined(SDL_VIDEO_DRIVER_MIR)
+#include <mir_toolkit/mir_client_library.h>
 #endif
+
 
 /**
  *  These are the various supported windowing subsystems
@@ -119,7 +117,6 @@ typedef enum
     SDL_SYSWM_WAYLAND,
     SDL_SYSWM_MIR,
     SDL_SYSWM_WINRT,
-    SDL_SYSWM_ANDROID
 } SDL_SYSWM_TYPE;
 
 /**
@@ -152,10 +149,6 @@ struct SDL_SysWMmsg
 #if defined(SDL_VIDEO_DRIVER_COCOA)
         struct
         {
-            /* Latest version of Xcode clang complains about empty structs in C v. C++:
-                 error: empty struct has size 0 in C, size 1 in C++
-             */
-            int dummy;
             /* No Cocoa window events yet */
         } cocoa;
 #endif
@@ -186,7 +179,6 @@ struct SDL_SysWMinfo
         struct
         {
             HWND window;                /**< The window handle */
-            HDC hdc;                    /**< The window device context */
         } win;
 #endif
 #if defined(SDL_VIDEO_DRIVER_WINRT)
@@ -213,21 +205,13 @@ struct SDL_SysWMinfo
 #if defined(SDL_VIDEO_DRIVER_COCOA)
         struct
         {
-#if defined(__OBJC__) && defined(__has_feature) && __has_feature(objc_arc)
-            NSWindow __unsafe_unretained *window; /* The Cocoa window */
-#else
-            NSWindow *window;                     /* The Cocoa window */
-#endif
+            NSWindow *window;           /* The Cocoa window */
         } cocoa;
 #endif
 #if defined(SDL_VIDEO_DRIVER_UIKIT)
         struct
         {
-#if defined(__OBJC__) && defined(__has_feature) && __has_feature(objc_arc)
-            UIWindow __unsafe_unretained *window; /* The UIKit window */
-#else
-            UIWindow *window;                     /* The UIKit window */
-#endif
+            UIWindow *window;           /* The UIKit window */
         } uikit;
 #endif
 #if defined(SDL_VIDEO_DRIVER_WAYLAND)
@@ -241,17 +225,9 @@ struct SDL_SysWMinfo
 #if defined(SDL_VIDEO_DRIVER_MIR)
         struct
         {
-            struct MirConnection *connection;  /**< Mir display server connection */
-            struct MirSurface *surface;  /**< Mir surface */
+            MirConnection *connection;  /**< Mir display server connection */
+            MirSurface *surface;  /**< Mir surface */
         } mir;
-#endif
-
-#if defined(SDL_VIDEO_DRIVER_ANDROID)
-        struct
-        {
-            ANativeWindow *window;
-            EGLSurface surface;
-        } android;
 #endif
 
         /* Can't have an empty union */

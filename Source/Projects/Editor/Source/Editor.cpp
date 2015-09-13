@@ -13,6 +13,15 @@ namespace
 {
     const int kDefaultWindowWidth = 1280;
     const int kDefaultWindowHeight = 720;
+
+    void onResize(int width, int height)
+    {
+        glMatrixMode( GL_PROJECTION );
+        glLoadIdentity( );
+
+        glViewport( 0, 0, width, height );
+        glOrtho( 0, width, 0, height, -100.0f, 100.0f );
+    }
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
@@ -20,34 +29,30 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)
     : m_mainWindow( nullptr )
     , m_glContext( nullptr )
+    , m_project( new Project( ) )
 {
-    ursine::Application::Instance->Connect(
-        ursine::APP_UPDATE, 
-        this, 
-        &Editor::onAppUpdate 
-    );
+    
 }
 
 Editor::~Editor(void)
 {
-    ursine::Application::Instance->Disconnect(
-        ursine::APP_UPDATE, 
-        this, 
-        &Editor::onAppUpdate 
-    );
-
-    m_mainWindow->Listener( this )
-        .Off( ursine::WINDOW_RESIZE, &Editor::onMainWindowResize );
-
     URSINE_TODO( "temporary OpenGL" );
     SDL_GL_DeleteContext( m_glContext );
 
     delete m_mainWindow;
+
+    delete m_project;
 }
 
 void Editor::OnInitialize(void)
 {
     auto *app = ursine::Application::Instance;
+
+    app->Connect(
+        ursine::APP_UPDATE, 
+        this, 
+        &Editor::onAppUpdate 
+    );
 
     auto *windowManager = app->GetCoreSystem<ursine::WindowManager>( );
     auto *uiManager = app->GetCoreSystem<ursine::UIManager>( );
@@ -63,9 +68,10 @@ void Editor::OnInitialize(void)
 
     m_mainWindow->Listener( this )
         .On( ursine::WINDOW_RESIZE, &Editor::onMainWindowResize );
-
+  
     m_mainWindow->SetLocationCentered( );
     m_mainWindow->Show( true );
+    m_mainWindow->SetIcon( "Assets/Resources/Icon.png" );
 
     URSINE_TODO( "temporary OpenGL" );
     {
@@ -77,12 +83,28 @@ void Editor::OnInitialize(void)
         glewInit( );
     }
 
-    m_ui = uiManager->CreateView( m_mainWindow, "http://www.google.com/" );
+    m_ui = uiManager->CreateView( m_mainWindow, "http://bennettfeely.com/clippy/" );
 
     m_ui->SetViewport( {
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
+
+    onResize( kDefaultWindowWidth, kDefaultWindowHeight );
+}
+
+void Editor::OnRemove(void)
+{
+    ursine::Application::Instance->Disconnect(
+        ursine::APP_UPDATE, 
+        this, 
+        &Editor::onAppUpdate 
+    );
+
+    m_mainWindow->Listener( this )
+        .Off( ursine::WINDOW_RESIZE, &Editor::onMainWindowResize );
+
+    m_ui->Close( );
 }
 
 void Editor::initializeTools(void)
@@ -110,11 +132,7 @@ void Editor::onMainWindowResize(EVENT_HANDLER(ursine::Window))
 {
     EVENT_ATTRS(ursine::Window, ursine::WindowResizeArgs);
 
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity( );
-
-    glViewport( 0, 0, args->width, args->height );
-    glOrtho( -1, 1, -1, 1, -100.0f, 100.0f );
+    onResize( args->width, args->height );
 
     m_ui->SetViewport( {
         0, 0,

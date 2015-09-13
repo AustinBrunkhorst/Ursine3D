@@ -34,9 +34,9 @@ namespace ursine
         command_line->AppendSwitch( "no-proxy-server" );
         command_line->AppendSwitch( "winhttp-proxy-resolver" );
 
-        //command_line->AppendSwitch( "enable-begin-frame-scheduling" );
-        //command_line->AppendSwitch( "disable-gpu" );
-        //command_line->AppendSwitch( "disable-gpu-compositing" );
+        command_line->AppendSwitch( "enable-begin-frame-scheduling" );
+        command_line->AppendSwitch( "disable-gpu" );
+        command_line->AppendSwitch( "disable-gpu-compositing" );
 
         //command_line->AppendSwitch("off-screen-rendering-enabled");
         //command_line->AppendSwitch("in-process-gpu");
@@ -53,17 +53,12 @@ namespace ursine
         return this;
     }
 
-    bool Core::GetLocalizedString(int message_id, CefString &string)
+    bool Core::GetLocalizedString(int nessageID, CefString &string)
     {
         // dot to shut up the errors
         string = ".";
 
         return true;
-    }
-
-    CefRefPtr<CefRenderProcessHandler> Core::GetRenderProcessHandler(void)
-    {
-        return this;
     }
 
     void Core::Shutdown(void)

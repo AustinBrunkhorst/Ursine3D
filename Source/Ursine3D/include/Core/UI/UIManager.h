@@ -38,12 +38,21 @@ namespace ursine
         static const int REMOTE_DEBUGGING_PORT = 6999;
 
         UIManager(void);
+
+        Meta(Disable)
+        UIManager(const UIManager &rhs) { }
+
+        Meta(Disable)
+        UIManager(const UIManager &&rhs) { }
+
         ~UIManager(void);
 
         CefRefPtr<UIView> CreateView(Window *window, const std::string &url);
 
     private:
         CefRefPtr<Core> m_core;
+
+        std::vector<CefRefPtr<UIView>> m_created;
 
         void onAppUpdate(EVENT_HANDLER(Application));
 

@@ -23,6 +23,10 @@ namespace ursine
             // called after all systems have been constructed
             Meta(Disable)
             virtual void OnInitialize(void) { }
+
+            // called before all systems are removed
+            Meta(Disable)
+            virtual void OnRemove(void) { }
         } Meta(Enable);
     }
 }

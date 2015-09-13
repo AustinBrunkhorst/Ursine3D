@@ -93,7 +93,7 @@ namespace ursine
 
         const std::string &Entity::GetTag(void) const
         {
-            return { };
+            return *new std::string( );
             //return m_world->Manager<TagManager>()->GetTag(this);
         }
 
@@ -108,7 +108,7 @@ namespace ursine
 
         const EntityGroupVector &Entity::GetGroups(void) const
         {
-            return { };
+            return *new EntityGroupVector( );
             //return m_world->Manager<GroupManager>()->GetGroups(this);
         }
 
@@ -134,13 +134,13 @@ namespace ursine
 
         LocalTimerManager &Entity::GetTimers(void)
         {
-            return LocalTimerManager( nullptr );
+            return *new LocalTimerManager( nullptr );
             //return m_world->Manager<UtilityManager>()->GetTimers( this );
         }
 
         LocalTweenManager &Entity::GetTweens(void)
         {
-            return LocalTweenManager( nullptr );
+            return *new LocalTweenManager( nullptr );
             //return m_world->Manager<UtilityManager>()->GetTweens( this );
         }
 

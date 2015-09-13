@@ -5,8 +5,7 @@ Because CEF is huge (it's building upon Chromium, which is ~4,000,000+ lines of 
 
 In order to build the engine, you must download these files. They are hosted on Dropbox below.
 
-[Visual Studio 2013](https://www.dropbox.com/s/49pqagn3iihgve1/CEF%20%28build%203.1750.1738%29%20VS%202013.7z?dl=0).
-[Visual Studio 2015](https://www.dropbox.com/s/mbmaorkl43obqdn/CEF%20%28build%203.1750.1738%29%20VS%202015.7z?dl=0)
+[Visual Studio 2015](https://www.dropbox.com/s/ws9dtteog8wnm3t/CEF%20%28build%203.2272.32.gbda8dc7%29%20VS%202015.7z?dl=0)
 
 #### Instructions
 
@@ -15,10 +14,12 @@ In order to build the engine, you must download these files. They are hosted on 
 
 #### Current Build Info
 
-Date:             June 11, 2014
+Date:             August 07, 2015
 
-CEF Version:      3.1750.1738
-CEF URL:          http://chromiumembedded.googlecode.com/svn/branches/1750/cef3@1738
+CEF Version:      3.2272.32.gbda8dc7
+CEF URL:          https://bitbucket.org/chromiumembedded/cef.git
+                  @bda8dc71be6ffce529b6c63fecd821509d0c406e
 
-Chromium Verison: 33.0.1750.170
-Chromium URL:     http://chromiumembedded.googlecode.com/svn/branches/1750/cef3@1738
+Chromium Verison: 41.0.2272.104
+Chromium URL:     https://chromium.googlesource.com/chromium/src.git
+                  @70181fa34550b82997e89f7cc309e56c1016169a

@@ -67,7 +67,7 @@ void ReflectionParser::Parse(void)
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
         m_index,
         m_options.inputSourceFile.c_str( ),
-        arguments.size( ),
+        static_cast<int>( arguments.size( ) ),
         arguments.data( ),
         0,
         nullptr

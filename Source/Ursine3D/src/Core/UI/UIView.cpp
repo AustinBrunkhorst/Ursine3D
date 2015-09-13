@@ -6,6 +6,8 @@
 #include "KeyboardManager.h"
 #include "MouseManager.h"
 
+#include <winuser.h>
+
 namespace ursine
 {
     UIView::UIView(Window *window, const CefBrowserSettings &settings, const std::string &url)
@@ -13,11 +15,10 @@ namespace ursine
     {
         CefWindowInfo info;
 
-        info.SetAsOffScreen(
-            static_cast<CefWindowHandle>( window->GetPlatformHandle( ) )
+        info.SetAsWindowless( 
+            static_cast<CefWindowHandle>( window->GetPlatformHandle( ) ), 
+            true 
         );
-
-        info.SetTransparentPainting( true );
 
         m_browser = CefBrowserHost::CreateBrowserSync(
             info,
@@ -26,6 +27,8 @@ namespace ursine
             settings,
             nullptr 
         );
+
+        UAssert( m_browser, "Unable to create UIView" );
 
         auto *app = Application::Instance;
 
@@ -49,6 +52,11 @@ namespace ursine
 
     UIView::~UIView(void)
     {
+        
+    }
+
+    void UIView::Close(void)
+    {
         m_window->Listener( this )
             .Off( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );
 
@@ -62,6 +70,10 @@ namespace ursine
             .Off( MM_BUTTON_UP, &UIView::onMouseButton )
             .Off( MM_MOVE, &UIView::onMouseMove )
             .Off( MM_SCROLL, &UIView::onMouseWheel );
+
+        m_browser->GetHost( )->CloseBrowser( true );
+
+        m_browser = nullptr;
     }
 
     const CefRect &UIView::GetViewport(void) const
@@ -74,6 +86,11 @@ namespace ursine
         m_viewport = viewport;
 
         m_browser->GetHost( )->WasResized( );
+    }
+
+    bool UIView::IsValid(void) const
+    {
+        return !!m_browser;
     }
 
     CefRefPtr<CefRenderHandler> UIView::GetRenderHandler(void)
@@ -89,6 +106,22 @@ namespace ursine
     bool UIView::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString &message, const CefString &source, int line)
     {
         return true;
+    }
+
+    void UIView::OnCursorChange(CefRefPtr<CefBrowser> browser, CefCursorHandle cursor, CursorType type, const CefCursorInfo &customCursorInfo)
+    {
+        auto handle = m_window->GetPlatformHandle( );
+
+#if defined(PLATFORM_WINDOWS)
+
+        SetClassLongPtr( 
+            static_cast<HWND>( handle ), 
+            GCLP_HCURSOR,
+            static_cast<LONG>( reinterpret_cast<LONG_PTR>( cursor ) )
+        );
+
+        SetCursor( cursor );
+#endif
     }
 
     bool UIView::Execute(const CefString &name, 
@@ -117,23 +150,6 @@ namespace ursine
 
         m_browser->GetHost( )->SendKeyEvent( e );
 
-#ifdef ENABLE_DEVTOOLS_LAUNCH
-        // CTRL + SHIFT + J
-        if (args->state &&
-            args->repeat == 0 &&
-            utils::IsFlagSet(e.modifiers, EVENTFLAG_CONTROL_DOWN | EVENTFLAG_SHIFT_DOWN) &&
-            e.windows_key_code == KEY_J)
-        {
-            std::string debug_url( "http://localhost:");
-
-            debug_url += std::to_string( UIManager::REMOTE_DEBUGGING_PORT );
-
-#ifdef PLATFORM_WINDOWS
-            ShellExecute( nullptr, "open", debug_url.c_str( ), nullptr, nullptr, SW_SHOWNORMAL );
-#endif
-        }
-#endif
-
         // handle return key (not handled by text input)
         if (args->state && args->key == KEY_RETURN)
         {
@@ -153,7 +169,7 @@ namespace ursine
 
         e.type = KEYEVENT_CHAR;
 
-        e.modifiers = getKeyModifiers();
+        e.modifiers = getKeyModifiers( );
 
         e.is_system_key = false;
 
@@ -169,7 +185,7 @@ namespace ursine
 
         CefMouseEvent e;
 
-        e.modifiers = getKeyModifiers() ;
+        e.modifiers = getKeyModifiers( );
 
         if (m_mouseManager->IsButtonDown( MBTN_LEFT ))
             utils::FlagSet( e.modifiers, EVENTFLAG_LEFT_MOUSE_BUTTON );

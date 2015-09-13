@@ -24,6 +24,7 @@ namespace ursine
         ~WindowManager(void);
 
         Window *AddWindow(const std::string &title, const Vec2 &location, const Vec2 &size, uint32 flags);
+        Window *GetWindow(uint32 windowID);
 
     private:
         friend class Window;

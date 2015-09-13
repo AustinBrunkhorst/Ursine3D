@@ -24,10 +24,20 @@ namespace ursine
     GamepadManager::GamepadManager(void)
         : EventDispatcher( this )
     {
-        SDL_InitSubSystem( 
-            SDL_INIT_JOYSTICK | 
-            SDL_INIT_HAPTIC | 
-            SDL_INIT_GAMECONTROLLER 
+        
+    }
+
+    GamepadManager::~GamepadManager(void)
+    {
+        
+    }
+
+    void GamepadManager::OnInitialize(void)
+    {
+        SDL_InitSubSystem(
+            SDL_INIT_JOYSTICK |
+            SDL_INIT_HAPTIC |
+            SDL_INIT_GAMECONTROLLER
         );
 
         auto *app = Application::Instance;
@@ -41,7 +51,7 @@ namespace ursine
             .On( SDL_CONTROLLERBUTTONUP, &GamepadManager::onButtonUp );
     }
 
-    GamepadManager::~GamepadManager(void)
+    void GamepadManager::OnRemove(void)
     {
         auto *app = Application::Instance;
 
@@ -55,6 +65,10 @@ namespace ursine
 
         for (auto gamepad : m_gamepads)
             SDL_GameControllerClose( gamepad.controller );
+
+        m_gamepads.clear( );
+
+        m_virtualGamepads.clear( );
     }
 
     GamepadState *GamepadManager::GetState(ursine::GamepadIndex index)
@@ -103,7 +117,7 @@ namespace ursine
     {
         m_virtualGamepads.emplace_back( true );
 
-        return { this, m_virtualGamepads.size( ) - 1u };
+        return { this, static_cast<GamepadIndex>( m_virtualGamepads.size( ) - 1u ) };
     }
 
     VirtualGamepad GamepadManager::GetVirtualGamepad(GamepadIndex index)

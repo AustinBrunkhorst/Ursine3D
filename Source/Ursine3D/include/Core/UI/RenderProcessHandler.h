@@ -29,7 +29,7 @@ namespace ursine
         std::vector<CefRefPtr<JavaScriptExtension>> m_extensions;
 
         void OnRenderThreadCreated(
-            CefRefPtr<CefListValue> extra_info) override;
+            CefRefPtr<CefListValue> extraInfo) override;
 
         void OnWebKitInitialized(void) override;
 
@@ -40,8 +40,8 @@ namespace ursine
         bool OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
             CefRefPtr<CefFrame> frame,
             CefRefPtr<CefRequest> request,
-            NavigationType navigation_type,
-            bool is_redirect) override;
+            NavigationType navigationType,
+            bool isRedirect) override;
 
         void OnContextCreated(CefRefPtr<CefBrowser> browser,
             CefRefPtr<CefFrame> frame,
@@ -52,7 +52,7 @@ namespace ursine
             CefRefPtr<CefV8Context> context) override;
 
         bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
-            CefProcessId source_process,
+            CefProcessId sourceProcess,
             CefRefPtr<CefProcessMessage> message) override;
     };
 }

@@ -233,9 +233,9 @@ extern DECLSPEC void SDLCALL SDL_DetachThread(SDL_Thread * thread);
  *          if (!thread_local_storage) {
  *              thread_local_storage = SDL_TLSCreate();
  *          }
- *          SDL_AtomicUnlock(&tls_lock);
+ *          SDL_AtomicUnLock(&tls_lock);
  *      }
- *      SDL_TLSSet(thread_local_storage, value, 0);
+ *      SDL_TLSSet(thread_local_storage, value);
  *  }
  *  
  *  void *GetMyThreadData(void)

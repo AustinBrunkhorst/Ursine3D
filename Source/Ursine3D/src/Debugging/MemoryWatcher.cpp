@@ -27,51 +27,51 @@ namespace ursine
             line
         };
 
-        strncpy(allocation.file, file, MAX_FILE_LENGTH);
+        strncpy( allocation.file, file, MAX_FILE_LENGTH );
 
-        auto &mutex = getMutex();
+        auto &mutex = getMutex( );
 
-        if (mutex.try_lock())
+        if (mutex.try_lock( ))
         {
-            getContainer().push_back(allocation);
+            getContainer( ).push_back( allocation );
 
-            mutex.unlock();
+            mutex.unlock( );
         }
     }
 
     void MemoryWatcher::Remove(void *pointer)
     {
-        auto &container = getContainer();
+        auto &container = getContainer( );
 
-        if (container.empty())
+        if (container.empty( ))
             return;
 
-        auto &mutex = getMutex();
+        auto &mutex = getMutex( );
 
-        if (mutex.try_lock())
+        if (mutex.try_lock( ))
         {
-            for (int i = container.size() - 1; i >= 0; --i)
+            for (size_t i = container.size( ) - 1u; i >= 0; --i)
             {
-                if (container[i].pointer == pointer)
+                if (container[ i ].pointer == pointer)
                 {
-                    container.erase(container.begin() + i);
+                    container.erase( container.begin( ) + i );
 
-                    mutex.unlock();
+                    mutex.unlock( );
 
                     return;
                 }
             }
 
-            mutex.unlock();
+            mutex.unlock( );
         }
     }
 
     URSINE_TODO("Actually implement this")
     void MemoryWatcher::PrintLeaks(void)
     {
-        for (auto &leak : getContainer())
+        for (auto &leak : getContainer( ))
         {
-            printf("leak: %s(%u)\n", leak.file, leak.line);
+            printf( "leak: %s(%u)\n", leak.file, leak.line );
         }
     }
 

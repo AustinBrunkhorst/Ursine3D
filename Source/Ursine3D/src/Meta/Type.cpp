@@ -181,7 +181,7 @@ namespace ursine
 
             auto equal = true;
 
-            for (auto i = 0u, size = a.size( ); i < size && equal; ++i)
+            for (size_t i = 0u, size = a.size( ); equal && i < size; ++i)
                 equal = (a[ i ] == b[ i ]);
 
             return equal;

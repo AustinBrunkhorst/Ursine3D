@@ -93,7 +93,7 @@ typedef struct SDL_RWops
     Uint32 type;
     union
     {
-#if defined(__ANDROID__)
+#if defined(ANDROID)
         struct
         {
             void *fileNameRef;
@@ -219,6 +219,7 @@ extern DECLSPEC size_t SDLCALL SDL_WriteBE32(SDL_RWops * dst, Uint32 value);
 extern DECLSPEC size_t SDLCALL SDL_WriteLE64(SDL_RWops * dst, Uint64 value);
 extern DECLSPEC size_t SDLCALL SDL_WriteBE64(SDL_RWops * dst, Uint64 value);
 /* @} *//* Write endian functions */
+
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

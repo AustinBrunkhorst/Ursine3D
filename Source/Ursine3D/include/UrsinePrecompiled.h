@@ -137,8 +137,6 @@ namespace fs = boost::filesystem;
 
 #include "FastDelegate.h"
 
-#include "Screen.h"
-
 #include "EventDispatcher.h"
 #include "Application.h"
 

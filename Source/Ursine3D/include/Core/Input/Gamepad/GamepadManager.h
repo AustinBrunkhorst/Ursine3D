@@ -44,6 +44,12 @@ namespace ursine
         GamepadManager(void);
         ~GamepadManager(void);
 
+        Meta(Disable);
+        void OnInitialize(void) override;
+
+        Meta(Disable);
+        void OnRemove(void) override;
+
         // Gets the current state of a gamepad based on the gamepad index.
         // returns null if the gamepad index is invalid or not connected
         GamepadState *GetState(GamepadIndex index);

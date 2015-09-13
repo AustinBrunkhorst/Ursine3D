@@ -278,7 +278,15 @@ namespace ursine
         scanToKey[ SDL_SCANCODE_SYSREQ ] = KEY_VEXECUTE;
         scanToKey[ SDL_SCANCODE_DELETE ] = KEY_DELETE;
 #pragma endregion
+    }
 
+    KeyboardManager::~KeyboardManager(void)
+    {
+        
+    }
+
+    void KeyboardManager::OnInitialize(void)
+    {
         SDL_StartTextInput( );
 
         auto *app = Application::Instance;
@@ -291,7 +299,7 @@ namespace ursine
             .On( SDL_TEXTINPUT, &KeyboardManager::onText );
     }
 
-    KeyboardManager::~KeyboardManager(void)
+    void KeyboardManager::OnRemove(void)
     {
         auto *app = Application::Instance;
 

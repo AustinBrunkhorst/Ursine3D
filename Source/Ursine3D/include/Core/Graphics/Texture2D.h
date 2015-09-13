@@ -15,9 +15,9 @@
 
 #include "TextureConfig.h"
 
-#include "JsonSerializer.h"
-
 #include "Vec2.h"
+
+#include "Utils.h"
 
 namespace ursine
 {

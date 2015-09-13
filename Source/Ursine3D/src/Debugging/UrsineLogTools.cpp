@@ -214,7 +214,7 @@ namespace ursine
 
             strftime( buffer, 80, "%x - %I:%M%p", info );
 
-            int padding_left = 48 - strlen( buffer );
+            size_t padding_left = 48 - strlen( buffer );
 
             // align this puppy to the right
             for (int i = 0; i < padding_left; ++i)

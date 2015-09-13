@@ -49,7 +49,7 @@ find_package(SDL2 REQUIRED
 find_package(GLEW REQUIRED 
     HINTS ${GLEW_DIR})
 
-find_package(CEF 3.1750 REQUIRED 
+find_package(CEF 3.2272 REQUIRED 
     HINTS ${CEF_DIR})
 
 find_package(BENCHMARKS REQUIRED
@@ -76,6 +76,7 @@ if (MSVC)
         "/W3" # warning level 3
         "/WX" # warnings as errors
         "/Zm200" # increased compiler heap memory
+        "/bigobj" # increased object file size
     )
     
     #ursine_remove_compile_flags(

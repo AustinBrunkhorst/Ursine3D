@@ -5,6 +5,7 @@
 #include "WindowManager.h"
 
 #include <SDL_syswm.h>
+#include <SDL_image.h>
 
 namespace ursine
 {
@@ -145,6 +146,15 @@ namespace ursine
         }
 
         m_isShown = show;
+    }
+
+    void Window::SetIcon(const std::string &filename)
+    {
+        auto surface = IMG_Load( filename.c_str( ) );
+
+        SDL_SetWindowIcon( m_handle, surface );
+
+        SDL_FreeSurface( surface );
     }
 
     int Window::GetDisplayIndex(void) const

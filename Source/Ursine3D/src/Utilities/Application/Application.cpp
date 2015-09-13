@@ -35,7 +35,7 @@ namespace ursine
         );
 
         // default FPS
-        m_frameRateController.SetTargetFPS( 60 );
+        m_frameRateController.SetTargetFPS( 144 );
 
         // default sub systems
         SDL_InitSubSystem( SDL_INIT_TIMER | SDL_INIT_EVENTS );
@@ -76,6 +76,11 @@ namespace ursine
 
     Application::~Application(void)
     {
+        // make sure any systems cross referencing 
+        // other systems have valid pointers
+        for (auto *system : m_systems)
+            system->OnRemove( );
+
         for (auto *system : m_systems)
             delete system;
 
@@ -83,12 +88,13 @@ namespace ursine
 
         Instance = nullptr;
     }
-
     void Application::Run(void)
     {
         SDL_Event e;
 
         PlatformEventArgs internal;
+
+        internal.data = &e;
 
         while (m_isRunning)
         {
@@ -100,8 +106,6 @@ namespace ursine
             {
                 if (e.type == SDL_QUIT)
                     Exit( );
-
-                internal.data = &e;
 
                 m_platformEvents.Dispatch( e.type, this, &internal );
             }

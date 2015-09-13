@@ -38,10 +38,20 @@ set(CEF_STATIC_LIBS
 set(DEBUG_EXPR $<CONFIG:debug>)
 set(RELEASE_EXPR $<NOT:${DEBUG_EXPR}>)
 
-set(CEF_SHARED_LIBS "${DIR_LIB}/$<${DEBUG_EXPR}:Debug>$<${RELEASE_EXPR}:Release>/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(CEF_SHARED_LIBS 
+	"${DIR_LIB}/$<${DEBUG_EXPR}:Debug>$<${RELEASE_EXPR}:Release>/*${CMAKE_SHARED_LIBRARY_SUFFIX}"
+	"${DIR_LIB}/$<${DEBUG_EXPR}:Debug>$<${RELEASE_EXPR}:Release>/*.bin"
+)
 
-set(CEF_SHARED_LIBS_Debug "${DIR_LIB}/Debug/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
-set(CEF_SHARED_LIBS_Release "${DIR_LIB}/Release/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(CEF_SHARED_LIBS_Debug 
+	"${DIR_LIB}/Debug/*${CMAKE_SHARED_LIBRARY_SUFFIX}"
+	"${DIR_LIB}/Debug/*.bin"
+)
+
+set(CEF_SHARED_LIBS_Release 
+	"${DIR_LIB}/Release/*${CMAKE_SHARED_LIBRARY_SUFFIX}"
+	"${DIR_LIB}/Release/*.bin"
+)
 
 # Resources
 

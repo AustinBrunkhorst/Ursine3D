@@ -46,14 +46,10 @@ namespace ursine
         glBindTexture( GL_TEXTURE_2D, m_textureID );
 
         glBegin( GL_QUADS );
-        glTexCoord2i( 0, 0 );
-        glVertex2f( -1.0f, 1.0f );
-        glTexCoord2i( 0, 1 );
-        glVertex2f( -1.0f, -1.0f );
-        glTexCoord2i( 1, 1 );
-        glVertex2f( 1.0f, -1.0f );
-        glTexCoord2i( 1, 0 );
-        glVertex2f( 1.0f, 1.0f );
+        glTexCoord2i( 0, 0 ); glVertex2i( m_viewport.x, m_viewport.height );
+        glTexCoord2i( 0, 1 ); glVertex2i( m_viewport.x, m_viewport.y );
+        glTexCoord2i( 1, 1 ); glVertex2i( m_viewport.width, m_viewport.y );
+        glTexCoord2i( 1, 0 ); glVertex2i( m_viewport.width, m_viewport.height );
         glEnd( );
     }
 
@@ -68,7 +64,8 @@ namespace ursine
     {
         if (!show)
         {
-            browser->GetHost( )->Invalidate( m_popupBounds, PET_VIEW );
+            URSINE_TODO( "test" );
+            browser->GetHost( )->Invalidate( PET_VIEW );
 
             m_popupBounds.Set( 0, 0, 0, 0 );
         }

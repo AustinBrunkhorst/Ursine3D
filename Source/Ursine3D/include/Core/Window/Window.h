@@ -36,6 +36,8 @@ namespace ursine
         bool IsShown(void) const;
         void Show(bool show);
 
+        void SetIcon(const std::string &filename);
+
         int GetDisplayIndex(void) const;
 
         std::vector<SDL_DisplayMode> GetAvailableDisplayModes(void) const;

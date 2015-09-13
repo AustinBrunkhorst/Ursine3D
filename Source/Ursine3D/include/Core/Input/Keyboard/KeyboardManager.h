@@ -33,6 +33,12 @@ namespace ursine
         KeyboardManager(void);
         ~KeyboardManager(void);
 
+        Meta(Disable);
+        void OnInitialize(void) override;
+
+        Meta(Disable);
+        void OnRemove(void) override;
+
         static uint ScanToKey(SDL_Scancode scan);
         static uint KeyToScan(KeyboardKey key);
 

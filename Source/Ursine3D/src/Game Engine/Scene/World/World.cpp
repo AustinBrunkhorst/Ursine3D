@@ -85,7 +85,7 @@ namespace ursine
 
         const EntityVector &World::GetEntities(const std::string &group) const
         {
-            return { };
+            return *new EntityVector( );
         }
 
         EntityVector World::GetEntities(const Filter &filter) const

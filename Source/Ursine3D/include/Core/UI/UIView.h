@@ -24,8 +24,12 @@ namespace ursine
     public:
         ~UIView(void);
 
+        void Close(void);
+
         const CefRect &GetViewport(void) const;
         void SetViewport(const CefRect &viewport);
+
+        bool IsValid(void) const;
 
     private:
         friend class UIManager;
@@ -55,6 +59,11 @@ namespace ursine
             const CefString &source,
             int line) override;
 
+        void OnCursorChange(CefRefPtr<CefBrowser> browser,
+            CefCursorHandle cursor,
+            CursorType type,
+            const CefCursorInfo &customCursorInfo) override;
+
         ////////////////////////////////////////////////////////////////////
         // V8Handler Methods
         ////////////////////////////////////////////////////////////////////
@@ -68,7 +77,7 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////
         // Event Handlers
         ////////////////////////////////////////////////////////////////////
-
+        
         void onKeyboard(EVENT_HANDLER(MouseManager));
         void onText(EVENT_HANDLER(MouseManager));
         void onMouseMove(EVENT_HANDLER(MouseManager));
@@ -81,6 +90,6 @@ namespace ursine
 
         uint32 getKeyModifiers(void);
 
-        IMPLEMENT_REFCOUNTING(UIVIew);
+        IMPLEMENT_REFCOUNTING(UIView);
     };
 }
