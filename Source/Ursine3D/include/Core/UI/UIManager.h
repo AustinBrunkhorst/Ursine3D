@@ -18,7 +18,7 @@
 #include "UIManager.h"
 #include "UIManagerEvent.h"
 
-#include "Core.h"
+#include "UICore.h"
 #include "UIView.h"
 
 #include "Window.h"
@@ -50,7 +50,7 @@ namespace ursine
         CefRefPtr<UIView> CreateView(Window *window, const std::string &url);
 
     private:
-        CefRefPtr<Core> m_core;
+        CefRefPtr<UICore> m_core;
 
         std::vector<CefRefPtr<UIView>> m_created;
 

@@ -7,12 +7,17 @@
 #include <WindowManager.h>
 #include <UIManager.h>
 
+#include <Color.h>
+
 #include <GL/glew.h>
 
 namespace
 {
-    const int kDefaultWindowWidth = 1280;
-    const int kDefaultWindowHeight = 720;
+    const auto kEditorEntryPoint = "file:///Assets/Editor/Editor.html";
+    const auto kEditorClearColor = ursine::Color( 0xFF252526 );
+
+    const auto kDefaultWindowWidth = 1280;
+    const auto kDefaultWindowHeight = 720;
 
     void onResize(int width, int height)
     {
@@ -81,9 +86,14 @@ void Editor::OnInitialize(void)
         glewExperimental = GL_TRUE;
 
         glewInit( );
+
+        glEnable( GL_BLEND );
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+        glClearColor( kEditorClearColor.r, kEditorClearColor.g, kEditorClearColor.b, kEditorClearColor.a );
     }
 
-    m_ui = uiManager->CreateView( m_mainWindow, "http://bennettfeely.com/clippy/" );
+    m_ui = uiManager->CreateView( m_mainWindow, kEditorEntryPoint );
 
     m_ui->SetViewport( {
         0, 0,
@@ -116,7 +126,7 @@ void Editor::onAppUpdate(EVENT_HANDLER(ursine::Application))
 {
     EVENT_ATTRS(ursine::Application, ursine::EventArgs);
 
-    glClear( GL_COLOR_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     // @@@ TODO:
     // Update Scene

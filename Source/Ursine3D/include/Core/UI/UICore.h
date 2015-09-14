@@ -14,7 +14,6 @@
 #pragma once
 
 #include "EventDispatcher.h"
-#include "CoreEvent.h"
 
 #include "BrowserProcessHandler.h"
 #include "RenderProcessHandler.h"
@@ -24,15 +23,15 @@
 
 namespace ursine
 {
-    class Core
+    class UICore
         : public CefApp
         , public CefClient
         , public BrowserProcessHandler
         , public ResourceBundleHandler
     {
     public:
-        Core(void);
-        ~Core(void);
+        UICore(void);
+        ~UICore(void);
 
         static void Shutdown(void);
 
@@ -45,6 +44,6 @@ namespace ursine
 
         bool GetLocalizedString(int message_id, CefString &string) override;
 
-        IMPLEMENT_REFCOUNTING(Core);
+        IMPLEMENT_REFCOUNTING(UICore);
     };
 }

@@ -21,7 +21,7 @@ namespace ursine
 
     UIManager::UIManager(void)
         : EventDispatcher( this )
-        , m_core( new Core )
+        , m_core( new UICore )
     {
         auto *app = Application::Instance;
 
@@ -54,6 +54,8 @@ namespace ursine
         //settings.pack_loading_disabled = true;
 
 #endif
+
+        settings.background_color = CefColorSetARGB( 0, 0, 0, 0 );
 
         URSINE_TODO( "configurable handlers" );
         UAssert( CefInitialize( mainArgs, settings, m_core, nullptr ),

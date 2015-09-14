@@ -13,21 +13,21 @@
 
 #include "UrsinePrecompiled.h"
 
-#include "Core.h"
+#include "UICore.h"
 
 namespace ursine
 {
-    Core::Core(void)
+    UICore::UICore(void)
     {
         atexit( Shutdown );
     }
 
-    Core::~Core(void)
+    UICore::~UICore(void)
     {
             
     }
 
-    void Core::OnBeforeCommandLineProcessing(const CefString &process_type,
+    void UICore::OnBeforeCommandLineProcessing(const CefString &process_type,
         CefRefPtr<CefCommandLine> command_line)
     {
         // fixes v8 errors on startup
@@ -43,17 +43,17 @@ namespace ursine
         //command_line->AppendSwitchWithValue("use-gl", "desktop");
     }
 
-    CefRefPtr<CefBrowserProcessHandler> Core::GetBrowserProcessHandler(void)
+    CefRefPtr<CefBrowserProcessHandler> UICore::GetBrowserProcessHandler(void)
     {
         return this;
     }
 
-    CefRefPtr<CefResourceBundleHandler> Core::GetResourceBundleHandler(void)
+    CefRefPtr<CefResourceBundleHandler> UICore::GetResourceBundleHandler(void)
     {
         return this;
     }
 
-    bool Core::GetLocalizedString(int nessageID, CefString &string)
+    bool UICore::GetLocalizedString(int nessageID, CefString &string)
     {
         // dot to shut up the errors
         string = ".";
@@ -61,7 +61,7 @@ namespace ursine
         return true;
     }
 
-    void Core::Shutdown(void)
+    void UICore::Shutdown(void)
     {
         CefShutdown( );
     }
