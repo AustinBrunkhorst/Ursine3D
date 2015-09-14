@@ -12,6 +12,8 @@ public:
 
     CXCursorKind GetKind(void) const;
 
+    Cursor GetLexicalParent(void) const;
+
     std::string GetSpelling(void) const;
     std::string GetDisplayName(void) const;
     std::string GetMangledName(void) const;
@@ -25,6 +27,7 @@ public:
 
     CursorType GetType(void) const;
     CursorType GetReturnType(void) const;
+    CursorType GetTypedefType(void) const;
 
     List GetChildren(void) const;
     void VisitChildren(Visitor visitor, void *data = nullptr);

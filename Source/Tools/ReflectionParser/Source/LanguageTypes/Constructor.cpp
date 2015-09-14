@@ -13,13 +13,17 @@ Constructor::Constructor(const Cursor &cursor, const Namespace &currentNamespace
         
 }
 
+bool Constructor::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
 TemplateData Constructor::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };
 
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
 
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     data[ "templateParameters" ] = getTemplateParameters( );
     data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialConstructorInvocation );
     data[ "dynamicInvocationBody" ] = context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );

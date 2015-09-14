@@ -32,6 +32,16 @@ CursorType CursorType::GetCanonicalType(void) const
     return clang_getCanonicalType( m_handle );
 }
 
+Cursor CursorType::GetDeclaration(void) const
+{
+    return clang_getTypeDeclaration( m_handle );
+}
+
+CXTypeKind CursorType::GetKind(void) const
+{
+    return m_handle.kind;
+}
+
 bool CursorType::IsConst(void) const
 {
     return clang_isConstQualifiedType( m_handle ) ? true : false;

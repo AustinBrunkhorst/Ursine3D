@@ -20,6 +20,7 @@ public:
     Enum(const Cursor &cursor, const Namespace &currentNamespace);
     virtual ~Enum(void) { }
 
+    bool ShouldCompile(void) const;
     TemplateData CompileTemplate(const ReflectionParser *context) const override;
 
     static void LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace);

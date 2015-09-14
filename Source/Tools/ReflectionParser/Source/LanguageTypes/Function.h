@@ -13,6 +13,7 @@ public:
     Function(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
     virtual ~Function(void) { }
 
+    bool ShouldCompile(void) const;
     TemplateData CompileTemplate(const ReflectionParser *context) const override;
 
 private:

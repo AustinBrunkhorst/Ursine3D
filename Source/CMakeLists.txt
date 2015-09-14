@@ -6,13 +6,13 @@ project(BearKing CXX)
 # Global Settings
 # ------------------------------------------------------------------------------
 
-# directory to UrsineEngine
-set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/UrsineEngine")
+# directory to Ursine3D
+set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/Ursine3D")
 
-# directory to UrsineEngine dependencies
+# directory to Ursine3D dependencies
 set(ENGINE_DEP_DIR "${ENGINE_DIR}/dep")
 
-# directory to UrsineEngine resources
+# directory to Ursine3D resources
 set(ENGINE_RESOURCES_DIR "${ENGINE_DIR}/resources")
 
 # module directory
@@ -49,7 +49,7 @@ find_package(SDL2 REQUIRED
 find_package(GLEW REQUIRED 
     HINTS ${GLEW_DIR})
 
-find_package(CEF 3.1750 REQUIRED 
+find_package(CEF 3.2272 REQUIRED 
     HINTS ${CEF_DIR})
 
 find_package(BENCHMARKS REQUIRED
@@ -76,6 +76,7 @@ if (MSVC)
         "/W3" # warning level 3
         "/WX" # warnings as errors
         "/Zm200" # increased compiler heap memory
+        "/bigobj" # increased object file size
     )
     
     #ursine_remove_compile_flags(
@@ -103,13 +104,13 @@ set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
 
 if (MSVC)
     if (MSVC10)
-        set(vc_version 10)
+        set(VS_VERSION 10)
     elseif (MSVC11)
-        set(vc_version 11)
+        set(VS_VERSION 11)
     elseif (MSVC12)
-        set(vc_version 12)
+        set(VS_VERSION 12)
     elseif (MSVC14)
-        set(vc_version 14)
+        set(VS_VERSION 14)
     endif()
 
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -118,7 +119,7 @@ if (MSVC)
         set(vc_build x86)
     endif ()
 
-    set(vcredist_name "vcredist${vc_version}0_${vc_build}.exe")
+    set(vcredist_name "vcredist${VS_VERSION}0_${vc_build}.exe")
 
     # Visual Studio redistributable runtime libraries
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
@@ -135,7 +136,7 @@ endif ()
 
 # engine
 
-add_subdirectory("UrsineEngine")
+add_subdirectory("Ursine3D")
 
 # all projects to build
 

@@ -2,6 +2,14 @@
 {{/usingPrecompiledHeader}}
 #include "{{ouputHeaderFile}}"
 
+#if !defined(URSINE_REFLECTION_INCLUDED)
+
+#include <Utilities/MacroUtils.h>
+
+URSINE_ERROR( "<UrsineReflection.h> must be included in the input header file." )
+
+#endif
+
 namespace m = ursine::meta;
 
 m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
@@ -16,7 +24,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             auto id = db.AllocateType( "{{& displayName}}" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, true );
         }
         {{#ptrTypeEnabled}}
         { // Pointer Type
@@ -45,7 +53,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             auto id = db.AllocateType( "{{& displayName}}" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, {{#isAccessible}}true{{/isAccessible}}{{^isAccessible}}false{{/isAccessible}} );
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, true );
         }
         {{#ptrTypeEnabled}}
         { // Pointer Type
@@ -68,14 +76,14 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     ///////////////////////////////////////////////////////////////////////////
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
-    {{#global}}{{#isAccessible}}
+    {{#global}}
     db.AddGlobal<{{& type}}>( "{{& qualifiedName}}",{{#isGetterAccessible}}
         [](void)
         {
             return m::Variant { {{> getterBody}} };
         },{{/isGetterAccessible}}{{^isGetterAccessible}}
         nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
-        [](const m::Variant &value)
+        [](const m::Argument &value)
         {
             {{> setterBody}}
         },{{/isSetterAccessible}}{{^isSetterAccessible}}
@@ -84,13 +92,13 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{> metaDataInitializerList}}
         }
     );
-    {{/isAccessible}}{{/global}}
+    {{/global}}
     ///////////////////////////////////////////////////////////////////////////
     // Global Functions
     ///////////////////////////////////////////////////////////////////////////
-    {{#globalFunction}}{{#isAccessible}}
+    {{#globalFunction}}
     db.AddGlobalFunction( "{{& qualifiedName}}",
-        static_cast<{{qualifiedSignature}}>( {{& qualifiedName}} ),
+        static_cast<{{& qualifiedSignature}}>( {{& qualifiedName}} ),
         [](m::ArgumentList &args)
         { {{#isVoidReturnType}}
             {{> invocationBody}};
@@ -104,11 +112,11 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{> metaDataInitializerList}}
         }
     );
-    {{/isAccessible}}{{/globalFunction}}
+    {{/globalFunction}}
     ///////////////////////////////////////////////////////////////////////////
     // Enum Definitions
     ///////////////////////////////////////////////////////////////////////////
-    {{#enum}}{{#isAccessible}}
+    {{#enum}}
     {
         auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
 
@@ -128,11 +136,11 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             m::TypeInfo<{{& qualifiedName}}>::Defined = true;
         }
     }
-    {{/isAccessible}}{{/enum}}
+    {{/enum}}
     ///////////////////////////////////////////////////////////////////////////
     // Class Definitions
     ///////////////////////////////////////////////////////////////////////////
-    {{#class}}{{#isAccessible}}
+    {{#class}}
     /**
      * {{& qualifiedName}}
      */
@@ -148,11 +156,11 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             };
 
             type.LoadBaseClasses( db, typeID, { 
-                {{#baseClass}}typeof( {{name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
+                {{#baseClass}}typeof( {{& name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
             } );
 
             // Constructors
-            {{#constructor}}{{#isAccessible}}
+            {{#constructor}}
             type.AddConstructor<{{& templateParameters}}>(
                 [](m::ArgumentList &args)
                 {
@@ -165,9 +173,9 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 },
                 false
             );
-            {{/isAccessible}}{{/constructor}}
+            {{/constructor}}
             // Dynamic Constructors
-            {{#dynamicConstructor}}{{#isAccessible}}
+            {{#dynamicConstructor}}
             type.AddConstructor<{{& templateParameters}}>(
                 [](m::ArgumentList &args)
                 {
@@ -180,9 +188,9 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 },
                 true
             );
-            {{/isAccessible}}{{/dynamicConstructor}}
+            {{/dynamicConstructor}}
             // Fields
-            {{#field}}{{#isAccessible}}
+            {{#field}}
             type.AddField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",
                 {{#isGetterAccessible}}[](const m::Variant &obj)
                 {
@@ -202,16 +210,16 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                     {{> metaDataInitializerList}}
                 }
             );
-            {{/isAccessible}}{{/field}}
+            {{/field}}
             // Static Fields
-            {{#staticField}}{{#isAccessible}}
-            type.AddStaticField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",
+            {{#staticField}}
+            type.AddStaticField<{{& parentQualifiedName}}, {{type}}>( "{{& displayName}}",
                 {{#isGetterAccessible}}[](void)
                 {
                     return m::Variant { {{> getterBody}} };
                 },{{/isGetterAccessible}}{{^isGetterAccessible}}
                 nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
-                [](const m::Variant &value)
+                [](const m::Argument &value)
                 {
                     {{> setterBody}}
                 },{{/isSetterAccessible}}{{^isSetterAccessible}}
@@ -220,11 +228,11 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                     {{> metaDataInitializerList}}
                 }
             );
-            {{/isAccessible}}{{/staticField}}
+            {{/staticField}}
             // Methods
-            {{#method}}{{#isAccessible}}
+            {{#method}}
             type.AddMethod( "{{name}}",
-                static_cast<{{qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
+                static_cast<{{& qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
                 [](m::Variant &obj, m::ArgumentList &args)
                 { 
                     auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
@@ -240,11 +248,11 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                     {{> metaDataInitializerList}}
                 }
             );
-            {{/isAccessible}}{{/method}}
+            {{/method}}
             // Static Methods
-            {{#staticMethod}}{{#isAccessible}}
+            {{#staticMethod}}
             type.AddStaticMethod<{{parentQualifiedName}}>( "{{name}}",
-                static_cast<{{qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
+                static_cast<{{& qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
                 [](m::ArgumentList &args)
                 { {{#isVoidReturnType}}
                     {{parentQualifiedName}}::{{> invocationBody}};
@@ -257,9 +265,9 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 {
                     {{> metaDataInitializerList}}
                 }
-            );{{/isAccessible}}{{/staticMethod}}
+            );{{/staticMethod}}
 
             m::TypeInfo<{{& qualifiedName}}>::Defined = true;
         }
-    }{{/isAccessible}}{{/class}}
+    }{{/class}}
 });

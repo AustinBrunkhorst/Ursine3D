@@ -9,12 +9,17 @@
 
 Method::Method(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
     : LanguageType(cursor, currentNamespace)
-    , Invokable(cursor)
+    , Invokable( cursor )
     , m_isConst( cursor.IsConst( ) )
     , m_parent( parent )
     , m_name( cursor.GetSpelling( ) )
 {
     
+}
+
+bool Method::ShouldCompile(void) const
+{
+    return isAccessible( );
 }
 
 TemplateData Method::CompileTemplate(const ReflectionParser *context) const
@@ -24,8 +29,6 @@ TemplateData Method::CompileTemplate(const ReflectionParser *context) const
     data[ "name" ] = m_name;
         
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
-
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     
     data[ "isVoidReturnType" ] = utils::TemplateBool( m_returnType == kReturnTypeVoid );
 

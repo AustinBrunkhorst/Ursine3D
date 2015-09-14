@@ -67,7 +67,7 @@ void ReflectionParser::Parse(void)
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
         m_index,
         m_options.inputSourceFile.c_str( ),
-        arguments.size( ),
+        static_cast<int>( arguments.size( ) ),
         arguments.data( ),
         0,
         nullptr
@@ -326,8 +326,11 @@ TemplateData ReflectionParser::compileGlobalTemplates(void) const
     TemplateData data = { TemplateData::Type::List };
 
     for (auto *global : m_globals)
-        data << global->CompileTemplate( this );
-
+    {
+        if (global->ShouldCompile( ))
+            data << global->CompileTemplate( this );
+    }
+       
     return data;
 }
 
@@ -336,7 +339,10 @@ TemplateData ReflectionParser::compileGlobalFunctionTemplates(void) const
     TemplateData data = { TemplateData::Type::List };
 
     for (auto *globalFunction : m_globalFunctions)
-        data << globalFunction->CompileTemplate( this );
+    {
+        if (globalFunction->ShouldCompile( ))
+            data << globalFunction->CompileTemplate( this );
+    }
 
     return data;
 }
@@ -346,7 +352,10 @@ TemplateData ReflectionParser::compileEnumTemplates(void) const
     TemplateData data = { TemplateData::Type::List };
 
     for (auto *enewm : m_enums)
-        data << enewm->CompileTemplate( this );
+    {
+        if (enewm->ShouldCompile( ))
+            data << enewm->CompileTemplate( this );
+    }
 
     return data;
 }
