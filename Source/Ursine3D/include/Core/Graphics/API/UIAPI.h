@@ -6,7 +6,7 @@
 
 #include "GfxAPIDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   class UIAPI : public CefRenderHandler
   {

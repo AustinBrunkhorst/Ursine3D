@@ -24,7 +24,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "RasterStateManager.h"
 #include "DepthStencilManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {
@@ -32,7 +32,7 @@ namespace rey_oso
     {
     public:
       //initialize everything
-      void Initialize( const unsigned width, const unsigned height, HWND *hWindow, rey_oso::GfxInfo *gfxInfo, bool fullscreen );
+      void Initialize( const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen );
       void Uninitialize( );
 
       //methods

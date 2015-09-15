@@ -1,11 +1,11 @@
 #include "UrsinePrecompiled.h"
 #include "DirectXCore.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {
-    void DirectXCore::Initialize( const unsigned width, const unsigned height, HWND *hWindow, rey_oso::GfxInfo *gfxInfo, bool fullscreen )
+    void DirectXCore::Initialize( const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen )
     {
       //allocate all
       m_blendManager = new BlendStateManager;

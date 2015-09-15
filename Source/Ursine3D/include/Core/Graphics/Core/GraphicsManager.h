@@ -31,7 +31,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include <atomic>
 
-namespace rey_oso
+namespace ursine
 {
   class GraphicsCore
   {

@@ -7,7 +7,7 @@
 #include "ProfileTargetList.h"
 #include "GraphicsDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   class GfxProfiler
   {

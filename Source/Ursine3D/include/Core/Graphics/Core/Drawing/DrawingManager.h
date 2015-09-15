@@ -7,7 +7,7 @@
 #include "GraphicsDefines.h"
 #include "VertexDefinitions.h"
 
-namespace rey_oso
+namespace ursine
 {
   class DrawingManager
   {

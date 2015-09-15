@@ -3,7 +3,7 @@
 #include "ViewportAPI.h"
 #include "ViewportManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   struct ViewportAPI::privData
   {

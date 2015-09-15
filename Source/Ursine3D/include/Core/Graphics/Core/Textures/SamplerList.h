@@ -19,6 +19,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 enum Sampler
 {
   SAMPLER_WRAP_TEX = 0,
+  SAMPLER_NO_FILTERING,
 
   SAMPLER_COUNT
 };

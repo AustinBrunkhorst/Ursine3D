@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "RenderableManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   void RenderableManager::Initialize( )
   {

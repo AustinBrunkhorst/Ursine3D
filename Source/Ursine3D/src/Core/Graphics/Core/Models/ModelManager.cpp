@@ -2,7 +2,7 @@
 #include "ModelManager.h"
 
 
-namespace rey_oso
+namespace ursine
 {
   void ModelManager::Initialize( ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath )
   {

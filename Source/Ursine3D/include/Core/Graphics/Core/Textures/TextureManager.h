@@ -24,7 +24,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "SamplerList.h"
 #include "GraphicsDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   class TextureManager
   {

@@ -3,7 +3,7 @@
 #include "VertexDefinitions.h"
 #include "DrawingManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   void DrawingManager::Initialize( ID3D11Device *device, ID3D11DeviceContext *devCon )
   {

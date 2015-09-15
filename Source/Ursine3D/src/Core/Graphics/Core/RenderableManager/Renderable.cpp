@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
 
-namespace rey_oso
+namespace ursine
 {
   ///////////////////////////////////////////////////////////////////
   // renderable class

@@ -2,7 +2,7 @@
 #include "CameraAPI.h"
 #include "CameraManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   struct CameraAPI::privData
   {

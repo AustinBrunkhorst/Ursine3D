@@ -3,7 +3,7 @@
 #include "GraphicsDefines.h"
 #include "ViewportRenderModes.h"
 
-namespace rey_oso
+namespace ursine
 {
   struct Viewport
   {

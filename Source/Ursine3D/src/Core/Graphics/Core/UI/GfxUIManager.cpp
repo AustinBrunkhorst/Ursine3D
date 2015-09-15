@@ -6,7 +6,7 @@
 
 #define GfxManager reinterpret_cast<GraphicsCore*>(m_gfxmgr)
 
-namespace rey_oso
+namespace ursine
 {
   void GfxUIManager::Initialize( ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *gfx )
   {
@@ -16,8 +16,11 @@ namespace rey_oso
 
     m_rtManager = rtmgr;
 
-    m_size = 1200;
-    m_height = 600;
+    unsigned x, y;
+    GfxManager->gfxInfo->GetDimensions( x, y );
+
+    m_size = x;
+    m_height = y;
   }
 
   void GfxUIManager::Uninitialize( )
@@ -32,8 +35,8 @@ namespace rey_oso
 
     //auto &size = gWindowManager->GetSize( );
 
-    //bounds.width = static_cast<int>(size.x);
-    //bounds.height = static_cast<int>(size.y);
+    bounds.width = static_cast<int>(m_size);
+    bounds.height = static_cast<int>(m_height);
 
     return true;
   }

@@ -8,7 +8,7 @@
 #include "RenderTargetManager.h"
 
 
-namespace rey_oso
+namespace ursine
 {
   class ViewportManager
   {

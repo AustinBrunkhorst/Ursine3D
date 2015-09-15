@@ -3,7 +3,7 @@
 
 #include "GfxUIManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   struct UIAPI::privData
   {

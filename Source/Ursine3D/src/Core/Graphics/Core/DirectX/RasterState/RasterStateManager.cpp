@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "RasterStateManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {
@@ -143,6 +143,24 @@ namespace rey_oso
 
       //Create the rasterizer state from the description we just filled out.
       result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_LINE_RENDERING ] );
+      UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
+
+      ///////////////////////////////////////////////////////////////
+      // UI RENDERING   
+      //Setup the raster description which will determine how and what polygons will be drawn.
+      rasterDesc.AntialiasedLineEnable = false;
+      rasterDesc.CullMode = D3D11_CULL_NONE;
+      rasterDesc.DepthBias = 0;
+      rasterDesc.DepthBiasClamp = 0.0f;
+      rasterDesc.DepthClipEnable = false;
+      rasterDesc.FillMode = D3D11_FILL_SOLID;
+      rasterDesc.FrontCounterClockwise = false;
+      rasterDesc.MultisampleEnable = false;
+      rasterDesc.ScissorEnable = false;
+      rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+      //Create the rasterizer state from the description we just filled out.
+      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_UI ] );
       UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
     }
 

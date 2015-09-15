@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "GfxProfiler.h"
 
-namespace rey_oso
+namespace ursine
 {
   void GfxProfiler::Initialize( ID3D11Device *device, ID3D11DeviceContext *devCon, bool run )
   {

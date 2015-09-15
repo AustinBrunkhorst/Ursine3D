@@ -4,7 +4,7 @@
 #include <locale>
 #include <codecvt>
 
-namespace rey_oso
+namespace ursine
 {
   std::string ws2s( const std::wstring& wstr )
   {

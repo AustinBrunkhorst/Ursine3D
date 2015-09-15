@@ -2,7 +2,7 @@
 #include "GfxAPI.h"
 #include "GraphicsManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   CORE_SYSTEM_DEFINITION( GfxAPI );
 
@@ -11,6 +11,11 @@ namespace rey_oso
   {
     GraphicsCore *gfxCore_;
   };
+
+  GfxAPI::GfxAPI(void)
+  {
+
+  }
 
   void GfxAPI::OnInitialize ( )
   {

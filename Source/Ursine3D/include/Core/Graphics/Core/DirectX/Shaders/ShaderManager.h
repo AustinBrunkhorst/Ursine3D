@@ -23,7 +23,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "ShaderTypes.h"
 #include "GraphicsDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {

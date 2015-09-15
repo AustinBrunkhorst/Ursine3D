@@ -24,7 +24,7 @@ typedef unsigned long long GFXHND;
 #define HND_RENDER(handle)  reinterpret_cast<_RENDERABLEHND*>(&handle)
 #define HND_CAST(handle)    static_cast<GFXHND>(handle)
 
-namespace rey_oso
+namespace ursine
 {
   //internal structure for draw calls
   struct DRAWHND

@@ -3,7 +3,7 @@
 #include "ViewportManager.h"
 #include "RenderTargetList.h"
 
-namespace rey_oso
+namespace ursine
 {
   void ViewportManager::Initialize( DXCore::RenderTargetManager *mgr )
   {

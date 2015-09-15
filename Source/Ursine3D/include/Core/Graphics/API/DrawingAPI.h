@@ -4,7 +4,7 @@
 
 #include "GFXAPIDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   class DrawingAPI
   {

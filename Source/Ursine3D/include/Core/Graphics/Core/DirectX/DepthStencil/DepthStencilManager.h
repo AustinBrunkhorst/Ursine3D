@@ -6,7 +6,7 @@
 #include "GraphicsDefines.h"
 #include "DepthStencilList.h"
 
-namespace rey_oso
+namespace ursine
 {
   class DepthStencilManager
   {

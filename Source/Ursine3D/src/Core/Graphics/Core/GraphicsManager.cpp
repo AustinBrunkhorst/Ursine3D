@@ -5,7 +5,7 @@
 #include "VertexDefinitions.h"
 #include <complex>
 
-namespace rey_oso
+namespace ursine
 {
   bool sort( DRAWHND &h1, DRAWHND &h2 )
   {
@@ -932,11 +932,14 @@ namespace rey_oso
     //textureManager->MapTextureByName( "Wire", 3 );
 
     //render ui on top of everything
-    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetBlendState( BLEND_STATE_DEFAULT );
+    dxCore->SetRasterState( RASTER_STATE_UI );
     dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
     dxCore->SetDepthState( DEPTH_STATE_NO_DEPTH_CHECK );
     dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
+    bufferManager->MapCameraBuffer( DirectX::XMMatrixIdentity( ), DirectX::XMMatrixIdentity( ) );
 
+    textureManager->MapSamplerState( SAMPLER_NO_FILTERING );
     shaderManager->BindShader( SHADER_UI );
     layoutManager->SetInputLayout( SHADER_UI );
     bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( -2, 2, 1 ) * DirectX::XMMatrixTranslation( 0, 0, 0.1f ) );

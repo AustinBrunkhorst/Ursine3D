@@ -22,7 +22,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <DirectXMath.h>
 #include <string>
 
-namespace rey_oso
+namespace ursine
 {
   //main renderable class
   class Renderable

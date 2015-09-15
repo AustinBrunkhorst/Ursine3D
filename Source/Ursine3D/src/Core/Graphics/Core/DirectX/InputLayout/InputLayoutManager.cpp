@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "InputLayoutManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {

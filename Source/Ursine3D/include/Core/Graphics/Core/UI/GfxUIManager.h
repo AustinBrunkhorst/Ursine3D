@@ -5,7 +5,7 @@
 #include "RenderTargetManager.h"
 #include "GraphicsDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   class GfxUIManager : CefRenderHandler
   {

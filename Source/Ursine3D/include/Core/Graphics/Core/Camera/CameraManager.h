@@ -21,7 +21,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "GraphicsDefines.h"
 #include "Camera.h"
 
-namespace rey_oso
+namespace ursine
 {
   class CameraManager
   {

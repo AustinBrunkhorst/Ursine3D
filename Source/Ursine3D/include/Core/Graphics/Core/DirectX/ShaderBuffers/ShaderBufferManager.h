@@ -24,7 +24,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "GraphicsDefines.h"
 
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {

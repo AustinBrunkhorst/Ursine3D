@@ -24,7 +24,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "RenderableTypes.h"
 #include "Renderable.h"
 
-namespace rey_oso
+namespace ursine
 {
   class Model3D;
 

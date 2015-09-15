@@ -4,7 +4,7 @@
 #define CONCAT_END(file, ending) file ## ending
 #define GetString(type) #type
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {

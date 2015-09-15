@@ -12,7 +12,8 @@
 
 namespace
 {
-    const auto kGraphicsTestUIEntryPoint = "http://www.google.com/";
+    //const auto kGraphicsTestUIEntryPoint = "file:///Assets/Test.html";
+    const auto kGraphicsTestUIEntryPoint = "www.google.com";
 
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
@@ -72,20 +73,20 @@ void GraphicsTest::OnInitialize(void)
 
     /////////////////////////////////////////////////////////////////
     //make graphics manager
-    auto *gfxManager = app->GetCoreSystem<rey_oso::GfxAPI>( );
+    auto *gfxManager = app->GetCoreSystem<ursine::GfxAPI>( );
 
-    HWND *handle = reinterpret_cast<HWND*>((m_mainWindow->GetPlatformHandle( )));
+    HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle( )));
 
-    rey_oso::GfxConfig config;
+    ursine::GfxConfig config;
     config.Fullscreen_ = false;
-    config.HandleToWindow_ = handle;
-    config.ModelListPath_ = "../Models/";
-    config.ShaderListPath_ = "../SHADER_BINARY/";
-    config.TextureListPath_ = "../Textures/";
+    config.HandleToWindow_ = &handle;
+    config.ModelListPath_ = "Models/";
+    config.ShaderListPath_ = "SHADER_BINARY/";
+    config.TextureListPath_ = "Textures/";
     config.WindowWidth_ = kDefaultWindowWidth;
     config.WindowHeight_ = kDefaultWindowHeight;
     config.m_renderUI = true;
-    config.Profile_ = true;
+    config.Profile_ = false;
 
     gfxManager->StartGraphics( config );
 
@@ -124,6 +125,11 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
     // Update Scene
     // Render Tools
     // Render Editor UIView
+
+    auto gfx = ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( );
+
+    gfx->BeginScene( );
+    gfx->EndScene( );
 
     m_ui->Draw( );
 

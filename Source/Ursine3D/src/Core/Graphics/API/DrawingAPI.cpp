@@ -3,7 +3,7 @@
 #include "DrawingAPI.h"
 #include "DrawingManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   struct DrawingAPI::privData
   {

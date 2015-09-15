@@ -28,7 +28,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "Meta.h"
 
-namespace rey_oso
+namespace ursine
 {
   class GfxAPI : public ursine::core::CoreSystem
   {
@@ -60,6 +60,9 @@ namespace rey_oso
 
     //public methods
   public:
+    Meta( DisableNonDynamic )
+    GfxAPI(void);
+
     void OnInitialize( void ) override;
 
     void OnRemove( void ) override;

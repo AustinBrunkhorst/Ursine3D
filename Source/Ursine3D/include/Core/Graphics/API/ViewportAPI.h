@@ -5,7 +5,7 @@
 
 #include "ViewportRenderModes.h"
 
-namespace rey_oso
+namespace ursine
 {
   class ViewportAPI
   {

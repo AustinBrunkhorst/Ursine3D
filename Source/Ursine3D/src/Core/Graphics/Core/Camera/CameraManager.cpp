@@ -2,7 +2,7 @@
 
 #include "CameraManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   void CameraManager::Initialize( )
   {

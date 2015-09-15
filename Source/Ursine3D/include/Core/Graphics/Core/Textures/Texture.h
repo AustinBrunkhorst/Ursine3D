@@ -18,7 +18,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include <d3d11.h>
 
-namespace rey_oso
+namespace ursine
 {
   struct Texture
   {

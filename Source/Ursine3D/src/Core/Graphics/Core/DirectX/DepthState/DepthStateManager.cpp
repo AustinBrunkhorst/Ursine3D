@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "DepthStateManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {

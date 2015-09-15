@@ -20,7 +20,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "BlendStateList.h"
 #include "GraphicsDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {

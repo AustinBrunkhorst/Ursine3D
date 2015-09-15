@@ -18,7 +18,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "GFXAPIDefines.h"
 
-namespace rey_oso
+namespace ursine
 {
   class ResourceAPI
   {

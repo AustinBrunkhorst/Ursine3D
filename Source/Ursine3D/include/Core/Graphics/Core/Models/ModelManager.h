@@ -25,7 +25,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "VertexDefinitions.h"
 #include "Model.h"
 
-namespace rey_oso
+namespace ursine
 {
   class ModelManager
   {

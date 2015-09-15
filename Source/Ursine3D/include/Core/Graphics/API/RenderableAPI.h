@@ -19,7 +19,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "GFXAPIDefines.h"
 #include "Renderable.h"
 
-namespace rey_oso
+namespace ursine
 {
   class RenderableAPI
   {

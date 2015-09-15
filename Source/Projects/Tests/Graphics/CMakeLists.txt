@@ -6,7 +6,7 @@ ursine_default_project(Graphics
     DEPENDS SDL2 CEF DirectX
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
-    SYM_LINKS "Assets"
+    SYM_LINKS "Assets" "Models" "SHADER_BINARY" "Textures"
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META

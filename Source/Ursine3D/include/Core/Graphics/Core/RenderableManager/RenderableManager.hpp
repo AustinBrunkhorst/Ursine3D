@@ -1,4 +1,4 @@
-namespace rey_oso
+namespace ursine
 {
   //template<typename T>
   //T &RenderableManager::GetRenderable( GFXHND handle )

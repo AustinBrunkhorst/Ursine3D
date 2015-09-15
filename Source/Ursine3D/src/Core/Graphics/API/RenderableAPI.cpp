@@ -2,7 +2,7 @@
 #include "RenderableAPI.h"
 #include "RenderableManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   struct RenderableAPI::privData
   {

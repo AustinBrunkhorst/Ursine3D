@@ -3,7 +3,7 @@
 #include "ModelManager.h"
 #include "TextureManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   struct ResourceAPI::privData
   {

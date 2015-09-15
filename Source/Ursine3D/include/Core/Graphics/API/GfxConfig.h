@@ -19,7 +19,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <string>
 #include <Windows.h>
 
-namespace rey_oso
+namespace ursine
 {
   struct GfxConfig
   {

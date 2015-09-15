@@ -2,7 +2,7 @@
 #include "UrsinePrecompiled.h"
 #include "RenderTargetManager.h"
 
-namespace rey_oso
+namespace ursine
 {
   namespace DXCore
   {
