@@ -13,8 +13,12 @@
 
 #pragma once
 
-#define STR(x) #x
-#define STRINGIFY(x) STR(x)
+#define __STRINGIFY(x) #x
+#define STRINGIFY(x) __STRINGIFY(x)
+
+#define __WIDEN(x) L ## x
+#define WIDEN(x) __WIDEN(x)
+
 
 #define __MESSAGE(text) __pragma( message(__FILE__ "(" STRINGIFY(__LINE__) ")" text) ) 
 
