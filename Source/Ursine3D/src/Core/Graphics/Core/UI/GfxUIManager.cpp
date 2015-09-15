@@ -19,7 +19,7 @@ namespace ursine
     unsigned x, y;
     GfxManager->gfxInfo->GetDimensions( x, y );
 
-    m_size = x;
+    m_width = x;
     m_height = y;
   }
 
@@ -34,8 +34,13 @@ namespace ursine
     bounds.y = 0;
 
     //auto &size = gWindowManager->GetSize( );
+    unsigned x, y;
+    GfxManager->gfxInfo->GetDimensions( x, y );
 
-    bounds.width = static_cast<int>(m_size);
+    m_width = x;
+    m_height = y;
+
+    bounds.width = static_cast<int>(m_width);
     bounds.height = static_cast<int>(m_height);
 
     return true;
@@ -115,8 +120,8 @@ namespace ursine
       y = 0;
     }
 
-    if (x + w > m_size)
-      w -= x + w - m_size;
+    if (x + w > m_width)
+      w -= x + w - m_width;
     if (y + h > m_height)
       h -= y + h - m_height;
 
@@ -136,7 +141,7 @@ namespace ursine
     //set up resource
     D3D11_SUBRESOURCE_DATA subrsc;
     subrsc.pSysMem = buffer;
-    subrsc.SysMemPitch = width * 4; //length of one line, 32 bit color
+    subrsc.SysMemPitch = width * 4; //length of one line in bytes, 32 bit color
     subrsc.SysMemSlicePitch = 0;
 
     //create the texture
@@ -162,17 +167,11 @@ namespace ursine
     m_context->CopySubresourceRegion( rt->TextureMap, 0, x, y, 0, tex, 0, &box );
 
     RELEASE_RESOURCE( tex );
+  }
 
-    //// update the popup rectangle.
-    //glPixelStorei( GL_UNPACK_ROW_LENGTH, width );
-    //glPixelStorei( GL_UNPACK_SKIP_PIXELS, skip_pixels );
-    //glPixelStorei( GL_UNPACK_SKIP_ROWS, skip_rows );
-    //glTexSubImage2D( GL_TEXTURE_2D, 0, x, y, w, h, GL_BGRA,
-    //  GL_UNSIGNED_INT_8_8_8_8_REV, buffer );
-
-    //// reset
-    //glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
-    //glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0 );
-    //glPixelStorei( GL_UNPACK_SKIP_ROWS, 0 );
+  void GfxUIManager::Resize ( int width, int height )
+  {
+    m_width = width;
+    m_height = height;
   }
 }

@@ -139,15 +139,15 @@ namespace ursine
 
       /////////////////////////////////////////////////////////////////
       // CREATING DEPTH STATES ////////////////////////////////////////
-      m_depthStateManager->Initialize( m_device, m_deviceContext );
+      m_depthStencilManager->Initialize( m_device, m_deviceContext );
 
       /////////////////////////////////////////////////////////////////
       // CREATING DEPTH VIEW //////////////////////////////////////////
-      m_depthStencilManager->Initialize( m_device, m_deviceContext, width, height );
+      m_depthStateManager->Initialize( m_device, m_deviceContext, width, height );
 
       /////////////////////////////////////////////////////////////////
       // SET MAIN RENDER TARGET ///////////////////////////////////////
-      m_deviceContext->OMSetRenderTargets( 1, &m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
+      m_deviceContext->OMSetRenderTargets( 1, &m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, m_depthStateManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
 
       /////////////////////////////////////////////////////////////////
       // CREATING RASTER STATES ///////////////////////////////////////
@@ -208,7 +208,7 @@ namespace ursine
       float lightMap[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_LIGHTMAP )->RenderTargetView, lightMap );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_COLOR )->RenderTargetView, color );
-      m_deviceContext->ClearDepthStencilView( m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH, 1.0f, 0 );
+      m_deviceContext->ClearDepthStencilView( m_depthStateManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH, 1.0f, 0 );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_DEPTH )->RenderTargetView, colorNormal );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_NORMAL )->RenderTargetView, color );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEBUG )->RenderTargetView, clear );
@@ -254,12 +254,12 @@ namespace ursine
     //set depth stencil
     void DirectXCore::SetDepthState( DEPTH_STATES dt )
     {
-      m_depthStateManager->SetDepthState( dt );
+      m_depthStencilManager->SetDepthState( dt );
     }
     //set target
     void DirectXCore::SetRenderTarget( RENDER_TARGETS rt )
     {
-      m_targetManager->SetRenderTarget( rt, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
+      m_targetManager->SetRenderTarget( rt, m_depthStateManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
     }
 
     void DirectXCore::SetRasterState( RASTER_STATES state )
@@ -286,6 +286,33 @@ namespace ursine
     DepthStencilManager* DirectXCore::GetDepthStencilMgr ( )
     {
       return m_depthStencilManager;
+    }
+
+    void DirectXCore::ResizeDX ( int width, int height )
+    {
+      m_targetManager->ResizeDeferred( width, height );
+      m_targetManager->ResizeEngineTargets( width, height );
+
+      //swapchain
+      //set render target to null
+      m_deviceContext->OMSetRenderTargets( 0, nullptr, nullptr );
+      
+      //release swapchain
+      m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView->Release( );
+
+      HRESULT hr;
+      hr = m_swapChain->ResizeBuffers( 0, static_cast<UINT>(width), static_cast<UINT>(height), DXGI_FORMAT_UNKNOWN, 0 );
+      UAssert( hr == S_OK, "Failed to resize swapchain!" );
+      
+      ID3D11Texture2D * pBuffer;
+      hr = m_swapChain->GetBuffer( 0, __uuidof(pBuffer), (void**)&pBuffer );
+      UAssert( hr == S_OK, "Failed to get swap chain buffer!" );
+      
+      hr = m_device->CreateRenderTargetView( pBuffer, NULL, &m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView );
+      UAssert( hr == S_OK, "Failed to make render target! (Error '%i')", hr );
+
+      //depth stuff
+      m_depthStateManager->Resize( width, height );
     }
   }
 }

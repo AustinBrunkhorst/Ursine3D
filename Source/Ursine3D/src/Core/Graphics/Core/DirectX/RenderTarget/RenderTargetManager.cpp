@@ -172,6 +172,32 @@ namespace ursine
       m_deferredTextureMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->TextureMap;
     }
 
+    void RenderTargetManager::ResizeEngineTargets ( unsigned width, unsigned height )
+    {
+      for (int x = 1; x <= RENDER_TARGET_DEBUG; ++x)
+      {
+        if (m_renderTargets[ x ] != NULL)
+        {
+          RELEASE_RESOURCE( m_renderTargets[ x ]->RenderTargetView );
+          RELEASE_RESOURCE( m_renderTargets[ x ]->ShaderMap );
+          RELEASE_RESOURCE( m_renderTargets[ x ]->TextureMap );
+
+          delete m_renderTargets[ x ];
+        }
+      }
+
+      //create the reserved render targets
+      CreateRenderTarget( RENDER_TARGET_DEFERRED_COLOR, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
+
+      //these NEED to be 64 bit floats.
+      CreateRenderTarget( RENDER_TARGET_DEFERRED_NORMAL, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+      CreateRenderTarget( RENDER_TARGET_DEFERRED_DEPTH, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+
+      CreateRenderTarget( RENDER_TARGET_LIGHTMAP, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+      CreateRenderTarget( RENDER_TARGET_UI, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
+      CreateRenderTarget( RENDER_TARGET_DEBUG, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+    }
+
     void RenderTargetManager::CreateRenderTarget( RENDER_TARGETS target, DXGI_FORMAT format, unsigned width, unsigned height )
     {
       D3D11_TEXTURE2D_DESC textureDesc;

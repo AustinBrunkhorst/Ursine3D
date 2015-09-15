@@ -80,4 +80,9 @@ namespace ursine
   {
     m_privates->gfxCore_->EndScene( );
   }
+
+  void GfxAPI::Resize ( int width, int height )
+  {
+    m_privates->gfxCore_->Resize( width, height );
+  }
 }

@@ -15,9 +15,11 @@ Author:         Matt Yan, m.yan@digipen.edu
 /*- End Header --------------------------------------------------------------*/
 #pragma once
 
-enum DEPTH_STATES
+
+enum DEPTH_STENCIL_LIST
 {
-  DEPTH_STATE_DEPTH_CHECK = 0,
-  DEPTH_STATE_NO_DEPTH_CHECK,
-  DEPTH_STATE_COUNT
+  DEPTH_STENCIL_MAIN = 0,
+  DEPTH_STENCIL_SHADOWMAP,
+
+  DEPTH_STENCIL_COUNT
 };

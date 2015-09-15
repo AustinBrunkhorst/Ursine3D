@@ -79,7 +79,9 @@ namespace ursine
     void RenderScene(float dt, GFXHND viewport );   
 
     // end the current scene
-    void EndScene( );                                       
+    void EndScene( );             
+
+    void Resize( int width, int height );
 
     // private members
   private:

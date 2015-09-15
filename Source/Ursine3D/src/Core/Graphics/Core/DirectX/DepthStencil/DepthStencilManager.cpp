@@ -4,116 +4,102 @@
 
 namespace ursine
 {
-  void DepthStencilManager::Initialize ( ID3D11Device* device, ID3D11DeviceContext* devicecontext, int width, int height )
+  namespace DXCore
   {
-    m_device = device;
-    m_deviceContext = devicecontext;
-
-    m_depthStencilViewArray.resize( DEPTH_STENCIL_COUNT );
-    m_depthStencilTextureArray.resize( DEPTH_STENCIL_COUNT );
-    m_depthStencilResourceArray.resize( DEPTH_STENCIL_COUNT );
-
-    /////////////////////////////////////////////////////////////////
-    //create main depth stencil
-    HRESULT result;
-    D3D11_TEXTURE2D_DESC depthBufferDesc;
-    ZeroMemory( &depthBufferDesc, sizeof( depthBufferDesc ) );
-
-    //Set up the description of the depth buffer.
-    depthBufferDesc.Width = width;
-    depthBufferDesc.Height = height;
-    depthBufferDesc.MipLevels = 1;
-    depthBufferDesc.ArraySize = 1;
-    depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthBufferDesc.SampleDesc.Count = 1;
-    depthBufferDesc.SampleDesc.Quality = 0;
-    depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    depthBufferDesc.CPUAccessFlags = 0;
-    depthBufferDesc.MiscFlags = 0;
-
-    //Create the texture for the depth buffer using the filled out description.
-    result = m_device->CreateTexture2D( &depthBufferDesc, NULL, &m_depthStencilTextureArray[DEPTH_STENCIL_MAIN] );
-    UAssert( result == S_OK, "Depth buffer texture failed!" );
-
-    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-    ZeroMemory( &depthStencilViewDesc, sizeof( depthStencilViewDesc ) );
-
-    depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-    result = m_device->CreateDepthStencilView( m_depthStencilTextureArray[ DEPTH_STENCIL_MAIN ], &depthStencilViewDesc, &m_depthStencilViewArray[DEPTH_STENCIL_MAIN] );
-    UAssert( result == S_OK, "Failed to make depth stencil view! (Error '%i')", result );
-
-    /////////////////////////////////////////////////////////////////
-    // CREATING SHADOW MAP BUFFER
-    ZeroMemory( &depthBufferDesc, sizeof( depthBufferDesc ) );
-
-    //Set up the description of the depth buffer.
-    depthBufferDesc.Width = width;
-    depthBufferDesc.Height = height;
-    depthBufferDesc.MipLevels = 1;
-    depthBufferDesc.ArraySize = 1;
-    depthBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-    depthBufferDesc.SampleDesc.Count = 1;
-    depthBufferDesc.SampleDesc.Quality = 0;
-    depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    depthBufferDesc.BindFlags = D3D10_BIND_DEPTH_STENCIL | D3D10_BIND_SHADER_RESOURCE;
-    depthBufferDesc.CPUAccessFlags = 0;
-    depthBufferDesc.MiscFlags = 0;
-
-    //Create the texture for the depth buffer using the filled out description.
-    result = m_device->CreateTexture2D( &depthBufferDesc, nullptr, &m_depthStencilTextureArray[ DEPTH_STENCIL_SHADOWMAP ] );
-    UAssert( result == S_OK, "Depth buffer texture failed!" );
-
-    ZeroMemory( &depthStencilViewDesc, sizeof( depthStencilViewDesc ) );
-
-    depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-    depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-    result = m_device->CreateDepthStencilView( m_depthStencilTextureArray[ DEPTH_STENCIL_SHADOWMAP ], &depthStencilViewDesc, &m_depthStencilViewArray[ DEPTH_STENCIL_SHADOWMAP ] );
-    UAssert( result == S_OK, "Failed to make depth stencil view! (Error '%i')", result );
-
-    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
-    srvDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = 1;
-    srvDesc.Texture2D.MostDetailedMip = 0;
-
-    result = m_device->CreateShaderResourceView( m_depthStencilTextureArray[ DEPTH_STENCIL_SHADOWMAP ], &srvDesc, &m_depthStencilResourceArray[ DEPTH_STENCIL_SHADOWMAP ] );
-    UAssert( result == S_OK, "Failed to make depth stencil shader resource view! (Error '%i')", result );
-  }
-
-  void DepthStencilManager::Uninitialize ( )
-  {
-    for(auto x : m_depthStencilTextureArray)
+    void DepthStencilManager::Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext )
     {
-      RELEASE_RESOURCE( x );
+      m_device = device;
+      m_deviceContext = devicecontext;
+
+      m_depthStateArray.resize( DEPTH_STATE_COUNT );
+
+      m_currentState = DEPTH_STATE_COUNT;
+
+      /////////////////////////////////////////////////////////////////
+      // DEPTH CHECKING ///////////////////////////////////////////////
+      HRESULT result;
+      D3D11_DEPTH_STENCIL_DESC depthCheckStencilDesc;
+      ZeroMemory( &depthCheckStencilDesc, sizeof( depthCheckStencilDesc ) );
+
+      //Set up the description of the stencil state.
+      depthCheckStencilDesc.DepthEnable = true;
+      depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+      depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+      depthCheckStencilDesc.StencilEnable = true;
+      depthCheckStencilDesc.StencilReadMask = 0xFF;
+      depthCheckStencilDesc.StencilWriteMask = 0xFF;
+
+      //Stencil operations if pixel is front-facing.
+      depthCheckStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+      depthCheckStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+      //Stencil operations if pixel is back-facing.
+      depthCheckStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+      depthCheckStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+      //Create the depth stencil state.
+      result = m_device->CreateDepthStencilState( &depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_DEPTH_CHECK ] );
+      UAssert( result == S_OK, "Failed to create depth stencil! (Error '%i')", result );
+
+      /////////////////////////////////////////////////////////////////
+      // NO DEPTH CHECKING ////////////////////////////////////////////
+      ZeroMemory( &depthCheckStencilDesc, sizeof( depthCheckStencilDesc ) );
+
+      //Set up the description of the stencil state.
+      depthCheckStencilDesc.DepthEnable = false;
+      depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+      depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+      depthCheckStencilDesc.StencilEnable = true;
+      depthCheckStencilDesc.StencilReadMask = 0xFF;
+      depthCheckStencilDesc.StencilWriteMask = 0xFF;
+
+      //Stencil operations if pixel is front-facing.
+      depthCheckStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+      depthCheckStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+      //Stencil operations if pixel is back-facing.
+      depthCheckStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+      depthCheckStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+      depthCheckStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+      //Create the depth stencil state.
+      result = m_device->CreateDepthStencilState( &depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_NO_DEPTH_CHECK ] );
+      UAssert( result == S_OK, "Failed to create depth stencil! (Error '%i')", result );
     }
 
-    for (auto x : m_depthStencilResourceArray)
+    void DepthStencilManager::Uninitialize( )
     {
-      RELEASE_RESOURCE( x );
+      for (unsigned x = 0; x < m_depthStateArray.size( ); ++x)
+      {
+        RELEASE_RESOURCE( m_depthStateArray[ x ] );
+      }
+
+      m_device = NULL;
+      m_deviceContext = NULL;
     }
 
-    for (auto x : m_depthStencilViewArray)
+    ID3D11DepthStencilState *DepthStencilManager::GetStencilState( DEPTH_STATES state )
     {
-      RELEASE_RESOURCE( x );
+      return m_depthStateArray[ state ];
     }
 
-    m_deviceContext = nullptr;
-    m_device = nullptr;
-  }
+    void DepthStencilManager::SetDepthState( DEPTH_STATES state )
+    {
+      if (m_currentState == state)
+        return;
 
-  ID3D11DepthStencilView* DepthStencilManager::GetDepthStencilView ( DEPTH_STENCIL_LIST stencil )
-  {
-    return m_depthStencilViewArray[ stencil ];
-  }
+      m_currentState = state;
 
-  ID3D11ShaderResourceView* DepthStencilManager::GetDepthStencilSRV ( DEPTH_STENCIL_LIST stencil )
-  {
-    return m_depthStencilResourceArray[ stencil ];
+      m_deviceContext->OMSetDepthStencilState( m_depthStateArray[ state ], 1 );
+    }
   }
 }

@@ -558,7 +558,7 @@ namespace ursine
     dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
 
     //deferred shading
-    dxCore->GetRenderTargetMgr( )->SetDeferredTargets( dxCore->GetDepthStencilMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
+    dxCore->GetRenderTargetMgr( )->SetDeferredTargets( dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
     shaderManager->BindShader( SHADER_DEFERRED_DEPTH );
     layoutManager->SetInputLayout( SHADER_DEFERRED_DEPTH );
 
@@ -698,7 +698,7 @@ namespace ursine
         }
 
 
-        ID3D11ShaderResourceView *resource = dxCore->GetDepthStencilMgr()->GetDepthStencilSRV( DEPTH_STENCIL_SHADOWMAP );
+        ID3D11ShaderResourceView *resource = dxCore->GetDepthMgr()->GetDepthStencilSRV( DEPTH_STENCIL_SHADOWMAP );
         dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &resource );
 
         DirectionalLight &dl = renderableManager->m_renderableDirectionalLight[ m_drawList[ x ].Index_ ];
@@ -961,5 +961,16 @@ namespace ursine
   DXCore::DirectXCore *GraphicsCore::GetDXCore( )
   {
     return dxCore;
+  }
+
+  void GraphicsCore::Resize ( int width, int height )
+  {
+    gfxInfo->SetDimensions( width, height );
+
+    //what needs to be resized?
+    //ui
+    uiManager->Resize( width, height );
+      //MAIN render targets, not viewports
+    dxCore->ResizeDX( width, height );
   }
 }

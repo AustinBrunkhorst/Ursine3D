@@ -51,6 +51,8 @@ namespace ursine
 
       void ResizeDeferred( unsigned width, unsigned height );
 
+      void ResizeEngineTargets( unsigned width, unsigned height );
+
       void Invalidate( ) { m_currentTarget = RENDER_TARGET_COUNT; }
     private:
       void CreateRenderTarget( RENDER_TARGETS target, DXGI_FORMAT format, unsigned width, unsigned height );

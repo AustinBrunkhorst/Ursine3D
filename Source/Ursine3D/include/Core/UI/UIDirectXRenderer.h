@@ -4,6 +4,8 @@
 
 #include <cef_render_handler.h>
 
+#include "GfxAPI.h"
+
 namespace ursine
 {
   class UIDirectXRenderer : public CefRenderHandler
@@ -18,6 +20,7 @@ namespace ursine
       CefRect m_viewport;
 
   private:
+      GfxAPI *m_gfxMgr;
       int m_width, m_height;
 
       CefRect m_popupBounds;

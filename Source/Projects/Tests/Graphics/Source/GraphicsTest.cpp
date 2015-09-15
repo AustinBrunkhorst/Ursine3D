@@ -26,6 +26,8 @@ namespace
 
         glViewport( 0, 0, width, height );
         glOrtho( 0, width, 0, height, -100.0f, 100.0f );*/
+
+        //ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
     }
 }
 

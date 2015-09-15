@@ -44,13 +44,13 @@ namespace ursine
 
     void BeginScene( );
 
-    
-
     void RenderScene( float dt, GFXHND viewport = -1 );
 
     void EndScene( );
 
     DXCore::DirectXCore *GetDXCore( );
+
+    void Resize( int width, int height );
 
     //public members
   public:

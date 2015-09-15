@@ -8,21 +8,23 @@
 
 namespace ursine
 {
-  class DepthStencilManager
+  namespace DXCore
   {
-  public:
-    void Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext, int width, int height );
-    void Uninitialize( );
+    class DepthStencilManager
+    {
+    public:
+      void Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext );
+      void Uninitialize( );
 
-    ID3D11DepthStencilView *GetDepthStencilView( DEPTH_STENCIL_LIST stencil );
-    ID3D11ShaderResourceView *GetDepthStencilSRV( DEPTH_STENCIL_LIST stencil );
-  private:
-    ID3D11Device *m_device;
-    ID3D11DeviceContext *m_deviceContext;
+      ID3D11DepthStencilState *GetStencilState( DEPTH_STATES state );
+      void SetDepthState( DEPTH_STATES state );
+    private:
+      ID3D11Device *m_device;
+      ID3D11DeviceContext *m_deviceContext;
 
-    std::vector<ID3D11DepthStencilView*> m_depthStencilViewArray;
-    std::vector<ID3D11Texture2D*> m_depthStencilTextureArray;
-    std::vector<ID3D11ShaderResourceView*> m_depthStencilResourceArray;
+      std::vector<ID3D11DepthStencilState*> m_depthStateArray;
 
-  };
+      DEPTH_STATES m_currentState;
+    };
+  }
 }

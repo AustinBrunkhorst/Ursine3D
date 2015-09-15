@@ -36,9 +36,11 @@ namespace ursine
       PaintElementType type, const RectList &regions,
       const void *buffer, int width, int height );
 
+    void Resize( int width, int height );
+
     //private members
   private:
-    int m_size, m_height;
+    int m_width, m_height;
 
     CefRect m_popm_upbounds;
 
