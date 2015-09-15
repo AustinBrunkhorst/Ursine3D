@@ -10,6 +10,8 @@
 
 #include "Application.h"
 
+#include "GfxAPI.h"
+
 #include "UIManager.h"
 
 #include "WindowManager.h"

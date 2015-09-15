@@ -13,6 +13,8 @@
 
 #include "UrsinePrecompiled.h"
 
+#if defined(URSINE_GRAPHICS_OPENGL)
+
 #include "UIOpenGLRenderer.h"
 
 #include <GL/glew.h>
@@ -186,3 +188,5 @@ namespace ursine
         glPixelStorei( GL_UNPACK_SKIP_ROWS, 0 );
     }
 }
+
+#endif // defined(URSINE_GRAPHICS_OPENGL)

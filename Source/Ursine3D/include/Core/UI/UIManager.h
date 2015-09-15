@@ -37,13 +37,8 @@ namespace ursine
     public:
         static const int REMOTE_DEBUGGING_PORT = 6999;
 
+        Meta(DisableNonDynamic)
         UIManager(void);
-
-        Meta(Disable)
-        UIManager(const UIManager &rhs) { }
-
-        Meta(Disable)
-        UIManager(const UIManager &&rhs) { }
 
         ~UIManager(void);
 

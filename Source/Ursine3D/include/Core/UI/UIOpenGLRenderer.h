@@ -13,6 +13,13 @@
 
 #pragma once
 
+namespace ursine
+{
+    class UIOpenGLRenderer;
+}
+
+#if defined(URSINE_GRAPHICS_OPENGL)
+
 #include <cef_render_handler.h>
 
 #include <GL/glew.h>
@@ -61,3 +68,5 @@ namespace ursine
         IMPLEMENT_REFCOUNTING(UIOpenGLRenderer);
     };
 }
+
+#endif // defined(URSINE_GRAPHICS_OPENGL)

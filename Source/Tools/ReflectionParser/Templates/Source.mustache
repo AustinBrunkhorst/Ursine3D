@@ -160,7 +160,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             } );
 
             // Constructors
-            {{#constructor}}
+            {{#constructor}}{{#enableNonDynamic}}
             type.AddConstructor<{{& templateParameters}}>(
                 [](m::ArgumentList &args)
                 {
@@ -173,7 +173,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 },
                 false
             );
-            {{/constructor}}
+            {{/enableNonDynamic}}{{/constructor}}
             // Dynamic Constructors
             {{#dynamicConstructor}}
             type.AddConstructor<{{& templateParameters}}>(

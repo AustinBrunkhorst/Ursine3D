@@ -31,6 +31,11 @@ class Enable : public ursine::meta::MetaProperty { };
 */
 class Disable : public ursine::meta::MetaProperty { };
 
+/** @brief Explicitly disables generation of non dynamic constructors.
+*          Only applies to class constructors.
+*/
+class DisableNonDynamic : public ursine::meta::MetaProperty { };
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /** @brief Explicitly disables generation of pointers to class types.

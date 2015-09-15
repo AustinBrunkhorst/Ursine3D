@@ -2,7 +2,19 @@
 
 #include "Window.h"
 
+#if defined(URSINE_GRAPHICS_OPENGL)
+
 #include "UIOpenGLRenderer.h"
+
+#define UIRendererType UIOpenGLRenderer
+
+#elif defined(URSINE_GRAPHICS_DIRECTX)
+
+#include "UIDirectXRenderer.h"
+
+#define UIRendererType UIDirectXRenderer
+
+#endif
 
 #include "MouseButton.h"
 
@@ -19,7 +31,7 @@ namespace ursine
         : public CefClient
         , public CefDisplayHandler
         , public CefV8Handler
-        , public UIOpenGLRenderer
+        , public UIRendererType
     {
     public:
         ~UIView(void);

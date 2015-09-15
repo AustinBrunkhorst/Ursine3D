@@ -6,7 +6,11 @@
 #include "KeyboardManager.h"
 #include "MouseManager.h"
 
+#if defined(PLATFORM_WINDOWS)
+
 #include <winuser.h>
+
+#endif
 
 namespace ursine
 {

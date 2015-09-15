@@ -72,6 +72,7 @@ void MetaDataManager::CompileTemplateData(TemplateData &data, const ReflectionPa
     {
         kMetaEnable,
         kMetaDisable,
+        kMetaDisableNonDynamicCtor,
         kMetaDisablePtrType,
         kMetaDisableConstPtrType,
         kMetaDisplayName,

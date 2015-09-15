@@ -62,8 +62,8 @@ TemplateData Field::CompileTemplate(const ReflectionParser *context) const
 
 bool Field::isAccessible(void) const
 {
-    return (m_hasExplicitGetter || m_hasExplicitSetter) ||
-        (m_accessModifier == CX_CXXPublic && !m_metaData.GetFlag( kMetaDisable ));
+  return (m_hasExplicitGetter || m_hasExplicitSetter) ||
+         (m_accessModifier == CX_CXXPublic && !m_metaData.GetFlag( kMetaDisable ));
 }
 
 bool Field::isGetterAccessible(void) const
