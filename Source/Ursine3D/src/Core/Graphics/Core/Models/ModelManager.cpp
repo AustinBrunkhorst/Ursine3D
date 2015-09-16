@@ -65,6 +65,9 @@ namespace ursine
       RELEASE_RESOURCE( x.second->Vertices_ );
       RELEASE_RESOURCE( x.second->Indices_ );
     }
+
+    m_device = nullptr;
+    m_deviceContext = nullptr;
   }
 
   void ModelManager::LoadModel( std::string name, std::string fileName )

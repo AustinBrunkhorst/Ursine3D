@@ -25,7 +25,8 @@ namespace ursine
 
   void GfxUIManager::Uninitialize( )
   {
-
+    m_device = nullptr;
+    m_context = nullptr;
   }
 
   bool GfxUIManager::GetViewRect( CefRefPtr<CefBrowser> browser, CefRect &bounds )
@@ -173,5 +174,7 @@ namespace ursine
   {
     m_width = width;
     m_height = height;
+
+    m_rtManager->ResizeUI( width, height );
   }
 }

@@ -93,8 +93,8 @@ namespace ursine
     RELEASE_RESOURCE( m_vertPointBuffer );
     RELEASE_RESOURCE( m_vertLineBuffer );
     RELEASE_RESOURCE( m_indexBuffer );
-    m_device = 0;
-    m_deviceContext = 0;
+    m_device = nullptr;
+    m_deviceContext = nullptr;
   }
 
   void DrawingManager::EndScene( )

@@ -28,7 +28,7 @@ enum SHADER_TYPES
   SHADER_UI,
 
   //lights need to go after this, post processing stuffz...
-  SHADER_POINT_LIGHT,         //this order is important
+  SHADER_POINT_LIGHT,         //this order is important, DO NOT SWAP
   SHADER_DIRECTIONAL_LIGHT,
 
   //and past this is debug!

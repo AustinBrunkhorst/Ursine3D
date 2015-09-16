@@ -19,7 +19,7 @@ namespace ursine
   }
   void ViewportManager::Uninitialize( void )
   {
-
+    m_renderMgr = nullptr;
   }
 
   GFXHND ViewportManager::AddViewport( unsigned width, unsigned height )

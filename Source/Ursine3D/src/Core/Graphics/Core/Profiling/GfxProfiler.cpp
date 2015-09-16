@@ -5,13 +5,12 @@ namespace ursine
 {
   void GfxProfiler::Initialize( ID3D11Device *device, ID3D11DeviceContext *devCon, bool run )
   {
+    m_run = run;
+    if (!run)
+      return;
+
     m_device = device;
     m_devCon = devCon;
-
-    m_run = run;
-
-    if (!m_run)
-      return;
 
     //init variables
     m_frame = 0;
@@ -58,6 +57,9 @@ namespace ursine
       RELEASE_RESOURCE( x[ 0 ] );
       RELEASE_RESOURCE( x[ 1 ] );
     }
+
+    m_device = nullptr;
+    m_devCon = nullptr;
   }
 
   //start frame

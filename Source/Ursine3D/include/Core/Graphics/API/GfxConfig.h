@@ -32,5 +32,6 @@ namespace ursine
     HWND *HandleToWindow_;          // handle to the window
     bool Profile_;                  // output profiling info about graphics
     bool m_renderUI;                // should I render the ui?
+    bool debug;                     // should I do debug stuff?
   };
 }

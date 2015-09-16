@@ -5,7 +5,7 @@ namespace ursine
 {
   namespace DXCore
   {
-    void DirectXCore::Initialize( const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen )
+    void DirectXCore::Initialize( const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug )
     {
       //allocate all
       m_blendManager = new BlendStateManager;
@@ -20,6 +20,7 @@ namespace ursine
       m_swapChain = NULL;
       m_deviceContext = NULL;
       m_device = NULL;
+      m_debug = debug;
 
       /////////////////////////////////////////////////////////////////
       // GET REFRESH RATE /////////////////////////////////////////////
@@ -101,28 +102,37 @@ namespace ursine
       //Set the feature level to DirectX 11.
       featureLevel = D3D_FEATURE_LEVEL_11_1;
 
+      ///////////////////////////////////////////////////////////////
       //Create the swap chain, Direct3D device, and Direct3D device context.
-#ifdef _DEBUG
-      result = D3D11CreateDeviceAndSwapChain( NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
-        D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, FeatureLevelArray, 4, D3D11_SDK_VERSION,
-        &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext );
-      UAssert( result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result );
-#else
-      result = D3D11CreateDeviceAndSwapChain( NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
-        D3D11_CREATE_DEVICE_SINGLETHREADED, &featureLevel, 1, D3D11_SDK_VERSION,
-        &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext );
-      UAssert( result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result );
-#endif
+      if (debug)
+      {
+        result = D3D11CreateDeviceAndSwapChain( NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
+          D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, FeatureLevelArray, 4, D3D11_SDK_VERSION,
+          &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext );
+        UAssert( result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result );
+
+        //make debug interface
+        result = m_device->QueryInterface( __uuidof(ID3D11Debug), reinterpret_cast<void**>(&m_debugInterface) );
+        UAssert( result == S_OK, "Failed to make debug interface!" );
+      }
+      else
+      {
+        result = D3D11CreateDeviceAndSwapChain( NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
+          D3D11_CREATE_DEVICE_SINGLETHREADED, FeatureLevelArray, 4, D3D11_SDK_VERSION,
+          &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext );
+        UAssert( result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result );
+      }
 
       D3D_FEATURE_LEVEL finalFeatureLevel = m_device->GetFeatureLevel( );
       LogMessage( "Feature Level: %i", 2, finalFeatureLevel );
 
-      //init targets
-      m_targetManager->Initialize( m_device, m_deviceContext );
-      m_targetManager->CreateTargets( );
-
       //set to not fullscreen
       m_swapChain->SetFullscreenState( fullscreen, NULL );
+
+      ///////////////////////////////////////////////////////////////
+      // INIT RENDER TARGETS
+      m_targetManager->Initialize( m_device, m_deviceContext );
+      m_targetManager->CreateTargets( );
 
       //Get the pointer to the back buffer.
       result = m_swapChain->GetBuffer( 0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr );
@@ -196,6 +206,12 @@ namespace ursine
       RELEASE_RESOURCE( m_swapChain );
       RELEASE_RESOURCE( m_deviceContext );
       RELEASE_RESOURCE( m_device );
+
+      if (m_debug)
+      {
+        m_debugInterface->ReportLiveDeviceObjects( D3D11_RLDO_DETAIL );
+        RELEASE_RESOURCE( m_debugInterface );
+      }
     }
 
     void DirectXCore::ClearDeferredBuffers( )
@@ -293,10 +309,12 @@ namespace ursine
       m_targetManager->ResizeDeferred( width, height );
       m_targetManager->ResizeEngineTargets( width, height );
 
+      return;
+
       //swapchain
       //set render target to null
-      m_deviceContext->OMSetRenderTargets( 0, nullptr, nullptr );
-      
+      m_deviceContext->ClearState( );
+
       //release swapchain
       m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView->Release( );
 

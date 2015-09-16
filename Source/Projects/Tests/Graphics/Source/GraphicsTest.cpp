@@ -27,7 +27,7 @@ namespace
         glViewport( 0, 0, width, height );
         glOrtho( 0, width, 0, height, -100.0f, 100.0f );*/
 
-        //ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
+        ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
     }
 }
 
@@ -87,8 +87,9 @@ void GraphicsTest::OnInitialize(void)
     config.TextureListPath_ = "Textures/";
     config.WindowWidth_ = kDefaultWindowWidth;
     config.WindowHeight_ = kDefaultWindowHeight;
-    config.m_renderUI = true;
+    config.m_renderUI = false;
     config.Profile_ = false;
+    config.debug = false;
 
     gfxManager->StartGraphics( config );
 
@@ -130,7 +131,56 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
 
     auto gfx = ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( );
 
+    static GFXHND prim, obj, floor, point;
+    static GFXHND vp;
+    static GFXHND cam;
+    static bool ran = false;
+    static float dt = 0;
+    dt += 0.016;
+
+    if(!ran)
+    {
+      ran = true;
+      prim = gfx->RenderableMgr.AddRenderable( RENDERABLE_PRIMITIVE );
+      obj = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+      floor = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+      point = gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+
+      gfx->RenderableMgr.GetModel3D( obj ).SetModel( "Cube" );
+      gfx->RenderableMgr.GetModel3D( obj ).SetModel( "Cube" );
+      gfx->RenderableMgr.GetModel3D( floor ).SetModel( "Cube" );
+      gfx->RenderableMgr.GetModel3D( floor ).SetModel( "Cube" );
+      gfx->RenderableMgr.GetModel3D( floor ).SetWorldMatrix( DirectX::XMMatrixScaling( 1, 1, 1 ) * DirectX::XMMatrixTranslation( 0, 1, 0 ) );
+      gfx->RenderableMgr.GetModel3D( floor ).SetWorldMatrix( DirectX::XMMatrixScaling( 10, 1, 10 ) * DirectX::XMMatrixTranslation( 0, -1, 0 ) );
+
+      gfx->RenderableMgr.GetPointLight( point ).SetPosition( 1, 1, -1 );
+      gfx->RenderableMgr.GetPointLight( point ).SetRadius( 30 );
+      gfx->RenderableMgr.GetPointLight( point ).SetColor( 1, 1, 1 );
+
+      gfx->RenderableMgr.GetPrimitive( prim ).SetType( ursine::Primitive::PRIM_CUBE );
+      gfx->RenderableMgr.GetPrimitive( prim ).SetWidth( 1 );
+      gfx->RenderableMgr.GetPrimitive( prim ).SetHeight( 1 );
+      gfx->RenderableMgr.GetPrimitive( prim ).SetDepth( 1 );
+      gfx->RenderableMgr.GetPrimitive( prim ).SetColor( 1, 1, 1, 1 );
+      
+
+      vp = gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
+      cam = gfx->CameraMgr.AddCamera( );
+
+      gfx->ViewportMgr.SetCamera( vp, cam );
+
+      gfx->CameraMgr.GetCamera( cam ).SetPosition( DirectX::XMFLOAT4( 0, 0, -10, 1 ) );
+      gfx->CameraMgr.GetCamera( cam ).LookAtPoint( DirectX::XMFLOAT4( 0, 0, 0, 1 ) );
+    }
+    gfx->RenderableMgr.GetPointLight( point ).SetPosition(cosf(dt * 2), 1, sinf(dt * 2) );
+    gfx->RenderableMgr.GetPrimitive( prim ).SetWorldMatrix( DirectX::XMMatrixRotationRollPitchYaw( cosf( dt ), cosf( dt ), cosf( dt ) ) );
+    
     gfx->BeginScene( );
+    gfx->RenderObject( prim );
+    gfx->RenderObject( obj );
+    gfx->RenderObject( floor );
+    gfx->RenderObject( point );
+    gfx->RenderScene( 0.016, vp );
     gfx->EndScene( );
 
     m_ui->Draw( );
