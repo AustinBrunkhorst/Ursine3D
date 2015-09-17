@@ -68,7 +68,7 @@ namespace ursine
       shaderManager->LoadShader( SHADER_DIFFUSE, "DiffuseShader" );
       shaderManager->LoadShader( SHADER_NORMAL, "NormalShader" );
       shaderManager->LoadShader( SHADER_DEFFERED_TEXTURE, "DeferredTextureShader" );
-      shaderManager->LoadShader( SHADER_DEFERRED_DEPTH, "FragmentationShader" );
+      shaderManager->LoadShader( SHADER_DEFERRED_DEPTH, "DeferredDepthNormalMap" );
       shaderManager->LoadShader( SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap" );
       shaderManager->LoadShader( SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource" );
       shaderManager->LoadShader( SHADER_POINT_LIGHT, "PointLightSource" );
@@ -204,6 +204,8 @@ namespace ursine
 
   void GraphicsCore::RenderScene( float dt, GFXHND viewport )
   {
+	  RenderScene_Deferred(dt, viewport);
+	  return;
     //close thread handle if needed
     if (m_threadHandle != nullptr)
       CloseHandle( m_threadHandle );
