@@ -574,7 +574,9 @@ namespace ursine
 
     //debug 
     PrepForDebugRender( );
+	dxCore->SetRasterState(RASTER_STATE_BACKFACE_CULL);
     RenderDebugPoints( view, proj, currentCamera );
+	dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
     RenderDebugLines( view, proj, currentCamera );
 
     /////////////////////////////////////////////////////////////////
@@ -651,7 +653,7 @@ namespace ursine
     textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
 
     //set culling
-    dxCore->SetRasterState( RASTER_STATE_NO_CULL );
+    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
 
     bufferManager->MapCameraBuffer( view, proj );
     bufferManager->MapCameraBuffer( view, proj, GEOMETRY_SHADER );
