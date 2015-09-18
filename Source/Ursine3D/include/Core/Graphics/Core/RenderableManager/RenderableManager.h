@@ -52,7 +52,7 @@ namespace ursine
       UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
       UAssert( render->Type_ == RENDERABLE_MODEL3D, "Attempted to use invalid handle to get a model!" );
 
-      return m_renderableModel3D[ render->Index_ ];
+      return m_currentRenderableModel3D[ render->Index_ ];
     }
 
     template<>
@@ -63,7 +63,7 @@ namespace ursine
       UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
       UAssert( render->Type_ == RENDERABLE_DIRECTION_LIGHT, "Attempted to use invalid handle to get a directional light!" );
 
-      return m_renderableDirectionalLight[ render->Index_ ];
+      return m_currentRenderableDirectionalLight[ render->Index_ ];
     }
 
     template<>
@@ -74,7 +74,7 @@ namespace ursine
       UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
       UAssert( render->Type_ == RENDERABLE_POINT_LIGHT, "Attempted to use invalid handle to get a point light!" );
 
-      return m_renderablePointLight[ render->Index_ ];
+      return m_currentRenderablePointLight[ render->Index_ ];
     }
 
     template<>
@@ -85,19 +85,24 @@ namespace ursine
       UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
       UAssert( render->Type_ == RENDERABLE_PRIMITIVE, "Attempted to use invalid handle to get a primitive!" );
 
-      return m_renderablePrimitives[ render->Index_ ];
+      return m_currentRenderablePrimitives[ render->Index_ ];
     }
 
   private:
+    void CacheFrame( );
+
+  private:
     //all the renderables
+    std::vector<Model3D>          m_currentRenderableModel3D;
+    std::vector<DirectionalLight> m_currentRenderableDirectionalLight;
+    std::vector<PointLight>       m_currentRenderablePointLight;
+    std::vector<Primitive>        m_currentRenderablePrimitives;
+
+    //cahced data used to render frame N while updating frame N + 1
     std::vector<Model3D> m_renderableModel3D;
     std::vector<DirectionalLight> m_renderableDirectionalLight;
     std::vector<PointLight> m_renderablePointLight;
     std::vector<Primitive> m_renderablePrimitives;
-
-    //TEMPORARY all the lights of the current render
-    //std::vector<PointLight *> currentPointLights;
-    //std::vector<DirectionalLight *> currentDirectionalLights;
 
     //all the free handles
     std::vector<std::list<unsigned>*> m_handleList;

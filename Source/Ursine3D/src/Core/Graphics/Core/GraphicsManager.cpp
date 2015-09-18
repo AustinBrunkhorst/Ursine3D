@@ -197,13 +197,31 @@ namespace ursine
     }
   }
 
-  void GraphicsCore::BeginScene( )
+  void GraphicsCore::StartFrame ( )
   {
     while (m_rendering);
 
     m_rendering = true;
 
-    dxCore->ClearBuffers( );
+    dxCore->ClearSwapchain( );
+    dxCore->ClearTargetBuffers( );
+    dxCore->ClearDebugBuffer( );
+    gfxProfiler->BeginFrame( );
+  }
+
+  void GraphicsCore::BeginScene( )
+  {
+    //clear draw call list
+    memset( reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof( unsigned long long ) * m_drawCount );
+    m_drawCount = 0;
+
+    //cache state of all graphics objects
+    renderableManager->CacheFrame( );
+
+    //@matt remove
+    dxCore->ClearSwapchain( );
+    dxCore->ClearTargetBuffers( );
+    dxCore->ClearDebugBuffer( );
     gfxProfiler->BeginFrame( );
   }
 
@@ -212,7 +230,11 @@ namespace ursine
     //close thread handle if needed
     if (m_threadHandle != nullptr)
       CloseHandle( m_threadHandle );
-    RenderScene_Deferred( dt, viewport );
+
+    if(viewportManager->GetViewport(viewport).GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
+      RenderScene_Deferred( dt, viewport );
+    else
+      RenderScene_Forward( dt, viewport );
 
     return;
     /*
@@ -247,276 +269,84 @@ namespace ursine
 
   void GraphicsCore::RenderScene_Forward( float dt, GFXHND viewport )
   {
-    //// init buffers for frame
-    //dxCore->ClearDeferredBuffers( );
-    //gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
+    /////////////////////////////////////////////////////////////////
+    // PRE FRAME STUFF 
+    // init buffers for frame
+    dxCore->ClearDepthBuffers( );
+    gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
 
-    //// PRE FRAME STUFF //////////////////////////////////////////////
-    ////get camera
-    ////Camera &currentCamera = cameraManager->GetCamera( viewportManager->GetCamera( viewport ) );
-    ////get viewport handle
-    //_VIEWPORTHND *vpHandle = reinterpret_cast<_VIEWPORTHND*>(&viewport);
-    //unsigned wwidth, wheight;
-    //int wposX, wposY;
+    // get viewport
+    Viewport &vp = viewportManager->GetViewport( viewport );
 
-    ////calculate stuff for viewport
-    //unsigned w, h;
-    //gfxInfo->GetDimensions( w, h );
+    // get camera
+    Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
 
-    //float posX = wposX * 2.f / w;   //position of the viewport
-    //float posY = wposY * 2.f / h;
+    //get d3d11 viewport info, set it
+    D3D11_VIEWPORT vpData = vp.GetViewportData( );
 
-    //float width = wwidth / static_cast<float>(w);       //actual ratio of viewport to window
-    //float height = wheight / static_cast<float>(h);
+    dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
-    //DirectX::XMMATRIX proj;
-    //if (currentCamera.GetProjMode( ) == Camera::ProjectionMode::PROJECTION_PERSPECTIVE)
-    //{
-    //  proj = DirectX::XMMatrixPerspectiveFovLH( currentCamera.GetFOV( ) * 3.14f / 180.f, (float)wwidth / wheight, 0.0001f, 1000.f );
-    //}
-    //else
-    //{
-    //  proj = DirectX::XMMatrixOrthographicLH( (float)wwidth / 100, (float)wheight / 100, 0.0001f, 1000.f );
-    //}
-    ////check stuff, get things ready to go
-    //RENDER_TARGETS mainTarget = (RENDER_TARGETS)(viewportManager->GetRenderTargetID( viewport ) + RENDER_TARGET_VIEWPORT_1);
+    /////////////////////////////////////////////////////////////////
+    // gets the projection matrix and view matrix
+    DirectX::XMMATRIX proj, view;
+    proj = currentCamera.GetProjMatrix( vpData.Width / 100, vpData.Height / 100 );
+    view = currentCamera.GetViewMatrix( );
 
-    //// raster state
+    /////////////////////////////////////////////////////////////////
+    // SORT ALL DRAW CALLS
+    std::sort( m_drawList.begin( ), m_drawList.begin( ) + m_drawCount, sort );
 
-    ////set all states
-    //dxCore->SetBlendState( BLEND_STATE_DEFAULT );
-    //dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
+    /////////////////////////////////////////////////////////////////
+    // BEGIN RENDERING
+    //keep track of where we are
+    int currentIndex = 0;
 
-    ////forward shading
-    //shaderManager->BindShader( SHADER_DIFFUSE );
-    //layoutManager->SetInputLayout( SHADER_DIFFUSE );
+    //render 3d models deferred
+    dxCore->SetBlendState( BLEND_STATE_DEFAULT );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
+    shaderManager->BindShader( SHADER_DIFFUSE );
+    layoutManager->SetInputLayout( SHADER_DIFFUSE );
+    dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+    textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
+    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
 
-    ////set render type
-    //dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
+      Render3DModel( m_drawList[ currentIndex++ ] );
 
-    ////map the sampler
-    //textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
+    //render wireframes?
+    ////light pass
+    PrepForLightPass( view, proj );
+    //while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
+    //  RenderPointLight( m_drawList[ currentIndex++ ], currentCamera );
+    //while (m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT)
+    //  RenderDirectionalLight( m_drawList[ currentIndex++ ], currentCamera );
 
-    ////set culling
-    //dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    //primitive pass
+    gfxProfiler->Stamp( PROFILE_LIGHTS );
 
-    //dxCore->SetRenderTarget( mainTarget );
+    dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
+    shaderManager->BindShader( SHADER_PRIMITIVE );
+    layoutManager->SetInputLayout( SHADER_PRIMITIVE );
 
-    ///////////////////////////////////////////////////////////////////
-    //// TEMPORARY 
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
+      RenderPrimitive( m_drawList[ currentIndex++ ] );
 
-    ////map camera and proj
-    //bufferManager->MapCameraBuffer( currentCamera.GetViewMatrix( ), proj );
+    //debug 
+    dxCore->SetBlendState( BLEND_STATE_NONE );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
 
-    //// SORT ALL DRAW CALLS
-    //std::sort( m_drawList.begin( ), m_drawList.begin( ) + m_drawCount, sort );
+    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    RenderDebugPoints( view, proj, currentCamera );
 
-    ////prepping for light render and stuff
-    //bool lightStart = false;
-    //bool debugStart = false;
+    dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
+    RenderDebugLines( view, proj, currentCamera );
 
-    //// calls all draw calls
-    //for (unsigned x = 0; x < m_drawCount; ++x)
-    //{
-    //  //how to render the current object?
-    //  switch (m_drawList[ x ].Type_)
-    //  {
-    //    //rendering a model
-    //  case RENDERABLE_MODEL3D:
-    //  {
-    //    //map transform
-    //    bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ m_drawList[ x ].Index_ ].GetWorldMatrix( ) );
-
-    //    //set model
-    //    modelManager->BindModel( m_drawList[ x ].Model_ );
-
-    //    //map texture
-    //    textureManager->MapTextureByID( m_drawList[ x ].Material_ );
-
-    //    shaderManager->Render( modelManager->GetModelVertcountByID( m_drawList[ x ].Model_ ) );
-    //  }
-    //  break;
-    //  //renderable a point light
-    //  case RENDERABLE_POINT_LIGHT:
-    //  {
-    //    break;
-    //  }
-    //  break;
-    //  //rendering a directional light
-    //  case RENDERABLE_DIRECTION_LIGHT:
-    //  {
-    //    break;
-    //  }
-    //  break;
-    //  case RENDERABLE_PRIMITIVE:
-    //  {
-    //    if (!debugStart)
-    //    {
-    //      debugStart = true;
-    //      bufferManager->MapCameraBuffer( currentCamera.GetViewMatrix( ), proj );
-    //      dxCore->SetBlendState( BLEND_STATE_DEFAULT );
-    //      dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
-    //      shaderManager->BindShader( SHADER_PRIMITIVE );
-    //      layoutManager->SetInputLayout( SHADER_PRIMITIVE );
-    //    }
-
-    //    Primitive &prim = renderableManager->m_renderablePrimitives[ m_drawList[ x ].Index_ ];
-
-    //    //set data if it is wireframe or not
-    //    if (prim.GetWireFrameMode( ) == true)
-    //    {
-    //      dxCore->SetRasterState( RASTER_STATE_WIREFRAME_NO_CULL );
-    //      dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP );
-    //    }
-    //    else
-    //    {
-    //      dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
-    //      dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-    //    }
-
-    //    //set color
-    //    PrimitiveColorBuffer pcb;
-    //    pcb.color = prim.GetColor( );
-    //    bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, PIXEL_SHADER );
-
-    //    //render specific primitive, based upon data
-    //    switch (prim.GetType( ))
-    //    {
-    //    case Primitive::PRIM_PLANE:
-    //      dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_LINELIST );
-    //      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetWidth( ), 0, prim.GetHeight( ) ) * prim.GetWorldMatrix( ) );
-    //      modelManager->BindModel( modelManager->GetModelIDByName( "Plane" ) );
-    //      shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Plane" ) ) );
-    //      break;
-
-    //    case Primitive::PRIM_SPHERE:
-    //      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f ) * prim.GetWorldMatrix( ) );
-    //      modelManager->BindModel( modelManager->GetModelIDByName( "Sphere" ) );
-    //      shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sphere" ) ) );
-    //      break;
-    //    case Primitive::PRIM_CUBE:
-    //      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetWidth( ), prim.GetHeight( ), prim.GetDepth( ) ) * prim.GetWorldMatrix( ) );
-    //      modelManager->BindModel( modelManager->GetModelIDByName( "Cube" ) );
-    //      shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Cube" ) ) );
-    //      break;
-    //    case Primitive::PRIM_CAPSULE:
-    //      modelManager->BindModel( modelManager->GetModelIDByName( "HalfSphere" ) );
-
-    //      //render top cap
-    //      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ), prim.GetRadius( ), prim.GetRadius( ) )  * DirectX::XMMatrixTranslation( 0, prim.GetHeight( ) / 2.f, 0 ) * prim.GetWorldMatrix( ) );
-    //      shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
-    //      //render bottom cap
-    //      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ), prim.GetRadius( ), prim.GetRadius( ) )  * DirectX::XMMatrixRotationX( 3.14f ) * DirectX::XMMatrixTranslation( 0, -prim.GetHeight( ) / 2.f, 0 ) * prim.GetWorldMatrix( ) );
-    //      shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
-
-    //      //render body
-    //      modelManager->BindModel( modelManager->GetModelIDByName( "CapsuleBody" ) );
-    //      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ), prim.GetHeight( ), prim.GetRadius( ) )  * prim.GetWorldMatrix( ) );
-    //      shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "CapsuleBody" ) ) );
-    //      break;
-    //    }
-
-    //  }
-    //  break;
-    //  default:
-    //    UAssert( false, "Some rendering handle got messed up... Tell Matt" );
-    //    break;
-    //  }
-    //}
-    //gfxProfiler->Stamp( PROFILE_PRIMITIVES );
-
-    ///////////////////////////////////////////////////////////////////
-    //// RENDER POINTS AND LINES
-    //shaderManager->BindShader( SHADER_PRIMITIVE );
-    //layoutManager->SetInputLayout( SHADER_PRIMITIVE );
-    //bufferManager->MapTransformBuffer( DirectX::XMMatrixIdentity( ) );
-    //dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
-
-    ////render points
-    //if (drawingManager->CheckRenderPoints( ))
-    //{
-    //  ID3D11Buffer *mesh, *indices;
-    //  unsigned vertCount, indexCount;
-    //  drawingManager->ConstructPointMesh( vertCount, indexCount, &mesh, &indices );
-
-    //  //set input
-    //  dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_POINTLIST );
-
-    //  //set up buffers
-    //  bufferManager->MapCameraBuffer( currentCamera.GetViewMatrix( ), proj, GEOMETRY_SHADER );
-    //  PointGeometryBuffer pgb;
-    //  pgb.cameraUp = currentCamera.GetUp( );
-    //  pgb.cameraPosition = currentCamera.GetPosition( );
-    //  bufferManager->MapBuffer<BUFFER_POINT_GEOM>( &pgb, GEOMETRY_SHADER );
-
-    //  //bind shader
-    //  shaderManager->BindShader( SHADER_POINT );
-    //  layoutManager->SetInputLayout( SHADER_POINT );
-
-    //  //map meshes
-    //  modelManager->BindMesh<PrimitiveVertex>( mesh, indices );
-
-    //  //render
-    //  shaderManager->Render( indexCount );
-
-    //  //release resources
-    //  RELEASE_RESOURCE( mesh );
-    //  RELEASE_RESOURCE( indices );
-    //}
-
-    ////render lines
-    //if (drawingManager->CheckRenderLines( ))
-    //{
-    //  ID3D11Buffer *mesh, *indices;
-    //  unsigned vertCount, indexCount;
-    //  drawingManager->ConstructLineMesh( vertCount, indexCount, &mesh, &indices );
-
-    //  //set input
-    //  dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP );
-
-    //  //bind shader
-    //  shaderManager->BindShader( SHADER_BASIC );
-    //  layoutManager->SetInputLayout( SHADER_BASIC );
-
-    //  //map meshes
-    //  modelManager->BindMesh<PrimitiveVertex>( mesh, indices );
-
-    //  //render
-    //  shaderManager->Render( indexCount );
-
-    //  //release resources
-    //  RELEASE_RESOURCE( mesh );
-    //  RELEASE_RESOURCE( indices );
-    //}
-
-    //gfxProfiler->Stamp( PROFILE_DEBUG );
-
-    ////render main
-    //dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
-    //dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-    //dxCore->SetDepthState( DEPTH_STATE_NO_DEPTH_CHECK );
-
-    //modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
-    //bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( -2 * width, 2 * height, 1 ) * DirectX::XMMatrixTranslation( posX, posY, 0 ) );
-    //shaderManager->BindShader( SHADER_QUAD );
-    //layoutManager->SetInputLayout( SHADER_QUAD );
-    //dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
-
-    ////RENDER SCENE
-    //dxCore->SetBlendState( BLEND_STATE_DEFAULT );
-    //bufferManager->MapCameraBuffer( DirectX::XMMatrixIdentity( ), DirectX::XMMatrixIdentity( ) );
-
-    //dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( mainTarget )->ShaderMap );
-
-    //shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
-
-    ////clearing all buffers
-    //textureManager->MapTextureByName( "Wire" );
-    //textureManager->MapTextureByName( "Wire", 1 );
-    //textureManager->MapTextureByName( "Wire", 2 );
-    //textureManager->MapTextureByName( "Wire", 3 );
-
-    //// end of temp //////////////////////////////////////////////////
+    //clearing all buffers
+    textureManager->MapTextureByName( "Wire" );
+    textureManager->MapTextureByName( "Wire", 1 );
+    textureManager->MapTextureByName( "Wire", 2 );
+    textureManager->MapTextureByName( "Wire", 3 );
   }
 
   void GraphicsCore::RenderScene_Deferred( float dt, GFXHND viewport )
@@ -525,6 +355,7 @@ namespace ursine
     // PRE FRAME STUFF 
     // init buffers for frame
     dxCore->ClearDeferredBuffers( );
+    dxCore->ClearDepthBuffers( );
     gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
 
     // get viewport
@@ -572,7 +403,9 @@ namespace ursine
 
     //debug 
     PrepForDebugRender( );
+    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
     RenderDebugPoints( view, proj, currentCamera );
+    dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
     RenderDebugLines( view, proj, currentCamera );
 
     /////////////////////////////////////////////////////////////////
@@ -603,10 +436,7 @@ namespace ursine
 
   void GraphicsCore::EndScene( )
   {
-    //clear draw data
-    memset( reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof( unsigned long long ) * m_drawCount );
-    m_drawCount = 0;
-
+    //@matt update this to match end frame
     // render ui on top of everything
     if (m_renderUI)
     {
@@ -615,6 +445,26 @@ namespace ursine
     }
     gfxProfiler->Stamp( PROFILE_SCENE_UI );
 
+    // end profiler
+    gfxProfiler->WaitForCalls( m_profile );
+
+    // reset drawing for next frame
+    drawingManager->EndScene( );
+
+    // present
+    dxCore->SwapChainBuffer( );
+
+    // end the frame
+    gfxProfiler->EndFrame( );
+
+    //end rendering
+    m_rendering = false;
+
+    dxCore->CheckSize( );
+  }
+
+  void GraphicsCore::EndFrame ( )
+  {
     // end profiler
     gfxProfiler->WaitForCalls( m_profile );
 
@@ -733,18 +583,6 @@ namespace ursine
   // rendering //////////////////////////////////////////////////////
   void GraphicsCore::Render3DModel ( DRAWHND handle )
   {
-    POINT p;
-    GetCursorPos( &p );
-
-    static float temp = 0;
-    temp += 0.016f;
-
-    PrimitiveColorBuffer pcb;
-    pcb.color.x = p.x / 100.f;
-    pcb.color.y = p.y / 100.f;
-    pcb.color.z = temp;
-    bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, GEOMETRY_SHADER );
-
     //map transform
     bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ) );
     bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ), GEOMETRY_SHADER );
@@ -961,8 +799,6 @@ namespace ursine
     //what needs to be resized?
     //ui
     uiManager->Resize( width, height );
-
-    return;
 
     //MAIN render targets, not viewports
     dxCore->ResizeDX( width, height );

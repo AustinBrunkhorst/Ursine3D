@@ -38,7 +38,18 @@ namespace ursine
       //methods
       //clears buffers
       void ClearDeferredBuffers( );
-      void ClearBuffers( );
+      void ClearDepthBuffers( );
+      void ClearSwapchain( );
+      void ClearDebugBuffer( );
+      void ClearTargetBuffers( );
+
+      //what render targets do I need to clear?
+      //deferred
+      
+      //depth
+      //debug
+      //swapchain
+      //others?
 
       //swaps the swapchain
       void SwapChainBuffer( );
@@ -70,8 +81,17 @@ namespace ursine
 
       void ResizeDX( int width, int height );
 
+      void CheckSize( );
+
+      //private methods
+    private:
+      void backendResizeDX( int width, int height );
+
     private:
       bool m_debug;
+      int m_newWidth;
+      int m_newHeight;
+      bool m_shouldResize;
 
       ID3D11Device *m_device;
       ID3D11DeviceContext *m_deviceContext;

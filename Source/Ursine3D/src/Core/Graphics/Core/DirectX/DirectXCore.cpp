@@ -21,6 +21,7 @@ namespace ursine
       m_deviceContext = NULL;
       m_device = NULL;
       m_debug = debug;
+      m_shouldResize = false;
 
       /////////////////////////////////////////////////////////////////
       // GET REFRESH RATE /////////////////////////////////////////////
@@ -41,7 +42,6 @@ namespace ursine
       /////////////////////////////////////////////////////////////////
       // CREATING SWAP CHAIN //////////////////////////////////////////
       DXGI_SWAP_CHAIN_DESC swapChainDesc;
-      D3D_FEATURE_LEVEL featureLevel;
       ID3D11Texture2D *backBufferPtr;
 
       D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ];
@@ -99,9 +99,6 @@ namespace ursine
       //Discard the back buffer contents after presenting.
       swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-      //Set the feature level to DirectX 11.
-      featureLevel = D3D_FEATURE_LEVEL_11_1;
-
       ///////////////////////////////////////////////////////////////
       //Create the swap chain, Direct3D device, and Direct3D device context.
       if (debug)
@@ -130,7 +127,7 @@ namespace ursine
       m_swapChain->SetFullscreenState( fullscreen, NULL );
 
       ///////////////////////////////////////////////////////////////
-      // INIT RENDER TARGETS
+      // INIT RENDER TARGETS ////////////////////////////////////////
       m_targetManager->Initialize( m_device, m_deviceContext );
       m_targetManager->CreateTargets( );
 
@@ -203,24 +200,36 @@ namespace ursine
     void DirectXCore::ClearDeferredBuffers( )
     {
       float color[ 4 ] = { 0.0f, 0.0f, 0.0f, 1.0f };
-      float clear[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
       float colorNormal[ 4 ] = { 0.5, 0.5, 0.5, 1.0f };
-      float colorDepth[ 4 ] = { 1, 1, 1, 1.0f };
-
       float lightMap[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_LIGHTMAP )->RenderTargetView, lightMap );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_COLOR )->RenderTargetView, color );
-      m_deviceContext->ClearDepthStencilView( m_depthStateManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH, 1.0f, 0 );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_DEPTH )->RenderTargetView, colorNormal );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_NORMAL )->RenderTargetView, color );
+      
+    }
+
+    void DirectXCore::ClearDepthBuffers ( )
+    {
+      m_deviceContext->ClearDepthStencilView( m_depthStateManager->GetDepthStencilView( DEPTH_STENCIL_MAIN ), D3D11_CLEAR_DEPTH, 1.0f, 0 );
+    }
+
+    void DirectXCore::ClearSwapchain ( )
+    {
+      float color[ 4 ] = { 0.2f, 0.2f, 0.2f, 1.0f };
+      m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, color );
+    }
+
+    void DirectXCore::ClearDebugBuffer ( )
+    {
+      float clear[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEBUG )->RenderTargetView, clear );
     }
 
-    void DirectXCore::ClearBuffers( )
+    void DirectXCore::ClearTargetBuffers( )
     {
-      float color[ 4 ] = { 1.0f, 0.0f, 0.0f, 1.0f };
-
-      m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, color );
+      float color[ 4 ] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
       //clear other targets
       for (int x = RENDER_TARGET_VIEWPORT_1; x < RENDER_TARGET_COUNT; ++x)
@@ -291,19 +300,38 @@ namespace ursine
 
     void DirectXCore::ResizeDX ( int width, int height )
     {
+      m_shouldResize = true;
+
+      m_newWidth = width;
+      m_newHeight = height;
+    }
+
+    void DirectXCore::CheckSize ( )
+    {
+      if (!m_shouldResize)
+        return;
+
+      m_shouldResize = false;
+      backendResizeDX( m_newWidth, m_newHeight );
+    }
+
+    void DirectXCore::backendResizeDX( int width, int height )
+    {
       m_targetManager->ResizeDeferred( width, height );
       m_targetManager->ResizeEngineTargets( width, height );
 
-      return;
-
       //swapchain
       //set render target to null
+      m_deviceContext->OMSetRenderTargets( 0, nullptr, nullptr );
+
       m_deviceContext->ClearState( );
 
       //release swapchain
       m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView->Release( );
-
+      m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView = nullptr;
+      
       HRESULT hr;
+      
       hr = m_swapChain->ResizeBuffers( 0, static_cast<UINT>(width), static_cast<UINT>(height), DXGI_FORMAT_UNKNOWN, 0 );
       UAssert( hr == S_OK, "Failed to resize swapchain!" );
       
@@ -313,6 +341,9 @@ namespace ursine
       
       hr = m_device->CreateRenderTargetView( pBuffer, NULL, &m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView );
       UAssert( hr == S_OK, "Failed to make render target! (Error '%i')", hr );
+
+      //release buffer
+      RELEASE_RESOURCE( pBuffer );
 
       //depth stuff
       m_depthStateManager->Resize( width, height );
