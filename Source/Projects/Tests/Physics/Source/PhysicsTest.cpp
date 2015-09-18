@@ -157,7 +157,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 		// wirePrimitive = gfx->RenderableMgr.AddRenderable(RENDERABLE_PRIMITIVE);
 
 		light = gfx->RenderableMgr.AddRenderable(RENDERABLE_POINT_LIGHT);
-		gfx->ViewportMgr.SetCamera(viewport, camera);
+		gfx->ViewportMgr.GetViewport(viewport).SetViewportCamera(camera);
 
 		Model3D &MdlCube = gfx->RenderableMgr.GetModel3D(cube);
 		PointLight &pointLight = gfx->RenderableMgr.GetPointLight(light);
