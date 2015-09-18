@@ -169,20 +169,6 @@ namespace ursine
       m_blendManager->Initialize( m_device, m_deviceContext );
 
       /////////////////////////////////////////////////////////////////
-      // CREATING VIEWPORT ////////////////////////////////////////////
-      D3D11_VIEWPORT viewport;
-      ZeroMemory( &viewport, sizeof( viewport ) );
-
-      viewport.Width = static_cast<float>(width);
-      viewport.Height = static_cast<float>(height);
-      viewport.MinDepth = 0.0f;
-      viewport.MaxDepth = 1.0f;
-      viewport.TopLeftX = 0.0f;
-      viewport.TopLeftY = 0.0f;
-
-      m_deviceContext->RSSetViewports( 1, &viewport );
-
-      /////////////////////////////////////////////////////////////////
       // CREATE OTHER RENDER TARGETS //////////////////////////////////
       m_targetManager->InitializeAllRenderTargets( width, height );
     }
@@ -232,7 +218,7 @@ namespace ursine
 
     void DirectXCore::ClearBuffers( )
     {
-      float color[ 4 ] = { 0.0f, 0.0f, 0.0f, 1.0f };
+      float color[ 4 ] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, color );
 
@@ -244,7 +230,6 @@ namespace ursine
 
         m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( (RENDER_TARGETS)x )->RenderTargetView, color );
       }
-
     }
 
     void DirectXCore::SwapChainBuffer( )

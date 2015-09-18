@@ -89,12 +89,11 @@ namespace ursine
     void RenderScene_Deferred( float dt, GFXHND viewport = -1 );
 
     //preparing for rendering
-    void GenerateScreenInfo( GFXHND &vp, float &width, float &height, float &posX, float &posY, float &windowW, float &windowH );
     void PrepFor3DModels( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
     void PrepForLightPass( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
     void PrepForPrimitives( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
     void PrepForDebugRender( );
-    void PrepForFinalOutput( float width, float height, float posX, float posY );
+    void PrepForFinalOutput( );
     void PrepForUI( );
 
     //rendering funcs

@@ -20,29 +20,9 @@ namespace ursine
     m_privates->mgr->DestroyViewport( handle );
   }
 
-  void ViewportAPI::SetPosition( GFXHND viewportHandle, const int x, const int y )
+  Viewport& ViewportAPI::GetViewport ( GFXHND& handle )
   {
-    m_privates->mgr->SetPosition( viewportHandle, x, y );
-  }
-  void ViewportAPI::SetDimension( GFXHND viewportHandle, const unsigned w, const unsigned h )
-  {
-    m_privates->mgr->SetDimension( viewportHandle, w, h );
-  }
-  void ViewportAPI::SetDrawOrder( GFXHND viewportHandle, unsigned order )
-  {
-    m_privates->mgr->SetDrawOrder( viewportHandle, order );
-  }
-  void ViewportAPI::SetColor( GFXHND viewportHandle, float r, float g, float b, float a )
-  {
-    m_privates->mgr->SetColor( viewportHandle, r, g, b, a );
-  }
-  void ViewportAPI::SetCamera( GFXHND handle, GFXHND camHandle )
-  {
-    m_privates->mgr->SetCamera( handle, camHandle );
-  }
-  void ViewportAPI::SetRenderMode( GFXHND handle, ViewportRenderMode mode )
-  {
-    m_privates->mgr->SetRenderMode( handle, mode );
+    return m_privates->mgr->GetViewport( handle );
   }
 
   void ViewportAPI::SetPrivates( void *priv)

@@ -1,49 +1,58 @@
 #pragma once
 
+#include <d3d11.h>
+
 #include "GraphicsDefines.h"
 #include "ViewportRenderModes.h"
 
 namespace ursine
 {
-  struct Viewport
+  class Viewport
   {
-    inline void Reset( )
-    {
-      m_color[ 0 ] = 0;
-      m_color[ 1 ] = 0;
-      m_color[ 2 ] = 0;
-      m_color[ 3 ] = 1;
+  public:
+    // initialize viewport to default settings
+    void Initialize( );
 
-      m_layer = 0;
+    // set background color of this viewport (NOT IMPLEMENTED)
+    void SetBackgroundColor( float r, float g, float b, float a );
 
-      m_size = 0;
-      m_height = 0;
+    // get the background, array of 4 floats
+    const float *GetBackgroundColor( );
 
-      m_xPos = 0;
-      m_yPos = 0;
+    // set the camera for this viewport
+    void SetViewportCamera( GFXHND camera );
 
-      m_rt = -1;
+    // get the camera for this viewport
+    GFXHND GetViewportCamera( );
 
-      m_renderMode = VIEWPORT_RENDER_DEFERRED;
+    //set render mode (orthographics VS perspective)
+    void SetRenderMode( ViewportRenderMode renderMode );
 
-      m_active = false;
-    }
+    //get the render mode
+    ViewportRenderMode GetRenderMode( );
 
-    float m_color[ 4 ];       // background color
-    unsigned m_layer;         // rendering order
+    // set dimensions of the viewport, in pixels
+    void SetDimensions( unsigned width, unsigned height );
 
-    unsigned m_size;          // dimensions
-    unsigned m_height;
+    // set the top-left position of this viewport, in pixels. 
+    // top left is 0, 0, bottom right is screenWidth, screenHeight
+    void SetPosition( unsigned positionX, unsigned positionY );
 
-    int m_xPos;               // position
-    int m_yPos;
+    // get directx viewport data
+    D3D11_VIEWPORT GetViewportData( );
+  private:
+    float m_color[ 4 ];               // background color
 
-    bool m_active;            //is this one in use?
+    GFXHND m_camera;                  // camera handle
 
-    GFXHND m_camera;          //camera index
+    ViewportRenderMode m_renderMode;  // render in forward or deferred mode?
 
-    ViewportRenderMode m_renderMode;  //render in forward or deferred mode?
+    unsigned m_width;                 // dimension x
+    unsigned m_height;                // dimension y
 
-    unsigned m_rt;            //current render target to use
+    unsigned m_positionX;             // position x
+    unsigned m_positionY;             // position y
+
+    unsigned m_rt;                    // current render target to use
   };
 }
