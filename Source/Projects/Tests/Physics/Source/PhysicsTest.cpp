@@ -127,9 +127,6 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 {
     EVENT_ATTRS(Application, EventArgs);
 
-    // ::OPENGL
-    //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
     // @@@ TODO:
     // Update Scene
     // Render Tools
@@ -158,6 +155,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 
 		light = gfx->RenderableMgr.AddRenderable(RENDERABLE_POINT_LIGHT);
 		gfx->ViewportMgr.GetViewport(viewport).SetViewportCamera(camera);
+		gfx->ViewportMgr.GetViewport(viewport).SetDimensions(kDefaultWindowWidth, kDefaultWindowHeight);
 
 		Model3D &MdlCube = gfx->RenderableMgr.GetModel3D(cube);
 		PointLight &pointLight = gfx->RenderableMgr.GetPointLight(light);
@@ -394,9 +392,6 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
     gfx->EndScene( );
 
     // m_ui->Draw( );
-
-    // ::OPENGL
-    //SDL_GL_SwapWindow( m_mainWindow->GetHandle( ) );
 }
 
 void PhysicsTest::onMainWindowResize(EVENT_HANDLER(ursine::Window))
