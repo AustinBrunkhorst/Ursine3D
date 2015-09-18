@@ -69,7 +69,7 @@ namespace ursine
 
     GfxInfo *gfxInfo;
 
-    //private methods
+    //thred stuff
   private:
     struct threadData
     {
@@ -82,9 +82,27 @@ namespace ursine
     HANDLE m_threadHandle;
     DWORD m_threadID;
 
+    //private methods
+  private:
     static DWORD WINAPI renderBootstrap( LPVOID lpParam );
     void RenderScene_Forward( float dt, GFXHND viewport = -1 );
     void RenderScene_Deferred( float dt, GFXHND viewport = -1 );
+
+    //preparing for rendering
+    void PrepFor3DModels( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
+    void PrepForLightPass( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
+    void PrepForPrimitives( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
+    void PrepForDebugRender( );
+    void PrepForFinalOutput( );
+    void PrepForUI( );
+
+    //rendering funcs
+    void Render3DModel( DRAWHND handle );
+    void RenderPointLight( DRAWHND handle, Camera &currentCamera );
+    void RenderDirectionalLight( DRAWHND handle, Camera &currentcamera );
+    void RenderPrimitive( DRAWHND handle );
+    void RenderDebugPoints( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj, Camera &currentCamera );
+    void RenderDebugLines( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj, Camera &currentCamera );
 
     //privates members
   private:
@@ -92,6 +110,8 @@ namespace ursine
 
     bool m_renderUI;
     bool m_profile;
+    bool m_debug;
+    bool m_ready = false;
     std::vector<DRAWHND> m_drawList;
     unsigned m_drawCount;
 

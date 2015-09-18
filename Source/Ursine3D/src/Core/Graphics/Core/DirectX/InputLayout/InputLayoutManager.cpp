@@ -34,8 +34,8 @@ namespace ursine
           RELEASE_RESOURCE(m_layoutArray[x]);
         }
       }
-      m_device = NULL;
-      m_deviceContext = NULL;
+      m_device = nullptr;
+      m_deviceContext = nullptr;
     }
 
     void InputLayoutManager::SetInputLayout(SHADER_TYPES type)

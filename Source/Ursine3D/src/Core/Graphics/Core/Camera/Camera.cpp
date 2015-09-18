@@ -20,9 +20,16 @@ DirectX::XMMATRIX Camera::GetViewMatrix( )
   return DirectX::XMMatrixLookAtLH( m_position, DirectX::XMVectorAdd( m_position, m_look ), m_up );
 }
 
-DirectX::XMMATRIX Camera::GetProjMatrix( )
+DirectX::XMMATRIX Camera::GetProjMatrix(float width, float height)
 {
-  return DirectX::XMMatrixIdentity( );
+  if (m_projMode == Camera::ProjectionMode::PROJECTION_PERSPECTIVE)
+  {
+    return DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f, width / height, 0.0001f, 1000.f );
+  }
+  else
+  {
+    return DirectX::XMMatrixOrthographicLH(width, height, 0.0001f, 1000.f );
+  }
 }
 
 DirectX::XMFLOAT4 Camera::GetPosition( )

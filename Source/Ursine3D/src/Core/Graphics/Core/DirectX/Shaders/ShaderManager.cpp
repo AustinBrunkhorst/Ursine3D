@@ -114,9 +114,6 @@ namespace ursine
         break;
       }
 
-
-
-
       //update time, filename
       shader->timestamps[ shaderType ] = time;
       shader->filenames[ shaderType ].clear( );
@@ -161,8 +158,8 @@ namespace ursine
         }
       }
 
-      m_device = NULL;
-      m_deviceContext = NULL;
+      m_device = nullptr;
+      m_deviceContext = nullptr;
     }
 
     void ShaderManager::BindShader( SHADER_TYPES shader )

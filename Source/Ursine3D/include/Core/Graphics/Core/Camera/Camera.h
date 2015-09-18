@@ -36,7 +36,7 @@ public:
 
   //getting matrices
   DirectX::XMMATRIX GetViewMatrix( );
-  DirectX::XMMATRIX GetProjMatrix( );
+  DirectX::XMMATRIX GetProjMatrix( float width, float height );
 
   //setting position
   DirectX::XMFLOAT4 GetPosition( );

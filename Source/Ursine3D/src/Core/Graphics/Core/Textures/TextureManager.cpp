@@ -118,7 +118,7 @@ namespace ursine
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
     //Create the texture sampler state.
-    result = device->CreateSamplerState( &samplerDesc, &m_samplerStateList_[ SAMPLER_WRAP_TEX ] );
+    result = device->CreateSamplerState( &samplerDesc, &m_samplerStateList_[ SAMPLER_NO_FILTERING ] );
     UAssert( result == S_OK, "Failed to make sampler state!" );
   }
 
@@ -136,6 +136,9 @@ namespace ursine
     {
       RELEASE_RESOURCE( m_samplerStateList_[ x ] )
     }
+
+    m_device = nullptr;
+    m_deviceContext = nullptr;
   }
 
   void TextureManager::MapTextureByName( std::string name, unsigned int bufferIndex )

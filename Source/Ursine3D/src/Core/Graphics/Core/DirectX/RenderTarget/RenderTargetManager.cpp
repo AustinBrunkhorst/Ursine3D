@@ -181,8 +181,6 @@ namespace ursine
           RELEASE_RESOURCE( m_renderTargets[ x ]->RenderTargetView );
           RELEASE_RESOURCE( m_renderTargets[ x ]->ShaderMap );
           RELEASE_RESOURCE( m_renderTargets[ x ]->TextureMap );
-
-          delete m_renderTargets[ x ];
         }
       }
 
@@ -194,8 +192,17 @@ namespace ursine
       CreateRenderTarget( RENDER_TARGET_DEFERRED_DEPTH, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
 
       CreateRenderTarget( RENDER_TARGET_LIGHTMAP, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
-      CreateRenderTarget( RENDER_TARGET_UI, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
+      
       CreateRenderTarget( RENDER_TARGET_DEBUG, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+    }
+
+    void RenderTargetManager::ResizeUI ( unsigned width, unsigned height )
+    {
+      RELEASE_RESOURCE( m_renderTargets[RENDER_TARGET_UI]->RenderTargetView );
+      RELEASE_RESOURCE( m_renderTargets[RENDER_TARGET_UI]->ShaderMap );
+      RELEASE_RESOURCE( m_renderTargets[RENDER_TARGET_UI]->TextureMap );
+
+      CreateRenderTarget( RENDER_TARGET_UI, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
     }
 
     void RenderTargetManager::CreateRenderTarget( RENDER_TARGETS target, DXGI_FORMAT format, unsigned width, unsigned height )

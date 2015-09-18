@@ -28,6 +28,9 @@ namespace ursine
     ResourceMgr.Uninitialize( );
     RenderableMgr.Uninitialize( );
     CameraMgr.Uninitialize( );
+    ViewportMgr.Uninitialize( );
+    UIMgr.Uninitialize( );
+    DrawingMgr.Uninitialize( );
 
     //uninit graphics as a whole
     m_privates->gfxCore_->Uninitialize( );

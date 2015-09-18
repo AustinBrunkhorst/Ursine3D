@@ -32,7 +32,7 @@ namespace ursine
     {
     public:
       //initialize everything
-      void Initialize( const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen );
+      void Initialize( const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug );
       void Uninitialize( );
 
       //methods
@@ -71,9 +71,12 @@ namespace ursine
       void ResizeDX( int width, int height );
 
     private:
+      bool m_debug;
+
       ID3D11Device *m_device;
       ID3D11DeviceContext *m_deviceContext;
       IDXGISwapChain *m_swapChain;
+      ID3D11Debug *m_debugInterface;
 
       BlendStateManager *m_blendManager;
       DepthStateManager *m_depthStateManager;
