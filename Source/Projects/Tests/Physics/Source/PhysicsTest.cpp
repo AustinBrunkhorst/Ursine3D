@@ -375,7 +375,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 
 	slerpT = math::Clamp( slerpT, 0.0f, 1.0f );
 
-	SQuat result = quat0.Slerp(quat1, ease::CubicIn(slerpT));
+	SQuat result = quat0.Slerp(quat1, ease::CircularInOut(slerpT));
 	SMat4 mat(result);
 
 	Model3D &modelCube = gfx->RenderableMgr.GetModel3D(cube);
