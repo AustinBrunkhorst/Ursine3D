@@ -31,6 +31,9 @@ enum SHADER_TYPES
   SHADER_POINT_LIGHT,         //this order is important, DO NOT SWAP
   SHADER_DIRECTIONAL_LIGHT,
 
+  //billboarded sprites don't care about lighting for now...
+  SHADER_BILLBOARD2D,
+
   //and past this is debug!
   SHADER_PRIMITIVE,
 

@@ -5,10 +5,17 @@ namespace ursine
 {
   void RenderableManager::Initialize( )
   {
+    m_currentRenderableModel3D.resize( MAX_RENDERABLES );
+    m_currentRenderableDirectionalLight.resize( MAX_RENDERABLES );
+    m_currentRenderablePointLight.resize( MAX_RENDERABLES );
+    m_currentRenderablePrimitives.resize( MAX_RENDERABLES );
+    m_currentRenderableBillboards.resize( MAX_RENDERABLES );
+
     m_renderableModel3D.resize( MAX_RENDERABLES );
     m_renderableDirectionalLight.resize( MAX_RENDERABLES );
     m_renderablePointLight.resize( MAX_RENDERABLES );
     m_renderablePrimitives.resize( MAX_RENDERABLES );
+    m_renderableBillboards.resize( MAX_RENDERABLES );
 
     m_handleList.resize( RENDERABLE_TYPE_COUNT );
 
@@ -85,5 +92,14 @@ namespace ursine
     }
 
     handle = 0;
+  }
+
+  void RenderableManager::CacheFrame ( )
+  {
+    m_renderableModel3D = m_currentRenderableModel3D;
+    m_renderableDirectionalLight = m_currentRenderableDirectionalLight;
+    m_renderablePointLight = m_currentRenderablePointLight;
+    m_renderablePrimitives = m_currentRenderablePrimitives;
+    m_renderableBillboards = m_currentRenderableBillboards;
   }
 }

@@ -66,7 +66,6 @@ namespace ursine
         SetBuffer( shader, bufferIndex, m_bufferArray[ buffer ] );
       }
     private:
-      //methods
 
       //sets the buffer for a given shader
       void SetBuffer( SHADERDEF shader, unsigned bufferIndex, ID3D11Buffer *buffer );

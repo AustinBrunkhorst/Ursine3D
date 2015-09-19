@@ -27,6 +27,8 @@ enum BUFFER_LIST
   BUFFER_INV_PROJ,
   BUFFER_PRIM_COLOR,
   BUFFER_POINT_GEOM,
+  BUFFER_BILLBOARDSPRITE,
+
   BUFFER_COUNT
 };
 
@@ -71,4 +73,11 @@ struct PointGeometryBuffer
 {
   DirectX::XMFLOAT4 cameraPosition;
   DirectX::XMFLOAT4 cameraUp;
+};
+
+struct BillboardSpriteBuffer
+{
+  float width;
+  float height;
+  DirectX::XMFLOAT2 buffer;
 };

@@ -145,7 +145,7 @@ namespace ursine
     {
       for (int x = RENDER_TARGET_LIGHTMAP; x <= RENDER_TARGET_DEFERRED_COLOR; ++x)
       {
-        if (m_renderTargets[ x ] != NULL)
+        if (m_renderTargets[ x ] != nullptr)
         {
           RELEASE_RESOURCE( m_renderTargets[ x ]->RenderTargetView );
           RELEASE_RESOURCE( m_renderTargets[ x ]->ShaderMap );
@@ -174,26 +174,11 @@ namespace ursine
 
     void RenderTargetManager::ResizeEngineTargets ( unsigned width, unsigned height )
     {
-      for (int x = 1; x <= RENDER_TARGET_DEBUG; ++x)
-      {
-        if (m_renderTargets[ x ] != NULL)
-        {
-          RELEASE_RESOURCE( m_renderTargets[ x ]->RenderTargetView );
-          RELEASE_RESOURCE( m_renderTargets[ x ]->ShaderMap );
-          RELEASE_RESOURCE( m_renderTargets[ x ]->TextureMap );
-        }
-      }
+      RELEASE_RESOURCE( m_renderTargets[ RENDER_TARGET_DEBUG ]->RenderTargetView );
+      RELEASE_RESOURCE( m_renderTargets[ RENDER_TARGET_DEBUG ]->ShaderMap );
+      RELEASE_RESOURCE( m_renderTargets[ RENDER_TARGET_DEBUG ]->TextureMap );
 
-      //create the reserved render targets
-      CreateRenderTarget( RENDER_TARGET_DEFERRED_COLOR, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
-
-      //these NEED to be 64 bit floats.
-      CreateRenderTarget( RENDER_TARGET_DEFERRED_NORMAL, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
-      CreateRenderTarget( RENDER_TARGET_DEFERRED_DEPTH, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
-
-      CreateRenderTarget( RENDER_TARGET_LIGHTMAP, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
-      
-      CreateRenderTarget( RENDER_TARGET_DEBUG, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+      CreateRenderTarget( RENDER_TARGET_DEBUG, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
     }
 
     void RenderTargetManager::ResizeUI ( unsigned width, unsigned height )

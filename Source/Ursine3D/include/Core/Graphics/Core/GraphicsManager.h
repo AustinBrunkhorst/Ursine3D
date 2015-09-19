@@ -42,11 +42,15 @@ namespace ursine
 
     void Render( GFXHND handle );
 
+    void StartFrame( );
+
     void BeginScene( );
 
     void RenderScene( float dt, GFXHND viewport = -1 );
 
     void EndScene( );
+
+    void EndFrame( );
 
     DXCore::DirectXCore *GetDXCore( );
 

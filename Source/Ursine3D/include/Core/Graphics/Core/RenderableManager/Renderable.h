@@ -75,11 +75,17 @@ namespace ursine
   public:
     const char *GetTextureName( void );
     const GFXHND &GetTextureID( void );
+
     void SetTexture( std::string texName );
+    
+    void SetDimensions( float width, float height );
+    void GetDimensions( float &width, float &height );
 
     Billboard2D( void );
 
   private:
+    float m_width;
+    float m_height;
     std::string TextureName_;
   };
 

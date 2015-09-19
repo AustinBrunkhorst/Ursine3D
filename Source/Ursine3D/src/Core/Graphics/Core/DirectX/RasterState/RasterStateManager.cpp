@@ -33,7 +33,7 @@ namespace ursine
       rasterDesc.SlopeScaledDepthBias = 0.0f;
 
       //Create the rasterizer state from the description we just filled out.
-      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_FRONTFACE_CULL ] );
+      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_SOLID_FRONTCULL ] );
       UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
 
       ///////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace ursine
       rasterDesc.SlopeScaledDepthBias = 0.0f;
 
       //Create the rasterizer state from the description we just filled out.
-      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_BACKFACE_CULL ] );
+      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_SOLID_BACKCULL ] );
       UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
 
       ///////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ namespace ursine
       rasterDesc.SlopeScaledDepthBias = 0.0f;
 
       //Create the rasterizer state from the description we just filled out.
-      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_NO_CULL ] );
+      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_SOLID_NOCULL ] );
       UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
 
 
@@ -88,7 +88,7 @@ namespace ursine
       rasterDesc.SlopeScaledDepthBias = 0.0f;
 
       //Create the rasterizer state from the description we just filled out.
-      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_BACKFACE_CULL ] );
+      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_BACKCULL ] );
       UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
 
       ///////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ namespace ursine
       rasterDesc.SlopeScaledDepthBias = 0.0f;
 
       //Create the rasterizer state from the description we just filled out.
-      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_FRONTFACE_CULL ] );
+      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_FRONTCULL ] );
       UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
 
       ///////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ namespace ursine
       rasterDesc.SlopeScaledDepthBias = 0.0f;
 
       //Create the rasterizer state from the description we just filled out.
-      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_NO_CULL ] );
+      result = m_device->CreateRasterizerState( &rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_NOCULL ] );
       UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
 
       ///////////////////////////////////////////////////////////////

@@ -128,7 +128,7 @@ namespace ursine
       m_device = device;
       m_deviceContext = context;
 
-      m_currentShader = SHADER_COUNT;
+      m_currentState = SHADER_COUNT;
 
       m_shaderArray.resize( SHADER_COUNT );
 
@@ -164,10 +164,10 @@ namespace ursine
 
     void ShaderManager::BindShader( SHADER_TYPES shader )
     {
-      if (m_currentShader == shader)
+      if (m_currentState == shader)
         return;
 
-      m_currentShader = shader;
+      m_currentState = shader;
 
       //if a given shader exists, bind it
       if (m_shaderArray[ shader ]->vs != NULL) m_deviceContext->VSSetShader( m_shaderArray[ shader ]->vs, NULL, 0 );

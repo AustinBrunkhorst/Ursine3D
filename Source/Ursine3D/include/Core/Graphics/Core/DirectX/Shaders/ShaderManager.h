@@ -70,7 +70,7 @@ namespace ursine
       ID3D11Device *m_device;
       ID3D11DeviceContext *m_deviceContext;
 
-      SHADER_TYPES m_currentShader;
+      SHADER_TYPES m_currentState;
       std::vector<Shader*> m_shaderArray;
     };
   }
