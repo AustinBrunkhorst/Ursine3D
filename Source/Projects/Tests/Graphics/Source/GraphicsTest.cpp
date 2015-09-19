@@ -197,8 +197,9 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       cam = gfx->CameraMgr.AddCamera( );
 
       gfx->ViewportMgr.GetViewport(vp).SetViewportCamera( cam );
+	  gfx->ViewportMgr.GetViewport(vp).SetRenderMode(ViewportRenderMode::VIEWPORT_RENDER_FORWARD);
 
-      gfx->CameraMgr.GetCamera( cam ).SetPosition( DirectX::XMFLOAT4( 3, 0, -10, 1 ) );
+      gfx->CameraMgr.GetCamera( cam ).SetPosition( DirectX::XMFLOAT4( 0, 0, -10, 1 ) );
       gfx->CameraMgr.GetCamera( cam ).LookAtPoint( DirectX::XMFLOAT4( 0, 0, 0, 1 ) );
 
       gfx->DrawingMgr.SetColor( 1, 1, 1, 1 );
@@ -221,6 +222,10 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       angle += 6.28 / 10;
     }
     
+	gfx->DrawingMgr.SetSize(20);
+	gfx->DrawingMgr.SetColor(1, 0, 0, 1);
+	gfx->DrawingMgr.DrawPoint(0, 0, 0);
+
     gfx->BeginScene( );
     //gfx->RenderObject( prim );
     gfx->RenderObject( obj );
