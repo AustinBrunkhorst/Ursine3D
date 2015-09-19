@@ -500,10 +500,9 @@ namespace ursine
     textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
 
     //set culling
-    dxCore->SetRasterState( RASTER_STATE_NO_CULL );
+    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
 
     bufferManager->MapCameraBuffer( view, proj );
-    bufferManager->MapCameraBuffer( view, proj, GEOMETRY_SHADER );
   }
 
   void GraphicsCore::PrepForLightPass ( DirectX::XMMATRIX& view, DirectX::XMMATRIX& proj )
@@ -586,7 +585,6 @@ namespace ursine
   {
     //map transform
     bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ) );
-    bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ), GEOMETRY_SHADER );
 
     //set model
     modelManager->BindModel( handle.Model_ );

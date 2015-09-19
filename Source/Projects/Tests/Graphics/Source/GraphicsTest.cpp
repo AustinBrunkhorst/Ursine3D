@@ -87,9 +87,9 @@ void GraphicsTest::OnInitialize(void)
     config.TextureListPath_ = "Textures/";
     config.WindowWidth_ = kDefaultWindowWidth;
     config.WindowHeight_ = kDefaultWindowHeight;
-    config.m_renderUI = false;
+    config.m_renderUI = true;
     config.Profile_ = false;
-    config.debug = true;
+    config.debug = false;
 
     gfxManager->StartGraphics( config );
 
@@ -169,6 +169,7 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       
       vp = gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
       gfx->ViewportMgr.GetViewport( vp ).SetPosition( 0, 0 );
+      //gfx->ViewportMgr.GetViewport( vp ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
       cam = gfx->CameraMgr.AddCamera( );
 
       gfx->ViewportMgr.GetViewport(vp).SetViewportCamera( cam );
