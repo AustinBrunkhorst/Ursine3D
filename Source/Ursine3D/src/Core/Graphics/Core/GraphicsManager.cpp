@@ -78,7 +78,7 @@ namespace ursine
       shaderManager->LoadShader( SHADER_PRIMITIVE, "PrimitiveShader" );
       shaderManager->LoadShader( SHADER_POINT, "PointShader" );
       shaderManager->LoadShader( SHADER_SHADOW, "ShadowMap" );
-      shaderManager->LoadShader( SHADER_BILLBOARDED_SPRITE, "BillboardedSprite" );
+      shaderManager->LoadShader( SHADER_BILLBOARD2D, "BillboardedSprite" );
     }
 
     LogMessage( "Initialize Buffers", 1 );
@@ -159,7 +159,7 @@ namespace ursine
       drawCall.Model_ = modelManager->GetModelIDByName( current->GetModelName( ) );
       drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
     }
-    break;
+      break;
     //directional light
     case RENDERABLE_DIRECTION_LIGHT:
     {
@@ -170,7 +170,7 @@ namespace ursine
 
       drawCall.Shader_ = SHADER_DIRECTIONAL_LIGHT;
     }
-    break;
+      break;
     //point light
     case RENDERABLE_POINT_LIGHT:
     {
@@ -181,7 +181,7 @@ namespace ursine
 
       drawCall.Shader_ = SHADER_POINT_LIGHT;
     }
-    break;
+      break;
     case RENDERABLE_PRIMITIVE:
     {
       Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
@@ -192,7 +192,18 @@ namespace ursine
       drawCall.Shader_ = SHADER_PRIMITIVE;
       drawCall.debug_ = 1;
     }
-    break;
+      break;
+    case RENDERABLE_BILLBOARD2D:
+    {
+      Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
+
+      drawCall.Index_ = render->Index_;
+      drawCall.Type_ = render->Type_;
+      drawCall.Material_ = textureManager->GetTextureIDByName( current->GetTextureName( ) );
+
+      drawCall.Shader_ = SHADER_BILLBOARD2D;
+    }
+      break;
     default:
       break;
     }
@@ -304,12 +315,12 @@ namespace ursine
 
     //render 3d models deferred
     dxCore->SetBlendState( BLEND_STATE_DEFAULT );
-    dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
     shaderManager->BindShader( SHADER_DIFFUSE );
     layoutManager->SetInputLayout( SHADER_DIFFUSE );
     dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
     textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
-    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
     dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
 
     while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
@@ -335,9 +346,9 @@ namespace ursine
 
     //debug 
     dxCore->SetBlendState( BLEND_STATE_NONE );
-    dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
 
-    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
     RenderDebugPoints( view, proj, currentCamera );
 
     dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
@@ -404,7 +415,7 @@ namespace ursine
 
     //debug 
     PrepForDebugRender( );
-    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
     RenderDebugPoints( view, proj, currentCamera );
     dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
     RenderDebugLines( view, proj, currentCamera );
@@ -486,7 +497,7 @@ namespace ursine
   void GraphicsCore::PrepFor3DModels ( DirectX::XMMATRIX& view, DirectX::XMMATRIX& proj )
   {
     dxCore->SetBlendState( BLEND_STATE_DEFAULT );
-    dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
 
     //deferred shading
     dxCore->GetRenderTargetMgr( )->SetDeferredTargets( dxCore->GetDepthMgr( )->GetDepthStencilView( DEPTH_STENCIL_MAIN ) );
@@ -500,7 +511,7 @@ namespace ursine
     textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
 
     //set culling
-    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
     bufferManager->MapCameraBuffer( view, proj );
   }
@@ -510,7 +521,7 @@ namespace ursine
     gfxProfiler->Stamp( PROFILE_DEFERRED );
     dxCore->SetRenderTarget( RENDER_TARGET_LIGHTMAP );
     dxCore->SetBlendState( BLEND_STATE_ADDITIVE );
-    dxCore->SetDepthState( DEPTH_STATE_NO_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_NODEPTH_NOSTENCIL );
 
     bufferManager->MapCameraBuffer( view, proj );
 
@@ -525,7 +536,7 @@ namespace ursine
 
     bufferManager->MapCameraBuffer( view, proj );
     dxCore->SetBlendState( BLEND_STATE_DEFAULT );
-    dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
     dxCore->SetRenderTarget( RENDER_TARGET_DEBUG );
     shaderManager->BindShader( SHADER_PRIMITIVE );
     layoutManager->SetInputLayout( SHADER_PRIMITIVE );
@@ -536,7 +547,7 @@ namespace ursine
     gfxProfiler->Stamp( PROFILE_PRIMITIVES );
 
     dxCore->SetBlendState( BLEND_STATE_NONE );
-    dxCore->SetDepthState( DEPTH_STATE_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
     dxCore->SetRenderTarget( RENDER_TARGET_DEBUG );
     shaderManager->BindShader( SHADER_PRIMITIVE );
     layoutManager->SetInputLayout( SHADER_PRIMITIVE );
@@ -548,9 +559,9 @@ namespace ursine
   {
     gfxProfiler->Stamp( PROFILE_DEBUG );
 
-    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
     dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-    dxCore->SetDepthState( DEPTH_STATE_NO_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_NODEPTH_NOSTENCIL );
     dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
     dxCore->SetBlendState( BLEND_STATE_DEFAULT );
 
@@ -567,7 +578,7 @@ namespace ursine
     dxCore->SetBlendState( BLEND_STATE_DEFAULT );
     dxCore->SetRasterState( RASTER_STATE_UI );
     dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-    dxCore->SetDepthState( DEPTH_STATE_NO_DEPTH_CHECK );
+    dxCore->SetDepthState( DEPTH_STATE_NODEPTH_NOSTENCIL );
     dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
     bufferManager->MapCameraBuffer( DirectX::XMMatrixIdentity( ), DirectX::XMMatrixIdentity( ) );
 
@@ -623,9 +634,9 @@ namespace ursine
 
     //@Matt do not forget to look at this
     if (radiusSqr > fabs( distance ))
-      dxCore->SetRasterState( RASTER_STATE_FRONTFACE_CULL );
+      dxCore->SetRasterState( RASTER_STATE_SOLID_FRONTCULL );
     else
-      dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+      dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
     //set buffer stuff
     bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( radius, radius, radius ) * DirectX::XMMatrixTranslation( lightP.x, lightP.y, lightP.z ) );
@@ -651,7 +662,7 @@ namespace ursine
     DirectionalLight &dl = renderableManager->m_renderableDirectionalLight[ handle.Index_ ];
     shaderManager->BindShader( SHADER_DIRECTIONAL_LIGHT );
     layoutManager->SetInputLayout( SHADER_DIRECTIONAL_LIGHT );
-    dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
     bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( -2, 2, 1 ) );
     bufferManager->MapCameraBuffer( DirectX::XMMatrixIdentity( ), DirectX::XMMatrixIdentity( ) );
@@ -675,12 +686,12 @@ namespace ursine
     //set data if it is wireframe or not
     if (prim.GetWireFrameMode( ) == true)
     {
-      dxCore->SetRasterState( RASTER_STATE_WIREFRAME_NO_CULL );
+      dxCore->SetRasterState( RASTER_STATE_WIREFRAME_NOCULL );
       dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP );
     }
     else
     {
-      dxCore->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+      dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
       dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
     }
 

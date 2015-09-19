@@ -32,7 +32,7 @@ enum SHADER_TYPES
   SHADER_DIRECTIONAL_LIGHT,
 
   //billboarded sprites don't care about lighting for now...
-  SHADER_BILLBOARDED_SPRITE,
+  SHADER_BILLBOARD2D,
 
   //and past this is debug!
   SHADER_PRIMITIVE,

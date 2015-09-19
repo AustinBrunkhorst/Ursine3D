@@ -88,6 +88,17 @@ namespace ursine
       return m_currentRenderablePrimitives[ render->Index_ ];
     }
 
+    template<>
+    Billboard2D &GetRenderable<Billboard2D>( GFXHND handle )
+    {
+      _RENDERABLEHND *render = HND_RENDER( handle );
+
+      UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
+      UAssert( render->Type_ == RENDERABLE_PRIMITIVE, "Attempted to use invalid handle to get a primitive!" );
+
+      return m_currentRenderableBillboards[ render->Index_ ];
+    }
+
   private:
     void CacheFrame( );
 
@@ -97,12 +108,14 @@ namespace ursine
     std::vector<DirectionalLight> m_currentRenderableDirectionalLight;
     std::vector<PointLight>       m_currentRenderablePointLight;
     std::vector<Primitive>        m_currentRenderablePrimitives;
+    std::vector<Billboard2D>      m_currentRenderableBillboards;
 
     //cahced data used to render frame N while updating frame N + 1
-    std::vector<Model3D> m_renderableModel3D;
+    std::vector<Model3D>          m_renderableModel3D;
     std::vector<DirectionalLight> m_renderableDirectionalLight;
-    std::vector<PointLight> m_renderablePointLight;
-    std::vector<Primitive> m_renderablePrimitives;
+    std::vector<PointLight>       m_renderablePointLight;
+    std::vector<Primitive>        m_renderablePrimitives;
+    std::vector<Billboard2D>      m_renderableBillboards;
 
     //all the free handles
     std::vector<std::list<unsigned>*> m_handleList;

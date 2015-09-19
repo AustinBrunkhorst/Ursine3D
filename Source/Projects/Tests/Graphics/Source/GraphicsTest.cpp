@@ -15,8 +15,8 @@ namespace
     //const auto kGraphicsTestUIEntryPoint = "file:///Assets/Test.html";
     const auto kGraphicsTestUIEntryPoint = "www.google.com";
 
-    const auto kDefaultWindowWidth = 1280;
-    const auto kDefaultWindowHeight = 720;
+    const auto kDefaultWindowWidth = 1920;
+    const auto kDefaultWindowHeight = 1080;
 
     void onResize(int width, int height)
     {
@@ -87,7 +87,7 @@ void GraphicsTest::OnInitialize(void)
     config.TextureListPath_ = "Textures/";
     config.WindowWidth_ = kDefaultWindowWidth;
     config.WindowHeight_ = kDefaultWindowHeight;
-    config.m_renderUI = true;
+    config.m_renderUI = false;
     config.Profile_ = false;
     config.debug = false;
 
@@ -134,8 +134,24 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
     static GFXHND prim, obj, floor, point, skybox;
     static GFXHND vp;
     static GFXHND cam;
+    static GFXHND lights[ 10 ];
+    static GFXHND cubes[ 10 ];
     static bool ran = false;
     static float dt = 0;
+
+    DirectX::XMFLOAT3 colors[ 10 ] = {
+      DirectX::XMFLOAT3(0, 0, 1),
+      DirectX::XMFLOAT3(0, 1, 0),
+      DirectX::XMFLOAT3(0, 1, 1),
+      DirectX::XMFLOAT3(1, 0, 0),
+      DirectX::XMFLOAT3(1, 0, 1),
+      DirectX::XMFLOAT3(1, 1, 0),
+      DirectX::XMFLOAT3(1, 1, 1),
+      DirectX::XMFLOAT3(0, 0, 1),
+      DirectX::XMFLOAT3(0, 1, 0),
+      DirectX::XMFLOAT3(1, 0, 0),
+    };
+
     dt += 0.016;
 
     if(!ran)
@@ -147,17 +163,25 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       floor = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
       point = gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
 
-      gfx->RenderableMgr.GetModel3D( obj ).SetModel( "Cube" );
+      for (int x = 0; x < 10; ++x)
+      {
+        lights[ x ] = gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+        gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetRadius( 5 );
+        gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetColor( colors[x] );
+
+        cubes[x] = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+      }
+
+      gfx->RenderableMgr.GetModel3D( obj ).SetModel( "Pedestal" );
       gfx->RenderableMgr.GetModel3D( floor ).SetModel( "Cube" );
-      gfx->RenderableMgr.GetModel3D( obj ).SetModel( "Cube" );
       gfx->RenderableMgr.GetModel3D( floor ).SetModel( "Cube" );
       gfx->RenderableMgr.GetModel3D( skybox ).SetModel( "Skybox" );
-      gfx->RenderableMgr.GetModel3D( obj ).SetWorldMatrix( DirectX::XMMatrixScaling( 0.98f, 0.98f, 0.98f ) );
+      
       gfx->RenderableMgr.GetModel3D( floor ).SetWorldMatrix( DirectX::XMMatrixScaling( 10, 1, 10 ) * DirectX::XMMatrixTranslation( 0, -1, 0 ) );
       gfx->RenderableMgr.GetModel3D( skybox ).SetWorldMatrix( DirectX::XMMatrixScaling( 20.f, 20.f, 20.f ) );
 
       gfx->RenderableMgr.GetPointLight( point ).SetPosition( 1, 1, -1 );
-      gfx->RenderableMgr.GetPointLight( point ).SetRadius( 30 );
+      gfx->RenderableMgr.GetPointLight( point ).SetRadius( 5 );
       gfx->RenderableMgr.GetPointLight( point ).SetColor( 1, 1, 1 );
 
       gfx->RenderableMgr.GetPrimitive( prim ).SetType( ursine::Primitive::PRIM_SPHERE );
@@ -181,19 +205,34 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       gfx->DrawingMgr.SetSize( 10 );
     }
 
-    
+    gfx->RenderableMgr.GetModel3D( obj ).SetWorldMatrix( DirectX::XMMatrixRotationRollPitchYaw( 3.14f / 2, dt, 0 ) * DirectX::XMMatrixScaling( 0.0025, 0.0025, 0.0025 ) * DirectX::XMMatrixTranslation( 0, 1.1, 0 ) );
 
-    gfx->RenderableMgr.GetPointLight( point ).SetPosition(cosf(dt * 2), 1 + cosf( dt * 2 ) * 0.25, sinf(dt * 2) );
-    gfx->RenderableMgr.GetPrimitive( prim ).SetWorldMatrix( DirectX::XMMatrixRotationRollPitchYaw( cosf( dt ), sinf( dt ), cosf( dt ) ) );
-    
-    gfx->DrawingMgr.DrawPoint( cosf( dt * 2 ), 1 + cosf( dt * 2 ) * 0.25, sinf( dt * 2 ) );
+    float angle = 0;
+    for (int x = 0; x < 10; ++x)
+    {
+      float radius = 5 + 3 * cos( dt );
+      gfx->RenderableMgr.GetPointLight( lights[x] ).SetPosition( cosf( (dt + angle) ) * radius, 1 + cosf( (dt + angle) * 2 ) * 0.75, sinf( (dt + angle) ) * radius );
+      gfx->DrawingMgr.SetColor( colors[ x ].x, colors[ x ].y, colors[ x ].z, 1 );
+      gfx->DrawingMgr.DrawPoint( cosf( (dt + angle) ) * radius, 1 + cosf( (dt + angle) * 2 ) * 0.75, sinf( (dt + angle) ) * radius );
 
+      gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetRadius( 6 );
+
+      gfx->RenderableMgr.GetModel3D( cubes[ x ] ).SetWorldMatrix( DirectX::XMMatrixRotationRollPitchYaw( cos( angle - dt ), sin( angle - dt ), -cosf( angle - dt ) ) * DirectX::XMMatrixTranslation( cosf( -angle - dt ) * radius, 2 + cosf( (dt + angle) * 2 ), sinf( -angle - dt ) * radius ) );
+      angle += 6.28 / 10;
+    }
+    
     gfx->BeginScene( );
     //gfx->RenderObject( prim );
     gfx->RenderObject( obj );
     gfx->RenderObject( floor );
-    gfx->RenderObject( point );
+    //gfx->RenderObject( point );
     gfx->RenderObject( skybox );
+
+    for (int x = 0; x < 10; ++x)
+    {
+      gfx->RenderObject( lights[ x ] );
+      gfx->RenderObject( cubes[ x ] );
+    }
 
     gfx->RenderScene( 0.016f, vp ); //very back
     gfx->EndScene( );

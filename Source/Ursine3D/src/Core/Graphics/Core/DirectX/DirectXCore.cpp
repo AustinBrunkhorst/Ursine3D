@@ -159,7 +159,7 @@ namespace ursine
       /////////////////////////////////////////////////////////////////
       // CREATING RASTER STATES ///////////////////////////////////////
       m_rasterStateManager->Initialize( m_device, m_deviceContext );
-      m_rasterStateManager->SetRasterState( RASTER_STATE_BACKFACE_CULL );
+      m_rasterStateManager->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
       /////////////////////////////////////////////////////////////////
       // CREATING BLEND STATES ////////////////////////////////////////
