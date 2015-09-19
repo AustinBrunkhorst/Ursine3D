@@ -21,6 +21,7 @@ namespace ursine
       MakeBuffer<InvProjBuffer>( BUFFER_INV_PROJ );
       MakeBuffer<PrimitiveColorBuffer>( BUFFER_PRIM_COLOR );
       MakeBuffer<PointGeometryBuffer>( BUFFER_POINT_GEOM );
+      MakeBuffer<BillboardSpriteBuffer>( BUFFER_BILLBOARDSPRITE );
     }
 
     void ShaderBufferManager::Uninitialize( )
@@ -113,6 +114,8 @@ namespace ursine
     template <typename T>
     void ShaderBufferManager::MakeBuffer( BUFFER_LIST type )
     {
+      UAssert( sizeof( T ) % 16 == 0, "Invalid constant buffer! Constant buffer must have a multiple of 16 as its byte width!" );
+
       HRESULT result;
       D3D11_BUFFER_DESC matrixBufferDesc;
 

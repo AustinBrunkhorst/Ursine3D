@@ -9,7 +9,7 @@ namespace ursine
     {
       //allocate all
       m_blendManager = new BlendStateManager;
-      m_depthStateManager = new DepthStateManager;
+      m_depthStateManager = new DepthStencilStateManager;
       m_targetManager = new RenderTargetManager;
       m_rasterStateManager = new RasterStateManager;
       m_depthStencilManager = new DepthStencilManager;
@@ -146,15 +146,15 @@ namespace ursine
 
       /////////////////////////////////////////////////////////////////
       // CREATING DEPTH STATES ////////////////////////////////////////
-      m_depthStencilManager->Initialize( m_device, m_deviceContext );
+      m_depthStateManager->Initialize( m_device, m_deviceContext );
 
       /////////////////////////////////////////////////////////////////
       // CREATING DEPTH VIEW //////////////////////////////////////////
-      m_depthStateManager->Initialize( m_device, m_deviceContext, width, height );
+      m_depthStencilManager->Initialize( m_device, m_deviceContext, width, height );
 
       /////////////////////////////////////////////////////////////////
       // SET MAIN RENDER TARGET ///////////////////////////////////////
-      m_deviceContext->OMSetRenderTargets( 1, &m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, m_depthStateManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
+      m_deviceContext->OMSetRenderTargets( 1, &m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
 
       /////////////////////////////////////////////////////////////////
       // CREATING RASTER STATES ///////////////////////////////////////
@@ -212,7 +212,7 @@ namespace ursine
 
     void DirectXCore::ClearDepthBuffers ( )
     {
-      m_deviceContext->ClearDepthStencilView( m_depthStateManager->GetDepthStencilView( DEPTH_STENCIL_MAIN ), D3D11_CLEAR_DEPTH, 1.0f, 0 );
+      m_deviceContext->ClearDepthStencilView( m_depthStencilManager->GetDepthStencilView( DEPTH_STENCIL_MAIN ), D3D11_CLEAR_DEPTH, 1.0f, 0 );
     }
 
     void DirectXCore::ClearSwapchain ( )
@@ -264,12 +264,12 @@ namespace ursine
     //set depth stencil
     void DirectXCore::SetDepthState( DEPTH_STATES dt )
     {
-      m_depthStencilManager->SetDepthState( dt );
+      m_depthStateManager->SetDepthState( dt );
     }
     //set target
     void DirectXCore::SetRenderTarget( RENDER_TARGETS rt )
     {
-      m_targetManager->SetRenderTarget( rt, m_depthStateManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
+      m_targetManager->SetRenderTarget( rt, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
     }
 
     void DirectXCore::SetRasterState( RASTER_STATES state )
@@ -283,9 +283,9 @@ namespace ursine
       return m_blendManager;
     }
     //get depth stencil
-    DepthStateManager *DirectXCore::GetDepthMgr( )
+    DepthStencilManager *DirectXCore::GetDepthMgr( )
     {
-      return m_depthStateManager;
+      return m_depthStencilManager;
     }
     //get target
     RenderTargetManager *DirectXCore::GetRenderTargetMgr( )
@@ -346,7 +346,7 @@ namespace ursine
       RELEASE_RESOURCE( pBuffer );
 
       //depth stuff
-      m_depthStateManager->Resize( width, height );
+      m_depthStencilManager->Resize( width, height );
     }
   }
 }

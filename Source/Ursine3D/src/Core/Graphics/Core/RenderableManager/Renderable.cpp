@@ -61,6 +61,8 @@ namespace ursine
   Billboard2D::Billboard2D( void )
   {
     TextureName_ = "Default";
+    m_width = 1;
+    m_height = 1;
   }
 
   const char *Billboard2D::GetTextureName( void )
@@ -71,6 +73,18 @@ namespace ursine
   void Billboard2D::SetTexture( std::string texName )
   {
     TextureName_ = texName;
+  }
+
+  void Billboard2D::SetDimensions ( float width, float height )
+  {
+    m_width = width;
+    m_height = height;
+  }
+
+  void Billboard2D::GetDimensions ( float& width, float& height )
+  {
+    width = m_width;
+    height = m_height;
   }
 
   ///////////////////////////////////////////////////////////////////

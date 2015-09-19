@@ -19,7 +19,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <Windows.h>
 #include "GfxInfo.h"
 #include "BlendStateManager.h"
-#include "DepthStateManager.h"
+#include "DepthStencilStateManager.h"
 #include "RenderTargetManager.h"
 #include "RasterStateManager.h"
 #include "DepthStencilManager.h"
@@ -73,7 +73,7 @@ namespace ursine
       //get blend
       BlendStateManager *GetBlendMgr( );
       //get depth stencil
-      DepthStateManager *GetDepthMgr( );
+      DepthStencilManager *GetDepthMgr( );
       //get target
       RenderTargetManager *GetRenderTargetMgr( );
       //get stencil manager
@@ -99,7 +99,7 @@ namespace ursine
       ID3D11Debug *m_debugInterface;
 
       BlendStateManager *m_blendManager;
-      DepthStateManager *m_depthStateManager;
+      DepthStencilStateManager *m_depthStateManager;
       DepthStencilManager *m_depthStencilManager;
       RenderTargetManager *m_targetManager;
       RasterStateManager *m_rasterStateManager;

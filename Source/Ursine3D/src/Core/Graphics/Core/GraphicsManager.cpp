@@ -78,6 +78,7 @@ namespace ursine
       shaderManager->LoadShader( SHADER_PRIMITIVE, "PrimitiveShader" );
       shaderManager->LoadShader( SHADER_POINT, "PointShader" );
       shaderManager->LoadShader( SHADER_SHADOW, "ShadowMap" );
+      shaderManager->LoadShader( SHADER_BILLBOARDED_SPRITE, "BillboardedSprite" );
     }
 
     LogMessage( "Initialize Buffers", 1 );

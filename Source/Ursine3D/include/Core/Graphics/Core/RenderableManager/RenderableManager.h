@@ -106,7 +106,6 @@ namespace ursine
 
     //all the free handles
     std::vector<std::list<unsigned>*> m_handleList;
-
   };
 }
 

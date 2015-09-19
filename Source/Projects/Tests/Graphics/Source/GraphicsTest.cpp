@@ -167,8 +167,8 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       gfx->RenderableMgr.GetPrimitive( prim ).SetDepth( 1 );
       gfx->RenderableMgr.GetPrimitive( prim ).SetColor( 1, 1, 1, 1 );
       
-      vp = gfx->ViewportMgr.CreateViewport( 400, 400 );
-      gfx->ViewportMgr.GetViewport( vp ).SetPosition( 300, 300 );
+      vp = gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
+      gfx->ViewportMgr.GetViewport( vp ).SetPosition( 0, 0 );
       cam = gfx->CameraMgr.AddCamera( );
 
       gfx->ViewportMgr.GetViewport(vp).SetViewportCamera( cam );

@@ -62,12 +62,11 @@ namespace ursine
     ID3D11Device *m_device;
     ID3D11DeviceContext *m_deviceContext;
 
-    unsigned m_modelCount;
-
-    unsigned m_currentState;
-
     std::map<std::string, ModelResource *> m_modelArray;
     std::map<std::string, unsigned> m_s2uTable;
     std::map<unsigned, ModelResource *> m_u2mTable;
+
+    unsigned m_modelCount;
+    unsigned m_currentState;
   };
 }
