@@ -12,9 +12,6 @@
 #include <SQuat.h>
 #include <SMat4.h>
 
-#include <btBulletCollisionCommon.h>
-#include <btBulletDynamicsCommon.h>
-
 using namespace ursine;
 
 namespace
@@ -26,15 +23,8 @@ namespace
     const auto kDefaultWindowHeight = 720;
 
     void onResize(int width, int height)
-    {
-        // ::OPENGL
-        /*glMatrixMode( GL_PROJECTION );
-        glLoadIdentity( );
-
-        glViewport( 0, 0, width, height );
-        glOrtho( 0, width, 0, height, -100.0f, 100.0f );*/
-
-        //ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
+	{
+        Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
     }
 }
 
@@ -56,57 +46,8 @@ PhysicsTest::~PhysicsTest(void)
 
 void PhysicsTest::OnInitialize(void)
 {
-    auto *app = Application::Instance;
-
-    app->Connect(
-        APP_UPDATE, 
-        this, 
-        &PhysicsTest::onAppUpdate 
-    );
-
-    auto *windowManager = app->GetCoreSystem<WindowManager>( );
-    auto *uiManager = app->GetCoreSystem<UIManager>( );
-
-    m_mainWindow = windowManager->AddWindow(
-        "Ursine3D Editor", 
-        { 0, 0 }, 
-        { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
-        SDL_WINDOW_RESIZABLE
-    );
-
-    m_mainWindow->Listener( this )
-        .On( WINDOW_RESIZE, &PhysicsTest::onMainWindowResize );
-  
-    m_mainWindow->SetLocationCentered( );
-    m_mainWindow->Show( true );
-
-    /////////////////////////////////////////////////////////////////
-    //make graphics manager
-    auto *gfxManager = app->GetCoreSystem<GfxAPI>( );
-
-    HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle( )));
-
-    GfxConfig config;
-    config.Fullscreen_ = false;
-    config.HandleToWindow_ = &handle;
-    config.ModelListPath_ = "Models/";
-    config.ShaderListPath_ = "SHADER_BINARY/";
-    config.TextureListPath_ = "Textures/";
-    config.WindowWidth_ = kDefaultWindowWidth;
-    config.WindowHeight_ = kDefaultWindowHeight;
-    config.m_renderUI = true;
-    config.Profile_ = false;
-
-    gfxManager->StartGraphics( config );
-
-    /* m_ui = uiManager->CreateView( m_mainWindow, kGraphicsTestUIEntryPoint );
-
-    m_ui->SetViewport( {
-        0, 0,
-        kDefaultWindowWidth, kDefaultWindowHeight
-    } );
-
-    onResize( kDefaultWindowWidth, kDefaultWindowHeight );*/
+	initGraphics();
+	initPhysics();
 }
 
 void PhysicsTest::OnRemove(void)
@@ -120,7 +61,7 @@ void PhysicsTest::OnRemove(void)
     m_mainWindow->Listener( this )
         .Off( WINDOW_RESIZE, &PhysicsTest::onMainWindowResize );
 
-    // m_ui->Close( );
+    m_ui->Close( );
 }
 
 void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
@@ -132,224 +73,10 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
     // Render Tools
     // Render Editor UIView
 
-    auto gfx = Application::Instance->GetCoreSystem<GfxAPI>( );
-
-	static GFXHND viewport;
-	static GFXHND camera;
-	static GFXHND cube;
-	// static GFXHND wirePrimitive;
-	static GFXHND floor;
-	static GFXHND light;
-	static bool run = false;
-	
-	if (!run)
-	{
-		run = true;
-
-		viewport = gfx->ViewportMgr.CreateViewport(kDefaultWindowWidth, kDefaultWindowHeight);
-		camera = gfx->CameraMgr.AddCamera();
-
-		cube = gfx->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
-		floor = gfx->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
-		// wirePrimitive = gfx->RenderableMgr.AddRenderable(RENDERABLE_PRIMITIVE);
-
-		light = gfx->RenderableMgr.AddRenderable(RENDERABLE_POINT_LIGHT);
-		gfx->ViewportMgr.GetViewport(viewport).SetViewportCamera(camera);
-		gfx->ViewportMgr.GetViewport(viewport).SetDimensions(kDefaultWindowWidth, kDefaultWindowHeight);
-
-		Model3D &MdlCube = gfx->RenderableMgr.GetModel3D(cube);
-		PointLight &pointLight = gfx->RenderableMgr.GetPointLight(light);
-		// Primitive &primitive = gfx->RenderableMgr.GetPrimitive(wirePrimitive);
-
-		//set primitive data
-		// primitive.SetRadius(3.0f);
-		// primitive.SetType(Primitive::PRIM_SPHERE);	//what type of shape do you want? sphere? capsule? cube? plane?
-
-		gfx->RenderableMgr.GetModel3D(floor).SetWorldMatrix(DirectX::XMMatrixScaling(10, 1, 10) * DirectX::XMMatrixTranslation(0, -2, 0));
-
-		//set obj data here
-		MdlCube.SetModel("Cube");
-		MdlCube.SetMaterial("Cube");
-		MdlCube.SetWorldMatrix(DirectX::XMMatrixIdentity());
-
-		pointLight.SetPosition(0, 2, -2);
-		pointLight.SetRadius(40);
-
-
-
-
-		///-----includes_end-----
-
-		int i;
-		///-----initialization_start-----
-
-		///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
-		btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
-
-		///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-		btCollisionDispatcher* dispatcher = new	btCollisionDispatcher(collisionConfiguration);
-
-		///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-		btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
-
-		///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-		btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
-
-		btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-
-		dynamicsWorld->setGravity(btVector3(0, -10, 0));
-
-		///-----initialization_end-----
-
-		///create a few basic rigid bodies
-		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
-
-		//keep track of the shapes, we release memory at exit.
-		//make sure to re-use collision shapes among rigid bodies whenever possible!
-		btAlignedObjectArray<btCollisionShape*> collisionShapes;
-
-		collisionShapes.push_back(groundShape);
-
-		btTransform groundTransform;
-		groundTransform.setIdentity();
-		groundTransform.setOrigin(btVector3(0, -56, 0));
-
-		{
-			btScalar mass(0.);
-
-			//rigidbody is dynamic if and only if mass is non zero, otherwise static
-			bool isDynamic = (mass != 0.f);
-
-			btVector3 localInertia(0, 0, 0);
-			if (isDynamic)
-				groundShape->calculateLocalInertia(mass, localInertia);
-
-			//using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
-			btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
-			btRigidBody* body = new btRigidBody(rbInfo);
-
-			//add the body to the dynamics world
-			dynamicsWorld->addRigidBody(body);
-		}
-
-
-		{
-			//create a dynamic rigidbody
-
-			//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			btCollisionShape* colShape = new btSphereShape(btScalar(1.));
-			collisionShapes.push_back(colShape);
-
-			/// Create Dynamic Objects
-			btTransform startTransform;
-			startTransform.setIdentity();
-
-			btScalar	mass(1.f);
-
-			//rigidbody is dynamic if and only if mass is non zero, otherwise static
-			bool isDynamic = (mass != 0.f);
-
-			btVector3 localInertia(0, 0, 0);
-			if (isDynamic)
-				colShape->calculateLocalInertia(mass, localInertia);
-
-			startTransform.setOrigin(btVector3(2, 10, 0));
-
-			//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-			btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-			btRigidBody* body = new btRigidBody(rbInfo);
-
-			dynamicsWorld->addRigidBody(body);
-		}
-
-
-
-		/// Do some simulation
-
-
-		///-----stepsimulation_start-----
-		for (i = 0; i<100; i++)
-		{
-			dynamicsWorld->stepSimulation(1.f / 60.f, 10);
-
-			//print positions of all objects
-			for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
-			{
-				btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
-				btRigidBody* body = btRigidBody::upcast(obj);
-				btTransform trans;
-				if (body && body->getMotionState())
-				{
-					body->getMotionState()->getWorldTransform(trans);
-
-				}
-				else
-				{
-					trans = obj->getWorldTransform();
-				}
-				printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
-			}
-		}
-
-		///-----stepsimulation_end-----
-
-		//cleanup in the reverse order of creation/initialization
-
-		///-----cleanup_start-----
-
-		//remove the rigidbodies from the dynamics world and delete them
-		for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
-		{
-			btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
-			btRigidBody* body = btRigidBody::upcast(obj);
-			if (body && body->getMotionState())
-			{
-				delete body->getMotionState();
-			}
-			dynamicsWorld->removeCollisionObject(obj);
-			delete obj;
-		}
-
-		//delete collision shapes
-		for (int j = 0; j<collisionShapes.size(); j++)
-		{
-			btCollisionShape* shape = collisionShapes[j];
-			collisionShapes[j] = 0;
-			delete shape;
-		}
-
-		//delete dynamics world
-		delete dynamicsWorld;
-
-		//delete solver
-		delete solver;
-
-		//delete broadphase
-		delete overlappingPairCache;
-
-		//delete dispatcher
-		delete dispatcher;
-
-		delete collisionConfiguration;
-
-		//next line is optional: it will be cleared by the destructor when the array goes out of scope
-		collisionShapes.clear();
-
-		///-----cleanup_end-----
-		printf("Press a key to exit\n");
-
-
-
-
-
-	}
-
 	static float t = 0.0f;
 	t += Application::Instance->GetDeltaTime();
 
-	Camera &cam = gfx->CameraMgr.GetCamera(camera);
+	Camera &cam = m_gfx->CameraMgr.GetCamera(m_camera);
 
 	float distance = 5.0f;
 	float x = cos(t) * distance;
@@ -376,22 +103,23 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 	SQuat result = quat0.Slerp(quat1, ease::CircularInOut(slerpT));
 	SMat4 mat(result);
 
-	Model3D &modelCube = gfx->RenderableMgr.GetModel3D(cube);
+	Model3D &modelCube = m_gfx->RenderableMgr.GetModel3D(m_cube);
 	modelCube.SetWorldMatrix(DirectX::XMMATRIX(mat.GetFloatPtr()));
 	
 
-    gfx->BeginScene( );
+	m_gfx->BeginScene( );
 	//stick draw calls here
-	gfx->RenderObject(cube);
-	gfx->RenderObject(floor);
+	m_gfx->RenderObject(m_cube);
+	m_gfx->RenderObject(m_floor);
 	// gfx->RenderObject(wirePrimitive);
-	gfx->RenderObject(light);
+	m_gfx->RenderObject(m_light);
+	m_gfx->RenderObject(m_light2);
 
 	//LAST
-	gfx->RenderScene(0.016f, viewport);
-    gfx->EndScene( );
+	m_gfx->RenderScene(0.016f, m_viewport);
+	m_gfx->EndScene( );
 
-    // m_ui->Draw( );
+    m_ui->Draw( );
 }
 
 void PhysicsTest::onMainWindowResize(EVENT_HANDLER(ursine::Window))
@@ -404,4 +132,227 @@ void PhysicsTest::onMainWindowResize(EVENT_HANDLER(ursine::Window))
         0, 0,
         args->width, args->height
     } );
+}
+
+void PhysicsTest::initGraphics(void)
+{
+	auto *app = Application::Instance;
+
+	app->Connect(
+		APP_UPDATE,
+		this,
+		&PhysicsTest::onAppUpdate
+		);
+
+	auto *windowManager = app->GetCoreSystem<WindowManager>();
+	auto *uiManager = app->GetCoreSystem<UIManager>();
+
+	m_mainWindow = windowManager->AddWindow(
+		"Ursine3D Editor",
+		{ 0, 0 },
+		{ static_cast<float>(kDefaultWindowWidth), static_cast<float>(kDefaultWindowHeight) },
+		SDL_WINDOW_RESIZABLE
+		);
+
+	m_mainWindow->Listener(this)
+		.On(WINDOW_RESIZE, &PhysicsTest::onMainWindowResize);
+
+	m_mainWindow->SetLocationCentered();
+	m_mainWindow->Show(true);
+
+	/////////////////////////////////////////////////////////////////
+	//make graphics manager
+	m_gfx = app->GetCoreSystem<GfxAPI>();
+
+	HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle()));
+
+	GfxConfig config;
+	config.Fullscreen_ = false;
+	config.HandleToWindow_ = &handle;
+	config.ModelListPath_ = "Models/";
+	config.ShaderListPath_ = "SHADER_BINARY/";
+	config.TextureListPath_ = "Textures/";
+	config.WindowWidth_ = kDefaultWindowWidth;
+	config.WindowHeight_ = kDefaultWindowHeight;
+	config.m_renderUI = false;
+	config.Profile_ = false;
+
+	m_gfx->StartGraphics(config);
+
+	m_ui = uiManager->CreateView(m_mainWindow, kGraphicsTestUIEntryPoint);
+
+	m_ui->SetViewport({
+		0, 0,
+		kDefaultWindowWidth, kDefaultWindowHeight
+	});
+
+	onResize(kDefaultWindowWidth, kDefaultWindowHeight);
+
+
+	////////////////////////////////////////////////////////////////////
+	//initialize the demo related tings
+	m_viewport = m_gfx->ViewportMgr.CreateViewport(kDefaultWindowWidth, kDefaultWindowHeight);
+	m_camera = m_gfx->CameraMgr.AddCamera();
+
+	m_cube = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
+	m_floor = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
+	// wirePrimitive = gfx->RenderableMgr.AddRenderable(RENDERABLE_PRIMITIVE);
+
+	m_light = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_POINT_LIGHT);
+	m_light2 = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_POINT_LIGHT);
+	m_gfx->ViewportMgr.GetViewport(m_viewport).SetViewportCamera(m_camera);
+	m_gfx->ViewportMgr.GetViewport(m_viewport).SetDimensions(kDefaultWindowWidth, kDefaultWindowHeight);
+
+	Model3D &MdlCube = m_gfx->RenderableMgr.GetModel3D(m_cube);
+	PointLight &pointLight = m_gfx->RenderableMgr.GetPointLight(m_light);
+	PointLight &pointLight2 = m_gfx->RenderableMgr.GetPointLight(m_light2);
+	// Primitive &primitive = gfx->RenderableMgr.GetPrimitive(wirePrimitive);
+
+	//set primitive data
+	// primitive.SetRadius(3.0f);
+	// primitive.SetType(Primitive::PRIM_SPHERE);	//what type of shape do you want? sphere? capsule? cube? plane?
+
+	m_gfx->RenderableMgr.GetModel3D(m_floor).SetWorldMatrix(DirectX::XMMatrixScaling(10, 1, 10) * DirectX::XMMatrixTranslation(0, -2, 0));
+
+	//set obj data here
+	MdlCube.SetModel("Cube");
+	MdlCube.SetMaterial("Cube");
+	MdlCube.SetWorldMatrix(DirectX::XMMatrixIdentity());
+
+	pointLight.SetPosition(0, 2, -2);
+	pointLight.SetRadius(40);
+
+	pointLight2.SetPosition(0, 2, 2);
+	pointLight2.SetRadius(40);
+}
+
+void PhysicsTest::initPhysics(void)
+{
+	int i;
+
+	m_physics = Application::Instance->GetCoreSystem<PhysicsManager>();
+
+	///create a few basic rigid bodies
+	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+
+	//keep track of the shapes, we release memory at exit.
+	//make sure to re-use collision shapes among rigid bodies whenever possible!
+	btAlignedObjectArray<btCollisionShape*> collisionShapes;
+
+	collisionShapes.push_back(groundShape);
+
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(0, -56, 0));
+
+	{
+		btScalar mass(0.);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			groundShape->calculateLocalInertia(mass, localInertia);
+
+		//using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		//add the body to the dynamics world
+		dynamicsWorld->addRigidBody(body);
+	}
+
+
+	{
+		//create a dynamic rigidbody
+
+		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+		btCollisionShape* colShape = new btSphereShape(btScalar(1.));
+		collisionShapes.push_back(colShape);
+
+		/// Create Dynamic Objects
+		btTransform startTransform;
+		startTransform.setIdentity();
+
+		btScalar	mass(1.f);
+
+		//rigidbody is dynamic if and only if mass is non zero, otherwise static
+		bool isDynamic = (mass != 0.f);
+
+		btVector3 localInertia(0, 0, 0);
+		if (isDynamic)
+			colShape->calculateLocalInertia(mass, localInertia);
+
+		startTransform.setOrigin(btVector3(2, 10, 0));
+
+		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+		btRigidBody* body = new btRigidBody(rbInfo);
+
+		dynamicsWorld->addRigidBody(body);
+	}
+
+
+
+	/// Do some simulation
+
+
+	///-----stepsimulation_start-----
+	for (i = 0; i<100; i++)
+	{
+		dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+
+		//print positions of all objects
+		for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
+		{
+			btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
+			btRigidBody* body = btRigidBody::upcast(obj);
+			btTransform trans;
+			if (body && body->getMotionState())
+			{
+				body->getMotionState()->getWorldTransform(trans);
+
+			}
+			else
+			{
+				trans = obj->getWorldTransform();
+			}
+			printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+		}
+	}
+
+	///-----stepsimulation_end-----
+
+	//cleanup in the reverse order of creation/initialization
+
+	///-----cleanup_start-----
+
+	//remove the rigidbodies from the dynamics world and delete them
+	for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+	{
+		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
+		btRigidBody* body = btRigidBody::upcast(obj);
+		if (body && body->getMotionState())
+		{
+			delete body->getMotionState();
+		}
+		dynamicsWorld->removeCollisionObject(obj);
+		delete obj;
+	}
+
+	//delete collision shapes
+	for (int j = 0; j<collisionShapes.size(); j++)
+	{
+		btCollisionShape* shape = collisionShapes[j];
+		collisionShapes[j] = 0;
+		delete shape;
+	}
+
+	
+
+	//next line is optional: it will be cleared by the destructor when the array goes out of scope
+	collisionShapes.clear();
 }
