@@ -18,6 +18,7 @@
 
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
+#include "PhysicsDebugDrawer.h"
 
 namespace ursine
 {
@@ -34,7 +35,7 @@ namespace ursine
 
 		// collision configuration contains default setup for memory,
 		// collision setup. Advanced users can create their own configuration.
-		btDefaultCollisionConfiguration *m_collisionConfig;
+		btDefaultCollisionConfiguration m_collisionConfig;
 
 		// use the default collision dispatcher. For parallel processing 
 		// you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
@@ -49,6 +50,8 @@ namespace ursine
 		btSequentialImpulseConstraintSolver *m_solver;
 
 		btDiscreteDynamicsWorld *m_dynamicsWorld;
+
+		PhysicsDebugDrawer *m_debugDrawer;
 
 	} Meta( Enable );
 }

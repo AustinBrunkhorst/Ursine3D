@@ -233,7 +233,7 @@ void PhysicsTest::initPhysics(void)
 	m_physics = Application::Instance->GetCoreSystem<PhysicsManager>();
 
 	///create a few basic rigid bodies
-	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+	/*btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
 
 	//keep track of the shapes, we release memory at exit.
 	//make sure to re-use collision shapes among rigid bodies whenever possible!
@@ -354,5 +354,5 @@ void PhysicsTest::initPhysics(void)
 	
 
 	//next line is optional: it will be cleared by the destructor when the array goes out of scope
-	collisionShapes.clear();
+	collisionShapes.clear();*/
 }

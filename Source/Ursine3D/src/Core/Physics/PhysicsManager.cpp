@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** PhysicsManager.h
+** PhysicsManager.cpp
 **
 ** Author:
 ** - Jordan Ellis - J.Ellis@digipen.edu
@@ -16,10 +16,11 @@
 
 namespace ursine
 {
+	CORE_SYSTEM_DEFINITION( PhysicsManager );
+
 	 PhysicsManager::PhysicsManager(void)
 	 {
-		m_collisionConfig = new btDefaultCollisionConfiguration( );
-		m_dispatcher = new btCollisionDispatcher( m_collisionConfig );
+		m_dispatcher = new btCollisionDispatcher( &m_collisionConfig );
 		m_overlappingPairCache = new btDbvtBroadphase( );
 		m_solver = new btSequentialImpulseConstraintSolver( );
 
@@ -27,10 +28,15 @@ namespace ursine
 					          m_dispatcher, 
 					          m_overlappingPairCache, 
 					          m_solver,
-					          m_collisionConfig
+					          &m_collisionConfig
 						  );
 
 		m_dynamicsWorld->setGravity( btVector3( 0, -10, 0 ) );
+
+		// Debug drawing
+		m_debugDrawer = new PhysicsDebugDrawer(Application::Instance->GetCoreSystem<GfxAPI>());
+		m_dynamicsWorld->setDebugDrawer(m_debugDrawer);
+		m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 	 }
 
 	 PhysicsManager::~PhysicsManager(void)
@@ -46,8 +52,6 @@ namespace ursine
 
 		 //delete dispatcher
 		 delete m_dispatcher;
-
-		 delete m_collisionConfig;
 	 }
 
 }
