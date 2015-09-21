@@ -18,6 +18,8 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "GFXAPIDefines.h"
 #include <string>
+#include "SMat4.h"
+#include "Color.h"
 
 namespace ursine
 {
@@ -38,13 +40,13 @@ namespace ursine
     {
         friend class RenderableManager;
     public:
-        const Mat4 &GetWorldMatrix( void );
-        void SetWorldMatrix( Mat4 &matrix );
+        const SMat4 &GetWorldMatrix( void );
+        void SetWorldMatrix( const SMat4 &matrix );
         
         Model( void );
     
     private:
-        Mat4 Transform_;
+        SMat4 Transform_;
     };
     
     //3d model class
@@ -120,7 +122,7 @@ namespace ursine
         bool GetWireFrameMode( );
         
         Color &GetColor( );
-        void SetColor( Color &color );
+        void SetColor( const Color &color );
         void SetColor( float r, float g, float b, float a = 1.0f );
     private:
         PRIMITIVE_TYPE Type_;
@@ -141,18 +143,18 @@ namespace ursine
     {
         friend class RenderableManager;
     public:
-        Vec3 &GetDirection( );
-        void SetDirection( Vec3 &dir );
+        SVec3 &GetDirection( );
+        void SetDirection( const SVec3 &dir );
         void SetDirection( float x, float y, float z );
         
         Color &GetColor( );
-        void SetColor( Color &color );
+        void SetColor( const Color &color );
         void SetColor( float r, float g, float b );
         
         DirectionalLight( );
     
     private:
-        Vec3 Direction_;
+        SVec3 Direction_;
         Color Color_;
     };
     
@@ -161,12 +163,12 @@ namespace ursine
     class PointLight : public Renderable
     {
     public:
-        Vec3 &GetPosition( );
-        void SetPosition( Vec3 &position );
+        SVec3 &GetPosition( );
+        void SetPosition( const SVec3 &position );
         void SetPosition( float x, float y, float z );
         
 	    Color &GetColor( );
-        void SetColor( Color &color );
+        void SetColor( const Color &color );
         void SetColor( float r, float g, float b );
         
         float &GetRadius( );
@@ -175,7 +177,7 @@ namespace ursine
         PointLight( );
     
     private:
-        Vec3 m_position;
+        SVec3 m_position;
         Color Color_;
         float Radius_;
     };

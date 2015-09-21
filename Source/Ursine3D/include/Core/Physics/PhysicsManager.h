@@ -12,7 +12,7 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
-
+/*
 #include "CoreSystem.h"
 #include "Meta.h"
 
@@ -55,3 +55,4 @@ namespace ursine
 
 	} Meta( Enable );
 }
+*/

@@ -76,15 +76,15 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 	static float t = 0.0f;
 	t += Application::Instance->GetDeltaTime();
 
-	Camera &cam = m_gfx->CameraMgr.GetCamera(m_camera);
+	/*Camera &cam = m_gfx->CameraMgr.GetCamera(m_camera);
 
 	float distance = 5.0f;
 	float x = cos(t) * distance;
 	float z = sin(t) * distance;
-	cam.SetPosition( DirectX::XMFLOAT4(x, 0.0f, z, 1.0f) );
+	cam.SetPosition( SVec3( x, 0.0f, z ) );
 
-	SVec4 dir(cam.GetPosition());
-	cam.SetLook( (-dir).ToDxVec() );
+	SVec3 dir( cam.GetPosition( ) );
+	cam.SetLook( -dir );*/
 
 	static SQuat quat0(60.0f, 40.0f, 10.0f);
 	static SQuat quat1(-60.0f, -40.0f, -20.0f);
@@ -104,7 +104,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 	SMat4 mat(result);
 
 	Model3D &modelCube = m_gfx->RenderableMgr.GetModel3D(m_cube);
-	modelCube.SetWorldMatrix(DirectX::XMMATRIX(mat.GetFloatPtr()));
+	modelCube.SetWorldMatrix( mat );
 	
 
 	m_gfx->BeginScene( );
@@ -212,12 +212,14 @@ void PhysicsTest::initGraphics(void)
 	// primitive.SetRadius(3.0f);
 	// primitive.SetType(Primitive::PRIM_SPHERE);	//what type of shape do you want? sphere? capsule? cube? plane?
 
-	m_gfx->RenderableMgr.GetModel3D(m_floor).SetWorldMatrix(DirectX::XMMatrixScaling(10, 1, 10) * DirectX::XMMatrixTranslation(0, -2, 0));
+	SMat4 trans;
+	trans.Translate( SVec3( 0, -2, 0 ) );
+	m_gfx->RenderableMgr.GetModel3D(m_floor).SetWorldMatrix(SMat4( 10, 1, 10 ) * trans);
 
 	//set obj data here
 	MdlCube.SetModel("Cube");
 	MdlCube.SetMaterial("Cube");
-	MdlCube.SetWorldMatrix(DirectX::XMMatrixIdentity());
+	MdlCube.SetWorldMatrix( SMat4::Identity( ) );
 
 	pointLight.SetPosition(0, 2, -2);
 	pointLight.SetRadius(40);
@@ -228,12 +230,12 @@ void PhysicsTest::initGraphics(void)
 
 void PhysicsTest::initPhysics(void)
 {
-	int i;
+	/*int i;
 
 	m_physics = Application::Instance->GetCoreSystem<PhysicsManager>();
 
 	///create a few basic rigid bodies
-	/*btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
 
 	//keep track of the shapes, we release memory at exit.
 	//make sure to re-use collision shapes among rigid bodies whenever possible!

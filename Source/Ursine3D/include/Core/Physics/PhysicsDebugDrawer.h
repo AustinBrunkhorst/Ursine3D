@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "LinearMath/btIDebugDraw.h"
+/*#include "LinearMath/btIDebugDraw.h"
 
 namespace ursine
 {
@@ -40,4 +40,4 @@ namespace ursine
 
 		int	getDebugMode() const override;
 	};
-}
+}*/

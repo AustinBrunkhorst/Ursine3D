@@ -12,7 +12,7 @@
 ** -------------------------------------------------------------------------*/
 
 #include "UrsinePrecompiled.h"
-
+/*
 #include "PhysicsDebugDrawer.h"
 #include "GfxAPI.h"
 
@@ -66,3 +66,4 @@ namespace ursine
 		return m_debugMode;
 	}
 }
+*/

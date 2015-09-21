@@ -20,7 +20,7 @@
 #ifdef URSINE_GRAPHICS_DIRECTX
 namespace DirectX
 {
-	// forward declaration
+	// forward Declaration
 	struct XMFLOAT4;
 }
 #endif
@@ -51,7 +51,7 @@ namespace ursine
 #ifdef URSINE_GRAPHICS_DIRECTX
 		explicit SVec4(const DirectX::XMFLOAT4 &vec);
 
-		DirectX::XMFLOAT4 ToDxVec(void) const;
+		DirectX::XMFLOAT4 ToD3D(void) const;
 #endif
 
 		// Properties

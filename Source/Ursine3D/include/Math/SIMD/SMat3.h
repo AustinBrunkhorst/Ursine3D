@@ -85,8 +85,7 @@ namespace ursine
 		void TRS(const Vec2 &translation, float degrees, const Vec2 &scale);
 		static void TRS(SMat3 &mat, const Vec2 &translation, float degrees, const Vec2 &scale);
 
-		void SetLookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
-		void SetLookAt(const SVec3 &targetDirection, const SVec3 &worldUp = SVec3::UnitY( ));
+		static SMat3 LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
 
 		void Transpose(void);
 		static void Transpose(SMat3 &mat);

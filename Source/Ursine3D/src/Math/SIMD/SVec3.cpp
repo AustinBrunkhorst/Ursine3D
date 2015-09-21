@@ -13,6 +13,10 @@
 
 #include "UrsinePrecompiled.h"
 
+#ifdef URSINE_GRAPHICS_DIRECTX
+#include "DirectXMath.h"
+#endif
+
 namespace ursine
 {
 	SVec3::SVec3(const Vec2 &value, float Z)
@@ -54,6 +58,23 @@ namespace ursine
 		m_w = 0.0f;
 #endif
 	}
+
+#ifdef URSINE_GRAPHICS_DIRECTX
+	SVec3::SVec3(const DirectX::XMFLOAT3 &vec)
+		: m_x( vec.x )
+		, m_y( vec.y )
+		, m_z( vec.z )
+	{
+#ifdef USE_SSE
+		m_w = 0.0f;
+#endif
+	}
+
+	DirectX::XMFLOAT3 SVec3::ToD3D(void) const
+	{
+		return{ m_x, m_y, m_z };
+	}
+#endif
 
 	// Public Methods
 	void SVec3::Clean(void)

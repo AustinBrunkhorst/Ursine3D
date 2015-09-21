@@ -9,6 +9,9 @@
 #include <GfxAPI.h>
 
 #include <Color.h>
+#include <DirectXMath.h>
+
+using namespace ursine;
 
 namespace
 {
@@ -167,7 +170,7 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       {
         lights[ x ] = gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
         gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetRadius( 5 );
-        gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetColor( colors[x] );
+        gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetColor( Color( SVec3( colors[x] ) ) );
 
         cubes[x] = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
       }
@@ -177,8 +180,8 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       gfx->RenderableMgr.GetModel3D( floor ).SetModel( "Cube" );
       gfx->RenderableMgr.GetModel3D( skybox ).SetModel( "Skybox" );
       
-      gfx->RenderableMgr.GetModel3D( floor ).SetWorldMatrix( DirectX::XMMatrixScaling( 10, 1, 10 ) * DirectX::XMMatrixTranslation( 0, -1, 0 ) );
-      gfx->RenderableMgr.GetModel3D( skybox ).SetWorldMatrix( DirectX::XMMatrixScaling( 20.f, 20.f, 20.f ) );
+      gfx->RenderableMgr.GetModel3D( floor ).SetWorldMatrix( SMat4( DirectX::XMMatrixScaling( 10, 1, 10 ) * DirectX::XMMatrixTranslation( 0, -1, 0 ) ) );
+      gfx->RenderableMgr.GetModel3D( skybox ).SetWorldMatrix( SMat4( DirectX::XMMatrixScaling( 20.f, 20.f, 20.f ) ) );
 
       gfx->RenderableMgr.GetPointLight( point ).SetPosition( 1, 1, -1 );
       gfx->RenderableMgr.GetPointLight( point ).SetRadius( 5 );
@@ -199,14 +202,14 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
       gfx->ViewportMgr.GetViewport(vp).SetViewportCamera( cam );
 	  gfx->ViewportMgr.GetViewport(vp).SetRenderMode(ViewportRenderMode::VIEWPORT_RENDER_FORWARD);
 
-      gfx->CameraMgr.GetCamera( cam ).SetPosition( DirectX::XMFLOAT4( 0, 0, -10, 1 ) );
-      gfx->CameraMgr.GetCamera( cam ).LookAtPoint( DirectX::XMFLOAT4( 0, 0, 0, 1 ) );
+      gfx->CameraMgr.GetCamera( cam ).SetPosition( SVec3( DirectX::XMFLOAT3( 0, 0, -10 ) ) );
+      gfx->CameraMgr.GetCamera( cam ).LookAtPoint( SVec3( DirectX::XMFLOAT3( 0, 0, 0 ) ) );
 
       gfx->DrawingMgr.SetColor( 1, 1, 1, 1 );
       gfx->DrawingMgr.SetSize( 10 );
     }
 
-    gfx->RenderableMgr.GetModel3D( obj ).SetWorldMatrix( DirectX::XMMatrixRotationRollPitchYaw( 3.14f / 2, dt, 0 ) * DirectX::XMMatrixScaling( 0.0025, 0.0025, 0.0025 ) * DirectX::XMMatrixTranslation( 0, 1.1, 0 ) );
+    gfx->RenderableMgr.GetModel3D( obj ).SetWorldMatrix( SMat4( DirectX::XMMatrixRotationRollPitchYaw( 3.14f / 2, dt, 0 ) * DirectX::XMMatrixScaling( 0.0025, 0.0025, 0.0025 ) * DirectX::XMMatrixTranslation( 0, 1.1, 0 ) ) );
 
     float angle = 0;
     for (int x = 0; x < 10; ++x)
@@ -218,7 +221,7 @@ void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
 
       gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetRadius( 6 );
 
-      gfx->RenderableMgr.GetModel3D( cubes[ x ] ).SetWorldMatrix( DirectX::XMMatrixRotationRollPitchYaw( cos( angle - dt ), sin( angle - dt ), -cosf( angle - dt ) ) * DirectX::XMMatrixTranslation( cosf( -angle - dt ) * radius, 2 + cosf( (dt + angle) * 2 ), sinf( -angle - dt ) * radius ) );
+      gfx->RenderableMgr.GetModel3D( cubes[ x ] ).SetWorldMatrix( SMat4( DirectX::XMMatrixRotationRollPitchYaw( cos( angle - dt ), sin( angle - dt ), -cosf( angle - dt ) ) * DirectX::XMMatrixTranslation( cosf( -angle - dt ) * radius, 2 + cosf( (dt + angle) * 2 ), sinf( -angle - dt ) * radius ) ) );
       angle += 6.28 / 10;
     }
     

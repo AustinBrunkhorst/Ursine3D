@@ -1,13 +1,16 @@
 #include "UrsinePrecompiled.h"
 #include "Camera.h"
+#include "DirectXMath.h"
+
+using namespace ursine;
 
 void Camera::Initialize( void )
 {
-  m_position = DirectX::XMVectorSet( 0, 0, -10, 1 );
-  LookAtPoint( DirectX::XMFLOAT4( 0, 0, 0, 1 ) );
-
-  m_projMode = PROJECTION_PERSPECTIVE;
-  m_fov = 45.f;
+    m_position.Set( 0, 0, -10 );
+    LookAtPoint( SVec3( 0, 0, 0 ) );
+    
+    m_projMode = PROJECTION_PERSPECTIVE;
+    m_fov = 45.f;
 }
 
 void Camera::Uninitialize( )
@@ -15,80 +18,99 @@ void Camera::Uninitialize( )
 
 }
 
-DirectX::XMMATRIX Camera::GetViewMatrix( )
+SMat4 Camera::GetViewMatrix( )
 {
-  return DirectX::XMMatrixLookAtLH( m_position, DirectX::XMVectorAdd( m_position, m_look ), m_up );
+	// return SMat4::LookAt( m_position, m_position + m_look, SVec3::UnitZ( ), m_up, SVec3::UnitY( ) );
+	auto eye = SVec4(m_position, 1.0f).ToD3D();
+	auto target = SVec4(m_position + m_look, 1).ToD3D();
+	auto up = SVec4(m_up, 0).ToD3D();
+
+	auto eyePos = XMLoadFloat4(&eye);
+	auto targetPos = XMLoadFloat4(&target);
+	auto upDir = XMLoadFloat4(&up);
+
+	return SMat4( DirectX::XMMatrixLookAtLH( eyePos, targetPos, upDir ) );
 }
 
-DirectX::XMMATRIX Camera::GetProjMatrix(float width, float height)
+SMat4 Camera::GetProjMatrix(float width, float height)
 {
-  if (m_projMode == Camera::ProjectionMode::PROJECTION_PERSPECTIVE)
-  {
-    return DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f, width / height, 0.0001f, 1000.f );
-  }
-  else
-  {
-    return DirectX::XMMatrixOrthographicLH(width, height, 0.0001f, 1000.f );
-  }
+	SMat4 mat;
+
+    if (m_projMode == PROJECTION_PERSPECTIVE)
+    {
+	    // mat.D3DPerspProjLH(0.0001f, 1000.0f, width, height);
+        return SMat4(DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f, width / height, 0.0001f, 1000.f ));
+    }
+    else
+    {
+	    // mat.D3DOrthoProjLH(0.0001f, 1000.0f, width, height);
+        return SMat4(DirectX::XMMatrixOrthographicLH(width, height, 0.0001f, 1000.f ));
+    }
+    
+    return mat;
 }
 
-DirectX::XMFLOAT4 Camera::GetPosition( )
+SVec3 Camera::GetPosition( )
 {
-  return DirectX::XMFLOAT4( m_position.m128_f32 );
+    return m_position;
 }
-void Camera::SetPosition( const DirectX::XMFLOAT4 &pos )
+void Camera::SetPosition( const SVec3 &pos )
 {
-  m_position = DirectX::XMLoadFloat4( &pos );
-}
-
-DirectX::XMFLOAT4 Camera::GetLook( )
-{
-  return DirectX::XMFLOAT4( m_look.m128_f32 );
-}
-void Camera::SetLook( const DirectX::XMFLOAT4 &look )
-{
-  m_look = DirectX::XMLoadFloat4( &look );
-  CalculateVectors( DirectX::XMFLOAT4( 0, 1, 0, 0 ) );
+    m_position = pos;
 }
 
-DirectX::XMFLOAT4 Camera::GetRight( )
+SVec3 Camera::GetLook( )
 {
-  return DirectX::XMFLOAT4( m_right.m128_f32 );
+    return m_look;
+}
+void Camera::SetLook( const SVec3 &look )
+{
+    m_look = look;
+    CalculateVectors( SVec3::UnitY( ) );
 }
 
-DirectX::XMFLOAT4 Camera::GetUp( )
+SVec3 Camera::GetRight( )
 {
-  return DirectX::XMFLOAT4( m_up.m128_f32 );
+    return m_right;
+}
+
+SVec3 Camera::GetUp( )
+{
+    return m_up;
 }
 
 float Camera::GetFOV( )
 {
-  return m_fov;
+    return m_fov;
 }
 void Camera::SetFOV( float fov )
 {
-  UAssert( fov > 0, "FOV can't be less than 0!" );
-  m_fov = fov;
+    UAssert( fov > 0, "FOV can't be less than 0!" );
+    m_fov = fov;
 }
 
 Camera::ProjectionMode Camera::GetProjMode( )
 {
-  return m_projMode;
+    return m_projMode;
 }
-void Camera::SetProjMode( Camera::ProjectionMode mode )
+void Camera::SetProjMode( ProjectionMode mode )
 {
-  m_projMode = mode;
-}
-
-void Camera::LookAtPoint( const DirectX::XMFLOAT4 &point )
-{
-  m_look = DirectX::XMVectorSubtract( DirectX::XMLoadFloat4( &point ), m_position );
-  CalculateVectors( DirectX::XMFLOAT4( 0, 1, 0, 0 ) );
+    m_projMode = mode;
 }
 
-void Camera::CalculateVectors( DirectX::XMFLOAT4 &up )
+void Camera::LookAtPoint( const SVec3 &point )
 {
-  m_look = DirectX::XMVector3NormalizeEst( m_look );
-  m_right = DirectX::XMVector3NormalizeEst( DirectX::XMVector3Cross( m_look, DirectX::XMLoadFloat4( &up ) ) );
-  m_up = DirectX::XMVector3NormalizeEst( DirectX::XMVector3Cross( DirectX::XMVectorNegate( m_look ), m_right ) );
+  m_look = point - m_position;
+  CalculateVectors( SVec3::UnitY( ) );
+}
+
+void Camera::CalculateVectors( const SVec3 &up )
+{
+  m_look.Normalize();
+  
+  m_right = SVec3::Cross(m_look, up);
+  m_right.Normalize();
+  
+  m_up = SVec3::Cross(-m_look, m_right);
+  m_up.Normalize();
 }

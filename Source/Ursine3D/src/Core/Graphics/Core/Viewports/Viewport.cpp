@@ -81,8 +81,8 @@ namespace ursine
     viewport.Height = static_cast<float>(m_height);
     viewport.MinDepth = 0.0f;
     viewport.MaxDepth = 1.0f;
-    viewport.TopLeftX = m_positionX;
-    viewport.TopLeftY = m_positionY;
+    viewport.TopLeftX = static_cast<float>(m_positionX);
+    viewport.TopLeftY = static_cast<float>(m_positionY);
 
     return viewport;
   }

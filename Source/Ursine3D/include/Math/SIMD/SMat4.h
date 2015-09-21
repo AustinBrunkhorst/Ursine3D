@@ -17,6 +17,14 @@
 #include "SVec3.h"
 #include "SQuat.h"
 
+#ifdef URSINE_GRAPHICS_DIRECTX
+namespace DirectX
+{
+	// Forward Declaration
+	struct XMMATRIX;
+}
+#endif
+
 namespace ursine
 {
 	// Forward Declaration
@@ -49,6 +57,12 @@ namespace ursine
 		SMat4(float x_scalar, float y_scalar, float z_scalar); // Scalar
 		explicit SMat4(const SVec3 &translation); // Translation
 		SMat4(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
+
+#ifdef URSINE_GRAPHICS_DIRECTX
+		explicit SMat4(const DirectX::XMMATRIX &mat);
+
+		DirectX::XMMATRIX ToD3D(void) const;
+#endif
 
 		// Properties
 		static const SMat4 &Identity(void);
@@ -126,31 +140,36 @@ namespace ursine
 
 		// Identical to D3DXMatrixOrthoLH, except transposed to account for Matrix * vector convention
 		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205346(v=vs.85).aspx
-		void D3DOrthoProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 D3DOrthoProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
 
 		// Identical to D3DXMatrixOrthoRH, except transposed to account for Matrix * vector convention
 		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205349(v=vs.85).aspx
-		void D3DOrthoProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 D3DOrthoProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
 
 		// Identical to D3DXMatrixPerspectiveLH, except transposed to account for Matrix * vector convention
 		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205352(v=vs.85).aspx
-		void D3DPerspProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 D3DPerspProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
 
 		// Identical to D3DXMatrixPerspectiveRH, except transposed to account for Matrix * vector convention
 		// see http://msdn.microsoft.com/en-us/library/windows/desktop/bb205355(v=vs.85).aspx
-		void D3DPerspProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 D3DPerspProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
 
 		// Computes a left-handed orthographic projection matrix for OpenGL
-		void OGLOrthoProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 OGLOrthoProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
 
 		// Computes a right-handed orthographic projection matrix for OpenGL
-		void OGLOrthoProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 OGLOrthoProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
 
 		// Computes a left-handed perspective projection matrix for OpenGL
-		void OGLPerspProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 OGLPerspProjLH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
 
 		// Computes a right-handed perspective projection matrix for OpenGL
-		void OGLPerspProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+		static SMat4 OGLPerspProjRH(float nearDist, float farDist, float horizontalViewSize, float verticalViewSize);
+
+		static SMat4 LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
+
+		static SMat4 LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 localForward,
+							const SVec3 &localUp, const SVec3 &worldUp);
 
 
 		std::string ToString(void) const;
@@ -193,6 +212,7 @@ namespace ursine
 		// TODO: static void invertFast(const float *src, float *dest);
 
 		void setRotation(const SQuat &quat);
+		void setRotation(const SMat3 &mat);
 		void setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
 	};
 }

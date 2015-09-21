@@ -35,8 +35,8 @@ namespace ursine
       void Uninitialize( );
 
       //buffer mapping
-      void MapCameraBuffer( DirectX::XMMATRIX &view, DirectX::XMMATRIX &projection, SHADERDEF shader = SHADERDEF::VERTEX_SHADER, unsigned int bufferIndex = BUFFER_CAMERA );
-      void MapTransformBuffer( const DirectX::XMMATRIX &transform, SHADERDEF shader = SHADERDEF::VERTEX_SHADER, unsigned int bufferIndex = BUFFER_TRANSFORM );
+      void MapCameraBuffer(const SMat4 &view, const SMat4 &projection, SHADERDEF shader = VERTEX_SHADER, unsigned int bufferIndex = BUFFER_CAMERA );
+      void MapTransformBuffer(const SMat4 &transform, SHADERDEF shader = VERTEX_SHADER, unsigned int bufferIndex = BUFFER_TRANSFORM );
 
       template<BUFFER_LIST buffer, typename T>
       void MapBuffer( T *data, SHADERDEF shader, unsigned int bufferIndex = buffer )

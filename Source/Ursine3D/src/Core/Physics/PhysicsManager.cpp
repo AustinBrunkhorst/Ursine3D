@@ -12,7 +12,7 @@
 ** -------------------------------------------------------------------------*/
 
 #include "UrsinePrecompiled.h"
-#include "PhysicsManager.h"
+/*#include "PhysicsManager.h"
 
 namespace ursine
 {
@@ -55,3 +55,4 @@ namespace ursine
 	 }
 
 }
+*/

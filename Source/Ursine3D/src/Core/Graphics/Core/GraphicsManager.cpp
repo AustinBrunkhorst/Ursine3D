@@ -4,6 +4,7 @@
 //@Matt
 #include "VertexDefinitions.h"
 #include <complex>
+#include "DepthStencilStateList.h"
 
 namespace ursine
 {
@@ -302,7 +303,7 @@ namespace ursine
 
     /////////////////////////////////////////////////////////////////
     // gets the projection matrix and view matrix
-    DirectX::XMMATRIX proj, view;
+    SMat4 proj, view;
     proj = currentCamera.GetProjMatrix( vpData.Width / 100, vpData.Height / 100 );
     view = currentCamera.GetViewMatrix( );
 
@@ -385,7 +386,7 @@ namespace ursine
 
     /////////////////////////////////////////////////////////////////
     // gets the projection matrix and view matrix
-    DirectX::XMMATRIX proj, view;
+    SMat4 proj, view;
     proj = currentCamera.GetProjMatrix( vpData.Width / 100, vpData.Height / 100 );
     view = currentCamera.GetViewMatrix( );
 
@@ -496,7 +497,7 @@ namespace ursine
   }
 
   // preparing for different stages /////////////////////////////////
-  void GraphicsCore::PrepFor3DModels ( DirectX::XMMATRIX& view, DirectX::XMMATRIX& proj )
+  void GraphicsCore::PrepFor3DModels ( const SMat4& view, const SMat4& proj )
   {
     dxCore->SetBlendState( BLEND_STATE_DEFAULT );
     dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
@@ -518,7 +519,7 @@ namespace ursine
     bufferManager->MapCameraBuffer( view, proj );
   }
 
-  void GraphicsCore::PrepForLightPass ( DirectX::XMMATRIX& view, DirectX::XMMATRIX& proj )
+  void GraphicsCore::PrepForLightPass (const SMat4& view, const SMat4& proj )
   {
     gfxProfiler->Stamp( PROFILE_DEFERRED );
     dxCore->SetRenderTarget( RENDER_TARGET_LIGHTMAP );
@@ -532,7 +533,7 @@ namespace ursine
     dxCore->GetDeviceContext( )->PSSetShaderResources( 2, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_COLOR )->ShaderMap );
   }
 
-  void GraphicsCore::PrepForPrimitives ( DirectX::XMMATRIX& view, DirectX::XMMATRIX& proj )
+  void GraphicsCore::PrepForPrimitives (const SMat4& view, const SMat4& proj )
   {
     gfxProfiler->Stamp( PROFILE_LIGHTS );
 
@@ -553,7 +554,7 @@ namespace ursine
     dxCore->SetRenderTarget( RENDER_TARGET_DEBUG );
     shaderManager->BindShader( SHADER_PRIMITIVE );
     layoutManager->SetInputLayout( SHADER_PRIMITIVE );
-    bufferManager->MapTransformBuffer( DirectX::XMMatrixIdentity( ) );
+    bufferManager->MapTransformBuffer( SMat4::Identity( ) );
     dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
   }
 
@@ -571,23 +572,26 @@ namespace ursine
     shaderManager->BindShader( SHADER_DEFFERED_TEXTURE );
     layoutManager->SetInputLayout( SHADER_DEFFERED_TEXTURE );
 
-    bufferManager->MapCameraBuffer( DirectX::XMMatrixIdentity( ), DirectX::XMMatrixIdentity( ) );
-    bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( -2, 2, 1 ) );
+    bufferManager->MapCameraBuffer( SMat4::Identity( ), SMat4::Identity( ) );
+    bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
   }
 
   void GraphicsCore::PrepForUI ( )
   {
+	SMat4 trans;
+	trans.Translate(SVec3(0, 0, 0.1f));
+
     dxCore->SetBlendState( BLEND_STATE_DEFAULT );
     dxCore->SetRasterState( RASTER_STATE_UI );
     dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
     dxCore->SetDepthState( DEPTH_STATE_NODEPTH_NOSTENCIL );
     dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
-    bufferManager->MapCameraBuffer( DirectX::XMMatrixIdentity( ), DirectX::XMMatrixIdentity( ) );
+    bufferManager->MapCameraBuffer( SMat4::Identity( ), SMat4::Identity( ) );
 
     textureManager->MapSamplerState( SAMPLER_NO_FILTERING );
     shaderManager->BindShader( SHADER_UI );
     layoutManager->SetInputLayout( SHADER_UI );
-    bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( -2, 2, 1 ) * DirectX::XMMatrixTranslation( 0, 0, 0.1f ) );
+    bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) * trans );
     modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
 
     dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_UI )->ShaderMap );
@@ -618,20 +622,17 @@ namespace ursine
     PointLight &pl = renderableManager->m_renderablePointLight[ handle.Index_ ];
 
     //get camera position
-    DirectX::XMFLOAT4 tempPos = currentCamera.GetPosition( );
+    SVec3 tempPos = currentCamera.GetPosition( );
 
     ////get light position
-    DirectX::XMFLOAT3 lightP = pl.GetPosition( );
+    SVec3 lightP = pl.GetPosition( );
 
     //get light to camera vector
-    DirectX::XMFLOAT3 camLight;
-    camLight.x = tempPos.x - lightP.x;
-    camLight.y = tempPos.y - lightP.y;
-    camLight.z = tempPos.z - lightP.z;
+	SVec3 camLight = tempPos - lightP;
 
     //set culling to backface or frontface, depending on the distance
     float radius = pl.GetRadius( ) / 2.f;
-    float distance = camLight.x * camLight.x + camLight.y * camLight.y + camLight.z * camLight.z;
+	float distance = camLight.LengthSquared();
     float radiusSqr = radius * radius;
 
     //@Matt do not forget to look at this
@@ -641,15 +642,18 @@ namespace ursine
       dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
     //set buffer stuff
-    bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( radius, radius, radius ) * DirectX::XMMatrixTranslation( lightP.x, lightP.y, lightP.z ) );
-    DirectX::XMVECTOR lightPosition = DirectX::XMVector4Transform( DirectX::XMLoadFloat4( &DirectX::XMFLOAT4( pl.GetPosition( ).x, pl.GetPosition( ).y, pl.GetPosition( ).z, 1 ) ), currentCamera.GetViewMatrix( ) );
+	SMat4 trans;
+	trans.Translate(lightP);
+
+    bufferManager->MapTransformBuffer( SMat4( radius, radius, radius ) * trans );
+	SVec3 lightPosition = currentCamera.GetViewMatrix( ).TransformPoint( pl.GetPosition( ) );
     PointLightBuffer pointB;
-    pointB.lightPos = DirectX::XMFLOAT3( lightPosition.m128_f32 );
+    pointB.lightPos = DirectX::XMFLOAT3( lightPosition.GetFloatPtr( ) );
     pointB.lightRadius = radius;
     pointB.attenuation = 1;
-    pointB.color.x = pl.GetColor( ).x;
-    pointB.color.y = pl.GetColor( ).y;
-    pointB.color.z = pl.GetColor( ).z;
+    pointB.color.x = pl.GetColor( ).r;
+    pointB.color.y = pl.GetColor( ).g;
+    pointB.color.z = pl.GetColor( ).b;
     bufferManager->MapBuffer<BUFFER_POINT_LIGHT>( &pointB, PIXEL_SHADER );
 
     //render!
@@ -666,16 +670,16 @@ namespace ursine
     layoutManager->SetInputLayout( SHADER_DIRECTIONAL_LIGHT );
     dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
-    bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( -2, 2, 1 ) );
-    bufferManager->MapCameraBuffer( DirectX::XMMatrixIdentity( ), DirectX::XMMatrixIdentity( ) );
+    bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
+    bufferManager->MapCameraBuffer( SMat4::Identity( ), SMat4::Identity( ) );
     modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
 
-    DirectX::XMVECTOR lightDirection = DirectX::XMVector4Transform( DirectX::XMLoadFloat4( &DirectX::XMFLOAT4( dl.GetDirection( ).x, dl.GetDirection( ).y, dl.GetDirection( ).z, 0 ) ), currentCamera.GetViewMatrix( ) );
+	SVec3 lightDirection = currentCamera.GetViewMatrix( ).TransformVector( dl.GetDirection( ) );
     DirectionalLightBuffer lightB;
-    lightB.lightDirection = DirectX::XMFLOAT4( lightDirection.m128_f32 );
-    lightB.lightColor = dl.GetColor( );
+    lightB.lightDirection = DirectX::XMFLOAT4( lightDirection.GetFloatPtr( ) );
+    lightB.lightColor = DirectX::XMFLOAT3( dl.GetColor( ).r, dl.GetColor( ).g, dl.GetColor( ).b );
     lightB.attenuation = 1.f;
-    lightB.lightPosition = DirectX::XMFLOAT4( lightDirection.m128_f32 );
+    lightB.lightPosition = DirectX::XMFLOAT4( lightDirection.GetFloatPtr( ) );
     bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>( &lightB, PIXEL_SHADER );
     shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
   }
@@ -699,7 +703,7 @@ namespace ursine
 
     //set color
     PrimitiveColorBuffer pcb;
-    pcb.color = prim.GetColor( );
+    pcb.color = prim.GetColor( ).ToVector4( ).ToD3D( );
     bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, PIXEL_SHADER );
 
     //render specific primitive, based upon data
@@ -707,18 +711,18 @@ namespace ursine
     {
     case Primitive::PRIM_PLANE:
       dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_LINELIST );
-      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetWidth( ), 0, prim.GetHeight( ) ) * prim.GetWorldMatrix( ) );
+      bufferManager->MapTransformBuffer( SMat4( prim.GetWidth( ), 0, prim.GetHeight( ) ) * prim.GetWorldMatrix( ) );
       modelManager->BindModel( modelManager->GetModelIDByName( "Plane" ) );
       shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Plane" ) ) );
       break;
 
     case Primitive::PRIM_SPHERE:
-      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f ) * prim.GetWorldMatrix( ) );
+      bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f ) * prim.GetWorldMatrix( ) );
       modelManager->BindModel( modelManager->GetModelIDByName( "Sphere" ) );
       shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sphere" ) ) );
       break;
     case Primitive::PRIM_CUBE:
-      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetWidth( ), prim.GetHeight( ), prim.GetDepth( ) ) * prim.GetWorldMatrix( ) );
+      bufferManager->MapTransformBuffer( SMat4( prim.GetWidth( ), prim.GetHeight( ), prim.GetDepth( ) ) * prim.GetWorldMatrix( ) );
       modelManager->BindModel( modelManager->GetModelIDByName( "Cube" ) );
       shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Cube" ) ) );
       break;
@@ -726,21 +730,27 @@ namespace ursine
       modelManager->BindModel( modelManager->GetModelIDByName( "HalfSphere" ) );
 
       //render top cap
-      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ), prim.GetRadius( ), prim.GetRadius( ) )  * DirectX::XMMatrixTranslation( 0, prim.GetHeight( ) / 2.f, 0 ) * prim.GetWorldMatrix( ) );
+	  SMat4 trans;
+	  trans.Translate( SVec3( 0.0f, prim.GetHeight( ) * 0.5f, 0.0f ) );
+      bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ), prim.GetRadius( ), prim.GetRadius( ) )  * trans * prim.GetWorldMatrix( ) );
       shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
+
       //render bottom cap
-      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ), prim.GetRadius( ), prim.GetRadius( ) )  * DirectX::XMMatrixRotationX( 3.14f ) * DirectX::XMMatrixTranslation( 0, -prim.GetHeight( ) / 2.f, 0 ) * prim.GetWorldMatrix( ) );
+	  SMat4 mat;
+	  mat.TRS( SVec3( 0, -prim.GetHeight( ) / 2.f, 0 ), SQuat( 180.0f, 0.0f, 0.0f ), SVec3( prim.GetRadius( ) ) );
+
+      bufferManager->MapTransformBuffer( mat * prim.GetWorldMatrix( ) );
       shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
 
       //render body
       modelManager->BindModel( modelManager->GetModelIDByName( "CapsuleBody" ) );
-      bufferManager->MapTransformBuffer( DirectX::XMMatrixScaling( prim.GetRadius( ), prim.GetHeight( ), prim.GetRadius( ) )  * prim.GetWorldMatrix( ) );
+      bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ), prim.GetHeight( ), prim.GetRadius( ) )  * prim.GetWorldMatrix( ) );
       shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "CapsuleBody" ) ) );
       break;
     }
   }
 
-  void GraphicsCore::RenderDebugPoints ( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj, Camera &currentCamera )
+  void GraphicsCore::RenderDebugPoints ( const SMat4 &view, const SMat4 &proj, Camera &currentCamera )
   {
     //render points
     if (drawingManager->CheckRenderPoints( ))
@@ -755,8 +765,8 @@ namespace ursine
       //set up buffers
       bufferManager->MapCameraBuffer( view, proj, GEOMETRY_SHADER );
       PointGeometryBuffer pgb;
-      pgb.cameraUp = currentCamera.GetUp( );
-      pgb.cameraPosition = currentCamera.GetPosition( );
+      pgb.cameraUp = SVec4( currentCamera.GetUp( ), 0 ).ToD3D( );
+      pgb.cameraPosition = SVec4( currentCamera.GetPosition( ), 1 ).ToD3D( );
       bufferManager->MapBuffer<BUFFER_POINT_GEOM>( &pgb, GEOMETRY_SHADER );
 
       //bind shader
@@ -771,7 +781,7 @@ namespace ursine
     }
   }
 
-  void GraphicsCore::RenderDebugLines (DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj, Camera &currentCamera)
+  void GraphicsCore::RenderDebugLines (const SMat4 &view, const SMat4 &proj, Camera &currentCamera)
   {
     //render lines
     if (drawingManager->CheckRenderLines( ))

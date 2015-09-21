@@ -14,15 +14,15 @@ namespace ursine
     //model class
     Model::Model( void )
     {
-	    Transform_ = Mat4::Identity();
+	    Transform_ = SMat4::Identity();
     }
     
-    const Mat4 &Model::GetWorldMatrix( void )
+    const SMat4 &Model::GetWorldMatrix( void )
     {
         return Transform_;
     }
     
-    void Model::SetWorldMatrix( Mat4 &matrix )
+    void Model::SetWorldMatrix( const SMat4 &matrix )
     {
 		Transform_ = matrix;
     }
@@ -158,7 +158,7 @@ namespace ursine
     {
         return Color_;
     }
-    void Primitive::SetColor( Color &color )
+    void Primitive::SetColor( const Color &color )
     {
         Color_ = color;
     }
@@ -178,11 +178,11 @@ namespace ursine
         Color_ = Color( 1, 1, 1 , 1 );
     }
     
-    Vec3 &DirectionalLight::GetDirection( )
+    SVec3 &DirectionalLight::GetDirection( )
     {
         return Direction_;
     }
-    void DirectionalLight::SetDirection( Vec3 &dir )
+    void DirectionalLight::SetDirection( const SVec3 &dir )
     {
         Direction_ = dir;
     }
@@ -196,7 +196,7 @@ namespace ursine
     {
         return Color_;
     }
-    void DirectionalLight::SetColor( Color &color )
+    void DirectionalLight::SetColor( const Color &color )
     {
         Color_ = color;
     }
@@ -214,24 +214,24 @@ namespace ursine
         Radius_ = 5;
     }
     
-    Vec3 &PointLight::GetPosition( )
+    SVec3 &PointLight::GetPosition( )
     {
         return m_position;
     }
-    void PointLight::SetPosition( Vec3 &position )
+    void PointLight::SetPosition( const SVec3 &position )
     {
         m_position = position;
     }
     void PointLight::SetPosition( float x, float y, float z )
     {
-        m_position = Vec3( x, y, z );
+        m_position = SVec3( x, y, z );
     }
     
     Color &PointLight::GetColor( )
     {
         return Color_;
     }
-    void PointLight::SetColor( Color &color )
+    void PointLight::SetColor( const Color &color )
     {
         Color_ = color;
     }

@@ -52,7 +52,7 @@ namespace ursine
 	{
 	}
 
-	DirectX::XMFLOAT4 SVec4::ToDxVec(void) const
+	DirectX::XMFLOAT4 SVec4::ToD3D(void) const
 	{
 		return { m_x, m_y, m_z, m_w };
 	}
