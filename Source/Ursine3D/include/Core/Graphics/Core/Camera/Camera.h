@@ -16,7 +16,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-#include <DirectXMath.h>
+#include "Mat4.h"
 
 class Camera
 {
@@ -35,8 +35,8 @@ public:
   void Uninitialize( );
 
   //getting matrices
-  DirectX::XMMATRIX GetViewMatrix( );
-  DirectX::XMMATRIX GetProjMatrix( float width, float height );
+  Mat4 GetViewMatrix( );
+  Mat4 GetProjMatrix( float width, float height );
 
   //setting position
   DirectX::XMFLOAT4 GetPosition( );
