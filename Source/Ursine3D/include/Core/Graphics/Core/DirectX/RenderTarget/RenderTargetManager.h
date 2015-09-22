@@ -15,10 +15,12 @@ Author:         Matt Yan, m.yan@digipen.edu
 /*- End Header --------------------------------------------------------------*/
 
 #pragma once
-#include <d3d11.h>
+
+
 #include <list>
 #include "RenderTargetList.h"
-#include "GraphicsDefines.h"
+#include "D3D11Forward.h"
+#include <dxgiformat.h>
 
 namespace ursine
 {

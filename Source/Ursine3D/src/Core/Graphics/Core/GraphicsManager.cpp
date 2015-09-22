@@ -5,6 +5,7 @@
 #include "VertexDefinitions.h"
 #include <complex>
 #include "DepthStencilStateList.h"
+#include <d3d11.h>
 
 namespace ursine
 {

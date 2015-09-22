@@ -2,6 +2,8 @@
 
 #include "VertexDefinitions.h"
 #include "DrawingManager.h"
+#include "GraphicsDefines.h"
+#include <d3d11.h>
 
 namespace ursine
 {
@@ -105,13 +107,13 @@ namespace ursine
 
   void DrawingManager::SetDrawColor( float x, float y, float z, float a )
   {
-    m_color = DirectX::XMFLOAT4( x, y, z, a );
+    m_color = Color( x, y, z, a );
   }
-  void DrawingManager::SetDrawColor( DirectX::XMFLOAT4 color )
+  void DrawingManager::SetDrawColor( const Color &color )
   {
     m_color = color;
   }
-  DirectX::XMFLOAT4 &DrawingManager::GetColor( )
+  Color &DrawingManager::GetColor( )
   {
     return m_color;
   }
@@ -130,7 +132,7 @@ namespace ursine
     UAssert( m_pointCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it" );
     m_pointList[ m_pointCount ].pos = DirectX::XMFLOAT4( x, y, z, 1 );
     m_pointList[ m_pointCount ].size = m_size;
-    m_pointList[ m_pointCount++ ].color = m_color;
+    m_pointList[ m_pointCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
   }
 
   void DrawingManager::DrawLine( float x0, float y0, float z0, float x1, float y1, float z1 )
@@ -138,11 +140,11 @@ namespace ursine
     UAssert( m_lineCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it" );
     m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4( x0, y0, z0, 1 );
     m_lineList[ m_lineCount ].size = m_size;
-    m_lineList[ m_lineCount++ ].color = m_color;
+    m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
 
     m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4( x1, y1, z1, 1 );
     m_lineList[ m_lineCount ].size = m_size;
-    m_lineList[ m_lineCount++ ].color = m_color;
+    m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
   }
 
   void DrawingManager::ConstructPointMesh( unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices )

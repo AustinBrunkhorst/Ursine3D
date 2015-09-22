@@ -15,12 +15,12 @@ Author:         Matt Yan, m.yan@digipen.edu
 /*- End Header --------------------------------------------------------------*/
 
 #pragma once
-#include <d3d11.h>
+
 #include <vector>
 
 #include "ShaderTypes.h"
 #include "ShaderManager.h"
-#include "GraphicsDefines.h"
+#include "D3D11Forward.h"
 
 namespace ursine
 {

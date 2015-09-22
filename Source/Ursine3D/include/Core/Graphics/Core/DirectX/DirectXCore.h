@@ -15,14 +15,13 @@ Author:         Matt Yan, m.yan@digipen.edu
 /*- End Header --------------------------------------------------------------*/
 #pragma once
 
-#include <d3d11.h>
-#include <Windows.h>
 #include "GfxInfo.h"
 #include "BlendStateManager.h"
 #include "DepthStencilStateManager.h"
 #include "RenderTargetManager.h"
 #include "RasterStateManager.h"
 #include "DepthStencilManager.h"
+#include "D3D11Forward.h"
 
 namespace ursine
 {

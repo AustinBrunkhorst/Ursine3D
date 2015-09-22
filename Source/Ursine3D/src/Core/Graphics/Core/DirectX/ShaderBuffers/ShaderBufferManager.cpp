@@ -1,5 +1,6 @@
 #include "UrsinePrecompiled.h"
 #include "ShaderBufferManager.h"
+#include <d3d11.h>
 
 namespace ursine
 {

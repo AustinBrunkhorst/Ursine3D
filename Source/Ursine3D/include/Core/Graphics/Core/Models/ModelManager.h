@@ -18,11 +18,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include <map>
 #include <string>
-#include <iostream>
-#include <fstream>
 
-#include "GraphicsDefines.h"
-#include "VertexDefinitions.h"
 #include "Model.h"
 
 namespace ursine

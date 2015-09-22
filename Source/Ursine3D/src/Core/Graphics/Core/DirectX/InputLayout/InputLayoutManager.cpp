@@ -1,5 +1,8 @@
 #include "UrsinePrecompiled.h"
 #include "InputLayoutManager.h"
+#include <d3d11.h>
+#include <d3dcompiler.h>
+#include "GraphicsDefines.h"
 
 namespace ursine
 {

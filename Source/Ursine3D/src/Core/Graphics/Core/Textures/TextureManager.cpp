@@ -1,6 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "TextureManager.h"
 #include "DDSTextureLoader.h"
+#include <d3d11.h>
 
 namespace ursine
 {
