@@ -78,7 +78,7 @@ namespace ursine
       dataPtr = (TransformBuffer*)mappedResource.pData;
 
       //set data
-      dataPtr->transform = SMat4::Transpose( transform ).ToD3D( );
+      dataPtr->transform = transform.ToD3D( );
 
       //unlock buffer
       m_deviceContext->Unmap( m_bufferArray[ BUFFER_TRANSFORM ], 0 );

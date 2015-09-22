@@ -185,6 +185,7 @@ namespace ursine
     void DirectionalLight::SetDirection( const SVec3 &dir )
     {
         Direction_ = dir;
+		Direction_.Normalize();
     }
     void DirectionalLight::SetDirection( float x, float y, float z )
     {

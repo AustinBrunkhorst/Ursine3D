@@ -635,9 +635,9 @@ namespace ursine
 	float distance = camLight.LengthSquared();
     float radiusSqr = radius * radius;
 
-    //@Matt do not forget to look at this
+	URSINE_TODO("Matt: Do not forget to look at this.");
     if (radiusSqr > fabs( distance ))
-      dxCore->SetRasterState( RASTER_STATE_SOLID_FRONTCULL );
+      dxCore->SetRasterState(RASTER_STATE_SOLID_FRONTCULL);
     else
       dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
@@ -645,7 +645,7 @@ namespace ursine
 	SMat4 trans;
 	trans.Translate(lightP);
 
-    bufferManager->MapTransformBuffer( SMat4( radius, radius, radius ) * trans );
+    bufferManager->MapTransformBuffer( trans * SMat4(radius, radius, radius) );
 	SVec3 lightPosition = currentCamera.GetViewMatrix( ).TransformPoint( pl.GetPosition( ) );
     PointLightBuffer pointB;
     pointB.lightPos = DirectX::XMFLOAT3( lightPosition.GetFloatPtr( ) );

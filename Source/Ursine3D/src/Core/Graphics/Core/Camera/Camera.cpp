@@ -20,7 +20,6 @@ void Camera::Uninitialize( )
 
 SMat4 Camera::GetViewMatrix( )
 {
-	// return SMat4::LookAt( m_position, m_position + m_look, SVec3::UnitZ( ), m_up, SVec3::UnitY( ) );
 	auto eye = SVec4(m_position, 1.0f).ToD3D();
 	auto target = SVec4(m_position + m_look, 1).ToD3D();
 	auto up = SVec4(m_up, 0).ToD3D();
@@ -38,16 +37,12 @@ SMat4 Camera::GetProjMatrix(float width, float height)
 
     if (m_projMode == PROJECTION_PERSPECTIVE)
     {
-	    // mat.D3DPerspProjLH(0.0001f, 1000.0f, width, height);
         return SMat4(DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f, width / height, 0.0001f, 1000.f ));
     }
     else
     {
-	    // mat.D3DOrthoProjLH(0.0001f, 1000.0f, width, height);
         return SMat4(DirectX::XMMatrixOrthographicLH(width, height, 0.0001f, 1000.f ));
     }
-    
-    return mat;
 }
 
 SVec3 Camera::GetPosition( )

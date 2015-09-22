@@ -38,9 +38,6 @@ PhysicsTest::PhysicsTest(void)
 
 PhysicsTest::~PhysicsTest(void)
 {
-    // ::OPENGL
-    //SDL_GL_DeleteContext( m_glContext );
-
     delete m_mainWindow;
 }
 
@@ -76,15 +73,15 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 	static float t = 0.0f;
 	t += Application::Instance->GetDeltaTime();
 
-	/*Camera &cam = m_gfx->CameraMgr.GetCamera(m_camera);
+	Camera &cam = m_gfx->CameraMgr.GetCamera(m_camera);
 
-	float distance = 5.0f;
+	float distance = 11.0f;
 	float x = cos(t) * distance;
 	float z = sin(t) * distance;
 	cam.SetPosition( SVec3( x, 0.0f, z ) );
 
 	SVec3 dir( cam.GetPosition( ) );
-	cam.SetLook( -dir );*/
+	cam.SetLook( -dir );
 
 	static SQuat quat0(60.0f, 40.0f, 10.0f);
 	static SQuat quat1(-60.0f, -40.0f, -20.0f);
@@ -192,6 +189,7 @@ void PhysicsTest::initGraphics(void)
 	////////////////////////////////////////////////////////////////////
 	//initialize the demo related tings
 	m_viewport = m_gfx->ViewportMgr.CreateViewport(kDefaultWindowWidth, kDefaultWindowHeight);
+	m_gfx->ViewportMgr.GetViewport(m_viewport).SetRenderMode(VIEWPORT_RENDER_FORWARD);
 	m_camera = m_gfx->CameraMgr.AddCamera();
 
 	m_cube = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
@@ -213,8 +211,8 @@ void PhysicsTest::initGraphics(void)
 	// primitive.SetType(Primitive::PRIM_SPHERE);	//what type of shape do you want? sphere? capsule? cube? plane?
 
 	SMat4 trans;
-	trans.Translate( SVec3( 0, -2, 0 ) );
-	m_gfx->RenderableMgr.GetModel3D(m_floor).SetWorldMatrix(SMat4( 10, 1, 10 ) * trans);
+	trans.Translate( SVec3( 0, -8, 0 ) );
+	m_gfx->RenderableMgr.GetModel3D(m_floor).SetWorldMatrix(trans * SMat4( 10, 10, 10 ));
 
 	//set obj data here
 	MdlCube.SetModel("Cube");
