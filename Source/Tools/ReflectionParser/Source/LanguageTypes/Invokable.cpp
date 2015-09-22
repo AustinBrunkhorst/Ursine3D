@@ -25,6 +25,7 @@ Invokable::Invokable(const Cursor &cursor)
 
             Namespace parentNamespace;
 
+            // walk up to the root namespace
             while (parent.GetKind( ) == CXCursor_Namespace)
             {
                 parentNamespace.emplace_back( parent.GetDisplayName( ) );

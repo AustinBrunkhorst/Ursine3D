@@ -27,6 +27,8 @@ namespace ursine
         {
             types[ Type::Invalid ].name = "UNKNOWN";
 
+            // register all of the native type variants explicity, before
+            // anything else
             REGISTER_NATIVE_TYPE_VARIANTS( void );
             REGISTER_NATIVE_TYPE_VARIANTS( int );
             REGISTER_NATIVE_TYPE_VARIANTS( bool );
@@ -35,11 +37,11 @@ namespace ursine
             REGISTER_NATIVE_TYPE_VARIANTS( std::string );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         ReflectionDatabase::~ReflectionDatabase(void) { }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         ReflectionDatabase &ReflectionDatabase::Instance(void)
         {
@@ -48,7 +50,7 @@ namespace ursine
             return instance;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         TypeID ReflectionDatabase::AllocateType(const std::string &name)
         {
@@ -67,9 +69,11 @@ namespace ursine
             return id;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
-        const Function &ReflectionDatabase::GetGlobalFunction(const std::string &name)
+        const Function &ReflectionDatabase::GetGlobalFunction(
+            const std::string &name
+        )
         {
             auto &base = globalFunctions[ name ];
 
@@ -79,9 +83,12 @@ namespace ursine
             return base.begin( )->second;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
-        const Function &ReflectionDatabase::GetGlobalFunction(const std::string &name, const InvokableSignature &signature)
+        const Function &ReflectionDatabase::GetGlobalFunction(
+            const std::string &name, 
+            const InvokableSignature &signature
+        )
         {
             auto &base = globalFunctions[ name ];
 
@@ -93,9 +100,11 @@ namespace ursine
             return search->second;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
-        ReflectionDatabase::Initializer::Initializer(std::function<void()> initializer)
+        ReflectionDatabase::Initializer::Initializer(
+            std::function<void()> initializer
+        )
         {
             initializer( );
         }

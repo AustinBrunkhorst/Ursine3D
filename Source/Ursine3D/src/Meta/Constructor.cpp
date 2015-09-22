@@ -14,7 +14,12 @@ namespace ursine
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
-        Constructor::Constructor(Type classType, InvokableSignature signature, Invoker invoker, bool isDynamic)
+        Constructor::Constructor(
+            Type classType, 
+            InvokableSignature signature, 
+            Invoker invoker, 
+            bool isDynamic
+        )
             : Invokable( "constructor" )
             , m_isDynamic( isDynamic )
             , m_classType( classType )

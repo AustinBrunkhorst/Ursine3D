@@ -34,7 +34,10 @@ namespace ursine
             return m_isConst;
         }
 
-        Variant Method::Invoke(Variant &instance, ArgumentList &arguments) const
+        Variant Method::Invoke(
+            Variant &instance,
+            ArgumentList &arguments
+        ) const
         {
         #ifdef CONFIG_DEBUG
 

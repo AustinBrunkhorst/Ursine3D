@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** EnumContainer.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "EnumBase.h"
@@ -17,7 +27,12 @@ namespace ursine
             typedef std::unordered_map<std::string, EnumType> Table;
 
             EnumContainer(const std::string &name, const Table &table);
-            EnumContainer(const std::string &name, const Table &table, TypeID owner);
+            
+            EnumContainer(
+                const std::string &name, 
+                const Table &table, 
+                TypeID owner
+            );
 
             Type GetType(void) const override;
             Type GetUnderlyingType(void) const override;

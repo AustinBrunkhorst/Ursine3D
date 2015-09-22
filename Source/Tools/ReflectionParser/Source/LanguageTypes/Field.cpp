@@ -3,7 +3,11 @@
 #include "LanguageTypes/Class.h"
 #include "LanguageTypes/Field.h"
 
-Field::Field(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
+Field::Field(
+    const Cursor &cursor, 
+    const Namespace &currentNamespace, 
+    Class *parent
+)
     : LanguageType( cursor, currentNamespace )
     , m_isConst( cursor.GetType( ).IsConst( ) )
     , m_parent( parent )
@@ -63,7 +67,10 @@ TemplateData Field::CompileTemplate(const ReflectionParser *context) const
 bool Field::isAccessible(void) const
 {
     return (m_hasExplicitGetter || m_hasExplicitSetter) ||
-        (m_accessModifier == CX_CXXPublic && !m_metaData.GetFlag( kMetaDisable ));
+            (
+                m_accessModifier == CX_CXXPublic && 
+                !m_metaData.GetFlag( kMetaDisable )
+            );
 }
 
 bool Field::isGetterAccessible(void) const
@@ -73,5 +80,6 @@ bool Field::isGetterAccessible(void) const
 
 bool Field::isSetterAccessible(void) const
 {
-    return m_hasExplicitSetter || (!m_isConst && m_accessModifier == CX_CXXPublic);
+    return m_hasExplicitSetter || 
+           (!m_isConst && m_accessModifier == CX_CXXPublic);
 }

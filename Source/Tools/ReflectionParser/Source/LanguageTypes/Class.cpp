@@ -14,7 +14,11 @@ namespace
 
     bool isNativeType(const std::string &qualifiedName)
     {
-        return std::find( nativeTypes.begin( ), nativeTypes.end( ), qualifiedName ) != nativeTypes.end( );
+        return std::find( 
+            nativeTypes.begin( ), 
+            nativeTypes.end( ), 
+            qualifiedName
+        ) != nativeTypes.end( );
     }
 }
 
@@ -32,9 +36,14 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
     auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 
     if (displayName.empty( ))
+    {
         m_displayName = m_qualifiedName;
+    }
     else
-        m_displayName = utils::GetQualifiedName( displayName, currentNamespace );
+    {
+        m_displayName = 
+            utils::GetQualifiedName( displayName, currentNamespace );
+    }
 
     for (auto &child : cursor.GetChildren( ))
     {
@@ -123,7 +132,9 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     data[ "displayName" ] = m_displayName;
     data[ "qualifiedName" ] = m_qualifiedName;
     data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
-    data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
+
+    data[ "constPtrTypeEnabled" ] = 
+        utils::TemplateBool( m_constPtrTypeEnabled );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -142,7 +153,9 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
             TemplateData item { TemplateData::Type::Object };
 
             item[ "name" ] = baseClass->name;
-            item[ "isLast" ] = utils::TemplateBool( i == m_baseClasses.size( ) - 1 );
+
+            item[ "isLast" ] = 
+                utils::TemplateBool( i == m_baseClasses.size( ) - 1 );
 
             baseClasses << item;
 

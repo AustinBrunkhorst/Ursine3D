@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** VariantPolicy.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 namespace ursine

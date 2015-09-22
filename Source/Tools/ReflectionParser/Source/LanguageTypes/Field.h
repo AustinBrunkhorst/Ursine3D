@@ -7,11 +7,19 @@ class Class;
 class Field : public LanguageType
 {
 public:
-    Field(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
+    Field(
+        const Cursor &cursor, 
+        const Namespace &currentNamespace, 
+        Class *parent = nullptr
+    );
+
     virtual ~Field(void) { }
 
     bool ShouldCompile(void) const;
-    TemplateData CompileTemplate(const ReflectionParser *context) const override;
+    
+    TemplateData CompileTemplate(
+        const ReflectionParser *context
+    ) const override;
 
 private:
     bool m_isConst;

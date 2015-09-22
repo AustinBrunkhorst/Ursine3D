@@ -1,20 +1,20 @@
-/* ---------------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
 **
 ** MacroUtils.h
 **
 ** Author:
-** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
-**
-** Contributors:
-** - <list in same format as author if applicable>
-** -------------------------------------------------------------------------*/
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
 
 #pragma once
 
-#define STR(x) #x
-#define STRINGIFY(x) STR(x)
+#define __STRINGIFY(x) #x
+#define STRINGIFY(x) __STRINGIFY(x)
+
+#define __WIDEN(x) L ## x
+#define WIDEN(x) __WIDEN(x)
 
 #define __MESSAGE(text) __pragma( message(__FILE__ "(" STRINGIFY(__LINE__) ")" text) ) 
 

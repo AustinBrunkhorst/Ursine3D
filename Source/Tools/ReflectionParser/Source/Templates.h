@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Templates.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #define EXT ".mustache"

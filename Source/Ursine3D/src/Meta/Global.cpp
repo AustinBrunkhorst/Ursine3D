@@ -13,7 +13,13 @@ namespace ursine
             , m_getter( nullptr ) 
             , m_setter( nullptr ) { }
 
-        Global::Global(const std::string &name, Type type, Getter getter, Setter setter, Type parentType) 
+        Global::Global(
+            const std::string &name, 
+            Type type, 
+            Getter getter, 
+            Setter setter, 
+            Type parentType
+        ) 
             : m_type( type )
             , m_parentType( parentType ) 
             , m_name( name ) 

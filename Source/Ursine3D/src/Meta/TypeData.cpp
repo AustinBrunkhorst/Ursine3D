@@ -15,7 +15,7 @@ namespace ursine
             , isClass( false )
             , enumeration { nullptr } { }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         TypeData::TypeData(const std::string &name)
             : isEnum( false )
@@ -36,7 +36,11 @@ namespace ursine
             }
         }
 
-        void TypeData::LoadBaseClasses(ReflectionDatabase &db, TypeID thisType, const std::initializer_list<Type> &classes)
+        void TypeData::LoadBaseClasses(
+            ReflectionDatabase &db, 
+            TypeID thisType, 
+            const std::initializer_list<Type> &classes
+        )
         {
             for (auto &base : classes)
             {
@@ -51,9 +55,11 @@ namespace ursine
             }
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
-        const Constructor &TypeData::GetConstructor(const InvokableSignature &signature)
+        const Constructor &TypeData::GetConstructor(
+            const InvokableSignature &signature
+        )
         {
             auto search = constructors.find( signature );
 
@@ -63,7 +69,9 @@ namespace ursine
             return search->second;
         }
 
-        const Constructor &TypeData::GetDynamicConstructor(const InvokableSignature &signature)
+        const Constructor &TypeData::GetDynamicConstructor(
+            const InvokableSignature &signature
+        )
         {
             auto search = dynamicConstructors.find( signature );
 
@@ -73,7 +81,7 @@ namespace ursine
             return search->second;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         const Method &TypeData::GetMethod(const std::string &name)
         {
@@ -85,9 +93,12 @@ namespace ursine
             return base.begin( )->second;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
-        const Method &TypeData::GetMethod(const std::string &name, const InvokableSignature &signature)
+        const Method &TypeData::GetMethod(
+            const std::string &name, 
+            const InvokableSignature &signature
+        )
         {
             auto &base = methods[ name ];
 
@@ -99,7 +110,7 @@ namespace ursine
             return search->second;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         const Function &TypeData::GetStaticMethod(const std::string &name)
         {
@@ -111,9 +122,12 @@ namespace ursine
             return base.begin( )->second;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
-        const Function &TypeData::GetStaticMethod(const std::string &name, const InvokableSignature &signature)
+        const Function &TypeData::GetStaticMethod(
+            const std::string &name, 
+            const InvokableSignature &signature
+        )
         {
             auto &base = staticMethods[ name ];
 

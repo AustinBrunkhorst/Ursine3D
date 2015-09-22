@@ -1,17 +1,22 @@
 #include "Type.h"
 #include "TypeUnpacker.hpp"
 
+#include <boost/functional/hash.hpp>
+
 namespace std
 {
     template<>
     struct hash<ursine::meta::InvokableSignature>
     {
-        size_t operator()(const ursine::meta::InvokableSignature &signature) const
+        size_t operator()(
+            const ursine::meta::InvokableSignature &signature
+        ) const
         {
             size_t seed = 0;
 
+            // combine the hash of all type IDs in the signature
             for (auto &type : signature)
-                seed ^= type.GetID( ) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                boost::hash_combine( seed, type.GetID( ) );
 
             return seed;
         }

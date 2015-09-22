@@ -5,7 +5,11 @@
 
 #include <Utils.h>
 
-Constructor::Constructor(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
+Constructor::Constructor(
+    const Cursor &cursor, 
+    const Namespace &currentNamespace, 
+    Class *parent
+)
     : LanguageType( cursor, currentNamespace )
     , Invokable( cursor )
     , m_parent( parent )
@@ -18,15 +22,21 @@ bool Constructor::ShouldCompile(void) const
     return isAccessible( );
 }
 
-TemplateData Constructor::CompileTemplate(const ReflectionParser *context) const
+TemplateData Constructor::CompileTemplate(
+    const ReflectionParser *context
+) const
 {
     TemplateData data { TemplateData::Type::Object };
 
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
 
     data[ "templateParameters" ] = getTemplateParameters( );
-    data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialConstructorInvocation );
-    data[ "dynamicInvocationBody" ] = context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
+
+    data[ "invocationBody" ] = 
+        context->LoadTemplatePartial( kPartialConstructorInvocation );
+
+    data[ "dynamicInvocationBody" ] = 
+        context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
 
     data[ "argument" ] = compileSignatureTemplate( );
 
@@ -37,7 +47,8 @@ TemplateData Constructor::CompileTemplate(const ReflectionParser *context) const
 
 bool Constructor::isAccessible(void) const
 {
-    return m_accessModifier == CX_CXXPublic && !m_metaData.GetFlag( kMetaDisable );
+    return m_accessModifier == CX_CXXPublic && 
+           !m_metaData.GetFlag( kMetaDisable );
 }
 
 std::string Constructor::getTemplateParameters(void) const

@@ -9,8 +9,6 @@
 
 #include <Color.h>
 
-#include <GL/glew.h>
-
 namespace
 {
     const auto kEditorEntryPoint = "file:///Assets/Editor/Editor.html";
@@ -21,11 +19,7 @@ namespace
 
     void onResize(int width, int height)
     {
-        glMatrixMode( GL_PROJECTION );
-        glLoadIdentity( );
 
-        glViewport( 0, 0, width, height );
-        glOrtho( 0, width, 0, height, -100.0f, 100.0f );
     }
 }
 
@@ -80,17 +74,7 @@ void Editor::OnInitialize(void)
 
     URSINE_TODO( "temporary OpenGL" );
     {
-        // create an OpenGL context for this window
-        m_glContext = SDL_GL_CreateContext( m_mainWindow->GetHandle( ) );
 
-        glewExperimental = GL_TRUE;
-
-        glewInit( );
-
-        glEnable( GL_BLEND );
-        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-
-        glClearColor( kEditorClearColor.r, kEditorClearColor.g, kEditorClearColor.b, kEditorClearColor.a );
     }
 
     m_ui = uiManager->CreateView( m_mainWindow, kEditorEntryPoint );
@@ -125,8 +109,6 @@ void Editor::initializeTools(void)
 void Editor::onAppUpdate(EVENT_HANDLER(ursine::Application))
 {
     EVENT_ATTRS(ursine::Application, ursine::EventArgs);
-
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     // @@@ TODO:
     // Update Scene

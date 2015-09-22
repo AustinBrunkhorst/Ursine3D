@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         )
         ( 
             SWITCH_OPTION( CompilerFlags ), 
-            po::value<std::vector<std::string>>( )->multitoken( )->required( ), 
+            po::value<std::vector<std::string>>( )->multitoken( )->required( ),
             "Optional list of flags to pass to the compiler." 
         );
 
@@ -105,11 +105,17 @@ void parse(const po::variables_map &cmdLine)
 {
     ReflectionOptions options;
 
-    options.targetName = cmdLine.at( kSwitchTargetName ).as<std::string>( );
-    options.inputSourceFile = cmdLine.at( kSwitchInputSource ).as<std::string>( );
+    options.targetName = 
+        cmdLine.at( kSwitchTargetName ).as<std::string>( );
 
-    options.outputHeaderFile = cmdLine.at( kSwitchOutputHeader ).as<std::string>( );
-    options.outputSourceFile = cmdLine.at( kSwitchOutputSource ).as<std::string>( );
+    options.inputSourceFile = 
+        cmdLine.at( kSwitchInputSource ).as<std::string>( );
+
+    options.outputHeaderFile = 
+        cmdLine.at( kSwitchOutputHeader ).as<std::string>( );
+
+    options.outputSourceFile = 
+        cmdLine.at( kSwitchOutputSource ).as<std::string>( );
 
     // default arguments
     options.arguments =
@@ -121,19 +127,26 @@ void parse(const po::variables_map &cmdLine)
     } };
 
     if (cmdLine.count( kSwitchPrecompiledHeader ))
-        options.precompiledHeader = cmdLine.at( kSwitchPrecompiledHeader ).as<std::string>( );
+    {
+        options.precompiledHeader = 
+            cmdLine.at( kSwitchPrecompiledHeader ).as<std::string>( );
+    }
 
     if (cmdLine.count( kSwitchCompilerFlags ))
     {
-        auto flags = cmdLine.at( kSwitchCompilerFlags ).as<std::vector<std::string>>( );
+        auto flags = 
+            cmdLine.at( kSwitchCompilerFlags ).as<std::vector<std::string>>( );
 
         for (auto &flag : flags) 
             options.arguments.emplace_back( flag.c_str( ) );
     }
 
-    options.templateDirectory = cmdLine.at( kSwitchTemplateDirectory ).as<std::string>( );
+    options.templateDirectory = 
+        cmdLine.at( kSwitchTemplateDirectory ).as<std::string>( );
     
-    std::cout << "Parsing reflection data for target \"" << options.targetName << "\"" << std::endl;
+    std::cout << "Parsing reflection data for target \"" 
+              << options.targetName << "\"" 
+              << std::endl;
 
     ReflectionParser parser( options );
 
