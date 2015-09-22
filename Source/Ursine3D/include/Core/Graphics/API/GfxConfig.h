@@ -17,7 +17,6 @@ Author:         Matt Yan, m.yan@digipen.edu
 #pragma once
 
 #include <string>
-#include <Windows.h>
 
 namespace ursine
 {

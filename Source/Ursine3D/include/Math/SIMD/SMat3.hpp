@@ -258,7 +258,7 @@ namespace ursine
 		);
 	}
 
-	INLINE void SMat3::SetLookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp)
+	INLINE SMat3 SMat3::LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp)
 	{
 		// Generate the third basis vector in the local space.
 		SVec3 localRight = SVec3::Cross( localUp, localForward );
@@ -304,15 +304,12 @@ namespace ursine
 		// and not the columns to directly produce the transpose, i.e. the inverse of (localRight, localUp, localForward).
 
 		// Compute final M.
-		*this = m1 * m2;
+		auto m = m1 * m2;
 
 		// And fix any numeric stability issues by re-orthonormalizing the result.
-		Orthonormalize( );
-	}
+		m.Orthonormalize( );
 
-	INLINE void SMat3::SetLookAt(const SVec3 &targetDirection, const SVec3 &worldUp)
-	{
-		SetLookAt( targetDirection, SVec3::UnitZ( ), SVec3::UnitY( ), worldUp );
+		return m;
 	}
 
 	INLINE void SMat3::Transpose(void)

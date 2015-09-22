@@ -65,7 +65,7 @@ namespace ursine
       rasterDesc.FillMode = D3D11_FILL_SOLID;
       rasterDesc.FrontCounterClockwise = false;
       rasterDesc.MultisampleEnable = true;
-      rasterDesc.ScissorEnable = true;
+      rasterDesc.ScissorEnable = false;
       rasterDesc.SlopeScaledDepthBias = 0.0f;
 
       //Create the rasterizer state from the description we just filled out.

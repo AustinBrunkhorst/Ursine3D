@@ -38,7 +38,7 @@ namespace ursine
 
     /////////////////////////////////////////////////////////////////
     // SHADER BUFFER MAPPING ////////////////////////////////////////
-    void ShaderBufferManager::MapCameraBuffer( DirectX::XMMATRIX &view, DirectX::XMMATRIX &projection, SHADERDEF shader, unsigned int bufferIndex )
+    void ShaderBufferManager::MapCameraBuffer(const SMat4 &view, const SMat4 &projection, SHADERDEF shader, unsigned int bufferIndex )
     {
       UAssert( bufferIndex < MAX_CONST_BUFF, "ResourceManager attempted to map buffer to invalid index (index #%i)", bufferIndex );
       HRESULT result;
@@ -53,8 +53,8 @@ namespace ursine
       dataPtr = (CameraBuffer*)mappedResource.pData;
 
       //set data
-      dataPtr->view = XMMatrixTranspose( view );
-      dataPtr->projection = XMMatrixTranspose( projection );
+      dataPtr->view = SMat4::Transpose( view ).ToD3D( );
+      dataPtr->projection = SMat4::Transpose( projection ).ToD3D( );
 
       //unlock buffer
       m_deviceContext->Unmap( m_bufferArray[ BUFFER_CAMERA ], 0 );
@@ -63,7 +63,7 @@ namespace ursine
       SetBuffer( shader, bufferIndex, m_bufferArray[ BUFFER_CAMERA ] );
     }
 
-    void ShaderBufferManager::MapTransformBuffer( const DirectX::XMMATRIX &transform, SHADERDEF shader, unsigned int bufferIndex )
+    void ShaderBufferManager::MapTransformBuffer( const SMat4 &transform, SHADERDEF shader, unsigned int bufferIndex )
     {
       UAssert( bufferIndex < MAX_CONST_BUFF, "ResourceManager attempted to map buffer to invalid index (index #%i)", bufferIndex );
       HRESULT result;
@@ -78,7 +78,7 @@ namespace ursine
       dataPtr = (TransformBuffer*)mappedResource.pData;
 
       //set data
-      dataPtr->transform = XMMatrixTranspose( transform );
+      dataPtr->transform = transform.ToD3D( );
 
       //unlock buffer
       m_deviceContext->Unmap( m_bufferArray[ BUFFER_TRANSFORM ], 0 );

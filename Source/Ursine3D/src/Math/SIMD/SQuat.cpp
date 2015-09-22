@@ -279,7 +279,7 @@ namespace ursine
 	{
 		SMat3 mat;
 
-		mat.SetLookAt( targetDirection, localForward, localUp, worldUp );
+		mat.LookAt( targetDirection, localForward, localUp, worldUp );
 
 		set( mat );
 	}
@@ -288,7 +288,7 @@ namespace ursine
 	{
 		SMat3 mat;
 
-		mat.SetLookAt( targetDirection, worldUp );
+		mat.LookAt( targetDirection, SVec3::UnitZ( ), SVec3::UnitY( ), worldUp );
 
 		set( mat );
 	}
@@ -297,7 +297,7 @@ namespace ursine
 	{
 		SMat3 mat;
 
-		mat.SetLookAt( targetDirection, localForward, localUp, worldUp );
+		mat.LookAt( targetDirection, localForward, localUp, worldUp );
 
 		return SQuat( mat );
 	}
@@ -306,7 +306,7 @@ namespace ursine
 	{
 		SMat3 mat;
 
-		mat.SetLookAt( targetDirection, worldUp );
+		mat.LookAt( targetDirection, SVec3::UnitZ( ), SVec3::UnitY( ), worldUp );
 
 		return SQuat( mat );
 	}

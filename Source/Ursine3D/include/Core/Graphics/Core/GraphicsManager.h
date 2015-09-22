@@ -93,9 +93,9 @@ namespace ursine
     void RenderScene_Deferred( float dt, GFXHND viewport = -1 );
 
     //preparing for rendering
-    void PrepFor3DModels( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
-    void PrepForLightPass( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
-    void PrepForPrimitives( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj );
+    void PrepFor3DModels( const SMat4 &view, const SMat4 &proj );
+    void PrepForLightPass( const SMat4 &view, const SMat4 &proj );
+    void PrepForPrimitives( const SMat4 &view, const SMat4 &proj );
     void PrepForDebugRender( );
     void PrepForFinalOutput( );
     void PrepForUI( );
@@ -105,8 +105,8 @@ namespace ursine
     void RenderPointLight( DRAWHND handle, Camera &currentCamera );
     void RenderDirectionalLight( DRAWHND handle, Camera &currentcamera );
     void RenderPrimitive( DRAWHND handle );
-    void RenderDebugPoints( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj, Camera &currentCamera );
-    void RenderDebugLines( DirectX::XMMATRIX &view, DirectX::XMMATRIX &proj, Camera &currentCamera );
+    void RenderDebugPoints( const SMat4 &view, const SMat4 &proj, Camera &currentCamera );
+    void RenderDebugLines( const SMat4 &view, const SMat4 &proj, Camera &currentCamera );
 
     //privates members
   private:

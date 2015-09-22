@@ -1,6 +1,6 @@
 #include "UrsinePrecompiled.h"
-#include "GfxAPI.h"
 #include "GraphicsManager.h"
+#include "GfxAPI.h"
 
 namespace ursine
 {

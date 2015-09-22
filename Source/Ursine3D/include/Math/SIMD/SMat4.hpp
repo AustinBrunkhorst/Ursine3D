@@ -1,6 +1,8 @@
 
 
 #include <string.h>
+#include "UrsineLogTools.h"
+#include "SMat3.h"
 
 namespace ursine
 {
@@ -844,164 +846,228 @@ namespace ursine
 		point.Z( ) = inv_div * ( m[ 2 ][ 0 ] * x + m[ 2 ][ 1 ] * y + m[ 2 ][ 2 ] * z + m[ 2 ][ 3 ] );
 	}
 
-	INLINE void SMat4::D3DOrthoProjLH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::D3DOrthoProjLH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = 1.f / ( f - n );
-		m[ 2 ][ 3 ] = n / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = 0.f;
-		m[ 3 ][ 3 ] = 1.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = 1.f / ( f - n );
+		m( 2, 3 ) = n / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = 0.f;
+		m( 3, 3 ) = 1.f;
+
+		return m;
 	}
 
-	INLINE void SMat4::D3DOrthoProjRH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::D3DOrthoProjRH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = 1.f / ( n - f );
-		m[ 2 ][ 3 ] = n / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = 0.f;
-		m[ 3 ][ 3 ] = 1.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = 1.f / ( n - f );
+		m( 2, 3 ) = n / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = 0.f;
+		m( 3, 3 ) = 1.f;
+
+		return m;
 	}
 
-	INLINE void SMat4::D3DPerspProjLH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::D3DPerspProjLH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f * n / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f * n / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = f / ( f - n );
-		m[ 2 ][ 3 ] = n * f / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = 1.f;
-		m[ 3 ][ 3 ] = 0.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f * n / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f * n / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = f / ( f - n );
+		m( 2, 3 ) = n * f / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = 1.f;
+		m( 3, 3 ) = 0.f;
+
+		return m;
 	}
 
-	INLINE void SMat4::D3DPerspProjRH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::D3DPerspProjRH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f * n / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f * n / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = f / ( n - f );
-		m[ 2 ][ 3 ] = n * f / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = -1.f;
-		m[ 3 ][ 3 ] = 0.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f * n / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f * n / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = f / ( n - f );
+		m( 2, 3 ) = n * f / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = -1.f;
+		m( 3, 3 ) = 0.f;
+
+		return m;
 	}
 
-	INLINE void SMat4::OGLOrthoProjLH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::OGLOrthoProjLH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = 2.f / ( f - n );
-		m[ 2 ][ 3 ] = ( f + n ) / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = 0;
-		m[ 3 ][ 3 ] = 1.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = 2.f / ( f - n );
+		m( 2, 3 ) = ( f + n ) / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = 0;
+		m( 3, 3 ) = 1.f;
+
+		return m;
 	}
 
-	INLINE void SMat4::OGLOrthoProjRH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::OGLOrthoProjRH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = 2.f / ( n - f );
-		m[ 2 ][ 3 ] = ( f + n ) / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = 0;
-		m[ 3 ][ 3 ] = 1.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = 2.f / ( n - f );
+		m( 2, 3 ) = ( f + n ) / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = 0;
+		m( 3, 3 ) = 1.f;
+
+		return m;
 	}
 
-	INLINE void SMat4::OGLPerspProjLH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::OGLPerspProjLH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f * n / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f * n / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = ( n + f ) / ( f - n );
-		m[ 2 ][ 3 ] = 2.f * n * f / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = 1.f;
-		m[ 3 ][ 3 ] = 0.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f * n / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f * n / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = ( n + f ) / ( f - n );
+		m( 2, 3 ) = 2.f * n * f / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = 1.f;
+		m( 3, 3 ) = 0.f;
+
+		return m;
 	}
 
-	INLINE void SMat4::OGLPerspProjRH(float n, float f, float h, float v)
+	INLINE SMat4 SMat4::OGLPerspProjRH(float n, float f, float h, float v)
 	{
-		m[ 0 ][ 0 ] = 2.f * n / h;
-		m[ 0 ][ 1 ] = 0;
-		m[ 0 ][ 2 ] = 0;
-		m[ 0 ][ 3 ] = 0.f;
-		m[ 1 ][ 0 ] = 0;
-		m[ 1 ][ 1 ] = 2.f * n / v;
-		m[ 1 ][ 2 ] = 0;
-		m[ 1 ][ 3 ] = 0.f;
-		m[ 2 ][ 0 ] = 0;
-		m[ 2 ][ 1 ] = 0;
-		m[ 2 ][ 2 ] = ( n + f ) / ( n - f );
-		m[ 2 ][ 3 ] = 2.f * n * f / ( n - f );
-		m[ 3 ][ 0 ] = 0;
-		m[ 3 ][ 1 ] = 0;
-		m[ 3 ][ 2 ] = -1.f;
-		m[ 3 ][ 3 ] = 0.f;
+		SMat4 m;
+
+		m( 0, 0 ) = 2.f * n / h;
+		m( 0, 1 ) = 0;
+		m( 0, 2 ) = 0;
+		m( 0, 3 ) = 0.f;
+		m( 1, 0 ) = 0;
+		m( 1, 1 ) = 2.f * n / v;
+		m( 1, 2 ) = 0;
+		m( 1, 3 ) = 0.f;
+		m( 2, 0 ) = 0;
+		m( 2, 1 ) = 0;
+		m( 2, 2 ) = ( n + f ) / ( n - f );
+		m( 2, 3 ) = 2.f * n * f / ( n - f );
+		m( 3, 0 ) = 0;
+		m( 3, 1 ) = 0;
+		m( 3, 2 ) = -1.f;
+		m( 3, 3 ) = 0.f;
+
+		return m;
+	}
+
+	INLINE SMat4 SMat4::LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp)
+	{
+		SMat4 mat;
+
+		mat.setRotation( SMat3::LookAt( targetDirection, localForward, localUp, worldUp ) );
+		mat.SetRow( 3, SVec4( 0, 0, 0, 1 ) );
+
+		return mat;
+	}
+
+	INLINE SMat4 SMat4::LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 localForward,
+    						   const SVec3 &localUp, const SVec3 &worldUp)
+	{
+		SMat4 mat;
+		auto dir = targetPos - eyePos;
+		dir.Normalize( );
+
+		mat.setRotation( SMat3::LookAt( dir, localForward, localUp, worldUp ) );
+		mat.SetColumn( 3, SVec4( eyePos, 1.0f ) );
+		mat.SetRow( 3, SVec4( 0.0f, 0.0f, 0.0f, 1.0f) );
+
+		return mat;
+	}
+
+
+	INLINE void SMat4::setRotation(const SMat3 &mat)
+	{
+		m[0] = SVec4( mat.m[0], 0.0f );
+		m[1] = SVec4( mat.m[1], 0.0f );
+		m[2] = SVec4( mat.m[2], 0.0f );
 	}
 
 	// Accessors
