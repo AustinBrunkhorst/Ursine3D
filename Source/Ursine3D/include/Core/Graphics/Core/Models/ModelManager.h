@@ -58,6 +58,8 @@ namespace ursine
 
     ID3D11Buffer *GetModelVertByID( unsigned ID );
     unsigned GetModelVertcountByID( unsigned ID );
+
+    void Invalidate( );
   private:
     ID3D11Device *m_device;
     ID3D11DeviceContext *m_deviceContext;

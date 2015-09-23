@@ -56,6 +56,8 @@ namespace ursine
 
     void Resize( int width, int height );
 
+    void Invalidate( );
+
     //public members
   public:
     DXCore::DirectXCore *dxCore;

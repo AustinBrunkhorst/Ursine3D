@@ -18,6 +18,8 @@ namespace ursine
 
       ID3D11DepthStencilState *GetStencilState( DEPTH_STATES state );
       void SetDepthState( DEPTH_STATES state );
+
+      void Invalidate( );
     private:
       ID3D11Device *m_device;
       ID3D11DeviceContext *m_deviceContext;

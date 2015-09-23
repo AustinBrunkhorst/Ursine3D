@@ -189,5 +189,10 @@ namespace ursine
 
       m_deviceContext->RSSetState( m_rasterStateArray[ state ] );
     }
+
+    void RasterStateManager::Invalidate ( )
+    {
+      m_currentState = RASTER_STATE_COUNT;
+    }
   }
 }

@@ -12,7 +12,8 @@ namespace ursine
 
     m_pointList.resize( MAX_DRAW_OBJ );
     m_lineList.resize( MAX_DRAW_OBJ );
-    m_size = 1;
+    m_size = 10;
+    m_color = DirectX::XMFLOAT4( 1, 1, 1, 1 );
 
     m_pointCount = 0;
     m_lineCount = 0;

@@ -84,15 +84,22 @@ namespace ursine
 
     LogMessage( "Initialize Buffers", 1 );
     bufferManager->Initialize( dxCore->GetDevice( ), dxCore->GetDeviceContext( ) );
+
     LogMessage( "Initialize Models", 1 );
     modelManager->Initialize( dxCore->GetDevice( ), dxCore->GetDeviceContext( ), config.ModelListPath_ );
+    
     renderableManager->Initialize( );
     cameraManager->Initialize( );
+    
     LogMessage( "Initialize Textures", 1 );
     textureManager->Initialize( dxCore->GetDevice( ), dxCore->GetDeviceContext( ), config.TextureListPath_ );
+    
     viewportManager->Initialize( dxCore->GetRenderTargetMgr( ) );
+    
     uiManager->Initialize( dxCore->GetDevice( ), dxCore->GetDeviceContext( ), dxCore->GetRenderTargetMgr( ), this );
+    
     drawingManager->Initialize( dxCore->GetDevice( ), dxCore->GetDeviceContext( ) );
+    
     gfxProfiler->Initialize( dxCore->GetDevice( ), dxCore->GetDeviceContext( ), m_profile );
 
     //create layouts
@@ -100,6 +107,8 @@ namespace ursine
 
     //init drawing manager
     drawingManager->EndScene( );
+
+    Invalidate( );
 
     m_ready = true;
   }
@@ -240,16 +249,15 @@ namespace ursine
 
   void GraphicsCore::RenderScene( float dt, GFXHND viewport )
   {
-	  RenderScene_Deferred(dt, viewport);
+    if (viewportManager->GetViewport( viewport ).GetRenderMode( ) == VIEWPORT_RENDER_DEFERRED)
+      RenderScene_Deferred( dt, viewport );
+    else
+      RenderScene_Forward( dt, viewport );
+
 	  return;
     //close thread handle if needed
     if (m_threadHandle != nullptr)
       CloseHandle( m_threadHandle );
-
-    if(viewportManager->GetViewport(viewport).GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
-      RenderScene_Deferred( dt, viewport );
-    else
-      RenderScene_Forward( dt, viewport );
 
     return;
     /*
@@ -282,88 +290,6 @@ namespace ursine
     return 0;
   }
 
-  void GraphicsCore::RenderScene_Forward( float dt, GFXHND viewport )
-  {
-    /////////////////////////////////////////////////////////////////
-    // PRE FRAME STUFF 
-    // init buffers for frame
-    dxCore->ClearDepthBuffers( );
-    gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
-
-    // get viewport
-    Viewport &vp = viewportManager->GetViewport( viewport );
-
-    // get camera
-    Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
-
-    //get d3d11 viewport info, set it
-    D3D11_VIEWPORT vpData = vp.GetViewportData( );
-
-    dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
-
-    /////////////////////////////////////////////////////////////////
-    // gets the projection matrix and view matrix
-    SMat4 proj, view;
-    proj = currentCamera.GetProjMatrix( vpData.Width / 100, vpData.Height / 100 );
-    view = currentCamera.GetViewMatrix( );
-
-    /////////////////////////////////////////////////////////////////
-    // SORT ALL DRAW CALLS
-    std::sort( m_drawList.begin( ), m_drawList.begin( ) + m_drawCount, sort );
-
-    /////////////////////////////////////////////////////////////////
-    // BEGIN RENDERING
-    //keep track of where we are
-    int currentIndex = 0;
-
-    //render 3d models deferred
-    dxCore->SetBlendState( BLEND_STATE_DEFAULT );
-    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
-    shaderManager->BindShader( SHADER_DIFFUSE );
-    layoutManager->SetInputLayout( SHADER_DIFFUSE );
-    dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-    textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
-    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
-    dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
-
-    while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
-      Render3DModel( m_drawList[ currentIndex++ ] );
-
-    //render wireframes?
-    ////light pass
-    PrepForLightPass( view, proj );
-    //while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
-    //  RenderPointLight( m_drawList[ currentIndex++ ], currentCamera );
-    //while (m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT)
-    //  RenderDirectionalLight( m_drawList[ currentIndex++ ], currentCamera );
-
-    //primitive pass
-    gfxProfiler->Stamp( PROFILE_LIGHTS );
-
-    dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
-    shaderManager->BindShader( SHADER_PRIMITIVE );
-    layoutManager->SetInputLayout( SHADER_PRIMITIVE );
-
-    while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
-      RenderPrimitive( m_drawList[ currentIndex++ ] );
-
-    //debug 
-    dxCore->SetBlendState( BLEND_STATE_NONE );
-    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
-
-    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
-    RenderDebugPoints( view, proj, currentCamera );
-
-    dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
-    RenderDebugLines( view, proj, currentCamera );
-
-    //clearing all buffers
-    textureManager->MapTextureByName( "Wire" );
-    textureManager->MapTextureByName( "Wire", 1 );
-    textureManager->MapTextureByName( "Wire", 2 );
-    textureManager->MapTextureByName( "Wire", 3 );
-  }
-
   void GraphicsCore::RenderScene_Deferred( float dt, GFXHND viewport )
   {
     /////////////////////////////////////////////////////////////////
@@ -375,7 +301,7 @@ namespace ursine
 
     // get viewport
     Viewport &vp = viewportManager->GetViewport( viewport );
-    
+
     // get camera
     Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
 
@@ -401,7 +327,7 @@ namespace ursine
 
     //render 3d models deferred
     PrepFor3DModels( view, proj );
-    while(m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
       Render3DModel( m_drawList[ currentIndex++ ] );
 
     //light pass
@@ -438,11 +364,93 @@ namespace ursine
 
     shaderManager->BindShader( SHADER_QUAD );
     layoutManager->SetInputLayout( SHADER_QUAD );
-    
+
     shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
     gfxProfiler->Stamp( PROFILE_SCENE_PRIMITIVE );
 
     //clearing all buffers
+    textureManager->MapTextureByName( "Wire" );
+    textureManager->MapTextureByName( "Wire", 1 );
+    textureManager->MapTextureByName( "Wire", 2 );
+    textureManager->MapTextureByName( "Wire", 3 );
+  }
+
+  void GraphicsCore::RenderScene_Forward( float dt, GFXHND viewport )
+  {
+    /////////////////////////////////////////////////////////////////
+    // PRE FRAME STUFF 
+    // init buffers for frame
+    dxCore->ClearDeferredBuffers( );
+    dxCore->ClearDepthBuffers( );
+    gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
+
+    // get viewport
+    Viewport &vp = viewportManager->GetViewport( viewport );
+    
+    // get camera
+    Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
+
+    //get d3d11 viewport info, set it
+    D3D11_VIEWPORT vpData = vp.GetViewportData( );
+
+    dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
+
+    /////////////////////////////////////////////////////////////////
+    // gets the projection matrix and view matrix
+    SMat4 proj, view;
+    proj = currentCamera.GetProjMatrix( vpData.Width / 100, vpData.Height / 100 );
+    view = currentCamera.GetViewMatrix( );
+
+    /////////////////////////////////////////////////////////////////
+    // SORT ALL DRAW CALLS
+    std::sort( m_drawList.begin( ), m_drawList.begin( ) + m_drawCount, sort );
+
+    /////////////////////////////////////////////////////////////////
+    // BEGIN RENDERING
+    //keep track of where we are
+    int currentIndex = 0;
+
+    dxCore->SetBlendState( BLEND_STATE_DEFAULT );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
+    dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
+    dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
+
+    shaderManager->BindShader( SHADER_DIFFUSE );
+    layoutManager->SetInputLayout( SHADER_DIFFUSE );
+    textureManager->MapSamplerState( SAMPLER_WRAP_TEX );
+    bufferManager->MapCameraBuffer( view, proj );
+
+    //render objects
+    while(m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
+      Render3DModel( m_drawList[ currentIndex++ ] );
+
+    gfxProfiler->Stamp( PROFILE_LIGHTS );
+
+    //go through lights
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
+      ++currentIndex;
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT)
+      ++currentIndex;
+
+    //render primitives
+    dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
+    shaderManager->BindShader( SHADER_PRIMITIVE );
+    layoutManager->SetInputLayout( SHADER_PRIMITIVE );
+
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
+      RenderPrimitive( m_drawList[ currentIndex++ ] );
+
+    //render points and lines
+    dxCore->SetBlendState( BLEND_STATE_NONE );
+    dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
+
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
+    RenderDebugPoints( view, proj, currentCamera );
+
+    dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
+    RenderDebugLines( view, proj, currentCamera );
+
     textureManager->MapTextureByName( "Wire" );
     textureManager->MapTextureByName( "Wire", 1 );
     textureManager->MapTextureByName( "Wire", 2 );
@@ -476,6 +484,10 @@ namespace ursine
     m_rendering = false;
 
     dxCore->CheckSize( );
+
+    //invalidate CPU-side gfx engine for next frame
+    dxCore->Invalidate( );
+    Invalidate( );
   }
 
   void GraphicsCore::EndFrame ( )
@@ -824,5 +836,14 @@ namespace ursine
 
     //MAIN render targets, not viewports
     dxCore->ResizeDX( width, height );
+
+    Invalidate( );
+  }
+
+  void GraphicsCore::Invalidate ( )
+  {
+    dxCore->Invalidate( );
+    shaderManager->Invalidate( );
+    layoutManager->Invalidate( );
   }
 }

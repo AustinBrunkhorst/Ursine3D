@@ -159,5 +159,10 @@ namespace ursine
 
       m_deviceContext->OMSetDepthStencilState( m_depthStateArray[ state ], 1 );
     }
+
+    void DepthStencilStateManager::Invalidate ( )
+    {
+      m_currentState = DEPTH_STATE_COUNT;
+    }
   }
 }

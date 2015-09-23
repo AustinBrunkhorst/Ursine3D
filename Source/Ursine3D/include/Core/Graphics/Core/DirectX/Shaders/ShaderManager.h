@@ -65,6 +65,8 @@ namespace ursine
       void Render( unsigned vert_count );
 
       Shader *GetShader( SHADER_TYPES shader );
+
+      void Invalidate( );
     private:
       std::string m_shaderPath;
       ID3D11Device *m_device;

@@ -83,6 +83,8 @@ namespace ursine
 
       void CheckSize( );
 
+      void Invalidate( );
+
       //private methods
     private:
       void backendResizeDX( int width, int height );

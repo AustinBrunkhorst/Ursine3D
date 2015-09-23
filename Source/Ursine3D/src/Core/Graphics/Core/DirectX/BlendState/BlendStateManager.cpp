@@ -107,5 +107,10 @@ namespace ursine
       float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
       m_deviceContext->OMSetBlendState( BlendStateArray_[ state ], blendFactor, 0xffffffff );
     }
+
+    void BlendStateManager::Invalidate ( )
+    {
+      m_currentState = BLEND_STATE_COUNT;
+    }
   }
 }

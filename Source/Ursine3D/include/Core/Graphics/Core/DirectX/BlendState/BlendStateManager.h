@@ -32,6 +32,9 @@ namespace ursine
 
       ID3D11BlendState *GetBlendState( BLEND_STATES state );
       void SetBlendState( BLEND_STATES state );
+
+      void Invalidate( );
+
     private:
       ID3D11Device *m_device;
       ID3D11DeviceContext *m_deviceContext;

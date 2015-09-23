@@ -119,6 +119,11 @@ namespace ursine
     return m_depthStencilResourceArray[ stencil ];
   }
 
+  void DepthStencilManager::Invalidate ( )
+  {
+    m_currentState = DEPTH_STENCIL_COUNT;
+  }
+
   void DepthStencilManager::Resize ( int width, int height )
   {
     for (auto x : m_depthStencilTextureArray)

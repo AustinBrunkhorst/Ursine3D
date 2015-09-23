@@ -315,6 +315,15 @@ namespace ursine
       backendResizeDX( m_newWidth, m_newHeight );
     }
 
+    void DirectXCore::Invalidate ( )
+    {
+      m_blendManager->Invalidate( );
+      m_depthStateManager->Invalidate( );
+      m_depthStencilManager->Invalidate( );
+      m_targetManager->Invalidate( );
+      m_rasterStateManager->Invalidate( );
+    }
+
     void DirectXCore::backendResizeDX( int width, int height )
     {
       m_targetManager->ResizeDeferred( width, height );

@@ -9,256 +9,353 @@
 #include <GfxAPI.h>
 
 #include <Color.h>
-#include <DirectXMath.h>
+#include <SQuat.h>
+#include <SMat4.h>
 
 using namespace ursine;
 
 namespace
 {
-    //const auto kGraphicsTestUIEntryPoint = "file:///Assets/Test.html";
-    const auto kGraphicsTestUIEntryPoint = "www.google.com";
+  //const auto kGraphicsTestUIEntryPoint = "file:///Assets/Test.html";
+  const auto kGraphicsTestUIEntryPoint = "www.google.com";
 
-    const auto kDefaultWindowWidth = 1920;
-    const auto kDefaultWindowHeight = 1080;
+  const auto kDefaultWindowWidth = 1280;
+  const auto kDefaultWindowHeight = 720;
 
-    void onResize(int width, int height)
-    {
-        // ::OPENGL
-        /*glMatrixMode( GL_PROJECTION );
-        glLoadIdentity( );
-
-        glViewport( 0, 0, width, height );
-        glOrtho( 0, width, 0, height, -100.0f, 100.0f );*/
-
-        ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
-    }
+  void onResize( int width, int height )
+  {
+    Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
+  }
 }
 
-CORE_SYSTEM_DEFINITION( GraphicsTest );
+CORE_SYSTEM_DEFINITION( PhysicsTest );
 
-GraphicsTest::GraphicsTest(void)
-    : m_mainWindow( nullptr )
+PhysicsTest::PhysicsTest( void )
+  : m_mainWindow( nullptr )
 {
-    
+
 }
 
-GraphicsTest::~GraphicsTest(void)
+PhysicsTest::~PhysicsTest( void )
 {
-    // ::OPENGL
-    //SDL_GL_DeleteContext( m_glContext );
-
-    delete m_mainWindow;
+  delete m_mainWindow;
 }
 
-void GraphicsTest::OnInitialize(void)
+void PhysicsTest::OnInitialize( void )
 {
-    auto *app = ursine::Application::Instance;
+  initGraphics( );
+  initPhysics( );
+}
 
-    app->Connect(
-        ursine::APP_UPDATE, 
-        this, 
-        &GraphicsTest::onAppUpdate 
+void PhysicsTest::OnRemove( void )
+{
+  Application::Instance->Disconnect(
+    APP_UPDATE,
+    this,
+    &PhysicsTest::onAppUpdate
     );
 
-    auto *windowManager = app->GetCoreSystem<ursine::WindowManager>( );
-    auto *uiManager = app->GetCoreSystem<ursine::UIManager>( );
+  m_mainWindow->Listener( this )
+    .Off( WINDOW_RESIZE, &PhysicsTest::onMainWindowResize );
 
-    m_mainWindow = windowManager->AddWindow(
-        "Ursine3D Editor", 
-        { 0, 0 }, 
-        { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
-        SDL_WINDOW_RESIZABLE
+  m_ui->Close( );
+}
+
+void PhysicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
+{
+  EVENT_ATTRS( Application, EventArgs );
+
+  // @@@ TODO:
+  // Update Scene
+  // Render Tools
+  // Render Editor UIView
+
+  static float t = 0.0f;
+  t += Application::Instance->GetDeltaTime( );
+
+  Camera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
+
+  float distance = 11.0f;
+  float x = cos( t ) * distance;
+  float z = sin( t ) * distance;
+  cam.SetPosition( SVec3( x, 0.0f, z ) );
+
+  SVec3 dir( cam.GetPosition( ) );
+  cam.SetLook( -dir );
+
+  static SQuat quat0( 60.0f, 40.0f, 10.0f );
+  static SQuat quat1( -60.0f, -40.0f, -20.0f );
+  static float slerpT = 0.0f;
+  static int direction = 1;
+
+  slerpT += Application::Instance->GetDeltaTime( ) * direction;
+
+  if (slerpT > 1.0f)
+    direction = -1;
+  else if (slerpT < 0.0f)
+    direction = 1;
+
+  slerpT = math::Clamp( slerpT, 0.0f, 1.0f );
+
+  SQuat result = quat0.Slerp( quat1, ease::CircularInOut( slerpT ) );
+  SMat4 mat( result );
+
+  Model3D &modelCube = m_gfx->RenderableMgr.GetModel3D( m_cube );
+  modelCube.SetWorldMatrix( mat );
+
+  m_gfx->DrawingMgr.SetSize( 10 );
+  m_gfx->DrawingMgr.DrawPoint( 0, 0, 0 );
+
+  m_gfx->BeginScene( );
+  //stick draw calls here
+  //m_gfx->RenderObject( m_cube );
+  m_gfx->RenderObject( m_floor );
+  // gfx->RenderObject(wirePrimitive);
+  m_gfx->RenderObject( m_light );
+  m_gfx->RenderObject( m_light2 );
+  m_gfx->RenderObject( m_primitive );
+
+  //LAST
+  m_gfx->RenderScene( 0.016f, m_viewport );
+  m_gfx->EndScene( );
+
+  m_ui->Draw( );
+}
+
+void PhysicsTest::onMainWindowResize( EVENT_HANDLER( ursine::Window ) )
+{
+  EVENT_ATTRS( ursine::Window, ursine::WindowResizeArgs );
+
+  onResize( args->width, args->height );
+
+  m_ui->SetViewport( {
+    0, 0,
+    args->width, args->height
+  } );
+}
+
+void PhysicsTest::initGraphics( void )
+{
+  auto *app = Application::Instance;
+
+  app->Connect(
+    APP_UPDATE,
+    this,
+    &PhysicsTest::onAppUpdate
     );
 
-    m_mainWindow->Listener( this )
-        .On( ursine::WINDOW_RESIZE, &GraphicsTest::onMainWindowResize );
-  
-    m_mainWindow->SetLocationCentered( );
-    m_mainWindow->Show( true );
+  auto *windowManager = app->GetCoreSystem<WindowManager>( );
+  auto *uiManager = app->GetCoreSystem<UIManager>( );
 
-    /////////////////////////////////////////////////////////////////
-    //make graphics manager
-    auto *gfxManager = app->GetCoreSystem<ursine::GfxAPI>( );
-
-    HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle( )));
-
-    ursine::GfxConfig config;
-    config.Fullscreen_ = false;
-    config.HandleToWindow_ = &handle;
-    config.ModelListPath_ = "Models/";
-    config.ShaderListPath_ = "SHADER_BINARY/";
-    config.TextureListPath_ = "Textures/";
-    config.WindowWidth_ = kDefaultWindowWidth;
-    config.WindowHeight_ = kDefaultWindowHeight;
-    config.m_renderUI = false;
-    config.Profile_ = false;
-    config.debug = false;
-
-    gfxManager->StartGraphics( config );
-
-    m_ui = uiManager->CreateView( m_mainWindow, kGraphicsTestUIEntryPoint );
-
-    m_ui->SetViewport( {
-        0, 0,
-        kDefaultWindowWidth, kDefaultWindowHeight
-    } );
-
-    onResize( kDefaultWindowWidth, kDefaultWindowHeight );
-}
-
-void GraphicsTest::OnRemove(void)
-{
-    ursine::Application::Instance->Disconnect(
-        ursine::APP_UPDATE, 
-        this, 
-        &GraphicsTest::onAppUpdate 
+  m_mainWindow = windowManager->AddWindow(
+    "Ursine3D Editor",
+    { 0, 0 },
+    { static_cast<float>(kDefaultWindowWidth), static_cast<float>(kDefaultWindowHeight) },
+    SDL_WINDOW_RESIZABLE
     );
 
-    m_mainWindow->Listener( this )
-        .Off( ursine::WINDOW_RESIZE, &GraphicsTest::onMainWindowResize );
+  m_mainWindow->Listener( this )
+    .On( WINDOW_RESIZE, &PhysicsTest::onMainWindowResize );
 
-    m_ui->Close( );
+  m_mainWindow->SetLocationCentered( );
+  m_mainWindow->Show( true );
+
+  /////////////////////////////////////////////////////////////////
+  //make graphics manager
+  m_gfx = app->GetCoreSystem<GfxAPI>( );
+
+  HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle( )));
+
+  GfxConfig config;
+  config.Fullscreen_ = false;
+  config.HandleToWindow_ = &handle;
+  config.ModelListPath_ = "Models/";
+  config.ShaderListPath_ = "SHADER_BINARY/";
+  config.TextureListPath_ = "Textures/";
+  config.WindowWidth_ = kDefaultWindowWidth;
+  config.WindowHeight_ = kDefaultWindowHeight;
+  config.m_renderUI = false;
+  config.Profile_ = false;
+
+  m_gfx->StartGraphics( config );
+
+  m_ui = uiManager->CreateView( m_mainWindow, kGraphicsTestUIEntryPoint );
+
+  m_ui->SetViewport( {
+    0, 0,
+    kDefaultWindowWidth, kDefaultWindowHeight
+  } );
+
+  onResize( kDefaultWindowWidth, kDefaultWindowHeight );
+
+
+  ////////////////////////////////////////////////////////////////////
+  //initialize the demo related tings
+  m_viewport = m_gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
+  m_camera = m_gfx->CameraMgr.AddCamera( );
+
+  m_cube = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+  m_floor = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+  m_primitive = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_PRIMITIVE);
+
+  m_light = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+  m_light2 = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetViewportCamera( m_camera );
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetDimensions( kDefaultWindowWidth, kDefaultWindowHeight );
+
+  Model3D &MdlCube = m_gfx->RenderableMgr.GetModel3D( m_cube );
+  PointLight &pointLight = m_gfx->RenderableMgr.GetPointLight( m_light );
+  PointLight &pointLight2 = m_gfx->RenderableMgr.GetPointLight( m_light2 );
+  // Primitive &primitive = gfx->RenderableMgr.GetPrimitive(wirePrimitive);
+
+  //set primitive data
+  // primitive.SetRadius(3.0f);
+  // primitive.SetType(Primitive::PRIM_SPHERE);	//what type of shape do you want? sphere? capsule? cube? plane?
+
+  SMat4 trans;
+  trans.Translate( SVec3( 0, -8, 0 ) );
+  m_gfx->RenderableMgr.GetModel3D( m_floor ).SetWorldMatrix( trans * SMat4( 10, 10, 10 ) );
+
+  //set obj data here
+  MdlCube.SetModel( "Cube" );
+  MdlCube.SetMaterial( "Cube" );
+  MdlCube.SetWorldMatrix( SMat4::Identity( ) );
+
+  pointLight.SetPosition( 0, 2, -2 );
+  pointLight.SetRadius( 40 );
+
+  pointLight2.SetPosition( 0, 2, 2 );
+  pointLight2.SetRadius( 40 );
 }
 
-void GraphicsTest::onAppUpdate(EVENT_HANDLER(ursine::Application))
+void PhysicsTest::initPhysics( void )
 {
-    EVENT_ATTRS(ursine::Application, ursine::EventArgs);
+  /*int i;
 
-    // ::OPENGL
-    //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+  m_physics = Application::Instance->GetCoreSystem<PhysicsManager>();
 
-    // @@@ TODO:
-    // Update Scene
-    // Render Tools
-    // Render Editor UIView
+  ///create a few basic rigid bodies
+  btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
 
-    auto gfx = ursine::Application::Instance->GetCoreSystem<ursine::GfxAPI>( );
+  //keep track of the shapes, we release memory at exit.
+  //make sure to re-use collision shapes among rigid bodies whenever possible!
+  btAlignedObjectArray<btCollisionShape*> collisionShapes;
 
-    static GFXHND prim, obj, floor, point, skybox;
-    static GFXHND vp;
-    static GFXHND cam;
-    static GFXHND lights[ 10 ];
-    static GFXHND cubes[ 10 ];
-    static bool ran = false;
-    static float dt = 0;
+  collisionShapes.push_back(groundShape);
 
-    DirectX::XMFLOAT3 colors[ 10 ] = {
-      DirectX::XMFLOAT3(0, 0, 1),
-      DirectX::XMFLOAT3(0, 1, 0),
-      DirectX::XMFLOAT3(0, 1, 1),
-      DirectX::XMFLOAT3(1, 0, 0),
-      DirectX::XMFLOAT3(1, 0, 1),
-      DirectX::XMFLOAT3(1, 1, 0),
-      DirectX::XMFLOAT3(1, 1, 1),
-      DirectX::XMFLOAT3(0, 0, 1),
-      DirectX::XMFLOAT3(0, 1, 0),
-      DirectX::XMFLOAT3(1, 0, 0),
-    };
+  btTransform groundTransform;
+  groundTransform.setIdentity();
+  groundTransform.setOrigin(btVector3(0, -56, 0));
 
-    dt += 0.016;
+  {
+  btScalar mass(0.);
 
-    if(!ran)
-    {
-      ran = true;
-      prim = gfx->RenderableMgr.AddRenderable( RENDERABLE_PRIMITIVE );
-      obj = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
-      skybox = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
-      floor = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
-      point = gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+  //rigidbody is dynamic if and only if mass is non zero, otherwise static
+  bool isDynamic = (mass != 0.f);
 
-      for (int x = 0; x < 10; ++x)
-      {
-        lights[ x ] = gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
-        gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetRadius( 5 );
-        gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetColor( Color( SVec3( colors[x] ) ) );
+  btVector3 localInertia(0, 0, 0);
+  if (isDynamic)
+  groundShape->calculateLocalInertia(mass, localInertia);
 
-        cubes[x] = gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
-      }
+  //using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
+  btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
+  btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
+  btRigidBody* body = new btRigidBody(rbInfo);
 
-      gfx->RenderableMgr.GetModel3D( obj ).SetModel( "Pedestal" );
-      gfx->RenderableMgr.GetModel3D( floor ).SetModel( "Cube" );
-      gfx->RenderableMgr.GetModel3D( floor ).SetModel( "Cube" );
-      gfx->RenderableMgr.GetModel3D( skybox ).SetModel( "Skybox" );
-      
-      gfx->RenderableMgr.GetModel3D( floor ).SetWorldMatrix( SMat4( DirectX::XMMatrixScaling( 10, 1, 10 ) * DirectX::XMMatrixTranslation( 0, -1, 0 ) ) );
-      gfx->RenderableMgr.GetModel3D( skybox ).SetWorldMatrix( SMat4( DirectX::XMMatrixScaling( 20.f, 20.f, 20.f ) ) );
+  //add the body to the dynamics world
+  dynamicsWorld->addRigidBody(body);
+  }
 
-      gfx->RenderableMgr.GetPointLight( point ).SetPosition( 1, 1, -1 );
-      gfx->RenderableMgr.GetPointLight( point ).SetRadius( 5 );
-      gfx->RenderableMgr.GetPointLight( point ).SetColor( 1, 1, 1 );
 
-      gfx->RenderableMgr.GetPrimitive( prim ).SetType( ursine::Primitive::PRIM_SPHERE );
-      gfx->RenderableMgr.GetPrimitive( prim ).SetRadius( 1.1 );
-      gfx->RenderableMgr.GetPrimitive( prim ).SetWidth( 1 );
-      gfx->RenderableMgr.GetPrimitive( prim ).SetHeight( 1 );
-      gfx->RenderableMgr.GetPrimitive( prim ).SetDepth( 1 );
-      gfx->RenderableMgr.GetPrimitive( prim ).SetColor( 1, 1, 1, 1 );
-      
-      vp = gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
-      gfx->ViewportMgr.GetViewport( vp ).SetPosition( 0, 0 );
-      //gfx->ViewportMgr.GetViewport( vp ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
-      cam = gfx->CameraMgr.AddCamera( );
+  {
+  //create a dynamic rigidbody
 
-      gfx->ViewportMgr.GetViewport(vp).SetViewportCamera( cam );
-	  gfx->ViewportMgr.GetViewport(vp).SetRenderMode(ViewportRenderMode::VIEWPORT_RENDER_FORWARD);
+  //btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+  btCollisionShape* colShape = new btSphereShape(btScalar(1.));
+  collisionShapes.push_back(colShape);
 
-      gfx->CameraMgr.GetCamera( cam ).SetPosition( SVec3( DirectX::XMFLOAT3( 0, 0, -10 ) ) );
-      gfx->CameraMgr.GetCamera( cam ).LookAtPoint( SVec3( DirectX::XMFLOAT3( 0, 0, 0 ) ) );
+  /// Create Dynamic Objects
+  btTransform startTransform;
+  startTransform.setIdentity();
 
-      gfx->DrawingMgr.SetColor( 1, 1, 1, 1 );
-      gfx->DrawingMgr.SetSize( 10 );
-    }
+  btScalar	mass(1.f);
 
-    gfx->RenderableMgr.GetModel3D( obj ).SetWorldMatrix( SMat4( DirectX::XMMatrixRotationRollPitchYaw( 3.14f / 2, dt, 0 ) * DirectX::XMMatrixScaling( 0.0025, 0.0025, 0.0025 ) * DirectX::XMMatrixTranslation( 0, 1.1, 0 ) ) );
+  //rigidbody is dynamic if and only if mass is non zero, otherwise static
+  bool isDynamic = (mass != 0.f);
 
-    float angle = 0;
-    for (int x = 0; x < 10; ++x)
-    {
-      float radius = 5 + 3 * cos( dt );
-      gfx->RenderableMgr.GetPointLight( lights[x] ).SetPosition( cosf( (dt + angle) ) * radius, 1 + cosf( (dt + angle) * 2 ) * 0.75, sinf( (dt + angle) ) * radius );
-      gfx->DrawingMgr.SetColor( colors[ x ].x, colors[ x ].y, colors[ x ].z, 1 );
-      gfx->DrawingMgr.DrawPoint( cosf( (dt + angle) ) * radius, 1 + cosf( (dt + angle) * 2 ) * 0.75, sinf( (dt + angle) ) * radius );
+  btVector3 localInertia(0, 0, 0);
+  if (isDynamic)
+  colShape->calculateLocalInertia(mass, localInertia);
 
-      gfx->RenderableMgr.GetPointLight( lights[ x ] ).SetRadius( 6 );
+  startTransform.setOrigin(btVector3(2, 10, 0));
 
-      gfx->RenderableMgr.GetModel3D( cubes[ x ] ).SetWorldMatrix( SMat4( DirectX::XMMatrixRotationRollPitchYaw( cos( angle - dt ), sin( angle - dt ), -cosf( angle - dt ) ) * DirectX::XMMatrixTranslation( cosf( -angle - dt ) * radius, 2 + cosf( (dt + angle) * 2 ), sinf( -angle - dt ) * radius ) ) );
-      angle += 6.28 / 10;
-    }
-    
-	gfx->DrawingMgr.SetSize(20);
-	gfx->DrawingMgr.SetColor(1, 0, 0, 1);
-	gfx->DrawingMgr.DrawPoint(0, 0, 0);
+  //using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+  btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+  btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+  btRigidBody* body = new btRigidBody(rbInfo);
 
-    gfx->BeginScene( );
-    //gfx->RenderObject( prim );
-    gfx->RenderObject( obj );
-    gfx->RenderObject( floor );
-    //gfx->RenderObject( point );
-    gfx->RenderObject( skybox );
+  dynamicsWorld->addRigidBody(body);
+  }
 
-    for (int x = 0; x < 10; ++x)
-    {
-      gfx->RenderObject( lights[ x ] );
-      gfx->RenderObject( cubes[ x ] );
-    }
 
-    gfx->RenderScene( 0.016f, vp ); //very back
-    gfx->EndScene( );
 
-    m_ui->Draw( );
+  /// Do some simulation
 
-    // ::OPENGL
-    //SDL_GL_SwapWindow( m_mainWindow->GetHandle( ) );
-}
 
-void GraphicsTest::onMainWindowResize(EVENT_HANDLER(ursine::Window))
-{
-    EVENT_ATTRS(ursine::Window, ursine::WindowResizeArgs);
+  ///-----stepsimulation_start-----
+  for (i = 0; i<100; i++)
+  {
+  dynamicsWorld->stepSimulation(1.f / 60.f, 10);
 
-    onResize( args->width, args->height );
+  //print positions of all objects
+  for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
+  {
+  btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
+  btRigidBody* body = btRigidBody::upcast(obj);
+  btTransform trans;
+  if (body && body->getMotionState())
+  {
+  body->getMotionState()->getWorldTransform(trans);
 
-    m_ui->SetViewport( {
-        0, 0,
-        args->width, args->height
-    } );
+  }
+  else
+  {
+  trans = obj->getWorldTransform();
+  }
+  printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+  }
+  }
+
+  ///-----stepsimulation_end-----
+
+  //cleanup in the reverse order of creation/initialization
+
+  ///-----cleanup_start-----
+
+  //remove the rigidbodies from the dynamics world and delete them
+  for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+  {
+  btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
+  btRigidBody* body = btRigidBody::upcast(obj);
+  if (body && body->getMotionState())
+  {
+  delete body->getMotionState();
+  }
+  dynamicsWorld->removeCollisionObject(obj);
+  delete obj;
+  }
+
+  //delete collision shapes
+  for (int j = 0; j<collisionShapes.size(); j++)
+  {
+  btCollisionShape* shape = collisionShapes[j];
+  collisionShapes[j] = 0;
+  delete shape;
+  }
+
+
+
+  //next line is optional: it will be cleared by the destructor when the array goes out of scope
+  collisionShapes.clear();*/
 }

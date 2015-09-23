@@ -34,6 +34,7 @@ namespace ursine
 
       void SetInputLayout( SHADER_TYPES type );
 
+      void Invalidate( );
     private:
       HRESULT GetLayoutFromBlob( Shader *shader, ID3D11InputLayout** pInputLayout );
       ID3D11Device *m_device;

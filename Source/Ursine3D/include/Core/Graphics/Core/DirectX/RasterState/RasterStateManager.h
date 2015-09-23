@@ -32,6 +32,8 @@ namespace ursine
 
       ID3D11RasterizerState *GetRasterState( RASTER_STATES state );
       void SetRasterState( RASTER_STATES state );
+
+      void Invalidate( );
     private:
       ID3D11Device *m_device;
       ID3D11DeviceContext *m_deviceContext;
