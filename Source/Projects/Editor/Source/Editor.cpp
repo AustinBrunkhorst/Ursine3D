@@ -11,7 +11,7 @@
 
 namespace
 {
-    const auto kEditorEntryPoint = "file:///Assets/Editor/Editor.html";
+    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
     const auto kEditorClearColor = ursine::Color( 0xFF252526 );
 
     const auto kDefaultWindowWidth = 1280;
@@ -19,7 +19,7 @@ namespace
 
     void onResize(int width, int height)
     {
-
+        
     }
 }
 

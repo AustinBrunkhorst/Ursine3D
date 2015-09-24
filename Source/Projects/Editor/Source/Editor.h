@@ -17,10 +17,10 @@ public:
     Editor(void);
     ~Editor(void);
 
-    Meta(Disable);
+    Meta(Disable)
     void OnInitialize(void) override;
 
-    Meta(Disable);
+    Meta(Disable)
     void OnRemove(void) override;
     
 private:

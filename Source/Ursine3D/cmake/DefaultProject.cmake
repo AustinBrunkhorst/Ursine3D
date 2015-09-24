@@ -32,10 +32,6 @@ macro (ursine_default_project project_name)
         # add to the sources
         list(APPEND files_src ${meta_generated_src})
         list(APPEND files_inc ${meta_generated_header})
-
-        # create temporary empty files to suppress compilation errors
-        file(WRITE ${meta_generated_header} "")
-        file(WRITE ${meta_generated_src} "")
     endif ()
 
     set(files_misc "")
@@ -301,9 +297,14 @@ macro (ursine_default_project project_name)
             set(pch_switch "--pch \"${PROJ_PCH_NAME}.h\"")
         endif ()
 
+        set(meta_depends ${files_inc})
+
+        list(REMOVE_ITEM meta_depends ${meta_generated_header})
+
+        # add the command that generates the header and source files
         add_custom_command(
-            TARGET ${project_name}
-            PRE_BUILD
+            OUTPUT ${meta_generated_header} ${meta_generated_src}
+            DEPENDS ${meta_depends}
             COMMAND call "$<TARGET_FILE:ReflectionParser>"
             --target-name "${project_name}"
             --in-source "${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SOURCE_DIR}/${PROJ_META_HEADER}"

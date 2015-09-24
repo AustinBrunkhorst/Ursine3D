@@ -1,0 +1,5 @@
+# Compile as JavaScript
+-js ../Resources/Editor.js
+
+# Entry point class
+-main Application
