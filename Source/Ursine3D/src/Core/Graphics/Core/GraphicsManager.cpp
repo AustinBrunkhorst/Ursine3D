@@ -8,7 +8,7 @@
 
 namespace ursine
 {
-  bool sort( DRAWHND &h1, DRAWHND &h2 )
+  bool sort( _DRAWHND &h1, _DRAWHND &h2 )
   {
     if (*reinterpret_cast<unsigned long long*>(&h1) < *reinterpret_cast<unsigned long long*>(&h2))
       return true;
@@ -158,7 +158,7 @@ namespace ursine
     UAssert( m_drawCount < MAX_DRAW_CALLS, "Out of available draw calls! Let Matt know, easy fix." );
 
     //get a new draw call
-    DRAWHND &drawCall = m_drawList[ m_drawCount++ ];
+    _DRAWHND &drawCall = m_drawList[ m_drawCount++ ];
 
     switch (render->Type_)
     {
@@ -637,7 +637,7 @@ namespace ursine
   }
 
   // rendering //////////////////////////////////////////////////////
-  void GraphicsCore::Render3DModel ( DRAWHND handle )
+  void GraphicsCore::Render3DModel ( _DRAWHND handle )
   {
     //map transform
     bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ) );
@@ -652,7 +652,7 @@ namespace ursine
   
   }
 
-  void GraphicsCore::Render2DBillboard( DRAWHND handle )
+  void GraphicsCore::Render2DBillboard( _DRAWHND handle )
   {
     //map transform
     bufferManager->MapTransformBuffer( renderableManager->m_renderableBillboards[ handle.Index_ ].GetWorldMatrix( ) );
@@ -667,7 +667,7 @@ namespace ursine
     shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sprite" ) ) );
   }
 
-  void GraphicsCore::RenderPointLight ( DRAWHND handle, Camera &currentCamera )
+  void GraphicsCore::RenderPointLight ( _DRAWHND handle, Camera &currentCamera )
   {
     shaderManager->BindShader( SHADER_POINT_LIGHT );
     layoutManager->SetInputLayout( SHADER_POINT_LIGHT );
@@ -714,7 +714,7 @@ namespace ursine
     shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sphere" ) ) );
   }
 
-  void GraphicsCore::RenderDirectionalLight ( DRAWHND handle, Camera &currentCamera )
+  void GraphicsCore::RenderDirectionalLight ( _DRAWHND handle, Camera &currentCamera )
   {
     ID3D11ShaderResourceView *resource = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_SHADOWMAP );
     dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &resource );
@@ -738,7 +738,7 @@ namespace ursine
     shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
   }
 
-  void GraphicsCore::RenderPrimitive ( DRAWHND handle )
+  void GraphicsCore::RenderPrimitive ( _DRAWHND handle )
   {
 
     Primitive &prim = renderableManager->m_renderablePrimitives[ handle.Index_ ];

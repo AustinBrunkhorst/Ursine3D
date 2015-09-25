@@ -103,11 +103,11 @@ namespace ursine
     void PrepForUI( );
 
     //rendering funcs
-    void Render3DModel( DRAWHND handle );
-    void Render2DBillboard( DRAWHND handle );
-    void RenderPointLight( DRAWHND handle, Camera &currentCamera );
-    void RenderDirectionalLight( DRAWHND handle, Camera &currentcamera );
-    void RenderPrimitive( DRAWHND handle );
+    void Render3DModel( _DRAWHND handle );
+    void Render2DBillboard( _DRAWHND handle );
+    void RenderPointLight( _DRAWHND handle, Camera &currentCamera );
+    void RenderDirectionalLight( _DRAWHND handle, Camera &currentcamera );
+    void RenderPrimitive( _DRAWHND handle );
     void RenderDebugPoints( const SMat4 &view, const SMat4 &proj, Camera &currentCamera );
     void RenderDebugLines( const SMat4 &view, const SMat4 &proj, Camera &currentCamera );
 
@@ -121,7 +121,7 @@ namespace ursine
     bool m_profile;
     bool m_debug;
     bool m_ready = false;
-    std::vector<DRAWHND> m_drawList;
+    std::vector<_DRAWHND> m_drawList;
     unsigned m_drawCount;
 
     //temp
