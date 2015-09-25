@@ -17,6 +17,14 @@
 #include "SIMD.h"
 #include <string>
 
+#ifdef URSINE_GRAPHICS_DIRECTX
+namespace DirectX
+{
+	// Forward Declaration
+	struct XMFLOAT3;
+}
+#endif
+
 namespace ursine
 {
 	// Forward declaration
@@ -44,6 +52,12 @@ namespace ursine
 		SVec3(const Vec2 &value, float Z);
 		explicit SVec3(const SVec4 &value);
 		explicit SVec3(const Vec4 &value);
+
+#ifdef URSINE_GRAPHICS_DIRECTX
+		explicit SVec3(const DirectX::XMFLOAT3 &vec);
+
+		DirectX::XMFLOAT3 ToD3D(void) const;
+#endif
 
 		// Properties
 		static const SVec3 &Zero(void);

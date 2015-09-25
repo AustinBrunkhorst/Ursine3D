@@ -84,6 +84,7 @@ void MetaDataManager::CompileTemplateData(
     {
         kMetaEnable,
         kMetaDisable,
+        kMetaDisableNonDynamicCtor,
         kMetaDisablePtrType,
         kMetaDisableConstPtrType,
         kMetaDisplayName,

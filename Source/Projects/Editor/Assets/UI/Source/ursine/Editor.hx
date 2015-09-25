@@ -11,5 +11,7 @@ class Editor {
         instance = this;
 
         mainMenu = new MainMenu( );
+
+        js.Browser.document.querySelector( '#header-toolbar' ).appendChild( mainMenu.domContainer );
     }
 }

@@ -38,6 +38,8 @@ TemplateData Constructor::CompileTemplate(
     data[ "dynamicInvocationBody" ] = 
         context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
 
+    data[ "enableNonDynamic" ] = utils::TemplateBool( !m_metaData.GetFlag( kMetaDisableNonDynamicCtor ) );
+
     data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data, context );

@@ -10,6 +10,10 @@
 
 #include "Application.h"
 
+#include "GfxAPI.h"
+
+#include "PhysicsManager.h"
+
 #include "UIManager.h"
 
 #include "WindowManager.h"

@@ -13,6 +13,10 @@
 
 #include "UrsinePrecompiled.h"
 
+#ifdef URSINE_GRAPHICS_DIRECTX
+#include "DirectXMath.h"
+#endif
+
 namespace ursine
 {
 	// Constructors
@@ -67,6 +71,18 @@ namespace ursine
 	{
 		SetColumn( 3, SVec4( trans, 1.0f ) );
 	}
+
+#ifdef URSINE_GRAPHICS_DIRECTX
+	SMat4::SMat4(const DirectX::XMMATRIX &mat)
+	{
+		memcpy( m, mat.r, sizeof( m ) );
+	}
+
+	DirectX::XMMATRIX SMat4::ToD3D(void) const
+	{
+		return DirectX::XMMATRIX(GetFloatPtr());
+	}
+#endif
 
 	// Public Methods
 	std::string SMat4::ToString(void) const

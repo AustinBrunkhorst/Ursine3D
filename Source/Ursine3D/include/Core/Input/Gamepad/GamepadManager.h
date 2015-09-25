@@ -44,10 +44,10 @@ namespace ursine
         GamepadManager(void);
         ~GamepadManager(void);
 
-        Meta(Disable);
+        Meta(Disable)
         void OnInitialize(void) override;
 
-        Meta(Disable);
+        Meta(Disable)
         void OnRemove(void) override;
 
         // Gets the current state of a gamepad based on the gamepad index.

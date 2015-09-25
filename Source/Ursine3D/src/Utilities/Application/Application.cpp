@@ -58,6 +58,10 @@ namespace ursine
 
             auto ctor = derived.GetDynamicConstructor( );
 
+            UAssert( ctor.IsValid( ),
+              "Core system \"%s\" doesn't have a default constructor.",
+              derived.GetName( ).c_str( ) );
+
             auto system = ctor.Invoke( );
 
             UAssert( system.IsValid( ), 

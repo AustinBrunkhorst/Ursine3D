@@ -50,34 +50,30 @@ namespace ursine
             if (ExitCode == EXIT_SUCCESS)
                 return;
 
-            std::string message = "Please contact a developer with the debug trace.";
+            std::wstringstream message;
 
-            auto wdir = boost::filesystem::current_path( ).string( );
+            message << "Please contact a developer with the debug trace.";
+            message << "\n\n";
+            message << boost::filesystem::current_path( ) / WIDEN( URSINE_ERROR_LOG_FILE );
 
-            if (!wdir.empty( ))
-            {
-                message += "\n\n";
-                message += wdir;
-                message += "\\";
-                message += URSINE_ERROR_LOG_FILE;
-            }
+        #ifdef PLATFORM_WINDOWS
 
-#ifdef PLATFORM_WINDOWS
+            MessageBoxW( nullptr, message.str( ).c_str( ), L"Unexpected Crash", MB_OK | MB_ICONERROR );
 
-            MessageBox( nullptr, "Unexpected Crash", message.c_str( ), MB_OK | MB_ICONERROR );
-
-#else
+        #else
 
             URSINE_TODO( "Add messageboxes for this platform" );
 
-#endif
+        #endif
         }
 
         void Initialize(void)
         {
-#if (URSINE_DISPLAY_CRASH_MESSAGEBOX)
-            atexit(displayCrashMessageBox);
-#endif
+        #if (URSINE_DISPLAY_CRASH_MESSAGEBOX)
+
+            atexit( displayCrashMessageBox );
+
+        #endif
         }
 
         void OutputInfo(FILE *handle, URSINE_FFL_ARGS)
@@ -115,7 +111,8 @@ namespace ursine
 
         void OutputStack(FILE *handle)
         {
-#ifdef PLATFORM_WINDOWS
+        #ifdef PLATFORM_WINDOWS
+
             auto process = GetCurrentProcess( );
 
             SymInitialize( process, nullptr, true );
@@ -170,7 +167,8 @@ namespace ursine
             free( symbol );
 
             SymCleanup( process );
-#endif
+
+        #endif // PLATFORM_WINDOWS
         }
 
         void OutputWDir(FILE *handle)
@@ -187,16 +185,18 @@ namespace ursine
         void ExitError(void)
         {
             // focus on the console
-#ifdef PLATFORM_WINDOWS
+        #ifdef PLATFORM_WINDOWS
+
             SetForegroundWindow( GetConsoleWindow( ) );
-#endif
+
+        #endif
 
             /*
             * If you're seeing this, it's because you're in debug mode
             * and an assertion failed or a fatal error was thrown.
             * Check out the console, or look at the call stack.
             **/
-            URSINE_DEBUG_BREAK();
+            URSINE_DEBUG_BREAK( );
 
             // make sure we show the message box
             exit( ExitCode = EXIT_FAILURE );

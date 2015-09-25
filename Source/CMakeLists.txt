@@ -37,17 +37,14 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 # Global Dependencies
 # ------------------------------------------------------------------------------
 
-set(SDL2_DIR       "${ENGINE_DEP_DIR}/SDL2")
-set(GLEW_DIR       "${ENGINE_DEP_DIR}/GLEW")
-set(CEF_DIR        "${ENGINE_DEP_DIR}/CEF")
-set(BENCHMARKS_DIR "${ENGINE_DEP_DIR}/Benchmarks")
-set(CLANG_DIR      "${ENGINE_DEP_DIR}/Clang")
+set(SDL2_DIR          "${ENGINE_DEP_DIR}/SDL2")
+set(CEF_DIR           "${ENGINE_DEP_DIR}/CEF")
+set(BENCHMARKS_DIR    "${ENGINE_DEP_DIR}/Benchmarks")
+set(CLANG_DIR         "${ENGINE_DEP_DIR}/Clang")
+set(BulletPhysics_DIR "${ENGINE_DEP_DIR}/Bullet")
 
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
-
-find_package(GLEW REQUIRED 
-    HINTS ${GLEW_DIR})
 
 find_package(CEF 3.2272 REQUIRED 
     HINTS ${CEF_DIR})
@@ -58,8 +55,10 @@ find_package(BENCHMARKS REQUIRED
 find_package(Clang REQUIRED
     HINTS ${CLANG_DIR})
 
-# boost requires some special attention
+find_package(BulletPhysics REQUIRED
+    HINTS ${BulletPhysics_DIR})
 
+# boost requires some special attention
 include(BoostSetup)
 
 # ------------------------------------------------------------------------------
@@ -78,6 +77,12 @@ if (MSVC)
         "/Zm200" # increased compiler heap memory
         "/bigobj" # increased object file size
     )
+
+    # DirectX requires some special attention
+    include(DirectXSetup)
+
+    # DirectX graphics backend
+    add_definitions(-DURSINE_GRAPHICS_DIRECTX)
     
     #ursine_remove_compile_flags(
     #    "/EHsc" # disable exceptions

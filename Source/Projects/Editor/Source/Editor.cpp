@@ -9,25 +9,22 @@
 
 #include <Color.h>
 
+using namespace ursine;
+
 namespace
 {
     const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
-    const auto kEditorClearColor = ursine::Color( 0xFF252526 );
+    const auto kEditorClearColor = Color( 0xFF252526 );
 
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
-
-    void onResize(int width, int height)
-    {
-        
-    }
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
 
 Editor::Editor(void)
-    : m_mainWindow( nullptr )
-    , m_glContext( nullptr )
+    : m_graphics( nullptr )
+    , m_mainWindow( { nullptr } )
     , m_project( new Project( ) )
 {
     
@@ -35,70 +32,99 @@ Editor::Editor(void)
 
 Editor::~Editor(void)
 {
-    URSINE_TODO( "temporary OpenGL" );
-    SDL_GL_DeleteContext( m_glContext );
-
-    delete m_mainWindow;
+    delete m_mainWindow.window;
 
     delete m_project;
 }
 
 void Editor::OnInitialize(void)
 {
-    auto *app = ursine::Application::Instance;
+    auto *app = Application::Instance;
 
     app->Connect(
-        ursine::APP_UPDATE, 
+        APP_UPDATE, 
         this, 
         &Editor::onAppUpdate 
     );
 
-    auto *windowManager = app->GetCoreSystem<ursine::WindowManager>( );
-    auto *uiManager = app->GetCoreSystem<ursine::UIManager>( );
+    auto *windowManager = app->GetCoreSystem<WindowManager>( );
+    auto *uiManager = app->GetCoreSystem<UIManager>( );
 
-    m_mainWindow = windowManager->AddWindow(
+    m_mainWindow.window = windowManager->AddWindow(
         "Ursine3D Editor", 
         { 0, 0 }, 
         { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
-        URSINE_TODO( "temporary OpenGL" )
-        SDL_WINDOW_OPENGL | 
         SDL_WINDOW_RESIZABLE
     );
 
-    m_mainWindow->Listener( this )
-        .On( ursine::WINDOW_RESIZE, &Editor::onMainWindowResize );
+    m_mainWindow.window->Listener( this )
+        .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
   
-    m_mainWindow->SetLocationCentered( );
-    m_mainWindow->Show( true );
-    m_mainWindow->SetIcon( "Assets/Resources/Icon.png" );
+    m_mainWindow.window->SetLocationCentered( );
+    m_mainWindow.window->Show( true );
+    m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
-    URSINE_TODO( "temporary OpenGL" );
-    {
+    m_graphics = app->GetCoreSystem<GfxAPI>( );
 
-    }
+    initializeGraphics( );
 
-    m_ui = uiManager->CreateView( m_mainWindow, kEditorEntryPoint );
+    m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEditorEntryPoint );
 
-    m_ui->SetViewport( {
+    m_mainWindow.ui->SetViewport( {
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
 
-    onResize( kDefaultWindowWidth, kDefaultWindowHeight );
+    resizeMainWindow( kDefaultWindowWidth, kDefaultWindowHeight );
 }
 
 void Editor::OnRemove(void)
 {
-    ursine::Application::Instance->Disconnect(
-        ursine::APP_UPDATE, 
+    Application::Instance->Disconnect(
+        APP_UPDATE, 
         this, 
         &Editor::onAppUpdate 
     );
 
-    m_mainWindow->Listener( this )
-        .Off( ursine::WINDOW_RESIZE, &Editor::onMainWindowResize );
+    m_mainWindow.window->Listener( this )
+        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
-    m_ui->Close( );
+    m_mainWindow.ui->Close( );
+}
+
+void Editor::initializeGraphics(void)
+{
+    GfxConfig config;
+
+    config.Fullscreen_ = false;
+
+    config.HandleToWindow_ = 
+        static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
+
+    config.ModelListPath_ = "Assets/Models/";
+    config.ShaderListPath_ = "Assets/Shaders/";
+    config.TextureListPath_ = "Assets/Textures/";
+    config.WindowWidth_ = kDefaultWindowWidth;
+    config.WindowHeight_ = kDefaultWindowHeight;
+
+    URSINE_TODO( "..." );
+    config.m_renderUI = true;
+
+    config.Profile_ = false;
+
+    m_graphics->StartGraphics( config );
+
+    m_mainWindow.viewport = m_graphics->ViewportMgr.CreateViewport(
+        kDefaultWindowWidth, 
+        kDefaultWindowHeight 
+    );
+
+    m_mainWindow.camera = m_graphics->CameraMgr.AddCamera( );
+
+    auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
+
+    viewportHandle.SetRenderMode( VIEWPORT_RENDER_FORWARD );
+    viewportHandle.SetViewportCamera( m_mainWindow.camera );
 }
 
 void Editor::initializeTools(void)
@@ -106,28 +132,38 @@ void Editor::initializeTools(void)
     // @@@ TODO:
 }
 
-void Editor::onAppUpdate(EVENT_HANDLER(ursine::Application))
+void Editor::resizeMainWindow(int width, int height)
 {
-    EVENT_ATTRS(ursine::Application, ursine::EventArgs);
+    auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
+
+    viewportHandle.SetDimensions( width, height );
+}
+
+void Editor::onAppUpdate(EVENT_HANDLER(Application))
+{
+    EVENT_ATTRS(Application, EventArgs);
+
+    m_graphics->BeginScene( );
 
     // @@@ TODO:
     // Update Scene
     // Render Tools
     // Render Editor UIView
 
-    m_ui->Draw( );
-
-    SDL_GL_SwapWindow( m_mainWindow->GetHandle( ) );
+    m_graphics->RenderScene( sender->GetDeltaTime( ), m_mainWindow.viewport );
+    m_graphics->EndScene( );
 }
 
-void Editor::onMainWindowResize(EVENT_HANDLER(ursine::Window))
+void Editor::onMainWindowResize(EVENT_HANDLER(Window))
 {
-    EVENT_ATTRS(ursine::Window, ursine::WindowResizeArgs);
+    EVENT_ATTRS(Window, WindowResizeArgs);
 
-    onResize( args->width, args->height );
+    resizeMainWindow( args->width, args->height );
 
-    m_ui->SetViewport( {
+    m_mainWindow.ui->SetViewport( {
         0, 0,
         args->width, args->height
     } );
+
+    m_graphics->Resize( args->width, args->height );
 }

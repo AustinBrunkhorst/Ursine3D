@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 ursine_default_project(Editor
     FOLDER "Engine"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF GLEW
+    DEPENDS Boost SDL2 CEF DirectX
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
     SYM_LINKS "Assets"

@@ -1,5 +1,9 @@
-# Compile as JavaScript
+# compile as JavaScript
 -js ../Resources/Editor.js
+-D noEmbedJS
 
-# Entry point class
+# dead code elimination
+-dce full
+
+# entry point class
 -main Application
