@@ -110,7 +110,7 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
   m_gfx->BeginScene( );
 
   //stick draw calls here
-  //m_gfx->RenderObject( m_cube );
+  m_gfx->RenderObject( m_cube );
   m_gfx->RenderObject( m_floor );
   m_gfx->RenderObject(m_billboard);
   m_gfx->RenderObject( m_light );
@@ -483,7 +483,7 @@ void GraphicsTest::initGraphics( void )
 
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 200, kDefaultWindowHeight - 200 );
 
-  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_DEFERRED );
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( 0, 0, 0, 0 );
   
