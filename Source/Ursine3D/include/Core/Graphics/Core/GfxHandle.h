@@ -27,7 +27,7 @@ typedef unsigned long long GFXHND;
 namespace ursine
 {
   //internal structure for draw calls
-  struct DRAWHND
+  struct _DRAWHND
   {
     unsigned Index_ : 16;
     unsigned Type_ : 4;

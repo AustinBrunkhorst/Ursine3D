@@ -181,11 +181,11 @@ namespace ursine
       CreateRenderTarget( RENDER_TARGET_DEBUG, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
     }
 
-    void RenderTargetManager::ResizeUI ( unsigned width, unsigned height )
+    void RenderTargetManager::ResizeUI ( unsigned width, unsigned height, RENDER_TARGETS target )
     {
-      RELEASE_RESOURCE( m_renderTargets[RENDER_TARGET_UI]->RenderTargetView );
-      RELEASE_RESOURCE( m_renderTargets[RENDER_TARGET_UI]->ShaderMap );
-      RELEASE_RESOURCE( m_renderTargets[RENDER_TARGET_UI]->TextureMap );
+      RELEASE_RESOURCE( m_renderTargets[ target ]->RenderTargetView );
+      RELEASE_RESOURCE( m_renderTargets[ target ]->ShaderMap );
+      RELEASE_RESOURCE( m_renderTargets[ target ]->TextureMap );
 
       CreateRenderTarget( RENDER_TARGET_UI, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
     }

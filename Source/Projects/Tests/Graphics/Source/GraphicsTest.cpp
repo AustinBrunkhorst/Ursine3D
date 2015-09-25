@@ -119,16 +119,28 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
 
   //LAST
   m_gfx->RenderScene( 0.016f, m_viewport );
+
+  Viewport &vp = m_gfx->ViewportMgr.GetViewport( m_viewport2 );
+  D3D11_VIEWPORT currVP = vp.GetViewportData( );
+  m_ui->SetViewport( {
+      (int)currVP.TopLeftX, (int)currVP.TopLeftY,
+      (int)currVP.Width, (int)currVP.Height
+  } );
+  m_ui->Draw( m_viewport2 );
+
   m_gfx->EndScene( );
 
   m_gfx->BeginScene( );
   m_gfx->RenderScene( 0.016f, m_viewport2 );
+
+  //resize it
+
+
   m_gfx->EndScene( );
 
   //END
   m_gfx->EndFrame( );
 
-  m_ui->Draw( );
 }
 
 void GraphicsTest::onMainWindowResize( EVENT_HANDLER( ursine::Window ) )
@@ -481,9 +493,9 @@ void GraphicsTest::initGraphics( void )
   m_viewport = m_gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
   m_viewport2 = m_gfx->ViewportMgr.CreateViewport( 200, 200 );
 
-  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 200, kDefaultWindowHeight - 200 );
-
-  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
+  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 250, kDefaultWindowHeight - 250 );
+  
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_DEFERRED );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( 0, 0, 0, 0 );
   

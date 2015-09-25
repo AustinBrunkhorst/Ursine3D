@@ -58,6 +58,8 @@ namespace ursine
 
     void Invalidate( );
 
+    void RenderUI( GFXHND viewport, RENDER_TARGETS input );
+
     //public members
   public:
     DXCore::DirectXCore *dxCore;
