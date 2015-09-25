@@ -126,7 +126,7 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
   m_gfx->EndScene( );
 
   //END
-  //m_gfx->EndFrame( );
+  m_gfx->EndFrame( );
 
   m_ui->Draw( );
 }
