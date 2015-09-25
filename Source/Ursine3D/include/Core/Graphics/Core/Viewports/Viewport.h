@@ -1,6 +1,8 @@
 #pragma once
 
 #include <d3d11.h>
+#include <Color.h>
+#include <SMat4.h>
 
 #include "GraphicsDefines.h"
 #include "ViewportRenderModes.h"
@@ -13,8 +15,9 @@ namespace ursine
     // initialize viewport to default settings
     void Initialize( );
 
-    // set background color of this viewport (NOT IMPLEMENTED)
+    // set background color of this viewport
     void SetBackgroundColor( float r, float g, float b, float a );
+    void SetBackgroundColor( Color color );
 
     // get the background, array of 4 floats
     const float *GetBackgroundColor( );

@@ -6,7 +6,10 @@ namespace ursine
 {
   void Viewport::Initialize ( )
   {
-    m_color[ 4 ];              
+    m_color[ 0 ] = 0.f;
+    m_color[ 1 ] = 0.f;
+    m_color[ 2 ] = 0.f;
+    m_color[ 3 ] = 1.f;
 
     m_camera = 0;              
 
@@ -27,6 +30,14 @@ namespace ursine
     m_color[ 1 ] = g;
     m_color[ 2 ] = b;
     m_color[ 3 ] = a;
+  }
+
+  void Viewport::SetBackgroundColor ( Color color )
+  {
+    m_color[ 0 ] = color.ByteR( ) / 255.f;
+    m_color[ 1 ] = color.ByteG( ) / 255.f;
+    m_color[ 2 ] = color.ByteB( ) / 255.f;
+    m_color[ 3 ] = color.ByteA( ) / 255.f;
   }
 
   const float* Viewport::GetBackgroundColor ( )

@@ -68,6 +68,8 @@ namespace ursine
         
         void StartGraphics( GfxConfig config );
         
+        void StartFrame( );
+
         // render an object                                                                   
         void RenderObject( GFXHND handle );      
         
@@ -78,7 +80,9 @@ namespace ursine
         void RenderScene(float dt, GFXHND viewport );   
         
         // end the current scene
-        void EndScene( );             
+        void EndScene( );     
+
+        void EndFrame( );
         
         void Resize( int width, int height );
     

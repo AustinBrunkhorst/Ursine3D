@@ -94,7 +94,7 @@ namespace ursine
       _RENDERABLEHND *render = HND_RENDER( handle );
 
       UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
-      UAssert( render->Type_ == RENDERABLE_PRIMITIVE, "Attempted to use invalid handle to get a primitive!" );
+      UAssert( render->Type_ == RENDERABLE_BILLBOARD2D, "Attempted to use invalid handle to get a billboard2D!" );
 
       return m_currentRenderableBillboards[ render->Index_ ];
     }

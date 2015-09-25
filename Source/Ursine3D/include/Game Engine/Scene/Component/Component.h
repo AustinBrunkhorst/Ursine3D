@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include "ComponentConfig.h"
+
 namespace ursine
 {
     namespace ecs

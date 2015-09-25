@@ -64,6 +64,11 @@ namespace ursine
     DrawingMgr.SetPrivates( m_privates->gfxCore_->drawingManager );
   }
 
+  void GfxAPI::StartFrame ( )
+  {
+    m_privates->gfxCore_->StartFrame( );
+  }
+
   void GfxAPI::RenderObject(GFXHND handle)
   {
     m_privates->gfxCore_->Render(handle);
@@ -82,6 +87,11 @@ namespace ursine
   void GfxAPI::EndScene( )
   {
     m_privates->gfxCore_->EndScene( );
+  }
+
+  void GfxAPI::EndFrame ( )
+  {
+    m_privates->gfxCore_->EndFrame( );
   }
 
   void GfxAPI::Resize ( int width, int height )

@@ -104,6 +104,7 @@ namespace ursine
 
     //rendering funcs
     void Render3DModel( DRAWHND handle );
+    void Render2DBillboard( DRAWHND handle );
     void RenderPointLight( DRAWHND handle, Camera &currentCamera );
     void RenderDirectionalLight( DRAWHND handle, Camera &currentcamera );
     void RenderPrimitive( DRAWHND handle );
@@ -114,6 +115,8 @@ namespace ursine
   private:
     std::atomic<bool> m_rendering;
 
+    bool m_sceneActive;       //was beginscene called
+    bool m_currentlyRendering;//was start frame called
     bool m_renderUI;
     bool m_profile;
     bool m_debug;

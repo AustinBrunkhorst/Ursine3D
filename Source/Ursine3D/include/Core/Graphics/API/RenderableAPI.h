@@ -44,7 +44,9 @@ namespace ursine
     PointLight &GetPointLight( GFXHND &handle );  
 
     // get a point light
-    Primitive &GetPrimitive( GFXHND &handle );                
+    Primitive &GetPrimitive( GFXHND &handle );       
+
+    Billboard2D &GetBillboard2D( GFXHND &handle );
 
   private:
     privData *m_privates;

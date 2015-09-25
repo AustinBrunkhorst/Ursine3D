@@ -41,6 +41,8 @@ namespace ursine
     m_profile = config.Profile_;
     m_threadHandle = nullptr;
     m_debug = config.debug;
+    m_currentlyRendering = false;
+    m_sceneActive = false;
 
     //writing log stuff
     LogMessage( "GRAPHICS" );
@@ -143,6 +145,9 @@ namespace ursine
 
   void GraphicsCore::Render( GFXHND handle )
   {
+    UAssert( m_currentlyRendering == true, "Attempted to render an object without starting the frame!" );
+    UAssert( m_sceneActive == true, "Attempted to render an object without beginning a scene!" );
+
     //convert to renderable handle
     _RENDERABLEHND *render = HND_RENDER( handle );
 
@@ -221,34 +226,70 @@ namespace ursine
 
   void GraphicsCore::StartFrame ( )
   {
+    UAssert( m_currentlyRendering == false, "Attempted to start the frame without ending the last one!" );
+    m_currentlyRendering = true;
+
     while (m_rendering);
 
     m_rendering = true;
 
+    
+
     dxCore->ClearSwapchain( );
     dxCore->ClearTargetBuffers( );
     dxCore->ClearDebugBuffer( );
     gfxProfiler->BeginFrame( );
+
+    //cache state of all graphics objects
+    renderableManager->CacheFrame( );
   }
 
   void GraphicsCore::BeginScene( )
   {
+    UAssert( m_currentlyRendering == true, "Attempted to begin a scene without starting the frame!" );
+    UAssert( m_sceneActive == false, "Attempted to begin a scene without ending the last one!" );
+    m_sceneActive = true;
+
     //clear draw call list
     memset( reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof( unsigned long long ) * m_drawCount );
     m_drawCount = 0;
 
-    //cache state of all graphics objects
-    renderableManager->CacheFrame( );
-
-    //@matt remove
-    dxCore->ClearSwapchain( );
-    dxCore->ClearTargetBuffers( );
+    //clear debug buffer
     dxCore->ClearDebugBuffer( );
-    gfxProfiler->BeginFrame( );
   }
 
   void GraphicsCore::RenderScene( float dt, GFXHND viewport )
   {
+    UAssert( m_currentlyRendering == true, "Attempted to render a scene without starting the frame!" );
+    UAssert( m_sceneActive == true, "Attempted to render a scene without beginning one!" );
+    // get viewport
+    Viewport &vp = viewportManager->GetViewport( viewport );
+
+    //set directx viewport
+    D3D11_VIEWPORT vpData = vp.GetViewportData( );
+    dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
+
+    //clear it
+    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
+    dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+    dxCore->SetDepthState( DEPTH_STATE_NODEPTH_NOSTENCIL );
+    dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
+    dxCore->SetBlendState( BLEND_STATE_DEFAULT );
+
+    modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
+    shaderManager->BindShader( SHADER_PRIMITIVE );
+    layoutManager->SetInputLayout( SHADER_PRIMITIVE );
+
+    bufferManager->MapCameraBuffer( SMat4::Identity( ), SMat4::Identity( ) );
+    bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
+
+    PrimitiveColorBuffer pcb;
+    pcb.color = DirectX::XMFLOAT4(vp .GetBackgroundColor());
+    bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, PIXEL_SHADER );
+
+    shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+
+    /////////////////////////////////////////////////////////////////
     if (viewportManager->GetViewport( viewport ).GetRenderMode( ) == VIEWPORT_RENDER_DEFERRED)
       RenderScene_Deferred( dt, viewport );
     else
@@ -305,15 +346,13 @@ namespace ursine
     // get camera
     Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
 
-    //get d3d11 viewport info, set it
+    //get d3d11 viewport info
     D3D11_VIEWPORT vpData = vp.GetViewportData( );
-
-    dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
     /////////////////////////////////////////////////////////////////
     // gets the projection matrix and view matrix
     SMat4 proj, view;
-    proj = currentCamera.GetProjMatrix( vpData.Width / 100, vpData.Height / 100 );
+    proj = currentCamera.GetProjMatrix( vpData.Width, vpData.Height);
     view = currentCamera.GetViewMatrix( );
 
     /////////////////////////////////////////////////////////////////
@@ -329,6 +368,8 @@ namespace ursine
     PrepFor3DModels( view, proj );
     while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
       Render3DModel( m_drawList[ currentIndex++ ] );
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
+      Render2DBillboard( m_drawList[ currentIndex++ ] );
 
     //light pass
     PrepForLightPass( view, proj );
@@ -390,10 +431,8 @@ namespace ursine
     // get camera
     Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
 
-    //get d3d11 viewport info, set it
+    //get d3d11 viewport info
     D3D11_VIEWPORT vpData = vp.GetViewportData( );
-
-    dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
     /////////////////////////////////////////////////////////////////
     // gets the projection matrix and view matrix
@@ -424,6 +463,8 @@ namespace ursine
     //render objects
     while(m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
       Render3DModel( m_drawList[ currentIndex++ ] );
+    while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
+      Render2DBillboard( m_drawList[ currentIndex++ ] );
 
     gfxProfiler->Stamp( PROFILE_LIGHTS );
 
@@ -442,10 +483,10 @@ namespace ursine
       RenderPrimitive( m_drawList[ currentIndex++ ] );
 
     //render points and lines
-    dxCore->SetBlendState( BLEND_STATE_NONE );
+    dxCore->SetBlendState( BLEND_STATE_DEFAULT );
     dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
+    dxCore->SetRasterState( RASTER_STATE_SOLID_NOCULL );
 
-    dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
     RenderDebugPoints( view, proj, currentCamera );
 
     dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
@@ -459,14 +500,17 @@ namespace ursine
 
   void GraphicsCore::EndScene( )
   {
-    //@matt update this to match end frame
-    // render ui on top of everything
-    if (m_renderUI)
-    {
-      PrepForUI( );
-      shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
-    }
-    gfxProfiler->Stamp( PROFILE_SCENE_UI );
+    UAssert( m_currentlyRendering == true, "Attemped to end a scene without starting the frame!" );
+    UAssert( m_sceneActive == true, "Attempted to end a scene before beginning one!" );
+    m_sceneActive = false;
+  }
+
+  void GraphicsCore::EndFrame ( )
+  {
+    UAssert( m_sceneActive == false, "Attempted to end the frame without ending the scene!" );
+    UAssert( m_currentlyRendering == true, "Attemped to end the frame when it was never started!" );
+
+    m_currentlyRendering = false;
 
     // end profiler
     gfxProfiler->WaitForCalls( m_profile );
@@ -483,29 +527,12 @@ namespace ursine
     //end rendering
     m_rendering = false;
 
+    //check to resize
     dxCore->CheckSize( );
 
     //invalidate CPU-side gfx engine for next frame
     dxCore->Invalidate( );
     Invalidate( );
-  }
-
-  void GraphicsCore::EndFrame ( )
-  {
-    // end profiler
-    gfxProfiler->WaitForCalls( m_profile );
-
-    // reset drawing for next frame
-    drawingManager->EndScene( );
-
-    // present
-    dxCore->SwapChainBuffer( );
-
-    // end the frame
-    gfxProfiler->EndFrame( );
-
-    //end rendering
-    m_rendering = false;
   }
 
   // preparing for different stages /////////////////////////////////
@@ -623,6 +650,21 @@ namespace ursine
 
     shaderManager->Render( modelManager->GetModelVertcountByID( handle.Model_ ) );
   
+  }
+
+  void GraphicsCore::Render2DBillboard( DRAWHND handle )
+  {
+    //map transform
+    bufferManager->MapTransformBuffer( renderableManager->m_renderableBillboards[ handle.Index_ ].GetWorldMatrix( ) );
+
+    //set model
+    modelManager->BindModel("Sprite" );
+
+    //map texture
+    textureManager->MapTextureByID( handle.Material_ );
+
+    //render
+    shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sprite" ) ) );
   }
 
   void GraphicsCore::RenderPointLight ( DRAWHND handle, Camera &currentCamera )

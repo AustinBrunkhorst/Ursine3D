@@ -23,6 +23,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
+    /////////////////////////////////////////////////////////////////
     //main renderable class
     class Renderable
     {
@@ -35,6 +36,7 @@ namespace ursine
         bool Active_;
     };
     
+    /////////////////////////////////////////////////////////////////
     //main model class
     class Model : public Renderable
     {
@@ -49,6 +51,7 @@ namespace ursine
         SMat4 Transform_;
     };
     
+    /////////////////////////////////////////////////////////////////
     //3d model class
     class Model3D : public Model
     {
@@ -67,6 +70,7 @@ namespace ursine
         std::string MaterialName_;
     };
     
+    /////////////////////////////////////////////////////////////////
     //2d billboard class
     class Billboard2D : public Model
     {
@@ -88,6 +92,7 @@ namespace ursine
         std::string TextureName_;
     };
     
+    /////////////////////////////////////////////////////////////////
     //3d primitve class
     class Primitive : public Model
     {

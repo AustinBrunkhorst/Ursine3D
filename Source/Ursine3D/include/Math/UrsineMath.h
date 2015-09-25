@@ -17,6 +17,8 @@
 
 namespace ursine
 {
+    class SQuat;
+
     namespace math
     {
         const float Epsilon = 0.0001f;
@@ -63,6 +65,9 @@ namespace ursine
         inline float DegreesToRadians(float degrees);
 
         void SinCos(float radians, float &sin, float &cos);
+
+        extern template
+        SQuat Lerp(const SQuat &a, const SQuat &b, float percent);
     }
 }
 
