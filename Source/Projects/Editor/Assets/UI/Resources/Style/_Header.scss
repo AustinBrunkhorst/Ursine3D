@@ -16,11 +16,11 @@ $header-menu-sub-menu-min-width: 125px;
   height: $header-height;
   background: $header-bg-color;
 
-  .menu {
+  .main-menu {
     margin-left: 5px;
     line-height: $header-height;
 
-    > .item {
+    > x-menu-item {
       position: relative;
       display: inline-block;
       margin: 0 2px 0 0;
@@ -47,7 +47,7 @@ $header-menu-sub-menu-min-width: 125px;
     left: 100%;
     top: 0;
     display: none;
-    min-width: $header-menu-sub-menu-min-width;
+    white-space: nowrap;
     background-color: #1b1b1c;
     border: 1px solid #333337;
 
@@ -56,9 +56,10 @@ $header-menu-sub-menu-min-width: 125px;
       background: #333337;
     }
 
-    > .item {
+    > x-menu-item {
       position: relative;
       display: block;
+      min-width: $header-menu-sub-menu-min-width;
       line-height: normal;
       padding: 3px 10px;
       transition: background-color $duration-transition-btn ease;
@@ -85,7 +86,7 @@ $header-menu-sub-menu-min-width: 125px;
     }
   }
 
-  .item {
+  x-menu-item {
     font-size: $header-menu-item-font-size;
 
     &:hover {

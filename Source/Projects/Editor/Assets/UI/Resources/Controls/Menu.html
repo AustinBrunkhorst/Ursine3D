@@ -1,0 +1,86 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-menu">
+    <template>
+        <style>
+            @import url( '../Style/Controls/Menu.css' );
+        </style>
+        <content></content>
+    </template>
+    <script>
+        var MenuControl = Polymer({
+            is: "x-menu",
+            properties: {
+                isSubMenu: {
+                    type: Boolean,
+                    readonly: true,
+                    notify: true
+                },
+                disabled: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
+                empty: {
+                    type: Boolean,
+                    readonly: true,
+                    value: true
+                }
+            },
+            attached: function() {
+                this._initItems( );
+
+                this._observer = new MutationObserver( this._onMutations.bind( this ) );
+
+                this._observer.observe( this, {
+                    childList: true,
+                    subtree: true
+                } );
+            },
+            detached: function() {
+                if (this._observer)
+                    this._observer.disconnect( );
+            },
+
+            _initItems: function() {
+                var items = this._getItems( );
+
+                if (items) {
+                    var initializer = this._initItem.bind( this );
+
+                    [ ].forEach.call( items, initializer );
+                }
+            },
+            _initItem: function(item) {
+                console.log( 'init', item );
+            },
+
+            _getItems: function() {
+                return this.querySelectorAll( ':scope > x-menu-item' ) || [ ];
+            },
+
+            _onMutations: function(mutations) {
+                var isMenuItem = this._isMenuItem.bind( this );
+                var initItem = this._initItem.bind( this );
+
+                mutations.forEach( function(mutation) {
+                    var items = [ ].filter.call( mutation.addedNodes, isMenuItem );
+
+                    items.forEach( initItem );
+                } );
+
+                console.log( 'hi', this._getItems( ) );
+
+                this.empty = !this._getItems( ).length;
+
+                this.fire( 'items-changed', {
+
+                } );
+            },
+
+            _isMenuItem: function(node) {
+                return node.tagName == 'X-MENU-ITEM';
+            }
+        });
+    </script>
+</dom-module>

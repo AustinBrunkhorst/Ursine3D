@@ -27,7 +27,7 @@ class HTMLTemplate {
     }
 
     public function compile(?context : Dynamic, ?macros : Dynamic) : js.html.DOMElement {
-        var div = js.Browser.document.createDivElement( );
+        var div = js.Browser.document.createElement( 'div' );
 
         div.innerHTML = m_template.execute( context ? context : { }, macros );
 

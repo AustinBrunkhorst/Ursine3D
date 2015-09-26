@@ -8,7 +8,7 @@ class Menu implements IElementContainer {
     public var domContainer : DOMElement;
 
     public function new() {
-        domContainer = HTMLTemplate.load( "Templates/Menu/Menu.html" ).compile( );
+        //domContainer = HTMLTemplate.load( "Templates/Menu/Menu.html" ).compile( );
     }
 
     public function addItem(item : MenuItem) : Void {

@@ -1,0 +1,40 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-menu-item">
+    <template>
+        <content>{{text}}</content>
+        <x-menu id="menu" class="sub-menu"></x-menu>
+    </template>
+    <script>
+        var MenuItemControl = Polymer({
+            is: "x-menu-item",
+            properties: {
+                'has-sub-menu': {
+                    type: Boolean,
+                    readOnly: true,
+                    notify: true
+                },
+                text: {
+                    type: String,
+                    notify: true
+                }
+            },
+
+            get menu() {
+                return this.$.menu;
+            },
+
+            attached: function() {
+                this._onItemsChanged( );
+
+                this.listen( this.menu, 'items-changed', '_onItemsChanged' );
+            },
+
+            _onItemsChanged: function(e) {
+                console.log( 'changed!', this.menu.empty );
+
+                this['has-sub-menu'] = !this.menu.empty;
+            }
+        });
+    </script>
+</dom-module>

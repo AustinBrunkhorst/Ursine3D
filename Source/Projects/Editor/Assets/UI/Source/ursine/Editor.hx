@@ -12,6 +12,6 @@ class Editor {
 
         mainMenu = new MainMenu( );
 
-        js.Browser.document.querySelector( '#header-toolbar' ).appendChild( mainMenu.domContainer );
+        //js.Browser.document.querySelector( '#header-toolbar' ).appendChild( mainMenu.domContainer );
     }
 }
