@@ -1,6 +1,6 @@
 package ursine.controls;
 
-@:native("ButtonControl")
+@:native( "ButtonControl" )
 extern class Button extends PolymerElement {
     var text : String;
 

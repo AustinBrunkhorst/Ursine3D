@@ -1,18 +1,16 @@
 package ursine.editor;
 
-import ursine.controls.Menu;
+import ursine.controls.MainMenu;
 
 class Editor {
     public static var instance : Editor = null;
 
-    public var mainMenu : Menu;
+    public var mainMenu : MainMenu;
 
     public function new() {
         instance = this;
 
-        mainMenu = new Menu( );
-
-        mainMenu.classList.add( 'main-menu' );
+        mainMenu = new MainMenu( );
 
         js.Browser.document.querySelector( '#header-toolbar' ).appendChild( mainMenu );
     }

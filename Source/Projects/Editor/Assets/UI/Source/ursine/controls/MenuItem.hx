@@ -1,7 +1,8 @@
 package ursine.controls;
 
-@:native("MenuItemControl")
+@:native( "MenuItemControl" )
 extern class MenuItem extends PolymerElement {
+    var disabled : Bool;
     var text : String;
 
     var menu : Menu;

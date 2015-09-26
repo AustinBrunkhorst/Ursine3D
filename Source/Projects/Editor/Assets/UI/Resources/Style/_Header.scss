@@ -1,13 +1,6 @@
 @import 'Config';
 @import 'Utils';
 
-$header-bg-color: #2d2d30;
-$header-height: 30px;
-
-$header-menu-item-color: #f5f5f5;
-$header-menu-item-font-size: 14px;
-$header-menu-sub-menu-min-width: 125px;
-
 #header-toolbar {
   position: absolute;
   left: 0;
@@ -15,87 +8,4 @@ $header-menu-sub-menu-min-width: 125px;
   top: 0;
   height: $header-height;
   background: $header-bg-color;
-
-  .main-menu {
-    margin-left: 5px;
-    line-height: $header-height;
-
-    > x-menu-item {
-      position: relative;
-      display: inline-block;
-      margin: 0 2px 0 0;
-      padding: 0 5px;
-      color: $header-menu-item-color;
-      text-transform: uppercase;
-      vertical-align: middle;
-      cursor: pointer;
-      transition: background-color $duration-transition-btn ease;
-
-      > .sub-menu {
-        left: 0;
-        top: 100%;
-      }
-
-      &:hover {
-        background-color: #1b1b1c;
-      }
-    }
-  }
-
-  .sub-menu {
-    position: absolute;
-    left: 100%;
-    top: 0;
-    display: none;
-    white-space: nowrap;
-    background-color: #1b1b1c;
-    border: 1px solid #333337;
-    box-shadow: 0 2px 3px 0 rgba(black, 0.75);
-
-    .separator {
-      height: 1px;
-      background: #333337;
-    }
-
-    > x-menu-item {
-      position: relative;
-      display: block;
-      min-width: $header-menu-sub-menu-min-width;
-      line-height: normal;
-      padding: 3px 10px;
-      transition: background-color $duration-transition-btn ease;
-
-      &[has-sub-menu] {
-        padding-right: 25px;
-
-        &:after {
-          position: absolute;
-          right: 5px;
-          top: 50%;
-          transform: translateY(-50%);
-          @include triangle(right, #999999, 4px);
-        }
-      }
-
-      &:hover {
-        background-color: #333334;
-
-        &[has-sub-menu] {
-          &:after {
-            @include triangle(right, $color-accent, 4px);
-          }
-        }
-      }
-    }
-  }
-
-  x-menu-item {
-    font-size: $header-menu-item-font-size;
-
-    &[has-sub-menu]:hover {
-      > .sub-menu {
-        display: block;
-      }
-    }
-  }
 }

@@ -9,20 +9,51 @@ function $extend(from, fields) {
 var ursine_editor_MenuItemContainer = function() { };
 $hxClasses["ursine.editor.MenuItemContainer"] = ursine_editor_MenuItemContainer;
 ursine_editor_MenuItemContainer.__name__ = ["ursine","editor","MenuItemContainer"];
+var FileMenu = function() { };
+$hxClasses["FileMenu"] = FileMenu;
+FileMenu.__name__ = ["FileMenu"];
+FileMenu.doNew = function() {
+	console.log("New File!");
+};
+FileMenu.doOpen = function() {
+	console.log("Open File!");
+};
+FileMenu.__super__ = ursine_editor_MenuItemContainer;
+FileMenu.prototype = $extend(ursine_editor_MenuItemContainer.prototype,{
+});
+var MenuWrapper = function(text,children) {
+	this.text = text;
+	this.children = children;
+};
+$hxClasses["MenuWrapper"] = MenuWrapper;
+MenuWrapper.__name__ = ["MenuWrapper"];
 var Application = function() { };
 $hxClasses["Application"] = Application;
 Application.__name__ = ["Application"];
+Application.buildMenus = function(menus) {
+	var _g = 0;
+	while(_g < menus.length) {
+		var item = menus[_g];
+		++_g;
+		Application.buildMenu(item,ursine_editor_Editor.instance.mainMenu);
+	}
+};
+Application.buildMenu = function(menu,parent) {
+	var item = new MenuItemControl();
+	item.text = menu.text;
+	parent.appendChild(item);
+	var _g = 0;
+	var _g1 = menu.children;
+	while(_g < _g1.length) {
+		var child = _g1[_g];
+		++_g;
+		Application.buildMenu(child,item.menu);
+	}
+};
 Application.main = function() {
 	var editor = new ursine_editor_Editor();
-	var file = new MenuItemControl();
-	file.text = "File";
-	var itemNew = new MenuItemControl();
-	itemNew.text = "New";
-	var itemOpen = new MenuItemControl();
-	itemOpen.text = "Open";
-	file.menu.appendChild(itemNew);
-	file.menu.appendChild(itemOpen);
-	editor.mainMenu.appendChild(file);
+	var menus = [new MenuWrapper("One",[new MenuWrapper("One One",[]),new MenuWrapper("One Two",[]),new MenuWrapper("One Three",[new MenuWrapper("One Three One",[]),new MenuWrapper("One Three Two",[]),new MenuWrapper("One Three Three",[]),new MenuWrapper("One Three Four",[])]),new MenuWrapper("One Four",[])]),new MenuWrapper("Two",[new MenuWrapper("One One",[]),new MenuWrapper("One Two",[]),new MenuWrapper("One Three",[new MenuWrapper("One Three One",[]),new MenuWrapper("One Three Two",[]),new MenuWrapper("One Three Three",[new MenuWrapper("One One",[]),new MenuWrapper("One Two",[]),new MenuWrapper("One Three",[new MenuWrapper("One Three One",[]),new MenuWrapper("One Three Two",[]),new MenuWrapper("One Three Three",[new MenuWrapper("One One",[]),new MenuWrapper("One Two",[]),new MenuWrapper("One Three",[new MenuWrapper("One Three One",[]),new MenuWrapper("One Three Two",[]),new MenuWrapper("One Three Three",[new MenuWrapper("One One",[]),new MenuWrapper("One Two",[]),new MenuWrapper("One Three",[new MenuWrapper("One Three One",[]),new MenuWrapper("One Three Two",[]),new MenuWrapper("One Three Three",[]),new MenuWrapper("One Three Four",[])]),new MenuWrapper("One Four",[])]),new MenuWrapper("One Three Four",[])]),new MenuWrapper("One Four",[])]),new MenuWrapper("One Three Four",[])]),new MenuWrapper("One Four",[])]),new MenuWrapper("One Three Four",[])]),new MenuWrapper("One Four",[])]),new MenuWrapper("Three",[])];
+	Application.buildMenus(menus);
 	var classTypeNames = Object.keys( $hxClasses );
 	var _g = 0;
 	while(_g < classTypeNames.length) {
@@ -1516,8 +1547,7 @@ js_Boot.__string_rec = function(o,s) {
 };
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
-	this.mainMenu = new MenuControl();
-	this.mainMenu.classList.add("main-menu");
+	this.mainMenu = new MainMenuControl();
 	window.document.querySelector("#header-toolbar").appendChild(this.mainMenu);
 };
 $hxClasses["ursine.editor.Editor"] = ursine_editor_Editor;
@@ -1531,7 +1561,9 @@ $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
 var __map_reserved = {}
 ursine_editor_MenuItemContainer.__rtti = "<class path=\"ursine.editor.MenuItemContainer\" params=\"\"><meta>\n\t<m n=\":rtti\"/>\n\t<m n=\":keepSub\"/>\n</meta></class>";
-Application.__rtti = "<class path=\"Application\" params=\"\">\n\t<extends path=\"ursine.editor.MenuItemContainer\"/>\n\t<main set=\"method\" line=\"20\" static=\"1\">\n\t\t<f a=\"\"><x path=\"Void\"/></f>\n\t\t<meta>\n\t\t\t<m n=\":keep\"/>\n\t\t\t<m n=\":has_untyped\"/>\n\t\t</meta>\n\t</main>\n</class>";
+FileMenu.__meta__ = { statics : { doNew : { mainMenuItem : ["File/New"]}, doOpen : { mainMenuItem : ["File/Open"]}}};
+FileMenu.__rtti = "<class path=\"FileMenu\" params=\"\" module=\"Application\">\n\t<extends path=\"ursine.editor.MenuItemContainer\"/>\n\t<doNew set=\"method\" line=\"10\" static=\"1\">\n\t\t<f a=\"\"><x path=\"Void\"/></f>\n\t\t<meta><m n=\"mainMenuItem\"><e>\"File/New\"</e></m></meta>\n\t</doNew>\n\t<doOpen set=\"method\" line=\"15\" static=\"1\">\n\t\t<f a=\"\"><x path=\"Void\"/></f>\n\t\t<meta><m n=\"mainMenuItem\"><e>\"File/Open\"</e></m></meta>\n\t</doOpen>\n</class>";
+Application.__rtti = "<class path=\"Application\" params=\"\">\n\t<extends path=\"ursine.editor.MenuItemContainer\"/>\n\t<buildMenus set=\"method\" line=\"32\" static=\"1\"><f a=\"menus\">\n\t<c path=\"Array\"><c path=\"MenuWrapper\"/></c>\n\t<x path=\"Void\"/>\n</f></buildMenus>\n\t<buildMenu set=\"method\" line=\"37\" static=\"1\"><f a=\"menu:parent\">\n\t<c path=\"MenuWrapper\"/>\n\t<c path=\"ursine.controls.Menu\"/>\n\t<x path=\"Void\"/>\n</f></buildMenu>\n\t<main set=\"method\" line=\"49\" static=\"1\">\n\t\t<f a=\"\"><x path=\"Void\"/></f>\n\t\t<meta>\n\t\t\t<m n=\":keep\"/>\n\t\t\t<m n=\":has_untyped\"/>\n\t\t</meta>\n\t</main>\n\t<meta><m n=\":directlyUsed\"/></meta>\n</class>";
 Xml.Element = 0;
 Xml.PCData = 1;
 Xml.CData = 2;

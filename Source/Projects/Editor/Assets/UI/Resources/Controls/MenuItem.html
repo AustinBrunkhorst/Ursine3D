@@ -2,7 +2,9 @@
 
 <dom-module id="x-menu-item">
     <template>
-        <content>{{text}}</content>
+        <span id="text">
+            <content>{{text}}</content>
+        </span>
         <x-menu id="menu" class="sub-menu"></x-menu>
     </template>
     <script>
@@ -12,24 +14,72 @@
                 text: {
                     type: String,
                     notify: true
+                },
+                disabled: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                    observer: '_onDisabledChanged'
                 }
+            },
+            listeners: {
+                'mouseenter': '_onMouseEnter',
+                'mouseout': '_onMouseLeave',
+                'click': '_onClick'
             },
 
             get menu() {
                 return this.$.menu;
             },
-
             attached: function() {
                 this._onItemsChanged( );
 
                 this.listen( this.menu, 'items-changed', '_onItemsChanged' );
             },
 
+            _onMouseEnter: function(e) {
+                if (this.disabled)
+                    return;
+
+                var hovered = this.parentNode.querySelectorAll( ':scope > .hover' );
+
+                // remove hover from all siblings
+                [].forEach.call( hovered, function(item) {
+                    item.classList.remove( 'hover' );
+                } );
+
+                // make this item hovered
+                this.classList.add( 'hover' );
+            },
+            _onMouseLeave: function(e) {
+                // make sure this event doesn't bubble to the parent
+                e.stopPropagation( );
+                e.stopImmediatePropagation( );
+
+                var hovered = this.$.menu.querySelectorAll( '.hover' );
+
+                // remove hover from child menus
+                [].forEach.call( hovered, function(item) {
+                    item.classList.remove( 'hover' );
+                } );
+            },
+            _onClick: function(e) {
+                if (this.disabled)
+                    return;
+
+                this.fire( 'open', e );
+            },
             _onItemsChanged: function() {
                 if (this.menu.empty)
                     this.removeAttribute( 'has-sub-menu' );
                 else
                     this.setAttribute( 'has-sub-menu', true );
+            },
+            _onDisabledChanged: function() {
+                if (this.disabled)
+                    this.setAttribute( 'disabled', true );
+                else
+                    this.removeAttribute( 'disabled' );
             }
         });
     </script>

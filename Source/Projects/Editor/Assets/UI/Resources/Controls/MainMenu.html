@@ -1,0 +1,35 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="Behaviors/Menu.html">
+
+<!-- TODO: make better UX with hover events -->
+<dom-module id="x-main-menu">
+    <link rel="import" type="css" href="../Style/Controls/MainMenu.css">
+    <template>
+        <content></content>
+    </template>
+    <script>
+        var MainMenuControl = Polymer({
+            is: "x-main-menu",
+            properties: {
+
+            },
+            created: function() {
+                // make this element focusable
+                this.tabIndex = -1;
+
+                this.listen( this, 'item-added', '_onItemAdded' );
+            },
+            attached: function() {
+
+            },
+            detached: function() {
+
+            },
+            behaviors: [ MenuBehavior ],
+
+            _onItemAdded: function(e) {
+
+            }
+        });
+    </script>
+</dom-module>

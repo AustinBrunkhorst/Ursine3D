@@ -1,10 +1,11 @@
+import ursine.controls.MenuSeparator;
 import ursine.editor.MenuItemContainer;
 import ursine.editor.Editor;
 
-import ursine.controls.Menu;
+import ursine.controls.MainMenu;
 import ursine.controls.MenuItem;
 
-/*class FileMenu extends MenuItemContainer {
+class FileMenu extends MenuItemContainer {
     @mainMenuItem( "File/New" )
     static function doNew() {
         trace( "New File!" );
@@ -14,28 +15,101 @@ import ursine.controls.MenuItem;
     static function doOpen() {
         trace( "Open File!" );
     }
-}*/
+}
+
+class MenuWrapper {
+    public var text : String;
+
+    public var children : Array<MenuWrapper>;
+
+    public function new(text : String, children : Array<MenuWrapper>) {
+        this.text = text;
+        this.children = children;
+    }
+}
 
 class Application extends MenuItemContainer {
+    static function buildMenus(menus : Array<MenuWrapper>) {
+        for (item in menus)
+            buildMenu( item, Editor.instance.mainMenu );
+    }
+
+    static function buildMenu(menu : MenuWrapper, parent : ursine.controls.Menu) {
+        var item = new MenuItem( );
+
+        item.text = menu.text;
+
+        parent.appendChild( item );
+
+        for (child in menu.children) {
+            buildMenu( child, item.menu );
+        }
+    }
+
     static function main() {
         var editor = new Editor( );
 
-        var file = new MenuItem( );
+        var menus = [
+            new MenuWrapper( "One",
+            [
+                new MenuWrapper( "One One", [ ] ),
+                new MenuWrapper( "One Two", [ ] ),
+                new MenuWrapper( "One Three",
+                [
+                    new MenuWrapper( "One Three One", [ ] ),
+                    new MenuWrapper( "One Three Two", [ ] ),
+                    new MenuWrapper( "One Three Three", [ ] ),
+                    new MenuWrapper( "One Three Four", [ ] )
+                ]
+                ),
+                new MenuWrapper( "One Four", [ ] )
+            ]
+            ),
+            new MenuWrapper( "Two", [ new MenuWrapper( "One One", [ ] ),
+            new MenuWrapper( "One Two", [ ] ),
+            new MenuWrapper( "One Three",
+            [
+                new MenuWrapper( "One Three One", [ ] ),
+                new MenuWrapper( "One Three Two", [ ] ),
+                new MenuWrapper( "One Three Three", [ new MenuWrapper( "One One", [ ] ),
+                new MenuWrapper( "One Two", [ ] ),
+                new MenuWrapper( "One Three",
+                [
+                    new MenuWrapper( "One Three One", [ ] ),
+                    new MenuWrapper( "One Three Two", [ ] ),
+                    new MenuWrapper( "One Three Three", [ new MenuWrapper( "One One", [ ] ),
+                    new MenuWrapper( "One Two", [ ] ),
+                    new MenuWrapper( "One Three",
+                    [
+                        new MenuWrapper( "One Three One", [ ] ),
+                        new MenuWrapper( "One Three Two", [ ] ),
+                        new MenuWrapper( "One Three Three", [ new MenuWrapper( "One One", [ ] ),
+                        new MenuWrapper( "One Two", [ ] ),
+                        new MenuWrapper( "One Three",
+                        [
+                            new MenuWrapper( "One Three One", [ ] ),
+                            new MenuWrapper( "One Three Two", [ ] ),
+                            new MenuWrapper( "One Three Three", [ ] ),
+                            new MenuWrapper( "One Three Four", [ ] )
+                        ]
+                        ),
+                        new MenuWrapper( "One Four", [ ] ) ] ),
+                        new MenuWrapper( "One Three Four", [ ] )
+                    ]
+                    ),
+                    new MenuWrapper( "One Four", [ ] ) ] ),
+                    new MenuWrapper( "One Three Four", [ ] )
+                ]
+                ),
+                new MenuWrapper( "One Four", [ ] ) ] ),
+                new MenuWrapper( "One Three Four", [ ] )
+            ]
+            ),
+            new MenuWrapper( "One Four", [ ] ) ] ),
+            new MenuWrapper( "Three", [ ] )
+        ];
 
-        file.text = "File";
-
-        var itemNew = new MenuItem( );
-
-        itemNew.text = "New";
-
-        var itemOpen = new MenuItem( );
-
-        itemOpen.text = "Open";
-
-        file.menu.appendChild( itemNew );
-        file.menu.appendChild( itemOpen );
-
-        editor.mainMenu.appendChild( file );
+        buildMenus( menus );
 
         var classTypeNames : Array<String> = untyped __js__( "Object.keys( $hxClasses )" );
 
