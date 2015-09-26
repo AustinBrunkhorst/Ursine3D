@@ -45,18 +45,22 @@
             _initItems: function() {
                 var items = this._getItems( );
 
-                if (items) {
+                if (items.length) {
                     var initializer = this._initItem.bind( this );
 
                     [ ].forEach.call( items, initializer );
+
+                    this.fire( 'items-changed', {
+
+                    } );
                 }
             },
             _initItem: function(item) {
-                console.log( 'init', item );
+                this.empty = !this._getItems( ).length;
             },
 
             _getItems: function() {
-                return this.querySelectorAll( ':scope > x-menu-item' ) || [ ];
+                return this.querySelectorAll( ':scope > x-menu-item' );
             },
 
             _onMutations: function(mutations) {
@@ -68,10 +72,6 @@
 
                     items.forEach( initItem );
                 } );
-
-                console.log( 'hi', this._getItems( ) );
-
-                this.empty = !this._getItems( ).length;
 
                 this.fire( 'items-changed', {
 

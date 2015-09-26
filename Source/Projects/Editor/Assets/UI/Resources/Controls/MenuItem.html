@@ -9,11 +9,6 @@
         var MenuItemControl = Polymer({
             is: "x-menu-item",
             properties: {
-                'has-sub-menu': {
-                    type: Boolean,
-                    readOnly: true,
-                    notify: true
-                },
                 text: {
                     type: String,
                     notify: true
@@ -30,10 +25,11 @@
                 this.listen( this.menu, 'items-changed', '_onItemsChanged' );
             },
 
-            _onItemsChanged: function(e) {
-                console.log( 'changed!', this.menu.empty );
-
-                this['has-sub-menu'] = !this.menu.empty;
+            _onItemsChanged: function() {
+                if (this.menu.empty)
+                    this.removeAttribute( 'has-sub-menu' );
+                else
+                    this.setAttribute( 'has-sub-menu', true );
             }
         });
     </script>

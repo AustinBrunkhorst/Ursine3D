@@ -1,6 +1,7 @@
 # compile as JavaScript
 -js ../Resources/Editor.js
 -D noEmbedJS
+-D js-es5
 
 # dead code elimination
 -dce full
