@@ -102,7 +102,7 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
   SQuat result = quat0.Slerp( quat1, ease::CircularInOut( slerpT ) );
   SMat4 mat( result );
    Model3D &modelCube = m_gfx->RenderableMgr.GetModel3D( m_cube );
-  modelCube.SetWorldMatrix( mat );
+  //modelCube.SetWorldMatrix( mat );
 
   m_gfx->StartFrame( );
   //BEGIN
@@ -495,7 +495,7 @@ void GraphicsTest::initGraphics( void )
 
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 250, kDefaultWindowHeight - 250 );
   
-  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_DEFERRED );
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( 0, 0, 0, 0 );
   
@@ -531,7 +531,7 @@ void GraphicsTest::initGraphics( void )
   m_gfx->RenderableMgr.GetModel3D( m_floor ).SetWorldMatrix( trans * SMat4( 10, 10, 10 ) );
 
   //set obj data here
-  MdlCube.SetModel( "Cube" );
+  MdlCube.SetModel( "Character" );
   MdlCube.SetMaterial( "Cube" );
   MdlCube.SetWorldMatrix( SMat4::Identity( ) );
 
