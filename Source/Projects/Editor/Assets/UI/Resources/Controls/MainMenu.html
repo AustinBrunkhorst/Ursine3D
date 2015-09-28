@@ -1,7 +1,6 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
 <link rel="import" href="Behaviors/Menu.html">
 
-<!-- TODO: make better UX with hover events -->
 <dom-module id="x-main-menu">
     <link rel="import" type="css" href="../Style/Controls/MainMenu.css">
     <template>
@@ -13,9 +12,15 @@
             properties: {
 
             },
+            listeners: {
+                'blur': '_onBlur'
+            },
             created: function() {
                 // make this element focusable
                 this.tabIndex = -1;
+
+                // make this the root menu by default
+                this.classList.add( 'root-menu' );
 
                 this.listen( this, 'item-added', '_onItemAdded' );
             },
@@ -27,8 +32,20 @@
             },
             behaviors: [ MenuBehavior ],
 
+            close: function() {
+                this.blur( );
+            },
+
             _onItemAdded: function(e) {
 
+            },
+            _onBlur: function() {
+                var hovered = this.querySelectorAll( '.hover' );
+
+                // remove hover from child menus
+                [].forEach.call( hovered, function (item) {
+                    item.classList.remove( 'hover' );
+                } );
             }
         });
     </script>

@@ -1,0 +1,22 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-editor-window">
+    <link rel="import" type="css" href="../Style/Controls/EditorWindow.css">
+    <template>
+        <header>
+            <div class="heading">{{heading}}</div>
+        </header>
+        <content></content>
+    </template>
+    <script>
+        var EditorWindowControl = Polymer({
+            is: "x-editor-window",
+            properties: {
+                heading: {
+                    type: String,
+                    notify: true
+                }
+            }
+        });
+    </script>
+</dom-module>

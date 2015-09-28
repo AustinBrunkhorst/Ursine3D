@@ -1,7 +1,7 @@
 package ursine.editor;
 
-@:rtti
 @:keepSub
-class MenuItemContainer {
+@:keepInit
+class MenuItemHandler {
 
 }
