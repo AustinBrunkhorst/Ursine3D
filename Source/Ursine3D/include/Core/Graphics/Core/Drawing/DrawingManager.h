@@ -1,10 +1,8 @@
 #pragma once
 
-
-#include <d3d11.h>
+#include "D3D11Forward.h"
 #include <vector>
 
-#include "GraphicsDefines.h"
 #include "VertexDefinitions.h"
 
 namespace ursine
@@ -18,8 +16,8 @@ namespace ursine
     void EndScene( );
 
     void SetDrawColor( float x, float y, float z, float a );
-    void SetDrawColor( DirectX::XMFLOAT4 color );
-    DirectX::XMFLOAT4 &GetColor( );
+    void SetDrawColor( const Color &color );
+    Color &GetColor( );
 
     void SetSize( float width );
     float GetSize( );
@@ -37,7 +35,7 @@ namespace ursine
     ID3D11Device *m_device;
     ID3D11DeviceContext *m_deviceContext;
     float m_size;
-    DirectX::XMFLOAT4 m_color;
+    Color m_color;
 
     std::vector<PrimitiveVertex> m_pointList;
     std::vector<PrimitiveVertex> m_lineList;

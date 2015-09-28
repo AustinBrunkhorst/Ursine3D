@@ -1,9 +1,8 @@
 #pragma once
 
-#include <d3d11.h>
 #include <vector>
 
-#include "GraphicsDefines.h"
+#include "D3D11Forward.h"
 #include "DepthStencilStateList.h"
 
 namespace ursine

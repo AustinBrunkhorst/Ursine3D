@@ -1,6 +1,5 @@
 #pragma once
 
-#include <d3d11.h>
 #include <cef_render_handler.h>
 #include "RenderTargetManager.h"
 #include "GraphicsDefines.h"

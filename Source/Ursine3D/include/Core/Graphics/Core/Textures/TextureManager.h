@@ -19,7 +19,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <vector>
 #include <map>
 #include <string>
-#include <d3d11.h>
+#include "D3D11Forward.h"
 #include "Texture.h"
 #include "SamplerList.h"
 #include "GraphicsDefines.h"

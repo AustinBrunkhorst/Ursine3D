@@ -4,6 +4,8 @@
 
 #include "GraphicsManager.h"
 
+#include <d3d11.h>
+
 #define GfxManager reinterpret_cast<GraphicsCore*>(m_gfxmgr)
 
 namespace ursine

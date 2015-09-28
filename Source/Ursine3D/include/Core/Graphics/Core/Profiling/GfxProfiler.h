@@ -1,11 +1,7 @@
 #pragma once
 
-#include <d3d11.h>
-#include <string>
-#include <unordered_map>
-
+#include "D3D11Forward.h"
 #include "ProfileTargetList.h"
-#include "GraphicsDefines.h"
 
 namespace ursine
 {

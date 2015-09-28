@@ -42,6 +42,6 @@ private:
 	GFXHND m_light2;
 
 	// Physics Related
-	// ursine::PhysicsManager *m_physics;
+	ursine::PhysicsManager *m_physics;
 
 } Meta(Enable);

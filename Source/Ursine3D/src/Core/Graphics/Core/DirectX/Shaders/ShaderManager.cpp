@@ -1,5 +1,8 @@
 #include "UrsinePrecompiled.h"
 #include "ShaderManager.h"
+#include "GraphicsDefines.h"
+#include <d3d11.h>
+#include <d3dcompiler.h>
 
 #define CONCAT_END(file, ending) file ## ending
 #define GetString(type) #type

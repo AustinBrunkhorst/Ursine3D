@@ -1,6 +1,8 @@
 #include "UrsinePrecompiled.h"
 #include "ModelManager.h"
-
+#include "GraphicsDefines.h"
+#include "VertexDefinitions.h"
+#include <d3d11.h>
 
 namespace ursine
 {
