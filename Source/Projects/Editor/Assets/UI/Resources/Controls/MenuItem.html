@@ -28,7 +28,7 @@
                 'click': '_onClick'
             },
             attached: function () {
-                this._onItemsChanged();
+                this._onItemsChanged( );
 
                 this.listen( this.menu, 'items-changed', '_onItemsChanged' );
             },
@@ -64,8 +64,8 @@
             },
             _onMouseLeave: function (e) {
                 // make sure this event doesn't bubble to the parent
-                e.stopPropagation();
-                e.stopImmediatePropagation();
+                e.stopPropagation( );
+                e.stopImmediatePropagation( );
 
                 this._clearChildrenFocus( );
             },

@@ -15,21 +15,25 @@
 #include "UrsinePrecompiled.h"
 
 #include "RenderProcessHandler.h"
-#include "UIConfig.h"
 
 namespace ursine
 {
-    RenderProcessHandler::RenderProcessHandler(void) { }
+    RenderProcessHandler::RenderProcessHandler(void)
+    {
+        
+    }
 
-    RenderProcessHandler::~RenderProcessHandler(void) { }
+    RenderProcessHandler::~RenderProcessHandler(void)
+    {
+        
+    }
 
     void RenderProcessHandler::OnRenderThreadCreated(
         CefRefPtr<CefListValue> extraInfo) { }
 
     void RenderProcessHandler::OnWebKitInitialized(void)
     {
-        for (auto extension : m_extensions)
-            extension->Register( );
+
     }
 
     void RenderProcessHandler::OnBrowserCreated(
@@ -51,7 +55,10 @@ namespace ursine
     void RenderProcessHandler::OnContextCreated(
         CefRefPtr<CefBrowser> browser,
         CefRefPtr<CefFrame> frame,
-        CefRefPtr<CefV8Context> context) { }
+        CefRefPtr<CefV8Context> context)
+    {
+        
+    }
 
     void RenderProcessHandler::OnContextReleased(
         CefRefPtr<CefBrowser> browser,

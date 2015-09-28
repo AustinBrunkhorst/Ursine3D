@@ -26,8 +26,6 @@ namespace ursine
         ~RenderProcessHandler(void);
 
     private:
-        std::vector<CefRefPtr<JavaScriptExtension>> m_extensions;
-
         void OnRenderThreadCreated(
             CefRefPtr<CefListValue> extraInfo) override;
 
