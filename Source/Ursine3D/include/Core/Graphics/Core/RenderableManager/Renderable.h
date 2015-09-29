@@ -64,8 +64,15 @@ namespace ursine
         void SetMaterial( std::string materialName );
         
         Model3D( void );
+
+        void SetMaterialData( float emiss, float pow, float intensity );
+
+        void GetMaterialData( float &emiss, float &pow, float &intensity );
     
     private:
+        float m_emissive;
+        float m_specPow;
+        float m_specIntensity;
         std::string ModelName_;
         std::string MaterialName_;
     };

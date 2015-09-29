@@ -121,6 +121,30 @@ void Camera::LookAtPoint( const SVec3 &point )
   CalculateVectors( SVec3::UnitY( ) );
 }
 
+void Camera::SetDimensions(float width, float height)
+{
+    m_width = width;
+    m_height = height;
+}
+
+void Camera::GetDimensions(float& width, float& height)
+{
+    width = m_width;
+    height = m_height;
+}
+
+void Camera::SetPosition(float x, float y)
+{
+    m_xPos = x;
+    m_yPos = y;
+}
+
+void Camera::GetPosition(float& x, float& y)
+{
+    x = m_xPos;
+    y = m_yPos;
+}
+
 void Camera::CalculateVectors( const SVec3 &up )
 {
   m_look.Normalize();

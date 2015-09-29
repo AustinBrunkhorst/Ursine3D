@@ -55,6 +55,10 @@ private:
 
   GFXHND m_primitive;
 
+  GFXHND m_spheres[ 10 ][ 10 ];
+
+  GFXHND m_lights[ 12 ];
+
   //tweens
   
   ursine::SVec3 m_camPos;

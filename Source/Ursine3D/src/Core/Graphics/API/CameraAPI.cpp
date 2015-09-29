@@ -24,7 +24,7 @@ namespace ursine
     m_privates->mgr->SetCurrent( handle );
   }
 
-  void CameraAPI::SetPrivates( void *priv )
+    void CameraAPI::SetPrivates( void *priv )
   {
     m_privates->mgr = reinterpret_cast<CameraManager*>(priv);
   }

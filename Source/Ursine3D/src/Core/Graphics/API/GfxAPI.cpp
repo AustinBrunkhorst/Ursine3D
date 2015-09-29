@@ -98,4 +98,9 @@ namespace ursine
   {
     m_privates->gfxCore_->Resize( width, height );
   }
+
+    void GfxAPI::SetGameViewport(GFXHND vp)
+  {
+      m_privates->gfxCore_->SetGameViewport( vp );
+  }
 }

@@ -58,7 +58,12 @@ namespace ursine
 
     void Invalidate( );
 
-    void RenderUI( GFXHND viewport, RENDER_TARGETS input );
+    void RenderUI( GFXHND camera, RENDER_TARGETS input );
+
+    void RenderUI_Main( RENDER_TARGETS input );
+
+    //set the viewport for the current game
+    void SetGameViewport( GFXHND vp );
 
     //public members
   public:
@@ -124,6 +129,9 @@ namespace ursine
     bool m_profile;
     bool m_debug;
     bool m_ready = false;
+    
+    GFXHND m_GameViewport;
+
     std::vector<_DRAWHND> m_drawList;
     unsigned m_drawCount;
 

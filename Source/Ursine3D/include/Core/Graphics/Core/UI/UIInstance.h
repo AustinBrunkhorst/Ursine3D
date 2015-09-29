@@ -31,6 +31,8 @@ namespace ursine
 
         void Draw( GFXHND viewport = 0);
 
+        void DrawMain( );
+
         bool GetViewRect( CefRefPtr<CefBrowser> browser,
             CefRect &bounds ) override;
 

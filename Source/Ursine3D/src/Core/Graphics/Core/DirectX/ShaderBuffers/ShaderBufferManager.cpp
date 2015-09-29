@@ -24,6 +24,7 @@ namespace ursine
       MakeBuffer<BillboardSpriteBuffer>( BUFFER_BILLBOARDSPRITE );
       MakeBuffer<GBufferUnpackBuffer>( BUFFER_GBUFFER_UNPACK );
       MakeBuffer<TransformBuffer>( BUFFER_LIGHT_PROJ );
+      MakeBuffer<MaterialDataBuffer>( BUFFER_MATERIAL_DATA );
     }
 
     void ShaderBufferManager::Uninitialize( )

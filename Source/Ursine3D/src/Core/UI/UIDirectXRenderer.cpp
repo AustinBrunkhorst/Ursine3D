@@ -25,7 +25,9 @@ namespace ursine
   void UIDirectXRenderer::Draw(GFXHND viewport)
   {
       //@UI
-      m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( viewport );
+      //m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( viewport );
+      m_gfxMgr->UIMgr.GetUI( m_uiHandle ).DrawMain(  );
+
   }
 
   bool UIDirectXRenderer::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &bounds)

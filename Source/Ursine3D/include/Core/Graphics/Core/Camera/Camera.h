@@ -67,6 +67,13 @@ public:
 
   void LookAtPoint( const ursine::SVec3 &point );
 
+  void SetDimensions( float width, float height );
+  void GetDimensions( float &width, float &height );
+
+  void SetPosition( float x, float y );
+  void GetPosition( float &x, float &y );
+  
+
 private:
   void CalculateVectors( const ursine::SVec3 &up );
 
@@ -81,4 +88,9 @@ private:
   ursine::SVec3 m_position;
   ursine::SVec3 m_right, m_up, m_look;
   ursine::SMat4 m_view;
+
+  float m_width;
+  float m_height;
+  float m_xPos;
+  float m_yPos;
 };

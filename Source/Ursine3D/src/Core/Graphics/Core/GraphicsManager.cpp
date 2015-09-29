@@ -258,15 +258,36 @@ namespace ursine
         dxCore->ClearDebugBuffer( );
     }
 
-    void GraphicsCore::RenderScene( float dt, GFXHND viewport )
+    void GraphicsCore::RenderScene( float dt, GFXHND camera )
     {
         UAssert( m_currentlyRendering == true, "Attempted to render a scene without starting the frame!" );
         UAssert( m_sceneActive == true, "Attempted to render a scene without beginning one!" );
         // get viewport
-        Viewport &vp = viewportManager->GetViewport( viewport );
+        Camera &cam = cameraManager->GetCamera( camera );
+
+        //get game vp dimensions
+        Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
+        D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
 
         //set directx viewport
-        D3D11_VIEWPORT vpData = vp.GetViewportData( );
+        float w, h, x, y;
+        cam.GetPosition( x, y );
+        cam.GetDimensions( w, h );
+
+        w *= gvp.Width;
+        h *= gvp.Height;
+
+        x *= gvp.Width;
+        y *= gvp.Height;
+
+        D3D11_VIEWPORT vpData;
+        vpData.Width = w;
+        vpData.Height = h;
+        vpData.TopLeftX = x;
+        vpData.TopLeftY = y;
+        vpData.MinDepth = 0;
+        vpData.MaxDepth = 1;
+
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
         //clear it
@@ -284,16 +305,13 @@ namespace ursine
         bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
 
         PrimitiveColorBuffer pcb;
-        pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
+        //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
         bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, PIXEL_SHADER );
 
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
 
         /////////////////////////////////////////////////////////////////
-        if (viewportManager->GetViewport( viewport ).GetRenderMode( ) == VIEWPORT_RENDER_DEFERRED)
-            RenderScene_Deferred( dt, viewport );
-        else
-            RenderScene_Forward( dt, viewport );
+        RenderScene_Deferred( dt, camera );
 
         return;
         //close thread handle if needed
@@ -331,7 +349,7 @@ namespace ursine
         return 0;
     }
 
-    void GraphicsCore::RenderScene_Deferred( float dt, GFXHND viewport )
+    void GraphicsCore::RenderScene_Deferred( float dt, GFXHND camera )
     {
         /////////////////////////////////////////////////////////////////
         // PRE FRAME STUFF 
@@ -340,19 +358,25 @@ namespace ursine
         dxCore->ClearDepthBuffers( );
         gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
 
-        // get viewport
-        Viewport &vp = viewportManager->GetViewport( viewport );
-
         // get camera
-        Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
+        Camera &currentCamera = cameraManager->GetCamera( camera );
 
         //get d3d11 viewport info
-        D3D11_VIEWPORT vpData = vp.GetViewportData( );
+        //get game vp dimensions
+        Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
+        D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
+
+        //set directx viewport
+        float w, h;
+        currentCamera.GetDimensions( w, h );
+
+        w *= gvp.Width;
+        h *= gvp.Height;
 
         /////////////////////////////////////////////////////////////////
         // gets the projection matrix and view matrix
         SMat4 proj, view;
-        proj = currentCamera.GetProjMatrix( vpData.Width, vpData.Height );
+        proj = currentCamera.GetProjMatrix( w, h );
         view = currentCamera.GetViewMatrix( );
 
         /////////////////////////////////////////////////////////////////
@@ -419,7 +443,7 @@ namespace ursine
         textureManager->MapTextureByName( "Wire", 3 );
     }
 
-    void GraphicsCore::RenderScene_Forward( float dt, GFXHND viewport )
+    void GraphicsCore::RenderScene_Forward( float dt, GFXHND camera )
     {
         /////////////////////////////////////////////////////////////////
         // PRE FRAME STUFF 
@@ -429,7 +453,7 @@ namespace ursine
         gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
 
         // get viewport
-        Viewport &vp = viewportManager->GetViewport( viewport );
+        Viewport &vp = viewportManager->GetViewport( camera );
 
         // get camera
         Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
@@ -692,6 +716,12 @@ namespace ursine
         //map transform
         bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ) );
 
+        //map material data
+        MaterialDataBuffer mdb;
+        Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
+        current.GetMaterialData( mdb.emissive, mdb.specularPower, mdb.specularIntensity ); 
+        bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>( &mdb, PIXEL_SHADER );
+
         //set model
         modelManager->BindModel( handle.Model_ );
 
@@ -918,6 +948,11 @@ namespace ursine
         }
     }
 
+    void GraphicsCore::SetGameViewport(GFXHND vp)
+    {
+        m_GameViewport = vp;
+    }
+
     // misc stuff /////////////////////////////////////////////////////
     DXCore::DirectXCore *GraphicsCore::GetDXCore( )
     {
@@ -949,15 +984,49 @@ namespace ursine
         layoutManager->Invalidate( );
     }
 
-    void GraphicsCore::RenderUI( GFXHND viewport, RENDER_TARGETS input )
+    void GraphicsCore::RenderUI( GFXHND camera, RENDER_TARGETS input )
+    {
+        PrepForUI( );
+
+        // get viewport
+        Camera &cam = cameraManager->GetCamera( camera );
+
+        //get game vp dimensions
+        Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
+        D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
+
+        //set directx viewport
+        float w, h, x, y;
+        cam.GetPosition( x, y );
+        cam.GetDimensions( w, h );
+
+        w *= gvp.Width;
+        h *= gvp.Height;
+
+        x *= gvp.Width;
+        y *= gvp.Height;
+
+        D3D11_VIEWPORT vpData;
+        vpData.Width = w;
+        vpData.Height = h;
+        vpData.TopLeftX = x;
+        vpData.TopLeftY = y;
+        vpData.MinDepth = 0;
+        vpData.MaxDepth = 1;
+
+        dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
+
+        dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( input )->ShaderMap );
+        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+    }
+
+    void GraphicsCore::RenderUI_Main(RENDER_TARGETS input)
     {
         PrepForUI( );
 
         //set directx viewport
-        D3D11_VIEWPORT vpData = viewportManager->GetViewport( viewport ).GetViewportData( );
+        D3D11_VIEWPORT vpData = viewportManager->GetViewport( m_GameViewport ).GetViewportData( );
 
-        vpData.Width = 1280;
-        vpData.Height = 760;
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
         dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( input )->ShaderMap );

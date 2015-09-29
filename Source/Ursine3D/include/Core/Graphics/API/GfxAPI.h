@@ -85,6 +85,8 @@ namespace ursine
         void EndFrame( );
         
         void Resize( int width, int height );
+
+        void SetGameViewport( GFXHND vp );
     
     // private members
     private:

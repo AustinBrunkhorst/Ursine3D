@@ -37,6 +37,11 @@ namespace ursine
         GfxManager->RenderUI( viewport, m_target );
     }
 
+    void UIInstance::DrawMain()
+    {
+        GfxManager->RenderUI_Main( m_target );
+    }
+
     bool UIInstance::GetViewRect( CefRefPtr<CefBrowser> browser, CefRect &bounds )
     {
         bounds.x = 0;

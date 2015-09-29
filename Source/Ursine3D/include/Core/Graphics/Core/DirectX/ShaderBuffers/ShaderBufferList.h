@@ -30,6 +30,7 @@ enum BUFFER_LIST
     BUFFER_BILLBOARDSPRITE,
     BUFFER_GBUFFER_UNPACK,
     BUFFER_LIGHT_PROJ,
+    BUFFER_MATERIAL_DATA,
 
     BUFFER_COUNT,
 
@@ -91,4 +92,12 @@ struct GBufferUnpackBuffer
 {
     DirectX::XMFLOAT4 perspectiveVals;
     DirectX::XMFLOAT4 x4ViewInv;
+};
+
+struct MaterialDataBuffer
+{
+    float emissive;
+    float specularPower;
+    float specularIntensity;
+    float buffer;
 };

@@ -20,6 +20,22 @@
 
 using namespace ursine;
 
+SVec3 colors[] = {
+    { 1,0,0 },
+    { 0,1,0 },
+    { 0,0,1 },
+    { 1,1,0 },
+    { 1,0,1 },
+    { 0,1,1 },
+    { 1,1,1 },
+
+    { 0.5,1,1 },
+    { 1,0.5,1 },
+    { 1,1,0.5 },
+    { 0.5,0.5,1 },
+    { 0.5,1,0.5 }
+};
+
 namespace
 {
   //const auto kGraphicsTestUIEntryPoint = "file:///Assets/Test.html";
@@ -112,33 +128,56 @@ m_gfx->StartFrame( );
   m_gfx->BeginScene( );
 
   //stick draw calls here
-  m_gfx->RenderObject( m_cube );
+  //m_gfx->RenderObject( m_cube );
   m_gfx->RenderObject( m_floor );
-  m_gfx->RenderObject(m_billboard);
+  //m_gfx->RenderObject(m_billboard);
+  //m_gfx->RenderObject( m_directLight );
+  //m_gfx->RenderObject( m_primitive );
+
+  //lights
   m_gfx->RenderObject( m_light );
-  m_gfx->RenderObject( m_directLight );
-  m_gfx->RenderObject( m_primitive );
+
+  static float dt;
+  int count = 12;
+
+  dt += t;
+
+  float currAngle = 0;
+
+  float radius = 4;
+  float centerX = 4.5;
+  float centerY = 4.5;
+
+  for (int x = 0; x < count; ++x)
+  {
+      PointLight &current = m_gfx->RenderableMgr.GetPointLight( m_lights[ x ] );
+
+      float cf = cosf( currAngle + dt );
+      float sf = sinf( currAngle + dt );
+
+      current.SetRadius( 3 );
+      current.SetPosition( cf * radius + centerX, sf * radius + centerY, -1 );
+      current.SetColor( colors[ x ].X( ), colors[ x ].Y( ), colors[ x ].Z( ) );
+      currAngle += (360.f / count) * 3.14 / 180.f;
+
+      m_gfx->RenderObject( m_lights[ x ] );
+  }
+
+    
+  //boxess
+  for (int y = 0; y < 10; ++y)
+  {
+      for (int x = 0; x < 10; ++x)
+      {
+          m_gfx->RenderObject( m_spheres[ y ][ x ] );
+      }
+  }
   
   //LAST
-  m_gfx->RenderScene( 0.016f, m_viewport );
-
-  Viewport &vp = m_gfx->ViewportMgr.GetViewport( m_viewport2 );
-  D3D11_VIEWPORT currVP = vp.GetViewportData( );
-  m_ui->SetViewport( {
-      (int)currVP.TopLeftX, (int)currVP.TopLeftY,
-      (int)currVP.Width, (int)currVP.Height
-  } );
-  m_ui->Draw( m_viewport2 );
+  m_gfx->RenderScene( 0.016f, m_camera );
 
   m_gfx->EndScene( );
 
-  m_gfx->BeginScene( );
-  m_gfx->RenderScene( 0.016f, m_viewport2 );
-
-  //resize it
-
-
-  m_gfx->EndScene( );
 
   //END
   m_gfx->EndFrame( );
@@ -168,8 +207,8 @@ void GraphicsTest::onMouseScroll( EVENT_HANDLER( MouseManager ) )
 
 void GraphicsTest::UpdateCamera_Keys ( float dt )
 {
-  auto *app = Application::Instance;
-  auto *keyboardMgr = app->GetCoreSystem<KeyboardManager>( );
+    auto *app = Application::Instance;
+    auto *keyboardMgr = app->GetCoreSystem<KeyboardManager>( );
 
   float speed = 3;
 
@@ -492,8 +531,10 @@ void GraphicsTest::initGraphics( void )
 
   ////////////////////////////////////////////////////////////////////
   //initialize the demo related tings
-  m_viewport = m_gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
+  m_viewport = m_gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth/2, kDefaultWindowHeight/2 );
   m_viewport2 = m_gfx->ViewportMgr.CreateViewport( 200, 200 );
+
+  m_gfx->SetGameViewport( m_viewport );
 
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 250, kDefaultWindowHeight - 250 );
   
@@ -507,6 +548,9 @@ void GraphicsTest::initGraphics( void )
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetPosition( SVec3( 0, 0, 1010 ) );
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetProjMode( Camera::PROJECTION_ORTHOGRAPHIC );
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetPlanes( 0.0000, 100 );
+
+  m_gfx->CameraMgr.GetCamera( m_camera ).SetPosition( 0, 0 );
+  m_gfx->CameraMgr.GetCamera( m_camera ).SetDimensions( 1, 1 );
 
   m_cube = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
   m_floor = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
@@ -526,6 +570,27 @@ void GraphicsTest::initGraphics( void )
   PointLight &pointLight2 = m_gfx->RenderableMgr.GetPointLight( m_light2 );
   Billboard2D &billboard = m_gfx->RenderableMgr.GetBillboard2D( m_billboard );
   // Primitive &primitive = gfx->RenderableMgr.GetPrimitive(wirePrimitive);
+
+  int count = 10;
+
+  for (int y = 0; y < count; ++y)
+  {
+      for (int x = 0; x < count; ++x)
+      {
+          m_spheres[ y ][ x ] = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+
+          Model3D &current = m_gfx->RenderableMgr.GetModel3D( m_spheres[ y ][ x ] );
+          current.SetWorldMatrix( SMat4( SVec3(x, y, 0 ) ) );
+          current.SetModel( "Cube" );
+          current.SetMaterial( "Blank" );
+          current.SetMaterialData( 0.5, 10.f + (x / (float)(count - 1)) * 245.f, (float)y / (float)(count - 1) );
+      }
+  }
+
+  for (int x = 0; x < 12; ++x)
+  {
+      m_lights[x] = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+  }
 
   //set primitive data
   // primitive.SetRadius(3.0f);
