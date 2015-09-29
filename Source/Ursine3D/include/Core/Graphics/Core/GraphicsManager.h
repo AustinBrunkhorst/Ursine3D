@@ -98,7 +98,8 @@ namespace ursine
 
     //preparing for rendering
     void PrepFor3DModels( const SMat4 &view, const SMat4 &proj );
-    void PrepForLightPass( const SMat4 &view, const SMat4 &proj );
+    void PrepForPointLightPass( const SMat4 &view, const SMat4 &proj );
+    void PrepForDirectionalLightPass( const SMat4 &view, const SMat4 &proj );
     void PrepForPrimitives( const SMat4 &view, const SMat4 &proj );
     void PrepForDebugRender( );
     void PrepForFinalOutput( );
@@ -107,7 +108,7 @@ namespace ursine
     //rendering funcs
     void Render3DModel( _DRAWHND handle );
     void Render2DBillboard( _DRAWHND handle );
-    void RenderPointLight( _DRAWHND handle, Camera &currentCamera );
+    void RenderPointLight( _DRAWHND handle, Camera &currentCamera, SMat4 &proj );
     void RenderDirectionalLight( _DRAWHND handle, Camera &currentcamera );
     void RenderPrimitive( _DRAWHND handle );
     void RenderDebugPoints( const SMat4 &view, const SMat4 &proj, Camera &currentCamera );

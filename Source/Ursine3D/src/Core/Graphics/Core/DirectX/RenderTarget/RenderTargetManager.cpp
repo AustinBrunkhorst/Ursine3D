@@ -49,29 +49,28 @@ namespace ursine
       m_deferredRenderTargetView = new ID3D11RenderTargetView*[ 3 ];
       m_deferredShaderMap = new ID3D11ShaderResourceView*[ 3 ];
 
-      //create the reserved render targets
+      //deferred render targets
       CreateRenderTarget( RENDER_TARGET_DEFERRED_COLOR, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
-
-      //these NEED to be 64 bit floats.
       CreateRenderTarget( RENDER_TARGET_DEFERRED_NORMAL, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
-      CreateRenderTarget( RENDER_TARGET_DEFERRED_DEPTH, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
-
+      CreateRenderTarget( RENDER_TARGET_DEFERRED_SPECPOW, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
       CreateRenderTarget( RENDER_TARGET_LIGHTMAP, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+      
+      //create the reserved render targets
       CreateRenderTarget( RENDER_TARGET_UI, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
       CreateRenderTarget( RENDER_TARGET_DEBUG, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
 
       //set this for mapping data
-      m_deferredRenderTargetView[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_DEPTH ]->RenderTargetView;
-      m_deferredShaderMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_DEPTH ]->ShaderMap;
-      m_deferredTextureMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_DEPTH ]->TextureMap;
+      m_deferredRenderTargetView[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->RenderTargetView;
+      m_deferredShaderMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->ShaderMap;
+      m_deferredTextureMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->TextureMap;
 
       m_deferredRenderTargetView[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->RenderTargetView;
       m_deferredShaderMap[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->ShaderMap;
       m_deferredTextureMap[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->TextureMap;
 
-      m_deferredRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->RenderTargetView;
-      m_deferredShaderMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->ShaderMap;
-      m_deferredTextureMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->TextureMap;
+      m_deferredRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->RenderTargetView;
+      m_deferredShaderMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->ShaderMap;
+      m_deferredTextureMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->TextureMap;
     }
 
     void RenderTargetManager::UnInitializeAllRenderTargets( )
@@ -143,7 +142,7 @@ namespace ursine
 
     void RenderTargetManager::ResizeDeferred( unsigned width, unsigned height )
     {
-      for (int x = RENDER_TARGET_LIGHTMAP; x <= RENDER_TARGET_DEFERRED_COLOR; ++x)
+      for (int x = RENDER_TARGET_LIGHTMAP; x <= RENDER_TARGET_DEFERRED_SPECPOW; ++x)
       {
         if (m_renderTargets[ x ] != nullptr)
         {
@@ -153,23 +152,23 @@ namespace ursine
         }
       }
 
-      CreateRenderTarget( RENDER_TARGET_DEFERRED_COLOR, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+      CreateRenderTarget( RENDER_TARGET_DEFERRED_COLOR, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
       CreateRenderTarget( RENDER_TARGET_DEFERRED_NORMAL, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
-      CreateRenderTarget( RENDER_TARGET_DEFERRED_DEPTH, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
+      CreateRenderTarget( RENDER_TARGET_DEFERRED_SPECPOW, DXGI_FORMAT_R8G8B8A8_UNORM, width, height );
       CreateRenderTarget( RENDER_TARGET_LIGHTMAP, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height );
 
       //set this for mapping data
-      m_deferredRenderTargetView[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_DEPTH ]->RenderTargetView;
-      m_deferredShaderMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_DEPTH ]->ShaderMap;
-      m_deferredTextureMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_DEPTH ]->TextureMap;
+      m_deferredRenderTargetView[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->RenderTargetView;
+      m_deferredShaderMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->ShaderMap;
+      m_deferredTextureMap[ 0 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->TextureMap;
 
       m_deferredRenderTargetView[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->RenderTargetView;
       m_deferredShaderMap[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->ShaderMap;
       m_deferredTextureMap[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->TextureMap;
 
-      m_deferredRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->RenderTargetView;
-      m_deferredShaderMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->ShaderMap;
-      m_deferredTextureMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_COLOR ]->TextureMap;
+      m_deferredRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->RenderTargetView;
+      m_deferredShaderMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->ShaderMap;
+      m_deferredTextureMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->TextureMap;
     }
 
     void RenderTargetManager::ResizeEngineTargets ( unsigned width, unsigned height )

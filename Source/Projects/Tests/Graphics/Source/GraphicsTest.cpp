@@ -104,7 +104,9 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
    Model3D &modelCube = m_gfx->RenderableMgr.GetModel3D( m_cube );
   //modelCube.SetWorldMatrix( mat );
 
-  m_gfx->StartFrame( );
+   m_gfx->RenderableMgr.GetPointLight( m_light ).SetPosition( m_camPos );
+   m_gfx->RenderableMgr.GetPointLight( m_light ).SetRadius( 5 );
+m_gfx->StartFrame( );
   //BEGIN
 
   m_gfx->BeginScene( );
@@ -114,9 +116,9 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
   m_gfx->RenderObject( m_floor );
   m_gfx->RenderObject(m_billboard);
   m_gfx->RenderObject( m_light );
-  m_gfx->RenderObject( m_light2 );
+  m_gfx->RenderObject( m_directLight );
   m_gfx->RenderObject( m_primitive );
-
+  
   //LAST
   m_gfx->RenderScene( 0.016f, m_viewport );
 
@@ -495,7 +497,7 @@ void GraphicsTest::initGraphics( void )
 
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 250, kDefaultWindowHeight - 250 );
   
-  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_DEFERRED );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( 0, 0, 0, 0 );
   
@@ -510,6 +512,9 @@ void GraphicsTest::initGraphics( void )
   m_floor = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
   m_primitive = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_PRIMITIVE);
   m_billboard = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_BILLBOARD2D );
+  m_directLight = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_DIRECTION_LIGHT );
+
+  m_gfx->RenderableMgr.GetDirectionalLight( m_directLight ).SetDirection( 0, -1, 0 );
 
   m_light = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
   m_light2 = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
@@ -529,6 +534,9 @@ void GraphicsTest::initGraphics( void )
   SMat4 trans;
   trans.Translate( SVec3( 0, -8, 0 ) );
   m_gfx->RenderableMgr.GetModel3D( m_floor ).SetWorldMatrix( trans * SMat4( 10, 10, 10 ) );
+
+  trans.Translate( SVec3( 1, 0, 0 ) );
+  billboard.SetWorldMatrix( trans );
 
   //set obj data here
   MdlCube.SetModel( "Character" );

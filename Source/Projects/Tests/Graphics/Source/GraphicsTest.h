@@ -51,6 +51,7 @@ private:
   GFXHND m_floor;
   GFXHND m_light;
   GFXHND m_light2;
+  GFXHND m_directLight;
 
   GFXHND m_primitive;
 

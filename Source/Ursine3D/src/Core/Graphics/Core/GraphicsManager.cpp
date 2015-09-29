@@ -371,10 +371,13 @@ namespace ursine
         while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
             Render2DBillboard( m_drawList[ currentIndex++ ] );
 
-        //light pass
-        PrepForLightPass( view, proj );
+        //point light pass
+        PrepForPointLightPass( view, proj );
         while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
-            RenderPointLight( m_drawList[ currentIndex++ ], currentCamera );
+            RenderPointLight( m_drawList[ currentIndex++ ], currentCamera, proj );
+
+        //directional light pass
+        PrepForDirectionalLightPass( view, proj );
         while (m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT)
             RenderDirectionalLight( m_drawList[ currentIndex++ ], currentCamera );
 
@@ -538,7 +541,8 @@ namespace ursine
     // preparing for different stages /////////////////////////////////
     void GraphicsCore::PrepFor3DModels( const SMat4& view, const SMat4& proj )
     {
-        dxCore->SetBlendState( BLEND_STATE_DEFAULT );
+        float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+        dxCore->GetDeviceContext()->OMSetBlendState( nullptr, blendFactor, 0xffffffff );
         dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
 
         //deferred shading
@@ -558,18 +562,66 @@ namespace ursine
         bufferManager->MapCameraBuffer( view, proj );
     }
 
-    void GraphicsCore::PrepForLightPass( const SMat4& view, const SMat4& proj )
+    void GraphicsCore::PrepForPointLightPass( const SMat4& view, const SMat4& proj )
     {
         gfxProfiler->Stamp( PROFILE_DEFERRED );
-        dxCore->SetRenderTarget( RENDER_TARGET_LIGHTMAP );
+
+        modelManager->BindModel( modelManager->GetModelIDByName("Sphere") );
+
+        //set states
+        dxCore->SetRenderTarget( RENDER_TARGET_LIGHTMAP, false );
         dxCore->SetBlendState( BLEND_STATE_ADDITIVE );
         dxCore->SetDepthState( DEPTH_STATE_NODEPTH_NOSTENCIL );
+        dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
+        //map inv proj
+        InvProjBuffer ipb;
+        SMat4 temp = proj;
+        temp.Transpose( );
+        temp.Inverse( );
+
+        ipb.invProj = temp.ToD3D();
+        bufferManager->MapBuffer<BUFFER_INV_PROJ>( &ipb, PIXEL_SHADER );
+
+        //map camera buffer
         bufferManager->MapCameraBuffer( view, proj );
 
-        dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_DEPTH )->ShaderMap );
-        dxCore->GetDeviceContext( )->PSSetShaderResources( 1, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_NORMAL )->ShaderMap );
-        dxCore->GetDeviceContext( )->PSSetShaderResources( 2, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_COLOR )->ShaderMap );
+        //map perspective values
+        SMat4 tempMat = proj;
+        tempMat.Transpose( );
+        GBufferUnpackBuffer gbub;
+        gbub.perspectiveVals.x = 1.f / tempMat( 0, 0 );
+        gbub.perspectiveVals.y = 1.f / tempMat( 1, 1 );
+        gbub.perspectiveVals.z = tempMat( 3, 2 );
+        gbub.perspectiveVals.w = -tempMat( 2, 2 );
+        bufferManager->MapBuffer<BUFFER_GBUFFER_UNPACK>( &gbub, PIXEL_SHADER );
+
+        //bind shader
+        shaderManager->BindShader( SHADER_POINT_LIGHT );
+        layoutManager->SetInputLayout( SHADER_POINT_LIGHT );
+
+        ////clear index/vertex buffers
+        //dxCore->GetDeviceContext()->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
+        //dxCore->GetDeviceContext( )->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
+
+        //set gbuffer resources
+        ID3D11ShaderResourceView *srv = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_MAIN );
+        dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &srv );
+        dxCore->GetDeviceContext( )->PSSetShaderResources( 1, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_COLOR )->ShaderMap );
+        dxCore->GetDeviceContext( )->PSSetShaderResources( 2, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_NORMAL )->ShaderMap );
+        dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_SPECPOW )->ShaderMap );
+    }
+
+    void GraphicsCore::PrepForDirectionalLightPass(const SMat4& view, const SMat4& proj)
+    {
+        modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
+
+        shaderManager->BindShader( SHADER_DIRECTIONAL_LIGHT );
+        layoutManager->SetInputLayout( SHADER_DIRECTIONAL_LIGHT );
+        dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
+
+        bufferManager->MapCameraBuffer( SMat4::Identity(), SMat4::Identity( ) );
+        bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
     }
 
     void GraphicsCore::PrepForPrimitives( const SMat4& view, const SMat4& proj )
@@ -665,48 +717,57 @@ namespace ursine
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sprite" ) ) );
     }
 
-    void GraphicsCore::RenderPointLight( _DRAWHND handle, Camera &currentCamera )
+    void GraphicsCore::RenderPointLight( _DRAWHND handle, Camera &currentCamera, SMat4 &proj )
     {
-        shaderManager->BindShader( SHADER_POINT_LIGHT );
-        layoutManager->SetInputLayout( SHADER_POINT_LIGHT );
-        modelManager->BindModel( modelManager->GetModelIDByName( "Sphere" ) );
-
+        //get point light data
         PointLight &pl = renderableManager->m_renderablePointLight[ handle.Index_ ];
+
+        //get data
+        float radius = pl.GetRadius( );
+
+        //domain shader needs light proj
+        SMat4 lightProj;
+        lightProj = SMat4( radius, radius, radius );    //scaling
+        lightProj *= SMat4( pl.GetPosition( ) );        //translate to world space
+        lightProj *= currentCamera.GetViewMatrix( );    //transform into view space
+        lightProj *= proj;                              //transform into screeen space
+
+        //map
+        bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>( &lightProj, DOMAIN_SHADER );
+
+        //ps needs point light data buffer
+        SMat4 view = currentCamera.GetViewMatrix( );    //need to transpose view (dx11 gg)
+        view.Transpose( );
+        SVec3 lightPosition = view.TransformPoint( pl.GetPosition( ) );
+
+        PointLightBuffer pointB;
+        pointB.lightPos = lightPosition.ToD3D();
+        pointB.lightRadius = pl.GetRadius();
+        pointB.intensity = 1;
+        pointB.color.x = pl.GetColor( ).r;
+        pointB.color.y = pl.GetColor( ).g;
+        pointB.color.z = pl.GetColor( ).b;
+        bufferManager->MapBuffer<BUFFER_POINT_LIGHT>( &pointB, PIXEL_SHADER );
+
+        //light transform
+        SMat4 transform;
+        transform *= SMat4( pl.GetPosition( ) );
+        transform *= SMat4( radius, radius, radius );
+        bufferManager->MapTransformBuffer( transform );
 
         //get camera position
         SVec3 tempPos = currentCamera.GetPosition( );
 
         ////get light position
         SVec3 lightP = pl.GetPosition( );
-
-        //get light to camera vector
         SVec3 camLight = tempPos - lightP;
-
-        //set culling to backface or frontface, depending on the distance
-        float radius = pl.GetRadius( ) / 2.f;
         float distance = camLight.LengthSquared( );
         float radiusSqr = radius * radius;
 
-        URSINE_TODO( "Matt: Do not forget to look at this." );
         if (radiusSqr > fabs( distance ))
             dxCore->SetRasterState( RASTER_STATE_SOLID_FRONTCULL );
         else
             dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
-
-        //set buffer stuff
-        SMat4 trans;
-        trans.Translate( lightP );
-
-        bufferManager->MapTransformBuffer( trans * SMat4( radius, radius, radius ) );
-        SVec3 lightPosition = currentCamera.GetViewMatrix( ).TransformPoint( pl.GetPosition( ) );
-        PointLightBuffer pointB;
-        pointB.lightPos = DirectX::XMFLOAT3( lightPosition.GetFloatPtr( ) );
-        pointB.lightRadius = radius;
-        pointB.attenuation = 1;
-        pointB.color.x = pl.GetColor( ).r;
-        pointB.color.y = pl.GetColor( ).g;
-        pointB.color.z = pl.GetColor( ).b;
-        bufferManager->MapBuffer<BUFFER_POINT_LIGHT>( &pointB, PIXEL_SHADER );
 
         //render!
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sphere" ) ) );
@@ -714,24 +775,24 @@ namespace ursine
 
     void GraphicsCore::RenderDirectionalLight( _DRAWHND handle, Camera &currentCamera )
     {
-        ID3D11ShaderResourceView *resource = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_SHADOWMAP );
-        dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &resource );
+        //ID3D11ShaderResourceView *resource = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_SHADOWMAP );
+        //dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &resource );
 
         DirectionalLight &dl = renderableManager->m_renderableDirectionalLight[ handle.Index_ ];
-        shaderManager->BindShader( SHADER_DIRECTIONAL_LIGHT );
-        layoutManager->SetInputLayout( SHADER_DIRECTIONAL_LIGHT );
-        dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
-        bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
-        bufferManager->MapCameraBuffer( SMat4::Identity( ), SMat4::Identity( ) );
-        modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
+        SMat4 view = currentCamera.GetViewMatrix( );    //need to transpose view (dx11 gg)
+        view.Transpose( );
+        SVec3 lightDirection = view.TransformVector( dl.GetDirection( ));
 
-        SVec3 lightDirection = currentCamera.GetViewMatrix( ).TransformVector( dl.GetDirection( ) );
         DirectionalLightBuffer lightB;
-        lightB.lightDirection = DirectX::XMFLOAT4( lightDirection.GetFloatPtr( ) );
+        lightB.lightDirection.x = lightDirection.X( );
+        lightB.lightDirection.y = lightDirection.Y( );
+        lightB.lightDirection.z = lightDirection.Z( );
+
+        lightB.intensity = 1.f;
+
         lightB.lightColor = DirectX::XMFLOAT3( dl.GetColor( ).r, dl.GetColor( ).g, dl.GetColor( ).b );
-        lightB.attenuation = 1.f;
-        lightB.lightPosition = DirectX::XMFLOAT4( lightDirection.GetFloatPtr( ) );
+
         bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>( &lightB, PIXEL_SHADER );
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
     }

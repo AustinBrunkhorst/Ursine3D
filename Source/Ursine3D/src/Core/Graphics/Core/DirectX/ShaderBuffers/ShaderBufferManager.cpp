@@ -22,6 +22,8 @@ namespace ursine
       MakeBuffer<PrimitiveColorBuffer>( BUFFER_PRIM_COLOR );
       MakeBuffer<PointGeometryBuffer>( BUFFER_POINT_GEOM );
       MakeBuffer<BillboardSpriteBuffer>( BUFFER_BILLBOARDSPRITE );
+      MakeBuffer<GBufferUnpackBuffer>( BUFFER_GBUFFER_UNPACK );
+      MakeBuffer<TransformBuffer>( BUFFER_LIGHT_PROJ );
     }
 
     void ShaderBufferManager::Uninitialize( )
