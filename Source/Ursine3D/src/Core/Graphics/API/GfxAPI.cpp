@@ -79,9 +79,9 @@ namespace ursine
     m_privates->gfxCore_->BeginScene( );
   }
 
-  void GfxAPI::RenderScene( float dt, GFXHND viewport )
+  void GfxAPI::RenderScene( float dt, GFXHND camera )
   {
-    m_privates->gfxCore_->RenderScene(dt, viewport);
+    m_privates->gfxCore_->RenderScene(dt, camera );
   }
 
   void GfxAPI::EndScene( )

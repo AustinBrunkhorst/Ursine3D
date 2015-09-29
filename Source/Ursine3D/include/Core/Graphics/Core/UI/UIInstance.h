@@ -29,7 +29,7 @@ namespace ursine
         void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr, RENDER_TARGETS target );
         void Uninitialize( );
 
-        void Draw( GFXHND viewport = 0);
+        void Draw( GFXHND camera = 0);
 
         void DrawMain( );
 
