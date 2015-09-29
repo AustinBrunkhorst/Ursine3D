@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include "SystemManagerEvent.h"
-
 #include "SystemConfig.h"
 #include "EntitySystem.h"
 
@@ -28,7 +26,6 @@ namespace ursine
     {
         class SystemManager final 
             : public WorldManager
-            , public EventDispatcher<SystemManagerEvent>
         {
         public:
             template<class SystemType>
@@ -40,10 +37,6 @@ namespace ursine
             std::vector<EntitySystem*> m_systems;
 
             void OnInitialize(void) override;
-            void OnWorldLoaded(void) override;
-
-            void Update(void);
-            void Draw(void);
 
             SystemManager(World *world);
             ~SystemManager(void);

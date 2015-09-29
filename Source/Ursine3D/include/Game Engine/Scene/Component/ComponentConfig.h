@@ -31,15 +31,15 @@
 #define BaseComponent() ursine::ecs::Component( GetComponentID( std::remove_reference<decltype( *this )>::type ) )
 
 // Required at the top of all native component declarations
-#define NATIVE_COMPONENT                    \
-    META_OBJECT                             \
-    public:                                 \
-        Meta(Enable)                        \
-        static ComponentTypeID ComponentID; \
-    private:                                \
+#define NATIVE_COMPONENT                                 \
+    META_OBJECT                                          \
+    public:                                              \
+        Meta(Enable)                                     \
+        static ursine::ecs::ComponentTypeID ComponentID; \
+    private:                                             \
 
-#define NATIVE_COMPONENT_DEFINITION(type)   \
-    ComponentTypeID type::ComponentID = -1; \
+#define NATIVE_COMPONENT_DEFINITION(type)                \
+    ursine::ecs::ComponentTypeID type::ComponentID = -1; \
 
 namespace ursine
 {

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "Meta.h"
+#include "ComponentConfig.h"
 
 namespace ursine
 {
@@ -35,12 +36,14 @@ namespace ursine
             // entity that this component is attached to
             Entity *m_owner;
         public:
+            Meta(Disable)
             explicit inline Component(ComponentTypeID typeID);
 
+            Meta(Disable)
             Component(const Component &rhs) = default;
-            Component &operator=(const Component &rhs) = default;
 
-            virtual ~Component(void) { }
+            Meta(Disable)
+            Component &operator=(const Component &rhs) = default;
 
             // Called when the component has been initialized and added to an entity
             virtual void OnInitialize(void) { }

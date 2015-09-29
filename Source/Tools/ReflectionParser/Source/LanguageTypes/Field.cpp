@@ -12,7 +12,7 @@ Field::Field(
     , m_isConst( cursor.GetType( ).IsConst( ) )
     , m_parent( parent )
     , m_name( cursor.GetSpelling( ) )
-    , m_type( cursor.GetType( ).GetDisplayName( ) )
+    , m_type( utils::GetQualifiedName( cursor.GetType( ) ) )
 {
     auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 

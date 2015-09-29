@@ -5,10 +5,11 @@
 #include <Window.h>
 #include <UIView.h>
 
-#include "Project.h"
 #include "EditorTool.h"
 
 #include <SDL_video.h>
+
+class Project;
 
 class Editor : public ursine::core::CoreSystem
 {
@@ -22,6 +23,8 @@ public:
 
     Meta(Disable)
     void OnRemove(void) override;
+    
+    Project *GetProject(void) const;
     
 private:
     ursine::GfxAPI *m_graphics;

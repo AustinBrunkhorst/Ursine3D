@@ -21,6 +21,8 @@ namespace utils
 
     Mustache::Data<std::string>::Type TemplateBool(bool value);
 
+    std::string GetQualifiedName(const CursorType &type);
+
     std::string GetQualifiedName(
     	const std::string &displayName, 
     	const Namespace &currentNamespace

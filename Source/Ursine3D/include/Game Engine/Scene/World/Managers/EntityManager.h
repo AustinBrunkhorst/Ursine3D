@@ -14,11 +14,8 @@
 #pragma once
 
 #include "EntityConfig.h"
-#include "EntityManagerEvent.h"
 
 #include "WorldManager.h"
-
-#include "EventDispatcher.h"
 
 #include "Entity.h"
 
@@ -36,9 +33,7 @@ namespace ursine
         class World;
         class Filter;
 
-        class EntityManager final 
-            : public WorldManager
-            , public EventDispatcher<EntityManagerEvent>
+        class EntityManager final : public WorldManager
         {
             // can access addComponent (internal method)
             friend class EntitySerializer;
@@ -104,15 +99,6 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
             // Serialization
             ////////////////////////////////////////////////////////////////////
-
-            // Serializes all components on an entity to JSON
-            Json Serialize(Entity *entity) const;
-
-            // Gets the path to where entity data is stored
-            const std::string &GetDataPath(void) const;
-
-            // Sets the path to where entity data is stored
-            void SetDataPath(const std::string &path);
 
             // predicate for comparing components based on unique ID
             static bool CompareComponents(const Component *a, const Component *b);

@@ -28,7 +28,8 @@ namespace ursine
     namespace ecs
     {
         World::World(void)
-            : m_entityManager( new EntityManager( this ) )
+            : EventDispatcher( this )
+            , m_entityManager( new EntityManager( this ) )
             , m_systemManager( new SystemManager( this ) )
             , m_nameManager( new NameManager( this ) )
             , m_utilityManager( new UtilityManager( this ) )

@@ -16,15 +16,12 @@
 #include "WorldManager.h"
 #include "EntityConfig.h"
 
-#include "GroupManagerEvent.h"
-
 namespace ursine
 {
     namespace ecs
     {
         class NameManager final 
             : public WorldManager
-            , public EventDispatcher<GroupManagerEvent>
         {
             // group of entities mapped to a specific group name
             std::unordered_map<std::string, EntityVector> m_names;

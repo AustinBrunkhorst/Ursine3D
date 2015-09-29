@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include "WorldEvent.h"
+
 #include "EntityConfig.h"
 #include "Filter.h"
 
@@ -30,7 +32,7 @@ namespace ursine
         class NameManager;
         class UtilityManager;
 
-        class World
+        class World : public EventDispatcher<WorldEventType>
         {
         public:
             World(void);
@@ -54,10 +56,6 @@ namespace ursine
             // Gets all active entities matching the specified filter
             EntityVector GetEntitiesFromFilter(const Filter &filter) const;
 
-            URSINE_TODO( "..." );
-            EntityManager *GetEntityManager(void) const { return m_entityManager; }
-            SystemManager *GetSystemManager(void) const { return m_systemManager; }
-
             // Updates the world
             void Update(void);
 
@@ -75,6 +73,8 @@ namespace ursine
             SystemManager *m_systemManager;
             NameManager *m_nameManager;
             UtilityManager *m_utilityManager;
+
+            World(const World &rhs) = delete;
 
             // adds an entity to the deletion queue
             void deleteEntity(Entity *entity);

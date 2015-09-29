@@ -34,5 +34,9 @@
 #include "TimerManager.h"
 #include "TweenManager.h"
 
+/// Game Engine
+
+#include "NativeComponents.h"
+
 // define it last
 #define URSINE_REFLECTION_INCLUDED

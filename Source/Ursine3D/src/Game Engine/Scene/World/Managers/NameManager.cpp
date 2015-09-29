@@ -21,8 +21,7 @@ namespace ursine
     namespace ecs
     {
         NameManager::NameManager(World *world)
-            : WorldManager( world )
-            , EventDispatcher( this ) { }
+            : WorldManager( world ) { }
 
         NameManager::~NameManager(void) { }
 

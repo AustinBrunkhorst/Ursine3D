@@ -13,6 +13,6 @@ namespace ursine
         public:
             Transform(void) 
                 : BaseComponent( ) { }
-        } Meta(Enable);
+        } Meta(Enable, DisplayName( "Transform" ));
     }
 }

@@ -22,17 +22,17 @@ namespace ursine
     {
         FilterSystem::FilterSystem(World *world, const Filter &filter, SystemPriority priority)
             : EntitySystem( world, priority )
-              , m_filter( filter ) { }
+            , m_filter( filter ) { }
 
-        void FilterSystem::onComponentChange(EVENT_HANDLER(EntityManager))
+        void FilterSystem::onComponentChange(EVENT_HANDLER(World))
         {
-            EVENT_ATTRS(EntityManager, EntityEventArgs);
+            EVENT_ATTRS(World, EntityEventArgs);
 
             auto entity = args->entity;
 
             auto contains = utils::IsFlagSet( GetTypeMask( ), entity->m_systemMask );
             auto interests = m_filter.Matches( entity );
-            auto removed = args->event_type == EM_COMPONENT_REMOVED;
+            auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
 
             if (interests && !contains && !removed)
             {
@@ -52,9 +52,9 @@ namespace ursine
             }
         }
 
-        void FilterSystem::onEntityRemoved(EVENT_HANDLER(EntityManager))
+        void FilterSystem::onEntityRemoved(EVENT_HANDLER(World))
         {
-            EVENT_ATTRS(EntityManager, EntityEventArgs);
+            EVENT_ATTRS(World, EntityEventArgs);
 
             auto entity = args->entity;
 
@@ -64,11 +64,11 @@ namespace ursine
                 Remove( entity );
         }
 
-        void FilterSystem::onUpdate(EVENT_HANDLER(SystemManager))
+        void FilterSystem::onUpdate(EVENT_HANDLER(World))
         {
             Begin( );
 
-            for (auto entity : m_active)
+            for (auto &entity : m_active)
                 Process( entity.second );
 
             End( );
@@ -93,8 +93,7 @@ namespace ursine
         {
             auto id = entity->GetID( );
 
-            URSINE_TODO( "Optimize with binary search" )
-            ;
+            URSINE_TODO( "Optimize with binary search" );
 
             // already enabled
             if (m_active.find( id ) != m_active.end( ))
@@ -116,24 +115,20 @@ namespace ursine
 
         void FilterSystem::OnInitialize(void)
         {
-            m_world->GetEntityManager( )->Listener( this )
-                .On( EM_COMPONENT_ADDED, &FilterSystem::onComponentChange )
-                .On( EM_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
-                .On( EM_ENTITY_REMOVED, &FilterSystem::onEntityRemoved );
-
-            m_world->GetSystemManager( )->Listener( this )
-                .On( SM_UPDATE, &FilterSystem::onUpdate );
+            m_world->Listener( this )
+                .On( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
+                .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
+                .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
+                .On( WORLD_UPDATE, &FilterSystem::onUpdate );
         }
 
         void FilterSystem::OnRemove(void)
         {
-            m_world->GetEntityManager( )->Listener( this )
-                .Off( EM_COMPONENT_ADDED, &FilterSystem::onComponentChange )
-                .Off( EM_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
-                .Off( EM_ENTITY_REMOVED, &FilterSystem::onEntityRemoved );
-
-            m_world->GetSystemManager( )->Listener( this )
-                .Off( SM_UPDATE, &FilterSystem::onUpdate );
+            m_world->Listener( this )
+                .Off( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
+                .Off( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
+                .Off( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
+                .Off( WORLD_UPDATE, &FilterSystem::onUpdate );
         }
     }
 }

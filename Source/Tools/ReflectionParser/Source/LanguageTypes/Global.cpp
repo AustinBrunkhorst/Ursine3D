@@ -15,7 +15,7 @@ Global::Global(
     , m_parent( parent )
     , m_name( cursor.GetSpelling( ) )
     , m_qualifiedName( utils::GetQualifiedName( cursor, currentNamespace ) )
-    , m_type( cursor.GetType( ).GetDisplayName( ) )
+    , m_type( utils::GetQualifiedName( cursor.GetType( ) ) )
 {
     auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
 

@@ -28,7 +28,7 @@ bool Method::ShouldCompile(void) const
 
 TemplateData Method::CompileTemplate(const ReflectionParser *context) const
 {
-    TemplateData data = { TemplateData::Type::Object };
+    TemplateData data { TemplateData::Type::Object };
 
     data[ "name" ] = m_name;
         

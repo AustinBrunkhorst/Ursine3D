@@ -32,13 +32,13 @@ namespace ursine
             , public EntityProcessor
         {
             // entity's components changed
-            void onComponentChange(EVENT_HANDLER(EntityManager));
+            void onComponentChange(EVENT_HANDLER(World));
 
             // entity removed
-            void onEntityRemoved(EVENT_HANDLER(EntityManager));
+            void onEntityRemoved(EVENT_HANDLER(World));
 
             // game tick
-            void onUpdate(EVENT_HANDLER(SystemManager));
+            void onUpdate(EVENT_HANDLER(World));
 
             const Filter m_filter;
 

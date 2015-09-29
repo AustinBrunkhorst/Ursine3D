@@ -41,8 +41,7 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
     }
     else
     {
-        m_displayName = 
-            utils::GetQualifiedName( displayName, currentNamespace );
+        m_displayName = displayName;
     }
 
     for (auto &child : cursor.GetChildren( ))

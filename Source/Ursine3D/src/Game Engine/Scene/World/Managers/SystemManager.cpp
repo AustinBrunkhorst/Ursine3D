@@ -21,7 +21,6 @@ namespace ursine
     {
         SystemManager::SystemManager(World *world)
             : WorldManager( world )
-            , EventDispatcher( this )
         {
             URSINE_TODO( "construct entity systems here" );
         }
@@ -59,24 +58,6 @@ namespace ursine
                 if (system)
                     system->OnInitialize( );
             }
-        }
-
-        void SystemManager::OnWorldLoaded(void)
-        {
-            // notify systems that are interested
-            Dispatch( SM_WORLD_LOADED, EventArgs::Empty );
-        }
-
-        void SystemManager::Update(void)
-        {
-            // notify systems that are interested
-            Dispatch( SM_UPDATE, EventArgs::Empty );
-        }
-
-        void SystemManager::Draw(void)
-        {
-            // notify systems that are interested
-            Dispatch( SM_DRAW, EventArgs::Empty );
         }
     }
 }

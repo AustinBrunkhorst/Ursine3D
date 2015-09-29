@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 
 #include "Editor.h"
+#include "Project.h"
 
 #include <Application.h>
 
@@ -27,7 +28,7 @@ Editor::Editor(void)
     , m_mainWindow( { nullptr } )
     , m_project( new Project( ) )
 {
-    
+    auto entity = m_project->GetScene( ).GetWorld( ).CreateEntity( );
 }
 
 Editor::~Editor(void)
@@ -90,6 +91,11 @@ void Editor::OnRemove(void)
         .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
     m_mainWindow.ui->Close( );
+}
+
+Project *Editor::GetProject(void) const
+{
+    return m_project;
 }
 
 void Editor::initializeGraphics(void)

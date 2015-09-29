@@ -27,14 +27,11 @@ namespace ursine
             World *m_world;
 
             WorldManager(World *world);
-            virtual ~WorldManager(void) {}
+            virtual ~WorldManager(void) { }
 
             // Called after the manager is added to its world.
             // This is before the world is actually serialized.
-            virtual void OnInitialize(void) {}
-
-            // Called when the owner world loads the attributes, entities, etc.
-            virtual void OnWorldLoaded(void) {}
+            virtual void OnInitialize(void) { }
         };
     }
 }

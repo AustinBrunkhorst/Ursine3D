@@ -18,6 +18,36 @@
 #include "Filter.h"
 #include "TransformComponent.h"
 
+namespace
+{
+    void configureComponents(void)
+    {
+        static bool configured = false;
+
+        if (configured)
+            return;
+
+        configured = true;
+
+        auto componentType = typeof( ursine::ecs::Component );
+
+        ursine::ecs::ComponentTypeID nextID = 0;
+
+        for (auto derived : componentType.GetDerivedClasses( ))
+        {
+            auto componentID = derived.GetStaticField( "ComponentID" );
+
+            UAssert( componentID.IsValid( ),
+                "Native component '%s' doesn't have a static field ComponentID.\n"
+                "Most likely missing NATIVE_COMPONENT in declaration", 
+                derived.GetName( ).c_str( ) 
+            );
+
+            componentID.SetValue( nextID++ );
+        }
+    }
+}
+
 namespace ursine
 {
     namespace ecs
@@ -28,11 +58,11 @@ namespace ursine
 
         EntityManager::EntityManager(World *world)
             : WorldManager( world )
-              , EventDispatcher( this )
-              , m_nextEntityID( 0 )
-              , m_nextEntityUID( 0 )
-              , m_nextComponentUID( 0 )
+            , m_nextEntityID( 0 )
+            , m_nextEntityUID( 0 )
+            , m_nextComponentUID( 0 )
         {
+            configureComponents( );
         }
 
         EntityManager::~EntityManager(void)
@@ -66,9 +96,9 @@ namespace ursine
 
             component->OnInitialize( );
 
-            ComponentEventArgs e( EM_COMPONENT_ADDED, entity, component );
+            ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
 
-            Dispatch( EM_COMPONENT_ADDED, &e );
+            m_world->Dispatch( WORLD_ENTITY_COMPONENT_ADDED, &e );
         }
 
         void EntityManager::RemoveComponent(Entity *entity, ComponentTypeID id)
@@ -152,10 +182,10 @@ namespace ursine
 
         void EntityManager::BeforeRemove(Entity *entity)
         {
-            EntityEventArgs e( EM_ENTITY_REMOVED, entity );
+            EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
 
             // we're removing man
-            Dispatch( EM_ENTITY_REMOVED, &e );
+            m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
         void EntityManager::Remove(Entity *entity)
@@ -229,9 +259,9 @@ namespace ursine
 
         void EntityManager::dispatchCreated(Entity *entity)
         {
-            EntityEventArgs e( EM_ENTITY_ADDED, entity );
+            EntityEventArgs e( WORLD_ENTITY_ADDED, entity );
 
-            Dispatch( EM_ENTITY_ADDED, &e );
+            m_world->Dispatch( WORLD_ENTITY_ADDED, &e );
         }
 
         void EntityManager::addComponent(Entity *entity, Component *component)
@@ -268,9 +298,9 @@ namespace ursine
 
             if (dispatch)
             {
-                ComponentEventArgs e( EM_COMPONENT_REMOVED, entity, component );
+                ComponentEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component );
 
-                Dispatch( EM_COMPONENT_REMOVED, &e );
+                m_world->Dispatch( WORLD_ENTITY_COMPONENT_REMOVED, &e );
             }
 
             delete component;
@@ -283,7 +313,7 @@ namespace ursine
             const auto size = m_componentTypes.size( );
             const auto id = entity->m_id;
 
-            ComponentEventArgs args( EM_COMPONENT_ADDED, entity, nullptr );
+            ComponentEventArgs args( WORLD_ENTITY_COMPONENT_ADDED, entity, nullptr );
 
             // transform can be assumed to be the first component type
             for (uint32 i = 0; i < size; ++i)
@@ -296,7 +326,7 @@ namespace ursine
 
                     args.component = component;
 
-                    Dispatch( EM_COMPONENT_ADDED, &args );
+                    m_world->Dispatch( WORLD_ENTITY_COMPONENT_ADDED, &args );
                 }
             }
         }
@@ -327,13 +357,13 @@ namespace ursine
 
             if (dispatch)
             {
-                ComponentEventArgs args( EM_COMPONENT_REMOVED, entity, nullptr );
+                ComponentEventArgs args( WORLD_ENTITY_COMPONENT_REMOVED, entity, nullptr );
 
                 for (uint32 i = 0; i < removeCount; ++i)
                 {
                     args.component = toRemove[ i ];
 
-                    Dispatch( EM_COMPONENT_REMOVED, &args );
+                    m_world->Dispatch( WORLD_ENTITY_COMPONENT_REMOVED, &args );
                 }
             }
 

@@ -297,7 +297,7 @@ macro (ursine_default_project project_name)
             set(pch_switch "--pch \"${PROJ_PCH_NAME}.h\"")
         endif ()
 
-        set(meta_depends ${files_inc})
+        set(meta_depends ${files_inc} ${URSINE_HEADER_FILES})
 
         list(REMOVE_ITEM meta_depends ${meta_generated_header})
 
