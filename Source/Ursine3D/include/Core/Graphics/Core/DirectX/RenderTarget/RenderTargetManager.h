@@ -53,7 +53,7 @@ namespace ursine
 
       void ResizeEngineTargets( unsigned width, unsigned height );
 
-      void ResizeUI( unsigned width, unsigned height );
+      void ResizeUI( unsigned width, unsigned height, RENDER_TARGETS target = RENDER_TARGET_UI );
 
       void Invalidate( ) { m_currentTarget = RENDER_TARGET_COUNT; }
     private:

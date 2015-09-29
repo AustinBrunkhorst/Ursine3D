@@ -205,8 +205,8 @@ namespace ursine
 
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_LIGHTMAP )->RenderTargetView, lightMap );
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_COLOR )->RenderTargetView, color );
-      m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_DEPTH )->RenderTargetView, colorNormal );
-      m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_NORMAL )->RenderTargetView, color );
+      m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_SPECPOW )->RenderTargetView, color );
+      m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_DEFERRED_NORMAL )->RenderTargetView, colorNormal );
       
     }
 
@@ -217,7 +217,7 @@ namespace ursine
 
     void DirectXCore::ClearSwapchain ( )
     {
-      float color[ 4 ] = { 0.2f, 0.2f, 0.2f, 1.0f };
+      float color[ 4 ] = { 0.15f, 0.15f, 0.15f, 1.0f };
       m_deviceContext->ClearRenderTargetView( m_targetManager->GetRenderTarget( RENDER_TARGET_SWAPCHAIN )->RenderTargetView, color );
     }
 
@@ -267,9 +267,12 @@ namespace ursine
       m_depthStateManager->SetDepthState( dt );
     }
     //set target
-    void DirectXCore::SetRenderTarget( RENDER_TARGETS rt )
+    void DirectXCore::SetRenderTarget( RENDER_TARGETS rt, bool useDepth )
     {
-      m_targetManager->SetRenderTarget( rt, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
+        if(useDepth)
+            m_targetManager->SetRenderTarget( rt, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN) );
+        else
+            m_targetManager->SetRenderTarget( rt, nullptr );
     }
 
     void DirectXCore::SetRasterState( RASTER_STATES state )
@@ -293,9 +296,9 @@ namespace ursine
       return m_targetManager;
     }
 
-    DepthStencilManager* DirectXCore::GetDepthStencilMgr ( )
+    DepthStencilStateManager* DirectXCore::GetDepthStencilMgr ( )
     {
-      return m_depthStencilManager;
+      return m_depthStateManager;
     }
 
     void DirectXCore::ResizeDX ( int width, int height )

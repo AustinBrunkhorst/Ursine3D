@@ -11,6 +11,10 @@ void Camera::Initialize( void )
     
     m_projMode = PROJECTION_PERSPECTIVE;
     m_fov = 45.f;
+
+    m_nearPlane = 0.1;
+    m_farPlane = 100.f;
+    m_size = 10.f;
 }
 
 void Camera::Uninitialize( )
@@ -37,11 +41,11 @@ SMat4 Camera::GetProjMatrix(float width, float height)
 
     if (m_projMode == PROJECTION_PERSPECTIVE)
     {
-        return SMat4(DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f, width / height, 0.0001f, 1000.f ));
+        return SMat4(DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f, width / height, m_nearPlane, m_farPlane ));
     }
     else
     {
-        return SMat4(DirectX::XMMatrixOrthographicLH(width, height, 0.0001f, 1000.f ));
+        return SMat4(DirectX::XMMatrixOrthographicLH( m_size * width/height, m_size, m_nearPlane, m_farPlane ));
     }
 }
 
@@ -74,6 +78,19 @@ SVec3 Camera::GetUp( )
     return m_up;
 }
 
+void Camera::SetPlanes ( float nearPlane, float farPlane )
+{
+  UAssert( nearPlane < farPlane, "Near and far planes cannot be the same!" );
+  m_nearPlane = nearPlane;
+  m_farPlane = farPlane;
+}
+
+void Camera::GetPlanes ( float& nearPlane, float& farPlane )
+{
+  nearPlane = m_nearPlane;
+  farPlane = m_farPlane;
+}
+
 float Camera::GetFOV( )
 {
     return m_fov;
@@ -93,10 +110,39 @@ void Camera::SetProjMode( ProjectionMode mode )
     m_projMode = mode;
 }
 
+void Camera::SetSize ( float size )
+{
+  m_size = size;
+}
+
 void Camera::LookAtPoint( const SVec3 &point )
 {
   m_look = point - m_position;
   CalculateVectors( SVec3::UnitY( ) );
+}
+
+void Camera::SetDimensions(float width, float height)
+{
+    m_width = width;
+    m_height = height;
+}
+
+void Camera::GetDimensions(float& width, float& height)
+{
+    width = m_width;
+    height = m_height;
+}
+
+void Camera::SetPosition(float x, float y)
+{
+    m_xPos = x;
+    m_yPos = y;
+}
+
+void Camera::GetPosition(float& x, float& y)
+{
+    x = m_xPos;
+    y = m_yPos;
 }
 
 void Camera::CalculateVectors( const SVec3 &up )

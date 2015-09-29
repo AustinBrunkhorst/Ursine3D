@@ -4,7 +4,7 @@ disclosure of this file or its contents without the prior written
 consent of DigiPen Institute of Technology is prohibited.
 =============================================================================*/
 /*!
-File Name:      CameraAPI.h
+File Name:      ModelManager.h
 Module:         Graphics
 Purpose:        Manager for handling all of the models
 Language:       C++

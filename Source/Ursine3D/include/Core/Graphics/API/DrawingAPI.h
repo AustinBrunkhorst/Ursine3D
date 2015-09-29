@@ -1,6 +1,7 @@
 #pragma once
 
-
+#include <Color.h>
+#include <SMat4.h>
 
 #include "GFXAPIDefines.h"
 
@@ -14,12 +15,17 @@ namespace ursine
 
   public:
     // draw a point
-    void DrawPoint( float x, float y, float z );      
+    void DrawPoint( float x, float y, float z );    
+    void DrawPoint( const SVec3 &pos );
+
     // draw a line 
     void DrawLine( float x0, float y0, float z0, float x1, float y1, float z1 );  
+    void DrawLine( const SVec3 &pos0, const SVec3 &pos1 );
                                        
     // set render color
-    void SetColor( float r, float g, float b, float a );        
+    void SetColor( float r, float g, float b, float a );   
+    void SetColor( const SVec4 &color );
+    void SetColor( const Color &color );
 
     // size of the points, in pixels
     void SetSize( float size );                                                   

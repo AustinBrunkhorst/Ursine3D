@@ -14,6 +14,7 @@
 #pragma once
 
 #include "Meta.h"
+
 #include "ComponentConfig.h"
 
 namespace ursine

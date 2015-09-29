@@ -8,4 +8,14 @@ namespace ursine
     {
         return m_world;
     }
+
+    void Scene::Update(void)
+    {
+
+    }
+
+    void Scene::Render(void)
+    {
+
+    }
 }

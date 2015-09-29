@@ -1,57 +1,59 @@
+/* Start Header ---------------------------------------------------------------
+Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
+disclosure of this file or its contents without the prior written
+consent of DigiPen Institute of Technology is prohibited.
+=============================================================================*/
+/*!
+File Name:      GfxUIManager.h
+Module:         Graphics
+Purpose:        Class for handling the UI
+Language:       C++
+
+Project:        Graphics Prototype
+Author:         Matt Yan, m.yan@digipen.edu
+*/
+/*- End Header --------------------------------------------------------------*/
+
 #pragma once
 
 #include <d3d11.h>
-#include <cef_render_handler.h>
+#include <vector>
+#include <list>
 #include "RenderTargetManager.h"
+#include "UIInstance.h"
 #include "GraphicsDefines.h"
 
 namespace ursine
 {
-  class GfxUIManager : CefRenderHandler
-  {
-  public:
-    void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr);
-    void Uninitialize( );
+    class GfxUIManager
+    {
+    public:
+        void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr );
+        void Uninitialize( );
 
-    //private methods
-  public:
-    bool GetViewRect( CefRefPtr<CefBrowser> browser,
-      CefRect &bounds ) override;
+        //create UI
+        GFXHND CreateUI( );
 
-    void OnPopupShow( CefRefPtr<CefBrowser> browser,
-      bool show ) override;
+        //destroy UI
+        void DestroyUI( GFXHND );
 
-    void OnPopupSize( CefRefPtr<CefBrowser> browser,
-      const CefRect &bounds ) override;
+        //get UI
+        UIInstance &GetUI( GFXHND );
 
-    void OnPaint( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height ) override;
+        //private members
+    private:
 
-    void paintView( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height );
+        std::vector<UIInstance*> m_uiInstances;
+        std::list<unsigned> m_freeInstances;
 
-    void paintPopup( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height );
+        std::list<RENDER_TARGETS> m_freeTargets;
 
-    void Resize( int width, int height );
+        //device context
+        ID3D11Device *m_device;
+        ID3D11DeviceContext *m_context;
+        DXCore::RenderTargetManager *m_rtManager;
+        void * m_gfxmgr;
 
-    //private members
-  private:
-    int m_width, m_height;
 
-    CefRect m_popm_upbounds;
-
-    //device context
-    ID3D11Device *m_device;
-    ID3D11DeviceContext *m_context;
-    void * m_gfxmgr;
-
-    //rtmanager
-    DXCore::RenderTargetManager *m_rtManager;
-
-    IMPLEMENT_REFCOUNTING( GfxUIManager );
-  };
+    };
 }

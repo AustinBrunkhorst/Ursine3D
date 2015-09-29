@@ -65,7 +65,7 @@ namespace ursine
       //set depth stencil
       void SetDepthState( DEPTH_STATES dt );
       //set target
-      void SetRenderTarget( RENDER_TARGETS rt );
+      void SetRenderTarget( RENDER_TARGETS rt, bool useDepth = true );
 
       //set raster state
       void SetRasterState( RASTER_STATES state );
@@ -77,7 +77,7 @@ namespace ursine
       //get target
       RenderTargetManager *GetRenderTargetMgr( );
       //get stencil manager
-      DepthStencilManager *GetDepthStencilMgr( );
+      DepthStencilStateManager *GetDepthStencilMgr( );
 
       void ResizeDX( int width, int height );
 

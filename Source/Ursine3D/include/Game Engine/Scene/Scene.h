@@ -9,6 +9,9 @@ namespace ursine
     public:
         ecs::World &GetWorld(void);
 
+        void Update(void);
+        void Render(void);
+
     private:
         ecs::World m_world;
     };

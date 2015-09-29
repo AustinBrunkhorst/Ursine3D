@@ -38,6 +38,11 @@ namespace ursine
     return m_privates->renderMgr->GetRenderable<Primitive>( handle );
   }
 
+  Billboard2D& RenderableAPI::GetBillboard2D ( GFXHND& handle )
+  {
+    return m_privates->renderMgr->GetRenderable<Billboard2D>( handle );
+  }
+
   void RenderableAPI::SetPrivates(void *priv)
   {
     m_privates->renderMgr = reinterpret_cast<RenderableManager*>(priv);

@@ -24,6 +24,7 @@ enum SHADER_TYPES
   SHADER_NORMAL,
   SHADER_DEFFERED_TEXTURE,
   SHADER_DEFERRED_DEPTH,
+  SHADER_BILLBOARD2D,
   SHADER_DEFERRED_DEPTH_NORM,
   SHADER_UI,
 
@@ -32,7 +33,7 @@ enum SHADER_TYPES
   SHADER_DIRECTIONAL_LIGHT,
 
   //billboarded sprites don't care about lighting for now...
-  SHADER_BILLBOARD2D,
+
 
   //and past this is debug!
   SHADER_PRIMITIVE,

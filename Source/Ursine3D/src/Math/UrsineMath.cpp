@@ -22,5 +22,11 @@ namespace ursine
             sin_value = sin(radians);
             cos_value = cos(radians);
         }
+
+        template<>
+        SQuat Lerp(const SQuat &a, const SQuat &b, float percent)
+        {
+            return a.Slerp( b, percent );
+        }
     }
 }

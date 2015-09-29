@@ -33,8 +33,26 @@ namespace ursine
     {
         ModelName_ = "Cube";
         MaterialName_ = "UV";
+
+        m_emissive = 0;
+        m_specPow = 0;
+        m_specIntensity = 0;
     }
-    
+
+    void Model3D::SetMaterialData(float emiss, float pow, float intensity)
+    {
+        m_emissive = emiss;
+        m_specPow = pow;
+        m_specIntensity = intensity;
+    }
+
+    void Model3D::GetMaterialData(float& emiss, float& pow, float& intensity)
+    {
+        emiss = m_emissive;
+        pow = m_specPow;
+        intensity = m_specIntensity;
+    }
+
     const char *Model3D::GetModelName( void )
     {
         return ModelName_.c_str( );
