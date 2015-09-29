@@ -34,7 +34,10 @@ namespace ursine
             , m_nameManager( new NameManager( this ) )
             , m_utilityManager( new UtilityManager( this ) )
         {
-
+            m_entityManager->OnInitialize( );
+            m_systemManager->OnInitialize( );
+            m_nameManager->OnInitialize( );
+            m_utilityManager->OnInitialize( );
         }
 
         World::~World(void)
@@ -84,6 +87,12 @@ namespace ursine
                 m_deleted.pop_back( );
             }
 
+            Dispatch( WORLD_UPDATE, EventArgs::Empty );
+        }
+
+        void World::Render(void)
+        {
+            Dispatch( WORLD_RENDER, EventArgs::Empty );
         }
 
         void World::deleteEntity(Entity *entity)

@@ -22,17 +22,11 @@ namespace ursine
 {
     namespace ecs
     {
-        EntitySystem::EntitySystem(World *world, SystemPriority priority) 
+        EntitySystem::EntitySystem(World *world) 
             : m_typeID( 0 )
-            , m_priority( priority )
             , m_world( world )
             , m_timers( nullptr )
             , m_tweens( nullptr )
         { }
-
-        bool EntitySystem::compare(const EntitySystem *a, const EntitySystem *b)
-        {
-            return a && b && b->m_priority < a->m_priority;
-        }
     }
 }

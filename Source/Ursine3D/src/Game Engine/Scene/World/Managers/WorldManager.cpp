@@ -21,6 +21,6 @@ namespace ursine
     namespace ecs
     {
         WorldManager::WorldManager(World *world)
-            : m_world(world) { }
+            : m_world( world ) { }
     }
 }

@@ -59,8 +59,8 @@ namespace ursine
             // Updates the world
             void Update(void);
 
-            // Draws the world
-            void Draw(void);
+            // Renders the world
+            void Render(void);
 
         private:
             friend class Entity;

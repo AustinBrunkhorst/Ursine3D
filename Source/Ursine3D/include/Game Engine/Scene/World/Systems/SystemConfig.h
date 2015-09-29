@@ -29,11 +29,8 @@ namespace ursine
         // Type for unique bit masks mapped to entity system types.
         typedef uint64 SystemTypeMask;
 
-        // Update priority of systems
-        typedef int SystemPriority;
-
         // Maximum number of entity systems able to be stored (number of bits able
-        // to be stored in EntitySystemTypeMask).
-        const uint8 MAX_ENTITY_SYSTEM_COUNT = sizeof(SystemTypeMask) * kBitsPerByte;
+        // to be stored in SystemTypeMask).
+        const uint8 KMaxEntitySystemCount = sizeof( SystemTypeMask ) * kBitsPerByte;
     }
 }

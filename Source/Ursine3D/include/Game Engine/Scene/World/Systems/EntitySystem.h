@@ -30,7 +30,7 @@ namespace ursine
         class EntitySystem
         {
         public:
-            EntitySystem(World *world, SystemPriority priority = 0);
+            EntitySystem(World *world);
             virtual ~EntitySystem(void) { }
 
             inline SystemTypeID GetTypeID(void);
@@ -41,12 +41,6 @@ namespace ursine
             friend class SystemManager;
 
             SystemTypeID m_typeID;
-
-            // update priority (higher updates first)
-            int m_priority;
-
-            // compares systems based on priority
-            static bool compare(const EntitySystem *a, const EntitySystem *b);
 
         protected:
             World *m_world;

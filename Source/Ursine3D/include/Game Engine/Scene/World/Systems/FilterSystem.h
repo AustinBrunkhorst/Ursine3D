@@ -54,7 +54,7 @@ namespace ursine
             virtual void OnInitialize(void);
             virtual void OnRemove(void);
         public:
-            FilterSystem(World *world, const Filter &filter, SystemPriority priority = 0);
+            FilterSystem(World *world, const Filter &filter);
         };
     }
 }

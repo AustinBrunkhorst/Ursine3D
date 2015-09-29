@@ -131,6 +131,8 @@ void Editor::initializeGraphics(void)
 
     viewportHandle.SetRenderMode( VIEWPORT_RENDER_FORWARD );
     viewportHandle.SetViewportCamera( m_mainWindow.camera );
+
+    m_graphics->SetGameViewport( m_mainWindow.viewport );
 }
 
 void Editor::initializeTools(void)
@@ -149,6 +151,8 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 {
     EVENT_ATTRS(Application, EventArgs);
 
+    m_graphics->StartFrame( );
+
     m_graphics->BeginScene( );
 
     // @@@ TODO:
@@ -156,8 +160,11 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     // Render Tools
     // Render Editor UIView
 
-    m_graphics->RenderScene( sender->GetDeltaTime( ), m_mainWindow.viewport );
+    m_graphics->RenderScene( sender->GetDeltaTime( ), m_mainWindow.camera );
+
     m_graphics->EndScene( );
+
+    m_graphics->EndFrame( );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

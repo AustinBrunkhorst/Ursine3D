@@ -20,8 +20,8 @@ namespace ursine
 {
     namespace ecs
     {
-        FilterSystem::FilterSystem(World *world, const Filter &filter, SystemPriority priority)
-            : EntitySystem( world, priority )
+        FilterSystem::FilterSystem(World *world, const Filter &filter)
+            : EntitySystem( world )
             , m_filter( filter ) { }
 
         void FilterSystem::onComponentChange(EVENT_HANDLER(World))

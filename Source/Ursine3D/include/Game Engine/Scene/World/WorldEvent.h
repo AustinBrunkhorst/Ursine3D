@@ -10,6 +10,7 @@ namespace ursine
         enum WorldEventType
         {
             WORLD_UPDATE,
+            WORLD_RENDER,
             WORLD_ENTITY_ADDED,
             WORLD_ENTITY_REMOVED,
             WORLD_ENTITY_COMPONENT_ADDED,

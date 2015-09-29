@@ -15,7 +15,6 @@
 #include <SMat4.h>
 #include <Core/Input/Keyboard/KeyboardManagerEvent.h>
 #include <Core/Input/Mouse/MouseManagerEvent.h>
-#include <Game Engine/Scene/Component/Core Components/TransformComponent.h>
 #include <Ease.h>
 
 using namespace ursine;
@@ -39,7 +38,7 @@ SVec3 colors[] = {
 namespace
 {
   //const auto kGraphicsTestUIEntryPoint = "file:///Assets/Test.html";
-  const auto kGraphicsTestUIEntryPoint = "www.google.com";
+  const auto kGraphicsTestUIEntryPoint = "http://www.google.com";
 
   const auto kDefaultWindowWidth = 1280;
   const auto kDefaultWindowHeight = 720;
@@ -507,13 +506,13 @@ void GraphicsTest::initGraphics( void )
 
   GfxConfig config;
   config.Fullscreen_ = false;
-  config.HandleToWindow_ = &handle;
+  config.HandleToWindow_ = handle;
   config.ModelListPath_ = "Models/";
   config.ShaderListPath_ = "SHADER_BINARY/";
   config.TextureListPath_ = "Textures/";
   config.WindowWidth_ = kDefaultWindowWidth;
   config.WindowHeight_ = kDefaultWindowHeight;
-  config.m_renderUI = false;
+  config.m_renderUI = true;
   config.Profile_ = false;
   config.debug = false;
 
@@ -538,9 +537,9 @@ void GraphicsTest::initGraphics( void )
 
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 250, kDefaultWindowHeight - 250 );
   
-  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_DEFERRED );
-  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
-  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( 0, 0, 0, 0 );
+  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
+  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetRenderMode(VIEWPORT_RENDER_FORWARD);
+  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( Color::Red );
   
   m_camera = m_gfx->CameraMgr.AddCamera( );
   m_camera2 = m_gfx->CameraMgr.AddCamera( );
