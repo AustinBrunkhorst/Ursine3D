@@ -369,8 +369,19 @@ namespace ursine
 
         std::vector<Method> Type::GetMethods(void) const
         {
-            URSINE_TODO( "recursively get base class methods" );
-            return { };
+            std::vector<Method> methods;
+
+            auto &handle = database.types[ m_id ].methods;
+
+            for (auto &overload : handle)
+            {
+                for (auto &method : overload.second)
+                {
+                    methods.emplace_back( method.second );
+                }
+            }
+
+            return methods;
         }
 
         ///////////////////////////////////////////////////////////////////////

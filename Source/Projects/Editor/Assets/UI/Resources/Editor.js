@@ -11,6 +11,9 @@ $hxClasses["Application"] = Application;
 Application.__name__ = ["Application"];
 Application.main = function() {
 	var editor = new ursine_editor_Editor();
+	editor.broadcastManager.getChannel("EntityManager").on("EntityCreated",function(data) {
+		console.log(data);
+	});
 	var windows = [new ursine_editor_windows_EntityInspector(),new ursine_editor_windows_SceneOutline(),new ursine_editor_windows_SceneView()];
 	var windowContainer = window.document.body.querySelector("#window-container");
 	var _g = 0;
@@ -63,6 +66,31 @@ Type.resolveClass = function(name) {
 	if(cl == null || !cl.__name__) return null;
 	return cl;
 };
+var haxe_IMap = function() { };
+$hxClasses["haxe.IMap"] = haxe_IMap;
+haxe_IMap.__name__ = ["haxe","IMap"];
+var haxe_ds_StringMap = function() {
+	this.h = { };
+};
+$hxClasses["haxe.ds.StringMap"] = haxe_ds_StringMap;
+haxe_ds_StringMap.__name__ = ["haxe","ds","StringMap"];
+haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
+haxe_ds_StringMap.prototype = {
+	set: function(key,value) {
+		if(__map_reserved[key] != null) this.setReserved(key,value); else this.h[key] = value;
+	}
+	,get: function(key) {
+		if(__map_reserved[key] != null) return this.getReserved(key);
+		return this.h[key];
+	}
+	,setReserved: function(key,value) {
+		if(this.rh == null) this.rh = { };
+		this.rh["$" + key] = value;
+	}
+	,getReserved: function(key) {
+		if(this.rh == null) return null; else return this.rh["$" + key];
+	}
+};
 var haxe_rtti_Meta = function() { };
 $hxClasses["haxe.rtti.Meta"] = haxe_rtti_Meta;
 haxe_rtti_Meta.__name__ = ["haxe","rtti","Meta"];
@@ -79,6 +107,7 @@ haxe_rtti_Meta.getStatics = function(t) {
 };
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
+	this.broadcastManager = new ursine_editor_NativeBroadcastManager();
 	this.mainMenu = new MainMenuControl();
 	this.buildMenus();
 	window.document.querySelector("#header-toolbar").appendChild(this.mainMenu);
@@ -155,6 +184,25 @@ ursine_editor_Editor.prototype = {
 var ursine_editor_MenuItemHandler = function() { };
 $hxClasses["ursine.editor.MenuItemHandler"] = ursine_editor_MenuItemHandler;
 ursine_editor_MenuItemHandler.__name__ = ["ursine","editor","MenuItemHandler"];
+var ursine_editor_NativeBroadcastManager = function() {
+	this.m_channels = new haxe_ds_StringMap();
+	window.NativeBroadcast = ursine_editor_NativeBroadcastManager.onBroadcast;
+};
+$hxClasses["ursine.editor.NativeBroadcastManager"] = ursine_editor_NativeBroadcastManager;
+ursine_editor_NativeBroadcastManager.__name__ = ["ursine","editor","NativeBroadcastManager"];
+ursine_editor_NativeBroadcastManager.onBroadcast = function(target,message,data) {
+	ursine_editor_Editor.instance.broadcastManager.getChannel(target).trigger(message,data);
+};
+ursine_editor_NativeBroadcastManager.prototype = {
+	getChannel: function(name) {
+		var channel = this.m_channels.get(name);
+		if(channel == null) {
+			channel = new ursine_utils_EventManager();
+			this.m_channels.set(name,channel);
+		}
+		return channel;
+	}
+};
 var ursine_editor_WindowHandler = function() {
 	this.window = new EditorWindowControl();
 };
@@ -254,10 +302,39 @@ ursine_editor_windows_SceneView.__name__ = ["ursine","editor","windows","SceneVi
 ursine_editor_windows_SceneView.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 });
+var ursine_utils_EventManager = function() {
+	this.m_events = new haxe_ds_StringMap();
+};
+$hxClasses["ursine.utils.EventManager"] = ursine_utils_EventManager;
+ursine_utils_EventManager.__name__ = ["ursine","utils","EventManager"];
+ursine_utils_EventManager.prototype = {
+	on: function(event,handler) {
+		var handlers = this.m_events.get(event);
+		if(handlers == null) {
+			handlers = [];
+			this.m_events.set(event,handlers);
+		}
+		handlers.push(handler);
+		return this;
+	}
+	,trigger: function(event,data) {
+		var handlers = this.m_events.get(event);
+		if(handlers == null) return true;
+		var result = true;
+		var _g = 0;
+		while(_g < handlers.length) {
+			var handler = handlers[_g];
+			++_g;
+			if(!handler(data)) result = false;
+		}
+		return result;
+	}
+};
 $hxClasses.Math = Math;
 String.__name__ = ["String"];
 $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
+var __map_reserved = {}
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/New"]}, doOpen : { mainMenuItem : ["File/Open"]}}};

@@ -15,7 +15,7 @@
 
 #include <cef_app.h>
 
-#include "JavascriptExtension.h"
+#include "NativeJavaScriptHandler.h"
 
 namespace ursine
 {
@@ -26,6 +26,10 @@ namespace ursine
         ~RenderProcessHandler(void);
 
     private:
+        std::vector<CefRefPtr<NativeJavaScriptHandler>> m_nativeHandlers;
+
+        CefRefPtr<CefV8Value> m_nativeBroadcaster;
+
         void OnRenderThreadCreated(
             CefRefPtr<CefListValue> extraInfo) override;
 
@@ -52,5 +56,9 @@ namespace ursine
         bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
             CefProcessId sourceProcess,
             CefRefPtr<CefProcessMessage> message) override;
+
+        bool initNativeBroadcaster(CefRefPtr<CefV8Value> global);
+
+        void broadcast(CefRefPtr<CefBrowser> browser, const std::string &target, CefRefPtr<CefListValue> args);
     };
 }

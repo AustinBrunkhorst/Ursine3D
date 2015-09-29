@@ -8,17 +8,11 @@ namespace ursine
     {
         class Transform : public Component 
         {
-            explicit Transform(ComponentTypeID typeID)
-                : Component( typeID )
-            {
+            NATIVE_COMPONENT;
 
-            }
-
-            explicit Transform(const Component& rhs)
-                : Component( rhs )
-            {
-
-            }
-        };
+        public:
+            Transform(void) 
+                : BaseComponent( ) { }
+        } Meta(Enable);
     }
 }

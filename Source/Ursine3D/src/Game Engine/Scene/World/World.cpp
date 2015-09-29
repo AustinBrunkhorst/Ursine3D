@@ -16,127 +16,78 @@
 
 #include "World.h"
 
-#include "WorldConfig.h"
-
 #include "Entity.h"
+
+#include "EntityManager.h"
+#include "NameManager.h"
+#include "UtilityManager.h"
+#include "SystemManager.h"
 
 namespace ursine
 {
     namespace ecs
     {
         World::World(void)
-            : _loaded(false)
-            , _owner(nullptr)
+            : m_entityManager( new EntityManager( this ) )
+            , m_systemManager( new SystemManager( this ) )
+            , m_nameManager( new NameManager( this ) )
+            , m_utilityManager( new UtilityManager( this ) )
         {
 
         }
 
         World::~World(void)
         {
-            
-        }
-
-        void World::Load(const std::string &path)
-        {
-            UAssert(!_loaded, "World has already been loaded.");
-
-            _loaded = true;
-        }
-
-        const Json &World::GetAttribute(const std::string &name) const
-        {
-            return _attributes[name];
-        }
-
-        void World::SetOwner(void *owner)
-        {
-            _owner = owner;
+            delete m_entityManager;
+            delete m_systemManager;
+            delete m_nameManager;
+            delete m_utilityManager;
         }
 
         Entity *World::CreateEntity(void)
         {
-            return nullptr;
-        }
-
-        Entity *World::CreateEntity(const std::string &identifier)
-        {
-            return nullptr;
-        }
-
-        Entity* World::CreateEntity(const std::string &identifier, const Json &merge)
-        {
-            return nullptr;
+            return m_entityManager->Create( );
         }
 
         Entity *World::GetEntity(EntityID id) const
         {
-            return nullptr;
+            return m_entityManager->GetEntity( id );
         }
 
-        Entity *World::GetEntity(const std::string &tag) const
+        Entity *World::GetEntityFromName(const std::string &name) const
         {
-            return nullptr;
+            return m_nameManager->GetEntity( name );
         }
 
-        Entity *World::GetEntityUnique(EntityUniqueID unique_id) const
+        Entity *World::GetEntityUnique(EntityUniqueID uniqueID) const
         {
-            return nullptr;
+            return m_entityManager->GetEntityUnique( uniqueID );
         }
 
-        const EntityVector &World::GetEntities(const std::string &group) const
+        const EntityVector &World::GetEntitiesFromName(const std::string &name) const
         {
-            return *new EntityVector( );
+            return m_nameManager->GetEntities( name );
         }
 
-        EntityVector World::GetEntities(const Filter &filter) const
+        EntityVector World::GetEntitiesFromFilter(const Filter &filter) const
         {
-            return { };
+            return m_entityManager->GetEntities( filter );
         }
 
         void World::Update(void)
         {
-            while (_deleted.size())
+            while (m_deleted.size( ))
             {
-                auto entity = _deleted.back();
+                auto entity = m_deleted.back( );
 
-                _deleted.pop_back( );
+                m_deleted.pop_back( );
             }
 
         }
 
-        template<>
-        EntityManager *World::Manager(void)
-        {
-            return _entity_manager;
-        }
-
-        template<>
-        SystemManager *World::Manager(void)
-        {
-            return _system_manager;
-        }
-
-        template<>
-        TagManager *World::Manager(void)
-        {
-            return _tag_manager;
-        }
-
-        template<>
-        GroupManager *World::Manager(void)
-        {
-            return _group_manager;
-        }
-
-        template<>
-        UtilityManager *World::Manager(void)
-        {
-            return _utility_manager;
-        }
-
         void World::deleteEntity(Entity *entity)
         {
-            _deleted.push_back(entity);
+            m_deleted.push_back( entity );
         }
     }
 }

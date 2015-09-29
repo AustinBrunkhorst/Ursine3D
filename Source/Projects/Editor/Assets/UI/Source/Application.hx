@@ -8,6 +8,10 @@ class Application {
     static function main() {
         var editor = new Editor( );
 
+        editor.broadcastManager.getChannel( 'EntityManager' ).on( 'EntityCreated', function(data) {
+            trace( data );
+        } );
+
         var windows : Array<WindowHandler> = [
             new EntityInspector( ),
             new SceneOutline( ),

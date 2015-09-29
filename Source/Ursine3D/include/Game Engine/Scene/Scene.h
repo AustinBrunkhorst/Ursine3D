@@ -1,1 +1,9 @@
-ECHO is on.
+#pragma once
+
+namespace ursine
+{
+    class Scene
+    {
+            
+    };
+}

@@ -15,5 +15,10 @@
 
 namespace ursine
 {
+    enum UIMessageCommand
+    {
+        UI_CMD_BROADCAST
+    };
 
+    const auto kNativeBroadcastFunction = "NativeBroadcast";
 }

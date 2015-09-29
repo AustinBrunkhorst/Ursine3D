@@ -20,6 +20,7 @@
 #include "ResourceBundleHandler.h"
 
 #include <cef_client.h>
+#include "UISubProcess.h"
 
 namespace ursine
 {
@@ -27,6 +28,8 @@ namespace ursine
         : public CefApp
         , public CefClient
         , public BrowserProcessHandler
+        // TODO:
+        , public RenderProcessHandler
         , public ResourceBundleHandler
     {
     public:
@@ -42,7 +45,8 @@ namespace ursine
         CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler(void) override;
         CefRefPtr<CefResourceBundleHandler> GetResourceBundleHandler(void) override;
 
-        bool GetLocalizedString(int message_id, CefString &string) override;
+        // TODO:
+        CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler(void) override { return this; }
 
         IMPLEMENT_REFCOUNTING(UICore);
     };

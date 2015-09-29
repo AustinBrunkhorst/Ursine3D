@@ -12,7 +12,6 @@
 ** -------------------------------------------------------------------------*/
 
 #include "World.h"
-#include "Utils.h"
 
 namespace ursine
 {
@@ -25,7 +24,7 @@ namespace ursine
         {
             auto component = new ComponentType( std::forward<Args>( args )... );
 
-            //m_world->Manager<EntityManager>( )->AddComponent( this, component );
+            m_world->m_entityManager->AddComponent( this, component );
 
             return component;
         }
@@ -33,29 +32,19 @@ namespace ursine
         template<class ComponentType>
         void Entity::RemoveComponent(void)
         {
-            //m_world->Manager<EntityManager>( )->RemoveComponent<ComponentType>( this );
+            m_world->m_entityManager->RemoveComponent<ComponentType>( this );
         }
 
         template<class ComponentType>
         ComponentType *Entity::GetComponent(void) const
         {
-            return nullptr;
-            //return m_world->Manager<EntityManager>( )->GetComponent<ComponentType>( this );
-        }
-
-        template<class ComponentType, typename... Args>
-        void Entity::ApplyChildren(void (ComponentType::*func)(Args ...), Args &&... args)
-        {
-            /*auto transform = GetTransform( );
-
-            if (transform)
-                transform->ApplyChildren( func, std::forward<Args>( args )... );*/
+            return m_world->m_entityManager->GetComponent<ComponentType>( this );
         }
 
         template<class ComponentType>
         bool Entity::HasComponent(void) const
         {
-            static const auto mask = GetComponentMask(ComponentType);
+            static const auto mask = GetComponentMask( ComponentType );
 
             return HasComponent( mask );
         }
@@ -63,25 +52,25 @@ namespace ursine
         template<typename Args>
         void Entity::Connect(EventID event, StaticDelegate<Args> delegate)
         {
-            //m_world->Manager<EntityManager>( )->GetEntityEvents( this ).Connect( event, delegate );
+            m_world->m_entityManager->GetEntityEvents( this ).Connect( event, delegate );
         }
 
         template<typename Class, typename Args>
         void Entity::Connect(EventID event, Class *context, ClassDelegate<Class, Args> delegate)
         {
-            //m_world->Manager<EntityManager>( )->GetEntityEvents( this ).Connect( event, context, delegate );
+            m_world->m_entityManager->GetEntityEvents( this ).Connect( event, context, delegate );
         }
 
         template<typename Args>
         void Entity::Disconnect(EventID event, StaticDelegate<Args> delegate)
         {
-            //m_world->Manager<EntityManager>( )->GetEntityEvents( this ).Disconnect( event, delegate );
+            m_world->m_entityManager->GetEntityEvents( this ).Disconnect( event, delegate );
         }
 
         template<typename Class, typename Args>
         void Entity::Disconnect(EventID event, Class *context, ClassDelegate<Class, Args> delegate)
         {
-            //m_world->Manager<EntityManager>( )->GetEntityEvents( this ).Disconnect( event, context, delegate );
+            m_world->m_entityManager->GetEntityEvents( this ).Disconnect( event, context, delegate );
         }
 
         template<typename ListenerType>

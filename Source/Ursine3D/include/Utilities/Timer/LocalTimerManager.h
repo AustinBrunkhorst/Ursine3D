@@ -20,6 +20,8 @@ namespace ursine
     class LocalTimerManager
     {
     public:
+        LocalTimerManager(void) = default;
+
         LocalTimerManager(TimerManager *manager, TimerGroupID defaultGroup = Timer::GROUP_DEFAULT);
         ~LocalTimerManager(void);
 

@@ -73,30 +73,14 @@ namespace ursine
             Transform *GetTransform(void) const;
 
             ////////////////////////////////////////////////////////////////////
-            // Tags
+            // Naming
             ////////////////////////////////////////////////////////////////////
 
-            // Gets the tag for this entity. Empty by default
-            const std::string &GetTag(void) const;
+            // Gets the name for this entity
+            const std::string &GetName(void) const;
 
-            // Sets the tag for this entity.
-            void SetTag(const std::string &tag);
-
-            ////////////////////////////////////////////////////////////////////
-            // Groups
-            ////////////////////////////////////////////////////////////////////
-
-            // Gets groups this entity belongs to
-            const EntityGroupVector &GetGroups(void) const;
-
-            // Adds this entity to a specific group
-            void AddGroup(const std::string &group);
-
-            // Removes this entity from a specific group
-            void RemoveGroup(const std::string &group);
-
-            // Determines if this entity belongs to the specified group
-            bool HasGroup(const std::string &group) const;
+            // Sets the name for this entity
+            void SetName(const std::string &name);
 
             ////////////////////////////////////////////////////////////////////
             // Utilities
@@ -145,11 +129,6 @@ namespace ursine
             // (chances are you don't need to use it)
             ComponentVector GetComponents(void) const;
 
-            // Call a certain member function on all children in the transform
-            // hierarchy, and forwards the specified args.
-            template<class ComponentType, typename... Args>
-            void ApplyChildren(void (ComponentType::*)(Args...), Args&&...);
-
             ////////////////////////////////////////////////////////////////////
             // Events
             ////////////////////////////////////////////////////////////////////
@@ -183,7 +162,7 @@ namespace ursine
 
             // access ids directly
             friend class TagManager;
-            friend class GroupManager;
+            friend class NameManager;
             friend class UtilityManager;
 
             // emplace_back access constructor

@@ -27,108 +27,58 @@ namespace ursine
 
         class SystemManager;
         class EntityManager;
-        class TagManager;
-        class GroupManager;
+        class NameManager;
         class UtilityManager;
 
         class World
         {
-            friend class Entity;
-            friend class WorldSerializer;
-
-            std::vector<Entity*> _deleted;
-
-            // direct pointers core world managers
-            EntityManager *_entity_manager;
-            SystemManager *_system_manager;
-            TagManager *_tag_manager;
-            GroupManager *_group_manager;
-            UtilityManager *_utility_manager;
-
-            Json _attributes;
-
-            // determines if the world has already been loaded
-            bool _loaded;
-
-            // pointer to the object that owns this world
-            void *_owner;
-
-            template<class ManagerType, typename... Args>
-            inline ManagerType *addManager(Args&&...);
-
-            // adds an entity to the deletion queue
-            void deleteEntity(Entity *entity);
-
         public:
             World(void);
 
             ~World(void);
 
-            template<class ManagerType>
-            ManagerType *Manager(void);
-
-            // Loads a world from a file
-            void Load(const std::string &path);
-
-            // Gets an attribute set in the world file
-            const Json &GetAttribute(const std::string &name) const;
-
-            // Gets the owner of this world (as the specified type)
-            template<typename OwnerType>
-            OwnerType *GetOwner(void);
-
-            // Sets the owner of this world
-            void SetOwner(void *owner);
-
-            // Creates an entity without serialization
             Entity *CreateEntity(void);
-
-            // Creates a serialized entity
-            Entity *CreateEntity(const std::string &identifier);
-
-            // Creates a serialized entity that merges component data with "merge"
-            Entity *CreateEntity(const std::string &identifier, const Json &merge);
 
             // Gets an entity based on its active id
             Entity *GetEntity(EntityID id) const;
 
-            // Gets an entity based its tag name
-            Entity *GetEntity(const std::string &tag) const;
+            // Gets an entity based its name (first entity with this name)
+            Entity *GetEntityFromName(const std::string &name) const;
 
             // Gets an entity based on its unique id
-            Entity *GetEntityUnique(EntityUniqueID unique_id) const;
+            Entity *GetEntityUnique(EntityUniqueID uniqueID) const;
 
             // Gets all entities belonging to a group
-            const EntityVector &GetEntities(const std::string &group) const;
+            const EntityVector &GetEntitiesFromName(const std::string &group) const;
 
             // Gets all active entities matching the specified filter
-            EntityVector GetEntities(const Filter &filter) const;
+            EntityVector GetEntitiesFromFilter(const Filter &filter) const;
+
+            URSINE_TODO( "..." );
+            EntityManager *GetEntityManager(void) const { return m_entityManager; }
+            SystemManager *GetSystemManager(void) const { return m_systemManager; }
 
             // Updates the world
             void Update(void);
 
             // Draws the world
             void Draw(void);
+
+        private:
+            friend class Entity;
+            friend class WorldSerializer;
+
+            std::vector<Entity*> m_deleted;
+
+            // direct pointers core world managers
+            EntityManager *m_entityManager;
+            SystemManager *m_systemManager;
+            NameManager *m_nameManager;
+            UtilityManager *m_utilityManager;
+
+            // adds an entity to the deletion queue
+            void deleteEntity(Entity *entity);
         };
-
-        ////////////////////////////////////////////////////////////////////////
-        // Core Manager Specialization
-        ////////////////////////////////////////////////////////////////////////
-
-        extern template
-        EntityManager *World::Manager(void);
-
-        extern template
-        SystemManager *World::Manager(void);
-
-        extern template
-        TagManager *World::Manager(void);
-
-        extern template
-        GroupManager *World::Manager(void);
-
-        extern template
-        UtilityManager *World::Manager(void);
     }
 }
 

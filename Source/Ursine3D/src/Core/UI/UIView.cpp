@@ -97,6 +97,21 @@ namespace ursine
         return !!m_browser;
     }
 
+    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data)
+    {
+        auto processMessage = CefProcessMessage::Create( target );
+
+        auto args = processMessage->GetArgumentList( );
+
+        args->SetSize( 3 );
+
+        args->SetInt( 0, command );
+        args->SetString( 1, message );
+        args->SetString( 2, data.dump( ) );
+
+        m_browser->SendProcessMessage( PID_RENDERER, processMessage );
+    }
+
     CefRefPtr<CefRenderHandler> UIView::GetRenderHandler(void)
     {
         return this;

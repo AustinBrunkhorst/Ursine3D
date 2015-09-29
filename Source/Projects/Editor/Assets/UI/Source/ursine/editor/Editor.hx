@@ -17,10 +17,13 @@ import ursine.editor.menus.EntityMenu;
 class Editor {
     public static var instance : Editor = null;
 
+    public var broadcastManager : NativeBroadcastManager;
     public var mainMenu : MainMenu;
 
     public function new() {
         instance = this;
+
+        broadcastManager = new NativeBroadcastManager( );
 
         mainMenu = new MainMenu( );
 

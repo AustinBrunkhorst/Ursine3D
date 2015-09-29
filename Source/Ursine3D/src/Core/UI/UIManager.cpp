@@ -39,7 +39,7 @@ namespace ursine
         settings.ignore_certificate_errors = true;
         settings.command_line_args_disabled = true;
 
-        settings.single_process = false;
+        settings.single_process = true;
         settings.multi_threaded_message_loop = false;
 
 #ifdef CONFIG_DEBUG

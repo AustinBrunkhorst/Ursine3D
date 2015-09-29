@@ -13,13 +13,15 @@
 
 #pragma once
 
+#include "Meta.h"
+
 namespace ursine
 {
     namespace ecs
     {
         class Entity;
 
-        class Component
+        class Component : public meta::Object
         {
             // can set the owner
             friend class EntityManager;
@@ -30,11 +32,8 @@ namespace ursine
             // unique instance id
             ComponentUniqueID m_uniqueID;
             
-            // Entity that this component is attached to.
+            // entity that this component is attached to
             Entity *m_owner;
-
-            // component type mask (1 << m_typeID)
-            ComponentTypeMask m_typeMask;
         public:
             explicit inline Component(ComponentTypeID typeID);
 

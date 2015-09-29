@@ -44,7 +44,7 @@ namespace ursine
             UAssert( IsValid( ), 
                 "Invalid method invoked" );
 
-            UAssert( instance.IsConst( ) && !m_isConst, 
+            UAssert( !(instance.IsConst( ) && !m_isConst), 
                 "Non-const method invoked on const object" )
 
             UAssert( instance.GetType( ) == m_classType, 

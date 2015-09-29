@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** WorldConfig.h
+** EntitySystem.hpp
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -11,17 +11,18 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#pragma once
-
-#include <string>
-
 namespace ursine
 {
     namespace ecs
     {
-        const std::string kWorldKeySystems = "systems";
-        const std::string kWorldKeyAttributes = "attributes";
-        const std::string kWorldKeyEntities = "entities";
-        const std::string kWorldExtension = ".world";
+        inline SystemTypeID EntitySystem::GetTypeID(void)
+        {
+            return m_typeID;
+        }
+
+        inline SystemTypeMask EntitySystem::GetTypeMask(void)
+        {
+            return 1ull << m_typeID;
+        }
     }
 }
