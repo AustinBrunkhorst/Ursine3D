@@ -20,25 +20,25 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class ResourceAPI
-  {
-    friend class GfxAPI;
-  private:
-    struct privData;
+    class ResourceAPI
+    {
+        friend class GfxAPI;
+    private:
+        struct privData;
 
-  public:
-    // get model handle
-    GFXHND GetModelHandle( const char *name );
+    public:
+        // get model handle
+        GFXHND GetModelHandle(const char *name);
 
-    // get texture handle
-    GFXHND GetTexHandle( const char *name );
+        // get texture handle
+        GFXHND GetTexHandle(const char *name);
 
-  private:
-    privData *m_privates;
+    private:
+        privData *m_privates;
 
-  private:
-    void SetPrivates( void *priv, void *priv2 );
-    void Initialize( );
-    void Uninitialize( );
-  };
+    private:
+        void SetPrivates(void *priv, void *priv2);
+        void Initialize();
+        void Uninitialize();
+    };
 }

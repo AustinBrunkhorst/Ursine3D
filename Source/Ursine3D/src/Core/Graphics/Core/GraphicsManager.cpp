@@ -262,7 +262,12 @@ namespace ursine
     {
         UAssert( m_currentlyRendering == true, "Attempted to render a scene without starting the frame!" );
         UAssert( m_sceneActive == true, "Attempted to render a scene without beginning one!" );
+
+        
         // get viewport
+        _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>(&camera);
+        UAssert( camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!" );
+
         Camera &cam = cameraManager->GetCamera( camera );
 
         //get game vp dimensions
@@ -950,6 +955,10 @@ namespace ursine
 
     void GraphicsCore::SetGameViewport(GFXHND vp)
     {
+        _VIEWPORTHND *viewPort = reinterpret_cast<_VIEWPORTHND*>(&vp);
+
+        UAssert( viewPort->ID_ == ID_VIEWPORT, "Attempted to set game viewport with invalid handle!" );
+
         m_GameViewport = vp;
     }
 
@@ -986,6 +995,10 @@ namespace ursine
 
     void GraphicsCore::RenderUI( GFXHND camera, RENDER_TARGETS input )
     {
+        _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>(&camera);
+
+        UAssert( newRender->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!" );
+
         PrepForUI( );
 
         // get viewport

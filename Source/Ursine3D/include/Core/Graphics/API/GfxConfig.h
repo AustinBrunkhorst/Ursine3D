@@ -20,17 +20,17 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  struct GfxConfig
-  {
-    unsigned WindowHeight_;         // height of window
-    unsigned WindowWidth_;          // width of window
-    std::string ModelListPath_;     // path to models
-    std::string TextureListPath_;   // path to textures
-    std::string ShaderListPath_;    // path to the shaders
-    bool Fullscreen_;               // do I launch in fullscreen?
-    HWND *HandleToWindow_;          // handle to the window
-    bool Profile_;                  // output profiling info about graphics
-    bool m_renderUI;                // should I render the ui?
-    bool debug;                     // should I do debug stuff?
-  };
+    struct GfxConfig
+    {
+        unsigned WindowHeight_; // height of window
+        unsigned WindowWidth_; // width of window
+        std::string ModelListPath_; // path to models
+        std::string TextureListPath_; // path to textures
+        std::string ShaderListPath_; // path to the shaders
+        bool Fullscreen_; // do I launch in fullscreen?
+        HWND *HandleToWindow_; // handle to the window
+        bool Profile_; // output profiling info about graphics
+        bool m_renderUI; // should I render the ui?
+        bool debug; // should I do debug stuff?
+    };
 }

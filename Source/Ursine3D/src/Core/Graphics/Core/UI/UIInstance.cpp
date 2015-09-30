@@ -32,9 +32,9 @@ namespace ursine
         m_context = nullptr;
     }
 
-    void UIInstance::Draw(GFXHND viewport)
+    void UIInstance::Draw(GFXHND camera)
     {
-        GfxManager->RenderUI( viewport, m_target );
+        GfxManager->RenderUI( camera, m_target );
     }
 
     void UIInstance::DrawMain()

@@ -19,4 +19,5 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "ShaderList.h"
 #include "RenderableTypes.h"
 
-typedef unsigned long long GFXHND;  // universal graphics handle
+typedef unsigned long long GFXHND; // universal graphics handle
+

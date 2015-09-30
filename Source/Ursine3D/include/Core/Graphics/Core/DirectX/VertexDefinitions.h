@@ -20,35 +20,35 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 enum VERTEX_TYPES
 {
-  VERTEX_BASIC = 0,
-  VERTEX_DIFFUSE,
-  VERTEX_DRAWING,
-  VERTEX_COUNT
+    VERTEX_BASIC = 0,
+    VERTEX_DIFFUSE,
+    VERTEX_DRAWING,
+    VERTEX_COUNT
 };
 
 struct BasicVertex
 {
-  DirectX::XMFLOAT4 pos;
+    DirectX::XMFLOAT4 pos;
 };
 
 struct DiffuseVertex
 {
-  DirectX::XMFLOAT4 pos;
-  DirectX::XMFLOAT4 normal;
+    DirectX::XMFLOAT4 pos;
+    DirectX::XMFLOAT4 normal;
 };
 
 struct DiffuseTextureVertex
 {
-  DirectX::XMFLOAT4 pos;
-  DirectX::XMFLOAT4 normal;
-  DirectX::XMFLOAT2 UV;
+    DirectX::XMFLOAT4 pos;
+    DirectX::XMFLOAT4 normal;
+    DirectX::XMFLOAT2 UV;
 
-  //@matt don't forget this
+    //@matt don't forget this
 };
 
 struct PrimitiveVertex
 {
-  DirectX::XMFLOAT4 pos;
-  DirectX::XMFLOAT4 color;
-  float size;
+    DirectX::XMFLOAT4 pos;
+    DirectX::XMFLOAT4 color;
+    float size;
 };
