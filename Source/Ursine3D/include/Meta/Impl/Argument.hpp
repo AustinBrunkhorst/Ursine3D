@@ -13,7 +13,7 @@ namespace ursine
                 "Cannot use Argument as an argument" );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename T>
         Argument::Argument(T &data)
@@ -24,12 +24,14 @@ namespace ursine
                 "Cannot use Argument as an argument" );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename T>
         T &Argument::GetValue(void) const
         {
-            return *reinterpret_cast< typename std::remove_reference< T >::type* >(
+            return *reinterpret_cast< 
+                typename std::remove_reference< T >::type* 
+            >(
                 const_cast<void *>( m_data )
             );
         }

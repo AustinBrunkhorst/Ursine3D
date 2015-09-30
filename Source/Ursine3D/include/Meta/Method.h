@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Method.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "MetaContainer.h"
@@ -24,11 +34,28 @@ namespace ursine
 
             Method(void);
 
-            template<class ClassType, typename ReturnType, typename ...ArgTypes>
-            Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...), Invoker invoker);
+            template<
+                class ClassType, 
+                typename ReturnType, 
+                typename ...ArgTypes
+            >
+            Method(
+                const std::string &name, 
+                ReturnType(ClassType::*method)(ArgTypes...), 
+                Invoker invoker
+            );
 
-            template<class ClassType, typename ReturnType, typename ...ArgTypes>
-            Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...)const, Invoker invoker);
+            // detect const-ness
+            template<
+                class ClassType, 
+                typename ReturnType, 
+                typename ...ArgTypes
+            >
+            Method(
+                const std::string &name, 
+                ReturnType(ClassType::*method)(ArgTypes...) const, 
+                Invoker invoker
+            );
 
             static const Method &Invalid(void);
 

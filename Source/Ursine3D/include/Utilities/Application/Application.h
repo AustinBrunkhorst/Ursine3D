@@ -22,6 +22,8 @@
 
 #include "FrameRateController.h"
 
+#define CoreSystem(name) Application::Instance->GetCoreSystem<name>( )
+
 namespace ursine
 {
     class Application 

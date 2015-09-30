@@ -22,18 +22,18 @@ namespace ursine
     namespace ecs
     {
         Filter::Filter(void) 
-            : _mask_one(0)
-            , _mask_exclude(0)
-            , _mask_contains(0) {}
+            : m_maskOne( 0 )
+            , m_maskExclude( 0 )
+            , m_maskContains( 0 ) { }
 
         bool Filter::Matches(const Entity *entity) const
         {
             if (!entity)
                 return false;
 
-            return ((_mask_one      & entity->m_typeMask) != 0              || _mask_one == 0) &&
-                   ((_mask_contains & entity->m_typeMask) == _mask_contains || _mask_contains == 0) &&
-                   ((_mask_exclude  & entity->m_typeMask) == 0              || _mask_exclude == 0);
+            return ((m_maskOne      & entity->m_typeMask) != 0              || m_maskOne == 0) &&
+                   ((m_maskContains & entity->m_typeMask) == m_maskContains || m_maskContains == 0) &&
+                   ((m_maskExclude  & entity->m_typeMask) == 0              || m_maskExclude == 0);
         }
     }
 }

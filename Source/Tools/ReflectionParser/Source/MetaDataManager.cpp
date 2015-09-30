@@ -54,14 +54,26 @@ std::string MetaDataManager::GetNativeString(const std::string &key) const
 
     boost::match_results<std::string::const_iterator> match;
 
-    if (boost::regex_search( value.cbegin( ), value.cend( ), match, quotedString, flags ))
+    if (boost::regex_search( 
+            value.cbegin( ), 
+            value.cend( ), 
+            match, 
+            quotedString, 
+            flags 
+        )
+    )
+    {
         return match[ 1 ].str( );
+    }
 
     // couldn't find one
     return "";
 }
 
-void MetaDataManager::CompileTemplateData(TemplateData &data, const ReflectionParser *context) const
+void MetaDataManager::CompileTemplateData(
+    TemplateData &data, 
+    const ReflectionParser *context
+) const
 {
     TemplateData propertyData { TemplateData::Type::List };
 
@@ -89,7 +101,12 @@ void MetaDataManager::CompileTemplateData(TemplateData &data, const ReflectionPa
         TemplateData item { TemplateData::Type::Object };
 
         // skip reserved keywords
-        if (std::find( reservedKeywords.begin( ), reservedKeywords.end( ), prop.first ) != reservedKeywords.end( ))
+        if (std::find( 
+                reservedKeywords.begin( ), 
+                reservedKeywords.end( ), 
+                prop.first 
+            ) != reservedKeywords.end( )
+        )
         {
             --propertyCount;
 
@@ -107,10 +124,13 @@ void MetaDataManager::CompileTemplateData(TemplateData &data, const ReflectionPa
     }
 
     data[ "metaProperty" ] = propertyData;
-    data[ "metaDataInitializerList" ] = context->LoadTemplatePartial( kPartialMetaInitializerList );
+    data[ "metaDataInitializerList" ] = 
+        context->LoadTemplatePartial( kPartialMetaInitializerList );
 }
 
-std::vector<MetaDataManager::Property> MetaDataManager::extractProperties(const Cursor &cursor) const
+std::vector<MetaDataManager::Property> MetaDataManager::extractProperties(
+    const Cursor &cursor
+) const
 {
     std::vector<Property> properties;
 
@@ -142,7 +162,15 @@ std::vector<MetaDataManager::Property> MetaDataManager::extractProperties(const 
 
     auto start = meta.cbegin( );
 
-    while (boost::regex_search( start, meta.cend( ), match, propertyList, flags ))
+    // collect properties and optional arguments
+    while (boost::regex_search( 
+            start, 
+            meta.cend( ), 
+            match, 
+            propertyList, 
+            flags 
+        )
+    )
     {
         auto name = match[ 1 ].str( );
         auto arguments = match[ 3 ].str( );

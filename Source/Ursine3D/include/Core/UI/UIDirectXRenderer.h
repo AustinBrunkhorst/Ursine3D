@@ -1,7 +1,5 @@
 #pragma once
 
-#if defined(URSINE_GRAPHICS_DIRECTX)
-
 #include <cef_render_handler.h>
 
 #include "GfxAPI.h"
@@ -14,7 +12,8 @@ namespace ursine
       UIDirectXRenderer(void);
       virtual ~UIDirectXRenderer(void);
 
-      void Draw( GFXHND viewport = 0);
+      void Draw(GFXHND camera);
+      void DrawMain(void);
 
   protected:
       CefRect m_viewport;
@@ -50,5 +49,3 @@ namespace ursine
       IMPLEMENT_REFCOUNTING(UIDirectXRenderer);
   };
 }
-
-#endif // defined(URSINE_GRAPHICS_DIRECTX)

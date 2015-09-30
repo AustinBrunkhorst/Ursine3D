@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Function.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Invokable.h"
@@ -21,7 +31,12 @@ namespace ursine
             Function(void);
 
             template<typename ReturnType, typename ...ArgTypes>
-            Function(const std::string &name, ReturnType(*type)(ArgTypes...), Invoker invoker, Type parentType = Type::Invalid);
+            Function(
+                const std::string &name, 
+                ReturnType(*type)(ArgTypes...), 
+                Invoker invoker, 
+                Type parentType = Type::Invalid
+            );
 
             static const Function &Invalid(void);
 

@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Global.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "MetaContainer.h"
@@ -18,7 +28,14 @@ namespace ursine
             typedef std::function<void(const Argument &)> Setter;
 
             Global(void);
-            Global(const std::string &name, Type type, Getter getter, Setter setter, Type parentType = Type::Invalid);
+
+            Global(
+                const std::string &name, 
+                Type type, 
+                Getter getter, 
+                Setter setter, 
+                Type parentType = Type::Invalid
+            );
 
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
@@ -30,6 +47,7 @@ namespace ursine
 
             Variant GetValue(void) const;
             bool SetValue(const Argument &value) const;
+            
         private:
             Type m_type;
             Type m_parentType;

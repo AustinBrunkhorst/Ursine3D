@@ -21,9 +21,16 @@ public:
     virtual ~Enum(void) { }
 
     bool ShouldCompile(void) const;
-    TemplateData CompileTemplate(const ReflectionParser *context) const override;
+    
+    TemplateData CompileTemplate(
+        const ReflectionParser *context
+    ) const override;
 
-    static void LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace);
+    static void LoadAnonymous(
+        std::vector<Global*> &output, 
+        const Cursor &cursor, 
+        const Namespace &currentNamespace
+    );
 
 private:
     std::string m_name;

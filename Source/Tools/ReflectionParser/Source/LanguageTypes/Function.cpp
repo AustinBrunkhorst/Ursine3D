@@ -7,7 +7,11 @@
 
 #include <boost/format.hpp>
 
-Function::Function(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
+Function::Function(
+    const Cursor &cursor, 
+    const Namespace &currentNamespace, 
+    Class *parent
+)
     : LanguageType( cursor, currentNamespace )
     , Invokable( cursor )
     , m_parent( parent )
@@ -32,10 +36,13 @@ TemplateData Function::CompileTemplate(const ReflectionParser *context) const
     if (m_parent)
         data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
     
-    data[ "isVoidReturnType" ] = utils::TemplateBool( m_returnType == kReturnTypeVoid );
+    data[ "isVoidReturnType" ] = 
+        utils::TemplateBool( m_returnType == kReturnTypeVoid );
 
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-    data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialFunctionInvocation );
+    
+    data[ "invocationBody" ] = 
+        context->LoadTemplatePartial( kPartialFunctionInvocation );
 
     data[ "argument" ] = compileSignatureTemplate( );
 

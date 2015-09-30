@@ -5,7 +5,11 @@ namespace ursine
     namespace meta
     {
         template<class ClassType, typename ReturnType, typename ...ArgTypes>
-        Method::Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...), Invoker invoker)
+        Method::Method(
+            const std::string &name, 
+            ReturnType(ClassType::*method)(ArgTypes...), 
+            Invoker invoker
+        )
             : Invokable( name )
             , m_isConst( false )
             , m_classType( typeof( ClassType ) )
@@ -15,7 +19,11 @@ namespace ursine
         }
 
         template<class ClassType, typename ReturnType, typename ...ArgTypes>
-        Method::Method(const std::string &name, ReturnType(ClassType::*method)(ArgTypes...)const, Invoker invoker)
+        Method::Method(
+            const std::string &name, 
+            ReturnType(ClassType::*method)(ArgTypes...) const, 
+            Invoker invoker
+        )
             : Invokable( name )
             , m_isConst( true )
             , m_classType( typeof( ClassType ) )
@@ -24,7 +32,7 @@ namespace ursine
             TypeUnpacker<ArgTypes...>::Apply( m_signature );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename ...Args>
         Variant Method::Invoke(Variant &instance, Args &&...args) const

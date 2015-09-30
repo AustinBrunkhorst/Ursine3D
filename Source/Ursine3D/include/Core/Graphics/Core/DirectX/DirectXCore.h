@@ -32,7 +32,7 @@ namespace ursine
         {
         public:
             //initialize everything
-            void Initialize(const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug);
+            void Initialize(const unsigned width, const unsigned height, HWND hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug);
             void Uninitialize(void);
 
             //methods

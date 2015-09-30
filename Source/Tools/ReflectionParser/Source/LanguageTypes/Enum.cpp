@@ -44,7 +44,9 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
     data[ "displayName" ] = m_displayName;
     data[ "qualifiedName" ] = m_qualifiedName;
     data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
-    data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
+
+    data[ "constPtrTypeEnabled" ] = 
+        utils::TemplateBool( m_constPtrTypeEnabled );
 
     TemplateData members { TemplateData::Type::List };
 
@@ -70,7 +72,11 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
     return data;
 }
 
-void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace)
+void Enum::LoadAnonymous(
+    std::vector<Global*> &output, 
+    const Cursor &cursor, 
+    const Namespace &currentNamespace
+)
 {
     for (auto &child : cursor.GetChildren( ))
     {

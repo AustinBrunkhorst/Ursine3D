@@ -59,8 +59,9 @@ namespace ursine
 
         //public methods
     public:
-        Meta( DisableNonDynamic ) 
+        Meta(DisableNonDynamic) 
         GfxAPI(void);
+        ~GfxAPI(void);
 
         void OnInitialize(void) override;
 

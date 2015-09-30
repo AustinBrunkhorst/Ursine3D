@@ -14,7 +14,11 @@ namespace ursine
         bool TypeInfo<T>::Defined = false;
 
         template<typename T>
-        void TypeInfo<T>::Register(TypeID id, TypeData &data, bool beingDefined)
+        void TypeInfo<T>::Register(
+            TypeID id, 
+            TypeData &data, 
+            bool beingDefined
+        )
         {
             // already defined
             if (id == Type::Invalid)
@@ -39,8 +43,11 @@ namespace ursine
 
         template<typename T>
         template<typename U = T>
-        void TypeInfo<T>::addDefaultConstructor(TypeData &data
-            , typename std::enable_if< !std::is_trivially_default_constructible<U>::value >::type*
+        void TypeInfo<T>::addDefaultConstructor(
+            TypeData &data, 
+            typename std::enable_if< 
+                !std::is_trivially_default_constructible<U>::value 
+            >::type*
         )
         {
             // do nothing
@@ -48,8 +55,11 @@ namespace ursine
 
         template<typename T>
         template<typename U = T>
-        void TypeInfo<T>::addDefaultConstructor(TypeData &data
-            , typename std::enable_if< std::is_trivially_default_constructible<U>::value >::type*
+        void TypeInfo<T>::addDefaultConstructor(
+            TypeData &data, 
+            typename std::enable_if< 
+                std::is_trivially_default_constructible<U>::value 
+            >::type*
         )
         {
             // add the good 'ol default constructor
@@ -77,8 +87,11 @@ namespace ursine
 
         template<typename T>
         template<typename U = T>
-        void TypeInfo<T>::applyTrivialAttributes(TypeData &data
-            , typename std::enable_if< !std::is_trivial<U>::value >::type* = nullptr
+        void TypeInfo<T>::applyTrivialAttributes(
+            TypeData &data, 
+            typename std::enable_if< 
+                !std::is_trivial<U>::value 
+            >::type* = nullptr
         )
         {
             // do nothing
@@ -86,8 +99,11 @@ namespace ursine
 
         template<typename T>
         template<typename U = T>
-        void TypeInfo<T>::applyTrivialAttributes(TypeData &data
-            , typename std::enable_if< std::is_trivial<U>::value >::type* = nullptr
+        void TypeInfo<T>::applyTrivialAttributes(
+            TypeData &data, 
+            typename std::enable_if< 
+                std::is_trivial<U>::value 
+            >::type* = nullptr
         )
         {
             data.SetDestructor<T>( );

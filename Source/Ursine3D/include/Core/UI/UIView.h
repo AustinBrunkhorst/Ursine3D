@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UIConfig.h"
+
 #include "Window.h"
 
 #if defined(URSINE_GRAPHICS_OPENGL)
@@ -42,6 +44,8 @@ namespace ursine
         void SetViewport(const CefRect &viewport);
 
         bool IsValid(void) const;
+
+        void Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data);
 
     private:
         friend class UIManager;

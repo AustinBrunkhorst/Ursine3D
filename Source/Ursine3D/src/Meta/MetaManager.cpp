@@ -28,14 +28,15 @@ namespace ursine
             return *this;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         MetaManager::MetaManager(const Initializer &properties)
         {
             for (auto &prop : properties)
             {
                 UAssert( prop.first.IsValid( ), 
-                    "Invalid meta property registered. Make sure the property type is enabled in reflection."
+                    "Invalid meta property registered."
+                    "Make sure the property type is enabled in reflection."
                 );
 
                 SetProperty( prop.first, prop.second );
@@ -48,7 +49,7 @@ namespace ursine
                 delete prop.second;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         Variant MetaManager::GetProperty(Type type) const
         {
@@ -60,7 +61,7 @@ namespace ursine
             return Variant { search->second, variant_policy::WrapObject( ) };
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         void MetaManager::SetProperty(Type type, const MetaProperty *prop)
         {
@@ -75,8 +76,11 @@ namespace ursine
 
         void MetaManager::copy(const MetaManager& rhs)
         {
-            for (auto &prop : rhs.m_properties)
-                m_properties[ prop.first ] = static_cast<MetaProperty*>( prop.second->Clone( ) );
+            for (auto &prop : rhs.m_properties) 
+            {
+                m_properties[ prop.first ] = 
+                    static_cast<MetaProperty*>( prop.second->Clone( ) );
+            }
         }
     }
 }
