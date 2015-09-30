@@ -10,8 +10,6 @@ namespace ursine
 {
     namespace ecs
     {
-        typedef ::Camera GraphicsCamera;
-
         class Camera : public Component
         {
             NATIVE_COMPONENT;
@@ -20,7 +18,7 @@ namespace ursine
             Camera(void);
             ~Camera(void);
 
-            GraphicsCamera &GetCamera(void) const;
+            ::Camera &GetCamera(void) const;
 
         private:
             friend class RenderSystem;

@@ -26,20 +26,20 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class ViewportManager
-  {
-  public:
-    void Initialize( DXCore::RenderTargetManager *mgr );
-    void Uninitialize( void );
+    class ViewportManager
+    {
+    public:
+        void Initialize(DXCore::RenderTargetManager *mgr);
+        void Uninitialize(void);
 
-    GFXHND AddViewport( unsigned width, unsigned height );
-    void DestroyViewport( GFXHND &viewportHandle );
+        GFXHND AddViewport(unsigned width, unsigned height);
+        void DestroyViewport(GFXHND &viewportHandle);
 
-    Viewport &GetViewport( GFXHND &viewportHandle );
+        Viewport &GetViewport(GFXHND &viewportHandle);
 
-  private:
-    std::vector<Viewport> m_viewports;
-    std::list<unsigned> m_availableViewports;
-    DXCore::RenderTargetManager *m_renderMgr;
-  };
+    private:
+        std::vector<Viewport> m_viewports;
+        std::list<unsigned> m_availableViewports;
+        DXCore::RenderTargetManager *m_renderMgr;
+    };
 }

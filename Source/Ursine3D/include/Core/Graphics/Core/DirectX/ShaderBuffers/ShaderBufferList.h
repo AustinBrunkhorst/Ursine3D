@@ -35,7 +35,6 @@ enum BUFFER_LIST
     BUFFER_COUNT,
 
     //"virtual" buffer
-    
 };
 
 struct CameraBuffer

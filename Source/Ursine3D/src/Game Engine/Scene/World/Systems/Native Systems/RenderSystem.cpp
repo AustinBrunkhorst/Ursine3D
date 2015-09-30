@@ -3,6 +3,7 @@
 #include "RenderSystem.h"
 
 #include "RenderableComponent.h"
+#include "CameraComponent.h"
 
 #include "GfxAPI.h"
 
@@ -45,14 +46,14 @@ namespace ursine
             {
                 m_cameras.emplace( 
                     args->entity->GetUniqueID( ), 
-                    static_cast<ursine::ecs::Camera*>( args->component )
+                    static_cast<Camera*>( const_cast<Component*>( args->component ) )
                 );
             }
             else if (args->component->Is<Renderable>( ))
             {
                 m_renderable.emplace( 
                     args->entity->GetUniqueID( ), 
-                    static_cast<const Renderable*>( args->component )
+                    static_cast<Renderable*>( const_cast<Component*>( args->component ) )
                 );
             }
         }
@@ -79,17 +80,17 @@ namespace ursine
 
         void RenderSystem::onRender(EVENT_HANDLER(World))
         {
+            m_graphics->BeginScene( );
+
             for (auto &camera : m_cameras)
             {
-                m_graphics->BeginScene( );
-
                 for (auto &renderable : m_renderable)
                     m_graphics->RenderObject( renderable.second->m_handle );
 
                 m_graphics->RenderScene( 0.0f, camera.first );
-
-                m_graphics->EndScene( );
             }
+
+            m_graphics->EndScene( );
         }
     }
 }

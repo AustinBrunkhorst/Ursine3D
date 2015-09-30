@@ -59,7 +59,7 @@ namespace ursine
     
     //public methods
     public:
-        Meta( DisableNonDynamic )
+        Meta( DisableNonDynamic ) 
         GfxAPI(void);
         
         void OnInitialize( void ) override;
@@ -77,7 +77,7 @@ namespace ursine
         void BeginScene( );   
         
         // render the scene
-        void RenderScene(float dt, GFXHND viewport );   
+        void RenderScene(float dt, GFXHND camera );   
         
         // end the current scene
         void EndScene( );     

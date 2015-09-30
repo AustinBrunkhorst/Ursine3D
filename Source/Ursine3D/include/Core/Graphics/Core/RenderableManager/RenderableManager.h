@@ -26,100 +26,100 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class Model3D;
+    class Model3D;
 
-  class RenderableManager
-  {
-    friend class GraphicsCore;
-  public:
-    void Initialize( );
-    void Uninitialize( );
-
-    GFXHND AddRenderable( const RENDERABLE_TYPE type );
-    void DestroyRenderable( GFXHND &handle );
-
-    template<typename T>
-    T &GetRenderable( GFXHND handle )
+    class RenderableManager
     {
-      return T( );
-    }
+        friend class GraphicsCore;
+    public:
+        void Initialize();
+        void Uninitialize();
 
-    template<>
-    Model3D &GetRenderable<Model3D>( GFXHND handle )
-    {
-      _RENDERABLEHND *render = HND_RENDER( handle );
+        GFXHND AddRenderable(const RENDERABLE_TYPE type);
+        void DestroyRenderable(GFXHND &handle);
 
-      UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
-      UAssert( render->Type_ == RENDERABLE_MODEL3D, "Attempted to use invalid handle to get a model!" );
+        template<typename T>
+        T &GetRenderable(GFXHND handle)
+        {
+            return T( );
+        }
 
-      return m_currentRenderableModel3D[ render->Index_ ];
-    }
+        template<>
+        Model3D &GetRenderable<Model3D>(GFXHND handle)
+        {
+            _RENDERABLEHND *render = HND_RENDER( handle );
 
-    template<>
-    DirectionalLight &GetRenderable<DirectionalLight>( GFXHND handle )
-    {
-      _RENDERABLEHND *render = HND_RENDER( handle );
+            UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
+            UAssert( render->Type_ == RENDERABLE_MODEL3D, "Attempted to use invalid handle to get a model!" );
 
-      UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
-      UAssert( render->Type_ == RENDERABLE_DIRECTION_LIGHT, "Attempted to use invalid handle to get a directional light!" );
+            return m_currentRenderableModel3D[ render->Index_ ];
+        }
 
-      return m_currentRenderableDirectionalLight[ render->Index_ ];
-    }
+        template<>
+        DirectionalLight &GetRenderable<DirectionalLight>(GFXHND handle)
+        {
+            _RENDERABLEHND *render = HND_RENDER( handle );
 
-    template<>
-    PointLight &GetRenderable<PointLight>( GFXHND handle )
-    {
-      _RENDERABLEHND *render = HND_RENDER( handle );
+            UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
+            UAssert( render->Type_ == RENDERABLE_DIRECTION_LIGHT, "Attempted to use invalid handle to get a directional light!" );
 
-      UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
-      UAssert( render->Type_ == RENDERABLE_POINT_LIGHT, "Attempted to use invalid handle to get a point light!" );
+            return m_currentRenderableDirectionalLight[ render->Index_ ];
+        }
 
-      return m_currentRenderablePointLight[ render->Index_ ];
-    }
+        template<>
+        PointLight &GetRenderable<PointLight>(GFXHND handle)
+        {
+            _RENDERABLEHND *render = HND_RENDER( handle );
 
-    template<>
-    Primitive &GetRenderable<Primitive>( GFXHND handle )
-    {
-      _RENDERABLEHND *render = HND_RENDER( handle );
+            UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
+            UAssert( render->Type_ == RENDERABLE_POINT_LIGHT, "Attempted to use invalid handle to get a point light!" );
 
-      UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
-      UAssert( render->Type_ == RENDERABLE_PRIMITIVE, "Attempted to use invalid handle to get a primitive!" );
+            return m_currentRenderablePointLight[ render->Index_ ];
+        }
 
-      return m_currentRenderablePrimitives[ render->Index_ ];
-    }
+        template<>
+        Primitive &GetRenderable<Primitive>(GFXHND handle)
+        {
+            _RENDERABLEHND *render = HND_RENDER( handle );
 
-    template<>
-    Billboard2D &GetRenderable<Billboard2D>( GFXHND handle )
-    {
-      _RENDERABLEHND *render = HND_RENDER( handle );
+            UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
+            UAssert( render->Type_ == RENDERABLE_PRIMITIVE, "Attempted to use invalid handle to get a primitive!" );
 
-      UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
-      UAssert( render->Type_ == RENDERABLE_BILLBOARD2D, "Attempted to use invalid handle to get a billboard2D!" );
+            return m_currentRenderablePrimitives[ render->Index_ ];
+        }
 
-      return m_currentRenderableBillboards[ render->Index_ ];
-    }
+        template<>
+        Billboard2D &GetRenderable<Billboard2D>(GFXHND handle)
+        {
+            _RENDERABLEHND *render = HND_RENDER( handle );
 
-  private:
-    void CacheFrame( );
+            UAssert( render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!" );
+            UAssert( render->Type_ == RENDERABLE_BILLBOARD2D, "Attempted to use invalid handle to get a billboard2D!" );
 
-  private:
-    //all the renderables
-    std::vector<Model3D>          m_currentRenderableModel3D;
-    std::vector<DirectionalLight> m_currentRenderableDirectionalLight;
-    std::vector<PointLight>       m_currentRenderablePointLight;
-    std::vector<Primitive>        m_currentRenderablePrimitives;
-    std::vector<Billboard2D>      m_currentRenderableBillboards;
+            return m_currentRenderableBillboards[ render->Index_ ];
+        }
 
-    //cahced data used to render frame N while updating frame N + 1
-    std::vector<Model3D>          m_renderableModel3D;
-    std::vector<DirectionalLight> m_renderableDirectionalLight;
-    std::vector<PointLight>       m_renderablePointLight;
-    std::vector<Primitive>        m_renderablePrimitives;
-    std::vector<Billboard2D>      m_renderableBillboards;
+    private:
+        void CacheFrame();
 
-    //all the free handles
-    std::vector<std::list<unsigned>*> m_handleList;
-  };
+    private:
+        //all the renderables
+        std::vector<Model3D> m_currentRenderableModel3D;
+        std::vector<DirectionalLight> m_currentRenderableDirectionalLight;
+        std::vector<PointLight> m_currentRenderablePointLight;
+        std::vector<Primitive> m_currentRenderablePrimitives;
+        std::vector<Billboard2D> m_currentRenderableBillboards;
+
+        //cahced data used to render frame N while updating frame N + 1
+        std::vector<Model3D> m_renderableModel3D;
+        std::vector<DirectionalLight> m_renderableDirectionalLight;
+        std::vector<PointLight> m_renderablePointLight;
+        std::vector<Primitive> m_renderablePrimitives;
+        std::vector<Billboard2D> m_renderableBillboards;
+
+        //all the free handles
+        std::vector<std::list<unsigned>*> m_handleList;
+    };
 }
 
 #include "RenderableManager.hpp"

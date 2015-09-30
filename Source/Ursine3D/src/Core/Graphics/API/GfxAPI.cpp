@@ -101,6 +101,10 @@ namespace ursine
 
     void GfxAPI::SetGameViewport(GFXHND vp)
   {
+      _VIEWPORTHND *viewPort = reinterpret_cast<_VIEWPORTHND*>(&vp);
+
+      UAssert( viewPort->ID_ == ID_VIEWPORT, "Attempted to set game viewport with invalid handle!" );
+
       m_privates->gfxCore_->SetGameViewport( vp );
   }
 }

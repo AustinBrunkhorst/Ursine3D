@@ -22,7 +22,7 @@ namespace ursine
             URSINE_TODO( "remove camera handle" );
         }
 
-        GraphicsCamera &Camera::GetCamera(void) const
+        ::Camera &Camera::GetCamera(void) const
         {
             return Application::Instance->GetCoreSystem<GfxAPI>( )->CameraMgr.GetCamera( m_handle );
         }

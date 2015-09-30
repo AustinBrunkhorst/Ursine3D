@@ -26,32 +26,32 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class TextureManager
-  {
-  public:
-    void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath );
-    void Uninitialize( );
+    class TextureManager
+    {
+    public:
+        void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
+        void Uninitialize();
 
-    void MapTextureByName( std::string name, unsigned int bufferIndex = 0 );
-    void MapTextureByID( unsigned ID, unsigned int bufferIndex = 0 );
+        void MapTextureByName(std::string name, unsigned int bufferIndex = 0);
+        void MapTextureByID(unsigned ID, unsigned int bufferIndex = 0);
 
-    void MapSamplerState( Sampler type, unsigned bufferIndex = 0 );
+        void MapSamplerState(Sampler type, unsigned bufferIndex = 0);
 
-    unsigned GetTextureIDByName( std::string name );
+        unsigned GetTextureIDByName(std::string name);
 
-  private:
-    void TextureLoadBackend( std::string name, std::string path, unsigned width, unsigned height );
+    private:
+        void TextureLoadBackend(std::string name, std::string path, unsigned width, unsigned height);
 
-  private:
-    ID3D11Device *m_device;
-    ID3D11DeviceContext *m_deviceContext;
+    private:
+        ID3D11Device *m_device;
+        ID3D11DeviceContext *m_deviceContext;
 
-    unsigned m_textureCount;
+        unsigned m_textureCount;
 
-    std::map<std::string, Texture*> m_textureList;
-    std::map<unsigned int, Texture*> m_hashTextureList;
-    std::map<std::string, unsigned int> m_lookupTextureList;
+        std::map<std::string, Texture*> m_textureList;
+        std::map<unsigned int, Texture*> m_hashTextureList;
+        std::map<std::string, unsigned int> m_lookupTextureList;
 
-    std::vector<ID3D11SamplerState*> m_samplerStateList_;
-  };
+        std::vector<ID3D11SamplerState*> m_samplerStateList_;
+    };
 }

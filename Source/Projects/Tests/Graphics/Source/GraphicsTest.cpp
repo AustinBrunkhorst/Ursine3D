@@ -516,10 +516,6 @@ void GraphicsTest::initGraphics( void )
   config.Profile_ = false;
   config.debug = false;
 
-  m_gfx->StartGraphics( config );
-
-  m_ui = uiManager->CreateView( m_mainWindow, kGraphicsTestUIEntryPoint );
-
   m_ui->SetViewport( {
     0, 0,
     kDefaultWindowWidth, kDefaultWindowHeight
@@ -530,7 +526,7 @@ void GraphicsTest::initGraphics( void )
 
   ////////////////////////////////////////////////////////////////////
   //initialize the demo related tings
-  m_viewport = m_gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth/2, kDefaultWindowHeight/2 );
+  m_viewport = m_gfx->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
   m_viewport2 = m_gfx->ViewportMgr.CreateViewport( 200, 200 );
 
   m_gfx->SetGameViewport( m_viewport );
@@ -544,6 +540,7 @@ void GraphicsTest::initGraphics( void )
   m_camera = m_gfx->CameraMgr.AddCamera( );
   m_camera2 = m_gfx->CameraMgr.AddCamera( );
   m_gfx->CameraMgr.GetCamera( m_camera ).LookAtPoint( SVec3( 0, 0, 0 ) );
+
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetPosition( SVec3( 0, 0, 1010 ) );
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetProjMode( Camera::PROJECTION_ORTHOGRAPHIC );
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetPlanes( 0.0000, 100 );
