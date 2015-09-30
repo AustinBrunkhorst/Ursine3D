@@ -12,7 +12,8 @@ namespace ursine
       UIDirectXRenderer(void);
       virtual ~UIDirectXRenderer(void);
 
-      void Draw(GFXHND viewport = 0);
+      void Draw(GFXHND camera);
+      void DrawMain(void);
 
   protected:
       CefRect m_viewport;

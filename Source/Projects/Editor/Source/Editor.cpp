@@ -123,7 +123,7 @@ void Editor::initializeGraphics(void)
 
     m_graphics->StartGraphics( config );
 
-    m_mainWindow.viewport = m_graphics->ViewportMgr.CreateViewport(
+    /*m_mainWindow.viewport = m_graphics->ViewportMgr.CreateViewport(
         kDefaultWindowWidth, 
         kDefaultWindowHeight 
     );
@@ -134,19 +134,35 @@ void Editor::initializeGraphics(void)
 
     viewportHandle.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
     viewportHandle.SetViewportCamera( m_mainWindow.camera );
-    viewportHandle.SetPosition( 0.0f, 0.0f );
-    viewportHandle.SetDimensions( kDefaultWindowWidth, kDefaultWindowHeight );
+    viewportHandle.SetPosition( 0.15f * kDefaultWindowWidth, 30.0f + 27.0f );
+    viewportHandle.SetDimensions( 0.85f * kDefaultWindowWidth, kDefaultWindowHeight - (30.0f + 27.0f) );
 
-    m_graphics->SetGameViewport( m_mainWindow.viewport );
+    m_graphics->SetGameViewport( m_mainWindow.viewport );*/
 
-    auto &world = m_project->GetScene( ).GetWorld( );
+    auto &scene = m_project->GetScene( );
+    {
+        auto viewport = m_graphics->ViewportMgr.CreateViewport(
+            0.85f * kDefaultWindowWidth, kDefaultWindowHeight - (30.0f + 27.0f) 
+        );
+
+        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
+
+        handle.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
+        handle.SetPosition( 0.15f * kDefaultWindowWidth, 30.0f + 27.0f );
+
+        scene.SetViewport( viewport );
+
+        m_graphics->SetGameViewport( viewport );
+    }
+
+    auto &world = scene.GetWorld( );
 
     auto *cameraEntity = world.CreateEntity( );
     {
         auto &camera = cameraEntity->AddComponent<ecs::Camera>( )->GetCamera( );
 
-        camera.SetPosition( 0.15f, (30.0f + 27.0f) / kDefaultWindowHeight );
-        camera.SetDimensions( 0.85f, 1.0f - ((30.0f + 27.0f) / kDefaultWindowHeight) );
+        camera.SetPosition( 0.0f, 0.0f );
+        camera.SetDimensions( 1.0f, 1.0f );
 
         camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
     }
@@ -208,9 +224,9 @@ void Editor::initializeTools(void)
 
 void Editor::resizeMainWindow(int width, int height)
 {
-    auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
+    /*auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
 
-    viewportHandle.SetDimensions( width, height );
+    viewportHandle.SetDimensions( width, height );*/
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -227,7 +243,7 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     scene.Render( );
 
-    m_mainWindow.ui->Draw( );
+    m_mainWindow.ui->DrawMain( );
 
     m_graphics->EndFrame( );
 }

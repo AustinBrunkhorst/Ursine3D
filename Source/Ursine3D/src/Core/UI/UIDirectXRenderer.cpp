@@ -19,10 +19,13 @@ namespace ursine
         //m_uiHandle = 0;
     }
 
-    void UIDirectXRenderer::Draw(GFXHND viewport)
+    void UIDirectXRenderer::Draw(GFXHND camera)
     {
-        //@UI
-        //m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( viewport );
+        m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( camera );
+    }
+
+    void UIDirectXRenderer::DrawMain(void)
+    {
         m_gfxMgr->UIMgr.GetUI( m_uiHandle ).DrawMain( );
     }
 
