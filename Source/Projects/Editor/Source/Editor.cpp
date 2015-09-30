@@ -151,9 +151,17 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 {
     EVENT_ATTRS(Application, EventArgs);
 
+    auto dt = sender->GetDeltaTime( );
+
+    auto &scene = m_project->GetScene( );
+
+    scene.Update( dt );
+
     m_graphics->StartFrame( );
 
-    m_graphics->BeginScene( );
+    scene.Render( );
+
+   /* m_graphics->BeginScene( );
 
     // @@@ TODO:
     // Update Scene
@@ -163,6 +171,8 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     m_graphics->RenderScene( sender->GetDeltaTime( ), m_mainWindow.camera );
 
     m_graphics->EndScene( );
+
+    m_mainWindow.ui->Draw( );*/
 
     m_graphics->EndFrame( );
 }

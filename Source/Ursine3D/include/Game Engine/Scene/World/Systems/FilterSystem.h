@@ -43,7 +43,7 @@ namespace ursine
             const Filter m_filter;
 
         protected:
-            std::unordered_map<EntityID, Entity*> m_active;
+            std::unordered_map<EntityUniqueID, Entity*> m_active;
 
             void Add(Entity *entity);
             void Remove(Entity *entity);

@@ -15,12 +15,12 @@ namespace ursine
 {
     namespace ecs
     {
-        inline SystemTypeID EntitySystem::GetTypeID(void)
+        inline SystemTypeID EntitySystem::GetTypeID(void) const
         {
             return m_typeID;
         }
 
-        inline SystemTypeMask EntitySystem::GetTypeMask(void)
+        inline SystemTypeMask EntitySystem::GetTypeMask(void) const
         {
             return 1ull << m_typeID;
         }

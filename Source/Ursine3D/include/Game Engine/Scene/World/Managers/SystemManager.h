@@ -24,12 +24,12 @@ namespace ursine
 {
     namespace ecs
     {
-        class SystemManager final 
+        class SystemManager final
             : public WorldManager
         {
         public:
             template<class SystemType>
-            inline SystemType *System(void);
+            inline SystemType *GetSystem(void);
 
         private:
             friend class World;

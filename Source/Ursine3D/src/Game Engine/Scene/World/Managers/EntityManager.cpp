@@ -18,40 +18,40 @@
 #include "Filter.h"
 #include "TransformComponent.h"
 
-namespace
-{
-    void configureComponents(void)
-    {
-        static bool configured = false;
-
-        if (configured)
-            return;
-
-        configured = true;
-
-        auto componentType = typeof( ursine::ecs::Component );
-
-        ursine::ecs::ComponentTypeID nextID = 0;
-
-        for (auto derived : componentType.GetDerivedClasses( ))
-        {
-            auto componentID = derived.GetStaticField( "ComponentID" );
-
-            UAssert( componentID.IsValid( ),
-                "Native component '%s' doesn't have a static field ComponentID.\n"
-                "Most likely missing NATIVE_COMPONENT in declaration", 
-                derived.GetName( ).c_str( ) 
-            );
-
-            componentID.SetValue( nextID++ );
-        }
-    }
-}
-
 namespace ursine
 {
     namespace ecs
     {
+        namespace
+        {
+            void configureComponents(void)
+            {
+                static bool configured = false;
+
+                if (configured)
+                    return;
+
+                configured = true;
+
+                auto componentType = typeof( Component );
+
+                ComponentTypeID nextID = 0;
+
+                for (auto derived : componentType.GetDerivedClasses( ))
+                {
+                    auto componentID = derived.GetStaticField( "ComponentID" );
+
+                    UAssert( componentID.IsValid( ),
+                        "Native component '%s' doesn't have a static field ComponentID.\n"
+                        "Most likely missing NATIVE_COMPONENT in declaration",
+                        derived.GetName().c_str( )
+                    );
+
+                    componentID.SetValue( nextID++ );
+                }
+            }
+        }
+
         ////////////////////////////////////////////////////////////////////////
         // Constructors/Destructors
         ////////////////////////////////////////////////////////////////////////

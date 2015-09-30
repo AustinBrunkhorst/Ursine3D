@@ -33,14 +33,8 @@ namespace ursine
             EntitySystem(World *world);
             virtual ~EntitySystem(void) { }
 
-            inline SystemTypeID GetTypeID(void);
-            inline SystemTypeMask GetTypeMask(void);
-
-        private:
-            // SystemManager is able to call OnInitialize and OnDestroy
-            friend class SystemManager;
-
-            SystemTypeID m_typeID;
+            inline SystemTypeID GetTypeID(void) const;
+            inline SystemTypeMask GetTypeMask(void) const;
 
         protected:
             World *m_world;
@@ -49,10 +43,18 @@ namespace ursine
             LocalTweenManager m_tweens;
 
             // Called when the system is initialized
+            Meta(Disable)
             virtual void OnInitialize(void) { }
 
             // Called when the system is removed from the world
+            Meta(Disable)
             virtual void OnRemove(void) { }
+
+        private:
+            // SystemManager is able to call OnInitialize and OnDestroy
+            friend class SystemManager;
+
+            SystemTypeID m_typeID;
         };
     }
 }

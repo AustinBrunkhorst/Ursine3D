@@ -161,7 +161,6 @@ namespace ursine
             friend class EntityManager;
 
             // access ids directly
-            friend class TagManager;
             friend class NameManager;
             friend class UtilityManager;
 

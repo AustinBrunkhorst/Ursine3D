@@ -38,6 +38,7 @@
         static ursine::ecs::ComponentTypeID ComponentID; \
     private:                                             \
 
+// Required in the translation unit of all native components
 #define NATIVE_COMPONENT_DEFINITION(type)                \
     ursine::ecs::ComponentTypeID type::ComponentID = -1; \
 

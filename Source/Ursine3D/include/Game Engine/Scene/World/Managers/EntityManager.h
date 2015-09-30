@@ -35,9 +35,6 @@ namespace ursine
 
         class EntityManager final : public WorldManager
         {
-            // can access addComponent (internal method)
-            friend class EntitySerializer;
-
         public:
             explicit EntityManager(World *world);
             ~EntityManager(void);

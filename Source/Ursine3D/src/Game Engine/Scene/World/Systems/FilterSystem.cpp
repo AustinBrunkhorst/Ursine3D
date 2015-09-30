@@ -91,26 +91,24 @@ namespace ursine
 
         void FilterSystem::Enable(Entity *entity)
         {
-            auto id = entity->GetID( );
-
-            URSINE_TODO( "Optimize with binary search" );
+            auto uniqueID = entity->GetUniqueID( );
 
             // already enabled
-            if (m_active.find( id ) != m_active.end( ))
+            if (m_active.find( uniqueID ) != m_active.end( ))
                 return;
 
-            m_active[ id ] = entity;
+            m_active[ uniqueID ] = entity;
         }
 
         void FilterSystem::Disable(Entity *entity)
         {
-            auto id = entity->GetID( );
+            auto uniqueID = entity->GetUniqueID( );
 
             // doesn't exist
-            if (m_active.find( id ) == m_active.end( ))
+            if (m_active.find( uniqueID ) == m_active.end( ))
                 return;
 
-            m_active.erase( id );
+            m_active.erase( uniqueID );
         }
 
         void FilterSystem::OnInitialize(void)

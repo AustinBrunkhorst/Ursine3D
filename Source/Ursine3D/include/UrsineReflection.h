@@ -37,6 +37,7 @@
 /// Game Engine
 
 #include "NativeComponents.h"
+#include "NativeEntitySystems.h"
 
 // define it last
 #define URSINE_REFLECTION_INCLUDED

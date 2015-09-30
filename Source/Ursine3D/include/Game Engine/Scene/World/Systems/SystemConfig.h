@@ -15,14 +15,21 @@
 
 #include "UrsineTypes.h"
 
+// Required at the top of all entity system declarations
+#define ENTITY_SYSTEM                              \
+    public:                                        \
+        Meta(Enable)                               \
+        static ursine::ecs::SystemTypeID SystemID; \
+    private:                                       \
+
+// Required in the translation unit of all entity systems
+#define ENTITY_SYSTEM_DEFINITION(type)             \
+    ursine::ecs::SystemTypeID type::SystemID = -1; \
+
 namespace ursine
 {
     namespace ecs
     {
-        // forward declarations
-        class EntitySystem;
-        class World;
-
         // Type for unique ids mapped to entity system types.
         typedef uint64 SystemTypeID;
 

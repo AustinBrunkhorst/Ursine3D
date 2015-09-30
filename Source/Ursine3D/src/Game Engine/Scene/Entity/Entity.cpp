@@ -102,7 +102,7 @@ namespace ursine
 
         void Entity::SetName(const std::string &name)
         {
-            m_world->m_nameManager->Add( name, this );
+            m_world->m_nameManager->SetName( this, name );
         }
 
         ////////////////////////////////////////////////////////////////////////

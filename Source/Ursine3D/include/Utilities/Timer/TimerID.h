@@ -21,6 +21,9 @@
 
 namespace ursine
 {
+    class TimerManager;
+    class LocalTimerManager;
+
     class TimerID
     {
     public:

@@ -20,27 +20,14 @@ namespace ursine
 {
     namespace ecs
     {
-        class NameManager final 
-            : public WorldManager
+        class NameManager final : public WorldManager
         {
-            // group of entities mapped to a specific group name
-            std::unordered_map<std::string, EntityVector> m_names;
-            
-            // groups mapped to a specific entity
-            std::unordered_map<EntityUniqueID, EntityGroupVector> m_idMap;
-
         public:
             NameManager(World *world);
             ~NameManager(void);
 
-            // Adds an entity to a specific group
-            void Add(const std::string &name, Entity *entity);
-
-            // Removes an entity from a specific group
-            void Remove(const std::string &name, Entity *entity);
-
-            // Removes all groups from this entity
-            void Clear(Entity *entity);
+            // Removes this entity from reference
+            void Remove(Entity *entity);
 
             // Gets the first entity with this name
             Entity *GetEntity(const std::string &name);
@@ -49,7 +36,17 @@ namespace ursine
             const EntityVector &GetEntities(const std::string &name);
 
             // Gets the name of a specific entity
-            const std::string &GetName(const Entity *entity) const;
+            const std::string &GetName(const Entity *entity);
+            void SetName(Entity *entity, const std::string &name);
+
+        private:
+            // group of entities mapped to a specifc name
+            std::unordered_map<std::string, EntityVector> m_grouped;
+
+            // entities mapped to specific names
+            std::unordered_map<EntityUniqueID, std::string> m_names;
+
+            void removeFromGroup(const std::string &name, Entity *entity);
         };
     }
 }

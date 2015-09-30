@@ -25,63 +25,64 @@ namespace ursine
 
         NameManager::~NameManager(void) { }
 
-        void NameManager::Add(const std::string &group, Entity *entity)
+        void NameManager::Remove(Entity *entity)
         {
-            auto &groups = m_idMap[ entity->m_uniqueID ];
+            auto search = m_names.find( entity->m_uniqueID );
 
-            // already have this group
-            if (find( groups.begin( ), groups.end( ), group ) != groups.end( ))
+            if (search == m_names.end( ))
                 return;
 
-            groups.push_back( group );
+            removeFromGroup( search->second, entity );
 
-            m_names[ group ].push_back( entity );
-        }
-
-        void NameManager::Remove(const std::string &group, Entity *entity)
-        {
-            auto &entities = m_names[ group ];
-
-            auto search = find( entities.begin( ), entities.end( ), entity );
-
-            // doesn't have this group
-            if (search == entities.end( ))
-                return;
-
-            entities.erase( search );
-
-            auto &groups = m_idMap[ entity->m_uniqueID ];
-
-            groups.erase( find( groups.begin( ), groups.end( ), group ) );
-        }
-
-        void NameManager::Clear(Entity *entity)
-        {
-            auto &groups = m_idMap[ entity->m_uniqueID ];
-
-            while (!groups.empty( ))
-                Remove( groups.front( ), entity );
+            m_names.erase( search );
         }
 
         Entity *NameManager::GetEntity(const std::string &name)
         {
-            auto &entities = m_names[ name ];
+            auto search = m_grouped.find( name );
 
-            if (entities.empty( ))
+            if (search == m_grouped.end( ) || search->second.empty( ))
                 return nullptr;
 
-            return entities.front( );
+            return search->second.front( );
         }
 
-        const EntityVector &NameManager::GetEntities(const std::string &group)
+        const EntityVector &NameManager::GetEntities(const std::string &name)
         {
-            return m_names[ group ];
+            return m_grouped[ name ];
         }
 
-        const std::string &NameManager::GetName(const Entity *entity) const
+        const std::string &NameManager::GetName(const Entity *entity)
         {
-            URSINE_TODO( "..." );
-            return m_names.begin( )->first;
+            return m_names[ entity->m_uniqueID ];
+        }
+
+        void NameManager::SetName(Entity *entity, const std::string &name)
+        {
+            auto nameEntry = m_names.find( entity->m_uniqueID );
+
+            // first time setting the name
+            if (nameEntry == m_names.end( ))
+            {
+                m_names[ entity->m_uniqueID ] = name;
+            }
+            else
+            {
+                removeFromGroup( nameEntry->second, entity );
+
+                // update name
+                nameEntry->second = name;
+            }
+
+            // add new grouped name
+            m_grouped[ name ].emplace_back( entity );
+        }
+
+        void NameManager::removeFromGroup(const std::string &name, Entity *entity)
+        {
+            auto &group = m_grouped[ name ];
+
+            group.erase( find( group.begin( ), group.end( ), entity ) );
         }
     }
 }

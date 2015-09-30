@@ -16,17 +16,19 @@
 
 #include "EntitySystem.h"
 #include "World.h"
-#include "Entity.h"
+
+#include "TimerManager.h"
+#include "TweenManager.h"
 
 namespace ursine
 {
     namespace ecs
     {
         EntitySystem::EntitySystem(World *world) 
-            : m_typeID( 0 )
-            , m_world( world )
-            , m_timers( nullptr )
-            , m_tweens( nullptr )
+            : m_world( world )
+            , m_timers( Application::Instance->GetCoreSystem<TimerManager>( ) )
+            , m_tweens( Application::Instance->GetCoreSystem<TweenManager>( ) )
+            , m_typeID( 0 )
         { }
     }
 }

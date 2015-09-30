@@ -85,6 +85,9 @@ namespace ursine
                 auto entity = m_deleted.back( );
 
                 m_deleted.pop_back( );
+
+                m_nameManager->Remove( entity );
+                m_entityManager->Remove( entity );
             }
 
             Dispatch( WORLD_UPDATE, EventArgs::Empty );
@@ -97,6 +100,8 @@ namespace ursine
 
         void World::deleteEntity(Entity *entity)
         {
+            m_entityManager->BeforeRemove( entity );
+
             m_deleted.push_back( entity );
         }
     }
