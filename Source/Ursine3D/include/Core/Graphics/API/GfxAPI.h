@@ -28,69 +28,74 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "Meta.h"
 
 namespace ursine
-{    
+{
     class GfxAPI : public ursine::core::CoreSystem
     {
         CORE_SYSTEM
     private:
         struct privateData;
-    
-    //public members
+
+        //public members
     public:
         //manage resources like textures, models
         //RenderableManager
         Meta(Disable)
         ResourceAPI ResourceMgr;
-        
+
         Meta(Disable)
         RenderableAPI RenderableMgr;
-        
+
         Meta(Disable)
         CameraAPI CameraMgr;
-        
+
         Meta(Disable)
         ViewportAPI ViewportMgr;
-        
+
         Meta(Disable)
         UIAPI UIMgr;
-        
+
         Meta(Disable)
         DrawingAPI DrawingMgr;
-    
-    //public methods
+
+        //public methods
     public:
         Meta( DisableNonDynamic ) 
         GfxAPI(void);
-        
-        void OnInitialize( void ) override;
-        
-        void OnRemove( void ) override;
-        
-        void StartGraphics( GfxConfig config );
-        
-        void StartFrame( );
+
+        void OnInitialize(void) override;
+
+        void OnRemove(void) override;
+
+        // initialize graphics manager
+        void StartGraphics(GfxConfig config);
+
+        // begin graphics for the whole frame
+        void StartFrame();
 
         // render an object                                                                   
-        void RenderObject( GFXHND handle );      
-        
+        void RenderObject(GFXHND handle);
+
         // begin to render a scene                                                                   
-        void BeginScene( );   
-        
+        void BeginScene();
+
         // render the scene
-        void RenderScene(float dt, GFXHND camera );   
-        
+        void RenderScene(float dt, GFXHND camera);
+
         // end the current scene
-        void EndScene( );     
+        void EndScene();
 
-        void EndFrame( );
-        
-        void Resize( int width, int height );
+        // end the whole frame
+        void EndFrame();
 
-        void SetGameViewport( GFXHND vp );
-    
-    // private members
+        // resize the window
+        void Resize(int width, int height);
+
+        //set the main game viewport. All cameras are sized 
+            // w/ respect to this size
+        void SetGameViewport(GFXHND vp);
+
+        // private members
     private:
-      privateData *m_privates;
-    
+        privateData *m_privates;
     } Meta(Enable);
 }

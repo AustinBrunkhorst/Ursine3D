@@ -147,23 +147,23 @@ namespace ursine
             UAssert( result == S_OK, "Failed to create depth stencil! (Error '%i')", result );
         }
 
-        void DepthStencilStateManager::Uninitialize()
+        void DepthStencilStateManager::Uninitialize(void)
         {
             for (unsigned x = 0; x < m_depthStateArray.size( ); ++x)
             {
                 RELEASE_RESOURCE( m_depthStateArray[ x ] );
             }
 
-            m_device = NULL;
-            m_deviceContext = NULL;
+            m_device = nullptr;
+            m_deviceContext = nullptr;
         }
 
-        ID3D11DepthStencilState *DepthStencilStateManager::GetStencilState(DEPTH_STATES state)
+        ID3D11DepthStencilState *DepthStencilStateManager::GetStencilState(const DEPTH_STATES state)
         {
             return m_depthStateArray[ state ];
         }
 
-        void DepthStencilStateManager::SetDepthState(DEPTH_STATES state)
+        void DepthStencilStateManager::SetDepthState(const DEPTH_STATES state)
         {
             if (m_currentState == state)
                 return;
@@ -173,7 +173,7 @@ namespace ursine
             m_deviceContext->OMSetDepthStencilState( m_depthStateArray[ state ], 1 );
         }
 
-        void DepthStencilStateManager::Invalidate()
+        void DepthStencilStateManager::Invalidate(void)
         {
             m_currentState = DEPTH_STATE_COUNT;
         }

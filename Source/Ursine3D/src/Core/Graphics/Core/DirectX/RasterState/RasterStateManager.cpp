@@ -164,7 +164,7 @@ namespace ursine
             UAssert( result == S_OK, "Failed to make rasterizer state! (Error '%i')", result );
         }
 
-        void RasterStateManager::Uninitialize()
+        void RasterStateManager::Uninitialize(void )
         {
             for (unsigned x = 0; x < m_rasterStateArray.size( ); ++x)
             {
@@ -180,7 +180,7 @@ namespace ursine
             return m_rasterStateArray[ state ];
         }
 
-        void RasterStateManager::SetRasterState(RASTER_STATES state)
+        void RasterStateManager::SetRasterState(const RASTER_STATES state)
         {
             if (m_currentState == state)
                 return;
@@ -190,7 +190,7 @@ namespace ursine
             m_deviceContext->RSSetState( m_rasterStateArray[ state ] );
         }
 
-        void RasterStateManager::Invalidate()
+        void RasterStateManager::Invalidate(void)
         {
             m_currentState = RASTER_STATE_COUNT;
         }

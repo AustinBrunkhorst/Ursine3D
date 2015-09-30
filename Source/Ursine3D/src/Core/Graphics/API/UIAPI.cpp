@@ -5,10 +5,10 @@
 
 namespace ursine
 {
-  struct UIAPI::privData
-  {
-    GfxUIManager *mgr;
-  };
+    struct UIAPI::privData
+    {
+        GfxUIManager *mgr;
+    };
 
 
     GFXHND UIAPI::CreateUI()
@@ -16,7 +16,7 @@ namespace ursine
         return m_privates->mgr->CreateUI( );
     }
 
-    UIInstance& UIAPI::GetUI(GFXHND ui)
+    UIInstance &UIAPI::GetUI(GFXHND ui)
     {
         return m_privates->mgr->GetUI( ui );
     }
@@ -26,18 +26,18 @@ namespace ursine
         m_privates->mgr->DestroyUI( ui );
     }
 
-    void UIAPI::SetPrivates( void *priv )
-  {
-    m_privates->mgr = reinterpret_cast<GfxUIManager*>(priv);
-  }
+    void UIAPI::SetPrivates(void *priv)
+    {
+        m_privates->mgr = reinterpret_cast<GfxUIManager*>( priv );
+    }
 
-  void UIAPI::Initialize( )
-  {
-    m_privates = new UIAPI::privData( );
-  }
+    void UIAPI::Initialize()
+    {
+        m_privates = new UIAPI::privData( );
+    }
 
-  void UIAPI::Uninitialize( )
-  {
-    delete m_privates;
-  }
+    void UIAPI::Uninitialize()
+    {
+        delete m_privates;
+    }
 }
