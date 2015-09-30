@@ -10,6 +10,9 @@
 
 #include <Color.h>
 
+#include <CameraComponent.h>
+#include <RenderableComponent.h>
+
 using namespace ursine;
 
 namespace
@@ -48,8 +51,8 @@ void Editor::OnInitialize(void)
         &Editor::onAppUpdate 
     );
 
-    auto *windowManager = app->GetCoreSystem<WindowManager>( );
-    auto *uiManager = app->GetCoreSystem<UIManager>( );
+    auto *windowManager = CoreSystem( WindowManager );
+    auto *uiManager = CoreSystem( UIManager );
 
     m_mainWindow.window = windowManager->AddWindow(
         "Ursine3D Editor", 
@@ -65,7 +68,7 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Show( true );
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
-    m_graphics = app->GetCoreSystem<GfxAPI>( );
+    m_graphics = CoreSystem( GfxAPI );
 
     initializeGraphics( );
 
@@ -129,10 +132,73 @@ void Editor::initializeGraphics(void)
 
     auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
 
-    viewportHandle.SetRenderMode( VIEWPORT_RENDER_FORWARD );
+    viewportHandle.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
     viewportHandle.SetViewportCamera( m_mainWindow.camera );
+    viewportHandle.SetPosition( 0.0f, 0.0f );
+    viewportHandle.SetDimensions( kDefaultWindowWidth, kDefaultWindowHeight );
 
     m_graphics->SetGameViewport( m_mainWindow.viewport );
+
+    auto &world = m_project->GetScene( ).GetWorld( );
+
+    auto *cameraEntity = world.CreateEntity( );
+    {
+        auto &camera = cameraEntity->AddComponent<ecs::Camera>( )->GetCamera( );
+
+        camera.SetPosition( 0.15f, (30.0f + 27.0f) / kDefaultWindowHeight );
+        camera.SetDimensions( 0.85f, 1.0f - ((30.0f + 27.0f) / kDefaultWindowHeight) );
+
+        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+    }
+
+    auto *boxEntity = world.CreateEntity( );
+    {
+        auto boxHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+
+        auto &box = m_graphics->RenderableMgr.GetModel3D( boxHandle );
+
+        box.SetModel( "Skeleton" );
+        box.SetMaterial( "Blank" );
+
+        SMat4 transform;
+
+        transform.Translate( { 0.0f, 0.0f, 85.0f } );
+
+        box.SetWorldMatrix( transform );
+
+        auto *component = boxEntity->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle( boxHandle );
+    }
+
+    auto *directionLight = world.CreateEntity( );
+    {
+        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_DIRECTION_LIGHT );
+
+        auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
+
+        light.SetDirection( { 0.0f, 1.0f, 0.0f } );
+        light.SetColor( Color::White );
+
+        auto *component = directionLight->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle( lightHandle );
+    }
+
+    auto *pointLight = world.CreateEntity( );
+    {
+        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+
+        auto &light = m_graphics->RenderableMgr.GetPointLight( lightHandle );
+
+        light.SetPosition( { 0.0f, 0.0f, 0.0f } );
+        light.SetRadius( 100.0f );
+        light.SetColor( Color::Red );
+
+        auto *component = pointLight->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle( lightHandle );
+    }
 }
 
 void Editor::initializeTools(void)
@@ -161,18 +227,7 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     scene.Render( );
 
-   /* m_graphics->BeginScene( );
-
-    // @@@ TODO:
-    // Update Scene
-    // Render Tools
-    // Render Editor UIView
-
-    m_graphics->RenderScene( sender->GetDeltaTime( ), m_mainWindow.camera );
-
-    m_graphics->EndScene( );
-
-    m_mainWindow.ui->Draw( );*/
+    m_mainWindow.ui->Draw( );
 
     m_graphics->EndFrame( );
 }

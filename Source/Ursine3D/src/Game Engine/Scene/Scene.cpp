@@ -7,7 +7,7 @@
 namespace ursine
 {
     Scene::Scene(void)
-        : m_graphics( Application::Instance->GetCoreSystem<GfxAPI>( ) )
+        : m_graphics( CoreSystem( GfxAPI ) )
         , m_viewport( 0 )
     {
         

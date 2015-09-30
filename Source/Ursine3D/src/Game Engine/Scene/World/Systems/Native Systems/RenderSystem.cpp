@@ -16,7 +16,7 @@ namespace ursine
         RenderSystem::RenderSystem(World *world)
             : EntitySystem( world )
         {
-            m_graphics = Application::Instance->GetCoreSystem<GfxAPI>( );
+            m_graphics = CoreSystem( GfxAPI );
         }
 
         RenderSystem::~RenderSystem(void)
@@ -27,6 +27,7 @@ namespace ursine
         void RenderSystem::OnInitialize(void)
         {
             m_world->Listener( this )
+                .On( WORLD_RENDER, &RenderSystem::onRender )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
@@ -34,6 +35,7 @@ namespace ursine
         void RenderSystem::OnRemove(void)
         {
             m_world->Listener( this )
+                .Off( WORLD_RENDER, &RenderSystem::onRender )
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
@@ -87,7 +89,7 @@ namespace ursine
                 for (auto &renderable : m_renderable)
                     m_graphics->RenderObject( renderable.second->m_handle );
 
-                m_graphics->RenderScene( 0.0f, camera.first );
+                m_graphics->RenderScene( 0.0f, camera.second->m_handle );
             }
 
             m_graphics->EndScene( );

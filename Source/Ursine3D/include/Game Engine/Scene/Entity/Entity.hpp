@@ -17,8 +17,6 @@ namespace ursine
 {
     namespace ecs
     {
-        class EntityManager;
-
         template<class ComponentType, typename... Args>
         ComponentType *Entity::AddComponent(Args &&... args)
         {

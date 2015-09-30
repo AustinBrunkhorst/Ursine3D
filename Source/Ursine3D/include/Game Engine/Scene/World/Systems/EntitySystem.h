@@ -55,7 +55,7 @@ namespace ursine
             friend class SystemManager;
 
             SystemTypeID m_typeID;
-        };
+        } Meta(Enable);
     }
 }
 

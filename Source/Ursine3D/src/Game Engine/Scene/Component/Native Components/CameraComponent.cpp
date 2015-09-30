@@ -12,19 +12,20 @@ namespace ursine
 
         Camera::Camera(void)
             : BaseComponent( )
-            , m_handle( Application::Instance->GetCoreSystem<GfxAPI>( )->CameraMgr.AddCamera( ) )
+            , m_handle( CoreSystem( GfxAPI )->CameraMgr.AddCamera( ) )
         {
             
         }
 
         Camera::~Camera(void)
         {
-            URSINE_TODO( "remove camera handle" );
+            URSINE_TODO( "..." );
+            //CoreSystem( GfxAPI )->CameraMgr.DestroyCamera( m_handle );
         }
 
         ::Camera &Camera::GetCamera(void) const
         {
-            return Application::Instance->GetCoreSystem<GfxAPI>( )->CameraMgr.GetCamera( m_handle );
+            return CoreSystem( GfxAPI )->CameraMgr.GetCamera( m_handle );
         }
     }
 }

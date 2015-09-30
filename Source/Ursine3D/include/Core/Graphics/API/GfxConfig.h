@@ -28,7 +28,7 @@ namespace ursine
         std::string TextureListPath_; // path to textures
         std::string ShaderListPath_; // path to the shaders
         bool Fullscreen_; // do I launch in fullscreen?
-        HWND *HandleToWindow_; // handle to the window
+        HWND HandleToWindow_; // handle to the window
         bool Profile_; // output profiling info about graphics
         bool m_renderUI; // should I render the ui?
         bool debug; // should I do debug stuff?

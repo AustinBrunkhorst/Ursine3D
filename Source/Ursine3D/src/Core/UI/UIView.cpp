@@ -36,8 +36,8 @@ namespace ursine
 
         auto *app = Application::Instance;
 
-        m_keyboardManager = app->GetCoreSystem<KeyboardManager>( );
-        m_mouseManager = app->GetCoreSystem<MouseManager>( );
+        m_keyboardManager = CoreSystem( KeyboardManager );
+        m_mouseManager = CoreSystem( MouseManager );
 
         m_window->Listener( this )
             .On( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );
