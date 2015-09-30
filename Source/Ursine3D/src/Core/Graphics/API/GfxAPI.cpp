@@ -4,7 +4,7 @@
 
 namespace ursine
 {
-    CORE_SYSTEM_DEFINITION( GfxAPI ) ;
+    CORE_SYSTEM_DEFINITION( GfxAPI );
 
     //privates
     struct GfxAPI::privateData
@@ -12,18 +12,20 @@ namespace ursine
         GraphicsCore *gfxCore_;
     };
 
-    GfxAPI::GfxAPI(void) { }
+    GfxAPI::GfxAPI(void)
+        : m_privates( nullptr )
+    {
+        
+    }
 
-    void GfxAPI::OnInitialize() { }
-
-    void GfxAPI::OnRemove()
+    GfxAPI::~GfxAPI(void)
     {
         //uninit API managers
         ResourceMgr.Uninitialize( );
         RenderableMgr.Uninitialize( );
         CameraMgr.Uninitialize( );
         ViewportMgr.Uninitialize( );
-        UIMgr.Uninitialize( );
+        UIMgr.Uninitialize();
         DrawingMgr.Uninitialize( );
 
         //uninit graphics as a whole
@@ -32,6 +34,16 @@ namespace ursine
         //delete everything
         delete m_privates->gfxCore_;
         delete m_privates;
+    }
+
+    void GfxAPI::OnInitialize(void)
+    {
+        
+    }
+
+    void GfxAPI::OnRemove(void)
+    {
+        
     }
 
     void GfxAPI::StartGraphics(GfxConfig config)

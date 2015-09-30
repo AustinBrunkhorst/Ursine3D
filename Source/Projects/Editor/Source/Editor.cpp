@@ -29,16 +29,14 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_project( new Project( ) )
+    , m_project( nullptr )
 {
-    auto entity = m_project->GetScene( ).GetWorld( ).CreateEntity( );
+
 }
 
 Editor::~Editor(void)
 {
-    delete m_mainWindow.window;
 
-    delete m_project;
 }
 
 void Editor::OnInitialize(void)
@@ -70,6 +68,8 @@ void Editor::OnInitialize(void)
 
     m_graphics = CoreSystem( GfxAPI );
 
+    m_project = new Project( );
+
     initializeGraphics( );
 
     m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEditorEntryPoint );
@@ -94,6 +94,14 @@ void Editor::OnRemove(void)
         .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
     m_mainWindow.ui->Close( );
+
+    delete m_mainWindow.window;
+
+    m_mainWindow.window = nullptr;
+
+    delete m_project;
+
+    m_project = nullptr;
 }
 
 Project *Editor::GetProject(void) const
@@ -142,13 +150,16 @@ void Editor::initializeGraphics(void)
     auto &scene = m_project->GetScene( );
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport(
-            0.85f * kDefaultWindowWidth, kDefaultWindowHeight - (30.0f + 27.0f) 
+            static_cast<int>( 0.85f * kDefaultWindowWidth ), 
+            static_cast<int>( kDefaultWindowHeight - (30.0f + 27.0f) )
         );
 
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-        handle.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
-        handle.SetPosition( 0.15f * kDefaultWindowWidth, 30.0f + 27.0f );
+        handle.SetPosition( 
+            static_cast<int>( 0.15f * kDefaultWindowWidth ), 
+            static_cast<int>( 30.0f + 27.0f ) 
+        );
 
         scene.SetViewport( viewport );
 

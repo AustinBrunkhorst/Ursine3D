@@ -18,7 +18,7 @@ namespace ursine
             Camera(void);
             ~Camera(void);
 
-            ::Camera &GetCamera(void) const;
+            GFXCamera &GetCamera(void) const;
 
         private:
             friend class RenderSystem;

@@ -5,7 +5,7 @@ namespace ursine
 {
     namespace DXCore
     {
-        void DirectXCore::Initialize(const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug)
+        void DirectXCore::Initialize(const unsigned width, const unsigned height, HWND hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug)
         {
             //allocate all
             m_blendManager = new BlendStateManager;
@@ -79,7 +79,7 @@ namespace ursine
             swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
             //Set the handle for the window to render to.
-            swapChainDesc.OutputWindow = *hWindow;
+            swapChainDesc.OutputWindow = hWindow;
 
             //set multisampling
             swapChainDesc.SampleDesc.Count = gfxInfo->GetSampleCount( );

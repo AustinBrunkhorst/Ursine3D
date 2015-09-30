@@ -19,11 +19,10 @@ namespace ursine
 
         Camera::~Camera(void)
         {
-            URSINE_TODO( "..." );
-            //CoreSystem( GfxAPI )->CameraMgr.DestroyCamera( m_handle );
+            CoreSystem( GfxAPI )->CameraMgr.DestroyCamera( m_handle );
         }
 
-        ::Camera &Camera::GetCamera(void) const
+        GFXCamera &Camera::GetCamera(void) const
         {
             return CoreSystem( GfxAPI )->CameraMgr.GetCamera( m_handle );
         }
