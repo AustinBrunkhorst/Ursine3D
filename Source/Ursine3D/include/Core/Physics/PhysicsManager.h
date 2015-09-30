@@ -41,6 +41,8 @@ namespace ursine
 
 		btRigidBody *AddRigidBody(const btRigidBody::btRigidBodyConstructionInfo &info);
 
+        void LoadWorld(const char *bulletFile);
+
 	private:
 
 		// collision configuration contains default setup for memory,

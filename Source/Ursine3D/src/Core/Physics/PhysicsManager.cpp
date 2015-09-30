@@ -48,7 +48,15 @@ namespace ursine
 		return body;
 	}
 
-	void PhysicsManager::onAppUpdate(EVENT_HANDLER(Application))
+    void PhysicsManager::LoadWorld(const char* bulletFile)
+    {
+        auto *fileName = (std::string("Assets/Bullet/") + std::string(bulletFile)).c_str();
+        auto *fileLoader = new btBulletWorldImporter(m_dynamicsWorld);
+        fileLoader->loadFile(fileName);
+        delete fileLoader;
+    }
+
+    void PhysicsManager::onAppUpdate(EVENT_HANDLER(Application))
 	{
 		m_dynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
 		m_dynamicsWorld->debugDrawWorld();
@@ -73,10 +81,6 @@ namespace ursine
 		m_debugDrawer = new PhysicsDebugDrawer(Application::Instance->GetCoreSystem<GfxAPI>());
 		m_dynamicsWorld->setDebugDrawer(m_debugDrawer);
 		m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
-
-		auto *fileLoader = new btBulletWorldImporter(m_dynamicsWorld);
-		fileLoader->loadFile("Assets/Bullet/test.bullet");
-		delete fileLoader;
 	}
 
 	void PhysicsManager::destroyPhysics()

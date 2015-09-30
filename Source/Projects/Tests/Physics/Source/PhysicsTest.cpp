@@ -229,7 +229,7 @@ void PhysicsTest::initGraphics(void)
 void PhysicsTest::initPhysics(void)
 {
 	m_physics = Application::Instance->GetCoreSystem<PhysicsManager>();
-
+    m_physics->LoadWorld("test.bullet");
 	/*btBoxShape* box = new btBoxShape(btVector3(btScalar(5), btScalar(5), btScalar(5)));
 	
 	m_physics->AddCollisionShape(box);
