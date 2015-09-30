@@ -280,8 +280,8 @@ namespace ursine
         w *= gvp.Width;
         h *= gvp.Height;
 
-        x *= gvp.Width;
-        y *= gvp.Height;
+        x = x * gvp.Width + gvp.TopLeftX;
+        y = y * gvp.Height + gvp.TopLeftY;
 
         D3D11_VIEWPORT vpData;
         vpData.Width = w;

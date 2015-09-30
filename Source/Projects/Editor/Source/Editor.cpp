@@ -18,6 +18,7 @@ using namespace ursine;
 namespace
 {
     const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
+    //const auto kEditorEntryPoint = "www.google.com/";
     const auto kEditorClearColor = Color( 0xFF252526 );
 
     const auto kDefaultWindowWidth = 1280;
@@ -130,22 +131,6 @@ void Editor::initializeGraphics(void)
     config.Profile_ = false;
 
     m_graphics->StartGraphics( config );
-
-    /*m_mainWindow.viewport = m_graphics->ViewportMgr.CreateViewport(
-        kDefaultWindowWidth, 
-        kDefaultWindowHeight 
-    );
-
-    m_mainWindow.camera = m_graphics->CameraMgr.AddCamera( );
-
-    auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
-
-    viewportHandle.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
-    viewportHandle.SetViewportCamera( m_mainWindow.camera );
-    viewportHandle.SetPosition( 0.15f * kDefaultWindowWidth, 30.0f + 27.0f );
-    viewportHandle.SetDimensions( 0.85f * kDefaultWindowWidth, kDefaultWindowHeight - (30.0f + 27.0f) );
-
-    m_graphics->SetGameViewport( m_mainWindow.viewport );*/
 
     auto &scene = m_project->GetScene( );
     {
@@ -269,6 +254,8 @@ void Editor::onMainWindowResize(EVENT_HANDLER(Window))
         0, 0,
         args->width, args->height
     } );
+
+    
 
     m_graphics->Resize( args->width, args->height );
 }

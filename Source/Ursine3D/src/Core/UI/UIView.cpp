@@ -90,6 +90,8 @@ namespace ursine
         m_viewport = viewport;
 
         m_browser->GetHost( )->WasResized( );
+
+        resize(viewport.width, viewport.height);
     }
 
     bool UIView::IsValid(void) const

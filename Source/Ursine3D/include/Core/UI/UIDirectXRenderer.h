@@ -18,6 +18,8 @@ namespace ursine
   protected:
       CefRect m_viewport;
 
+      void resize(const int width, const int height);
+
   private:
       GfxAPI *m_gfxMgr;
       GFXHND m_uiHandle;

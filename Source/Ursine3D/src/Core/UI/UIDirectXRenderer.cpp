@@ -29,6 +29,11 @@ namespace ursine
         m_gfxMgr->UIMgr.GetUI( m_uiHandle ).DrawMain( );
     }
 
+    void UIDirectXRenderer::resize(const int width, const int height)
+    {
+        m_gfxMgr->UIMgr.GetUI(m_uiHandle).Resize(width, height);
+    }
+
     bool UIDirectXRenderer::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &bounds)
     {
         bounds = m_viewport;
