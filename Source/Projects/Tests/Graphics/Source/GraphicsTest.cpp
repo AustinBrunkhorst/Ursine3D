@@ -22,18 +22,19 @@ using namespace ursine;
 SVec3 colors[] = {
     { 1,0,0 },
     { 0,1,0 },
-    { 0,0,1 },
-    { 1,1,0 },
-    { 1,0,1 },
-    { 0,1,1 },
-    { 1,1,1 },
-
     { 0.5,1,1 },
+    { 0,0,1 },
     { 1,0.5,1 },
+    { 1,1,0 },
     { 1,1,0.5 },
+    { 1,0,1 },
     { 0.5,0.5,1 },
-    { 0.5,1,0.5 }
+    { 0,1,1 },
+    { 0.5,1,0.5 },
+    { 1,1,1 }
 };
+
+std::string model = "Cube";
 
 namespace
 {
@@ -168,6 +169,16 @@ m_gfx->StartFrame( );
   {
       for (int x = 0; x < 10; ++x)
       {
+          //temp fak u
+          SQuat quat0( x * 40 + dt * 20, y * 40 + dt * 20, (10 - x) * 40 + dt * 20 );
+
+          SMat4 mat( quat0 );
+
+          Model3D &current = m_gfx->RenderableMgr.GetModel3D( m_spheres[ y ][ x ] );
+          current.SetModel( model );
+          SMat4 temp = SMat4( SVec3( x, y, 0 ) ) * mat;
+          current.SetWorldMatrix( temp );
+
           m_gfx->RenderObject( m_spheres[ y ][ x ] );
       }
   }
@@ -212,7 +223,7 @@ void GraphicsTest::UpdateCamera_Keys ( float dt )
   float speed = 3;
 
   //get the camera
-  Camera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
+  GFXCamera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
   SVec3 look = cam.GetLook( );
 
   ///////////////////////////////////////////////////////////////////
@@ -250,6 +261,11 @@ void GraphicsTest::UpdateCamera_Keys ( float dt )
     dir -= up;
   }
 
+  if (keyboardMgr->IsDown( KEY_1 ))
+      model = "Cube";
+  else if (keyboardMgr->IsDown( KEY_2 ))
+      model = "Sphere";
+
   //make sure something happened
   if (dir.Length( ) > 0)
   {
@@ -271,7 +287,7 @@ void GraphicsTest::UpdateCamera_Mouse ( float dt )
   auto *mouseMgr = app->GetCoreSystem<MouseManager>( );
 
   //get the camera
-  Camera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
+  GFXCamera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
 
   SVec3 look = cam.GetLook( );
   SVec3 up = cam.GetUp( );
@@ -364,7 +380,7 @@ void GraphicsTest::UpdateCamera( float dt )
   }
 
   //our position always needs to be relative to the center position
-  Camera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
+  GFXCamera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
   SVec3 look = cam.GetLook( );
 
   //normalize look and scale by zoom
@@ -376,7 +392,7 @@ void GraphicsTest::UpdateCamera( float dt )
 
   ///////////////////////////////////////////////////////////////////
   //render the xyz axis in side window
-  Camera &cam2 = m_gfx->CameraMgr.GetCamera( m_camera2 );
+  GFXCamera &cam2 = m_gfx->CameraMgr.GetCamera( m_camera2 );
   float lineLength = 2;
 
   look.Normalize( );
@@ -516,6 +532,10 @@ void GraphicsTest::initGraphics( void )
   config.Profile_ = false;
   config.debug = false;
 
+  m_gfx->StartGraphics( config );
+
+  m_ui = uiManager->CreateView( m_mainWindow, kGraphicsTestUIEntryPoint );
+
   m_ui->SetViewport( {
     0, 0,
     kDefaultWindowWidth, kDefaultWindowHeight
@@ -533,16 +553,15 @@ void GraphicsTest::initGraphics( void )
 
   m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetPosition( kDefaultWindowWidth - 250, kDefaultWindowHeight - 250 );
   
-  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetRenderMode( VIEWPORT_RENDER_FORWARD );
-  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetRenderMode(VIEWPORT_RENDER_FORWARD);
-  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( Color::Red );
+  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetBackgroundColor( 0, 0, 0, 0 );
+
   
   m_camera = m_gfx->CameraMgr.AddCamera( );
   m_camera2 = m_gfx->CameraMgr.AddCamera( );
   m_gfx->CameraMgr.GetCamera( m_camera ).LookAtPoint( SVec3( 0, 0, 0 ) );
-
+  
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetPosition( SVec3( 0, 0, 1010 ) );
-  m_gfx->CameraMgr.GetCamera( m_camera2 ).SetProjMode( Camera::PROJECTION_ORTHOGRAPHIC );
+  m_gfx->CameraMgr.GetCamera( m_camera2 ).SetProjMode( GFXCamera::PROJECTION_ORTHOGRAPHIC );
   m_gfx->CameraMgr.GetCamera( m_camera2 ).SetPlanes( 0.0000, 100 );
 
   m_gfx->CameraMgr.GetCamera( m_camera ).SetPosition( 0, 0 );
@@ -558,8 +577,6 @@ void GraphicsTest::initGraphics( void )
 
   m_light = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
   m_light2 = m_gfx->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
-  m_gfx->ViewportMgr.GetViewport( m_viewport ).SetViewportCamera( m_camera );
-  m_gfx->ViewportMgr.GetViewport( m_viewport2 ).SetViewportCamera( m_camera2 );
 
   Model3D &MdlCube = m_gfx->RenderableMgr.GetModel3D( m_cube );
   PointLight &pointLight = m_gfx->RenderableMgr.GetPointLight( m_light );

@@ -26,35 +26,35 @@ namespace ursine
     class UIInstance : CefRenderHandler
     {
     public:
-        void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr, RENDER_TARGETS target );
-        void Uninitialize( );
+        void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr, RENDER_TARGETS target);
+        void Uninitialize();
 
-        void Draw( GFXHND camera = 0);
+        void Draw(GFXHND camera = 0);
 
-        void DrawMain( );
+        void DrawMain();
 
-        bool GetViewRect( CefRefPtr<CefBrowser> browser,
-            CefRect &bounds ) override;
+        bool GetViewRect(CefRefPtr<CefBrowser> browser,
+            CefRect &bounds) override;
 
-        void OnPopupShow( CefRefPtr<CefBrowser> browser,
-            bool show ) override;
+        void OnPopupShow(CefRefPtr<CefBrowser> browser,
+            bool show) override;
 
-        void OnPopupSize( CefRefPtr<CefBrowser> browser,
-            const CefRect &bounds ) override;
+        void OnPopupSize(CefRefPtr<CefBrowser> browser,
+            const CefRect &bounds) override;
 
-        void OnPaint( CefRefPtr<CefBrowser> browser,
+        void OnPaint(CefRefPtr<CefBrowser> browser,
             PaintElementType type, const RectList &regions,
-            const void *buffer, int width, int height ) override;
+            const void *buffer, int width, int height) override;
 
-        void paintView( CefRefPtr<CefBrowser> browser,
+        void paintView(CefRefPtr<CefBrowser> browser,
             PaintElementType type, const RectList &regions,
-            const void *buffer, int width, int height );
+            const void *buffer, int width, int height);
 
-        void paintPopup( CefRefPtr<CefBrowser> browser,
+        void paintPopup(CefRefPtr<CefBrowser> browser,
             PaintElementType type, const RectList &regions,
-            const void *buffer, int width, int height );
+            const void *buffer, int width, int height);
 
-        void Resize( int width, int height );
+        void Resize(int width, int height);
 
         //private members
     private:
@@ -65,7 +65,7 @@ namespace ursine
         //device context
         ID3D11Device *m_device;
         ID3D11DeviceContext *m_context;
-        void * m_gfxmgr;
+        void *m_gfxmgr;
 
 
         RENDER_TARGETS m_target;

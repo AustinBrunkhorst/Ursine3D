@@ -8,14 +8,14 @@
 
 namespace ursine
 {
-    bool sort( _DRAWHND &h1, _DRAWHND &h2 )
+    bool sort(_DRAWHND &h1, _DRAWHND &h2)
     {
-        if (*reinterpret_cast<unsigned long long*>(&h1) < *reinterpret_cast<unsigned long long*>(&h2))
+        if (*reinterpret_cast<unsigned long long*>( &h1 ) < *reinterpret_cast<unsigned long long*>( &h2 ))
             return true;
         return false;
     }
 
-    void GraphicsCore::Initialize( GfxConfig &config )
+    void GraphicsCore::Initialize(GfxConfig &config)
     {
         /////////////////////////////////////////////////////////////////
         // ALLOCATE MANAGERS ////////////////////////////////////////////
@@ -115,7 +115,7 @@ namespace ursine
         m_ready = true;
     }
 
-    void GraphicsCore::Uninitialize( )
+    void GraphicsCore::Uninitialize()
     {
         //WaitForSingleObject( m_threadHandle, INFINITE );
 
@@ -143,7 +143,7 @@ namespace ursine
         delete modelManager;
     }
 
-    void GraphicsCore::Render( GFXHND handle )
+    void GraphicsCore::Render(GFXHND handle)
     {
         UAssert( m_currentlyRendering == true, "Attempted to render an object without starting the frame!" );
         UAssert( m_sceneActive == true, "Attempted to render an object without beginning a scene!" );
@@ -162,69 +162,69 @@ namespace ursine
 
         switch (render->Type_)
         {
-            //rendering a model
-        case RENDERABLE_MODEL3D:
-        {
-            Model3D *current = &renderableManager->m_renderableModel3D[ render->Index_ ];
+                //rendering a model
+            case RENDERABLE_MODEL3D:
+            {
+                Model3D *current = &renderableManager->m_renderableModel3D[ render->Index_ ];
 
-            drawCall.Index_ = render->Index_;
-            drawCall.Type_ = render->Type_;
-            drawCall.Material_ = textureManager->GetTextureIDByName( current->GetMaterialslName( ) );
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
+                drawCall.Material_ = textureManager->GetTextureIDByName( current->GetMaterialslName( ) );
 
-            drawCall.Model_ = modelManager->GetModelIDByName( current->GetModelName( ) );
-            drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
-        }
-        break;
-        //directional light
-        case RENDERABLE_DIRECTION_LIGHT:
-        {
-            DirectionalLight *current = &renderableManager->m_renderableDirectionalLight[ render->Index_ ];
+                drawCall.Model_ = modelManager->GetModelIDByName( current->GetModelName( ) );
+                drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
+            }
+                break;
+                //directional light
+            case RENDERABLE_DIRECTION_LIGHT:
+            {
+                DirectionalLight *current = &renderableManager->m_renderableDirectionalLight[ render->Index_ ];
 
-            drawCall.Index_ = render->Index_;
-            drawCall.Type_ = render->Type_;
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
 
-            drawCall.Shader_ = SHADER_DIRECTIONAL_LIGHT;
-        }
-        break;
-        //point light
-        case RENDERABLE_POINT_LIGHT:
-        {
-            PointLight *current = &renderableManager->m_renderablePointLight[ render->Index_ ];
+                drawCall.Shader_ = SHADER_DIRECTIONAL_LIGHT;
+            }
+                break;
+                //point light
+            case RENDERABLE_POINT_LIGHT:
+            {
+                PointLight *current = &renderableManager->m_renderablePointLight[ render->Index_ ];
 
-            drawCall.Index_ = render->Index_;
-            drawCall.Type_ = render->Type_;
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
 
-            drawCall.Shader_ = SHADER_POINT_LIGHT;
-        }
-        break;
-        case RENDERABLE_PRIMITIVE:
-        {
-            Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
+                drawCall.Shader_ = SHADER_POINT_LIGHT;
+            }
+                break;
+            case RENDERABLE_PRIMITIVE:
+            {
+                Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
 
-            drawCall.Index_ = render->Index_;
-            drawCall.Type_ = render->Type_;
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
 
-            drawCall.Shader_ = SHADER_PRIMITIVE;
-            drawCall.debug_ = 1;
-        }
-        break;
-        case RENDERABLE_BILLBOARD2D:
-        {
-            Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
+                drawCall.Shader_ = SHADER_PRIMITIVE;
+                drawCall.debug_ = 1;
+            }
+                break;
+            case RENDERABLE_BILLBOARD2D:
+            {
+                Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
 
-            drawCall.Index_ = render->Index_;
-            drawCall.Type_ = render->Type_;
-            drawCall.Material_ = textureManager->GetTextureIDByName( current->GetTextureName( ) );
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
+                drawCall.Material_ = textureManager->GetTextureIDByName( current->GetTextureName( ) );
 
-            drawCall.Shader_ = SHADER_BILLBOARD2D;
-        }
-        break;
-        default:
-            break;
+                drawCall.Shader_ = SHADER_BILLBOARD2D;
+            }
+                break;
+            default:
+                break;
         }
     }
 
-    void GraphicsCore::StartFrame( )
+    void GraphicsCore::StartFrame()
     {
         UAssert( m_currentlyRendering == false, "Attempted to start the frame without ending the last one!" );
         m_currentlyRendering = true;
@@ -232,7 +232,6 @@ namespace ursine
         while (m_rendering);
 
         m_rendering = true;
-
 
 
         dxCore->ClearSwapchain( );
@@ -244,31 +243,30 @@ namespace ursine
         renderableManager->CacheFrame( );
     }
 
-    void GraphicsCore::BeginScene( )
+    void GraphicsCore::BeginScene()
     {
         UAssert( m_currentlyRendering == true, "Attempted to begin a scene without starting the frame!" );
         UAssert( m_sceneActive == false, "Attempted to begin a scene without ending the last one!" );
         m_sceneActive = true;
 
         //clear draw call list
-        memset( reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof( unsigned long long ) * m_drawCount );
+        memset( reinterpret_cast<unsigned long long*>( &m_drawList[ 0 ] ), 0, sizeof( unsigned long long) * m_drawCount );
         m_drawCount = 0;
 
         //clear debug buffer
         dxCore->ClearDebugBuffer( );
     }
 
-    void GraphicsCore::RenderScene( float dt, GFXHND camera )
+    void GraphicsCore::RenderScene(float dt, GFXHND camera)
     {
         UAssert( m_currentlyRendering == true, "Attempted to render a scene without starting the frame!" );
         UAssert( m_sceneActive == true, "Attempted to render a scene without beginning one!" );
 
-        
         // get viewport
-        _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>(&camera);
+        _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>( &camera );
         UAssert( camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!" );
 
-        Camera &cam = cameraManager->GetCamera( camera );
+        GFXCamera &cam = cameraManager->GetCamera( camera );
 
         //get game vp dimensions
         Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
@@ -316,7 +314,10 @@ namespace ursine
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
 
         /////////////////////////////////////////////////////////////////
-        RenderScene_Deferred( dt, camera );
+        if(cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
+            RenderScene_Deferred( dt, camera );
+        else
+            RenderScene_Forward( dt, camera );
 
         return;
         //close thread handle if needed
@@ -334,9 +335,9 @@ namespace ursine
         m_threadHandle = CreateThread( nullptr, 0, renderBootstrap, data, 0, &m_threadID );*/
     }
 
-    DWORD GraphicsCore::renderBootstrap( LPVOID lpParam )
+    DWORD GraphicsCore::renderBootstrap(LPVOID lpParam)
     {
-        auto *data = reinterpret_cast<threadData*>(lpParam);
+        auto *data = reinterpret_cast<threadData*>( lpParam );
 
         if (data->forward == true)
         {
@@ -354,7 +355,7 @@ namespace ursine
         return 0;
     }
 
-    void GraphicsCore::RenderScene_Deferred( float dt, GFXHND camera )
+    void GraphicsCore::RenderScene_Deferred(float dt, GFXHND camera)
     {
         /////////////////////////////////////////////////////////////////
         // PRE FRAME STUFF 
@@ -364,7 +365,7 @@ namespace ursine
         gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
 
         // get camera
-        Camera &currentCamera = cameraManager->GetCamera( camera );
+        GFXCamera &currentCamera = cameraManager->GetCamera( camera );
 
         //get d3d11 viewport info
         //get game vp dimensions
@@ -448,7 +449,7 @@ namespace ursine
         textureManager->MapTextureByName( "Wire", 3 );
     }
 
-    void GraphicsCore::RenderScene_Forward( float dt, GFXHND camera )
+    void GraphicsCore::RenderScene_Forward(float dt, GFXHND camera)
     {
         /////////////////////////////////////////////////////////////////
         // PRE FRAME STUFF 
@@ -457,19 +458,25 @@ namespace ursine
         dxCore->ClearDepthBuffers( );
         gfxProfiler->Stamp( PROFILE_CLEAR_BUFFERS );
 
-        // get viewport
-        Viewport &vp = viewportManager->GetViewport( camera );
-
         // get camera
-        Camera &currentCamera = cameraManager->GetCamera( vp.GetViewportCamera( ) );
+        GFXCamera &currentCamera = cameraManager->GetCamera( camera );
 
         //get d3d11 viewport info
-        D3D11_VIEWPORT vpData = vp.GetViewportData( );
+        //get game vp dimensions
+        Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
+        D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
+
+        //set directx viewport
+        float w, h;
+        currentCamera.GetDimensions( w, h );
+
+        w *= gvp.Width;
+        h *= gvp.Height;
 
         /////////////////////////////////////////////////////////////////
         // gets the projection matrix and view matrix
         SMat4 proj, view;
-        proj = currentCamera.GetProjMatrix( vpData.Width / 100, vpData.Height / 100 );
+        proj = currentCamera.GetProjMatrix( w, h );
         view = currentCamera.GetViewMatrix( );
 
         /////////////////////////////////////////////////////////////////
@@ -515,9 +522,11 @@ namespace ursine
             RenderPrimitive( m_drawList[ currentIndex++ ] );
 
         //render points and lines
-        dxCore->SetBlendState( BLEND_STATE_DEFAULT );
+        gfxProfiler->Stamp( PROFILE_PRIMITIVES );
+        dxCore->SetBlendState( BLEND_STATE_NONE );
+        dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
         dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
-        dxCore->SetRasterState( RASTER_STATE_SOLID_NOCULL );
+        bufferManager->MapTransformBuffer( SMat4::Identity( ) );
 
         RenderDebugPoints( view, proj, currentCamera );
 
@@ -530,14 +539,14 @@ namespace ursine
         textureManager->MapTextureByName( "Wire", 3 );
     }
 
-    void GraphicsCore::EndScene( )
+    void GraphicsCore::EndScene()
     {
         UAssert( m_currentlyRendering == true, "Attemped to end a scene without starting the frame!" );
         UAssert( m_sceneActive == true, "Attempted to end a scene before beginning one!" );
         m_sceneActive = false;
     }
 
-    void GraphicsCore::EndFrame( )
+    void GraphicsCore::EndFrame()
     {
         UAssert( m_sceneActive == false, "Attempted to end the frame without ending the scene!" );
         UAssert( m_currentlyRendering == true, "Attemped to end the frame when it was never started!" );
@@ -568,10 +577,10 @@ namespace ursine
     }
 
     // preparing for different stages /////////////////////////////////
-    void GraphicsCore::PrepFor3DModels( const SMat4& view, const SMat4& proj )
+    void GraphicsCore::PrepFor3DModels(const SMat4 &view, const SMat4 &proj)
     {
         float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
-        dxCore->GetDeviceContext()->OMSetBlendState( nullptr, blendFactor, 0xffffffff );
+        dxCore->GetDeviceContext( )->OMSetBlendState( nullptr, blendFactor, 0xffffffff );
         dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
 
         //deferred shading
@@ -589,13 +598,17 @@ namespace ursine
         dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
         bufferManager->MapCameraBuffer( view, proj );
+
+        //TEMP
+        URSINE_TODO( "Remove this" );
+        bufferManager->MapCameraBuffer( view, proj, GEOMETRY_SHADER );
     }
 
-    void GraphicsCore::PrepForPointLightPass( const SMat4& view, const SMat4& proj )
+    void GraphicsCore::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
     {
         gfxProfiler->Stamp( PROFILE_DEFERRED );
 
-        modelManager->BindModel( modelManager->GetModelIDByName("Sphere") );
+        modelManager->BindModel( modelManager->GetModelIDByName( "Sphere" ) );
 
         //set states
         dxCore->SetRenderTarget( RENDER_TARGET_LIGHTMAP, false );
@@ -609,7 +622,7 @@ namespace ursine
         temp.Transpose( );
         temp.Inverse( );
 
-        ipb.invProj = temp.ToD3D();
+        ipb.invProj = temp.ToD3D( );
         bufferManager->MapBuffer<BUFFER_INV_PROJ>( &ipb, PIXEL_SHADER );
 
         //map camera buffer
@@ -641,7 +654,7 @@ namespace ursine
         dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_SPECPOW )->ShaderMap );
     }
 
-    void GraphicsCore::PrepForDirectionalLightPass(const SMat4& view, const SMat4& proj)
+    void GraphicsCore::PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj)
     {
         modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
 
@@ -649,11 +662,11 @@ namespace ursine
         layoutManager->SetInputLayout( SHADER_DIRECTIONAL_LIGHT );
         dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
 
-        bufferManager->MapCameraBuffer( SMat4::Identity(), SMat4::Identity( ) );
+        bufferManager->MapCameraBuffer( SMat4::Identity( ), SMat4::Identity( ) );
         bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
     }
 
-    void GraphicsCore::PrepForPrimitives( const SMat4& view, const SMat4& proj )
+    void GraphicsCore::PrepForPrimitives(const SMat4 &view, const SMat4 &proj)
     {
         gfxProfiler->Stamp( PROFILE_LIGHTS );
 
@@ -665,7 +678,7 @@ namespace ursine
         layoutManager->SetInputLayout( SHADER_PRIMITIVE );
     }
 
-    void GraphicsCore::PrepForDebugRender( )
+    void GraphicsCore::PrepForDebugRender()
     {
         gfxProfiler->Stamp( PROFILE_PRIMITIVES );
 
@@ -678,7 +691,7 @@ namespace ursine
         dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
     }
 
-    void GraphicsCore::PrepForFinalOutput( )
+    void GraphicsCore::PrepForFinalOutput()
     {
         gfxProfiler->Stamp( PROFILE_DEBUG );
 
@@ -696,7 +709,7 @@ namespace ursine
         bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) );
     }
 
-    void GraphicsCore::PrepForUI( )
+    void GraphicsCore::PrepForUI()
     {
         SMat4 trans;
         trans.Translate( SVec3( 0, 0, 0.1f ) );
@@ -716,15 +729,30 @@ namespace ursine
     }
 
     // rendering //////////////////////////////////////////////////////
-    void GraphicsCore::Render3DModel( _DRAWHND handle )
+    void GraphicsCore::Render3DModel(_DRAWHND handle)
     {
+        //TEMP
+        URSINE_TODO( "Remove this" );
+        POINT point;
+        GetCursorPos( &point );
+        bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ), GEOMETRY_SHADER );
+        PrimitiveColorBuffer pcb;
+        pcb.color.x = point.x / 80.f;
+        pcb.color.y = point.y / 80.f;
+
+        static float t;
+        t += 0.000016;
+        pcb.color.z = t;
+        bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, GEOMETRY_SHADER );
+        //END OF TEMP
+
         //map transform
         bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ) );
 
         //map material data
         MaterialDataBuffer mdb;
         Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
-        current.GetMaterialData( mdb.emissive, mdb.specularPower, mdb.specularIntensity ); 
+        current.GetMaterialData( mdb.emissive, mdb.specularPower, mdb.specularIntensity );
         bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>( &mdb, PIXEL_SHADER );
 
         //set model
@@ -734,10 +762,9 @@ namespace ursine
         textureManager->MapTextureByID( handle.Material_ );
 
         shaderManager->Render( modelManager->GetModelVertcountByID( handle.Model_ ) );
-
     }
 
-    void GraphicsCore::Render2DBillboard( _DRAWHND handle )
+    void GraphicsCore::Render2DBillboard(_DRAWHND handle)
     {
         //map transform
         bufferManager->MapTransformBuffer( renderableManager->m_renderableBillboards[ handle.Index_ ].GetWorldMatrix( ) );
@@ -752,7 +779,7 @@ namespace ursine
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sprite" ) ) );
     }
 
-    void GraphicsCore::RenderPointLight( _DRAWHND handle, Camera &currentCamera, SMat4 &proj )
+    void GraphicsCore::RenderPointLight(_DRAWHND handle, GFXCamera &currentCamera, SMat4 &proj)
     {
         //get point light data
         PointLight &pl = renderableManager->m_renderablePointLight[ handle.Index_ ];
@@ -762,22 +789,22 @@ namespace ursine
 
         //domain shader needs light proj
         SMat4 lightProj;
-        lightProj = SMat4( radius, radius, radius );    //scaling
-        lightProj *= SMat4( pl.GetPosition( ) );        //translate to world space
-        lightProj *= currentCamera.GetViewMatrix( );    //transform into view space
-        lightProj *= proj;                              //transform into screeen space
+        lightProj = SMat4( radius, radius, radius ); //scaling
+        lightProj *= SMat4( pl.GetPosition( ) ); //translate to world space
+        lightProj *= currentCamera.GetViewMatrix( ); //transform into view space
+        lightProj *= proj; //transform into screeen space
 
         //map
         bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>( &lightProj, DOMAIN_SHADER );
 
         //ps needs point light data buffer
-        SMat4 view = currentCamera.GetViewMatrix( );    //need to transpose view (dx11 gg)
+        SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
         view.Transpose( );
         SVec3 lightPosition = view.TransformPoint( pl.GetPosition( ) );
 
         PointLightBuffer pointB;
-        pointB.lightPos = lightPosition.ToD3D();
-        pointB.lightRadius = pl.GetRadius();
+        pointB.lightPos = lightPosition.ToD3D( );
+        pointB.lightRadius = pl.GetRadius( );
         pointB.intensity = 1;
         pointB.color.x = pl.GetColor( ).r;
         pointB.color.y = pl.GetColor( ).g;
@@ -808,16 +835,16 @@ namespace ursine
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sphere" ) ) );
     }
 
-    void GraphicsCore::RenderDirectionalLight( _DRAWHND handle, Camera &currentCamera )
+    void GraphicsCore::RenderDirectionalLight(_DRAWHND handle, GFXCamera &currentCamera)
     {
         //ID3D11ShaderResourceView *resource = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_SHADOWMAP );
         //dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &resource );
 
         DirectionalLight &dl = renderableManager->m_renderableDirectionalLight[ handle.Index_ ];
 
-        SMat4 view = currentCamera.GetViewMatrix( );    //need to transpose view (dx11 gg)
+        SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
         view.Transpose( );
-        SVec3 lightDirection = view.TransformVector( dl.GetDirection( ));
+        SVec3 lightDirection = view.TransformVector( dl.GetDirection( ) );
 
         DirectionalLightBuffer lightB;
         lightB.lightDirection.x = lightDirection.X( );
@@ -832,9 +859,8 @@ namespace ursine
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
     }
 
-    void GraphicsCore::RenderPrimitive( _DRAWHND handle )
+    void GraphicsCore::RenderPrimitive(_DRAWHND handle)
     {
-
         Primitive &prim = renderableManager->m_renderablePrimitives[ handle.Index_ ];
 
         //set data if it is wireframe or not
@@ -857,48 +883,48 @@ namespace ursine
         //render specific primitive, based upon data
         switch (prim.GetType( ))
         {
-        case Primitive::PRIM_PLANE:
-            dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_LINELIST );
-            bufferManager->MapTransformBuffer( SMat4( prim.GetWidth( ), 0, prim.GetHeight( ) ) * prim.GetWorldMatrix( ) );
-            modelManager->BindModel( modelManager->GetModelIDByName( "Plane" ) );
-            shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Plane" ) ) );
-            break;
+            case Primitive::PRIM_PLANE:
+                dxCore->GetDeviceContext( )->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_LINELIST );
+                bufferManager->MapTransformBuffer( SMat4( prim.GetWidth( ), 0, prim.GetHeight( ) ) * prim.GetWorldMatrix( ) );
+                modelManager->BindModel( modelManager->GetModelIDByName( "Plane" ) );
+                shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Plane" ) ) );
+                break;
 
-        case Primitive::PRIM_SPHERE:
-            bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f ) * prim.GetWorldMatrix( ) );
-            modelManager->BindModel( modelManager->GetModelIDByName( "Sphere" ) );
-            shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sphere" ) ) );
-            break;
-        case Primitive::PRIM_CUBE:
-            bufferManager->MapTransformBuffer( SMat4( prim.GetWidth( ), prim.GetHeight( ), prim.GetDepth( ) ) * prim.GetWorldMatrix( ) );
-            modelManager->BindModel( modelManager->GetModelIDByName( "Cube" ) );
-            shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Cube" ) ) );
-            break;
-        case Primitive::PRIM_CAPSULE:
-            modelManager->BindModel( modelManager->GetModelIDByName( "HalfSphere" ) );
+            case Primitive::PRIM_SPHERE:
+                bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f, prim.GetRadius( ) / 2.f ) * prim.GetWorldMatrix( ) );
+                modelManager->BindModel( modelManager->GetModelIDByName( "Sphere" ) );
+                shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sphere" ) ) );
+                break;
+            case Primitive::PRIM_CUBE:
+                bufferManager->MapTransformBuffer( SMat4( prim.GetWidth( ), prim.GetHeight( ), prim.GetDepth( ) ) * prim.GetWorldMatrix( ) );
+                modelManager->BindModel( modelManager->GetModelIDByName( "Cube" ) );
+                shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Cube" ) ) );
+                break;
+            case Primitive::PRIM_CAPSULE:
+                modelManager->BindModel( modelManager->GetModelIDByName( "HalfSphere" ) );
 
-            //render top cap
-            SMat4 trans;
-            trans.Translate( SVec3( 0.0f, prim.GetHeight( ) * 0.5f, 0.0f ) );
-            bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ), prim.GetRadius( ), prim.GetRadius( ) )  * trans * prim.GetWorldMatrix( ) );
-            shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
+                //render top cap
+                SMat4 trans;
+                trans.Translate( SVec3( 0.0f, prim.GetHeight( ) * 0.5f, 0.0f ) );
+                bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ), prim.GetRadius( ), prim.GetRadius( ) ) * trans * prim.GetWorldMatrix( ) );
+                shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
 
-            //render bottom cap
-            SMat4 mat;
-            mat.TRS( SVec3( 0, -prim.GetHeight( ) / 2.f, 0 ), SQuat( 180.0f, 0.0f, 0.0f ), SVec3( prim.GetRadius( ) ) );
+                //render bottom cap
+                SMat4 mat;
+                mat.TRS( SVec3( 0, -prim.GetHeight( ) / 2.f, 0 ), SQuat( 180.0f, 0.0f, 0.0f ), SVec3( prim.GetRadius( ) ) );
 
-            bufferManager->MapTransformBuffer( mat * prim.GetWorldMatrix( ) );
-            shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
+                bufferManager->MapTransformBuffer( mat * prim.GetWorldMatrix( ) );
+                shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "HalfSphere" ) ) );
 
-            //render body
-            modelManager->BindModel( modelManager->GetModelIDByName( "CapsuleBody" ) );
-            bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ), prim.GetHeight( ), prim.GetRadius( ) )  * prim.GetWorldMatrix( ) );
-            shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "CapsuleBody" ) ) );
-            break;
+                //render body
+                modelManager->BindModel( modelManager->GetModelIDByName( "CapsuleBody" ) );
+                bufferManager->MapTransformBuffer( SMat4( prim.GetRadius( ), prim.GetHeight( ), prim.GetRadius( ) ) * prim.GetWorldMatrix( ) );
+                shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "CapsuleBody" ) ) );
+                break;
         }
     }
 
-    void GraphicsCore::RenderDebugPoints( const SMat4 &view, const SMat4 &proj, Camera &currentCamera )
+    void GraphicsCore::RenderDebugPoints(const SMat4 &view, const SMat4 &proj, GFXCamera &currentCamera)
     {
         //render points
         if (drawingManager->CheckRenderPoints( ))
@@ -929,7 +955,7 @@ namespace ursine
         }
     }
 
-    void GraphicsCore::RenderDebugLines( const SMat4 &view, const SMat4 &proj, Camera &currentCamera )
+    void GraphicsCore::RenderDebugLines(const SMat4 &view, const SMat4 &proj, GFXCamera &currentCamera)
     {
         //render lines
         if (drawingManager->CheckRenderLines( ))
@@ -955,7 +981,7 @@ namespace ursine
 
     void GraphicsCore::SetGameViewport(GFXHND vp)
     {
-        _VIEWPORTHND *viewPort = reinterpret_cast<_VIEWPORTHND*>(&vp);
+        _VIEWPORTHND *viewPort = reinterpret_cast<_VIEWPORTHND*>( &vp );
 
         UAssert( viewPort->ID_ == ID_VIEWPORT, "Attempted to set game viewport with invalid handle!" );
 
@@ -963,12 +989,12 @@ namespace ursine
     }
 
     // misc stuff /////////////////////////////////////////////////////
-    DXCore::DirectXCore *GraphicsCore::GetDXCore( )
+    DXCore::DirectXCore *GraphicsCore::GetDXCore()
     {
         return dxCore;
     }
 
-    void GraphicsCore::Resize( int width, int height )
+    void GraphicsCore::Resize(int width, int height)
     {
         if (!m_ready)
             return;
@@ -986,23 +1012,23 @@ namespace ursine
         Invalidate( );
     }
 
-    void GraphicsCore::Invalidate( )
+    void GraphicsCore::Invalidate()
     {
         dxCore->Invalidate( );
         shaderManager->Invalidate( );
         layoutManager->Invalidate( );
     }
 
-    void GraphicsCore::RenderUI( GFXHND camera, RENDER_TARGETS input )
+    void GraphicsCore::RenderUI(GFXHND camera, RENDER_TARGETS input)
     {
-        _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>(&camera);
+        _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>( &camera );
 
         UAssert( newRender->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!" );
 
         PrepForUI( );
 
         // get viewport
-        Camera &cam = cameraManager->GetCamera( camera );
+        GFXCamera &cam = cameraManager->GetCamera( camera );
 
         //get game vp dimensions
         Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
@@ -1039,6 +1065,12 @@ namespace ursine
 
         //set directx viewport
         D3D11_VIEWPORT vpData = viewportManager->GetViewport( m_GameViewport ).GetViewportData( );
+        unsigned w, h;
+        gfxInfo->GetDimensions(w, h );
+        vpData.TopLeftX = 0;
+        vpData.TopLeftY = 0;
+        vpData.Width = w;
+        vpData.Height = h;
 
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 

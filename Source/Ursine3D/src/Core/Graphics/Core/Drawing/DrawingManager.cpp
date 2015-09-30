@@ -90,7 +90,7 @@ namespace ursine
         UAssert( result == S_OK, "Failed to make index buffer!" );
     }
 
-    void DrawingManager::Uninitialize()
+    void DrawingManager::Uninitialize(void)
     {
         RELEASE_RESOURCE( m_vertPointBuffer );
         RELEASE_RESOURCE( m_vertLineBuffer );
@@ -99,38 +99,38 @@ namespace ursine
         m_deviceContext = nullptr;
     }
 
-    void DrawingManager::EndScene()
+    void DrawingManager::EndScene(void)
     {
         m_lineCount = 0;
         m_pointCount = 0;
     }
 
-    void DrawingManager::SetDrawColor(float x, float y, float z, float a)
+    void DrawingManager::SetDrawColor( const float x, const float y, const float z, const float a)
     {
         m_color = DirectX::XMFLOAT4( x, y, z, a );
     }
 
-    void DrawingManager::SetDrawColor(DirectX::XMFLOAT4 color)
+    void DrawingManager::SetDrawColor( const DirectX::XMFLOAT4 color)
     {
         m_color = color;
     }
 
-    DirectX::XMFLOAT4 &DrawingManager::GetColor()
+    DirectX::XMFLOAT4 &DrawingManager::GetColor(void)
     {
         return m_color;
     }
 
-    void DrawingManager::SetSize(float width)
+    void DrawingManager::SetSize( const float width)
     {
         m_size = width;
     }
 
-    float DrawingManager::GetSize()
+    float DrawingManager::GetSize(void)
     {
         return m_size;
     }
 
-    void DrawingManager::DrawPoint(float x, float y, float z)
+    void DrawingManager::DrawPoint( const float x, const float y, const float z)
     {
         UAssert( m_pointCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it" );
         m_pointList[ m_pointCount ].pos = DirectX::XMFLOAT4( x, y, z, 1 );
@@ -138,7 +138,7 @@ namespace ursine
         m_pointList[ m_pointCount++ ].color = m_color;
     }
 
-    void DrawingManager::DrawLine(float x0, float y0, float z0, float x1, float y1, float z1)
+    void DrawingManager::DrawLine( const float x0, const float y0, const float z0, const float x1, const float y1, const float z1)
     {
         UAssert( m_lineCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it" );
         m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4( x0, y0, z0, 1 );
@@ -206,12 +206,12 @@ namespace ursine
         *mesh = m_vertLineBuffer;
     }
 
-    bool DrawingManager::CheckRenderPoints()
+    bool DrawingManager::CheckRenderPoints(void) const
     {
         return m_pointCount > 0;
     }
 
-    bool DrawingManager::CheckRenderLines()
+    bool DrawingManager::CheckRenderLines(void) const
     {
         return m_lineCount > 0;
     }

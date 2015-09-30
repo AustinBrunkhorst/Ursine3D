@@ -1,55 +1,54 @@
 #include "UrsinePrecompiled.h"
 
 #include "CameraManager.h"
+#include "GraphicsDefines.h"
 
 namespace ursine
 {
-  void CameraManager::Initialize( )
-  {
-    m_cameraArray.clear( );
-    m_cameraArray.push_back( Camera( ) );
-    m_cameraArray[ 0 ].Initialize( );
+    void CameraManager::Initialize( void )
+    {
+        m_cameraArray.resize( MAX_CAMERAS );
 
-    m_current = 0;
-  }
+        for (unsigned x = 0; x < MAX_CAMERAS; ++x)
+        {
+            m_freeCameraList.push_back( x );
+        }
+    }
 
-  void CameraManager::Uninitialize( )
-  {
-    m_cameraArray.clear( );
-  }
+    void CameraManager::Uninitialize( void )
+    {
+        
+    }
 
-  GFXHND CameraManager::CreateCamera( )
-  {
-    GFXHND data;
-    _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>(&data);
-    newRender->ID_ = ID_CAMERA;
-    newRender->Index_ = m_cameraArray.size( );
-    m_cameraArray.push_back( Camera( ) );
-    m_cameraArray[ newRender->Index_ ].Initialize( );
+    GFXHND CameraManager::CreateCamera()
+    {
+        UAssert( m_freeCameraList.size( ) > 0, "Out of cameras!" );
+        GFXHND data;
+        _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>( &data );
+        newRender->ID_ = ID_CAMERA;
+        newRender->Index_ = m_freeCameraList.front( );
+        m_freeCameraList.pop_front( );
+        m_cameraArray[ newRender->Index_ ].Initialize( );
 
-    return data;
-  }
+        return data;
+    }
 
-  Camera &CameraManager::GetCamera( const GFXHND &handle )
-  {
-    const _RESOURCEHND *newRender = reinterpret_cast<const _RESOURCEHND*>(&handle);
+    GFXCamera &CameraManager::GetCamera(const GFXHND &handle)
+    {
+        const _RESOURCEHND *newRender = reinterpret_cast<const _RESOURCEHND*>( &handle );
 
-    UAssert( newRender->ID_ == ID_CAMERA, "Attempted to use invalid handle to get camera!" );
+        UAssert( newRender->ID_ == ID_CAMERA, "Attempted to use invalid handle to get camera!" );
 
-    return m_cameraArray[ newRender->Index_ ];
-  }
+        return m_cameraArray[ newRender->Index_ ];
+    }
 
-  Camera &CameraManager::GetCurrent( )
-  {
-    return m_cameraArray[ m_current ];
-  }
+    void CameraManager::DestroyCamera(GFXHND& handle)
+    {
+        _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>(&handle);
 
-  void CameraManager::SetCurrent( const GFXHND &handle )
-  {
-    const _RESOURCEHND *newRender = reinterpret_cast<const _RESOURCEHND*>(&handle);
-
-    UAssert( newRender->ID_ == ID_CAMERA, "Attempted to use invalid handle to get camera!" );
-
-    m_current = newRender->Index_;
-  }
+        UAssert( newRender->ID_ == ID_CAMERA, "Attempted to destroy invalid camera handle!" );
+        m_cameraArray[ newRender->Index_ ].Uninitialize( );
+        m_freeCameraList.push_front( newRender->ID_ );
+        handle = 0;
+    }
 }

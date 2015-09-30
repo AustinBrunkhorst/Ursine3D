@@ -30,11 +30,11 @@ namespace ursine
         {
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, ShaderManager *shdrmgr);
-            void Uninitialize();
+            void Uninitialize(void);
 
-            void SetInputLayout(SHADER_TYPES type);
+            void SetInputLayout(const SHADER_TYPES type);
 
-            void Invalidate();
+            void Invalidate(void);
         private:
             HRESULT GetLayoutFromBlob(Shader *shader, ID3D11InputLayout **pInputLayout);
             ID3D11Device *m_device;

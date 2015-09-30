@@ -17,6 +17,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #pragma once
 
 #include <vector>
+#include <list>
 
 #include "GraphicsDefines.h"
 #include "Camera.h"
@@ -26,16 +27,17 @@ namespace ursine
     class CameraManager
     {
     public:
-        void Initialize();
-        void Uninitialize();
+        void Initialize(void);
+        void Uninitialize( void );
 
-        GFXHND CreateCamera();
-        Camera &GetCamera(const GFXHND &handle);
+        GFXHND CreateCamera( void );
+        GFXCamera &GetCamera(const GFXHND &handle);
 
-        Camera &GetCurrent();
-        void SetCurrent(const GFXHND &handle);
+        void DestroyCamera( GFXHND &handle );
+
     private:
-        std::vector<Camera> m_cameraArray;
+        std::vector<GFXCamera> m_cameraArray;
+        std::list<unsigned> m_freeCameraList;
         unsigned m_current;
     };
 }

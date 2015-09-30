@@ -3,7 +3,7 @@
 
 namespace ursine
 {
-    void RenderableManager::Initialize()
+    void RenderableManager::Initialize(void)
     {
         m_currentRenderableModel3D.resize( MAX_RENDERABLES );
         m_currentRenderableDirectionalLight.resize( MAX_RENDERABLES );
@@ -95,7 +95,7 @@ namespace ursine
         handle = 0;
     }
 
-    void RenderableManager::CacheFrame()
+    void RenderableManager::CacheFrame(void)
     {
         m_renderableModel3D = m_currentRenderableModel3D;
         m_renderableDirectionalLight = m_currentRenderableDirectionalLight;

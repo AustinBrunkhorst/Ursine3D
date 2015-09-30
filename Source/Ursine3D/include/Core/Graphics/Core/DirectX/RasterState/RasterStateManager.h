@@ -28,12 +28,12 @@ namespace ursine
         {
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
-            void Uninitialize();
+            void Uninitialize(void);
 
-            ID3D11RasterizerState *GetRasterState(RASTER_STATES state);
-            void SetRasterState(RASTER_STATES state);
+            ID3D11RasterizerState *GetRasterState(const RASTER_STATES state);
+            void SetRasterState(const RASTER_STATES state);
 
-            void Invalidate();
+            void Invalidate(void);
         private:
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;

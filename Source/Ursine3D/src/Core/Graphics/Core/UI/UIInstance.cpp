@@ -9,7 +9,7 @@
 
 namespace ursine
 {
-    void UIInstance::Initialize( ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *gfx, RENDER_TARGETS target )
+    void UIInstance::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *gfx, RENDER_TARGETS target)
     {
         m_device = device;
         m_context = context;
@@ -26,7 +26,7 @@ namespace ursine
         m_target = target;
     }
 
-    void UIInstance::Uninitialize( )
+    void UIInstance::Uninitialize()
     {
         m_device = nullptr;
         m_context = nullptr;
@@ -42,7 +42,7 @@ namespace ursine
         GfxManager->RenderUI_Main( m_target );
     }
 
-    bool UIInstance::GetViewRect( CefRefPtr<CefBrowser> browser, CefRect &bounds )
+    bool UIInstance::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &bounds)
     {
         bounds.x = 0;
         bounds.y = 0;
@@ -54,13 +54,13 @@ namespace ursine
         m_width = x;
         m_height = y;
 
-        bounds.width = static_cast<int>(m_width);
-        bounds.height = static_cast<int>(m_height);
+        bounds.width = static_cast<int>( m_width );
+        bounds.height = static_cast<int>( m_height );
 
         return true;
     }
 
-    void UIInstance::OnPopupShow( CefRefPtr<CefBrowser> browser, bool show )
+    void UIInstance::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show)
     {
         if (!show)
         {
@@ -70,7 +70,7 @@ namespace ursine
         }
     }
 
-    void UIInstance::OnPopupSize( CefRefPtr<CefBrowser> browser, const CefRect &bounds )
+    void UIInstance::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect &bounds)
     {
         if (bounds.width <= 0 || bounds.height <= 0)
             return;
@@ -84,9 +84,8 @@ namespace ursine
         const RectList &regions,
         const void *buffer,
         int width,
-        int height )
+        int height)
     {
-
         if (type == PET_VIEW)
             paintView( browser, type, regions, buffer, width, height );
         else if (m_popm_upbounds.width > 0 && m_popm_upbounds.height > 0)
@@ -100,9 +99,8 @@ namespace ursine
         const RectList &regions,
         const void *buffer,
         int width,
-        int height )
+        int height)
     {
-
         //@Matt temp
         paintPopup( browser, type, regions, buffer, width, height );
     }
@@ -114,7 +112,7 @@ namespace ursine
         const RectList &regions,
         const void *buffer,
         int width,
-        int height )
+        int height)
     {
         int skip_pixels = 0, x = m_popm_upbounds.x;
         int skip_rows = 0, y = m_popm_upbounds.y;
@@ -166,8 +164,8 @@ namespace ursine
 
         //this doesn't work for now
         //define the box of the texture
-        D3D11_BOX box;    //this box is the taken from the SOURCE texture
-        box.back = 1;     //this might need SERIOUS changes
+        D3D11_BOX box; //this box is the taken from the SOURCE texture
+        box.back = 1; //this might need SERIOUS changes
         box.front = 0;
 
         box.left = 0;
@@ -183,13 +181,11 @@ namespace ursine
         RELEASE_RESOURCE( tex );
     }
 
-    void UIInstance::Resize( int width, int height )
+    void UIInstance::Resize(int width, int height)
     {
         m_width = width;
         m_height = height;
 
         m_rtManager->ResizeUI( width, height, m_target );
     }
-
-    
 }

@@ -100,7 +100,7 @@ namespace ursine
         }
 
     private:
-        void CacheFrame();
+        void CacheFrame(void);
 
     private:
         //all the renderables
