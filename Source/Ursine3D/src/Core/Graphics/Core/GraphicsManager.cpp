@@ -1065,6 +1065,12 @@ namespace ursine
 
         //set directx viewport
         D3D11_VIEWPORT vpData = viewportManager->GetViewport( m_GameViewport ).GetViewportData( );
+        unsigned w, h;
+        gfxInfo->GetDimensions(w, h );
+        vpData.TopLeftX = 0;
+        vpData.TopLeftY = 0;
+        vpData.Width = w;
+        vpData.Height = h;
 
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
