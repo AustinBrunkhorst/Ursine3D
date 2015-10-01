@@ -9,20 +9,21 @@ namespace ursine
 {
     namespace ecs
     {
-        ALIGNED16(class) Transform : public Component
+        class Transform : public Component
         {
             NATIVE_COMPONENT;
 
         public:
-        #if defined(__REFLECTION_PARSER__)
+        /*#if defined(__REFLECTION_PARSER__)
 
             Meta(Getter( "GetterForfieldName" ), Setter( "SetterForfieldName" ))
             SVec3 fieldName;
 
-        #endif
+        #endif*/
 
-            Transform(void);
-            Transform(const Transform &transform);
+			Transform(void) : BaseComponent() { }
+
+            /*Transform(const Transform &transform);
 
             ~Transform(void);
 
@@ -104,7 +105,7 @@ namespace ursine
             SVec3 m_local_position,
                   m_local_scale;
 
-            SQuat m_local_rotation;
+            SQuat m_local_rotation;*/
 
         } Meta(Enable, DisplayName( "Transform" ));
     }

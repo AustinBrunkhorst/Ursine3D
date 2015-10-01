@@ -29,6 +29,8 @@ private:
 
     void onMouseScroll(EVENT_HANDLER(MouseManager));
 
+	void onKeyDown(EVENT_HANDLER(KeyboardManager));
+
     void UpdateCamera(float dt);
     void UpdateCamera_Mouse(float dt);
     void UpdateCamera_Keys(float dt);

@@ -67,8 +67,11 @@ void PhysicsTest::OnInitialize(void)
     initGraphics();
     initPhysics();
 
-    m_camPos = SVec3(0, 0, 0);
+    m_camPos = SVec3(0, 1, -15);
     m_camZoom = 5;
+
+	Application::Instance->GetCoreSystem<KeyboardManager>()->Listener(this)
+		.On(KM_KEY_DOWN, &PhysicsTest::onKeyDown);
 }
 
 void PhysicsTest::OnRemove(void)
@@ -98,7 +101,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
     t = Application::Instance->GetDeltaTime();
 
     UpdateCamera(t);
-    RenderGrid();
+    // RenderGrid();
 
     static SQuat quat0(60.0f, 40.0f, 10.0f);
     static SQuat quat1(-60.0f, -40.0f, -20.0f);
@@ -128,7 +131,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 
     //stick draw calls here
     //m_gfx->RenderObject( m_cube );
-    m_gfx->RenderObject(m_floor);
+    //m_gfx->RenderObject(m_floor);
     //m_gfx->RenderObject(m_billboard);
     //m_gfx->RenderObject( m_directLight );
     //m_gfx->RenderObject( m_primitive );
@@ -202,6 +205,18 @@ void PhysicsTest::onMouseScroll(EVENT_HANDLER(MouseManager))
     m_camZoom -= args->delta.Y();
 
     if (m_camZoom < 1) m_camZoom = 1.f;
+}
+
+void PhysicsTest::onKeyDown(EVENT_HANDLER(KeyboardManager))
+{
+	EVENT_ATTRS(KeyboardManager, ursine::KeyboardKeyArgs);
+	static bool spawned = false;
+
+	if (args->key == KEY_SPACE && !spawned)
+	{
+		spawned = true;
+		m_physics->LoadWorld("Assets/Bullet/test.bullet");
+	}
 }
 
 void PhysicsTest::UpdateCamera_Keys(float dt)
@@ -505,7 +520,7 @@ void PhysicsTest::initGraphics(void)
     HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle()));
 
     GfxConfig config;
-    config.Fullscreen_ = false;
+    config.Fullscreen_ = true;
     config.HandleToWindow_ = handle;
     config.ModelListPath_ = "Models/";
     config.ShaderListPath_ = "SHADER_BINARY/";
@@ -616,5 +631,4 @@ void PhysicsTest::initGraphics(void)
 void PhysicsTest::initPhysics(void)
 {
     m_physics = Application::Instance->GetCoreSystem<PhysicsManager>();
-    m_physics->LoadWorld("Assets/Bullet/test.bullet");
 }
