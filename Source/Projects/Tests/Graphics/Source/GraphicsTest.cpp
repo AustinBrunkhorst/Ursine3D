@@ -121,7 +121,7 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
   //modelCube.SetWorldMatrix( mat );
 
    m_gfx->RenderableMgr.GetPointLight( m_light ).SetPosition( m_camPos );
-   m_gfx->RenderableMgr.GetPointLight( m_light ).SetRadius( 5 );
+   m_gfx->RenderableMgr.GetPointLight( m_light ).SetRadius( 15 );
 m_gfx->StartFrame( );
   //BEGIN
 
@@ -592,7 +592,7 @@ void GraphicsTest::initGraphics( void )
 
           Model3D &current = m_gfx->RenderableMgr.GetModel3D( m_spheres[ y ][ x ] );
           current.SetWorldMatrix( SMat4( SVec3(x, y, 0 ) ) );
-          current.SetModel( "Cube" );
+          current.SetModel( "Sphere" );
           current.SetMaterial( "Blank" );
           current.SetMaterialData( 0.5, 10.f + (x / (float)(count - 1)) * 245.f, (float)y / (float)(count - 1) );
       }
