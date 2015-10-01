@@ -16,3 +16,7 @@ ursine_default_project(Editor
 
 # disable exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
+
+# add WITH_EDITOR definition to editor and engine targets
+set_target_properties(Editor PROPERTIES COMPILE_DEFINITIONS WITH_EDITOR=1)
+set_target_properties(Ursine3D PROPERTIES COMPILE_DEFINITIONS WITH_EDITOR=1)

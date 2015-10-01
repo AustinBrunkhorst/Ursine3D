@@ -38,8 +38,12 @@ namespace ursine
         // get the background, array of 4 floats
         const float *GetBackgroundColor();
 
+        void GetDimensions(unsigned &width, unsigned &height);
+
         // set dimensions of the viewport, in pixels
         void SetDimensions(unsigned width, unsigned height);
+
+        void GetPosition(unsigned &positionX, unsigned &positionY);
 
         // set the top-left position of this viewport, in pixels. 
         // top left is 0, 0, bottom right is screenWidth, screenHeight

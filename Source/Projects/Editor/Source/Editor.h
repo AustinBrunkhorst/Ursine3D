@@ -6,7 +6,7 @@
 #include <UIView.h>
 
 class Project;
-class EditorTool;
+class NativeEditorTool;
 
 class Editor : public ursine::core::CoreSystem
 {
@@ -36,7 +36,7 @@ private:
 
     Project *m_project;
 
-    std::vector<EditorTool *> m_tools;
+    std::vector<NativeEditorTool *> m_tools;
 
     void initializeGraphics(void);
     void initializeTools(void);

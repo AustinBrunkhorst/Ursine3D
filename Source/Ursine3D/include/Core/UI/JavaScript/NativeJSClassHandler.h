@@ -6,7 +6,7 @@
 
 namespace ursine
 {
-    class NativeJavaScriptHandler : public CefV8Handler
+    class NativeJSClassHandler : public CefV8Handler
     {
     private:
         friend class RenderProcessHandler;
@@ -33,7 +33,12 @@ namespace ursine
         {
             meta::Variant instance;
 
-            InstanceWrapper(const meta::Constructor &constructor);
+            InstanceWrapper(
+                const meta::Constructor &constructor,
+                CefRefPtr<CefV8Value> context,
+                const CefV8ValueList &arguments,
+                CefString &exception
+            );
 
             IMPLEMENT_REFCOUNTING( InstanceWrapper );
         };
@@ -44,7 +49,7 @@ namespace ursine
 
         CefRefPtr<PrototypeHandler> m_prototypeHandler;
 
-        NativeJavaScriptHandler(meta::Type classType);
+        NativeJSClassHandler(meta::Type classType);
 
         void Bind(CefRefPtr<CefV8Value> object);
         void UnBind(CefRefPtr<CefV8Value> object);
@@ -57,6 +62,6 @@ namespace ursine
             CefString &exception
         ) override;
 
-        IMPLEMENT_REFCOUNTING( NativeJavaScriptHandler );
+        IMPLEMENT_REFCOUNTING( NativeJSClassHandler );
     };
 }

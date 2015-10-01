@@ -38,7 +38,15 @@ TemplateData Constructor::CompileTemplate(
     data[ "dynamicInvocationBody" ] = 
         context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
 
-    data[ "enableNonDynamic" ] = utils::TemplateBool( !m_metaData.GetFlag( kMetaDisableNonDynamicCtor ) );
+    data[ "enableNonDynamic" ] = 
+        utils::TemplateBool( 
+            !m_metaData.GetFlag( native_property::DisableNonDynamicCtor ) 
+        );
+
+    data[ "dynamicWrapObject" ] = 
+        utils::TemplateBool( 
+            m_metaData.GetFlag( native_property::DynamicCtorWrap ) 
+        );
 
     data[ "argument" ] = compileSignatureTemplate( );
 
@@ -50,7 +58,7 @@ TemplateData Constructor::CompileTemplate(
 bool Constructor::isAccessible(void) const
 {
     return m_accessModifier == CX_CXXPublic && 
-           !m_metaData.GetFlag( kMetaDisable );
+           !m_metaData.GetFlag( native_property::Disable );
 }
 
 std::string Constructor::getTemplateParameters(void) const

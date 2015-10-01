@@ -208,6 +208,30 @@ var ursine_editor_WindowHandler = function() {
 };
 $hxClasses["ursine.editor.WindowHandler"] = ursine_editor_WindowHandler;
 ursine_editor_WindowHandler.__name__ = ["ursine","editor","WindowHandler"];
+var ursine_editor_NativeCanvasWindowHandler = function(toolName) {
+	ursine_editor_WindowHandler.call(this);
+	this.m_nativeHandler = new NativeToolHandler(toolName);
+	var _g = 0;
+	var _g1 = ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents;
+	while(_g < _g1.length) {
+		var event = _g1[_g];
+		++_g;
+		this.window.addEventListener(event,$bind(this,this.forwardEvent),true);
+	}
+	window.addEventListener("resize",$bind(this,this.onViewportInvalidated));
+};
+$hxClasses["ursine.editor.NativeCanvasWindowHandler"] = ursine_editor_NativeCanvasWindowHandler;
+ursine_editor_NativeCanvasWindowHandler.__name__ = ["ursine","editor","NativeCanvasWindowHandler"];
+ursine_editor_NativeCanvasWindowHandler.__super__ = ursine_editor_WindowHandler;
+ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_WindowHandler.prototype,{
+	forwardEvent: function(e) {
+		this.m_nativeHandler.Event(e.type,e);
+	}
+	,onViewportInvalidated: function() {
+		var bounds = this.window.container.getBoundingClientRect();
+		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left, y : bounds.top, width : bounds.width, height : bounds.height});
+	}
+});
 var ursine_editor_menus_DebugMenu = function() { };
 $hxClasses["ursine.editor.menus.DebugMenu"] = ursine_editor_menus_DebugMenu;
 ursine_editor_menus_DebugMenu.__name__ = ["ursine","editor","menus","DebugMenu"];
@@ -263,7 +287,7 @@ var ursine_editor_menus_FileMenu = function() { };
 $hxClasses["ursine.editor.menus.FileMenu"] = ursine_editor_menus_FileMenu;
 ursine_editor_menus_FileMenu.__name__ = ["ursine","editor","menus","FileMenu"];
 ursine_editor_menus_FileMenu.doNew = function() {
-	console.log("new");
+	console.log("NativeEditorHandler");
 };
 ursine_editor_menus_FileMenu.doOpen = function() {
 	console.log("open");
@@ -278,6 +302,7 @@ var ursine_editor_windows_EntityInspector = function() {
 	this.window.style.bottom = "50%";
 	this.window.style.left = "0";
 	this.window.style.width = "15%";
+	this.window.style.borderBottom = "none";
 };
 $hxClasses["ursine.editor.windows.EntityInspector"] = ursine_editor_windows_EntityInspector;
 ursine_editor_windows_EntityInspector.__name__ = ["ursine","editor","windows","EntityInspector"];
@@ -298,18 +323,18 @@ ursine_editor_windows_SceneOutline.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 });
 var ursine_editor_windows_SceneView = function() {
-	ursine_editor_WindowHandler.call(this);
+	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
 	this.window.heading = "Scene";
 	this.window.style.top = "0";
 	this.window.style.bottom = "0";
 	this.window.style.left = "15%";
 	this.window.style.right = "0";
-	console.log("testing");
+	this.window.style.borderLeft = "none";
 };
 $hxClasses["ursine.editor.windows.SceneView"] = ursine_editor_windows_SceneView;
 ursine_editor_windows_SceneView.__name__ = ["ursine","editor","windows","SceneView"];
-ursine_editor_windows_SceneView.__super__ = ursine_editor_WindowHandler;
-ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_WindowHandler.prototype,{
+ursine_editor_windows_SceneView.__super__ = ursine_editor_NativeCanvasWindowHandler;
+ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWindowHandler.prototype,{
 });
 var ursine_utils_EventManager = function() {
 	this.m_events = new haxe_ds_StringMap();
@@ -339,11 +364,14 @@ ursine_utils_EventManager.prototype = {
 		return result;
 	}
 };
+var $_, $fid = 0;
+function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 $hxClasses.Math = Math;
 String.__name__ = ["String"];
 $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
 var __map_reserved = {}
+ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur"];
 ursine_editor_menus_DebugMenu.__meta__ = { statics : { doEditorDebugTools : { mainMenuItem : ["Debug/Debug Editor UI"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};

@@ -4,7 +4,7 @@
 
 #include <UIManager.h>
 
-JavaScriptFunction(DebugEditorUI)
+JSFunction(DebugEditorUI)
 {
     std::string debugURL( "http://localhost:" );
 

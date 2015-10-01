@@ -1,12 +1,12 @@
 #include "UrsinePrecompiled.h"
 
-#include "GlobalFunctionHandler.h"
+#include "NativeJSFunctionHandler.h"
 
-#include "NativeJavaScriptFunction.h"
+#include "NativeJSFunction.h"
 
 namespace ursine 
 {
-    void GlobalFunctionHandler::Bind(CefRefPtr<CefV8Value> context)
+    void NativeJSFunctionHandler::Bind(CefRefPtr<CefV8Value> context)
     {
         auto globalFunctions = meta::Type::GetGlobalFunctions( );
 
@@ -30,7 +30,7 @@ namespace ursine
         }
     }
 
-    bool GlobalFunctionHandler::Execute(
+    bool NativeJSFunctionHandler::Execute(
         const CefString &name, 
         CefRefPtr<CefV8Value> object, 
         const CefV8ValueList &arguments, 

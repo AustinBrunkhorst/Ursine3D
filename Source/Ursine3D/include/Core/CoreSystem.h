@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Meta.h"
+#include "Application.h"
 
 #define CORE_SYSTEM               \
     public:                       \
@@ -10,6 +11,8 @@
 
 #define CORE_SYSTEM_DEFINITION(type) \
     unsigned type::SystemID = -1;    \
+
+#define GetCoreSystem(name) ursine::Application::Instance->CoreSystem<name>( )
 
 namespace ursine
 {

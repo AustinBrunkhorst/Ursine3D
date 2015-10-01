@@ -1,18 +1,25 @@
 #include "UrsinePrecompiled.h"
 
-#include "NativeJavaScriptHandler.h"
+#include "NativeJSClassHandler.h"
 
 namespace ursine
 {
-    NativeJavaScriptHandler::NativeJavaScriptHandler(meta::Type classType)
+    NativeJSClassHandler::NativeJSClassHandler(meta::Type classType)
         : m_classType( classType )
-        , m_constructor( classType.GetConstructor( { } ) )
+        , m_constructor( classType.GetDynamicConstructor( { 
+            typeof( CefRefPtr<CefV8Value> ), 
+            typeof( const CefV8ValueList& ),
+            typeof( CefString& )
+        } ) )
         , m_prototypeHandler( new PrototypeHandler( ) )
     {
-        
+        UAssert( m_constructor.IsValid( ),
+            "Native JS Class '%s' does not have a proper constructor.",
+            classType.GetName( ).c_str( )
+        );
     }
 
-    void NativeJavaScriptHandler::Bind(CefRefPtr<CefV8Value> object)
+    void NativeJSClassHandler::Bind(CefRefPtr<CefV8Value> object)
     {
         auto &className = m_classType.GetName( );
 
@@ -40,14 +47,14 @@ namespace ursine
         }
     }
 
-    void NativeJavaScriptHandler::UnBind(CefRefPtr<CefV8Value> object)
+    void NativeJSClassHandler::UnBind(CefRefPtr<CefV8Value> object)
     {
         // release function handler instances
         for (auto &method : m_prototypeHandler->methods)
             method.second.first = nullptr;
     }
 
-    bool NativeJavaScriptHandler::Execute(
+    bool NativeJSClassHandler::Execute(
         const CefString &name, 
         CefRefPtr<CefV8Value> context, 
         const CefV8ValueList &arguments, 
@@ -57,7 +64,9 @@ namespace ursine
     {
         auto object = context->CreateObject( nullptr );
 
-        object->SetUserData( new InstanceWrapper( m_constructor ) );
+        object->SetUserData( 
+            new InstanceWrapper( m_constructor, context, arguments, exception )
+        );
 
         for (auto &method : m_prototypeHandler->methods)
         {
@@ -73,7 +82,7 @@ namespace ursine
         return true;
     }
 
-    bool NativeJavaScriptHandler::PrototypeHandler::Execute(
+    bool NativeJSClassHandler::PrototypeHandler::Execute(
         const CefString &name, 
         CefRefPtr<CefV8Value> context, 
         const CefV8ValueList &arguments, 
@@ -102,8 +111,15 @@ namespace ursine
         return true;
     }
 
-    NativeJavaScriptHandler::InstanceWrapper::InstanceWrapper(const meta::Constructor &constructor)
-        : instance( constructor.Invoke( ) )
+    NativeJSClassHandler::InstanceWrapper::InstanceWrapper(
+        const meta::Constructor &constructor, 
+        CefRefPtr<CefV8Value> context,
+        const CefV8ValueList &arguments,
+        CefString &exception
+    )
+        : instance( 
+            constructor.Invoke( context, std::move( arguments ), std::move( exception ) )
+        )
     {
         
     }

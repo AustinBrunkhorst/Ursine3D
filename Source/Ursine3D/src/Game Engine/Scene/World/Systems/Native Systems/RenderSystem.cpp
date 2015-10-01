@@ -16,7 +16,7 @@ namespace ursine
         RenderSystem::RenderSystem(World *world)
             : EntitySystem( world )
         {
-            m_graphics = CoreSystem( GfxAPI );
+            m_graphics = GetCoreSystem( GfxAPI );
         }
 
         RenderSystem::~RenderSystem(void)
@@ -84,10 +84,16 @@ namespace ursine
         {
             m_graphics->BeginScene( );
 
-            for (auto &camera : m_cameras)
+            for (auto &renderable : m_renderable)
+                m_graphics->RenderObject( renderable.second->m_handle );
+
+            RenderHookArgs e( 0 );
+
+            for (auto &camera : m_cameras) 
             {
-                for (auto &renderable : m_renderable)
-                    m_graphics->RenderObject( renderable.second->m_handle );
+                e.camera = camera.second->m_handle;
+
+                Dispatch( RENDER_HOOK, &e );
 
                 m_graphics->RenderScene( 0.0f, camera.second->m_handle );
             }

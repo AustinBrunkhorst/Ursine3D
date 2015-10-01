@@ -1,6 +1,6 @@
 #pragma once
 
-#include <NativeJavaScriptFunction.h>
+#include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
-JavaScriptFunction(DebugEditorUI);
+JSFunction(DebugEditorUI);

@@ -19,7 +19,8 @@
 /// UI
 
 #include "UIManager.h"
-#include "NativeJavaScriptClass.h"
+#include "NativeJSClass.h"
+#include "NativeJSFunction.h"
 
 /// Window Management
 

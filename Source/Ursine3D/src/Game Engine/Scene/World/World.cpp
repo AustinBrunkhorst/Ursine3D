@@ -98,6 +98,11 @@ namespace ursine
             Dispatch( WORLD_RENDER, EventArgs::Empty );
         }
 
+        SystemManager *World::GetSystemManager(void)
+        {
+            return m_systemManager;
+        }
+
         void World::deleteEntity(Entity *entity)
         {
             m_entityManager->BeforeRemove( entity );

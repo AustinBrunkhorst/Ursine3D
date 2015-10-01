@@ -23,9 +23,11 @@ namespace ursine
         void OnContextInitialized(void) override;
 
         void OnBeforeChildProcessLaunch(
-            CefRefPtr<CefCommandLine> command_line) override;
+            CefRefPtr<CefCommandLine> cmdLine
+        ) override;
 
         void OnRenderProcessThreadCreated(
-            CefRefPtr<CefListValue> extra_info) override;
+            CefRefPtr<CefListValue> extraInfo
+        ) override;
     };
 }

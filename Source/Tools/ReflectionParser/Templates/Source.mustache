@@ -129,7 +129,8 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             };
 
             type.SetEnum<{{& qualifiedName}}>( "{{& displayName}}", {
-                {{#member}} { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
+                {{#member}} 
+                    { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
                 {{/member}}
             } );
 
@@ -180,7 +181,8 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
                 [](m::ArgumentList &args)
                 {
                     return m::Variant { 
-                        {{> dynamicInvocationBody}}
+                        {{> dynamicInvocationBody}}{{#dynamicWrapObject}},
+                        m::variant_policy::WrapObject( ){{/dynamicWrapObject}}
                     };
                 }, 
                 {

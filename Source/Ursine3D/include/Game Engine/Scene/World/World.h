@@ -70,6 +70,8 @@ namespace ursine
             Meta(Disable)
             void Render(void);
 
+            SystemManager *GetSystemManager(void);
+
         private:
             friend class Entity;
             friend class WorldSerializer;

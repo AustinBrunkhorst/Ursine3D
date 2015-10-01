@@ -15,25 +15,15 @@
 
 #include <cef_v8.h>
 
-#include <functional>
+#define JSThrow(message, ...) { exception = message; return __VA_ARGS__; }\
 
-#define JSMethod(name)                                                    \
-    CefRefPtr<CefV8Value> name(CefRefPtr<CefV8Value> context,             \
-                                         const CefV8ValueList &arguments, \
-                                                    CefString &exception) \
-
-#define BindJSMethod(name) std::bind(name, this, _1, _2, _3)
-
-using namespace std::placeholders;
+#define JSHandlerArgs                \
+    CefRefPtr<CefV8Value> context,   \
+    const CefV8ValueList &arguments, \
+    CefString &exception             \
 
 namespace ursine
 {
-    // this context, args, exception [out]
-    typedef std::function<CefRefPtr<CefV8Value>(
-        CefRefPtr<CefV8Value>, 
-        const CefV8ValueList &,
-        CefString &)> JavaScriptMethod;
-
     extern template
     Json JsonSerializer::Serialize(const CefRefPtr<CefV8Value> &instance);
 

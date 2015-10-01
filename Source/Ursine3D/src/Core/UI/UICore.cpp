@@ -27,16 +27,18 @@ namespace ursine
             
     }
 
-    void UICore::OnBeforeCommandLineProcessing(const CefString &process_type,
-        CefRefPtr<CefCommandLine> command_line)
+    void UICore::OnBeforeCommandLineProcessing(
+        const CefString &processType,
+        CefRefPtr<CefCommandLine> cmdLine
+    )
     {
         // fixes v8 errors on startup
-        command_line->AppendSwitch( "no-proxy-server" );
-        command_line->AppendSwitch( "winhttp-proxy-resolver" );
+        cmdLine->AppendSwitch( "no-proxy-server" );
+        cmdLine->AppendSwitch( "winhttp-proxy-resolver" );
 
-        command_line->AppendSwitch( "enable-begin-frame-scheduling" );
-        command_line->AppendSwitch( "disable-gpu" );
-        command_line->AppendSwitch( "disable-gpu-compositing" );
+        cmdLine->AppendSwitch( "enable-begin-frame-scheduling" );
+        cmdLine->AppendSwitch( "disable-gpu" );
+        cmdLine->AppendSwitch( "disable-gpu-compositing" );
 
         //command_line->AppendSwitch("off-screen-rendering-enabled");
         //command_line->AppendSwitch("in-process-gpu");
@@ -49,6 +51,11 @@ namespace ursine
     }
 
     CefRefPtr<CefResourceBundleHandler> UICore::GetResourceBundleHandler(void)
+    {
+        return this;
+    }
+
+    CefRefPtr<CefRenderProcessHandler> UICore::GetRenderProcessHandler(void)
     {
         return this;
     }

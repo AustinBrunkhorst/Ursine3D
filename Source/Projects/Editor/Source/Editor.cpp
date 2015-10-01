@@ -49,8 +49,8 @@ void Editor::OnInitialize(void)
         &Editor::onAppUpdate 
     );
 
-    auto *windowManager = CoreSystem( WindowManager );
-    auto *uiManager = CoreSystem( UIManager );
+    auto *windowManager = GetCoreSystem( WindowManager );
+    auto *uiManager = GetCoreSystem( UIManager );
 
     m_mainWindow.window = windowManager->AddWindow(
         "Ursine3D Editor", 
@@ -66,7 +66,7 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Show( true );
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
-    m_graphics = CoreSystem( GfxAPI );
+    m_graphics = GetCoreSystem( GfxAPI );
 
     m_project = new Project( );
 
@@ -144,6 +144,8 @@ void Editor::initializeGraphics(void)
             static_cast<int>( 30.0f + 27.0f ) 
         );
 
+        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
+
         scene.SetViewport( viewport );
 
         m_graphics->SetGameViewport( viewport );
@@ -153,32 +155,44 @@ void Editor::initializeGraphics(void)
 
     auto *cameraEntity = world.CreateEntity( );
     {
-        auto &camera = cameraEntity->AddComponent<ecs::Camera>( )->GetCamera( );
+        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
+
+        auto &camera = component->GetCamera( );
 
         camera.SetPosition( 0.0f, 0.0f );
         camera.SetDimensions( 1.0f, 1.0f );
+        camera.SetPlanes( 0.1f, 300.0f );
 
         camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+
+        scene.SetEditorCamera( component->GetHandle( ) );
     }
 
-    auto *boxEntity = world.CreateEntity( );
+    for (int i = 0; i < 50; ++i)
     {
-        auto boxHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+        auto *entity = world.CreateEntity( );
+        {
+            auto handle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
 
-        auto &box = m_graphics->RenderableMgr.GetModel3D( boxHandle );
+            auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
 
-        box.SetModel( "Skeleton" );
-        box.SetMaterial( "Blank" );
+            model.SetModel( i & 1 ? "Cube" : "Character" );
+            model.SetMaterial( "Cube" );
 
-        SMat4 transform;
+            SMat4 transform;
 
-        transform.Translate( { 0.0f, 0.0f, 85.0f } );
+            transform.TRS(
+                SVec3{ i * 1.0f, 0.0f, 0.0f },
+                SQuat{ 0.0f, 0.0f, 0.0f },
+                SVec3{ 1.0f, 1.0f, 1.0f }
+            );
 
-        box.SetWorldMatrix( transform );
+            model.SetWorldMatrix( transform );
 
-        auto *component = boxEntity->AddComponent<ecs::Renderable>( );
+            auto *component = entity->AddComponent<ecs::Renderable>( );
 
-        component->SetHandle( boxHandle );
+            component->SetHandle( handle );
+        }
     }
 
     auto *directionLight = world.CreateEntity( );
@@ -188,7 +202,7 @@ void Editor::initializeGraphics(void)
         auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
 
         light.SetDirection( { 0.0f, 1.0f, 0.0f } );
-        light.SetColor( Color::White );
+        light.SetColor( 1.0f, 1.0f, 1.0f );
 
         auto *component = directionLight->AddComponent<ecs::Renderable>( );
 

@@ -171,7 +171,7 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        Type Type::Get(const std::string &name)
+        Type Type::GetFromName(const std::string &name)
         {
             auto search = database.ids.find( name );
 

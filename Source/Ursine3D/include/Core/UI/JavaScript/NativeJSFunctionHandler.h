@@ -4,7 +4,7 @@
 
 namespace ursine
 {
-    class GlobalFunctionHandler : public CefV8Handler
+    class NativeJSFunctionHandler : public CefV8Handler
     {
     public:
         void Bind(CefRefPtr<CefV8Value> context);
@@ -18,6 +18,6 @@ namespace ursine
             CefRefPtr<CefV8Value> &retval,
             CefString &exception) override;
 
-        IMPLEMENT_REFCOUNTING( GlobalFunctionHandler );
+        IMPLEMENT_REFCOUNTING( NativeJSFunctionHandler );
     };
 }

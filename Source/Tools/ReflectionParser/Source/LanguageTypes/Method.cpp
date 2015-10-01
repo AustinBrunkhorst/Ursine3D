@@ -52,7 +52,7 @@ TemplateData Method::CompileTemplate(const ReflectionParser *context) const
 bool Method::isAccessible(void) const
 {
     return m_accessModifier == CX_CXXPublic && 
-           !m_metaData.GetFlag( kMetaDisable );
+           !m_metaData.GetFlag( native_property::Disable );
 }
 
 std::string Method::getQualifiedSignature(void) const

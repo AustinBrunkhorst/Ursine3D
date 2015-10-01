@@ -1,7 +1,7 @@
 namespace ursine
 {
     template<typename SystemType>
-    inline SystemType *Application::GetCoreSystem(void)
+    inline SystemType *Application::CoreSystem(void)
     {
         static_assert( std::is_base_of<core::CoreSystem, SystemType>::value,
             "The type is not a system!" );

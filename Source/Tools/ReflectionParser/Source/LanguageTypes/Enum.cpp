@@ -14,7 +14,7 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetType( ).GetDisplayName( ) )
     , m_qualifiedName( m_name )
 {
-    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( native_property::DisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_qualifiedName;
@@ -91,5 +91,5 @@ void Enum::LoadAnonymous(
 
 bool Enum::isAccessible(void) const
 {
-    return m_metaData.GetFlag( kMetaEnable );
+    return m_metaData.GetFlag( native_property::Enable );
 }

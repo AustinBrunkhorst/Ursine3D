@@ -8,7 +8,7 @@ namespace ursine
         : m_width( 0 )
         , m_height( 0 )
     {
-        m_gfxMgr = CoreSystem( GfxAPI );
+        m_gfxMgr = GetCoreSystem( GfxAPI );
         m_uiHandle = m_gfxMgr->UIMgr.CreateUI( );
     }
 

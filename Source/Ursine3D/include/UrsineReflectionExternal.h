@@ -2,8 +2,13 @@
 
 #include "Meta.h"
 
-#include <cef_base.h>
+///////////////////////////////////////////////////////////////////////////////
+// Chromium Embedded Framework
+///////////////////////////////////////////////////////////////////////////////
+
 #include <cef_v8.h>
 
-MetaExternal(CefRefPtr<CefString>);
-MetaExternal(CefRefPtr<CefV8Value>);
+MetaExternal( CefString );
+MetaExternal( CefRefPtr<CefString> );
+MetaExternal( CefRefPtr<CefV8Value> );
+MetaExternal( CefV8ValueList );

@@ -2,6 +2,8 @@
 
 #include "EntitySystem.h"
 
+#include "GFXAPIDefines.h"
+
 namespace ursine
 {
     class GfxAPI;
@@ -11,7 +13,22 @@ namespace ursine
         class Renderable;
         class Camera;
 
-        class RenderSystem : public EntitySystem
+        enum RenderSystemEventType
+        {
+            RENDER_HOOK
+        };
+
+        struct RenderHookArgs : EventArgs
+        {
+            GFXHND camera;
+
+            RenderHookArgs(GFXHND camera)
+                : camera( camera ) { }
+        };
+
+        class RenderSystem 
+            : public EntitySystem
+            , public EventDispatcher<RenderSystemEventType>
         {
             ENTITY_SYSTEM;
 

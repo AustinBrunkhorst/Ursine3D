@@ -1,8 +1,8 @@
 package ursine.editor.windows;
 
-class SceneView extends WindowHandler {
+class SceneView extends NativeCanvasWindowHandler {
     public function new() {
-        super( );
+        super( 'SceneView' );
 
         window.heading = "Scene";
 
@@ -11,6 +11,9 @@ class SceneView extends WindowHandler {
         window.style.left = "15%";
         window.style.right = "0";
 
-        trace( "testing" );
+        // TODO:
+        window.style.borderLeft = "none";
+
+        //onViewportInvalidated( );
     }
 }

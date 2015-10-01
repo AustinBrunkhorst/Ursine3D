@@ -38,11 +38,23 @@ namespace ursine
     {
         return m_color;
     }
+    
+    void Viewport::GetDimensions(unsigned &width, unsigned &height)
+    {
+        width = m_width;
+        height = m_height;
+    }
 
     void Viewport::SetDimensions(unsigned width, unsigned height)
     {
         m_width = width;
         m_height = height;
+    }
+
+    void Viewport::GetPosition(unsigned &positionX, unsigned &positionY)
+    {
+        positionX = m_positionX;
+        positionY = m_positionY;
     }
 
     void Viewport::SetPosition(unsigned positionX, unsigned positionY)

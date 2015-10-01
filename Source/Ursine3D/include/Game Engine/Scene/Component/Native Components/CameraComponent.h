@@ -18,6 +18,7 @@ namespace ursine
             Camera(void);
             ~Camera(void);
 
+            GFXHND GetHandle(void) const;
             GFXCamera &GetCamera(void) const;
 
         private:

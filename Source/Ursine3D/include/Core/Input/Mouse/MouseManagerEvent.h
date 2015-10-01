@@ -16,7 +16,7 @@ namespace ursine
         MM_SCROLL
     };
 
-    struct MouseButtonArgs : public EventArgs
+    struct MouseButtonArgs : EventArgs
     {
         // Determines the button state. true if down, false if up
         bool state;
@@ -32,32 +32,32 @@ namespace ursine
         uint8 clicks;
 
         MouseButtonArgs(bool state, MouseButton button, const Vec2 &position, uint8 clicks)
-            : state(state)
-            , button(button)
-            , position(position)
-            , clicks(clicks) { }
+            : state( state )
+            , button( button )
+            , position( position )
+            , clicks( clicks ) { }
     };
 
-    struct MouseMoveArgs : public EventArgs
+    struct MouseMoveArgs : EventArgs
     {
         // New position of the mouse
         Vec2 position;
 
         // Change in position of the mouse since 
         // last motion event or mouse update
-        Vec2 position_delta;
+        Vec2 positionDelta;
 
-        MouseMoveArgs(const Vec2 &position, const Vec2 &position_delta)
-            : position(position)
-            , position_delta(position_delta) { }
+        MouseMoveArgs(const Vec2 &position, const Vec2 &positionDelta)
+            : position( position )
+            , positionDelta( positionDelta ) { }
     };
 
-    struct MouseScrollArgs : public EventArgs
+    struct MouseScrollArgs : EventArgs
     {
         // Scroll wheel horizontal and vertical change
         Vec2 delta;
 
         MouseScrollArgs(const Vec2 &delta)
-            : delta(delta) { }
+            : delta( delta ) { }
     };
 }

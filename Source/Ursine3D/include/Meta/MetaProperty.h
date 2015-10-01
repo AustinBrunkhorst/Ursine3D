@@ -50,6 +50,10 @@ class Disable : public ursine::meta::MetaProperty { };
 */
 class DisableNonDynamic : public ursine::meta::MetaProperty { };
 
+/** @brief Uses the "WrapObject" Variant policy in dynamic constructors.
+*/
+class WrapObject : public ursine::meta::MetaProperty { };
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /** @brief Explicitly disables generation of pointers to class types.
