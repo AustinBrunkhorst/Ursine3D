@@ -24,3 +24,5 @@ const auto kMetaDisableNonDynamicCtor = "DisableNonDynamic";
 
 const auto kMetaExplicitGetter = "Getter";
 const auto kMetaExplicitSetter = "Setter";
+
+const auto kMetaExternalTypeDefName = "__META_EXTERNAL__";

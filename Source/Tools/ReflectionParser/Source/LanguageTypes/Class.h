@@ -28,7 +28,7 @@ public:
     Class(const Cursor &cursor, const Namespace &currentNamespace);
     virtual ~Class(void);
 
-    bool ShouldCompile(void) const;
+    virtual bool ShouldCompile(void) const;
 
     TemplateData CompileTemplate(
         const ReflectionParser *context
