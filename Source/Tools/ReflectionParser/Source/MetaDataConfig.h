@@ -13,6 +13,8 @@
 const auto kMetaEnable = "Enable";
 const auto kMetaDisable = "Disable";
 
+const auto kMetaRegister = "Register";
+
 const auto kMetaDisplayName = "DisplayName";
 
 const auto kMetaDisablePtrType = "DisablePtrType";

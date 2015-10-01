@@ -23,7 +23,8 @@
 namespace ursine
 {
     RenderProcessHandler::RenderProcessHandler(void)
-        : m_nativeBroadcaster( nullptr )
+        : m_globalFunctionHandler( new GlobalFunctionHandler( ) )
+        , m_nativeBroadcaster( nullptr )
     {
         auto exposedType = typeof( NativeJavaScriptClass );
 
@@ -60,6 +61,8 @@ namespace ursine
         CefRefPtr<CefV8Context> context)
     {
         auto global = context->GetGlobal( );
+
+        m_globalFunctionHandler->Bind( global );
 
         for (auto &handler : m_nativeHandlers)
             handler->Bind( global );

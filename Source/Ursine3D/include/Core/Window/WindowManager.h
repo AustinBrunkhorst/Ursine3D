@@ -23,7 +23,14 @@ namespace ursine
         WindowManager(void);
         ~WindowManager(void);
 
-        Window *AddWindow(const std::string &title, const Vec2 &location, const Vec2 &size, uint32 flags);
+        Meta(Disable)
+        Window *AddWindow(
+            const std::string &title, 
+            const Vec2 &location, 
+            const Vec2 &size, uint32 flags
+        );
+
+        Meta(Disable)
         Window *GetWindow(uint32 windowID);
 
     private:

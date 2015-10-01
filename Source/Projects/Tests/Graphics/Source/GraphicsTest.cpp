@@ -188,6 +188,7 @@ m_gfx->StartFrame( );
 
   m_gfx->EndScene( );
 
+  m_ui->DrawMain( );
 
   //END
   m_gfx->EndFrame( );

@@ -27,12 +27,15 @@ namespace ursine
         ~TimerManager(void);
 
         // Suspends updating a specific group
+        Meta(Disable)
         void Pause(TimerGroupID group);
 
         // Resumes updating a specific group
+        Meta(Disable)
         void Resume(TimerGroupID group);
 
         // Removes all timers in a specific group
+        Meta(Disable)
         void Clear(TimerGroupID group = Timer::GROUP_DEFAULT);
 
     private:

@@ -164,6 +164,10 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
         data[ "baseClass" ] = baseClasses;
     }
 
+    // don't do anything else if only registering
+    if (m_metaData.GetFlag( kMetaRegister ))
+        return data;
+
     // constructors
     {
         TemplateData constructors { TemplateData::Type::List };
@@ -236,5 +240,5 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 
 bool Class::isAccessible(void) const
 {
-    return m_enabled;
+    return m_enabled || m_metaData.GetFlag( kMetaRegister );
 }

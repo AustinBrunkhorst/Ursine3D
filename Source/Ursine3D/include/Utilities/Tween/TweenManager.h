@@ -27,12 +27,15 @@ namespace ursine
         ~TweenManager(void);
 
         // Suspends updating a specific group
+        Meta(Disable)
         void Pause(TweenGroupID group);
 
         // Resumes updating a specific group
+        Meta(Disable)
         void Resume(TweenGroupID group);
 
         // Removes all timers in a specific group
+        Meta(Disable)
         void Clear(TweenGroupID group = Tween::GROUP_DEFAULT);
 
     private:

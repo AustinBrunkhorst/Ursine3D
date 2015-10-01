@@ -5,4 +5,4 @@
 class EditorTool
 {
     
-} Meta(Enable);
+} Meta(Register);

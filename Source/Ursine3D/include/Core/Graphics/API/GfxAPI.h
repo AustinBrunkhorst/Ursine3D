@@ -63,36 +63,47 @@ namespace ursine
         GfxAPI(void);
         ~GfxAPI(void);
 
+        Meta(Disable)
         void OnInitialize(void) override;
 
+        Meta(Disable)
         void OnRemove(void) override;
 
         // initialize graphics manager
+        Meta(Disable)
         void StartGraphics(GfxConfig config);
 
         // begin graphics for the whole frame
-        void StartFrame();
+        Meta(Disable)
+        void StartFrame(void);
 
-        // render an object                                                                   
+        // render an object                   
+        Meta(Disable)
         void RenderObject(GFXHND handle);
 
-        // begin to render a scene                                                                   
-        void BeginScene();
+        // begin to render a scene   
+        Meta(Disable)
+        void BeginScene(void);
 
         // render the scene
+        Meta(Disable)
         void RenderScene(float dt, GFXHND camera);
 
         // end the current scene
-        void EndScene();
+        Meta(Disable)
+        void EndScene(void);
 
         // end the whole frame
-        void EndFrame();
+        Meta(Disable)
+        void EndFrame(void);
 
         // resize the window
+        Meta(Disable)
         void Resize(int width, int height);
 
         //set the main game viewport. All cameras are sized 
             // w/ respect to this size
+        Meta(Disable)
         void SetGameViewport(GFXHND vp);
 
         // private members

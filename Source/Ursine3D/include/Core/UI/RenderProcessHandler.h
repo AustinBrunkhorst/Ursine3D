@@ -16,6 +16,7 @@
 #include <cef_app.h>
 
 #include "NativeJavaScriptHandler.h"
+#include "GlobalFunctionHandler.h"
 
 namespace ursine
 {
@@ -26,6 +27,8 @@ namespace ursine
         ~RenderProcessHandler(void);
 
     private:
+        CefRefPtr<GlobalFunctionHandler> m_globalFunctionHandler;
+
         std::vector<CefRefPtr<NativeJavaScriptHandler>> m_nativeHandlers;
 
         CefRefPtr<CefV8Value> m_nativeBroadcaster;

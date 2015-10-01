@@ -1,7 +1,6 @@
 #include "UrsinePrecompiled.h"
 
 #include "JavaScriptConfig.h"
-#include "JavaScriptAccessor.h"
 
 namespace ursine
 {

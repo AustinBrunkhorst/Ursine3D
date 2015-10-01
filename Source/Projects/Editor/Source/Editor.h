@@ -5,11 +5,8 @@
 #include <Window.h>
 #include <UIView.h>
 
-#include "EditorTool.h"
-
-#include <SDL_video.h>
-
 class Project;
+class EditorTool;
 
 class Editor : public ursine::core::CoreSystem
 {
@@ -43,8 +40,6 @@ private:
 
     void initializeGraphics(void);
     void initializeTools(void);
-
-    void resizeMainWindow(int width, int height);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 

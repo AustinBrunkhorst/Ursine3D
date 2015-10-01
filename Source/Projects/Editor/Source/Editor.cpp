@@ -18,7 +18,6 @@ using namespace ursine;
 namespace
 {
     const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
-    //const auto kEditorEntryPoint = "www.google.com/";
     const auto kEditorClearColor = Color( 0xFF252526 );
 
     const auto kDefaultWindowWidth = 1280;
@@ -79,8 +78,6 @@ void Editor::OnInitialize(void)
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
-
-    resizeMainWindow( kDefaultWindowWidth, kDefaultWindowHeight );
 }
 
 void Editor::OnRemove(void)
@@ -131,6 +128,7 @@ void Editor::initializeGraphics(void)
     config.Profile_ = false;
 
     m_graphics->StartGraphics( config );
+    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
 
     auto &scene = m_project->GetScene( );
     {
@@ -218,13 +216,6 @@ void Editor::initializeTools(void)
     // @@@ TODO:
 }
 
-void Editor::resizeMainWindow(int width, int height)
-{
-    /*auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
-
-    viewportHandle.SetDimensions( width, height );*/
-}
-
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
 {
     EVENT_ATTRS(Application, EventArgs);
@@ -248,14 +239,10 @@ void Editor::onMainWindowResize(EVENT_HANDLER(Window))
 {
     EVENT_ATTRS(Window, WindowResizeArgs);
 
-    resizeMainWindow( args->width, args->height );
-
     m_mainWindow.ui->SetViewport( {
         0, 0,
         args->width, args->height
     } );
-
-    
 
     m_graphics->Resize( args->width, args->height );
 }
