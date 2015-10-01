@@ -280,8 +280,8 @@ namespace ursine
         w *= gvp.Width;
         h *= gvp.Height;
 
-        x *= gvp.Width;
-        y *= gvp.Height;
+        x = x * gvp.Width + gvp.TopLeftX;
+        y = x * gvp.Height + gvp.TopLeftY;
 
         D3D11_VIEWPORT vpData;
         vpData.Width = w;
@@ -300,7 +300,7 @@ namespace ursine
         dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
         dxCore->SetBlendState( BLEND_STATE_DEFAULT );
 
-        modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
+        modelManager->BindModel( modelManager->GetModelIDByName( "internalQuad" ) );
         shaderManager->BindShader( SHADER_PRIMITIVE );
         layoutManager->SetInputLayout( SHADER_PRIMITIVE );
 
@@ -311,7 +311,7 @@ namespace ursine
         //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
         bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, PIXEL_SHADER );
 
-        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "internalQuad" ) ) );
 
         /////////////////////////////////////////////////////////////////
         if(cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
@@ -429,7 +429,7 @@ namespace ursine
 
         dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_DEFERRED_COLOR )->ShaderMap );
         dxCore->GetDeviceContext( )->PSSetShaderResources( 1, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( RENDER_TARGET_LIGHTMAP )->ShaderMap );
-        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "internalQuad" ) ) );
         gfxProfiler->Stamp( PROFILE_SCENE_MAIN );
 
         /////////////////////////////////////////////////////////////////
@@ -439,7 +439,7 @@ namespace ursine
         shaderManager->BindShader( SHADER_QUAD );
         layoutManager->SetInputLayout( SHADER_QUAD );
 
-        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "internalQuad" ) ) );
         gfxProfiler->Stamp( PROFILE_SCENE_PRIMITIVE );
 
         //clearing all buffers
@@ -656,7 +656,7 @@ namespace ursine
 
     void GraphicsCore::PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj)
     {
-        modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
+        modelManager->BindModel( modelManager->GetModelIDByName( "internalQuad" ) );
 
         shaderManager->BindShader( SHADER_DIRECTIONAL_LIGHT );
         layoutManager->SetInputLayout( SHADER_DIRECTIONAL_LIGHT );
@@ -701,7 +701,7 @@ namespace ursine
         dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN );
         dxCore->SetBlendState( BLEND_STATE_DEFAULT );
 
-        modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
+        modelManager->BindModel( modelManager->GetModelIDByName( "internalQuad" ) );
         shaderManager->BindShader( SHADER_DEFFERED_TEXTURE );
         layoutManager->SetInputLayout( SHADER_DEFFERED_TEXTURE );
 
@@ -725,7 +725,7 @@ namespace ursine
         shaderManager->BindShader( SHADER_UI );
         layoutManager->SetInputLayout( SHADER_UI );
         bufferManager->MapTransformBuffer( SMat4( -2, 2, 1 ) * trans );
-        modelManager->BindModel( modelManager->GetModelIDByName( "Quad" ) );
+        modelManager->BindModel( modelManager->GetModelIDByName( "internalQuad" ) );
     }
 
     // rendering //////////////////////////////////////////////////////
@@ -856,7 +856,7 @@ namespace ursine
         lightB.lightColor = DirectX::XMFLOAT3( dl.GetColor( ).r, dl.GetColor( ).g, dl.GetColor( ).b );
 
         bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>( &lightB, PIXEL_SHADER );
-        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "internalQuad" ) ) );
     }
 
     void GraphicsCore::RenderPrimitive(_DRAWHND handle)
@@ -1056,7 +1056,7 @@ namespace ursine
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
         dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( input )->ShaderMap );
-        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "internalQuad" ) ) );
     }
 
     void GraphicsCore::RenderUI_Main(RENDER_TARGETS input)
@@ -1075,6 +1075,6 @@ namespace ursine
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 
         dxCore->GetDeviceContext( )->PSSetShaderResources( 0, 1, &dxCore->GetRenderTargetMgr( )->GetRenderTarget( input )->ShaderMap );
-        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Quad" ) ) );
+        shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "internalQuad" ) ) );
     }
 }
