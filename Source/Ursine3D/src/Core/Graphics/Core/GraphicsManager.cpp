@@ -778,7 +778,7 @@ namespace ursine
         //render
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sprite" ) ) );
     }
-
+     
     void GraphicsCore::RenderPointLight(_DRAWHND handle, GFXCamera &currentCamera, SMat4 &proj)
     {
         //get point light data
@@ -994,7 +994,7 @@ namespace ursine
         return dxCore;
     }
 
-    void GraphicsCore::Resize(int width, int height)
+    void GraphicsCore:: Resize(int width, int height)
     {
         if (!m_ready)
             return;
