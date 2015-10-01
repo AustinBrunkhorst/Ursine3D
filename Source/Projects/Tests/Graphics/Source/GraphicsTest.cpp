@@ -41,12 +41,12 @@ namespace
   //const auto kGraphicsTestUIEntryPoint = "file:///Assets/Test.html";
   const auto kGraphicsTestUIEntryPoint = "http://www.google.com";
 
-  const auto kDefaultWindowWidth = 1280;
-  const auto kDefaultWindowHeight = 720;
+  const auto kDefaultWindowWidth = 1920;
+  const auto kDefaultWindowHeight = 1080;
 
   void onResize( int width, int height )
   {
-    Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
+    GetCoreSystem( ursine::GfxAPI )->Resize( width, height );
   }
 }
 
@@ -121,7 +121,7 @@ void GraphicsTest::onAppUpdate( EVENT_HANDLER( Application ) )
   //modelCube.SetWorldMatrix( mat );
 
    m_gfx->RenderableMgr.GetPointLight( m_light ).SetPosition( m_camPos );
-   m_gfx->RenderableMgr.GetPointLight( m_light ).SetRadius( 5 );
+   m_gfx->RenderableMgr.GetPointLight( m_light ).SetRadius( 15 );
 m_gfx->StartFrame( );
   //BEGIN
 
@@ -129,7 +129,7 @@ m_gfx->StartFrame( );
 
   //stick draw calls here
   //m_gfx->RenderObject( m_cube );
-  m_gfx->RenderObject( m_floor );
+  // m_gfx->RenderObject( m_floor );
   //m_gfx->RenderObject(m_billboard);
   //m_gfx->RenderObject( m_directLight );
   //m_gfx->RenderObject( m_primitive );
@@ -155,7 +155,7 @@ m_gfx->StartFrame( );
       float cf = cosf( currAngle + dt );
       float sf = sinf( currAngle + dt );
 
-      current.SetRadius( 3 );
+      current.SetRadius( 7 );
       current.SetPosition( cf * radius + centerX, sf * radius + centerY, -1 );
       current.SetColor( colors[ x ].X( ), colors[ x ].Y( ), colors[ x ].Z( ) );
       currAngle += (360.f / count) * 3.14 / 180.f;
@@ -188,7 +188,7 @@ m_gfx->StartFrame( );
 
   m_gfx->EndScene( );
 
-  m_ui->DrawMain( );
+  // m_ui->DrawMain( );
 
   //END
   m_gfx->EndFrame( );
@@ -218,8 +218,7 @@ void GraphicsTest::onMouseScroll( EVENT_HANDLER( MouseManager ) )
 
 void GraphicsTest::UpdateCamera_Keys ( float dt )
 {
-    auto *app = Application::Instance;
-    auto *keyboardMgr = app->GetCoreSystem<KeyboardManager>( );
+    auto *keyboardMgr = GetCoreSystem( KeyboardManager );
 
   float speed = 3;
 
@@ -284,8 +283,7 @@ void GraphicsTest::UpdateCamera_Keys ( float dt )
 
 void GraphicsTest::UpdateCamera_Mouse ( float dt )
 {
-  auto *app = Application::Instance;
-  auto *mouseMgr = app->GetCoreSystem<MouseManager>( );
+  auto *mouseMgr = GetCoreSystem( MouseManager );
 
   //get the camera
   GFXCamera &cam = m_gfx->CameraMgr.GetCamera( m_camera );
@@ -367,8 +365,7 @@ void GraphicsTest::UpdateCamera_Mouse ( float dt )
 
 void GraphicsTest::UpdateCamera( float dt )
 {
-  auto *app = Application::Instance;
-  auto *keyboardMgr = app->GetCoreSystem<KeyboardManager>( );
+  auto *keyboardMgr = GetCoreSystem( KeyboardManager );
 
   // first, update all of the camera stuff. 
   //keyboard controls
@@ -493,11 +490,11 @@ void GraphicsTest::initGraphics( void )
     &GraphicsTest::onAppUpdate
     );
 
-  auto *keyboardManager = app->GetCoreSystem<KeyboardManager>( );
-  auto *mouseManager = app->GetCoreSystem<MouseManager>( );
+  auto *keyboardManager = GetCoreSystem( KeyboardManager );
+  auto *mouseManager = GetCoreSystem( MouseManager );
 
-  auto *windowManager = app->GetCoreSystem<WindowManager>( );
-  auto *uiManager = app->GetCoreSystem<UIManager>( );
+  auto *windowManager = GetCoreSystem( WindowManager );
+  auto *uiManager = GetCoreSystem( UIManager );
 
   m_mainWindow = windowManager->AddWindow(
     "Ursine3D Editor",
@@ -517,12 +514,12 @@ void GraphicsTest::initGraphics( void )
 
   /////////////////////////////////////////////////////////////////
   //make graphics manager
-  m_gfx = app->GetCoreSystem<GfxAPI>( );
+  m_gfx = GetCoreSystem( GfxAPI );
 
   HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle( )));
 
   GfxConfig config;
-  config.Fullscreen_ = false;
+  config.Fullscreen_ = true;
   config.HandleToWindow_ = handle;
   config.ModelListPath_ = "Models/";
   config.ShaderListPath_ = "SHADER_BINARY/";
@@ -595,7 +592,7 @@ void GraphicsTest::initGraphics( void )
 
           Model3D &current = m_gfx->RenderableMgr.GetModel3D( m_spheres[ y ][ x ] );
           current.SetWorldMatrix( SMat4( SVec3(x, y, 0 ) ) );
-          current.SetModel( "Cube" );
+          current.SetModel( "Sphere" );
           current.SetMaterial( "Blank" );
           current.SetMaterialData( 0.5, 10.f + (x / (float)(count - 1)) * 245.f, (float)y / (float)(count - 1) );
       }

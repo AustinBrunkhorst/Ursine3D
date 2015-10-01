@@ -72,7 +72,7 @@ namespace ursine
             shaderManager->LoadShader( SHADER_DIFFUSE, "DiffuseShader" );
             shaderManager->LoadShader( SHADER_NORMAL, "NormalShader" );
             shaderManager->LoadShader( SHADER_DEFFERED_TEXTURE, "DeferredTextureShader" );
-            shaderManager->LoadShader( SHADER_DEFERRED_DEPTH, "DeferredDepth" );
+            shaderManager->LoadShader( SHADER_DEFERRED_DEPTH, "FragmentationShader" );
             shaderManager->LoadShader( SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap" );
             shaderManager->LoadShader( SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource" );
             shaderManager->LoadShader( SHADER_POINT_LIGHT, "PointLightSource" );
@@ -778,7 +778,7 @@ namespace ursine
         //render
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "Sprite" ) ) );
     }
-
+     
     void GraphicsCore::RenderPointLight(_DRAWHND handle, GFXCamera &currentCamera, SMat4 &proj)
     {
         //get point light data
@@ -994,7 +994,7 @@ namespace ursine
         return dxCore;
     }
 
-    void GraphicsCore::Resize(int width, int height)
+    void GraphicsCore:: Resize(int width, int height)
     {
         if (!m_ready)
             return;
