@@ -1,6 +1,7 @@
 #include "UrsinePrecompiled.h"
 
 #include "RenderableComponent.h"
+#include "Renderable.h"
 
 namespace ursine
 {

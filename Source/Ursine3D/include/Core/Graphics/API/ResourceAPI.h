@@ -33,6 +33,12 @@ namespace ursine
         // get texture handle
         GFXHND GetTexHandle(const char *name);
 
+        //validate that a model/texture exists
+
+        //get a list of available models
+
+        //get a list of available textures
+
     private:
         privData *m_privates;
 
