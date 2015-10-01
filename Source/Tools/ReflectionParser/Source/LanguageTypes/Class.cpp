@@ -14,12 +14,16 @@ namespace
 
     bool isNativeType(const std::string &qualifiedName)
     {
-        return std::find( nativeTypes.begin( ), nativeTypes.end( ), qualifiedName ) != nativeTypes.end( );
+        return std::find( 
+            nativeTypes.begin( ), 
+            nativeTypes.end( ), 
+            qualifiedName
+        ) != nativeTypes.end( );
     }
 }
 
 BaseClass::BaseClass(const Cursor &cursor)
-    : name( cursor.GetType( ).GetDisplayName( ) )
+    : name( cursor.GetType( ).GetCanonicalType( ).GetDisplayName( ) )
 {
 
 }
@@ -29,12 +33,16 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetDisplayName( ) )
     , m_qualifiedName( cursor.GetType( ).GetDisplayName( ) )
 {
-    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( native_property::DisplayName );
 
     if (displayName.empty( ))
+    {
         m_displayName = m_qualifiedName;
+    }
     else
-        m_displayName = utils::GetQualifiedName( displayName, currentNamespace );
+    {
+        m_displayName = displayName;
+    }
 
     for (auto &child : cursor.GetChildren( ))
     {
@@ -48,7 +56,7 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
 
             // automatically enable the type if not explicitly disabled
             if (isNativeType( baseClass->name ))
-                m_enabled = !m_metaData.GetFlag( kMetaDisable );
+                m_enabled = !m_metaData.GetFlag( native_property::Disable );
         }
             break;
         // constructor
@@ -113,7 +121,7 @@ Class::~Class(void)
 
 bool Class::ShouldCompile(void) const
 {
-    return !isNativeType( m_qualifiedName );
+    return isAccessible( ) && !isNativeType( m_qualifiedName );
 }
 
 TemplateData Class::CompileTemplate(const ReflectionParser *context) const
@@ -123,8 +131,9 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     data[ "displayName" ] = m_displayName;
     data[ "qualifiedName" ] = m_qualifiedName;
     data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
-    data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
+
+    data[ "constPtrTypeEnabled" ] = 
+        utils::TemplateBool( m_constPtrTypeEnabled );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -143,7 +152,9 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
             TemplateData item { TemplateData::Type::Object };
 
             item[ "name" ] = baseClass->name;
-            item[ "isLast" ] = utils::TemplateBool( i == m_baseClasses.size( ) - 1 );
+
+            item[ "isLast" ] = 
+                utils::TemplateBool( i == m_baseClasses.size( ) - 1 );
 
             baseClasses << item;
 
@@ -153,12 +164,20 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
         data[ "baseClass" ] = baseClasses;
     }
 
+    // don't do anything else if only registering
+    if (m_metaData.GetFlag( native_property::Register ))
+        return data;
+
     // constructors
     {
         TemplateData constructors { TemplateData::Type::List };
 
         for (auto *ctor : m_constructors)
-            constructors << ctor->CompileTemplate( context );
+        {
+            if (ctor->ShouldCompile( ))
+                constructors << ctor->CompileTemplate( context );
+        }
+            
 
         data[ "constructor" ] = constructors;
         data[ "dynamicConstructor" ] = constructors;
@@ -169,7 +188,10 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
         TemplateData fields { TemplateData::Type::List };
 
         for (auto *field : m_fields)
-            fields << field->CompileTemplate( context );
+        {
+            if (field->ShouldCompile( ))
+                fields << field->CompileTemplate( context );
+        }
 
         data[ "field" ] = fields;
     }
@@ -179,8 +201,11 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
         TemplateData staticFields { TemplateData::Type::List };
 
         for (auto *staticField : m_staticFields)
-            staticFields << staticField->CompileTemplate( context );
-
+        {
+            if (staticField->ShouldCompile( ))
+                staticFields << staticField->CompileTemplate( context );
+        }
+            
         data[ "staticField" ] = staticFields;
     }
 
@@ -189,8 +214,11 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
         TemplateData methods { TemplateData::Type::List };
 
         for (auto *method : m_methods)
-            methods << method->CompileTemplate( context );
-
+        {
+            if (method->ShouldCompile( ))
+                methods << method->CompileTemplate( context );
+        }
+           
         data[ "method" ] = methods;
     }
 
@@ -199,7 +227,10 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
         TemplateData staticMethods { TemplateData::Type::List };
 
         for (auto *staticMethod : m_staticMethods)
-            staticMethods << staticMethod->CompileTemplate( context );
+        {
+            if (staticMethod->ShouldCompile( ))
+                staticMethods << staticMethod->CompileTemplate( context );
+        }
 
         data[ "staticMethod" ] = staticMethods;
     }
@@ -209,5 +240,5 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 
 bool Class::isAccessible(void) const
 {
-    return m_enabled;
+    return m_enabled || m_metaData.GetFlag( native_property::Register );
 }

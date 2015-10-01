@@ -3,11 +3,13 @@
 #include "ReflectionParser.h"
 
 #include "LanguageTypes/Class.h"
+#include "LanguageTypes/External.h"
 #include "LanguageTypes/Global.h"
 #include "LanguageTypes/Function.h"
 #include "LanguageTypes/Enum.h"
 
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #define RECURSE_NAMESPACES(kind, cursor, method, ns) \
     if (kind == CXCursor_Namespace)                  \
@@ -67,7 +69,7 @@ void ReflectionParser::Parse(void)
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
         m_index,
         m_options.inputSourceFile.c_str( ),
-        arguments.size( ),
+        static_cast<int>( arguments.size( ) ),
         arguments.data( ),
         0,
         nullptr
@@ -100,7 +102,11 @@ MustacheTemplate ReflectionParser::LoadTemplate(const std::string &name) const
 
     try
     {
-        return *utils::LoadText( path.string( ) );
+        std::string text;
+
+        utils::LoadText( path.string( ), text );
+
+        return text;
     }
     catch(std::exception &e)
     {
@@ -117,9 +123,12 @@ MustacheTemplate ReflectionParser::LoadTemplate(const std::string &name) const
     return { "" };
 }
 
-TemplateData::PartialType ReflectionParser::LoadTemplatePartial(const std::string &name) const
+TemplateData::PartialType ReflectionParser::LoadTemplatePartial(
+    const std::string &name
+) const
 {
-    auto path = fs::path( m_options.templateDirectory ).append( name ).string( );
+    auto path = 
+        fs::path( m_options.templateDirectory ).append( name ).string( );
 
     try
     {
@@ -129,7 +138,9 @@ TemplateData::PartialType ReflectionParser::LoadTemplatePartial(const std::strin
 
             if (cache == m_templatePartialCache.end( ))
             {
-                auto text = *utils::LoadText( path );
+                std::string text;
+
+                utils::LoadText( path, text );
 
                 m_templatePartialCache[ path ] = text;
 
@@ -166,7 +177,10 @@ void ReflectionParser::GenerateHeader(std::string &output) const
     headerData[ "inputSourceFile" ] = m_options.inputSourceFile;
     headerData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
     headerData[ "outpuSourceFile" ] = m_options.outputSourceFile;
-    headerData[ "usingPrecompiledHeader" ] = utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+
+    headerData[ "usingPrecompiledHeader" ] = 
+        utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+
     headerData[ "precompiledHeader" ] = m_options.precompiledHeader;
 
     auto headerTemplate = LoadTemplate( kTemplateHeader );
@@ -194,7 +208,10 @@ void ReflectionParser::GenerateSource(std::string &output) const
     sourceData[ "inputSourceFile" ] = m_options.inputSourceFile;
     sourceData[ "ouputHeaderFile" ] = m_options.outputHeaderFile;
     sourceData[ "outpuSourceFile" ] = m_options.outputSourceFile;
-    sourceData[ "usingPrecompiledHeader" ] = utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+
+    sourceData[ "usingPrecompiledHeader" ] = 
+        utils::TemplateBool( !m_options.precompiledHeader.empty( ) );
+
     sourceData[ "precompiledHeader" ] = m_options.precompiledHeader;
 
     // language type data
@@ -219,25 +236,42 @@ void ReflectionParser::GenerateSource(std::string &output) const
     output = sourceTemplate.render( sourceData );
 }
 
-void ReflectionParser::buildClasses(const Cursor &cursor, Namespace &currentNamespace)
+void ReflectionParser::buildClasses(
+    const Cursor &cursor, 
+    Namespace &currentNamespace
+)
 {
     for (auto &child : cursor.GetChildren( ))
     {
         auto kind = child.GetKind( );
 
         // actual definition and a class or struct
-        if (child.IsDefinition( ) && (kind == CXCursor_ClassDecl || kind == CXCursor_StructDecl))
+        if (child.IsDefinition( ) && 
+            (kind == CXCursor_ClassDecl || kind == CXCursor_StructDecl)
+        )
         {
             m_classes.emplace_back( 
                 new Class( child, currentNamespace )
             );
+        }
+        else if (kind == CXCursor_TypedefDecl)
+        {
+            if (boost::starts_with( child.GetDisplayName( ), kMetaExternalTypeDefName ))
+            {
+                m_classes.emplace_back(
+                    new External( child.GetTypedefType( ).GetDeclaration( ) )
+                );
+            }
         }
         
         RECURSE_NAMESPACES( kind, child, buildClasses, currentNamespace );
     }
 }
 
-void ReflectionParser::buildGlobals(const Cursor &cursor, Namespace &currentNamespace)
+void ReflectionParser::buildGlobals(
+    const Cursor &cursor, 
+    Namespace &currentNamespace
+)
 {
     for (auto &child : cursor.GetChildren( ))
     {
@@ -259,7 +293,10 @@ void ReflectionParser::buildGlobals(const Cursor &cursor, Namespace &currentName
     }
 }
 
-void ReflectionParser::buildGlobalFunctions(const Cursor &cursor, Namespace &currentNamespace)
+void ReflectionParser::buildGlobalFunctions(
+    const Cursor &cursor, 
+    Namespace &currentNamespace
+)
 {
     for (auto &child : cursor.GetChildren( ))
     {
@@ -277,11 +314,19 @@ void ReflectionParser::buildGlobalFunctions(const Cursor &cursor, Namespace &cur
             );
         }
 
-        RECURSE_NAMESPACES( kind, child, buildGlobalFunctions, currentNamespace );
+        RECURSE_NAMESPACES( 
+            kind, 
+            child, 
+            buildGlobalFunctions, 
+            currentNamespace 
+        );
     }
 }
 
-void ReflectionParser::buildEnums(const Cursor &cursor, Namespace &currentNamespace)
+void ReflectionParser::buildEnums(
+    const Cursor &cursor, 
+    Namespace &currentNamespace
+)
 {
     for (auto &child : cursor.GetChildren( ))
     {
@@ -291,9 +336,11 @@ void ReflectionParser::buildEnums(const Cursor &cursor, Namespace &currentNamesp
         if (child.IsDefinition( ) && kind == CXCursor_EnumDecl)
         {
             // anonymous enum if the underlying type display name contains this
-            if (child.GetType( ).GetDisplayName( ).find( "anonymous enum at" ) != std::string::npos)
+            if (child.GetType( ).GetDisplayName( ).find( "anonymous enum at" ) 
+                != std::string::npos)
             {
-                // anonymous enums are just loaded as globals with each of their values
+                // anonymous enums are just loaded as 
+                // globals with each of their values
                 Enum::LoadAnonymous( m_globals, child, currentNamespace );
             }
             else
@@ -326,8 +373,11 @@ TemplateData ReflectionParser::compileGlobalTemplates(void) const
     TemplateData data = { TemplateData::Type::List };
 
     for (auto *global : m_globals)
-        data << global->CompileTemplate( this );
-
+    {
+        if (global->ShouldCompile( ))
+            data << global->CompileTemplate( this );
+    }
+       
     return data;
 }
 
@@ -336,7 +386,10 @@ TemplateData ReflectionParser::compileGlobalFunctionTemplates(void) const
     TemplateData data = { TemplateData::Type::List };
 
     for (auto *globalFunction : m_globalFunctions)
-        data << globalFunction->CompileTemplate( this );
+    {
+        if (globalFunction->ShouldCompile( ))
+            data << globalFunction->CompileTemplate( this );
+    }
 
     return data;
 }
@@ -346,7 +399,10 @@ TemplateData ReflectionParser::compileEnumTemplates(void) const
     TemplateData data = { TemplateData::Type::List };
 
     for (auto *enewm : m_enums)
-        data << enewm->CompileTemplate( this );
+    {
+        if (enewm->ShouldCompile( ))
+            data << enewm->CompileTemplate( this );
+    }
 
     return data;
 }

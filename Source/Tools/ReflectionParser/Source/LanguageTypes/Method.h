@@ -10,10 +10,19 @@ class Method
     , public Invokable
 {
 public:
-    Method(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
+    Method(
+        const Cursor &cursor, 
+        const Namespace &currentNamespace, 
+        Class *parent = nullptr
+    );
+
     virtual ~Method(void) { }
 
-    TemplateData CompileTemplate(const ReflectionParser *context) const override;
+    bool ShouldCompile(void) const;
+    
+    TemplateData CompileTemplate(
+        const ReflectionParser *context
+    ) const override;
 
 private:
     bool m_isConst;

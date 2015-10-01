@@ -1,6 +1,6 @@
 @echo off
 
-set vsDir="Build-VS-2015"
+set vsDir="Build-VS-2015-x64"
 
 echo.
 echo ===== Cleaning =====
@@ -16,6 +16,6 @@ echo.
 echo ===== Building =====
 echo.
 
-cmake -G "Visual Studio 14" "../Source"
+cmake -G "Visual Studio 14 Win64" "../Source"
 
 cd ..

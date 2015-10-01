@@ -1,4 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** CursorType.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
+
+class Cursor;
 
 class CursorType
 {
@@ -11,6 +23,10 @@ public:
     CursorType GetArgument(unsigned index) const;
 
     CursorType GetCanonicalType(void) const;
+
+    Cursor GetDeclaration(void) const;
+
+    CXTypeKind GetKind(void) const;
 
     bool IsConst(void) const;
 

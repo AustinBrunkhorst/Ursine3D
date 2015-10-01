@@ -2,8 +2,10 @@
 
 #include "LanguageTypes/Invokable.h"
 
+#include <Utils.h>
+
 Invokable::Invokable(const Cursor &cursor)
-    : m_returnType( cursor.GetReturnType( ).GetDisplayName( ) )
+    : m_returnType( utils::GetQualifiedName( cursor.GetReturnType( ) ))
 {
     auto type = cursor.GetType( );
     unsigned count = type.GetArgumentCount( );
@@ -14,8 +16,8 @@ Invokable::Invokable(const Cursor &cursor)
     {
         auto argument = type.GetArgument( i );
 
-        m_signature.emplace_back( 
-            argument.GetDisplayName( ) 
+        m_signature.emplace_back(
+            utils::GetQualifiedName( argument )
         );
     }
 }

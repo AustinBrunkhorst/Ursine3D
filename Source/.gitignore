@@ -175,6 +175,7 @@ FakesAssemblies/
 
 # JetBrains Workspace Configurations
 .idea/
+.idea_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

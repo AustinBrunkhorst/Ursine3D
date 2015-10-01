@@ -10,10 +10,19 @@ class Function
     , public Invokable
 {
 public:
-    Function(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
+    Function(
+        const Cursor &cursor, 
+        const Namespace &currentNamespace, 
+        Class *parent = nullptr
+    );
+
     virtual ~Function(void) { }
 
-    TemplateData CompileTemplate(const ReflectionParser *context) const override;
+    bool ShouldCompile(void) const;
+
+    TemplateData CompileTemplate(
+        const ReflectionParser *context
+    ) const override;
 
 private:
     Class *m_parent;

@@ -5,7 +5,11 @@
 
 #include <Utils.h>
 
-Constructor::Constructor(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
+Constructor::Constructor(
+    const Cursor &cursor, 
+    const Namespace &currentNamespace, 
+    Class *parent
+)
     : LanguageType( cursor, currentNamespace )
     , Invokable( cursor )
     , m_parent( parent )
@@ -13,16 +17,36 @@ Constructor::Constructor(const Cursor &cursor, const Namespace &currentNamespace
         
 }
 
-TemplateData Constructor::CompileTemplate(const ReflectionParser *context) const
+bool Constructor::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
+TemplateData Constructor::CompileTemplate(
+    const ReflectionParser *context
+) const
 {
     TemplateData data { TemplateData::Type::Object };
 
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
 
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     data[ "templateParameters" ] = getTemplateParameters( );
-    data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialConstructorInvocation );
-    data[ "dynamicInvocationBody" ] = context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
+
+    data[ "invocationBody" ] = 
+        context->LoadTemplatePartial( kPartialConstructorInvocation );
+
+    data[ "dynamicInvocationBody" ] = 
+        context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
+
+    data[ "enableNonDynamic" ] = 
+        utils::TemplateBool( 
+            !m_metaData.GetFlag( native_property::DisableNonDynamicCtor ) 
+        );
+
+    data[ "dynamicWrapObject" ] = 
+        utils::TemplateBool( 
+            m_metaData.GetFlag( native_property::DynamicCtorWrap ) 
+        );
 
     data[ "argument" ] = compileSignatureTemplate( );
 
@@ -33,7 +57,8 @@ TemplateData Constructor::CompileTemplate(const ReflectionParser *context) const
 
 bool Constructor::isAccessible(void) const
 {
-    return m_accessModifier == CX_CXXPublic && !m_metaData.GetFlag( kMetaDisable );
+    return m_accessModifier == CX_CXXPublic && 
+           !m_metaData.GetFlag( native_property::Disable );
 }
 
 std::string Constructor::getTemplateParameters(void) const

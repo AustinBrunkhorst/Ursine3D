@@ -7,9 +7,13 @@
 
 #include <boost/format.hpp>
 
-Method::Method(const Cursor &cursor, const Namespace &currentNamespace, Class *parent)
-    : LanguageType(cursor, currentNamespace)
-    , Invokable(cursor)
+Method::Method(
+    const Cursor &cursor, 
+    const Namespace &currentNamespace, 
+    Class *parent
+)
+    : LanguageType( cursor, currentNamespace )
+    , Invokable( cursor )
     , m_isConst( cursor.IsConst( ) )
     , m_parent( parent )
     , m_name( cursor.GetSpelling( ) )
@@ -17,20 +21,26 @@ Method::Method(const Cursor &cursor, const Namespace &currentNamespace, Class *p
     
 }
 
+bool Method::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
 TemplateData Method::CompileTemplate(const ReflectionParser *context) const
 {
-    TemplateData data = { TemplateData::Type::Object };
+    TemplateData data { TemplateData::Type::Object };
 
     data[ "name" ] = m_name;
         
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
-
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
     
-    data[ "isVoidReturnType" ] = utils::TemplateBool( m_returnType == kReturnTypeVoid );
+    data[ "isVoidReturnType" ] = 
+        utils::TemplateBool( m_returnType == kReturnTypeVoid );
 
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-    data[ "invocationBody" ] = context->LoadTemplatePartial( kPartialMethodInvocation );
+
+    data[ "invocationBody" ] = 
+        context->LoadTemplatePartial( kPartialMethodInvocation );
 
     data[ "argument" ] = compileSignatureTemplate( );
 
@@ -41,7 +51,8 @@ TemplateData Method::CompileTemplate(const ReflectionParser *context) const
 
 bool Method::isAccessible(void) const
 {
-    return m_accessModifier == CX_CXXPublic && !m_metaData.GetFlag( kMetaDisable );
+    return m_accessModifier == CX_CXXPublic && 
+           !m_metaData.GetFlag( native_property::Disable );
 }
 
 std::string Method::getQualifiedSignature(void) const
@@ -52,5 +63,9 @@ std::string Method::getQualifiedSignature(void) const
 
     std::string constNess = m_isConst ? " const" : "";
 
-    return (boost::format( "%1%(%2%::*)(%3%)%4%" ) % m_returnType % m_parent->m_qualifiedName % argsList % constNess).str( );
+    return (boost::format( "%1%(%2%::*)(%3%)%4%" ) % 
+        m_returnType % 
+        m_parent->m_qualifiedName % 
+        argsList % constNess
+    ).str( );
 }

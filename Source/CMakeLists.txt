@@ -6,13 +6,13 @@ project(BearKing CXX)
 # Global Settings
 # ------------------------------------------------------------------------------
 
-# directory to UrsineEngine
-set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/UrsineEngine")
+# directory to Ursine3D
+set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/Ursine3D")
 
-# directory to UrsineEngine dependencies
+# directory to Ursine3D dependencies
 set(ENGINE_DEP_DIR "${ENGINE_DIR}/dep")
 
-# directory to UrsineEngine resources
+# directory to Ursine3D resources
 set(ENGINE_RESOURCES_DIR "${ENGINE_DIR}/resources")
 
 # module directory
@@ -37,24 +37,17 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 # Global Dependencies
 # ------------------------------------------------------------------------------
 
-set(SDL2_DIR       "${ENGINE_DEP_DIR}/SDL2")
-set(GLEW_DIR       "${ENGINE_DEP_DIR}/GLEW")
-set(CEF_DIR        "${ENGINE_DEP_DIR}/CEF")
-set(FMOD_DIR       "${ENGINE_DEP_DIR}/FMOD")
-set(BENCHMARKS_DIR "${ENGINE_DEP_DIR}/Benchmarks")
-set(CLANG_DIR "${ENGINE_DEP_DIR}/Clang")
+set(SDL2_DIR          "${ENGINE_DEP_DIR}/SDL2")
+set(CEF_DIR           "${ENGINE_DEP_DIR}/CEF")
+set(BENCHMARKS_DIR    "${ENGINE_DEP_DIR}/Benchmarks")
+set(CLANG_DIR         "${ENGINE_DEP_DIR}/Clang")
+set(BulletPhysics_DIR "${ENGINE_DEP_DIR}/Bullet")
 
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
 
-find_package(GLEW REQUIRED 
-    HINTS ${GLEW_DIR})
-
-find_package(CEF 3.1750 REQUIRED 
+find_package(CEF 3.2272 REQUIRED 
     HINTS ${CEF_DIR})
-
-find_package(FMOD REQUIRED 
-    HINTS ${FMOD_DIR})
 
 find_package(BENCHMARKS REQUIRED
     HINTS ${BENCHMARKS_DIR})
@@ -62,8 +55,10 @@ find_package(BENCHMARKS REQUIRED
 find_package(Clang REQUIRED
     HINTS ${CLANG_DIR})
 
-# boost requires some special attention
+find_package(BulletPhysics REQUIRED
+    HINTS ${BulletPhysics_DIR})
 
+# boost requires some special attention
 include(BoostSetup)
 
 # ------------------------------------------------------------------------------
@@ -80,7 +75,14 @@ if (MSVC)
         "/W3" # warning level 3
         "/WX" # warnings as errors
         "/Zm200" # increased compiler heap memory
+        "/bigobj" # increased object file size
     )
+
+    # DirectX requires some special attention
+    include(DirectXSetup)
+
+    # DirectX graphics backend
+    add_definitions(-DURSINE_GRAPHICS_DIRECTX)
     
     #ursine_remove_compile_flags(
     #    "/EHsc" # disable exceptions
@@ -107,13 +109,13 @@ set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
 
 if (MSVC)
     if (MSVC10)
-        set(vc_version 10)
+        set(VS_VERSION 10)
     elseif (MSVC11)
-        set(vc_version 11)
+        set(VS_VERSION 11)
     elseif (MSVC12)
-        set(vc_version 12)
+        set(VS_VERSION 12)
     elseif (MSVC14)
-        set(vc_version 14)
+        set(VS_VERSION 14)
     endif()
 
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -122,7 +124,7 @@ if (MSVC)
         set(vc_build x86)
     endif ()
 
-    set(vcredist_name "vcredist${vc_version}0_${vc_build}.exe")
+    set(vcredist_name "vcredist${VS_VERSION}0_${vc_build}.exe")
 
     # Visual Studio redistributable runtime libraries
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
@@ -139,7 +141,7 @@ endif ()
 
 # engine
 
-add_subdirectory("UrsineEngine")
+add_subdirectory("Ursine3D")
 
 # all projects to build
 

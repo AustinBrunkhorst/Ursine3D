@@ -14,7 +14,7 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetType( ).GetDisplayName( ) )
     , m_qualifiedName( m_name )
 {
-    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( native_property::DisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_qualifiedName;
@@ -32,6 +32,11 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     }
 }
 
+bool Enum::ShouldCompile(void) const
+{
+    return isAccessible( );
+}
+
 TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
 {
     TemplateData data { TemplateData::Type::Object };
@@ -39,8 +44,9 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
     data[ "displayName" ] = m_displayName;
     data[ "qualifiedName" ] = m_qualifiedName;
     data[ "ptrTypeEnabled" ] = utils::TemplateBool( m_ptrTypeEnabled );
-    data[ "constPtrTypeEnabled" ] = utils::TemplateBool( m_constPtrTypeEnabled );
-    data[ "isAccessible" ] = utils::TemplateBool( isAccessible( ) );
+
+    data[ "constPtrTypeEnabled" ] = 
+        utils::TemplateBool( m_constPtrTypeEnabled );
 
     TemplateData members { TemplateData::Type::List };
 
@@ -66,7 +72,11 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
     return data;
 }
 
-void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, const Namespace &currentNamespace)
+void Enum::LoadAnonymous(
+    std::vector<Global*> &output, 
+    const Cursor &cursor, 
+    const Namespace &currentNamespace
+)
 {
     for (auto &child : cursor.GetChildren( ))
     {
@@ -81,5 +91,5 @@ void Enum::LoadAnonymous(std::vector<Global*> &output, const Cursor &cursor, con
 
 bool Enum::isAccessible(void) const
 {
-    return !m_metaData.GetFlag( kMetaDisable );
+    return m_metaData.GetFlag( native_property::Enable );
 }

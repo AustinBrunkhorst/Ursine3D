@@ -2,11 +2,14 @@
 
 #include "LanguageType.h"
 
-LanguageType::LanguageType(const Cursor &cursor, const Namespace &currentNamespace)
+LanguageType::LanguageType(
+	const Cursor &cursor, 
+    const Namespace &currentNamespace
+)
     : m_metaData( cursor )
-    , m_enabled( m_metaData.GetFlag( kMetaEnable ) )
-    , m_ptrTypeEnabled( !m_metaData.GetFlag( kMetaDisablePtrType ) )
-    , m_constPtrTypeEnabled( !m_metaData.GetFlag( kMetaDisableConstPtrType ) )
+    , m_enabled( m_metaData.GetFlag( native_property::Enable ) )
+    , m_ptrTypeEnabled( !m_metaData.GetFlag( native_property::DisablePtrType ) )
+    , m_constPtrTypeEnabled( !m_metaData.GetFlag( native_property::DisableConstPtrType ) )
     , m_accessModifier( cursor.GetAccessModifier( ) )
 {
     

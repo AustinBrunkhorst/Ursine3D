@@ -1,0 +1,32 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-editor-window">
+    <link rel="import" type="css" href="../Style/Controls/EditorWindow.css">
+    <template>
+        <header>
+            <div class="heading">{{heading}}</div>
+        </header>
+        <div id="container">
+            <content></content>
+        </div>
+    </template>
+    <script>
+        var EditorWindowControl = Polymer({
+            is: "x-editor-window",
+            properties: {
+                heading: {
+                    type: String,
+                    notify: true
+                }
+            },
+            created: function() {
+                // make this element focusable
+                this.tabIndex = -1;
+            },
+
+            get container() {
+                return this.$.container;
+            }
+        });
+    </script>
+</dom-module>
