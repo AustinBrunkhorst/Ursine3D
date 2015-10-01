@@ -74,9 +74,9 @@ namespace ursine
 		m_dynamicsWorld->setDebugDrawer(m_debugDrawer);
 		m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 
-		auto *fileLoader = new btBulletWorldImporter(m_dynamicsWorld);
+		/*auto *fileLoader = new btBulletWorldImporter(m_dynamicsWorld);
 		fileLoader->loadFile("Assets/Bullet/test.bullet");
-		delete fileLoader;
+		delete fileLoader;*/
 	}
 
 	void PhysicsManager::destroyPhysics()

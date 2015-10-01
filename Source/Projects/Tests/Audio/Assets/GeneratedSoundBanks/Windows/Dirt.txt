@@ -1,0 +1,21 @@
+Event	ID	Name			Wwise Object Path	Notes
+	3854155799	Play_Footsteps			\Default Work Unit\Play_Footsteps	
+
+Switch Group	ID	Name			Wwise Object Path	Notes
+	1834394558	Surface			\Footsteps With Multiple Variables\Surface	
+
+Switch	ID	Name	Switch Group			Notes
+	2058049674	Wood	Surface			
+	2185786256	Gravel	Surface			
+	2195636714	Dirt	Surface			
+	2473969246	Metal	Surface			
+
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	246300162	Footstep_Weight			\Footsteps With Multiple Variables\Footstep_Weight	0 is a light footstep and 100 is a heavy footstep.  This RTPC drives the Footstep_Weight switch
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	180276440	FS_Dirt_02	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_02_E1E65BF4.wem		\Actor-Mixer Hierarchy\Footsteps With Multiple Variables\Footsteps\Dirt\FS_Dirt_02		12016
+	380879024	FS_Dirt_04	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_04_E1E65BF4.wem		\Actor-Mixer Hierarchy\Footsteps With Multiple Variables\Footsteps\Dirt\FS_Dirt_04		11404
+	443382262	FS_Dirt_01	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_01_E1E65BF4.wem		\Actor-Mixer Hierarchy\Footsteps With Multiple Variables\Footsteps\Dirt\FS_Dirt_01		10108
+	757197798	FS_Dirt_03	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Footsteps\Dirt\FS_Dirt_03_E1E65BF4.wem		\Actor-Mixer Hierarchy\Footsteps With Multiple Variables\Footsteps\Dirt\FS_Dirt_03		12268
+

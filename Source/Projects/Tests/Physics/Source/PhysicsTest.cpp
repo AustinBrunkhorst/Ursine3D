@@ -116,7 +116,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 	m_gfx->RenderScene(0.016f, m_viewport);
 	m_gfx->EndScene( );
 
-    m_ui->Draw( );
+    // m_ui->Draw( );
 }
 
 void PhysicsTest::onMainWindowResize(EVENT_HANDLER(ursine::Window))
@@ -165,7 +165,7 @@ void PhysicsTest::initGraphics(void)
 
 	GfxConfig config;
 	config.Fullscreen_ = false;
-	config.HandleToWindow_ = &handle;
+	config.HandleToWindow_ = handle;
 	config.ModelListPath_ = "Models/";
 	config.ShaderListPath_ = "SHADER_BINARY/";
 	config.TextureListPath_ = "Textures/";

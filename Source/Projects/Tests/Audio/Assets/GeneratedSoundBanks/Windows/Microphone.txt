@@ -1,0 +1,13 @@
+Event	ID	Name			Wwise Object Path	Notes
+	6251382	Disable_Microphone_Delay			\Default Work Unit\Disable_Microphone_Delay	
+	1324678662	Play_Microphone			\Default Work Unit\Play_Microphone	
+	3533161767	Enable_Microphone_Delay			\Default Work Unit\Enable_Microphone_Delay	
+	3629954576	Stop_Microphone			\Default Work Unit\Stop_Microphone	
+
+Effect plug-ins	ID	Name	Type				Notes
+	656632019	Default (Custom)	Wwise Peak Limiter			
+	748014606	Echoes_Linear (Define custom)	Wwise Delay			
+
+Source plug-ins	ID	Name	Type		Wwise Object Path	Notes
+	340541280	Audio Input	Wwise Audio Input		\Actor-Mixer Hierarchy\Default Work Unit\Microphone\Audio Input	
+

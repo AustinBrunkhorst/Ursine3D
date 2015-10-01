@@ -1,0 +1,8 @@
+Event	ID	Name			Wwise Object Path	Notes
+	2567011622	Play_RecordableMusic			\Default Work Unit\Play_RecordableMusic	
+	3873244457	Play_NonRecordableMusic			\Default Work Unit\Play_NonRecordableMusic	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	663670250	RecordableMusic	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Bass160Fight3_3A67241E.wem		\Actor-Mixer Hierarchy\Default Work Unit\BGM Demo\RecordableMusic		297712
+	1028934394	NonRecordableMusic	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Guitar_C4F9F991.wem		\Actor-Mixer Hierarchy\Default Work Unit\BGM Demo\NonRecordableMusic		376835
+
