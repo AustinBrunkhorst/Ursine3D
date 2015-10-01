@@ -3,7 +3,7 @@
 #include "Meta.h"
 #include <include/cef_v8.h>
 
-#define JavascriptConstructor       \
+#define JavaScriptConstructor       \
     CefRefPtr<CefV8Value> context,  \
     const CefV8ValueList &arguments \
 

@@ -208,6 +208,15 @@ var ursine_editor_WindowHandler = function() {
 };
 $hxClasses["ursine.editor.WindowHandler"] = ursine_editor_WindowHandler;
 ursine_editor_WindowHandler.__name__ = ["ursine","editor","WindowHandler"];
+var ursine_editor_menus_DebugMenu = function() { };
+$hxClasses["ursine.editor.menus.DebugMenu"] = ursine_editor_menus_DebugMenu;
+ursine_editor_menus_DebugMenu.__name__ = ["ursine","editor","menus","DebugMenu"];
+ursine_editor_menus_DebugMenu.doEditorDebugTools = function() {
+	DebugEditorUI( );
+};
+ursine_editor_menus_DebugMenu.__super__ = ursine_editor_MenuItemHandler;
+ursine_editor_menus_DebugMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+});
 var ursine_editor_menus_EditMenu = function() { };
 $hxClasses["ursine.editor.menus.EditMenu"] = ursine_editor_menus_EditMenu;
 ursine_editor_menus_EditMenu.__name__ = ["ursine","editor","menus","EditMenu"];
@@ -335,6 +344,7 @@ String.__name__ = ["String"];
 $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
 var __map_reserved = {}
+ursine_editor_menus_DebugMenu.__meta__ = { statics : { doEditorDebugTools : { mainMenuItem : ["Debug/Debug Editor UI"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/New"]}, doOpen : { mainMenuItem : ["File/Open"]}}};

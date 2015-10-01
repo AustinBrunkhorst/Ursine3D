@@ -6,7 +6,7 @@ namespace ursine
 {
     NativeJavaScriptHandler::NativeJavaScriptHandler(meta::Type classType)
         : m_classType( classType )
-        , m_constructor( classType.GetConstructor( { typeof( CefRefPtr<CefV8Value> ), typeof( const CefV8ValueList& ) } ) )
+        , m_constructor( classType.GetConstructor( { } ) )
         , m_prototypeHandler( new PrototypeHandler( ) )
     {
         
