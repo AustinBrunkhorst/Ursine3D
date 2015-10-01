@@ -36,8 +36,8 @@ namespace ursine
 
         auto *app = Application::Instance;
 
-        m_keyboardManager = app->GetCoreSystem<KeyboardManager>( );
-        m_mouseManager = app->GetCoreSystem<MouseManager>( );
+        m_keyboardManager = CoreSystem( KeyboardManager );
+        m_mouseManager = CoreSystem( MouseManager );
 
         m_window->Listener( this )
             .On( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );
@@ -95,6 +95,21 @@ namespace ursine
     bool UIView::IsValid(void) const
     {
         return !!m_browser;
+    }
+
+    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data)
+    {
+        auto processMessage = CefProcessMessage::Create( target );
+
+        auto args = processMessage->GetArgumentList( );
+
+        args->SetSize( 3 );
+
+        args->SetInt( 0, command );
+        args->SetString( 1, message );
+        args->SetString( 2, data.dump( ) );
+
+        m_browser->SendProcessMessage( PID_RENDERER, processMessage );
     }
 
     CefRefPtr<CefRenderHandler> UIView::GetRenderHandler(void)

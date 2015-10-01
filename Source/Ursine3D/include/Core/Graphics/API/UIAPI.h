@@ -5,36 +5,25 @@
 #include <cef_render_handler.h>
 
 #include "GfxAPIDefines.h"
+#include "UIInstance.h"
 
 namespace ursine
 {
-  class UIAPI : public CefRenderHandler
+  class UIAPI
   {
     friend class GfxAPI;
   private:
     struct privData;
 
   public:
-    bool GetViewRect( CefRefPtr<CefBrowser> browser,
-      CefRect &bounds ) override;
+      //create a viewport
+      GFXHND CreateUI( );
 
-    void OnPopupShow( CefRefPtr<CefBrowser> browser,
-      bool show ) override;
+      //get ui
+      UIInstance& GetUI( GFXHND UI );
 
-    void OnPopupSize( CefRefPtr<CefBrowser> browser,
-      const CefRect &bounds ) override;
-
-    void OnPaint( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height ) override;
-
-    void paintView( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height );
-
-    void paintPopup( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height );
+      //destroy a viewport
+      void DestroyUI( GFXHND  UI );
 
   private:
     privData *m_privates;
@@ -43,7 +32,5 @@ namespace ursine
     void SetPrivates( void *priv );
     void Initialize( );
     void Uninitialize( );
-
-    IMPLEMENT_REFCOUNTING( UIAPI );
   };
 }

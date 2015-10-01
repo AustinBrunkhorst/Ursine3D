@@ -48,6 +48,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define ID_MODEL      146
 #define ID_CAMERA     123
 #define ID_VIEWPORT   42
+#define ID_UI         87
 
 typedef unsigned long long GFXHND;
 

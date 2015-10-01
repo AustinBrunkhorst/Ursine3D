@@ -13,13 +13,17 @@
 
 #pragma once
 
+#include "Meta.h"
+
+#include "ComponentConfig.h"
+
 namespace ursine
 {
     namespace ecs
     {
         class Entity;
 
-        class Component
+        class Component : public meta::Object
         {
             // can set the owner
             friend class EntityManager;
@@ -30,18 +34,17 @@ namespace ursine
             // unique instance id
             ComponentUniqueID m_uniqueID;
             
-            // Entity that this component is attached to.
+            // entity that this component is attached to
             Entity *m_owner;
-
-            // component type mask (1 << m_typeID)
-            ComponentTypeMask m_typeMask;
         public:
+            Meta(Disable)
             explicit inline Component(ComponentTypeID typeID);
 
+            Meta(Disable)
             Component(const Component &rhs) = default;
-            Component &operator=(const Component &rhs) = default;
 
-            virtual ~Component(void) { }
+            Meta(Disable)
+            Component &operator=(const Component &rhs) = default;
 
             // Called when the component has been initialized and added to an entity
             virtual void OnInitialize(void) { }

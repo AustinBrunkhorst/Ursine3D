@@ -24,24 +24,25 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  namespace DXCore
-  {
-    class InputLayoutManager
+    namespace DXCore
     {
-    public:
-      void Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext, ShaderManager *shdrmgr );
-      void Uninitialize( );
+        class InputLayoutManager
+        {
+        public:
+            void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, ShaderManager *shdrmgr);
+            void Uninitialize();
 
-      void SetInputLayout( SHADER_TYPES type );
+            void SetInputLayout(SHADER_TYPES type);
 
-    private:
-      HRESULT GetLayoutFromBlob( Shader *shader, ID3D11InputLayout** pInputLayout );
-      ID3D11Device *m_device;
-      ID3D11DeviceContext *m_deviceContext;
+            void Invalidate();
+        private:
+            HRESULT GetLayoutFromBlob(Shader *shader, ID3D11InputLayout **pInputLayout);
+            ID3D11Device *m_device;
+            ID3D11DeviceContext *m_deviceContext;
 
-      std::vector<ID3D11InputLayout *> m_layoutArray;
+            std::vector<ID3D11InputLayout *> m_layoutArray;
 
-      SHADER_TYPES m_currentState;
-    };
-  }
+            SHADER_TYPES m_currentState;
+        };
+    }
 }

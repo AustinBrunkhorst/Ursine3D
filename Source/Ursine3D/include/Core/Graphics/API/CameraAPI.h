@@ -29,11 +29,11 @@ namespace ursine
 
   public:
     // Create an camera
-    GFXHND AddCamera( );                          
+    GFXHND AddCamera( );
     // get a camera
-    Camera &GetCamera( const GFXHND &handle );   
+    Camera &GetCamera( const GFXHND &handle );
     // set active game camera
-    void SetGameCamera( const GFXHND &handle );  
+    void SetGameCamera( const GFXHND &handle );
 
   private:
     privData *m_privates;

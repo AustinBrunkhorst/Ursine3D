@@ -18,29 +18,29 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 enum SHADER_TYPES
 {
-  SHADER_BASIC = 0,
-  SHADER_QUAD,
-  SHADER_DIFFUSE,
-  SHADER_NORMAL,
-  SHADER_DEFFERED_TEXTURE,
-  SHADER_DEFERRED_DEPTH,
-  SHADER_DEFERRED_DEPTH_NORM,
-  SHADER_UI,
+    SHADER_BASIC = 0,
+    SHADER_QUAD,
+    SHADER_DIFFUSE,
+    SHADER_NORMAL,
+    SHADER_DEFFERED_TEXTURE,
+    SHADER_DEFERRED_DEPTH,
+    SHADER_BILLBOARD2D,
+    SHADER_DEFERRED_DEPTH_NORM,
+    SHADER_UI,
 
-  //lights need to go after this, post processing stuffz...
-  SHADER_POINT_LIGHT,         //this order is important, DO NOT SWAP
-  SHADER_DIRECTIONAL_LIGHT,
+    //lights need to go after this, post processing stuffz...
+    SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
+    SHADER_DIRECTIONAL_LIGHT,
 
-  //billboarded sprites don't care about lighting for now...
-  SHADER_BILLBOARD2D,
+    //billboarded sprites don't care about lighting for now...
 
-  //and past this is debug!
-  SHADER_PRIMITIVE,
 
-  //shaders not part of the regular pipeline
-  SHADER_POINT,
-  SHADER_SHADOW,
+    //and past this is debug!
+    SHADER_PRIMITIVE,
 
-  SHADER_COUNT
+    //shaders not part of the regular pipeline
+    SHADER_POINT,
+    SHADER_SHADOW,
+
+    SHADER_COUNT
 };
-

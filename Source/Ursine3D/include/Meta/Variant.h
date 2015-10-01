@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Variant.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "VariantBase.h"
@@ -17,19 +27,30 @@ namespace ursine
         public:
             Variant(void);
 
+            // Given a type that inherits from a meta::Object and
+            // supplied with the "WrapObject" policy, use the object wrapper
+            // variant base 
             template<typename T>
-            Variant(T *data
-                , variant_policy::WrapObject
-                , typename std::enable_if< std::is_base_of<Object, T>::value >::type* = nullptr
+            Variant(
+                T *data, 
+                variant_policy::WrapObject, 
+                typename std::enable_if< 
+                    std::is_base_of<Object, T>::value 
+                >::type* = nullptr
             );
 
             template<typename T>
             Variant(T &data);
 
+            // non-const r-value references, excluding other variants
             template<typename T>
-            Variant(T &&data
-                , typename std::enable_if< !std::is_same<Variant&, T>::value >::type* = nullptr
-                , typename std::enable_if< !std::is_const<T>::value >::type* = nullptr
+            Variant(T &&data, 
+                typename std::enable_if< 
+                    !std::is_same<Variant&, T>::value 
+                >::type* = nullptr,
+                typename std::enable_if< 
+                    !std::is_const<T>::value 
+                >::type* = nullptr
             );
 
             Variant(const Variant &rhs);

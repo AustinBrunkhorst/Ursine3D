@@ -19,15 +19,16 @@ namespace ursine
       // NORMAL BLEND DESCRIPTION ///////////////////////////////////
       D3D11_BLEND_DESC blendDesc;
       ZeroMemory( &blendDesc, sizeof( blendDesc ) );
-      blendDesc.AlphaToCoverageEnable = true;
+      blendDesc.AlphaToCoverageEnable = false;
+      blendDesc.IndependentBlendEnable = true;
       blendDesc.RenderTarget[ 0 ].BlendEnable = TRUE;
 
       blendDesc.RenderTarget[ 0 ].BlendOp = D3D11_BLEND_OP_ADD;
       blendDesc.RenderTarget[ 0 ].SrcBlend = D3D11_BLEND_SRC_ALPHA;
       blendDesc.RenderTarget[ 0 ].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 
-      blendDesc.RenderTarget[ 0 ].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-      blendDesc.RenderTarget[ 0 ].SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
+      blendDesc.RenderTarget[ 0 ].BlendOpAlpha = D3D11_BLEND_OP_MAX;
+      blendDesc.RenderTarget[ 0 ].SrcBlendAlpha = D3D11_BLEND_ONE;
       blendDesc.RenderTarget[ 0 ].DestBlendAlpha = D3D11_BLEND_ONE;
 
       blendDesc.RenderTarget[ 0 ].RenderTargetWriteMask = 0x0F;
@@ -43,6 +44,7 @@ namespace ursine
       // ADDITIVE BLEND DESCRIPTION /////////////////////////////////
       ZeroMemory( &blendDesc, sizeof( blendDesc ) );
       blendDesc.AlphaToCoverageEnable = false;
+      blendDesc.IndependentBlendEnable = true;
       blendDesc.RenderTarget[ 0 ].BlendEnable = TRUE;
 
       blendDesc.RenderTarget[ 0 ].BlendOp = D3D11_BLEND_OP_ADD;
@@ -62,6 +64,7 @@ namespace ursine
       // NO BLENDING    DESCRIPTION /////////////////////////////////
       ZeroMemory( &blendDesc, sizeof( blendDesc ) );
       blendDesc.AlphaToCoverageEnable = false;
+      blendDesc.IndependentBlendEnable = true;
       blendDesc.RenderTarget[ 0 ].BlendEnable = TRUE;
 
       blendDesc.RenderTarget[ 0 ].BlendOp = D3D11_BLEND_OP_ADD;
@@ -105,8 +108,12 @@ namespace ursine
 
       m_currentState = state;
 
-      float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
-      m_deviceContext->OMSetBlendState( BlendStateArray_[ state ], blendFactor, 0xffffffff );
+      m_deviceContext->OMSetBlendState( BlendStateArray_[ state ], 0, 0xffffffff );
+    }
+
+    void BlendStateManager::Invalidate ( )
+    {
+      m_currentState = BLEND_STATE_COUNT;
     }
   }
 }

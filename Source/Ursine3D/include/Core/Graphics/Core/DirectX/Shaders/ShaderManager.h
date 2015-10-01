@@ -23,53 +23,55 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  namespace DXCore
-  {
-    struct Shader
+    namespace DXCore
     {
-      SHADER_TYPES type;
+        struct Shader
+        {
+            SHADER_TYPES type;
 
-      ID3D11VertexShader *vs;
-      ID3D11PixelShader *ps;
-      ID3D11HullShader *hs;
-      ID3D11DomainShader *ds;
-      ID3D11GeometryShader *gs;
+            ID3D11VertexShader *vs;
+            ID3D11PixelShader *ps;
+            ID3D11HullShader *hs;
+            ID3D11DomainShader *ds;
+            ID3D11GeometryShader *gs;
 
-      ID3D11ShaderReflection *reflectionData;
-      ID3DBlob *vsBlob;
-      void *rawData;
-      unsigned size;
+            ID3D11ShaderReflection *reflectionData;
+            ID3DBlob *vsBlob;
+            void *rawData;
+            unsigned size;
 
-      std::vector<std::string> filenames;
-      std::vector<time_t> timestamps;
+            std::vector<std::string> filenames;
+            std::vector<time_t> timestamps;
 
-      Shader( )
-      {
-        filenames.resize( DEF_COUNT );
-        timestamps.resize( DEF_COUNT );
-      }
-    };
+            Shader()
+            {
+                filenames.resize( DEF_COUNT );
+                timestamps.resize( DEF_COUNT );
+            }
+        };
 
-    class ShaderManager
-    {
-    public:
-      void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath = "" );
-      void Uninitialize( );
+        class ShaderManager
+        {
+        public:
+            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath = "");
+            void Uninitialize();
 
-      void BindShader( SHADER_TYPES shader );
+            void BindShader(SHADER_TYPES shader);
 
-      void LoadShader( SHADER_TYPES shader, const char *filename );
+            void LoadShader(SHADER_TYPES shader, const char *filename);
 
-      void Render( unsigned vert_count );
+            void Render(unsigned vert_count);
 
-      Shader *GetShader( SHADER_TYPES shader );
-    private:
-      std::string m_shaderPath;
-      ID3D11Device *m_device;
-      ID3D11DeviceContext *m_deviceContext;
+            Shader *GetShader(SHADER_TYPES shader);
 
-      SHADER_TYPES m_currentState;
-      std::vector<Shader*> m_shaderArray;
-    };
-  }
+            void Invalidate();
+        private:
+            std::string m_shaderPath;
+            ID3D11Device *m_device;
+            ID3D11DeviceContext *m_deviceContext;
+
+            SHADER_TYPES m_currentState;
+            std::vector<Shader*> m_shaderArray;
+        };
+    }
 }

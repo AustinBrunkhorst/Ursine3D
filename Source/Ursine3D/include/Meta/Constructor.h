@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Constructor.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "MetaContainer.h"
@@ -20,7 +30,13 @@ namespace ursine
             typedef std::function<Variant(ArgumentList&)> Invoker;
 
             Constructor(void);
-            Constructor(Type classType, InvokableSignature signature, Invoker invoker, bool isDynamic);
+            
+            Constructor(
+                Type classType, 
+                InvokableSignature signature, 
+                Invoker invoker, 
+                bool isDynamic
+            );
 
             static const Constructor &Invalid(void);
 

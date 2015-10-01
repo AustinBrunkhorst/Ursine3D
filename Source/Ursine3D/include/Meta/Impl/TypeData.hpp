@@ -3,9 +3,14 @@ namespace ursine
     namespace meta
     {
         template<typename ClassType, typename ... Args>
-        void TypeData::AddConstructor(Constructor::Invoker invoker, const MetaManager::Initializer &meta, bool isDynamic)
+        void TypeData::AddConstructor(
+            Constructor::Invoker invoker, 
+            const MetaManager::Initializer &meta, 
+            bool isDynamic
+        )
         {
-            InvokableSignature signature = Invokable::CreateSignature<Args...>( );
+            InvokableSignature signature = 
+                Invokable::CreateSignature<Args...>( );
 
             Constructor ctor {
                 typeof( ClassType ),
@@ -22,7 +27,7 @@ namespace ursine
                 constructors.emplace( signature, ctor );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename ClassType>
         void TypeData::SetDestructor(void)
@@ -36,10 +41,15 @@ namespace ursine
             };
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename ClassType, typename FieldType>
-        void TypeData::AddField(const std::string &name, Field::Getter getter, Field::Setter setter, const MetaManager::Initializer &meta)
+        void TypeData::AddField(
+            const std::string &name, 
+            Field::Getter getter, 
+            Field::Setter setter, 
+            const MetaManager::Initializer &meta
+        )
         {
             Field field {
                 name,
@@ -55,7 +65,12 @@ namespace ursine
         }
 
         template<typename ClassType, typename FieldType>
-        void TypeData::AddStaticField(const std::string &name, Global::Getter getter, Global::Setter setter, const MetaManager::Initializer &meta)
+        void TypeData::AddStaticField(
+            const std::string &name, 
+            Global::Getter getter, 
+            Global::Setter setter, 
+            const MetaManager::Initializer &meta
+        )
         {
             Global global {
                 name,
@@ -70,10 +85,15 @@ namespace ursine
             staticFields.emplace( name, global );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename MethodType, typename MethodInvoker>
-        void TypeData::AddMethod(const std::string &name, MethodType type, MethodInvoker invoker, const MetaManager::Initializer &meta)
+        void TypeData::AddMethod(
+            const std::string &name, 
+            MethodType type, 
+            MethodInvoker invoker, 
+            const MetaManager::Initializer &meta
+        )
         {
             Method method( name, type, invoker );
 
@@ -83,7 +103,12 @@ namespace ursine
         }
 
         template<typename ClassType, typename FunctionType, typename FunctionInvoker>
-        void TypeData::AddStaticMethod(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta)
+        void TypeData::AddStaticMethod(
+            const std::string &name, 
+            FunctionType type, 
+            FunctionInvoker invoker, 
+            const MetaManager::Initializer &meta
+        )
         {
             Function function( name, type, invoker, typeof( ClassType ) );
 
@@ -92,10 +117,13 @@ namespace ursine
             staticMethods[ name ].emplace( function.GetSignature( ), function );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
-        void TypeData::SetEnum(const std::string &name, const typename EnumContainer<EnumType>::Table &table)
+        void TypeData::SetEnum(
+            const std::string &name, 
+            const typename EnumContainer<EnumType>::Table &table
+        )
         {
             enumeration = new EnumContainer<EnumType>( name, table );
         }

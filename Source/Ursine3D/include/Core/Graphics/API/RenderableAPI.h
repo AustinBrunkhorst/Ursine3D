@@ -21,38 +21,39 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class RenderableAPI
-  {
-    friend class GfxAPI;
-  private:
-    struct privData;
+    class RenderableAPI
+    {
+        friend class GfxAPI;
+    private:
+        struct privData;
 
-  public:
-    // create a graphics object
-    GFXHND AddRenderable( const RENDERABLE_TYPE type );   
+    public:
+        // create a graphics object
+        GFXHND AddRenderable(const RENDERABLE_TYPE type);
 
-    // destroy graphics object
-    void DestroyRenderable( GFXHND &handle );  
+        // destroy graphics object
+        void DestroyRenderable(GFXHND &handle);
 
-    // get a model
-    Model3D &GetModel3D( GFXHND &handle );    
+        // get a model
+        Model3D &GetModel3D(GFXHND &handle);
 
-    // get a directional light
-    DirectionalLight &GetDirectionalLight( GFXHND &handle );  
+        // get a directional light
+        DirectionalLight &GetDirectionalLight(GFXHND &handle);
 
-    // get a point light
-    PointLight &GetPointLight( GFXHND &handle );  
+        // get a point light
+        PointLight &GetPointLight(GFXHND &handle);
 
-    // get a point light
-    Primitive &GetPrimitive( GFXHND &handle );                
+        // get a point light
+        Primitive &GetPrimitive(GFXHND &handle);
 
-  private:
-    privData *m_privates;
+        Billboard2D &GetBillboard2D(GFXHND &handle);
 
-  private:
-    void SetPrivates( void *priv );
-    void Initialize( );
-    void Uninitialize( );
+    private:
+        privData *m_privates;
 
-  };
+    private:
+        void SetPrivates(void *priv);
+        void Initialize();
+        void Uninitialize();
+    };
 }

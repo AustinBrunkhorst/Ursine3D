@@ -53,6 +53,11 @@ namespace ursine
       m_deviceContext->IASetInputLayout(m_layoutArray[type]);
     }
 
+    void InputLayoutManager::Invalidate ( )
+    {
+      m_currentState = SHADER_COUNT;
+    }
+
     HRESULT InputLayoutManager::GetLayoutFromBlob(Shader *shader, ID3D11InputLayout** pInputLayout)
     {
       // Reflect shader info

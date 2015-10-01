@@ -1,3 +1,19 @@
+/* Start Header ---------------------------------------------------------------
+Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
+disclosure of this file or its contents without the prior written
+consent of DigiPen Institute of Technology is prohibited.
+=============================================================================*/
+/*!
+File Name:      ViewportManager.h
+Module:         Graphics
+Purpose:        Class for handling multiple viewports
+Language:       C++
+
+Project:        Graphics Prototype
+Author:         Matt Yan, m.yan@digipen.edu
+*/
+/*- End Header --------------------------------------------------------------*/
+
 #pragma once
 
 #include <vector>
@@ -10,20 +26,20 @@
 
 namespace ursine
 {
-  class ViewportManager
-  {
-  public:
-    void Initialize( DXCore::RenderTargetManager *mgr );
-    void Uninitialize( void );
+    class ViewportManager
+    {
+    public:
+        void Initialize(DXCore::RenderTargetManager *mgr);
+        void Uninitialize(void);
 
-    GFXHND AddViewport( unsigned width, unsigned height );
-    void DestroyViewport( GFXHND &viewportHandle );
+        GFXHND AddViewport(unsigned width, unsigned height);
+        void DestroyViewport(GFXHND &viewportHandle);
 
-    Viewport &GetViewport( GFXHND &viewportHandle );
+        Viewport &GetViewport(GFXHND &viewportHandle);
 
-  private:
-    std::vector<Viewport> m_viewports;
-    std::list<unsigned> m_availableViewports;
-    DXCore::RenderTargetManager *m_renderMgr;
-  };
+    private:
+        std::vector<Viewport> m_viewports;
+        std::list<unsigned> m_availableViewports;
+        DXCore::RenderTargetManager *m_renderMgr;
+    };
 }

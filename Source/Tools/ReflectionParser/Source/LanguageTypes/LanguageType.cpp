@@ -2,7 +2,10 @@
 
 #include "LanguageType.h"
 
-LanguageType::LanguageType(const Cursor &cursor, const Namespace &currentNamespace)
+LanguageType::LanguageType(
+	const Cursor &cursor, 
+    const Namespace &currentNamespace
+)
     : m_metaData( cursor )
     , m_enabled( m_metaData.GetFlag( kMetaEnable ) )
     , m_ptrTypeEnabled( !m_metaData.GetFlag( kMetaDisablePtrType ) )

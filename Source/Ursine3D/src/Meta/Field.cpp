@@ -13,7 +13,13 @@ namespace ursine
             , m_getter( nullptr ) 
             , m_setter( nullptr ) { }
 
-        Field::Field(const std::string &name, Type type, Type classType, Getter getter, Setter setter) 
+        Field::Field(
+            const std::string &name, 
+            Type type, 
+            Type classType, 
+            Getter getter, 
+            Setter setter
+        ) 
             : m_type( type )
             , m_classType( classType )
             , m_name( name )

@@ -1,0 +1,24 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="Behaviors/Menu.html">
+
+<dom-module id="x-menu">
+    <link rel="import" type="css" href="../Style/Controls/Menu.css">
+    <template>
+        <content></content>
+    </template>
+    <script>
+        var MenuControl = Polymer({
+            is: "x-menu",
+            properties: {
+
+            },
+            attached: function() {
+
+            },
+            detached: function() {
+
+            },
+            behaviors: [ MenuBehavior ]
+        });
+    </script>
+</dom-module>

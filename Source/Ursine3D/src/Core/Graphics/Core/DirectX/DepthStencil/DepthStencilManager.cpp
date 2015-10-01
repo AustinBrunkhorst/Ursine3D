@@ -28,11 +28,11 @@ namespace ursine
     depthBufferDesc.Height = height;
     depthBufferDesc.MipLevels = 1;
     depthBufferDesc.ArraySize = 1;
-    depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthBufferDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
     depthBufferDesc.SampleDesc.Count = 1;
     depthBufferDesc.SampleDesc.Quality = 0;
     depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D10_BIND_SHADER_RESOURCE;
     depthBufferDesc.CPUAccessFlags = 0;
     depthBufferDesc.MiscFlags = 0;
 
@@ -50,6 +50,15 @@ namespace ursine
     result = m_device->CreateDepthStencilView( m_depthStencilTextureArray[ DEPTH_STENCIL_MAIN ], &depthStencilViewDesc, &m_depthStencilViewArray[ DEPTH_STENCIL_MAIN ] );
     UAssert( result == S_OK, "Failed to make depth stencil view! (Error '%i')", result );
 
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+
+    result = m_device->CreateShaderResourceView( m_depthStencilTextureArray[ DEPTH_STENCIL_MAIN ], &srvDesc, &m_depthStencilResourceArray[ DEPTH_STENCIL_MAIN ] );
+    UAssert( result == S_OK, "Failed to make depth stencil shader resource view! (Error '%i')", result );
+
     /////////////////////////////////////////////////////////////////
     // CREATING SHADOW MAP BUFFER
     ZeroMemory( &depthBufferDesc, sizeof( depthBufferDesc ) );
@@ -59,7 +68,7 @@ namespace ursine
     depthBufferDesc.Height = height;
     depthBufferDesc.MipLevels = 1;
     depthBufferDesc.ArraySize = 1;
-    depthBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+    depthBufferDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
     depthBufferDesc.SampleDesc.Count = 1;
     depthBufferDesc.SampleDesc.Quality = 0;
     depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -73,15 +82,14 @@ namespace ursine
 
     ZeroMemory( &depthStencilViewDesc, sizeof( depthStencilViewDesc ) );
 
-    depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     depthStencilViewDesc.Texture2D.MipSlice = 0;
 
     result = m_device->CreateDepthStencilView( m_depthStencilTextureArray[ DEPTH_STENCIL_SHADOWMAP ], &depthStencilViewDesc, &m_depthStencilViewArray[ DEPTH_STENCIL_SHADOWMAP ] );
     UAssert( result == S_OK, "Failed to make depth stencil view! (Error '%i')", result );
 
-    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
     srvDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;
     srvDesc.Texture2D.MostDetailedMip = 0;
@@ -119,6 +127,11 @@ namespace ursine
   ID3D11ShaderResourceView* DepthStencilManager::GetDepthStencilSRV( DEPTH_STENCIL_LIST stencil )
   {
     return m_depthStencilResourceArray[ stencil ];
+  }
+
+  void DepthStencilManager::Invalidate ( )
+  {
+    m_currentState = DEPTH_STENCIL_COUNT;
   }
 
   void DepthStencilManager::Resize ( int width, int height )

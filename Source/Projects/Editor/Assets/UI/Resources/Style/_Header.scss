@@ -1,0 +1,16 @@
+@import 'Config';
+@import 'Utils';
+
+body {
+  padding-top: $header-height;
+}
+
+#header-toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: $header-height;
+  background: $header-bg-color;
+  z-index: 9999;
+}

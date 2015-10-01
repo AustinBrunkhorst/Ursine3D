@@ -19,6 +19,10 @@
 #include "LocalTimerManager.h"
 #include "LocalTweenManager.h"
 
+#include "EntityManager.h"
+#include "NameManager.h"
+#include "UtilityManager.h"
+
 namespace ursine
 {
     namespace ecs
@@ -29,12 +33,12 @@ namespace ursine
 
         Entity::Entity(World *world, EntityUniqueID id)
             : m_flags( ACTIVE )
-            , m_id( id )
-            , m_world( world )
-            , m_systemMask( 0 )
-            , m_typeMask( 0 )
-        {
-        }
+              , m_id( id )
+              , m_uniqueID( 0 )
+              , m_world( world )
+              , m_transform( nullptr )
+              , m_systemMask( 0 )
+              , m_typeMask( 0 ) { }
 
         ////////////////////////////////////////////////////////////////////////
         // State/Identification
@@ -88,44 +92,17 @@ namespace ursine
         }
 
         ////////////////////////////////////////////////////////////////////////
-        // Tags
+        // Naming
         ////////////////////////////////////////////////////////////////////////
 
-        const std::string &Entity::GetTag(void) const
+        const std::string &Entity::GetName(void) const
         {
-            return *new std::string( );
-            //return m_world->Manager<TagManager>()->GetTag(this);
+            return m_world->m_nameManager->GetName( this );
         }
 
-        void Entity::SetTag(const std::string &tag)
+        void Entity::SetName(const std::string &name)
         {
-            //m_world->Manager<TagManager>()->Register(tag, this);
-        }
-
-        ////////////////////////////////////////////////////////////////////////
-        // Groups
-        ////////////////////////////////////////////////////////////////////////
-
-        const EntityGroupVector &Entity::GetGroups(void) const
-        {
-            return *new EntityGroupVector( );
-            //return m_world->Manager<GroupManager>()->GetGroups(this);
-        }
-
-        void Entity::AddGroup(const std::string &group)
-        {
-            //m_world->Manager<GroupManager>()->Add(group, this);
-        }
-
-        void Entity::RemoveGroup(const std::string &group)
-        {
-            //m_world->Manager<GroupManager>()->Remove(group, this);
-        }
-
-        bool Entity::HasGroup(const std::string &group) const
-        {
-            return false;
-            //return m_world->Manager<GroupManager>()->HasGroup(group, this);
+            m_world->m_nameManager->SetName( this, name );
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -134,14 +111,12 @@ namespace ursine
 
         LocalTimerManager &Entity::GetTimers(void)
         {
-            return *new LocalTimerManager( nullptr );
-            //return m_world->Manager<UtilityManager>()->GetTimers( this );
+            return m_world->m_utilityManager->GetTimers( this );
         }
 
         LocalTweenManager &Entity::GetTweens(void)
         {
-            return *new LocalTweenManager( nullptr );
-            //return m_world->Manager<UtilityManager>()->GetTweens( this );
+            return m_world->m_utilityManager->GetTweens( this );
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -155,19 +130,17 @@ namespace ursine
 
         Component *Entity::GetComponent(ComponentTypeID id) const
         {
-            return nullptr;
-            //return m_world->Manager<EntityManager>()->GetComponent(this, id);
+            return m_world->m_entityManager->GetComponent( this, id );
         }
 
         ComponentVector Entity::GetComponents(void) const
         {
-            return { };
-            //return m_world->Manager<EntityManager>()->GetComponents(this);
+            return m_world->m_entityManager->GetComponents( this );
         }
 
         void Entity::RemoveComponent(ComponentTypeID id)
         {
-            //m_world->Manager<EntityManager>()->RemoveComponent(this, id);
+            m_world->m_entityManager->RemoveComponent( this, id );
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -176,7 +149,7 @@ namespace ursine
 
         void Entity::Dispatch(EventID event, const EventArgs *args)
         {
-            //m_world->Manager<EntityManager>()->GetEntityEvents(this).Dispatch(event, this, args);
+            m_world->m_entityManager->GetEntityEvents( this ).Dispatch( event, this, args );
         }
 
         ////////////////////////////////////////////////////////////////////////

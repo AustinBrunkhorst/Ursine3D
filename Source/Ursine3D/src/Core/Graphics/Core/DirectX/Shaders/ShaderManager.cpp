@@ -167,8 +167,7 @@ namespace ursine
 
     void ShaderManager::BindShader( SHADER_TYPES shader )
     {
-      if (m_currentState == shader)
-        return;
+
 
       m_currentState = shader;
 
@@ -219,6 +218,11 @@ namespace ursine
     Shader *ShaderManager::GetShader( SHADER_TYPES shader )
     {
       return m_shaderArray[ shader ];
+    }
+
+    void ShaderManager::Invalidate ( )
+    {
+      m_currentState = SHADER_COUNT;
     }
   }
 }

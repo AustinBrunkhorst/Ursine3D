@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 ursine_default_project(Graphics
     FOLDER "Tests"
     TYPE EXE
-    DEPENDS SDL2 CEF DirectX
+    DEPENDS SDL2 CEF DirectX BulletPhysics
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
     SYM_LINKS "Assets" "Models" "SHADER_BINARY" "Textures"

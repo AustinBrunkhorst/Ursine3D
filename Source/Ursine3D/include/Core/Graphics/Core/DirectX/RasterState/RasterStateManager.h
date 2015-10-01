@@ -22,23 +22,25 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  namespace DXCore
-  {
-    class RasterStateManager
+    namespace DXCore
     {
-    public:
-      void Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext );
-      void Uninitialize( );
+        class RasterStateManager
+        {
+        public:
+            void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+            void Uninitialize();
 
-      ID3D11RasterizerState *GetRasterState( RASTER_STATES state );
-      void SetRasterState( RASTER_STATES state );
-    private:
-      ID3D11Device *m_device;
-      ID3D11DeviceContext *m_deviceContext;
+            ID3D11RasterizerState *GetRasterState(RASTER_STATES state);
+            void SetRasterState(RASTER_STATES state);
 
-      std::vector<ID3D11RasterizerState*> m_rasterStateArray;
+            void Invalidate();
+        private:
+            ID3D11Device *m_device;
+            ID3D11DeviceContext *m_deviceContext;
 
-      RASTER_STATES m_currentState;
-    };
-  }
+            std::vector<ID3D11RasterizerState*> m_rasterStateArray;
+
+            RASTER_STATES m_currentState;
+        };
+    }
 }

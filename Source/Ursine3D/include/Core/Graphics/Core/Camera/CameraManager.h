@@ -23,19 +23,19 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class CameraManager
-  {
-  public:
-    void Initialize( );
-    void Uninitialize( );
+    class CameraManager
+    {
+    public:
+        void Initialize();
+        void Uninitialize();
 
-    GFXHND CreateCamera( );
-    Camera &GetCamera( const GFXHND &handle );
+        GFXHND CreateCamera();
+        Camera &GetCamera(const GFXHND &handle);
 
-    Camera &GetCurrent( );
-    void SetCurrent( const GFXHND &handle );
-  private:
-    std::vector<Camera> m_cameraArray;
-    unsigned m_current;
-  };
+        Camera &GetCurrent();
+        void SetCurrent(const GFXHND &handle);
+    private:
+        std::vector<Camera> m_cameraArray;
+        unsigned m_current;
+    };
 }

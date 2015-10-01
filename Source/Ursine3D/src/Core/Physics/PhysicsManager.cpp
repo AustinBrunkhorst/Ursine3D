@@ -50,9 +50,8 @@ namespace ursine
 
     void PhysicsManager::LoadWorld(const char* bulletFile)
     {
-        auto *fileName = (std::string("Assets/Bullet/") + std::string(bulletFile)).c_str();
         auto *fileLoader = new btBulletWorldImporter(m_dynamicsWorld);
-        fileLoader->loadFile(fileName);
+        UAssert(fileLoader->loadFile(bulletFile), "Failed to load Bullet World");
         delete fileLoader;
     }
 
@@ -80,7 +79,10 @@ namespace ursine
 		// Debug drawing
 		m_debugDrawer = new PhysicsDebugDrawer(Application::Instance->GetCoreSystem<GfxAPI>());
 		m_dynamicsWorld->setDebugDrawer(m_debugDrawer);
-		m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+		m_dynamicsWorld->getDebugDrawer()->setDebugMode(
+            btIDebugDraw::DBG_DrawWireframe | 
+            btIDebugDraw::DBG_DrawContactPoints
+        );
 	}
 
 	void PhysicsManager::destroyPhysics()

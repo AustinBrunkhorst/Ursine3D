@@ -10,11 +10,19 @@ class Constructor
     , public Invokable
 {
 public:
-    Constructor(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
+    Constructor(
+    	const Cursor &cursor, 
+    	const Namespace &currentNamespace, 
+    	Class *parent = nullptr
+	);
+
     virtual ~Constructor(void) { } 
 
     bool ShouldCompile(void) const;
-    TemplateData CompileTemplate(const ReflectionParser *context) const override;
+    
+    TemplateData CompileTemplate(
+    	const ReflectionParser *context
+	) const override;
 
 private:
     Class *m_parent;

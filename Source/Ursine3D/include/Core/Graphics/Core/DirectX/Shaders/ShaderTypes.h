@@ -20,10 +20,10 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 enum SHADERDEF
 {
-  VERTEX_SHADER = 0,
-  PIXEL_SHADER,
-  HULL_SHADER,
-  DOMAIN_SHADER,
-  GEOMETRY_SHADER,
-  DEF_COUNT
+    VERTEX_SHADER = 0,
+    PIXEL_SHADER,
+    HULL_SHADER,
+    DOMAIN_SHADER,
+    GEOMETRY_SHADER,
+    DEF_COUNT
 };

@@ -53,14 +53,6 @@ namespace ursine
         return this;
     }
 
-    bool UICore::GetLocalizedString(int nessageID, CefString &string)
-    {
-        // dot to shut up the errors
-        string = ".";
-
-        return true;
-    }
-
     void UICore::Shutdown(void)
     {
         CefShutdown( );

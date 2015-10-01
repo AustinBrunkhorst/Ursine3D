@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Field.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "MetaContainer.h"
@@ -18,7 +28,14 @@ namespace ursine
             typedef std::function<void(Variant &, const Variant &)> Setter;
 
             Field(void);
-            Field(const std::string &name, Type type, Type classType, Getter getter, Setter setter);
+
+            Field(
+                const std::string &name, 
+                Type type, 
+                Type classType, 
+                Getter getter, 
+                Setter setter
+            );
 
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
@@ -30,6 +47,7 @@ namespace ursine
 
             Variant GetValue(Variant &instance) const;
             bool SetValue(Variant &instance, const Variant &value) const;
+            
         private:
             Type m_type;
             Type m_classType;

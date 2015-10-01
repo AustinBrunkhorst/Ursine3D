@@ -32,6 +32,8 @@ namespace ursine
     ID3D11ShaderResourceView *GetDepthStencilSRV( DEPTH_STENCIL_LIST stencil );
 
     void Resize( int width, int height );
+
+    void Invalidate( );
   private:
     ID3D11Device *m_device;
     ID3D11DeviceContext *m_deviceContext;

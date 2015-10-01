@@ -64,6 +64,11 @@ namespace ursine
     DrawingMgr.SetPrivates( m_privates->gfxCore_->drawingManager );
   }
 
+  void GfxAPI::StartFrame ( )
+  {
+    m_privates->gfxCore_->StartFrame( );
+  }
+
   void GfxAPI::RenderObject(GFXHND handle)
   {
     m_privates->gfxCore_->Render(handle);
@@ -74,9 +79,9 @@ namespace ursine
     m_privates->gfxCore_->BeginScene( );
   }
 
-  void GfxAPI::RenderScene( float dt, GFXHND viewport )
+  void GfxAPI::RenderScene( float dt, GFXHND camera )
   {
-    m_privates->gfxCore_->RenderScene(dt, viewport);
+    m_privates->gfxCore_->RenderScene(dt, camera );
   }
 
   void GfxAPI::EndScene( )
@@ -84,8 +89,22 @@ namespace ursine
     m_privates->gfxCore_->EndScene( );
   }
 
+  void GfxAPI::EndFrame ( )
+  {
+    m_privates->gfxCore_->EndFrame( );
+  }
+
   void GfxAPI::Resize ( int width, int height )
   {
     m_privates->gfxCore_->Resize( width, height );
+  }
+
+    void GfxAPI::SetGameViewport(GFXHND vp)
+  {
+      _VIEWPORTHND *viewPort = reinterpret_cast<_VIEWPORTHND*>(&vp);
+
+      UAssert( viewPort->ID_ == ID_VIEWPORT, "Attempted to set game viewport with invalid handle!" );
+
+      m_privates->gfxCore_->SetGameViewport( vp );
   }
 }

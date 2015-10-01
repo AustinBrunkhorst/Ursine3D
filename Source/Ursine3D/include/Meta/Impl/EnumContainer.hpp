@@ -3,18 +3,25 @@ namespace ursine
     namespace meta
     {
         template<typename EnumType>
-        EnumContainer<EnumType>::EnumContainer(const std::string &name, const Table &table)
+        EnumContainer<EnumType>::EnumContainer(
+            const std::string &name, 
+            const Table &table
+        )
             : EnumBase( name, Type::Invalid )
             , m_table( table ) { }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
-        EnumContainer<EnumType>::EnumContainer(const std::string &name, const Table &table, TypeID owner)
+        EnumContainer<EnumType>::EnumContainer(
+            const std::string &name, 
+            const Table &table, 
+            TypeID owner
+        )
             : EnumBase( name, owner )
             , m_table( table ) { }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
         Type EnumContainer<EnumType>::GetType(void) const
@@ -22,7 +29,7 @@ namespace ursine
             return typeof( EnumType );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
         Type EnumContainer<EnumType>::GetUnderlyingType(void) const
@@ -30,7 +37,7 @@ namespace ursine
             return typeof( typename std::underlying_type< EnumType >::type );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
         std::vector<std::string> EnumContainer<EnumType>::GetKeys(void) const
@@ -43,7 +50,7 @@ namespace ursine
             return keys;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
         std::vector<Variant> EnumContainer<EnumType>::GetValues(void) const
@@ -56,12 +63,13 @@ namespace ursine
             return values;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
         std::string EnumContainer<EnumType>::GetKey(const Argument &value) const
         {
-            typedef typename std::underlying_type< EnumType >::type UnderlyingType;
+            typedef 
+            typename std::underlying_type< EnumType >::type UnderlyingType;
 
             auto type = value.GetType( );
 
@@ -83,7 +91,7 @@ namespace ursine
             return std::string( );
         }
 
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
         Variant EnumContainer<EnumType>::GetValue(const std::string &key) const

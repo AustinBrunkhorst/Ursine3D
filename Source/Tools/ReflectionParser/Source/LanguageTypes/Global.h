@@ -7,11 +7,19 @@ class Class;
 class Global : public LanguageType
 {
 public:
-    Global(const Cursor &cursor, const Namespace &currentNamespace, Class *parent = nullptr);
+    Global(
+        const Cursor &cursor, 
+        const Namespace &currentNamespace, 
+        Class *parent = nullptr
+    );
+
     virtual ~Global(void) { }
 
     bool ShouldCompile(void) const;
-    TemplateData CompileTemplate(const ReflectionParser *context) const override;
+    
+    TemplateData CompileTemplate(
+        const ReflectionParser *context
+    ) const override;
 
 private:
     bool m_isConst;

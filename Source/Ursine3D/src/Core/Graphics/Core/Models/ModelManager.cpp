@@ -173,8 +173,7 @@ namespace ursine
 
   void ModelManager::BindModel( std::string name )
   {
-    if (m_s2uTable[ name ] == m_currentState)
-      return;
+
 
     ModelResource *model = m_modelArray[ name ];
 
@@ -192,8 +191,7 @@ namespace ursine
 
   void ModelManager::BindModel( unsigned ID )
   {
-    if (ID == m_currentState)
-      return;
+
 
     ModelResource *model = m_u2mTable[ ID ];
 
@@ -221,5 +219,10 @@ namespace ursine
   unsigned ModelManager::GetModelVertcountByID( unsigned ID )
   {
     return m_u2mTable[ ID ]->VertCount_;
+  }
+
+  void ModelManager::Invalidate ( )
+  {
+    m_currentState = -1;
   }
 }

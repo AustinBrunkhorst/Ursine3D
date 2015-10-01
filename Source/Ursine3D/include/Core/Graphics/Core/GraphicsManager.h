@@ -56,6 +56,15 @@ namespace ursine
 
     void Resize( int width, int height );
 
+    void Invalidate( );
+
+    void RenderUI( GFXHND camera, RENDER_TARGETS input );
+
+    void RenderUI_Main( RENDER_TARGETS input );
+
+    //set the viewport for the current game
+    void SetGameViewport( GFXHND vp );
+
     //public members
   public:
     DXCore::DirectXCore *dxCore;
@@ -94,17 +103,19 @@ namespace ursine
 
     //preparing for rendering
     void PrepFor3DModels( const SMat4 &view, const SMat4 &proj );
-    void PrepForLightPass( const SMat4 &view, const SMat4 &proj );
+    void PrepForPointLightPass( const SMat4 &view, const SMat4 &proj );
+    void PrepForDirectionalLightPass( const SMat4 &view, const SMat4 &proj );
     void PrepForPrimitives( const SMat4 &view, const SMat4 &proj );
     void PrepForDebugRender( );
     void PrepForFinalOutput( );
     void PrepForUI( );
 
     //rendering funcs
-    void Render3DModel( DRAWHND handle );
-    void RenderPointLight( DRAWHND handle, Camera &currentCamera );
-    void RenderDirectionalLight( DRAWHND handle, Camera &currentcamera );
-    void RenderPrimitive( DRAWHND handle );
+    void Render3DModel( _DRAWHND handle );
+    void Render2DBillboard( _DRAWHND handle );
+    void RenderPointLight( _DRAWHND handle, Camera &currentCamera, SMat4 &proj );
+    void RenderDirectionalLight( _DRAWHND handle, Camera &currentcamera );
+    void RenderPrimitive( _DRAWHND handle );
     void RenderDebugPoints( const SMat4 &view, const SMat4 &proj, Camera &currentCamera );
     void RenderDebugLines( const SMat4 &view, const SMat4 &proj, Camera &currentCamera );
 
@@ -112,11 +123,16 @@ namespace ursine
   private:
     std::atomic<bool> m_rendering;
 
+    bool m_sceneActive;       //was beginscene called
+    bool m_currentlyRendering;//was start frame called
     bool m_renderUI;
     bool m_profile;
     bool m_debug;
     bool m_ready = false;
-    std::vector<DRAWHND> m_drawList;
+    
+    GFXHND m_GameViewport;
+
+    std::vector<_DRAWHND> m_drawList;
     unsigned m_drawCount;
 
     //temp

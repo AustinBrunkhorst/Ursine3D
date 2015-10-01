@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** Type.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "TypeConfig.h"
@@ -45,188 +55,330 @@ namespace ursine
             bool operator==(const Type &rhs) const;
             bool operator!=(const Type &rhs) const;
 
+            /** @brief Gets the internal id of the type.
+             */
             TypeID GetID(void) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets all types registered
+            /** @brief Gets all types registered in the main 
+             *         reflection database.
+             */
             static List GetTypes(void);
 
-            // Gets a type based on the qualified string name
-            static Type Get(const char *name);
+            /** @brief Gets a type based on the qualified string name.
+             *  @param name Name of the type.
+             */
+            static Type Get(const std::string &name);
 
-            // Gets a type by deducing the type of an object
+            /** @brief Gets a type by deducing the type of an object.
+             *  @param obj Object to deduce type from.
+             */
             template<typename T>
             static Type Get(T &&obj);
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets all registered global variables
+            /** @brief Gets all registered global variables.
+             */
             static std::vector<Global> GetGlobals(void);
 
-            // Gets a global variable with the specified name
+            /** @brief Gets a global variable with the specified name.
+             *  @param name Qualified global name.
+             */
             static const Global &GetGlobal(const std::string &name);
 
-            // Gets all registered global functions
+            /** @brief Gets all registered global functions.
+             */
             static std::vector<Function> GetGlobalFunctions(void);
 
-            // Gets a global function with the specified name, and first
-            // available overload
+            /** @brief Gets a global function with the specified name, and 
+             *         first available overload.
+             *  @param name Qualified global function name.
+             */
             static const Function &GetGlobalFunction(const std::string &name);
 
-            // Gets a global function with the specified name, and overload signature
-            static const Function &GetGlobalFunction(const std::string &name, const InvokableSignature &signature);
+            /** @brief Gets a global function with the specified name, and 
+             *         overload signature.
+             *  @param name Qualified global function name.
+             *  @param signature Signature of the global function.
+             */
+            static const Function &GetGlobalFunction(
+                  const std::string &name, 
+                  const InvokableSignature &signature
+            );
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Compares two type lists. Returns true if "a" is identical to "b"
+            /** @brief Compares two type lists.
+             *  @param a First list
+             *  @param b Second list
+             *  @return true if "a" is identical to "b"
+             */
             static bool ListsEqual(const List &a, const List &b);
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Determines if this is a valid type
+            /** @brief Determines if this type is valid.
+             *  @return true if the internal id is not Type::INVALID
+             */
             bool IsValid(void) const;
 
-            // Determines if this type is primitive (int, bool, char, etc)
+            /** @brief Determines if this type is primitive.
+             *  @return true if the type is among (int, bool, char, etc).
+             */
             bool IsPrimitive(void) const;
 
-            // Determines if this type is an enumeration
+            /** @brief Determines if this type is an enumeration.
+             *  @return true if the type is either an enum or enum class.
+             */
             bool IsEnum(void) const;
 
-            // Determines if this type is a pointer
+            /** @brief Determines if this type is a pointer.
+             *  @return true if the type has any level of indirection. 
+             *          ie - (int *), (int **), etc.
+             */
             bool IsPointer(void) const;
 
-            // Determines if this type is a class
+            /** @brief Determines if this type is a class.
+             *  @return true if the type is a class or struct.
+             */
             bool IsClass(void) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets the human readable name for this type
+            /** @brief Gets the human readable name for this type.
+             *  @return Qualified name of the type as it is declared.
+             *          ie - "boost::regex"
+             */
             const std::string &GetName(void) const;
 
-            // Instantiates an instance of this type with the given constructor signature
-            // NOTE: it is much faster to cache the appropriate constructor first, then
-            // call Invoke( ) manually
+            /** @brief Instantiates an instance of this type with the given 
+             *         constructor signature. NOTE: it is much faster to cache 
+             *         the appropriate constructor first, then call 
+             *         Invoke( ) manually.
+             *  @param arguments List of arguments to forward to the 
+             *                   type constructor.
+             *  @return Variant representing the newly created type instance.
+             */
             Variant CreateVariadic(const ArgumentList &arguments) const;
 
-            // Instantiates an instance of this type with the given dynamic constructor signature
-            // NOTE: it is much faster to cache the appropriate constructor first, then
-            // call Invoke( ) manually
+            /** @brief Same as CreateVariadic( ), except it uses the dynamic
+             *         constructor and returns the class pointer type.
+             *  @param arguments List of arguments to forward to the 
+             *                   type constructor.
+             *  @return Variant representing a pointer to the newly 
+             *          created type instance. NOTE: client is responsible for
+             *          memory management, either through type.Destroy( ) or
+             *          directly calling the underlying pointer's deconstructor
+             */
             Variant CreateDynamicVariadic(const ArgumentList &arguments) const;
 
-            // Instantiates an instance of this type with the given constructor signature
-            // NOTE: it is much faster to cache the appropriate constructor first, then
-            // call Invoke( ) manually
+            /** @brief Instantiates an instance of this type with the given 
+             *         constructor signature. NOTE: it is much faster to cache 
+             *         the appropriate constructor first, then call 
+             *         Invoke( ) manually.
+             *  @param arguments List of arguments to forward to the 
+             *                   type constructor.
+             *  @return Variant representing the newly created type instance.
+             */
             template<typename ...Args>
             Variant Create(Args &&...args) const;
 
-            // Instantiates an instance of this type with the given dynamic constructor signature
-            // NOTE: it is much faster to cache the appropriate constructor first, then
-            // call Invoke( ) manually
+           /** @brief Same as Create( ), except it uses the dynamic
+             *         constructor and returns the class pointer type.
+             * @param arguments List of arguments to forward to the 
+             *                   type constructor.
+             * @return Variant representing a pointer to the newly 
+             *          created type instance. NOTE: client is responsible for
+             *          memory management, either through type.Destroy( ) or
+             *          directly calling the underlying pointer's deconstructor
+             */
             template<typename ...Args>
             Variant CreateDynamic(Args &&...args) const;
 
-            // Deconstructs the given object instance
+            /** @brief Deconstructs the given object instance.
+             *  @param instance Variant object instance to destruct.
+             */
             void Destroy(Variant &instance) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets the decayed version of this type (no qualifiers like const, and no pointer)
+            /** @brief Gets the decayed version of this type.
+             *  @return Type with no qualifiers like const, and no pointer.
+             *          ie - const int * -> int
+             */
             Type GetDecayedType(void) const;
 
-            // Gets the enumeration representing this type, assuming it's an enum type
+            /** @brief Gets the enumeration representing this type, 
+             *         assuming it's an enum type.
+             *  @return Reference to the enum type in the reflection database.
+             */
             const Enum &GetEnum(void) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Determines if this type derives from the specified runtime type
+            /** @brief Determines if this type derives from the specified 
+             *         runtime type.
+             *  @param other Other class type.
+             *  @return true if both types are class types and this type
+             *          derives from "other".
+             */
             bool DerivesFrom(const Type &other) const;
 
-            // Determines if this type derives from the specified static type
+            /** @brief Determines if this type derives from the specified 
+             *         runtime type.
+             *  @return true if both types are class types and this type
+             *          derives from "other".
+             */
             template<typename T>
             bool DerivesFrom(void) const;
 
-            // Gets all base classes for this type
+            /** @brief Gets all base classes for this type.
+             *  @return Type set of all base classes for this type.
+             */
             const Set &GetBaseClasses(void) const;
 
-            // Gets all classes that derive from this class type
+            /** @brief Gets all classes that derive from this class type.
+             *  @return Type set of all derived classes for this type.
+             */
             const Set &GetDerivedClasses(void) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets all constructors for this type assuming it's a class type
+            /** @brief Gets all constructors for this type 
+             *         assuming it's a class type.
+             *  @return Set of constructors for this type.
+             */
             std::vector<Constructor> GetConstructors(void) const;
 
-            // Gets all dynamic constructors for this type assuming it's a class type
+            /** @brief Gets all dynamic constructors for this type 
+             *         assuming it's a class type.
+             *  @return Set of all dynamic constructors for this type.
+             */
             std::vector<Constructor> GetDynamicConstructors(void) const;
 
-            // Gets a constructor for this type with the specified argument signature
-            const Constructor &GetConstructor(const InvokableSignature &signature = InvokableSignature( )) const;
+            /** @brief Gets a constructor for this type.
+             *  @param signature Signature of the constructor.
+             *  @return Reference to the constructor with the given signature
+             *          in the reflection database.
+             */
+            const Constructor &GetConstructor(
+                  const InvokableSignature &signature = InvokableSignature( )
+            ) const;
 
-            // Gets a dynamic constuctor for this type with the specified argument signature
-            const Constructor &GetDynamicConstructor(const InvokableSignature &signature = InvokableSignature( )) const;
+            /** @brief Gets a dynamic constructor for this type with the 
+             *         specified argument signature.
+             *  @param signature Signature of the dynamic constructor.
+             *  @return Reference to the dynamic constructor with the given 
+             *          signature in the reflection database.
+             */
+            const Constructor &GetDynamicConstructor(
+                  const InvokableSignature &signature = InvokableSignature( )
+            ) const;
 
-            // Gets the destructor for this type assuming it's a class type
+            /** @brief Gets the destructor for this type assuming it's a 
+             *         class type.
+             *  @return Reference to the destructor in the reflection database.
+             */
             const Destructor &GetDestructor(void) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets all methods for this type, assuming it's a class type
+            /** @brief Gets all methods for this type 
+             *         assuming it's a class type.
+             *  @return Set of methods for this type.
+             */
             std::vector<Method> GetMethods(void) const;
 
-            // Gets a specific method for this type, assuming it's a class type.
-            // If the method doesn't exist, an invalid method is returned.
-            // If the method exists, but has overloads, the first declared
-            // overload is returned.
+            /** @brief Gets a method for this type.
+             *  @param name Name of the method.
+             *  @return Reference to the method in the reflection database.
+             *     If the method doesn't exist, an invalid method.
+             *     If the method exists, but has overloads, the first declared.
+             */
             const Method &GetMethod(const std::string &name) const;
 
-            // Gets a specific method for this type, with the given 
-            // overloaded signature, assuming it's a class type.
-            // If the overload doesn't exist, an invalid method is returned.
-            const Method &GetMethod(const std::string &name, const InvokableSignature &signature) const;
+            /** @brief Gets a method for this type.
+             *  @param name Name of the method.
+             *  @param signature Specific overload for this method.
+             *  @return Reference to the method in the reflection database
+             *          with the specified overload. If the specific overload
+             *          doesn't exist, an invalid method is returned.
+             */
+            const Method &GetMethod(
+                  const std::string &name, 
+                  const InvokableSignature &signature
+            ) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets all static methods for this type, assuming it's a class type
+            /** @brief Gets all static methods for this type
+             *         assuming it's a class type.
+             *  @return Set of static methods for this type.
+             */
             std::vector<Function> GetStaticMethods(void) const;
 
-            // Gets a specific static method for this type, assuming it's a class type.
-            // If the method doesn't exist, an invalid function is returned.
-            // If the method exists, but has overloads, the first declared
-            // overload is returned.
+            /** @brief Gets a static method for this type.
+             *  @param name Name of the static method.
+             *  @return Reference to the method in the reflection database.
+             *     If the method doesn't exist, an invalid function.
+             *     If the method exists, but has overloads, the first declared.
+             */
             const Function &GetStaticMethod(const std::string &name) const;
 
-            // Gets a specific static method for this type, with the given 
-            // overloaded signature, assuming it's a class type.
-            // If the overload doesn't exist, an invalid function is returned.
-            const Function &GetStaticMethod(const std::string &name, const InvokableSignature &signature) const;
+            /** @brief Gets a static method for this type.
+             *  @param name Name of the static method.
+             *  @param signature Specific overload for this method.
+             *  @return Reference to the method in the reflection database
+             *          with the specified overload. If the specific overload
+             *          doesn't exist, an invalid function is returned.
+             */
+            const Function &GetStaticMethod(
+                  const std::string &name, 
+                  const InvokableSignature &signature
+            ) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets all fields for this type assuming it's a class type
+            /** @brief Gets all fields for this type 
+             *         assuming it's a class type.
+             *  @return Set of fields for this type.
+             */
             std::vector<Field> GetFields(void) const;
 
-            // Gets a specific field for this type, assuming it's a class type
+            /** @brief Gets a specific field for this type.
+             *  @param name Name of the field.
+             *  @return Reference to the field in the reflection database.
+             *          If the field doesn't exist, an invalid field.
+             */
             const Field &GetField(const std::string &name) const;
 
-            ////////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
-            // Gets all static fields for this type assuming it's a class type
+            /** @brief Gets all static fields for this type 
+             *         assuming it's a class type.
+             *  @return Set of static fields for this type.
+             */
             std::vector<Global> GetStaticFields(void) const;
 
-            // Gets a specific static field for this type, assuming it's a class type
+            /** @brief Gets a specific static field for this type.
+             *  @param name Name of the static field.
+             *  @return Reference to the field in the reflection database.
+             *          If the field doesn't exist, an invalid global.
+             */
             const Global &GetStaticField(const std::string &name) const;
 
         private:

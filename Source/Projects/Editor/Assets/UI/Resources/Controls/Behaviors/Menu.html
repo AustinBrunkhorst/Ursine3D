@@ -1,0 +1,95 @@
+<link rel="import" href="../../LIB/Polymer/polymer.html">
+
+<script>
+    var MenuBehavior = {
+        is: "x-menu",
+        properties: {
+            empty: {
+                type: Boolean,
+                readOnly: true,
+                value: true
+            }
+        },
+        attached: function() {
+            this._initItems( );
+
+            this._observer = new MutationObserver( this._onMutations.bind( this ) );
+
+            this._observer.observe( this, {
+                childList: true,
+                subtree: false
+            } );
+        },
+        detached: function() {
+            if (this._observer)
+                this._observer.disconnect( );
+        },
+
+        getItems: function() {
+            return this.querySelectorAll( ':scope > x-menu-item' );
+        },
+
+        close: function() {
+            var hovered = this.querySelectorAll( '.hover' );
+
+            // remove hover from all child nodes
+            [].forEach.call( hovered, function (item) {
+                item.classList.remove( 'hover' );
+            } );
+        },
+        /**
+         * Finds an item based on its text
+         * @param text
+         */
+        findItem: function(text) {
+            var items = this.getItems( );
+
+            for (var i = 0; i < items.length; ++i) {
+                var item = items[ i ];
+
+                if (item.text == text)
+                    return item;
+            }
+
+            return null;
+        },
+
+        _initItems: function() {
+            var items = this.getItems( );
+
+            if (items.length) {
+                var initializer = this._initItem.bind( this );
+
+                [ ].forEach.call( items, initializer );
+
+                this.fire( 'items-changed', {
+
+                } );
+            }
+        },
+        _initItem: function(item) {
+            this._setEmpty( !this.getItems( ).length );
+
+            this.fire( 'item-added', item );
+        },
+
+        _onMutations: function(mutations) {
+            var isMenuItem = this._isMenuItem.bind( this );
+            var initItem = this._initItem.bind( this );
+
+            mutations.forEach( function(mutation) {
+                var items = [ ].filter.call( mutation.addedNodes, isMenuItem );
+
+                items.forEach( initItem );
+            } );
+
+            this.fire( 'items-changed', {
+
+            } );
+        },
+
+        _isMenuItem: function(node) {
+            return node.tagName == 'X-MENU-ITEM';
+        }
+    };
+</script>

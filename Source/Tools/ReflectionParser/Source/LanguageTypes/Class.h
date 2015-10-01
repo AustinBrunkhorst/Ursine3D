@@ -30,7 +30,10 @@ public:
 
     bool ShouldCompile(void) const;
 
-    TemplateData CompileTemplate(const ReflectionParser *context) const override;
+    TemplateData CompileTemplate(
+        const ReflectionParser *context
+    ) const override;
+    
 private:
     std::string m_name;
     std::string m_displayName;

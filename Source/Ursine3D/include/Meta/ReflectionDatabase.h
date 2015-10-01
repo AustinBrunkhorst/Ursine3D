@@ -1,3 +1,13 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 201x DigiPen Institute of Technology, All Rights Reserved.
+**
+** ReflectionDatabase.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "TypeData.h"
@@ -27,7 +37,11 @@ namespace ursine
             std::unordered_map<std::string, TypeID> ids;
 
             std::unordered_map<std::string, Global> globals;
-            std::unordered_map<std::string, InvokableOverloadMap<Function>> globalFunctions;
+            
+            std::unordered_map<
+                std::string, 
+                InvokableOverloadMap<Function>
+            > globalFunctions;
 
             ////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////
@@ -43,16 +57,30 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////////
 
             template<typename GlobalType>
-            void AddGlobal(const std::string &name, Global::Getter getter, Global::Setter setter, const MetaManager::Initializer &meta);
+            void AddGlobal(
+                const std::string &name, 
+                Global::Getter getter, 
+                Global::Setter setter, 
+                const MetaManager::Initializer &meta
+            );
 
             ////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////
 
             template<typename FunctionType, typename FunctionInvoker>
-            void AddGlobalFunction(const std::string &name, FunctionType type, FunctionInvoker invoker, const MetaManager::Initializer &meta);
+            void AddGlobalFunction(
+                const std::string &name, 
+                FunctionType type, 
+                FunctionInvoker invoker, 
+                const MetaManager::Initializer &meta
+            );
 
             const Function &GetGlobalFunction(const std::string &name);
-            const Function &GetGlobalFunction(const std::string &name, const InvokableSignature &signature);
+
+            const Function &GetGlobalFunction(
+                const std::string &name, 
+                const InvokableSignature &signature
+            );
 
         private:
             TypeID m_nextID;

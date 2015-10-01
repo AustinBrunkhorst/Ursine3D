@@ -5,10 +5,11 @@
 #include <Window.h>
 #include <UIView.h>
 
-#include "Project.h"
 #include "EditorTool.h"
 
 #include <SDL_video.h>
+
+class Project;
 
 class Editor : public ursine::core::CoreSystem
 {
@@ -17,23 +18,33 @@ public:
     Editor(void);
     ~Editor(void);
 
-    Meta(Disable);
+    Meta(Disable)
     void OnInitialize(void) override;
 
-    Meta(Disable);
+    Meta(Disable)
     void OnRemove(void) override;
     
+    Project *GetProject(void) const;
+    
 private:
-    ursine::Window *m_mainWindow;
-    SDL_GLContext m_glContext;
+    ursine::GfxAPI *m_graphics;
 
-    CefRefPtr<ursine::UIView> m_ui;
+    struct
+    {
+        ursine::Window *window;
+        CefRefPtr<ursine::UIView> ui;
+        GFXHND viewport;
+        GFXHND camera;
+    } m_mainWindow;
 
     Project *m_project;
 
     std::vector<EditorTool *> m_tools;
 
+    void initializeGraphics(void);
     void initializeTools(void);
+
+    void resizeMainWindow(int width, int height);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 

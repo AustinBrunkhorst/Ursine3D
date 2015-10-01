@@ -31,7 +31,7 @@ namespace ursine
     {
     public:
       //initialize everything
-      void Initialize( const unsigned width, const unsigned height, HWND *hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug );
+      void Initialize( const unsigned width, const unsigned height, HWND hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug );
       void Uninitialize( );
 
       //methods
@@ -64,7 +64,7 @@ namespace ursine
       //set depth stencil
       void SetDepthState( DEPTH_STATES dt );
       //set target
-      void SetRenderTarget( RENDER_TARGETS rt );
+      void SetRenderTarget( RENDER_TARGETS rt, bool useDepth = true );
 
       //set raster state
       void SetRasterState( RASTER_STATES state );
@@ -76,11 +76,13 @@ namespace ursine
       //get target
       RenderTargetManager *GetRenderTargetMgr( );
       //get stencil manager
-      DepthStencilManager *GetDepthStencilMgr( );
+      DepthStencilStateManager *GetDepthStencilMgr( );
 
       void ResizeDX( int width, int height );
 
       void CheckSize( );
+
+      void Invalidate( );
 
       //private methods
     private:

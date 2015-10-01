@@ -1,5 +1,9 @@
 #pragma once
 
+#define NOMINMAX
+
+#include <windows.h>
+
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -37,3 +41,9 @@
 
 #include <TweenID.h>
 #include <Tween.h>
+
+////////////////////////////////////////////////////////////////////////////////
+// Game Engine Stuff
+////////////////////////////////////////////////////////////////////////////////
+
+#include <EntityManager.h>

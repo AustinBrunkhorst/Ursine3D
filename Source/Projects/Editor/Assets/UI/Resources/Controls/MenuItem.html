@@ -1,0 +1,111 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-menu-item">
+    <template>
+        <span id="text">
+            <content>{{text}}</content>
+        </span>
+        <x-menu id="menu" class="sub-menu"></x-menu>
+    </template>
+    <script>
+        var MenuItemControl = Polymer( {
+            is: "x-menu-item",
+            properties: {
+                text: {
+                    type: String,
+                    notify: true
+                },
+                disabled: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                    observer: '_onDisabledChanged'
+                }
+            },
+            listeners: {
+                'mouseover': '_onMouseEnter',
+                'mouseout': '_onMouseLeave',
+                'click': '_onClick'
+            },
+            attached: function () {
+                this._onItemsChanged( );
+
+                this.listen( this.menu, 'items-changed', '_onItemsChanged' );
+            },
+
+            get menu() {
+                return this.$.menu;
+            },
+            get rootMenu() {
+                var node = this;
+
+                for (; node && node !== document; node = node.parentNode) {
+                    if (node.classList.contains( 'root-menu' ))
+                        return node;
+                }
+
+                // this shouldn't ever happen
+                return null;
+            },
+
+            _onMouseEnter: function (e) {
+                if (this.disabled)
+                    return;
+
+                var hovered = this.parentNode.querySelectorAll( ':scope > .hover' );
+
+                // remove hover from all siblings
+                [].forEach.call( hovered, function (item) {
+                    item.classList.remove( 'hover' );
+                } );
+
+                // make this item hovered
+                this.classList.add( 'hover' );
+            },
+            _onMouseLeave: function (e) {
+                // make sure this event doesn't bubble to the parent
+                e.stopPropagation( );
+                e.stopImmediatePropagation( );
+
+                this._clearChildrenFocus( );
+            },
+            _onClick: function (e) {
+                // make sure this event doesn't bubble to the parent
+                e.stopImmediatePropagation( );
+                e.stopPropagation( );
+
+                if (this.disabled)
+                    return;
+
+                var result = this.fire( 'open', e );
+
+                if (!result.disableClose && this.$.menu.empty) {
+                    this._clearChildrenFocus( );
+
+                    this.rootMenu.close( );
+                }
+            },
+            _onItemsChanged: function () {
+                if (this.menu.empty)
+                    this.removeAttribute( 'has-sub-menu' );
+                else
+                    this.setAttribute( 'has-sub-menu', true );
+            },
+            _onDisabledChanged: function () {
+                if (this.disabled)
+                    this.setAttribute( 'disabled', true );
+                else
+                    this.removeAttribute( 'disabled' );
+            },
+
+            _clearChildrenFocus: function() {
+                var hovered = this.$.menu.querySelectorAll( '.hover' );
+
+                // remove hover from child menus
+                [].forEach.call( hovered, function (item) {
+                    item.classList.remove( 'hover' );
+                } );
+            }
+        } );
+    </script>
+</dom-module>

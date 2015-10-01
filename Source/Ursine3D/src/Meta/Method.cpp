@@ -34,14 +34,17 @@ namespace ursine
             return m_isConst;
         }
 
-        Variant Method::Invoke(Variant &instance, ArgumentList &arguments) const
+        Variant Method::Invoke(
+            Variant &instance,
+            ArgumentList &arguments
+        ) const
         {
         #ifdef CONFIG_DEBUG
 
             UAssert( IsValid( ), 
                 "Invalid method invoked" );
 
-            UAssert( instance.IsConst( ) && !m_isConst, 
+            UAssert( !(instance.IsConst( ) && !m_isConst), 
                 "Non-const method invoked on const object" )
 
             UAssert( instance.GetType( ) == m_classType, 
