@@ -741,7 +741,7 @@ namespace ursine
         pcb.color.y = point.y / 80.f;
 
         static float t;
-        t += 0.000016;
+        t += 0.000016f;
         pcb.color.z = t;
         bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, GEOMETRY_SHADER );
         //END OF TEMP
@@ -1069,8 +1069,8 @@ namespace ursine
         gfxInfo->GetDimensions(w, h );
         vpData.TopLeftX = 0;
         vpData.TopLeftY = 0;
-        vpData.Width = w;
-        vpData.Height = h;
+        vpData.Width = static_cast<FLOAT>(w);
+        vpData.Height = static_cast<FLOAT>(h);
 
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 

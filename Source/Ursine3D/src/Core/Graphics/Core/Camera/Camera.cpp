@@ -12,7 +12,7 @@ void GFXCamera::Initialize(void)
     m_projMode = PROJECTION_PERSPECTIVE;
     m_fov = 45.f;
 
-    m_nearPlane = 0.1;
+    m_nearPlane = 0.1f;
     m_farPlane = 100.f;
     m_size = 10.f;
 
