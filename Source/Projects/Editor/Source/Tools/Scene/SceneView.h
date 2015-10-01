@@ -3,6 +3,7 @@
 #include "NativeEditorTool.h"
 
 #include "Editor.h"
+#include "SVec3.h"
 
 class SceneView : public NativeEditorTool
 {
@@ -17,12 +18,17 @@ private:
 
     float m_camZoom;
 
+    ursine::SVec3 m_camPos;
+
     GFXCamera &getEditorCamera(void);
 
-    void onViewportInvalidated(EVENT_HANDLER(NativeEditorTool));
+    void onAppUpdate(EVENT_HANDLER( ursine::Application ));
 
-    void onMouseScroll(EVENT_HANDLER(ursine::MouseManager));
-    void onMouseMove(EVENT_HANDLER(ursine::MouseManager));
+    void onViewportInvalidated(EVENT_HANDLER( NativeEditorTool ));
 
-    void onKeyDown(EVENT_HANDLER(ursine::KeyboardManager));
+    void onMouseScroll(EVENT_HANDLER( ursine::MouseManager ));
+
+    void UpdateCameraKeys(float dt);
+    void UpdateCameraMouse(float dt);
+
 } Meta(Enable);

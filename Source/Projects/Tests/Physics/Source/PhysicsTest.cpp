@@ -11,6 +11,7 @@
 #include <Color.h>
 #include <SQuat.h>
 #include <SMat4.h>
+#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
 
 using namespace ursine;
 
@@ -24,7 +25,7 @@ namespace
 
     void onResize(int width, int height)
 	{
-        Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
+        GetCoreSystem( ursine::GfxAPI )->Resize( width, height );
     }
 }
 
@@ -73,7 +74,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 	static float t = 0.0f;
 	t += Application::Instance->GetDeltaTime();
 
-	Camera &cam = m_gfx->CameraMgr.GetCamera(m_camera);
+    auto &cam = m_gfx->CameraMgr.GetCamera(m_camera);
 
 	float distance = 11.0f;
 	float x = cos(t) * distance;
@@ -116,7 +117,7 @@ void PhysicsTest::onAppUpdate(EVENT_HANDLER(Application))
 	m_gfx->RenderScene(0.016f, m_viewport);
 	m_gfx->EndScene( );
 
-    m_ui->Draw( );
+    // m_ui->Draw();
 }
 
 void PhysicsTest::onMainWindowResize(EVENT_HANDLER(ursine::Window))
@@ -141,8 +142,8 @@ void PhysicsTest::initGraphics(void)
 		&PhysicsTest::onAppUpdate
 		);
 
-	auto *windowManager = app->GetCoreSystem<WindowManager>();
-	auto *uiManager = app->GetCoreSystem<UIManager>();
+	auto *windowManager = GetCoreSystem( WindowManager );
+	auto *uiManager = GetCoreSystem( UIManager );
 
 	m_mainWindow = windowManager->AddWindow(
 		"Ursine3D Editor",
@@ -159,13 +160,13 @@ void PhysicsTest::initGraphics(void)
 
 	/////////////////////////////////////////////////////////////////
 	//make graphics manager
-	m_gfx = app->GetCoreSystem<GfxAPI>();
+	m_gfx = GetCoreSystem( GfxAPI );
 
 	HWND handle = reinterpret_cast<HWND>((m_mainWindow->GetPlatformHandle()));
 
 	GfxConfig config;
 	config.Fullscreen_ = false;
-	config.HandleToWindow_ = &handle;
+	config.HandleToWindow_ = handle;
 	config.ModelListPath_ = "Models/";
 	config.ShaderListPath_ = "SHADER_BINARY/";
 	config.TextureListPath_ = "Textures/";
@@ -189,7 +190,7 @@ void PhysicsTest::initGraphics(void)
 	////////////////////////////////////////////////////////////////////
 	//initialize the demo related tings
 	m_viewport = m_gfx->ViewportMgr.CreateViewport(kDefaultWindowWidth, kDefaultWindowHeight);
-	m_gfx->ViewportMgr.GetViewport(m_viewport).SetRenderMode(VIEWPORT_RENDER_FORWARD);
+	// m_gfx->ViewportMgr.GetViewport(m_viewport).SetRenderMode(VIEWPORT_RENDER_FORWARD);
 	m_camera = m_gfx->CameraMgr.AddCamera();
 
 	m_cube = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
@@ -198,7 +199,7 @@ void PhysicsTest::initGraphics(void)
 
 	m_light = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_POINT_LIGHT);
 	m_light2 = m_gfx->RenderableMgr.AddRenderable(RENDERABLE_POINT_LIGHT);
-	m_gfx->ViewportMgr.GetViewport(m_viewport).SetViewportCamera(m_camera);
+	// m_gfx->ViewportMgr.GetViewport(m_viewport).SetViewportCamera(m_camera);
 	m_gfx->ViewportMgr.GetViewport(m_viewport).SetDimensions(kDefaultWindowWidth, kDefaultWindowHeight);
 
 	Model3D &MdlCube = m_gfx->RenderableMgr.GetModel3D(m_cube);

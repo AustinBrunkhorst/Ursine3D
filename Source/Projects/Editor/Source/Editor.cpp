@@ -161,7 +161,8 @@ void Editor::initializeGraphics(void)
 
         camera.SetPosition( 0.0f, 0.0f );
         camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 300.0f );
+        camera.SetPlanes( 0.1f, 600.0f );
+        camera.SetRenderMode(VIEWPORT_RENDER_FORWARD);
 
         camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
 
@@ -201,7 +202,7 @@ void Editor::initializeGraphics(void)
 
         auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
 
-        light.SetDirection( { 0.0f, 1.0f, 0.0f } );
+        light.SetDirection( { 0.0f, -1.0f, 0.0f } );
         light.SetColor( 1.0f, 1.0f, 1.0f );
 
         auto *component = directionLight->AddComponent<ecs::Renderable>( );
@@ -217,11 +218,30 @@ void Editor::initializeGraphics(void)
 
         light.SetPosition( { 0.0f, 0.0f, 0.0f } );
         light.SetRadius( 100.0f );
-        light.SetColor( Color::Red );
+        light.SetColor( Color::White );
 
         auto *component = pointLight->AddComponent<ecs::Renderable>( );
 
         component->SetHandle( lightHandle );
+    }
+
+    auto *skyBox = world.CreateEntity();
+    {
+        auto skyBhandle = m_graphics->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
+
+        auto &box = m_graphics->RenderableMgr.GetModel3D(skyBhandle);
+        m_skyBox = &box;
+
+        box.SetModel("Skybox");
+        box.SetMaterial("Skybox");
+        SQuat rot = SQuat(90.f, SVec3(0, 0, 1));
+        SMat4 transf = SMat4(400, 400, 400);
+        SMat4 final = SMat4(rot) * transf;
+        box.SetWorldMatrix(final);
+
+        auto *component = skyBox->AddComponent<ecs::Renderable>();
+
+        component->SetHandle(skyBhandle);
     }
 }
 
