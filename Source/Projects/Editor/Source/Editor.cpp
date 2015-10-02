@@ -202,7 +202,7 @@ void Editor::initializeGraphics(void)
 
         auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
 
-        light.SetDirection( { 0.0f, 1.0f, 0.0f } );
+        light.SetDirection( { 0.0f, -1.0f, 0.0f } );
         light.SetColor( 1.0f, 1.0f, 1.0f );
 
         auto *component = directionLight->AddComponent<ecs::Renderable>( );
@@ -218,7 +218,7 @@ void Editor::initializeGraphics(void)
 
         light.SetPosition( { 0.0f, 0.0f, 0.0f } );
         light.SetRadius( 100.0f );
-        light.SetColor( Color::Red );
+        light.SetColor( Color::White );
 
         auto *component = pointLight->AddComponent<ecs::Renderable>( );
 

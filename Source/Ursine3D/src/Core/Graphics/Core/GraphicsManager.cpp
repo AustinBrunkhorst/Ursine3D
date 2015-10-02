@@ -8,6 +8,7 @@
 
 namespace ursine
 {
+    GFXCamera *tempCam;
     bool sort(_DRAWHND &h1, _DRAWHND &h2)
     {
         if (*reinterpret_cast<unsigned long long*>( &h1 ) < *reinterpret_cast<unsigned long long*>( &h2 ))
@@ -268,6 +269,8 @@ namespace ursine
 
         GFXCamera &cam = cameraManager->GetCamera( camera );
 
+        tempCam = &cam;
+
         //get game vp dimensions
         Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
         D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
@@ -309,6 +312,7 @@ namespace ursine
 
         PrimitiveColorBuffer pcb;
         //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
+        pcb.color = DirectX::XMFLOAT4(0.2, 0.2, 0.2, 1);
         bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, PIXEL_SHADER );
 
         shaderManager->Render( modelManager->GetModelVertcountByID( modelManager->GetModelIDByName( "internalQuad" ) ) );
@@ -527,10 +531,11 @@ namespace ursine
         dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
         dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
         bufferManager->MapTransformBuffer( SMat4::Identity( ) );
-
+        dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
         RenderDebugPoints( view, proj, currentCamera );
 
         dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
+        dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
         RenderDebugLines( view, proj, currentCamera );
 
         textureManager->MapTextureByName( "Wire" );
@@ -732,10 +737,15 @@ namespace ursine
     void GraphicsCore::Render3DModel(_DRAWHND handle)
     {
         //TEMP
-        URSINE_TODO( "Remove this" );
+        URSINE_TODO( "THIS IS REALLY BAD FIX AT LATER DATE" );
         POINT point;
         GetCursorPos( &point );
-        bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ), GEOMETRY_SHADER );
+
+        {
+            bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[handle.Index_].GetWorldMatrix(), GEOMETRY_SHADER);
+            bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[handle.Index_].GetWorldMatrix());
+        }
+
         PrimitiveColorBuffer pcb;
         pcb.color.x = point.x / 80.f;
         pcb.color.y = point.y / 80.f;
@@ -747,7 +757,7 @@ namespace ursine
         //END OF TEMP
 
         //map transform
-        bufferManager->MapTransformBuffer( renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix( ) );
+        
 
         //map material data
         MaterialDataBuffer mdb;

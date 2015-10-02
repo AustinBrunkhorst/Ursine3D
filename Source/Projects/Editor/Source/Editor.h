@@ -36,6 +36,8 @@ private:
 
     Project *m_project;
 
+    ursine::Model3D *m_skyBox;
+
     std::vector<NativeEditorTool *> m_tools;
 
     void initializeGraphics(void);
