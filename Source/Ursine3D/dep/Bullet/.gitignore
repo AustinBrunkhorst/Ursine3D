@@ -1,2 +1,4 @@
 *.cpp
 *.c
+!Debug
+!Release
