@@ -16,6 +16,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #pragma once
 
 #include "GfxConfig.h"
+#include "GfxAPIDefines.h"
 #include "ResourceAPI.h"
 #include "RenderableAPI.h"
 #include "CameraAPI.h"
@@ -25,89 +26,90 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "CoreSystem.h"
 
-#include "Meta.h"
-
 namespace ursine
 {
-    class GfxAPI : public ursine::core::CoreSystem
+    namespace graphics
     {
-        CORE_SYSTEM
-    private:
-        struct privateData;
+        class GfxAPI : public core::CoreSystem
+        {
+            CORE_SYSTEM
+        private:
+            struct privateData;
 
-        //public members
-    public:
-        //manage resources like textures, models
-        //RenderableManager
-        Meta(Disable)
-        ResourceAPI ResourceMgr;
+            //public members
+        public:
+            //manage resources like textures, models
+            //RenderableManager
+            Meta(Disable)
+                ResourceAPI ResourceMgr;
 
-        Meta(Disable)
-        RenderableAPI RenderableMgr;
+            Meta(Disable)
+                RenderableAPI RenderableMgr;
 
-        Meta(Disable)
-        CameraAPI CameraMgr;
+            Meta(Disable)
+                CameraAPI CameraMgr;
 
-        Meta(Disable)
-        ViewportAPI ViewportMgr;
+            Meta(Disable)
+                ViewportAPI ViewportMgr;
 
-        Meta(Disable)
-        UIAPI UIMgr;
+            Meta(Disable)
+                UIAPI UIMgr;
 
-        Meta(Disable)
-        DrawingAPI DrawingMgr;
+            Meta(Disable)
+                DrawingAPI DrawingMgr;
 
-        //public methods
-    public:
-        Meta(DisableNonDynamic) 
-        GfxAPI(void);
-        ~GfxAPI(void);
+            //public methods
+        public:
+            Meta(DisableNonDynamic)
+                GfxAPI(void);
+            ~GfxAPI(void);
 
-        Meta(Disable)
-        void OnInitialize(void) override;
+            Meta(Disable)
+                void OnInitialize(void) override;
 
-        Meta(Disable)
-        void OnRemove(void) override;
+            Meta(Disable)
+                void OnRemove(void) override;
 
-        // initialize graphics manager
-        Meta(Disable)
-        void StartGraphics(GfxConfig config);
+            // initialize graphics manager
+            Meta(Disable)
+                void StartGraphics(GfxConfig config);
 
-        // begin graphics for the whole frame
-        Meta(Disable)
-        void StartFrame(void);
+            // begin graphics for the whole frame
+            Meta(Disable)
+                void StartFrame(void);
 
-        // render an object                   
-        Meta(Disable)
-        void RenderObject(GFXHND handle);
+            // render an object                   
+            Meta(Disable)
+                void RenderObject(GfxHND handle);
 
-        // begin to render a scene   
-        Meta(Disable)
-        void BeginScene(void);
+            // begin to render a scene   
+            Meta(Disable)
+                void BeginScene(void);
 
-        // render the scene
-        Meta(Disable)
-        void RenderScene(float dt, GFXHND camera);
+            // render the scene
+            Meta(Disable)
+                void RenderScene(float dt, GfxHND camera);
 
-        // end the current scene
-        Meta(Disable)
-        void EndScene(void);
+            // end the current scene
+            Meta(Disable)
+                void EndScene(void);
 
-        // end the whole frame
-        Meta(Disable)
-        void EndFrame(void);
+            // end the whole frame
+            Meta(Disable)
+                void EndFrame(void);
 
-        // resize the window
-        Meta(Disable)
-        void Resize(int width, int height);
+            // resize the window
+            Meta(Disable)
+                void Resize(int width, int height);
 
-        //set the main game viewport. All cameras are sized 
-            // w/ respect to this size
-        Meta(Disable)
-        void SetGameViewport(GFXHND vp);
+            //set the main game viewport. All cameras are sized 
+                // w/ respect to this size
+            Meta(Disable)
+                void SetGameViewport(GfxHND vp);
 
-        // private members
-    private:
-        privateData *m_privates;
-    } Meta(Enable);
+            // private members
+        private:
+            privateData *m_privates;
+        } Meta(Enable);
+    }
 }

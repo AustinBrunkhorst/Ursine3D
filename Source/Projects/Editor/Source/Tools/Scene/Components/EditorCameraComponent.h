@@ -17,8 +17,8 @@ public:
     void OnInitialize(void) override;
 
     // graphics gettors
-    GFXHND GetHandle(void) const;
-    GFXCamera &GetCamera(void) const;
+    ursine::graphics::GfxHND GetHandle(void) const;
+    ursine::graphics::Camera &GetCamera(void) const;
 
     // zoom
     const float &GetZoom(void) const;
@@ -29,12 +29,12 @@ public:
     void SetFocusPosition(const ursine::SVec3 &focusPosition);
 
     // render mode
-    const ViewportRenderMode GetRenderMode(void) const;
-    void SetRenderMode(const ViewportRenderMode renderMode);
+    const ursine::graphics::ViewportRenderMode GetRenderMode(void) const;
+    void SetRenderMode(const ursine::graphics::ViewportRenderMode renderMode);
 
     // projection mode
-    const GFXCamera::ProjectionMode GetProjectionModev(void) const;
-    void SetProjectionMode(const GFXCamera::ProjectionMode projection);
+    const ursine::graphics::Camera::ProjectionMode GetProjectionModev(void) const;
+    void SetProjectionMode(const ursine::graphics::Camera::ProjectionMode projection);
 
     // near/far
     ursine::Vec2 GetNearFar(void) const;
@@ -68,8 +68,8 @@ private:
     ursine::SVec3 m_camFocus;
 
     // camera ptr
-    GFXCamera *m_camera;
+    ursine::graphics::Camera *m_camera;
 
     // handle to camera object
-    GFXHND m_camHandle;
+    ursine::graphics::GfxHND m_camHandle;
 };

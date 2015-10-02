@@ -5,60 +5,63 @@
 
 namespace ursine
 {
-    void ViewportManager::Initialize(DXCore::RenderTargetManager *mgr)
+    namespace graphics
     {
-        m_viewports.resize( RENDER_TARGETS::RENDER_TARGET_MAX_VIEWPORT );
-
-        for (int x = 0; x < RENDER_TARGETS::RENDER_TARGET_MAX_VIEWPORT; ++x)
+        void ViewportManager::Initialize(DXCore::RenderTargetManager *mgr)
         {
-            m_availableViewports.push_back( x );
+            m_viewports.resize(RENDER_TARGETS::RENDER_TARGET_MAX_VIEWPORT);
+
+            for (int x = 0; x < RENDER_TARGETS::RENDER_TARGET_MAX_VIEWPORT; ++x)
+            {
+                m_availableViewports.push_back(x);
+            }
+
+            m_renderMgr = mgr;
         }
 
-        m_renderMgr = mgr;
-    }
+        void ViewportManager::Uninitialize(void)
+        {
+            m_renderMgr = nullptr;
+        }
 
-    void ViewportManager::Uninitialize(void)
-    {
-        m_renderMgr = nullptr;
-    }
+        GfxHND ViewportManager::AddViewport(unsigned width, unsigned height)
+        {
+            UAssert(m_availableViewports.size() > 0, "Out of viewports!");
 
-    GFXHND ViewportManager::AddViewport(unsigned width, unsigned height)
-    {
-        UAssert( m_availableViewports.size( ) > 0, "Out of viewports!" );
-
-        GFXHND newHandle = 0;
-        _VIEWPORTHND *vpHandle = reinterpret_cast<_VIEWPORTHND*>( &newHandle );
+            GfxHND newHandle = 0;
+            _VIEWPORTHND *vpHandle = reinterpret_cast<_VIEWPORTHND*>(&newHandle);
 
 
-        int x = sizeof( _VIEWPORTHND);
-        vpHandle->ID_ = ID_VIEWPORT;
+            int x = sizeof(_VIEWPORTHND);
+            vpHandle->ID_ = ID_VIEWPORT;
 
-        vpHandle->Index_ = m_availableViewports.front( );
-        m_availableViewports.pop_front( );
+            vpHandle->Index_ = m_availableViewports.front();
+            m_availableViewports.pop_front();
 
-        m_viewports[ vpHandle->Index_ ].Initialize( );
-        m_viewports[ vpHandle->Index_ ].SetDimensions( width, height );
+            m_viewports[ vpHandle->Index_ ].Initialize();
+            m_viewports[ vpHandle->Index_ ].SetDimensions(width, height);
 
-        return newHandle;
-    }
+            return newHandle;
+        }
 
-    void ViewportManager::DestroyViewport(GFXHND &viewportHandle)
-    {
-        _VIEWPORTHND *vpHandle = reinterpret_cast<_VIEWPORTHND*>( &viewportHandle );
+        void ViewportManager::DestroyViewport(GfxHND &viewportHandle)
+        {
+            _VIEWPORTHND *vpHandle = reinterpret_cast<_VIEWPORTHND*>(&viewportHandle);
 
-        UAssert( vpHandle->ID_ == ID_VIEWPORT, "Attempted to use invalid handle to destroy viewport!" );
+            UAssert(vpHandle->ID_ == ID_VIEWPORT, "Attempted to use invalid handle to destroy viewport!");
 
-        m_availableViewports.push_front( vpHandle->Index_ );
+            m_availableViewports.push_front(vpHandle->Index_);
 
-        viewportHandle = 0;
-    }
+            viewportHandle = 0;
+        }
 
-    Viewport &ViewportManager::GetViewport(GFXHND &viewportHandle)
-    {
-        _VIEWPORTHND *vpHandle = reinterpret_cast<_VIEWPORTHND*>( &viewportHandle );
+        Viewport &ViewportManager::GetViewport(GfxHND &viewportHandle)
+        {
+            _VIEWPORTHND *vpHandle = reinterpret_cast<_VIEWPORTHND*>(&viewportHandle);
 
-        UAssert( vpHandle->ID_ == ID_VIEWPORT, "Attempted to use invalid handle to get viewport!" );
+            UAssert(vpHandle->ID_ == ID_VIEWPORT, "Attempted to use invalid handle to get viewport!");
 
-        return m_viewports[ vpHandle->Index_ ];
+            return m_viewports[ vpHandle->Index_ ];
+        }
     }
 }

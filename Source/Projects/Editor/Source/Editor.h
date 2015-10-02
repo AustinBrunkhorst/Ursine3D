@@ -28,19 +28,19 @@ public:
     void InitializeScene(void);
     
 private:
-    ursine::GfxAPI *m_graphics;
+    ursine::graphics::GfxAPI *m_graphics;
 
     struct
     {
         ursine::Window *window;
         CefRefPtr<ursine::UIView> ui;
-        GFXHND viewport;
-        GFXHND camera;
+        GfxHND viewport;
+        GfxHND camera;
     } m_mainWindow;
 
     Project *m_project;
 
-    ursine::Model3D *m_skyBox;
+    ursine::graphics::Model3D *m_skyBox;
 
     std::vector<NativeEditorTool *> m_tools;
 

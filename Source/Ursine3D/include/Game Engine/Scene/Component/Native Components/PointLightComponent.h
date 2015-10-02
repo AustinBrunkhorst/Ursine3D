@@ -42,7 +42,7 @@ namespace ursine
             void SetRadius(float radius);
 
         private:
-            ursine::PointLight *m_pointLight;
+            ursine::graphics::PointLight *m_pointLight;
         } Meta( Enable, DisplayName( "PointLight" ) );
     }
 }

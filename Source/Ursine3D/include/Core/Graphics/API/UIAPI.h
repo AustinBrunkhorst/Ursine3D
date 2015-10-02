@@ -8,28 +8,31 @@
 
 namespace ursine
 {
-    class UIAPI
+    namespace graphics
     {
-        friend class GfxAPI;
-    private:
-        struct privData;
+        class UIAPI
+        {
+            friend class GfxAPI;
+        private:
+            struct privData;
 
-    public:
-        //create a viewport
-        GFXHND CreateUI();
+        public:
+            //create a viewport
+            GfxHND CreateUI();
 
-        //get ui
-        UIInstance &GetUI(GFXHND UI);
+            //get ui
+            UIInstance &GetUI(GfxHND UI);
 
-        //destroy a viewport
-        void DestroyUI(GFXHND UI);
+            //destroy a viewport
+            void DestroyUI(GfxHND UI);
 
-    private:
-        privData *m_privates;
+        private:
+            privData *m_privates;
 
-    private:
-        void SetPrivates(void *priv);
-        void Initialize();
-        void Uninitialize();
-    };
+        private:
+            void SetPrivates(void *priv);
+            void Initialize();
+            void Uninitialize();
+        };
+    }
 }

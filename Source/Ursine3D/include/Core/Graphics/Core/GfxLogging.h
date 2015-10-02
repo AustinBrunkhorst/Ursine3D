@@ -16,4 +16,11 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-void LogMessage(char *message, int tabs = 0, ...);
+namespace ursine
+{
+    namespace graphics
+    {
+
+        void LogMessage(char *message, int tabs = 0, ...);
+    }
+}

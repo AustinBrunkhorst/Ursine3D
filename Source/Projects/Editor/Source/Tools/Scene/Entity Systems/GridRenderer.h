@@ -2,6 +2,7 @@
 
 #include <EntitySystem.h>
 #include <RenderSystem.h>
+#include <Core/Graphics/API/GfxAPI.h>
 
 class GridRenderer : public ursine::ecs::EntitySystem
 {
@@ -10,7 +11,7 @@ public:
     GridRenderer(ursine::ecs::World *world);
 
 private:
-    ursine::GfxAPI *m_graphics;
+    ursine::graphics::GfxAPI *m_graphics;
     ursine::ecs::RenderSystem *m_renderSystem;
 
     void OnInitialize(void) override;

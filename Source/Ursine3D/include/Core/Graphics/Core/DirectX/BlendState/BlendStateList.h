@@ -15,11 +15,17 @@ Author:         Matt Yan, m.yan@digipen.edu
 /*- End Header --------------------------------------------------------------*/
 #pragma once
 
-enum BLEND_STATES
+namespace ursine
 {
-    BLEND_STATE_DEFAULT = 0,
-    BLEND_STATE_ADDITIVE,
-    BLEND_STATE_NONE,
+    namespace graphics
+    {
+        enum BLEND_STATES
+        {
+            BLEND_STATE_DEFAULT = 0,
+            BLEND_STATE_ADDITIVE,
+            BLEND_STATE_NONE,
 
-    BLEND_STATE_COUNT
-};
+            BLEND_STATE_COUNT
+        };
+    }
+}

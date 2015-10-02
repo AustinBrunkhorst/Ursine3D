@@ -20,7 +20,7 @@ private:
 
     ursine::SVec3 m_camPos;
 
-    GFXCamera &getEditorCamera(void);
+    ursine::graphics::Camera &getEditorCamera(void);
 
     void onAppUpdate(EVENT_HANDLER( ursine::Application ));
 

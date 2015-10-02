@@ -8,7 +8,7 @@ namespace ursine
         : m_width( 0 )
         , m_height( 0 )
     {
-        m_gfxMgr = GetCoreSystem( GfxAPI );
+        m_gfxMgr = GetCoreSystem(graphics::GfxAPI );
         m_uiHandle = m_gfxMgr->UIMgr.CreateUI( );
     }
 
@@ -19,7 +19,7 @@ namespace ursine
         //m_uiHandle = 0;
     }
 
-    void UIDirectXRenderer::Draw(GFXHND camera)
+    void UIDirectXRenderer::Draw(GfxHND camera)
     {
         m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( camera );
     }

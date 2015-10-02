@@ -28,7 +28,7 @@ namespace ursine
             void SetColor( const float r, const float g, const float b );
             
         private:
-            ursine::DirectionalLight *m_directionalLight;
+            ursine::graphics::DirectionalLight *m_directionalLight;
 
             friend class RenderSystem;
         }Meta( Enable, DisplayName( "DirectionalLight" ) );

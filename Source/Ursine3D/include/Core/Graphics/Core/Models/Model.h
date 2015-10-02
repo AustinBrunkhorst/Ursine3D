@@ -20,11 +20,14 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-    struct ModelResource
+    namespace graphics
     {
-        ID3D11Buffer *Vertices_;
-        ID3D11Buffer *Indices_;
-        unsigned VertCount_;
-        unsigned IndexCount_;
-    };
+        struct ModelResource
+        {
+            ID3D11Buffer *Vertices_;
+            ID3D11Buffer *Indices_;
+            unsigned VertCount_;
+            unsigned IndexCount_;
+        };
+    }
 }

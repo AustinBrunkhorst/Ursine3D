@@ -19,30 +19,33 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-    class GfxInfo
+    namespace graphics
     {
-    public:
-        void Initialize();
-        void Uninitialize();
+        class GfxInfo
+        {
+        public:
+            void Initialize();
+            void Uninitialize();
 
-        DXGI_MODE_DESC &GetDisplayInfo(unsigned index);
-        unsigned GetModeCount();
+            DXGI_MODE_DESC &GetDisplayInfo(unsigned index);
+            unsigned GetModeCount();
 
-        unsigned GetSampleCount();
-        unsigned GetSampleQuality();
+            unsigned GetSampleCount();
+            unsigned GetSampleQuality();
 
-        void GetDimensions(unsigned &w, unsigned &h);
-        void SetDimensions(unsigned w, unsigned h);
-    private:
-        unsigned ModeCount_;
-        DXGI_MODE_DESC *DisplayModeList_;
-        unsigned int DedicatedVideoMemory_;
-        unsigned int SharedVideoMemory_;
-        bool VSync_;
-        unsigned Width_;
-        unsigned Height_;
+            void GetDimensions(unsigned &w, unsigned &h);
+            void SetDimensions(unsigned w, unsigned h);
+        private:
+            unsigned ModeCount_;
+            DXGI_MODE_DESC *DisplayModeList_;
+            unsigned int DedicatedVideoMemory_;
+            unsigned int SharedVideoMemory_;
+            bool VSync_;
+            unsigned Width_;
+            unsigned Height_;
 
-        unsigned SampleCount_;
-        unsigned SampleQuality_;
-    };
+            unsigned SampleCount_;
+            unsigned SampleQuality_;
+        };
+    }
 }

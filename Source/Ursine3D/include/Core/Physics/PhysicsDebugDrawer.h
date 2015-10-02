@@ -22,11 +22,11 @@ namespace ursine
 
 	class PhysicsDebugDrawer : public btIDebugDraw
 	{
-		GfxAPI *m_gfx;
+        graphics::GfxAPI *m_gfx;
 		int m_debugMode;
 
 	public:
-		PhysicsDebugDrawer(GfxAPI *gfx);
+		PhysicsDebugDrawer(graphics::GfxAPI *gfx);
 
 		void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override;
 

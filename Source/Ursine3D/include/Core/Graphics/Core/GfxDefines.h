@@ -4,7 +4,7 @@ disclosure of this file or its contents without the prior written
 consent of DigiPen Institute of Technology is prohibited.
 =============================================================================*/
 /*!
-File Name:      GraphicsDefines.h
+File Name:      GfxDefines.h
 Module:         Graphics
 Purpose:        Gfx global defines
 Language:       C++
@@ -53,6 +53,12 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define ID_VIEWPORT   42
 #define ID_UI         87
 
-typedef unsigned long long GFXHND;
+namespace ursine
+{
+    namespace graphics
+    {
+        typedef unsigned long long GfxHND;
+    }
+}
 
 #include "GfxHandle.h"

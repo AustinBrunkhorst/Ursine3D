@@ -14,22 +14,22 @@ EditorCamera::EditorCamera()
 
 EditorCamera::~EditorCamera()
 {
-    GetCoreSystem(ursine::GfxAPI)->CameraMgr.DestroyCamera(m_camHandle);
+    GetCoreSystem(ursine::graphics::GfxAPI)->CameraMgr.DestroyCamera(m_camHandle);
 }
 
 void EditorCamera::OnInitialize()
 {
-    m_camHandle = GetCoreSystem( ursine::GfxAPI )->CameraMgr.AddCamera();
+    m_camHandle = GetCoreSystem( ursine::graphics::GfxAPI )->CameraMgr.AddCamera();
 
-    m_camera = &GetCoreSystem(ursine::GfxAPI)->CameraMgr.GetCamera(m_camHandle);
+    m_camera = &GetCoreSystem(ursine::graphics::GfxAPI)->CameraMgr.GetCamera(m_camHandle);
 }
 
-GFXHND EditorCamera::GetHandle() const
+ursine::graphics::GfxHND EditorCamera::GetHandle() const
 {
     return m_camHandle;
 }
 
-GFXCamera& EditorCamera::GetCamera() const
+ursine::graphics::Camera& EditorCamera::GetCamera() const
 {
     return *m_camera;
 }
@@ -54,22 +54,22 @@ void EditorCamera::SetFocusPosition(const ursine::SVec3& focusPosition)
     m_camFocus = focusPosition;
 }
 
-const ViewportRenderMode EditorCamera::GetRenderMode() const
+const ursine::graphics::ViewportRenderMode EditorCamera::GetRenderMode() const
 {
     return m_camera->GetRenderMode();
 }
 
-void EditorCamera::SetRenderMode(const ViewportRenderMode renderMode)
+void EditorCamera::SetRenderMode(const ursine::graphics::ViewportRenderMode renderMode)
 {
     m_camera->SetRenderMode(renderMode);
 }
 
-const GFXCamera::ProjectionMode EditorCamera::GetProjectionModev() const
+const ursine::graphics::Camera::ProjectionMode EditorCamera::GetProjectionModev() const
 {
     return m_camera->GetProjMode();
 }
 
-void EditorCamera::SetProjectionMode(const GFXCamera::ProjectionMode projection)
+void EditorCamera::SetProjectionMode(const ursine::graphics::Camera::ProjectionMode projection)
 {
     m_camera->SetProjMode(projection);
 }
