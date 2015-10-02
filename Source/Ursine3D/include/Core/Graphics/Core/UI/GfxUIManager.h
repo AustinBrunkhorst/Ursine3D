@@ -21,33 +21,36 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-    class GfxUIManager
+    namespace graphics
     {
-    public:
-        void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr);
-        void Uninitialize();
+        class GfxUIManager
+        {
+        public:
+            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr);
+            void Uninitialize();
 
-        //create UI
-        GFXHND CreateUI();
+            //create UI
+            GfxHND CreateUI();
 
-        //destroy UI
-        void DestroyUI(GFXHND);
+            //destroy UI
+            void DestroyUI(GfxHND);
 
-        //get UI
-        UIInstance &GetUI(GFXHND);
+            //get UI
+            UIInstance &GetUI(GfxHND);
 
-        //private members
-    private:
+            //private members
+        private:
 
-        std::vector<UIInstance*> m_uiInstances;
-        std::list<unsigned> m_freeInstances;
+            std::vector<UIInstance*> m_uiInstances;
+            std::list<unsigned> m_freeInstances;
 
-        std::list<RENDER_TARGETS> m_freeTargets;
+            std::list<RENDER_TARGETS> m_freeTargets;
 
-        //device context
-        ID3D11Device *m_device;
-        ID3D11DeviceContext *m_context;
-        DXCore::RenderTargetManager *m_rtManager;
-        void *m_gfxmgr;
-    };
+            //device context
+            ID3D11Device *m_device;
+            ID3D11DeviceContext *m_context;
+            DXCore::RenderTargetManager *m_rtManager;
+            void *m_gfxmgr;
+        };
+    }
 }

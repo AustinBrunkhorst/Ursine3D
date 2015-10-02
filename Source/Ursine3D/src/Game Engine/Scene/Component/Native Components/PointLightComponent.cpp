@@ -26,9 +26,9 @@ void ursine::ecs::PointLight::OnInitialize(void)
 {
     auto *renderable = GetOwner( )->GetComponent<Renderable>( );
 
-    auto handle = GetCoreSystem( ursine::GfxAPI )->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
+    auto handle = GetCoreSystem( ursine::graphics::GfxAPI )->RenderableMgr.AddRenderable(graphics::RENDERABLE_POINT_LIGHT );
 
-    m_pointLight = &GetCoreSystem( ursine::GfxAPI )->RenderableMgr.GetPointLight( handle );
+    m_pointLight = &GetCoreSystem( ursine::graphics::GfxAPI )->RenderableMgr.GetPointLight( handle );
 
     renderable->SetHandle( handle );
 }

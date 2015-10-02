@@ -17,7 +17,7 @@
 
 namespace ursine
 {
-	PhysicsDebugDrawer::PhysicsDebugDrawer(GfxAPI* gfx)
+	PhysicsDebugDrawer::PhysicsDebugDrawer(graphics::GfxAPI* gfx)
 		: m_gfx(gfx) { }
 
 	void PhysicsDebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)

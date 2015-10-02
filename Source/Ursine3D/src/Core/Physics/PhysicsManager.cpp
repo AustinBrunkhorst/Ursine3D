@@ -77,7 +77,7 @@ namespace ursine
 		m_dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
 		// Debug drawing
-		m_debugDrawer = new PhysicsDebugDrawer( GetCoreSystem( GfxAPI ) );
+		m_debugDrawer = new PhysicsDebugDrawer( GetCoreSystem(graphics::GfxAPI ) );
 		m_dynamicsWorld->setDebugDrawer(m_debugDrawer);
 		m_dynamicsWorld->getDebugDrawer()->setDebugMode(
             btIDebugDraw::DBG_DrawWireframe | 

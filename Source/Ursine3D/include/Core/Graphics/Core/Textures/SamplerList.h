@@ -16,10 +16,16 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-enum Sampler
+namespace ursine
 {
-    SAMPLER_WRAP_TEX = 0,
-    SAMPLER_NO_FILTERING,
+    namespace graphics
+    {
+        enum Sampler
+        {
+            SAMPLER_WRAP_TEX = 0,
+            SAMPLER_NO_FILTERING,
 
-    SAMPLER_COUNT
-};
+            SAMPLER_COUNT
+        };
+    }
+}

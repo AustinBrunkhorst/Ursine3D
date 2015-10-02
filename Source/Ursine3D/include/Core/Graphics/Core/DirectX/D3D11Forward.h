@@ -1,5 +1,6 @@
 #pragma once
 
+
 // Forward declarations
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -26,3 +27,4 @@ struct D3D11_VIEWPORT;
 struct DXGI_MODE_DESC;
 struct IDXGISwapChain;
 struct ID3D11Debug;
+

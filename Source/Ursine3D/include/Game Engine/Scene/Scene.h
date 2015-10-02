@@ -2,6 +2,7 @@
 
 #include "World.h"
 #include "GFXAPIDefines.h"
+#include <Core/Graphics/API/GfxAPI.h>
 
 namespace ursine
 {
@@ -14,19 +15,19 @@ namespace ursine
 
         ecs::World &GetWorld(void);
 
-        GFXHND GetViewport(void) const;
-        void SetViewport(GFXHND viewport);
+        graphics::GfxHND GetViewport(void) const;
+        void SetViewport(graphics::GfxHND viewport);
 
-        GFXHND GetEditorCamera(void) const;
-        void SetEditorCamera(GFXHND camera);
+        graphics::GfxHND GetEditorCamera(void) const;
+        void SetEditorCamera(graphics::GfxHND camera);
 
         void Update(DeltaTime dt);
         void Render(void);
 
     private:
-        GfxAPI *m_graphics;
-        GFXHND m_viewport;
-        GFXHND m_editorCamera;
+        graphics::GfxAPI *m_graphics;
+        graphics::GfxHND m_viewport;
+        graphics::GfxHND m_editorCamera;
 
         ecs::World m_world;
     };

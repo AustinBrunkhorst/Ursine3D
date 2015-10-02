@@ -35,9 +35,9 @@ SceneView::~SceneView(void)
         .Off( APP_UPDATE, &SceneView::onAppUpdate );
 }
 
-GFXCamera &SceneView::getEditorCamera(void)
+graphics::Camera &SceneView::getEditorCamera(void)
 {
-    return GetCoreSystem( GfxAPI )->CameraMgr.GetCamera(
+    return GetCoreSystem(graphics::GfxAPI )->CameraMgr.GetCamera(
         m_editor->GetProject( )->GetScene( ).GetEditorCamera( )
     );
 }
@@ -65,7 +65,7 @@ void SceneView::onAppUpdate(EVENT_HANDLER(ursine::Application))
     }
 
     //our position always needs to be relative to the center position
-    GFXCamera &cam = getEditorCamera( );
+    graphics::Camera &cam = getEditorCamera( );
     SVec3 look = cam.GetLook( );
 
     //normalize look and scale by zoom
@@ -103,7 +103,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
     auto handle = scene.GetViewport( );
 
     auto &viewport =
-            GetCoreSystem( GfxAPI )->ViewportMgr.GetViewport( handle );
+            GetCoreSystem(graphics::GfxAPI )->ViewportMgr.GetViewport( handle );
 
     unsigned oldX, oldY;
 
@@ -144,7 +144,7 @@ void SceneView::UpdateCameraKeys(float dt)
     float speed = 3;
 
     //get the camera
-    GFXCamera &cam = getEditorCamera( );
+    graphics::Camera &cam = getEditorCamera( );
     SVec3 look = cam.GetLook( );
 
     ///////////////////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ void SceneView::UpdateCameraMouse(float dt)
     auto *mouseMgr = GetCoreSystem(MouseManager);
 
     //get the camera
-    GFXCamera &cam = getEditorCamera( );
+    graphics::Camera &cam = getEditorCamera( );
 
     SVec3 look = cam.GetLook( );
     SVec3 up = cam.GetUp( );
@@ -272,7 +272,7 @@ void SceneView::UpdateCameraMouse(float dt)
     //if in here, draw the center mark
     float halfSize = 0.3f;
 
-    auto gfx = GetCoreSystem( GfxAPI );
+    auto gfx = GetCoreSystem(graphics::GfxAPI );
 
     gfx->DrawingMgr.SetColor( 1, 0, 0, 1 );
     gfx->DrawingMgr.DrawLine( m_camPos - SVec3( halfSize, 0, 0 ), m_camPos + SVec3( halfSize, 0, 0 ) );

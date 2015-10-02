@@ -23,25 +23,28 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-    namespace DXCore
+    namespace graphics
     {
-        class DepthStencilStateManager
+        namespace DXCore
         {
-        public:
-            void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
-            void Uninitialize(void);
+            class DepthStencilStateManager
+            {
+            public:
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+                void Uninitialize(void);
 
-            ID3D11DepthStencilState *GetStencilState(const DEPTH_STATES state);
-            void SetDepthState(const DEPTH_STATES state);
+                ID3D11DepthStencilState *GetStencilState(const DEPTH_STATES state);
+                void SetDepthState(const DEPTH_STATES state);
 
-            void Invalidate(void);
-        private:
-            ID3D11Device *m_device;
-            ID3D11DeviceContext *m_deviceContext;
+                void Invalidate(void);
+            private:
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
 
-            std::vector<ID3D11DepthStencilState*> m_depthStateArray;
+                std::vector<ID3D11DepthStencilState*> m_depthStateArray;
 
-            DEPTH_STATES m_currentState;
-        };
+                DEPTH_STATES m_currentState;
+            };
+        }
     }
 }

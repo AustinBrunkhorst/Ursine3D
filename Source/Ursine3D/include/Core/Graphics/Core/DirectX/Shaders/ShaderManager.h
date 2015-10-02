@@ -23,55 +23,58 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-    namespace DXCore
+    namespace graphics
     {
-        struct Shader
+        namespace DXCore
         {
-            SHADER_TYPES type;
-
-            ID3D11VertexShader *vs;
-            ID3D11PixelShader *ps;
-            ID3D11HullShader *hs;
-            ID3D11DomainShader *ds;
-            ID3D11GeometryShader *gs;
-
-            ID3D11ShaderReflection *reflectionData;
-            ID3DBlob *vsBlob;
-            void *rawData;
-            unsigned size;
-
-            std::vector<std::string> filenames;
-            std::vector<time_t> timestamps;
-
-            Shader()
+            struct Shader
             {
-                filenames.resize( DEF_COUNT );
-                timestamps.resize( DEF_COUNT );
-            }
-        };
+                SHADER_TYPES type;
 
-        class ShaderManager
-        {
-        public:
-            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath = "");
-            void Uninitialize(void);
+                ID3D11VertexShader *vs;
+                ID3D11PixelShader *ps;
+                ID3D11HullShader *hs;
+                ID3D11DomainShader *ds;
+                ID3D11GeometryShader *gs;
 
-            void BindShader(const SHADER_TYPES shader);
+                ID3D11ShaderReflection *reflectionData;
+                ID3DBlob *vsBlob;
+                void *rawData;
+                unsigned size;
 
-            void LoadShader( const SHADER_TYPES shader, const char *filename);
+                std::vector<std::string> filenames;
+                std::vector<time_t> timestamps;
 
-            void Render( const unsigned vert_count);
+                Shader()
+                {
+                    filenames.resize(DEF_COUNT);
+                    timestamps.resize(DEF_COUNT);
+                }
+            };
 
-            Shader *GetShader( const SHADER_TYPES shader);
+            class ShaderManager
+            {
+            public:
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath = "");
+                void Uninitialize(void);
 
-            void Invalidate(void);
-        private:
-            std::string m_shaderPath;
-            ID3D11Device *m_device;
-            ID3D11DeviceContext *m_deviceContext;
+                void BindShader(const SHADER_TYPES shader);
 
-            SHADER_TYPES m_currentState;
-            std::vector<Shader*> m_shaderArray;
-        };
+                void LoadShader(const SHADER_TYPES shader, const char *filename);
+
+                void Render(const unsigned vert_count);
+
+                Shader *GetShader(const SHADER_TYPES shader);
+
+                void Invalidate(void);
+            private:
+                std::string m_shaderPath;
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
+
+                SHADER_TYPES m_currentState;
+                std::vector<Shader*> m_shaderArray;
+            };
+        }
     }
 }

@@ -19,59 +19,62 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <d3d11.h>
 #include <cef_render_handler.h>
 #include "RenderTargetManager.h"
-#include "GraphicsDefines.h"
+#include "GfxDefines.h"
 
 namespace ursine
 {
-    class UIInstance : CefRenderHandler
+    namespace graphics
     {
-    public:
-        void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr, RENDER_TARGETS target);
-        void Uninitialize();
+        class UIInstance : CefRenderHandler
+        {
+        public:
+            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr, RENDER_TARGETS target);
+            void Uninitialize();
 
-        void Draw(GFXHND camera = 0);
+            void Draw(GfxHND camera = 0);
 
-        void DrawMain();
+            void DrawMain();
 
-        bool GetViewRect(CefRefPtr<CefBrowser> browser,
-            CefRect &bounds) override;
+            bool GetViewRect(CefRefPtr<CefBrowser> browser,
+                CefRect &bounds) override;
 
-        void OnPopupShow(CefRefPtr<CefBrowser> browser,
-            bool show) override;
+            void OnPopupShow(CefRefPtr<CefBrowser> browser,
+                bool show) override;
 
-        void OnPopupSize(CefRefPtr<CefBrowser> browser,
-            const CefRect &bounds) override;
+            void OnPopupSize(CefRefPtr<CefBrowser> browser,
+                const CefRect &bounds) override;
 
-        void OnPaint(CefRefPtr<CefBrowser> browser,
-            PaintElementType type, const RectList &regions,
-            const void *buffer, int width, int height) override;
+            void OnPaint(CefRefPtr<CefBrowser> browser,
+                PaintElementType type, const RectList &regions,
+                const void *buffer, int width, int height) override;
 
-        void paintView(CefRefPtr<CefBrowser> browser,
-            PaintElementType type, const RectList &regions,
-            const void *buffer, int width, int height);
+            void paintView(CefRefPtr<CefBrowser> browser,
+                PaintElementType type, const RectList &regions,
+                const void *buffer, int width, int height);
 
-        void paintPopup(CefRefPtr<CefBrowser> browser,
-            PaintElementType type, const RectList &regions,
-            const void *buffer, int width, int height);
+            void paintPopup(CefRefPtr<CefBrowser> browser,
+                PaintElementType type, const RectList &regions,
+                const void *buffer, int width, int height);
 
-        void Resize(int width, int height);
+            void Resize(int width, int height);
 
-        //private members
-    private:
-        int m_width, m_height;
+            //private members
+        private:
+            int m_width, m_height;
 
-        CefRect m_popm_upbounds;
+            CefRect m_popm_upbounds;
 
-        //device context
-        ID3D11Device *m_device;
-        ID3D11DeviceContext *m_context;
-        void *m_gfxmgr;
+            //device context
+            ID3D11Device *m_device;
+            ID3D11DeviceContext *m_context;
+            void *m_gfxmgr;
 
 
-        RENDER_TARGETS m_target;
-        //rtmanager
-        DXCore::RenderTargetManager *m_rtManager;
+            RENDER_TARGETS m_target;
+            //rtmanager
+            DXCore::RenderTargetManager *m_rtManager;
 
-        IMPLEMENT_REFCOUNTING( UIInstance );
-    };
+            IMPLEMENT_REFCOUNTING(UIInstance);
+        };
+    }
 }

@@ -68,7 +68,7 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Show( true );
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
-    m_graphics = GetCoreSystem( GfxAPI );
+    m_graphics = GetCoreSystem(graphics::GfxAPI );
 
     m_project = new Project( );
 
@@ -136,7 +136,7 @@ void Editor::InitializeScene(void)
         auto &camera = component->GetCamera( );
 
         camera.SetPosition( 0.0f, 0.0f );
-        camera.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
+        camera.SetRenderMode(graphics::VIEWPORT_RENDER_DEFERRED );
         camera.SetDimensions( 1.0f, 1.0f );
         camera.SetPlanes( 0.1f, 700.0f );
 
@@ -149,7 +149,7 @@ void Editor::InitializeScene(void)
     {
         auto *entity = world.CreateEntity( );
         {
-            auto handle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+            auto handle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
 
             auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
 
@@ -178,7 +178,7 @@ void Editor::InitializeScene(void)
 
     auto *directionLight = world.CreateEntity( "Directional Light" );
     {
-        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_DIRECTION_LIGHT );
+        auto lightHandle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_DIRECTION_LIGHT );
 
         auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
 
@@ -192,7 +192,7 @@ void Editor::InitializeScene(void)
 
     auto *sky = world.CreateEntity( "Skybox" );
     {
-        auto skyHND = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+        auto skyHND = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_MODEL3D );
 
         auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
 
@@ -219,7 +219,7 @@ JSFunction(OnEditorUILoad)
 
 void Editor::initializeGraphics(void)
 {
-    GfxConfig config;
+    graphics::GfxConfig config;
 
     config.Fullscreen_ = false;
 

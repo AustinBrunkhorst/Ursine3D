@@ -3,6 +3,7 @@
 #include "EntitySystem.h"
 
 #include "GFXAPIDefines.h"
+#include <Core/Graphics/API/GfxAPI.h>
 
 namespace ursine
 {
@@ -20,9 +21,9 @@ namespace ursine
 
         struct RenderHookArgs : EventArgs
         {
-            GFXHND camera;
+            graphics::GfxHND camera;
 
-            RenderHookArgs(GFXHND camera)
+            RenderHookArgs(graphics::GfxHND camera)
                 : camera( camera ) { }
         };
 
@@ -37,7 +38,7 @@ namespace ursine
             ~RenderSystem(void);
 
         private:
-            GfxAPI *m_graphics;
+            graphics::GfxAPI *m_graphics;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;

@@ -21,64 +21,67 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "ShaderTypes.h"
 #include "ShaderBufferList.h"
-#include "GraphicsDefines.h"
+#include "GfxDefines.h"
 
 namespace ursine
 {
-    namespace DXCore
+    namespace graphics
     {
-        class ShaderBufferManager
+        namespace DXCore
         {
-        public:
-            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context);
-            void Uninitialize(void);
-
-            //buffer mapping
-            void MapCameraBuffer(const SMat4 &view, const SMat4 &projection, SHADERDEF shader = VERTEX_SHADER, unsigned int bufferIndex = BUFFER_CAMERA);
-            void MapTransformBuffer(const SMat4 &transform, const SHADERDEF shader = VERTEX_SHADER, unsigned int bufferIndex = BUFFER_TRANSFORM);
-
-            template<BUFFER_LIST buffer, typename T>
-            void MapBuffer(const T *data, const SHADERDEF shader, const unsigned int bufferIndex = buffer)
+            class ShaderBufferManager
             {
-                UAssert( bufferIndex < MAX_CONST_BUFF, "ResourceManager attempted to map buffer to invalid index (index #%i)", bufferIndex );
-                HRESULT result;
-                D3D11_MAPPED_SUBRESOURCE mappedResource;
+            public:
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *context);
+                void Uninitialize(void);
 
-                T *dataPtr;
+                //buffer mapping
+                void MapCameraBuffer(const SMat4 &view, const SMat4 &projection, SHADERDEF shader = VERTEX_SHADER, unsigned int bufferIndex = BUFFER_CAMERA);
+                void MapTransformBuffer(const SMat4 &transform, const SHADERDEF shader = VERTEX_SHADER, unsigned int bufferIndex = BUFFER_TRANSFORM);
 
-                //make sure buffer exists
-                UAssert( m_bufferArray[ buffer ] != NULL, "A buffer was never initialized!" );
+                template<BUFFER_LIST buffer, typename T>
+                void MapBuffer(const T *data, const SHADERDEF shader, const unsigned int bufferIndex = buffer)
+                {
+                    UAssert(bufferIndex < MAX_CONST_BUFF, "ResourceManager attempted to map buffer to invalid index (index #%i)", bufferIndex);
+                    HRESULT result;
+                    D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-                //lock the buffer
-                result = m_deviceContext->Map( m_bufferArray[ buffer ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource );
+                    T *dataPtr;
 
-                //grab data
-                dataPtr = ( T* )mappedResource.pData;
+                    //make sure buffer exists
+                    UAssert(m_bufferArray[ buffer ] != NULL, "A buffer was never initialized!");
 
-                //set data
-                memcpy( dataPtr, data, sizeof( T) );
+                    //lock the buffer
+                    result = m_deviceContext->Map(m_bufferArray[ buffer ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-                //unlock buffer
-                m_deviceContext->Unmap( m_bufferArray[ buffer ], 0 );
+                    //grab data
+                    dataPtr = (T*)mappedResource.pData;
 
-                //map to a given buffer
-                SetBuffer( shader, bufferIndex, m_bufferArray[ buffer ] );
-            }
+                    //set data
+                    memcpy(dataPtr, data, sizeof(T));
 
-        private:
+                    //unlock buffer
+                    m_deviceContext->Unmap(m_bufferArray[ buffer ], 0);
 
-            //sets the buffer for a given shader
-            void SetBuffer(const SHADERDEF shader, const unsigned bufferIndex, ID3D11Buffer *buffer);
+                    //map to a given buffer
+                    SetBuffer(shader, bufferIndex, m_bufferArray[ buffer ]);
+                }
 
-            //makes the buffers for mapping resources
-            template<typename T>
-            void MakeBuffer(const BUFFER_LIST type);
+            private:
 
-            //members
-            ID3D11Device *m_device;
-            ID3D11DeviceContext *m_deviceContext;
+                //sets the buffer for a given shader
+                void SetBuffer(const SHADERDEF shader, const unsigned bufferIndex, ID3D11Buffer *buffer);
 
-            std::vector<ID3D11Buffer *> m_bufferArray;
-        };
+                //makes the buffers for mapping resources
+                template<typename T>
+                void MakeBuffer(const BUFFER_LIST type);
+
+                //members
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
+
+                std::vector<ID3D11Buffer *> m_bufferArray;
+            };
+        }
     }
 }

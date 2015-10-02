@@ -23,7 +23,7 @@ namespace ursine
             //get/set world matrix
 
         private:
-            ursine::Model3D *m_model;
+            ursine::graphics::Model3D *m_model;
         } Meta( Enable, DisplayName( "Model3D" ) );
     }
 }

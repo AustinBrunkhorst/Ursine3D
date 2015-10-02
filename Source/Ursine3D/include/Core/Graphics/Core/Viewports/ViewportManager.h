@@ -20,26 +20,29 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <list>
 
 #include "Viewport.h"
-#include "GraphicsDefines.h"
+#include "GfxDefines.h"
 #include "RenderTargetManager.h"
 
 
 namespace ursine
 {
-    class ViewportManager
+    namespace graphics
     {
-    public:
-        void Initialize(DXCore::RenderTargetManager *mgr);
-        void Uninitialize(void);
+        class ViewportManager
+        {
+        public:
+            void Initialize(DXCore::RenderTargetManager *mgr);
+            void Uninitialize(void);
 
-        GFXHND AddViewport(unsigned width, unsigned height);
-        void DestroyViewport(GFXHND &viewportHandle);
+            GfxHND AddViewport(unsigned width, unsigned height);
+            void DestroyViewport(GfxHND &viewportHandle);
 
-        Viewport &GetViewport(GFXHND &viewportHandle);
+            Viewport &GetViewport(GfxHND &viewportHandle);
 
-    private:
-        std::vector<Viewport> m_viewports;
-        std::list<unsigned> m_availableViewports;
-        DXCore::RenderTargetManager *m_renderMgr;
-    };
+        private:
+            std::vector<Viewport> m_viewports;
+            std::list<unsigned> m_availableViewports;
+            DXCore::RenderTargetManager *m_renderMgr;
+        };
+    }
 }

@@ -15,13 +15,16 @@ namespace ursine
         public:
             Renderable(void);
 
-            GFXHND GetHandle(void) const;
-            void SetHandle(GFXHND handle);
+            Meta(Disable)
+            graphics::GfxHND GetHandle(void) const;
+
+            Meta(Disable)
+            void SetHandle(graphics::GfxHND handle);
 
         private:
             friend class RenderSystem;
 
-            GFXHND m_handle;
+            graphics::GfxHND m_handle;
         } Meta(Enable, DisplayName( "Renderable" ));
     }
 }

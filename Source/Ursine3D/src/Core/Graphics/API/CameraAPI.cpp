@@ -4,38 +4,41 @@
 
 namespace ursine
 {
-    struct CameraAPI::privData
+    namespace graphics
     {
-        CameraManager *mgr;
-    };
+        struct CameraAPI::privData
+        {
+            CameraManager *mgr;
+        };
 
-    GFXHND CameraAPI::AddCamera()
-    {
-        return m_privates->mgr->CreateCamera( );
-    }
+        GfxHND CameraAPI::AddCamera()
+        {
+            return m_privates->mgr->CreateCamera();
+        }
 
-    GFXCamera &CameraAPI::GetCamera(const GFXHND &handle)
-    {
-        return m_privates->mgr->GetCamera( handle );
-    }
+        Camera &CameraAPI::GetCamera(const GfxHND &handle)
+        {
+            return m_privates->mgr->GetCamera(handle);
+        }
 
-    void CameraAPI::DestroyCamera(GFXHND &handle)
-    {
-        m_privates->mgr->DestroyCamera( handle );
-    }
+        void CameraAPI::DestroyCamera(GfxHND &handle)
+        {
+            m_privates->mgr->DestroyCamera(handle);
+        }
 
-    void CameraAPI::SetPrivates(void *priv)
-    {
-        m_privates->mgr = reinterpret_cast<CameraManager*>( priv );
-    }
+        void CameraAPI::SetPrivates(void *priv)
+        {
+            m_privates->mgr = reinterpret_cast<CameraManager*>(priv);
+        }
 
-    void CameraAPI::Initialize()
-    {
-        m_privates = new CameraAPI::privData( );
-    }
+        void CameraAPI::Initialize()
+        {
+            m_privates = new CameraAPI::privData();
+        }
 
-    void CameraAPI::Uninitialize()
-    {
-        delete m_privates;
+        void CameraAPI::Uninitialize()
+        {
+            delete m_privates;
+        }
     }
 }

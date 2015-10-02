@@ -1,13 +1,13 @@
 namespace ursine
 {
     //template<typename T>
-    //T &RenderableManager::GetRenderable( GFXHND handle )
+    //T &RenderableManager::GetRenderable( GfxHND handle )
     //{
     //  return T( );
     //}
 
     //template<>
-    //Model3D &RenderableManager::GetRenderable<Model3D>( GFXHND handle )
+    //Model3D &RenderableManager::GetRenderable<Model3D>( GfxHND handle )
     //{
     //  _RENDERABLEHND *render = HND_RENDER( handle );
 
@@ -18,7 +18,7 @@ namespace ursine
     //}
 
     //template<>
-    //DirectionalLight &RenderableManager::GetRenderable<DirectionalLight>( GFXHND handle )
+    //DirectionalLight &RenderableManager::GetRenderable<DirectionalLight>( GfxHND handle )
     //{
     //  _RENDERABLEHND *render = HND_RENDER( handle );
 
@@ -29,7 +29,7 @@ namespace ursine
     //}
 
     //template<>
-    //PointLight &RenderableManager::GetRenderable<PointLight>( GFXHND handle )
+    //PointLight &RenderableManager::GetRenderable<PointLight>( GfxHND handle )
     //{
     //  _RENDERABLEHND *render = HND_RENDER( handle );
 
@@ -40,7 +40,7 @@ namespace ursine
     //}
 
     //template<>
-    //Primitive &RenderableManager::GetRenderable<Primitive>( GFXHND handle )
+    //Primitive &RenderableManager::GetRenderable<Primitive>( GfxHND handle )
     //{
     //  _RENDERABLEHND *render = HND_RENDER( handle );
 

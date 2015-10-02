@@ -24,56 +24,59 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-    namespace DXCore
+    namespace graphics
     {
-        //a single render target
-        struct RenderTarget
+        namespace DXCore
         {
-            ID3D11RenderTargetView *RenderTargetView;
-            ID3D11ShaderResourceView *ShaderMap;
-            ID3D11Texture2D *TextureMap;
-        };
+            //a single render target
+            struct RenderTarget
+            {
+                ID3D11RenderTargetView *RenderTargetView;
+                ID3D11ShaderResourceView *ShaderMap;
+                ID3D11Texture2D *TextureMap;
+            };
 
-        //manages
-        class RenderTargetManager
-        {
-        public:
-            void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
-            void Uninitialize(void);
-            void InitializeAllRenderTargets(const unsigned width, const unsigned height);
-            void UnInitializeAllRenderTargets( void );
-            void CreateTargets( void );
+            //manages
+            class RenderTargetManager
+            {
+            public:
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+                void Uninitialize(void);
+                void InitializeAllRenderTargets(const unsigned width, const unsigned height);
+                void UnInitializeAllRenderTargets(void);
+                void CreateTargets(void);
 
-            RenderTarget *GetRenderTarget(const RENDER_TARGETS target);
-            void SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view);
-            
-            void SetDeferredTargets(ID3D11DepthStencilView *view);
+                RenderTarget *GetRenderTarget(const RENDER_TARGETS target);
+                void SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view);
 
-            RENDER_TARGETS CreateRT(const unsigned width, const unsigned height);
-            void DestroyRT(RENDER_TARGETS rt);
+                void SetDeferredTargets(ID3D11DepthStencilView *view);
 
-            void ResizeDeferred(const unsigned width, const unsigned height);
-            void ResizeEngineTargets(const unsigned width, const unsigned height);
-            void ResizeUI(const unsigned width, const unsigned height, const RENDER_TARGETS target = RENDER_TARGET_UI);
+                RENDER_TARGETS CreateRT(const unsigned width, const unsigned height);
+                void DestroyRT(RENDER_TARGETS rt);
 
-            void Invalidate( void );
-        private:
-            void CreateRenderTarget( const RENDER_TARGETS target, const  DXGI_FORMAT format, const unsigned width, const unsigned height);
+                void ResizeDeferred(const unsigned width, const unsigned height);
+                void ResizeEngineTargets(const unsigned width, const unsigned height);
+                void ResizeUI(const unsigned width, const unsigned height, const RENDER_TARGETS target = RENDER_TARGET_UI);
 
-            ID3D11Device *m_device;
-            ID3D11DeviceContext *m_deviceContext;
+                void Invalidate(void);
+            private:
+                void CreateRenderTarget(const RENDER_TARGETS target, const  DXGI_FORMAT format, const unsigned width, const unsigned height);
 
-            //the targets
-            std::vector<RenderTarget*> m_renderTargets;
-            std::list<RENDER_TARGETS> m_availableTargets;
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
 
-            //deferred rendering
-            ID3D11RenderTargetView **m_deferredRenderTargetView;
-            ID3D11ShaderResourceView **m_deferredShaderMap;
-            ID3D11Texture2D **m_deferredTextureMap;
+                //the targets
+                std::vector<RenderTarget*> m_renderTargets;
+                std::list<RENDER_TARGETS> m_availableTargets;
 
-            //what target am I on?
-            RENDER_TARGETS m_currentTarget;
-        };
+                //deferred rendering
+                ID3D11RenderTargetView **m_deferredRenderTargetView;
+                ID3D11ShaderResourceView **m_deferredShaderMap;
+                ID3D11Texture2D **m_deferredTextureMap;
+
+                //what target am I on?
+                RENDER_TARGETS m_currentTarget;
+            };
+        }
     }
 }

@@ -2,91 +2,94 @@
 
 #include "UIManager.h"
 
-#include "GraphicsManager.h"
+#include "GfxManager.h"
 
 #include <d3d11.h>
 
-#define GfxManager reinterpret_cast<GraphicsCore*>(m_gfxmgr)
+#define GfxManager reinterpret_cast<GfxManager*>(m_gfxmgr)
 
 namespace ursine
 {
-    void GfxUIManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *gfx)
+    namespace graphics
     {
-        m_device = device;
-        m_context = context;
-        m_gfxmgr = (gfx);
-
-        m_rtManager = rtmgr;
-
-        //DONT FORGET TO CHANGE SIZE
-        m_uiInstances.resize( 2 );
-
-        for (int x = 0; x < 2; ++x)
+        void GfxUIManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *gfx)
         {
-            m_uiInstances[ x ] = nullptr;
-            m_freeInstances.push_back( x );
-        }
+            m_device = device;
+            m_context = context;
+            m_gfxmgr = (gfx);
 
-        m_freeTargets.push_back( RENDER_TARGET_UI );
-        m_freeTargets.push_back( RENDER_TARGET_UI2 );
-        m_freeTargets.push_back( RENDER_TARGET_UI3 );
-        m_freeTargets.push_back( RENDER_TARGET_UI4 );
-    }
+            m_rtManager = rtmgr;
 
-    void GfxUIManager::Uninitialize()
-    {
-        for (auto x : m_uiInstances)
-        {
-            if (x != nullptr)
+            //DONT FORGET TO CHANGE SIZE
+            m_uiInstances.resize(2);
+
+            for (int x = 0; x < 2; ++x)
             {
-                x->Uninitialize( );
-
-                delete x;
+                m_uiInstances[ x ] = nullptr;
+                m_freeInstances.push_back(x);
             }
+
+            m_freeTargets.push_back(RENDER_TARGET_UI);
+            m_freeTargets.push_back(RENDER_TARGET_UI2);
+            m_freeTargets.push_back(RENDER_TARGET_UI3);
+            m_freeTargets.push_back(RENDER_TARGET_UI4);
         }
 
-        m_device = nullptr;
-        m_context = nullptr;
-    }
+        void GfxUIManager::Uninitialize()
+        {
+            for (auto x : m_uiInstances)
+            {
+                if (x != nullptr)
+                {
+                    x->Uninitialize();
 
-    GFXHND GfxUIManager::CreateUI()
-    {
-        UAssert( m_freeInstances.size( ) > 0, "Out of UI instances!" );
+                    delete x;
+                }
+            }
 
-        GFXHND newHandle;
-        _RENDERABLEHND *temp = reinterpret_cast<_RENDERABLEHND*>( &newHandle );
+            m_device = nullptr;
+            m_context = nullptr;
+        }
 
-        temp->ID_ = ID_RENDERABLE;
-        temp->Index_ = m_freeInstances.front( );
-        m_freeInstances.pop_front( );
+        GfxHND GfxUIManager::CreateUI()
+        {
+            UAssert(m_freeInstances.size() > 0, "Out of UI instances!");
 
-        m_uiInstances[ temp->Index_ ] = new UIInstance( );
+            GfxHND newHandle;
+            _RENDERABLEHND *temp = reinterpret_cast<_RENDERABLEHND*>(&newHandle);
 
-        m_uiInstances[ temp->Index_ ]->Initialize( m_device, m_context, m_rtManager, m_gfxmgr, m_freeTargets.front( ) );
-        m_freeTargets.pop_front( );
+            temp->ID_ = ID_RENDERABLE;
+            temp->Index_ = m_freeInstances.front();
+            m_freeInstances.pop_front();
 
-        return newHandle;
-    }
+            m_uiInstances[ temp->Index_ ] = new UIInstance();
 
-    void GfxUIManager::DestroyUI(GFXHND hnd)
-    {
-        _RENDERABLEHND *handle = reinterpret_cast<_RENDERABLEHND*>( &hnd );
+            m_uiInstances[ temp->Index_ ]->Initialize(m_device, m_context, m_rtManager, m_gfxmgr, m_freeTargets.front());
+            m_freeTargets.pop_front();
 
-        UAssert( handle->ID_ == ID_RENDERABLE, "Attempted to destroy a UI using an invalid handle!" );
+            return newHandle;
+        }
 
-        m_uiInstances[ handle->Index_ ]->Uninitialize( );
+        void GfxUIManager::DestroyUI(GfxHND hnd)
+        {
+            _RENDERABLEHND *handle = reinterpret_cast<_RENDERABLEHND*>(&hnd);
 
-        delete m_uiInstances[ handle->Index_ ];
+            UAssert(handle->ID_ == ID_RENDERABLE, "Attempted to destroy a UI using an invalid handle!");
 
-        m_freeInstances.push_front( handle->Index_ );
-    }
+            m_uiInstances[ handle->Index_ ]->Uninitialize();
 
-    UIInstance &GfxUIManager::GetUI(GFXHND hnd)
-    {
-        _RENDERABLEHND *handle = reinterpret_cast<_RENDERABLEHND*>( &hnd );
+            delete m_uiInstances[ handle->Index_ ];
 
-        UAssert( handle->ID_ == ID_RENDERABLE, "Attempted to destroy a UI using an invalid handle!" );
+            m_freeInstances.push_front(handle->Index_);
+        }
 
-        return *m_uiInstances[ handle->Index_ ];
+        UIInstance &GfxUIManager::GetUI(GfxHND hnd)
+        {
+            _RENDERABLEHND *handle = reinterpret_cast<_RENDERABLEHND*>(&hnd);
+
+            UAssert(handle->ID_ == ID_RENDERABLE, "Attempted to destroy a UI using an invalid handle!");
+
+            return *m_uiInstances[ handle->Index_ ];
+        }
     }
 }

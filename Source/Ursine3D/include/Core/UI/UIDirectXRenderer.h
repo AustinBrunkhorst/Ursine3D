@@ -12,7 +12,7 @@ namespace ursine
       UIDirectXRenderer(void);
       virtual ~UIDirectXRenderer(void);
 
-      void Draw(GFXHND camera);
+      void Draw(GfxHND camera);
       void DrawMain(void);
 
   protected:
@@ -21,8 +21,8 @@ namespace ursine
       void resize(const int width, const int height);
 
   private:
-      GfxAPI *m_gfxMgr;
-      GFXHND m_uiHandle;
+      graphics::GfxAPI *m_gfxMgr;
+      GfxHND m_uiHandle;
       int m_width, m_height;
 
       CefRect m_popupBounds;

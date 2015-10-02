@@ -19,25 +19,28 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <vector>
 #include <list>
 
-#include "GraphicsDefines.h"
+#include "GfxDefines.h"
 #include "Camera.h"
 
 namespace ursine
 {
-    class CameraManager
+    namespace graphics
     {
-    public:
-        void Initialize(void);
-        void Uninitialize( void );
+        class CameraManager
+        {
+        public:
+            void Initialize(void);
+            void Uninitialize(void);
 
-        GFXHND CreateCamera( void );
-        GFXCamera &GetCamera(const GFXHND &handle);
+            GfxHND CreateCamera(void);
+            Camera &GetCamera(const GfxHND &handle);
 
-        void DestroyCamera( GFXHND &handle );
+            void DestroyCamera(GfxHND &handle);
 
-    private:
-        std::vector<GFXCamera> m_cameraArray;
-        std::list<unsigned> m_freeCameraList;
-        unsigned m_current;
-    };
+        private:
+            std::vector<Camera> m_cameraArray;
+            std::list<unsigned> m_freeCameraList;
+            unsigned m_current;
+        };
+    }
 }

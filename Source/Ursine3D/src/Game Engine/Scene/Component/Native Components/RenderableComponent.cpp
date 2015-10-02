@@ -16,12 +16,12 @@ namespace ursine
             
         }
 
-        GFXHND Renderable::GetHandle(void) const
+        graphics::GfxHND Renderable::GetHandle(void) const
         {
             return m_handle;
         }
 
-        void Renderable::SetHandle(GFXHND handle)
+        void Renderable::SetHandle(graphics::GfxHND handle)
         {
             m_handle = handle;
         }

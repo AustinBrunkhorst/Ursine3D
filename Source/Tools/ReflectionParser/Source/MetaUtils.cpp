@@ -24,7 +24,7 @@ namespace utils
 
     std::string GetQualifiedName(const CursorType &type)
     {
-        if (type.GetKind() != CXType_Typedef)
+        if (type.GetKind( ) != CXType_Typedef)
             return type.GetDisplayName( );
 
         auto declaration = type.GetDeclaration( );

@@ -7,7 +7,7 @@
 namespace ursine
 {
     Scene::Scene(void)
-        : m_graphics( GetCoreSystem( GfxAPI ) )
+        : m_graphics( GetCoreSystem(graphics::GfxAPI ) )
         , m_viewport( 0 )
     {
         
@@ -18,22 +18,22 @@ namespace ursine
         return m_world;
     }
 
-    GFXHND Scene::GetViewport(void) const
+    graphics::GfxHND Scene::GetViewport(void) const
     {
         return m_viewport;
     }
 
-    void Scene::SetViewport(GFXHND viewport)
+    void Scene::SetViewport(graphics::GfxHND viewport)
     {
         m_viewport = viewport;
     }
 
-    GFXHND Scene::GetEditorCamera(void) const
+    graphics::GfxHND Scene::GetEditorCamera(void) const
     {
         return m_editorCamera;
     }
 
-    void Scene::SetEditorCamera(GFXHND camera)
+    void Scene::SetEditorCamera(GfxHND camera)
     {
         m_editorCamera = camera;
     }
