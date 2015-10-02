@@ -136,7 +136,7 @@ void Editor::InitializeScene(void)
         auto &camera = component->GetCamera( );
 
         camera.SetPosition( 0.0f, 0.0f );
-        camera.SetRenderMode( VIEWPORT_RENDER_FORWARD );
+        camera.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
         camera.SetDimensions( 1.0f, 1.0f );
         camera.SetPlanes( 0.1f, 700.0f );
 
@@ -196,11 +196,9 @@ void Editor::InitializeScene(void)
 
         auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
 
-
         skybox.SetModel( "Skybox" );
         skybox.SetMaterial( "Skybox" );
         skybox.SetMaterialData( 1, 0, 0 );
-
 
         SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
         SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
