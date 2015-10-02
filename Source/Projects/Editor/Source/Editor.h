@@ -5,6 +5,8 @@
 #include <Window.h>
 #include <UIView.h>
 
+#include <NativeJSFunction.h>
+
 class Project;
 class NativeEditorTool;
 
@@ -22,6 +24,8 @@ public:
     void OnRemove(void) override;
     
     Project *GetProject(void) const;
+
+    void InitializeScene(void);
     
 private:
     ursine::GfxAPI *m_graphics;
@@ -41,9 +45,13 @@ private:
     std::vector<NativeEditorTool *> m_tools;
 
     void initializeGraphics(void);
-    void initializeTools(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
+
+    void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
 } Meta(Enable);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(OnEditorUILoad);

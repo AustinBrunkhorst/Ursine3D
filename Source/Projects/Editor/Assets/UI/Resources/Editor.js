@@ -216,7 +216,7 @@ var ursine_editor_NativeCanvasWindowHandler = function(toolName) {
 	while(_g < _g1.length) {
 		var event = _g1[_g];
 		++_g;
-		this.window.addEventListener(event,$bind(this,this.forwardEvent),true);
+		this.window.addEventListener(event,$bind(this,this.forwardEvent));
 	}
 	window.addEventListener("resize",$bind(this,this.onViewportInvalidated));
 };
@@ -225,6 +225,7 @@ ursine_editor_NativeCanvasWindowHandler.__name__ = ["ursine","editor","NativeCan
 ursine_editor_NativeCanvasWindowHandler.__super__ = ursine_editor_WindowHandler;
 ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 	forwardEvent: function(e) {
+		console.log(e);
 		this.m_nativeHandler.Event(e.type,e);
 	}
 	,onViewportInvalidated: function() {
@@ -316,11 +317,20 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.window.style.bottom = "0";
 	this.window.style.left = "0";
 	this.window.style.width = "15%";
+	this.m_entityList = window.document.createElement("ul");
+	this.m_entityList.classList.add("entity-list");
+	this.window.container.appendChild(this.m_entityList);
+	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("EntityAdded",$bind(this,this.onEntityAdded));
 };
 $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOutline;
 ursine_editor_windows_SceneOutline.__name__ = ["ursine","editor","windows","SceneOutline"];
 ursine_editor_windows_SceneOutline.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandler.prototype,{
+	onEntityAdded: function(e) {
+		var item = window.document.createElement("li");
+		item.innerText = "Entity " + e.uniqueID;
+		this.m_entityList.appendChild(item);
+	}
 });
 var ursine_editor_windows_SceneView = function() {
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
@@ -371,7 +381,7 @@ String.__name__ = ["String"];
 $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
 var __map_reserved = {}
-ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur"];
+ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
 ursine_editor_menus_DebugMenu.__meta__ = { statics : { doEditorDebugTools : { mainMenuItem : ["Debug/Debug Editor UI"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};

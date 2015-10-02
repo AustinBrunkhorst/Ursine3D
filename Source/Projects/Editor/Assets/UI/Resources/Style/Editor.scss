@@ -8,3 +8,19 @@
 
 // @@@TODO: remove this
 //body { background: #252526 }
+
+// @@@TODO: separate this
+.entity-list {
+  color: white;
+
+  li {
+    margin-bottom: 1px;
+    padding: 5px 5px 5px 10px;
+    cursor: pointer;
+    transition: all $duration-transition-btn ease;
+
+    &:hover {
+      background: darken($color-accent, 25%);
+    }
+  }
+}

@@ -11,6 +11,8 @@
 #include "Method.h"
 #include "Function.h"
 
+#include "MetaManager.h"
+
 #include "ReflectionDatabase.h"
 
 namespace ursine
@@ -212,6 +214,20 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
+        bool Type::IsFloatingPoint(void) const
+        {
+            return database.types[ m_id ].isFloatingPoint;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        bool Type::IsSigned(void) const
+        {
+            return database.types[ m_id ].isSigned;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
         bool Type::IsEnum(void) const
         {
             return database.types[ m_id ].isEnum;
@@ -236,6 +252,11 @@ namespace ursine
         const std::string &Type::GetName(void) const
         {
             return database.types[ m_id ].name;
+        }
+
+        const MetaManager& Type::GetMeta(void) const
+        {
+            return database.types[ m_id ].meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -479,6 +500,38 @@ namespace ursine
         const Global &Type::GetStaticField(const std::string &name) const
         {
             return database.types[ m_id ].staticFields[ name ];
+        }
+
+        Json Type::SerializeJson(const Variant &instance) const
+        {
+            UAssert(
+                instance.GetType( ) == *this,
+                "Serializing incompatible variant instance.\n"
+                "Got '%s', expected '%s'",
+                instance.GetType( ).GetName( ).c_str( ),
+                GetName( ).c_str( )
+            );
+
+            if (IsPrimitive( ))
+            {
+                if (IsFloatingPoint( ) || !IsSigned( ))
+                    return { instance.ToDouble( ) };
+ 
+                return { instance.ToInt( ) };
+            }
+            
+            Json::object object { };
+
+            auto &fields = database.types[ m_id ].fields;
+
+            for (auto &field : fields)
+            {
+                auto value = field.second.GetValue( instance );
+
+                object[ field.first ] = value.GetType( ).SerializeJson( value );
+            }
+
+            return object;
         }
     }
 }

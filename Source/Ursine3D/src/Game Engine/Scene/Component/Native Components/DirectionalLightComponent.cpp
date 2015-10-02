@@ -3,6 +3,8 @@
 #include "DirectionalLightComponent.h"
 #include "RenderableComponent.h"
 
+NATIVE_COMPONENT_DEFINITION( ursine::ecs::DirectionalLight );
+
 ursine::ecs::DirectionalLight::DirectionalLight()
     : BaseComponent( )
     , m_directionalLight( nullptr )

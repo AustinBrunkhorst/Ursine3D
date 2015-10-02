@@ -12,6 +12,7 @@
 
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
+#include <Utilities/Timer/TimerManager.h>
 
 using namespace ursine;
 
@@ -107,49 +108,12 @@ Project *Editor::GetProject(void) const
     return m_project;
 }
 
-void Editor::initializeGraphics(void)
+void Editor::InitializeScene(void)
 {
-    GfxConfig config;
-
-    config.Fullscreen_ = false;
-
-    config.HandleToWindow_ = 
-        static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
-
-    config.ModelListPath_ = "Assets/Models/";
-    config.ShaderListPath_ = "Assets/Shaders/";
-    config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = kDefaultWindowWidth;
-    config.WindowHeight_ = kDefaultWindowHeight;
-
-    URSINE_TODO( "..." );
-    config.m_renderUI = true;
-
-    config.Profile_ = false;
-
-    m_graphics->StartGraphics( config );
-    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
+    m_project->GetScene( ).GetWorld( ).Listener( this )
+        .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded );
 
     auto &scene = m_project->GetScene( );
-    {
-        auto viewport = m_graphics->ViewportMgr.CreateViewport(
-            static_cast<int>( 0.85f * kDefaultWindowWidth ), 
-            static_cast<int>( kDefaultWindowHeight - (30.0f + 27.0f) )
-        );
-
-        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
-
-        handle.SetPosition( 
-            static_cast<int>( 0.15f * kDefaultWindowWidth ), 
-            static_cast<int>( 30.0f + 27.0f ) 
-        );
-
-        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
-
-        scene.SetViewport( viewport );
-
-        m_graphics->SetGameViewport( viewport );
-    }
 
     auto &world = scene.GetWorld( );
 
@@ -247,9 +211,56 @@ void Editor::initializeGraphics(void)
     }
 }
 
-void Editor::initializeTools(void)
+JSFunction(OnEditorUILoad)
 {
-    // @@@ TODO:
+    GetCoreSystem( Editor )->InitializeScene( );
+
+    return nullptr;
+}
+
+void Editor::initializeGraphics(void)
+{
+    GfxConfig config;
+
+    config.Fullscreen_ = false;
+
+    config.HandleToWindow_ = 
+        static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
+
+    config.ModelListPath_ = "Assets/Models/";
+    config.ShaderListPath_ = "Assets/Shaders/";
+    config.TextureListPath_ = "Assets/Textures/";
+    config.WindowWidth_ = kDefaultWindowWidth;
+    config.WindowHeight_ = kDefaultWindowHeight;
+
+    URSINE_TODO( "..." );
+    config.m_renderUI = true;
+
+    config.Profile_ = false;
+
+    m_graphics->StartGraphics( config );
+    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
+
+    auto &scene = m_project->GetScene( );
+    {
+        auto viewport = m_graphics->ViewportMgr.CreateViewport(
+            static_cast<int>( 0.85f * kDefaultWindowWidth ), 
+            static_cast<int>( kDefaultWindowHeight - (30.0f + 27.0f) )
+        );
+
+        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
+
+        handle.SetPosition( 
+            static_cast<int>( 0.15f * kDefaultWindowWidth ), 
+            static_cast<int>( 30.0f + 27.0f ) 
+        );
+
+        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
+
+        scene.SetViewport( viewport );
+
+        m_graphics->SetGameViewport( viewport );
+    }
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -269,6 +280,17 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     m_mainWindow.ui->DrawMain( );
 
     m_graphics->EndFrame( );
+}
+
+void Editor::onEntityAdded(EVENT_HANDLER(ecs::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
+
+    Json message = Json::object {
+        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
+    };
+
+    m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "EntityAdded", message );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

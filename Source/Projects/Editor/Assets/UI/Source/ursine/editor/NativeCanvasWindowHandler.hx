@@ -8,7 +8,9 @@ class NativeCanvasWindowHandler extends WindowHandler {
     // events to be forwareded to the native handler
     private static var m_forwardedEvents : Array<String> = [
         "focus",
-        "blur"
+        "blur",
+        "mouseover",
+        "mouseout"
     ];
 
     public function new(toolName : String) {
@@ -17,7 +19,7 @@ class NativeCanvasWindowHandler extends WindowHandler {
         m_nativeHandler = new NativeToolHandler( toolName );
 
         for (event in m_forwardedEvents)
-            window.addEventListener( event, forwardEvent, true );
+            window.addEventListener( event, forwardEvent );
 
         js.Browser.window.addEventListener( 'resize', onViewportInvalidated );
     }
@@ -31,6 +33,8 @@ class NativeCanvasWindowHandler extends WindowHandler {
     }
 
     private function forwardEvent(e : Event) {
+        trace( e );
+        
         m_nativeHandler.Event( e.type, e );
     }
 
