@@ -12,10 +12,11 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-            Model3D( void );
-            ~Model3D( void );
+            Model3D(void);
+            ~Model3D(void);
 
-            void OnInitialize( void ) override;
+            Meta(Disable)
+            void OnInitialize(void) override;
 
             //get/set model
             //get/set texture
@@ -23,8 +24,6 @@ namespace ursine
 
         private:
             ursine::Model3D *m_model;
-
-            friend class RenderSystem;
-        }Meta( Enable, DisplayName( "Model3D" ) );
+        } Meta( Enable, DisplayName( "Model3D" ) );
     }
 }

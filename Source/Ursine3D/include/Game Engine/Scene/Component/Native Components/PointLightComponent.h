@@ -39,12 +39,10 @@ namespace ursine
 
             //get/set radius
             float GetRadius(void) const;
-            void SetRadius(double radius);
+            void SetRadius(float radius);
 
         private:
             ursine::PointLight *m_pointLight;
-
-            friend class RenderSystem;
         } Meta( Enable, DisplayName( "PointLight" ) );
     }
 }

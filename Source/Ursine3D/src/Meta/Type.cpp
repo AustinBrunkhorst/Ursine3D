@@ -505,7 +505,7 @@ namespace ursine
         Json Type::SerializeJson(const Variant &instance) const
         {
             UAssert(
-                m_id == instance.GetType( ),
+                *this == instance.GetType( ),
                 "Serializing incompatible variant instance.\n"
                 "Got '%s', expected '%s'",
                 instance.GetType( ).GetName( ).c_str( ),
@@ -539,15 +539,15 @@ namespace ursine
             // we have to handle all primitive types explicitly
             if (IsPrimitive( ))
             {
-                if (m_id == typeof( int ))
+                if (*this == typeof( int ))
                     return { value.int_value( ) };
-                else if (m_id == typeof(unsigned int))
+                else if (*this == typeof( unsigned int ))
                     return { static_cast<unsigned int>( value.number_value( ) ) };
-                else if (m_id == typeof( bool ))
+                else if (*this == typeof( bool ))
                     return { value.bool_value( ) };
-                else if (m_id == typeof( float ))
+                else if (*this == typeof( float ))
                     return { static_cast<float>( value.number_value( ) ) };
-                else if (m_id == typeof( double ))
+                else if (*this == typeof( double ))
                     return { value.number_value( ) };
             }
             else if (*this == typeof( std::string ))
@@ -571,7 +571,7 @@ namespace ursine
                 auto fieldType = field.second.GetType( );
 
                 UAssert( fieldType.IsValid( ),
-                    "Unknown type in field '%s' for base type '%s'. Is this type reflected?",
+                    "Unknown type for field '%s' in base type '%s'. Is this type reflected?",
                     fieldType.GetName( ).c_str( ),
                     GetName( ).c_str( )
                 );

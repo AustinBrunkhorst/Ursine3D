@@ -43,9 +43,9 @@ float ursine::ecs::PointLight::GetRadius(void) const
     return m_pointLight->GetRadius( );
 }
 
-void ursine::ecs::PointLight::SetRadius(double radius)
+void ursine::ecs::PointLight::SetRadius(float radius)
 {
-    m_pointLight->SetRadius( (float)radius );
+    m_pointLight->SetRadius( radius );
 }
 
 const ursine::Color &ursine::ecs::PointLight::GetColor(void) const
