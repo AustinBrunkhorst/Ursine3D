@@ -12,12 +12,13 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
-/*
+
 #include "CoreSystem.h"
 #include "Meta.h"
 
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
+#include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
 #include "PhysicsDebugDrawer.h"
 
 namespace ursine
@@ -27,9 +28,20 @@ namespace ursine
 		CORE_SYSTEM;
 	public:
 
-		Meta( DisableNonDynamic );
-		PhysicsManager(void);
-		~PhysicsManager(void);
+		Meta( DisableNonDynamic )
+		PhysicsManager(void) { }
+
+		Meta(Disable)
+		void OnInitialize(void) override;
+
+		Meta(Disable)
+		void OnRemove(void) override;
+
+		void AddCollisionShape(btCollisionShape *shape);
+
+		btRigidBody *AddRigidBody(const btRigidBody::btRigidBodyConstructionInfo &info);
+
+        void LoadWorld(const char *bulletFile);
 
 	private:
 
@@ -49,10 +61,18 @@ namespace ursine
 		// you can use a different solver (see Extras/BulletMultiThreaded)
 		btSequentialImpulseConstraintSolver *m_solver;
 
-		btDiscreteDynamicsWorld *m_dynamicsWorld;
+		btSoftRigidDynamicsWorld *m_dynamicsWorld;
 
 		PhysicsDebugDrawer *m_debugDrawer;
 
+		// keep track of the shapes, we release memory at exit.
+		// make sure to re-use collision shapes among rigidbodies whenever possible!
+		btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
+
+		void onAppUpdate(EVENT_HANDLER(Application));
+
+		void initPhysics(void);
+		void destroyPhysics(void);
+
 	} Meta( Enable );
 }
-*/

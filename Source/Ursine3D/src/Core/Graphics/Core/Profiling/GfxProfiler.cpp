@@ -1,5 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "GfxProfiler.h"
+#include <d3d11.h>
+#include "GraphicsDefines.h"
 
 namespace ursine
 {

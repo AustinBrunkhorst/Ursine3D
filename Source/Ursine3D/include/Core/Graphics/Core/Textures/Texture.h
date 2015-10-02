@@ -16,7 +16,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-#include <d3d11.h>
+#include "D3D11Forward.h"
 
 namespace ursine
 {

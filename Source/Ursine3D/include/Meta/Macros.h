@@ -14,6 +14,8 @@
 
 #define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
 
+#define EditorField(expression, getter, setter) Meta(Getter(#getter), Setter(#setter)) expression
+
 #define __META_EXTERNAL(type, guid)       \                       
     typedef type __META_EXTERNAL__##guid; \
 
@@ -26,6 +28,8 @@
 #else
 
 #define Meta(...)
+
+#define EditorField(expression, getter, setter)
 
 #define MetaExternal(type)
 

@@ -1,5 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "RenderTargetManager.h"
+#include "GraphicsDefines.h"
+#include <d3d11.h>
 
 namespace ursine
 {

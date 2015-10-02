@@ -16,12 +16,8 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-#include <d3d11.h>
-#include <vector>
-#include <list>
 #include "RenderTargetManager.h"
 #include "UIInstance.h"
-#include "GraphicsDefines.h"
 
 namespace ursine
 {

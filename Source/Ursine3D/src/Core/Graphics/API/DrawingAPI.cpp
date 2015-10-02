@@ -37,12 +37,12 @@ namespace ursine
 
     void DrawingAPI::SetColor(const SVec4 &color)
     {
-        m_privates->mgr->SetDrawColor( color.ToD3D( ) );
+        m_privates->mgr->SetDrawColor( color.X( ), color.Y( ), color.Z( ), color.W( ) );
     }
 
     void DrawingAPI::SetColor(const Color &color)
     {
-        m_privates->mgr->SetDrawColor( (color.ToVector4( ) / 255.f).ToD3D( ) );
+        m_privates->mgr->SetDrawColor( color );
     }
 
     void DrawingAPI::SetSize(float size)
