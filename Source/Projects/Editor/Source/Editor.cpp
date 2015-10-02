@@ -160,8 +160,9 @@ void Editor::initializeGraphics(void)
         auto &camera = component->GetCamera( );
 
         camera.SetPosition( 0.0f, 0.0f );
+        camera.SetRenderMode( VIEWPORT_RENDER_FORWARD );
         camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 300.0f );
+        camera.SetPlanes( 0.1f, 700.0f );
 
         camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
 
@@ -222,6 +223,27 @@ void Editor::initializeGraphics(void)
         auto *component = pointLight->AddComponent<ecs::Renderable>( );
 
         component->SetHandle( lightHandle );
+    }
+
+    auto *sky = world.CreateEntity( );
+    {
+        auto skyHND = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+
+        auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
+
+
+        skybox.SetModel( "Skybox" );
+        skybox.SetMaterial( "Skybox" );
+        skybox.SetMaterialData( 1, 0, 0 );
+
+
+        SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
+        SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
+        skybox.SetWorldMatrix( final );
+
+        auto *component = sky->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle( skyHND );
     }
 }
 
