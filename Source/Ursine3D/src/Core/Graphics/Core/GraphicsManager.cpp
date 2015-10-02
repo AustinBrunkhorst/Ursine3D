@@ -5,6 +5,7 @@
 #include "VertexDefinitions.h"
 #include <complex>
 #include "DepthStencilStateList.h"
+#include <d3d11.h>
 
 namespace ursine
 {
@@ -480,6 +481,7 @@ namespace ursine
         /////////////////////////////////////////////////////////////////
         // gets the projection matrix and view matrix
         SMat4 proj, view;
+
         proj = currentCamera.GetProjMatrix( w, h );
         view = currentCamera.GetViewMatrix( );
 
@@ -531,6 +533,7 @@ namespace ursine
         dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
         dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
         bufferManager->MapTransformBuffer( SMat4::Identity( ) );
+        
         dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
         RenderDebugPoints( view, proj, currentCamera );
 

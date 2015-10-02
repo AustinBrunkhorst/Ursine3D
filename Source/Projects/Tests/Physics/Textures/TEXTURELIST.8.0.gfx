@@ -1,9 +1,0 @@
-#
-#First is file name, second is texture name, then width, then height
-uv.DDS UV 1024 1024
-skybox_texture.DDS Skybox 1024 1024
-wire.DDS Wire 1024 1024
-
-normal1.DDS n1 256 256
-normal2.DDS n2 256 256
-normal3.DDS n3 256 256

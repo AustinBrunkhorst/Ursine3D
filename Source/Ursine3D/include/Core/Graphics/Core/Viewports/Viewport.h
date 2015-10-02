@@ -16,10 +16,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-#include <d3d11.h>
-#include <Color.h>
-#include <SMat4.h>
-
+#include "D3D11Forward.h"
 #include "GraphicsDefines.h"
 #include "ViewportRenderModes.h"
 

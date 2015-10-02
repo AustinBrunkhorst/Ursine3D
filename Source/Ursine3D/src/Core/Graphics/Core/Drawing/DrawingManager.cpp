@@ -2,18 +2,19 @@
 
 #include "VertexDefinitions.h"
 #include "DrawingManager.h"
+#include "GraphicsDefines.h"
+#include <d3d11.h>
 
 namespace ursine
 {
-    void DrawingManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *devCon)
+    void DrawingManager::Initialize( ID3D11Device *device, ID3D11DeviceContext *devCon )
     {
         m_device = device;
         m_deviceContext = devCon;
 
         m_pointList.resize( MAX_DRAW_OBJ );
         m_lineList.resize( MAX_DRAW_OBJ );
-        m_size = 10;
-        m_color = DirectX::XMFLOAT4( 1, 1, 1, 1 );
+        m_size = 1;
 
         m_pointCount = 0;
         m_lineCount = 0;
@@ -26,7 +27,7 @@ namespace ursine
 
         //Set up the description of the static vertex buffer.
         vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-        vertexBufferDesc.ByteWidth = sizeof( PrimitiveVertex) * MAX_DRAW_OBJ;
+        vertexBufferDesc.ByteWidth = sizeof( PrimitiveVertex ) * MAX_DRAW_OBJ;
         vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         vertexBufferDesc.MiscFlags = 0;
@@ -47,7 +48,7 @@ namespace ursine
 
         //Set up the description of the static vertex buffer.
         vertexBufferDesc2.Usage = D3D11_USAGE_DYNAMIC;
-        vertexBufferDesc2.ByteWidth = sizeof( PrimitiveVertex) * MAX_DRAW_OBJ;
+        vertexBufferDesc2.ByteWidth = sizeof( PrimitiveVertex ) * MAX_DRAW_OBJ;
         vertexBufferDesc2.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         vertexBufferDesc2.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         vertexBufferDesc2.MiscFlags = 0;
@@ -74,7 +75,7 @@ namespace ursine
 
         //Set up the description of the static index buffer.
         indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        indexBufferDesc.ByteWidth = sizeof( unsigned) * MAX_DRAW_OBJ;
+        indexBufferDesc.ByteWidth = sizeof( unsigned ) * MAX_DRAW_OBJ;
         indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
         indexBufferDesc.CPUAccessFlags = 0;
         indexBufferDesc.MiscFlags = 0;
@@ -105,22 +106,21 @@ namespace ursine
         m_pointCount = 0;
     }
 
-    void DrawingManager::SetDrawColor( const float x, const float y, const float z, const float a)
+    void DrawingManager::SetDrawColor(float x, float y, float z, float a)
     {
-        m_color = DirectX::XMFLOAT4( x, y, z, a );
+        m_color = Color( x, y, z, a );
     }
 
-    void DrawingManager::SetDrawColor( const DirectX::XMFLOAT4 color)
+    void DrawingManager::SetDrawColor(const Color &color)
     {
         m_color = color;
     }
-
-    DirectX::XMFLOAT4 &DrawingManager::GetColor(void)
+    Color &DrawingManager::GetColor(void)
     {
         return m_color;
     }
 
-    void DrawingManager::SetSize( const float width)
+    void DrawingManager::SetSize( float width )
     {
         m_size = width;
     }
@@ -130,27 +130,27 @@ namespace ursine
         return m_size;
     }
 
-    void DrawingManager::DrawPoint( const float x, const float y, const float z)
+    void DrawingManager::DrawPoint( float x, float y, float z )
     {
         UAssert( m_pointCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it" );
         m_pointList[ m_pointCount ].pos = DirectX::XMFLOAT4( x, y, z, 1 );
         m_pointList[ m_pointCount ].size = m_size;
-        m_pointList[ m_pointCount++ ].color = m_color;
+        m_pointList[ m_pointCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
     }
 
-    void DrawingManager::DrawLine( const float x0, const float y0, const float z0, const float x1, const float y1, const float z1)
+    void DrawingManager::DrawLine( float x0, float y0, float z0, float x1, float y1, float z1 )
     {
         UAssert( m_lineCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it" );
         m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4( x0, y0, z0, 1 );
         m_lineList[ m_lineCount ].size = m_size;
-        m_lineList[ m_lineCount++ ].color = m_color;
+        m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
 
         m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4( x1, y1, z1, 1 );
         m_lineList[ m_lineCount ].size = m_size;
-        m_lineList[ m_lineCount++ ].color = m_color;
+        m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
     }
 
-    void DrawingManager::ConstructPointMesh(unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices)
+    void DrawingManager::ConstructPointMesh( unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices )
     {
         vertCount = m_pointCount;
 
@@ -160,15 +160,15 @@ namespace ursine
 
         //buffer of the data
         PrimitiveVertex *buffer;
-
+    
         //lock the buffer
         result = m_deviceContext->Map( m_vertPointBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource );
 
         //get the buffer
-        buffer = ( PrimitiveVertex* )mappedResource.pData;
+        buffer = (PrimitiveVertex*)mappedResource.pData;
 
         //copy the data over
-        memcpy( buffer, &m_pointList[ 0 ], sizeof( PrimitiveVertex) * vertCount );
+        memcpy( buffer, &m_pointList[ 0 ], sizeof( PrimitiveVertex ) * vertCount );
 
         //unlock
         m_deviceContext->Unmap( m_vertPointBuffer, 0 );
@@ -178,7 +178,7 @@ namespace ursine
         *mesh = m_vertPointBuffer;
     }
 
-    void DrawingManager::ConstructLineMesh(unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices)
+    void DrawingManager::ConstructLineMesh( unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices )
     {
         vertCount = m_lineCount;
 
@@ -193,10 +193,10 @@ namespace ursine
         result = m_deviceContext->Map( m_vertLineBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource );
 
         //get the buffer
-        buffer = ( PrimitiveVertex* )mappedResource.pData;
+        buffer = (PrimitiveVertex*)mappedResource.pData;
 
         //copy the data over
-        memcpy( buffer, &m_lineList[ 0 ], sizeof( PrimitiveVertex) * vertCount );
+        memcpy( buffer, &m_lineList[ 0 ], sizeof( PrimitiveVertex ) * vertCount );
 
         //unlock
         m_deviceContext->Unmap( m_vertLineBuffer, 0 );

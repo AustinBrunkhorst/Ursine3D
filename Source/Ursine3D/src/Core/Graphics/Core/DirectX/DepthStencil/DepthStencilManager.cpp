@@ -1,5 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "DepthStencilManager.h"
+#include <d3d11.h>
+#include "GraphicsDefines.h"
 
 namespace ursine
 {

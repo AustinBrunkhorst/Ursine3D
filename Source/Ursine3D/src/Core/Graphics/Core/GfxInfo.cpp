@@ -1,6 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "GfxInfo.h"
 #include "GraphicsDefines.h"
+#include <d3d11.h>
 #include <locale>
 #include <codecvt>
 
