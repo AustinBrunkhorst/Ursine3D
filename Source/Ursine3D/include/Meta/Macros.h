@@ -14,11 +14,15 @@
 
 #define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
 
+#define EditorField(expression, getter, setter) Meta(Getter(#getter), Setter(#setter)) expression
+
 #define META_OBJECT
 
 #else
 
 #define Meta(...)
+
+#define EditorField(expression, getter, setter)
 
 // Used in objects to preserve virtual inheritance functionality
 #define META_OBJECT                                                                                    \

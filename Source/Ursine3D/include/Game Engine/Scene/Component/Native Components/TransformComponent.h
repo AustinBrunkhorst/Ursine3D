@@ -14,16 +14,27 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-        /*#if defined(__REFLECTION_PARSER__)
+            EditorField( 
+                SVec3 translation, 
+                editorGetTranslation, 
+                editorSetTranslation 
+            );
 
-            Meta(Getter( "GetterForfieldName" ), Setter( "SetterForfieldName" ))
-            SVec3 fieldName;
+            EditorField( 
+                SVec3 rotation, 
+                editorGetRotation, 
+                editorSetRotation
+            );
 
-        #endif*/
+            EditorField( 
+                SVec3 scale, 
+                editorGetScale, 
+                editorSetScale 
+            );
 
-			Transform(void) : BaseComponent() { }
+            Transform(void);
 
-            /*Transform(const Transform &transform);
+            Transform(const Transform &transform);
 
             ~Transform(void);
 
@@ -35,49 +46,59 @@ namespace ursine
             // Position
             ////////////////////////////////////////////////////////////////////
 
-            // Set the local position
-            void SetLocalPosition(const SVec3 &position);
+            /*void SetLocalPosition(const SVec3 &position);
 
-            const SVec3 &LocalPosition(void) const;
+            const SVec3 &LocalPosition(void) const;*/
 
-            // Set the position in world coordinates, neglecting the parent's scale
             void SetWorldPosition(const SVec3 &position);
 
-            const SVec3 &WorldPosition(void) const;
+            const SVec3 &GetWorldPosition(void) const;
+
+            const SVec3 &editorGetTranslation(void) const;
+            void editorSetTranslation(const SVec3 &position);
 
             ////////////////////////////////////////////////////////////////////
             // Rotation
             ////////////////////////////////////////////////////////////////////
 
-            // Set the local rotation
-            void SetLocalRotation(const SQuat &rotation);
+            /*void SetLocalRotation(const SQuat &rotation);
             void SetLocalEuler(const SVec3 &euler);
 
             const SQuat &LocalRotation(void) const;
-            SVec3 LocalEuler(void) const;
+            SVec3 LocalEuler(void) const;*/
 
-            // Set the world rotation
             void SetWorldRotation(const SQuat &rotation);
             void SetWorldEuler(const SVec3 &euler);
 
-            const SQuat &WorldRotation(void) const;
-            SVec3 WorldEuler(void) const;
+            const SQuat &GetWorldRotation(void) const;
+            SVec3 GetWorldEuler(void) const;
+
+            const SVec3 &editorGetRotation(void) const;
+            void editorSetRotation(const SVec3 &euler);
 
             ////////////////////////////////////////////////////////////////////
             // Scale
             ////////////////////////////////////////////////////////////////////
 
-            // Set the local scale
-            void SetLocalScale(const SVec3 &scale);
-            const SVec3 &LocalScale(void) const;
+            /*void SetLocalScale(const SVec3 &scale);
+            
+            const SVec3 &LocalScale(void) const;*/
+
+            void SetWorldScale(const SVec3 &scale);
+
+            const SVec3 &GetWorldScale(void) const;
+
+            const SVec3 &editorGetScale(void) const;
+            void editorSetScale(const SVec3 &scale);
 
             ////////////////////////////////////////////////////////////////////
             // Axis
             ////////////////////////////////////////////////////////////////////
 
-            SVec3 Forward(void) const;
+            // Do this in the quaternion class
+            /*SVec3 Forward(void) const;
             SVec3 Right(void) const;
-            SVec3 Up(void) const;
+            SVec3 Up(void) const;*/
 
         protected:
 
@@ -96,16 +117,20 @@ namespace ursine
             bool m_dirty;
 
             // World coordinates
-            SVec3 m_world_position,
-                m_world_scale;
+            SVec3 m_worldPosition,
+                  m_worldScale;
 
-            SQuat m_world_rotation;
+            SQuat m_worldRotation;
 
             // Local coordinates (coordinates in relation to the parent)
-            SVec3 m_local_position,
+            /*SVec3 m_local_position,
                   m_local_scale;
 
             SQuat m_local_rotation;*/
+
+        private:
+            
+            void copy(const Transform &transform);
 
         } Meta(Enable, DisplayName( "Transform" ));
     }
