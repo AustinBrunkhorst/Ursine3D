@@ -74,7 +74,7 @@ namespace ursine
             shaderManager->LoadShader( SHADER_DIFFUSE, "DiffuseShader" );
             shaderManager->LoadShader( SHADER_NORMAL, "NormalShader" );
             shaderManager->LoadShader( SHADER_DEFFERED_TEXTURE, "DeferredTextureShader" );
-            shaderManager->LoadShader( SHADER_DEFERRED_DEPTH, "FragmentationShader" );
+            shaderManager->LoadShader( SHADER_DEFERRED_DEPTH, "DeferredDepth" );
             shaderManager->LoadShader( SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap" );
             shaderManager->LoadShader( SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource" );
             shaderManager->LoadShader( SHADER_POINT_LIGHT, "PointLightSource" );
@@ -754,7 +754,7 @@ namespace ursine
         pcb.color.y = point.y / 80.f;
 
         static float t;
-        t += 0.000016;
+        t += 0.000016f;
         pcb.color.z = t;
         bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, GEOMETRY_SHADER );
         //END OF TEMP
@@ -1082,8 +1082,8 @@ namespace ursine
         gfxInfo->GetDimensions(w, h );
         vpData.TopLeftX = 0;
         vpData.TopLeftY = 0;
-        vpData.Width = w;
-        vpData.Height = h;
+        vpData.Width = static_cast<FLOAT>(w);
+        vpData.Height = static_cast<FLOAT>(h);
 
         dxCore->GetDeviceContext( )->RSSetViewports( 1, &vpData );
 

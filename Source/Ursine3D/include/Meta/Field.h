@@ -45,7 +45,7 @@ namespace ursine
 
             const std::string &GetName(void) const;
 
-            Variant GetValue(Variant &instance) const;
+            Variant GetValue(const Variant &instance) const;
             bool SetValue(Variant &instance, const Variant &value) const;
             
         private:
@@ -54,7 +54,7 @@ namespace ursine
 
             std::string m_name;
 
-            Getter m_getter;
+            const Getter m_getter;
             Setter m_setter;
         };
     }

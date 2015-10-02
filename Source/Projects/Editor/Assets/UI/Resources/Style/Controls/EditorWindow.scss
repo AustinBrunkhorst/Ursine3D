@@ -29,6 +29,7 @@ $window-header-height: 28px;
   }
 
   #container {
+    overflow: auto;
     position: absolute;
     left: 0;
     right: 0;

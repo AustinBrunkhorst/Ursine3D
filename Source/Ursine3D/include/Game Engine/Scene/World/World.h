@@ -40,7 +40,7 @@ namespace ursine
             ~World(void);
 
             Meta(Disable)
-            Entity *CreateEntity(void);
+            Entity *CreateEntity(const std::string &name = "Entity");
 
             // Gets an entity based on its active id
             Meta(Disable)

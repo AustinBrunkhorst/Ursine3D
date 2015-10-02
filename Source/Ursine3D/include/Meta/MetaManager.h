@@ -12,8 +12,11 @@
 
 #include "MetaProperty.h"
 
+#include "Json.h"
+
 #include <string>
 #include <map>
+#include <vector>
 
 namespace ursine
 {
@@ -28,6 +31,8 @@ namespace ursine
             typedef std::initializer_list<
                 std::pair<Type, const MetaProperty *>
             > Initializer;
+
+            typedef std::vector<Variant> PropertyList;
 
             MetaManager(void);
             MetaManager(const MetaManager &rhs);
@@ -46,6 +51,11 @@ namespace ursine
 
             // Sets the given property
             void SetProperty(Type type, const MetaProperty *value);
+
+            // Gets all properties
+            PropertyList GetProperties(void) const;
+
+            Json SerializeJson(void) const;
 
         private:
             void copy(const MetaManager &rhs);

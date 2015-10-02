@@ -12,6 +12,8 @@
 
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
+#include <PointLightComponent.h>
+#include <Utilities/Timer/TimerManager.h>
 
 using namespace ursine;
 
@@ -107,6 +109,114 @@ Project *Editor::GetProject(void) const
     return m_project;
 }
 
+void Editor::InitializeScene(void)
+{
+    m_project->GetScene( ).GetWorld( ).Listener( this )
+        .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded );
+
+    auto &scene = m_project->GetScene( );
+
+    auto &world = scene.GetWorld( );
+
+    auto *pointLight = world.CreateEntity( "Point Light" );
+    {
+        pointLight->AddComponent<ecs::Renderable>( );
+
+        auto *light = pointLight->AddComponent<ecs::PointLight>( );
+
+        light->SetPosition( { 0.0f, 0.0f, 0.0f } );
+        light->SetRadius( 100.0f );
+        light->SetColor( Color::Red );
+    }
+
+    auto *cameraEntity = world.CreateEntity( "Camera" );
+    {
+        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
+
+        auto &camera = component->GetCamera( );
+
+        camera.SetPosition( 0.0f, 0.0f );
+        camera.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
+        camera.SetDimensions( 1.0f, 1.0f );
+        camera.SetPlanes( 0.1f, 700.0f );
+
+        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+
+        scene.SetEditorCamera( component->GetHandle( ) );
+    }
+
+    for (int i = 0; i < 50; ++i)
+    {
+        auto *entity = world.CreateEntity( );
+        {
+            auto handle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+
+            auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
+
+            auto name = i & 1 ? "Cube" : "Character";
+
+            entity->SetName( name );
+
+            model.SetModel( name );
+            model.SetMaterial( "Cube" );
+
+            SMat4 transform;
+
+            transform.TRS(
+                SVec3{ i * 1.0f, 0.0f, 0.0f },
+                SQuat{ 0.0f, 0.0f, 0.0f },
+                SVec3{ 1.0f, 1.0f, 1.0f }
+            );
+
+            model.SetWorldMatrix( transform );
+
+            auto *component = entity->AddComponent<ecs::Renderable>( );
+
+            component->SetHandle( handle );
+        }
+    }
+
+    auto *directionLight = world.CreateEntity( "Directional Light" );
+    {
+        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_DIRECTION_LIGHT );
+
+        auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
+
+        light.SetDirection( { 0.0f, -1.0f, 0.0f } );
+        light.SetColor( 1.0f, 1.0f, 1.0f );
+
+        auto *component = directionLight->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle( lightHandle );
+    }
+
+    auto *sky = world.CreateEntity( "Skybox" );
+    {
+        auto skyHND = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+
+        auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
+
+        skybox.SetModel( "Skybox" );
+        skybox.SetMaterial( "Skybox" );
+        skybox.SetMaterialData( 1, 0, 0 );
+
+        SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
+        SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
+        skybox.SetWorldMatrix( final );
+
+        auto *component = sky->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle( skyHND );
+    }
+}
+
+JSFunction(OnEditorUILoad)
+{
+    GetCoreSystem( Editor )->InitializeScene( );
+
+    return nullptr;
+}
+
 void Editor::initializeGraphics(void)
 {
     GfxConfig config;
@@ -150,104 +260,6 @@ void Editor::initializeGraphics(void)
 
         m_graphics->SetGameViewport( viewport );
     }
-
-    auto &world = scene.GetWorld( );
-
-    auto *cameraEntity = world.CreateEntity( );
-    {
-        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
-
-        auto &camera = component->GetCamera( );
-
-        camera.SetPosition( 0.0f, 0.0f );
-        camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 600.0f );
-        camera.SetRenderMode(VIEWPORT_RENDER_FORWARD);
-
-        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-        scene.SetEditorCamera( component->GetHandle( ) );
-    }
-
-    for (int i = 0; i < 50; ++i)
-    {
-        auto *entity = world.CreateEntity( );
-        {
-            auto handle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
-
-            auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
-
-            model.SetModel( i & 1 ? "Cube" : "Character" );
-            model.SetMaterial( "Cube" );
-
-            SMat4 transform;
-
-            transform.TRS(
-                SVec3{ i * 1.0f, 0.0f, 0.0f },
-                SQuat{ 0.0f, 0.0f, 0.0f },
-                SVec3{ 1.0f, 1.0f, 1.0f }
-            );
-
-            model.SetWorldMatrix( transform );
-
-            auto *component = entity->AddComponent<ecs::Renderable>( );
-
-            component->SetHandle( handle );
-        }
-    }
-
-    auto *directionLight = world.CreateEntity( );
-    {
-        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_DIRECTION_LIGHT );
-
-        auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
-
-        light.SetDirection( { 0.0f, -1.0f, 0.0f } );
-        light.SetColor( 1.0f, 1.0f, 1.0f );
-
-        auto *component = directionLight->AddComponent<ecs::Renderable>( );
-
-        component->SetHandle( lightHandle );
-    }
-
-    auto *pointLight = world.CreateEntity( );
-    {
-        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
-
-        auto &light = m_graphics->RenderableMgr.GetPointLight( lightHandle );
-
-        light.SetPosition( { 0.0f, 0.0f, 0.0f } );
-        light.SetRadius( 100.0f );
-        light.SetColor( Color::White );
-
-        auto *component = pointLight->AddComponent<ecs::Renderable>( );
-
-        component->SetHandle( lightHandle );
-    }
-
-    auto *skyBox = world.CreateEntity();
-    {
-        auto skyBhandle = m_graphics->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
-
-        auto &box = m_graphics->RenderableMgr.GetModel3D(skyBhandle);
-        m_skyBox = &box;
-
-        box.SetModel("Skybox");
-        box.SetMaterial("Skybox");
-        SQuat rot = SQuat(90.f, SVec3(0, 0, 1));
-        SMat4 transf = SMat4(400, 400, 400);
-        SMat4 final = SMat4(rot) * transf;
-        box.SetWorldMatrix(final);
-
-        auto *component = skyBox->AddComponent<ecs::Renderable>();
-
-        component->SetHandle(skyBhandle);
-    }
-}
-
-void Editor::initializeTools(void)
-{
-    // @@@ TODO:
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -267,6 +279,17 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     m_mainWindow.ui->DrawMain( );
 
     m_graphics->EndFrame( );
+}
+
+void Editor::onEntityAdded(EVENT_HANDLER(ecs::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
+
+    Json message = Json::object {
+        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
+    };
+
+    m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "EntityAdded", message );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

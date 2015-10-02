@@ -14,6 +14,8 @@
 #include "InvokableConfig.h"
 #include "ArgumentConfig.h"
 
+#include "Json.h"
+
 #include <string>
 #include <vector>
 #include <set>
@@ -31,6 +33,8 @@ namespace ursine
         class Method;
         class Function;
         class Argument;
+
+        class MetaManager;
 
         class Type
         {
@@ -133,6 +137,17 @@ namespace ursine
              */
             bool IsPrimitive(void) const;
 
+            /** @brief Determines if this type is a floating point
+             *          float, double, long double, etc.
+             *  @return true if the type is among (float, double, long double, etc).
+             */
+            bool IsFloatingPoint(void) const;
+
+            /** @brief Determines if this type is signed (unsigned int, etc).
+             *  @return true if the type is signed.
+             */
+            bool IsSigned(void) const;
+
             /** @brief Determines if this type is an enumeration.
              *  @return true if the type is either an enum or enum class.
              */
@@ -157,6 +172,11 @@ namespace ursine
              *          ie - "boost::regex"
              */
             const std::string &GetName(void) const;
+
+            /** @brief Gets meta data for this type.
+             *  @return Meta Data Manager for this type.
+             */
+            const MetaManager &GetMeta(void) const;
 
             /** @brief Instantiates an instance of this type with the given 
              *         constructor signature. NOTE: it is much faster to cache 
@@ -380,6 +400,9 @@ namespace ursine
              *          If the field doesn't exist, an invalid global.
              */
             const Global &GetStaticField(const std::string &name) const;
+
+            Json SerializeJson(const Variant &instance) const;
+            Variant DeserializeJson(const Json &value) const;
 
         private:
             friend class std::allocator<Type>;

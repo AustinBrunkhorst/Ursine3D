@@ -31,6 +31,7 @@ namespace ursine
             // anything else
             REGISTER_NATIVE_TYPE_VARIANTS( void );
             REGISTER_NATIVE_TYPE_VARIANTS( int );
+            REGISTER_NATIVE_TYPE_VARIANTS( unsigned int );
             REGISTER_NATIVE_TYPE_VARIANTS( bool );
             REGISTER_NATIVE_TYPE_VARIANTS( float );
             REGISTER_NATIVE_TYPE_VARIANTS( double );

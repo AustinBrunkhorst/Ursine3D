@@ -26,12 +26,14 @@ namespace ursine
 
             ID = id;
         
-            typedef std::decay<T> Decayed;
+            typedef std::remove_pointer< std::decay<T>::type >::type Decayed;
 
             data.isClass = std::is_class< Decayed >::value;
             data.isEnum = std::is_enum< Decayed >::value;
             data.isPointer = std::is_pointer< T >::value;
             data.isPrimitive = std::is_arithmetic< Decayed >::value;
+            data.isFloatingPoint = std::is_floating_point< Decayed >::value;
+            data.isSigned = std::is_signed< Decayed >::value;
         
             if (beingDefined)
             {

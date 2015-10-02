@@ -32,6 +32,8 @@ namespace ursine
         {
             bool isEnum : 1;
             bool isPrimitive : 1;
+            bool isSigned : 1;
+            bool isFloatingPoint : 1;
             bool isPointer : 1;
             bool isClass : 1;
 

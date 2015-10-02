@@ -14,8 +14,11 @@
 #include "Tools/Scene/SceneView.h"
 #include "Tools/Scene/Entity Systems/GridRenderer.h"
 
+#include "Tools/Scene/Entity/EntityHandler.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 // Native JavaScript Bindings
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "Tools/JavaScript/DebugUtils.h"
+#include "Tools/JavaScript/ComponentUtils.h"
