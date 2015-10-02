@@ -39,10 +39,6 @@ JSFunction(GetNativeComponentDatabase)
 
     CefRefPtr<CefV8Value> object;
 
-    Json test = database;
-
-    auto str = test.dump( );
-
     JsonSerializer::Deserialize( database, object );
 
     return object;

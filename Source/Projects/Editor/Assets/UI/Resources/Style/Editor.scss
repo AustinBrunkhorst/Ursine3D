@@ -11,16 +11,24 @@
 
 // @@@TODO: separate this
 .entity-list {
+  font-size: 14px;
   color: white;
 
   li {
-    margin-bottom: 1px;
     padding: 5px 5px 5px 10px;
     cursor: pointer;
     transition: all $duration-transition-btn ease;
 
+    &:nth-child(odd) {
+      background: darken(#262626, 1%);
+    }
+
     &:hover {
-      background: darken($color-accent, 25%);
+      background: darken($color-accent, 35%);
+    }
+
+    &.selected {
+      background: darken($color-accent, 25%) !important;
     }
   }
 }

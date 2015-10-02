@@ -48,9 +48,13 @@ namespace ursine
             delete m_entityManager;
         }
 
-        Entity *World::CreateEntity(void)
+        Entity *World::CreateEntity(const std::string &name)
         {
-            return m_entityManager->Create( );
+            auto entity = m_entityManager->Create( );
+
+            entity->SetName( name );
+
+            return entity;
         }
 
         Entity *World::GetEntity(EntityID id) const

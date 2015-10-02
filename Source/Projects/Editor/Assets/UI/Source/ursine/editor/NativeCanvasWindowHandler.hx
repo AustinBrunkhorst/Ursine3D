@@ -33,8 +33,6 @@ class NativeCanvasWindowHandler extends WindowHandler {
     }
 
     private function forwardEvent(e : Event) {
-        trace( e );
-        
         m_nativeHandler.Event( e.type, e );
     }
 

@@ -505,7 +505,7 @@ namespace ursine
         Json Type::SerializeJson(const Variant &instance) const
         {
             UAssert(
-                instance.GetType( ) == *this,
+                m_id == instance.GetType( ),
                 "Serializing incompatible variant instance.\n"
                 "Got '%s', expected '%s'",
                 instance.GetType( ).GetName( ).c_str( ),
@@ -532,6 +532,56 @@ namespace ursine
             }
 
             return object;
+        }
+
+        Variant Type::DeserializeJson(const Json &value) const
+        {
+            // we have to handle all primitive types explicitly
+            if (IsPrimitive( ))
+            {
+                if (m_id == typeof( int ))
+                    return { value.int_value( ) };
+                else if (m_id == typeof(unsigned int))
+                    return { static_cast<unsigned int>( value.number_value( ) ) };
+                else if (m_id == typeof( bool ))
+                    return { value.bool_value( ) };
+                else if (m_id == typeof( float ))
+                    return { static_cast<float>( value.number_value( ) ) };
+                else if (m_id == typeof( double ))
+                    return { value.number_value( ) };
+            }
+            else if (*this == typeof( std::string ))
+            {
+                return { value.string_value( ) };
+            }
+
+            auto ctor = GetConstructor( );
+
+            UAssert( ctor.IsValid( ),
+                "Serialization requires a default constructor.\nWith type '%s'.",
+                GetName( ).c_str( )
+            );
+
+            auto instance = ctor.Invoke( );
+
+            auto &fields = database.types[ m_id ].fields;
+
+            for (auto &field : fields)
+            {
+                auto fieldType = field.second.GetType( );
+
+                UAssert( fieldType.IsValid( ),
+                    "Unknown type in field '%s' for base type '%s'. Is this type reflected?",
+                    fieldType.GetName( ).c_str( ),
+                    GetName( ).c_str( )
+                );
+
+                field.second.SetValue( instance, 
+                    fieldType.DeserializeJson( value[ field.first ] ) 
+                );
+            }
+
+            return instance;
         }
     }
 }

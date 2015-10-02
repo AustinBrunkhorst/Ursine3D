@@ -402,6 +402,7 @@ namespace ursine
             const Global &GetStaticField(const std::string &name) const;
 
             Json SerializeJson(const Variant &instance) const;
+            Variant DeserializeJson(const Json &value) const;
 
         private:
             friend class std::allocator<Type>;

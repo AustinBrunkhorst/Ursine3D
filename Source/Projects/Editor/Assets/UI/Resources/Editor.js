@@ -225,7 +225,6 @@ ursine_editor_NativeCanvasWindowHandler.__name__ = ["ursine","editor","NativeCan
 ursine_editor_NativeCanvasWindowHandler.__super__ = ursine_editor_WindowHandler;
 ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 	forwardEvent: function(e) {
-		console.log(e);
 		this.m_nativeHandler.Event(e.type,e);
 	}
 	,onViewportInvalidated: function() {
@@ -297,6 +296,7 @@ ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 });
 var ursine_editor_windows_EntityInspector = function() {
+	ursine_editor_windows_EntityInspector.instance = this;
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Inspector";
 	this.window.style.top = "0";
@@ -309,8 +309,13 @@ $hxClasses["ursine.editor.windows.EntityInspector"] = ursine_editor_windows_Enti
 ursine_editor_windows_EntityInspector.__name__ = ["ursine","editor","windows","EntityInspector"];
 ursine_editor_windows_EntityInspector.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHandler.prototype,{
+	inspect: function(entity) {
+		var inspection = entity.inspect();
+		console.log(inspection);
+	}
 });
 var ursine_editor_windows_SceneOutline = function() {
+	this.m_selectedItem = null;
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Outline";
 	this.window.style.top = "50%";
@@ -327,9 +332,25 @@ ursine_editor_windows_SceneOutline.__name__ = ["ursine","editor","windows","Scen
 ursine_editor_windows_SceneOutline.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 	onEntityAdded: function(e) {
-		var item = window.document.createElement("li");
-		item.innerText = "Entity " + e.uniqueID;
+		var entity = new EntityHandler(e.uniqueID);
+		var item = this.createEntityItem(entity);
 		this.m_entityList.appendChild(item);
+	}
+	,createEntityItem: function(entity) {
+		var _g = this;
+		var item = window.document.createElement("li");
+		item.innerText = entity.getName();
+		item.entity = entity;
+		item.addEventListener("click",function(e) {
+			_g.selectEntity(item);
+		});
+		return item;
+	}
+	,selectEntity: function(item) {
+		if(this.m_selectedItem != null) this.m_selectedItem.classList.remove("selected");
+		this.m_selectedItem = item;
+		item.classList.add("selected");
+		ursine_editor_windows_EntityInspector.instance.inspect(item.entity);
 	}
 });
 var ursine_editor_windows_SceneView = function() {

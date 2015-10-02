@@ -12,6 +12,7 @@
 
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
+#include <PointLightComponent.h>
 #include <Utilities/Timer/TimerManager.h>
 
 using namespace ursine;
@@ -117,7 +118,18 @@ void Editor::InitializeScene(void)
 
     auto &world = scene.GetWorld( );
 
-    auto *cameraEntity = world.CreateEntity( );
+    auto *pointLight = world.CreateEntity( "Point Light" );
+    {
+        pointLight->AddComponent<ecs::Renderable>( );
+
+        auto *light = pointLight->AddComponent<ecs::PointLight>( );
+
+        light->SetPosition( { 0.0f, 0.0f, 0.0f } );
+        light->SetRadius( 100.0f );
+        light->SetColor( Color::Red );
+    }
+
+    auto *cameraEntity = world.CreateEntity( "Camera" );
     {
         auto *component = cameraEntity->AddComponent<ecs::Camera>( );
 
@@ -141,7 +153,11 @@ void Editor::InitializeScene(void)
 
             auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
 
-            model.SetModel( i & 1 ? "Cube" : "Character" );
+            auto name = i & 1 ? "Cube" : "Character";
+
+            entity->SetName( name );
+
+            model.SetModel( name );
             model.SetMaterial( "Cube" );
 
             SMat4 transform;
@@ -160,7 +176,7 @@ void Editor::InitializeScene(void)
         }
     }
 
-    auto *directionLight = world.CreateEntity( );
+    auto *directionLight = world.CreateEntity( "Directional Light" );
     {
         auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_DIRECTION_LIGHT );
 
@@ -174,22 +190,7 @@ void Editor::InitializeScene(void)
         component->SetHandle( lightHandle );
     }
 
-    auto *pointLight = world.CreateEntity( );
-    {
-        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_POINT_LIGHT );
-
-        auto &light = m_graphics->RenderableMgr.GetPointLight( lightHandle );
-
-        light.SetPosition( { 0.0f, 0.0f, 0.0f } );
-        light.SetRadius( 100.0f );
-        light.SetColor( Color::White );
-
-        auto *component = pointLight->AddComponent<ecs::Renderable>( );
-
-        component->SetHandle( lightHandle );
-    }
-
-    auto *sky = world.CreateEntity( );
+    auto *sky = world.CreateEntity( "Skybox" );
     {
         auto skyHND = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
 

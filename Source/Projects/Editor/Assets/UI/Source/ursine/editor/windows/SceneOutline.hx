@@ -1,9 +1,14 @@
 package ursine.editor.windows;
 
+import js.html.LIElement;
+import js.html.DOMElement;
 import js.html.UListElement;
+
+import ursine.editor.scene.Entity;
 
 class SceneOutline extends WindowHandler {
     private var m_entityList : UListElement;
+    private var m_selectedItem : DOMElement = null;
 
     public function new() {
         super( );
@@ -24,10 +29,35 @@ class SceneOutline extends WindowHandler {
     }
 
     private function onEntityAdded(e) {
+        var entity = new Entity( e.uniqueID );
+
+        var item = createEntityItem( entity );
+
+        m_entityList.appendChild(item );
+    }
+
+    private function createEntityItem(entity : Entity) : LIElement {
         var item = js.Browser.document.createElement( 'li' );
 
-        item.innerText = 'Entity ${e.uniqueID}';
+        item.innerText = entity.getName( );
 
-        m_entityList.appendChild( item );
+        untyped item.entity = entity;
+
+        item.addEventListener( 'click', function(e) {
+            selectEntity( item );
+        } );
+
+        return cast item;
+    }
+
+    private function selectEntity(item) {
+        if (m_selectedItem != null)
+            m_selectedItem.classList.remove( 'selected' );
+
+        m_selectedItem = item;
+
+        item.classList.add( 'selected' );
+
+        EntityInspector.instance.inspect( untyped item.entity );
     }
 }

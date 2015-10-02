@@ -30,5 +30,6 @@
 #include <Field.h>
 #include <Method.h>
 #include <Function.h>
+#include <Global.h>
 
 #endif
