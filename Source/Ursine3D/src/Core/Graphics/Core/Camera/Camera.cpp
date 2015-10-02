@@ -116,6 +116,11 @@ void GFXCamera::SetProjMode(const ProjectionMode mode)
     m_projMode = mode;
 }
 
+const float GFXCamera::GetSize()
+{
+    return m_size;
+}
+
 void GFXCamera::SetSize(const float size)
 {
     m_size = size;
