@@ -73,7 +73,7 @@ namespace ursine
             const SQuat &GetWorldRotation(void) const;
             SVec3 GetWorldEuler(void) const;
 
-            const SVec3 &editorGetRotation(void) const;
+            SVec3 editorGetRotation(void) const;
             void editorSetRotation(const SVec3 &euler);
 
             ////////////////////////////////////////////////////////////////////

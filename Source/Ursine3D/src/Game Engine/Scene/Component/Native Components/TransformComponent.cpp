@@ -77,7 +77,7 @@ namespace ursine
             return m_worldRotation.GetEulerAngles( );
         }
 
-        const SVec3& Transform::editorGetRotation(void) const
+        SVec3 Transform::editorGetRotation(void) const
         {
             return m_worldRotation.GetEulerAngles();
         }
