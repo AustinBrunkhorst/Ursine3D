@@ -24,17 +24,17 @@ namespace ursine
     class GfxUIManager
     {
     public:
-        void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr );
-        void Uninitialize( );
+        void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr);
+        void Uninitialize();
 
         //create UI
-        GFXHND CreateUI( );
+        GFXHND CreateUI();
 
         //destroy UI
-        void DestroyUI( GFXHND );
+        void DestroyUI(GFXHND);
 
         //get UI
-        UIInstance &GetUI( GFXHND );
+        UIInstance &GetUI(GFXHND);
 
         //private members
     private:
@@ -48,8 +48,6 @@ namespace ursine
         ID3D11Device *m_device;
         ID3D11DeviceContext *m_context;
         DXCore::RenderTargetManager *m_rtManager;
-        void * m_gfxmgr;
-
-
+        void *m_gfxmgr;
     };
 }

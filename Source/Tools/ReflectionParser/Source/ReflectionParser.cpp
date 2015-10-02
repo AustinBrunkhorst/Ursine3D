@@ -3,11 +3,13 @@
 #include "ReflectionParser.h"
 
 #include "LanguageTypes/Class.h"
+#include "LanguageTypes/External.h"
 #include "LanguageTypes/Global.h"
 #include "LanguageTypes/Function.h"
 #include "LanguageTypes/Enum.h"
 
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #define RECURSE_NAMESPACES(kind, cursor, method, ns) \
     if (kind == CXCursor_Namespace)                  \
@@ -251,6 +253,15 @@ void ReflectionParser::buildClasses(
             m_classes.emplace_back( 
                 new Class( child, currentNamespace )
             );
+        }
+        else if (kind == CXCursor_TypedefDecl)
+        {
+            if (boost::starts_with( child.GetDisplayName( ), kMetaExternalTypeDefName ))
+            {
+                m_classes.emplace_back(
+                    new External( child.GetTypedefType( ).GetDeclaration( ) )
+                );
+            }
         }
         
         RECURSE_NAMESPACES( kind, child, buildClasses, currentNamespace );

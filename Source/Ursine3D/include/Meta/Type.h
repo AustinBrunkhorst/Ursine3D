@@ -70,7 +70,7 @@ namespace ursine
             /** @brief Gets a type based on the qualified string name.
              *  @param name Name of the type.
              */
-            static Type Get(const std::string &name);
+            static Type GetFromName(const std::string &name);
 
             /** @brief Gets a type by deducing the type of an object.
              *  @param obj Object to deduce type from.

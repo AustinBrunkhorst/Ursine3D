@@ -15,6 +15,13 @@ namespace ursine
 {
     namespace ecs
     {
+        template<class SystemType>
+        inline SystemType *SystemManager::GetSystem(void)
+        {
+            static_assert( std::is_base_of<EntitySystem, SystemType>::value,
+                "The type is not a system!" );
 
+            return static_cast<SystemType *>( m_systems[ SystemType::SystemID ] );
+        }
     }
 }

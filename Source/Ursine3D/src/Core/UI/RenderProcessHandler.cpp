@@ -15,20 +15,21 @@
 
 #include "RenderProcessHandler.h"
 
-#include "NativeJavaScriptClass.h"
+#include "NativeJSClass.h"
 
 #include "UIConfig.h"
-#include "JavaScriptConfig.h"
+#include "JSConfig.h"
 
 namespace ursine
 {
     RenderProcessHandler::RenderProcessHandler(void)
-        : m_nativeBroadcaster( nullptr )
+        : m_globalFunctionHandler( new NativeJSFunctionHandler( ) )
+        , m_nativeBroadcaster( nullptr )
     {
-        auto exposedType = typeof( NativeJavaScriptClass );
+        auto exposedType = typeof( NativeJSClass );
 
         for (auto &exposed : exposedType.GetDerivedClasses( ))
-            m_nativeHandlers.emplace_back( new NativeJavaScriptHandler( exposed ) );
+            m_nativeHandlers.emplace_back( new NativeJSClassHandler( exposed ) );
     }
 
     RenderProcessHandler::~RenderProcessHandler(void) { }
@@ -60,6 +61,8 @@ namespace ursine
         CefRefPtr<CefV8Context> context)
     {
         auto global = context->GetGlobal( );
+
+        m_globalFunctionHandler->Bind( global );
 
         for (auto &handler : m_nativeHandlers)
             handler->Bind( global );

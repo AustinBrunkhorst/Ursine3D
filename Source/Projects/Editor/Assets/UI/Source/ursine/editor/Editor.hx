@@ -13,6 +13,7 @@ import ursine.editor.MenuItemHandler;
 import ursine.editor.menus.FileMenu;
 import ursine.editor.menus.EditMenu;
 import ursine.editor.menus.EntityMenu;
+import ursine.editor.menus.DebugMenu;
 
 class Editor {
     public static var instance : Editor = null;

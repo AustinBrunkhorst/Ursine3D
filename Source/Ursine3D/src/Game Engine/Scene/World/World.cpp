@@ -42,10 +42,10 @@ namespace ursine
 
         World::~World(void)
         {
-            delete m_entityManager;
-            delete m_systemManager;
-            delete m_nameManager;
             delete m_utilityManager;
+            delete m_nameManager;
+            delete m_systemManager;
+            delete m_entityManager;
         }
 
         Entity *World::CreateEntity(void)
@@ -96,6 +96,11 @@ namespace ursine
         void World::Render(void)
         {
             Dispatch( WORLD_RENDER, EventArgs::Empty );
+        }
+
+        SystemManager *World::GetSystemManager(void)
+        {
+            return m_systemManager;
         }
 
         void World::deleteEntity(Entity *entity)

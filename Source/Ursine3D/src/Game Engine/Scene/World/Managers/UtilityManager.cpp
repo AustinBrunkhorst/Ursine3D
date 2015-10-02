@@ -25,7 +25,7 @@ namespace ursine
                 // add it for the first time
                 return m_timers.emplace(
                     entity->m_uniqueID, 
-                    CoreSystem( TimerManager )
+                    GetCoreSystem( TimerManager )
                 ).first->second;
             }
 
@@ -41,7 +41,7 @@ namespace ursine
                 // add it for the first time
                 return m_tweens.emplace(
                     entity->m_uniqueID, 
-                    CoreSystem( TweenManager )
+                    GetCoreSystem( TweenManager )
                 ).first->second;
             }
 

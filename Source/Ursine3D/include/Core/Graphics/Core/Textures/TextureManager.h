@@ -30,17 +30,17 @@ namespace ursine
     {
     public:
         void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
-        void Uninitialize();
+        void Uninitialize(void);
 
-        void MapTextureByName(std::string name, unsigned int bufferIndex = 0);
-        void MapTextureByID(unsigned ID, unsigned int bufferIndex = 0);
+        void MapTextureByName(const std::string name, const unsigned int bufferIndex = 0);
+        void MapTextureByID( const unsigned ID, const unsigned int bufferIndex = 0);
 
-        void MapSamplerState(Sampler type, unsigned bufferIndex = 0);
+        void MapSamplerState( const Sampler type, const unsigned bufferIndex = 0);
 
-        unsigned GetTextureIDByName(std::string name);
+        unsigned GetTextureIDByName( const std::string name);
 
     private:
-        void TextureLoadBackend(std::string name, std::string path, unsigned width, unsigned height);
+        void TextureLoadBackend( const std::string name, const std::string path, const unsigned width, const unsigned height);
 
     private:
         ID3D11Device *m_device;

@@ -36,8 +36,8 @@ namespace ursine
 
         auto *app = Application::Instance;
 
-        m_keyboardManager = CoreSystem( KeyboardManager );
-        m_mouseManager = CoreSystem( MouseManager );
+        m_keyboardManager = GetCoreSystem( KeyboardManager );
+        m_mouseManager = GetCoreSystem( MouseManager );
 
         m_window->Listener( this )
             .On( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );
@@ -90,6 +90,8 @@ namespace ursine
         m_viewport = viewport;
 
         m_browser->GetHost( )->WasResized( );
+
+        resize(viewport.width, viewport.height);
     }
 
     bool UIView::IsValid(void) const

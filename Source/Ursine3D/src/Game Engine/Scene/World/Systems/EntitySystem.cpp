@@ -26,8 +26,8 @@ namespace ursine
     {
         EntitySystem::EntitySystem(World *world) 
             : m_world( world )
-            , m_timers( CoreSystem( TimerManager ) )
-            , m_tweens( CoreSystem( TweenManager ) )
+            , m_timers( GetCoreSystem( TimerManager ) )
+            , m_tweens( GetCoreSystem( TweenManager ) )
             , m_typeID( 0 )
         { }
     }

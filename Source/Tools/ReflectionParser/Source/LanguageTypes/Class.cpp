@@ -33,7 +33,7 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetDisplayName( ) )
     , m_qualifiedName( cursor.GetType( ).GetDisplayName( ) )
 {
-    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( native_property::DisplayName );
 
     if (displayName.empty( ))
     {
@@ -56,7 +56,7 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
 
             // automatically enable the type if not explicitly disabled
             if (isNativeType( baseClass->name ))
-                m_enabled = !m_metaData.GetFlag( kMetaDisable );
+                m_enabled = !m_metaData.GetFlag( native_property::Disable );
         }
             break;
         // constructor
@@ -164,6 +164,10 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
         data[ "baseClass" ] = baseClasses;
     }
 
+    // don't do anything else if only registering
+    if (m_metaData.GetFlag( native_property::Register ))
+        return data;
+
     // constructors
     {
         TemplateData constructors { TemplateData::Type::List };
@@ -236,5 +240,5 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 
 bool Class::isAccessible(void) const
 {
-    return m_enabled;
+    return m_enabled || m_metaData.GetFlag( native_property::Register );
 }

@@ -10,15 +10,23 @@
 
 #pragma once
 
-const auto kMetaEnable = "Enable";
-const auto kMetaDisable = "Disable";
+namespace native_property
+{
+    const auto Enable = "Enable";
+    const auto Disable = "Disable";
 
-const auto kMetaDisplayName = "DisplayName";
+    const auto Register = "Register";
 
-const auto kMetaDisablePtrType = "DisablePtrType";
-const auto kMetaDisableConstPtrType = "DisableConstPtrType";
+    const auto DisplayName = "DisplayName";
 
-const auto kMetaDisableNonDynamicCtor = "DisableNonDynamic";
+    const auto DisablePtrType = "DisablePtrType";
+    const auto DisableConstPtrType = "DisableConstPtrType";
 
-const auto kMetaExplicitGetter = "Getter";
-const auto kMetaExplicitSetter = "Setter";
+    const auto DisableNonDynamicCtor = "DisableNonDynamic";
+    const auto DynamicCtorWrap = "WrapObject";
+
+    const auto ExplicitGetter = "Getter";
+    const auto ExplicitSetter = "Setter";
+}
+
+const auto kMetaExternalTypeDefName = "__META_EXTERNAL__";

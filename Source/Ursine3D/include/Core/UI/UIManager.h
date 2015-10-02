@@ -42,6 +42,7 @@ namespace ursine
 
         ~UIManager(void);
 
+        Meta(Disable)
         CefRefPtr<UIView> CreateView(Window *window, const std::string &url);
 
     private:

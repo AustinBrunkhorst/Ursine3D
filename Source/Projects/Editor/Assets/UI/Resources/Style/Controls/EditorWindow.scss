@@ -1,13 +1,38 @@
 @import '../Config';
 
+$window-header-height: 28px;
+
 :host {
   position: absolute;
   border: 1px solid #3f3f46;
 
+  &:focus {
+    outline: none;
+
+    header {
+      background: darken(#2d2d30, 2%);
+      color: lighten(#b3b3b3, 2%);
+    }
+  }
+
   header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: $window-header-height;
     padding: 5px;
     background: #2d2d30;
     color: #b3b3b3;
     border-bottom: 1px solid #3f3f46;
+    transition: all $duration-transition-btn ease;
+  }
+
+  #container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: $window-header-height;
+    bottom: 0;
   }
 }

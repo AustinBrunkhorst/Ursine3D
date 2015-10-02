@@ -39,15 +39,25 @@ namespace ursine
         Meta(Disable)
         void OnRemove(void) override;
 
+        Meta(Disable)
         static uint ScanToKey(SDL_Scancode scan);
+
+        Meta(Disable)
         static uint KeyToScan(KeyboardKey key);
 
+        Meta(Disable)
         bool IsDown(KeyboardKey key);
+
+        Meta(Disable)
         bool IsUp(KeyboardKey key);
 
+        Meta(Disable)
         bool IsTriggeredDown(KeyboardKey key);
+
+        Meta(Disable)
         bool IsTriggeredUp(KeyboardKey key);
 
+        Meta(Disable)
         KeyboardModifiers GetModifiers(void) const;
 
     private:

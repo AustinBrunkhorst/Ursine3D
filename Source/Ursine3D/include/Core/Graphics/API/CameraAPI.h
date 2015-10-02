@@ -21,26 +21,26 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class CameraAPI
-  {
-    friend class GfxAPI;
-  private:
-    struct privData;
+    class CameraAPI
+    {
+        friend class GfxAPI;
+    private:
+        struct privData;
 
-  public:
-    // Create an camera
-    GFXHND AddCamera( );
-    // get a camera
-    Camera &GetCamera( const GFXHND &handle );
-    // set active game camera
-    void SetGameCamera( const GFXHND &handle );
+    public:
+        // Create an camera
+        GFXHND AddCamera();
+        // get a camera
+        GFXCamera &GetCamera(const GFXHND &handle);
+        // set active game camera
+        void DestroyCamera(GFXHND &handle);
 
-  private:
-    privData *m_privates;
+    private:
+        privData *m_privates;
 
-  private:
-    void SetPrivates( void *priv );
-    void Initialize( );
-    void Uninitialize( );
-  };
+    private:
+        void SetPrivates(void *priv);
+        void Initialize();
+        void Uninitialize();
+    };
 }

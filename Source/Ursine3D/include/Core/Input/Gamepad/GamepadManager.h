@@ -52,33 +52,43 @@ namespace ursine
 
         // Gets the current state of a gamepad based on the gamepad index.
         // returns null if the gamepad index is invalid or not connected
+        Meta(Disable)
         GamepadState *GetState(GamepadIndex index);
 
         // Gets the number of connected gamepads currently
+        Meta(Disable)
         int NumConnected(void) const;
 
         // Vibrates the given gamepad for the specified instensity [0-1] and duration
+        Meta(Disable)
         void Vibrate(GamepadIndex index, float intensity, TimeSpan duration);
 
         // Stops vibration for all gamepads
+        Meta(Disable)
         void StopAllVibration(void);
 
         // Sets how deadzones are handled for a specific gamepad
+        Meta(Disable)
         void SetDeadZoneType(GamepadIndex index, GamepadDeadZoneType type);
 
         // Creates a new virtual gamepad
+        Meta(Disable)
         VirtualGamepad CreateVirtualGamepad(void);
 
         // Gets an existing virtual gamepad
+        Meta(Disable)
         VirtualGamepad GetVirtualGamepad(GamepadIndex index);
 
         // Determines if a gamepad is virtual
+        Meta(Disable)
         static bool IsVirtual(GamepadIndex index);
 
         // Converts a virtual gamepad index to a non virtual index
+        Meta(Disable)
         static GamepadIndex IndexFromVirtual(GamepadIndex index);
 
         // Converts a non virtual gamepad index to a virtual index
+        Meta(Disable)
         static GamepadIndex IndexToVirtual(GamepadIndex index);
 
     private:

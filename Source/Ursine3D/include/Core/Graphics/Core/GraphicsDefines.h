@@ -33,6 +33,9 @@ Author:         Matt Yan, m.yan@digipen.edu
 //maximum simultaneous queries
 #define MAX_QUERIES             36
 
+//max cameras
+#define MAX_CAMERAS             32
+
 //max points/lines
 #define MAX_DRAW_OBJ            4096
 

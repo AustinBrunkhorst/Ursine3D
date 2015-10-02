@@ -27,12 +27,12 @@ namespace ursine
         {
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
-            void Uninitialize();
+            void Uninitialize(void);
 
-            ID3D11BlendState *GetBlendState(BLEND_STATES state);
-            void SetBlendState(BLEND_STATES state);
+            ID3D11BlendState *GetBlendState(const BLEND_STATES state);
+            void SetBlendState(const BLEND_STATES state);
 
-            void Invalidate();
+            void Invalidate( void );
 
         private:
             ID3D11Device *m_device;

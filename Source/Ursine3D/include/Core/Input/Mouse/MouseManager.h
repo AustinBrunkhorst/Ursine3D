@@ -23,16 +23,28 @@ namespace ursine
         Meta(Disable)
         void OnRemove(void) override;
 
+        Meta(Disable)
         const Vec2 &GetPosition(void) const;
+
+        Meta(Disable)
         const Vec2 &GetPositionDelta(void) const;
 
+        Meta(Disable)
         bool IsButtonDown(MouseButton button) const;
+
+        Meta(Disable)
         bool IsButtonUp(MouseButton button) const;
         
+        Meta(Disable)
         bool IsButtonTriggeredDown(MouseButton button) const;
+
+        Meta(Disable)
         bool IsButtonTriggeredUp(MouseButton button) const;
 
+        Meta(Disable)
         void ShowCursor(bool show) const;
+
+        Meta(Disable)
         void SetWarped(bool warped) const;
 
     private:

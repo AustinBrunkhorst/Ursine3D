@@ -6,7 +6,9 @@
         <header>
             <div class="heading">{{heading}}</div>
         </header>
-        <content></content>
+        <div id="container">
+            <content></content>
+        </div>
     </template>
     <script>
         var EditorWindowControl = Polymer({
@@ -16,6 +18,14 @@
                     type: String,
                     notify: true
                 }
+            },
+            created: function() {
+                // make this element focusable
+                this.tabIndex = -1;
+            },
+
+            get container() {
+                return this.$.container;
             }
         });
     </script>

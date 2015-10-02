@@ -56,6 +56,88 @@ namespace ursine
     }
 
     input.close( );
+
+    std::vector<DiffuseTextureVertex> temp;
+    temp.resize( 6 );
+
+    temp[ 0 ].pos = DirectX::XMFLOAT4(-0.5, -0.5, 0.5, 1.f );
+    temp[ 0 ].UV = DirectX::XMFLOAT2(1, 1);
+    temp[ 0 ].normal = DirectX::XMFLOAT4(0, 0, 0, 0);
+
+    temp[ 1 ].pos = DirectX::XMFLOAT4( 0.5, -0.5, 0.5, 1.f );
+    temp[ 1 ].UV = DirectX::XMFLOAT2( 0, 1 );
+    temp[ 1 ].normal = DirectX::XMFLOAT4( 0, 0, 0, 0 );
+
+    temp[ 2 ].pos = DirectX::XMFLOAT4( 0.5, 0.5, 0.5, 1.f );
+    temp[ 2 ].UV = DirectX::XMFLOAT2( 0, 0 );
+    temp[ 2 ].normal = DirectX::XMFLOAT4( 0, 0, 0, 0 );
+
+    temp[ 3 ].pos = DirectX::XMFLOAT4( 0.5, 0.5, 0.5, 1.f );
+    temp[ 3 ].UV = DirectX::XMFLOAT2( 0, 0 );
+    temp[ 3 ].normal = DirectX::XMFLOAT4( 0, 0, 0, 0 );
+
+    temp[ 4 ].pos = DirectX::XMFLOAT4( -0.5, 0.5, 0.5, 1.f );
+    temp[ 4 ].UV = DirectX::XMFLOAT2( 1, 0 );
+    temp[ 4 ].normal = DirectX::XMFLOAT4( 0, 0, 0, 0 );
+
+    temp[ 5 ].pos = DirectX::XMFLOAT4( -0.5, -0.5, 0.5, 1.f );
+    temp[ 5 ].UV = DirectX::XMFLOAT2( 1, 1 );
+    temp[ 5 ].normal = DirectX::XMFLOAT4( 0, 0, 0, 0 );
+
+    std::string name = "internalQuad";
+
+    m_modelArray[ name ] = new ModelResource( );
+
+    D3D11_BUFFER_DESC vertexBufferDesc;
+    D3D11_SUBRESOURCE_DATA vertexData;
+    HRESULT result;
+
+    //Set up the description of the static vertex buffer.
+    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    vertexBufferDesc.ByteWidth = sizeof( DiffuseTextureVertex ) * 6;
+    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    vertexBufferDesc.CPUAccessFlags = 0;
+    vertexBufferDesc.MiscFlags = 0;
+    vertexBufferDesc.StructureByteStride = 0;
+
+    //Give the subresource structure a pointer to the vertex data.
+    vertexData.pSysMem = &temp[ 0 ];
+    vertexData.SysMemPitch = 0;
+    vertexData.SysMemSlicePitch = 0;
+
+    //Now create the vertex buffer.
+    result = m_device->CreateBuffer( &vertexBufferDesc, &vertexData, &m_modelArray[ name ]->Vertices_ );
+    UAssert( result == S_OK, "Failed to make vertex buffer!" );
+    m_modelArray[ name ]->VertCount_ = 6;
+
+    m_modelArray[ name ]->IndexCount_ = 6;
+    unsigned *indexArray = new unsigned[ m_modelArray[ name ]->IndexCount_ ];
+
+    for (unsigned x = 0; x < 6; ++x)
+        indexArray[ x ] = x;
+
+    D3D11_BUFFER_DESC indexBufferDesc;
+    D3D11_SUBRESOURCE_DATA indexData;
+
+    //Set up the description of the static index buffer.
+    indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    indexBufferDesc.ByteWidth = sizeof( unsigned ) * m_modelArray[ name ]->IndexCount_;
+    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    indexBufferDesc.CPUAccessFlags = 0;
+    indexBufferDesc.MiscFlags = 0;
+    indexBufferDesc.StructureByteStride = 0;
+
+    //Give the subresource structure a pointer to the index data.
+    indexData.pSysMem = indexArray;
+    indexData.SysMemPitch = 0;
+    indexData.SysMemSlicePitch = 0;
+
+    //Create the index buffer.
+    result = m_device->CreateBuffer( &indexBufferDesc, &indexData, &m_modelArray[ name ]->Indices_ );
+    UAssert( result == S_OK, "Failed to make index buffer!" );
+
+    m_s2uTable[ name ] = m_modelCount;
+    m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
   }
 
   void ModelManager::Uninitialize( )
@@ -66,6 +148,8 @@ namespace ursine
         continue;
       RELEASE_RESOURCE( x.second->Vertices_ );
       RELEASE_RESOURCE( x.second->Indices_ );
+
+      delete x.second;
     }
 
     m_device = nullptr;
@@ -155,6 +239,8 @@ namespace ursine
 
     m_s2uTable[ name ] = m_modelCount;
     m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
+
+    delete[] indexArray;
   }
 
   ID3D11Buffer *ModelManager::GetModelVert( std::string name )

@@ -10,5 +10,8 @@ class EntityInspector extends WindowHandler {
         window.style.bottom = "50%";
         window.style.left = "0";
         window.style.width = "15%";
+
+        // TODO:
+        window.style.borderBottom = "none";
     }
 }

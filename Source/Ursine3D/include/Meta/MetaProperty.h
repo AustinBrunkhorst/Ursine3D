@@ -35,6 +35,10 @@ namespace ursine
 */
 class Enable : public ursine::meta::MetaProperty { };
 
+/** @brief Only registers this type. Does not generate class information.
+*/
+class Register : public ursine::meta::MetaProperty { };
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /** @brief Explicitly disables introspection of this type.
@@ -45,6 +49,10 @@ class Disable : public ursine::meta::MetaProperty { };
 *          Only applies to class constructors.
 */
 class DisableNonDynamic : public ursine::meta::MetaProperty { };
+
+/** @brief Uses the "WrapObject" Variant policy in dynamic constructors.
+*/
+class WrapObject : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 

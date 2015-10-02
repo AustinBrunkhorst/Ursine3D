@@ -13,14 +13,11 @@
 
 #pragma once
 
-#include "EventDispatcher.h"
-
 #include "BrowserProcessHandler.h"
 #include "RenderProcessHandler.h"
 #include "ResourceBundleHandler.h"
 
 #include <cef_client.h>
-#include "UISubProcess.h"
 
 namespace ursine
 {
@@ -28,7 +25,6 @@ namespace ursine
         : public CefApp
         , public CefClient
         , public BrowserProcessHandler
-        // TODO:
         , public RenderProcessHandler
         , public ResourceBundleHandler
     {
@@ -39,15 +35,15 @@ namespace ursine
         static void Shutdown(void);
 
     private:
-        void OnBeforeCommandLineProcessing(const CefString &process_type,
-            CefRefPtr<CefCommandLine> command_line) override;
+        void OnBeforeCommandLineProcessing(
+            const CefString &processType,
+            CefRefPtr<CefCommandLine> cmdLine
+        ) override;
 
         CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler(void) override;
         CefRefPtr<CefResourceBundleHandler> GetResourceBundleHandler(void) override;
+        CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler(void) override;
 
-        // TODO:
-        CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler(void) override { return this; }
-
-        IMPLEMENT_REFCOUNTING(UICore);
+        IMPLEMENT_REFCOUNTING( UICore );
     };
 }

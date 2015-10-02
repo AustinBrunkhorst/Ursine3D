@@ -25,7 +25,7 @@ namespace ursine
     {
         auto *app = Application::Instance;
 
-#ifdef PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
 
         CefMainArgs mainArgs( GetModuleHandle( nullptr ) );
 
@@ -42,16 +42,21 @@ namespace ursine
         settings.single_process = true;
         settings.multi_threaded_message_loop = false;
 
-#ifdef CONFIG_DEBUG
+#if defined(CONFIG_DEBUG)
 
         settings.log_severity = LOGSEVERITY_WARNING;
-        settings.remote_debugging_port = REMOTE_DEBUGGING_PORT;
         settings.uncaught_exception_stack_size = 1;
 
 #else
 
         settings.log_severity = LOGSEVERITY_DISABLE;
         //settings.pack_loading_disabled = true;
+
+#endif
+
+#if defined(WITH_EDITOR)
+
+        settings.remote_debugging_port = REMOTE_DEBUGGING_PORT;
 
 #endif
 

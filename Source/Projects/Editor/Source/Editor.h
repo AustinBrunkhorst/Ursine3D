@@ -5,11 +5,8 @@
 #include <Window.h>
 #include <UIView.h>
 
-#include "EditorTool.h"
-
-#include <SDL_video.h>
-
 class Project;
+class NativeEditorTool;
 
 class Editor : public ursine::core::CoreSystem
 {
@@ -39,12 +36,12 @@ private:
 
     Project *m_project;
 
-    std::vector<EditorTool *> m_tools;
+    ursine::Model3D *m_skyBox;
+
+    std::vector<NativeEditorTool *> m_tools;
 
     void initializeGraphics(void);
     void initializeTools(void);
-
-    void resizeMainWindow(int width, int height);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 

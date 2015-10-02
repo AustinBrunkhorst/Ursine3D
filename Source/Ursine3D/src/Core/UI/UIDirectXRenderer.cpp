@@ -8,7 +8,7 @@ namespace ursine
         : m_width( 0 )
         , m_height( 0 )
     {
-        m_gfxMgr = CoreSystem( GfxAPI );
+        m_gfxMgr = GetCoreSystem( GfxAPI );
         m_uiHandle = m_gfxMgr->UIMgr.CreateUI( );
     }
 
@@ -19,11 +19,19 @@ namespace ursine
         //m_uiHandle = 0;
     }
 
-    void UIDirectXRenderer::Draw(GFXHND viewport)
+    void UIDirectXRenderer::Draw(GFXHND camera)
     {
-        //@UI
-        //m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( viewport );
+        m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( camera );
+    }
+
+    void UIDirectXRenderer::DrawMain(void)
+    {
         m_gfxMgr->UIMgr.GetUI( m_uiHandle ).DrawMain( );
+    }
+
+    void UIDirectXRenderer::resize(const int width, const int height)
+    {
+        m_gfxMgr->UIMgr.GetUI(m_uiHandle).Resize(width, height);
     }
 
     bool UIDirectXRenderer::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &bounds)

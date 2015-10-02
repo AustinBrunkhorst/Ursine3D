@@ -26,6 +26,8 @@
 #define ENTITY_SYSTEM_DEFINITION(type)             \
     ursine::ecs::SystemTypeID type::SystemID = -1; \
 
+#define GetEntitySystem(systemType) GetSystemManager( )->GetSystem<systemType>( )
+
 namespace ursine
 {
     namespace ecs

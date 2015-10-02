@@ -91,7 +91,7 @@ namespace ursine
         UAssert( result == S_OK, "Failed to make index buffer!" );
     }
 
-    void DrawingManager::Uninitialize( )
+    void DrawingManager::Uninitialize(void)
     {
         RELEASE_RESOURCE( m_vertPointBuffer );
         RELEASE_RESOURCE( m_vertLineBuffer );
@@ -100,21 +100,22 @@ namespace ursine
         m_deviceContext = nullptr;
     }
 
-    void DrawingManager::EndScene( )
+    void DrawingManager::EndScene(void)
     {
         m_lineCount = 0;
         m_pointCount = 0;
     }
 
-    void DrawingManager::SetDrawColor( float x, float y, float z, float a )
+    void DrawingManager::SetDrawColor(float x, float y, float z, float a)
     {
         m_color = Color( x, y, z, a );
     }
-    void DrawingManager::SetDrawColor( const Color &color )
+
+    void DrawingManager::SetDrawColor(const Color &color)
     {
         m_color = color;
     }
-    Color &DrawingManager::GetColor( )
+    Color &DrawingManager::GetColor(void)
     {
         return m_color;
     }
@@ -123,7 +124,8 @@ namespace ursine
     {
         m_size = width;
     }
-    float DrawingManager::GetSize( )
+
+    float DrawingManager::GetSize(void)
     {
         return m_size;
     }
@@ -204,12 +206,12 @@ namespace ursine
         *mesh = m_vertLineBuffer;
     }
 
-    bool DrawingManager::CheckRenderPoints( )
+    bool DrawingManager::CheckRenderPoints(void) const
     {
         return m_pointCount > 0;
     }
 
-    bool DrawingManager::CheckRenderLines( )
+    bool DrawingManager::CheckRenderLines(void) const
     {
         return m_lineCount > 0;
     }

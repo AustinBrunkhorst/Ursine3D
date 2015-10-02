@@ -54,17 +54,17 @@ namespace ursine
         {
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath = "");
-            void Uninitialize();
+            void Uninitialize(void);
 
-            void BindShader(SHADER_TYPES shader);
+            void BindShader(const SHADER_TYPES shader);
 
-            void LoadShader(SHADER_TYPES shader, const char *filename);
+            void LoadShader( const SHADER_TYPES shader, const char *filename);
 
-            void Render(unsigned vert_count);
+            void Render( const unsigned vert_count);
 
-            Shader *GetShader(SHADER_TYPES shader);
+            Shader *GetShader( const SHADER_TYPES shader);
 
-            void Invalidate();
+            void Invalidate(void);
         private:
             std::string m_shaderPath;
             ID3D11Device *m_device;

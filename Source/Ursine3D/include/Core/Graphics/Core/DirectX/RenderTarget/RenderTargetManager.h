@@ -39,31 +39,26 @@ namespace ursine
         {
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
-            void Uninitialize();
-            void InitializeAllRenderTargets(unsigned width, unsigned height);
-            void UnInitializeAllRenderTargets();
-            void CreateTargets();
-            RenderTarget *GetRenderTarget(RENDER_TARGETS target);
-            void SetRenderTarget(RENDER_TARGETS target, ID3D11DepthStencilView *view);
+            void Uninitialize(void);
+            void InitializeAllRenderTargets(const unsigned width, const unsigned height);
+            void UnInitializeAllRenderTargets( void );
+            void CreateTargets( void );
 
+            RenderTarget *GetRenderTarget(const RENDER_TARGETS target);
+            void SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view);
+            
             void SetDeferredTargets(ID3D11DepthStencilView *view);
 
-            RENDER_TARGETS CreateRT(unsigned width, unsigned height);
+            RENDER_TARGETS CreateRT(const unsigned width, const unsigned height);
             void DestroyRT(RENDER_TARGETS rt);
 
-            void ResizeDeferred(unsigned width, unsigned height);
+            void ResizeDeferred(const unsigned width, const unsigned height);
+            void ResizeEngineTargets(const unsigned width, const unsigned height);
+            void ResizeUI(const unsigned width, const unsigned height, const RENDER_TARGETS target = RENDER_TARGET_UI);
 
-            void ResizeEngineTargets(unsigned width, unsigned height);
-
-            void ResizeUI(unsigned width, unsigned height, RENDER_TARGETS target = RENDER_TARGET_UI);
-
-            void Invalidate()
-            {
-                m_currentTarget = RENDER_TARGET_COUNT;
-            }
-
+            void Invalidate( void );
         private:
-            void CreateRenderTarget(RENDER_TARGETS target, DXGI_FORMAT format, unsigned width, unsigned height);
+            void CreateRenderTarget( const RENDER_TARGETS target, const  DXGI_FORMAT format, const unsigned width, const unsigned height);
 
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;

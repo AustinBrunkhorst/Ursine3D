@@ -29,16 +29,14 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_project( new Project( ) )
+    , m_project( nullptr )
 {
-    auto entity = m_project->GetScene( ).GetWorld( ).CreateEntity( );
+
 }
 
 Editor::~Editor(void)
 {
-    delete m_mainWindow.window;
 
-    delete m_project;
 }
 
 void Editor::OnInitialize(void)
@@ -51,8 +49,8 @@ void Editor::OnInitialize(void)
         &Editor::onAppUpdate 
     );
 
-    auto *windowManager = CoreSystem( WindowManager );
-    auto *uiManager = CoreSystem( UIManager );
+    auto *windowManager = GetCoreSystem( WindowManager );
+    auto *uiManager = GetCoreSystem( UIManager );
 
     m_mainWindow.window = windowManager->AddWindow(
         "Ursine3D Editor", 
@@ -68,7 +66,9 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Show( true );
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
-    m_graphics = CoreSystem( GfxAPI );
+    m_graphics = GetCoreSystem( GfxAPI );
+
+    m_project = new Project( );
 
     initializeGraphics( );
 
@@ -78,8 +78,6 @@ void Editor::OnInitialize(void)
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
-
-    resizeMainWindow( kDefaultWindowWidth, kDefaultWindowHeight );
 }
 
 void Editor::OnRemove(void)
@@ -94,6 +92,14 @@ void Editor::OnRemove(void)
         .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
     m_mainWindow.ui->Close( );
+
+    delete m_mainWindow.window;
+
+    m_mainWindow.window = nullptr;
+
+    delete m_project;
+
+    m_project = nullptr;
 }
 
 Project *Editor::GetProject(void) const
@@ -122,53 +128,72 @@ void Editor::initializeGraphics(void)
     config.Profile_ = false;
 
     m_graphics->StartGraphics( config );
+    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
 
-    m_mainWindow.viewport = m_graphics->ViewportMgr.CreateViewport(
-        kDefaultWindowWidth, 
-        kDefaultWindowHeight 
-    );
+    auto &scene = m_project->GetScene( );
+    {
+        auto viewport = m_graphics->ViewportMgr.CreateViewport(
+            static_cast<int>( 0.85f * kDefaultWindowWidth ), 
+            static_cast<int>( kDefaultWindowHeight - (30.0f + 27.0f) )
+        );
 
-    m_mainWindow.camera = m_graphics->CameraMgr.AddCamera( );
+        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-    auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
+        handle.SetPosition( 
+            static_cast<int>( 0.15f * kDefaultWindowWidth ), 
+            static_cast<int>( 30.0f + 27.0f ) 
+        );
 
-    viewportHandle.SetRenderMode( VIEWPORT_RENDER_DEFERRED );
-    viewportHandle.SetViewportCamera( m_mainWindow.camera );
-    viewportHandle.SetPosition( 0.0f, 0.0f );
-    viewportHandle.SetDimensions( kDefaultWindowWidth, kDefaultWindowHeight );
+        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-    m_graphics->SetGameViewport( m_mainWindow.viewport );
+        scene.SetViewport( viewport );
 
-    auto &world = m_project->GetScene( ).GetWorld( );
+        m_graphics->SetGameViewport( viewport );
+    }
+
+    auto &world = scene.GetWorld( );
 
     auto *cameraEntity = world.CreateEntity( );
     {
-        auto &camera = cameraEntity->AddComponent<ecs::Camera>( )->GetCamera( );
+        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
 
-        camera.SetPosition( 0.15f, (30.0f + 27.0f) / kDefaultWindowHeight );
-        camera.SetDimensions( 0.85f, 1.0f - ((30.0f + 27.0f) / kDefaultWindowHeight) );
+        auto &camera = component->GetCamera( );
+
+        camera.SetPosition( 0.0f, 0.0f );
+        camera.SetDimensions( 1.0f, 1.0f );
+        camera.SetPlanes( 0.1f, 600.0f );
+        camera.SetRenderMode(VIEWPORT_RENDER_FORWARD);
 
         camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+
+        scene.SetEditorCamera( component->GetHandle( ) );
     }
 
-    auto *boxEntity = world.CreateEntity( );
+    for (int i = 0; i < 50; ++i)
     {
-        auto boxHandle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
+        auto *entity = world.CreateEntity( );
+        {
+            auto handle = m_graphics->RenderableMgr.AddRenderable( RENDERABLE_MODEL3D );
 
-        auto &box = m_graphics->RenderableMgr.GetModel3D( boxHandle );
+            auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
 
-        box.SetModel( "Skeleton" );
-        box.SetMaterial( "Blank" );
+            model.SetModel( i & 1 ? "Cube" : "Character" );
+            model.SetMaterial( "Cube" );
 
-        SMat4 transform;
+            SMat4 transform;
 
-        transform.Translate( { 0.0f, 0.0f, 85.0f } );
+            transform.TRS(
+                SVec3{ i * 1.0f, 0.0f, 0.0f },
+                SQuat{ 0.0f, 0.0f, 0.0f },
+                SVec3{ 1.0f, 1.0f, 1.0f }
+            );
 
-        box.SetWorldMatrix( transform );
+            model.SetWorldMatrix( transform );
 
-        auto *component = boxEntity->AddComponent<ecs::Renderable>( );
+            auto *component = entity->AddComponent<ecs::Renderable>( );
 
-        component->SetHandle( boxHandle );
+            component->SetHandle( handle );
+        }
     }
 
     auto *directionLight = world.CreateEntity( );
@@ -177,8 +202,8 @@ void Editor::initializeGraphics(void)
 
         auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
 
-        light.SetDirection( { 0.0f, 1.0f, 0.0f } );
-        light.SetColor( Color::White );
+        light.SetDirection( { 0.0f, -1.0f, 0.0f } );
+        light.SetColor( 1.0f, 1.0f, 1.0f );
 
         auto *component = directionLight->AddComponent<ecs::Renderable>( );
 
@@ -193,24 +218,36 @@ void Editor::initializeGraphics(void)
 
         light.SetPosition( { 0.0f, 0.0f, 0.0f } );
         light.SetRadius( 100.0f );
-        light.SetColor( Color::Red );
+        light.SetColor( Color::White );
 
         auto *component = pointLight->AddComponent<ecs::Renderable>( );
 
         component->SetHandle( lightHandle );
+    }
+
+    auto *skyBox = world.CreateEntity();
+    {
+        auto skyBhandle = m_graphics->RenderableMgr.AddRenderable(RENDERABLE_MODEL3D);
+
+        auto &box = m_graphics->RenderableMgr.GetModel3D(skyBhandle);
+        m_skyBox = &box;
+
+        box.SetModel("Skybox");
+        box.SetMaterial("Skybox");
+        SQuat rot = SQuat(90.f, SVec3(0, 0, 1));
+        SMat4 transf = SMat4(400, 400, 400);
+        SMat4 final = SMat4(rot) * transf;
+        box.SetWorldMatrix(final);
+
+        auto *component = skyBox->AddComponent<ecs::Renderable>();
+
+        component->SetHandle(skyBhandle);
     }
 }
 
 void Editor::initializeTools(void)
 {
     // @@@ TODO:
-}
-
-void Editor::resizeMainWindow(int width, int height)
-{
-    auto &viewportHandle = m_graphics->ViewportMgr.GetViewport( m_mainWindow.viewport );
-
-    viewportHandle.SetDimensions( width, height );
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -227,7 +264,7 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     scene.Render( );
 
-    m_mainWindow.ui->Draw( );
+    m_mainWindow.ui->DrawMain( );
 
     m_graphics->EndFrame( );
 }
@@ -235,8 +272,6 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))
 {
     EVENT_ATTRS(Window, WindowResizeArgs);
-
-    resizeMainWindow( args->width, args->height );
 
     m_mainWindow.ui->SetViewport( {
         0, 0,
