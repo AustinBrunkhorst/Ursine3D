@@ -134,15 +134,18 @@ macro (ursine_default_project project_name)
         # handle shaders
         if (NOT "${PROJ_COPY_SHADERS}" STREQUAL "")
             add_dependencies(${project_name} Shaders)
+
+            # create a macro to reference at compile time
+            add_definitions(-DURSINE_SHADER_BUILD_DIRECTORY=\"${PROJ_COPY_SHADERS}\")
             
             foreach (shader ${URSINE_SHADER_FILES})
                 get_filename_component(shader_file "${shader}" NAME_WE)
 
                 # copy shaders on post build of the shader project
-                add_custom_command(TARGET ${project_name} POST_BUILD
-                    COMMAND
+                list(APPEND post_build_commands
+                    COMMAND 
                     ${CMAKE_COMMAND} -E copy_if_different
-                    \"$<TARGET_FILE_DIR:Shaders>/${shader_file}.cso\" \"$<TARGET_FILE_DIR:${project_name}>/${PROJ_COPY_SHADERS}/${shader_file}.cso\"
+                    \"$<TARGET_FILE_DIR:Shaders>/${shader_file}.cso\" \"$<TARGET_FILE_DIR:${project_name}>/${PROJ_COPY_SHADERS}${shader_file}.cso\"
                 )
 
                 # install shaders if applicable

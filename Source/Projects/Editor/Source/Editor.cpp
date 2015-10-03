@@ -227,7 +227,7 @@ void Editor::initializeGraphics(void)
         static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
 
     config.ModelListPath_ = "Assets/Models/";
-    config.ShaderListPath_ = "Assets/Shaders/";
+    config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
     config.TextureListPath_ = "Assets/Textures/";
     config.WindowWidth_ = kDefaultWindowWidth;
     config.WindowHeight_ = kDefaultWindowHeight;
