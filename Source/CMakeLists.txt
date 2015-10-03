@@ -83,7 +83,7 @@ if (MSVC)
 
     # DirectX graphics backend
     add_definitions(-DURSINE_GRAPHICS_DIRECTX)
-    
+
     #ursine_remove_compile_flags(
     #    "/EHsc" # disable exceptions
     #)

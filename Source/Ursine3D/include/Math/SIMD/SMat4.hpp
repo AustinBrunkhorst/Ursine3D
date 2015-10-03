@@ -1048,7 +1048,7 @@ namespace ursine
 		return mat;
 	}
 
-	INLINE SMat4 SMat4::LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 localForward,
+	INLINE SMat4 SMat4::LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 &localForward,
     						   const SVec3 &localUp, const SVec3 &worldUp)
 	{
 		SMat4 mat;

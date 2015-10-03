@@ -1,0 +1,29 @@
+//texture
+Texture2D colorTexture : register(t0);
+
+//sample type
+SamplerState SampleType : register(s0);
+
+cbuffer DirectionalLightBuffer : register(b3)
+{
+  float4 lightDirection;
+  float4 color;
+}
+
+struct PixelInputType
+{
+  float4 position : SV_POSITION;
+  float4 normal : NORMAL;
+  float2 uv : UV;
+};
+
+float4 main(PixelInputType input) : SV_TARGET
+{
+  float4 lightColor;
+  float3 textureColor;
+
+  // Sample the pixel color from the texture using the sampler at this texture coordinate location.
+  textureColor = colorTexture.Sample(SampleType, input.uv).xyz;
+
+  return float4((textureColor.xyz), 1);
+}

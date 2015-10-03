@@ -14,7 +14,7 @@ endmacro ()
 
 macro (ursine_default_project project_name)
     ursine_parse_arguments(PROJ 
-        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE;META_HEADER" 
+        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE;META_HEADER;COPY_SHADERS" 
         "NO_ENGINE;PARSE_SOURCE_GROUPS;RECURSIVE_INCLUDES;INCLUDE_INSTALLER;BUILD_META" 
         ${ARGN})
     
@@ -127,6 +127,26 @@ macro (ursine_default_project project_name)
                 # install folder if applicable
                 if ("${PROJ_INCLUDE_INSTALLER}" STREQUAL "TRUE")
                     install(DIRECTORY ${link} DESTINATION "bin" COMPONENT ${project_name})
+                endif ()
+            endforeach ()
+        endif ()
+
+        # handle shaders
+        if (NOT "${PROJ_COPY_SHADERS}" STREQUAL "")
+            add_dependencies(${project_name} Shaders)
+            
+            foreach (shader ${URSINE_SHADER_FILES})
+                get_filename_component(shader_file "${shader}" NAME)
+
+                list(APPEND post_build_commands
+                    COMMAND 
+                    ${CMAKE_COMMAND} -E copy_if_different
+                    \"${shader}\" \"$<TARGET_FILE_DIR:${project_name}>/${PROJ_COPY_SHADERS}/${shader_file}\"
+                )
+
+                # install shaders if applicable
+                if ("${PROJ_INCLUDE_INSTALLER}" STREQUAL "TRUE")
+                    install(FILES "${shader}" DESTINATION "bin/${PROJ_COPY_SHADERS}" COMPONENT ${project_name})
                 endif ()
             endforeach ()
         endif ()
@@ -314,7 +334,7 @@ macro (ursine_default_project project_name)
             --flags ${meta_flags}
         )
     endif ()
-    
+
     # project folder
     if (NOT "${PROJ_FOLDER}" STREQUAL "")
         ursine_set_folder(${project_name} ${PROJ_FOLDER})

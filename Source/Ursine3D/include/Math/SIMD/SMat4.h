@@ -168,7 +168,7 @@ namespace ursine
 
 		static SMat4 LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
 
-		static SMat4 LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 localForward,
+		static SMat4 LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 &localForward,
 							const SVec3 &localUp, const SVec3 &worldUp);
 
 
