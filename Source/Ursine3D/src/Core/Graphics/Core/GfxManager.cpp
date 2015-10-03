@@ -315,7 +315,7 @@ namespace ursine
 
             PrimitiveColorBuffer pcb;
             //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
-            pcb.color = DirectX::XMFLOAT4(0.2, 0.2, 0.2, 1);
+            pcb.color = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, PIXEL_SHADER);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));

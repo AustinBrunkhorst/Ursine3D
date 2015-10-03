@@ -44,16 +44,16 @@ namespace ursine
             ursine::SMat4 GetProjMatrix(const float width, const float height) const;
 
             //setting position
-            ursine::SVec3 GetPosition() const;
+            const ursine::SVec3 &GetPosition() const;
             void SetPosition(const ursine::SVec3 &pos);
 
             //get look direction
-            ursine::SVec3 GetLook() const;
+            const ursine::SVec3 &GetLook() const;
             void SetLook(const ursine::SVec3 &dir);
 
             //getting right and up
-            ursine::SVec3 GetRight(void) const;
-            ursine::SVec3 GetUp(void) const;
+            const ursine::SVec3 &GetRight(void) const;
+            const ursine::SVec3 &GetUp(void) const;
 
             //near/far planes
             void SetPlanes(const float nearPlane, const float farPlane);
