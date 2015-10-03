@@ -132,6 +132,8 @@ namespace ursine
             
             void copy(const Transform &transform);
 
+            void dispatch(void) const;
+
         } Meta(Enable, DisplayName( "Transform" ));
     }
 }

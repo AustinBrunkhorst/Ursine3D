@@ -1,6 +1,8 @@
 #include "UrsinePrecompiled.h"
 
 #include "TransformComponent.h"
+#include "Entity.h"
+#include "EntityEvent.h"
 
 namespace ursine
 {
@@ -40,6 +42,7 @@ namespace ursine
         void Transform::SetWorldPosition(const SVec3 &position)
         {
             m_worldPosition = position;
+            dispatch( );
         }
 
         const SVec3 &Transform::GetWorldPosition(void) const
@@ -55,16 +58,19 @@ namespace ursine
         void Transform::editorSetTranslation(const SVec3& position)
         {
             m_worldPosition = position;
+            dispatch( );
         }
 
         void Transform::SetWorldRotation(const SQuat &rotation)
         {
             m_worldRotation = rotation;
+            dispatch( );
         }
 
         void Transform::SetWorldEuler(const SVec3 &euler)
         {
             m_worldRotation.SetEulerAngles( euler );
+            dispatch( );
         }
 
         const SQuat &Transform::GetWorldRotation(void) const
@@ -85,11 +91,13 @@ namespace ursine
         void Transform::editorSetRotation(const SVec3& euler)
         {
             m_worldRotation.SetEulerAngles(euler);
+            dispatch( );
         }
 
         void Transform::SetWorldScale(const SVec3 &scale)
         {
             m_worldScale = scale;
+            dispatch( );
         }
 
         const SVec3 &Transform::GetWorldScale(void) const
@@ -105,6 +113,7 @@ namespace ursine
         void Transform::editorSetScale(const SVec3& scale)
         {
             m_worldScale = scale;
+            dispatch( );
         }
 
         void Transform::copy(const Transform &transform)
@@ -113,6 +122,12 @@ namespace ursine
             m_worldPosition = transform.m_worldPosition;
             m_worldRotation = transform.m_worldRotation;
             m_worldScale = transform.m_worldScale;
+            dispatch( );
+        }
+
+        void Transform::dispatch(void) const
+        {
+            GetOwner( )->Dispatch( ENTITY_TRANSFORM_CHANGED, EventArgs::Empty );
         }
     }
 }
