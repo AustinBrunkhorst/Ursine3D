@@ -55,7 +55,7 @@ namespace ursine
             }
         }
 
-        SVec3 Camera::GetPosition(void) const
+        const SVec3 &Camera::GetPosition(void) const
         {
             return m_position;
         }
@@ -65,7 +65,7 @@ namespace ursine
             m_position = pos;
         }
 
-        SVec3 Camera::GetLook(void) const
+        const SVec3 &Camera::GetLook(void) const
         {
             return m_look;
         }
@@ -76,12 +76,12 @@ namespace ursine
             CalculateVectors(SVec3::UnitY());
         }
 
-        SVec3 Camera::GetRight(void) const
+        const SVec3 &Camera::GetRight(void) const
         {
             return m_right;
         }
 
-        SVec3 Camera::GetUp(void) const
+        const SVec3 &Camera::GetUp(void) const
         {
             return m_up;
         }
