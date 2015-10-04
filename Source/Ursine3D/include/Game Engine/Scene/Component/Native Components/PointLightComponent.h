@@ -14,20 +14,12 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-        #if defined(__REFLECTION_PARSER__)
-
-            Meta(Getter( "GetColor" ), Setter( "SetColor" ))
-            Color color;
-
-            Meta(Getter( "GetRadius" ), Setter( "SetRadius" ))
-            float radius;
-
-        #endif
+            EditorField(float radius, GetRadius, SetRadius);
+            EditorField(Color color, GetColor, SetColor);
 
             PointLight(void);
             ~PointLight(void);
 
-            Meta(Disable)
             void OnInitialize(void) override;
 
             //get/set color
@@ -43,6 +35,6 @@ namespace ursine
 
         private:
             ursine::graphics::PointLight *m_pointLight;
-        } Meta( Enable, DisplayName( "PointLight" ) );
+        } Meta(Enable, WhiteListMethods, DisplayName( "PointLight" ));
     }
 }

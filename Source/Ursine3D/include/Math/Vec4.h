@@ -31,7 +31,13 @@ namespace ursine
 		friend class SVec4;
 
 	public:
+        EditorField(float x, X, SetX);
+        EditorField(float y, Y, SetY);
+        EditorField(float z, Z, SetZ);
+        EditorField(float w, W, SetW);
+
 		// Constructors
+        Meta(Enable)
 		Vec4(void);
 		Vec4(const Vec4 &value);
 		Vec4(const SVec4 &value);
@@ -90,10 +96,16 @@ namespace ursine
 		float Y(void) const;
 		float Z(void) const;
 		float W(void) const;
+
 		float &X(void);
 		float &Y(void);
 		float &Z(void);
 		float &W(void);
+
+        void SetX(float x);
+        void SetY(float y);
+        void SetZ(float z);
+        void SetW(float z);
 
 		float operator[](uint index) const;
 		float &operator[](uint index);
@@ -121,7 +133,7 @@ namespace ursine
 
 	protected:
 		float m_x, m_y, m_z, m_w;
-	};
+	} Meta(Enable, WhiteListMethods);
 }
 
 #include "Vec4.hpp"

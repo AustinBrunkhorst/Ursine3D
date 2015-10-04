@@ -42,6 +42,21 @@
 #define NATIVE_COMPONENT_DEFINITION(type)                \
     ursine::ecs::ComponentTypeID type::ComponentID = -1; \
 
+#if defined(URSINE_WITH_EDITOR)
+
+#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                           \
+    auto *__owner = GetOwner( );                                                               \
+    ursine::ecs::EditorComponentChangedArgs __e {                                              \
+        ursine::ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, __owner, this, displayName, value  \
+    };                                                                                         \
+    __owner->GetWorld( )->Dispatch( ursine::ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, &__e ) \
+
+#else
+
+#define NOTIFY_COMPONENT_CHANGED(displayName, value)
+
+#endif
+
 namespace ursine
 {
     namespace ecs

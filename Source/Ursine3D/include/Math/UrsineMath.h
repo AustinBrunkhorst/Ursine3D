@@ -28,7 +28,7 @@ namespace ursine
         const float PI_SQR = PI * PI;
         const float SQRT_2 = 1.4142f;
 
-        const float MAX_FLOAT = std::numeric_limits<float>::max();
+        const float MAX_FLOAT = std::numeric_limits<float>::max( );
 
         template<typename T>
         inline bool IsZero(T value);
@@ -56,9 +56,6 @@ namespace ursine
 
         template<typename T>
         T Rand(T min, T max);
-
-        // This is not very percise. With large floating point values it is generally 1% off.
-        inline float fastSqrt(float val);
 
         inline float RadiansToDegrees(float radians);
 

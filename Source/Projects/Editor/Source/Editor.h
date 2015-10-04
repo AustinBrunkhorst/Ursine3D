@@ -14,13 +14,11 @@ class Editor : public ursine::core::CoreSystem
 {
     CORE_SYSTEM
 public:
+    Meta(Enable)
     Editor(void);
     ~Editor(void);
 
-    Meta(Disable)
     void OnInitialize(void) override;
-
-    Meta(Disable)
     void OnRemove(void) override;
     
     Project *GetProject(void) const;
@@ -40,10 +38,6 @@ private:
 
     Project *m_project;
 
-    ursine::graphics::Model3D *m_skyBox;
-
-    std::vector<NativeEditorTool *> m_tools;
-
     void initializeGraphics(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
@@ -51,7 +45,8 @@ private:
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
 
     void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
-} Meta(Enable);
+    void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
+} Meta(Enable, WhiteListMethods);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(OnEditorUILoad);

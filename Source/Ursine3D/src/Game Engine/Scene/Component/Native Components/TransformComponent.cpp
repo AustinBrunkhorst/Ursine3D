@@ -11,38 +11,32 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION( Transform );
 
         Transform::Transform(void)
-            : BaseComponent()
+            : BaseComponent( )
+            , m_dirty( true )
         {
-            
         }
 
-        Transform::Transform(const Transform& transform)
+        Transform::Transform(const Transform &transform)
             : Component( transform )
         {
-            copy(transform);
+            copy( transform );
         }
 
         Transform::~Transform(void)
         {
-            
+
         }
 
         Transform &Transform::operator=(const Transform &transform)
         {
-            copy(transform);
+            copy( transform );
 
             return *this;
         }
 
         void Transform::OnInitialize(void)
         {
-            
-        }
 
-        void Transform::SetWorldPosition(const SVec3 &position)
-        {
-            m_worldPosition = position;
-            dispatch( );
         }
 
         const SVec3 &Transform::GetWorldPosition(void) const
@@ -50,27 +44,13 @@ namespace ursine
             return m_worldPosition;
         }
 
-        const SVec3& Transform::editorGetTranslation(void) const
-        {
-            return m_worldPosition;
-        }
-
-        void Transform::editorSetTranslation(const SVec3& position)
+        void Transform::SetWorldPosition(const SVec3 &position)
         {
             m_worldPosition = position;
-            dispatch( );
-        }
 
-        void Transform::SetWorldRotation(const SQuat &rotation)
-        {
-            m_worldRotation = rotation;
             dispatch( );
-        }
 
-        void Transform::SetWorldEuler(const SVec3 &euler)
-        {
-            m_worldRotation.SetEulerAngles( euler );
-            dispatch( );
+            NOTIFY_COMPONENT_CHANGED( "position", m_worldPosition );
         }
 
         const SQuat &Transform::GetWorldRotation(void) const
@@ -78,26 +58,36 @@ namespace ursine
             return m_worldRotation;
         }
 
+        void Transform::SetWorldRotation(const SQuat &rotation)
+        {
+            m_worldRotation = rotation;
+
+            dispatch( );
+
+            NOTIFY_COMPONENT_CHANGED( "rotation", m_worldRotation.GetEulerAngles( ) );
+        }
+
         SVec3 Transform::GetWorldEuler(void) const
         {
             return m_worldRotation.GetEulerAngles( );
         }
 
-        SVec3 Transform::editorGetRotation(void) const
+        void Transform::SetWorldEuler(const SVec3 &euler)
         {
-            return m_worldRotation.GetEulerAngles();
+            m_worldRotation.SetEulerAngles( euler );
+
+            dispatch( );
+
+            NOTIFY_COMPONENT_CHANGED( "rotation", euler );
         }
 
-        void Transform::editorSetRotation(const SVec3& euler)
+        void Transform::editorSetRotation(const SVec3 &euler)
         {
-            m_worldRotation.SetEulerAngles(euler);
-            dispatch( );
-        }
+            m_worldRotation.SetEulerAngles( euler );
 
-        void Transform::SetWorldScale(const SVec3 &scale)
-        {
-            m_worldScale = scale;
             dispatch( );
+
+            NOTIFY_COMPONENT_CHANGED( "rotation", euler );
         }
 
         const SVec3 &Transform::GetWorldScale(void) const
@@ -105,15 +95,13 @@ namespace ursine
             return m_worldScale;
         }
 
-        const SVec3& Transform::editorGetScale(void) const
-        {
-            return m_worldScale;
-        }
-
-        void Transform::editorSetScale(const SVec3& scale)
+        void Transform::SetWorldScale(const SVec3 &scale)
         {
             m_worldScale = scale;
+
             dispatch( );
+
+            NOTIFY_COMPONENT_CHANGED( "scale", scale );
         }
 
         void Transform::copy(const Transform &transform)
@@ -122,6 +110,7 @@ namespace ursine
             m_worldPosition = transform.m_worldPosition;
             m_worldRotation = transform.m_worldRotation;
             m_worldScale = transform.m_worldScale;
+
             dispatch( );
         }
 
