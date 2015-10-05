@@ -48,7 +48,11 @@ namespace ursine
             // get a point light
             Primitive &GetPrimitive(GfxHND &handle);
 
+            //get billboarded quad
             Billboard2D &GetBillboard2D(GfxHND &handle);
+
+            //get a universal light
+            Light &GetLight(GfxHND &handle);
 
         private:
             privData *m_privates;

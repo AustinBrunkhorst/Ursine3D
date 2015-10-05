@@ -30,6 +30,7 @@ namespace ursine
                 MakeBuffer<GBufferUnpackBuffer>(BUFFER_GBUFFER_UNPACK);
                 MakeBuffer<TransformBuffer>(BUFFER_LIGHT_PROJ);
                 MakeBuffer<MaterialDataBuffer>(BUFFER_MATERIAL_DATA);
+                MakeBuffer<SpotlightBuffer>(BUFFER_SPOTLIGHT);
             }
 
             void ShaderBufferManager::Uninitialize(void)
@@ -62,8 +63,8 @@ namespace ursine
                 dataPtr = (CameraBuffer*)mappedResource.pData;
 
                 //set data
-                dataPtr->view = SMat4::Transpose(view).ToD3D();
-                dataPtr->projection = SMat4::Transpose(projection).ToD3D();
+                dataPtr->view = SMat4::Transpose(view).ToD3D( );
+                dataPtr->projection = SMat4::Transpose(projection).ToD3D( );
 
                 //unlock buffer
                 m_deviceContext->Unmap(m_bufferArray[ BUFFER_CAMERA ], 0);
@@ -88,7 +89,7 @@ namespace ursine
                 dataPtr = (TransformBuffer*)mappedResource.pData;
 
                 //set data
-                dataPtr->transform = transform.ToD3D();
+                dataPtr->transform = transform.ToD3D( );
 
                 //unlock buffer
                 m_deviceContext->Unmap(m_bufferArray[ BUFFER_TRANSFORM ], 0);

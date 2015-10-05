@@ -35,6 +35,7 @@ namespace ursine
             BUFFER_GBUFFER_UNPACK,
             BUFFER_LIGHT_PROJ,
             BUFFER_MATERIAL_DATA,
+            BUFFER_SPOTLIGHT,
 
             BUFFER_COUNT,
 
@@ -103,6 +104,16 @@ namespace ursine
             float specularPower;
             float specularIntensity;
             float buffer;
+        };
+
+        struct SpotlightBuffer
+        {
+            DirectX::XMFLOAT3 lightPosition;
+            float falloff;
+            DirectX::XMFLOAT3 lightDirection;
+            float innerAngle;
+            DirectX::XMFLOAT3 diffuseColor;
+            float outerAngle;
         };
     }
 }

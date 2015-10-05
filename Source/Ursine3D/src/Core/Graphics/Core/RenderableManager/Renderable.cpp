@@ -12,6 +12,8 @@ namespace ursine
             Active_ = false;
         }
 
+        void Renderable::Initialize() {}
+
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
@@ -31,7 +33,7 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////
         //model3d
-        Model3D::Model3D(void)
+        void Model3D::Initialize()
         {
             ModelName_ = "Cube";
             MaterialName_ = "UV";
@@ -109,7 +111,7 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////
         //primitives
-        Primitive::Primitive(void)
+        void Primitive::Initialize()
         {
             Type_ = Primitive::PRIM_CUBE;
             Radius_ = 1;
@@ -238,6 +240,8 @@ namespace ursine
             Color_ = Color(x, y, z, 1);
         }
 
+        
+
         ///////////////////////////////////////////////////////////////////
         // point light
         PointLight::PointLight()
@@ -286,6 +290,110 @@ namespace ursine
         void PointLight::SetRadius(float radius)
         {
             Radius_ = radius;
+        }
+
+        ///////////////////////////////////////////////////////////////////
+        // universal light
+        void Light::Initialize(void) 
+        {
+            m_type = LIGHT_DIRECTIONAL;
+            m_position = SVec3(0, 0, 0);
+            m_color = Color::White;
+            m_radius = 1.0f;
+            m_direction = SVec3(0, -1, 0);
+            m_intensity = 1.0f;;
+
+            m_spotlightAngles = Vec2(30, 30);
+        }
+
+        Light::LightType Light::GetType(void)
+        {
+            return m_type;
+        }
+
+        void Light::SetType(const LightType type)
+        {
+            m_type = type;
+        }
+
+        const SVec3& Light::GetDirection(void)
+        {
+            return m_direction;
+        }
+
+        void Light::SetDirection(const SVec3& dir)
+        {
+            m_direction = dir;
+        }
+
+        void Light::SetDirection(const float x, const float y, const float z)
+        {
+            m_direction = SVec3(x, y, z);
+        }
+
+        const SVec3& Light::GetPosition(void)
+        {
+            return m_position;
+        }
+
+        void Light::SetPosition(const SVec3& position)
+        {
+            m_position = position;
+        }
+
+        void Light::SetPosition(const float x, const float y, const float z)
+        {
+            m_position = SVec3(x, y, z);
+        }
+
+        const Color& Light::GetColor(void)
+        {
+            return m_color;
+        }
+
+        void Light::SetColor(const Color& color)
+        {
+            m_color = color;
+        }
+
+        void Light::SetColor(const float r, const float g, const  float b)
+        {
+            m_color = Color(r, g, b, 1.0f);
+        }
+
+        float Light::GetRadius(void)
+        {
+            return m_radius;
+        }
+
+        void Light::SetRadius(const float radius)
+        {
+            m_radius = radius;
+        }
+
+        float Light::GetIntensity()
+        {
+            return m_intensity;
+        }
+
+        void Light::SetIntensity(const float intensity)
+        {
+            m_intensity = intensity;
+        }
+
+        const Vec2& Light::GetSpotlightAngles()
+        {
+            return m_spotlightAngles;
+        }
+
+        void Light::SetSpotlightAngles(const Vec2& angles)
+        {
+            m_spotlightAngles = angles;
+        }
+
+        void Light::SetSpotlightAngles(const float inner, const float outer)
+        {
+            m_spotlightAngles = Vec2(inner, outer);
         }
     }
 }

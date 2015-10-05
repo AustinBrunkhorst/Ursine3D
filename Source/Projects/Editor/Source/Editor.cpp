@@ -176,19 +176,19 @@ void Editor::InitializeScene(void)
         }
     }
 
-    auto *directionLight = world.CreateEntity( "Directional Light" );
-    {
-        auto lightHandle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_DIRECTION_LIGHT );
+    //auto *directionLight = world.CreateEntity( "Directional Light" );
+    //{
+    //    auto lightHandle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_DIRECTION_LIGHT );
 
-        auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
+    //    auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
 
-        light.SetDirection( { 0.0f, -1.0f, 0.0f } );
-        light.SetColor( 1.0f, 1.0f, 1.0f );
+    //    light.SetDirection( { 0.0f, -1.0f, 0.0f } );
+    //    light.SetColor( 1.0f, 1.0f, 1.0f );
 
-        auto *component = directionLight->AddComponent<ecs::Renderable>( );
+    //    auto *component = directionLight->AddComponent<ecs::Renderable>( );
 
-        component->SetHandle( lightHandle );
-    }
+    //    component->SetHandle( lightHandle );
+    //}
 
     auto *sky = world.CreateEntity( "Skybox" );
     {
@@ -207,6 +207,20 @@ void Editor::InitializeScene(void)
         auto *component = sky->AddComponent<ecs::Renderable>( );
 
         component->SetHandle( skyHND );
+    }
+
+    auto *univLight = world.CreateEntity("Light");
+    {
+        auto lightHandle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_LIGHT);
+
+        auto &light = m_graphics->RenderableMgr.GetLight(lightHandle);
+
+        light.SetDirection({ 0.0f, -1.0f, 0.0f });
+        light.SetColor(1.0f, 1.0f, 1.0f);
+
+        auto *component = univLight->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle(lightHandle);
     }
 }
 

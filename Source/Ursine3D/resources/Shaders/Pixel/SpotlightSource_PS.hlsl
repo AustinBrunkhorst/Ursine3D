@@ -5,15 +5,17 @@ Texture2D NormalTexture: register(t2);
 Texture2D SpecPowTexture: register(t3);
 
 //buffer for light data
-cbuffer PointLightBuffer : register(b3)
+cbuffer SpotLightBuffer : register(b11)
 {
-    float3 lightPos     : packoffset(c0);
-    float radius        : packoffset(c0.w);
-    float3 diffuseColor : packoffset(c1);
-    float intensity     : packoffset(c1.w);
+    float3 lightPosition    : packoffset(c0);
+    float falloff           : packoffset(c0.w);
+    float3 lightDirection   : packoffset(c1);
+    float innerAngle        : packoffset(c1.w);
+    float3 diffuseColor     : packoffset(c2);
+    float outerAngle        : packoffset(c2.w);
 }
 
-cbuffer invProj : register(b4)
+cbuffer InvProj : register(b4)
 {
     matrix InvProj;
 };
@@ -108,30 +110,25 @@ SURFACE_DATA UnpackGBuffer( int2 location )
 
 float3 CalcPoint( float3 position, Material material )
 {
-    float3 ToLight = lightPos.xyz - position;
+    float3 ToLight = -lightDirection;
     float3 ToEye = -position;
-    float DistToLight = length( ToLight );
 
     // Phong diffuse
-    ToLight /= DistToLight; // Normalize
     float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (intensity);
-
-    // Attenuation
-    float attenuation = saturate( 1.0f - (DistToLight / radius) );
-    finalColor *= material.diffuseColor * attenuation;
+    float3 finalColor = diffuseColor.rgb * NDotL * (1.f)* material.diffuseColor;
 
     // Blinn specular
     ToEye = normalize( ToEye );
     float3 HalfWay = normalize( ToEye + ToLight );
     float NDotH = saturate( dot( HalfWay, material.normal ) );
-    finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0) * material.specIntensity * attenuation * NDotL;
+    finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
+
+    // spotlight falloff
 
     return finalColor;
 }
 
-/////////////////////////////////////////////////////////////////////
-// MAIN
+
 float4 main( DS_OUTPUT In ) : SV_TARGET
 {
     // Unpack the GBuffer
@@ -146,9 +143,11 @@ float4 main( DS_OUTPUT In ) : SV_TARGET
     mat.specIntensity = gbd.SpecInt;
     mat.emissive = gbd.Emissive;
 
+    //calculate world position
     In.cpPos.xy /= In.cpPos.w;
     float3 pos = CalcWorldPos( In.cpPos.xy, gbd.LinearDepth );
 
+    //get the final color
     float4 finalColor;
     finalColor.xyz = CalcPoint( pos, mat );
     finalColor.w = 1.0;
