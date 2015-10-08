@@ -1,6 +1,8 @@
 #include "UrsinePrecompiled.h"
 #include "RasterStateManager.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
+
 
 namespace ursine
 {
@@ -37,7 +39,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_SOLID_FRONTCULL ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // BACK FACE
@@ -55,7 +57,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_SOLID_BACKCULL ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // NO CULLING
@@ -73,7 +75,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_SOLID_NOCULL ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
 
                 ///////////////////////////////////////////////////////////////
@@ -92,7 +94,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_BACKCULL ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // WIREFRAME RENDER, FRONTFACE CULL
@@ -110,7 +112,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_FRONTCULL ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // WIREFRAME RENDER, NO CULL
@@ -128,7 +130,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_WIREFRAME_NOCULL ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // LINE RENDERING
@@ -146,7 +148,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_LINE_RENDERING ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // UI RENDERING   
@@ -164,7 +166,7 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_UI ]);
-                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
             }
 
             void RasterStateManager::Uninitialize(void)

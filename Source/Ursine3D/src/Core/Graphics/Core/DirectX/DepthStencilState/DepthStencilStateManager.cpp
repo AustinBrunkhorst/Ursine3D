@@ -3,6 +3,7 @@
 #include "DepthStencilStateManager.h"
 #include <d3d11.h>
 #include "GfxDefines.h"
+#include "DXErrorHandling.h"
 
 
 namespace ursine
@@ -49,7 +50,7 @@ namespace ursine
 
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_DEPTH_NOSTENCIL ]);
-                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
 
                 /////////////////////////////////////////////////////////////////
                 // NO DEPTH CHECKING ////////////////////////////////////////////
@@ -78,7 +79,7 @@ namespace ursine
 
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_NODEPTH_NOSTENCIL ]);
-                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
 
                 /////////////////////////////////////////////////////////////////
                 // DEPTH CHECK AND STENCIL
@@ -107,7 +108,7 @@ namespace ursine
 
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_DEPTH_STENCIL ]);
-                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
 
                 /////////////////////////////////////////////////////////////////
                 // NO DEPTH CHECKING, STENCIL CHECK
@@ -136,7 +137,7 @@ namespace ursine
 
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_NODEPTH_STENCIL ]);
-                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
 
                 /////////////////////////////////////////////////////////////////
                 // POINT LIGHT
@@ -149,7 +150,7 @@ namespace ursine
 
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_POINTLIGHT ]);
-                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
             }
 
             void DepthStencilStateManager::Uninitialize(void)

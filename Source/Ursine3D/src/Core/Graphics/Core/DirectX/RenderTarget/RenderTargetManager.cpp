@@ -2,6 +2,8 @@
 #include "RenderTargetManager.h"
 #include "GfxDefines.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
+
 
 namespace ursine
 {
@@ -223,7 +225,7 @@ namespace ursine
                 textureDesc.MiscFlags = 0;
 
                 result = m_device->CreateTexture2D(&textureDesc, NULL, &m_renderTargets[ target ]->TextureMap);
-
+                UAssert(result == S_OK, "Failed to create texture2D description! (Error '%s')", GetDXErrorMessage(result));
                 ///////////////////////////////////////////////////////////////
                 // Setup the description of the render target view.
                 renderTargetViewDesc.Format = textureDesc.Format;
@@ -231,6 +233,7 @@ namespace ursine
                 renderTargetViewDesc.Texture2D.MipSlice = 0;
 
                 result = m_device->CreateRenderTargetView(m_renderTargets[ target ]->TextureMap, &renderTargetViewDesc, &m_renderTargets[ target ]->RenderTargetView);
+                UAssert(result == S_OK, "Failed to create render target view! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // Setup the description of the shader resource view.
@@ -240,6 +243,7 @@ namespace ursine
                 shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
                 result = m_device->CreateShaderResourceView(m_renderTargets[ target ]->TextureMap, &shaderResourceViewDesc, &m_renderTargets[ target ]->ShaderMap);
+                UAssert(result == S_OK, "Failed to create shader resource view! (Error '%s')", GetDXErrorMessage(result));
             }
         }
     }

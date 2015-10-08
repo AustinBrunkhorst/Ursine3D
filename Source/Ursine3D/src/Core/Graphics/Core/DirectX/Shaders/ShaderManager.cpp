@@ -3,6 +3,7 @@
 #include "GfxDefines.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include "DXErrorHandling.h"
 
 #define CONCAT_END(file, ending) file ## ending
 #define GetString(type) #type
@@ -93,29 +94,29 @@ namespace ursine
                 {
                 case SHADERDEF::VERTEX_SHADER:
                     result = dev->CreateVertexShader(binData, binSize, NULL, &shader->vs);
-                    UAssert(result == S_OK, "Failed to load vert shader '%s' (error %i)", filename, result);
+                    UAssert(result == S_OK, "Failed to load vert shader '%s'! (Error '%s')", GetDXErrorMessage(result));
 
                     result = D3DCreateBlob(binSize, &shader->vsBlob);
-                    UAssert(result == S_OK, "Failed to create vert blob '%s' (error %i)", filename, result);
+                    UAssert(result == S_OK, "Failed to create vert blob '%s'! (Error '%s')", GetDXErrorMessage(result));
 
                     shader->size = (unsigned)binSize;
                     shader->rawData = binData;
                     break;
                 case SHADERDEF::PIXEL_SHADER:
                     result = dev->CreatePixelShader(binData, binSize, NULL, &shader->ps);
-                    UAssert(result == S_OK, "Failed to load pixel shader '%s' (error %i)", filename, result);
+                    UAssert(result == S_OK, "Failed to load pixel shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 case SHADERDEF::HULL_SHADER:
                     result = dev->CreateHullShader(binData, binSize, NULL, &shader->hs);
-                    UAssert(result == S_OK, "Failed to load hull shader '%s' (error %i)", filename, result);
+                    UAssert(result == S_OK, "Failed to load hull shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 case SHADERDEF::DOMAIN_SHADER:
                     result = dev->CreateDomainShader(binData, binSize, NULL, &shader->ds);
-                    UAssert(result == S_OK, "Failed to load domain shader '%s' (error %i)", filename, result);
+                    UAssert(result == S_OK, "Failed to load domain shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 case SHADERDEF::GEOMETRY_SHADER:
                     result = dev->CreateGeometryShader(binData, binSize, NULL, &shader->gs);
-                    UAssert(result == S_OK, "Failed to load geometry shader '%s' (error %i)", filename, result);
+                    UAssert(result == S_OK, "Failed to load geometry shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 }
 

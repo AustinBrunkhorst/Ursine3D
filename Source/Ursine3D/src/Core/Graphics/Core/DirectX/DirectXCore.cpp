@@ -1,6 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "DirectXCore.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
 
 namespace ursine
 {
@@ -109,18 +110,18 @@ namespace ursine
                     result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
                         D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, FeatureLevelArray, 4, D3D11_SDK_VERSION,
                         &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
-                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result);
+                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '%s')", GetDXErrorMessage(result));
 
                     //make debug interface
                     result = m_device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&m_debugInterface));
-                    UAssert(result == S_OK, "Failed to make debug interface!");
+                    UAssert(result == S_OK, "Failed to make debug interface! (Error '%s')", GetDXErrorMessage(result));
                 }
                 else
                 {
                     result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
                         D3D11_CREATE_DEVICE_SINGLETHREADED, FeatureLevelArray, 4, D3D11_SDK_VERSION,
                         &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
-                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result);
+                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '%s')", GetDXErrorMessage(result));
                 }
 
                 D3D_FEATURE_LEVEL finalFeatureLevel = m_device->GetFeatureLevel();
@@ -136,12 +137,12 @@ namespace ursine
 
                 //Get the pointer to the back buffer.
                 result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr);
-                UAssert(result == S_OK, "Failed to get back buffer! (Error '0x%x')", result);
+                UAssert(result == S_OK, "Failed to get back buffer! (Error '%s')", GetDXErrorMessage(result));
 
                 //Create the render target view with the back buffer pointer.
                 result = m_device->CreateRenderTargetView(backBufferPtr, NULL,
                     &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView);
-                UAssert(result == S_OK, "Failed to make render target! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make render target! (Error '%s')", GetDXErrorMessage(result));
 
                 //Release pointer to the back buffer as we no longer need it.
                 backBufferPtr->Release();
@@ -351,14 +352,14 @@ namespace ursine
                 HRESULT hr;
 
                 hr = m_swapChain->ResizeBuffers(0, static_cast<UINT>(width), static_cast<UINT>(height), DXGI_FORMAT_UNKNOWN, 0);
-                UAssert(hr == S_OK, "Failed to resize swapchain!");
+                UAssert(hr == S_OK, "Failed to resize swapchain! (Error '%s')", GetDXErrorMessage(hr));
 
                 ID3D11Texture2D *pBuffer;
                 hr = m_swapChain->GetBuffer(0, __uuidof(pBuffer), (void**)&pBuffer);
-                UAssert(hr == S_OK, "Failed to get swap chain buffer!");
+                UAssert(hr == S_OK, "Failed to get swap chain buffer! (Error '%s')", GetDXErrorMessage(hr));
 
                 hr = m_device->CreateRenderTargetView(pBuffer, NULL, &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView);
-                UAssert(hr == S_OK, "Failed to make render target! (Error '%i')", hr);
+                UAssert(hr == S_OK, "Failed to make render target! (Error '%s')", GetDXErrorMessage(hr));
 
                 //release buffer
                 RELEASE_RESOURCE(pBuffer);

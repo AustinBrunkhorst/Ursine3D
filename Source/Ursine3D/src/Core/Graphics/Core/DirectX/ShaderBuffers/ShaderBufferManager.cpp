@@ -1,6 +1,8 @@
 #include "UrsinePrecompiled.h"
 #include "ShaderBufferManager.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
+
 
 namespace ursine
 {
@@ -54,6 +56,7 @@ namespace ursine
 
                 //lock the buffer
                 result = m_deviceContext->Map(m_bufferArray[ BUFFER_CAMERA ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                UAssert(result == S_OK, "Failed to lock shader buffer for camera! (Error '%s')", GetDXErrorMessage(result));
 
                 //grab data
                 dataPtr = (CameraBuffer*)mappedResource.pData;
@@ -79,6 +82,7 @@ namespace ursine
 
                 //lock the buffer
                 result = m_deviceContext->Map(m_bufferArray[ BUFFER_TRANSFORM ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                UAssert(result == S_OK, "Failed to lock shader buffer for transform! (Error '%s')", GetDXErrorMessage(result));
 
                 //grab data
                 dataPtr = (TransformBuffer*)mappedResource.pData;
@@ -134,7 +138,7 @@ namespace ursine
 
                 //Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
                 result = m_device->CreateBuffer(&matrixBufferDesc, NULL, &m_bufferArray[ type ]);
-                UAssert(result == S_OK, "Failed to make buffer! (type: %i)", type);
+                UAssert(result == S_OK, "Failed to make buffer! (type: %i)  (Error '%s')", type, GetDXErrorMessage(result));
             }
         }
     }
