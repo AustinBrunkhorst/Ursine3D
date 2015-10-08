@@ -176,8 +176,8 @@ namespace ursine
                     RELEASE_RESOURCE(m_rasterStateArray[ x ]);
                 }
 
-                m_device = NULL;
-                m_deviceContext = NULL;
+                m_device = nullptr;
+                m_deviceContext = nullptr;
             }
 
             ID3D11RasterizerState *RasterStateManager::GetRasterState(RASTER_STATES state)

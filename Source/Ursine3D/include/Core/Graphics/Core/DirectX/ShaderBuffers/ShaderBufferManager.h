@@ -49,7 +49,7 @@ namespace ursine
                     T *dataPtr;
 
                     //make sure buffer exists
-                    UAssert(m_bufferArray[ buffer ] != NULL, "A buffer was never initialized!");
+                    UAssert(m_bufferArray[ buffer ] != nullptr, "A buffer was never initialized!");
 
                     //lock the buffer
                     result = m_deviceContext->Map(m_bufferArray[ buffer ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

@@ -137,7 +137,7 @@ namespace ursine
                 matrixBufferDesc.StructureByteStride = 0;
 
                 //Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-                result = m_device->CreateBuffer(&matrixBufferDesc, NULL, &m_bufferArray[ type ]);
+                result = m_device->CreateBuffer(&matrixBufferDesc, nullptr, &m_bufferArray[ type ]);
                 UAssert(result == S_OK, "Failed to make buffer! (type: %i)  (Error '%s')", type, GetDXErrorMessage(result));
             }
         }

@@ -93,7 +93,7 @@ namespace ursine
                 switch (shaderType)
                 {
                 case SHADERDEF::VERTEX_SHADER:
-                    result = dev->CreateVertexShader(binData, binSize, NULL, &shader->vs);
+                    result = dev->CreateVertexShader(binData, binSize, nullptr, &shader->vs);
                     UAssert(result == S_OK, "Failed to load vert shader '%s'! (Error '%s')", GetDXErrorMessage(result));
 
                     result = D3DCreateBlob(binSize, &shader->vsBlob);
@@ -103,19 +103,19 @@ namespace ursine
                     shader->rawData = binData;
                     break;
                 case SHADERDEF::PIXEL_SHADER:
-                    result = dev->CreatePixelShader(binData, binSize, NULL, &shader->ps);
+                    result = dev->CreatePixelShader(binData, binSize, nullptr, &shader->ps);
                     UAssert(result == S_OK, "Failed to load pixel shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 case SHADERDEF::HULL_SHADER:
-                    result = dev->CreateHullShader(binData, binSize, NULL, &shader->hs);
+                    result = dev->CreateHullShader(binData, binSize, nullptr, &shader->hs);
                     UAssert(result == S_OK, "Failed to load hull shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 case SHADERDEF::DOMAIN_SHADER:
-                    result = dev->CreateDomainShader(binData, binSize, NULL, &shader->ds);
+                    result = dev->CreateDomainShader(binData, binSize, nullptr, &shader->ds);
                     UAssert(result == S_OK, "Failed to load domain shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 case SHADERDEF::GEOMETRY_SHADER:
-                    result = dev->CreateGeometryShader(binData, binSize, NULL, &shader->gs);
+                    result = dev->CreateGeometryShader(binData, binSize, nullptr, &shader->gs);
                     UAssert(result == S_OK, "Failed to load geometry shader '%s'! (Error '%s')", GetDXErrorMessage(result));
                     break;
                 }
@@ -142,7 +142,7 @@ namespace ursine
 
                 for (unsigned x = 0; x < SHADER_COUNT; ++x)
                 {
-                    m_shaderArray[ x ] = NULL;
+                    m_shaderArray[ x ] = nullptr;
                 }
             }
 
@@ -150,7 +150,7 @@ namespace ursine
             {
                 for (unsigned x = 0; x < SHADER_COUNT; ++x)
                 {
-                    if (m_shaderArray[ x ] != NULL)
+                    if (m_shaderArray[ x ] != nullptr)
                     {
                         RELEASE_RESOURCE(m_shaderArray[ x ]->vs);
                         RELEASE_RESOURCE(m_shaderArray[ x ]->ps);
@@ -173,23 +173,23 @@ namespace ursine
                 m_currentState = shader;
 
                 //if a given shader exists, bind it
-                if (m_shaderArray[ shader ]->vs != NULL)
-                    m_deviceContext->VSSetShader(m_shaderArray[ shader ]->vs, NULL, 0);
-                if (m_shaderArray[ shader ]->ps != NULL)
-                    m_deviceContext->PSSetShader(m_shaderArray[ shader ]->ps, NULL, 0);
-                if (m_shaderArray[ shader ]->hs != NULL)
-                    m_deviceContext->HSSetShader(m_shaderArray[ shader ]->hs, NULL, 0);
-                if (m_shaderArray[ shader ]->ds != NULL)
-                    m_deviceContext->DSSetShader(m_shaderArray[ shader ]->ds, NULL, 0);
-                if (m_shaderArray[ shader ]->gs != NULL)
-                    m_deviceContext->GSSetShader(m_shaderArray[ shader ]->gs, NULL, 0);
+                if (m_shaderArray[ shader ]->vs != nullptr)
+                    m_deviceContext->VSSetShader(m_shaderArray[ shader ]->vs, nullptr, 0);
+                if (m_shaderArray[ shader ]->ps != nullptr)
+                    m_deviceContext->PSSetShader(m_shaderArray[ shader ]->ps, nullptr, 0);
+                if (m_shaderArray[ shader ]->hs != nullptr)
+                    m_deviceContext->HSSetShader(m_shaderArray[ shader ]->hs, nullptr, 0);
+                if (m_shaderArray[ shader ]->ds != nullptr)
+                    m_deviceContext->DSSetShader(m_shaderArray[ shader ]->ds, nullptr, 0);
+                if (m_shaderArray[ shader ]->gs != nullptr)
+                    m_deviceContext->GSSetShader(m_shaderArray[ shader ]->gs, nullptr, 0);
                 else
-                    m_deviceContext->GSSetShader(NULL, NULL, 0);
+                    m_deviceContext->GSSetShader(nullptr, nullptr, 0);
             }
 
             void ShaderManager::LoadShader(const SHADER_TYPES shader, const char *filename)
             {
-                UAssert(m_shaderArray[ shader ] == NULL, "Attempted to load shader twice");
+                UAssert(m_shaderArray[ shader ] == nullptr, "Attempted to load shader twice");
                 m_shaderArray[ shader ] = new Shader;
 
                 LogMessage("Loading Shader: %s", 2, filename);
@@ -197,12 +197,12 @@ namespace ursine
                 LogMessage("Shader Types Found:", 3);
 
                 //init to 0
-                m_shaderArray[ shader ]->vsBlob = NULL;
-                m_shaderArray[ shader ]->vs = NULL;
-                m_shaderArray[ shader ]->ps = NULL;
-                m_shaderArray[ shader ]->hs = NULL;
-                m_shaderArray[ shader ]->ds = NULL;
-                m_shaderArray[ shader ]->gs = NULL;
+                m_shaderArray[ shader ]->vsBlob = nullptr;
+                m_shaderArray[ shader ]->vs = nullptr;
+                m_shaderArray[ shader ]->ps = nullptr;
+                m_shaderArray[ shader ]->hs = nullptr;
+                m_shaderArray[ shader ]->ds = nullptr;
+                m_shaderArray[ shader ]->gs = nullptr;
 
                 //attempt to load all shaders
                 int result = 0;

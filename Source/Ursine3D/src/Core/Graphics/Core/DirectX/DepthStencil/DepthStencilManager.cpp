@@ -42,7 +42,7 @@ namespace ursine
                 depthBufferDesc.MiscFlags = 0;
 
                 //Create the texture for the depth buffer using the filled out description.
-                result = m_device->CreateTexture2D(&depthBufferDesc, NULL, &m_depthStencilTextureArray[ DEPTH_STENCIL_MAIN ]);
+                result = m_device->CreateTexture2D(&depthBufferDesc, nullptr, &m_depthStencilTextureArray[ DEPTH_STENCIL_MAIN ]);
                 UAssert(result == S_OK, "Depth buffer texture failed! (Error '%s')", GetDXErrorMessage(result));
 
                 D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;

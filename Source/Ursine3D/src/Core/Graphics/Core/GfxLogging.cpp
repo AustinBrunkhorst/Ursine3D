@@ -34,7 +34,7 @@ namespace ursine
             ////if we haven't made it yet, make it
             //if (filename.size( ) == 0)
             //{
-            //  CreateDirectory( L"../LOGS/", NULL );
+            //  CreateDirectory( L"../LOGS/", nullptr );
             //  filename = "../LOGS/";
             //  std::string Final = GetDateTime( );
             //  filename += Final;

@@ -91,15 +91,15 @@ namespace ursine
             {
                 for (unsigned x = 0; x < BlendStateArray_.size(); ++x)
                 {
-                    if (BlendStateArray_[ x ] != NULL)
+                    if (BlendStateArray_[ x ] != nullptr)
                     {
                         BlendStateArray_[ x ]->Release();
-                        BlendStateArray_[ x ] = NULL;
+                        BlendStateArray_[ x ] = nullptr;
                     }
                 }
 
-                m_device = NULL;
-                m_deviceContext = NULL;
+                m_device = nullptr;
+                m_deviceContext = nullptr;
             }
 
             ID3D11BlendState *BlendStateManager::GetBlendState(const BLEND_STATES state)

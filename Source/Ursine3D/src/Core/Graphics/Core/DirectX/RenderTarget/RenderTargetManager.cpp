@@ -30,7 +30,7 @@ namespace ursine
             {
                 for (int x = 0; x < RENDER_TARGET_COUNT; ++x)
                 {
-                    if (m_renderTargets[ x ] != NULL)
+                    if (m_renderTargets[ x ] != nullptr)
                     {
                         RELEASE_RESOURCE(m_renderTargets[ x ]->RenderTargetView);
                         RELEASE_RESOURCE(m_renderTargets[ x ]->ShaderMap);
@@ -42,8 +42,8 @@ namespace ursine
 
                 UnInitializeAllRenderTargets();
 
-                m_device = NULL;
-                m_deviceContext = NULL;
+                m_device = nullptr;
+                m_deviceContext = nullptr;
             }
 
             void RenderTargetManager::InitializeAllRenderTargets(const unsigned width, const unsigned height)
@@ -82,9 +82,9 @@ namespace ursine
             {
                 for (int x = 0; x < 3; x++)
                 {
-                    m_deferredTextureMap[ x ] = NULL;
-                    m_deferredRenderTargetView[ x ] = NULL;
-                    m_deferredShaderMap[ x ] = NULL;
+                    m_deferredTextureMap[ x ] = nullptr;
+                    m_deferredRenderTargetView[ x ] = nullptr;
+                    m_deferredShaderMap[ x ] = nullptr;
                 }
 
                 delete[] m_deferredTextureMap;
@@ -97,9 +97,9 @@ namespace ursine
                 for (int x = 0; x < RENDER_TARGET_COUNT; ++x)
                 {
                     m_renderTargets[ x ] = new RenderTarget;
-                    m_renderTargets[ x ]->RenderTargetView = NULL;
-                    m_renderTargets[ x ]->ShaderMap = NULL;
-                    m_renderTargets[ x ]->TextureMap = NULL;
+                    m_renderTargets[ x ]->RenderTargetView = nullptr;
+                    m_renderTargets[ x ]->ShaderMap = nullptr;
+                    m_renderTargets[ x ]->TextureMap = nullptr;
                 }
             }
 
@@ -224,7 +224,7 @@ namespace ursine
                 textureDesc.CPUAccessFlags = 0;
                 textureDesc.MiscFlags = 0;
 
-                result = m_device->CreateTexture2D(&textureDesc, NULL, &m_renderTargets[ target ]->TextureMap);
+                result = m_device->CreateTexture2D(&textureDesc, nullptr, &m_renderTargets[ target ]->TextureMap);
                 UAssert(result == S_OK, "Failed to create texture2D description! (Error '%s')", GetDXErrorMessage(result));
                 ///////////////////////////////////////////////////////////////
                 // Setup the description of the render target view.

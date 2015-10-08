@@ -146,7 +146,7 @@ namespace ursine
         {
             for (auto &x : m_modelArray)
             {
-                if (x.second == NULL)
+                if (x.second == nullptr)
                     continue;
                 RELEASE_RESOURCE(x.second->Vertices_);
                 RELEASE_RESOURCE(x.second->Indices_);
@@ -160,7 +160,7 @@ namespace ursine
 
         void ModelManager::LoadModel(std::string name, std::string fileName)
         {
-            UAssert(m_modelArray[ name ] == NULL, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+            UAssert(m_modelArray[ name ] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
             std::ifstream input;
             std::vector<DiffuseTextureVertex> buffer;
@@ -247,14 +247,14 @@ namespace ursine
 
         ID3D11Buffer *ModelManager::GetModelVert(std::string name)
         {
-            if (m_modelArray[ name ] == NULL)
-                return NULL;
+            if (m_modelArray[ name ] == nullptr)
+                return nullptr;
             return m_modelArray[ name ]->Vertices_;
         }
 
         unsigned ModelManager::GetModelVertcount(std::string name)
         {
-            if (m_modelArray[ name ] == NULL)
+            if (m_modelArray[ name ] == nullptr)
                 return -1;
             return m_modelArray[ name ]->VertCount_;
         }
@@ -265,7 +265,7 @@ namespace ursine
 
             ModelResource *model = m_modelArray[ name ];
 
-            UAssert(model != NULL, "Failed to bind model '%s'", name.c_str());
+            UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
 
             //map mesh
             unsigned int strides = sizeof(DiffuseTextureVertex);
@@ -283,7 +283,7 @@ namespace ursine
 
             ModelResource *model = m_u2mTable[ ID ];
 
-            UAssert(model != NULL, "Failed to bind model ID:%i", ID);
+            UAssert(model != nullptr, "Failed to bind model ID:%i", ID);
 
             //map mesh
             unsigned int strides = sizeof(DiffuseTextureVertex);
