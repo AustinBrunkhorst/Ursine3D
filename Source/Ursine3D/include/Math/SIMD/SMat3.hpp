@@ -72,7 +72,7 @@ namespace ursine
 
 	INLINE SMat3::SMat3(float z_degrees, float x_degrees, float y_degrees)
 	{
-		RotationZXY( *this, z_degrees, x_degrees, y_degrees );
+		Rotation( *this, z_degrees, x_degrees, y_degrees );
 	}
 
 	// Properties
@@ -149,32 +149,28 @@ namespace ursine
 		);
 	}
 
-	INLINE void SMat3::RotationZXY(float z_degrees, float x_degrees, float y_degrees)
+	INLINE void SMat3::Rotation(float z_degrees, float x_degrees, float y_degrees)
 	{
-		RotationZXY( *this, z_degrees, x_degrees, y_degrees );
+		Rotation( *this, z_degrees, x_degrees, y_degrees );
 	}
 
-	INLINE void SMat3::RotationZXY(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees)
+	INLINE void SMat3::Rotation(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees)
 	{
-		float cx, sx, cy, sy, cz, sz;
+		float A, B, C, D, E, F;
 
 		float x = math::DegreesToRadians( x_degrees );
 		float y = math::DegreesToRadians( y_degrees );
 		float z = math::DegreesToRadians( z_degrees );
 
-		math::SinCos( x, sx, cx );
-		math::SinCos( y, sy, cy );
-		math::SinCos( z, sz, cz );
-
-		float cycz = cy * cz;
-		float sxsy = sx * sy;
-		float szcy = sz * cy;
+		math::SinCos( x, B, A );
+		math::SinCos( y, D, C );
+		math::SinCos( z, F, E );
 
 		mat.Set(
-			cycz + sxsy * sz, cz * sxsy - szcy, cx * sx,
-			cx * sz, cx * cz, -sx,
-			szcy * sx - cz * sy, cycz * sx + sy * sz, cx * cy
-		);
+            C*E, -C*F, -D,
+            -B*D*E + A*F, B*D*F + A*E, -B*C,
+            A*D*E + B*F, -A*D*F + B*E, A*C
+        );
 	}
 
 	INLINE SVec3 SMat3::GetRotationXYZ( ) const

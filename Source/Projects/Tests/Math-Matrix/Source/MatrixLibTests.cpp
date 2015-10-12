@@ -586,7 +586,7 @@ TEST_CASE("SMat3: Euler Rotation Function")
 {
     SMat3 mat;
 
-    mat.RotationZXY(45.0f, 45.0f, 45.0f);
+    mat.Rotation(45.0f, 45.0f, 45.0f);
 
     REQUIRE(math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(math::IsEqual(mat(0, 2), 0.5f));
     REQUIRE(math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(math::IsEqual(mat(1, 2), -0.707107f));
@@ -858,7 +858,7 @@ TEST_CASE("SMat4: Euler Rotation Function")
 {
     SMat4 mat;
 
-    mat.RotationZXY(45.0f, 45.0f, 45.0f);
+    mat.Rotation(45.0f, 45.0f, 45.0f);
 
     REQUIRE(math::IsEqual(mat(0, 0), 0.853553f));  REQUIRE(math::IsEqual(mat(0, 1), -0.146447f)); REQUIRE(math::IsEqual(mat(0, 2), 0.5f));       REQUIRE(mat(0, 3) == 0.0f);
     REQUIRE(math::IsEqual(mat(1, 0), 0.5f));       REQUIRE(math::IsEqual(mat(1, 1), 0.5f));       REQUIRE(math::IsEqual(mat(1, 2), -0.707107f)); REQUIRE(mat(1, 3) == 0.0f);

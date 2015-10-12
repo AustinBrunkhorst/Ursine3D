@@ -420,29 +420,29 @@ namespace ursine
 		SetColumn( 3, SVec4( 0, 0, 0, 1 ) );
 	}
 
-	INLINE void SMat4::RotationZXY(float z_degrees, float x_degrees, float y_degrees)
+	INLINE void SMat4::Rotation(float z_degrees, float x_degrees, float y_degrees)
 	{
-		RotationZXY( *this, z_degrees, x_degrees, y_degrees );
+		Rotation( *this, z_degrees, x_degrees, y_degrees );
 	}
 
-	INLINE void SMat4::RotationZXY(SMat4 &mat, float z_degrees, float x_degrees, float y_degrees)
+	INLINE void SMat4::Rotation(SMat4 &mat, float z_degrees, float x_degrees, float y_degrees)
 	{
-		float cx, sx, cy, sy, cz, sz;
+        float A, B, C, D, E, F;
 
-		math::SinCos( math::DegreesToRadians( x_degrees ), sx, cx );
-		math::SinCos( math::DegreesToRadians( y_degrees ), sy, cy );
-		math::SinCos( math::DegreesToRadians( z_degrees ), sz, cz );
+		float x = math::DegreesToRadians( x_degrees );
+		float y = math::DegreesToRadians( y_degrees );
+		float z = math::DegreesToRadians( z_degrees );
 
-		float cycz = cy * cz;
-		float sxsy = sx * sy;
-		float szcy = sz * cy;
+		math::SinCos( x, B, A );
+		math::SinCos( y, D, C );
+		math::SinCos( z, F, E );
 
 		mat.Set(
-			cycz + sxsy * sz, cz * sxsy - szcy, cx * sx, 0.0f,
-			cx * sz, cx * cz, -sx, 0.0f,
-			szcy * sx - cz * sy, cycz * sx + sy * sz, cx * cy, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		);
+            C*E, -C*F, -D, 0,
+            -B*D*E + A*F, B*D*F + A*E, -B*C, 0,
+            A*D*E + B*F, -A*D*F + B*E, A*C, 0,
+            0, 0, 0, 1
+        );
 	}
 
 	INLINE void SMat4::Scale(const SVec3 &scale)
