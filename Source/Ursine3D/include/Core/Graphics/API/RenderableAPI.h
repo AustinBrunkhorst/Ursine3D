@@ -39,12 +39,6 @@ namespace ursine
             // get a model
             Model3D &GetModel3D(GfxHND &handle);
 
-            // get a directional light
-            DirectionalLight &GetDirectionalLight(GfxHND &handle);
-
-            // get a point light
-            PointLight &GetPointLight(GfxHND &handle);
-
             // get a point light
             Primitive &GetPrimitive(GfxHND &handle);
 

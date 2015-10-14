@@ -179,28 +179,6 @@ namespace ursine
                 drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
             }
             break;
-            //directional light
-            case RENDERABLE_DIRECTION_LIGHT:
-            {
-                DirectionalLight *current = &renderableManager->m_renderableDirectionalLight[ render->Index_ ];
-
-                drawCall.Index_ = render->Index_;
-                drawCall.Type_ = render->Type_;
-
-                drawCall.Shader_ = SHADER_DIRECTIONAL_LIGHT;
-            }
-            break;
-            //point light
-            case RENDERABLE_POINT_LIGHT:
-            {
-                PointLight *current = &renderableManager->m_renderablePointLight[ render->Index_ ];
-
-                drawCall.Index_ = render->Index_;
-                drawCall.Type_ = render->Type_;
-
-                drawCall.Shader_ = SHADER_POINT_LIGHT;
-            }
-            break;
             case RENDERABLE_PRIMITIVE:
             {
                 Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
@@ -764,7 +742,7 @@ namespace ursine
         void GfxManager::Render3DModel(_DRAWHND handle)
         {
             //TEMP
-            URSINE_TODO("THIS IS REALLY BAD FIX AT LATER DATE");
+            URSINE_TODO("Remove this");
             POINT point;
             GetCursorPos(&point);
 
@@ -818,162 +796,79 @@ namespace ursine
 
         void GfxManager::RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj)
         {
-            if (handle.Type_ == RENDERABLE_POINT_LIGHT)
-            {
-                //get point light data
-                PointLight &pl = renderableManager->m_renderablePointLight[ handle.Index_ ];
+            Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
-                //get data
-                float radius = pl.GetRadius( );
+            //get data
+            float radius = pl.GetRadius( );
 
-                //domain shader needs light proj
-                SMat4 lightProj;
-                lightProj = SMat4(radius, radius, radius); //scaling
-                lightProj *= SMat4(pl.GetPosition( )); //translate to world space
-                lightProj *= currentCamera.GetViewMatrix( ); //transform into view space
-                lightProj *= proj; //transform into screeen space
+            //domain shader needs light proj
+            SMat4 lightProj;
+            lightProj = SMat4(radius, radius, radius); //scaling
+            lightProj *= SMat4(pl.GetPosition( )); //translate to world space
+            lightProj *= currentCamera.GetViewMatrix( ); //transform into view space
+            lightProj *= proj; //transform into screeen space
 
-                //map
-                bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, DOMAIN_SHADER);
+                                //map
+            bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, DOMAIN_SHADER);
 
-                //ps needs point light data buffer
-                SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
-                view.Transpose( );
-                SVec3 lightPosition = view.TransformPoint(pl.GetPosition( ));
+            //ps needs point light data buffer
+            SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
+            view.Transpose( );
+            SVec3 lightPosition = view.TransformPoint(pl.GetPosition( ));
 
-                PointLightBuffer pointB;
-                pointB.lightPos = lightPosition.ToD3D( );
-                pointB.lightRadius = pl.GetRadius( );
-                pointB.intensity = 1;
-                pointB.color.x = pl.GetColor( ).r;
-                pointB.color.y = pl.GetColor( ).g;
-                pointB.color.z = pl.GetColor( ).b;
-                bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, PIXEL_SHADER);
+            PointLightBuffer pointB;
+            pointB.lightPos = lightPosition.ToD3D( );
+            pointB.lightRadius = pl.GetRadius( );
+            pointB.intensity = 1;
+            pointB.color.x = pl.GetColor( ).r;
+            pointB.color.y = pl.GetColor( ).g;
+            pointB.color.z = pl.GetColor( ).b;
+            bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, PIXEL_SHADER);
 
-                //light transform
-                SMat4 transform;
-                transform *= SMat4(pl.GetPosition( ));
-                transform *= SMat4(radius, radius, radius);
-                bufferManager->MapTransformBuffer(transform);
+            //light transform
+            SMat4 transform;
+            transform *= SMat4(pl.GetPosition( ));
+            transform *= SMat4(radius, radius, radius);
+            bufferManager->MapTransformBuffer(transform);
 
-                //get camera position
-                SVec3 tempPos = currentCamera.GetPosition( );
+            //get camera position
+            SVec3 tempPos = currentCamera.GetPosition( );
 
-                ////get light position
-                SVec3 lightP = pl.GetPosition( );
-                SVec3 camLight = tempPos - lightP;
-                float distance = camLight.LengthSquared( );
-                float radiusSqr = radius * radius;
+            ////get light position
+            SVec3 lightP = pl.GetPosition( );
+            SVec3 camLight = tempPos - lightP;
+            float distance = camLight.LengthSquared( );
+            float radiusSqr = radius * radius;
 
-                if (radiusSqr > fabs(distance))
-                    dxCore->SetRasterState(RASTER_STATE_SOLID_FRONTCULL);
-                else
-                    dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
-
-                //render!
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sphere")));
-            }
+            if (radiusSqr > fabs(distance))
+                dxCore->SetRasterState(RASTER_STATE_SOLID_FRONTCULL);
             else
-            {
-                Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
+                dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
 
-                //get data
-                float radius = pl.GetRadius( );
-
-                //domain shader needs light proj
-                SMat4 lightProj;
-                lightProj = SMat4(radius, radius, radius); //scaling
-                lightProj *= SMat4(pl.GetPosition( )); //translate to world space
-                lightProj *= currentCamera.GetViewMatrix( ); //transform into view space
-                lightProj *= proj; //transform into screeen space
-
-                                   //map
-                bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, DOMAIN_SHADER);
-
-                //ps needs point light data buffer
-                SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
-                view.Transpose( );
-                SVec3 lightPosition = view.TransformPoint(pl.GetPosition( ));
-
-                PointLightBuffer pointB;
-                pointB.lightPos = lightPosition.ToD3D( );
-                pointB.lightRadius = pl.GetRadius( );
-                pointB.intensity = 1;
-                pointB.color.x = pl.GetColor( ).r;
-                pointB.color.y = pl.GetColor( ).g;
-                pointB.color.z = pl.GetColor( ).b;
-                bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, PIXEL_SHADER);
-
-                //light transform
-                SMat4 transform;
-                transform *= SMat4(pl.GetPosition( ));
-                transform *= SMat4(radius, radius, radius);
-                bufferManager->MapTransformBuffer(transform);
-
-                //get camera position
-                SVec3 tempPos = currentCamera.GetPosition( );
-
-                ////get light position
-                SVec3 lightP = pl.GetPosition( );
-                SVec3 camLight = tempPos - lightP;
-                float distance = camLight.LengthSquared( );
-                float radiusSqr = radius * radius;
-
-                if (radiusSqr > fabs(distance))
-                    dxCore->SetRasterState(RASTER_STATE_SOLID_FRONTCULL);
-                else
-                    dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
-
-                //render!
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sphere")));
-            }
+            //render!
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sphere")));
         }
 
         void GfxManager::RenderDirectionalLight(_DRAWHND handle, Camera &currentCamera)
         {
-            
-            if (handle.Type_ == RENDERABLE_DIRECTION_LIGHT)
-            {
+            Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
 
-                DirectionalLight &dl = renderableManager->m_renderableDirectionalLight[ handle.Index_ ];
+            SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
+            view.Transpose( );
+            SVec3 lightDirection = view.TransformVector(l.GetDirection( ));
 
-                SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
-                view.Transpose( );
-                SVec3 lightDirection = view.TransformVector(dl.GetDirection( ));
+            DirectionalLightBuffer lightB;
+            lightB.lightDirection.x = lightDirection.X( );
+            lightB.lightDirection.y = lightDirection.Y( );
+            lightB.lightDirection.z = lightDirection.Z( );
 
-                DirectionalLightBuffer lightB;
-                lightB.lightDirection.x = lightDirection.X( );
-                lightB.lightDirection.y = lightDirection.Y( );
-                lightB.lightDirection.z = lightDirection.Z( );
+            //used as a buffer
+            lightB.intensity = l.GetIntensity();
 
-                lightB.intensity = 1.f;
+            lightB.lightColor = DirectX::XMFLOAT3(l.GetColor( ).r * lightB.intensity, l.GetColor( ).g * lightB.intensity, l.GetColor( ).b * lightB.intensity);
 
-                lightB.lightColor = DirectX::XMFLOAT3(dl.GetColor( ).r, dl.GetColor( ).g, dl.GetColor( ).b);
-
-                bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, PIXEL_SHADER);
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-            }
-            else
-            {
-                Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
-
-                SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
-                view.Transpose( );
-                SVec3 lightDirection = view.TransformVector(l.GetDirection( ));
-
-                DirectionalLightBuffer lightB;
-                lightB.lightDirection.x = lightDirection.X( );
-                lightB.lightDirection.y = lightDirection.Y( );
-                lightB.lightDirection.z = lightDirection.Z( );
-
-                //used as a buffer
-                lightB.intensity = l.GetIntensity();
-
-                lightB.lightColor = DirectX::XMFLOAT3(l.GetColor( ).r * lightB.intensity, l.GetColor( ).g * lightB.intensity, l.GetColor( ).b * lightB.intensity);
-
-                bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, PIXEL_SHADER);
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-            }
+            bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, PIXEL_SHADER);
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
         }
 
         void GfxManager::RenderPrimitive(_DRAWHND handle)

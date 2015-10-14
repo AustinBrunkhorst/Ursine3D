@@ -24,13 +24,9 @@ namespace ursine
         {
             RENDERABLE_MODEL3D = 0,     //3d model
             RENDERABLE_BILLBOARD2D,     //2D billboard
-            RENDERABLE_LIGHT,
+            RENDERABLE_LIGHT,           //light
             RENDERABLE_PRIMITIVE,       //wireframe primitives
             
-            //deprecated
-            RENDERABLE_DIRECTION_LIGHT, //directional light, applied to all objects
-            RENDERABLE_POINT_LIGHT,     //positional light
-
             RENDERABLE_TYPE_COUNT
         };
     }

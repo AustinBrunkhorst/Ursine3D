@@ -58,28 +58,6 @@ namespace ursine
             }
 
             template<>
-            DirectionalLight &GetRenderable<DirectionalLight>(GfxHND handle)
-            {
-                _RENDERABLEHND *render = HND_RENDER(handle);
-
-                UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
-                UAssert(render->Type_ == RENDERABLE_DIRECTION_LIGHT, "Attempted to use invalid handle to get a directional light!");
-
-                return m_currentRenderableDirectionalLight[ render->Index_ ];
-            }
-
-            template<>
-            PointLight &GetRenderable<PointLight>(GfxHND handle)
-            {
-                _RENDERABLEHND *render = HND_RENDER(handle);
-
-                UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
-                UAssert(render->Type_ == RENDERABLE_POINT_LIGHT, "Attempted to use invalid handle to get a point light!");
-
-                return m_currentRenderablePointLight[ render->Index_ ];
-            }
-
-            template<>
             Primitive &GetRenderable<Primitive>(GfxHND handle)
             {
                 _RENDERABLEHND *render = HND_RENDER(handle);
@@ -130,12 +108,6 @@ namespace ursine
 
             //all the free handles
             std::vector<std::list<unsigned>*> m_handleList;
-
-            //deprecated
-            std::vector<DirectionalLight> m_renderableDirectionalLight;
-            std::vector<PointLight> m_renderablePointLight;
-            std::vector<DirectionalLight> m_currentRenderableDirectionalLight;
-            std::vector<PointLight> m_currentRenderablePointLight;
         };
     }
 }

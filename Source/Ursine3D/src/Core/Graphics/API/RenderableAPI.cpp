@@ -26,16 +26,6 @@ namespace ursine
             return m_privates->renderMgr->GetRenderable<Model3D>(handle);
         }
 
-        DirectionalLight &RenderableAPI::GetDirectionalLight(GfxHND &handle)
-        {
-            return m_privates->renderMgr->GetRenderable<DirectionalLight>(handle);
-        }
-
-        PointLight &RenderableAPI::GetPointLight(GfxHND &handle)
-        {
-            return m_privates->renderMgr->GetRenderable<PointLight>(handle);
-        }
-
         Primitive &RenderableAPI::GetPrimitive(GfxHND &handle)
         {
             return m_privates->renderMgr->GetRenderable<Primitive>(handle);
