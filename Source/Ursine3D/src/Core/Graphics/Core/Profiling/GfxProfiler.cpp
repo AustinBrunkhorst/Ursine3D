@@ -116,7 +116,7 @@ namespace ursine
             }
 
             //wait for data
-            while (m_devCon->GetData(m_disjointedQueries[ m_lastFrame ], NULL, 0, 0) == S_FALSE) { }
+            while (m_devCon->GetData(m_disjointedQueries[ m_lastFrame ], nullptr, 0, 0) == S_FALSE) { }
 
             //grab data
             D3D11_QUERY_DATA_TIMESTAMP_DISJOINT disjointStamp;

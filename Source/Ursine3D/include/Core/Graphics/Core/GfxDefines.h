@@ -24,10 +24,10 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 //gfx defines
 #define RELEASE_RESOURCE(resource) \
-  if(resource != NULL)\
+  if(resource != nullptr)\
     {\
     resource->Release();\
-    resource = NULL;\
+    resource = nullptr;\
     }
 
 //maximum simultaneous queries

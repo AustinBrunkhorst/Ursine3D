@@ -118,16 +118,6 @@ void Editor::InitializeScene(void)
 
     auto &world = scene.GetWorld( );
 
-    auto *pointLight = world.CreateEntity( "Point Light" );
-    {
-        pointLight->AddComponent<ecs::Renderable>( );
-
-        auto *light = pointLight->AddComponent<ecs::PointLight>( );
-
-        light->SetPosition( { 0.0f, 0.0f, 0.0f } );
-        light->SetRadius( 100.0f );
-        light->SetColor( Color::Red );
-    }
 
     auto *cameraEntity = world.CreateEntity( "Camera" );
     {
@@ -176,20 +166,6 @@ void Editor::InitializeScene(void)
         }
     }
 
-    auto *directionLight = world.CreateEntity( "Directional Light" );
-    {
-        auto lightHandle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_DIRECTION_LIGHT );
-
-        auto &light = m_graphics->RenderableMgr.GetDirectionalLight( lightHandle );
-
-        light.SetDirection( { 0.0f, -1.0f, 0.0f } );
-        light.SetColor( 1.0f, 1.0f, 1.0f );
-
-        auto *component = directionLight->AddComponent<ecs::Renderable>( );
-
-        component->SetHandle( lightHandle );
-    }
-
     auto *sky = world.CreateEntity( "Skybox" );
     {
         auto skyHND = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_MODEL3D );
@@ -202,11 +178,29 @@ void Editor::InitializeScene(void)
 
         SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
         SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
+        skybox.SetMaterialData(1, 0, 0);
         skybox.SetWorldMatrix( final );
 
         auto *component = sky->AddComponent<ecs::Renderable>( );
 
         component->SetHandle( skyHND );
+    }
+
+    auto *univLight = world.CreateEntity("Light");
+    {
+        auto lightHandle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_LIGHT);
+
+        auto &light = m_graphics->RenderableMgr.GetLight(lightHandle);
+
+        light.SetType(graphics::Light::LightType::LIGHT_DIRECTIONAL);
+        light.SetPosition(0, 0, 0);
+        light.SetRadius(40);
+        light.SetDirection({ 0.0f, 1.0f, 0.0f });
+        light.SetColor(Color::White);
+
+        auto *component = univLight->AddComponent<ecs::Renderable>( );
+
+        component->SetHandle(lightHandle);
     }
 }
 

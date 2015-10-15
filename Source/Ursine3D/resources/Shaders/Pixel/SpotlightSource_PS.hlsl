@@ -4,21 +4,20 @@ Texture2D ColorSpecIntTexture: register(t1);
 Texture2D NormalTexture: register(t2);
 Texture2D SpecPowTexture: register(t3);
 
-//sample type
-SamplerState SampleType : register(s0);
-
 //buffer for light data
-cbuffer DirectionalLightBuffer : register(b2)
+cbuffer SpotLightBuffer : register(b11)
 {
-    float4 lightDirection   : packoffset(c0);
-    float3 diffuseColor     : packoffset(c1);
-    float intensity         : packoffset(c1.w);
-    float4 lightPosition    : packoffset(c2);
+    float3 lightPosition    : packoffset(c0);
+    float falloff           : packoffset(c0.w);
+    float3 lightDirection   : packoffset(c1);
+    float innerAngle        : packoffset(c1.w);
+    float3 diffuseColor     : packoffset(c2);
+    float outerAngle        : packoffset(c2.w);
 }
 
 cbuffer InvProj : register(b4)
 {
-    float4x4 InvProj;
+    matrix InvProj;
 };
 
 //specular power range
@@ -116,7 +115,7 @@ float3 CalcPoint( float3 position, Material material )
 
     // Phong diffuse
     float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (intensity) * material.diffuseColor;
+    float3 finalColor = diffuseColor.rgb * NDotL * (1.f)* material.diffuseColor;
 
     // Blinn specular
     ToEye = normalize( ToEye );
@@ -124,7 +123,9 @@ float3 CalcPoint( float3 position, Material material )
     float NDotH = saturate( dot( HalfWay, material.normal ) );
     finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
 
-    return finalColor * (1.f - material.emissive) + material.diffuseColor * material.emissive;
+    // spotlight falloff
+
+    return finalColor;
 }
 
 

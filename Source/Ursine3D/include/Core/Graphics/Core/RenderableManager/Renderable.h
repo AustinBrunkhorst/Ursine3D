@@ -33,6 +33,7 @@ namespace ursine
             friend class RenderableManager;
         public:
             Renderable(void);
+            void Initialize(void);
 
         private:
             bool Active_;
@@ -59,16 +60,16 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
+            void Initialize(void);
+
             const char *GetModelName(void);
             void SetModel(std::string modelName);
 
             const char *GetMaterialslName(void);
             void SetMaterial(std::string materialName);
 
-            Model3D(void);
-
+    
             void SetMaterialData(float emiss, float pow, float intensity);
-
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
         private:
@@ -115,7 +116,7 @@ namespace ursine
                 PRIM_COUNT
             };
 
-            Primitive(void);
+            void Initialize(void);
 
             void SetType(PRIMITIVE_TYPE type);
             PRIMITIVE_TYPE GetType();
@@ -194,6 +195,60 @@ namespace ursine
             SVec3 m_position;
             Color Color_;
             float Radius_;
+        };
+
+        /////////////////////////////////////////////////////////////
+        // universal light class
+        class Light : public Renderable
+        {
+        public:
+            //enum for the different types of lights
+            enum LightType
+            {
+                LIGHT_DIRECTIONAL = 0,
+                LIGHT_POINT,
+                LIGHT_SPOTLIGHT,
+
+                LIGHT_COUNT
+            };
+
+        public:
+            void Initialize(void);
+
+            LightType GetType(void);
+            void SetType(const LightType type);
+
+            const SVec3 &GetDirection(void);
+            void SetDirection(const SVec3 &dir);
+            void SetDirection(const float x, const float y, const float z);
+
+            const SVec3 &GetPosition(void);
+            void SetPosition(const SVec3 &position);
+            void SetPosition(const float x, const  float y, const float z);
+
+            const Color &GetColor(void);
+            void SetColor(const Color &color);
+            void SetColor(const float r, const float g, const float b);
+
+            float GetRadius(void);
+            void SetRadius(const float radius);
+
+            float GetIntensity(void);
+            void SetIntensity(const float intensity);
+
+            const Vec2 &GetSpotlightAngles(void);
+            void SetSpotlightAngles(const Vec2 &angles);
+            void SetSpotlightAngles(const float inner, const float outer);
+
+        private:
+            LightType m_type;
+            SVec3 m_position;
+            Color m_color;
+            float m_radius;
+            SVec3 m_direction;
+            float m_intensity;
+
+            Vec2 m_spotlightAngles;
         };
     }
 }

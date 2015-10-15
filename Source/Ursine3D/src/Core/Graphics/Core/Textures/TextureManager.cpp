@@ -129,7 +129,7 @@ namespace ursine
         {
             for (auto i : m_textureList)
             {
-                if (i.second != NULL)
+                if (i.second != nullptr)
                     RELEASE_RESOURCE(i.second->Texture_);
             }
 
