@@ -6,12 +6,17 @@
 
 #define GfxManager reinterpret_cast<GfxManager*>(m_gfxmgr)
 
-
 namespace ursine
 {
     namespace graphics
     {
-        void UIInstance::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *gfx, RENDER_TARGETS target)
+        void UIInstance::Initialize(
+            ID3D11Device *device,
+            ID3D11DeviceContext *context,
+            DXCore::RenderTargetManager *rtmgr,
+            void *gfx,
+            RENDER_TARGETS target
+        )
         {
             m_device = device;
             m_context = context;
@@ -20,17 +25,17 @@ namespace ursine
             m_rtManager = rtmgr;
 
             unsigned x, y;
-            GfxManager->gfxInfo->GetDimensions(x, y);
+            GfxManager->gfxInfo->GetDimensions( x, y );
 
             m_width = x;
             m_height = y;
 
             m_target = target;
 
-            m_mainScreen = GfxManager->textureManager->CreateDynamicTexture(x, y);
+            m_paintingPopup = false;
         }
 
-        void UIInstance::Uninitialize()
+        void UIInstance::Uninitialize(void)
         {
             m_device = nullptr;
             m_context = nullptr;
@@ -38,86 +43,150 @@ namespace ursine
 
         void UIInstance::Draw(GfxHND camera)
         {
-            //GfxManager->RenderUI(camera, m_target);
-            GfxManager->RenderDynamicTexture(m_mainScreen, 0, 0);
+            GfxManager->RenderUI( camera, m_target );
         }
 
-        void UIInstance::DrawMain()
+        void UIInstance::DrawMain(void)
         {
-            //GfxManager->RenderUI_Main(m_target);
-            GfxManager->RenderDynamicTexture(m_mainScreen, 0, 0);
+            GfxManager->RenderUI_Main( m_target );
         }
 
-        void UIInstance::DrawPopup()
-        {
-            
-        }
-
-        bool UIInstance::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &bounds)
+        bool UIInstance::GetViewRect(
+            CefRefPtr<CefBrowser> browser, 
+            CefRect &bounds
+        )
         {
             bounds.x = 0;
             bounds.y = 0;
 
             //auto &size = gWindowManager->GetSize( );
             unsigned x, y;
-            GfxManager->gfxInfo->GetDimensions(x, y);
+            GfxManager->gfxInfo->GetDimensions( x, y );
 
             m_width = x;
             m_height = y;
 
-            bounds.width = static_cast<int>(m_width);
-            bounds.height = static_cast<int>(m_height);
+            bounds.width = static_cast<int>( m_width );
+            bounds.height = static_cast<int>( m_height );
 
             return true;
         }
 
-        void UIInstance::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show)
+        void UIInstance::OnPopupShow(
+            CefRefPtr<CefBrowser> browser, 
+            bool show
+        )
         {
-            printf("popup\n");
-            //if false, don't show popup
             if (!show)
             {
-                browser->GetHost()->Invalidate(PET_VIEW);
+                m_popupRect.Set( 0, 0, 0, 0 );
+                m_originalPopupRect.Set( 0, 0, 0, 0 );
 
-                m_popm_upbounds.Set(0, 0, 0, 0);
+                browser->GetHost( )->Invalidate( PET_VIEW );
             }
         }
 
-        void UIInstance::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect &bounds)
+        void UIInstance::OnPopupSize(
+            CefRefPtr<CefBrowser> browser, 
+            const CefRect &bounds
+        )
         {
             if (bounds.width <= 0 || bounds.height <= 0)
-                return; 
+                return;
 
-            m_popm_upbounds = bounds;
+            m_originalPopupRect = bounds;
+            m_popupRect = getPopupRectInView( m_originalPopupRect );
         }
 
         void UIInstance::OnPaint(
             CefRefPtr<CefBrowser> browser,
-            PaintElementType type,
-            const RectList &regions,
+            CefRenderHandler::PaintElementType type,
+            const CefRenderHandler::RectList &regions,
             const void *buffer,
             int width,
-            int height)
+            int height
+        )
         {
-
-            printf("%i\n", type);
             if (type == PET_VIEW)
-                paintView(browser, type, regions, buffer, width, height);
-            else if (m_popm_upbounds.width > 0 && m_popm_upbounds.height > 0)
-                paintPopup(browser, type, regions, buffer, width, height);
+                paintView( browser, type, regions, buffer, width, height );
+            else if (m_popupRect.width > 0 && m_popupRect.height > 0)
+                paintPopup( browser, type, regions, buffer, width, height );
+
+            if (!m_paintingPopup && type == PET_VIEW && !m_popupRect.IsEmpty( ))
+            {
+                m_paintingPopup = true;
+
+                browser->GetHost( )->Invalidate( PET_POPUP );
+
+                m_paintingPopup = false;
+            }
+        }
+
+        void UIInstance::Resize(int width, int height)
+        {
+            m_width = width;
+            m_height = height;
+
+            m_rtManager->ResizeUI( width, height, m_target );
+        }
+
+        CefRect UIInstance::getPopupRectInView(const CefRect &original)
+        {
+            auto rect( original );
+
+            // if x or y are negative, move them to 0
+
+            if (rect.x < 0)
+                rect.x = 0;
+
+            if (rect.y < 0)
+                rect.y = 0;
+
+            // if popup goes outside the view, try to reposition origin
+
+            if (rect.x + rect.width > m_width)
+                rect.x = m_width - rect.width;
+
+            if (rect.y + rect.height > m_height)
+                rect.y = m_height - rect.height;
+
+            // if x or y became negative, move them to 0 again
+
+            if (rect.x < 0)
+                rect.x = 0;
+
+            if (rect.y < 0)
+                rect.y = 0;
+
+            return rect;
         }
 
         //paint main ui
         void UIInstance::paintView(
             CefRefPtr<CefBrowser> browser,
-            PaintElementType type,
-            const RectList &regions,
+            CefRenderHandler::PaintElementType type,
+            const CefRenderHandler::RectList &regions,
             const void *buffer,
             int width,
-            int height)
+            int height
+        )
         {
-            int skip_pixels = 0, x = m_popm_upbounds.x;
-            int skip_rows = 0, y = m_popm_upbounds.y;
+            URSINE_TODO( "@Matt: this is all yours, baby" );
+            paintPopup( browser, type, regions, buffer, width, height );
+        }
+
+        //paint a popup
+        void UIInstance::paintPopup(
+            CefRefPtr<CefBrowser> browser,
+            CefRenderHandler::PaintElementType type,
+            const CefRenderHandler::RectList &regions,
+            const void *buffer,
+            int width,
+            int height
+        )
+        {
+            int skip_pixels = 0, x = m_popupRect.x;
+            int skip_rows = 0, y = m_popupRect.y;
             int w = width;
             int h = height;
 
@@ -160,7 +229,7 @@ namespace ursine
 
             //create the texture
             ID3D11Texture2D *tex;
-            HRESULT hr = m_device->CreateTexture2D(&desc, &subrsc, &tex);
+            HRESULT hr = m_device->CreateTexture2D( &desc, &subrsc, &tex );
 
             UAssert(hr == S_OK, "Failed to create UI texture!");
 
@@ -177,30 +246,10 @@ namespace ursine
             box.bottom = h;
 
             //now that we have the texture, we need to write it to the render target
-            DXCore::RenderTarget *rt = m_rtManager->GetRenderTarget(m_target);
-            m_context->CopySubresourceRegion(GfxManager->textureManager->GetDynamicTexture(m_mainScreen)->m_texture2d, 0, x, y, 0, tex, 0, &box);
+            DXCore::RenderTarget *rt = m_rtManager->GetRenderTarget( m_target );
+            m_context->CopySubresourceRegion( rt->TextureMap, 0, x, y, 0, tex, 0, &box );
 
-            RELEASE_RESOURCE(tex);
-        }
-
-        //paint a popup
-        void UIInstance::paintPopup(
-            CefRefPtr<CefBrowser> browser,
-            PaintElementType type,
-            const RectList &regions,
-            const void *buffer,
-            int width,
-            int height)
-        {
-            
-        }
-
-        void UIInstance::Resize(int width, int height)
-        {
-            m_width = width;
-            m_height = height;
-
-            m_rtManager->ResizeUI(width, height, m_target);
+            RELEASE_RESOURCE( tex );
         }
     }
 }
