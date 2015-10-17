@@ -59,7 +59,7 @@ namespace ursine
     void UIDirectXRenderer::paintView(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &regions, const void *buffer, int width, int height)
     {
         //@UI
-        m_gfxMgr->UIMgr.GetUI( m_uiHandle ).paintPopup( browser, type, regions, buffer, width, height );
+        m_gfxMgr->UIMgr.GetUI( m_uiHandle ).paintView( browser, type, regions, buffer, width, height );
     }
 
     void UIDirectXRenderer::paintPopup(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &regions, const void *buffer, int width, int height)

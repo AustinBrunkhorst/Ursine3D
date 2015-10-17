@@ -26,6 +26,8 @@ namespace ursine
             m_height = y;
 
             m_target = target;
+
+            m_mainScreen = GfxManager->textureManager->CreateDynamicTexture(x, y);
         }
 
         void UIInstance::Uninitialize()
@@ -36,12 +38,19 @@ namespace ursine
 
         void UIInstance::Draw(GfxHND camera)
         {
-            GfxManager->RenderUI(camera, m_target);
+            //GfxManager->RenderUI(camera, m_target);
+            GfxManager->RenderDynamicTexture(m_mainScreen, 0, 0);
         }
 
         void UIInstance::DrawMain()
         {
-            GfxManager->RenderUI_Main(m_target);
+            //GfxManager->RenderUI_Main(m_target);
+            GfxManager->RenderDynamicTexture(m_mainScreen, 0, 0);
+        }
+
+        void UIInstance::DrawPopup()
+        {
+            
         }
 
         bool UIInstance::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &bounds)
@@ -64,6 +73,8 @@ namespace ursine
 
         void UIInstance::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show)
         {
+            printf("popup\n");
+            //if false, don't show popup
             if (!show)
             {
                 browser->GetHost()->Invalidate(PET_VIEW);
@@ -75,7 +86,7 @@ namespace ursine
         void UIInstance::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect &bounds)
         {
             if (bounds.width <= 0 || bounds.height <= 0)
-                return;
+                return; 
 
             m_popm_upbounds = bounds;
         }
@@ -88,6 +99,8 @@ namespace ursine
             int width,
             int height)
         {
+
+            printf("%i\n", type);
             if (type == PET_VIEW)
                 paintView(browser, type, regions, buffer, width, height);
             else if (m_popm_upbounds.width > 0 && m_popm_upbounds.height > 0)
@@ -96,19 +109,6 @@ namespace ursine
 
         //paint main ui
         void UIInstance::paintView(
-            CefRefPtr<CefBrowser> browser,
-            PaintElementType type,
-            const RectList &regions,
-            const void *buffer,
-            int width,
-            int height)
-        {
-            //@Matt temp
-            paintPopup(browser, type, regions, buffer, width, height);
-        }
-
-        //paint a popup
-        void UIInstance::paintPopup(
             CefRefPtr<CefBrowser> browser,
             PaintElementType type,
             const RectList &regions,
@@ -178,9 +178,21 @@ namespace ursine
 
             //now that we have the texture, we need to write it to the render target
             DXCore::RenderTarget *rt = m_rtManager->GetRenderTarget(m_target);
-            m_context->CopySubresourceRegion(rt->TextureMap, 0, x, y, 0, tex, 0, &box);
+            m_context->CopySubresourceRegion(GfxManager->textureManager->GetDynamicTexture(m_mainScreen)->m_texture2d, 0, x, y, 0, tex, 0, &box);
 
             RELEASE_RESOURCE(tex);
+        }
+
+        //paint a popup
+        void UIInstance::paintPopup(
+            CefRefPtr<CefBrowser> browser,
+            PaintElementType type,
+            const RectList &regions,
+            const void *buffer,
+            int width,
+            int height)
+        {
+            
         }
 
         void UIInstance::Resize(int width, int height)

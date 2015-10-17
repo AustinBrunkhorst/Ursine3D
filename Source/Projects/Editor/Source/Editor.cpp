@@ -19,7 +19,7 @@ using namespace ursine;
 
 namespace
 {
-    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
+    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Test.html";
     const auto kEditorClearColor = Color( 0xFF252526 );
 
     const auto kDefaultWindowWidth = 1280;
@@ -228,6 +228,7 @@ void Editor::initializeGraphics(void)
 
     URSINE_TODO( "..." );
     config.m_renderUI = true;
+    config.debug = true;
 
     config.Profile_ = false;
 

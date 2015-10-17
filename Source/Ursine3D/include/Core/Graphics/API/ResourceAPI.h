@@ -35,6 +35,10 @@ namespace ursine
             // get texture handle
             GfxHND GetTexHandle(const char *name);
 
+            // create a texture of a given width/height, returns handle
+            // resize a texture
+            // destroy a texture resource
+
             //validate that a model/texture exists
 
             //get a list of available models

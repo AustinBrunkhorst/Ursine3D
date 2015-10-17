@@ -34,6 +34,7 @@ namespace ursine
             void Draw(GfxHND camera = 0);
 
             void DrawMain();
+            void DrawPopup();
 
             bool GetViewRect(CefRefPtr<CefBrowser> browser,
                 CefRect &bounds) override;
@@ -69,6 +70,8 @@ namespace ursine
             ID3D11DeviceContext *m_context;
             void *m_gfxmgr;
 
+            GfxHND m_mainScreen;
+            GfxHND m_popup;
 
             RENDER_TARGETS m_target;
             //rtmanager

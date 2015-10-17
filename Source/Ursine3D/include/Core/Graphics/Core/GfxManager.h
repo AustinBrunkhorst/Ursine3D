@@ -67,6 +67,8 @@ namespace ursine
             //set the viewport for the current game
             void SetGameViewport(GfxHND vp);
 
+            void RenderDynamicTexture(GfxHND &texHandle, const unsigned posX, const unsigned posY);
+
             //public members
         public:
             DXCore::DirectXCore *dxCore;

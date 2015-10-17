@@ -1000,6 +1000,39 @@ namespace ursine
             m_GameViewport = vp;
         }
 
+        void GfxManager::RenderDynamicTexture(GfxHND& texHandle, const unsigned posX, const unsigned posY)
+        {
+            //get the texture
+            Texture *tex = textureManager->GetDynamicTexture(texHandle);
+
+            _RESOURCEHND *handle = HND_RSRCE(texHandle);
+
+            //prep for ui
+            PrepForUI();
+
+            //get dimensions
+            unsigned width, height;
+            gfxInfo->GetDimensions(width, height);
+
+            //set directx viewport
+            D3D11_VIEWPORT vpData = viewportManager->GetViewport(m_GameViewport).GetViewportData();
+            unsigned w, h;
+            gfxInfo->GetDimensions(w, h);
+            vpData.TopLeftX = 0;
+            vpData.TopLeftY = 0;
+            vpData.Width = static_cast<FLOAT>(w);
+            vpData.Height = static_cast<FLOAT>(h);
+
+            dxCore->GetDeviceContext()->RSSetViewports(1, &vpData);
+
+
+            //map tex
+            textureManager->MapTextureByID(handle->Index_);
+            
+            //render to screen
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+        }
+
         // misc stuff /////////////////////////////////////////////////////
         DXCore::DirectXCore *GfxManager::GetDXCore()
         {
