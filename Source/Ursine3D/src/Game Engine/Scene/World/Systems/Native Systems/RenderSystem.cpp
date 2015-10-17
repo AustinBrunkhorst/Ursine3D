@@ -44,7 +44,7 @@ namespace ursine
         {
             EVENT_ATTRS(World, ComponentEventArgs);
 
-            if (args->component->Is<ursine::ecs::Camera>( ))
+            if (args->component->Is<Camera>( ))
             {
                 m_cameras.emplace( 
                     args->entity->GetUniqueID( ), 

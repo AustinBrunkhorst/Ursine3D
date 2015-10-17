@@ -23,19 +23,17 @@ namespace ursine
     {
         CORE_SYSTEM
     public:
+        Meta(Enable)
         TweenManager(void);
         ~TweenManager(void);
 
         // Suspends updating a specific group
-        Meta(Disable)
         void Pause(TweenGroupID group);
 
         // Resumes updating a specific group
-        Meta(Disable)
         void Resume(TweenGroupID group);
 
         // Removes all timers in a specific group
-        Meta(Disable)
         void Clear(TweenGroupID group = Tween::GROUP_DEFAULT);
 
     private:
@@ -62,5 +60,5 @@ namespace ursine
         Tween *get(uint32 id);
 
         void cancel(uint32 id, bool invokeRemoved = true);
-    } Meta(Enable);
+    } Meta(Enable, WhiteListMethods);
 }

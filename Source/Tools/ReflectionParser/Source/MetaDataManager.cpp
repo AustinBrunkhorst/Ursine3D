@@ -85,6 +85,7 @@ void MetaDataManager::CompileTemplateData(
         native_property::Enable,
         native_property::Disable,
         native_property::Register,
+        native_property::WhiteListMethods,
         native_property::DisableNonDynamicCtor,
         native_property::DynamicCtorWrap,
         native_property::DisablePtrType,

@@ -54,7 +54,7 @@ namespace ursine
 
 #endif
 
-#if defined(WITH_EDITOR)
+#if defined(URSINE_WITH_EDITOR)
 
         settings.remote_debugging_port = REMOTE_DEBUGGING_PORT;
 

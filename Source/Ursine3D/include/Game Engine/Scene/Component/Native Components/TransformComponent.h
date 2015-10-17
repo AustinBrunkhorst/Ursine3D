@@ -16,20 +16,20 @@ namespace ursine
         public:
             EditorField( 
                 SVec3 translation, 
-                editorGetTranslation, 
-                editorSetTranslation 
+                GetWorldPosition, 
+                SetWorldPosition 
             );
 
             EditorField( 
                 SVec3 rotation, 
-                editorGetRotation, 
+                GetWorldEuler,
                 editorSetRotation
             );
 
             EditorField( 
                 SVec3 scale, 
-                editorGetScale, 
-                editorSetScale 
+                GetWorldScale, 
+                SetWorldScale 
             );
 
             Transform(void);
@@ -54,9 +54,6 @@ namespace ursine
 
             const SVec3 &GetWorldPosition(void) const;
 
-            const SVec3 &editorGetTranslation(void) const;
-            void editorSetTranslation(const SVec3 &position);
-
             ////////////////////////////////////////////////////////////////////
             // Rotation
             ////////////////////////////////////////////////////////////////////
@@ -73,7 +70,6 @@ namespace ursine
             const SQuat &GetWorldRotation(void) const;
             SVec3 GetWorldEuler(void) const;
 
-            SVec3 editorGetRotation(void) const;
             void editorSetRotation(const SVec3 &euler);
 
             ////////////////////////////////////////////////////////////////////
@@ -87,9 +83,6 @@ namespace ursine
             void SetWorldScale(const SVec3 &scale);
 
             const SVec3 &GetWorldScale(void) const;
-
-            const SVec3 &editorGetScale(void) const;
-            void editorSetScale(const SVec3 &scale);
 
             ////////////////////////////////////////////////////////////////////
             // Axis
@@ -129,9 +122,10 @@ namespace ursine
             SQuat m_local_rotation;*/
 
         private:
-            
             void copy(const Transform &transform);
 
-        } Meta(Enable, DisplayName( "Transform" ));
+            void dispatch(void) const;
+
+        } Meta(Enable, WhiteListMethods, DisplayName( "Transform" ));
     }
 }

@@ -13,7 +13,6 @@
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
 #include <PointLightComponent.h>
-#include <Utilities/Timer/TimerManager.h>
 
 using namespace ursine;
 
@@ -112,7 +111,8 @@ Project *Editor::GetProject(void) const
 void Editor::InitializeScene(void)
 {
     m_project->GetScene( ).GetWorld( ).Listener( this )
-        .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded );
+        .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded )
+        .On( ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, &Editor::onComponentChanged );
 
     auto &scene = m_project->GetScene( );
 
@@ -285,6 +285,19 @@ void Editor::onEntityAdded(EVENT_HANDLER(ecs::World))
     };
 
     m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "EntityAdded", message );
+}
+
+void Editor::onComponentChanged(EVENT_HANDLER(ecs::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
+
+    Json message = Json::object {
+        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "field", args->field },
+        { "value", args->value.GetType( ).SerializeJson( args->value ) }
+    };
+
+    m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "ComponentChanged", message );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

@@ -27,14 +27,11 @@ namespace ursine
 	{
 		CORE_SYSTEM;
 	public:
-
-		Meta( DisableNonDynamic )
+		Meta(Enable, DisableNonDynamic)
 		PhysicsManager(void) { }
 
-		Meta(Disable)
 		void OnInitialize(void) override;
 
-		Meta(Disable)
 		void OnRemove(void) override;
 
 		void AddCollisionShape(btCollisionShape *shape);
@@ -74,5 +71,5 @@ namespace ursine
 		void initPhysics(void);
 		void destroyPhysics(void);
 
-	} Meta( Enable );
+	} Meta(Enable, WhiteListMethods);
 }

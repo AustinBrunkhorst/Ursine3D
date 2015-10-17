@@ -4,7 +4,7 @@ import js.html.LIElement;
 import js.html.DOMElement;
 import js.html.UListElement;
 
-import ursine.editor.scene.Entity;
+import ursine.editor.scene.entity.Entity;
 
 class SceneOutline extends WindowHandler {
     private var m_entityList : UListElement;
@@ -25,7 +25,8 @@ class SceneOutline extends WindowHandler {
 
         window.container.appendChild( m_entityList );
 
-        Editor.instance.broadcastManager.getChannel( 'EntityManager' ).on( 'EntityAdded', onEntityAdded );
+        Editor.instance.broadcastManager.getChannel( 'EntityManager' )
+            .on( 'EntityAdded', onEntityAdded );
     }
 
     private function onEntityAdded(e) {

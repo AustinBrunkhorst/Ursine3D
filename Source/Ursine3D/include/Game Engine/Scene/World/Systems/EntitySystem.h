@@ -43,11 +43,9 @@ namespace ursine
             LocalTweenManager m_tweens;
 
             // Called when the system is initialized
-            Meta(Disable)
             virtual void OnInitialize(void) { }
 
             // Called when the system is removed from the world
-            Meta(Disable)
             virtual void OnRemove(void) { }
 
         private:
@@ -55,7 +53,7 @@ namespace ursine
             friend class SystemManager;
 
             SystemTypeID m_typeID;
-        } Meta(Enable);
+        } Meta(Enable, WhiteListMethods);
     }
 }
 

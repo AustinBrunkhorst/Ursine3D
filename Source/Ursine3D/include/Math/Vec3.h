@@ -15,7 +15,6 @@
 
 #include "UrsineTypes.h"
 #include "SIMD.h"
-#include <string>
 
 namespace ursine
 {
@@ -33,7 +32,12 @@ namespace ursine
 		friend class SVec4;
 
 	public:
+        EditorField(float x, X, SetX);
+        EditorField(float y, Y, SetY);
+        EditorField(float z, Z, SetZ);
+
 		// Constructors
+        Meta(Enable)
 		Vec3(void);
 		Vec3(const Vec3 &value);
 		Vec3(const SVec3 &value);
@@ -97,9 +101,14 @@ namespace ursine
 		float X(void) const;
 		float Y(void) const;
 		float Z(void) const;
+
 		float &X(void);
 		float &Y(void);
 		float &Z(void);
+
+        void SetX(float x);
+        void SetY(float y);
+        void SetZ(float z);
 
 		float operator[](uint index) const;
 		float &operator[](uint index);
@@ -127,7 +136,7 @@ namespace ursine
 
 	private:
 		float m_x, m_y, m_z;
-	};
+	} Meta(Enable, WhiteListMethods);
 }
 
 #include "Vec3.hpp"

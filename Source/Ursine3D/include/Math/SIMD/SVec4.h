@@ -15,7 +15,8 @@
 
 #include "UrsineTypes.h"
 #include "SIMD.h"
-#include <string>
+
+#include "Meta.h"
 
 #ifdef URSINE_GRAPHICS_DIRECTX
 namespace DirectX
@@ -39,7 +40,13 @@ namespace ursine
 		friend class Vec4;
 
 	public:
+        EditorField(float x, X, SetX);
+        EditorField(float y, Y, SetY);
+        EditorField(float z, Z, SetZ);
+        EditorField(float w, W, SetW);
+
 		// Constructors
+        Meta(Enable)
 		SVec4(void);
 		SVec4(const SVec4 &value);
 		SVec4(const Vec4 &value);
@@ -104,10 +111,16 @@ namespace ursine
 		float Y(void) const;
 		float Z(void) const;
 		float W(void) const;
+
 		float &X(void);
 		float &Y(void);
 		float &Z(void);
 		float &W(void);
+
+        void SetX(float x);
+        void SetY(float y);
+        void SetZ(float z);
+        void SetW(float z);
 
 		float operator[](uint index) const;
 		float &operator[](uint index);
@@ -151,7 +164,7 @@ namespace ursine
 #else
 		float m_x, m_y, m_z, m_w;
 #endif
-	};
+	} Meta(Enable, WhiteListMethods);
 }
 
 #include "SVec4.hpp"

@@ -1,0 +1,27 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-component-inspector">
+    <link rel="import" type="css" href="../Style/Controls/ComponentInspector.css">
+    <template>
+        <header>
+            <div class="heading">{{heading}}</div>
+        </header>
+        <div id="container">
+            <content></content>
+        </div>
+    </template>
+    <script>
+        var ComponentInspector = Polymer({
+            is: "x-component-inspector",
+            properties: {
+                heading: {
+                    type: String,
+                    notify: true
+                }
+            },
+            get container() {
+                return this.$.container;
+            }
+        });
+    </script>
+</dom-module>

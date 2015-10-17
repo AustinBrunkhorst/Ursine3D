@@ -23,19 +23,17 @@ namespace ursine
     {
         CORE_SYSTEM
     public:
+        Meta(Enable)
         TimerManager(void);
         ~TimerManager(void);
 
         // Suspends updating a specific group
-        Meta(Disable)
         void Pause(TimerGroupID group);
 
         // Resumes updating a specific group
-        Meta(Disable)
         void Resume(TimerGroupID group);
 
         // Removes all timers in a specific group
-        Meta(Disable)
         void Clear(TimerGroupID group = Timer::GROUP_DEFAULT);
 
     private:
@@ -61,5 +59,5 @@ namespace ursine
         Timer *get(uint32 id);
 
         void cancel(uint32 id, bool invoke_removed = true);
-    } Meta(Enable);
+    } Meta(Enable, WhiteListMethods);
 }

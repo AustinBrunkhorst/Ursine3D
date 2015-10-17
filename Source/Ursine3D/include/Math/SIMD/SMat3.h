@@ -70,8 +70,8 @@ namespace ursine
 		static void Rotation(SMat3 &mat, float degrees);
 
 		// Euler Axis Rotation
-		void RotationZXY(float z_degrees, float x_degrees, float y_degrees);
-		static void RotationZXY(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees);
+		void Rotation(float z_degrees, float x_degrees, float y_degrees);
+		static void Rotation(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees);
 
 		// Get the euler angles in degrees
 		SVec3 GetRotationXYZ(void) const;

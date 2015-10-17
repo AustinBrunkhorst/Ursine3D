@@ -1,7 +1,9 @@
-package ursine.editor.scene;
+package ursine.editor.scene.entity;
+
+import ursine.editor.scene.component.ComponentInspection;
 
 @:native( "EntityHandler" )
-extern class Entity {
+extern class EntityHandler {
     public function new(uniqueID : UInt) : Void;
 
     public function isValid() : Bool;
@@ -11,9 +13,4 @@ extern class Entity {
     public function inspect() : Array<ComponentInspection>;
 
     public function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void;
-}
-
-extern class ComponentInspection {
-    var type : String;
-    var value : Dynamic;
 }

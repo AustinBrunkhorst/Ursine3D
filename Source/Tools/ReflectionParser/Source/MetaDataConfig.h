@@ -14,6 +14,7 @@ namespace native_property
 {
     const auto Enable = "Enable";
     const auto Disable = "Disable";
+    const auto WhiteListMethods = "WhiteListMethods";
 
     const auto Register = "Register";
 
