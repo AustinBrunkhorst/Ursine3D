@@ -1042,6 +1042,67 @@ namespace ursine
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
         }
 
+        void GfxManager::RenderDynamicTextureInViewport(GfxHND& texHandle, const float posX, const float posY, GfxHND& camera)
+        {
+            _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>(&camera);
+
+            UAssert(newRender->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
+
+            // get viewport
+            Camera &cam = cameraManager->GetCamera(camera);
+
+            //get the texture
+            Texture *tex = textureManager->GetDynamicTexture(texHandle);
+
+            _RESOURCEHND *handle = HND_RSRCE(texHandle);
+
+            //prep for ui
+            PrepForUI( );
+
+            //get dimensions
+            unsigned width, height;
+            gfxInfo->GetDimensions(width, height);
+
+            //will need these to be floats
+            float fWidth = static_cast<float>(width);
+            float fHeight = static_cast<float>(height);
+
+            //set directx viewport
+            float w, h, x, y;
+            Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
+            D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
+            cam.GetPosition(x, y);
+            cam.GetDimensions(w, h);
+
+            w *= gvp.Width;
+            h *= gvp.Height;
+
+            x *= gvp.Width;
+            y *= gvp.Height;
+
+            D3D11_VIEWPORT vpData;
+            vpData.Width = w;
+            vpData.Height = h;
+            vpData.TopLeftX = x;
+            vpData.TopLeftY = y;
+            vpData.MinDepth = 0;
+            vpData.MaxDepth = 1;
+
+            dxCore->GetDeviceContext( )->RSSetViewports(1, &vpData);
+
+            //calculate position w/ respect to top left
+            float finalX = (posX - fWidth / 2.f + tex->m_width / 2.f) / (fWidth / 2.f);
+            float finalY = (-posY + height / 2.f - tex->m_height / 2.f) / (fHeight / 2.f);
+            SMat4 trans = SMat4(SVec3(finalX, finalY, 0));
+            bufferManager->MapTransformBuffer(trans * SMat4(-2 * (tex->m_width / fWidth), 2 * (tex->m_height / fHeight), 1));
+
+            //map tex
+            textureManager->MapTextureByID(handle->Index_);
+
+            //render to screen
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+        }
+
         void GfxManager::RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void* input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY)
         {
             //set up description
