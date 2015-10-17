@@ -7,6 +7,6 @@ namespace ursine
     namespace ecs
     {
         Rigidbody::Rigidbody(void)
-            : BaseComponent() { }
+            : BaseComponent( ) { }
     }
 }
