@@ -115,7 +115,7 @@ float3 CalcPoint( float3 position, Material material )
 
     // Phong diffuse
     float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (1.f)* material.diffuseColor;
+    float3 finalColor = diffuseColor.rgb * NDotL * (1.f)* material.diffuseColor.xyz;
 
     // Blinn specular
     ToEye = normalize( ToEye );

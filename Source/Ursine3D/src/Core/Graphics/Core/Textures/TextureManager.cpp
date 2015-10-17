@@ -264,7 +264,7 @@ namespace ursine
             //make sure it's of the right type
             UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to resize dynamic texture with handle of invalid type!");
 
-            id = hnd->ID_;
+            id = hnd->Index_;
 
             //make sure valid resource was given
             UAssert(m_hashTextureList[ id ] != nullptr, "Tried to resize invalid dynamic texture!");
@@ -286,7 +286,7 @@ namespace ursine
             desc.Height = height;
             desc.MipLevels = desc.ArraySize = 1;
             desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-            desc.SampleDesc.Count = 2;
+            desc.SampleDesc.Count = 1;
             desc.SampleDesc.Quality = 0;
             desc.Usage = D3D11_USAGE_DYNAMIC;
             desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;

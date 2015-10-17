@@ -107,6 +107,14 @@ namespace ursine
             Meta(Disable)
                 void SetGameViewport(GfxHND vp);
 
+            void RenderTexture(GfxHND &handle, const float posX, const float posY);
+
+            void RenderToDynamicTexture(const int srcWidth, const int srcHeight, 
+                                        const void *input, 
+                                        const int inputWidth, const int inputHeight, 
+                                        GfxHND destTexture, 
+                                        const int destinationX, const int destinationY);
+
             // private members
         private:
             privateData *m_privates;

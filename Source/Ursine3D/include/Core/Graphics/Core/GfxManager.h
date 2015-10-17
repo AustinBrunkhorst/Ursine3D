@@ -67,7 +67,11 @@ namespace ursine
             //set the viewport for the current game
             void SetGameViewport(GfxHND vp);
 
-            void RenderDynamicTexture(GfxHND &texHandle, const unsigned posX, const unsigned posY);
+            //render texture to screen
+            void RenderDynamicTexture(GfxHND &texHandle, const float posX, const float posY);
+
+            //render onto a texture
+            void RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void *input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY);
 
             //public members
         public:

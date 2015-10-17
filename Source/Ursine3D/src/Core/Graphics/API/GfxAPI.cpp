@@ -111,5 +111,19 @@ namespace ursine
         {
             m_privates->gfxCore_->SetGameViewport(vp);
         }
+
+        void GfxAPI::RenderTexture(GfxHND& handle, const float posX, const float posY)
+        {
+            m_privates->gfxCore_->RenderDynamicTexture(handle, posX, posY);
+        }
+
+        void GfxAPI::RenderToDynamicTexture(const int srcWidth, const int srcHeight, 
+                                            const void* input, 
+                                            const int inputWidth, const int inputHeight, 
+                                            GfxHND destTexture, 
+                                            const int destinationX, const int destinationY)
+        {
+            m_privates->gfxCore_->RenderToDynamicTexture(srcWidth, srcHeight, input, inputWidth, inputHeight, destTexture, destinationX, destinationX);
+        }
     }
 }
