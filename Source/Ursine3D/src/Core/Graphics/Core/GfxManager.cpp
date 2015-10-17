@@ -1000,6 +1000,156 @@ namespace ursine
             m_GameViewport = vp;
         }
 
+        void GfxManager::RenderDynamicTexture(GfxHND& texHandle, const float posX, const float posY)
+        {
+            //get the texture
+            Texture *tex = textureManager->GetDynamicTexture(texHandle);
+
+            _RESOURCEHND *handle = HND_RSRCE(texHandle);
+
+            //prep for ui
+            PrepForUI();
+
+            //get dimensions
+            unsigned width, height;
+            gfxInfo->GetDimensions(width, height);
+
+            //will need these to be floats
+            float fWidth = static_cast<float>(width);
+            float fHeight = static_cast<float>(height);
+
+            //set directx viewport
+            D3D11_VIEWPORT vpData = viewportManager->GetViewport(m_GameViewport).GetViewportData();
+            unsigned w, h;
+            gfxInfo->GetDimensions(w, h);
+            vpData.TopLeftX = 0;
+            vpData.TopLeftY = 0;
+            vpData.Width = static_cast<FLOAT>(w);
+            vpData.Height = static_cast<FLOAT>(h);
+
+            dxCore->GetDeviceContext()->RSSetViewports(1, &vpData);
+
+            //calculate position w/ respect to top left
+            float finalX = (posX - fWidth / 2.f + tex->m_width / 2.f) / (fWidth / 2.f);
+            float finalY = (-posY + height / 2.f - tex->m_height / 2.f) / (fHeight / 2.f);
+            SMat4 trans = SMat4(SVec3(finalX, finalY, 0));
+            bufferManager->MapTransformBuffer(trans * SMat4(-2 * (tex->m_width / fWidth), 2 * (tex->m_height / fHeight), 1));
+
+            //map tex
+            textureManager->MapTextureByID(handle->Index_);
+            
+            //render to screen
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+        }
+
+        void GfxManager::RenderDynamicTextureInViewport(GfxHND& texHandle, const float posX, const float posY, GfxHND& camera)
+        {
+            _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>(&camera);
+
+            UAssert(newRender->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
+
+            // get viewport
+            Camera &cam = cameraManager->GetCamera(camera);
+
+            //get the texture
+            Texture *tex = textureManager->GetDynamicTexture(texHandle);
+
+            _RESOURCEHND *handle = HND_RSRCE(texHandle);
+
+            //prep for ui
+            PrepForUI( );
+
+            //get dimensions
+            unsigned width, height;
+            gfxInfo->GetDimensions(width, height);
+
+            //will need these to be floats
+            float fWidth = static_cast<float>(width);
+            float fHeight = static_cast<float>(height);
+
+            //set directx viewport
+            float w, h, x, y;
+            Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
+            D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
+            cam.GetPosition(x, y);
+            cam.GetDimensions(w, h);
+
+            w *= gvp.Width;
+            h *= gvp.Height;
+
+            x *= gvp.Width;
+            y *= gvp.Height;
+
+            D3D11_VIEWPORT vpData;
+            vpData.Width = w;
+            vpData.Height = h;
+            vpData.TopLeftX = x;
+            vpData.TopLeftY = y;
+            vpData.MinDepth = 0;
+            vpData.MaxDepth = 1;
+
+            dxCore->GetDeviceContext( )->RSSetViewports(1, &vpData);
+
+            //calculate position w/ respect to top left
+            float finalX = (posX - fWidth / 2.f + tex->m_width / 2.f) / (fWidth / 2.f);
+            float finalY = (-posY + height / 2.f - tex->m_height / 2.f) / (fHeight / 2.f);
+            SMat4 trans = SMat4(SVec3(finalX, finalY, 0));
+            bufferManager->MapTransformBuffer(trans * SMat4(-2 * (tex->m_width / fWidth), 2 * (tex->m_height / fHeight), 1));
+
+            //map tex
+            textureManager->MapTextureByID(handle->Index_);
+
+            //render to screen
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+        }
+
+        void GfxManager::RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void* input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY)
+        {
+            //set up description
+            D3D11_TEXTURE2D_DESC desc;
+            desc.Width = srcWidth;
+            desc.Height = srcHeight;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // dammmnnnn
+            desc.SampleDesc.Count = 1;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_DEFAULT;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = 0;
+            desc.MiscFlags = 0;
+
+            //set up resource
+            D3D11_SUBRESOURCE_DATA subrsc;
+            subrsc.pSysMem = input;
+            subrsc.SysMemPitch = srcWidth * 4; //length of one line in bytes, 32 bit color
+            subrsc.SysMemSlicePitch = 0;
+
+            //create the texture
+            ID3D11Texture2D *tex;
+            HRESULT hr = dxCore->GetDevice()->CreateTexture2D(&desc, &subrsc, &tex);
+
+            UAssert(hr == S_OK, "Failed to create UI texture!");
+
+            //this doesn't work for now
+            //define the box of the texture
+            D3D11_BOX box; //this box is the taken from the SOURCE texture
+            box.back = 1; //this might need SERIOUS changes
+            box.front = 0;
+
+            box.left = 0;
+            box.top = 0;
+
+            box.right = inputWidth;
+            box.bottom = inputHeight;
+
+            //now that we have the texture, we need to write it to the render target
+            Texture *target = textureManager->GetDynamicTexture(destTexture);
+            dxCore->GetDeviceContext()->CopySubresourceRegion(target->m_texture2d, 0, destinationX, destinationY, 0, tex, 0, &box);
+
+
+            RELEASE_RESOURCE(tex);
+        }
+        
         // misc stuff /////////////////////////////////////////////////////
         DXCore::DirectXCore *GfxManager::GetDXCore()
         {

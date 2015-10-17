@@ -21,6 +21,7 @@ typedef unsigned long long GfxHND;
 //converting to types
 #define HND_DRAW(handle)    reinterpret_cast<_DRAWHND*>(&handle)
 #define HND_RSRCE(handle)   reinterpret_cast<_RESOURCEHND*>(&handle)
+#define HND_CONST_RSRCE(handle)   reinterpret_cast<_RESOURCEHND const*>(&handle)
 #define HND_RENDER(handle)  reinterpret_cast<_RENDERABLEHND*>(&handle)
 #define HND_CAST(handle)    static_cast<GfxHND>(handle)
 
@@ -47,8 +48,8 @@ namespace ursine
         {
             unsigned Index_ : 16; //index of resource
             unsigned Etc_ : 16; //extra data... what type of texture? maybe what model it is associated with?
-            unsigned Type_ : 4; //what is this? a model? texture? 
-            unsigned buffer_ : 20; //buffer for packing
+            unsigned Type_ : 16; //what is this? a model? texture? 
+            unsigned buffer_ : 8; //buffer for packing
             unsigned ID_ : 8; //sanity check ID
         };
 
@@ -56,9 +57,9 @@ namespace ursine
         struct _RENDERABLEHND
         {
             unsigned Index_ : 16; //actual data
-            unsigned Type_ : 8; //what type is this resource? a 3d model? a light? 2d billboard?
-            unsigned ID_ : 8; //sanity check ID
-            unsigned buffer_ : 32; //buffer
+            unsigned Type_ : 16; //what type is this resource? a 3d model? a light? 2d billboard?
+            unsigned ID_ : 16; //sanity check ID
+            unsigned buffer_ : 16; //buffer
         };
 
         //internal structure for renderables given to user

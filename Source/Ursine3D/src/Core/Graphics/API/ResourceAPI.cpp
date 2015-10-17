@@ -25,6 +25,21 @@ namespace ursine
             return m_privates->textureMgr->GetTextureIDByName(name);
         }
 
+        GfxHND ResourceAPI::CreateTexture(const unsigned width, const unsigned height)
+        {
+            return m_privates->textureMgr->CreateDynamicTexture(width, height);
+        }
+
+        void ResourceAPI::ResizeTexture(GfxHND& handle, const unsigned width, const unsigned height)
+        {
+            m_privates->textureMgr->ResizeDynamicTexture(handle, width, height);
+        }
+
+        void ResourceAPI::DestroyTexture(GfxHND& handle)
+        {
+            m_privates->textureMgr->DestroyDynamicTexture(handle);
+        }
+
         void ResourceAPI::SetPrivates(void *priv, void *priv2)
         {
             m_privates->modelMgr = reinterpret_cast<ModelManager*>(priv);

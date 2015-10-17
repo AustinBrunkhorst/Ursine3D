@@ -67,6 +67,15 @@ namespace ursine
             //set the viewport for the current game
             void SetGameViewport(GfxHND vp);
 
+            //render texture to screen
+            void RenderDynamicTexture(GfxHND &texHandle, const float posX, const float posY);
+
+            //render in cam viewport
+            void RenderDynamicTextureInViewport(GfxHND &texHandle, const float posX, const float posY, GfxHND &camera);
+
+            //render onto a texture
+            void RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void *input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY);
+
             //public members
         public:
             DXCore::DirectXCore *dxCore;
