@@ -49,9 +49,8 @@ namespace ursine
         {
             GfxManager->RenderDynamicTexture(m_mainTarget, 0,0);
 
-            if (true)
+            if (m_paintingPopup)
             {
-                printf("%i, %i\n", m_popupRect.x, m_popupRect.y);
                 GfxManager->RenderDynamicTexture(m_popup, m_popupRect.x, m_popupRect.y);
             }
         }
@@ -200,7 +199,7 @@ namespace ursine
             if (y + h > m_height)
                 h -= y + h - m_height;
 
-            GfxManager->RenderToDynamicTexture(width, height, buffer, w, h, m_mainTarget, x, y);
+            GfxManager->RenderToDynamicTexture(width, height, buffer, w, h, m_mainTarget, 0, 0);
         }
 
         //paint a popup
