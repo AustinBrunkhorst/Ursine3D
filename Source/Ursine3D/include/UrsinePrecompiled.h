@@ -135,3 +135,5 @@ namespace fs = boost::filesystem;
 #include "Application.h"
 
 #include "Randomizer.h"
+
+#include "EntityManager.h"

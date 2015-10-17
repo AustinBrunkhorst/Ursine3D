@@ -27,8 +27,11 @@ namespace ursine
             // Transform
             ///////////////////////////////////////////////////////////////////
 
-            // A transform was invalided
+            // A transform was invalidated
             ENTITY_TRANSFORM_CHANGED,
+
+            // An entities parent has changed
+            ENTITY_PARENT_CHANGED,
 
             ///////////////////////////////////////////////////////////////////
             // User Defined
