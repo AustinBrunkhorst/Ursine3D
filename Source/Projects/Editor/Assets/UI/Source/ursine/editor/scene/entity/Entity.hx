@@ -19,7 +19,8 @@ class Entity implements IEventContainer {
 
         m_handler = new EntityHandler( uniqueID );
 
-        Editor.instance.broadcastManager.getChannel( 'EntityManager' ).on( 'ComponentChanged', onComponentChanged );
+        Editor.instance.broadcastManager.getChannel( 'EntityManager' )
+            .on( EntityEvent.ComponentChanged, onComponentChanged );
     }
 
     public function isValid() : Bool {
@@ -40,6 +41,6 @@ class Entity implements IEventContainer {
 
     private function onComponentChanged(e) {
         if (e.uniqueID == uniqueID)
-            events.trigger( 'componentChanged', e );
+            events.trigger( EntityEvent.ComponentChanged, e );
     }
 }

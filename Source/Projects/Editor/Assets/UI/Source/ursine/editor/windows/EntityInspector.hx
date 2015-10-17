@@ -1,20 +1,21 @@
 package ursine.editor.windows;
 
-import ursine.editor.scene.Entity;
+import ursine.editor.scene.entity.Entity;
+import ursine.editor.scene.entity.EntityEvent;
 
 class EntityInspector extends WindowHandler {
     public static var instance : EntityInspector;
 
     private var m_inspectedEntity : Entity = null;
 
-    private var m_componentContainers : Map<String, ComponentInspectionHandler>;
+    private var m_componentHandlers : Map<String, ComponentInspectionHandler>;
 
     public function new() {
         instance = this;
 
         super( );
 
-        m_componentContainers = new Map<String, ComponentInspectionHandler>( );
+        m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
 
         window.heading = "Inspector";
 
@@ -42,16 +43,16 @@ class EntityInspector extends WindowHandler {
 
     private function clearOldInspection() {
         if (m_inspectedEntity != null)
-            m_inspectedEntity.events.off( 'componentChanged', onInspectedEntityComponentChanged );
+            m_inspectedEntity.events.off( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
 
-        for (container in m_componentContainers)
-            window.container.removeChild( container );
+        for (handler in m_componentHandlers)
+            window.container.removeChild( handler.inspector );
 
         // reset containers
-        m_componentContainers = new Map<String, ComponentInspectionHandler>( );
+        m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
     }
 
     public function initializeInspection() {
-        m_inspectedEntity.events.on( 'componentChanged', onInspectedEntityComponentChanged );
+        m_inspectedEntity.events.on( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
     }
 }

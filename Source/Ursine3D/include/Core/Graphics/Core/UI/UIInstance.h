@@ -25,36 +25,46 @@ namespace ursine
 {
     namespace graphics
     {
-        class UIInstance : CefRenderHandler
+        class UIInstance
         {
         public:
-            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, DXCore::RenderTargetManager *rtmgr, void *mgr, RENDER_TARGETS target);
-            void Uninitialize();
+            void Initialize(
+                ID3D11Device *device, 
+                ID3D11DeviceContext *context, 
+                DXCore::RenderTargetManager *rtmgr, 
+                void *mgr, 
+                RENDER_TARGETS target
+            );
+
+            void Uninitialize(void);
 
             void Draw(GfxHND camera = 0);
 
-            void DrawMain();
+            void DrawMain(void);
 
-            bool GetViewRect(CefRefPtr<CefBrowser> browser,
-                CefRect &bounds) override;
+            bool GetViewRect(
+                CefRefPtr<CefBrowser> browser,
+                CefRect &bounds
+            );
 
-            void OnPopupShow(CefRefPtr<CefBrowser> browser,
-                bool show) override;
+            void OnPopupShow(
+                CefRefPtr<CefBrowser> browser,
+                bool show
+            );
 
-            void OnPopupSize(CefRefPtr<CefBrowser> browser,
-                const CefRect &bounds) override;
+            void OnPopupSize(
+                CefRefPtr<CefBrowser> browser,
+                const CefRect &bounds
+            );
 
-            void OnPaint(CefRefPtr<CefBrowser> browser,
-                PaintElementType type, const RectList &regions,
-                const void *buffer, int width, int height) override;
-
-            void paintView(CefRefPtr<CefBrowser> browser,
-                PaintElementType type, const RectList &regions,
-                const void *buffer, int width, int height);
-
-            void paintPopup(CefRefPtr<CefBrowser> browser,
-                PaintElementType type, const RectList &regions,
-                const void *buffer, int width, int height);
+            void OnPaint(
+                CefRefPtr<CefBrowser> browser,
+                CefRenderHandler::PaintElementType type, 
+                const CefRenderHandler::RectList &regions,
+                const void *buffer, 
+                int width, 
+                int height
+            );
 
             void Resize(int width, int height);
 
@@ -62,19 +72,38 @@ namespace ursine
         private:
             int m_width, m_height;
 
-            CefRect m_popm_upbounds;
+            bool m_paintingPopup;
+
+            CefRect m_popupRect;
+            CefRect m_originalPopupRect;
 
             //device context
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_context;
             void *m_gfxmgr;
 
-
             RENDER_TARGETS m_target;
-            //rtmanager
+
             DXCore::RenderTargetManager *m_rtManager;
 
-            IMPLEMENT_REFCOUNTING(UIInstance);
+            CefRect getPopupRectInView(const CefRect &original);
+
+            void paintView(CefRefPtr<CefBrowser> browser,
+                CefRenderHandler::PaintElementType type, 
+                const CefRenderHandler::RectList &regions,
+                const void *buffer, 
+                int width, 
+                int height
+            );
+
+            void paintPopup(
+                CefRefPtr<CefBrowser> browser,
+                CefRenderHandler::PaintElementType type, 
+                const CefRenderHandler::RectList &regions,
+                const void *buffer, 
+                int width, 
+                int height
+            );
         };
     }
 }

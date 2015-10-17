@@ -1,8 +1,12 @@
 package ursine.editor;
 
-class ComponentInspectionHandler {
-    public function new() {
+import ursine.controls.ComponentInspector;
 
+class ComponentInspectionHandler {
+    public var inspector : ComponentInspector;
+
+    public function new() {
+        inspector = new ComponentInspector( );
     }
 
     public function remove() {
