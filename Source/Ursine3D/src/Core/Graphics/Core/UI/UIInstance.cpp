@@ -48,8 +48,10 @@ namespace ursine
         void UIInstance::DrawMain(void)
         {
             GfxManager->RenderDynamicTexture(m_mainTarget, 0,0);
-
-            if (m_paintingPopup)
+            
+            URSINE_TODO("remove hard-coded edge case");
+            //this is VERY VERY VERY temporary. Just so you can see it works.
+            if (m_popupRect.y != 0)
             {
                 GfxManager->RenderDynamicTexture(m_popup, m_popupRect.x, m_popupRect.y);
             }
@@ -176,11 +178,12 @@ namespace ursine
             int height
         )
         {
+            URSINE_TODO("handle cases w/ multiple rect lists");
             int skip_pixels = 0, x = m_popupRect.x;
             int skip_rows = 0, y = m_popupRect.y;
             int w = width;
             int h = height;
-            
+
             // adjust the popup to fit inside the view.
             if (x < 0)
             {

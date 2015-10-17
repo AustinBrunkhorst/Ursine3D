@@ -107,7 +107,9 @@ namespace ursine
             Meta(Disable)
                 void SetGameViewport(GfxHND vp);
 
-            void RenderTexture(GfxHND &handle, const float posX, const float posY);
+            void RenderTextureMain(GfxHND &handle, const float posX, const float posY);
+
+            void RenderTextureInViewport(GfxHND &handle, const float posX, const float posY, GfxHND &camera);
 
             void RenderToDynamicTexture(const int srcWidth, const int srcHeight, 
                                         const void *input, 
