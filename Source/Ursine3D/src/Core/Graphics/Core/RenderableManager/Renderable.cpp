@@ -14,6 +14,16 @@ namespace ursine
 
         void Renderable::Initialize() {}
 
+        void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
+        {
+            entityID = id;
+        }
+
+        ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
+        {
+            return entityID;
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)

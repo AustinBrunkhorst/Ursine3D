@@ -103,7 +103,7 @@ namespace ursine
             float emissive;
             float specularPower;
             float specularIntensity;
-            float buffer;
+            unsigned id;
         };
 
         struct SpotlightBuffer

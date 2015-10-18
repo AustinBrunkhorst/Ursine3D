@@ -741,14 +741,13 @@ namespace ursine
         // rendering //////////////////////////////////////////////////////
         void GfxManager::Render3DModel(_DRAWHND handle)
         {
-            //TEMP
+            // TEMP /////////////////////////////////////////////////
             URSINE_TODO("Remove this");
             POINT point;
             GetCursorPos(&point);
 
             {
                 bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), GEOMETRY_SHADER);
-                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
             }
 
             PrimitiveColorBuffer pcb;
@@ -759,15 +758,22 @@ namespace ursine
             t += 0.000016f;
             pcb.color.z = t;
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, GEOMETRY_SHADER);
-            //END OF TEMP
+            // END OF TEMP //////////////////////////////////////////
 
             //map transform
+            bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
 
-
-            //map material data
+            //material buffer
             MaterialDataBuffer mdb;
+
+            //get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
+
+            //set unique ID for this model
+            mdb.id = (handle.Index_) | (handle.Type_ << 16);
+
+            //map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
 
             //set model
@@ -776,6 +782,7 @@ namespace ursine
             //map texture
             textureManager->MapTextureByID(handle.Material_);
 
+            //render
             shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
         }
 
@@ -786,6 +793,11 @@ namespace ursine
 
             //set model
             modelManager->BindModel("Sprite");
+
+            //map material data
+            MaterialDataBuffer mdb;
+            mdb.id;
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
 
             //map texture
             textureManager->MapTextureByID(handle.Material_);
