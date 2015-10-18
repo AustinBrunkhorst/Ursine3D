@@ -12,13 +12,13 @@
 
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
-#include <PointLightComponent.h>
 
 using namespace ursine;
 
 namespace
 {
     const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
+
     const auto kEditorClearColor = Color( 0xFF252526 );
 
     const auto kDefaultWindowWidth = 1280;
@@ -292,10 +292,10 @@ void Editor::onMainWindowResize(EVENT_HANDLER(Window))
 {
     EVENT_ATTRS(Window, WindowResizeArgs);
 
+    m_graphics->Resize( args->width, args->height );
+
     m_mainWindow.ui->SetViewport( {
         0, 0,
         args->width, args->height
     } );
-
-    m_graphics->Resize( args->width, args->height );
 }
