@@ -90,7 +90,7 @@ namespace ursine
             ComponentVector GetComponents(const Entity *entity) const;
 
             ////////////////////////////////////////////////////////////////////
-            // Scene
+            // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
             // Gets a component of the specified type in this entity's children (type safe) (depth first)

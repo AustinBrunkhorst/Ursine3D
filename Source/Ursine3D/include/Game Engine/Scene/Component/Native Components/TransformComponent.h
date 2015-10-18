@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** TransformComponent.h
+**
+** Author:
+** - Jordan Ellis - contact@jordanellis.me
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Component.h"
@@ -12,6 +25,8 @@ namespace ursine
         class Transform : public Component
         {
             NATIVE_COMPONENT;
+
+			ALLOW_ALIGNED_ALLOC(16);
 
         public:
             EditorField( 
@@ -46,9 +61,9 @@ namespace ursine
             // Position
             ////////////////////////////////////////////////////////////////////
 
-            /*void SetLocalPosition(const SVec3 &position);
+            void SetLocalPosition(const SVec3 &position);
 
-            const SVec3 &LocalPosition(void) const;*/
+            const SVec3 &GetLocalPosition(void) const;
 
             void SetWorldPosition(const SVec3 &position);
 
@@ -58,11 +73,11 @@ namespace ursine
             // Rotation
             ////////////////////////////////////////////////////////////////////
 
-            /*void SetLocalRotation(const SQuat &rotation);
+            void SetLocalRotation(const SQuat &rotation);
             void SetLocalEuler(const SVec3 &euler);
 
-            const SQuat &LocalRotation(void) const;
-            SVec3 LocalEuler(void) const;*/
+            const SQuat &GetLocalRotation(void) const;
+            SVec3 GetLocalEuler(void) const;
 
             void SetWorldRotation(const SQuat &rotation);
             void SetWorldEuler(const SVec3 &euler);
@@ -72,13 +87,15 @@ namespace ursine
 
             void editorSetRotation(const SVec3 &euler);
 
+			void LookAt(const SVec3 &worldPosition);
+
             ////////////////////////////////////////////////////////////////////
             // Scale
             ////////////////////////////////////////////////////////////////////
 
-            /*void SetLocalScale(const SVec3 &scale);
+            void SetLocalScale(const SVec3 &scale);
             
-            const SVec3 &LocalScale(void) const;*/
+            const SVec3 &GetLocalScale(void) const;
 
             void SetWorldScale(const SVec3 &scale);
 
@@ -89,22 +106,104 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             // Do this in the quaternion class
-            /*SVec3 Forward(void) const;
-            SVec3 Right(void) const;
-            SVec3 Up(void) const;*/
+            SVec3 GetForward(void) const;
+            SVec3 GetRight(void) const;
+            SVec3 GetUp(void) const;
+
+			////////////////////////////////////////////////////////////////////
+			// Matrix
+			////////////////////////////////////////////////////////////////////
+
+			bool GetDirty(void) const;
+
+			const SMat4 &GetLocalToWorldMatrix(void);
+
+			const SMat4 &GetWorldToLocalMatrix(void);
+
+			////////////////////////////////////////////////////////////////////
+			// Hierarchy
+			////////////////////////////////////////////////////////////////////
+
+			Transform *GetRoot(void);
+
+			Transform *GetParent(void);
+
+			bool IsChildOf(Transform *parent);
+
+			// Add a child to the hierarchy, assuming its coordinates are in world space
+			void AddChild(Transform *child);
+
+			// Add a child to the hierarchy, assuming its coordinates are in local space
+			void AddChildAlreadyInLocal(Transform *child);
+
+			// Remove a child from the hierarchy (adding to root node)
+			void RemoveChild(Transform *child);
+
+			// Remove all children from the hiearchy (adding to root node)
+			void RemoveChildren(void);
+
+			// Find child by their index in the list
+			// If the index is too large, return nullptr
+			Transform *GetChild(uint index);
+			const Transform *GetChild(uint index) const;
+
+			// Find this transform's index in relation to the other children
+			uint GetSiblingIndex(void) const;
+
+			// Move this transform to the start of the parent's children lists
+			void SetAsFirstSibling(void);
+
+			// Sets this transform's index in the parent's children list
+			void SetSiblingIndex(uint index) const;
+
+			// Gets a component of the specified type in this entity's children (type safe) (depth first)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInChildren(const Entity *entity) const;
+
+			// Gets a component of the specified type id in this entity's children (depth first)
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInChildren(const Entity *entity, ComponentTypeID id) const;
+
+			// Gets a component of the specified type in this entity's parent (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInParent(const Entity *entity) const;
+
+			// Gets a component of the specified type id in this entity's parent
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's children (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInChildren(const Entity *entity) const;
+
+			// Gets the components of the specified type id in this entity's children
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInChildren(const Entity *entity, ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's parents (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInParents(const Entity *entity) const;
+
+			// Gets the components of the specified type id in this entity's parents
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
 
         protected:
 
             // The top most transform in the hierarchy
             // If this is the top most, root == this
-            // Transform *m_root;
+            Transform *m_root;
 
             // The parent of this transform.
             // If there is no parent, parent == nullptr
-            // Transform *m_parent;
+            Transform *m_parent;
 
             // Child pointers.
-            // std::vector<Transform*> _children;
+            std::vector<Transform*> _children;
 
             // Flag telling us if this object's data has been changed this frame
             bool m_dirty;
@@ -116,10 +215,10 @@ namespace ursine
             SQuat m_worldRotation;
 
             // Local coordinates (coordinates in relation to the parent)
-            /*SVec3 m_local_position,
-                  m_local_scale;
+            SVec3 m_localPosition,
+                  m_localScale;
 
-            SQuat m_local_rotation;*/
+            SQuat m_localRotation;
 
         private:
             void copy(const Transform &transform);
@@ -129,3 +228,5 @@ namespace ursine
         } Meta(Enable, WhiteListMethods, DisplayName( "Transform" ));
     }
 }
+
+#include "TransformComponent.hpp"

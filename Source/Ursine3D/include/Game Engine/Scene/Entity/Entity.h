@@ -129,6 +129,46 @@ namespace ursine
             // (chances are you don't need to use it)
             ComponentVector GetComponents(void) const;
 
+			////////////////////////////////////////////////////////////////////
+			// Hierarchy
+			////////////////////////////////////////////////////////////////////
+
+			// Gets a component of the specified type in this entity's children (type safe) (depth first)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInChildren(const Entity *entity) const;
+
+			// Gets a component of the specified type id in this entity's children (depth first)
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInChildren(const Entity *entity, ComponentTypeID id) const;
+
+			// Gets a component of the specified type in this entity's parent (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInParent(const Entity *entity) const;
+
+			// Gets a component of the specified type id in this entity's parent
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's children (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInChildren(const Entity *entity) const;
+
+			// Gets the components of the specified type id in this entity's children
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInChildren(const Entity *entity, ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's parents (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInParents(const Entity *entity) const;
+
+			// Gets the components of the specified type id in this entity's parents
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
+
             ////////////////////////////////////////////////////////////////////
             // Events
             ////////////////////////////////////////////////////////////////////

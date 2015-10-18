@@ -69,7 +69,7 @@ namespace ursine
             auto &entityNode = m_nodes[ entityID ];
             
             // Save the old parent
-            auto oldParent = entityNode.Parent( );
+			auto oldParent = args->oldParent;
             auto newParent = args->newParent;
       
             if (newParent == oldParent)
