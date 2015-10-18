@@ -21,4 +21,5 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "Tools/JavaScript/DebugUtils.h"
+#include "Tools/JavaScript/SceneUtils.h"
 #include "Tools/JavaScript/ComponentUtils.h"

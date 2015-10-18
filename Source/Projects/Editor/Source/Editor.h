@@ -22,8 +22,6 @@ public:
     void OnRemove(void) override;
     
     Project *GetProject(void) const;
-
-    void InitializeScene(void);
     
 private:
     ursine::graphics::GfxAPI *m_graphics;
@@ -39,6 +37,7 @@ private:
     Project *m_project;
 
     void initializeGraphics(void);
+    void initializeScene(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
@@ -47,6 +46,3 @@ private:
     void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
     void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
 } Meta(Enable, WhiteListMethods);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(OnEditorUILoad);

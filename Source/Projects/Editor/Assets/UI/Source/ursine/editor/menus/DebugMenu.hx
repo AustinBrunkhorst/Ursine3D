@@ -1,8 +1,15 @@
 package ursine.editor.menus;
 
+import ursine.native.Extern;
+
 class DebugMenu extends MenuItemHandler {
-    @mainMenuItem( "Debug/Debug Editor UI" )
+    @mainMenuItem( "Debug/Editor UI/Reload" )
+    static function doEditorReload() {
+        //js.Browser.location.reload( true );
+    }
+
+    @mainMenuItem( "Debug/Editor UI/Inspect" )
     static function doEditorDebugTools() {
-        untyped __js__( "DebugEditorUI( )" );
+        Extern.DebugEditorUI( );
     }
 }

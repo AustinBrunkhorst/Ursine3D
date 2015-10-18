@@ -37,8 +37,7 @@ class EntityInspector extends WindowHandler {
     }
 
     private function onInspectedEntityComponentChanged(e) {
-        trace( 'changed!!!!' );
-        trace( e );
+
     }
 
     private function clearOldInspection() {

@@ -254,7 +254,7 @@ namespace ursine
             return database.types[ m_id ].name;
         }
 
-        const MetaManager& Type::GetMeta(void) const
+        const MetaManager &Type::GetMeta(void) const
         {
             return database.types[ m_id ].meta;
         }

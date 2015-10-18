@@ -87,6 +87,11 @@ namespace ursine
             return entity;
         }
 
+        const EntityVector &EntityManager::GetActiveEntities(void) const
+        {
+            return m_active;
+        }
+
         void EntityManager::AddComponent(Entity *entity, Component *component)
         {
             UAssert( !entity->HasComponent( component->GetTypeMask( ) ),

@@ -48,6 +48,9 @@ namespace ursine
             // Gets an entity based on its unique id
             Entity *GetEntityUnique(EntityUniqueID uniqueID) const;
 
+            // Gets all active entities in the world
+            const EntityVector &GetActiveEntities(void) const;
+
             // Gets all entities belonging to a group
             const EntityVector &GetEntitiesFromName(const std::string &group) const;
 
