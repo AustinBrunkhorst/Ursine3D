@@ -32,15 +32,15 @@ namespace ursine
         //internal structure for draw calls
         struct _DRAWHND
         {
-            unsigned Index_ : 16;
-            unsigned Type_ : 4;
-            unsigned Material_ : 8; //what material do I have?
-            unsigned Model_ : 8; //what model do we have
-            unsigned Shader_ : 8; //what shader am I?
-            unsigned HUD_ : 1; //are we a part of the hud?
-            unsigned buffer_ : 7; //buffer for packing
-            unsigned debug_ : 4; //debug happens last
-            unsigned ID_ : 8; //sanity check ID
+            unsigned Index_ : 16;       //index of the 
+            unsigned Type_ : 4;         //type
+            unsigned Material_ : 8;     //what material do I have?
+            unsigned Model_ : 8;        //what model do we have
+            unsigned Shader_ : 8;       //what shader am I?
+            unsigned HUD_ : 1;          //are we a part of the hud?
+            unsigned buffer_ : 7;       //buffer for packing
+            unsigned debug_ : 4;        //debug happens last
+            unsigned ID_ : 8;           //sanity check ID
         };
 
         //internal structure for resources

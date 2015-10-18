@@ -93,9 +93,9 @@ namespace ursine
         URSINE_TODO( "..." );
         //m_viewport = viewport;
 
-        m_browser->GetHost( )->WasResized( );
-
         resize(viewport.width, viewport.height);
+
+        m_browser->GetHost()->WasResized();
     }
 
     bool UIView::IsValid(void) const
