@@ -158,7 +158,22 @@ namespace ursine
 			return m_world->m_entityManager->GetComponentsInParents( entity, id );
 	    }
 
-	    void Entity::RemoveComponent(ComponentTypeID id)
+        uint Entity::GetSiblingIndex(void) const
+        {
+            return m_world->m_entityManager->GetSiblingIndex( this );
+        }
+
+        void Entity::SetAsFirstSibling(void)
+        {
+
+        }
+
+        void Entity::SetSiblingIndex(uint index) const
+        {
+
+        }
+
+        void Entity::RemoveComponent(ComponentTypeID id)
         {
             m_world->m_entityManager->RemoveComponent( this, id );
         }

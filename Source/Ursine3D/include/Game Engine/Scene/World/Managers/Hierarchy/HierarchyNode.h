@@ -21,8 +21,10 @@ namespace ursine
     {
         class HierarchyNode
         {
+            friend class Hierarchy;
+
         public:
-            virtual const std::vector<EntityID> *Children(void) const;
+            virtual const std::vector<EntityID> &Children(void) const;
             virtual void AddChild(EntityID child);
             virtual void RemoveChild(EntityID child);
 

@@ -169,6 +169,15 @@ namespace ursine
 			// nullptr if it doesn't exist. Use the type safe version when possible
 			ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
 
+            // Find this entity's index in relation to the other children
+            uint GetSiblingIndex(void) const;
+
+            // Move this entity to the start of the parent's children lists
+            void SetAsFirstSibling(void);
+
+            // Sets this entity's index in the parent's children list
+            void SetSiblingIndex(uint index) const;
+
             ////////////////////////////////////////////////////////////////////
             // Events
             ////////////////////////////////////////////////////////////////////

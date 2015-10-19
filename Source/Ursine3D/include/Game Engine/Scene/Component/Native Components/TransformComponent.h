@@ -120,6 +120,16 @@ namespace ursine
 
 			const SMat4 &GetWorldToLocalMatrix(void);
 
+            ////////////////////////////////////////////////////////////////////
+            // Transformations
+            ////////////////////////////////////////////////////////////////////
+
+            SVec3 ToLocal(const SVec3 &point);
+            SQuat ToLocal(const SQuat &quat);
+
+            SVec3 ToWorld(const SVec3 &point);
+            SQuat ToWorld(const SQuat &quat);
+
 			////////////////////////////////////////////////////////////////////
 			// Hierarchy
 			////////////////////////////////////////////////////////////////////
@@ -128,6 +138,8 @@ namespace ursine
 
 			Transform *GetParent(void);
 
+            // Check to see if this transform is a 
+            // child (anywhere in the hierarchy) of the given parent
 			bool IsChildOf(Transform *parent);
 
 			// Add a child to the hierarchy, assuming its coordinates are in world space
@@ -194,6 +206,9 @@ namespace ursine
 
         protected:
 
+            // Flag telling us if this object's data has been changed this frame
+            bool m_dirty;
+
             // The top most transform in the hierarchy
             // If this is the top most, root == this
             Transform *m_root;
@@ -203,10 +218,7 @@ namespace ursine
             Transform *m_parent;
 
             // Child pointers.
-            std::vector<Transform*> _children;
-
-            // Flag telling us if this object's data has been changed this frame
-            bool m_dirty;
+            std::vector<Transform*> m_children;
 
             // World coordinates
             SVec3 m_worldPosition,
@@ -220,10 +232,27 @@ namespace ursine
 
             SQuat m_localRotation;
 
+            // Transformations
+            SMat4 m_localToWorld;
+            SMat4 m_worldToLocal;
+
         private:
             void copy(const Transform &transform);
 
-            void dispatch(void) const;
+            void dispatchDirty(void) const;
+            void dispatchParentChange(Transform *oldParent, Transform *newParent) const;
+
+            // Recalculate the internal matrices
+            void recalculateLocalToWorldMatrix(void);
+            void recalculateWorldToLocalMatrix(void);
+
+            void onParentDirty(EVENT_HANDLER(Entity));
+
+            // Generically add a child to our hierarch, without 
+            // handling value changes in scale, position, or rotation
+            void genericAddChild(Transform *child);
+
+            void setParent(Transform *oldParent, Transform *newParent);
 
         } Meta(Enable, WhiteListMethods, DisplayName( "Transform" ));
     }

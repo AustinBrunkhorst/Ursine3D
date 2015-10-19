@@ -7,9 +7,9 @@ namespace ursine
 {
     namespace ecs
     {
-        const std::vector<EntityID> *HierarchyNode::Children() const
+        const std::vector<EntityID> &HierarchyNode::Children(void) const
         {
-            return &m_children;
+            return m_children;
         }
 
         void HierarchyNode::AddChild(EntityID child)

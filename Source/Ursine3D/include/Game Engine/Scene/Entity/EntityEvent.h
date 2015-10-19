@@ -28,7 +28,7 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////
 
             // A transform was invalidated
-            ENTITY_TRANSFORM_CHANGED,
+            ENTITY_TRANSFORM_DIRTY,
 
             // An entities parent has changed
             ENTITY_PARENT_CHANGED,

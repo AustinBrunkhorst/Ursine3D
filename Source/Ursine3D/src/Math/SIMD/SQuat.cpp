@@ -257,7 +257,7 @@ namespace ursine
 			result = *this;
 	}
 
-	SVec3 SQuat::Rotate(const SVec3 &vec)
+	SVec3 SQuat::Rotate(const SVec3 &vec) const
 	{
 		SVec3 result;
 
@@ -266,7 +266,7 @@ namespace ursine
 		return result;
 	}
 
-	void SQuat::Rotate(const SVec3 &vec, SVec3 &result)
+	void SQuat::Rotate(const SVec3 &vec, SVec3 &result) const
 	{
 		SVec3 qv( m_x, m_y, m_z );
 
@@ -324,7 +324,7 @@ namespace ursine
 		return *this;
 	}
 
-	SQuat SQuat::operator*(const SQuat &rhs)
+	SQuat SQuat::operator*(const SQuat &rhs) const
 	{
 		return SQuat(
 			m_w * rhs.X( ) + m_x * rhs.W( ) + m_y * rhs.Z( ) - m_z * rhs.Y( ),
@@ -334,7 +334,7 @@ namespace ursine
 		);
 	}
 
-	SVec3 SQuat::operator*(const SVec3 &rhs)
+	SVec3 SQuat::operator*(const SVec3 &rhs) const
 	{
 		return Rotate( rhs );
 	}
