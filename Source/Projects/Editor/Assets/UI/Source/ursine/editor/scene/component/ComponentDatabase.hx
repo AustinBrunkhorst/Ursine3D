@@ -1,12 +1,18 @@
 package ursine.editor.scene.component;
 
-typedef NativeEnum = Dynamic<Map<String, Int>>;
 typedef NativeMeta = Dynamic<Map<String, Dynamic>>;
+typedef NativeEnum = Dynamic<Map<String, Dynamic>>;
+
+extern class NativeType {
+    var type : String;
+}
 
 extern class ComponentTypeField {
     var type : String;
-    var meta : NativeMeta;
     var isEnum : Bool;
+    var enumValue : NativeEnum;
+
+    var meta : NativeMeta;
 }
 
 extern class ComponentType {
@@ -15,7 +21,7 @@ extern class ComponentType {
 }
 
 class ComponentDatabase {
-    private var m_enums : Map<String, NativeEnum>;
+    private var m_typeDB : Map<String, NativeType>;
     private var m_db : Map<String, ComponentType>;
 
     public function new(database : Dynamic) {
@@ -24,7 +30,7 @@ class ComponentDatabase {
         var components = Reflect.fields( database );
 
         for (name in components) {
-            var component = Reflect.field( components, name );
+            var component = Reflect.field( database, name );
 
             m_db.set( name, component );
         }

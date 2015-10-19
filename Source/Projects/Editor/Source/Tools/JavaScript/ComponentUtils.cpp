@@ -26,9 +26,27 @@ JSFunction(GetNativeComponentDatabase)
         for (auto &field : component.GetFields( ))
         {
             auto &fieldName = field.GetName( );
+            auto fieldType = field.GetType( );
+
+            Json::object enumObj;
+
+            if (fieldType.IsEnum( ))
+            {
+                auto &handle = fieldType.GetEnum( );
+                auto keys = handle.GetKeys( );
+
+                for (auto &key : keys)
+                {
+                    auto value = handle.GetValue( key );
+
+                    enumObj[ key ] = value.GetType( ).SerializeJson( value );
+                }
+            }
 
             auto fieldObj = Json::object {
-                { "type", field.GetType( ).GetName( ) },
+                { "type", fieldType.GetName( ) },
+                { "isEnum", fieldType.IsEnum( ) },
+                { "enumValue", enumObj },
                 { "meta", field.GetMeta( ).SerializeJson( ) }
             };
 

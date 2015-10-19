@@ -23,6 +23,7 @@
 #include "Application.h"
 
 #include "GfxAPI.h"
+#include "Color.h"
 
 #include "PhysicsManager.h"
 

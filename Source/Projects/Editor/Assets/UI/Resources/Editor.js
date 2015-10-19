@@ -452,7 +452,7 @@ var ursine_editor_scene_component_ComponentDatabase = function(database) {
 	while(_g < components.length) {
 		var name = components[_g];
 		++_g;
-		var component = Reflect.field(components,name);
+		var component = Reflect.field(database,name);
 		this.m_db.set(name,component);
 	}
 	console.log(this.m_db.toString());

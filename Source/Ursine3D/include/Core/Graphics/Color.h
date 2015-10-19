@@ -210,7 +210,7 @@ namespace ursine
 
         // Converts the color to its hexadecimal representation
         uint32 ToHex(void) const;
-    };
+    } Meta(Enable, WhiteListMethods);
 
     extern template
     Json JsonSerializer::Serialize(Color &instance);

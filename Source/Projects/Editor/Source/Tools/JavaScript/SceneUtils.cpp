@@ -11,7 +11,7 @@ JSFunction(SceneGetActiveEntities)
 
     auto &active = scene.GetWorld( ).GetActiveEntities( );
 
-    auto ids = CefV8Value::CreateArray( active.size( ) );
+    auto ids = CefV8Value::CreateArray( static_cast<int>( active.size( ) ) );
 
     for (size_t i = 0; i < active.size( ); ++i)
     {

@@ -7,11 +7,24 @@ namespace ursine
 {
     namespace ecs
     {
+        enum class LightType
+        {
+            Directional = graphics::Light::LIGHT_DIRECTIONAL,
+            Point = graphics::Light::LIGHT_POINT,
+            Spot = graphics::Light::LIGHT_SPOTLIGHT,
+        } Meta(Enable);
+
         class Light : public Component
         {
             NATIVE_COMPONENT;
 
         public:
+            EditorField(
+                LightType Type,
+                GetType,
+                SetType
+            );
+
             EditorField(
                 SVec3 Position,
                 GetPosition,
@@ -48,17 +61,16 @@ namespace ursine
                 SetSpotlightAngles
             );
 
-        public:
             Light(void);
             ~Light(void);
 
             void OnInitialize(void) override;
 
-            const graphics::GfxHND GetHandle(void) const;
-            const graphics::Light *GetLight(void);
+            ursine::graphics::GfxHND GetHandle(void) const;
+            const ursine::graphics::Light *GetLight(void);
 
-            ursine::graphics::Light::LightType GetType(void);
-            void SetType(const ursine::graphics::Light::LightType type);
+            LightType GetType(void);
+            void SetType(LightType type);
 
             const SVec3 &GetDirection(void);
             void SetDirection(const SVec3 &dir);
@@ -66,8 +78,8 @@ namespace ursine
             const SVec3 &GetPosition(void);
             void SetPosition(const SVec3 &position);
 
-            const Color &GetColor(void);
-            void SetColor(const Color &color);
+            const ursine::Color &GetColor(void);
+            void SetColor(const ursine::Color &color);
 
             float GetRadius(void);
             void SetRadius(const float radius);
@@ -81,10 +93,10 @@ namespace ursine
             void SetWorldMatrix(const Mat4 &worldTransform);
 
         private:
-            ursine::graphics::Light *m_light;
-            ursine::graphics::GfxHND m_handle;
+            graphics::Light *m_light;
+            graphics::GfxHND m_handle;
 
             friend class RenderSystem;
-        }Meta(Enable, DisplayName("Light"));
+        } Meta(Enable, DisplayName( "Light" ));
     }
 }
