@@ -93,9 +93,9 @@ namespace ursine
         URSINE_TODO( "..." );
         //m_viewport = viewport;
 
-        m_browser->GetHost( )->WasResized( );
-
         resize(viewport.width, viewport.height);
+
+        m_browser->GetHost()->WasResized();
     }
 
     bool UIView::IsValid(void) const
@@ -148,15 +148,6 @@ namespace ursine
 
         SetCursor( cursor );
 #endif
-    }
-
-    bool UIView::Execute(const CefString &name, 
-        CefRefPtr<CefV8Value> object, 
-        const CefV8ValueList &arguments, 
-        CefRefPtr<CefV8Value> &retval,
-        CefString &exception)
-    {
-        return true;
     }
 
     void UIView::onKeyboard(EVENT_HANDLER(KeyboardManager))

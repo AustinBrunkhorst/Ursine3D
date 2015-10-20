@@ -32,7 +32,6 @@ namespace ursine
     class UIView 
         : public CefClient
         , public CefDisplayHandler
-        , public CefV8Handler
         , public UIRendererType
     {
     public:
@@ -79,16 +78,6 @@ namespace ursine
             CefCursorHandle cursor,
             CursorType type,
             const CefCursorInfo &customCursorInfo) override;
-
-        ////////////////////////////////////////////////////////////////////
-        // V8Handler Methods
-        ////////////////////////////////////////////////////////////////////
-
-        bool Execute(const CefString &name,
-            CefRefPtr<CefV8Value> object,
-            const CefV8ValueList &arguments,
-            CefRefPtr<CefV8Value> &retval,
-            CefString &exception) override;
 
         ////////////////////////////////////////////////////////////////////
         // Event Handlers

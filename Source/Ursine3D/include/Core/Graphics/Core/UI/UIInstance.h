@@ -82,9 +82,8 @@ namespace ursine
             ID3D11DeviceContext *m_context;
             void *m_gfxmgr;
 
-            RENDER_TARGETS m_target;
-
-            DXCore::RenderTargetManager *m_rtManager;
+            GfxHND m_mainTarget;
+            GfxHND m_popup;
 
             CefRect getPopupRectInView(const CefRect &original);
 

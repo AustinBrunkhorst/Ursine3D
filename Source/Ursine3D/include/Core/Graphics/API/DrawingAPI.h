@@ -31,6 +31,12 @@ namespace ursine
 
             // size of the points, in pixels
             void SetSize(float size);
+
+            //get a texture of a certain size
+            //resize texture
+            //destroy texture
+            //render a texture, this operates on a size/scale basis, based on the width/height originally defined
+
         private:
             privData *m_privates;
 

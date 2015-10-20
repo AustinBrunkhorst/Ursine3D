@@ -1,9 +1,9 @@
 package ursine.editor;
 
 import haxe.rtti.Meta;
-
+import ursine.native.Extern;
+import ursine.editor.scene.component.ComponentDatabase;
 import ursine.controls.*;
-
 import ursine.editor.MenuItemHandler;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,15 +18,22 @@ import ursine.editor.menus.DebugMenu;
 class Editor {
     public static var instance : Editor = null;
 
-    public var broadcastManager : NativeBroadcastManager;
     public var mainMenu : MainMenu;
+
+    public var broadcastManager : NativeBroadcastManager;
+
+    public var componentDatabase : ComponentDatabase;
 
     public function new() {
         instance = this;
 
+        mainMenu = new MainMenu( );
+
         broadcastManager = new NativeBroadcastManager( );
 
-        mainMenu = new MainMenu( );
+        componentDatabase = new ComponentDatabase(
+            Extern.GetNativeComponentDatabase( )
+        );
 
         buildMenus( );
 

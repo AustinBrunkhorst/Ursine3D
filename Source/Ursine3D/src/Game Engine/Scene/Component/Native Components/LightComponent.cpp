@@ -5,109 +5,115 @@
 
 NATIVE_COMPONENT_DEFINITION(ursine::ecs::Light);
 
-ursine::ecs::Light::Light( )
-    : BaseComponent( )
-    , m_light(nullptr)
-    , m_handle(0)
+namespace ursine
 {
-}
+    namespace ecs
+    {
+        Light::Light(void)
+            : BaseComponent( )
+            , m_light( nullptr )
+            , m_handle( 0 ) { }
 
-ursine::ecs::Light::~Light()
-{
-    GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable(m_handle);
-    m_light = nullptr;
-}
+        Light::~Light(void)
+        {
+            GetCoreSystem( graphics::GfxAPI )->RenderableMgr.DestroyRenderable( m_handle );
 
-void ursine::ecs::Light::OnInitialize()
-{
-    m_handle = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.AddRenderable(graphics::RENDERABLE_LIGHT);
-    m_light = &GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetLight(m_handle);
-    m_light->Initialize( );
-}
+            m_light = nullptr;
+        }
 
-const ursine::graphics::GfxHND ursine::ecs::Light::GetHandle() const
-{
-    return m_handle;
-}
+        void Light::OnInitialize(void)
+        {
+            m_handle = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT );
+            m_light = &GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetLight( m_handle );
 
-const ursine::graphics::Light* ursine::ecs::Light::GetLight()
-{
-    return m_light;
-}
+            m_light->Initialize( );
+        }
 
-ursine::graphics::Light::LightType ursine::ecs::Light::GetType()
-{
-    return m_light->GetType( );
-}
+        graphics::GfxHND Light::GetHandle(void) const
+        {
+            return m_handle;
+        }
 
-void ursine::ecs::Light::SetType(const ursine::graphics::Light::LightType type)
-{
-    m_light->SetType(type);
-}
+        const graphics::Light *Light::GetLight(void)
+        {
+            return m_light;
+        }
 
-const ursine::SVec3& ursine::ecs::Light::GetDirection()
-{
-    return m_light->GetDirection( );
-}
+        LightType Light::GetType(void)
+        {
+            return static_cast<LightType>( m_light->GetType( ) );
+        }
 
-void ursine::ecs::Light::SetDirection(const SVec3& dir)
-{
-    m_light->SetDirection(dir);
-}
+        void Light::SetType(LightType type)
+        {
+            m_light->SetType( static_cast<graphics::Light::LightType>( type ) );
+        }
 
-const ursine::SVec3& ursine::ecs::Light::GetPosition()
-{
-    return m_light->GetPosition( );
-}
+        const SVec3 &Light::GetDirection(void)
+        {
+            return m_light->GetDirection( );
+        }
 
-void ursine::ecs::Light::SetPosition(const SVec3& position)
-{
-    m_light->SetPosition(position);
-}
+        void Light::SetDirection(const SVec3 &dir)
+        {
+            m_light->SetDirection( dir );
+        }
 
-const ursine::Color& ursine::ecs::Light::GetColor()
-{
-    return m_light->GetColor( );
-}
+        const SVec3 &Light::GetPosition(void)
+        {
+            return m_light->GetPosition( );
+        }
 
-void ursine::ecs::Light::SetColor(const Color& color)
-{
-    m_light->SetColor(color);
-}
+        void Light::SetPosition(const SVec3 &position)
+        {
+            m_light->SetPosition( position );
+        }
 
-float ursine::ecs::Light::GetRadius()
-{
-    return m_light->GetRadius( );
-}
+        const Color &Light::GetColor(void)
+        {
+            return m_light->GetColor( );
+        }
 
-void ursine::ecs::Light::SetRadius(const float radius)
-{
-    m_light->SetRadius(radius);
-}
+        void Light::SetColor(const Color &color)
+        {
+            m_light->SetColor( color );
+        }
 
-float ursine::ecs::Light::GetIntensity()
-{
-    return m_light->GetIntensity( );
-}
+        float Light::GetRadius(void)
+        {
+            return m_light->GetRadius( );
+        }
 
-void ursine::ecs::Light::SetIntensity(const float intensity)
-{
-    m_light->SetIntensity(intensity);
-}
+        void Light::SetRadius(const float radius)
+        {
+            m_light->SetRadius( radius );
+        }
 
-const ursine::Vec2& ursine::ecs::Light::GetSpotlightAngles()
-{
-    return m_light->GetSpotlightAngles( );
-}
+        float Light::GetIntensity(void)
+        {
+            return m_light->GetIntensity( );
+        }
 
-void ursine::ecs::Light::SetSpotlightAngles(const Vec2& angles)
-{
-    m_light->SetSpotlightAngles(angles);
-}
+        void Light::SetIntensity(const float intensity)
+        {
+            m_light->SetIntensity( intensity );
+        }
 
-void ursine::ecs::Light::SetWorldMatrix(const Mat4& worldTransform)
-{
-    //extract position data
+        const Vec2 &Light::GetSpotlightAngles(void)
+        {
+            return m_light->GetSpotlightAngles( );
+        }
 
-    //extract radius data
+        void Light::SetSpotlightAngles(const Vec2 &angles)
+        {
+            m_light->SetSpotlightAngles( angles );
+        }
+
+        void Light::SetWorldMatrix(const Mat4 &worldTransform)
+        {
+            //extract position data
+
+            //extract radius data
+        }
+    }
 }

@@ -44,6 +44,9 @@ namespace ursine
             // Creates an entity with only a transform
             Entity *Create(void);
 
+            // Gets all active entities
+            const EntityVector &GetActiveEntities(void) const;
+
             // Gets all entities who match this filter
             EntityVector GetEntities(const Filter &aspect) const;
 

@@ -101,6 +101,7 @@ void main(
   float4 vec = normalize( target - averagePos ) * color.x;
 
   //5. add the vector to target
+  [unroll]
   for (int x = 0; x < 3; ++x)
   {
     //modify stuff

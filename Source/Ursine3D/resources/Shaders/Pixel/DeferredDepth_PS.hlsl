@@ -1,7 +1,7 @@
-//texture
+// texture
 Texture2D shaderTexture : register(t0);
 
-//sample type
+// sample type
 SamplerState SampleType : register(s0);
 
 cbuffer MaterialBuffer : register(b10)
@@ -9,7 +9,7 @@ cbuffer MaterialBuffer : register(b10)
     float emissive;
     float specularPower;
     float specularIntensity;
-    float buffer;
+    int objID;
 };
 
 struct PixelInputType
@@ -19,10 +19,10 @@ struct PixelInputType
     float2 uv : UV;
 };
 
-//specular power range
+// specular power range
 static const float2 g_SpecPowerRange = { 0.1, 250.0 };
 
-//this is where we output to each render target
+// this is where we output to each render target
 struct PS_GBUFFER_OUT
 {
     float4 ColorSpecInt: SV_TARGET0;
@@ -30,7 +30,7 @@ struct PS_GBUFFER_OUT
     float4 SpecPow: SV_TARGET2;
 };
 
-//func to pack
+// func to pack
 PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
     SpecIntensity, float SpecPower, float emissive )
 {
@@ -38,16 +38,23 @@ PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
     // Normalize the specular power
     float SpecPowerNorm = (SpecPower - g_SpecPowerRange.x) / g_SpecPowerRange.y;
 
+    // convert id into proper sizes
+    int size16 = objID & 0xff;
+    int size8_1 = (objID >> 8) & 0xf;
+    int size8_2 = (objID >> 16) & 0xf;
+
     // Pack all the data into the GBuffer structure
     Out.ColorSpecInt = float4(BaseColor.rgb, SpecIntensity);
-    Out.Normal = float4(Normal.xyz * 0.5 + 0.5, 0.0);
-    Out.SpecPow = float4(SpecPowerNorm, emissive, 0.0, 0.0);
+    Out.Normal = float4(Normal.xyz * 0.5 + 0.5, (float)size16);
+    Out.SpecPow = float4(SpecPowerNorm, emissive, (float)size8_1, (float)size8_2);
+
+    // return
     return Out;
 }
 
-PS_GBUFFER_OUT main( PixelInputType input ) : SV_TARGET
+PS_GBUFFER_OUT main( PixelInputType input )
 {
-    float3 baseColor = shaderTexture.Sample(SampleType, input.uv);
+    float3 baseColor = shaderTexture.Sample(SampleType, input.uv).xyz;
     float3 normal = input.normal.xyz;
 
     PS_GBUFFER_OUT buff = PackGBuffer( baseColor, normal, specularIntensity, specularPower, emissive );

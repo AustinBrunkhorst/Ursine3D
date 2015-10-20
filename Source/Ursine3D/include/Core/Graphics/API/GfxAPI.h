@@ -102,11 +102,28 @@ namespace ursine
             Meta(Disable)
                 void Resize(int width, int height);
 
-            //set the main game viewport. All cameras are sized 
-                // w/ respect to this size
+            // set the main screen viewport. All cameras are sized 
+                // w/ respect to this size. Should always be width
+                // and height of the window
             Meta(Disable)
                 void SetGameViewport(GfxHND vp);
 
+            // render a texture to the main viewport
+            Meta(Disable)
+                void RenderTextureMain(GfxHND &handle, const float posX, const float posY);
+
+            // render a texture in a specific viewport
+            Meta(Disable)
+                void RenderTextureInViewport(GfxHND &handle, const float posX, const float posY, GfxHND &camera);
+
+            // render a buffer of data to a dynamic texture
+            Meta(Disable)
+                void RenderToDynamicTexture(const int srcWidth, const int srcHeight, 
+                                            const void *input, 
+                                            const int inputWidth, const int inputHeight, 
+                                            GfxHND destTexture, 
+                                            const int destinationX, const int destinationY);
+            
             // private members
         private:
             privateData *m_privates;

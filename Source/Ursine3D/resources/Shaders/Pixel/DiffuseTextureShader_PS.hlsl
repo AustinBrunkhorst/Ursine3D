@@ -28,5 +28,5 @@ float4 main(PixelInputType input) : SV_TARGET
   float specular = lightColor.w;
 
   //return the light color
-  return float4(textureColor * lightColor.xyz + specular, 1);
+  return float4(textureColor.xyz * lightColor.xyz + specular, 1);
 }

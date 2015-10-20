@@ -111,12 +111,12 @@ SURFACE_DATA UnpackGBuffer( int2 location )
 
 float3 CalcPoint( float3 position, Material material )
 {
-    float3 ToLight = -lightDirection;
+    float3 ToLight = -lightDirection.xyz;
     float3 ToEye = -position;
 
     // Phong diffuse
     float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (intensity) * material.diffuseColor;
+    float3 finalColor = diffuseColor.rgb * NDotL * (intensity) * material.diffuseColor.xyz;
 
     // Blinn specular
     ToEye = normalize( ToEye );
@@ -124,7 +124,7 @@ float3 CalcPoint( float3 position, Material material )
     float NDotH = saturate( dot( HalfWay, material.normal ) );
     finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
 
-    return finalColor * (1.f - material.emissive) + material.diffuseColor * material.emissive;
+    return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
 }
 
 
