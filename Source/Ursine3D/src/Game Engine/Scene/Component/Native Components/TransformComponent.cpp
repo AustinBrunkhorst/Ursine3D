@@ -42,7 +42,7 @@ namespace ursine
             if (m_parent)
                 m_parent->RemoveChild( this );
 
-            UAssert( m_children.size( ) > 0, "This should never happen, entities should be deleted from the bottom up." );
+            UAssert( m_children.size( ) == 0, "This should never happen, entities should be deleted from the bottom up." );
         }
 
         Transform &Transform::operator=(const Transform &transform)
