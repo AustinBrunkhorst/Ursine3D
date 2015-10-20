@@ -12,6 +12,7 @@
 
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
+#include <LightComponent.h>
 
 using namespace ursine;
 
@@ -118,10 +119,10 @@ void Editor::initializeGraphics(void)
     config.WindowWidth_ = kDefaultWindowWidth;
     config.WindowHeight_ = kDefaultWindowHeight;
 
-    URSINE_TODO( "..." )
-    ;
+    URSINE_TODO( "..." );
+
     config.m_renderUI = true;
-    config.debug = true;
+    config.debug = false;
 
     config.Profile_ = false;
 
@@ -223,21 +224,15 @@ void Editor::initializeScene(void)
         component->SetHandle( skyHND );
     }
 
-    auto *univLight = world.CreateEntity( "Light" );
+    auto *univLight = world.CreateEntity( "Global Light" );
     {
-        auto lightHandle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT );
+        auto *component = univLight->AddComponent<ecs::Light>( );
 
-        auto &light = m_graphics->RenderableMgr.GetLight( lightHandle );
-
-        light.SetType( graphics::Light::LightType::LIGHT_DIRECTIONAL );
-        light.SetPosition( 0, 0, 0 );
-        light.SetRadius( 40 );
-        light.SetDirection( { 0.0f, 1.0f, 0.0f } );
-        light.SetColor( Color::White );
-
-        auto *component = univLight->AddComponent<ecs::Renderable>( );
-
-        component->SetHandle( lightHandle );
+        component->SetType( ecs::LightType::Point );
+        component->SetPosition( { 0.0f, 0.0f, 0.0f } );
+        component->SetRadius( 40.0f );
+        component->SetDirection( { 0.0f, 1.0f, 0.0f } );
+        component->SetColor( Color::White );
     }
 
     m_project->GetScene( ).GetWorld( ).Listener( this )
@@ -282,7 +277,7 @@ void Editor::onComponentChanged(EVENT_HANDLER(ecs::World))
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
         { "field", args->field },
-        { "value", args->value.GetType( ).SerializeJson( args->value ) }
+        { "value", args->value.SerializeJson( ) }
     };
 
     m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "ComponentChanged", message );

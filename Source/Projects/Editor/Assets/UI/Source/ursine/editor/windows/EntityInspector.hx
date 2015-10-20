@@ -2,6 +2,7 @@ package ursine.editor.windows;
 
 import ursine.editor.scene.entity.Entity;
 import ursine.editor.scene.entity.EntityEvent;
+import ursine.editor.scene.component.inspectors.ComponentInspectionHandler;
 
 class EntityInspector extends WindowHandler {
     public static var instance : EntityInspector;
@@ -53,5 +54,16 @@ class EntityInspector extends WindowHandler {
 
     public function initializeInspection() {
         m_inspectedEntity.events.on( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
+
+        var inspection = m_inspectedEntity.inspect( );
+
+        for (component in inspection) {
+            var handler =
+                Editor.instance.componentDatabase.createComponentInspector( m_inspectedEntity, component );
+
+            m_componentHandlers[ component.type ] = handler;
+
+            window.container.appendChild( handler.inspector );
+        }
     }
 }

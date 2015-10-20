@@ -15,9 +15,6 @@
 
 #include "TypeConfig.h"
 
-#include <vector>
-#include <memory>
-
 namespace ursine
 {
     namespace meta
@@ -39,6 +36,7 @@ namespace ursine
                 >::type* = nullptr
             );
 
+            // types excluding Variant *
             template<typename T>
             Variant(T &data);
 
@@ -75,6 +73,8 @@ namespace ursine
             float ToFloat(void) const;
             double ToDouble(void) const;
             std::string ToString(void) const;
+
+            Json SerializeJson(void) const;
 
             template<typename T>
             T &GetValue(void) const;

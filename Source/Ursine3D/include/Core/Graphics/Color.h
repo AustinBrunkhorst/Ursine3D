@@ -173,6 +173,7 @@ namespace ursine
         #pragma endregion
 
         // Default constructor (white)
+        Meta(Enable)
         Color(void);
 
         // Constructs a color from the respective red, green, and blue values

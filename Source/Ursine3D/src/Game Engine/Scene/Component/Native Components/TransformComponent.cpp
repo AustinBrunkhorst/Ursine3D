@@ -50,7 +50,7 @@ namespace ursine
 
             dispatch( );
 
-            NOTIFY_COMPONENT_CHANGED( "position", m_worldPosition );
+            NOTIFY_COMPONENT_CHANGED( "Position", m_worldPosition );
         }
 
         const SQuat &Transform::GetWorldRotation(void) const
@@ -64,7 +64,7 @@ namespace ursine
 
             dispatch( );
 
-            NOTIFY_COMPONENT_CHANGED( "rotation", m_worldRotation.GetEulerAngles( ) );
+            NOTIFY_COMPONENT_CHANGED( "Rotation", m_worldRotation.GetEulerAngles( ) );
         }
 
         SVec3 Transform::GetWorldEuler(void) const
@@ -78,7 +78,7 @@ namespace ursine
 
             dispatch( );
 
-            NOTIFY_COMPONENT_CHANGED( "rotation", euler );
+            NOTIFY_COMPONENT_CHANGED( "Rotation", euler );
         }
 
         void Transform::editorSetRotation(const SVec3 &euler)
@@ -87,7 +87,7 @@ namespace ursine
 
             dispatch( );
 
-            NOTIFY_COMPONENT_CHANGED( "rotation", euler );
+            NOTIFY_COMPONENT_CHANGED( "Rotation", euler );
         }
 
         const SVec3 &Transform::GetWorldScale(void) const
@@ -101,7 +101,7 @@ namespace ursine
 
             dispatch( );
 
-            NOTIFY_COMPONENT_CHANGED( "scale", scale );
+            NOTIFY_COMPONENT_CHANGED( "Scale", scale );
         }
 
         void Transform::copy(const Transform &transform)

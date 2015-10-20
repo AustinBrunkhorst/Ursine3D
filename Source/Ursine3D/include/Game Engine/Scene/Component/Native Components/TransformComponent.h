@@ -15,19 +15,19 @@ namespace ursine
 
         public:
             EditorField( 
-                SVec3 translation, 
+                SVec3 Translation, 
                 GetWorldPosition, 
                 SetWorldPosition 
             );
 
             EditorField( 
-                SVec3 rotation, 
+                SVec3 Rotation, 
                 GetWorldEuler,
                 editorSetRotation
             );
 
             EditorField( 
-                SVec3 scale, 
+                SVec3 Scale, 
                 GetWorldScale, 
                 SetWorldScale 
             );

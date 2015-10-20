@@ -1,18 +1,16 @@
-<link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="../../LIB/Polymer/polymer.html">
 
-<dom-module id="x-component-inspector">
-    <link rel="import" type="css" href="../Style/Controls/ComponentInspector.css">
+<dom-module id="x-field-inspector">
+    <link rel="import" type="css" href="../../Style/Controls/Inspection/FieldInspector.css">
     <template>
-        <header>
-            <div class="heading">{{heading}}</div>
-        </header>
+        <div id="header">{{heading}}</div>
         <div id="container">
             <content></content>
         </div>
     </template>
     <script>
-        var ComponentInspector = Polymer({
-            is: "x-component-inspector",
+        var FieldInspectorControl = Polymer({
+            is: "x-field-inspector",
             properties: {
                 heading: {
                     type: String,

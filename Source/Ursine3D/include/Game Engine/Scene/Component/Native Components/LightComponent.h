@@ -64,9 +64,13 @@ namespace ursine
             Light(void);
             ~Light(void);
 
+            Meta(Disable)
             void OnInitialize(void) override;
 
+            Meta(Disable)
             ursine::graphics::GfxHND GetHandle(void) const;
+
+            Meta(Disable)
             const ursine::graphics::Light *GetLight(void);
 
             LightType GetType(void);
@@ -89,8 +93,6 @@ namespace ursine
 
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
-
-            void SetWorldMatrix(const Mat4 &worldTransform);
 
         private:
             graphics::Light *m_light;

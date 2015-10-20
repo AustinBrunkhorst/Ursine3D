@@ -528,7 +528,7 @@ namespace ursine
             {
                 auto value = field.second.GetValue( instance );
 
-                object[ field.first ] = value.GetType( ).SerializeJson( value );
+                object[ field.first ] = value.SerializeJson( );
             }
 
             return object;

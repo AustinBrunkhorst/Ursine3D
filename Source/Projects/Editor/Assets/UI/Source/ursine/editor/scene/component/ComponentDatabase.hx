@@ -1,40 +1,142 @@
 package ursine.editor.scene.component;
 
-typedef NativeMeta = Dynamic<Map<String, Dynamic>>;
-typedef NativeEnum = Dynamic<Map<String, Dynamic>>;
+import ursine.editor.scene.component.inspectors.fields.DefaultFieldInspector;
+import haxe.rtti.Meta;
+import ursine.utils.MetaUtils;
+import ursine.editor.scene.component.inspectors.components.DefaultComponentInspector;
+import ursine.editor.scene.component.inspectors.fields.DefaultFieldInspector;
+import ursine.editor.scene.component.inspectors.ComponentInspectionHandler;
+import ursine.editor.scene.component.inspectors.FieldInspectionHandler;
+import ursine.editor.scene.entity.Entity;
 
-extern class NativeType {
+import ursine.editor.scene.component.inspectors.ComponentInspectors;
+import ursine.editor.scene.component.inspectors.FieldInspectors;
+
+// Map<String, Dynamic>
+typedef NativeMeta = Map<String, Dynamic>;
+
+// Map<String, Dynamic>
+typedef NativeEnum = Dynamic;
+
+extern class NativeField {
+    var name : String;
     var type : String;
-}
-
-extern class ComponentTypeField {
-    var type : String;
-    var isEnum : Bool;
-    var enumValue : NativeEnum;
-
     var meta : NativeMeta;
 }
 
+extern class NativeType {
+    var name : String;
+    var enumValue : Null<NativeEnum>;
+
+    // Map<String, NativeField>
+    var fields : Dynamic;
+}
+
 extern class ComponentType {
-    public var meta : NativeMeta;
-    public var fields : Dynamic<Map<String, ComponentTypeField>>;
+    var meta : NativeMeta;
+
+    // Map<String, NativeField>
+    var fields : Dynamic;
 }
 
 class ComponentDatabase {
+    private static var m_componentInspectorMeta = "componentInspector";
+    private static var m_fieldInspectorMeta = "fieldInspector";
+
+    private var m_componentInspectionHandlers : Map<String, Class<Dynamic>>;
+    private var m_fieldInspectionHandlers : Map<String, Class<Dynamic>>;
+
     private var m_typeDB : Map<String, NativeType>;
     private var m_db : Map<String, ComponentType>;
 
     public function new(database : Dynamic) {
+        m_componentInspectionHandlers = new Map<String, Class<Dynamic>>( );
+        m_fieldInspectionHandlers = new Map<String, Class<Dynamic>>( );
+
+        m_typeDB = new Map<String, NativeType>( );
         m_db = new Map<String, ComponentType>( );
 
-        var components = Reflect.fields( database );
+        var types = Reflect.fields( database.types );
+
+        for (name in types) {
+            var type = Reflect.field( database.types, name );
+
+            m_typeDB.set( name, type );
+        }
+
+        var components = Reflect.fields( database.components );
 
         for (name in components) {
-            var component = Reflect.field( database, name );
+            var component = Reflect.field( database.components, name );
 
             m_db.set( name, component );
         }
 
-        trace( m_db );
+        initComponentInspectors( );
+        initFieldInspectors( );
+    }
+
+    public function getNativeType(name : String) : NativeType {
+        return m_typeDB.get( name );
+    }
+
+    public function getComponentType(name : String) : ComponentType {
+        return m_db.get( name );
+    }
+
+    public function createComponentInspector(entity : Entity, inspection : ComponentInspection) : ComponentInspectionHandler {
+        var handler : Class<Dynamic> = m_componentInspectionHandlers.get( inspection.type );
+
+        if (handler == null)
+            handler = DefaultComponentInspector;
+
+        return Type.createInstance( handler, [ entity, inspection ] );
+    }
+
+    public function createFieldInspector(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) : FieldInspectionHandler {
+        var handler = m_fieldInspectionHandlers.get( type.name );
+
+        if (handler == null)
+            handler = DefaultFieldInspector;
+
+        return Type.createInstance( handler, [ owner, instance, field, type ] );
+    }
+
+    private function initComponentInspectors() {
+        var inspectors = MetaUtils.getDerivedClasses( ComponentInspectionHandler );
+
+        for (inspector in inspectors) {
+            var meta = Meta.getType( inspector );
+
+            // must have the custom inspector meta data
+            if (!Reflect.hasField( meta, m_componentInspectorMeta ))
+                continue;
+
+            // names of the component type that this inspector is interested in
+            var componentNames : Array<String> = Reflect.field( meta, m_componentInspectorMeta );
+
+            for (name in componentNames) {
+                m_componentInspectionHandlers.set( name, inspector );
+            }
+        }
+    }
+
+    private function initFieldInspectors() {
+        var inspectors = MetaUtils.getDerivedClasses( FieldInspectionHandler );
+
+        for (inspector in inspectors) {
+            var meta = Meta.getType( inspector );
+
+            // must have the custom inspector meta data
+            if (!Reflect.hasField( meta, m_fieldInspectorMeta ))
+                continue;
+
+            // names of the field type that this inspector is interested in
+            var componentNames : Array<String> = Reflect.field( meta, m_fieldInspectorMeta );
+
+            for (name in componentNames) {
+                m_fieldInspectionHandlers.set( name, inspector );
+            }
+        }
     }
 }

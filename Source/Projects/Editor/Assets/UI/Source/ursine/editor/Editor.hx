@@ -6,14 +6,7 @@ import ursine.editor.scene.component.ComponentDatabase;
 import ursine.controls.*;
 import ursine.editor.MenuItemHandler;
 
-///////////////////////////////////////////////////////////////////////////////
-// Main Menu Items
-///////////////////////////////////////////////////////////////////////////////
-
-import ursine.editor.menus.FileMenu;
-import ursine.editor.menus.EditMenu;
-import ursine.editor.menus.EntityMenu;
-import ursine.editor.menus.DebugMenu;
+import ursine.editor.menus.MainMenus;
 
 class Editor {
     public static var instance : Editor = null;

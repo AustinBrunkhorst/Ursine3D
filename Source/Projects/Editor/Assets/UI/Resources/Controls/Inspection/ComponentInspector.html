@@ -1,0 +1,47 @@
+<link rel="import" href="../../LIB/Polymer/polymer.html">
+
+<dom-module id="x-component-inspector">
+    <link rel="import" type="css" href="../../Style/Controls/Inspection/ComponentInspector.css">
+    <template>
+        <header id="header">
+            <span class="text">{{heading}}</span>
+        </header>
+        <div id="container">
+            <content></content>
+            <div id="fieldInspectors"></div>
+        </div>
+    </template>
+    <script>
+        var ComponentInspectorControl = Polymer({
+            is: "x-component-inspector",
+            properties: {
+                heading: {
+                    type: String,
+                    notify: true
+                },
+                opened: {
+                    type: Boolean,
+                    notify: true,
+                    observer: '_onOpenedChanged'
+                }
+            },
+            listeners: {
+                'header.click': '_onHeaderClick'
+            },
+            get container() {
+                return this.$.container;
+            },
+            get fieldInspectors() {
+                return this.$.fieldInspectors;
+            },
+
+            _onOpenedChanged: function() {
+                this.classList.toggle( 'opened', !!this.opened );
+            },
+
+            _onHeaderClick: function() {
+                this.opened = !this.opened;
+            }
+        });
+    </script>
+</dom-module>
