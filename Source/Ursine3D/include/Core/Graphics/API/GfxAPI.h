@@ -127,6 +127,7 @@ namespace ursine
             // private members
         private:
             privateData *m_privates;
+
         } Meta(Enable);
     }
 }
