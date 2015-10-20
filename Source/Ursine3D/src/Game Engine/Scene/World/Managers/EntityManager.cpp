@@ -68,8 +68,11 @@ namespace ursine
 
         EntityManager::~EntityManager(void)
         {
-            for (auto entity : m_active)
-                clearComponents( entity );
+            while (m_active.size( ) > 0)
+            {
+                auto entity = m_active[ 0 ];
+                Remove( entity );
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -303,10 +306,13 @@ namespace ursine
                 return;
 
             // Remove the children before the parent is removed
-            auto &children = *m_hierarchy.GetChildren( entity );
+            auto children = m_hierarchy.GetChildren( entity );
 
-            for (auto &child : children)
+            while (children->size() > 0)
+            {
+                auto &child = ( *children )[ 0 ];
                 Remove( m_active[ child ] );
+            }
 
             m_hierarchy.RemoveEntity( entity );
 

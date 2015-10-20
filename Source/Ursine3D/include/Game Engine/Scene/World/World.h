@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "EventDispatcher.h"
 #include "WorldEvent.h"
 
 #include "EntityConfig.h"

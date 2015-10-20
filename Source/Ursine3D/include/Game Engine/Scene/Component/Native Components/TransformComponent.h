@@ -67,7 +67,7 @@ namespace ursine
 
             void SetWorldPosition(const SVec3 &position);
 
-            const SVec3 &GetWorldPosition(void) const;
+            SVec3 GetWorldPosition(void);
 
             ////////////////////////////////////////////////////////////////////
             // Rotation
@@ -82,10 +82,10 @@ namespace ursine
             void SetWorldRotation(const SQuat &rotation);
             void SetWorldEuler(const SVec3 &euler);
 
-            const SQuat &GetWorldRotation(void) const;
-            SVec3 GetWorldEuler(void) const;
+            SQuat GetWorldRotation(void);
+            SVec3 GetWorldEuler(void);
 
-			void LookAt(const SVec3 &worldPosition);
+            void LookAt(const SVec3 &worldPosition);
 
             ////////////////////////////////////////////////////////////////////
             // Scale
@@ -97,26 +97,26 @@ namespace ursine
 
             void SetWorldScale(const SVec3 &scale);
 
-            const SVec3 &GetWorldScale(void) const;
+            SVec3 GetWorldScale(void);
 
             ////////////////////////////////////////////////////////////////////
             // Axis
             ////////////////////////////////////////////////////////////////////
 
             // Do this in the quaternion class
-            SVec3 GetForward(void) const;
-            SVec3 GetRight(void) const;
-            SVec3 GetUp(void) const;
+            SVec3 GetForward(void);
+            SVec3 GetRight(void);
+            SVec3 GetUp(void);
 
-			////////////////////////////////////////////////////////////////////
-			// Matrix
-			////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
+            // Matrix
+            ////////////////////////////////////////////////////////////////////
 
-			bool GetDirty(void) const;
+            bool GetDirty(void) const;
 
-			const SMat4 &GetLocalToWorldMatrix(void);
+            const SMat4 &GetLocalToWorldMatrix(void);
 
-			const SMat4 &GetWorldToLocalMatrix(void);
+            const SMat4 &GetWorldToLocalMatrix(void);
 
             ////////////////////////////////////////////////////////////////////
             // Transformations
@@ -128,79 +128,79 @@ namespace ursine
             SVec3 ToWorld(const SVec3 &point);
             SQuat ToWorld(const SQuat &quat);
 
-			////////////////////////////////////////////////////////////////////
-			// Hierarchy
-			////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
+            // Hierarchy
+            ////////////////////////////////////////////////////////////////////
 
-			Transform *GetRoot(void);
+            Transform *GetRoot(void);
 
-			Transform *GetParent(void);
+            Transform *GetParent(void);
 
             // Check to see if this transform is a 
             // child (anywhere in the hierarchy) of the given parent
-			bool IsChildOf(Transform *parent);
+            bool IsChildOf(Transform *parent);
 
-			// Add a child to the hierarchy, assuming its coordinates are in world space
-			void AddChild(Transform *child);
+            // Add a child to the hierarchy, assuming its coordinates are in world space
+            void AddChild(Transform *child);
 
-			// Add a child to the hierarchy, assuming its coordinates are in local space
-			void AddChildAlreadyInLocal(Transform *child);
+            // Add a child to the hierarchy, assuming its coordinates are in local space
+            void AddChildAlreadyInLocal(Transform *child);
 
-			// Remove a child from the hierarchy (adding to root node)
-			void RemoveChild(Transform *child);
+            // Remove a child from the hierarchy (adding to root node)
+            void RemoveChild(Transform *child);
 
-			// Remove all children from the hiearchy (adding to root node)
-			void RemoveChildren(void);
+            // Remove all children from the hiearchy (adding to root node)
+            void RemoveChildren(void);
 
-			// Find child by their index in the list
-			// If the index is too large, return nullptr
-			Transform *GetChild(uint index);
-			const Transform *GetChild(uint index) const;
+            // Find child by their index in the list
+            // If the index is too large, return nullptr
+            Transform *GetChild(uint index);
+            const Transform *GetChild(uint index) const;
 
-			// Find this transform's index in relation to the other children
-			uint GetSiblingIndex(void) const;
+            // Find this transform's index in relation to the other children
+            uint GetSiblingIndex(void) const;
 
-			// Move this transform to the start of the parent's children lists
-			void SetAsFirstSibling(void);
+            // Move this transform to the start of the parent's children lists
+            void SetAsFirstSibling(void);
 
-			// Sets this transform's index in the parent's children list
-			void SetSiblingIndex(uint index) const;
+            // Sets this transform's index in the parent's children list
+            void SetSiblingIndex(uint index) const;
 
-			// Gets a component of the specified type in this entity's children (type safe) (depth first)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline ComponentType *GetComponentInChildren(const Entity *entity) const;
+            // Gets a component of the specified type in this entity's children (type safe) (depth first)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline ComponentType *GetComponentInChildren(const Entity *entity) const;
 
-			// Gets a component of the specified type id in this entity's children (depth first)
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			Component *GetComponentInChildren(const Entity *entity, ComponentTypeID id) const;
+            // Gets a component of the specified type id in this entity's children (depth first)
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            Component *GetComponentInChildren(const Entity *entity, ComponentTypeID id) const;
 
-			// Gets a component of the specified type in this entity's parent (type safe)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline ComponentType *GetComponentInParent(const Entity *entity) const;
+            // Gets a component of the specified type in this entity's parent (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline ComponentType *GetComponentInParent(const Entity *entity) const;
 
-			// Gets a component of the specified type id in this entity's parent
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
+            // Gets a component of the specified type id in this entity's parent
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
 
-			// Gets the components of the specified type in this entity's children (type safe)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline std::vector<ComponentType*> GetComponentsInChildren(const Entity *entity) const;
+            // Gets the components of the specified type in this entity's children (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline std::vector<ComponentType*> GetComponentsInChildren(const Entity *entity) const;
 
-			// Gets the components of the specified type id in this entity's children
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			ComponentVector GetComponentsInChildren(const Entity *entity, ComponentTypeID id) const;
+            // Gets the components of the specified type id in this entity's children
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            ComponentVector GetComponentsInChildren(const Entity *entity, ComponentTypeID id) const;
 
-			// Gets the components of the specified type in this entity's parents (type safe)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline std::vector<ComponentType*> GetComponentsInParents(const Entity *entity) const;
+            // Gets the components of the specified type in this entity's parents (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline std::vector<ComponentType*> GetComponentsInParents(const Entity *entity) const;
 
-			// Gets the components of the specified type id in this entity's parents
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
+            // Gets the components of the specified type id in this entity's parents
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
 
         protected:
 
@@ -217,12 +217,6 @@ namespace ursine
 
             // Child pointers.
             std::vector<Transform*> m_children;
-
-            // World coordinates
-            SVec3 m_worldPosition,
-                  m_worldScale;
-
-            SQuat m_worldRotation;
 
             // Local coordinates (coordinates in relation to the parent)
             SVec3 m_localPosition,
@@ -244,16 +238,6 @@ namespace ursine
 
             // Recalculate the matrices
             void recalculateMatrices(void);
-
-            // Recalculate the local values
-            void recalculateLocalPosition(void);
-            void recalculateLocalRotation(void);
-            void recalculateLocalScale(void);
-
-            // Recalculate the world values
-            void recalculateWorldPosition(void);
-            void recalculateWorldRotation(void);
-            void recalculateWorldScale(void);
 
             // notify the editor our values have changed
             void notifyPositionChanged(void);

@@ -29,7 +29,7 @@ namespace ursine
             auto id = entity->GetID( );
       
             // grow the array's size if needed
-            if (id > m_nodes.size( ))
+            if (id >= m_nodes.size( ))
                 m_nodes.emplace_back( entity->GetID( ) );
       
             // Add it to the root
