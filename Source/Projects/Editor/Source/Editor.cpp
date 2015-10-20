@@ -12,14 +12,13 @@
 
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
-#include <PointLightComponent.h>
 
 using namespace ursine;
 
 namespace
 {
-    //const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Test.html";
-    const auto kEditorEntryPoint = "www.google.com";
+    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
+    //const auto kEditorEntryPoint = "www.google.com";
 
     const auto kEditorClearColor = Color( 0xFF252526 );
 
@@ -145,12 +144,15 @@ void Editor::InitializeScene(void)
 
             auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
 
+            model.SetEntityUniqueID(entity->GetUniqueID(  ));
+
             auto name = i & 1 ? "Cube" : "Character";
 
             entity->SetName( name );
 
             model.SetModel( name );
             model.SetMaterial( "Cube" );
+            model.SetMaterialData(0, 10, 1);
 
             SMat4 transform;
 
@@ -174,6 +176,8 @@ void Editor::InitializeScene(void)
 
         auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
 
+        skybox.SetEntityUniqueID(sky->GetUniqueID());
+
         skybox.SetModel( "Skybox" );
         skybox.SetMaterial( "Skybox" );
         skybox.SetMaterialData( 1, 0, 0 );
@@ -194,6 +198,7 @@ void Editor::InitializeScene(void)
 
         auto &light = m_graphics->RenderableMgr.GetLight(lightHandle);
 
+        light.SetEntityUniqueID(univLight->GetUniqueID());
         light.SetType(graphics::Light::LightType::LIGHT_DIRECTIONAL);
         light.SetPosition(0, 0, 0);
         light.SetRadius(40);

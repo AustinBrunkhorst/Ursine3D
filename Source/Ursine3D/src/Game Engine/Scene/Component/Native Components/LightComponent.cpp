@@ -25,7 +25,7 @@ void ursine::ecs::Light::OnInitialize()
     m_light->Initialize( );
 }
 
-const ursine::graphics::GfxHND ursine::ecs::Light::GetHandle() const
+ursine::graphics::GfxHND ursine::ecs::Light::GetHandle() const
 {
     return m_handle;
 }

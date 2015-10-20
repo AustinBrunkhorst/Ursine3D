@@ -54,7 +54,7 @@ namespace ursine
 
             void OnInitialize(void) override;
 
-            const graphics::GfxHND GetHandle(void) const;
+            graphics::GfxHND GetHandle(void) const;
             const graphics::Light *GetLight(void);
 
             ursine::graphics::Light::LightType GetType(void);

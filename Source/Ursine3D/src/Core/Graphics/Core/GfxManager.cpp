@@ -11,7 +11,6 @@ namespace ursine
 {
     namespace graphics
     {
-        Camera *tempCam;
         bool sort(_DRAWHND &h1, _DRAWHND &h2)
         {
             if (*reinterpret_cast<unsigned long long*>(&h1) < *reinterpret_cast<unsigned long long*>(&h2))
@@ -86,6 +85,9 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_POINT, "PointShader");
                 shaderManager->LoadShader(SHADER_SHADOW, "ShadowMap");
                 shaderManager->LoadShader(SHADER_BILLBOARD2D, "BillboardedSprite");
+
+                //load compute
+                shaderManager->LoadShader(SHADER_MOUSEPOSITION, "MouseTypeID");
             }
 
             LogMessage("Initialize Buffers", 1);
@@ -272,8 +274,6 @@ namespace ursine
 
             Camera &cam = cameraManager->GetCamera(camera);
 
-            tempCam = &cam;
-
             //get game vp dimensions
             Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
             D3D11_VIEWPORT gvp = gameVP.GetViewportData();
@@ -316,7 +316,7 @@ namespace ursine
             PrimitiveColorBuffer pcb;
             //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
             pcb.color = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
 
@@ -398,7 +398,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////////////
             // BEGIN RENDERING
-            //keep track of where we are
+            //keep track of where we are 
             int currentIndex = 0;
 
             //render 3d models deferred
@@ -409,6 +409,49 @@ namespace ursine
                 Render2DBillboard(m_drawList[ currentIndex++ ]);
 
             //point light pass
+            PrepForPointLightPass(view, proj);
+
+            /////////////////////////////////////////////////////////////////////////////
+            // TEMP COMPUTE
+            //perform compute operations
+            MouseBuffer dataToCS;
+
+            POINT point;
+            GetCursorPos(&point);
+
+            if (point.x < 0) point.x = 0;
+            if (point.y < 0) point.y = 0;
+
+            //@matt set proper mouse position
+            dataToCS.mousePos = DirectX::XMINT4(point.x, point.y, 0, 0);
+
+            //bind shader
+            shaderManager->BindShader(SHADER_MOUSEPOSITION);
+
+            //set input
+            bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE);
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
+             
+            //set UAV as output
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID], nullptr);
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID_CPU, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID_CPU ], nullptr);
+
+            //call the compute shader. Results *should* be written to the UAV above
+            dxCore->GetDeviceContext()->Dispatch(1, 1, 1);
+
+            //copy data to intermediary buffer
+            //                                                         CPU read-only staging buffer                            GPU compute output
+            dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
+
+            //read from intermediary buffer
+            ComputeIDOutput dataFromCS;
+            bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
+
+            printf("%i, %i\n", point.x, point.y);
+            printf("%f\n", dataFromCS.id);
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
+            // END OF COMPUTE TEMP
+            /////////////////////////////////////////////////////////////////////////////
             PrepForPointLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
@@ -611,7 +654,7 @@ namespace ursine
 
             //TEMP
             URSINE_TODO("Remove this");
-            bufferManager->MapCameraBuffer(view, proj, GEOMETRY_SHADER);
+            bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
         }
 
         void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
@@ -633,7 +676,7 @@ namespace ursine
             temp.Inverse();
 
             ipb.invProj = temp.ToD3D();
-            bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
             //map camera buffer
             bufferManager->MapCameraBuffer(view, proj);
@@ -646,7 +689,7 @@ namespace ursine
             gbub.perspectiveVals.y = 1.f / tempMat(1, 1);
             gbub.perspectiveVals.z = tempMat(3, 2);
             gbub.perspectiveVals.w = -tempMat(2, 2);
-            bufferManager->MapBuffer<BUFFER_GBUFFER_UNPACK>(&gbub, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_GBUFFER_UNPACK>(&gbub, SHADERTYPE_PIXEL);
 
             //bind shader
             shaderManager->BindShader(SHADER_POINT_LIGHT);
@@ -747,7 +790,7 @@ namespace ursine
             GetCursorPos(&point);
 
             {
-                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), GEOMETRY_SHADER);
+                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
             }
 
             PrimitiveColorBuffer pcb;
@@ -757,7 +800,7 @@ namespace ursine
             static float t;
             t += 0.000016f;
             pcb.color.z = t;
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, GEOMETRY_SHADER);
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_GEOMETRY);
             // END OF TEMP //////////////////////////////////////////
 
             //map transform
@@ -774,7 +817,7 @@ namespace ursine
             mdb.id = (handle.Index_) | (handle.Type_ << 16);
 
             //map buffer
-            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             //set model
             modelManager->BindModel(handle.Model_);
@@ -797,7 +840,7 @@ namespace ursine
             //map material data
             MaterialDataBuffer mdb;
             mdb.id;
-            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             //map texture
             textureManager->MapTextureByID(handle.Material_);
@@ -821,7 +864,7 @@ namespace ursine
             lightProj *= proj; //transform into screeen space
 
                                 //map
-            bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, DOMAIN_SHADER);
+            bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, SHADERTYPE_DOMAIN);
 
             //ps needs point light data buffer
             SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
@@ -835,7 +878,7 @@ namespace ursine
             pointB.color.x = pl.GetColor( ).r;
             pointB.color.y = pl.GetColor( ).g;
             pointB.color.z = pl.GetColor( ).b;
-            bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, SHADERTYPE_PIXEL);
 
             //light transform
             SMat4 transform;
@@ -879,7 +922,7 @@ namespace ursine
 
             lightB.lightColor = DirectX::XMFLOAT3(l.GetColor( ).r * lightB.intensity, l.GetColor( ).g * lightB.intensity, l.GetColor( ).b * lightB.intensity);
 
-            bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, SHADERTYPE_PIXEL);
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
         }
 
@@ -902,7 +945,7 @@ namespace ursine
             //set color
             PrimitiveColorBuffer pcb;
             pcb.color = prim.GetColor().ToVector4().ToD3D();
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             //render specific primitive, based upon data
             switch (prim.GetType())
@@ -961,11 +1004,11 @@ namespace ursine
                 dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
                 //set up buffers
-                bufferManager->MapCameraBuffer(view, proj, GEOMETRY_SHADER);
+                bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
                 PointGeometryBuffer pgb;
                 pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
                 pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
-                bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, GEOMETRY_SHADER);
+                bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_GEOMETRY);
 
                 //bind shader
                 shaderManager->BindShader(SHADER_POINT);

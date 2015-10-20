@@ -36,15 +36,15 @@ namespace ursine
             SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
             SHADER_DIRECTIONAL_LIGHT,
 
-            //billboarded sprites don't care about lighting for now...
-
-
-            //and past this is debug!
+            /////////////////////////////////////////////////////////
+            // and past this is debug!
             SHADER_PRIMITIVE,
 
             //shaders not part of the regular pipeline
             SHADER_POINT,
             SHADER_SHADOW,
+
+            SHADER_MOUSEPOSITION,
 
             SHADER_COUNT
         };
