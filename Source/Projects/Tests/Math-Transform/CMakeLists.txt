@@ -14,4 +14,4 @@ ursine_default_project(
 )
 
 add_definitions(-D_HAS_EXCEPTIONS=0)
-add_definitions(-DSDL_MAIN_HANDLED)
+add_definitions(-SDL_MAIN_HANDLED)

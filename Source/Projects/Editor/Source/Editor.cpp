@@ -13,6 +13,7 @@
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
 #include <LightComponent.h>
+#include <Model3DComponent.h>
 
 using namespace ursine;
 
@@ -173,35 +174,45 @@ void Editor::initializeScene(void)
         scene.SetEditorCamera( component->GetHandle( ) );
     }
 
-    for (int i = 0; i < 50; ++i)
+    for (int i = 0; i < 25; ++i)
     {
-        auto *entity = world.CreateEntity( );
+        auto *entity_char = world.CreateEntity( );
+        auto *entity_cube = world.CreateEntity( );
         {
-            auto handle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
+            entity_char->AddComponent<ecs::Renderable>();
+            auto model = entity_char->AddComponent<ecs::Model3D>();
 
-            auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
+            auto name = "Character";
 
-            auto name = i & 1 ? "Cube" : "Character";
+            entity_char->SetName( name );
 
-            entity->SetName( name );
+            model->SetModel( name );
 
-            model.SetModel( name );
-            model.SetMaterial( "Cube" );
+            auto transform = entity_char->GetTransform( );
 
-            SMat4 transform;
-
-            transform.TRS(
-                SVec3 { i * 1.0f, 0.0f, 0.0f },
-                SQuat { 0.0f, 0.0f, 0.0f },
-                SVec3 { 1.0f, 1.0f, 1.0f }
-            );
-
-            model.SetWorldMatrix( transform );
-
-            auto *component = entity->AddComponent<ecs::Renderable>( );
-
-            component->SetHandle( handle );
+            transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
+            transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
+            transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
         }
+        {
+            entity_cube->AddComponent<ecs::Renderable>();
+            auto model = entity_cube->AddComponent<ecs::Model3D>();
+
+            auto name = "Cube";
+
+            entity_cube->SetName(name);
+
+            model->SetModel(name);
+
+            auto transform = entity_cube->GetTransform();
+
+            transform->SetWorldPosition(SVec3{ i * 1.0f, 0.0f, 0.0f });
+            transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
+            transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
+        }
+
+        // parent the character to the cube
+        entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
     }
 
     auto *sky = world.CreateEntity( "Skybox" );

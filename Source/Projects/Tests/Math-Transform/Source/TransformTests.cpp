@@ -32,13 +32,31 @@ bool lossyEquals(const SVec3 &a, const SVec3 &b)
     return dif.X() < ep.X() && dif.Y() < ep.Y() && dif.Z() < ep.Z();
 }
 
-TEST_CASE("Transform: Local/World Position Manipulation")
+bool lossyEquals(const SVec4 &a, const SVec4 &b)
+{
+    auto dif = a - b;
+
+    dif.X() = abs(dif.X());
+    dif.Y() = abs(dif.Y());
+    dif.Z() = abs(dif.Z());
+    dif.W() = abs(dif.W());
+
+    SVec4 ep(0.1f);
+
+    return dif.X() < ep.X() && dif.Y() < ep.Y() && dif.Z() < ep.Z() && dif.W() < ep.W();
+}
+
+TEST_CASE("Transform: Manipulation")
 {
     World world;
 
     auto e = world.CreateEntity();
     auto t0 = e->GetComponent<Transform>();
     
+    //////////////////////
+    // Testing position //
+    //////////////////////
+
     SVec3 parentPos( -20, 25, 329 );
     t0->SetWorldPosition( parentPos );
 
@@ -80,4 +98,26 @@ TEST_CASE("Transform: Local/World Position Manipulation")
 
     REQUIRE(lossyEquals(t2->GetLocalPosition(), SVec3(-53, -371, -3784)));
     REQUIRE(lossyEquals(t2->GetWorldPosition(), SVec3(47, -401, -3769)));
+
+    //////////////////////
+    // Testing rotation //
+    //////////////////////
+
+    t1->SetLocalRotation( SQuat( 0.0f, 24.0f, 0.0f ) );
+
+    REQUIRE( lossyEquals( t0->GetLocalPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetLocalRotation( ), SQuat( 0.0f, 0.0f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldRotation( ), SQuat( 0.0f, 0.0f, 0.0f, 1.0f ) ) );
+
+    REQUIRE( lossyEquals( t1->GetLocalPosition( ), SVec3( 90, -60, -28 ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldPosition( ), SVec3( 100, -30, 15 ) ) );
+    REQUIRE( lossyEquals( t1->GetLocalRotation( ), SQuat( 0.0f, 0.2f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldRotation( ), SQuat( 0.0f, 0.2f, 0.0f, 1.0f ) ) );
+
+
+    REQUIRE( lossyEquals( t2->GetLocalPosition( ), SVec3( -53, -371, -3784 ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldPosition( ), SVec3( -1487.5f, -401, -3420.3f ) ) );
+    REQUIRE( lossyEquals( t2->GetLocalRotation( ), SQuat( 0.0f, 0.0f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldRotation( ), SQuat( 0.0f, 0.2f, 0.0f, 1.0f ) ) );
 }

@@ -15,6 +15,8 @@
 
 #include "TypeConfig.h"
 
+#include "Json.h"
+
 namespace ursine
 {
     namespace meta
