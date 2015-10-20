@@ -93,7 +93,7 @@ namespace ursine
             ComponentVector GetComponents(const Entity *entity) const;
 
             ////////////////////////////////////////////////////////////////////
-            // Scene
+            // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
             // Gets a component of the specified type in this entity's children (type safe) (depth first)
@@ -131,6 +131,15 @@ namespace ursine
             // Gets the components of the specified type id in this entity's parents
             // nullptr if it doesn't exist. Use the type safe version when possible
             ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
+
+            // Find the entity's index in relation to the other children
+            uint GetSiblingIndex(const Entity *entity) const;
+
+            // Move the entity to the start of the parent's children lists
+            void SetAsFirstSibling(const Entity *entity);
+
+            // Sets the entity's index in the parent's children list
+            void SetSiblingIndex(const Entity *entity, uint index);
 
             ////////////////////////////////////////////////////////////////////
             // Events

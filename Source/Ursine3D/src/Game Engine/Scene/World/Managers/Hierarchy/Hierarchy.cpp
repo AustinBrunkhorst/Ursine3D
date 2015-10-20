@@ -13,17 +13,17 @@ namespace ursine
         {
             return m_nodes[ entity->GetID( ) ].Children( );
         }
-    
+
         EntityID Hierarchy::GetParent(const Entity* entity) const
         {
-            return m_nodes[ entity->GetID( ) ].Parent();
+            return m_nodes[ entity->GetID( ) ].Parent( );
         }
-    
+
         EntityID Hierarchy::GetRoot(const Entity* entity) const
         {
-            return m_nodes[ entity->GetID( ) ].Root();
+            return m_nodes[ entity->GetID( ) ].Root( );
         }
-    
+
         void Hierarchy::AddEntity(Entity* entity)
         {
             auto id = entity->GetID( );
@@ -37,7 +37,7 @@ namespace ursine
       
             // subscribe to this entities events
             entity->Listener( this )
-                .On( ENTITY_PARENT_CHANGED, &Hierarchy::ParentChanged );
+                .On( ENTITY_PARENT_CHANGED, &Hierarchy::parentChanged );
         }
     
         void Hierarchy::RemoveEntity(Entity* entity)
@@ -58,10 +58,60 @@ namespace ursine
       
             // unsubscribe to this entities events
             entity->Listener( this )
-                .Off( ENTITY_PARENT_CHANGED, &Hierarchy::ParentChanged );
+                .Off( ENTITY_PARENT_CHANGED, &Hierarchy::parentChanged );
         }
-    
-        void Hierarchy::ParentChanged(EVENT_HANDLER( Entity ))
+
+        uint Hierarchy::GetSiblingIndex(const Entity* entity) const
+        {
+            auto ID = entity->GetID( );
+            auto &children = *getSiblingArray( ID );
+
+            int i = 0;
+            for (auto &child : children)
+            {
+                if (child == ID)
+                    return i;
+                else
+                    ++i;
+            }
+
+            UAssert(i == children.size( ), "This shouldn't happen. Something is wrong with the scene" );
+            return 0;
+        }
+
+        void Hierarchy::SetAsFirstSibling(const Entity* entity)
+        {
+            SetSiblingIndex( entity, 0 );
+        }
+
+        void Hierarchy::SetSiblingIndex(const Entity* entity, uint index)
+        {
+            auto ID = entity->GetID( );
+            auto &children = *getSiblingArray( ID );
+
+            UAssert( index < children.size( ), "This is an invalid index." );
+
+            int i = 0;
+            for (auto &child : children)
+            {
+                if (child == ID)
+                    break;
+                else
+                    ++i;
+            }
+
+            UAssert( i == children.size( ), "This shouldn't happen. Something is wrong with the scene" );
+            
+            // walk from the old place to the new place, making sure all things are moved
+            int dir = static_cast<int>( index ) > i ? 1 : -1;
+            for (int j = i; j != index; j += dir)
+            {
+                children[ j ] = children[ j + dir ];
+                children[ j + dir ] = ID;
+            }
+        }
+
+        void Hierarchy::parentChanged(EVENT_HANDLER( Entity ))
         {
             EVENT_ATTRS( Entity, ParentChangedArgs );
     
@@ -69,7 +119,7 @@ namespace ursine
             auto &entityNode = m_nodes[ entityID ];
             
             // Save the old parent
-            auto oldParent = entityNode.Parent( );
+			auto oldParent = args->oldParent;
             auto newParent = args->newParent;
       
             if (newParent == oldParent)
@@ -97,6 +147,32 @@ namespace ursine
                 m_root.RemoveChild( entityID );
             else
                 m_nodes[ oldParent ].RemoveChild( entityID );
-      }
+        }
+
+        const std::vector<EntityID> *Hierarchy::getSiblingArray(EntityID id) const
+        {
+            auto parentID = m_nodes[ id ].Parent( );
+            const HierarchyNode *parentNode;
+
+            if (parentID == -1)
+                parentNode = &m_root;
+            else
+                parentNode = &m_nodes[ parentID ];
+
+            return parentNode->Children( );
+        }
+
+        std::vector<EntityID> *Hierarchy::getSiblingArray(EntityID id)
+        {
+            auto parentID = m_nodes[id].Parent();
+            HierarchyNode *parentNode;
+
+            if (parentID == -1)
+                parentNode = &m_root;
+            else
+                parentNode = &m_nodes[parentID];
+
+            return &(parentNode->m_children);
+        }
     }
 }
