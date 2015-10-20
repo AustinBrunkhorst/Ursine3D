@@ -10,7 +10,7 @@ cbuffer MousePosition : register(b0)
 //defining the output to CPU
 struct CS_OUTPUT
 {
-    float id;
+    uint id;
 };
 
 //specify the output to the CPU as a read-write buffer
@@ -24,11 +24,13 @@ void main()
     //read value from texture
     float4 value = inputTexture.Load(int3(mousePos.x, mousePos.y, 0));// [mousePos.xy];
 
+    float final = value.x + value.y + value.z + value.w;
+
     //grab the raw ID values
-    float finalID = value.y;
-    float size8_1 = value.z * 255.f;
-    float size8_2 = value.w * 255.f;
+    uint finalID = value.y * 255.f;
+    int size8_1 = value.z * 255.f;
+    int size8_2 = value.w * 255.f;
 
     //shift values into place, combine to get the final ID
-    gOutput[ 0 ].id = value.y;// +(size8_1 << 8) + (size8_2 << 16);
+    gOutput[ 0 ].id = finalID;// +(size8_1 << 8) + (size8_2 << 16);
 }

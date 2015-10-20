@@ -7,6 +7,8 @@
 #include "DepthStencilStateList.h"
 #include <d3d11.h>
 
+static int tempID = -1;
+
 namespace ursine
 {
     namespace graphics
@@ -402,7 +404,7 @@ namespace ursine
             int currentIndex = 0;
 
             //render 3d models deferred
-            PrepFor3DModels(view, proj);
+            PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ]);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
@@ -423,21 +425,21 @@ namespace ursine
             if (point.y < 0) point.y = 0;
 
             //@matt set proper mouse position
-            dataToCS.mousePos = DirectX::XMINT4(point.x, point.y, 0, 0);
+            dataToCS.mousePos = DirectX::XMINT4(point.x, point.y, 0, 0);  
 
             //bind shader
-            shaderManager->BindShader(SHADER_MOUSEPOSITION);
+            shaderManager->BindShader(SHADER_MOUSEPOSITION); 
 
             //set input
-            bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE);
-            dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
+            bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE, 0);
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
              
-            //set UAV as output
+            //set UAV as output 
             dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID], nullptr);
             dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID_CPU, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID_CPU ], nullptr);
 
             //call the compute shader. Results *should* be written to the UAV above
-            dxCore->GetDeviceContext()->Dispatch(1, 1, 1);
+            dxCore->GetDeviceContext()->Dispatch(1, 1, 1); 
 
             //copy data to intermediary buffer
             //                                                         CPU read-only staging buffer                            GPU compute output
@@ -448,9 +450,12 @@ namespace ursine
             bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
 
             printf("%i, %i\n", point.x, point.y);
-            printf("%f\n", dataFromCS.id);
-            dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
-            // END OF COMPUTE TEMP
+            printf("%i\n", dataFromCS.id);
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr); 
+
+            tempID = dataFromCS.id;
+
+            // END OF COMPUTE TEMP  
             /////////////////////////////////////////////////////////////////////////////
             PrepForPointLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
@@ -794,27 +799,30 @@ namespace ursine
             }
 
             PrimitiveColorBuffer pcb;
-            pcb.color.x = point.x / 80.f;
-            pcb.color.y = point.y / 80.f;
+            pcb.color.x = point.x;
+            pcb.color.y = point.y;
 
             static float t;
             t += 0.000016f;
             pcb.color.z = t;
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_GEOMETRY);
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL); 
             // END OF TEMP //////////////////////////////////////////
-
+                    
             //map transform
             bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
 
-            //material buffer
+            //material buffer 
             MaterialDataBuffer mdb;
-
+              
             //get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
 
+            if (tempID == handle.Index_)
+                mdb.emissive = 1;
+
             //set unique ID for this model
-            mdb.id = (handle.Index_) | (handle.Type_ << 16);
+            mdb.id = (handle.Index_);
 
             //map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);

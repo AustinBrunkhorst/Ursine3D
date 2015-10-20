@@ -149,7 +149,11 @@ namespace ursine
                 case SHADERTYPE_GEOMETRY:
                     m_deviceContext->GSSetConstantBuffers(bufferIndex, 1, &buffer);
                     break;
+                case SHADERTYPE_COMPUTE:
+                    m_deviceContext->CSSetConstantBuffers(bufferIndex, 1, &buffer);
+                    break;
                 default:
+                    UAssert(false, "Failed to set buffer!");
                     break;
                 }
             }

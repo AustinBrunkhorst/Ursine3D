@@ -132,7 +132,7 @@ namespace ursine
 
         struct ComputeIDOutput
         {
-            float id;
+            unsigned id;
         };
     }
 }

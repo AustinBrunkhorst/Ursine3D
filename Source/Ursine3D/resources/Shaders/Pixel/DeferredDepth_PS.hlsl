@@ -30,6 +30,11 @@ struct PS_GBUFFER_OUT
     float4 SpecPow: SV_TARGET2;
 };
 
+cbuffer PrimColorBuffer : register(b5)
+{
+    float4 color;
+}
+
 // func to pack
 PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
     SpecIntensity, float SpecPower, float emissive )
@@ -39,14 +44,14 @@ PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
     float SpecPowerNorm = (SpecPower - g_SpecPowerRange.x) / g_SpecPowerRange.y;
 
     // convert id into proper sizes
-    int size16 = 10;// objID & 0xff;
-    int size8_1 = (objID >> 8) & 0xf;
-    int size8_2 = (objID >> 16) & 0xf;
+    int size8 = objID;
+    int size8_1 = (objID >> 4) & 0xf;
+    int size8_2 = (objID >> 8) & 0xf;
 
     // Pack all the data into the GBuffer structure
     Out.ColorSpecInt = float4(BaseColor.rgb, SpecIntensity);
     Out.Normal = float4(Normal.xyz * 0.5 + 0.5, emissive);
-    Out.SpecPow = float4(SpecPowerNorm, 0.5, (float)(size8_1) / 255.f, (float)(size8_2) / 255.f);
+    Out.SpecPow = float4(SpecPowerNorm, size8 /256.f, (float)(size8_1) / 256.f, (float)(size8_2) / 256.f);
 
     // return
     return Out;
