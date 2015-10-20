@@ -151,13 +151,13 @@ namespace ursine
 
         Component* EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
         {
-            std::queue<const std::vector<EntityID>&> childrenContainer;
+            std::queue<const std::vector<EntityID>*> childrenContainer;
 
             childrenContainer.push( m_hierarchy.GetChildren( entity ));
 
             while (childrenContainer.size( ) > 0)
             {
-                auto &children = childrenContainer.front( );
+                auto &children = *childrenContainer.front( );
 
                 for (auto &child : children)
                 {
@@ -191,13 +191,13 @@ namespace ursine
         ComponentVector EntityManager::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
         {
             ComponentVector components;
-            std::queue<const std::vector<EntityID>&> childrenContainer;
+            std::queue<const std::vector<EntityID>*> childrenContainer;
 
             childrenContainer.push( m_hierarchy.GetChildren( entity ));
 
             while (childrenContainer.size( ) > 0)
             {
-                auto &children = childrenContainer.front( );
+                auto &children = *childrenContainer.front( );
 
                 for (auto &child : children)
                 {
@@ -298,7 +298,7 @@ namespace ursine
                 return;
 
             // Remove the children before the parent is removed
-            auto &children = m_hierarchy.GetChildren( entity );
+            auto &children = *m_hierarchy.GetChildren( entity );
 
             for (auto &child : children)
                 Remove( m_active[ child ] );

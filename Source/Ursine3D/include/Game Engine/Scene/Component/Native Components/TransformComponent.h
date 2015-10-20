@@ -26,26 +26,26 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
-			ALLOW_ALIGNED_ALLOC(16);
-
         public:
             EditorField( 
-                SVec3 translation, 
-                GetWorldPosition, 
-                SetWorldPosition 
+                SVec3 translation,
+                GetLocalPosition,
+                SetLocalPosition
             );
 
             EditorField( 
-                SVec3 rotation, 
-                GetWorldEuler,
-                editorSetRotation
+                SVec3 rotation,
+                GetLocalEuler,
+                SetLocalEuler
             );
 
             EditorField( 
-                SVec3 scale, 
-                GetWorldScale, 
-                SetWorldScale 
+                SVec3 scale,
+                GetLocalScale,
+                SetLocalScale
             );
+
+            ALLOW_ALIGNED_ALLOC(16);
 
             Transform(void);
 
@@ -84,8 +84,6 @@ namespace ursine
 
             const SQuat &GetWorldRotation(void) const;
             SVec3 GetWorldEuler(void) const;
-
-            void editorSetRotation(const SVec3 &euler);
 
 			void LookAt(const SVec3 &worldPosition);
 
@@ -239,14 +237,28 @@ namespace ursine
         private:
             void copy(const Transform &transform);
 
-            void dispatchDirty(void) const;
+            void dispatchAndSetDirty(void);
             void dispatchParentChange(Transform *oldParent, Transform *newParent) const;
 
-            // Recalculate the internal matrices
-            void recalculateLocalToWorldMatrix(void);
-            void recalculateWorldToLocalMatrix(void);
-
             void onParentDirty(EVENT_HANDLER(Entity));
+
+            // Recalculate the matrices
+            void recalculateMatrices(void);
+
+            // Recalculate the local values
+            void recalculateLocalPosition(void);
+            void recalculateLocalRotation(void);
+            void recalculateLocalScale(void);
+
+            // Recalculate the world values
+            void recalculateWorldPosition(void);
+            void recalculateWorldRotation(void);
+            void recalculateWorldScale(void);
+
+            // notify the editor our values have changed
+            void notifyPositionChanged(void);
+            void notifyRotationChanged(void);
+            void notifyScaleChanged(void);
 
             // Generically add a child to our hierarch, without 
             // handling value changes in scale, position, or rotation

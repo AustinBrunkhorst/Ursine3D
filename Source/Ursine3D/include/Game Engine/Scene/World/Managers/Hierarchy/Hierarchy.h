@@ -24,7 +24,7 @@ namespace ursine
         class Hierarchy
         {
         public:
-            const std::vector<EntityID> &GetChildren(const Entity *entity) const;
+            const std::vector<EntityID> *GetChildren(const Entity *entity) const;
       
             EntityID GetParent(const Entity *entity) const;
       
@@ -49,8 +49,8 @@ namespace ursine
 
             void parentChanged(EVENT_HANDLER(ParentChangedArgs));
 
-            const std::vector<EntityID> &getSiblingArray(EntityID id) const;
-            std::vector<EntityID> &getSiblingArray(EntityID id);
+            const std::vector<EntityID> *getSiblingArray(EntityID id) const;
+            std::vector<EntityID> *getSiblingArray(EntityID id);
         };
     }
 }

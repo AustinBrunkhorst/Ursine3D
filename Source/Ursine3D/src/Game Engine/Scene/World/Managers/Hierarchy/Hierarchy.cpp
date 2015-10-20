@@ -9,7 +9,7 @@ namespace ursine
 {
     namespace ecs
     {
-        const std::vector<EntityID> &Hierarchy::GetChildren(const Entity* entity) const
+        const std::vector<EntityID> *Hierarchy::GetChildren(const Entity* entity) const
         {
             return m_nodes[ entity->GetID( ) ].Children( );
         }
@@ -64,7 +64,7 @@ namespace ursine
         uint Hierarchy::GetSiblingIndex(const Entity* entity) const
         {
             auto ID = entity->GetID( );
-            auto &children = getSiblingArray( ID );
+            auto &children = *getSiblingArray( ID );
 
             int i = 0;
             for (auto &child : children)
@@ -87,7 +87,7 @@ namespace ursine
         void Hierarchy::SetSiblingIndex(const Entity* entity, uint index)
         {
             auto ID = entity->GetID( );
-            auto &children = getSiblingArray( ID );
+            auto &children = *getSiblingArray( ID );
 
             UAssert( index < children.size( ), "This is an invalid index." );
 
@@ -103,7 +103,7 @@ namespace ursine
             UAssert( i == children.size( ), "This shouldn't happen. Something is wrong with the scene" );
             
             // walk from the old place to the new place, making sure all things are moved
-            int dir = index > i ? 1 : -1;
+            int dir = static_cast<int>( index ) > i ? 1 : -1;
             for (int j = i; j != index; j += dir)
             {
                 children[ j ] = children[ j + dir ];
@@ -149,7 +149,7 @@ namespace ursine
                 m_nodes[ oldParent ].RemoveChild( entityID );
         }
 
-        const std::vector<EntityID>& Hierarchy::getSiblingArray(EntityID id) const
+        const std::vector<EntityID> *Hierarchy::getSiblingArray(EntityID id) const
         {
             auto parentID = m_nodes[ id ].Parent( );
             const HierarchyNode *parentNode;
@@ -162,7 +162,7 @@ namespace ursine
             return parentNode->Children( );
         }
 
-        std::vector<EntityID> &Hierarchy::getSiblingArray(EntityID id)
+        std::vector<EntityID> *Hierarchy::getSiblingArray(EntityID id)
         {
             auto parentID = m_nodes[id].Parent();
             HierarchyNode *parentNode;
@@ -172,7 +172,7 @@ namespace ursine
             else
                 parentNode = &m_nodes[parentID];
 
-            return parentNode->m_children;
+            return &(parentNode->m_children);
         }
     }
 }

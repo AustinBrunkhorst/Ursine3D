@@ -7,9 +7,9 @@ namespace ursine
 {
     namespace ecs
     {
-        const std::vector<EntityID> &HierarchyNode::Children(void) const
+        const std::vector<EntityID> *HierarchyNode::Children(void) const
         {
-            return m_children;
+            return &m_children;
         }
 
         void HierarchyNode::AddChild(EntityID child)
@@ -19,7 +19,7 @@ namespace ursine
 
         void HierarchyNode::RemoveChild(EntityID child)
         {
-            for (uint i = 0, s = m_children.size( ); i < s; ++i)
+            for (size_t i = 0, s = m_children.size( ); i < s; ++i)
                 if (m_children.at( i ) == child)
                 {
                     m_children.erase( m_children.begin( ) + i );
