@@ -5,10 +5,7 @@ net session >nul 2>&1
 
 if %errorLevel% neq 0 (
     :: create popup
-    start cmd /C "color 0C && echo Visual Studio must be run as an administrator to create symbolic links. && echo. && pause"
-
-    :: exit with error
-    exit /B 1
+    start cmd /C "color 0E && echo WARNING: Visual Studio must be run as an administrator to create symbolic links. && echo. && pause"
 )
 
 set link=%1
