@@ -8,6 +8,7 @@
 #include <d3d11.h>
 
 static int tempID = -1;
+static HWND wHND = 0;
 
 namespace ursine
 {
@@ -48,6 +49,7 @@ namespace ursine
             m_debug = config.debug;
             m_currentlyRendering = false;
             m_sceneActive = false;
+            m_currentID = -1;
 
             //writing log stuff
             LogMessage("GRAPHICS");
@@ -61,6 +63,8 @@ namespace ursine
             LogMessage("GPU Info", 1);
             gfxInfo->Initialize();
             gfxInfo->SetDimensions(config.WindowWidth_, config.WindowHeight_);
+
+            wHND = config.HandleToWindow_;
 
             /////////////////////////////////////////////////////////////////
             // INITIALIZE MANAGERS //////////////////////////////////////////
@@ -397,7 +401,7 @@ namespace ursine
             /////////////////////////////////////////////////////////////////
             // SORT ALL DRAW CALLS
             std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
-
+            
             /////////////////////////////////////////////////////////////////
             // BEGIN RENDERING
             //keep track of where we are 
@@ -410,53 +414,11 @@ namespace ursine
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
                 Render2DBillboard(m_drawList[ currentIndex++ ]);
 
+            //compute pass for mouse position
+            PrepForCompute(view, proj);
+            RenderComputeMousePos();
+
             //point light pass
-            PrepForPointLightPass(view, proj);
-
-            /////////////////////////////////////////////////////////////////////////////
-            // TEMP COMPUTE
-            //perform compute operations
-            MouseBuffer dataToCS;
-
-            POINT point;
-            GetCursorPos(&point);
-
-            if (point.x < 0) point.x = 0;
-            if (point.y < 0) point.y = 0;
-
-            //@matt set proper mouse position
-            dataToCS.mousePos = DirectX::XMINT4(point.x, point.y, 0, 0);  
-
-            //bind shader
-            shaderManager->BindShader(SHADER_MOUSEPOSITION); 
-
-            //set input
-            bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE, 0);
-            dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
-             
-            //set UAV as output 
-            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID], nullptr);
-            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID_CPU, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID_CPU ], nullptr);
-
-            //call the compute shader. Results *should* be written to the UAV above
-            dxCore->GetDeviceContext()->Dispatch(1, 1, 1); 
-
-            //copy data to intermediary buffer
-            //                                                         CPU read-only staging buffer                            GPU compute output
-            dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
-
-            //read from intermediary buffer
-            ComputeIDOutput dataFromCS;
-            bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
-
-            printf("%i, %i\n", point.x, point.y);
-            printf("%i\n", dataFromCS.id);
-            dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr); 
-
-            tempID = dataFromCS.id;
-
-            // END OF COMPUTE TEMP  
-            /////////////////////////////////////////////////////////////////////////////
             PrepForPointLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
@@ -538,6 +500,8 @@ namespace ursine
             /////////////////////////////////////////////////////////////////
             // SORT ALL DRAW CALLS
             std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
+
+            gfxProfiler->Stamp(PROFILE_SORT);
 
             /////////////////////////////////////////////////////////////////
             // BEGIN RENDERING
@@ -637,6 +601,9 @@ namespace ursine
         // preparing for different stages /////////////////////////////////
         void GfxManager::PrepFor3DModels(const SMat4 &view, const SMat4 &proj)
         {
+            //end sorting
+            gfxProfiler->Stamp(PROFILE_SORT);
+
             float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
             dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
@@ -662,10 +629,30 @@ namespace ursine
             bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
         }
 
-        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
+        void GfxManager::PrepForCompute(const SMat4& view, const SMat4& proj)
         {
+#if defined(URSINE_WITH_EDITOR)
             gfxProfiler->Stamp(PROFILE_DEFERRED);
 
+            //set states
+            dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, false);
+            dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
+            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            //bind shader
+            shaderManager->BindShader(SHADER_MOUSEPOSITION);
+#endif
+        }
+
+        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
+        {
+            //if in editor mode, we need to compute the mouse pos
+#if defined(URSINE_WITH_EDITOR)
+            gfxProfiler->Stamp(PROFILE_COMPUTEMOUSE);
+#else
+            gfxProfiler->Stamp(PROFILE_DEFERRED);
+#endif
             modelManager->BindModel(modelManager->GetModelIDByName("Sphere"));
 
             //set states
@@ -817,12 +804,12 @@ namespace ursine
             //get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
-
-            if (tempID == handle.Index_)
-                mdb.emissive = 1;
-
+            
             //set unique ID for this model
-            mdb.id = (handle.Index_);
+            mdb.id = (handle.Index_) | (handle.Type_ << 16);
+
+            if (tempID == mdb.id)
+                mdb.emissive = 1;
 
             //map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
@@ -855,6 +842,73 @@ namespace ursine
 
             //render
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sprite")));
+        }
+
+        void GfxManager::RenderComputeMousePos()
+        {
+            MouseBuffer dataToCS;
+
+            POINT point;
+            GetCursorPos(&point);
+
+            ScreenToClient(wHND, &point);
+
+            if (point.x < 0) point.x = 0;
+            if (point.y < 0) point.y = 0;
+
+            //@matt set proper mouse position
+            dataToCS.mousePos = DirectX::XMINT4(point.x, point.y, 0, 0);
+
+            //bind shader
+            shaderManager->BindShader(SHADER_MOUSEPOSITION);
+
+            //set input
+            bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE, 0);
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
+
+            //set UAV as output 
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID ], nullptr);
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID_CPU, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID_CPU ], nullptr);
+
+            //call the compute shader. Results *should* be written to the UAV above
+            dxCore->GetDeviceContext()->Dispatch(1, 1, 1);
+
+            //copy data to intermediary buffer
+            //                                                         CPU read-only staging buffer                            GPU compute output
+            dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
+
+            //read from intermediary buffer
+            ComputeIDOutput dataFromCS;
+            bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
+
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
+
+            tempID = dataFromCS.id;
+
+            int index = tempID & 0xff;
+            int type = (tempID >> 16) & 0xff;
+
+            unsigned w, h;
+            gfxInfo->GetDimensions(w, h);
+
+            if (tempID < 100000 && point.x < w && point.y < h)
+            {
+                //printf("index: %i, type: %i\n", tempID, type);
+
+                switch (type)
+                {
+                case RENDERABLE_MODEL3D:
+                    m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityUniqueID();
+                    break;
+                case RENDERABLE_BILLBOARD2D:
+                    m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityUniqueID();
+                    break;
+                }
+
+
+            }
+            else
+                m_currentID = -1;
         }
 
         void GfxManager::RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj)
@@ -1212,7 +1266,12 @@ namespace ursine
 
             RELEASE_RESOURCE(tex);
         }
-        
+
+        int GfxManager::GetCurrentUniqueID()
+        {
+            return m_currentID;
+        }
+
         // misc stuff /////////////////////////////////////////////////////
         DXCore::DirectXCore *GfxManager::GetDXCore()
         {

@@ -76,6 +76,8 @@ namespace ursine
             //render onto a texture
             void RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void *input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY);
 
+            int GetCurrentUniqueID();
+
             //public members
         public:
             DXCore::DirectXCore *dxCore;
@@ -114,6 +116,7 @@ namespace ursine
 
             //preparing for rendering
             void PrepFor3DModels(const SMat4 &view, const SMat4 &proj);
+            void PrepForCompute(const SMat4 &view, const SMat4 &proj);
             void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForPrimitives(const SMat4 &view, const SMat4 &proj);
@@ -124,6 +127,7 @@ namespace ursine
             //rendering funcs
             void Render3DModel(_DRAWHND handle);
             void Render2DBillboard(_DRAWHND handle);
+            void RenderComputeMousePos();
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
             void RenderPrimitive(_DRAWHND handle);
@@ -140,6 +144,8 @@ namespace ursine
             bool m_profile;
             bool m_debug;
             bool m_ready = false;
+
+            int m_currentID;    //current object we are moused over
 
             GfxHND m_GameViewport;
 

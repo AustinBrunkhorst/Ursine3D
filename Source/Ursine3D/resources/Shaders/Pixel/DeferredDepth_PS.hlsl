@@ -44,9 +44,9 @@ PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
     float SpecPowerNorm = (SpecPower - g_SpecPowerRange.x) / g_SpecPowerRange.y;
 
     // convert id into proper sizes
-    int size8 = objID;
-    int size8_1 = (objID >> 4) & 0xf;
-    int size8_2 = (objID >> 8) & 0xf;
+    int size8 = objID & 0xff;
+    int size8_1 = (objID >> 8) & 0xff;
+    int size8_2 = (objID >> 16) & 0xf;
 
     // Pack all the data into the GBuffer structure
     Out.ColorSpecInt = float4(BaseColor.rgb, SpecIntensity);

@@ -32,5 +32,5 @@ void main()
     int size8_2 = value.w * 255.f;
 
     //shift values into place, combine to get the final ID
-    gOutput[ 0 ].id = finalID;// +(size8_1 << 8) + (size8_2 << 16);
+    gOutput[ 0 ].id = finalID +(size8_1 << 8) + (size8_2 << 16);
 }
