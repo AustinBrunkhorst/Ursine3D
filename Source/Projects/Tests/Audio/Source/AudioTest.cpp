@@ -24,9 +24,13 @@ namespace
 
 	const std::string init = "INIT.bnk";
 	const std::string bgm = "BGM.bnk";
+	const std::string car = "Car.bnk";
 
 	AkBankID initID = AK_INVALID_BANK_ID;
 	AkBankID bgmID = AK_INVALID_BANK_ID;
+
+	const AkGameObjectID GAME_OBJECT_ID_CAR = 100;
+	const AkGameObjectID GAME_OBJECT_NON_RECORDABLE = 200;
 
     void onResize(int width, int height)
 	{
@@ -309,13 +313,22 @@ void AudioTest::initAudio()
 	AkGameObjectID gameObj = 20;
 
 	//Add a BGM output, associated with listener #8 (Why 8? Because it is not 0 which is usually associated to the player).
-	AK::SoundEngine::AddSecondaryOutput(0 /*Unused for BGM*/, AkOutput_MergeToMain, 0x80 /*Listener 8 (8th bit)*/);
+	//auto second = AK::SoundEngine::AddSecondaryOutput(0 /*Unused for BGM*/, AkOutput_MergeToMain, 0x80 /*Listener 8 (8th bit)*/);
 
 	//Setup a game object to emit sound to the listener 8
-	AK::SoundEngine::RegisterGameObj(gameObj, 0x80);
+	auto obj = AK::SoundEngine::RegisterGameObj(GAME_OBJECT_ID_CAR, 0x80);
 
-	AK::SoundEngine::SetActiveListeners(gameObj, 0x80);
+	//AK::SoundEngine::PostEvent(L"Play_Engine", GAME_OBJECT_ID_CAR);
+
+	//AK::SoundEngine::AddSecondaryOutput(0 /*Ignored for BGM*/, AkOutput_MergeToMain, 0x80 /*Use the listener #8 (bit mask)*/);
+
+	// Register the "Non-recordable music object" game object
+	AK::SoundEngine::RegisterGameObj(GAME_OBJECT_NON_RECORDABLE, "Non-recordable music");
+	//Make the non-recordable object emit sound only to listener #8.  Nothing to do on the other object as by default everything is output to the main output, and is recordable.
+	//AK::SoundEngine::SetActiveListeners(GAME_OBJECT_NON_RECORDABLE, 0x80);
 
 	//Play the music. This sound must be routed to the Master Secondary Bus (or any sub bus)
-	AK::SoundEngine::PostEvent(L"Play_NonRecordableMusic", gameObj);
+	//AK::SoundEngine::PostEvent(L"Play_NonRecordableMusic", GAME_OBJECT_ID_CAR);
+	AK::SoundEngine::PostEvent("Play_NonRecordableMusic", GAME_OBJECT_NON_RECORDABLE);
+
 }
