@@ -13,9 +13,9 @@ namespace ursine
 
         public:
             EditorField(
-                SVec3 Position,
-                GetPosition,
-                SetPosition
+                LightType Type,
+                GetType,
+                SetType
             );
 
             EditorField(

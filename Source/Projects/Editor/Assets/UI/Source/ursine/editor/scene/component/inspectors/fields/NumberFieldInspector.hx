@@ -13,14 +13,26 @@ class NumberFieldInspector extends FieldInspectionHandler {
         number.value = m_instance;
 
         number.addEventListener( 'input', function() {
+            var number : Float = number.valueAsNumber;
+
+            if (Math.isNaN( number ))
+                number = 0;
+
             // floating point
             if (m_type.name == "float" || m_type.name == "double")
-                m_instance = number.valueAsNumber;
+                m_instance = number;
             // integral
             else
-                m_instance = Std.int( number.valueAsNumber );
+                m_instance = Std.int( number );
 
             m_owner.notifyChanged( m_field, m_instance );
+        } );
+
+        // select all text on focus
+        number.addEventListener( 'focus', function(e) {
+            number.select( );
+
+            e.preventDefault( );
         } );
 
         inspector.container.appendChild( number );

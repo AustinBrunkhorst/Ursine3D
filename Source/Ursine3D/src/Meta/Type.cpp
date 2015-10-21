@@ -550,6 +550,10 @@ namespace ursine
                 else if (*this == typeof( double ))
                     return { value.number_value( ) };
             }
+            else if (IsEnum( ))
+            {
+                return { value.int_value( ) };
+            }
             else if (*this == typeof( std::string ))
             {
                 return { value.string_value( ) };

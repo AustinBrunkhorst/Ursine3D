@@ -30,9 +30,21 @@ class VectorFieldInspector extends FieldInspectionHandler {
         number.value = Reflect.field( m_instance, field.name );
 
         number.addEventListener( 'input', function() {
-            Reflect.setField( m_instance, field.name, number.valueAsNumber );
+            var number : Float = number.valueAsNumber;
+
+            if (Math.isNaN( number ))
+                number = 0;
+
+            Reflect.setField( m_instance, field.name, number );
 
             m_owner.notifyChanged( m_field, m_instance );
+        } );
+
+        // select all text on focus
+        number.addEventListener( 'focus', function(e) {
+            number.select( );
+
+            e.preventDefault( );
         } );
 
         inspector.container.appendChild( number );

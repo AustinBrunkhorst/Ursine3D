@@ -26,6 +26,11 @@ Application.main = function() {
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = ["HxOverrides"];
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) return undefined;
+	return x;
+};
 HxOverrides.remove = function(a,obj) {
 	var i = a.indexOf(obj);
 	if(i == -1) return false;
@@ -59,6 +64,12 @@ $hxClasses["Std"] = Std;
 Std.__name__ = ["Std"];
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
+};
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
 };
 var StringTools = function() { };
 $hxClasses["StringTools"] = StringTools;
@@ -111,6 +122,12 @@ Type.createInstance = function(cl,args) {
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = ["haxe","IMap"];
+var haxe_ds_IntMap = function() {
+	this.h = { };
+};
+$hxClasses["haxe.ds.IntMap"] = haxe_ds_IntMap;
+haxe_ds_IntMap.__name__ = ["haxe","ds","IntMap"];
+haxe_ds_IntMap.__interfaces__ = [haxe_IMap];
 var haxe_ds__$StringMap_StringMapIterator = function(map,keys) {
 	this.map = map;
 	this.keys = keys;
@@ -535,13 +552,19 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 var ursine_editor_scene_component_inspectors_ComponentInspectionHandler = function(entity,component) {
 	this.m_entity = entity;
 	this.m_component = component;
+	this.m_componentType = ursine_editor_Editor.instance.componentDatabase.getComponentType(this.m_component.type);
+	this.fieldChangeEvents = new ursine_utils_EventManager();
 	this.inspector = new ComponentInspectorControl();
 	this.inspector.heading = component.type;
 };
 $hxClasses["ursine.editor.scene.component.inspectors.ComponentInspectionHandler"] = ursine_editor_scene_component_inspectors_ComponentInspectionHandler;
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","ComponentInspectionHandler"];
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = {
-	addField: function(field) {
+	updateField: function(name,value) {
+		this.m_component.value[name] = value;
+		this.fieldChangeEvents.trigger(name,{ name : name, value : value});
+	}
+	,addField: function(field) {
 		this.inspector.fieldInspectors.appendChild(field.inspector);
 	}
 	,notifyChanged: function(field,value) {
@@ -588,11 +611,53 @@ ursine_editor_scene_component_inspectors_components_DefaultComponentInspector.pr
 });
 var ursine_editor_scene_component_inspectors_components_LightInspector = function(entity,component) {
 	ursine_editor_scene_component_inspectors_ComponentInspectionHandler.call(this,entity,component);
+	this.fieldChangeEvents.on(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName,$bind(this,this.onLightTypeChange));
+	this.m_typeFields = [];
+	if(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum == null) this.initTypeToFields();
+	var database = ursine_editor_Editor.instance.componentDatabase;
+	this.addField(database.createFieldInspector(this,Reflect.field(this.m_component.value,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName),Reflect.field(this.m_componentType.fields,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName),ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName)));
+	this.setType(Reflect.field(component.value,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName));
 };
 $hxClasses["ursine.editor.scene.component.inspectors.components.LightInspector"] = ursine_editor_scene_component_inspectors_components_LightInspector;
 ursine_editor_scene_component_inspectors_components_LightInspector.__name__ = ["ursine","editor","scene","component","inspectors","components","LightInspector"];
 ursine_editor_scene_component_inspectors_components_LightInspector.__super__ = ursine_editor_scene_component_inspectors_ComponentInspectionHandler;
 ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $extend(ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype,{
+	setType: function(type) {
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		var componentType = database.getComponentType(this.m_component.type);
+		while(this.m_typeFields.length > 0) this.m_typeFields.pop().remove();
+		var fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[type];
+		var _g = 0;
+		while(_g < fields.length) {
+			var name = fields[_g];
+			++_g;
+			var field = Reflect.field(componentType.fields,name);
+			var instance = Reflect.field(this.m_component.value,field.name);
+			var type1 = database.getNativeType(field.type);
+			var inspector = database.createFieldInspector(this,instance,field,type1);
+			this.addField(inspector);
+			this.m_typeFields.push(inspector);
+		}
+	}
+	,onLightTypeChange: function(e) {
+		this.setType(e.value);
+	}
+	,initTypeToFields: function() {
+		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
+		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
+		var k = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
+		var v = ["Color","Direction"];
+		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
+		v;
+		var k1 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
+		var v1 = ["Color","Intensity","Radius"];
+		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k1] = v1;
+		v1;
+		var k2 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
+		var v2 = ["Color","Direction","Intensity","SpotlightAngles"];
+		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
+		v2;
+	}
 });
 var ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -640,22 +705,26 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__name__ =
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
 	initEnum: function() {
-		var select;
-		var _this = window.document;
-		select = _this.createElement("select");
+		var _g = this;
+		var combo = new ComboInputControl();
 		var values = Reflect.fields(this.m_type.enumValue);
-		var _g = 0;
-		while(_g < values.length) {
-			var key = values[_g];
-			++_g;
+		var _g1 = 0;
+		while(_g1 < values.length) {
+			var key = values[_g1];
+			++_g1;
 			var option;
-			var _this1 = window.document;
-			option = _this1.createElement("option");
+			var _this = window.document;
+			option = _this.createElement("option");
 			option.text = key;
 			option.value = Reflect.field(this.m_type.enumValue,key);
-			select.appendChild(option);
+			combo.appendChild(option);
 		}
-		this.inspector.container.appendChild(select);
+		combo.value = this.m_instance;
+		combo.addEventListener("change",function(e) {
+			_g.m_instance = Std.parseInt(combo.value);
+			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+		});
+		this.inspector.container.appendChild(combo);
 	}
 });
 var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = function(owner,instance,field,type) {
@@ -664,8 +733,14 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 	var number = new NumberInputControl();
 	number.value = this.m_instance;
 	number.addEventListener("input",function() {
-		if(_g.m_type.name == "float" || _g.m_type.name == "double") _g.m_instance = number.valueAsNumber; else _g.m_instance = number.valueAsNumber | 0;
+		var number1 = number.valueAsNumber;
+		if(isNaN(number1)) number1 = 0;
+		if(_g.m_type.name == "float" || _g.m_type.name == "double") _g.m_instance = number1; else _g.m_instance = number1 | 0;
 		_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+	});
+	number.addEventListener("focus",function(e) {
+		number.select();
+		e.preventDefault();
 	});
 	this.inspector.container.appendChild(number);
 };
@@ -703,8 +778,14 @@ ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.prototype =
 		number.step = "0.1";
 		number.value = Reflect.field(this.m_instance,field.name);
 		number.addEventListener("input",function() {
-			_g.m_instance[field.name] = number.valueAsNumber;
+			var number1 = number.valueAsNumber;
+			if(isNaN(number1)) number1 = 0;
+			_g.m_instance[field.name] = number1;
 			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+		});
+		number.addEventListener("focus",function(e) {
+			number.select();
+			e.preventDefault();
 		});
 		this.inspector.container.appendChild(number);
 	}
@@ -760,6 +841,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.initializeInspection();
 	}
 	,onInspectedEntityComponentChanged: function(e) {
+		this.m_componentHandlers.get(e.component).updateField(e.field,e.value);
 	}
 	,clearOldInspection: function() {
 		if(this.m_inspectedEntity != null) this.m_inspectedEntity.events.off(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
@@ -930,7 +1012,12 @@ ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : 
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/New"]}, doOpen : { mainMenuItem : ["File/Open"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
-ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["..."]}};
+ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};
+ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName = "ursine::ecs::LightType";
+ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName = "Type";
+ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional = "Directional";
+ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint = "Point";
+ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot = "Spot";
 ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__meta__ = { obj : { fieldInspector : ["bool"]}};
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Color"]}};
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","float","double"]}};
