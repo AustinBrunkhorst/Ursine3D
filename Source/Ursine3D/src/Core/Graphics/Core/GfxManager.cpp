@@ -185,6 +185,7 @@ namespace ursine
 
                 drawCall.Model_ = modelManager->GetModelIDByName(current->GetModelName());
                 drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
+                drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
             case RENDERABLE_PRIMITIVE:
@@ -196,6 +197,7 @@ namespace ursine
 
                 drawCall.Shader_ = SHADER_PRIMITIVE;
                 drawCall.debug_ = 1;
+                drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
             case RENDERABLE_BILLBOARD2D:
@@ -207,6 +209,7 @@ namespace ursine
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetTextureName());
 
                 drawCall.Shader_ = SHADER_BILLBOARD2D;
+                drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
             case RENDERABLE_LIGHT:
@@ -214,7 +217,7 @@ namespace ursine
                 Light *current = &renderableManager->m_renderableLights[ render->Index_ ];
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
-
+                drawCall.Overdraw_ = current->GetOverdraw();
                 switch(current->GetType())
                 {
                 case Light::LIGHT_DIRECTIONAL:
@@ -439,7 +442,7 @@ namespace ursine
             RenderDebugPoints(view, proj, currentCamera);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera);
-
+            gfxProfiler->Stamp(PROFILE_DEBUG);
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
             PrepForFinalOutput();
@@ -451,6 +454,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////////////
             //render primitive layer
+            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_STENCIL);
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEBUG)->ShaderMap);
 
             shaderManager->BindShader(SHADER_QUAD);
@@ -738,7 +742,7 @@ namespace ursine
 
         void GfxManager::PrepForFinalOutput()
         {
-            gfxProfiler->Stamp(PROFILE_DEBUG);
+            
 
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -786,13 +790,11 @@ namespace ursine
             }
 
             PrimitiveColorBuffer pcb;
-            pcb.color.x = point.x;
-            pcb.color.y = point.y;
-
-            static float t;
-            t += 0.000016f;
-            pcb.color.z = t;
+            pcb.color.x = 1;
+            pcb.color.y = 1;
+            pcb.color.z = 1;
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL); 
+
             // END OF TEMP //////////////////////////////////////////
                     
             //map transform
@@ -808,9 +810,6 @@ namespace ursine
             //set unique ID for this model
             mdb.id = (handle.Index_) | (handle.Type_ << 16);
 
-            if (tempID == mdb.id)
-                mdb.emissive = 1;
-
             //map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
@@ -820,8 +819,36 @@ namespace ursine
             //map texture
             textureManager->MapTextureByID(handle.Material_);
 
+            if(handle.Overdraw_)
+                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+            else
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+
             //render
             shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+
+            //render debug lines
+            Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
+            if(model.GetDebug())
+            {
+                dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+                dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+
+                pcb.color.x = 0.75;
+                pcb.color.y = 0.75;
+                pcb.color.z = 0.45;
+                bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+
+                mdb.emissive = 4;
+                mdb.specularPower = 0;
+                mdb.specularIntensity = 0;
+                bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+                textureManager->MapTextureByName("Blank");
+                shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+
+                dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+            }
         }
 
         void GfxManager::Render2DBillboard(_DRAWHND handle)
@@ -839,6 +866,11 @@ namespace ursine
 
             //map texture
             textureManager->MapTextureByID(handle.Material_);
+
+            if (handle.Overdraw_)
+                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+            else
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //render
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sprite")));
@@ -891,7 +923,7 @@ namespace ursine
             unsigned w, h;
             gfxInfo->GetDimensions(w, h);
 
-            if (tempID < 100000 && point.x < w && point.y < h)
+            if (tempID < 100000 && (unsigned)point.x < w && (unsigned)point.y < h)
             {
                 //printf("index: %i, type: %i\n", tempID, type);
 

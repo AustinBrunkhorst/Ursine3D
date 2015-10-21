@@ -37,10 +37,16 @@ namespace ursine
             void Initialize(void);
             void SetEntityUniqueID(const ecs::EntityUniqueID id);
             ecs::EntityUniqueID GetEntityUniqueID() const;
+            void SetOverdraw(bool draw);
+            bool GetOverdraw() const;
 
+            void SetDebug(bool debug);
+            bool GetDebug() const;
         private:
             ecs::EntityUniqueID entityID;
             bool Active_;
+            bool Overdraw_;
+            bool Debug_;
         };
 
         /////////////////////////////////////////////////////////////////

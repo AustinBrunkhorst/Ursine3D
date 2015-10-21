@@ -12,7 +12,11 @@ namespace ursine
             Active_ = false;
         }
 
-        void Renderable::Initialize() {}
+        void Renderable::Initialize()
+        {
+            Overdraw_ = false;
+            Debug_ = false;
+        }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
         {
@@ -22,6 +26,26 @@ namespace ursine
         ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
         {
             return entityID;
+        }
+
+        void Renderable::SetOverdraw(bool draw)
+        {
+            Overdraw_ = draw;
+        }
+
+        bool Renderable::GetOverdraw() const
+        {
+            return Overdraw_;
+        }
+
+        void Renderable::SetDebug(bool debug)
+        {
+            Debug_ = debug;
+        }
+
+        bool Renderable::GetDebug() const
+        {
+            return Debug_;
         }
 
         ///////////////////////////////////////////////////////////////////

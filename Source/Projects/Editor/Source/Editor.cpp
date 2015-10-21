@@ -7,6 +7,7 @@
 
 #include <WindowManager.h>
 #include <UIManager.h>
+#include <MouseManager.h>
 
 #include <Color.h>
 
@@ -136,38 +137,93 @@ void Editor::InitializeScene(void)
         scene.SetEditorCamera( component->GetHandle( ) );
     }
 
-    for (int i = 0; i < 50; ++i)
+    //for (int i = 0; i < 50; ++i)
+    //{
+    //    auto *entity = world.CreateEntity( );
+    //    {
+    //        auto handle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
+
+    //        auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
+
+    //        if(i == 1)
+    //            model.SetOverdraw(true);
+
+    //        model.SetEntityUniqueID(entity->GetUniqueID(  ));
+
+    //        auto name = i & 1 ? "Cube" : "Cylinder";
+
+    //        entity->SetName( name );
+
+    //        model.SetModel( name );
+    //        model.SetMaterial( "Cube" );
+    //        model.SetMaterialData(0, 10, 1);
+
+    //        SMat4 transform;
+
+    //        entity->GetComponent<ecs::Transform>()->SetWorldPosition(SVec3(i, 0, 0));
+
+    //        transform.TRS(
+    //            SVec3{ i * 1.0f, 0.0f, 0.0f },
+    //            SQuat{ 0.0f, 0.0f, 0.0f },
+    //            SVec3{ 1.0f, 1.0f, 1.0f }
+    //        );
+
+    //        model.SetWorldMatrix( transform );
+
+    //        auto *component = entity->AddComponent<ecs::Renderable>( );
+
+    //        component->SetHandle( handle );
+    //    }
+    //}
+
+    //create axis
+    auto *xAxis = world.CreateEntity();
+    auto *yAxis = world.CreateEntity();
+    auto *zAxis = world.CreateEntity();
     {
-        auto *entity = world.CreateEntity( );
-        {
-            auto handle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
+        auto xHND = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_MODEL3D);
+        auto yHND = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_MODEL3D);
+        auto zHND = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_MODEL3D);
 
-            auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
+        auto &xModel = m_graphics->RenderableMgr.GetModel3D(xHND);
+        auto &yModel = m_graphics->RenderableMgr.GetModel3D(yHND);
+        auto &zModel = m_graphics->RenderableMgr.GetModel3D(zHND);
 
-            model.SetEntityUniqueID(entity->GetUniqueID(  ));
+        xModel.SetModel("Cylinder");
+        yModel.SetModel("Cylinder");
+        zModel.SetModel("Cylinder");
 
-            auto name = i & 1 ? "Cube" : "Character";
+        xModel.SetEntityUniqueID(xAxis->GetUniqueID());
+        yModel.SetEntityUniqueID(yAxis->GetUniqueID());
+        zModel.SetEntityUniqueID(zAxis->GetUniqueID());
 
-            entity->SetName( name );
+        xModel.SetMaterialData(1, 0, 0);
+        yModel.SetMaterialData(1, 0, 0);
+        zModel.SetMaterialData(1, 0, 0);
 
-            model.SetModel( name );
-            model.SetMaterial( "Cube" );
-            model.SetMaterialData(0, 10, 1);
+        xModel.SetOverdraw(true);
+        yModel.SetOverdraw(true);
+        zModel.SetOverdraw(true);
 
-            SMat4 transform;
+        SQuat rotZ = SQuat(90, SVec3(1, 0, 0));
+        SQuat rotX = SQuat(90, SVec3(0, 0, 1));
+        SQuat rotY = SQuat(0, SVec3(0, 0, 1));
 
-            transform.TRS(
-                SVec3{ i * 1.0f, 0.0f, 0.0f },
-                SQuat{ 0.0f, 0.0f, 0.0f },
-                SVec3{ 1.0f, 1.0f, 1.0f }
-            );
+        SMat4 xTrans = SMat4(SVec3(0.5, 0, 0));
+        SMat4 yTrans = SMat4(SVec3(0, 0.5, 0));
+        SMat4 zTrans = SMat4(SVec3(0, 0, 0.5));
 
-            model.SetWorldMatrix( transform );
+        xModel.SetWorldMatrix(xTrans * SMat4(rotX) * SMat4(0.03, 1, 0.03));
+        yModel.SetWorldMatrix(yTrans * SMat4(rotY) * SMat4(0.03, 1, 0.03));
+        zModel.SetWorldMatrix(zTrans * SMat4(rotZ) * SMat4(0.03, 1, 0.03));
 
-            auto *component = entity->AddComponent<ecs::Renderable>( );
+        auto *componentX = xAxis->AddComponent<ecs::Renderable>();
+        auto *componentY = yAxis->AddComponent<ecs::Renderable>();
+        auto *componentZ = zAxis->AddComponent<ecs::Renderable>();
 
-            component->SetHandle( handle );
-        }
+        componentX->SetHandle(xHND);
+        componentY->SetHandle(yHND);
+        componentZ->SetHandle(zHND);
     }
 
     auto *sky = world.CreateEntity( "Skybox" );
@@ -181,7 +237,7 @@ void Editor::InitializeScene(void)
         skybox.SetModel( "Skybox" );
         skybox.SetMaterial( "Skybox" );
         skybox.SetMaterialData( 1, 0, 0 );
-
+        skybox.SetOverdraw(false);
         SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
         SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
         skybox.SetMaterialData(1, 0, 0);
@@ -273,6 +329,60 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto &scene = m_project->GetScene( );
 
     scene.Update( dt );
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    //object picking
+    static ecs::EntityUniqueID currentID = -1;
+    auto id = GetCoreSystem(ursine::graphics::GfxAPI)->GetMousedOverID();
+
+    if(GetCoreSystem(MouseManager)->IsButtonTriggeredDown(MBTN_LEFT) && id != -1)
+    {
+        if (currentID != -1)
+        {
+            auto obj = scene.GetWorld().GetEntityUnique(currentID);
+
+            auto renderable = obj->GetComponent<ecs::Renderable>();
+
+            if (renderable)
+            {
+                auto handle = renderable->GetHandle();
+                auto &model = GetCoreSystem(ursine::graphics::GfxAPI)->RenderableMgr.GetModel3D(handle);
+
+                model.SetDebug(false);
+            }
+        }
+
+        currentID = id;
+    }
+
+    //acting upon current selected obj
+    if (currentID != -1)
+    {
+        auto obj = scene.GetWorld().GetEntityUnique(currentID);
+
+        auto renderable = obj->GetComponent<ecs::Renderable>();
+
+        auto transform = obj->GetComponent<ecs::Transform>();
+
+        auto pos = transform->GetWorldPosition();
+
+        GetCoreSystem(ursine::graphics::GfxAPI)->DrawingMgr.SetColor(1, 0, 0, 1);
+        GetCoreSystem(ursine::graphics::GfxAPI)->DrawingMgr.DrawLine(pos, pos + SVec3(1, 0, 0));
+        GetCoreSystem(ursine::graphics::GfxAPI)->DrawingMgr.SetColor(0, 1, 0, 1);
+        GetCoreSystem(ursine::graphics::GfxAPI)->DrawingMgr.DrawLine(pos, pos + SVec3(0, 1, 0));
+        GetCoreSystem(ursine::graphics::GfxAPI)->DrawingMgr.SetColor(0, 0, 1, 1);
+        GetCoreSystem(ursine::graphics::GfxAPI)->DrawingMgr.DrawLine(pos, pos + SVec3(0, 0, 1));
+
+        if (renderable)
+        {
+            auto handle = renderable->GetHandle();
+            auto &model = GetCoreSystem(ursine::graphics::GfxAPI)->RenderableMgr.GetModel3D(handle);
+
+            model.SetDebug(true);
+        }
+    }
+    //end of object picking
+    //////////////////////////////////////////////////////////////////////////////////////
 
     m_graphics->StartFrame( );
 
