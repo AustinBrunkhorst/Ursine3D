@@ -789,10 +789,11 @@ namespace ursine
                 bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
             }
 
+            Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor();
             PrimitiveColorBuffer pcb;
-            pcb.color.x = 1;
-            pcb.color.y = 1;
-            pcb.color.z = 1;
+            pcb.color.x = c.r;
+            pcb.color.y = c.g;
+            pcb.color.z = c.b;
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL); 
 
             // END OF TEMP //////////////////////////////////////////

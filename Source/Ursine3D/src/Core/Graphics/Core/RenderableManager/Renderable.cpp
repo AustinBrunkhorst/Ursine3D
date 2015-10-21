@@ -91,6 +91,16 @@ namespace ursine
             intensity = m_specIntensity;
         }
 
+        void Model3D::SetColor(const Color color)
+        {
+            m_color = color;
+        }
+
+        Color Model3D::GetColor() const
+        {
+            return m_color;
+        }
+
         const char *Model3D::GetModelName(void)
         {
             return ModelName_.c_str();

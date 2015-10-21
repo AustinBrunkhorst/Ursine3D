@@ -82,10 +82,13 @@ namespace ursine
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+            void SetColor(const Color color);
+            Color GetColor() const;
         private:
             float m_emissive;
             float m_specPow;
             float m_specIntensity;
+            Color m_color;
             std::string ModelName_;
             std::string MaterialName_;
         };

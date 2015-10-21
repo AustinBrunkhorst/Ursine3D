@@ -137,44 +137,44 @@ void Editor::InitializeScene(void)
         scene.SetEditorCamera( component->GetHandle( ) );
     }
 
-    //for (int i = 0; i < 50; ++i)
-    //{
-    //    auto *entity = world.CreateEntity( );
-    //    {
-    //        auto handle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
+    for (int i = 0; i < 50; ++i)
+    {
+        auto *entity = world.CreateEntity( );
+        {
+            auto handle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
 
-    //        auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
+            auto &model = m_graphics->RenderableMgr.GetModel3D( handle );
 
-    //        if(i == 1)
-    //            model.SetOverdraw(true);
+            if(i == 1)
+                model.SetOverdraw(true);
 
-    //        model.SetEntityUniqueID(entity->GetUniqueID(  ));
+            model.SetEntityUniqueID(entity->GetUniqueID(  ));
 
-    //        auto name = i & 1 ? "Cube" : "Cylinder";
+            auto name = i & 1 ? "Cube" : "Cylinder";
 
-    //        entity->SetName( name );
+            entity->SetName( name );
 
-    //        model.SetModel( name );
-    //        model.SetMaterial( "Cube" );
-    //        model.SetMaterialData(0, 10, 1);
+            model.SetModel( name );
+            model.SetMaterial( "Cube" );
+            model.SetMaterialData(0, 10, 1);
 
-    //        SMat4 transform;
+            SMat4 transform;
 
-    //        entity->GetComponent<ecs::Transform>()->SetWorldPosition(SVec3(i, 0, 0));
+            entity->GetComponent<ecs::Transform>()->SetWorldPosition(SVec3(i, 0, 0));
 
-    //        transform.TRS(
-    //            SVec3{ i * 1.0f, 0.0f, 0.0f },
-    //            SQuat{ 0.0f, 0.0f, 0.0f },
-    //            SVec3{ 1.0f, 1.0f, 1.0f }
-    //        );
+            transform.TRS(
+                SVec3{ i * 1.0f, 0.0f, 0.0f },
+                SQuat{ 0.0f, 0.0f, 0.0f },
+                SVec3{ 1.0f, 1.0f, 1.0f }
+            );
 
-    //        model.SetWorldMatrix( transform );
+            model.SetWorldMatrix( transform );
 
-    //        auto *component = entity->AddComponent<ecs::Renderable>( );
+            auto *component = entity->AddComponent<ecs::Renderable>( );
 
-    //        component->SetHandle( handle );
-    //    }
-    //}
+            component->SetHandle( handle );
+        }
+    }
 
     //create axis
     auto *xAxis = world.CreateEntity();
@@ -193,13 +193,21 @@ void Editor::InitializeScene(void)
         yModel.SetModel("Cylinder");
         zModel.SetModel("Cylinder");
 
+        xModel.SetMaterial("Blank");
+        yModel.SetMaterial("Blank");
+        zModel.SetMaterial("Blank");
+
         xModel.SetEntityUniqueID(xAxis->GetUniqueID());
         yModel.SetEntityUniqueID(yAxis->GetUniqueID());
         zModel.SetEntityUniqueID(zAxis->GetUniqueID());
 
-        xModel.SetMaterialData(1, 0, 0);
-        yModel.SetMaterialData(1, 0, 0);
-        zModel.SetMaterialData(1, 0, 0);
+        xModel.SetColor(Color(1, 0, 0, 1));
+        yModel.SetColor(Color(0, 1, 0, 1));
+        zModel.SetColor(Color(0, 0, 1, 1));
+
+        xModel.SetMaterialData(3, 0, 0);
+        yModel.SetMaterialData(3, 0, 0);
+        zModel.SetMaterialData(3, 0, 0);
 
         xModel.SetOverdraw(true);
         yModel.SetOverdraw(true);
