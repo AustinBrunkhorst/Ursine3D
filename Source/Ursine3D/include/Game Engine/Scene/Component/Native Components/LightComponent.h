@@ -26,12 +26,6 @@ namespace ursine
             );
 
             EditorField(
-                SVec3 Position,
-                GetPosition,
-                SetPosition
-            );
-
-            EditorField(
                 SVec3 Direction,
                 GetDirection,
                 SetDirection

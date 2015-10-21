@@ -287,6 +287,7 @@ void Editor::onComponentChanged(EVENT_HANDLER(ecs::World))
 
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "component", args->component->GetType( ).GetName( ) },
         { "field", args->field },
         { "value", args->value.SerializeJson( ) }
     };

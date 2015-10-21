@@ -14,12 +14,12 @@ In order to build the engine, you must download these files. They are hosted on 
 
 #### Current Build Info
 
-Date:             August 07, 2015
+Date:             October 20, 2015
 
-CEF Version:      3.2272.32.gbda8dc7
+CEF Version:      3.2526.1342.g156dc55
 CEF URL:          https://bitbucket.org/chromiumembedded/cef.git
-                  @bda8dc71be6ffce529b6c63fecd821509d0c406e
+                  @156dc552b96e32a9ba152ce9994463ac48238452
 
-Chromium Verison: 41.0.2272.104
+Chromium Verison: 47.0.2526.16
 Chromium URL:     https://chromium.googlesource.com/chromium/src.git
-                  @70181fa34550b82997e89f7cc309e56c1016169a
+                  @866d98134590c1389ce9cc348e7a08501883f472

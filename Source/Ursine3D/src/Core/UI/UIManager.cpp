@@ -50,7 +50,6 @@ namespace ursine
 #else
 
         settings.log_severity = LOGSEVERITY_DISABLE;
-        //settings.pack_loading_disabled = true;
 
 #endif
 
@@ -80,7 +79,6 @@ namespace ursine
 
         settings.windowless_frame_rate = 144;
         settings.webgl = STATE_DISABLED;
-        settings.java = STATE_DISABLED;
         settings.plugins = STATE_DISABLED;
         settings.javascript = STATE_ENABLED;
         settings.javascript_access_clipboard = STATE_ENABLED;

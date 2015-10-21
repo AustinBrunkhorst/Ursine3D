@@ -38,7 +38,7 @@ class EntityInspector extends WindowHandler {
     }
 
     private function onInspectedEntityComponentChanged(e) {
-
+        m_componentHandlers[ e.component ].updateField( e.field, e.value );
     }
 
     private function clearOldInspection() {
