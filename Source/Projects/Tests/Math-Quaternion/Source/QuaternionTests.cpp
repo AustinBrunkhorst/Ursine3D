@@ -1,9 +1,9 @@
 #define CATCH_CONFIG_MAIN
 #include "../dep/Testing/include/catch.hpp"
 
-#include "SQuat.h"
-#include "SVec3.h"
-#include "SMat3.h"
+#include <SQuat.h>
+#include <SVec3.h>
+#include <SMat3.h>
 
 using namespace ursine;
 
@@ -173,10 +173,7 @@ TEST_CASE("SQuat: Look At")
 	SQuat quat;
 
 	quat.SetLookAt(
-		SVec3(39.0f, 273.0f, -45.0f),
-		SVec3(0.0f, 0.0f, 1.0f),
-		SVec3(0.0f, 1.0f, 0.0f),
-		SVec3(0.0f, 1.0f, 0.0f)
+		SVec3(39.0f, 273.0f, -45.0f)
 	);
 
 	SQuat answer(-0.2192286f, 0.7297007f, 0.5876916f, 0.2722027f);

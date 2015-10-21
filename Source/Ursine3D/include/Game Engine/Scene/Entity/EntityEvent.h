@@ -28,10 +28,18 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////
 
             // A transform was invalidated
-            ENTITY_TRANSFORM_CHANGED,
+            ENTITY_TRANSFORM_DIRTY,
 
             // An entities parent has changed
             ENTITY_PARENT_CHANGED,
+
+            ///////////////////////////////////////////////////////////////////
+            // Renderer
+            ///////////////////////////////////////////////////////////////////
+
+            // Tells components (model, light) to update the
+            // renderer with their info (position, scale, ect.)
+            ENTITY_UPDATE_RENDERER,
 
             ///////////////////////////////////////////////////////////////////
             // User Defined

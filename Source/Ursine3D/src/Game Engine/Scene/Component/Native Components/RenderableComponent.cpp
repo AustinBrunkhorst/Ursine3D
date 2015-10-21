@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 
 #include "RenderableComponent.h"
-#include "Renderable.h"
+#include "EntityEvent.h"
 
 namespace ursine
 {
@@ -16,6 +16,12 @@ namespace ursine
             
         }
 
+        Renderable::~Renderable(void)
+        {
+            GetOwner( )->Listener( this )
+                .Off( ENTITY_TRANSFORM_DIRTY, &Renderable::onTransformChange );
+        }
+
         graphics::GfxHND Renderable::GetHandle(void) const
         {
             return m_handle;
@@ -24,6 +30,24 @@ namespace ursine
         void Renderable::SetHandle(graphics::GfxHND handle)
         {
             m_handle = handle;
+        }
+
+        void Renderable::OnInitialize()
+        {
+            GetOwner( )->Listener( this )
+                .On( ENTITY_TRANSFORM_DIRTY, &Renderable::onTransformChange );
+        }
+
+        void Renderable::onTransformChange(EVENT_HANDLER(Entity))
+        {
+            m_dirty = true;
+        }
+
+        void Renderable::updateRenderer(void)
+        {
+            GetOwner( )->Dispatch( ENTITY_UPDATE_RENDERER, EventArgs::Empty );
+
+            m_dirty = false;
         }
     }
 }

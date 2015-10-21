@@ -16,9 +16,9 @@
 #include "CoreSystem.h"
 #include "Meta.h"
 
-#include "btBulletCollisionCommon.h"
-#include "btBulletDynamicsCommon.h"
-#include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include <BulletSoftBody/btSoftRigidDynamicsWorld.h>
 #include "PhysicsDebugDrawer.h"
 
 namespace ursine

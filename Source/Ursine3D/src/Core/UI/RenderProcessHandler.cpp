@@ -37,7 +37,10 @@ namespace ursine
     void RenderProcessHandler::OnRenderThreadCreated(
         CefRefPtr<CefListValue> extraInfo) { }
 
-    void RenderProcessHandler::OnWebKitInitialized(void) { }
+    void RenderProcessHandler::OnWebKitInitialized(void)
+    {
+        
+    }
 
     void RenderProcessHandler::OnBrowserCreated(
         CefRefPtr<CefBrowser> browser) { }
@@ -86,7 +89,7 @@ namespace ursine
         CefProcessId sourceProcess,
         CefRefPtr<CefProcessMessage> message)
     {
-        if (sourceProcess == PID_BROWSER)
+        if (sourceProcess == PID_BROWSER && !browser->IsLoading( ))
         {
             auto args = message->GetArgumentList( );
 

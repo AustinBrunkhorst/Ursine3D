@@ -355,7 +355,7 @@ namespace ursine
             return m_type;
         }
 
-        void Light::SetType(const LightType type)
+        void Light::SetType(const Light::LightType type)
         {
             m_type = type;
         }

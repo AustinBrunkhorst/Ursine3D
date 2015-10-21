@@ -85,7 +85,12 @@ namespace ursine
             m_graphics->BeginScene( );
 
             for (auto &renderable : m_renderable)
+            {
+                if (renderable.second->m_dirty)
+                    renderable.second->updateRenderer( );
+
                 m_graphics->RenderObject( renderable.second->m_handle );
+            }
 
             RenderHookArgs e( 0 );
 

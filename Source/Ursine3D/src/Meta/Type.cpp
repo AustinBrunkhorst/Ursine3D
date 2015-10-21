@@ -254,7 +254,7 @@ namespace ursine
             return database.types[ m_id ].name;
         }
 
-        const MetaManager& Type::GetMeta(void) const
+        const MetaManager &Type::GetMeta(void) const
         {
             return database.types[ m_id ].meta;
         }
@@ -512,7 +512,7 @@ namespace ursine
                 GetName( ).c_str( )
             );
 
-            if (IsPrimitive( ))
+            if (IsPrimitive( ) || IsEnum( ))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
                     return { instance.ToDouble( ) };
@@ -528,7 +528,7 @@ namespace ursine
             {
                 auto value = field.second.GetValue( instance );
 
-                object[ field.first ] = value.GetType( ).SerializeJson( value );
+                object[ field.first ] = value.SerializeJson( );
             }
 
             return object;

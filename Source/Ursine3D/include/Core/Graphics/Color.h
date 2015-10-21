@@ -17,7 +17,7 @@
 
 #include "SVec4.h"
 
-#include "Json.h"
+#include "JsonSerializer.h"
 
 #include "Utils.h"
 
@@ -173,6 +173,7 @@ namespace ursine
         #pragma endregion
 
         // Default constructor (white)
+        Meta(Enable)
         Color(void);
 
         // Constructs a color from the respective red, green, and blue values
@@ -210,7 +211,7 @@ namespace ursine
 
         // Converts the color to its hexadecimal representation
         uint32 ToHex(void) const;
-    };
+    } Meta(Enable, WhiteListMethods);
 
     extern template
     Json JsonSerializer::Serialize(Color &instance);

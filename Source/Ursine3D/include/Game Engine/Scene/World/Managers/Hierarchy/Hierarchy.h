@@ -33,16 +33,24 @@ namespace ursine
             void AddEntity(Entity *entity);
       
             void RemoveEntity(Entity *entity);
+
+            uint GetSiblingIndex(const Entity *entity) const;
+
+            void SetAsFirstSibling(const Entity *entity);
+
+            void SetSiblingIndex(const Entity *entity, uint index);
     
         private:
-            void ParentChanged(EVENT_HANDLER( ParentChangedArgs ));
       
             RootHierarchyNode m_root;
       
             // Array of EntityNodes.  Each index is associated to the entity's id.
             std::vector<EntityHierarchyNode> m_nodes;
-      
-            // TODO: Maybe contains the BVH for all children
+
+            void parentChanged(EVENT_HANDLER(ParentChangedArgs));
+
+            const std::vector<EntityID> *getSiblingArray(EntityID id) const;
+            std::vector<EntityID> *getSiblingArray(EntityID id);
         };
     }
 }

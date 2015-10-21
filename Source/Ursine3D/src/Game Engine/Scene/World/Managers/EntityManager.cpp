@@ -68,8 +68,11 @@ namespace ursine
 
         EntityManager::~EntityManager(void)
         {
-            for (auto entity : m_active)
-                clearComponents( entity );
+            while (m_active.size( ) > 0)
+            {
+                auto entity = m_active[ 0 ];
+                Remove( entity );
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -85,6 +88,11 @@ namespace ursine
             dispatchCreated( entity );
 
             return entity;
+        }
+
+        const EntityVector &EntityManager::GetActiveEntities(void) const
+        {
+            return m_active;
         }
 
         void EntityManager::AddComponent(Entity *entity, Component *component)
@@ -157,9 +165,9 @@ namespace ursine
 
             while (childrenContainer.size( ) > 0)
             {
-                auto &children = childrenContainer.front( );
+                auto &children = *childrenContainer.front( );
 
-                for (auto &child : *children)
+                for (auto &child : children)
                 {
                     auto childEntity = &m_cache[ child ];
                     auto component = GetComponent( childEntity, id );
@@ -197,9 +205,9 @@ namespace ursine
 
             while (childrenContainer.size( ) > 0)
             {
-                auto &children = childrenContainer.front( );
+                auto &children = *childrenContainer.front( );
 
-                for (auto &child : *children)
+                for (auto &child : children)
                 {
                     auto childEntity = &m_cache[ child ];
                     auto component = GetComponent( childEntity, id );
@@ -236,6 +244,21 @@ namespace ursine
             return components;
         }
 
+        uint EntityManager::GetSiblingIndex(const Entity *entity) const
+        {
+            return m_hierarchy.GetSiblingIndex( entity );
+        }
+
+        void EntityManager::SetAsFirstSibling(const Entity *entity)
+        {
+            m_hierarchy.SetAsFirstSibling( entity );
+        }
+
+        void EntityManager::SetSiblingIndex(const Entity *entity, uint index)
+        {
+            m_hierarchy.SetSiblingIndex( entity, index );
+        }
+         
         EntityVector EntityManager::GetEntities(const Filter &filter) const
         {
             EntityVector found;
@@ -281,6 +304,15 @@ namespace ursine
             // not active, so we don't want to delete him
             if (!entity->IsActive( ))
                 return;
+
+            // Remove the children before the parent is removed
+            auto children = m_hierarchy.GetChildren( entity );
+
+            while (children->size() > 0)
+            {
+                auto &child = ( *children )[ 0 ];
+                Remove( m_active[ child ] );
+            }
 
             m_hierarchy.RemoveEntity( entity );
 
@@ -430,11 +462,6 @@ namespace ursine
 
             // components to remove
             ComponentVector toRemove;
-
-            URSINE_TODO(
-                "optimize this once entity parenting is implemented: "
-                "start from the deepest child and clear components going up the tree."
-            );
 
             for (ComponentTypeID i = 0; i < size; ++i)
             {

@@ -22,6 +22,9 @@ namespace ursine
 
         GfxAPI::~GfxAPI(void)
         {
+            if (m_privates == nullptr)
+                return;
+            
             //uninit API managers
             ResourceMgr.Uninitialize();
             RenderableMgr.Uninitialize();

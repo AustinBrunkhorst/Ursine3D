@@ -14,6 +14,7 @@ namespace ursine
 
         public:
             Renderable(void);
+            ~Renderable(void);
 
             Meta(Disable)
             graphics::GfxHND GetHandle(void) const;
@@ -21,10 +22,23 @@ namespace ursine
             Meta(Disable)
             void SetHandle(graphics::GfxHND handle);
 
+            void OnInitialize(void) override;
+
         private:
             friend class RenderSystem;
 
             graphics::GfxHND m_handle;
+
+            // lets us know if we need to update the matrix in the renderer
+            bool m_dirty;
+
+            void onTransformChange(EVENT_HANDLER(Entity));
+
+            // notify the components listening to the 
+            // renderable component to update the renderer
+            // Ex: Model updates the renderers matrix
+            void updateRenderer(void);
+
         } Meta(Enable, DisplayName( "Renderable" ));
     }
 }

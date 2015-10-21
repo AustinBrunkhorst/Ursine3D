@@ -1,0 +1,19 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-color-input">
+    <link rel="import" type="css" href="../Style/Controls/ColorInput.css">
+    <template>
+    </template>
+    <script>
+        var ColorInputControl = Polymer({
+            is: 'x-color-input',
+            extends: 'input',
+            properties: {
+
+            },
+            created: function() {
+                this.type = 'color';
+            }
+        });
+    </script>
+</dom-module>

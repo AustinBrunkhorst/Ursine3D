@@ -75,8 +75,8 @@ namespace ursine
 		void Slerp(const SQuat &other, float t, SQuat &result) const;
 
 		// Rotate a given vector by this quaternion
-		SVec3 Rotate(const SVec3 &vec);
-		void Rotate(const SVec3 &vec, SVec3 &result);
+		SVec3 Rotate(const SVec3 &vec) const;
+		void Rotate(const SVec3 &vec, SVec3 &result) const;
 
 		// A LookAt quaternion is a quaternion that orients an object to face towards a specified target direction.
 		void SetLookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
@@ -88,8 +88,8 @@ namespace ursine
 
 		// Operators
 		const SQuat &operator*=(const SQuat &q);
-		SQuat operator*(const SQuat &rhs);
-		SVec3 operator*(const SVec3 &rhs);
+		SQuat operator*(const SQuat &rhs) const;
+		SVec3 operator*(const SVec3 &rhs) const;
 
 		ALLOW_ALIGNED_ALLOC(16)
 

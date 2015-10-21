@@ -156,20 +156,24 @@ namespace ursine
 
 	INLINE void SMat3::Rotation(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees)
 	{
-		float A, B, C, D, E, F;
+        float cx, sx, cy, sy, cz, sz;
 
-		float x = math::DegreesToRadians( x_degrees );
-		float y = math::DegreesToRadians( y_degrees );
-		float z = math::DegreesToRadians( z_degrees );
+        float x = math::DegreesToRadians( x_degrees );
+        float y = math::DegreesToRadians( y_degrees );
+        float z = math::DegreesToRadians( z_degrees );
 
-		math::SinCos( x, B, A );
-		math::SinCos( y, D, C );
-		math::SinCos( z, F, E );
+        math::SinCos( x, sx, cx );
+        math::SinCos( y, sy, cy );
+        math::SinCos( z, sz, cz );
 
-		mat.Set(
-            C*E, -C*F, -D,
-            -B*D*E + A*F, B*D*F + A*E, -B*C,
-            A*D*E + B*F, -A*D*F + B*E, A*C
+        float cycz = cy * cz;
+        float sxsy = sx * sy;
+        float szcy = sz * cy;
+
+        mat.Set(
+            cycz + sxsy * sz, cz * sxsy - szcy, cx * sx,
+            cx * sz, cx * cz, -sx,
+            szcy * sx - cz * sy, cycz * sx + sy * sz, cx * cy
         );
 	}
 
@@ -254,7 +258,7 @@ namespace ursine
 		);
 	}
 
-	INLINE SMat3 SMat3::LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp)
+	INLINE void SMat3::LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp)
 	{
 		// Generate the third basis vector in the local space.
 		SVec3 localRight = SVec3::Cross( localUp, localForward );
@@ -291,8 +295,7 @@ namespace ursine
 		// or     M = m1 * m2, where
 
 		// m1 equals (worldRight, perpWorldUp, targetDirection):
-		SMat3 m1;
-		m1.SetColumns( worldRight, perpWorldUp, targetDirection );
+		SetColumns( worldRight, perpWorldUp, targetDirection );
 
 		// and m2 equals (localRight, localUp, localForward)^{-1}:
 		SMat3 m2( localRight, localUp, localForward );
@@ -300,12 +303,10 @@ namespace ursine
 		// and not the columns to directly produce the transpose, i.e. the inverse of (localRight, localUp, localForward).
 
 		// Compute final M.
-		auto m = m1 * m2;
+		*this = *this * m2;
 
 		// And fix any numeric stability issues by re-orthonormalizing the result.
-		m.Orthonormalize( );
-
-		return m;
+		Orthonormalize( );
 	}
 
 	INLINE void SMat3::Transpose(void)

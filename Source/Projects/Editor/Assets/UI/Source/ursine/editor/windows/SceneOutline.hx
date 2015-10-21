@@ -3,7 +3,7 @@ package ursine.editor.windows;
 import js.html.LIElement;
 import js.html.DOMElement;
 import js.html.UListElement;
-
+import ursine.native.Extern;
 import ursine.editor.scene.entity.Entity;
 
 class SceneOutline extends WindowHandler {
@@ -25,8 +25,22 @@ class SceneOutline extends WindowHandler {
 
         window.container.appendChild( m_entityList );
 
+        initScene( );
+
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
             .on( 'EntityAdded', onEntityAdded );
+    }
+
+    private function initScene() {
+        var entities : Array<UInt> = Extern.SceneGetActiveEntities( );
+
+        var event = { uniqueID: 0 };
+
+        for (uniqueID in entities) {
+            event.uniqueID = uniqueID;
+
+            onEntityAdded( event );
+        }
     }
 
     private function onEntityAdded(e) {
