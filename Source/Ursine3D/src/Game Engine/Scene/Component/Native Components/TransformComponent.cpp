@@ -216,7 +216,10 @@ namespace ursine
 
         SQuat Transform::ToLocal(const SQuat& quat)
         {
-            return m_localRotation * quat;
+            if (m_parent)
+                return m_parent->ToLocal( m_localRotation.GetInverse( ) * quat );
+            else
+                return m_localRotation.GetInverse( ) * quat;
         }
 
         SVec3 Transform::ToWorld(const SVec3& point)

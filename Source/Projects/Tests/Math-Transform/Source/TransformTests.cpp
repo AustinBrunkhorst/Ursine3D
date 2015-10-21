@@ -103,6 +103,7 @@ TEST_CASE("Transform: Manipulation")
     // Testing rotation //
     //////////////////////
 
+    // rotating the first child
     t1->SetLocalRotation( SQuat( 0.0f, 24.0f, 0.0f ) );
 
     REQUIRE( lossyEquals( t0->GetLocalPosition( ), SVec3( 10, 30, 43 ) ) );
@@ -120,4 +121,62 @@ TEST_CASE("Transform: Manipulation")
     REQUIRE( lossyEquals( t2->GetWorldPosition( ), SVec3( -1487.5f, -401, -3420.3f ) ) );
     REQUIRE( lossyEquals( t2->GetLocalRotation( ), SQuat( 0.0f, 0.0f, 0.0f, 1.0f ) ) );
     REQUIRE( lossyEquals( t2->GetWorldRotation( ), SQuat( 0.0f, 0.2f, 0.0f, 1.0f ) ) );
+
+    // rotating the root
+    t0->SetLocalRotation( SQuat( 25.0f, 0.0f, 2.0f ) );
+
+    REQUIRE( lossyEquals( t0->GetLocalPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetLocalRotation( ), SQuat( 0.2f, 0.0f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldRotation( ), SQuat( 0.2f, 0.0f, 0.0f, 1.0f ) ) );
+
+    REQUIRE( lossyEquals( t1->GetLocalPosition( ), SVec3( 90, -60, -28 ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldPosition( ), SVec3( 102, -9.7f, -6.4f ) ) );
+    REQUIRE( lossyEquals( t1->GetLocalRotation( ), SQuat( 0.0f, 0.2f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldRotation( ), SQuat( 0.2f, 0.2f, 0.1f, 1.0f ) ) );
+
+
+    REQUIRE( lossyEquals( t2->GetLocalPosition( ), SVec3( -53, -371, -3784 ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldPosition( ), SVec3( -1471.6f, 1055.9f, -3299.9f ) ) );
+    REQUIRE( lossyEquals( t2->GetLocalRotation( ), SQuat( 0.0f, 0.0f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldRotation( ), SQuat( 0.2f, 0.2f, 0.1f, 1.0f ) ) );
+
+    // rotating the second child (world coordinates)
+    t1->SetWorldRotation( SQuat( 343.0f, 3.0f, -12.0f ) );
+
+    REQUIRE( lossyEquals( t0->GetLocalPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetLocalRotation( ), SQuat( 0.2f, 0.0f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldRotation( ), SQuat( 0.2f, 0.0f, 0.0f, 1.0f ) ) );
+
+    REQUIRE( lossyEquals( t1->GetLocalPosition( ), SVec3( 90, -60, -28 ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldPosition( ), SVec3( 102, -9.7f, -6.4f ) ) );
+    REQUIRE( lossyEquals( t1->GetLocalRotation( ), SQuat( 0.4f, 0.0f, 0.1f, -0.9f ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldRotation( ), SQuat( 0.1f, 0.0f, 0.1f, -1.0f ) ) );
+
+
+    REQUIRE( lossyEquals( t2->GetLocalPosition( ), SVec3( -53, -371, -3784 ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldPosition( ), SVec3( -210.8f, -1452.5f, -3510.6f ) ) );
+    REQUIRE( lossyEquals( t2->GetLocalRotation( ), SQuat( 0.0f, 0.0f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldRotation( ), SQuat( 0.1f, 0.0f, 0.1f, -1.0f ) ) );
+
+    // rotating the leaf
+    t2->SetWorldRotation( SQuat( 29.0f, 282.0f, 183.0f ) );
+
+    REQUIRE( lossyEquals( t0->GetLocalPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldPosition( ), SVec3( 10, 30, 43 ) ) );
+    REQUIRE( lossyEquals( t0->GetLocalRotation( ), SQuat( 0.2f, 0.0f, 0.0f, 1.0f ) ) );
+    REQUIRE( lossyEquals( t0->GetWorldRotation( ), SQuat( 0.2f, 0.0f, 0.0f, 1.0f ) ) );
+
+    REQUIRE( lossyEquals( t1->GetLocalPosition( ), SVec3( 90, -60, -28 ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldPosition( ), SVec3( 102, -9.7f, -6.4f ) ) );
+    REQUIRE( lossyEquals( t1->GetLocalRotation( ), SQuat( 0.4f, 0.0f, 0.1f, -0.9f ) ) );
+    REQUIRE( lossyEquals( t1->GetWorldRotation( ), SQuat( 0.1f, 0.0f, 0.1f, -1.0f ) ) );
+
+    REQUIRE( lossyEquals( t2->GetLocalPosition( ), SVec3( -53, -371, -3784 ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldPosition( ), SVec3( -210.8f, -1452.5f, -3510.6f ) ) );
+    REQUIRE( lossyEquals( t2->GetLocalRotation( ), SQuat( -0.6f, -0.3f, 0.7f, -0.2f ) ) );
+    REQUIRE( lossyEquals( t2->GetWorldRotation( ), SQuat( 0.6f, 0.2f, -0.7f, 0.2f ) ) );
+
+
 }
