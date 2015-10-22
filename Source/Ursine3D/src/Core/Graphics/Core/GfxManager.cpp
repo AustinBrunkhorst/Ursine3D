@@ -503,7 +503,7 @@ namespace ursine
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
 
             shaderManager->BindShader(SHADER_DIFFUSE);
-            layoutManager->SetInputLayout(SHADER_DIFFUSE);
+            layoutManager->SetInputLayout(SHADER_DIFFUSE);  
             textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
             bufferManager->MapCameraBuffer(view, proj);
 
@@ -783,7 +783,7 @@ namespace ursine
             textureManager->MapTextureByID(handle.Material_);
 
             //render
-            shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+            shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_));
         }
 
         void GfxManager::Render2DBillboard(_DRAWHND handle)

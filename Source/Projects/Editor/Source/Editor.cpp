@@ -161,90 +161,110 @@ void Editor::initializeScene(void)
     auto *cameraEntity = world.CreateEntity( "Camera" );
     {
         auto *component = cameraEntity->AddComponent<ecs::Camera>( );
-
+		 
         auto &camera = component->GetCamera( );
 
         camera.SetPosition( 0.0f, 0.0f );
-        camera.SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
+        camera.SetRenderMode( graphics::VIEWPORT_RENDER_FORWARD );
         camera.SetDimensions( 1.0f, 1.0f );
         camera.SetPlanes( 0.1f, 700.0f );
 
         camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-        scene.SetEditorCamera( component->GetHandle( ) );
+		 
+        scene.SetEditorCamera( component->GetHandle( ) ); 
     }
 
-    for (int i = 0; i < 25; ++i)
-    {
-        auto *entity_char = world.CreateEntity( );
-        auto *entity_cube = world.CreateEntity( );
-        {
-            entity_char->AddComponent<ecs::Renderable>();
-            auto model = entity_char->AddComponent<ecs::Model3D>();
+	// animation model entities - custom file format stuff
+	auto *entity_cfmt_model = world.CreateEntity();  
+	{ 
+		entity_cfmt_model->AddComponent<ecs::Renderable>();
+		auto model = entity_cfmt_model->AddComponent<ecs::Model3D>();
 
-            auto name = "Character";
+		auto name = "Custom";
 
-            entity_char->SetName( name );
+		entity_cfmt_model->SetName(name); 
 
-            model->SetModel( name );
+		model->SetModel(name);
+		model->GetModel()->SetMaterialData(1, 0, 0);
 
-            auto transform = entity_char->GetTransform( );
+		auto transform = entity_cfmt_model->GetTransform();
+		transform->SetWorldPosition(SVec3{ 0.0f, 0.0f, 0.0f });
+		transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
+		transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f }); 
+	}
 
-            transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
-            transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
-            transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
-        }
-        {
-            entity_cube->AddComponent<ecs::Renderable>();
-            auto model = entity_cube->AddComponent<ecs::Model3D>();
+	//// character entities
+ //   for (int i = 0; i < 25; ++i)
+ //   {
+ //       auto *entity_char = world.CreateEntity( );
+ //       auto *entity_cube = world.CreateEntity( ); 
+ //       {
+ //           entity_char->AddComponent<ecs::Renderable>();
+ //           auto model = entity_char->AddComponent<ecs::Model3D>();
 
-            auto name = "Cube";
+ //           auto name = "Character";
 
-            entity_cube->SetName(name);
+ //           entity_char->SetName( name );
 
-            model->SetModel(name);
+ //           model->SetModel( name );
 
-            auto transform = entity_cube->GetTransform();
+ //           auto transform = entity_char->GetTransform( );
 
-            transform->SetWorldPosition(SVec3{ i * 1.0f, 0.0f, 0.0f });
-            transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
-            transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
-        }
+ //           transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
+ //           transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
+ //           transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
+ //       }
+ //       {
+ //           entity_cube->AddComponent<ecs::Renderable>();
+ //           auto model = entity_cube->AddComponent<ecs::Model3D>();
 
-        // parent the character to the cube
-        entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
-    }
+ //           auto name = "Cube";
 
-    auto *sky = world.CreateEntity( "Skybox" );
-    {
-        auto skyHND = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
+ //           entity_cube->SetName(name);
 
-        auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
+ //           model->SetModel(name);
 
-        skybox.SetModel( "Skybox" );
-        skybox.SetMaterial( "Skybox" );
-        skybox.SetMaterialData( 1, 0, 0 );
+ //           auto transform = entity_cube->GetTransform();
 
-        SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
-        SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
-        skybox.SetMaterialData( 1, 0, 0 );
-        skybox.SetWorldMatrix( final );
+ //           transform->SetWorldPosition(SVec3{ i * 1.0f, 0.0f, 0.0f });
+ //           transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
+ //           transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
+ //       }
 
-        auto *component = sky->AddComponent<ecs::Renderable>( );
+ //       // parent the character to the cube
+ //       entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
+ //   }
 
-        component->SetHandle( skyHND );
-    }
+ //   auto *sky = world.CreateEntity( "Skybox" );
+ //   {
+ //       auto skyHND = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
 
-    auto *univLight = world.CreateEntity( "Global Light" );
-    {
-        auto *component = univLight->AddComponent<ecs::Light>( );
+ //       auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
 
-        component->SetType( ecs::LightType::Point );
-        component->SetPosition( { 0.0f, 0.0f, 0.0f } );
-        component->SetRadius( 40.0f );
-        component->SetDirection( { 0.0f, 1.0f, 0.0f } );
-        component->SetColor( Color::White );
-    }
+ //       skybox.SetModel( "Skybox" );
+ //       skybox.SetMaterial( "Skybox" );
+ //       skybox.SetMaterialData( 1, 0, 0 );
+
+ //       SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
+ //       SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
+ //       skybox.SetMaterialData( 1, 0, 0 ); 
+ //       skybox.SetWorldMatrix( final );
+
+ //       auto *component = sky->AddComponent<ecs::Renderable>( );
+
+ //       component->SetHandle( skyHND );
+ //   }
+
+ //   auto *univLight = world.CreateEntity( "Global Light" );
+ //   {
+ //       auto *component = univLight->AddComponent<ecs::Light>( );
+
+ //       component->SetType( ecs::LightType::Point );
+ //       component->SetPosition( { 10.0f, -10.0f, 0.0f } );
+ //       component->SetRadius( 400.0f );
+ //       component->SetDirection( { 0.0f, 1.0f, 0.0f } );
+ //       component->SetColor( Color::White );
+ //   }
 
     m_project->GetScene( ).GetWorld( ).Listener( this )
         .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded )
@@ -258,8 +278,8 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto dt = sender->GetDeltaTime( );
 
     auto &scene = m_project->GetScene( );
-
-    scene.Update( dt );
+	 
+    scene.Update( dt ); 
 
     m_graphics->StartFrame( );
 

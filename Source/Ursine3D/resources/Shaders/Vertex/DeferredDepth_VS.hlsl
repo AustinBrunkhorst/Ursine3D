@@ -1,45 +1,87 @@
 cbuffer CameraBuffer : register(b0)
 {
-  matrix viewMatrix;
-  matrix projectionMatrix;
+  matrix View;
+  matrix Projection;
 };
 
 cbuffer TransformBuffer : register(b1)
 {
-  matrix transform;
+  matrix World;
 }
 
-struct VertexInputType
+cbuffer MatrixStack : register(b12)
 {
-  float4 position : POSITION;
-  float4 normal : NORMAL;
-  float2 uv : UV;
-  //@matt don't forget this
+	matrix matPal[96];
+}
+
+//struct VertexInputType
+//{
+//  float4 position : POSITION;
+//  float4 normal : NORMAL;
+//  float2 uv : UV;
+//  //@matt don't forget this
+//};
+
+struct VS_INPUT
+{
+	float3	Pos		: POSITION;
+	float3	Nor		: NORMAL;
+	float2	Tex		: TEXCOORD;
+	float4	BWeight : BLENDWEIGHT;
+	int4	BIdx	: BLENDINDICES;
 };
 
-struct PixelInputType
+
+struct VS_OUTPUT
 {
-  float4 position : SV_POSITION;
+  float4 Pos : SV_POSITION;
   float4 normal : NORMAL;
-  float2 uv : UV;
+  float2 Tex : UV;
 };
 
-PixelInputType main(VertexInputType input)
+VS_OUTPUT main(VS_INPUT input)
 {
-  PixelInputType output;
+	VS_OUTPUT output;
 
-  // 
-  input.position.w = 1.f;
+	//float weights[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	//weights[0] = input.BWeight.x;
+	//weights[1] = input.BWeight.y;
+	//weights[2] = input.BWeight.z;
+	//weights[3] = 1.0f - weights[0] - weights[1] - weights[2];
+	//
+	//int indices[4] = { 0, 0, 0, 0 };
+	//indices[0] = input.BIdx.x;
+	//indices[1] = input.BIdx.y;
+	//indices[2] = input.BIdx.z;
+	//indices[3] = input.BIdx.w;
+	//
+	//float3 pos = float3(0.f, 0.f, 0.f);
+	//for (int i = 0; i < 4; ++i)
+	//{
+	//	pos += weights[i] * mul(float4(input.Pos.xyz, 1.0f), matPal[indices[i]]).xyz;
+	//}
 
-  // Calculate the position of the vertex against the world, view, and projection matrices.
-  float4 worldPos = mul(input.position, transform);
-  float4 viewPos = mul(worldPos, viewMatrix);         //position wr2 the center of the world
+	//output.Pos = mul(float4(input.Pos.xyz, 1.f), World);
+	//output.Pos = mul(output.Pos, View);
+	//output.Pos = mul(output.Pos, Projection);
+	//output.Tex = input.Tex;
 
-  output.position = mul(viewPos, projectionMatrix);   //get the screen pos
-  output.normal = mul(input.normal, transform);
-  output.normal = mul(output.normal, viewMatrix);
+	//output.normal = mul(float4(input.Nor.xyz, 0), World);
+	//output.normal = mul(output.normal, View);
+	//return output;
 
-  output.uv = input.uv;
 
-  return output;
+	// 
+
+	// Calculate the position of the vertex against the world, view, and projection matrices.
+	float4 worldPos = mul(float4(input.Pos, 1), World);
+	float4 viewPos = mul(worldPos, View);         //position wr2 the center of the world
+
+	output.Pos = mul(viewPos, Projection);   //get the screen pos
+	output.normal = mul(float4(input.Nor, 0), World);
+	output.normal = mul(output.normal, View);
+
+	output.Tex = input.Tex;
+
+	return output;
 }

@@ -31,6 +31,7 @@ namespace ursine
                 MakeBuffer<TransformBuffer>(BUFFER_LIGHT_PROJ);
                 MakeBuffer<MaterialDataBuffer>(BUFFER_MATERIAL_DATA);
                 MakeBuffer<SpotlightBuffer>(BUFFER_SPOTLIGHT);
+				MakeBuffer<MatrixPalBuffer>(BUFFER_MATRIX_PAL);
             }
 
             void ShaderBufferManager::Uninitialize(void)

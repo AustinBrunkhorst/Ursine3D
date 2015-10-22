@@ -82,6 +82,11 @@ namespace ursine
             float m_specIntensity;
             std::string ModelName_;
             std::string MaterialName_;
+			
+			//float m_animationTime;
+			//AnimInfo *myCurrentAnimation;
+			//int currentKeyframe;
+			//int nextKeyframe;
         };
 
         /////////////////////////////////////////////////////////////////

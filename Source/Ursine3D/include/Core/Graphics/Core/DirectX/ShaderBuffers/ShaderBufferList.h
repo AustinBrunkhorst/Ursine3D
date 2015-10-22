@@ -36,6 +36,7 @@ namespace ursine
             BUFFER_LIGHT_PROJ,
             BUFFER_MATERIAL_DATA,
             BUFFER_SPOTLIGHT,
+			BUFFER_MATRIX_PAL,
 
             BUFFER_COUNT,
 
@@ -115,5 +116,10 @@ namespace ursine
             DirectX::XMFLOAT3 diffuseColor;
             float outerAngle;
         };
+
+		struct MatrixPalBuffer
+		{
+			DirectX::XMMATRIX matPal[96];
+		};
     }
 }

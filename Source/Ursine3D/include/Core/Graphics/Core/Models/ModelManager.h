@@ -20,6 +20,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <string>
 
 #include "Model.h"
+#include "ModelInfo.h"
 
 namespace ursine
 {
@@ -30,10 +31,13 @@ namespace ursine
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
             void Uninitialize();
+
             void LoadModel(std::string name, std::string fileName);
+			void LoadModel_Ursine(std::string name, std::string fileName);
 
             ID3D11Buffer *GetModelVert(std::string name);
             unsigned GetModelVertcount(std::string name);
+			unsigned GetModelIndexcount(std::string name);
 
             void BindModel(std::string name);
             void BindModel(unsigned ID);
@@ -56,6 +60,8 @@ namespace ursine
 
             ID3D11Buffer *GetModelVertByID(unsigned ID);
             unsigned GetModelVertcountByID(unsigned ID);
+
+			unsigned GetModelIndexcountByID(unsigned ID);
 
             void Invalidate();
         private:
