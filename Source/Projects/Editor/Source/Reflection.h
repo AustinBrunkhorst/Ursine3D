@@ -13,6 +13,7 @@
 
 #include "Tools/Scene/SceneView.h"
 #include "Tools/Scene/Entity Systems/GridRenderer.h"
+#include "Tools/Scene/Components/SelectorComponent.h"
 
 #include "Tools/Scene/Entity/EntityHandler.h"
 

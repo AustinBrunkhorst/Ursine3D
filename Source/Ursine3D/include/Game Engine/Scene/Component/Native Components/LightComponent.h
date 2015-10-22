@@ -7,6 +7,13 @@ namespace ursine
 {
     namespace ecs
     {
+        enum class LightType
+        {
+            Directional = graphics::Light::LIGHT_DIRECTIONAL,
+            Point = graphics::Light::LIGHT_POINT,
+            Spot = graphics::Light::LIGHT_SPOTLIGHT,
+        } Meta(Enable);
+
         class Light : public Component
         {
             NATIVE_COMPONENT;
@@ -48,17 +55,20 @@ namespace ursine
                 SetSpotlightAngles
             );
 
-        public:
             Light(void);
             ~Light(void);
 
+            Meta(Disable)
             void OnInitialize(void) override;
 
-            graphics::GfxHND GetHandle(void) const;
-            const graphics::Light *GetLight(void);
+            Meta(Disable)
+            ursine::graphics::GfxHND GetHandle(void) const;
 
-            ursine::graphics::Light::LightType GetType(void);
-            void SetType(const ursine::graphics::Light::LightType type);
+            Meta(Disable)
+            const ursine::graphics::Light *GetLight(void);
+
+            LightType GetType(void);
+            void SetType(LightType type);
 
             const SVec3 &GetDirection(void);
             void SetDirection(const SVec3 &dir);
@@ -66,8 +76,8 @@ namespace ursine
             const SVec3 &GetPosition(void);
             void SetPosition(const SVec3 &position);
 
-            const Color &GetColor(void);
-            void SetColor(const Color &color);
+            const ursine::Color &GetColor(void);
+            void SetColor(const ursine::Color &color);
 
             float GetRadius(void);
             void SetRadius(const float radius);
@@ -78,13 +88,11 @@ namespace ursine
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
 
-            void SetWorldMatrix(const Mat4 &worldTransform);
-
         private:
-            ursine::graphics::Light *m_light;
-            ursine::graphics::GfxHND m_handle;
+            graphics::Light *m_light;
+            graphics::GfxHND m_handle;
 
             friend class RenderSystem;
-        }Meta(Enable, DisplayName("Light"));
+        } Meta(Enable, DisplayName( "Light" ));
     }
 }
