@@ -42,12 +42,10 @@ namespace ursine
 
         ~UIManager(void);
 
-        CefRefPtr<UIView> CreateView(Window *window, const std::string &url);
+        UIView::Handle CreateView(Window::Handle window, const std::string &url) const;
 
     private:
         CefRefPtr<UICore> m_core;
-
-        std::vector<CefRefPtr<UIView>> m_created;
 
         void onAppUpdate(EVENT_HANDLER(Application));
 

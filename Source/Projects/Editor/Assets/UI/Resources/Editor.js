@@ -490,6 +490,7 @@ var ursine_editor_scene_component_ComponentDatabase = function(database) {
 		var name1 = components[_g1];
 		++_g1;
 		var component = Reflect.field(database.components,name1);
+		console.log(component.meta);
 		this.m_db.set(name1,component);
 	}
 	this.initComponentInspectors();
@@ -855,11 +856,14 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	,initializeInspection: function() {
 		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
 		var inspection = this.m_inspectedEntity.inspect();
+		var database = ursine_editor_Editor.instance.componentDatabase;
 		var _g = 0;
 		while(_g < inspection.length) {
 			var component = inspection[_g];
 			++_g;
-			var handler = ursine_editor_Editor.instance.componentDatabase.createComponentInspector(this.m_inspectedEntity,component);
+			var type = database.getComponentType(component.type);
+			if(Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.HiddenInInspector)) continue;
+			var handler = database.createComponentInspector(this.m_inspectedEntity,component);
 			{
 				this.m_componentHandlers.set(component.type,handler);
 				handler;
@@ -945,6 +949,9 @@ ursine_native_Extern.GetNativeComponentDatabase = function() {
 ursine_native_Extern.SceneGetActiveEntities = function() {
 	return SceneGetActiveEntities();
 };
+var ursine_native_Property = function() { };
+$hxClasses["ursine.native.Property"] = ursine_native_Property;
+ursine_native_Property.__name__ = ["ursine","native","Property"];
 var ursine_utils_EventManager = function() {
 	this.m_events = new haxe_ds_StringMap();
 };
@@ -1024,5 +1031,6 @@ ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = 
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4"]}};
 ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";
+ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 Application.main();
 })();

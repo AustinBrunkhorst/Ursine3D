@@ -2,8 +2,8 @@
 
 #include "SceneUtils.h"
 
-#include <Editor.h>
-#include <Project.h>
+#include "Editor.h"
+#include "Project.h"
 
 JSFunction(SceneGetActiveEntities)
 {

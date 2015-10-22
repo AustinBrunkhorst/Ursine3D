@@ -519,6 +519,10 @@ namespace ursine
  
                 return { instance.ToInt( ) };
             }
+            else if (*this == typeof( std::string ))
+            {
+                return { instance.ToString( ) };
+            }
             
             Json::object object { };
 

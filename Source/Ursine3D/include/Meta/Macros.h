@@ -35,7 +35,6 @@
 
 // Used in objects to preserve virtual inheritance functionality
 #define META_OBJECT                                  \
-    public:                                          \
     ursine::meta::Type GetType(void) const override  \
     {                                                \
         return typeof( decltype( *this ) );          \
@@ -50,6 +49,5 @@
         >::type ClassType;                           \
         return new ClassType( *this );               \
     }                                                \
-    private:                                         \
 
 #endif
