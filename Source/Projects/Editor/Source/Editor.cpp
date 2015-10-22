@@ -14,7 +14,8 @@
 #include <RenderableComponent.h>
 #include <LightComponent.h>
 #include <Model3DComponent.h>
-#include "SelectorComponent.h"
+
+#include "Tools/Scene/Components/SelectedComponent.h"
 
 using namespace ursine;
 
@@ -66,10 +67,7 @@ void Editor::OnInitialize(void)
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
-    m_project = new Project( );
-
     initializeGraphics( );
-    initializeScene( );
 
     m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEditorEntryPoint );
 
@@ -77,6 +75,10 @@ void Editor::OnInitialize(void)
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
+
+    m_project = std::make_shared<Project>( m_mainWindow.ui );
+
+    initializeScene( );
 }
 
 void Editor::OnRemove(void)
@@ -92,16 +94,12 @@ void Editor::OnRemove(void)
 
     m_mainWindow.ui->Close( );
 
-    delete m_mainWindow.window;
-
     m_mainWindow.window = nullptr;
-
-    delete m_project;
 
     m_project = nullptr;
 }
 
-Project *Editor::GetProject(void) const
+std::shared_ptr<Project> Editor::GetProject(void) const
 {
     return m_project;
 }
@@ -130,12 +128,18 @@ void Editor::initializeGraphics(void)
 
     m_graphics->StartGraphics( config );
     m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
+}
 
+void Editor::initializeScene(void)
+{
     auto &scene = m_project->GetScene( );
+
+    auto &world = scene.GetWorld( );
+
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport(
             static_cast<int>( 0.85f * kDefaultWindowWidth ),
-            static_cast<int>( kDefaultWindowHeight - (30.0f + 27.0f) )
+            static_cast<int>( kDefaultWindowHeight - ( 30.0f + 27.0f ))
         );
 
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
@@ -151,16 +155,11 @@ void Editor::initializeGraphics(void)
 
         m_graphics->SetGameViewport( viewport );
     }
-}
-
-void Editor::initializeScene(void)
-{
-    auto &scene = m_project->GetScene( );
-
-    auto &world = scene.GetWorld( );
 
     auto *cameraEntity = world.CreateEntity( "Camera" );
     {
+        cameraEntity->AddComponent<Selected>( );
+
         auto *component = cameraEntity->AddComponent<ecs::Camera>( );
 
         auto &camera = component->GetCamera( );

@@ -13,7 +13,7 @@ import ursine.editor.scene.component.inspectors.ComponentInspectors;
 import ursine.editor.scene.component.inspectors.FieldInspectors;
 
 // Map<String, Dynamic>
-typedef NativeMeta = Map<String, Dynamic>;
+typedef NativeMeta = Dynamic;
 
 // Map<String, Dynamic>
 typedef NativeEnum = Dynamic;
@@ -67,7 +67,9 @@ class ComponentDatabase {
         var components = Reflect.fields( database.components );
 
         for (name in components) {
-            var component = Reflect.field( database.components, name );
+            var component : ComponentType = Reflect.field( database.components, name );
+
+            trace( component.meta );
 
             m_db.set( name, component );
         }

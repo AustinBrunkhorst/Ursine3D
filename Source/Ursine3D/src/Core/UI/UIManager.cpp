@@ -73,7 +73,7 @@ namespace ursine
         Application::Instance->Disconnect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
 
-    CefRefPtr<UIView> UIManager::CreateView(Window *window, const std::string &url)
+    UIView::Handle UIManager::CreateView(Window::Handle window, const std::string &url) const
     {
         CefBrowserSettings settings;
 

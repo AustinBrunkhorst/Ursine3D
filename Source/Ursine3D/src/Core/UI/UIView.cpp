@@ -14,7 +14,7 @@
 
 namespace ursine
 {
-    UIView::UIView(Window *window, const CefBrowserSettings &settings, const std::string &url)
+    UIView::UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url)
         : m_window( window )
     {
         CefWindowInfo info;

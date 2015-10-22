@@ -1,5 +1,6 @@
 package ursine.editor.windows;
 
+import ursine.native.Property;
 import ursine.editor.scene.entity.Entity;
 import ursine.editor.scene.entity.EntityEvent;
 import ursine.editor.scene.component.inspectors.ComponentInspectionHandler;
@@ -57,9 +58,16 @@ class EntityInspector extends WindowHandler {
 
         var inspection = m_inspectedEntity.inspect( );
 
+        var database = Editor.instance.componentDatabase;
+
         for (component in inspection) {
-            var handler =
-                Editor.instance.componentDatabase.createComponentInspector( m_inspectedEntity, component );
+            var type = database.getComponentType( component.type );
+
+            // skip components marked hidden in inspector
+            if (Reflect.hasField( type.meta, Property.HiddenInInspector ))
+                continue;
+
+            var handler = database.createComponentInspector( m_inspectedEntity, component );
 
             m_componentHandlers[ component.type ] = handler;
 
