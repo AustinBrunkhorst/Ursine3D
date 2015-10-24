@@ -70,15 +70,27 @@ namespace ursine
         template <class ComponentType>
         std::vector<ComponentType*> EntityManager::GetComponentsInChildren(const Entity* entity) const
         {
-            return static_cast<std::vector<ComponentType*>>(GetComponentsInChildren(entity,
-                GetComponentID(ComponentType)));
+            auto components = GetComponentsInChildren( entity, GetComponentID( ComponentType ) );
+
+            std::vector<ComponentType*> derivedVector;
+
+            for (auto &component : components)
+                derivedVector.push_back( static_cast<ComponentType*>( component ) );
+            
+            return derivedVector;
         }
 
         template <class ComponentType>
         std::vector<ComponentType*> EntityManager::GetComponentsInParents(const Entity* entity) const
         {
-            return static_cast<std::vector<ComponentType*>>(GetComponentsInParents(entity,
-                GetComponentID(ComponentType)));
+            auto components = GetComponentsInParents( entity, GetComponentID( ComponentType ) );
+
+            std::vector<ComponentType*> derivedVector;
+
+            for (auto &component : components)
+                derivedVector.push_back( static_cast<ComponentType*>( component ) );
+            
+            return derivedVector;
         }
     }
 }

@@ -16,27 +16,27 @@ namespace ursine
 	namespace ecs
 	{
 		template <class ComponentType>
-		ComponentType* Transform::GetComponentInChildren(const Entity* entity) const
+		ComponentType* Transform::GetComponentInChildren(void) const
 		{
-			return GetOwner( )->GetComponentInChildren( entity );
+			return GetOwner( )->GetComponentInChildren<ComponentType>( );
 		}
 
 		template <class ComponentType>
-		ComponentType* Transform::GetComponentInParent(const Entity* entity) const
+		ComponentType* Transform::GetComponentInParent(void) const
 		{
-			return GetOwner( )->GetComponentInParent( entity );
+			return GetOwner( )->GetComponentInParent<ComponentType>( );
 		}
 
 		template <class ComponentType>
-		std::vector<ComponentType*> Transform::GetComponentsInChildren(const Entity* entity) const
+		std::vector<ComponentType*> Transform::GetComponentsInChildren(void) const
 		{
-			return GetOwner( )->GetComponentsInChildren( entity );
+			return GetOwner( )->GetComponentsInChildren<ComponentType>( );
 		}
 
 		template <class ComponentType>
-		std::vector<ComponentType*> Transform::GetComponentsInParents(const Entity* entity) const
+		std::vector<ComponentType*> Transform::GetComponentsInParents(void) const
 		{
-			return GetOwner( )->GetComponentsInParents( entity );
+			return GetOwner( )->GetComponentsInParents<ComponentType>( );
 		}
 	}
 }

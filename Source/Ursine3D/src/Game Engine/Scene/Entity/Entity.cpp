@@ -138,24 +138,24 @@ namespace ursine
             return m_world->m_entityManager->GetComponents( this );
         }
 
-	    Component* Entity::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+	    Component* Entity::GetComponentInChildren(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentInChildren( entity, id );
+			return m_world->m_entityManager->GetComponentInChildren( this, id );
 	    }
 
-	    Component* Entity::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+	    Component* Entity::GetComponentInParent(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentInParent( entity, id );
+			return m_world->m_entityManager->GetComponentInParent( this, id );
 	    }
 
-	    ComponentVector Entity::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Entity::GetComponentsInChildren(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentsInChildren( entity, id );
+			return m_world->m_entityManager->GetComponentsInChildren( this, id );
 	    }
 
-	    ComponentVector Entity::GetComponentsInParents(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Entity::GetComponentsInParents(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentsInParents( entity, id );
+			return m_world->m_entityManager->GetComponentsInParents( this, id );
 	    }
 
         uint Entity::GetSiblingIndex(void) const
@@ -165,12 +165,12 @@ namespace ursine
 
         void Entity::SetAsFirstSibling(void)
         {
-
+            m_world->m_entityManager->SetAsFirstSibling( this );
         }
 
         void Entity::SetSiblingIndex(uint index) const
         {
-
+            m_world->m_entityManager->SetSiblingIndex( this, index );
         }
 
         void Entity::RemoveComponent(ComponentTypeID id)

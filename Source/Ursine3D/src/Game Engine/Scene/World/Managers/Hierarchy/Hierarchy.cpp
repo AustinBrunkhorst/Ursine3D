@@ -100,7 +100,7 @@ namespace ursine
                     ++i;
             }
 
-            UAssert( i == children.size( ), "This shouldn't happen. Something is wrong with the scene" );
+            UAssert( i != children.size( ), "This shouldn't happen. Something is wrong with the scene" );
             
             // walk from the old place to the new place, making sure all things are moved
             int dir = static_cast<int>( index ) > i ? 1 : -1;

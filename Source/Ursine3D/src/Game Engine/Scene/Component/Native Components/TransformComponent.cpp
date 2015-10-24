@@ -138,9 +138,9 @@ namespace ursine
 
         void Transform::LookAt(const SVec3& worldPosition)
         {
-            auto dir = ToLocal( worldPosition );
+            SVec3 dir = worldPosition - GetWorldPosition( );
 
-            m_localRotation.SetLookAt( dir );
+            SetWorldRotation( SQuat::LookAt( dir ) );
         }
 
         void Transform::SetLocalScale(const SVec3& scale)
@@ -185,7 +185,7 @@ namespace ursine
 
         SVec3 Transform::GetUp(void)
         {
-            return GetWorldRotation( ) * SVec3::UnitZ( );
+            return GetWorldRotation( ) * SVec3::UnitY( );
         }
 
         bool Transform::GetDirty(void) const
@@ -217,7 +217,7 @@ namespace ursine
         SQuat Transform::ToLocal(const SQuat& quat)
         {
             if (m_parent)
-                return m_parent->ToLocal( m_localRotation.GetInverse( ) * quat );
+                return m_localRotation.GetInverse( ) * m_parent->ToLocal( quat );
             else
                 return m_localRotation.GetInverse( ) * quat;
         }
@@ -263,7 +263,8 @@ namespace ursine
             auto oldWorldScale = child->GetWorldScale( );
             auto oldWorldRot = child->GetWorldRotation( );
 
-            genericAddChild( child );
+            if (!genericAddChild( child ))
+                return;
 
             // Set the new local values
             child->SetLocalPosition( ToLocal( oldWorldPos ) );
@@ -278,7 +279,8 @@ namespace ursine
             auto oldWorldScale = child->GetWorldScale( );
             auto oldWorldRot = child->GetWorldRotation( );
 
-            genericAddChild( child );
+            if (!genericAddChild( child ))
+                return;
 
             // Set the new local values
             child->SetLocalPosition( oldWorldPos );
@@ -291,9 +293,8 @@ namespace ursine
             // find the child in our local array of children
             auto itr = std::find( m_children.begin( ), m_children.end( ), child );
 
-            UAssert( itr != m_children.end( ), 
-                     "You're trying to remove a child "
-                     "that isn't a child of this transform" );
+            if ( itr == m_children.end( ) )
+                return;
 
             m_children.erase( itr );
             child->setParent( this, nullptr );
@@ -309,14 +310,14 @@ namespace ursine
 
         Transform *Transform::GetChild(uint index)
         {
-            UAssert(m_children.size() < index, "The index must be less than the child count");
+            UAssert(index < m_children.size( ), "The index must be less than the child count");
 
             return m_children[ index ];
         }
 
         const Transform *Transform::GetChild(uint index) const
         {
-            UAssert(m_children.size() < index, "The index must be less than the child count");
+            UAssert(index < m_children.size( ), "The index must be less than the child count");
 
             return m_children[index];
         }
@@ -328,12 +329,36 @@ namespace ursine
 
         void Transform::SetAsFirstSibling(void)
         {
-            GetOwner( )->SetAsFirstSibling( );
+            SetSiblingIndex( 0 );
         }
 
-        void Transform::SetSiblingIndex(uint index) const
+        void Transform::SetSiblingIndex(uint index)
         {
+            if (m_parent == nullptr)
+                return;
+
             GetOwner( )->SetSiblingIndex( index );
+
+            auto &childArray = m_parent->m_children;
+
+            int i = 0;
+            for (auto child : childArray)
+            {
+                if (child == this)
+                    break;
+                else
+                    ++i;
+            }
+
+            UAssert(i != childArray.size( ), "This shouldn't happen. Something is wrong with the parent's children array.");
+
+            // walk from the old place to the new place, making sure all things are moved
+            int dir = static_cast<int>( index ) > i ? 1 : -1;
+            for (int j = i; j != index; j += dir)
+            {
+                childArray[ j ] = childArray[ j + dir ];
+                childArray[ j + dir ] = this;
+            }
         }
 
         void Transform::SetWorldScale(const SVec3 &scale)
@@ -346,24 +371,24 @@ namespace ursine
             dispatchAndSetDirty( );
         }
 
-		Component *Transform::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+		Component *Transform::GetComponentInChildren(ComponentTypeID id) const
 		{
-			return GetOwner( )->GetComponentInChildren( entity, id );
+			return GetOwner( )->GetComponentInChildren( id );
 		}
 
-	    Component *Transform::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+	    Component *Transform::GetComponentInParent(ComponentTypeID id) const
 	    {
-			return GetOwner( )->GetComponentInParent( entity, id );
+			return GetOwner( )->GetComponentInParent( id );
 	    }
 
-	    ComponentVector Transform::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const
 	    {
-			return GetOwner( )->GetComponentsInChildren( entity, id );
+			return GetOwner( )->GetComponentsInChildren( id );
 	    }
 
-	    ComponentVector Transform::GetComponentsInParents(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Transform::GetComponentsInParents(ComponentTypeID id) const
 	    {
-			return GetOwner( )->GetComponentsInParents( entity, id );
+			return GetOwner( )->GetComponentsInParents( id );
 	    }
 
 	    void Transform::copy(const Transform &transform)
@@ -433,7 +458,7 @@ namespace ursine
                 }
 
                 m_worldToLocal = m_localToWorld;
-                m_worldToLocal.Inverse();
+                m_worldToLocal.Inverse( );
 
                 m_dirty = false;
             }
@@ -454,11 +479,20 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "scale", m_localScale );
         }
 
-        void Transform::genericAddChild(Transform *child)
+        bool Transform::genericAddChild(Transform *child)
         {
+            if (child->m_parent == this)
+                return false;
+
+            // edge case for if the child is my parent
+            if (IsChildOf( child ))
+                return false;
+            
             // Add the child to this transform
-            m_children.push_back( child );
             child->setParent( child->m_parent, this );
+            m_children.push_back( child );
+
+            return true;
         }
 
         void Transform::setParent(Transform *oldParent, Transform *newParent)
@@ -468,17 +502,21 @@ namespace ursine
 
             // unsubscribe this entity from the old parent's events
             if (oldParent)
+            {
+                // remove this transform from the old parent
+                oldParent->RemoveChild( this );
+
                 oldParent->GetOwner( )->Listener( this )
                     .Off( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
+            }
 
             // subscribe this entity to my events
             if (newParent)
                 newParent->GetOwner( )->Listener( this )
                     .On( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
 
-            // dispatch messages for dirty and hierarchical change
+            // dispatch messages for hierarchical change
             dispatchParentChange( oldParent, newParent );
-            dispatchAndSetDirty( );
         }
     }
 }
