@@ -373,7 +373,7 @@ namespace ursine
 
 	INLINE void SMat4::setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale)
 	{
-		*this = SMat4( rotation ) * SMat4( scale );
+		*this = SMat4( rotation ) * SMat4( scale.X( ), scale.Y( ), scale.Z( ) );
 
 		SetColumn( 3, SVec4( translation, 1.0f ) );
 	}
