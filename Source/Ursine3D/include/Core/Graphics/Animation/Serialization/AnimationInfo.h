@@ -16,7 +16,7 @@ namespace ursine
 				char name[MAXTEXTLEN];
 				unsigned int clipCount; // how many clips in this animation?
 				unsigned int boneCount; // how many bones in this model?
-				unsigned int** keyCount; // how many keys does each bone have?
+				unsigned int** keyIndices; // how many keys does each bone have?
 				FBX_DATA::KeyFrame*** keyframes;
 
 				AnimInfo();

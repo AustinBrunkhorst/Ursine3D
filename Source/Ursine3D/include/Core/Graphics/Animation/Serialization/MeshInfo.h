@@ -2,13 +2,13 @@
 
 #include "ISerialize.h"
 #include "Utilities.h"
+
 namespace ursine
 {
 	namespace graphics
 	{
 		namespace ufmt_loader
 		{
-			// add transparency later
 			class MeshInfo : public ISerialize
 			{
 			public:
@@ -31,9 +31,16 @@ namespace ursine
 				XMFLOAT3*		normals;
 				XMFLOAT3*		tangents;
 				XMFLOAT2*		uvs;
+				char*			mtrlName[MAXTEXTLEN];
+
 				unsigned int*	materialIndices;
-				FBX_DATA::Material* materials;
 				FBX_DATA::ModelSubset* modelSubsets;
+
+				// maybe we don't need this, because we already have full infos for materials and textures
+				// maybe materialIndices will be enough
+				// maybe we can find correct material and texture from materialInfo by material Indices and name
+				//FBX_DATA::FbxMaterial* fbxmaterials;
+
 				unsigned int**	ctrlIndices;
 				double**		ctrlBlendWeights;
 

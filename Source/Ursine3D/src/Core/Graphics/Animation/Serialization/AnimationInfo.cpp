@@ -8,7 +8,7 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			AnimInfo::AnimInfo()
-				: clipCount(0), boneCount(0), keyCount(nullptr), keyframes(nullptr), ISerialize("")
+				: clipCount(0), boneCount(0), keyIndices(nullptr), keyframes(nullptr), ISerialize("")
 			{
 			}
 
@@ -29,14 +29,14 @@ namespace ursine
 							delete[] keyframes[i][j];
 					}
 					// 2d pt
-					if (keyCount)
-						delete[] keyCount[i];
+					if (keyIndices)
+						delete[] keyIndices[i];
 					if (keyframes)
 						delete[] keyframes[i];
 				}
 				// 1d pt
-				if (keyCount)
-					delete[] keyCount;
+				if (keyIndices)
+					delete[] keyIndices;
 				if (keyframes)
 					delete[] keyframes;
 			}
@@ -49,13 +49,13 @@ namespace ursine
 				// serializing counts
 				ReadFile(hFile, &clipCount, sizeof(unsigned int), &nByteRead, nullptr);
 				ReadFile(hFile, &boneCount, sizeof(unsigned int), &nByteRead, nullptr);
-				keyCount = new unsigned int*[clipCount];
+				keyIndices = new unsigned int*[clipCount];
 				for (i = 0; i < clipCount; ++i)
 				{
-					keyCount[i] = new unsigned int[boneCount];
+					keyIndices[i] = new unsigned int[boneCount];
 					for (j = 0; j < boneCount; ++j)
 					{
-						ReadFile(hFile, &keyCount[i][j], sizeof(unsigned int), &nByteRead, nullptr);
+						ReadFile(hFile, &keyIndices[i][j], sizeof(unsigned int), &nByteRead, nullptr);
 					}
 				}
 
@@ -66,8 +66,8 @@ namespace ursine
 					keyframes[i] = new FBX_DATA::KeyFrame*[boneCount];
 					for (j = 0; j < boneCount; ++j)
 					{
-						keyframes[i][j] = new FBX_DATA::KeyFrame[keyCount[i][j]];
-						for (k = 0; k < keyCount[i][j]; ++k)
+						keyframes[i][j] = new FBX_DATA::KeyFrame[keyIndices[i][j]];
+						for (k = 0; k < keyIndices[i][j]; ++k)
 						{
 							FBX_DATA::KeyFrame* currKF = &keyframes[i][j][k];
 							ReadFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
@@ -89,7 +89,7 @@ namespace ursine
 				{
 					for (j = 0; j < boneCount; ++j)
 					{
-						WriteFile(hFile, &keyCount[i][j], sizeof(unsigned int), &nBytesWrite, nullptr);
+						WriteFile(hFile, &keyIndices[i][j], sizeof(unsigned int), &nBytesWrite, nullptr);
 					}
 				}
 
@@ -98,7 +98,7 @@ namespace ursine
 				{
 					for (j = 0; j < boneCount; ++j)
 					{
-						for (k = 0; k < keyCount[i][j]; ++k)
+						for (k = 0; k < keyIndices[i][j]; ++k)
 						{
 							FBX_DATA::KeyFrame* currKF = &keyframes[i][j][k];
 							WriteFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nBytesWrite, nullptr);

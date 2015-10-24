@@ -244,6 +244,11 @@ namespace ursine
 			return FbxVector4(src.x, src.y, src.z, 1.0f);
 		}
 
+		XMFLOAT4 Utilities::FBXDouble3ToXMFLOAT4(const FbxDouble3& src)
+		{
+			return XMFLOAT4(static_cast<float>(src[0]), static_cast<float>(src[1]), static_cast<float>(src[2]), 1.f);
+		}
+
 		XMFLOAT3 Utilities::FBXVectorToXMFLOAT3(const FbxVector4& src)
 		{
 			return XMFLOAT3(

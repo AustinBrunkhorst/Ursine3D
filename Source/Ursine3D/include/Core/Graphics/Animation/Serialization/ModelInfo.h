@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MeshInfo.h"
+#include "MaterialInfo.h"
 #include "SkinInfo.h"
 #include "AnimationInfo.h"
 
@@ -18,6 +19,10 @@ namespace ursine
 				// mesh data	 
 				unsigned int	 mmeshCount;
 				MeshInfo*		 marrMeshes;
+
+				// material data
+				unsigned int	mmaterialCount;
+				MaterialInfo*	marrMaterials;
 
 				// skin data
 				unsigned int	mskinCount;

@@ -10,12 +10,17 @@ namespace ursine
 	{
 		namespace FBX_DATA
 		{
-			// layouts
+			// UVSet
+			typedef std::tr1::unordered_map<std::string, int> UVsetID;
+			// UVSet
+			typedef std::tr1::unordered_map<std::string, std::vector<std::string>> TextureSet;
+			// layout
 			enum eLayout
 			{
 				NONE = -1,
-				STATIC,
-				SKINNED
+				STATIC = 0,
+				INSTANCE = 0,
+				SKINNED,
 			};
 
 			struct LAYOUT
@@ -53,56 +58,14 @@ namespace ursine
 				XMINT4		vBIdx;
 			};
 
-			struct MATERIAL_CONSTANT_DATA
+			struct Material_Consts
 			{
 				XMFLOAT4	ambient;
 				XMFLOAT4	diffuse;
 				XMFLOAT4	specular;
-				XMFLOAT4	emmisive;
-			};
-
-			struct MATERIAL_DATA
-			{
-				XMFLOAT4	ambient;
-				XMFLOAT4	diffuse;
-				XMFLOAT4	specular;
-				XMFLOAT4	emmisive;
-				float specularPower;
-				float TransparencyFactor;
-
-				MATERIAL_CONSTANT_DATA materialConstantData;
-
-				ID3D11ShaderResourceView*	pSRV;
-				ID3D11SamplerState*         pSampler;
-				ID3D11Buffer*				pMaterialCb;
-
-				MATERIAL_DATA()
-				{
-					pSRV = nullptr;
-					pSampler = nullptr;
-					pMaterialCb = nullptr;
-				}
-
-				void Release()
-				{
-					if (pMaterialCb)
-					{
-						pMaterialCb->Release();
-						pMaterialCb = nullptr;
-					}
-
-					if (pSRV)
-					{
-						pSRV->Release();
-						pSRV = nullptr;
-					}
-
-					if (pSampler)
-					{
-						pSampler->Release();
-						pSampler = nullptr;
-					}
-				}
+				XMFLOAT4	emissive;
+				float		shineness;
+				float		TransparencyFactor;
 			};
 
 			struct BlendIdxWeight
@@ -130,7 +93,7 @@ namespace ursine
 				XMFLOAT3 mPosition;
 				std::vector<BlendIdxWeight> mBlendingInfo;
 			};
-
+			// Control Points
 			typedef std::unordered_map<unsigned int, CtrlPoint*> ControlPoints;
 
 			struct KeyFrame
@@ -157,15 +120,161 @@ namespace ursine
 				std::unordered_map<std::string, AnimationClip> animations;
 			};
 
-			struct Material
+			struct Material_Eles
 			{
-				float specularPower;
-				float TransparencyFactor;
-				std::string  diffMapName;
-				std::string  normMapName;
-				std::string  specMapName;
-				std::string  emitMapName;
+				// determine if material only holds material or only textures
+				// or both
+				enum eMaterial_Fac
+				{
+					Fac_None = 0,
+					Fac_Only_Color,
+					Fac_Only_Texture,
+					Fac_Both,
+					Fac_Max,
+				};
+				eMaterial_Fac type;
+				XMFLOAT4 color;
+				TextureSet textureSetArray;
+
+				Material_Eles()
+					:type(Fac_None), color(0, 0, 0, 1)
+				{
+					textureSetArray.clear();
+				}
+
+				~Material_Eles()
+				{
+					Release();
+				}
+
+				void Release()
+				{
+					for (TextureSet::iterator it = textureSetArray.begin(); it != textureSetArray.end(); ++it)
+					{
+						it->second.clear();
+					}
+					textureSetArray.clear();
+				}
+
+				Material_Eles& operator=(const Material_Eles& rhs)
+				{
+					type = rhs.type;
+					color = rhs.color;
+
+					for (auto iter = rhs.textureSetArray.begin(); iter != rhs.textureSetArray.end(); ++iter)
+					{
+						for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2)
+						{
+							textureSetArray[iter->first].push_back(*iter2);
+						}
+					}
+					return *this;
+				}
+			};
+
+			// structure for storing material and texture's'
+			// this will be used to export info as JMDL
+			// Currently, not handling subset or submaterial
+			struct FbxMaterial
+			{
+				enum eMaterial_Type
+				{
+					Type_None = 0,
+					Type_Lambert,
+					Type_Phong,
+					Type_Max
+				};
+
 				std::string  name;
+				eMaterial_Type type;
+				// ambiet material and texture
+				Material_Eles ambient;
+				// diffuse material and texture
+				Material_Eles diffuse;
+				// emmisive material and texture
+				Material_Eles emissive;
+				// specular material and texture
+				Material_Eles specular;
+				float shineness;
+				float TransparencyFactor;
+				Material_Consts mtrl_consts;
+
+				FbxMaterial()
+					:name(""), type(Type_None),
+					shineness(0), TransparencyFactor(0)
+				{}
+
+				void Release()
+				{
+					ambient.Release();
+					diffuse.Release();
+					emissive.Release();
+					specular.Release();
+				}
+
+				FbxMaterial& operator=(const FbxMaterial& rhs)
+				{
+					name = rhs.name;
+					type = rhs.type;
+					ambient = rhs.ambient;
+					diffuse = rhs.diffuse;
+					emissive = rhs.emissive;
+					specular = rhs.specular;
+					shineness = rhs.shineness;
+					TransparencyFactor = rhs.TransparencyFactor;
+
+					mtrl_consts.ambient = rhs.ambient.color;
+					mtrl_consts.diffuse = rhs.diffuse.color;
+					mtrl_consts.emissive = rhs.emissive.color;
+					mtrl_consts.specular = rhs.specular.color;
+					//mtrl_consts.shineness = rhs.shineness;
+					//mtrl_consts.TransparencyFactor = rhs.TransparencyFactor;
+					return *this;
+				}
+			};
+
+			// structure which will be used to pass data to shaer
+			// this will replace MATERIAL_DATA
+			struct Material_Data
+			{
+				FbxMaterial*				fbxmaterial;
+				ID3D11ShaderResourceView*	pSRV;
+				ID3D11SamplerState*         pSampler;
+				ID3D11Buffer*				pMaterialCb;
+
+				Material_Data()
+				{
+					fbxmaterial = nullptr;
+					pSRV = nullptr;
+					pSampler = nullptr;
+					pMaterialCb = nullptr;
+				}
+				void Release()
+				{
+					if (fbxmaterial)
+					{
+						fbxmaterial->Release();
+						fbxmaterial = nullptr;
+					}
+
+					if (pMaterialCb)
+					{
+						pMaterialCb->Release();
+						pMaterialCb = nullptr;
+					}
+
+					if (pSRV)
+					{
+						pSRV->Release();
+						pSRV = nullptr;
+					}
+
+					if (pSampler)
+					{
+						pSampler->Release();
+						pSampler = nullptr;
+					}
+				}
 			};
 
 			// This is the actual representation of a joint in a game engine
@@ -245,7 +354,7 @@ namespace ursine
 				unsigned int* materialIndices;
 
 				// material
-				std::vector<Material> materials;
+				std::vector<FbxMaterial> fbxmaterials;
 				std::vector<ModelSubset> modelSubsets;
 
 				MeshData() : vertexCnt(0), indexCnt(0), normalCnt(0), tangentCnt(0), uvCnt(0),
@@ -264,6 +373,7 @@ namespace ursine
 				std::string				name;
 				FbxSkinnedData			mSkinnedData;
 				std::vector<MeshData*>	mMeshData;
+				std::vector<FbxMaterial*> mMaterials;
 				std::vector<ControlPoints*> mCtrlPoints;
 				std::vector<AnimationData*> mAnimationData;
 				// ====================================
@@ -276,6 +386,8 @@ namespace ursine
 				void Release()
 				{
 					mMeshData.clear();
+					mMaterials.clear();
+					mCtrlPoints.clear();
 					mAnimationData.clear();
 				}
 				void GetFinalTransform(const std::string& clipName, double timePos, std::vector<XMMATRIX>& finalTransform) const;
@@ -301,6 +413,7 @@ namespace ursine
 			XMVECTOR ConvertQuaternion(const FbxQuaternion& quat);
 			FbxVector4 XMVectorToFBXVector(const XMVECTOR& src);
 			FbxVector4 XMFloat3ToFBXVector4(const XMFLOAT3& src);
+			XMFLOAT4 FBXDouble3ToXMFLOAT4(const FbxDouble3& src);
 			XMFLOAT3 FBXVectorToXMFLOAT3(const FbxVector4& src);
 			FbxVector2 XMFloat2ToFBXVector2(const XMFLOAT2& src);
 			XMFLOAT4 FBXQuaternionToXMLOAT4(const FbxQuaternion& quat);

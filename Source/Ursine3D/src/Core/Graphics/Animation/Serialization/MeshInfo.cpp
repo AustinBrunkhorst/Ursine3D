@@ -14,8 +14,10 @@ namespace ursine
 				normalMode(FbxLayerElement::EMappingMode::eNone),
 				tangentMode(FbxLayerElement::EMappingMode::eNone),
 				vertices(nullptr), indices(nullptr), normals(nullptr), tangents(nullptr), uvs(nullptr), materialIndices(nullptr),
-				materials(nullptr), modelSubsets(nullptr), ctrlIndices(nullptr), ctrlBlendWeights(nullptr), ISerialize("")
+				modelSubsets(nullptr), //fbxmaterials(nullptr),
+				ctrlIndices(nullptr), ctrlBlendWeights(nullptr), ISerialize("")
 			{
+				*mtrlName = { nullptr };
 			}
 
 			MeshInfo::~MeshInfo()
@@ -50,15 +52,15 @@ namespace ursine
 					delete[] uvs;
 					uvs = nullptr;
 				}
+				if (mtrlName)
+				{
+					for (unsigned int i = 0; i < mtrlCount; ++i)
+						delete mtrlName[i];
+				}
 				if (materialIndices)
 				{
 					delete[] materialIndices;
 					materialIndices = nullptr;
-				}
-				if (materials)
-				{
-					delete[] materials;
-					materials = nullptr;
 				}
 				if (modelSubsets)
 				{
@@ -126,15 +128,21 @@ namespace ursine
 					{
 						ReadFile(hFile, &uvs[i], sizeof(XMFLOAT2), &nBytesRead, nullptr);
 					}
+					// replace this fbxmaterial or just name of mtrl,texture
+					//materials = new FBX_DATA::Material[mtrlCount];
+					//for (i = 0; i < mtrlCount; ++i)
+					//{
+					//	ReadFile(hFile, &materials[i], sizeof(FBX_DATA::Material), &nBytesRead, nullptr);
+					//}
+					for (i = 0; i < mtrlCount; ++i)
+					{
+						mtrlName[i] = new char[MAXTEXTLEN];
+						ReadFile(hFile, mtrlName[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					}
 					materialIndices = new unsigned int[mtrlIndexCount];
 					for (i = 0; i < mtrlIndexCount; ++i)
 					{
 						ReadFile(hFile, &materialIndices[i], sizeof(unsigned int), &nBytesRead, nullptr);
-					}
-					materials = new FBX_DATA::Material[mtrlCount];
-					for (i = 0; i < mtrlCount; ++i)
-					{
-						ReadFile(hFile, &materials[i], sizeof(FBX_DATA::Material), &nBytesRead, nullptr);
 					}
 					ctrlIndices = new unsigned int*[ctrlPtCount];
 					ctrlBlendWeights = new double*[ctrlPtCount];
@@ -198,13 +206,18 @@ namespace ursine
 					{
 						WriteFile(hFile, &uvs[i], sizeof(XMFLOAT2), &nBytesWrite, nullptr);
 					}
+					// replace this to fbxmaterial or just name of mtrl,texture
+					//for (i = 0; i < mtrlCount; ++i)
+					//{
+					//	WriteFile(hFile, &materials[i], sizeof(FBX_DATA::Material), &nBytesWrite, nullptr);
+					//}
+					for (i = 0; i < mtrlCount; ++i)
+					{
+						WriteFile(hFile, mtrlName[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					}
 					for (i = 0; i < mtrlIndexCount; ++i)
 					{
 						WriteFile(hFile, &materialIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
-					}
-					for (i = 0; i < mtrlCount; ++i)
-					{
-						WriteFile(hFile, &materials[i], sizeof(FBX_DATA::Material), &nBytesWrite, nullptr);
 					}
 					for (i = 0; i < ctrlPtCount; ++i)
 					{

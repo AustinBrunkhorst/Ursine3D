@@ -13,6 +13,7 @@ namespace ursine
 			ModelInfo::ModelInfo()
 				:
 				mmeshCount(0), marrMeshes(nullptr),
+				mmaterialCount(0), marrMaterials(nullptr),
 				mskinCount(0), marrSkins(nullptr),
 				manimCount(0), marrAnims(nullptr),
 				ISerialize("")
@@ -29,6 +30,11 @@ namespace ursine
 				{
 					delete[] marrMeshes;
 					marrMeshes = nullptr;
+				}
+				if (marrMaterials)
+				{
+					delete[] marrMaterials;
+					marrMaterials = nullptr;
 				}
 				if (marrSkins)
 				{
@@ -50,6 +56,7 @@ namespace ursine
 				{
 					ReadFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
 					ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mskinCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &manimCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
@@ -57,6 +64,11 @@ namespace ursine
 					for (i = 0; i < mmeshCount; ++i)
 					{
 						marrMeshes[i].SerializeIn(hFile);
+					}
+					marrMaterials = new MaterialInfo[mmaterialCount];
+					for (i = 0; i < mmaterialCount; ++i)
+					{
+						marrMaterials[i].SerializeIn(hFile);
 					}
 					marrSkins = new SkinInfo[mskinCount];
 					for (i = 0; i < mskinCount; ++i)
@@ -80,12 +92,17 @@ namespace ursine
 				{
 					WriteFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mskinCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &manimCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
 					for (i = 0; i < mmeshCount; ++i)
 					{
 						marrMeshes[i].SerializeOut(hFile);
+					}
+					for (i = 0; i < mmaterialCount; ++i)
+					{
+						marrMaterials[i].SerializeOut(hFile);
 					}
 					for (i = 0; i < mskinCount; ++i)
 					{
