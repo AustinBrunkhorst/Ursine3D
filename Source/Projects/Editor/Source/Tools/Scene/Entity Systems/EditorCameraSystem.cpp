@@ -266,3 +266,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     gfx->DrawingMgr.DrawPoint(m_camPos + SVec3(0, 0, halfSize));
 }
 
+ursine::SVec3 EditorCameraSystem::GetEditorFocusPosition()
+{
+    return m_camPos;
+}

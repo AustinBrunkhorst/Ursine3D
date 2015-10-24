@@ -14,6 +14,7 @@ public:
     void SetEditorCamera(ursine::graphics::Camera *camera);
     ursine::graphics::Camera *GetEditorCamera();
 
+    ursine::SVec3 GetEditorFocusPosition(void);
     //private methods
 private:
     void OnInitialize(void) override;
