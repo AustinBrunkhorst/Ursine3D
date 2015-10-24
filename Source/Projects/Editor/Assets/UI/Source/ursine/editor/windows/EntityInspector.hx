@@ -20,14 +20,6 @@ class EntityInspector extends WindowHandler {
         m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
 
         window.heading = "Inspector";
-
-        window.style.top = "0";
-        window.style.bottom = "50%";
-        window.style.left = "0";
-        window.style.width = "15%";
-
-        // TODO:
-        window.style.borderBottom = "none";
     }
 
     public function inspect(entity : Entity) {

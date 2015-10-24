@@ -1,0 +1,34 @@
+@import '../../Config';
+@import 'DockConfig';
+
+:host {
+  display: block;
+
+  ::content {
+    > x-dock-column {
+      position: relative;
+      float: left;
+      height: 100%;
+
+      &:not(:last-child) {
+        #resize-handle {
+          position: absolute;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          width: $dock-resize-handle-size;
+          background: red;
+          cursor: ew-resize;
+
+          &:hover, &:active {
+            background: lighten(red, 25%);
+          }
+        }
+      }
+
+      > .dock-node {
+        width: 100%;
+      }
+    }
+  }
+}

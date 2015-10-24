@@ -1,4 +1,5 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="Behaviors/Docking/DockNode.html">
 
 <dom-module id="x-editor-window">
     <link rel="import" type="css" href="../Style/Controls/EditorWindow.css">
@@ -13,6 +14,9 @@
     <script>
         var EditorWindowControl = Polymer({
             is: "x-editor-window",
+            hostAttributes: {
+                tabindex: -1
+            },
             properties: {
                 heading: {
                     type: String,
@@ -20,9 +24,9 @@
                 }
             },
             created: function() {
-                // make this element focusable
-                this.tabIndex = -1;
+
             },
+            behaviors: [ DockNodeBehavior ],
 
             get container() {
                 return this.$.container;

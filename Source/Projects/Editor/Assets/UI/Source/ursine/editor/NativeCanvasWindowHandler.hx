@@ -16,12 +16,13 @@ class NativeCanvasWindowHandler extends WindowHandler {
     public function new(toolName : String) {
         super( );
 
-        m_nativeHandler = new NativeToolHandler( toolName );
+        // TODO:
+        /*m_nativeHandler = new NativeToolHandler( toolName );
 
         for (event in m_forwardedEvents)
             window.addEventListener( event, forwardEvent );
 
-        js.Browser.window.addEventListener( 'resize', onViewportInvalidated );
+        js.Browser.window.addEventListener( 'resize', onViewportInvalidated );*/
     }
 
     private function resizeOuterWindow(width : Int, height : Int)
@@ -37,13 +38,14 @@ class NativeCanvasWindowHandler extends WindowHandler {
     }
 
     private function onViewportInvalidated() {
-        var bounds = window.container.getBoundingClientRect( );
+        // TODO:
+        /*var bounds = window.container.getBoundingClientRect( );
 
         m_nativeHandler.Event( 'viewportInvalidated', {
             x: bounds.left,
             y: bounds.top,
             width: bounds.width,
             height: bounds.height
-        } );
+        } );*/
     }
 }

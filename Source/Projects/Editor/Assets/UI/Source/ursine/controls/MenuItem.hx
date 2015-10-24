@@ -7,5 +7,5 @@ extern class MenuItem extends PolymerElement {
 
     var menu : Menu;
 
-    public function new() : Void;
+    function new() : Void;
 }

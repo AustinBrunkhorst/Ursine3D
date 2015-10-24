@@ -15,20 +15,16 @@ class SceneOutline extends WindowHandler {
 
         window.heading = "Outline";
 
-        window.style.top = "50%";
-        window.style.bottom = "0";
-        window.style.left = "0";
-        window.style.width = "15%";
-
         m_entityList = cast js.Browser.document.createElement( 'ul' );
         m_entityList.classList.add( 'entity-list' );
 
         window.container.appendChild( m_entityList );
 
-        initScene( );
+        // TODO:
+        /*initScene( );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
-            .on( 'EntityAdded', onEntityAdded );
+            .on( 'EntityAdded', onEntityAdded );*/
     }
 
     private function initScene() {

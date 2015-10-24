@@ -1,0 +1,47 @@
+<link rel="import" href="../../../LIB/Polymer/polymer.html">
+
+<script>
+    /**
+     * Default DockNode configurations
+     * */
+    var DockNodeConfig = {
+        MinWidth: 15
+    };
+
+    var DockNodeBehavior = {
+        properties: {
+            /**
+             * Value in pixels of the minimum width of this node
+             */
+            minWidth: {
+                type: Number,
+                value: DockNodeConfig.MinWidth,
+                notify: true,
+                observer: '_onMinWidthChanged'
+            }
+        },
+        created: function() {
+            this.parent = null;
+
+            this.classList.add( 'dock-node' );
+        },
+        attached: function() {
+            this.parent = this.parentNode;
+        },
+        detached: function() {
+            this.parent = null;
+        },
+
+        detachParent: function() {
+            if (this.parent)
+                this.parent.removeChild( this );
+        },
+
+        _onMinWidthChanged: function() {
+            var width = Math.max( this.minWidth, 0 );
+
+            if (this.parent)
+                this.parent._onChildMinWidthChanged( width );
+        }
+    };
+</script>

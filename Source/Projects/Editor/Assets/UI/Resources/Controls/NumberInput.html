@@ -8,11 +8,14 @@
         var NumberInputControl = Polymer({
             is: 'x-number-input',
             extends: 'input',
+            hostAttributes: {
+                type: 'number'
+            },
             properties: {
 
             },
             created: function() {
-                this.type = 'number';
+
             }
         });
     </script>

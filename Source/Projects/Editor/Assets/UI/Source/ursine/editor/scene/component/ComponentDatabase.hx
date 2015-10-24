@@ -69,8 +69,6 @@ class ComponentDatabase {
         for (name in components) {
             var component : ComponentType = Reflect.field( database.components, name );
 
-            trace( component.meta );
-
             m_db.set( name, component );
         }
 

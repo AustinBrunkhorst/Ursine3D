@@ -4,5 +4,5 @@ package ursine.controls;
 extern class Button extends PolymerElement {
     var text : String;
 
-    public function new() : Void;
+    function new() : Void;
 }

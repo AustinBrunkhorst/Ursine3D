@@ -6,6 +6,9 @@
 
     <script src="LIB/Polymer/webcomponents.min.js"></script>
 
+    <script src="Script/NativeExterns.js"></script>
+    <script src="Script/MathUtils.js"></script>
+
     <!-- Controls -->
     <link rel="import" href="Controls/Button.html" />
     <link rel="import" href="Controls/NumberInput.html" />
@@ -17,15 +20,15 @@
     <link rel="import" href="Controls/MainMenu.html" />
     <link rel="import" href="Controls/EditorWindow.html" />
 
+    <link rel="import" href="Controls/Docking/DockContainer.html" />
+    <link rel="import" href="Controls/Docking/DockColumn.html" />
+
     <link rel="import" href="Controls/Inspection/ComponentInspector.html" />
     <link rel="import" href="Controls/Inspection/FieldInspector.html" />
 </head>
 <body>
 	<div id="header-toolbar"></div>
-    <div id="window-container"></div>
+    <div id="main-dock-container"></div>
 </body>
-<script>
-    function NativeBroadcast(target, message, data) { }
-</script>
 <script type="text/javascript" src="Editor.js"></script>
 </html>

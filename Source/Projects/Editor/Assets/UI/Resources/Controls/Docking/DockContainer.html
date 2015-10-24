@@ -1,0 +1,39 @@
+<link rel="import" href="../../LIB/Polymer/polymer.html">
+<link rel="import" href="DockColumn.html">
+
+<script src="../Behaviors/Docking/DockLocation.js"></script>
+
+<dom-module id="x-dock-container">
+    <link rel="import" type="css" href="../../Style/Controls/Docking/DockContainer.css">
+    <template>
+        <content></content>
+    </template>
+    <script>
+        var DockContainerControl = Polymer({
+            is: "x-dock-container",
+            properties: {
+
+            },
+            created: function() {
+                this.parent = null;
+            },
+            attached: function() {
+                this.parent = this.parentNode;
+            },
+            detached: function() {
+                this.parent = null;
+            },
+
+            /**
+             * Adds a new column to the container
+             */
+            addColumn: function() {
+                var column = new DockColumnControl( );
+
+                this.appendChild( column );
+
+                return column;
+            }
+        });
+    </script>
+</dom-module>

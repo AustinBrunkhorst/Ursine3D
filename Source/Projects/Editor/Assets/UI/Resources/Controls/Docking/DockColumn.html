@@ -1,0 +1,137 @@
+<link rel="import" href="../../LIB/Polymer/polymer.html">
+<link rel="import" href="../Behaviors/Docking/DockNode.html">
+
+<dom-module id="x-dock-column">
+    <template>
+        <content></content>
+        <div id="resize-handle"></div>
+    </template>
+    <script>
+        var DockColumnControl = Polymer({
+            is: "x-dock-column",
+            properties: {
+
+            },
+            listeners: {
+                'resize-handle.mousedown': '_onResizeHandleMouseDown'
+            },
+            created: function() {
+                this.parent = null;
+
+                this._minWidth = DockNodeConfig.MinWidth;
+                this._lastMouseX = 0;
+            },
+            attached: function() {
+                this.parent = this.parentNode;
+
+                this._lastResizeWidth = this._getWidthPixels( );
+            },
+            detached: function() {
+                this.parent = null;
+            },
+
+            /**
+             * Sets the width of this column
+             * @param width width in range [0, 1] representing
+             *        the percentage of the parent container to contain
+             */
+            setWidthPercent: function(width) {
+                var widthPercent = this._getWidthPercent( );
+
+                var deltaPercent = width - widthPercent;
+
+                var allowedDelta;
+
+                // request an allowed delta from our next sibling
+                if (this.nextSibling) {
+                    allowedDelta = this.nextSibling._applyResizeDelta( deltaPercent );
+                } else {
+                    allowedDelta = deltaPercent;
+                }
+
+                this._setWidthPercent( widthPercent + allowedDelta );
+            },
+
+            /**
+             * Adds a node as a child to this container
+             * @param node
+             */
+            addNode: function(node) {
+                node.detachParent( );
+
+                this.appendChild( node );
+            },
+
+            _getWidthPixels: function() {
+                return this.clientWidth;
+            },
+            _getWidthPercent: function() {
+                if (this.parent)
+                    return this.clientWidth / this.parent.clientWidth;
+
+                return 1.0;
+            },
+            _getMinWidthPercent: function() {
+                if (this.parent)
+                    return this._minWidth / this.parent.clientWidth;
+
+                return 0.0;
+            },
+
+            _setWidthPercent: function(percent) {
+                this.style.width = (Math.clamp( percent, 0.0, 1.0 ) * 100.0) + '%';
+            },
+            _onChildMinWidthChanged: function(width) {
+                this._minWidth = Math.max( 0.0, Math.min( this._minWidth, width ) );
+            },
+            _applyResizeDelta: function(delta) {
+                var widthPercent = this._getWidthPercent( );
+
+                var deltaApplied = widthPercent - delta;
+
+                var minWidthPercent = this._getMinWidthPercent( );
+
+                // we don't want to make this column less than its min width
+                if (deltaApplied < minWidthPercent)
+                    delta = 0.0;
+
+                this._setWidthPercent( widthPercent - delta );
+
+                return delta;
+            },
+
+            _onResizeHandleMouseDown: function(e) {
+                this._lastMouseX = e.clientX;
+                this._lastResizeWidth = this._getWidthPixels( );
+
+                DockColumnControl.ActiveResize = this;
+            },
+
+            _handleResize: function(e) {
+                var deltaX = e.clientX - this._lastMouseX;
+
+                var newWidth = Math.max( this._minWidth, this._lastResizeWidth + deltaX );
+
+                this.setWidthPercent( newWidth / this.parent.clientWidth );
+            },
+            _handleResizeEnd: function(e) {
+                DockColumnControl.ActiveResize = null;
+            }
+        });
+
+        DockColumnControl.ActiveResize = null;
+
+        DockColumnControl.OnDocumentMouseMove = function(e) {
+            if (DockColumnControl.ActiveResize)
+                DockColumnControl.ActiveResize._handleResize( e );
+        };
+
+        DockColumnControl.OnDocumentMouseUp = function(e) {
+            if (DockColumnControl.ActiveResize)
+                DockColumnControl.ActiveResize._handleResizeEnd( e );
+        };
+
+        document.addEventListener( 'mousemove', DockColumnControl.OnDocumentMouseMove );
+        document.addEventListener( 'mouseup', DockColumnControl.OnDocumentMouseUp );
+    </script>
+</dom-module>
