@@ -25,6 +25,9 @@ namespace
 	const std::string init = "INIT.bnk";
 	const std::string bgm = "BGM.bnk";
 	const std::string car = "Car.bnk";
+	const std::string RPM = "RPM";
+
+	const std::string play_CarEngine = "Play_Engine";
 
 	AkBankID initID = AK_INVALID_BANK_ID;
 	AkBankID bgmID = AK_INVALID_BANK_ID;
@@ -105,11 +108,24 @@ void AudioTest::onAppUpdate(EVENT_HANDLER(Application))
 	slerpT += Application::Instance->GetDeltaTime() * direction;
 
 	if (slerpT > 1.0f)
+	{
 		direction = -1;
+		//m_audio->PauseAudio();
+	}
+		
 	else if (slerpT < 0.0f)
+	{
 		direction = 1;
+		//m_audio->ResumeAudio();
+	}
+		
 
 	slerpT = math::Clamp( slerpT, 0.0f, 1.0f );
+
+	auto v = (cos( t ) + 1.0f) * 0.5f;
+
+	m_audio->SetRealTimeParameter(RPM, 1000.0f + v * 9000.0f, GAME_OBJECT_ID_CAR);
+	AK::SoundEngine::RenderAudio();
 
 	SQuat result = quat0.Slerp(quat1, ease::CircularInOut(slerpT));
 	SMat4 mat(result);
@@ -308,27 +324,9 @@ void AudioTest::initAudio()
 	m_audio = Application::Instance->GetCoreSystem<AudioManager>();
 
 	m_audio->LoadBank(init, initID);
-	m_audio->LoadBank(bgm, bgmID);
+	m_audio->LoadBank(car, bgmID);
 
-	AkGameObjectID gameObj = 20;
-
-	//Add a BGM output, associated with listener #8 (Why 8? Because it is not 0 which is usually associated to the player).
-	//auto second = AK::SoundEngine::AddSecondaryOutput(0 /*Unused for BGM*/, AkOutput_MergeToMain, 0x80 /*Listener 8 (8th bit)*/);
-
-	//Setup a game object to emit sound to the listener 8
-	auto obj = AK::SoundEngine::RegisterGameObj(GAME_OBJECT_ID_CAR, 0x80);
-
-	//AK::SoundEngine::PostEvent(L"Play_Engine", GAME_OBJECT_ID_CAR);
-
-	//AK::SoundEngine::AddSecondaryOutput(0 /*Ignored for BGM*/, AkOutput_MergeToMain, 0x80 /*Use the listener #8 (bit mask)*/);
-
-	// Register the "Non-recordable music object" game object
-	AK::SoundEngine::RegisterGameObj(GAME_OBJECT_NON_RECORDABLE, "Non-recordable music");
-	//Make the non-recordable object emit sound only to listener #8.  Nothing to do on the other object as by default everything is output to the main output, and is recordable.
-	//AK::SoundEngine::SetActiveListeners(GAME_OBJECT_NON_RECORDABLE, 0x80);
-
-	//Play the music. This sound must be routed to the Master Secondary Bus (or any sub bus)
-	//AK::SoundEngine::PostEvent(L"Play_NonRecordableMusic", GAME_OBJECT_ID_CAR);
-	AK::SoundEngine::PostEvent("Play_NonRecordableMusic", GAME_OBJECT_NON_RECORDABLE);
+	m_audio->RegisterObject(GAME_OBJECT_ID_CAR, 0x08);
+	m_audio->PlayEvent(play_CarEngine, GAME_OBJECT_ID_CAR);
 
 }

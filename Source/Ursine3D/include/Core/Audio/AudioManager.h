@@ -16,17 +16,11 @@
 #include "CoreSystem.h"
 #include "Meta.h"
 
-#include <AK/Tools/Common/AkAssert.h>
-#include <AK/SoundEngine/Common/AkSoundEngine.h>
+//#include <AK/Tools/Common/AkAssert.h>
 
-#include <AK/SoundEngine/Common/AkMemoryMgr.h>
-#include <AK/SoundEngine/Common/AkModule.h>
-
-#include <AK/SoundEngine/Common/IAkStreamMgr.h>
-#include <AK/Tools/Common/AkPlatformFuncs.h>
-#include <WWiseUtils/AkFilePackageLowLevelIOBlocking.h>
-
-#include <AK/MusicEngine/Common/AkMusicEngine.h>
+#include "ListenerMasks.h"
+#include "WwiseForward.h"
+#include "WWiseUtils/AkFilePackageLowLevelIOBlocking.h"
 
 namespace AK
 {
@@ -83,24 +77,35 @@ namespace ursine
 
 		void UnloadBank(const std::string &bankName);
 
-		void SetInitBankID(AkBankID init);
+		void RegisterObject(AkGameObjectID obj, int listener);
 
-		void SetCurrentBankID(AkBankID bank);
+		void PlayEvent(const std::string name, AkGameObjectID obj);
 
-		AkBankID GetInitBankID(void);
+		void PauseAudio();
 
-		AkBankID GetCurrentBankID(void);
+		void ResumeAudio();
+
+		void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
+
+		void AssignListener(AkGameObjectID obj, int listeners);
+
+		void SetListenerPosition(const AkVector orientation_forward, const AkVector orientation_up, const AkVector position);
+
+		// create SetListeners with SVec3
+		void SetListenerPosition(const SVec3 orientation_forward, const SVec3 orientation_up, const SVec3 position);
+
+		void SetObject3DPosition(AkGameObjectID obj, const AkSoundPosition position);
+
+		void SetObject3DPosition(AkGameObjectID obj, const SVec3 position, const SVec3 orientation);
 
 		CAkFilePackageLowLevelIOBlocking g_lowLevelIO;
 
 	private:
 		AkInitSettings m_initSettings;
 		AkPlatformInitSettings m_platSettings;
-		AkBankID m_initBankID;
-		AkBankID m_curBankID;
 
 		void onAppUpdate(EVENT_HANDLER(Application));
-		AKRESULT Init(AkInitSettings* in_pSettings, AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
+		void Init(AkInitSettings* in_pSettings, AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
 
 	} Meta( Enable );
 }
