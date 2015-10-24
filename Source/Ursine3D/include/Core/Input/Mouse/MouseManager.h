@@ -14,13 +14,11 @@ namespace ursine
     {
         CORE_SYSTEM
     public:
+        Meta(Enable)
         MouseManager(void);
         ~MouseManager(void);
 
-        Meta(Disable)
         void OnInitialize(void) override;
-
-        Meta(Disable)
         void OnRemove(void) override;
 
         const Vec2 &GetPosition(void) const;
@@ -33,6 +31,7 @@ namespace ursine
         bool IsButtonTriggeredUp(MouseButton button) const;
 
         void ShowCursor(bool show) const;
+
         void SetWarped(bool warped) const;
 
     private:
@@ -55,5 +54,5 @@ namespace ursine
         void onMove(EVENT_HANDLER(Application));
 
         void onScroll(EVENT_HANDLER(Application));
-    } Meta(Enable);
+    } Meta(Enable, WhiteListMethods);
 }

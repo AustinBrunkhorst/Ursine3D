@@ -23,13 +23,20 @@ namespace ursine
         WindowManager(void);
         ~WindowManager(void);
 
-        Window *AddWindow(const std::string &title, const Vec2 &location, const Vec2 &size, uint32 flags);
-        Window *GetWindow(uint32 windowID);
+        Meta(Disable)
+        Window::Handle AddWindow(
+            const std::string &title, 
+            const Vec2 &location, 
+            const Vec2 &size, uint32 flags
+        );
+
+        Meta(Disable)
+        Window::Handle GetWindow(uint32 windowID);
 
     private:
         friend class Window;
 
-        std::unordered_map<uint32, Window*> m_created;
+        std::unordered_map<uint32, Window::Handle> m_created;
 
         void destroy(Window *window);
 

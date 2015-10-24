@@ -12,6 +12,22 @@
 
 #include "VariantBase.h"
 
+#include "TraitUtils.h"
+
+#define DEFAULT_TYPE_HANDLER(typeName)                                              \
+    template<typename U = T>                                                        \
+    typeName get##typeName(                                                         \
+        typename std::enable_if<                                                    \
+            !std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value \
+        >::type* = nullptr                                                          \
+    ) const;                                                                        \
+    template<typename U = T>                                                        \
+    typeName get##typeName(                                                         \
+        typename std::enable_if<                                                    \
+            std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value  \
+        >::type* = nullptr                                                          \
+    ) const;                                                                        \
+
 namespace ursine
 {
     namespace meta
@@ -38,12 +54,33 @@ namespace ursine
         private:
             friend class Variant;
 
+            T m_value;
+
             VariantContainer &operator=(const VariantContainer &rhs) = delete;
 
-            T m_value;
+            DEFAULT_TYPE_HANDLER( int );
+            DEFAULT_TYPE_HANDLER( bool );
+            DEFAULT_TYPE_HANDLER( float );
+            DEFAULT_TYPE_HANDLER( double );
+
+            template<typename U = T>             
+            std::string getString(
+                typename std::enable_if<                 
+                    !std::is_arithmetic<U>::value 
+                >::type* = nullptr                       
+            ) const;          
+
+            template<typename U = T>                     
+            std::string getString(
+                typename std::enable_if<                 
+                    std::is_arithmetic<U>::value
+                >::type* = nullptr                       
+            ) const;                                           
         };
     }
 }
+
+#undef DEFAULT_TYPE_HANDLER
 
 #include "Impl/VariantContainer.hpp"
 #include "Impl/VariantContainerStandardTypes.hpp"

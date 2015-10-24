@@ -33,7 +33,7 @@ namespace ursine
 
     TimerID Timer::Create(const TimeSpan &duration, TimerGroupID group)
     {
-        static auto *manager = Application::Instance->GetCoreSystem<TimerManager>( );
+        static auto *manager = GetCoreSystem( TimerManager );
 
         UAssert (duration >= TimeSpan::Zero,
             "Timer duration must be non-negative." );

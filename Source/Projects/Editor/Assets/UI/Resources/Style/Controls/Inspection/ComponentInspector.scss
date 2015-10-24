@@ -1,0 +1,38 @@
+@import '../../Config';
+@import '../../Utils';
+
+:host {
+  #header {
+    padding: 5px;
+    background: #2d2d30;
+    color: #b3b3b3;
+    border-bottom: 1px solid #29292c;
+    cursor: pointer;
+
+    &:before {
+      display: inline-block;
+      padding-right: 5px;
+      -webkit-transform: rotate(0deg);
+      -webkit-transform-origin: center;
+      -webkit-transition: -webkit-transform $duration-transition-btn ease;
+      @include triangle( 'right', $color-accent, 5px );
+    }
+  }
+
+  #container {
+    display: none;
+    margin-left: 5px;
+  }
+
+  &.opened {
+    #header {
+      &:before {
+        -webkit-transform: rotate(90deg);
+      }
+    }
+
+    #container {
+      display: block;
+    }
+  }
+}

@@ -46,6 +46,7 @@ private:
     CXTranslationUnit m_translationUnit;
 
     std::vector<Class*> m_classes;
+
     std::vector<Global*> m_globals;
     std::vector<Function*> m_globalFunctions;
     std::vector<Enum*> m_enums;

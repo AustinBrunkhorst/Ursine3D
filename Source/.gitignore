@@ -235,3 +235,6 @@ ErrorLog.txt
 
 # FMOD Studio Bank Cache
 .fsbcache/
+
+# HLSL Compiled Shader Object
+*.cso

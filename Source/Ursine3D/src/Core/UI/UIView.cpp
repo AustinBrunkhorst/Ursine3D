@@ -14,7 +14,7 @@
 
 namespace ursine
 {
-    UIView::UIView(Window *window, const CefBrowserSettings &settings, const std::string &url)
+    UIView::UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url)
         : m_window( window )
     {
         CefWindowInfo info;
@@ -36,8 +36,8 @@ namespace ursine
 
         auto *app = Application::Instance;
 
-        m_keyboardManager = app->GetCoreSystem<KeyboardManager>( );
-        m_mouseManager = app->GetCoreSystem<MouseManager>( );
+        m_keyboardManager = GetCoreSystem( KeyboardManager );
+        m_mouseManager = GetCoreSystem( MouseManager );
 
         m_window->Listener( this )
             .On( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );
@@ -82,19 +82,40 @@ namespace ursine
 
     const CefRect &UIView::GetViewport(void) const
     {
-        return m_viewport;
+        URSINE_TODO( "..." );
+        CefRect todo;
+
+        return todo;
     }
 
     void UIView::SetViewport(const CefRect &viewport)
     {
-        m_viewport = viewport;
+        URSINE_TODO( "..." );
+        //m_viewport = viewport;
 
-        m_browser->GetHost( )->WasResized( );
+        resize(viewport.width, viewport.height);
+
+        m_browser->GetHost()->WasResized();
     }
 
     bool UIView::IsValid(void) const
     {
         return !!m_browser;
+    }
+
+    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data)
+    {
+        auto processMessage = CefProcessMessage::Create( target );
+
+        auto args = processMessage->GetArgumentList( );
+
+        args->SetSize( 3 );
+
+        args->SetInt( 0, command );
+        args->SetString( 1, message );
+        args->SetString( 2, data.dump( ) );
+
+        m_browser->SendProcessMessage( PID_RENDERER, processMessage );
     }
 
     CefRefPtr<CefRenderHandler> UIView::GetRenderHandler(void)
@@ -127,15 +148,6 @@ namespace ursine
 
         SetCursor( cursor );
 #endif
-    }
-
-    bool UIView::Execute(const CefString &name, 
-        CefRefPtr<CefV8Value> object, 
-        const CefV8ValueList &arguments, 
-        CefRefPtr<CefV8Value> &retval,
-        CefString &exception)
-    {
-        return true;
     }
 
     void UIView::onKeyboard(EVENT_HANDLER(KeyboardManager))
@@ -201,6 +213,9 @@ namespace ursine
         if (m_mouseManager->IsButtonDown( MBTN_RIGHT ))
             utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
+        URSINE_TODO( "..." );
+        CefRect m_viewport { 0, 0, 0, 0 };
+
         e.x = static_cast<int>( args->position.X( ) - m_viewport.x );
         e.y = static_cast<int>( args->position.Y( ) - m_viewport.y );
 
@@ -223,6 +238,9 @@ namespace ursine
 
         if (m_mouseManager->IsButtonDown( MBTN_RIGHT ))
             utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
+
+        URSINE_TODO( "..." );
+        CefRect m_viewport { 0, 0, 0, 0 };
 
         e.x = static_cast<int>( args->position.X( ) - m_viewport.x );
         e.y = static_cast<int>( args->position.Y( ) - m_viewport.y );
@@ -256,6 +274,9 @@ namespace ursine
             utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
         auto &position = m_mouseManager->GetPosition( );
+
+        URSINE_TODO( "..." );
+        CefRect m_viewport { 0, 0, 0, 0 };
 
         e.x = static_cast<int>( position.X( ) - m_viewport.x );
         e.y = static_cast<int>( position.Y( ) - m_viewport.y );

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UIConfig.h"
+
 #include "Window.h"
 
 #if defined(URSINE_GRAPHICS_OPENGL)
@@ -30,10 +32,11 @@ namespace ursine
     class UIView 
         : public CefClient
         , public CefDisplayHandler
-        , public CefV8Handler
         , public UIRendererType
     {
     public:
+        typedef CefRefPtr<UIView> Handle;
+
         ~UIView(void);
 
         void Close(void);
@@ -43,17 +46,19 @@ namespace ursine
 
         bool IsValid(void) const;
 
+        void Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data);
+
     private:
         friend class UIManager;
 
-        Window *m_window;
+        Window::Handle m_window;
 
         CefRefPtr<CefBrowser> m_browser;
 
         KeyboardManager *m_keyboardManager;
         MouseManager *m_mouseManager;
 
-        UIView(Window *window, const CefBrowserSettings &settings, const std::string &url);
+        UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url);
 
         ////////////////////////////////////////////////////////////////////
         // Handler Getters
@@ -75,16 +80,6 @@ namespace ursine
             CefCursorHandle cursor,
             CursorType type,
             const CefCursorInfo &customCursorInfo) override;
-
-        ////////////////////////////////////////////////////////////////////
-        // V8Handler Methods
-        ////////////////////////////////////////////////////////////////////
-
-        bool Execute(const CefString &name,
-            CefRefPtr<CefV8Value> object,
-            const CefV8ValueList &arguments,
-            CefRefPtr<CefV8Value> &retval,
-            CefString &exception) override;
 
         ////////////////////////////////////////////////////////////////////
         // Event Handlers

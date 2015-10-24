@@ -11,15 +11,26 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-
 #include "UrsinePrecompiled.h"
 
 #include "RenderProcessHandler.h"
+
+#include "NativeJSClass.h"
+
 #include "UIConfig.h"
+#include "JSConfig.h"
 
 namespace ursine
 {
-    RenderProcessHandler::RenderProcessHandler(void) { }
+    RenderProcessHandler::RenderProcessHandler(void)
+        : m_globalFunctionHandler( new NativeJSFunctionHandler( ) )
+        , m_nativeBroadcaster( nullptr )
+    {
+        auto exposedType = typeof( NativeJSClass );
+
+        for (auto &exposed : exposedType.GetDerivedClasses( ))
+            m_nativeHandlers.emplace_back( new NativeJSClassHandler( exposed ) );
+    }
 
     RenderProcessHandler::~RenderProcessHandler(void) { }
 
@@ -28,8 +39,7 @@ namespace ursine
 
     void RenderProcessHandler::OnWebKitInitialized(void)
     {
-        for (auto extension : m_extensions)
-            extension->Register( );
+        
     }
 
     void RenderProcessHandler::OnBrowserCreated(
@@ -51,32 +61,96 @@ namespace ursine
     void RenderProcessHandler::OnContextCreated(
         CefRefPtr<CefBrowser> browser,
         CefRefPtr<CefFrame> frame,
-        CefRefPtr<CefV8Context> context) { }
+        CefRefPtr<CefV8Context> context)
+    {
+        auto global = context->GetGlobal( );
+
+        m_globalFunctionHandler->Bind( global );
+
+        for (auto &handler : m_nativeHandlers)
+            handler->Bind( global );
+    }
 
     void RenderProcessHandler::OnContextReleased(
         CefRefPtr<CefBrowser> browser,
         CefRefPtr<CefFrame> frame,
-        CefRefPtr<CefV8Context> context) { }
+        CefRefPtr<CefV8Context> context)
+    {
+        auto global = context->GetGlobal( );
+
+        for (auto &handler : m_nativeHandlers)
+            handler->UnBind( global );
+
+        m_nativeBroadcaster = nullptr;
+    }
 
     bool RenderProcessHandler::OnProcessMessageReceived(
         CefRefPtr<CefBrowser> browser,
         CefProcessId sourceProcess,
         CefRefPtr<CefProcessMessage> message)
     {
-        if (sourceProcess == PID_BROWSER)
+        if (sourceProcess == PID_BROWSER && !browser->IsLoading( ))
         {
-            auto context = browser->GetMainFrame( )->GetV8Context( );
+            auto args = message->GetArgumentList( );
 
-            if (context->IsValid( ))
+            // command
+            switch (args->GetInt( 0 ))
             {
-                context->Enter( );
-
-               // TODO:
-
-                context->Exit( );
+            case UI_CMD_BROADCAST:
+                broadcast( browser, message->GetName( ), args );
+                return true;
+            default:
+                return false;
             }
         }
 
-        return true;
+        // TODO:
+        return false;
+    }
+
+    bool RenderProcessHandler::initNativeBroadcaster(CefRefPtr<CefV8Value> global)
+    {
+        m_nativeBroadcaster = global->GetValue( kNativeBroadcastFunction );
+
+        return m_nativeBroadcaster != nullptr;
+    }
+
+    void RenderProcessHandler::broadcast(
+        CefRefPtr<CefBrowser> browser, 
+        const std::string &target, 
+        CefRefPtr<CefListValue> args
+    )
+    {
+        auto context = browser->GetMainFrame( )->GetV8Context( );
+
+        if (!context->IsValid( ))
+            return;
+
+        context->Enter( );
+
+        auto global = context->GetGlobal( );
+
+        if (!m_nativeBroadcaster && !initNativeBroadcaster( global ))
+        {
+            context->Exit( );
+
+            return;
+        }
+
+        static std::string error;
+
+        auto json = Json::parse( args->GetString( 2 ), error );
+
+        CefV8ValueList broadcastArgs {
+            CefV8Value::CreateString( target ),
+            CefV8Value::CreateString( args->GetString( 1 ) ),
+            nullptr
+        };
+
+        JsonSerializer::Deserialize( json, broadcastArgs[ 2 ] );
+
+        m_nativeBroadcaster->ExecuteFunction( global, broadcastArgs );
+
+        context->Exit( );
     }
 }

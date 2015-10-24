@@ -37,22 +37,20 @@ namespace ursine
     public:
         static const int REMOTE_DEBUGGING_PORT = 6999;
 
-        Meta(DisableNonDynamic)
+        Meta(Enable, DisableNonDynamic)
         UIManager(void);
 
         ~UIManager(void);
 
-        CefRefPtr<UIView> CreateView(Window *window, const std::string &url);
+        UIView::Handle CreateView(Window::Handle window, const std::string &url) const;
 
     private:
         CefRefPtr<UICore> m_core;
 
-        std::vector<CefRefPtr<UIView>> m_created;
-
         void onAppUpdate(EVENT_HANDLER(Application));
 
         IMPLEMENT_REFCOUNTING(UIManager);
-    } Meta(Enable);
+    } Meta(Enable, WhiteListMethods);
 }
 
 DISABLE_RUNNABLE_METHOD_REFCOUNT(ursine::UIManager);

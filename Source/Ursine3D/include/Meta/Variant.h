@@ -15,8 +15,7 @@
 
 #include "TypeConfig.h"
 
-#include <vector>
-#include <memory>
+#include "Json.h"
 
 namespace ursine
 {
@@ -33,7 +32,7 @@ namespace ursine
             template<typename T>
             Variant(
                 T *data, 
-                variant_policy::WrapObject, 
+                variant_policy::WrapObject,
                 typename std::enable_if< 
                     std::is_base_of<Object, T>::value 
                 >::type* = nullptr
@@ -75,6 +74,8 @@ namespace ursine
             float ToFloat(void) const;
             double ToDouble(void) const;
             std::string ToString(void) const;
+
+            Json SerializeJson(void) const;
 
             template<typename T>
             T &GetValue(void) const;

@@ -12,19 +12,19 @@ Field::Field(
     , m_isConst( cursor.GetType( ).IsConst( ) )
     , m_parent( parent )
     , m_name( cursor.GetSpelling( ) )
-    , m_type( cursor.GetType( ).GetDisplayName( ) )
+    , m_type( utils::GetQualifiedName( cursor.GetType( ) ) )
 {
-    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( native_property::DisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_name;
     else
         m_displayName = displayName;
 
-    m_explicitGetter = m_metaData.GetNativeString( kMetaExplicitGetter );
+    m_explicitGetter = m_metaData.GetNativeString( native_property::ExplicitGetter );
     m_hasExplicitGetter = !m_explicitGetter.empty( );
 
-    m_explicitSetter = m_metaData.GetNativeString( kMetaExplicitSetter );
+    m_explicitSetter = m_metaData.GetNativeString( native_property::ExplicitSetter );
     m_hasExplicitSetter = !m_explicitSetter.empty( );
 }
 
@@ -69,7 +69,7 @@ bool Field::isAccessible(void) const
     return (m_hasExplicitGetter || m_hasExplicitSetter) ||
             (
                 m_accessModifier == CX_CXXPublic && 
-                !m_metaData.GetFlag( kMetaDisable )
+                !m_metaData.GetFlag( native_property::Disable )
             );
 }
 

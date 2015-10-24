@@ -27,16 +27,20 @@ namespace ursine
             
     }
 
-    void UICore::OnBeforeCommandLineProcessing(const CefString &process_type,
-        CefRefPtr<CefCommandLine> command_line)
+    void UICore::OnBeforeCommandLineProcessing(
+        const CefString &processType,
+        CefRefPtr<CefCommandLine> cmdLine
+    )
     {
-        // fixes v8 errors on startup
-        command_line->AppendSwitch( "no-proxy-server" );
-        command_line->AppendSwitch( "winhttp-proxy-resolver" );
+        cmdLine->AppendSwitch( "disable-extensions" );
 
-        command_line->AppendSwitch( "enable-begin-frame-scheduling" );
-        command_line->AppendSwitch( "disable-gpu" );
-        command_line->AppendSwitch( "disable-gpu-compositing" );
+        // fixes v8 errors on startup
+        cmdLine->AppendSwitch( "no-proxy-server" );
+        cmdLine->AppendSwitch( "winhttp-proxy-resolver" );
+
+        cmdLine->AppendSwitch( "enable-begin-frame-scheduling" );
+        cmdLine->AppendSwitch( "disable-gpu" );
+        cmdLine->AppendSwitch( "disable-gpu-compositing" );
 
         //command_line->AppendSwitch("off-screen-rendering-enabled");
         //command_line->AppendSwitch("in-process-gpu");
@@ -53,12 +57,9 @@ namespace ursine
         return this;
     }
 
-    bool UICore::GetLocalizedString(int nessageID, CefString &string)
+    CefRefPtr<CefRenderProcessHandler> UICore::GetRenderProcessHandler(void)
     {
-        // dot to shut up the errors
-        string = ".";
-
-        return true;
+        return this;
     }
 
     void UICore::Shutdown(void)

@@ -47,7 +47,7 @@ namespace ursine
 
     TweenID Tween::Create(TweenGroupID group)
     {
-        static auto *manager = Application::Instance->GetCoreSystem<TweenManager>( );
+        static auto *manager = GetCoreSystem( TweenManager );
 
         return manager->create( group );
     }

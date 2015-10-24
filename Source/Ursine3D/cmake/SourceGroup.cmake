@@ -1,3 +1,24 @@
+macro (ursine_source_group_files dir_base files)
+	foreach (entry ${files})
+        # get the directory name from the file
+        get_filename_component(group_name "${entry}" DIRECTORY)
+
+        # skip folders containing ".ignore-group"
+        if (NOT EXISTS "${group_name}/.ignore-group")
+        	# get the directory relative to the base directory
+        	file(RELATIVE_PATH group_name "${dir_base}" "${group_name}")
+
+             # replace forward slashes with double back slashes
+            string(REPLACE "/" "\\\\" group_name "${group_name}")
+
+            # make sure the group name isn't empty (root include folder)
+            if (NOT group_name STREQUAL "")
+                source_group(${group_name} FILES "${entry}")
+            endif ()
+        endif ()
+    endforeach ()
+endmacro ()
+
 #-------------------------------------------------------------------------------
 # ursine_recursive_includes()
 #
@@ -45,29 +66,8 @@ function (ursine_parse_source_groups dir_inc dir_src)
     # "Source Files" and "Header Files" group is created).
     source_group("" FILES ${files_inc} ${files_src})
 
-    macro (_parse_group dir_base files)
-        foreach (entry ${files})
-            # get the directory name from the file
-            get_filename_component(group_name "${entry}" DIRECTORY)
-
-            # skip folders containing ".ignore-group"
-            if (NOT EXISTS "${group_name}/.ignore-group")
-            	# get the directory relative to the base directory
-            	file(RELATIVE_PATH group_name "${dir_base}" "${group_name}")
-
-                 # replace forward slashes with double back slashes
-                string(REPLACE "/" "\\\\" group_name "${group_name}")
-
-                # make sure the group name isn't empty (root include folder)
-                if (NOT group_name STREQUAL "")
-                    source_group(${group_name} FILES "${entry}")
-                endif ()
-            endif ()
-        endforeach ()
-    endmacro ()
-
-    _parse_group("${dir_inc}" "${files_inc}")
-    _parse_group("${dir_src}" "${files_src}")
+    ursine_source_group_files("${dir_inc}" "${files_inc}")
+    ursine_source_group_files("${dir_src}" "${files_src}")
 endfunction ()
 
 #-------------------------------------------------------------------------------

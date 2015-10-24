@@ -17,7 +17,7 @@
 
 namespace ursine
 {
-	PhysicsDebugDrawer::PhysicsDebugDrawer(GfxAPI* gfx)
+	PhysicsDebugDrawer::PhysicsDebugDrawer(graphics::GfxAPI* gfx)
 		: m_gfx(gfx) { }
 
 	void PhysicsDebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
@@ -34,8 +34,9 @@ namespace ursine
 										      btScalar distance, int lifeTime, const btVector3& color)
 	{
 		m_gfx->DrawingMgr.SetColor(color.getX(), color.getY(), color.getZ(), 1.0f);
-
+        m_gfx->DrawingMgr.SetSize(8.0f);
 		m_gfx->DrawingMgr.DrawPoint(PointOnB.getX(), PointOnB.getY(), PointOnB.getZ());
+        m_gfx->DrawingMgr.SetSize(4.0f);
 
 		auto normP = PointOnB + normalOnB * distance;
 

@@ -7,6 +7,8 @@ namespace ursine
     class LocalTweenManager
     {
     public:
+        LocalTweenManager(void) = default;
+
         LocalTweenManager(TweenManager *manager, TweenGroupID defaultGroup = Tween::GROUP_DEFAULT);
         ~LocalTweenManager(void);
 

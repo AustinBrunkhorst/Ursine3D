@@ -19,4 +19,11 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "ShaderList.h"
 #include "RenderableTypes.h"
 
-typedef unsigned long long GFXHND;  // universal graphics handle
+namespace ursine
+{
+    namespace graphics
+    {
+        typedef unsigned long long GfxHND; // universal graphics handle
+    }
+}
+

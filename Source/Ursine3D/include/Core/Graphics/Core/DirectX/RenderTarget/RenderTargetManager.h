@@ -24,57 +24,59 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  namespace DXCore
-  {
-    //a single render target
-    struct RenderTarget
+    namespace graphics
     {
-      ID3D11RenderTargetView *RenderTargetView;
-      ID3D11ShaderResourceView *ShaderMap;
-      ID3D11Texture2D *TextureMap;
-    };
+        namespace DXCore
+        {
+            //a single render target
+            struct RenderTarget
+            {
+                ID3D11RenderTargetView *RenderTargetView;
+                ID3D11ShaderResourceView *ShaderMap;
+                ID3D11Texture2D *TextureMap;
+            };
 
-    //manages
-    class RenderTargetManager
-    {
-    public:
-      void Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext );
-      void Uninitialize( );
-      void InitializeAllRenderTargets( unsigned width, unsigned height );
-      void UnInitializeAllRenderTargets( );
-      void CreateTargets( );
-      RenderTarget *GetRenderTarget( RENDER_TARGETS target );
-      void SetRenderTarget( RENDER_TARGETS target, ID3D11DepthStencilView *view );
+            //manages
+            class RenderTargetManager
+            {
+            public:
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+                void Uninitialize(void);
+                void InitializeAllRenderTargets(const unsigned width, const unsigned height);
+                void UnInitializeAllRenderTargets(void);
+                void CreateTargets(void);
 
-      void SetDeferredTargets( ID3D11DepthStencilView *view );
+                RenderTarget *GetRenderTarget(const RENDER_TARGETS target);
+                void SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view);
 
-      RENDER_TARGETS CreateRT( unsigned width, unsigned height );
-      void DestroyRT( RENDER_TARGETS rt );
+                void SetDeferredTargets(ID3D11DepthStencilView *view);
 
-      void ResizeDeferred( unsigned width, unsigned height );
+                RENDER_TARGETS CreateRT(const unsigned width, const unsigned height);
+                void DestroyRT(RENDER_TARGETS rt);
 
-      void ResizeEngineTargets( unsigned width, unsigned height );
+                void ResizeDeferred(const unsigned width, const unsigned height);
+                void ResizeEngineTargets(const unsigned width, const unsigned height);
+                void ResizeUI(const unsigned width, const unsigned height, const RENDER_TARGETS target = RENDER_TARGET_UI);
 
-      void ResizeUI( unsigned width, unsigned height );
+                void Invalidate(void);
+            private:
+                void CreateRenderTarget(const RENDER_TARGETS target, const  DXGI_FORMAT format, const unsigned width, const unsigned height);
 
-      void Invalidate( ) { m_currentTarget = RENDER_TARGET_COUNT; }
-    private:
-      void CreateRenderTarget( RENDER_TARGETS target, DXGI_FORMAT format, unsigned width, unsigned height );
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
 
-      ID3D11Device *m_device;
-      ID3D11DeviceContext *m_deviceContext;
+                //the targets
+                std::vector<RenderTarget*> m_renderTargets;
+                std::list<RENDER_TARGETS> m_availableTargets;
 
-      //the targets
-      std::vector<RenderTarget*> m_renderTargets;
-      std::list<RENDER_TARGETS> m_availableTargets;
+                //deferred rendering
+                ID3D11RenderTargetView **m_deferredRenderTargetView;
+                ID3D11ShaderResourceView **m_deferredShaderMap;
+                ID3D11Texture2D **m_deferredTextureMap;
 
-      //deferred rendering
-      ID3D11RenderTargetView **m_deferredRenderTargetView;
-      ID3D11ShaderResourceView **m_deferredShaderMap;
-      ID3D11Texture2D **m_deferredTextureMap;
-
-      //what target am I on?
-      RENDER_TARGETS m_currentTarget;
-    };
-  }
+                //what target am I on?
+                RENDER_TARGETS m_currentTarget;
+            };
+        }
+    }
 }

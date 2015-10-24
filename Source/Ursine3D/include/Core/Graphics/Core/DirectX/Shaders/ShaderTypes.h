@@ -18,12 +18,18 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "ShaderList.h"
 
-enum SHADERDEF
+namespace ursine
 {
-  VERTEX_SHADER = 0,
-  PIXEL_SHADER,
-  HULL_SHADER,
-  DOMAIN_SHADER,
-  GEOMETRY_SHADER,
-  DEF_COUNT
-};
+    namespace graphics
+    {
+        enum SHADERDEF
+        {
+            VERTEX_SHADER = 0,
+            PIXEL_SHADER,
+            HULL_SHADER,
+            DOMAIN_SHADER,
+            GEOMETRY_SHADER,
+            DEF_COUNT
+        };
+    }
+}

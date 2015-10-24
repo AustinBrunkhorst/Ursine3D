@@ -30,16 +30,17 @@ namespace ursine
     {
         CORE_SYSTEM
     public:
+        Meta(Enable)
         KeyboardManager(void);
         ~KeyboardManager(void);
 
-        Meta(Disable)
         void OnInitialize(void) override;
-
-        Meta(Disable)
         void OnRemove(void) override;
 
+        Meta(Disable)
         static uint ScanToKey(SDL_Scancode scan);
+
+        Meta(Disable)
         static uint KeyToScan(KeyboardKey key);
 
         bool IsDown(KeyboardKey key);
@@ -62,5 +63,5 @@ namespace ursine
         void onKeyDown(EVENT_HANDLER(Application));
         void onKeyUp(EVENT_HANDLER(Application));
         void onText(EVENT_HANDLER(Application));
-    } Meta(Enable);
+    } Meta(Enable, WhiteListMethods);
 }

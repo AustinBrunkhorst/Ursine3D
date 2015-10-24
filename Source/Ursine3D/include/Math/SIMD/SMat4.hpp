@@ -373,7 +373,7 @@ namespace ursine
 
 	INLINE void SMat4::setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale)
 	{
-		*this = SMat4( rotation ) * SMat4( scale );
+		*this = SMat4( rotation ) * SMat4( scale.X( ), scale.Y( ), scale.Z( ) );
 
 		SetColumn( 3, SVec4( translation, 1.0f ) );
 	}
@@ -420,14 +420,14 @@ namespace ursine
 		SetColumn( 3, SVec4( 0, 0, 0, 1 ) );
 	}
 
-	INLINE void SMat4::RotationZXY(float z_degrees, float x_degrees, float y_degrees)
+	INLINE void SMat4::Rotation(float z_degrees, float x_degrees, float y_degrees)
 	{
-		RotationZXY( *this, z_degrees, x_degrees, y_degrees );
+		Rotation( *this, z_degrees, x_degrees, y_degrees );
 	}
 
-	INLINE void SMat4::RotationZXY(SMat4 &mat, float z_degrees, float x_degrees, float y_degrees)
+	INLINE void SMat4::Rotation(SMat4 &mat, float z_degrees, float x_degrees, float y_degrees)
 	{
-		float cx, sx, cy, sy, cz, sz;
+        float cx, sx, cy, sy, cz, sz;
 
 		math::SinCos( math::DegreesToRadians( x_degrees ), sx, cx );
 		math::SinCos( math::DegreesToRadians( y_degrees ), sy, cy );
@@ -1041,21 +1041,27 @@ namespace ursine
 	INLINE SMat4 SMat4::LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp)
 	{
 		SMat4 mat;
+        SMat3 lookMat;
 
-		mat.setRotation( SMat3::LookAt( targetDirection, localForward, localUp, worldUp ) );
+        lookMat.LookAt(targetDirection, localForward, localUp, worldUp);
+
+		mat.setRotation( lookMat );
 		mat.SetRow( 3, SVec4( 0, 0, 0, 1 ) );
 
 		return mat;
 	}
 
-	INLINE SMat4 SMat4::LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 localForward,
+	INLINE SMat4 SMat4::LookAt(const SVec3 &eyePos, const SVec3 &targetPos, const SVec3 &localForward,
     						   const SVec3 &localUp, const SVec3 &worldUp)
 	{
 		SMat4 mat;
+        SMat3 lookMat;
 		auto dir = targetPos - eyePos;
 		dir.Normalize( );
 
-		mat.setRotation( SMat3::LookAt( dir, localForward, localUp, worldUp ) );
+        lookMat.LookAt(dir, localForward, localUp, worldUp);
+
+		mat.setRotation( lookMat );
 		mat.SetColumn( 3, SVec4( eyePos, 1.0f ) );
 		mat.SetRow( 3, SVec4( 0.0f, 0.0f, 0.0f, 1.0f) );
 

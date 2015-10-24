@@ -37,8 +37,8 @@ namespace ursine
             {
                 static ComponentTypeMask Apply(void)
                 {
-                    static_assert(std::is_base_of<Component, First>::value,
-                        "Not all types are components!");
+                    static_assert( std::is_base_of<Component, First>::value,
+                        "Not all types are components!" );
 
                     return GetComponentMask( First ) | MaskUnpack<Types...>::Apply( );
                 }
@@ -47,23 +47,23 @@ namespace ursine
 
         inline ComponentTypeMask Filter::OneMask(void) const
         {
-            return _mask_one;
+            return m_maskOne;
         }
 
         inline ComponentTypeMask Filter::ExcludeMask(void) const
         {
-            return _mask_exclude;
+            return m_maskExclude;
         }
 
         inline ComponentTypeMask Filter::ContainsMask(void) const
         {
-            return _mask_contains;
+            return m_maskContains;
         }
 
         template<class... Types>
         Filter &Filter::All(void)
         {
-            _mask_contains |= MaskUnpack<Types...>::Apply( );
+            m_maskContains |= MaskUnpack<Types...>::Apply( );
 
             return *this;
         }
@@ -71,7 +71,7 @@ namespace ursine
         template<class... Types>
         Filter &Filter::Exclude(void)
         {
-            _mask_exclude |= MaskUnpack<Types...>::Apply( );
+            m_maskExclude |= MaskUnpack<Types...>::Apply( );
 
             return *this;
         }
@@ -79,7 +79,7 @@ namespace ursine
         template<class... Types>
         Filter &Filter::One(void)
         {
-            _mask_one |= MaskUnpack<Types...>::Apply( );
+            m_maskOne |= MaskUnpack<Types...>::Apply( );
 
             return *this;
         }

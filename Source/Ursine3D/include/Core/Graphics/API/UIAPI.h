@@ -1,49 +1,38 @@
 #pragma once
 
 
-
 #include <cef_render_handler.h>
 
 #include "GfxAPIDefines.h"
+#include "UIInstance.h"
 
 namespace ursine
 {
-  class UIAPI : public CefRenderHandler
-  {
-    friend class GfxAPI;
-  private:
-    struct privData;
+    namespace graphics
+    {
+        class UIAPI
+        {
+            friend class GfxAPI;
+        private:
+            struct privData;
 
-  public:
-    bool GetViewRect( CefRefPtr<CefBrowser> browser,
-      CefRect &bounds ) override;
+        public:
+            //create a viewport
+            GfxHND CreateUI();
 
-    void OnPopupShow( CefRefPtr<CefBrowser> browser,
-      bool show ) override;
+            //get ui
+            UIInstance &GetUI(GfxHND UI);
 
-    void OnPopupSize( CefRefPtr<CefBrowser> browser,
-      const CefRect &bounds ) override;
+            //destroy a viewport
+            void DestroyUI(GfxHND UI);
 
-    void OnPaint( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height ) override;
+        private:
+            privData *m_privates;
 
-    void paintView( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height );
-
-    void paintPopup( CefRefPtr<CefBrowser> browser,
-      PaintElementType type, const RectList &regions,
-      const void *buffer, int width, int height );
-
-  private:
-    privData *m_privates;
-
-  private:
-    void SetPrivates( void *priv );
-    void Initialize( );
-    void Uninitialize( );
-
-    IMPLEMENT_REFCOUNTING( UIAPI );
-  };
+        private:
+            void SetPrivates(void *priv);
+            void Initialize();
+            void Uninitialize();
+        };
+    }
 }

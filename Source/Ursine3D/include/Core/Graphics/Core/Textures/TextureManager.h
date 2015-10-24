@@ -22,36 +22,44 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "D3D11Forward.h"
 #include "Texture.h"
 #include "SamplerList.h"
-#include "GraphicsDefines.h"
+#include "GfxDefines.h"
 
 namespace ursine
 {
-  class TextureManager
-  {
-  public:
-    void Initialize( ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath );
-    void Uninitialize( );
+    namespace graphics
+    {
+        class TextureManager
+        {
+        public:
+            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
+            void Uninitialize(void);
 
-    void MapTextureByName( std::string name, unsigned int bufferIndex = 0 );
-    void MapTextureByID( unsigned ID, unsigned int bufferIndex = 0 );
+            void MapTextureByName(const std::string name, const unsigned int bufferIndex = 0);
+            void MapTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
 
-    void MapSamplerState( Sampler type, unsigned bufferIndex = 0 );
+            void MapSamplerState(const Sampler type, const unsigned bufferIndex = 0);
 
-    unsigned GetTextureIDByName( std::string name );
+            unsigned GetTextureIDByName(const std::string name);
 
-  private:
-    void TextureLoadBackend( std::string name, std::string path, unsigned width, unsigned height );
+            GfxHND CreateDynamicTexture(const unsigned width, const unsigned height);
+            Texture *GetDynamicTexture(GfxHND &handle);
+            void ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height);
+            void DestroyDynamicTexture(GfxHND &handle);
 
-  private:
-    ID3D11Device *m_device;
-    ID3D11DeviceContext *m_deviceContext;
+        private:
+            void TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height);
 
-    unsigned m_textureCount;
+        private:
+            ID3D11Device *m_device;
+            ID3D11DeviceContext *m_deviceContext;
 
-    std::map<std::string, Texture*> m_textureList;
-    std::map<unsigned int, Texture*> m_hashTextureList;
-    std::map<std::string, unsigned int> m_lookupTextureList;
+            unsigned m_textureCount;
 
-    std::vector<ID3D11SamplerState*> m_samplerStateList_;
-  };
+            std::map<std::string, Texture*> m_textureList;
+            std::map<unsigned int, Texture*> m_hashTextureList;
+            std::map<std::string, unsigned int> m_lookupTextureList;
+
+            std::vector<ID3D11SamplerState*> m_samplerStateList_;
+        };
+    }
 }

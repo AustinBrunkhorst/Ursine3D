@@ -18,29 +18,32 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "D3D11Forward.h"
 #include <vector>
 #include "RasterStateList.h"
-#include "GraphicsDefines.h"
+#include "GfxDefines.h"
 
 namespace ursine
 {
-  namespace DXCore
-  {
-    class RasterStateManager
+    namespace graphics
     {
-    public:
-      void Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext );
-      void Uninitialize( );
+        namespace DXCore
+        {
+            class RasterStateManager
+            {
+            public:
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+                void Uninitialize(void);
 
-      ID3D11RasterizerState *GetRasterState( RASTER_STATES state );
-      void SetRasterState( RASTER_STATES state );
+                ID3D11RasterizerState *GetRasterState(const RASTER_STATES state);
+                void SetRasterState(const RASTER_STATES state);
 
-      void Invalidate( );
-    private:
-      ID3D11Device *m_device;
-      ID3D11DeviceContext *m_deviceContext;
+                void Invalidate(void);
+            private:
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
 
-      std::vector<ID3D11RasterizerState*> m_rasterStateArray;
+                std::vector<ID3D11RasterizerState*> m_rasterStateArray;
 
-      RASTER_STATES m_currentState;
-    };
-  }
+                RASTER_STATES m_currentState;
+            };
+        }
+    }
 }

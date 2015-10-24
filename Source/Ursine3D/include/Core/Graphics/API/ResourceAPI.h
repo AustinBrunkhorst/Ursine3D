@@ -20,25 +20,43 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  class ResourceAPI
-  {
-    friend class GfxAPI;
-  private:
-    struct privData;
+    namespace graphics
+    {
+        class ResourceAPI
+        {
+            friend class GfxAPI;
+        private:
+            struct privData;
 
-  public:
-    // get model handle
-    GFXHND GetModelHandle( const char *name );
+        public:
+            // get model handle
+            GfxHND GetModelHandle(const char *name);
 
-    // get texture handle
-    GFXHND GetTexHandle( const char *name );
+            // get texture handle
+            GfxHND GetTexHandle(const char *name);
 
-  private:
-    privData *m_privates;
+            // create a texture of a given width/height, returns handle
+            GfxHND CreateTexture(const unsigned width, const unsigned height);
 
-  private:
-    void SetPrivates( void *priv, void *priv2 );
-    void Initialize( );
-    void Uninitialize( );
-  };
+            // resize a texture
+            void ResizeTexture(GfxHND &handle, const unsigned width, const unsigned height);
+
+            // destroy a texture resource
+            void DestroyTexture(GfxHND &handle);
+
+            //validate that a model/texture exists
+
+            //get a list of available models
+
+            //get a list of available textures
+
+        private:
+            privData *m_privates;
+
+        private:
+            void SetPrivates(void *priv, void *priv2);
+            void Initialize();
+            void Uninitialize();
+        };
+    }
 }

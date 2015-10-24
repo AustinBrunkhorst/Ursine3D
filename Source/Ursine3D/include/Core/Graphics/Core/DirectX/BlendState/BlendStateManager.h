@@ -21,26 +21,29 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  namespace DXCore
-  {
-    class BlendStateManager
+    namespace graphics
     {
-    public:
-      void Initialize( ID3D11Device *device, ID3D11DeviceContext *devicecontext );
-      void Uninitialize( );
+        namespace DXCore
+        {
+            class BlendStateManager
+            {
+            public:
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+                void Uninitialize(void);
 
-      ID3D11BlendState *GetBlendState( BLEND_STATES state );
-      void SetBlendState( BLEND_STATES state );
+                ID3D11BlendState *GetBlendState(const BLEND_STATES state);
+                void SetBlendState(const BLEND_STATES state);
 
-      void Invalidate( );
+                void Invalidate(void);
 
-    private:
-      ID3D11Device *m_device;
-      ID3D11DeviceContext *m_deviceContext;
+            private:
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
 
-      std::vector<ID3D11BlendState*> BlendStateArray_;
+                std::vector<ID3D11BlendState*> BlendStateArray_;
 
-      BLEND_STATES m_currentState;
-    };
-  }
+                BLEND_STATES m_currentState;
+            };
+        }
+    }
 }

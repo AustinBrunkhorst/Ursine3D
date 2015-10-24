@@ -11,6 +11,8 @@
 #include "Method.h"
 #include "Function.h"
 
+#include "MetaManager.h"
+
 #include "ReflectionDatabase.h"
 
 namespace ursine
@@ -171,7 +173,7 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        Type Type::Get(const std::string &name)
+        Type Type::GetFromName(const std::string &name)
         {
             auto search = database.ids.find( name );
 
@@ -212,6 +214,20 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
+        bool Type::IsFloatingPoint(void) const
+        {
+            return database.types[ m_id ].isFloatingPoint;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        bool Type::IsSigned(void) const
+        {
+            return database.types[ m_id ].isSigned;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
         bool Type::IsEnum(void) const
         {
             return database.types[ m_id ].isEnum;
@@ -236,6 +252,11 @@ namespace ursine
         const std::string &Type::GetName(void) const
         {
             return database.types[ m_id ].name;
+        }
+
+        const MetaManager &Type::GetMeta(void) const
+        {
+            return database.types[ m_id ].meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -369,8 +390,19 @@ namespace ursine
 
         std::vector<Method> Type::GetMethods(void) const
         {
-            URSINE_TODO( "recursively get base class methods" );
-            return { };
+            std::vector<Method> methods;
+
+            auto &handle = database.types[ m_id ].methods;
+
+            for (auto &overload : handle)
+            {
+                for (auto &method : overload.second)
+                {
+                    methods.emplace_back( method.second );
+                }
+            }
+
+            return methods;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -468,6 +500,96 @@ namespace ursine
         const Global &Type::GetStaticField(const std::string &name) const
         {
             return database.types[ m_id ].staticFields[ name ];
+        }
+
+        Json Type::SerializeJson(const Variant &instance) const
+        {
+            UAssert(
+                *this == instance.GetType( ),
+                "Serializing incompatible variant instance.\n"
+                "Got '%s', expected '%s'",
+                instance.GetType( ).GetName( ).c_str( ),
+                GetName( ).c_str( )
+            );
+
+            if (IsPrimitive( ) || IsEnum( ))
+            {
+                if (IsFloatingPoint( ) || !IsSigned( ))
+                    return { instance.ToDouble( ) };
+ 
+                return { instance.ToInt( ) };
+            }
+            else if (*this == typeof( std::string ))
+            {
+                return { instance.ToString( ) };
+            }
+            
+            Json::object object { };
+
+            auto &fields = database.types[ m_id ].fields;
+
+            for (auto &field : fields)
+            {
+                auto value = field.second.GetValue( instance );
+
+                object[ field.first ] = value.SerializeJson( );
+            }
+
+            return object;
+        }
+
+        Variant Type::DeserializeJson(const Json &value) const
+        {
+            // we have to handle all primitive types explicitly
+            if (IsPrimitive( ))
+            {
+                if (*this == typeof( int ))
+                    return { value.int_value( ) };
+                else if (*this == typeof( unsigned int ))
+                    return { static_cast<unsigned int>( value.number_value( ) ) };
+                else if (*this == typeof( bool ))
+                    return { value.bool_value( ) };
+                else if (*this == typeof( float ))
+                    return { static_cast<float>( value.number_value( ) ) };
+                else if (*this == typeof( double ))
+                    return { value.number_value( ) };
+            }
+            else if (IsEnum( ))
+            {
+                return { value.int_value( ) };
+            }
+            else if (*this == typeof( std::string ))
+            {
+                return { value.string_value( ) };
+            }
+
+            auto ctor = GetConstructor( );
+
+            UAssert( ctor.IsValid( ),
+                "Serialization requires a default constructor.\nWith type '%s'.",
+                GetName( ).c_str( )
+            );
+
+            auto instance = ctor.Invoke( );
+
+            auto &fields = database.types[ m_id ].fields;
+
+            for (auto &field : fields)
+            {
+                auto fieldType = field.second.GetType( );
+
+                UAssert( fieldType.IsValid( ),
+                    "Unknown type for field '%s' in base type '%s'. Is this type reflected?",
+                    fieldType.GetName( ).c_str( ),
+                    GetName( ).c_str( )
+                );
+
+                field.second.SetValue( instance, 
+                    fieldType.DeserializeJson( value[ field.first ] ) 
+                );
+            }
+
+            return instance;
         }
     }
 }

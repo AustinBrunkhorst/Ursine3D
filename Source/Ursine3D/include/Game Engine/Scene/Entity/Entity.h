@@ -73,30 +73,14 @@ namespace ursine
             Transform *GetTransform(void) const;
 
             ////////////////////////////////////////////////////////////////////
-            // Tags
+            // Naming
             ////////////////////////////////////////////////////////////////////
 
-            // Gets the tag for this entity. Empty by default
-            const std::string &GetTag(void) const;
+            // Gets the name for this entity
+            const std::string &GetName(void) const;
 
-            // Sets the tag for this entity.
-            void SetTag(const std::string &tag);
-
-            ////////////////////////////////////////////////////////////////////
-            // Groups
-            ////////////////////////////////////////////////////////////////////
-
-            // Gets groups this entity belongs to
-            const EntityGroupVector &GetGroups(void) const;
-
-            // Adds this entity to a specific group
-            void AddGroup(const std::string &group);
-
-            // Removes this entity from a specific group
-            void RemoveGroup(const std::string &group);
-
-            // Determines if this entity belongs to the specified group
-            bool HasGroup(const std::string &group) const;
+            // Sets the name for this entity
+            void SetName(const std::string &name);
 
             ////////////////////////////////////////////////////////////////////
             // Utilities
@@ -145,10 +129,54 @@ namespace ursine
             // (chances are you don't need to use it)
             ComponentVector GetComponents(void) const;
 
-            // Call a certain member function on all children in the transform
-            // hierarchy, and forwards the specified args.
-            template<class ComponentType, typename... Args>
-            void ApplyChildren(void (ComponentType::*)(Args...), Args&&...);
+			////////////////////////////////////////////////////////////////////
+			// Hierarchy
+			////////////////////////////////////////////////////////////////////
+
+			// Gets a component of the specified type in this entity's children (type safe) (depth first)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInChildren(void) const;
+
+			// Gets a component of the specified type id in this entity's children (depth first)
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInChildren(ComponentTypeID id) const;
+
+			// Gets a component of the specified type in this entity's parent (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInParent(void) const;
+
+			// Gets a component of the specified type id in this entity's parent
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInParent(ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's children (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInChildren(void) const;
+
+			// Gets the components of the specified type id in this entity's children
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInChildren(ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's parents (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInParents(void) const;
+
+			// Gets the components of the specified type id in this entity's parents
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInParents(ComponentTypeID id) const;
+
+            // Find this entity's index in relation to the other children
+            uint GetSiblingIndex(void) const;
+
+            // Move this entity to the start of the parent's children lists
+            void SetAsFirstSibling(void);
+
+            // Sets this entity's index in the parent's children list
+            void SetSiblingIndex(uint index) const;
 
             ////////////////////////////////////////////////////////////////////
             // Events
@@ -182,8 +210,7 @@ namespace ursine
             friend class EntityManager;
 
             // access ids directly
-            friend class TagManager;
-            friend class GroupManager;
+            friend class NameManager;
             friend class UtilityManager;
 
             // emplace_back access constructor

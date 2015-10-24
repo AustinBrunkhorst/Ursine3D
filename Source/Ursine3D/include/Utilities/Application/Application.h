@@ -18,12 +18,15 @@
 #include "ApplicationEvent.h"
 #include "PlatformEventArgs.h"
 
-#include "CoreSystem.h"
-
 #include "FrameRateController.h"
 
 namespace ursine
 {
+    namespace core
+    {
+        class CoreSystem;
+    }
+
     class Application 
         : public EventDispatcher<ApplicationEventType>
     {
@@ -51,7 +54,7 @@ namespace ursine
         EventDispatcher<uint32> &GetPlatformEvents(void);
 
         template<typename SystemType>
-        SystemType *GetCoreSystem(void);
+        SystemType *CoreSystem(void);
 
     protected:
         // determines if the application should continue updating

@@ -15,6 +15,7 @@
 
 #include "SVec3.h"
 #include "Vec2.h"
+#include "SQuat.h"
 
 namespace ursine
 {
@@ -70,8 +71,8 @@ namespace ursine
 		static void Rotation(SMat3 &mat, float degrees);
 
 		// Euler Axis Rotation
-		void RotationZXY(float z_degrees, float x_degrees, float y_degrees);
-		static void RotationZXY(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees);
+		void Rotation(float z_degrees, float x_degrees, float y_degrees);
+		static void Rotation(SMat3 &mat, float z_degrees, float x_degrees, float y_degrees);
 
 		// Get the euler angles in degrees
 		SVec3 GetRotationXYZ(void) const;
@@ -85,7 +86,7 @@ namespace ursine
 		void TRS(const Vec2 &translation, float degrees, const Vec2 &scale);
 		static void TRS(SMat3 &mat, const Vec2 &translation, float degrees, const Vec2 &scale);
 
-		static SMat3 LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
+		void LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp);
 
 		void Transpose(void);
 		static void Transpose(SMat3 &mat);

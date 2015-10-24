@@ -1,0 +1,19 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-number-input">
+    <link rel="import" type="css" href="../Style/Controls/NumberInput.css">
+    <template>
+    </template>
+    <script>
+        var NumberInputControl = Polymer({
+            is: 'x-number-input',
+            extends: 'input',
+            properties: {
+
+            },
+            created: function() {
+                this.type = 'number';
+            }
+        });
+    </script>
+</dom-module>

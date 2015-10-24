@@ -41,13 +41,11 @@ namespace ursine
         Meta(Disable)
         const float DEADZONE_SIZE = 0.18f;
 
+        Meta(Enable)
         GamepadManager(void);
         ~GamepadManager(void);
 
-        Meta(Disable)
         void OnInitialize(void) override;
-
-        Meta(Disable)
         void OnRemove(void) override;
 
         // Gets the current state of a gamepad based on the gamepad index.
@@ -145,5 +143,5 @@ namespace ursine
 
         // removes a virtual gamepad index
         void removeVirtualGamepad(GamepadIndex index);
-    } Meta(Enable);
+    } Meta(Enable, WhiteListMethods);
 }

@@ -74,7 +74,33 @@ namespace ursine
             m_properties[ type ] = prop;
         }
 
-        void MetaManager::copy(const MetaManager& rhs)
+        MetaManager::PropertyList MetaManager::GetProperties(void) const
+        {
+            PropertyList properties;
+
+            for (auto &property : m_properties)
+                properties.emplace_back( property.second, variant_policy::WrapObject( ) );
+
+            return properties;
+        }
+
+        Json MetaManager::SerializeJson(void) const
+        {
+            Json::object object { };
+
+            for (auto &property : m_properties)
+            {
+                Variant instance { property.second, variant_policy::WrapObject( ) };
+
+                auto type = instance.GetType( );
+
+                object[ type.GetName( ) ] = type.SerializeJson( instance );
+            }
+
+            return object;
+        }
+
+        void MetaManager::copy(const MetaManager &rhs)
         {
             for (auto &prop : rhs.m_properties) 
             {

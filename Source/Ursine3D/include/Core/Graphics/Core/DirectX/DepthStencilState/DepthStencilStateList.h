@@ -16,13 +16,21 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-enum DEPTH_STATES
+namespace ursine
 {
-  DEPTH_STATE_DEPTH_NOSTENCIL = 0,
-  DEPTH_STATE_NODEPTH_NOSTENCIL,
+    namespace graphics
+    {
+        enum DEPTH_STATES
+        {
+            DEPTH_STATE_DEPTH_NOSTENCIL = 0,
+            DEPTH_STATE_NODEPTH_NOSTENCIL,
 
-  DEPTH_STATE_DEPTH_STENCIL,
-  DEPTH_STATE_NODEPTH_STENCIL,
+            DEPTH_STATE_DEPTH_STENCIL,
+            DEPTH_STATE_NODEPTH_STENCIL,
 
-  DEPTH_STATE_COUNT
-};
+            DEPTH_STATE_POINTLIGHT,
+
+            DEPTH_STATE_COUNT
+        };
+    }
+}

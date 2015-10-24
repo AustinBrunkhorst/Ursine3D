@@ -14,25 +14,53 @@
 #pragma once
 
 #include "UrsineTypes.h"
-#include "Utils.h"
+
+#include "ComponentProperties.h"
 
 #include <vector>
-#include <unordered_map>
 
 // Gets the unique id of this component type
-#define GetComponentID(componentType) componentType::ID
+#define GetComponentID(componentType) (componentType::ComponentID)
 
 // Gets the unique mask for this component type
-#define GetComponentMask(componentType) componentType::Mask
+#define GetComponentMask(componentType) (1ull << componentType::ComponentID)
+
+// Determines if a component of this type has been registered
+#define IsComponentRegistered(componentType) (typeof( componentType ).IsValid( ))
 
 // Cleaner way of calling a base component constructor in the member 
 // initialization list (used to assign the component type id)
-#define BaseComponent() ursine::ecs::Component( GetComponentID( std::remove_reference< decltype( *this ) >::type ) )
+#define BaseComponent() ursine::ecs::Component( GetComponentID( std::remove_reference<decltype( *this )>::type ) )
+
+// Required at the top of all native component declarations
+#define NATIVE_COMPONENT                                 \
+    META_OBJECT                                          \
+    public:                                              \
+        Meta(Enable)                                     \
+        static ursine::ecs::ComponentTypeID ComponentID; \
+    private:                                             \
+
+// Required in the translation unit of all native components
+#define NATIVE_COMPONENT_DEFINITION(type)                \
+    ursine::ecs::ComponentTypeID type::ComponentID = -1; \
+
+#if defined(URSINE_WITH_EDITOR)
+
+#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                           \
+    auto *__owner = GetOwner( );                                                               \
+    ursine::ecs::EditorComponentChangedArgs __e {                                              \
+        ursine::ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, __owner, this, displayName, value  \
+    };                                                                                         \
+    __owner->GetWorld( )->Dispatch( ursine::ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, &__e ) \
+
+#else
+
+#define NOTIFY_COMPONENT_CHANGED(displayName, value)
+
+#endif
 
 namespace ursine
 {
-    class JsonSerializer;
-
     namespace ecs
     {
         class Component;
@@ -51,6 +79,6 @@ namespace ursine
 
         // Maximum number of components able to be stored (number of bits able
         // to be stored in ComponentTypeMask).
-        const uint8 kMaxComponentCount = sizeof(ComponentTypeMask) * kBitsPerByte;
+        const uint8 kMaxComponentCount = sizeof( ComponentTypeMask ) * kBitsPerByte;
     }
 }

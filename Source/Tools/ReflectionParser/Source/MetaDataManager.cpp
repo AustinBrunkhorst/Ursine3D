@@ -82,14 +82,17 @@ void MetaDataManager::CompileTemplateData(
     // list of keywords to ignore in the initializer list
     static const std::vector<std::string> reservedKeywords
     {
-        kMetaEnable,
-        kMetaDisable,
-        kMetaDisableNonDynamicCtor,
-        kMetaDisablePtrType,
-        kMetaDisableConstPtrType,
-        kMetaDisplayName,
-        kMetaExplicitGetter,
-        kMetaExplicitSetter
+        native_property::Enable,
+        native_property::Disable,
+        native_property::Register,
+        native_property::WhiteListMethods,
+        native_property::DisableNonDynamicCtor,
+        native_property::DynamicCtorWrap,
+        native_property::DisablePtrType,
+        native_property::DisableConstPtrType,
+        native_property::DisplayName,
+        native_property::ExplicitGetter,
+        native_property::ExplicitSetter
     };
 
     int i = 0;

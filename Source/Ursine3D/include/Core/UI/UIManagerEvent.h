@@ -17,6 +17,6 @@ namespace ursine
 {
     enum UIManagerEvent
     {
-            
+        
     };
 }

@@ -5,7 +5,7 @@
 #include <Utils.h>
 
 Invokable::Invokable(const Cursor &cursor)
-    : m_returnType( cursor.GetReturnType( ).GetDisplayName( ) )
+    : m_returnType( utils::GetQualifiedName( cursor.GetReturnType( ) ))
 {
     auto type = cursor.GetType( );
     unsigned count = type.GetArgumentCount( );
@@ -16,41 +16,9 @@ Invokable::Invokable(const Cursor &cursor)
     {
         auto argument = type.GetArgument( i );
 
-        // we need to make sure we have the qualified namespace
-        if (argument.GetKind( ) == CXType_Typedef)
-        {
-            auto declaration = argument.GetDeclaration( );
-
-            auto parent = declaration.GetLexicalParent( );
-
-            Namespace parentNamespace;
-
-            // walk up to the root namespace
-            while (parent.GetKind( ) == CXCursor_Namespace)
-            {
-                parentNamespace.emplace_back( parent.GetDisplayName( ) );
-
-                parent = parent.GetLexicalParent( );
-            }
-
-            // add the display name as the end of the namespace
-            parentNamespace.emplace_back( 
-                argument.GetDisplayName( )
-            );
-
-            std::string qualifiedName;
-
-            ursine::utils::Join( parentNamespace, "::", qualifiedName );
-
-            m_signature.emplace_back( qualifiedName );
-        }
-        // it should already be qualified
-        else
-        {
-            m_signature.emplace_back(
-                argument.GetDisplayName( )
-            );
-        }
+        m_signature.emplace_back(
+            utils::GetQualifiedName( argument )
+        );
     }
 }
 

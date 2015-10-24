@@ -13,18 +13,16 @@ int main(int argc, char *argv[])
 {
     auto start = std::chrono::system_clock::now( );
 
-    // misc initialization
-    {
-        // path to the executable
-        auto exeDir = fs::path( argv[ 0 ] );
-
-        // set the working directory to the executable directory
-        fs::current_path( exeDir.parent_path( ) );
-    }
-
     // parse command line
     try 
     {
+        // path to the executable
+        auto exeDir = fs::path( argv[ 0 ] ).parent_path( );
+
+        // set the working directory to the executable directory
+        if (!exeDir.empty( ))
+            fs::current_path( exeDir );
+
         po::options_description program( "Ursine3D Reflection Parser" );
 
         program.add_options( )

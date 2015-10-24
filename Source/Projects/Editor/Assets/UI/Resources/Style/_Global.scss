@@ -1,7 +1,67 @@
+@import 'Config';
+@import 'Utils';
+
 body {
   font-family: Roboto;
 }
 
 * {
   -webkit-user-select: none;
+}
+
+::-webkit-scrollbar-track {
+  background: #3e3e42;
+}
+
+::-webkit-scrollbar-track-piece {
+
+}
+
+::-webkit-scrollbar {
+  width: 18px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #686868;
+  transition: background $duration-transition-btn ease;
+
+  &:hover {
+    background: #9e9e9e;
+  }
+
+  &:active {
+    background: #efebef;
+  }
+
+  &:vertical {
+    border-left: 4px solid #3e3e42;
+    border-right: 4px solid #3e3e42;
+  }
+}
+
+::-webkit-scrollbar-button {
+  cursor: pointer;
+
+  background-color: #3e3e42;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &:vertical {
+    &:start {
+      background-image: url(Images/scroll-up.png);
+    }
+
+    &:end {
+      background-image: url(Images/scroll-down.png);
+    }
+  }
+
+  &:hover {
+    background-color: darken(#3e3e42, 10%);
+  }
+}
+
+::selection {
+  background: lighten($color-accent, 10%);
+  color: white;
 }

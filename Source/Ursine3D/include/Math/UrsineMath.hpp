@@ -13,7 +13,6 @@
 
 #pragma once
 
-#include <math.h>
 #include <stdlib.h>
 
 namespace ursine
@@ -93,26 +92,6 @@ namespace ursine
         T Rand(T min, T max)
         {
             return min + rand() / static_cast<T>(RAND_MAX / (max - min));
-        }
-
-        inline float fastSqrt(float val)
-        {
-            if (val == 0.0f)
-                return 0.0f;
-
-            union
-            {
-                float f;
-                int i;
-            } workval;
-
-            workval.f = val;
-            workval.i -= 0x3f800000; // subtract 127 from biased exponent
-            workval.i >>= 1; // requires signed shift to preserve sign
-            workval.i += 0x3f800000; // rebias the new exponent
-            workval.i &= 0x7FFFFFFF; // remove sign bit
-
-            return workval.f;
         }
 
         inline float RadiansToDegrees(float radians)

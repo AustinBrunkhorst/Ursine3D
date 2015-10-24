@@ -6,44 +6,42 @@
 #include <UIView.h>
 
 #include "Project.h"
-#include "EditorTool.h"
 
-#include <SDL_video.h>
+class NativeEditorTool;
 
 class Editor : public ursine::core::CoreSystem
 {
     CORE_SYSTEM
 public:
+    Meta(Enable)
     Editor(void);
     ~Editor(void);
 
-    Meta(Disable)
     void OnInitialize(void) override;
-
-    Meta(Disable)
     void OnRemove(void) override;
     
+    Project::Handle GetProject(void) const;
+    
 private:
-    ursine::GfxAPI *m_graphics;
+    ursine::graphics::GfxAPI *m_graphics;
 
     struct
     {
-        ursine::Window *window;
-        CefRefPtr<ursine::UIView> ui;
-        GFXHND viewport;
-        GFXHND camera;
+        ursine::Window::Handle window;
+        ursine::UIView::Handle ui;
+        GfxHND viewport;
+        GfxHND camera;
     } m_mainWindow;
 
-    Project *m_project;
-
-    std::vector<EditorTool *> m_tools;
+    Project::Handle m_project;
 
     void initializeGraphics(void);
-    void initializeTools(void);
-
-    void resizeMainWindow(int width, int height);
+    void initializeScene(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
-} Meta(Enable);
+
+    void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
+    void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
+} Meta(Enable, WhiteListMethods);

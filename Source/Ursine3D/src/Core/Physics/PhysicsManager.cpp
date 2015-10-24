@@ -48,7 +48,14 @@ namespace ursine
 		return body;
 	}
 
-	void PhysicsManager::onAppUpdate(EVENT_HANDLER(Application))
+    void PhysicsManager::LoadWorld(const char* bulletFile)
+    {
+        auto *fileLoader = new btBulletWorldImporter(m_dynamicsWorld);
+        UAssert(fileLoader->loadFile(bulletFile), "Failed to load Bullet World");
+        delete fileLoader;
+    }
+
+    void PhysicsManager::onAppUpdate(EVENT_HANDLER(Application))
 	{
 		m_dynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
 		m_dynamicsWorld->debugDrawWorld();
@@ -70,13 +77,12 @@ namespace ursine
 		m_dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
 		// Debug drawing
-		m_debugDrawer = new PhysicsDebugDrawer(Application::Instance->GetCoreSystem<GfxAPI>());
+		m_debugDrawer = new PhysicsDebugDrawer( GetCoreSystem(graphics::GfxAPI ) );
 		m_dynamicsWorld->setDebugDrawer(m_debugDrawer);
-		m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
-
-		/*auto *fileLoader = new btBulletWorldImporter(m_dynamicsWorld);
-		fileLoader->loadFile("Assets/Bullet/test.bullet");
-		delete fileLoader;*/
+		m_dynamicsWorld->getDebugDrawer()->setDebugMode(
+                    btIDebugDraw::DBG_DrawWireframe | 
+                    btIDebugDraw::DBG_DrawContactPoints
+                );
 	}
 
 	void PhysicsManager::destroyPhysics()

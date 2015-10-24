@@ -51,7 +51,7 @@ namespace ursine
             return m_name;
         }
 
-        Variant Field::GetValue(Variant &instance) const
+        Variant Field::GetValue(const Variant &instance) const
         {
             return m_getter( instance );
         }

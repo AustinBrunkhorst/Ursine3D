@@ -4,47 +4,72 @@
 
 namespace ursine
 {
-  UIDirectXRenderer::UIDirectXRenderer(void)
-      : m_width( 0 )
-      , m_height( 0 )
-  {
-    m_gfxMgr = Application::Instance->GetCoreSystem<ursine::GfxAPI>( );
-  }
+    UIDirectXRenderer::UIDirectXRenderer(void)
+        : m_gfxMgr( GetCoreSystem( graphics::GfxAPI ) )
+        , m_uiHandle( m_gfxMgr->UIMgr.CreateUI( ) )
+    {
 
-  UIDirectXRenderer::~UIDirectXRenderer(void)
-  {
+    }
 
-  }
+    UIDirectXRenderer::~UIDirectXRenderer(void)
+    {
+        //@UI
+        //m_gfxMgr->UIMgr.DestroyUI( m_uiHandle );
+        //m_uiHandle = 0;
+    }
 
-  bool UIDirectXRenderer::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &bounds)
-  {
-      bounds = m_viewport;
+    void UIDirectXRenderer::Draw(GfxHND camera)
+    {
+        m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Draw( camera );
+    }
 
-      return true;
-  }
+    void UIDirectXRenderer::DrawMain(void)
+    {
+        m_gfxMgr->UIMgr.GetUI( m_uiHandle ).DrawMain( );
+    }
 
-  void UIDirectXRenderer::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show)
-  {
-    m_gfxMgr->UIMgr.OnPopupShow( browser, show );
-  }
+    void UIDirectXRenderer::resize(const int width, const int height)
+    {
+        m_gfxMgr->UIMgr.GetUI( m_uiHandle ).Resize( width, height );
+    }
 
-  void UIDirectXRenderer::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect &bounds)
-  {
-    m_gfxMgr->UIMgr.OnPopupSize( browser, bounds );
-  }
+    bool UIDirectXRenderer::GetViewRect(
+        CefRefPtr<CefBrowser> browser, 
+        CefRect &bounds
+    )
+    {
+        return m_gfxMgr->UIMgr
+            .GetUI( m_uiHandle ).GetViewRect( browser, bounds );
+    }
 
-  void UIDirectXRenderer::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList& regions, const void *buffer, int width, int height)
-  {
-    m_gfxMgr->UIMgr.OnPaint( browser, type, regions, buffer, width, height );
-  }
+    void UIDirectXRenderer::OnPopupShow(
+        CefRefPtr<CefBrowser> browser, 
+        bool show
+    )
+    {
+        m_gfxMgr->UIMgr
+            .GetUI( m_uiHandle ).OnPopupShow( browser, show );
+    }
 
-  void UIDirectXRenderer::paintView(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList& regions, const void *buffer, int width, int height)
-  {
-    m_gfxMgr->UIMgr.paintPopup( browser, type, regions, buffer, width, height );
-  }
+    void UIDirectXRenderer::OnPopupSize(
+        CefRefPtr<CefBrowser> browser, 
+        const CefRect &bounds
+    )
+    {
+        m_gfxMgr->UIMgr
+            .GetUI( m_uiHandle ).OnPopupSize( browser, bounds );
+    }
 
-  void UIDirectXRenderer::paintPopup(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &regions, const void *buffer, int width, int height)
-  {
-    m_gfxMgr->UIMgr.paintPopup( browser, type, regions, buffer, width, height );
-  }
+    void UIDirectXRenderer::OnPaint(
+        CefRefPtr<CefBrowser> browser, 
+        PaintElementType type, 
+        const RectList &regions, 
+        const void *buffer, 
+        int width, 
+        int height
+    )
+    {
+        m_gfxMgr->UIMgr.GetUI( m_uiHandle )
+            .OnPaint( browser, type, regions, buffer, width, height );
+    }
 }

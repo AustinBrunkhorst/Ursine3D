@@ -1,0 +1,522 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** TransformComponent.h
+**
+** Author:
+** - Jordan Ellis - contact@jordanellis.me
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
+#include "UrsinePrecompiled.h"
+
+#include "TransformComponent.h"
+#include "Entity.h"
+#include "EntityEvent.h"
+
+namespace ursine
+{
+    namespace ecs
+    {
+        NATIVE_COMPONENT_DEFINITION( Transform );
+
+        Transform::Transform(void)
+            : BaseComponent( )
+            , m_dirty( true )
+            , m_root( this )
+            , m_parent( nullptr )
+            , m_localScale( 1.0f ) { }
+
+        Transform::Transform(const Transform &transform)
+            : BaseComponent( )
+        {
+            copy( transform );
+        }
+
+        Transform::~Transform(void)
+        {
+            if (m_parent)
+                m_parent->RemoveChild( this );
+
+            UAssert( m_children.size( ) == 0, "This should never happen, entities should be deleted from the bottom up." );
+        }
+
+        Transform &Transform::operator=(const Transform &transform)
+        {
+            copy( transform );
+
+            return *this;
+        }
+
+        void Transform::OnInitialize(void)
+        {
+            dispatchAndSetDirty( );
+        }
+
+        void Transform::SetLocalPosition(const SVec3& position)
+        {
+            m_localPosition = position;
+
+            dispatchAndSetDirty( );
+        }
+
+        const SVec3& Transform::GetLocalPosition(void) const
+        {
+            return m_localPosition;
+        }
+
+        void Transform::SetWorldPosition(const SVec3 &position)
+        {
+            if (m_parent)
+                m_localPosition = m_parent->ToLocal(position);
+            else
+                m_localPosition = position;
+
+            dispatchAndSetDirty( );
+        }
+
+        SVec3 Transform::GetWorldPosition(void)
+        {
+            if (m_parent)
+                return m_parent->ToWorld( m_localPosition );
+            else
+                return m_localPosition;
+        }
+
+        void Transform::SetLocalRotation(const SQuat& rotation)
+        {
+            m_localRotation = rotation;
+
+            dispatchAndSetDirty( );
+        }
+
+        void Transform::SetLocalEuler(const SVec3& euler)
+        {
+            m_localRotation.SetEulerAngles( euler );
+
+            dispatchAndSetDirty( );
+        }
+
+        const SQuat& Transform::GetLocalRotation(void) const
+        {
+            return m_localRotation;
+        }
+
+        SVec3 Transform::GetLocalEuler(void) const
+        {
+            return m_localRotation.GetEulerAngles( );
+        }
+
+        SQuat Transform::GetWorldRotation(void)
+        {
+            if (m_parent)
+                return m_parent->ToWorld( m_localRotation );
+            else
+                return m_localRotation;
+        }
+
+        void Transform::SetWorldRotation(const SQuat &rotation)
+        {
+            if (m_parent)
+                m_localRotation = m_parent->ToLocal( rotation );
+            else
+                m_localRotation = rotation;
+
+            dispatchAndSetDirty( );
+        }
+
+        SVec3 Transform::GetWorldEuler(void)
+        {
+            if (m_parent)
+                return m_parent->ToWorld( m_localRotation ).GetEulerAngles( );
+            else
+                return m_localRotation.GetEulerAngles( );
+        }
+
+        void Transform::LookAt(const SVec3& worldPosition)
+        {
+            SVec3 dir = worldPosition - GetWorldPosition( );
+
+            SetWorldRotation( SQuat::LookAt( dir ) );
+        }
+
+        void Transform::SetLocalScale(const SVec3& scale)
+        {
+            m_localScale = scale;
+
+            dispatchAndSetDirty( );
+        }
+
+        const SVec3& Transform::GetLocalScale(void) const
+        {
+            return m_localScale;
+        }
+
+        void Transform::SetWorldEuler(const SVec3 &euler)
+        {
+            if (m_parent)
+                m_localRotation = m_parent->ToLocal( SQuat( euler.X( ), euler.Y( ), euler.Z( ) ) );
+            else
+                m_localRotation.SetEulerAngles( euler );
+
+            dispatchAndSetDirty( );
+        }
+
+        SVec3 Transform::GetWorldScale(void)
+        {
+            if (m_parent)
+                return m_localScale * m_parent->GetWorldScale();
+            else
+                return m_localScale;
+        }
+
+        SVec3 Transform::GetForward(void)
+        {
+            return GetWorldRotation( ) * SVec3::UnitZ( );
+        }
+
+        SVec3 Transform::GetRight(void)
+        {
+            return GetWorldRotation( ) * SVec3::UnitX( );
+        }
+
+        SVec3 Transform::GetUp(void)
+        {
+            return GetWorldRotation( ) * SVec3::UnitY( );
+        }
+
+        bool Transform::GetDirty(void) const
+        {
+            return m_dirty;
+        }
+
+        const SMat4 &Transform::GetLocalToWorldMatrix(void)
+        {
+            if (m_dirty)
+                recalculateMatrices( );
+
+            return m_localToWorld;
+        }
+
+        const SMat4 &Transform::GetWorldToLocalMatrix(void)
+        {
+            if (m_dirty)
+                recalculateMatrices( );
+
+            return m_worldToLocal;
+        }
+
+        SVec3 Transform::ToLocal(const SVec3& point)
+        {
+            return GetWorldToLocalMatrix( ).TransformPoint( point );
+        }
+
+        SQuat Transform::ToLocal(const SQuat& quat)
+        {
+            if (m_parent)
+                return m_localRotation.GetInverse( ) * m_parent->ToLocal( quat );
+            else
+                return m_localRotation.GetInverse( ) * quat;
+        }
+
+        SVec3 Transform::ToWorld(const SVec3& point)
+        {
+            return GetLocalToWorldMatrix( ).TransformPoint( point );
+        }
+
+        SQuat Transform::ToWorld(const SQuat& quat)
+        {
+            if (m_parent)
+                return m_parent->GetWorldRotation( ) * m_localRotation * quat;
+            else
+                return m_localRotation * quat;
+        }
+
+        Transform *Transform::GetRoot(void)
+        {
+            return m_root;
+        }
+
+        Transform *Transform::GetParent(void)
+        {
+            return m_parent;
+        }
+
+        bool Transform::IsChildOf(Transform* parent)
+        {
+            if (parent == m_parent)
+                return true;
+
+            if (m_parent)
+                return m_parent->IsChildOf(parent);
+            
+            return false;
+        }
+
+        void Transform::AddChild(Transform* child)
+        {
+            // Store old values we need to retain for later
+            auto oldWorldPos = child->GetWorldPosition( );
+            auto oldWorldScale = child->GetWorldScale( );
+            auto oldWorldRot = child->GetWorldRotation( );
+
+            if (!genericAddChild( child ))
+                return;
+
+            // Set the new local values
+            child->SetLocalPosition( ToLocal( oldWorldPos ) );
+            child->SetLocalRotation( ToLocal( oldWorldRot ) );
+            child->SetLocalScale( oldWorldScale / GetWorldScale( ) );
+        }
+
+        void Transform::AddChildAlreadyInLocal(Transform* child)
+        {
+            // Store old values we need to retain for later
+            auto oldWorldPos = child->GetWorldPosition( );
+            auto oldWorldScale = child->GetWorldScale( );
+            auto oldWorldRot = child->GetWorldRotation( );
+
+            if (!genericAddChild( child ))
+                return;
+
+            // Set the new local values
+            child->SetLocalPosition( oldWorldPos );
+            child->SetLocalRotation( oldWorldRot );
+            child->SetLocalScale( oldWorldScale );
+        }
+
+        void Transform::RemoveChild(Transform* child)
+        {
+            // find the child in our local array of children
+            auto itr = std::find( m_children.begin( ), m_children.end( ), child );
+
+            if ( itr == m_children.end( ) )
+                return;
+
+            m_children.erase( itr );
+            child->setParent( this, nullptr );
+        }
+
+        void Transform::RemoveChildren(void)
+        {
+            for (auto &child : m_children)
+                child->setParent( this, nullptr );
+
+            m_children.clear( );
+        }
+
+        Transform *Transform::GetChild(uint index)
+        {
+            UAssert(index < m_children.size( ), "The index must be less than the child count");
+
+            return m_children[ index ];
+        }
+
+        const Transform *Transform::GetChild(uint index) const
+        {
+            UAssert(index < m_children.size( ), "The index must be less than the child count");
+
+            return m_children[index];
+        }
+
+        uint Transform::GetSiblingIndex(void) const
+        {
+            return GetOwner( )->GetSiblingIndex( );
+        }
+
+        void Transform::SetAsFirstSibling(void)
+        {
+            SetSiblingIndex( 0 );
+        }
+
+        void Transform::SetSiblingIndex(uint index)
+        {
+            if (m_parent == nullptr)
+                return;
+
+            GetOwner( )->SetSiblingIndex( index );
+
+            auto &childArray = m_parent->m_children;
+
+            int i = 0;
+            for (auto child : childArray)
+            {
+                if (child == this)
+                    break;
+                else
+                    ++i;
+            }
+
+            UAssert(i != childArray.size( ), "This shouldn't happen. Something is wrong with the parent's children array.");
+
+            // walk from the old place to the new place, making sure all things are moved
+            int dir = static_cast<int>( index ) > i ? 1 : -1;
+            for (int j = i; j != index; j += dir)
+            {
+                childArray[ j ] = childArray[ j + dir ];
+                childArray[ j + dir ] = this;
+            }
+        }
+
+        void Transform::SetWorldScale(const SVec3 &scale)
+        {
+            if (m_parent)
+                m_localScale = m_parent->GetWorldScale( ) * scale;
+            else
+                m_localScale = scale;
+
+            dispatchAndSetDirty( );
+        }
+
+		Component *Transform::GetComponentInChildren(ComponentTypeID id) const
+		{
+			return GetOwner( )->GetComponentInChildren( id );
+		}
+
+	    Component *Transform::GetComponentInParent(ComponentTypeID id) const
+	    {
+			return GetOwner( )->GetComponentInParent( id );
+	    }
+
+	    ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const
+	    {
+			return GetOwner( )->GetComponentsInChildren( id );
+	    }
+
+	    ComponentVector Transform::GetComponentsInParents(ComponentTypeID id) const
+	    {
+			return GetOwner( )->GetComponentsInParents( id );
+	    }
+
+	    void Transform::copy(const Transform &transform)
+        {
+            m_dirty = transform.m_dirty;
+
+            m_localPosition = transform.m_localPosition;
+            m_localRotation = transform.m_localRotation;
+            m_localScale    = transform.m_localScale;
+
+            m_localToWorld = transform.m_localToWorld;
+            m_worldToLocal = transform.m_worldToLocal;
+
+            if (transform.m_parent)
+            {
+                transform.m_parent->AddChild( this );
+            }
+            else
+            {
+                m_root = this;
+                m_parent = nullptr;
+            }
+
+            URSINE_TODO( "Test this and make sure it is called AFTER"
+                         " the 'Create' function has been called in EntityManager.cpp" );
+
+            // We don't copy over children
+        }
+
+        void Transform::dispatchAndSetDirty(void)
+        {
+            m_dirty = true;
+
+            GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY, EventArgs::Empty );
+        }
+
+        void Transform::dispatchParentChange(Transform *oldParent, Transform *newParent) const
+        {
+            ParentChangedArgs args( 
+                newParent ? newParent->GetOwner( ) : nullptr,
+                oldParent ? oldParent->GetOwner() : nullptr
+            );
+
+            GetOwner( )->Dispatch( ENTITY_PARENT_CHANGED, &args );
+        }
+
+        void Transform::onParentDirty(EVENT_HANDLER(Entity))
+        {
+            EVENT_ATTRS(Entity, EventArgs);
+            
+            // dispatch to notify my children and anyone else who cares
+            dispatchAndSetDirty( );
+        }
+
+        void Transform::recalculateMatrices(void)
+        {
+            if (m_dirty)
+            {
+                if (m_parent)
+                {
+                    m_localToWorld = m_parent->GetLocalToWorldMatrix( ) *
+                                     SMat4( m_localPosition, m_localRotation, m_localScale );
+                }
+                else
+                {
+                    m_localToWorld.TRS( m_localPosition, m_localRotation, m_localScale );
+                }
+
+                m_worldToLocal = m_localToWorld;
+                m_worldToLocal.Inverse( );
+
+                m_dirty = false;
+            }
+        }
+
+        void Transform::notifyPositionChanged(void)
+        {
+            NOTIFY_COMPONENT_CHANGED( "position", m_localPosition );
+        }
+
+        void Transform::notifyRotationChanged(void)
+        {
+            NOTIFY_COMPONENT_CHANGED( "rotation", m_localRotation.GetEulerAngles( ) );
+        }
+
+        void Transform::notifyScaleChanged(void)
+        {
+            NOTIFY_COMPONENT_CHANGED( "scale", m_localScale );
+        }
+
+        bool Transform::genericAddChild(Transform *child)
+        {
+            if (child->m_parent == this)
+                return false;
+
+            // edge case for if the child is my parent
+            if (IsChildOf( child ))
+                return false;
+            
+            // Add the child to this transform
+            child->setParent( child->m_parent, this );
+            m_children.push_back( child );
+
+            return true;
+        }
+
+        void Transform::setParent(Transform *oldParent, Transform *newParent)
+        {
+            m_parent = newParent;
+            m_root = newParent ? newParent->m_root : this;
+
+            // unsubscribe this entity from the old parent's events
+            if (oldParent)
+            {
+                // remove this transform from the old parent
+                oldParent->RemoveChild( this );
+
+                oldParent->GetOwner( )->Listener( this )
+                    .Off( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
+            }
+
+            // subscribe this entity to my events
+            if (newParent)
+                newParent->GetOwner( )->Listener( this )
+                    .On( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
+
+            // dispatch messages for hierarchical change
+            dispatchParentChange( oldParent, newParent );
+        }
+    }
+}

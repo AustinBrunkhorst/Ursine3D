@@ -24,10 +24,6 @@ namespace ursine
 
         class Filter
         {
-            ComponentTypeMask _mask_one;
-            ComponentTypeMask _mask_exclude;
-            ComponentTypeMask _mask_contains;
-
         public:
             Filter(void);
 
@@ -45,6 +41,11 @@ namespace ursine
 
             template<class... Types>
             Filter &One(void);
+
+        private:
+            ComponentTypeMask m_maskOne;
+            ComponentTypeMask m_maskExclude;
+            ComponentTypeMask m_maskContains;
         };
     }
 }

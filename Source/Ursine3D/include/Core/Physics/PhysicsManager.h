@@ -16,9 +16,9 @@
 #include "CoreSystem.h"
 #include "Meta.h"
 
-#include "btBulletCollisionCommon.h"
-#include "btBulletDynamicsCommon.h"
-#include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include <BulletSoftBody/btSoftRigidDynamicsWorld.h>
 #include "PhysicsDebugDrawer.h"
 
 namespace ursine
@@ -27,19 +27,18 @@ namespace ursine
 	{
 		CORE_SYSTEM;
 	public:
-
-		Meta( DisableNonDynamic )
+		Meta(Enable, DisableNonDynamic)
 		PhysicsManager(void) { }
 
-		Meta(Disable)
 		void OnInitialize(void) override;
 
-		Meta(Disable)
 		void OnRemove(void) override;
 
 		void AddCollisionShape(btCollisionShape *shape);
 
 		btRigidBody *AddRigidBody(const btRigidBody::btRigidBodyConstructionInfo &info);
+
+        void LoadWorld(const char *bulletFile);
 
 	private:
 
@@ -72,5 +71,5 @@ namespace ursine
 		void initPhysics(void);
 		void destroyPhysics(void);
 
-	} Meta( Enable );
+	} Meta(Enable, WhiteListMethods);
 }

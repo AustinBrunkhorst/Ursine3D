@@ -5,7 +5,9 @@
 
 :host {
   margin-left: 5px;
-  line-height: $header-height;
+
+  // 2px to account for border
+  line-height: $header-height - 2px;
 
   &:focus {
     outline: none;

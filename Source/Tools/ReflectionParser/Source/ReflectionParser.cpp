@@ -3,11 +3,14 @@
 #include "ReflectionParser.h"
 
 #include "LanguageTypes/Class.h"
+#include "LanguageTypes/External.h"
 #include "LanguageTypes/Global.h"
 #include "LanguageTypes/Function.h"
 #include "LanguageTypes/Enum.h"
 
+#include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #define RECURSE_NAMESPACES(kind, cursor, method, ns) \
     if (kind == CXCursor_Namespace)                  \
@@ -26,7 +29,12 @@ ReflectionParser::ReflectionParser(const ReflectionOptions &options)
     , m_index( nullptr )
     , m_translationUnit( nullptr )
 {
-   
+    // replace special characters in target name with underscores
+    m_options.targetName = boost::regex_replace(
+        m_options.targetName, 
+        boost::regex( "[^a-zA-Z0-9]+" ), 
+        "_" 
+    );
 }
 
 ReflectionParser::~ReflectionParser(void)
@@ -251,6 +259,15 @@ void ReflectionParser::buildClasses(
             m_classes.emplace_back( 
                 new Class( child, currentNamespace )
             );
+        }
+        else if (kind == CXCursor_TypedefDecl)
+        {
+            if (boost::starts_with( child.GetDisplayName( ), kMetaExternalTypeDefName ))
+            {
+                m_classes.emplace_back(
+                    new External( child.GetTypedefType( ).GetDeclaration( ) )
+                );
+            }
         }
         
         RECURSE_NAMESPACES( kind, child, buildClasses, currentNamespace );

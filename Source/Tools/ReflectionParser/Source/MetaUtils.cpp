@@ -22,6 +22,37 @@ namespace utils
         return value ? TemplateData::Type::True : TemplateData::Type::False;
     }
 
+    std::string GetQualifiedName(const CursorType &type)
+    {
+        if (type.GetKind( ) != CXType_Typedef)
+            return type.GetDisplayName( );
+
+        auto declaration = type.GetDeclaration( );
+
+        auto parent = declaration.GetLexicalParent( );
+
+        Namespace parentNamespace;
+
+        // walk up to the root namespace
+        while (parent.GetKind( ) == CXCursor_Namespace)
+        {
+            parentNamespace.emplace( parentNamespace.begin( ), parent.GetDisplayName( ) );
+
+            parent = parent.GetLexicalParent( );
+        }
+
+        // add the display name as the end of the namespace
+        parentNamespace.emplace_back(
+            type.GetDisplayName( )
+        );
+
+        std::string qualifiedName;
+
+        ursine::utils::Join( parentNamespace, "::", qualifiedName );
+
+        return qualifiedName;
+    }
+
     std::string GetQualifiedName(
         const std::string &displayName, 
         const Namespace &currentNamespace

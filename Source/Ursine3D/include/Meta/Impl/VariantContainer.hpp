@@ -1,5 +1,38 @@
 #include "Type.h"
 
+#pragma warning(push)
+
+// unused template parameters
+#pragma warning(disable : 4544)
+
+// implicit conversion performance warnings
+#pragma warning(disable : 4800)
+
+// possible loss of data
+#pragma warning(disable : 4244)
+
+#define DEFAULT_TYPE_HANDLER_IMPL(typeName)                                         \
+    template<typename T>                                                            \
+    template<typename U = T>                                                        \
+    typeName VariantContainer<T>::get##typeName(                                    \
+        typename std::enable_if<                                                    \
+            !std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value \
+        >::type* = nullptr                                                          \
+        ) const                                                                     \
+    {                                                                               \
+        return typeName( );                                                         \
+    }                                                                               \
+    template<typename T>                                                            \
+    template<typename U = T>                                                        \
+    typeName VariantContainer<T>::get##typeName(                                    \
+        typename std::enable_if<                                                    \
+            std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value  \
+        >::type* = nullptr                                                          \
+    ) const                                                                         \
+    {                                                                               \
+        return static_cast<typeName>( m_value );                                    \
+    }                                                                               \
+
 namespace ursine
 {
     namespace meta
@@ -33,7 +66,7 @@ namespace ursine
         template<typename T>
         int VariantContainer<T>::ToInt(void) const
         {
-            return int( );
+            return getint( );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -41,7 +74,7 @@ namespace ursine
         template<typename T>
         bool VariantContainer<T>::ToBool(void) const
         {
-            return bool( );
+            return getbool( );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -49,7 +82,7 @@ namespace ursine
         template<typename T>
         float VariantContainer<T>::ToFloat(void) const
         {
-            return float( );
+            return getfloat( );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -57,7 +90,7 @@ namespace ursine
         template<typename T>
         double VariantContainer<T>::ToDouble(void) const
         {
-            return double( );
+            return getdouble( );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -65,7 +98,7 @@ namespace ursine
         template<typename T>
         std::string VariantContainer<T>::ToString(void) const
         {
-            return std::string( );
+            return getString( );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -87,5 +120,38 @@ namespace ursine
         {
             return new VariantContainer<T>( m_value );
         }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        DEFAULT_TYPE_HANDLER_IMPL( int );
+        DEFAULT_TYPE_HANDLER_IMPL( bool );
+        DEFAULT_TYPE_HANDLER_IMPL( float );
+        DEFAULT_TYPE_HANDLER_IMPL( double );
+
+        template<typename T>
+        template<typename U = T>
+        std::string VariantContainer<T>::getString(
+            typename std::enable_if<
+                !std::is_arithmetic<U>::value
+            >::type* = nullptr
+        ) const
+        {
+            return std::string( );
+        }
+
+        template<typename T>
+        template<typename U = T>
+        std::string VariantContainer<T>::getString(
+            typename std::enable_if<
+                std::is_arithmetic<U>::value
+            >::type* = nullptr
+        ) const
+        {
+            return std::to_string( m_value );
+        }
     }
 }
+
+#undef DEFAULT_TYPE_HANDLER_IMPL
+
+#pragma warning(pop)

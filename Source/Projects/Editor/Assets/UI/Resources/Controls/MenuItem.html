@@ -8,7 +8,7 @@
         <x-menu id="menu" class="sub-menu"></x-menu>
     </template>
     <script>
-        var MenuItemControl = Polymer({
+        var MenuItemControl = Polymer( {
             is: "x-menu-item",
             properties: {
                 text: {
@@ -23,64 +23,89 @@
                 }
             },
             listeners: {
-                'mouseenter': '_onMouseEnter',
+                'mouseover': '_onMouseEnter',
                 'mouseout': '_onMouseLeave',
                 'click': '_onClick'
             },
-
-            get menu() {
-                return this.$.menu;
-            },
-            attached: function() {
+            attached: function () {
                 this._onItemsChanged( );
 
                 this.listen( this.menu, 'items-changed', '_onItemsChanged' );
             },
 
-            _onMouseEnter: function(e) {
+            get menu() {
+                return this.$.menu;
+            },
+            get rootMenu() {
+                var node = this;
+
+                for (; node && node !== document; node = node.parentNode) {
+                    if (node.classList.contains( 'root-menu' ))
+                        return node;
+                }
+
+                // this shouldn't ever happen
+                return null;
+            },
+
+            _onMouseEnter: function (e) {
                 if (this.disabled)
                     return;
 
                 var hovered = this.parentNode.querySelectorAll( ':scope > .hover' );
 
                 // remove hover from all siblings
-                [].forEach.call( hovered, function(item) {
+                [].forEach.call( hovered, function (item) {
                     item.classList.remove( 'hover' );
                 } );
 
                 // make this item hovered
                 this.classList.add( 'hover' );
             },
-            _onMouseLeave: function(e) {
+            _onMouseLeave: function (e) {
                 // make sure this event doesn't bubble to the parent
                 e.stopPropagation( );
                 e.stopImmediatePropagation( );
 
-                var hovered = this.$.menu.querySelectorAll( '.hover' );
-
-                // remove hover from child menus
-                [].forEach.call( hovered, function(item) {
-                    item.classList.remove( 'hover' );
-                } );
+                this._clearChildrenFocus( );
             },
-            _onClick: function(e) {
+            _onClick: function (e) {
+                // make sure this event doesn't bubble to the parent
+                e.stopImmediatePropagation( );
+                e.stopPropagation( );
+
                 if (this.disabled)
                     return;
 
-                this.fire( 'open', e );
+                var result = this.fire( 'open', e );
+
+                if (!result.disableClose && this.$.menu.empty) {
+                    this._clearChildrenFocus( );
+
+                    this.rootMenu.close( );
+                }
             },
-            _onItemsChanged: function() {
+            _onItemsChanged: function () {
                 if (this.menu.empty)
                     this.removeAttribute( 'has-sub-menu' );
                 else
                     this.setAttribute( 'has-sub-menu', true );
             },
-            _onDisabledChanged: function() {
+            _onDisabledChanged: function () {
                 if (this.disabled)
                     this.setAttribute( 'disabled', true );
                 else
                     this.removeAttribute( 'disabled' );
+            },
+
+            _clearChildrenFocus: function() {
+                var hovered = this.$.menu.querySelectorAll( '.hover' );
+
+                // remove hover from child menus
+                [].forEach.call( hovered, function (item) {
+                    item.classList.remove( 'hover' );
+                } );
             }
-        });
+        } );
     </script>
 </dom-module>

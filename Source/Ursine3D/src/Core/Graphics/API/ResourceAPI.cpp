@@ -5,37 +5,56 @@
 
 namespace ursine
 {
-  struct ResourceAPI::privData
-  {
-    ModelManager *modelMgr;
-    TextureManager *textureMgr;
-  };
+    namespace graphics
+    {
+        struct ResourceAPI::privData
+        {
+            ModelManager *modelMgr;
+            TextureManager *textureMgr;
+        };
 
-  //get model handle
-  GFXHND ResourceAPI::GetModelHandle(const char *name)
-  {
-    return m_privates->modelMgr->GetModelIDByName(name);
-  }
+        //get model handle
+        GfxHND ResourceAPI::GetModelHandle(const char *name)
+        {
+            return m_privates->modelMgr->GetModelIDByName(name);
+        }
 
-  //get texture handle
-  GFXHND ResourceAPI::GetTexHandle(const char *name)
-  {
-    return m_privates->textureMgr->GetTextureIDByName(name);
-  }
+        //get texture handle
+        GfxHND ResourceAPI::GetTexHandle(const char *name)
+        {
+            return m_privates->textureMgr->GetTextureIDByName(name);
+        }
 
-  void ResourceAPI::SetPrivates(void *priv, void *priv2)
-  {
-    m_privates->modelMgr = reinterpret_cast<ModelManager*>(priv);
-    m_privates->textureMgr = reinterpret_cast<TextureManager*>(priv2);
-  }
+        GfxHND ResourceAPI::CreateTexture(const unsigned width, const unsigned height)
+        {
+            return m_privates->textureMgr->CreateDynamicTexture(width, height);
+        }
 
-  void ResourceAPI::Initialize()
-  {
-    m_privates = new privData;
-  }
+        void ResourceAPI::ResizeTexture(GfxHND& handle, const unsigned width, const unsigned height)
+        {
+            m_privates->textureMgr->ResizeDynamicTexture(handle, width, height);
+        }
 
-  void ResourceAPI::Uninitialize()
-  {
-    delete m_privates;
-  }
+        void ResourceAPI::DestroyTexture(GfxHND& handle)
+        {
+            m_privates->textureMgr->DestroyDynamicTexture(handle);
+        }
+
+        void ResourceAPI::SetPrivates(void *priv, void *priv2)
+        {
+            m_privates->modelMgr = reinterpret_cast<ModelManager*>(priv);
+            m_privates->textureMgr = reinterpret_cast<TextureManager*>(priv2);
+        }
+
+        void ResourceAPI::Initialize()
+        {
+            m_privates = new privData;
+        }
+
+        void ResourceAPI::Uninitialize()
+        {
+            delete m_privates;
+        }
+    }
+
 }

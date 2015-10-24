@@ -1,2 +1,5 @@
 *.cpp
 *.c
+!*.pdb
+!Debug
+!Release

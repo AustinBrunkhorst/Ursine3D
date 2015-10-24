@@ -47,7 +47,7 @@ set(WWise_DIR         "${ENGINE_DEP_DIR}/WWise")
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
 
-find_package(CEF 3.2272 REQUIRED 
+find_package(CEF 3.2526 REQUIRED 
     HINTS ${CEF_DIR})
 
 find_package(BENCHMARKS REQUIRED
@@ -73,6 +73,8 @@ if (MSVC)
     add_definitions(
         -D_CRT_SECURE_NO_WARNINGS
         -D_SCL_SECURE_NO_WARNINGS
+        # FUCK YOU MICROSOFT
+        -DNOMINMAX
     )
     
     ursine_add_compile_flags(
@@ -87,7 +89,7 @@ if (MSVC)
 
     # DirectX graphics backend
     add_definitions(-DURSINE_GRAPHICS_DIRECTX)
-    
+
     #ursine_remove_compile_flags(
     #    "/EHsc" # disable exceptions
     #)

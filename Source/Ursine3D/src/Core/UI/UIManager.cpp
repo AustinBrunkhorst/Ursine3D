@@ -25,7 +25,7 @@ namespace ursine
     {
         auto *app = Application::Instance;
 
-#ifdef PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
 
         CefMainArgs mainArgs( GetModuleHandle( nullptr ) );
 
@@ -39,19 +39,23 @@ namespace ursine
         settings.ignore_certificate_errors = true;
         settings.command_line_args_disabled = true;
 
-        settings.single_process = false;
+        settings.single_process = true;
         settings.multi_threaded_message_loop = false;
 
-#ifdef CONFIG_DEBUG
+#if defined(CONFIG_DEBUG)
 
         settings.log_severity = LOGSEVERITY_WARNING;
-        settings.remote_debugging_port = REMOTE_DEBUGGING_PORT;
         settings.uncaught_exception_stack_size = 1;
 
 #else
 
         settings.log_severity = LOGSEVERITY_DISABLE;
-        //settings.pack_loading_disabled = true;
+
+#endif
+
+#if defined(URSINE_WITH_EDITOR)
+
+        settings.remote_debugging_port = REMOTE_DEBUGGING_PORT;
 
 #endif
 
@@ -69,13 +73,12 @@ namespace ursine
         Application::Instance->Disconnect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
 
-    CefRefPtr<UIView> UIManager::CreateView(Window *window, const std::string &url)
+    UIView::Handle UIManager::CreateView(Window::Handle window, const std::string &url) const
     {
         CefBrowserSettings settings;
 
         settings.windowless_frame_rate = 144;
         settings.webgl = STATE_DISABLED;
-        settings.java = STATE_DISABLED;
         settings.plugins = STATE_DISABLED;
         settings.javascript = STATE_ENABLED;
         settings.javascript_access_clipboard = STATE_ENABLED;

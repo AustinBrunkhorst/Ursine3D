@@ -20,10 +20,15 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  struct Texture
-  {
-    unsigned Width_;
-    unsigned Height_;
-    ID3D11ShaderResourceView *Texture_;
-  };
+    namespace graphics
+    {
+        struct Texture
+        {
+            Texture() : m_width(0), m_height(0), m_shaderResource(nullptr), m_texture2d(nullptr) {}
+            unsigned m_width;
+            unsigned m_height;
+            ID3D11ShaderResourceView *m_shaderResource;
+            ID3D11Texture2D *m_texture2d;
+        };
+    }
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#define NOMINMAX
-
 #include <windows.h>
 
 #include <string>
@@ -41,3 +39,12 @@
 
 #include <TweenID.h>
 #include <Tween.h>
+
+////////////////////////////////////////////////////////////////////////////////
+// Game Engine Stuff
+////////////////////////////////////////////////////////////////////////////////
+
+#include <EntityManager.h>
+
+#include "EditorEntityManager.h"
+#include "Project.h"

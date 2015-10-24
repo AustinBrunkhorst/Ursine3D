@@ -18,66 +18,102 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include <DirectXMath.h>
 
-enum BUFFER_LIST
+namespace ursine
 {
-  BUFFER_CAMERA = 0,
-  BUFFER_TRANSFORM,
-  BUFFER_DIRECTIONAL_LIGHT,
-  BUFFER_POINT_LIGHT,
-  BUFFER_INV_PROJ,
-  BUFFER_PRIM_COLOR,
-  BUFFER_POINT_GEOM,
-  BUFFER_BILLBOARDSPRITE,
+    namespace graphics
+    {
+        enum BUFFER_LIST
+        {
+            BUFFER_CAMERA = 0,
+            BUFFER_TRANSFORM,
+            BUFFER_DIRECTIONAL_LIGHT,
+            BUFFER_POINT_LIGHT,
+            BUFFER_INV_PROJ,
+            BUFFER_PRIM_COLOR,
+            BUFFER_POINT_GEOM,
+            BUFFER_BILLBOARDSPRITE,
+            BUFFER_GBUFFER_UNPACK,
+            BUFFER_LIGHT_PROJ,
+            BUFFER_MATERIAL_DATA,
+            BUFFER_SPOTLIGHT,
 
-  BUFFER_COUNT
-};
+            BUFFER_COUNT,
 
-struct CameraBuffer
-{
-  DirectX::XMMATRIX view;
-  DirectX::XMMATRIX projection;
-};
+            //"virtual" buffer
+        };
 
-struct TransformBuffer
-{
-  DirectX::XMMATRIX transform;
-};
+        struct CameraBuffer
+        {
+            DirectX::XMMATRIX view;
+            DirectX::XMMATRIX projection;
+        };
 
-struct DirectionalLightBuffer
-{
-  DirectX::XMFLOAT4 lightDirection;
-  DirectX::XMFLOAT3 lightColor;
-  float attenuation;
-  DirectX::XMFLOAT4 lightPosition;
-};
+        struct TransformBuffer
+        {
+            DirectX::XMMATRIX transform;
+        };
 
-struct InvProjBuffer
-{
-  DirectX::XMMATRIX invProj;
-};
+        struct DirectionalLightBuffer
+        {
+            DirectX::XMFLOAT4 lightDirection;
+            DirectX::XMFLOAT3 lightColor;
+            float intensity;
+            DirectX::XMFLOAT4 lightPosition;
+        };
 
-struct PointLightBuffer
-{
-  DirectX::XMFLOAT3 lightPos;
-  float lightRadius;
-  DirectX::XMFLOAT3 color;
-  float attenuation;
-};
+        struct InvProjBuffer
+        {
+            DirectX::XMMATRIX invProj;
+        };
 
-struct PrimitiveColorBuffer
-{
-  DirectX::XMFLOAT4 color;
-};
+        struct PointLightBuffer
+        {
+            DirectX::XMFLOAT3 lightPos;
+            float lightRadius;
+            DirectX::XMFLOAT3 color;
+            float intensity;
+        };
 
-struct PointGeometryBuffer
-{
-  DirectX::XMFLOAT4 cameraPosition;
-  DirectX::XMFLOAT4 cameraUp;
-};
+        struct PrimitiveColorBuffer
+        {
+            DirectX::XMFLOAT4 color;
+        };
 
-struct BillboardSpriteBuffer
-{
-  float width;
-  float height;
-  DirectX::XMFLOAT2 buffer;
-};
+        struct PointGeometryBuffer
+        {
+            DirectX::XMFLOAT4 cameraPosition;
+            DirectX::XMFLOAT4 cameraUp;
+        };
+
+        struct BillboardSpriteBuffer
+        {
+            float width;
+            float height;
+            DirectX::XMFLOAT2 buffer;
+        };
+
+        struct GBufferUnpackBuffer
+        {
+            DirectX::XMFLOAT4 perspectiveVals;
+            DirectX::XMFLOAT4 x4ViewInv;
+        };
+
+        struct MaterialDataBuffer
+        {
+            float emissive;
+            float specularPower;
+            float specularIntensity;
+            unsigned id;
+        };
+
+        struct SpotlightBuffer
+        {
+            DirectX::XMFLOAT3 lightPosition;
+            float falloff;
+            DirectX::XMFLOAT3 lightDirection;
+            float innerAngle;
+            DirectX::XMFLOAT3 diffuseColor;
+            float outerAngle;
+        };
+    }
+}

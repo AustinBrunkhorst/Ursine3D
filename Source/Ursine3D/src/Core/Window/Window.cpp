@@ -9,7 +9,7 @@
 
 namespace ursine
 {
-     Window::Window(WindowManager *manager, WindowHandle *handle)
+     Window::Window(WindowManager *manager, InternalWindowHandle handle)
         : EventDispatcher( this )
         , m_isFocused( true )
         , m_isFullscreen( false )
@@ -85,7 +85,7 @@ namespace ursine
         return m_isFocused;
     }
 
-    WindowHandle *Window::GetHandle(void) const
+    InternalWindowHandle Window::GetInternalHandle(void) const
     {
         return m_handle;
     }

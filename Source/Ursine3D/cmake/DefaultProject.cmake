@@ -14,7 +14,7 @@ endmacro ()
 
 macro (ursine_default_project project_name)
     ursine_parse_arguments(PROJ 
-        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE;META_HEADER" 
+        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE;META_HEADER;COPY_SHADERS" 
         "NO_ENGINE;PARSE_SOURCE_GROUPS;RECURSIVE_INCLUDES;INCLUDE_INSTALLER;BUILD_META" 
         ${ARGN})
     
@@ -127,6 +127,30 @@ macro (ursine_default_project project_name)
                 # install folder if applicable
                 if ("${PROJ_INCLUDE_INSTALLER}" STREQUAL "TRUE")
                     install(DIRECTORY ${link} DESTINATION "bin" COMPONENT ${project_name})
+                endif ()
+            endforeach ()
+        endif ()
+
+        # handle shaders
+        if (NOT "${PROJ_COPY_SHADERS}" STREQUAL "")
+            add_dependencies(${project_name} Shaders)
+
+            # create a macro to reference at compile time
+            add_definitions(-DURSINE_SHADER_BUILD_DIRECTORY=\"${PROJ_COPY_SHADERS}\")
+            
+            foreach (shader ${URSINE_SHADER_FILES})
+                get_filename_component(shader_file "${shader}" NAME_WE)
+
+                # copy shaders on post build of the shader project
+                list(APPEND post_build_commands
+                    COMMAND 
+                    ${CMAKE_COMMAND} -E copy_if_different
+                    \"$<TARGET_FILE_DIR:Shaders>/${shader_file}.cso\" \"$<TARGET_FILE_DIR:${project_name}>/${PROJ_COPY_SHADERS}${shader_file}.cso\"
+                )
+
+                # install shaders if applicable
+                if ("${PROJ_INCLUDE_INSTALLER}" STREQUAL "TRUE")
+                    install(FILES "${shader}" DESTINATION "bin/${PROJ_COPY_SHADERS}" COMPONENT ${project_name})
                 endif ()
             endforeach ()
         endif ()
@@ -297,7 +321,7 @@ macro (ursine_default_project project_name)
             set(pch_switch "--pch \"${PROJ_PCH_NAME}.h\"")
         endif ()
 
-        set(meta_depends ${files_inc})
+        set(meta_depends ${files_inc} ${URSINE_HEADER_FILES})
 
         list(REMOVE_ITEM meta_depends ${meta_generated_header})
 
@@ -314,7 +338,7 @@ macro (ursine_default_project project_name)
             --flags ${meta_flags}
         )
     endif ()
-    
+
     # project folder
     if (NOT "${PROJ_FOLDER}" STREQUAL "")
         ursine_set_folder(${project_name} ${PROJ_FOLDER})

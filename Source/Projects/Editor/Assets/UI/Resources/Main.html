@@ -8,32 +8,24 @@
 
     <!-- Controls -->
     <link rel="import" href="Controls/Button.html" />
+    <link rel="import" href="Controls/NumberInput.html" />
+    <link rel="import" href="Controls/ComboInput.html" />
+    <link rel="import" href="Controls/ColorInput.html" />
     <link rel="import" href="Controls/MenuItem.html" />
     <link rel="import" href="Controls/MenuSeparator.html" />
     <link rel="import" href="Controls/Menu.html" />
     <link rel="import" href="Controls/MainMenu.html" />
+    <link rel="import" href="Controls/EditorWindow.html" />
+
+    <link rel="import" href="Controls/Inspection/ComponentInspector.html" />
+    <link rel="import" href="Controls/Inspection/FieldInspector.html" />
 </head>
 <body>
-	<div id="header-toolbar">
-        <!--<div class="menu">
-            <div class="item"> File </div>
-            <div class="item"> Edit
-                <div class="sub-menu">
-                    <div class="item"> Undo </div>
-                    <div class="item has-sub-menu"> Redo
-                        <div class="sub-menu">
-                            <div class="item"> One </div>
-                            <div class="item"> Two </div>
-                            <div class="item"> Three </div>
-                        </div>
-                    </div>
-                    <div class="separator"></div>
-                    <div class="item"> Test </div>
-                </div>
-            </div>
-            <div class="item"> Project </div>
-        </div>-->
-    </div>
+	<div id="header-toolbar"></div>
+    <div id="window-container"></div>
 </body>
+<script>
+    function NativeBroadcast(target, message, data) { }
+</script>
 <script type="text/javascript" src="Editor.js"></script>
 </html>

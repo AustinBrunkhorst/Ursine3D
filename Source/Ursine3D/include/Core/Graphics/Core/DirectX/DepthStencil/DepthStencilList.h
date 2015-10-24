@@ -15,11 +15,16 @@ Author:         Matt Yan, m.yan@digipen.edu
 /*- End Header --------------------------------------------------------------*/
 #pragma once
 
-
-enum DEPTH_STENCIL_LIST
+namespace ursine
 {
-  DEPTH_STENCIL_MAIN = 0,
-  DEPTH_STENCIL_SHADOWMAP,
+    namespace graphics
+    {
+        enum DEPTH_STENCIL_LIST
+        {
+            DEPTH_STENCIL_MAIN = 0,
+            DEPTH_STENCIL_SHADOWMAP,
 
-  DEPTH_STENCIL_COUNT
-};
+            DEPTH_STENCIL_COUNT
+        };
+    }
+}

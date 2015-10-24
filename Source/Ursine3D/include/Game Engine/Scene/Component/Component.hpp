@@ -17,8 +17,7 @@ namespace ursine
     {
         Component::Component(ComponentTypeID typeID) 
             : m_typeID( typeID )
-            , m_owner( nullptr )
-            , m_typeMask( 1ull << typeID ) { }
+            , m_owner( nullptr ) { }
 
         ComponentTypeID Component::GetTypeID(void) const
         {
@@ -27,7 +26,7 @@ namespace ursine
 
         ComponentTypeMask Component::GetTypeMask(void) const
         {
-            return m_typeMask;
+            return 1ull << m_typeID;
         }
 
         Entity *Component::GetOwner(void) const

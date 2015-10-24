@@ -25,85 +25,80 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-  namespace DXCore
-  {
-    class DirectXCore
+    namespace graphics
     {
-    public:
-      //initialize everything
-      void Initialize( const unsigned width, const unsigned height, HWND hWindow, ursine::GfxInfo *gfxInfo, bool fullscreen, bool debug );
-      void Uninitialize( );
+        namespace DXCore
+        {
+            class DirectXCore
+            {
+            public:
+                //initialize everything
+                void Initialize(const unsigned width, const unsigned height, HWND hWindow, GfxInfo *gfxInfo, bool fullscreen, bool debug);
+                void Uninitialize(void);
 
-      //methods
-      //clears buffers
-      void ClearDeferredBuffers( );
-      void ClearDepthBuffers( );
-      void ClearSwapchain( );
-      void ClearDebugBuffer( );
-      void ClearTargetBuffers( );
+                //methods
+                //clears buffers
+                void ClearDeferredBuffers(void);
+                void ClearDepthBuffers(void);
+                void ClearSwapchain(void);
+                void ClearDebugBuffer(void);
+                void ClearTargetBuffers(void);
 
-      //what render targets do I need to clear?
-      //deferred
-      
-      //depth
-      //debug
-      //swapchain
-      //others?
+                //swaps the swapchain
+                void SwapChainBuffer(void);
 
-      //swaps the swapchain
-      void SwapChainBuffer( );
+                //get the device
+                ID3D11Device *GetDevice(void);
 
-      //get the device
-      ID3D11Device *GetDevice( );
+                //get the devcon
+                ID3D11DeviceContext *GetDeviceContext(void);
 
-      //get the devcon
-      ID3D11DeviceContext *GetDeviceContext( );
+                //set blend
+                void SetBlendState(const BLEND_STATES bt);
+                //set depth stencil
+                void SetDepthState(const DEPTH_STATES dt);
+                //set target
+                void SetRenderTarget(const RENDER_TARGETS rt, const bool useDepth = true);
 
-      //set blend
-      void SetBlendState( BLEND_STATES bt );
-      //set depth stencil
-      void SetDepthState( DEPTH_STATES dt );
-      //set target
-      void SetRenderTarget( RENDER_TARGETS rt );
+                //set raster state
+                void SetRasterState(const RASTER_STATES state);
 
-      //set raster state
-      void SetRasterState( RASTER_STATES state );
+                //get blend
+                BlendStateManager *GetBlendMgr(void);
+                //get depth stencil
+                DepthStencilManager *GetDepthMgr(void);
+                //get target
+                RenderTargetManager *GetRenderTargetMgr(void);
+                //get stencil manager
+                DepthStencilStateManager *GetDepthStencilMgr(void);
 
-      //get blend
-      BlendStateManager *GetBlendMgr( );
-      //get depth stencil
-      DepthStencilManager *GetDepthMgr( );
-      //get target
-      RenderTargetManager *GetRenderTargetMgr( );
-      //get stencil manager
-      DepthStencilManager *GetDepthStencilMgr( );
+                void ResizeDX(const int width, const int height);
 
-      void ResizeDX( int width, int height );
+                void CheckSize(void);
 
-      void CheckSize( );
+                void Invalidate(void);
 
-      void Invalidate( );
+                //private methods
+            private:
+                void backendResizeDX(const int width, const int height);
 
-      //private methods
-    private:
-      void backendResizeDX( int width, int height );
+            private:
+                bool m_debug;
+                int m_newWidth;
+                int m_newHeight;
+                bool m_shouldResize;
 
-    private:
-      bool m_debug;
-      int m_newWidth;
-      int m_newHeight;
-      bool m_shouldResize;
+                ID3D11Device *m_device;
+                ID3D11DeviceContext *m_deviceContext;
+                IDXGISwapChain *m_swapChain;
+                ID3D11Debug *m_debugInterface;
 
-      ID3D11Device *m_device;
-      ID3D11DeviceContext *m_deviceContext;
-      IDXGISwapChain *m_swapChain;
-      ID3D11Debug *m_debugInterface;
-
-      BlendStateManager *m_blendManager;
-      DepthStencilStateManager *m_depthStateManager;
-      DepthStencilManager *m_depthStencilManager;
-      RenderTargetManager *m_targetManager;
-      RasterStateManager *m_rasterStateManager;
-    };
-  }
+                BlendStateManager *m_blendManager;
+                DepthStencilStateManager *m_depthStateManager;
+                DepthStencilManager *m_depthStencilManager;
+                RenderTargetManager *m_targetManager;
+                RasterStateManager *m_rasterStateManager;
+            };
+        }
+    }
 }

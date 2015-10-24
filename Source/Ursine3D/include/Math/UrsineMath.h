@@ -17,6 +17,8 @@
 
 namespace ursine
 {
+    class SQuat;
+
     namespace math
     {
         const float Epsilon = 0.0001f;
@@ -55,14 +57,14 @@ namespace ursine
         template<typename T>
         T Rand(T min, T max);
 
-        // This is not very percise. With large floating point values it is generally 1% off.
-        inline float fastSqrt(float val);
-
         inline float RadiansToDegrees(float radians);
 
         inline float DegreesToRadians(float degrees);
 
         void SinCos(float radians, float &sin, float &cos);
+
+        extern template
+        SQuat Lerp(const SQuat &a, const SQuat &b, float percent);
     }
 }
 

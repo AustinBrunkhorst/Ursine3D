@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 ursine_default_project(ReflectionParser
-    FOLDER "Tools/ReflectionParser"
+    FOLDER "Tools/Meta"
     TYPE EXE
     DEPENDS Clang Boost
     SOURCE_DIR "Source"
