@@ -41,6 +41,11 @@ namespace ursine
 
             unsigned GetTextureIDByName(const std::string name);
 
+            GfxHND CreateDynamicTexture(const unsigned width, const unsigned height);
+            Texture *GetDynamicTexture(GfxHND &handle);
+            void ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height);
+            void DestroyDynamicTexture(GfxHND &handle);
+
         private:
             void TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height);
 

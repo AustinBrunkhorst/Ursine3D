@@ -47,11 +47,14 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 //handle IDs
 #define ID_RENDERABLE 170
-#define ID_TEXTURE    219
+#define ID_TEXTURE    113
 #define ID_MODEL      146
 #define ID_CAMERA     123
 #define ID_VIEWPORT   42
 #define ID_UI         87
+
+//sanity values
+#define SANITY_RESOURCE 73
 
 namespace ursine
 {

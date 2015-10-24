@@ -41,7 +41,7 @@ void main(
   float halfHeight = distance / 2000.f * input[ 0 ].size;
 
   //crossing the up and plane gets us the right
-  float3 rightVector = cross( camUp, look );
+  float3 rightVector = cross( camUp.xyz, look.xyz );
   float3 upVector = cross( look, rightVector );
 
   //scale by width/height

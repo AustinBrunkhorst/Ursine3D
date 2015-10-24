@@ -28,7 +28,7 @@ namespace ursine
         const float PI_SQR = PI * PI;
         const float SQRT_2 = 1.4142f;
 
-        const float MAX_FLOAT = std::numeric_limits<float>::max( );
+        const float MAX_FLOAT = std::numeric_limits<float>::max();
 
         template<typename T>
         inline bool IsZero(T value);

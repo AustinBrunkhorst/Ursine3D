@@ -50,7 +50,6 @@ namespace ursine
 #else
 
         settings.log_severity = LOGSEVERITY_DISABLE;
-        //settings.pack_loading_disabled = true;
 
 #endif
 
@@ -74,13 +73,12 @@ namespace ursine
         Application::Instance->Disconnect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
 
-    CefRefPtr<UIView> UIManager::CreateView(Window *window, const std::string &url)
+    UIView::Handle UIManager::CreateView(Window::Handle window, const std::string &url) const
     {
         CefBrowserSettings settings;
 
         settings.windowless_frame_rate = 144;
         settings.webgl = STATE_DISABLED;
-        settings.java = STATE_DISABLED;
         settings.plugins = STATE_DISABLED;
         settings.javascript = STATE_ENABLED;
         settings.javascript_access_clipboard = STATE_ENABLED;

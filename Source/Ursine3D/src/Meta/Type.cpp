@@ -254,7 +254,7 @@ namespace ursine
             return database.types[ m_id ].name;
         }
 
-        const MetaManager& Type::GetMeta(void) const
+        const MetaManager &Type::GetMeta(void) const
         {
             return database.types[ m_id ].meta;
         }
@@ -512,12 +512,16 @@ namespace ursine
                 GetName( ).c_str( )
             );
 
-            if (IsPrimitive( ))
+            if (IsPrimitive( ) || IsEnum( ))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
                     return { instance.ToDouble( ) };
  
                 return { instance.ToInt( ) };
+            }
+            else if (*this == typeof( std::string ))
+            {
+                return { instance.ToString( ) };
             }
             
             Json::object object { };
@@ -528,7 +532,7 @@ namespace ursine
             {
                 auto value = field.second.GetValue( instance );
 
-                object[ field.first ] = value.GetType( ).SerializeJson( value );
+                object[ field.first ] = value.SerializeJson( );
             }
 
             return object;
@@ -549,6 +553,10 @@ namespace ursine
                     return { static_cast<float>( value.number_value( ) ) };
                 else if (*this == typeof( double ))
                     return { value.number_value( ) };
+            }
+            else if (IsEnum( ))
+            {
+                return { value.int_value( ) };
             }
             else if (*this == typeof( std::string ))
             {

@@ -1,20 +1,23 @@
 package ursine.editor.windows;
 
-import ursine.editor.scene.Entity;
+import ursine.native.Property;
+import ursine.editor.scene.entity.Entity;
+import ursine.editor.scene.entity.EntityEvent;
+import ursine.editor.scene.component.inspectors.ComponentInspectionHandler;
 
 class EntityInspector extends WindowHandler {
     public static var instance : EntityInspector;
 
     private var m_inspectedEntity : Entity = null;
 
-    private var m_componentContainers : Map<String, ComponentInspectionHandler>;
+    private var m_componentHandlers : Map<String, ComponentInspectionHandler>;
 
     public function new() {
         instance = this;
 
         super( );
 
-        m_componentContainers = new Map<String, ComponentInspectionHandler>( );
+        m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
 
         window.heading = "Inspector";
 
@@ -36,22 +39,39 @@ class EntityInspector extends WindowHandler {
     }
 
     private function onInspectedEntityComponentChanged(e) {
-        trace( 'changed!!!!' );
-        trace( e );
+        m_componentHandlers[ e.component ].updateField( e.field, e.value );
     }
 
     private function clearOldInspection() {
         if (m_inspectedEntity != null)
-            m_inspectedEntity.events.off( 'componentChanged', onInspectedEntityComponentChanged );
+            m_inspectedEntity.events.off( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
 
-        for (container in m_componentContainers)
-            window.container.removeChild( container );
+        for (handler in m_componentHandlers)
+            window.container.removeChild( handler.inspector );
 
         // reset containers
-        m_componentContainers = new Map<String, ComponentInspectionHandler>( );
+        m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
     }
 
     public function initializeInspection() {
-        m_inspectedEntity.events.on( 'componentChanged', onInspectedEntityComponentChanged );
+        m_inspectedEntity.events.on( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
+
+        var inspection = m_inspectedEntity.inspect( );
+
+        var database = Editor.instance.componentDatabase;
+
+        for (component in inspection) {
+            var type = database.getComponentType( component.type );
+
+            // skip components marked hidden in inspector
+            if (Reflect.hasField( type.meta, Property.HiddenInInspector ))
+                continue;
+
+            var handler = database.createComponentInspector( m_inspectedEntity, component );
+
+            m_componentHandlers[ component.type ] = handler;
+
+            window.container.appendChild( handler.inspector );
+        }
     }
 }

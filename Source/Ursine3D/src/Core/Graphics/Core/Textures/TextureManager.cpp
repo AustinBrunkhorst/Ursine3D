@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "DDSTextureLoader.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
 
 namespace ursine
 {
@@ -130,7 +131,12 @@ namespace ursine
             for (auto i : m_textureList)
             {
                 if (i.second != nullptr)
-                    RELEASE_RESOURCE(i.second->Texture_);
+                {
+                    RELEASE_RESOURCE(i.second->m_shaderResource);
+                    RELEASE_RESOURCE(i.second->m_texture2d);
+                }
+
+                delete i.second;
             }
 
             m_textureList.clear();
@@ -146,12 +152,12 @@ namespace ursine
 
         void TextureManager::MapTextureByName(const std::string name, const unsigned int bufferIndex)
         {
-            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureList[ name ]->Texture_);
+            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureList[ name ]->m_shaderResource);
         }
 
         void TextureManager::MapTextureByID(const unsigned ID, const unsigned int bufferIndex)
         {
-            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_hashTextureList[ ID ]->Texture_);
+            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_hashTextureList[ ID ]->m_shaderResource);
         }
 
         void TextureManager::MapSamplerState(const Sampler type, const unsigned bufferIndex)
@@ -163,6 +169,171 @@ namespace ursine
         {
             return m_lookupTextureList[ name ];
         }
+
+        GfxHND TextureManager::CreateDynamicTexture(const unsigned width, const unsigned height)
+        {
+            HRESULT result;
+            D3D11_TEXTURE2D_DESC desc;
+            GfxHND handle;
+            _RESOURCEHND *id = HND_RSRCE(handle);
+
+            //create a name for this guy
+            std::stringstream strName;
+            strName << "DynamicTex" << m_textureCount;
+
+            std::string name = strName.str();
+
+            //alloc texture
+            m_textureList[ name ] = new Texture();
+
+            //setup texture2d desc
+            desc.Width = width;
+            desc.Height = height;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.SampleDesc.Count = 1;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_DYNAMIC;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            desc.MiscFlags = 0;
+
+            //create the texture2d
+            result = m_device->CreateTexture2D(&desc, nullptr, &m_textureList[ name ]->m_texture2d);
+            UAssert(result == S_OK, "Failed to create texture2D description! (Error '%s')", DXCore::GetDXErrorMessage(result));
+
+            //create shader resource
+            D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+            shaderResourceViewDesc.Format = desc.Format;
+            shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+            shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+            shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+            result = m_device->CreateShaderResourceView(m_textureList[ name ]->m_texture2d, &shaderResourceViewDesc, &m_textureList[ name ]->m_shaderResource);
+            UAssert(result == S_OK, "Failed to create shader resource view! (Error '%s')", DXCore::GetDXErrorMessage(result));
+
+            //set information
+            m_textureList[ name ]->m_width = width;
+            m_textureList[ name ]->m_height = height;
+            m_lookupTextureList[ name ] = m_textureCount;
+            m_hashTextureList[ m_textureCount ] = m_textureList[ name ];
+
+            id->ID_ = SANITY_RESOURCE;
+            id->Type_ = ID_TEXTURE;
+            id->Index_ = m_textureCount++;
+
+            return handle;
+        }
+
+        Texture* TextureManager::GetDynamicTexture(GfxHND &handle)
+        {
+            int id;
+
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+
+            //make sure it's a resource
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+
+            //make sure it's of the right type
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            //make sure valid resource was given
+            UAssert(m_hashTextureList[ id ] != nullptr, "Tried to get invalid dynamic texture!");
+
+            //check to see if this texture is actually a dynamic texture
+            //if it's static, its tex2d ptr will be null
+            UAssert(m_hashTextureList[ id ]->m_texture2d != nullptr, "Tried to get static texture!");
+
+            return m_hashTextureList[ id ];
+        }
+
+        void TextureManager::ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height)
+        {
+            D3D11_TEXTURE2D_DESC desc;
+            D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+            HRESULT result;
+            int id;
+
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+
+            //make sure it's a resource
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to resize dynamic texture with invalid handle!");
+
+            //make sure it's of the right type
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to resize dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            //make sure valid resource was given
+            UAssert(m_hashTextureList[ id ] != nullptr, "Tried to resize invalid dynamic texture!");
+
+            //check to see if this texture is actually a dynamic texture
+                //if it's static, its tex2d ptr will be null
+            UAssert(m_hashTextureList[ id ]->m_texture2d != nullptr, "Tried to resize static texture!");
+
+            //release current resources
+            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_shaderResource);
+            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_texture2d);
+
+            //re-create the buffers, update the values in the texture
+            m_hashTextureList[ id ]->m_width = width;
+            m_hashTextureList[ id ]->m_height = height;
+
+            //set data
+            desc.Width = width;
+            desc.Height = height;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.SampleDesc.Count = 1;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_DYNAMIC;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            desc.MiscFlags = 0;
+
+            //create the 2d tex
+            result = m_device->CreateTexture2D(&desc, nullptr, &m_hashTextureList[ id ]->m_texture2d);
+            UAssert(result == S_OK, "Failed to create texture2D description! (Error '%s')", DXCore::GetDXErrorMessage(result));
+
+            //create shader resource
+            shaderResourceViewDesc.Format = desc.Format;
+            shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+            shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+            shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+            //create shader resource
+            result = m_device->CreateShaderResourceView(m_hashTextureList[ id ]->m_texture2d, &shaderResourceViewDesc, &m_hashTextureList[ id ]->m_shaderResource);
+            UAssert(result == S_OK, "Failed to create shader resource view! (Error '%s')", DXCore::GetDXErrorMessage(result));
+        }
+
+        void TextureManager::DestroyDynamicTexture(GfxHND& handle)
+        {
+            int id;
+
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+
+            //make sure it's a resource
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to destroy dynamic texture with invalid handle!");
+
+            //make sure it's of the right type
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to destroy dynamic texture with handle of invalid type!");
+
+            id = hnd->ID_;
+
+            //make sure valid resource was given
+            UAssert(m_hashTextureList[ id ] != nullptr, "Tried to destroy invalid dynamic texture!");
+
+            //check to see if this texture is actually a dynamic texture
+            //if it's static, its tex2d ptr will be null
+            UAssert(m_hashTextureList[ id ]->m_texture2d != nullptr, "Tried to destroy static texture!");
+        
+            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_shaderResource);
+            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_texture2d);
+
+            handle = 0;
+        }   
 
         void TextureManager::TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height)
         {
@@ -188,13 +359,13 @@ namespace ursine
 
             m_textureList[ name ] = new Texture();
 
-            result = DirectX::CreateDDSTextureFromFile(m_device, strToWchart(path), nullptr, &m_textureList[ name ]->Texture_);
+            result = DirectX::CreateDDSTextureFromFile(m_device, strToWchart(path), nullptr, &m_textureList[ name ]->m_shaderResource);
 
             UAssert(result != HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND), "Texture '%s' was not found!", path.c_str());
             UAssert(result == S_OK, "Failed to load texture: '%s'", name.c_str());
 
-            m_textureList[ name ]->Width_ = width;
-            m_textureList[ name ]->Height_ = height;
+            m_textureList[ name ]->m_width = width;
+            m_textureList[ name ]->m_height = height;
             m_lookupTextureList[ name ] = m_textureCount;
             m_hashTextureList[ m_textureCount++ ] = m_textureList[ name ];
         }

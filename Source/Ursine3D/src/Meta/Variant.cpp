@@ -80,6 +80,11 @@ namespace ursine
             return m_base ? m_base->ToString( ) : std::string( );
         }
 
+        Json Variant::SerializeJson(void) const
+        {
+            return GetType( ).SerializeJson( *this );
+        }
+
         void Variant::Swap(Variant &other)
         {
             std::swap( m_base, other.m_base );

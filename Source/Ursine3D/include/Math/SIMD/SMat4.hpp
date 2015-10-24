@@ -373,7 +373,7 @@ namespace ursine
 
 	INLINE void SMat4::setTRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale)
 	{
-		*this = SMat4( rotation ) * SMat4( scale );
+		*this = SMat4( rotation ) * SMat4( scale.X( ), scale.Y( ), scale.Z( ) );
 
 		SetColumn( 3, SVec4( translation, 1.0f ) );
 	}
@@ -427,22 +427,22 @@ namespace ursine
 
 	INLINE void SMat4::Rotation(SMat4 &mat, float z_degrees, float x_degrees, float y_degrees)
 	{
-        float A, B, C, D, E, F;
+        float cx, sx, cy, sy, cz, sz;
 
-		float x = math::DegreesToRadians( x_degrees );
-		float y = math::DegreesToRadians( y_degrees );
-		float z = math::DegreesToRadians( z_degrees );
+		math::SinCos( math::DegreesToRadians( x_degrees ), sx, cx );
+		math::SinCos( math::DegreesToRadians( y_degrees ), sy, cy );
+		math::SinCos( math::DegreesToRadians( z_degrees ), sz, cz );
 
-		math::SinCos( x, B, A );
-		math::SinCos( y, D, C );
-		math::SinCos( z, F, E );
+		float cycz = cy * cz;
+		float sxsy = sx * sy;
+		float szcy = sz * cy;
 
 		mat.Set(
-            C*E, -C*F, -D, 0,
-            -B*D*E + A*F, B*D*F + A*E, -B*C, 0,
-            A*D*E + B*F, -A*D*F + B*E, A*C, 0,
-            0, 0, 0, 1
-        );
+			cycz + sxsy * sz, cz * sxsy - szcy, cx * sx, 0.0f,
+			cx * sz, cx * cz, -sx, 0.0f,
+			szcy * sx - cz * sy, cycz * sx + sy * sz, cx * cy, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		);
 	}
 
 	INLINE void SMat4::Scale(const SVec3 &scale)
@@ -1041,8 +1041,11 @@ namespace ursine
 	INLINE SMat4 SMat4::LookAt(const SVec3 &targetDirection, const SVec3 &localForward, const SVec3 &localUp, const SVec3 &worldUp)
 	{
 		SMat4 mat;
+        SMat3 lookMat;
 
-		mat.setRotation( SMat3::LookAt( targetDirection, localForward, localUp, worldUp ) );
+        lookMat.LookAt(targetDirection, localForward, localUp, worldUp);
+
+		mat.setRotation( lookMat );
 		mat.SetRow( 3, SVec4( 0, 0, 0, 1 ) );
 
 		return mat;
@@ -1052,10 +1055,13 @@ namespace ursine
     						   const SVec3 &localUp, const SVec3 &worldUp)
 	{
 		SMat4 mat;
+        SMat3 lookMat;
 		auto dir = targetPos - eyePos;
 		dir.Normalize( );
 
-		mat.setRotation( SMat3::LookAt( dir, localForward, localUp, worldUp ) );
+        lookMat.LookAt(dir, localForward, localUp, worldUp);
+
+		mat.setRotation( lookMat );
 		mat.SetColumn( 3, SVec4( eyePos, 1.0f ) );
 		mat.SetRow( 3, SVec4( 0.0f, 0.0f, 0.0f, 1.0f) );
 

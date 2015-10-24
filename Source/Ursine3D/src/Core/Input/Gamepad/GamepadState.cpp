@@ -34,22 +34,22 @@ namespace ursine
                 return m_triggersCurrent._right >= threshold;
 
             case BTN_STICK_LEFT_UP:
-                return m_sticksCurrent.m_left.Y() >= threshold;
+                return m_sticksCurrent.m_left.Y( ) >= threshold;
             case BTN_STICK_LEFT_DOWN:
-                return m_sticksCurrent.m_left.Y() <= -threshold;
+                return m_sticksCurrent.m_left.Y( ) <= -threshold;
             case BTN_STICK_LEFT_LEFT:
-                return m_sticksCurrent.m_left.X() <= -threshold;
+                return m_sticksCurrent.m_left.X( ) <= -threshold;
             case BTN_STICK_LEFT_RIGHT:
-                return m_sticksCurrent.m_left.X() >= threshold;
+                return m_sticksCurrent.m_left.X( ) >= threshold;
 
             case BTN_STICK_RIGHT_UP:
-                return m_sticksCurrent.m_right.Y() >= threshold;
+                return m_sticksCurrent.m_right.Y( ) >= threshold;
             case BTN_STICK_RIGHT_DOWN:
-                return m_sticksCurrent.m_right.Y() <= -threshold;
+                return m_sticksCurrent.m_right.Y( ) <= -threshold;
             case BTN_STICK_RIGHT_LEFT:
-                return m_sticksCurrent.m_right.X() <= -threshold;
+                return m_sticksCurrent.m_right.X( ) <= -threshold;
             case BTN_STICK_RIGHT_RIGHT:
-                return m_sticksCurrent.m_right.X() >= threshold;
+                return m_sticksCurrent.m_right.X( ) >= threshold;
 
             default:
                 return m_btnsCurrent[ button ] == SDL_TRUE;
@@ -66,22 +66,22 @@ namespace ursine
                 return m_triggersCurrent._right < threshold;
 
             case BTN_STICK_LEFT_UP:
-                return m_sticksCurrent.m_left.Y() < threshold;
+                return m_sticksCurrent.m_left.Y( ) < threshold;
             case BTN_STICK_LEFT_DOWN:
-                return m_sticksCurrent.m_left.Y() > -threshold;
+                return m_sticksCurrent.m_left.Y( ) > -threshold;
             case BTN_STICK_LEFT_LEFT:
-                return m_sticksCurrent.m_left.X() > -threshold;
+                return m_sticksCurrent.m_left.X( ) > -threshold;
             case BTN_STICK_LEFT_RIGHT:
-                return m_sticksCurrent.m_left.X() < threshold;
+                return m_sticksCurrent.m_left.X( ) < threshold;
 
             case BTN_STICK_RIGHT_UP:
-                return m_sticksCurrent.m_right.Y() < threshold;
+                return m_sticksCurrent.m_right.Y( ) < threshold;
             case BTN_STICK_RIGHT_DOWN:
-                return m_sticksCurrent.m_right.Y() > -threshold;
+                return m_sticksCurrent.m_right.Y( ) > -threshold;
             case BTN_STICK_RIGHT_LEFT:
-                return m_sticksCurrent.m_right.X() > -threshold;
+                return m_sticksCurrent.m_right.X( ) > -threshold;
             case BTN_STICK_RIGHT_RIGHT:
-                return m_sticksCurrent.m_right.X() < threshold;
+                return m_sticksCurrent.m_right.X( ) < threshold;
 
             default:
                 return m_btnsCurrent[ button ] == SDL_FALSE;
@@ -94,40 +94,40 @@ namespace ursine
         {
             case BTN_TRIGGER_LEFT:
                 return m_triggersLast._left < threshold &&
-                    m_triggersCurrent._left >= threshold;
+                       m_triggersCurrent._left >= threshold;
             case BTN_TRIGGER_RIGHT:
                 return m_triggersLast._right < threshold &&
-                    m_triggersCurrent._right >= threshold;
+                       m_triggersCurrent._right >= threshold;
 
             case BTN_STICK_LEFT_UP:
-                return m_sticksLast.m_left.Y() < threshold &&
-                    m_sticksCurrent.m_left.Y() >= threshold;
+                return m_sticksLast.m_left.Y( ) < threshold &&
+                       m_sticksCurrent.m_left.Y( ) >= threshold;
             case BTN_STICK_LEFT_DOWN:
-                return m_sticksLast.m_left.Y() > -threshold &&
-                    m_sticksCurrent.m_left.Y() <= -threshold;
+                return m_sticksLast.m_left.Y( ) > -threshold &&
+                       m_sticksCurrent.m_left.Y( ) <= -threshold;
             case BTN_STICK_LEFT_LEFT:
-                return m_sticksLast.m_left.X() > -threshold &&
-                    m_sticksCurrent.m_left.X() <= -threshold;
+                return m_sticksLast.m_left.X( ) > -threshold &&
+                       m_sticksCurrent.m_left.X( ) <= -threshold;
             case BTN_STICK_LEFT_RIGHT:
-                return m_sticksLast.m_left.X() < threshold &&
-                    m_sticksCurrent.m_left.X() >= threshold;
+                return m_sticksLast.m_left.X( ) < threshold &&
+                       m_sticksCurrent.m_left.X( ) >= threshold;
 
             case BTN_STICK_RIGHT_UP:
-                return m_sticksLast.m_right.Y() < threshold &&
-                    m_sticksCurrent.m_right.Y() >= threshold;
+                return m_sticksLast.m_right.Y( ) < threshold &&
+                       m_sticksCurrent.m_right.Y( ) >= threshold;
             case BTN_STICK_RIGHT_DOWN:
-                return m_sticksLast.m_right.Y() > -threshold &&
-                    m_sticksCurrent.m_right.Y() <= -threshold;
+                return m_sticksLast.m_right.Y( ) > -threshold &&
+                       m_sticksCurrent.m_right.Y( ) <= -threshold;
             case BTN_STICK_RIGHT_LEFT:
-                return m_sticksLast.m_right.X() > -threshold &&
-                    m_sticksCurrent.m_right.X() <= -threshold;
+                return m_sticksLast.m_right.X( ) > -threshold &&
+                       m_sticksCurrent.m_right.X( ) <= -threshold;
             case BTN_STICK_RIGHT_RIGHT:
-                return m_sticksLast.m_right.X() < threshold &&
-                    m_sticksCurrent.m_right.X() >= threshold;
+                return m_sticksLast.m_right.X( ) < threshold &&
+                       m_sticksCurrent.m_right.X( ) >= threshold;
 
             default:
                 return m_btnsLast[ button ] == SDL_FALSE &&
-                    m_btnsCurrent[ button ] == SDL_TRUE;
+                       m_btnsCurrent[ button ] == SDL_TRUE;
         }
     }
 
@@ -137,40 +137,40 @@ namespace ursine
         {
             case BTN_TRIGGER_LEFT:
                 return m_triggersLast._left >= threshold &&
-                    m_triggersCurrent._left < threshold;
+                        m_triggersCurrent._left < threshold;
             case BTN_TRIGGER_RIGHT:
                 return m_triggersLast._right >= threshold &&
-                    m_triggersCurrent._right < threshold;
+                        m_triggersCurrent._right < threshold;
 
             case BTN_STICK_LEFT_UP:
-                return m_sticksLast.m_left.Y() >= threshold &&
-                    m_sticksCurrent.m_left.Y() < threshold;
+                return m_sticksLast.m_left.Y( ) >= threshold &&
+                        m_sticksCurrent.m_left.Y( ) < threshold;
             case BTN_STICK_LEFT_DOWN:
-                return m_sticksLast.m_left.Y() <= -threshold &&
-                    m_sticksCurrent.m_left.Y() > -threshold;
+                return m_sticksLast.m_left.Y( ) <= -threshold &&
+                        m_sticksCurrent.m_left.Y( ) > -threshold;
             case BTN_STICK_LEFT_LEFT:
-                return m_sticksLast.m_left.X() <= -threshold &&
-                    m_sticksCurrent.m_left.X() > -threshold;
+                return m_sticksLast.m_left.X( ) <= -threshold &&
+                        m_sticksCurrent.m_left.X( ) > -threshold;
             case BTN_STICK_LEFT_RIGHT:
-                return m_sticksLast.m_left.X() >= threshold &&
-                    m_sticksCurrent.m_left.X() < threshold;
+                return m_sticksLast.m_left.X( ) >= threshold &&
+                        m_sticksCurrent.m_left.X( ) < threshold;
 
             case BTN_STICK_RIGHT_UP:
-                return m_sticksLast.m_right.Y() >= threshold &&
-                    m_sticksCurrent.m_right.Y() < threshold;
+                return m_sticksLast.m_right.Y( ) >= threshold &&
+                        m_sticksCurrent.m_right.Y( ) < threshold;
             case BTN_STICK_RIGHT_DOWN:
-                return m_sticksLast.m_right.Y() <= -threshold &&
-                    m_sticksCurrent.m_right.Y() > -threshold;
+                return m_sticksLast.m_right.Y( ) <= -threshold &&
+                        m_sticksCurrent.m_right.Y( ) > -threshold;
             case BTN_STICK_RIGHT_LEFT:
-                return m_sticksLast.m_right.X() <= -threshold &&
-                    m_sticksCurrent.m_right.X() > -threshold;
+                return m_sticksLast.m_right.X( ) <= -threshold &&
+                        m_sticksCurrent.m_right.X( ) > -threshold;
             case BTN_STICK_RIGHT_RIGHT:
-                return m_sticksLast.m_right.X() >= threshold &&
-                    m_sticksCurrent.m_right.X() < threshold;
+                return m_sticksLast.m_right.X( ) >= threshold &&
+                        m_sticksCurrent.m_right.X( ) < threshold;
 
             default:
                 return m_btnsLast[ button ] == SDL_TRUE &&
-                    m_btnsCurrent[ button ] == SDL_FALSE;
+                        m_btnsCurrent[ button ] == SDL_FALSE;
         }
     }
 
@@ -198,14 +198,16 @@ namespace ursine
 
     void GamepadState::virtualSetPressed(GamepadButton button)
     {
-        UAssert(button < BTN_MAX, "Cannot set button state for virtual buttons (digital).");
+        UAssert( button < BTN_MAX, 
+            "Cannot set button state for virtual buttons (digital)." );
 
         m_btnsCurrent[ button ] = SDL_TRUE;
     }
 
     void GamepadState::virtualSetReleased(GamepadButton button)
     {
-        UAssert(button < BTN_MAX, "Cannot set button state for virtual buttons (digital).");
+        UAssert( button < BTN_MAX, 
+            "Cannot set button state for virtual buttons (digital)." );
 
         m_btnsCurrent[ button ] = SDL_FALSE;
     }

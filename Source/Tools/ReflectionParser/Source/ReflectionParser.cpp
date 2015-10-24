@@ -8,6 +8,7 @@
 #include "LanguageTypes/Function.h"
 #include "LanguageTypes/Enum.h"
 
+#include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -28,7 +29,12 @@ ReflectionParser::ReflectionParser(const ReflectionOptions &options)
     , m_index( nullptr )
     , m_translationUnit( nullptr )
 {
-   
+    // replace special characters in target name with underscores
+    m_options.targetName = boost::regex_replace(
+        m_options.targetName, 
+        boost::regex( "[^a-zA-Z0-9]+" ), 
+        "_" 
+    );
 }
 
 ReflectionParser::~ReflectionParser(void)
