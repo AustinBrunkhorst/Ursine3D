@@ -117,7 +117,7 @@ namespace ursine
                 //Set up the description of the stencil state.
                 depthCheckStencilDesc.DepthEnable = false;
                 depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
                 depthCheckStencilDesc.StencilEnable = true;
                 depthCheckStencilDesc.StencilReadMask = 0xFF;
@@ -133,14 +133,14 @@ namespace ursine
                 depthCheckStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
                 depthCheckStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
                 depthCheckStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-                depthCheckStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_GREATER;
+                depthCheckStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_NEVER;
 
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_NODEPTH_STENCIL ]);
                 UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
 
                 /////////////////////////////////////////////////////////////////
-                // ALWAYS PASS DEPTH AND STENCIL
+                // point light sutff
                 ZeroMemory(&depthCheckStencilDesc, sizeof(depthCheckStencilDesc));
 
                 //Set up the description of the stencil state.
@@ -152,6 +152,8 @@ namespace ursine
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_POINTLIGHT ]);
                 UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
 
+                /////////////////////////////////////////////////////////////////
+                // ALWAYS PASS DEPTH AND STENCIL
                 ZeroMemory(&depthCheckStencilDesc, sizeof(depthCheckStencilDesc));
 
                 //Set up the description of the stencil state.

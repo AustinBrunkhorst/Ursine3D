@@ -395,10 +395,13 @@ namespace ursine
             w *= gvp.Width;
             h *= gvp.Height;
 
+            currentCamera.SetScreenDimensions(w, h);
+            currentCamera.SetScreenPosition(gvp.TopLeftX, gvp.TopLeftY);
+
             /////////////////////////////////////////////////////////////////
             // gets the projection matrix and view matrix
             SMat4 proj, view;
-            proj = currentCamera.GetProjMatrix(w, h);
+            proj = currentCamera.GetProjMatrix();
             view = currentCamera.GetViewMatrix();
 
             /////////////////////////////////////////////////////////////////
@@ -438,11 +441,12 @@ namespace ursine
 
             //debug 
             PrepForDebugRender();
-            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
             RenderDebugPoints(view, proj, currentCamera);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera);
             gfxProfiler->Stamp(PROFILE_DEBUG);
+
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
             PrepForFinalOutput();
@@ -494,11 +498,13 @@ namespace ursine
             w *= gvp.Width;
             h *= gvp.Height;
 
+            currentCamera.SetScreenDimensions(w, h);
+
             /////////////////////////////////////////////////////////////////
             // gets the projection matrix and view matrix
             SMat4 proj, view;
 
-            proj = currentCamera.GetProjMatrix(w, h);
+            proj = currentCamera.GetProjMatrix();
             view = currentCamera.GetViewMatrix();
 
             /////////////////////////////////////////////////////////////////
@@ -734,8 +740,6 @@ namespace ursine
             dxCore->SetBlendState(BLEND_STATE_NONE);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
             dxCore->SetRenderTarget(RENDER_TARGET_DEBUG);
-            shaderManager->BindShader(SHADER_PRIMITIVE);
-            layoutManager->SetInputLayout(SHADER_PRIMITIVE);
             bufferManager->MapTransformBuffer(SMat4::Identity());
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
         }
