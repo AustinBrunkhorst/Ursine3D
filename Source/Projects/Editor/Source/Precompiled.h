@@ -1,7 +1,5 @@
 #pragma once
 
-#define NOMINMAX
-
 #include <windows.h>
 
 #include <string>
@@ -47,3 +45,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <EntityManager.h>
+
+#include "EditorEntityManager.h"
+#include "Project.h"

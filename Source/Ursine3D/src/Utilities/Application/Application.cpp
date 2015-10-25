@@ -92,6 +92,7 @@ namespace ursine
 
         Instance = nullptr;
     }
+
     void Application::Run(void)
     {
         SDL_Event e;

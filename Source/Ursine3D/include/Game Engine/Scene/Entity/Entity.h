@@ -129,6 +129,55 @@ namespace ursine
             // (chances are you don't need to use it)
             ComponentVector GetComponents(void) const;
 
+			////////////////////////////////////////////////////////////////////
+			// Hierarchy
+			////////////////////////////////////////////////////////////////////
+
+			// Gets a component of the specified type in this entity's children (type safe) (depth first)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInChildren(void) const;
+
+			// Gets a component of the specified type id in this entity's children (depth first)
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInChildren(ComponentTypeID id) const;
+
+			// Gets a component of the specified type in this entity's parent (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline ComponentType *GetComponentInParent(void) const;
+
+			// Gets a component of the specified type id in this entity's parent
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			Component *GetComponentInParent(ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's children (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInChildren(void) const;
+
+			// Gets the components of the specified type id in this entity's children
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInChildren(ComponentTypeID id) const;
+
+			// Gets the components of the specified type in this entity's parents (type safe)
+			// nullptr if it doesn't exist
+			template<class ComponentType>
+			inline std::vector<ComponentType*> GetComponentsInParents(void) const;
+
+			// Gets the components of the specified type id in this entity's parents
+			// nullptr if it doesn't exist. Use the type safe version when possible
+			ComponentVector GetComponentsInParents(ComponentTypeID id) const;
+
+            // Find this entity's index in relation to the other children
+            uint GetSiblingIndex(void) const;
+
+            // Move this entity to the start of the parent's children lists
+            void SetAsFirstSibling(void);
+
+            // Sets this entity's index in the parent's children list
+            void SetSiblingIndex(uint index) const;
+
             ////////////////////////////////////////////////////////////////////
             // Events
             ////////////////////////////////////////////////////////////////////

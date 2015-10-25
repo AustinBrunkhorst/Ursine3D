@@ -15,6 +15,8 @@
 
 #include "UrsineTypes.h"
 
+#include "ComponentProperties.h"
+
 #include <vector>
 
 // Gets the unique id of this component type

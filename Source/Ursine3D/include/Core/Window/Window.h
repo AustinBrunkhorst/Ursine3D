@@ -14,6 +14,8 @@ namespace ursine
         : public EventDispatcher<WindowEventType>
     {
     public:
+        typedef std::shared_ptr<Window> Handle;
+
         ~Window(void);
 
         const Vec2 &GetSize(void) const;
@@ -25,7 +27,7 @@ namespace ursine
 
         bool IsFocused(void) const;
 
-        WindowHandle *GetHandle(void) const;
+        InternalWindowHandle GetInternalHandle(void) const;
         void *GetPlatformHandle(void);
 
         uint32 GetID(void) const;
@@ -50,7 +52,7 @@ namespace ursine
     private:
         friend class WindowManager;
 
-        Window(WindowManager *manager, WindowHandle *handle);
+        Window(WindowManager *manager, InternalWindowHandle handle);
 
         // determines if the window is currently focused
         bool m_isFocused;
@@ -64,7 +66,7 @@ namespace ursine
         uint32 m_id;
 
         WindowManager *m_manager;
-        WindowHandle *m_handle;
+        InternalWindowHandle m_handle;
 
         Vec2 m_size;
         Vec2 m_location;

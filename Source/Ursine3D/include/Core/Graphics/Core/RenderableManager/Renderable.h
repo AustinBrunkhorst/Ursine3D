@@ -16,6 +16,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
+#include "EntityConfig.h"
 #include "GFXAPIDefines.h"
 #include <string>
 #include "SMat4.h"
@@ -34,8 +35,11 @@ namespace ursine
         public:
             Renderable(void);
             void Initialize(void);
+            void SetEntityUniqueID(const ecs::EntityUniqueID id);
+            ecs::EntityUniqueID GetEntityUniqueID() const;
 
         private:
+            ecs::EntityUniqueID entityID;
             bool Active_;
         };
 

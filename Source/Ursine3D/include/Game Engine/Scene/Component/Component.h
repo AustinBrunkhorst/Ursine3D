@@ -16,6 +16,7 @@
 #include "Meta.h"
 
 #include "ComponentConfig.h"
+#include "EventDispatcher.h"
 
 namespace ursine
 {

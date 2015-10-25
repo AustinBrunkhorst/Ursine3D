@@ -14,6 +14,16 @@ namespace ursine
 
         void Renderable::Initialize() {}
 
+        void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
+        {
+            entityID = id;
+        }
+
+        ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
+        {
+            return entityID;
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
@@ -311,7 +321,7 @@ namespace ursine
             return m_type;
         }
 
-        void Light::SetType(const LightType type)
+        void Light::SetType(const Light::LightType type)
         {
             m_type = type;
         }

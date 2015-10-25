@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Renderable.h"
+#include "GfxAPI.h"
 
 namespace ursine
 {
@@ -19,11 +20,21 @@ namespace ursine
             void OnInitialize(void) override;
 
             //get/set model
+            void SetModel(const std::string &name);
+            ursine::graphics::Model3D *GetModel(void);
+            
             //get/set texture
-            //get/set world matrix
 
         private:
-            ursine::graphics::Model3D *m_model;
+
+            // This model component's model in the renderer
+            graphics::Model3D *m_model;
+
+            // The graphics core API
+            graphics::GfxAPI *m_graphics;
+
+            void onUpdateRenderer(EVENT_HANDLER(Entity));
+
         } Meta( Enable, DisplayName( "Model3D" ) );
     }
 }

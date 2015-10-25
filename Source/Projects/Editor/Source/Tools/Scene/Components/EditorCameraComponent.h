@@ -1,8 +1,6 @@
-
-
 #pragma once
 
-#include "Component.h"
+#include <Component.h>
 #include <Core/Graphics/Core/Camera/Camera.h>
 #include <Core/Graphics/API/GFXAPIDefines.h>
 

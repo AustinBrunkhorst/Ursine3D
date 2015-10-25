@@ -52,5 +52,45 @@ namespace ursine
                 ) 
             );
         }
+
+        template <class ComponentType>
+        ComponentType* EntityManager::GetComponentInChildren(const Entity* entity) const
+        {
+            return static_cast<ComponentType*>(GetComponentInChildren(entity,
+                GetComponentID(ComponentType)));
+        }
+
+        template <class ComponentType>
+        ComponentType* EntityManager::GetComponentInParent(const Entity* entity) const
+        {
+            return static_cast<ComponentType*>(GetComponentInParent(entity,
+                GetComponentID(ComponentType)));
+        }
+
+        template <class ComponentType>
+        std::vector<ComponentType*> EntityManager::GetComponentsInChildren(const Entity* entity) const
+        {
+            auto components = GetComponentsInChildren( entity, GetComponentID( ComponentType ) );
+
+            std::vector<ComponentType*> derivedVector;
+
+            for (auto &component : components)
+                derivedVector.push_back( static_cast<ComponentType*>( component ) );
+            
+            return derivedVector;
+        }
+
+        template <class ComponentType>
+        std::vector<ComponentType*> EntityManager::GetComponentsInParents(const Entity* entity) const
+        {
+            auto components = GetComponentsInParents( entity, GetComponentID( ComponentType ) );
+
+            std::vector<ComponentType*> derivedVector;
+
+            for (auto &component : components)
+                derivedVector.push_back( static_cast<ComponentType*>( component ) );
+            
+            return derivedVector;
+        }
     }
 }
