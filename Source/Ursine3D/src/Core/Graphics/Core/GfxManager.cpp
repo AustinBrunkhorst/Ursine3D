@@ -171,6 +171,7 @@ namespace ursine
 
             //get a new draw call
             _DRAWHND &drawCall = m_drawList[ m_drawCount++ ];
+            drawCall.buffer_ = 0;
 
             switch (render->Type_)
             {
@@ -466,6 +467,13 @@ namespace ursine
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
             gfxProfiler->Stamp(PROFILE_SCENE_PRIMITIVE);
+
+            //overdraw render
+            PrepForOverdrawDebugRender(view, proj);
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            RenderDebugPoints(view, proj, currentCamera, true);
+            dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
+            RenderDebugLines(view, proj, currentCamera, true);
 
             //clearing all buffers
             textureManager->MapTextureByName("Wire");
@@ -781,6 +789,16 @@ namespace ursine
             modelManager->BindModel(modelManager->GetModelIDByName("internalQuad"));
         }
 
+        void GfxManager::PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj)
+        {
+            dxCore->SetBlendState(BLEND_STATE_NONE);
+            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
+            bufferManager->MapTransformBuffer(SMat4::Identity( ));
+            dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
+            bufferManager->MapCameraBuffer(view, proj);
+        }
+
         // rendering //////////////////////////////////////////////////////
         void GfxManager::Render3DModel(_DRAWHND handle)
         {
@@ -798,6 +816,7 @@ namespace ursine
             pcb.color.x = c.r;
             pcb.color.y = c.g;
             pcb.color.z = c.b;
+            pcb.color.w = c.a;
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL); 
 
             // END OF TEMP //////////////////////////////////////////
@@ -827,7 +846,7 @@ namespace ursine
             if(handle.Overdraw_)
                 dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
             else
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
 
             //render
             shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
@@ -839,9 +858,9 @@ namespace ursine
                 dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
                 dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
 
-                pcb.color.x = 0.75;
-                pcb.color.y = 0.75;
-                pcb.color.z = 0.45;
+                pcb.color.x = 0.75f;
+                pcb.color.y = 0.75f;
+                pcb.color.z = 0.45f;
                 bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
                 mdb.emissive = 4;
@@ -1090,14 +1109,18 @@ namespace ursine
             }
         }
 
-        void GfxManager::RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera)
+        void GfxManager::RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw)
         {
             //render points
-            if (drawingManager->CheckRenderPoints())
+            if ((drawingManager->CheckRenderPoints( ) && !overdraw) || (drawingManager->CheckOverdrawRenderPoints( ) && overdraw))
             {
                 ID3D11Buffer *mesh, *indices;
                 unsigned vertCount, indexCount;
-                drawingManager->ConstructPointMesh(vertCount, indexCount, &mesh, &indices);
+
+                if(!overdraw)
+                    drawingManager->ConstructPointMesh(vertCount, indexCount, &mesh, &indices);
+                else
+                    drawingManager->ConstructOverdrawPointMesh(vertCount, indexCount, &mesh, &indices);
 
                 //set input
                 dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -1121,14 +1144,18 @@ namespace ursine
             }
         }
 
-        void GfxManager::RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera)
+        void GfxManager::RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw)
         {
             //render lines
-            if (drawingManager->CheckRenderLines())
+            if ((drawingManager->CheckRenderLines() && !overdraw) || (drawingManager->CheckOverdrawRenderLines( ) && overdraw))
             {
                 ID3D11Buffer *mesh, *indices;
                 unsigned vertCount, indexCount;
-                drawingManager->ConstructLineMesh(vertCount, indexCount, &mesh, &indices);
+
+                if(!overdraw)
+                    drawingManager->ConstructLineMesh(vertCount, indexCount, &mesh, &indices);
+                else
+                    drawingManager->ConstructOverdrawLineMesh(vertCount, indexCount, &mesh, &indices);
 
                 //set input
                 dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);

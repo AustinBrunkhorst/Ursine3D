@@ -123,6 +123,7 @@ namespace ursine
             void PrepForDebugRender();
             void PrepForFinalOutput();
             void PrepForUI();
+            void PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj);
 
             //rendering funcs
             void Render3DModel(_DRAWHND handle);
@@ -131,8 +132,8 @@ namespace ursine
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
             void RenderPrimitive(_DRAWHND handle);
-            void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
-            void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
+            void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
+            void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
 
             //privates members
         private:

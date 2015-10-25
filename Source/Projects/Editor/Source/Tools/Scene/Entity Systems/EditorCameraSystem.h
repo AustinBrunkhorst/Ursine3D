@@ -15,6 +15,7 @@ public:
     ursine::graphics::Camera *GetEditorCamera();
 
     ursine::SVec3 GetEditorFocusPosition(void);
+    float GetCamZoom(void);
     //private methods
 private:
     void OnInitialize(void) override;

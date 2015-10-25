@@ -17,6 +17,7 @@ Selected::~Selected()
 {
     m_selectBox->Delete();
     GetOwner()->GetComponent<ursine::ecs::Model3D>()->GetModel()->SetMaterialData(0, 0, 0);
+    GetOwner( )->GetComponent<ursine::ecs::Model3D>( )->GetModel( )->SetDebug(false);
 }
 
 void Selected::OnInitialize()
@@ -31,8 +32,9 @@ void Selected::OnInitialize()
     prim.SetType(Primitive::PRIM_CUBE);
 
     prim.SetWorldMatrix(transform->GetLocalToWorldMatrix() * ursine::SMat4(1.1, 1.1 ,1.1));
-
+    
     m_selectBox->GetComponent<ursine::ecs::Renderable>()->SetHandle(handle);
 
     GetOwner()->GetComponent<ursine::ecs::Model3D>()->GetModel()->SetMaterialData(1, 0, 0);
+    GetOwner( )->GetComponent<ursine::ecs::Model3D>( )->GetModel( )->SetDebug(true);
 }

@@ -264,9 +264,15 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     gfx->DrawingMgr.SetColor(0, 0, 1, 1);
     gfx->DrawingMgr.DrawLine(m_camPos - SVec3(0, 0, halfSize), m_camPos + SVec3(0, 0, halfSize));
     gfx->DrawingMgr.DrawPoint(m_camPos + SVec3(0, 0, halfSize));
+
 }
 
 ursine::SVec3 EditorCameraSystem::GetEditorFocusPosition()
 {
     return m_camPos;
+}
+
+float EditorCameraSystem::GetCamZoom()
+{
+    return m_camZoom;
 }
