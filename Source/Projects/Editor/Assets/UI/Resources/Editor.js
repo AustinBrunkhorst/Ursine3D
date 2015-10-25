@@ -15,22 +15,48 @@ Application.main = function() {
 	mainDockContainer.appendChild(mainDock);
 	var leftColumn = mainDock.addColumn();
 	leftColumn.setWidthPercent(0.20);
+	var rows = [leftColumn.addRow(),leftColumn.addRow()];
+	var _g = 0;
+	while(_g < rows.length) {
+		var row = rows[_g];
+		++_g;
+		row.addColumn().setWidthPercent(1.0);
+		row.setHeightPercent(0.5);
+	}
 	var inspector = new EditorWindowControl();
 	inspector.heading = "Inspector";
-	leftColumn.addNode(inspector);
+	rows[0].columns[0].appendChild(inspector);
 	var outline = new EditorWindowControl();
 	outline.heading = "Outline";
-	leftColumn.addNode(outline);
+	rows[1].columns[0].appendChild(outline);
 	var middleColumn = mainDock.addColumn();
 	middleColumn.setWidthPercent(0.40);
+	var rows1 = [middleColumn.addRow(),middleColumn.addRow()];
+	var _g1 = 0;
+	while(_g1 < rows1.length) {
+		var row1 = rows1[_g1];
+		++_g1;
+		row1.addColumn();
+		row1.setHeightPercent(0.5);
+	}
 	var content = new EditorWindowControl();
-	content.heading = "Content Browser";
-	middleColumn.addNode(content);
+	content.heading = "Asset Browser";
+	rows1[0].columns[0].setWidthPercent(1.0);
+	rows1[0].columns[0].appendChild(content);
+	var material = new EditorWindowControl();
+	material.heading = "Material Editor";
+	rows1[1].columns[0].setWidthPercent(0.5);
+	rows1[1].columns[0].appendChild(material);
+	var row2col2 = rows1[1].addColumn();
+	var particle = new EditorWindowControl();
+	particle.heading = "Particle Editor";
+	row2col2.setWidthPercent(0.5);
+	row2col2.appendChild(particle);
 	var rightColumn = mainDock.addColumn();
 	rightColumn.setWidthPercent(0.40);
 	var scene = new EditorWindowControl();
 	scene.heading = "Scene";
-	rightColumn.addNode(scene);
+	rightColumn.addRow().appendChild(scene);
 };
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;

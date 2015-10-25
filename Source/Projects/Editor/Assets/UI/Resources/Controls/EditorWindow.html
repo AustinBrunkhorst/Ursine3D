@@ -1,5 +1,4 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
-<link rel="import" href="Behaviors/Docking/DockNode.html">
 
 <dom-module id="x-editor-window">
     <link rel="import" type="css" href="../Style/Controls/EditorWindow.css">
@@ -26,7 +25,6 @@
             created: function() {
 
             },
-            behaviors: [ DockNodeBehavior ],
 
             get container() {
                 return this.$.container;

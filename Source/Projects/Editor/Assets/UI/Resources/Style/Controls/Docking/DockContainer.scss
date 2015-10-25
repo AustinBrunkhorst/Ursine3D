@@ -10,19 +10,17 @@
       float: left;
       height: 100%;
 
-      &:not(:last-child) {
-        #resize-handle {
-          position: absolute;
-          right: 0;
-          top: 0;
-          bottom: 0;
-          width: $dock-resize-handle-size;
-          background: red;
-          cursor: ew-resize;
+      #resize-handle.active {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: $dock-resize-handle-size;
+        background: red;
+        cursor: ew-resize;
 
-          &:hover, &:active {
-            background: lighten(red, 25%);
-          }
+        &:hover, &:active {
+          background: lighten(red, 25%);
         }
       }
 

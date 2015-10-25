@@ -1,9 +1,8 @@
 <link rel="import" href="../../LIB/Polymer/polymer.html">
-<link rel="import" href="../Behaviors/Docking/DockNode.html">
 
 <dom-module id="x-dock-column">
     <template>
-        <content></content>
+         <content></content>
         <div id="resize-handle"></div>
     </template>
     <script>
@@ -25,9 +24,14 @@
                 this.parent = this.parentNode;
 
                 this._lastResizeWidth = this._getWidthPixels( );
+
+                this.$[ 'resize-handle' ].classList.add( 'active' );
             },
             detached: function() {
                 this.parent = null;
+            },
+            get rows() {
+                return this.querySelectorAll( ':scope > x-dock-container' );
             },
 
             /**
@@ -38,28 +42,36 @@
             setWidthPercent: function(width) {
                 var widthPercent = this._getWidthPercent( );
 
-                var deltaPercent = width - widthPercent;
-
-                var allowedDelta;
-
-                // request an allowed delta from our next sibling
+                // apply the width change to both children
                 if (this.nextSibling) {
-                    allowedDelta = this.nextSibling._applyResizeDelta( deltaPercent );
-                } else {
-                    allowedDelta = deltaPercent;
-                }
+                    var nextWidthPercent = this.nextSibling._getWidthPercent( );
+                    var nextMinWidth = this.nextSibling._getMinWidthPercent( );
 
-                this._setWidthPercent( widthPercent + allowedDelta );
+                    var totalWidthPercent = widthPercent + nextWidthPercent;
+
+                    var newWidthPercent = Math.min(
+                        totalWidthPercent - nextMinWidth,
+                        widthPercent + (width - widthPercent)
+                    );
+
+                    this.nextSibling._setWidthPercent( totalWidthPercent - newWidthPercent );
+
+                    this._setWidthPercent( newWidthPercent );
+                } else {
+                    this._setWidthPercent( widthPercent + (width - widthPercent) );
+                }
             },
 
             /**
-             * Adds a node as a child to this container
-             * @param node
+             * Adds a row as a child to this container
+             * @return {DockContainerControl}
              */
-            addNode: function(node) {
-                node.detachParent( );
+            addRow: function() {
+                var row = new DockContainerControl( );
 
-                this.appendChild( node );
+                this.appendChild( row );
+
+                return row;
             },
 
             _getWidthPixels: function() {
@@ -83,21 +95,6 @@
             },
             _onChildMinWidthChanged: function(width) {
                 this._minWidth = Math.max( 0.0, Math.min( this._minWidth, width ) );
-            },
-            _applyResizeDelta: function(delta) {
-                var widthPercent = this._getWidthPercent( );
-
-                var deltaApplied = widthPercent - delta;
-
-                var minWidthPercent = this._getMinWidthPercent( );
-
-                // we don't want to make this column less than its min width
-                if (deltaApplied < minWidthPercent)
-                    delta = 0.0;
-
-                this._setWidthPercent( widthPercent - delta );
-
-                return delta;
             },
 
             _onResizeHandleMouseDown: function(e) {

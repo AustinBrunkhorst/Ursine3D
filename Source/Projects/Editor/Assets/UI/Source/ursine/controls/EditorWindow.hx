@@ -1,10 +1,9 @@
 package ursine.controls;
 
-import ursine.controls.docking.DockNode;
 import js.html.DOMElement;
 
 @:native( "EditorWindowControl" )
-extern class EditorWindow extends DockNode {
+extern class EditorWindow extends PolymerElement {
     var heading : String;
     var container : DOMElement;
 

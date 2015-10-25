@@ -23,9 +23,13 @@
             detached: function() {
                 this.parent = null;
             },
+            get columns() {
+                return this.querySelectorAll( ':scope > x-dock-column' );
+            },
 
             /**
              * Adds a new column to the container
+             * @return {DockColumnControl}
              */
             addColumn: function() {
                 var column = new DockColumnControl( );
@@ -33,6 +37,16 @@
                 this.appendChild( column );
 
                 return column;
+            },
+
+            /**
+             * Sets the height of this row
+             * @param height height in range [0, 1] representing
+             *        the percentage of the parent container to contain
+             */
+            setHeightPercent: function(height) {
+                // TODO:
+                this.style.height = (height * 100) + '%';
             }
         });
     </script>
