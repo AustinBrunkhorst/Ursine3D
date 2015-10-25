@@ -41,7 +41,4 @@ private:
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
-
-    void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
-    void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
 } Meta(Enable, WhiteListMethods);
