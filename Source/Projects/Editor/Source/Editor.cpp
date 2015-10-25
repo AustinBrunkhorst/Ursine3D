@@ -134,7 +134,6 @@ void Editor::initializeScene(void)
     auto &scene = m_project->GetScene( );
 
     auto &world = scene.GetWorld( );
-
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport(
             static_cast<int>( 0.85f * kDefaultWindowWidth ),
@@ -244,10 +243,6 @@ void Editor::initializeScene(void)
         component->SetDirection( { 0.0f, 1.0f, 0.0f } );
         component->SetColor( Color::White );
     }
-
-    m_project->GetScene( ).GetWorld( ).Listener( this )
-        .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded )
-        .On( ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, &Editor::onComponentChanged );
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -267,31 +262,6 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     m_mainWindow.ui->DrawMain( );
 
     m_graphics->EndFrame( );
-}
-
-void Editor::onEntityAdded(EVENT_HANDLER(ecs::World))
-{
-    EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
-
-    Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
-    };
-
-    m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "EntityAdded", message );
-}
-
-void Editor::onComponentChanged(EVENT_HANDLER(ecs::World))
-{
-    EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
-
-    Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
-        { "component", args->component->GetType( ).GetName( ) },
-        { "field", args->field },
-        { "value", args->value.SerializeJson( ) }
-    };
-
-    m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "ComponentChanged", message );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))
