@@ -30,5 +30,10 @@
     &.selected {
       background: darken($color-accent, 25%) !important;
     }
+
+    &::selection {
+      background: white;
+      color: black;
+    }
   }
 }

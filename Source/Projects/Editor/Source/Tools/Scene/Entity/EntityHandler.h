@@ -10,6 +10,7 @@ public:
     JSConstructor(EntityHandler);
 
     JSMethod(isValid);
+    JSMethod(remove);
 
     JSMethod(getName);
     JSMethod(setName);

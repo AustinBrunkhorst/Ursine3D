@@ -15,6 +15,7 @@
 #include <LightComponent.h>
 #include <Model3DComponent.h>
 #include "Tools/Scene/Components/SelectedComponent.h"
+#include <Utilities/Timer/Timer.h>
 
 using namespace ursine;
 
@@ -135,17 +136,11 @@ void Editor::initializeScene(void)
 
     auto &world = scene.GetWorld( );
     {
-        auto viewport = m_graphics->ViewportMgr.CreateViewport(
-            static_cast<int>( 0.85f * kDefaultWindowWidth ),
-            static_cast<int>( kDefaultWindowHeight - ( 30.0f + 27.0f ))
-        );
+        auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
 
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-        handle.SetPosition(
-            static_cast<int>( 0.15f * kDefaultWindowWidth ),
-            static_cast<int>( 30.0f + 27.0f )
-        );
+        handle.SetPosition( 0, 0 );
 
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 

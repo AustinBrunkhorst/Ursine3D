@@ -1,5 +1,6 @@
 package ursine.editor.windows;
 
+import js.html.HtmlElement;
 import js.html.LIElement;
 import js.html.DOMElement;
 import js.html.UListElement;
@@ -8,6 +9,8 @@ import ursine.editor.scene.entity.Entity;
 
 class SceneOutline extends WindowHandler {
     private var m_entityList : UListElement;
+    private var m_entityItems : Map<UInt, HtmlElement>;
+
     private var m_selectedItem : DOMElement = null;
 
     public function new() {
@@ -16,6 +19,7 @@ class SceneOutline extends WindowHandler {
         window.heading = "Outline";
 
         m_entityList = cast js.Browser.document.createElement( 'ul' );
+        m_entityItems = new Map<UInt, HtmlElement>( );
         m_entityList.classList.add( 'entity-list' );
 
         window.container.appendChild( m_entityList );
@@ -23,7 +27,11 @@ class SceneOutline extends WindowHandler {
         initScene( );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
-            .on( 'EntityAdded', onEntityAdded );
+            .on( 'EntityAdded', onEntityAdded )
+            .on( 'EntityRemoved', onEntityRemoved )
+            .on( 'EntityNameChanged', onEntityNameChanged );
+
+        window.addEventListener( 'keydown', onWindowKeyDown );
     }
 
     private function initScene() {
@@ -38,12 +46,36 @@ class SceneOutline extends WindowHandler {
         }
     }
 
+    private function onWindowKeyDown(e) {
+        switch (e.keyCode) {
+            // delete
+            case 46: {
+                deleteSelectedEntities( );
+            }
+        }
+    }
+
     private function onEntityAdded(e) {
         var entity = new Entity( e.uniqueID );
 
         var item = createEntityItem( entity );
 
-        m_entityList.appendChild(item );
+        m_entityList.appendChild( item );
+    }
+
+    private function onEntityRemoved(e) {
+        var item = m_entityItems[ e.uniqueID ];
+
+        if (item == m_selectedItem)
+            selectEntity( null );
+
+        m_entityList.removeChild( item );
+    }
+
+    private function onEntityNameChanged(e) {
+        var item = m_entityItems[ e.uniqueID ];
+
+        item.innerText = e.name;
     }
 
     private function createEntityItem(entity : Entity) : LIElement {
@@ -51,6 +83,28 @@ class SceneOutline extends WindowHandler {
 
         item.addEventListener( 'dblclick', function() {
             item.contentEditable = 'true';
+
+            var range = js.Browser.document.createRange( );
+
+            range.selectNodeContents( item );
+
+            var selection = js.Browser.window.getSelection( );
+
+            selection.removeAllRanges( );
+            selection.addRange( range );
+        } );
+
+        item.addEventListener( 'keydown', function(e) {
+            // return key
+            if (e.keyCode == 13) {
+                item.blur( );
+
+                e.preventDefault( );
+
+                return false;
+            }
+
+            return true;
         } );
 
         item.addEventListener( 'blur', function() {
@@ -67,6 +121,8 @@ class SceneOutline extends WindowHandler {
             selectEntity( item );
         } );
 
+        m_entityItems[ entity.uniqueID ] = cast item;
+
         return cast item;
     }
 
@@ -76,8 +132,21 @@ class SceneOutline extends WindowHandler {
 
         m_selectedItem = item;
 
-        item.classList.add( 'selected' );
+        if (item == null) {
+            EntityInspector.instance.inspect( null );
+        } else {
+            item.classList.add( 'selected' );
 
-        EntityInspector.instance.inspect( untyped item.entity );
+            EntityInspector.instance.inspect( untyped item.entity );
+
+            untyped item.entity.select( );
+        }
+    }
+
+    private function deleteSelectedEntities() {
+        if (m_selectedItem == null)
+            return;
+
+        untyped m_selectedItem.entity.remove( );
     }
 }

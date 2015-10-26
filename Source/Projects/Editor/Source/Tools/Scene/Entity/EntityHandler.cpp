@@ -24,6 +24,18 @@ JSMethod(EntityHandler::isValid)
     return CefV8Value::CreateBool( getEntity( ) != nullptr );
 }
 
+JSMethod(EntityHandler::remove)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    entity->Delete( );
+
+    return CefV8Value::CreateBool( true );
+}
+
 JSMethod(EntityHandler::getName)
 {
     auto entity = getEntity( );

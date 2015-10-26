@@ -10,6 +10,7 @@ var Application = function() { };
 $hxClasses["Application"] = Application;
 Application.__name__ = ["Application"];
 Application.main = function() {
+	console.log(window.document.readyState);
 	window.addEventListener("load",function() {
 		haxe_Timer.delay(Application.initWindows,25);
 	});
@@ -845,20 +846,51 @@ var ursine_editor_scene_entity_Entity = function(uniqueID) {
 	this.events = new ursine_utils_EventManager();
 	this.uniqueID = uniqueID;
 	this.m_handler = new EntityHandler(uniqueID);
-	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onComponentChanged));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onComponentChanged));
 };
 $hxClasses["ursine.editor.scene.entity.Entity"] = ursine_editor_scene_entity_Entity;
 ursine_editor_scene_entity_Entity.__name__ = ["ursine","editor","scene","entity","Entity"];
 ursine_editor_scene_entity_Entity.__interfaces__ = [ursine_utils_IEventContainer];
 ursine_editor_scene_entity_Entity.prototype = {
-	getName: function() {
+	isValid: function() {
+		return this.m_handler.isValid();
+	}
+	,remove: function() {
+		this.m_handler.remove();
+	}
+	,getName: function() {
 		return this.m_handler.getName();
+	}
+	,setName: function(name) {
+		this.m_handler.setName(name);
+	}
+	,select: function() {
+		if(!this.m_handler.hasComponent("Selected")) {
+			this.m_handler.addComponent("Selected");
+			return true;
+		}
+		return false;
 	}
 	,inspect: function() {
 		return this.m_handler.inspect();
 	}
+	,hasComponent: function(name) {
+		return this.m_handler.hasComponent(name);
+	}
+	,addComponent: function(name) {
+		this.m_handler.addComponent(name);
+	}
+	,removeComponent: function(name) {
+		this.m_handler.removeComponent(name);
+	}
 	,updateComponentField: function(componentName,fieldName,value) {
 		this.m_handler.updateComponentField(componentName,fieldName,value);
+	}
+	,onComponentAdded: function(e) {
+		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentAdded,e);
+	}
+	,onComponentRemoved: function(e) {
+		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,e);
 	}
 	,onComponentChanged: function(e) {
 		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentChanged,e);
@@ -883,11 +915,19 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.m_inspectedEntity = entity;
 		this.initializeInspection();
 	}
+	,onInspectedEntityComponentAdded: function(e) {
+		var inspection = { type : e.component, value : e.value};
+		this.inspectComponent(inspection);
+	}
+	,onInspectedEntityComponentRemoved: function(e) {
+		var handler = this.m_componentHandlers.get(e.component);
+		this.window.container.removeChild(handler.inspector);
+	}
 	,onInspectedEntityComponentChanged: function(e) {
 		this.m_componentHandlers.get(e.component).updateField(e.field,e.value);
 	}
 	,clearOldInspection: function() {
-		if(this.m_inspectedEntity != null) this.m_inspectedEntity.events.off(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
+		if(this.m_inspectedEntity != null) this.m_inspectedEntity.events.off(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).off(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).off(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
 		var $it0 = this.m_componentHandlers.iterator();
 		while( $it0.hasNext() ) {
 			var handler = $it0.next();
@@ -896,22 +936,26 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.m_componentHandlers = new haxe_ds_StringMap();
 	}
 	,initializeInspection: function() {
-		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
+		if(this.m_inspectedEntity == null) return;
+		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
 		var inspection = this.m_inspectedEntity.inspect();
-		var database = ursine_editor_Editor.instance.componentDatabase;
 		var _g = 0;
 		while(_g < inspection.length) {
 			var component = inspection[_g];
 			++_g;
-			var type = database.getComponentType(component.type);
-			if(Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.HiddenInInspector)) continue;
-			var handler = database.createComponentInspector(this.m_inspectedEntity,component);
-			{
-				this.m_componentHandlers.set(component.type,handler);
-				handler;
-			}
-			this.window.container.appendChild(handler.inspector);
+			this.inspectComponent(component);
 		}
+	}
+	,inspectComponent: function(component) {
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		var type = database.getComponentType(component.type);
+		if(Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.HiddenInInspector)) return;
+		var handler = database.createComponentInspector(this.m_inspectedEntity,component);
+		{
+			this.m_componentHandlers.set(component.type,handler);
+			handler;
+		}
+		this.window.container.appendChild(handler.inspector);
 	}
 });
 var ursine_editor_windows_SceneOutline = function() {
@@ -919,10 +963,12 @@ var ursine_editor_windows_SceneOutline = function() {
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Outline";
 	this.m_entityList = window.document.createElement("ul");
+	this.m_entityItems = new haxe_ds_IntMap();
 	this.m_entityList.classList.add("entity-list");
 	this.window.container.appendChild(this.m_entityList);
 	this.initScene();
-	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("EntityAdded",$bind(this,this.onEntityAdded));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("EntityAdded",$bind(this,this.onEntityAdded)).on("EntityRemoved",$bind(this,this.onEntityRemoved)).on("EntityNameChanged",$bind(this,this.onEntityNameChanged));
+	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
 $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOutline;
 ursine_editor_windows_SceneOutline.__name__ = ["ursine","editor","windows","SceneOutline"];
@@ -939,32 +985,73 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			this.onEntityAdded(event);
 		}
 	}
+	,onWindowKeyDown: function(e) {
+		var _g = e.keyCode;
+		switch(_g) {
+		case 46:
+			this.deleteSelectedEntities();
+			break;
+		}
+	}
 	,onEntityAdded: function(e) {
 		var entity = new ursine_editor_scene_entity_Entity(e.uniqueID);
 		var item = this.createEntityItem(entity);
 		this.m_entityList.appendChild(item);
+	}
+	,onEntityRemoved: function(e) {
+		var item = this.m_entityItems.h[e.uniqueID];
+		if(item == this.m_selectedItem) this.selectEntity(null);
+		this.m_entityList.removeChild(item);
+	}
+	,onEntityNameChanged: function(e) {
+		var item = this.m_entityItems.h[e.uniqueID];
+		item.innerText = e.name;
 	}
 	,createEntityItem: function(entity) {
 		var _g = this;
 		var item = window.document.createElement("li");
 		item.addEventListener("dblclick",function() {
 			item.contentEditable = "true";
+			var range = window.document.createRange();
+			range.selectNodeContents(item);
+			var selection = window.getSelection();
+			selection.removeAllRanges();
+			selection.addRange(range);
+		});
+		item.addEventListener("keydown",function(e) {
+			if(e.keyCode == 13) {
+				item.blur();
+				e.preventDefault();
+				return false;
+			}
+			return true;
 		});
 		item.addEventListener("blur",function() {
 			item.contentEditable = "false";
+			entity.setName(item.innerText);
 		});
 		item.innerText = entity.getName();
 		item.entity = entity;
-		item.addEventListener("click",function(e) {
+		item.addEventListener("click",function(e1) {
 			_g.selectEntity(item);
 		});
+		var v = item;
+		this.m_entityItems.h[entity.uniqueID] = v;
+		v;
 		return item;
 	}
 	,selectEntity: function(item) {
 		if(this.m_selectedItem != null) this.m_selectedItem.classList.remove("selected");
 		this.m_selectedItem = item;
-		item.classList.add("selected");
-		ursine_editor_windows_EntityInspector.instance.inspect(item.entity);
+		if(item == null) ursine_editor_windows_EntityInspector.instance.inspect(null); else {
+			item.classList.add("selected");
+			ursine_editor_windows_EntityInspector.instance.inspect(item.entity);
+			item.entity.select();
+		}
+	}
+	,deleteSelectedEntities: function() {
+		if(this.m_selectedItem == null) return;
+		this.m_selectedItem.entity.remove();
 	}
 });
 var ursine_editor_windows_SceneView = function() {
@@ -1070,6 +1157,8 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = {
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","float","double"]}};
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4"]}};
+ursine_editor_scene_entity_EntityEvent.ComponentAdded = "ComponentAdded";
+ursine_editor_scene_entity_EntityEvent.ComponentRemoved = "ComponentRemoved";
 ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 Application.main();

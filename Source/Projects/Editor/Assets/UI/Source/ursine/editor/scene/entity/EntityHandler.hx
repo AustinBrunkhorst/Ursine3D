@@ -7,13 +7,14 @@ extern class EntityHandler {
     function new(uniqueID : UInt) : Void;
 
     function isValid() : Bool;
+    function remove() : Void;
 
     function getName() : String;
     function setName(name : String) : Void;
 
     function inspect() : Array<ComponentInspection>;
 
-    function hasComponent() : Bool;
+    function hasComponent(name : String) : Bool;
     function addComponent(name : String) : Void;
     function removeComponent(name : String) : Void;
 
