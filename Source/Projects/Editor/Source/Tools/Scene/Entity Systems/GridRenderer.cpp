@@ -4,6 +4,7 @@
 
 #include <SystemManager.h>
 #include <GfxAPI.h>
+#include "EditorCameraSystem.h"
 
 using namespace ursine;
 
@@ -59,8 +60,9 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     static int subSector = 10;
 
     //current center position of the grid
-    float centerX = position.X( );
-    float centerZ = position.Z( );
+    ursine::SVec3 pos = m_world->GetEntitySystem(EditorCameraSystem)->GetEditorFocusPosition();
+    float centerX = pos.X( );
+    float centerZ = pos.Z( );
 
     ///////////////////////////////////////////////////////////////////
     // IMPLEMENTATION

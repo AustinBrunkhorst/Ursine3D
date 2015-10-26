@@ -93,15 +93,16 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     Out.SpecInt = baseColorSpecInt.w;
 
     // Sample the normal, convert it to the full range and noramalize it
+    float4 normalValue = NormalTexture.Load(location3);
     Out.Normal = NormalTexture.Load( location3 ).xyz;
     Out.Normal = normalize( Out.Normal * 2.0 - 1.0 );
+
+    //grab emissive value
+    Out.Emissive = normalValue.w;
 
     // Scale the specular power back to the original range
     float2 SpecPowerNorm = SpecPowTexture.Load( location3 ).xy;
     Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
-
-    //grab emissive value
-    Out.Emissive = SpecPowerNorm.y;
 
     return Out;
 }

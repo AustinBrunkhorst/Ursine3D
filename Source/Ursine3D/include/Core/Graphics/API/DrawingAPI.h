@@ -32,6 +32,9 @@ namespace ursine
             // size of the points, in pixels
             void SetSize(float size);
 
+            //should this line/point ignore all depth?
+            void SetOverdraw(bool draw);
+
             //get a texture of a certain size
             //resize texture
             //destroy texture

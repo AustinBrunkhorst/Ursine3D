@@ -41,17 +41,21 @@ namespace ursine
             return SMat4(DirectX::XMMatrixLookAtLH(eyePos, targetPos, upDir));
         }
 
-        SMat4 Camera::GetProjMatrix(const float width, const float height) const
+        SMat4 Camera::GetProjMatrix() const
         {
             SMat4 mat;
 
             if (m_projMode == PROJECTION_PERSPECTIVE)
             {
-                return SMat4(DirectX::XMMatrixPerspectiveFovLH(m_fov * 3.14f / 180.f, width / height, m_nearPlane, m_farPlane));
+                return SMat4(DirectX::XMMatrixPerspectiveFovLH(m_fov * 3.14f / 180.f, 
+                    m_screenWidth / m_screenHeight, 
+                    m_nearPlane, m_farPlane));
             }
             else
             {
-                return SMat4(DirectX::XMMatrixOrthographicLH(m_size * width / height, m_size, m_nearPlane, m_farPlane));
+                return SMat4(DirectX::XMMatrixOrthographicLH(m_size * 
+                    (m_screenWidth / m_screenHeight), 
+                    m_size, m_nearPlane, m_farPlane));
             }
         }
 
@@ -168,6 +172,64 @@ namespace ursine
         ViewportRenderMode Camera::GetRenderMode(void) const
         {
             return m_renderMode;
+        }
+
+        Vec3 Camera::ScreenToWorld(const Vec2& screenPos, const float depth)
+        {
+            UAssert(depth > 0, "Can't use a number less than 0 for depth!");
+
+            //convert mouse coordinates to NDC. Also offset for the screen position
+            float unitX = 2.f * ((screenPos.X() - m_screenX) / m_screenWidth) - 1;
+            float unitY = -(2.f * ((screenPos.Y() - m_screenY) / m_screenHeight)) + 1;
+
+            ////create point with depth
+            //Vec4 point = Vec4(unitX, unitY, depth, 1);
+
+            ////get inv projection
+            SMat4 invProj = GetProjMatrix();
+            SMat4::Transpose(invProj);
+            SMat4::Inverse(invProj);
+
+            Vec4 pos = invProj * Vec4(unitX, unitY, depth, 1);
+            pos /= pos.W();
+
+            //get inv view
+            SMat4 invView = GetViewMatrix();
+            SMat4::Transpose(invView);
+            SMat4::Inverse(invView);
+
+            SVec4 temp = invView * SVec4(0, 0, 0, 1);
+
+            pos = invView * pos;
+
+            ////apply inv proj
+            //point = invProj * point;
+
+            ////divide by w
+            //point /= point.W();
+
+            ////apply inv view
+            //point = invView * point;
+
+            //
+
+            ////return
+            //Vec3 finalPoint;
+            //finalPoint.Set(point.X(), point.Y(), point.Z());
+            //return finalPoint;
+            return Vec3(pos.X(), pos.Y(), pos.Z());
+        }
+
+        void Camera::SetScreenDimensions(const float width, const float height)
+        {
+            m_screenWidth = width;
+            m_screenHeight = height;
+        }
+
+        void Camera::SetScreenPosition(const float x, const float y)
+        {
+            m_screenX = x;
+            m_screenY = y;
         }
 
         void Camera::CalculateVectors(const SVec3 &up)

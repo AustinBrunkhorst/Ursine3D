@@ -52,6 +52,11 @@ namespace ursine
             m_privates->mgr->SetSize(size);
         }
 
+        void DrawingAPI::SetOverdraw(bool draw)
+        {
+            m_privates->mgr->SetOverdraw(draw);
+        }
+
         void DrawingAPI::SetPrivates(void *priv)
         {
             m_privates->mgr = reinterpret_cast<DrawingManager*>(priv);

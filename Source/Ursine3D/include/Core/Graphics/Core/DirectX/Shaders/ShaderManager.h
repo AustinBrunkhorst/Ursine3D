@@ -36,6 +36,7 @@ namespace ursine
                 ID3D11HullShader *hs;
                 ID3D11DomainShader *ds;
                 ID3D11GeometryShader *gs;
+                ID3D11ComputeShader *cs;
 
                 ID3D11ShaderReflection *reflectionData;
                 ID3DBlob *vsBlob;
@@ -47,8 +48,8 @@ namespace ursine
 
                 Shader()
                 {
-                    filenames.resize(DEF_COUNT);
-                    timestamps.resize(DEF_COUNT);
+                    filenames.resize(SHADERTYPE_COUNT);
+                    timestamps.resize(SHADERTYPE_COUNT);
                 }
             };
 

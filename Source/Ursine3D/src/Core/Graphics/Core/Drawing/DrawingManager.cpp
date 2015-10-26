@@ -21,6 +21,13 @@ namespace ursine
             m_pointCount = 0;
             m_lineCount = 0;
 
+            m_pointListOverdraw.resize(MAX_DRAW_OBJ);
+            m_lineListOverdraw.resize(MAX_DRAW_OBJ);
+
+            m_pointCountOverdraw = 0;
+            m_lineCountOverdraw = 0;
+            m_overdraw = false;
+
             //create the buffers
             // CREATE VERTEX BUFFER /////////////////////////////////////////
             D3D11_BUFFER_DESC vertexBufferDesc;
@@ -44,6 +51,10 @@ namespace ursine
             result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertPointBuffer);
             UAssert(result == S_OK, "Failed to make vertex buffer!");
 
+            vertexData.pSysMem = &m_pointListOverdraw[ 0 ];
+            result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertPointBufferOverdraw);
+            UAssert(result == S_OK, "Failed to make vertex buffer!");
+
             // CREATE VERTEX BUFFER /////////////////////////////////////////
             D3D11_BUFFER_DESC vertexBufferDesc2;
             D3D11_SUBRESOURCE_DATA vertexData2;
@@ -63,6 +74,10 @@ namespace ursine
 
             //Now create the vertex buffer.
             result = m_device->CreateBuffer(&vertexBufferDesc2, &vertexData2, &m_vertLineBuffer);
+            UAssert(result == S_OK, "Failed to make vertex buffer!");
+
+            vertexData2.pSysMem = &m_lineListOverdraw[ 0 ];
+            result = m_device->CreateBuffer(&vertexBufferDesc2, &vertexData2, &m_vertLineBufferOverdraw);
             UAssert(result == S_OK, "Failed to make vertex buffer!");
 
             // CREATE INDEX BUFFER //////////////////////////////////////////
@@ -90,6 +105,7 @@ namespace ursine
 
             //Create the index buffer.
             result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+            result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBufferOverdraw);
             UAssert(result == S_OK, "Failed to make index buffer!");
         }
 
@@ -98,6 +114,10 @@ namespace ursine
             RELEASE_RESOURCE(m_vertPointBuffer);
             RELEASE_RESOURCE(m_vertLineBuffer);
             RELEASE_RESOURCE(m_indexBuffer);
+
+            RELEASE_RESOURCE(m_vertPointBufferOverdraw);
+            RELEASE_RESOURCE(m_vertLineBufferOverdraw);
+            RELEASE_RESOURCE(m_indexBufferOverdraw);
             m_device = nullptr;
             m_deviceContext = nullptr;
         }
@@ -106,6 +126,9 @@ namespace ursine
         {
             m_lineCount = 0;
             m_pointCount = 0;
+
+            m_lineCountOverdraw = false;
+            m_pointCountOverdraw = false;
         }
 
         void DrawingManager::SetDrawColor(float x, float y, float z, float a)
@@ -132,24 +155,55 @@ namespace ursine
             return m_size;
         }
 
+        void DrawingManager::SetOverdraw(bool draw)
+        {
+            m_overdraw = draw;
+        }
+
         void DrawingManager::DrawPoint(float x, float y, float z)
         {
-            UAssert(m_pointCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it");
-            m_pointList[ m_pointCount ].pos = DirectX::XMFLOAT4(x, y, z, 1);
-            m_pointList[ m_pointCount ].size = m_size;
-            m_pointList[ m_pointCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
+            if (!m_overdraw)
+            {
+                UAssert(m_pointCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it");
+
+                m_pointList[ m_pointCount ].pos = DirectX::XMFLOAT4(x, y, z, 1);
+                m_pointList[ m_pointCount ].size = m_size;
+                m_pointList[ m_pointCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4( ).GetFloatPtr( ));
+            }
+            else
+            {
+                UAssert(m_pointCountOverdraw < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it");
+
+                m_pointListOverdraw[ m_pointCountOverdraw ].pos = DirectX::XMFLOAT4(x, y, z, 1);
+                m_pointListOverdraw[ m_pointCountOverdraw ].size = m_size;
+                m_pointListOverdraw[ m_pointCountOverdraw++ ].color = DirectX::XMFLOAT4(m_color.ToVector4( ).GetFloatPtr( ));
+            }
         }
 
         void DrawingManager::DrawLine(float x0, float y0, float z0, float x1, float y1, float z1)
         {
-            UAssert(m_lineCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it");
-            m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4(x0, y0, z0, 1);
-            m_lineList[ m_lineCount ].size = m_size;
-            m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
+            if (!m_overdraw)
+            {
+                UAssert(m_lineCount < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it");
+                m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4(x0, y0, z0, 1);
+                m_lineList[ m_lineCount ].size = m_size;
+                m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4( ).GetFloatPtr( ));
 
-            m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4(x1, y1, z1, 1);
-            m_lineList[ m_lineCount ].size = m_size;
-            m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4().GetFloatPtr());
+                m_lineList[ m_lineCount ].pos = DirectX::XMFLOAT4(x1, y1, z1, 1);
+                m_lineList[ m_lineCount ].size = m_size;
+                m_lineList[ m_lineCount++ ].color = DirectX::XMFLOAT4(m_color.ToVector4( ).GetFloatPtr( ));
+            }
+            else
+            {
+                UAssert(m_lineCountOverdraw < MAX_DRAW_OBJ, "No more room for drawable objects! Let Matt now, he'll fix it");
+                m_lineListOverdraw[ m_lineCountOverdraw ].pos = DirectX::XMFLOAT4(x0, y0, z0, 1);
+                m_lineListOverdraw[ m_lineCountOverdraw ].size = m_size;
+                m_lineListOverdraw[ m_lineCountOverdraw++ ].color = DirectX::XMFLOAT4(m_color.ToVector4( ).GetFloatPtr( ));
+
+                m_lineListOverdraw[ m_lineCountOverdraw ].pos = DirectX::XMFLOAT4(x1, y1, z1, 1);
+                m_lineListOverdraw[ m_lineCountOverdraw ].size = m_size;
+                m_lineListOverdraw[ m_lineCountOverdraw++ ].color = DirectX::XMFLOAT4(m_color.ToVector4( ).GetFloatPtr( ));
+            }
         }
 
         void DrawingManager::ConstructPointMesh(unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices)
@@ -216,6 +270,72 @@ namespace ursine
         bool DrawingManager::CheckRenderLines(void) const
         {
             return m_lineCount > 0;
+        }
+
+        void DrawingManager::ConstructOverdrawPointMesh(unsigned& vertCount, unsigned& indexCount, ID3D11Buffer** mesh, ID3D11Buffer** indices) 
+        {
+            vertCount = m_pointCountOverdraw;
+
+            // UPDATE VERTEX BUFFER /////////////////////////////////////////
+            HRESULT result;
+            D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+            //buffer of the data
+            PrimitiveVertex *buffer;
+
+            //lock the buffer
+            result = m_deviceContext->Map(m_vertPointBufferOverdraw, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+            //get the buffer
+            buffer = (PrimitiveVertex*)mappedResource.pData;
+
+            //copy the data over
+            memcpy(buffer, &m_pointListOverdraw[ 0 ], sizeof(PrimitiveVertex) * vertCount);
+
+            //unlock
+            m_deviceContext->Unmap(m_vertPointBufferOverdraw, 0);
+
+            indexCount = vertCount;
+            *indices = m_indexBufferOverdraw;
+            *mesh = m_vertPointBufferOverdraw;
+        }
+
+        void DrawingManager::ConstructOverdrawLineMesh(unsigned& vertCount, unsigned& indexCount, ID3D11Buffer** mesh, ID3D11Buffer** indices)
+        {
+            vertCount = m_lineCountOverdraw;
+
+            // UPDATE VERTEX BUFFER /////////////////////////////////////////
+            HRESULT result;
+            D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+            //buffer of the data
+            PrimitiveVertex *buffer;
+
+            //lock the buffer
+            result = m_deviceContext->Map(m_vertLineBufferOverdraw, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+            //get the buffer
+            buffer = (PrimitiveVertex*)mappedResource.pData;
+
+            //copy the data over
+            memcpy(buffer, &m_lineListOverdraw[ 0 ], sizeof(PrimitiveVertex) * vertCount);
+
+            //unlock
+            m_deviceContext->Unmap(m_vertLineBufferOverdraw, 0);
+
+            indexCount = vertCount;
+            *indices = m_indexBufferOverdraw;
+            *mesh = m_vertLineBufferOverdraw;
+        }
+
+        bool DrawingManager::CheckOverdrawRenderPoints() const 
+        {
+            return m_pointCountOverdraw > 0;
+        }
+
+        bool DrawingManager::CheckOverdrawRenderLines() const 
+        {
+            return m_lineCountOverdraw > 0;
         }
     }
 }

@@ -23,7 +23,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "ViewportAPI.h"
 #include "UIAPI.h"
 #include "DrawingAPI.h"
-
+#include "EntityConfig.h"
 #include "CoreSystem.h"
 
 namespace ursine
@@ -123,6 +123,9 @@ namespace ursine
                                             const int inputWidth, const int inputHeight, 
                                             GfxHND destTexture, 
                                             const int destinationX, const int destinationY);
+
+            // get current object that is moused over
+            ursine::ecs::EntityUniqueID GetMousedOverID(void);
             
             // private members
         private:
