@@ -247,7 +247,7 @@ void Editor::initializeScene(void)
 
     m_project->GetScene( ).GetWorld( ).Listener( this )
         .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded )
-        .On( ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, &Editor::onComponentChanged );
+        .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &Editor::onComponentChanged );
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))

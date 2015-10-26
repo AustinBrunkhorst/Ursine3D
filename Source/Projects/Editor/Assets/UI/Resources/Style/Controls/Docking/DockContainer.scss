@@ -3,25 +3,54 @@
 
 :host {
   display: block;
+  position: relative;
 
   ::content {
+    &:not(.last-row) {
+      > .resize-handle.row {
+        display: block;
+      }
+    }
+
+    .resize-handle {
+      position: absolute;
+      display: none;
+      background: darken($header-bg-color, 5%);
+      z-index: 200;
+
+      &:hover, &:active {
+        background: lighten($header-bg-color, 10%);
+      }
+    }
+
+    > .resize-handle.row {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: $dock-resize-handle-size;
+      cursor: ns-resize;
+    }
+
     > x-dock-column {
+      overflow: hidden;
       position: relative;
       float: left;
       height: 100%;
 
-      #resize-handle.active {
-        position: absolute;
+      &:not(.last-column) {
+        padding-right: $dock-resize-handle-size;
+
+        > .resize-handle.column {
+          display: block;
+        }
+      }
+
+      > .resize-handle.column {
         right: 0;
         top: 0;
         bottom: 0;
         width: $dock-resize-handle-size;
-        background: red;
         cursor: ew-resize;
-
-        &:hover, &:active {
-          background: lighten(red, 25%);
-        }
       }
 
       > .dock-node {

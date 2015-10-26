@@ -12,8 +12,14 @@ public:
     JSMethod(isValid);
 
     JSMethod(getName);
+    JSMethod(setName);
     
     JSMethod(inspect);
+
+    JSMethod(hasComponent);
+    JSMethod(addComponent);
+    JSMethod(removeComponent);
+
     JSMethod(updateComponentField);
 
 private:

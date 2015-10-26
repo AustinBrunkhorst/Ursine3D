@@ -76,6 +76,14 @@ namespace ursine
 
             // add new grouped name
             m_grouped[ name ].emplace_back( entity );
+
+            EditorEntityNameChangedArgs e( 
+                WORLD_EDITOR_ENTITY_NAME_CHANGED, 
+                entity, 
+                name 
+            );
+
+            m_world->Dispatch( WORLD_EDITOR_ENTITY_NAME_CHANGED, &e );
         }
 
         void NameManager::removeFromGroup(const std::string &name, Entity *entity)

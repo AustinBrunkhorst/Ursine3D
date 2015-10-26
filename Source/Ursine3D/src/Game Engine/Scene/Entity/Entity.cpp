@@ -123,6 +123,11 @@ namespace ursine
         // Components
         ////////////////////////////////////////////////////////////////////////
 
+        void Entity::AddComponent(Component *component)
+        {
+            m_world->m_entityManager->AddComponent( this, component );
+        }
+
         bool Entity::HasComponent(ComponentTypeMask mask) const
         {
             return utils::IsFlagSet( m_typeMask, mask );

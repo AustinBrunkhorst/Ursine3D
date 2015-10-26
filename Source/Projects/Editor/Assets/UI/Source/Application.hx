@@ -1,14 +1,19 @@
 import ursine.editor.Editor;
 
-import ursine.editor.WindowHandler;
-
 import ursine.controls.EditorWindow;
 import ursine.controls.docking.*;
 import ursine.editor.windows.*;
 
 class Application {
     static function main() {
-        //var editor = new Editor( );
+        js.Browser.window.addEventListener( 'load', function() {
+            // TODO: figure out why there is an arbitrary delay
+            haxe.Timer.delay( initWindows, 25 );
+        } );
+    }
+
+    static private function initWindows() {
+        var editor = new Editor( );
 
         var mainDockContainer =
             js.Browser.document.body.querySelector( '#main-dock-container' );
@@ -20,76 +25,54 @@ class Application {
 
         mainDockContainer.appendChild( mainDock );
 
+        var sceneView = new SceneView( );
+
         var leftColumn = mainDock.addColumn( );
         {
-            leftColumn.setWidthPercent( 0.20 );
+            leftColumn.style.width = '20%';
 
-            var rows = [ leftColumn.addRow( ), leftColumn.addRow( ) ];
+            var row = leftColumn.addRow( );
 
-            for (row in rows) {
-                row.addColumn( ).setWidthPercent( 1.0 );
+            row.setHeightPercent( 1.0 );
 
-                row.setHeightPercent( 0.5 );
-            }
+            var column = row.addColumn( );
 
-            var inspector = new EditorWindow( );
+            column.setWidthPercent( 1.0 );
 
-            inspector.heading = 'Inspector';
-
-            rows[ 0 ].columns[ 0 ].appendChild( inspector );
-
-            var outline = new EditorWindow( );
-
-            outline.heading = 'Outline';
-
-            rows[ 1 ].columns[ 0 ].appendChild( outline );
+            column.appendChild( new EntityInspector( ).window );
         }
 
         var middleColumn = mainDock.addColumn( );
         {
-            middleColumn.setWidthPercent( 0.40 );
+            middleColumn.style.width = '60%';
 
-            var rows = [ middleColumn.addRow( ), middleColumn.addRow( ) ];
+            var row = middleColumn.addRow( );
 
-            for (row in rows) {
-                row.addColumn( );
+            row.setHeightPercent( 1.0 );
 
-                row.setHeightPercent( 0.5 );
-            }
+            var column = row.addColumn( );
 
-            var content = new EditorWindow( );
+            column.setWidthPercent( 1.0 );
 
-            content.heading = 'Asset Browser';
-
-            rows[ 0 ].columns[ 0 ].setWidthPercent( 1.0 );
-            rows[ 0 ].columns[ 0 ].appendChild( content );
-
-            var material = new EditorWindow( );
-
-            material.heading = 'Material Editor';
-
-            rows[ 1 ].columns[ 0 ].setWidthPercent( 0.5 );
-            rows[ 1 ].columns[ 0 ].appendChild( material );
-
-            var row2col2 = rows[ 1 ].addColumn( );
-
-            var particle = new EditorWindow( );
-
-            particle.heading = 'Particle Editor';
-
-            row2col2.setWidthPercent( 0.5 );
-            row2col2.appendChild( particle );
+            column.appendChild( sceneView.window );
         }
 
         var rightColumn = mainDock.addColumn( );
         {
-            rightColumn.setWidthPercent( 0.40 );
+            rightColumn.style.width = '20%';
 
-            var scene = new EditorWindow( );
+            var row = rightColumn.addRow( );
 
-            scene.heading = 'Scene';
+            row.setHeightPercent( 1.0 );
 
-            rightColumn.addRow( ).appendChild( scene );
+            var column = row.addColumn( );
+
+            column.setWidthPercent( 1.0 );
+
+            column.appendChild( new SceneOutline( ).window );
         }
+
+        // TODO: remove after dock calls made
+        sceneView.onViewportInvalidated( );
     }
 }

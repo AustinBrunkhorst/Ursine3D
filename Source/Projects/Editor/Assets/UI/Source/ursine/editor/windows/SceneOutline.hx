@@ -20,11 +20,10 @@ class SceneOutline extends WindowHandler {
 
         window.container.appendChild( m_entityList );
 
-        // TODO:
-        /*initScene( );
+        initScene( );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
-            .on( 'EntityAdded', onEntityAdded );*/
+            .on( 'EntityAdded', onEntityAdded );
     }
 
     private function initScene() {
@@ -49,6 +48,16 @@ class SceneOutline extends WindowHandler {
 
     private function createEntityItem(entity : Entity) : LIElement {
         var item = js.Browser.document.createElement( 'li' );
+
+        item.addEventListener( 'dblclick', function() {
+            item.contentEditable = 'true';
+        } );
+
+        item.addEventListener( 'blur', function() {
+            item.contentEditable = 'false';
+
+            entity.setName( item.innerText );
+        } );
 
         item.innerText = entity.getName( );
 

@@ -34,6 +34,20 @@ JSMethod(EntityHandler::getName)
     return CefV8Value::CreateBool( false );
 }
 
+JSMethod(EntityHandler::setName)
+{
+    auto entity = getEntity( );
+
+    if (entity)
+    {
+        entity->SetName( arguments[ 0 ]->GetStringValue( ) );
+
+        return CefV8Value::CreateBool( true );
+    }
+
+    return CefV8Value::CreateBool( false );
+}
+
 JSMethod(EntityHandler::inspect)
 {
     auto entity = getEntity( );
@@ -64,6 +78,77 @@ JSMethod(EntityHandler::inspect)
     JsonSerializer::Deserialize( componentArray, output );
 
     return output;
+}
+
+JSMethod(EntityHandler::hasComponent)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        return CefV8Value::CreateBool( false );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        return CefV8Value::CreateBool( false );
+
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    return CefV8Value::CreateBool( entity->HasComponent( id ) );
+}
+
+JSMethod(EntityHandler::addComponent)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        return CefV8Value::CreateBool( false );
+
+    auto instance = componentType.CreateDynamic( );
+
+    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSMethod(EntityHandler::removeComponent)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        return CefV8Value::CreateBool( false );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        return CefV8Value::CreateBool( false );
+
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    entity->RemoveComponent( id );
+
+    return CefV8Value::CreateBool( true );
 }
 
 JSMethod(EntityHandler::updateComponentField)

@@ -3,7 +3,7 @@
 <dom-module id="x-dock-column">
     <template>
          <content></content>
-        <div id="resize-handle"></div>
+        <div id="resize-handle" class="resize-handle column"></div>
     </template>
     <script>
         var DockColumnControl = Polymer({
@@ -25,10 +25,18 @@
 
                 this._lastResizeWidth = this._getWidthPixels( );
 
-                this.$[ 'resize-handle' ].classList.add( 'active' );
+                this._observer = new MutationObserver( this._onMutations.bind( this ) );
+
+                this._observer.observe( this, {
+                    childList: true,
+                    subtree: false
+                } );
             },
             detached: function() {
                 this.parent = null;
+
+                if (this._observer)
+                    this._observer.disconnect( );
             },
             get rows() {
                 return this.querySelectorAll( ':scope > x-dock-container' );
@@ -84,6 +92,7 @@
                 return 1.0;
             },
             _getMinWidthPercent: function() {
+                // TODO: get min width of sum of all child columns
                 if (this.parent)
                     return this._minWidth / this.parent.clientWidth;
 
@@ -91,7 +100,32 @@
             },
 
             _setWidthPercent: function(percent) {
-                this.style.width = (Math.clamp( percent, 0.0, 1.0 ) * 100.0) + '%';
+                var currentPercent = this._getWidthPercent( );
+
+                if (currentPercent != percent) {
+                    this.style.width = (Math.clamp( percent, 0.0, 1.0 ) * 100.0) + '%';
+
+                    this._notifyWidthChanged( );
+                }
+            },
+            _notifyWidthChanged: function() {
+                // TODO:
+                var windows = this.querySelectorAll( 'x-editor-window' );
+
+                for (var i = 0; i < windows.length; ++i)
+                    windows[ i ].fire( 'resize', { } );
+            },
+
+            _onMutations: function(mutations) {
+                // items were added or removed, update row resize handles
+                var rows = this.rows;
+
+                for (var i = 0; i < rows.length; ++i) {
+                    var row = rows[ i ];
+
+                    row.classList
+                        .toggle( 'last-row', i == rows.length - 1 );
+                }
             },
             _onChildMinWidthChanged: function(width) {
                 this._minWidth = Math.max( 0.0, Math.min( this._minWidth, width ) );

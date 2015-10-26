@@ -96,6 +96,9 @@ namespace ursine
             // Components
             ////////////////////////////////////////////////////////////////////
 
+            // Adds a component based on an existing instance
+            void AddComponent(Component *component);
+
             // Adds a component this entity. Arguments passed are forwarded to 
             // the components constructor
             template<class ComponentType, typename... Args>
