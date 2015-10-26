@@ -43,7 +43,8 @@ class EntityInspector extends WindowHandler {
     private function onInspectedEntityComponentRemoved(e) {
         var handler = m_componentHandlers[ e.component ];
 
-        window.container.removeChild( handler.inspector );
+        if (handler != null)
+            window.container.removeChild( handler.inspector );
     }
 
     private function onInspectedEntityComponentChanged(e) {

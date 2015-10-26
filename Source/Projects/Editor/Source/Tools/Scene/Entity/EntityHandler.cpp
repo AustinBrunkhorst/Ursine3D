@@ -113,7 +113,7 @@ JSMethod(EntityHandler::hasComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    return CefV8Value::CreateBool( entity->HasComponent( id ) );
+    return CefV8Value::CreateBool( entity->HasComponent( 1ull << id ) );
 }
 
 JSMethod(EntityHandler::addComponent)

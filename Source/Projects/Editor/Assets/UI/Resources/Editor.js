@@ -871,6 +871,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 		}
 		return false;
 	}
+	,deselect: function() {
+		this.m_handler.removeComponent("Selected");
+	}
 	,inspect: function() {
 		return this.m_handler.inspect();
 	}
@@ -921,7 +924,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,onInspectedEntityComponentRemoved: function(e) {
 		var handler = this.m_componentHandlers.get(e.component);
-		this.window.container.removeChild(handler.inspector);
+		if(handler != null) this.window.container.removeChild(handler.inspector);
 	}
 	,onInspectedEntityComponentChanged: function(e) {
 		this.m_componentHandlers.get(e.component).updateField(e.field,e.value);
@@ -959,15 +962,16 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 });
 var ursine_editor_windows_SceneOutline = function() {
-	this.m_selectedItem = null;
+	this.m_selectedEntities = null;
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Outline";
 	this.m_entityList = window.document.createElement("ul");
-	this.m_entityItems = new haxe_ds_IntMap();
 	this.m_entityList.classList.add("entity-list");
+	this.m_entityItems = new haxe_ds_IntMap();
+	this.m_selectedEntities = [];
 	this.window.container.appendChild(this.m_entityList);
 	this.initScene();
-	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("EntityAdded",$bind(this,this.onEntityAdded)).on("EntityRemoved",$bind(this,this.onEntityRemoved)).on("EntityNameChanged",$bind(this,this.onEntityNameChanged));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.EntityAdded,$bind(this,this.onEntityAdded)).on(ursine_editor_scene_entity_EntityEvent.EntityRemoved,$bind(this,this.onEntityRemoved)).on(ursine_editor_scene_entity_EntityEvent.EntityNameChanged,$bind(this,this.onEntityNameChanged)).on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
 $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOutline;
@@ -997,15 +1001,22 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var entity = new ursine_editor_scene_entity_Entity(e.uniqueID);
 		var item = this.createEntityItem(entity);
 		this.m_entityList.appendChild(item);
+		if(entity.hasComponent("Selected")) this.selectEntity(item);
 	}
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
-		if(item == this.m_selectedItem) this.selectEntity(null);
+		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
 		this.m_entityList.removeChild(item);
 	}
 	,onEntityNameChanged: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
 		item.innerText = e.name;
+	}
+	,onComponentAdded: function(e) {
+		if(e.component == "Selected") this.selectEntity(this.m_entityItems.h[e.uniqueID]);
+	}
+	,onComponentRemoved: function(e) {
+		if(e.component == "Selected") this.deselectEntity(this.m_entityItems.h[e.uniqueID]);
 	}
 	,createEntityItem: function(entity) {
 		var _g = this;
@@ -1033,7 +1044,8 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		item.innerText = entity.getName();
 		item.entity = entity;
 		item.addEventListener("click",function(e1) {
-			_g.selectEntity(item);
+			_g.clearSelectedEntities();
+			item.entity.select();
 		});
 		var v = item;
 		this.m_entityItems.h[entity.uniqueID] = v;
@@ -1041,17 +1053,41 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		return item;
 	}
 	,selectEntity: function(item) {
-		if(this.m_selectedItem != null) this.m_selectedItem.classList.remove("selected");
-		this.m_selectedItem = item;
 		if(item == null) ursine_editor_windows_EntityInspector.instance.inspect(null); else {
 			item.classList.add("selected");
+			item.scrollIntoViewIfNeeded();
 			ursine_editor_windows_EntityInspector.instance.inspect(item.entity);
-			item.entity.select();
+			this.m_selectedEntities.push(item.entity.uniqueID);
+		}
+	}
+	,deselectEntity: function(item) {
+		if(item != null) {
+			item.classList.remove("selected");
+			ursine_editor_windows_EntityInspector.instance.inspect(null);
+			this.m_selectedEntities.filter(function(x) {
+				return x == item.entity.uniqueID;
+			});
+		}
+	}
+	,clearSelectedEntities: function() {
+		var _g = 0;
+		var _g1 = this.m_selectedEntities;
+		while(_g < _g1.length) {
+			var uid = _g1[_g];
+			++_g;
+			var item = this.m_entityItems.h[uid];
+			item.entity.deselect();
 		}
 	}
 	,deleteSelectedEntities: function() {
-		if(this.m_selectedItem == null) return;
-		this.m_selectedItem.entity.remove();
+		var _g = 0;
+		var _g1 = this.m_selectedEntities;
+		while(_g < _g1.length) {
+			var uid = _g1[_g];
+			++_g;
+			var item = this.m_entityItems.h[uid];
+			item.entity.remove();
+		}
 	}
 });
 var ursine_editor_windows_SceneView = function() {
@@ -1157,6 +1193,9 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = {
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","float","double"]}};
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4"]}};
+ursine_editor_scene_entity_EntityEvent.EntityAdded = "EntityAdded";
+ursine_editor_scene_entity_EntityEvent.EntityRemoved = "EntityRemoved";
+ursine_editor_scene_entity_EntityEvent.EntityNameChanged = "EntityNameChanged";
 ursine_editor_scene_entity_EntityEvent.ComponentAdded = "ComponentAdded";
 ursine_editor_scene_entity_EntityEvent.ComponentRemoved = "ComponentRemoved";
 ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";

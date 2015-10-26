@@ -52,6 +52,10 @@ class Entity implements IEventContainer {
         return false;
     }
 
+    public function deselect() : Void {
+        m_handler.removeComponent( 'Selected' );
+    }
+
     public function inspect() : Array<ComponentInspection> {
         return m_handler.inspect( );
     }
