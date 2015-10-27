@@ -39,13 +39,13 @@ namespace ursine
                     for (auto derived : systemType.GetDerivedClasses( ))
                     {
                         auto search = find(
-                            systemTypes.begin( ),
-                            systemTypes.end( ),
+							baseTypes.begin( ),
+							baseTypes.end( ),
                             derived
                         );
 
                         // skip base clases of base system types
-                        if (search == systemTypes.end( ))
+                        if (search == baseTypes.end( ))
                             systemTypes.emplace_back( derived );
                     }
                 }

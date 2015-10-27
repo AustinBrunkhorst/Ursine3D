@@ -84,24 +84,27 @@ namespace ursine
                     &body->m_rigidbody
                 );
             }
-            else if (component->Is<Body>( ))
-            {
-                auto body = entity->GetComponent<Body>( );
-
-                m_simulation.RemoveBody(
-                    &body->m_body
-                );
-            }
             else if (component->Is<SphereCollider>( ))
             {
                 auto *sphere = entity->GetComponent<SphereCollider>( );
-                
+				bool addBody = false;
+
                 if (!entity->HasComponent<Body>( ) && !entity->HasComponent<Rigidbody>( ))
+				{
                     entity->AddComponent<Body>( );
+					addBody = true;
+				}
 
                 // Add the collider to the body
                 if (entity->HasComponent<Body>( ))
-                    entity->GetComponent<Body>( )->m_body.SetCollider( &sphere->m_sphereCollider );
+				{
+					auto body = entity->GetComponent<Body>( );
+
+                    body->m_body.SetCollider( &sphere->m_sphereCollider );
+
+					if (addBody)
+						m_simulation.AddBody( &body->m_body );
+				}
                 else if (entity->HasComponent<Rigidbody>( ))
                     entity->GetComponent<Rigidbody>( )->m_rigidbody.SetCollider( &sphere->m_sphereCollider );
             }

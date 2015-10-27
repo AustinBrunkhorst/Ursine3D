@@ -20,8 +20,6 @@ namespace ursine
 {
     namespace ecs
     {
-		ENTITY_SYSTEM_DEFINITION( FilterSystem );
-
         FilterSystem::FilterSystem(World *world, const Filter &filter)
             : EntitySystem( world )
             , m_filter( filter ) { }

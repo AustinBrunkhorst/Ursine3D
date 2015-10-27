@@ -48,12 +48,16 @@ namespace ursine
 
         void Body::SetCollider(ColliderBase* collider)
         {
+		#ifdef BULLET_PHYSICS
             setCollisionShape( collider );
+		#endif
         }
 
         void Body::RemoveCollider(void)
         {
+		#ifdef BULLET_PHYSICS
             setCollisionShape( nullptr );
+		#endif
         }
     }
 }
