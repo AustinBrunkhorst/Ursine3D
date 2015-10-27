@@ -19,7 +19,7 @@ namespace ursine
 
         Camera::~Camera(void)
         {
-            GetCoreSystem(graphics::GfxAPI )->CameraMgr.DestroyCamera( m_handle );
+            GetCoreSystem( graphics::GfxAPI )->CameraMgr.DestroyCamera( m_handle );
         }
 
         graphics::GfxHND Camera::GetHandle(void) const
@@ -27,9 +27,9 @@ namespace ursine
             return m_handle;
         }
 
-        graphics::Camera &Camera::GetCamera(void) const
+        graphics::Camera *Camera::GetCamera(void) const
         {
-            return GetCoreSystem(graphics::GfxAPI )->CameraMgr.GetCamera( m_handle );
+            return &GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle );
         }
     }
 }

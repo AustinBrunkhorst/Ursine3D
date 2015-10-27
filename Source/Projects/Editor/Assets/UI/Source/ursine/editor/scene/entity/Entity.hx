@@ -30,6 +30,18 @@ class Entity implements IEventContainer {
         return m_handler.isValid( );
     }
 
+    public function isRemovalEnabled() : Bool {
+        return m_handler.isRemovalEnabled( );
+    }
+
+    public function isHierarchyChangeEnabled() : Bool {
+        return m_handler.isHierarchyChangeEnabled( );
+    }
+
+    public function isVisibleInEditor() : Bool {
+        return m_handler.isVisibleInEditor( );
+    }
+
     public function remove() : Void {
         m_handler.remove( );
     }

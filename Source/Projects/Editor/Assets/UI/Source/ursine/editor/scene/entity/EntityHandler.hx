@@ -7,6 +7,10 @@ extern class EntityHandler {
     function new(uniqueID : UInt) : Void;
 
     function isValid() : Bool;
+    function isRemovalEnabled() : Bool;
+    function isHierarchyChangeEnabled() : Bool;
+    function isVisibleInEditor() : Bool;
+
     function remove() : Void;
 
     function getName() : String;

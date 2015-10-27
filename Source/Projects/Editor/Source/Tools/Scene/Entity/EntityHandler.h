@@ -10,6 +10,10 @@ public:
     JSConstructor(EntityHandler);
 
     JSMethod(isValid);
+    JSMethod(isRemovalEnabled);
+    JSMethod(isHierarchyChangeEnabled);
+    JSMethod(isVisibleInEditor);
+
     JSMethod(remove);
 
     JSMethod(getName);

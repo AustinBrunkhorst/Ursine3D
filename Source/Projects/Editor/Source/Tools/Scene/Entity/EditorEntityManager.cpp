@@ -29,7 +29,7 @@ namespace
     }
 }
 
-EditorEntityManager::EditorEntityManager(Project::Handle project)
+EditorEntityManager::EditorEntityManager(Project *project)
     : m_project( project )
 {
     m_project->GetScene( ).GetWorld( ).Listener( this )

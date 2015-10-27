@@ -308,7 +308,7 @@ namespace ursine
             // Remove the children before the parent is removed
             auto children = m_hierarchy.GetChildren( entity );
 
-            while (children->size() > 0)
+            while (children->size( ) > 0)
             {
                 auto &child = ( *children )[ 0 ];
                 Remove( m_active[ child ] );
@@ -318,7 +318,7 @@ namespace ursine
 
             clearComponents( entity, true );
 
-            utils::FlagUnset( entity->m_flags, Entity::ACTIVE );
+            entity->m_active = false;
 
             m_active.erase( find( m_active.begin( ), m_active.end( ), entity ) );
 

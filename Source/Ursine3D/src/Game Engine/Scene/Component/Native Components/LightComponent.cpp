@@ -18,9 +18,8 @@ namespace ursine
 
         Light::~Light(void)
         {
-            // TODO:
-            /*GetCoreSystem( graphics::GfxAPI )->
-                RenderableMgr.DestroyRenderable( m_handle );*/
+            GetCoreSystem( graphics::GfxAPI )->
+                RenderableMgr.DestroyRenderable( m_handle );
 
             m_light = nullptr;
         }

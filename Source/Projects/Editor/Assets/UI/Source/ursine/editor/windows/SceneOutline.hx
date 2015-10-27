@@ -65,16 +65,23 @@ class SceneOutline extends WindowHandler {
     private function onEntityAdded(e) {
         var entity = new Entity( e.uniqueID );
 
-        var item = createEntityItem( entity );
+        if (!entity.isVisibleInEditor( )) {
+            m_entityItems[ entity.uniqueID ] = null;
+        } else {
+            var item = createEntityItem( entity );
 
-        m_entityList.appendChild( item );
+            m_entityList.appendChild( item );
 
-        if (entity.hasComponent( 'Selected' ))
-            selectEntity( item );
+            if (entity.hasComponent( 'Selected' ))
+                selectEntity( item );
+        }
     }
 
     private function onEntityRemoved(e) {
         var item = m_entityItems[ e.uniqueID ];
+
+        if (item == null)
+            return;
 
         // TODO: handle multi selection
         if (m_selectedEntities.indexOf( e.uniqueID ) != -1)
@@ -86,18 +93,27 @@ class SceneOutline extends WindowHandler {
     private function onEntityNameChanged(e) {
         var item = m_entityItems[ e.uniqueID ];
 
+        if (item == null)
+            return;
+
         item.innerText = e.name;
     }
 
     private function onComponentAdded(e) {
         if (e.component == 'Selected') {
-            selectEntity( m_entityItems[ cast e.uniqueID ] );
+            var item = m_entityItems[ e.uniqueID ];
+
+            if (item != null)
+                selectEntity( item );
         }
     }
 
     private function onComponentRemoved(e) {
         if (e.component == 'Selected') {
-            deselectEntity( m_entityItems[ cast e.uniqueID ] );
+            var item = m_entityItems[ e.uniqueID ];
+
+            if (item != null)
+                deselectEntity( item );
         }
     }
 
@@ -183,6 +199,9 @@ class SceneOutline extends WindowHandler {
         for (uid in m_selectedEntities) {
             var item = m_entityItems[ uid ];
 
+            if (item == null)
+                continue;
+
             untyped item.entity.deselect( );
         }
     }
@@ -191,7 +210,16 @@ class SceneOutline extends WindowHandler {
         for (uid in m_selectedEntities) {
             var item = m_entityItems[ uid ];
 
-            untyped item.entity.remove( );
+            if (item == null)
+                continue;
+
+            var entity : Entity = untyped item.entity;
+
+            if (entity.isRemovalEnabled( )) {
+                entity.remove( );
+            } else {
+                // TODO: add removal warning
+            }
         }
     }
 }

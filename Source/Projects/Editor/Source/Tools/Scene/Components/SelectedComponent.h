@@ -15,4 +15,6 @@ public:
 private:
     ursine::ecs::Entity *m_selectBox;
 
+    void tryDebugModel(bool enabled);
+
 } Meta(Enable, HiddenInInspector);

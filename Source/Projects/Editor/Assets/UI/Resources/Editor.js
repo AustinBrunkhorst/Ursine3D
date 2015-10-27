@@ -855,6 +855,15 @@ ursine_editor_scene_entity_Entity.prototype = {
 	isValid: function() {
 		return this.m_handler.isValid();
 	}
+	,isRemovalEnabled: function() {
+		return this.m_handler.isRemovalEnabled();
+	}
+	,isHierarchyChangeEnabled: function() {
+		return this.m_handler.isHierarchyChangeEnabled();
+	}
+	,isVisibleInEditor: function() {
+		return this.m_handler.isVisibleInEditor();
+	}
 	,remove: function() {
 		this.m_handler.remove();
 	}
@@ -999,24 +1008,37 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	}
 	,onEntityAdded: function(e) {
 		var entity = new ursine_editor_scene_entity_Entity(e.uniqueID);
-		var item = this.createEntityItem(entity);
-		this.m_entityList.appendChild(item);
-		if(entity.hasComponent("Selected")) this.selectEntity(item);
+		if(!entity.isVisibleInEditor()) {
+			this.m_entityItems.h[entity.uniqueID] = null;
+			null;
+		} else {
+			var item = this.createEntityItem(entity);
+			this.m_entityList.appendChild(item);
+			if(entity.hasComponent("Selected")) this.selectEntity(item);
+		}
 	}
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
+		if(item == null) return;
 		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
 		this.m_entityList.removeChild(item);
 	}
 	,onEntityNameChanged: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
+		if(item == null) return;
 		item.innerText = e.name;
 	}
 	,onComponentAdded: function(e) {
-		if(e.component == "Selected") this.selectEntity(this.m_entityItems.h[e.uniqueID]);
+		if(e.component == "Selected") {
+			var item = this.m_entityItems.h[e.uniqueID];
+			if(item != null) this.selectEntity(item);
+		}
 	}
 	,onComponentRemoved: function(e) {
-		if(e.component == "Selected") this.deselectEntity(this.m_entityItems.h[e.uniqueID]);
+		if(e.component == "Selected") {
+			var item = this.m_entityItems.h[e.uniqueID];
+			if(item != null) this.deselectEntity(item);
+		}
 	}
 	,createEntityItem: function(entity) {
 		var _g = this;
@@ -1076,6 +1098,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			var uid = _g1[_g];
 			++_g;
 			var item = this.m_entityItems.h[uid];
+			if(item == null) continue;
 			item.entity.deselect();
 		}
 	}
@@ -1086,7 +1109,10 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			var uid = _g1[_g];
 			++_g;
 			var item = this.m_entityItems.h[uid];
-			item.entity.remove();
+			if(item == null) continue;
+			var entity = item.entity;
+			if(entity.isRemovalEnabled()) entity.remove(); else {
+			}
 		}
 	}
 });

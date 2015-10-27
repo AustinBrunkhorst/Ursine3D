@@ -24,6 +24,27 @@ JSMethod(EntityHandler::isValid)
     return CefV8Value::CreateBool( getEntity( ) != nullptr );
 }
 
+JSMethod(EntityHandler::isRemovalEnabled)
+{
+    auto entity = getEntity( );
+
+    return CefV8Value::CreateBool( entity && entity->IsDeletionEnabled( ) );
+}
+
+JSMethod(EntityHandler::isHierarchyChangeEnabled)
+{
+    auto entity = getEntity( );
+
+    return CefV8Value::CreateBool( entity && entity->IsHierarchyChangeEnabled( ) );
+}
+
+JSMethod(EntityHandler::isVisibleInEditor)
+{
+    auto entity = getEntity( );
+
+    return CefV8Value::CreateBool( entity && entity->IsVisibleInEditor( ) );
+}
+
 JSMethod(EntityHandler::remove)
 {
     auto entity = getEntity( );

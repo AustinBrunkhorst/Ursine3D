@@ -10,14 +10,10 @@
 
 #include <Color.h>
 
-#include <CameraComponent.h>
 #include <RenderableComponent.h>
 #include <LightComponent.h>
 #include <Model3DComponent.h>
-#include "SelectedComponent.h"
-#include "EditorCameraSystem.h"
-#include <SystemManager.h>
- 
+
 using namespace ursine;
 
 namespace
@@ -30,7 +26,7 @@ namespace
     const auto kDefaultWindowHeight = 720;
 }
 
-CORE_SYSTEM_DEFINITION( Editor ) ;
+CORE_SYSTEM_DEFINITION( Editor );
 
 Editor::Editor(void)
     : m_graphics( nullptr )
@@ -94,6 +90,7 @@ void Editor::OnRemove(void)
         .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
     m_mainWindow.ui->Close( );
+    m_mainWindow.ui = nullptr;
 
     m_mainWindow.window = nullptr;
 
@@ -112,7 +109,7 @@ void Editor::initializeGraphics(void)
     config.Fullscreen_ = false;
 
     config.HandleToWindow_ =
-            static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
+        static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
 
     config.ModelListPath_ = "Assets/Models/";
     config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
@@ -150,43 +147,14 @@ void Editor::initializeScene(void)
         m_graphics->SetGameViewport( viewport );
     }
 
-    auto *cameraEntity = world.CreateEntity( "Camera" );
-    {
-
-        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
-
-        auto &camera = component->GetCamera( );
-
-        camera.SetPosition( 0.0f, 0.0f );
-        camera.SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
-        camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 700.0f );
-        camera.SetFOV(45.f);
-
-        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-        scene.SetEditorCamera( component->GetHandle( ) );
-
-        GetCoreSystem(graphics::GfxAPI)->CameraMgr.GetCamera(
-            GetProject()->GetScene().GetEditorCamera()
-            );
-
-        GetProject()->GetScene().GetWorld().GetEntitySystem(
-            EditorCameraSystem)->
-            SetEditorCamera(&GetCoreSystem(graphics::GfxAPI)->
-            CameraMgr.GetCamera(
-                GetProject()->GetScene().GetEditorCamera()
-            ));
-    }
-
     for (int i = 0; i < 1; ++i)
     {
         auto *entity_char = world.CreateEntity( );
         auto *entity_cube = world.CreateEntity( );
 
         {
-            entity_char->AddComponent<ecs::Renderable>();
-            auto model = entity_char->AddComponent<ecs::Model3D>();
+            entity_char->AddComponent<ecs::Renderable>( );
+            auto model = entity_char->AddComponent<ecs::Model3D>( );
 
             auto name = "Character";
 
@@ -196,25 +164,25 @@ void Editor::initializeScene(void)
 
             auto transform = entity_char->GetTransform( );
 
-            transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
-            transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
-            transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
+            transform->SetWorldPosition( SVec3 { i * 1.0f, 0.0f, 0.0f } );
+            transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
+            transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );
         }
         {
-            entity_cube->AddComponent<ecs::Renderable>();
-            auto model = entity_cube->AddComponent<ecs::Model3D>();
+            entity_cube->AddComponent<ecs::Renderable>( );
+            auto model = entity_cube->AddComponent<ecs::Model3D>( );
 
             auto name = "Cube";
 
-            entity_cube->SetName(name);
+            entity_cube->SetName( name );
 
-            model->SetModel(name);
+            model->SetModel( name );
 
-            auto transform = entity_cube->GetTransform();
+            auto transform = entity_cube->GetTransform( );
 
-            transform->SetWorldPosition(SVec3{ i * 1.0f, 0.0f, 0.0f });
-            transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
-            transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
+            transform->SetWorldPosition( SVec3 { i * 1.0f, 0.0f, 0.0f } );
+            transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
+            transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );
         }
 
         // parent the character to the cube
@@ -223,15 +191,15 @@ void Editor::initializeScene(void)
 
     auto *sky = world.CreateEntity( "Skybox" );
     {
-        sky->AddComponent<ecs::Renderable>();
-        auto model = sky->AddComponent<ecs::Model3D>();
+        sky->AddComponent<ecs::Renderable>( );
+        auto model = sky->AddComponent<ecs::Model3D>( );
 
-        model->GetModel()->SetModel( "Skybox" );
-        model->GetModel()->SetMaterial( "Skybox" );
-        model->GetModel()->SetMaterialData( 0.6, 0, 0 );
-        model->GetModel()->SetEntityUniqueID(sky->GetUniqueID());
+        model->GetModel( )->SetModel( "Skybox" );
+        model->GetModel( )->SetMaterial( "Skybox" );
+        model->GetModel( )->SetMaterialData( 0.6, 0, 0 );
+        model->GetModel( )->SetEntityUniqueID( sky->GetUniqueID( ) );
 
-        auto transform = sky->GetComponent<ecs::Transform>();
+        auto transform = sky->GetComponent<ecs::Transform>( );
     }
 
     auto *univLight = world.CreateEntity( "Global Light" );
@@ -244,8 +212,6 @@ void Editor::initializeScene(void)
         component->SetDirection( { 0.0f, 1.0f, 0.0f } );
         component->SetColor( Color::White );
     }
-
-
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
