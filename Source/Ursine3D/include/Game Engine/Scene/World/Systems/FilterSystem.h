@@ -31,6 +31,8 @@ namespace ursine
             : public EntitySystem
             , public EntityProcessor
         {
+			ENTITY_SYSTEM;
+
             // entity's components changed
             void onComponentChange(EVENT_HANDLER(World));
 
@@ -55,6 +57,6 @@ namespace ursine
             virtual void OnRemove(void);
         public:
             FilterSystem(World *world, const Filter &filter);
-        };
+        } Meta( Enable, WhiteListMethods );
     }
 }
