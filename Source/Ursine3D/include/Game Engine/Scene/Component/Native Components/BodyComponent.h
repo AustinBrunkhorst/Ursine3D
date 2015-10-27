@@ -15,9 +15,14 @@ namespace ursine
 
         public:
             Body(void);
+			~Body(void);
+
+			void OnInitialize(void) override;
 
         private:
             physics::Body m_body;
+
+			void onTransformChange(EVENT_HANDLER(Entity));
 
         } Meta( Enable, WhiteListMethods );
     }

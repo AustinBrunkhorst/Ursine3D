@@ -15,9 +15,14 @@ namespace ursine
 
         public:
             Rigidbody(void);
+			~Rigidbody(void);
+
+			void OnInitialize(void) override;
 
         private:
             physics::Rigidbody m_rigidbody;
+
+			void onTransformChange(EVENT_HANDLER(Entity));
 
         } Meta( Enable, WhiteListMethods, DisplayName( "Rigidbody" ) );
     }

@@ -32,7 +32,7 @@ namespace ursine
             m_handle = handle;
         }
 
-        void Renderable::OnInitialize()
+        void Renderable::OnInitialize(void)
         {
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Renderable::onTransformChange );
