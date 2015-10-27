@@ -4,6 +4,7 @@
 #include "RigidbodyComponent.h"
 #include "BodyComponent.h"
 #include "SphereColliderComponent.h"
+#include "GfxAPI.h"
 
 namespace ursine
 {
@@ -13,8 +14,16 @@ namespace ursine
 
         PhysicsSystem::PhysicsSystem(World *world)
             : FilterSystem( world, Filter( ).All<Body, Rigidbody>( ) )
+			, m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
         {
             m_collisionShapes.One<SphereCollider>();
+
+			m_simulation.SetDebugDrawer( &m_debugDrawer );
+			m_debugDrawer.setDebugMode(
+				physics::DRAW_WIRE_FRAME |
+				physics::DRAW_AABB |
+				physics::DRAW_CONTACT_POINTS
+			);
         }
 
         PhysicsSystem::~PhysicsSystem(void)

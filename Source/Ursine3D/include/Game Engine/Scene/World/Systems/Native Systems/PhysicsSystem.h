@@ -6,6 +6,8 @@
 
 // AGGREGATE THE SIMULATION
 
+#pragma once
+
 #include "FilterSystem.h"
 #include "Simulation.h"
 
@@ -27,6 +29,7 @@ namespace ursine
 
         private:
             physics::Simulation m_simulation;
+			physics::DebugDrawer m_debugDrawer;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
