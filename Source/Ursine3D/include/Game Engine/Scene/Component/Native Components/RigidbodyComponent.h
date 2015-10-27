@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Rigidbody.h"
 
 namespace ursine
 {
@@ -10,12 +11,14 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
+            friend class PhysicsSystem;
+
         public:
             Rigidbody(void);
 
         private:
-            // private tings
+            physics::Rigidbody m_rigidbody;
 
-        } Meta(Enable, WhiteListMethods, DisplayName( "Rigidbody" ));
+        } Meta( Enable, WhiteListMethods, DisplayName( "Rigidbody" ) );
     }
 }

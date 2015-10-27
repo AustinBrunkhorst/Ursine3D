@@ -15,6 +15,7 @@
 #include <LightComponent.h>
 #include <Model3DComponent.h>
 #include "Tools/Scene/Components/SelectedComponent.h"
+#include <SphereColliderComponent.h>
 
 using namespace ursine;
 
@@ -177,6 +178,7 @@ void Editor::initializeScene(void)
         auto *entity_char = world.CreateEntity( );
         auto *entity_cube = world.CreateEntity( );
         {
+            entity_char->AddComponent<ecs::SphereCollider>();
             entity_char->AddComponent<ecs::Renderable>();
             auto model = entity_char->AddComponent<ecs::Model3D>();
 

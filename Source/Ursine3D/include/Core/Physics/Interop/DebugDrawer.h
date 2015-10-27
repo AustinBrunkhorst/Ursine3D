@@ -14,11 +14,10 @@ namespace ursine
             DRAW_WIRE_FRAME = btIDebugDraw::DBG_DrawWireframe,
             DRAW_AABB = btIDebugDraw::DBG_DrawAabb,
             DRAW_CONTACT_POINTS = btIDebugDraw::DBG_DrawContactPoints
-
 #endif
         };
 
-        class DebugDrawer : public PhysicsDebugDraw
+        class DebugDrawer : public DebugDrawerBase
         {
         public:
             DebugDrawer(graphics::GfxAPI *gfx);

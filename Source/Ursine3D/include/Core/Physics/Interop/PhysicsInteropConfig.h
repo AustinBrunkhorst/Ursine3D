@@ -22,6 +22,27 @@
 #include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
 #include "BulletWorldImporter/btWorldImporter.h"
 
-typedef btIDebugDraw PhysicsDebugDraw;
+namespace ursine
+{
+    namespace physics
+    {
+        // Debug drawer
+        typedef btIDebugDraw DebugDrawerBase;
+
+        // Collision shapes
+        typedef btCollisionShape ColliderBase;
+        typedef btSphereShape SphereColliderBase;
+
+        // Collision Object
+        typedef btCollisionObject BodyBase;
+
+        // Rigidbodies
+        typedef btRigidBody RigidbodyBase;
+        typedef btRigidBody::btRigidBodyConstructionInfo RigidbodyConstructionInfo;
+
+        // Motion state
+        typedef btDefaultMotionState MotionStateBase;
+    }
+}
 
 #endif

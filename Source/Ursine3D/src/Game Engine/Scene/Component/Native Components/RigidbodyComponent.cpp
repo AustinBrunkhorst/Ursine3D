@@ -6,7 +6,10 @@ namespace ursine
 {
     namespace ecs
     {
+        NATIVE_COMPONENT_DEFINITION( Rigidbody );
+
         Rigidbody::Rigidbody(void)
-            : BaseComponent( ) { }
+            : BaseComponent( )
+            , m_rigidbody( 1.0f, nullptr ) { }
     }
 }

@@ -48,6 +48,7 @@ namespace ursine
         // Callback function handler
         using Handler = fastdelegate::FastDelegate<void(void*, const EventArgs *)>;
 
+        URSINE_TODO("Austin: Add a weight for event listeners.");
         // Binds a connection to a static function
         template<typename Args>
         void Connect(const Key &event, StaticDelegate<Args> delegate);

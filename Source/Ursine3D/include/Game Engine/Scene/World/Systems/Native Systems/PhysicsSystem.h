@@ -6,20 +6,38 @@
 
 // AGGREGATE THE SIMULATION
 
-#include "EntitySystem.h"
-#include "PhysicsInterop.h"
+#include "FilterSystem.h"
+#include "Simulation.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class PhysicsSystem
+        class PhysicsSystem 
+            : public FilterSystem
         {
             ENTITY_SYSTEM;
+
         public:
-            
+            PhysicsSystem(World *world);
+            ~PhysicsSystem(void);
+
+        protected:
+            void Process(Entity *entity) override;
+
         private:
-            physics::Simulation simulation;
-        };
+            physics::Simulation m_simulation;
+
+            void OnInitialize(void) override;
+            void OnRemove(void) override;
+
+            void onComponentAdded(EVENT_HANDLER(World));
+            void onComponentRemoved(EVENT_HANDLER(World));
+
+            void onUpdate(EVENT_HANDLER(World));
+
+            Filter m_collisionShapes;
+
+        } Meta(Enable);
     }
 }
