@@ -25,7 +25,19 @@ namespace ursine
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
 		}
 
-		void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
+        BodyType Rigidbody::GetBodyType(void) const
+        {
+            return static_cast<BodyType>( m_rigidbody.GetBodyType( ) );
+        }
+
+        void Rigidbody::SetBodyType(BodyType bodyType)
+        {
+            m_rigidbody.SetBodyType( 
+                static_cast<physics::BodyType>( bodyType )
+            );
+        }
+
+        void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
         {
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
         }

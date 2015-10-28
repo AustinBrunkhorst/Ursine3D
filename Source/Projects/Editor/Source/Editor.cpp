@@ -16,6 +16,7 @@
 #include <Model3DComponent.h>
 #include "Tools/Scene/Components/SelectedComponent.h"
 #include <SphereColliderComponent.h>
+#include <BoxColliderComponent.h>
 #include <RigidbodyComponent.h>
 
 using namespace ursine;
@@ -174,13 +175,24 @@ void Editor::initializeScene(void)
         scene.SetEditorCamera( component->GetHandle( ) );
     }
 
+    auto *floorEntity = world.CreateEntity( "Floor" );
+    {
+        auto collider = floorEntity->AddComponent<ecs::BoxCollider>();
+
+        collider->SetDimensions(SVec3(40, 1, 40));
+
+        auto trans = floorEntity->GetTransform( );
+
+        trans->SetWorldPosition( SVec3( 0, -4, 0 ) );
+    }
+
     for (int i = 0; i < 25; ++i)
     {
         auto *entity_char = world.CreateEntity( );
         auto *entity_cube = world.CreateEntity( );
         {
-            entity_char->AddComponent<ecs::SphereCollider>();
-			//entity_char->AddComponent<ecs::Rigidbody>();
+            entity_char->AddComponent<ecs::BoxCollider>();
+			entity_char->AddComponent<ecs::Rigidbody>();
             entity_char->AddComponent<ecs::Renderable>();
             auto model = entity_char->AddComponent<ecs::Model3D>();
 

@@ -18,3 +18,4 @@
 #include "RigidbodyComponent.h"
 #include "BodyComponent.h"
 #include "SphereColliderComponent.h"
+#include "BoxColliderComponent.h"

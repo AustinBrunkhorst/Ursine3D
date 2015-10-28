@@ -8,23 +8,53 @@ namespace ursine
 {
     namespace physics
     {
-        Rigidbody::Rigidbody(float mass, ColliderBase *collider)
-            : RigidbodyBase( RigidbodyConstructionInfo(mass, &m_motionState, collider) )
+        Rigidbody::Rigidbody(float mass, ColliderBase *collider, BodyType bodyType)
+            : RigidbodyBase( RigidbodyConstructionInfo(mass, nullptr, collider) )
+            , m_gettingTransform( false )
+            , m_mass( mass )
         {
+        #ifdef BULLET_PHYSICS
             setMotionState( &m_motionState );
+        #endif
+
+            SetBodyType( bodyType );
+        }
+
+        void Rigidbody::SetBodyType(BodyType bodyType)
+        {
+            m_bodyType = bodyType;
+
+        #ifdef BULLET_PHYSICS
+            setCollisionFlags( m_bodyType );
+
+            if (bodyType == BODY_DYNAMIC)
+                activate( );
+        #endif
+        }
+
+        BodyType Rigidbody::GetBodyType(void) const
+        {
+            return m_bodyType;
         }
 
         void Rigidbody::SetTransform(ecs::Transform *transform)
         {
+            if (m_gettingTransform)
+                return;
+
         #ifdef BULLET_PHYSICS
 
             auto rot = transform->GetWorldRotation( );
             auto pos = transform->GetWorldPosition( );
-            
-            m_motionState.setWorldTransform(btTransform(
+            auto trans = btTransform(
                 btQuaternion( rot.X( ), rot.Y( ), rot.Z( ), rot.W( ) ),
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
-            ));
+            );
+
+            setWorldTransform( trans );
+
+            if (m_bodyType == BODY_DYNAMIC)
+                activate( );
 
         #endif
         }
@@ -33,6 +63,9 @@ namespace ursine
         {
             if (!m_motionState.m_dirty)
                 return;
+
+            // Setting this eleminates a circular get/set from the rigidbody component
+            m_gettingTransform = true;
 
         #ifdef BULLET_PHYSICS
 
@@ -53,6 +86,8 @@ namespace ursine
 
         #endif
 
+            m_gettingTransform = false;
+
             m_motionState.m_dirty = false;
         }
 
@@ -60,6 +95,14 @@ namespace ursine
         {
         #ifdef BULLET_PHYSICS
             setCollisionShape( collider );
+
+            btVector3 localInertia;
+
+            collider->calculateLocalInertia( m_mass, localInertia );
+
+            setupRigidBody( RigidbodyConstructionInfo( 
+                m_mass, &m_motionState, collider, localInertia 
+            ) );
         #endif
         }
 

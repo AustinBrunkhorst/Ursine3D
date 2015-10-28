@@ -12,7 +12,7 @@ namespace ursine
             MotionState(void);
 
         #ifdef BULLET_PHYSICS
-            virtual void setWorldTransform(const btTransform &centerOfMassWorldTrans);
+            void setWorldTransform(const btTransform &centerOfMassWorldTrans) override;
         #endif
 
             bool m_dirty;

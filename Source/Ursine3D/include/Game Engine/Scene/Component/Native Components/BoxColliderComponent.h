@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** SphereColliderComponent.h
+** BoxColliderComponent.h
 **
 ** Author:
 ** - Jordan Ellis - contact@jordanellis.me
@@ -14,13 +14,13 @@
 #pragma once
 
 #include "Component.h"
-#include "SphereCollider.h"
+#include "BoxCollider.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class SphereCollider : public Component
+        class BoxCollider : public Component
         {
             NATIVE_COMPONENT;
 
@@ -28,19 +28,19 @@ namespace ursine
 
         public:
             EditorField(
-                float radius,
-                GetRadius,
-                SetRadius
+                SVec3 dimensions,
+                GetDimensions,
+                SetDimensions
             );
 
-            SphereCollider(void);
+            BoxCollider(void);
 
-            float GetRadius(void) const;
-            void SetRadius(float radius);
+            SVec3 GetDimensions(void) const;
+            void SetDimensions(const SVec3 &dimensions);
 
         private:
-            physics::SphereCollider m_sphereCollider;
+            physics::BoxCollider m_boxCollider;
 
-        } Meta( Enable, WhiteListMethods, DisplayName( "SphereCollider" ) );
+        } Meta( Enable, WhiteListMethods, DisplayName( "BoxCollider" ) );
     }
 }

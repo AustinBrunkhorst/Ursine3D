@@ -32,6 +32,7 @@ namespace ursine
         // Collision shapes
         typedef btCollisionShape ColliderBase;
         typedef btSphereShape SphereColliderBase;
+        typedef btBoxShape BoxColliderBase;
 
         // Collision Object
         typedef btCollisionObject BodyBase;

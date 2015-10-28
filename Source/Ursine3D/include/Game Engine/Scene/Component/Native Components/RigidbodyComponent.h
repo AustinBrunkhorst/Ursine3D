@@ -7,6 +7,13 @@ namespace ursine
 {
     namespace ecs
     {
+        enum class BodyType
+        {
+            Dynamic = physics::BODY_DYNAMIC,
+            Static = physics::BODY_STATIC,
+            kinematic = physics::BODY_KINEMATIC
+        } Meta( Enable );
+
         class Rigidbody : public Component
         {
             NATIVE_COMPONENT;
@@ -14,10 +21,19 @@ namespace ursine
             friend class PhysicsSystem;
 
         public:
+            EditorField(
+                BodyType bodyType,
+                GetBodyType,
+                SetBodyType
+            );
+
             Rigidbody(void);
 			~Rigidbody(void);
 
 			void OnInitialize(void) override;
+
+            BodyType GetBodyType(void) const;
+            void SetBodyType(BodyType bodyType);
 
         private:
             physics::Rigidbody m_rigidbody;

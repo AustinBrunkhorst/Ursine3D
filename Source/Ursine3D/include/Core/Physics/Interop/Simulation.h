@@ -20,7 +20,6 @@ namespace ursine
         // forward declaration
         class Body;
         class Rigidbody;
-        class SphereCollider;
 
         class Simulation
         {

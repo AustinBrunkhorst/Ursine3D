@@ -10,6 +10,7 @@
 
 #include "FilterSystem.h"
 #include "Simulation.h"
+#include "PhysicsInteropConfig.h"
 
 namespace ursine
 {
@@ -22,7 +23,6 @@ namespace ursine
 
         public:
             PhysicsSystem(World *world);
-            ~PhysicsSystem(void);
 
         protected:
             void Process(Entity *entity) override;
@@ -38,6 +38,9 @@ namespace ursine
             void onComponentRemoved(EVENT_HANDLER(World));
 
             void onUpdate(EVENT_HANDLER(World));
+
+            void addCollider(Entity *entity, physics::ColliderBase *collider);
+            void removeCollider(Entity *entity);
 
             Filter m_collisionShapes;
 
