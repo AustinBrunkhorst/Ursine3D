@@ -76,6 +76,7 @@ namespace ursine
             m_specPow = 0;
             m_specIntensity = 0;
             SetOverdraw(false);
+            SetDebug(false);
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)

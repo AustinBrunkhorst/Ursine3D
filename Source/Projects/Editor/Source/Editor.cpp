@@ -8,7 +8,7 @@
 #include <WindowManager.h>
 #include <UIManager.h>
 
-#include <Color.h>
+#include <Color.h> 
 
 #include <CameraComponent.h>
 #include <RenderableComponent.h>
@@ -164,7 +164,7 @@ void Editor::initializeScene(void)
 
         auto &camera = component->GetCamera( );
 
-        camera.SetPosition( 0.0f, 0.0f );
+        camera.SetPosition( 0, 0.0f );
         camera.SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
         camera.SetDimensions( 1.0f, 1.0f );
         camera.SetPlanes( 0.1f, 700.0f );
@@ -186,7 +186,7 @@ void Editor::initializeScene(void)
             ));
     }
 
-    for (int i = 0; i < 1; ++i)
+    for (int i = 0; i < 10; ++i)
     {
         auto *entity_char = world.CreateEntity( );
         auto *entity_cube = world.CreateEntity( );
@@ -227,18 +227,22 @@ void Editor::initializeScene(void)
         // parent the character to the cube
         entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
     }
-
-    auto *sky = world.CreateEntity( "Skybox" );
     {
-        sky->AddComponent<ecs::Renderable>();
-        auto model = sky->AddComponent<ecs::Model3D>();
+        auto *entity_cube = world.CreateEntity();
+        entity_cube->AddComponent<ecs::Renderable>();
+        auto model = entity_cube->AddComponent<ecs::Model3D>();
 
-        model->GetModel()->SetModel( "Skybox" );
-        model->GetModel()->SetMaterial( "Skybox" );
-        model->GetModel()->SetMaterialData( 0.6, 0, 0 );
-        model->GetModel()->SetEntityUniqueID(sky->GetUniqueID());
+        auto name = "Cube";
 
-        auto transform = sky->GetComponent<ecs::Transform>();
+        entity_cube->SetName(name);
+
+        model->SetModel(name);
+
+        auto transform = entity_cube->GetTransform();
+
+        transform->SetWorldPosition(SVec3{ 5 * 1.0f, 0.0f, 0.0f });
+        transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
+        transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
     }
 
     auto *univLight = world.CreateEntity( "Global Light" );

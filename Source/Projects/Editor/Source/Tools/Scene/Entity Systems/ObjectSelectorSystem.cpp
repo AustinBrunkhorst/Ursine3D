@@ -227,6 +227,9 @@ void ObjectSelectorSystem::onMouseMove(EVENT_HANDLER(ursine::MouseManager))
     EVENT_ATTRS(MouseManager, MouseMoveArgs);
 
     auto mouseMgr = GetCoreSystem(MouseManager);
+    auto newID = m_graphics->GetMousedOverID();
+
+   
 
     //some switch for detecting tool type
     if(!(GetCoreSystem(ursine::KeyboardManager)->GetModifiers( ) & KMD_ALT))
@@ -273,6 +276,7 @@ void ObjectSelectorSystem::onMouseMove(EVENT_HANDLER(ursine::MouseManager))
                 updateScale(SVec3(x, y, z));
                 break;
             case TOOL_ROTATION:
+                updateRotation(SVec3(x, y, z));
                 break;
             default:
                 break;
@@ -442,7 +446,7 @@ void ObjectSelectorSystem::updateToolPosition(ursine::Vec3 pos)
         switch(m_currentTool)
         {
         case TOOL_TRANSLATION:
-            scalar = zoom / 80;
+            scalar = zoom / 90;
             xTransf->SetWorldScale(SVec3(scalar, zoom / 10.f, scalar));
             yTransf->SetWorldScale(SVec3(scalar, zoom / 10.f, scalar));
             zTransf->SetWorldScale(SVec3(scalar, zoom / 10.f, scalar));
@@ -450,6 +454,11 @@ void ObjectSelectorSystem::updateToolPosition(ursine::Vec3 pos)
             xTransf->SetWorldPosition(ursine::SVec3(zoom / 20, 0, 0) + pos);
             yTransf->SetWorldPosition(ursine::SVec3(0, zoom / 20, 0) + pos);
             zTransf->SetWorldPosition(ursine::SVec3(0, 0, zoom / 20) + pos);
+
+            //rotation
+            xTransf->SetWorldRotation(ursine::SQuat(90, ursine::SVec3(0, 0, 1)));
+            yTransf->SetWorldRotation(ursine::SQuat(0, ursine::SVec3(0, 0, 1)));
+            zTransf->SetWorldRotation(ursine::SQuat(90, ursine::SVec3(1, 0, 0)));
             break;
         case TOOL_SCALE:
             scalar = zoom / 40;
@@ -460,8 +469,25 @@ void ObjectSelectorSystem::updateToolPosition(ursine::Vec3 pos)
             xTransf->SetWorldPosition(ursine::SVec3(scalar * 3, 0, 0) + pos);
             yTransf->SetWorldPosition(ursine::SVec3(0, scalar * 3, 0) + pos);
             zTransf->SetWorldPosition(ursine::SVec3(0, 0, scalar * 3) + pos);
+
+            //rotation
+            xTransf->SetWorldRotation(ursine::SQuat(90, ursine::SVec3(0, 0, 1)));
+            yTransf->SetWorldRotation(ursine::SQuat(0, ursine::SVec3(0, 0, 1)));
+            zTransf->SetWorldRotation(ursine::SQuat(90, ursine::SVec3(1, 0, 0)));
             break;
         case TOOL_ROTATION:
+            scalar = zoom / 5; 
+            xTransf->SetWorldScale(SVec3(scalar, scalar, scalar));
+            yTransf->SetWorldScale(SVec3(scalar, scalar, scalar));
+            zTransf->SetWorldScale(SVec3(scalar, scalar, scalar));
+
+            xTransf->SetWorldRotation(ursine::SQuat(0, ursine::SVec3(1, 0, 0)));
+            yTransf->SetWorldRotation(ursine::SQuat(ursine::SQuat(90, ursine::SVec3(0, 0, 2))));
+            zTransf->SetWorldRotation(ursine::SQuat(90, ursine::SVec3(1, 0, 0)));
+
+            xTransf->SetWorldPosition(pos);
+            yTransf->SetWorldPosition(pos);
+            zTransf->SetWorldPosition(pos);
             break;
         default:
             break;
@@ -607,7 +633,7 @@ void ObjectSelectorSystem::updateScale(const ursine::SVec3& mousePos)
     case 0:
         scale.SetX(mousePos.X( ) - m_baseMousePos.X( ) + m_baseScale.X( ));
         break;
-    case 1:
+    case 1: 
         scale.SetY(mousePos.Y( ) - m_baseMousePos.Y( ) + m_baseScale.Y( ));
         break;
     case 2:
@@ -621,14 +647,81 @@ void ObjectSelectorSystem::updateScale(const ursine::SVec3& mousePos)
 
 void ObjectSelectorSystem::setToRotation()
 {
-    float zoom = m_world->GetEntitySystem(EditorCameraSystem)->GetCamZoom( );
+    //get their models
+    auto xHand = m_xAxis->GetComponent<ursine::ecs::Renderable>()->GetHandle();
+    auto yHand = m_yAxis->GetComponent<ursine::ecs::Renderable>()->GetHandle();
+    auto zHand = m_zAxis->GetComponent<ursine::ecs::Renderable>()->GetHandle();
 
-    
+    auto &xModel = m_graphics->RenderableMgr.GetModel3D(xHand);
+    auto &yModel = m_graphics->RenderableMgr.GetModel3D(yHand);
+    auto &zModel = m_graphics->RenderableMgr.GetModel3D(zHand);
+
+    {
+
+        xModel.SetModel("Ring");
+        yModel.SetModel("Ring");
+        zModel.SetModel("Ring");
+
+        xModel.SetMaterial("Blank");
+        yModel.SetMaterial("Blank");
+        zModel.SetMaterial("Blank");
+
+        xModel.SetMaterialData(8, 0, 0);
+        yModel.SetMaterialData(8, 0, 0);
+        zModel.SetMaterialData(8, 0, 0);
+
+        xModel.SetColor(Color(1, 0, 0, 1));
+        zModel.SetColor(Color(0, 0, 1, 1));
+        yModel.SetColor(Color(0, 1, 0, 1));
+
+        xModel.SetOverdraw(true);
+        yModel.SetOverdraw(true);
+        zModel.SetOverdraw(true);
+
+        if (m_currentID != -1) moveToolToEntity(m_currentID);
+    }
 }
 
 void ObjectSelectorSystem::updateRotation(const ursine::SVec3& mousePos)
 {
-    
+    //what axis are we trying to change? x, y, or z?
+    SVec3 mouseLockedPos = m_baseMousePos;
+    SVec3 mouseFreePos = mousePos;
+
+    SVec3 mouseLockedVec;
+    SVec3 mouseFreeVec;
+  
+    SQuat newRot;
+    auto transf = m_world->GetEntityUnique(m_currentID)->GetComponent<ecs::Transform>();
+    float difference;
+
+    //if x, lock to the x/y of the obj. get vector from xyz of obj.
+    switch (m_axis)
+    {
+    case 0:
+        difference = mousePos.X() - m_baseMousePos.X();
+
+        transf->SetLocalRotation(transf->GetLocalRotation() * SQuat(0, -difference, 0));
+            
+        break;
+    case 1:
+        difference = mousePos.X() - m_baseMousePos.X();
+
+        transf->SetLocalRotation(transf->GetLocalRotation() * SQuat(-difference, 0, 0));
+        break;
+    case 2:    
+        difference = mousePos.Y() - m_baseMousePos.Y();
+
+        transf->SetLocalRotation(transf->GetLocalRotation() * SQuat(0, 0, -difference));
+        break;
+    }
+
+
+
+    //so we need to somehow lock onto the plane that we want to rotate on
+    //in the case of X, we will want to rotate on the Y/Z Axis
+    //however, to get the angle we need to rotate on the plane that the ring exists on (XZ)
+    //
 }
 
 void ObjectSelectorSystem::hideTool()
@@ -637,8 +730,8 @@ void ObjectSelectorSystem::hideTool()
     m_axis = -1;
 
     m_baseTranslation = SVec3(2000, 2000, 2000);
-    updateToolPosition(m_baseTranslation);
-}
+    updateToolPosition(m_baseTranslation);  
+}  
 
 ursine::SVec3 ObjectSelectorSystem::GetMousePosition(const ursine::Vec2 mousePos)
 {
@@ -684,4 +777,5 @@ void ObjectSelectorSystem::updateBases()
 
     m_baseTranslation = obj->GetComponent<ecs::Transform>( )->GetWorldPosition( );
     m_baseScale = obj->GetComponent<ecs::Transform>( )->GetWorldScale( );
+    m_baseRotation = obj->GetComponent<ecs::Transform>()->GetWorldRotation();
 }

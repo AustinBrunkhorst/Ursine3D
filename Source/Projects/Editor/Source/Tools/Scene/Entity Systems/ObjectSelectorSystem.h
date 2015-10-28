@@ -108,5 +108,6 @@ private:
     ursine::Vec3 m_baseTranslation;
     ursine::Vec3 m_offset;
     ursine::Vec3 m_baseScale;
+    ursine::SQuat m_baseRotation;
     ursine::Vec3 m_baseMousePos;
 } Meta(Enable);

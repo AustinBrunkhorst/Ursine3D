@@ -832,7 +832,10 @@ namespace ursine
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
             
             //set unique ID for this model
-            mdb.id = (handle.Index_) | (handle.Type_ << 16);
+            int overdrw = current.GetOverdraw() == true ? 1 : 0;
+
+            //             16                8
+            mdb.id = (handle.Index_) | (handle.Type_ << 16) | (overdrw << 20);
 
             //map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
@@ -844,7 +847,7 @@ namespace ursine
             textureManager->MapTextureByID(handle.Material_);
 
             if(handle.Overdraw_)
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+                dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
             else
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
 
@@ -930,7 +933,7 @@ namespace ursine
             dxCore->GetDeviceContext()->Dispatch(1, 1, 1);
 
             //copy data to intermediary buffer
-            //                                                         CPU read-only staging buffer                            GPU compute output
+            //                                                           CPU read-only staging buffer                            GPU compute output
             dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
 
             //read from intermediary buffer
@@ -942,15 +945,19 @@ namespace ursine
             tempID = dataFromCS.id;
 
             int index = tempID & 0xff;
-            int type = (tempID >> 16) & 0xff;
+            int type = (tempID >> 16) & 0xf;
+            int overdraw = (tempID >> 20) & 0xF; 
 
+            type = 0;  
             unsigned w, h;
-            gfxInfo->GetDimensions(w, h);
-
-            if (tempID < 100000 && (unsigned)point.x < w && (unsigned)point.y < h)
+            gfxInfo->GetDimensions(w, h); 
+            printf("index: %i\n", tempID);
+            if (tempID < 16711680 && (unsigned)point.x < w && (unsigned)point.y < h)
             {
-                //printf("index: %i, type: %i\n", tempID, type);
+                  
 
+               
+                printf("%i, %i, %i\n", index, type, overdraw);
                 switch (type)
                 {
                 case RENDERABLE_MODEL3D:
