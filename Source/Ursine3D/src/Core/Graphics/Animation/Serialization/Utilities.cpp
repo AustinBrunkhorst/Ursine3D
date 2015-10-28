@@ -11,101 +11,102 @@ namespace ursine
 	{
 		namespace FBX_DATA
 		{
+			//make sure this gft, interpolate function works in jdl model
 			void FbxModel::GetFinalTransform(const std::string& clipName, double timePos, std::vector<XMMATRIX>& finalTransform) const
-			{
-				// Calculating Final Transform
-				size_t numBones = mSkinnedData.mbonehierarchy.size();
-				std::vector<XMMATRIX> toParentTransforms(numBones);
-				std::vector<XMMATRIX> toRootTransforms(numBones);
-				auto AnimData = mAnimationData[0];
-				auto AnimClip = AnimData->animations.find(clipName);
-
-				// try just one animation
-				// Interpolate all the bones of this clip at the given time instance.
-				AnimClip->second.Interpolate(timePos, toParentTransforms);
-				//
-				// Traverse the hierarchy and transform all the bones to the root space.
-				//
-				// The root bone has index 0. The root bone has no parent, so
-				// its toRootTransform is just its local bone transform.
-				toRootTransforms[0] = toParentTransforms[0];
-				// Now find the toRootTransform of the children.
-				for (size_t i = 1; i < numBones; ++i)
 				{
-					// toParent = animTM
-					XMMATRIX toParent = toParentTransforms[i];
-					int parentIndex = mSkinnedData.mbonehierarchy[i].mParentIndex;
-					// parentToRoot = parent to root transformation
-					XMMATRIX parentToRoot = toRootTransforms[parentIndex];
-					// toRootTransform = local bone transform
-					toRootTransforms[i] = XMMatrixMultiply(toParent, parentToRoot);
-				}
+					// Calculating Final Transform
+					size_t numBones = mSkinnedData.mbonehierarchy.size();
+					std::vector<XMMATRIX> toParentTransforms(numBones);
+					std::vector<XMMATRIX> toRootTransforms(numBones);
+					auto AnimData = mAnimationData[0];
+					auto AnimClip = AnimData->animations.find(clipName);
 
-				// Premultiply by the bone offset transform to get the final transform.
-				for (size_t i = 0; i < numBones; ++i)
-				{
-					XMVECTOR bsp = Utilities::SetFloat4ToXMVector(mSkinnedData.mbonehierarchy[i].boneSpacePosition);
-					XMVECTOR bsr = Utilities::SetFloat4ToXMVector(mSkinnedData.mbonehierarchy[i].boneSpaceRotation);
-					XMMATRIX offPos = XMMatrixTranslationFromVector(bsp);
-					XMMATRIX offRot = XMMatrixRotationQuaternion(bsr);
-					XMMATRIX offset = XMMatrixMultiply(offRot, offPos);
-					XMMATRIX toroot = toRootTransforms[i];
-					finalTransform[i] = XMMatrixMultiply(offset, toroot);
+					// try just one animation
+					// Interpolate all the bones of this clip at the given time instance.
+					AnimClip->second.Interpolate(timePos, toParentTransforms);
+					//
+					// Traverse the hierarchy and transform all the bones to the root space.
+					//
+					// The root bone has index 0. The root bone has no parent, so
+					// its toRootTransform is just its local bone transform.
+					toRootTransforms[0] = toParentTransforms[0];
+					// Now find the toRootTransform of the children.
+					for (size_t i = 1; i < numBones; ++i)
+					{
+						// toParent = animTM
+						XMMATRIX toParent = toParentTransforms[i];
+						int parentIndex = mSkinnedData.mbonehierarchy[i].mParentIndex;
+						// parentToRoot = parent to root transformation
+						XMMATRIX parentToRoot = toRootTransforms[parentIndex];
+						// toRootTransform = local bone transform
+						toRootTransforms[i] = XMMatrixMultiply(toParent, parentToRoot);
+					}
+
+					// Premultiply by the bone offset transform to get the final transform.
+					for (size_t i = 0; i < numBones; ++i)
+					{
+						XMVECTOR bsp = Utilities::SetFloat4ToXMVector(mSkinnedData.mbonehierarchy[i].boneSpacePosition);
+						XMVECTOR bsr = Utilities::SetFloat4ToXMVector(mSkinnedData.mbonehierarchy[i].boneSpaceRotation);
+						XMMATRIX offPos = XMMatrixTranslationFromVector(bsp);
+						XMMATRIX offRot = XMMatrixRotationQuaternion(bsr);
+						XMMATRIX offset = XMMatrixMultiply(offRot, offPos);
+						XMMATRIX toroot = toRootTransforms[i];
+						finalTransform[i] = XMMatrixMultiply(offset, toroot);
+					}
 				}
-			}
 
 			void AnimationClip::Interpolate(double timePos, std::vector<XMMATRIX>& toParentTMs)
-			{
-				for (size_t i = 0; i < boneAnim.size(); ++i)
 				{
-					// rot * trsnl is the correct order in row major
-					BoneAnimation* currBa = &(boneAnim[i]);
-					//t is before the animation started, so just return the first key frame.
-					if (timePos <= currBa->keyFrames.front().time)
+					for (size_t i = 0; i < boneAnim.size(); ++i)
 					{
-						XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
-						XMVECTOR P = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().trans);
-						XMVECTOR Q = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().rot);
-						XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
-						XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
-						XMMATRIX rot = XMMatrixRotationQuaternion(Q);
-						toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
-					} // t is after the animation ended, so just return the last key frame.
-					else if (timePos >= currBa->keyFrames.back().time)
-					{
-						XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
-						XMVECTOR P = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().trans);
-						XMVECTOR Q = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().rot);
-						XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
-						XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
-						XMMATRIX rot = XMMatrixRotationQuaternion(Q);
-						toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
-					} // t is between two key frames, so interpolate.
-					else
-					{
-						for (unsigned int j = 0; j < currBa->keyFrames.size() - 1; ++j)
+						// rot * trsnl is the correct order in row major
+						BoneAnimation* currBa = &(boneAnim[i]);
+						//t is before the animation started, so just return the first key frame.
+						if (timePos <= currBa->keyFrames.front().time)
 						{
-							if (timePos >= currBa->keyFrames[j].time && timePos <= currBa->keyFrames[j + 1].time)
+							XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+							XMVECTOR P = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().trans);
+							XMVECTOR Q = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().rot);
+							XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
+							XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
+							XMMATRIX rot = XMMatrixRotationQuaternion(Q);
+							toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
+						} // t is after the animation ended, so just return the last key frame.
+						else if (timePos >= currBa->keyFrames.back().time)
+						{
+							XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+							XMVECTOR P = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().trans);
+							XMVECTOR Q = Utilities::SetFloat4ToXMVector(currBa->keyFrames.front().rot);
+							XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
+							XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
+							XMMATRIX rot = XMMatrixRotationQuaternion(Q);
+							toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
+						} // t is between two key frames, so interpolate.
+						else
+						{
+							for (unsigned int j = 0; j < currBa->keyFrames.size() - 1; ++j)
 							{
-								float lerpPercent = ((float)timePos - currBa->keyFrames[j].time)
-									/ (currBa->keyFrames[j + 1].time - currBa->keyFrames[j].time);
-								XMVECTOR p0 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j].trans);
-								XMVECTOR p1 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j + 1].trans);
-								XMVECTOR q0 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j].rot);
-								XMVECTOR q1 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j + 1].rot);
-								XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
-								XMVECTOR P = XMVectorLerp(p0, p1, lerpPercent);
-								XMVECTOR Q = XMQuaternionSlerp(q0, q1, lerpPercent);
-								XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
-								XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
-								XMMATRIX rot = XMMatrixRotationQuaternion(Q);
-								toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
-								break;
+								if (timePos >= currBa->keyFrames[j].time && timePos <= currBa->keyFrames[j + 1].time)
+								{
+									float lerpPercent = ((float)timePos - currBa->keyFrames[j].time)
+										/ (currBa->keyFrames[j + 1].time - currBa->keyFrames[j].time);
+									XMVECTOR p0 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j].trans);
+									XMVECTOR p1 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j + 1].trans);
+									XMVECTOR q0 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j].rot);
+									XMVECTOR q1 = Utilities::SetFloat4ToXMVector(currBa->keyFrames[j + 1].rot);
+									XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+									XMVECTOR P = XMVectorLerp(p0, p1, lerpPercent);
+									XMVECTOR Q = XMQuaternionSlerp(q0, q1, lerpPercent);
+									XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
+									XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
+									XMMATRIX rot = XMMatrixRotationQuaternion(Q);
+									toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
+									break;
+								}
 							}
 						}
 					}
 				}
-			}
 		}
 
 		XMVECTOR Utilities::Set4FloatsToXMVector(const float& x, const float& y, const float& z, const float& w)

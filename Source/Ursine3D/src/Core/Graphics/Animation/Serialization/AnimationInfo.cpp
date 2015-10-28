@@ -107,6 +107,65 @@ namespace ursine
 				}
 				return true;
 			}
+
+			void AnimInfo::Interpolate(int index, double timePos, std::vector<XMMATRIX>& toParentTMs)
+			{
+				for (size_t i = 0; i < boneCount; ++i)
+				{
+					// rot * trsnl is the correct order in row major
+					// which clips which bone? need which clip index
+					size_t keyCount = keyIndices[index][i];
+					FBX_DATA::KeyFrame* KeyFrame = keyframes[index][i];
+					if (nullptr == KeyFrame)
+						continue;
+
+					//t is before the animation started, so just return the first key frame.
+					if (timePos <= KeyFrame[0].time)
+					{
+						XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+						XMVECTOR P = Utilities::SetFloat4ToXMVector(KeyFrame[0].trans);
+						XMVECTOR Q = Utilities::SetFloat4ToXMVector(KeyFrame[0].rot);
+						XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
+						XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
+						XMMATRIX rot = XMMatrixRotationQuaternion(Q);
+						toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
+					}
+					// t is after the animation ended, so just return the last key frame.
+					else if (timePos >= KeyFrame[keyCount - 1].time)
+					{
+						XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+						XMVECTOR P = Utilities::SetFloat4ToXMVector(KeyFrame[keyCount - 1].trans);
+						XMVECTOR Q = Utilities::SetFloat4ToXMVector(KeyFrame[keyCount - 1].rot);
+						XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
+						XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
+						XMMATRIX rot = XMMatrixRotationQuaternion(Q);
+						toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
+					}
+					// t is between two key frames, so interpolate.
+					else
+					{
+						for (unsigned int j = 0; j < keyCount - 1; ++j)
+						{
+							if (timePos >= KeyFrame[j].time && timePos <= KeyFrame[j + 1].time)
+							{
+								float lerpPercent = ((float)timePos - KeyFrame[j].time) / (KeyFrame[j + 1].time - KeyFrame[j].time);
+								XMVECTOR p0 = Utilities::SetFloat4ToXMVector(KeyFrame[j].trans);
+								XMVECTOR p1 = Utilities::SetFloat4ToXMVector(KeyFrame[j + 1].trans);
+								XMVECTOR q0 = Utilities::SetFloat4ToXMVector(KeyFrame[j].rot);
+								XMVECTOR q1 = Utilities::SetFloat4ToXMVector(KeyFrame[j + 1].rot);
+								XMVECTOR S = XMVectorSet(1.f, 1.f, 1.f, 1.f);
+								XMVECTOR P = XMVectorLerp(p0, p1, lerpPercent);
+								XMVECTOR Q = XMQuaternionSlerp(q0, q1, lerpPercent);
+								XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
+								XMMATRIX trnsl = XMMatrixTranslationFromVector(P);
+								XMMATRIX rot = XMMatrixRotationQuaternion(Q);
+								toParentTMs[i] = XMMatrixAffineTransformation(S, zero, Q, P);
+								break;
+							}
+						}
+					}
+				}
+			}
 		};
 	};
 };

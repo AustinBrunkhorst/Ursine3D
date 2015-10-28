@@ -28,7 +28,7 @@ namespace ursine
 				DWORD nBytesRead;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					ReadFile(hFile, &mbones, sizeof(FBX_DATA::Joint), &nBytesRead, nullptr);
+					ReadFile(hFile, &mbones, sizeof(SkinBone), &nBytesRead, nullptr);
 				}
 				return true;
 			}
@@ -38,7 +38,7 @@ namespace ursine
 				DWORD nBytesWrite;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					WriteFile(hFile, &mbones, sizeof(FBX_DATA::Joint), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mbones, sizeof(SkinBone), &nBytesWrite, nullptr);
 				}
 				return true;
 			}

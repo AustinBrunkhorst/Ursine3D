@@ -38,6 +38,8 @@ namespace ursine
 
 				bool SerializeIn(HANDLE hFile);
 				bool SerializeOut(HANDLE hFile);
+				void GetFinalTransform(const std::string& clipName, double timePos, std::vector<XMMATRIX>& finalTransform) const;
+				AnimInfo* FindAnimClip(int* index, const std::string& clipName) const;
 			};
 		};
 	};

@@ -25,6 +25,7 @@ namespace ursine
 
 				bool SerializeIn(HANDLE hFile);
 				bool SerializeOut(HANDLE hFile);
+				void Interpolate(int index, double timePos, std::vector<XMMATRIX>& toParentTMs);
 			};
 		};
 	};

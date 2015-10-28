@@ -68,27 +68,27 @@ namespace ursine
             temp.resize(6);
 
             temp[ 0 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-            temp[ 0 ].vTexcoord = DirectX::XMFLOAT2(1, 1);
+            temp[ 0 ].vUv = DirectX::XMFLOAT2(1, 1);
             temp[ 0 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
             temp[ 1 ].vPos = DirectX::XMFLOAT3(0.5, -0.5, 0.5);
-            temp[ 1 ].vTexcoord = DirectX::XMFLOAT2(0, 1);
+            temp[ 1 ].vUv = DirectX::XMFLOAT2(0, 1);
             temp[ 1 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
             temp[ 2 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-            temp[ 2 ].vTexcoord = DirectX::XMFLOAT2(0, 0);
+            temp[ 2 ].vUv = DirectX::XMFLOAT2(0, 0);
             temp[ 2 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
             temp[ 3 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-            temp[ 3 ].vTexcoord = DirectX::XMFLOAT2(0, 0);
+            temp[ 3 ].vUv = DirectX::XMFLOAT2(0, 0);
             temp[ 3 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
             temp[ 4 ].vPos = DirectX::XMFLOAT3(-0.5, 0.5, 0.5);
-            temp[ 4 ].vTexcoord = DirectX::XMFLOAT2(1, 0);
+            temp[ 4 ].vUv = DirectX::XMFLOAT2(1, 0);
             temp[ 4 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
             temp[ 5 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-            temp[ 5 ].vTexcoord = DirectX::XMFLOAT2(1, 1);
+            temp[ 5 ].vUv = DirectX::XMFLOAT2(1, 1);
             temp[ 5 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
             std::string name = "internalQuad";
@@ -257,11 +257,11 @@ namespace ursine
 			std::ifstream input;
 			std::vector<AnimationVertex> buffer;
 
-			// this is wrong
 			HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			ufmt_loader::ModelInfo ufmt_model;
-			// Serialize in model ////////////////////////////////////////
+			// Serialize in model
 			ufmt_model.SerializeIn(hFile);
+			// constrcut FbxModel by ufmt_model (this is prototype->change more efficiently later)
 
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -291,7 +291,7 @@ namespace ursine
 				{
 					buffer[i].vPos = ufmt_model.marrMeshes[mesh_idx].vertices[i];
 					buffer[i].vNor = ufmt_model.marrMeshes[mesh_idx].normals[i];
-					buffer[i].vTexcoord = ufmt_model.marrMeshes[mesh_idx].uvs[i];
+					buffer[i].vUv = ufmt_model.marrMeshes[mesh_idx].uvs[i];
 					if (ufmt_model.marrMeshes[mesh_idx].ctrlPtCount > 0)
 					{
 						buffer[i].vBWeight.x = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][0];

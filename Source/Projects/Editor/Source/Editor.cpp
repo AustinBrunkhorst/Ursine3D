@@ -165,7 +165,7 @@ void Editor::initializeScene(void)
         auto &camera = component->GetCamera( );
 
         camera.SetPosition( 0.0f, 0.0f );
-        camera.SetRenderMode( graphics::VIEWPORT_RENDER_FORWARD );
+		camera.SetRenderMode(graphics::VIEWPORT_RENDER_FORWARD );
         camera.SetDimensions( 1.0f, 1.0f );
         camera.SetPlanes( 0.1f, 700.0f );
 
