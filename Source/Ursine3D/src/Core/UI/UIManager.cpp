@@ -21,7 +21,6 @@ namespace ursine
 
     UIManager::UIManager(void)
         : EventDispatcher( this )
-        , m_core( new UICore )
     {
         auto *app = Application::Instance;
 
@@ -61,9 +60,13 @@ namespace ursine
 
         settings.background_color = CefColorSetARGB( 0, 0, 0, 0 );
 
+        UICore::Instance = new UICore( );
+
         URSINE_TODO( "configurable handlers" );
-        UAssert( CefInitialize( mainArgs, settings, m_core, nullptr ),
+        UAssert( CefInitialize( mainArgs, settings, UICore::Instance, nullptr ),
             "Unable to initialize CEF." );
+
+        CefEnableHighDPISupport( );
 
         app->Connect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }

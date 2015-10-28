@@ -39,6 +39,6 @@ namespace ursine
             // Ex: Model updates the renderers matrix
             void updateRenderer(void);
 
-        } Meta(Enable, DisplayName( "Renderable" ));
+        } Meta(Enable, HiddenInInspector);
     }
 }

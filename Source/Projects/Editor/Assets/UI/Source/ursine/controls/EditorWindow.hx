@@ -7,5 +7,5 @@ extern class EditorWindow extends PolymerElement {
     var heading : String;
     var container : DOMElement;
 
-    public function new() : Void;
+    function new() : Void;
 }

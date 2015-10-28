@@ -37,6 +37,9 @@ namespace ursine
         template<typename A>
         inline A FlagNegateAll(A value);
 
+        template<typename A>
+        constexpr A IndexToMask(A value);
+
         // Insertions sorts the given container
         template<typename Container, class Predicate>
         void InsertionSort(Container &v, Predicate predicate);

@@ -8,7 +8,7 @@
 
 using namespace ursine;
 
-ENTITY_SYSTEM_DEFINITION( GridRenderer ) ;
+ENTITY_SYSTEM_DEFINITION( GridRenderer );
 
 GridRenderer::GridRenderer(ecs::World *world)
     : EntitySystem( world )
@@ -19,7 +19,7 @@ GridRenderer::GridRenderer(ecs::World *world)
 
 void GridRenderer::OnInitialize(void)
 {
-    m_graphics = GetCoreSystem(graphics::GfxAPI );
+    m_graphics = GetCoreSystem( graphics::GfxAPI );
 
     m_renderSystem = m_world->GetEntitySystem( ecs::RenderSystem );
 

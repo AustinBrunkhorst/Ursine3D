@@ -45,8 +45,6 @@ namespace ursine
         UIView::Handle CreateView(Window::Handle window, const std::string &url) const;
 
     private:
-        CefRefPtr<UICore> m_core;
-
         void onAppUpdate(EVENT_HANDLER(Application));
 
         IMPLEMENT_REFCOUNTING(UIManager);

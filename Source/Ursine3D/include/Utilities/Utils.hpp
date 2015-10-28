@@ -41,6 +41,12 @@ namespace ursine
             return ~value;
         }
 
+        template<typename A>
+        constexpr A IndexToMask(A value)
+        {
+            return static_cast<A>( 1 ) << value;
+        }
+
         template<typename Container, class Predicate>
         void InsertionSort(Container &v, Predicate predicate)
         {

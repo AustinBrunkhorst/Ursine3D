@@ -1,40 +1,66 @@
 #include "Precompiled.h"
 
 #include "SelectedComponent.h"
-#include <Game Engine/Scene/Component/Native Components/RenderableComponent.h>
-#include <Game Engine/Scene/Component/Native Components/Model3DComponent.h>
-#include <Game Engine/Scene/Entity/EntityEvent.h>
 
-using namespace ursine::graphics;
+#include <RenderableComponent.h>
+#include <Model3DComponent.h>
+
+using namespace ursine;
 
 NATIVE_COMPONENT_DEFINITION( Selected );
 
 Selected::Selected(void)
     : BaseComponent( ) 
-    , m_selectBox(nullptr) { }
+    , m_selectBox( nullptr ) { }
 
-Selected::~Selected()
+Selected::~Selected(void)
 {
-    m_selectBox->Delete();
-    GetOwner()->GetComponent<ursine::ecs::Model3D>()->GetModel()->SetMaterialData(0, 0, 0);
-    GetOwner( )->GetComponent<ursine::ecs::Model3D>( )->GetModel( )->SetDebug(false);
+    m_selectBox->Delete( );
+
+    tryDebugModel( false );
 }
 
-void Selected::OnInitialize()
+void Selected::OnInitialize(void)
 {
-    m_selectBox = GetOwner()->GetWorld()->CreateEntity("DebugBox");
+    auto owner = GetOwner( );
 
-    m_selectBox->AddComponent<ursine::ecs::Renderable>();
-    auto handle = GetCoreSystem(GfxAPI)->RenderableMgr.AddRenderable(ursine::graphics::RENDERABLE_PRIMITIVE);
-    auto &prim = GetCoreSystem(GfxAPI)->RenderableMgr.GetPrimitive(handle);
-    auto transform = GetOwner()->GetComponent<ursine::ecs::Transform>();
+    m_selectBox = owner->GetWorld( )->CreateEntity( "DebugBox" );
 
-    prim.SetType(Primitive::PRIM_CUBE);
+    m_selectBox->SetVisibleInEditor( false );
 
-    prim.SetWorldMatrix(transform->GetLocalToWorldMatrix() * ursine::SMat4(1.1, 1.1 ,1.1));
+    auto *renderable = m_selectBox->AddComponent<ecs::Renderable>( );
+
+    auto &renderableManager = GetCoreSystem( graphics::GfxAPI )->RenderableMgr;
+
+    auto handle = renderableManager.AddRenderable( graphics::RENDERABLE_PRIMITIVE );
+    auto &prim = renderableManager.GetPrimitive( handle );
+
+    auto transform = owner->GetTransform( );
+
+    prim.SetType( graphics::Primitive::PRIM_CUBE );
+
+    prim.SetWorldMatrix( transform->GetLocalToWorldMatrix( ) * SMat4( 1.1, 1.1, 1.1 ) );
     
-    m_selectBox->GetComponent<ursine::ecs::Renderable>()->SetHandle(handle);
+    renderable->SetHandle( handle );
 
-    GetOwner()->GetComponent<ursine::ecs::Model3D>()->GetModel()->SetMaterialData(1, 0, 0);
-    GetOwner( )->GetComponent<ursine::ecs::Model3D>( )->GetModel( )->SetDebug(true);
+    tryDebugModel( true );
+}
+
+void Selected::tryDebugModel(bool enabled)
+{
+    auto model = GetOwner( )->GetComponent<ecs::Model3D>( );
+
+    // nope the fuck out of here
+    if (!model)
+        return;
+
+    auto *handle = model->GetModel( );
+
+    handle->SetDebug( enabled );
+
+    URSINE_TODO( "This should probably be removed" );
+    if (enabled)
+        handle->SetMaterialData( 1, 0, 0 );
+    else
+        handle->SetMaterialData( 0, 0, 0 );
 }

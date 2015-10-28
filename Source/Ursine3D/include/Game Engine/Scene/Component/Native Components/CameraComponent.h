@@ -14,19 +14,17 @@ namespace ursine
         {
             NATIVE_COMPONENT;
         public:
+            Meta(Enable)
             Camera(void);
             ~Camera(void);
 
-            Meta(Disable)
             graphics::GfxHND GetHandle(void) const;
-
-            Meta(Disable)
-            graphics::Camera &GetCamera(void) const;
+            graphics::Camera *GetCamera(void) const;
 
         private:
             friend class RenderSystem;
 
             graphics::GfxHND m_handle;
-        } Meta(Enable, DisplayName( "Camera" ));
+        } Meta(Enable, WhiteListMethods, DisplayName( "Camera" ));
     }
 }
