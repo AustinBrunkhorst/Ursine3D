@@ -16,7 +16,10 @@
 #include <Model3DComponent.h>
 #include "Tools/Scene/Components/SelectedComponent.h"
 #include <SphereColliderComponent.h>
+#include <CylinderColliderComponent.h>
 #include <BoxColliderComponent.h>
+#include <CapsuleColliderComponent.h>
+#include <ConeColliderComponent.h>
 #include <RigidbodyComponent.h>
 
 using namespace ursine;
@@ -178,12 +181,15 @@ void Editor::initializeScene(void)
     auto *floorEntity = world.CreateEntity( "Floor" );
     {
         auto collider = floorEntity->AddComponent<ecs::BoxCollider>();
+        floorEntity->AddComponent<ecs::Renderable>();
 
-        collider->SetDimensions(SVec3(40, 1, 40));
+        auto cube = floorEntity->AddComponent<ecs::Model3D>();
+        cube->SetModel("Cube");
 
         auto trans = floorEntity->GetTransform( );
 
-        trans->SetWorldPosition( SVec3( 0, -4, 0 ) );
+        trans->SetWorldPosition(SVec3(0, 1, 0));
+        trans->SetWorldScale(SVec3(40, 1, 40));
     }
 
     for (int i = 0; i < 25; ++i)
@@ -191,7 +197,19 @@ void Editor::initializeScene(void)
         auto *entity_char = world.CreateEntity( );
         auto *entity_cube = world.CreateEntity( );
         {
-            entity_char->AddComponent<ecs::BoxCollider>();
+            auto rnd = rand() % 100;
+
+            if (rnd < 50)
+                entity_char->AddComponent<ecs::ConeCollider>();
+            else if (rnd < 40)
+                entity_char->AddComponent<ecs::SphereCollider>();
+            else if (rnd < 60)
+                entity_char->AddComponent<ecs::CapsuleCollider>();
+            else if (rnd < 80)
+                entity_char->AddComponent<ecs::CylinderCollider>();
+            else if (rnd < 100)
+                entity_char->AddComponent<ecs::BoxCollider>();
+            
 			entity_char->AddComponent<ecs::Rigidbody>();
             entity_char->AddComponent<ecs::Renderable>();
             auto model = entity_char->AddComponent<ecs::Model3D>();
@@ -204,7 +222,7 @@ void Editor::initializeScene(void)
 
             auto transform = entity_char->GetTransform( );
 
-            transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
+            transform->SetWorldPosition( SVec3{ i * 1.0f, 4.0f, 0.0f } );
             transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
             transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
         }
@@ -254,8 +272,8 @@ void Editor::initializeScene(void)
         auto *component = univLight->AddComponent<ecs::Light>( );
 
         component->SetType( ecs::LightType::Point );
-        component->SetPosition( { 0.0f, 0.0f, 0.0f } );
-        component->SetRadius( 40.0f );
+        component->SetPosition( { 0.0f, 5.0f, 0.0f } );
+        component->SetRadius( 400.0f );
         component->SetDirection( { 0.0f, 1.0f, 0.0f } );
         component->SetColor( Color::White );
     }

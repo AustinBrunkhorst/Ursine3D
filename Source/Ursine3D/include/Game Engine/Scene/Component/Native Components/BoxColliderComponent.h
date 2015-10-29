@@ -34,12 +34,21 @@ namespace ursine
             );
 
             BoxCollider(void);
+            ~BoxCollider(void);
+
+            void OnInitialize(void) override;
 
             SVec3 GetDimensions(void) const;
             void SetDimensions(const SVec3 &dimensions);
 
         private:
             physics::BoxCollider m_boxCollider;
+
+            SVec3 m_dimensions;
+
+            void onTransformChange(EVENT_HANDLER(Entity));
+
+            void updateDimensions(void);
 
         } Meta( Enable, WhiteListMethods, DisplayName( "BoxCollider" ) );
     }

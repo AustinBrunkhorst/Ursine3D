@@ -26,10 +26,10 @@ namespace ursine
 
         #ifdef BULLET_PHYSICS
             setCollisionFlags( m_bodyType );
+        #endif
 
             if (bodyType == BODY_DYNAMIC)
-                activate( );
-        #endif
+                SetAwake( );
         }
 
         BodyType Rigidbody::GetBodyType(void) const
@@ -53,10 +53,10 @@ namespace ursine
 
             setWorldTransform( trans );
 
-            if (m_bodyType == BODY_DYNAMIC)
-                activate( );
-
         #endif
+
+            if (m_bodyType == BODY_DYNAMIC)
+                SetAwake( );
         }
 
         void Rigidbody::GetTransform(ecs::Transform *transform)
@@ -111,6 +111,16 @@ namespace ursine
         #ifdef BULLET_PHYSICS
             setCollisionShape( nullptr );
         #endif    
+        }
+
+        void Rigidbody::SetAwake(void)
+        {
+            if (m_gettingTransform)
+                return;
+
+        #ifdef BULLET_PHYSICS
+            activate( );
+        #endif
         }
 
     }

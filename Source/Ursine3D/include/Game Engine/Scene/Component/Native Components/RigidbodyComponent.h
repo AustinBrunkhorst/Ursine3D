@@ -35,6 +35,8 @@ namespace ursine
             BodyType GetBodyType(void) const;
             void SetBodyType(BodyType bodyType);
 
+            void SetAwake(void);
+
         private:
             physics::Rigidbody m_rigidbody;
 

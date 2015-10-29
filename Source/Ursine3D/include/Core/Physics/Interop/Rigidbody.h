@@ -38,6 +38,8 @@ namespace ursine
 
             void RemoveCollider(void);
 
+            void SetAwake(void);
+
         private:
             MotionState m_motionState;
 

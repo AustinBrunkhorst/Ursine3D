@@ -5,6 +5,9 @@
 #include "BodyComponent.h"
 #include "SphereColliderComponent.h"
 #include "BoxColliderComponent.h"
+#include "CylinderColliderComponent.h"
+#include "CapsuleColliderComponent.h"
+#include "ConeColliderComponent.h"
 #include "GfxAPI.h"
 
 namespace ursine
@@ -17,7 +20,13 @@ namespace ursine
             : FilterSystem( world, Filter( ).One<Body, Rigidbody>( ) )
 			, m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
         {
-            m_collisionShapes.One<SphereCollider, BoxCollider>();
+            m_collisionShapes.One<
+                SphereCollider, 
+                BoxCollider, 
+                CylinderCollider,
+                CapsuleCollider,
+                ConeCollider
+            >( );
 
 			m_simulation.SetDebugDrawer( &m_debugDrawer );
 			m_debugDrawer.setDebugMode(
@@ -102,6 +111,24 @@ namespace ursine
                 auto *box = entity->GetComponent<BoxCollider>( );
 
                 addCollider( entity, &box->m_boxCollider );
+            }
+            else if (component->Is<CylinderCollider>( ))
+            {
+                auto *cylinder = entity->GetComponent<CylinderCollider>( );
+
+                addCollider( entity, &cylinder->m_cylinderCollider );
+            }
+            else if (component->Is<CapsuleCollider>( ))
+            {
+                auto *capsule = entity->GetComponent<CapsuleCollider>( );
+
+                addCollider( entity, &capsule->m_capsuleCollider );
+            }
+            else if (component->Is<ConeCollider>( ))
+            {
+                auto *cone = entity->GetComponent<ConeCollider>( );
+
+                addCollider( entity, &cone->m_coneCollider );
             }
         }
 

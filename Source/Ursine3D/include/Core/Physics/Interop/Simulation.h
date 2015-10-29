@@ -57,7 +57,7 @@ namespace ursine
 
             // btDbvtBroadphase is a good general purpose broadphase. 
             // You can also try out btAxis3Sweep.
-            btBroadphaseInterface *m_overlappingPairCache;
+            btDbvtBroadphase *m_overlappingPairCache;
 
             // the default constraint solver. For parallel processing 
             // you can use a different solver (see Extras/BulletMultiThreaded)

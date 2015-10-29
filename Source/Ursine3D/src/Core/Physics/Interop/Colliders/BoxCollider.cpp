@@ -32,9 +32,8 @@ namespace ursine
                 dimensions.Z( )
             );
 
-            setLocalScaling( dim );
+            m_implicitShapeDimensions = 0.5f * dim;
         #endif
         }
-
     }
 }

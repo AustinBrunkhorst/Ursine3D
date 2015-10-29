@@ -19,3 +19,6 @@
 #include "BodyComponent.h"
 #include "SphereColliderComponent.h"
 #include "BoxColliderComponent.h"
+#include "CylinderColliderComponent.h"
+#include "CapsuleColliderComponent.h"
+#include "ConeColliderComponent.h"

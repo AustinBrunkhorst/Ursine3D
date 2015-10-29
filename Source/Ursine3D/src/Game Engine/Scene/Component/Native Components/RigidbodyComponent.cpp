@@ -37,6 +37,11 @@ namespace ursine
             );
         }
 
+        void Rigidbody::SetAwake(void)
+        {
+            m_rigidbody.SetAwake( );
+        }
+
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
         {
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );

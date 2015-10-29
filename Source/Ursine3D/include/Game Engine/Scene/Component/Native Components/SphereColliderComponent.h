@@ -34,12 +34,21 @@ namespace ursine
             );
 
             SphereCollider(void);
+            ~SphereCollider(void);
+
+            void OnInitialize(void) override;
 
             float GetRadius(void) const;
             void SetRadius(float radius);
 
         private:
             physics::SphereCollider m_sphereCollider;
+
+            float m_radius;
+
+            void onTransformChange(EVENT_HANDLER(Entity));
+
+            void updateRadius(void);
 
         } Meta( Enable, WhiteListMethods, DisplayName( "SphereCollider" ) );
     }
