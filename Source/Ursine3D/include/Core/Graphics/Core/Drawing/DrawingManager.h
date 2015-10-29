@@ -40,6 +40,8 @@ namespace ursine
             void SetSize(const float width);
             float GetSize(void);
 
+            void SetOverdraw(bool draw);
+
             void DrawPoint(const float x, const float y, const float z);
 
             void DrawLine(const float x0, const float y0, const float z0, const float x1, const float y1, const float z1);
@@ -50,11 +52,17 @@ namespace ursine
             bool CheckRenderPoints(void) const;
             bool CheckRenderLines(void) const;
 
+            void ConstructOverdrawPointMesh(unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices);
+            void ConstructOverdrawLineMesh(unsigned &vertCount, unsigned &indexCount, ID3D11Buffer **mesh, ID3D11Buffer **indices);
+            bool CheckOverdrawRenderPoints(void) const;
+            bool CheckOverdrawRenderLines(void) const;
+
         private:
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;
             float m_size;
             Color m_color;
+            bool m_overdraw;
 
             std::vector<PrimitiveVertex> m_pointList;
             std::vector<PrimitiveVertex> m_lineList;
@@ -65,6 +73,17 @@ namespace ursine
 
             unsigned m_pointCount;
             unsigned m_lineCount;
+
+            //overdrawing
+            std::vector<PrimitiveVertex> m_pointListOverdraw;
+            std::vector<PrimitiveVertex> m_lineListOverdraw;
+
+            ID3D11Buffer *m_vertPointBufferOverdraw;
+            ID3D11Buffer *m_vertLineBufferOverdraw;
+            ID3D11Buffer *m_indexBufferOverdraw;
+
+            unsigned m_pointCountOverdraw;
+            unsigned m_lineCountOverdraw;
         };
     }
 }

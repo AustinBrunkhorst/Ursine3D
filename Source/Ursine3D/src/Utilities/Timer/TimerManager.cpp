@@ -56,7 +56,7 @@ namespace ursine
     {
         EVENT_ATTRS(Application, EventArgs);
 
-        auto dt = sender->GetDeltaTime( );
+        auto dt = sender->GetDeltaTime( ) * TimeSpan::MillisPerSecond;
 
         for (auto &pair : m_timers)
         {

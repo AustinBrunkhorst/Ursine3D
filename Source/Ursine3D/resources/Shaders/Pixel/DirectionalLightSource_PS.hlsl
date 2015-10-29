@@ -96,15 +96,16 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     Out.SpecInt = baseColorSpecInt.w;
 
     // Sample the normal, convert it to the full range and noramalize it
-    Out.Normal = NormalTexture.Load( location3 ).xyz;
+    float4 normalValue = NormalTexture.Load(location3);
+    Out.Normal = normalValue.xyz;
     Out.Normal = normalize( Out.Normal * 2.0 - 1.0 );
+
+    //grab emissive value
+    Out.Emissive = normalValue.w;
 
     // Scale the specular power back to the original range
     float2 SpecPowerNorm = SpecPowTexture.Load( location3 ).xy;
     Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
-
-    //grab emissive value
-    Out.Emissive = SpecPowerNorm.y;
 
     return Out;
 }
@@ -116,13 +117,15 @@ float3 CalcPoint( float3 position, Material material )
 
     // Phong diffuse
     float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (intensity) * material.diffuseColor.xyz;
+    float3 finalColor = diffuseColor.rgb * (intensity) * material.diffuseColor.xyz;
 
     // Blinn specular
     ToEye = normalize( ToEye );
     float3 HalfWay = normalize( ToEye + ToLight );
     float NDotH = saturate( dot( HalfWay, material.normal ) );
     finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
+
+    finalColor *= NDotL;
 
     return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
 }

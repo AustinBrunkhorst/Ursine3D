@@ -42,6 +42,9 @@ namespace ursine
 
             // store a pointer to the model
             m_model = &m_graphics->RenderableMgr.GetModel3D( handle );
+
+            // set the unique id
+            m_model->SetEntityUniqueID(GetOwner()->GetUniqueID());
         }
 
         void Model3D::SetModel(const std::string &name)

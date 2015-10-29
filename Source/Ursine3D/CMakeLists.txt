@@ -10,11 +10,11 @@ set(URSINE_DIR_SOURCE src)
 set(URSINE_DIR_INCLUDE include)
 
 set(URSINE_DEPENDENCIES_INCLUDE_DIRS 
-    ${SDL2_INCLUDE_DIRS} 
+    ${SDL2_INCLUDE_DIRS}  
     ${CEF_INCLUDE_DIRS}
     ${DirectX_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    ${BulletPhysics_INCLUDE_DIRS}
+    ${BulletPhysics_INCLUDE_DIRS} 
 )
 
 set(URSINE_DEPENDENCIES_INCLUDE_DIRS "${URSINE_DEPENDENCIES_INCLUDE_DIRS}" PARENT_SCOPE)
@@ -117,6 +117,8 @@ if (MSVC)
 			set(vs_shader_type "Hull")
 		elseif (shader_type STREQUAL "ds")
 			set(vs_shader_type "Domain")
+        elseif (shader_type STREQUAL "cs")
+			set(vs_shader_type "Compute")
 		endif ()
 
 		# set the properties in Visual Studio

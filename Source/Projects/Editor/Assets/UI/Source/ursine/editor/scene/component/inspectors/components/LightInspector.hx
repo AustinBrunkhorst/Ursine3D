@@ -53,7 +53,7 @@ class LightInspector extends ComponentInspectionHandler {
 
         var fields = m_typeToFields[ type ];
 
-        // add new fields
+        // add DockNode fields
         for (name in fields) {
             var field : NativeField = Reflect.field( componentType.fields, name );
 

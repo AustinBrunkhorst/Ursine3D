@@ -5,7 +5,7 @@
 
 Project::Project(ursine::UIView::Handle ui)
     : m_ui( ui )
-    , m_entityManager( Handle( this ) )
+    , m_entityManager( this )
 {
     
 }

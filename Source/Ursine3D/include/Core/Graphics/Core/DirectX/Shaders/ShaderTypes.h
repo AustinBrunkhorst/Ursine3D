@@ -22,14 +22,16 @@ namespace ursine
 {
     namespace graphics
     {
-        enum SHADERDEF
+        enum SHADERTYPE
         {
-            VERTEX_SHADER = 0,
-            PIXEL_SHADER,
-            HULL_SHADER,
-            DOMAIN_SHADER,
-            GEOMETRY_SHADER,
-            DEF_COUNT
+            SHADERTYPE_VERTEX = 0,
+            SHADERTYPE_PIXEL,
+            SHADERTYPE_HULL,
+            SHADERTYPE_DOMAIN,
+            SHADERTYPE_GEOMETRY,
+            SHADERTYPE_COMPUTE,
+
+            SHADERTYPE_COUNT
         };
     }
 }

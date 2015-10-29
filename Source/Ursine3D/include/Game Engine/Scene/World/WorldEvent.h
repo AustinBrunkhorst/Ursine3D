@@ -24,8 +24,10 @@ namespace ursine
             // A component has been removed from an entity
             WORLD_ENTITY_COMPONENT_REMOVED,
 
+            // An entity's name changed
+            WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
             // A component's field has changed
-            WORLD_ENTITY_EDITOR_COMPONENT_CHANGED = 0x100,
+            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED
         };
 
         struct WorldEventArgs : EventArgs
@@ -54,6 +56,15 @@ namespace ursine
                 : WorldEventArgs( type )
                 , entity( entity )
                 , component( component ) { }
+        };
+
+        struct EditorEntityNameChangedArgs : EntityEventArgs
+        {
+            std::string newName;
+
+            EditorEntityNameChangedArgs(WorldEventType type, Entity *entity, const std::string &newName)
+                : EntityEventArgs( type, entity )
+                , newName( newName ) { }
         };
 
         struct EditorComponentChangedArgs : ComponentEventArgs

@@ -23,29 +23,41 @@
 #include "UtilityManager.h"
 #include "SystemManager.h"
 
+namespace
+{
+    const auto kWorldSettingsEntityName = "World Settings";
+}
+
 namespace ursine
 {
     namespace ecs
     {
         World::World(void)
             : EventDispatcher( this )
+            , m_settings( nullptr )
             , m_entityManager( new EntityManager( this ) )
             , m_systemManager( new SystemManager( this ) )
             , m_nameManager( new NameManager( this ) )
             , m_utilityManager( new UtilityManager( this ) )
         {
             m_entityManager->OnInitialize( );
-            m_systemManager->OnInitialize( );
             m_nameManager->OnInitialize( );
             m_utilityManager->OnInitialize( );
+            m_systemManager->OnInitialize( );
+
+            m_settings = CreateEntity( kWorldSettingsEntityName );
+            m_settings->EnableDeletion( false );
+            m_settings->EnableHierarchyChange( false );
         }
 
         World::~World(void)
         {
+            delete m_systemManager;
             delete m_utilityManager;
             delete m_nameManager;
-            delete m_systemManager;
             delete m_entityManager;
+            
+            m_settings = nullptr;
         }
 
         Entity *World::CreateEntity(const std::string &name)
@@ -105,6 +117,11 @@ namespace ursine
         void World::Render(void)
         {
             Dispatch( WORLD_RENDER, EventArgs::Empty );
+        }
+
+        Entity *World::GetSettings(void)
+        {
+            return m_settings;
         }
 
         SystemManager *World::GetSystemManager(void)

@@ -1,5 +1,6 @@
 package ursine.editor.windows;
 
+import ursine.editor.scene.component.ComponentInspection;
 import ursine.native.Property;
 import ursine.editor.scene.entity.Entity;
 import ursine.editor.scene.entity.EntityEvent;
@@ -20,14 +21,6 @@ class EntityInspector extends WindowHandler {
         m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
 
         window.heading = "Inspector";
-
-        window.style.top = "0";
-        window.style.bottom = "50%";
-        window.style.left = "0";
-        window.style.width = "15%";
-
-        // TODO:
-        window.style.borderBottom = "none";
     }
 
     public function inspect(entity : Entity) {
@@ -38,13 +31,33 @@ class EntityInspector extends WindowHandler {
         initializeInspection( );
     }
 
+    private function onInspectedEntityComponentAdded(e) {
+        var inspection = {
+            type: e.component,
+            value: e.value
+        };
+
+        inspectComponent( cast inspection );
+    }
+
+    private function onInspectedEntityComponentRemoved(e) {
+        var handler = m_componentHandlers[ e.component ];
+
+        if (handler != null)
+            window.container.removeChild( handler.inspector );
+    }
+
     private function onInspectedEntityComponentChanged(e) {
         m_componentHandlers[ e.component ].updateField( e.field, e.value );
     }
 
     private function clearOldInspection() {
-        if (m_inspectedEntity != null)
-            m_inspectedEntity.events.off( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
+        if (m_inspectedEntity != null) {
+            m_inspectedEntity.events
+                .off( EntityEvent.ComponentAdded, onInspectedEntityComponentAdded )
+                .off( EntityEvent.ComponentRemoved, onInspectedEntityComponentRemoved )
+                .off( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
+        }
 
         for (handler in m_componentHandlers)
             window.container.removeChild( handler.inspector );
@@ -54,24 +67,34 @@ class EntityInspector extends WindowHandler {
     }
 
     public function initializeInspection() {
-        m_inspectedEntity.events.on( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
+        if (m_inspectedEntity == null)
+            return;
+
+        m_inspectedEntity.events
+            .on( EntityEvent.ComponentAdded, onInspectedEntityComponentAdded )
+            .on( EntityEvent.ComponentRemoved, onInspectedEntityComponentRemoved )
+            .on( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
 
         var inspection = m_inspectedEntity.inspect( );
 
+        for (component in inspection) {
+            inspectComponent( component );
+        }
+    }
+
+    private function inspectComponent(component : ComponentInspection) {
         var database = Editor.instance.componentDatabase;
 
-        for (component in inspection) {
-            var type = database.getComponentType( component.type );
+        var type = database.getComponentType( component.type );
 
-            // skip components marked hidden in inspector
-            if (Reflect.hasField( type.meta, Property.HiddenInInspector ))
-                continue;
+        // skip components marked hidden in inspector
+        if (Reflect.hasField( type.meta, Property.HiddenInInspector ))
+            return;
 
-            var handler = database.createComponentInspector( m_inspectedEntity, component );
+        var handler = database.createComponentInspector( m_inspectedEntity, component );
 
-            m_componentHandlers[ component.type ] = handler;
+        m_componentHandlers[ component.type ] = handler;
 
-            window.container.appendChild( handler.inspector );
-        }
+        window.container.appendChild( handler.inspector );
     }
 }

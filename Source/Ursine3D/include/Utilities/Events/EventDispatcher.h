@@ -42,34 +42,58 @@ namespace ursine
     public:
         using KeyType = Key;
 
-        EventDispatcher(void);
-        EventDispatcher(void *default_sender);
+        template<typename Listener>
+        using ChainType = ChainableEventOperator<EventDispatcher<Key>, Listener>;
 
         // Callback function handler
         using Handler = fastdelegate::FastDelegate<void(void*, const EventArgs *)>;
 
-        URSINE_TODO("Austin: Add a weight for event listeners.");
+        EventDispatcher(void *defaultSender = nullptr);
+
         // Binds a connection to a static function
         template<typename Args>
-        void Connect(const Key &event, StaticDelegate<Args> delegate);
+        void Connect(
+            const Key &event, 
+            StaticDelegate<Args> delegate, 
+            EventHandlerPriority priority = kDefaultEventHandlerPriority
+        );
 
         // Binds a connection to a class member function
         template<typename Class, typename Args>
-        void Connect(const Key &event, Class *context, ClassDelegate<Class, Args> delegate);
+        void Connect(
+            const Key &event, 
+            Class *context, 
+            ClassDelegate<Class, Args> delegate, 
+            EventHandlerPriority priority = kDefaultEventHandlerPriority
+        );
 
         // Removes a bound static function from this dispatcher
         template<typename Args>
-        void Disconnect(const Key &event, StaticDelegate<Args> delegate);
+        void Disconnect(
+            const Key &event, 
+            StaticDelegate<Args> delegate
+        );
 
         // Removes a bound class member function from this dispatcher
         template<typename Class, typename Args>
-        void Disconnect(const Key &event, Class *context, ClassDelegate<Class, Args> delegate);
+        void Disconnect(
+            const Key &event,
+            Class *context, 
+            ClassDelegate<Class, Args> delegate
+        );
 
         // Dispatches the given event with the given args. "this" is used for the sender.
-        void Dispatch(const Key &event, const EventArgs *args);
+        void Dispatch(
+            const Key &event,
+            const EventArgs *args
+        );
 
         // Dispatches the given event with the given args.
-        void Dispatch(const Key &event, void *sender, const EventArgs *args);
+        void Dispatch(
+            const Key &event, 
+            void *sender, 
+            const EventArgs *args
+        );
 
         // Clears all handlers from this dispatcher (effectively resets)
         void ClearHandlers(void);
@@ -79,26 +103,46 @@ namespace ursine
         // operations will be from static functions otherwise you'll be 
         // passing a nullptr as the class context (bad).
         template<typename Listener>
-        ChainableEventOperator<EventDispatcher<Key>, Listener> Listener(Listener *listener = nullptr);
+        ChainType<Listener> Listener(Listener *listener = nullptr);
 
     private:
         void *m_defaultSender;
 
+        struct HandlerData
+        {
+            EventHandlerPriority priority;
+            Handler handler;
+        };
+
+        typedef std::vector<HandlerData> HandlerListType;
+
         // hash functor that handles integral types
-        struct integral_hasher
+        struct IntegralHasher
         {
             template <typename T>
-            std::size_t operator()(T t) const
+            size_t operator()(T t) const
             {
-                return static_cast<std::size_t>( t );
+                return static_cast<size_t>( t );
             }
         };
 
-        // functor type that uses "integral_hasher" if "T" is an enum, otherwise the default
+        // functor type that uses "IntegralHasher" if "T" is an enum, otherwise the default
         template <typename T>
-        using hash_type = typename std::conditional< std::is_enum<T>::value, integral_hasher, std::hash<T> >::type;
+        using HashHandlerType = typename std::conditional< 
+            std::is_enum<T>::value, IntegralHasher, 
+            std::hash<T> 
+        >::type;
 
-        std::unordered_map<Key, std::vector<Handler>, hash_type<Key>> m_events;
+        std::unordered_map<
+            Key, 
+            HandlerListType,
+            HashHandlerType<Key>
+        > m_events;
+
+        inline static bool compareHandlers(
+            const HandlerData &a, 
+            const HandlerData &b
+        );
     };
 }
 

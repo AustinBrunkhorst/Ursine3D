@@ -8,11 +8,14 @@
         var ColorInputControl = Polymer({
             is: 'x-color-input',
             extends: 'input',
+            hostAttributes: {
+                type: 'color'
+            },
             properties: {
 
             },
             created: function() {
-                this.type = 'color';
+
             }
         });
     </script>
