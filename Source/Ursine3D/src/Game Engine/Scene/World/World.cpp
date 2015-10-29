@@ -35,19 +35,27 @@ namespace ursine
         World::World(void)
             : EventDispatcher( this )
             , m_settings( nullptr )
-            , m_entityManager( new EntityManager( this ) )
-            , m_systemManager( new SystemManager( this ) )
-            , m_nameManager( new NameManager( this ) )
-            , m_utilityManager( new UtilityManager( this ) )
+            , m_entityManager( nullptr )
+            , m_systemManager( nullptr )
+            , m_nameManager( nullptr )
+            , m_utilityManager( nullptr )
         {
+            m_entityManager = new EntityManager( this );
             m_entityManager->OnInitialize( );
-            m_nameManager->OnInitialize( );
-            m_utilityManager->OnInitialize( );
-            m_systemManager->OnInitialize( );
 
+            m_nameManager = new NameManager( this );
+            m_nameManager->OnInitialize( );
+
+            m_utilityManager = new UtilityManager( this );
+            m_utilityManager->OnInitialize( );
+
+            // ensure the settings entity is created before the system manager
             m_settings = CreateEntity( kWorldSettingsEntityName );
             m_settings->EnableDeletion( false );
             m_settings->EnableHierarchyChange( false );
+
+            m_systemManager = new SystemManager( this );
+            m_systemManager->OnInitialize( );
         }
 
         World::~World(void)
