@@ -1,10 +1,13 @@
 @import 'Reset';
 @import 'Fonts';
+@import 'Icons';
 
 @import 'Global';
 
 @import 'Header';
 @import 'Main';
+
+@import 'Windows/EntityInspector';
 
 // @@@TODO: remove this
 //body { background: #252526 }

@@ -80,6 +80,15 @@ class ComponentDatabase {
         return m_typeDB.get( name );
     }
 
+    public function getComponentTypes() : Array<String> {
+        var keys : Array<String> = new Array<String>( );
+
+        for (key in m_db.keys( ))
+            keys.push( key );
+
+        return keys;
+    }
+
     public function getComponentType(name : String) : ComponentType {
         return m_db.get( name );
     }

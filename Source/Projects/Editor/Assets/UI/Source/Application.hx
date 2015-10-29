@@ -10,7 +10,7 @@ class Application {
 
         js.Browser.window.addEventListener( 'load', function() {
             // TODO: figure out why there is an arbitrary delay
-            haxe.Timer.delay( initWindows, 25 );
+            haxe.Timer.delay( initWindows, 100 );
         } );
     }
 
@@ -35,11 +35,11 @@ class Application {
 
             var row = leftColumn.addRow( );
 
-            row.setHeightPercent( 1.0 );
+            row.style.height = '100%';
 
             var column = row.addColumn( );
 
-            column.setWidthPercent( 1.0 );
+            column.style.width = '100%';
 
             column.appendChild( new EntityInspector( ).window );
         }
@@ -50,11 +50,11 @@ class Application {
 
             var row = middleColumn.addRow( );
 
-            row.setHeightPercent( 1.0 );
+            row.style.height = '100%';
 
             var column = row.addColumn( );
 
-            column.setWidthPercent( 1.0 );
+            column.style.width = '100%';
 
             column.appendChild( sceneView.window );
         }
@@ -65,11 +65,11 @@ class Application {
 
             var row = rightColumn.addRow( );
 
-            row.setHeightPercent( 1.0 );
+            row.style.height = '100%';
 
             var column = row.addColumn( );
 
-            column.setWidthPercent( 1.0 );
+            column.style.width = '100%';
 
             column.appendChild( new SceneOutline( ).window );
         }

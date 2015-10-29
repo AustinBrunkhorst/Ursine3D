@@ -1,4 +1,4 @@
-package ursine.controls;
+package ursine.controls.inspection;
 
 @:native( "FieldInspectorControl" )
 extern class FieldInspector extends PolymerElement {

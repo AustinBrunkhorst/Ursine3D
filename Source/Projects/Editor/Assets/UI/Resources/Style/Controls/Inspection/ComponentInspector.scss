@@ -1,8 +1,10 @@
 @import '../../Config';
 @import '../../Utils';
+@import '../../Icons';
 
 :host {
   #header {
+    position: relative;
     padding: 5px;
     background: #2d2d30;
     color: #b3b3b3;
@@ -16,6 +18,23 @@
       -webkit-transform-origin: center;
       -webkit-transition: -webkit-transform $duration-transition-btn ease;
       @include triangle( 'right', $color-accent, 5px );
+    }
+
+    #btnRemove {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      color: $color-accent;
+      transform: translateY(-50%);
+      transition: color $duration-transition-btn ease;
+
+      @include icon-half( $icon-half-remove-circle, 15px );
+
+      &:hover {
+        color: #cf6753;
+      }
     }
   }
 
