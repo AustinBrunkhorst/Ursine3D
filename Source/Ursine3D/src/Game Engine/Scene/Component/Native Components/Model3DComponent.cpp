@@ -60,6 +60,16 @@ namespace ursine
             return m_model;
         }
 
+        void Model3D::SetColor(const ursine::Color& color)
+        {
+            m_model->SetColor(color);
+        }
+
+        const Color& Model3D::GetColor()
+        {
+            return m_model->GetColor();
+        }
+
         void Model3D::onUpdateRenderer(EVENT_HANDLER(Entity))
         {
             // update the renderer's

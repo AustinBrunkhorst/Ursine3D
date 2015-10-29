@@ -8,11 +8,13 @@
 #include <WindowManager.h>
 #include <UIManager.h>
 
-#include <Color.h>
+#include <Color.h> 
 
 #include <RenderableComponent.h>
 #include <LightComponent.h>
 #include <Model3DComponent.h>
+#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
+#include "Tools/Scene/Entity Systems/EditorCameraSystem.h"
 
 using namespace ursine;
 
@@ -189,18 +191,6 @@ void Editor::initializeScene(void)
         entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
     }
 
-    auto *sky = world.CreateEntity( "Skybox" );
-    {
-        sky->AddComponent<ecs::Renderable>( );
-        auto model = sky->AddComponent<ecs::Model3D>( );
-
-        model->GetModel( )->SetModel( "Skybox" );
-        model->GetModel( )->SetMaterial( "Skybox" );
-        model->GetModel( )->SetMaterialData( 0.6, 0, 0 );
-        model->GetModel( )->SetEntityUniqueID( sky->GetUniqueID( ) );
-
-        auto transform = sky->GetComponent<ecs::Transform>( );
-    }
 
     auto *univLight = world.CreateEntity( "Global Light" );
     {

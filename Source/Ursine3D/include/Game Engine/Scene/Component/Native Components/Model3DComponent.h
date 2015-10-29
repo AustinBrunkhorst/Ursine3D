@@ -13,6 +13,13 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+            EditorField(
+                Color Color,
+                GetColor,
+                SetColor
+                );
+
+        public:
             Model3D(void);
             ~Model3D(void);
 
@@ -23,7 +30,9 @@ namespace ursine
             void SetModel(const std::string &name);
             ursine::graphics::Model3D *GetModel(void);
             
-            //get/set texture
+            //get/set color
+            void SetColor(const ursine::Color &color);
+            const ursine::Color &GetColor(void);
 
         private:
 
