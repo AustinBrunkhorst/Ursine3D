@@ -73,7 +73,7 @@ void EditorCameraSystem::OnRemove(void)
 
 void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
 {
-    EVENT_ATTRS(Application, EventArgs);
+    EVENT_ATTRS(ecs::World, EventArgs);
 
     auto dt = Application::Instance->GetDeltaTime( );
 
