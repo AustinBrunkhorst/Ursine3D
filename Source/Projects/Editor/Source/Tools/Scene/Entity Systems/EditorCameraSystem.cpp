@@ -75,7 +75,7 @@ void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(Application, EventArgs);
 
-    auto dt = sender->GetDeltaTime( );
+    auto dt = Application::Instance->GetDeltaTime( );
 
     auto *keyboardMgr = GetCoreSystem( KeyboardManager );
 

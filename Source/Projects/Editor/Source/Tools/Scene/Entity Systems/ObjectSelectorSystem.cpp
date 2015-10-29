@@ -59,8 +59,13 @@ void ObjectSelectorSystem::OnInitialize()
 
     //construct the 3 axis
     m_xAxis = m_world->CreateEntity();
+    m_xAxis->SetVisibleInEditor( false );
+
     m_yAxis = m_world->CreateEntity();
+    m_yAxis->SetVisibleInEditor( false );
+
     m_zAxis = m_world->CreateEntity();
+    m_zAxis->SetVisibleInEditor( false );
 
     //get their transforms, set data
     auto xTransf = m_xAxis->GetComponent<ursine::ecs::Transform>();
