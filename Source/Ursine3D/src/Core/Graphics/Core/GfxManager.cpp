@@ -847,7 +847,7 @@ namespace ursine
             textureManager->MapTextureByID(handle.Material_);
 
             if(handle.Overdraw_)
-                dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
             else
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
 
@@ -951,13 +951,10 @@ namespace ursine
             type = 0;  
             unsigned w, h;
             gfxInfo->GetDimensions(w, h); 
-            printf("index: %i\n", tempID);
+
             if (tempID < 16711680 && (unsigned)point.x < w && (unsigned)point.y < h)
             {
-                  
 
-               
-                printf("%i, %i, %i\n", index, type, overdraw);
                 switch (type)
                 {
                 case RENDERABLE_MODEL3D:

@@ -13,7 +13,7 @@ public:
     void OnInitialize(void) override;
 
 private:
-    ursine::ecs::Entity *m_selectBox;
+    float m_emissive;
 
     void tryDebugModel(bool enabled);
 

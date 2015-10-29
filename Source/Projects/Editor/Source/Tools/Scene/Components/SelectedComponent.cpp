@@ -11,12 +11,10 @@ NATIVE_COMPONENT_DEFINITION( Selected );
 
 Selected::Selected(void)
     : BaseComponent( ) 
-    , m_selectBox( nullptr ) { }
+    , m_emissive( 0 ) { }
 
 Selected::~Selected(void)
 {
-    m_selectBox->Delete( );
-
     tryDebugModel( false );
 }
 
@@ -24,24 +22,6 @@ void Selected::OnInitialize(void)
 {
     auto owner = GetOwner( );
 
-    m_selectBox = owner->GetWorld( )->CreateEntity( "DebugBox" );
-
-    m_selectBox->SetVisibleInEditor( false );
-
-    auto *renderable = m_selectBox->AddComponent<ecs::Renderable>( );
-
-    auto &renderableManager = GetCoreSystem( graphics::GfxAPI )->RenderableMgr;
-
-    auto handle = renderableManager.AddRenderable( graphics::RENDERABLE_PRIMITIVE );
-    auto &prim = renderableManager.GetPrimitive( handle );
-
-    auto transform = owner->GetTransform( );
-
-    prim.SetType( graphics::Primitive::PRIM_CUBE );
-
-    prim.SetWorldMatrix( transform->GetLocalToWorldMatrix( ) * SMat4( 1.1, 1.1, 1.1 ) );
-    
-    renderable->SetHandle( handle );
 
     tryDebugModel( true );
 }
@@ -58,9 +38,16 @@ void Selected::tryDebugModel(bool enabled)
 
     handle->SetDebug( enabled );
 
+    float e, p, i;
+    handle->GetMaterialData(e, p, i);
+
+    //save the emissive?
+    if (enabled)
+        m_emissive = e;
+
     URSINE_TODO( "This should probably be removed" );
     if (enabled)
         handle->SetMaterialData( 1, 0, 0 );
     else
-        handle->SetMaterialData( 0, 0, 0 );
+        handle->SetMaterialData(m_emissive, 0, 0 );
 }

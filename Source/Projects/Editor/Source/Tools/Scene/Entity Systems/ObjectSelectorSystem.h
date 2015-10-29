@@ -46,6 +46,8 @@ private:
     // when the world updates
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
+    void onSelectedAdd(EVENT_HANDLER(ursine::ecs::World));
+
     // change the offset values of the tool
     void calculateOffset(ursine::Vec2 mousePos);
 
@@ -57,7 +59,7 @@ private:
 
     // given a handle, select an object
     void pickObject(ursine::ecs::EntityUniqueID id);
-    
+
     // given a handle, unselect an object
     void unpickObject(ursine::ecs::EntityUniqueID id);
 

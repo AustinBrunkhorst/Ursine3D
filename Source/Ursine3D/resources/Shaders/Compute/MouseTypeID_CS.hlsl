@@ -27,7 +27,7 @@ void main()
 
     /////////////////////////////////////////////////////////////////
     // SEARCHING NEARBY TILES
-    int searchRadius = 15;
+    int searchRadius = 10;
 
     int xMin = mousePos.x - searchRadius;
     int xMax = mousePos.x + searchRadius;
@@ -38,7 +38,7 @@ void main()
     float bestDistance = 10000;
 
     //current ID to return
-    int bestAnswer = 0;
+    int bestAnswer = -1;
 
     bool currentStatus = false;
 

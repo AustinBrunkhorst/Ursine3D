@@ -13,6 +13,8 @@
 #include <RenderableComponent.h>
 #include <LightComponent.h>
 #include <Model3DComponent.h>
+#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
+#include "Tools/Scene/Entity Systems/EditorCameraSystem.h"
 
 using namespace ursine;
 
@@ -147,40 +149,7 @@ void Editor::initializeScene(void)
         m_graphics->SetGameViewport( viewport );
     }
 
-<<<<<<< HEAD
-    auto *cameraEntity = world.CreateEntity( "Camera" );
-    {
-
-        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
-
-        auto &camera = component->GetCamera( );
-
-        camera.SetPosition( 0, 0.0f );
-        camera.SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
-        camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 700.0f );
-        camera.SetFOV(45.f);
-
-        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-        scene.SetEditorCamera( component->GetHandle( ) );
-
-        GetCoreSystem(graphics::GfxAPI)->CameraMgr.GetCamera(
-            GetProject()->GetScene().GetEditorCamera()
-            );
-
-        GetProject()->GetScene().GetWorld().GetEntitySystem(
-            EditorCameraSystem)->
-            SetEditorCamera(&GetCoreSystem(graphics::GfxAPI)->
-            CameraMgr.GetCamera(
-                GetProject()->GetScene().GetEditorCamera()
-            ));
-    }
-
-    for (int i = 0; i < 10; ++i)
-=======
     for (int i = 0; i < 1; ++i)
->>>>>>> refs/remotes/origin/editor-docking
     {
         auto *entity_char = world.CreateEntity( );
         auto *entity_cube = world.CreateEntity( );
@@ -221,35 +190,7 @@ void Editor::initializeScene(void)
         // parent the character to the cube
         entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
     }
-    {
-<<<<<<< HEAD
-        auto *entity_cube = world.CreateEntity();
-        entity_cube->AddComponent<ecs::Renderable>();
-        auto model = entity_cube->AddComponent<ecs::Model3D>();
 
-        auto name = "Cube";
-
-        entity_cube->SetName(name);
-
-        model->SetModel(name);
-
-        auto transform = entity_cube->GetTransform();
-
-        transform->SetWorldPosition(SVec3{ 5 * 1.0f, 0.0f, 0.0f });
-        transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
-        transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
-=======
-        sky->AddComponent<ecs::Renderable>( );
-        auto model = sky->AddComponent<ecs::Model3D>( );
-
-        model->GetModel( )->SetModel( "Skybox" );
-        model->GetModel( )->SetMaterial( "Skybox" );
-        model->GetModel( )->SetMaterialData( 0.6, 0, 0 );
-        model->GetModel( )->SetEntityUniqueID( sky->GetUniqueID( ) );
-
-        auto transform = sky->GetComponent<ecs::Transform>( );
->>>>>>> refs/remotes/origin/editor-docking
-    }
 
     auto *univLight = world.CreateEntity( "Global Light" );
     {
