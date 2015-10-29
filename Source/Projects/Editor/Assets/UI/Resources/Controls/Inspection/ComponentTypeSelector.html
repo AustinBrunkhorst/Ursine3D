@@ -1,0 +1,98 @@
+<link rel="import" href="../../LIB/Polymer/polymer.html">
+<link rel="import" href="../TextInput.html">
+
+<dom-module id="x-component-type-inspector">
+    <link rel="import" type="css" href="../../Style/Controls/Inspection/ComponentTypeSelector.css">
+    <template>
+        <div id="header">
+            <input is="x-text-input" id="filter" placeholder="Filter By Name..." />
+            <div id="filter-icon"></div>
+        </div>
+        <ul id="types">
+        <template is="dom-repeat" items="{{types}}" as="type">
+            <li on-click="_onTypeSelected">{{type}}</li>
+        </template>
+        </ul>
+    </template>
+    <script>
+        var ComponentTypeSelectorControl = Polymer({
+            is: "x-component-type-inspector",
+            hostAttributes: {
+                tabindex: -1
+            },
+            properties: {
+                types: {
+                    type: Array,
+                    value: [ ]
+                }
+            },
+            listeners: {
+                'blur': '_onContainerBlur',
+                'filter.blur': '_onContainerBlur',
+                'filter.input': '_onFilterInput'
+            },
+            /**
+             * Constructor
+             * @param {Array<String>} componentTypes
+             */
+            factoryImpl: function(componentTypes) {
+                this._rawTypes = componentTypes || [ ];
+
+                this.set( 'types', this._rawTypes );
+            },
+            created: function() {
+
+            },
+            attached: function() {
+                this.$.filter.focus( );
+            },
+
+            close: function() {
+                var self = this;
+
+                // already closing
+                if (this.classList.contains( 'closing' ))
+                    return;
+
+                this.classList.add( 'closing' );
+
+                setTimeout( function() {
+                    self.parentNode.removeChild( self );
+                }, 175 );
+            },
+
+            _onContainerBlur: function(e) {
+                // needs to be bound to a timeout so document.activeElement has time to update
+                setTimeout( function() {
+                    var focus = document.activeElement;
+
+                    if (!(focus === this || this.contains( focus )))
+                        this.close( );
+                }.bind( this ), 0 );
+            },
+            _onFilterInput: function(e) {
+                var output;
+
+                var value = this.$.filter.value.toLowerCase( );
+
+                if (value.length) {
+                    // filter types that doesn't start with this value
+                    output = this._rawTypes.filter( function(type) {
+                        return type.toLowerCase( ).indexOf( value ) == 0;
+                    } );
+                } else {
+                    output = this._rawTypes;
+                }
+
+                this.set( 'types', output );
+            },
+            _onTypeSelected: function(e) {
+                this.fire( 'type-selected', {
+                    type: e.model.type
+                } );
+
+                this.close( );
+            }
+        });
+    </script>
+</dom-module>

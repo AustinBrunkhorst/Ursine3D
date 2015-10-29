@@ -51,3 +51,21 @@
     border-top:    $perpendicular-borders;
   }
 }
+
+@mixin icon-half($name, $font-size: 12px) {
+  &:before {
+    display: block;
+    content: $name;
+    font-family: 'Icons Half';
+    font-size: $font-size;
+  }
+}
+
+@mixin icon-regular($name, $font-size: 24px) {
+  &:before {
+    display: block;
+    content: $name;
+    font-family: 'Icons Regular';
+    font-size: $font-size;
+  }
+}

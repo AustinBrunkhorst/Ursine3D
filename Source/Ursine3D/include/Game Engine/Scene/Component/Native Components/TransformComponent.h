@@ -250,7 +250,12 @@ namespace ursine
 
             void setParent(Transform *oldParent, Transform *newParent);
 
-        } Meta(Enable, WhiteListMethods, DisplayName( "Transform" ));
+        } Meta(
+            Enable, 
+            WhiteListMethods, 
+            DisableComponentRemoval, 
+            DisplayName( "Transform" )
+        );
     }
 }
 

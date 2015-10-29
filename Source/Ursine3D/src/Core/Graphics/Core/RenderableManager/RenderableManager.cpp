@@ -87,9 +87,11 @@ namespace ursine
             case RENDERABLE_BILLBOARD2D:
                 UAssert(m_currentRenderableBillboards[ rend->Index_ ].Active_ == true, "Attempted to free an already free billboard2d!");
                 m_currentRenderableBillboards[ rend->Index_ ].Active_ = false;
+                break;
             case RENDERABLE_LIGHT:
                 UAssert(m_currentRenderableLights[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
                 m_currentRenderableLights[ rend->Index_ ].Active_ = false;
+                break;
             default:
                 UAssert(false, "Attempted to destroy corrupted handle!");
                 break;

@@ -15,6 +15,10 @@
 #include "Tools/JavaScript/NativeToolHandler.h"
 
 #include "Tools/Scene/SceneView.h"
+
+#include "Tools/Scene/Entity Systems/GridRenderer.h"
+#include "Tools/Scene/Components/SelectedComponent.h"
+
 #include "Tools/Scene/Entity/EntityHandler.h"
 
 ///////////////////////////////////////////////////////////////////////////////

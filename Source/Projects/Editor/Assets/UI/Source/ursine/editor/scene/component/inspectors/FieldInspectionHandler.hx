@@ -1,6 +1,6 @@
 package ursine.editor.scene.component.inspectors;
 
-import ursine.controls.FieldInspector;
+import ursine.controls.inspection.FieldInspector;
 import ursine.editor.scene.component.ComponentDatabase;
 
 @:keepInit

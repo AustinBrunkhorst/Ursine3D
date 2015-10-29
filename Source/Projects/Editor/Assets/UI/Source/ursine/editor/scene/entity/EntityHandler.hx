@@ -4,13 +4,23 @@ import ursine.editor.scene.component.ComponentInspection;
 
 @:native( "EntityHandler" )
 extern class EntityHandler {
-    public function new(uniqueID : UInt) : Void;
+    function new(uniqueID : UInt) : Void;
 
-    public function isValid() : Bool;
+    function isValid() : Bool;
+    function isRemovalEnabled() : Bool;
+    function isHierarchyChangeEnabled() : Bool;
+    function isVisibleInEditor() : Bool;
 
-    public function getName() : String;
+    function remove() : Void;
 
-    public function inspect() : Array<ComponentInspection>;
+    function getName() : String;
+    function setName(name : String) : Void;
 
-    public function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void;
+    function inspect() : Array<ComponentInspection>;
+
+    function hasComponent(name : String) : Bool;
+    function addComponent(name : String) : Void;
+    function removeComponent(name : String) : Void;
+
+    function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void;
 }

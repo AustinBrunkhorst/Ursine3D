@@ -11,7 +11,6 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-
 #include "UrsinePrecompiled.h"
 
 #include "Entity.h"
@@ -32,13 +31,17 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////
 
         Entity::Entity(World *world, EntityUniqueID id)
-            : m_flags( ACTIVE )
-              , m_id( id )
-              , m_uniqueID( 0 )
-              , m_world( world )
-              , m_transform( nullptr )
-              , m_systemMask( 0 )
-              , m_typeMask( 0 ) { }
+            : m_active( true )
+            , m_deleting( false )
+            , m_deletionEnabled( true )
+            , m_hierarchyChangeEnabled( true )
+            , m_visibleInEditor( true )
+            , m_id( id )
+            , m_uniqueID( 0 )
+            , m_world( world )
+            , m_transform( nullptr )
+            , m_systemMask( 0 )
+            , m_typeMask( 0 ) { }
 
         ////////////////////////////////////////////////////////////////////////
         // State/Identification
@@ -46,11 +49,11 @@ namespace ursine
 
         void Entity::Delete(void)
         {
-            // it's already being deleted
-            if (m_flags != ACTIVE)
+            // it's already being deleted or deletion is disabled
+            if (!(m_active && !m_deleting) || !m_deletionEnabled)
                 return;
 
-            utils::FlagSet( m_flags, DELETING );
+            m_deleting = true;
 
             m_world->deleteEntity( this );
         }
@@ -67,18 +70,48 @@ namespace ursine
 
         bool Entity::IsDeleting(void) const
         {
-            return utils::IsFlagSet( m_flags, DELETING );
+            return m_deleting;
         }
 
         bool Entity::IsActive(void) const
         {
-            return utils::IsFlagSet( m_flags, ACTIVE );
+            return m_active;
         }
 
         bool Entity::IsAvailable(void) const
         {
             // active, but not deleting
-            return (m_flags & (ACTIVE | DELETING)) == ACTIVE;
+            return m_active && !m_deleting;
+        }
+
+        bool Entity::IsDeletionEnabled(void) const
+        {
+            return m_deletionEnabled;
+        }
+
+        void Entity::EnableDeletion(bool enabled)
+        {
+            m_deletionEnabled = enabled;
+        }
+
+        bool Entity::IsHierarchyChangeEnabled(void) const
+        {
+            return m_hierarchyChangeEnabled;
+        }
+
+        void Entity::EnableHierarchyChange(bool enabled)
+        {
+            m_hierarchyChangeEnabled = enabled;
+        }
+
+        bool Entity::IsVisibleInEditor(void) const
+        {
+            return m_visibleInEditor;
+        }
+
+        void Entity::SetVisibleInEditor(bool visible)
+        {
+            m_visibleInEditor = visible;
         }
 
         World *Entity::GetWorld(void) const
@@ -122,6 +155,11 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////
         // Components
         ////////////////////////////////////////////////////////////////////////
+
+        void Entity::AddComponent(Component *component)
+        {
+            m_world->m_entityManager->AddComponent( this, component );
+        }
 
         bool Entity::HasComponent(ComponentTypeMask mask) const
         {
@@ -191,12 +229,12 @@ namespace ursine
         // Private Functions
         ////////////////////////////////////////////////////////////////////////
 
-        void Entity::setSystem(ComponentTypeMask mask)
+        void Entity::setSystem(SystemTypeMask mask)
         {
             utils::FlagSet( m_systemMask, mask );
         }
 
-        void Entity::unsetSystem(ComponentTypeMask mask)
+        void Entity::unsetSystem(SystemTypeMask mask)
         {
             utils::FlagUnset( m_systemMask, mask );
         }
@@ -217,7 +255,13 @@ namespace ursine
             m_typeMask = 0;
 
             // active and not deleting
-            m_flags = ACTIVE;
+            m_active = true;
+            m_deleting = false;
+
+            // default settings
+            m_deletionEnabled = true;
+            m_hierarchyChangeEnabled = true;
+            m_visibleInEditor = true;
         }
     }
 }

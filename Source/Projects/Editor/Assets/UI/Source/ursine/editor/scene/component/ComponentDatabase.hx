@@ -69,8 +69,6 @@ class ComponentDatabase {
         for (name in components) {
             var component : ComponentType = Reflect.field( database.components, name );
 
-            trace( component.meta );
-
             m_db.set( name, component );
         }
 
@@ -80,6 +78,15 @@ class ComponentDatabase {
 
     public function getNativeType(name : String) : NativeType {
         return m_typeDB.get( name );
+    }
+
+    public function getComponentTypes() : Array<String> {
+        var keys : Array<String> = new Array<String>( );
+
+        for (key in m_db.keys( ))
+            keys.push( key );
+
+        return keys;
     }
 
     public function getComponentType(name : String) : ComponentType {

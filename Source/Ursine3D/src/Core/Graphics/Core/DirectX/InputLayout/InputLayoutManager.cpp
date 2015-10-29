@@ -24,7 +24,7 @@ namespace ursine
                     m_layoutArray[ x ] = nullptr;
                     Shader *current = shdrmgr->GetShader((SHADER_TYPES)x);
 
-                    if (current != nullptr)
+                    if (current != nullptr && current->vs != nullptr)
                     {
                         HRESULT result = GetLayoutFromBlob(current, &m_layoutArray[ x ]);
                         UAssert(result == S_OK, "Failed to load layout from blob for shader %i.  (Error '%s')", x, GetDXErrorMessage(result));

@@ -1,0 +1,13 @@
+@import '../Config';
+
+:host {
+  padding: 2px;
+  background: #333337;
+  border: 1px solid #3f3f46;
+  color: #dcdcdc;
+  outline: none;
+
+  &:hover, &:focus {
+    border: 1px solid $color-accent;
+  }
+}

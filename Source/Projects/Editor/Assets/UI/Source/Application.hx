@@ -1,26 +1,80 @@
 import ursine.editor.Editor;
 
-import ursine.editor.WindowHandler;
-
+import ursine.controls.EditorWindow;
+import ursine.controls.docking.*;
 import ursine.editor.windows.*;
 
 class Application {
     static function main() {
+        trace( js.Browser.document.readyState );
+
+        js.Browser.window.addEventListener( 'load', function() {
+            // TODO: figure out why there is an arbitrary delay
+            haxe.Timer.delay( initWindows, 100 );
+        } );
+    }
+
+    static private function initWindows() {
         var editor = new Editor( );
 
-        editor.broadcastManager.getChannel( 'EntityManager' ).on( 'EntityCreated', function(data) {
-            trace( data );
-        } );
+        var mainDockContainer =
+            js.Browser.document.body.querySelector( '#main-dock-container' );
 
-        var windows : Array<WindowHandler> = [
-            new EntityInspector( ),
-            new SceneOutline( ),
-            new SceneView( )
-        ];
+        var mainDock = new DockContainer( );
 
-        var windowContainer = js.Browser.document.body.querySelector( '#window-container' );
+        mainDock.style.width = '100%';
+        mainDock.style.height = '100%';
 
-        for (handler in windows)
-            windowContainer.appendChild( handler.window );
+        mainDockContainer.appendChild( mainDock );
+
+        var sceneView = new SceneView( );
+
+        var leftColumn = mainDock.addColumn( );
+        {
+            leftColumn.style.width = '20%';
+
+            var row = leftColumn.addRow( );
+
+            row.style.height = '100%';
+
+            var column = row.addColumn( );
+
+            column.style.width = '100%';
+
+            column.appendChild( new EntityInspector( ).window );
+        }
+
+        var middleColumn = mainDock.addColumn( );
+        {
+            middleColumn.style.width = '60%';
+
+            var row = middleColumn.addRow( );
+
+            row.style.height = '100%';
+
+            var column = row.addColumn( );
+
+            column.style.width = '100%';
+
+            column.appendChild( sceneView.window );
+        }
+
+        var rightColumn = mainDock.addColumn( );
+        {
+            rightColumn.style.width = '20%';
+
+            var row = rightColumn.addRow( );
+
+            row.style.height = '100%';
+
+            var column = row.addColumn( );
+
+            column.style.width = '100%';
+
+            column.appendChild( new SceneOutline( ).window );
+        }
+
+        // TODO: remove after dock calls made
+        sceneView.onViewportInvalidated( );
     }
 }

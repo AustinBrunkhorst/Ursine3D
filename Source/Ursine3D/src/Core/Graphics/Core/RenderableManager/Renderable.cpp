@@ -12,7 +12,11 @@ namespace ursine
             Active_ = false;
         }
 
-        void Renderable::Initialize() {}
+        void Renderable::Initialize()
+        {
+            Overdraw_ = false;
+            Debug_ = false;
+        }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
         {
@@ -22,6 +26,26 @@ namespace ursine
         ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
         {
             return entityID;
+        }
+
+        void Renderable::SetOverdraw(bool draw)
+        {
+            Overdraw_ = draw;
+        }
+
+        bool Renderable::GetOverdraw() const
+        {
+            return Overdraw_;
+        }
+
+        void Renderable::SetDebug(bool debug)
+        {
+            Debug_ = debug;
+        }
+
+        bool Renderable::GetDebug() const
+        {
+            return Debug_;
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -51,6 +75,7 @@ namespace ursine
             m_emissive = 0;
             m_specPow = 0;
             m_specIntensity = 0;
+            SetOverdraw(false);
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -65,6 +90,16 @@ namespace ursine
             emiss = m_emissive;
             pow = m_specPow;
             intensity = m_specIntensity;
+        }
+
+        void Model3D::SetColor(const Color color)
+        {
+            m_color = color;
+        }
+
+        Color Model3D::GetColor() const
+        {
+            return m_color;
         }
 
         const char *Model3D::GetModelName(void)

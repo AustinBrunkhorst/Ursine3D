@@ -37,10 +37,16 @@ namespace ursine
             void Initialize(void);
             void SetEntityUniqueID(const ecs::EntityUniqueID id);
             ecs::EntityUniqueID GetEntityUniqueID() const;
+            void SetOverdraw(bool draw);
+            bool GetOverdraw() const;
 
+            void SetDebug(bool debug);
+            bool GetDebug() const;
         private:
             ecs::EntityUniqueID entityID;
             bool Active_;
+            bool Overdraw_;
+            bool Debug_;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -76,10 +82,13 @@ namespace ursine
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+            void SetColor(const Color color);
+            Color GetColor() const;
         private:
             float m_emissive;
             float m_specPow;
             float m_specIntensity;
+            Color m_color;
             std::string ModelName_;
             std::string MaterialName_;
         };
