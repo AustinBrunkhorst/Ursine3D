@@ -61,6 +61,8 @@ namespace ursine
             m_localPosition = position;
 
             dispatchAndSetDirty( );
+
+            notifyPositionChanged( );
         }
 
         const SVec3& Transform::GetLocalPosition(void) const
@@ -76,6 +78,8 @@ namespace ursine
                 m_localPosition = position;
 
             dispatchAndSetDirty( );
+
+            notifyPositionChanged( );
         }
 
         SVec3 Transform::GetWorldPosition(void)
@@ -91,6 +95,8 @@ namespace ursine
             m_localRotation = rotation;
 
             dispatchAndSetDirty( );
+
+            notifyRotationChanged( );
         }
 
         void Transform::SetLocalEuler(const SVec3& euler)
@@ -98,6 +104,8 @@ namespace ursine
             m_localRotation.SetEulerAngles( euler );
 
             dispatchAndSetDirty( );
+
+            notifyRotationChanged( );
         }
 
         const SQuat& Transform::GetLocalRotation(void) const
@@ -126,6 +134,8 @@ namespace ursine
                 m_localRotation = rotation;
 
             dispatchAndSetDirty( );
+
+            notifyRotationChanged( );
         }
 
         SVec3 Transform::GetWorldEuler(void)
@@ -148,6 +158,8 @@ namespace ursine
             m_localScale = scale;
 
             dispatchAndSetDirty( );
+
+            notifyScaleChanged( );
         }
 
         const SVec3& Transform::GetLocalScale(void) const
@@ -163,6 +175,8 @@ namespace ursine
                 m_localRotation.SetEulerAngles( euler );
 
             dispatchAndSetDirty( );
+
+            notifyRotationChanged( );
         }
 
         SVec3 Transform::GetWorldScale(void)
@@ -369,6 +383,8 @@ namespace ursine
                 m_localScale = scale;
 
             dispatchAndSetDirty( );
+
+            notifyScaleChanged( );
         }
 
 		Component *Transform::GetComponentInChildren(ComponentTypeID id) const
@@ -414,6 +430,10 @@ namespace ursine
 
             URSINE_TODO( "Test this and make sure it is called AFTER"
                          " the 'Create' function has been called in EntityManager.cpp" );
+
+            notifyPositionChanged( );
+            notifyRotationChanged( );
+            notifyScaleChanged( );
 
             // We don't copy over children
         }

@@ -19,6 +19,43 @@ namespace ursine
 {
     namespace ecs
     {
+        const auto &getSystemTypes(void)
+        {
+            static bool configured = false;
+
+            // types of base system types
+            static meta::Type::List baseTypes
+            {
+                typeof( EntitySystem ),
+                typeof( FilterSystem )
+            };
+
+            static meta::Type::List systemTypes;
+
+            if (!configured)
+            {
+                for (auto systemType : baseTypes)
+                {
+                    for (auto derived : systemType.GetDerivedClasses( ))
+                    {
+                        auto search = find(
+							baseTypes.begin( ),
+							baseTypes.end( ),
+                            derived
+                        );
+
+                        // skip base clases of base system types
+                        if (search == baseTypes.end( ))
+                            systemTypes.emplace_back( derived );
+                    }
+                }
+            }
+
+            configured = true;
+
+            return systemTypes;
+        }
+
         void configureSystems(void)
         {
             static bool configured = false;
@@ -28,18 +65,18 @@ namespace ursine
 
             configured = true;
 
-            auto systemType = typeof( EntitySystem );
+            auto &systemTypes = getSystemTypes( );
 
             SystemTypeID nextID = 0;
 
-            for (auto derived : systemType.GetDerivedClasses( ))
+            for (auto systemType : systemTypes)
             {
-                auto systemID = derived.GetStaticField( "SystemID" );
+                auto systemID = systemType.GetStaticField( "SystemID" );
 
                 UAssert( systemID.IsValid( ),
                     "Entity system '%s' doesn't have a static field SystemID.\n"
                     "Most likely missing ENTITY_SYSTEM in declaration",
-                    derived.GetName( ).c_str( )
+                    systemType.GetName( ).c_str( )
                 );
 
                 systemID.SetValue( nextID++ );
@@ -51,9 +88,7 @@ namespace ursine
         {
             configureSystems( );
 
-            auto systemType = typeof( EntitySystem );
-
-            auto &systemTypes = systemType.GetDerivedClasses( );
+            auto &systemTypes = getSystemTypes( );
 
             m_systems.resize( systemTypes.size( ) );
 
@@ -61,9 +96,9 @@ namespace ursine
             const auto systemConstructor = 
                 meta::InvokableSignature { typeof( World* ) };
 
-            for (auto derived : systemType.GetDerivedClasses( ))
+            for (auto systemType : systemTypes)
             {
-                auto systemID = derived.GetStaticField( "SystemID" )
+                auto systemID = systemType.GetStaticField( "SystemID" )
                     .GetValue( )
                     .GetValue<SystemTypeID>( );
                 
@@ -73,11 +108,11 @@ namespace ursine
                 );
 
                 auto constructor = 
-                    derived.GetDynamicConstructor( systemConstructor );
+                    systemType.GetDynamicConstructor( systemConstructor );
 
                 UAssert( constructor.IsValid( ), 
                     "System type missing dynamic constructor %s(World *)",
-                    derived.GetName( ).c_str( )
+                    systemType.GetName( ).c_str( )
                 );
 
                 auto *system = 
