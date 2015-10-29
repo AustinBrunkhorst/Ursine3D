@@ -91,14 +91,15 @@ namespace ursine
             m_motionState.m_dirty = false;
         }
 
-        void Rigidbody::SetCollider(ColliderBase* collider)
+        void Rigidbody::SetCollider(ColliderBase* collider, bool emptyCollider)
         {
         #ifdef BULLET_PHYSICS
             setCollisionShape( collider );
 
             btVector3 localInertia;
 
-            collider->calculateLocalInertia( m_mass, localInertia );
+            if (!emptyCollider)
+                collider->calculateLocalInertia( m_mass, localInertia );
 
             setupRigidBody( RigidbodyConstructionInfo( 
                 m_mass, &m_motionState, collider, localInertia 
@@ -106,11 +107,11 @@ namespace ursine
         #endif
         }
 
-        void Rigidbody::RemoveCollider(void)
+        ColliderBase *Rigidbody::GetCollider(void)
         {
         #ifdef BULLET_PHYSICS
-            setCollisionShape( nullptr );
-        #endif    
+            return getCollisionShape( );
+        #endif
         }
 
         void Rigidbody::SetAwake(void)

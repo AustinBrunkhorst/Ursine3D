@@ -486,17 +486,17 @@ namespace ursine
 
         void Transform::notifyPositionChanged(void)
         {
-            NOTIFY_COMPONENT_CHANGED( "position", m_localPosition );
+            // NOTIFY_COMPONENT_CHANGED( "position", m_localPosition );
         }
 
         void Transform::notifyRotationChanged(void)
         {
-            NOTIFY_COMPONENT_CHANGED( "rotation", m_localRotation.GetEulerAngles( ) );
+            // NOTIFY_COMPONENT_CHANGED( "rotation", m_localRotation.GetEulerAngles( ) );
         }
 
         void Transform::notifyScaleChanged(void)
         {
-            NOTIFY_COMPONENT_CHANGED( "scale", m_localScale );
+            // NOTIFY_COMPONENT_CHANGED( "scale", m_localScale );
         }
 
         bool Transform::genericAddChild(Transform *child)

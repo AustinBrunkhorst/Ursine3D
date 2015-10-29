@@ -36,6 +36,7 @@ namespace ursine
             BoxCollider(void);
             ~BoxCollider(void);
 
+            Meta(Disable);
             void OnInitialize(void) override;
 
             SVec3 GetDimensions(void) const;
@@ -50,6 +51,6 @@ namespace ursine
 
             void updateDimensions(void);
 
-        } Meta( Enable, WhiteListMethods, DisplayName( "BoxCollider" ) );
+        } Meta(Enable, DisplayName( "BoxCollider" ));
     }
 }

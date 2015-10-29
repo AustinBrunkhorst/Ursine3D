@@ -8,6 +8,7 @@
 #include "CylinderColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
+#include "EmptyColliderComponent.h"
 #include "GfxAPI.h"
 
 namespace ursine
@@ -130,28 +131,47 @@ namespace ursine
 
                 addCollider( entity, &cone->m_coneCollider );
             }
+            else if (component->Is<EmptyCollider>( ))
+            {
+                auto *empty = entity->GetComponent<EmptyCollider>( );
+
+                addCollider( entity, &empty->m_emptyCollider, true );
+            }
         }
 
         void PhysicsSystem::onComponentRemoved(EVENT_HANDLER(World))
         {
-            EVENT_ATTRS(World, ComponentEventArgs);
+            EVENT_ATTRS(World, ComponentRemovedEventArgs);
 
             auto &entity = args->entity;
             auto &component = args->component;
+            auto &oldTypeMask = args->oldTypeMask;
 
             if (component->Is<Rigidbody>( ))
             {
-                auto body = static_cast<Rigidbody*>( component );
-
-                // Add the body to the simulation
-                m_simulation.RemoveRigidbody( 
-                    &body->m_rigidbody
-                );
+                auto rigidbody = static_cast<Rigidbody*>( component );
 
                 // if there are still collision shapes attached to 
                 // the entity, add a body for them to use
-                if (m_collisionShapes.Matches( entity ))
-                    entity->AddComponent<Body>( );
+                if (m_collisionShapes.Matches( oldTypeMask ))
+                {
+                    // Copy the collider over to the new body
+                    auto *body = entity->AddComponent<Body>( );
+                    body->m_body.SetCollider(
+                        rigidbody->m_rigidbody.GetCollider( )
+                    );
+
+                    m_simulation.AddBody( &body->m_body );
+                }
+
+                // Add the body to the simulation
+                m_simulation.RemoveRigidbody( 
+                    &rigidbody->m_rigidbody
+                );
+
+                // if there is an empty collider attached, remove it
+                if (entity->HasComponent<EmptyCollider>( ))
+                    entity->RemoveComponent<EmptyCollider>( );
             }
             else if (component->Is<Body>( ))
             {
@@ -161,7 +181,7 @@ namespace ursine
                     &body->m_body
                 );
             }
-            else if (m_collisionShapes.Matches( entity ))
+            else if (m_collisionShapes.Matches( oldTypeMask ))
             {
                 removeCollider( entity );
             }
@@ -172,7 +192,7 @@ namespace ursine
             m_simulation.Step(Application::Instance->GetDeltaTime( ));
         }
 
-        void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider)
+        void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider)
         {
             bool addBody = false;
 
@@ -193,7 +213,7 @@ namespace ursine
                     m_simulation.AddBody( &body->m_body );
             }
             else if (entity->HasComponent<Rigidbody>( ))
-                entity->GetComponent<Rigidbody>( )->m_rigidbody.SetCollider( collider );
+                entity->GetComponent<Rigidbody>( )->m_rigidbody.SetCollider( collider, emptyCollider );
         }
 
         void PhysicsSystem::removeCollider(Entity *entity)
@@ -201,9 +221,9 @@ namespace ursine
             if (entity->HasComponent<Body>( ))
                 entity->RemoveComponent<Body>( );
 
-            // Remove the collider to the body
+            // Add an empty collider
             if (entity->HasComponent<Rigidbody>( ))
-                entity->GetComponent<Rigidbody>( )->m_rigidbody.RemoveCollider( );
+                entity->AddComponent<EmptyCollider>( );
         }
 
     }

@@ -1,30 +1,24 @@
 #pragma once
 
 #include "Component.h"
-#include "Body.h"
+#include "EmptyCollider.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Body : public Component
+        class EmptyCollider : public Component
         {
             NATIVE_COMPONENT;
 
             friend class PhysicsSystem;
 
         public:
-            Body(void);
-			~Body(void);
-
-            Meta(Disable)
-			void OnInitialize(void) override;
+            EmptyCollider(void);
 
         private:
-            physics::Body m_body;
-
-			void onTransformChange(EVENT_HANDLER(Entity));
-
+            physics::EmptyCollider m_emptyCollider;
+        
         } Meta(Enable, HiddenInInspector);
     }
 }

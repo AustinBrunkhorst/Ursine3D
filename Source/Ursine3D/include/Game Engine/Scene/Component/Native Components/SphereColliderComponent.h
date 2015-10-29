@@ -36,6 +36,8 @@ namespace ursine
             SphereCollider(void);
             ~SphereCollider(void);
 
+            
+            Meta(Disable)
             void OnInitialize(void) override;
 
             float GetRadius(void) const;
@@ -50,6 +52,6 @@ namespace ursine
 
             void updateRadius(void);
 
-        } Meta( Enable, WhiteListMethods, DisplayName( "SphereCollider" ) );
+        } Meta( Enable, DisplayName( "SphereCollider" ) );
     }
 }

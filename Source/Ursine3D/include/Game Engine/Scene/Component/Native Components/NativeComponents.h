@@ -22,3 +22,4 @@
 #include "CylinderColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
+#include "EmptyColliderComponent.h"

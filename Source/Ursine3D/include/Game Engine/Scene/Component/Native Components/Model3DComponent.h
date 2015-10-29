@@ -44,6 +44,6 @@ namespace ursine
 
             void onUpdateRenderer(EVENT_HANDLER(Entity));
 
-        } Meta( Enable, DisplayName( "Model3D" ) );
+        } Meta(Enable, DisplayName( "Model3D" ));
     }
 }

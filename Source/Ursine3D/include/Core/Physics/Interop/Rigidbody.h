@@ -34,9 +34,9 @@ namespace ursine
 
             void GetTransform(ecs::Transform *transform);
 
-            void SetCollider(ColliderBase *collider);
+            void SetCollider(ColliderBase *collider, bool emptyCollider = false);
 
-            void RemoveCollider(void);
+            ColliderBase *GetCollider(void);
 
             void SetAwake(void);
 

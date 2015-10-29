@@ -49,6 +49,13 @@ namespace ursine
                     );
 
                     componentID.SetValue( nextID++ );
+
+                    auto defaultCtor = derived.GetDynamicConstructor( );
+
+                    UAssert( defaultCtor.IsValid( ), 
+                        "Component type '%s' doesn't have a default dynamic constructor.",
+                        derived.GetName( ).c_str( )
+                    )
                 }
             }
         }
@@ -416,13 +423,15 @@ namespace ursine
             if (!entity->HasComponent( mask ))
                 return;
 
+            auto oldMask = entity->m_typeMask;
+
             entity->unsetType( mask );
 
             Component *&component = m_componentTypes[ id ][ entity->m_id ];
 
             if (dispatch)
             {
-                ComponentEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component );
+                ComponentRemovedEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component, oldMask );
 
                 m_world->Dispatch( WORLD_ENTITY_COMPONENT_REMOVED, &e );
             }

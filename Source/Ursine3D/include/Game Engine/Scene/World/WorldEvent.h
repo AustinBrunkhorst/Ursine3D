@@ -58,6 +58,15 @@ namespace ursine
                 , component( component ) { }
         };
 
+        struct ComponentRemovedEventArgs : ComponentEventArgs
+        {
+            ComponentTypeMask oldTypeMask;
+
+            ComponentRemovedEventArgs(WorldEventType type, Entity *entity, Component *component, ComponentTypeMask oldTypeMask)
+                : ComponentEventArgs( type, entity, component )
+                , oldTypeMask( oldTypeMask ) { }
+        };
+
         struct EditorEntityNameChangedArgs : EntityEventArgs
         {
             std::string newName;

@@ -30,6 +30,7 @@ namespace ursine
             Rigidbody(void);
 			~Rigidbody(void);
 
+            Meta(Disable)
 			void OnInitialize(void) override;
 
             BodyType GetBodyType(void) const;
@@ -42,6 +43,6 @@ namespace ursine
 
 			void onTransformChange(EVENT_HANDLER(Entity));
 
-        } Meta( Enable, WhiteListMethods, DisplayName( "Rigidbody" ) );
+        } Meta(Enable, DisplayName( "Rigidbody" ));
     }
 }

@@ -39,7 +39,7 @@ namespace ursine
 
             void onUpdate(EVENT_HANDLER(World));
 
-            void addCollider(Entity *entity, physics::ColliderBase *collider);
+            void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
             void removeCollider(Entity *entity);
 
             Filter m_collisionShapes;

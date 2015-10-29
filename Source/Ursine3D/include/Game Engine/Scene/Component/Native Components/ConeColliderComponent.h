@@ -29,6 +29,7 @@ namespace ursine
             ConeCollider(void);
             ~ConeCollider(void);
 
+            Meta(Disable)
             void OnInitialize(void) override;
 
             float GetRadius(void) const;
@@ -47,6 +48,6 @@ namespace ursine
 
             void updateHeightAndRadius(void);
 
-        } Meta( Enable, WhiteListMethods, DisplayName( "ConeCollider" ) );
+        } Meta(Enable, DisplayName( "ConeCollider" ));
     }
 }
