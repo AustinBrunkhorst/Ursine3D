@@ -74,7 +74,7 @@ namespace ursine
         {
             // update the renderer's
             auto ren = GetOwner( )->GetComponent<Renderable>( );
-            auto trans = GetOwner( )->GetComponent<Transform>( );
+            auto trans = GetOwner( )->GetTransform( );
             auto handle = ren->GetHandle( );
             auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( handle );
 

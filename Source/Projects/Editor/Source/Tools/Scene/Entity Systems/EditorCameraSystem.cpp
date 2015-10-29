@@ -20,10 +20,32 @@ namespace
 
 EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     : EntitySystem( world )
+    , m_hasFocus( false )
+    , m_hasMouseFocus( false )
     , m_cameraEntity( nullptr )
     , m_camera( nullptr )
     , m_camZoom( 5.0f )
     , m_camPos( SVec3( 0, 0, 0 ) ) { }
+
+bool EditorCameraSystem::HasFocus(void) const
+{
+    return m_hasFocus;
+}
+
+void EditorCameraSystem::SetFocus(bool focus)
+{
+    m_hasFocus = focus;
+}
+
+bool EditorCameraSystem::HasMouseFocus(void) const
+{
+    return m_hasMouseFocus;
+}
+
+void EditorCameraSystem::SetMouseFocus(bool focus)
+{
+    m_hasMouseFocus = focus;
+}
 
 graphics::Camera *EditorCameraSystem::GetEditorCamera(void)
 {
@@ -75,6 +97,10 @@ void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, EventArgs);
 
+    // don't update on focus
+    if (!m_hasFocus)
+        return;
+
     auto dt = Application::Instance->GetDeltaTime( );
 
     auto *keyboardMgr = GetCoreSystem( KeyboardManager );
@@ -103,6 +129,10 @@ void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
 void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
 {
     EVENT_ATTRS(MouseManager, MouseScrollArgs);
+
+    // don't update on focus
+    if (!m_hasFocus)
+        return;
 
     m_camZoom -= args->delta.Y( );
 

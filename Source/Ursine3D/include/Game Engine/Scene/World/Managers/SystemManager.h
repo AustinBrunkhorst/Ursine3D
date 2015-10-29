@@ -29,6 +29,9 @@ namespace ursine
         {
         public:
             template<class SystemType>
+            inline bool HasSystem(void);
+
+            template<class SystemType>
             inline SystemType *GetSystem(void);
 
         private:
