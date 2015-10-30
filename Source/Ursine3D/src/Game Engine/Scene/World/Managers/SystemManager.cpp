@@ -138,5 +138,11 @@ namespace ursine
             for (auto system : m_systems)
                 system->OnInitialize( );
         }
+
+        void SystemManager::onAfterLoad(void)
+        {
+            for (auto system : m_systems)
+                system->OnAfterLoad( );
+        }
     }
 }

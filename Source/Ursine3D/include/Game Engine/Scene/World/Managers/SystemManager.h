@@ -39,10 +39,12 @@ namespace ursine
 
             std::vector<EntitySystem*> m_systems;
 
-            void OnInitialize(void) override;
-
             SystemManager(World *world);
             ~SystemManager(void);
+
+            void OnInitialize(void) override;
+
+            void onAfterLoad(void);
         };
     }
 }

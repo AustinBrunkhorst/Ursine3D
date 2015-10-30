@@ -13,9 +13,9 @@ public:
     Project(ursine::UIView::Handle ui);
 
     ursine::Scene::Handle GetScene(void);
-    void SetScene(ursine::Scene::Handle scene);
-
     ursine::UIView::Handle GetUI(void);
+
+    void SetWorld(ursine::ecs::World::Handle world);
 
 private:
     ursine::UIView::Handle m_ui;

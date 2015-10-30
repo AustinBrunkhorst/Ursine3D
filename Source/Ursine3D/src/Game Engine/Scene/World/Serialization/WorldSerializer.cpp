@@ -39,9 +39,12 @@ namespace ursine
 
             for (auto *entity : world->m_entityManager->GetActiveEntities( ))
             {
-                // skip the settings entity
-                if (entity->GetUniqueID( ) == settingsEntity->GetUniqueID( ))
+                // skip the settings entity or hidden entities
+                if (entity->GetUniqueID( ) == settingsEntity->GetUniqueID( ) || 
+                    !entity->IsVisibleInEditor( ))
+                {
                     continue;
+                }
 
                 entitiesData.emplace_back( 
                     serializeEntity( entity ) 
@@ -129,6 +132,8 @@ namespace ursine
                 entityManager->dispatchCreated( entity );
             }
 
+            world->DispatchLoad( );
+
             out = world;
 
             return true;
@@ -152,6 +157,10 @@ namespace ursine
             {
                 auto componentType = component->GetType( );
 
+                // skip components hidden in inspector
+                /*if (componentType.GetMeta( ).GetProperty<HiddenInInspector>( ))
+                    continue;*/
+
                 auto instance = meta::Variant { 
                     component, 
                     meta::variant_policy::WrapObject( ) 
@@ -174,49 +183,82 @@ namespace ursine
                 return false;
             }
 
+            static const auto &transformName = typeof( ecs::Transform ).GetName( );
+
+            auto &transformData = data[ transformName ];
+
+            // handle transform first, explicitly
+            if (transformData.is_null( ))
+            {
+                // add the transform if it doesn't already exist
+                entity->m_transform = new Transform( );
+            }
+            else
+            {
+                Component *transform;
+
+                if (!deserializeComponent( entity, transformName, transformData, transform ))
+                    return false;
+
+                entity->m_transform = static_cast<Transform*>( transform );
+
+                manager->addComponent( entity, transform );
+            }
+
             for (auto &componentData : data.object_items( ))
             {
-                auto componentType = meta::Type::GetFromName( componentData.first );
+                // skip transform
+                if (componentData.first == transformName)
+                    continue;
 
-                if (!componentType.IsValid( ))
-                {
-                    UWarning( "Unknown component type '%s'.", 
-                        componentData.first.c_str( )
-                    );
+                Component *component;
 
+                if (!deserializeComponent( entity, componentData.first, componentData.second, component ))
                     return false;
-                }
 
-                auto ctor = componentType.GetDynamicConstructor( );
-
-                if (!ctor.IsValid( ))
-                {
-                    UWarning( "Component type '%s' doesn't have dynamic default constructor.", 
-                        componentType.GetName( ).c_str( )
-                    );
-
-                    return false;
-                }
-
-                URSINE_TODO( "find better solution to this" );
-                auto instance = meta::Variant { 
-                    ctor.Invoke( ).GetValue<Component*>( ), 
-                    meta::variant_policy::WrapObject( ) 
-                };
-
-                auto &component = instance.GetValue<Component>( );
-
-                component.m_owner = entity;
-
-                componentType.DeserializeJson( instance, componentData.second );
-
-                manager->addComponent( 
-                    entity, 
-                    &component
-                );
+                manager->addComponent( entity, component );
             }
             
             return true;
+        }
+
+        bool WorldSerializer::deserializeComponent(Entity *entity, const std::string &typeName, const Json &data, Component *&out)
+        {
+            auto componentType = meta::Type::GetFromName( typeName );
+
+            if (!componentType.IsValid( ))
+            {
+                UWarning( "Unknown component type '%s'.", 
+                    typeName.c_str( )
+                );
+
+                return false;
+            }
+
+            auto ctor = componentType.GetDynamicConstructor( );
+
+            if (!ctor.IsValid( ))
+            {
+                UWarning( "Component type '%s' doesn't have dynamic default constructor.", 
+                    componentType.GetName( ).c_str( )
+                );
+
+                return false;
+            }
+
+            URSINE_TODO( "find better solution to this" );
+            auto instance = meta::Variant { 
+                ctor.Invoke( ).GetValue<Component*>( ), 
+                meta::variant_policy::WrapObject( ) 
+            };
+
+            auto &component = instance.GetValue<Component>( );
+
+            component.m_owner = entity;
+
+            componentType.DeserializeJson( instance, data );
+
+            out = &component;
         }
     }
 }

@@ -492,6 +492,7 @@ void ObjectSelectorSystem::updateToolPosition(Vec3 pos)
 void ObjectSelectorSystem::moveToolToEntity(const ecs::EntityUniqueID id)
 {
     auto newObj = m_world->GetEntityUnique( id );
+
     updateToolPosition( newObj->GetTransform( )->GetWorldPosition( ) );
 }
 

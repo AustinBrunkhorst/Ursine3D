@@ -113,9 +113,7 @@ namespace
             return;
         }
 
-        auto scene = std::make_shared<Scene>( );
-
-        editor->GetProject( )->SetScene( scene );
+        editor->GetProject( )->SetWorld( world );
     }
 
     void doSaveScene(int selectedFilter, const FileList &files)

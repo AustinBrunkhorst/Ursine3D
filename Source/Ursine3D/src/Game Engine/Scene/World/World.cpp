@@ -137,6 +137,11 @@ namespace ursine
             return m_systemManager;
         }
 
+        void World::DispatchLoad(void)
+        {
+            m_systemManager->onAfterLoad( );
+        }
+
         void World::deleteEntity(Entity *entity)
         {
             m_entityManager->BeforeRemove( entity );

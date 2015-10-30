@@ -68,7 +68,7 @@ namespace ursine
 
             if (owner->HasComponent<Rigidbody>( ))
                 return owner->GetComponent<Rigidbody>( )->GetOffset( );
-            else
+            else if (owner->HasComponent<Body>( ))
                 return owner->GetComponent<Body>( )->GetOffset( );
         }
 
@@ -78,7 +78,7 @@ namespace ursine
 
             if (owner->HasComponent<Rigidbody>( ))
                 return owner->GetComponent<Rigidbody>( )->SetOffset( offset );
-            else
+            else if (owner->HasComponent<Body>( ))
                 return owner->GetComponent<Body>( )->SetOffset( offset );
         }
 
@@ -89,7 +89,9 @@ namespace ursine
 
         void CapsuleCollider::updateHeightAndRadius(void)
         {
-            auto scale = GetOwner( )->GetTransform( )->GetWorldScale( );
+            auto owner = GetOwner( );
+
+            auto scale = owner->GetTransform( )->GetWorldScale( );
 
             auto radius = std::max( scale.X( ), scale.Z( ) ) * m_radius;
             auto height = scale.Y( ) * m_height;
@@ -97,7 +99,7 @@ namespace ursine
             m_capsuleCollider.SetRadius( radius );
             m_capsuleCollider.SetHeight( height );
 
-            auto rigidbody = GetOwner( )->GetComponent<Rigidbody>( );
+            auto rigidbody = owner->GetComponent<Rigidbody>( );
 
             if (rigidbody)
                 rigidbody->SetAwake( );

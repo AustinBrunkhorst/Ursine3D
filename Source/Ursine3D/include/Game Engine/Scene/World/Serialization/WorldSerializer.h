@@ -19,6 +19,7 @@ namespace ursine
             Json serializeComponents(const Entity *entity);
 
             bool deserializeComponents(EntityManager *manager, Entity *entity, const Json &data);
+            bool deserializeComponent(Entity *entity, const std::string &typeName, const Json &data, Component *&out);
         };
     }
 }

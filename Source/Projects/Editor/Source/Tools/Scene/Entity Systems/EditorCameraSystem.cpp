@@ -57,6 +57,22 @@ graphics::Camera *EditorCameraSystem::GetEditorCamera(void)
 
 void EditorCameraSystem::OnInitialize(void)
 {
+    m_focusTransition = m_tweens.Create( );
+
+    GetCoreSystem( MouseManager )->Listener( this )
+        .On( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
+
+    m_world->Listener( this )
+        .On( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+}
+
+void EditorCameraSystem::OnAfterLoad(void)
+{
+    auto *oldCamera = m_world->GetEntityFromName( kEditorCameraEntityName );
+
+    if (oldCamera)
+        oldCamera->Delete( );
+
     m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
 
     m_cameraEntity->EnableDeletion( false );
@@ -66,20 +82,13 @@ void EditorCameraSystem::OnInitialize(void)
     m_camera = component->GetCamera( );
 
     m_camera->SetPosition( 0.0f, 0.0f );
+    m_camera->SetPosition( SVec3( -50, 50, 50 ) );
     m_camera->SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
     m_camera->SetDimensions( 1.0f, 1.0f );
     m_camera->SetPlanes( 0.1f, 700.0f );
     m_camera->SetFOV( 45.f );
 
     m_camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-    m_focusTransition = m_tweens.Create( );
-
-    GetCoreSystem( MouseManager )->Listener( this )
-        .On( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
-
-    m_world->Listener( this )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::OnRemove(void)

@@ -16,6 +16,7 @@ namespace ursine
         Scene(void);
 
         ecs::World::Handle GetWorld(void);
+        void SetWorld(ecs::World::Handle world);
 
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);

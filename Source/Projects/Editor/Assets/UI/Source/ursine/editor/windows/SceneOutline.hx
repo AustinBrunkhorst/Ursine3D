@@ -33,7 +33,10 @@ class SceneOutline extends WindowHandler {
 
         window.container.appendChild( m_entityList );
 
-        initScene( );
+        resetScene( );
+
+        Editor.instance.broadcastManager.getChannel( 'SceneManager' )
+            .on( 'Reset', resetScene );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
             .on( EntityEvent.EntityAdded, onEntityAdded )
@@ -56,7 +59,13 @@ class SceneOutline extends WindowHandler {
         }
     }
 
-    private function initScene() {
+    private function resetScene() {
+        m_selectedEntities = new Array<UInt>( );
+        m_entityList.innerHTML = '';
+        m_entityItems = new Map<UInt, Element>( );
+
+        EntityInspector.instance.inspect( null );
+
         var entities : Array<UInt> = Extern.SceneGetActiveEntities( );
 
         var event = { uniqueID: 0 };

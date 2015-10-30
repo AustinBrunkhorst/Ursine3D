@@ -18,6 +18,11 @@ namespace ursine
         return m_world;
     }
 
+    void Scene::SetWorld(ecs::World::Handle world)
+    {
+        m_world = world;
+    }
+
     graphics::GfxHND Scene::GetViewport(void) const
     {
         return m_viewport;

@@ -69,6 +69,8 @@ namespace ursine
             Entity *GetSettings(void) const;
 
             SystemManager *GetSystemManager(void) const;
+
+            void DispatchLoad(void);
         private:
             friend class Entity;
             friend class WorldSerializer;

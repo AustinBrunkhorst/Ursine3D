@@ -1099,7 +1099,8 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.m_entityItems = new haxe_ds_IntMap();
 	this.m_selectedEntities = [];
 	this.window.container.appendChild(this.m_entityList);
-	this.initScene();
+	this.resetScene();
+	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("Reset",$bind(this,this.resetScene));
 	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.EntityAdded,$bind(this,this.onEntityAdded)).on(ursine_editor_scene_entity_EntityEvent.EntityRemoved,$bind(this,this.onEntityRemoved)).on(ursine_editor_scene_entity_EntityEvent.EntityNameChanged,$bind(this,this.onEntityNameChanged)).on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
@@ -1118,7 +1119,11 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			item.entity.deselect();
 		}
 	}
-	,initScene: function() {
+	,resetScene: function() {
+		this.m_selectedEntities = [];
+		this.m_entityList.innerHTML = "";
+		this.m_entityItems = new haxe_ds_IntMap();
+		ursine_editor_windows_EntityInspector.instance.inspect(null);
 		var entities = ursine_native_Extern.SceneGetActiveEntities();
 		var event = { uniqueID : 0};
 		var _g = 0;

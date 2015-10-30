@@ -33,12 +33,17 @@ namespace ursine
 
         void Model3D::OnInitialize(void)
         {
+            auto *owner = GetOwner( );
+
             // Subscribe from the Renderable component's event
-            GetOwner( )->Listener( this )
+            owner->Listener( this )
                 .On( ENTITY_UPDATE_RENDERER, &Model3D::onUpdateRenderer );
 
             // Set the handle in the renderable component
-            GetOwner( )->GetComponent<Renderable>( )->SetHandle( m_handle );
+            if (!owner->HasComponent<Renderable>( ))
+                owner->AddComponent<Renderable>( );
+
+            owner->GetComponent<Renderable>( )->SetHandle( m_handle );
 
             // set the unique id
             m_model->SetEntityUniqueID( GetOwner( )->GetUniqueID( ) );

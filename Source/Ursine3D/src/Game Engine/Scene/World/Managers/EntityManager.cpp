@@ -446,12 +446,6 @@ namespace ursine
             const auto size = m_componentTypes.size( );
             const auto id = entity->m_id;
 
-            auto transform = GetComponent<Transform>( entity );
-
-            // add the transform if it doesn't already exist
-            entity->m_transform = transform ? transform : 
-                new Transform( );
-
             ComponentEventArgs args( WORLD_ENTITY_COMPONENT_ADDED, entity, nullptr );
 
             // transform can be assumed to be the first component type

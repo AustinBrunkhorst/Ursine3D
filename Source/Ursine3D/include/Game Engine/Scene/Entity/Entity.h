@@ -224,6 +224,7 @@ namespace ursine
         private:
             // entity manager needs to be able to construct entities
             friend class EntityManager;
+            friend class WorldSerializer;
 
             // access ids directly
             friend class NameManager;
