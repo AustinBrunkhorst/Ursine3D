@@ -29,12 +29,15 @@ class EntityInspector extends WindowHandler {
     // controls
     private var m_btnAddComponent : Button;
 
+    private var m_openCache : Map<String, Bool>;
+
     public function new() {
         instance = this;
 
         super( );
 
         m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
+        m_openCache = new Map<String, Bool>( );
 
         window.heading = "Inspector";
 
@@ -63,10 +66,15 @@ class EntityInspector extends WindowHandler {
 
         if (handler != null)
             removeInspector( handler.inspector );
+
+        m_componentHandlers.remove( e.component );
     }
 
     private function onInspectedEntityComponentChanged(e) {
-        m_componentHandlers[ e.component ].updateField( e.field, e.value );
+        var handler = m_componentHandlers[ e.component ];
+
+        if (handler != null)
+            handler.updateField( e.field, e.value );
     }
 
     private function clearOldInspection() {
@@ -106,6 +114,10 @@ class EntityInspector extends WindowHandler {
     }
 
     private function inspectComponent(component : ComponentInspection) {
+        // this component was already inspected
+        if (m_componentHandlers[ component.type ] != null)
+            return;
+
         var database = Editor.instance.componentDatabase;
 
         var type = database.getComponentType( component.type );
@@ -118,7 +130,11 @@ class EntityInspector extends WindowHandler {
 
         handler.inspector.canRemove = !Reflect.hasField( type.meta, Property.DisableComponentRemoval );
 
+        // remember opened state for components
+        handler.inspector.opened = (m_openCache[ component.type ] == true);
+
         handler.inspector.addEventListener( 'removed', onRemoveComponentClicked.bind( component ) );
+        handler.inspector.addEventListener( 'open-changed', onOpenChanged.bind( component ) );
 
         m_componentHandlers[ component.type ] = handler;
 
@@ -173,6 +189,10 @@ class EntityInspector extends WindowHandler {
         }
 
         m_inspectedEntity.addComponent( componentType );
+    }
+
+    private function onOpenChanged(component : ComponentInspection, e : CustomEvent) {
+        m_openCache[ component.type ] = e.detail.open;
     }
 
     private function initWindow() {

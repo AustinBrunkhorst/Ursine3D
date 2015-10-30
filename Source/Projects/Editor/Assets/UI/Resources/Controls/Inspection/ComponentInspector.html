@@ -45,6 +45,10 @@
 
             _onOpenedChanged: function() {
                 this.classList.toggle( 'opened', !!this.opened );
+
+                this.fire( 'open-changed', {
+                    open: this.opened
+                } );
             },
             _onCanRemoveChanged: function() {
                 this.$.btnRemove.style.display = this.canRemove ? 'block' : 'none';

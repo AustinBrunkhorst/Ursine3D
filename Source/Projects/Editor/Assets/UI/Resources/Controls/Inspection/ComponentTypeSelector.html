@@ -45,6 +45,14 @@
             },
             attached: function() {
                 this.$.filter.focus( );
+
+                setTimeout( function() {
+                    var bounds = this.getBoundingClientRect( );
+
+                    // fit inside window
+                    if (bounds.bottom > window.innerHeight)
+                        this.style.top = (window.innerHeight - bounds.height) + 'px';
+                }.bind( this ), 25 );
             },
 
             close: function() {

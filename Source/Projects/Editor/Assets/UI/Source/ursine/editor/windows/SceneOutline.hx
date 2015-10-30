@@ -9,12 +9,16 @@ import ursine.editor.scene.entity.EntityEvent;
 import ursine.editor.scene.entity.Entity;
 
 class SceneOutline extends WindowHandler {
+    public static var instance : SceneOutline;
+
     private var m_entityList : UListElement;
     private var m_entityItems : Map<UInt, Element>;
 
     private var m_selectedEntities : Array<UInt> = null;
 
     public function new() {
+        instance = this;
+
         super( );
 
         window.heading = "Outline";
@@ -39,6 +43,17 @@ class SceneOutline extends WindowHandler {
             .on( EntityEvent.ComponentRemoved, onComponentRemoved );
 
         window.addEventListener( 'keydown', onWindowKeyDown );
+    }
+
+    public function clearSelectedEntities() {
+        for (uid in m_selectedEntities) {
+            var item = m_entityItems[ uid ];
+
+            if (item == null)
+                continue;
+
+            untyped item.entity.deselect( );
+        }
     }
 
     private function initScene() {
@@ -192,17 +207,6 @@ class SceneOutline extends WindowHandler {
             m_selectedEntities.filter( function(x) {
                 return x == untyped item.entity.uniqueID;
             } );
-        }
-    }
-
-    private function clearSelectedEntities() {
-        for (uid in m_selectedEntities) {
-            var item = m_entityItems[ uid ];
-
-            if (item == null)
-                continue;
-
-            untyped item.entity.deselect( );
         }
     }
 
