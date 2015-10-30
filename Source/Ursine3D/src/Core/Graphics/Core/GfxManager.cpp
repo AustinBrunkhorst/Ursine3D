@@ -908,10 +908,11 @@ namespace ursine
         {
             auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
 
-            auto scale = billboard.GetScale();
+            float w, h;
+
             BillboardSpriteBuffer bsb;
-            bsb.width = scale.X();
-            bsb.height = scale.Y();
+
+            billboard.GetDimensions(bsb.width, bsb.height);
 
             //map camera data
             PointGeometryBuffer pgb;

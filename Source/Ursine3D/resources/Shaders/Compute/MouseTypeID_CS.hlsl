@@ -53,8 +53,8 @@ void main()
             float4 currVal = inputTexture.Load(int3(x, y, 0));// [mousePos.xy];
             
             //convert to ID
-            uint w1 = currVal.y * 255.f;
-            uint w2 = currVal.z * 255.f;
+            uint w1 = round(currVal.y * 255.f);
+            uint w2 = round(currVal.z * 255.f);
 
             //construct final ID
             uint currID = w1 + (w2 << 8);

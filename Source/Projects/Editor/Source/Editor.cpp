@@ -165,6 +165,9 @@ void Editor::initializeScene(void)
 
             auto transform = entity_char->GetTransform( );
 
+            model->GetBillboard()->SetTexture("Sun"); 
+            model->GetBillboard()->SetDimensions(30, 30);
+
             transform->SetWorldPosition( SVec3 { i * 1.0f, 2.0f, 0.0f } );
             transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
             transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );

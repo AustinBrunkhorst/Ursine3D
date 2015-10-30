@@ -62,14 +62,14 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     float subColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //size of a cell
-    float cellSize = 1;
+    float cellSize = settings->GetCellSize();
 
     // # of cells
     int widthCount = settings->GetWidth( );
     int heightCount = settings->GetHeight( );
 
     //number of cells between dividers
-    static int subSector = settings->GetSubDivisions( );
+    int subSector = settings->GetSubDivisions( );
 
     //current center position of the grid
     SVec3 pos = m_world->GetEntitySystem(EditorCameraSystem)->GetEditorFocusPosition( );

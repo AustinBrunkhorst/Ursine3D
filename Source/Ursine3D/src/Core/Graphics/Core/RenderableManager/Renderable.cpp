@@ -156,16 +156,6 @@ namespace ursine
             height = m_height;
         }
 
-        void Billboard2D::SetScale(const ursine::Vec2& scale)
-        {
-            m_scale = scale;
-        }
-
-        const ursine::Vec2& Billboard2D::GetScale() const
-        {
-            return m_scale;
-        }
-
         void Billboard2D::SetPosition(const ursine::SVec3& position)
         {
             m_position = position;
