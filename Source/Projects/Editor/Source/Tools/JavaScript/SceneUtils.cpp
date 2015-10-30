@@ -5,6 +5,10 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include <UIFileDialogCallback.h>
+
+using namespace ursine;
+
 JSFunction(SceneGetActiveEntities)
 {
     auto &scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
@@ -22,4 +26,62 @@ JSFunction(SceneGetActiveEntities)
     }
 
     return ids;
+}
+
+#include <iostream>
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneLoad)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    CefRefPtr<UIFileDialogCallback> callback = new UIFileDialogCallback( 
+        [](int, std::vector<fs::path> paths) 
+        {
+            // TODO:
+        } 
+    );
+
+    std::vector<CefString> filters {
+        "World Files|.uworld"
+    };
+
+    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+        FILE_DIALOG_OPEN,
+        "Load World",
+        "",
+        filters,
+        0,
+        callback
+    );
+
+    return CefV8Value::CreateUndefined( );
+}
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneSave)
+{
+     auto *editor = GetCoreSystem( Editor );
+
+    CefRefPtr<UIFileDialogCallback> callback = new UIFileDialogCallback( 
+        [](int, std::vector<fs::path> paths) 
+        {
+            // TODO:
+        } 
+    );
+
+    std::vector<CefString> filters {
+        "World Files|.uworld"
+    };
+
+    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+        static_cast<CefBrowserHost::FileDialogMode>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG ),
+        "Save World",
+        "",
+        filters,
+        0,
+        callback
+    );
+
+    return CefV8Value::CreateUndefined( );
 }

@@ -39,6 +39,8 @@ namespace ursine
 
         ~UIView(void);
 
+        CefRefPtr<CefBrowser> GetBrowser(void) const;
+
         void Close(void);
 
         const CefRect &GetViewport(void) const;

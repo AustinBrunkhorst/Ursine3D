@@ -100,6 +100,16 @@ void Editor::OnRemove(void)
     m_project = nullptr;
 }
 
+Window::Handle Editor::GetMainWindow(void) const
+{
+    return m_mainWindow.window;
+}
+
+UIView::Handle Editor::GetMainUI(void) const
+{
+    return m_mainWindow.ui;
+}
+
 std::shared_ptr<Project> Editor::GetProject(void) const
 {
     return m_project;

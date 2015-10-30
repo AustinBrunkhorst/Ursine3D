@@ -160,8 +160,8 @@ void ObjectSelectorSystem::onMouseDown(EVENT_HANDLER(MouseManager))
 {
     EVENT_ATTRS(MouseManager, MouseButtonArgs);
 
-    // can't click without focus
-    if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
+    // can't click without mouse focus
+    if (!m_editorCameraSystem->HasMouseFocus( ))
         return;
 
     if (m_keyboardManager->GetModifiers( ) & KMD_ALT)

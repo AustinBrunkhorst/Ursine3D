@@ -16,4 +16,13 @@ class Extern {
     public static function SceneGetActiveEntities() {
         return untyped __js__( "SceneGetActiveEntities()" );
     }
+
+    public static function SceneLoad() {
+        return untyped __js__( "SceneLoad()" );
+    }
+
+    public static function SceneSave() {
+        return untyped __js__( "SceneSave()" );
+    }
+
 }
