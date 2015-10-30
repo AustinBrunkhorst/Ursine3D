@@ -15,6 +15,7 @@
 #include <Model3DComponent.h>
 #include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
 #include "Tools/Scene/Entity Systems/EditorCameraSystem.h"
+#include <Game Engine/Scene/Component/Native Components/Billboard2DComponent.h>
 
 using namespace ursine;
 
@@ -156,17 +157,15 @@ void Editor::initializeScene(void)
 
         {
             entity_char->AddComponent<ecs::Renderable>( );
-            auto model = entity_char->AddComponent<ecs::Model3D>( );
+            auto model = entity_char->AddComponent<ecs::Billboard2D>( );
 
             auto name = "Character";
 
             entity_char->SetName( name );
 
-            model->SetModel( name );
-
             auto transform = entity_char->GetTransform( );
 
-            transform->SetWorldPosition( SVec3 { i * 1.0f, 0.0f, 0.0f } );
+            transform->SetWorldPosition( SVec3 { i * 1.0f, 2.0f, 0.0f } );
             transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
             transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );
         }
@@ -189,7 +188,7 @@ void Editor::initializeScene(void)
 
         // parent the character to the cube
         entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
-    }
+    }  
 
 
     auto *univLight = world.CreateEntity( "Global Light" );

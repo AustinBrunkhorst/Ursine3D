@@ -38,7 +38,7 @@ void main()
     float bestDistance = 10000;
 
     //current ID to return
-    int bestAnswer = -1;
+    uint bestAnswer = -1;
 
     bool currentStatus = false;
 
@@ -48,20 +48,19 @@ void main()
     //check surrounding area for overrides
     for (int y = yMin; y <= yMax; ++y)
         for (int x = xMin; x <= xMax; ++x)
-        {
+        { 
             //read value from texture
             float4 currVal = inputTexture.Load(int3(x, y, 0));// [mousePos.xy];
             
             //convert to ID
             uint w1 = currVal.y * 255.f;
             uint w2 = currVal.z * 255.f;
-            uint w3 = currVal.w * 255.f;
 
             //construct final ID
-            int currID = w1 + (w2 << 8) + (w3 << 16);
+            uint currID = w1 + (w2 << 8);
 
             //make sure ID is valid
-            if (currID > 16710680)
+            if (currID > 73727 || currID == 0)
             {
                 continue;
             }
@@ -70,7 +69,7 @@ void main()
             float distanceSqr = (x - mouseX) * (x - mouseX) + (y - mouseY) * (y - mouseY);
 
             //is the current ID an overdraw ID?
-            int currIsOverdraw = ((currID >> 20) & 0xF);
+            int currIsOverdraw = ((currID >> 15) & 0x1);
 
             //if we want overdraw, but this object isn't, skip
             if (usingOverdraw && !currIsOverdraw)

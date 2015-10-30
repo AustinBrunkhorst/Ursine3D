@@ -27,8 +27,8 @@ namespace ursine
             SHADER_DIFFUSE,
             SHADER_NORMAL,
             SHADER_DEFFERED_TEXTURE,
-            SHADER_DEFERRED_DEPTH,
             SHADER_BILLBOARD2D,
+            SHADER_DEFERRED_DEPTH,
             SHADER_DEFERRED_DEPTH_NORM,
             SHADER_UI,
 

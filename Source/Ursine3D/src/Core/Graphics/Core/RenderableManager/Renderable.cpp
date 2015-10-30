@@ -77,6 +77,7 @@ namespace ursine
             m_specIntensity = 0;
             SetOverdraw(false);
             SetDebug(false);
+            m_color = Color(1, 1, 1, 1);
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -98,7 +99,7 @@ namespace ursine
             m_color = color;
         }
 
-        Color Model3D::GetColor() const
+        const Color &Model3D::GetColor() const
         {
             return m_color;
         }
@@ -153,6 +154,36 @@ namespace ursine
         {
             width = m_width;
             height = m_height;
+        }
+
+        void Billboard2D::SetScale(const ursine::Vec2& scale)
+        {
+            m_scale = scale;
+        }
+
+        const ursine::Vec2& Billboard2D::GetScale() const
+        {
+            return m_scale;
+        }
+
+        void Billboard2D::SetPosition(const ursine::SVec3& position)
+        {
+            m_position = position;
+        }
+
+        const ursine::SVec3& Billboard2D::GetPosition() const
+        {
+            return m_position;
+        }
+
+        void Billboard2D::SetColor(const Color color)
+        {
+            m_color = color;
+        }
+
+        const Color &Billboard2D::GetColor() const
+        {
+            return m_color;
         }
 
         ///////////////////////////////////////////////////////////////////
