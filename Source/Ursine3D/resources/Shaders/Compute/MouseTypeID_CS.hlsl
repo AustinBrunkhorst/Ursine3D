@@ -28,7 +28,7 @@ void main()
 
     /////////////////////////////////////////////////////////////////
     // SEARCHING NEARBY TILES
-    int searchRadius = 1;
+    int searchRadius = 10;
 
     int xMin = mousePos.x - searchRadius;
     int xMax = mousePos.x + searchRadius;

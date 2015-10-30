@@ -25,7 +25,11 @@ EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     , m_cameraEntity( nullptr )
     , m_camera( nullptr )
     , m_camZoom( 5.0f )
-    , m_camPos( SVec3( 0, 0, 0 ) ) { }
+    , m_camPos( SVec3( 0, 0, 0 ) )
+{
+    m_camPos = SVec3( 0, 0, 0 );
+    m_camZoom = 100.0f;
+}
 
 bool EditorCameraSystem::HasFocus(void) const
 {
@@ -82,13 +86,13 @@ void EditorCameraSystem::OnAfterLoad(void)
     m_camera = component->GetCamera( );
 
     m_camera->SetPosition( 0.0f, 0.0f );
-    m_camera->SetPosition( SVec3( -50, 50, 50 ) );
+    m_camera->SetPosition( Vec3( -50, 50, -50 ) );
     m_camera->SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
     m_camera->SetDimensions( 1.0f, 1.0f );
     m_camera->SetPlanes( 0.1f, 700.0f );
     m_camera->SetFOV( 45.f );
 
-    m_camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+    m_camera->LookAtPoint( m_camPos );
 }
 
 void EditorCameraSystem::OnRemove(void)

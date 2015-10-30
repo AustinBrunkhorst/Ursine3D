@@ -166,6 +166,11 @@ void Editor::initializeScene(void)
 
     world->DispatchLoad( );
 
+    SVec3 positions[ 2 ] = {
+        SVec3( -30.0, 0.5f, 5.0f ),
+        SVec3( 30.0f, 0.5f, 5.0f )
+    };
+
 	for (int i = 0; i < 2; ++i)
 	{
         auto *entity_char = world->CreateEntity( );
@@ -182,33 +187,34 @@ void Editor::initializeScene(void)
 
         entity_char->AddComponent<CharacterController>( )->id = i;
 
-        auto *collider = entity_char->AddComponent<ecs::CapsuleCollider>();
+        /*auto *collider = entity_char->AddComponent<ecs::CapsuleCollider>();
 
 		/*auto body = entity_char->AddComponent<ecs::Rigidbody>( );
 
 		body->LockXRotation(true);
-		body->LockZRotation(true);*/
+		body->LockZRotation(true);#1#
 
         collider->SetHeight(19.0f);
         collider->SetRadius(4.0f);
-        collider->SetOffset(SVec3(0.0f, 15.2f, 0.0f));
+        collider->SetOffset(SVec3(0.0f, 15.2f, 0.0f));*/
 
         auto transform = entity_char->GetTransform();
 
-        transform->SetWorldPosition(SVec3{ i * 5.0f, 0.5f, i * 5.0f });
+        transform->SetWorldPosition( positions[ i ] );
         transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
         transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
     }
 
     {
-        auto *floor = world->CreateEntity( );
+        auto *floor = world->CreateEntity( "Floor" );
 
         floor->AddComponent<ecs::Renderable>();
         auto model = floor->AddComponent<ecs::Model3D>();
-        model->SetModel("Cube");
+        model->SetModel( "Cube");
 
         floor->AddComponent<ecs::BoxCollider>();
         
+        floor->GetTransform()->SetWorldPosition(SVec3(0, 0.1f, 0));
         floor->GetTransform()->SetWorldScale(SVec3(100, 0.1f, 100));
     }
 
@@ -216,11 +222,40 @@ void Editor::initializeScene(void)
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
+        univLight->GetTransform()->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
+        univLight->GetTransform()->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+
         component->SetType( ecs::LightType::Directional );
-        component->SetPosition( { 0.0f, 0.0f, 0.0f } );
         component->SetRadius( 40.0f );
-        component->SetDirection( { 0.0f, 1.0f, 0.0f } );
-        component->SetColor( Color::White );
+        component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
+    }
+
+    std::vector<SVec3> lightPositions
+    {
+        SVec3( -30.0f, 35.0f, 0.0f ),
+        SVec3( 0.0f, 35.0f, 0.0f ),
+        SVec3( 30.0f, 35.0f, 5.0f ),
+    };
+
+    std::vector<Color> colors {
+        Color::Red,
+        Color::Green,
+        Color::Blue
+    };
+
+    for (int i = 0; i < 3; ++i)
+    {
+        auto *pointLight = world->CreateEntity( "Point Light" );
+        {
+            auto *component = pointLight->AddComponent<ecs::Light>( );
+
+            pointLight->GetTransform()->SetLocalPosition( lightPositions[ i ] );
+            pointLight->GetTransform()->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+
+            component->SetType( ecs::LightType::Point );
+            component->SetRadius( 50.0f );
+            component->SetColor( colors[ i ]  );
+        }
     }
 }
 
