@@ -20,6 +20,9 @@ namespace ursine
             Meta(Disable)
 			void OnInitialize(void) override;
 
+            void SetOffset(const SVec3 &offset);
+            SVec3 GetOffset(void) const;
+
         private:
             physics::Body m_body;
 

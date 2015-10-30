@@ -2,6 +2,7 @@
 
 #include "CapsuleColliderComponent.h"
 #include "RigidbodyComponent.h"
+#include "BodyComponent.h"
 #include "EntityEvent.h"
 
 namespace ursine
@@ -59,6 +60,26 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "height", m_height);
 
             updateHeightAndRadius( );
+        }
+
+        SVec3 CapsuleCollider::GetOffset(void) const
+        {
+            auto owner = GetOwner( );
+
+            if (owner->HasComponent<Rigidbody>( ))
+                return owner->GetComponent<Rigidbody>( )->GetOffset( );
+            else
+                return owner->GetComponent<Body>( )->GetOffset( );
+        }
+
+        void CapsuleCollider::SetOffset(const SVec3& offset)
+        {
+            auto owner = GetOwner( );
+
+            if (owner->HasComponent<Rigidbody>( ))
+                return owner->GetComponent<Rigidbody>( )->SetOffset( offset );
+            else
+                return owner->GetComponent<Body>( )->SetOffset( offset );
         }
 
         void CapsuleCollider::onTransformChange(EVENT_HANDLER(Entity))

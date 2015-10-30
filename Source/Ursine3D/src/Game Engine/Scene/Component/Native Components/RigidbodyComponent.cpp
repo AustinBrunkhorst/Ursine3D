@@ -42,6 +42,31 @@ namespace ursine
             m_rigidbody.SetAwake( );
         }
 
+        void Rigidbody::SetOffset(const SVec3 &offset)
+        {
+            m_rigidbody.SetOffset( offset );
+        }
+
+        void Rigidbody::LockXRotation(bool flag)
+        {
+            m_rigidbody.LockXRotation( flag );
+        }
+
+        void Rigidbody::LockYRotation(bool flag)
+        {
+            m_rigidbody.LockYRotation( flag );
+        }
+
+        void Rigidbody::LockZRotation(bool flag)
+        {
+            m_rigidbody.LockZRotation( flag );
+        }
+
+        SVec3 Rigidbody::GetOffset(void) const
+        {
+            return m_rigidbody.GetOffset( );
+        }
+
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
         {
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );

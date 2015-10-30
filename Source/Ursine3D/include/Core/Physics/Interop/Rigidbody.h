@@ -40,6 +40,14 @@ namespace ursine
 
             void SetAwake(void);
 
+            void SetOffset(const SVec3 &offset);
+
+            SVec3 GetOffset(void) const;
+
+            void LockXRotation(bool flag);
+            void LockYRotation(bool flag);
+            void LockZRotation(bool flag);
+
         private:
             MotionState m_motionState;
 
@@ -48,6 +56,10 @@ namespace ursine
             bool m_gettingTransform;
 
             float m_mass;
+
+            SVec3 m_offset;
+
+            SVec3 m_rotLock;
         };
     }
 }

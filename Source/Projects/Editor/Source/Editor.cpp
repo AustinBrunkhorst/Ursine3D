@@ -13,9 +13,14 @@
 #include <RenderableComponent.h>
 #include <LightComponent.h>
 #include <Model3DComponent.h>
+#include <CapsuleColliderComponent.h>
+#include <RigidbodyComponent.h>
+#include <BoxColliderComponent.h>
 #include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
 #include "Tools/Scene/Entity Systems/EditorCameraSystem.h"
 #include <Game Engine/Scene/Component/Native Components/Billboard2DComponent.h>
+
+#include "CharacterControllerComponent.h"
 
 using namespace ursine;
 
@@ -150,46 +155,48 @@ void Editor::initializeScene(void)
         m_graphics->SetGameViewport( viewport );
     }
 
-    for (int i = 0; i < 1; ++i)
     {
-        auto *entity_char = world.CreateEntity( );
-        auto *entity_cube = world.CreateEntity( );
+        auto *entity_char = world.CreateEntity();
 
-        {
-            entity_char->AddComponent<ecs::Renderable>( );
-            auto model = entity_char->AddComponent<ecs::Billboard2D>( );
+        entity_char->AddComponent<ecs::Renderable>();
+        auto model = entity_char->AddComponent<ecs::Model3D>();
 
-            auto name = "Character";
+        auto name = "Character";
 
-            entity_char->SetName( name );
+        model->SetModel(name);
+        model->GetModel()->SetMaterial("Blank");
 
-            auto transform = entity_char->GetTransform( );
+        entity_char->SetName(name);
 
-            transform->SetWorldPosition( SVec3 { i * 1.0f, 2.0f, 0.0f } );
-            transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
-            transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );
-        }
-        {
-            entity_cube->AddComponent<ecs::Renderable>( );
-            auto model = entity_cube->AddComponent<ecs::Model3D>( );
+        entity_char->AddComponent<CharacterController>( );
 
-            auto name = "Cube";
+        auto *collider = entity_char->AddComponent<ecs::CapsuleCollider>();
+        auto *body = entity_char->AddComponent<ecs::Rigidbody>();
+        collider->SetHeight(19.0f);
+        collider->SetRadius(4.0f);
+        collider->SetOffset(SVec3(0.0f, 15.2f, 0.0f));
 
-            entity_cube->SetName( name );
+        body->LockXRotation(true);
+        body->LockZRotation(true);
 
-            model->SetModel( name );
+        auto transform = entity_char->GetTransform();
 
-            auto transform = entity_cube->GetTransform( );
+        transform->SetWorldPosition(SVec3{ 0.0f, 10.0f, 0.0f });
+        transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
+        transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
+    }
 
-            transform->SetWorldPosition( SVec3 { i * 1.0f, 0.0f, 0.0f } );
-            transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
-            transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );
-        }
+    {
+        auto *floor = world.CreateEntity();
 
-        // parent the character to the cube
-        entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
-    }  
+        floor->AddComponent<ecs::Renderable>();
+        auto model = floor->AddComponent<ecs::Model3D>();
+        model->SetModel("Cube");
 
+        floor->AddComponent<ecs::BoxCollider>();
+        
+        floor->GetTransform()->SetWorldScale(SVec3(100, 0.1f, 100));
+    }
 
     auto *univLight = world.CreateEntity( "Global Light" );
     {

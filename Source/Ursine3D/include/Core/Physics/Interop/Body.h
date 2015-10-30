@@ -23,6 +23,14 @@ namespace ursine
             void SetCollider(ColliderBase *collider);
 
             void RemoveCollider(void);
+             
+            void SetOffset(const SVec3 &offset);
+
+            SVec3 GetOffset(void) const;
+
+        private:
+            SVec3 m_offset;
+
         };
     }
 }
