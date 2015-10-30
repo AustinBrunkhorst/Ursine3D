@@ -45,7 +45,7 @@ namespace ursine
         void Billboard2D::onUpdateRenderer(EVENT_HANDLER(Entity)) 
         {
             auto ren = GetOwner()->GetComponent<Renderable>();
-            auto trans = GetOwner()->GetComponent<Transform>();
+            auto trans = GetOwner()->GetTransform();
             auto handle = ren->GetHandle();
             auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D(handle);
 
