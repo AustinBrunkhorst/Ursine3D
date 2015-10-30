@@ -12,6 +12,7 @@ namespace ursine
             : RigidbodyBase( RigidbodyConstructionInfo(mass, nullptr, collider) )
             , m_gettingTransform( false )
             , m_mass( mass )
+            , m_rotLock( 1 )
         {
         #ifdef BULLET_PHYSICS
             setMotionState( &m_motionState );
@@ -45,13 +46,17 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             auto rot = transform->GetWorldRotation( );
-            auto pos = transform->GetWorldPosition( );
+            auto pos = transform->GetWorldPosition( ) + m_offset;
             auto trans = btTransform(
                 btQuaternion( rot.X( ), rot.Y( ), rot.Z( ), rot.W( ) ),
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
             );
 
             setWorldTransform( trans );
+
+            setAngularFactor(
+                btVector3( m_rotLock.X( ), m_rotLock.Y( ), m_rotLock.Z( ) )
+            );
 
         #endif
 
@@ -81,7 +86,7 @@ namespace ursine
             );
 
             transform->SetWorldPosition(
-                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) )
+                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) ) - m_offset
             );
 
         #endif
@@ -124,5 +129,29 @@ namespace ursine
         #endif
         }
 
+        void Rigidbody::SetOffset(const SVec3 &offset)
+        {
+            m_offset = offset;
+        }
+
+        void Rigidbody::LockXRotation(bool flag)
+        {
+            m_rotLock.X( ) = flag ? 0 : 1;
+        }
+
+        void Rigidbody::LockYRotation(bool flag)
+        {
+            m_rotLock.Y( ) = flag ? 0 : 1;
+        }
+
+        void Rigidbody::LockZRotation(bool flag)
+        {
+            m_rotLock.Z( ) = flag ? 0 : 1;
+        }
+
+        SVec3 Rigidbody::GetOffset(void) const
+        {
+            return m_offset;
+        }
     }
 }

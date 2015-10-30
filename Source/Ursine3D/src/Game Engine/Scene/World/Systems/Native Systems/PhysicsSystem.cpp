@@ -181,7 +181,7 @@ namespace ursine
                     &body->m_body
                 );
             }
-            else if (m_collisionShapes.Matches( oldTypeMask ))
+            else if (m_collisionShapes.Matches( component->GetTypeMask( ) ))
             {
                 removeCollider( entity );
             }

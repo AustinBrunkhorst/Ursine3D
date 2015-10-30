@@ -18,7 +18,7 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             auto rot = transform->GetWorldRotation( );
-            auto pos = transform->GetWorldPosition( );
+            auto pos = transform->GetWorldPosition( ) + m_offset;
             
             setWorldTransform(btTransform(
                 btQuaternion( rot.X( ), rot.Y( ), rot.Z( ), rot.W( ) ),
@@ -40,7 +40,7 @@ namespace ursine
             );
 
             transform->SetWorldPosition(
-                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) )
+                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) ) - m_offset
             );
 
         #endif
@@ -58,6 +58,16 @@ namespace ursine
 		#ifdef BULLET_PHYSICS
             setCollisionShape( nullptr );
 		#endif
+        }
+
+        void Body::SetOffset(const SVec3 &offset)
+        {
+            m_offset = offset;
+        }
+
+        SVec3 Body::GetOffset(void) const
+        {
+            return m_offset;
         }
     }
 }

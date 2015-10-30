@@ -38,6 +38,13 @@ namespace ursine
 
             void SetAwake(void);
 
+            void SetOffset(const SVec3 &offset);
+            SVec3 GetOffset(void) const;
+
+            void LockXRotation(bool flag);
+            void LockYRotation(bool flag);
+            void LockZRotation(bool flag);
+
         private:
             physics::Rigidbody m_rigidbody;
 

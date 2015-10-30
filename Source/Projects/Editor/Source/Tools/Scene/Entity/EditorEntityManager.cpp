@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 
 #include "EditorEntityManager.h"
+#include "SelectedComponent.h"
 
 using namespace ursine;
 
@@ -143,17 +144,20 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
 
-    Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
-        { "component", args->component->GetType( ).GetName( ) },
-        { "field", args->field },
-        { "value", args->value.SerializeJson( ) }
-    };
+    if (args->entity->HasComponent<Selected>( ))
+    {
+        Json message = Json::object {
+            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+            { "component", args->component->GetType( ).GetName( ) },
+            { "field", args->field },
+            { "value", args->value.SerializeJson( ) }
+        };
 
-    m_project->GetUI( )->Message(
-        UI_CMD_BROADCAST, 
-        channel::EntityManager, 
-        events::component::Changed,
-        message
-    );
+        m_project->GetUI( )->Message(
+            UI_CMD_BROADCAST, 
+            channel::EntityManager, 
+            events::component::Changed,
+            message
+        );
+    }
 }

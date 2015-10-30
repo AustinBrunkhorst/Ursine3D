@@ -873,10 +873,10 @@ namespace ursine
             textureManager->MapTextureByID(handle.Material_);
 
             if(handle.Overdraw_)
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL); 
             else
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
-
+             
             //render
             shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
 
@@ -993,32 +993,32 @@ namespace ursine
             dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
 
             //read from intermediary buffer
-            ComputeIDOutput dataFromCS;
+            ComputeIDOutput dataFromCS[5]; 
             bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
 
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
 
-            tempID = dataFromCS.id;
-
+            tempID = dataFromCS[0].id; 
+             
             int index = tempID & 0x7FF;
             int type = (tempID >> 12) & 0x3;
-            int overdraw = (tempID >> 15) & 0x1; 
+            int overdraw = (tempID >> 15) & 0x1;
              
-            unsigned w, h;
+            unsigned w, h; 
             gfxInfo->GetDimensions(w, h); 
-
+             
             if (tempID != -1 && tempID < 73727 && (unsigned)point.x < w && (unsigned)point.y < h)
             {
-                switch (type)
+                switch (type) 
                 {
                 case RENDERABLE_MODEL3D:
                     m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityUniqueID();
-                    break;
+                    break; 
                 case RENDERABLE_BILLBOARD2D:
                     m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityUniqueID();
                     break;
                 }
-            }
+            } 
             else
                 m_currentID = -1;
         }
