@@ -11,6 +11,7 @@ class CharacterController : public ursine::ecs::Component
 public:
     CharacterController(void);
             
-    float speed;
+    float moveSpeed;
+	float rotateSpeed;
     int id;
 } Meta(Enable, DisplayName("CharacterController"));

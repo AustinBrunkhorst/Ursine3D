@@ -18,7 +18,8 @@ void CharacterControllerSystem::Process(ursine::ecs::Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
     auto id = controller->id;
-    auto speed = controller->speed;
+    auto moveSpeed = controller->moveSpeed;
+	auto rotateSpeed = controller->rotateSpeed;
 
     auto gamepadManager = GetCoreSystem( ursine::GamepadManager );
 
@@ -26,11 +27,27 @@ void CharacterControllerSystem::Process(ursine::ecs::Entity *entity)
 
     if (state)
     {
-        auto rightStick = state->Sticks( ).Right( );
-        auto angle = ursine::math::RadiansToDegrees( rightStick.Angle( ) );
+		auto dt = ursine::Application::Instance->GetDeltaTime( );
+		auto transform = entity->GetTransform();
 
-        entity->GetTransform( )->SetWorldRotation(
-            ursine::SQuat( 0.0f, angle, 0.0f )
-        );
+		float x = abs(state->Sticks( ).Right( ).X( ));
+
+		if (x > 0.1f)
+		{
+			auto angle = state->Sticks( ).Right( ).X( ) * rotateSpeed * dt;
+
+			transform->SetWorldRotation(
+				transform->GetWorldRotation( ) * ursine::SQuat( 0.0f, angle, 0.0f )
+			);
+		}
+
+		auto walk = state->Sticks( ).Left( ) * moveSpeed * dt;
+
+		auto forward = transform->GetForward( ) * walk.Y( );
+		auto strafe = transform->GetRight( ) * walk.X( );
+
+		transform->SetWorldPosition(
+			transform->GetWorldPosition( ) + forward + strafe
+		);
     }
 }

@@ -165,7 +165,8 @@ void Editor::initializeScene(void)
         m_graphics->SetGameViewport( viewport );
     }
 
-    {
+	for (int i = 0; i < 2; ++i)
+	{
         auto *entity_char = world.CreateEntity();
 
         entity_char->AddComponent<ecs::Renderable>();
@@ -178,20 +179,22 @@ void Editor::initializeScene(void)
 
         entity_char->SetName(name);
 
-        entity_char->AddComponent<CharacterController>( );
+        entity_char->AddComponent<CharacterController>( )->id = i;
 
         auto *collider = entity_char->AddComponent<ecs::CapsuleCollider>();
-        auto *body = entity_char->AddComponent<ecs::Rigidbody>();
+
+		/*auto body = entity_char->AddComponent<ecs::Rigidbody>( );
+
+		body->LockXRotation(true);
+		body->LockZRotation(true);*/
+
         collider->SetHeight(19.0f);
         collider->SetRadius(4.0f);
         collider->SetOffset(SVec3(0.0f, 15.2f, 0.0f));
 
-        body->LockXRotation(true);
-        body->LockZRotation(true);
-
         auto transform = entity_char->GetTransform();
 
-        transform->SetWorldPosition(SVec3{ 0.0f, 10.0f, 0.0f });
+        transform->SetWorldPosition(SVec3{ i * 5.0f, 0.5f, i * 5.0f });
         transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
         transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
     }

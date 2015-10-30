@@ -6,5 +6,6 @@ NATIVE_COMPONENT_DEFINITION( CharacterController );
 
 CharacterController::CharacterController(void)
     : BaseComponent()
-    , speed( 1.0f )
+    , moveSpeed( 50.0f )
+	, rotateSpeed( 300.0f )
     , id( 0 ) { }
