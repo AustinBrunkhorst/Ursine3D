@@ -110,9 +110,6 @@ namespace ursine
             void SetDimensions(float width, float height);
             void GetDimensions(float &width, float &height);
 
-            void SetScale(const ursine::Vec2 &scale);
-            const ursine::Vec2 &GetScale(void) const;
-
             void SetPosition(const ursine::SVec3 &position);
             const ursine::SVec3 &GetPosition(void) const;
             

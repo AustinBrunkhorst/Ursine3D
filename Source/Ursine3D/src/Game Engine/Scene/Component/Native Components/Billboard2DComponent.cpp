@@ -50,9 +50,6 @@ namespace ursine
             auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D(handle);
 
             billboard.SetPosition(trans->GetWorldPosition());
-
-            auto scale = trans->GetWorldScale();
-            billboard.SetScale(ursine::Vec2(scale.X(), scale.Y()));
         }
 
         ursine::graphics::Billboard2D* Billboard2D::GetBillboard()

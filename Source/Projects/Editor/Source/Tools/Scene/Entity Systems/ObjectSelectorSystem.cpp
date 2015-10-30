@@ -137,7 +137,7 @@ void ObjectSelectorSystem::OnInitialize()
 
 void ObjectSelectorSystem::OnRemove()
 {
-    m_mouseManager->Listener( this )
+    m_mouseManager->Listener( this ) 
         .Off( MM_BUTTON_DOWN, &ObjectSelectorSystem::onMouseDown )
         .Off( MM_MOVE, &ObjectSelectorSystem::onMouseMove )
         .Off( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp )
@@ -145,6 +145,10 @@ void ObjectSelectorSystem::OnRemove()
 
     m_keyboardManager->Listener( this )
         .Off( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
+     
+    m_world->Listener(this)
+        .Off(ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate)
+        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd);
 
     m_zAxis->Delete( );
     m_xAxis->Delete( );
@@ -156,8 +160,8 @@ void ObjectSelectorSystem::onMouseDown(EVENT_HANDLER(MouseManager))
 {
     EVENT_ATTRS(MouseManager, MouseButtonArgs);
 
-    // can't click without focus
-    if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
+    // can't click without mouse focus
+    if (!m_editorCameraSystem->HasMouseFocus( ))
         return;
 
     if (m_keyboardManager->GetModifiers( ) & KMD_ALT)

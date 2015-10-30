@@ -20,6 +20,9 @@ public:
     void OnInitialize(void) override;
     void OnRemove(void) override;
     
+    ursine::Window::Handle GetMainWindow(void) const;
+    ursine::UIView::Handle GetMainUI(void) const;
+
     Project::Handle GetProject(void) const;
     
 private:
