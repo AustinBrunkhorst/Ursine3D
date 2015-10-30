@@ -15,28 +15,31 @@ namespace ursine
         Light::Light(void)
             : BaseComponent( )
             , m_light( nullptr )
-            , m_handle( 0 ) { }
+            , m_handle( 0 )
+        {
+            auto *graphics = GetCoreSystem( graphics::GfxAPI );
+
+            m_handle = graphics->
+                RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT );
+
+            m_light = &graphics->
+                RenderableMgr.GetLight( m_handle );
+
+            m_light->Initialize( );
+        }
 
         Light::~Light(void)
         {
-            GetOwner()->Listener(this)
-                .Off(ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer);
+            GetOwner( )->Listener( this )
+                .Off( ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer );
 
             m_light = nullptr;
         }
 
         void Light::OnInitialize(void)
         {
-            m_handle = GetCoreSystem( graphics::GfxAPI )->
-                RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT );
-
-            GetOwner()->Listener(this)
-                .On(ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer);
-
-            m_light = &GetCoreSystem( graphics::GfxAPI )->
-                RenderableMgr.GetLight( m_handle );
-
-            m_light->Initialize( );
+            GetOwner( )->Listener(this)
+                .On( ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer );
 
             auto *owner = GetOwner( );
 

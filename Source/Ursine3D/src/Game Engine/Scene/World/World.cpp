@@ -127,12 +127,12 @@ namespace ursine
             Dispatch( WORLD_RENDER, EventArgs::Empty );
         }
 
-        Entity *World::GetSettings(void)
+        Entity *World::GetSettings(void) const
         {
             return m_settings;
         }
 
-        SystemManager *World::GetSystemManager(void)
+        SystemManager *World::GetSystemManager(void) const
         {
             return m_systemManager;
         }

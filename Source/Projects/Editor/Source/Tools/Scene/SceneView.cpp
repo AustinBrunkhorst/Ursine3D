@@ -36,13 +36,13 @@ void SceneView::onFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto &world = m_editor->GetProject( )->GetScene( ).GetWorld( );
+    auto world = m_editor->GetProject( )->GetScene( )->GetWorld( );
 
     auto focused = (args->name == event::Focus);
 
-    if (world.HasEntitySystem( EditorCameraSystem ))
+    if (world->HasEntitySystem( EditorCameraSystem ))
     {
-        world.GetEntitySystem( EditorCameraSystem )->SetFocus( focused );
+        world->GetEntitySystem( EditorCameraSystem )->SetFocus( focused );
     }
 }
 
@@ -50,13 +50,13 @@ void SceneView::onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto &world = m_editor->GetProject( )->GetScene( ).GetWorld( );
+    auto world = m_editor->GetProject( )->GetScene( )->GetWorld( );
 
     auto focused = (args->name == event::MouseOver);
 
-    if (world.HasEntitySystem( EditorCameraSystem ))
+    if (world->HasEntitySystem( EditorCameraSystem ))
     {
-        world.GetEntitySystem( EditorCameraSystem )->SetMouseFocus( focused );
+        world->GetEntitySystem( EditorCameraSystem )->SetMouseFocus( focused );
     }
 }
 
@@ -64,7 +64,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto &scene = m_editor->GetProject( )->GetScene( );
+    auto scene = m_editor->GetProject( )->GetScene( );
 
     auto x = static_cast<unsigned>(
         args->data->GetValue( "x" )->GetDoubleValue( )
@@ -84,7 +84,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
         )
     );
 
-    auto handle = scene.GetViewport( );
+    auto handle = scene->GetViewport( );
 
     auto &viewport =
             GetCoreSystem( graphics::GfxAPI )->ViewportMgr.GetViewport( handle );

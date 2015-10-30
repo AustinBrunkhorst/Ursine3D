@@ -55,7 +55,7 @@ namespace ursine
             // world when this entity was created)
             EntityUniqueID GetUniqueID(void) const;
 
-            // determines if the entity is currently being deleted
+            // Determines if the entity is currently being deleted
             bool IsDeleting(void) const;
 
             // Determines if the entity is active (being used in the world)

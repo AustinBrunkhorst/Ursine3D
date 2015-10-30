@@ -65,7 +65,7 @@ namespace ursine
             notifyPositionChanged( );
         }
 
-        const SVec3& Transform::GetLocalPosition(void) const
+        const SVec3 &Transform::GetLocalPosition(void) const
         {
             return m_localPosition;
         }
@@ -162,7 +162,7 @@ namespace ursine
             notifyScaleChanged( );
         }
 
-        const SVec3& Transform::GetLocalScale(void) const
+        const SVec3 &Transform::GetLocalScale(void) const
         {
             return m_localScale;
         }

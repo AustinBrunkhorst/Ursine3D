@@ -11,9 +11,11 @@ namespace ursine
     class Scene
     {
     public:
+        typedef std::shared_ptr<Scene> Handle;
+
         Scene(void);
 
-        ecs::World &GetWorld(void);
+        ecs::World::Handle GetWorld(void);
 
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);
@@ -24,6 +26,6 @@ namespace ursine
     private:
         graphics::GfxHND m_viewport;
 
-        ecs::World m_world;
+        ecs::World::Handle m_world;
     };
 }

@@ -143,9 +143,9 @@ void Editor::initializeGraphics(void)
 
 void Editor::initializeScene(void)
 {
-    auto &scene = m_project->GetScene( );
+    auto scene = m_project->GetScene( );
 
-    auto &world = scene.GetWorld( );
+    auto world = scene->GetWorld( );
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
 
@@ -155,15 +155,15 @@ void Editor::initializeScene(void)
 
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-        scene.SetViewport( viewport );
+        scene->SetViewport( viewport );
 
         m_graphics->SetGameViewport( viewport );
     }
 
     for (int i = 0; i < 1; ++i)
     {
-        auto *entity_char = world.CreateEntity( );
-        auto *entity_cube = world.CreateEntity( );
+        auto *entity_char = world->CreateEntity( );
+        auto *entity_cube = world->CreateEntity( );
 
         {
             entity_char->AddComponent<ecs::Renderable>( );
@@ -204,7 +204,7 @@ void Editor::initializeScene(void)
     }  
 
 
-    auto *univLight = world.CreateEntity( "Global Light" );
+    auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
@@ -222,13 +222,13 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    auto &scene = m_project->GetScene( );
+    auto scene = m_project->GetScene( );
 
-    scene.Update( dt );
+    scene->Update( dt );
 
     m_graphics->StartFrame( );
 
-    scene.Render( );
+    scene->Render( );
 
     m_mainWindow.ui->DrawMain( );
 

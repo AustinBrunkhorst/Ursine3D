@@ -318,7 +318,7 @@ namespace ursine
             while (children->size( ) > 0)
             {
                 auto &child = ( *children )[ 0 ];
-                Remove( m_active[ child ] );
+                Remove( &m_cache[ child ] );
             }
 
             m_hierarchy.RemoveEntity( entity );
@@ -445,6 +445,12 @@ namespace ursine
         {
             const auto size = m_componentTypes.size( );
             const auto id = entity->m_id;
+
+            auto transform = GetComponent<Transform>( entity );
+
+            // add the transform if it doesn't already exist
+            entity->m_transform = transform ? transform : 
+                new Transform( );
 
             ComponentEventArgs args( WORLD_ENTITY_COMPONENT_ADDED, entity, nullptr );
 

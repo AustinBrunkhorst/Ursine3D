@@ -6,9 +6,9 @@
 
 JSFunction(CreateEntity)
 {
-    auto &world = GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetWorld( );
+    auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
 
-    auto *entity = world.CreateEntity( );
+    auto *entity = world->CreateEntity( );
 
     return CefV8Value::CreateUInt( entity->GetUniqueID( ) );
 }

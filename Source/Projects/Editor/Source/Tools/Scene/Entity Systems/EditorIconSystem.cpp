@@ -30,13 +30,16 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ursine::ecs::World))
 
     auto comp = args->component;
 
+    if (args->entity->HasComponent<EditorIcon>( ))
+        return;
+
     //if the object added was a selected component
-    if (comp->Is<ursine::ecs::Light>())
+    if (comp->Is<ursine::ecs::Light>( ))
     {
-        args->component->GetOwner()->AddComponent<EditorIcon>()->SetIcon("Sun");
+        args->entity->AddComponent<EditorIcon>( )->SetIcon( "Sun" );
     }
-    else if (comp->Is<ursine::ecs::Camera>())
+    else if (comp->Is<ursine::ecs::Camera>( ))
     {
-        args->component->GetOwner()->AddComponent<EditorIcon>()->SetIcon("Camera");
+        args->entity->AddComponent<EditorIcon>( )->SetIcon( "Camera" );
     }
 }

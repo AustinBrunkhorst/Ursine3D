@@ -7,12 +7,13 @@
 namespace ursine
 {
     Scene::Scene(void)
-        :  m_viewport( 0 )
+        : m_viewport( 0 )
+        , m_world( std::make_shared<ecs::World>( ) )
     {
         
     }
 
-    ecs::World &Scene::GetWorld(void)
+    ecs::World::Handle Scene::GetWorld(void)
     {
         return m_world;
     }
@@ -29,11 +30,11 @@ namespace ursine
 
     void Scene::Update(DeltaTime dt)
     {
-        m_world.Update( );
+        m_world->Update( );
     }
 
     void Scene::Render(void)
     {
-        m_world.Render( );
+        m_world->Render( );
     }
 }

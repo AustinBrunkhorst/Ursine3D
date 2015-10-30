@@ -32,7 +32,7 @@ namespace
 EditorEntityManager::EditorEntityManager(Project *project)
     : m_project( project )
 {
-    m_project->GetScene( ).GetWorld( ).Listener( this )
+    m_project->GetScene( )->GetWorld( )->Listener( this )
         .On( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
         .On( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
@@ -43,7 +43,7 @@ EditorEntityManager::EditorEntityManager(Project *project)
 
 EditorEntityManager::~EditorEntityManager(void)
 {
-    m_project->GetScene( ).GetWorld( ).Listener( this )
+    m_project->GetScene( )->GetWorld( )->Listener( this )
         .Off( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
         .Off( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
