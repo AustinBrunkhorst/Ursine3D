@@ -20,6 +20,8 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "GFXAPIDefines.h"
 #include <string>
 #include "SMat4.h"
+#include "SVec3.h"
+#include "Vec2.h"
 #include "Color.h"
 
 namespace ursine
@@ -83,7 +85,7 @@ namespace ursine
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
             void SetColor(const Color color);
-            Color GetColor() const;
+            const Color &GetColor() const;
         private:
             float m_emissive;
             float m_specPow;
@@ -95,23 +97,34 @@ namespace ursine
 
         /////////////////////////////////////////////////////////////////
         //2d billboard class
-        class Billboard2D : public Model
+        class Billboard2D : public Renderable
         {
             friend class RenderableManager;
         public:
+            Billboard2D(void);
+
             const char *GetTextureName(void);
-            const GfxHND &GetTextureID(void);
 
             void SetTexture(std::string texName);
 
             void SetDimensions(float width, float height);
             void GetDimensions(float &width, float &height);
 
-            Billboard2D(void);
+            void SetScale(const ursine::Vec2 &scale);
+            const ursine::Vec2 &GetScale(void) const;
+
+            void SetPosition(const ursine::SVec3 &position);
+            const ursine::SVec3 &GetPosition(void) const;
+            
+            void SetColor(const Color color);
+            const Color &GetColor() const;
 
         private:
             float m_width;
             float m_height;
+            ursine::Vec2 m_scale;
+            ursine::SVec3 m_position;
+            Color m_color;
             std::string TextureName_;
         };
 

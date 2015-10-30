@@ -116,19 +116,20 @@ namespace ursine
 
             //preparing for rendering
             void PrepFor3DModels(const SMat4 &view, const SMat4 &proj);
-            void PrepForCompute(const SMat4 &view, const SMat4 &proj);
+            void PrepForBillboard2D(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
+            void PrepForCompute(void);
             void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForPrimitives(const SMat4 &view, const SMat4 &proj);
-            void PrepForDebugRender();
-            void PrepForFinalOutput();
-            void PrepForUI();
+            void PrepForDebugRender(void);
+            void PrepForFinalOutput(void);
+            void PrepForUI(void);
             void PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj);
 
             //rendering funcs
             void Render3DModel(_DRAWHND handle);
-            void Render2DBillboard(_DRAWHND handle);
-            void RenderComputeMousePos();
+            void Render2DBillboard(_DRAWHND handle, Camera &currentCamera);
+            void RenderComputeMousePos(void);
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
             void RenderPrimitive(_DRAWHND handle);

@@ -178,7 +178,7 @@ void ObjectSelectorSystem::onMouseDown(EVENT_HANDLER(MouseManager))
             unpickObject( m_currentID );
             m_currentID = -1;
 
-            return;
+            return; 
         }
 
         //check to see if we are selecting any of our axis

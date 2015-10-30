@@ -2,6 +2,7 @@
 
 #include "RenderableComponent.h"
 #include "EntityEvent.h"
+#include "GfxAPI.h"
 
 namespace ursine
 {
@@ -20,6 +21,8 @@ namespace ursine
         {
             GetOwner( )->Listener( this )
                 .Off( ENTITY_TRANSFORM_DIRTY, &Renderable::onTransformChange );
+
+            GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable(m_handle);
         }
 
         graphics::GfxHND Renderable::GetHandle(void) const

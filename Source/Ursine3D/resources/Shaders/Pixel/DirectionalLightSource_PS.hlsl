@@ -37,7 +37,7 @@ struct DS_OUTPUT
 struct SURFACE_DATA
 {
     float LinearDepth;
-    float3 Color;
+    float4 Color;
     float3 Normal;
     float SpecInt;
     float SpecPow;
@@ -91,9 +91,9 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     Out.LinearDepth = ConvertDepthToLinear( depth );
 
     // Get the base color and specular intensity
-    float4 baseColorSpecInt = ColorSpecIntTexture.Load( location3 );
-    Out.Color = baseColorSpecInt.xyz;
-    Out.SpecInt = baseColorSpecInt.w;
+    float4 baseColor = ColorSpecIntTexture.Load( location3 );
+    Out.Color = baseColor;
+    Out.SpecInt;
 
     // Sample the normal, convert it to the full range and noramalize it
     float4 normalValue = NormalTexture.Load(location3);
@@ -104,8 +104,9 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     Out.Emissive = normalValue.w;
 
     // Scale the specular power back to the original range
-    float2 SpecPowerNorm = SpecPowTexture.Load( location3 ).xy;
+    float4 SpecPowerNorm = SpecPowTexture.Load(location3);
     Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
+    Out.SpecInt = SpecPowerNorm.w;
 
     return Out;
 }
@@ -139,8 +140,7 @@ float4 main( DS_OUTPUT In ) : SV_TARGET
     // Convert the data into the material structure
     Material mat;
     mat.normal = gbd.Normal;
-    mat.diffuseColor.xyz = gbd.Color;
-    mat.diffuseColor.w = 1.0; // Fully opaque
+    mat.diffuseColor = gbd.Color;
     mat.specPow = gbd.SpecPow;
     mat.specIntensity = gbd.SpecInt;
     mat.emissive = gbd.Emissive;

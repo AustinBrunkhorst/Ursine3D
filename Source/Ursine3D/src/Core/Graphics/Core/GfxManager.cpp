@@ -415,15 +415,13 @@ namespace ursine
             int currentIndex = 0;
 
             //render 3d models deferred
+            PrepForBillboard2D(view, proj, currentCamera);
+            while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+
             PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ]);
-            while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
-                Render2DBillboard(m_drawList[ currentIndex++ ]);
-
-            //compute pass for mouse position
-            PrepForCompute(view, proj);
-            RenderComputeMousePos();
 
             //point light pass
             PrepForPointLightPass(view, proj);
@@ -541,7 +539,7 @@ namespace ursine
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ]);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
-                Render2DBillboard(m_drawList[ currentIndex++ ]);
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
 
             gfxProfiler->Stamp(PROFILE_LIGHTS);
 
@@ -584,6 +582,9 @@ namespace ursine
             UAssert(m_currentlyRendering == true, "Attemped to end a scene without starting the frame!");
             UAssert(m_sceneActive == true, "Attempted to end a scene before beginning one!");
             m_sceneActive = false;
+
+            // reset drawing for next scene
+            drawingManager->EndScene();
         }
 
         void GfxManager::EndFrame()
@@ -591,13 +592,14 @@ namespace ursine
             UAssert(m_sceneActive == false, "Attempted to end the frame without ending the scene!");
             UAssert(m_currentlyRendering == true, "Attemped to end the frame when it was never started!");
 
+            //compute pass for mouse position
+            PrepForCompute();
+            RenderComputeMousePos();
+
             m_currentlyRendering = false;
 
             // end profiler
             gfxProfiler->WaitForCalls(m_profile);
-
-            // reset drawing for next frame
-            drawingManager->EndScene();
 
             // present
             dxCore->SwapChainBuffer();
@@ -619,15 +621,7 @@ namespace ursine
         // preparing for different stages /////////////////////////////////
         void GfxManager::PrepFor3DModels(const SMat4 &view, const SMat4 &proj)
         {
-            //end sorting
-            gfxProfiler->Stamp(PROFILE_SORT);
-
-            float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
-            dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
-            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-
-            //deferred shading
-            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+           
             shaderManager->BindShader(SHADER_DEFERRED_DEPTH);
             layoutManager->SetInputLayout(SHADER_DEFERRED_DEPTH);
 
@@ -647,7 +641,39 @@ namespace ursine
             bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
         }
 
-        void GfxManager::PrepForCompute(const SMat4& view, const SMat4& proj)
+        void GfxManager::PrepForBillboard2D(const SMat4& view, const SMat4& proj, Camera &currentCamera)
+        {
+            //end sorting
+            gfxProfiler->Stamp(PROFILE_SORT);
+
+            float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+            dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+
+            //deferred shading
+            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+
+            //set input
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+            //set up buffers
+            bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
+            PointGeometryBuffer pgb;
+            pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
+            pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_GEOMETRY);
+
+            //bind shader 
+            shaderManager->BindShader(SHADER_BILLBOARD2D);
+            layoutManager->SetInputLayout(SHADER_BILLBOARD2D);
+
+            //set model
+            modelManager->BindModel("Sprite");
+            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+        }
+
+        void GfxManager::PrepForCompute(void)
         {
 #if defined(URSINE_WITH_EDITOR)
             gfxProfiler->Stamp(PROFILE_DEFERRED);
@@ -835,7 +861,7 @@ namespace ursine
             int overdrw = current.GetOverdraw() == true ? 1 : 0;
 
             //             16                8
-            mdb.id = (handle.Index_) | (handle.Type_ << 16) | (overdrw << 20);
+            mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
 
             //map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
@@ -878,29 +904,58 @@ namespace ursine
             }
         }
 
-        void GfxManager::Render2DBillboard(_DRAWHND handle)
+        void GfxManager::Render2DBillboard(_DRAWHND handle, Camera &currentCamera)
         {
+            auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
+
+            auto scale = billboard.GetScale();
+            BillboardSpriteBuffer bsb;
+            bsb.width = scale.X();
+            bsb.height = scale.Y();
+
+            //map camera data
+            PointGeometryBuffer pgb;
+            pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
+            pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_GEOMETRY);
+
+            //map color data
+            Color c = billboard.GetColor();
+            PrimitiveColorBuffer pcb;
+            pcb.color.x = c.r;
+            pcb.color.y = c.g;
+            pcb.color.z = c.b;
+            pcb.color.w = c.a;
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+
+            //map sprite data
+            bufferManager->MapBuffer<BUFFER_BILLBOARDSPRITE>(&bsb, SHADERTYPE_GEOMETRY);
+
             //map transform
-            bufferManager->MapTransformBuffer(renderableManager->m_renderableBillboards[ handle.Index_ ].GetWorldMatrix());
+            bufferManager->MapTransformBuffer(SMat4(billboard.GetPosition()));
 
-            //set model
-            modelManager->BindModel("Sprite");
-
-            //map material data
+            //map id data
             MaterialDataBuffer mdb;
-            mdb.id;
+
+            //set unique ID for this model
+            int overdrw = billboard.GetOverdraw() == true ? 1 : 0;
+
+            mdb.emissive = 1.f;
+            //             16                8
+            mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             //map texture
             textureManager->MapTextureByID(handle.Material_);
 
+            //set overdraw value
             if (handle.Overdraw_)
                 dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
             else
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //render
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sprite")));
+            shaderManager->Render(1);
         }
 
         void GfxManager::RenderComputeMousePos()
@@ -944,17 +999,15 @@ namespace ursine
 
             tempID = dataFromCS.id;
 
-            int index = tempID & 0xff;
-            int type = (tempID >> 16) & 0xf;
-            int overdraw = (tempID >> 20) & 0xF; 
-
-            type = 0;  
+            int index = tempID & 0x7FF;
+            int type = (tempID >> 12) & 0x3;
+            int overdraw = (tempID >> 15) & 0x1; 
+             
             unsigned w, h;
             gfxInfo->GetDimensions(w, h); 
 
-            if (tempID < 16711680 && (unsigned)point.x < w && (unsigned)point.y < h)
+            if (tempID != -1 && tempID < 73727 && (unsigned)point.x < w && (unsigned)point.y < h)
             {
-
                 switch (type)
                 {
                 case RENDERABLE_MODEL3D:
@@ -964,8 +1017,6 @@ namespace ursine
                     m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityUniqueID();
                     break;
                 }
-
-
             }
             else
                 m_currentID = -1;
