@@ -12,7 +12,7 @@
 
 #include <SystemManager.h>
 #include <CameraComponent.h>
-#include <RenderableComponent.h>
+#include <RenderableComponent.h>  
 #include <LightComponent.h>
 #include <Model3DComponent.h>
 #include <CapsuleColliderComponent.h>
