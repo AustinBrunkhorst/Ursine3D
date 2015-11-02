@@ -9,12 +9,16 @@ import ursine.editor.scene.entity.EntityEvent;
 import ursine.editor.scene.entity.Entity;
 
 class SceneOutline extends WindowHandler {
+    public static var instance : SceneOutline;
+
     private var m_entityList : UListElement;
     private var m_entityItems : Map<UInt, Element>;
 
     private var m_selectedEntities : Array<UInt> = null;
 
     public function new() {
+        instance = this;
+
         super( );
 
         window.heading = "Outline";
@@ -29,7 +33,10 @@ class SceneOutline extends WindowHandler {
 
         window.container.appendChild( m_entityList );
 
-        initScene( );
+        resetScene( );
+
+        Editor.instance.broadcastManager.getChannel( 'SceneManager' )
+            .on( 'Reset', resetScene );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
             .on( EntityEvent.EntityAdded, onEntityAdded )
@@ -41,7 +48,24 @@ class SceneOutline extends WindowHandler {
         window.addEventListener( 'keydown', onWindowKeyDown );
     }
 
-    private function initScene() {
+    public function clearSelectedEntities() {
+        for (uid in m_selectedEntities) {
+            var item = m_entityItems[ uid ];
+
+            if (item == null)
+                continue;
+
+            untyped item.entity.deselect( );
+        }
+    }
+
+    private function resetScene() {
+        m_selectedEntities = new Array<UInt>( );
+        m_entityList.innerHTML = '';
+        m_entityItems = new Map<UInt, Element>( );
+
+        EntityInspector.instance.inspect( null );
+
         var entities : Array<UInt> = Extern.SceneGetActiveEntities( );
 
         var event = { uniqueID: 0 };
@@ -192,17 +216,6 @@ class SceneOutline extends WindowHandler {
             m_selectedEntities.filter( function(x) {
                 return x == untyped item.entity.uniqueID;
             } );
-        }
-    }
-
-    private function clearSelectedEntities() {
-        for (uid in m_selectedEntities) {
-            var item = m_entityItems[ uid ];
-
-            if (item == null)
-                continue;
-
-            untyped item.entity.deselect( );
         }
     }
 

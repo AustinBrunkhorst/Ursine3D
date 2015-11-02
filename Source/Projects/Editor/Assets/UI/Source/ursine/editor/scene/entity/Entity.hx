@@ -1,5 +1,7 @@
 package ursine.editor.scene.entity;
 
+import ursine.native.Extern;
+
 import ursine.editor.scene.component.ComponentInspection;
 
 import ursine.utils.EventManager;
@@ -12,6 +14,10 @@ class Entity implements IEventContainer {
     public var uniqueID : UInt;
 
     private var m_handler : EntityHandler;
+
+    public static function create() : Entity {
+        return new Entity( Extern.CreateEntity( ) );
+    }
 
     public function new(uniqueID : UInt) {
         events = new EventManager( );
@@ -65,7 +71,8 @@ class Entity implements IEventContainer {
     }
 
     public function deselect() : Void {
-        m_handler.removeComponent( 'Selected' );
+        if (m_handler.hasComponent( 'Selected' ))
+            m_handler.removeComponent( 'Selected' );
     }
 
     public function inspect() : Array<ComponentInspection> {

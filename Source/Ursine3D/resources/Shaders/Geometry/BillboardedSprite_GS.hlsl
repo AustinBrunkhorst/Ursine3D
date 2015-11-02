@@ -42,8 +42,8 @@ void main(
   float distance = length( look );
   look = normalize( look );
 
-  float halfWidth = width / 2.f;
-  float halfHeight = height / 2.f;
+  float halfWidth = distance / 2000.f * width;
+  float halfHeight = distance / 2000.f * height;
 
   //crossing the up and plane gets us the right
   float3 rightVector = cross( camUp.xyz, look.xyz );

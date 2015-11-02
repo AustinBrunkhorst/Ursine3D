@@ -12,7 +12,7 @@ Application.__name__ = ["Application"];
 Application.main = function() {
 	console.log(window.document.readyState);
 	window.addEventListener("load",function() {
-		haxe_Timer.delay(Application.initWindows,25);
+		haxe_Timer.delay(Application.initWindows,100);
 	});
 };
 Application.initWindows = function() {
@@ -26,23 +26,23 @@ Application.initWindows = function() {
 	var leftColumn = mainDock.addColumn();
 	leftColumn.style.width = "20%";
 	var row = leftColumn.addRow();
-	row.setHeightPercent(1.0);
+	row.style.height = "100%";
 	var column = row.addColumn();
-	column.setWidthPercent(1.0);
+	column.style.width = "100%";
 	column.appendChild(new ursine_editor_windows_EntityInspector().window);
 	var middleColumn = mainDock.addColumn();
 	middleColumn.style.width = "60%";
 	var row1 = middleColumn.addRow();
-	row1.setHeightPercent(1.0);
+	row1.style.height = "100%";
 	var column1 = row1.addColumn();
-	column1.setWidthPercent(1.0);
+	column1.style.width = "100%";
 	column1.appendChild(sceneView.window);
 	var rightColumn = mainDock.addColumn();
 	rightColumn.style.width = "20%";
 	var row2 = rightColumn.addRow();
-	row2.setHeightPercent(1.0);
+	row2.style.height = "100%";
 	var column2 = row2.addColumn();
-	column2.setWidthPercent(1.0);
+	column2.style.width = "100%";
 	column2.appendChild(new ursine_editor_windows_SceneOutline().window);
 	sceneView.onViewportInvalidated();
 };
@@ -59,6 +59,13 @@ HxOverrides.remove = function(a,obj) {
 	if(i == -1) return false;
 	a.splice(i,1);
 	return true;
+};
+HxOverrides.iter = function(a) {
+	return { cur : 0, arr : a, hasNext : function() {
+		return this.cur < this.arr.length;
+	}, next : function() {
+		return this.arr[this.cur++];
+	}};
 };
 Math.__name__ = ["Math"];
 var Reflect = function() { };
@@ -212,6 +219,22 @@ haxe_ds_StringMap.prototype = {
 	}
 	,getReserved: function(key) {
 		if(this.rh == null) return null; else return this.rh["$" + key];
+	}
+	,remove: function(key) {
+		if(__map_reserved[key] != null) {
+			key = "$" + key;
+			if(this.rh == null || !this.rh.hasOwnProperty(key)) return false;
+			delete(this.rh[key]);
+			return true;
+		} else {
+			if(!this.h.hasOwnProperty(key)) return false;
+			delete(this.h[key]);
+			return true;
+		}
+	}
+	,keys: function() {
+		var _this = this.arrayKeys();
+		return HxOverrides.iter(_this);
 	}
 	,arrayKeys: function() {
 		var out = [];
@@ -482,28 +505,42 @@ var ursine_editor_menus_EntityMenu = function() { };
 $hxClasses["ursine.editor.menus.EntityMenu"] = ursine_editor_menus_EntityMenu;
 ursine_editor_menus_EntityMenu.__name__ = ["ursine","editor","menus","EntityMenu"];
 ursine_editor_menus_EntityMenu.doCreateEmpty = function() {
-	console.log("create empty");
+	ursine_editor_menus_EntityMenu.createEntity("Empty Entity");
 };
 ursine_editor_menus_EntityMenu.doCreatePlane = function() {
-	console.log("create plane");
+	var entity = ursine_editor_menus_EntityMenu.createEntity("Plane");
 };
 ursine_editor_menus_EntityMenu.doCreateBox = function() {
-	console.log("create box");
+	var entity = ursine_editor_menus_EntityMenu.createEntity("Box");
 };
 ursine_editor_menus_EntityMenu.doCreateCylinder = function() {
-	console.log("create Cylinder");
+	var entity = ursine_editor_menus_EntityMenu.createEntity("Cylinder");
 };
 ursine_editor_menus_EntityMenu.doCreateSphere = function() {
-	console.log("create Sphere");
+	var entity = ursine_editor_menus_EntityMenu.createEntity("Sphere");
 };
 ursine_editor_menus_EntityMenu.doCreatePointLight = function() {
-	console.log("create Point Light");
+	var entity = ursine_editor_menus_EntityMenu.createLight("Point Light","Point");
 };
 ursine_editor_menus_EntityMenu.doCreateSpotLight = function() {
-	console.log("create Spot Light");
+	var entity = ursine_editor_menus_EntityMenu.createLight("Spot Light","Spot");
 };
 ursine_editor_menus_EntityMenu.doCreateDirectionalLight = function() {
-	console.log("create Directional Light");
+	var entity = ursine_editor_menus_EntityMenu.createLight("Directional Light","Directional");
+};
+ursine_editor_menus_EntityMenu.createEntity = function(name) {
+	var entity = ursine_editor_scene_entity_Entity.create();
+	entity.setName(name);
+	ursine_editor_windows_SceneOutline.instance.clearSelectedEntities();
+	entity.select();
+	return entity;
+};
+ursine_editor_menus_EntityMenu.createLight = function(name,type) {
+	var entity = ursine_editor_menus_EntityMenu.createEntity(name);
+	entity.addComponent("Light");
+	var lightType = ursine_editor_Editor.instance.componentDatabase.getNativeType("ursine::ecs::LightType").enumValue;
+	entity.updateComponentField("Light","Type",Reflect.field(lightType,type));
+	return entity;
 };
 ursine_editor_menus_EntityMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_EntityMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -512,10 +549,10 @@ var ursine_editor_menus_FileMenu = function() { };
 $hxClasses["ursine.editor.menus.FileMenu"] = ursine_editor_menus_FileMenu;
 ursine_editor_menus_FileMenu.__name__ = ["ursine","editor","menus","FileMenu"];
 ursine_editor_menus_FileMenu.doNew = function() {
-	console.log("NativeEditorHandler");
+	ursine_native_Extern.SceneLoad();
 };
 ursine_editor_menus_FileMenu.doOpen = function() {
-	console.log("open");
+	ursine_native_Extern.SceneSave();
 };
 ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -549,6 +586,15 @@ ursine_editor_scene_component_ComponentDatabase.__name__ = ["ursine","editor","s
 ursine_editor_scene_component_ComponentDatabase.prototype = {
 	getNativeType: function(name) {
 		return this.m_typeDB.get(name);
+	}
+	,getComponentTypes: function() {
+		var keys = [];
+		var $it0 = this.m_db.keys();
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			keys.push(key);
+		}
+		return keys;
 	}
 	,getComponentType: function(name) {
 		return this.m_db.get(name);
@@ -851,6 +897,9 @@ var ursine_editor_scene_entity_Entity = function(uniqueID) {
 $hxClasses["ursine.editor.scene.entity.Entity"] = ursine_editor_scene_entity_Entity;
 ursine_editor_scene_entity_Entity.__name__ = ["ursine","editor","scene","entity","Entity"];
 ursine_editor_scene_entity_Entity.__interfaces__ = [ursine_utils_IEventContainer];
+ursine_editor_scene_entity_Entity.create = function() {
+	return new ursine_editor_scene_entity_Entity(ursine_native_Extern.CreateEntity());
+};
 ursine_editor_scene_entity_Entity.prototype = {
 	isValid: function() {
 		return this.m_handler.isValid();
@@ -881,7 +930,7 @@ ursine_editor_scene_entity_Entity.prototype = {
 		return false;
 	}
 	,deselect: function() {
-		this.m_handler.removeComponent("Selected");
+		if(this.m_handler.hasComponent("Selected")) this.m_handler.removeComponent("Selected");
 	}
 	,inspect: function() {
 		return this.m_handler.inspect();
@@ -916,7 +965,9 @@ var ursine_editor_windows_EntityInspector = function() {
 	ursine_editor_windows_EntityInspector.instance = this;
 	ursine_editor_WindowHandler.call(this);
 	this.m_componentHandlers = new haxe_ds_StringMap();
+	this.m_openCache = new haxe_ds_StringMap();
 	this.window.heading = "Inspector";
+	this.initWindow();
 };
 $hxClasses["ursine.editor.windows.EntityInspector"] = ursine_editor_windows_EntityInspector;
 ursine_editor_windows_EntityInspector.__name__ = ["ursine","editor","windows","EntityInspector"];
@@ -933,22 +984,28 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,onInspectedEntityComponentRemoved: function(e) {
 		var handler = this.m_componentHandlers.get(e.component);
-		if(handler != null) this.window.container.removeChild(handler.inspector);
+		if(handler != null) this.removeInspector(handler.inspector);
+		this.m_componentHandlers.remove(e.component);
 	}
 	,onInspectedEntityComponentChanged: function(e) {
-		this.m_componentHandlers.get(e.component).updateField(e.field,e.value);
+		var handler = this.m_componentHandlers.get(e.component);
+		if(handler != null) handler.updateField(e.field,e.value);
 	}
 	,clearOldInspection: function() {
 		if(this.m_inspectedEntity != null) this.m_inspectedEntity.events.off(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).off(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).off(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
 		var $it0 = this.m_componentHandlers.iterator();
 		while( $it0.hasNext() ) {
 			var handler = $it0.next();
-			this.window.container.removeChild(handler.inspector);
+			this.removeInspector(handler.inspector);
 		}
 		this.m_componentHandlers = new haxe_ds_StringMap();
 	}
 	,initializeInspection: function() {
-		if(this.m_inspectedEntity == null) return;
+		if(this.m_inspectedEntity == null) {
+			this.m_btnAddComponent.style.display = "none";
+			return;
+		}
+		this.m_btnAddComponent.style.display = "block";
 		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
 		var inspection = this.m_inspectedEntity.inspect();
 		var _g = 0;
@@ -959,19 +1016,82 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		}
 	}
 	,inspectComponent: function(component) {
+		if(this.m_componentHandlers.get(component.type) != null) return;
 		var database = ursine_editor_Editor.instance.componentDatabase;
 		var type = database.getComponentType(component.type);
 		if(Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.HiddenInInspector)) return;
 		var handler = database.createComponentInspector(this.m_inspectedEntity,component);
+		handler.inspector.canRemove = !Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.DisableComponentRemoval);
+		handler.inspector.opened = this.m_openCache.get(component.type) == true;
+		handler.inspector.addEventListener("removed",(function(f,a1) {
+			return function(e) {
+				f(a1,e);
+			};
+		})($bind(this,this.onRemoveComponentClicked),component));
+		handler.inspector.addEventListener("open-changed",(function(f1,a11) {
+			return function(e1) {
+				f1(a11,e1);
+			};
+		})($bind(this,this.onOpenChanged),component));
 		{
 			this.m_componentHandlers.set(component.type,handler);
 			handler;
 		}
-		this.window.container.appendChild(handler.inspector);
+		this.m_inspectorsContainer.appendChild(handler.inspector);
+	}
+	,removeInspector: function(container) {
+		if(this.m_inspectorsContainer.contains(container)) this.m_inspectorsContainer.removeChild(container);
+	}
+	,getAvailableComponentTypes: function(entity) {
+		var db = ursine_editor_Editor.instance.componentDatabase;
+		return db.getComponentTypes().filter(function(type) {
+			var componentType = db.getComponentType(type);
+			var isHidden = Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInInspector);
+			return !entity.hasComponent(type) && !isHidden;
+		});
+	}
+	,onAddComponentClicked: function(e) {
+		var types = this.getAvailableComponentTypes(this.m_inspectedEntity);
+		var selector = new ComponentTypeSelectorControl(types);
+		selector.style.left = "" + e.clientX + "px";
+		selector.style.top = "" + e.clientY + "px";
+		selector.addEventListener("type-selected",$bind(this,this.onAddComponentTypeSelected));
+		window.document.body.appendChild(selector);
+	}
+	,onRemoveComponentClicked: function(component,e) {
+		this.m_inspectedEntity.removeComponent(component.type);
+		e.stopPropagation();
+	}
+	,onAddComponentTypeSelected: function(e) {
+		var componentType = e.detail.type;
+		if(this.m_inspectedEntity.hasComponent(componentType)) throw new js__$Boot_HaxeError("Entity already has component type " + componentType);
+		this.m_inspectedEntity.addComponent(componentType);
+	}
+	,onOpenChanged: function(component,e) {
+		var v = e.detail.open;
+		this.m_openCache.set(component.type,v);
+		v;
+	}
+	,initWindow: function() {
+		this.window.classList.add("entity-inspector-window");
+		var _this = window.document;
+		this.m_headerToolbar = _this.createElement("div");
+		this.m_headerToolbar.classList.add("header-toolbar");
+		this.window.container.appendChild(this.m_headerToolbar);
+		var _this1 = window.document;
+		this.m_inspectorsContainer = _this1.createElement("div");
+		this.window.container.appendChild(this.m_inspectorsContainer);
+		this.m_btnAddComponent = new ButtonControl();
+		this.m_btnAddComponent.text = "Add Component";
+		this.m_btnAddComponent.classList.add("btn-add-component");
+		this.m_btnAddComponent.style.display = "none";
+		this.m_btnAddComponent.addEventListener("click",$bind(this,this.onAddComponentClicked));
+		this.window.container.appendChild(this.m_btnAddComponent);
 	}
 });
 var ursine_editor_windows_SceneOutline = function() {
 	this.m_selectedEntities = null;
+	ursine_editor_windows_SceneOutline.instance = this;
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Outline";
 	this.m_entityList = window.document.createElement("ul");
@@ -979,7 +1099,8 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.m_entityItems = new haxe_ds_IntMap();
 	this.m_selectedEntities = [];
 	this.window.container.appendChild(this.m_entityList);
-	this.initScene();
+	this.resetScene();
+	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("Reset",$bind(this,this.resetScene));
 	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.EntityAdded,$bind(this,this.onEntityAdded)).on(ursine_editor_scene_entity_EntityEvent.EntityRemoved,$bind(this,this.onEntityRemoved)).on(ursine_editor_scene_entity_EntityEvent.EntityNameChanged,$bind(this,this.onEntityNameChanged)).on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
@@ -987,7 +1108,22 @@ $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOu
 ursine_editor_windows_SceneOutline.__name__ = ["ursine","editor","windows","SceneOutline"];
 ursine_editor_windows_SceneOutline.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandler.prototype,{
-	initScene: function() {
+	clearSelectedEntities: function() {
+		var _g = 0;
+		var _g1 = this.m_selectedEntities;
+		while(_g < _g1.length) {
+			var uid = _g1[_g];
+			++_g;
+			var item = this.m_entityItems.h[uid];
+			if(item == null) continue;
+			item.entity.deselect();
+		}
+	}
+	,resetScene: function() {
+		this.m_selectedEntities = [];
+		this.m_entityList.innerHTML = "";
+		this.m_entityItems = new haxe_ds_IntMap();
+		ursine_editor_windows_EntityInspector.instance.inspect(null);
 		var entities = ursine_native_Extern.SceneGetActiveEntities();
 		var event = { uniqueID : 0};
 		var _g = 0;
@@ -1091,17 +1227,6 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			});
 		}
 	}
-	,clearSelectedEntities: function() {
-		var _g = 0;
-		var _g1 = this.m_selectedEntities;
-		while(_g < _g1.length) {
-			var uid = _g1[_g];
-			++_g;
-			var item = this.m_entityItems.h[uid];
-			if(item == null) continue;
-			item.entity.deselect();
-		}
-	}
 	,deleteSelectedEntities: function() {
 		var _g = 0;
 		var _g1 = this.m_selectedEntities;
@@ -1132,11 +1257,20 @@ ursine_native_Extern.__name__ = ["ursine","native","Extern"];
 ursine_native_Extern.DebugEditorUI = function() {
 	return DebugEditorUI();
 };
+ursine_native_Extern.CreateEntity = function() {
+	return CreateEntity();
+};
 ursine_native_Extern.GetNativeComponentDatabase = function() {
 	return GetNativeComponentDatabase();
 };
 ursine_native_Extern.SceneGetActiveEntities = function() {
 	return SceneGetActiveEntities();
+};
+ursine_native_Extern.SceneLoad = function() {
+	return SceneLoad();
+};
+ursine_native_Extern.SceneSave = function() {
+	return SceneSave();
 };
 var ursine_native_Property = function() { };
 $hxClasses["ursine.native.Property"] = ursine_native_Property;
@@ -1205,7 +1339,7 @@ ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mou
 ursine_editor_menus_DebugMenu.__meta__ = { statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
-ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/New"]}, doOpen : { mainMenuItem : ["File/Open"]}}};
+ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene"]}, doOpen : { mainMenuItem : ["File/Save Scene"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};
@@ -1225,6 +1359,7 @@ ursine_editor_scene_entity_EntityEvent.EntityNameChanged = "EntityNameChanged";
 ursine_editor_scene_entity_EntityEvent.ComponentAdded = "ComponentAdded";
 ursine_editor_scene_entity_EntityEvent.ComponentRemoved = "ComponentRemoved";
 ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";
+ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 Application.main();
 })();

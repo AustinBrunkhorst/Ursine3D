@@ -49,13 +49,22 @@ namespace ursine
 
         struct ComponentEventArgs : WorldEventArgs
         {
-            const Entity *entity;
-            const Component *component;
+            Entity *entity;
+            Component *component;
 
-            ComponentEventArgs(WorldEventType type, const Entity *entity, const Component *component)
+            ComponentEventArgs(WorldEventType type, Entity *entity, Component *component)
                 : WorldEventArgs( type )
                 , entity( entity )
                 , component( component ) { }
+        };
+
+        struct ComponentRemovedEventArgs : ComponentEventArgs
+        {
+            ComponentTypeMask oldTypeMask;
+
+            ComponentRemovedEventArgs(WorldEventType type, Entity *entity, Component *component, ComponentTypeMask oldTypeMask)
+                : ComponentEventArgs( type, entity, component )
+                , oldTypeMask( oldTypeMask ) { }
         };
 
         struct EditorEntityNameChangedArgs : EntityEventArgs
@@ -75,8 +84,8 @@ namespace ursine
 
             EditorComponentChangedArgs(
                 WorldEventType type,
-                const Entity *entity,
-                const Component *component,
+                Entity *entity,
+                Component *component,
                 const std::string &field,
                 const meta::Variant &value
             )

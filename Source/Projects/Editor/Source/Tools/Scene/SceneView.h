@@ -16,6 +16,9 @@ public:
 private:
     Editor *m_editor;
 
-    void onViewportInvalidated(EVENT_HANDLER( NativeEditorTool ));
+    void onFocusChanged(EVENT_HANDLER(NativeEditorTool));
+    void onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool));
+
+    void onViewportInvalidated(EVENT_HANDLER(NativeEditorTool));
 
 } Meta(Enable);

@@ -5,6 +5,7 @@
     <template>
         <header id="header">
             <span class="text">{{heading}}</span>
+            <div id="btnRemove"></div>
         </header>
         <div id="container">
             <content></content>
@@ -23,10 +24,17 @@
                     type: Boolean,
                     notify: true,
                     observer: '_onOpenedChanged'
+                },
+                canRemove: {
+                    type: Boolean,
+                    notify: true,
+                    value: true,
+                    observer: '_onCanRemoveChanged'
                 }
             },
             listeners: {
-                'header.click': '_onHeaderClick'
+                'header.click': '_onHeaderClick',
+                'btnRemove.click': '_onRemoveClicked'
             },
             get container() {
                 return this.$.container;
@@ -37,10 +45,20 @@
 
             _onOpenedChanged: function() {
                 this.classList.toggle( 'opened', !!this.opened );
+
+                this.fire( 'open-changed', {
+                    open: this.opened
+                } );
+            },
+            _onCanRemoveChanged: function() {
+                this.$.btnRemove.style.display = this.canRemove ? 'block' : 'none';
             },
 
             _onHeaderClick: function() {
                 this.opened = !this.opened;
+            },
+            _onRemoveClicked: function() {
+                this.fire( 'removed', { } );
             }
         });
     </script>

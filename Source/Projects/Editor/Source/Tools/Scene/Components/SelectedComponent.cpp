@@ -22,7 +22,6 @@ void Selected::OnInitialize(void)
 {
     auto owner = GetOwner( );
 
-
     tryDebugModel( true );
 }
 

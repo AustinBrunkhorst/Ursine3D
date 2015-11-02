@@ -37,7 +37,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define MAX_CAMERAS             32
 
 //max points/lines
-#define MAX_DRAW_OBJ            4096
+#define MAX_DRAW_OBJ            800192
 
 //max renderables of each type
 #define MAX_RENDERABLES         2048

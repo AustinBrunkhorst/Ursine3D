@@ -61,7 +61,7 @@ namespace ursine
                 default:
                     break;
                 }
-                //
+
 
                 HRESULT result;
                 struct stat *st = new struct stat();

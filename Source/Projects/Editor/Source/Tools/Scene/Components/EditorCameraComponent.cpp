@@ -3,38 +3,36 @@
 #include "EditorCameraComponent.h"
 #include <Core/Graphics/API/GfxAPI.h>
 
-NATIVE_COMPONENT_DEFINITION(EditorCamera);
+NATIVE_COMPONENT_DEFINITION( EditorCamera );
 
-EditorCamera::EditorCamera()
+EditorCamera::EditorCamera(void)
     : BaseComponent()
-    , m_camZoom(10.f)
-    , m_camFocus(ursine::SVec3(0, 0, 0))
+                     , m_camZoom( 10.f )
+                     , m_camFocus( ursine::SVec3( 0, 0, 0 ) ) {}
+
+EditorCamera::~EditorCamera(void)
 {
+    GetCoreSystem(ursine::graphics::GfxAPI)->CameraMgr.DestroyCamera( m_camHandle );
 }
 
-EditorCamera::~EditorCamera()
+void EditorCamera::OnInitialize(void)
 {
-    GetCoreSystem(ursine::graphics::GfxAPI)->CameraMgr.DestroyCamera(m_camHandle);
+    m_camHandle = GetCoreSystem( ursine::graphics::GfxAPI )->CameraMgr.AddCamera( );
+
+    m_camera = &GetCoreSystem(ursine::graphics::GfxAPI)->CameraMgr.GetCamera( m_camHandle );
 }
 
-void EditorCamera::OnInitialize()
-{
-    m_camHandle = GetCoreSystem( ursine::graphics::GfxAPI )->CameraMgr.AddCamera();
-
-    m_camera = &GetCoreSystem(ursine::graphics::GfxAPI)->CameraMgr.GetCamera(m_camHandle);
-}
-
-ursine::graphics::GfxHND EditorCamera::GetHandle() const
+ursine::graphics::GfxHND EditorCamera::GetHandle(void) const
 {
     return m_camHandle;
 }
 
-ursine::graphics::Camera& EditorCamera::GetCamera() const
+ursine::graphics::Camera &EditorCamera::GetCamera(void) const
 {
     return *m_camera;
 }
 
-const float &EditorCamera::GetZoom() const
+const float &EditorCamera::GetZoom(void) const
 {
     return m_camZoom;
 }
@@ -44,100 +42,98 @@ void EditorCamera::SetZoom(float zoom)
     m_camZoom = zoom;
 }
 
-const ursine::SVec3& EditorCamera::GetFocusPosition() const
+const ursine::SVec3 &EditorCamera::GetFocusPosition(void) const
 {
     return m_camFocus;
 }
 
-void EditorCamera::SetFocusPosition(const ursine::SVec3& focusPosition)
+void EditorCamera::SetFocusPosition(const ursine::SVec3 &focusPosition)
 {
     m_camFocus = focusPosition;
 }
 
-const ursine::graphics::ViewportRenderMode EditorCamera::GetRenderMode() const
+const ursine::graphics::ViewportRenderMode EditorCamera::GetRenderMode(void) const
 {
-    return m_camera->GetRenderMode();
+    return m_camera->GetRenderMode( );
 }
 
 void EditorCamera::SetRenderMode(const ursine::graphics::ViewportRenderMode renderMode)
 {
-    m_camera->SetRenderMode(renderMode);
+    m_camera->SetRenderMode( renderMode );
 }
 
-const ursine::graphics::Camera::ProjectionMode EditorCamera::GetProjectionModev() const
+const ursine::graphics::Camera::ProjectionMode EditorCamera::GetProjectionMode(void) const
 {
-    return m_camera->GetProjMode();
+    return m_camera->GetProjMode( );
 }
 
 void EditorCamera::SetProjectionMode(const ursine::graphics::Camera::ProjectionMode projection)
 {
-    m_camera->SetProjMode(projection);
+    m_camera->SetProjMode( projection );
 }
 
-ursine::Vec2 EditorCamera::GetNearFar() const
+ursine::Vec2 EditorCamera::GetNearFar(void) const
 {
     float nearPlane, farPlane;
-    m_camera->GetPlanes(nearPlane, farPlane);
+    m_camera->GetPlanes( nearPlane, farPlane );
 
-    return ursine::Vec2(nearPlane, farPlane);
+    return ursine::Vec2( nearPlane, farPlane );
 }
 
-void EditorCamera::SetNearFar(const ursine::Vec2& nearFar)
+void EditorCamera::SetNearFar(const ursine::Vec2 &nearFar)
 {
-    m_camera->SetPlanes(nearFar.X(), nearFar.Y());
+    m_camera->SetPlanes( nearFar.X( ), nearFar.Y( ) );
 }
 
-const float EditorCamera::GetFOV() const
+const float EditorCamera::GetFOV(void) const
 {
-    return m_camera->GetFOV();
+    return m_camera->GetFOV( );
 }
 
 void EditorCamera::SetFOV(const float degrees)
 {
-    m_camera->SetFOV(degrees);
+    m_camera->SetFOV( degrees );
 }
 
-const float EditorCamera::GetOrthoSize() const
+const float EditorCamera::GetOrthoSize(void) const
 {
-    return m_camera->GetSize();
+    return m_camera->GetSize( );
 }
 
 void EditorCamera::SetOrthoSize(const float size)
 {
-    m_camera->SetSize(size);
+    m_camera->SetSize( size );
 }
 
-const ursine::SVec3& EditorCamera::GetPosition() const
+const ursine::SVec3 &EditorCamera::GetPosition(void) const
 {
-    return m_camera->GetPosition();
+    return m_camera->GetPosition( );
 }
 
-void EditorCamera::SetPosition(const ursine::SVec3& position)
+void EditorCamera::SetPosition(const ursine::SVec3 &position)
 {
-    m_camera->SetPosition(position);
+    m_camera->SetPosition( position );
 }
 
-ursine::Vec2 EditorCamera::GetDimensions() const
+ursine::Vec2 EditorCamera::GetDimensions(void) const
 {
     float width, height;
-    m_camera->GetDimensions(width, height);
+    m_camera->GetDimensions( width, height );
 
-    return ursine::Vec2(width, height);
+    return ursine::Vec2( width, height );
 }
 
-void EditorCamera::SetDimensions(const ursine::Vec2& dimensions)
+void EditorCamera::SetDimensions(const ursine::Vec2 &dimensions)
 {
-    m_camera->SetDimensions(dimensions.X(), dimensions.Y());
+    m_camera->SetDimensions( dimensions.X( ), dimensions.Y( ) );
 }
 
-const ursine::SVec3& EditorCamera::GetLook() const
+const ursine::SVec3 &EditorCamera::GetLook(void) const
 {
-    return m_camera->GetLook();
+    return m_camera->GetLook( );
 }
 
-void EditorCamera::SetLook(const ursine::SVec3& look)
+void EditorCamera::SetLook(const ursine::SVec3 &look)
 {
-    m_camera->SetLook(look);
+    m_camera->SetLook( look );
 }
-
-

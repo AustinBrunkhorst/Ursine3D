@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 
 #include "EditorEntityManager.h"
+#include "SelectedComponent.h"
 
 using namespace ursine;
 
@@ -8,11 +9,17 @@ namespace
 {
     namespace channel
     {
+        const auto SceneManager = "SceneManager";
         const auto EntityManager = "EntityManager";
     }
 
     namespace events
     {
+        namespace scene
+        {
+            const auto Reset = "Reset";
+        }
+
         namespace entity
         {
             const auto Added = "EntityAdded";
@@ -31,19 +38,46 @@ namespace
 
 EditorEntityManager::EditorEntityManager(Project *project)
     : m_project( project )
+    , m_world( nullptr )
 {
-    m_project->GetScene( ).GetWorld( ).Listener( this )
+
+}
+
+EditorEntityManager::~EditorEntityManager(void)
+{
+    clearWorld( m_world );
+}
+
+void EditorEntityManager::SetWorld(ecs::World::Handle world)
+{
+    clearWorld( m_world );
+
+    world->Listener( this )
         .On( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
         .On( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .On( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged );
+
+    m_world = world;
+
+    Json data;
+
+    m_project->GetUI( )->Message(
+        UI_CMD_BROADCAST, 
+        channel::SceneManager, 
+        events::scene::Reset,
+        data
+    );
 }
 
-EditorEntityManager::~EditorEntityManager(void)
+void EditorEntityManager::clearWorld(ecs::World::Handle world)
 {
-    m_project->GetScene( ).GetWorld( ).Listener( this )
+    if (!world)
+        return;
+
+    world->Listener( this )
         .Off( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
         .Off( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
@@ -143,17 +177,20 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
 
-    Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
-        { "component", args->component->GetType( ).GetName( ) },
-        { "field", args->field },
-        { "value", args->value.SerializeJson( ) }
-    };
+    if (args->entity->HasComponent<Selected>( ))
+    {
+        Json message = Json::object {
+            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+            { "component", args->component->GetType( ).GetName( ) },
+            { "field", args->field },
+            { "value", args->value.SerializeJson( ) }
+        };
 
-    m_project->GetUI( )->Message(
-        UI_CMD_BROADCAST, 
-        channel::EntityManager, 
-        events::component::Changed,
-        message
-    );
+        m_project->GetUI( )->Message(
+            UI_CMD_BROADCAST, 
+            channel::EntityManager, 
+            events::component::Changed,
+            message
+        );
+    }
 }

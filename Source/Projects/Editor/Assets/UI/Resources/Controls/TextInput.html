@@ -1,0 +1,19 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-text-input">
+    <link rel="import" type="css" href="../Style/Controls/TextInput.css">
+    <template>
+    </template>
+    <script>
+        var TextInputControl = Polymer({
+            is: 'x-text-input',
+            extends: 'input',
+            properties: {
+
+            },
+            created: function() {
+                this.type = 'text';
+            }
+        });
+    </script>
+</dom-module>

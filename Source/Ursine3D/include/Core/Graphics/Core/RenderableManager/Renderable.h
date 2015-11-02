@@ -110,9 +110,6 @@ namespace ursine
             void SetDimensions(float width, float height);
             void GetDimensions(float &width, float &height);
 
-            void SetScale(const ursine::Vec2 &scale);
-            const ursine::Vec2 &GetScale(void) const;
-
             void SetPosition(const ursine::SVec3 &position);
             const ursine::SVec3 &GetPosition(void) const;
             
@@ -266,6 +263,9 @@ namespace ursine
             void SetSpotlightAngles(const Vec2 &angles);
             void SetSpotlightAngles(const float inner, const float outer);
 
+            void SetSpotlightTransform(const SMat4 &transf);
+            const SMat4 &GetSpotlightTransform(void);
+
         private:
             LightType m_type;
             SVec3 m_position;
@@ -275,6 +275,7 @@ namespace ursine
             float m_intensity;
 
             Vec2 m_spotlightAngles;
+            SMat4 m_spotlightTransform;
         };
     }
 }

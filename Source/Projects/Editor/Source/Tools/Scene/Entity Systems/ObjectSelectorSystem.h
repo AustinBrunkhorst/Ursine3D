@@ -1,6 +1,9 @@
 #pragma once
 
 #include <EntitySystem.h>
+
+#include "EditorCameraSystem.h"
+
 #include <GfxAPI.h>
 #include <MouseManager.h>
 #include <KeyboardManager.h>
@@ -97,6 +100,10 @@ private:
     ursine::ecs::EntityUniqueID m_currentID;
 
     ursine::graphics::GfxAPI *m_graphics;
+    ursine::MouseManager *m_mouseManager;
+    ursine::KeyboardManager *m_keyboardManager;
+
+    EditorCameraSystem *m_editorCameraSystem;
 
     // are we dragging right now?
     bool m_dragging;

@@ -59,6 +59,11 @@ namespace ursine
         
     }
 
+    CefRefPtr<CefBrowser> UIView::GetBrowser(void) const
+    {
+        return m_browser;
+    }
+
     void UIView::Close(void)
     {
         m_window->Listener( this )

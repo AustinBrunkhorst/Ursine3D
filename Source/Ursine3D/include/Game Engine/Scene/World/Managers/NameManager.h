@@ -40,12 +40,15 @@ namespace ursine
             void SetName(Entity *entity, const std::string &name);
 
         private:
+            friend class WorldSerializer;
+
             // group of entities mapped to a specifc name
             std::unordered_map<std::string, EntityVector> m_grouped;
 
             // entities mapped to specific names
             std::unordered_map<EntityUniqueID, std::string> m_names;
 
+            void setName(Entity *entity, const std::string &name);
             void removeFromGroup(const std::string &name, Entity *entity);
         };
     }

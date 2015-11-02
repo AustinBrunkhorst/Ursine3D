@@ -118,7 +118,7 @@ namespace ursine
         struct SpotlightBuffer
         {
             DirectX::XMFLOAT3 lightPosition;
-            float falloff;
+            float intensity;
             DirectX::XMFLOAT3 lightDirection;
             float innerAngle;
             DirectX::XMFLOAT3 diffuseColor;

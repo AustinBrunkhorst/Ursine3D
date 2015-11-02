@@ -35,15 +35,13 @@ namespace ursine
             const ursine::Color &GetColor(void);
 
         private:
+            graphics::GfxHND m_handle;
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;
 
-            // The graphics core API
-            graphics::GfxAPI *m_graphics;
-
             void onUpdateRenderer(EVENT_HANDLER(Entity));
 
-        } Meta( Enable, DisplayName( "Model3D" ) );
+        } Meta(Enable, DisplayName( "Model3D" ));
     }
 }

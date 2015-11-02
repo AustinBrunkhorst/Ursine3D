@@ -14,7 +14,7 @@ CapsuleBody.8.0.mdl CapsuleBody
 Plane.8.0.mdl Plane
 cone_8.8.0.mdl Cone
 Sprite.8.0.mdl Sprite
-#cone_12.8.0.mdl Cone
+cone_12.8.0.mdl lightCone
 #cone_16.8.0.mdl Cone
-character_test_01.8.0.mdl Character
+character.8.0.mdl Character
 torus2.8.0.mdl Ring

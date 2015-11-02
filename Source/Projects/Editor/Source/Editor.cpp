@@ -10,12 +10,16 @@
 
 #include <Color.h> 
 
-#include <RenderableComponent.h>
+#include <SystemManager.h>
+#include <CameraComponent.h>
+#include <RenderableComponent.h>  
 #include <LightComponent.h>
 #include <Model3DComponent.h>
-#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
-#include "Tools/Scene/Entity Systems/EditorCameraSystem.h"
-#include <Game Engine/Scene/Component/Native Components/Billboard2DComponent.h>
+#include <CapsuleColliderComponent.h>
+#include <BoxColliderComponent.h>
+
+#include "CharacterControllerComponent.h"
+#include "EditorCameraSystem.h"
 
 using namespace ursine;
 
@@ -100,6 +104,16 @@ void Editor::OnRemove(void)
     m_project = nullptr;
 }
 
+Window::Handle Editor::GetMainWindow(void) const
+{
+    return m_mainWindow.window;
+}
+
+UIView::Handle Editor::GetMainUI(void) const
+{
+    return m_mainWindow.ui;
+}
+
 std::shared_ptr<Project> Editor::GetProject(void) const
 {
     return m_project;
@@ -133,9 +147,9 @@ void Editor::initializeGraphics(void)
 
 void Editor::initializeScene(void)
 {
-    auto &scene = m_project->GetScene( );
+    auto scene = m_project->GetScene( );
 
-    auto &world = scene.GetWorld( );
+    auto world = scene->GetWorld( );
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
 
@@ -145,53 +159,60 @@ void Editor::initializeScene(void)
 
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-        scene.SetViewport( viewport );
+        scene->SetViewport( viewport );
 
         m_graphics->SetGameViewport( viewport );
     }
 
-    for (int i = 0; i < 1; ++i)
+    world->DispatchLoad( );
+
+	for (int i = 0; i < 2; ++i)
+	{
+        auto *entity_char = world->CreateEntity( );
+
+        entity_char->AddComponent<ecs::Renderable>( );
+        auto model = entity_char->AddComponent<ecs::Model3D>( );
+
+        auto name = "Character";
+
+        model->SetModel( name );
+        model->GetModel( )->SetMaterial( "Blank" );
+
+        entity_char->SetName( name );
+
+        entity_char->AddComponent<CharacterController>( )->id = i;
+
+        auto *collider = entity_char->AddComponent<ecs::CapsuleCollider>();
+
+		/*auto body = entity_char->AddComponent<ecs::Rigidbody>( );
+
+		body->LockXRotation(true);
+		body->LockZRotation(true);*/
+
+        collider->SetHeight(19.0f);
+        collider->SetRadius(4.0f);
+        collider->SetOffset(SVec3(0.0f, 15.2f, 0.0f));
+
+        auto transform = entity_char->GetTransform();
+
+        transform->SetWorldPosition(SVec3{ i * 5.0f, 0.5f, i * 5.0f });
+        transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
+        transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
+    }
+
     {
-        auto *entity_char = world.CreateEntity( );
-        auto *entity_cube = world.CreateEntity( );
+        auto *floor = world->CreateEntity( );
 
-        {
-            entity_char->AddComponent<ecs::Renderable>( );
-            auto model = entity_char->AddComponent<ecs::Billboard2D>( );
+        floor->AddComponent<ecs::Renderable>();
+        auto model = floor->AddComponent<ecs::Model3D>();
+        model->SetModel("Cube");
 
-            auto name = "Character";
+        floor->AddComponent<ecs::BoxCollider>();
+        
+        floor->GetTransform()->SetWorldScale(SVec3(100, 0.1f, 100));
+    }
 
-            entity_char->SetName( name );
-
-            auto transform = entity_char->GetTransform( );
-
-            transform->SetWorldPosition( SVec3 { i * 1.0f, 2.0f, 0.0f } );
-            transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
-            transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );
-        }
-        {
-            entity_cube->AddComponent<ecs::Renderable>( );
-            auto model = entity_cube->AddComponent<ecs::Model3D>( );
-
-            auto name = "Cube";
-
-            entity_cube->SetName( name );
-
-            model->SetModel( name );
-
-            auto transform = entity_cube->GetTransform( );
-
-            transform->SetWorldPosition( SVec3 { i * 1.0f, 0.0f, 0.0f } );
-            transform->SetWorldRotation( SQuat { 0.0f, 0.0f, 0.0f } );
-            transform->SetWorldScale( SVec3 { 1.0f, 1.0f, 1.0f } );
-        }
-
-        // parent the character to the cube
-        entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
-    }  
-
-
-    auto *univLight = world.CreateEntity( "Global Light" );
+    auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
@@ -209,13 +230,13 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    auto &scene = m_project->GetScene( );
+    auto scene = m_project->GetScene( );
 
-    scene.Update( dt );
+    scene->Update( dt );
 
     m_graphics->StartFrame( );
 
-    scene.Render( );
+    scene->Render( );
 
     m_mainWindow.ui->DrawMain( );
 

@@ -13,3 +13,24 @@ struct NativeToolEvent : ursine::EventArgs
         : name( name )
         , data( data ) { }
 };
+
+namespace native_tool
+{
+    namespace event
+    {
+        // Window container moused over
+        const auto MouseOver = "mouseover";
+
+        // Window container moused out
+        const auto MouseOut = "mouseout";
+
+        // Window container focused
+        const auto Focus = "focus";
+
+        // Window container focus lost
+        const auto Blur = "blur";
+
+        // Window container viewport changed
+        const auto ViewportInvalidated = "viewportInvalidated";
+    }
+}

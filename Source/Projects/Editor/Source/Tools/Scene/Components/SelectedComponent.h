@@ -1,12 +1,12 @@
 #pragma once
 
 #include <Component.h>
-#include <Core/Graphics/API/GfxAPI.h>
 
 class Selected : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 public:
+    Meta(Enable)
     Selected(void);
     ~Selected(void);
 
@@ -17,4 +17,4 @@ private:
 
     void tryDebugModel(bool enabled);
 
-} Meta(Enable, HiddenInInspector);
+} Meta(Enable, WhiteListMethods, HiddenInInspector);

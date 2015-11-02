@@ -21,13 +21,14 @@ RWStructuredBuffer<CS_OUTPUT> gOutput : register(u0);
 [numthreads(1, 1, 1)] 
 void main()
 {
+
     //mouse pos
     int mouseX = mousePos.x;
     int mouseY = mousePos.y;
 
     /////////////////////////////////////////////////////////////////
     // SEARCHING NEARBY TILES
-    int searchRadius = 10;
+    int searchRadius = 1;
 
     int xMin = mousePos.x - searchRadius;
     int xMax = mousePos.x + searchRadius;
@@ -39,6 +40,8 @@ void main()
 
     //current ID to return
     uint bestAnswer = -1;
+    uint num1 = -1;
+    uint num2 = 0;
 
     bool currentStatus = false;
 
@@ -50,11 +53,11 @@ void main()
         for (int x = xMin; x <= xMax; ++x)
         { 
             //read value from texture
-            float4 currVal = inputTexture.Load(int3(x, y, 0));// [mousePos.xy];
+            float4 currVal = inputTexture.Load(int3(mouseX, mouseY, 0));// [mousePos.xy];
             
             //convert to ID
-            uint w1 = currVal.y * 255.f;
-            uint w2 = currVal.z * 255.f;
+            uint w1 = round(currVal.y * 255.f);
+            uint w2 = round(currVal.z * 255.f);
 
             //construct final ID
             uint currID = w1 + (w2 << 8);
@@ -63,7 +66,7 @@ void main()
             if (currID > 73727 || currID == 0)
             {
                 continue;
-            }
+            } 
 
             //calculate distance
             float distanceSqr = (x - mouseX) * (x - mouseX) + (y - mouseY) * (y - mouseY);
@@ -81,6 +84,9 @@ void main()
                 bestAnswer = currID;
                 bestDistance = distanceSqr;
                 usingOverdraw = true;
+
+                num1 = w1;
+                num2 = w2;
                 continue;
             }
 
@@ -89,11 +95,17 @@ void main()
             {
                 bestAnswer = currID;
                 bestDistance = distanceSqr;
+
+
+                num1 = w1;
+                num2 = w2;
                 continue;
             }
         }
 
     gOutput[ 0 ].id = bestAnswer; 
+    gOutput[ 1 ].id = num1;
+    gOutput[2].id = num2;
     return;
 }
 

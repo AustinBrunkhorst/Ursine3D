@@ -20,10 +20,32 @@ namespace
 
 EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     : EntitySystem( world )
+    , m_hasFocus( false )
+    , m_hasMouseFocus( false )
     , m_cameraEntity( nullptr )
     , m_camera( nullptr )
     , m_camZoom( 5.0f )
     , m_camPos( SVec3( 0, 0, 0 ) ) { }
+
+bool EditorCameraSystem::HasFocus(void) const
+{
+    return m_hasFocus;
+}
+
+void EditorCameraSystem::SetFocus(bool focus)
+{
+    m_hasFocus = focus;
+}
+
+bool EditorCameraSystem::HasMouseFocus(void) const
+{
+    return m_hasMouseFocus;
+}
+
+void EditorCameraSystem::SetMouseFocus(bool focus)
+{
+    m_hasMouseFocus = focus;
+}
 
 graphics::Camera *EditorCameraSystem::GetEditorCamera(void)
 {
@@ -35,6 +57,22 @@ graphics::Camera *EditorCameraSystem::GetEditorCamera(void)
 
 void EditorCameraSystem::OnInitialize(void)
 {
+    m_focusTransition = m_tweens.Create( );
+
+    GetCoreSystem( MouseManager )->Listener( this )
+        .On( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
+
+    m_world->Listener( this )
+        .On( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+}
+
+void EditorCameraSystem::OnAfterLoad(void)
+{
+    auto *oldCamera = m_world->GetEntityFromName( kEditorCameraEntityName );
+
+    if (oldCamera)
+        oldCamera->Delete( );
+
     m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
 
     m_cameraEntity->EnableDeletion( false );
@@ -44,20 +82,13 @@ void EditorCameraSystem::OnInitialize(void)
     m_camera = component->GetCamera( );
 
     m_camera->SetPosition( 0.0f, 0.0f );
+    m_camera->SetPosition( SVec3( -50, 50, 50 ) );
     m_camera->SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
     m_camera->SetDimensions( 1.0f, 1.0f );
     m_camera->SetPlanes( 0.1f, 700.0f );
     m_camera->SetFOV( 45.f );
 
     m_camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-    m_focusTransition = m_tweens.Create( );
-
-    GetCoreSystem( MouseManager )->Listener( this )
-        .On( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
-
-    m_world->Listener( this )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::OnRemove(void)
@@ -73,9 +104,13 @@ void EditorCameraSystem::OnRemove(void)
 
 void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
 {
-    EVENT_ATTRS(Application, EventArgs);
+    EVENT_ATTRS(ecs::World, EventArgs);
 
-    auto dt = sender->GetDeltaTime( );
+    // don't update on focus
+    if (!m_hasFocus)
+        return;
+
+    auto dt = Application::Instance->GetDeltaTime( );
 
     auto *keyboardMgr = GetCoreSystem( KeyboardManager );
 
@@ -103,6 +138,10 @@ void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
 void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
 {
     EVENT_ATTRS(MouseManager, MouseScrollArgs);
+
+    // don't update on focus
+    if (!m_hasFocus)
+        return;
 
     m_camZoom -= args->delta.Y( );
 

@@ -1,0 +1,18 @@
+@import '../Config';
+
+:host {
+  display: block;
+  margin: 4px;
+  padding: 5px;
+  color: #999999;
+  background: #2d2d30;
+  text-align: center;
+  cursor: pointer;
+  transition: all $duration-transition-btn ease;
+
+  &:hover {
+    color: #c8c8c8;
+    background: #3e3e40;
+    transition: all $duration-transition-btn ease;
+  }
+}

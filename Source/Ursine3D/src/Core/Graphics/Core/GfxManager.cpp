@@ -84,6 +84,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH, "DeferredDepth");
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap");
                 shaderManager->LoadShader(SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource");
+                shaderManager->LoadShader(SHADER_SPOT_LIGHT, "SpotlightSource");
                 shaderManager->LoadShader(SHADER_POINT_LIGHT, "PointLightSource");
                 shaderManager->LoadShader(SHADER_QUAD, "QuadShader");
                 shaderManager->LoadShader(SHADER_UI, "UIShader");
@@ -428,6 +429,11 @@ namespace ursine
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
+            //spot light pass
+            PrepForSpotlightPass(view, proj);
+            while (m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT)
+                RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
+
             //directional light pass
             PrepForDirectionalLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT)
@@ -743,6 +749,16 @@ namespace ursine
             dxCore->GetDeviceContext()->PSSetShaderResources(3, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
         }
 
+        void GfxManager::PrepForSpotlightPass(const SMat4& view, const SMat4& proj)
+        {
+            //bind model
+            modelManager->BindModel(modelManager->GetModelIDByName("lightCone"));
+
+            //bind shader
+            shaderManager->BindShader(SHADER_SPOT_LIGHT);
+            layoutManager->SetInputLayout(SHADER_SPOT_LIGHT);
+        }
+
         void GfxManager::PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj)
         {
             modelManager->BindModel(modelManager->GetModelIDByName("internalQuad"));
@@ -873,10 +889,10 @@ namespace ursine
             textureManager->MapTextureByID(handle.Material_);
 
             if(handle.Overdraw_)
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL); 
             else
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
-
+             
             //render
             shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
 
@@ -908,10 +924,9 @@ namespace ursine
         {
             auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
 
-            auto scale = billboard.GetScale();
             BillboardSpriteBuffer bsb;
-            bsb.width = scale.X();
-            bsb.height = scale.Y();
+
+            billboard.GetDimensions(bsb.width, bsb.height);
 
             //map camera data
             PointGeometryBuffer pgb;
@@ -992,32 +1007,32 @@ namespace ursine
             dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
 
             //read from intermediary buffer
-            ComputeIDOutput dataFromCS;
+            ComputeIDOutput dataFromCS[5]; 
             bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
 
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
 
-            tempID = dataFromCS.id;
-
+            tempID = dataFromCS[0].id; 
+             
             int index = tempID & 0x7FF;
             int type = (tempID >> 12) & 0x3;
-            int overdraw = (tempID >> 15) & 0x1; 
+            int overdraw = (tempID >> 15) & 0x1;
              
-            unsigned w, h;
+            unsigned w, h; 
             gfxInfo->GetDimensions(w, h); 
-
+             
             if (tempID != -1 && tempID < 73727 && (unsigned)point.x < w && (unsigned)point.y < h)
             {
-                switch (type)
+                switch (type) 
                 {
                 case RENDERABLE_MODEL3D:
                     m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityUniqueID();
-                    break;
+                    break; 
                 case RENDERABLE_BILLBOARD2D:
                     m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityUniqueID();
                     break;
                 }
-            }
+            } 
             else
                 m_currentID = -1;
         }
@@ -1047,7 +1062,7 @@ namespace ursine
             PointLightBuffer pointB;
             pointB.lightPos = lightPosition.ToD3D( );
             pointB.lightRadius = pl.GetRadius( );
-            pointB.intensity = 1;
+            pointB.intensity = pl.GetIntensity( );
             pointB.color.x = pl.GetColor( ).r;
             pointB.color.y = pl.GetColor( ).g;
             pointB.color.z = pl.GetColor( ).b;
@@ -1075,6 +1090,27 @@ namespace ursine
 
             //render!
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sphere")));
+        }
+
+        void GfxManager::RenderSpotLight(_DRAWHND handle, Camera& currentCamera, SMat4& proj)
+        {
+            Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
+
+            //spotlight data
+            SpotlightBuffer slb;
+            slb.diffuseColor = pl.GetColor( ).ToVector3().ToD3D();
+            slb.lightDirection = pl.GetDirection( ).ToD3D();
+            slb.lightPosition = pl.GetPosition( ).ToD3D( );
+            slb.intensity = pl.GetIntensity();
+            slb.innerAngle = pl.GetSpotlightAngles( ).X();
+            slb.outerAngle = pl.GetSpotlightAngles( ).Y( );
+
+            bufferManager->MapBuffer<BUFFER_SPOTLIGHT>(&slb, SHADERTYPE_PIXEL);
+
+            //transform data  
+            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform( ));
+
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("lightCone")));
         }
 
         void GfxManager::RenderDirectionalLight(_DRAWHND handle, Camera &currentCamera)

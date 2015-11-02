@@ -4,6 +4,7 @@
 #include "RenderableComponent.h"
 
 #include "GfxAPI.h"
+#include <Game Engine/Scene/Entity/EntityEvent.h>
 
 namespace ursine
 {
@@ -14,22 +15,31 @@ namespace ursine
         Light::Light(void)
             : BaseComponent( )
             , m_light( nullptr )
-            , m_handle( 0 ) { }
+            , m_handle( 0 )
+        {
+            auto *graphics = GetCoreSystem( graphics::GfxAPI );
+
+            m_handle = graphics->
+                RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT );
+
+            m_light = &graphics->
+                RenderableMgr.GetLight( m_handle );
+
+            m_light->Initialize( );
+        }
 
         Light::~Light(void)
         {
+            GetOwner( )->Listener( this )
+                .Off( ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer );
+
             m_light = nullptr;
         }
 
         void Light::OnInitialize(void)
         {
-            m_handle = GetCoreSystem( graphics::GfxAPI )->
-                RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT );
-
-            m_light = &GetCoreSystem( graphics::GfxAPI )->
-                RenderableMgr.GetLight( m_handle );
-
-            m_light->Initialize( );
+            GetOwner( )->Listener(this)
+                .On( ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer );
 
             auto *owner = GetOwner( );
 
@@ -140,6 +150,23 @@ namespace ursine
             m_light->SetSpotlightAngles( angles );
 
             NOTIFY_COMPONENT_CHANGED( "SpotLightAngles", angles );
+        }
+
+        void Light::onUpdateRenderer(void* _sender, const ursine::EventArgs* _args)
+        {
+            auto ren = GetOwner()->GetComponent<Renderable>();
+            auto trans = GetOwner()->GetTransform();
+            auto handle = ren->GetHandle();
+            auto &light = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetLight(handle);
+
+            //set position using the transform
+            light.SetPosition(trans->GetWorldPosition());
+
+            //set our direction using our rotation 
+            SVec3 lightDir = SVec3(0, -1, 0);
+            lightDir = trans->GetWorldRotation() * lightDir;
+
+            light.SetDirection(lightDir);
         }
     }
 }

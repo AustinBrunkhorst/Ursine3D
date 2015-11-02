@@ -55,7 +55,7 @@ namespace ursine
             // world when this entity was created)
             EntityUniqueID GetUniqueID(void) const;
 
-            // determines if the entity is currently being deleted
+            // Determines if the entity is currently being deleted
             bool IsDeleting(void) const;
 
             // Determines if the entity is active (being used in the world)
@@ -224,6 +224,7 @@ namespace ursine
         private:
             // entity manager needs to be able to construct entities
             friend class EntityManager;
+            friend class WorldSerializer;
 
             // access ids directly
             friend class NameManager;
