@@ -124,7 +124,7 @@ float3 CalcPoint( float3 position, Material material )
     float attenuation = saturate( 1.0f - (DistToLight / radius) );
     finalColor *= material.diffuseColor.xyz * attenuation;
 
-    // Blinn specular
+    // specular
     ToEye = normalize( ToEye );
     float3 HalfWay = normalize( ToEye + ToLight );
     float NDotH = saturate( dot( HalfWay, material.normal ) );

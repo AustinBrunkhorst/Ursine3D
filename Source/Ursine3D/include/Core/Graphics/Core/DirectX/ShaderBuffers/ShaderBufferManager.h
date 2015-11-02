@@ -136,7 +136,7 @@ namespace ursine
                 void SetBuffer(const SHADERTYPE shader, const unsigned bufferIndex, ID3D11Buffer *buffer);
 
                 //makes the buffers for mapping resources
-                template<typename T>
+                template<typename T>                    //D3D11_USAGE_DYNAMIC           D3D11_CPU_ACCESS_WRITE
                 void MakeBuffer(const BUFFER_LIST type, unsigned gpuUsage = 2, unsigned cpuAccess = 0x10000L);
 
                 //create compute buffer

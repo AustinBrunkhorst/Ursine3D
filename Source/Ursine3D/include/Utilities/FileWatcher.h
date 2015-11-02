@@ -42,8 +42,10 @@ public:
     *  @param recursive if we should recursively go through directories
     *  @return pointer to the filewatcher
     */
-    static FileWatcher *StartFileWatch( std::string path, std::string extension, 
-                                        void( *callback )(const std::string), WatchMode mode = ON_MODIFICATION, 
+    static FileWatcher *StartFileWatch( 
+        std::string path, 
+        std::string extension, 
+                void( *callback )(const std::string), WatchMode mode = ON_MODIFICATION, 
                                         unsigned sleepTime = 1000, bool recursive = false );
 
     /** @brief begins a file watcher, using a class method as the callback

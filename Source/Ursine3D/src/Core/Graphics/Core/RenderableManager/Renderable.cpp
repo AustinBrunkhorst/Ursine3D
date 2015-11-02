@@ -462,5 +462,15 @@ namespace ursine
         {
             m_spotlightAngles = Vec2(inner, outer);
         }
+
+        void Light::SetSpotlightTransform(const SMat4& transf)
+        {
+            m_spotlightTransform = transf;
+        }
+
+        const SMat4& Light::GetSpotlightTransform()
+        {
+            return m_spotlightTransform;
+        }
     }
 }

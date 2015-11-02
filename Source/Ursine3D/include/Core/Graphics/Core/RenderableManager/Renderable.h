@@ -263,6 +263,9 @@ namespace ursine
             void SetSpotlightAngles(const Vec2 &angles);
             void SetSpotlightAngles(const float inner, const float outer);
 
+            void SetSpotlightTransform(const SMat4 &transf);
+            const SMat4 &GetSpotlightTransform(void);
+
         private:
             LightType m_type;
             SVec3 m_position;
@@ -272,6 +275,7 @@ namespace ursine
             float m_intensity;
 
             Vec2 m_spotlightAngles;
+            SMat4 m_spotlightTransform;
         };
     }
 }

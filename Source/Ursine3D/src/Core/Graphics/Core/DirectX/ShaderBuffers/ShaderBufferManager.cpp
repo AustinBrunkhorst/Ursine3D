@@ -24,19 +24,19 @@ namespace ursine
                 //make all the buffers
 
                 //these buffers are GPU read only, CPU-write
-                MakeBuffer<CameraBuffer>            (BUFFER_CAMERA);
-                MakeBuffer<TransformBuffer>         (BUFFER_TRANSFORM);
-                MakeBuffer<DirectionalLightBuffer>  (BUFFER_DIRECTIONAL_LIGHT);
-                MakeBuffer<PointLightBuffer>        (BUFFER_POINT_LIGHT);
-                MakeBuffer<InvProjBuffer>           (BUFFER_INV_PROJ);
-                MakeBuffer<PrimitiveColorBuffer>    (BUFFER_PRIM_COLOR);
-                MakeBuffer<PointGeometryBuffer>     (BUFFER_POINT_GEOM);
-                MakeBuffer<BillboardSpriteBuffer>   (BUFFER_BILLBOARDSPRITE);
-                MakeBuffer<GBufferUnpackBuffer>     (BUFFER_GBUFFER_UNPACK);
-                MakeBuffer<TransformBuffer>         (BUFFER_LIGHT_PROJ);
-                MakeBuffer<MaterialDataBuffer>      (BUFFER_MATERIAL_DATA);
-                MakeBuffer<SpotlightBuffer>         (BUFFER_SPOTLIGHT);
-                MakeBuffer<MouseBuffer>             (BUFFER_MOUSEPOS);
+                MakeBuffer<CameraBuffer>(BUFFER_CAMERA);
+                MakeBuffer<TransformBuffer>(BUFFER_TRANSFORM);
+                MakeBuffer<DirectionalLightBuffer>(BUFFER_DIRECTIONAL_LIGHT);
+                MakeBuffer<PointLightBuffer>(BUFFER_POINT_LIGHT);
+                MakeBuffer<InvProjBuffer>(BUFFER_INV_PROJ);
+                MakeBuffer<PrimitiveColorBuffer>(BUFFER_PRIM_COLOR);
+                MakeBuffer<PointGeometryBuffer>(BUFFER_POINT_GEOM);
+                MakeBuffer<BillboardSpriteBuffer>(BUFFER_BILLBOARDSPRITE);
+                MakeBuffer<GBufferUnpackBuffer>(BUFFER_GBUFFER_UNPACK);
+                MakeBuffer<TransformBuffer>(BUFFER_LIGHT_PROJ);
+                MakeBuffer<MaterialDataBuffer>(BUFFER_MATERIAL_DATA);
+                MakeBuffer<SpotlightBuffer>(BUFFER_SPOTLIGHT);
+                MakeBuffer<MouseBuffer>(BUFFER_MOUSEPOS);
 
                 // COMPUTE SHADERS //////////////////////////////////
                 //GPU-readonly buffer that can only be written to by the CPU 
@@ -47,9 +47,9 @@ namespace ursine
                 //this is output from compute shader, GPU write only. CPU can't read
                 //                   type     1 element  buffer enum           usage                  binding         cpu access
                 MakeComputeBuffer<ComputeIDOutput>(5, COMPUTE_BUFFER_ID, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 0);
-                
+
                 //requires UAV to write as compute output
-                MakeComputeUAV(5, COMPUTE_BUFFER_ID); 
+                MakeComputeUAV(5, COMPUTE_BUFFER_ID);
 
                 //create a buffer for copying data from the gpu onto the cpu
                 //                   type     1 element  buffer enum           usage           binding     cpu access
@@ -215,7 +215,7 @@ namespace ursine
                 srvDesc.BufferEx.Flags = 0;
                 srvDesc.BufferEx.NumElements = count;
 
-                result = m_device->CreateShaderResourceView(m_computeBufferArray[type], &srvDesc, &m_computeSRV[ type ]);
+                result = m_device->CreateShaderResourceView(m_computeBufferArray[ type ], &srvDesc, &m_computeSRV[ type ]);
                 UAssert(result == S_OK, "Failed to make compute buffer srv! (type: %i)  (Error '%s')", type, GetDXErrorMessage(result));
             }
 
