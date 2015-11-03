@@ -162,6 +162,17 @@ namespace ursine
             //set position using the transform
             light.SetPosition(trans->GetWorldPosition());
 
+            //get inner/outer angles
+            float outer = light.GetSpotlightAngles().Y() * 3.1415f / 180.f;
+
+            SVec3 scale = trans->GetWorldScale();
+            scale.SetX(tanf(outer / 2.f) * scale.Y() * 2.2f); //arbitrary scalar to prevent artifacts from exact sizing
+            scale.SetZ(tanf(outer / 2.f) * scale.Y() * 2.2f);
+            trans->SetWorldScale(scale);
+
+            //update transform for the spotlight
+            light.SetSpotlightTransform(trans->GetLocalToWorldMatrix());
+
             //set our direction using our rotation 
             SVec3 lightDir = SVec3(0, -1, 0);
             lightDir = trans->GetWorldRotation() * lightDir;

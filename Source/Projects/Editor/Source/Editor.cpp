@@ -11,15 +11,15 @@
 #include <Color.h> 
 
 #include <SystemManager.h>
-#include <CameraComponent.h>
-#include <RenderableComponent.h>  
+#include <CameraComponent.h> 
+#include <RenderableComponent.h>   
 #include <LightComponent.h>
 #include <Model3DComponent.h>
 #include <CapsuleColliderComponent.h>
 #include <BoxColliderComponent.h>
 
 #include "CharacterControllerComponent.h"
-#include "EditorCameraSystem.h"
+#include "EditorCameraSystem.h"  
 
 using namespace ursine;
 
@@ -215,9 +215,11 @@ void Editor::initializeScene(void)
     auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
-
-        component->SetType( ecs::LightType::Directional );
-        component->SetPosition( { 0.0f, 0.0f, 0.0f } );
+        auto transf = univLight->GetTransform();
+        transf->SetWorldPosition(SVec3(10, 10, 0));
+        transf->SetWorldScale(SVec3(10, 30, 10)); 
+        component->SetType( ecs::LightType::Spot);
+        component->SetPosition( { 10.0f, 10.0f, 0.0f } );
         component->SetRadius( 40.0f );
         component->SetDirection( { 0.0f, 1.0f, 0.0f } );
         component->SetColor( Color::White );
@@ -234,11 +236,11 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     scene->Update( dt );
 
-    m_graphics->StartFrame( );
+    m_graphics->StartFrame( );  
 
-    scene->Render( );
+    scene->Render( ); 
 
-    m_mainWindow.ui->DrawMain( );
+    m_mainWindow.ui->DrawMain( );  
 
     m_graphics->EndFrame( );
 }

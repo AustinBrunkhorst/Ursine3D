@@ -175,51 +175,6 @@ namespace ursine
         ///////////////////////////////////////////////////////////////////
         // LIGHTS /////////////////////////////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////
-        // directional light
-        class DirectionalLight : public Renderable
-        {
-            friend class RenderableManager;
-        public:
-            SVec3 &GetDirection();
-            void SetDirection(const SVec3 &dir);
-            void SetDirection(float x, float y, float z);
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b);
-
-            DirectionalLight();
-
-        private:
-            SVec3 Direction_;
-            Color Color_;
-        };
-
-        ///////////////////////////////////////////////////////////////////
-        // point light
-        class PointLight : public Renderable
-        {
-        public:
-            SVec3 &GetPosition();
-            void SetPosition(const SVec3 &position);
-            void SetPosition(float x, float y, float z);
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b);
-
-            float &GetRadius();
-            void SetRadius(float radius);
-
-            PointLight();
-
-        private:
-            SVec3 m_position;
-            Color Color_;
-            float Radius_;
-        };
-
         /////////////////////////////////////////////////////////////
         // universal light class
         class Light : public Renderable
