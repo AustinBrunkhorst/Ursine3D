@@ -37,6 +37,13 @@ namespace ursine
 			);
         }
 
+        bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
+                                    physics::RaycastOutput& output,
+                                    physics::RaycastType type)
+        {
+            return m_simulation.Raycast( input, output, type );
+        }
+
         void PhysicsSystem::Process(Entity* entity)
         {
             auto trans = entity->GetTransform( );

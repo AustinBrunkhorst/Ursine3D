@@ -180,8 +180,6 @@ void Editor::initializeScene(void)
 
         entity_char->SetName( name );
 
-        entity_char->AddComponent<CharacterController>( )->id = i;
-
         auto *collider = entity_char->AddComponent<ecs::CapsuleCollider>();
 
 		/*auto body = entity_char->AddComponent<ecs::Rigidbody>( );

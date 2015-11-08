@@ -21,6 +21,8 @@ namespace ursine
 
 		void Rigidbody::OnInitialize(void)
 		{
+            m_rigidbody.SetID( GetOwner( )->GetUniqueID( ) );
+
 			GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
 		}

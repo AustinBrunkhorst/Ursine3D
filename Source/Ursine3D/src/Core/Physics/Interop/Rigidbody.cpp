@@ -21,6 +21,20 @@ namespace ursine
             SetBodyType( bodyType );
         }
 
+        void Rigidbody::SetID(int id)
+        {
+        #ifdef BULLET_PHYSICS
+            setUserIndex( id );
+        #endif
+        }
+
+        int Rigidbody::GetID(void)
+        {
+        #ifdef BULLET_PHYSICS
+            return getUserIndex( );
+        #endif
+        }
+
         void Rigidbody::SetBodyType(BodyType bodyType)
         {
             m_bodyType = bodyType;
@@ -136,17 +150,17 @@ namespace ursine
 
         void Rigidbody::LockXRotation(bool flag)
         {
-            m_rotLock.X( ) = flag ? 0 : 1;
+            m_rotLock.X( ) = flag ? 0.0f : 1.0f;
         }
 
         void Rigidbody::LockYRotation(bool flag)
         {
-            m_rotLock.Y( ) = flag ? 0 : 1;
+            m_rotLock.Y( ) = flag ? 0.0f : 1.0f;
         }
 
         void Rigidbody::LockZRotation(bool flag)
         {
-            m_rotLock.Z( ) = flag ? 0 : 1;
+            m_rotLock.Z( ) = flag ? 0.0f : 1.0f;
         }
 
         SVec3 Rigidbody::GetOffset(void) const

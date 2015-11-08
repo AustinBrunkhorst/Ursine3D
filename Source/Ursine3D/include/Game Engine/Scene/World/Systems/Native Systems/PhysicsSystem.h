@@ -1,16 +1,22 @@
-// Physics System
-// - World System
-// - Add / Remove collision shapes and bodies to / from the simulation
-// - initializes a new instance of a simulation whenever it is constructed
-// - debug / performance debug info for this world's physics sim
-
-// AGGREGATE THE SIMULATION
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** PhysicsSystem.h
+**
+** Author:
+** - Jordan Ellis - contact@jordanellis.me
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
 
 #pragma once
 
 #include "FilterSystem.h"
 #include "Simulation.h"
 #include "PhysicsInteropConfig.h"
+#include "Raycasting.h"
 
 namespace ursine
 {
@@ -23,6 +29,10 @@ namespace ursine
 
         public:
             PhysicsSystem(World *world);
+
+            bool Raycast(const ursine::physics::RaycastInput &input, 
+                         ursine::physics::RaycastOutput &output,
+                         ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT);
 
         protected:
             void Process(Entity *entity) override;

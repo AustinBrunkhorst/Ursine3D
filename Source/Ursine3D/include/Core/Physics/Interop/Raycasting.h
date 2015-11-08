@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BoxCollider.h
+** Raycasting.h
 **
 ** Author:
 ** - Jordan Ellis - contact@jordanellis.me
@@ -13,20 +13,30 @@
 
 #pragma once
 
-#include "PhysicsInteropConfig.h"
 #include "SVec3.h"
+#include "EntityConfig.h"
 
 namespace ursine
 {
     namespace physics
     {
-        class BoxCollider : public BoxColliderBase
+        enum RaycastType
         {
-        public:
-            BoxCollider(void);
+            RAYCAST_CLOSEST_HIT,
+            RAYCAST_ALL_HITS,
+            RAYCAST_NUM
+        };
 
-            SVec3 GetDimensions(void) const;
-            void SetDimensions(const SVec3 &dimensions);
+        struct RaycastInput
+        {
+            SVec3 start, dir;
+            float distance;
+        };
+        
+        struct RaycastOutput
+        {
+            std::vector<SVec3> hit, normal;
+            std::vector<ecs::EntityUniqueID> entity;
         };
     }
 }

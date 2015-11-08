@@ -68,7 +68,7 @@ namespace ursine
 
             if (owner->HasComponent<Rigidbody>( ))
                 return owner->GetComponent<Rigidbody>( )->GetOffset( );
-            else if (owner->HasComponent<Body>( ))
+            else
                 return owner->GetComponent<Body>( )->GetOffset( );
         }
 
@@ -78,7 +78,7 @@ namespace ursine
 
             if (owner->HasComponent<Rigidbody>( ))
                 return owner->GetComponent<Rigidbody>( )->SetOffset( offset );
-            else if (owner->HasComponent<Body>( ))
+            else
                 return owner->GetComponent<Body>( )->SetOffset( offset );
         }
 
