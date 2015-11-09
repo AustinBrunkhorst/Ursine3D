@@ -84,6 +84,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH, "DeferredDepth");
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap");
                 shaderManager->LoadShader(SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource");
+                shaderManager->LoadShader(SHADER_SPOT_LIGHT, "SpotlightSource");
                 shaderManager->LoadShader(SHADER_POINT_LIGHT, "PointLightSource");
                 shaderManager->LoadShader(SHADER_QUAD, "QuadShader");
                 shaderManager->LoadShader(SHADER_UI, "UIShader");
@@ -219,6 +220,7 @@ namespace ursine
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();
+
                 switch(current->GetType())
                 {
                 case Light::LIGHT_DIRECTIONAL:
@@ -228,7 +230,7 @@ namespace ursine
                     drawCall.Shader_ = SHADER_POINT_LIGHT;
                     break;
                 case Light::LIGHT_SPOTLIGHT:
-                    URSINE_TODO("Implement spotlight");
+                    drawCall.Shader_ = SHADER_SPOT_LIGHT;
                     break;
                 default:
                     break;
@@ -427,6 +429,11 @@ namespace ursine
             PrepForPointLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
+
+            //spot light pass
+            PrepForSpotlightPass(view, proj);
+            while (m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT)
+                RenderSpotLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
             //directional light pass
             PrepForDirectionalLightPass(view, proj);
@@ -743,6 +750,16 @@ namespace ursine
             dxCore->GetDeviceContext()->PSSetShaderResources(3, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
         }
 
+        void GfxManager::PrepForSpotlightPass(const SMat4& view, const SMat4& proj)
+        {
+            //bind model
+            modelManager->BindModel(modelManager->GetModelIDByName("lightCone"));
+
+            //bind shader
+            shaderManager->BindShader(SHADER_SPOT_LIGHT);
+            layoutManager->SetInputLayout(SHADER_SPOT_LIGHT);
+        }
+
         void GfxManager::PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj)
         {
             modelManager->BindModel(modelManager->GetModelIDByName("internalQuad"));
@@ -908,8 +925,6 @@ namespace ursine
         {
             auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
 
-            float w, h;
-
             BillboardSpriteBuffer bsb;
 
             billboard.GetDimensions(bsb.width, bsb.height);
@@ -1048,7 +1063,7 @@ namespace ursine
             PointLightBuffer pointB;
             pointB.lightPos = lightPosition.ToD3D( );
             pointB.lightRadius = pl.GetRadius( );
-            pointB.intensity = 1;
+            pointB.intensity = pl.GetIntensity( );
             pointB.color.x = pl.GetColor( ).r;
             pointB.color.y = pl.GetColor( ).g;
             pointB.color.z = pl.GetColor( ).b;
@@ -1076,6 +1091,39 @@ namespace ursine
 
             //render!
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sphere")));
+        }
+
+        void GfxManager::RenderSpotLight(_DRAWHND handle, Camera& currentCamera, SMat4& proj)
+        {
+            Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
+
+            SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
+            view.Transpose();
+            SVec3 lightDirection = view.TransformVector(pl.GetDirection());
+
+            SVec3 lightPosition = view.TransformPoint(pl.GetPosition());
+
+            //spotlight data
+            SpotlightBuffer slb;
+            slb.diffuseColor = pl.GetColor( ).ToVector3().ToD3D();
+            slb.lightDirection = lightDirection.ToD3D();
+            slb.lightPosition = lightPosition.ToD3D( );
+            slb.intensity = pl.GetIntensity();
+            slb.innerAngle = cosf((pl.GetSpotlightAngles( ).X() / 2.f) * (3.141596f / 180.0f));   //needs to be in radians
+            slb.outerAngle = cosf((pl.GetSpotlightAngles( ).Y() / 2.f) * (3.141596f / 180.0f));
+
+            bufferManager->MapBuffer<BUFFER_SPOTLIGHT>(&slb, SHADERTYPE_PIXEL);
+
+            //transform data  
+            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform( ) * SMat4(SVec3(0, -0.5, 0)));
+
+            //what culling to use?
+            if(currentCamera.GetLook().Dot(lightDirection) > 0)
+                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            else
+                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("lightCone")));
         }
 
         void GfxManager::RenderDirectionalLight(_DRAWHND handle, Camera &currentCamera)

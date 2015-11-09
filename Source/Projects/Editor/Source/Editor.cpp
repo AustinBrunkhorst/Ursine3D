@@ -11,8 +11,8 @@
 #include <Color.h> 
 
 #include <SystemManager.h>
-#include <CameraComponent.h>
-#include <RenderableComponent.h>
+#include <CameraComponent.h> 
+#include <RenderableComponent.h>   
 #include <LightComponent.h>
 #include <Model3DComponent.h>
 #include <CapsuleColliderComponent.h>
@@ -20,6 +20,8 @@
 
 #include "CharacterControllerComponent.h"
 #include "EditorCameraSystem.h"
+
+#include "PhysicsSystem.h"
 
 using namespace ursine;
 
@@ -269,13 +271,36 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     scene->Update( dt );
 
-    m_graphics->StartFrame( );
+    m_graphics->StartFrame( );  
 
-    scene->Render( );
+    scene->Render( ); 
 
-    m_mainWindow.ui->DrawMain( );
+    m_mainWindow.ui->DrawMain( );  
 
     m_graphics->EndFrame( );
+
+    static bool hi = false;
+
+    if (!hi)
+    {
+        const int numRays = 5;
+        const float incAngle = math::PI_2 / numRays;
+        const float radius = 4.0f;
+
+        for (int i = 0; i < numRays; ++i)
+        {
+            float ang = i * incAngle;
+
+            SVec3 start(0.0f, 40.0f, 0.0f);
+            SVec3 end(cos(ang) * radius, -1.0f, sin(ang) * radius);
+
+            physics::RaycastInput input(start, end);
+            physics::RaycastOutput output;
+
+            m_project->GetScene( )->GetWorld( )->GetEntitySystem(ursine::ecs::PhysicsSystem)
+                ->Raycast(input, output, physics::RAYCAST_CLOSEST_HIT, true, 0.016f);
+        }
+    }
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

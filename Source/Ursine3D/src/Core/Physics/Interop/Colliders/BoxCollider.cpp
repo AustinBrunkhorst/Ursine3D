@@ -11,7 +11,7 @@ namespace ursine
             : BoxColliderBase( btVector3( 1.0f, 1.0f, 1.0f ) )
         #endif
         {
-            
+
         }
 
         SVec3 BoxCollider::GetDimensions(void) const

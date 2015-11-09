@@ -15,10 +15,30 @@ namespace ursine
             , m_rotLock( 1 )
         {
         #ifdef BULLET_PHYSICS
+
             setMotionState( &m_motionState );
+
         #endif
 
             SetBodyType( bodyType );
+        }
+
+        void Rigidbody::SetID(int id)
+        {
+        #ifdef BULLET_PHYSICS
+
+            setUserIndex( id );
+
+        #endif
+        }
+
+        int Rigidbody::GetID(void)
+        {
+        #ifdef BULLET_PHYSICS
+
+            return getUserIndex( );
+
+        #endif
         }
 
         void Rigidbody::SetBodyType(BodyType bodyType)
@@ -26,7 +46,9 @@ namespace ursine
             m_bodyType = bodyType;
 
         #ifdef BULLET_PHYSICS
+
             setCollisionFlags( m_bodyType );
+
         #endif
 
             if (bodyType == BODY_DYNAMIC)
@@ -46,7 +68,7 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             auto rot = transform->GetWorldRotation( );
-            auto pos = transform->GetWorldPosition( ) + m_offset;
+            auto pos = transform->GetWorldPosition( ) + rot * m_offset;
             auto trans = btTransform(
                 btQuaternion( rot.X( ), rot.Y( ), rot.Z( ), rot.W( ) ),
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
@@ -86,7 +108,8 @@ namespace ursine
             );
 
             transform->SetWorldPosition(
-                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) ) - m_offset
+                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) ) - 
+                transform->GetWorldRotation( ) * m_offset
             );
 
         #endif
@@ -99,9 +122,10 @@ namespace ursine
         void Rigidbody::SetCollider(ColliderBase* collider, bool emptyCollider)
         {
         #ifdef BULLET_PHYSICS
+
             setCollisionShape( collider );
 
-            btVector3 localInertia;
+            btVector3 localInertia(0.0f, 0.0f, 0.0f);
 
             if (!emptyCollider)
                 collider->calculateLocalInertia( m_mass, localInertia );
@@ -109,13 +133,16 @@ namespace ursine
             setupRigidBody( RigidbodyConstructionInfo( 
                 m_mass, &m_motionState, collider, localInertia 
             ) );
+
         #endif
         }
 
         ColliderBase *Rigidbody::GetCollider(void)
         {
         #ifdef BULLET_PHYSICS
+
             return getCollisionShape( );
+
         #endif
         }
 
@@ -125,28 +152,32 @@ namespace ursine
                 return;
 
         #ifdef BULLET_PHYSICS
+
             activate( );
+
         #endif
         }
 
         void Rigidbody::SetOffset(const SVec3 &offset)
         {
             m_offset = offset;
+
+            SetAwake( );
         }
 
         void Rigidbody::LockXRotation(bool flag)
         {
-            m_rotLock.X( ) = flag ? 0 : 1;
+            m_rotLock.X( ) = flag ? 0.0f : 1.0f;
         }
 
         void Rigidbody::LockYRotation(bool flag)
         {
-            m_rotLock.Y( ) = flag ? 0 : 1;
+            m_rotLock.Y( ) = flag ? 0.0f : 1.0f;
         }
 
         void Rigidbody::LockZRotation(bool flag)
         {
-            m_rotLock.Z( ) = flag ? 0 : 1;
+            m_rotLock.Z( ) = flag ? 0.0f : 1.0f;
         }
 
         SVec3 Rigidbody::GetOffset(void) const

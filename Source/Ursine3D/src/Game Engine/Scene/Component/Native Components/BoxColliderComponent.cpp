@@ -3,6 +3,7 @@
 #include "BoxColliderComponent.h"
 #include "RigidbodyComponent.h"
 #include "EntityEvent.h"
+#include "PhysicsSystem.h"
 
 namespace ursine
 {
@@ -49,7 +50,10 @@ namespace ursine
 
         void BoxCollider::onTransformChange(EVENT_HANDLER(Entity))
         {
-            updateDimensions( );
+            EVENT_ATTRS(Entity, TransformChangedArgs);
+
+            if (args->scaleChanged)
+                updateDimensions( );
         }
 
         void BoxCollider::updateDimensions(void)
@@ -61,7 +65,12 @@ namespace ursine
             auto rigidbody = GetOwner( )->GetComponent<Rigidbody>( );
 
             if (rigidbody)
+            {
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( rigidbody );
+
                 rigidbody->SetAwake( );
+            }
         }
     }
 }

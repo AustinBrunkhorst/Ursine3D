@@ -30,6 +30,7 @@ namespace ursine
         void Body::SetOffset(const SVec3 &offset)
         {
             m_body.SetOffset( offset );
+            m_body.SetTransform( GetOwner( )->GetTransform( ) );
         }
 
         SVec3 Body::GetOffset(void) const

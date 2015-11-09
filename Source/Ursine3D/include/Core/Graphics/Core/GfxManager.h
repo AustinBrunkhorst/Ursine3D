@@ -119,6 +119,7 @@ namespace ursine
             void PrepForBillboard2D(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
             void PrepForCompute(void);
             void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
+            void PrepForSpotlightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForPrimitives(const SMat4 &view, const SMat4 &proj);
             void PrepForDebugRender(void);
@@ -131,6 +132,7 @@ namespace ursine
             void Render2DBillboard(_DRAWHND handle, Camera &currentCamera);
             void RenderComputeMousePos(void);
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
+            void RenderSpotLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
             void RenderPrimitive(_DRAWHND handle);
             void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);

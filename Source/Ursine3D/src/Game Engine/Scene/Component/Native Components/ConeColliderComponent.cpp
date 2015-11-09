@@ -3,6 +3,7 @@
 #include "ConeColliderComponent.h"
 #include "RigidbodyComponent.h"
 #include "EntityEvent.h"
+#include "PhysicsSystem.h"
 
 namespace ursine
 {
@@ -63,7 +64,10 @@ namespace ursine
 
         void ConeCollider::onTransformChange(EVENT_HANDLER(Entity))
         {
-            updateHeightAndRadius( );
+            EVENT_ATTRS(Entity, TransformChangedArgs);
+
+            if (args->scaleChanged)
+                updateHeightAndRadius( );
         }
 
         void ConeCollider::updateHeightAndRadius(void)
@@ -79,7 +83,12 @@ namespace ursine
             auto rigidbody = GetOwner( )->GetComponent<Rigidbody>( );
 
             if (rigidbody)
+            {
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( rigidbody );
+
                 rigidbody->SetAwake( );
+            }
         }
     }
 }

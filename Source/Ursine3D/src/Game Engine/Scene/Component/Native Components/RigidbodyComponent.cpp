@@ -2,6 +2,7 @@
 
 #include "RigidbodyComponent.h"
 #include "EntityEvent.h"
+#include "PhysicsSystem.h"
 
 namespace ursine
 {
@@ -21,6 +22,8 @@ namespace ursine
 
 		void Rigidbody::OnInitialize(void)
 		{
+            m_rigidbody.SetID( GetOwner( )->GetUniqueID( ) );
+
 			GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
 		}
@@ -45,6 +48,7 @@ namespace ursine
         void Rigidbody::SetOffset(const SVec3 &offset)
         {
             m_rigidbody.SetOffset( offset );
+            m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
         }
 
         void Rigidbody::LockXRotation(bool flag)
@@ -69,6 +73,12 @@ namespace ursine
 
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
         {
+            EVENT_ATTRS(Entity, TransformChangedArgs);
+
+            if (args->scaleChanged)
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( this );
+
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
         }
     }

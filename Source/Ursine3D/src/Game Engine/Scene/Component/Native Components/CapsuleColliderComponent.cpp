@@ -4,6 +4,7 @@
 #include "RigidbodyComponent.h"
 #include "BodyComponent.h"
 #include "EntityEvent.h"
+#include "PhysicsSystem.h"
 
 namespace ursine
 {
@@ -68,7 +69,7 @@ namespace ursine
 
             if (owner->HasComponent<Rigidbody>( ))
                 return owner->GetComponent<Rigidbody>( )->GetOffset( );
-            else if (owner->HasComponent<Body>( ))
+            else
                 return owner->GetComponent<Body>( )->GetOffset( );
         }
 
@@ -78,13 +79,16 @@ namespace ursine
 
             if (owner->HasComponent<Rigidbody>( ))
                 return owner->GetComponent<Rigidbody>( )->SetOffset( offset );
-            else if (owner->HasComponent<Body>( ))
+            else
                 return owner->GetComponent<Body>( )->SetOffset( offset );
         }
 
         void CapsuleCollider::onTransformChange(EVENT_HANDLER(Entity))
         {
-            updateHeightAndRadius( );
+            EVENT_ATTRS(Entity, TransformChangedArgs);
+
+            if (args->scaleChanged)
+                updateHeightAndRadius( );
         }
 
         void CapsuleCollider::updateHeightAndRadius(void)
@@ -102,7 +106,12 @@ namespace ursine
             auto rigidbody = owner->GetComponent<Rigidbody>( );
 
             if (rigidbody)
+            {
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( rigidbody );
+
                 rigidbody->SetAwake( );
+            }
         }
     }
 }
