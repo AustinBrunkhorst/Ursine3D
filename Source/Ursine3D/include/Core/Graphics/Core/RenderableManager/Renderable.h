@@ -72,6 +72,7 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
+            Model3D(void);
             void Initialize(void);
 
             const char *GetModelName(void);
@@ -86,6 +87,8 @@ namespace ursine
 
             void SetColor(const Color color);
             const Color &GetColor() const;
+
+            std::vector<SMat4> &GetMatrixPalette(void);
         private:
             float m_emissive;
             float m_specPow;
@@ -93,6 +96,7 @@ namespace ursine
             Color m_color;
             std::string ModelName_;
             std::string MaterialName_;
+            std::vector<SMat4> m_matrixPalette;
         };
 
         /////////////////////////////////////////////////////////////////
