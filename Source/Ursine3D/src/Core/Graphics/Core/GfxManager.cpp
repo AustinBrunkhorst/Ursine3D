@@ -766,6 +766,9 @@ namespace ursine
             //material buffer
             MaterialDataBuffer mdb;
 
+			//map matrix palette
+
+
             //get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);

@@ -76,6 +76,8 @@ namespace ursine
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+			void SetAnimationTime(const float time);
+			float &GetAnimationTime(void);
         private:
             float m_emissive;
             float m_specPow;
@@ -83,10 +85,7 @@ namespace ursine
             std::string ModelName_;
             std::string MaterialName_;
 			
-			//float m_animationTime;
-			//AnimInfo *myCurrentAnimation;
-			//int currentKeyframe;
-			//int nextKeyframe;
+			float m_animationTime;
         };
 
         /////////////////////////////////////////////////////////////////

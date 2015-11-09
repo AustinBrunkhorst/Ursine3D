@@ -67,6 +67,17 @@ namespace ursine
             intensity = m_specIntensity;
         }
 
+		void Model3D::SetAnimationTime(const float time)
+		{
+			m_animationTime = time;
+		}
+
+		float & Model3D::GetAnimationTime(void)
+		{
+			// TODO: insert return statement here
+			return m_animationTime;
+		}
+
         const char *Model3D::GetModelName(void)
         {
             return ModelName_.c_str();

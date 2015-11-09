@@ -261,7 +261,8 @@ namespace ursine
 			ufmt_loader::ModelInfo ufmt_model;
 			// Serialize in model
 			ufmt_model.SerializeIn(hFile);
-			// constrcut FbxModel by ufmt_model (this is prototype->change more efficiently later)
+			// serialize in->push_back into ModelInfo array or vector, then do GetFinalTransform function on update
+			// and pass matrices to the matPal, then it will do
 
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////
