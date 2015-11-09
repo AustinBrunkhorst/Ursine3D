@@ -41,6 +41,8 @@ namespace ursine
             physics::Simulation m_simulation;
 			physics::DebugDrawer m_debugDrawer;
 
+            Filter m_collisionShapes;
+
             void OnInitialize(void) override;
             void OnRemove(void) override;
 
@@ -51,8 +53,6 @@ namespace ursine
 
             void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
             void removeCollider(Entity *entity);
-
-            Filter m_collisionShapes;
 
         } Meta(Enable);
     }

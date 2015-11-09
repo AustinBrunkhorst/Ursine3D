@@ -19,7 +19,9 @@
 #include <BoxColliderComponent.h>
 
 #include "CharacterControllerComponent.h"
-#include "EditorCameraSystem.h"  
+#include "EditorCameraSystem.h"
+
+#include "DebugSystem.h"
 
 using namespace ursine;
 
@@ -222,6 +224,10 @@ void Editor::initializeScene(void)
         component->SetDirection( { 0.0f, 1.0f, 0.0f } );
         component->SetColor( Color::White );
     }
+
+    auto *drawer = world->GetEntitySystem( ursine::ecs::DebugSystem );
+
+    drawer->DrawLine(SVec3::Zero(), SVec3(20.0f, 100.0f, 0.0f), Color::Cyan, 10.0f);
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
