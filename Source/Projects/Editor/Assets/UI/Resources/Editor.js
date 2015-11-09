@@ -24,21 +24,21 @@ Application.initWindows = function() {
 	mainDockContainer.appendChild(mainDock);
 	var sceneView = new ursine_editor_windows_SceneView();
 	var leftColumn = mainDock.addColumn();
-	leftColumn.style.width = "20%";
+	leftColumn.style.width = "15%";
 	var row = leftColumn.addRow();
 	row.style.height = "100%";
 	var column = row.addColumn();
 	column.style.width = "100%";
 	column.appendChild(new ursine_editor_windows_EntityInspector().window);
 	var middleColumn = mainDock.addColumn();
-	middleColumn.style.width = "60%";
+	middleColumn.style.width = "70%";
 	var row1 = middleColumn.addRow();
 	row1.style.height = "100%";
 	var column1 = row1.addColumn();
 	column1.style.width = "100%";
 	column1.appendChild(sceneView.window);
 	var rightColumn = mainDock.addColumn();
-	rightColumn.style.width = "20%";
+	rightColumn.style.width = "15%";
 	var row2 = rightColumn.addRow();
 	row2.style.height = "100%";
 	var column2 = row2.addColumn();
@@ -92,8 +92,8 @@ Reflect.fields = function(o) {
 var Std = function() { };
 $hxClasses["Std"] = Std;
 Std.__name__ = ["Std"];
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
+Std["int"] = function(x) {
+	return x | 0;
 };
 Std.parseInt = function(x) {
 	var v = parseInt(x,10);
@@ -277,77 +277,6 @@ js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
-var js_Boot = function() { };
-$hxClasses["js.Boot"] = js_Boot;
-js_Boot.__name__ = ["js","Boot"];
-js_Boot.__string_rec = function(o,s) {
-	if(o == null) return "null";
-	if(s.length >= 5) return "<...>";
-	var t = typeof(o);
-	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
-	switch(t) {
-	case "object":
-		if(o instanceof Array) {
-			if(o.__enum__) {
-				if(o.length == 2) return o[0];
-				var str2 = o[0] + "(";
-				s += "\t";
-				var _g1 = 2;
-				var _g = o.length;
-				while(_g1 < _g) {
-					var i1 = _g1++;
-					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
-				}
-				return str2 + ")";
-			}
-			var l = o.length;
-			var i;
-			var str1 = "[";
-			s += "\t";
-			var _g2 = 0;
-			while(_g2 < l) {
-				var i2 = _g2++;
-				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
-			}
-			str1 += "]";
-			return str1;
-		}
-		var tostr;
-		try {
-			tostr = o.toString;
-		} catch( e ) {
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
-			return "???";
-		}
-		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
-			var s2 = o.toString();
-			if(s2 != "[object Object]") return s2;
-		}
-		var k = null;
-		var str = "{\n";
-		s += "\t";
-		var hasp = o.hasOwnProperty != null;
-		for( var k in o ) {
-		if(hasp && !o.hasOwnProperty(k)) {
-			continue;
-		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
-			continue;
-		}
-		if(str.length != 2) str += ", \n";
-		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
-		}
-		s = s.substring(1);
-		str += "\n" + s + "}";
-		return str;
-	case "function":
-		return "<function>";
-	case "string":
-		return o;
-	default:
-		return String(o);
-	}
-};
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
 	this.mainMenu = new MainMenuControl();
@@ -648,6 +577,7 @@ var ursine_editor_scene_component_inspectors_ComponentInspectionHandler = functi
 	this.m_entity = entity;
 	this.m_component = component;
 	this.m_componentType = ursine_editor_Editor.instance.componentDatabase.getComponentType(this.m_component.type);
+	this.m_fieldHandlers = new haxe_ds_StringMap();
 	this.fieldChangeEvents = new ursine_utils_EventManager();
 	this.inspector = new ComponentInspectorControl();
 	this.inspector.heading = component.type;
@@ -657,10 +587,22 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = [
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = {
 	updateField: function(name,value) {
 		this.m_component.value[name] = value;
-		this.fieldChangeEvents.trigger(name,{ name : name, value : value});
+		var result = this.fieldChangeEvents.trigger(name,{ name : name, value : value});
+		if(result != false) {
+			var handler = this.m_fieldHandlers.get(name);
+			if(handler != null) handler.updateValue(value);
+		}
 	}
 	,addField: function(field) {
+		var k = field.get_name();
+		this.m_fieldHandlers.set(k,field);
+		field;
 		this.inspector.fieldInspectors.appendChild(field.inspector);
+	}
+	,removeField: function(field) {
+		var key = field.get_name();
+		this.m_fieldHandlers.remove(key);
+		this.inspector.fieldInspectors.removeChild(field.inspector);
 	}
 	,notifyChanged: function(field,value) {
 		this.m_entity.updateComponentField(this.m_component.type,field.name,value);
@@ -680,20 +622,25 @@ var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(o
 $hxClasses["ursine.editor.scene.component.inspectors.FieldInspectionHandler"] = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","FieldInspectionHandler"];
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype = {
-	remove: function() {
+	updateValue: function(value) {
+		this.m_instance = value;
+	}
+	,remove: function() {
 		this.inspector.parentNode.removeChild(this.inspector);
+	}
+	,get_name: function() {
+		return this.m_field.name;
 	}
 };
 var ursine_editor_scene_component_inspectors_components_DefaultComponentInspector = function(entity,component) {
 	ursine_editor_scene_component_inspectors_ComponentInspectionHandler.call(this,entity,component);
 	var database = ursine_editor_Editor.instance.componentDatabase;
 	var componentType = database.getComponentType(component.type);
-	var fields = Reflect.fields(componentType.fields);
 	var _g = 0;
-	while(_g < fields.length) {
-		var name = fields[_g];
+	var _g1 = componentType.fields;
+	while(_g < _g1.length) {
+		var field = _g1[_g];
 		++_g;
-		var field = Reflect.field(componentType.fields,name);
 		var instance = Reflect.field(component.value,field.name);
 		var type = database.getNativeType(field.type);
 		this.addField(database.createFieldInspector(this,instance,field,type));
@@ -723,10 +670,10 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		while(this.m_typeFields.length > 0) this.m_typeFields.pop().remove();
 		var fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[type];
 		var _g = 0;
-		while(_g < fields.length) {
-			var name = fields[_g];
+		var _g1 = componentType.fields;
+		while(_g < _g1.length) {
+			var field = _g1[_g];
 			++_g;
-			var field = Reflect.field(componentType.fields,name);
 			var instance = Reflect.field(this.m_component.value,field.name);
 			var type1 = database.getNativeType(field.type);
 			var inspector = database.createFieldInspector(this,instance,field,type1);
@@ -764,31 +711,35 @@ ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.prototype 
 });
 var ursine_editor_scene_component_inspectors_fields_ColorFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
-	var fields = Reflect.fields(type.fields);
-	var _g = 0;
-	while(_g < fields.length) {
-		var name = fields[_g];
-		++_g;
-		var colorField = Reflect.field(type.fields,name);
-		this.createColorField(colorField);
-	}
+	var previewContainer;
+	var _this = window.document;
+	previewContainer = _this.createElement("div");
+	previewContainer.classList.add("color-preview");
+	this.inspector.container.appendChild(previewContainer);
+	var _this1 = window.document;
+	this.m_colorPreview = _this1.createElement("div");
+	this.m_colorPreview.addEventListener("click",$bind(this,this.onPreviewClick));
+	previewContainer.appendChild(this.m_colorPreview);
+	this.m_colorInput = null;
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.ColorFieldInspector"] = ursine_editor_scene_component_inspectors_fields_ColorFieldInspector;
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","ColorFieldInspector"];
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
-	createColorField: function(field) {
-		var _g = this;
-		var number = new NumberInputControl();
-		number.step = "1";
-		number.min = "0";
-		number.max = "255";
-		number.value = Std.string(Reflect.field(this.m_instance,field.name) * 255);
-		number.addEventListener("input",function() {
-			_g.m_instance[field.name] = number.valueAsNumber / 255.0;
-			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
-		});
-		this.inspector.container.appendChild(number);
+	updateValue: function(value) {
+		var red = Reflect.field(value,"r") * 255;
+		var green = Reflect.field(value,"g") * 255;
+		var blue = Reflect.field(value,"b") * 255;
+		var alpha = Reflect.field(value,"a") * 255;
+		this.m_colorPreview.style.background = "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+	}
+	,onPreviewClick: function(e) {
+		if(this.m_colorInput != null) return;
+		this.m_colorInput = new ColorInputControl(this.m_instance);
+		this.m_colorInput.style.left = "" + e.clientX + "px";
+		this.m_colorInput.style.top = "" + e.clientY + "px";
+		window.document.body.appendChild(this.m_colorInput);
 	}
 });
 var ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector = function(owner,instance,field,type) {
@@ -825,27 +776,39 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = function(owner,instance,field,type) {
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
-	var number = new NumberInputControl();
-	number.value = this.m_instance;
-	number.addEventListener("input",function() {
-		var number1 = number.valueAsNumber;
-		if(isNaN(number1)) number1 = 0;
-		if(_g.m_type.name == "float" || _g.m_type.name == "double") _g.m_instance = number1; else _g.m_instance = number1 | 0;
-		_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+	this.m_number = new NumberInputControl();
+	this.m_number.value = this.m_instance;
+	this.m_number.addEventListener("change",function() {
+		var value = _g.m_number.valueAsNumber;
+		if((function($this) {
+			var $r;
+			var f = value;
+			$r = isNaN(f);
+			return $r;
+		}(this))) value = 0;
+		if(!(_g.m_type.name == "float" || _g.m_type.name == "double")) value = Std["int"](value);
+		_g.m_owner.notifyChanged(_g.m_field,value);
 	});
-	number.addEventListener("focus",function(e) {
-		number.select();
+	this.m_number.addEventListener("focus",function(e) {
+		_g.m_number.select();
 		e.preventDefault();
 	});
-	this.inspector.container.appendChild(number);
+	this.inspector.container.appendChild(this.m_number);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.NumberFieldInspector"] = ursine_editor_scene_component_inspectors_fields_NumberFieldInspector;
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","NumberFieldInspector"];
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
+	updateValue: function(value) {
+		var number;
+		if(this.m_type.name == "float" || this.m_type.name == "double") number = value.toPrecision(4); else number = Std["int"](value);
+		this.m_number.value = number;
+	}
 });
 var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
+	this.m_string = new TextInputControl();
+	this.inspector.container.appendChild(this.m_string);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.StringFieldInspector"] = ursine_editor_scene_component_inspectors_fields_StringFieldInspector;
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","StringFieldInspector"];
@@ -854,35 +817,50 @@ ursine_editor_scene_component_inspectors_fields_StringFieldInspector.prototype =
 });
 var ursine_editor_scene_component_inspectors_fields_VectorFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
-	var fields = Reflect.fields(type.fields);
+	this.m_fields = new haxe_ds_StringMap();
 	var _g = 0;
-	while(_g < fields.length) {
-		var name = fields[_g];
+	var _g1 = type.fields;
+	while(_g < _g1.length) {
+		var field1 = _g1[_g];
 		++_g;
-		var vectorField = Reflect.field(type.fields,name);
-		this.createVectorField(vectorField);
+		this.createVectorField(field1);
 	}
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.VectorFieldInspector"] = ursine_editor_scene_component_inspectors_fields_VectorFieldInspector;
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","VectorFieldInspector"];
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
-	createVectorField: function(field) {
+	updateValue: function(value) {
+		var $it0 = this.m_fields.keys();
+		while( $it0.hasNext() ) {
+			var field = $it0.next();
+			this.updateVectorField(field,Reflect.field(value,field));
+		}
+	}
+	,createVectorField: function(field) {
 		var _g = this;
 		var number = new NumberInputControl();
 		number.step = "0.1";
-		number.value = Reflect.field(this.m_instance,field.name);
-		number.addEventListener("input",function() {
-			var number1 = number.valueAsNumber;
-			if(isNaN(number1)) number1 = 0;
-			_g.m_instance[field.name] = number1;
+		number.addEventListener("change",function() {
+			var value = number.valueAsNumber;
+			if(isNaN(value)) value = 0;
+			_g.m_instance[field.name] = value;
 			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
 		});
 		number.addEventListener("focus",function(e) {
 			number.select();
 			e.preventDefault();
 		});
+		{
+			this.m_fields.set(field.name,number);
+			number;
+		}
 		this.inspector.container.appendChild(number);
+	}
+	,updateVectorField: function(name,value) {
+		var field = this.m_fields.get(name);
+		field.value = value.toPrecision(4);
 	}
 });
 var ursine_utils_IEventContainer = function() { };

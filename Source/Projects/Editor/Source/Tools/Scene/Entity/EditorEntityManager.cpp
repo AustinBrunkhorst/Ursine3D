@@ -179,6 +179,16 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 
     if (args->entity->HasComponent<Selected>( ))
     {
+    #if defined(CONFIG_DEBUG)
+        UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
+            "Notifying change of unknown field.\n"
+            "Component: %s\n"
+            "Field: %s",
+            args->component->GetType( ).GetName( ),
+            args->field.c_str( )
+        );
+    #endif
+
         Json message = Json::object {
             { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
             { "component", args->component->GetType( ).GetName( ) },

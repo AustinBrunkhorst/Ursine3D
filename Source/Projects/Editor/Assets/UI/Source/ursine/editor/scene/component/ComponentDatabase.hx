@@ -28,15 +28,13 @@ extern class NativeType {
     var name : String;
     var enumValue : Null<NativeEnum>;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 extern class ComponentType {
     var meta : NativeMeta;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 class ComponentDatabase {
