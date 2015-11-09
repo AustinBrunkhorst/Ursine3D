@@ -36,6 +36,9 @@ namespace ursine
                          ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT, 
                          bool debugDraw = false, float drawDuration = 2.0f);
 
+            void SetGravity(const SVec3 &gravity);
+            SVec3 GetGravity(void) const;
+
         protected:
             void Process(Entity *entity) override;
 
@@ -49,6 +52,8 @@ namespace ursine
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
+
+            void OnAfterLoad(void) override;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));

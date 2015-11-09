@@ -53,6 +53,9 @@ namespace ursine
 
             bool Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type);
 
+            void SetGravity(const SVec3 &gravity);
+            SVec3 GetGravity(void) const;
+
         private:
 
             // terminate the simulation

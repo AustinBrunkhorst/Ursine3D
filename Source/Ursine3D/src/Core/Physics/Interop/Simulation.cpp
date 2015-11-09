@@ -78,6 +78,24 @@ namespace ursine
         #endif
         }
 
+        void Simulation::SetGravity(const SVec3& gravity)
+        {
+        #ifdef BULLET_PHYSICS
+            btVector3 grav( gravity.X( ), gravity.Y( ), gravity.Z( ) );
+
+            m_dynamicsWorld->setGravity( grav );
+        #endif
+        }
+
+        SVec3 Simulation::GetGravity(void) const
+        {
+        #ifdef BULLET_PHYSICS
+            auto grav = m_dynamicsWorld->getGravity( );
+
+            return { grav.getX( ), grav.getY( ), grav.getZ( ) };
+        #endif
+        }
+
         bool Simulation::Raycast(const RaycastInput& input, RaycastOutput& output, RaycastType type)
         {
             output.entity.clear( );

@@ -24,4 +24,4 @@
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
 #include "EmptyColliderComponent.h"
-
+#include "PhysicsSettingsComponent.h"

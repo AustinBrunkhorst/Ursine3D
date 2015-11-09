@@ -10,6 +10,7 @@
 #include "ConeColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "GfxAPI.h"
+#include "PhysicsSettingsComponent.h"
 
 namespace ursine
 {
@@ -35,6 +36,22 @@ namespace ursine
 				physics::DRAW_AABB |
 				physics::DRAW_CONTACT_POINTS
 			);
+        }
+
+        void PhysicsSystem::SetGravity(const SVec3& gravity)
+        {
+            // We have to wake up all rigidbodies before we set the gravity
+            auto entities = m_world->GetEntitiesFromFilter(Filter( ).All<Rigidbody>( ));
+
+            for (auto &entity : entities)
+                entity->GetComponent<Rigidbody>( )->SetAwake( );
+
+            m_simulation.SetGravity( gravity );
+        }
+
+        SVec3 PhysicsSystem::GetGravity(void) const
+        {
+            return m_simulation.GetGravity( );
         }
 
         bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
@@ -105,6 +122,14 @@ namespace ursine
                 .Off( WORLD_UPDATE, &PhysicsSystem::onUpdate )
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &PhysicsSystem::onComponentAdded )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &PhysicsSystem::onComponentRemoved );
+        }
+
+        void PhysicsSystem::OnAfterLoad(void)
+        {
+            auto levelSettings = m_world->GetSettings( );
+
+            if (!levelSettings->HasComponent<PhysicsSettings>( ))
+                levelSettings->AddComponent<PhysicsSettings>( );
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
