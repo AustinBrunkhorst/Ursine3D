@@ -87,7 +87,7 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             auto &startP = input.start;
-            auto endP = input.start + input.dir * input.distance;
+            auto &endP = input.end;
 
             btVector3 start( startP.X( ), startP.Y( ), startP.Z( ) );
             btVector3 end( endP.X( ), endP.Y( ), endP.Z( ) );

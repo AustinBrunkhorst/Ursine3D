@@ -21,6 +21,7 @@ namespace ursine
 {
     namespace graphics
     {
+        class DrawingAPI;
         class GfxAPI;
     }
 
@@ -35,6 +36,9 @@ namespace ursine
 
             void DrawLine(const SVec3 &start, const SVec3 &end, 
                           const Color &color, float duration);
+
+            void DrawPoint(const SVec3 &point, float size, 
+                           const Color &color, float duration);
 
         private:
 
@@ -52,6 +56,8 @@ namespace ursine
                 float duration;
                 float timer;
 
+                virtual void Draw(graphics::DrawingAPI &drawer) = 0;
+
                 Request(float duration)
                     : duration( duration )
                     , timer( 0.0f ) { }
@@ -68,9 +74,27 @@ namespace ursine
                     , start( start )
                     , end( end )
                     , color( color ) { }
+
+                void Draw(graphics::DrawingAPI &draw) override;
             };
 
-            std::vector<LineRequest> m_lineRequests;
+            struct PointRequest : Request
+            {
+                SVec3 point;
+                float size;
+                Color color;
+
+                PointRequest(const SVec3 point, float size,
+                             const Color &color, float duration)
+                    : Request( duration )
+                    , point( point )
+                    , size( size )
+                    , color( color ) { }
+
+                void Draw(graphics::DrawingAPI &draw) override;
+            };
+
+            std::vector< std::shared_ptr<Request> > m_requests;
 
         } Meta(Enable);
     }

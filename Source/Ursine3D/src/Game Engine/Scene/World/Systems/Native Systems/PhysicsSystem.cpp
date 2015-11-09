@@ -39,9 +39,32 @@ namespace ursine
 
         bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
                                     physics::RaycastOutput& output,
-                                    physics::RaycastType type)
+                                    physics::RaycastType type, bool debug, float drawDuration)
         {
-            return m_simulation.Raycast( input, output, type );
+            bool result = m_simulation.Raycast( input, output, type );
+
+            // debug draw the raycast results
+            if (result && debug)
+            {
+                auto &start = input.start;
+
+                for (size_t i = 0, n = output.hit.size( ); i < n; ++i)
+                {
+                    auto &hit = output.hit[ i ];
+                    auto &norm = output.normal[ i ];
+
+                    // Draw the ray to the hit
+                    m_debugSystem->DrawLine( start, hit, Color::Blue, drawDuration );
+
+                    // Draw the normal
+                    m_debugSystem->DrawLine( hit, hit + norm * 1.0f, Color::White, drawDuration );
+
+                    // Draw the hit location
+                    m_debugSystem->DrawPoint( hit, 10.0f, Color::Cyan, drawDuration );
+                }
+            }
+
+            return result;
         }
 
         void PhysicsSystem::Process(Entity* entity)
@@ -65,6 +88,8 @@ namespace ursine
         void PhysicsSystem::OnInitialize(void)
         {
             FilterSystem::OnInitialize( );
+
+            m_debugSystem = m_world->GetEntitySystem( DebugSystem );
 
             m_world->Listener( this )
                 .On( WORLD_UPDATE, &PhysicsSystem::onUpdate )

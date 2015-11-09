@@ -29,11 +29,10 @@ namespace ursine
 
         struct RaycastInput
         {
-            SVec3 start, dir;
-            float distance;
+            SVec3 start, end;
 
-            RaycastInput(const SVec3 &start, const SVec3 &direction, float distance)
-                : start( start ), dir( direction ), distance( distance ) { }
+            RaycastInput(const SVec3 &start, const SVec3 &end)
+                : start( start ), end( end ) { }
         };
         
         struct RaycastOutput

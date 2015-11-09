@@ -21,7 +21,7 @@
 #include "CharacterControllerComponent.h"
 #include "EditorCameraSystem.h"
 
-#include "DebugSystem.h"
+#include "PhysicsSystem.h"
 
 using namespace ursine;
 
@@ -218,16 +218,12 @@ void Editor::initializeScene(void)
         auto transf = univLight->GetTransform();
         transf->SetWorldPosition(SVec3(10, 10, 0));
         transf->SetWorldScale(SVec3(10, 30, 10)); 
-        component->SetType( ecs::LightType::Spot);
+        component->SetType( ecs::LightType::Directional );
         component->SetPosition( { 10.0f, 10.0f, 0.0f } );
         component->SetRadius( 40.0f );
         component->SetDirection( { 0.0f, 1.0f, 0.0f } );
         component->SetColor( Color::White );
     }
-
-    auto *drawer = world->GetEntitySystem( ursine::ecs::DebugSystem );
-
-    drawer->DrawLine(SVec3::Zero(), SVec3(20.0f, 100.0f, 0.0f), Color::Cyan, 10.0f);
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -247,6 +243,29 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     m_mainWindow.ui->DrawMain( );  
 
     m_graphics->EndFrame( );
+
+    static bool hi = false;
+
+    if (!hi)
+    {
+        const int numRays = 5;
+        const float incAngle = math::PI_2 / numRays;
+        const float radius = 4.0f;
+
+        for (int i = 0; i < numRays; ++i)
+        {
+            float ang = i * incAngle;
+
+            SVec3 start(0.0f, 40.0f, 0.0f);
+            SVec3 end(cos(ang) * radius, -1.0f, sin(ang) * radius);
+
+            physics::RaycastInput input(start, end);
+            physics::RaycastOutput output;
+
+            m_project->GetScene( )->GetWorld( )->GetEntitySystem(ursine::ecs::PhysicsSystem)
+                ->Raycast(input, output, physics::RAYCAST_ALL_HITS, true, 0.016f);
+        }
+    }
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

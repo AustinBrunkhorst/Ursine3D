@@ -17,6 +17,7 @@
 #include "Simulation.h"
 #include "PhysicsInteropConfig.h"
 #include "Raycasting.h"
+#include "DebugSystem.h"
 
 namespace ursine
 {
@@ -32,7 +33,8 @@ namespace ursine
 
             bool Raycast(const ursine::physics::RaycastInput &input, 
                          ursine::physics::RaycastOutput &output,
-                         ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT);
+                         ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT, 
+                         bool debugDraw = false, float drawDuration = 2.0f);
 
         protected:
             void Process(Entity *entity) override;
@@ -42,6 +44,8 @@ namespace ursine
 			physics::DebugDrawer m_debugDrawer;
 
             Filter m_collisionShapes;
+
+            DebugSystem *m_debugSystem;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
