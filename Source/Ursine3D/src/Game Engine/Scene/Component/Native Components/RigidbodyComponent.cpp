@@ -47,6 +47,7 @@ namespace ursine
         void Rigidbody::SetOffset(const SVec3 &offset)
         {
             m_rigidbody.SetOffset( offset );
+            m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
         }
 
         void Rigidbody::LockXRotation(bool flag)

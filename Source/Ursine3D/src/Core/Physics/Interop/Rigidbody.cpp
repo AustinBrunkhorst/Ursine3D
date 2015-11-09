@@ -60,7 +60,7 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             auto rot = transform->GetWorldRotation( );
-            auto pos = transform->GetWorldPosition( ) + m_offset;
+            auto pos = transform->GetWorldPosition( ) + rot * m_offset;
             auto trans = btTransform(
                 btQuaternion( rot.X( ), rot.Y( ), rot.Z( ), rot.W( ) ),
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
@@ -100,7 +100,8 @@ namespace ursine
             );
 
             transform->SetWorldPosition(
-                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) ) - m_offset
+                SVec3( pos.getX( ), pos.getY( ), pos.getZ( ) ) - 
+                transform->GetWorldRotation( ) * m_offset
             );
 
         #endif
