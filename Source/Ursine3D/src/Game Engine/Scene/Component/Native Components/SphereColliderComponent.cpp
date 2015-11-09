@@ -3,6 +3,7 @@
 #include "SphereColliderComponent.h"
 #include "RigidbodyComponent.h"
 #include "EntityEvent.h"
+#include "PhysicsSystem.h"
 
 namespace ursine
 {
@@ -45,7 +46,10 @@ namespace ursine
 
         void SphereCollider::onTransformChange(EVENT_HANDLER(Entity))
         {
-            updateRadius( );
+            EVENT_ATTRS(Entity, TransformChangedArgs);
+
+            if (args->scaleChanged)
+                updateRadius( );
         }
 
         void SphereCollider::updateRadius(void)
@@ -58,7 +62,12 @@ namespace ursine
             auto rigidbody = GetOwner( )->GetComponent<Rigidbody>( );
 
             if (rigidbody)
+            {
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( rigidbody );
+
                 rigidbody->SetAwake( );
+            }
         }
     }
 }

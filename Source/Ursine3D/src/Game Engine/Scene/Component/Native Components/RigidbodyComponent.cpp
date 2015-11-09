@@ -2,6 +2,7 @@
 
 #include "RigidbodyComponent.h"
 #include "EntityEvent.h"
+#include "PhysicsSystem.h"
 
 namespace ursine
 {
@@ -72,6 +73,12 @@ namespace ursine
 
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
         {
+            EVENT_ATTRS(Entity, TransformChangedArgs);
+
+            if (args->scaleChanged)
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( this );
+
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
         }
     }

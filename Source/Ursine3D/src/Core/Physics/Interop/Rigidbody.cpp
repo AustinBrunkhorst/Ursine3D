@@ -15,7 +15,9 @@ namespace ursine
             , m_rotLock( 1 )
         {
         #ifdef BULLET_PHYSICS
+
             setMotionState( &m_motionState );
+
         #endif
 
             SetBodyType( bodyType );
@@ -24,14 +26,18 @@ namespace ursine
         void Rigidbody::SetID(int id)
         {
         #ifdef BULLET_PHYSICS
+
             setUserIndex( id );
+
         #endif
         }
 
         int Rigidbody::GetID(void)
         {
         #ifdef BULLET_PHYSICS
+
             return getUserIndex( );
+
         #endif
         }
 
@@ -40,7 +46,9 @@ namespace ursine
             m_bodyType = bodyType;
 
         #ifdef BULLET_PHYSICS
+
             setCollisionFlags( m_bodyType );
+
         #endif
 
             if (bodyType == BODY_DYNAMIC)
@@ -114,6 +122,7 @@ namespace ursine
         void Rigidbody::SetCollider(ColliderBase* collider, bool emptyCollider)
         {
         #ifdef BULLET_PHYSICS
+
             setCollisionShape( collider );
 
             btVector3 localInertia(0.0f, 0.0f, 0.0f);
@@ -124,13 +133,16 @@ namespace ursine
             setupRigidBody( RigidbodyConstructionInfo( 
                 m_mass, &m_motionState, collider, localInertia 
             ) );
+
         #endif
         }
 
         ColliderBase *Rigidbody::GetCollider(void)
         {
         #ifdef BULLET_PHYSICS
+
             return getCollisionShape( );
+
         #endif
         }
 
@@ -140,7 +152,9 @@ namespace ursine
                 return;
 
         #ifdef BULLET_PHYSICS
+
             activate( );
+
         #endif
         }
 

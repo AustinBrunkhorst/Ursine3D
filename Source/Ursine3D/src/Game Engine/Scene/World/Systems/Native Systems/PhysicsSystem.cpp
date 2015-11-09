@@ -54,6 +54,11 @@ namespace ursine
             return m_simulation.GetGravity( );
         }
 
+        void PhysicsSystem::ClearContacts(Rigidbody *rigidbody)
+        {
+            m_simulation.ClearContacts( rigidbody->m_rigidbody );
+        }
+
         bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
                                     physics::RaycastOutput& output,
                                     physics::RaycastType type, bool debug, float drawDuration)
@@ -313,7 +318,11 @@ namespace ursine
 
             // Add an empty collider
             if (entity->HasComponent<Rigidbody>( ))
+            {
+                ClearContacts( entity->GetComponent<Rigidbody>( ) );
+
                 entity->AddComponent<EmptyCollider>( );
+            }
         }
 
     }

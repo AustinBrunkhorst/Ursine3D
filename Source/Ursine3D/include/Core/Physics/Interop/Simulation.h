@@ -56,6 +56,8 @@ namespace ursine
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
 
+            void ClearContacts(Rigidbody &rigidbody);
+
         private:
 
             // terminate the simulation

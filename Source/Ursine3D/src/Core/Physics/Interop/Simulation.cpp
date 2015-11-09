@@ -181,6 +181,16 @@ namespace ursine
         #endif
         }
 
+        void Simulation::ClearContacts(Rigidbody& rigidbody)
+        {
+        #ifdef BULLET_PHYSICS
+            auto proxy = rigidbody.getBroadphaseProxy( );
+
+            m_dynamicsWorld->getPairCache( )
+                ->removeOverlappingPairsContainingProxy( proxy, m_dispatcher );
+        #endif
+        }
+
         void Simulation::destroySimulation(void)
         {
         #ifdef BULLET_PHYSICS

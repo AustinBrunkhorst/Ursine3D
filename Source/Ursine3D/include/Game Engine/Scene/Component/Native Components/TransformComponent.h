@@ -22,6 +22,16 @@ namespace ursine
 {
     namespace ecs
     {
+        struct TransformChangedArgs : public EventArgs
+        {
+            bool transChanged, scaleChanged, rotChanged;
+
+            TransformChangedArgs(bool transChanged, bool scaleChanged, bool rotChanged)
+                : transChanged( transChanged )
+                , scaleChanged( scaleChanged )
+                , rotChanged( rotChanged ) { }
+        };
+
         class Transform : public Component
         {
             NATIVE_COMPONENT;
@@ -231,7 +241,8 @@ namespace ursine
         private:
             void copy(const Transform &transform);
 
-            void dispatchAndSetDirty(void);
+            void dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged);
+            void dispatchAndSetDirty(const TransformChangedArgs *args);
             void dispatchParentChange(Transform *oldParent, Transform *newParent) const;
 
             void onParentDirty(EVENT_HANDLER(Entity));

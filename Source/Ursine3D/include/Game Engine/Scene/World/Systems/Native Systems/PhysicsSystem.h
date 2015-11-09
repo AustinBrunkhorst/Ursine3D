@@ -23,6 +23,8 @@ namespace ursine
 {
     namespace ecs
     {
+        class Rigidbody;
+
         class PhysicsSystem 
             : public FilterSystem
         {
@@ -38,6 +40,8 @@ namespace ursine
 
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
+
+            void ClearContacts(Rigidbody *rigidbody);
 
         protected:
             void Process(Entity *entity) override;
