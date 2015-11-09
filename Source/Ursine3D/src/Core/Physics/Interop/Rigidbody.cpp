@@ -115,7 +115,7 @@ namespace ursine
         #ifdef BULLET_PHYSICS
             setCollisionShape( collider );
 
-            btVector3 localInertia;
+            btVector3 localInertia(0.0f, 0.0f, 0.0f);
 
             if (!emptyCollider)
                 collider->calculateLocalInertia( m_mass, localInertia );
@@ -146,6 +146,8 @@ namespace ursine
         void Rigidbody::SetOffset(const SVec3 &offset)
         {
             m_offset = offset;
+
+            SetAwake( );
         }
 
         void Rigidbody::LockXRotation(bool flag)

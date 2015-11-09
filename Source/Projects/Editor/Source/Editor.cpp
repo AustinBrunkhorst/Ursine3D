@@ -263,7 +263,7 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
             physics::RaycastOutput output;
 
             m_project->GetScene( )->GetWorld( )->GetEntitySystem(ursine::ecs::PhysicsSystem)
-                ->Raycast(input, output, physics::RAYCAST_ALL_HITS, true, 0.016f);
+                ->Raycast(input, output, physics::RAYCAST_CLOSEST_HIT, true, 0.016f);
         }
     }
 }

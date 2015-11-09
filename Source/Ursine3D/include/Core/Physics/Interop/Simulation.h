@@ -34,7 +34,7 @@ namespace ursine
         class Simulation
         {
         public:
-            Simulation(const SVec3 &gravity = SVec3( 0.0f, -10.0f, 0.0f ));
+            Simulation(const SVec3 &gravity = SVec3( 0.0f, 0.0f, 0.0f ));
             ~Simulation(void);
 
             // Step the simulation forward
