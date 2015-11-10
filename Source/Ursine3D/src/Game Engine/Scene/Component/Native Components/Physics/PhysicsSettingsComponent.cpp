@@ -11,6 +11,7 @@ namespace ursine
         PhysicsSettings::PhysicsSettings(void)
             : BaseComponent( )
             , m_physicsSystem( nullptr )
+            , m_gravity( 0.0f, -10.0f, 0.0f )
         {
             
         }

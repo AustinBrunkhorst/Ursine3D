@@ -19,6 +19,6 @@ namespace ursine
         private:
             physics::EmptyCollider m_emptyCollider;
         
-        } Meta(Enable, HiddenInInspector);
+        } Meta(Enable, HiddenInInspector, DisableSerialization);
     }
 }
