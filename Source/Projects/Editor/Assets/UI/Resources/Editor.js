@@ -725,12 +725,23 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 	}
 });
 var ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector = function(owner,instance,field,type) {
+	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
+	this.m_bool = new CheckBoxInputControl();
+	this.m_bool.addEventListener("change",function() {
+		_g.m_owner.notifyChanged(_g.m_field,_g.m_bool.checked);
+	});
+	this.inspector.container.appendChild(this.m_bool);
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.BooleanFieldInspector"] = ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector;
 ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","BooleanFieldInspector"];
 ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
+	updateValue: function(value) {
+		this.m_bool.checked = value;
+		this.m_instance = value;
+	}
 });
 var ursine_editor_scene_component_inspectors_fields_ColorFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -842,14 +853,29 @@ ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.prototype =
 	}
 });
 var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = function(owner,instance,field,type) {
+	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_string = new TextInputControl();
+	this.m_string.addEventListener("change",function() {
+		_g.m_owner.notifyChanged(_g.m_field,_g.m_string.value);
+	});
+	this.m_string.addEventListener("focus",function(e) {
+		haxe_Timer.delay(function() {
+			_g.m_string.select();
+		},50);
+		e.preventDefault();
+	});
 	this.inspector.container.appendChild(this.m_string);
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.StringFieldInspector"] = ursine_editor_scene_component_inspectors_fields_StringFieldInspector;
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","StringFieldInspector"];
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
+	updateValue: function(value) {
+		this.m_string.value = value;
+		this.m_instance = value;
+	}
 });
 var ursine_editor_scene_component_inspectors_fields_VectorFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);

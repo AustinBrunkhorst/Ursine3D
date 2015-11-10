@@ -87,7 +87,7 @@ namespace ursine
         {
             m_model->SetColor( color );
 
-            NOTIFY_COMPONENT_CHANGED( "Color", color );
+            NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 
         const Color &Model3D::GetColor()
