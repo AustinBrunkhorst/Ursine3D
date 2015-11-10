@@ -43,7 +43,9 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define MAX_RENDERABLES         2048
 
 //max draw calls for a single scene
-#define MAX_DRAW_CALLS 2048
+#define MAX_DRAW_CALLS          2048
+
+#define MAX_BONE_COUNT          60
 
 //handle IDs
 #define ID_RENDERABLE 170

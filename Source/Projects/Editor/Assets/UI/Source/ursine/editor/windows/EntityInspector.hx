@@ -71,7 +71,7 @@ class EntityInspector extends WindowHandler {
     }
 
     private function onInspectedEntityComponentChanged(e) {
-        var handler = m_componentHandlers[ e.component ];
+        var handler : ComponentInspectionHandler = m_componentHandlers[ e.component ];
 
         if (handler != null)
             handler.updateField( e.field, e.value );
@@ -128,13 +128,23 @@ class EntityInspector extends WindowHandler {
 
         var handler = database.createComponentInspector( m_inspectedEntity, component );
 
-        handler.inspector.canRemove = !Reflect.hasField( type.meta, Property.DisableComponentRemoval );
+        handler.inspector.canRemove = !Reflect.hasField(
+            type.meta,
+            Property.DisableComponentRemoval
+        );
 
         // remember opened state for components
         handler.inspector.opened = (m_openCache[ component.type ] == true);
 
-        handler.inspector.addEventListener( 'removed', onRemoveComponentClicked.bind( component ) );
-        handler.inspector.addEventListener( 'open-changed', onOpenChanged.bind( component ) );
+        handler.inspector.addEventListener(
+            'removed',
+            onRemoveComponentClicked.bind( component )
+        );
+
+        handler.inspector.addEventListener(
+            'open-changed',
+            onOpenChanged.bind( component )
+        );
 
         m_componentHandlers[ component.type ] = handler;
 

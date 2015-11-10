@@ -10,6 +10,7 @@ namespace ursine
 
         PhysicsSettings::PhysicsSettings(void)
             : BaseComponent( )
+            , m_physicsSystem( nullptr )
         {
             
         }
@@ -26,12 +27,17 @@ namespace ursine
 
         void PhysicsSettings::SetGravity(const SVec3& gravity)
         {
-            m_physicsSystem->SetGravity( gravity );
+            m_gravity = gravity;
+
+            if (m_physicsSystem)
+                m_physicsSystem->SetGravity( gravity );
         }
 
         void PhysicsSettings::OnInitialize(void)
         {
             m_physicsSystem = GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem );
+
+            m_physicsSystem->SetGravity( m_gravity );
         }
     }
 }

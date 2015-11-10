@@ -1,5 +1,6 @@
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
+#include <Core/Graphics/Core/GfxDefines.h>
 
 namespace ursine
 {
@@ -65,6 +66,11 @@ namespace ursine
             Transform_ = matrix;
         }
 
+        Model3D::Model3D()
+        {
+            m_matrixPalette.resize(MAX_BONE_COUNT);
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model3d
         void Model3D::Initialize()
@@ -102,6 +108,11 @@ namespace ursine
         const Color &Model3D::GetColor() const
         {
             return m_color;
+        }
+
+        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        {
+            return m_matrixPalette;
         }
 
         const char *Model3D::GetModelName(void)

@@ -1,37 +1,53 @@
 package ursine.editor.scene.component.inspectors.fields;
 
-import ursine.controls.NumberInput;
+import ursine.controls.ColorInput;
 import ursine.editor.scene.component.ComponentDatabase;
 
 @fieldInspector( "ursine::Color" )
 class ColorFieldInspector extends FieldInspectionHandler {
+    var m_colorPreview : js.html.DivElement;
+    var m_colorInput : ColorInput;
+
     public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
-        var fields = Reflect.fields( type.fields );
+        var previewContainer = js.Browser.document.createDivElement( );
+        {
+            previewContainer.classList.add( 'color-preview' );
 
-        for (name in fields) {
-            var colorField = Reflect.field( type.fields, name );
-
-            createColorField( colorField );
+            inspector.container.appendChild( previewContainer );
         }
+
+        m_colorPreview = js.Browser.document.createDivElement( );
+        {
+            m_colorPreview.addEventListener( 'click', onPreviewClick );
+
+            previewContainer.appendChild( m_colorPreview );
+        }
+
+        m_colorInput = null;
+
+        updateValue( instance );
     }
 
-    private function createColorField(field : NativeField) {
-        var number = new NumberInput( );
+    public override function updateValue(value : Dynamic) {
+        var red = Reflect.field( value, 'r' ) * 255;
+        var green = Reflect.field( value, 'g' ) * 255;
+        var blue = Reflect.field( value, 'b' ) * 255;
+        var alpha = Reflect.field( value, 'a' ) * 255;
 
-        number.step = '1';
-        number.min = '0';
-        number.max = '255';
+        m_colorPreview.style.background = 'rgba(${red}, ${green}, ${blue}, ${alpha})';
+    }
 
-        number.value = Std.string( Reflect.field( m_instance, field.name ) * 255 );
+    private function onPreviewClick(e : js.html.MouseEvent) {
+        if (m_colorInput != null)
+            return;
 
-        number.addEventListener( 'input', function() {
-            Reflect.setField( m_instance, field.name, number.valueAsNumber / 255.0 );
+        m_colorInput = new ColorInput( m_instance );
 
-            m_owner.notifyChanged( m_field, m_instance );
-        } );
+        m_colorInput.style.left = '${e.clientX}px';
+        m_colorInput.style.top = '${e.clientY}px';
 
-        inspector.container.appendChild( number );
+        js.Browser.document.body.appendChild( m_colorInput );
     }
 }
