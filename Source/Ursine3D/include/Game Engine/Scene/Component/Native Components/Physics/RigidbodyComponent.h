@@ -45,6 +45,8 @@ namespace ursine
             void LockYRotation(bool flag);
             void LockZRotation(bool flag);
 
+            void UpdateInertiaTensor(void);
+
         private:
             physics::Rigidbody m_rigidbody;
 

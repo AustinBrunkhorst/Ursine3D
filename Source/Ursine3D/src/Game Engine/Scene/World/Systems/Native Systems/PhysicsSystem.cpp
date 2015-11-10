@@ -165,10 +165,6 @@ namespace ursine
                     entity->RemoveComponent<Body>( );
                 }
 
-                // If the entity does not have a collision shape, add an empty one
-                if (!m_collisionShapes.Matches( entity ))
-                    entity->AddComponent<EmptyCollider>( );
-
                 // set the transform
                 rigidbody->m_rigidbody.SetTransform(
                     entity->GetTransform( )
@@ -178,6 +174,10 @@ namespace ursine
                 m_simulation.AddRigidbody(
                     &rigidbody->m_rigidbody
                 );
+
+                // If the entity does not have a collision shape, add an empty one
+                if (!m_collisionShapes.Matches( entity ))
+                    entity->AddComponent<EmptyCollider>( );
             }
             else if (component->Is<SphereCollider>( ))
             {
@@ -278,7 +278,7 @@ namespace ursine
 
         void PhysicsSystem::onUpdate(EVENT_HANDLER(World))
         {
-            m_simulation.Step(Application::Instance->GetDeltaTime( ));
+            m_simulation.Step( Application::Instance->GetDeltaTime( ) );
         }
 
         void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider)
@@ -304,7 +304,18 @@ namespace ursine
                     m_simulation.AddBody( &body->m_body );
             }
             else if (entity->HasComponent<Rigidbody>( ))
-                entity->GetComponent<Rigidbody>( )->m_rigidbody.SetCollider( collider, emptyCollider );
+            {
+                auto rigidbody = entity->GetComponent<Rigidbody>();
+
+                // Assign the collider
+                rigidbody->m_rigidbody.SetCollider( collider, emptyCollider );
+                
+                if (rigidbody->GetBodyType( ) == BodyType::Dynamic)
+                {
+                    // Set the bodies gravity
+                    rigidbody->m_rigidbody.SetGravity( GetGravity( ) );
+                }
+            }
 
             // Remove the empty collider if it exists
             if (!emptyCollider && entity->HasComponent<EmptyCollider>( ))
@@ -319,7 +330,11 @@ namespace ursine
             // Add an empty collider
             if (entity->HasComponent<Rigidbody>( ))
             {
-                ClearContacts( entity->GetComponent<Rigidbody>( ) );
+                auto rigidbody = entity->GetComponent<Rigidbody>( );
+
+                ClearContacts( rigidbody );
+
+                rigidbody->SetOffset( SVec3( 0.0f, 0.0f, 0.0f ) );
 
                 entity->AddComponent<EmptyCollider>( );
             }

@@ -40,30 +40,29 @@ namespace ursine
             Rigidbody(float mass, ColliderBase *collider, BodyType bodyType = BODY_DYNAMIC);
 
             void SetID(int id);
-
             int GetID(void);
 
             void SetBodyType(BodyType bodyType);
-            
             BodyType GetBodyType(void) const;
 
             void SetTransform(ecs::Transform *transform);
-
             void GetTransform(ecs::Transform *transform);
 
             void SetCollider(ColliderBase *collider, bool emptyCollider = false);
-
             ColliderBase *GetCollider(void);
 
             void SetAwake(void);
 
             void SetOffset(const SVec3 &offset);
-
             SVec3 GetOffset(void) const;
 
             void LockXRotation(bool flag);
             void LockYRotation(bool flag);
             void LockZRotation(bool flag);
+
+            void UpdateInertiaTensor(void);
+
+            void SetGravity(const SVec3 &gravity);
 
         private:
             MotionState m_motionState;

@@ -17,15 +17,18 @@ namespace ursine
         SVec3 BoxCollider::GetDimensions(void) const
         {
         #ifdef BULLET_PHYSICS
+            
             auto dim = 2.0f * getHalfExtentsWithoutMargin( );
 
             return { dim.getX( ), dim.getY( ), dim.getZ( ) };
+
         #endif
         }
 
         void BoxCollider::SetDimensions(const SVec3 &dimensions)
         {
         #ifdef BULLET_PHYSICS
+            
             auto dim = btVector3(
                 dimensions.X( ),
                 dimensions.Y( ),
@@ -33,6 +36,7 @@ namespace ursine
             );
 
             m_implicitShapeDimensions = 0.5f * dim;
+
         #endif
         }
     }
