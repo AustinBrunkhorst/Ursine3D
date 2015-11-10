@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 
 #include "Rigidbody.h"
-
+#include "Simulation.h"
 #include "TransformComponent.h"
 
 namespace ursine
@@ -13,6 +13,8 @@ namespace ursine
             , m_gettingTransform( false )
             , m_mass( mass )
             , m_rotLock( 1 )
+            , m_simulation( nullptr )
+            , m_emptyCollider( true )
         {
         #ifdef BULLET_PHYSICS
 
@@ -21,6 +23,16 @@ namespace ursine
         #endif
 
             SetBodyType( bodyType );
+        }
+
+        void Rigidbody::SetSimulation(Simulation *simulation)
+        {
+            m_simulation = simulation;
+        }
+
+        Simulation *Rigidbody::GetSimulation(void)
+        {
+            return m_simulation;
         }
 
         void Rigidbody::SetID(int id)
@@ -46,6 +58,9 @@ namespace ursine
             m_bodyType = bodyType;
 
         #ifdef BULLET_PHYSICS
+
+            if (m_simulation && bodyType == BODY_STATIC || bodyType == BODY_KINEMATIC)
+                m_simulation->ClearContacts( *this );
 
             if (bodyType != BODY_DYNAMIC)
                 SetMass( 0.0f );
@@ -127,20 +142,14 @@ namespace ursine
 
         void Rigidbody::SetCollider(ColliderBase* collider, bool emptyCollider)
         {
+            m_emptyCollider = emptyCollider;
+
         #ifdef BULLET_PHYSICS
 
             btVector3 localInertia( 0.0f, 0.0f, 0.0f );
 
-            if (!emptyCollider)
-                collider->calculateLocalInertia( m_mass, localInertia );
-
-            m_localInertia.Set( 
-                localInertia.getX( ), 
-                localInertia.getY( ), 
-                localInertia.getZ( ) 
-            );
-
-            setMotionState( &m_motionState );
+            if (!m_emptyCollider)
+                collider->calculateLocalInertia( GetMass( ), localInertia );
 
             setCollisionShape( collider );
             
@@ -225,10 +234,26 @@ namespace ursine
 
         #ifdef BULLET_PHYSICS
 
-            btVector3 inertia( m_localInertia.X( ), m_localInertia.Y( ), m_localInertia.Z( ) );
+            removeFromSimulation( );
+
+            btVector3 inertia( 0.0f, 0.0f, 0.0f );
+
+            auto shape = getCollisionShape( );
+
+            if (shape && !m_emptyCollider)
+                shape->calculateLocalInertia( GetMass( ), inertia );
+
             setMassProps( GetMass( ), inertia );
 
+            addToSimulation( );
+
         #endif
+
+            if (m_bodyType == BODY_DYNAMIC)
+            {
+                SetGravity( m_gravity );
+                SetAwake( );
+            }
         }
 
         float Rigidbody::GetMass(void) const
@@ -237,6 +262,18 @@ namespace ursine
                 return 0.0f;
             else
                 return m_mass;
+        }
+
+        void Rigidbody::addToSimulation(void)
+        {
+            if (m_simulation)
+                m_simulation->AddRigidbody( this );
+        }
+
+        void Rigidbody::removeFromSimulation(void)
+        {
+            if (m_simulation)
+                m_simulation->RemoveRigidbody( this );
         }
     }
 }

@@ -54,7 +54,7 @@ namespace ursine
             return m_simulation.GetGravity( );
         }
 
-        void PhysicsSystem::ClearContacts(Rigidbody *rigidbody)
+        void PhysicsSystem::ClearContacts(Rigidbody* rigidbody)
         {
             m_simulation.ClearContacts( rigidbody->m_rigidbody );
         }
@@ -174,6 +174,9 @@ namespace ursine
                     entity->GetTransform( )
                 );
 
+                // Set the bodies gravity
+                rigidbody->m_rigidbody.SetGravity( GetGravity( ) );
+
                 // Add the body to the simulation
                 m_simulation.AddRigidbody(
                     &rigidbody->m_rigidbody
@@ -283,12 +286,12 @@ namespace ursine
 
         void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider)
         {
-            bool addBody = false;
+            bool removeBody = true;
 
             if (!entity->HasComponent<Body>( ) && !entity->HasComponent<Rigidbody>( ))
             {
                 entity->AddComponent<Body>( );
-                addBody = true;
+                removeBody = false;
             }
 
             // Add the collider to the body
@@ -296,25 +299,27 @@ namespace ursine
             {
                 auto body = entity->GetComponent<Body>( );
 
+                if (removeBody)
+                    m_simulation.RemoveBody( &body->m_body );
+
                 body->m_body.SetCollider( collider );
 
                 body->m_body.SetTransform( entity->GetTransform( ) );
 
-                if (addBody)
-                    m_simulation.AddBody( &body->m_body );
+                m_simulation.AddBody( &body->m_body );
             }
             else if (entity->HasComponent<Rigidbody>( ))
             {
                 auto rigidbody = entity->GetComponent<Rigidbody>();
 
+                if (!emptyCollider)
+                    m_simulation.RemoveRigidbody( &rigidbody->m_rigidbody );
+
                 // Assign the collider
                 rigidbody->m_rigidbody.SetCollider( collider, emptyCollider );
-                
-                if (rigidbody->GetBodyType( ) == BodyType::Dynamic)
-                {
-                    // Set the bodies gravity
-                    rigidbody->m_rigidbody.SetGravity( GetGravity( ) );
-                }
+
+                if (!emptyCollider)
+                    m_simulation.AddRigidbody( &rigidbody->m_rigidbody );
             }
 
             // Remove the empty collider if it exists

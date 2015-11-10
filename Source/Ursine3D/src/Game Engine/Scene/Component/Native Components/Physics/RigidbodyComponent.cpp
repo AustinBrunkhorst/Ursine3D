@@ -22,7 +22,13 @@ namespace ursine
 
 		void Rigidbody::OnInitialize(void)
 		{
-            m_rigidbody.SetID( GetOwner( )->GetUniqueID( ) );
+            auto owner = GetOwner( );
+
+            m_rigidbody.SetSimulation( 
+                &owner->GetWorld( )->GetEntitySystem( PhysicsSystem )->m_simulation 
+            );
+
+            m_rigidbody.SetID( owner->GetUniqueID( ) );
 
 			GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
@@ -45,19 +51,9 @@ namespace ursine
 
         void Rigidbody::SetBodyType(BodyType bodyType)
         {
-            if (bodyType == BodyType::Static || bodyType == BodyType::Kinematic)
-                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )->ClearContacts( this );
-
             m_rigidbody.SetBodyType(
                 static_cast<physics::BodyType>( bodyType )
             );
-
-            if (bodyType == BodyType::Dynamic)
-            {
-                m_rigidbody.SetGravity( 
-                    GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )->GetGravity( )
-                );
-            }
         }
 
         void Rigidbody::SetAwake(void)

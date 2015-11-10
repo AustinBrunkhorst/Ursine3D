@@ -25,6 +25,8 @@ namespace ursine
 
     namespace physics
     {
+        class Simulation;
+
         enum BodyType
         {
         #ifdef BULLET_PHYSICS
@@ -38,6 +40,9 @@ namespace ursine
         {
         public:
             Rigidbody(float mass, ColliderBase *collider, BodyType bodyType = BODY_STATIC);
+
+            void SetSimulation(Simulation *simulation);
+            Simulation *GetSimulation(void);
 
             void SetID(int id);
             int GetID(void);
@@ -68,11 +73,13 @@ namespace ursine
             float GetMass(void) const;
 
         private:
-            MotionState m_motionState;
-
             BodyType m_bodyType;
 
             bool m_gettingTransform;
+
+            bool m_emptyCollider;
+
+            Simulation *m_simulation;
 
             float m_mass;
 
@@ -80,9 +87,12 @@ namespace ursine
 
             SVec3 m_rotLock;
 
-            SVec3 m_localInertia;
-
             SVec3 m_gravity;
+
+            MotionState m_motionState;
+
+            void addToSimulation(void);
+            void removeFromSimulation(void);
 
         };
     }
