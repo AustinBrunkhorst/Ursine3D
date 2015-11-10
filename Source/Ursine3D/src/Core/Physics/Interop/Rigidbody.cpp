@@ -47,12 +47,18 @@ namespace ursine
 
         #ifdef BULLET_PHYSICS
 
-            setCollisionFlags( m_bodyType );
+            if (bodyType != BODY_DYNAMIC)
+                SetMass( 0.0f );
+            else
+                SetMass( m_mass );
 
         #endif
 
             if (bodyType == BODY_DYNAMIC)
+            {
+                SetGravity( m_gravity );
                 SetAwake( );
+            }
         }
 
         BodyType Rigidbody::GetBodyType(void) const
@@ -123,21 +129,24 @@ namespace ursine
         {
         #ifdef BULLET_PHYSICS
 
-            setCollisionShape( collider );
-
             btVector3 localInertia( 0.0f, 0.0f, 0.0f );
 
             if (!emptyCollider)
                 collider->calculateLocalInertia( m_mass, localInertia );
 
-            setupRigidBody( RigidbodyConstructionInfo( 
-                m_mass, &m_motionState, collider, localInertia 
-            ) );
+            m_localInertia.Set( 
+                localInertia.getX( ), 
+                localInertia.getY( ), 
+                localInertia.getZ( ) 
+            );
+
+            setMotionState( &m_motionState );
+
+            setCollisionShape( collider );
+            
+            setMassProps( GetMass( ), localInertia );
 
         #endif
-
-            if (!emptyCollider)
-                UpdateInertiaTensor( );
         }
 
         ColliderBase *Rigidbody::GetCollider(void)
@@ -168,6 +177,11 @@ namespace ursine
             SetAwake( );
         }
 
+        SVec3 Rigidbody::GetOffset(void) const
+        {
+            return m_offset;
+        }
+
         void Rigidbody::LockXRotation(bool flag)
         {
             m_rotLock.X( ) = flag ? 0.0f : 1.0f;
@@ -194,6 +208,8 @@ namespace ursine
 
         void Rigidbody::SetGravity(const SVec3& gravity)
         {
+            m_gravity = gravity;
+
         #ifdef BULLET_PHYSICS
 
             btVector3 vec( gravity.X( ), gravity.Y( ), gravity.Z( ) );
@@ -203,9 +219,24 @@ namespace ursine
         #endif
         }
 
-        SVec3 Rigidbody::GetOffset(void) const
+        void Rigidbody::SetMass(float mass)
         {
-            return m_offset;
+            m_mass = mass;
+
+        #ifdef BULLET_PHYSICS
+
+            btVector3 inertia( m_localInertia.X( ), m_localInertia.Y( ), m_localInertia.Z( ) );
+            setMassProps( GetMass( ), inertia );
+
+        #endif
+        }
+
+        float Rigidbody::GetMass(void) const
+        {
+            if (m_bodyType != BODY_DYNAMIC)
+                return 0.0f;
+            else
+                return m_mass;
         }
     }
 }

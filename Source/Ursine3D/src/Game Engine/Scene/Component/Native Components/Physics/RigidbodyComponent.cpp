@@ -33,9 +33,19 @@ namespace ursine
             return static_cast<BodyType>( m_rigidbody.GetBodyType( ) );
         }
 
+        float Rigidbody::GetMass(void) const
+        {
+            return m_rigidbody.GetMass( );
+        }
+
+        void Rigidbody::SetMass(float mass)
+        {
+            m_rigidbody.SetMass( mass );
+        }
+
         void Rigidbody::SetBodyType(BodyType bodyType)
         {
-            if (bodyType == BodyType::Static || bodyType == BodyType::Dynamic)
+            if (bodyType == BodyType::Static || bodyType == BodyType::Kinematic)
                 GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )->ClearContacts( this );
 
             m_rigidbody.SetBodyType(

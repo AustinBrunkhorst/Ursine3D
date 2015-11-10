@@ -165,6 +165,10 @@ namespace ursine
                     entity->RemoveComponent<Body>( );
                 }
 
+                // If the entity does not have a collision shape, add an empty one
+                if (!m_collisionShapes.Matches( entity ))
+                    entity->AddComponent<EmptyCollider>( );
+
                 // set the transform
                 rigidbody->m_rigidbody.SetTransform(
                     entity->GetTransform( )
@@ -174,10 +178,6 @@ namespace ursine
                 m_simulation.AddRigidbody(
                     &rigidbody->m_rigidbody
                 );
-
-                // If the entity does not have a collision shape, add an empty one
-                if (!m_collisionShapes.Matches( entity ))
-                    entity->AddComponent<EmptyCollider>( );
             }
             else if (component->Is<SphereCollider>( ))
             {

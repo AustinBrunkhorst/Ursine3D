@@ -37,7 +37,7 @@ namespace ursine
         class Rigidbody : public virtual RigidbodyBase
         {
         public:
-            Rigidbody(float mass, ColliderBase *collider, BodyType bodyType = BODY_DYNAMIC);
+            Rigidbody(float mass, ColliderBase *collider, BodyType bodyType = BODY_STATIC);
 
             void SetID(int id);
             int GetID(void);
@@ -64,6 +64,9 @@ namespace ursine
 
             void SetGravity(const SVec3 &gravity);
 
+            void SetMass(float mass);
+            float GetMass(void) const;
+
         private:
             MotionState m_motionState;
 
@@ -76,6 +79,11 @@ namespace ursine
             SVec3 m_offset;
 
             SVec3 m_rotLock;
+
+            SVec3 m_localInertia;
+
+            SVec3 m_gravity;
+
         };
     }
 }
