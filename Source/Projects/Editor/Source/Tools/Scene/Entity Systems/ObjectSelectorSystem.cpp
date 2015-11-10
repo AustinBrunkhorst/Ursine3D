@@ -776,6 +776,14 @@ void ObjectSelectorSystem::updateBases()
 
     auto obj = m_world->GetEntityUnique( m_currentID );
 
+    URSINE_TODO( "Multi select, handle unselected objects" );
+    if (!obj)
+    {
+        m_currentID = -1;
+
+        return;
+    }
+
     m_baseTranslation = obj->GetTransform( )->GetWorldPosition( );
     m_baseScale = obj->GetTransform( )->GetWorldScale( );
     m_baseRotation = obj->GetTransform( )->GetWorldRotation( );

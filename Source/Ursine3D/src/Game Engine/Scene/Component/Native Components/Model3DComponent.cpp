@@ -54,6 +54,8 @@ namespace ursine
 
             if (m_materialName.size( ) > 0)
                 m_model->SetMaterial( m_materialName );
+
+            onUpdateRenderer( this, EventArgs::Empty );
         }
 
         void Model3D::SetModel(const std::string &name)

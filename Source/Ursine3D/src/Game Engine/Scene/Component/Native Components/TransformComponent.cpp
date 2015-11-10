@@ -440,7 +440,7 @@ namespace ursine
 
         void Transform::dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged)
         {
-            TransformChangedArgs args(transChanged, scaleChanged, rotChanged);
+            TransformChangedArgs args( transChanged, scaleChanged, rotChanged );
 
             dispatchAndSetDirty( &args );
         }
@@ -449,7 +449,7 @@ namespace ursine
         {
             m_dirty = true;
 
-            GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY,  args );
+            GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY, args );
         }
 
         void Transform::dispatchParentChange(Transform *oldParent, Transform *newParent) const

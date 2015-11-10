@@ -1268,8 +1268,8 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		if(item != null) {
 			item.classList.remove("selected");
 			ursine_editor_windows_EntityInspector.instance.inspect(null);
-			this.m_selectedEntities.filter(function(x) {
-				return x == item.entity.uniqueID;
+			this.m_selectedEntities = this.m_selectedEntities.filter(function(x) {
+				return x != item.entity.uniqueID;
 			});
 		}
 	}
