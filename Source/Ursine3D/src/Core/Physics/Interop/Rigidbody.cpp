@@ -125,7 +125,7 @@ namespace ursine
 
             setCollisionShape( collider );
 
-            btVector3 localInertia(0.0f, 0.0f, 0.0f);
+            btVector3 localInertia( 0.0f, 0.0f, 0.0f );
 
             if (!emptyCollider)
                 collider->calculateLocalInertia( m_mass, localInertia );
@@ -135,6 +135,9 @@ namespace ursine
             ) );
 
         #endif
+
+            if (!emptyCollider)
+                UpdateInertiaTensor( );
         }
 
         ColliderBase *Rigidbody::GetCollider(void)
@@ -178,6 +181,26 @@ namespace ursine
         void Rigidbody::LockZRotation(bool flag)
         {
             m_rotLock.Z( ) = flag ? 0.0f : 1.0f;
+        }
+
+        void Rigidbody::UpdateInertiaTensor(void)
+        {
+        #ifdef BULLET_PHYSICS
+
+            updateInertiaTensor( );
+
+        #endif
+        }
+
+        void Rigidbody::SetGravity(const SVec3& gravity)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 vec( gravity.X( ), gravity.Y( ), gravity.Z( ) );
+            
+            setGravity( vec );
+
+        #endif
         }
 
         SVec3 Rigidbody::GetOffset(void) const

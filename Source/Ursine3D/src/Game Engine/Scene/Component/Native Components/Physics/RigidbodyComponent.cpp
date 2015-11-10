@@ -35,9 +35,19 @@ namespace ursine
 
         void Rigidbody::SetBodyType(BodyType bodyType)
         {
-            m_rigidbody.SetBodyType( 
+            if (bodyType == BodyType::Static || bodyType == BodyType::Dynamic)
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )->ClearContacts( this );
+
+            m_rigidbody.SetBodyType(
                 static_cast<physics::BodyType>( bodyType )
             );
+
+            if (bodyType == BodyType::Dynamic)
+            {
+                m_rigidbody.SetGravity( 
+                    GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )->GetGravity( )
+                );
+            }
         }
 
         void Rigidbody::SetAwake(void)
@@ -49,6 +59,11 @@ namespace ursine
         {
             m_rigidbody.SetOffset( offset );
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
+        }
+
+        SVec3 Rigidbody::GetOffset(void) const
+        {
+            return m_rigidbody.GetOffset( );
         }
 
         void Rigidbody::LockXRotation(bool flag)
@@ -66,18 +81,14 @@ namespace ursine
             m_rigidbody.LockZRotation( flag );
         }
 
-        SVec3 Rigidbody::GetOffset(void) const
+        void Rigidbody::UpdateInertiaTensor(void)
         {
-            return m_rigidbody.GetOffset( );
+            m_rigidbody.UpdateInertiaTensor( );
         }
 
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
         {
             EVENT_ATTRS(Entity, TransformChangedArgs);
-
-            if (args->scaleChanged)
-                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
-                    ->ClearContacts( this );
 
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
         }

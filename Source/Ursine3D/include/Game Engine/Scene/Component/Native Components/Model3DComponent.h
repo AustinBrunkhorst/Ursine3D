@@ -14,12 +14,23 @@ namespace ursine
 
         public:
             EditorField(
-                Color Color,
+                Color color,
                 GetColor,
                 SetColor
-                );
+            );
 
-        public:
+            EditorField(
+                std::string modelName,
+                GetModel,
+                SetModel
+            );
+
+            EditorField(
+                std::string materialName,
+                GetMaterial,
+                SetMaterial
+            );
+
             Model3D(void);
             ~Model3D(void);
 
@@ -28,17 +39,30 @@ namespace ursine
 
             //get/set model
             void SetModel(const std::string &name);
-            ursine::graphics::Model3D *GetModel(void);
+            const std::string &GetModel(void) const;
             
+            void SetMaterial(const std::string &name);
+            const std::string &GetMaterial(void) const;
+
             //get/set color
             void SetColor(const ursine::Color &color);
             const ursine::Color &GetColor(void);
+
+            // turn debug mode on or off for this model
+            void SetDebug(bool flag);
+            bool GetDebug(void) const;
+
+            void SetMaterialData(float emiss, float pow, float intensity);
+            void GetMaterialData(float &emiss, float &pow, float &intensity);
 
         private:
             graphics::GfxHND m_handle;
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;
+
+            std::string m_modelName;
+            std::string m_materialName;
 
             void onUpdateRenderer(EVENT_HANDLER(Entity));
 

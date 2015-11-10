@@ -24,12 +24,8 @@ EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     , m_hasMouseFocus( false )
     , m_cameraEntity( nullptr )
     , m_camera( nullptr )
-    , m_camZoom( 5.0f )
-    , m_camPos( SVec3( 0, 0, 0 ) )
-{
-    m_camPos = SVec3( 0, 0, 0 );
-    m_camZoom = 100.0f;
-}
+    , m_camZoom( 50.0f )
+    , m_camPos( SVec3( 0, 0, 0 ) ) { }
 
 bool EditorCameraSystem::HasFocus(void) const
 {
@@ -92,7 +88,8 @@ void EditorCameraSystem::OnAfterLoad(void)
     m_camera->SetPlanes( 0.1f, 700.0f );
     m_camera->SetFOV( 45.f );
 
-    m_camera->LookAtPoint( m_camPos );
+    m_camZoom = SVec3( -50, 50, 50 ).Length( );
+    m_camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
 }
 
 void EditorCameraSystem::OnRemove(void)

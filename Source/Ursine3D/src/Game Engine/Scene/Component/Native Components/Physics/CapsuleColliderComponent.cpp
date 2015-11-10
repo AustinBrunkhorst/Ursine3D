@@ -111,6 +111,8 @@ namespace ursine
                     ->ClearContacts( rigidbody );
 
                 rigidbody->SetAwake( );
+
+                rigidbody->UpdateInertiaTensor();
             }
         }
     }

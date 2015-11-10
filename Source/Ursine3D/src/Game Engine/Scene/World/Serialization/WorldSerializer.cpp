@@ -175,9 +175,9 @@ namespace ursine
             {
                 auto componentType = component->GetType( );
 
-                // skip components hidden in inspector
-                /*if (componentType.GetMeta( ).GetProperty<HiddenInInspector>( ))
-                    continue;*/
+                // skip components explicitly disabled
+                if (componentType.GetMeta( ).GetProperty<DisableSerialization>( ))
+                    continue;
 
                 auto instance = meta::Variant { 
                     component, 

@@ -29,6 +29,8 @@ namespace ursine
         private:
             PhysicsSystem *m_physicsSystem;
 
+            SVec3 m_gravity;
+
         } Meta(Enable, DisplayName("PhysicsSettings"));
     }
 }

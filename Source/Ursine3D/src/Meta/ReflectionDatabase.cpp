@@ -36,6 +36,32 @@ namespace ursine
             REGISTER_NATIVE_TYPE_VARIANTS( float );
             REGISTER_NATIVE_TYPE_VARIANTS( double );
             REGISTER_NATIVE_TYPE_VARIANTS( std::string );
+
+            auto &stringType = types[ TypeInfo<std::string>::ID ];
+
+            // explicitly add default constructors for string
+
+            stringType.AddConstructor<std::string>(
+                [](ArgumentList &args)
+                {
+                    return Variant {
+                        std::string( )
+                    };
+                },
+                { },
+                false
+            );
+
+            stringType.AddConstructor<std::string>(
+                [](ArgumentList &args)
+                {
+                    return Variant {
+                        new std::string( )
+                    };
+                },
+                { },
+                true
+            );
         }
 
         ///////////////////////////////////////////////////////////////////////

@@ -183,7 +183,7 @@ void Editor::initializeScene(void)
         auto name = "Character";
 
         model->SetModel( name );
-        model->GetModel( )->SetMaterial( "Blank" );
+        model->SetMaterial( "Blank" );
 
         entity_char->SetName( name );
 
