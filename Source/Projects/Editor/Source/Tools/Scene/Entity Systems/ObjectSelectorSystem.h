@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EntitySystem.h>
+#include <FilterSystem.h>
 
 #include "EditorCameraSystem.h"
 
@@ -9,7 +9,7 @@
 #include <KeyboardManager.h>
 #include <Vec3.h>
 
-class ObjectSelectorSystem : public ursine::ecs::EntitySystem
+class ObjectSelectorSystem : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
 
@@ -30,6 +30,8 @@ public:
 private:
     void OnInitialize(void) override;
     void OnRemove(void) override;
+
+    void Process(ursine::ecs::Entity *entity) override;
 
     // when the mouse is pressed down
     void onMouseDown(EVENT_HANDLER(ursine::MouseManager));

@@ -191,19 +191,34 @@ namespace ursine
             return m_offset;
         }
 
-        void Rigidbody::LockXRotation(bool flag)
+        void Rigidbody::SetRotationFreezeX(bool flag)
         {
             m_rotLock.X( ) = flag ? 0.0f : 1.0f;
         }
 
-        void Rigidbody::LockYRotation(bool flag)
+        bool Rigidbody::GetRotationFreezeX(void) const
+        {
+            return m_rotLock.X( ) == 0.0f;
+        }
+
+        void Rigidbody::SetRotationFreezeY(bool flag)
         {
             m_rotLock.Y( ) = flag ? 0.0f : 1.0f;
         }
 
-        void Rigidbody::LockZRotation(bool flag)
+        bool Rigidbody::GetRotationFreezeY(void) const
+        {
+            return m_rotLock.Y( ) == 0.0f;
+        }
+
+        void Rigidbody::SetRotationFreezeZ(bool flag)
         {
             m_rotLock.Z( ) = flag ? 0.0f : 1.0f;
+        }
+
+        bool Rigidbody::GetRotationFreezeZ(void) const
+        {
+            return m_rotLock.Z( ) == 0.0f;
         }
 
         void Rigidbody::UpdateInertiaTensor(void)
@@ -262,6 +277,66 @@ namespace ursine
                 return 0.0f;
             else
                 return m_mass;
+        }
+
+        void Rigidbody::SetVelocity(const SVec3 &velocity)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 vel( velocity.X( ), velocity.Y( ), velocity.Z( ) );
+
+            setLinearVelocity( vel );
+
+        #endif
+        }
+
+        SVec3 Rigidbody::GetVelocity(void) const
+        {
+            SVec3 vel;
+
+        #ifdef BULLET_PHYSICS
+
+            auto velocity = getLinearVelocity( );
+
+            vel.Set(
+                velocity.getX( ),
+                velocity.getY( ),
+                velocity.getZ( )
+            );
+
+        #endif
+
+            return vel;
+        }
+
+        void Rigidbody::SetAngularVelocity(const SVec3& angularVelocity)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 angVel( angularVelocity.X( ), angularVelocity.Y( ), angularVelocity.Z( ) );
+
+            setAngularVelocity( angVel );
+
+        #endif
+        }
+
+        SVec3 Rigidbody::GetAngularVelocity(void) const
+        {
+            SVec3 angVel;
+
+        #ifdef BULLET_PHYSICS
+
+            auto angularVel = getAngularVelocity( );
+
+            angVel.Set(
+                angularVel.getX( ),
+                angularVel.getY( ),
+                angularVel.getZ( )
+            );
+
+        #endif
+
+            return angVel;
         }
 
         void Rigidbody::addToSimulation(void)

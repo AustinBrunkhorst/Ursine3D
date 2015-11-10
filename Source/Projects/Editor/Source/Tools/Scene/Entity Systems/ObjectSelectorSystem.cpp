@@ -10,6 +10,7 @@
 
 #include <RenderableComponent.h>
 #include <Model3DComponent.h>
+#include <RigidbodyComponent.h>
 
 #include <SystemManager.h>
 #include <GfxAPI.h>
@@ -20,7 +21,7 @@ using namespace ursine;
 ENTITY_SYSTEM_DEFINITION( ObjectSelectorSystem );
 
 ObjectSelectorSystem::ObjectSelectorSystem(ecs::World *world)
-    : EntitySystem( world )
+    : FilterSystem( world, ecs::Filter( ).All<ecs::Rigidbody, Selected>( ) )
     , m_xAxis( nullptr )
     , m_yAxis( nullptr )
     , m_zAxis( nullptr )
@@ -37,13 +38,15 @@ ObjectSelectorSystem::ObjectSelectorSystem(ecs::World *world)
     , m_baseScale( Vec3( 1, 1, 1 ) )
     , m_baseMousePos( Vec3( 0, 0, 0 ) ) { }
 
-ecs::Entity *ObjectSelectorSystem::GetCurrentFocus()
+ecs::Entity *ObjectSelectorSystem::GetCurrentFocus(void)
 {
     return m_world->GetEntityUnique( m_currentID );
 }
 
-void ObjectSelectorSystem::OnInitialize()
+void ObjectSelectorSystem::OnInitialize(void)
 {
+    FilterSystem::OnInitialize( );
+
     //grab graphics
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_mouseManager = GetCoreSystem( MouseManager );
@@ -135,8 +138,10 @@ void ObjectSelectorSystem::OnInitialize()
     }
 }
 
-void ObjectSelectorSystem::OnRemove()
+void ObjectSelectorSystem::OnRemove(void)
 {
+    FilterSystem::OnRemove( );
+
     m_mouseManager->Listener( this ) 
         .Off( MM_BUTTON_DOWN, &ObjectSelectorSystem::onMouseDown )
         .Off( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp )
@@ -153,6 +158,20 @@ void ObjectSelectorSystem::OnRemove()
     m_zAxis->Delete( );
     m_xAxis->Delete( );
     m_yAxis->Delete( );
+}
+
+void ObjectSelectorSystem::Process(ecs::Entity *entity)
+{
+    if (!(m_keyboardManager->GetModifiers( ) & KMD_ALT) &&
+        GetCoreSystem(MouseManager)->IsButtonDown( MBTN_LEFT ) &&
+        m_dragging)
+    {
+        // zero out all selected rigidbodies' velocity and angular velocity
+        auto rigidbody = entity->GetComponent<ecs::Rigidbody>( );
+
+        rigidbody->SetVelocity( SVec3::Zero( ) );
+        rigidbody->SetAngularVelocity( SVec3::Zero( ) );
+    }
 }
 
 // EVENTS ///////////////////////////////////////////////////////////
@@ -719,7 +738,7 @@ void ObjectSelectorSystem::updateRotation(const SVec3 &mousePos)
     //
 }
 
-void ObjectSelectorSystem::hideTool()
+void ObjectSelectorSystem::hideTool(void)
 {
     m_dragging = false;
     m_axis = -1;
@@ -763,7 +782,7 @@ SVec3 ObjectSelectorSystem::getMousePosition(const Vec2 &mousePos)
     return SVec3( x, y, z );
 }
 
-void ObjectSelectorSystem::updateBases()
+void ObjectSelectorSystem::updateBases(void)
 {
     if (m_currentID == -1)
         return;

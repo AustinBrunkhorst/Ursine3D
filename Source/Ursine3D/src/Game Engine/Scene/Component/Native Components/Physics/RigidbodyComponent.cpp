@@ -72,24 +72,59 @@ namespace ursine
             return m_rigidbody.GetOffset( );
         }
 
-        void Rigidbody::LockXRotation(bool flag)
+        void Rigidbody::SetRotationFreezeX(bool flag)
         {
-            m_rigidbody.LockXRotation( flag );
+            m_rigidbody.SetRotationFreezeX( flag );
         }
 
-        void Rigidbody::LockYRotation(bool flag)
+        bool Rigidbody::GetRotationFreezeX(void) const
         {
-            m_rigidbody.LockYRotation( flag );
+            return m_rigidbody.GetRotationFreezeX( );
         }
 
-        void Rigidbody::LockZRotation(bool flag)
+        void Rigidbody::SetRotationFreezeY(bool flag)
         {
-            m_rigidbody.LockZRotation( flag );
+            m_rigidbody.SetRotationFreezeY( flag );
+        }
+
+        bool Rigidbody::GetRotationFreezeY(void) const
+        {
+            return m_rigidbody.GetRotationFreezeY( );
+        }
+
+        void Rigidbody::SetRotationFreezeZ(bool flag)
+        {
+            m_rigidbody.SetRotationFreezeZ( flag );
+        }
+
+        bool Rigidbody::GetRotationFreezeZ(void) const
+        {
+            return m_rigidbody.GetRotationFreezeZ( );
         }
 
         void Rigidbody::UpdateInertiaTensor(void)
         {
             m_rigidbody.UpdateInertiaTensor( );
+        }
+
+        void Rigidbody::SetVelocity(const SVec3 &velocity)
+        {
+            m_rigidbody.SetVelocity( velocity );
+        }
+
+        SVec3 Rigidbody::GetVelocity(void) const
+        {
+            return m_rigidbody.GetVelocity( );
+        }
+
+        void Rigidbody::SetAngularVelocity(const SVec3 &angularVelocity)
+        {
+            m_rigidbody.SetAngularVelocity( angularVelocity );
+        }
+
+        SVec3 Rigidbody::GetAngularVelocity(void) const
+        {
+            return m_rigidbody.GetAngularVelocity( );
         }
 
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
