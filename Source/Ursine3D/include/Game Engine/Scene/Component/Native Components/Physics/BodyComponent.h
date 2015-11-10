@@ -28,6 +28,6 @@ namespace ursine
 
 			void onTransformChange(EVENT_HANDLER(Entity));
 
-        } Meta(Enable, HiddenInInspector);
+        } Meta(Enable, HiddenInInspector, DisableSerialization);
     }
 }

@@ -15,3 +15,10 @@ struct HiddenInInspector : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
+
+/** @brief Disable serialization of this object
+*/
+struct DisableSerialization : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};

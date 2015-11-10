@@ -33,12 +33,10 @@ void Selected::tryDebugModel(bool enabled)
     if (!model)
         return;
 
-    auto *handle = model->GetModel( );
-
-    handle->SetDebug( enabled );
+    model->SetDebug( enabled );
 
     float e, p, i;
-    handle->GetMaterialData(e, p, i);
+    model->GetMaterialData(e, p, i);
 
     //save the emissive?
     if (enabled)
@@ -46,7 +44,7 @@ void Selected::tryDebugModel(bool enabled)
 
     URSINE_TODO( "This should probably be removed" );
     if (enabled)
-        handle->SetMaterialData( 1, 0, 0 );
+        model->SetMaterialData( 1, 0, 0 );
     else
-        handle->SetMaterialData(m_emissive, 0, 0 );
+        model->SetMaterialData(m_emissive, 0, 0 );
 }
