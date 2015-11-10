@@ -11,10 +11,18 @@ import ursine.editor.scene.component.ComponentDatabase;
     "ursine::SVec4"
 )
 class VectorFieldInspector extends FieldInspectionHandler {
+    private var m_fieldsContainer : js.html.DivElement;
     private var m_fields : Map<String, NumberInput>;
 
     public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
+
+        m_fieldsContainer = js.Browser.document.createDivElement( );
+        {
+            m_fieldsContainer.classList.add( 'vector-fields' );
+
+            inspector.container.appendChild( m_fieldsContainer );
+        }
 
         m_fields = new Map<String, NumberInput>( );
 
@@ -49,14 +57,16 @@ class VectorFieldInspector extends FieldInspectionHandler {
 
         // select all text on focus
         number.addEventListener( 'focus', function(e) {
-            number.select( );
+            haxe.Timer.delay( function() {
+                number.select( );
+            }, 50 );
 
             e.preventDefault( );
         } );
 
         m_fields[ field.name ] = number;
 
-        inspector.container.appendChild( number );
+        m_fieldsContainer.appendChild( number );
     }
 
     private function updateVectorField(name : String, value : Dynamic) {

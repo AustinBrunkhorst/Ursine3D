@@ -11,7 +11,7 @@ namespace ursine
         {
             Dynamic = physics::BODY_DYNAMIC,
             Static = physics::BODY_STATIC,
-            kinematic = physics::BODY_KINEMATIC
+            Kinematic = physics::BODY_KINEMATIC
         } Meta( Enable );
 
         class Rigidbody : public Component
@@ -27,6 +27,12 @@ namespace ursine
                 SetBodyType
             );
 
+            EditorField(
+                float mass,
+                GetMass,
+                SetMass
+            );
+
             Rigidbody(void);
 			~Rigidbody(void);
 
@@ -36,6 +42,9 @@ namespace ursine
             BodyType GetBodyType(void) const;
             void SetBodyType(BodyType bodyType);
 
+            float GetMass(void) const;
+            void SetMass(float mass);
+
             void SetAwake(void);
 
             void SetOffset(const SVec3 &offset);
@@ -44,6 +53,8 @@ namespace ursine
             void LockXRotation(bool flag);
             void LockYRotation(bool flag);
             void LockZRotation(bool flag);
+
+            void UpdateInertiaTensor(void);
 
         private:
             physics::Rigidbody m_rigidbody;

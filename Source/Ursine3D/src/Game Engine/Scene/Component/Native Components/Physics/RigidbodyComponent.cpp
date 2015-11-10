@@ -22,7 +22,13 @@ namespace ursine
 
 		void Rigidbody::OnInitialize(void)
 		{
-            m_rigidbody.SetID( GetOwner( )->GetUniqueID( ) );
+            auto owner = GetOwner( );
+
+            m_rigidbody.SetSimulation( 
+                &owner->GetWorld( )->GetEntitySystem( PhysicsSystem )->m_simulation 
+            );
+
+            m_rigidbody.SetID( owner->GetUniqueID( ) );
 
 			GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
@@ -33,9 +39,19 @@ namespace ursine
             return static_cast<BodyType>( m_rigidbody.GetBodyType( ) );
         }
 
+        float Rigidbody::GetMass(void) const
+        {
+            return m_rigidbody.GetMass( );
+        }
+
+        void Rigidbody::SetMass(float mass)
+        {
+            m_rigidbody.SetMass( mass );
+        }
+
         void Rigidbody::SetBodyType(BodyType bodyType)
         {
-            m_rigidbody.SetBodyType( 
+            m_rigidbody.SetBodyType(
                 static_cast<physics::BodyType>( bodyType )
             );
         }
@@ -49,6 +65,11 @@ namespace ursine
         {
             m_rigidbody.SetOffset( offset );
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
+        }
+
+        SVec3 Rigidbody::GetOffset(void) const
+        {
+            return m_rigidbody.GetOffset( );
         }
 
         void Rigidbody::LockXRotation(bool flag)
@@ -66,18 +87,14 @@ namespace ursine
             m_rigidbody.LockZRotation( flag );
         }
 
-        SVec3 Rigidbody::GetOffset(void) const
+        void Rigidbody::UpdateInertiaTensor(void)
         {
-            return m_rigidbody.GetOffset( );
+            m_rigidbody.UpdateInertiaTensor( );
         }
 
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))
         {
             EVENT_ATTRS(Entity, TransformChangedArgs);
-
-            if (args->scaleChanged)
-                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
-                    ->ClearContacts( this );
 
             m_rigidbody.SetTransform( GetOwner( )->GetTransform( ) );
         }

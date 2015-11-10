@@ -91,6 +91,12 @@ class ComponentDatabase {
         return m_db.get( name );
     }
 
+    public function getComponentTypeField(type : ComponentType, name : String) : NativeField {
+        return Lambda.find( type.fields, function(f) {
+            return f.name == name;
+        } );
+    }
+
     public function createComponentInspector(entity : Entity, inspection : ComponentInspection) : ComponentInspectionHandler {
         var handler : Class<Dynamic> = m_componentInspectionHandlers.get( inspection.type );
 

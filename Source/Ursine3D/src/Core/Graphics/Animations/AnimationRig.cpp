@@ -3,6 +3,10 @@
 
 namespace ursine
 {
+    AnimationRig::AnimationRig(void)
+    {
+    }
+
     AnimationRig::AnimationRig(const std::string& name)
         : m_name(name)
     {
@@ -35,6 +39,8 @@ namespace ursine
         // calculate offset matrix
         SMat4 offsetMatrix = SMat4(trans) * SMat4(scale.X(), scale.Y(), scale.Z()) * SMat4(rotation);
         m_offsetMatrices.push_back(offsetMatrix);
+
+        return newID;
     }
 
     const std::string& AnimationRig::GetName() const

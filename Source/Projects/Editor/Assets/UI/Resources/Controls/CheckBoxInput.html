@@ -1,19 +1,22 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
 
-<dom-module id="x-button">
-    <link rel="import" type="css" href="../Style/Controls/Button.css">
+<dom-module id="x-checkbox">
+    <link rel="import" type="css" href="../Style/Controls/CheckBoxInput.css">
     <template>
         <content>{{text}}</content>
     </template>
     <script>
-        var ButtonControl = Polymer({
-            is: 'x-button',
-            extends: 'button',
+        var CheckBoxInputControl = Polymer({
+            is: 'x-checkbox',
+            extends: 'input',
             properties: {
                 text: {
                     type: String,
                     notify: true
                 }
+            },
+            created: function() {
+                this.type = 'checkbox';
             }
         });
     </script>

@@ -25,14 +25,18 @@ namespace ursine
         float SphereCollider::GetRadius(void) const
         {
         #ifdef BULLET_PHYSICS
+
             return getRadius( );
+
         #endif
         }
 
         void SphereCollider::SetRadius(float radius)
         {
         #ifdef BULLET_PHYSICS
+
             setUnscaledRadius( radius );
+
         #endif
         }
     }

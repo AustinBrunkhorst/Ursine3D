@@ -25,6 +25,7 @@ namespace ursine
     class AnimationRig
     {
     public:
+        AnimationRig(void);
         AnimationRig(const std::string &name);
 
         //returns boneID of newly minted bone lolol

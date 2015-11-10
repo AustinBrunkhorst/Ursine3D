@@ -38,19 +38,19 @@ namespace ursine
 
         public:
             EditorField( 
-                SVec3 Translation,
+                SVec3 translation,
                 GetLocalPosition,
                 SetLocalPosition
             );
 
             EditorField( 
-                SVec3 Rotation,
+                SVec3 rotation,
                 GetLocalEuler,
                 SetLocalEuler
             );
 
             EditorField( 
-                SVec3 Scale,
+                SVec3 scale,
                 GetLocalScale,
                 SetLocalScale
             );

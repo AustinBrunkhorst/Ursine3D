@@ -31,6 +31,8 @@ namespace ursine
             ENTITY_SYSTEM;
 
         public:
+            friend class Rigidbody;
+
             PhysicsSystem(World *world);
 
             bool Raycast(const ursine::physics::RaycastInput &input, 

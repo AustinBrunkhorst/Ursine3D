@@ -213,8 +213,8 @@ class SceneOutline extends WindowHandler {
             // TODO: handle multi selection
             EntityInspector.instance.inspect( null );
 
-            m_selectedEntities.filter( function(x) {
-                return x == untyped item.entity.uniqueID;
+            m_selectedEntities = m_selectedEntities.filter( function(x) {
+                return x != untyped item.entity.uniqueID;
             } );
         }
     }

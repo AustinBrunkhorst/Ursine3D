@@ -3,6 +3,10 @@
 
 namespace ursine
 {
+    Animation::Animation(void)
+    {
+    }
+
     Animation::Animation(std::string& name) {}
 
     void Animation::AddKeyframe(const SVec3& trans, const SVec3& scale, const SQuat& rot, const float runtime)

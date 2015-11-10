@@ -12,6 +12,26 @@ class StringFieldInspector extends FieldInspectionHandler {
 
         m_string = new TextInput( );
 
+        m_string.addEventListener( 'change', function() {
+            m_owner.notifyChanged( m_field, m_string.value );
+        } );
+
+        m_string.addEventListener( 'focus', function(e) {
+            haxe.Timer.delay( function() {
+                m_string.select( );
+            }, 50 );
+
+            e.preventDefault( );
+        } );
+
         inspector.container.appendChild( m_string );
+
+        updateValue( instance );
+    }
+
+    public override function updateValue(value : Dynamic) {
+        m_string.value = value;
+
+        m_instance = value;
     }
 }

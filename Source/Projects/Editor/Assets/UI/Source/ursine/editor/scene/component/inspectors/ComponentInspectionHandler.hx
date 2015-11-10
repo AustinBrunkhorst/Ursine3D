@@ -62,6 +62,10 @@ class ComponentInspectionHandler {
     }
 
     public function remove() {
-        inspector.parentNode.removeChild( inspector );
+        for (handler in m_fieldHandlers)
+            handler.remove( );
+
+        if (inspector.parentNode != null)
+            inspector.parentNode.removeChild( inspector );
     }
 }

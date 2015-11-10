@@ -31,12 +31,21 @@ class ColorFieldInspector extends FieldInspectionHandler {
     }
 
     public override function updateValue(value : Dynamic) {
-        var red = Reflect.field( value, 'r' ) * 255;
-        var green = Reflect.field( value, 'g' ) * 255;
-        var blue = Reflect.field( value, 'b' ) * 255;
-        var alpha = Reflect.field( value, 'a' ) * 255;
+        var red = Math.round( Reflect.field( value, 'r' ) * 255 );
+        var green = Math.round( Reflect.field( value, 'g' ) * 255 );
+        var blue = Math.round( Reflect.field( value, 'b' ) * 255 );
+        var alpha = untyped Reflect.field( value, 'a' ).toPrecision( 4 );
 
         m_colorPreview.style.background = 'rgba(${red}, ${green}, ${blue}, ${alpha})';
+
+        m_instance = value;
+    }
+
+    public override function remove() {
+        if (m_colorInput != null)
+            js.Browser.document.body.removeChild( m_colorInput );
+
+        super.remove( );
     }
 
     private function onPreviewClick(e : js.html.MouseEvent) {
@@ -45,9 +54,20 @@ class ColorFieldInspector extends FieldInspectionHandler {
 
         m_colorInput = new ColorInput( m_instance );
 
+        m_colorInput.addEventListener( 'color-changed', onColorChanged );
+        m_colorInput.addEventListener( 'closed', onColorClosed );
+
         m_colorInput.style.left = '${e.clientX}px';
         m_colorInput.style.top = '${e.clientY}px';
 
         js.Browser.document.body.appendChild( m_colorInput );
+    }
+
+    private function onColorChanged(e : js.html.CustomEvent) {
+        m_owner.notifyChanged( m_field, e.detail.color );
+    }
+
+    private function onColorClosed(e : js.html.CustomEvent) {
+        m_colorInput = null;
     }
 }

@@ -440,7 +440,7 @@ namespace ursine
 
         void Transform::dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged)
         {
-            TransformChangedArgs args(transChanged, scaleChanged, rotChanged);
+            TransformChangedArgs args( transChanged, scaleChanged, rotChanged );
 
             dispatchAndSetDirty( &args );
         }
@@ -449,7 +449,7 @@ namespace ursine
         {
             m_dirty = true;
 
-            GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY,  args );
+            GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY, args );
         }
 
         void Transform::dispatchParentChange(Transform *oldParent, Transform *newParent) const
@@ -493,17 +493,17 @@ namespace ursine
 
         void Transform::notifyPositionChanged(void)
         {
-            NOTIFY_COMPONENT_CHANGED( "Translation", m_localPosition );
+            NOTIFY_COMPONENT_CHANGED( "translation", m_localPosition );
         }
 
         void Transform::notifyRotationChanged(void)
         {
-            NOTIFY_COMPONENT_CHANGED( "Rotation", m_localRotation.GetEulerAngles( ) );
+            NOTIFY_COMPONENT_CHANGED( "rotation", m_localRotation.GetEulerAngles( ) );
         }
 
         void Transform::notifyScaleChanged(void)
         {
-            NOTIFY_COMPONENT_CHANGED( "Scale", m_localScale );
+            NOTIFY_COMPONENT_CHANGED( "scale", m_localScale );
         }
 
         bool Transform::genericAddChild(Transform *child)

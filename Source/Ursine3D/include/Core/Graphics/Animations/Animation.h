@@ -32,6 +32,7 @@ namespace ursine
             //animation length
             //name
 
+        Animation(void);
         Animation(std::string &name);
 
         // add a keyframe to this animation

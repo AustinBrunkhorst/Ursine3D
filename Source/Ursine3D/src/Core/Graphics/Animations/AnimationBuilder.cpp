@@ -14,12 +14,12 @@ namespace ursine
 
     Animation* AnimationBuilder::AddAnimation()
     {
-        
+        return nullptr;
     }
 
     AnimationRig* AnimationBuilder::AddAnimationRig()
     {
-        
+        return nullptr;
     }
 
     Animation *AnimationBuilder::GetAnimation(const unsigned index)

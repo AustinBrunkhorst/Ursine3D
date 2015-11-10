@@ -56,6 +56,8 @@ namespace ursine
             }
 
             renderable->SetHandle( m_handle );
+
+            onUpdateRenderer( this, EventArgs::Empty );
         }
 
         graphics::GfxHND Light::GetHandle(void) const
