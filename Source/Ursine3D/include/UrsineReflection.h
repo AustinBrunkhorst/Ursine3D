@@ -25,8 +25,6 @@
 #include "GfxAPI.h"
 #include "Color.h"
 
-#include "PhysicsManager.h"
-
 /// UI
 
 #include "UIManager.h"

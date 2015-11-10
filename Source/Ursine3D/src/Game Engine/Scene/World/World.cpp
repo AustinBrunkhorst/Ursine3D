@@ -23,29 +23,49 @@
 #include "UtilityManager.h"
 #include "SystemManager.h"
 
+namespace
+{
+    const auto kWorldSettingsEntityName = "World Settings";
+}
+
 namespace ursine
 {
     namespace ecs
     {
         World::World(void)
             : EventDispatcher( this )
-            , m_entityManager( new EntityManager( this ) )
-            , m_systemManager( new SystemManager( this ) )
-            , m_nameManager( new NameManager( this ) )
-            , m_utilityManager( new UtilityManager( this ) )
+            , m_settings( nullptr )
+            , m_entityManager( nullptr )
+            , m_systemManager( nullptr )
+            , m_nameManager( nullptr )
+            , m_utilityManager( nullptr )
         {
+            m_entityManager = new EntityManager( this );
             m_entityManager->OnInitialize( );
-            m_systemManager->OnInitialize( );
+
+            m_nameManager = new NameManager( this );
             m_nameManager->OnInitialize( );
+
+            m_utilityManager = new UtilityManager( this );
             m_utilityManager->OnInitialize( );
+
+            // ensure the settings entity is created before the system manager
+            m_settings = CreateEntity( kWorldSettingsEntityName );
+            m_settings->EnableDeletion( false );
+            m_settings->EnableHierarchyChange( false );
+
+            m_systemManager = new SystemManager( this );
+            m_systemManager->OnInitialize( );
         }
 
         World::~World(void)
         {
+            delete m_systemManager;
             delete m_utilityManager;
             delete m_nameManager;
-            delete m_systemManager;
             delete m_entityManager;
+            
+            m_settings = nullptr;
         }
 
         Entity *World::CreateEntity(const std::string &name)
@@ -107,9 +127,19 @@ namespace ursine
             Dispatch( WORLD_RENDER, EventArgs::Empty );
         }
 
-        SystemManager *World::GetSystemManager(void)
+        Entity *World::GetSettings(void) const
+        {
+            return m_settings;
+        }
+
+        SystemManager *World::GetSystemManager(void) const
         {
             return m_systemManager;
+        }
+
+        void World::DispatchLoad(void)
+        {
+            m_systemManager->onAfterLoad( );
         }
 
         void World::deleteEntity(Entity *entity)

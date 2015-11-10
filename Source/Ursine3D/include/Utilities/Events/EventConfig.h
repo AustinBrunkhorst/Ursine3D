@@ -22,4 +22,8 @@ namespace ursine
     // Class member function delegate
     template<typename Class, typename Args>
     using ClassDelegate = void(Class::*)(void *, const Args *);
+
+    typedef int EventHandlerPriority;
+
+    const EventHandlerPriority kDefaultEventHandlerPriority = 0;
 }

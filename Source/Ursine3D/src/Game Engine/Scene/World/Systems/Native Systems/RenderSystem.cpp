@@ -16,7 +16,7 @@ namespace ursine
         RenderSystem::RenderSystem(World *world)
             : EntitySystem( world )
         {
-            m_graphics = GetCoreSystem(graphics::GfxAPI );
+            m_graphics = GetCoreSystem( graphics::GfxAPI );
         }
 
         RenderSystem::~RenderSystem(void)

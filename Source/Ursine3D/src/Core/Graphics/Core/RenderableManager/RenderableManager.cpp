@@ -56,6 +56,10 @@ namespace ursine
                 m_currentRenderableLights[ newRender->Index_ ].Active_ = true;
                 m_currentRenderableLights[ newRender->Index_ ].Initialize( );
                 break;
+            case RENDERABLE_BILLBOARD2D:
+                m_currentRenderableBillboards[ newRender->Index_ ].Active_ = true;
+                m_currentRenderableBillboards[ newRender->Index_ ].Initialize();
+                break;
             default:
                 UAssert(false, "Tried to add an invalid renderable!");
             }
@@ -79,7 +83,7 @@ namespace ursine
             case RENDERABLE_MODEL3D:
                 UAssert(m_currentRenderableModel3D[ rend->Index_ ].Active_ == true, "Attempted to free an already free model3d!");
                 m_currentRenderableModel3D[ rend->Index_ ].Active_ = false;
-                break;
+                break; 
             case RENDERABLE_PRIMITIVE:
                 UAssert(m_currentRenderablePrimitives[ rend->Index_ ].Active_ == true, "Attempted to free an already free primitive!");
                 m_currentRenderablePrimitives[ rend->Index_ ].Active_ = false;
@@ -87,9 +91,11 @@ namespace ursine
             case RENDERABLE_BILLBOARD2D:
                 UAssert(m_currentRenderableBillboards[ rend->Index_ ].Active_ == true, "Attempted to free an already free billboard2d!");
                 m_currentRenderableBillboards[ rend->Index_ ].Active_ = false;
+                break;
             case RENDERABLE_LIGHT:
                 UAssert(m_currentRenderableLights[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
                 m_currentRenderableLights[ rend->Index_ ].Active_ = false;
+                break;
             default:
                 UAssert(false, "Attempted to destroy corrupted handle!");
                 break;

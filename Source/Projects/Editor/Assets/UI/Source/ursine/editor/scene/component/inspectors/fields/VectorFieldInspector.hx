@@ -11,15 +11,23 @@ import ursine.editor.scene.component.ComponentDatabase;
     "ursine::SVec4"
 )
 class VectorFieldInspector extends FieldInspectionHandler {
+    private var m_fields : Map<String, NumberInput>;
+
     public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
-        var fields = Reflect.fields( type.fields );
+        m_fields = new Map<String, NumberInput>( );
 
-        for (name in fields) {
-            var vectorField = Reflect.field( type.fields, name );
+        for (field in type.fields) {
+            createVectorField( field );
+        }
 
-            createVectorField( vectorField );
+        updateValue( instance );
+    }
+
+    public override function updateValue(value : Dynamic) {
+        for (field in m_fields.keys( )) {
+            updateVectorField( field, Reflect.field( value, field ) );
         }
     }
 
@@ -27,14 +35,33 @@ class VectorFieldInspector extends FieldInspectionHandler {
         var number = new NumberInput( );
 
         number.step = '0.1';
-        number.value = Reflect.field( m_instance, field.name );
 
-        number.addEventListener( 'input', function() {
-            Reflect.setField( m_instance, field.name, number.valueAsNumber );
+        number.addEventListener( 'change', function() {
+            var value : Float = number.valueAsNumber;
+
+            if (Math.isNaN( value ))
+                value = 0;
+
+            Reflect.setField( m_instance, field.name, value );
 
             m_owner.notifyChanged( m_field, m_instance );
         } );
 
+        // select all text on focus
+        number.addEventListener( 'focus', function(e) {
+            number.select( );
+
+            e.preventDefault( );
+        } );
+
+        m_fields[ field.name ] = number;
+
         inspector.container.appendChild( number );
+    }
+
+    private function updateVectorField(name : String, value : Dynamic) {
+        var field = m_fields[ name ];
+
+        field.value = untyped value.toPrecision( 4 );
     }
 }

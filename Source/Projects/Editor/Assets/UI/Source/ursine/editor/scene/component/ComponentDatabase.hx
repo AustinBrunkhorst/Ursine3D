@@ -13,7 +13,7 @@ import ursine.editor.scene.component.inspectors.ComponentInspectors;
 import ursine.editor.scene.component.inspectors.FieldInspectors;
 
 // Map<String, Dynamic>
-typedef NativeMeta = Map<String, Dynamic>;
+typedef NativeMeta = Dynamic;
 
 // Map<String, Dynamic>
 typedef NativeEnum = Dynamic;
@@ -28,15 +28,13 @@ extern class NativeType {
     var name : String;
     var enumValue : Null<NativeEnum>;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 extern class ComponentType {
     var meta : NativeMeta;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 class ComponentDatabase {
@@ -67,7 +65,7 @@ class ComponentDatabase {
         var components = Reflect.fields( database.components );
 
         for (name in components) {
-            var component = Reflect.field( database.components, name );
+            var component : ComponentType = Reflect.field( database.components, name );
 
             m_db.set( name, component );
         }
@@ -78,6 +76,15 @@ class ComponentDatabase {
 
     public function getNativeType(name : String) : NativeType {
         return m_typeDB.get( name );
+    }
+
+    public function getComponentTypes() : Array<String> {
+        var keys : Array<String> = new Array<String>( );
+
+        for (key in m_db.keys( ))
+            keys.push( key );
+
+        return keys;
     }
 
     public function getComponentType(name : String) : ComponentType {

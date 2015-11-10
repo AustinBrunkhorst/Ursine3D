@@ -11,24 +11,22 @@ namespace ursine
     class Scene
     {
     public:
+        typedef std::shared_ptr<Scene> Handle;
+
         Scene(void);
 
-        ecs::World &GetWorld(void);
+        ecs::World::Handle GetWorld(void);
+        void SetWorld(ecs::World::Handle world);
 
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);
-
-        graphics::GfxHND GetEditorCamera(void) const;
-        void SetEditorCamera(graphics::GfxHND camera);
 
         void Update(DeltaTime dt);
         void Render(void);
 
     private:
-        graphics::GfxAPI *m_graphics;
         graphics::GfxHND m_viewport;
-        graphics::GfxHND m_editorCamera;
 
-        ecs::World m_world;
+        ecs::World::Handle m_world;
     };
 }

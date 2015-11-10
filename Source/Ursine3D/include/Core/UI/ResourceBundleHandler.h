@@ -20,9 +20,22 @@ namespace ursine
     class ResourceBundleHandler : public CefResourceBundleHandler
     {
     private:
-        bool GetLocalizedString(int messageID, CefString &string) override;
+        bool GetLocalizedString(
+            int messageID, 
+            CefString &string
+        ) override;
 
-        bool GetDataResource(int resourceID, void *&data, 
-            size_t &dataSize) override;
+        bool GetDataResource(
+            int resourceID, 
+            void *&data, 
+            size_t &dataSize
+        ) override;
+
+        bool GetDataResourceForScale(
+            int resourceID, 
+            ScaleFactor scaleFactor,
+            void *&data,
+            size_t &dataSize
+        ) override;
     };
 }

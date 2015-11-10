@@ -15,6 +15,8 @@
 
 #include "UrsineTypes.h"
 
+#include "ComponentProperties.h"
+
 #include <vector>
 
 // Gets the unique id of this component type
@@ -44,12 +46,15 @@
 
 #if defined(URSINE_WITH_EDITOR)
 
-#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                           \
-    auto *__owner = GetOwner( );                                                               \
-    ursine::ecs::EditorComponentChangedArgs __e {                                              \
-        ursine::ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, __owner, this, displayName, value  \
-    };                                                                                         \
-    __owner->GetWorld( )->Dispatch( ursine::ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, &__e ) \
+#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                                \
+    auto *__owner = GetOwner( );                                                                    \
+    if (__owner)                                                                                    \
+    {                                                                                               \
+        ursine::ecs::EditorComponentChangedArgs __e {                                               \
+            ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, __owner, this, displayName, value   \
+        };                                                                                          \
+        __owner->GetWorld( )->Dispatch( ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &__e ); \
+    }                                                                                               \
 
 #else
 

@@ -10,12 +10,18 @@ namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(Model3D);
+        NATIVE_COMPONENT_DEFINITION( Model3D );
 
         Model3D::Model3D(void)
             : BaseComponent( )
-            , m_model(nullptr)
+            , m_model( nullptr )
         {
+            auto *graphics = GetCoreSystem( graphics::GfxAPI );
+
+            m_handle = graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
+
+            // store a pointer to the model
+            m_model = &graphics->RenderableMgr.GetModel3D( m_handle );
         }
 
         Model3D::~Model3D(void)
@@ -27,21 +33,20 @@ namespace ursine
 
         void Model3D::OnInitialize(void)
         {
+            auto *owner = GetOwner( );
+
             // Subscribe from the Renderable component's event
-            GetOwner( )->Listener( this )
+            owner->Listener( this )
                 .On( ENTITY_UPDATE_RENDERER, &Model3D::onUpdateRenderer );
 
-            // store a pointer to the GfxAPI core system
-            m_graphics = GetCoreSystem( graphics::GfxAPI );
-
-            // get ourselves a handle
-            auto handle = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
-
             // Set the handle in the renderable component
-            GetOwner( )->GetComponent<Renderable>( )->SetHandle( handle );
+            if (!owner->HasComponent<Renderable>( ))
+                owner->AddComponent<Renderable>( );
 
-            // store a pointer to the model
-            m_model = &m_graphics->RenderableMgr.GetModel3D( handle );
+            owner->GetComponent<Renderable>( )->SetHandle( m_handle );
+
+            // set the unique id
+            m_model->SetEntityUniqueID( GetOwner( )->GetUniqueID( ) );
         }
 
         void Model3D::SetModel(const std::string &name)
@@ -57,11 +62,21 @@ namespace ursine
             return m_model;
         }
 
+        void Model3D::SetColor(const ursine::Color &color)
+        {
+            m_model->SetColor( color );
+        }
+
+        const Color &Model3D::GetColor()
+        {
+            return m_model->GetColor( );
+        }
+
         void Model3D::onUpdateRenderer(EVENT_HANDLER(Entity))
         {
             // update the renderer's
             auto ren = GetOwner( )->GetComponent<Renderable>( );
-            auto trans = GetOwner( )->GetComponent<Transform>( );
+            auto trans = GetOwner( )->GetTransform( );
             auto handle = ren->GetHandle( );
             auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( handle );
 

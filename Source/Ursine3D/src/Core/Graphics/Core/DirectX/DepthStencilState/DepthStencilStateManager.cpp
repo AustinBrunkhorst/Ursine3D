@@ -117,7 +117,7 @@ namespace ursine
                 //Set up the description of the stencil state.
                 depthCheckStencilDesc.DepthEnable = false;
                 depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
                 depthCheckStencilDesc.StencilEnable = true;
                 depthCheckStencilDesc.StencilReadMask = 0xFF;
@@ -125,31 +125,60 @@ namespace ursine
 
                 //Stencil operations if pixel is front-facing.
                 depthCheckStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-                depthCheckStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+                depthCheckStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
                 depthCheckStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-                depthCheckStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+                depthCheckStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
 
                 //Stencil operations if pixel is back-facing.
                 depthCheckStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
                 depthCheckStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
                 depthCheckStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-                depthCheckStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+                depthCheckStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_NEVER;
 
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_NODEPTH_STENCIL ]);
                 UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
 
                 /////////////////////////////////////////////////////////////////
-                // POINT LIGHT
+                // point light sutff
+                ZeroMemory(&depthCheckStencilDesc, sizeof(depthCheckStencilDesc));
+
+                //Set up the description of the stencil state.
+                depthCheckStencilDesc.DepthEnable = true;
+                depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+
+                //Create the depth stencil state.
+                result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_POINTLIGHT ]);
+                UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
+
+                /////////////////////////////////////////////////////////////////
+                // ALWAYS PASS DEPTH AND STENCIL
                 ZeroMemory(&depthCheckStencilDesc, sizeof(depthCheckStencilDesc));
 
                 //Set up the description of the stencil state.
                 depthCheckStencilDesc.DepthEnable = true;
                 depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
+                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+
+                depthCheckStencilDesc.StencilEnable = true;
+                depthCheckStencilDesc.StencilReadMask = 0xFF;
+                depthCheckStencilDesc.StencilWriteMask = 0xFF;
+
+                //Stencil operations if pixel is front-facing.
+                depthCheckStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+                depthCheckStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+                depthCheckStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+                depthCheckStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+                //Stencil operations if pixel is back-facing.
+                depthCheckStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+                depthCheckStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+                depthCheckStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+                depthCheckStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_LESS;
 
                 //Create the depth stencil state.
-                result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_POINTLIGHT ]);
+                result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_PASSDEPTH_WRITESTENCIL ]);
                 UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
             }
 

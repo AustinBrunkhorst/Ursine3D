@@ -9,10 +9,15 @@
 // Editor Tools
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "Tools/Scene/Components/EditorComponents.h"
+#include "Tools/Scene/Entity Systems/EntitySystems.h"
+
 #include "Tools/JavaScript/NativeToolHandler.h"
 
 #include "Tools/Scene/SceneView.h"
+
 #include "Tools/Scene/Entity Systems/GridRenderer.h"
+#include "Tools/Scene/Components/SelectedComponent.h"
 
 #include "Tools/Scene/Entity/EntityHandler.h"
 
@@ -22,4 +27,5 @@
 
 #include "Tools/JavaScript/DebugUtils.h"
 #include "Tools/JavaScript/SceneUtils.h"
+#include "Tools/JavaScript/EntityUtils.h"
 #include "Tools/JavaScript/ComponentUtils.h"

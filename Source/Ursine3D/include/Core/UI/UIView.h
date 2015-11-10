@@ -35,7 +35,11 @@ namespace ursine
         , public UIRendererType
     {
     public:
+        typedef CefRefPtr<UIView> Handle;
+
         ~UIView(void);
+
+        CefRefPtr<CefBrowser> GetBrowser(void) const;
 
         void Close(void);
 
@@ -49,14 +53,14 @@ namespace ursine
     private:
         friend class UIManager;
 
-        Window *m_window;
+        Window::Handle m_window;
 
         CefRefPtr<CefBrowser> m_browser;
 
         KeyboardManager *m_keyboardManager;
         MouseManager *m_mouseManager;
 
-        UIView(Window *window, const CefBrowserSettings &settings, const std::string &url);
+        UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url);
 
         ////////////////////////////////////////////////////////////////////
         // Handler Getters

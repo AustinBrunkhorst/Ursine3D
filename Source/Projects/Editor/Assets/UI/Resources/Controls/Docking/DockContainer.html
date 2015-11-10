@@ -1,0 +1,169 @@
+<link rel="import" href="../../LIB/Polymer/polymer.html">
+<link rel="import" href="DockColumn.html">
+
+<script src="../Behaviors/Docking/DockLocation.js"></script>
+
+<dom-module id="x-dock-container">
+    <link rel="import" type="css" href="../../Style/Controls/Docking/DockContainer.css">
+    <template>
+        <content></content>
+        <div id="resize-handle" class="resize-handle row"></div>
+    </template>
+    <script>
+        var DockContainerControl = Polymer({
+            is: "x-dock-container",
+            properties: {
+
+            },
+            listeners: {
+                'resize-handle.mousedown': '_onResizeHandleMouseDown'
+            },
+            created: function() {
+                this.parent = null;
+
+                this._minHeight = DockNodeConfig.MinHeight;
+                this._lastMouseY = 0;
+            },
+            attached: function() {
+                this.parent = this.parentNode;
+
+                this._lastResizeHeight = this._getHeightPixels( );
+
+                this._observer = new MutationObserver( this._onMutations.bind( this ) );
+
+                this._observer.observe( this, {
+                    childList: true,
+                    subtree: false
+                } );
+            },
+            detached: function() {
+                this.parent = null;
+
+                if (this._observer)
+                    this._observer.disconnect( );
+            },
+            get columns() {
+                return this.querySelectorAll( ':scope > x-dock-column' );
+            },
+
+            /**
+             * Sets the height of this row
+             * @param height height in range [0, 1] representing
+             *        the percentage of the parent container to contain
+             */
+            setHeightPercent: function(height) {
+                var heightPercent = this._getHeightPercent( );
+
+                // apply the width change to both children
+                if (this.nextSibling) {
+                    var nextHeightPercent = this.nextSibling._getHeightPercent( );
+                    var nextMinHeight= this.nextSibling._getMinHeightPercent( );
+
+                    var totalHeightPercent = heightPercent + nextHeightPercent;
+
+                    var newHeightPercent = Math.min(
+                        totalHeightPercent - nextMinHeight,
+                        heightPercent + (height - heightPercent)
+                    );
+
+                    this.nextSibling._setHeightPercent( totalHeightPercent - newHeightPercent );
+
+                    this._setHeightPercent( newHeightPercent );
+                } else {
+                    this._setHeightPercent( heightPercent + (height - heightPercent) );
+                }
+            },
+
+            /**
+             * Adds a new column to the container
+             * @return {DockColumnControl}
+             */
+            addColumn: function() {
+                var column = new DockColumnControl( );
+
+                this.appendChild( column );
+
+                return column;
+            },
+
+            _getHeightPixels: function() {
+                return this.clientHeight;
+            },
+            _getHeightPercent: function() {
+                if (this.parent)
+                    return this.clientHeight / this.parent.clientHeight;
+
+                return 1.0;
+            },
+            _getMinHeightPercent: function() {
+                if (this.parent)
+                    return this._minHeight / this.parent.clientHeight;
+
+                return 0.0;
+            },
+
+            _setHeightPercent: function(percent) {
+                var currentPercent = this._getHeightPercent( );
+
+                if (currentPercent != percent) {
+                    this.style.height = (Math.clamp( percent, 0.0, 1.0 ) * 100.0) + '%';
+
+                    this._notifyHeightChanged( );
+                }
+
+            },
+            _notifyHeightChanged: function() {
+                // TODO:
+                var windows = this.querySelectorAll( 'x-editor-window' );
+
+                for (var i = 0; i < windows.length; ++i)
+                    windows[ i ].fire( 'resize', { } );
+            },
+
+            _onMutations: function(mutations) {
+                // items were added or removed, update column resize handles
+                var columns = this.columns;
+
+                for (var i = 0; i < columns.length; ++i) {
+                    var column = columns[ i ];
+
+                    column.classList
+                        .toggle( 'last-column', i == columns.length - 1 );
+                }
+            },
+
+            _onResizeHandleMouseDown: function(e) {
+                this._lastMouseY = e.clientY;
+                this._lastResizeHeight = this._getHeightPixels( );
+
+                DockContainerControl.ActiveResize = this;
+            },
+
+            _handleResize: function(e) {
+                var deltaY = e.clientY - this._lastMouseY;
+
+                var newHeight = Math.max( this._minHeight, this._lastResizeHeight + deltaY );
+
+                this.setHeightPercent( newHeight / this.parent.clientHeight );
+            },
+            _handleResizeEnd: function(e) {
+                DockContainerControl.ActiveResize = null;
+            }
+        });
+
+        DockContainerControl.ActiveResize = null;
+
+        DockContainerControl.OnDocumentMouseMove = function(e) {
+            if (DockContainerControl.ActiveResize)
+                DockContainerControl.ActiveResize._handleResize( e );
+        };
+
+        DockContainerControl.OnDocumentMouseUp = function(e) {
+            if (DockContainerControl.ActiveResize)
+                DockContainerControl.ActiveResize._handleResizeEnd( e );
+        };
+
+        document.addEventListener( 'mousemove', DockContainerControl.OnDocumentMouseMove );
+        document.addEventListener( 'mouseup', DockContainerControl.OnDocumentMouseUp );
+    </script>
+</dom-module>

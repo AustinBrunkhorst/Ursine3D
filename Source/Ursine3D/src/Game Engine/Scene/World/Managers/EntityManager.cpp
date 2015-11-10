@@ -49,6 +49,13 @@ namespace ursine
                     );
 
                     componentID.SetValue( nextID++ );
+
+                    auto defaultCtor = derived.GetDynamicConstructor( );
+
+                    UAssert( defaultCtor.IsValid( ), 
+                        "Component type '%s' doesn't have a default dynamic constructor.",
+                        derived.GetName( ).c_str( )
+                    )
                 }
             }
         }
@@ -308,17 +315,17 @@ namespace ursine
             // Remove the children before the parent is removed
             auto children = m_hierarchy.GetChildren( entity );
 
-            while (children->size() > 0)
+            while (children->size( ) > 0)
             {
                 auto &child = ( *children )[ 0 ];
-                Remove( m_active[ child ] );
+                Remove( &m_cache[ child ] );
             }
 
             m_hierarchy.RemoveEntity( entity );
 
             clearComponents( entity, true );
 
-            utils::FlagUnset( entity->m_flags, Entity::ACTIVE );
+            entity->m_active = false;
 
             m_active.erase( find( m_active.begin( ), m_active.end( ), entity ) );
 
@@ -416,13 +423,15 @@ namespace ursine
             if (!entity->HasComponent( mask ))
                 return;
 
+            auto oldMask = entity->m_typeMask;
+
             entity->unsetType( mask );
 
             Component *&component = m_componentTypes[ id ][ entity->m_id ];
 
             if (dispatch)
             {
-                ComponentEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component );
+                ComponentRemovedEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component, oldMask );
 
                 m_world->Dispatch( WORLD_ENTITY_COMPONENT_REMOVED, &e );
             }

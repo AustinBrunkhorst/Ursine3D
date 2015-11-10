@@ -34,7 +34,7 @@ struct DS_OUTPUT
 struct SURFACE_DATA
 {
     float LinearDepth;
-    float3 Color;
+    float4 Color;
     float3 Normal;
     float SpecInt;
     float SpecPow;
@@ -76,7 +76,7 @@ float3 CalcWorldPos( float2 csPos, float linearDepth )
 }
 
 //unpack the g buffer from our textures
-SURFACE_DATA UnpackGBuffer( int2 location )
+SURFACE_DATA UnpackGBuffer(int2 location)
 {
     SURFACE_DATA Out;
 
@@ -84,27 +84,30 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     int3 location3 = int3(location, 0);
 
     // Get the depth value and convert it to linear depth
-    float depth = DepthTexture.Load( location3 ).x;
-    Out.LinearDepth = ConvertDepthToLinear( depth );
+    float depth = DepthTexture.Load(location3).x;
+    Out.LinearDepth = ConvertDepthToLinear(depth);
 
     // Get the base color and specular intensity
-    float4 baseColorSpecInt = ColorSpecIntTexture.Load( location3 );
-    Out.Color = baseColorSpecInt.xyz;
-    Out.SpecInt = baseColorSpecInt.w;
+    float4 baseColor = ColorSpecIntTexture.Load(location3);
+    Out.Color = baseColor;
+    Out.SpecInt;
 
     // Sample the normal, convert it to the full range and noramalize it
-    Out.Normal = NormalTexture.Load( location3 ).xyz;
-    Out.Normal = normalize( Out.Normal * 2.0 - 1.0 );
-
-    // Scale the specular power back to the original range
-    float2 SpecPowerNorm = SpecPowTexture.Load( location3 ).xy;
-    Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
+    float4 normalValue = NormalTexture.Load(location3);
+    Out.Normal = normalValue.xyz;
+    Out.Normal = normalize(Out.Normal * 2.0 - 1.0);
 
     //grab emissive value
-    Out.Emissive = SpecPowerNorm.y;
+    Out.Emissive = normalValue.w;
+
+    // Scale the specular power back to the original range
+    float4 SpecPowerNorm = SpecPowTexture.Load(location3);
+    Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
+    Out.SpecInt = SpecPowerNorm.w;
 
     return Out;
 }
+
 
 float3 CalcPoint( float3 position, Material material )
 {
@@ -121,7 +124,7 @@ float3 CalcPoint( float3 position, Material material )
     float attenuation = saturate( 1.0f - (DistToLight / radius) );
     finalColor *= material.diffuseColor.xyz * attenuation;
 
-    // Blinn specular
+    // specular
     ToEye = normalize( ToEye );
     float3 HalfWay = normalize( ToEye + ToLight );
     float NDotH = saturate( dot( HalfWay, material.normal ) );
@@ -135,22 +138,23 @@ float3 CalcPoint( float3 position, Material material )
 float4 main( DS_OUTPUT In ) : SV_TARGET
 {
     // Unpack the GBuffer
-    SURFACE_DATA gbd = UnpackGBuffer( In.Position.xy );
+    SURFACE_DATA gbd = UnpackGBuffer(In.Position.xy);
 
     // Convert the data into the material structure
     Material mat;
     mat.normal = gbd.Normal;
-    mat.diffuseColor.xyz = gbd.Color;
-    mat.diffuseColor.w = 1.0; // Fully opaque
-    mat.specPow = gbd.SpecPow;
+    mat.diffuseColor = gbd.Color;
+    mat.specPow = gbd.SpecPow; 
     mat.specIntensity = gbd.SpecInt;
     mat.emissive = gbd.Emissive;
 
+    //calculate world position
     In.cpPos.xy /= In.cpPos.w;
-    float3 pos = CalcWorldPos( In.cpPos.xy, gbd.LinearDepth );
+    float3 pos = CalcWorldPos(In.cpPos.xy, gbd.LinearDepth);
 
+    //get the final color
     float4 finalColor;
-    finalColor.xyz = CalcPoint( pos, mat );
+    finalColor.xyz = CalcPoint(pos, mat);
     finalColor.w = 1.0;
 
     return finalColor;

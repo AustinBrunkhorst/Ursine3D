@@ -5,9 +5,8 @@
 #include <Window.h>
 #include <UIView.h>
 
-#include <NativeJSFunction.h>
+#include "Project.h"
 
-class Project;
 class NativeEditorTool;
 
 class Editor : public ursine::core::CoreSystem
@@ -21,20 +20,21 @@ public:
     void OnInitialize(void) override;
     void OnRemove(void) override;
     
-    Project *GetProject(void) const;
+    ursine::Window::Handle GetMainWindow(void) const;
+    ursine::UIView::Handle GetMainUI(void) const;
+
+    Project::Handle GetProject(void) const;
     
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
     struct
     {
-        ursine::Window *window;
-        CefRefPtr<ursine::UIView> ui;
-        GfxHND viewport;
-        GfxHND camera;
+        ursine::Window::Handle window;
+        ursine::UIView::Handle ui;
     } m_mainWindow;
 
-    Project *m_project;
+    Project::Handle m_project;
 
     void initializeGraphics(void);
     void initializeScene(void);
@@ -42,7 +42,4 @@ private:
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
-
-    void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
-    void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
 } Meta(Enable, WhiteListMethods);

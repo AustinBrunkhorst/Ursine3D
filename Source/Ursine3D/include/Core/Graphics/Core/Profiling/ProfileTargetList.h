@@ -28,13 +28,18 @@ namespace ursine
             //leave above as first
 
             PROFILE_CLEAR_BUFFERS,
+            PROFILE_SORT,
             PROFILE_DEFERRED, //big (2nd)
+
+#if defined(URSINE_WITH_EDITOR)
+            PROFILE_COMPUTEMOUSE,
+#endif
+
             PROFILE_LIGHTS, //big (1st)
             PROFILE_PRIMITIVES,
             PROFILE_DEBUG,
             PROFILE_SCENE_MAIN, //big (3rd)
             PROFILE_SCENE_PRIMITIVE,
-            PROFILE_SCENE_UI,
 
 
             //leave as last

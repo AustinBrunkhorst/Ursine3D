@@ -519,6 +519,10 @@ namespace ursine
  
                 return { instance.ToInt( ) };
             }
+            else if (*this == typeof( std::string ))
+            {
+                return { instance.ToString( ) };
+            }
             
             Json::object object { };
 
@@ -536,6 +540,18 @@ namespace ursine
 
         Variant Type::DeserializeJson(const Json &value) const
         {
+            auto ctor = GetConstructor( );
+
+            UAssert( ctor.IsValid( ),
+                "Serialization requires a default constructor.\nWith type '%s'.",
+                GetName( ).c_str( )
+            );
+
+            return DeserializeJson( value, ctor );
+        }
+
+        Variant Type::DeserializeJson(const Json &value, const Constructor &ctor) const
+        {
             // we have to handle all primitive types explicitly
             if (IsPrimitive( ))
             {
@@ -550,20 +566,24 @@ namespace ursine
                 else if (*this == typeof( double ))
                     return { value.number_value( ) };
             }
+            else if (IsEnum( ))
+            {
+                return { value.int_value( ) };
+            }
             else if (*this == typeof( std::string ))
             {
                 return { value.string_value( ) };
             }
 
-            auto ctor = GetConstructor( );
-
-            UAssert( ctor.IsValid( ),
-                "Serialization requires a default constructor.\nWith type '%s'.",
-                GetName( ).c_str( )
-            );
-
             auto instance = ctor.Invoke( );
 
+            DeserializeJson( instance, value );
+
+            return instance;
+        }
+
+        void Type::DeserializeJson(Variant &instance, const Json &value) const
+        {
             auto &fields = database.types[ m_id ].fields;
 
             for (auto &field : fields)
@@ -580,8 +600,6 @@ namespace ursine
                     fieldType.DeserializeJson( value[ field.first ] ) 
                 );
             }
-
-            return instance;
         }
     }
 }

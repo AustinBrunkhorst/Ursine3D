@@ -1,5 +1,6 @@
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
+#include <Core/Graphics/Core/GfxDefines.h>
 
 namespace ursine
 {
@@ -12,7 +13,11 @@ namespace ursine
             Active_ = false;
         }
 
-        void Renderable::Initialize() {}
+        void Renderable::Initialize()
+        {
+            Overdraw_ = false;
+            Debug_ = false;
+        }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
         {
@@ -22,6 +27,26 @@ namespace ursine
         ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
         {
             return entityID;
+        }
+
+        void Renderable::SetOverdraw(bool draw)
+        {
+            Overdraw_ = draw;
+        }
+
+        bool Renderable::GetOverdraw() const
+        {
+            return Overdraw_;
+        }
+
+        void Renderable::SetDebug(bool debug)
+        {
+            Debug_ = debug;
+        }
+
+        bool Renderable::GetDebug() const
+        {
+            return Debug_;
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -41,6 +66,11 @@ namespace ursine
             Transform_ = matrix;
         }
 
+        Model3D::Model3D()
+        {
+            m_matrixPalette.resize(MAX_BONE_COUNT);
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model3d
         void Model3D::Initialize()
@@ -51,6 +81,9 @@ namespace ursine
             m_emissive = 0;
             m_specPow = 0;
             m_specIntensity = 0;
+            SetOverdraw(false);
+            SetDebug(false);
+            m_color = Color(1, 1, 1, 1);
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -67,6 +100,7 @@ namespace ursine
             intensity = m_specIntensity;
         }
 
+
 		void Model3D::SetAnimationTime(const float time)
 		{
 			m_animationTime = time;
@@ -77,6 +111,22 @@ namespace ursine
 			// TODO: insert return statement here
 			return m_animationTime;
 		}
+
+        void Model3D::SetColor(const Color color)
+        {
+            m_color = color;
+        }
+
+        const Color &Model3D::GetColor() const
+        {
+            return m_color;
+        }
+
+        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        {
+            return m_matrixPalette;
+        }
+
 
         const char *Model3D::GetModelName(void)
         {
@@ -128,6 +178,26 @@ namespace ursine
         {
             width = m_width;
             height = m_height;
+        }
+
+        void Billboard2D::SetPosition(const ursine::SVec3& position)
+        {
+            m_position = position;
+        }
+
+        const ursine::SVec3& Billboard2D::GetPosition() const
+        {
+            return m_position;
+        }
+
+        void Billboard2D::SetColor(const Color color)
+        {
+            m_color = color;
+        }
+
+        const Color &Billboard2D::GetColor() const
+        {
+            return m_color;
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -222,98 +292,6 @@ namespace ursine
         //lights
 
         ///////////////////////////////////////////////////////////////////
-        // directional light
-        DirectionalLight::DirectionalLight()
-        {
-            Direction_ = Vec3(0, 0, 1);
-            Color_ = Color(1, 1, 1, 1);
-        }
-
-        SVec3 &DirectionalLight::GetDirection()
-        {
-            return Direction_;
-        }
-
-        void DirectionalLight::SetDirection(const SVec3 &dir)
-        {
-            Direction_ = dir;
-            Direction_.Normalize();
-        }
-
-        void DirectionalLight::SetDirection(float x, float y, float z)
-        {
-            Direction_.Set(x, y, z);
-            Direction_.Normalize();
-        }
-
-        Color &DirectionalLight::GetColor()
-        {
-            return Color_;
-        }
-
-        void DirectionalLight::SetColor(const Color &color)
-        {
-            Color_ = color;
-        }
-
-        void DirectionalLight::SetColor(float x, float y, float z)
-        {
-            Color_ = Color(x, y, z, 1);
-        }
-
-        
-
-        ///////////////////////////////////////////////////////////////////
-        // point light
-        PointLight::PointLight()
-        {
-            m_position = Vec3(0, 0, 0);
-            Color_ = Color(1, 1, 1, 1);
-            Radius_ = 5;
-        }
-
-        SVec3 &PointLight::GetPosition()
-        {
-            return m_position;
-        }
-
-        void PointLight::SetPosition(const SVec3 &position)
-        {
-            m_position = position;
-        }
-
-        void PointLight::SetPosition(float x, float y, float z)
-        {
-            m_position = SVec3(x, y, z);
-        }
-
-        Color &PointLight::GetColor()
-        {
-            return Color_;
-        }
-
-        void PointLight::SetColor(const Color &color)
-        {
-            Color_ = color;
-        }
-
-        void PointLight::SetColor(float x, float y, float z)
-        {
-            Color_ = Color(x, y, z, 1);
-        }
-
-
-        float &PointLight::GetRadius()
-        {
-            return Radius_;
-        }
-
-        void PointLight::SetRadius(float radius)
-        {
-            Radius_ = radius;
-        }
-
-        ///////////////////////////////////////////////////////////////////
         // universal light
         void Light::Initialize(void) 
         {
@@ -324,7 +302,7 @@ namespace ursine
             m_direction = SVec3(0, -1, 0);
             m_intensity = 1.0f;;
 
-            m_spotlightAngles = Vec2(30, 30);
+            m_spotlightAngles = Vec2(15, 30);
         }
 
         Light::LightType Light::GetType(void)
@@ -415,6 +393,16 @@ namespace ursine
         void Light::SetSpotlightAngles(const float inner, const float outer)
         {
             m_spotlightAngles = Vec2(inner, outer);
+        }
+
+        void Light::SetSpotlightTransform(const SMat4& transf)
+        {
+            m_spotlightTransform = transf;
+        }
+
+        const SMat4& Light::GetSpotlightTransform()
+        {
+            return m_spotlightTransform;
         }
     }
 }

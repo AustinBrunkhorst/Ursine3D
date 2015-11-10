@@ -13,6 +13,13 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+            EditorField(
+                Color Color,
+                GetColor,
+                SetColor
+                );
+
+        public:
             Model3D(void);
             ~Model3D(void);
 
@@ -23,18 +30,18 @@ namespace ursine
             void SetModel(const std::string &name);
             ursine::graphics::Model3D *GetModel(void);
             
-            //get/set texture
+            //get/set color
+            void SetColor(const ursine::Color &color);
+            const ursine::Color &GetColor(void);
 
         private:
+            graphics::GfxHND m_handle;
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;
 
-            // The graphics core API
-            graphics::GfxAPI *m_graphics;
-
             void onUpdateRenderer(EVENT_HANDLER(Entity));
 
-        } Meta( Enable, DisplayName( "Model3D" ) );
+        } Meta(Enable, DisplayName( "Model3D" ));
     }
 }

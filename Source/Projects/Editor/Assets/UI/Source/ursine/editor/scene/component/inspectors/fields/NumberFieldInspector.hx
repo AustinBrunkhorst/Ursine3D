@@ -5,24 +5,46 @@ import ursine.editor.scene.component.ComponentDatabase;
 
 @fieldInspector( "int", "float", "double" )
 class NumberFieldInspector extends FieldInspectionHandler {
+    private var m_number : NumberInput;
+
     public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
-        var number = new NumberInput( );
+        m_number = new NumberInput( );
 
-        number.value = m_instance;
+        m_number.value = m_instance;
 
-        number.addEventListener( 'input', function() {
-            // floating point
-            if (m_type.name == "float" || m_type.name == "double")
-                m_instance = number.valueAsNumber;
-            // integral
-            else
-                m_instance = Std.int( number.valueAsNumber );
+        m_number.addEventListener( 'change', function() {
+            var value : Dynamic = m_number.valueAsNumber;
 
-            m_owner.notifyChanged( m_field, m_instance );
+            if (Math.isNaN( value ))
+                value = 0;
+
+            // integral (not floating point)
+            if (!(m_type.name == "float" || m_type.name == "double"))
+                value = Std.int( value );
+
+            m_owner.notifyChanged( m_field, value );
         } );
 
-        inspector.container.appendChild( number );
+        // select all text on focus
+        m_number.addEventListener( 'focus', function(e) {
+            m_number.select( );
+
+            e.preventDefault( );
+        } );
+
+        inspector.container.appendChild( m_number );
+    }
+
+    public override function updateValue(value : Dynamic) {
+        var number : Dynamic;
+
+        if (m_type.name == "float" || m_type.name == "double")
+            number = untyped value.toPrecision( 4 );
+        else
+            number = Std.int( value );
+
+        m_number.value = number;
     }
 }

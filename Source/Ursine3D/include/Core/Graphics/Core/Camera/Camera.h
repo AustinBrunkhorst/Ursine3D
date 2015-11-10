@@ -41,7 +41,7 @@ namespace ursine
 
             //getting matrices
             ursine::SMat4 GetViewMatrix() const;
-            ursine::SMat4 GetProjMatrix(const float width, const float height) const;
+            ursine::SMat4 GetProjMatrix() const;
 
             //setting position
             const ursine::SVec3 &GetPosition() const;
@@ -88,6 +88,15 @@ namespace ursine
 
             //get the render mode
             ViewportRenderMode GetRenderMode(void) const;
+
+            //convert screen point to world point
+            Vec3 ScreenToWorld(const Vec2 &screenPos, const float depth);
+
+            //DO NOT CALL set screen dimensions
+            void SetScreenDimensions(const float width, const float height);
+
+            //DO NOT CALL set screen pixel positions
+            void SetScreenPosition(const float x, const float y);
         private:
             void CalculateVectors(const ursine::SVec3 &up);
 
@@ -109,6 +118,12 @@ namespace ursine
             float m_height;
             float m_xPos;
             float m_yPos;
+
+            //these are the actual pixel-position/sizes of the screen.
+            float m_screenX;
+            float m_screenY;
+            float m_screenWidth;
+            float m_screenHeight;
         };
     }
 }

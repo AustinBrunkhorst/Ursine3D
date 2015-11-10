@@ -17,6 +17,8 @@
 
 namespace ursine
 {
+    CefRefPtr<UICore> UICore::Instance = nullptr;
+
     UICore::UICore(void)
     {
         atexit( Shutdown );
@@ -32,6 +34,8 @@ namespace ursine
         CefRefPtr<CefCommandLine> cmdLine
     )
     {
+        cmdLine->AppendSwitch( "disable-extensions" );
+
         // fixes v8 errors on startup
         cmdLine->AppendSwitch( "no-proxy-server" );
         cmdLine->AppendSwitch( "winhttp-proxy-resolver" );

@@ -9,6 +9,9 @@
     <script>
         var MainMenuControl = Polymer({
             is: "x-main-menu",
+            hostAttributes: {
+                tabindex: -1
+            },
             properties: {
 
             },
@@ -16,9 +19,6 @@
                 'blur': '_onBlur'
             },
             created: function() {
-                // make this element focusable
-                this.tabIndex = -1;
-
                 // make this the root menu by default
                 this.classList.add( 'root-menu' );
 

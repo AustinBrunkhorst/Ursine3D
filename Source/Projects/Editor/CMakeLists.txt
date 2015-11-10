@@ -14,7 +14,7 @@ ursine_default_project(Editor
     META_HEADER "Reflection.h"
     PCH_NAME "Precompiled"
 )
-
+ 
 # disable exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
 

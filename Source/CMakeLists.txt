@@ -47,7 +47,7 @@ set(FBX_DIR           "${ENGINE_DEP_DIR}/FBX")
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
 
-find_package(CEF 3.2272 REQUIRED 
+find_package(CEF 3.2526 REQUIRED 
     HINTS ${CEF_DIR})
 
 find_package(BENCHMARKS REQUIRED

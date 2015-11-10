@@ -13,6 +13,9 @@
     <script>
         var EditorWindowControl = Polymer({
             is: "x-editor-window",
+            hostAttributes: {
+                tabindex: -1
+            },
             properties: {
                 heading: {
                     type: String,
@@ -20,8 +23,7 @@
                 }
             },
             created: function() {
-                // make this element focusable
-                this.tabIndex = -1;
+
             },
 
             get container() {

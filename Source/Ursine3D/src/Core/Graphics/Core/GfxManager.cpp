@@ -7,11 +7,13 @@
 #include "DepthStencilStateList.h"
 #include <d3d11.h>
 
+static int tempID = -1;
+static HWND wHND = 0;
+
 namespace ursine
 {
     namespace graphics
     {
-        Camera *tempCam;
         bool sort(_DRAWHND &h1, _DRAWHND &h2)
         {
             if (*reinterpret_cast<unsigned long long*>(&h1) < *reinterpret_cast<unsigned long long*>(&h2))
@@ -47,6 +49,7 @@ namespace ursine
             m_debug = config.debug;
             m_currentlyRendering = false;
             m_sceneActive = false;
+            m_currentID = -1;
 
             //writing log stuff
             LogMessage("GRAPHICS");
@@ -60,6 +63,8 @@ namespace ursine
             LogMessage("GPU Info", 1);
             gfxInfo->Initialize();
             gfxInfo->SetDimensions(config.WindowWidth_, config.WindowHeight_);
+
+            wHND = config.HandleToWindow_;
 
             /////////////////////////////////////////////////////////////////
             // INITIALIZE MANAGERS //////////////////////////////////////////
@@ -79,6 +84,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH, "DeferredDepth");
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap");
                 shaderManager->LoadShader(SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource");
+                shaderManager->LoadShader(SHADER_SPOT_LIGHT, "SpotlightSource");
                 shaderManager->LoadShader(SHADER_POINT_LIGHT, "PointLightSource");
                 shaderManager->LoadShader(SHADER_QUAD, "QuadShader");
                 shaderManager->LoadShader(SHADER_UI, "UIShader");
@@ -86,6 +92,9 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_POINT, "PointShader");
                 shaderManager->LoadShader(SHADER_SHADOW, "ShadowMap");
                 shaderManager->LoadShader(SHADER_BILLBOARD2D, "BillboardedSprite");
+
+                //load compute
+                shaderManager->LoadShader(SHADER_MOUSEPOSITION, "MouseTypeID");
             }
 
             LogMessage("Initialize Buffers", 1);
@@ -163,6 +172,7 @@ namespace ursine
 
             //get a new draw call
             _DRAWHND &drawCall = m_drawList[ m_drawCount++ ];
+            drawCall.buffer_ = 0;
 
             switch (render->Type_)
             {
@@ -177,6 +187,7 @@ namespace ursine
 
                 drawCall.Model_ = modelManager->GetModelIDByName(current->GetModelName());
                 drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
+                drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
             case RENDERABLE_PRIMITIVE:
@@ -188,6 +199,7 @@ namespace ursine
 
                 drawCall.Shader_ = SHADER_PRIMITIVE;
                 drawCall.debug_ = 1;
+                drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
             case RENDERABLE_BILLBOARD2D:
@@ -199,6 +211,7 @@ namespace ursine
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetTextureName());
 
                 drawCall.Shader_ = SHADER_BILLBOARD2D;
+                drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
             case RENDERABLE_LIGHT:
@@ -206,6 +219,7 @@ namespace ursine
                 Light *current = &renderableManager->m_renderableLights[ render->Index_ ];
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
+                drawCall.Overdraw_ = current->GetOverdraw();
 
                 switch(current->GetType())
                 {
@@ -216,7 +230,7 @@ namespace ursine
                     drawCall.Shader_ = SHADER_POINT_LIGHT;
                     break;
                 case Light::LIGHT_SPOTLIGHT:
-                    URSINE_TODO("Implement spotlight");
+                    drawCall.Shader_ = SHADER_SPOT_LIGHT;
                     break;
                 default:
                     break;
@@ -272,8 +286,6 @@ namespace ursine
 
             Camera &cam = cameraManager->GetCamera(camera);
 
-            tempCam = &cam;
-
             //get game vp dimensions
             Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
             D3D11_VIEWPORT gvp = gameVP.GetViewportData();
@@ -316,7 +328,7 @@ namespace ursine
             PrimitiveColorBuffer pcb;
             //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
             pcb.color = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
 
@@ -386,32 +398,42 @@ namespace ursine
             w *= gvp.Width;
             h *= gvp.Height;
 
+            currentCamera.SetScreenDimensions(w, h);
+            currentCamera.SetScreenPosition(gvp.TopLeftX, gvp.TopLeftY);
+
             /////////////////////////////////////////////////////////////////
             // gets the projection matrix and view matrix
             SMat4 proj, view;
-            proj = currentCamera.GetProjMatrix(w, h);
+            proj = currentCamera.GetProjMatrix();
             view = currentCamera.GetViewMatrix();
 
             /////////////////////////////////////////////////////////////////
             // SORT ALL DRAW CALLS
             std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
-
+            
             /////////////////////////////////////////////////////////////////
             // BEGIN RENDERING
-            //keep track of where we are
+            //keep track of where we are 
             int currentIndex = 0;
 
             //render 3d models deferred
-            PrepFor3DModels(view, proj);
+            PrepForBillboard2D(view, proj, currentCamera);
+            while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+
+            PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ]);
-            while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
-                Render2DBillboard(m_drawList[ currentIndex++ ]);
 
             //point light pass
             PrepForPointLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
+
+            //spot light pass
+            PrepForSpotlightPass(view, proj);
+            while (m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT)
+                RenderSpotLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
             //directional light pass
             PrepForDirectionalLightPass(view, proj);
@@ -425,10 +447,11 @@ namespace ursine
 
             //debug 
             PrepForDebugRender();
-            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
             RenderDebugPoints(view, proj, currentCamera);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera);
+            gfxProfiler->Stamp(PROFILE_DEBUG);
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
@@ -441,6 +464,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////////////
             //render primitive layer
+            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_STENCIL);
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEBUG)->ShaderMap);
 
             shaderManager->BindShader(SHADER_QUAD);
@@ -448,6 +472,13 @@ namespace ursine
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
             gfxProfiler->Stamp(PROFILE_SCENE_PRIMITIVE);
+
+            //overdraw render
+            PrepForOverdrawDebugRender(view, proj);
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            RenderDebugPoints(view, proj, currentCamera, true);
+            dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
+            RenderDebugLines(view, proj, currentCamera, true);
 
             //clearing all buffers
             textureManager->MapTextureByName("Wire");
@@ -480,16 +511,20 @@ namespace ursine
             w *= gvp.Width;
             h *= gvp.Height;
 
+            currentCamera.SetScreenDimensions(w, h);
+
             /////////////////////////////////////////////////////////////////
             // gets the projection matrix and view matrix
             SMat4 proj, view;
 
-            proj = currentCamera.GetProjMatrix(w, h);
+            proj = currentCamera.GetProjMatrix();
             view = currentCamera.GetViewMatrix();
 
             /////////////////////////////////////////////////////////////////
             // SORT ALL DRAW CALLS
             std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
+
+            gfxProfiler->Stamp(PROFILE_SORT);
 
             /////////////////////////////////////////////////////////////////
             // BEGIN RENDERING
@@ -511,7 +546,7 @@ namespace ursine
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ]);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
-                Render2DBillboard(m_drawList[ currentIndex++ ]);
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
 
             gfxProfiler->Stamp(PROFILE_LIGHTS);
 
@@ -554,6 +589,9 @@ namespace ursine
             UAssert(m_currentlyRendering == true, "Attemped to end a scene without starting the frame!");
             UAssert(m_sceneActive == true, "Attempted to end a scene before beginning one!");
             m_sceneActive = false;
+
+            // reset drawing for next scene
+            drawingManager->EndScene();
         }
 
         void GfxManager::EndFrame()
@@ -561,13 +599,14 @@ namespace ursine
             UAssert(m_sceneActive == false, "Attempted to end the frame without ending the scene!");
             UAssert(m_currentlyRendering == true, "Attemped to end the frame when it was never started!");
 
+            //compute pass for mouse position
+            PrepForCompute();
+            RenderComputeMousePos();
+
             m_currentlyRendering = false;
 
             // end profiler
             gfxProfiler->WaitForCalls(m_profile);
-
-            // reset drawing for next frame
-            drawingManager->EndScene();
 
             // present
             dxCore->SwapChainBuffer();
@@ -589,12 +628,7 @@ namespace ursine
         // preparing for different stages /////////////////////////////////
         void GfxManager::PrepFor3DModels(const SMat4 &view, const SMat4 &proj)
         {
-            float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
-            dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
-            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-
-            //deferred shading
-            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+           
             shaderManager->BindShader(SHADER_DEFERRED_DEPTH);
             layoutManager->SetInputLayout(SHADER_DEFERRED_DEPTH);
 
@@ -611,13 +645,65 @@ namespace ursine
 
             //TEMP
             URSINE_TODO("Remove this");
-            bufferManager->MapCameraBuffer(view, proj, GEOMETRY_SHADER);
+            bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
+        }
+
+        void GfxManager::PrepForBillboard2D(const SMat4& view, const SMat4& proj, Camera &currentCamera)
+        {
+            //end sorting
+            gfxProfiler->Stamp(PROFILE_SORT);
+
+            float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+            dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+
+            //deferred shading
+            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+
+            //set input
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+            //set up buffers
+            bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
+            PointGeometryBuffer pgb;
+            pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
+            pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_GEOMETRY);
+
+            //bind shader 
+            shaderManager->BindShader(SHADER_BILLBOARD2D);
+            layoutManager->SetInputLayout(SHADER_BILLBOARD2D);
+
+            //set model
+            modelManager->BindModel("Sprite");
+            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+        }
+
+        void GfxManager::PrepForCompute(void)
+        {
+#if defined(URSINE_WITH_EDITOR)
+            gfxProfiler->Stamp(PROFILE_DEFERRED);
+
+            //set states
+            dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, false);
+            dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
+            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            //bind shader
+            shaderManager->BindShader(SHADER_MOUSEPOSITION);
+#endif
         }
 
         void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
         {
+            //if in editor mode, we need to compute the mouse pos
+#if defined(URSINE_WITH_EDITOR)
+            gfxProfiler->Stamp(PROFILE_COMPUTEMOUSE);
+#else
             gfxProfiler->Stamp(PROFILE_DEFERRED);
-
+#endif
             modelManager->BindModel(modelManager->GetModelIDByName("Sphere"));
 
             //set states
@@ -633,7 +719,7 @@ namespace ursine
             temp.Inverse();
 
             ipb.invProj = temp.ToD3D();
-            bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
             //map camera buffer
             bufferManager->MapCameraBuffer(view, proj);
@@ -646,7 +732,7 @@ namespace ursine
             gbub.perspectiveVals.y = 1.f / tempMat(1, 1);
             gbub.perspectiveVals.z = tempMat(3, 2);
             gbub.perspectiveVals.w = -tempMat(2, 2);
-            bufferManager->MapBuffer<BUFFER_GBUFFER_UNPACK>(&gbub, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_GBUFFER_UNPACK>(&gbub, SHADERTYPE_PIXEL);
 
             //bind shader
             shaderManager->BindShader(SHADER_POINT_LIGHT);
@@ -662,6 +748,16 @@ namespace ursine
             dxCore->GetDeviceContext()->PSSetShaderResources(1, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
             dxCore->GetDeviceContext()->PSSetShaderResources(2, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_NORMAL)->ShaderMap);
             dxCore->GetDeviceContext()->PSSetShaderResources(3, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
+        }
+
+        void GfxManager::PrepForSpotlightPass(const SMat4& view, const SMat4& proj)
+        {
+            //bind model
+            modelManager->BindModel(modelManager->GetModelIDByName("lightCone"));
+
+            //bind shader
+            shaderManager->BindShader(SHADER_SPOT_LIGHT);
+            layoutManager->SetInputLayout(SHADER_SPOT_LIGHT);
         }
 
         void GfxManager::PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj)
@@ -695,15 +791,13 @@ namespace ursine
             dxCore->SetBlendState(BLEND_STATE_NONE);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
             dxCore->SetRenderTarget(RENDER_TARGET_DEBUG);
-            shaderManager->BindShader(SHADER_PRIMITIVE);
-            layoutManager->SetInputLayout(SHADER_PRIMITIVE);
             bufferManager->MapTransformBuffer(SMat4::Identity());
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
         }
 
         void GfxManager::PrepForFinalOutput()
         {
-            gfxProfiler->Stamp(PROFILE_DEBUG);
+            
 
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -738,6 +832,16 @@ namespace ursine
             modelManager->BindModel(modelManager->GetModelIDByName("internalQuad"));
         }
 
+        void GfxManager::PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj)
+        {
+            dxCore->SetBlendState(BLEND_STATE_NONE);
+            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
+            bufferManager->MapTransformBuffer(SMat4::Identity( ));
+            dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
+            bufferManager->MapCameraBuffer(view, proj);
+        }
+
         // rendering //////////////////////////////////////////////////////
         void GfxManager::Render3DModel(_DRAWHND handle)
         {
@@ -747,37 +851,37 @@ namespace ursine
             GetCursorPos(&point);
 
             {
-                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), GEOMETRY_SHADER);
+                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
             }
 
+            Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor();
             PrimitiveColorBuffer pcb;
-            pcb.color.x = point.x / 80.f;
-            pcb.color.y = point.y / 80.f;
+            pcb.color.x = c.r;
+            pcb.color.y = c.g;
+            pcb.color.z = c.b;
+            pcb.color.w = c.a;
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL); 
 
-            static float t;
-            t += 0.000016f;
-            pcb.color.z = t;
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, GEOMETRY_SHADER);
             // END OF TEMP //////////////////////////////////////////
-
+                    
             //map transform
             bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
 
-            //material buffer
+            //material buffer 
             MaterialDataBuffer mdb;
-
-			//map matrix palette
-
 
             //get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
-
+            
             //set unique ID for this model
-            mdb.id = (handle.Index_) | (handle.Type_ << 16);
+            int overdrw = current.GetOverdraw() == true ? 1 : 0;
+
+            //             16                8
+            mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
 
             //map buffer
-            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             //set model
             modelManager->BindModel(handle.Model_);
@@ -785,28 +889,153 @@ namespace ursine
             //map texture
             textureManager->MapTextureByID(handle.Material_);
 
+            if(handle.Overdraw_)
+                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL); 
+            else
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
+             
             //render
             shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_));
+
+            //render debug lines
+            Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
+            if(model.GetDebug())
+            {
+                dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+                dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+
+                pcb.color.x = 0.75f;
+                pcb.color.y = 0.75f;
+                pcb.color.z = 0.45f;
+                bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+
+                mdb.emissive = 4;
+                mdb.specularPower = 0;
+                mdb.specularIntensity = 0;
+                bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+                textureManager->MapTextureByName("Blank");
+                shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+
+                dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+            }
         }
 
-        void GfxManager::Render2DBillboard(_DRAWHND handle)
+        void GfxManager::Render2DBillboard(_DRAWHND handle, Camera &currentCamera)
         {
+            auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
+
+            BillboardSpriteBuffer bsb;
+
+            billboard.GetDimensions(bsb.width, bsb.height);
+
+            //map camera data
+            PointGeometryBuffer pgb;
+            pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
+            pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_GEOMETRY);
+
+            //map color data
+            Color c = billboard.GetColor();
+            PrimitiveColorBuffer pcb;
+            pcb.color.x = c.r;
+            pcb.color.y = c.g;
+            pcb.color.z = c.b;
+            pcb.color.w = c.a;
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+
+            //map sprite data
+            bufferManager->MapBuffer<BUFFER_BILLBOARDSPRITE>(&bsb, SHADERTYPE_GEOMETRY);
+
             //map transform
-            bufferManager->MapTransformBuffer(renderableManager->m_renderableBillboards[ handle.Index_ ].GetWorldMatrix());
+            bufferManager->MapTransformBuffer(SMat4(billboard.GetPosition()));
 
-            //set model
-            modelManager->BindModel("Sprite");
-
-            //map material data
+            //map id data
             MaterialDataBuffer mdb;
-            mdb.id;
-            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
+
+            //set unique ID for this model
+            int overdrw = billboard.GetOverdraw() == true ? 1 : 0;
+
+            mdb.emissive = 1.f;
+            //             16                8
+            mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             //map texture
             textureManager->MapTextureByID(handle.Material_);
 
+            //set overdraw value
+            if (handle.Overdraw_)
+                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+            else
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+
             //render
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sprite")));
+            shaderManager->Render(1);
+        }
+
+        void GfxManager::RenderComputeMousePos()
+        {
+            MouseBuffer dataToCS;
+
+            POINT point;
+            GetCursorPos(&point);
+
+            ScreenToClient(wHND, &point);
+
+            if (point.x < 0) point.x = 0;
+            if (point.y < 0) point.y = 0;
+
+            //@matt set proper mouse position
+            dataToCS.mousePos = DirectX::XMINT4(point.x, point.y, 0, 0);
+
+            //bind shader
+            shaderManager->BindShader(SHADER_MOUSEPOSITION);
+
+            //set input
+            bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE, 0);
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
+
+            //set UAV as output 
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID ], nullptr);
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID_CPU, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID_CPU ], nullptr);
+
+            //call the compute shader. Results *should* be written to the UAV above
+            dxCore->GetDeviceContext()->Dispatch(1, 1, 1);
+
+            //copy data to intermediary buffer
+            //                                                           CPU read-only staging buffer                            GPU compute output
+            dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
+
+            //read from intermediary buffer
+            ComputeIDOutput dataFromCS[5]; 
+            bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
+
+            dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
+
+            tempID = dataFromCS[0].id; 
+             
+            int index = tempID & 0x7FF;
+            int type = (tempID >> 12) & 0x3;
+            int overdraw = (tempID >> 15) & 0x1;
+             
+            unsigned w, h; 
+            gfxInfo->GetDimensions(w, h); 
+             
+            if (tempID != -1 && tempID < 73727 && (unsigned)point.x < w && (unsigned)point.y < h)
+            {
+                switch (type) 
+                {
+                case RENDERABLE_MODEL3D:
+                    m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityUniqueID();
+                    break; 
+                case RENDERABLE_BILLBOARD2D:
+                    m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityUniqueID();
+                    break;
+                }
+            } 
+            else
+                m_currentID = -1;
         }
 
         void GfxManager::RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj)
@@ -824,7 +1053,7 @@ namespace ursine
             lightProj *= proj; //transform into screeen space
 
                                 //map
-            bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, DOMAIN_SHADER);
+            bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, SHADERTYPE_DOMAIN);
 
             //ps needs point light data buffer
             SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
@@ -834,11 +1063,11 @@ namespace ursine
             PointLightBuffer pointB;
             pointB.lightPos = lightPosition.ToD3D( );
             pointB.lightRadius = pl.GetRadius( );
-            pointB.intensity = 1;
+            pointB.intensity = pl.GetIntensity( );
             pointB.color.x = pl.GetColor( ).r;
             pointB.color.y = pl.GetColor( ).g;
             pointB.color.z = pl.GetColor( ).b;
-            bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, SHADERTYPE_PIXEL);
 
             //light transform
             SMat4 transform;
@@ -864,6 +1093,39 @@ namespace ursine
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sphere")));
         }
 
+        void GfxManager::RenderSpotLight(_DRAWHND handle, Camera& currentCamera, SMat4& proj)
+        {
+            Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
+
+            SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
+            view.Transpose();
+            SVec3 lightDirection = view.TransformVector(pl.GetDirection());
+
+            SVec3 lightPosition = view.TransformPoint(pl.GetPosition());
+
+            //spotlight data
+            SpotlightBuffer slb;
+            slb.diffuseColor = pl.GetColor( ).ToVector3().ToD3D();
+            slb.lightDirection = lightDirection.ToD3D();
+            slb.lightPosition = lightPosition.ToD3D( );
+            slb.intensity = pl.GetIntensity();
+            slb.innerAngle = cosf((pl.GetSpotlightAngles( ).X() / 2.f) * (3.141596f / 180.0f));   //needs to be in radians
+            slb.outerAngle = cosf((pl.GetSpotlightAngles( ).Y() / 2.f) * (3.141596f / 180.0f));
+
+            bufferManager->MapBuffer<BUFFER_SPOTLIGHT>(&slb, SHADERTYPE_PIXEL);
+
+            //transform data  
+            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform( ) * SMat4(SVec3(0, -0.5, 0)));
+
+            //what culling to use?
+            if(currentCamera.GetLook().Dot(lightDirection) > 0)
+                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            else
+                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("lightCone")));
+        }
+
         void GfxManager::RenderDirectionalLight(_DRAWHND handle, Camera &currentCamera)
         {
             Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
@@ -882,7 +1144,7 @@ namespace ursine
 
             lightB.lightColor = DirectX::XMFLOAT3(l.GetColor( ).r * lightB.intensity, l.GetColor( ).g * lightB.intensity, l.GetColor( ).b * lightB.intensity);
 
-            bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, SHADERTYPE_PIXEL);
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
         }
 
@@ -905,7 +1167,7 @@ namespace ursine
             //set color
             PrimitiveColorBuffer pcb;
             pcb.color = prim.GetColor().ToVector4().ToD3D();
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, PIXEL_SHADER);
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             //render specific primitive, based upon data
             switch (prim.GetType())
@@ -951,24 +1213,28 @@ namespace ursine
             }
         }
 
-        void GfxManager::RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera)
+        void GfxManager::RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw)
         {
             //render points
-            if (drawingManager->CheckRenderPoints())
+            if ((drawingManager->CheckRenderPoints( ) && !overdraw) || (drawingManager->CheckOverdrawRenderPoints( ) && overdraw))
             {
                 ID3D11Buffer *mesh, *indices;
                 unsigned vertCount, indexCount;
-                drawingManager->ConstructPointMesh(vertCount, indexCount, &mesh, &indices);
+
+                if(!overdraw)
+                    drawingManager->ConstructPointMesh(vertCount, indexCount, &mesh, &indices);
+                else
+                    drawingManager->ConstructOverdrawPointMesh(vertCount, indexCount, &mesh, &indices);
 
                 //set input
                 dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
                 //set up buffers
-                bufferManager->MapCameraBuffer(view, proj, GEOMETRY_SHADER);
+                bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
                 PointGeometryBuffer pgb;
                 pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
                 pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
-                bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, GEOMETRY_SHADER);
+                bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_GEOMETRY);
 
                 //bind shader
                 shaderManager->BindShader(SHADER_POINT);
@@ -982,14 +1248,18 @@ namespace ursine
             }
         }
 
-        void GfxManager::RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera)
+        void GfxManager::RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw)
         {
             //render lines
-            if (drawingManager->CheckRenderLines())
+            if ((drawingManager->CheckRenderLines() && !overdraw) || (drawingManager->CheckOverdrawRenderLines( ) && overdraw))
             {
                 ID3D11Buffer *mesh, *indices;
                 unsigned vertCount, indexCount;
-                drawingManager->ConstructLineMesh(vertCount, indexCount, &mesh, &indices);
+
+                if(!overdraw)
+                    drawingManager->ConstructLineMesh(vertCount, indexCount, &mesh, &indices);
+                else
+                    drawingManager->ConstructOverdrawLineMesh(vertCount, indexCount, &mesh, &indices);
 
                 //set input
                 dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -1164,7 +1434,12 @@ namespace ursine
 
             RELEASE_RESOURCE(tex);
         }
-        
+
+        int GfxManager::GetCurrentUniqueID()
+        {
+            return m_currentID;
+        }
+
         // misc stuff /////////////////////////////////////////////////////
         DXCore::DirectXCore *GfxManager::GetDXCore()
         {

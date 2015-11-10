@@ -26,9 +26,6 @@ namespace ursine
 
         class Component : public meta::Object
         {
-            // can set the owner
-            friend class EntityManager;
-
             // component type id
             ComponentTypeID m_typeID;
 
@@ -38,6 +35,10 @@ namespace ursine
             // entity that this component is attached to
             Entity *m_owner;
         public:
+            // can set the owner
+            friend class EntityManager;
+            friend class WorldSerializer;
+
             explicit inline Component(ComponentTypeID typeID);
 
             Component(const Component &rhs) = default;

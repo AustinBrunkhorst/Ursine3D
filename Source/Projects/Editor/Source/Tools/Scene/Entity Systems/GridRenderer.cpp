@@ -2,28 +2,36 @@
 
 #include "GridRenderer.h"
 
+#include "EditorCameraSystem.h"
+#include "GridRendererSettingsComponent.h"
+
 #include <SystemManager.h>
 #include <GfxAPI.h>
 
 using namespace ursine;
 
-ENTITY_SYSTEM_DEFINITION( GridRenderer ) ;
+ENTITY_SYSTEM_DEFINITION( GridRenderer );
 
 GridRenderer::GridRenderer(ecs::World *world)
     : EntitySystem( world )
-      , m_graphics( nullptr )
-      , m_renderSystem( nullptr )
+    , m_graphics( nullptr )
+    , m_renderSystem( nullptr )
 {
 }
 
 void GridRenderer::OnInitialize(void)
 {
-    m_graphics = GetCoreSystem(graphics::GfxAPI );
+    m_graphics = GetCoreSystem( graphics::GfxAPI );
 
     m_renderSystem = m_world->GetEntitySystem( ecs::RenderSystem );
 
     m_renderSystem->Listener( this )
         .On( ecs::RENDER_HOOK, &GridRenderer::onRenderHook );
+
+    auto settingsEntity = m_world->GetSettings( );
+
+    if (!settingsEntity->HasComponent<GridRendererSettings>( ))
+        settingsEntity->AddComponent<GridRendererSettings>( );
 }
 
 void GridRenderer::OnRemove(void)
@@ -35,6 +43,11 @@ void GridRenderer::OnRemove(void)
 void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
 {
     EVENT_ATTRS(ecs::RenderSystem, ecs::RenderHookArgs);
+
+    auto settings = m_world->GetSettings()->GetComponent<GridRendererSettings>( );
+
+    if (!settings)
+        return;
 
     auto &camera = m_graphics->CameraMgr.GetCamera( args->camera );
 
@@ -49,18 +62,19 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     float subColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //size of a cell
-    float cellSize = 1;
+    float cellSize = settings->GetCellSize();
 
     // # of cells
-    int widthCount = 200;
-    int heightCount = 200;
+    int widthCount = settings->GetWidth( );
+    int heightCount = settings->GetHeight( );
 
     //number of cells between dividers
-    static int subSector = 10;
+    int subSector = settings->GetSubDivisions( );
 
     //current center position of the grid
-    float centerX = position.X( );
-    float centerZ = position.Z( );
+    SVec3 pos = m_world->GetEntitySystem(EditorCameraSystem)->GetEditorFocusPosition( );
+    float centerX = pos.X( );
+    float centerZ = pos.Z( );
 
     ///////////////////////////////////////////////////////////////////
     // IMPLEMENTATION

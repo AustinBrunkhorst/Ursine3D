@@ -2,6 +2,7 @@
 @import 'Utils';
 
 body {
+  overflow: hidden;
   font-family: Roboto;
 }
 
@@ -59,4 +60,9 @@ body {
   &:hover {
     background-color: darken(#3e3e42, 10%);
   }
+}
+
+::selection {
+  background: lighten($color-accent, 10%);
+  color: white;
 }

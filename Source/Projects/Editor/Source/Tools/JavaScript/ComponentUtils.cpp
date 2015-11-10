@@ -24,7 +24,7 @@ JSFunction(GetNativeComponentDatabase)
             { "meta", component.GetMeta( ).SerializeJson( ) }
         };
 
-        auto fieldsObj = Json::object { };
+        auto fieldsObj = Json::array { };
 
         for (auto &field : component.GetFields( ))
         {
@@ -33,13 +33,11 @@ JSFunction(GetNativeComponentDatabase)
 
             addType( types, fieldType );
 
-            auto fieldObj = Json::object {
+            fieldsObj.emplace_back( Json::object {
                 { "name", fieldName },
                 { "type", fieldType.GetName( ) },
                 { "meta", field.GetMeta( ).SerializeJson( ) }
-            };
-
-            fieldsObj.insert( std::make_pair( fieldName, fieldObj ) );
+            } );
         }
 
         componentObj[ "fields" ] = fieldsObj;
@@ -95,19 +93,18 @@ namespace
             typeObj[ "enumValue" ] = nullptr;
         }
 
-        Json::object fieldsObj;
+        Json::array fieldsObj;
 
         for (auto &field : type.GetFields( ))
         {
             auto fieldType = field.GetType( );
             auto &fieldName = field.GetName( );
 
-            fieldsObj[ fieldName ] = Json::object 
-            {
+            fieldsObj.emplace_back( Json::object {
                 { "name", fieldName },
                 { "type", fieldType.GetName( ) },
                 { "meta", field.GetMeta( ).SerializeJson( ) }
-            };
+            } );
         }
 
         typeObj[ "fields" ] = fieldsObj;

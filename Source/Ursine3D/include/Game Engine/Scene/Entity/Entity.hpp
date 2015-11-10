@@ -36,6 +36,9 @@ namespace ursine
         template<class ComponentType>
         ComponentType *Entity::GetComponent(void) const
         {
+            static_assert( !std::is_same<ComponentType, Transform>::value, 
+                "Use GetTransform( ) to get the Transform component." );
+
             return m_world->m_entityManager->GetComponent<ComponentType>( this );
         }
 
@@ -48,27 +51,27 @@ namespace ursine
         }
 
 	    template <class ComponentType>
-	    ComponentType* Entity::GetComponentInChildren(const Entity* entity) const
+	    ComponentType* Entity::GetComponentInChildren(void) const
 	    {
-			return m_world->m_entityManager->GetComponentInChildren( entity );
+			return m_world->m_entityManager->GetComponentInChildren<ComponentType>( this );
 	    }
 
 	    template <class ComponentType>
-	    ComponentType* Entity::GetComponentInParent(const Entity* entity) const
+	    ComponentType* Entity::GetComponentInParent(void) const
 	    {
-			return m_world->m_entityManager->GetComponentInParent( entity );
+			return m_world->m_entityManager->GetComponentInParent<ComponentType>( this );
 	    }
 
 	    template <class ComponentType>
-	    std::vector<ComponentType*> Entity::GetComponentsInChildren(const Entity* entity) const
+	    std::vector<ComponentType*> Entity::GetComponentsInChildren(void) const
 	    {
-			return m_world->m_entityManager->GetComponentsInChildren( entity );
+			return m_world->m_entityManager->GetComponentsInChildren<ComponentType>( this );
 	    }
 
 	    template <class ComponentType>
-	    std::vector<ComponentType*> Entity::GetComponentsInParents(const Entity* entity) const
+	    std::vector<ComponentType*> Entity::GetComponentsInParents(void) const
 	    {
-			return m_world->m_entityManager->GetComponentsInParents( entity );
+			return m_world->m_entityManager->GetComponentsInParents<ComponentType>( this );
 	    }
 
 	    template<typename Args>

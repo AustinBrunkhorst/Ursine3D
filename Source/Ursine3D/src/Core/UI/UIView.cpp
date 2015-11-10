@@ -14,7 +14,7 @@
 
 namespace ursine
 {
-    UIView::UIView(Window *window, const CefBrowserSettings &settings, const std::string &url)
+    UIView::UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url)
         : m_window( window )
     {
         CefWindowInfo info;
@@ -59,6 +59,11 @@ namespace ursine
         
     }
 
+    CefRefPtr<CefBrowser> UIView::GetBrowser(void) const
+    {
+        return m_browser;
+    }
+
     void UIView::Close(void)
     {
         m_window->Listener( this )
@@ -76,8 +81,6 @@ namespace ursine
             .Off( MM_SCROLL, &UIView::onMouseWheel );
 
         m_browser->GetHost( )->CloseBrowser( true );
-
-        m_browser = nullptr;
     }
 
     const CefRect &UIView::GetViewport(void) const
@@ -95,12 +98,12 @@ namespace ursine
 
         resize(viewport.width, viewport.height);
 
-        m_browser->GetHost()->WasResized();
+        m_browser->GetHost( )->WasResized( );
     }
 
     bool UIView::IsValid(void) const
     {
-        return !!m_browser;
+        return m_browser != nullptr;
     }
 
     void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data)

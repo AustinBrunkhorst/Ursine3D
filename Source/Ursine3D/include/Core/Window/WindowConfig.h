@@ -4,5 +4,5 @@ struct SDL_Window;
 
 namespace ursine
 {
-    typedef SDL_Window WindowHandle;
+    typedef SDL_Window *InternalWindowHandle;
 }

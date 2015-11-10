@@ -3,10 +3,25 @@
 #include <d3d11.h>
 #include "GfxDefines.h"
 
+#define PROFILE(target) #target
+
 namespace ursine
 {
     namespace graphics
     {
+        static char *profileNames[ 20 ] = { 
+            PROFILE(PROFILE_FRAME_BEGIN),
+            PROFILE(PROFILE_CLEAR_BUFFERS),
+            PROFILE(PROFILE_SORT),
+            PROFILE(PROFILE_DEFERRED), 
+            PROFILE(PROFILE_COMPUTEMOUSE),
+            PROFILE(PROFILE_LIGHTS), 
+            PROFILE(PROFILE_PRIMITIVES),
+            PROFILE(PROFILE_DEBUG),
+            PROFILE(PROFILE_SCENE_MAIN), 
+            PROFILE(PROFILE_SCENE_PRIMITIVE),
+            PROFILE(PROFILE_COUNT)
+        };
         void GfxProfiler::Initialize(ID3D11Device *device, ID3D11DeviceContext *devCon, bool run)
         {
             m_run = run;
@@ -153,7 +168,7 @@ namespace ursine
                 currentTotal += m_timeStamps[ x ];
 
                 if (output)
-                    printf("PROFILE: %i, %5.3f\n", x, m_timeStamps[ x ] / 0.016f);
+                    printf("%s, %5.3f\n", profileNames[x], m_timeStamps[ x ] / 0.016f);
             }
 
             if (output)

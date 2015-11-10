@@ -4,9 +4,9 @@ package ursine.controls;
 extern class Menu extends PolymerElement {
     var empty : Bool;
 
-    public function new() : Void;
+    function new() : Void;
 
-    public function findItem(text : String) : MenuItem;
+    function findItem(text : String) : MenuItem;
 
-    public function close() : Void;
+    function close() : Void;
 }

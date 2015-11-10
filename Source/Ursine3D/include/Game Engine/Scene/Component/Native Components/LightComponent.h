@@ -26,12 +26,6 @@ namespace ursine
             );
 
             EditorField(
-                SVec3 Position,
-                GetPosition,
-                SetPosition
-            );
-
-            EditorField(
                 SVec3 Direction,
                 GetDirection,
                 SetDirection
@@ -94,6 +88,11 @@ namespace ursine
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
 
+            //private methods
+        private:
+            void onUpdateRenderer(EVENT_HANDLER(Entity));
+
+            //private members
         private:
             graphics::Light *m_light;
             graphics::GfxHND m_handle;

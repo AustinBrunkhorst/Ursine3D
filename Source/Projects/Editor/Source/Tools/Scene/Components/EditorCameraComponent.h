@@ -1,8 +1,6 @@
-
-
 #pragma once
 
-#include "Component.h"
+#include <Component.h>
 #include <Core/Graphics/Core/Camera/Camera.h>
 #include <Core/Graphics/API/GFXAPIDefines.h>
 
@@ -11,6 +9,7 @@ class EditorCamera : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
+    Meta(Enable)
     EditorCamera(void);
     ~EditorCamera(void);
 
@@ -33,7 +32,7 @@ public:
     void SetRenderMode(const ursine::graphics::ViewportRenderMode renderMode);
 
     // projection mode
-    const ursine::graphics::Camera::ProjectionMode GetProjectionModev(void) const;
+    const ursine::graphics::Camera::ProjectionMode GetProjectionMode(void) const;
     void SetProjectionMode(const ursine::graphics::Camera::ProjectionMode projection);
 
     // near/far
