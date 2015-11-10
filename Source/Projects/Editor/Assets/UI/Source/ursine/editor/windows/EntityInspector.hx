@@ -65,7 +65,7 @@ class EntityInspector extends WindowHandler {
         var handler = m_componentHandlers[ e.component ];
 
         if (handler != null)
-            removeInspector( handler.inspector );
+            removeInspector( handler );
 
         m_componentHandlers.remove( e.component );
     }
@@ -86,7 +86,7 @@ class EntityInspector extends WindowHandler {
         }
 
         for (handler in m_componentHandlers)
-            removeInspector( handler.inspector );
+            removeInspector( handler );
 
         // reset containers
         m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
@@ -151,9 +151,8 @@ class EntityInspector extends WindowHandler {
         m_inspectorsContainer.appendChild( handler.inspector );
     }
 
-    private function removeInspector(container : DOMElement) {
-        if (m_inspectorsContainer.contains( container ))
-            m_inspectorsContainer.removeChild( container );
+    private function removeInspector(inspector : ComponentInspectionHandler) {
+        inspector.remove( );
     }
 
     private function getAvailableComponentTypes(entity : Entity) : Array<String> {

@@ -329,6 +329,10 @@ void ObjectSelectorSystem::onKeyDown(EVENT_HANDLER(KeyboardManager))
 {
     EVENT_ATTRS(KeyboardManager, KeyboardKeyArgs);
 
+    // must have focus or mouse focus
+    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+        return;
+
     if (args->key == KEY_1)
     {
         m_dragging = false;

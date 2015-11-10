@@ -1,4 +1,7 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="Button.html">
+<link rel="import" href="NumberInput.html">
+<link rel="import" href="ColorInput.html">
 
 <dom-module id="x-color-input">
     <link rel="import" type="css" href="../Style/Controls/ColorInput.css">
@@ -12,6 +15,57 @@
         <div id="alphaView" class="v-view">
             <div id="alphaCanvas"></div>
             <div id="alphaCursor" class="v-cursor"></div>
+        </div>
+        <div id="channelView">
+            <div class="column">
+                <div class="channel">
+                    <span class="label">R</span>
+                    <input id="channelRed" is="x-number-input" min="0" max="255">
+                </div>
+                <div class="channel">
+                    <span class="label">G</span>
+                    <input id="channelGreen" is="x-number-input" min="0" max="255">
+                </div>
+                <div class="channel">
+                    <span class="label">B</span>
+                    <input id="channelBlue" is="x-number-input" min="0" max="255">
+                </div>
+                <div class="channel">
+                    <span class="label">#</span>
+                    <input id="inputHex" is="x-text-input" spellcheck="false">
+                </div>
+            </div>
+            <div class="column">
+                <div class="channel">
+                    <span class="label">H</span>
+                    <input id="channelHue" is="x-number-input" min="0" max="360">
+                    <span class="unit">&deg;</span>
+                </div>
+                <div class="channel">
+                    <span class="label">S</span>
+                    <input id="channelSaturation" is="x-number-input" min="0" max="100">
+                    <span class="unit">%</span>
+                </div>
+                <div class="channel">
+                    <span class="label">B</span>
+                    <input id="channelBrightness" is="x-number-input" min="0" max="100">
+                    <span class="unit">%</span>
+                </div>
+            </div>
+            <div class="column actions">
+                <div class="rendered-colors">
+                    <div>
+                        <span id="colorPreview"></span>
+                        New
+                    </div>
+                    <div>
+                        <span id="colorDefault"></span>
+                        Current
+                    </div>
+                </div>
+                <button id="btnSave" is="x-button"> Save </button>
+                <button id="btnCancel" is="x-button"> Cancel </button>
+            </div>
         </div>
     </template>
     <script>
@@ -35,13 +89,31 @@
             listeners: {
                 'saturationView.mousedown': '_onSaturationMouseDown',
                 'hueView.mousedown': '_onHueMouseDown',
-                'alphaView.mousedown': '_onAlphaMouseDown'
+                'alphaView.mousedown': '_onAlphaMouseDown',
+                'btnSave.click': '_onSaveClick',
+                'btnCancel.click': '_onCancelClick',
+                'channelRed.change': '_onRGBInput',
+                'channelGreen.change': '_onRGBInput',
+                'channelBlue.change': '_onRGBInput',
+                'channelHue.change': '_onHSBInput',
+                'channelSaturation.change': '_onHSBInput',
+                'channelBrightness.change': '_onHSBInput',
+                'inputHex.change': '_onHexInput',
+                'colorDefault.click': '_onColorDefaultClick'
             },
             factoryImpl: function(color) {
-                this.color = color || ColorInputConfig.DefaultColor;
+                color = color || ColorInputConfig.DefaultColor;
+
+                this.currentColor = ObjectUtils.clone( color );
+                this.newColor = ObjectUtils.clone( color );
             },
             created: function() {
+                this.currentColor = ObjectUtils.clone( ColorInputConfig.DefaultColor );
+                this.newColor = ObjectUtils.clone( ColorInputConfig.DefaultColor );
 
+                this._currentHue = 0;
+                this._currentSaturation = 0;
+                this._currentBrightness = 0;
             },
             attached: function() {
                 this._initColor( );
@@ -55,14 +127,39 @@
                 }.bind( this ), 25 );
             },
 
-            _setHue: function(hue) {
-                var hsl = 'hsla('+ (hue * 360) +', 100%, 50%, 1)';
+            close: function() {
+                if (this.parentNode)
+                    this.parentNode.removeChild( this );
 
-                this.$.hueCursor.style.top = (Math.clamp( hue, 0, 1 ) * this.$.hueView.clientHeight) + 'px';
-                this.$.saturationView.style.background = 'linear-gradient(to right, white 0%, '+ hsl +' 100%)';
+                this.fire( 'closed', { } );
             },
-            _setAlpha: function(alpha) {
-                this.$.alphaCursor.style.top = (Math.clamp( alpha, 0, 1 ) * this.$.alphaView.clientHeight) + 'px';
+            setHue: function(hue) {
+                hue = Math.clamp( hue, 0, 1 );
+
+                this._currentHue = hue;
+
+                this._onHueInvalidated( );
+
+                // i'm sorry, but I don't understand why it's 1 - hue. It works though :)
+                var rgb = this._hsv2rgb( 1 - hue, this._currentSaturation, this._currentBrightness );
+
+                this.newColor.r = rgb[ 0 ];
+                this.newColor.b = rgb[ 1 ];
+                this.newColor.g = rgb[ 2 ];
+
+                this._onRGBInvalidated( );
+                this._onHSBInvalidated( );
+
+                var hex = this._rgb2hex.apply( this, rgb );
+
+                this._onHexInvalidated( hex );
+            },
+            setAlpha: function(alpha) {
+                alpha = Math.clamp( alpha, 0, 1 );
+
+                this.newColor.a = alpha;
+
+                this._onAlphaInvalidated( );
             },
 
             _onSaturationMouseDown: function(e) {
@@ -73,11 +170,33 @@
             _onSaturationMouseMove: function(e) {
                 var bounds = this.$.saturationView.getBoundingClientRect( );
 
-                var x = e.clientX - bounds.left;
-                var y = e.clientY - bounds.top;
+                var x = Math.clamp( e.clientX - bounds.left, 0, bounds.width );
+                var y = Math.clamp( e.clientY - bounds.top, 0, bounds.height );
 
-                this.$.saturationCursor.style.left = Math.clamp( x, 0, bounds.width ) + 'px';
-                this.$.saturationCursor.style.top = Math.clamp( y, 0, bounds.height ) + 'px';
+                var saturation = x / bounds.width;
+                var brightness = 1 - (y / bounds.height);
+
+                this._currentSaturation = saturation;
+                this._currentBrightness = brightness;
+
+                // convert rgb input to HSV
+                var rgb = this._hsv2rgb( this._currentHue, this._currentSaturation, this._currentBrightness );
+
+                // update new color
+                this.newColor.r = rgb[ 0 ];
+                this.newColor.g = rgb[ 1 ];
+                this.newColor.b = rgb[ 2 ];
+
+                this._onSaturationBrightnessInvalidated( );
+
+                this._onHSBInvalidated( );
+                this._onRGBInvalidated( );
+
+                var hex = this._rgb2hex.apply( this, rgb );
+
+                this._onHexInvalidated( hex );
+
+                this._triggerColorChanged( this.newColor );
             },
             _onHueMouseDown: function(e) {
                 this._bindDrag( this.$.hueView, this._onHueMouseMove );
@@ -89,7 +208,9 @@
 
                 var y = Math.clamp( e.clientY - bounds.top, 0, bounds.height );
 
-                this._setHue( y / bounds.height );
+                this.setHue( 1 - (y / bounds.height) );
+
+                this._triggerColorChanged( this.newColor );
             },
             _onAlphaMouseDown: function(e) {
                 this._bindDrag( this.$.alphaView, this._onAlphaMouseMove );
@@ -101,13 +222,166 @@
 
                 var y = Math.clamp( e.clientY - bounds.top, 0, bounds.height );
 
-                this._setAlpha( y / bounds.height );
+                this.setAlpha( 1 - (y / bounds.height) );
+
+                this._triggerColorChanged( this.newColor );
+            },
+            _onRGBInput: function() {
+                var red = this.$.channelRed.value / 255;
+                var green = this.$.channelGreen.value / 255;
+                var blue = this.$.channelBlue.value / 255;
+
+                // update new color
+                this.newColor.r = red;
+                this.newColor.g = green;
+                this.newColor.b = blue;
+
+                // convert rgb input to HSV
+                var hsv = this._rgb2hsv( red, green, blue );
+
+                this._currentHue = hsv[ 0 ];
+                this._currentSaturation = hsv[ 1 ];
+                this._currentBrightness = hsv[ 2 ];
+
+                this._onHueInvalidated( );
+                this._onSaturationBrightnessInvalidated( );
+                this._onHSBInvalidated( );
+
+                var hex = this._rgb2hex( red, green, blue );
+
+                this._onHexInvalidated( hex );
+
+                this._triggerColorChanged( this.newColor );
+            },
+            _onHSBInput: function() {
+                var hue = this.$.channelHue.value / 360;
+                var saturation = this.$.channelSaturation.value / 100;
+                var brightness = this.$.channelBrightness.value / 100;
+
+                this._currentHue = hue;
+                this._currentSaturation = saturation;
+                this._currentBrightness = brightness;
+
+                this._onHueInvalidated( );
+                this._onSaturationBrightnessInvalidated( );
+
+                var rgb = this._hsv2rgb( hue, saturation, brightness );
+
+                // update new color
+                this.newColor.r = rgb[ 0 ];
+                this.newColor.g = rgb[ 1 ];
+                this.newColor.b = rgb[ 2 ];
+
+                this._onRGBInvalidated( );
+
+                var hex = this._rgb2hex.apply( this, rgb );
+
+                this._onHexInvalidated( hex );
+
+                this._triggerColorChanged( this.newColor );
+            },
+            _onHexInput: function() {
+                var string = this.$.inputHex.value;
+
+                // parse input as hex integer
+                var hex = parseInt( string, 16 );
+
+                // default to black or zero on invalid input
+                if (Number.isNaN( hex ))
+                    hex = 0;
+
+                this.newColor.r = ((hex >> 16) & 0xFF) / 255;
+                this.newColor.g = ((hex >> 8) & 0xFF) / 255;
+                this.newColor.b = ((hex) & 0xFF) / 255;
+
+                this._onHexInvalidated( hex );
+
+                this._onRGBInvalidated( );
+
+                var hsv = this._rgb2hsv( this.newColor.r, this.newColor.g, this.newColor.b );
+
+                this._currentHue = hsv[ 0 ];
+                this._currentSaturation = hsv[ 1 ];
+                this._currentBrightness = hsv[ 2 ];
+
+                this._onHueInvalidated( );
+                this._onSaturationBrightnessInvalidated( );
+                this._onHSBInvalidated( );
+            },
+            _onColorDefaultClick: function() {
+                this.newColor = ObjectUtils.clone( this.currentColor );
+
+                this._initColor( );
+
+                this._triggerColorChanged( this.newColor );
+            },
+            _onSaveClick: function() {
+                this._triggerColorChanged( this.newColor );
+
+                this.close( );
+            },
+            _onCancelClick: function() {
+                this._triggerColorChanged( this.currentColor );
+
+                this.close( );
+            },
+            _onRGBInvalidated: function() {
+                this.$.channelRed.value = Math.round( this.newColor.r * 255 );
+                this.$.channelGreen.value = Math.round( this.newColor.g * 255 );
+                this.$.channelBlue.value = Math.round( this.newColor.b * 255 );
+
+                this._renderColorPreview( this.$.colorPreview, this.newColor );
+            },
+            _onHueInvalidated: function() {
+                var hsl = 'hsla('+ (this._currentHue * 360) +', 100%, 50%, 1)';
+
+                // 360 degrees is at top
+                var y = 1 - this._currentHue;
+
+                this.$.hueCursor.style.top = (y * this.$.hueView.clientHeight) + 'px';
+                this.$.saturationView.style.background = 'linear-gradient(to right, white 0%, '+ hsl +' 100%)';
+            },
+            _onHSBInvalidated: function(h, s, b) {
+                this.$.channelHue.value = Math.round( this._currentHue * 360 );
+                this.$.channelSaturation.value = Math.round( this._currentSaturation * 100 );
+                this.$.channelBrightness.value = Math.round( this._currentBrightness * 100 );
+
+                this._renderColorPreview( this.$.colorPreview, this.newColor );
+            },
+            _onSaturationBrightnessInvalidated: function() {
+                var x = this._currentSaturation * this.$.saturationView.clientWidth;
+                var y = (1 - this._currentBrightness) * this.$.saturationView.clientHeight;
+
+                this.$.saturationCursor.style.left = x + 'px';
+                this.$.saturationCursor.style.top = y + 'px';
+            },
+            _onAlphaInvalidated: function() {
+                var alpha = 1 - this.newColor.a;
+
+                this.$.alphaCursor.style.top = (alpha * this.$.alphaView.clientHeight) + 'px';
+            },
+            _onHexInvalidated: function(hex) {
+                this.$.inputHex.value = ('000000' + hex.toString( 16 )).substr( -6 ).toUpperCase( );
             },
 
             _initColor: function() {
-                var hsl = this._rgb2hsl( this.color.r, this.color.g, this.color.b );
+                this._renderColorPreview( this.$.colorDefault, this.currentColor );
 
-                this._setHue( hsl[ 0 ] );
+                this._onAlphaInvalidated( );
+                this._onRGBInvalidated( );
+                this._onRGBInput( );
+            },
+            _renderColorPreview: function(element, color) {
+                var values = [ color.r, color.g, color.b ].map( function(v) {
+                    return Math.round( v * 255 );
+                } ).join( ',' );
+
+                element.style.background = 'rgb('+ values +')';
+            },
+            _triggerColorChanged: function(color) {
+                this.fire( 'color-changed', {
+                    color: color
+                } );
             },
 
             _bindDrag: function(element, handler) {
@@ -119,71 +393,62 @@
                     document.body.removeEventListener( 'mousemove', thisHandler );
                 } );
             },
-            _hsl2rgb: function(h, s, l) {
+            _hsv2rgb: function(h, s, v) {
                 var r, g, b;
 
-                if(s == 0) {
-                    r = g = b = l; // achromatic
-                } else {
-                    var hue2rgb = function hue2rgb(p, q, t) {
-                        if(t < 0)
-                            t += 1;
+                var i = Math.floor( h * 6 );
+                var f = h * 6 - i;
+                var p = v * (1 - s);
+                var q = v * (1 - f * s);
+                var t = v * (1 - (1 - f) * s);
 
-                        if(t > 1)
-                            t -= 1;
-
-                        if(t < 1/6)
-                            return p + (q - p) * 6 * t;
-
-                        if(t < 1/2)
-                            return q;
-
-                        if(t < 2/3)
-                            return p + (q - p) * (2/3 - t) * 6;
-
-                        return p;
-                    };
-
-                    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-
-                    var p = 2 * l - q;
-
-                    r = hue2rgb( p, q, h + 1/3 );
-                    g = hue2rgb( p, q, h );
-                    b = hue2rgb( p, q, h - 1/3 );
+                switch(i % 6){
+                    case 0: r = v, g = t, b = p; break;
+                    case 1: r = q, g = v, b = p; break;
+                    case 2: r = p, g = v, b = t; break;
+                    case 3: r = p, g = q, b = v; break;
+                    case 4: r = t, g = p, b = v; break;
+                    case 5: r = v, g = p, b = q; break;
                 }
 
-                return [ r, g, b ];
+                return [ r , g , b ];
             },
-            _rgb2hsl: function (r, g, b) {
+            _rgb2hsv: function (r, g, b) {
                 var max = Math.max( r, g, b ),
                     min = Math.min( r, g, b );
 
-                var h, s, l = (max + min) / 2;
+                var h, s, v = max;
+
+                var d = max - min;
+
+                s = max == 0 ? 0 : d / max;
 
                 if(max == min) {
-                    h = s = 0; // achromatic
+                    h = 0; // achromatic
                 } else {
-                    var d = max - min;
-
-                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-                    switch(max) {
-                        case r:
-                            h = (g - b) / d + (g < b ? 6 : 0);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0);
                             break;
-                        case g:
-                            h = (b - r) / d + 2;
+                        case g: h = (b - r) / d + 2;
                             break;
-                        case b:
-                            h = (r - g) / d + 4;
+                        case b: h = (r - g) / d + 4;
                             break;
                     }
 
                     h /= 6;
                 }
 
-                return [ h, s, l ];
+                return [ h, s, v ];
+            },
+            _rgb2hex: function(r, g, b) {
+                // convert to [0,255] int
+                r = Math.round( r * 255 ) >> 0;
+                g = Math.round( g * 255 ) >> 0;
+                b = Math.round( b * 255 ) >> 0;
+
+                return ((r & 0xFF) << 16) +
+                       ((g & 0xFF) << 8) +
+                        (b & 0xFF);
             }
         });
     </script>
