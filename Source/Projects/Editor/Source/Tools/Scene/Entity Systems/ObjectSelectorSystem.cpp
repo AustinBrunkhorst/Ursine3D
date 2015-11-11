@@ -8,7 +8,6 @@
 #include <Vec2.h>
 #include <Vec3.h>
 
-#include <RenderableComponent.h>
 #include <Model3DComponent.h>
 #include <RigidbodyComponent.h>
 
@@ -99,42 +98,30 @@ void ObjectSelectorSystem::OnInitialize(void)
     }
 
     //give them all renderables and models
-    m_xAxis->AddComponent<ecs::Renderable>( );
-    m_yAxis->AddComponent<ecs::Renderable>( );
-    m_zAxis->AddComponent<ecs::Renderable>( );
+    auto xModel = m_xAxis->AddComponent<ecs::Model3D>( );
+    auto yModel = m_yAxis->AddComponent<ecs::Model3D>( );
+    auto zModel = m_zAxis->AddComponent<ecs::Model3D>( );
 
-    m_xAxis->AddComponent<ecs::Model3D>( );
-    m_yAxis->AddComponent<ecs::Model3D>( );
-    m_zAxis->AddComponent<ecs::Model3D>( );
-
-    //get their models
-    auto xHand = m_xAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto yHand = m_yAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto zHand = m_zAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-
-    auto &xModel = m_graphics->RenderableMgr.GetModel3D( xHand );
-    auto &yModel = m_graphics->RenderableMgr.GetModel3D( yHand );
-    auto &zModel = m_graphics->RenderableMgr.GetModel3D( zHand );
     {
-        xModel.SetModel( "Cylinder" );
-        yModel.SetModel( "Cylinder" );
-        zModel.SetModel( "Cylinder" );
+        xModel->SetModel( "Cylinder" );
+        yModel->SetModel( "Cylinder" );
+        zModel->SetModel( "Cylinder" );
 
-        xModel.SetMaterial( "Blank" );
-        yModel.SetMaterial( "Blank" );
-        zModel.SetMaterial( "Blank" );
+        xModel->SetMaterial( "Blank" );
+        yModel->SetMaterial( "Blank" );
+        zModel->SetMaterial( "Blank" );
 
-        xModel.SetColor( Color( 1, 0, 0, 1 ) );
-        yModel.SetColor( Color( 0, 1, 0, 1 ) );
-        zModel.SetColor( Color( 0, 0, 1, 1 ) );
+        xModel->SetColor( Color( 1, 0, 0, 1 ) );
+        yModel->SetColor( Color( 0, 1, 0, 1 ) );
+        zModel->SetColor( Color( 0, 0, 1, 1 ) );
 
-        xModel.SetMaterialData( 8, 0, 0 );
-        yModel.SetMaterialData( 8, 0, 0 );
-        zModel.SetMaterialData( 8, 0, 0 );
+        xModel->SetMaterialData( 8, 0, 0 );
+        yModel->SetMaterialData( 8, 0, 0 );
+        zModel->SetMaterialData( 8, 0, 0 );
 
-        xModel.SetOverdraw( true );
-        yModel.SetOverdraw( true );
-        zModel.SetOverdraw( true );
+        xModel->SetOverdraw( true );
+        yModel->SetOverdraw( true );
+        zModel->SetOverdraw( true );
     }
 }
 
@@ -408,17 +395,13 @@ void ObjectSelectorSystem::onUpdate(EVENT_HANDLER(ecs::World))
     }
 
     //set color in models
-    auto xHand = m_xAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto yHand = m_yAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto zHand = m_zAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
+    auto xModel = m_xAxis->GetComponent<ecs::Model3D>( );
+    auto yModel = m_yAxis->GetComponent<ecs::Model3D>( );
+    auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
-    auto &xModel = m_graphics->RenderableMgr.GetModel3D( xHand );
-    auto &yModel = m_graphics->RenderableMgr.GetModel3D( yHand );
-    auto &zModel = m_graphics->RenderableMgr.GetModel3D( zHand );
-
-    xModel.SetColor( xAx );
-    yModel.SetColor( yAx );
-    zModel.SetColor( zAx );
+    xModel->SetColor( xAx );
+    yModel->SetColor( yAx );
+    zModel->SetColor( zAx );
 }
 
 void ObjectSelectorSystem::onSelectedAdd(EVENT_HANDLER(ecs::World))
@@ -543,34 +526,30 @@ void ObjectSelectorSystem::unpickObject(const ecs::EntityUniqueID id)
 void ObjectSelectorSystem::setToTranslate()
 {
     //get their models
-    auto xHand = m_xAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto yHand = m_yAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto zHand = m_zAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-
-    auto &xModel = m_graphics->RenderableMgr.GetModel3D( xHand );
-    auto &yModel = m_graphics->RenderableMgr.GetModel3D( yHand );
-    auto &zModel = m_graphics->RenderableMgr.GetModel3D( zHand );
+    auto xModel = m_xAxis->GetComponent<ecs::Model3D>( );
+    auto yModel = m_yAxis->GetComponent<ecs::Model3D>( );
+    auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel.SetModel( "Cylinder" );
-        yModel.SetModel( "Cylinder" );
-        zModel.SetModel( "Cylinder" );
+        xModel->SetModel( "Cylinder" );
+        yModel->SetModel( "Cylinder" );
+        zModel->SetModel( "Cylinder" );
 
-        xModel.SetMaterial( "Blank" );
-        yModel.SetMaterial( "Blank" );
-        zModel.SetMaterial( "Blank" );
+        xModel->SetMaterial( "Blank" );
+        yModel->SetMaterial( "Blank" );
+        zModel->SetMaterial( "Blank" );
 
-        xModel.SetMaterialData( 8, 0, 0 );
-        yModel.SetMaterialData( 8, 0, 0 );
-        zModel.SetMaterialData( 8, 0, 0 );
+        xModel->SetMaterialData( 8, 0, 0 );
+        yModel->SetMaterialData( 8, 0, 0 );
+        zModel->SetMaterialData( 8, 0, 0 );
 
-        xModel.SetColor( Color( 1, 0, 0, 1 ) );
-        zModel.SetColor( Color( 0, 0, 1, 1 ) );
-        yModel.SetColor( Color( 0, 1, 0, 1 ) );
+        xModel->SetColor( Color( 1, 0, 0, 1 ) );
+        zModel->SetColor( Color( 0, 0, 1, 1 ) );
+        yModel->SetColor( Color( 0, 1, 0, 1 ) );
 
-        xModel.SetOverdraw( true );
-        yModel.SetOverdraw( true );
-        zModel.SetOverdraw( true );
+        xModel->SetOverdraw( true );
+        yModel->SetOverdraw( true );
+        zModel->SetOverdraw( true );
 
         if (m_currentID != -1)
             moveToolToEntity( m_currentID );
@@ -604,34 +583,30 @@ void ObjectSelectorSystem::updateTranslation(const SVec3 &mousePos)
 void ObjectSelectorSystem::setToScale()
 {
     //get their models
-    auto xHand = m_xAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto yHand = m_yAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto zHand = m_zAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-
-    auto &xModel = m_graphics->RenderableMgr.GetModel3D( xHand );
-    auto &yModel = m_graphics->RenderableMgr.GetModel3D( yHand );
-    auto &zModel = m_graphics->RenderableMgr.GetModel3D( zHand );
+    auto xModel = m_xAxis->GetComponent<ecs::Model3D>( );
+    auto yModel = m_yAxis->GetComponent<ecs::Model3D>( );
+    auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel.SetModel( "Cube" );
-        yModel.SetModel( "Cube" );
-        zModel.SetModel( "Cube" );
+        xModel->SetModel( "Cube" );
+        yModel->SetModel( "Cube" );
+        zModel->SetModel( "Cube" );
 
-        xModel.SetMaterial( "Blank" );
-        yModel.SetMaterial( "Blank" );
-        zModel.SetMaterial( "Blank" );
+        xModel->SetMaterial( "Blank" );
+        yModel->SetMaterial( "Blank" );
+        zModel->SetMaterial( "Blank" );
 
-        xModel.SetMaterialData( 8, 0, 0 );
-        yModel.SetMaterialData( 8, 0, 0 );
-        zModel.SetMaterialData( 8, 0, 0 );
+        xModel->SetMaterialData( 8, 0, 0 );
+        yModel->SetMaterialData( 8, 0, 0 );
+        zModel->SetMaterialData( 8, 0, 0 );
 
-        xModel.SetColor( Color( 1, 0, 0, 1 ) );
-        zModel.SetColor( Color( 0, 0, 1, 1 ) );
-        yModel.SetColor( Color( 0, 1, 0, 1 ) );
+        xModel->SetColor( Color( 1, 0, 0, 1 ) );
+        zModel->SetColor( Color( 0, 0, 1, 1 ) );
+        yModel->SetColor( Color( 0, 1, 0, 1 ) );
 
-        xModel.SetOverdraw( true );
-        yModel.SetOverdraw( true );
-        zModel.SetOverdraw( true );
+        xModel->SetOverdraw( true );
+        yModel->SetOverdraw( true );
+        zModel->SetOverdraw( true );
 
         if (m_currentID != -1)
             moveToolToEntity( m_currentID );
@@ -663,34 +638,30 @@ void ObjectSelectorSystem::updateScale(const SVec3 &mousePos)
 void ObjectSelectorSystem::setToRotation()
 {
     //get their models
-    auto xHand = m_xAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto yHand = m_yAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-    auto zHand = m_zAxis->GetComponent<ecs::Renderable>( )->GetHandle( );
-
-    auto &xModel = m_graphics->RenderableMgr.GetModel3D( xHand );
-    auto &yModel = m_graphics->RenderableMgr.GetModel3D( yHand );
-    auto &zModel = m_graphics->RenderableMgr.GetModel3D( zHand );
+    auto xModel = m_xAxis->GetComponent<ecs::Model3D>( );
+    auto yModel = m_yAxis->GetComponent<ecs::Model3D>( );
+    auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel.SetModel( "Ring" );
-        yModel.SetModel( "Ring" );
-        zModel.SetModel( "Ring" );
+        xModel->SetModel( "Ring" );
+        yModel->SetModel( "Ring" );
+        zModel->SetModel( "Ring" );
 
-        xModel.SetMaterial( "Blank" );
-        yModel.SetMaterial( "Blank" );
-        zModel.SetMaterial( "Blank" );
+        xModel->SetMaterial( "Blank" );
+        yModel->SetMaterial( "Blank" );
+        zModel->SetMaterial( "Blank" );
 
-        xModel.SetMaterialData( 8, 0, 0 );
-        yModel.SetMaterialData( 8, 0, 0 );
-        zModel.SetMaterialData( 8, 0, 0 );
+        xModel->SetMaterialData( 8, 0, 0 );
+        yModel->SetMaterialData( 8, 0, 0 );
+        zModel->SetMaterialData( 8, 0, 0 );
 
-        xModel.SetColor( Color( 1, 0, 0, 1 ) );
-        zModel.SetColor( Color( 0, 0, 1, 1 ) );
-        yModel.SetColor( Color( 0, 1, 0, 1 ) );
+        xModel->SetColor( Color( 1, 0, 0, 1 ) );
+        zModel->SetColor( Color( 0, 0, 1, 1 ) );
+        yModel->SetColor( Color( 0, 1, 0, 1 ) );
 
-        xModel.SetOverdraw( true );
-        yModel.SetOverdraw( true );
-        zModel.SetOverdraw( true );
+        xModel->SetOverdraw( true );
+        yModel->SetOverdraw( true );
+        zModel->SetOverdraw( true );
 
         if (m_currentID != -1)
             moveToolToEntity( m_currentID );

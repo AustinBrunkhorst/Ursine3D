@@ -20,6 +20,8 @@ namespace ursine
 
             setMotionState( &m_motionState );
 
+            updateRotationFreeze( );
+
         #endif
 
             SetBodyType( bodyType );
@@ -62,10 +64,7 @@ namespace ursine
             if (m_simulation && bodyType == BODY_STATIC || bodyType == BODY_KINEMATIC)
                 m_simulation->ClearContacts( *this );
 
-            if (bodyType != BODY_DYNAMIC)
-                SetMass( 0.0f );
-            else
-                SetMass( m_mass );
+            SetMass( m_mass );
 
         #endif
 
@@ -96,10 +95,6 @@ namespace ursine
             );
 
             setWorldTransform( trans );
-
-            setAngularFactor(
-                btVector3( m_rotLock.X( ), m_rotLock.Y( ), m_rotLock.Z( ) )
-            );
 
         #endif
 
@@ -194,6 +189,8 @@ namespace ursine
         void Rigidbody::SetRotationFreezeX(bool flag)
         {
             m_rotLock.X( ) = flag ? 0.0f : 1.0f;
+            
+            updateRotationFreeze( );
         }
 
         bool Rigidbody::GetRotationFreezeX(void) const
@@ -204,6 +201,8 @@ namespace ursine
         void Rigidbody::SetRotationFreezeY(bool flag)
         {
             m_rotLock.Y( ) = flag ? 0.0f : 1.0f;
+
+            updateRotationFreeze( );
         }
 
         bool Rigidbody::GetRotationFreezeY(void) const
@@ -214,6 +213,8 @@ namespace ursine
         void Rigidbody::SetRotationFreezeZ(bool flag)
         {
             m_rotLock.Z( ) = flag ? 0.0f : 1.0f;
+
+            updateRotationFreeze( );
         }
 
         bool Rigidbody::GetRotationFreezeZ(void) const
@@ -349,6 +350,17 @@ namespace ursine
         {
             if (m_simulation)
                 m_simulation->RemoveRigidbody( this );
+        }
+
+        void Rigidbody::updateRotationFreeze(void)
+        {
+        #ifdef BULLET_PHYSICS
+
+            setAngularFactor(
+                btVector3( m_rotLock.X( ), m_rotLock.Y( ), m_rotLock.Z( ) )
+            );
+
+        #endif
         }
     }
 }

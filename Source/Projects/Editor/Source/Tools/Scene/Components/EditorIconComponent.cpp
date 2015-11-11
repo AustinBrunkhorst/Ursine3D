@@ -1,6 +1,5 @@
 #include "Precompiled.h"
 #include "EditorIconComponent.h"
-#include "RenderableComponent.h"
 #include "CoreSystem.h"
 #include "GfxAPI.h"
 #include "EntityEvent.h"
@@ -29,7 +28,6 @@ void EditorIcon::OnInitialize()
 {
     m_billboard = GetOwner()->GetWorld()->CreateEntity();
     m_billboard->SetVisibleInEditor(false);
-    m_billboard->AddComponent<ursine::ecs::Renderable>();
     m_billboard->AddComponent<ursine::ecs::Billboard2D>();
 
     GetOwner()->GetTransform()->AddChild(m_billboard->GetTransform());

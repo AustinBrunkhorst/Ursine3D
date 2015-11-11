@@ -3,12 +3,15 @@
 #include "Component.h"
 #include "Renderable.h"
 #include "GfxAPI.h"
+#include "RenderableComponentBase.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Model3D : public Component
+        class Model3D 
+            : public Component
+            , public RenderableComponentBase
         {
             NATIVE_COMPONENT;
 
@@ -48,6 +51,9 @@ namespace ursine
             void SetColor(const ursine::Color &color);
             const ursine::Color &GetColor(void);
 
+            void SetOverdraw(bool flag);
+            bool GetOverdraw(void) const;
+
             // turn debug mode on or off for this model
             void SetDebug(bool flag);
             bool GetDebug(void) const;
@@ -56,7 +62,6 @@ namespace ursine
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
         private:
-            graphics::GfxHND m_handle;
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;
@@ -64,7 +69,7 @@ namespace ursine
             std::string m_modelName;
             std::string m_materialName;
 
-            void onUpdateRenderer(EVENT_HANDLER(Entity));
+            void updateRenderer(void) override;
 
         } Meta(Enable, DisplayName( "Model3D" ));
     }

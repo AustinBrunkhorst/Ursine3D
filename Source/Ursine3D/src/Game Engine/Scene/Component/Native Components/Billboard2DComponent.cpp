@@ -1,6 +1,5 @@
 #include "UrsinePrecompiled.h"
 #include "Billboard2DComponent.h"
-#include "RenderableComponent.h"
 #include "CoreSystem.h"
 #include "GfxAPI.h"
 #include "EntityEvent.h"
@@ -15,39 +14,34 @@ namespace ursine
             : BaseComponent()
             , m_billboard(nullptr)
         {
+            // store a pointer to the GfxAPI core system
+            m_graphics = GetCoreSystem(graphics::GfxAPI);
 
+            m_handle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_BILLBOARD2D);
+
+            // store a pointer to the model
+            m_billboard = &m_graphics->RenderableMgr.GetBillboard2D(m_handle);
         } 
 
         Billboard2D::~Billboard2D(void)
         {
-            GetOwner()->Listener(this)
-                .Off(ENTITY_UPDATE_RENDERER, &Billboard2D::onUpdateRenderer);
+            RenderableComponentBase::OnRemove( GetOwner( ) );
+
+            m_graphics->RenderableMgr.DestroyRenderable( m_handle );
         }
 
         void Billboard2D::OnInitialize() 
         {
-            GetOwner()->Listener(this)
-                .On(ENTITY_UPDATE_RENDERER, &Billboard2D::onUpdateRenderer);
-
-            // store a pointer to the GfxAPI core system
-            m_graphics = GetCoreSystem(graphics::GfxAPI);
-
-            auto handle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_BILLBOARD2D);
-            GetOwner()->GetComponent<Renderable>()->SetHandle(handle);
-
-            // store a pointer to the model
-            m_billboard = &m_graphics->RenderableMgr.GetBillboard2D(handle);
+            RenderableComponentBase::OnInitialize( GetOwner( ) );
 
             // set the unique id
             m_billboard->SetEntityUniqueID(GetOwner()->GetUniqueID());
         }
 
-        void Billboard2D::onUpdateRenderer(EVENT_HANDLER(Entity)) 
+        void Billboard2D::updateRenderer(void)
         {
-            auto ren = GetOwner()->GetComponent<Renderable>();
             auto trans = GetOwner()->GetTransform();
-            auto handle = ren->GetHandle();
-            auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D(handle);
+            auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D( m_handle );
 
             billboard.SetPosition(trans->GetWorldPosition());
         }

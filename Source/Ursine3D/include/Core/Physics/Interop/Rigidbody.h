@@ -104,6 +104,8 @@ namespace ursine
 
             void addToSimulation(void);
             void removeFromSimulation(void);
+            
+            void updateRotationFreeze(void);
 
         };
     }

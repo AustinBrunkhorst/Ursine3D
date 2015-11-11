@@ -9,19 +9,7 @@
 #include <UIManager.h>
 
 #include <Color.h> 
-
-#include <SystemManager.h>
-#include <CameraComponent.h> 
-#include <RenderableComponent.h>   
 #include <LightComponent.h>
-#include <Model3DComponent.h>
-#include <CapsuleColliderComponent.h>
-#include <BoxColliderComponent.h>
-
-#include "CharacterControllerComponent.h"
-#include "EditorCameraSystem.h"
-
-#include "PhysicsSystem.h"
 
 using namespace ursine;
 
@@ -168,58 +156,6 @@ void Editor::initializeScene(void)
 
     world->DispatchLoad( );
 
-    SVec3 positions[ 2 ] = {
-        SVec3( -30.0, 0.5f, 5.0f ),
-        SVec3( 30.0f, 0.5f, 5.0f )
-    };
-
-	for (int i = 0; i < 2; ++i)
-	{
-        auto *entity_char = world->CreateEntity( );
-
-        entity_char->AddComponent<ecs::Renderable>( );
-        auto model = entity_char->AddComponent<ecs::Model3D>( );
-
-        auto name = "Character";
-
-        model->SetModel( name );
-        model->SetMaterial( "Blank" );
-
-        entity_char->SetName( name );
-
-        entity_char->AddComponent<CharacterController>( )->id = i;
-
-        /*auto *collider = entity_char->AddComponent<ecs::CapsuleCollider>();
-
-		/*auto body = entity_char->AddComponent<ecs::Rigidbody>( );
-
-		body->LockXRotation(true);
-		body->LockZRotation(true);#1#
-
-        collider->SetHeight(19.0f);
-        collider->SetRadius(4.0f);
-        collider->SetOffset(SVec3(0.0f, 15.2f, 0.0f));*/
-
-        auto transform = entity_char->GetTransform();
-
-        transform->SetWorldPosition( positions[ i ] );
-        transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
-        transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
-    }
-
-    {
-        auto *floor = world->CreateEntity( "Floor" );
-
-        floor->AddComponent<ecs::Renderable>();
-        auto model = floor->AddComponent<ecs::Model3D>();
-        model->SetModel( "Cube");
-
-        floor->AddComponent<ecs::BoxCollider>();
-        
-        floor->GetTransform()->SetWorldPosition(SVec3(0, 0.1f, 0));
-        floor->GetTransform()->SetWorldScale(SVec3(100, 0.1f, 100));
-    }
-
     auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
@@ -230,34 +166,6 @@ void Editor::initializeScene(void)
         component->SetType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
-    }
-
-    std::vector<SVec3> lightPositions
-    {
-        SVec3( -30.0f, 35.0f, 0.0f ),
-        SVec3( 0.0f, 35.0f, 0.0f ),
-        SVec3( 30.0f, 35.0f, 5.0f ),
-    };
-
-    std::vector<Color> colors {
-        Color::Red,
-        Color::Green,
-        Color::Blue
-    };
-
-    for (int i = 0; i < 3; ++i)
-    {
-        auto *pointLight = world->CreateEntity( "Point Light" );
-        {
-            auto *component = pointLight->AddComponent<ecs::Light>( );
-
-            pointLight->GetTransform()->SetLocalPosition( lightPositions[ i ] );
-            pointLight->GetTransform()->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
-
-            component->SetType( ecs::LightType::Point );
-            component->SetRadius( 50.0f );
-            component->SetColor( colors[ i ]  );
-        }
     }
 }
 
@@ -278,29 +186,6 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     m_mainWindow.ui->DrawMain( );  
 
     m_graphics->EndFrame( );
-
-    static bool hi = false;
-
-    if (!hi)
-    {
-        const int numRays = 5;
-        const float incAngle = math::PI_2 / numRays;
-        const float radius = 4.0f;
-
-        for (int i = 0; i < numRays; ++i)
-        {
-            float ang = i * incAngle;
-
-            SVec3 start(0.0f, 40.0f, 0.0f);
-            SVec3 end(cos(ang) * radius, -1.0f, sin(ang) * radius);
-
-            physics::RaycastInput input(start, end);
-            physics::RaycastOutput output;
-
-            m_project->GetScene( )->GetWorld( )->GetEntitySystem(ursine::ecs::PhysicsSystem)
-                ->Raycast(input, output, physics::RAYCAST_CLOSEST_HIT, true, 0.016f);
-        }
-    }
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

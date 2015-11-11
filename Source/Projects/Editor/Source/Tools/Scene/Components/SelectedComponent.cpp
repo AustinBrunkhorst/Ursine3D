@@ -2,7 +2,6 @@
 
 #include "SelectedComponent.h"
 
-#include <RenderableComponent.h>
 #include <Model3DComponent.h>
 
 using namespace ursine;

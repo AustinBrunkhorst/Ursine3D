@@ -1,7 +1,6 @@
 #include "UrsinePrecompiled.h"
 
 #include "LightComponent.h"
-#include "RenderableComponent.h"
 
 #include "GfxAPI.h"
 #include <Game Engine/Scene/Entity/EntityEvent.h>
@@ -15,7 +14,6 @@ namespace ursine
         Light::Light(void)
             : BaseComponent( )
             , m_light( nullptr )
-            , m_handle( 0 )
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
@@ -30,34 +28,19 @@ namespace ursine
 
         Light::~Light(void)
         {
-            GetOwner( )->Listener( this )
-                .Off( ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer );
-
+            RenderableComponentBase::OnRemove( GetOwner( ) );
+            
             m_light = nullptr;
+
+            GetCoreSystem( graphics::GfxAPI )
+                ->RenderableMgr.DestroyRenderable( m_handle );
         }
 
         void Light::OnInitialize(void)
         {
-            GetOwner( )->Listener(this)
-                .On( ENTITY_UPDATE_RENDERER, &Light::onUpdateRenderer );
+            RenderableComponentBase::OnInitialize( GetOwner( ) );
 
-            auto *owner = GetOwner( );
-
-            Renderable *renderable;
-
-            URSINE_TODO( "Decouple this" );
-            if (owner->HasComponent<Renderable>( ))
-            {
-                renderable = owner->GetComponent<Renderable>( );
-            }
-            else
-            {
-                renderable = owner->AddComponent<Renderable>( );
-            }
-
-            renderable->SetHandle( m_handle );
-
-            onUpdateRenderer( this, EventArgs::Empty );
+            updateRenderer( );
         }
 
         graphics::GfxHND Light::GetHandle(void) const
@@ -154,12 +137,10 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "SpotLightAngles", angles );
         }
 
-        void Light::onUpdateRenderer(void* _sender, const ursine::EventArgs* _args)
+        void Light::updateRenderer(void)
         {
-            auto ren = GetOwner()->GetComponent<Renderable>();
             auto trans = GetOwner()->GetTransform();
-            auto handle = ren->GetHandle();
-            auto &light = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetLight(handle);
+            auto &light = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetLight(m_handle);
 
             //set position using the transform
             light.SetPosition(trans->GetWorldPosition());

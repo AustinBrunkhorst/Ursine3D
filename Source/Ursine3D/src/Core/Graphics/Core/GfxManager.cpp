@@ -168,7 +168,7 @@ namespace ursine
             UAssert(render->ID_ == ID_RENDERABLE, "Attempted to draw non-valid handle!");
 
             //make sure we have enough room to render
-            UAssert(m_drawCount < MAX_DRAW_CALLS, "Out of available draw calls! Let Matt know, easy fix.");
+            UAssert(m_drawCount < MAX_DRAW_CALLS, "Out of available draw calls! Let Matt know, easy fix.");          
 
             //get a new draw call
             _DRAWHND &drawCall = m_drawList[ m_drawCount++ ];
@@ -180,6 +180,13 @@ namespace ursine
             case RENDERABLE_MODEL3D:
             {
                 Model3D *current = &renderableManager->m_renderableModel3D[ render->Index_ ];
+
+                URSINE_TODO("Remove hack for Jordan");
+                if(!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
@@ -194,6 +201,13 @@ namespace ursine
             {
                 Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
 
+                URSINE_TODO("Remove hack for Jordan");
+                if (!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
+
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
 
@@ -206,6 +220,13 @@ namespace ursine
             {
                 Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
 
+                URSINE_TODO("Remove hack for Jordan");
+                if (!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
+
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetTextureName());
@@ -217,6 +238,14 @@ namespace ursine
             case RENDERABLE_LIGHT:
             {
                 Light *current = &renderableManager->m_renderableLights[ render->Index_ ];
+
+                URSINE_TODO("Remove hack for Jordan");
+                if (!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
+
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();

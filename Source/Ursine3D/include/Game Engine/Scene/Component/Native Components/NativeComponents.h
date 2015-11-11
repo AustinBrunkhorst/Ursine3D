@@ -6,7 +6,6 @@
 // Graphics
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "RenderableComponent.h"
 #include "CameraComponent.h"
 #include "Model3DComponent.h"
 #include "LightComponent.h"
