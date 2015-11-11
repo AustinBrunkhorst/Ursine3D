@@ -42,6 +42,7 @@ set(CEF_DIR           "${ENGINE_DEP_DIR}/CEF")
 set(BENCHMARKS_DIR    "${ENGINE_DEP_DIR}/Benchmarks")
 set(CLANG_DIR         "${ENGINE_DEP_DIR}/Clang")
 set(BulletPhysics_DIR "${ENGINE_DEP_DIR}/Bullet")
+set(FBX_DIR           "${ENGINE_DEP_DIR}/FBX")
 
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
@@ -57,8 +58,11 @@ find_package(Clang REQUIRED
 
 find_package(BulletPhysics REQUIRED
     HINTS ${BulletPhysics_DIR})
+	
+find_package(FBX REQUIRED
+    HINTS ${FBX_DIR})
 
-# boost requires some special attention
+# dependencies that require special attention
 include(BoostSetup)
 
 # ------------------------------------------------------------------------------
@@ -69,6 +73,8 @@ if (MSVC)
     add_definitions(
         -D_CRT_SECURE_NO_WARNINGS
         -D_SCL_SECURE_NO_WARNINGS
+        # FUCK YOU MICROSOFT
+        -DNOMINMAX
     )
     
     ursine_add_compile_flags(

@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "EventDispatcher.h"
 #include "WorldEvent.h"
 
 #include "EntityConfig.h"
@@ -34,40 +35,33 @@ namespace ursine
         class World : public EventDispatcher<WorldEventType>
         {
         public:
-            Meta(DisableNonDynamic)
             World(void);
-
             ~World(void);
 
-            Meta(Disable)
             Entity *CreateEntity(const std::string &name = "Entity");
 
             // Gets an entity based on its active id
-            Meta(Disable)
             Entity *GetEntity(EntityID id) const;
 
             // Gets an entity based its name (first entity with this name)
-            Meta(Disable)
             Entity *GetEntityFromName(const std::string &name) const;
 
             // Gets an entity based on its unique id
-            Meta(Disable)
             Entity *GetEntityUnique(EntityUniqueID uniqueID) const;
 
+            // Gets all active entities in the world
+            const EntityVector &GetActiveEntities(void) const;
+
             // Gets all entities belonging to a group
-            Meta(Disable)
             const EntityVector &GetEntitiesFromName(const std::string &group) const;
 
             // Gets all active entities matching the specified filter
-            Meta(Disable)
             EntityVector GetEntitiesFromFilter(const Filter &filter) const;
 
             // Updates the world
-            Meta(Disable)
             void Update(void);
 
             // Renders the world
-            Meta(Disable)
             void Render(void);
 
             SystemManager *GetSystemManager(void);
@@ -88,7 +82,7 @@ namespace ursine
 
             // adds an entity to the deletion queue
             void deleteEntity(Entity *entity);
-        } Meta(Enable);
+        } Meta(Enable, WhiteListMethods);
     }
 }
 

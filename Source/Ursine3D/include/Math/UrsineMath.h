@@ -57,9 +57,6 @@ namespace ursine
         template<typename T>
         T Rand(T min, T max);
 
-        // This is not very percise. With large floating point values it is generally 1% off.
-        inline float fastSqrt(float val);
-
         inline float RadiansToDegrees(float radians);
 
         inline float DegreesToRadians(float degrees);

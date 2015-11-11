@@ -1,6 +1,8 @@
 #include "UrsinePrecompiled.h"
 #include "ShaderBufferManager.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
+
 
 namespace ursine
 {
@@ -28,6 +30,8 @@ namespace ursine
                 MakeBuffer<GBufferUnpackBuffer>(BUFFER_GBUFFER_UNPACK);
                 MakeBuffer<TransformBuffer>(BUFFER_LIGHT_PROJ);
                 MakeBuffer<MaterialDataBuffer>(BUFFER_MATERIAL_DATA);
+                MakeBuffer<SpotlightBuffer>(BUFFER_SPOTLIGHT);
+				MakeBuffer<MatrixPalBuffer>(BUFFER_MATRIX_PAL);
             }
 
             void ShaderBufferManager::Uninitialize(void)
@@ -54,13 +58,14 @@ namespace ursine
 
                 //lock the buffer
                 result = m_deviceContext->Map(m_bufferArray[ BUFFER_CAMERA ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                UAssert(result == S_OK, "Failed to lock shader buffer for camera! (Error '%s')", GetDXErrorMessage(result));
 
                 //grab data
                 dataPtr = (CameraBuffer*)mappedResource.pData;
 
                 //set data
-                dataPtr->view = SMat4::Transpose(view).ToD3D();
-                dataPtr->projection = SMat4::Transpose(projection).ToD3D();
+                dataPtr->view = SMat4::Transpose(view).ToD3D( );
+                dataPtr->projection = SMat4::Transpose(projection).ToD3D( );
 
                 //unlock buffer
                 m_deviceContext->Unmap(m_bufferArray[ BUFFER_CAMERA ], 0);
@@ -79,12 +84,13 @@ namespace ursine
 
                 //lock the buffer
                 result = m_deviceContext->Map(m_bufferArray[ BUFFER_TRANSFORM ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+                UAssert(result == S_OK, "Failed to lock shader buffer for transform! (Error '%s')", GetDXErrorMessage(result));
 
                 //grab data
                 dataPtr = (TransformBuffer*)mappedResource.pData;
 
                 //set data
-                dataPtr->transform = transform.ToD3D();
+                dataPtr->transform = transform.ToD3D( );
 
                 //unlock buffer
                 m_deviceContext->Unmap(m_bufferArray[ BUFFER_TRANSFORM ], 0);
@@ -133,8 +139,8 @@ namespace ursine
                 matrixBufferDesc.StructureByteStride = 0;
 
                 //Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-                result = m_device->CreateBuffer(&matrixBufferDesc, NULL, &m_bufferArray[ type ]);
-                UAssert(result == S_OK, "Failed to make buffer! (type: %i)", type);
+                result = m_device->CreateBuffer(&matrixBufferDesc, nullptr, &m_bufferArray[ type ]);
+                UAssert(result == S_OK, "Failed to make buffer! (type: %i)  (Error '%s')", type, GetDXErrorMessage(result));
             }
         }
     }

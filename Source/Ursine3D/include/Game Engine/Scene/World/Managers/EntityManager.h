@@ -19,6 +19,8 @@
 
 #include "Entity.h"
 
+#include "Hierarchy.h"
+
 #include <unordered_map>
 #include <vector>
 #include <array>
@@ -41,6 +43,9 @@ namespace ursine
 
             // Creates an entity with only a transform
             Entity *Create(void);
+
+            // Gets all active entities
+            const EntityVector &GetActiveEntities(void) const;
 
             // Gets all entities who match this filter
             EntityVector GetEntities(const Filter &aspect) const;
@@ -88,6 +93,55 @@ namespace ursine
             ComponentVector GetComponents(const Entity *entity) const;
 
             ////////////////////////////////////////////////////////////////////
+            // Hierarchy
+            ////////////////////////////////////////////////////////////////////
+
+            // Gets a component of the specified type in this entity's children (type safe) (depth first)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline ComponentType *GetComponentInChildren(const Entity *entity) const;
+
+            // Gets a component of the specified type id in this entity's children (depth first)
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            Component *GetComponentInChildren(const Entity *entity, ComponentTypeID id) const;
+
+            // Gets a component of the specified type in this entity's parent (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline ComponentType *GetComponentInParent(const Entity *entity) const;
+
+            // Gets a component of the specified type id in this entity's parent
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
+
+            // Gets the components of the specified type in this entity's children (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline std::vector<ComponentType*> GetComponentsInChildren(const Entity *entity) const;
+
+            // Gets the components of the specified type id in this entity's children
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            ComponentVector GetComponentsInChildren(const Entity *entity, ComponentTypeID id) const;
+
+            // Gets the components of the specified type in this entity's parents (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline std::vector<ComponentType*> GetComponentsInParents(const Entity *entity) const;
+
+            // Gets the components of the specified type id in this entity's parents
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
+
+            // Find the entity's index in relation to the other children
+            uint GetSiblingIndex(const Entity *entity) const;
+
+            // Move the entity to the start of the parent's children lists
+            void SetAsFirstSibling(const Entity *entity);
+
+            // Sets the entity's index in the parent's children list
+            void SetSiblingIndex(const Entity *entity, uint index);
+
+            ////////////////////////////////////////////////////////////////////
             // Events
             ////////////////////////////////////////////////////////////////////
 
@@ -127,6 +181,9 @@ namespace ursine
 
             // next unique component unique ID
             ComponentUniqueID m_nextComponentUID;
+
+            // the hierarchy that all entities reside in
+            Hierarchy m_hierarchy;
 
             // creates an empty entity and adds it to the world
             Entity *create(void);

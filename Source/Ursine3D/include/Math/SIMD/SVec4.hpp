@@ -290,6 +290,26 @@ namespace ursine
 		return m_w;
 	}
 
+    INLINE void SVec4::SetX(float x)
+    {
+        m_x = x;
+    }
+
+    INLINE void SVec4::SetY(float y)
+    {
+        m_y = y;
+    }
+
+    INLINE void SVec4::SetZ(float z)
+    {
+        m_z = z;
+    }
+
+    INLINE void SVec4::SetW(float w)
+	{
+        m_w = w;
+	}
+
 	INLINE float SVec4::operator[](uint index) const
 	{
 		return ( &m_x )[ index ];

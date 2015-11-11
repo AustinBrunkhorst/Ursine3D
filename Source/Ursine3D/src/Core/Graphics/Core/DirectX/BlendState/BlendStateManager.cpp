@@ -1,6 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "BlendStateManager.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
 
 namespace ursine
 {
@@ -19,6 +20,7 @@ namespace ursine
 
                 ///////////////////////////////////////////////////////////////
                 // NORMAL BLEND DESCRIPTION ///////////////////////////////////
+                HRESULT result;
                 D3D11_BLEND_DESC blendDesc;
                 ZeroMemory(&blendDesc, sizeof(blendDesc));
                 blendDesc.AlphaToCoverageEnable = false;
@@ -60,7 +62,8 @@ namespace ursine
                 blendDesc.RenderTarget[ 0 ].RenderTargetWriteMask = 0x0F;
 
                 //create blend description
-                m_device->CreateBlendState(&blendDesc, &BlendStateArray_[ BLEND_STATE_ADDITIVE ]);
+                result = m_device->CreateBlendState(&blendDesc, &BlendStateArray_[ BLEND_STATE_ADDITIVE ]);
+                UAssert(result == S_OK, "Failed to create blend state! (Error: '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
                 // NO BLENDING    DESCRIPTION /////////////////////////////////
@@ -80,22 +83,23 @@ namespace ursine
                 blendDesc.RenderTarget[ 0 ].RenderTargetWriteMask = 0x0F;
 
                 //create blend description
-                m_device->CreateBlendState(&blendDesc, &BlendStateArray_[ BLEND_STATE_NONE ]);
+                result = m_device->CreateBlendState(&blendDesc, &BlendStateArray_[ BLEND_STATE_NONE ]);
+                UAssert(result == S_OK, "Failed to create blend state! (Error: '%s')", GetDXErrorMessage(result));
             }
 
             void BlendStateManager::Uninitialize(void)
             {
                 for (unsigned x = 0; x < BlendStateArray_.size(); ++x)
                 {
-                    if (BlendStateArray_[ x ] != NULL)
+                    if (BlendStateArray_[ x ] != nullptr)
                     {
                         BlendStateArray_[ x ]->Release();
-                        BlendStateArray_[ x ] = NULL;
+                        BlendStateArray_[ x ] = nullptr;
                     }
                 }
 
-                m_device = NULL;
-                m_deviceContext = NULL;
+                m_device = nullptr;
+                m_deviceContext = nullptr;
             }
 
             ID3D11BlendState *BlendStateManager::GetBlendState(const BLEND_STATES state)

@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include "GfxDefines.h"
+#include "DXErrorHandling.h"
 
 namespace ursine
 {
@@ -20,12 +21,13 @@ namespace ursine
                 //YEA BOI
                 for (unsigned x = 0; x < SHADER_COUNT; ++x)
                 {
-                    m_layoutArray[ x ] = NULL;
+                    m_layoutArray[ x ] = nullptr;
                     Shader *current = shdrmgr->GetShader((SHADER_TYPES)x);
 
-                    if (current != NULL)
+                    if (current != nullptr)
                     {
-                        UAssert(GetLayoutFromBlob(current, &m_layoutArray[ x ]) == S_OK, "Failed to load layout from blob for shader ", x);
+                        HRESULT result = GetLayoutFromBlob(current, &m_layoutArray[ x ]);
+                        UAssert(result == S_OK, "Failed to load layout from blob for shader %i.  (Error '%s')", x, GetDXErrorMessage(result));
                     }
                 }
             }
@@ -48,7 +50,7 @@ namespace ursine
                 if (m_currentState == type)
                     return;
 
-                UAssert(m_layoutArray[ type ] != NULL, "No input found for type %i", type);
+                UAssert(m_layoutArray[ type ] != nullptr, "No input found for type %i!", type);
 
                 m_currentState = type;
 
@@ -63,9 +65,9 @@ namespace ursine
             HRESULT InputLayoutManager::GetLayoutFromBlob(Shader *shader, ID3D11InputLayout **pInputLayout)
             {
                 // Reflect shader info
-                ID3D11ShaderReflection *pVertexShaderReflection = NULL;
+                ID3D11ShaderReflection *pVertexShaderReflection = nullptr;
                 HRESULT hr = D3DReflect(shader->rawData, shader->vsBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pVertexShaderReflection);
-                UAssert(hr == S_OK, "failed to reflect");
+                UAssert(hr == S_OK, "failed to reflect! (Error '%s')", GetDXErrorMessage(hr));
 
                 // Get shader info
                 D3D11_SHADER_DESC shaderDesc;

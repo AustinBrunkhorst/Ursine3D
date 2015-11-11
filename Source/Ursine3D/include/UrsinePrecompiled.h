@@ -13,10 +13,6 @@
 
 #include "UrsineLogTools.h"
 
-// This is to stop windef.h conflicting with min and max
-// http://stackoverflow.com/questions/14657474/conflict-of-windows-h-and-limits
-#define NOMINMAX
-
 ////////////////////////////////////////////////////////////////////////////////
 // Configuration Detection
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,3 +135,5 @@ namespace fs = boost::filesystem;
 #include "Application.h"
 
 #include "Randomizer.h"
+
+#include "EntityManager.h"

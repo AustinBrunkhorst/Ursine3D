@@ -7,10 +7,10 @@ Texture2D SpecPowTexture: register(t3);
 //buffer for light data
 cbuffer PointLightBuffer : register(b3)
 {
-    float3 lightPos : packoffset(c0);
-    float radius : packoffset(c0.w);
+    float3 lightPos     : packoffset(c0);
+    float radius        : packoffset(c0.w);
     float3 diffuseColor : packoffset(c1);
-    float intensity : packoffset(c1.w);
+    float intensity     : packoffset(c1.w);
 }
 
 cbuffer invProj : register(b4)
@@ -119,7 +119,7 @@ float3 CalcPoint( float3 position, Material material )
 
     // Attenuation
     float attenuation = saturate( 1.0f - (DistToLight / radius) );
-    finalColor *= material.diffuseColor * attenuation;
+    finalColor *= material.diffuseColor.xyz * attenuation;
 
     // Blinn specular
     ToEye = normalize( ToEye );

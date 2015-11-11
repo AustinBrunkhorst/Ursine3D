@@ -19,7 +19,7 @@ private:
     float m_camZoom;
 
     ursine::SVec3 m_camPos;
-
+    
     ursine::graphics::Camera &getEditorCamera(void);
 
     void onAppUpdate(EVENT_HANDLER( ursine::Application ));

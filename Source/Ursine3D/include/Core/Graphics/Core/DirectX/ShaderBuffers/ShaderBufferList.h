@@ -35,6 +35,8 @@ namespace ursine
             BUFFER_GBUFFER_UNPACK,
             BUFFER_LIGHT_PROJ,
             BUFFER_MATERIAL_DATA,
+            BUFFER_SPOTLIGHT,
+			BUFFER_MATRIX_PAL,
 
             BUFFER_COUNT,
 
@@ -102,7 +104,22 @@ namespace ursine
             float emissive;
             float specularPower;
             float specularIntensity;
-            float buffer;
+            unsigned id;
         };
+
+        struct SpotlightBuffer
+        {
+            DirectX::XMFLOAT3 lightPosition;
+            float falloff;
+            DirectX::XMFLOAT3 lightDirection;
+            float innerAngle;
+            DirectX::XMFLOAT3 diffuseColor;
+            float outerAngle;
+        };
+
+		struct MatrixPalBuffer
+		{
+			DirectX::XMMATRIX matPal[96];
+		};
     }
 }

@@ -47,7 +47,31 @@ namespace ursine
             return HasComponent( mask );
         }
 
-        template<typename Args>
+	    template <class ComponentType>
+	    ComponentType* Entity::GetComponentInChildren(const Entity* entity) const
+	    {
+			return m_world->m_entityManager->GetComponentInChildren( entity );
+	    }
+
+	    template <class ComponentType>
+	    ComponentType* Entity::GetComponentInParent(const Entity* entity) const
+	    {
+			return m_world->m_entityManager->GetComponentInParent( entity );
+	    }
+
+	    template <class ComponentType>
+	    std::vector<ComponentType*> Entity::GetComponentsInChildren(const Entity* entity) const
+	    {
+			return m_world->m_entityManager->GetComponentsInChildren( entity );
+	    }
+
+	    template <class ComponentType>
+	    std::vector<ComponentType*> Entity::GetComponentsInParents(const Entity* entity) const
+	    {
+			return m_world->m_entityManager->GetComponentsInParents( entity );
+	    }
+
+	    template<typename Args>
         void Entity::Connect(EventID event, StaticDelegate<Args> delegate)
         {
             m_world->m_entityManager->GetEntityEvents( this ).Connect( event, delegate );

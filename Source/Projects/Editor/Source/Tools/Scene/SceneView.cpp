@@ -207,7 +207,7 @@ void SceneView::UpdateCameraMouse(float dt)
     SVec3 look = cam.GetLook( );
     SVec3 up = cam.GetUp( );
     SVec3 right = cam.GetRight( );
-
+    
     ///////////////////////////////////////////////////////////////////
     // CAMERA ROTATION
     if (mouseMgr->IsButtonDown( MBTN_LEFT ))

@@ -17,6 +17,7 @@
 #include "Entity.h"
 #include "Filter.h"
 #include "TransformComponent.h"
+#include <queue>
 
 namespace ursine
 {
@@ -67,8 +68,11 @@ namespace ursine
 
         EntityManager::~EntityManager(void)
         {
-            for (auto entity : m_active)
-                clearComponents( entity );
+            while (m_active.size( ) > 0)
+            {
+                auto entity = m_active[ 0 ];
+                Remove( entity );
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -84,6 +88,11 @@ namespace ursine
             dispatchCreated( entity );
 
             return entity;
+        }
+
+        const EntityVector &EntityManager::GetActiveEntities(void) const
+        {
+            return m_active;
         }
 
         void EntityManager::AddComponent(Entity *entity, Component *component)
@@ -148,6 +157,108 @@ namespace ursine
             return found;
         }
 
+        Component* EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+        {
+            std::queue<const std::vector<EntityID>*> childrenContainer;
+
+            childrenContainer.push( m_hierarchy.GetChildren( entity ));
+
+            while (childrenContainer.size( ) > 0)
+            {
+                auto &children = *childrenContainer.front( );
+
+                for (auto &child : children)
+                {
+                    auto childEntity = &m_cache[ child ];
+                    auto component = GetComponent( childEntity, id );
+
+                    if (component)
+                        return component;
+
+                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ));
+                }
+
+                childrenContainer.pop( );
+            }
+
+            return nullptr;
+        }
+
+        Component* EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+        {
+            auto parentID = m_hierarchy.GetParent( entity );
+
+            if (parentID == -1)
+                return nullptr;
+
+            auto parent = &m_cache[ parentID ];
+
+            return GetComponent( parent, id );
+        }
+
+        ComponentVector EntityManager::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
+        {
+            ComponentVector components;
+            std::queue<const std::vector<EntityID>*> childrenContainer;
+
+            childrenContainer.push( m_hierarchy.GetChildren( entity ));
+
+            while (childrenContainer.size( ) > 0)
+            {
+                auto &children = *childrenContainer.front( );
+
+                for (auto &child : children)
+                {
+                    auto childEntity = &m_cache[ child ];
+                    auto component = GetComponent( childEntity, id );
+
+                    if (component)
+                        components.push_back( component );
+
+                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ));
+                }
+
+                childrenContainer.pop( );
+            }
+
+            return components;
+        }
+
+        ComponentVector EntityManager::GetComponentsInParents(const Entity* entity, ComponentTypeID id) const
+        {
+            ComponentVector components;
+            auto parentID = m_hierarchy.GetParent( entity );
+
+            while (parentID != -1)
+            {
+                auto parent = &m_cache[ parentID ];
+
+                auto component = GetComponent( parent, id );
+
+                if (component)
+                    components.push_back( component );
+
+                parentID = m_hierarchy.GetParent( parent );
+            }
+
+            return components;
+        }
+
+        uint EntityManager::GetSiblingIndex(const Entity *entity) const
+        {
+            return m_hierarchy.GetSiblingIndex( entity );
+        }
+
+        void EntityManager::SetAsFirstSibling(const Entity *entity)
+        {
+            m_hierarchy.SetAsFirstSibling( entity );
+        }
+
+        void EntityManager::SetSiblingIndex(const Entity *entity, uint index)
+        {
+            m_hierarchy.SetSiblingIndex( entity, index );
+        }
+         
         EntityVector EntityManager::GetEntities(const Filter &filter) const
         {
             EntityVector found;
@@ -193,6 +304,17 @@ namespace ursine
             // not active, so we don't want to delete him
             if (!entity->IsActive( ))
                 return;
+
+            // Remove the children before the parent is removed
+            auto children = m_hierarchy.GetChildren( entity );
+
+            while (children->size() > 0)
+            {
+                auto &child = ( *children )[ 0 ];
+                Remove( m_active[ child ] );
+            }
+
+            m_hierarchy.RemoveEntity( entity );
 
             clearComponents( entity, true );
 
@@ -253,6 +375,8 @@ namespace ursine
             entity->m_uniqueID = uniqueID;
 
             m_unique[ uniqueID ] = entity;
+
+            m_hierarchy.AddEntity( entity );
 
             return entity;
         }
@@ -338,11 +462,6 @@ namespace ursine
 
             // components to remove
             ComponentVector toRemove;
-
-            URSINE_TODO(
-                "optimize this once entity parenting is implemented: "
-                "start from the deepest child and clear components going up the tree."
-            );
 
             for (ComponentTypeID i = 0; i < size; ++i)
             {

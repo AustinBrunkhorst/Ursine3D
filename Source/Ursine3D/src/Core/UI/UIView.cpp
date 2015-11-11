@@ -82,16 +82,20 @@ namespace ursine
 
     const CefRect &UIView::GetViewport(void) const
     {
-        return m_viewport;
+        URSINE_TODO( "..." );
+        CefRect todo;
+
+        return todo;
     }
 
     void UIView::SetViewport(const CefRect &viewport)
     {
-        m_viewport = viewport;
-
-        m_browser->GetHost( )->WasResized( );
+        URSINE_TODO( "..." );
+        //m_viewport = viewport;
 
         resize(viewport.width, viewport.height);
+
+        m_browser->GetHost()->WasResized();
     }
 
     bool UIView::IsValid(void) const
@@ -144,15 +148,6 @@ namespace ursine
 
         SetCursor( cursor );
 #endif
-    }
-
-    bool UIView::Execute(const CefString &name, 
-        CefRefPtr<CefV8Value> object, 
-        const CefV8ValueList &arguments, 
-        CefRefPtr<CefV8Value> &retval,
-        CefString &exception)
-    {
-        return true;
     }
 
     void UIView::onKeyboard(EVENT_HANDLER(KeyboardManager))
@@ -218,6 +213,9 @@ namespace ursine
         if (m_mouseManager->IsButtonDown( MBTN_RIGHT ))
             utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
+        URSINE_TODO( "..." );
+        CefRect m_viewport { 0, 0, 0, 0 };
+
         e.x = static_cast<int>( args->position.X( ) - m_viewport.x );
         e.y = static_cast<int>( args->position.Y( ) - m_viewport.y );
 
@@ -240,6 +238,9 @@ namespace ursine
 
         if (m_mouseManager->IsButtonDown( MBTN_RIGHT ))
             utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
+
+        URSINE_TODO( "..." );
+        CefRect m_viewport { 0, 0, 0, 0 };
 
         e.x = static_cast<int>( args->position.X( ) - m_viewport.x );
         e.y = static_cast<int>( args->position.Y( ) - m_viewport.y );
@@ -273,6 +274,9 @@ namespace ursine
             utils::FlagSet( e.modifiers, EVENTFLAG_RIGHT_MOUSE_BUTTON );
 
         auto &position = m_mouseManager->GetPosition( );
+
+        URSINE_TODO( "..." );
+        CefRect m_viewport { 0, 0, 0, 0 };
 
         e.x = static_cast<int>( position.X( ) - m_viewport.x );
         e.y = static_cast<int>( position.Y( ) - m_viewport.y );

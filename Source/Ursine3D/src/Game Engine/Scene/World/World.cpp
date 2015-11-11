@@ -72,6 +72,11 @@ namespace ursine
             return m_entityManager->GetEntityUnique( uniqueID );
         }
 
+        const EntityVector &World::GetActiveEntities(void) const
+        {
+            return m_entityManager->GetActiveEntities( );
+        }
+
         const EntityVector &World::GetEntitiesFromName(const std::string &name) const
         {
             return m_nameManager->GetEntities( name );

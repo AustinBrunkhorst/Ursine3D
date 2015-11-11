@@ -77,6 +77,16 @@ namespace ursine
 		return m_y;
 	}
 
+    INLINE void Vec2::SetX(float x)
+	{
+        m_x = x;
+	}
+
+    INLINE void Vec2::SetY(float y)
+    {
+        m_y = y;
+    }
+
 	INLINE float Vec2::operator[](uint index) const
 	{
 		return ( &m_x )[ index ];
@@ -87,7 +97,7 @@ namespace ursine
 		return ( &m_x )[ index ];
 	}
 
-	INLINE const float *Vec2::GetFloatPtr( ) const
+	INLINE const float *Vec2::GetFloatPtr(void) const
 	{
 		return &m_x;
 	}

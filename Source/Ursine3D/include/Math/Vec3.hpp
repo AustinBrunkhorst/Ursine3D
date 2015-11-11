@@ -250,6 +250,21 @@ namespace ursine
 		return m_z;
 	}
 
+    INLINE void Vec3::SetX(float x)
+    {                   
+        m_x = x;
+    }                   
+                        
+    INLINE void Vec3::SetY(float y)
+    {                   
+        m_y = y;
+    }                   
+                        
+    INLINE void Vec3::SetZ(float z)
+    {
+        m_z = z;
+    }
+
 	INLINE float Vec3::operator[](uint index) const
 	{
 		return ( &m_x )[ index ];

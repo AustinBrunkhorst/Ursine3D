@@ -22,7 +22,7 @@ FileWatcher<T> *FileWatcher<T>::StartFileWatch( std::string path, std::string ex
     FileWatcher<T> *fw = new FileWatcher<T>( path, extension, mode, sleepTime, callback, recursive );
 
     // call thread, using the static callback main
-    fw->m_threadHandle = CreateThread( NULL, 0, FileWatcher<T>::staticWatcherMain, fw, 0, &fw->m_threadID );
+    fw->m_threadHandle = CreateThread( nullptr, 0, FileWatcher<T>::staticWatcherMain, fw, 0, &fw->m_threadID );
 
     // inc counter
     ++m_watcherCount;
@@ -39,7 +39,7 @@ FileWatcher<T> *FileWatcher<T>::StartFileWatch( std::string path, std::string ex
     FileWatcher<T> *fw = new FileWatcher<T>( path, extension, mode, sleepTime, classFunc, callbackCaller, recursive );
 
     // call thread
-    fw->m_threadHandle = CreateThread( NULL, 0, FileWatcher<T>::classWatcherMain, fw, 0, &fw->m_threadID );
+    fw->m_threadHandle = CreateThread( nullptr, 0, FileWatcher<T>::classWatcherMain, fw, 0, &fw->m_threadID );
 
     // return file watcher
     return fw;

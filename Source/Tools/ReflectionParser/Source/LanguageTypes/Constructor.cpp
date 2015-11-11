@@ -57,8 +57,16 @@ TemplateData Constructor::CompileTemplate(
 
 bool Constructor::isAccessible(void) const
 {
-    return m_accessModifier == CX_CXXPublic && 
-           !m_metaData.GetFlag( native_property::Disable );
+    if (m_accessModifier != CX_CXXPublic)
+        return false;
+
+    // if the parent wants white listed method, then we must have 
+    // the enable flag
+    if (m_parent->GetMetaData( ).GetFlag( native_property::WhiteListMethods ))
+        return m_metaData.GetFlag( native_property::Enable );
+
+    // must not be explicitly disabled
+    return !m_metaData.GetFlag( native_property::Disable );
 }
 
 std::string Constructor::getTemplateParameters(void) const

@@ -16,6 +16,7 @@
 #include "Meta.h"
 
 #include "ComponentConfig.h"
+#include "EventDispatcher.h"
 
 namespace ursine
 {
@@ -37,13 +38,10 @@ namespace ursine
             // entity that this component is attached to
             Entity *m_owner;
         public:
-            Meta(Disable)
             explicit inline Component(ComponentTypeID typeID);
 
-            Meta(Disable)
             Component(const Component &rhs) = default;
 
-            Meta(Disable)
             Component &operator=(const Component &rhs) = default;
 
             // Called when the component has been initialized and added to an entity
@@ -61,7 +59,7 @@ namespace ursine
             // Determines if this component is of the specified type
             template<class ComponentType>
             inline bool Is(void) const;
-        };
+        } Meta(WhiteListMethods);
     }
 }
 

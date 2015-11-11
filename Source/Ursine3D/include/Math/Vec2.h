@@ -14,8 +14,10 @@
 #pragma once
 
 #include "UrsineTypes.h"
+
 #include "SIMD.h"
-#include <string>
+
+#include "Meta.h"
 
 namespace ursine
 {
@@ -33,7 +35,11 @@ namespace ursine
 		friend class SVec4;
 
 	public:
+        EditorField(float x, X, SetX);
+        EditorField(float y, Y, SetY);
+
 		// Constructors
+        Meta(Enable)
 		Vec2(void);
 		Vec2(const Vec2 &value);
 		Vec2(float X, float Y);
@@ -105,8 +111,12 @@ namespace ursine
 		// Accessors
 		float X(void) const;
 		float Y(void) const;
+
 		float &X(void);
 		float &Y(void);
+
+        void SetX(float x);
+        void SetY(float y);
 
 		float operator[](uint index) const;
 		float &operator[](uint index);
@@ -134,7 +144,7 @@ namespace ursine
 
 	private:
 		float m_x, m_y;
-	};
+	} Meta(Enable, WhiteListMethods);
 }
 
 #include "Vec2.hpp"

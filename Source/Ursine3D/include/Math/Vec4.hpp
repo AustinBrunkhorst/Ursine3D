@@ -251,6 +251,26 @@ namespace ursine
 		return m_w;
 	}
 
+    INLINE void Vec4::SetX(float x)
+    {
+        m_x = x;
+    }
+
+    INLINE void Vec4::SetY(float y)
+    {
+        m_y = y;
+    }
+
+    INLINE void Vec4::SetZ(float z)
+    {
+        m_z = z;
+    }
+
+    INLINE void Vec4::SetW(float w)
+    {
+        m_w = w;
+    }
+
 	INLINE float Vec4::operator[](uint index) const
 	{
 		return ( &m_x )[ index ];

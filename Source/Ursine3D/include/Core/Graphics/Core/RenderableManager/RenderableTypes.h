@@ -22,12 +22,11 @@ namespace ursine
     {
         enum RENDERABLE_TYPE
         {
-            RENDERABLE_MODEL3D = 0, //3d model
-            RENDERABLE_BILLBOARD2D, //2D billboard
-            RENDERABLE_DIRECTION_LIGHT, //directional light, applied to all objects
-            RENDERABLE_POINT_LIGHT, //positional light
-            RENDERABLE_PRIMITIVE, //wireframe primitives
-
+            RENDERABLE_MODEL3D = 0,     //3d model
+            RENDERABLE_BILLBOARD2D,     //2D billboard
+            RENDERABLE_LIGHT,           //light
+            RENDERABLE_PRIMITIVE,       //wireframe primitives
+            
             RENDERABLE_TYPE_COUNT
         };
     }

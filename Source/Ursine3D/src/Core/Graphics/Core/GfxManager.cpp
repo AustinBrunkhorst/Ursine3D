@@ -179,28 +179,6 @@ namespace ursine
                 drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
             }
             break;
-            //directional light
-            case RENDERABLE_DIRECTION_LIGHT:
-            {
-                DirectionalLight *current = &renderableManager->m_renderableDirectionalLight[ render->Index_ ];
-
-                drawCall.Index_ = render->Index_;
-                drawCall.Type_ = render->Type_;
-
-                drawCall.Shader_ = SHADER_DIRECTIONAL_LIGHT;
-            }
-            break;
-            //point light
-            case RENDERABLE_POINT_LIGHT:
-            {
-                PointLight *current = &renderableManager->m_renderablePointLight[ render->Index_ ];
-
-                drawCall.Index_ = render->Index_;
-                drawCall.Type_ = render->Type_;
-
-                drawCall.Shader_ = SHADER_POINT_LIGHT;
-            }
-            break;
             case RENDERABLE_PRIMITIVE:
             {
                 Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
@@ -221,6 +199,28 @@ namespace ursine
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetTextureName());
 
                 drawCall.Shader_ = SHADER_BILLBOARD2D;
+            }
+            break;
+            case RENDERABLE_LIGHT:
+            {
+                Light *current = &renderableManager->m_renderableLights[ render->Index_ ];
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
+
+                switch(current->GetType())
+                {
+                case Light::LIGHT_DIRECTIONAL:
+                    drawCall.Shader_ = SHADER_DIRECTIONAL_LIGHT;
+                    break;
+                case Light::LIGHT_POINT:
+                    drawCall.Shader_ = SHADER_POINT_LIGHT;
+                    break;
+                case Light::LIGHT_SPOTLIGHT:
+                    URSINE_TODO("Implement spotlight");
+                    break;
+                default:
+                    break;
+                }
             }
             break;
             default:
@@ -503,7 +503,7 @@ namespace ursine
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
 
             shaderManager->BindShader(SHADER_DIFFUSE);
-            layoutManager->SetInputLayout(SHADER_DIFFUSE);
+            layoutManager->SetInputLayout(SHADER_DIFFUSE);  
             textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
             bufferManager->MapCameraBuffer(view, proj);
 
@@ -741,14 +741,13 @@ namespace ursine
         // rendering //////////////////////////////////////////////////////
         void GfxManager::Render3DModel(_DRAWHND handle)
         {
-            //TEMP
-            URSINE_TODO("THIS IS REALLY BAD FIX AT LATER DATE");
+            // TEMP /////////////////////////////////////////////////
+            URSINE_TODO("Remove this");
             POINT point;
             GetCursorPos(&point);
 
             {
                 bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), GEOMETRY_SHADER);
-                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
             }
 
             PrimitiveColorBuffer pcb;
@@ -759,15 +758,22 @@ namespace ursine
             t += 0.000016f;
             pcb.color.z = t;
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, GEOMETRY_SHADER);
-            //END OF TEMP
+            // END OF TEMP //////////////////////////////////////////
 
             //map transform
+            bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
 
-
-            //map material data
+            //material buffer
             MaterialDataBuffer mdb;
+
+            //get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
+
+            //set unique ID for this model
+            mdb.id = (handle.Index_) | (handle.Type_ << 16);
+
+            //map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
 
             //set model
@@ -776,7 +782,8 @@ namespace ursine
             //map texture
             textureManager->MapTextureByID(handle.Material_);
 
-            shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+            //render
+            shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_));
         }
 
         void GfxManager::Render2DBillboard(_DRAWHND handle)
@@ -787,6 +794,11 @@ namespace ursine
             //set model
             modelManager->BindModel("Sprite");
 
+            //map material data
+            MaterialDataBuffer mdb;
+            mdb.id;
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, PIXEL_SHADER);
+
             //map texture
             textureManager->MapTextureByID(handle.Material_);
 
@@ -796,49 +808,48 @@ namespace ursine
 
         void GfxManager::RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj)
         {
-            //get point light data
-            PointLight &pl = renderableManager->m_renderablePointLight[ handle.Index_ ];
+            Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
             //get data
-            float radius = pl.GetRadius();
+            float radius = pl.GetRadius( );
 
             //domain shader needs light proj
             SMat4 lightProj;
             lightProj = SMat4(radius, radius, radius); //scaling
-            lightProj *= SMat4(pl.GetPosition()); //translate to world space
-            lightProj *= currentCamera.GetViewMatrix(); //transform into view space
+            lightProj *= SMat4(pl.GetPosition( )); //translate to world space
+            lightProj *= currentCamera.GetViewMatrix( ); //transform into view space
             lightProj *= proj; //transform into screeen space
 
-            //map
+                                //map
             bufferManager->MapBuffer<BUFFER_LIGHT_PROJ>(&lightProj, DOMAIN_SHADER);
 
             //ps needs point light data buffer
-            SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
-            view.Transpose();
-            SVec3 lightPosition = view.TransformPoint(pl.GetPosition());
+            SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
+            view.Transpose( );
+            SVec3 lightPosition = view.TransformPoint(pl.GetPosition( ));
 
             PointLightBuffer pointB;
-            pointB.lightPos = lightPosition.ToD3D();
-            pointB.lightRadius = pl.GetRadius();
+            pointB.lightPos = lightPosition.ToD3D( );
+            pointB.lightRadius = pl.GetRadius( );
             pointB.intensity = 1;
-            pointB.color.x = pl.GetColor().r;
-            pointB.color.y = pl.GetColor().g;
-            pointB.color.z = pl.GetColor().b;
+            pointB.color.x = pl.GetColor( ).r;
+            pointB.color.y = pl.GetColor( ).g;
+            pointB.color.z = pl.GetColor( ).b;
             bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, PIXEL_SHADER);
 
             //light transform
             SMat4 transform;
-            transform *= SMat4(pl.GetPosition());
+            transform *= SMat4(pl.GetPosition( ));
             transform *= SMat4(radius, radius, radius);
             bufferManager->MapTransformBuffer(transform);
 
             //get camera position
-            SVec3 tempPos = currentCamera.GetPosition();
+            SVec3 tempPos = currentCamera.GetPosition( );
 
             ////get light position
-            SVec3 lightP = pl.GetPosition();
+            SVec3 lightP = pl.GetPosition( );
             SVec3 camLight = tempPos - lightP;
-            float distance = camLight.LengthSquared();
+            float distance = camLight.LengthSquared( );
             float radiusSqr = radius * radius;
 
             if (radiusSqr > fabs(distance))
@@ -852,23 +863,21 @@ namespace ursine
 
         void GfxManager::RenderDirectionalLight(_DRAWHND handle, Camera &currentCamera)
         {
-            //ID3D11ShaderResourceView *resource = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_SHADOWMAP );
-            //dxCore->GetDeviceContext( )->PSSetShaderResources( 3, 1, &resource );
+            Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
 
-            DirectionalLight &dl = renderableManager->m_renderableDirectionalLight[ handle.Index_ ];
-
-            SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
-            view.Transpose();
-            SVec3 lightDirection = view.TransformVector(dl.GetDirection());
+            SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
+            view.Transpose( );
+            SVec3 lightDirection = view.TransformVector(l.GetDirection( ));
 
             DirectionalLightBuffer lightB;
-            lightB.lightDirection.x = lightDirection.X();
-            lightB.lightDirection.y = lightDirection.Y();
-            lightB.lightDirection.z = lightDirection.Z();
+            lightB.lightDirection.x = lightDirection.X( );
+            lightB.lightDirection.y = lightDirection.Y( );
+            lightB.lightDirection.z = lightDirection.Z( );
 
-            lightB.intensity = 1.f;
+            //used as a buffer
+            lightB.intensity = l.GetIntensity();
 
-            lightB.lightColor = DirectX::XMFLOAT3(dl.GetColor().r, dl.GetColor().g, dl.GetColor().b);
+            lightB.lightColor = DirectX::XMFLOAT3(l.GetColor( ).r * lightB.intensity, l.GetColor( ).g * lightB.intensity, l.GetColor( ).b * lightB.intensity);
 
             bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, PIXEL_SHADER);
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
@@ -1003,6 +1012,156 @@ namespace ursine
             m_GameViewport = vp;
         }
 
+        void GfxManager::RenderDynamicTexture(GfxHND& texHandle, const float posX, const float posY)
+        {
+            //get the texture
+            Texture *tex = textureManager->GetDynamicTexture(texHandle);
+
+            _RESOURCEHND *handle = HND_RSRCE(texHandle);
+
+            //prep for ui
+            PrepForUI();
+
+            //get dimensions
+            unsigned width, height;
+            gfxInfo->GetDimensions(width, height);
+
+            //will need these to be floats
+            float fWidth = static_cast<float>(width);
+            float fHeight = static_cast<float>(height);
+
+            //set directx viewport
+            D3D11_VIEWPORT vpData = viewportManager->GetViewport(m_GameViewport).GetViewportData();
+            unsigned w, h;
+            gfxInfo->GetDimensions(w, h);
+            vpData.TopLeftX = 0;
+            vpData.TopLeftY = 0;
+            vpData.Width = static_cast<FLOAT>(w);
+            vpData.Height = static_cast<FLOAT>(h);
+
+            dxCore->GetDeviceContext()->RSSetViewports(1, &vpData);
+
+            //calculate position w/ respect to top left
+            float finalX = (posX - fWidth / 2.f + tex->m_width / 2.f) / (fWidth / 2.f);
+            float finalY = (-posY + height / 2.f - tex->m_height / 2.f) / (fHeight / 2.f);
+            SMat4 trans = SMat4(SVec3(finalX, finalY, 0));
+            bufferManager->MapTransformBuffer(trans * SMat4(-2 * (tex->m_width / fWidth), 2 * (tex->m_height / fHeight), 1));
+
+            //map tex
+            textureManager->MapTextureByID(handle->Index_);
+            
+            //render to screen
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+        }
+
+        void GfxManager::RenderDynamicTextureInViewport(GfxHND& texHandle, const float posX, const float posY, GfxHND& camera)
+        {
+            _RESOURCEHND *newRender = reinterpret_cast<_RESOURCEHND*>(&camera);
+
+            UAssert(newRender->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
+
+            // get viewport
+            Camera &cam = cameraManager->GetCamera(camera);
+
+            //get the texture
+            Texture *tex = textureManager->GetDynamicTexture(texHandle);
+
+            _RESOURCEHND *handle = HND_RSRCE(texHandle);
+
+            //prep for ui
+            PrepForUI( );
+
+            //get dimensions
+            unsigned width, height;
+            gfxInfo->GetDimensions(width, height);
+
+            //will need these to be floats
+            float fWidth = static_cast<float>(width);
+            float fHeight = static_cast<float>(height);
+
+            //set directx viewport
+            float w, h, x, y;
+            Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
+            D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
+            cam.GetPosition(x, y);
+            cam.GetDimensions(w, h);
+
+            w *= gvp.Width;
+            h *= gvp.Height;
+
+            x *= gvp.Width;
+            y *= gvp.Height;
+
+            D3D11_VIEWPORT vpData;
+            vpData.Width = w;
+            vpData.Height = h;
+            vpData.TopLeftX = x;
+            vpData.TopLeftY = y;
+            vpData.MinDepth = 0;
+            vpData.MaxDepth = 1;
+
+            dxCore->GetDeviceContext( )->RSSetViewports(1, &vpData);
+
+            //calculate position w/ respect to top left
+            float finalX = (posX - fWidth / 2.f + tex->m_width / 2.f) / (fWidth / 2.f);
+            float finalY = (-posY + height / 2.f - tex->m_height / 2.f) / (fHeight / 2.f);
+            SMat4 trans = SMat4(SVec3(finalX, finalY, 0));
+            bufferManager->MapTransformBuffer(trans * SMat4(-2 * (tex->m_width / fWidth), 2 * (tex->m_height / fHeight), 1));
+
+            //map tex
+            textureManager->MapTextureByID(handle->Index_);
+
+            //render to screen
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+        }
+
+        void GfxManager::RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void* input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY)
+        {
+            //set up description
+            D3D11_TEXTURE2D_DESC desc;
+            desc.Width = srcWidth;
+            desc.Height = srcHeight;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // dammmnnnn
+            desc.SampleDesc.Count = 1;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_DEFAULT;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = 0;
+            desc.MiscFlags = 0;
+
+            //set up resource
+            D3D11_SUBRESOURCE_DATA subrsc;
+            subrsc.pSysMem = input;
+            subrsc.SysMemPitch = srcWidth * 4; //length of one line in bytes, 32 bit color
+            subrsc.SysMemSlicePitch = 0;
+
+            //create the texture
+            ID3D11Texture2D *tex;
+            HRESULT hr = dxCore->GetDevice()->CreateTexture2D(&desc, &subrsc, &tex);
+
+            UAssert(hr == S_OK, "Failed to create UI texture!");
+
+            //this doesn't work for now
+            //define the box of the texture
+            D3D11_BOX box; //this box is the taken from the SOURCE texture
+            box.back = 1; //this might need SERIOUS changes
+            box.front = 0;
+
+            box.left = 0;
+            box.top = 0;
+
+            box.right = inputWidth;
+            box.bottom = inputHeight;
+
+            //now that we have the texture, we need to write it to the render target
+            Texture *target = textureManager->GetDynamicTexture(destTexture);
+            dxCore->GetDeviceContext()->CopySubresourceRegion(target->m_texture2d, 0, destinationX, destinationY, 0, tex, 0, &box);
+
+
+            RELEASE_RESOURCE(tex);
+        }
+        
         // misc stuff /////////////////////////////////////////////////////
         DXCore::DirectXCore *GfxManager::GetDXCore()
         {

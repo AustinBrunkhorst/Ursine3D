@@ -38,7 +38,7 @@ namespace ursine
             UAssert(result == S_OK, "Failed to make adapter enum! (Error '%i')", result);
 
             //Get the number of modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format for the adapter output (monitor).
-            result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_SCALING, &ModeCount_, NULL);
+            result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_SCALING, &ModeCount_, nullptr);
             UAssert(result == S_OK, "Failed to get sampler state! (Error '%i')", result);
 
             UAssert(ModeCount_ > 0, "No modes available");
@@ -62,15 +62,15 @@ namespace ursine
 
             //Release the adapter output.
             adapterOutput->Release();
-            adapterOutput = NULL;
+            adapterOutput = nullptr;
 
             //Release the adapter.
             adapter->Release();
-            adapter = NULL;
+            adapter = nullptr;
 
             //Release the factory.
             factory->Release();
-            factory = NULL;
+            factory = nullptr;
 
             // @Matt TEMP, change the sampling later
             SampleCount_ = 1;
@@ -79,7 +79,7 @@ namespace ursine
 
         void GfxInfo::Uninitialize()
         {
-            if (DisplayModeList_ != NULL)
+            if (DisplayModeList_ != nullptr)
                 delete[] DisplayModeList_;
         }
 

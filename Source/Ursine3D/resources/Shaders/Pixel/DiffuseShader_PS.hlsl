@@ -44,14 +44,14 @@ float4 main(PixelInputType input) : SV_TARGET
   float upIntensity, downIntensity;
   float4 color;
 
-  textureColor = modelTexture.Sample( texSample, input.uv);
+  textureColor = modelTexture.Sample(texSample, input.uv);
 
   upIntensity = (dot(input.normal, float4(0, 1, 0, 0)));
-  downIntensity = (dot( input.normal, float4(0, -1, 0, 0) ));
+  downIntensity = (dot(input.normal, float4(0, -1, 0, 0)));
 
 
   // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-  color = (textureColor * 0.5f + textureColor * ((clamp( downIntensity, 0, 1 ) * upColor) + (downColor * clamp( upIntensity, 0, 1 )))) * (1 - emissive) + textureColor * emissive;
+  color = (textureColor * 0.5f + textureColor * ((clamp(downIntensity, 0, 1) * upColor) + (downColor * clamp(upIntensity, 0, 1)))) * (1 - emissive) + textureColor * emissive;
   color.w = 1;
 
   return color;

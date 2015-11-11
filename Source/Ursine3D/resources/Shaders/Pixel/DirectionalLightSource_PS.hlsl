@@ -10,15 +10,15 @@ SamplerState SampleType : register(s0);
 //buffer for light data
 cbuffer DirectionalLightBuffer : register(b2)
 {
-  float4 lightDirection;
-  float3 diffuseColor;
-  float intensity;
-  float4 lightPosition;
+    float4 lightDirection   : packoffset(c0);
+    float3 diffuseColor     : packoffset(c1);
+    float intensity         : packoffset(c1.w);
+    float4 lightPosition    : packoffset(c2);
 }
 
 cbuffer InvProj : register(b4)
 {
-  float4x4 InvProj;
+    float4x4 InvProj;
 };
 
 //specular power range
@@ -111,12 +111,12 @@ SURFACE_DATA UnpackGBuffer( int2 location )
 
 float3 CalcPoint( float3 position, Material material )
 {
-    float3 ToLight = -lightDirection;
+    float3 ToLight = -lightDirection.xyz;
     float3 ToEye = -position;
 
     // Phong diffuse
     float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (intensity) * material.diffuseColor;
+    float3 finalColor = diffuseColor.rgb * NDotL * (intensity) * material.diffuseColor.xyz;
 
     // Blinn specular
     ToEye = normalize( ToEye );
@@ -124,11 +124,11 @@ float3 CalcPoint( float3 position, Material material )
     float NDotH = saturate( dot( HalfWay, material.normal ) );
     finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
 
-    return finalColor;
+    return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
 }
 
 
-float4 main( DS_OUTPUT In) : SV_TARGET
+float4 main( DS_OUTPUT In ) : SV_TARGET
 {
     // Unpack the GBuffer
     SURFACE_DATA gbd = UnpackGBuffer( In.Position.xy );
@@ -142,58 +142,14 @@ float4 main( DS_OUTPUT In) : SV_TARGET
     mat.specIntensity = gbd.SpecInt;
     mat.emissive = gbd.Emissive;
 
+    //calculate world position
     In.cpPos.xy /= In.cpPos.w;
     float3 pos = CalcWorldPos( In.cpPos.xy, gbd.LinearDepth );
 
+    //get the final color
     float4 finalColor;
     finalColor.xyz = CalcPoint( pos, mat );
     finalColor.w = 1.0;
 
     return finalColor;
-
-////////////////////////////////////////////////
-  //
-  //input.ScreenPosition.xy /= input.ScreenPosition.w;
-  //float2 texCoord = 0.5f * (float2(input.ScreenPosition.x, -input.ScreenPosition.y) + 1);
-
-  ////temporary variables, 
-  //float diffuseIntensity = 1;
-
-  ////ambient values
-  //float ambientIntensity = 0.25;
-  //float4 ambientColor = float4(1, 1, 1, 1);
-
-  ////specular values
-  //float SpecularIntensity = 1;
-  //float4 SpecularColor = float4(1, 1, 1, 1);
-  //float Shininess = 256;
-
-  ////calculate the reflection vector for specular lighting
-  //float3 light = (lightDirection).xyz;
-
-  ////get the normal from the map, which is in view space
-  //float3 normal = normalize(float3((normalTexture.Sample(SampleType, texCoord )).xyz));
-
-  ////reflect the light off of the surface
-  //float3 reflection = normalize(reflect(-light, normal));
-
-  ////get the view vector
-  //float3 viewVector = normalize(-depthTexture.Sample(SampleType, texCoord ).xyz);
-
-  ////get the dot to grab specular value
-  //float dotProduct = dot(reflection, viewVector);
-
-  ////get the dot for determining what side we are on
-  //float dotP = saturate(dot(-light, normal));
-
-  ////calculate diffuse value
-  //float3 diffuse = lightColor * dotP;
-
-  ////setting specular value
-  //float specular = saturate(SpecularIntensity * max(pow(dotProduct, Shininess), 0) * length(diffuse));
-
-  ////get shadow value
-  //float shadowValue = shadowMap.Sample( SampleType, float2(0,0) );
-
-  //return float4(diffuse + ambientColor.xyz * ambientIntensity, (specular * dotP));
 }

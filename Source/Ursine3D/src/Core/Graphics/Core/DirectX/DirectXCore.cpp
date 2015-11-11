@@ -1,6 +1,7 @@
 #include "UrsinePrecompiled.h"
 #include "DirectXCore.h"
 #include <d3d11.h>
+#include "DXErrorHandling.h"
 
 namespace ursine
 {
@@ -20,9 +21,9 @@ namespace ursine
                 //initializing
                 HRESULT result;
 
-                m_swapChain = NULL;
-                m_deviceContext = NULL;
-                m_device = NULL;
+                m_swapChain = nullptr;
+                m_deviceContext = nullptr;
+                m_device = nullptr;
                 m_debug = debug;
                 m_shouldResize = false;
 
@@ -98,7 +99,7 @@ namespace ursine
                 //Set the scan line ordering and scaling to unspecified.
                 swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
                 swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
+                
                 //Discard the back buffer contents after presenting.
                 swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
@@ -106,28 +107,28 @@ namespace ursine
                 //Create the swap chain, Direct3D device, and Direct3D device context.
                 if (debug)
                 {
-                    result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
+                    result = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
                         D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, FeatureLevelArray, 4, D3D11_SDK_VERSION,
-                        &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
-                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result);
+                        &swapChainDesc, &m_swapChain, &m_device, nullptr, &m_deviceContext);
+                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '%s')", GetDXErrorMessage(result));
 
                     //make debug interface
                     result = m_device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&m_debugInterface));
-                    UAssert(result == S_OK, "Failed to make debug interface!");
+                    UAssert(result == S_OK, "Failed to make debug interface! (Error '%s')", GetDXErrorMessage(result));
                 }
                 else
                 {
-                    result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
+                    result = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
                         D3D11_CREATE_DEVICE_SINGLETHREADED, FeatureLevelArray, 4, D3D11_SDK_VERSION,
-                        &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
-                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '0x%x')", result);
+                        &swapChainDesc, &m_swapChain, &m_device, nullptr, &m_deviceContext);
+                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '%s')", GetDXErrorMessage(result));
                 }
 
                 D3D_FEATURE_LEVEL finalFeatureLevel = m_device->GetFeatureLevel();
                 LogMessage("Feature Level: %i", 2, finalFeatureLevel);
 
                 //set to not fullscreen
-                m_swapChain->SetFullscreenState(fullscreen, NULL);
+                m_swapChain->SetFullscreenState(fullscreen, nullptr);
 
                 ///////////////////////////////////////////////////////////////
                 // INIT RENDER TARGETS ////////////////////////////////////////
@@ -136,16 +137,16 @@ namespace ursine
 
                 //Get the pointer to the back buffer.
                 result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr);
-                UAssert(result == S_OK, "Failed to get back buffer! (Error '0x%x')", result);
+                UAssert(result == S_OK, "Failed to get back buffer! (Error '%s')", GetDXErrorMessage(result));
 
                 //Create the render target view with the back buffer pointer.
-                result = m_device->CreateRenderTargetView(backBufferPtr, NULL,
+                result = m_device->CreateRenderTargetView(backBufferPtr, nullptr,
                     &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView);
-                UAssert(result == S_OK, "Failed to make render target! (Error '%i')", result);
+                UAssert(result == S_OK, "Failed to make render target! (Error '%s')", GetDXErrorMessage(result));
 
                 //Release pointer to the back buffer as we no longer need it.
                 backBufferPtr->Release();
-                backBufferPtr = NULL;
+                backBufferPtr = nullptr;
 
                 /////////////////////////////////////////////////////////////////
                 // CREATING DEPTH STATES ////////////////////////////////////////
@@ -176,7 +177,7 @@ namespace ursine
             void DirectXCore::Uninitialize(void)
             {
                 //set to not fullscreen
-                m_swapChain->SetFullscreenState(false, NULL);
+                m_swapChain->SetFullscreenState(false, nullptr);
 
                 m_rasterStateManager->Uninitialize();
                 m_blendManager->Uninitialize();
@@ -236,7 +237,7 @@ namespace ursine
                 //clear other targets
                 for (int x = RENDER_TARGET_VIEWPORT_1; x < RENDER_TARGET_COUNT; ++x)
                 {
-                    if (m_targetManager->GetRenderTarget((RENDER_TARGETS)x)->RenderTargetView == NULL)
+                    if (m_targetManager->GetRenderTarget((RENDER_TARGETS)x)->RenderTargetView == nullptr)
                         continue;
 
                     m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget((RENDER_TARGETS)x)->RenderTargetView, color);
@@ -351,14 +352,14 @@ namespace ursine
                 HRESULT hr;
 
                 hr = m_swapChain->ResizeBuffers(0, static_cast<UINT>(width), static_cast<UINT>(height), DXGI_FORMAT_UNKNOWN, 0);
-                UAssert(hr == S_OK, "Failed to resize swapchain!");
+                UAssert(hr == S_OK, "Failed to resize swapchain! (Error '%s')", GetDXErrorMessage(hr));
 
                 ID3D11Texture2D *pBuffer;
                 hr = m_swapChain->GetBuffer(0, __uuidof(pBuffer), (void**)&pBuffer);
-                UAssert(hr == S_OK, "Failed to get swap chain buffer!");
+                UAssert(hr == S_OK, "Failed to get swap chain buffer! (Error '%s')", GetDXErrorMessage(hr));
 
-                hr = m_device->CreateRenderTargetView(pBuffer, NULL, &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView);
-                UAssert(hr == S_OK, "Failed to make render target! (Error '%i')", hr);
+                hr = m_device->CreateRenderTargetView(pBuffer, nullptr, &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView);
+                UAssert(hr == S_OK, "Failed to make render target! (Error '%s')", GetDXErrorMessage(hr));
 
                 //release buffer
                 RELEASE_RESOURCE(pBuffer);
