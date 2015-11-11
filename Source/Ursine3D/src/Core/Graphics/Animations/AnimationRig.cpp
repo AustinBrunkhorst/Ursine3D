@@ -14,10 +14,13 @@ namespace ursine
     }
 
     unsigned AnimationRig::AddBone(
-        const std::string& name, 
-        const SVec3& trans, 
-        const SVec3& scale, 
-        const SQuat& rotation, 
+        const std::string& name,
+        const SVec3& boneTrans,
+        const SVec3& boneScale,
+        const SQuat& boneRotation,
+        const SVec3& bindTrans,
+        const SVec3& bindScale,
+        const SQuat& bindRotation,
         const unsigned parentID
     )
     {
@@ -34,10 +37,10 @@ namespace ursine
 
         // add bone to table, initialize this bone with proper data
         m_boneData.push_back(AnimationBone());
-        m_boneData[ newID ].InitializeBone(name, trans, scale, rotation, newID, parent);
+        m_boneData[ newID ].InitializeBone(name, boneTrans, boneScale, boneRotation, newID, parent);
         
         // calculate offset matrix
-        SMat4 offsetMatrix = SMat4(trans) * SMat4(scale.X(), scale.Y(), scale.Z()) * SMat4(rotation);
+        SMat4 offsetMatrix = SMat4(bindTrans) * SMat4(bindScale.X(), bindScale.Y(), bindScale.Z()) * SMat4(bindRotation);
         m_offsetMatrices.push_back(offsetMatrix);
 
         return newID;

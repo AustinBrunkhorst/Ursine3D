@@ -168,41 +168,20 @@ void Editor::initializeScene(void)
 
     world->DispatchLoad( );
 
-<<<<<<< HEAD
-    auto *cameraEntity = world.CreateEntity( "Camera" );
+    auto *cameraEntity = world->CreateEntity( "Camera" );
     {
         auto *component = cameraEntity->AddComponent<ecs::Camera>( );
 		 
-        auto &camera = component->GetCamera( );
+        auto camera = component->GetCamera( );
 
-        camera.SetPosition( 0.0f, 0.0f );
-		camera.SetRenderMode(graphics::VIEWPORT_RENDER_FORWARD );
-        camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 700.0f );
-
-        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+        camera->SetPosition( 0.0f, 0.0f );
+		camera->SetRenderMode(graphics::VIEWPORT_RENDER_FORWARD );
+        camera->SetDimensions( 1.0f, 1.0f );
+        camera->SetPlanes( 0.1f, 700.0f );
+              
+        camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
 		 
-        scene.SetEditorCamera( component->GetHandle( ) ); 
     }
-
-	// animation model entities - custom file format stuff
-	auto *entity_cfmt_model = world.CreateEntity();  
-	{ 
-		entity_cfmt_model->AddComponent<ecs::Renderable>();
-		auto model = entity_cfmt_model->AddComponent<ecs::Model3D>();
-
-		auto name = "Custom";
-
-		entity_cfmt_model->SetName(name); 
-
-		model->SetModel(name);
-		model->GetModel()->SetMaterialData(1, 0, 0);
-
-		auto transform = entity_cfmt_model->GetTransform();
-		transform->SetWorldPosition(SVec3{ 0.0f, 0.0f, 0.0f });
-		transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
-		transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f }); 
-	}
 
 	// //// character entities
  // //   for (int i = 0; i < 25; ++i)
@@ -286,9 +265,9 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto dt = sender->GetDeltaTime( );
 
 
-    auto &scene = m_project->GetScene( );
+    auto scene = m_project->GetScene( );
 	 
-    scene.Update( dt ); 
+    scene->Update( dt ); 
 
 
     m_graphics->StartFrame( );  

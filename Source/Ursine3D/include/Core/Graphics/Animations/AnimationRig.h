@@ -31,9 +31,12 @@ namespace ursine
         //returns boneID of newly minted bone lolol
         unsigned AddBone(
             const std::string& name,
-            const SVec3& trans,
-            const SVec3& scale,
-            const SQuat& rotation,
+            const SVec3& boneTrans,
+            const SVec3& boneScale,
+            const SQuat& boneRotation,
+            const SVec3& bindTrans,
+            const SVec3& bindScale,
+            const SQuat& bindRotation,
             const unsigned parentID
         );
 
@@ -54,8 +57,8 @@ namespace ursine
     private:
         std::string m_name;
 
-        std::vector<SMat4> m_offsetMatrices;
-        std::vector<AnimationBone> m_boneData;
+        std::vector<SMat4> m_offsetMatrices;    //t-pose
+        std::vector<AnimationBone> m_boneData;  //bone-space data
         std::vector<unsigned> m_hierarchyTable;
     };
 }

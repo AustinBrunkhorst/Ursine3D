@@ -16,6 +16,7 @@
 
 #include "AnimationRig.h"
 #include "Animation.h"
+#include "AnimationState.h"
 
 namespace ursine
 {
@@ -24,10 +25,12 @@ namespace ursine
     public:
         //given a Rig, State, and 2 vectors of matrices, generate matrix palette
 
+        void GenerateAnimationData(const AnimationState &animState, const Animation *animation, std::vector<SMat4> &outputMatPal);
+
         //static stuff
         static void InitializeStaticData(void);
-        static Animation *AddAnimation(void);
-        static AnimationRig *AddAnimationRig(void);
+        static unsigned AddAnimation(void);
+        static unsigned AddAnimationRig(void);
         
         static Animation *GetAnimation(const unsigned index);
         static AnimationRig *GetAnimationRig(const unsigned index);

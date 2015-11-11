@@ -12,14 +12,18 @@ namespace ursine
         m_animationRigData.resize(100);
     }
 
-    Animation* AnimationBuilder::AddAnimation()
+    unsigned AnimationBuilder::AddAnimation()
     {
-        return nullptr;
+        unsigned index = m_animationData.size();
+        m_animationData.push_back(Animation());
+        return index;
     }
 
-    AnimationRig* AnimationBuilder::AddAnimationRig()
+    unsigned AnimationBuilder::AddAnimationRig()
     {
-        return nullptr;
+        unsigned index = m_animationRigData.size();
+        m_animationRigData.push_back(AnimationRig());
+        return index;
     }
 
     Animation *AnimationBuilder::GetAnimation(const unsigned index)
