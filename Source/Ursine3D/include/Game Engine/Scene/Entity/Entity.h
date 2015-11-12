@@ -76,6 +76,12 @@ namespace ursine
             // Enables hierarchy change for this entity
             void EnableHierarchyChange(bool enabled);
 
+            // Determines if this entity will be serialized
+            bool IsSerializationEnabled(void) const;
+
+            // Enables serialization for this entity
+            void EnableSerialization(bool enabled);
+
             // Determines if this entity is visible in the editor
             bool IsVisibleInEditor(void) const;
 
@@ -243,6 +249,7 @@ namespace ursine
             bool m_deleting               : 1;
             bool m_deletionEnabled        : 1;
             bool m_hierarchyChangeEnabled : 1;
+            bool m_serializationEnabled   : 1;
             bool m_visibleInEditor        : 1;
 
             // active id in the entity manager

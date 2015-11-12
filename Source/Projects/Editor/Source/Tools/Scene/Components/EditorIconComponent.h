@@ -7,7 +7,7 @@ class EditorIcon : public ursine::ecs::Component
     NATIVE_COMPONENT;
 public:
     Meta(Enable)
-        EditorIcon(void);
+    EditorIcon(void);
     ~EditorIcon(void);
 
     void SetIcon(const std::string &text);
@@ -17,4 +17,9 @@ public:
 private:
     ursine::ecs::Entity *m_billboard;
 
-} Meta(Enable, WhiteListMethods, HiddenInInspector);
+} Meta(
+    Enable, 
+    WhiteListMethods, 
+    DisableSerialization, 
+    HiddenInInspector
+);

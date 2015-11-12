@@ -69,12 +69,15 @@ void ObjectSelectorSystem::OnInitialize(void)
 
     //construct the 3 axis
     m_xAxis = m_world->CreateEntity( );
+    m_xAxis->EnableSerialization( false );
     m_xAxis->SetVisibleInEditor( false );
 
     m_yAxis = m_world->CreateEntity( );
+    m_yAxis->EnableSerialization( false );
     m_yAxis->SetVisibleInEditor( false );
 
     m_zAxis = m_world->CreateEntity( );
+    m_zAxis->EnableSerialization( false );
     m_zAxis->SetVisibleInEditor( false );
 
     //get their transforms, set data
@@ -492,6 +495,9 @@ void ObjectSelectorSystem::updateToolPosition(Vec3 pos)
 void ObjectSelectorSystem::moveToolToEntity(const ecs::EntityUniqueID id)
 {
     auto newObj = m_world->GetEntityUnique( id );
+    
+    if (!newObj)
+        return;
 
     updateToolPosition( newObj->GetTransform( )->GetWorldPosition( ) );
 }

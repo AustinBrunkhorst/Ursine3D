@@ -512,6 +512,11 @@ namespace ursine
                 GetName( ).c_str( )
             );
 
+            if (*this == typeof( bool ))
+            {
+                return { instance.ToBool( ) };
+            }
+
             if (IsPrimitive( ) || IsEnum( ))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
@@ -519,7 +524,8 @@ namespace ursine
  
                 return { instance.ToInt( ) };
             }
-            else if (*this == typeof( std::string ))
+
+            if (*this == typeof( std::string ))
             {
                 return { instance.ToString( ) };
             }

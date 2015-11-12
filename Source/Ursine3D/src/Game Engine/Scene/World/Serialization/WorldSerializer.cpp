@@ -57,9 +57,9 @@ namespace ursine
 
             for (auto *entity : world->m_entityManager->GetActiveEntities( ))
             {
-                // skip the settings entity or hidden entities
+                // skip the settings entity or unserialized entities
                 if (entity->GetUniqueID( ) == settingsEntity->GetUniqueID( ) || 
-                    !entity->IsVisibleInEditor( ))
+                    !entity->IsSerializationEnabled( ))
                 {
                     continue;
                 }

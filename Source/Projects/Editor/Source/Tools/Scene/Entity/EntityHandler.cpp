@@ -90,9 +90,7 @@ JSMethod(EntityHandler::inspect)
 
     auto components = entity->GetComponents( );
 
-    Json componentArray = Json::array { };
-
-    auto &items = const_cast<Json::array&>( componentArray.array_items( ) );
+    Json::array componentArray;
 
     for (auto *component : components)
     {
@@ -100,7 +98,7 @@ JSMethod(EntityHandler::inspect)
 
         auto type = instance.GetType( );
 
-        items.emplace_back( Json::object {
+        componentArray.emplace_back( Json::object {
             { "type", type.GetName( ) },
             { "value", type.SerializeJson( instance ) }
         } );

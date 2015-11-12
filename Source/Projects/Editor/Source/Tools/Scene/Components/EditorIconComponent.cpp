@@ -1,36 +1,44 @@
 #include "Precompiled.h"
+
 #include "EditorIconComponent.h"
-#include "CoreSystem.h"
-#include "GfxAPI.h"
-#include "EntityEvent.h"
-#include <Game Engine/Scene/Component/Native Components/Billboard2DComponent.h>
 
-NATIVE_COMPONENT_DEFINITION(EditorIcon);
+#include <GfxAPI.h>
+#include <Billboard2DComponent.h>
 
-EditorIcon::EditorIcon() 
-    : BaseComponent()
-    , m_billboard(nullptr)
+NATIVE_COMPONENT_DEFINITION( EditorIcon );
+
+using namespace ursine;
+
+EditorIcon::EditorIcon(void)
+    : BaseComponent( )
+    , m_billboard( nullptr )
 {
-    
 }
 
-EditorIcon::~EditorIcon()
+EditorIcon::~EditorIcon(void)
 {
-    m_billboard->Delete();
+    m_billboard->Delete( );
 }
 
-void EditorIcon::SetIcon(const std::string& text)
+void EditorIcon::SetIcon(const std::string &text)
 {
-    m_billboard->GetComponent<ursine::ecs::Billboard2D>()->GetBillboard()->SetTexture(text);
+    m_billboard->GetComponent<ecs::Billboard2D>( )->GetBillboard( )->SetTexture( text );
 }
 
-void EditorIcon::OnInitialize()
+void EditorIcon::OnInitialize(void)
 {
-    m_billboard = GetOwner()->GetWorld()->CreateEntity();
-    m_billboard->SetVisibleInEditor(false);
-    m_billboard->AddComponent<ursine::ecs::Billboard2D>();
+    auto *owner = GetOwner( );
 
-    GetOwner()->GetTransform()->AddChild(m_billboard->GetTransform());
-    m_billboard->GetComponent<ursine::ecs::Billboard2D>()->GetBillboard()->SetDimensions(50, 50);
-    m_billboard->GetComponent<ursine::ecs::Billboard2D>()->GetBillboard()->SetEntityUniqueID(GetOwner()->GetUniqueID());
+    m_billboard = owner->GetWorld( )->CreateEntity( );
+    m_billboard->EnableSerialization( false );
+    m_billboard->SetVisibleInEditor( false );
+
+    auto *billboard = m_billboard
+        ->AddComponent<ecs::Billboard2D>( )
+        ->GetBillboard( );
+
+    owner->GetTransform( )->AddChild( m_billboard->GetTransform( ) );
+
+    billboard->SetDimensions( 50, 50 );
+    billboard->SetEntityUniqueID( owner->GetUniqueID( ) );
 }
