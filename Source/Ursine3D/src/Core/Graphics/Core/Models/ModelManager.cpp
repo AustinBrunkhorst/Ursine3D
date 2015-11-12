@@ -271,11 +271,21 @@ namespace ursine
             // GENERATING BONE DATA
             // first, we need to build a binary tree of the bones, then do a depth-first traversal to generate bone hierarchy data
             unsigned boneCount = ufmt_model.mskinCount;
-            unsigned parent = 0;
+            unsigned parent = -1;
+
+            std::vector<std::vector<unsigned> >hierarchy;
+            hierarchy.resize(boneCount);
+
+            for (unsigned x = 0; x < boneCount; ++x)
+            {
+                auto &node = ufmt_model.marrSkins[ x ];
+
+                hierarchy[ node.mbones.mParentIndex ].push_back(x);
+            }
 
             while(1)
             {
-                //grab the current parent bone
+                //grab the current bone bone
                 auto &node = ufmt_model.marrSkins[ parent ];
 
                 //grab bone data
@@ -291,7 +301,7 @@ namespace ursine
                     SVec3(1, 1, 1),
                     SQuat(boneData.bindRotation.x, boneData.bindRotation.y, boneData.bindRotation.z, boneData.bindRotation.w),
                     parent
-                    );
+                );
             }
 
 
