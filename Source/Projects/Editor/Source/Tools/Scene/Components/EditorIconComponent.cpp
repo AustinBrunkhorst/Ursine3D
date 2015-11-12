@@ -31,6 +31,6 @@ void EditorIcon::OnInitialize()
     m_billboard->AddComponent<ursine::ecs::Billboard2D>();
 
     GetOwner()->GetTransform()->AddChild(m_billboard->GetTransform());
-    m_billboard->GetComponent<ursine::ecs::Billboard2D>()->GetBillboard()->SetDimensions(25, 25);
+    m_billboard->GetComponent<ursine::ecs::Billboard2D>()->GetBillboard()->SetDimensions(50, 50);
     m_billboard->GetComponent<ursine::ecs::Billboard2D>()->GetBillboard()->SetEntityUniqueID(GetOwner()->GetUniqueID());
 }

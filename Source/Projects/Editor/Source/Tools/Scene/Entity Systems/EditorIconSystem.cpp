@@ -40,6 +40,6 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ursine::ecs::World))
     }
     else if (comp->Is<ursine::ecs::Camera>( ))
     {
-        args->entity->AddComponent<EditorIcon>( )->SetIcon( "Camera" );
+        args->entity->AddComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
     }
 }
