@@ -4,6 +4,7 @@
 #include "VertexDefinitions.h"
 #include <d3d11.h>
 #include "AnimationBuilder.h"
+#include "SkinInfo.h"
 
 namespace ursine
 {
@@ -264,51 +265,15 @@ namespace ursine
 			// Serialize in model
 			ufmt_model.SerializeIn(hFile);
             
-            // GENERATING ALL ANIMATION DATA
-            unsigned rigIndex = AnimationBuilder::AddAnimationRig();
-            auto rig = AnimationBuilder::GetAnimationRig(rigIndex);
+            /////////////////////////////////////////////////////////
+            // GENERATING BONE DATA /////////////////////////////////
 
-            // GENERATING BONE DATA
-            // first, we need to build a binary tree of the bones, then do a depth-first traversal to generate bone hierarchy data
-            unsigned boneCount = ufmt_model.mskinCount;
-            unsigned parent = -1;
-
-            std::vector<std::vector<unsigned> >hierarchy;
-            hierarchy.resize(boneCount);
-
-            for (unsigned x = 0; x < boneCount; ++x)
-            {
-                auto &node = ufmt_model.marrSkins[ x ];
-
-                hierarchy[ node.mbones.mParentIndex ].push_back(x);
-            }
-
-            while(1)
-            {
-                //grab the current bone bone
-                auto &node = ufmt_model.marrSkins[ parent ];
-
-                //grab bone data
-                auto &boneData = node.mbones;
-
-                //add as a bone to the current mesh
-                rig->AddBone(
-                    node.name,
-                    SVec3(boneData.boneSpacePosition.x, boneData.boneSpacePosition.y, boneData.boneSpacePosition.z),
-                    SVec3(1, 1, 1),
-                    SQuat(boneData.boneSpaceRotation.x, boneData.boneSpaceRotation.y, boneData.boneSpaceRotation.z, boneData.boneSpaceRotation.w),
-                    SVec3(boneData.bindPosition.x, boneData.bindPosition.y, boneData.bindPosition.z),
-                    SVec3(1, 1, 1),
-                    SQuat(boneData.bindRotation.x, boneData.bindRotation.y, boneData.bindRotation.z, boneData.bindRotation.w),
-                    parent
-                );
-            }
-
-
-			// serialize in->push_back into ModelInfo array or vector, then do GetFinalTransform function on update
-			// and pass matrices to the matPal, then it will do
-
+            // 1. load rig
+            unsigned rigIndex = AnimationBuilder::LoadBoneData( ufmt_model );
             
+            // 2. load animation
+            unsigned animationIndex = AnimationBuilder::LoadAnimation( ufmt_model.marrAnims[ 0 ] );
+
 
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -481,5 +446,6 @@ namespace ursine
         {
             m_currentState = -1;
         }
+
     }
 }

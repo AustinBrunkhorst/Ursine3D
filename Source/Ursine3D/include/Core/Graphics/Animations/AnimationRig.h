@@ -28,7 +28,23 @@ namespace ursine
         AnimationRig(void);
         AnimationRig(const std::string &name);
 
-        //returns boneID of newly minted bone lolol
+        /** @brief adds a bone to this rig
+        *
+        *  the rig consists of a hierarchy of bones. 
+        *  this method will add the bone, update the data,
+        *  calculate the proper matrices and update the 
+        *  parent's child list
+        *
+        *  @param name the name of this bone
+        *  @param boneTrans the trans in bone space
+        *  @param boneScale the scale in bone space
+        *  @param boneRotation the rot in bone space
+        *  @param bindTrans the trans in bind space
+        *  @param bindScale the scale in bind space
+        *  @param bindRotation the rot in bind space
+        *  @param parentID the index ID of parent bone
+        *  @return ID of new bone
+        */
         unsigned AddBone(
             const std::string& name,
             const SVec3& boneTrans,

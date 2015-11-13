@@ -22,6 +22,10 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "Model.h"
 #include "ModelInfo.h"
 
+namespace ursine{
+    class AnimationRig;
+}
+
 namespace ursine
 {
     namespace graphics
@@ -64,7 +68,9 @@ namespace ursine
 			unsigned GetModelIndexcountByID(unsigned ID);
 
             void Invalidate();
+
         private:
+
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;
 

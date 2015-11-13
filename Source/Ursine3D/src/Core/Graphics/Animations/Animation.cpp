@@ -3,25 +3,49 @@
 
 namespace ursine
 {
-    Animation::Animation(void)
+    Animation::Animation( void )
+        : m_rigKeyframeCount( 0 )
+        , m_boneCount( 0 )
+        , m_name( "" )
     {
     }
 
-    Animation::Animation(std::string& name) {}
-
-    void Animation::AddKeyframe(const SVec3& trans, const SVec3& scale, const SQuat& rot, const float runtime)
+    Animation::Animation(const std::string &name) 
+        : m_rigKeyframeCount( 0 )
+        , m_boneCount( 0 )
+        , m_name( name )
     {
-        unsigned index = m_keyframes.size();
-
-        m_keyframes.push_back(AnimationKeyframe());
-        m_keyframes[ index ].translation = trans;
-        m_keyframes[ index ].scale = scale;
-        m_keyframes[ index ].rotation = rot;
-
-        m_keyframes[ index ].length = runtime;
     }
 
-    const std::string& Animation::GetName() const
+    void Animation::AddKeyframe(
+        const unsigned rigKeyIndex, 
+        const unsigned boneIndex, 
+        const SVec3& trans, 
+        const SVec3& scale, 
+        const SQuat& rot, 
+        const float runtime 
+    )
+    {
+        int index = m_keyframes.size( );
+
+        m_keyframes[ rigKeyIndex ][ boneIndex ].translation = trans;
+        m_keyframes[ rigKeyIndex ][ boneIndex ].scale = scale;
+        m_keyframes[ rigKeyIndex ][ boneIndex ].rotation = rot;
+        m_keyframes[ rigKeyIndex ][ boneIndex ].length = runtime;
+    }
+
+    void Animation::SetData(const unsigned clipCount, const unsigned boneCount)
+    {
+        m_boneCount = boneCount;
+        m_rigKeyframeCount = clipCount;
+
+        m_keyframes.resize( clipCount );
+
+        for ( auto &x : m_keyframes )
+            x.resize( boneCount );
+    }
+
+    const std::string& Animation::GetName(void) const
     {
         return m_name;
     }
@@ -31,13 +55,13 @@ namespace ursine
         m_name = name;
     }
 
-    const std::vector<AnimationKeyframe>& Animation::GetKeyframes() const
+    const std::vector<AnimationKeyframe>& Animation::GetKeyframes(const unsigned rigKeyframe) const
     {
-        return m_keyframes;
+        return m_keyframes[ rigKeyframe ];
     }
 
-    const AnimationKeyframe& Animation::GetKeyframe(unsigned index) const
+    const AnimationKeyframe& Animation::GetKeyframe(const unsigned rigKeyFrame, const unsigned boneIndex) const
     {
-        return m_keyframes[ index ];
+        return m_keyframes[ rigKeyFrame ][ boneIndex ];
     }
 }
