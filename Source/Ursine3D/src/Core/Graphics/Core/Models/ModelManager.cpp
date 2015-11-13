@@ -18,6 +18,8 @@ namespace ursine
             m_modelCount = 0;
             m_currentState = -1;
 
+            AnimationBuilder::InitializeStaticData( );
+
             //loading all models
             char buffer[ 512 ];
             std::ifstream input;

@@ -36,6 +36,7 @@ namespace ursine
             const AnimationState &animState, 
             const Animation *animation, 
             std::vector<SMat4> &outputMatPal
+            
         );
 
         /////////////////////////////////////////////////////////////
@@ -96,14 +97,15 @@ namespace ursine
             AnimationRig *rig
             );
 
+        static unsigned m_rigCount;
+        static unsigned m_animationCount;
+
         // all the data
         static std::vector<Animation> m_animationData;
         static std::vector<AnimationRig> m_animationRigData;
         
         // lookup tables for stuff
         static std::unordered_map<std::string, Animation*> m_name2Animation;
-        static std::unordered_map<unsigned, Animation*> m_index2Animation;
         static std::unordered_map<std::string, AnimationRig*> m_name2Rig;
-        static std::unordered_map<unsigned, AnimationRig*> m_index2Rig;
     };
 }

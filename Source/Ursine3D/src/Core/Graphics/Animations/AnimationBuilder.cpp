@@ -7,28 +7,27 @@ namespace ursine
     std::vector<Animation>                          AnimationBuilder::m_animationData;
     std::vector<AnimationRig>                       AnimationBuilder::m_animationRigData;
     std::unordered_map<std::string, Animation*>     AnimationBuilder::m_name2Animation;
-    std::unordered_map<unsigned, Animation*>        AnimationBuilder::m_index2Animation;
     std::unordered_map<std::string, AnimationRig*>  AnimationBuilder::m_name2Rig;
-    std::unordered_map<unsigned, AnimationRig*>     AnimationBuilder::m_index2Rig;
+
+    unsigned AnimationBuilder::m_rigCount;
+    unsigned AnimationBuilder::m_animationCount;
 
     void AnimationBuilder::InitializeStaticData(void)
     {
         m_animationData.resize( 100 );
         m_animationRigData.resize( 100 );
+        m_rigCount = 0;
+        m_animationCount = 0;
     }
 
     unsigned AnimationBuilder::addAnimation(void)
     {
-        unsigned index = static_cast<unsigned>(m_animationData.size( ));
-        m_animationData.push_back( Animation( ) );
-        return index;
+        return m_animationCount++;
     }
 
     unsigned AnimationBuilder::addAnimationRig(void)
     {
-        unsigned index = static_cast<unsigned>(m_animationRigData.size( ));
-        m_animationRigData.push_back( AnimationRig( ) );
-        return index;
+        return m_rigCount++;
     }
 
     Animation *AnimationBuilder::GetAnimationByIndex(const unsigned index)
@@ -101,7 +100,6 @@ namespace ursine
 
         // set values, return
         m_name2Animation[ info.name ] = animation;
-        m_index2Animation[ animIndex ] = animation;
         return animIndex;
     }
 
@@ -119,6 +117,9 @@ namespace ursine
             // grab current node
             auto &node = modelData.marrSkins[ x ];
 
+            if ( node.mbones.mParentIndex == -1 )
+                continue;
+
             // push index into parent's vector
             hierarchy[ node.mbones.mParentIndex ].push_back( x );
         }
@@ -130,11 +131,11 @@ namespace ursine
         auto rig = GetAnimationRigByIndex( rigIndex );
 
         rig->SetName( modelData.marrSkins->name );
+        rig->InitializeRig( boneCount );
         rec_LoadBoneMesh( hierarchy, 0, -1, modelData.marrSkins, rig );
 
         // save the data in the maps, return
         m_name2Rig[ modelData.marrSkins->name ] = rig;
-        m_index2Rig[ rigIndex ] = rig;
         return rigIndex;
     }
 

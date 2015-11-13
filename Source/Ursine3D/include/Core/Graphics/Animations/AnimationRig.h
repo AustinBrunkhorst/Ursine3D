@@ -28,6 +28,15 @@ namespace ursine
         AnimationRig(void);
         AnimationRig(const std::string &name);
 
+        /** @brief initializes this rig for loading
+        *
+        *  resizes some veectors so pointers aren't invalidated
+        *
+        *  @param boneCount number of bones in rig
+        *  @return Void.
+        */
+        void InitializeRig(const unsigned boneCount);
+
         /** @brief adds a bone to this rig
         *
         *  the rig consists of a hierarchy of bones. 
@@ -72,6 +81,8 @@ namespace ursine
 
     private:
         std::string m_name;
+
+        unsigned m_boneCount;
 
         std::vector<SMat4> m_offsetMatrices;    //t-pose
         std::vector<AnimationBone> m_boneData;  //bone-space data
