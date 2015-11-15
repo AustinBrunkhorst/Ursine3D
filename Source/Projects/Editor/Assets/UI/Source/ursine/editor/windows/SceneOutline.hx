@@ -5,8 +5,6 @@ import js.html.Element;
 import js.html.DOMElement;
 import js.html.UListElement;
 import ursine.native.Extern;
-import ursine.controls.TreeView;
-import ursine.controls.TreeViewItem;
 import ursine.editor.scene.entity.EntityEvent;
 import ursine.editor.scene.entity.Entity;
 
@@ -48,30 +46,6 @@ class SceneOutline extends WindowHandler {
             .on( EntityEvent.ComponentRemoved, onComponentRemoved );
 
         window.addEventListener( 'keydown', onWindowKeyDown );
-
-        var view = new TreeView( );
-
-        view.setAsRoot( true );
-
-        var one = new TreeViewItem( );
-
-        one.text = 'One';
-
-        var two = new TreeViewItem( );
-
-        two.text = 'Two';
-
-        one.child.appendChild( two );
-
-        var three = new TreeViewItem( );
-
-        three.text = 'Three';
-
-        two.child.appendChild( three );
-
-        view.appendChild( one );
-
-        window.container.appendChild( view );
     }
 
     public function clearSelectedEntities() {

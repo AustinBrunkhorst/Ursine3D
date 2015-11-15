@@ -456,18 +456,10 @@ namespace ursine
         {
             ParentChangedArgs args( 
                 newParent ? newParent->GetOwner( ) : nullptr,
-                oldParent ? oldParent->GetOwner( ) : nullptr
+                oldParent ? oldParent->GetOwner() : nullptr
             );
 
-            auto *owner = GetOwner( );
-
-            owner->Dispatch( ENTITY_PARENT_CHANGED, &args );
-
-        #if defined(URSINE_WITH_EDITOR)
-
-            owner->GetWorld( )->Dispatch( WORLD_EDITOR_ENTITY_PARENT_CHANGED, &args );
-
-        #endif
+            GetOwner( )->Dispatch( ENTITY_PARENT_CHANGED, &args );
         }
 
         void Transform::onParentDirty(EVENT_HANDLER(Entity))
