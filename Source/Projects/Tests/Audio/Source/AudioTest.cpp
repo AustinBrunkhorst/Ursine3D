@@ -3,6 +3,7 @@
 #include "AudioTest.h"
 
 #include <Application.h>
+#include <CoreSystem.h>
 
 #include <WindowManager.h>
 #include <UIManager.h>
@@ -37,7 +38,7 @@ namespace
 
     void onResize(int width, int height)
 	{
-        Application::Instance->GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
+        GetCoreSystem<ursine::GfxAPI>( )->Resize( width, height );
     }
 }
 

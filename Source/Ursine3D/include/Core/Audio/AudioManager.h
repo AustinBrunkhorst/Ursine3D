@@ -16,8 +16,6 @@
 #include "CoreSystem.h"
 #include "Meta.h"
 
-//#include <AK/Tools/Common/AkAssert.h>
-
 #include "ListenerMasks.h"
 #include "WwiseForward.h"
 #include "WWiseUtils/AkFilePackageLowLevelIOBlocking.h"
@@ -79,6 +77,8 @@ namespace ursine
 
 		void RegisterObject(AkGameObjectID obj, int listener);
 
+		void UnRegisterObject(AkGameObjectID obj);
+
 		void PlayEvent(const std::string name, AkGameObjectID obj);
 
 		void PauseAudio();
@@ -89,14 +89,34 @@ namespace ursine
 
 		void AssignListener(AkGameObjectID obj, int listeners);
 
-		void SetListenerPosition(const AkVector orientation_forward, const AkVector orientation_up, const AkVector position);
+		void GetEventStrings(const AkBankID )
 
-		// create SetListeners with SVec3
-		void SetListenerPosition(const SVec3 orientation_forward, const SVec3 orientation_up, const SVec3 position);
+		void SetListener3DPosition(const AkVector orientation_forward, 
+			const AkVector orientation_up, const AkVector position, const AkUInt32 listeners);
+
+		void SetListener3DPosition(const SVec3 orientation_forward, 
+			const SVec3 orientation_up, const SVec3 position, const AkUInt32 listeners);
 
 		void SetObject3DPosition(AkGameObjectID obj, const AkSoundPosition position);
 
 		void SetObject3DPosition(AkGameObjectID obj, const SVec3 position, const SVec3 orientation);
+
+		void SetMultipleObject3DPosition(AkGameObjectID obj, const AkSoundPosition* positions, 
+			AkUInt16 num_positions, AK::SoundEngine::MultiPositionType type);
+
+		void SetSoundObstructionAndOcclusion(AkGameObjectID obstruction, 
+			const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level);
+
+		void SetGameState(const std::string name, const std::string state);
+
+		void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
+
+		void SetTrigger(const std::string name, AkGameObjectID obj);
+
+		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
+			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
+
+		AkGameObjectID AssignSoundObjectID();
 
 		CAkFilePackageLowLevelIOBlocking g_lowLevelIO;
 
@@ -104,8 +124,13 @@ namespace ursine
 		AkInitSettings m_initSettings;
 		AkPlatformInitSettings m_platSettings;
 
+		AkGameObjectID m_nextEmptyID;
+		std::vector<AkBankID> m_banksIDs;
+
 		void onAppUpdate(EVENT_HANDLER(Application));
-		void Init(AkInitSettings* in_pSettings, AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
+
+		void Init(AkInitSettings* in_pSettings, 
+			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
 
 	} Meta( Enable );
 }
