@@ -1149,6 +1149,18 @@ var ursine_editor_windows_SceneOutline = function() {
 	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("Reset",$bind(this,this.resetScene));
 	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.EntityAdded,$bind(this,this.onEntityAdded)).on(ursine_editor_scene_entity_EntityEvent.EntityRemoved,$bind(this,this.onEntityRemoved)).on(ursine_editor_scene_entity_EntityEvent.EntityNameChanged,$bind(this,this.onEntityNameChanged)).on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
+	var view = new TreeViewControl();
+	view.setAsRoot(true);
+	var one = new TreeViewItemControl();
+	one.text = "One";
+	var two = new TreeViewItemControl();
+	two.text = "Two";
+	one.child.appendChild(two);
+	var three = new TreeViewItemControl();
+	three.text = "Three";
+	two.child.appendChild(three);
+	view.appendChild(one);
+	this.window.container.appendChild(view);
 };
 $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOutline;
 ursine_editor_windows_SceneOutline.__name__ = ["ursine","editor","windows","SceneOutline"];

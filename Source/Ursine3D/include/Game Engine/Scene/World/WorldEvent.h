@@ -26,6 +26,8 @@ namespace ursine
 
             // An entity's name changed
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
+            // An entity's parent has changed
+            WORLD_EDITOR_ENTITY_PARENT_CHANGED,
             // A component's field has changed
             WORLD_EDITOR_ENTITY_COMPONENT_CHANGED
         };
