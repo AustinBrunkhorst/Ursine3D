@@ -1,11 +1,13 @@
 @import '../Config';
 
 :host {
-  display: block;
-  margin: 4px;
+  display: inline-block;
+  margin: 0 2px;
   padding: 5px;
   color: #999999;
   background: #2d2d30;
+  border: none;
+  outline: none;
   text-align: center;
   cursor: pointer;
   transition: all $duration-transition-btn ease;

@@ -28,7 +28,7 @@ public:
     JSMethod(updateComponentField);
 
 private:
-    ursine::ecs::World::Handle m_world;
+    ursine::ecs::World *m_world;
     ursine::ecs::EntityUniqueID m_handle;
 
     ursine::ecs::Entity *getEntity(void);  

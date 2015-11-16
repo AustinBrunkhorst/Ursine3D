@@ -1,1 +1,1 @@
-:host{display:block;margin:4px;padding:5px;color:#999999;background:#2d2d30;text-align:center;cursor:pointer;transition:all 175ms ease}:host:hover{color:#c8c8c8;background:#3e3e40;transition:all 175ms ease}
+:host{display:inline-block;margin:0 2px;padding:5px;color:#999999;background:#2d2d30;border:none;outline:none;text-align:center;cursor:pointer;transition:all 175ms ease}:host:hover{color:#c8c8c8;background:#3e3e40;transition:all 175ms ease}

@@ -16,7 +16,7 @@ JSConstructor(EntityHandler)
         JSThrow( "Invalid constructor arguments." );
 
     m_handle = arguments[ 0 ]->GetUIntValue( );
-    m_world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
+    m_world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( ).get( );
 }
 
 JSMethod(EntityHandler::isValid)

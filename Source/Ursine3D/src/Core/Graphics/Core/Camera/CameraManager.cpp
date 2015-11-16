@@ -50,7 +50,7 @@ namespace ursine
 
             UAssert(newRender->ID_ == ID_CAMERA, "Attempted to destroy invalid camera handle!");
             m_cameraArray[ newRender->Index_ ].Uninitialize();
-            m_freeCameraList.push_front(newRender->ID_);
+            m_freeCameraList.push_front(newRender->Index_);
             handle = 0;
         }
     }

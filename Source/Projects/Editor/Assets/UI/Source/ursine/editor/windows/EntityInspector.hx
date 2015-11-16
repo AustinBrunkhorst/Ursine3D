@@ -65,13 +65,13 @@ class EntityInspector extends WindowHandler {
         var handler = m_componentHandlers[ e.component ];
 
         if (handler != null)
-            removeInspector( handler.inspector );
+            removeInspector( handler );
 
         m_componentHandlers.remove( e.component );
     }
 
     private function onInspectedEntityComponentChanged(e) {
-        var handler = m_componentHandlers[ e.component ];
+        var handler : ComponentInspectionHandler = m_componentHandlers[ e.component ];
 
         if (handler != null)
             handler.updateField( e.field, e.value );
@@ -86,7 +86,7 @@ class EntityInspector extends WindowHandler {
         }
 
         for (handler in m_componentHandlers)
-            removeInspector( handler.inspector );
+            removeInspector( handler );
 
         // reset containers
         m_componentHandlers = new Map<String, ComponentInspectionHandler>( );
@@ -128,22 +128,31 @@ class EntityInspector extends WindowHandler {
 
         var handler = database.createComponentInspector( m_inspectedEntity, component );
 
-        handler.inspector.canRemove = !Reflect.hasField( type.meta, Property.DisableComponentRemoval );
+        handler.inspector.canRemove = !Reflect.hasField(
+            type.meta,
+            Property.DisableComponentRemoval
+        );
 
         // remember opened state for components
         handler.inspector.opened = (m_openCache[ component.type ] == true);
 
-        handler.inspector.addEventListener( 'removed', onRemoveComponentClicked.bind( component ) );
-        handler.inspector.addEventListener( 'open-changed', onOpenChanged.bind( component ) );
+        handler.inspector.addEventListener(
+            'removed',
+            onRemoveComponentClicked.bind( component )
+        );
+
+        handler.inspector.addEventListener(
+            'open-changed',
+            onOpenChanged.bind( component )
+        );
 
         m_componentHandlers[ component.type ] = handler;
 
         m_inspectorsContainer.appendChild( handler.inspector );
     }
 
-    private function removeInspector(container : DOMElement) {
-        if (m_inspectorsContainer.contains( container ))
-            m_inspectorsContainer.removeChild( container );
+    private function removeInspector(inspector : ComponentInspectionHandler) {
+        inspector.remove( );
     }
 
     private function getAvailableComponentTypes(entity : Entity) : Array<String> {

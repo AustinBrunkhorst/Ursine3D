@@ -220,6 +220,7 @@ namespace ursine
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();
+
                 switch(current->GetType())
                 {
                 case Light::LIGHT_DIRECTIONAL:
@@ -229,7 +230,7 @@ namespace ursine
                     drawCall.Shader_ = SHADER_POINT_LIGHT;
                     break;
                 case Light::LIGHT_SPOTLIGHT:
-                    URSINE_TODO("Implement spotlight");
+                    drawCall.Shader_ = SHADER_SPOT_LIGHT;
                     break;
                 default:
                     break;
@@ -432,7 +433,7 @@ namespace ursine
             //spot light pass
             PrepForSpotlightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT)
-                RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
+                RenderSpotLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
             //directional light pass
             PrepForDirectionalLightPass(view, proj);
@@ -537,7 +538,7 @@ namespace ursine
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
 
             shaderManager->BindShader(SHADER_DIFFUSE);
-            layoutManager->SetInputLayout(SHADER_DIFFUSE);
+            layoutManager->SetInputLayout(SHADER_DIFFUSE);  
             textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
             bufferManager->MapCameraBuffer(view, proj);
 
@@ -868,7 +869,7 @@ namespace ursine
 
             //material buffer 
             MaterialDataBuffer mdb;
-              
+
             //get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
@@ -894,7 +895,7 @@ namespace ursine
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
              
             //render
-            shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+            shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_));
 
             //render debug lines
             Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
@@ -1096,19 +1097,31 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
+            view.Transpose();
+            SVec3 lightDirection = view.TransformVector(pl.GetDirection());
+
+            SVec3 lightPosition = view.TransformPoint(pl.GetPosition());
+
             //spotlight data
             SpotlightBuffer slb;
             slb.diffuseColor = pl.GetColor( ).ToVector3().ToD3D();
-            slb.lightDirection = pl.GetDirection( ).ToD3D();
-            slb.lightPosition = pl.GetPosition( ).ToD3D( );
+            slb.lightDirection = lightDirection.ToD3D();
+            slb.lightPosition = lightPosition.ToD3D( );
             slb.intensity = pl.GetIntensity();
-            slb.innerAngle = pl.GetSpotlightAngles( ).X();
-            slb.outerAngle = pl.GetSpotlightAngles( ).Y( );
+            slb.innerAngle = cosf((pl.GetSpotlightAngles( ).X() / 2.f) * (3.141596f / 180.0f));   //needs to be in radians
+            slb.outerAngle = cosf((pl.GetSpotlightAngles( ).Y() / 2.f) * (3.141596f / 180.0f));
 
             bufferManager->MapBuffer<BUFFER_SPOTLIGHT>(&slb, SHADERTYPE_PIXEL);
 
             //transform data  
-            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform( ));
+            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform( ) * SMat4(SVec3(0, -0.5, 0)));
+
+            //what culling to use?
+            if(currentCamera.GetLook().Dot(lightDirection) > 0)
+                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            else
+                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("lightCone")));
         }

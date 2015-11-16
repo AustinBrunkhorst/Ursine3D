@@ -72,6 +72,7 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
+            Model3D(void);
             void Initialize(void);
 
             const char *GetModelName(void);
@@ -84,8 +85,15 @@ namespace ursine
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+
+            void SetAnimationTime(const float time);
+            float &GetAnimationTime(void);
+
             void SetColor(const Color color);
             const Color &GetColor() const;
+
+            std::vector<SMat4> &GetMatrixPalette(void);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -93,6 +101,10 @@ namespace ursine
             Color m_color;
             std::string ModelName_;
             std::string MaterialName_;
+
+            float m_animationTime;
+
+            std::vector<SMat4> m_matrixPalette;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -174,51 +186,6 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////
         // LIGHTS /////////////////////////////////////////////////////////
-
-        ///////////////////////////////////////////////////////////////////
-        // directional light
-        class DirectionalLight : public Renderable
-        {
-            friend class RenderableManager;
-        public:
-            SVec3 &GetDirection();
-            void SetDirection(const SVec3 &dir);
-            void SetDirection(float x, float y, float z);
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b);
-
-            DirectionalLight();
-
-        private:
-            SVec3 Direction_;
-            Color Color_;
-        };
-
-        ///////////////////////////////////////////////////////////////////
-        // point light
-        class PointLight : public Renderable
-        {
-        public:
-            SVec3 &GetPosition();
-            void SetPosition(const SVec3 &position);
-            void SetPosition(float x, float y, float z);
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b);
-
-            float &GetRadius();
-            void SetRadius(float radius);
-
-            PointLight();
-
-        private:
-            SVec3 m_position;
-            Color Color_;
-            float Radius_;
-        };
 
         /////////////////////////////////////////////////////////////
         // universal light class

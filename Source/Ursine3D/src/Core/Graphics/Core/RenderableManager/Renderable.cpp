@@ -1,5 +1,6 @@
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
+#include <Core/Graphics/Core/GfxDefines.h>
 
 namespace ursine
 {
@@ -65,6 +66,11 @@ namespace ursine
             Transform_ = matrix;
         }
 
+        Model3D::Model3D()
+        {
+            m_matrixPalette.resize(MAX_BONE_COUNT);
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model3d
         void Model3D::Initialize()
@@ -94,6 +100,18 @@ namespace ursine
             intensity = m_specIntensity;
         }
 
+
+		void Model3D::SetAnimationTime(const float time)
+		{
+			m_animationTime = time;
+		}
+
+		float & Model3D::GetAnimationTime(void)
+		{
+			// TODO: insert return statement here
+			return m_animationTime;
+		}
+
         void Model3D::SetColor(const Color color)
         {
             m_color = color;
@@ -103,6 +121,12 @@ namespace ursine
         {
             return m_color;
         }
+
+        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        {
+            return m_matrixPalette;
+        }
+
 
         const char *Model3D::GetModelName(void)
         {
@@ -268,98 +292,6 @@ namespace ursine
         //lights
 
         ///////////////////////////////////////////////////////////////////
-        // directional light
-        DirectionalLight::DirectionalLight()
-        {
-            Direction_ = Vec3(0, 0, 1);
-            Color_ = Color(1, 1, 1, 1);
-        }
-
-        SVec3 &DirectionalLight::GetDirection()
-        {
-            return Direction_;
-        }
-
-        void DirectionalLight::SetDirection(const SVec3 &dir)
-        {
-            Direction_ = dir;
-            Direction_.Normalize();
-        }
-
-        void DirectionalLight::SetDirection(float x, float y, float z)
-        {
-            Direction_.Set(x, y, z);
-            Direction_.Normalize();
-        }
-
-        Color &DirectionalLight::GetColor()
-        {
-            return Color_;
-        }
-
-        void DirectionalLight::SetColor(const Color &color)
-        {
-            Color_ = color;
-        }
-
-        void DirectionalLight::SetColor(float x, float y, float z)
-        {
-            Color_ = Color(x, y, z, 1);
-        }
-
-        
-
-        ///////////////////////////////////////////////////////////////////
-        // point light
-        PointLight::PointLight()
-        {
-            m_position = Vec3(0, 0, 0);
-            Color_ = Color(1, 1, 1, 1);
-            Radius_ = 5;
-        }
-
-        SVec3 &PointLight::GetPosition()
-        {
-            return m_position;
-        }
-
-        void PointLight::SetPosition(const SVec3 &position)
-        {
-            m_position = position;
-        }
-
-        void PointLight::SetPosition(float x, float y, float z)
-        {
-            m_position = SVec3(x, y, z);
-        }
-
-        Color &PointLight::GetColor()
-        {
-            return Color_;
-        }
-
-        void PointLight::SetColor(const Color &color)
-        {
-            Color_ = color;
-        }
-
-        void PointLight::SetColor(float x, float y, float z)
-        {
-            Color_ = Color(x, y, z, 1);
-        }
-
-
-        float &PointLight::GetRadius()
-        {
-            return Radius_;
-        }
-
-        void PointLight::SetRadius(float radius)
-        {
-            Radius_ = radius;
-        }
-
-        ///////////////////////////////////////////////////////////////////
         // universal light
         void Light::Initialize(void) 
         {
@@ -370,7 +302,7 @@ namespace ursine
             m_direction = SVec3(0, -1, 0);
             m_intensity = 1.0f;;
 
-            m_spotlightAngles = Vec2(30, 30);
+            m_spotlightAngles = Vec2(15, 30);
         }
 
         Light::LightType Light::GetType(void)

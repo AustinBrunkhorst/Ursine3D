@@ -4,22 +4,40 @@
 
 #include <NameManager.h>
 
-namespace
-{
-    const auto kKeySettings = "settings";
-    const auto kKeyEntities = "entities";
-    
-    const auto kKeyEntityName = "name";
-    const auto kKeyEntityComponents = "components";
-
-    const auto kKeyVersion = "v";
-    const auto kVersion = "0.0";
-}
-
 namespace ursine
 {
     namespace ecs
     {
+        namespace
+        {
+            const auto kKeySettings = "settings";
+            const auto kKeyEntities = "entities";
+
+            const auto kKeyEntityName = "name";
+            const auto kKeyEntityComponents = "components";
+
+            const auto kKeyComponentUID = ".uid";
+
+            const auto kKeyVersion = "v";
+            const auto kVersion = "0.0";
+
+            struct ComponentDeserializationData
+            {
+                ComponentUniqueID uid;
+                Component *component;
+                const Json *data;
+            };
+
+            bool compareComponentDeserializationData(
+                const ComponentDeserializationData &a, 
+                const ComponentDeserializationData &b
+            )
+            {
+                // note: ascending order
+                return a.uid < b.uid;
+            }
+        }
+
         WorldSerializer::WorldSerializer(void)
         {
 
@@ -157,16 +175,21 @@ namespace ursine
             {
                 auto componentType = component->GetType( );
 
-                // skip components hidden in inspector
-                /*if (componentType.GetMeta( ).GetProperty<HiddenInInspector>( ))
-                    continue;*/
+                // skip components explicitly disabled
+                if (componentType.GetMeta( ).GetProperty<DisableSerialization>( ))
+                    continue;
 
                 auto instance = meta::Variant { 
                     component, 
                     meta::variant_policy::WrapObject( ) 
                 };
 
-                data[ componentType.GetName( ) ] = instance.SerializeJson( );
+                auto serialized = instance.SerializeJson( );
+
+                const_cast<Json::object&>( serialized.object_items( ) )
+                    [ kKeyComponentUID ] = Json( static_cast<double>( component->m_uniqueID ) );
+
+                data[ componentType.GetName( ) ] = serialized;
             }
 
             return data;
@@ -195,15 +218,16 @@ namespace ursine
             }
             else
             {
-                Component *transform;
-
-                if (!deserializeComponent( entity, transformName, transformData, transform ))
-                    return false;
-
-                entity->m_transform = static_cast<Transform*>( transform );
+                Component *transform = new Transform( );
 
                 manager->addComponent( entity, transform );
+
+                deserializeComponent( transform, transformData );
+
+                entity->m_transform = static_cast<Transform*>( transform );
             }
+
+            std::vector<ComponentDeserializationData> components;
 
             for (auto &componentData : data.object_items( ))
             {
@@ -211,18 +235,35 @@ namespace ursine
                 if (componentData.first == transformName)
                     continue;
 
-                Component *component;
+                ComponentDeserializationData serializationData;
 
-                if (!deserializeComponent( entity, componentData.first, componentData.second, component ))
+                if (!createComponent( componentData.first, serializationData.component ))
                     return false;
 
-                manager->addComponent( entity, component );
+                serializationData.uid = static_cast<ComponentUniqueID>( 
+                    componentData.second[ kKeyComponentUID ].number_value( )
+                );
+
+                serializationData.data = &componentData.second;
+
+                manager->addComponent( entity, serializationData.component );
+
+                utils::InsertionSort( 
+                    components, 
+                    serializationData, 
+                    compareComponentDeserializationData 
+                );
+            }
+
+            for (auto &component : components)
+            {
+                deserializeComponent( component.component, *component.data );
             }
             
             return true;
         }
 
-        bool WorldSerializer::deserializeComponent(Entity *entity, const std::string &typeName, const Json &data, Component *&out)
+        bool WorldSerializer::createComponent(const std::string &typeName, Component *&out)
         {
             auto componentType = meta::Type::GetFromName( typeName );
 
@@ -246,19 +287,19 @@ namespace ursine
                 return false;
             }
 
-            URSINE_TODO( "find better solution to this" );
+            out = ctor.Invoke( ).GetValue<Component*>( );
+
+            return true;
+        }
+
+        void WorldSerializer::deserializeComponent(Component *component, const Json &data)
+        {
             auto instance = meta::Variant { 
-                ctor.Invoke( ).GetValue<Component*>( ), 
+                component, 
                 meta::variant_policy::WrapObject( ) 
             };
 
-            auto &component = instance.GetValue<Component>( );
-
-            component.m_owner = entity;
-
-            componentType.DeserializeJson( instance, data );
-
-            out = &component;
+            instance.GetType( ).DeserializeJson( instance, data );
         }
     }
 }

@@ -27,6 +27,7 @@ namespace ursine
             VERTEX_BASIC = 0,
             VERTEX_DIFFUSE,
             VERTEX_DRAWING,
+			VERTEX_ANIMATION,
             VERTEX_COUNT
         };
 
@@ -49,6 +50,15 @@ namespace ursine
 
             //@matt don't forget this
         };
+
+		struct AnimationVertex
+		{
+			DirectX::XMFLOAT3	vPos;
+			DirectX::XMFLOAT3	vNor;
+			DirectX::XMFLOAT2	vUv;
+			DirectX::XMFLOAT4	vBWeight;
+			DirectX::XMINT4		vBIdx;
+		};
 
         struct PrimitiveVertex
         {

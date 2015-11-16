@@ -6,6 +6,7 @@ import ursine.editor.scene.component.ComponentDatabase;
 @:keepInit
 @:keepSub
 class FieldInspectionHandler {
+    public var name(get, null) : String;
     public var inspector : FieldInspector;
 
     private var m_owner : ComponentInspectionHandler;
@@ -24,7 +25,15 @@ class FieldInspectionHandler {
         inspector.heading = field.name;
     }
 
+    public function updateValue(value : Dynamic) {
+        m_instance = value;
+    }
+
     public function remove() {
         inspector.parentNode.removeChild( inspector );
+    }
+
+    private function get_name() : String {
+        return m_field.name;
     }
 }

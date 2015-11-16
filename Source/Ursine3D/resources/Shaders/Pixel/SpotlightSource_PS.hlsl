@@ -118,10 +118,11 @@ float3 CalcPoint(float3 position, Material material)
 {
     float3 ToLight = -lightDirection.xyz;
     float3 ToEye = -position;
+    float3 light2pos = normalize(position - lightPosition);
 
     // Phong diffuse
     float NDotL = saturate(dot(ToLight, material.normal));
-    float3 finalColor = diffuseColor.rgb * (1)* material.diffuseColor.xyz;
+    float3 finalColor = diffuseColor.rgb * (intensity)* material.diffuseColor.xyz;
 
     // Blinn specular
     ToEye = normalize(ToEye);
@@ -129,10 +130,16 @@ float3 CalcPoint(float3 position, Material material)
     float NDotH = saturate(dot(HalfWay, material.normal));
     finalColor += diffuseColor.rgb * max(pow(NDotH, material.specPow), 0) * material.specIntensity;
 
-    finalColor *= NDotL;
+    //spotlight atten
+    float directionPosAngle = dot(light2pos, lightDirection.xyz);
+    float spotlightFalloff = ((directionPosAngle)-outerAngle) / 
+        (innerAngle - outerAngle);
+
+    finalColor *= NDotL * spotlightFalloff; 
 
     return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
 }
+
 
 
 float4 main(DS_OUTPUT In) : SV_TARGET
@@ -157,5 +164,5 @@ float4 main(DS_OUTPUT In) : SV_TARGET
     finalColor.xyz = CalcPoint(pos, mat);
     finalColor.w = 1.0;
 
-    return float4(1, 1, 1, 1);
+    return finalColor;
 }

@@ -54,7 +54,6 @@ void ObjectSelectorSystem::OnInitialize()
     //connect to the mouse events
     m_mouseManager->Listener( this )
         .On( MM_BUTTON_DOWN, &ObjectSelectorSystem::onMouseDown )
-        .On( MM_MOVE, &ObjectSelectorSystem::onMouseMove )
         .On( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp )
         .On( MM_SCROLL, &ObjectSelectorSystem::onMouseScroll );
 
@@ -63,6 +62,7 @@ void ObjectSelectorSystem::OnInitialize()
 
     m_world->Listener( this )
         .On( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate )
+        .On( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
         .On( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd );
 
     //construct the 3 axis
@@ -139,7 +139,6 @@ void ObjectSelectorSystem::OnRemove()
 {
     m_mouseManager->Listener( this ) 
         .Off( MM_BUTTON_DOWN, &ObjectSelectorSystem::onMouseDown )
-        .Off( MM_MOVE, &ObjectSelectorSystem::onMouseMove )
         .Off( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp )
         .Off( MM_SCROLL, &ObjectSelectorSystem::onMouseScroll );
 
@@ -147,8 +146,9 @@ void ObjectSelectorSystem::OnRemove()
         .Off( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
      
     m_world->Listener(this)
-        .Off(ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate)
-        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd);
+        .Off( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate )
+        .Off( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
+        .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd );
 
     m_zAxis->Delete( );
     m_xAxis->Delete( );
@@ -246,15 +246,11 @@ void ObjectSelectorSystem::onMouseDown(EVENT_HANDLER(MouseManager))
     }
 }
 
-void ObjectSelectorSystem::onMouseMove(EVENT_HANDLER(MouseManager))
+void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
 {
-    EVENT_ATTRS(MouseManager, MouseMoveArgs);
-
     // can't move mouse on focus
     if (!m_editorCameraSystem->HasFocus( ))
         return;
-
-    auto newID = m_graphics->GetMousedOverID( );
 
     //some switch for detecting tool type
     if (!(m_keyboardManager->GetModifiers( ) & KMD_ALT))
@@ -263,7 +259,7 @@ void ObjectSelectorSystem::onMouseMove(EVENT_HANDLER(MouseManager))
         graphics::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
 
         //get the mouse position
-        Vec2 screenPos = args->position;
+        Vec2 screenPos = GetCoreSystem(MouseManager)->GetPosition( );
 
         Vec3 camPos = cam->GetPosition( );
 
@@ -329,6 +325,10 @@ void ObjectSelectorSystem::onKeyDown(EVENT_HANDLER(KeyboardManager))
 {
     EVENT_ATTRS(KeyboardManager, KeyboardKeyArgs);
 
+    // must have focus or mouse focus
+    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+        return;
+
     if (args->key == KEY_1)
     {
         m_dragging = false;
@@ -351,25 +351,23 @@ void ObjectSelectorSystem::onKeyDown(EVENT_HANDLER(KeyboardManager))
 
 void ObjectSelectorSystem::onUpdate(EVENT_HANDLER(ecs::World))
 {
-    // can't update without focus
-    if (!m_editorCameraSystem->HasFocus( ))
+    if (m_currentID == -1)
         return;
 
-    if (m_currentID == -1)
+    moveToolToEntity( m_currentID );
+
+    // can't update without focus
+    if (!m_editorCameraSystem->HasFocus( ))
         return;
 
     float zoom = m_editorCameraSystem->GetCamZoom( );
 
     auto obj = m_world->GetEntityUnique( m_currentID );
 
-    Vec3 pos = obj->GetTransform( )->GetWorldPosition( );
-
     //figure out some color stuff
     Color xAx = Color( 1, 0, 0, 1 );
     Color yAx = Color( 0, 1, 0, 1 );
     Color zAx = Color( 0, 0, 1, 1 );
-
-    moveToolToEntity( m_currentID );
 
     //change color to yellow if dragging
     if (m_dragging && !(m_keyboardManager->GetModifiers( ) & KMD_ALT))
@@ -448,7 +446,7 @@ void ObjectSelectorSystem::updateToolPosition(Vec3 pos)
                 xTransf->SetWorldPosition( SVec3( zoom / 20, 0, 0 ) + pos );
                 yTransf->SetWorldPosition( SVec3( 0, zoom / 20, 0 ) + pos );
                 zTransf->SetWorldPosition( SVec3( 0, 0, zoom / 20 ) + pos );
-
+                
                 //rotation
                 xTransf->SetWorldRotation( SQuat( 90, SVec3( 0, 0, 1 ) ) );
                 yTransf->SetWorldRotation( SQuat( 0, SVec3( 0, 0, 1 ) ) );
@@ -771,6 +769,14 @@ void ObjectSelectorSystem::updateBases()
         return;
 
     auto obj = m_world->GetEntityUnique( m_currentID );
+
+    URSINE_TODO( "Multi select, handle unselected objects" );
+    if (!obj)
+    {
+        m_currentID = -1;
+
+        return;
+    }
 
     m_baseTranslation = obj->GetTransform( )->GetWorldPosition( );
     m_baseScale = obj->GetTransform( )->GetWorldScale( );

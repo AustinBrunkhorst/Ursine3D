@@ -35,7 +35,7 @@ private:
     void onMouseDown(EVENT_HANDLER(ursine::MouseManager));
 
     // when the mouse is moved
-    void onMouseMove(EVENT_HANDLER(ursine::MouseManager));
+    void onMouseUpdate(EVENT_HANDLER(ursine::ecs::World));
 
     // when the mouse is released
     void onMouseUp(EVENT_HANDLER(ursine::MouseManager));

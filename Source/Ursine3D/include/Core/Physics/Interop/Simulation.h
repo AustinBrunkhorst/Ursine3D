@@ -1,11 +1,21 @@
-// Simulation
-// Interop class
-// - Contains the physics engine's equivalent
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Simulation.h
+**
+** Author:
+** - Jordan Ellis - contact@jordanellis.me
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
 
 #pragma once
 
 #include "PhysicsInteropConfig.h"
 #include "DebugDrawer.h"
+#include "Raycasting.h"
 
 namespace ursine
 {
@@ -24,8 +34,7 @@ namespace ursine
         class Simulation
         {
         public:
-			URSINE_TODO("PUT THIS BACK TO -10");
-            Simulation(const SVec3 &gravity = SVec3( 0.0f, 0.0f, 0.0f ));
+            Simulation(const SVec3 &gravity = SVec3( 0.0f, -10.0f, 0.0f ));
             ~Simulation(void);
 
             // Step the simulation forward
@@ -41,6 +50,13 @@ namespace ursine
             // Add a body to the simulation (not rigid or soft)
             void AddBody(Body *body);
             void RemoveBody(Body *body);
+
+            bool Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type);
+
+            void SetGravity(const SVec3 &gravity);
+            SVec3 GetGravity(void) const;
+
+            void ClearContacts(Rigidbody &rigidbody);
 
         private:
 
