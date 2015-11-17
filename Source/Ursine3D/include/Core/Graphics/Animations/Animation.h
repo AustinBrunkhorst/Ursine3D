@@ -87,6 +87,10 @@ namespace ursine
             const unsigned boneIndex
         ) const;
 
+        unsigned GetRigKeyFrameCount(void) const;
+
+        unsigned GetDesiredBoneCount(void) const;
+
     private:
         unsigned m_rigKeyframeCount;
         unsigned m_boneCount;

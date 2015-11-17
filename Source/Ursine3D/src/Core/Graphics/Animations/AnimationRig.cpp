@@ -45,14 +45,13 @@ namespace ursine
             parent = &m_boneData[ parentID ];
 
         // set bone in vector, initialize this bone with proper data
-        m_boneData[ newID ].InitializeBone(name, boneTrans, boneScale, boneRotation, newID, parent);
+        m_boneData[ newID ].InitializeBone(name, bindTrans, bindScale, bindRotation, newID, parentID, parent);
 
         // set bone in hierarchy table
         m_hierarchyTable[ newID ] = parentID;
         
         // calculate offset matrix
-        SMat4 offsetMatrix = SMat4(bindTrans) * SMat4(bindScale.X(), bindScale.Y(), bindScale.Z()) * SMat4(bindRotation);
-        m_offsetMatrices[ newID ] = offsetMatrix;
+        m_offsetMatrices[ newID ] = SMat4( boneTrans ) * SMat4( boneScale.X( ), boneScale.Y( ), boneScale.Z( ) ) * SMat4( boneRotation );
 
         return newID;
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ISerialize.h"
-#include "Utilities.h"
+#include "AnimationDef.h"
 
 namespace ursine
 {
@@ -19,10 +19,10 @@ namespace ursine
 				FBX_DATA::Material_Eles::eMaterial_Fac emistype;
 				FBX_DATA::Material_Eles::eMaterial_Fac spectype;
 
-				XMFLOAT4 ambi_mcolor;
-				XMFLOAT4 diff_mcolor;
-				XMFLOAT4 emis_mcolor;
-				XMFLOAT4 spec_mcolor;
+				pseudodx::XMFLOAT4 ambi_mcolor;
+				pseudodx::XMFLOAT4 diff_mcolor;
+				pseudodx::XMFLOAT4 emis_mcolor;
+				pseudodx::XMFLOAT4 spec_mcolor;
 
 				unsigned int ambi_mapCount;
 				unsigned int diff_mapCount;

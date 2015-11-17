@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utilities.h"
+#include "AnimationDef.h"
 #include "ISerialize.h"
 
 namespace ursine
@@ -25,7 +25,6 @@ namespace ursine
 
 				bool SerializeIn(HANDLE hFile);
 				bool SerializeOut(HANDLE hFile);
-				void Interpolate(int index, double timePos, std::vector<XMMATRIX>& toParentTMs);
 			};
 		};
 	};

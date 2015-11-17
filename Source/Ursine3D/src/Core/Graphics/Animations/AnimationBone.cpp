@@ -3,12 +3,13 @@
 
 namespace ursine
 {
-    AnimationBone::AnimationBone(void)
+    AnimationBone::AnimationBone( void )
         : m_name( "undefined" )
         , m_translation( SVec3( ) )
         , m_scale( SVec3( ) )
         , m_rotation( SQuat( ) )
         , m_boneID( -1 )
+        , m_parentID( -1 )
         , m_parent( nullptr )
     {
     }
@@ -19,6 +20,7 @@ namespace ursine
         const SVec3& scale,
         const SQuat& rotation,
         const unsigned boneID,
+        const unsigned parentID,
         AnimationBone* parent
     )
     {
@@ -27,6 +29,7 @@ namespace ursine
         m_scale = scale;
         m_rotation = rotation;
         m_boneID = boneID;
+        m_parentID = parentID;
         m_parent = parent;
 
         if ( m_parent != nullptr )
@@ -88,9 +91,9 @@ namespace ursine
         return m_boneID;
     }
 
-    void AnimationBone::SetBoneID(const unsigned boneID)
+    unsigned AnimationBone::GetParentID() const
     {
-        m_boneID = boneID;
+        return m_parentID;
     }
 
     const AnimationBone* AnimationBone::GetParent(void) const

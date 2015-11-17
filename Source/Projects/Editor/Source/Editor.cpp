@@ -17,6 +17,7 @@
 #include <Model3DComponent.h>
 #include <CapsuleColliderComponent.h>
 #include <BoxColliderComponent.h>
+#include <AnimationBuilder.h>
 
 #include "CharacterControllerComponent.h"
 #include "EditorCameraSystem.h"
@@ -69,6 +70,7 @@ void Editor::OnInitialize(void)
 
     m_mainWindow.window->SetLocationCentered( );
     m_mainWindow.window->Show( true );
+    m_mainWindow.window->SetFullScreen( false );
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -125,7 +127,7 @@ void Editor::initializeGraphics(void)
 {
     graphics::GfxConfig config;
 
-    config.Fullscreen_ = false;
+    config.Fullscreen_ = m_mainWindow.window->IsFullScreen( );
 
     config.HandleToWindow_ =
         static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
@@ -133,8 +135,8 @@ void Editor::initializeGraphics(void)
     config.ModelListPath_ = "Assets/Models/";
     config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
     config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = kDefaultWindowWidth;
-    config.WindowHeight_ = kDefaultWindowHeight;
+    config.WindowWidth_ = static_cast<unsigned>(m_mainWindow.window->GetSize( ).X( ));
+    config.WindowHeight_ = static_cast<unsigned>(m_mainWindow.window->GetSize( ).Y( ));
 
     URSINE_TODO( "..." );
 
@@ -182,80 +184,6 @@ void Editor::initializeScene(void)
         camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
 		 
     }
-
-	// //// character entities
- // //   for (int i = 0; i < 25; ++i)
- // //   {
- // //       auto *entity_char = world.CreateEntity( );
- // //       auto *entity_cube = world.CreateEntity( ); 
- // //       {
- // //           entity_char->AddComponent<ecs::Renderable>();
- // //           auto model = entity_char->AddComponent<ecs::Model3D>();
-
- // //           auto name = "Character";
-
- // //           entity_char->SetName( name );
-
- // //           model->SetModel( name );
-
- // //           auto transform = entity_char->GetTransform( );
-
- // //           transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
- // //           transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
- // //           transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
- // //       }
- // //       {
- // //           entity_cube->AddComponent<ecs::Renderable>();
- // //           auto model = entity_cube->AddComponent<ecs::Model3D>();
-
- // //           auto name = "Cube";
-
- // //           entity_cube->SetName(name);
-
- // //           model->SetModel(name);
-
- // //           auto transform = entity_cube->GetTransform();
-
- // //           transform->SetWorldPosition(SVec3{ i * 1.0f, 0.0f, 0.0f });
- // //           transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
- // //           transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
- // //       }
-
- // //       // parent the character to the cube
- // //       entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
- // //   }
-
- // //   auto *sky = world.CreateEntity( "Skybox" );
- // //   {
- // //       auto skyHND = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
-
- // //       auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
-
- // //       skybox.SetModel( "Skybox" );
- // //       skybox.SetMaterial( "Skybox" );
- // //       skybox.SetMaterialData( 1, 0, 0 );
-
- // //       SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
- // //       SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
- // //       skybox.SetMaterialData( 1, 0, 0 ); 
- // //       skybox.SetWorldMatrix( final );
-
- // //       auto *component = sky->AddComponent<ecs::Renderable>( );
-
- // //       component->SetHandle( skyHND );
- // //   }
-
- // //   auto *univLight = world.CreateEntity( "Global Light" );
- // //   {
- // //       auto *component = univLight->AddComponent<ecs::Light>( );
-
- // //       component->SetType( ecs::LightType::Point );
- // //       component->SetPosition( { 10.0f, -10.0f, 0.0f } );
- // //       component->SetRadius( 400.0f );
- // //       component->SetDirection( { 0.0f, 1.0f, 0.0f } );
- // //       component->SetColor( Color::White );
- // //   }
-
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -264,6 +192,17 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
+    /////////////////////////////
+    // TEMPORARY
+    ursine::AnimationState myState;
+    myState.SetAnimation( AnimationBuilder::GetAnimationByIndex( 0 ) );
+    myState.SetTimePosition( 0 );
+
+    auto *rig = AnimationBuilder::GetAnimationRigByIndex( 0 );
+
+    //std::vector<DirectX::XMMATRIX> matPal;
+
+    //AnimationBuilder::GenerateAnimationData( myState, rig, matPal );
 
     auto scene = m_project->GetScene( );
 	 

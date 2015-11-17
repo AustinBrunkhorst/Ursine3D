@@ -64,4 +64,14 @@ namespace ursine
     {
         return m_keyframes[ rigKeyFrame ][ boneIndex ];
     }
+
+    unsigned Animation::GetRigKeyFrameCount() const
+    {
+        return m_rigKeyframeCount;
+    }
+
+    unsigned Animation::GetDesiredBoneCount() const
+    {
+        return m_boneCount;
+    }
 }
