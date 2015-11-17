@@ -9,4 +9,5 @@ CharacterController::CharacterController(void)
     , moveSpeed( 50.0f )
     , jumpSpeed( 1000.0f )
 	, rotateSpeed( 300.0f )
-    , id( 0 ) { }
+    , id( 0 )
+    , keyboard( false ) { }

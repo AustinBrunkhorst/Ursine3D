@@ -9,10 +9,11 @@ class CharacterController : public ursine::ecs::Component
 
 public:
     CharacterController(void);
-            
+    
     float moveSpeed;
     float jumpSpeed;
 	float rotateSpeed;
     int id;
+    bool keyboard;
 
 } Meta(Enable, DisplayName("CharacterController"));

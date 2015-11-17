@@ -6,6 +6,8 @@
 #include "RigidbodyComponent.h"
 
 #include <GamepadManager.h>
+#include <MouseManager.h>
+#include <KeyboardManager.h>
 #include <UrsineMath.h>
 
 using namespace ursine;
@@ -28,35 +30,77 @@ void CharacterControllerSystem::Process(Entity *entity)
 
     auto gamepadManager = GetCoreSystem( ursine::GamepadManager );
 
-    auto state = gamepadManager->GetState( id );
+    auto dt = ursine::Application::Instance->GetDeltaTime();
 
-    if (state)
+    if (controller->keyboard)
     {
-		auto dt = ursine::Application::Instance->GetDeltaTime( );
-		auto transform = entity->GetTransform();
+        auto transform = entity->GetTransform();
         auto rigidbody = entity->GetComponent<Rigidbody>();
 
-		float x = abs(state->Sticks( ).Right( ).X( ));
+        float x = GetCoreSystem( MouseManager )->GetPositionDelta( ).X( );
 
-		if (x > 0.1f)
-		{
-			auto angle = state->Sticks( ).Right( ).X( ) * rotateSpeed;
+        if (abs(x) > 0.1f)
+        {
+            float angle = x * rotateSpeed;
 
-            rigidbody->AddTorque( SVec3( 0.0f, angle, 0.0f ) );
-		}
+            rigidbody->AddTorque(SVec3(0.0f, angle, 0.0f));
+        }
         else
-            rigidbody->SetAngularVelocity( SVec3( 0.0f, 0.0f, 0.0f ) );
+            rigidbody->SetAngularVelocity(SVec3(0.0f, 0.0f, 0.0f));
 
-		auto walk = state->Sticks( ).Left( ) * moveSpeed;
+        auto keyboard = GetCoreSystem( KeyboardManager );
+        Vec2 walk;
 
-		auto forward = transform->GetForward( ) * walk.Y( );
-		auto strafe = transform->GetRight( ) * walk.X( );
-        auto vel = rigidbody->GetVelocity( );
+        if (keyboard->IsDown(KEY_A))
+            walk.X( ) -= moveSpeed;
+        if (keyboard->IsDown(KEY_D))
+            walk.X( ) += moveSpeed;
+        if (keyboard->IsDown(KEY_W))
+            walk.Y( ) += moveSpeed;
+        if (keyboard->IsDown(KEY_S))
+            walk.Y( ) -= moveSpeed;
+
+        auto forward = transform->GetForward() * walk.Y();
+        auto strafe = transform->GetRight() * walk.X();
+        auto vel = rigidbody->GetVelocity();
         auto accum = forward + strafe;
 
-        rigidbody->SetVelocity( { accum.X( ), vel.Y( ), accum.Z( ) } );
+        rigidbody->SetVelocity({ accum.X(), vel.Y(), accum.Z() });
 
-        if (state->IsButtonTriggeredDown( BTN_A ))
-            rigidbody->AddForce( SVec3( 0.0f, controller->jumpSpeed, 0.0f ) );
+        if (keyboard->IsTriggeredDown(KEY_SPACE))
+            rigidbody->AddForce(SVec3(0.0f, controller->jumpSpeed, 0.0f));
+    }
+    else
+    {
+        auto state = gamepadManager->GetState(id);
+
+        if (state)
+        {
+            auto transform = entity->GetTransform();
+            auto rigidbody = entity->GetComponent<Rigidbody>();
+
+            float x = abs(state->Sticks().Right().X());
+
+            if (x > 0.1f)
+            {
+                float angle = state->Sticks().Right().X() * rotateSpeed;
+
+                rigidbody->AddTorque(SVec3(0.0f, angle, 0.0f));
+            }
+            else
+                rigidbody->SetAngularVelocity(SVec3(0.0f, 0.0f, 0.0f));
+
+            auto walk = state->Sticks().Left() * moveSpeed;
+
+            auto forward = transform->GetForward() * walk.Y();
+            auto strafe = transform->GetRight() * walk.X();
+            auto vel = rigidbody->GetVelocity();
+            auto accum = forward + strafe;
+
+            rigidbody->SetVelocity({ accum.X(), vel.Y(), accum.Z() });
+
+            if (state->IsButtonTriggeredDown(BTN_A))
+                rigidbody->AddForce(SVec3(0.0f, controller->jumpSpeed, 0.0f));
+        }
     }
 }
