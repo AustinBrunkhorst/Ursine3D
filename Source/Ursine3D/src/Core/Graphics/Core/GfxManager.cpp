@@ -154,6 +154,13 @@ namespace ursine
             delete bufferManager;
             delete layoutManager;
             delete modelManager;
+            delete renderableManager;
+            delete cameraManager;
+            delete textureManager;
+            delete viewportManager;
+            delete uiManager;
+            delete drawingManager;
+            delete gfxProfiler;
         }
 
         void GfxManager::Render(GfxHND handle)
@@ -797,8 +804,6 @@ namespace ursine
 
         void GfxManager::PrepForFinalOutput()
         {
-            
-
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
@@ -854,39 +859,40 @@ namespace ursine
                 bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
             }
 
-            Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor();
+            // END OF TEMP //////////////////////////////////////////
+                    
+            // map color
+            Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor( );
             PrimitiveColorBuffer pcb;
             pcb.color.x = c.r;
             pcb.color.y = c.g;
             pcb.color.z = c.b;
             pcb.color.w = c.a;
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL); 
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, SHADERTYPE_PIXEL );
 
-            // END OF TEMP //////////////////////////////////////////
-                    
-            //map transform
+            // map transform
             bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
 
-            //material buffer 
+            // material buffer 
             MaterialDataBuffer mdb;
 
-            //get material data
+            // get material data
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
             
-            //set unique ID for this model
+            // set unique ID for this model
             int overdrw = current.GetOverdraw() == true ? 1 : 0;
 
             //             16                8
             mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
 
-            //map buffer
+            // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            //set model
+            // set model
             modelManager->BindModel(handle.Model_);
 
-            //map texture
+            // map texture
             textureManager->MapTextureByID(handle.Material_);
 
             if(handle.Overdraw_)

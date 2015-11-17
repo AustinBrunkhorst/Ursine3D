@@ -47,6 +47,7 @@ namespace ursine
             const SVec3 &scale, 
             const SQuat &rotation, 
             const unsigned boneID,
+            const unsigned parentID,
             AnimationBone *parent
         );
 
@@ -71,7 +72,7 @@ namespace ursine
         void SetRotation(const SQuat &rot);
 
         unsigned GetBoneID(void) const;
-        void SetBoneID(const unsigned boneID);
+        unsigned GetParentID(void) const;
 
         const AnimationBone *GetParent(void) const;
 
@@ -86,6 +87,7 @@ namespace ursine
         SQuat m_rotation;
 
         unsigned m_boneID;
+        unsigned m_parentID;
 
         AnimationBone *m_parent;
         std::vector<const AnimationBone *> m_children;

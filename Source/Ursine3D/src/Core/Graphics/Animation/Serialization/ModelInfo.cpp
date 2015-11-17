@@ -116,55 +116,6 @@ namespace ursine
 				return true;
 			}
 
-			void ModelInfo::GetFinalTransform(const std::string& clipName, double timePos, std::vector<XMMATRIX>& finalTransform) const
-			{
-				// Calculating Final Transform
-				size_t numBones = mskinCount;
-				std::vector<XMMATRIX> toParentTransforms(numBones);
-				std::vector<XMMATRIX> toRootTransforms(numBones);
-				if (0 == manimCount)
-					return;
-
-				// find animation by name
-				int AnimClipIdx = -1;
-				auto AnimClip = FindAnimClip(&AnimClipIdx, clipName);
-				if (-1 == AnimClipIdx || nullptr == AnimClip)
-					return;
-
-				// currently, we can only handle one animation
-				// Interpolate all the bones of this clip at the given time instance.
-				AnimClip->Interpolate(AnimClipIdx, timePos, toParentTransforms); // need clip index
-				//
-				// Traverse the hierarchy and transform all the bones to the root space.
-				//
-				// The root bone has index 0. The root bone has no parent, so
-				// its toRootTransform is just its local bone transform.
-				toRootTransforms[0] = toParentTransforms[0];
-				// Now find the toRootTransform of the children.
-				for (size_t i = 1; i < numBones; ++i)
-				{
-					// toParent = animTM
-					XMMATRIX toParent = toParentTransforms[i];
-					int parentIndex = marrSkins[i].mbones.mParentIndex;
-					// parentToRoot = parent to root transformation
-					XMMATRIX parentToRoot = toRootTransforms[parentIndex];
-					// toRootTransform = local bone transform
-					toRootTransforms[i] = XMMatrixMultiply(toParent, parentToRoot);
-				}
-
-				// Premultiply by the bone offset transform to get the final transform.
-				for (size_t i = 0; i < numBones; ++i)
-				{
-					XMVECTOR bsp = Utilities::SetFloat4ToXMVector(marrSkins[i].mbones.boneSpacePosition);
-					XMVECTOR bsr = Utilities::SetFloat4ToXMVector(marrSkins[i].mbones.boneSpaceRotation);
-					XMMATRIX offPos = XMMatrixTranslationFromVector(bsp);
-					XMMATRIX offRot = XMMatrixRotationQuaternion(bsr);
-					XMMATRIX offset = XMMatrixMultiply(offRot, offPos);
-					XMMATRIX toroot = toRootTransforms[i];
-					finalTransform[i] = XMMatrixMultiply(offset, toroot);
-				}
-			}
-
 			AnimInfo* ModelInfo::FindAnimClip(int* index, const std::string& clipName) const
 			{
 				for (unsigned int i = 0; i < manimCount; ++i)

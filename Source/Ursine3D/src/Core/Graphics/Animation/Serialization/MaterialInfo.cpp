@@ -66,12 +66,12 @@ namespace ursine
 					ReadFile(hFile, &emistype, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &spectype, sizeof(unsigned int), &nBytesRead, nullptr);
 
-					ReadFile(hFile, &ambi_mcolor, sizeof(XMFLOAT4), &nBytesRead, nullptr);
-					ReadFile(hFile, &diff_mcolor, sizeof(XMFLOAT4), &nBytesRead, nullptr);
-					ReadFile(hFile, &emis_mcolor, sizeof(XMFLOAT4), &nBytesRead, nullptr);
-					ReadFile(hFile, &spec_mcolor, sizeof(XMFLOAT4), &nBytesRead, nullptr);
+					ReadFile(hFile, &ambi_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
+					ReadFile(hFile, &diff_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
+					ReadFile(hFile, &emis_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
+					ReadFile(hFile, &spec_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
 
-					ReadFile(hFile, &ambi_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					 (hFile, &ambi_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &diff_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &emis_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &spec_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
@@ -128,10 +128,10 @@ namespace ursine
 					int_type = static_cast<unsigned int>(spectype);
 					WriteFile(hFile, &int_type, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					WriteFile(hFile, &ambi_mcolor, sizeof(XMFLOAT4), &nBytesWrite, nullptr);
-					WriteFile(hFile, &diff_mcolor, sizeof(XMFLOAT4), &nBytesWrite, nullptr);
-					WriteFile(hFile, &emis_mcolor, sizeof(XMFLOAT4), &nBytesWrite, nullptr);
-					WriteFile(hFile, &spec_mcolor, sizeof(XMFLOAT4), &nBytesWrite, nullptr);
+					WriteFile(hFile, &ambi_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesWrite, nullptr);
+					WriteFile(hFile, &diff_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesWrite, nullptr);
+					WriteFile(hFile, &emis_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesWrite, nullptr);
+					WriteFile(hFile, &spec_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesWrite, nullptr);
 
 					WriteFile(hFile, &ambi_mapCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &diff_mapCount, sizeof(unsigned int), &nBytesWrite, nullptr);

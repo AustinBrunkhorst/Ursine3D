@@ -22,10 +22,6 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "Model.h"
 #include "ModelInfo.h"
 
-namespace ursine{
-    class AnimationRig;
-}
-
 namespace ursine
 {
     namespace graphics

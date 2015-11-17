@@ -303,9 +303,23 @@ namespace ursine
 				buffer.resize(vertCount);
 				for (size_t i = 0; i < vertCount; ++i)
 				{
-					buffer[i].vPos = ufmt_model.marrMeshes[mesh_idx].vertices[i];
-					buffer[i].vNor = ufmt_model.marrMeshes[mesh_idx].normals[i];
-					buffer[i].vUv = ufmt_model.marrMeshes[mesh_idx].uvs[i];
+                    buffer[ i ].vPos = DirectX::XMFLOAT3(
+                        ufmt_model.marrMeshes[ mesh_idx ].vertices[ i ].x,
+                        ufmt_model.marrMeshes[ mesh_idx ].vertices[ i ].y,
+                        ufmt_model.marrMeshes[ mesh_idx ].vertices[ i ].z 
+                    );
+
+                    buffer[ i ].vNor = DirectX::XMFLOAT3(
+                        ufmt_model.marrMeshes[ mesh_idx ].normals[ i ].x,
+                        ufmt_model.marrMeshes[ mesh_idx ].normals[ i ].y,
+                        ufmt_model.marrMeshes[ mesh_idx ].normals[ i ].z
+                        );
+
+                    buffer[ i ].vUv = DirectX::XMFLOAT2(
+                        ufmt_model.marrMeshes[ mesh_idx ].uvs[ i ].x,
+                        ufmt_model.marrMeshes[ mesh_idx ].uvs[ i ].y
+                    );
+
 					if (ufmt_model.marrMeshes[mesh_idx].ctrlPtCount > 0)
 					{
 						buffer[i].vBWeight.x = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][0];

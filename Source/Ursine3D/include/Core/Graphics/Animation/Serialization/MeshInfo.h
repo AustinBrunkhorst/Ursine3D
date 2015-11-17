@@ -1,7 +1,10 @@
 #pragma once
 
 #include "ISerialize.h"
-#include "Utilities.h"
+#include <fbxsdk/scene/geometry/fbxlayer.h>
+#include "AnimationDef.h"
+
+using namespace pseudodx;
 
 namespace ursine
 {
@@ -26,11 +29,11 @@ namespace ursine
 				FbxLayerElement::EMappingMode normalMode;
 				FbxLayerElement::EMappingMode tangentMode;
 
-				XMFLOAT3*		vertices;
+                pseudodx::XMFLOAT3*		vertices;
 				unsigned int*	indices;
-				XMFLOAT3*		normals;
-				XMFLOAT3*		tangents;
-				XMFLOAT2*		uvs;
+				pseudodx::XMFLOAT3*		normals;
+				pseudodx::XMFLOAT3*		tangents;
+				pseudodx::XMFLOAT2*		uvs;
 				char*			mtrlName[MAXTEXTLEN];
 
 				unsigned int*	materialIndices;

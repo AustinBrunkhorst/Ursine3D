@@ -8,14 +8,91 @@ namespace ursine
     std::vector<AnimationRig>                       AnimationBuilder::m_animationRigData;
     std::unordered_map<std::string, Animation*>     AnimationBuilder::m_name2Animation;
     std::unordered_map<std::string, AnimationRig*>  AnimationBuilder::m_name2Rig;
+    std::vector<SMat4>                              AnimationBuilder::m_toParentTransforms;
+    std::vector<SMat4>                              AnimationBuilder::m_toRootTransforms;
 
     unsigned AnimationBuilder::m_rigCount;
     unsigned AnimationBuilder::m_animationCount;
 
+    void AnimationBuilder::GenerateAnimationData(const AnimationState& animState, const AnimationRig* rig, std::vector<SMat4>& outputMatPal)
+    {
+        // get the current time
+        float time = animState.GetTimePosition( );
+
+        // clamp time between 0 and 1
+        time = time < 0 ? 0 : time;
+        time = time > 1 ? 1 : time;
+
+        // get the currently running animation
+        auto currentAnimation = animState.GetAnimation( );
+
+        // get the total keyframes for this animation
+        unsigned frameCount = currentAnimation->GetRigKeyFrameCount( );
+
+        // get num of bones in this rig
+        unsigned boneCount = rig->GetBoneCount( );
+
+        // make sure the rig bones match animation bones
+        UAssert( boneCount == currentAnimation->GetDesiredBoneCount( ), "Attempted to use invalid rig to calculate animations!" );
+
+        // determine the 2 current keyframes to use
+        // we assume that all frames exist, and that they were baked across all total keyframes
+        for ( int x = 0; x < frameCount - 1; ++x)
+        {
+            // get the two current keyframes
+            const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes( x );
+            const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes( x + 1 );
+
+            // check if the current keyframe set holds the time value between them
+            if(f1[0].length <= time && time < f2[0].length )
+            {
+                // if it did, interpolate the two keyframes, save values, break out
+                interpolateRigKeyFrames( 
+                    f1, 
+                    f2, 
+                    time, 
+                    boneCount,
+                    m_toParentTransforms 
+                );
+
+                // kick out, we're done
+                break;
+            }
+        }
+
+        // root bone has no transform, therefor is just defaulted to the first interpolated matrix
+        m_toRootTransforms[ 0 ] = m_toParentTransforms[ 0 ];
+
+        // now we need to go through the bone hierarchy 
+        auto &boneData = rig->GetBoneData( );
+
+        // iterate through each bone
+        for ( unsigned x = 1; x < boneCount; ++x)
+        {
+            // get the toParent transform
+            SMat4 &toParent = m_toParentTransforms[ x ];
+
+            // get the parent to root
+            const SMat4 &parentToRoot = m_toRootTransforms[ boneData[ x ].GetParentID( ) ];
+
+            // calculate root transform
+            m_toRootTransforms[ x ] = toParent * parentToRoot;
+        }
+
+        // multiply by bone offset transform to get final transform
+        auto &offsetMatrices = rig->GetOffsetMatrices( );
+        for ( unsigned x = 0; x < boneCount; ++x)
+        {
+            outputMatPal[ x ] = (offsetMatrices[ x ] * m_toRootTransforms[ x ]);
+        }
+    }
+
     void AnimationBuilder::InitializeStaticData(void)
     {
-        m_animationData.resize( 100 );
-        m_animationRigData.resize( 100 );
+        m_animationData.resize( 128 );
+        m_animationRigData.resize( 128 );
+        m_toParentTransforms.resize( 128 );
+        m_toRootTransforms.resize( 128 );
         m_rigCount = 0;
         m_animationCount = 0;
     }
@@ -137,6 +214,37 @@ namespace ursine
         // save the data in the maps, return
         m_name2Rig[ modelData.marrSkins->name ] = rig;
         return rigIndex;
+    }
+
+    void AnimationBuilder::interpolateRigKeyFrames(
+        const std::vector<AnimationKeyframe>& frame1, 
+        const std::vector<AnimationKeyframe>& frame2, 
+        const float time, 
+        const unsigned boneCount,
+        std::vector<SMat4> &finalTransform
+    )
+    {
+        // get the percentage between current frame and next frame
+        float lerpPercent = (time - frame1[ 0 ].length) / (frame2[ 0 ].length - frame1[ 0 ].length);
+
+        // for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
+        for ( unsigned x = 0; x < boneCount; ++x )
+        {
+            // get the current guy
+            SMat4 &current = finalTransform[ x ];
+
+            // position
+            SVec3 p = frame1[ x ].translation * lerpPercent + (1.0f - lerpPercent) * frame2[ x ].translation;
+
+            // scale
+            SVec3 s = frame1[ x ].scale * lerpPercent + (1.0f - lerpPercent) * frame2[ x ].scale;
+
+            // rotation
+            SQuat q = frame1[ x ].rotation.Slerp(frame2[ x ].rotation, lerpPercent );
+
+            // construct matrix for this matrix
+            current = SMat4( p, q, s );
+        }
     }
 
     void AnimationBuilder::rec_LoadBoneMesh(
