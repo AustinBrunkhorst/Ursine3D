@@ -49,6 +49,13 @@ namespace ursine
                     );
 
                     componentID.SetValue( nextID++ );
+
+                    auto defaultCtor = derived.GetDynamicConstructor( );
+
+                    UAssert( defaultCtor.IsValid( ), 
+                        "Component type '%s' doesn't have a default dynamic constructor.",
+                        derived.GetName( ).c_str( )
+                    )
                 }
             }
         }
@@ -112,7 +119,7 @@ namespace ursine
 
         void EntityManager::RemoveComponent(Entity *entity, ComponentTypeID id)
         {
-        #ifdef CONFIG_DEBUG
+        #if defined(CONFIG_DEBUG)
 
             UAssert( id != GetComponentID( Transform ),
                 "You can't remove a Transform component." );
@@ -139,19 +146,12 @@ namespace ursine
             if (!entity)
                 return found;
 
-            const auto entity_id = entity->m_id;
+            const auto entityID = entity->m_id;
 
             for (uint32 i = 0; i < m_componentTypes.size( ); ++i)
             {
-                auto &components = m_componentTypes[ i ];
-
-                Component *component;
-
-                if (entity_id + 1u <= components.size( ) &&
-                    (component = components[ entity_id ]) != nullptr)
-                {
-                    found.push_back( component );
-                }
+                if (entity->HasComponent( 1ull << i ))
+                    found.emplace_back( m_componentTypes[ i ][ entityID ] );
             }
 
             return found;
@@ -161,7 +161,7 @@ namespace ursine
         {
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
-            childrenContainer.push( m_hierarchy.GetChildren( entity ));
+            childrenContainer.push( m_hierarchy.GetChildren( entity ) );
 
             while (childrenContainer.size( ) > 0)
             {
@@ -175,7 +175,7 @@ namespace ursine
                     if (component)
                         return component;
 
-                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ));
+                    childrenContainer.push( m_hierarchy.GetChildren( childEntity )) ;
                 }
 
                 childrenContainer.pop( );
@@ -201,7 +201,7 @@ namespace ursine
             ComponentVector components;
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
-            childrenContainer.push( m_hierarchy.GetChildren( entity ));
+            childrenContainer.push( m_hierarchy.GetChildren( entity ) );
 
             while (childrenContainer.size( ) > 0)
             {
@@ -215,7 +215,7 @@ namespace ursine
                     if (component)
                         components.push_back( component );
 
-                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ));
+                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ) );
                 }
 
                 childrenContainer.pop( );
@@ -308,17 +308,17 @@ namespace ursine
             // Remove the children before the parent is removed
             auto children = m_hierarchy.GetChildren( entity );
 
-            while (children->size() > 0)
+            while (children->size( ) > 0)
             {
                 auto &child = ( *children )[ 0 ];
-                Remove( m_active[ child ] );
+                Remove( &m_cache[ child ] );
             }
 
             m_hierarchy.RemoveEntity( entity );
 
             clearComponents( entity, true );
 
-            utils::FlagUnset( entity->m_flags, Entity::ACTIVE );
+            entity->m_active = false;
 
             m_active.erase( find( m_active.begin( ), m_active.end( ), entity ) );
 
@@ -392,7 +392,7 @@ namespace ursine
         {
             auto componentID = component->GetTypeID( );
 
-            ComponentVector &components = m_componentTypes[ componentID ];
+            auto &components = m_componentTypes[ componentID ];
 
             const auto entityID = entity->m_id;
 
@@ -416,13 +416,15 @@ namespace ursine
             if (!entity->HasComponent( mask ))
                 return;
 
+            auto oldMask = entity->m_typeMask;
+
             entity->unsetType( mask );
 
-            Component *&component = m_componentTypes[ id ][ entity->m_id ];
+            auto *&component = m_componentTypes[ id ][ entity->m_id ];
 
             if (dispatch)
             {
-                ComponentEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component );
+                ComponentRemovedEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component, oldMask );
 
                 m_world->Dispatch( WORLD_ENTITY_COMPONENT_REMOVED, &e );
             }
@@ -458,7 +460,7 @@ namespace ursine
         void EntityManager::clearComponents(Entity *entity, bool dispatch)
         {
             const auto size = m_componentTypes.size( );
-            const auto id = entity->m_id;
+            const auto entityID = entity->m_id;
 
             // components to remove
             ComponentVector toRemove;
@@ -469,7 +471,7 @@ namespace ursine
                 // the queue to remove (based on instance id)
                 // this is so components with dependencies are deleted in the correct order
                 if (entity->HasComponent( 1ull << i ))
-                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ id ], CompareComponents );
+                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponents );
             }
 
             auto const removeCount = toRemove.size( );
@@ -486,8 +488,18 @@ namespace ursine
                 }
             }
 
-            for (uint32 i = 0; i < removeCount; ++i)
-                delete toRemove[ i ];
+            for (uint32 i = 0; i < removeCount; ++i) 
+            {
+                auto *component = toRemove[ i ];
+
+                // reference to the pointer of this component for this entity
+                auto *&componentReference = m_componentTypes[ component->m_typeID ][ entityID ];
+
+                delete component;
+
+                // make sure the value in the container is set to null
+                componentReference = nullptr;
+            }
         }
     }
 }

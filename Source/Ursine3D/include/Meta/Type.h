@@ -403,6 +403,8 @@ namespace ursine
 
             Json SerializeJson(const Variant &instance) const;
             Variant DeserializeJson(const Json &value) const;
+            Variant DeserializeJson(const Json &value, const Constructor &ctor) const;
+            void DeserializeJson(Variant &instance, const Json &value) const;
 
         private:
             friend class std::allocator<Type>;

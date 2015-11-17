@@ -6,14 +6,6 @@ class SceneView extends NativeCanvasWindowHandler {
 
         window.heading = "Scene";
 
-        window.style.top = "0";
-        window.style.bottom = "0";
-        window.style.left = "15%";
-        window.style.right = "0";
-
-        // TODO:
-        window.style.borderLeft = "none";
-
-        //onViewportInvalidated( );
+        onViewportInvalidated( );
     }
 }

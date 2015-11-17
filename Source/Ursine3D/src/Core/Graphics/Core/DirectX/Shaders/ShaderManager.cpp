@@ -29,7 +29,7 @@ namespace ursine
                 }
             }
 
-            static int _backendLoadShader(ID3D11Device *dev, Shader *shader, SHADERDEF shaderType, const char *filename, const char *filePath)
+            static int _backendLoadShader(ID3D11Device *dev, Shader *shader, SHADERTYPE shaderType, const char *filename, const char *filePath)
             {
                 std::string path = filePath;
                 path.append(filename);
@@ -38,33 +38,30 @@ namespace ursine
                 if (!CheckFile(path))
                     return 0;
 
-                //VERTEX_SHADER = 0,
-                //  PIXEL_SHADER,
-                //  HULL_SHADER,
-                //  DOMAIN_SHADER,
-                //  GEOMETRY_SHADER,
-
                 switch (shaderType)
                 {
-                case VERTEX_SHADER:
+                case SHADERTYPE_VERTEX:
                     LogMessage("Vertex Shader Found", 4);
                     break;
-                case PIXEL_SHADER:
+                case SHADERTYPE_PIXEL:
                     LogMessage("Pixel Shader Found", 4);
                     break;
-                case HULL_SHADER:
+                case SHADERTYPE_HULL:
                     LogMessage("Hull Shader Found", 4);
                     break;
-                case DOMAIN_SHADER:
+                case SHADERTYPE_DOMAIN:
                     LogMessage("Domain Shader Found", 4);
                     break;
-                case GEOMETRY_SHADER:
+                case SHADERTYPE_GEOMETRY:
                     LogMessage("Geometry Shader Found", 4);
+                    break;
+                case SHADERTYPE_COMPUTE:
+                    LogMessage("Compute Shader Found", 4);
                     break;
                 default:
                     break;
                 }
-                //
+
 
                 HRESULT result;
                 struct stat *st = new struct stat();
@@ -92,7 +89,7 @@ namespace ursine
                 //compile shader, save name data
                 switch (shaderType)
                 {
-                case SHADERDEF::VERTEX_SHADER:
+                case SHADERTYPE::SHADERTYPE_VERTEX:
                     result = dev->CreateVertexShader(binData, binSize, nullptr, &shader->vs);
                     UAssert(result == S_OK, "Failed to load vert shader '%s'! (Error '%s')", GetDXErrorMessage(result));
 
@@ -102,21 +99,25 @@ namespace ursine
                     shader->size = (unsigned)binSize;
                     shader->rawData = binData;
                     break;
-                case SHADERDEF::PIXEL_SHADER:
+                case SHADERTYPE::SHADERTYPE_PIXEL:
                     result = dev->CreatePixelShader(binData, binSize, nullptr, &shader->ps);
-                    UAssert(result == S_OK, "Failed to load pixel shader '%s'! (Error '%s')", GetDXErrorMessage(result));
+                    UAssert(result == S_OK, "Failed to load pixel shader '%s'! (Error '%s')", filename, GetDXErrorMessage(result));
                     break;
-                case SHADERDEF::HULL_SHADER:
+                case SHADERTYPE::SHADERTYPE_HULL:
                     result = dev->CreateHullShader(binData, binSize, nullptr, &shader->hs);
-                    UAssert(result == S_OK, "Failed to load hull shader '%s'! (Error '%s')", GetDXErrorMessage(result));
+                    UAssert(result == S_OK, "Failed to load hull shader '%s'! (Error '%s')", filename, GetDXErrorMessage(result));
                     break;
-                case SHADERDEF::DOMAIN_SHADER:
+                case SHADERTYPE::SHADERTYPE_DOMAIN:
                     result = dev->CreateDomainShader(binData, binSize, nullptr, &shader->ds);
-                    UAssert(result == S_OK, "Failed to load domain shader '%s'! (Error '%s')", GetDXErrorMessage(result));
+                    UAssert(result == S_OK, "Failed to load domain shader '%s'! (Error '%s')", filename, GetDXErrorMessage(result));
                     break;
-                case SHADERDEF::GEOMETRY_SHADER:
+                case SHADERTYPE::SHADERTYPE_GEOMETRY:
                     result = dev->CreateGeometryShader(binData, binSize, nullptr, &shader->gs);
-                    UAssert(result == S_OK, "Failed to load geometry shader '%s'! (Error '%s')", GetDXErrorMessage(result));
+                    UAssert(result == S_OK, "Failed to load geometry shader '%s'! (Error '%s')", filename, GetDXErrorMessage(result));
+                    break;
+                case SHADERTYPE::SHADERTYPE_COMPUTE:
+                    result = dev->CreateComputeShader(binData, binSize, nullptr, &shader->cs);
+                    UAssert(result == S_OK, "Failed to load compute shader '%s'! (Error '%s')", filename, GetDXErrorMessage(result));
                     break;
                 }
 
@@ -157,6 +158,7 @@ namespace ursine
                         RELEASE_RESOURCE(m_shaderArray[ x ]->hs);
                         RELEASE_RESOURCE(m_shaderArray[ x ]->ds);
                         RELEASE_RESOURCE(m_shaderArray[ x ]->gs);
+                        RELEASE_RESOURCE(m_shaderArray[ x ]->cs);
                         RELEASE_RESOURCE(m_shaderArray[ x ]->vsBlob);
                         RELEASE_RESOURCE(m_shaderArray[ x ]->reflectionData);
 
@@ -173,18 +175,44 @@ namespace ursine
                 m_currentState = shader;
 
                 //if a given shader exists, bind it
+                    //if it DOESN'T, we need to make sure that shader is removed from pipeline
+
+                //vertex
                 if (m_shaderArray[ shader ]->vs != nullptr)
                     m_deviceContext->VSSetShader(m_shaderArray[ shader ]->vs, nullptr, 0);
+                else
+                    m_deviceContext->VSSetShader(nullptr, nullptr, 0);
+
+                //pixel
                 if (m_shaderArray[ shader ]->ps != nullptr)
                     m_deviceContext->PSSetShader(m_shaderArray[ shader ]->ps, nullptr, 0);
+                else
+                    m_deviceContext->PSSetShader(nullptr, nullptr, 0);
+
+                //hull
                 if (m_shaderArray[ shader ]->hs != nullptr)
                     m_deviceContext->HSSetShader(m_shaderArray[ shader ]->hs, nullptr, 0);
+                else
+                    m_deviceContext->HSSetShader(nullptr, nullptr, 0);
+
+                //domain
                 if (m_shaderArray[ shader ]->ds != nullptr)
                     m_deviceContext->DSSetShader(m_shaderArray[ shader ]->ds, nullptr, 0);
+                else
+                    m_deviceContext->DSSetShader(nullptr, nullptr, 0);
+
+                //geometry
                 if (m_shaderArray[ shader ]->gs != nullptr)
                     m_deviceContext->GSSetShader(m_shaderArray[ shader ]->gs, nullptr, 0);
                 else
                     m_deviceContext->GSSetShader(nullptr, nullptr, 0);
+
+                //compute
+                if (m_shaderArray[ shader ]->cs != nullptr)
+                    m_deviceContext->CSSetShader(m_shaderArray[ shader ]->cs, nullptr, 0);
+                else
+                    m_deviceContext->CSSetShader(nullptr, nullptr, 0);
+                
             }
 
             void ShaderManager::LoadShader(const SHADER_TYPES shader, const char *filename)
@@ -197,20 +225,24 @@ namespace ursine
                 LogMessage("Shader Types Found:", 3);
 
                 //init to 0
+                m_shaderArray[ shader ]->reflectionData = nullptr;
                 m_shaderArray[ shader ]->vsBlob = nullptr;
+                m_shaderArray[ shader ]->rawData = nullptr;
                 m_shaderArray[ shader ]->vs = nullptr;
                 m_shaderArray[ shader ]->ps = nullptr;
                 m_shaderArray[ shader ]->hs = nullptr;
                 m_shaderArray[ shader ]->ds = nullptr;
                 m_shaderArray[ shader ]->gs = nullptr;
+                m_shaderArray[ shader ]->cs = nullptr;
 
                 //attempt to load all shaders
                 int result = 0;
-                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], VERTEX_SHADER, std::string(filename).append("_VS.cso").c_str(), m_shaderPath.c_str());
-                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], PIXEL_SHADER, std::string(filename).append("_PS.cso").c_str(), m_shaderPath.c_str());
-                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], HULL_SHADER, std::string(filename).append("_HS.cso").c_str(), m_shaderPath.c_str());
-                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], DOMAIN_SHADER, std::string(filename).append("_DS.cso").c_str(), m_shaderPath.c_str());
-                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], GEOMETRY_SHADER, std::string(filename).append("_GS.cso").c_str(), m_shaderPath.c_str());
+                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], SHADERTYPE_VERTEX, std::string(filename).append("_VS.cso").c_str(), m_shaderPath.c_str());
+                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], SHADERTYPE_PIXEL, std::string(filename).append("_PS.cso").c_str(), m_shaderPath.c_str());
+                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], SHADERTYPE_HULL, std::string(filename).append("_HS.cso").c_str(), m_shaderPath.c_str());
+                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], SHADERTYPE_DOMAIN, std::string(filename).append("_DS.cso").c_str(), m_shaderPath.c_str());
+                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], SHADERTYPE_GEOMETRY, std::string(filename).append("_GS.cso").c_str(), m_shaderPath.c_str());
+                result |= _backendLoadShader(m_device, m_shaderArray[ shader ], SHADERTYPE_COMPUTE, std::string(filename).append("_CS.cso").c_str(), m_shaderPath.c_str());
 
                 //if they all return 0, we have a problem
                 UAssert(result > 0, "Failed to load shader '%s'", filename);

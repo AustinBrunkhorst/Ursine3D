@@ -1,21 +1,30 @@
 #include "Precompiled.h"
 
 #include "Project.h"
-#include "EntityManager.h"
+#include "EditorEntityManager.h"
 
-Project::Project(ursine::UIView::Handle ui)
+using namespace ursine;
+
+Project::Project(UIView::Handle ui)
     : m_ui( ui )
-    , m_entityManager( Handle( this ) )
+    , m_scene( std::make_shared<Scene>( ) )
+    , m_entityManager( this )
 {
-    
+    m_entityManager.SetWorld( m_scene->GetWorld( ) );
 }
 
-ursine::Scene &Project::GetScene(void)
+Scene::Handle Project::GetScene(void)
 {
     return m_scene;
 }
 
-ursine::UIView::Handle Project::GetUI(void)
+UIView::Handle Project::GetUI(void)
 {
     return m_ui;
+}
+
+void Project::SetWorld(ecs::World::Handle world)
+{
+    m_scene->SetWorld( world );
+    m_entityManager.SetWorld( world );
 }

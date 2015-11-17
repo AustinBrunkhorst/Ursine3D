@@ -15,6 +15,7 @@
 
 #include "EntityConfig.h"
 #include "ComponentConfig.h"
+#include "SystemConfig.h"
 
 #include "TransformComponent.h"
 
@@ -54,7 +55,7 @@ namespace ursine
             // world when this entity was created)
             EntityUniqueID GetUniqueID(void) const;
 
-            // determines if the entity is currently being deleted
+            // Determines if the entity is currently being deleted
             bool IsDeleting(void) const;
 
             // Determines if the entity is active (being used in the world)
@@ -62,6 +63,30 @@ namespace ursine
 
             // Determines if this entity is both active and not being deleted
             bool IsAvailable(void) const;
+
+            // Determines if this entity can be deleted
+            bool IsDeletionEnabled(void) const;
+
+            // Enables deletion for this entity
+            void EnableDeletion(bool enabled);
+
+            // Determines if this entity change change it's hierarchy
+            bool IsHierarchyChangeEnabled(void) const;
+
+            // Enables hierarchy change for this entity
+            void EnableHierarchyChange(bool enabled);
+
+            // Determines if this entity will be serialized
+            bool IsSerializationEnabled(void) const;
+
+            // Enables serialization for this entity
+            void EnableSerialization(bool enabled);
+
+            // Determines if this entity is visible in the editor
+            bool IsVisibleInEditor(void) const;
+
+            // Sets whether or not the entity is visible in the editor
+            void SetVisibleInEditor(bool visible);
 
             // Removes this entity from the world
             void Delete(void);
@@ -95,6 +120,9 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
             // Components
             ////////////////////////////////////////////////////////////////////
+
+            // Adds a component based on an existing instance
+            void AddComponent(Component *component);
 
             // Adds a component this entity. Arguments passed are forwarded to 
             // the components constructor
@@ -200,14 +228,9 @@ namespace ursine
             ChainableEventOperator<Entity, Listener> Listener(Listener *listener = nullptr);
 
         private:
-            enum Flags
-            {
-                DELETING = 1,
-                ACTIVE = 2
-            };
-
             // entity manager needs to be able to construct entities
             friend class EntityManager;
+            friend class WorldSerializer;
 
             // access ids directly
             friend class NameManager;
@@ -222,8 +245,12 @@ namespace ursine
             // access type and system bits
             friend class FilterSystem;
 
-            // misc flags for the state of this entity
-            uint32 m_flags;
+            bool m_active                 : 1;
+            bool m_deleting               : 1;
+            bool m_deletionEnabled        : 1;
+            bool m_hierarchyChangeEnabled : 1;
+            bool m_serializationEnabled   : 1;
+            bool m_visibleInEditor        : 1;
 
             // active id in the entity manager
             EntityID m_id;
@@ -238,7 +265,7 @@ namespace ursine
             Transform *m_transform;
 
             // systems using this entity
-            ComponentTypeMask m_systemMask;
+            SystemTypeMask m_systemMask;
 
             // components attached to this entity
             ComponentTypeMask m_typeMask;
@@ -251,8 +278,8 @@ namespace ursine
             Entity(World *world, EntityID id);
 
             // sets/unsets component systems for this entity (which filter systems own it)
-            void setSystem(ComponentTypeMask mask);
-            void unsetSystem(ComponentTypeMask mask);
+            void setSystem(SystemTypeMask mask);
+            void unsetSystem(SystemTypeMask mask);
 
             // sets/unsets component types for this entity (which components it has)
             void setType(ComponentTypeMask mask);

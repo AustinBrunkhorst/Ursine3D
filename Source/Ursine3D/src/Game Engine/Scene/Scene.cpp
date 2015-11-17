@@ -7,15 +7,20 @@
 namespace ursine
 {
     Scene::Scene(void)
-        : m_graphics( GetCoreSystem(graphics::GfxAPI) )
-        , m_viewport( 0 )
+        : m_viewport( 0 )
+        , m_world( std::make_shared<ecs::World>( ) )
     {
         
     }
 
-    ecs::World &Scene::GetWorld(void)
+    ecs::World::Handle Scene::GetWorld(void)
     {
         return m_world;
+    }
+
+    void Scene::SetWorld(ecs::World::Handle world)
+    {
+        m_world = world;
     }
 
     graphics::GfxHND Scene::GetViewport(void) const
@@ -28,23 +33,13 @@ namespace ursine
         m_viewport = viewport;
     }
 
-    graphics::GfxHND Scene::GetEditorCamera(void) const
-    {
-        return m_editorCamera;
-    }
-
-    void Scene::SetEditorCamera(GfxHND camera)
-    {
-        m_editorCamera = camera;
-    }
-
     void Scene::Update(DeltaTime dt)
     {
-        m_world.Update( );
+        m_world->Update( );
     }
 
     void Scene::Render(void)
     {
-        m_world.Render( );
+        m_world->Render( );
     }
 }

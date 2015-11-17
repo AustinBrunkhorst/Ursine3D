@@ -22,6 +22,14 @@ namespace ursine
 {
     namespace graphics
     {
+        enum COMPUTE_BUFFER_LIST
+        {
+            COMPUTE_BUFFER_ID = 0,
+            COMPUTE_BUFFER_ID_CPU,
+            COMPUTE_BUFFER_MOUSEPOS,
+            COMPUTE_BUFFER_COUNT
+        };
+
         enum BUFFER_LIST
         {
             BUFFER_CAMERA = 0,
@@ -36,6 +44,7 @@ namespace ursine
             BUFFER_LIGHT_PROJ,
             BUFFER_MATERIAL_DATA,
             BUFFER_SPOTLIGHT,
+            BUFFER_MOUSEPOS,
 
             BUFFER_COUNT,
 
@@ -109,11 +118,21 @@ namespace ursine
         struct SpotlightBuffer
         {
             DirectX::XMFLOAT3 lightPosition;
-            float falloff;
+            float intensity;
             DirectX::XMFLOAT3 lightDirection;
             float innerAngle;
             DirectX::XMFLOAT3 diffuseColor;
             float outerAngle;
+        };
+
+        struct MouseBuffer
+        {
+            DirectX::XMINT4 mousePos;
+        };
+
+        struct ComputeIDOutput
+        {
+            unsigned id;
         };
     }
 }

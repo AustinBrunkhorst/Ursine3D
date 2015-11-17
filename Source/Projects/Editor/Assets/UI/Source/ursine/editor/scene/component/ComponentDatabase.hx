@@ -28,15 +28,13 @@ extern class NativeType {
     var name : String;
     var enumValue : Null<NativeEnum>;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 extern class ComponentType {
     var meta : NativeMeta;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 class ComponentDatabase {
@@ -69,8 +67,6 @@ class ComponentDatabase {
         for (name in components) {
             var component : ComponentType = Reflect.field( database.components, name );
 
-            trace( component.meta );
-
             m_db.set( name, component );
         }
 
@@ -82,8 +78,23 @@ class ComponentDatabase {
         return m_typeDB.get( name );
     }
 
+    public function getComponentTypes() : Array<String> {
+        var keys : Array<String> = new Array<String>( );
+
+        for (key in m_db.keys( ))
+            keys.push( key );
+
+        return keys;
+    }
+
     public function getComponentType(name : String) : ComponentType {
         return m_db.get( name );
+    }
+
+    public function getComponentTypeField(type : ComponentType, name : String) : NativeField {
+        return Lambda.find( type.fields, function(f) {
+            return f.name == name;
+        } );
     }
 
     public function createComponentInspector(entity : Entity, inspection : ComponentInspection) : ComponentInspectionHandler {

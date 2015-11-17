@@ -19,7 +19,6 @@ protected:
     bool m_hasCursorFocus;
 
 private:
-
     void onFocusChange(EVENT_HANDLER(NativeEditorTool));
     void onMouseEntry(EVENT_HANDLER(NativeEditorTool));
 } Meta(Register);

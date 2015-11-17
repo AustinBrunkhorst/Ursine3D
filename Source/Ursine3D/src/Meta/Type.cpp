@@ -512,6 +512,11 @@ namespace ursine
                 GetName( ).c_str( )
             );
 
+            if (*this == typeof( bool ))
+            {
+                return { instance.ToBool( ) };
+            }
+
             if (IsPrimitive( ) || IsEnum( ))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
@@ -519,7 +524,8 @@ namespace ursine
  
                 return { instance.ToInt( ) };
             }
-            else if (*this == typeof( std::string ))
+
+            if (*this == typeof( std::string ))
             {
                 return { instance.ToString( ) };
             }
@@ -539,6 +545,18 @@ namespace ursine
         }
 
         Variant Type::DeserializeJson(const Json &value) const
+        {
+            auto ctor = GetConstructor( );
+
+            UAssert( ctor.IsValid( ),
+                "Serialization requires a default constructor.\nWith type '%s'.",
+                GetName( ).c_str( )
+            );
+
+            return DeserializeJson( value, ctor );
+        }
+
+        Variant Type::DeserializeJson(const Json &value, const Constructor &ctor) const
         {
             // we have to handle all primitive types explicitly
             if (IsPrimitive( ))
@@ -563,15 +581,15 @@ namespace ursine
                 return { value.string_value( ) };
             }
 
-            auto ctor = GetConstructor( );
-
-            UAssert( ctor.IsValid( ),
-                "Serialization requires a default constructor.\nWith type '%s'.",
-                GetName( ).c_str( )
-            );
-
             auto instance = ctor.Invoke( );
 
+            DeserializeJson( instance, value );
+
+            return instance;
+        }
+
+        void Type::DeserializeJson(Variant &instance, const Json &value) const
+        {
             auto &fields = database.types[ m_id ].fields;
 
             for (auto &field : fields)
@@ -588,8 +606,6 @@ namespace ursine
                     fieldType.DeserializeJson( value[ field.first ] ) 
                 );
             }
-
-            return instance;
         }
     }
 }

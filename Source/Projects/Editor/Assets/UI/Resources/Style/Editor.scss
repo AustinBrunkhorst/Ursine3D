@@ -1,34 +1,10 @@
 @import 'Reset';
 @import 'Fonts';
+@import 'Icons';
 
 @import 'Global';
 
 @import 'Header';
 @import 'Main';
 
-// @@@TODO: remove this
-//body { background: #252526 }
-
-// @@@TODO: separate this
-.entity-list {
-  font-size: 14px;
-  color: white;
-
-  li {
-    padding: 5px 5px 5px 10px;
-    cursor: pointer;
-    transition: all $duration-transition-btn ease;
-
-    &:nth-child(odd) {
-      background: darken(#262626, 1%);
-    }
-
-    &:hover {
-      background: darken($color-accent, 35%);
-    }
-
-    &.selected {
-      background: darken($color-accent, 25%) !important;
-    }
-  }
-}
+@import 'Windows/EntityInspector';

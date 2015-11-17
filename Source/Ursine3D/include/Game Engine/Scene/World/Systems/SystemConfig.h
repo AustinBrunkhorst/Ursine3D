@@ -26,6 +26,10 @@
 #define ENTITY_SYSTEM_DEFINITION(type)             \
     ursine::ecs::SystemTypeID type::SystemID = -1; \
 
+// Determines if the world has the given system type
+#define HasEntitySystem(systemType) GetSystemManager( )->HasSystem<systemType>( )
+
+// Gets the given entity system from the world
 #define GetEntitySystem(systemType) GetSystemManager( )->GetSystem<systemType>( )
 
 namespace ursine

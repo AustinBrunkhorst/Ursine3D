@@ -31,9 +31,14 @@ namespace ursine
             if (!entity)
                 return false;
 
-            return ((m_maskOne      & entity->m_typeMask) != 0              || m_maskOne == 0) &&
-                   ((m_maskContains & entity->m_typeMask) == m_maskContains || m_maskContains == 0) &&
-                   ((m_maskExclude  & entity->m_typeMask) == 0              || m_maskExclude == 0);
+            return Matches( entity->m_typeMask );
+        }
+
+        bool Filter::Matches(const ComponentTypeMask& typeMask) const
+        {
+            return ((m_maskOne      & typeMask) != 0              || m_maskOne == 0) &&
+                   ((m_maskContains & typeMask) == m_maskContains || m_maskContains == 0) &&
+                   ((m_maskExclude  & typeMask) == 0              || m_maskExclude == 0);
         }
     }
 }

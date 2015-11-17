@@ -16,19 +16,9 @@ public:
 private:
     Editor *m_editor;
 
-    float m_camZoom;
+    void onFocusChanged(EVENT_HANDLER(NativeEditorTool));
+    void onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool));
 
-    ursine::SVec3 m_camPos;
-    
-    ursine::graphics::Camera &getEditorCamera(void);
-
-    void onAppUpdate(EVENT_HANDLER( ursine::Application ));
-
-    void onViewportInvalidated(EVENT_HANDLER( NativeEditorTool ));
-
-    void onMouseScroll(EVENT_HANDLER( ursine::MouseManager ));
-
-    void UpdateCameraKeys(float dt);
-    void UpdateCameraMouse(float dt);
+    void onViewportInvalidated(EVENT_HANDLER(NativeEditorTool));
 
 } Meta(Enable);

@@ -35,6 +35,8 @@ namespace ursine
         class World : public EventDispatcher<WorldEventType>
         {
         public:
+            typedef std::shared_ptr<World> Handle;
+
             World(void);
             ~World(void);
 
@@ -64,13 +66,18 @@ namespace ursine
             // Renders the world
             void Render(void);
 
-            SystemManager *GetSystemManager(void);
+            Entity *GetSettings(void) const;
 
+            SystemManager *GetSystemManager(void) const;
+
+            void DispatchLoad(void);
         private:
             friend class Entity;
             friend class WorldSerializer;
 
-            std::vector<Entity*> m_deleted;
+            EntityVector m_deleted;
+
+            Entity *m_settings;
 
             // direct pointers core world managers
             EntityManager *m_entityManager;

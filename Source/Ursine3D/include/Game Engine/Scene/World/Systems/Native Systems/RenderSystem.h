@@ -4,6 +4,8 @@
 
 #include "GFXAPIDefines.h"
 #include <Core/Graphics/API/GfxAPI.h>
+#include "RenderableComponentBase.h"
+#include "Filter.h"
 
 namespace ursine
 {
@@ -11,7 +13,6 @@ namespace ursine
 
     namespace ecs
     {
-        class Renderable;
         class Camera;
 
         enum RenderSystemEventType
@@ -44,12 +45,18 @@ namespace ursine
             void OnRemove(void) override;
 
             std::unordered_map<EntityUniqueID, ursine::ecs::Camera*> m_cameras;
-            std::unordered_map<EntityUniqueID, Renderable*> m_renderable;
+
+            typedef std::vector<RenderableComponentBase*> RenderableVector;
+            typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
+            RenderableMap m_renderableMap;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
             void onRender(EVENT_HANDLER(World));
+
+            void addRenderable(Entity *entity, RenderableComponentBase* renderable);
+            void removeRenderable(Entity *entity, RenderableComponentBase* renderable);
         } Meta(Enable);
     }
 }

@@ -1,21 +1,18 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
 
 <dom-module id="x-button">
+    <link rel="import" type="css" href="../Style/Controls/Button.css">
     <template>
-        <style>
-            button {
-                color: red;
-            }
-        </style>
-
-        <button>{{text}}</button>
+        <content>{{text}}</content>
     </template>
     <script>
         var ButtonControl = Polymer({
-            is: "x-button",
+            is: 'x-button',
+            extends: 'button',
             properties: {
                 text: {
-                    type: String
+                    type: String,
+                    notify: true
                 }
             }
         });

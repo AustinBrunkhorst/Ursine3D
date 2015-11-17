@@ -12,14 +12,15 @@ public:
 
     Project(ursine::UIView::Handle ui);
 
-    ursine::Scene &GetScene(void);
-
+    ursine::Scene::Handle GetScene(void);
     ursine::UIView::Handle GetUI(void);
 
-private:
-    ursine::Scene m_scene;
+    void SetWorld(ursine::ecs::World::Handle world);
 
+private:
     ursine::UIView::Handle m_ui;
+
+    ursine::Scene::Handle m_scene;
 
     EditorEntityManager m_entityManager;
 };

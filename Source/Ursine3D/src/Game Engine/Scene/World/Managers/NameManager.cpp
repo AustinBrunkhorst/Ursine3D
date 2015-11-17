@@ -59,6 +59,19 @@ namespace ursine
 
         void NameManager::SetName(Entity *entity, const std::string &name)
         {
+            setName( entity, name );
+
+            EditorEntityNameChangedArgs e( 
+                WORLD_EDITOR_ENTITY_NAME_CHANGED, 
+                entity, 
+                name 
+            );
+
+            m_world->Dispatch( WORLD_EDITOR_ENTITY_NAME_CHANGED, &e );
+        }
+
+        void NameManager::setName(Entity *entity, const std::string &name)
+        {
             auto nameEntry = m_names.find( entity->m_uniqueID );
 
             // first time setting the name

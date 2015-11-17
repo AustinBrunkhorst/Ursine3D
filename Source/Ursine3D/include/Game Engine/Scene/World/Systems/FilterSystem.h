@@ -55,6 +55,6 @@ namespace ursine
             virtual void OnRemove(void);
         public:
             FilterSystem(World *world, const Filter &filter);
-        };
+        } Meta(Enable, WhiteListMethods);
     }
 }

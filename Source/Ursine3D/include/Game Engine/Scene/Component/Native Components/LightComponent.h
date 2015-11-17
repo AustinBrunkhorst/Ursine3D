@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Renderable.h"
+#include "RenderableComponentBase.h"
 
 namespace ursine
 {
@@ -14,7 +15,9 @@ namespace ursine
             Spot = graphics::Light::LIGHT_SPOTLIGHT,
         } Meta(Enable);
 
-        class Light : public Component
+        class Light 
+            : public Component
+            , public RenderableComponentBase
         {
             NATIVE_COMPONENT;
 
@@ -88,9 +91,11 @@ namespace ursine
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
 
+            //private methods
         private:
+            void updateRenderer(void) override;
+
             graphics::Light *m_light;
-            graphics::GfxHND m_handle;
 
             friend class RenderSystem;
         } Meta(Enable, DisplayName( "Light" ));

@@ -1,37 +1,73 @@
 package ursine.editor.scene.component.inspectors.fields;
 
-import ursine.controls.NumberInput;
+import ursine.controls.ColorInput;
 import ursine.editor.scene.component.ComponentDatabase;
 
 @fieldInspector( "ursine::Color" )
 class ColorFieldInspector extends FieldInspectionHandler {
+    var m_colorPreview : js.html.DivElement;
+    var m_colorInput : ColorInput;
+
     public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
-        var fields = Reflect.fields( type.fields );
+        var previewContainer = js.Browser.document.createDivElement( );
+        {
+            previewContainer.classList.add( 'color-preview' );
 
-        for (name in fields) {
-            var colorField = Reflect.field( type.fields, name );
-
-            createColorField( colorField );
+            inspector.container.appendChild( previewContainer );
         }
+
+        m_colorPreview = js.Browser.document.createDivElement( );
+        {
+            m_colorPreview.addEventListener( 'click', onPreviewClick );
+
+            previewContainer.appendChild( m_colorPreview );
+        }
+
+        m_colorInput = null;
+
+        updateValue( instance );
     }
 
-    private function createColorField(field : NativeField) {
-        var number = new NumberInput( );
+    public override function updateValue(value : Dynamic) {
+        var red = Math.round( Reflect.field( value, 'r' ) * 255 );
+        var green = Math.round( Reflect.field( value, 'g' ) * 255 );
+        var blue = Math.round( Reflect.field( value, 'b' ) * 255 );
+        var alpha = untyped Reflect.field( value, 'a' ).toPrecision( 4 );
 
-        number.step = '1';
-        number.min = '0';
-        number.max = '255';
+        m_colorPreview.style.background = 'rgba(${red}, ${green}, ${blue}, ${alpha})';
 
-        number.value = Std.string( Reflect.field( m_instance, field.name ) * 255 );
+        m_instance = value;
+    }
 
-        number.addEventListener( 'input', function() {
-            Reflect.setField( m_instance, field.name, number.valueAsNumber / 255.0 );
+    public override function remove() {
+        if (m_colorInput != null)
+            js.Browser.document.body.removeChild( m_colorInput );
 
-            m_owner.notifyChanged( m_field, m_instance );
-        } );
+        super.remove( );
+    }
 
-        inspector.container.appendChild( number );
+    private function onPreviewClick(e : js.html.MouseEvent) {
+        if (m_colorInput != null)
+            return;
+
+        m_colorInput = new ColorInput( m_instance );
+
+        m_colorInput.addEventListener( 'color-changed', onColorChanged );
+        m_colorInput.addEventListener( 'closed', onColorClosed );
+
+        m_colorInput.style.left = '${e.clientX}px';
+        m_colorInput.style.top = '${e.clientY}px';
+
+        js.Browser.document.body.appendChild( m_colorInput );
+    }
+
+    private function onColorChanged(e : js.html.CustomEvent) {
+        m_owner.notifyChanged( m_field, e.detail.color );
+    }
+
+    private function onColorClosed(e : js.html.CustomEvent) {
+        m_colorInput = null;
     }
 }

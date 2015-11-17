@@ -3,16 +3,37 @@
 #include "Component.h"
 #include "Renderable.h"
 #include "GfxAPI.h"
+#include "RenderableComponentBase.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Model3D : public Component
+        class Model3D 
+            : public Component
+            , public RenderableComponentBase
         {
             NATIVE_COMPONENT;
 
         public:
+            EditorField(
+                Color color,
+                GetColor,
+                SetColor
+            );
+
+            EditorField(
+                std::string modelName,
+                GetModel,
+                SetModel
+            );
+
+            EditorField(
+                std::string materialName,
+                GetMaterial,
+                SetMaterial
+            );
+
             Model3D(void);
             ~Model3D(void);
 
@@ -21,20 +42,35 @@ namespace ursine
 
             //get/set model
             void SetModel(const std::string &name);
-            ursine::graphics::Model3D *GetModel(void);
+            const std::string &GetModel(void) const;
             
-            //get/set texture
+            void SetMaterial(const std::string &name);
+            const std::string &GetMaterial(void) const;
+
+            //get/set color
+            void SetColor(const ursine::Color &color);
+            const ursine::Color &GetColor(void);
+
+            void SetOverdraw(bool flag);
+            bool GetOverdraw(void) const;
+
+            // turn debug mode on or off for this model
+            void SetDebug(bool flag);
+            bool GetDebug(void) const;
+
+            void SetMaterialData(float emiss, float pow, float intensity);
+            void GetMaterialData(float &emiss, float &pow, float &intensity);
 
         private:
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;
 
-            // The graphics core API
-            graphics::GfxAPI *m_graphics;
+            std::string m_modelName;
+            std::string m_materialName;
 
-            void onUpdateRenderer(EVENT_HANDLER(Entity));
+            void updateRenderer(void) override;
 
-        } Meta( Enable, DisplayName( "Model3D" ) );
+        } Meta(Enable, DisplayName( "Model3D" ));
     }
 }

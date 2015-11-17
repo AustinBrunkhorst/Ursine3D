@@ -8,13 +8,8 @@
 #include <WindowManager.h>
 #include <UIManager.h>
 
-#include <Color.h>
-
-#include <CameraComponent.h>
-#include <RenderableComponent.h>
+#include <Color.h> 
 #include <LightComponent.h>
-#include <Model3DComponent.h>
-#include "Tools/Scene/Components/SelectedComponent.h"
 
 using namespace ursine;
 
@@ -28,7 +23,7 @@ namespace
     const auto kDefaultWindowHeight = 720;
 }
 
-CORE_SYSTEM_DEFINITION( Editor ) ;
+CORE_SYSTEM_DEFINITION( Editor );
 
 Editor::Editor(void)
     : m_graphics( nullptr )
@@ -92,10 +87,21 @@ void Editor::OnRemove(void)
         .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
     m_mainWindow.ui->Close( );
+    m_mainWindow.ui = nullptr;
 
     m_mainWindow.window = nullptr;
 
     m_project = nullptr;
+}
+
+Window::Handle Editor::GetMainWindow(void) const
+{
+    return m_mainWindow.window;
+}
+
+UIView::Handle Editor::GetMainUI(void) const
+{
+    return m_mainWindow.ui;
 }
 
 std::shared_ptr<Project> Editor::GetProject(void) const
@@ -110,7 +116,7 @@ void Editor::initializeGraphics(void)
     config.Fullscreen_ = false;
 
     config.HandleToWindow_ =
-            static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
+        static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
 
     config.ModelListPath_ = "Assets/Models/";
     config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
@@ -131,117 +137,35 @@ void Editor::initializeGraphics(void)
 
 void Editor::initializeScene(void)
 {
-    auto &scene = m_project->GetScene( );
+    auto scene = m_project->GetScene( );
 
-    auto &world = scene.GetWorld( );
+    auto world = scene->GetWorld( );
     {
-        auto viewport = m_graphics->ViewportMgr.CreateViewport(
-            static_cast<int>( 0.85f * kDefaultWindowWidth ),
-            static_cast<int>( kDefaultWindowHeight - ( 30.0f + 27.0f ))
-        );
+        auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
 
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-        handle.SetPosition(
-            static_cast<int>( 0.15f * kDefaultWindowWidth ),
-            static_cast<int>( 30.0f + 27.0f )
-        );
+        handle.SetPosition( 0, 0 );
 
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-        scene.SetViewport( viewport );
+        scene->SetViewport( viewport );
 
         m_graphics->SetGameViewport( viewport );
     }
 
-    auto *cameraEntity = world.CreateEntity( "Camera" );
-    {
-        cameraEntity->AddComponent<Selected>( );
+    world->DispatchLoad( );
 
-        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
-
-        auto &camera = component->GetCamera( );
-
-        camera.SetPosition( 0.0f, 0.0f );
-        camera.SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
-        camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 700.0f );
-
-        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-        scene.SetEditorCamera( component->GetHandle( ) );
-    }
-
-    for (int i = 0; i < 25; ++i)
-    {
-        auto *entity_char = world.CreateEntity( );
-        auto *entity_cube = world.CreateEntity( );
-        {
-            entity_char->AddComponent<ecs::Renderable>();
-            auto model = entity_char->AddComponent<ecs::Model3D>();
-
-            auto name = "Character";
-
-            entity_char->SetName( name );
-
-            model->SetModel( name );
-
-            auto transform = entity_char->GetTransform( );
-
-            transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
-            transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
-            transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
-        }
-        {
-            entity_cube->AddComponent<ecs::Renderable>();
-            auto model = entity_cube->AddComponent<ecs::Model3D>();
-
-            auto name = "Cube";
-
-            entity_cube->SetName(name);
-
-            model->SetModel(name);
-
-            auto transform = entity_cube->GetTransform();
-
-            transform->SetWorldPosition(SVec3{ i * 1.0f, 0.0f, 0.0f });
-            transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
-            transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
-        }
-
-        // parent the character to the cube
-        entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
-    }
-
-    auto *sky = world.CreateEntity( "Skybox" );
-    {
-        auto skyHND = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
-
-        auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
-
-        skybox.SetModel( "Skybox" );
-        skybox.SetMaterial( "Skybox" );
-        skybox.SetMaterialData( 1, 0, 0 );
-
-        SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
-        SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
-        skybox.SetMaterialData( 1, 0, 0 );
-        skybox.SetWorldMatrix( final );
-
-        auto *component = sky->AddComponent<ecs::Renderable>( );
-
-        component->SetHandle( skyHND );
-    }
-
-    auto *univLight = world.CreateEntity( "Global Light" );
+    auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
-        component->SetType( ecs::LightType::Point );
-        component->SetPosition( { 0.0f, 0.0f, 0.0f } );
+        univLight->GetTransform()->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
+        univLight->GetTransform()->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+
+        component->SetType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
-        component->SetDirection( { 0.0f, 1.0f, 0.0f } );
-        component->SetColor( Color::White );
+        component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
 }
 
@@ -251,15 +175,15 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    auto &scene = m_project->GetScene( );
+    auto scene = m_project->GetScene( );
 
-    scene.Update( dt );
+    scene->Update( dt );
 
-    m_graphics->StartFrame( );
+    m_graphics->StartFrame( );  
 
-    scene.Render( );
+    scene->Render( ); 
 
-    m_mainWindow.ui->DrawMain( );
+    m_mainWindow.ui->DrawMain( );  
 
     m_graphics->EndFrame( );
 }

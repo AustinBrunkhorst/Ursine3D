@@ -29,17 +29,19 @@ class LightInspector extends ComponentInspectionHandler {
 
         var database = Editor.instance.componentDatabase;
 
+        var typeInstance = Reflect.field( component.value, m_lightTypeFieldName );
+
         // add type field
         addField(
             database.createFieldInspector(
                 this,
-                Reflect.field( m_component.value, m_lightTypeFieldName ),
-                Reflect.field( m_componentType.fields, m_lightTypeFieldName ),
-                Editor.instance.componentDatabase.getNativeType( m_lightTypeName )
+                typeInstance,
+                database.getComponentTypeField( m_componentType, m_lightTypeFieldName ),
+                database.getNativeType( m_lightTypeName )
             )
         );
 
-        setType( Reflect.field( component.value, m_lightTypeFieldName ) );
+        setType( typeInstance );
     }
 
     private function setType(type : UInt) {
@@ -53,9 +55,11 @@ class LightInspector extends ComponentInspectionHandler {
 
         var fields = m_typeToFields[ type ];
 
-        // add new fields
-        for (name in fields) {
-            var field : NativeField = Reflect.field( componentType.fields, name );
+        // add type fields
+        for (field in componentType.fields) {
+            // ignore light type
+            if (field.name == m_lightTypeFieldName)
+                continue;
 
             var instance = Reflect.field( m_component.value, field.name );
 

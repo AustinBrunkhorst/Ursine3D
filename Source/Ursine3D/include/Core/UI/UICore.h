@@ -29,6 +29,8 @@ namespace ursine
         , public ResourceBundleHandler
     {
     public:
+        static CefRefPtr<UICore> Instance;
+
         UICore(void);
         ~UICore(void);
 

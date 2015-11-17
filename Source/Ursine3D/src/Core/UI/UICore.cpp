@@ -17,6 +17,8 @@
 
 namespace ursine
 {
+    CefRefPtr<UICore> UICore::Instance = nullptr;
+
     UICore::UICore(void)
     {
         atexit( Shutdown );

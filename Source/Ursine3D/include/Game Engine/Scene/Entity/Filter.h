@@ -32,6 +32,7 @@ namespace ursine
             inline ComponentTypeMask ContainsMask(void) const;
 
             bool Matches(const Entity *entity) const;
+            bool Matches(const ComponentTypeMask &typeMask) const;
 
             template<class... Types>
             Filter &All(void);

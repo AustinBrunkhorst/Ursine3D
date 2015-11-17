@@ -36,6 +36,9 @@ namespace ursine
         template<class ComponentType>
         ComponentType *Entity::GetComponent(void) const
         {
+            static_assert( !std::is_same<ComponentType, Transform>::value, 
+                "Use GetTransform( ) to get the Transform component." );
+
             return m_world->m_entityManager->GetComponent<ComponentType>( this );
         }
 

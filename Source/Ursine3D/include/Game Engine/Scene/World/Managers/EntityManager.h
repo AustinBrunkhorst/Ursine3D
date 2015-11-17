@@ -155,6 +155,8 @@ namespace ursine
             static bool CompareComponents(const Component *a, const Component *b);
 
         private:
+            friend class WorldSerializer;
+
             // components by type
             std::array<ComponentVector, kMaxComponentCount> m_componentTypes;
 

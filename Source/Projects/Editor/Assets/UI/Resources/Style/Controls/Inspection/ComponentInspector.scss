@@ -1,13 +1,26 @@
 @import '../../Config';
 @import '../../Utils';
+@import '../../Icons';
 
 :host {
   #header {
-    padding: 5px;
+    position: relative;
+    padding: 5px 42px 5px 5px;
+    white-space: nowrap;
     background: #2d2d30;
     color: #b3b3b3;
     border-bottom: 1px solid #29292c;
     cursor: pointer;
+
+    > span {
+      padding-bottom: 2px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      vertical-align: middle;
+    }
 
     &:before {
       display: inline-block;
@@ -17,11 +30,32 @@
       -webkit-transition: -webkit-transform $duration-transition-btn ease;
       @include triangle( 'right', $color-accent, 5px );
     }
+
+    #btnRemove {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      color: $color-accent;
+      transform: translateY(-50%);
+      transition: color $duration-transition-btn ease;
+
+      @include icon-half( $icon-half-remove-circle, 15px );
+
+      &:hover {
+        color: #cf6753;
+      }
+    }
   }
 
   #container {
     display: none;
-    margin-left: 5px;
+    margin: 0 0 0 5px;
+
+    #fieldInspectors {
+      overflow: auto;
+    }
   }
 
   &.opened {

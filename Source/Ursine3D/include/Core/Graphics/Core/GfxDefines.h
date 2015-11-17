@@ -37,13 +37,15 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define MAX_CAMERAS             32
 
 //max points/lines
-#define MAX_DRAW_OBJ            4096
+#define MAX_DRAW_OBJ            800192
 
 //max renderables of each type
 #define MAX_RENDERABLES         2048
 
 //max draw calls for a single scene
-#define MAX_DRAW_CALLS 2048
+#define MAX_DRAW_CALLS          2048
+
+#define MAX_BONE_COUNT          60
 
 //handle IDs
 #define ID_RENDERABLE 170

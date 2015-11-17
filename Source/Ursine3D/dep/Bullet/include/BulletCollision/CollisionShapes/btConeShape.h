@@ -23,7 +23,7 @@ subject to the following restrictions:
 ATTRIBUTE_ALIGNED16(class) btConeShape : public btConvexInternalShape
 
 {
-
+protected:
 	btScalar m_sinAngle;
 	btScalar m_radius;
 	btScalar m_height;
