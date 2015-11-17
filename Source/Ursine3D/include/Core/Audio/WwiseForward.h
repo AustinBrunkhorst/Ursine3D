@@ -14,3 +14,4 @@ namespace AK
 	typedef unsigned __int64 AkUIntPtr;
 	typedef AkUIntPtr AkGameObjectID;
 	typedef wchar_t	AkOSChar;
+	typedef unsigned char AkUInt8;

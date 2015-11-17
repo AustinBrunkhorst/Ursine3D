@@ -58,6 +58,13 @@ namespace AK
 
 namespace ursine
 {
+	struct ListenerNode
+	{
+		ListenerNode* next;
+		ListenerIndex listener;
+		bool available;
+	};
+
 	class AudioManager : public core::CoreSystem
 	{
 		CORE_SYSTEM;
@@ -72,6 +79,12 @@ namespace ursine
 		Meta(Disable)
 		void OnRemove(void) override;
 
+		void PlayEvent(const std::string name, AkGameObjectID obj);
+
+		void PauseAudio();
+
+		void ResumeAudio();
+
 		void LoadBank(const std::string &bankName, AkBankID &bankID);
 
 		void UnloadBank(const std::string &bankName);
@@ -80,39 +93,11 @@ namespace ursine
 
 		void UnRegisterObject(AkGameObjectID obj);
 
-		void PlayEvent(const std::string name, AkGameObjectID obj);
-
-		void PauseAudio();
-
-		void ResumeAudio();
-
-		void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
-
-		void AssignListener(AkGameObjectID obj, int listeners);
-
 		void GetEventStrings(const AkBankID);
 
-		void SetListener3DPosition(const AkVector orientation_forward, 
-			const AkVector orientation_up, const AkVector position, const AkUInt32 listeners);
+		ListenerIndex GetListener();
 
-		void SetListener3DPosition(const SVec3 orientation_forward, 
-			const SVec3 orientation_up, const SVec3 position, const AkUInt32 listeners);
-
-		void SetObject3DPosition(AkGameObjectID obj, const AkSoundPosition position);
-
-		void SetObject3DPosition(AkGameObjectID obj, const SVec3 position, const SVec3 orientation);
-
-		void SetMultipleObject3DPosition(AkGameObjectID obj, const AkSoundPosition* positions, 
-			AkUInt16 num_positions, AK::SoundEngine::MultiPositionType type);
-
-		void SetSoundObstructionAndOcclusion(AkGameObjectID obstruction, 
-			const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level);
-
-		void SetGameState(const std::string name, const std::string state);
-
-		void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
-
-		void SetTrigger(const std::string name, AkGameObjectID obj);
+		void FreeListener(ListenerIndex listener);
 
 		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
 			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
@@ -123,7 +108,13 @@ namespace ursine
 		AkInitSettings m_initSettings;
 		AkPlatformInitSettings m_platSettings;
 
+		ListenerNode* m_head;
+
 		void onAppUpdate(EVENT_HANDLER(Application));
+
+		void PopulateList();
+
+		void DestroyList();
 
 		void Init(AkInitSettings* in_pSettings, 
 			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);

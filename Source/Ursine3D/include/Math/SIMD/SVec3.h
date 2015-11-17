@@ -26,7 +26,6 @@ namespace DirectX
 }
 #endif
 
-URSINE_TODO("REMOVE ME");
 #define URSINE_DEPENDENCY_WWise
 
 #if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)

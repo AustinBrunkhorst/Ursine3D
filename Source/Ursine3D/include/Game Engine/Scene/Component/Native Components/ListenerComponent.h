@@ -1,44 +1,31 @@
 #pragma once
 
 #include "Component.h"
-
-#include "WwiseForward.h"
+#include "AudioComponentBase.h"
+#include "ListenerMasks.h"
 
 namespace ursine
 {
 	namespace ecs
 	{
-		class Listener : public Component
+		class AudioListener : public Component, public AudioComponentBase
 		{
 			NATIVE_COMPONENT;
 
 		public:
-			Listener(void);
-			~Listener(void);
+
+			AudioListener();
+			~AudioListener(void);
+
+			ListenerIndex GetListenerIndex();
+			void SetListenerIndex(ListenerIndex index);
 
 			Meta(Disable)
-				Listener GetHandle(void) const; //?
-
-			Meta(Disable)
-				void SetHandle(Listener handle); //?
-
-			void OnInitialize(void) override;
+				void OnInitialize(void) override;
 
 		private:
-			friend class RenderSystem;
+			 ListenerIndex m_listenerIndex;
 
-			AkGameObjectID m_handle;
-
-			// lets us know if we need to update the listener position
-			bool m_dirty;
-
-			void onTransformChange(EVENT_HANDLER(Entity));
-
-			// notify the components listening to the 
-			// renderable component to update the renderer
-			// Ex: Model updates the renderers matrix
-			void updateRenderer(void);
-
-		} Meta(Enable, DisplayName("Renderable"));
+		} Meta(Enable, DisplayName("Audio Listener 3D"));
 	}
 }
