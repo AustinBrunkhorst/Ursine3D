@@ -41,8 +41,6 @@ namespace ursine
 		// make app
 		auto *app = Application::Instance;
 
-		m_nextEmptyID = StartID;
-
 		// Subscribe to update
 		app->Connect(APP_UPDATE, this, &AudioManager::onAppUpdate);
 	}
@@ -63,6 +61,7 @@ namespace ursine
 
 	void AudioManager::onAppUpdate(void *_sender, const ursine::EventArgs *_args)
 	{
+
 		// Process bank requests, events, positions, RTPC, etc.
 		UAssert(AK::SoundEngine::RenderAudio() == AK_Success, "Wwise: Cannot Render Audio");
 	}
@@ -230,11 +229,6 @@ namespace ursine
 		{
 			UWarning("Wwise: Cannot Register Plugin");
 		}
-	}
-
-	AkGameObjectID AudioManager::AssignSoundObjectID()
-	{
-		return m_nextEmptyID++;
 	}
 
 	void AudioManager::SetObject3DPosition(AkGameObjectID obj, const SVec3 position, const SVec3 orientation)

@@ -15,6 +15,7 @@
 
 #include "CoreSystem.h"
 #include "Meta.h"
+#include "AudioEmitter.h"
 
 #include "ListenerMasks.h"
 #include "WwiseForward.h"
@@ -89,7 +90,7 @@ namespace ursine
 
 		void AssignListener(AkGameObjectID obj, int listeners);
 
-		void GetEventStrings(const AkBankID )
+		void GetEventStrings(const AkBankID);
 
 		void SetListener3DPosition(const AkVector orientation_forward, 
 			const AkVector orientation_up, const AkVector position, const AkUInt32 listeners);
@@ -116,16 +117,11 @@ namespace ursine
 		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
 			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
 
-		AkGameObjectID AssignSoundObjectID();
-
 		CAkFilePackageLowLevelIOBlocking g_lowLevelIO;
 
 	private:
 		AkInitSettings m_initSettings;
 		AkPlatformInitSettings m_platSettings;
-
-		AkGameObjectID m_nextEmptyID;
-		std::vector<AkBankID> m_banksIDs;
 
 		void onAppUpdate(EVENT_HANDLER(Application));
 
