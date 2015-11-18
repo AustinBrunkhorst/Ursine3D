@@ -200,9 +200,9 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto *rig = AnimationBuilder::GetAnimationRigByIndex( 0 );
 
-    //std::vector<DirectX::XMMATRIX> matPal;
+    std::vector<SMat4> matPal;
 
-    //AnimationBuilder::GenerateAnimationData( myState, rig, matPal );
+    AnimationBuilder::GenerateAnimationData( myState, rig, matPal );
 
     auto scene = m_project->GetScene( );
 	 
