@@ -5,3 +5,4 @@
 #include "GridRendererSettingsComponent.h"
 #include "CharacterControllerComponent.h"
 #include "EditorIconComponent.h"
+#include "PlayerInputComponent.h"

@@ -8,6 +8,4 @@ CharacterController::CharacterController(void)
     : BaseComponent()
     , moveSpeed( 50.0f )
     , jumpSpeed( 1000.0f )
-	, rotateSpeed( 300.0f )
-    , id( 0 )
-    , keyboard( false ) { }
+	, rotateSpeed( 300.0f ) { }
