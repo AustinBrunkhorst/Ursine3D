@@ -96,9 +96,7 @@ namespace ursine
             void SetAngularVelocity(const SVec3 &angularVelocity);
             SVec3 GetAngularVelocity(void) const;
 
-            Meta(Disable)
             URSINE_TODO("Add ForceMode");
-
             void AddForce(const SVec3 &force);
 
             // Relative to the transforms coordinate system
