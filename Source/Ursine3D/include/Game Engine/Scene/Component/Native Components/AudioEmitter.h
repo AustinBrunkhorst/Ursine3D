@@ -1,22 +1,22 @@
 #pragma once
 
 #include "Component.h"
-
-#include "AudioID.h"
-#include "AudioObject.h"
-#include <Core/Audio/AudioManager.h>
+#include "AudioComponentBase.h"
+#include "ListenerMasks.h"
+#include <queue>
 
 namespace ursine
 {
 	namespace ecs
 	{
-		class AudioEmitter : public Component
+		class AudioEmitter : public Component, public AudioComponentBase
 		{
 			NATIVE_COMPONENT;
 
 		public:
+
 			EditorField(
-				AkUInt8 Volume,
+				float Volume,
 				GetVolume,
 				SetVolume
 				);
@@ -27,25 +27,36 @@ namespace ursine
 				SetLoop
 				);
 
+			EditorField(
+				bool Mute,
+				GetMute,
+				SetMute
+				);
+
 			AudioEmitter(void);
 			~AudioEmitter(void);
 
-			AkUInt8 GetVolume( );
-			void SetVolume(AkUInt8 volume);
+			float GetVolume( ) const;
+			void SetVolume(float volume);
 
-			bool GetLoop( );
+			bool GetLoop( ) const;
 			void SetLoop(bool loop);
+
+			bool GetMute() const;
+			void SetMute(bool mute);
 
 			Meta(Disable)
 				void OnInitialize(void) override;
 
 		private:
-			AkGameObjectID m_audioObjID;
-			AkUInt8 m_volume;
 			bool m_loop;
+			bool m_mute;
+			AkUInt32 m_listeners;
+			float m_volume;
+			
+			// fire and forget
+			std::queue<std::string> m_soundsFAF;
 
-			void AudioEmitter::onTransformChange(EVENT_HANDLER(Entity));
-
-		} Meta(Enable, DisplayName("Audio Emitter 3D"));
+		} Meta(Enable, DisplayName("Audio Emitter"));
 	}
 }

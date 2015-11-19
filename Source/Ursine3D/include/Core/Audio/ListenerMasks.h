@@ -11,4 +11,4 @@ enum ListenerIndex
 	LISTENER_SIX = 1 << 5u,
 	LISTENER_SEVEN = 1 << 6u,
 	LISTENER_EIGHT = 1 << 7u
-};
+} Meta(Enable);

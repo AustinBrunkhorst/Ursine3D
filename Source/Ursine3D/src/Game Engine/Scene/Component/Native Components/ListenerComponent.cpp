@@ -1,53 +1,35 @@
 #include "UrsinePrecompiled.h"
 
-#include "RenderableComponent.h"
-#include "EntityEvent.h"
+#include "ListenerComponent.h"
 
 namespace ursine
 {
 	namespace ecs
 	{
-		NATIVE_COMPONENT_DEFINITION(Renderable);
+		NATIVE_COMPONENT_DEFINITION(AudioListener);
 
-		Renderable::Renderable(void)
+		AudioListener::AudioListener()
 			: BaseComponent()
-			, m_handle(0)
+			, m_listenerIndex(LISTENER_NONE)
+		{ }
+
+		void AudioListener::SetListenerIndex(ListenerIndex index)
+		{
+			m_listenerIndex = index;
+		}
+
+		ListenerIndex AudioListener::GetListenerIndex()
+		{
+			return m_listenerIndex;
+		}
+
+		AudioListener::~AudioListener(void)
 		{
 
 		}
 
-		Renderable::~Renderable(void)
+		void AudioListener::OnInitialize(void)
 		{
-			GetOwner()->Listener(this)
-				.Off(ENTITY_TRANSFORM_DIRTY, &Renderable::onTransformChange);
-		}
-
-		graphics::GfxHND Renderable::GetHandle(void) const
-		{
-			return m_handle;
-		}
-
-		void Renderable::SetHandle(graphics::GfxHND handle)
-		{
-			m_handle = handle;
-		}
-
-		void Renderable::OnInitialize()
-		{
-			GetOwner()->Listener(this)
-				.On(ENTITY_TRANSFORM_DIRTY, &Renderable::onTransformChange);
-		}
-
-		void Renderable::onTransformChange(EVENT_HANDLER(Entity))
-		{
-			m_dirty = true;
-		}
-
-		void Renderable::updateRenderer(void)
-		{
-			GetOwner()->Dispatch(ENTITY_UPDATE_RENDERER, EventArgs::Empty);
-
-			m_dirty = false;
 		}
 	}
 }
