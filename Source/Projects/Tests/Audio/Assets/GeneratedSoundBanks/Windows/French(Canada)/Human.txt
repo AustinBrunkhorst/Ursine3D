@@ -1,8 +1,0 @@
-Event	ID	Name			Wwise Object Path	Notes
-	1327221850	Resume_All_Global			\Default Work Unit\Resume_All_Global	
-	2952797154	Play_Hello			\Default Work Unit\Play_Hello	
-	3493516265	Pause_All_Global			\Default Work Unit\Pause_All_Global	
-
-In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	306982885	Hello	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\Voices\French(Canada)\Hello_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Hello		13763
-

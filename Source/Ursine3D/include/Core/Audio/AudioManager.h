@@ -93,7 +93,8 @@ namespace ursine
 
 		void UnRegisterObject(AkGameObjectID obj);
 
-		void GetEventStrings(const AkBankID);
+        URSINE_TODO("@Jason you need to implement this.");
+		// void GetEventStrings(const AkBankID);
 
 		ListenerIndex GetListener();
 
