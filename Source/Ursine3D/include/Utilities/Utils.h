@@ -48,6 +48,9 @@ namespace ursine
         template<typename Container, class T, class Predicate>
         void InsertionSort(Container &v, const T &item, Predicate predicate);
 
+        URSINE_TODO("Implement the binary search utility"
+                    " (http://stackoverflow.com/questions/446296/where-can-i-get-a-useful-c-binary-search-algorithm)");
+
         void Join(
             const std::vector<std::string> &input,
             const std::string &joiner,

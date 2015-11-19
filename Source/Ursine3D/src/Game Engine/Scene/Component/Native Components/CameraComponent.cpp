@@ -1,6 +1,8 @@
 #include "UrsinePrecompiled.h"
 
 #include "CameraComponent.h"
+#include "SystemManager.h"
+#include "RenderSystem.h"
 
 #include "GfxAPI.h"
 
@@ -13,6 +15,7 @@ namespace ursine
         Camera::Camera(void)
             : BaseComponent( )
             , m_active( true )
+            , m_renderLayer( 0 )
         {
             m_handle = GetCoreSystem( graphics::GfxAPI )->CameraMgr.AddCamera( );
 
@@ -117,6 +120,19 @@ namespace ursine
         void Camera::SetActive(bool active)
         {
             m_active = active;
+        }
+
+        int Camera::GetRenderLayer(void) const
+        {
+            return m_renderLayer;
+        }
+
+        void Camera::SetRenderLayer(int layer)
+        {
+            m_renderLayer = layer;
+            
+            // notify rendersystem that I've changed
+            GetOwner( )->GetWorld( )->GetEntitySystem( RenderSystem )->SortCameraArray( );
         }
 
         SVec3 Camera::GetLook(void)

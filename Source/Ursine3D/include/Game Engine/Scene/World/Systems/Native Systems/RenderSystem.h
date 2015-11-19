@@ -38,13 +38,18 @@ namespace ursine
             RenderSystem(World *world);
             ~RenderSystem(void);
 
+            void SortCameraArray(void);
+
         private:
             graphics::GfxAPI *m_graphics;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
 
-            std::unordered_map<EntityUniqueID, ursine::ecs::Camera*> m_cameras;
+            // vector of cameras sorted based on their render layer (low to high)
+            std::vector<ursine::ecs::Camera*> m_cameras;
+
+            static bool cameraSortPredicate(ursine::ecs::Camera *a, ursine::ecs::Camera *b);
 
             typedef std::vector<RenderableComponentBase*> RenderableVector;
             typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;

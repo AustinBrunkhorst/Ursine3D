@@ -22,7 +22,7 @@ namespace ursine
             std::string fileText = filePath;
             fileText.append("MODELS.8.0.gfx");
             input.open(fileText, std::ios_base::in);
-
+            
             UAssert(input.is_open(), "Failed to open file for model loading! ('%s')", filePath.c_str());
             while (input.eof() == false)
             {

@@ -21,6 +21,11 @@ namespace ursine
             m_graphics = GetCoreSystem( graphics::GfxAPI );
         }
 
+        void RenderSystem::SortCameraArray()
+        {
+            utils::InsertionSort( m_cameras, cameraSortPredicate );
+        }
+
         RenderSystem::~RenderSystem(void)
         {
             
@@ -42,15 +47,21 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
 
+        bool RenderSystem::cameraSortPredicate(ursine::ecs::Camera* a, ursine::ecs::Camera* b)
+        {
+            return a->GetRenderLayer( ) <= b->GetRenderLayer( );
+        }
+
         void RenderSystem::onComponentAdded(EVENT_HANDLER(World))
         {
             EVENT_ATTRS(World, ComponentEventArgs);
 
             if (args->component->Is<Camera>( ))
             {
-                m_cameras.emplace( 
-                    args->entity->GetUniqueID( ), 
-                    static_cast<Camera*>( const_cast<Component*>( args->component ) )
+                utils::InsertionSort(
+                    m_cameras, 
+                    static_cast<Camera*>( const_cast<Component*>( args->component ) ), 
+                    cameraSortPredicate 
                 );
             }
             else if (args->component->Is<Model3D>( ))
@@ -67,7 +78,12 @@ namespace ursine
 
             if (args->component->Is<Camera>( ))
             {
-                auto search = m_cameras.find( args->entity->GetUniqueID( ) );
+                URSINE_TODO("Replace this with a utils::BinarySearch call");
+                auto search = std::find(
+                    m_cameras.begin( ), 
+                    m_cameras.end( ), 
+                    static_cast<Camera*>( const_cast<Component*>( args->component ) )
+                );
 
                 if (search != m_cameras.end( ))
                     m_cameras.erase( search );
@@ -99,19 +115,19 @@ namespace ursine
 
             RenderHookArgs e( 0 );
 
-            for (auto &camera : m_cameras) 
+            for (auto &camera : m_cameras)
             {
-                if (camera.second->m_dirty)
-                    camera.second->updateRenderer( );
+                if (camera->m_dirty)
+                    camera->updateRenderer( );
 
-                if (!camera.second->GetActive( ))
+                if (!camera->GetActive( ))
                     continue;
 
-                e.camera = camera.second->m_handle;
+                e.camera = camera->m_handle;
 
                 Dispatch( RENDER_HOOK, &e );
 
-                m_graphics->RenderScene( 0.0f, camera.second->m_handle );
+                m_graphics->RenderScene( 0.0f, camera->m_handle );
             }
 
             m_graphics->EndScene( );

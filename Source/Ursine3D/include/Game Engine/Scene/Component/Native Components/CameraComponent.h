@@ -54,6 +54,12 @@ namespace ursine
                 SetActive
             );
 
+            EditorField(
+                int renderLayer,
+                GetRenderLayer,
+                SetRenderLayer
+            );
+
             Meta(Enable)
             Camera(void);
             ~Camera(void);
@@ -80,6 +86,9 @@ namespace ursine
             bool GetActive(void) const;
             void SetActive(bool active);
 
+            int GetRenderLayer(void) const;
+            void SetRenderLayer(int layer);
+
             SVec3 GetLook(void);
             void SetLook(const SVec3 &worldPosition);
 
@@ -94,6 +103,8 @@ namespace ursine
         private:
 
             bool m_active;
+
+            int m_renderLayer;
 
         } Meta(Enable, WhiteListMethods, DisplayName( "Camera" ));
     }

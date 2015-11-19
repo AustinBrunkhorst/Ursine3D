@@ -144,6 +144,8 @@ void Retrospect::initializeScene(void)
         m_scene->SetWorld( world );
     }
 
+    world->GetEntityFromName("Editor Camera")->Delete( );
+
     world->DispatchLoad( );
 }
 
