@@ -64,6 +64,7 @@ void Retrospect::OnInitialize(void)
 
     m_mainWindow.window->SetLocationCentered( );
     m_mainWindow.window->Show( true );
+    m_mainWindow.window->SetFullScreen(true);
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
