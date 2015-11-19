@@ -251,9 +251,9 @@ namespace ursine
             void recalculateMatrices(void);
 
             // notify the editor our values have changed
-            void notifyPositionChanged(void);
-            void notifyRotationChanged(void);
-            void notifyScaleChanged(void);
+            void notifyPositionChanged(const SVec3 *oldPosition);
+            void notifyRotationChanged(const SQuat *oldRotation);
+            void notifyScaleChanged(const SVec3 *oldScale);
 
             // Generically add a child to our hierarch, without 
             // handling value changes in scale, position, or rotation

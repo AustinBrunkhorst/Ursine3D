@@ -31,11 +31,8 @@ namespace ursine
             >( );
 
 			m_simulation.SetDebugDrawer( &m_debugDrawer );
-			m_debugDrawer.setDebugMode(
-				physics::DRAW_WIRE_FRAME |
-				physics::DRAW_AABB |
-				physics::DRAW_CONTACT_POINTS
-			);
+
+            SetEnableDebugDraw( true );
         }
 
         void PhysicsSystem::SetGravity(const SVec3& gravity)
@@ -52,6 +49,31 @@ namespace ursine
         SVec3 PhysicsSystem::GetGravity(void) const
         {
             return m_simulation.GetGravity( );
+        }
+
+        void PhysicsSystem::SetEnableDebugDraw(bool enable)
+        {
+            m_enableDebugDraw = enable;
+
+            if (m_enableDebugDraw)
+            {
+                m_debugDrawer.setDebugMode(
+			        physics::DRAW_WIRE_FRAME |
+			        physics::DRAW_AABB |
+			        physics::DRAW_CONTACT_POINTS
+		        );
+            }
+            else
+            {
+                m_debugDrawer.setDebugMode(
+			        physics::DRAW_NONE
+		        );
+            }
+        }
+
+        bool PhysicsSystem::GetEnableDebugDraw(void) const
+        {
+            return m_enableDebugDraw;
         }
 
         void PhysicsSystem::ClearContacts(Rigidbody* rigidbody)

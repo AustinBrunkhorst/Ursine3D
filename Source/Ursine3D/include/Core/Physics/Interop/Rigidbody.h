@@ -70,6 +70,9 @@ namespace ursine
             void SetRotationFreezeZ(bool flag);
             bool GetRotationFreezeZ(void) const;
 
+            void SetSleepToggle(bool flag);
+            bool GetSleepToggle(void) const;
+
             void UpdateInertiaTensor(void);
 
             void SetGravity(const SVec3 &gravity);
@@ -83,12 +86,26 @@ namespace ursine
             void SetAngularVelocity(const SVec3 &angularVelocity);
             SVec3 GetAngularVelocity(void) const;
 
+            void AddForce(const SVec3 &force);
+
+            // Relative to the transforms coordinate system
+            void AddForceRelative(const SVec3 &force, ecs::Transform *transform);
+
+            void AddForceAtPosition(const SVec3 &force, const SVec3 &worldPosition, ecs::Transform *transform);
+
+            void AddTorque(const SVec3 &torque);
+
+            // Relative to the transforms coordinate system
+            void AddTorqueRelative(const SVec3 &torque, ecs::Transform *transform);
+
         private:
             BodyType m_bodyType;
 
             bool m_gettingTransform;
 
             bool m_emptyCollider;
+
+            bool m_enableSleeping;
 
             Simulation *m_simulation;
 

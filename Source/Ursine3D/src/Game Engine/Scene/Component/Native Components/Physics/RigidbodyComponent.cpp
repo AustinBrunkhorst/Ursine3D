@@ -46,6 +46,9 @@ namespace ursine
 
         void Rigidbody::SetMass(float mass)
         {
+            if (mass < 0.0f)
+                return;
+            
             m_rigidbody.SetMass( mass );
         }
 
@@ -97,6 +100,16 @@ namespace ursine
             m_rigidbody.SetRotationFreezeZ( flag );
         }
 
+        void Rigidbody::SetSleepToggle(bool flag)
+        {
+            m_rigidbody.SetSleepToggle( flag );
+        }
+
+        bool Rigidbody::GetSleepToggle(void) const
+        {
+            return m_rigidbody.GetSleepToggle( );
+        }
+
         bool Rigidbody::GetRotationFreezeZ(void) const
         {
             return m_rigidbody.GetRotationFreezeZ( );
@@ -125,6 +138,31 @@ namespace ursine
         SVec3 Rigidbody::GetAngularVelocity(void) const
         {
             return m_rigidbody.GetAngularVelocity( );
+        }
+
+        void Rigidbody::AddForce(const SVec3& force)
+        {
+            m_rigidbody.AddForce( force );
+        }
+
+        void Rigidbody::AddForceRelative(const SVec3& force)
+        {
+            m_rigidbody.AddForceRelative( force, GetOwner( )->GetTransform( ) );
+        }
+
+        void Rigidbody::AddForceAtPosition(const SVec3& force, const SVec3& worldPosition)
+        {
+            m_rigidbody.AddForceAtPosition( force, worldPosition, GetOwner( )->GetTransform( ) );
+        }
+
+        void Rigidbody::AddTorque(const SVec3& torque)
+        {
+            m_rigidbody.AddTorque( torque );
+        }
+
+        void Rigidbody::AddTorqueRelative(const SVec3& torque)
+        {
+            m_rigidbody.AddTorqueRelative( torque, GetOwner( )->GetTransform( ) );
         }
 
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))

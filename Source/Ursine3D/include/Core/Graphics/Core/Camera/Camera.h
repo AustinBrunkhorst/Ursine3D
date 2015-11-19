@@ -80,8 +80,8 @@ namespace ursine
 
             //set the position w/ respect to main viewport
             //0, 0 is top left corner
-            void SetPosition(const float x, const float y);
-            void GetPosition(float &x, float &y) const;
+            void SetViewportPosition(const float x, const float y);
+            void GetViewportPosition(float &x, float &y) const;
 
             //set render mode (orthographics VS perspective)
             void SetRenderMode(const ViewportRenderMode renderMode);
@@ -90,7 +90,7 @@ namespace ursine
             ViewportRenderMode GetRenderMode(void) const;
 
             //convert screen point to world point
-            Vec3 ScreenToWorld(const Vec2 &screenPos, const float depth);
+            SVec3 ScreenToWorld(const Vec2 &screenPos, const float depth);
 
             //DO NOT CALL set screen dimensions
             void SetScreenDimensions(const float width, const float height);
