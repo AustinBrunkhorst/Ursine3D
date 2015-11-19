@@ -21,7 +21,7 @@ namespace
 {
     const auto kEntryPoint = "";
 
-    const auto  kStartWorld = "Assets/Worlds/SubmissionSemester1.uworld";
+    const auto  kStartWorld = "Assets/Worlds/SubmissionSemester1-Cpt.uworld";
 
     const auto kClearColor = Color(0xFF252526);
 

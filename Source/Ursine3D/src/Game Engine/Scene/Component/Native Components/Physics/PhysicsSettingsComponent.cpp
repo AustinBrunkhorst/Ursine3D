@@ -42,7 +42,7 @@ namespace ursine
             if (m_physicsSystem)
                 return m_physicsSystem->GetEnableDebugDraw( );
             else
-                return true;
+                return false;
         }
 
         void PhysicsSettings::SetEnableDebugDraw(bool enable)
