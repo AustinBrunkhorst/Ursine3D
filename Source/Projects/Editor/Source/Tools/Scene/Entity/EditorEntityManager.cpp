@@ -25,7 +25,7 @@ namespace
             const auto Added = "EntityAdded";
             const auto Removed = "EntityRemoved";
             const auto NameChanged = "EntityNameChanged";
-            const auto ParentChanged = "ParentChanged";
+            const auto ParentChanged = "EntityParentChanged";
         }
 
         namespace component
@@ -138,9 +138,9 @@ void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
     );
 }
 
-void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::World))
+void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
 {
-    EVENT_ATTRS(ecs::World, ecs::ParentChangedArgs);
+    EVENT_ATTRS(ecs::Entity, ecs::ParentChangedArgs);
 
     Json oldUniqueID, newUniqueID;
 
@@ -155,6 +155,7 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::World))
         newUniqueID = static_cast<int>( args->newParent );
 
     Json message = Json::object {
+        { "uniqueID", static_cast<int>( sender->GetUniqueID( ) ) },
         { "oldParent", oldUniqueID },
         { "newParent", newUniqueID }
     };

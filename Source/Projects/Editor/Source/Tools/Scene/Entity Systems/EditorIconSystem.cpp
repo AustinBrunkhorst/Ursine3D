@@ -25,7 +25,7 @@ void EditorIconSystem::OnInitialize(void)
 void EditorIconSystem::OnRemove(void)
 {
     m_world->Listener( this )
-        .Off(ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
+        .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
 }
 
 void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
