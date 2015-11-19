@@ -13,6 +13,8 @@
 #include <LightComponent.h>
 #include <WorldSerializer.h>
 
+#include <AudioManager.h>
+
 using namespace ursine;
 
 namespace
@@ -139,7 +141,7 @@ void Retrospect::initializeScene(void)
 
         ecs::WorldSerializer serializer;
 
-        serializer.Deserialize( kStartWorld, world );
+        world = serializer.Deserialize( kStartWorld );
 
         m_scene->SetWorld( world );
     }
@@ -147,6 +149,27 @@ void Retrospect::initializeScene(void)
     world->GetEntityFromName("Editor Camera")->Delete( );
 
     world->DispatchLoad( );
+
+    const std::string init = "INIT.bnk";
+    const std::string bgm = "BGM.bnk";
+    const std::string car = "Car.bnk";
+    const std::string RPM = "RPM";
+
+    const std::string play_CarEngine = "Play_Engine";
+
+    AkBankID initID = AK_INVALID_BANK_ID;
+    AkBankID bgmID = AK_INVALID_BANK_ID;
+
+    const AkGameObjectID GAME_OBJECT_ID_CAR = 100;
+    const AkGameObjectID GAME_OBJECT_NON_RECORDABLE = 200;
+
+    auto m_audio = GetCoreSystem(AudioManager);
+
+    m_audio->LoadBank(init, initID);
+    m_audio->LoadBank(car, bgmID);
+
+    m_audio->RegisterObject(GAME_OBJECT_ID_CAR, 0x08);
+    m_audio->PlayEvent(play_CarEngine, GAME_OBJECT_ID_CAR);
 }
 
 void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))

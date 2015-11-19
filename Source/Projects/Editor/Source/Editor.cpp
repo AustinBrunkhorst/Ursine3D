@@ -12,8 +12,6 @@
 #include <LightComponent.h>
 #include <Model3DComponent.h>
 
-#include <AudioManager.h>
-
 using namespace ursine;
 
 namespace
