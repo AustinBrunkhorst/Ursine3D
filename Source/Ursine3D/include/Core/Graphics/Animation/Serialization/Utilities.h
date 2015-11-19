@@ -23,49 +23,14 @@ namespace ursine
 				SKINNED,
 			};
 
-			//struct LAYOUT
-			//{
-			//	D3D11_INPUT_ELEMENT_DESC STATIC_LAYOUT[3];
-			//	D3D11_INPUT_ELEMENT_DESC SKINNED_LAYOUT[5];
-
-			//	LAYOUT()
-			//	{
-			//		STATIC_LAYOUT[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			//		STATIC_LAYOUT[1] = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			//		STATIC_LAYOUT[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-
-			//		SKINNED_LAYOUT[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			//		SKINNED_LAYOUT[1] = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			//		SKINNED_LAYOUT[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			//		SKINNED_LAYOUT[3] = { "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			//		SKINNED_LAYOUT[4] = { "BLENDINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-			//	}
-			//};
-
-			//struct VERTEX_DATA_STATIC
-			//{
-			//	XMFLOAT3	vPos;
-			//	XMFLOAT3	vNor;
-			//	XMFLOAT2	vTexcoord;
-			//};
-
-			//struct VERTEX_DATA_SKIN
-			//{
-			//	XMFLOAT3	vPos;
-			//	XMFLOAT3	vNor;
-			//	XMFLOAT2	vTexcoord;
-			//	XMFLOAT4	vBWeight;
-			//	XMINT4		vBIdx;
-			//};
-
 			struct Material_Consts
 			{
 				XMFLOAT4	ambient;
 				XMFLOAT4	diffuse;
 				XMFLOAT4	specular;
 				XMFLOAT4	emissive;
-				float		shineness;
-				float		TransparencyFactor;
+				float				shineness;
+				float				TransparencyFactor;
 			};
 
 			struct BlendIdxWeight
@@ -84,6 +49,9 @@ namespace ursine
 				}
 			};
 
+			bool compare_bw_ascend(BlendIdxWeight lhs, BlendIdxWeight rhs);
+			bool compare_bw_descend(BlendIdxWeight lhs, BlendIdxWeight rhs);
+
 			// Each Control Point in FBX is basically a vertex  in the physical world. For example, a cube has 8
 			// vertices(Control Points) in FBX Joints are associated with Control Points in FBX
 			// The mapping is one joint corresponding to 4 Control Points(Reverse of what is done in a game engine)
@@ -99,8 +67,9 @@ namespace ursine
 			struct KeyFrame
 			{
 				float time;
-				XMFLOAT4 trans;
+				XMFLOAT3 trans;
 				XMFLOAT4 rot;
+				XMFLOAT3 scl;
 			};
 
 			struct BoneAnimation
@@ -227,8 +196,8 @@ namespace ursine
 					mtrl_consts.diffuse = rhs.diffuse.color;
 					mtrl_consts.emissive = rhs.emissive.color;
 					mtrl_consts.specular = rhs.specular.color;
-					//mtrl_consts.shineness = rhs.shineness;
-					//mtrl_consts.TransparencyFactor = rhs.TransparencyFactor;
+					mtrl_consts.shineness = rhs.shineness;
+					mtrl_consts.TransparencyFactor = rhs.TransparencyFactor;
 					return *this;
 				}
 			};
@@ -287,19 +256,27 @@ namespace ursine
 
 				// bind - local coord system that the entire skin is defined relative to
 				// local tm. local about to the skinned mesh
-				XMFLOAT4 bindPosition;
+				XMFLOAT3 bindPosition;
+				XMFLOAT3 bindScaling;
 				XMFLOAT4 bindRotation;
 
 				// bone space - the space that influences the vertices. so-called offset transformation
 				// bone offset tm
-				XMFLOAT4 boneSpacePosition;
+				XMFLOAT3 boneSpacePosition;
+				XMFLOAT3 boneSpaceScaling;
 				XMFLOAT4 boneSpaceRotation;
 
 				Joint()
 				{
+					mParentIndex = -1;
+					bindPosition = XMFLOAT3(0, 0, 0);
+					bindRotation = XMFLOAT4(0, 0, 0, 1);
+					bindScaling = XMFLOAT3(1, 1, 1);
+					boneSpacePosition = XMFLOAT3(0, 0, 0);
+					boneSpaceRotation = XMFLOAT4(0, 0, 0, 1);
+					boneSpaceScaling = XMFLOAT3(1, 1, 1);
 					mToRoot.SetIdentity();
 					mToParent.SetIdentity();
-					mParentIndex = -1;
 				}
 
 				~Joint()
@@ -307,11 +284,11 @@ namespace ursine
 				}
 			};
 
-			struct FbxSkinnedData
+			struct FbxBoneData
 			{
 				std::vector<Joint>			mbonehierarchy;
 				std::vector<FbxNode*>		mboneNodes;
-				~FbxSkinnedData()
+				~FbxBoneData()
 				{
 					Release();
 				}
@@ -335,6 +312,7 @@ namespace ursine
 
 			struct MeshData
 			{
+				eLayout mLayout;
 				std::string name;
 				unsigned int vertexCnt;
 				unsigned int indexCnt;
@@ -345,6 +323,8 @@ namespace ursine
 
 				FbxLayerElement::EMappingMode normalMode;
 				FbxLayerElement::EMappingMode tangentMode;
+				XMMATRIX meshTM;
+				XMMATRIX parentTM;
 
 				XMFLOAT3* vertices;
 				unsigned int* indices;
@@ -357,10 +337,12 @@ namespace ursine
 				std::vector<FbxMaterial> fbxmaterials;
 				std::vector<ModelSubset> modelSubsets;
 
-				MeshData() : vertexCnt(0), indexCnt(0), normalCnt(0), tangentCnt(0), uvCnt(0),
+				MeshData() : mLayout(NONE), vertexCnt(0), indexCnt(0), normalCnt(0), tangentCnt(0), uvCnt(0),
 					normalMode(FbxLayerElement::eNone), tangentMode(FbxLayerElement::eNone),
 					vertices(nullptr), indices(nullptr), normals(nullptr), tangents(nullptr), uvs(nullptr)
-				{}
+				{
+					parentTM = XMMatrixIdentity();
+				}
 			};
 
 			struct FbxModel
@@ -371,7 +353,7 @@ namespace ursine
 				// need to be exported as binary
 				eLayout					mLayout;
 				std::string				name;
-				FbxSkinnedData			mSkinnedData;
+				FbxBoneData				mBoneData;
 				std::vector<MeshData*>	mMeshData;
 				std::vector<FbxMaterial*> mMaterials;
 				std::vector<ControlPoints*> mCtrlPoints;
@@ -399,16 +381,14 @@ namespace ursine
 			/*===============================
 			Utility Functions for FBX
 			===============================*/
+			void Swap(void* a, void* b);
 			XMVECTOR Set4FloatsToXMVector(const float& x, const float& y, const float& z, const float& w);
+			XMVECTOR SetFloat3ToXMVector(const XMFLOAT3& rhs);
 			XMVECTOR SetFloat4ToXMVector(const XMFLOAT4& rhs);
+			XMFLOAT3 SetXMVectorToFloat3(const XMVECTOR& rhs);
 			XMFLOAT4 SetXMVectorToFloat4(const XMVECTOR& rhs);
-			FbxAMatrix GetGeometryTransformation(FbxNode* inNode);
 			FbxAMatrix FBXMatrixToFBXAMatrix(FbxMatrix* src);
-			XMMATRIX FBXMatrixToXMMatrix(FbxAMatrix* src);
 			XMMATRIX FBXAMatrixToXMMatrix(FbxAMatrix* src);
-			void FBXMatrixToFloat16(FbxMatrix* src, float dest[16]);
-			void FBXAMatrixToFloat16(FbxAMatrix* src, float dest[16]);
-			void XMMatrixToFloat16(XMMATRIX& src, float dest[16]);
 			XMVECTOR ConvertVector4(const FbxVector4& vec);
 			XMVECTOR ConvertQuaternion(const FbxQuaternion& quat);
 			FbxVector4 XMVectorToFBXVector(const XMVECTOR& src);
@@ -417,6 +397,7 @@ namespace ursine
 			XMFLOAT3 FBXVectorToXMFLOAT3(const FbxVector4& src);
 			FbxVector2 XMFloat2ToFBXVector2(const XMFLOAT2& src);
 			XMFLOAT4 FBXQuaternionToXMLOAT4(const FbxQuaternion& quat);
+			XMFLOAT3 FBXVectorToXMFLOAT3(const FbxVector4& src);
 			XMFLOAT4 FBXVectorToXMFLOAT4(const FbxVector4& src);
 			bool HJIsZeroMtx(XMMATRIX* _pMtx);
 			bool HJIsSameMtx(XMMATRIX* _pMtx1, XMMATRIX* _pMtx2);

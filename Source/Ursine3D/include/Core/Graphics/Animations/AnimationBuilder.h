@@ -17,7 +17,7 @@
 #include "AnimationRig.h"
 #include "Animation.h"
 #include "AnimationState.h"
-#include "SkinInfo.h"
+#include "BoneInfo.h"
 #include <unordered_map>
 
 namespace ursine
@@ -102,7 +102,7 @@ namespace ursine
             std::vector<std::vector<unsigned>> &hierarchy,
             unsigned currentIndex,
             unsigned parentIndex,
-            graphics::ufmt_loader::SkinInfo *rigData,
+            graphics::ufmt_loader::BoneInfo *rigData,
             AnimationRig *rig
             );
 

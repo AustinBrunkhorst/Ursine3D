@@ -179,8 +179,8 @@ namespace ursine
                     mtrl_consts.diffuse = rhs.diffuse.color;
                     mtrl_consts.emissive = rhs.emissive.color;
                     mtrl_consts.specular = rhs.specular.color;
-                    //mtrl_consts.shineness = rhs.shineness;
-                    //mtrl_consts.TransparencyFactor = rhs.TransparencyFactor;
+                    mtrl_consts.shineness = rhs.shineness;
+                    mtrl_consts.TransparencyFactor = rhs.TransparencyFactor;
                     return *this;
                 }
             };
@@ -188,8 +188,9 @@ namespace ursine
             struct KeyFrame
             {
                 float time;
-                pseudodx::XMFLOAT4 trans;
+                pseudodx::XMFLOAT3 trans;
                 pseudodx::XMFLOAT4 rot;
+				pseudodx::XMFLOAT3 scl;
             };
 
             struct BoneAnimation

@@ -71,7 +71,7 @@ namespace ursine
 					ReadFile(hFile, &emis_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
 					ReadFile(hFile, &spec_mcolor, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
 
-					 (hFile, &ambi_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &ambi_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &diff_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &emis_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &spec_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
@@ -158,7 +158,6 @@ namespace ursine
 						//WriteFile(hFile, &spec_texIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
 						WriteFile(hFile, &spec_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					}
-
 					WriteFile(hFile, &shineness, sizeof(float), &nBytesWrite, nullptr);
 					WriteFile(hFile, &TransparencyFactor, sizeof(float), &nBytesWrite, nullptr);
 				}

@@ -47,6 +47,7 @@ namespace ursine
 				unsigned int i = 0, j = 0, k = 0;
 
 				// serializing counts
+				ReadFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
 				ReadFile(hFile, &clipCount, sizeof(unsigned int), &nByteRead, nullptr);
 				ReadFile(hFile, &boneCount, sizeof(unsigned int), &nByteRead, nullptr);
 				keyIndices = new unsigned int*[clipCount];
@@ -69,8 +70,7 @@ namespace ursine
 						keyframes[i][j] = new FBX_DATA::KeyFrame[keyIndices[i][j]];
 						for (k = 0; k < keyIndices[i][j]; ++k)
 						{
-							FBX_DATA::KeyFrame* currKF = &keyframes[i][j][k];
-							ReadFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
+							ReadFile(hFile, &keyframes[i][j][k], sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
 						}
 					}
 				}
@@ -83,6 +83,7 @@ namespace ursine
 				unsigned int i = 0, j = 0, k = 0;
 
 				// serializing counts
+				WriteFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 				WriteFile(hFile, &clipCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 				WriteFile(hFile, &boneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 				for (i = 0; i < clipCount; ++i)

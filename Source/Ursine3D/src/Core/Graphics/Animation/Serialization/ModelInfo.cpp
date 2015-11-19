@@ -14,7 +14,7 @@ namespace ursine
 				:
 				mmeshCount(0), marrMeshes(nullptr),
 				mmaterialCount(0), marrMaterials(nullptr),
-				mskinCount(0), marrSkins(nullptr),
+				mboneCount(0), marrBones(nullptr),
 				manimCount(0), marrAnims(nullptr),
 				ISerialize("")
 			{
@@ -36,10 +36,10 @@ namespace ursine
 					delete[] marrMaterials;
 					marrMaterials = nullptr;
 				}
-				if (marrSkins)
+				if (marrBones)
 				{
-					delete[] marrSkins;
-					marrSkins = nullptr;
+					delete[] marrBones;
+					marrBones = nullptr;
 				}
 				if (marrAnims)
 				{
@@ -57,7 +57,7 @@ namespace ursine
 					ReadFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
 					ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &mskinCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &manimCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
 					marrMeshes = new MeshInfo[mmeshCount];
@@ -70,10 +70,10 @@ namespace ursine
 					{
 						marrMaterials[i].SerializeIn(hFile);
 					}
-					marrSkins = new SkinInfo[mskinCount];
-					for (i = 0; i < mskinCount; ++i)
+					marrBones = new BoneInfo[mboneCount];
+					for (i = 0; i < mboneCount; ++i)
 					{
-						marrSkins[i].SerializeIn(hFile);
+						marrBones[i].SerializeIn(hFile);
 					}
 					marrAnims = new AnimInfo[manimCount];
 					for (i = 0; i < manimCount; ++i)
@@ -93,7 +93,7 @@ namespace ursine
 					WriteFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &mskinCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &manimCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
 					for (i = 0; i < mmeshCount; ++i)
@@ -104,9 +104,9 @@ namespace ursine
 					{
 						marrMaterials[i].SerializeOut(hFile);
 					}
-					for (i = 0; i < mskinCount; ++i)
+					for (i = 0; i < mboneCount; ++i)
 					{
-						marrSkins[i].SerializeOut(hFile);
+						marrBones[i].SerializeOut(hFile);
 					}
 					for (i = 0; i < manimCount; ++i)
 					{

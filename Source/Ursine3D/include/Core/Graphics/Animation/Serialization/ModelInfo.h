@@ -2,7 +2,7 @@
 
 #include "MeshInfo.h"
 #include "MaterialInfo.h"
-#include "SkinInfo.h"
+#include "BoneInfo.h"
 #include "AnimationInfo.h"
 
 namespace ursine
@@ -25,8 +25,8 @@ namespace ursine
 				MaterialInfo*	marrMaterials;
 
 				// skin data
-				unsigned int	mskinCount;
-				SkinInfo*		marrSkins;
+				unsigned int	mboneCount;
+				BoneInfo*		marrBones;
 
 				// anim data
 				unsigned int	manimCount;

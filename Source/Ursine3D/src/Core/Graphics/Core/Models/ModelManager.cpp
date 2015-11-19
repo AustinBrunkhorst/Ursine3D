@@ -4,7 +4,7 @@
 #include "VertexDefinitions.h"
 #include <d3d11.h>
 #include "AnimationBuilder.h"
-#include "SkinInfo.h"
+#include "BoneInfo.h"
 
 namespace ursine
 {

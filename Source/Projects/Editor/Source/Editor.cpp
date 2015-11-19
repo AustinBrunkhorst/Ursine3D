@@ -201,6 +201,7 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto *rig = AnimationBuilder::GetAnimationRigByIndex( 0 );
 
     std::vector<SMat4> matPal;
+	matPal.resize(100);
 
     AnimationBuilder::GenerateAnimationData( myState, rig, matPal );
 
