@@ -1,0 +1,10 @@
+Event	ID	Name			Wwise Object Path	Notes
+	1327221850	Resume_All_Global			\Default Work Unit\Resume_All_Global	
+	3493516265	Pause_All_Global			\Default Work Unit\Pause_All_Global	
+	4142087708	Play_Three_Numbers_in_a_Row			\External Sources\Play_Three_Numbers_in_a_Row	
+
+External Source	ID	Name			Wwise Object Path	Notes
+	293435250	Extern_2nd_number			\External Sources\Three Numbers in a Row\2nd Number\Extern_2nd_number	
+	978954801	Extern_3rd_number			\External Sources\Three Numbers in a Row\3rd Number\Extern_3rd_number	
+	4004957102	Extern_1st_number			\External Sources\Three Numbers in a Row\1st Number\Extern_1st_number	
+

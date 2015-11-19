@@ -1,42 +1,130 @@
 @import '../Config';
+@import '../Utils';
+
+$base-item-indent: 5px;
+$item-indent: 6px;
 
 :host {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   color: white;
 
-  &:not(.root-view) {
-    ::content {
-      > x-tree-view-item {
-        padding-left: 10px;
+  ::content {
+    @for $i from 2 through 10 {
+      @include repeat-selector( 'x-tree-view-item', $i, '.text' ) {
+        padding-left: $base-item-indent + ($item-indent * $i) !important;
       }
     }
-  }
 
-  ::content {
+    > x-tree-view-item {
+      opacity: 1;
+      transition: opacity $duration-transition-btn ease;
+
+      > .child-view {
+        display: none;
+      }
+
+      &.opened {
+        > .text {
+          .arrow {
+            &:before {
+              -webkit-transform: rotate(90deg);
+            }
+          }
+        }
+
+        > .child-view {
+          display: block;
+        }
+      }
+
+      &.dragging {
+        opacity: 0.65;
+      }
+
+      &.drop-target {
+        > .text {
+          background: $color-accent !important;
+        }
+      }
+
+      &.drop-after-target {
+        > .text {
+          .drop-after-container {
+            opacity: 1;
+          }
+        }
+      }
+
+      > .text {
+        position: relative;
+
+        .arrow {
+          display: inline-block;
+          width: 7px;
+          height: 100%;
+          margin-right: 4px;
+          cursor: pointer;
+
+          &:before {
+            -webkit-transform: rotate(0deg);
+            -webkit-transform-origin: center;
+            -webkit-transition: -webkit-transform $duration-transition-btn ease, border $duration-transition-btn ease;
+          }
+        }
+
+        .drop-after-container {
+          opacity: 0;
+          position: absolute;
+          height: 4px;
+          left: 0;
+          right: 0;
+          top: 100%;
+          margin-top: -2px;
+          z-index: 5;
+          background: $color-accent;
+          transition: opacity $duration-transition-btn ease;
+          pointer-events: none;
+        }
+      }
+
+      &[has-sub-view] {
+        > .text {
+          .arrow {
+            &:before {
+              display: inline-block;
+              @include triangle(right, $color-accent, 5px);
+            }
+          }
+        }
+      }
+    }
+
     x-tree-view-item {
-      #text {
-        padding: 5px 5px 5px 10px;
+      display: block;
+
+      .text {
+        display: block;
+        padding: 5px 5px 5px $base-item-indent;
         cursor: pointer;
         transition: all $duration-transition-btn ease;
-
-        &:hover {
-          background: darken($color-accent, 35%);
-        }
 
         &::selection {
           background: white;
           color: black;
         }
-      }
 
-      &:nth-child(odd) {
-        background: darken(#262626, 1%);
+        &:hover {
+          background: #5a5a5a !important;
+        }
       }
 
       &.selected {
-        background: darken($color-accent, 25%) !important;
+        > .text {
+          background: #414141;
+        }
       }
     }
   }
 }
+

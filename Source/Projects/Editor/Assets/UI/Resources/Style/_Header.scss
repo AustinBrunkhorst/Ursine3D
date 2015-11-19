@@ -12,5 +12,6 @@ body {
   top: 0;
   height: $header-height;
   background: $header-bg-color;
+  border-bottom: 1px solid #3f3f46;
   z-index: 9999;
 }

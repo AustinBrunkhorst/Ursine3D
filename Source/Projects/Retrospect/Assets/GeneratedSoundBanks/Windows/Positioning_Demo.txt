@@ -1,0 +1,8 @@
+Event	ID	Name			Wwise Object Path	Notes
+	1237313597	Play_Positioning_Demo			\Default Work Unit\Play_Positioning_Demo	
+	1327221850	Resume_All_Global			\Default Work Unit\Resume_All_Global	
+	3493516265	Pause_All_Global			\Default Work Unit\Pause_All_Global	
+
+Source plug-ins	ID	Name	Type		Wwise Object Path	Notes
+	216464226	Tone Generator	Wwise Tone Generator		\Actor-Mixer Hierarchy\Default Work Unit\Positioning_Demo\Tone Generator	
+

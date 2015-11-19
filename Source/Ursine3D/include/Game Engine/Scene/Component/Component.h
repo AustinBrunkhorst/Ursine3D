@@ -37,7 +37,7 @@ namespace ursine
         public:
             // can set the owner
             friend class EntityManager;
-            friend class WorldSerializer;
+            friend class EntitySerializer;
 
             explicit inline Component(ComponentTypeID typeID);
 

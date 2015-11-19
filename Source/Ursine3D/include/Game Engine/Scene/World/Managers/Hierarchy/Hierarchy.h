@@ -29,6 +29,8 @@ namespace ursine
             EntityID GetParent(const Entity *entity) const;
       
             EntityID GetRoot(const Entity *entity) const;
+
+            const RootHierarchyNode &GetRootNode(void) const;
       
             void AddEntity(Entity *entity);
       
@@ -41,7 +43,6 @@ namespace ursine
             void SetSiblingIndex(const Entity *entity, uint index);
     
         private:
-      
             RootHierarchyNode m_root;
       
             // Array of EntityNodes.  Each index is associated to the entity's id.

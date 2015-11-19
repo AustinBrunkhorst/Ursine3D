@@ -41,6 +41,10 @@
 #include "KeyboardManager.h"
 #include "MouseManager.h"
 
+/// Audio
+
+#include "AudioManager.h"
+
 /// Utilities
 
 #include "TimerManager.h"
