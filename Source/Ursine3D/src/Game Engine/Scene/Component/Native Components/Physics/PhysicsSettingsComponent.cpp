@@ -37,6 +37,20 @@ namespace ursine
                 m_physicsSystem->SetGravity( gravity );
         }
 
+        bool PhysicsSettings::GetEnableDebugDraw(void) const
+        {
+            if (m_physicsSystem)
+                return m_physicsSystem->GetEnableDebugDraw( );
+            else
+                return true;
+        }
+
+        void PhysicsSettings::SetEnableDebugDraw(bool enable)
+        {
+            if (m_physicsSystem)
+                m_physicsSystem->SetEnableDebugDraw( enable );
+        }
+
         void PhysicsSettings::OnInitialize(void)
         {
             m_physicsSystem = GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem );

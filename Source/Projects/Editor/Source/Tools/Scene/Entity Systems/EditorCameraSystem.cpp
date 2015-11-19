@@ -262,9 +262,6 @@ void EditorCameraSystem::updateCameraMouse(float dt)
         auto mouseDelta = mouseMgr->GetPositionDelta( );
         auto camTransform = cam.GetViewMatrix( );
 
-        //we need to limit the up delta so that we can't wrap if we are at the very top/bottom
-        // mouseDelta *= 0.5f;
-
         if (mouseDelta.Length( ) > 0)
         {
             //generate the up rotation
@@ -291,9 +288,9 @@ void EditorCameraSystem::updateCameraMouse(float dt)
         {
             auto size = cam.GetViewportSize( );
 
-            m_camPos += right * -mouseDelta.X( ) * dt * size.X( );
+            m_camPos += right * mouseDelta.X( ) * dt * size.X( );
 
-            m_camPos += up * -mouseDelta.Y( ) * dt * size.Y( );
+            m_camPos += up * mouseDelta.Y( ) * dt * size.Y( );
         }
     }
 

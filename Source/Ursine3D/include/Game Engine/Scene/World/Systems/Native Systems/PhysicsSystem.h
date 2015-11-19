@@ -43,6 +43,9 @@ namespace ursine
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
 
+            void SetEnableDebugDraw(bool enable);
+            bool GetEnableDebugDraw(void) const;
+
             void ClearContacts(Rigidbody *rigidbody);
 
         protected:
@@ -55,6 +58,8 @@ namespace ursine
             Filter m_collisionShapes;
 
             DebugSystem *m_debugSystem;
+
+            bool m_enableDebugDraw;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;

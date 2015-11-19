@@ -104,6 +104,9 @@ namespace ursine
                 if (camera.second->m_dirty)
                     camera.second->updateRenderer( );
 
+                if (!camera.second->GetActive( ))
+                    continue;
+
                 e.camera = camera.second->m_handle;
 
                 Dispatch( RENDER_HOOK, &e );

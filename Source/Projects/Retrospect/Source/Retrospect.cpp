@@ -125,17 +125,17 @@ void Retrospect::initializeScene(void)
 {
     auto world = m_scene->GetWorld( );
     {
-        auto viewport = m_graphics->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
+        auto handle = m_graphics->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
 
-        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
+        auto &viewport = m_graphics->ViewportMgr.GetViewport( handle );
 
-        handle.SetPosition( 0, 0 );
+        viewport.SetPosition( 0, 0 );
 
-        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
+        viewport.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-        m_scene->SetViewport( viewport );
+        m_scene->SetViewport( handle );
 
-        m_graphics->SetGameViewport( viewport );
+        m_graphics->SetGameViewport( handle );
 
         ecs::WorldSerializer serializer;
 
@@ -170,8 +170,12 @@ void Retrospect::onMainWindowResize(EVENT_HANDLER(ursine::Window))
 
     m_graphics->Resize( args->width, args->height );
 
-    m_mainWindow.ui->SetViewport( {
+    auto handle = m_scene->GetViewport( );
+
+    m_graphics->ViewportMgr.GetViewport( handle ).SetDimensions( args->width, args->height );
+
+    /*m_mainWindow.ui->SetViewport( {
         0, 0,
         args->width, args->height
-    } );
+    } );*/
 }

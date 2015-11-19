@@ -12,11 +12,12 @@ namespace ursine
 
         Camera::Camera(void)
             : BaseComponent( )
+            , m_active( true )
         {
             m_handle = GetCoreSystem( graphics::GfxAPI )->CameraMgr.AddCamera( );
 
-            SetNearPlane( 0.0f );
-            SetFarPlane( 100.0f );
+            SetNearPlane( 0.1f );
+            SetFarPlane( 1000.0f );
         }
 
         Camera::~Camera(void)
@@ -106,6 +107,16 @@ namespace ursine
         void Camera::SetFOV(float fov)
         {
             GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).SetFOV( fov );
+        }
+
+        bool Camera::GetActive(void) const
+        {
+            return m_active;
+        }
+
+        void Camera::SetActive(bool active)
+        {
+            m_active = active;
         }
 
         SVec3 Camera::GetLook(void)

@@ -18,6 +18,12 @@ namespace ursine
                 SetGravity
             );
 
+            EditorField(
+                bool enableDebugDraw,
+                GetEnableDebugDraw,
+                SetEnableDebugDraw
+            );
+
             PhysicsSettings(void);
             ~PhysicsSettings(void);
 
@@ -25,6 +31,9 @@ namespace ursine
 
             SVec3 GetGravity(void) const;
             void SetGravity(const SVec3 &gravity);
+
+            bool GetEnableDebugDraw(void) const;
+            void SetEnableDebugDraw(bool enable);
 
         private:
             PhysicsSystem *m_physicsSystem;
