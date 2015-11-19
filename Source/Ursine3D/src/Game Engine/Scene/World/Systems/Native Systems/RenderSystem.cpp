@@ -101,6 +101,9 @@ namespace ursine
 
             for (auto &camera : m_cameras) 
             {
+                if (camera.second->m_dirty)
+                    camera.second->updateRenderer( );
+
                 e.camera = camera.second->m_handle;
 
                 Dispatch( RENDER_HOOK, &e );

@@ -145,34 +145,6 @@ void Retrospect::initializeScene(void)
     }
 
     world->DispatchLoad( );
-
-    auto *cameraEntity = world->GetEntityFromName( "Editor Camera" );
-
-    auto *component = cameraEntity->GetComponent<ecs::Camera>( );
-
-    auto camera = component->GetCamera( );
-
-    camera->SetPosition( 0.0f, 0.0f );
-    camera->SetPosition( Vec3( -50, 50, -50 ) );
-    camera->SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
-    camera->SetDimensions( 1.0f, 0.5f );
-    camera->SetPlanes( 0.1f, 700.0f );
-    camera->SetFOV( 45.f );
-
-    camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-
-/*
-    auto *univLight = world->CreateEntity( "Global Light" );
-    {
-        auto *component = univLight->AddComponent<ecs::Light>( );
-
-        univLight->GetTransform()->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
-        univLight->GetTransform()->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
-
-        component->SetType( ecs::LightType::Directional );
-        component->SetRadius( 40.0f );
-        component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
-    }*/
 }
 
 void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))
