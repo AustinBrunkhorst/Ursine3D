@@ -1273,28 +1273,12 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			if(e1.detail.newParent == true) return false; else return true;
 		});
 		item.textElement.addEventListener("dblclick",function() {
-			item.textElement.contentEditable = "true";
-			var range = window.document.createRange();
-			range.selectNodeContents(item.textElement);
-			var selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(range);
-		});
-		item.textElement.addEventListener("keydown",function(e2) {
-			if(e2.keyCode == 13) {
-				item.textElement.blur();
-				e2.preventDefault();
-				return false;
-			}
-			return true;
-		});
-		item.textElement.addEventListener("blur",function() {
-			item.textElement.contentEditable = "false";
-			entity.setName(item.textElement.innerText);
+			var result = window.prompt("Edit Entity Name",entity.getName());
+			if(result != null) entity.setName(result);
 		});
 		item.text = entity.getName();
 		item.entity = entity;
-		item.textElement.addEventListener("click",function(e3) {
+		item.textElement.addEventListener("click",function(e2) {
 			_g.clearSelectedEntities();
 			item.entity.select();
 		});

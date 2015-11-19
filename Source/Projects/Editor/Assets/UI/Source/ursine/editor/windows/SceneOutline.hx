@@ -204,7 +204,7 @@ class SceneOutline extends WindowHandler {
         } );
 
         item.textElement.addEventListener( 'dblclick', function() {
-            item.textElement.contentEditable = 'true';
+            /*item.textElement.contentEditable = 'true';
 
             var range = js.Browser.document.createRange( );
 
@@ -213,10 +213,14 @@ class SceneOutline extends WindowHandler {
             var selection = js.Browser.window.getSelection( );
 
             selection.removeAllRanges( );
-            selection.addRange( range );
+            selection.addRange( range );*/
+            var result = js.Browser.window.prompt( 'Edit Entity Name', entity.getName( ) );
+
+            if (result != null)
+                entity.setName( result );
         } );
 
-        item.textElement.addEventListener( 'keydown', function(e) {
+        /*item.textElement.addEventListener( 'keydown', function(e) {
             // return key
             if (e.keyCode == 13) {
                 item.textElement.blur( );
@@ -233,7 +237,7 @@ class SceneOutline extends WindowHandler {
             item.textElement.contentEditable = 'false';
 
             entity.setName( item.textElement.innerText );
-        } );
+        } );*/
 
         item.text = entity.getName( );
 
