@@ -15,6 +15,7 @@ namespace ursine
             , m_rotLock( 1 )
             , m_simulation( nullptr )
             , m_emptyCollider( true )
+            , m_enableSleeping( true )
         {
         #ifdef BULLET_PHYSICS
 
@@ -217,6 +218,34 @@ namespace ursine
             updateRotationFreeze( );
         }
 
+        void Rigidbody::SetSleepToggle(bool flag)
+        {
+            if (flag != m_enableSleeping)
+            {
+                m_enableSleeping = flag;
+
+            #ifdef BULLET_PHYSICS
+
+                if (m_enableSleeping)
+                {
+                    if (getActivationState( ) != ACTIVE_TAG)
+                        setActivationState( ACTIVE_TAG );
+                }
+                else
+                {
+                    if (getActivationState( ) != DISABLE_DEACTIVATION)
+                        setActivationState( DISABLE_DEACTIVATION );
+                }
+
+            #endif
+            }
+        }
+
+        bool Rigidbody::GetSleepToggle(void) const
+        {
+            return m_enableSleeping;
+        }
+
         bool Rigidbody::GetRotationFreezeZ(void) const
         {
             return m_rotLock.Z( ) == 0.0f;
@@ -338,6 +367,64 @@ namespace ursine
         #endif
 
             return angVel;
+        }
+
+        void Rigidbody::AddForce(const SVec3& force)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 btForce( force.X( ), force.Y( ), force.Z( ) );
+
+            applyCentralForce( btForce );
+
+        #endif
+        }
+
+        void Rigidbody::AddForceRelative(const SVec3& force, ecs::Transform* transform)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 btForce( force.X( ), force.Y( ), force.Z( ) );
+
+            applyCentralForce( btForce );
+
+        #endif
+        }
+
+        void Rigidbody::AddForceAtPosition(const SVec3& force, const SVec3& worldPosition, ecs::Transform *transform)
+        {
+            auto localP = transform->ToLocal( worldPosition );
+
+        #ifdef BULLET_PHYSICS
+
+            btVector3 btForce( force.X( ), force.Y( ), force.Z( ) );
+            btVector3 btRel( localP.X( ), localP.Y( ), localP.Z( ) );
+
+            applyForce( btForce, btRel );
+
+        #endif
+        }
+
+        void Rigidbody::AddTorque(const SVec3& torque)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 btTorque( torque.X( ), torque.Y( ), torque.Z( ) );
+            
+            applyTorque( btTorque );
+
+        #endif
+        }
+
+        void Rigidbody::AddTorqueRelative(const SVec3& torque, ecs::Transform* transform)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 btTorque( torque.X( ), torque.Y( ), torque.Z( ) );
+            
+            applyTorque( btTorque );
+
+        #endif
         }
 
         void Rigidbody::addToSimulation(void)

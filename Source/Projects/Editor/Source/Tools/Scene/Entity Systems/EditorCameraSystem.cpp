@@ -47,12 +47,12 @@ void EditorCameraSystem::SetMouseFocus(bool focus)
     m_hasMouseFocus = focus;
 }
 
-graphics::Camera *EditorCameraSystem::GetEditorCamera(void)
+ecs::Camera *EditorCameraSystem::GetEditorCamera(void)
 {
     if (!m_cameraEntity)
         return nullptr;
 
-    return m_cameraEntity->GetComponent<ecs::Camera>( )->GetCamera( );
+    return m_cameraEntity->GetComponent<ecs::Camera>( );
 }
 
 void EditorCameraSystem::OnInitialize(void)
@@ -77,19 +77,18 @@ void EditorCameraSystem::OnAfterLoad(void)
 
     m_cameraEntity->EnableDeletion( false );
 
-    auto *component = m_cameraEntity->AddComponent<ecs::Camera>( );
+    m_camera = m_cameraEntity->AddComponent<ecs::Camera>( );
 
-    m_camera = component->GetCamera( );
 
-    m_camera->SetPosition( 0.0f, 0.0f );
-    m_camera->SetPosition( Vec3( -50, 50, -50 ) );
-    m_camera->SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
-    m_camera->SetDimensions( 1.0f, 1.0f );
-    m_camera->SetPlanes( 0.1f, 700.0f );
+    m_camera->SetViewportPosition( Vec2::Zero( ) );
+    m_cameraEntity->GetTransform( )->SetWorldPosition( Vec3( -50, 50, -50 ) );
+    m_camera->SetViewportSize( Vec2::One( ) );
+    m_camera->SetNearPlane( 0.1f );
+    m_camera->SetFarPlane( 700.0f );
     m_camera->SetFOV( 45.f );
 
     m_camZoom = SVec3( -50, 50, 50 ).Length( );
-    m_camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+    m_cameraEntity->GetTransform( )->LookAt( { 0.0f, 0.0f, 0.0f } );
 }
 
 void EditorCameraSystem::OnRemove(void)
@@ -126,14 +125,14 @@ void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
     }
 
     // our position always needs to be relative to the center position
-    auto look = m_camera->GetLook( );
+    auto look = m_cameraEntity->GetTransform( )->GetForward( );
 
     // normalize look and scale by zoom
     look.Normalize( );
     look = look * m_camZoom;
 
     // negate the vector, opposite of look is going away from center
-    m_camera->SetPosition( m_camPos - look );
+    m_cameraEntity->GetTransform( )->SetWorldPosition( m_camPos - look );
 }
 
 void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
@@ -144,7 +143,7 @@ void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
     if (!m_hasFocus)
         return;
 
-    m_camZoom -= args->delta.Y( );
+    m_camZoom -= args->delta.Y( ) * 10.0f;
 
     if (m_camZoom < 1)
         m_camZoom = 1.0f;
@@ -250,7 +249,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     auto *mouseMgr = GetCoreSystem( MouseManager );
 
     //get the camera
-    graphics::Camera &cam = *m_camera;
+    auto &cam = *m_camera;
 
     auto look = cam.GetLook( );
     auto up = cam.GetUp( );
@@ -264,7 +263,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
         auto camTransform = cam.GetViewMatrix( );
 
         //we need to limit the up delta so that we can't wrap if we are at the very top/bottom
-        mouseDelta /= 2.f;
+        // mouseDelta *= 0.5f;
 
         if (mouseDelta.Length( ) > 0)
         {
@@ -278,7 +277,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
             look = sideRotation.Rotate( look );
             look = upRotation.Rotate( look );
 
-            cam.SetLook( look );
+            cam.SetLook( m_camPos + look * m_camZoom );
         }
     }
 
@@ -290,13 +289,11 @@ void EditorCameraSystem::updateCameraMouse(float dt)
 
         if (mouseDelta.Length( ) > 0)
         {
-            float width, height;
+            auto size = cam.GetViewportSize( );
 
-            cam.GetDimensions( width, height );
+            m_camPos += right * -mouseDelta.X( ) * dt * size.X( );
 
-            m_camPos += right * -mouseDelta.X( ) * dt * width;
-
-            m_camPos += up * -mouseDelta.Y( ) * dt * height;
+            m_camPos += up * -mouseDelta.Y( ) * dt * size.Y( );
         }
     }
 
@@ -308,7 +305,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
 
         if (mouseDelta.Length( ) > 0)
         {
-            m_camZoom += -mouseDelta.Y( ) * dt;
+            m_camZoom += -mouseDelta.Y( ) * 10.0f * dt;
 
             if (m_camZoom < 1)
             {

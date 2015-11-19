@@ -321,7 +321,7 @@ namespace ursine
 
             //set directx viewport
             float w, h, x, y;
-            cam.GetPosition(x, y);
+            cam.GetViewportPosition(x, y);
             cam.GetDimensions(w, h);
 
             w *= gvp.Width;
@@ -1385,7 +1385,7 @@ namespace ursine
             float w, h, x, y;
             Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
             D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
-            cam.GetPosition(x, y);
+            cam.GetViewportPosition(x, y);
             cam.GetDimensions(w, h);
 
             w *= gvp.Width;
@@ -1517,7 +1517,7 @@ namespace ursine
 
             //set directx viewport
             float w, h, x, y;
-            cam.GetPosition(x, y);
+            cam.GetViewportPosition(x, y);
             cam.GetDimensions(w, h);
 
             w *= gvp.Width;

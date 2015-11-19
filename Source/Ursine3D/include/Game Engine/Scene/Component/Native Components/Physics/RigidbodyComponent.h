@@ -51,6 +51,12 @@ namespace ursine
                 SetRotationFreezeZ
             );
 
+            EditorField(
+                bool sleepToggle,
+                GetSleepToggle,
+                SetSleepToggle
+            );
+
             Rigidbody(void);
 			~Rigidbody(void);
 
@@ -78,6 +84,9 @@ namespace ursine
             void SetRotationFreezeZ(bool flag);
             bool GetRotationFreezeZ(void) const;
 
+            void SetSleepToggle(bool flag);
+            bool GetSleepToggle(void) const;
+
             Meta(Disable)
             void UpdateInertiaTensor(void);
 
@@ -86,6 +95,19 @@ namespace ursine
 
             void SetAngularVelocity(const SVec3 &angularVelocity);
             SVec3 GetAngularVelocity(void) const;
+
+            URSINE_TODO("Add ForceMode");
+            void AddForce(const SVec3 &force);
+
+            // Relative to the transforms coordinate system
+            void AddForceRelative(const SVec3 &force);
+
+            void AddForceAtPosition(const SVec3 &force, const SVec3 &worldPosition);
+
+            void AddTorque(const SVec3 &torque);
+
+            // Relative to the transforms coordinate system
+            void AddTorqueRelative(const SVec3 &torque);
 
         private:
             physics::Rigidbody m_rigidbody;

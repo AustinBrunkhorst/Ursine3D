@@ -153,6 +153,10 @@ add_subdirectory("Ursine3D")
 
 set(projects "")
 
+# shared
+file(GLOB_RECURSE shared_files ${CMAKE_SOURCE_DIR}/Shared/CMakeLists.txt)
+set(projects ${projects} ${shared_files})
+
 # projects
 file(GLOB_RECURSE projects_files ${CMAKE_SOURCE_DIR}/Projects/CMakeLists.txt)
 set(projects ${projects} ${projects_files})

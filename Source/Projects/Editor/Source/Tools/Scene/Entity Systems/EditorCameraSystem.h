@@ -4,6 +4,14 @@
 
 #include <GfxAPI.h>
 
+namespace ursine
+{
+    namespace ecs
+    {
+        class Camera;
+    }
+}
+
 class EditorCameraSystem : public ursine::ecs::EntitySystem
 {
     ENTITY_SYSTEM;
@@ -21,7 +29,7 @@ public:
     bool HasMouseFocus(void) const;
     void SetMouseFocus(bool focus);
 
-    ursine::graphics::Camera *GetEditorCamera(void);
+    ursine::ecs::Camera *GetEditorCamera(void);
 
     ursine::SVec3 GetEditorFocusPosition(void);
     float GetCamZoom(void);
@@ -32,7 +40,7 @@ private:
 
     ursine::ecs::Entity *m_cameraEntity;
 
-    ursine::graphics::Camera *m_camera;
+    ursine::ecs::Camera *m_camera;
     float m_camZoom;
     ursine::SVec3 m_camPos;
 

@@ -10,6 +10,7 @@
 
 #include <Model3DComponent.h>
 #include <RigidbodyComponent.h>
+#include <CameraComponent.h>
 
 #include <SystemManager.h>
 #include <GfxAPI.h>
@@ -265,19 +266,19 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
     if (!(m_keyboardManager->GetModifiers( ) & KMD_ALT))
     {
         //get the editor camera
-        graphics::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
+        ecs::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
 
         //get the mouse position
         Vec2 screenPos = GetCoreSystem(MouseManager)->GetPosition( );
 
-        Vec3 camPos = cam->GetPosition( );
+        SVec3 camPos = cam->GetOwner( )->GetTransform( )->GetWorldPosition( );
 
         //get the mouse world positions
-        Vec3 p1 = cam->ScreenToWorld( screenPos, 0.1f );
-        Vec3 p2 = cam->ScreenToWorld( screenPos, 1.f );
+        SVec3 p1 = cam->ScreenToWorld( screenPos, 0.1f );
+        SVec3 p2 = cam->ScreenToWorld( screenPos, 1.f );
 
         //create a vector going out from the eye
-        Vec3 mouseVec = p1 - p2;
+        SVec3 mouseVec = p1 - p2;
         mouseVec.Set( mouseVec.X( ), mouseVec.Y( ), mouseVec.Z( ) );
 
         //project onto the CURRENT place, which is dependent on the base position
@@ -727,12 +728,12 @@ void ObjectSelectorSystem::hideTool(void)
 SVec3 ObjectSelectorSystem::getMousePosition(const Vec2 &mousePos)
 {
     //get the editor camera
-    graphics::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
+    ecs::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
 
     //get the mouse position
     Vec2 screenPos = mousePos;
 
-    Vec3 camPos = cam->GetPosition( );
+    Vec3 camPos = cam->GetOwner( )->GetTransform( )->GetWorldPosition( );
 
     //get the mouse world positions
     Vec3 p1 = cam->ScreenToWorld( screenPos, 0.1f );
