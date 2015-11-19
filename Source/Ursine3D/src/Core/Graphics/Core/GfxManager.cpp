@@ -6,6 +6,8 @@
 #include <complex>
 #include "DepthStencilStateList.h"
 #include <d3d11.h>
+#include <Core/Graphics/Animations/AnimationState.h>
+#include <Core/Graphics/Animations/AnimationBuilder.h>
 
 static int tempID = -1;
 static HWND wHND = 0;
@@ -850,16 +852,16 @@ namespace ursine
         // rendering //////////////////////////////////////////////////////
         void GfxManager::Render3DModel(_DRAWHND handle)
         {
-            // TEMP /////////////////////////////////////////////////
-            URSINE_TODO("Remove this");
-            POINT point;
-            GetCursorPos(&point);
+            //// TEMP /////////////////////////////////////////////////
+            //URSINE_TODO("Remove this");
+            //POINT point;
+            //GetCursorPos(&point);
 
-            {
-                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
-            }
+            //{
+            //    bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
+            //}
 
-            // END OF TEMP //////////////////////////////////////////
+            //// END OF TEMP //////////////////////////////////////////
                     
             // map color
             Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor( );
@@ -889,8 +891,26 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            // set model
-            modelManager->BindModel(handle.Model_);
+            /////////////////////////////
+            // TEMPORARY
+            if (std::string(current.GetModelName( )) == std::string("Custom"))
+            {
+                ursine::AnimationState myState;
+                myState.SetAnimation(AnimationBuilder::GetAnimationByIndex(0));
+
+                static float time = 0;
+                time += 0.016;
+
+                if (time > 4) time = 0;
+                myState.SetTimePosition(time);
+
+                auto *rig = AnimationBuilder::GetAnimationRigByIndex(0);
+
+                AnimationBuilder::GenerateAnimationData(myState, rig, current.GetMatrixPalette( ));
+            }
+
+            // map matrix palette
+            bufferManager->MapBuffer<BUFFER_MATRIX_PAL>(&(current.GetMatrixPalette( )[ 0 ]), SHADERTYPE_VERTEX);
 
             // map texture
             textureManager->MapTextureByID(handle.Material_);
@@ -901,13 +921,20 @@ namespace ursine
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
              
             //render
-            shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_));
+            unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
+
+            for (int x = 0; x < count; ++x)
+            {
+                // set model
+                modelManager->BindModel(handle.Model_, x);
+                shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
+            }
 
             //render debug lines
             Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
             if(model.GetDebug())
             {
-                dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
                 dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
 
                 pcb.color.x = 0.75f;
@@ -920,7 +947,13 @@ namespace ursine
                 mdb.specularIntensity = 0;
                 bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
                 textureManager->MapTextureByName("Blank");
-                shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+                
+                for (int x = 0; x < count; ++x)
+                {
+                    // set model
+                    modelManager->BindModel(handle.Model_, x);
+                    shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
+                }
 
                 dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);

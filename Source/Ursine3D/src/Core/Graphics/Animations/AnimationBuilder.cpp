@@ -84,6 +84,7 @@ namespace ursine
 		for (unsigned x = 0; x < boneCount; ++x)
 		{
 			outputMatPal[x] = (offsetMatrices[x] * m_toRootTransforms[x]);
+            outputMatPal[ x ].Transpose( );
 		}
 	}
 

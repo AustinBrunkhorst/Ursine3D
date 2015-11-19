@@ -178,7 +178,7 @@ void Editor::initializeScene(void)
 
         camera->SetPosition( 0.0f, 0.0f );
 		camera->SetRenderMode(graphics::VIEWPORT_RENDER_FORWARD );
-        camera->SetDimensions( 1.0f, 1.0f );
+        camera->SetDimensions( 1.0f, 1.0f ); 
         camera->SetPlanes( 0.1f, 700.0f );
               
         camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
@@ -189,24 +189,13 @@ void Editor::initializeScene(void)
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
 {
     EVENT_ATTRS(Application, EventArgs);
-
+     
     auto dt = sender->GetDeltaTime( );
 
-    /////////////////////////////
-    // TEMPORARY
-    ursine::AnimationState myState;
-    myState.SetAnimation( AnimationBuilder::GetAnimationByIndex( 0 ) );
-    myState.SetTimePosition( 0 );
 
-    auto *rig = AnimationBuilder::GetAnimationRigByIndex( 0 );
-
-    std::vector<SMat4> matPal;
-	matPal.resize(100);
-
-    AnimationBuilder::GenerateAnimationData( myState, rig, matPal );
 
     auto scene = m_project->GetScene( );
-	 
+	  
     scene->Update( dt ); 
 
 
