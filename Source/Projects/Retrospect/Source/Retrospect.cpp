@@ -53,7 +53,7 @@ void Retrospect::OnInitialize(void)
     auto *uiManager = GetCoreSystem( UIManager );
 
     m_mainWindow.window = windowManager->AddWindow(
-        "Ursine3D Editor",
+        "Retrospect Tech Check",
         { 0, 0 },
         { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
         SDL_WINDOW_RESIZABLE
@@ -155,9 +155,10 @@ void Retrospect::initializeScene(void)
     const std::string car = "Car.bnk";
     const std::string RPM = "RPM";
 
-    const std::string play_CarEngine = "Play_Engine";
+    const std::string play_CarEngine = "Play_RecordableMusic";
 
     AkBankID initID = AK_INVALID_BANK_ID;
+    AkBankID carID = AK_INVALID_BANK_ID;
     AkBankID bgmID = AK_INVALID_BANK_ID;
 
     const AkGameObjectID GAME_OBJECT_ID_CAR = 100;
@@ -166,7 +167,8 @@ void Retrospect::initializeScene(void)
     auto m_audio = GetCoreSystem(AudioManager);
 
     m_audio->LoadBank(init, initID);
-    m_audio->LoadBank(car, bgmID);
+    m_audio->LoadBank(car, carID);
+    m_audio->LoadBank(bgm, bgmID);
 
     m_audio->RegisterObject(GAME_OBJECT_ID_CAR, 0x08);
     m_audio->PlayEvent(play_CarEngine, GAME_OBJECT_ID_CAR);
