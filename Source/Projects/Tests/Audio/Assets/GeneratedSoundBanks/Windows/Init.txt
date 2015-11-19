@@ -1,0 +1,77 @@
+Switch Group	ID	Name			Wwise Object Path	Notes
+	246300162	Footstep_Weight			\Footsteps With Multiple Variables\Footstep_Weight	This switch is driven by the Footstep_Weight RTPC
+	4202554577	Footstep_Gait			\Footsteps With Multiple Variables\Footstep_Gait	
+
+Switch	ID	Name	Switch Group			Notes
+	1935470627	Light	Footstep_Weight			
+	2732489590	Heavy	Footstep_Weight			
+	712161704	Run	Footstep_Gait			
+	2108779966	Walk	Footstep_Gait			
+
+State Group	ID	Name			Wwise Object Path	Notes
+	6899006	Objective			\Dialogue\Objective	
+	151362964	PlayerHealth			\Default Work Unit\PlayerHealth	
+	1176052424	Location			\Dialogue\Location	
+	1304109583	Unit			\Dialogue\Unit	
+	3299963692	ObjectiveStatus			\Dialogue\ObjectiveStatus	
+	3712907969	Hostile			\Dialogue\Hostile	
+	3991942870	Music			\Default Work Unit\Music	
+	4110439188	WalkieTalkie			\Dialogue\WalkieTalkie	
+
+State	ID	Name	State Group			Notes
+	141419130	NeutralizeHostile	Objective			
+	748895195	None	Objective			
+	3261872615	DefuseBomb	Objective			
+	3841112373	RescueHostage	Objective			
+	748895195	None	PlayerHealth			
+	868398962	Blasted	PlayerHealth			
+	1160234136	Normal	PlayerHealth			
+	672587556	Alley	Location			
+	748895195	None	Location			
+	2192450996	Hangar	Location			
+	4142189312	Street	Location			
+	748895195	None	Unit			
+	3004848132	Unit_B	Unit			
+	3004848135	Unit_A	Unit			
+	94054856	Completed	ObjectiveStatus			
+	748895195	None	ObjectiveStatus			
+	1655200910	Failed	ObjectiveStatus			
+	685704824	Gang	Hostile			
+	714721627	Bum	Hostile			
+	748895195	None	Hostile			
+	514064485	Fight	Music			
+	748895195	None	Music			
+	886139701	Fight_Damaged	Music			
+	1323211483	Winning_TheFight	Music			
+	1420167880	Fight_LowHealth	Music			
+	1823678183	Exploring	Music			
+	1852808225	Playing	Music			
+	4158285989	GameOver	Music			
+	4222988787	Fight_Dying	Music			
+	748895195	None	WalkieTalkie			
+	1553720736	Comm_Out	WalkieTalkie			
+	1856010785	Comm_In	WalkieTalkie			
+
+Custom State	ID	Name	State Group	Owner		Notes
+	416526659	Blasted	PlayerHealth	\Master-Mixer Hierarchy\Default Work Unit\Master Audio Bus		
+
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	2451442924	Enable_Effect			\Default Work Unit\Enable_Effect	
+
+Audio Bus	ID	Name			Wwise Object Path	Notes
+	197057172	Voices_Radio			\Default Work Unit\Master Audio Bus\Voices_Radio	
+	805203703	Master Secondary Bus			\Default Work Unit\Master Secondary Bus	
+	3011552261	Master Motion Bus			\Default Work Unit\Master Motion Bus	
+	3313685232	Voices			\Default Work Unit\Master Audio Bus\Voices	
+	3572306369	Unrecorded Background Music			\Default Work Unit\Master Secondary Bus\Unrecorded Background Music	
+	3600197733	Environmental Bus			\Default Work Unit\Master Audio Bus\Environmental Bus	
+	3803692087	Master Audio Bus			\Default Work Unit\Master Audio Bus	
+	3991942870	Music			\Default Work Unit\Master Audio Bus\Music	
+
+Auxiliary Bus	ID	Name			Wwise Object Path	Notes
+	2112490296	Hangar_Env			\Default Work Unit\Master Audio Bus\Environmental Bus\Hangar_Env	
+
+Effect plug-ins	ID	Name	Type				Notes
+	668148182	_BigReverb (Define custom)	Wwise RoomVerb			
+	2112490296	Hangar_Env	Wwise RoomVerb			
+

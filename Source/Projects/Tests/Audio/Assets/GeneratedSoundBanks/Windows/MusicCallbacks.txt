@@ -1,0 +1,24 @@
+Event	ID	Name			Wwise Object Path	Notes
+	519773712	PlayMusicDemo3			\MusicCallbacks\PlayMusicDemo3	
+	519773713	PlayMusicDemo2			\MusicCallbacks\PlayMusicDemo2	
+	519773714	PlayMusicDemo1			\MusicCallbacks\PlayMusicDemo1	
+	1327221850	Resume_All_Global			\Default Work Unit\Resume_All_Global	
+	3493516265	Pause_All_Global			\Default Work Unit\Pause_All_Global	
+
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	2	CC #1: Modulation			\CC 0-31\CC #1: Modulation	
+
+Modulator Envelope	ID	Name			Wwise Object Path	Notes
+	150695989	Modulator Envelope (Custom)				
+
+Source plug-ins	ID	Name	Type		Wwise Object Path	Notes
+	702118206	Wwise Synth One	Wwise Synth One		\Actor-Mixer Hierarchy\Default Work Unit\SynthOne\Wwise Synth One	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	329559453	CallbackTrack1	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\C3 (128Hz)_3A67241E.wem		\Interactive Music Hierarchy\Music Callbacks\CallbackPlaylist\CallbackSegment1\CallbackTrack1		6796
+	608003259	callback	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\callback_00000000.wem		\Interactive Music Hierarchy\Music Callbacks\MIDICallbacks\callback		282
+	708003509	CallbackTrack4	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\C6 (1024Hz)_3A67241E.wem		\Interactive Music Hierarchy\Music Callbacks\CallbackPlaylist\CallbackSegment4\CallbackTrack4		6796
+	752036114	MarchingBand	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\MarchingBand_AB9BF76F.wem		\Interactive Music Hierarchy\Music Callbacks\MarchingBand\MarchingBand		127330
+	942304755	CallbackTrack2	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\C4 (256Hz)_3A67241E.wem		\Interactive Music Hierarchy\Music Callbacks\CallbackPlaylist\CallbackSegment2\CallbackTrack2		6796
+	1005470372	CallbackTrack3	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\C5 (512Hz)_3A67241E.wem		\Interactive Music Hierarchy\Music Callbacks\CallbackPlaylist\CallbackSegment3\CallbackTrack3		6796
+

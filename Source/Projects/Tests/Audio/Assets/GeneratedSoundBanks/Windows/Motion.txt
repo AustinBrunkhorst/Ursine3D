@@ -1,0 +1,12 @@
+Event	ID	Name			Wwise Object Path	Notes
+	452547817	Stop_All			\Default Work Unit\Stop_All	
+	679837841	DoorSliding			\Motion\DoorSliding	
+	2975448509	GunFire			\Motion\GunFire	
+
+Source plug-ins	ID	Name	Type		Wwise Object Path	Notes
+	726964609	Wwise Motion Generator	Wwise Motion Generator		\Actor-Mixer Hierarchy\Motion\DoorSliding\DoorSliding_Motion\Wwise Motion Generator	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	102876030	GunFire	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Shotgun_Fire_01_E1E65BF4.wem		\Actor-Mixer Hierarchy\Motion\GunFire\GunFire	Audiokinetic Inc. All rights reserved. Audio content provided by Soundelux Design Music Group © 2007 Soundelux Design Music Group www.soundeluxdmg.com  The Audio Content contained in this digitally watermarked file is the property of Soundelux Design Music Group.  Your sole right with regard to this Audio Content is to listen to the Audio Content as part of this Sample Project.  This Audio Content cannot be used or modified for a commercial purpose nor for public demonstration.	72424
+	874577216	DoorSliding	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\SFX_DoorSliding_01_Open_E1E65BF4.wem		\Actor-Mixer Hierarchy\Motion\DoorSliding\DoorSliding	Audiokinetic Inc. All rights reserved. Audio content provided by Soundelux Design Music Group © 2007 Soundelux Design Music Group www.soundeluxdmg.com  The Audio Content contained in this digitally watermarked file is the property of Soundelux Design Music Group.  Your sole right with regard to this Audio Content is to listen to the Audio Content as part of this Sample Project.  This Audio Content cannot be used or modified for a commercial purpose nor for public demonstration.	112096
+

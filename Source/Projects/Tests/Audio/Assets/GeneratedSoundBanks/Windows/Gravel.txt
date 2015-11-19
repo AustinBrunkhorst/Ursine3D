@@ -1,0 +1,24 @@
+Event	ID	Name			Wwise Object Path	Notes
+	3854155799	Play_Footsteps			\Default Work Unit\Play_Footsteps	
+
+Switch Group	ID	Name			Wwise Object Path	Notes
+	1834394558	Surface			\Footsteps With Multiple Variables\Surface	
+
+Switch	ID	Name	Switch Group			Notes
+	2058049674	Wood	Surface			
+	2185786256	Gravel	Surface			
+	2195636714	Dirt	Surface			
+	2473969246	Metal	Surface			
+
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	246300162	Footstep_Weight			\Footsteps With Multiple Variables\Footstep_Weight	0 is a light footstep and 100 is a heavy footstep.  This RTPC drives the Footstep_Weight switch
+	3182548923	Footstep_Speed			\Footsteps With Multiple Variables\Footstep_Speed	This parameter models the walking speed.  0 is very slow, 10 is running fast.  Modeling the Walk/Run state of a game with a Game Parameter allows more flexibility than a simple switch, especially if there is a transitional animation between walking and running.  This parameter drives the Gait switch, used in some of the footsteps containers.
+
+Effect plug-ins	ID	Name	Type				Notes
+	1659519038	GravelEQ	Wwise Parametric EQ			
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	407913791	AK_FS_Run_Gravel_03	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\footsteps\Gravel\AK_FS_Run_Gravel_03_E1E65BF4.wem		\Actor-Mixer Hierarchy\Footsteps With Multiple Variables\Footsteps\Gravel_Any\AK_FS_Run_Gravel_03		6940
+	461944601	AK_FS_Run_Gravel_02	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\footsteps\Gravel\AK_FS_Run_Gravel_02_E1E65BF4.wem		\Actor-Mixer Hierarchy\Footsteps With Multiple Variables\Footsteps\Gravel_Any\AK_FS_Run_Gravel_02		7264
+	996471891	AK_FS_Run_Gravel_01	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\footsteps\Gravel\AK_FS_Run_Gravel_01_E1E65BF4.wem		\Actor-Mixer Hierarchy\Footsteps With Multiple Variables\Footsteps\Gravel_Any\AK_FS_Run_Gravel_01		6976
+

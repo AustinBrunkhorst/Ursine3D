@@ -18,12 +18,22 @@
 
 #include "Meta.h"
 
-#ifdef URSINE_GRAPHICS_DIRECTX
+#if defined(URSINE_GRAPHICS_DIRECTX)
 namespace DirectX
 {
 	// Forward Declaration
 	struct XMFLOAT3;
 }
+#endif
+
+URSINE_TODO("REMOVE ME");
+#define URSINE_DEPENDENCY_WWise
+
+#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+
+// Forward Declaration
+struct AkVector;
+
 #endif
 
 namespace ursine
@@ -59,10 +69,16 @@ namespace ursine
 		explicit SVec3(const SVec4 &value);
 		explicit SVec3(const Vec4 &value);
 
-#ifdef URSINE_GRAPHICS_DIRECTX
+#if defined(URSINE_GRAPHICS_DIRECTX)
 		explicit SVec3(const DirectX::XMFLOAT3 &vec);
 
 		DirectX::XMFLOAT3 ToD3D(void) const;
+#endif
+
+#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+		explicit SVec3(const AkVector & vec);
+
+		AkVector ToWwise(void) const;
 #endif
 
 		// Properties

@@ -17,6 +17,10 @@
 #include "DirectXMath.h"
 #endif
 
+#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+#include "Ak/SoundEngine/Common/AkTypes.h"
+#endif
+
 namespace ursine
 {
 	SVec3::SVec3(const Vec2 &value, float Z)
@@ -73,6 +77,29 @@ namespace ursine
 	DirectX::XMFLOAT3 SVec3::ToD3D(void) const
 	{
 		return{ m_x, m_y, m_z };
+	}
+#endif
+
+#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+	SVec3::SVec3(const AkVector & vec)
+		: m_x( vec.X )
+		, m_y( vec.Y )
+		, m_z( vec.Z )
+	{
+#ifdef USE_SSE
+		m_w = 0.0f;
+#endif
+	}
+
+	AkVector SVec3::ToWwise(void) const
+	{
+		AkVector vec;
+
+		vec.X = m_x;
+		vec.Y = m_y;
+		vec.Z = m_z;
+
+		return vec;
 	}
 #endif
 
