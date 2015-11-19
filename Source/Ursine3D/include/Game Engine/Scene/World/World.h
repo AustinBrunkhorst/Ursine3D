@@ -51,6 +51,9 @@ namespace ursine
             // Gets an entity based on its unique id
             Entity *GetEntityUnique(EntityUniqueID uniqueID) const;
 
+            // Gets entities without parents
+            EntityVector GetRootEntities(void) const;
+
             // Gets all active entities in the world
             const EntityVector &GetActiveEntities(void) const;
 

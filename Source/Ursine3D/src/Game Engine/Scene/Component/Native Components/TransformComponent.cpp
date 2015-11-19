@@ -465,7 +465,7 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            owner->GetWorld( )->Dispatch( WORLD_EDITOR_ENTITY_PARENT_CHANGED, &args );
+            owner->GetWorld( )->Dispatch( WORLD_EDITOR_ENTITY_PARENT_CHANGED, owner, &args );
 
         #endif
         }

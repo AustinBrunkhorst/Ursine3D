@@ -84,6 +84,8 @@
                     items.forEach( initItem );
                 } );
 
+                this._setEmpty( !this.getItems( ).length );
+
                 this.fire( 'items-changed', {
 
                 } );
