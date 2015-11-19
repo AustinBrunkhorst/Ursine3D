@@ -76,11 +76,11 @@ $item-indent: 6px;
         .drop-after-container {
           opacity: 0;
           position: absolute;
-          height: 4px;
+          height: 6px;
           left: 0;
           right: 0;
-          top: 100%;
-          margin-top: -2px;
+          bottom: 0;
+          margin-bottom: -3px;
           z-index: 5;
           background: $color-accent;
           transition: opacity $duration-transition-btn ease;
@@ -103,6 +103,14 @@ $item-indent: 6px;
     x-tree-view-item {
       display: block;
 
+      &:not(.dragging) {
+        .text {
+          &:hover {
+            background: #5a5a5a !important;
+          }
+        }
+      }
+
       .text {
         display: block;
         padding: 5px 5px 5px $base-item-indent;
@@ -112,10 +120,6 @@ $item-indent: 6px;
         &::selection {
           background: white;
           color: black;
-        }
-
-        &:hover {
-          background: #5a5a5a !important;
         }
       }
 

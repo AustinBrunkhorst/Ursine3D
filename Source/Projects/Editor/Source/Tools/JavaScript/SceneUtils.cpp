@@ -20,6 +20,25 @@ namespace
     void doSaveScene(int selectedFilter, const FileList &files);
 }
 
+JSFunction(SceneGetRootEntities)
+{
+    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+
+    auto root = scene->GetWorld( )->GetRootEntities( );
+
+    auto ids = CefV8Value::CreateArray( static_cast<int>( root.size( ) ) );
+
+    for (size_t i = 0; i < root.size( ); ++i)
+    {
+        ids->SetValue( 
+            static_cast<int>( i ), 
+            CefV8Value::CreateUInt( root[ i ]->GetUniqueID( ) )
+        );
+    }
+
+    return ids;
+}
+
 JSFunction(SceneGetActiveEntities)
 {
     auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
