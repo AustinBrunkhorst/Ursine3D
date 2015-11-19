@@ -15,7 +15,7 @@
 #include <RenderableComponent.h>   
 #include <LightComponent.h>
 #include <Model3DComponent.h>
-#include <CapsuleColliderComponent.h>
+#include <CapsuleColliderComponent.h> 
 #include <BoxColliderComponent.h>
 #include <AnimationBuilder.h>
 

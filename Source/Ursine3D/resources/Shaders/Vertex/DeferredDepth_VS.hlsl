@@ -28,14 +28,14 @@ struct VS_INPUT
 	float3	Nor		: NORMAL;
 	float2	Tex		: TEXCOORD;
 	float4	BWeight : BLENDWEIGHT;
-	int4	BIdx	: BLENDINDICES;
+	uint4	BIdx	: BLENDINDICES_EIGHT;
 };
 
 
 struct VS_OUTPUT
 {
   float4 Pos : SV_POSITION;
-  float4 normal : NORMAL;
+  float4 normal : NORMAL; 
   float2 Tex : UV;
 };
 
