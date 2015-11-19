@@ -1161,6 +1161,14 @@ var ursine_editor_windows_SceneOutline = function() {
 	two.child.appendChild(three);
 	view.appendChild(one);
 	this.window.container.appendChild(view);
+	var _g = 0;
+	while(_g < 10) {
+		var i = _g++;
+		var item = new TreeViewItemControl();
+		item.text = "Item " + i;
+		item.selected = i == 7;
+		if(i < 9) one.child.appendChild(item); else view.appendChild(item);
+	}
 };
 $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOutline;
 ursine_editor_windows_SceneOutline.__name__ = ["ursine","editor","windows","SceneOutline"];

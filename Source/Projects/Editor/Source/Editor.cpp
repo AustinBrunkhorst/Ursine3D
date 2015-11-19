@@ -10,6 +10,7 @@
 
 #include <Color.h> 
 #include <LightComponent.h>
+#include <Model3DComponent.h>
 
 using namespace ursine;
 
@@ -160,13 +161,34 @@ void Editor::initializeScene(void)
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
-        univLight->GetTransform()->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
-        univLight->GetTransform()->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+        univLight->GetTransform( )->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
+        univLight->GetTransform( )->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
 
         component->SetType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
+
+    /*auto *character = world->CreateEntity( "Character" );
+    {
+        auto *model = character->AddComponent<ecs::Model3D>( );
+
+        model->SetModel( "Character" );
+        model->SetMaterial( "Blank" );
+
+        auto *cube = world->CreateEntity( "Cube" );
+
+        auto *cubeModel = cube->AddComponent<ecs::Model3D>( );
+
+        cubeModel->SetModel( "Cube" );
+
+        auto *cubeTransform = cube->GetTransform( );
+
+        cubeTransform->SetLocalPosition( { 1, 20, 20 } );
+        cubeTransform->SetLocalScale( { 5, 5, 5 } );
+
+        character->GetTransform( )->AddChild( cubeTransform );
+    }*/
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))

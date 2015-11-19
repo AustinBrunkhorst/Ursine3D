@@ -97,11 +97,18 @@ namespace
         auto *editor = GetCoreSystem( Editor );
 
         ecs::WorldSerializer serializer;
-
         ecs::World::Handle world;
 
-        if (!serializer.Deserialize( files[ 0 ].string( ), world ))
+        try
         {
+            world = serializer.Deserialize( files[ 0 ].string( ) );
+        }
+        catch (const ecs::SerializationException &e)
+        {
+            UWarning( "World deserialization failure.\n%s",
+                e.GetError( ).c_str( ) 
+            );
+
             URSINE_TODO( "Use UI error popup" );
             SDL_ShowSimpleMessageBox(
                 SDL_MESSAGEBOX_ERROR,
@@ -109,8 +116,6 @@ namespace
                 "Unable to load world.",
                 editor->GetMainWindow( )->GetInternalHandle( )
             );
-
-            return;
         }
 
         editor->GetProject( )->SetWorld( world );
