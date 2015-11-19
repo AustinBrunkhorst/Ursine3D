@@ -157,7 +157,7 @@ namespace ursine
             return found;
         }
 
-        Component* EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+        Component *EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
         {
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
@@ -184,7 +184,7 @@ namespace ursine
             return nullptr;
         }
 
-        Component* EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+        Component *EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
         {
             auto parentID = m_hierarchy.GetParent( entity );
 
@@ -386,6 +386,12 @@ namespace ursine
             EntityEventArgs e( WORLD_ENTITY_ADDED, entity );
 
             m_world->Dispatch( WORLD_ENTITY_ADDED, &e );
+
+            auto &children = *m_hierarchy.GetChildren( entity );
+
+            // dispatch children AFTER dispatching parent
+            for (auto childID : children)
+                dispatchCreated( GetEntity( childID ) );
         }
 
         void EntityManager::addComponent(Entity *entity, Component *component)

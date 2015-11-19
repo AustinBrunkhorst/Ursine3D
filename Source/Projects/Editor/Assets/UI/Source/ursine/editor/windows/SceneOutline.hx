@@ -72,6 +72,19 @@ class SceneOutline extends WindowHandler {
         view.appendChild( one );
 
         window.container.appendChild( view );
+
+        for (i in 0...10) {
+            var item = new TreeViewItem( );
+
+            item.text = 'Item ${i}';
+
+            item.selected = i == 7;
+
+            if (i < 9)
+                one.child.appendChild( item );
+            else
+                view.appendChild( item );
+        }
     }
 
     public function clearSelectedEntities() {

@@ -16,7 +16,8 @@
 
             },
             listeners: {
-                'blur': '_onBlur'
+                'blur': '_onBlur',
+                'mouseleave': '_onMouseLeave'
             },
             created: function() {
                 // make this the root menu by default
@@ -46,6 +47,13 @@
                 [].forEach.call( hovered, function (item) {
                     item.classList.remove( 'hover' );
                 } );
+            },
+            _onMouseLeave: function() {
+                var focused = document.activeElement;
+
+                // make sure we remove the hover state explicitly when not focused on mouse exit
+                if (!(this === focused || this.contains( focused )))
+                    this._onBlur( );
             }
         });
     </script>
