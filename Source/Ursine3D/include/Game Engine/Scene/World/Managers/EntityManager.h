@@ -156,6 +156,7 @@ namespace ursine
 
         private:
             friend class WorldSerializer;
+            friend class EntitySerializer;
 
             // components by type
             std::array<ComponentVector, kMaxComponentCount> m_componentTypes;

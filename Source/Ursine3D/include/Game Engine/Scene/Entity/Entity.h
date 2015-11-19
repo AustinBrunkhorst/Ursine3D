@@ -231,6 +231,7 @@ namespace ursine
             // entity manager needs to be able to construct entities
             friend class EntityManager;
             friend class WorldSerializer;
+            friend class EntitySerializer;
 
             // access ids directly
             friend class NameManager;

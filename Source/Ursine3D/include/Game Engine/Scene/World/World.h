@@ -74,6 +74,7 @@ namespace ursine
         private:
             friend class Entity;
             friend class WorldSerializer;
+            friend class EntitySerializer;
 
             EntityVector m_deleted;
 

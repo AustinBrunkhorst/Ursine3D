@@ -2,8 +2,10 @@
 
 <dom-module id="x-tree-view-item">
     <template>
-        <div id="text">
+        <div id="text" class="text">
+            <span id="arrow" class="arrow"></span>
             <content>{{text}}</content>
+            <div class="drop-after-container"></div>
         </div>
         <x-tree-view id="child" class="child-view"></x-tree-view>
     </template>
@@ -14,12 +16,35 @@
                 text: {
                     type: String,
                     notify: true
+                },
+                selected: {
+                    type: Boolean,
+                    notify: true,
+                    value: false,
+                    observer: '_onSelectedChanged'
+                },
+                opened: {
+                    type: Boolean,
+                    notify: true,
+                    value: false,
+                    observer: '_onOpenedChanged'
+                },
+                dragging: {
+                    type: Boolean,
+                    readOnly: true,
+                    value: false,
+                    observer: '_onDraggingChanged'
                 }
             },
             listeners: {
-                'click': '_onClick'
+                'click': '_onClick',
+                'text.mousedown': '_onTextMouseDown',
+                'arrow.click': '_onArrowClick'
             },
-            attached: function () {
+            created: function() {
+
+            },
+            attached: function() {
                 this._onItemsChanged( );
 
                 this.listen( this.child, 'items-changed', '_onItemsChanged' );
@@ -40,12 +65,54 @@
                 return null;
             },
 
+            _onSelectedChanged: function() {
+                this.classList.toggle( 'selected', this.selected );
+            },
+            _onOpenedChanged: function() {
+                this.classList.toggle( 'opened', this.opened );
+            },
+            _onDraggingChanged: function() {
+                console.trace( 'changed', this.dragging );
+
+                this.classList.toggle( 'dragging', this.dragging );
+            },
             _onClick: function (e) {
-                // make sure this event doesn't bubble to the parent
+                // TODO:
+                /*// make sure this event doesn't bubble to the parent
                 e.stopImmediatePropagation( );
                 e.stopPropagation( );
 
-                var result = this.fire( 'open', e );
+                var result = this.fire( 'open', e );*/
+            },
+            _onTextMouseDown: function(e) {
+                ElementUtils.once( document.body, 'mouseup', this._onTextMouseUp.bind( this ) );
+
+                document.addEventListener( 'mousemove', this._onTextMouseMove.bind( this ) );
+
+                console.trace( this, 'mousedown' );
+            },
+            _onTextMouseMove: function(e) {
+                if (!this.dragging) {
+                    var result = this.fire( 'drag-start', e );
+
+                    // drag start was cancelled
+                    if (result === false)
+                        return;
+
+                    this._setDragging( true );
+                }
+
+                console.trace( this, 'drag', this.dragging );
+            },
+            _onTextMouseUp: function(e) {
+                this._setDragging( false );
+
+                document.removeEventListener( 'mousemove', this._onTextMouseMove.bind( this ) );
+
+                console.trace( this, 'mouseup' );
+            },
+            _onArrowClick: function(e) {
+                this.opened = !this.opened;
             },
             _onItemsChanged: function () {
                 if (this.child.empty)
