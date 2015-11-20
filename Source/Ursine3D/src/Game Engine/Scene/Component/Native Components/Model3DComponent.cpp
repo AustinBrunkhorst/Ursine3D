@@ -58,6 +58,11 @@ namespace ursine
             onUpdateRenderer( this, EventArgs::Empty );
         }
 
+        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        {
+            return m_model->GetMatrixPalette( );
+        }
+
         void Model3D::SetModel(const std::string &name)
         {
             m_modelName = name;

@@ -1,3 +1,15 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AnimationBuilder.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
 #include "UrsinePrecompiled.h"
 #include "AnimationBuilder.h"
 #include "ModelInfo.h"
@@ -9,7 +21,6 @@ namespace ursine
     std::unordered_map<std::string, Animation*>     AnimationBuilder::m_name2Animation;
     std::unordered_map<std::string, AnimationRig*>  AnimationBuilder::m_name2Rig;
     std::vector<SMat4>                              AnimationBuilder::m_toParentTransforms;
-    std::vector<SMat4>                              AnimationBuilder::m_toRootTransforms;
 
     unsigned AnimationBuilder::m_rigCount;
     unsigned AnimationBuilder::m_animationCount;
@@ -38,7 +49,7 @@ namespace ursine
 
 		// determine the 2 current keyframes to use
 		// we assume that all frames exist, and that they were baked across all total keyframes
-		for (int x = 0; x < frameCount - 1; ++x)
+		for (unsigned x = 0; x < frameCount - 1; ++x)
 		{
 			// get the two current keyframes
 			const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
@@ -93,7 +104,6 @@ namespace ursine
         m_animationData.resize( 128 );
         m_animationRigData.resize( 128 );
         m_toParentTransforms.resize( 128 );
-        m_toRootTransforms.resize( 128 );
         m_rigCount = 0;
         m_animationCount = 0;
     }
@@ -162,9 +172,20 @@ namespace ursine
 				auto keyframe = info.keyframes[0][boneIndex][rigIndex];
 
 				// get values
-				auto trans = SVec3(keyframe.trans.x, keyframe.trans.y, keyframe.trans.z);
+				auto trans = SVec3(
+                    keyframe.trans.x, 
+                    keyframe.trans.y, 
+                    keyframe.trans.z
+                );
+
 				auto scale = SVec3(1, 1, 1);
-				auto rot = SQuat(keyframe.rot.x, keyframe.rot.y, keyframe.rot.z, keyframe.rot.w);
+
+				auto rot = SQuat(
+                    keyframe.rot.x, 
+                    keyframe.rot.y, 
+                    keyframe.rot.z, 
+                    keyframe.rot.w
+                );
 
 				// add keyframe to animation
 				animation->AddKeyframe(
@@ -174,7 +195,7 @@ namespace ursine
 					scale,
 					rot,
 					keyframe.time
-					);
+				);
 			}
 		}
 
@@ -247,8 +268,6 @@ namespace ursine
 			
 			// construct matrix for this matrix
 			current = SMat4(p, q, s);
-			//get the current guy
-
 
 			// construct matrix for this matrix
 			current = SMat4(p, q, s);
@@ -317,7 +336,13 @@ namespace ursine
         // iterate through all existing children
         for ( auto &x : hierarchy[ currentIndex ] )
         {
-            rec_LoadBoneMesh( hierarchy, x, currentIndex, rigData, rig );
+            rec_LoadBoneMesh( 
+                hierarchy, 
+                x, 
+                currentIndex, 
+                rigData, 
+                rig 
+            );
         }
     }
 }

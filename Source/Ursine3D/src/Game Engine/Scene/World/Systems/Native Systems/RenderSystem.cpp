@@ -58,6 +58,13 @@ namespace ursine
                     static_cast<Renderable*>( const_cast<Component*>( args->component ) )
                 );
             }
+            else if(args->component->Is<Animator>())
+            {
+                m_animator.emplace(
+                    args->entity->GetUniqueID( ),
+                    static_cast<Animator*>(const_cast<Component*>(args->component))
+                    );
+            }
         }
 
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
@@ -83,6 +90,12 @@ namespace ursine
         void RenderSystem::onRender(EVENT_HANDLER(World))
         {
             m_graphics->BeginScene( );
+
+            for(auto &animator : m_animator)
+            {
+                
+                animator.second->UpdateAnimation( Application::Instance->GetDeltaTime() );
+            }
 
             for (auto &renderable : m_renderable)
             {

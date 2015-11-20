@@ -37,6 +37,9 @@ namespace ursine
             Meta(Disable)
             void OnInitialize(void) override;
 
+            Meta(Disable)
+            std::vector<SMat4> &GetMatrixPalette( void );
+
             //get/set model
             void SetModel(const std::string &name);
             const std::string &GetModel(void) const;
