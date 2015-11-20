@@ -910,23 +910,60 @@ namespace ursine
 
                 AnimationBuilder::GenerateAnimationData(myState, rig, current.GetMatrixPalette( ), boneMat);
 
-                for(auto &x : boneMat)
+                int max = 0;
+                int size = hierarchy.size( );
+
+                for (int x = 0; x < size; ++x)
                 {
+                    int distance = 0;
+                    int walker = hierarchy[ x ];
+
+                    while (walker != -1)
+                    {
+                        walker = hierarchy[ walker ];
+                        distance++;
+                        if (distance > max) max = distance;
+                    }
+                }
+
+                std::vector<SVec3> points( 100 );
+
+                for (int x = 0; x < size; ++x)
+                {
+                    points[x] = current.GetWorldMatrix( ).TransformPoint(boneMat[ x ].TransformPoint(SVec3(0, 0, 0)));
+                }
+
+                for (int counter = 0; counter < size; ++counter)
+                {
+                    int distance = 0;
+                    int walker = hierarchy[ counter ];
+
+                    while(walker != -1)
+                    {
+                        walker = hierarchy[ walker ];
+                        distance++;
+                    }
+
+                    float interp = (float)distance / (float)max;
                     //draw points
                     drawingManager->SetOverdraw(true);
-                    drawingManager->SetDrawColor(0, 1, 0, 1);
+                    drawingManager->SetDrawColor(Color(1 * interp,(1.f - interp),0,1));
+
+                    if (distance == 0)
+                        drawingManager->SetDrawColor(0, 0, 1, 1);
+
                     drawingManager->SetSize(10);
-                    SVec3 p = current.GetWorldMatrix().TransformPoint(x.TransformPoint(SVec3(0, 0, 0)));
+                    SVec3 &p = points[ counter ];
                     drawingManager->DrawPoint(p.X(), p.Y(), p.Z());
                     
                 }
 
-                int size = hierarchy.size( );
-                auto &palette = current.GetMatrixPalette( );
+                //int size = hierarchy.size( );
+                //auto &palette = current.GetMatrixPalette( );
                 for (int x = size - 1; x >= 1; --x)
                 {
-                    SVec3 p1 = current.GetWorldMatrix( ).TransformPoint(palette[ x ].TransformPoint(SVec3(0, 0, 0))); //child
-                    SVec3 p2 = current.GetWorldMatrix( ).TransformPoint(palette[ hierarchy[ x] ].TransformPoint(SVec3(0, 0, 0))); //to parent?
+                    SVec3 &p1 = points[ x ];
+                    SVec3 &p2 = points[ hierarchy[ x ] ];
 
                     drawingManager->DrawLine(p1.X( ), p1.Y( ), p1.Z( ), p2.X( ), p2.Y( ), p2.Z( ));
                 }
