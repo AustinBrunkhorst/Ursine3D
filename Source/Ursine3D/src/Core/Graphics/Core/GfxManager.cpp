@@ -905,8 +905,33 @@ namespace ursine
                 myState.SetTimePosition(time);
 
                 auto *rig = AnimationBuilder::GetAnimationRigByIndex(0);
+                auto &hierarchy = rig->GetHierarchyTable( );
+                std::vector<SMat4> boneMat(100);
 
-                AnimationBuilder::GenerateAnimationData(myState, rig, current.GetMatrixPalette( ));
+                AnimationBuilder::GenerateAnimationData(myState, rig, current.GetMatrixPalette( ), boneMat);
+
+                for(auto &x : boneMat)
+                {
+                    //draw points
+                    drawingManager->SetOverdraw(true);
+                    drawingManager->SetDrawColor(0, 1, 0, 1);
+                    drawingManager->SetSize(10);
+                    SVec3 p = current.GetWorldMatrix().TransformPoint(x.TransformPoint(SVec3(0, 0, 0)));
+                    drawingManager->DrawPoint(p.X(), p.Y(), p.Z());
+                    
+                }
+
+                int size = hierarchy.size( );
+                auto &palette = current.GetMatrixPalette( );
+                for (int x = size - 1; x >= 1; --x)
+                {
+                    SVec3 p1 = current.GetWorldMatrix( ).TransformPoint(palette[ x ].TransformPoint(SVec3(0, 0, 0))); //child
+                    SVec3 p2 = current.GetWorldMatrix( ).TransformPoint(palette[ hierarchy[ x] ].TransformPoint(SVec3(0, 0, 0))); //to parent?
+
+                    drawingManager->DrawLine(p1.X( ), p1.Y( ), p1.Z( ), p2.X( ), p2.Y( ), p2.Z( ));
+                }
+
+                drawingManager->SetOverdraw(false);
             }
 
             // map matrix palette

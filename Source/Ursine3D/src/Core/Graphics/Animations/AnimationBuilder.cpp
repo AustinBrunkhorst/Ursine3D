@@ -14,7 +14,12 @@ namespace ursine
     unsigned AnimationBuilder::m_rigCount;
     unsigned AnimationBuilder::m_animationCount;
 
-	void AnimationBuilder::GenerateAnimationData(const AnimationState& animState, const AnimationRig* rig, std::vector<SMat4>& outputMatPal)
+	void AnimationBuilder::GenerateAnimationData(
+        const AnimationState& animState, 
+        const AnimationRig* rig, 
+        std::vector<SMat4>& outputMatPal,
+        std::vector<SMat4> &outputBones
+    )
 	{
 		// get the current time
 		float time = animState.GetTimePosition();
@@ -57,7 +62,7 @@ namespace ursine
 		}
 
 		// root bone has no transform, therefor is just defaulted to the first interpolated matrix
-		m_toRootTransforms[0] = m_toParentTransforms[0];
+        outputBones[0] = m_toParentTransforms[0];
 
 		// now we need to go through the bone hierarchy 
 		auto &boneData = rig->GetBoneData();
@@ -69,17 +74,17 @@ namespace ursine
 			SMat4 &toParent = m_toParentTransforms[x];
 
 			// get the parent to root
-			const SMat4 &parentToRoot = m_toRootTransforms[boneData[x].GetParentID()];
+			const SMat4 &parentToRoot = outputBones[boneData[x].GetParentID()];
 
 			// calculate root transform
-			m_toRootTransforms[x] = parentToRoot * toParent;
+            outputBones[x] = parentToRoot * toParent;
 		}
 
 		// multiply by bone offset transform to get final transform
 		auto &offsetMatrices = rig->GetOffsetMatrices();
 		for (unsigned x = 0; x < boneCount; ++x)
 		{
-			outputMatPal[x] = (m_toRootTransforms[x] * offsetMatrices[ x ]);
+            outputMatPal[ x ] = (outputBones[ x ] * offsetMatrices[ x ]);
 		}
 	}
 

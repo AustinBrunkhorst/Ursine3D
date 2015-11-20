@@ -90,4 +90,9 @@ namespace ursine
     {
         return static_cast<unsigned>(m_boneData.size());
     }
+
+    const std::vector<unsigned>& AnimationRig::GetHierarchyTable() const
+    {
+        return m_hierarchyTable;
+    }
 }

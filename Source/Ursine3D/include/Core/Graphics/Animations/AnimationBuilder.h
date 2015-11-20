@@ -35,7 +35,8 @@ namespace ursine
         static void GenerateAnimationData(
             const AnimationState &animState, 
             const AnimationRig *rig,
-            std::vector<SMat4> &outputMatPal
+            std::vector<SMat4> &outputMatPal,
+            std::vector<SMat4> &outputBones
             
         );
 

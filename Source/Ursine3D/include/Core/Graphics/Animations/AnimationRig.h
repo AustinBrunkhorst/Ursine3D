@@ -79,6 +79,7 @@ namespace ursine
 
         unsigned GetBoneCount(void) const;
 
+        const std::vector<unsigned> &GetHierarchyTable(void) const;
     private:
         std::string m_name;
 
