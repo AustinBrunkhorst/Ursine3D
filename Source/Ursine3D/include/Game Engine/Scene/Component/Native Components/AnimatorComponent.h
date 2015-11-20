@@ -22,8 +22,11 @@ namespace ursine
 {
     namespace ecs
     {
+        // not implemented yet
         class AnimationClip
         {
+            
+
         public:
             enum MaskBlendMode
             {
@@ -78,13 +81,48 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-            Animator( void );
-            ~Animator( void );
+            EditorField(
+                std::string currentAnimation,
+                GetAnimation,
+                SetAnimation
+            );
+
+            EditorField(
+                bool loopAnimation,
+                SetLooping,
+                IsLooping
+            );
+
+            EditorField(
+                bool playAnimation,
+                SetPlaying,
+                IsPlaying
+            );
+
+        public:
+            Animator(void);
+            ~Animator(void);
 
             Meta( Disable )
-                void OnInitialize( void ) override;
+                void OnInitialize(void) override;
+
+            void UpdateAnimation(const float dt);
+
+        // getter / setter ////////////////////////////////////////
+            bool IsPlaying(void) const;
+            void SetPlaying(const bool isPlaying);
+
+            bool IsLooping(void) const;
+            void SetLooping(const bool isLooping);
+
+            const std::string &GetAnimation(void) const;
+            void SetAnimation(const std::string &name);
 
         private:
+            bool m_playing;
+            bool m_looping;
+            float m_animationTime;
+            std::string m_currentAnimation;
 
         } Meta( Enable, DisplayName( "Animator" ) );
     }
