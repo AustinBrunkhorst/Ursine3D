@@ -4,26 +4,38 @@
 namespace ursine
 {
     AnimationRig::AnimationRig(void)
+        : m_name( "" )
+        , m_boneCount( 0 )
     {
     }
 
-    AnimationRig::AnimationRig(const std::string& name)
-        : m_name(name)
+    AnimationRig::AnimationRig( const std::string& name )
+        : m_name( name )
+        , m_boneCount( 0 )
     {
         
     }
 
+    void AnimationRig::InitializeRig(const unsigned boneCount)
+    {
+        m_hierarchyTable.resize( boneCount );
+        m_boneData.resize( boneCount );
+        m_offsetMatrices.resize( boneCount );
+    }
+
     unsigned AnimationRig::AddBone(
-        const std::string& name, 
-        const SVec3& trans, 
-        const SVec3& scale, 
-        const SQuat& rotation, 
+        const std::string& name,
+        const SVec3& boneTrans,
+        const SVec3& boneScale,
+        const SQuat& boneRotation,
+        const SVec3& bindTrans,
+        const SVec3& bindScale,
+        const SQuat& bindRotation,
         const unsigned parentID
     )
     {
         // we need a new bone! first, save the new boneID, add to hierarchy table
-        unsigned newID = m_boneData.size();
-        m_hierarchyTable.push_back(parentID);
+        unsigned newID = m_boneCount++;
 
         // check if this is the root node
         AnimationBone *parent;
@@ -32,13 +44,14 @@ namespace ursine
         else
             parent = &m_boneData[ parentID ];
 
-        // add bone to table, initialize this bone with proper data
-        m_boneData.push_back(AnimationBone());
-        m_boneData[ newID ].InitializeBone(name, trans, scale, rotation, newID, parent);
+        // set bone in vector, initialize this bone with proper data
+        m_boneData[ newID ].InitializeBone(name, bindTrans, bindScale, bindRotation, newID, parentID, parent);
+
+        // set bone in hierarchy table
+        m_hierarchyTable[ newID ] = parentID;
         
         // calculate offset matrix
-        SMat4 offsetMatrix = SMat4(trans) * SMat4(scale.X(), scale.Y(), scale.Z()) * SMat4(rotation);
-        m_offsetMatrices.push_back(offsetMatrix);
+        m_offsetMatrices[ newID ] = SMat4( boneTrans ) * SMat4( boneScale.X( ), boneScale.Y( ), boneScale.Z( ) ) * SMat4( boneRotation );
 
         return newID;
     }
@@ -75,6 +88,11 @@ namespace ursine
 
     unsigned AnimationRig::GetBoneCount() const
     {
-        return m_boneData.size();
+        return static_cast<unsigned>(m_boneData.size());
+    }
+
+    const std::vector<unsigned>& AnimationRig::GetHierarchyTable() const
+    {
+        return m_hierarchyTable;
     }
 }

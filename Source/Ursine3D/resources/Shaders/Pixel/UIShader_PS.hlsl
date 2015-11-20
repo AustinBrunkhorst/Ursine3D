@@ -13,6 +13,7 @@ struct PixelInputType
 float4 main( PixelInputType input ) : SV_TARGET
 {
   float4 color = colorTexture.Sample(SampleType, input.uv);
+
   //float4 color = colorTexture.Sample(SampleType, input.uv);
-  return color.zyxw;
+  return color.zyxw; 
 }

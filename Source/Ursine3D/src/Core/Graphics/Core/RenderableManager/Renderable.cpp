@@ -100,6 +100,18 @@ namespace ursine
             intensity = m_specIntensity;
         }
 
+
+		void Model3D::SetAnimationTime(const float time)
+		{
+			m_animationTime = time;
+		}
+
+		float & Model3D::GetAnimationTime(void)
+		{
+			// TODO: insert return statement here
+			return m_animationTime;
+		}
+
         void Model3D::SetColor(const Color color)
         {
             m_color = color;
@@ -114,6 +126,7 @@ namespace ursine
         {
             return m_matrixPalette;
         }
+
 
         const char *Model3D::GetModelName(void)
         {
