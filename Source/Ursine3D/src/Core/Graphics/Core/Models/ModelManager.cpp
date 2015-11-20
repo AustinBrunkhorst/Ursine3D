@@ -203,10 +203,10 @@ namespace ursine
                 realbuffer[ x ].vPos = DirectX::XMFLOAT3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
                 realbuffer[ x ].vNor = DirectX::XMFLOAT3(buffer[ x ].normal.x, buffer[ x ].normal.y, buffer[ x ].normal.z);
                 realbuffer[ x ].vUv = buffer[ x ].UV;
-                realbuffer[ x ].vBIdx[ 0 ] = (BYTE)0;
-                realbuffer[ x ].vBIdx[ 1 ] = (BYTE)0;
-                realbuffer[ x ].vBIdx[ 2 ] = (BYTE)0;
-                realbuffer[ x ].vBIdx[ 3 ] = (BYTE)0;
+                realbuffer[ x ].vBIdx[ 0 ] = 0;
+                realbuffer[ x ].vBIdx[ 1 ] = 0;
+                realbuffer[ x ].vBIdx[ 2 ] = 0;
+                realbuffer[ x ].vBIdx[ 3 ] = 0;
                 realbuffer[ x ].vBWeight = DirectX::XMFLOAT4(1, 0, 0, 0);
             }
 
@@ -348,18 +348,18 @@ namespace ursine
 						buffer[i].vBWeight.y = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][1];
 						buffer[i].vBWeight.z = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][2];
 						buffer[i].vBWeight.w = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][3];
-						buffer[i].vBIdx[0] = (BYTE)ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][0];
-						buffer[i].vBIdx[1] = (BYTE)ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][1];
-						buffer[i].vBIdx[2] = (BYTE)ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][2];
-						buffer[i].vBIdx[3] = (BYTE)ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][3];
+						buffer[i].vBIdx[0] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][0];
+						buffer[i].vBIdx[1] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][1];
+						buffer[i].vBIdx[2] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][2];
+						buffer[i].vBIdx[3] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][3];
 					}
 					else
 					{
 						buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-                        buffer[ i ].vBIdx[ 0 ] = (BYTE)0;
-                        buffer[ i ].vBIdx[ 1 ] = (BYTE)0;
-                        buffer[ i ].vBIdx[ 2 ] = (BYTE)0;
-                        buffer[ i ].vBIdx[ 3 ] = (BYTE)0;
+                        buffer[ i ].vBIdx[ 0 ] = 0;
+                        buffer[ i ].vBIdx[ 1 ] = 0;
+                        buffer[ i ].vBIdx[ 2 ] = 0;
+                        buffer[ i ].vBIdx[ 3 ] = 0;
 					}
 				}
 				 

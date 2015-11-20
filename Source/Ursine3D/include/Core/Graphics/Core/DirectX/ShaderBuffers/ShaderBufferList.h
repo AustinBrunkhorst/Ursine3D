@@ -127,9 +127,14 @@ namespace ursine
             float outerAngle;
         };
 
+        struct MatrixPalette
+        {
+            DirectX::XMMATRIX matPal[ 96 ];
+        };
+
         struct MatrixPalBuffer
         {
-          DirectX::XMMATRIX matPal[96];
+            MatrixPalette matPal;
         };
 
         struct MouseBuffer

@@ -19,10 +19,6 @@ namespace ursine
 		// get the current time
 		float time = animState.GetTimePosition();
 
-		// clamp time between 0 and 1
-		time = time < 0 ? 0 : time;
-		time = time > 1 ? 1 : time;
-
 		// get the currently running animation
 		auto currentAnimation = animState.GetAnimation();
 
@@ -44,7 +40,7 @@ namespace ursine
 			const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
 
 			// check if the current keyframe set holds the time value between them
-			//if (f1[0].length <= time && time < f2[0].length)
+			if (f1[0].length <= time && time < f2[0].length)
 			{
 				// if it did, interpolate the two keyframes, save values, break out
 				interpolateRigKeyFrames(
@@ -76,15 +72,14 @@ namespace ursine
 			const SMat4 &parentToRoot = m_toRootTransforms[boneData[x].GetParentID()];
 
 			// calculate root transform
-			m_toRootTransforms[x] = toParent * parentToRoot;
+			m_toRootTransforms[x] = parentToRoot * toParent;
 		}
 
 		// multiply by bone offset transform to get final transform
 		auto &offsetMatrices = rig->GetOffsetMatrices();
 		for (unsigned x = 0; x < boneCount; ++x)
 		{
-			outputMatPal[x] = (offsetMatrices[x] * m_toRootTransforms[x]);
-            outputMatPal[ x ].Transpose( );
+			outputMatPal[x] = (m_toRootTransforms[x] * offsetMatrices[ x ]);
 		}
 	}
 
@@ -233,32 +228,22 @@ namespace ursine
 		// for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
 		for (unsigned x = 0; x < boneCount; ++x)
 		{
-			//// get the current guy
-			//SMat4 &current = finalTransform[x];
-			//
-			//// position
-			//SVec3 p = frame1[x].translation * lerpPercent + (1.0f - lerpPercent) * frame2[x].translation;
-			//
-			//// scale
-			//SVec3 s = frame1[x].scale * lerpPercent + (1.0f - lerpPercent) * frame2[x].scale;
-			//
-			//// rotation
-			//SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
-			//
-			//// construct matrix for this matrix
-			//current = SMat4(p, q, s);
 			// get the current guy
-
 			SMat4 &current = finalTransform[x];
-
+			
 			// position
-			SVec3 p = frame1[x].translation;
-
+			SVec3 p = (1.0f - lerpPercent) * frame1[x].translation + frame2[ x ].translation * lerpPercent;
+			
 			// scale
-			SVec3 s = frame1[x].scale;
-
+			SVec3 s =(1.0f - lerpPercent) * frame1[x].scale + frame2[ x ].scale * lerpPercent;
+			
 			// rotation
-			SQuat q = frame1[x].rotation;
+			SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
+			
+			// construct matrix for this matrix
+			current = SMat4(p, q, s);
+			//get the current guy
+
 
 			// construct matrix for this matrix
 			current = SMat4(p, q, s);

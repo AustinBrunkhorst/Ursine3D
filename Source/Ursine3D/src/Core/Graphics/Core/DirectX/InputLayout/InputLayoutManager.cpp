@@ -148,6 +148,8 @@ namespace ursine
                                 elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
                             else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
                                 elementDesc.Format = DXGI_FORMAT_R32G32_SINT;
+                            else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+                                elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
                         }
                     }
                     else if (paramDesc.Mask <= 7)

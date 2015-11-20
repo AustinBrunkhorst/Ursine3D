@@ -901,7 +901,7 @@ namespace ursine
                 static float time = 0;
                 time += 0.016;
 
-                if (time > 4) time = 0;
+                if (time > 1) time = 0;
                 myState.SetTimePosition(time);
 
                 auto *rig = AnimationBuilder::GetAnimationRigByIndex(0);
@@ -910,7 +910,7 @@ namespace ursine
             }
 
             // map matrix palette
-            bufferManager->MapBuffer<BUFFER_MATRIX_PAL>(&(current.GetMatrixPalette( )[ 0 ]), SHADERTYPE_VERTEX);
+            bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(reinterpret_cast<MatrixPalBuffer*>(&(current.GetMatrixPalette( )[ 0 ])), SHADERTYPE_VERTEX);
 
             // map texture
             textureManager->MapTextureByID(handle.Material_);
