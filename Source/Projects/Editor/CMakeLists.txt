@@ -5,7 +5,7 @@ include_directories(${Shared_INCLUDE_DIRS})
 ursine_default_project(Editor
     FOLDER "Engine"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"

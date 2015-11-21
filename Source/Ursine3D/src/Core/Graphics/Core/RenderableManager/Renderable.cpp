@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Renderable.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
 #include <Core/Graphics/Core/GfxDefines.h>
@@ -100,6 +113,18 @@ namespace ursine
             intensity = m_specIntensity;
         }
 
+
+		void Model3D::SetAnimationTime(const float time)
+		{
+			m_animationTime = time;
+		}
+
+		float & Model3D::GetAnimationTime(void)
+		{
+			// TODO: insert return statement here
+			return m_animationTime;
+		}
+
         void Model3D::SetColor(const Color color)
         {
             m_color = color;
@@ -114,6 +139,7 @@ namespace ursine
         {
             return m_matrixPalette;
         }
+
 
         const char *Model3D::GetModelName(void)
         {

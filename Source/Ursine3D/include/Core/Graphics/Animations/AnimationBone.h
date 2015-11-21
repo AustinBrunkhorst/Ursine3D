@@ -28,12 +28,26 @@ namespace ursine
     public:
         AnimationBone(void);
 
+        /** @brief initializes a bone with proper data
+        *
+        *  the method will save the data, notify parent of new child,
+        *  and do some checking to see if this bone is root
+        *
+        *  @param name name of the bone
+        *  @param trans bone-space translation
+        *  @param scale bone-space scale
+        *  @param rotation bone-space rotation
+        *  @param boneID id of this bone
+        *  @param parent ptr to the parent
+        *  @return Void.
+        */
         void InitializeBone(
             const std::string &name, 
             const SVec3 &trans, 
             const SVec3 &scale, 
             const SQuat &rotation, 
             const unsigned boneID,
+            const unsigned parentID,
             AnimationBone *parent
         );
 
@@ -58,7 +72,7 @@ namespace ursine
         void SetRotation(const SQuat &rot);
 
         unsigned GetBoneID(void) const;
-        void SetBoneID(const unsigned boneID);
+        unsigned GetParentID(void) const;
 
         const AnimationBone *GetParent(void) const;
 
@@ -73,6 +87,7 @@ namespace ursine
         SQuat m_rotation;
 
         unsigned m_boneID;
+        unsigned m_parentID;
 
         AnimationBone *m_parent;
         std::vector<const AnimationBone *> m_children;

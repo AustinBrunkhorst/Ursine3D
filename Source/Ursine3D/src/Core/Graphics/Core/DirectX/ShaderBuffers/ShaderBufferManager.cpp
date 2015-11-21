@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ShaderBufferManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "ShaderBufferManager.h"
 #include <d3d11.h>
@@ -36,6 +49,7 @@ namespace ursine
                 MakeBuffer<TransformBuffer>(BUFFER_LIGHT_PROJ);
                 MakeBuffer<MaterialDataBuffer>(BUFFER_MATERIAL_DATA);
                 MakeBuffer<SpotlightBuffer>(BUFFER_SPOTLIGHT);
+				MakeBuffer<MatrixPalBuffer>(BUFFER_MATRIX_PAL);
                 MakeBuffer<MouseBuffer>(BUFFER_MOUSEPOS);
 
                 // COMPUTE SHADERS //////////////////////////////////

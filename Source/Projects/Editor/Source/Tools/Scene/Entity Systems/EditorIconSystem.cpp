@@ -34,16 +34,17 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
 
     auto comp = args->component;
 
-    if (args->entity->HasComponent<EditorIcon>( ))
-        return;
-
     // if the object added was a selected component
     if (comp->Is<ecs::Light>( ))
     {
-        args->entity->AddComponent<EditorIcon>( )->SetIcon( "Sun" );
+        if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );
+        args->entity->GetComponent<EditorIcon>( )->SetIcon( "Sun" );
     }
     else if (comp->Is<ecs::Camera>( ))
     {
-        args->entity->AddComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
+        if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );
+        args->entity->GetComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
     }
 }

@@ -161,6 +161,8 @@ namespace ursine
             lightDir = trans->GetWorldRotation() * lightDir;
 
             light.SetDirection(lightDir);
+
+            light.SetSpotlightTransform(trans->GetLocalToWorldMatrix());
         }
     }
 }
