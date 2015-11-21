@@ -6,6 +6,7 @@
 #include <Core/Graphics/API/GfxAPI.h>
 #include "RenderableComponentBase.h"
 #include "Filter.h"
+#include <Game Engine/Scene/Component/Native Components/AnimatorComponent.h>
 
 namespace ursine
 {
@@ -46,9 +47,12 @@ namespace ursine
 
             std::unordered_map<EntityUniqueID, ursine::ecs::Camera*> m_cameras;
 
+
             typedef std::vector<RenderableComponentBase*> RenderableVector;
             typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
             RenderableMap m_renderableMap;
+
+            std::unordered_map<EntityUniqueID, Animator*> m_animator;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));

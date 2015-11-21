@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxUIManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "UIManager.h"
@@ -21,6 +34,7 @@ namespace ursine
             m_rtManager = rtmgr;
 
             //DONT FORGET TO CHANGE SIZE
+            URSINE_TODO( "Don't forget to update this if UI starts crashing" );
             m_uiInstances.resize(2);
 
             for (int x = 0; x < 2; ++x)

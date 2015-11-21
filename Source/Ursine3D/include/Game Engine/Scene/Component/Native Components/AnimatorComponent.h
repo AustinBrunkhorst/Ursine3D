@@ -89,14 +89,26 @@ namespace ursine
 
             EditorField(
                 bool loopAnimation,
-                SetLooping,
-                IsLooping
+                IsLooping,
+                SetLooping
             );
 
             EditorField(
                 bool playAnimation,
-                SetPlaying,
-                IsPlaying
+                IsPlaying,
+                SetPlaying
+            );
+
+            EditorField(
+                bool renderDebug,
+                IsDebug,
+                SetDebug
+            );
+
+            EditorField(
+                float timeScalar,
+                GetTimeScalar,
+                SetTimeScalar
             );
 
         public:
@@ -106,22 +118,34 @@ namespace ursine
             Meta( Disable )
                 void OnInitialize(void) override;
 
+            // stick this in a system
             void UpdateAnimation(const float dt);
 
-        // getter / setter ////////////////////////////////////////
+            // getter / setter //////////////////////////////////////
             bool IsPlaying(void) const;
             void SetPlaying(const bool isPlaying);
 
             bool IsLooping(void) const;
             void SetLooping(const bool isLooping);
 
+            bool IsDebug(void) const;
+            void SetDebug(const bool useDebug );
+
+            float GetTimeScalar(void) const;
+            void SetTimeScalar(const float scalar);
+
             const std::string &GetAnimation(void) const;
             void SetAnimation(const std::string &name);
 
+            float GetAnimationTimePosition(void) const;
+            void SetAnimationTimePosition(const float position);
+
         private:
+            AnimationState m_state;
             bool m_playing;
             bool m_looping;
-            float m_animationTime;
+            bool m_debug;
+            float m_speedScalar;
             std::string m_currentAnimation;
 
         } Meta( Enable, DisplayName( "Animator" ) );
