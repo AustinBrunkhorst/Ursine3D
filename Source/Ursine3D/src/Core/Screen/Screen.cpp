@@ -19,11 +19,17 @@
 
 namespace ursine
 {
-    Screen::Screen(bool isOverlay, const std::string &spaceName)
-        : m_isOverlay( isOverlay )
+    Screen::Screen(bool isOverlay)
+        : EventDispatcher( this )
+        , m_isOverlay( isOverlay )
         , m_isFocused( false )
         , m_state( SS_ACTIVE )
         , m_id( 0 ) { }
+
+    void Screen::MessageUI(const std::string &message, const Json &data)
+    {
+        
+    }
 
     void Screen::Exit(void)
     {

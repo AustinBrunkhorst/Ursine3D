@@ -18,11 +18,11 @@
 namespace ursine
 {
     OverlayScreen::OverlayScreen(const std::string &name)
-        : Screen( true, name ) { }
+        : Screen( true )
+        , m_name( name ) { }
 
     const std::string &OverlayScreen::GetName(void) const
     {
-        URSINE_TODO( "..." );
-        return "";
+        return m_name;
     }
 }

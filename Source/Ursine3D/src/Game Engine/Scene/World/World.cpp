@@ -148,7 +148,7 @@ namespace ursine
             return m_owner;
         }
 
-        void World::SetOwner(Screen* owner)
+        void World::SetOwner(Screen *owner)
         {
             m_owner = owner;
         }

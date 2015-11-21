@@ -17,13 +17,18 @@
 
 namespace ursine
 {
-    class OverlayScreen 
+    class OverlayScreen
         : public Screen
     {
+        NATIVE_SCREEN
+
     public:
         OverlayScreen(const std::string &name);
         virtual ~OverlayScreen(void) { }
 
         const std::string &GetName(void) const;
+
+    private:
+        std::string m_name;
     };
 }

@@ -16,6 +16,8 @@
 #include "ScreenState.h"
 #include "UrsineTypes.h"
 
+#define NATIVE_SCREEN META_OBJECT
+
 namespace ursine
 {
     class Screen;

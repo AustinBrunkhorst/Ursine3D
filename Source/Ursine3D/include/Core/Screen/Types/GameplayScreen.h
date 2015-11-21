@@ -20,7 +20,7 @@ namespace ursine
     class GameplayScreen : public Screen
     {
     public:
-        GameplayScreen(const std::string &spaceName);
+        GameplayScreen(void);
         virtual ~GameplayScreen(void) { }
 
         virtual void OnFocusChanged(bool state);

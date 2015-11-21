@@ -21,10 +21,10 @@
 
 namespace ursine
 {
-    GameplayScreen::GameplayScreen(const std::string &spaceName)
-        : Screen( false, spaceName )
+    GameplayScreen::GameplayScreen(void)
+        : Screen( false )
     {
-        
+        world.SetOwner( this );
     }
 
     void GameplayScreen::OnFocusChanged(bool state)

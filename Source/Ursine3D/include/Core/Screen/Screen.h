@@ -18,10 +18,14 @@
 namespace ursine
 {
     class Screen
+        : public meta::Object
+        , public EventDispatcher<std::string>
     {
     public:
-        Screen(bool isOverlay, const std::string &spaceName);
+        Screen(bool isOverlay);
         virtual ~Screen(void) { }
+
+        void MessageUI(const std::string &message, const Json &data);
 
         // Request to exit this screen
         void Exit(void);

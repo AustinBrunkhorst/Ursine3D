@@ -19,10 +19,16 @@ using namespace ursine;
 
 namespace
 {
+    const auto kEntryPoint = "Assets/UI/Resources/Main.html";
     const auto kStartWorld = "Assets/Worlds/SubmissionSemester1-Cpt.uworld";
 
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
+}
+
+JSFunction(GameInit)
+{
+    return CefV8Value::CreateUndefined( );
 }
 
 CORE_SYSTEM_DEFINITION( Retrospect );
@@ -66,12 +72,12 @@ void Retrospect::OnInitialize(void)
 
     initializeGraphics( );
 
-    // m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEntryPoint );
+    m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEntryPoint );
 
-    /*m_mainWindow.ui->SetViewport( {
+    m_mainWindow.ui->SetViewport( {
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
-    } );*/
+    } );
 
     initializeScene( );
 }
@@ -87,7 +93,7 @@ void Retrospect::OnRemove(void)
     m_mainWindow.window->Listener( this )
         .Off( WINDOW_RESIZE, &Retrospect::onMainWindowResize );
 
-    //m_mainWindow.ui->Close( );
+    m_mainWindow.ui->Close( );
     m_mainWindow.ui = nullptr;
     
     m_mainWindow.window = nullptr;
@@ -180,7 +186,7 @@ void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))
 
     m_scene->Render( );
 
-    //m_mainWindow.ui->DrawMain( );  
+    m_mainWindow.ui->DrawMain( );  
 
     m_graphics->EndFrame( );
 }
@@ -195,8 +201,8 @@ void Retrospect::onMainWindowResize(EVENT_HANDLER(ursine::Window))
 
     m_graphics->ViewportMgr.GetViewport( handle ).SetDimensions( args->width, args->height );
 
-    /*m_mainWindow.ui->SetViewport( {
+    m_mainWindow.ui->SetViewport( {
         0, 0,
         args->width, args->height
-    } );*/
+    } );
 }

@@ -5,6 +5,10 @@
 #include <Windows.h>
 #include <UIView.h>
 #include <Scene.h>
+#include <NativeJSFunction.h>
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(GameInit);
 
 class Retrospect : public ursine::core::CoreSystem
 {
