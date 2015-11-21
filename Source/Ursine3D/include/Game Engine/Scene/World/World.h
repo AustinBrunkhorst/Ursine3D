@@ -23,6 +23,8 @@
 
 namespace ursine
 {
+    class Screen;
+
     namespace ecs
     {
         class Entity;
@@ -73,7 +75,8 @@ namespace ursine
 
             SystemManager *GetSystemManager(void) const;
 
-            void DispatchLoad(void);
+            Screen *GetOwner(void) const;
+            void SetOwner(Screen *owner);
         private:
             friend class Entity;
             friend class WorldSerializer;
@@ -89,7 +92,11 @@ namespace ursine
             NameManager *m_nameManager;
             UtilityManager *m_utilityManager;
 
+            Screen *m_owner;
+
             World(const World &rhs) = delete;
+
+            void dispatchLoad(void);
 
             // adds an entity to the deletion queue
             void deleteEntity(Entity *entity);

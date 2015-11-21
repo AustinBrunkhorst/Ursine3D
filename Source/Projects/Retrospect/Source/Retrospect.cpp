@@ -19,11 +19,7 @@ using namespace ursine;
 
 namespace
 {
-    const auto kEntryPoint = "";
-
-    const auto  kStartWorld = "Assets/Worlds/SubmissionSemester1-Cpt.uworld";
-
-    const auto kClearColor = Color(0xFF252526);
+    const auto kStartWorld = "Assets/Worlds/SubmissionSemester1-Cpt.uworld";
 
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
@@ -53,7 +49,7 @@ void Retrospect::OnInitialize(void)
     auto *uiManager = GetCoreSystem( UIManager );
 
     m_mainWindow.window = windowManager->AddWindow(
-        "Retrospect Tech Check",
+        "Retrospect",
         { 0, 0 },
         { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
         SDL_WINDOW_RESIZABLE
@@ -64,8 +60,7 @@ void Retrospect::OnInitialize(void)
 
     m_mainWindow.window->SetLocationCentered( );
     m_mainWindow.window->Show( true );
-    m_mainWindow.window->SetFullScreen(true);
-    m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
+    //m_mainWindow.window->SetFullScreen( true );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
@@ -147,9 +142,7 @@ void Retrospect::initializeScene(void)
         m_scene->SetWorld( world );
     }
 
-    world->GetEntityFromName("Editor Camera")->Delete( );
-
-    world->DispatchLoad( );
+    world->GetEntityFromName( "Editor Camera" )->Delete( );
 
     const std::string init = "INIT.bnk";
     const std::string bgm = "BGM.bnk";
@@ -165,14 +158,14 @@ void Retrospect::initializeScene(void)
     const AkGameObjectID GAME_OBJECT_ID_CAR = 100;
     const AkGameObjectID GAME_OBJECT_NON_RECORDABLE = 200;
 
-    auto m_audio = GetCoreSystem(AudioManager);
+    auto *audio = GetCoreSystem( AudioManager );
 
-    m_audio->LoadBank(init, initID);
-    m_audio->LoadBank(car, carID);
-    m_audio->LoadBank(bgm, bgmID);
+    audio->LoadBank( init, initID );
+    audio->LoadBank( car, carID );
+    audio->LoadBank( bgm, bgmID );
 
-    m_audio->RegisterObject(GAME_OBJECT_ID_CAR, 0x08);
-    m_audio->PlayEvent(play_CarEngine, GAME_OBJECT_ID_CAR);
+    audio->RegisterObject( GAME_OBJECT_ID_CAR, 0x08 );
+    audio->PlayEvent( play_CarEngine, GAME_OBJECT_ID_CAR );
 }
 
 void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))

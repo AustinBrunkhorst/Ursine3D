@@ -39,6 +39,7 @@ namespace ursine
             , m_systemManager( nullptr )
             , m_nameManager( nullptr )
             , m_utilityManager( nullptr )
+            , m_owner( nullptr )
         {
             m_entityManager = new EntityManager( this );
             m_entityManager->OnInitialize( );
@@ -142,7 +143,17 @@ namespace ursine
             return m_systemManager;
         }
 
-        void World::DispatchLoad(void)
+        Screen *World::GetOwner(void) const
+        {
+            return m_owner;
+        }
+
+        void World::SetOwner(Screen* owner)
+        {
+            m_owner = owner;
+        }
+
+        void World::dispatchLoad(void)
         {
             m_systemManager->onAfterLoad( );
         }
