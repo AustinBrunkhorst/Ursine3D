@@ -112,14 +112,26 @@ $item-indent: 6px;
       }
 
       .text {
-        display: block;
+        display: flex;
         padding: 5px 5px 5px $base-item-indent;
         cursor: pointer;
         transition: all $duration-transition-btn ease;
 
-        &::selection {
-          background: white;
-          color: black;
+        .text-content {
+          flex: 1 1 auto;
+          width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &[contentEditable=true] {
+            padding: 2px;
+            background: #333337;
+            border: 1px solid #bdbd73;
+            color: #dcdcdc;
+            outline: none;
+            text-overflow: clip;
+          }
         }
       }
 

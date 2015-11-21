@@ -21,7 +21,7 @@ namespace ursine
 
     UICore::UICore(void)
     {
-        atexit( Shutdown );
+        atexit( Shutdown ); 
     }
 
     UICore::~UICore(void)

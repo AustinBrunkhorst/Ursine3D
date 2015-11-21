@@ -4,7 +4,9 @@
     <template>
         <div id="text" class="text">
             <span id="arrow" class="arrow"></span>
-            <content>{{text}}</content>
+            <content>
+                <span id="textContent" class="text-content">{{text}}</span>
+            </content>
             <div id="dropAfterContainer" class="drop-after-container"></div>
         </div>
         <x-tree-view id="child" class="child-view"></x-tree-view>
@@ -37,7 +39,6 @@
                 }
             },
             listeners: {
-                'click': '_onClick',
                 'text.mousedown': '_onTextMouseDown',
                 'arrow.click': '_onArrowClick'
             },
@@ -58,6 +59,9 @@
             },
             get textElement() {
                 return this.$.text;
+            },
+            get textContentElement() {
+                return this.$.textContent;
             },
             get rootView() {
                 var node = this;
@@ -80,14 +84,6 @@
             _onDraggingChanged: function() {
                 this.classList.toggle( 'dragging', this.dragging );
             },
-            _onClick: function (e) {
-                // TODO:
-                /*// make sure this event doesn't bubble to the parent
-                e.stopImmediatePropagation( );
-                e.stopPropagation( );
-
-                var result = this.fire( 'open', e );*/
-            },
             _onTextMouseDown: function(e) {
                 document.addEventListener( 'mouseup', this._textMouseUpHandler, true );
                 document.addEventListener( 'mousemove', this._textMouseMoveHandler, true );
@@ -97,8 +93,11 @@
                     var result = this.fire( 'drag-start', e );
 
                     // drag start was cancelled
-                    if (result === false)
+                    if (result === false) {
+                        this._lastDragTarget = null;
+
                         return;
+                    }
 
                     this._setDragging( true );
                 }

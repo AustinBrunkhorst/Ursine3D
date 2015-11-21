@@ -1269,16 +1269,33 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			return entity.isHierarchyChangeEnabled();
 		});
 		item.addEventListener("drag-drop",function(e1) {
+			if(!entity.isHierarchyChangeEnabled()) return false;
 			item.entity.setParent(e1.detail.dropTarget.entity);
 			if(e1.detail.newParent == true) return false; else return true;
 		});
-		item.textElement.addEventListener("dblclick",function() {
-			var result = window.prompt("Edit Entity Name",entity.getName());
-			if(result != null) entity.setName(result);
+		item.textContentElement.addEventListener("dblclick",function() {
+			item.textContentElement.contentEditable = "true";
+			var range = window.document.createRange();
+			range.selectNodeContents(item.textContentElement);
+			var selection = window.getSelection();
+			selection.removeAllRanges();
+			selection.addRange(range);
+		});
+		item.textContentElement.addEventListener("keydown",function(e2) {
+			if(e2.keyCode == 13) {
+				item.textContentElement.blur();
+				e2.preventDefault();
+				return false;
+			}
+			return true;
+		});
+		item.textContentElement.addEventListener("blur",function() {
+			item.textContentElement.contentEditable = "false";
+			entity.setName(item.textContentElement.innerText);
 		});
 		item.text = entity.getName();
 		item.entity = entity;
-		item.textElement.addEventListener("click",function(e2) {
+		item.textElement.addEventListener("click",function(e3) {
 			_g.clearSelectedEntities();
 			item.entity.select();
 		});

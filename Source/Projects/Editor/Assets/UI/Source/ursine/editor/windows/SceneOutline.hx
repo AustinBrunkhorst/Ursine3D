@@ -193,6 +193,9 @@ class SceneOutline extends WindowHandler {
         } );
 
         item.addEventListener( 'drag-drop', function(e) {
+            if (!entity.isHierarchyChangeEnabled( ))
+                return false;
+            
             untyped item.entity.setParent( untyped e.detail.dropTarget.entity );
 
             // handle manipulation explicitly for new parents
@@ -203,27 +206,23 @@ class SceneOutline extends WindowHandler {
             }
         } );
 
-        item.textElement.addEventListener( 'dblclick', function() {
-            /*item.textElement.contentEditable = 'true';
+        item.textContentElement.addEventListener( 'dblclick', function() {
+            item.textContentElement.contentEditable = 'true';
 
             var range = js.Browser.document.createRange( );
 
-            range.selectNodeContents( item.textElement );
+            range.selectNodeContents( item.textContentElement );
 
             var selection = js.Browser.window.getSelection( );
 
             selection.removeAllRanges( );
-            selection.addRange( range );*/
-            var result = js.Browser.window.prompt( 'Edit Entity Name', entity.getName( ) );
-
-            if (result != null)
-                entity.setName( result );
+            selection.addRange( range );
         } );
 
-        /*item.textElement.addEventListener( 'keydown', function(e) {
+        item.textContentElement.addEventListener( 'keydown', function(e) {
             // return key
             if (e.keyCode == 13) {
-                item.textElement.blur( );
+                item.textContentElement.blur( );
 
                 e.preventDefault( );
 
@@ -233,11 +232,11 @@ class SceneOutline extends WindowHandler {
             return true;
         } );
 
-        item.textElement.addEventListener( 'blur', function() {
-            item.textElement.contentEditable = 'false';
+        item.textContentElement.addEventListener( 'blur', function() {
+            item.textContentElement.contentEditable = 'false';
 
-            entity.setName( item.textElement.innerText );
-        } );*/
+            entity.setName( item.textContentElement.innerText );
+        } );
 
         item.text = entity.getName( );
 
