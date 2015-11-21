@@ -48,11 +48,12 @@ namespace ursine
             
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             std::vector<SMat4> tempVeec( 100 );
+            m_state.SetAnimation( currentAnimation );
 
             // update time
             if ( m_playing )
             {
-                m_state.IncrementTimePosition( dt );
+                m_state.IncrementTimePosition( dt * m_speedScalar );
 
                 unsigned keyframeCount = currentAnimation->GetRigKeyFrameCount( );
                 auto &lastFrame = currentAnimation->GetKeyframe( keyframeCount - 1, 0 );

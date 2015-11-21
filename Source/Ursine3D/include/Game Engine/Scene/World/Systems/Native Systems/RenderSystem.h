@@ -52,7 +52,7 @@ namespace ursine
             typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
             RenderableMap m_renderableMap;
 
-            std::unordered_map<EntityUniqueID, Animator*> m_animator;
+            std::unordered_map<EntityUniqueID, Animator*> m_animators;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));

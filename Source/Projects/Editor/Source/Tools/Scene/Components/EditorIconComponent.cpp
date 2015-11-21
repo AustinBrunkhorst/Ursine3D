@@ -30,14 +30,13 @@ void EditorIcon::OnInitialize(void)
     auto *owner = GetOwner( );
 
     m_billboard = owner->GetWorld( )->CreateEntity( );
+    GetOwner( )->GetTransform( )->AddChildAlreadyInLocal( m_billboard->GetTransform( ) );
     m_billboard->EnableSerialization( false );
     m_billboard->SetVisibleInEditor( false );
 
     auto *billboard = m_billboard
         ->AddComponent<ecs::Billboard2D>( )
         ->GetBillboard( );
-
-    owner->GetTransform( )->AddChild( m_billboard->GetTransform( ) );
 
     billboard->SetDimensions( 50, 50 );
     billboard->SetEntityUniqueID( owner->GetUniqueID( ) );
