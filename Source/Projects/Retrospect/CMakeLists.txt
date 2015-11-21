@@ -5,7 +5,7 @@ include_directories(${Shared_INCLUDE_DIRS})
 ursine_default_project(Retrospect
     FOLDER "Projects"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
@@ -13,6 +13,7 @@ ursine_default_project(Retrospect
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META
+    INCLUDE_INSTALLER
     META_HEADER "Reflection.h"
     PCH_NAME "Precompiled"
 )

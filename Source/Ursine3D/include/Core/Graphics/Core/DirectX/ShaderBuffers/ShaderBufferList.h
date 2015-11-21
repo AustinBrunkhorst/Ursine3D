@@ -44,7 +44,9 @@ namespace ursine
             BUFFER_LIGHT_PROJ,
             BUFFER_MATERIAL_DATA,
             BUFFER_SPOTLIGHT,
+            BUFFER_MATRIX_PAL,
             BUFFER_MOUSEPOS,
+
 
             BUFFER_COUNT,
 
@@ -123,6 +125,16 @@ namespace ursine
             float innerAngle;
             DirectX::XMFLOAT3 diffuseColor;
             float outerAngle;
+        };
+
+        struct MatrixPalette
+        {
+            DirectX::XMMATRIX matPal[ 96 ];
+        };
+
+        struct MatrixPalBuffer
+        {
+            MatrixPalette matPal;
         };
 
         struct MouseBuffer

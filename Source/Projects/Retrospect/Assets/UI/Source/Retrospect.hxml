@@ -1,0 +1,12 @@
+# compile as JavaScript
+-js ../Resources/Retrospect.js
+-D noEmbedJS
+-D js-es5
+
+-cp ursine/controls/
+
+# dead code elimination
+-dce full
+
+# entry point class
+-main Application

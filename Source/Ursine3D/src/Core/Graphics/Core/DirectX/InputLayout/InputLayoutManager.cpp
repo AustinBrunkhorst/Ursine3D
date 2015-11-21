@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** InputLayoutManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "InputLayoutManager.h"
 #include <d3d11.h>
@@ -88,42 +101,101 @@ namespace ursine
                     elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
                     elementDesc.InstanceDataStepRate = 0;
 
+                    std::string semanticName = std::string( paramDesc.SemanticName );
+
+                    // check if we need to override the size
+                    bool sizeOverride = false;
+                    unsigned overrideSize = 0;
+                    auto pos = semanticName.find( "_" );
+                    if ( pos != std::string::npos )
+                    {
+                        sizeOverride = true;
+                        std::string subStr = semanticName.substr( pos + 1 );
+
+                        if ( subStr == "EIGHT" )
+                            overrideSize = 8;
+                        else
+                            UAssert( false, "Failed to override vertex layout!" );
+                    }
+
                     // determine DXGI format
                     if (paramDesc.Mask == 1)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-                            elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
+                        // check if we need to override the size
+                        if( sizeOverride)
+                        {
+                            if(overrideSize == 8)
+                            {
+                                if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                    elementDesc.Format = DXGI_FORMAT_R8_UINT;
+                                else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                    elementDesc.Format = DXGI_FORMAT_R8_SINT;
+                            }
+                        }
+                        else // handle it normally
+                        {
+                            if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32_UINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32_SINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
+                        }
                     }
                     else if (paramDesc.Mask <= 3)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+                        // check if we need to override the size
+                        if ( sizeOverride )
+                        {
+                            if ( overrideSize == 8 )
+                            {
+                                if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                    elementDesc.Format = DXGI_FORMAT_R8G8_UINT;
+                                else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                    elementDesc.Format = DXGI_FORMAT_R8G8_SINT;
+                            }
+                        }
+                        else // handle it normally
+                        {
+                            if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32_SINT;
+                            else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+                                elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+                        }
                     }
                     else if (paramDesc.Mask <= 7)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
+                        if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
                             elementDesc.Format = DXGI_FORMAT_R32G32B32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
+                        else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
                             elementDesc.Format = DXGI_FORMAT_R32G32B32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+                        else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32 )
                             elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
                     }
                     else if (paramDesc.Mask <= 15)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32B32A32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                        // check if we need to override the size
+                        if ( sizeOverride )
+                        {
+                            if ( overrideSize == 8 )
+                            {
+                                if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                    elementDesc.Format = DXGI_FORMAT_R8G8B8A8_UINT;
+                                else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                    elementDesc.Format = DXGI_FORMAT_R8G8B8A8_SINT;
+                            }
+                        }
+                        else // handle it normally
+                        {
+                            if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32B32A32_SINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                        }
                     }
 
                     //save element desc
