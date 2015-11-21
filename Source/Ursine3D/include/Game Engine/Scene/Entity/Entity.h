@@ -161,6 +161,9 @@ namespace ursine
 			// Hierarchy
 			////////////////////////////////////////////////////////////////////
 
+            // Gets children of this entity
+            const std::vector<EntityID> *GetChildren(void) const;
+
 			// Gets a component of the specified type in this entity's children (type safe) (depth first)
 			// nullptr if it doesn't exist
 			template<class ComponentType>

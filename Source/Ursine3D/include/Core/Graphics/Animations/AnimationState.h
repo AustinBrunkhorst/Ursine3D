@@ -20,14 +20,48 @@ namespace ursine
     class AnimationState
     {
     public:
+        /** @brief constructor
+        *
+        *  @return Void.
+        */
         AnimationState(void);
 
+        /** @brief gets the time position of the current animation state
+        *
+        *  @return time (decimal) that the animation is at.
+        */
         float GetTimePosition(void) const;
-        void SetTimePosition(const float);
 
+        /** @brief sets the animation position
+        *
+        *  This will cause the animation to jump to a specific frame
+        *
+        *  @param position where we want to go
+        *  @return Void.
+        */
+        void SetTimePosition(const float position);
+
+        /** @brief Modifies the animation state by a delta
+        *
+        *  used to advance the animation along with the game when
+        *  it is running
+        *
+        *  @param dt change in animation position
+        *  @return Void.
+        */
         void IncrementTimePosition(const float dt);
 
+        /** @brief gets the currently running animation
+        *
+        *  @return pointer to the animation
+        */
         const Animation *GetAnimation(void) const;
+
+        /** @brief changes the currently running animation
+        *
+        *  @param animation the animation to switch to
+        *  @return Void.
+        */
         void SetAnimation(const Animation *animation);
 
     private:

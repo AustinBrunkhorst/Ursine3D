@@ -97,6 +97,18 @@ namespace ursine
             return entity;
         }
 
+        EntityVector EntityManager::GetRootEntities(void)
+        {
+            auto &children = *m_hierarchy.GetRootNode( ).Children( );
+
+            EntityVector entities;
+
+            for (auto child : children)
+                entities.emplace_back( GetEntity( child ) );
+
+            return entities;
+        }
+
         const EntityVector &EntityManager::GetActiveEntities(void) const
         {
             return m_active;
@@ -155,6 +167,11 @@ namespace ursine
             }
 
             return found;
+        }
+
+        const std::vector<EntityID> *EntityManager::GetChildren(const Entity *entity) const
+        {
+            return m_hierarchy.GetChildren( entity );
         }
 
         Component *EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const

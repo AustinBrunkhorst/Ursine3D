@@ -92,6 +92,11 @@ namespace ursine
             return m_entityManager->GetEntityUnique( uniqueID );
         }
 
+        EntityVector World::GetRootEntities(void) const
+        {
+            return m_entityManager->GetRootEntities( );
+        }
+
         const EntityVector &World::GetActiveEntities(void) const
         {
             return m_entityManager->GetActiveEntities( );

@@ -42,6 +42,8 @@ set(CEF_DIR           "${ENGINE_DEP_DIR}/CEF")
 set(BENCHMARKS_DIR    "${ENGINE_DEP_DIR}/Benchmarks")
 set(CLANG_DIR         "${ENGINE_DEP_DIR}/Clang")
 set(BulletPhysics_DIR "${ENGINE_DEP_DIR}/Bullet")
+set(WWise_DIR         "${ENGINE_DEP_DIR}/WWise")
+set(FBX_DIR           "${ENGINE_DEP_DIR}/FBX")
 
 find_package(SDL2 REQUIRED 
     HINTS ${SDL2_DIR})
@@ -57,8 +59,14 @@ find_package(Clang REQUIRED
 
 find_package(BulletPhysics REQUIRED
     HINTS ${BulletPhysics_DIR})
+	
+find_package(FBX REQUIRED
+    HINTS ${FBX_DIR})
 
-# boost requires some special attention
+find_package(WWise REQUIRED
+    HINTS ${WWise_DIR})
+
+# dependencies that require special attention
 include(BoostSetup)
 
 # ------------------------------------------------------------------------------

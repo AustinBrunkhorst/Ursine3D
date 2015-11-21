@@ -18,7 +18,11 @@ namespace ursine
         , m_manager( manager )
         , m_handle( handle )
     {
-        
+        int width, height;
+
+        SDL_GetWindowSize( handle, &width, &height );
+
+        m_size.Set( static_cast<float>( width ), static_cast<float>( height ) );
     }
 
     Window::~Window(void)

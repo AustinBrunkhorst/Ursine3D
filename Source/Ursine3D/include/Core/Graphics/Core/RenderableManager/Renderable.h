@@ -85,10 +85,15 @@ namespace ursine
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+
+            void SetAnimationTime(const float time);
+            float &GetAnimationTime(void);
+
             void SetColor(const Color color);
             const Color &GetColor() const;
 
             std::vector<SMat4> &GetMatrixPalette(void);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -96,6 +101,9 @@ namespace ursine
             Color m_color;
             std::string ModelName_;
             std::string MaterialName_;
+
+            float m_animationTime;
+
             std::vector<SMat4> m_matrixPalette;
         };
 

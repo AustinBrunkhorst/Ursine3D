@@ -45,6 +45,10 @@
 
 #include "ScreenManager.h"
 
+/// Audio
+
+#include "AudioManager.h"
+
 /// Utilities
 
 #include "TimerManager.h"

@@ -10,6 +10,7 @@
 #include "Model3DComponent.h"
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
+#include "AnimatorComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics
@@ -24,3 +25,10 @@
 #include "ConeColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
+
+///////////////////////////////////////////////////////////////////////////////
+// Audio
+///////////////////////////////////////////////////////////////////////////////
+
+#include "AudioEmitter.h"
+#include "ListenerComponent.h"

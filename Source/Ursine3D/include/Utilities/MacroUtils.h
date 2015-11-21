@@ -16,7 +16,15 @@
 #define __WIDEN(x) L ## x
 #define WIDEN(x) __WIDEN(x)
 
-#define __MESSAGE(text) __pragma( message(__FILE__ "(" STRINGIFY(__LINE__) ")" text) ) 
+#if defined(__REFLECTION_PARSER__)
+
+#define __MESSAGE(text)
+
+#else
+
+#define __MESSAGE(text) __pragma( message(__FILE__ "(" STRINGIFY(__LINE__) ")" text) )
+
+#endif
 
 // Outputs a warning during compile time
 #define URSINE_WARNING(text) __MESSAGE( " : Warning: " ##text )
@@ -27,7 +35,7 @@
 // Outputs a message during compile time
 #define URSINE_MESSAGE(text) __MESSAGE( ": " ##text )
 
-#ifdef URSINE_TODO_AS_WARNINGS
+#if defined(URSINE_TODO_AS_WARNINGS)
 
 // Outputs a TODO message during compile time
 #define URSINE_TODO(text) __MESSAGE( " : Warning: TODO: " ##text )
