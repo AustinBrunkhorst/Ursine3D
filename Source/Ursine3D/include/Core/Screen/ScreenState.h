@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TimerConfig.h
+** ScreenState.h
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -13,13 +13,13 @@
 
 #pragma once
 
-#include <functional>
-
 namespace ursine
 {
-    typedef std::function<void(void)> TimerCallback;
-
-    typedef int TimerGroupID;
-
-    const TimerGroupID kTimerGroupGameplay = 4;
+    enum ScreenState
+    {
+        // Active and updating
+        SS_ACTIVE,
+        // Inactive and not updating
+        SS_DELETING
+    };
 }

@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TimerConfig.h
+** GameplayScreen.h
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -13,13 +13,22 @@
 
 #pragma once
 
-#include <functional>
+#include "Screen.h"
 
 namespace ursine
 {
-    typedef std::function<void(void)> TimerCallback;
+    class GameplayScreen : public Screen
+    {
+    public:
+        GameplayScreen(const std::string &spaceName);
+        virtual ~GameplayScreen(void) { }
 
-    typedef int TimerGroupID;
+        virtual void OnFocusChanged(bool state);
 
-    const TimerGroupID kTimerGroupGameplay = 4;
+        virtual void Update(void);
+        virtual void Render(void);
+
+    protected:
+        ecs::World world;
+    };
 }

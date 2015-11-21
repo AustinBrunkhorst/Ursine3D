@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TimerConfig.h
+** ScreenConfig.h
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -13,13 +13,12 @@
 
 #pragma once
 
-#include <functional>
+#include "ScreenState.h"
+#include "UrsineTypes.h"
 
 namespace ursine
 {
-    typedef std::function<void(void)> TimerCallback;
+    class Screen;
 
-    typedef int TimerGroupID;
-
-    const TimerGroupID kTimerGroupGameplay = 4;
+    typedef uint32 ScreenID;
 }

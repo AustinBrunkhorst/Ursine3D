@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TimerConfig.h
+** OverlayScreen.h
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -13,13 +13,17 @@
 
 #pragma once
 
-#include <functional>
+#include "Screen.h"
 
 namespace ursine
 {
-    typedef std::function<void(void)> TimerCallback;
+    class OverlayScreen 
+        : public Screen
+    {
+    public:
+        OverlayScreen(const std::string &name);
+        virtual ~OverlayScreen(void) { }
 
-    typedef int TimerGroupID;
-
-    const TimerGroupID kTimerGroupGameplay = 4;
+        const std::string &GetName(void) const;
+    };
 }
