@@ -72,10 +72,6 @@ void Editor::OnInitialize(void)
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
 
-    auto *screenManager = GetCoreSystem( ScreenManager );
-
-    screenManager->SetUI( m_mainWindow.ui );
-
     m_project = std::make_shared<Project>( m_mainWindow.ui );
 
     initializeScene( );
@@ -203,7 +199,9 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto scene = m_project->GetScene( );
 
     scene->Update( dt );
-    scene->Render( );  
+    scene->Render( );
+
+    m_mainWindow.ui->DrawMain( );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))
