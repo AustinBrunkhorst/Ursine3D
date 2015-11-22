@@ -96,7 +96,7 @@ namespace ursine
         URSINE_TODO( "..." );
         //m_viewport = viewport;
 
-        resize(viewport.width, viewport.height);
+        resize( viewport.width, viewport.height );
 
         m_browser->GetHost( )->WasResized( );
     }
@@ -106,7 +106,7 @@ namespace ursine
         return m_browser != nullptr;
     }
 
-    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data)
+    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data)
     {
         auto processMessage = CefProcessMessage::Create( target );
 

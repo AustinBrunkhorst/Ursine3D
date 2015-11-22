@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** OverlayScreen.cpp
+** GameplayScreen.h
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -11,18 +11,24 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "UrsinePrecompiled.h"
+#pragma once
 
-#include "OverlayScreen.h"
+#include "Screen.h"
 
 namespace ursine
 {
-    OverlayScreen::OverlayScreen(const std::string &name)
-        : Screen( true )
-        , m_name( name ) { }
-
-    const std::string &OverlayScreen::GetName(void) const
+    class GameplayScreen : public Screen
     {
-        return m_name;
-    }
+    public:
+        GameplayScreen(ScreenManager *manager);
+        virtual ~GameplayScreen(void) { }
+
+        virtual void OnFocusChanged(bool state);
+
+        virtual void Update(void);
+        virtual void Render(void);
+
+    protected:
+        ecs::World world;
+    };
 }

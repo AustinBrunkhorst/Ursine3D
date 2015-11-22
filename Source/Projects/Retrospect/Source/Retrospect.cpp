@@ -6,6 +6,7 @@
 
 #include <WindowManager.h>
 #include <UIManager.h>
+#include <ScreenManager.h>
 
 #include <Color.h>
 #include <Vec3.h>
@@ -19,15 +20,17 @@ using namespace ursine;
 
 namespace
 {
-    const auto kEntryPoint = "Assets/UI/Resources/Main.html";
+    const auto kEntryPoint = "file:///Assets/UI/Resources/Main.html";
     const auto kStartWorld = "Assets/Worlds/SubmissionSemester1-Cpt.uworld";
 
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
 }
 
-JSFunction(GameInit)
+JSFunction(InitGame)
 {
+    gScreenManager->AddOverlay( "MainMenu" );
+
     return CefV8Value::CreateUndefined( );
 }
 
@@ -36,13 +39,13 @@ CORE_SYSTEM_DEFINITION( Retrospect );
 Retrospect::Retrospect(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_scene( std::make_shared<Scene>( ) )
 {
 
 }
 
 Retrospect::~Retrospect(void)
 {
+
 }
 
 void Retrospect::OnInitialize(void)
@@ -78,6 +81,21 @@ void Retrospect::OnInitialize(void)
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
+
+    std::string debugURL( "http://localhost:" );
+
+    debugURL += std::to_string( UIManager::REMOTE_DEBUGGING_PORT );
+
+    ShellExecute(
+        nullptr,
+        "open",
+        debugURL.c_str( ),
+        nullptr,
+        nullptr,
+        SW_SHOWNORMAL
+    );
+
+    m_screenManager.SetUI( m_mainWindow.ui );
 
     initializeScene( );
 }
@@ -127,7 +145,7 @@ void Retrospect::initializeGraphics(void)
 
 void Retrospect::initializeScene(void)
 {
-    auto world = m_scene->GetWorld( );
+    //auto world = m_scene->GetWorld( );
     {
         auto handle = m_graphics->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
 
@@ -137,18 +155,18 @@ void Retrospect::initializeScene(void)
 
         viewport.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-        m_scene->SetViewport( handle );
+        //m_scene->SetViewport( handle );
 
         m_graphics->SetGameViewport( handle );
 
         ecs::WorldSerializer serializer;
 
-        world = serializer.Deserialize( kStartWorld );
+        //world = serializer.Deserialize( kStartWorld );
 
-        m_scene->SetWorld( world );
+        //m_scene->SetWorld( world );
     }
 
-    world->GetEntityFromName( "Editor Camera" )->Delete( );
+    //world->GetEntityFromName( "Editor Camera" )->Delete( );
 
     const std::string init = "INIT.bnk";
     const std::string bgm = "BGM.bnk";
@@ -180,15 +198,7 @@ void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    m_scene->Update( dt );
-
-    m_graphics->StartFrame( );  
-
-    m_scene->Render( );
-
-    m_mainWindow.ui->DrawMain( );  
-
-    m_graphics->EndFrame( );
+    m_screenManager.Update( );
 }
 
 void Retrospect::onMainWindowResize(EVENT_HANDLER(ursine::Window))
@@ -196,10 +206,6 @@ void Retrospect::onMainWindowResize(EVENT_HANDLER(ursine::Window))
     EVENT_ATTRS(Window, WindowResizeArgs);
 
     m_graphics->Resize( args->width, args->height );
-
-    auto handle = m_scene->GetViewport( );
-
-    m_graphics->ViewportMgr.GetViewport( handle ).SetDimensions( args->width, args->height );
 
     m_mainWindow.ui->SetViewport( {
         0, 0,

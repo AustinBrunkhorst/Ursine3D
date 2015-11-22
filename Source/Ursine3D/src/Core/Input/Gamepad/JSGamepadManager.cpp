@@ -1,6 +1,7 @@
 #include "UrsinePrecompiled.h"
 
 #include "JSGamepadManager.h"
+#include "UIConfig.h"
 
 #define ButtonStateMethodSetup                                               \
     auto index =                                                             \
@@ -16,12 +17,36 @@
     else                                                                     \
         threshold = 0.5f;                                                    \
 
+namespace
+{
+    const auto kChannelGamepadManager = "GamepadManager";
+
+    const auto kEventGamepadButtonDown = "GamepadButtonDown";
+    const auto kEventGamepadButtonUp = "GamepadButtonUp";
+    const auto kEventGamepadConnected = "GamepadConnected";
+    const auto kEventGamepadDisconnected = "GamepadDisconnected";
+}
+
 namespace ursine
 {
     JSConstructor(JSGamepadManager)
         : m_manager( GetCoreSystem( GamepadManager ) )
+        , m_browser( CefV8Context::GetEnteredContext( )->GetBrowser( ) )
     {
-        
+        m_manager->Listener( this )
+            .On( GP_BUTTON_DOWN, &JSGamepadManager::onGamepadButtonDown )
+            .On( GP_BUTTON_UP, &JSGamepadManager::onGamepadButtonUp )
+            .On( GP_CONNECTED, &JSGamepadManager::onGamepadConnected )
+            .On( GP_DISCONNECTED, &JSGamepadManager::onGamepadDisconnected );
+    }
+
+    JSGamepadManager::~JSGamepadManager(void)
+    {
+        m_manager->Listener( this )
+            .Off( GP_BUTTON_DOWN, &JSGamepadManager::onGamepadButtonDown )
+            .Off( GP_BUTTON_UP, &JSGamepadManager::onGamepadButtonUp )
+            .Off( GP_CONNECTED, &JSGamepadManager::onGamepadConnected )
+            .Off( GP_DISCONNECTED, &JSGamepadManager::onGamepadDisconnected );
     }
 
     JSMethod(JSGamepadManager::numConnected) const
@@ -65,5 +90,73 @@ namespace ursine
         ButtonStateMethodSetup;
 
         return CefV8Value::CreateBool( state->IsButtonTriggeredUp( button ) );
+    }
+
+    void JSGamepadManager::onGamepadButtonDown(EVENT_HANDLER(GamepadManager))
+    {
+        EVENT_ATTRS(GamepadManager, GamepadButtonArgs);
+
+        Json::object btnEvent {
+            { "index", static_cast<int>( args->gamepad ) },
+            { "button", static_cast<int>( args->button ) },
+            { "pressed", true },
+            { "triggered", args->triggered }
+        };
+
+        messageBrowser( 
+            kChannelGamepadManager, 
+            kEventGamepadButtonDown,
+            btnEvent
+        );
+    }
+
+    void JSGamepadManager::onGamepadButtonUp(EVENT_HANDLER(GamepadManager))
+    {
+        EVENT_ATTRS(GamepadManager, GamepadButtonArgs);
+
+        Json::object btnEvent {
+            { "index", static_cast<int>( args->gamepad ) },
+            { "button", static_cast<int>( args->button ) },
+            { "pressed", false },
+            { "triggered", args->triggered }
+        };
+
+        messageBrowser( 
+            kChannelGamepadManager, 
+            kEventGamepadButtonUp, 
+            btnEvent 
+        );
+    }
+
+    void JSGamepadManager::onGamepadConnected(EVENT_HANDLER(GamepadManager))
+    {
+        EVENT_ATTRS(GamepadManager, GamepadConnectionArgs);
+
+        Json::object connectionEvent {
+            { "index", static_cast<int>( args->index ) },
+            { "connected", true }
+        };
+
+        messageBrowser( 
+            kChannelGamepadManager, 
+            kEventGamepadConnected, 
+            connectionEvent 
+        );
+    }
+
+    void JSGamepadManager::onGamepadDisconnected(EVENT_HANDLER(GamepadManager))
+    {
+        EVENT_ATTRS(GamepadManager, GamepadConnectionArgs);
+
+        Json::object connectionEvent {
+            { "index", static_cast<int>( args->index ) },
+            { "connected", false }
+        };
+
+        messageBrowser( 
+            kChannelGamepadManager, 
+            kEventGamepadDisconnected, 
+            connectionEvent 
+        );
     }
 }

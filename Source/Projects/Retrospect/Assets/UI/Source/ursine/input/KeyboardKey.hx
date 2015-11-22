@@ -169,5 +169,5 @@ abstract KeyboardKey(Int) {
     var PA1 = 0xFD;
     var OEM_CLEAR = 0xFE;
     var NUM_KEYS = 0xFE;
-    var UNKNOWN = 0
+    var UNKNOWN = 0;
 }

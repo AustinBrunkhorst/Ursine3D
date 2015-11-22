@@ -17,18 +17,22 @@
 
 namespace ursine
 {
+    class ScreenManager;
+
     class Screen
         : public meta::Object
         , public EventDispatcher<std::string>
     {
     public:
-        Screen(bool isOverlay);
+        Screen(ScreenManager *manager, bool isOverlay);
         virtual ~Screen(void) { }
 
-        void MessageUI(const std::string &message, const Json &data);
+        void MessageUI(const std::string &message, const Json &data) const;
 
         // Request to exit this screen
-        void Exit(void);
+        void Exit(void) const;
+
+        ScreenManager *GetManager(void) const;
 
         // Gets the current state of the screen
         ScreenState GetState(void) const;
@@ -41,10 +45,10 @@ namespace ursine
 
     protected:
         // Called when this screen becomes the "current" screen in the screen manager
-        virtual void OnEntered(const Json &data);
+        virtual void OnEntered(const std::string &name, const Json &data);
 
         // Called when this screen is removed
-        virtual void OnRemoved(void) {}
+        virtual void OnRemoved(void) { }
 
         // Called when this screen loses or gains focus state
         virtual void OnFocusChanged(bool state) { }
@@ -60,6 +64,8 @@ namespace ursine
 
     private:
         friend class ScreenManager;
+
+        ScreenManager *m_manager;
 
         // determines if this screen is an overlay
         bool m_isOverlay;

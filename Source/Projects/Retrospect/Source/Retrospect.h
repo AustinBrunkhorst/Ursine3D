@@ -3,12 +3,13 @@
 #include <CoreSystem.h>
 
 #include <Windows.h>
+#include <ScreenManager.h>
 #include <UIView.h>
 #include <Scene.h>
 #include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(GameInit);
+JSFunction(InitGame);
 
 class Retrospect : public ursine::core::CoreSystem
 {
@@ -24,13 +25,13 @@ public:
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
+    ursine::ScreenManager m_screenManager;
+
     struct
     {
         ursine::Window::Handle window;
         ursine::UIView::Handle ui;
     } m_mainWindow;
-
-    ursine::Scene::Handle m_scene;
 
     void initializeGraphics(void);
     void initializeScene(void);

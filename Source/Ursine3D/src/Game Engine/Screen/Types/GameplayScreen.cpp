@@ -21,8 +21,8 @@
 
 namespace ursine
 {
-    GameplayScreen::GameplayScreen(void)
-        : Screen( false )
+    GameplayScreen::GameplayScreen(ScreenManager *manager)
+        : Screen( manager, false )
     {
         world.SetOwner( this );
     }

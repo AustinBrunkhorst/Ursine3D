@@ -7,6 +7,7 @@
 
 #include <WindowManager.h>
 #include <UIManager.h>
+#include <ScreenManager.h>
 
 #include <Color.h> 
 #include <LightComponent.h>
@@ -70,6 +71,10 @@ void Editor::OnInitialize(void)
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
+
+    auto *screenManager = GetCoreSystem( ScreenManager );
+
+    screenManager->SetUI( m_mainWindow.ui );
 
     m_project = std::make_shared<Project>( m_mainWindow.ui );
 
@@ -155,8 +160,6 @@ void Editor::initializeScene(void)
         m_graphics->SetGameViewport( viewport );
     }
 
-    world->DispatchLoad( );
-
     auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
@@ -200,14 +203,7 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto scene = m_project->GetScene( );
 
     scene->Update( dt );
-
-    m_graphics->StartFrame( );  
-
-    scene->Render( ); 
-
-    m_mainWindow.ui->DrawMain( );  
-
-    m_graphics->EndFrame( );
+    scene->Render( );  
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

@@ -23,4 +23,14 @@ namespace ursine
     class Screen;
 
     typedef uint32 ScreenID;
+
+    struct UIMessageArgs : EventArgs
+    {
+        const std::string &message;
+        const Json &data;
+
+        UIMessageArgs(const std::string &message, const Json &data)
+            : message( message )
+            , data( data ) { }
+    };
 }
