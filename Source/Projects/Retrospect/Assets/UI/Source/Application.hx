@@ -23,7 +23,7 @@ class Application {
         gamepadManager = new GamepadManager( );
         keyboardManager = new KeyboardManager( );
 
-        screenManager = new ScreenManager( );
+        screenManager = new ScreenManager( 'retrospect.screens.' );
 
         Extern.InitGame( );
     }

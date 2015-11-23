@@ -23,8 +23,9 @@ namespace ursine
 {
     GameplayScreen::GameplayScreen(ScreenManager *manager)
         : Screen( manager, false )
+        , world( nullptr )
     {
-        world.SetOwner( this );
+
     }
 
     void GameplayScreen::OnFocusChanged(bool state)
@@ -45,16 +46,19 @@ namespace ursine
             tweenManager->Pause( kTweenGroupGameplay );
         }
 
-        world.Dispatch( ecs::WORLD_SCREEN_FOCUS_CHANGED, &args );
+        if (world)
+            world->Dispatch( ecs::WORLD_SCREEN_FOCUS_CHANGED, &args );
     }
 
     void GameplayScreen::Update(void)
     {
-        world.Update( );
+        if (world)
+            world->Update( );
     }
 
     void GameplayScreen::Render(void)
     {
-        world.Render( );
+        if (world)
+            world->Render( );
     }
 }

@@ -81,5 +81,5 @@ namespace ursine
 
         // internally sets the ID of this screen
         void setID(ScreenID id);
-    };
+    } Meta(Disable);
 }

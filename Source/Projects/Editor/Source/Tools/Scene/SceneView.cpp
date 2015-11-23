@@ -87,7 +87,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
     auto handle = scene->GetViewport( );
 
     auto &viewport =
-            GetCoreSystem( graphics::GfxAPI )->ViewportMgr.GetViewport( handle );
+        GetCoreSystem( graphics::GfxAPI )->ViewportMgr.GetViewport( handle );
 
     unsigned oldX, oldY;
 

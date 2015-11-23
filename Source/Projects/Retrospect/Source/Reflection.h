@@ -4,6 +4,8 @@
 
 #include "Retrospect.h"
 
+#include "Screens/Screens.h"
+
 #include <SharedComponents.h>
 #include <SharedSystems.h>
 

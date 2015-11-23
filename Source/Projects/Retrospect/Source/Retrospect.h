@@ -25,16 +25,16 @@ public:
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
-    ursine::ScreenManager m_screenManager;
+    ursine::ScreenManager *m_screenManager;
 
     struct
     {
         ursine::Window::Handle window;
         ursine::UIView::Handle ui;
+        ursine::graphics::Viewport *viewport;
     } m_mainWindow;
 
     void initializeGraphics(void);
-    void initializeScene(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 

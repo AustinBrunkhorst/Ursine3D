@@ -133,7 +133,7 @@ namespace ursine
                 );
             }
 
-            world->dispatchLoad( );
+            world->DispatchLoad( );
 
             return world;
         }

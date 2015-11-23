@@ -82,7 +82,8 @@ namespace ursine
 
         Json::object keyEvent {
             { "key", args->key },
-            { "pressed", args->state }
+            { "pressed", args->state },
+            { "triggered", false }
         };
 
         messageBrowser(

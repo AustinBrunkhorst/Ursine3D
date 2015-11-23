@@ -77,10 +77,14 @@ namespace ursine
 
             Screen *GetOwner(void) const;
             void SetOwner(Screen *owner);
+
+            void DispatchLoad(void);
         private:
             friend class Entity;
             friend class WorldSerializer;
             friend class EntitySerializer;
+
+            bool m_loaded;
 
             EntityVector m_deleted;
 
@@ -95,8 +99,6 @@ namespace ursine
             Screen *m_owner;
 
             World(const World &rhs) = delete;
-
-            void dispatchLoad(void);
 
             // adds an entity to the deletion queue
             void deleteEntity(Entity *entity);

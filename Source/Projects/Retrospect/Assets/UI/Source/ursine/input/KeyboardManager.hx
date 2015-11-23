@@ -2,9 +2,15 @@ package ursine.input;
 
 import ursine.input.KeyboardKey;
 
-class KeyboardEvent {
+class KeyboardEventType {
     public static var KeyDown = "KeyboardKeyDown";
     public static var KeyUp = "KeyboardKeyUp";
+}
+
+extern class KeyboardKeyEvent {
+    var key : KeyboardKey;
+    var pressed : Bool;
+    var triggered : Bool;
 }
 
 @:native( "KeyboardManager" )

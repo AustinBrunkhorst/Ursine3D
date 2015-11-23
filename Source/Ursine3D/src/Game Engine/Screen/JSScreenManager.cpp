@@ -21,7 +21,7 @@ namespace ursine
         auto data = JsonSerializer::Serialize( arguments[ 1 ] );
 
         // this needs to be called on the main thread
-        Timer::Create( TimeSpan::Zero ).Completed( [&]
+        Timer::Create( TimeSpan::Zero ).Completed( [=]
         {
             std::lock_guard<std::mutex> lock( m_mutex );
 
@@ -43,7 +43,7 @@ namespace ursine
         auto data = JsonSerializer::Serialize( arguments[ 1 ] );
 
         // this needs to be called on the main thread
-        Timer::Create( TimeSpan::Zero ).Completed( [&]
+        Timer::Create( TimeSpan::Zero ).Completed( [=]
         {
             std::lock_guard<std::mutex> lock( m_mutex );
 

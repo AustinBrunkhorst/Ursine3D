@@ -76,7 +76,7 @@ namespace ursine
         } );
 
         UAssert( ctor.IsValid( ),
-            "Screen missing dynamic constructor.\n%s(ScreenManager *)",
+            "Screen missing dynamic constructor.\n%s(ursine::ScreenManager *)",
             screenType.GetName( ).c_str( )
         );
 

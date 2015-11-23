@@ -168,6 +168,10 @@ void Editor::initializeScene(void)
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
 
+    // This only needs to be called because we manually setup the world
+    // rather than loading from a file
+    world->DispatchLoad( );
+
     /*auto *character = world->CreateEntity( "Character" );
     {
         auto *model = character->AddComponent<ecs::Model3D>( );

@@ -4,11 +4,23 @@ import ursine.input.GamepadButton;
 
 typedef GamepadIndex = Int;
 
-class GamepadEvent {
+class GamepadEventType {
     public static var ButtonDown = "GamepadButtonDown";
     public static var ButtonUp = "GamepadButtonUp";
     public static var Connected = "GamepadConnected";
     public static var Disconnected = "GamepadDisconnected";
+}
+
+extern class GamepadButtonEvent {
+    var index : GamepadIndex;
+    var button : GamepadButton;
+    var pressed : Bool;
+    var triggered : Bool;
+}
+
+extern class GamepadConnectionEvent {
+    var index : GamepadIndex;
+    var connected : Bool;
 }
 
 @:native( "GamepadManager" )

@@ -83,7 +83,7 @@ namespace ursine
 
         // screens mapped to their ID
         std::unordered_map<ScreenID, Screen*> m_map;
-    } Meta(Enable, WhiteListMethods);
+    } Meta(Register);
 
     extern ScreenManager *gScreenManager;
 }

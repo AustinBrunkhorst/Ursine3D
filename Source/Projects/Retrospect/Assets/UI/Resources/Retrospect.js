@@ -13,16 +13,10 @@ Application.main = function() {
 	Application.broadcastManager = new ursine_utils_NativeBroadcastManager();
 	Application.gamepadManager = new GamepadManager();
 	Application.keyboardManager = new KeyboardManager();
-	Application.screenManager = new ursine_screen_ScreenManager();
+	Application.screenManager = new ursine_screen_ScreenManager("retrospect.screens.");
 	ursine_native_Extern.InitGame();
 };
 Math.__name__ = true;
-var Std = function() { };
-$hxClasses["Std"] = Std;
-Std.__name__ = true;
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
-};
 var Type = function() { };
 $hxClasses["Type"] = Type;
 Type.__name__ = true;
@@ -57,16 +51,34 @@ Type.createInstance = function(cl,args) {
 	}
 	return null;
 };
-var _$UInt_UInt_$Impl_$ = {};
-$hxClasses["_UInt.UInt_Impl_"] = _$UInt_UInt_$Impl_$;
-_$UInt_UInt_$Impl_$.__name__ = true;
-_$UInt_UInt_$Impl_$.toFloat = function(this1) {
-	var $int = this1;
-	if($int < 0) return 4294967296.0 + $int; else return $int + 0.0;
-};
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = true;
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+$hxClasses["haxe.Timer"] = haxe_Timer;
+haxe_Timer.__name__ = true;
+haxe_Timer.delay = function(f,time_ms) {
+	var t = new haxe_Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+};
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+};
 var haxe_ds_IntMap = function() {
 	this.h = { };
 };
@@ -113,81 +125,11 @@ js__$Boot_HaxeError.__name__ = true;
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
-var js_Boot = function() { };
-$hxClasses["js.Boot"] = js_Boot;
-js_Boot.__name__ = true;
-js_Boot.__string_rec = function(o,s) {
-	if(o == null) return "null";
-	if(s.length >= 5) return "<...>";
-	var t = typeof(o);
-	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
-	switch(t) {
-	case "object":
-		if(o instanceof Array) {
-			if(o.__enum__) {
-				if(o.length == 2) return o[0];
-				var str2 = o[0] + "(";
-				s += "\t";
-				var _g1 = 2;
-				var _g = o.length;
-				while(_g1 < _g) {
-					var i1 = _g1++;
-					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
-				}
-				return str2 + ")";
-			}
-			var l = o.length;
-			var i;
-			var str1 = "[";
-			s += "\t";
-			var _g2 = 0;
-			while(_g2 < l) {
-				var i2 = _g2++;
-				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
-			}
-			str1 += "]";
-			return str1;
-		}
-		var tostr;
-		try {
-			tostr = o.toString;
-		} catch( e ) {
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
-			return "???";
-		}
-		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
-			var s2 = o.toString();
-			if(s2 != "[object Object]") return s2;
-		}
-		var k = null;
-		var str = "{\n";
-		s += "\t";
-		var hasp = o.hasOwnProperty != null;
-		for( var k in o ) {
-		if(hasp && !o.hasOwnProperty(k)) {
-			continue;
-		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
-			continue;
-		}
-		if(str.length != 2) str += ", \n";
-		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
-		}
-		s = s.substring(1);
-		str += "\n" + s + "}";
-		return str;
-	case "function":
-		return "<function>";
-	case "string":
-		return o;
-	default:
-		return String(o);
-	}
-};
 var ursine_utils_IEventContainer = function() { };
 $hxClasses["ursine.utils.IEventContainer"] = ursine_utils_IEventContainer;
 ursine_utils_IEventContainer.__name__ = true;
 var ursine_screen_Screen = function(id,frame,data) {
+	this.events = new ursine_utils_EventManager();
 	this.m_id = id;
 	this.m_frame = frame;
 	this.m_document = frame.contentDocument;
@@ -207,34 +149,76 @@ ursine_screen_Screen.prototype = {
 		Application.screenManager.removeScreen(this);
 	}
 };
-var retrospect_screens_MainMenu = function(id,frame,data) {
+var retrospect_screens_MainMenuScreen = function(id,frame,data) {
+	ursine_screen_Screen.call(this,id,frame,data);
+	this.m_document.addEventListener("mousedown",$bind(this,this.play));
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.play)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.play));
+};
+$hxClasses["retrospect.screens.MainMenuScreen"] = retrospect_screens_MainMenuScreen;
+retrospect_screens_MainMenuScreen.__name__ = true;
+retrospect_screens_MainMenuScreen.__super__ = ursine_screen_Screen;
+retrospect_screens_MainMenuScreen.prototype = $extend(ursine_screen_Screen.prototype,{
+	exit: function() {
+		ursine_screen_Screen.prototype.exit.call(this);
+		Application.screenManager.setScreen("MultiplayerPlayScreen",{ });
+	}
+	,play: function() {
+		var header = this.m_document.querySelector("header");
+		header.className = "animated fadeOutUp";
+		ElementUtils.once(header,"webkitAnimationEnd",$bind(this,this.exit));
+	}
+});
+var retrospect_screens_MultiplayerPlayScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
 };
-$hxClasses["retrospect.screens.MainMenu"] = retrospect_screens_MainMenu;
-retrospect_screens_MainMenu.__name__ = true;
-retrospect_screens_MainMenu.__super__ = ursine_screen_Screen;
-retrospect_screens_MainMenu.prototype = $extend(ursine_screen_Screen.prototype,{
+$hxClasses["retrospect.screens.MultiplayerPlayScreen"] = retrospect_screens_MultiplayerPlayScreen;
+retrospect_screens_MultiplayerPlayScreen.__name__ = true;
+retrospect_screens_MultiplayerPlayScreen.__super__ = ursine_screen_Screen;
+retrospect_screens_MultiplayerPlayScreen.prototype = $extend(ursine_screen_Screen.prototype,{
 });
-var ursine_input_GamepadEvent = function() { };
-$hxClasses["ursine.input.GamepadEvent"] = ursine_input_GamepadEvent;
-ursine_input_GamepadEvent.__name__ = true;
-var ursine_input_KeyboardEvent = function() { };
-$hxClasses["ursine.input.KeyboardEvent"] = ursine_input_KeyboardEvent;
-ursine_input_KeyboardEvent.__name__ = true;
+var retrospect_screens_SplashScreen = function(id,frame,data) {
+	var _g = this;
+	ursine_screen_Screen.call(this,id,frame,data);
+	var logo = this.m_document.querySelector("#logo");
+	ElementUtils.once(logo,"webkitAnimationEnd",function() {
+		haxe_Timer.delay(function() {
+			logo.className = "animated zoomOutUp";
+		},1000);
+		ElementUtils.once(logo,"webkitAnimationEnd",$bind(_g,_g.exit));
+	});
+	this.m_document.addEventListener("mousedown",$bind(this,this.exit));
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.exit)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.exit));
+};
+$hxClasses["retrospect.screens.SplashScreen"] = retrospect_screens_SplashScreen;
+retrospect_screens_SplashScreen.__name__ = true;
+retrospect_screens_SplashScreen.__super__ = ursine_screen_Screen;
+retrospect_screens_SplashScreen.prototype = $extend(ursine_screen_Screen.prototype,{
+	exit: function() {
+		ursine_screen_Screen.prototype.exit.call(this);
+		Application.screenManager.addOverlay("MainMenuScreen",{ });
+	}
+});
+var ursine_input_GamepadEventType = function() { };
+$hxClasses["ursine.input.GamepadEventType"] = ursine_input_GamepadEventType;
+ursine_input_GamepadEventType.__name__ = true;
+var ursine_input_KeyboardEventType = function() { };
+$hxClasses["ursine.input.KeyboardEventType"] = ursine_input_KeyboardEventType;
+ursine_input_KeyboardEventType.__name__ = true;
 var ursine_native_Extern = function() { };
 $hxClasses["ursine.native.Extern"] = ursine_native_Extern;
 ursine_native_Extern.__name__ = true;
 ursine_native_Extern.InitGame = function() {
 	return InitGame();
 };
-var ursine_screen_ScreenManager = function() {
+var ursine_screen_ScreenManager = function(screenPackagePrefix) {
 	ursine_screen_ScreenManager.instance = this;
+	this.m_screenPackagePrefix = screenPackagePrefix;
 	this.m_nativeManager = new ScreenManager();
 	this.m_screens = new haxe_ds_IntMap();
 	this.m_screensContainer = window.document.querySelector("#screens");
 	Application.broadcastManager.getChannel("ScreenManager").on("Event",$bind(this,this.onScreenEvent)).on("Entered",$bind(this,this.onScreenEntered)).on("Exited",$bind(this,this.onScreenExited));
-	Application.broadcastManager.getChannel("GamepadManager").on(ursine_input_GamepadEvent.ButtonDown,$bind(this,this.onGamepadBtnDown)).on(ursine_input_GamepadEvent.ButtonUp,$bind(this,this.onGamepadBtnUp)).on(ursine_input_GamepadEvent.Connected,$bind(this,this.onGamepadConnected)).on(ursine_input_GamepadEvent.Disconnected,$bind(this,this.onGamepadDisconnected));
-	Application.broadcastManager.getChannel("KeyboardManager").on(ursine_input_KeyboardEvent.KeyDown,$bind(this,this.onKeyDown)).on(ursine_input_KeyboardEvent.KeyUp,$bind(this,this.onKeyUp));
+	Application.broadcastManager.getChannel("GamepadManager").on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadBtnDown)).on(ursine_input_GamepadEventType.ButtonUp,$bind(this,this.onGamepadBtnUp)).on(ursine_input_GamepadEventType.Connected,$bind(this,this.onGamepadConnected)).on(ursine_input_GamepadEventType.Disconnected,$bind(this,this.onGamepadDisconnected));
+	Application.broadcastManager.getChannel("KeyboardManager").on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyDown)).on(ursine_input_KeyboardEventType.KeyUp,$bind(this,this.onKeyUp));
 };
 $hxClasses["ursine.screen.ScreenManager"] = ursine_screen_ScreenManager;
 ursine_screen_ScreenManager.__name__ = true;
@@ -245,10 +229,14 @@ ursine_screen_ScreenManager.prototype = {
 		this.m_screensContainer.removeChild(screen.getFrame());
 		this.m_screens.remove(id);
 	}
+	,setScreen: function(name,data) {
+		this.m_nativeManager.setScreen(name,data);
+	}
+	,addOverlay: function(name,data) {
+		this.m_nativeManager.addOverlay(name,data);
+	}
 	,createScreen: function(name,id,data) {
-		console.log(name);
-		console.log(Std.string(_$UInt_UInt_$Impl_$.toFloat(id)));
-		console.log(data);
+		var _g = this;
 		var frame;
 		var _this = window.document;
 		frame = _this.createElement("iframe");
@@ -257,8 +245,10 @@ ursine_screen_ScreenManager.prototype = {
 		this.m_screensContainer.appendChild(frame);
 		frame.contentWindow.addEventListener("load",function() {
 			frame.style.display = "block";
-			var screenType = Type.resolveClass(name);
-			Type.createInstance(screenType,[id,frame,data]);
+			var screenType = Type.resolveClass(_g.m_screenPackagePrefix + name);
+			if(screenType == null) throw new js__$Boot_HaxeError("Unknown screen type \"" + name + "\".");
+			var value = Type.createInstance(screenType,[id,frame,data]);
+			_g.m_screens.h[id] = value;
 		});
 	}
 	,onScreenEvent: function(e) {
@@ -280,37 +270,37 @@ ursine_screen_ScreenManager.prototype = {
 		var screen;
 		var key = this.m_nativeManager.getFocusedScreen();
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(ursine_input_GamepadEvent.ButtonUp,e);
+		if(screen != null) screen.events.trigger(ursine_input_GamepadEventType.ButtonUp,e);
 	}
 	,onGamepadBtnUp: function(e) {
 		var screen;
 		var key = this.m_nativeManager.getFocusedScreen();
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(ursine_input_GamepadEvent.ButtonUp,e);
+		if(screen != null) screen.events.trigger(ursine_input_GamepadEventType.ButtonUp,e);
 	}
 	,onGamepadConnected: function(e) {
 		var screen;
 		var key = this.m_nativeManager.getFocusedScreen();
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(ursine_input_GamepadEvent.Connected,e);
+		if(screen != null) screen.events.trigger(ursine_input_GamepadEventType.Connected,e);
 	}
 	,onGamepadDisconnected: function(e) {
 		var screen;
 		var key = this.m_nativeManager.getFocusedScreen();
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(ursine_input_GamepadEvent.Disconnected,e);
+		if(screen != null) screen.events.trigger(ursine_input_GamepadEventType.Disconnected,e);
 	}
 	,onKeyDown: function(e) {
 		var screen;
 		var key = this.m_nativeManager.getFocusedScreen();
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(ursine_input_KeyboardEvent.KeyDown,e);
+		if(screen != null) screen.events.trigger(ursine_input_KeyboardEventType.KeyDown,e);
 	}
 	,onKeyUp: function(e) {
 		var screen;
 		var key = this.m_nativeManager.getFocusedScreen();
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(ursine_input_KeyboardEvent.KeyUp,e);
+		if(screen != null) screen.events.trigger(ursine_input_KeyboardEventType.KeyUp,e);
 	}
 };
 var ursine_utils_EventManager = function() {
@@ -368,11 +358,11 @@ String.__name__ = true;
 $hxClasses.Array = Array;
 Array.__name__ = true;
 var __map_reserved = {}
-ursine_input_GamepadEvent.ButtonDown = "GamepadButtonDown";
-ursine_input_GamepadEvent.ButtonUp = "GamepadButtonUp";
-ursine_input_GamepadEvent.Connected = "GamepadConnected";
-ursine_input_GamepadEvent.Disconnected = "GamepadDisconnected";
-ursine_input_KeyboardEvent.KeyDown = "KeyboardKeyDown";
-ursine_input_KeyboardEvent.KeyUp = "KeyboardKeyUp";
+ursine_input_GamepadEventType.ButtonDown = "GamepadButtonDown";
+ursine_input_GamepadEventType.ButtonUp = "GamepadButtonUp";
+ursine_input_GamepadEventType.Connected = "GamepadConnected";
+ursine_input_GamepadEventType.Disconnected = "GamepadDisconnected";
+ursine_input_KeyboardEventType.KeyDown = "KeyboardKeyDown";
+ursine_input_KeyboardEventType.KeyUp = "KeyboardKeyUp";
 Application.main();
 })();

@@ -34,6 +34,7 @@ namespace ursine
     {
         World::World(void)
             : EventDispatcher( this )
+            , m_loaded( false )
             , m_settings( nullptr )
             , m_entityManager( nullptr )
             , m_systemManager( nullptr )
@@ -153,9 +154,14 @@ namespace ursine
             m_owner = owner;
         }
 
-        void World::dispatchLoad(void)
+        void World::DispatchLoad(void)
         {
-            m_systemManager->onAfterLoad( );
+            if (!m_loaded)
+            {
+                m_systemManager->onAfterLoad( );
+
+                m_loaded = true;
+            }
         }
 
         void World::deleteEntity(Entity *entity)

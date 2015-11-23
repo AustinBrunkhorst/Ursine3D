@@ -17,6 +17,8 @@ class Screen implements IEventContainer {
     private var m_data : Dynamic;
 
     public function new(id : ScreenID, frame : js.html.IFrameElement, data : Dynamic) {
+        events = new EventManager( );
+
         m_id = id;
         m_frame = frame;
         m_document = frame.contentDocument;

@@ -9,14 +9,16 @@ import ursine.input.KeyboardManager;
 class ScreenManager {
     public static var instance : ScreenManager;
 
+    private var m_screenPackagePrefix : String;
     private var m_nativeManager : NativeScreenManager;
     private var m_screens : Map<ScreenID, Screen>;
 
     private var m_screensContainer : js.html.Element;
 
-    public function new() {
+    public function new(screenPackagePrefix : String) {
         instance = this;
 
+        m_screenPackagePrefix = screenPackagePrefix;
         m_nativeManager = new NativeScreenManager( );
         m_screens = new Map<ScreenID, Screen>( );
 
@@ -28,14 +30,14 @@ class ScreenManager {
             .on( 'Exited', onScreenExited );
 
         Application.broadcastManager.getChannel( 'GamepadManager' )
-            .on( GamepadEvent.ButtonDown, onGamepadBtnDown )
-            .on( GamepadEvent.ButtonUp, onGamepadBtnUp )
-            .on( GamepadEvent.Connected, onGamepadConnected )
-            .on( GamepadEvent.Disconnected, onGamepadDisconnected );
+            .on( GamepadEventType.ButtonDown, onGamepadBtnDown )
+            .on( GamepadEventType.ButtonUp, onGamepadBtnUp )
+            .on( GamepadEventType.Connected, onGamepadConnected )
+            .on( GamepadEventType.Disconnected, onGamepadDisconnected );
 
         Application.broadcastManager.getChannel( 'KeyboardManager' )
-            .on( KeyboardEvent.KeyDown, onKeyDown )
-            .on( KeyboardEvent.KeyUp, onKeyUp );
+            .on( KeyboardEventType.KeyDown, onKeyDown )
+            .on( KeyboardEventType.KeyUp, onKeyUp );
     }
 
     public function getScreen(id : ScreenID) : Screen {
@@ -52,11 +54,15 @@ class ScreenManager {
         m_screens.remove( id );
     }
 
-    private function createScreen(name : String, id : ScreenID, data : Dynamic) {
-        trace( name );
-        trace( id );
-        trace( data );
+    public function setScreen(name : String, data : Dynamic) {
+        m_nativeManager.setScreen( name, data );
+    }
 
+    public function addOverlay(name : String, data : Dynamic) {
+        m_nativeManager.addOverlay( name, data );
+    }
+
+    private function createScreen(name : String, id : ScreenID, data : Dynamic) {
         var frame = js.Browser.document.createIFrameElement( );
 
         frame.src = 'Screens/${name}.html';
@@ -67,9 +73,12 @@ class ScreenManager {
         frame.contentWindow.addEventListener( 'load', function() {
             frame.style.display = 'block';
 
-            var screenType = Type.resolveClass( name );
+            var screenType = Type.resolveClass( m_screenPackagePrefix + name );
 
-            Type.createInstance( screenType, [ id, frame, data ] );
+            if (screenType == null)
+                throw 'Unknown screen type "${name}".';
+
+            m_screens.set( id, Type.createInstance( screenType, [ id, frame, data ] ) );
         } );
     }
 
@@ -95,41 +104,41 @@ class ScreenManager {
         var screen = m_screens[ m_nativeManager.getFocusedScreen( ) ];
 
         if (screen != null)
-            screen.events.trigger( GamepadEvent.ButtonUp, e );
+            screen.events.trigger( GamepadEventType.ButtonUp, e );
     }
 
     private function onGamepadBtnUp(e) {
         var screen = m_screens[ m_nativeManager.getFocusedScreen( ) ];
 
         if (screen != null)
-            screen.events.trigger( GamepadEvent.ButtonUp, e );
+            screen.events.trigger( GamepadEventType.ButtonUp, e );
     }
 
     private function onGamepadConnected(e) {
         var screen = m_screens[ m_nativeManager.getFocusedScreen( ) ];
 
         if (screen != null)
-            screen.events.trigger( GamepadEvent.Connected, e );
+            screen.events.trigger( GamepadEventType.Connected, e );
     }
 
     private function onGamepadDisconnected(e) {
         var screen = m_screens[ m_nativeManager.getFocusedScreen( ) ];
 
         if (screen != null)
-            screen.events.trigger( GamepadEvent.Disconnected, e );
+            screen.events.trigger( GamepadEventType.Disconnected, e );
     }
 
     private function onKeyDown(e) {
         var screen = m_screens[ m_nativeManager.getFocusedScreen( ) ];
 
         if (screen != null)
-            screen.events.trigger( KeyboardEvent.KeyDown, e );
+            screen.events.trigger( KeyboardEventType.KeyDown, e );
     }
 
     private function onKeyUp(e) {
         var screen = m_screens[ m_nativeManager.getFocusedScreen( ) ];
 
         if (screen != null)
-            screen.events.trigger( KeyboardEvent.KeyUp, e );
+            screen.events.trigger( KeyboardEventType.KeyUp, e );
     }
 }

@@ -29,6 +29,6 @@ namespace ursine
         virtual void Render(void);
 
     protected:
-        ecs::World world;
+        ecs::World::Handle world;
     };
 }
