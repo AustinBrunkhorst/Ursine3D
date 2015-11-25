@@ -14,12 +14,16 @@ namespace ursine
             : BaseComponent( )
             , m_handle( GetCoreSystem(graphics::GfxAPI )->CameraMgr.AddCamera( ) )
         {
-            
         }
 
         Camera::~Camera(void)
         {
             GetCoreSystem( graphics::GfxAPI )->CameraMgr.DestroyCamera( m_handle );
+        }
+
+        void Camera::OnInitialize()
+        {
+            GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).SetEntityID( GetOwner( )->GetID( ) );
         }
 
         graphics::GfxHND Camera::GetHandle(void) const

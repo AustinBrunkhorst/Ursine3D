@@ -474,7 +474,7 @@ namespace ursine
 
             PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
-                Render3DModel(m_drawList[ currentIndex++ ]);
+                Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
 
             //point light pass
             PrepForPointLightPass(view, proj);
@@ -494,7 +494,7 @@ namespace ursine
             //primitive pass
             PrepForPrimitives(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
-                RenderPrimitive(m_drawList[ currentIndex++ ]);
+                RenderPrimitive(m_drawList[ currentIndex++ ], currentCamera );
 
             //debug 
             PrepForDebugRender();
@@ -595,7 +595,7 @@ namespace ursine
 
             //render objects
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
-                Render3DModel(m_drawList[ currentIndex++ ]);
+                Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
                 Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
 
@@ -613,7 +613,7 @@ namespace ursine
             layoutManager->SetInputLayout(SHADER_PRIMITIVE);
 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
-                RenderPrimitive(m_drawList[ currentIndex++ ]);
+                RenderPrimitive(m_drawList[ currentIndex++ ], currentCamera );
 
             //render points and lines
             gfxProfiler->Stamp(PROFILE_PRIMITIVES);
@@ -892,18 +892,12 @@ namespace ursine
         }
 
         // rendering //////////////////////////////////////////////////////
-        void GfxManager::Render3DModel(_DRAWHND handle)
+        void GfxManager::Render3DModel(_DRAWHND handle, Camera &currentcamera )
         {
-            //// TEMP /////////////////////////////////////////////////
-            //URSINE_TODO("Remove this");
-            //POINT point;
-            //GetCursorPos(&point);
+            Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
 
-            //{
-            //    bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
-            //}
-
-            //// END OF TEMP //////////////////////////////////////////
+            if ( !currentcamera.CheckMask( current.GetRenderMask( ) ) )
+                return;
                     
             // map color
             Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor( );
@@ -921,7 +915,6 @@ namespace ursine
             MaterialDataBuffer mdb;
 
             // get material data
-            Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
             
             // set unique ID for this model
@@ -987,6 +980,9 @@ namespace ursine
         void GfxManager::Render2DBillboard(_DRAWHND handle, Camera &currentCamera)
         {
             auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
+
+            if ( !currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
+                return;
 
             BillboardSpriteBuffer bsb;
 
@@ -1105,6 +1101,9 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+                return;
+
             //get data
             float radius = pl.GetRadius( );
 
@@ -1160,6 +1159,9 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+                return;
+
             SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
             view.Transpose();
             SVec3 lightDirection = view.TransformVector(pl.GetDirection());
@@ -1193,6 +1195,9 @@ namespace ursine
         {
             Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if ( !currentCamera.CheckMask( l.GetRenderMask( ) ) )
+                return;
+
             SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
             view.Transpose( );
             SVec3 lightDirection = view.TransformVector(l.GetDirection( ));
@@ -1211,9 +1216,12 @@ namespace ursine
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
         }
 
-        void GfxManager::RenderPrimitive(_DRAWHND handle)
+        void GfxManager::RenderPrimitive(_DRAWHND handle, Camera &currentCamera )
         {
             Primitive &prim = renderableManager->m_renderablePrimitives[ handle.Index_ ];
+
+            if ( !currentCamera.CheckMask( prim.GetRenderMask( ) ) )
+                return;
 
             //set data if it is wireframe or not
             if (prim.GetWireFrameMode() == true)
@@ -1525,6 +1533,11 @@ namespace ursine
             dxCore->ResizeDX(width, height);
 
             Invalidate();
+        }
+
+        void GfxManager::SetFullscreenState(const bool state)
+        {
+            dxCore->SetFullscreenState( state );
         }
 
         void GfxManager::Invalidate()

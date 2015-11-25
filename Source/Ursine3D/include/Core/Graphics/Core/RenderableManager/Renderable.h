@@ -44,11 +44,16 @@ namespace ursine
 
             void SetDebug(bool debug);
             bool GetDebug() const;
+
+            RenderMask GetRenderMask(void) const;
+            void SetRenderMask(const RenderMask mask);
+
         private:
             ecs::EntityUniqueID entityID;
             bool Active_;
             bool Overdraw_;
             bool Debug_;
+            RenderMask m_mask;
         };
 
         /////////////////////////////////////////////////////////////////

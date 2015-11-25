@@ -34,6 +34,8 @@ namespace ursine
             m_size = 10.f;
 
             m_renderMode = VIEWPORT_RENDER_DEFERRED;
+
+            m_cameraMask = 0xFFFFFFFFFFFFFFFF;
         }
 
         void Camera::Uninitialize(void)
@@ -243,6 +245,31 @@ namespace ursine
         {
             m_screenX = x;
             m_screenY = y;
+        }
+
+        bool Camera::CheckMask(const unsigned long long renderMask)
+        {
+            // check to see if the whitelist bit is set
+            if ( renderMask & (0x1u << 63u) )
+                return (renderMask - (0x1u << 63u)) == m_entityID;
+
+            // else, return the regular mask comparison
+            return renderMask & m_cameraMask;
+        }
+
+        void Camera::SetMask(const unsigned long long renderMask)
+        {
+            m_cameraMask = renderMask;
+        }
+
+        ecs::EntityID Camera::GetEntityID() const
+        {
+            return m_entityID;
+        }
+
+        void Camera::SetEntityID(const ecs::EntityID id)
+        {
+            m_entityID = id;
         }
 
         void Camera::CalculateVectors(const SVec3 &up)

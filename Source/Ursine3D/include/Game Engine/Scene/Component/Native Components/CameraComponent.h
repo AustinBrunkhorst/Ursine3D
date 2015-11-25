@@ -18,6 +18,8 @@ namespace ursine
             Camera(void);
             ~Camera(void);
 
+            void OnInitialize(void) override;
+
             graphics::GfxHND GetHandle(void) const;
             graphics::Camera *GetCamera(void) const;
 

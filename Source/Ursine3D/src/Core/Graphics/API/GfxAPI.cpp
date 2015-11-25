@@ -123,6 +123,11 @@ namespace ursine
             m_privates->gfxCore_->Resize(width, height);
         }
 
+        void GfxAPI::SetFullscreenState(const bool state)
+        {
+            m_privates->gfxCore_->SetFullscreenState( state );
+        }
+
         void GfxAPI::SetGameViewport(GfxHND vp)
         {
             m_privates->gfxCore_->SetGameViewport(vp);

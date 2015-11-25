@@ -106,7 +106,7 @@ namespace ursine
                 LogMessage("Sample Quality: %i", 2, swapChainDesc.SampleDesc.Quality);
 
                 //set swap chain flags
-                swapChainDesc.Windowed = true; //@Mat rekt
+                swapChainDesc.Windowed = true; // this is like this for a reason
                 swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
                 //Set the scan line ordering and scaling to unspecified.
@@ -345,6 +345,11 @@ namespace ursine
                 m_depthStencilManager->Invalidate();
                 m_targetManager->Invalidate();
                 m_rasterStateManager->Invalidate();
+            }
+
+            void DirectXCore::SetFullscreenState(const bool state)
+            {
+                m_swapChain->SetFullscreenState( state, nullptr );
             }
 
             void DirectXCore::backendResizeDX(const int width, const int height)
