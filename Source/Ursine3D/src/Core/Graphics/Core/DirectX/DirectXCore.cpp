@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** DirectXCore.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "DirectXCore.h"
 #include <d3d11.h>
@@ -93,7 +106,7 @@ namespace ursine
                 LogMessage("Sample Quality: %i", 2, swapChainDesc.SampleDesc.Quality);
 
                 //set swap chain flags
-                swapChainDesc.Windowed = true; //@Mat rekt
+                swapChainDesc.Windowed = true; // this is like this for a reason
                 swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
                 //Set the scan line ordering and scaling to unspecified.
@@ -332,6 +345,11 @@ namespace ursine
                 m_depthStencilManager->Invalidate();
                 m_targetManager->Invalidate();
                 m_rasterStateManager->Invalidate();
+            }
+
+            void DirectXCore::SetFullscreenState(const bool state)
+            {
+                m_swapChain->SetFullscreenState( state, nullptr );
             }
 
             void DirectXCore::backendResizeDX(const int width, const int height)

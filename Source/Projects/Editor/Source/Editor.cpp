@@ -9,20 +9,10 @@
 #include <UIManager.h>
 
 #include <Color.h> 
-
-#include <SystemManager.h>
-#include <CameraComponent.h> 
-#include <RenderableComponent.h>   
 #include <LightComponent.h>
 #include <Model3DComponent.h>
-#include <CapsuleColliderComponent.h>
-#include <BoxColliderComponent.h>
-#include <AnimationBuilder.h>
 
-#include "CharacterControllerComponent.h"
-#include "EditorCameraSystem.h"
-
-#include "PhysicsSystem.h"
+#include <AudioManager.h>
 
 using namespace ursine;
 
@@ -68,9 +58,11 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
+    m_mainWindow.window->Listener( this )
+        .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange );
+
     m_mainWindow.window->SetLocationCentered( );
     m_mainWindow.window->Show( true );
-    m_mainWindow.window->SetFullScreen( false );
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -127,7 +119,7 @@ void Editor::initializeGraphics(void)
 {
     graphics::GfxConfig config;
 
-    config.Fullscreen_ = m_mainWindow.window->IsFullScreen( );
+    config.Fullscreen_ = false;
 
     config.HandleToWindow_ =
         static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
@@ -135,8 +127,8 @@ void Editor::initializeGraphics(void)
     config.ModelListPath_ = "Assets/Models/";
     config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
     config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = static_cast<unsigned>(m_mainWindow.window->GetSize( ).X( ));
-    config.WindowHeight_ = static_cast<unsigned>(m_mainWindow.window->GetSize( ).Y( ));
+    config.WindowWidth_ = 1366;
+    config.WindowHeight_ = 768;
 
     URSINE_TODO( "..." );
 
@@ -147,6 +139,9 @@ void Editor::initializeGraphics(void)
 
     m_graphics->StartGraphics( config );
     m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
+    //m_graphics->SetFullscreenState( true );
+
+    //m_mainWindow.window->SetFullScreen( true );
 }
 
 void Editor::initializeScene(void)
@@ -170,20 +165,38 @@ void Editor::initializeScene(void)
 
     world->DispatchLoad( );
 
-    auto *cameraEntity = world->CreateEntity( "Camera" );
+    auto *univLight = world->CreateEntity( "Global Light" );
     {
-        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
-		 
-        auto camera = component->GetCamera( );
+        auto *component = univLight->AddComponent<ecs::Light>( );
 
-        camera->SetPosition( 0.0f, 0.0f );
-		camera->SetRenderMode(graphics::VIEWPORT_RENDER_FORWARD );
-        camera->SetDimensions( 1.0f, 1.0f );
-        camera->SetPlanes( 0.1f, 700.0f );
-              
-        camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-		 
+        univLight->GetTransform( )->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
+        univLight->GetTransform( )->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+
+        component->SetType( ecs::LightType::Directional );
+        component->SetRadius( 40.0f );
+        component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
+
+    /*auto *character = world->CreateEntity( "Character" );
+    {
+        auto *model = character->AddComponent<ecs::Model3D>( );
+
+        model->SetModel( "Character" );
+        model->SetMaterial( "Blank" );
+
+        auto *cube = world->CreateEntity( "Cube" );
+
+        auto *cubeModel = cube->AddComponent<ecs::Model3D>( );
+
+        cubeModel->SetModel( "Cube" );
+
+        auto *cubeTransform = cube->GetTransform( );
+
+        cubeTransform->SetLocalPosition( { 1, 20, 20 } );
+        cubeTransform->SetLocalScale( { 5, 5, 5 } );
+
+        character->GetTransform( )->AddChild( cubeTransform );
+    }*/
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -192,22 +205,9 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    /////////////////////////////
-    // TEMPORARY
-    ursine::AnimationState myState;
-    myState.SetAnimation( AnimationBuilder::GetAnimationByIndex( 0 ) );
-    myState.SetTimePosition( 0 );
-
-    auto *rig = AnimationBuilder::GetAnimationRigByIndex( 0 );
-
-    //std::vector<DirectX::XMMATRIX> matPal;
-
-    //AnimationBuilder::GenerateAnimationData( myState, rig, matPal );
-
     auto scene = m_project->GetScene( );
-	 
-    scene->Update( dt ); 
 
+    scene->Update( dt );
 
     m_graphics->StartFrame( );  
 
@@ -216,29 +216,15 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     m_mainWindow.ui->DrawMain( );  
 
     m_graphics->EndFrame( );
+}
 
-    static bool hi = false;
+void Editor::onFocusChange(EVENT_HANDLER( ursine::Window ))
+{
+    EVENT_ATTRS( Window, WindowFocusArgs );
 
-    if (!hi)
-    {
-        const int numRays = 5;
-        const float incAngle = math::PI_2 / numRays;
-        const float radius = 4.0f;
-
-        for (int i = 0; i < numRays; ++i)
-        {
-            float ang = i * incAngle;
-
-            SVec3 start(0.0f, 40.0f, 0.0f);
-            SVec3 end(cos(ang) * radius, -1.0f, sin(ang) * radius);
-
-            physics::RaycastInput input(start, end);
-            physics::RaycastOutput output;
-
-            m_project->GetScene( )->GetWorld( )->GetEntitySystem(ursine::ecs::PhysicsSystem)
-                ->Raycast(input, output, physics::RAYCAST_CLOSEST_HIT, true, 0.016f);
-        }
-    }
+    //m_graphics->SetFullscreenState( args->focused );
+    //m_mainWindow.window->SetFullScreen( args->focused );
+    printf( "%s\n", args->focused ? "True" : "False" );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

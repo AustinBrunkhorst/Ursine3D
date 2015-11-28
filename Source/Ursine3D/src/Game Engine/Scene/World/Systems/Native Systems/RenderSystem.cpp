@@ -2,7 +2,9 @@
 
 #include "RenderSystem.h"
 
-#include "RenderableComponent.h"
+#include "Model3DComponent.h"
+#include "LightComponent.h"
+#include "Billboard2DComponent.h"
 #include "CameraComponent.h"
 
 #include "GfxAPI.h"
@@ -51,11 +53,18 @@ namespace ursine
                     static_cast<Camera*>( const_cast<Component*>( args->component ) )
                 );
             }
-            else if (args->component->Is<Renderable>( ))
+
+            else if (args->component->Is<Model3D>( ))
+                addRenderable( args->entity, static_cast<Model3D*>( const_cast<Component*>( args->component ) ) );
+            else if (args->component->Is<Billboard2D>( ))
+                addRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) ) );
+            else if (args->component->Is<Light>( ))
+                addRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) ) );
+            else if ( args->component->Is<Animator>( ) )
             {
-                m_renderable.emplace( 
-                    args->entity->GetUniqueID( ), 
-                    static_cast<Renderable*>( const_cast<Component*>( args->component ) )
+                m_animators.emplace(
+                    args->entity->GetUniqueID( ),
+                    static_cast<Animator*>(const_cast<Component*>(args->component))
                 );
             }
         }
@@ -71,25 +80,35 @@ namespace ursine
                 if (search != m_cameras.end( ))
                     m_cameras.erase( search );
             }
-            else if (args->component->Is<Renderable>( ))
-            {
-                auto search = m_renderable.find( args->entity->GetUniqueID( ) );
-
-                if (search != m_renderable.end( ))
-                    m_renderable.erase( search );
-            }
+            else if (args->component->Is<Model3D>( ))
+                removeRenderable( args->entity, static_cast<Model3D*>( const_cast<Component*>( args->component ) ) );
+            else if (args->component->Is<Billboard2D>( ))
+                removeRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) ) );
+            else if (args->component->Is<Light>( ))
+                removeRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) ) );
         }
 
         void RenderSystem::onRender(EVENT_HANDLER(World))
         {
             m_graphics->BeginScene( );
 
-            for (auto &renderable : m_renderable)
+            for ( auto &animator : m_animators )
             {
-                if (renderable.second->m_dirty)
-                    renderable.second->updateRenderer( );
 
-                m_graphics->RenderObject( renderable.second->m_handle );
+                animator.second->UpdateAnimation( Application::Instance->GetDeltaTime( ) );
+            }
+
+            for (auto &mapPair : m_renderableMap)
+            {
+                auto &renderableVec = mapPair.second;
+                
+                for (auto &rend : renderableVec)
+                {
+                    if (rend->m_dirty)
+                        rend->updateRenderer( );
+
+                    m_graphics->RenderObject( rend->m_handle );
+                }
             }
 
             RenderHookArgs e( 0 );
@@ -104,6 +123,33 @@ namespace ursine
             }
 
             m_graphics->EndScene( );
+        }
+
+        void RenderSystem::addRenderable(Entity *entity, RenderableComponentBase *renderable)
+        {
+            m_renderableMap[ entity->GetUniqueID( ) ].push_back( renderable );
+        }
+
+        void RenderSystem::removeRenderable(Entity *entity, RenderableComponentBase *renderable)
+        {
+            // See if we have a renderable vector for this entity
+            auto id = entity->GetUniqueID( );
+            auto vecSearch = m_renderableMap.find( id );
+
+            if (vecSearch != m_renderableMap.end( ))
+            {
+                // If so, see if we have this component's base class in the vector
+                auto &renderableVec = m_renderableMap[ id ];
+                auto renderableSearch = std::find( renderableVec.begin( ), renderableVec.end( ), renderable );
+
+                // If so remove it
+                if (renderableSearch != renderableVec.end( ))
+                    renderableVec.erase( renderableSearch );
+
+                // If vector is empty, remove it from the map
+                if (renderableVec.size( ) == 0)
+                    m_renderableMap.erase( id );
+            }
         }
     }
 }

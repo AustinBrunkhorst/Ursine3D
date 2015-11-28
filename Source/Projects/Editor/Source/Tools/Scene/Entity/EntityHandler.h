@@ -27,6 +27,10 @@ public:
 
     JSMethod(updateComponentField);
 
+    JSMethod(getChildren);
+    JSMethod(getParent);
+    JSMethod(setParent);
+
 private:
     ursine::ecs::World *m_world;
     ursine::ecs::EntityUniqueID m_handle;

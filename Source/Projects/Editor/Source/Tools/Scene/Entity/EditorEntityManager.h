@@ -21,6 +21,7 @@ private:
     void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
     void onEntityRemoved(EVENT_HANDLER(ursine::ecs::World));
     void onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World));
+    void onEntityParentChanged(EVENT_HANDLER(ursine::ecs::Entity));
 
     // component events
     void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));

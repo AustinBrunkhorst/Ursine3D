@@ -78,6 +78,8 @@ namespace ursine
 
                 void Invalidate(void);
 
+                void SetFullscreenState( const bool state );
+
                 //private methods
             private:
                 void backendResizeDX(const int width, const int height);

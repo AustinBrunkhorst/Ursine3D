@@ -17,4 +17,4 @@ private:
 
     void tryDebugModel(bool enabled);
 
-} Meta(Enable, WhiteListMethods, HiddenInInspector);
+} Meta(Enable, WhiteListMethods, DisableSerialization, HiddenInInspector);

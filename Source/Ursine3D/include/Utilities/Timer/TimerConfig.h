@@ -20,4 +20,6 @@ namespace ursine
     typedef std::function<void(void)> TimerCallback;
 
     typedef int TimerGroupID;
+
+    const TimerGroupID kTimerGroupGameplay = 4;
 }

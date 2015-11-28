@@ -61,9 +61,14 @@ namespace ursine
             void SetOffset(const SVec3 &offset);
             SVec3 GetOffset(void) const;
 
-            void LockXRotation(bool flag);
-            void LockYRotation(bool flag);
-            void LockZRotation(bool flag);
+            void SetRotationFreezeX(bool flag);
+            bool GetRotationFreezeX(void) const;
+
+            void SetRotationFreezeY(bool flag);
+            bool GetRotationFreezeY(void) const;
+
+            void SetRotationFreezeZ(bool flag);
+            bool GetRotationFreezeZ(void) const;
 
             void UpdateInertiaTensor(void);
 
@@ -71,6 +76,12 @@ namespace ursine
 
             void SetMass(float mass);
             float GetMass(void) const;
+
+            void SetVelocity(const SVec3 &velocity);
+            SVec3 GetVelocity(void) const;
+
+            void SetAngularVelocity(const SVec3 &angularVelocity);
+            SVec3 GetAngularVelocity(void) const;
 
         private:
             BodyType m_bodyType;
@@ -93,6 +104,8 @@ namespace ursine
 
             void addToSimulation(void);
             void removeFromSimulation(void);
+            
+            void updateRotationFreeze(void);
 
         };
     }

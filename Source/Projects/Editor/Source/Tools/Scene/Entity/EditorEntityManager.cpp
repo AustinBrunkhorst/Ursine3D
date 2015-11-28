@@ -25,6 +25,7 @@ namespace
             const auto Added = "EntityAdded";
             const auto Removed = "EntityRemoved";
             const auto NameChanged = "EntityNameChanged";
+            const auto ParentChanged = "EntityParentChanged";
         }
 
         namespace component
@@ -56,6 +57,7 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
         .On( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
         .On( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
+        .On( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .On( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged );
@@ -81,6 +83,7 @@ void EditorEntityManager::clearWorld(ecs::World::Handle world)
         .Off( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
         .Off( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
+        .Off( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
         .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .Off( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged );
@@ -131,6 +134,36 @@ void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::NameChanged,
+        message
+    );
+}
+
+void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
+{
+    EVENT_ATTRS(ecs::Entity, ecs::ParentChangedArgs);
+
+    Json oldUniqueID, newUniqueID;
+
+    if (args->oldParent == -1)
+        oldUniqueID = nullptr;
+    else
+        oldUniqueID = static_cast<int>( args->oldParent );
+
+    if (args->newParent == -1)
+        newUniqueID = nullptr;
+    else
+        newUniqueID = static_cast<int>( args->newParent );
+
+    Json message = Json::object {
+        { "uniqueID", static_cast<int>( sender->GetUniqueID( ) ) },
+        { "oldParent", oldUniqueID },
+        { "newParent", newUniqueID }
+    };
+
+    m_project->GetUI( )->Message(
+        UI_CMD_BROADCAST, 
+        channel::EntityManager, 
+        events::entity::ParentChanged,
         message
     );
 }

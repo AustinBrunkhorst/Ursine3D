@@ -3,12 +3,15 @@
 #include "Component.h"
 #include "Renderable.h"
 #include "GfxAPI.h"
+#include "RenderableComponentBase.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Billboard2D : public Component
+        class Billboard2D 
+            : public Component
+            , public RenderableComponentBase
         {
             NATIVE_COMPONENT;
 
@@ -30,7 +33,7 @@ namespace ursine
             // The graphics core API
             graphics::GfxAPI *m_graphics;
 
-            void onUpdateRenderer(EVENT_HANDLER(Entity));
+            void updateRenderer(void) override;
 
         } Meta(Enable, DisplayName("Billboard2D")); 
     }

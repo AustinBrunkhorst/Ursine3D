@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "GfxManager.h"
 
@@ -6,6 +19,8 @@
 #include <complex>
 #include "DepthStencilStateList.h"
 #include <d3d11.h>
+#include <Core/Graphics/Animations/AnimationState.h>
+#include <Core/Graphics/Animations/AnimationBuilder.h>
 
 static int tempID = -1;
 static HWND wHND = 0;
@@ -175,7 +190,7 @@ namespace ursine
             UAssert(render->ID_ == ID_RENDERABLE, "Attempted to draw non-valid handle!");
 
             //make sure we have enough room to render
-            UAssert(m_drawCount < MAX_DRAW_CALLS, "Out of available draw calls! Let Matt know, easy fix.");
+            UAssert(m_drawCount < MAX_DRAW_CALLS, "Out of available draw calls! Let Matt know, easy fix.");          
 
             //get a new draw call
             _DRAWHND &drawCall = m_drawList[ m_drawCount++ ];
@@ -187,6 +202,13 @@ namespace ursine
             case RENDERABLE_MODEL3D:
             {
                 Model3D *current = &renderableManager->m_renderableModel3D[ render->Index_ ];
+
+                URSINE_TODO("Remove hack for Jordan");
+                if(!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
@@ -201,6 +223,13 @@ namespace ursine
             {
                 Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
 
+                URSINE_TODO("Remove hack for Jordan");
+                if (!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
+
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
 
@@ -213,6 +242,13 @@ namespace ursine
             {
                 Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
 
+                URSINE_TODO("Remove hack for Jordan");
+                if (!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
+
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetTextureName());
@@ -224,6 +260,14 @@ namespace ursine
             case RENDERABLE_LIGHT:
             {
                 Light *current = &renderableManager->m_renderableLights[ render->Index_ ];
+
+                URSINE_TODO("Remove hack for Jordan");
+                if (!current->Active_)
+                {
+                    --m_drawCount;
+                    return;
+                }
+
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();
@@ -430,7 +474,7 @@ namespace ursine
 
             PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
-                Render3DModel(m_drawList[ currentIndex++ ]);
+                Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
 
             //point light pass
             PrepForPointLightPass(view, proj);
@@ -450,7 +494,7 @@ namespace ursine
             //primitive pass
             PrepForPrimitives(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
-                RenderPrimitive(m_drawList[ currentIndex++ ]);
+                RenderPrimitive(m_drawList[ currentIndex++ ], currentCamera );
 
             //debug 
             PrepForDebugRender();
@@ -551,7 +595,7 @@ namespace ursine
 
             //render objects
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
-                Render3DModel(m_drawList[ currentIndex++ ]);
+                Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
                 Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
 
@@ -569,7 +613,7 @@ namespace ursine
             layoutManager->SetInputLayout(SHADER_PRIMITIVE);
 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
-                RenderPrimitive(m_drawList[ currentIndex++ ]);
+                RenderPrimitive(m_drawList[ currentIndex++ ], currentCamera );
 
             //render points and lines
             gfxProfiler->Stamp(PROFILE_PRIMITIVES);
@@ -848,18 +892,12 @@ namespace ursine
         }
 
         // rendering //////////////////////////////////////////////////////
-        void GfxManager::Render3DModel(_DRAWHND handle)
+        void GfxManager::Render3DModel(_DRAWHND handle, Camera &currentcamera )
         {
-            // TEMP /////////////////////////////////////////////////
-            URSINE_TODO("Remove this");
-            POINT point;
-            GetCursorPos(&point);
+            Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
 
-            {
-                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix(), SHADERTYPE_GEOMETRY);
-            }
-
-            // END OF TEMP //////////////////////////////////////////
+            if ( !currentcamera.CheckMask( current.GetRenderMask( ) ) )
+                return;
                     
             // map color
             Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor( );
@@ -877,7 +915,6 @@ namespace ursine
             MaterialDataBuffer mdb;
 
             // get material data
-            Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
             current.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
             
             // set unique ID for this model
@@ -889,8 +926,8 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            // set model
-            modelManager->BindModel(handle.Model_);
+            // map matrix palette
+            bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(reinterpret_cast<MatrixPalBuffer*>(&(current.GetMatrixPalette( )[ 0 ])), SHADERTYPE_VERTEX);
 
             // map texture
             textureManager->MapTextureByID(handle.Material_);
@@ -901,13 +938,20 @@ namespace ursine
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
              
             //render
-            shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_));
+            unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
+
+            for (int x = 0; x < count; ++x)
+            {
+                // set model
+                modelManager->BindModel(handle.Model_, x);
+                shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
+            }
 
             //render debug lines
             Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
             if(model.GetDebug())
             {
-                dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
                 dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
 
                 pcb.color.x = 0.75f;
@@ -920,7 +964,13 @@ namespace ursine
                 mdb.specularIntensity = 0;
                 bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
                 textureManager->MapTextureByName("Blank");
-                shaderManager->Render(modelManager->GetModelVertcountByID(handle.Model_));
+                
+                for (int x = 0; x < count; ++x)
+                {
+                    // set model
+                    modelManager->BindModel(handle.Model_, x);
+                    shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
+                }
 
                 dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
                 dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
@@ -930,6 +980,9 @@ namespace ursine
         void GfxManager::Render2DBillboard(_DRAWHND handle, Camera &currentCamera)
         {
             auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
+
+            if ( !currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
+                return;
 
             BillboardSpriteBuffer bsb;
 
@@ -1048,6 +1101,9 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+                return;
+
             //get data
             float radius = pl.GetRadius( );
 
@@ -1103,6 +1159,9 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+                return;
+
             SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
             view.Transpose();
             SVec3 lightDirection = view.TransformVector(pl.GetDirection());
@@ -1136,6 +1195,9 @@ namespace ursine
         {
             Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if ( !currentCamera.CheckMask( l.GetRenderMask( ) ) )
+                return;
+
             SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)
             view.Transpose( );
             SVec3 lightDirection = view.TransformVector(l.GetDirection( ));
@@ -1154,9 +1216,12 @@ namespace ursine
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
         }
 
-        void GfxManager::RenderPrimitive(_DRAWHND handle)
+        void GfxManager::RenderPrimitive(_DRAWHND handle, Camera &currentCamera )
         {
             Primitive &prim = renderableManager->m_renderablePrimitives[ handle.Index_ ];
+
+            if ( !currentCamera.CheckMask( prim.GetRenderMask( ) ) )
+                return;
 
             //set data if it is wireframe or not
             if (prim.GetWireFrameMode() == true)
@@ -1468,6 +1533,11 @@ namespace ursine
             dxCore->ResizeDX(width, height);
 
             Invalidate();
+        }
+
+        void GfxManager::SetFullscreenState(const bool state)
+        {
+            dxCore->SetFullscreenState( state );
         }
 
         void GfxManager::Invalidate()

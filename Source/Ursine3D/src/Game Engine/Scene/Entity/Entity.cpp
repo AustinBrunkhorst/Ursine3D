@@ -35,6 +35,7 @@ namespace ursine
             , m_deleting( false )
             , m_deletionEnabled( true )
             , m_hierarchyChangeEnabled( true )
+            , m_serializationEnabled( true )
             , m_visibleInEditor( true )
             , m_id( id )
             , m_uniqueID( 0 )
@@ -102,6 +103,16 @@ namespace ursine
         void Entity::EnableHierarchyChange(bool enabled)
         {
             m_hierarchyChangeEnabled = enabled;
+        }
+
+        bool Entity::IsSerializationEnabled(void) const
+        {
+            return m_serializationEnabled;
+        }
+
+        void Entity::EnableSerialization(bool enabled)
+        {
+            m_serializationEnabled = enabled;
         }
 
         bool Entity::IsVisibleInEditor(void) const
@@ -176,7 +187,12 @@ namespace ursine
             return m_world->m_entityManager->GetComponents( this );
         }
 
-	    Component* Entity::GetComponentInChildren(ComponentTypeID id) const
+        const std::vector<EntityID> *Entity::GetChildren(void) const
+        {
+            return m_world->m_entityManager->GetChildren( this );
+        }
+
+        Component* Entity::GetComponentInChildren(ComponentTypeID id) const
 	    {
 			return m_world->m_entityManager->GetComponentInChildren( this, id );
 	    }
@@ -261,6 +277,7 @@ namespace ursine
             // default settings
             m_deletionEnabled = true;
             m_hierarchyChangeEnabled = true;
+            m_serializationEnabled = true;
             m_visibleInEditor = true;
         }
     }

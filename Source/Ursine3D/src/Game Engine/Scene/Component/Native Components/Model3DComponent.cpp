@@ -1,7 +1,6 @@
 #include "UrsinePrecompiled.h"
 
 #include "Model3DComponent.h"
-#include "RenderableComponent.h"
 #include "CoreSystem.h"
 #include "GfxAPI.h"
 #include "EntityEvent.h"
@@ -26,24 +25,18 @@ namespace ursine
 
         Model3D::~Model3D(void)
         {
-            // Unsubscribe from the Renderable component's event
-            GetOwner( )->Listener( this )
-                .Off( ENTITY_UPDATE_RENDERER, &Model3D::onUpdateRenderer );
+            RenderableComponentBase::OnRemove( GetOwner( ) );
+
+            m_model->SetDebug( false );
+
+            GetCoreSystem( graphics::GfxAPI )->RenderableMgr.DestroyRenderable( m_handle );
         }
 
         void Model3D::OnInitialize(void)
         {
             auto *owner = GetOwner( );
 
-            // Subscribe from the Renderable component's event
-            owner->Listener( this )
-                .On( ENTITY_UPDATE_RENDERER, &Model3D::onUpdateRenderer );
-
-            // Set the handle in the renderable component
-            if (!owner->HasComponent<Renderable>( ))
-                owner->AddComponent<Renderable>( );
-
-            owner->GetComponent<Renderable>( )->SetHandle( m_handle );
+            RenderableComponentBase::OnInitialize( owner );
 
             // set the unique id
             m_model->SetEntityUniqueID( GetOwner( )->GetUniqueID( ) );
@@ -55,7 +48,12 @@ namespace ursine
             if (m_materialName.size( ) > 0)
                 m_model->SetMaterial( m_materialName );
 
-            onUpdateRenderer( this, EventArgs::Empty );
+            updateRenderer( );
+        }
+
+        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        {
+            return m_model->GetMatrixPalette( );
         }
 
         void Model3D::SetModel(const std::string &name)
@@ -92,6 +90,16 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 
+        void Model3D::SetOverdraw(bool flag)
+        {
+            m_model->SetOverdraw( flag );
+        }
+
+        bool Model3D::GetOverdraw(void) const
+        {
+            return m_model->GetOverdraw( );
+        }
+
         const Color &Model3D::GetColor()
         {
             return m_model->GetColor( );
@@ -107,6 +115,18 @@ namespace ursine
             return m_model->GetDebug( );
         }
 
+        int Model3D::GetRenderMask() const
+        {
+            int retVal = static_cast<int>(m_model->GetRenderMask( ) & 0xFFFFFFFF);
+
+            return retVal;
+        }
+
+        void Model3D::SetRenderMask(const int mask)
+        {
+            m_model->SetRenderMask( static_cast<unsigned long long>(mask) );
+        }
+
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
         {
             m_model->SetMaterialData( emiss, pow, intensity );
@@ -117,13 +137,11 @@ namespace ursine
             m_model->GetMaterialData( emiss, pow, intensity );
         }
 
-        void Model3D::onUpdateRenderer(EVENT_HANDLER(Entity))
+        void Model3D::updateRenderer(void)
         {
             // update the renderer's
-            auto ren = GetOwner( )->GetComponent<Renderable>( );
             auto trans = GetOwner( )->GetTransform( );
-            auto handle = ren->GetHandle( );
-            auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( handle );
+            auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( m_handle );
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }

@@ -20,6 +20,25 @@ namespace
     void doSaveScene(int selectedFilter, const FileList &files);
 }
 
+JSFunction(SceneGetRootEntities)
+{
+    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+
+    auto root = scene->GetWorld( )->GetRootEntities( );
+
+    auto ids = CefV8Value::CreateArray( static_cast<int>( root.size( ) ) );
+
+    for (size_t i = 0; i < root.size( ); ++i)
+    {
+        ids->SetValue( 
+            static_cast<int>( i ), 
+            CefV8Value::CreateUInt( root[ i ]->GetUniqueID( ) )
+        );
+    }
+
+    return ids;
+}
+
 JSFunction(SceneGetActiveEntities)
 {
     auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
@@ -97,11 +116,18 @@ namespace
         auto *editor = GetCoreSystem( Editor );
 
         ecs::WorldSerializer serializer;
-
         ecs::World::Handle world;
 
-        if (!serializer.Deserialize( files[ 0 ].string( ), world ))
+        try
         {
+            world = serializer.Deserialize( files[ 0 ].string( ) );
+        }
+        catch (const ecs::SerializationException &e)
+        {
+            UWarning( "World deserialization failure.\n%s",
+                e.GetError( ).c_str( ) 
+            );
+
             URSINE_TODO( "Use UI error popup" );
             SDL_ShowSimpleMessageBox(
                 SDL_MESSAGEBOX_ERROR,
@@ -109,8 +135,6 @@ namespace
                 "Unable to load world.",
                 editor->GetMainWindow( )->GetInternalHandle( )
             );
-
-            return;
         }
 
         editor->GetProject( )->SetWorld( world );

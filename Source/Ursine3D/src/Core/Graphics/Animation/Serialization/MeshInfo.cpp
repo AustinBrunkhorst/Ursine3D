@@ -14,7 +14,7 @@ namespace ursine
 				normalMode(FbxLayerElement::EMappingMode::eNone),
 				tangentMode(FbxLayerElement::EMappingMode::eNone),
 				vertices(nullptr), indices(nullptr), normals(nullptr), tangents(nullptr), uvs(nullptr), materialIndices(nullptr),
-				modelSubsets(nullptr), //fbxmaterials(nullptr),
+				modelSubsets(nullptr),
 				ctrlIndices(nullptr), ctrlBlendWeights(nullptr), ISerialize("")
 			{
 				*mtrlName = { nullptr };

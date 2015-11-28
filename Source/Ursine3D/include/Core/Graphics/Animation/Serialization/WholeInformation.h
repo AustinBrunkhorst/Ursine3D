@@ -1,6 +1,10 @@
 #pragma once
 
-#include "D3D11Forward.h"
+#include <d3dx11.h>
+#include <directxmath.h>
+#include <d3dcompiler.h>
+#include <d3dcommon.h>
+#include <D3DX11async.h>
 #include <vector>
 #include <string>
 #include <queue>

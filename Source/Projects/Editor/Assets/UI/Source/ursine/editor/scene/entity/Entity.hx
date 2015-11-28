@@ -1,5 +1,6 @@
 package ursine.editor.scene.entity;
 
+import ursine.controls.PolymerElement;
 import ursine.native.Extern;
 
 import ursine.editor.scene.component.ComponentInspection;
@@ -93,6 +94,27 @@ class Entity implements IEventContainer {
 
     public function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void {
         m_handler.updateComponentField( componentName, fieldName, value );
+    }
+
+    public function getChildren() : Array<Entity> {
+        var children : Dynamic = m_handler.getChildren( );
+
+        if (children == false)
+            return [ ];
+
+        return children.map( function(uid) {
+            return new Entity( uid );
+        } );
+    }
+
+    public function getParent() : Entity {
+        var parentUniqueID = m_handler.getParent( );
+
+        return parentUniqueID == null ? null : new Entity( parentUniqueID );
+    }
+
+    public function setParent(parent : Entity) : Bool {
+        return m_handler.setParent( parent.uniqueID );
     }
 
     private function onComponentAdded(e) {

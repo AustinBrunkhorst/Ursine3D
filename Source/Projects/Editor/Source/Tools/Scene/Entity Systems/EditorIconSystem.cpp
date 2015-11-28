@@ -1,45 +1,50 @@
 #include "Precompiled.h"
+
 #include "EditorIconSystem.h"
-#include <Tools/Scene/Components/EditorIconComponent.h>
-#include <Game Engine/Scene/Component/Native Components/LightComponent.h>
-#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
+#include "EditorIconComponent.h"
 
-ENTITY_SYSTEM_DEFINITION(EditorIconSystem);
+#include <LightComponent.h>
+#include <CameraComponent.h>
 
-EditorIconSystem::EditorIconSystem(ursine::ecs::World* world)
-    : EntitySystem(world)
+ENTITY_SYSTEM_DEFINITION( EditorIconSystem );
+
+using namespace ursine;
+
+EditorIconSystem::EditorIconSystem(ecs::World* world)
+    : EntitySystem( world )
 {
     
 }
 
-void EditorIconSystem::OnInitialize()
+void EditorIconSystem::OnInitialize(void)
 {
-    m_world->Listener(this)
-        .On( ursine::ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd);
+    m_world->Listener( this )
+        .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
 }
 
-void EditorIconSystem::OnRemove()
+void EditorIconSystem::OnRemove(void)
 {
-    m_world->Listener(this)
-        .Off(ursine::ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd);
+    m_world->Listener( this )
+        .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
 }
 
-void EditorIconSystem::onIconAdd(EVENT_HANDLER(ursine::ecs::World))
+void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
 {
-    EVENT_ATTRS(ursine::ecs::World, ursine::ecs::ComponentEventArgs);
+    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
     auto comp = args->component;
 
-    if (args->entity->HasComponent<EditorIcon>( ))
-        return;
-
-    //if the object added was a selected component
-    if (comp->Is<ursine::ecs::Light>( ))
+    // if the object added was a selected component
+    if (comp->Is<ecs::Light>( ))
     {
-        args->entity->AddComponent<EditorIcon>( )->SetIcon( "Sun" );
+        if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );
+        args->entity->GetComponent<EditorIcon>( )->SetIcon( "Sun" );
     }
-    else if (comp->Is<ursine::ecs::Camera>( ))
+    else if (comp->Is<ecs::Camera>( ))
     {
-        args->entity->AddComponent<EditorIcon>( )->SetIcon( "Camera" );
+        if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );
+        args->entity->GetComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
     }
 }

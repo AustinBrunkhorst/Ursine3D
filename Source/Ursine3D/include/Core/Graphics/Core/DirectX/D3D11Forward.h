@@ -32,4 +32,6 @@ struct ID3D11UnorderedAccessView;
 struct ID3D11Resource;
 struct XMVECTOR;
 struct XMFLOAT2;
+struct XMFLOAT3;
+struct XMFLOAT4;
 

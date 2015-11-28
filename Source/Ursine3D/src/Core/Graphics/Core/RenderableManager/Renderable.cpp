@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Renderable.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
 #include <Core/Graphics/Core/GfxDefines.h>
@@ -17,6 +30,7 @@ namespace ursine
         {
             Overdraw_ = false;
             Debug_ = false;
+            m_mask = 0x7FFFFFFFFFFFFFFF;
         }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
@@ -47,6 +61,16 @@ namespace ursine
         bool Renderable::GetDebug() const
         {
             return Debug_;
+        }
+
+        RenderMask Renderable::GetRenderMask(void) const
+        {
+            return m_mask;
+        }
+
+        void Renderable::SetRenderMask(const RenderMask mask)
+        {
+            m_mask = mask;
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -303,6 +327,8 @@ namespace ursine
             m_intensity = 1.0f;;
 
             m_spotlightAngles = Vec2(15, 30);
+
+            Renderable::Initialize( );
         }
 
         Light::LightType Light::GetType(void)

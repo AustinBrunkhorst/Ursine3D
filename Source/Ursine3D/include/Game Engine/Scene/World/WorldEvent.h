@@ -24,8 +24,13 @@ namespace ursine
             // A component has been removed from an entity
             WORLD_ENTITY_COMPONENT_REMOVED,
 
+            // The screen that owns this world's focus state changed
+            WORLD_SCREEN_FOCUS_CHANGED,
+
             // An entity's name changed
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
+            // An entity's parent has changed
+            WORLD_EDITOR_ENTITY_PARENT_CHANGED,
             // A component's field has changed
             WORLD_EDITOR_ENTITY_COMPONENT_CHANGED
         };
@@ -65,6 +70,15 @@ namespace ursine
             ComponentRemovedEventArgs(WorldEventType type, Entity *entity, Component *component, ComponentTypeMask oldTypeMask)
                 : ComponentEventArgs( type, entity, component )
                 , oldTypeMask( oldTypeMask ) { }
+        };
+
+        struct ScreenFocusArgs : WorldEventArgs
+        {
+            bool focused;
+
+            ScreenFocusArgs(WorldEventType type, bool focused)
+                : WorldEventArgs( type )
+                , focused( focused ) { }
         };
 
         struct EditorEntityNameChangedArgs : EntityEventArgs

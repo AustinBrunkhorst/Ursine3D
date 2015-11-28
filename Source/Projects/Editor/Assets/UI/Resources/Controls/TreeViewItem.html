@@ -1,0 +1,231 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-tree-view-item">
+    <template>
+        <div id="text" class="text">
+            <span id="arrow" class="arrow"></span>
+            <content>{{text}}</content>
+            <div id="dropAfterContainer" class="drop-after-container"></div>
+        </div>
+        <x-tree-view id="child" class="child-view"></x-tree-view>
+    </template>
+    <script>
+        var TreeViewItemControl = Polymer( {
+            is: "x-tree-view-item",
+            properties: {
+                text: {
+                    type: String,
+                    notify: true
+                },
+                selected: {
+                    type: Boolean,
+                    notify: true,
+                    value: false,
+                    observer: '_onSelectedChanged'
+                },
+                opened: {
+                    type: Boolean,
+                    notify: true,
+                    value: false,
+                    observer: '_onOpenedChanged'
+                },
+                dragging: {
+                    type: Boolean,
+                    readOnly: true,
+                    value: false,
+                    observer: '_onDraggingChanged'
+                }
+            },
+            listeners: {
+                'click': '_onClick',
+                'text.mousedown': '_onTextMouseDown',
+                'arrow.click': '_onArrowClick'
+            },
+            created: function() {
+                this._textMouseUpHandler = this._onTextMouseUp.bind( this );
+                this._textMouseMoveHandler = this._onTextMouseMove.bind( this );
+
+                this._lastDragTarget = null;
+            },
+            attached: function() {
+                this._onItemsChanged( );
+
+                this.listen( this.child, 'items-changed', '_onItemsChanged' );
+            },
+
+            get child() {
+                return this.$.child;
+            },
+            get textElement() {
+                return this.$.text;
+            },
+            get rootView() {
+                var node = this;
+
+                for (; node && node !== document; node = node.parentNode) {
+                    if (node.classList.contains( 'root-view' ))
+                        return node;
+                }
+
+                // this shouldn't ever happen
+                return null;
+            },
+
+            _onSelectedChanged: function() {
+                this.classList.toggle( 'selected', this.selected );
+            },
+            _onOpenedChanged: function() {
+                this.classList.toggle( 'opened', this.opened );
+            },
+            _onDraggingChanged: function() {
+                this.classList.toggle( 'dragging', this.dragging );
+            },
+            _onClick: function (e) {
+                // TODO:
+                /*// make sure this event doesn't bubble to the parent
+                e.stopImmediatePropagation( );
+                e.stopPropagation( );
+
+                var result = this.fire( 'open', e );*/
+            },
+            _onTextMouseDown: function(e) {
+                document.addEventListener( 'mouseup', this._textMouseUpHandler, true );
+                document.addEventListener( 'mousemove', this._textMouseMoveHandler, true );
+            },
+            _onTextMouseMove: function(e) {
+                if (!this.dragging) {
+                    var result = this.fire( 'drag-start', e );
+
+                    // drag start was cancelled
+                    if (result === false)
+                        return;
+
+                    this._setDragging( true );
+                }
+
+                if (this._lastDragTarget !== null) {
+                    this._lastDragTarget.classList.remove( 'drop-after-target' );
+                    this._lastDragTarget.classList.remove( 'drop-target' );
+                }
+
+                var element = document.elementFromPoint( e.clientX, e.clientY );
+
+                var treeItem = this._findClosestTreeViewItem( element );
+
+                // aren't dragging on a tree view item, or the tree item is this
+                if (treeItem === null || treeItem === this || this.contains( treeItem ))
+                    return;
+
+                var dropAfterContainerBounds = treeItem.$.dropAfterContainer.getBoundingClientRect( );
+
+                // within the drop after container
+                if (e.clientY >= dropAfterContainerBounds.top && e.clientY <= dropAfterContainerBounds.bottom) {
+                    treeItem.classList.add( 'drop-after-target' );
+                // within the container to "parent"
+                } else {
+                    var previousTreeItem = treeItem.previousElementSibling;
+
+                    if (previousTreeItem && previousTreeItem !== this && !this.contains( previousTreeItem )) {
+                        var bounds = previousTreeItem.$.dropAfterContainer.getBoundingClientRect( );
+
+                        if (e.clientY >= bounds.top && e.clientY <= bounds.bottom) {
+                            previousTreeItem.classList.add( 'drop-after-target' );
+
+                            treeItem = previousTreeItem;
+                        } else {
+                            if (this._canSetDropTarget( treeItem, e ))
+                                treeItem.classList.add( 'drop-target' );
+                        }
+                    } else {
+                        if (this._canSetDropTarget( treeItem, e ))
+                            treeItem.classList.add( 'drop-target' );
+                    }
+                }
+
+                this._lastDragTarget = treeItem;
+            },
+            _onTextMouseUp: function(e) {
+                if (this._lastDragTarget !== null) {
+                    if (this._lastDragTarget !== this && this._canDropTarget( e )) {
+                        this.parentNode.removeChild( this );
+
+                        // inserting after
+                        if (this._lastDragTarget.classList.contains( 'drop-after-target' )) {
+                            if (this._lastDragTarget.child.empty) {
+                                this._lastDragTarget.parentNode.insertBefore(
+                                    this,
+                                    this._lastDragTarget.nextElementSibling
+                                );
+                            } else {
+                                this._lastDragTarget.child.insertBefore(
+                                    this,
+                                    this._lastDragTarget.child.firstElementChild
+                                );
+                            }
+                        // parenting
+                        } else {
+                            this._lastDragTarget.child.appendChild( this );
+                        }
+                    }
+
+                    this._lastDragTarget.classList.remove( 'drop-after-target' );
+                    this._lastDragTarget.classList.remove( 'drop-target' );
+
+                    this._lastDragTarget = null;
+                }
+
+                this._setDragging( false );
+
+                document.removeEventListener( 'mousemove', this._textMouseMoveHandler, true );
+                document.removeEventListener( 'mouseup', this._textMouseUpHandler, true );
+            },
+            _onArrowClick: function(e) {
+                this.opened = !this.opened;
+            },
+            _onItemsChanged: function () {
+                if (this.child.empty)
+                    this.removeAttribute( 'has-sub-view' );
+                else
+                    this.setAttribute( 'has-sub-view', true );
+            },
+
+            _canSetDropTarget: function(target, e) {
+                return target.fire( 'drag-feedback', e ) !== false;
+            },
+            _canDropTarget: function(e) {
+                if (this._lastDragTarget.classList.contains( 'drop-after-target' )) {
+                    if (this._lastDragTarget.child.empty) {
+                        e.dropTarget = this._lastDragTarget.parentNode;
+
+                    } else {
+                        e.dropTarget = this._lastDragTarget;
+                    }
+                // parenting
+                } else {
+                    e.dropTarget = this._lastDragTarget;
+                }
+
+                e.newParent = (e.dropTarget.parentNode === this.parentNode);
+
+                return this.fire( 'drag-drop', e ) !== false;
+            },
+            /**
+             * Finds the closest tree view item based on the given element (within the same hierarchy)
+             * @param element
+             * @returns {TreeViewItemControl|null}
+             * @private
+             */
+            _findClosestTreeViewItem: function(element) {
+                var node = element;
+
+                for (; node && node !== document; node = node.parentNode) {
+                    if (node instanceof TreeViewItemControl)
+                        return node;
+                }
+
+                // the input element doesn't have a tree
+                return null;
+            }
+        } );
+    </script>
+</dom-module>

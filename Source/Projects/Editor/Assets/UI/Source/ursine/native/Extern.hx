@@ -13,6 +13,10 @@ class Extern {
         return untyped __js__( "GetNativeComponentDatabase()" );
     }
 
+    public static function SceneGetRootEntities() {
+        return untyped __js__( "SceneGetRootEntities()" );
+    }
+
     public static function SceneGetActiveEntities() {
         return untyped __js__( "SceneGetActiveEntities()" );
     }

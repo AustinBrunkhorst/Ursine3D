@@ -35,12 +35,12 @@ namespace ursine
             void LoadModel(std::string name, std::string fileName);
 			void LoadModel_Ursine(std::string name, std::string fileName);
 
-            ID3D11Buffer *GetModelVert(std::string name);
-            unsigned GetModelVertcount(std::string name);
-			unsigned GetModelIndexcount(std::string name);
+            ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
+            unsigned GetModelVertcount(std::string name, unsigned index = 0);
+			unsigned GetModelIndexcount(std::string name, unsigned index = 0);
 
-            void BindModel(std::string name);
-            void BindModel(unsigned ID);
+            void BindModel(std::string name, unsigned index = 0);
+            void BindModel(unsigned ID, unsigned index = 0);
 
             //manual binding
             template<typename T>
@@ -58,10 +58,12 @@ namespace ursine
 
             unsigned GetModelIDByName(std::string name);
 
-            ID3D11Buffer *GetModelVertByID(unsigned ID);
-            unsigned GetModelVertcountByID(unsigned ID);
+            ID3D11Buffer *GetModelVertByID(unsigned ID, unsigned index = 0);
+            unsigned GetModelVertcountByID(unsigned ID, unsigned index = 0);
 
-			unsigned GetModelIndexcountByID(unsigned ID);
+			unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
+
+            unsigned GetModelMeshCount(unsigned ID);
 
             void Invalidate();
 

@@ -90,9 +90,7 @@ JSMethod(EntityHandler::inspect)
 
     auto components = entity->GetComponents( );
 
-    Json componentArray = Json::array { };
-
-    auto &items = const_cast<Json::array&>( componentArray.array_items( ) );
+    Json::array componentArray;
 
     for (auto *component : components)
     {
@@ -100,7 +98,7 @@ JSMethod(EntityHandler::inspect)
 
         auto type = instance.GetType( );
 
-        items.emplace_back( Json::object {
+        componentArray.emplace_back( Json::object {
             { "type", type.GetName( ) },
             { "value", type.SerializeJson( instance ) }
         } );
@@ -225,6 +223,64 @@ JSMethod(EntityHandler::updateComponentField)
     field.SetValue( instance, fieldType.DeserializeJson( value ) );
 
     return CefV8Value::CreateUndefined( );
+}
+
+JSMethod(EntityHandler::getChildren)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto &children = *entity->GetChildren( );
+
+    auto childrenArray = CefV8Value::CreateArray( children.size( ) );
+
+    for (size_t i = 0; i < children.size( ); ++i)
+    {
+        auto *child = m_world->GetEntity( children[ i ] );
+
+        childrenArray->SetValue( i, 
+            CefV8Value::CreateUInt( child->GetUniqueID( ) ) 
+        );
+    }
+
+    return childrenArray;
+}
+
+JSMethod(EntityHandler::getParent)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto *parent = entity->GetTransform( )->GetParent( );
+
+    if (!parent)
+        return CefV8Value::CreateNull( );
+
+    return CefV8Value::CreateUInt( parent->GetOwner( )->GetUniqueID( ) );
+}
+
+JSMethod(EntityHandler::setParent)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto *parent = m_world->GetEntityUnique( arguments[ 0 ]->GetUIntValue( ) );
+
+    if (!parent)
+        return CefV8Value::CreateBool( false );
+
+    parent->GetTransform( )->AddChildAlreadyInLocal( entity->GetTransform( ) );
+
+    return CefV8Value::CreateBool( true );
 }
 
 ecs::Entity *EntityHandler::getEntity(void)

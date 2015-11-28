@@ -76,6 +76,12 @@ namespace ursine
             // Enables hierarchy change for this entity
             void EnableHierarchyChange(bool enabled);
 
+            // Determines if this entity will be serialized
+            bool IsSerializationEnabled(void) const;
+
+            // Enables serialization for this entity
+            void EnableSerialization(bool enabled);
+
             // Determines if this entity is visible in the editor
             bool IsVisibleInEditor(void) const;
 
@@ -155,6 +161,9 @@ namespace ursine
 			// Hierarchy
 			////////////////////////////////////////////////////////////////////
 
+            // Gets children of this entity
+            const std::vector<EntityID> *GetChildren(void) const;
+
 			// Gets a component of the specified type in this entity's children (type safe) (depth first)
 			// nullptr if it doesn't exist
 			template<class ComponentType>
@@ -225,6 +234,7 @@ namespace ursine
             // entity manager needs to be able to construct entities
             friend class EntityManager;
             friend class WorldSerializer;
+            friend class EntitySerializer;
 
             // access ids directly
             friend class NameManager;
@@ -243,6 +253,7 @@ namespace ursine
             bool m_deleting               : 1;
             bool m_deletionEnabled        : 1;
             bool m_hierarchyChangeEnabled : 1;
+            bool m_serializationEnabled   : 1;
             bool m_visibleInEditor        : 1;
 
             // active id in the entity manager
