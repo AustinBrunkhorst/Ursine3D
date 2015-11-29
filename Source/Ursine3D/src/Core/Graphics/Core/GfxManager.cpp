@@ -947,7 +947,7 @@ namespace ursine
             //render
             unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
 
-            for (int x = 0; x < count; ++x)
+            for (uint x = 0; x < count; ++x)
             {
                 // set model
                 modelManager->BindModel(handle.Model_, x);
@@ -972,7 +972,7 @@ namespace ursine
                 bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
                 textureManager->MapTextureByName("Blank");
                 
-                for (int x = 0; x < count; ++x)
+                for (uint x = 0; x < count; ++x)
                 {
                     // set model
                     modelManager->BindModel(handle.Model_, x);

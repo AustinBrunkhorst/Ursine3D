@@ -211,7 +211,7 @@ namespace ursine
             realbuffer.resize(vertCount);
             input.read((char*)&buffer[ 0 ], sizeof(DiffuseTextureVertex) * vertCount);
 
-            for (int x = 0; x < vertCount; ++x)
+            for (uint x = 0; x < vertCount; ++x)
             {
                 realbuffer[ x ].vPos = DirectX::XMFLOAT3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
                 realbuffer[ x ].vNor = DirectX::XMFLOAT3(buffer[ x ].normal.x, buffer[ x ].normal.y, buffer[ x ].normal.z);
@@ -357,10 +357,10 @@ namespace ursine
 
 					if (ufmt_model.marrMeshes[mesh_idx].ctrlPtCount > 0)
 					{
-						buffer[i].vBWeight.x = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][0];
-						buffer[i].vBWeight.y = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][1];
-						buffer[i].vBWeight.z = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][2];
-						buffer[i].vBWeight.w = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][3];
+						buffer[i].vBWeight.x = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][0]);
+						buffer[i].vBWeight.y = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][1]);
+						buffer[i].vBWeight.z = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][2]);
+						buffer[i].vBWeight.w = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][3]);
 						buffer[i].vBIdx[0] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][0];
 						buffer[i].vBIdx[1] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][1];
 						buffer[i].vBIdx[2] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][2];

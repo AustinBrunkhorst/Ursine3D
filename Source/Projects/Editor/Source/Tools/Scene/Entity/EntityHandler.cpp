@@ -234,7 +234,7 @@ JSMethod(EntityHandler::getChildren)
 
     auto &children = *entity->GetChildren( );
 
-    auto childrenArray = CefV8Value::CreateArray( children.size( ) );
+    auto childrenArray = CefV8Value::CreateArray( static_cast<int>( children.size( ) ) );
 
     for (size_t i = 0; i < children.size( ); ++i)
     {

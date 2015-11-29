@@ -89,10 +89,10 @@ namespace ursine
                 auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
 
                 int maxNodeDistance = 0;
-                unsigned boneCount = hierarchy.size( );
+                size_t boneCount = hierarchy.size( );
 
                 // calculate max distance for colors, calculate bone position
-                for ( unsigned x = 0; x < boneCount; ++x )
+                for (size_t x = 0; x < boneCount; ++x)
                 {
                     // distance
                     int distance = 0;
@@ -137,7 +137,7 @@ namespace ursine
                 }
 
                 // render lines
-                for ( unsigned x = boneCount - 1; x >= 1; --x )
+                for ( size_t x = boneCount - 1; x >= 1; --x )
                 {
                     SVec3 &p1 = bonePoints[ x ];
                     SVec3 &p2 = bonePoints[ hierarchy[ x ] ];
