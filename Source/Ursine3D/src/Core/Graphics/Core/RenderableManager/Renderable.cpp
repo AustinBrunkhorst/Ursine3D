@@ -90,15 +90,17 @@ namespace ursine
             Transform_ = matrix;
         }
 
-        Model3D::Model3D()
+        Model3D::Model3D(void)
         {
             m_matrixPalette.resize(MAX_BONE_COUNT);
         }
 
         ///////////////////////////////////////////////////////////////////
         //model3d
-        void Model3D::Initialize()
+        void Model3D::Initialize(void)
         {
+			Renderable::Initialize( );
+
             ModelName_ = "Cube";
             MaterialName_ = "UV";
 
@@ -228,6 +230,8 @@ namespace ursine
         //primitives
         void Primitive::Initialize()
         {
+			Renderable::Initialize( );
+
             Type_ = Primitive::PRIM_CUBE;
             Radius_ = 1;
             Height_ = 1;

@@ -602,9 +602,14 @@ namespace ursine
                     GetName( ).c_str( )
                 );
 
-                field.second.SetValue( instance, 
-                    fieldType.DeserializeJson( value[ field.first ] ) 
-                );
+				auto &fieldData = value[ field.first ];
+
+				if (!fieldData.is_null( ))
+				{
+					field.second.SetValue( instance, 
+						fieldType.DeserializeJson( fieldData ) 
+					);
+				}
             }
         }
     }
