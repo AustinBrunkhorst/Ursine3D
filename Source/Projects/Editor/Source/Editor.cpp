@@ -57,6 +57,9 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
+    m_mainWindow.window->Listener( this )
+        .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange );
+
     m_mainWindow.window->SetLocationCentered( );
     m_mainWindow.window->Show( true );
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
@@ -123,8 +126,8 @@ void Editor::initializeGraphics(void)
     config.ModelListPath_ = "Assets/Models/";
     config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
     config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = kDefaultWindowWidth;
-    config.WindowHeight_ = kDefaultWindowHeight;
+    config.WindowWidth_ = 1366;
+    config.WindowHeight_ = 768;
 
     URSINE_TODO( "..." );
 
@@ -135,6 +138,9 @@ void Editor::initializeGraphics(void)
 
     m_graphics->StartGraphics( config );
     m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
+    //m_graphics->SetFullscreenState( true );
+
+    //m_mainWindow.window->SetFullScreen( true );
 }
 
 void Editor::initializeScene(void)
@@ -206,6 +212,15 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     scene->Render( );
 
     m_mainWindow.ui->DrawMain( );
+}
+
+void Editor::onFocusChange(EVENT_HANDLER( ursine::Window ))
+{
+    EVENT_ATTRS( Window, WindowFocusArgs );
+
+    //m_graphics->SetFullscreenState( args->focused );
+    //m_mainWindow.window->SetFullScreen( args->focused );
+    printf( "%s\n", args->focused ? "True" : "False" );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

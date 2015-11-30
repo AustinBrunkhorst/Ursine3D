@@ -163,7 +163,7 @@ namespace ursine
         SMat4 Camera::GetProjMatrix(void)
         {
             return GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).GetProjMatrix( );
-        }
+        }        
 
         SVec3 Camera::ScreenToWorld(const Vec2& screenPos, float depth)
         {

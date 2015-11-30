@@ -91,6 +91,9 @@ namespace ursine
             // resize the window
             void Resize(int width, int height);
 
+            // set fullscreen state
+            void SetFullscreenState(const bool state);
+
             // set the main screen viewport. All cameras are sized 
             // w/ respect to this size. Should always be width
             // and height of the window
