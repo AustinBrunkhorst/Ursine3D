@@ -18,11 +18,17 @@ namespace ursine
             EntitySerializer(void);
 
             Json Serialize(Entity *entity) const;
+            Json SerializeArchetype(Entity *entity) const;
 
             Entity *Deserialize(
-                const World::Handle &world, 
+                World *world, 
                 const Json &data, 
                 const char *version = kSerializationVersion
+            ) const;
+
+            Entity *DeserializeArchetype(
+                World *world,
+                const Json &data
             ) const;
 
         private:

@@ -44,6 +44,12 @@ namespace ursine
 
             Entity *CreateEntity(const std::string &name = "Entity");
 
+            // Creates an entity from an archetype file
+            Entity *CreateEntityFromArchetype(
+                const std::string &filename, 
+                const std::string &name = "Entity"
+            );
+
             // Gets an entity based on its active id
             Entity *GetEntity(EntityID id) const;
 
@@ -98,10 +104,14 @@ namespace ursine
 
             Screen *m_owner;
 
+            std::unordered_map<std::string, Json> m_archetypeCache;
+
             World(const World &rhs) = delete;
 
             // adds an entity to the deletion queue
             void deleteEntity(Entity *entity);
+
+            Entity *loadArchetype(const Json &data);
         } Meta(Enable, WhiteListMethods);
     }
 }

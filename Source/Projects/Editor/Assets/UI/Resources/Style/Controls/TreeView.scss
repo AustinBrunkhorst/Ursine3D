@@ -120,6 +120,7 @@ $item-indent: 6px;
         .text-content {
           flex: 1 1 auto;
           width: 100%;
+          padding-bottom: 1px;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;

@@ -9,6 +9,10 @@ class Extern {
         return untyped __js__( "CreateEntity()" );
     }
 
+    public static function CreateEntityFromArchetype() {
+        return untyped __js__( "CreateEntityFromArchetype()" );
+    }
+
     public static function GetNativeComponentDatabase() {
         return untyped __js__( "GetNativeComponentDatabase()" );
     }

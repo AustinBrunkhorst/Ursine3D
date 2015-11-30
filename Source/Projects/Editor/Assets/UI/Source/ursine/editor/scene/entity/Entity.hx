@@ -20,6 +20,10 @@ class Entity implements IEventContainer {
         return new Entity( Extern.CreateEntity( ) );
     }
 
+    public static function createFromArchetype() : Void {
+        Extern.CreateEntityFromArchetype( );
+    }
+
     public function new(uniqueID : UInt) {
         events = new EventManager( );
 
@@ -115,6 +119,10 @@ class Entity implements IEventContainer {
 
     public function setParent(parent : Entity) : Bool {
         return m_handler.setParent( parent.uniqueID );
+    }
+
+    public function saveAsArchetype() : Void {
+        m_handler.saveAsArchetype( );
     }
 
     private function onComponentAdded(e) {

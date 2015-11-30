@@ -447,6 +447,9 @@ ursine_editor_menus_EntityMenu.__name__ = ["ursine","editor","menus","EntityMenu
 ursine_editor_menus_EntityMenu.doCreateEmpty = function() {
 	ursine_editor_menus_EntityMenu.createEntity("Empty Entity");
 };
+ursine_editor_menus_EntityMenu.doCreateFromArchetype = function() {
+	ursine_editor_scene_entity_Entity.createFromArchetype();
+};
 ursine_editor_menus_EntityMenu.doCreatePlane = function() {
 	var entity = ursine_editor_menus_EntityMenu.createEntity("Plane");
 };
@@ -946,6 +949,9 @@ ursine_editor_scene_entity_Entity.__interfaces__ = [ursine_utils_IEventContainer
 ursine_editor_scene_entity_Entity.create = function() {
 	return new ursine_editor_scene_entity_Entity(ursine_native_Extern.CreateEntity());
 };
+ursine_editor_scene_entity_Entity.createFromArchetype = function() {
+	ursine_native_Extern.CreateEntityFromArchetype();
+};
 ursine_editor_scene_entity_Entity.prototype = {
 	isValid: function() {
 		return this.m_handler.isValid();
@@ -1007,6 +1013,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,setParent: function(parent) {
 		return this.m_handler.setParent(parent.uniqueID);
 	}
+	,saveAsArchetype: function() {
+		this.m_handler.saveAsArchetype();
+	}
 	,onComponentAdded: function(e) {
 		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentAdded,e);
 	}
@@ -1062,9 +1071,11 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,initializeInspection: function() {
 		if(this.m_inspectedEntity == null) {
+			this.m_btnSaveArchetype.style.display = "none";
 			this.m_btnAddComponent.style.display = "none";
 			return;
 		}
+		this.m_btnSaveArchetype.style.display = "block";
 		this.m_btnAddComponent.style.display = "block";
 		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
 		var inspection = this.m_inspectedEntity.inspect();
@@ -1110,6 +1121,9 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 			return !entity.hasComponent(type) && !isHidden;
 		});
 	}
+	,onArchetypeSaveClicked: function(e) {
+		if(this.m_inspectedEntity != null) this.m_inspectedEntity.saveAsArchetype();
+	}
 	,onAddComponentClicked: function(e) {
 		var types = this.getAvailableComponentTypes(this.m_inspectedEntity);
 		var selector = new ComponentTypeSelectorControl(types);
@@ -1138,12 +1152,17 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.m_headerToolbar = _this.createElement("div");
 		this.m_headerToolbar.classList.add("header-toolbar");
 		this.window.container.appendChild(this.m_headerToolbar);
+		this.m_btnSaveArchetype = new ButtonControl();
+		this.m_btnSaveArchetype.classList.add("save-archetype");
+		this.m_btnSaveArchetype.style.display = "none";
+		this.m_btnSaveArchetype.addEventListener("click",$bind(this,this.onArchetypeSaveClicked));
+		this.m_headerToolbar.appendChild(this.m_btnSaveArchetype);
 		var _this1 = window.document;
 		this.m_inspectorsContainer = _this1.createElement("div");
 		this.window.container.appendChild(this.m_inspectorsContainer);
 		this.m_btnAddComponent = new ButtonControl();
 		this.m_btnAddComponent.text = "Add Component";
-		this.m_btnAddComponent.classList.add("btn-add-component");
+		this.m_btnAddComponent.classList.add("add-component");
 		this.m_btnAddComponent.style.display = "none";
 		this.m_btnAddComponent.addEventListener("click",$bind(this,this.onAddComponentClicked));
 		this.window.container.appendChild(this.m_btnAddComponent);
@@ -1355,6 +1374,9 @@ ursine_native_Extern.DebugEditorUI = function() {
 ursine_native_Extern.CreateEntity = function() {
 	return CreateEntity();
 };
+ursine_native_Extern.CreateEntityFromArchetype = function() {
+	return CreateEntityFromArchetype();
+};
 ursine_native_Extern.GetNativeComponentDatabase = function() {
 	return GetNativeComponentDatabase();
 };
@@ -1434,7 +1456,7 @@ var __map_reserved = {}
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
 ursine_editor_menus_DebugMenu.__meta__ = { statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
-ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
+ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene"]}, doOpen : { mainMenuItem : ["File/Save Scene"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";

@@ -31,6 +31,8 @@ public:
     JSMethod(getParent);
     JSMethod(setParent);
 
+    JSMethod(saveAsArchetype);
+
 private:
     ursine::ecs::World *m_world;
     ursine::ecs::EntityUniqueID m_handle;

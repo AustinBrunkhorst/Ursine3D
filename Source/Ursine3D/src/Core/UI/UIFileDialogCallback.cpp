@@ -17,7 +17,7 @@ namespace ursine
     {
         if (m_callback) 
         {
-            std::vector<fs::path> output;
+            fs::FileList output;
 
             for (auto &path : paths)
                 output.emplace_back( path.ToString( ) );

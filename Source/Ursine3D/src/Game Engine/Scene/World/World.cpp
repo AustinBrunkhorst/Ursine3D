@@ -23,6 +23,8 @@
 #include "UtilityManager.h"
 #include "SystemManager.h"
 
+#include <EntitySerializer.h>
+
 namespace
 {
     const auto kWorldSettingsEntityName = "World Settings";
@@ -75,6 +77,51 @@ namespace ursine
             auto entity = m_entityManager->Create( );
 
             entity->SetName( name );
+
+            return entity;
+        }
+
+        Entity *World::CreateEntityFromArchetype(
+            const std::string &filename, 
+            const std::string &name
+        )
+        {
+            auto cache = m_archetypeCache.find( filename );
+
+            Entity *entity;
+
+            if (cache == m_archetypeCache.end( ))
+            {
+                std::string jsonData;
+
+                UAssert(
+                    fs::LoadText( filename, jsonData ),
+                    "Failed to load archetype.\nfile: %s", 
+                    filename.c_str( )
+                );
+
+                std::string jsonError;
+
+                auto data = Json::parse( jsonData, jsonError );
+
+                UAssert(
+                    jsonError.empty( ),
+                    "Failed to load archetype.\nJSON error: %s\nfile: %s",
+                    jsonError.c_str( ),
+                    filename.c_str( )
+                );
+
+                m_archetypeCache[ filename ] = data;
+
+                entity = loadArchetype( data );
+            }
+            else
+            {
+                entity = loadArchetype( cache->second );
+            }
+            
+            if (entity)
+                entity->SetName( name );
 
             return entity;
         }
@@ -169,6 +216,23 @@ namespace ursine
             m_entityManager->BeforeRemove( entity );
 
             m_deleted.push_back( entity );
+        }
+
+        Entity *World::loadArchetype(const Json &data)
+        {
+            try
+            {
+                return EntitySerializer( ).DeserializeArchetype( this, data );
+            }
+            catch (SerializationException &e)
+            {
+                UError( 
+                    "Unable to deserialize archetype.\nerror: %s",
+                    e.GetError( ).c_str( )
+                );
+
+                return nullptr;
+            }
         }
     }
 }

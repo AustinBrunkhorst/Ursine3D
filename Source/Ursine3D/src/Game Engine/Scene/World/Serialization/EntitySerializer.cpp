@@ -16,6 +16,8 @@ namespace ursine
 
             const auto kKeyComponentUID = ".uid";
 
+            const auto kKeyArchetypeVersion = "v";
+
             struct ComponentDeserializationData
             {
                 ComponentUniqueID uid;
@@ -50,8 +52,19 @@ namespace ursine
             return data;
         }
 
+        Json EntitySerializer::SerializeArchetype(Entity *entity) const
+        {
+            Json::object data;
+
+            data[ kKeyArchetypeVersion ] = kSerializationVersion;
+            data[ kKeyEntityComponents ] = serializeComponents( entity );
+            data[ kKeyEntityChildren ] = serializeChildren( entity );
+
+            return data;
+        }
+
         Entity *EntitySerializer::Deserialize(
-            const World::Handle &world,
+            World *world,
             const Json &data,
             const char *version
         ) const
@@ -65,6 +78,28 @@ namespace ursine
             entityManager->dispatchCreated( entity );
 
             return entity;
+        }
+
+        Entity *EntitySerializer::DeserializeArchetype(World *world, const Json &data) const
+        {
+            const char *version;
+
+            auto &versionData = data[ kKeyArchetypeVersion ];
+
+            if (!versionData.is_string( ))
+            {
+                UWarning( 
+                    "Unknown or missing archetype version, assuming latest."
+                );
+
+                version = kSerializationVersion;
+            }
+            else
+            {
+                version = versionData.string_value( ).c_str( );
+            }
+
+            return Deserialize( world, data, version );
         }
 
         Json EntitySerializer::serializeComponents(const Entity *entity) const

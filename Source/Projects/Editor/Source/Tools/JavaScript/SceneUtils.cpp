@@ -6,6 +6,8 @@
 #include "Project.h"
 
 #include <WorldSerializer.h>
+
+#include <FileSystem.h>
 #include <UIFileDialogCallback.h>
 
 #include <SDL_messagebox.h>
@@ -14,10 +16,8 @@ using namespace ursine;
 
 namespace
 {
-    typedef std::vector<fs::path> FileList;
-
-    void doLoadScene(int selectedFilter, const FileList &files);
-    void doSaveScene(int selectedFilter, const FileList &files);
+    void doLoadScene(int selectedFilter, const fs::FileList &files);
+    void doSaveScene(int selectedFilter, const fs::FileList &files);
 }
 
 JSFunction(SceneGetRootEntities)
@@ -108,7 +108,7 @@ JSFunction(SceneSave)
 
 namespace
 {
-    void doLoadScene(int selectedFilter, const FileList &files)
+    void doLoadScene(int selectedFilter, const fs::FileList &files)
     {
         if (files.empty( ))
             return;
@@ -140,7 +140,7 @@ namespace
         editor->GetProject( )->SetWorld( world );
     }
 
-    void doSaveScene(int selectedFilter, const FileList &files)
+    void doSaveScene(int selectedFilter, const fs::FileList &files)
     {
         if (files.empty( ))
             return;
