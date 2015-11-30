@@ -118,7 +118,7 @@ namespace ursine
                 ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
                 //Set to a single back buffer.
-                swapChainDesc.BufferCount = 0;
+                swapChainDesc.BufferCount = 1;
 
                 //Set the width and height of the back buffer.
                 swapChainDesc.BufferDesc.Width = width;
