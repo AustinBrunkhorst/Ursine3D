@@ -150,7 +150,7 @@ macro (ursine_default_project project_name)
 
                 # install shaders if applicable
                 if ("${PROJ_INCLUDE_INSTALLER}" STREQUAL "TRUE")
-                    install(FILES "${shader}" DESTINATION "bin/${PROJ_COPY_SHADERS}" COMPONENT ${project_name})
+                    install(FILES "$<TARGET_FILE_DIR:Shaders>/${shader_file}.cso" DESTINATION "bin/${PROJ_COPY_SHADERS}" COMPONENT ${project_name})
                 endif ()
             endforeach ()
         endif ()
@@ -169,6 +169,8 @@ macro (ursine_default_project project_name)
 
             if (MSVC)
                 install(PROGRAMS ${ENGINE_VCREDIST_FILE} DESTINATION "tmp" COMPONENT ${project_name})
+                install(PROGRAMS ${ENGINE_D3DREDIST_FILE} DESTINATION "tmp" COMPONENT ${project_name})
+                install(PROGRAMS ${ENGINE_D3DREDIST_HELPER_DLL} DESTINATION "tmp" COMPONENT ${project_name})
             endif ()
 
             set(expr_debug $<OR:$<CONFIG:debug>,$<CONFIG:relwithdebinfo>>)
