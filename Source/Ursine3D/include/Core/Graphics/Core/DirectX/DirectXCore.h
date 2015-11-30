@@ -22,6 +22,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "RasterStateManager.h"
 #include "DepthStencilManager.h"
 #include "D3D11Forward.h"
+#include <D3D11SDKLayers.h>
 
 namespace ursine
 {
@@ -94,6 +95,7 @@ namespace ursine
                 ID3D11DeviceContext *m_deviceContext;
                 IDXGISwapChain *m_swapChain;
                 ID3D11Debug *m_debugInterface;
+                ID3D11InfoQueue *m_infoQueue;
 
                 BlendStateManager *m_blendManager;
                 DepthStencilStateManager *m_depthStateManager;
