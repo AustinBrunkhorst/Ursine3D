@@ -145,6 +145,9 @@ namespace ursine
         struct ComputeIDOutput
         {
             unsigned id;
+            unsigned x;
+            unsigned y;
+            float depth;
         };
     }
 }

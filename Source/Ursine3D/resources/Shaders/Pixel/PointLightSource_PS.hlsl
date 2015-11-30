@@ -60,7 +60,7 @@ float ConvertDepthToLinear( float depth )
     float f = 100.0;
     float n = 0.1;
     float z = (2 * n) / (f + n - depth * (f - n));
-    return depth;
+    return z;
 }
 
 //calculating world position

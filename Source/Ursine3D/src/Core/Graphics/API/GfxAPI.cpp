@@ -156,5 +156,10 @@ namespace ursine
         {
             return m_privates->gfxCore_->GetCurrentUniqueID();
         }
+
+        SVec3 GfxAPI::GetMousedOverWorldPosition(const GfxHND& cameraHandle)
+        {
+            return m_privates->gfxCore_->GetCurrentWorldPosition( cameraHandle );
+        }
     }
 }

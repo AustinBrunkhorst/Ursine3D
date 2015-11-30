@@ -114,6 +114,8 @@ namespace ursine
 
             // get current object that is moused over
             ursine::ecs::EntityUniqueID GetMousedOverID(void);
+
+            SVec3 GetMousedOverWorldPosition( const GfxHND &cameraHandle );
             
             // private members
         private:

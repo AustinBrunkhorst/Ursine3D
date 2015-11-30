@@ -78,7 +78,10 @@ namespace ursine
             //render onto a texture
             void RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void *input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY);
 
+            // get the currently selected object
             int GetCurrentUniqueID();
+
+            SVec3 GetCurrentWorldPosition(const GfxHND &cameraHandle);
 
             //public members
         public:
@@ -151,7 +154,8 @@ namespace ursine
             bool m_debug;
             bool m_ready = false;
 
-            int m_currentID;    //current object we are moused over
+            int m_currentID;            // current object we are moused over
+            SVec3 m_currentPosition;    // view position of current object, stored in x pos, y pos, depth
 
             GfxHND m_GameViewport;
 

@@ -1054,6 +1054,8 @@ namespace ursine
             //set input
             bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE, 0);
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
+            ID3D11ShaderResourceView *srv = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_MAIN );
+            dxCore->GetDeviceContext( )->CSSetShaderResources( 1, 1, &srv );
 
             //set UAV as output 
             dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID ], nullptr);
@@ -1067,12 +1069,14 @@ namespace ursine
             dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
 
             //read from intermediary buffer
-            ComputeIDOutput dataFromCS[5]; 
+            ComputeIDOutput dataFromCS; 
             bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
 
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
 
-            tempID = dataFromCS[0].id; 
+            m_currentPosition = SVec3( dataFromCS.x, dataFromCS.y, dataFromCS.depth );
+
+            tempID = dataFromCS.id; 
              
             int index = tempID & 0x7FF;
             int type = (tempID >> 12) & 0x3;
@@ -1509,6 +1513,52 @@ namespace ursine
         int GfxManager::GetCurrentUniqueID()
         {
             return m_currentID;
+        }
+
+        SVec3 GfxManager::GetCurrentWorldPosition(const GfxHND& cameraHandle)
+        {
+            // convert current depth to linear depth
+            auto &camera = cameraManager->GetCamera( cameraHandle );
+
+            // get near/far plane depth
+            float nearP, farP;
+            camera.GetPlanes( nearP, farP );
+
+            float linearDepth = (2 * nearP) / (farP + nearP - m_currentPosition.Z() * (farP - nearP));
+
+            // construct position
+            
+            unsigned w, h;
+            gfxInfo->GetDimensions( w, h );
+            float width = w, height = h;
+
+            SVec4 finalPos;
+            finalPos.SetX( ((m_currentPosition.X( ) * 2) - width) / width );
+            finalPos.SetY( -((m_currentPosition.Y( ) * 2) - height) / height );
+
+            printf( "%f, %f\n\n", finalPos.X( ), finalPos.Y( ) );
+
+            finalPos.SetZ( linearDepth );
+            finalPos.SetW( 1.f );
+
+            // apply inv proj
+            auto proj = camera.GetProjMatrix( );
+            proj.Inverse( );
+
+            finalPos = proj * finalPos;
+
+            // perform perspective divide
+            finalPos /= finalPos.W( );
+
+            // perform inverse view projection
+            SMat4 invView = camera.GetViewMatrix( );
+            invView.Inverse( );
+
+            finalPos = invView * finalPos;
+            finalPos /= finalPos.W( );
+
+            // return the world position
+            return SVec3( finalPos.X( ), finalPos.Y( ), finalPos.Z( ) );
         }
 
         // misc stuff /////////////////////////////////////////////////////

@@ -14,6 +14,8 @@
 #include <SystemManager.h>
 #include <GfxAPI.h>
 #include <WorldEvent.h>
+#include <Game Engine/Scene/Component/Native Components/Physics/BoxColliderComponent.h>
+#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
 
 using namespace ursine;
 
@@ -261,11 +263,20 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
     if (!m_editorCameraSystem->HasFocus( ))
         return;
 
+    auto *cameraEntity = m_editorCameraSystem->GetEditorCameraEntity( );
+    auto handle = cameraEntity->GetComponent<ecs::Camera>( )->GetHandle( );
+
+    SVec3 worldMousePos = m_graphics->GetMousedOverWorldPosition( handle );
+
+    printf( "%f, %f, %f\n\n", worldMousePos.X( ), worldMousePos.Y( ), worldMousePos.Z( ) );
+
     //some switch for detecting tool type
     if (!(m_keyboardManager->GetModifiers( ) & KMD_ALT))
     {
         //get the editor camera
         graphics::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
+
+       
 
         //get the mouse position
         Vec2 screenPos = GetCoreSystem(MouseManager)->GetPosition( );
