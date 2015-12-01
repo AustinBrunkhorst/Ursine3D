@@ -106,6 +106,7 @@ namespace ursine
                 // CREATING SWAP CHAIN //////////////////////////////////////////
                 DXGI_SWAP_CHAIN_DESC swapChainDesc;
                 ID3D11Texture2D *backBufferPtr;
+
                 D3D_FEATURE_LEVEL finalFeatureLevel;
                 D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ] = {
                     D3D_FEATURE_LEVEL_11_0,
