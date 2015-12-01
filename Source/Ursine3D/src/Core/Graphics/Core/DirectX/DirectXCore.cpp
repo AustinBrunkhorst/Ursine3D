@@ -66,7 +66,7 @@ namespace ursine
                 }
             }
 
-            void DirectXCore::Initialize(const unsigned width, const unsigned height, HWND hWindow, ursine::graphics::GfxInfo *gfxInfo, bool fullscreen, bool debug)
+            void DirectXCore::Initialize( const unsigned width, const unsigned height, HWND hWindow, ursine::graphics::GfxInfo *gfxInfo, bool fullscreen, bool debug )
             {
                 //allocate all
                 m_blendManager = new BlendStateManager;
@@ -90,14 +90,14 @@ namespace ursine
                 // GET REFRESH RATE /////////////////////////////////////////////
                 unsigned numerator = 60, denominator = 1;
 
-                for (unsigned x = 0; x < gfxInfo->GetModeCount(); ++x)
+                for ( unsigned x = 0; x < gfxInfo->GetModeCount( ); ++x )
                 {
-                    if (gfxInfo->GetDisplayInfo(x).Width == width)
+                    if ( gfxInfo->GetDisplayInfo( x ).Width == width )
                     {
-                        if (gfxInfo->GetDisplayInfo(x).Height == height)
+                        if ( gfxInfo->GetDisplayInfo( x ).Height == height )
                         {
-                            numerator = gfxInfo->GetDisplayInfo(x).RefreshRate.Numerator;
-                            denominator = gfxInfo->GetDisplayInfo(x).RefreshRate.Denominator;
+                            numerator = gfxInfo->GetDisplayInfo( x ).RefreshRate.Numerator;
+                            denominator = gfxInfo->GetDisplayInfo( x ).RefreshRate.Denominator;
                         }
                     }
                 }
@@ -106,13 +106,12 @@ namespace ursine
                 // CREATING SWAP CHAIN //////////////////////////////////////////
                 DXGI_SWAP_CHAIN_DESC swapChainDesc;
                 ID3D11Texture2D *backBufferPtr;
-
-                D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ];
-                FeatureLevelArray[ 0 ] = D3D_FEATURE_LEVEL_11_1;
-                FeatureLevelArray[ 1 ] = D3D_FEATURE_LEVEL_11_0;
-                FeatureLevelArray[ 2 ] = D3D_FEATURE_LEVEL_10_1;
-                FeatureLevelArray[ 3 ] = D3D_FEATURE_LEVEL_10_0;
-                FeatureLevelArray[ 4 ] = D3D_FEATURE_LEVEL_9_1;
+                D3D_FEATURE_LEVEL finalFeatureLevel;
+                D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ] = {
+                    D3D_FEATURE_LEVEL_11_0,
+                    D3D_FEATURE_LEVEL_10_1,
+                    D3D_FEATURE_LEVEL_10_0
+                };
 
                 //Initialize the swap chain description.
                 ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -173,10 +172,10 @@ namespace ursine
                         nullptr, 
                         D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, 
                         FeatureLevelArray, 
-                        4, 
+                        3, 
                         D3D11_SDK_VERSION,
                         &m_device, 
-                        nullptr, 
+                        &finalFeatureLevel, 
                         &m_deviceContext 
                     );
 
@@ -282,19 +281,18 @@ namespace ursine
                         nullptr, 
                         D3D_DRIVER_TYPE_HARDWARE, 
                         nullptr, 
-                        D3D11_CREATE_DEVICE_SINGLETHREADED, 
-                        FeatureLevelArray, 
-                        4, 
+                        D3D11_CREATE_DEVICE_SINGLETHREADED,
+                        FeatureLevelArray,
+                        3, 
                         D3D11_SDK_VERSION,
                         &m_device, 
-                        nullptr, 
+                        &finalFeatureLevel,
                         &m_deviceContext 
                     );
 
                     dxErrorCheck( result, m_infoQueue );
                     UAssert( result == S_OK, "Failed to make device! (Error '%s')", GetDXErrorMessage( result ) );
 
-                    D3D_FEATURE_LEVEL finalFeatureLevel = m_device->GetFeatureLevel( );
                     LogMessage( "Feature Level: %i", 2, finalFeatureLevel );
 
                     // CREATE SWAPCHAIN ////////////////////////////////////////////
