@@ -284,7 +284,7 @@ namespace ursine
                 );
 
                 // if there is an empty collider attached, remove it
-                if (entity->HasComponent<EmptyCollider>( ))
+                if (entity->HasComponent<EmptyCollider>( ) && !entity->IsDeleting( ))
                     entity->RemoveComponent<EmptyCollider>( );
             }
             else if (component->Is<Body>( ))
@@ -297,7 +297,8 @@ namespace ursine
             }
             else if (m_collisionShapes.Matches( component->GetTypeMask( ) ))
             {
-                removeCollider( entity );
+				if (!entity->IsDeleting( ))
+					removeCollider( entity );
             }
         }
 
