@@ -108,11 +108,9 @@ namespace ursine
                 ID3D11Texture2D *backBufferPtr;
 
                 D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ];
-                FeatureLevelArray[ 0 ] = D3D_FEATURE_LEVEL_11_1;
-                FeatureLevelArray[ 1 ] = D3D_FEATURE_LEVEL_11_0;
-                FeatureLevelArray[ 2 ] = D3D_FEATURE_LEVEL_10_1;
-                FeatureLevelArray[ 3 ] = D3D_FEATURE_LEVEL_10_0;
-                FeatureLevelArray[ 4 ] = D3D_FEATURE_LEVEL_9_1;
+                FeatureLevelArray[ 0 ] = D3D_FEATURE_LEVEL_11_0;
+                FeatureLevelArray[ 1 ] = D3D_FEATURE_LEVEL_10_1;
+                FeatureLevelArray[ 2 ] = D3D_FEATURE_LEVEL_10_0;
 
                 //Initialize the swap chain description.
                 ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -284,7 +282,7 @@ namespace ursine
                         nullptr, 
                         D3D11_CREATE_DEVICE_SINGLETHREADED, 
                         FeatureLevelArray, 
-                        4, 
+                        3,
                         D3D11_SDK_VERSION,
                         &m_device, 
                         nullptr, 

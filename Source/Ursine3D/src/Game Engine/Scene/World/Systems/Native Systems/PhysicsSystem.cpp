@@ -256,7 +256,7 @@ namespace ursine
 
                 // if there are still collision shapes attached to 
                 // the entity, add a body for them to use
-                if (m_collisionShapes.Matches( oldTypeMask ))
+                if (m_collisionShapes.Matches( oldTypeMask ) && !entity->IsDeleting( ))
                 {
                     auto *body = entity->AddComponent<Body>( );
 
