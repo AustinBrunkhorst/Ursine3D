@@ -22,49 +22,6 @@ namespace ursine
     {
         namespace DXCore
         {
-            void dxErrorCheck( HRESULT hr, ID3D11InfoQueue *infoQueue )
-            {
-                if ( infoQueue == nullptr )
-                {
-                    //Short and sweet, and it works.
-                    LPTSTR output;
-                    if ( FAILED( hr ) ) {
-                        FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM |
-                            FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                            FORMAT_MESSAGE_IGNORE_INSERTS, NULL, hr,
-                            MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-                            (LPTSTR)&output, 0, NULL );
-
-                        MessageBox( GetActiveWindow( ), output, "FAILED", MB_OK );
-                    }
-                }
-                else
-                {
-                    if ( FAILED( hr ) ) 
-                    {
-                        UINT64 messageCount = infoQueue->GetNumStoredMessages( );
-
-                        for ( UINT64 x = 0; x < messageCount; ++x )
-                        {
-                            SIZE_T size;
-
-
-                            // get original size
-                            HRESULT hr = infoQueue->GetMessage( x, NULL, &size );
-
-                            // allocate
-                            D3D11_MESSAGE * pMessage = (D3D11_MESSAGE*)malloc( size );
-
-                            // get message
-                            hr = infoQueue->GetMessageA( x, pMessage, &size );
-                            UAssert( hr == S_OK, "Failed to get message from info queue" );
-
-                            if ( pMessage->Severity <= D3D11_MESSAGE_SEVERITY_WARNING )
-                                MessageBox( GetActiveWindow( ), pMessage->pDescription, "FAILED", MB_OK );
-                        }
-                    }
-                }
-            }
 
             void DirectXCore::Initialize( const unsigned width, const unsigned height, HWND hWindow, ursine::graphics::GfxInfo *gfxInfo, bool fullscreen, bool debug )
             {
@@ -180,7 +137,6 @@ namespace ursine
                         &m_deviceContext 
                     );
 
-                    dxErrorCheck( result, m_infoQueue );
                     UAssert( result == S_OK, "Failed to make device! (Error '%s')", GetDXErrorMessage( result ) );
 
                     D3D_FEATURE_LEVEL finalFeatureLevel = m_device->GetFeatureLevel( );
@@ -192,7 +148,6 @@ namespace ursine
                         reinterpret_cast<void**>(&m_debugInterface)
                         );
 
-                    dxErrorCheck( result, m_infoQueue );
                     UAssert( result == S_OK, "Failed to make debug interface! (Error '%s')", GetDXErrorMessage( result ) );
 
                     // create info queue ///////////////////////////////
@@ -201,7 +156,6 @@ namespace ursine
                         reinterpret_cast<void**>(&m_infoQueue)
                         );
 
-                    dxErrorCheck( result, m_infoQueue );
                     UAssert( result == S_OK, "Failed to make info queue! (Error '%s')", GetDXErrorMessage( result ) );
 
                     //D3D11_INFO_QUEUE_FILTER_DESC allow;
@@ -267,7 +221,6 @@ namespace ursine
                         &m_swapChain 
                     );
 
-                    dxErrorCheck( result, m_infoQueue );
                     UAssert( result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage( result ) );
 
                     // END //////////////////////////////////////////
@@ -291,7 +244,6 @@ namespace ursine
                         &m_deviceContext 
                     );
 
-                    dxErrorCheck( result, m_infoQueue );
                     UAssert( result == S_OK, "Failed to make device! (Error '%s')", GetDXErrorMessage( result ) );
 
                     LogMessage( "Feature Level: %i", 2, finalFeatureLevel );
@@ -318,7 +270,6 @@ namespace ursine
                         &m_swapChain 
                     );
 
-                    dxErrorCheck( result, m_infoQueue );
                     UAssert( result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage( result ) );
 
                     // END ////////////////////////////////////////////////////////////
@@ -342,7 +293,6 @@ namespace ursine
                     (LPVOID*)&backBufferPtr
                 );
 
-                dxErrorCheck( result, m_infoQueue );
                 UAssert(result == S_OK, "Failed to get back buffer! (Error '%s')", GetDXErrorMessage(result));
 
                 //Create the render target view with the back buffer pointer.
@@ -352,7 +302,6 @@ namespace ursine
                     &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView
                 );
 
-                dxErrorCheck( result, m_infoQueue );
                 UAssert(result == S_OK, "Failed to make render target! (Error '%s')", GetDXErrorMessage(result));
 
                 //Release pointer to the back buffer as we no longer need it.
