@@ -123,7 +123,7 @@ namespace ursine
             void PrepFor3DModels(const SMat4 &view, const SMat4 &proj);
             void PrepForBillboard2D(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
             void PrepForCompute(void);
-            void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
+            void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera );
             void PrepForSpotlightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForPrimitives(const SMat4 &view, const SMat4 &proj);

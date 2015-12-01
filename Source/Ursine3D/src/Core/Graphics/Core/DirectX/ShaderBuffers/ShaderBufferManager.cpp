@@ -175,7 +175,7 @@ namespace ursine
             template<typename T>
             void ShaderBufferManager::MakeBuffer(const BUFFER_LIST type, unsigned gpuUsage, unsigned cpuAccess)
             {
-                UAssert(sizeof(T) % 16 == 0, "Invalid constant buffer! Constant buffer must have a multiple of 16 as its byte width!");
+                static_assert(sizeof( T ) % 16 == 0, "Invalid constant buffer! Constant buffer must have a multiple of 16 as its byte width!");
 
                 HRESULT result;
                 D3D11_BUFFER_DESC bufferDesc;

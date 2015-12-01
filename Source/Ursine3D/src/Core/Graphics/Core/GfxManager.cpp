@@ -477,7 +477,7 @@ namespace ursine
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
 
             //point light pass
-            PrepForPointLightPass(view, proj);
+            PrepForPointLightPass(view, proj, currentCamera );
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
@@ -747,7 +747,7 @@ namespace ursine
 #endif
         }
 
-        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
+        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera )
         {
             //if in editor mode, we need to compute the mouse pos
 #if defined(URSINE_WITH_EDITOR)
@@ -770,6 +770,7 @@ namespace ursine
             temp.Inverse();
 
             ipb.invProj = temp.ToD3D();
+            currentCamera.GetPlanes( ipb.nearPlane, ipb.farPlane );
             bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
             //map camera buffer
@@ -1074,7 +1075,7 @@ namespace ursine
 
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
 
-            m_currentPosition = SVec3( dataFromCS.x, dataFromCS.y, dataFromCS.depth );
+            m_currentPosition = SVec3( point.x, point.y, dataFromCS.depth );
 
             tempID = dataFromCS.id; 
              
@@ -1517,48 +1518,17 @@ namespace ursine
 
         SVec3 GfxManager::GetCurrentWorldPosition(const GfxHND& cameraHandle)
         {
-            // convert current depth to linear depth
             auto &camera = cameraManager->GetCamera( cameraHandle );
 
-            // get near/far plane depth
-            float nearP, farP;
-            camera.GetPlanes( nearP, farP );
+            // get the saved depth
+            float depth = m_currentPosition.Z( );
 
-            float linearDepth = (2 * nearP) / (farP + nearP - m_currentPosition.Z() * (farP - nearP));
+            // transform from screen to world, given a specific camera
+            auto worldPosition = camera.ScreenToWorld( Vec2( m_currentPosition.X( ), m_currentPosition.Y( ) ), depth );
 
-            // construct position
-            
-            unsigned w, h;
-            gfxInfo->GetDimensions( w, h );
-            float width = w, height = h;
+            printf( "%f, %f, %f\n\n", worldPosition.X( ), worldPosition.Y( ), worldPosition.Z( ) );
 
-            SVec4 finalPos;
-            finalPos.SetX( ((m_currentPosition.X( ) * 2) - width) / width );
-            finalPos.SetY( -((m_currentPosition.Y( ) * 2) - height) / height );
-
-            printf( "%f, %f\n\n", finalPos.X( ), finalPos.Y( ) );
-
-            finalPos.SetZ( linearDepth );
-            finalPos.SetW( 1.f );
-
-            // apply inv proj
-            auto proj = camera.GetProjMatrix( );
-            proj.Inverse( );
-
-            finalPos = proj * finalPos;
-
-            // perform perspective divide
-            finalPos /= finalPos.W( );
-
-            // perform inverse view projection
-            SMat4 invView = camera.GetViewMatrix( );
-            invView.Inverse( );
-
-            finalPos = invView * finalPos;
-            finalPos /= finalPos.W( );
-
-            // return the world position
-            return SVec3( finalPos.X( ), finalPos.Y( ), finalPos.Z( ) );
+            return worldPosition;
         }
 
         // misc stuff /////////////////////////////////////////////////////
@@ -1573,11 +1543,6 @@ namespace ursine
                 return;
 
             gfxInfo->SetDimensions(width, height);
-
-            //what needs to be resized?
-            //ui
-            //@UI
-            //uiManager->Resize( width, height );
 
             //MAIN render targets, not viewports
             dxCore->ResizeDX(width, height);

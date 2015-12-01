@@ -16,6 +16,8 @@ cbuffer PointLightBuffer : register(b3)
 cbuffer invProj : register(b4)
 {
     matrix InvProj;
+    float nearPlane;
+    float farPlane;
 };
 
 //specular power range
@@ -57,8 +59,8 @@ struct Material
 //near is 0.1, far is 100, this needs to be modified
 float ConvertDepthToLinear( float depth )
 {
-    float f = 100.0;
-    float n = 0.1;
+    float f = nearPlane;
+    float n = farPlane;
     float z = (2 * n) / (f + n - depth * (f - n));
     return z;
 }

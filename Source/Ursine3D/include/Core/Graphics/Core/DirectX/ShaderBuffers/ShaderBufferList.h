@@ -75,6 +75,8 @@ namespace ursine
         struct InvProjBuffer
         {
             DirectX::XMMATRIX invProj;
+            float nearPlane;
+            float farPlane;
         };
 
         struct PointLightBuffer
