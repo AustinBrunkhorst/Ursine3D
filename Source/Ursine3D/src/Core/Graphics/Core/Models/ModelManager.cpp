@@ -69,6 +69,8 @@ namespace ursine
 					LoadModel_Fbx(tokens[1], tokens[0]);
 				else if(tokens[0].find(".jdl") != std::string::npos)
 					LoadModel_Ursine(tokens[1], tokens[0]);
+				else if (tokens[0].find(".jlvl") != std::string::npos)
+					LoadLevel_Ursine(tokens[1], tokens[0]);
             }
 
             input.close();
@@ -413,10 +415,11 @@ namespace ursine
 
 			HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			ufmt_loader::ModelInfo ufmt_model;
+			ufmt_loader::LevelInfo ufmt_lvl;
 
 			// Serialize in model
 			ufmt_model.SerializeIn(hFile);
-            
+
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
 
@@ -533,6 +536,20 @@ namespace ursine
 
 				delete[] indexArray;
 			}
+		}
+
+		void ModelManager::LoadLevel_Ursine(std::string name, std::string fileName)
+		{
+			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+
+			std::ifstream input;
+			std::vector<AnimationVertex> buffer;
+
+			HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+			ufmt_loader::LevelInfo ufmt_lvl;
+
+			// Serialize in model
+			ufmt_lvl.SerializeIn(hFile);
 		}
 
         ID3D11Buffer *ModelManager::GetModelVert(std::string name, unsigned index)

@@ -1,3 +1,15 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AnimationRig.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
 #include "UrsinePrecompiled.h"
 #include "AnimationRig.h"
 
@@ -89,5 +101,10 @@ namespace ursine
     unsigned AnimationRig::GetBoneCount() const
     {
         return static_cast<unsigned>(m_boneData.size());
+    }
+
+    const std::vector<unsigned>& AnimationRig::GetHierarchyTable() const
+    {
+        return m_hierarchyTable;
     }
 }

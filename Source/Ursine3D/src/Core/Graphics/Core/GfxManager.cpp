@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "GfxManager.h"
 
@@ -891,26 +904,8 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            ///////////////////////////////
-            //// TEMPORARY
-            //if (std::string(current.GetModelName( )) == std::string("Custom"))
-            //{
-            //    ursine::AnimationState myState;
-            //    myState.SetAnimation(AnimationBuilder::GetAnimationByIndex(0));
-			//
-            //    static float time = 0;
-            //    time += 0.016;
-			//
-            //    if (time > 4) time = 0;
-            //    myState.SetTimePosition(time);
-			//
-            //    auto *rig = AnimationBuilder::GetAnimationRigByIndex(0);
-			//
-            //    AnimationBuilder::GenerateAnimationData(myState, rig, current.GetMatrixPalette( ));
-            //}
-
             // map matrix palette
-            bufferManager->MapBuffer<BUFFER_MATRIX_PAL>(&(current.GetMatrixPalette( )[ 0 ]), SHADERTYPE_VERTEX);
+            bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(reinterpret_cast<MatrixPalBuffer*>(&(current.GetMatrixPalette( )[ 0 ])), SHADERTYPE_VERTEX);
 
             // map texture
             textureManager->MapTextureByID(handle.Material_);

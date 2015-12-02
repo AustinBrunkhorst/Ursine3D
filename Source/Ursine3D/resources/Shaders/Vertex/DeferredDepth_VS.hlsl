@@ -35,7 +35,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
   float4 Pos : SV_POSITION;
-  float4 normal : NORMAL;
+  float4 normal : NORMAL; 
   float2 Tex : UV;
 };
 

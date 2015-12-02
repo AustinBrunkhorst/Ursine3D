@@ -34,7 +34,8 @@ namespace ursine
 
             void LoadModel(std::string name, std::string fileName);
 			void LoadModel_Fbx(std::string name, std::string fileName);
-			void LoadModel_Ursine(std::string name, std::string fileName);
+			void LoadModel_Ursine(std::string name, std::string fileName); 
+			void LoadLevel_Ursine(std::string name, std::string fileName);
 
             ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
             unsigned GetModelVertcount(std::string name, unsigned index = 0);

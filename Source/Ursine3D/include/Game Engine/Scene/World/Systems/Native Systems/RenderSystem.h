@@ -4,6 +4,7 @@
 
 #include "GFXAPIDefines.h"
 #include <Core/Graphics/API/GfxAPI.h>
+#include <Game Engine/Scene/Component/Native Components/AnimatorComponent.h>
 
 namespace ursine
 {
@@ -45,6 +46,7 @@ namespace ursine
 
             std::unordered_map<EntityUniqueID, ursine::ecs::Camera*> m_cameras;
             std::unordered_map<EntityUniqueID, Renderable*> m_renderable;
+            std::unordered_map<EntityUniqueID, Animator*> m_animator;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));

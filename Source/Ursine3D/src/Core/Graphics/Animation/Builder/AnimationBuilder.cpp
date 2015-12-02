@@ -1,3 +1,15 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AnimationBuilder.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
 #include "UrsinePrecompiled.h"
 #include "AnimationBuilder.h"
 #include "ModelInfo.h"
@@ -9,19 +21,19 @@ namespace ursine
     std::unordered_map<std::string, Animation*>     AnimationBuilder::m_name2Animation;
     std::unordered_map<std::string, AnimationRig*>  AnimationBuilder::m_name2Rig;
     std::vector<SMat4>                              AnimationBuilder::m_toParentTransforms;
-    std::vector<SMat4>                              AnimationBuilder::m_toRootTransforms;
 
     unsigned AnimationBuilder::m_rigCount;
     unsigned AnimationBuilder::m_animationCount;
 
-	void AnimationBuilder::GenerateAnimationData(const AnimationState& animState, const AnimationRig* rig, std::vector<SMat4>& outputMatPal)
+	void AnimationBuilder::GenerateAnimationData(
+        const AnimationState& animState, 
+        const AnimationRig* rig, 
+        std::vector<SMat4>& outputMatPal,
+        std::vector<SMat4> &outputBones
+    )
 	{
 		// get the current time
 		float time = animState.GetTimePosition();
-
-		// clamp time between 0 and 1
-		time = time < 0 ? 0 : time;
-		time = time > 1 ? 1 : time;
 
 		// get the currently running animation
 		auto currentAnimation = animState.GetAnimation();
@@ -37,14 +49,14 @@ namespace ursine
 
 		// determine the 2 current keyframes to use
 		// we assume that all frames exist, and that they were baked across all total keyframes
-		for (int x = 0; x < frameCount - 1; ++x)
+		for (unsigned x = 0; x < frameCount - 1; ++x)
 		{
 			// get the two current keyframes
 			const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
 			const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
 
 			// check if the current keyframe set holds the time value between them
-			//if (f1[0].length <= time && time < f2[0].length)
+			if (f1[0].length <= time && time < f2[0].length)
 			{
 				// if it did, interpolate the two keyframes, save values, break out
 				interpolateRigKeyFrames(
@@ -61,7 +73,7 @@ namespace ursine
 		}
 
 		// root bone has no transform, therefor is just defaulted to the first interpolated matrix
-		m_toRootTransforms[0] = m_toParentTransforms[0];
+        outputBones[0] = m_toParentTransforms[0];
 
 		// now we need to go through the bone hierarchy 
 		auto &boneData = rig->GetBoneData();
@@ -73,18 +85,17 @@ namespace ursine
 			SMat4 &toParent = m_toParentTransforms[x];
 
 			// get the parent to root
-			const SMat4 &parentToRoot = m_toRootTransforms[boneData[x].GetParentID()];
+			const SMat4 &parentToRoot = outputBones[boneData[x].GetParentID()];
 
 			// calculate root transform
-			m_toRootTransforms[x] = toParent * parentToRoot;
+            outputBones[x] = parentToRoot * toParent;
 		}
 
 		// multiply by bone offset transform to get final transform
 		auto &offsetMatrices = rig->GetOffsetMatrices();
 		for (unsigned x = 0; x < boneCount; ++x)
 		{
-			outputMatPal[x] = (offsetMatrices[x] * m_toRootTransforms[x]);
-            outputMatPal[ x ].Transpose( );
+            outputMatPal[ x ] = (outputBones[ x ] * offsetMatrices[ x ]);
 		}
 	}
 
@@ -93,7 +104,6 @@ namespace ursine
         m_animationData.resize( 128 );
         m_animationRigData.resize( 128 );
         m_toParentTransforms.resize( 128 );
-        m_toRootTransforms.resize( 128 );
         m_rigCount = 0;
         m_animationCount = 0;
     }
@@ -162,9 +172,20 @@ namespace ursine
 				auto keyframe = info.keyframes[0][boneIndex][rigIndex];
 
 				// get values
-				auto trans = SVec3(keyframe.trans.x, keyframe.trans.y, keyframe.trans.z);
+				auto trans = SVec3(
+                    keyframe.trans.x, 
+                    keyframe.trans.y, 
+                    keyframe.trans.z
+                );
+
 				auto scale = SVec3(1, 1, 1);
-				auto rot = SQuat(keyframe.rot.x, keyframe.rot.y, keyframe.rot.z, keyframe.rot.w);
+
+				auto rot = SQuat(
+                    keyframe.rot.x, 
+                    keyframe.rot.y, 
+                    keyframe.rot.z, 
+                    keyframe.rot.w
+                );
 
 				// add keyframe to animation
 				animation->AddKeyframe(
@@ -174,7 +195,7 @@ namespace ursine
 					scale,
 					rot,
 					keyframe.time
-					);
+				);
 			}
 		}
 
@@ -233,32 +254,20 @@ namespace ursine
 		// for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
 		for (unsigned x = 0; x < boneCount; ++x)
 		{
-			//// get the current guy
-			//SMat4 &current = finalTransform[x];
-			//
-			//// position
-			//SVec3 p = frame1[x].translation * lerpPercent + (1.0f - lerpPercent) * frame2[x].translation;
-			//
-			//// scale
-			//SVec3 s = frame1[x].scale * lerpPercent + (1.0f - lerpPercent) * frame2[x].scale;
-			//
-			//// rotation
-			//SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
-			//
-			//// construct matrix for this matrix
-			//current = SMat4(p, q, s);
 			// get the current guy
-
 			SMat4 &current = finalTransform[x];
-
+			
 			// position
-			SVec3 p = frame1[x].translation;
-
+			SVec3 p = (1.0f - lerpPercent) * frame1[x].translation + frame2[ x ].translation * lerpPercent;
+			
 			// scale
-			SVec3 s = frame1[x].scale;
-
+			SVec3 s =(1.0f - lerpPercent) * frame1[x].scale + frame2[ x ].scale * lerpPercent;
+			
 			// rotation
-			SQuat q = frame1[x].rotation;
+			SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
+			
+			// construct matrix for this matrix
+			current = SMat4(p, q, s);
 
 			// construct matrix for this matrix
 			current = SMat4(p, q, s);
@@ -327,7 +336,13 @@ namespace ursine
         // iterate through all existing children
         for ( auto &x : hierarchy[ currentIndex ] )
         {
-            rec_LoadBoneMesh( hierarchy, x, currentIndex, rigData, rig );
+            rec_LoadBoneMesh( 
+                hierarchy, 
+                x, 
+                currentIndex, 
+                rigData, 
+                rig 
+            );
         }
     }
 }

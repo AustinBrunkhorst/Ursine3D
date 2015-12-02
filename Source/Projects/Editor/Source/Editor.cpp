@@ -17,7 +17,7 @@
 #include <RenderableComponent.h>   
 #include <LightComponent.h>
 #include <Model3DComponent.h>
-#include <CapsuleColliderComponent.h>
+#include <CapsuleColliderComponent.h> 
 #include <BoxColliderComponent.h>
 #include <AnimationBuilder.h>
 
@@ -30,7 +30,7 @@ using namespace ursine;
 
 namespace
 {
-    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
+    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html"; 
 
     const auto kEditorClearColor = Color( 0xFF252526 );
 
