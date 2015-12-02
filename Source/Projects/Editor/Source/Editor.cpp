@@ -1,5 +1,7 @@
 #include "Precompiled.h"
 
+#include <CFBXLoader.h>
+
 #include "Editor.h"
 #include "Project.h"
 
@@ -19,7 +21,7 @@
 #include <BoxColliderComponent.h>
 #include <AnimationBuilder.h>
 
-#include "CharacterControllerComponent.h"
+#include "CharacterControllerComponent.h" 
 #include "EditorCameraSystem.h"
 
 #include "PhysicsSystem.h"

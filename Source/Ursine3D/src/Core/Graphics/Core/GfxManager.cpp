@@ -6,8 +6,8 @@
 #include <complex>
 #include "DepthStencilStateList.h"
 #include <d3d11.h>
-#include <Core/Graphics/Animations/AnimationState.h>
-#include <Core/Graphics/Animations/AnimationBuilder.h>
+#include <Core/Graphics/Animation/Builder/AnimationState.h>
+#include <Core/Graphics/Animation/Builder/AnimationBuilder.h>
 
 static int tempID = -1;
 static HWND wHND = 0;
@@ -891,23 +891,23 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            /////////////////////////////
-            // TEMPORARY
-            if (std::string(current.GetModelName( )) == std::string("Custom"))
-            {
-                ursine::AnimationState myState;
-                myState.SetAnimation(AnimationBuilder::GetAnimationByIndex(0));
-
-                static float time = 0;
-                time += 0.016;
-
-                if (time > 4) time = 0;
-                myState.SetTimePosition(time);
-
-                auto *rig = AnimationBuilder::GetAnimationRigByIndex(0);
-
-                AnimationBuilder::GenerateAnimationData(myState, rig, current.GetMatrixPalette( ));
-            }
+            ///////////////////////////////
+            //// TEMPORARY
+            //if (std::string(current.GetModelName( )) == std::string("Custom"))
+            //{
+            //    ursine::AnimationState myState;
+            //    myState.SetAnimation(AnimationBuilder::GetAnimationByIndex(0));
+			//
+            //    static float time = 0;
+            //    time += 0.016;
+			//
+            //    if (time > 4) time = 0;
+            //    myState.SetTimePosition(time);
+			//
+            //    auto *rig = AnimationBuilder::GetAnimationRigByIndex(0);
+			//
+            //    AnimationBuilder::GenerateAnimationData(myState, rig, current.GetMatrixPalette( ));
+            //}
 
             // map matrix palette
             bufferManager->MapBuffer<BUFFER_MATRIX_PAL>(&(current.GetMatrixPalette( )[ 0 ]), SHADERTYPE_VERTEX);
@@ -922,7 +922,6 @@ namespace ursine
              
             //render
             unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
-
             for (int x = 0; x < count; ++x)
             {
                 // set model

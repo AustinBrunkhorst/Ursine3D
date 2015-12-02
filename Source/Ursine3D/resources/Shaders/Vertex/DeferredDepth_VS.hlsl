@@ -28,7 +28,7 @@ struct VS_INPUT
 	float3	Nor		: NORMAL;
 	float2	Tex		: TEXCOORD;
 	float4	BWeight : BLENDWEIGHT;
-	int4	BIdx	: BLENDINDICES;
+	uint4	BIdx	: BLENDINDICES;
 };
 
 
