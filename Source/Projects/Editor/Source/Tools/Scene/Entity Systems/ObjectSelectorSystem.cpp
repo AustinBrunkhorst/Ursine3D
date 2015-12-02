@@ -14,6 +14,8 @@
 #include <SystemManager.h>
 #include <GfxAPI.h>
 #include <WorldEvent.h>
+#include <Game Engine/Scene/Component/Native Components/Physics/BoxColliderComponent.h>
+#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
 
 using namespace ursine;
 
@@ -56,8 +58,7 @@ void ObjectSelectorSystem::OnInitialize(void)
     //connect to the mouse events
     m_mouseManager->Listener( this )
         .On( MM_BUTTON_DOWN, &ObjectSelectorSystem::onMouseDown )
-        .On( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp )
-        .On( MM_SCROLL, &ObjectSelectorSystem::onMouseScroll );
+        .On( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp );
 
     m_keyboardManager->Listener( this )
         .On( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
@@ -132,10 +133,9 @@ void ObjectSelectorSystem::OnRemove(void)
 {
     FilterSystem::OnRemove( );
 
-    m_mouseManager->Listener( this ) 
+    m_mouseManager->Listener( this )
         .Off( MM_BUTTON_DOWN, &ObjectSelectorSystem::onMouseDown )
-        .Off( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp )
-        .Off( MM_SCROLL, &ObjectSelectorSystem::onMouseScroll );
+        .Off( MM_BUTTON_UP, &ObjectSelectorSystem::onMouseUp );
 
     m_keyboardManager->Listener( this )
         .Off( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
@@ -164,6 +164,7 @@ void ObjectSelectorSystem::Process(ecs::Entity *entity)
     }
 }
 
+/////////////////////////////////////////////////////////////////////
 // EVENTS ///////////////////////////////////////////////////////////
 void ObjectSelectorSystem::onMouseDown(EVENT_HANDLER(MouseManager))
 {
@@ -261,12 +262,21 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
     if (!m_editorCameraSystem->HasFocus( ))
         return;
 
+    auto *cameraEntity = m_editorCameraSystem->GetEditorCameraEntity( );
+    auto handle = cameraEntity->GetComponent<ecs::Camera>( )->GetHandle( );
+
+    SVec3 worldMousePos = m_graphics->GetMousedOverWorldPosition( handle );
+
     //some switch for detecting tool type
     if (!(m_keyboardManager->GetModifiers( ) & KMD_ALT))
     {
         //get the editor camera
         graphics::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
 
+        // we need to calculate mouse position w/ respect to the current window
+        float width, height;
+        cam->GetDimensions( width, height );
+        
         //get the mouse position
         Vec2 screenPos = GetCoreSystem(MouseManager)->GetPosition( );
 
@@ -278,7 +288,6 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
 
         //create a vector going out from the eye
         Vec3 mouseVec = p1 - p2;
-        mouseVec.Set( mouseVec.X( ), mouseVec.Y( ), mouseVec.Z( ) );
 
         //project onto the CURRENT place, which is dependent on the base position
         //x axis, we will treat z as stationary
@@ -318,16 +327,6 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
 void ObjectSelectorSystem::onMouseUp(EVENT_HANDLER(MouseManager))
 {
     m_dragging = false;
-}
-
-void ObjectSelectorSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
-{
-    // we can scroll only if we have mouse focus
-    if (!m_editorCameraSystem->HasMouseFocus( ))
-        return;
-
-    if (m_currentID != -1)
-        moveToolToEntity( m_currentID );
 }
 
 void ObjectSelectorSystem::onKeyDown(EVENT_HANDLER(KeyboardManager))
@@ -378,6 +377,12 @@ void ObjectSelectorSystem::onUpdate(EVENT_HANDLER(ecs::World))
     Color yAx = Color( 0, 1, 0, 1 );
     Color zAx = Color( 0, 0, 1, 1 );
 
+    if(m_currentTool == TOOL_ROTATION )
+    {
+        xAx = yAx;
+        yAx = Color( 1, 0, 0, 1 );
+    }
+
     //change color to yellow if dragging
     if (m_dragging && !(m_keyboardManager->GetModifiers( ) & KMD_ALT))
     {
@@ -423,17 +428,18 @@ void ObjectSelectorSystem::onSelectedAdd(EVENT_HANDLER(ecs::World))
     }
 }
 
+/////////////////////////////////////////////////////////////////////
 // UTILITIES ////////////////////////////////////////////////////////
-
-void ObjectSelectorSystem::calculateOffset(Vec2 mousePos)
-{
-    SVec3 mouse = getMousePosition( mousePos );
-}
 
 void ObjectSelectorSystem::updateToolPosition(Vec3 pos)
 {
     float zoom = m_editorCameraSystem->GetCamZoom( );
     float scalar = 1;
+
+    ecs::Entity *obj = nullptr;
+    
+    if( m_currentID != -1 )
+        obj = m_world->GetEntityUnique( m_currentID );
 
     //get their transforms, set data
     auto xTransf = m_xAxis->GetTransform( );
@@ -478,9 +484,37 @@ void ObjectSelectorSystem::updateToolPosition(Vec3 pos)
                 yTransf->SetWorldScale( SVec3( scalar, scalar, scalar ) );
                 zTransf->SetWorldScale( SVec3( scalar, scalar, scalar ) );
 
-                xTransf->SetWorldRotation( SQuat( 0, SVec3( 1, 0, 0 ) ) );
-                yTransf->SetWorldRotation( SQuat( SQuat( 90, SVec3( 0, 0, 2 ) ) ) );
-                zTransf->SetWorldRotation( SQuat( 90, SVec3( 1, 0, 0 ) ) );
+                // we need to calculate stuff to rotate our rotation tool properly
+
+                // default rotation if we don't have an object
+                if ( obj == nullptr )
+                {
+                    xTransf->SetWorldRotation( SQuat( 0, SVec3( 1, 0, 0 ) ) );
+                    yTransf->SetWorldRotation( SQuat( 90, SVec3( 0, 0, 2 ) ) );
+                    zTransf->SetWorldRotation( SQuat( 90, SVec3( 1, 0, 0 ) ) );
+                }
+                else
+                {
+                    auto *entityTransform = obj->GetTransform( );
+
+                    // calculate the rotations
+                    auto up = SVec3( 0, 1, 0 );
+                    auto right = SVec3( 1, 0, 0 );
+                    auto forward = SVec3( 0, 0, 1 );
+
+                    auto entityUp = entityTransform->GetUp( );
+                    auto entityRight = entityTransform->GetRight( );
+                    auto entityForward = entityTransform->GetForward( );
+
+                    SQuat upRot, rightRot, forwardRot;
+                    upRot.SetFromTo( up, entityUp );
+                    rightRot.SetFromTo( right, entityRight );
+                    forwardRot.SetFromTo( forward, entityForward );
+
+                    xTransf->SetWorldRotation( upRot );
+                    yTransf->SetWorldRotation( rightRot * SQuat( 90, SVec3( 0, 0, 2 ) ) );
+                    zTransf->SetWorldRotation( forwardRot * SQuat( 90, SVec3( 1, 0, 0 ) ) );
+                }
 
                 xTransf->SetWorldPosition( pos );
                 yTransf->SetWorldPosition( pos );
@@ -502,6 +536,7 @@ void ObjectSelectorSystem::moveToolToEntity(const ecs::EntityUniqueID id)
     updateToolPosition( newObj->GetTransform( )->GetWorldPosition( ) );
 }
 
+/////////////////////////////////////////////////////////////////////
 // PICKING //////////////////////////////////////////////////////////
 
 void ObjectSelectorSystem::pickObject(const ecs::EntityUniqueID id)
@@ -527,8 +562,10 @@ void ObjectSelectorSystem::unpickObject(const ecs::EntityUniqueID id)
         obj->RemoveComponent<Selected>( );
 }
 
+/////////////////////////////////////////////////////////////////////
 // OBJECT TRANSFORMATION / TOOLS ////////////////////////////////////
 
+// TRANSLATION ////////////////////////
 void ObjectSelectorSystem::setToTranslate()
 {
     //get their models
@@ -586,6 +623,7 @@ void ObjectSelectorSystem::updateTranslation(const SVec3 &mousePos)
     updateToolPosition( pos );
 }
 
+// SCALE //////////////////////////////
 void ObjectSelectorSystem::setToScale()
 {
     //get their models
@@ -641,6 +679,7 @@ void ObjectSelectorSystem::updateScale(const SVec3 &mousePos)
     transf->SetWorldScale( scale );
 }
 
+// ROTATION ///////////////////////////
 void ObjectSelectorSystem::setToRotation()
 {
     //get their models
@@ -676,38 +715,41 @@ void ObjectSelectorSystem::setToRotation()
 
 void ObjectSelectorSystem::updateRotation(const SVec3 &mousePos)
 {
-    //what axis are we trying to change? x, y, or z?
-    SVec3 mouseLockedPos = m_baseMousePos;
-    SVec3 mouseFreePos = mousePos;
-
-    SVec3 mouseLockedVec;
-    SVec3 mouseFreeVec;
-
-    SQuat newRot;
     auto transf = m_world->GetEntityUnique( m_currentID )->GetTransform( );
     float difference;
+
+    // get camera position
+    auto *cameraEntity = m_editorCameraSystem->GetEditorCameraEntity( );
+    auto *camera = cameraEntity->GetComponent<ecs::Camera>( )->GetCamera( );
+    auto cameraPos = cameraEntity->GetTransform( )->GetWorldPosition( );
+
+    float sign = 0;
 
     //if x, lock to the x/y of the obj. get vector from xyz of obj.
     switch (m_axis)
     {
         case 0:
             difference = mousePos.X( ) - m_baseMousePos.X( );
+            sign = camera->GetLook( ).Dot( transf->GetRight( ) ) < 0 ? -1 : 1;
 
-            transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( 0, -difference, 0 ) );
+            transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( 0, -difference * sign, 0 ) );
 
             break;
         case 1:
-            difference = mousePos.X( ) - m_baseMousePos.X( );
-
-            transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( -difference, 0, 0 ) );
+            difference = mousePos.Z( ) - m_baseMousePos.Z( );
+            sign = camera->GetLook( ).Dot( transf->GetForward( ) ) < 0 ? -1 : 1;
+            transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( -difference * sign, 0, 0 ) );
             break;
         case 2:
             difference = mousePos.Y( ) - m_baseMousePos.Y( );
-
-            transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( 0, 0, -difference ) );
+            sign = camera->GetLook( ).Dot( transf->GetUp( ) ) < 0 ? -1 : 1;
+            transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( 0, 0, -difference * sign ) );
             break;
     }
 
+    m_baseMousePos = mousePos;
+
+    updateBases( );
 
     //so we need to somehow lock onto the plane that we want to rotate on
     //in the case of X, we will want to rotate on the Y/Z Axis
@@ -715,6 +757,8 @@ void ObjectSelectorSystem::updateRotation(const SVec3 &mousePos)
     //
 }
 
+/////////////////////////////////////////////////////////////////////
+// MISC METHODS /////////////////////////////////////////////////////
 void ObjectSelectorSystem::hideTool(void)
 {
     m_dragging = false;
@@ -777,4 +821,42 @@ void ObjectSelectorSystem::updateBases(void)
     m_baseTranslation = obj->GetTransform( )->GetWorldPosition( );
     m_baseScale = obj->GetTransform( )->GetWorldScale( );
     m_baseRotation = obj->GetTransform( )->GetWorldRotation( );
+}
+
+ursine::SVec3 ObjectSelectorSystem::LinePlaneIntersection(
+    const ursine::SVec3 &pointOnPlane,
+    const ursine::SVec3& axis1,
+    const ursine::SVec3& axis2,
+    const ursine::SVec3& vector,
+    const ursine::SVec3& vectorStart
+    )
+{
+    // we'll need a normal to this plane
+    SVec3 planeNormal = SVec3::Cross( axis1, axis2 );
+    planeNormal.Normalize( );
+
+    // if invalid, return infinity
+    if ( planeNormal.Dot( vector ) == 0 )
+        return SVec3( 0, 0, 0 );
+
+    // plane equation
+    // (some given point - point on plane) . normal = 0 IF it is on the plane
+
+    // line equation
+    // newPoint = oldPoint + scalar * vector;
+    float scalar = ((vectorStart - pointOnPlane).Dot( planeNormal )) / (vector.Dot( planeNormal ));
+
+    return vectorStart + vector * scalar;
+}
+
+ursine::SVec3 ObjectSelectorSystem::ProjectPointToLine(
+    const ursine::SVec3& linePoint1,
+    const ursine::SVec3& linePoint2,
+    const ursine::SVec3& point
+    )
+{
+    SVec3 vec1 = point - linePoint1;
+    SVec3 vec2 = linePoint2 - linePoint1;
+
+    return linePoint1 + (vec1.Dot( vec2 ) / vec2.Dot( vec2 )) * vec2;
 }

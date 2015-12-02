@@ -55,6 +55,11 @@ graphics::Camera *EditorCameraSystem::GetEditorCamera(void)
     return m_cameraEntity->GetComponent<ecs::Camera>( )->GetCamera( );
 }
 
+ursine::ecs::Entity* EditorCameraSystem::GetEditorCameraEntity()
+{
+    return m_cameraEntity;
+}
+
 void EditorCameraSystem::OnInitialize(void)
 {
     m_focusTransition = m_tweens.Create( );

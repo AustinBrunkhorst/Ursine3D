@@ -22,6 +22,7 @@ public:
     void SetMouseFocus(bool focus);
 
     ursine::graphics::Camera *GetEditorCamera(void);
+    ursine::ecs::Entity *GetEditorCameraEntity( void );
 
     ursine::SVec3 GetEditorFocusPosition(void);
     float GetCamZoom(void);

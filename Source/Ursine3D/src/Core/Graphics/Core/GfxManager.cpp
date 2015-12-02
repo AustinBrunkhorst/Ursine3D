@@ -477,7 +477,7 @@ namespace ursine
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
 
             //point light pass
-            PrepForPointLightPass(view, proj);
+            PrepForPointLightPass(view, proj, currentCamera );
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
@@ -747,7 +747,7 @@ namespace ursine
 #endif
         }
 
-        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
+        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera )
         {
             //if in editor mode, we need to compute the mouse pos
 #if defined(URSINE_WITH_EDITOR)
@@ -770,6 +770,7 @@ namespace ursine
             temp.Inverse();
 
             ipb.invProj = temp.ToD3D();
+            currentCamera.GetPlanes( ipb.nearPlane, ipb.farPlane );
             bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
             //map camera buffer
@@ -1054,6 +1055,8 @@ namespace ursine
             //set input
             bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE, 0);
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
+            ID3D11ShaderResourceView *srv = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_MAIN );
+            dxCore->GetDeviceContext( )->CSSetShaderResources( 1, 1, &srv );
 
             //set UAV as output 
             dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID ], nullptr);
@@ -1067,12 +1070,14 @@ namespace ursine
             dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
 
             //read from intermediary buffer
-            ComputeIDOutput dataFromCS[5]; 
+            ComputeIDOutput dataFromCS; 
             bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
 
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
 
-            tempID = dataFromCS[0].id; 
+            m_currentPosition = SVec3( point.x, point.y, dataFromCS.depth );
+
+            tempID = dataFromCS.id; 
              
             int index = tempID & 0x7FF;
             int type = (tempID >> 12) & 0x3;
@@ -1511,6 +1516,21 @@ namespace ursine
             return m_currentID;
         }
 
+        SVec3 GfxManager::GetCurrentWorldPosition(const GfxHND& cameraHandle)
+        {
+            auto &camera = cameraManager->GetCamera( cameraHandle );
+
+            // get the saved depth
+            float depth = m_currentPosition.Z( );
+
+            // transform from screen to world, given a specific camera
+            auto worldPosition = camera.ScreenToWorld( Vec2( m_currentPosition.X( ), m_currentPosition.Y( ) ), depth );
+
+            printf( "%f, %f, %f\n\n", worldPosition.X( ), worldPosition.Y( ), worldPosition.Z( ) );
+
+            return worldPosition;
+        }
+
         // misc stuff /////////////////////////////////////////////////////
         DXCore::DirectXCore *GfxManager::GetDXCore()
         {
@@ -1523,11 +1543,6 @@ namespace ursine
                 return;
 
             gfxInfo->SetDimensions(width, height);
-
-            //what needs to be resized?
-            //ui
-            //@UI
-            //uiManager->Resize( width, height );
 
             //MAIN render targets, not viewports
             dxCore->ResizeDX(width, height);

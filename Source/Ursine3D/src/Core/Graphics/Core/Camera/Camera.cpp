@@ -191,7 +191,7 @@ namespace ursine
 
         Vec3 Camera::ScreenToWorld(const Vec2& screenPos, const float depth)
         {
-            UAssert(depth > 0, "Can't use a number less than 0 for depth!");
+            UAssert(depth >= 0, "Can't use a number less than 0 for depth!");
 
             //convert mouse coordinates to NDC. Also offset for the screen position
             float unitX = 2.f * ((screenPos.X() - m_screenX) / m_screenWidth) - 1;
@@ -200,39 +200,54 @@ namespace ursine
             ////create point with depth
             //Vec4 point = Vec4(unitX, unitY, depth, 1);
 
-            ////get inv projection
-            SMat4 invProj = GetProjMatrix();
-            SMat4::Transpose(invProj);
-            SMat4::Inverse(invProj);
+            SMat4 viewMat = GetViewMatrix( );
+            SMat4 projMat = GetProjMatrix( );
+            viewMat.Transpose( );
+            projMat.Transpose( );
 
-            Vec4 pos = invProj * Vec4(unitX, unitY, depth, 1);
-            pos /= pos.W();
+            SMat4 invViewProj = projMat * viewMat;
+            invViewProj.Inverse( );
 
-            //get inv view
-            SMat4 invView = GetViewMatrix();
-            SMat4::Transpose(invView);
-            SMat4::Inverse(invView);
+            Vec4 pos = invViewProj * Vec4( unitX, unitY, depth, 1 );
+            pos /= pos.W( );
 
-            SVec4 temp = invView * SVec4(0, 0, 0, 1);
+            return Vec3( pos.X( ), pos.Y( ), pos.Z( ) );
 
-            pos = invView * pos;
+            //////get inv projection
+            //SMat4 invProj = GetProjMatrix();
+            //invProj.Transpose( );               //transpose because we use DX projection matrix
+            //SMat4::Inverse(invProj);
 
-            ////apply inv proj
-            //point = invProj * point;
+            //Vec4 pos = invProj * Vec4(unitX, unitY, depth, 1);
+            //pos /= pos.W();
 
-            ////divide by w
-            //point /= point.W();
+            //printf( "view space pos: %f, %f, %f\n", pos.X( ), pos.Y( ), pos.Z( ) );
 
-            ////apply inv view
-            //point = invView * point;
+            ////get inv view
+            //SMat4 invView = GetViewMatrix();
+            //invView.Transpose( );               //transpose because we use DX view matrix
+            //SMat4::Inverse(invView);
 
-            //
+            //pos = invView * pos;
 
-            ////return
-            //Vec3 finalPoint;
-            //finalPoint.Set(point.X(), point.Y(), point.Z());
-            //return finalPoint;
-            return Vec3(pos.X(), pos.Y(), pos.Z());
+            //printf( "depth: %f\n", depth );
+            //printf( "%f, %f, %f\n\n", pos.X( ), pos.Y( ), pos.Z( ) );
+            //////apply inv proj
+            ////point = invProj * point;
+
+            //////divide by w
+            ////point /= point.W();
+
+            //////apply inv view
+            ////point = invView * point;
+
+            ////
+
+            //////return
+            ////Vec3 finalPoint;
+            ////finalPoint.Set(point.X(), point.Y(), point.Z());
+            ////return finalPoint;
+            //return Vec3(pos.X(), pos.Y(), pos.Z());
         }
 
         void Camera::SetScreenDimensions(const float width, const float height)
