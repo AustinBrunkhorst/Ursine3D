@@ -109,6 +109,7 @@ namespace ursine
 			FBX_DATA::FbxModel& GetModel() const { return *mModel; }
 			bool IsSkinned() { return (mModel->mAnimationData.empty()) ? false : true; }
 			ufmt_loader::ModelInfo GetModelInfo() const { return *mModelInfo; }
+			ufmt_loader::LevelInfo GetLevelInfo() const { return *mLevelInfo; }
 
 		private:
 			unsigned int			boneindex;

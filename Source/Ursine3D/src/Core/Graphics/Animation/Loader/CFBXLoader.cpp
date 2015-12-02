@@ -24,10 +24,10 @@ std::string GetName(const char* filename)
 
 	// get pure file name
 	char* ptr;
-	ptr = strtok(fName, "\\");
+	ptr = strtok(fName, "/");
 	while (ptr != nullptr)
 	{
-		ptr = strtok(nullptr, "\\");
+		ptr = strtok(nullptr, "/");
 		if (nullptr != ptr)
 			ret = ptr;
 	}
@@ -70,7 +70,9 @@ namespace ursine
 	namespace graphics
 	{
 		CFBXLoader::CFBXLoader() :
-			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr), mModelInfo(nullptr), mConverter(nullptr)
+			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr), 
+			mModelInfo(nullptr), mLevelInfo(nullptr),
+			mConverter(nullptr)
 		{
 		}
 
@@ -87,6 +89,9 @@ namespace ursine
 
 			if (mModelInfo)
 				mModelInfo->ReleaseData();
+
+			if (mLevelInfo)
+				mLevelInfo->ReleaseData();
 
 			if (mModel)
 			{
@@ -221,14 +226,23 @@ namespace ursine
 			// mesh data
 			strcpy(mModelInfo->name, mModel->name.c_str());
 			mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
+			if (nullptr == mLevelInfo)
+				mLevelInfo = new ufmt_loader::LevelInfo[mModelInfo->mmeshCount];
+			mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
+
 			mModelInfo->marrMeshes = new ufmt_loader::MeshInfo[mModelInfo->mmeshCount];
+			mLevelInfo->marrMeshlvls = new ufmt_loader::MeshInLvl[mModelInfo->mmeshCount];
 			for (i = 0; i < mModelInfo->mmeshCount; ++i)
 			{
 				// name & counter initialization
 				std::strcpy(mModelInfo->marrMeshes[i].name, mModel->mMeshData[i]->name.c_str());
+				// store mesh name for level info
+				std::strcpy(mLevelInfo->marrMeshlvls[i].name, mModel->mMeshData[i]->name.c_str());
 				
 				// mesh Transformation
 				mModelInfo->marrMeshes[i].meshTM = mModel->mMeshData[i]->meshTM;
+				// store mesh transform for level info
+				mLevelInfo->marrMeshlvls[i].meshTM = mModel->mMeshData[i]->meshTM;
 
 				//vtx
 				mModelInfo->marrMeshes[i].vertexCount = static_cast<unsigned int>(mModel->mMeshData[i]->vertexCnt);
@@ -407,29 +421,30 @@ namespace ursine
 
 		bool CFBXLoader::CustomFileExport()
 		{
-			if (nullptr == mModelInfo)
+			if (nullptr == mModelInfo || nullptr == mLevelInfo)
 				return false;
 
 			// set name for the custom file format and store it into Output folder
 			std::string _fileName("Assets/Models/");
 			_fileName += mModelInfo->name;
-			std::string jdlFile = _fileName + ".jdl";
-			std::string jlvlFile = _fileName + ".jlvl";
-
+			std::string jdlFile = _fileName;
+			std::string jlvlFile = _fileName;
+			jdlFile += ".jdl";
+			jlvlFile += ".jlvl";
 			HANDLE hFile = CreateFile(jdlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 			bool ret = false;
 			if (mModelInfo->SerializeOut(hFile))
 				ret = true;
 			else
-				MessageBox(nullptr, "Data Exported Failed!", "", MB_OK);
+				MessageBox(nullptr, "Jdl Export Failed!", "", MB_OK);
 			CloseHandle(hFile);
 
 			hFile = CreateFile(jlvlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-			bool ret = false;
+			ret = false;
 			if (mLevelInfo->SerializeOut(hFile))
 				ret = true;
 			else
-				MessageBox(nullptr, "Data Exported Failed!", "", MB_OK);
+				MessageBox(nullptr, "Jlvl Export Failed!", "", MB_OK);
 			CloseHandle(hFile);
 
 			return ret;
@@ -577,6 +592,15 @@ namespace ursine
 				ProcessTexcoord(mesh, newMesh);
 				ProcessMaterials(pNode, newMesh);
 				mModel->mMeshData.push_back(newMesh);
+
+				//go through all the control points(verticies) and multiply by the transformation
+				for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
+				{
+					SVec3 vtx = SetFloat3ToSVec3(newMesh->vertices[i]);
+					SMat4 meshTM = newMesh->meshTM;
+					SVec3 result = meshTM.TransformVector(vtx);
+					newMesh->vertices[i] = SetSVec3ToFloat3(result);
+				}
 			}
 			for (int i = 0; i < pNode->GetChildCount(); ++i)
 				ProcessStaticMesh(pNode->GetChild(i));
@@ -1346,6 +1370,7 @@ namespace ursine
 					meshTransform.SetS(FbxVector4(1, 1, 1));
 
 				modelMesh->meshTM = FBXAMatrixToXMMatrix(&meshTransform);
+
 				ProcessVertices(mesh, modelMesh);
 				ProcessNormals(mesh, modelMesh);
 				ProcessTangent(mesh, modelMesh);
@@ -1357,7 +1382,7 @@ namespace ursine
 				{
 					SVec3 vtx = SetFloat3ToSVec3(modelMesh->vertices[i]);
 					SMat4 meshTM = modelMesh->meshTM;
-					SVec3 result = meshTM.TransformVector(vtx);// XMVector3Transform(vtx, meshTM);
+					SVec3 result = meshTM.TransformVector(vtx);
 					modelMesh->vertices[i] = SetSVec3ToFloat3(result);
 				}
 				mModel->mMeshData.push_back(modelMesh);

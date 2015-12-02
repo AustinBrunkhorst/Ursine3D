@@ -18,10 +18,11 @@ namespace ursine
 			{
 			public:
 				unsigned int	mmeshlvlCount;
-				MeshInLvl		marrMeshlvls;
+				MeshInLvl*		marrMeshlvls;
 
 				LevelInfo();
 				virtual ~LevelInfo();
+				void ReleaseData();
 
 				bool SerializeIn(HANDLE hFile);
 				bool SerializeOut(HANDLE hFile);
