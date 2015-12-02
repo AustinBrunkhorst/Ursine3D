@@ -132,7 +132,7 @@ void Editor::initializeGraphics(void)
     URSINE_TODO( "..." );
 
     config.m_renderUI = true;
-    config.debug = false;
+    config.debug = true;
 
     config.Profile_ = false;
 
