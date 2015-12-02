@@ -25,6 +25,8 @@ namespace ursine
 		{
 			GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Body::onTransformChange );
+
+            m_body.setUserIndex( GetOwner( )->GetUniqueID( ) );
 		}
 
         void Body::SetOffset(const SVec3 &offset)

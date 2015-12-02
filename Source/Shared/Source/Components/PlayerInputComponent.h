@@ -16,6 +16,11 @@ public:
 
     ursine::Vec2 LookDir(void);
 
+    bool Fire( void );
+
     int id;
     bool keyboard;
+
+    const float triggerDepressValue;
+    const float triggerPressValue;
 } Meta(Enable, DisplayName("PlayerInput"));
