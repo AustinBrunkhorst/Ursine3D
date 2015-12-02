@@ -5,15 +5,24 @@
 class Health : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
+
 public:
-    Health( );
+    EditorField(
+        int EntityHealth,
+        GetHealth,
+        SetHealth
+    );
 
-    int GetHealth( ) const;
-    void SetHealth( const int health );
+    Health(void);
+    ~Health(void);
 
-    void DealDamage( const int damage );
+    int GetHealth(void) const;
+    void SetHealth(const int health);
+
+    Meta(Disable)
+    void DealDamage(const int damage);
 
 private:
     int m_health;
 
-};
+} Meta(Enable, DisplayName("Health"));

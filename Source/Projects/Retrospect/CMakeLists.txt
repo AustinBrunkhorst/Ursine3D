@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 
 include_directories(${Shared_INCLUDE_DIRS})
 
+# external files that will trigger regeneration of meta data
+set(meta_dependencies ${Shared_HEADER_FILES})
+
 ursine_default_project(Retrospect
     FOLDER "Projects"
     TYPE EXE
@@ -15,6 +18,7 @@ ursine_default_project(Retrospect
     BUILD_META
     INCLUDE_INSTALLER
     META_HEADER "Reflection.h"
+    META_DEPENDENCIES ${meta_dependencies}
     PCH_NAME "Precompiled"
 )
 

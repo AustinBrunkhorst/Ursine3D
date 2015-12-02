@@ -363,9 +363,9 @@ namespace ursine
             dxCore->GetDeviceContext()->RSSetViewports(1, &vpData);
 
             //clear it
-            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+            dxCore->SetDepthState( DEPTH_STATE_PASSDEPTH_NOSTENCIL );
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
             dxCore->SetBlendState(BLEND_STATE_DEFAULT);
 
@@ -382,7 +382,7 @@ namespace ursine
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-
+            dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
             /////////////////////////////////////////////////////////////////
             if (cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
                 RenderScene_Deferred(dt, camera);
