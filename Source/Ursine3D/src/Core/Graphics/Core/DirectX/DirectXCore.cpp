@@ -15,6 +15,10 @@
 #include "DirectXCore.h"
 #include <d3d11.h>
 #include "DXErrorHandling.h"
+#include <d3d11_1.h>    
+#include <locale>
+#include <codecvt>
+#include <string>
 
 namespace ursine
 {
@@ -40,7 +44,7 @@ namespace ursine
                 m_device = nullptr;
                 m_debug = debug;
                 m_shouldResize = false;
-
+                m_userAnnotation = nullptr;
                 m_infoQueue = nullptr;
 
                 /////////////////////////////////////////////////////////////////
@@ -66,8 +70,8 @@ namespace ursine
 
                 D3D_FEATURE_LEVEL finalFeatureLevel;
                 D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ] = {
+                    D3D_FEATURE_LEVEL_11_1,
                     D3D_FEATURE_LEVEL_11_0,
-                    D3D_FEATURE_LEVEL_10_1,
                     D3D_FEATURE_LEVEL_10_0
                 };
 
@@ -150,54 +154,12 @@ namespace ursine
 
                     UAssert( result == S_OK, "Failed to make debug interface! (Error '%s')", GetDXErrorMessage( result ) );
 
-                    // create info queue ///////////////////////////////
+                    // create annotations ///////////////////////////
                     result = m_device->QueryInterface(
-                        __uuidof(ID3D11InfoQueue),
-                        reinterpret_cast<void**>(&m_infoQueue)
-                        );
-
-                    UAssert( result == S_OK, "Failed to make info queue! (Error '%s')", GetDXErrorMessage( result ) );
-
-                    //D3D11_INFO_QUEUE_FILTER_DESC allow;
-                    //D3D11_MESSAGE_SEVERITY allowList[] = { 
-                    //    D3D11_MESSAGE_SEVERITY_CORRUPTION,
-                    //    D3D11_MESSAGE_SEVERITY_ERROR,
-                    //    D3D11_MESSAGE_SEVERITY_WARNING
-                    //};
-                    //allow.NumCategories = 0;
-                    //allow.pCategoryList = nullptr;
-
-                    //allow.NumSeverities = 3;
-                    //allow.pSeverityList = allowList;
-
-                    //allow.NumIDs = 0;
-                    //allow.pIDList = nullptr;
-                    //
-                    //D3D11_INFO_QUEUE_FILTER_DESC deny;
-                    //D3D11_MESSAGE_SEVERITY denyList[] = { 
-                    //    D3D11_MESSAGE_SEVERITY_INFO,
-                    //    D3D11_MESSAGE_SEVERITY_MESSAGE
-                    //};
-                    //deny.NumCategories = 0;
-                    //deny.pCategoryList = nullptr;
-
-                    //deny.NumSeverities = 2;
-                    //deny.pSeverityList = denyList;
-
-                    //deny.NumIDs = 0;
-                    //deny.pIDList = nullptr;
-
-                    //D3D11_INFO_QUEUE_FILTER filter;
-                    //filter.AllowList = allow;
-                    //filter.DenyList = deny;
-                    m_infoQueue->SetMessageCountLimit( -1 );
-                    m_infoQueue->SetMuteDebugOutput( true );
-                    
-                    //m_infoQueue->AddRetrievalFilterEntries( &filter );
-                    result = m_infoQueue->PushEmptyStorageFilter( );
-                    UAssert( result == S_OK, "Failed to make storage filter! (Error '%s')", GetDXErrorMessage( result ) );
-                    result = m_infoQueue->PushEmptyRetrievalFilter( );
-                    UAssert( result == S_OK, "Failed to make retrieval filter! (Error '%s')", GetDXErrorMessage( result ) );
+                        __uuidof(ID3DUserDefinedAnnotation), 
+                        reinterpret_cast<void**>(&m_userAnnotation)
+                    );
+                    //UAssert(result == S_OK, "Failed to make annotation interface! (Error '%s')", GetDXErrorMessage(result));
 
                     // create swapchain /////////////////////////////
                     IDXGIDevice * pDXGIDevice = nullptr;
@@ -365,6 +327,8 @@ namespace ursine
                 delete m_depthStencilManager;
 
                 RELEASE_RESOURCE(m_swapChain);
+                RELEASE_RESOURCE(m_infoQueue);
+                RELEASE_RESOURCE(m_userAnnotation);
                 RELEASE_RESOURCE(m_deviceContext);
                 RELEASE_RESOURCE(m_device);
 
@@ -512,6 +476,28 @@ namespace ursine
             {
                 m_swapChain->SetFullscreenState( state, nullptr );
             }
+
+            void DirectXCore::StartDebugEvent(std::string eventStr)
+            {
+                if(m_userAnnotation != nullptr)
+                {
+                    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+                    std::wstring wide = converter.from_bytes(eventStr);
+
+                    m_userAnnotation->BeginEvent(wide.c_str());
+                }
+            }
+
+            void DirectXCore::EndDebugEvent()
+            {
+                if (m_userAnnotation != nullptr)
+                {
+
+                    m_userAnnotation->EndEvent();
+                }
+            }
+
+            /////////////////////////////////////////////////////////////////////////////////////////
 
             void DirectXCore::backendResizeDX(const int width, const int height)
             {

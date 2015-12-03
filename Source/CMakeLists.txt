@@ -135,14 +135,18 @@ if (MSVC)
     endif ()
 
     set(vcredist_name "vcredist${VS_VERSION}0_${vc_build}.exe")
+    set(d3dredist_name "d3dredist_${vc_build}.exe")
 
-    # Visual Studio redistributable runtime libraries
+    # Visual Studio and DirectX redistributable runtime library installation
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
         ExecWait '\\\"$INSTDIR\\\\tmp\\\\${vcredist_name}\\\" /q /norestart'
+        ExecWait '\\\"$INSTDIR\\\\tmp\\\\${d3dredist_name}\\\"'
         RMDir /r \\\"$INSTDIR\\\\tmp\\\"
     ")
 
     set(ENGINE_VCREDIST_FILE "${ENGINE_RESOURCES_DIR}/Installers/${vcredist_name}")
+    set(ENGINE_D3DREDIST_FILE "${ENGINE_RESOURCES_DIR}/Installers/${d3dredist_name}")
+    set(ENGINE_D3DREDIST_HELPER_DLL "${ENGINE_RESOURCES_DIR}/Installers/D3D11InstallHelper.dll")
 endif ()
 
 # ------------------------------------------------------------------------------

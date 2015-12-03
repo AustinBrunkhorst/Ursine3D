@@ -99,3 +99,22 @@ bool PlayerInput::Fire()
 
     return false;
 }
+
+bool PlayerInput::ResetTrigger()
+{
+    if ( keyboard )
+    {
+        auto *mouse = GetCoreSystem( MouseManager );
+
+        return !mouse->IsButtonTriggeredDown( MouseButton::MBTN_LEFT );
+    }
+
+    auto *state = GetCoreSystem( GamepadManager )->GetState( id );
+
+    if ( state )
+    {
+        return state->Triggers( ).Right( ) < triggerDepressValue;
+    }
+
+    return false;
+}

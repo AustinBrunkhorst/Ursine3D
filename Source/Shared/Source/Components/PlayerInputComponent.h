@@ -18,6 +18,8 @@ public:
 
     bool Fire( void );
 
+    bool ResetTrigger( void );
+
     int id;
     bool keyboard;
 

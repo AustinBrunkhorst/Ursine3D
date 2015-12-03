@@ -163,7 +163,17 @@ namespace ursine
         SMat4 Camera::GetProjMatrix(void)
         {
             return GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).GetProjMatrix( );
-        }        
+        }
+
+        int Camera::GetRenderMask() const
+        {
+            return GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).GetMask( );
+        }
+
+        void Camera::SetRenderMask(const int mask)
+        {
+            GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).SetMask( mask );
+        }
 
         SVec3 Camera::ScreenToWorld(const Vec2& screenPos, float depth)
         {

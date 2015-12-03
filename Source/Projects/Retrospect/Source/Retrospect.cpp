@@ -68,7 +68,6 @@ void Retrospect::OnInitialize(void)
         .On( WINDOW_RESIZE, &Retrospect::onMainWindowResize );
 
     m_mainWindow.window->SetLocationCentered( );
-    m_mainWindow.window->Show( true );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
@@ -98,6 +97,7 @@ void Retrospect::OnInitialize(void)
         } );
     }
     m_mainWindow.window->SetFullScreen( true );
+    m_mainWindow.window->Show( true );
 }
 
 void Retrospect::OnRemove(void)
