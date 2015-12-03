@@ -15,6 +15,10 @@
 #include "DirectXCore.h"
 #include <d3d11.h>
 #include "DXErrorHandling.h"
+#include <d3d11_1.h>    
+#include <locale>
+#include <codecvt>
+#include <string>
 
 namespace ursine
 {
@@ -22,7 +26,8 @@ namespace ursine
     {
         namespace DXCore
         {
-            void DirectXCore::Initialize(const unsigned width, const unsigned height, HWND hWindow, ursine::graphics::GfxInfo *gfxInfo, bool fullscreen, bool debug)
+
+            void DirectXCore::Initialize( const unsigned width, const unsigned height, HWND hWindow, ursine::graphics::GfxInfo *gfxInfo, bool fullscreen, bool debug )
             {
                 //allocate all
                 m_blendManager = new BlendStateManager;
@@ -39,19 +44,21 @@ namespace ursine
                 m_device = nullptr;
                 m_debug = debug;
                 m_shouldResize = false;
+                m_userAnnotation = nullptr;
+                m_infoQueue = nullptr;
 
                 /////////////////////////////////////////////////////////////////
                 // GET REFRESH RATE /////////////////////////////////////////////
-                unsigned numerator, denominator;
+                unsigned numerator = 60, denominator = 1;
 
-                for (unsigned x = 0; x < gfxInfo->GetModeCount(); ++x)
+                for ( unsigned x = 0; x < gfxInfo->GetModeCount( ); ++x )
                 {
-                    if (gfxInfo->GetDisplayInfo(x).Width == width)
+                    if ( gfxInfo->GetDisplayInfo( x ).Width == width )
                     {
-                        if (gfxInfo->GetDisplayInfo(x).Height == height)
+                        if ( gfxInfo->GetDisplayInfo( x ).Height == height )
                         {
-                            numerator = gfxInfo->GetDisplayInfo(x).RefreshRate.Numerator;
-                            denominator = gfxInfo->GetDisplayInfo(x).RefreshRate.Denominator;
+                            numerator = gfxInfo->GetDisplayInfo( x ).RefreshRate.Numerator;
+                            denominator = gfxInfo->GetDisplayInfo( x ).RefreshRate.Denominator;
                         }
                     }
                 }
@@ -61,11 +68,12 @@ namespace ursine
                 DXGI_SWAP_CHAIN_DESC swapChainDesc;
                 ID3D11Texture2D *backBufferPtr;
 
-                D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ];
-                FeatureLevelArray[ 0 ] = D3D_FEATURE_LEVEL_11_1;
-                FeatureLevelArray[ 1 ] = D3D_FEATURE_LEVEL_11_0;
-                FeatureLevelArray[ 2 ] = D3D_FEATURE_LEVEL_10_1;
-                FeatureLevelArray[ 3 ] = D3D_FEATURE_LEVEL_10_0;
+                D3D_FEATURE_LEVEL finalFeatureLevel;
+                D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ] = {
+                    D3D_FEATURE_LEVEL_11_1,
+                    D3D_FEATURE_LEVEL_11_0,
+                    D3D_FEATURE_LEVEL_10_0
+                };
 
                 //Initialize the swap chain description.
                 ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -81,7 +89,7 @@ namespace ursine
                 swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
                 //Set the refresh rate of the back buffer.
-                if (false) //@Matt change this to properly do vsync
+                if (true) //@Matt change this to properly do vsync
                 {
                     swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
                     swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
@@ -106,7 +114,7 @@ namespace ursine
                 LogMessage("Sample Quality: %i", 2, swapChainDesc.SampleDesc.Quality);
 
                 //set swap chain flags
-                swapChainDesc.Windowed = true; //@Mat rekt
+                swapChainDesc.Windowed = true; // this is like this for a reason
                 swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
                 //Set the scan line ordering and scaling to unspecified.
@@ -120,25 +128,117 @@ namespace ursine
                 //Create the swap chain, Direct3D device, and Direct3D device context.
                 if (debug)
                 {
-                    result = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
-                        D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, FeatureLevelArray, 4, D3D11_SDK_VERSION,
-                        &swapChainDesc, &m_swapChain, &m_device, nullptr, &m_deviceContext);
-                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '%s')", GetDXErrorMessage(result));
+                     result = D3D11CreateDevice( 
+                        nullptr, 
+                         D3D_DRIVER_TYPE_HARDWARE,
+                        nullptr, 
+                        D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, 
+                        FeatureLevelArray, 
+                        3, 
+                        D3D11_SDK_VERSION,
+                        &m_device, 
+                        &finalFeatureLevel, 
+                        &m_deviceContext 
+                    );
 
-                    //make debug interface
-                    result = m_device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&m_debugInterface));
-                    UAssert(result == S_OK, "Failed to make debug interface! (Error '%s')", GetDXErrorMessage(result));
+                    UAssert( result == S_OK, "Failed to make device! (Error '%s')", GetDXErrorMessage( result ) );
+
+                    D3D_FEATURE_LEVEL finalFeatureLevel = m_device->GetFeatureLevel( );
+                    LogMessage( "Feature Level: %i", 2, finalFeatureLevel );
+
+                    // make debug interface /////////////////////////
+                    result = m_device->QueryInterface(
+                        __uuidof(ID3D11Debug),
+                        reinterpret_cast<void**>(&m_debugInterface)
+                        );
+
+                    UAssert( result == S_OK, "Failed to make debug interface! (Error '%s')", GetDXErrorMessage( result ) );
+
+                    // create annotations ///////////////////////////
+                    result = m_device->QueryInterface(
+                        __uuidof(ID3DUserDefinedAnnotation), 
+                        reinterpret_cast<void**>(&m_userAnnotation)
+                    );
+                    //UAssert(result == S_OK, "Failed to make annotation interface! (Error '%s')", GetDXErrorMessage(result));
+
+                    // create swapchain /////////////////////////////
+                    IDXGIDevice * pDXGIDevice = nullptr;
+                    result = m_device->QueryInterface( 
+                        __uuidof(IDXGIDevice), 
+                        (void **)&pDXGIDevice 
+                    );
+
+                    IDXGIAdapter * pDXGIAdapter = nullptr;
+                    result = pDXGIDevice->GetAdapter( &pDXGIAdapter );
+
+                    IDXGIFactory * pIDXGIFactory = nullptr;
+                    pDXGIAdapter->GetParent( 
+                        __uuidof(IDXGIFactory), 
+                        (void **)&pIDXGIFactory 
+                    );
+
+                    result = pIDXGIFactory->CreateSwapChain( 
+                        m_device, 
+                        &swapChainDesc, 
+                        &m_swapChain 
+                    );
+
+                    UAssert( result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage( result ) );
+
+                    // END //////////////////////////////////////////
+                    RELEASE_RESOURCE( pIDXGIFactory );
+                    RELEASE_RESOURCE( pDXGIAdapter );
+                    RELEASE_RESOURCE( pDXGIDevice );
                 }
                 else
                 {
-                    result = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
-                        D3D11_CREATE_DEVICE_SINGLETHREADED, FeatureLevelArray, 4, D3D11_SDK_VERSION,
-                        &swapChainDesc, &m_swapChain, &m_device, nullptr, &m_deviceContext);
-                    UAssert(result == S_OK, "Failed to make device and swap chain! (Error '%s')", GetDXErrorMessage(result));
-                }
+                    // create the devices ///////////////////////////
+                    result = D3D11CreateDevice( 
+                        nullptr, 
+                        D3D_DRIVER_TYPE_HARDWARE, 
+                        nullptr, 
+                        D3D11_CREATE_DEVICE_SINGLETHREADED,
+                        FeatureLevelArray,
+                        3, 
+                        D3D11_SDK_VERSION,
+                        &m_device, 
+                        &finalFeatureLevel,
+                        &m_deviceContext 
+                    );
 
-                D3D_FEATURE_LEVEL finalFeatureLevel = m_device->GetFeatureLevel();
-                LogMessage("Feature Level: %i", 2, finalFeatureLevel);
+                    UAssert( result == S_OK, "Failed to make device! (Error '%s')", GetDXErrorMessage( result ) );
+
+                    LogMessage( "Feature Level: %i", 2, finalFeatureLevel );
+
+                    // CREATE SWAPCHAIN ////////////////////////////////////////////
+                    IDXGIDevice * pDXGIDevice = nullptr;
+                    result = m_device->QueryInterface( 
+                        __uuidof(IDXGIDevice), 
+                        (void **)&pDXGIDevice 
+                    );
+
+                    IDXGIAdapter * pDXGIAdapter = nullptr;
+                    result = pDXGIDevice->GetAdapter( &pDXGIAdapter );
+
+                    IDXGIFactory * pIDXGIFactory = nullptr;
+                    pDXGIAdapter->GetParent( 
+                        __uuidof(IDXGIFactory), 
+                        (void **)&pIDXGIFactory 
+                    );
+
+                    result = pIDXGIFactory->CreateSwapChain( 
+                        m_device, 
+                        &swapChainDesc, 
+                        &m_swapChain 
+                    );
+
+                    UAssert( result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage( result ) );
+
+                    // END ////////////////////////////////////////////////////////////
+                    RELEASE_RESOURCE( pIDXGIFactory );
+                    RELEASE_RESOURCE( pDXGIAdapter );
+                    RELEASE_RESOURCE( pDXGIDevice );
+                }
 
                 //set to not fullscreen
                 m_swapChain->SetFullscreenState(fullscreen, nullptr);
@@ -149,12 +249,21 @@ namespace ursine
                 m_targetManager->CreateTargets();
 
                 //Get the pointer to the back buffer.
-                result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr);
+                result = m_swapChain->GetBuffer(
+                    0, 
+                    __uuidof(ID3D11Texture2D), 
+                    (LPVOID*)&backBufferPtr
+                );
+
                 UAssert(result == S_OK, "Failed to get back buffer! (Error '%s')", GetDXErrorMessage(result));
 
                 //Create the render target view with the back buffer pointer.
-                result = m_device->CreateRenderTargetView(backBufferPtr, nullptr,
-                    &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView);
+                result = m_device->CreateRenderTargetView(
+                    backBufferPtr, 
+                    nullptr,
+                    &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView
+                );
+
                 UAssert(result == S_OK, "Failed to make render target! (Error '%s')", GetDXErrorMessage(result));
 
                 //Release pointer to the back buffer as we no longer need it.
@@ -171,20 +280,34 @@ namespace ursine
 
                 /////////////////////////////////////////////////////////////////
                 // SET MAIN RENDER TARGET ///////////////////////////////////////
-                m_deviceContext->OMSetRenderTargets(1, &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+                m_deviceContext->OMSetRenderTargets(
+                    1,
+                    &m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView, 
+                    m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN)
+                );
 
                 /////////////////////////////////////////////////////////////////
                 // CREATING RASTER STATES ///////////////////////////////////////
-                m_rasterStateManager->Initialize(m_device, m_deviceContext);
+                m_rasterStateManager->Initialize(
+                    m_device,
+                    m_deviceContext
+                );
+
                 m_rasterStateManager->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
 
                 /////////////////////////////////////////////////////////////////
                 // CREATING BLEND STATES ////////////////////////////////////////
-                m_blendManager->Initialize(m_device, m_deviceContext);
+                m_blendManager->Initialize(
+                    m_device, 
+                    m_deviceContext
+                );
 
                 /////////////////////////////////////////////////////////////////
                 // CREATE OTHER RENDER TARGETS //////////////////////////////////
-                m_targetManager->InitializeAllRenderTargets(width, height);
+                m_targetManager->InitializeAllRenderTargets(
+                    width, 
+                    height
+                );
             }
 
             void DirectXCore::Uninitialize(void)
@@ -204,6 +327,8 @@ namespace ursine
                 delete m_depthStencilManager;
 
                 RELEASE_RESOURCE(m_swapChain);
+                RELEASE_RESOURCE(m_infoQueue);
+                RELEASE_RESOURCE(m_userAnnotation);
                 RELEASE_RESOURCE(m_deviceContext);
                 RELEASE_RESOURCE(m_device);
 
@@ -346,6 +471,33 @@ namespace ursine
                 m_targetManager->Invalidate();
                 m_rasterStateManager->Invalidate();
             }
+
+            void DirectXCore::SetFullscreenState(const bool state)
+            {
+                m_swapChain->SetFullscreenState( state, nullptr );
+            }
+
+            void DirectXCore::StartDebugEvent(std::string eventStr)
+            {
+                if(m_userAnnotation != nullptr)
+                {
+                    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+                    std::wstring wide = converter.from_bytes(eventStr);
+
+                    m_userAnnotation->BeginEvent(wide.c_str());
+                }
+            }
+
+            void DirectXCore::EndDebugEvent()
+            {
+                if (m_userAnnotation != nullptr)
+                {
+
+                    m_userAnnotation->EndEvent();
+                }
+            }
+
+            /////////////////////////////////////////////////////////////////////////////////////////
 
             void DirectXCore::backendResizeDX(const int width, const int height)
             {

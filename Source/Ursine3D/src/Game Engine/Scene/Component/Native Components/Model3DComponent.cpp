@@ -115,6 +115,18 @@ namespace ursine
             return m_model->GetDebug( );
         }
 
+        int Model3D::GetRenderMask() const
+        {
+            int retVal = static_cast<int>(m_model->GetRenderMask( ) & 0xFFFFFFFF);
+
+            return retVal;
+        }
+
+        void Model3D::SetRenderMask(const int mask)
+        {
+            m_model->SetRenderMask( static_cast<unsigned long long>(mask) );
+        }
+
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
         {
             m_model->SetMaterialData( emiss, pow, intensity );

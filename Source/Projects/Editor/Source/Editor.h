@@ -41,5 +41,7 @@ private:
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
+    void onFocusChange(EVENT_HANDLER( ursine::Window ));
+
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
 } Meta(Enable, WhiteListMethods);

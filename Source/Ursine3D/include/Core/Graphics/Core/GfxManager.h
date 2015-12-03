@@ -58,6 +58,8 @@ namespace ursine
 
             void Resize(int width, int height);
 
+            void SetFullscreenState( const bool state );
+
             void Invalidate();
 
             void RenderUI(GfxHND camera, RENDER_TARGETS input);
@@ -128,13 +130,13 @@ namespace ursine
             void PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj);
 
             //rendering funcs
-            void Render3DModel(_DRAWHND handle);
+            void Render3DModel(_DRAWHND handle, Camera &currentcamera );
             void Render2DBillboard(_DRAWHND handle, Camera &currentCamera);
             void RenderComputeMousePos(void);
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderSpotLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
-            void RenderPrimitive(_DRAWHND handle);
+            void RenderPrimitive(_DRAWHND handle, Camera &currentcamera );
             void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
             void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
 

@@ -10,10 +10,13 @@ NATIVE_COMPONENT_DEFINITION( PlayerInput );
 
 using namespace ursine;
 
-PlayerInput::PlayerInput(void)
+PlayerInput::PlayerInput( void )
     : BaseComponent( )
     , id( 0 )
-    , keyboard( false ) { }
+    , keyboard( false )
+    , triggerDepressValue( 0.1f )
+    , triggerPressValue( 0.9f )
+{ }
 
 bool PlayerInput::Jump(void)
 {
@@ -76,4 +79,42 @@ ursine::Vec2 PlayerInput::LookDir(void)
         else
             return Vec2::Zero( );
     }
+}
+
+bool PlayerInput::Fire()
+{
+    if ( keyboard )
+    {
+        auto *mouse = GetCoreSystem( MouseManager );
+
+        return mouse->IsButtonTriggeredDown( MouseButton::MBTN_LEFT );
+    }
+
+    auto *state = GetCoreSystem( GamepadManager )->GetState( id );
+
+    if ( state )
+    {
+        return state->Triggers( ).Right( ) > triggerPressValue;
+    }
+
+    return false;
+}
+
+bool PlayerInput::ResetTrigger()
+{
+    if ( keyboard )
+    {
+        auto *mouse = GetCoreSystem( MouseManager );
+
+        return !mouse->IsButtonTriggeredDown( MouseButton::MBTN_LEFT );
+    }
+
+    auto *state = GetCoreSystem( GamepadManager )->GetState( id );
+
+    if ( state )
+    {
+        return state->Triggers( ).Right( ) < triggerDepressValue;
+    }
+
+    return false;
 }

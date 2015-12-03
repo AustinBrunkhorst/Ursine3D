@@ -83,7 +83,9 @@ namespace ursine
 
         bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
                                     physics::RaycastOutput& output,
-                                    physics::RaycastType type, bool debug, float drawDuration)
+                                    physics::RaycastType type, bool debug, float drawDuration, 
+                                    bool alwaysDrawLine, 
+                                    Color colorBegin, Color colorEnd )
         {
             bool result = m_simulation.Raycast( input, output, type );
 
@@ -98,7 +100,7 @@ namespace ursine
                     auto &norm = output.normal[ i ];
 
                     // Draw the ray to the hit
-                    m_debugSystem->DrawLine( start, hit, Color::Blue, drawDuration );
+                    m_debugSystem->DrawLine( start, hit, colorBegin, colorEnd, drawDuration );
 
                     // Draw the normal
                     m_debugSystem->DrawLine( hit, hit + norm * 1.0f, Color::White, drawDuration );
@@ -106,6 +108,10 @@ namespace ursine
                     // Draw the hit location
                     m_debugSystem->DrawPoint( hit, 10.0f, Color::Cyan, drawDuration );
                 }
+            }
+            else if(debug && alwaysDrawLine)
+            {
+                m_debugSystem->DrawLine( input.start, input.end, colorBegin, colorEnd, drawDuration );
             }
 
             return result;
@@ -256,7 +262,7 @@ namespace ursine
 
                 // if there are still collision shapes attached to 
                 // the entity, add a body for them to use
-                if (m_collisionShapes.Matches( oldTypeMask ))
+                if (m_collisionShapes.Matches( oldTypeMask ) && !entity->IsDeleting( ))
                 {
                     auto *body = entity->AddComponent<Body>( );
 
@@ -284,7 +290,7 @@ namespace ursine
                 );
 
                 // if there is an empty collider attached, remove it
-                if (entity->HasComponent<EmptyCollider>( ))
+                if (entity->HasComponent<EmptyCollider>( ) && !entity->IsDeleting( ))
                     entity->RemoveComponent<EmptyCollider>( );
             }
             else if (component->Is<Body>( ))
@@ -297,7 +303,8 @@ namespace ursine
             }
             else if (m_collisionShapes.Matches( component->GetTypeMask( ) ))
             {
-                removeCollider( entity );
+				if (!entity->IsDeleting( ))
+					removeCollider( entity );
             }
         }
 

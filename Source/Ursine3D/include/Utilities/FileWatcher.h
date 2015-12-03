@@ -45,8 +45,11 @@ public:
     static FileWatcher *StartFileWatch( 
         std::string path, 
         std::string extension, 
-                void( *callback )(const std::string), WatchMode mode = ON_MODIFICATION, 
-                                        unsigned sleepTime = 1000, bool recursive = false );
+        void( *callback )(const std::string), 
+        WatchMode mode = ON_MODIFICATION, 
+        unsigned sleepTime = 1000, 
+        bool recursive = false 
+        );
 
     /** @brief begins a file watcher, using a class method as the callback
     *
@@ -59,9 +62,15 @@ public:
     *  @param recursive if we should recursively go through directories
     *  @return pointer to the file watcher
     */
-    static FileWatcher *StartFileWatch( std::string path, std::string extension, void(T::*classFunc)(const std::string), 
-                                        T *callbackCaller, WatchMode mode = ON_MODIFICATION, unsigned sleepTime = 1000, 
-                                        bool recursive = false );
+    static FileWatcher *StartFileWatch( 
+        std::string path, 
+        std::string extension, 
+        void(T::*classFunc)(const std::string), 
+        T *callbackCaller, 
+        WatchMode mode = ON_MODIFICATION, 
+        unsigned sleepTime = 1000,                 
+        bool recursive = false 
+        );
 
     /** @brief permanently stop a file watcher
     *
@@ -81,7 +90,14 @@ private:
     *  @param recursive if we should recursively go through directories
     *  @return void
     */
-    FileWatcher( std::string path, std::string extension, WatchMode mode, unsigned sleepTime, void( *callbackFunc )(std::string), bool recursive );
+    FileWatcher( 
+        std::string path, 
+        std::string extension, 
+        WatchMode mode, 
+        unsigned sleepTime, 
+        void( *callbackFunc )(std::string), 
+        bool recursive 
+        );
 
     /** @brief constructor for class method callback
     *
@@ -94,7 +110,15 @@ private:
     *  @param recursive if we should recursively go through directories
     *  @return void
     */
-    FileWatcher( std::string path, std::string extension, WatchMode mode, unsigned sleepTime, void(T::*callbackFunc)(std::string), T *callbackCaller, bool recursive );
+    FileWatcher( 
+        std::string path, 
+        std::string extension, 
+        WatchMode mode, 
+        unsigned sleepTime, 
+        void(T::*callbackFunc)(std::string), 
+        T *callbackCaller, 
+        bool recursive 
+        );
 
     /** @brief main entrypoint for thread, if a static function is the callback
     *
@@ -128,7 +152,10 @@ private:
     *  @param fileList reference to vector of the files that require action
     *  @return it succeeded or not
     */
-    bool scanDirectory( std::wstring directory, std::vector<std::wstring> &fileList );
+    bool scanDirectory( 
+        std::wstring directory, 
+        std::vector<std::wstring> &fileList 
+        );
 
     /** @brief converts wide string to narrow string
     *
@@ -154,8 +181,6 @@ private:
     std::wstring m_extension;                       // what extension should I look for?
 
     unsigned m_sleepTime;                           // how long to sleep before checking again
-
-    static unsigned m_watcherCount;                 // how many watchers are currently running
 
     bool m_recursive;                               // recursive search?
 

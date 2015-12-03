@@ -23,7 +23,8 @@ namespace ursine
 {
     namespace graphics
     {
-        typedef unsigned long long GfxHND; // universal graphics handle
+        typedef unsigned long long GfxHND;      // universal graphics handle
+        typedef unsigned long long RenderMask;  // mask to cull rendering on a layer level
     }
 }
 

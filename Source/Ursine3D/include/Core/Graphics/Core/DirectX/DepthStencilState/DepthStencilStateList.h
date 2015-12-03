@@ -31,6 +31,8 @@ namespace ursine
             DEPTH_STATE_POINTLIGHT,
             DEPTH_STATE_PASSDEPTH_WRITESTENCIL,
 
+            DEPTH_STATE_PASSDEPTH_NOSTENCIL,
+
             DEPTH_STATE_COUNT
         };
     }

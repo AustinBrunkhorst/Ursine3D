@@ -34,6 +34,12 @@ namespace ursine
                 SetMaterial
             );
 
+            EditorField(
+                int renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
             Model3D(void);
             ~Model3D(void);
 
@@ -61,8 +67,13 @@ namespace ursine
             void SetDebug(bool flag);
             bool GetDebug(void) const;
 
+            int GetRenderMask(void) const;
+            void SetRenderMask(const int mask);
+
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
+
+
 
         private:
 

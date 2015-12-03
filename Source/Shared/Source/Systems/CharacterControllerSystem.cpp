@@ -2,6 +2,7 @@
 
 #include "CharacterControllerSystem.h"
 #include "CharacterControllerComponent.h"
+#include "CharacterFireControllerComponent.h"
 
 #include "RigidbodyComponent.h"
 
@@ -11,6 +12,10 @@
 #include <MouseManager.h>
 #include <KeyboardManager.h>
 #include <UrsineMath.h>
+#include <Core/Physics/Interop/Raycasting.h>
+#include <PhysicsSystem.h>
+#include <SystemManager.h>
+#include <Components/HealthComponent.h>
 
 using namespace ursine;
 using namespace ursine::ecs;
