@@ -60,6 +60,12 @@ namespace ursine
                 SetRenderLayer
             );
 
+            EditorField(
+                int renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
             Meta(Enable)
             Camera(void);
             ~Camera(void);
@@ -97,6 +103,9 @@ namespace ursine
 
             SMat4 GetViewMatrix(void);
             SMat4 GetProjMatrix(void);
+
+            int GetRenderMask(void) const;
+            void SetRenderMask(const int mask);
 
             SVec3 ScreenToWorld(const Vec2 &screenPos, float depth);
 

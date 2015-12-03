@@ -8,7 +8,7 @@ class Health : public ursine::ecs::Component
 
 public:
     EditorField(
-        int EntityHealth,
+        float EntityHealth,
         GetHealth,
         SetHealth
     );
@@ -16,13 +16,13 @@ public:
     Health(void);
     ~Health(void);
 
-    int GetHealth(void) const;
-    void SetHealth(const int health);
+    float GetHealth(void) const;
+    void SetHealth(const float health);
 
     Meta(Disable)
-    void DealDamage(const int damage);
+    void DealDamage(const float damage);
 
 private:
-    int m_health;
+    float m_health;
 
 } Meta(Enable, DisplayName("Health"));

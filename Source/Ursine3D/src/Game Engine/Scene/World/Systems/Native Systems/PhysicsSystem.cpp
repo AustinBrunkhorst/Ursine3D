@@ -83,7 +83,9 @@ namespace ursine
 
         bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
                                     physics::RaycastOutput& output,
-                                    physics::RaycastType type, bool debug, float drawDuration)
+                                    physics::RaycastType type, bool debug, float drawDuration, 
+                                    bool alwaysDrawLine, 
+                                    Color colorBegin, Color colorEnd )
         {
             bool result = m_simulation.Raycast( input, output, type );
 
@@ -98,7 +100,7 @@ namespace ursine
                     auto &norm = output.normal[ i ];
 
                     // Draw the ray to the hit
-                    m_debugSystem->DrawLine( start, hit, Color::Blue, drawDuration );
+                    m_debugSystem->DrawLine( start, hit, colorBegin, colorEnd, drawDuration );
 
                     // Draw the normal
                     m_debugSystem->DrawLine( hit, hit + norm * 1.0f, Color::White, drawDuration );
@@ -106,6 +108,10 @@ namespace ursine
                     // Draw the hit location
                     m_debugSystem->DrawPoint( hit, 10.0f, Color::Cyan, drawDuration );
                 }
+            }
+            else if(debug && alwaysDrawLine)
+            {
+                m_debugSystem->DrawLine( input.start, input.end, colorBegin, colorEnd, drawDuration );
             }
 
             return result;

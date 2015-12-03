@@ -16,17 +16,17 @@ Health::~Health(void)
     
 }
 
-int Health::GetHealth(void) const
+float Health::GetHealth(void) const
 {
     return m_health;
 }
 
-void Health::SetHealth(const int health)
+void Health::SetHealth(const float health)
 {
     m_health = health;
 }
 
-void Health::DealDamage(const int damage)
+void Health::DealDamage(const float damage)
 {
     m_health -= damage;
 

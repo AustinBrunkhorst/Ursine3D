@@ -103,6 +103,7 @@ namespace ursine
             bool CheckMask( const unsigned long long renderMask );
 
             // set the mask this camera will use for culling operations
+            unsigned GetMask(void) const;
             void SetMask( const unsigned long long renderMask );
 
             ecs::EntityID GetEntityID(void) const;

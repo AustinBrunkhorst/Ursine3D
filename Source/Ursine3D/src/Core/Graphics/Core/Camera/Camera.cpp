@@ -35,7 +35,7 @@ namespace ursine
 
             m_renderMode = VIEWPORT_RENDER_DEFERRED;
 
-            m_cameraMask = 0xFFFFFFFFFFFFFFFF;
+            m_cameraMask = 0x7FFFFFFF;
         }
 
         void Camera::Uninitialize(void)
@@ -257,6 +257,11 @@ namespace ursine
 
             // else, return the regular mask comparison
             return renderMask & m_cameraMask;
+        }
+
+        unsigned Camera::GetMask() const
+        {
+            return m_cameraMask;
         }
 
         void Camera::SetMask(const unsigned long long renderMask)

@@ -2,6 +2,7 @@
 
 #include "CharacterControllerSystem.h"
 #include "CharacterControllerComponent.h"
+#include "CharacterFireControllerComponent.h"
 
 #include "RigidbodyComponent.h"
 
@@ -59,28 +60,4 @@ void CharacterControllerSystem::Process(Entity *entity)
 
     if (input->Jump( ))
         rigidbody->AddForce({ 0.0f, controller->jumpSpeed, 0.0f });
-
-    // firing a ray
-    if(input->Fire())
-    {
-        auto scale = transform->GetWorldScale( ).Y( );
-        physics::RaycastInput rayInput = physics::RaycastInput( 
-            transform->GetWorldPosition( ) + SVec3( 0, scale / 2.f, 0 ), 
-            transform->GetWorldPosition( ) + SVec3( 0, scale / 2.f, 0 ) + transform->GetForward( ) * 1000
-        );
-
-        physics::RaycastOutput rayOutput;
-
-        m_world->GetEntitySystem( PhysicsSystem )->Raycast( rayInput, rayOutput, physics::RAYCAST_ALL_HITS, true, 1.0 );
-
-        for ( auto &x : rayOutput.entity )
-        {
-            auto *hitObj = m_world->GetEntity(x);
-            auto *health = hitObj->GetComponent<Health>( );
-            if ( health != nullptr )
-            {
-                health->DealDamage( 10 );
-            }
-        }
-    }
 }
