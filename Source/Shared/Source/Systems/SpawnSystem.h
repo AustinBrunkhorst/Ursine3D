@@ -3,33 +3,34 @@
 #include <EntitySystem.h>
 #include "SpawnpointComponent.h"
 
-class SpawnSystem : public ursine::ecs::EntitySystem
-{
-    ENTITY_SYSTEM;
 
-public:
-    SpawnSystem(ursine::ecs::World *world);
+        class SpawnSystem : public ursine::ecs::EntitySystem
+        {
+            ENTITY_SYSTEM;
 
-private:
+        public:
+            SpawnSystem(ursine::ecs::World *world);
 
-    void OnInitialize(void) override;
-    void OnRemove(void) override;
+        private:
+            void OnInitialize(void) override;
+            void OnRemove(void) override;
 
-    // used to maintain player count and spawnpoint list
-    void onComponentAdded(EVENT_HANDLER(World));
-    // spawn points and player count
-    void onComponentRemoved(EVENT_HANDLER(World));
+            // used to maintain player count and spawnpoint list
+            void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));
+            // spawn points and player count
+            void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
 
-    //Function for getting list of spawn points and creating player archtypes at those positions
-    void spawnPlayer(int team);
+            //Function for getting list of spawn points and creating player archtypes at those positions
+            void spawnPlayer(int team);
 
-    const ursine::SVec3 &getSpawnPosition(int);
+            const ursine::SVec3 &getSpawnPosition(int);
 
-    //std::vector<Spawnpoint *> m_spawnpoints;
+            //std::vector<Spawnpoint *> m_spawnpoints;
 
-    std::vector<std::list<Spawnpoint *>> m_spawnpointLists;
+                std::list<Spawnpoint *> m_team1Spawnpoints;
+                std::list<Spawnpoint *> m_team2Spawnpoints;
 
-    unsigned m_playerCount;
-    unsigned m_maxPlayerCount;
+            unsigned m_playerCount;
+            unsigned m_maxPlayerCount;
 
-} Meta(Disable);
+        } Meta(Enable);

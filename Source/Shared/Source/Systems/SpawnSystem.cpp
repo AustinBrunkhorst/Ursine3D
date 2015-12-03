@@ -5,10 +5,17 @@
 #include "SpawnSystem.h"
 #include <Components/CharacterControllerComponent.h>
 #include <Components/PlayerInputComponent.h>
+#include <WorldEvent.h>
 
+#include <GfxAPI.h> // WHO IS YOUR GOD
+
+
+#include <SystemManager.h>
+#include "CoreSystem.h"
+#include <WorldEvent.h>
 
 using namespace ursine;
-using namespace ursine::ecs;
+
 
 ENTITY_SYSTEM_DEFINITION( SpawnSystem );
 
@@ -21,20 +28,20 @@ SpawnSystem::SpawnSystem(ursine::ecs::World* world) : EntitySystem(world)
 void SpawnSystem::OnInitialize(void)
 {
     m_world->Listener(this)
-        .On(WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
-        .On(WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
+        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
+        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
 }
 
 void SpawnSystem::OnRemove(void)
 {
-    m_world->Listener(this)
-        .Off(WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
-        .Off(WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
+    //m_world->Listener(this)
+    //    .Off(WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
+    //    .Off(WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
 }
 
-void SpawnSystem::onComponentAdded(EVENT_HANDLER(World))
+void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 {
-    EVENT_ATTRS(World, ComponentEventArgs);
+    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
     if (args->component->Is<CharacterController>())
     {
@@ -48,18 +55,26 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(World))
     else if (args->component->Is<Spawnpoint>())
     {
         auto *spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
-        while (spawnpoint->teamNumber >= m_spawnpointLists.size())
+        int team = spawnpoint->teamNumber;
+
+        if (team == 0)
         {
-            m_spawnpointLists.push_back(std::list<Spawnpoint *>());
+            m_team1Spawnpoints.push_back(spawnpoint);
         }
+        else if (team == 1)
+        {
+            m_team2Spawnpoints.push_back(spawnpoint);
+
+        }
+
         // this is to nicely different teams spawnpoints
-        m_spawnpointLists[spawnpoint->teamNumber].push_back(spawnpoint);        
+
     }
 }
 
-void SpawnSystem::onComponentRemoved(EVENT_HANDLER(World))
+void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 {
-    EVENT_ATTRS(World, ComponentEventArgs);
+    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
 
     if (args->component->Is<CharacterController>())
@@ -70,8 +85,8 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(World))
         {
             for (unsigned i = 0; i < m_maxPlayerCount / 2; ++i)
             {
+                spawnPlayer(0);
                 spawnPlayer(1);
-                spawnPlayer(2);
             }
         }
     }
@@ -79,7 +94,16 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(World))
     {
         auto spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
 
-        m_spawnpointLists[spawnpoint->teamNumber].remove(spawnpoint);
+        int team = spawnpoint->teamNumber;
+
+        if (team == 0)
+        {
+            m_team1Spawnpoints.remove(spawnpoint);
+        }
+        else if (team == 1)
+        {
+            m_team2Spawnpoints.remove(spawnpoint);
+        }
     }
 }
 
@@ -102,12 +126,23 @@ const ursine::SVec3& SpawnSystem::getSpawnPosition(int team)
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    std::uniform_int_distribution<> randNo(0, m_spawnpointLists[team].size() - 1);
+    const std::list<Spawnpoint *>& spawnList = (team == 1) ? m_team1Spawnpoints : m_team2Spawnpoints;
+
+
+    std::uniform_int_distribution<> randNo(0, static_cast<int>(spawnList.size()) - 1);
+
+    Spawnpoint *chosenSpawn = nullptr;
 
     int index = randNo(gen);
 
-    while (m_spawnpointLists[team][index]->teamNumber != team)
+    int count = 0;
+    for (auto i = spawnList.begin(); i != spawnList.end(); ++i, ++count)
     {
-        index = randNo(gen);
+        if (count == index)
+        {
+            chosenSpawn = *i;
+        }
     }
+
+    return chosenSpawn->GetOwner()->GetTransform()->GetWorldPosition();
 }
