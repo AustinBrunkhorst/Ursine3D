@@ -23,7 +23,7 @@
             //Function for getting list of spawn points and creating player archtypes at those positions
             void spawnPlayer(int team);
 
-            const ursine::SVec3 &getSpawnPosition(int);
+            const ursine::SVec3 &getSpawnPosition(int team, float yOffset);
 
             //std::vector<Spawnpoint *> m_spawnpoints;
 
