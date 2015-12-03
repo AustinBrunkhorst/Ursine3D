@@ -14,3 +14,4 @@ ursine_default_project(Shared
 
 # disable exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
+add_definitions(-DWORLD_ARCHETYPE_PATH="${CMAKE_SOURCE_DIR}/Projects/Retrospect/Assets/Archetypes/")

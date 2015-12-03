@@ -18,6 +18,7 @@
 #include "FastDelegate.h"
 
 #include "ChainableEventOperator.h"
+#include "Utils.h"
 
 #include <string>
 #include <unordered_map>

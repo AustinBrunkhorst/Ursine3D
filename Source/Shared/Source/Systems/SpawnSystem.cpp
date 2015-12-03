@@ -7,9 +7,6 @@
 #include <Components/PlayerInputComponent.h>
 #include <WorldEvent.h>
 
-#include <GfxAPI.h> // WHO IS YOUR GOD
-
-
 #include <SystemManager.h>
 #include "CoreSystem.h"
 #include <WorldEvent.h>
@@ -34,16 +31,16 @@ void SpawnSystem::OnInitialize(void)
 
 void SpawnSystem::OnRemove(void)
 {
-    //m_world->Listener(this)
-    //    .Off(WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
-    //    .Off(WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
+    m_world->Listener(this)
+        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
+        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
 }
 
 void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
-    if (args->component->Is<CharacterController>())
+    if (args->component->Is<PlayerInput>())
     {
         ++m_playerCount;
 
@@ -77,7 +74,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
 
-    if (args->component->Is<CharacterController>())
+    if (args->component->Is<PlayerInput>())
     {
         --m_playerCount;
 
@@ -88,6 +85,11 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
                 spawnPlayer(0);
                 spawnPlayer(1);
             }
+        }
+        else
+        {
+            PlayerInput *player = reinterpret_cast<PlayerInput *>(args->component);
+            spawnPlayer(player->id);
         }
     }
     else if (args->component->Is<Spawnpoint>())
@@ -109,7 +111,10 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 
 void SpawnSystem::spawnPlayer(int team)
 {
-    auto *newPlayer = m_world->CreateEntityFromArchetype("Player", "SpawnedPlayer");
+    auto *newPlayer = m_world->CreateEntityFromArchetype( 
+        WORLD_ARCHETYPE_PATH "Player.uatype", 
+        "SpawnedPlayer" 
+    );
 
     auto *playerTransform = newPlayer->GetTransform();
 
