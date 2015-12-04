@@ -63,7 +63,7 @@ void EditorCameraSystem::OnInitialize(void)
         .On( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
 
     m_world->Listener( this )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+        .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::OnAfterLoad(void)
@@ -99,7 +99,7 @@ void EditorCameraSystem::OnRemove(void)
         .Off( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
 
     m_world->Listener( this )
-        .Off( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+        .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
@@ -143,7 +143,7 @@ void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
     if (!m_hasFocus)
         return;
 
-    m_camZoom -= args->delta.Y( ) * 10.0f;
+    m_camZoom -= args->delta.Y( ) * 15.0f;
 
     if (m_camZoom < 1)
         m_camZoom = 1.0f;
@@ -153,7 +153,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
 {
     auto *keyboardMgr = GetCoreSystem(KeyboardManager);
 
-    float speed = 3;
+    float speed = 15;
 
     // focus with f
     if (keyboardMgr->IsTriggeredDown( KEY_F ))
@@ -210,12 +210,12 @@ void EditorCameraSystem::updateCameraKeys(float dt)
 
         if (keyboardMgr->IsDown( KEY_A ))
         {
-            dir += right;
+            dir -= right;
         }
 
         if (keyboardMgr->IsDown( KEY_D ))
         {
-            dir -= right;
+            dir += right;
         }
 
         if (keyboardMgr->IsDown( KEY_E ))
@@ -288,9 +288,9 @@ void EditorCameraSystem::updateCameraMouse(float dt)
         {
             auto size = cam.GetViewportSize( );
 
-            m_camPos += right * mouseDelta.X( ) * dt * size.X( );
+            m_camPos += right * mouseDelta.X( ) * dt * size.X( ) * 2;
 
-            m_camPos += up * mouseDelta.Y( ) * dt * size.Y( );
+            m_camPos -= up * mouseDelta.Y( ) * dt * size.Y( ) * 2;
         }
     }
 
@@ -302,7 +302,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
 
         if (mouseDelta.Length( ) > 0)
         {
-            m_camZoom += -mouseDelta.Y( ) * 10.0f * dt;
+            m_camZoom += -mouseDelta.Y( ) * 15.0f * dt;
 
             if (m_camZoom < 1)
             {

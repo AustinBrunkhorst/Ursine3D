@@ -469,7 +469,7 @@ namespace ursine
         }
 
         void Transform::dispatchParentChange(Transform *oldParent, Transform *newParent) const
-        {
+        {            
             ParentChangedArgs args( 
                 newParent ? newParent->GetOwner( ) : nullptr,
                 oldParent ? oldParent->GetOwner( ) : nullptr
@@ -557,17 +557,20 @@ namespace ursine
 
         void Transform::setParent(Transform *oldParent, Transform *newParent)
         {
+            if (oldParent == newParent)
+                return;
+
             m_parent = newParent;
             m_root = newParent ? newParent->m_root : this;
 
             // unsubscribe this entity from the old parent's events
             if (oldParent)
             {
-                // remove this transform from the old parent
-                oldParent->RemoveChild( this );
-
                 oldParent->GetOwner( )->Listener( this )
                     .Off( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
+
+                // remove this transform from the old parent
+                oldParent->RemoveChild( this );
             }
 
             // subscribe this entity to my events

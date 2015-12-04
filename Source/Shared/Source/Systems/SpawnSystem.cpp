@@ -112,10 +112,21 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 
 void SpawnSystem::spawnPlayer(int team)
 {
-    auto *newPlayer = m_world->CreateEntityFromArchetype( 
-        WORLD_ARCHETYPE_PATH "Player.uatype", 
-        "SpawnedPlayer" 
-    );
+    ecs::Entity *newPlayer = nullptr;
+    if (team == 0)
+    {
+        newPlayer = m_world->CreateEntityFromArchetype(
+            WORLD_ARCHETYPE_PATH "Player1.uatype",
+            "SpawnedPlayer"
+            );
+    }
+    else
+    {
+        newPlayer = m_world->CreateEntityFromArchetype(
+            WORLD_ARCHETYPE_PATH "Player2.uatype",
+            "SpawnedPlayer"
+            );
+    }
 
     auto *playerTransform = newPlayer->GetTransform();
 
@@ -132,7 +143,7 @@ ursine::SVec3 SpawnSystem::getSpawnPosition(int team, float yOffset)
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    const std::list<Spawnpoint *>& spawnList = (team == 1) ? m_team1Spawnpoints : m_team2Spawnpoints;
+    const std::list<Spawnpoint *>& spawnList = (team == 0) ? m_team1Spawnpoints : m_team2Spawnpoints;
 
 
     std::uniform_int_distribution<> randNo(0, static_cast<int>(spawnList.size()) - 1);

@@ -13,3 +13,9 @@ JSFunction(SceneLoad);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(SceneSave);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ScenePlay);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneStep);

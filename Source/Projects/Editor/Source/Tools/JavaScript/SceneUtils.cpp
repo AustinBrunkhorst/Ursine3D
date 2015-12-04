@@ -58,7 +58,6 @@ JSFunction(SceneGetActiveEntities)
     return ids;
 }
 
-Meta(Enable, ExposeJavaScript)
 JSFunction(SceneLoad)
 {
     auto *editor = GetCoreSystem( Editor );
@@ -82,7 +81,6 @@ JSFunction(SceneLoad)
     return CefV8Value::CreateUndefined( );
 }
 
-Meta(Enable, ExposeJavaScript)
 JSFunction(SceneSave)
 {
     auto *editor = GetCoreSystem( Editor );
@@ -102,6 +100,29 @@ JSFunction(SceneSave)
         0,
         callback
     );
+
+    return CefV8Value::CreateUndefined( );
+}
+
+JSFunction(ScenePlay)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto playing = arguments[ 0 ]->GetBoolValue( );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->GetScene( )->SetPaused( !playing );
+
+    return CefV8Value::CreateUndefined( );
+}
+
+JSFunction(SceneStep)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->GetScene( )->Step( );
 
     return CefV8Value::CreateUndefined( );
 }

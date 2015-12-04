@@ -1,10 +1,20 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** MeshInfo.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "ISerialize.h"
-#include <fbxsdk/scene/geometry/fbxlayer.h>
 #include "AnimationDef.h"
-
-using namespace pseudodx;
 
 namespace ursine
 {
@@ -29,7 +39,8 @@ namespace ursine
 				FbxLayerElement::EMappingMode normalMode;
 				FbxLayerElement::EMappingMode tangentMode;
 
-                pseudodx::XMFLOAT3*		vertices;
+				SMat4					meshTM;
+				pseudodx::XMFLOAT3*		vertices;
 				unsigned int*			indices;
 				pseudodx::XMFLOAT3*		normals;
 				pseudodx::XMFLOAT3*		tangents;

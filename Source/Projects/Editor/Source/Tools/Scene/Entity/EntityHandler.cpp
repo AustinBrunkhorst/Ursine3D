@@ -308,12 +308,57 @@ JSMethod(EntityHandler::setParent)
     if (!entity)
         return CefV8Value::CreateBool( false );
 
-    auto *parent = m_world->GetEntityUnique( arguments[ 0 ]->GetUIntValue( ) );
+    auto *transform = entity->GetTransform( );
 
-    if (!parent)
+    auto targetParent = arguments[ 0 ];
+
+    // detaching parent
+    if (targetParent->IsNull( ))
+    {
+        auto *currentParent = transform->GetParent( );
+
+        if (currentParent)
+            currentParent->RemoveChild( transform );
+    }
+    else
+    {
+        auto *targetEntity = 
+            m_world->GetEntityUnique( targetParent->GetUIntValue( ) );
+
+        if (!targetEntity)
+            return CefV8Value::CreateBool( false );
+
+        targetEntity->GetTransform( )->AddChildAlreadyInLocal( transform );
+    }
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSMethod(EntityHandler::getSiblingIndex)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
         return CefV8Value::CreateBool( false );
 
-    parent->GetTransform( )->AddChildAlreadyInLocal( entity->GetTransform( ) );
+    auto index = entity->GetTransform( )->GetSiblingIndex( );
+
+    return CefV8Value::CreateUInt( index );
+}
+
+JSMethod(EntityHandler::setSiblingIndex)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    entity->GetTransform( )->SetSiblingIndex( 
+        arguments[ 0 ]->GetUIntValue( ) 
+    );
 
     return CefV8Value::CreateBool( true );
 }

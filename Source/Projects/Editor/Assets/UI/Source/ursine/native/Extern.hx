@@ -33,4 +33,11 @@ class Extern {
         return untyped __js__( "SceneSave()" );
     }
 
+    public static function ScenePlay(playing : Bool) {
+        return untyped __js__( "ScenePlay(playing)" );
+    }
+
+    public static function SceneStep() {
+        return untyped __js__( "SceneStep()" );
+    }
 }

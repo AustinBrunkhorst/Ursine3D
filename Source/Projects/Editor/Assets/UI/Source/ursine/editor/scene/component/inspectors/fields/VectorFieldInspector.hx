@@ -72,6 +72,6 @@ class VectorFieldInspector extends FieldInspectionHandler {
     private function updateVectorField(name : String, value : Dynamic) {
         var field = m_fields[ name ];
 
-        field.value = untyped value.toPrecision( 4 );
+        field.value = untyped Math.toMaxPrecision( value, 5 );
     }
 }

@@ -118,7 +118,15 @@ class Entity implements IEventContainer {
     }
 
     public function setParent(parent : Entity) : Bool {
-        return m_handler.setParent( parent.uniqueID );
+        return m_handler.setParent( parent == null ? null : parent.uniqueID );
+    }
+
+    public function getSiblingIndex() : UInt {
+        return m_handler.getSiblingIndex( );
+    }
+
+    public function setSiblingIndex(index : UInt) : Void {
+        m_handler.setSiblingIndex( index );
     }
 
     public function saveAsArchetype() : Void {

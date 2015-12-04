@@ -21,10 +21,17 @@ namespace ursine
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);
 
-        void Update(DeltaTime dt);
-        void Render(void);
+        void SetPaused(bool paused);
+        bool IsPaused(void) const;
+
+        void Step(void) const;
+
+        void Update(DeltaTime dt) const;
+        void Render(void) const;
 
     private:
+        bool m_paused;
+
         graphics::GfxHND m_viewport;
 
         ecs::World::Handle m_world;
