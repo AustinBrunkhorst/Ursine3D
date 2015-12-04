@@ -2,6 +2,7 @@
 
 #include "AudioComponentBase.h"
 #include "EntityEvent.h"
+#include "AudioSystem.h"
 
 namespace ursine
 {

@@ -4,6 +4,7 @@
 
 #include <Windows.h>
 #include <ScreenManager.h>
+#include <AudioManager.h>
 #include <UIView.h>
 #include <Scene.h>
 #include <NativeJSFunction.h>
@@ -26,6 +27,8 @@ private:
     ursine::graphics::GfxAPI *m_graphics;
 
     ursine::ScreenManager *m_screenManager;
+
+	ursine::AudioManager *m_audioManager;
 
     struct
     {

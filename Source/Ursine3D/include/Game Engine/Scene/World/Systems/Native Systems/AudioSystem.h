@@ -21,7 +21,7 @@ namespace ursine
 {
 	namespace ecs
 	{
-		class AudioEmitter;
+		class AudioEmitterComponent;
 		class AudioListener;
 
 		class AudioSystem : EntitySystem
@@ -32,6 +32,8 @@ namespace ursine
 			AudioSystem(World *world);
 
 			void CreateAudioObject(AkGameObjectID& id);
+
+			void DeleteAudioObject(AkGameObjectID& id);
 
 			void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
 
@@ -62,11 +64,9 @@ namespace ursine
 		private:
 			AudioManager* m_audioMan;
 
-			std::unordered_map<EntityUniqueID, ursine::ecs::AudioEmitter*> m_emitters;
+			std::unordered_map<EntityUniqueID, ursine::ecs::AudioEmitterComponent*> m_emitters;
 			std::unordered_map<EntityUniqueID, ursine::ecs::AudioListener*> m_listeners;
 			std::unordered_map<std::string, AkBankID> m_banks;
-
-			
 
 			AkGameObjectID m_nextEmptyID;
 

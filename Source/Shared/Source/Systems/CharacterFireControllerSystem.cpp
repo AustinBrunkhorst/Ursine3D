@@ -6,6 +6,7 @@
 #include "RigidbodyComponent.h"
 
 #include "PlayerInputComponent.h"
+#include "AudioEmitterComponent.h"
 
 #include <GamepadManager.h>
 #include <MouseManager.h>
@@ -20,6 +21,11 @@
 using namespace ursine;
 using namespace ursine::ecs;
 
+namespace
+{
+	const std::string FireGun = "FIRE_GUN_HAND";
+}
+
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
 
 CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World *world )
@@ -33,6 +39,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     auto *input = entity->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
+	auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
 
     // check our states
     if ( input->ResetTrigger( ) )
@@ -62,7 +69,12 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     // firing a ray
     if ( hotspot != nullptr && input->Fire( ) && fireController->CanFire() )
     {
-        printf( "BANG!\n\n" );
+        //printf( "BANG!\n\n" );
+
+		// Play that bang sound
+		if (emitter)
+			emitter->AddSoundToPlayQueue(FireGun);
+
         fireController->Fire( );
 
         //// get the camera, then get the arm connected to the camera

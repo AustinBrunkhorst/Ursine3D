@@ -22,6 +22,11 @@ namespace ursine
 			m_audioMan->RegisterObject(id, 0);
 		}
 
+		void AudioSystem::DeleteAudioObject(AkGameObjectID& id)
+		{
+			m_audioMan->UnRegisterObject(id);
+		}
+
 		void AudioSystem::OnInitialize(void)
 		{
 			m_world->Listener(this)
@@ -42,11 +47,11 @@ namespace ursine
 		{
 			EVENT_ATTRS(World, ComponentEventArgs);
 
-			if (args->component->Is<AudioEmitter>())
+			if (args->component->Is<AudioEmitterComponent>())
 			{
 				m_emitters.emplace(
 					args->entity->GetUniqueID(),
-					static_cast<AudioEmitter*>(const_cast<Component*>(args->component))
+					static_cast<AudioEmitterComponent*>(const_cast<Component*>(args->component))
 					);
 				auto& handle = m_emitters[args->entity->GetUniqueID()]->m_handle;
 				CreateAudioObject(handle);
@@ -66,12 +71,15 @@ namespace ursine
 		{
 			EVENT_ATTRS(World, ComponentEventArgs);
 
-			if (args->component->Is<AudioEmitter>())
+			if (args->component->Is<AudioEmitterComponent>())
 			{
 				auto search = m_emitters.find(args->entity->GetUniqueID());
 
 				if (search != m_emitters.end())
+				{
+					DeleteAudioObject(m_emitters[args->entity->GetUniqueID()]->m_handle);
 					m_emitters.erase(search);
+				}
 			}
 
 			else if (args->component->Is<AudioListener>())
@@ -108,6 +116,12 @@ namespace ursine
 				if (dirty)
 					SetObject3DPosition(handle, trans->GetWorldPosition(), 
 						trans->GetForward());
+
+				while (!emitter.second->SoundsEmpty())
+				{
+					m_audioMan->PlayEvent(emitter.second->GetFrontSound(), handle);
+					emitter.second->PopFrontSound();
+				}
 			}
 
 			for (auto &listener : m_listeners)
