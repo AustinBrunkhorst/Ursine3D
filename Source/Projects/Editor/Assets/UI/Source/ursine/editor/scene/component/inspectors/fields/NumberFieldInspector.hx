@@ -12,8 +12,6 @@ class NumberFieldInspector extends FieldInspectionHandler {
 
         m_number = new NumberInput( );
 
-        m_number.value = m_instance;
-
         m_number.addEventListener( 'change', function() {
             var value : Dynamic = m_number.valueAsNumber;
 
@@ -34,6 +32,9 @@ class NumberFieldInspector extends FieldInspectionHandler {
             e.preventDefault( );
         } );
 
+        // initially set the value
+        updateValue( instance );
+
         inspector.container.appendChild( m_number );
     }
 
@@ -41,7 +42,7 @@ class NumberFieldInspector extends FieldInspectionHandler {
         var number : Dynamic;
 
         if (m_type.name == "float" || m_type.name == "double")
-            number = untyped value.toPrecision( 4 );
+            number = untyped Math.toMaxPrecision( value, 5 );
         else
             number = Std.int( value );
 

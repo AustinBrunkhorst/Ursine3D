@@ -842,7 +842,6 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_number = new NumberInputControl();
-	this.m_number.value = this.m_instance;
 	this.m_number.addEventListener("change",function() {
 		var value = _g.m_number.valueAsNumber;
 		if((function($this) {
@@ -858,6 +857,7 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 		_g.m_number.select();
 		e.preventDefault();
 	});
+	this.updateValue(instance);
 	this.inspector.container.appendChild(this.m_number);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.NumberFieldInspector"] = ursine_editor_scene_component_inspectors_fields_NumberFieldInspector;
@@ -866,7 +866,7 @@ ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__super__ =
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
 	updateValue: function(value) {
 		var number;
-		if(this.m_type.name == "float" || this.m_type.name == "double") number = value.toPrecision(4); else number = Std["int"](value);
+		if(this.m_type.name == "float" || this.m_type.name == "double") number = Math.toMaxPrecision(value,5); else number = Std["int"](value);
 		this.m_number.value = number;
 	}
 });
@@ -946,7 +946,7 @@ ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.prototype =
 	}
 	,updateVectorField: function(name,value) {
 		var field = this.m_fields.get(name);
-		field.value = value.toPrecision(4);
+		field.value = Math.toMaxPrecision(value,5);
 	}
 });
 var ursine_utils_IEventContainer = function() { };
