@@ -10,6 +10,7 @@
 #include <SystemManager.h>
 #include "CoreSystem.h"
 #include <WorldEvent.h>
+#include <Components/HealthComponent.h>
 
 using namespace ursine;
 
@@ -123,10 +124,10 @@ void SpawnSystem::spawnPlayer(int team)
     playerInput->id = team;
 
     // get spawn position to place the player at and actually spawn the player
-    playerTransform->SetWorldPosition(getSpawnPosition(team, 100.0f));
+    playerTransform->SetWorldPosition(getSpawnPosition(team, 10.0f));
 }
 
-const ursine::SVec3& SpawnSystem::getSpawnPosition(int team, float yOffset)
+ursine::SVec3 SpawnSystem::getSpawnPosition(int team, float yOffset)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -148,6 +149,6 @@ const ursine::SVec3& SpawnSystem::getSpawnPosition(int team, float yOffset)
             chosenSpawn = *i;
         }
     }
-
-    return chosenSpawn->GetOwner()->GetTransform()->GetWorldPosition() + SVec3(0.0f, yOffset, 0.0f);
+    auto spawnPos = chosenSpawn->GetOwner()->GetTransform()->GetWorldPosition();
+    return spawnPos + SVec3(0.0f, yOffset, 0.0f);
 }
