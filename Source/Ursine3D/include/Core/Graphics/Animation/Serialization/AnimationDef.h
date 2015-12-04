@@ -420,7 +420,7 @@ namespace ursine
 				std::vector<AnimationData*> mAnimationData;
 				// ====================================
 
-				FbxModel() :mAnimPose(nullptr) {}
+
 				~FbxModel()
 				{
 					Release();
