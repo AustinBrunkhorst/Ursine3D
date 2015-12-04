@@ -43,8 +43,24 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     // update fire timer
     fireController->DecrementFireTimer( 0.016 );
 
+    // find the child hotspot for firing
+    auto childrenVector = entity->GetChildren( );
+
+    Entity *hotspot = nullptr;
+
+    for ( auto &x : *childrenVector )
+    {
+        auto *currentChild = m_world->GetEntity( x );
+
+        if ( currentChild->GetName( ) == "FiringHotspot" )
+        {
+            hotspot = currentChild;
+            break;
+        }
+    }
+
     // firing a ray
-    if ( input->Fire( ) && fireController->CanFire() )
+    if ( hotspot != nullptr && input->Fire( ) && fireController->CanFire() )
     {
         printf( "BANG!\n\n" );
         fireController->Fire( );
@@ -62,11 +78,14 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         float randomYaw = m_rng.GetValue( );
 
         SVec3 spray = entityTransform->GetUp( ) * randomPitch + entityTransform->GetRight( ) * randomYaw;
+        SVec3 offset = entityTransform->GetWorldRotation( ) * fireController->GetFireOffset( );
+
+        auto *childTransform = hotspot->GetTransform( );
 
         //auto *gunTransform = armGun->GetTransform( );
         physics::RaycastInput rayInput = physics::RaycastInput(
-            entityTransform->GetWorldPosition( ) + SVec3( 0, 20, 0 ) + entityTransform->GetForward( ) * fireController->GetFireOffset(),
-            entityTransform->GetWorldPosition( ) + SVec3( 0, 20, 0 ) + entityTransform->GetForward( ) * fireController->GetFireRange() + spray
+            childTransform->GetWorldPosition( ) + offset,
+            childTransform->GetWorldPosition( ) + entityTransform->GetForward( ) * fireController->GetFireRange() + spray
         );
 
         physics::RaycastOutput rayOutput;

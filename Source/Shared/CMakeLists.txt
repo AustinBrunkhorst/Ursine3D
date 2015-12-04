@@ -17,3 +17,6 @@ add_definitions(-D_HAS_EXCEPTIONS=0)
 
 # @@@TODO: this should be removed with the shared project, only temporary
 add_definitions(-DURSINE_WITH_EDITOR=1)
+
+# @@@TODO: this can't be an absolute path in the installer
+add_definitions(-DWORLD_ARCHETYPE_PATH="${CMAKE_SOURCE_DIR}/Projects/Retrospect/Assets/Archetypes/")
