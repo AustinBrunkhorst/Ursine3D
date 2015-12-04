@@ -63,7 +63,7 @@ namespace ursine
         m_hierarchyTable[ newID ] = parentID;
         
         // calculate offset matrix
-        m_offsetMatrices[ newID ] = SMat4( boneTrans ) * SMat4( boneScale.X( ), boneScale.Y( ), boneScale.Z( ) ) * SMat4( boneRotation );
+        m_offsetMatrices[ newID ] = SMat4( boneTrans ) * (SMat4( boneScale.X( ), boneScale.Y( ), boneScale.Z( ) ) * SMat4( boneRotation ));
 
         return newID;
     }
