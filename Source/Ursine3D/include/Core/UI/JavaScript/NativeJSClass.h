@@ -17,6 +17,7 @@ namespace ursine
 {
     class NativeJSClass : public meta::Object
     {
-        
-    } Meta(Enable);
+    protected:
+        void messageBrowser(const std::string &channel, const std::string &message, const Json &data) const;
+    } Meta(Enable, WhiteListMethods);
 }

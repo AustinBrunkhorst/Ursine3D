@@ -6,6 +6,7 @@
 
 #include <WindowManager.h>
 #include <UIManager.h>
+#include <ScreenManager.h>
 
 #include <Color.h>
 #include <Vec3.h>
@@ -13,32 +14,38 @@
 #include <LightComponent.h>
 #include <WorldSerializer.h>
 
+#include <AudioManager.h>
+
 using namespace ursine;
 
 namespace
 {
-    const auto kEntryPoint = "";
-
-    const auto  kStartWorld = "Assets/Worlds/SubmissionSemester1.uworld";
-
-    const auto kClearColor = Color(0xFF252526);
+    const auto kEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
+}
+
+JSFunction(InitGame)
+{
+    gScreenManager->AddOverlay( "SplashScreen" );
+
+    return CefV8Value::CreateUndefined( );
 }
 
 CORE_SYSTEM_DEFINITION( Retrospect );
 
 Retrospect::Retrospect(void)
     : m_graphics( nullptr )
+    , m_screenManager( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_scene( std::make_shared<Scene>( ) )
 {
 
 }
 
 Retrospect::~Retrospect(void)
 {
+
 }
 
 void Retrospect::OnInitialize(void)
@@ -51,7 +58,7 @@ void Retrospect::OnInitialize(void)
     auto *uiManager = GetCoreSystem( UIManager );
 
     m_mainWindow.window = windowManager->AddWindow(
-        "Ursine3D Editor",
+        "Retrospect",
         { 0, 0 },
         { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
         SDL_WINDOW_RESIZABLE
@@ -61,21 +68,36 @@ void Retrospect::OnInitialize(void)
         .On( WINDOW_RESIZE, &Retrospect::onMainWindowResize );
 
     m_mainWindow.window->SetLocationCentered( );
-    m_mainWindow.window->Show( true );
-    m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
     initializeGraphics( );
 
-    // m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEntryPoint );
+    m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEntryPoint );
 
-    /*m_mainWindow.ui->SetViewport( {
+    m_mainWindow.ui->SetViewport( {
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
-    } );*/
+    } );
 
-    initializeScene( );
+    m_screenManager = new ScreenManager( );
+    m_screenManager->SetUI( m_mainWindow.ui );
+
+    {
+        SDL_DisplayMode displayMode;
+
+        SDL_GetDesktopDisplayMode( 
+            m_mainWindow.window->GetDisplayIndex( ),
+            &displayMode 
+        );
+
+        m_mainWindow.window->SetSize( { 
+            static_cast<float>( displayMode.w ), 
+            static_cast<float>( displayMode.h ) 
+        } );
+    }
+    m_mainWindow.window->SetFullScreen( true );
+    m_mainWindow.window->Show( true );
 }
 
 void Retrospect::OnRemove(void)
@@ -86,10 +108,14 @@ void Retrospect::OnRemove(void)
         &Retrospect::onAppUpdate
     );
 
+    delete m_screenManager;
+
+    m_screenManager = nullptr;
+
     m_mainWindow.window->Listener( this )
         .Off( WINDOW_RESIZE, &Retrospect::onMainWindowResize );
 
-    //m_mainWindow.ui->Close( );
+    m_mainWindow.ui->Close( );
     m_mainWindow.ui = nullptr;
     
     m_mainWindow.window = nullptr;
@@ -119,32 +145,15 @@ void Retrospect::initializeGraphics(void)
 
     m_graphics->StartGraphics( config );
     m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
-}
 
-void Retrospect::initializeScene(void)
-{
-    auto world = m_scene->GetWorld( );
-    {
-        auto viewport = m_graphics->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
+    auto handle = m_graphics->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
 
-        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
+    m_mainWindow.viewport = &m_graphics->ViewportMgr.GetViewport( handle );
 
-        handle.SetPosition( 0, 0 );
+    m_mainWindow.viewport->SetPosition( 0, 0 );
+    m_mainWindow.viewport->SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
-
-        m_scene->SetViewport( viewport );
-
-        m_graphics->SetGameViewport( viewport );
-
-        ecs::WorldSerializer serializer;
-
-        serializer.Deserialize( kStartWorld, world );
-
-        m_scene->SetWorld( world );
-    }
-
-    world->DispatchLoad( );
+    m_graphics->SetGameViewport( handle );
 }
 
 void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))
@@ -153,15 +162,7 @@ void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    m_scene->Update( dt );
-
-    m_graphics->StartFrame( );  
-
-    m_scene->Render( );
-
-    //m_mainWindow.ui->DrawMain( );  
-
-    m_graphics->EndFrame( );
+    m_screenManager->Update( );
 }
 
 void Retrospect::onMainWindowResize(EVENT_HANDLER(ursine::Window))
@@ -169,6 +170,7 @@ void Retrospect::onMainWindowResize(EVENT_HANDLER(ursine::Window))
     EVENT_ATTRS(Window, WindowResizeArgs);
 
     m_graphics->Resize( args->width, args->height );
+    m_mainWindow.viewport->SetDimensions( args->width, args->height );
 
     m_mainWindow.ui->SetViewport( {
         0, 0,

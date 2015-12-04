@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxAPI.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "GfxManager.h"
 #include "GfxAPI.h"
@@ -108,6 +121,11 @@ namespace ursine
         void GfxAPI::Resize(int width, int height)
         {
             m_privates->gfxCore_->Resize(width, height);
+        }
+
+        void GfxAPI::SetFullscreenState(const bool state)
+        {
+            m_privates->gfxCore_->SetFullscreenState( state );
         }
 
         void GfxAPI::SetGameViewport(GfxHND vp)

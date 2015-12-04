@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** RasterStateManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "RasterStateManager.h"
 #include <d3d11.h>
@@ -33,7 +46,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_SOLID;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -51,7 +64,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_SOLID;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -69,7 +82,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_SOLID;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -106,7 +119,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -124,7 +137,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 

@@ -127,7 +127,7 @@ namespace ursine
             for (auto &entityData : entitiesData.array_items( ))
             {
                 entitySerializer.Deserialize( 
-                    world, 
+                    world.get( ), 
                     entityData, 
                     version 
                 );

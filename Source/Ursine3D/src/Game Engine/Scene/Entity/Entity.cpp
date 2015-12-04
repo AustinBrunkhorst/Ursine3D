@@ -187,7 +187,12 @@ namespace ursine
             return m_world->m_entityManager->GetComponents( this );
         }
 
-	    Component* Entity::GetComponentInChildren(ComponentTypeID id) const
+        const std::vector<EntityID> *Entity::GetChildren(void) const
+        {
+            return m_world->m_entityManager->GetChildren( this );
+        }
+
+        Component* Entity::GetComponentInChildren(ComponentTypeID id) const
 	    {
 			return m_world->m_entityManager->GetComponentInChildren( this, id );
 	    }

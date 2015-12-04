@@ -10,6 +10,11 @@ class EntityMenu extends MenuItemHandler {
         createEntity( "Empty Entity" );
     }
 
+    @mainMenuItem( "Entity/Create/From Archetype" )
+    static function doCreateFromArchetype() {
+        Entity.createFromArchetype( );
+    }
+
     @mainMenuItem( "Entity/Create/Plane", true )
     static function doCreatePlane() {
         var entity = createEntity( "Plane" );

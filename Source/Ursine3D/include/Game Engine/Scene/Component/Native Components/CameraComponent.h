@@ -16,6 +16,7 @@ namespace ursine
             , public RenderableComponentBase
         {
             NATIVE_COMPONENT;
+
         public:
             EditorField(
                 Vec2 viewportPosition,
@@ -47,6 +48,24 @@ namespace ursine
                 SetFOV
             );
 
+            EditorField(
+                bool active,
+                GetActive,
+                SetActive
+            );
+
+            EditorField(
+                int renderLayer,
+                GetRenderLayer,
+                SetRenderLayer
+            );
+
+            EditorField(
+                int renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
             Meta(Enable)
             Camera(void);
             ~Camera(void);
@@ -70,6 +89,12 @@ namespace ursine
             float GetFOV(void) const;
             void SetFOV(float fov);
 
+            bool GetActive(void) const;
+            void SetActive(bool active);
+
+            int GetRenderLayer(void) const;
+            void SetRenderLayer(int layer);
+
             SVec3 GetLook(void);
             void SetLook(const SVec3 &worldPosition);
 
@@ -79,7 +104,16 @@ namespace ursine
             SMat4 GetViewMatrix(void);
             SMat4 GetProjMatrix(void);
 
+            int GetRenderMask(void) const;
+            void SetRenderMask(const int mask);
+
             SVec3 ScreenToWorld(const Vec2 &screenPos, float depth);
+
+        private:
+
+            bool m_active;
+
+            int m_renderLayer;
 
         } Meta(Enable, WhiteListMethods, DisplayName( "Camera" ));
     }

@@ -4,6 +4,7 @@ class EntityEvent {
     public static var EntityAdded = "EntityAdded";
     public static var EntityRemoved = "EntityRemoved";
     public static var EntityNameChanged = "EntityNameChanged";
+    public static var EntityParentChanged = "EntityParentChanged";
 
     public static var ComponentAdded = "ComponentAdded";
     public static var ComponentRemoved = "ComponentRemoved";

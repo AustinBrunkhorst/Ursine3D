@@ -1,42 +1,53 @@
 cbuffer CameraBuffer : register(b0)
 {
-  matrix viewMatrix;
-  matrix projectionMatrix;
+	matrix View;
+	matrix Projection;
 };
 
 cbuffer TransformBuffer : register(b1)
 {
-  matrix transform;
+	matrix World;
 }
 
-struct VertexInputType
+cbuffer MatrixStack : register(b12)
 {
-  float4 position : POSITION;
-  float4 normal : NORMAL;
-  float2 uv : UV;
-  //@matt don't forget this
+	matrix matPal[96];
+}
+
+//struct VertexInputType
+//{
+//  float4 position : POSITION;
+//  float4 normal : NORMAL;
+//  float2 uv : UV;
+//  //@matt don't forget this
+//};
+
+struct VS_INPUT
+{
+	float3	Pos		: POSITION;
+	float3	Nor		: NORMAL;
+	float2	Tex		: TEXCOORD;
+	float4	BWeight : BLENDWEIGHT;
+	int4	BIdx	: BLENDINDICES;
 };
 
-struct PixelInputType
+
+struct VS_OUTPUT
 {
-  float4 position : SV_POSITION;
-  float2 uv : UV;
+	float4 Pos : SV_POSITION;
+	float2 Tex : UV;
 };
 
-
-PixelInputType main( VertexInputType input )
+VS_OUTPUT main(VS_INPUT input)
 {
-  PixelInputType output;
+	VS_OUTPUT output;
 
-  // 
-  input.position.w = 1.f;
+	float4 worldPos = mul(float4(input.Pos, 1), World);
+	float4 viewPos = mul(worldPos, View);         //position wr2 the center of the world
 
-  // Calculate the position of the vertex against the world, view, and projection matrices.
-  output.position = mul( input.position, transform );
-  output.position = mul( output.position, viewMatrix );
-  output.position = mul( output.position, projectionMatrix );
+	output.Pos = mul(viewPos, Projection);   //get the screen pos
 
-  output.uv = input.uv;
+	output.Tex = input.Tex;
 
-  return output;
+	return output;
 }

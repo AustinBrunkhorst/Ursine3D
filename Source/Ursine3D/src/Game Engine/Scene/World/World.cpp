@@ -23,6 +23,8 @@
 #include "UtilityManager.h"
 #include "SystemManager.h"
 
+#include <EntitySerializer.h>
+
 namespace
 {
     const auto kWorldSettingsEntityName = "World Settings";
@@ -34,11 +36,13 @@ namespace ursine
     {
         World::World(void)
             : EventDispatcher( this )
+            , m_loaded( false )
             , m_settings( nullptr )
             , m_entityManager( nullptr )
             , m_systemManager( nullptr )
             , m_nameManager( nullptr )
             , m_utilityManager( nullptr )
+            , m_owner( nullptr )
         {
             m_entityManager = new EntityManager( this );
             m_entityManager->OnInitialize( );
@@ -77,6 +81,51 @@ namespace ursine
             return entity;
         }
 
+        Entity *World::CreateEntityFromArchetype(
+            const std::string &filename, 
+            const std::string &name
+        )
+        {
+            auto cache = m_archetypeCache.find( filename );
+
+            Entity *entity;
+
+            if (cache == m_archetypeCache.end( ))
+            {
+                std::string jsonData;
+
+                UAssert(
+                    fs::LoadText( filename, jsonData ),
+                    "Failed to load archetype.\nfile: %s", 
+                    filename.c_str( )
+                );
+
+                std::string jsonError;
+
+                auto data = Json::parse( jsonData, jsonError );
+
+                UAssert(
+                    jsonError.empty( ),
+                    "Failed to load archetype.\nJSON error: %s\nfile: %s",
+                    jsonError.c_str( ),
+                    filename.c_str( )
+                );
+
+                m_archetypeCache[ filename ] = data;
+
+                entity = loadArchetype( data );
+            }
+            else
+            {
+                entity = loadArchetype( cache->second );
+            }
+            
+            if (entity)
+                entity->SetName( name );
+
+            return entity;
+        }
+
         Entity *World::GetEntity(EntityID id) const
         {
             return m_entityManager->GetEntity( id );
@@ -90,6 +139,11 @@ namespace ursine
         Entity *World::GetEntityUnique(EntityUniqueID uniqueID) const
         {
             return m_entityManager->GetEntityUnique( uniqueID );
+        }
+
+        EntityVector World::GetRootEntities(void) const
+        {
+            return m_entityManager->GetRootEntities( );
         }
 
         const EntityVector &World::GetActiveEntities(void) const
@@ -137,9 +191,24 @@ namespace ursine
             return m_systemManager;
         }
 
+        Screen *World::GetOwner(void) const
+        {
+            return m_owner;
+        }
+
+        void World::SetOwner(Screen *owner)
+        {
+            m_owner = owner;
+        }
+
         void World::DispatchLoad(void)
         {
-            m_systemManager->onAfterLoad( );
+            if (!m_loaded)
+            {
+                m_systemManager->onAfterLoad( );
+
+                m_loaded = true;
+            }
         }
 
         void World::deleteEntity(Entity *entity)
@@ -147,6 +216,23 @@ namespace ursine
             m_entityManager->BeforeRemove( entity );
 
             m_deleted.push_back( entity );
+        }
+
+        Entity *World::loadArchetype(const Json &data)
+        {
+            try
+            {
+                return EntitySerializer( ).DeserializeArchetype( this, data );
+            }
+            catch (SerializationException &e)
+            {
+                UError( 
+                    "Unable to deserialize archetype.\nerror: %s",
+                    e.GetError( ).c_str( )
+                );
+
+                return nullptr;
+            }
         }
     }
 }

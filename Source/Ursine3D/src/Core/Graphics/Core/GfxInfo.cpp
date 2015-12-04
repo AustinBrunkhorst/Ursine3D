@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxInfo.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "GfxInfo.h"
 #include "GfxDefines.h"
@@ -72,7 +85,7 @@ namespace ursine
             factory->Release();
             factory = nullptr;
 
-            // @Matt TEMP, change the sampling later
+            URSINE_TODO( "Enable multisampling toggling" );
             SampleCount_ = 1;
             SampleQuality_ = 0;
         }

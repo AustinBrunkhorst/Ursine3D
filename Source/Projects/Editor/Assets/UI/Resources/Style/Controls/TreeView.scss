@@ -76,11 +76,11 @@ $item-indent: 6px;
         .drop-after-container {
           opacity: 0;
           position: absolute;
-          height: 4px;
+          height: 6px;
           left: 0;
           right: 0;
-          top: 100%;
-          margin-top: -2px;
+          bottom: 0;
+          margin-bottom: -3px;
           z-index: 5;
           background: $color-accent;
           transition: opacity $duration-transition-btn ease;
@@ -103,19 +103,36 @@ $item-indent: 6px;
     x-tree-view-item {
       display: block;
 
+      &:not(.dragging) {
+        .text {
+          &:hover {
+            background: #5a5a5a !important;
+          }
+        }
+      }
+
       .text {
-        display: block;
+        display: flex;
         padding: 5px 5px 5px $base-item-indent;
         cursor: pointer;
         transition: all $duration-transition-btn ease;
 
-        &::selection {
-          background: white;
-          color: black;
-        }
+        .text-content {
+          flex: 1 1 auto;
+          width: 100%;
+          padding-bottom: 1px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
 
-        &:hover {
-          background: #5a5a5a !important;
+          &[contentEditable=true] {
+            padding: 2px;
+            background: #333337;
+            border: 1px solid #bdbd73;
+            color: #dcdcdc;
+            outline: none;
+            text-overflow: clip;
+          }
         }
       }
 

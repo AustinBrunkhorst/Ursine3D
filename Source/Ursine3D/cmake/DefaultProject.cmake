@@ -14,7 +14,7 @@ endmacro ()
 
 macro (ursine_default_project project_name)
     ursine_parse_arguments(PROJ 
-        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE;META_HEADER;COPY_SHADERS" 
+        "FOLDER;TYPE;SOURCE_DIR;INCLUDE_DIR;DEPENDS;PCH_NAME;SYM_LINKS;INSTALLER_VERSION;INSTALLER_SUMMARY;INSTALLER_DISPLAY_NAME;WINDOWS_RESOURCE_FILE;INSTALLER_ICON;INSTALLER_UNINSTALL_ICON;SUBSYSTEM_DEBUG;SUBSYSTEM_RELEASE;META_HEADER;META_DEPENDENCIES;COPY_SHADERS" 
         "NO_ENGINE;PARSE_SOURCE_GROUPS;RECURSIVE_INCLUDES;INCLUDE_INSTALLER;BUILD_META" 
         ${ARGN})
     
@@ -150,7 +150,7 @@ macro (ursine_default_project project_name)
 
                 # install shaders if applicable
                 if ("${PROJ_INCLUDE_INSTALLER}" STREQUAL "TRUE")
-                    install(FILES "${shader}" DESTINATION "bin/${PROJ_COPY_SHADERS}" COMPONENT ${project_name})
+                    install(FILES "$<TARGET_FILE_DIR:Shaders>/${shader_file}.cso" DESTINATION "bin/${PROJ_COPY_SHADERS}" COMPONENT ${project_name})
                 endif ()
             endforeach ()
         endif ()
@@ -169,6 +169,8 @@ macro (ursine_default_project project_name)
 
             if (MSVC)
                 install(PROGRAMS ${ENGINE_VCREDIST_FILE} DESTINATION "tmp" COMPONENT ${project_name})
+                install(PROGRAMS ${ENGINE_D3DREDIST_FILE} DESTINATION "tmp" COMPONENT ${project_name})
+                install(PROGRAMS ${ENGINE_D3DREDIST_HELPER_DLL} DESTINATION "tmp" COMPONENT ${project_name})
             endif ()
 
             set(expr_debug $<OR:$<CONFIG:debug>,$<CONFIG:relwithdebinfo>>)
@@ -323,6 +325,11 @@ macro (ursine_default_project project_name)
 
         set(meta_depends ${files_inc} ${URSINE_HEADER_FILES})
 
+        # add the explicit dependencies if applicable
+        if (NOT "${PROJ_META_DEPENDENCIES}" STREQUAL "")
+            set(meta_depends ${meta_depends} ${PROJ_META_DEPENDENCIES})
+        endif ()
+
         list(REMOVE_ITEM meta_depends ${meta_generated_header})
 
         # add the command that generates the header and source files
@@ -378,4 +385,5 @@ macro (ursine_default_project project_name)
     ursine_add_include_directories(${project_name} ${f_includes})
     
     set(${project_name}_INCLUDE_DIRS ${f_includes} PARENT_SCOPE)
+    set(${project_name}_HEADER_FILES ${files_inc} PARENT_SCOPE)
 endmacro ()

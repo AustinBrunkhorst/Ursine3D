@@ -38,10 +38,14 @@ namespace ursine
             bool Raycast(const ursine::physics::RaycastInput &input, 
                          ursine::physics::RaycastOutput &output,
                          ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT, 
-                         bool debugDraw = false, float drawDuration = 2.0f);
+                         bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
+                         Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
 
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
+
+            void SetEnableDebugDraw(bool enable);
+            bool GetEnableDebugDraw(void) const;
 
             void ClearContacts(Rigidbody *rigidbody);
 
@@ -55,6 +59,8 @@ namespace ursine
             Filter m_collisionShapes;
 
             DebugSystem *m_debugSystem;
+
+            bool m_enableDebugDraw;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;

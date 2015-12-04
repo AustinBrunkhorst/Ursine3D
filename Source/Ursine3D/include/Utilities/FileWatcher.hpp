@@ -11,9 +11,6 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-template<typename T>
-unsigned FileWatcher<T>::m_watcherCount = 0;          // how many watchers are currently running
-
 // begins the file watcher, using a static callback func
 template<typename T>
 FileWatcher<T> *FileWatcher<T>::StartFileWatch( std::string path, std::string extension, void( *callback )(std::string), WatchMode mode, unsigned sleepTime, bool recursive )
@@ -23,9 +20,6 @@ FileWatcher<T> *FileWatcher<T>::StartFileWatch( std::string path, std::string ex
 
     // call thread, using the static callback main
     fw->m_threadHandle = CreateThread( nullptr, 0, FileWatcher<T>::staticWatcherMain, fw, 0, &fw->m_threadID );
-
-    // inc counter
-    ++m_watcherCount;
 
     // return file watcher
     return fw;
@@ -57,9 +51,6 @@ void FileWatcher<T>::EndFileWatch( FileWatcher **watcher )
 
     // set ptr to null
     *watcher = 0;
-
-    // decrement counter
-    --m_watcherCount;
 }
 
 // constructor, takes the file extension, when to call func (only on new, when modified, or both), a delay to check, fp.

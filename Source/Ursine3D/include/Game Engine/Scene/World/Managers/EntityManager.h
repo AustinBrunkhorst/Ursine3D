@@ -44,6 +44,9 @@ namespace ursine
             // Creates an entity with only a transform
             Entity *Create(void);
 
+            // Gets all entities without a parent
+            EntityVector GetRootEntities(void);
+
             // Gets all active entities
             const EntityVector &GetActiveEntities(void) const;
 
@@ -95,6 +98,9 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
             // Hierarchy
             ////////////////////////////////////////////////////////////////////
+
+            // Gets all children of the specified entity
+            const std::vector<EntityID> *GetChildren(const Entity *entity) const;
 
             // Gets a component of the specified type in this entity's children (type safe) (depth first)
             // nullptr if it doesn't exist

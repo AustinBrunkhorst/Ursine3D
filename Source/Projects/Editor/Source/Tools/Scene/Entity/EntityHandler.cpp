@@ -8,7 +8,40 @@
 #include <Meta.h>
 #include <ComponentConfig.h>
 
+#include <FileSystem.h>
+#include <UIFileDialogCallback.h>
+#include <EntitySerializer.h>
+
 using namespace ursine;
+using namespace std::placeholders;
+
+namespace
+{
+    void doSaveArchetype(
+        ecs::Entity *entity, 
+        int selectedFilter, 
+        const fs::FileList &files
+    )
+    {
+        if (files.empty( ))
+            return;
+
+        auto data = ecs::EntitySerializer( ).SerializeArchetype( entity );
+        
+        if (!fs::WriteText( files[ 0 ].string( ), data.dump( ) ))
+        {
+            auto *editor = GetCoreSystem( Editor );
+
+            URSINE_TODO( "Use UI error popup" );
+            SDL_ShowSimpleMessageBox(
+                SDL_MESSAGEBOX_ERROR,
+                "Save Error",
+                "Unable to save archetype.",
+                editor->GetMainWindow( )->GetInternalHandle( )
+            );
+        }
+    }
+}
 
 JSConstructor(EntityHandler)
 {
@@ -223,6 +256,94 @@ JSMethod(EntityHandler::updateComponentField)
     field.SetValue( instance, fieldType.DeserializeJson( value ) );
 
     return CefV8Value::CreateUndefined( );
+}
+
+JSMethod(EntityHandler::getChildren)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto &children = *entity->GetChildren( );
+
+    auto childrenArray = CefV8Value::CreateArray( 
+        static_cast<int>( children.size( ) ) 
+    );
+
+    for (size_t i = 0; i < children.size( ); ++i)
+    {
+        auto *child = m_world->GetEntity( children[ i ] );
+
+        childrenArray->SetValue( static_cast<int>( i ), 
+            CefV8Value::CreateUInt( child->GetUniqueID( ) ) 
+        );
+    }
+
+    return childrenArray;
+}
+
+JSMethod(EntityHandler::getParent)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto *parent = entity->GetTransform( )->GetParent( );
+
+    if (!parent)
+        return CefV8Value::CreateNull( );
+
+    return CefV8Value::CreateUInt( parent->GetOwner( )->GetUniqueID( ) );
+}
+
+JSMethod(EntityHandler::setParent)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto *parent = m_world->GetEntityUnique( arguments[ 0 ]->GetUIntValue( ) );
+
+    if (!parent)
+        return CefV8Value::CreateBool( false );
+
+    parent->GetTransform( )->AddChildAlreadyInLocal( entity->GetTransform( ) );
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSMethod(EntityHandler::saveAsArchetype)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    CefRefPtr<UIFileDialogCallback> callback = 
+        new UIFileDialogCallback( std::bind( &doSaveArchetype, entity, _1, _2 ) );
+
+    std::vector<CefString> filters {
+        "Archetype Files|.uatype"
+    };
+
+    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+        static_cast<CefBrowserHost::FileDialogMode>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG ),
+        "Save Archetype",
+        "",
+        filters,
+        0,
+        callback
+    );
+
+    return CefV8Value::CreateBool( true );
 }
 
 ecs::Entity *EntityHandler::getEntity(void)

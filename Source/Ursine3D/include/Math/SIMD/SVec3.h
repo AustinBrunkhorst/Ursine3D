@@ -26,7 +26,12 @@ namespace DirectX
 }
 #endif
 
+URSINE_TODO( "Fix once build system is generator based" );
+#if !defined(URSINE_DEPENDENCY_WWise)
+
 #define URSINE_DEPENDENCY_WWise
+
+#endif
 
 #if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
 

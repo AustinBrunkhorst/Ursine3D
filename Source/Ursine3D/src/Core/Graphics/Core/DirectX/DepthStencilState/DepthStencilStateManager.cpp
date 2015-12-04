@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** DepthStencilStateManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "DepthStencilStateManager.h"
@@ -180,6 +193,21 @@ namespace ursine
                 //Create the depth stencil state.
                 result = m_device->CreateDepthStencilState(&depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_PASSDEPTH_WRITESTENCIL ]);
                 UAssert(result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage(result));
+
+                /////////////////////////////////////////////////////////////////
+                // WRITE DEPTH FOR CLEARNING
+                ZeroMemory( &depthCheckStencilDesc, sizeof( depthCheckStencilDesc ) );
+
+                //Set up the description of the stencil state.
+                depthCheckStencilDesc.DepthEnable = true;
+                depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+                depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+
+                depthCheckStencilDesc.StencilEnable = false;
+
+                //Create the depth stencil state.
+                result = m_device->CreateDepthStencilState( &depthCheckStencilDesc, &m_depthStateArray[ DEPTH_STATE_PASSDEPTH_NOSTENCIL ] );
+                UAssert( result == S_OK, "Failed to create depth stencil! (Error '%s')", GetDXErrorMessage( result ) );
             }
 
             void DepthStencilStateManager::Uninitialize(void)

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        #overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #252526;
+            opacity: 1;
+            transition: opacity 250ms ease;
+        }
+
+        #overlay.entered {
+            opacity: 0;
+        }
+    </style>
+    <script>
+        window.addEventListener( 'load', function() {
+            setTimeout( function() {
+                var overlay = document.querySelector( '#overlay' );
+
+                overlay.classList.add( 'entered' );
+            }, 250 );
+        } );
+    </script>
+</head>
+<body>
+    Play Screen
+    <div id="overlay"></div>
+</body>
+</html>

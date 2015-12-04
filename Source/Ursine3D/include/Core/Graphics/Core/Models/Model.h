@@ -24,10 +24,11 @@ namespace ursine
     {
         struct ModelResource
         {
-            ID3D11Buffer *Vertices_;
-            ID3D11Buffer *Indices_;
-            unsigned VertCount_;
-            unsigned IndexCount_;
+            ID3D11Buffer *Vertices_[64];
+            ID3D11Buffer *Indices_[ 64 ];
+            unsigned VertCount_[ 64 ];
+            unsigned IndexCount_[ 64 ];
+            unsigned MeshCount_;
         };
     }
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#define URSINE_OUTPUT_WARNINGS 1
+
 #include <windows.h>
 
 #include <string>

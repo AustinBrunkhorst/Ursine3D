@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 3.0)
 
 include_directories(${Shared_INCLUDE_DIRS})
 
+# external files that will trigger regeneration of meta data
+set(meta_dependencies ${Shared_HEADER_FILES})
+
 ursine_default_project(Editor
     FOLDER "Engine"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
@@ -13,7 +16,9 @@ ursine_default_project(Editor
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META
+    INCLUDE_INSTALLER 
     META_HEADER "Reflection.h"
+    META_DEPENDENCIES ${meta_dependencies}
     PCH_NAME "Precompiled"
 )
  

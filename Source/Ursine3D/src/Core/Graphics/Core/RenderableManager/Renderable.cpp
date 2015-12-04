@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Renderable.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
 #include <Core/Graphics/Core/GfxDefines.h>
@@ -17,6 +30,7 @@ namespace ursine
         {
             Overdraw_ = false;
             Debug_ = false;
+            m_mask = 0x7FFFFFFFFFFFFFFF;
         }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
@@ -49,6 +63,16 @@ namespace ursine
             return Debug_;
         }
 
+        RenderMask Renderable::GetRenderMask(void) const
+        {
+            return m_mask;
+        }
+
+        void Renderable::SetRenderMask(const RenderMask mask)
+        {
+            m_mask = mask;
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
@@ -66,15 +90,17 @@ namespace ursine
             Transform_ = matrix;
         }
 
-        Model3D::Model3D()
+        Model3D::Model3D(void)
         {
             m_matrixPalette.resize(MAX_BONE_COUNT);
         }
 
         ///////////////////////////////////////////////////////////////////
         //model3d
-        void Model3D::Initialize()
+        void Model3D::Initialize(void)
         {
+			Renderable::Initialize( );
+
             ModelName_ = "Cube";
             MaterialName_ = "UV";
 
@@ -100,6 +126,18 @@ namespace ursine
             intensity = m_specIntensity;
         }
 
+
+		void Model3D::SetAnimationTime(const float time)
+		{
+			m_animationTime = time;
+		}
+
+		float & Model3D::GetAnimationTime(void)
+		{
+			// TODO: insert return statement here
+			return m_animationTime;
+		}
+
         void Model3D::SetColor(const Color color)
         {
             m_color = color;
@@ -114,6 +152,7 @@ namespace ursine
         {
             return m_matrixPalette;
         }
+
 
         const char *Model3D::GetModelName(void)
         {
@@ -191,6 +230,8 @@ namespace ursine
         //primitives
         void Primitive::Initialize()
         {
+			Renderable::Initialize( );
+
             Type_ = Primitive::PRIM_CUBE;
             Radius_ = 1;
             Height_ = 1;
@@ -290,6 +331,8 @@ namespace ursine
             m_intensity = 1.0f;;
 
             m_spotlightAngles = Vec2(15, 30);
+
+            Renderable::Initialize( );
         }
 
         Light::LightType Light::GetType(void)

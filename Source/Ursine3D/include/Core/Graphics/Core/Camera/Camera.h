@@ -18,6 +18,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "SMat4.h"
 #include "ViewportRenderModes.h"
+#include "EntityConfig.h"
 
 namespace ursine
 {
@@ -97,29 +98,53 @@ namespace ursine
 
             //DO NOT CALL set screen pixel positions
             void SetScreenPosition(const float x, const float y);
+
+            // check to see if a given mask will pass this camera's mask
+            bool CheckMask( const unsigned long long renderMask );
+
+            // set the mask this camera will use for culling operations
+            unsigned GetMask(void) const;
+            void SetMask( const unsigned long long renderMask );
+
+            ecs::EntityID GetEntityID(void) const;
+            void SetEntityID(const ecs::EntityID id);
+
         private:
+            // calcualte all vectors based upon up
             void CalculateVectors(const ursine::SVec3 &up);
 
+            // render mask for culling objects on a layer-level
+            unsigned long long m_cameraMask;
+
+            // entity ID
+            ecs::EntityUniqueID m_entityID;
+
+            // field of view, near, var
             float m_fov;
             float m_nearPlane;
             float m_farPlane;
 
+            // orhtographic size
             float m_size;
 
+            // ortho or perspective projection
             ProjectionMode m_projMode;
 
+            // general camera data
             ursine::SVec3 m_position;
             ursine::SVec3 m_right, m_up, m_look;
             ursine::SMat4 m_view;
 
+            // forward or deferred?
             ViewportRenderMode m_renderMode;
 
+            // these are the dimensions of this camera's viewport
             float m_width;
             float m_height;
             float m_xPos;
             float m_yPos;
 
-            //these are the actual pixel-position/sizes of the screen.
+            // these are the actual pixel-position/sizes of the screen.
             float m_screenX;
             float m_screenY;
             float m_screenWidth;

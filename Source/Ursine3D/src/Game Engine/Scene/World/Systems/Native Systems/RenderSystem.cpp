@@ -21,6 +21,11 @@ namespace ursine
             m_graphics = GetCoreSystem( graphics::GfxAPI );
         }
 
+        void RenderSystem::SortCameraArray()
+        {
+            utils::InsertionSort( m_cameras, cameraSortPredicate );
+        }
+
         RenderSystem::~RenderSystem(void)
         {
             
@@ -42,23 +47,37 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
 
+        bool RenderSystem::cameraSortPredicate(ursine::ecs::Camera* a, ursine::ecs::Camera* b)
+        {
+            return a->GetRenderLayer( ) <= b->GetRenderLayer( );
+        }
+
         void RenderSystem::onComponentAdded(EVENT_HANDLER(World))
         {
             EVENT_ATTRS(World, ComponentEventArgs);
 
             if (args->component->Is<Camera>( ))
             {
-                m_cameras.emplace( 
-                    args->entity->GetUniqueID( ), 
-                    static_cast<Camera*>( const_cast<Component*>( args->component ) )
+                utils::InsertionSort(
+                    m_cameras, 
+                    static_cast<Camera*>( const_cast<Component*>( args->component ) ), 
+                    cameraSortPredicate 
                 );
             }
+
             else if (args->component->Is<Model3D>( ))
                 addRenderable( args->entity, static_cast<Model3D*>( const_cast<Component*>( args->component ) ) );
             else if (args->component->Is<Billboard2D>( ))
                 addRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) ) );
             else if (args->component->Is<Light>( ))
                 addRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) ) );
+            else if ( args->component->Is<Animator>( ) )
+            {
+                m_animators.emplace(
+                    args->entity->GetUniqueID( ),
+                    static_cast<Animator*>(const_cast<Component*>(args->component))
+                );
+            }
         }
 
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
@@ -67,7 +86,12 @@ namespace ursine
 
             if (args->component->Is<Camera>( ))
             {
-                auto search = m_cameras.find( args->entity->GetUniqueID( ) );
+                URSINE_TODO("Replace this with a utils::BinarySearch call");
+                auto search = std::find(
+                    m_cameras.begin( ), 
+                    m_cameras.end( ), 
+                    static_cast<Camera*>( const_cast<Component*>( args->component ) )
+                );
 
                 if (search != m_cameras.end( ))
                     m_cameras.erase( search );
@@ -84,6 +108,12 @@ namespace ursine
         {
             m_graphics->BeginScene( );
 
+            for ( auto &animator : m_animators )
+            {
+
+                animator.second->UpdateAnimation( Application::Instance->GetDeltaTime( ) );
+            }
+
             for (auto &mapPair : m_renderableMap)
             {
                 auto &renderableVec = mapPair.second;
@@ -99,16 +129,19 @@ namespace ursine
 
             RenderHookArgs e( 0 );
 
-            for (auto &camera : m_cameras) 
+            for (auto &camera : m_cameras)
             {
-                if (camera.second->m_dirty)
-                    camera.second->updateRenderer( );
+                if (camera->m_dirty)
+                    camera->updateRenderer( );
 
-                e.camera = camera.second->m_handle;
+                if (!camera->GetActive( ))
+                    continue;
+
+                e.camera = camera->m_handle;
 
                 Dispatch( RENDER_HOOK, &e );
 
-                m_graphics->RenderScene( 0.0f, camera.second->m_handle );
+                m_graphics->RenderScene( 0.0f, camera->m_handle );
             }
 
             m_graphics->EndScene( );

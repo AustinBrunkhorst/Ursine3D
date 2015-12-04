@@ -62,7 +62,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     float subColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //size of a cell
-    float cellSize = settings->GetCellSize();
+    auto cellSize = settings->GetCellSize();
 
     // # of cells
     int widthCount = settings->GetWidth( );
@@ -84,7 +84,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     if (heightCount % 2 == 0)
         heightCount++;
 
-    float scalar = (1.f / cellSize);
+    float scalar = (cellSize == 0 ? 1 : 1.f / cellSize);
     if (scalar < 1) scalar = 1;
 
     //round to the right size

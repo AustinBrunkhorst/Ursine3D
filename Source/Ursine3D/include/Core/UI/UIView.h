@@ -48,7 +48,7 @@ namespace ursine
 
         bool IsValid(void) const;
 
-        void Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data);
+        void Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data);
 
     private:
         friend class UIManager;

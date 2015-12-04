@@ -25,7 +25,7 @@ void EditorIconSystem::OnInitialize(void)
 void EditorIconSystem::OnRemove(void)
 {
     m_world->Listener( this )
-        .Off(ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
+        .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
 }
 
 void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
@@ -34,16 +34,17 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
 
     auto comp = args->component;
 
-    if (args->entity->HasComponent<EditorIcon>( ))
-        return;
-
     // if the object added was a selected component
     if (comp->Is<ecs::Light>( ))
     {
-        args->entity->AddComponent<EditorIcon>( )->SetIcon( "Sun" );
+        if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );
+        args->entity->GetComponent<EditorIcon>( )->SetIcon( "Sun" );
     }
     else if (comp->Is<ecs::Camera>( ))
     {
-        args->entity->AddComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
+        if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );
+        args->entity->GetComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
     }
 }

@@ -6,6 +6,8 @@ extern class TreeViewItem extends PolymerElement {
     var selected : Bool;
     var opened : Bool;
 
+    var textElement : js.html.Element;
+    var textContentElement : js.html.Element;
     var child : TreeView;
 
     function new() : Void;

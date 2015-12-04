@@ -1,6 +1,8 @@
 #include "UrsinePrecompiled.h"
 
 #include "CameraComponent.h"
+#include "SystemManager.h"
+#include "RenderSystem.h"
 
 #include "GfxAPI.h"
 
@@ -12,11 +14,13 @@ namespace ursine
 
         Camera::Camera(void)
             : BaseComponent( )
+            , m_active( true )
+            , m_renderLayer( 0 )
         {
             m_handle = GetCoreSystem( graphics::GfxAPI )->CameraMgr.AddCamera( );
 
-            SetNearPlane( 0.0f );
-            SetFarPlane( 100.0f );
+            SetNearPlane( 0.1f );
+            SetFarPlane( 1000.0f );
         }
 
         Camera::~Camera(void)
@@ -108,6 +112,29 @@ namespace ursine
             GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).SetFOV( fov );
         }
 
+        bool Camera::GetActive(void) const
+        {
+            return m_active;
+        }
+
+        void Camera::SetActive(bool active)
+        {
+            m_active = active;
+        }
+
+        int Camera::GetRenderLayer(void) const
+        {
+            return m_renderLayer;
+        }
+
+        void Camera::SetRenderLayer(int layer)
+        {
+            m_renderLayer = layer;
+            
+            // notify rendersystem that I've changed
+            GetOwner( )->GetWorld( )->GetEntitySystem( RenderSystem )->SortCameraArray( );
+        }
+
         SVec3 Camera::GetLook(void)
         {
             return GetOwner( )->GetTransform( )->GetForward( );
@@ -136,6 +163,16 @@ namespace ursine
         SMat4 Camera::GetProjMatrix(void)
         {
             return GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).GetProjMatrix( );
+        }
+
+        int Camera::GetRenderMask() const
+        {
+            return GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).GetMask( );
+        }
+
+        void Camera::SetRenderMask(const int mask)
+        {
+            GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).SetMask( mask );
         }
 
         SVec3 Camera::ScreenToWorld(const Vec2& screenPos, float depth)

@@ -34,11 +34,20 @@ namespace ursine
                 SetMaterial
             );
 
+            EditorField(
+                int renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
             Model3D(void);
             ~Model3D(void);
 
             Meta(Disable)
             void OnInitialize(void) override;
+
+            Meta(Disable)
+            std::vector<SMat4> &GetMatrixPalette( void );
 
             //get/set model
             void SetModel(const std::string &name);
@@ -58,8 +67,13 @@ namespace ursine
             void SetDebug(bool flag);
             bool GetDebug(void) const;
 
+            int GetRenderMask(void) const;
+            void SetRenderMask(const int mask);
+
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
+
+
 
         private:
 

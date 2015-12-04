@@ -51,6 +51,11 @@ namespace ursine
             updateRenderer( );
         }
 
+        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        {
+            return m_model->GetMatrixPalette( );
+        }
+
         void Model3D::SetModel(const std::string &name)
         {
             m_modelName = name;
@@ -108,6 +113,18 @@ namespace ursine
         bool Model3D::GetDebug() const
         {
             return m_model->GetDebug( );
+        }
+
+        int Model3D::GetRenderMask() const
+        {
+            int retVal = static_cast<int>(m_model->GetRenderMask( ) & 0xFFFFFFFF);
+
+            return retVal;
+        }
+
+        void Model3D::SetRenderMask(const int mask)
+        {
+            m_model->SetRenderMask( static_cast<unsigned long long>(mask) );
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)

@@ -37,6 +37,10 @@ namespace ursine
             void DrawLine(const SVec3 &start, const SVec3 &end, 
                           const Color &color, float duration);
 
+            void DrawLine(const SVec3 &start, const SVec3 &end,
+                          const Color &colorBegin, const Color &colorEnd,
+                          float duration );
+
             void DrawPoint(const SVec3 &point, float size, 
                            const Color &color, float duration);
 
@@ -66,14 +70,23 @@ namespace ursine
             struct LineRequest : Request
             {
                 SVec3 start, end;
-                Color color;
+                Color colorStart, colorEnd;
 
                 LineRequest(const SVec3 &start, const SVec3 &end,
                             const Color &color, float duration)
                     : Request( duration )
                     , start( start )
                     , end( end )
-                    , color( color ) { }
+                    , colorStart( color ) 
+                    , colorEnd( color ) { }
+
+                LineRequest(const SVec3 &start, const SVec3 &end,
+                            const Color &colorStart, const Color &colorEnd, float duration )
+                    : Request( duration )
+                    , start( start )
+                    , end( end )
+                    , colorStart( colorStart )
+                    , colorEnd( colorEnd ) { }
 
                 void Draw(graphics::DrawingAPI &draw) override;
             };

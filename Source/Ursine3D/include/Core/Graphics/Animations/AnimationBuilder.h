@@ -16,24 +16,108 @@
 
 #include "AnimationRig.h"
 #include "Animation.h"
+#include "AnimationState.h"
+#include "BoneInfo.h"
+#include <unordered_map>
 
 namespace ursine
 {
+    namespace graphics{namespace ufmt_loader{
+        class AnimInfo;
+        class ModelInfo;
+    }}
+
     class AnimationBuilder
     {
     public:
         //given a Rig, State, and 2 vectors of matrices, generate matrix palette
 
-        //static stuff
+        static void GenerateAnimationData(
+            const AnimationState &animState, 
+            const AnimationRig *rig,
+            std::vector<SMat4> &outputMatPal,
+            std::vector<SMat4> &outputBones
+            
+        );
+
+        /////////////////////////////////////////////////////////////
+        // static stuff /////////////////////////////////////////////
         static void InitializeStaticData(void);
-        static Animation *AddAnimation(void);
-        static AnimationRig *AddAnimationRig(void);
         
-        static Animation *GetAnimation(const unsigned index);
-        static AnimationRig *GetAnimationRig(const unsigned index);
+        // getting an animation
+        static Animation *GetAnimationByIndex(const unsigned index);
+        static Animation *GetAnimationByName(const std::string &name);
+
+        // getting an animation rig
+        static AnimationRig *GetAnimationRigByIndex(const unsigned index);
+        static AnimationRig *GetAnimationRigByName(const std::string &name);
+
+        /** @brief loads an animation into builder
+        *
+        *  this will construct the animation data, reading in ufmt,
+        *  and saving it into memory
+        *
+        *  @param info the animation info
+        *  @return index of new resource.
+        */
+        static int LoadAnimation(const graphics::ufmt_loader::AnimInfo &info);
+
+        /** @brief loads a rig into builder
+        *
+        *  this will construct the rig data, reading in ufmt,
+        *  and saving it into memory
+        *
+        *  @param info the rig data
+        *  @return index of new resource.
+        */
+        static int LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData);
+
     private:
+        // interpolate between 2 sets of keyframes
+        static void interpolateRigKeyFrames( 
+            const std::vector<AnimationKeyframe> &frame1, 
+            const std::vector<AnimationKeyframe> &frame2, 
+            const float time, 
+            const unsigned boneCount,
+            std::vector<SMat4> &finalTransform 
+        );
+
+        // add resources
+        static unsigned addAnimation(void);
+        static unsigned addAnimationRig(void);
+
+        /** @brief recursively load a bone hierarchy
+        *
+        *  given an existing binary tree, this method will
+        *  generate the current bone, then instantiate 
+        *  this bone's children
+        *
+        *  @param hierarchy binary tree of children
+        *  @param currentIndex index of current node
+        *  @param parentIndex index of the parent
+        *  @param rigData pointer to the bone data
+        *  @param rig pointer to the rig we are filling
+        *  @return Void.
+        */
+        static void rec_LoadBoneMesh(
+            std::vector<std::vector<unsigned>> &hierarchy,
+            unsigned currentIndex,
+            unsigned parentIndex,
+            graphics::ufmt_loader::BoneInfo *rigData,
+            AnimationRig *rig
+        );
+
+        static unsigned m_rigCount;
+        static unsigned m_animationCount;
+
+        // all the data
         static std::vector<Animation> m_animationData;
         static std::vector<AnimationRig> m_animationRigData;
         
+        // lookup tables for stuff
+        static std::unordered_map<std::string, Animation*> m_name2Animation;
+        static std::unordered_map<std::string, AnimationRig*> m_name2Rig;
+
+        static std::vector<SMat4> m_toParentTransforms;
     };
 }
