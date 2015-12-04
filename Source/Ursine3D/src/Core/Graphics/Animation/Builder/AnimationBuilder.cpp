@@ -45,7 +45,8 @@ namespace ursine
 		unsigned boneCount = rig->GetBoneCount();
 
 		// make sure the rig bones match animation bones
-		UAssert(boneCount == currentAnimation->GetDesiredBoneCount(), "Attempted to use invalid rig to calculate animations!");
+        if ( boneCount != currentAnimation->GetDesiredBoneCount( ) )
+            return;
 
 		// determine the 2 current keyframes to use
 		// we assume that all frames exist, and that they were baked across all total keyframes
@@ -120,6 +121,8 @@ namespace ursine
 
     Animation *AnimationBuilder::GetAnimationByIndex(const unsigned index)
     {
+        if ( index >= m_animationData.size( ) )
+            return nullptr;
         return &m_animationData[ index ];
     }
 
@@ -130,6 +133,8 @@ namespace ursine
 
     AnimationRig *AnimationBuilder::GetAnimationRigByIndex(const unsigned index)
     {
+        if ( index >= m_animationRigData.size( ) )
+            return nullptr;
         return &m_animationRigData[ index ];
     }
 

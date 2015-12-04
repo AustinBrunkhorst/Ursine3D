@@ -19,8 +19,8 @@
 #include <complex>
 #include "DepthStencilStateList.h"
 #include <d3d11.h>
-#include <Core/Graphics/Animations/AnimationState.h>
-#include <Core/Graphics/Animations/AnimationBuilder.h>
+#include <Core/Graphics/Animation/Builder/AnimationState.h>
+#include <Core/Graphics/Animation/Builder/AnimationBuilder.h>
 
 static int tempID = -1;
 static HWND wHND = 0;
@@ -954,15 +954,15 @@ namespace ursine
             // map texture
             textureManager->MapTextureByID(handle.Material_);
 
-            if(handle.Overdraw_)
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL); 
-            else
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
+			if (handle.Overdraw_)
+				dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+			else
+				dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
              
             //render
             unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
 
-            for (uint x = 0; x < count; ++x)
+            for (unsigned x = 0; x < count; ++x)
             {
                 // set model
                 modelManager->BindModel(handle.Model_, x);

@@ -1,16 +1,3 @@
-/* ---------------------------------------------------------------------------
-** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
-**
-** ModelManager.cpp
-**
-** Author:
-** - Matt Yan - m.yan@digipen.edu
-**
-** Contributors:
-** - <list in same format as author if applicable>
-** -------------------------------------------------------------------------*/
-
 #include "UrsinePrecompiled.h"
 #include "ModelManager.h"
 #include "GfxDefines.h"
@@ -18,6 +5,9 @@
 #include <d3d11.h>
 #include "AnimationBuilder.h"
 #include "BoneInfo.h"
+
+
+#include "CFBXLoader.h"
 
 namespace ursine
 {
@@ -75,8 +65,12 @@ namespace ursine
 				//determine what loading format to use
 				if (tokens[0].find("8.0.mdl") != std::string::npos)
 					LoadModel(tokens[1], tokens[0]);
-				else
+				else if (tokens[0].find(".fbx") != std::string::npos)
+					LoadModel_Fbx(tokens[1], tokens[0]);
+				else if(tokens[0].find(".jdl") != std::string::npos)
 					LoadModel_Ursine(tokens[1], tokens[0]);
+				else if (tokens[0].find(".jlvl") != std::string::npos)
+					LoadLevel_Ursine(tokens[1], tokens[0]);
             }
 
             input.close();
@@ -161,7 +155,8 @@ namespace ursine
             UAssert(result == S_OK, "Failed to make index buffer!");
 
             m_s2uTable[ name ] = m_modelCount;
-            m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
+            m_u2mTable[ m_modelCount ] = m_modelArray[ name ];
+			++m_modelCount;
         }
 
         void ModelManager::Uninitialize()
@@ -216,7 +211,7 @@ namespace ursine
                 realbuffer[ x ].vPos = DirectX::XMFLOAT3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
                 realbuffer[ x ].vNor = DirectX::XMFLOAT3(buffer[ x ].normal.x, buffer[ x ].normal.y, buffer[ x ].normal.z);
                 realbuffer[ x ].vUv = buffer[ x ].UV;
-                realbuffer[ x ].vBIdx[ 0 ] = 0;
+                realbuffer[ x ].vBIdx[ 0 ] = 0;// = DirectX::XMINT4( 0, 0, 0, 0 );
                 realbuffer[ x ].vBIdx[ 1 ] = 0;
                 realbuffer[ x ].vBIdx[ 2 ] = 0;
                 realbuffer[ x ].vBIdx[ 3 ] = 0;
@@ -286,6 +281,139 @@ namespace ursine
             delete[] indexArray;
         }
 
+		void ModelManager::LoadModel_Fbx(std::string name, std::string fileName)
+		{
+			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+		
+			std::vector<AnimationVertex> buffer;
+			CFBXLoader fbx_model;
+			if (false == fbx_model.LoadFBX(fileName.c_str()))
+				return;
+			ufmt_loader::ModelInfo ufmt_model = fbx_model.GetModelInfo();
+		
+			/////////////////////////////////////////////////////////
+			// GENERATING BONE DATA /////////////////////////////////
+		
+			// 1. load rig
+			unsigned rigIndex = AnimationBuilder::LoadBoneData(ufmt_model);
+		
+			// 2. load animation
+      for ( unsigned x = 0; x < ufmt_model.manimCount; ++x )
+        unsigned animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[x]);
+		
+		
+			/////////////////////////////////////////////////////////////////
+			// CREATE VERTEX BUFFER /////////////////////////////////////////
+			D3D11_BUFFER_DESC vertexBufferDesc;
+			D3D11_SUBRESOURCE_DATA vertexData;
+			HRESULT result;
+		
+			m_modelArray[name] = new ModelResource();
+			m_modelArray[name]->MeshCount_ = ufmt_model.mmeshCount;
+		
+			for (uint mesh_idx = 0; mesh_idx < ufmt_model.mmeshCount; ++mesh_idx)
+			{
+				/////////////////////////////////////////////////////////////////
+				// ALLOCATE MODEL ///////////////////////////////////////////////
+		
+		
+				uint vertCount = ufmt_model.marrMeshes[mesh_idx].vertexCount;
+				//Set up the description of the static vertex buffer.
+				vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+				vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
+				vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+				vertexBufferDesc.CPUAccessFlags = 0;
+				vertexBufferDesc.MiscFlags = 0;
+				vertexBufferDesc.StructureByteStride = 0;
+		
+				//Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
+				//can do this with skincount
+				buffer.resize(vertCount);
+				for (size_t i = 0; i < vertCount; ++i)
+				{
+					buffer[i].vPos = DirectX::XMFLOAT3(
+						ufmt_model.marrMeshes[mesh_idx].vertices[i].x,
+						ufmt_model.marrMeshes[mesh_idx].vertices[i].y,
+						ufmt_model.marrMeshes[mesh_idx].vertices[i].z
+						);
+		
+					buffer[i].vNor = DirectX::XMFLOAT3(
+						ufmt_model.marrMeshes[mesh_idx].normals[i].x,
+						ufmt_model.marrMeshes[mesh_idx].normals[i].y,
+						ufmt_model.marrMeshes[mesh_idx].normals[i].z
+						);
+		
+					buffer[i].vUv = DirectX::XMFLOAT2(
+						ufmt_model.marrMeshes[mesh_idx].uvs[i].x,
+						ufmt_model.marrMeshes[mesh_idx].uvs[i].y
+						);
+		
+					if (ufmt_model.marrMeshes[mesh_idx].ctrlPtCount > 0)
+					{
+						buffer[i].vBWeight.x = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][0];
+						buffer[i].vBWeight.y = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][1];
+						buffer[i].vBWeight.z = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][2];
+						buffer[i].vBWeight.w = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][3];
+						buffer[ i ].vBIdx[ 0 ] = ufmt_model.marrMeshes[ mesh_idx ].ctrlIndices[ i ][ 0 ];
+            buffer[ i ].vBIdx[ 1 ] = ufmt_model.marrMeshes[ mesh_idx ].ctrlIndices[ i ][ 1 ];
+            buffer[ i ].vBIdx[ 2 ] = ufmt_model.marrMeshes[ mesh_idx ].ctrlIndices[ i ][ 2 ];
+            buffer[ i ].vBIdx[ 3 ] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][3];
+					}
+					else
+					{
+						buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
+
+                        buffer[ i ].vBIdx[ 0 ] = 0;// = DirectX::XMINT4( 0, 0, 0, 0 );
+                        buffer[ i ].vBIdx[ 1 ] = 0;
+                        buffer[ i ].vBIdx[ 2 ] = 0;
+                        buffer[ i ].vBIdx[ 3 ] = 0;
+					}
+				}
+		
+				//Give the subresource structure a pointer to the vertex data.
+				vertexData.pSysMem = &buffer[0];
+				vertexData.SysMemPitch = 0;
+				vertexData.SysMemSlicePitch = 0;
+		
+				//Now create the vertex buffer.
+				result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_modelArray[name]->Vertices_[mesh_idx]);
+				UAssert(result == S_OK, "Failed to make vertex buffer!");
+				m_modelArray[name]->VertCount_[mesh_idx] = vertCount;
+		
+				/////////////////////////////////////////////////////////////////
+				// CREATE INDEX BUFFER //////////////////////////////////////////
+				m_modelArray[name]->IndexCount_[mesh_idx] = ufmt_model.marrMeshes[mesh_idx].indexCount;
+				unsigned *indexArray = new unsigned[m_modelArray[name]->IndexCount_[mesh_idx]];
+				for (unsigned x = 0; x < m_modelArray[name]->IndexCount_[mesh_idx]; ++x)
+					indexArray[x] = ufmt_model.marrMeshes[mesh_idx].indices[x];
+		
+				D3D11_BUFFER_DESC indexBufferDesc;
+				D3D11_SUBRESOURCE_DATA indexData;
+		
+				//Set up the description of the static index buffer.
+				indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+				indexBufferDesc.ByteWidth = sizeof(unsigned) * m_modelArray[name]->IndexCount_[mesh_idx];
+				indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+				indexBufferDesc.CPUAccessFlags = 0;
+				indexBufferDesc.MiscFlags = 0;
+				indexBufferDesc.StructureByteStride = 0;
+		
+				//Give the subresource structure a pointer to the index data.
+				indexData.pSysMem = indexArray;
+				indexData.SysMemPitch = 0;
+				indexData.SysMemSlicePitch = 0;
+		
+				//Create the index buffer.
+				result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_modelArray[name]->Indices_[mesh_idx]);
+				UAssert(result == S_OK, "Failed to make index buffer!");
+		
+				m_s2uTable[name] = m_modelCount;
+				m_u2mTable[m_modelCount++] = m_modelArray[name];
+		
+				delete[] indexArray;
+			}
+		}
+
 		void ModelManager::LoadModel_Ursine(std::string name, std::string fileName)
 		{
 			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
@@ -295,10 +423,11 @@ namespace ursine
 
 			HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			ufmt_loader::ModelInfo ufmt_model;
+			ufmt_loader::LevelInfo ufmt_lvl;
 
 			// Serialize in model
 			ufmt_model.SerializeIn(hFile);
-            
+
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
 
@@ -418,6 +547,20 @@ namespace ursine
 
 				delete[] indexArray;
 			}
+		}
+
+		void ModelManager::LoadLevel_Ursine(std::string name, std::string fileName)
+		{
+			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+
+			std::ifstream input;
+			std::vector<AnimationVertex> buffer;
+
+			HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+			ufmt_loader::LevelInfo ufmt_lvl;
+
+			// Serialize in model
+			ufmt_lvl.SerializeIn(hFile);
 		}
 
         ID3D11Buffer *ModelManager::GetModelVert(std::string name, unsigned index)
