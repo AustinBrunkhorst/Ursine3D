@@ -1,412 +1,47 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Utilities.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
 #pragma once
 
-#include "WholeInformation.h"
+#include <AnimationDef.h>
+#include <SVec4.h>
 
-using namespace DirectX;
-
-namespace ursine
+namespace Utilities
 {
-	namespace graphics
-	{
-		namespace FBX_DATA
-		{
-			// UVSet
-			typedef std::tr1::unordered_map<std::string, int> UVsetID;
-			// UVSet
-			typedef std::tr1::unordered_map<std::string, std::vector<std::string>> TextureSet;
-			// layout
-			enum eLayout
-			{
-				NONE = -1,
-				STATIC = 0,
-				INSTANCE = 0,
-				SKINNED,
-			};
-
-			struct Material_Consts
-			{
-				XMFLOAT4	ambient;
-				XMFLOAT4	diffuse;
-				XMFLOAT4	specular;
-				XMFLOAT4	emissive;
-				float				shineness;
-				float				TransparencyFactor;
-			};
-
-			struct BlendIdxWeight
-			{
-				unsigned int mBlendingIndex;
-				double mBlendingWeight;
-
-				BlendIdxWeight() :
-					mBlendingIndex(0),
-					mBlendingWeight(0)
-				{}
-
-				bool operator<(const BlendIdxWeight& rhs)
-				{
-					return mBlendingWeight < rhs.mBlendingWeight;
-				}
-			};
-
-			bool compare_bw_ascend(BlendIdxWeight lhs, BlendIdxWeight rhs);
-			bool compare_bw_descend(BlendIdxWeight lhs, BlendIdxWeight rhs);
-
-			// Each Control Point in FBX is basically a vertex  in the physical world. For example, a cube has 8
-			// vertices(Control Points) in FBX Joints are associated with Control Points in FBX
-			// The mapping is one joint corresponding to 4 Control Points(Reverse of what is done in a game engine)
-			// As a result, this struct stores a XMFLOAT3 and a vector of joint indices
-			struct CtrlPoint
-			{
-				XMFLOAT3 mPosition;
-				std::vector<BlendIdxWeight> mBlendingInfo;
-			};
-			// Control Points
-			typedef std::unordered_map<unsigned int, CtrlPoint*> ControlPoints;
-
-			struct KeyFrame
-			{
-				float time;
-				XMFLOAT3 trans;
-				XMFLOAT4 rot;
-				XMFLOAT3 scl;
-			};
-
-			struct BoneAnimation
-			{
-				std::vector<KeyFrame> keyFrames;
-			};
-
-			struct AnimationClip
-			{
-				// animation of each bones
-				std::vector<BoneAnimation> boneAnim;
-				void Interpolate(double timePos, std::vector<XMMATRIX>& toParentTMs);
-			};
-
-			struct AnimationData
-			{
-				std::unordered_map<std::string, AnimationClip> animations;
-			};
-
-			struct Material_Eles
-			{
-				// determine if material only holds material or only textures
-				// or both
-				enum eMaterial_Fac
-				{
-					Fac_None = 0,
-					Fac_Only_Color,
-					Fac_Only_Texture,
-					Fac_Both,
-					Fac_Max,
-				};
-				eMaterial_Fac type;
-				XMFLOAT4 color;
-				TextureSet textureSetArray;
-
-				Material_Eles()
-					:type(Fac_None), color(0, 0, 0, 1)
-				{
-					textureSetArray.clear();
-				}
-
-				~Material_Eles()
-				{
-					Release();
-				}
-
-				void Release()
-				{
-					for (TextureSet::iterator it = textureSetArray.begin(); it != textureSetArray.end(); ++it)
-					{
-						it->second.clear();
-					}
-					textureSetArray.clear();
-				}
-
-				Material_Eles& operator=(const Material_Eles& rhs)
-				{
-					type = rhs.type;
-					color = rhs.color;
-
-					for (auto iter = rhs.textureSetArray.begin(); iter != rhs.textureSetArray.end(); ++iter)
-					{
-						for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2)
-						{
-							textureSetArray[iter->first].push_back(*iter2);
-						}
-					}
-					return *this;
-				}
-			};
-
-			// structure for storing material and texture's'
-			// this will be used to export info as JMDL
-			// Currently, not handling subset or submaterial
-			struct FbxMaterial
-			{
-				enum eMaterial_Type
-				{
-					Type_None = 0,
-					Type_Lambert,
-					Type_Phong,
-					Type_Max
-				};
-
-				std::string  name;
-				eMaterial_Type type;
-				// ambiet material and texture
-				Material_Eles ambient;
-				// diffuse material and texture
-				Material_Eles diffuse;
-				// emmisive material and texture
-				Material_Eles emissive;
-				// specular material and texture
-				Material_Eles specular;
-				float shineness;
-				float TransparencyFactor;
-				Material_Consts mtrl_consts;
-
-				FbxMaterial()
-					:name(""), type(Type_None),
-					shineness(0), TransparencyFactor(0)
-				{}
-
-				void Release()
-				{
-					ambient.Release();
-					diffuse.Release();
-					emissive.Release();
-					specular.Release();
-				}
-
-				FbxMaterial& operator=(const FbxMaterial& rhs)
-				{
-					name = rhs.name;
-					type = rhs.type;
-					ambient = rhs.ambient;
-					diffuse = rhs.diffuse;
-					emissive = rhs.emissive;
-					specular = rhs.specular;
-					shineness = rhs.shineness;
-					TransparencyFactor = rhs.TransparencyFactor;
-
-					mtrl_consts.ambient = rhs.ambient.color;
-					mtrl_consts.diffuse = rhs.diffuse.color;
-					mtrl_consts.emissive = rhs.emissive.color;
-					mtrl_consts.specular = rhs.specular.color;
-					mtrl_consts.shineness = rhs.shineness;
-					mtrl_consts.TransparencyFactor = rhs.TransparencyFactor;
-					return *this;
-				}
-			};
-
-			// structure which will be used to pass data to shaer
-			// this will replace MATERIAL_DATA
-			struct Material_Data
-			{
-				FbxMaterial*				fbxmaterial;
-				ID3D11ShaderResourceView*	pSRV;
-				ID3D11SamplerState*         pSampler;
-				ID3D11Buffer*				pMaterialCb;
-
-				Material_Data()
-				{
-					fbxmaterial = nullptr;
-					pSRV = nullptr;
-					pSampler = nullptr;
-					pMaterialCb = nullptr;
-				}
-				void Release()
-				{
-					if (fbxmaterial)
-					{
-						fbxmaterial->Release();
-						fbxmaterial = nullptr;
-					}
-
-					if (pMaterialCb)
-					{
-						pMaterialCb->Release();
-						pMaterialCb = nullptr;
-					}
-
-					if (pSRV)
-					{
-						pSRV->Release();
-						pSRV = nullptr;
-					}
-
-					if (pSampler)
-					{
-						pSampler->Release();
-						pSampler = nullptr;
-					}
-				}
-			};
-
-			// This is the actual representation of a joint in a game engine
-			struct Joint
-			{
-				std::string mName;
-				int mParentIndex;
-				FbxAMatrix mToRoot;
-				FbxAMatrix mToParent;
-
-				// bind - local coord system that the entire skin is defined relative to
-				// local tm. local about to the skinned mesh
-				XMFLOAT3 bindPosition;
-				XMFLOAT3 bindScaling;
-				XMFLOAT4 bindRotation;
-
-				// bone space - the space that influences the vertices. so-called offset transformation
-				// bone offset tm
-				XMFLOAT3 boneSpacePosition;
-				XMFLOAT3 boneSpaceScaling;
-				XMFLOAT4 boneSpaceRotation;
-
-				Joint()
-				{
-					mParentIndex = -1;
-					bindPosition = XMFLOAT3(0, 0, 0);
-					bindRotation = XMFLOAT4(0, 0, 0, 1);
-					bindScaling = XMFLOAT3(1, 1, 1);
-					boneSpacePosition = XMFLOAT3(0, 0, 0);
-					boneSpaceRotation = XMFLOAT4(0, 0, 0, 1);
-					boneSpaceScaling = XMFLOAT3(1, 1, 1);
-					mToRoot.SetIdentity();
-					mToParent.SetIdentity();
-				}
-
-				~Joint()
-				{
-				}
-			};
-
-			struct FbxBoneData
-			{
-				std::vector<Joint>			mbonehierarchy;
-				std::vector<FbxNode*>		mboneNodes;
-				~FbxBoneData()
-				{
-					Release();
-				}
-				void Release()
-				{
-					mbonehierarchy.clear();
-					mboneNodes.clear();
-				}
-			};
-
-			struct ModelSubset
-			{
-				ModelSubset() : id(-1), vertexStart(0), vertexCount(0) {};
-				//id number of this subset
-				int         id;
-
-				//location of where this subset starts and end
-				unsigned    vertexStart;
-				unsigned    vertexCount;
-			};
-
-			struct MeshData
-			{
-				eLayout mLayout;
-				std::string name;
-				unsigned int vertexCnt;
-				unsigned int indexCnt;
-				unsigned int normalCnt;
-				unsigned int tangentCnt;
-				unsigned int uvCnt;
-				unsigned int mtrlIndexCnt;
-
-				FbxLayerElement::EMappingMode normalMode;
-				FbxLayerElement::EMappingMode tangentMode;
-				XMMATRIX meshTM;
-				XMMATRIX parentTM;
-
-				XMFLOAT3* vertices;
-				unsigned int* indices;
-				XMFLOAT3* normals;
-				XMFLOAT3* tangents;
-				XMFLOAT2* uvs;
-				unsigned int* materialIndices;
-
-				// material
-				std::vector<FbxMaterial> fbxmaterials;
-				std::vector<ModelSubset> modelSubsets;
-
-				MeshData() : mLayout(NONE), vertexCnt(0), indexCnt(0), normalCnt(0), tangentCnt(0), uvCnt(0),
-					normalMode(FbxLayerElement::eNone), tangentMode(FbxLayerElement::eNone),
-					vertices(nullptr), indices(nullptr), normals(nullptr), tangents(nullptr), uvs(nullptr)
-				{
-					parentTM = XMMatrixIdentity();
-				}
-			};
-
-			struct FbxModel
-			{
-				FbxPose*				mAnimPose;
-
-				// ===== Data we need to export =======
-				// need to be exported as binary
-				eLayout					mLayout;
-				std::string				name;
-				FbxBoneData				mBoneData;
-				std::vector<MeshData*>	mMeshData;
-				std::vector<FbxMaterial*> mMaterials;
-				std::vector<ControlPoints*> mCtrlPoints;
-				std::vector<AnimationData*> mAnimationData;
-				// ====================================
-
-				FbxModel() :mAnimPose(nullptr) {}
-				~FbxModel()
-				{
-					Release();
-				}
-				void Release()
-				{
-					mMeshData.clear();
-					mMaterials.clear();
-					mCtrlPoints.clear();
-					mAnimationData.clear();
-				}
-				void GetFinalTransform(const std::string& clipName, double timePos, std::vector<XMMATRIX>& finalTransform) const;
-			};
-		}
-
-		namespace Utilities
-		{
-			/*===============================
-			Utility Functions for FBX
-			===============================*/
-			void Swap(void* a, void* b);
-			XMVECTOR Set4FloatsToXMVector(const float& x, const float& y, const float& z, const float& w);
-			XMVECTOR SetFloat3ToXMVector(const XMFLOAT3& rhs);
-			XMVECTOR SetFloat4ToXMVector(const XMFLOAT4& rhs);
-			XMFLOAT3 SetXMVectorToFloat3(const XMVECTOR& rhs);
-			XMFLOAT4 SetXMVectorToFloat4(const XMVECTOR& rhs);
-			FbxAMatrix FBXMatrixToFBXAMatrix(FbxMatrix* src);
-			XMMATRIX FBXAMatrixToXMMatrix(FbxAMatrix* src);
-			XMVECTOR ConvertVector4(const FbxVector4& vec);
-			XMVECTOR ConvertQuaternion(const FbxQuaternion& quat);
-			FbxVector4 XMVectorToFBXVector(const XMVECTOR& src);
-			FbxVector4 XMFloat3ToFBXVector4(const XMFLOAT3& src);
-			XMFLOAT4 FBXDouble3ToXMFLOAT4(const FbxDouble3& src);
-			XMFLOAT3 FBXVectorToXMFLOAT3(const FbxVector4& src);
-			FbxVector2 XMFloat2ToFBXVector2(const XMFLOAT2& src);
-			XMFLOAT4 FBXQuaternionToXMLOAT4(const FbxQuaternion& quat);
-			XMFLOAT3 FBXVectorToXMFLOAT3(const FbxVector4& src);
-			XMFLOAT4 FBXVectorToXMFLOAT4(const FbxVector4& src);
-			bool HJIsZeroMtx(XMMATRIX* _pMtx);
-			bool HJIsSameMtx(XMMATRIX* _pMtx1, XMMATRIX* _pMtx2);
-			bool HJIsIdentityMtx(XMMATRIX* _pMtx);
-			int InterpolationFlagToIndex(int flags);
-			int ConstantmodeFlagToIndex(int flags);
-			int TangentmodeFlagToIndex(int flags);
-			int TangentweightFlagToIndex(int flags);
-			int TangentVelocityFlagToIndex(int flags);
-		};
-	};
+	/*===============================
+	Utility Functions for FBX
+	===============================*/
+	void Swap(void* a, void* b);
+	ursine::SVec3 SetFloat3ToSVec3(const pseudodx::XMFLOAT3& rhs);
+	ursine::SVec4 SetFloat3ToXMVector(const pseudodx::XMFLOAT3& rhs);
+	ursine::SVec4 SetFloat4ToXMVector(const pseudodx::XMFLOAT4& rhs);
+	pseudodx::XMFLOAT3 SetSVec3ToFloat3(const ursine::SVec3& rhs);
+	pseudodx::XMFLOAT3 SetXMVectorToFloat3(const ursine::SVec4& rhs);
+	pseudodx::XMFLOAT4 SetXMVectorToFloat4(const ursine::SVec4& rhs);
+	FbxAMatrix FBXMatrixToFBXAMatrix(FbxMatrix* src);
+	ursine::SMat4 FBXAMatrixToXMMatrix(FbxAMatrix* src);
+	ursine::SVec4 ConvertVector4(const FbxVector4& vec);
+	ursine::SVec4 ConvertQuaternion(const FbxQuaternion& quat);
+	FbxVector4 XMVectorToFBXVector(const ursine::SVec4& src);
+	FbxVector4 XMFloat3ToFBXVector4(const pseudodx::XMFLOAT3& src);
+	pseudodx::XMFLOAT4 FBXDouble3ToXMFLOAT4(const FbxDouble3& src);
+	pseudodx::XMFLOAT3 FBXVectorToXMFLOAT3(const FbxVector4& src);
+	FbxVector2 XMFloat2ToFBXVector2(const pseudodx::XMFLOAT2& src);
+	pseudodx::XMFLOAT4 FBXQuaternionToXMLOAT4(const FbxQuaternion& quat);
+	pseudodx::XMFLOAT3 FBXVectorToXMFLOAT3(const FbxVector4& src);
+	pseudodx::XMFLOAT4 FBXVectorToXMFLOAT4(const FbxVector4& src);
+	int InterpolationFlagToIndex(int flags);
+	int ConstantmodeFlagToIndex(int flags);
+	int TangentmodeFlagToIndex(int flags);
+	int TangentweightFlagToIndex(int flags);
+	int TangentVelocityFlagToIndex(int flags);
 };

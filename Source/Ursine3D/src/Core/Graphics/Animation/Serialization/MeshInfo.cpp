@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** MeshInfo.cpp
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "UrsinePrecompiled.h"
@@ -102,31 +115,32 @@ namespace ursine
 					ReadFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &ctrlPtCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &subsetCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &meshTM, sizeof(SMat4), &nBytesRead, nullptr);
 
-					vertices = new XMFLOAT3[vertexCount];
+					vertices = new pseudodx::XMFLOAT3[vertexCount];
 					for (i = 0; i < vertexCount; ++i)
 					{
-						ReadFile(hFile, &vertices[i], sizeof(XMFLOAT3), &nBytesRead, nullptr);
+						ReadFile(hFile, &vertices[i], sizeof(pseudodx::XMFLOAT3), &nBytesRead, nullptr);
 					}
 					indices = new unsigned int[indexCount];
 					for (i = 0; i < indexCount; ++i)
 					{
 						ReadFile(hFile, &indices[i], sizeof(unsigned int), &nBytesRead, nullptr);
 					}
-					normals = new XMFLOAT3[normalCount];
+					normals = new pseudodx::XMFLOAT3[normalCount];
 					for (i = 0; i < normalCount; ++i)
 					{
-						ReadFile(hFile, &normals[i], sizeof(XMFLOAT3), &nBytesRead, nullptr);
+						ReadFile(hFile, &normals[i], sizeof(pseudodx::XMFLOAT3), &nBytesRead, nullptr);
 					}
-					tangents = new XMFLOAT3[tangentCount];
+					tangents = new pseudodx::XMFLOAT3[tangentCount];
 					for (i = 0; i < tangentCount; ++i)
 					{
-						ReadFile(hFile, &tangents[i], sizeof(XMFLOAT3), &nBytesRead, nullptr);
+						ReadFile(hFile, &tangents[i], sizeof(pseudodx::XMFLOAT3), &nBytesRead, nullptr);
 					}
-					uvs = new XMFLOAT2[uvCount];
+					uvs = new pseudodx::XMFLOAT2[uvCount];
 					for (i = 0; i < uvCount; ++i)
 					{
-						ReadFile(hFile, &uvs[i], sizeof(XMFLOAT2), &nBytesRead, nullptr);
+						ReadFile(hFile, &uvs[i], sizeof(pseudodx::XMFLOAT2), &nBytesRead, nullptr);
 					}
 					// replace this fbxmaterial or just name of mtrl,texture
 					//materials = new FBX_DATA::Material[mtrlCount];
@@ -186,9 +200,10 @@ namespace ursine
 					WriteFile(hFile, &ctrlPtCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &subsetCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
+					WriteFile(hFile, &meshTM, sizeof(SMat4), &nBytesWrite, nullptr);
 					for (i = 0; i < vertexCount; ++i)
 					{
-						WriteFile(hFile, &vertices[i], sizeof(XMFLOAT3), &nBytesWrite, nullptr);
+						WriteFile(hFile, &vertices[i], sizeof(pseudodx::XMFLOAT3), &nBytesWrite, nullptr);
 					}
 					for (i = 0; i < indexCount; ++i)
 					{
@@ -196,15 +211,15 @@ namespace ursine
 					}
 					for (i = 0; i < normalCount; ++i)
 					{
-						WriteFile(hFile, &normals[i], sizeof(XMFLOAT3), &nBytesWrite, nullptr);
+						WriteFile(hFile, &normals[i], sizeof(pseudodx::XMFLOAT3), &nBytesWrite, nullptr);
 					}
 					for (i = 0; i < tangentCount; ++i)
 					{
-						WriteFile(hFile, &tangents[i], sizeof(XMFLOAT3), &nBytesWrite, nullptr);
+						WriteFile(hFile, &tangents[i], sizeof(pseudodx::XMFLOAT3), &nBytesWrite, nullptr);
 					}
 					for (i = 0; i < uvCount; ++i)
 					{
-						WriteFile(hFile, &uvs[i], sizeof(XMFLOAT2), &nBytesWrite, nullptr);
+						WriteFile(hFile, &uvs[i], sizeof(pseudodx::XMFLOAT2), &nBytesWrite, nullptr);
 					}
 					// replace this to fbxmaterial or just name of mtrl,texture
 					//for (i = 0; i < mtrlCount; ++i)

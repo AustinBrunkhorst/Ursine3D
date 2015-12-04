@@ -103,7 +103,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
 
         for ( auto &x : rayOutput.entity )
         {
-            auto *hitObj = m_world->GetEntity( x );
+            auto *hitObj = m_world->GetEntityUnique( x );
             auto *health = hitObj->GetComponent<Health>( );
             if ( health != nullptr )
             {

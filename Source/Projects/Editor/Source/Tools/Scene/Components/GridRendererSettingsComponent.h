@@ -54,4 +54,4 @@ private:
     int m_width;
     int m_height;
     int m_subDivisions;
-} Meta(Enable);
+} Meta(Enable, DisableSerialization);
