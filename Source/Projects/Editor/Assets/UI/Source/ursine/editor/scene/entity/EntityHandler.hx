@@ -27,6 +27,8 @@ extern class EntityHandler {
     function getChildren() : Array<UInt>;
     function getParent() : UInt;
     function setParent(parentUniqueID : UInt) : Bool;
+    function getSiblingIndex() : UInt;
+    function setSiblingIndex(index : UInt) : Void;
 
     function saveAsArchetype() : Void;
 }

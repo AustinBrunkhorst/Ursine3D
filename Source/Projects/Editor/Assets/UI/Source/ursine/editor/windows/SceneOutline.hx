@@ -24,6 +24,7 @@ class SceneOutline extends WindowHandler {
         super( );
 
         window.heading = "Outline";
+        window.classList.add( 'scene-outline-window' );
 
         m_rootView = new TreeView( );
         {
@@ -189,21 +190,47 @@ class SceneOutline extends WindowHandler {
         var item = new TreeViewItem( );
 
         item.addEventListener( 'drag-start', function(e) {
-            return entity.isHierarchyChangeEnabled( );
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
+
+            e.preventStart = !entity.isHierarchyChangeEnabled( );
         } );
 
         item.addEventListener( 'drag-drop', function(e) {
-            if (!entity.isHierarchyChangeEnabled( ))
-                return false;
-            
-            untyped item.entity.setParent( untyped e.detail.dropTarget.entity );
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
 
-            // handle manipulation explicitly for new parents
-            if (e.detail.newParent == true) {
-                return false;
-            } else {
-                return true;
+            if (!entity.isHierarchyChangeEnabled( )) {
+                e.preventDrop = true;
+
+                return;
             }
+
+            var target : Entity = e.detail.dropTarget.entity;
+
+            var parent = entity.getParent( );
+
+            var targetID = target == null ? -1 : target.uniqueID;
+            var parentID = parent == null ? -1 : parent.uniqueID;
+
+            // disable dropping onto the same entity
+            if (targetID == parentID) {
+                e.preventDrop = e.detail.newParent;
+
+                return;
+            }
+
+            // default case
+            entity.setParent( target );
+        } );
+
+        item.addEventListener( 'drag-drop-after', function(e) {
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
+
+            var childIndex = untyped ElementUtils.childIndex( item );
+
+            entity.setSiblingIndex( childIndex );
         } );
 
         item.textContentElement.addEventListener( 'dblclick', function() {

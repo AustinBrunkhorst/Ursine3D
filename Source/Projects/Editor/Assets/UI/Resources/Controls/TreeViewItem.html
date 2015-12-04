@@ -93,7 +93,7 @@
                     var result = this.fire( 'drag-start', e );
 
                     // drag start was cancelled
-                    if (result === false) {
+                    if (result.preventStart === true) {
                         this._lastDragTarget = null;
 
                         return;
@@ -111,33 +111,54 @@
 
                 var treeItem = this._findClosestTreeViewItem( element );
 
-                // aren't dragging on a tree view item, or the tree item is this
-                if (treeItem === null || treeItem === this || this.contains( treeItem ))
-                    return;
+                // specific case: the point dragged on is an empty area of the root tree view
+                // simply use the last item in the root as put after
+                if (treeItem === true) {
+                    var lastRootChild = element.lastElementChild;
 
-                var dropAfterContainerBounds = treeItem.$.dropAfterContainer.getBoundingClientRect( );
+                    // the last root child is being dropped after itself
+                    if (lastRootChild === this) {
+                        this._lastDragTarget = null;
 
-                // within the drop after container
-                if (e.clientY >= dropAfterContainerBounds.top && e.clientY <= dropAfterContainerBounds.bottom) {
+                        return;
+                    }
+
+                    treeItem = this._findLastTreeItem( lastRootChild );
+
                     treeItem.classList.add( 'drop-after-target' );
-                // within the container to "parent"
                 } else {
-                    var previousTreeItem = treeItem.previousElementSibling;
+                    // aren't dragging on a tree view item, or the tree item is this
+                    if (treeItem === null || treeItem === this || this.contains( treeItem )) {
+                        this._lastDragTarget = null;
 
-                    if (previousTreeItem && previousTreeItem !== this && !this.contains( previousTreeItem )) {
-                        var bounds = previousTreeItem.$.dropAfterContainer.getBoundingClientRect( );
+                        return;
+                    }
 
-                        if (e.clientY >= bounds.top && e.clientY <= bounds.bottom) {
-                            previousTreeItem.classList.add( 'drop-after-target' );
+                    var dropAfterContainerBounds = treeItem.$.dropAfterContainer.getBoundingClientRect( );
 
-                            treeItem = previousTreeItem;
+                    // within the drop after container OR
+                    // dragging on the empty area after the view, so just use the last
+                    if (e.clientY >= dropAfterContainerBounds.top && e.clientY <= dropAfterContainerBounds.bottom) {
+                        treeItem.classList.add( 'drop-after-target' );
+                        // within the container to "parent"
+                    } else {
+                        var previousTreeItem = treeItem.previousElementSibling;
+
+                        if (previousTreeItem && previousTreeItem !== this && !this.contains( previousTreeItem )) {
+                            var bounds = previousTreeItem.$.dropAfterContainer.getBoundingClientRect( );
+
+                            if (e.clientY >= bounds.top && e.clientY <= bounds.bottom) {
+                                previousTreeItem.classList.add( 'drop-after-target' );
+
+                                treeItem = previousTreeItem;
+                            } else {
+                                if (this._canSetDropTarget( treeItem, e ))
+                                    treeItem.classList.add( 'drop-target' );
+                            }
                         } else {
                             if (this._canSetDropTarget( treeItem, e ))
                                 treeItem.classList.add( 'drop-target' );
                         }
-                    } else {
-                        if (this._canSetDropTarget( treeItem, e ))
-                            treeItem.classList.add( 'drop-target' );
                     }
                 }
 
@@ -165,6 +186,8 @@
                         } else {
                             this._lastDragTarget.child.appendChild( this );
                         }
+
+                        this.fire( 'drag-drop-after', e );
                     }
 
                     this._lastDragTarget.classList.remove( 'drop-after-target' );
@@ -189,7 +212,9 @@
             },
 
             _canSetDropTarget: function(target, e) {
-                return target.fire( 'drag-feedback', e ) !== false;
+                e.dropTarget = target;
+
+                return target.fire( 'drag-feedback', e ).preventFeedback !== true;
             },
             _canDropTarget: function(e) {
                 if (this._lastDragTarget.classList.contains( 'drop-after-target' )) {
@@ -206,16 +231,20 @@
 
                 e.newParent = (e.dropTarget.parentNode === this.parentNode);
 
-                return this.fire( 'drag-drop', e ) !== false;
+                return this.fire( 'drag-drop', e ).preventDrop !== true;
             },
             /**
              * Finds the closest tree view item based on the given element (within the same hierarchy)
              * @param element
-             * @returns {TreeViewItemControl|null}
+             * @returns {TreeViewItemControl|null|boolean}
              * @private
              */
             _findClosestTreeViewItem: function(element) {
                 var node = element;
+
+                // if it's the root menu, return the item element in the root
+                if (element instanceof TreeViewControl && element.isRoot)
+                    return true;
 
                 for (; node && node !== document; node = node.parentNode) {
                     if (node instanceof TreeViewItemControl)
@@ -224,6 +253,18 @@
 
                 // the input element doesn't have a tree
                 return null;
+            },
+            /**
+             * Finds the last tree item based on it physical location
+             * @param element {TreeViewItemControl}
+             * @returns {TreeViewItemControl}
+             * @private
+             */
+            _findLastTreeItem: function(element) {
+                if (element.child.lastElementChild)
+                    return this._findLastTreeItem( element.child.lastElementChild );
+
+                return element;
             }
         } );
     </script>

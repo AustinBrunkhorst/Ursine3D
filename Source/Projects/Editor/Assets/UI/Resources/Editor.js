@@ -295,6 +295,7 @@ var ursine_editor_Editor = function() {
 	this.componentDatabase = new ursine_editor_scene_component_ComponentDatabase(ursine_native_Extern.GetNativeComponentDatabase());
 	this.buildMenus();
 	window.document.querySelector("#header-toolbar").appendChild(this.mainMenu);
+	this.initSimulationPlayback();
 };
 $hxClasses["ursine.editor.Editor"] = ursine_editor_Editor;
 ursine_editor_Editor.__name__ = ["ursine","editor","Editor"];
@@ -363,6 +364,20 @@ ursine_editor_Editor.prototype = {
 			parent = item.menu;
 		}
 		return parent;
+	}
+	,initSimulationPlayback: function() {
+		var btnToggle = window.document.querySelector("#simulation-toggle");
+		var btnStep = window.document.querySelector("#simulation-step");
+		btnToggle.addEventListener("click",function() {
+			btnToggle.classList.toggle("running");
+			var running = btnToggle.classList.contains("running");
+			btnStep.classList.toggle("disabled",running);
+			ursine_native_Extern.ScenePlay(running);
+		});
+		btnStep.addEventListener("click",function() {
+			if(btnStep.classList.contains("disabled")) return;
+			ursine_native_Extern.SceneStep();
+		});
 	}
 };
 var ursine_editor_MenuItemHandler = function() { };
@@ -650,7 +665,7 @@ ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype = {
 		this.m_instance = value;
 	}
 	,remove: function() {
-		this.inspector.parentNode.removeChild(this.inspector);
+		if(this.inspector.parentNode != null) this.inspector.parentNode.removeChild(this.inspector);
 	}
 	,get_name: function() {
 		return this.m_field.name;
@@ -695,10 +710,10 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		while(this.m_typeFields.length > 0) this.m_typeFields.pop().remove();
 		var fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[type];
 		var _g = 0;
-		var _g1 = componentType.fields;
-		while(_g < _g1.length) {
-			var field = _g1[_g];
+		while(_g < fields.length) {
+			var fieldName = fields[_g];
 			++_g;
+			var field = database.getComponentTypeField(this.m_componentType,fieldName);
 			if(field.name == ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName) continue;
 			var instance = Reflect.field(this.m_component.value,field.name);
 			var type1 = database.getNativeType(field.type);
@@ -1011,7 +1026,13 @@ ursine_editor_scene_entity_Entity.prototype = {
 		if(parentUniqueID == null) return null; else return new ursine_editor_scene_entity_Entity(parentUniqueID);
 	}
 	,setParent: function(parent) {
-		return this.m_handler.setParent(parent.uniqueID);
+		return this.m_handler.setParent(parent == null?null:parent.uniqueID);
+	}
+	,getSiblingIndex: function() {
+		return this.m_handler.getSiblingIndex();
+	}
+	,setSiblingIndex: function(index) {
+		this.m_handler.setSiblingIndex(index);
 	}
 	,saveAsArchetype: function() {
 		this.m_handler.saveAsArchetype();
@@ -1173,6 +1194,7 @@ var ursine_editor_windows_SceneOutline = function() {
 	ursine_editor_windows_SceneOutline.instance = this;
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Outline";
+	this.window.classList.add("scene-outline-window");
 	this.m_rootView = new TreeViewControl();
 	this.m_rootView.setAsRoot(true);
 	this.m_entityItems = new haxe_ds_IntMap();
@@ -1285,12 +1307,34 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var _g = this;
 		var item = new TreeViewItemControl();
 		item.addEventListener("drag-start",function(e) {
-			return entity.isHierarchyChangeEnabled();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			e.preventStart = !entity.isHierarchyChangeEnabled();
 		});
 		item.addEventListener("drag-drop",function(e1) {
-			if(!entity.isHierarchyChangeEnabled()) return false;
-			item.entity.setParent(e1.detail.dropTarget.entity);
-			if(e1.detail.newParent == true) return false; else return true;
+			e1.stopPropagation();
+			e1.stopImmediatePropagation();
+			if(!entity.isHierarchyChangeEnabled()) {
+				e1.preventDrop = true;
+				return;
+			}
+			var target = e1.detail.dropTarget.entity;
+			var parent = entity.getParent();
+			var targetID;
+			if(target == null) targetID = -1; else targetID = target.uniqueID;
+			var parentID;
+			if(parent == null) parentID = -1; else parentID = parent.uniqueID;
+			if(targetID == parentID) {
+				e1.preventDrop = e1.detail.newParent;
+				return;
+			}
+			entity.setParent(target);
+		});
+		item.addEventListener("drag-drop-after",function(e2) {
+			e2.stopPropagation();
+			e2.stopImmediatePropagation();
+			var childIndex = ElementUtils.childIndex(item);
+			entity.setSiblingIndex(childIndex);
 		});
 		item.textContentElement.addEventListener("dblclick",function() {
 			item.textContentElement.contentEditable = "true";
@@ -1300,10 +1344,10 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			selection.removeAllRanges();
 			selection.addRange(range);
 		});
-		item.textContentElement.addEventListener("keydown",function(e2) {
-			if(e2.keyCode == 13) {
+		item.textContentElement.addEventListener("keydown",function(e3) {
+			if(e3.keyCode == 13) {
 				item.textContentElement.blur();
-				e2.preventDefault();
+				e3.preventDefault();
 				return false;
 			}
 			return true;
@@ -1314,7 +1358,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		});
 		item.text = entity.getName();
 		item.entity = entity;
-		item.textElement.addEventListener("click",function(e3) {
+		item.textElement.addEventListener("click",function(e4) {
 			_g.clearSelectedEntities();
 			item.entity.select();
 		});
@@ -1388,6 +1432,12 @@ ursine_native_Extern.SceneLoad = function() {
 };
 ursine_native_Extern.SceneSave = function() {
 	return SceneSave();
+};
+ursine_native_Extern.ScenePlay = function(playing) {
+	return ScenePlay(playing);
+};
+ursine_native_Extern.SceneStep = function() {
+	return SceneStep();
 };
 var ursine_native_Property = function() { };
 $hxClasses["ursine.native.Property"] = ursine_native_Property;

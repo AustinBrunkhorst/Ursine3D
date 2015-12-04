@@ -63,7 +63,7 @@ void EditorCameraSystem::OnInitialize(void)
         .On( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
 
     m_world->Listener( this )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+        .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::OnAfterLoad(void)
@@ -99,7 +99,7 @@ void EditorCameraSystem::OnRemove(void)
         .Off( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
 
     m_world->Listener( this )
-        .Off( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+        .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))

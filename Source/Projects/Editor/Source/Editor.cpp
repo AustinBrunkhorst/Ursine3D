@@ -208,6 +208,8 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto scene = m_project->GetScene( );
 
+    scene->GetWorld( )->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
+
     scene->Update( dt );
     scene->Render( );
 

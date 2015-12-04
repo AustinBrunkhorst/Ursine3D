@@ -27,6 +27,8 @@ namespace ursine
             // The screen that owns this world's focus state changed
             WORLD_SCREEN_FOCUS_CHANGED,
 
+            // Update event called specifically for editor systems
+            WORLD_EDITOR_UPDATE,
             // An entity's name changed
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
             // An entity's parent has changed

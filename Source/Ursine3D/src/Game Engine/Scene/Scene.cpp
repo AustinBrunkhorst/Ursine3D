@@ -7,7 +7,8 @@
 namespace ursine
 {
     Scene::Scene(void)
-        : m_viewport( 0 )
+        : m_paused( true )
+        , m_viewport( 0 )
         , m_world( std::make_shared<ecs::World>( ) )
     {
         
@@ -33,12 +34,28 @@ namespace ursine
         m_viewport = viewport;
     }
 
-    void Scene::Update(DeltaTime dt)
+    void Scene::SetPaused(bool paused)
+    {
+        m_paused = paused;
+    }
+
+    bool Scene::IsPaused(void) const
+    {
+        return m_paused;
+    }
+
+    void Scene::Step(void) const
     {
         m_world->Update( );
     }
 
-    void Scene::Render(void)
+    void Scene::Update(DeltaTime dt) const
+    {
+        if (!m_paused)
+            m_world->Update( );
+    }
+
+    void Scene::Render(void) const
     {
         m_world->Render( );
     }

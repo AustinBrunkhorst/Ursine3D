@@ -217,7 +217,7 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             "Notifying change of unknown field.\n"
             "Component: %s\n"
             "Field: %s",
-            args->component->GetType( ).GetName( ),
+            args->component->GetType( ).GetName( ).c_str( ),
             args->field.c_str( )
         );
     #endif

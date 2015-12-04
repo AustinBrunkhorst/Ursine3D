@@ -1,9 +1,9 @@
 #include "Precompiled.h"
 #include "CharacterFireControllerComponent.h"
 
-NATIVE_COMPONENT_DEFINITION(CharacterFireController);
+NATIVE_COMPONENT_DEFINITION( CharacterFireController );
 
-CharacterFireController::CharacterFireController( void )
+CharacterFireController::CharacterFireController(void)
     : BaseComponent( )
     , m_fireRate( 0.1 )
     , m_fireRange( 1000.0f )
@@ -88,19 +88,23 @@ ursine::Color CharacterFireController::GetShotStartColor(void) const
     return m_shotStartColor;
 }
 
-void CharacterFireController::SetShotStartColor(const ursine::Color& shotColor)
+void CharacterFireController::SetShotStartColor(const ursine::Color &shotColor)
 {
     m_shotStartColor = shotColor;
+
+    NOTIFY_COMPONENT_CHANGED( "bulletStartColor", m_shotStartColor );
 }
 
-ursine::Color CharacterFireController::GetShotEndColor( ) const
+ursine::Color CharacterFireController::GetShotEndColor() const
 {
     return m_shotEndColor;
 }
 
-void CharacterFireController::SetShotEndColor( const ursine::Color& shotColor )
+void CharacterFireController::SetShotEndColor(const ursine::Color &shotColor)
 {
     m_shotEndColor = shotColor;
+
+    NOTIFY_COMPONENT_CHANGED( "bulletEndColor", m_shotEndColor );
 }
 
 float CharacterFireController::GetAccuracy() const

@@ -56,7 +56,9 @@ class LightInspector extends ComponentInspectionHandler {
         var fields = m_typeToFields[ type ];
 
         // add type fields
-        for (field in componentType.fields) {
+        for (fieldName in fields) {
+            var field = database.getComponentTypeField( m_componentType, fieldName );
+
             // ignore light type
             if (field.name == m_lightTypeFieldName)
                 continue;

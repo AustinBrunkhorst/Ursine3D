@@ -64,8 +64,8 @@ void ObjectSelectorSystem::OnInitialize(void)
         .On( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
 
     m_world->Listener( this )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
+        .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onUpdate )
+        .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
         .On( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd );
 
     //construct the 3 axis
@@ -142,8 +142,8 @@ void ObjectSelectorSystem::OnRemove(void)
         .Off( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
      
     m_world->Listener(this)
-        .Off( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate )
-        .Off( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
+        .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onUpdate )
+        .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
         .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd );
 
     m_zAxis->Delete( );

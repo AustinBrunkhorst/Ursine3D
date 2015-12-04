@@ -14,3 +14,6 @@ ursine_default_project(Shared
 
 # disable exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
+
+# @@@TODO: this should be removed with the shared project, only temporary
+add_definitions(-DURSINE_WITH_EDITOR=1)

@@ -30,6 +30,8 @@ public:
     JSMethod(getChildren);
     JSMethod(getParent);
     JSMethod(setParent);
+    JSMethod(getSiblingIndex);
+    JSMethod(setSiblingIndex);
 
     JSMethod(saveAsArchetype);
 
