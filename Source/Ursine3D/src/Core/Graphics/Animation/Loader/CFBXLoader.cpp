@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** AnimationState.h
+** Conversion.cpp
 **
 ** Author:
 ** - Park Hyung Jun - park.hyungjun@digipen.edu
@@ -10,6 +10,7 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include <CFBXLoader.h>
 
@@ -151,7 +152,11 @@ namespace ursine
 			// Process Scene
 			mModel = new FBX_DATA::FbxModel;
 			mModel->name = GetName(filename);
-			mModel->mAnimPose = mScene->GetPose(0);
+			// Getting Anim Pose
+			mModel->mAnimPose.resize(mScene->GetPoseCount());
+			for (unsigned i = 0; i < mModel->mAnimPose.size(); ++i)
+				mModel->mAnimPose[i] = mScene->GetPose(i);
+
 			ProcessScene(mScene->GetRootNode());
 
 			// Export FBX model as custom file format
@@ -503,12 +508,15 @@ namespace ursine
 				currJoint.mParentIndex = inParentIndex;
 				currJoint.mName = pNode->GetName();
 
-				int nodeIdx = mModel->mAnimPose->Find(pNode);
+				int nodeIdx = 0;
+				FbxPose* targetFP = nullptr;
+				targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
+
 				FbxAMatrix localMatrix;
 				if (-1 == nodeIdx)
 					localMatrix.SetIdentity();
 				else
-					localMatrix = GetPoseMatrix(mModel->mAnimPose, nodeIdx);
+					localMatrix = GetPoseMatrix(targetFP, nodeIdx);
 
 				mConverter->ConvertMatrix(localMatrix);
 				// Check negative scale
@@ -562,11 +570,12 @@ namespace ursine
 					newMesh->name = mModel->name;
 
 				FbxAMatrix  meshTransform;
-				if (mModel->mAnimPose)
+				int nodeIdx = 0;
+				FbxPose* targetFP = nullptr;
+				targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
+				if (targetFP)
 				{
-					unsigned int index = mModel->mAnimPose->Find(pNode);
-					//For skinned meshes get the pose matrix
-					meshTransform = GetPoseMatrix(mModel->mAnimPose, index);
+					meshTransform = GetPoseMatrix(targetFP, nodeIdx);
 				}
 				else
 					meshTransform = GetGlobalDefaultPosition(pNode);
@@ -1339,19 +1348,19 @@ namespace ursine
 			FbxMesh* mesh = pNode->GetMesh();
 			if (mesh)
 			{
-				FBX_DATA::MeshData* modelMesh = new FBX_DATA::MeshData;
-				modelMesh->name = pNode->GetName();
-				modelMesh->mLayout = FBX_DATA::SKINNED;
-				if ("" == modelMesh->name)
-					modelMesh->name = mModel->name;
+				FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
+				newMesh->name = pNode->GetName();
+				newMesh->mLayout = FBX_DATA::SKINNED;
+				if ("" == newMesh->name)
+					newMesh->name = mModel->name;
 
+				int nodeIdx = 0;
+				FbxPose* targetFP = nullptr;
+				targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
 				FbxAMatrix  meshTransform;
-				if (mModel->mAnimPose)
+				if (targetFP)
 				{
-					// get the index
-					unsigned index = mModel->mAnimPose->Find(pNode);
-					// For skinned meshes get the pose matrix
-					meshTransform = GetPoseMatrix(mModel->mAnimPose, index);
+					meshTransform = GetPoseMatrix(targetFP, nodeIdx);
 				}
 				else
 					meshTransform = GetGlobalDefaultPosition(pNode);
@@ -1359,7 +1368,7 @@ namespace ursine
 				//Meshes have a separate geometry transform that also needs to be applied
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
-				modelMesh->parentTM = FBXAMatrixToXMMatrix(&parentTransform);
+				newMesh->parentTM = FBXAMatrixToXMMatrix(&parentTransform);
 				//mConverter->ConvertMeshMatrix(meshTransform);
 				meshTransform = parentTransform * meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
@@ -1369,28 +1378,41 @@ namespace ursine
 				if (!CheckScaling(scl) || !CheckPositive(scl))
 					meshTransform.SetS(FbxVector4(1, 1, 1));
 
-				modelMesh->meshTM = FBXAMatrixToXMMatrix(&meshTransform);
+				newMesh->meshTM = FBXAMatrixToXMMatrix(&meshTransform);
 
-				ProcessVertices(mesh, modelMesh);
-				ProcessNormals(mesh, modelMesh);
-				ProcessTangent(mesh, modelMesh);
-				ProcessTexcoord(mesh, modelMesh);
-				ProcessMaterials(pNode, modelMesh);
+				ProcessVertices(mesh, newMesh);
+				ProcessNormals(mesh, newMesh);
+				ProcessTangent(mesh, newMesh);
+				ProcessTexcoord(mesh, newMesh);
+				ProcessMaterials(pNode, newMesh);
 
 				//go through all the control points(verticies) and multiply by the transformation
-				for (unsigned int i = 0; i < modelMesh->vertexCnt; ++i)
+				for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
 				{
-					SVec3 vtx = SetFloat3ToSVec3(modelMesh->vertices[i]);
-					SMat4 meshTM = modelMesh->meshTM;
+					SVec3 vtx = SetFloat3ToSVec3(newMesh->vertices[i]);
+					SMat4 meshTM = newMesh->meshTM;
 					SVec3 result = meshTM.TransformVector(vtx);
-					modelMesh->vertices[i] = SetSVec3ToFloat3(result);
+					newMesh->vertices[i] = SetSVec3ToFloat3(result);
 				}
-				mModel->mMeshData.push_back(modelMesh);
+				mModel->mMeshData.push_back(newMesh);
 			}
 			//go through all the child node and grab there geometry information
 			int childCnt = pNode->GetChildCount();
 			for (int i = 0; i < childCnt; ++i)
 				ProcessGeometry(pNode->GetChild(i));
+		}
+
+		//getting anim pose
+		FbxPose* CFBXLoader::GetAnimPoseAndIdx(FbxNode* pNode, int& index)
+		{
+			for (auto iter : mModel->mAnimPose)
+			{
+				//mModel->mAnimPose->Find(pNode->GetName());
+				index = iter->Find(pNode);
+				if (-1 != index)
+					return iter;
+			}
+			return nullptr;
 		}
 
 		void CFBXLoader::ReconstructIndices(FBX_DATA::MeshData* pData)
@@ -1526,13 +1548,12 @@ namespace ursine
 
 		FbxAMatrix CFBXLoader::GetParentTransformation(FbxNode* pParentNode)
 		{
+			int nodeIdx = 0;
+			FbxPose* targetFP = nullptr;
+			targetFP = GetAnimPoseAndIdx(pParentNode, nodeIdx);
 			FbxAMatrix parentTM;
-			if (mModel->mAnimPose)
-			{
-				int index = mModel->mAnimPose->Find(pParentNode);
-				//For skinned meshes get the pose matrix
-				parentTM = GetPoseMatrix(mModel->mAnimPose, index);
-			}
+			if (targetFP)
+				parentTM = GetPoseMatrix(targetFP, nodeIdx);
 			else
 				parentTM = GetGlobalDefaultPosition(pParentNode);
 			return parentTM;

@@ -1,12 +1,15 @@
-// *********************************************************************************************************************
-/// 
-/// @file 		CFBXLoader.h
-/// @brief		FBX info loader
-/// 
-/// @author 	Park Hyung Jun
-/// @date 		09/03/2015
-/// 
-// *********************************************************************************************************************
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** CFBXLoader.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
 
 #pragma once
 // For Parsing FBX infos
@@ -94,6 +97,8 @@ namespace ursine
 			void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time);
 			//process geometry
 			void ProcessGeometry(FbxNode* pNode);
+			//getting anim pose
+			FbxPose* GetAnimPoseAndIdx(FbxNode* pNode, int& index);
 			//reconstruct indices
 			void ReconstructIndices(FBX_DATA::MeshData* pData);
 			int FindNextMaterialIndex(FBX_DATA::MeshData* pData, unsigned start, unsigned materialId);

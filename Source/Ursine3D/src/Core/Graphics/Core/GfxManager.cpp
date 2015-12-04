@@ -910,10 +910,10 @@ namespace ursine
             // map texture
             textureManager->MapTextureByID(handle.Material_);
 
-            if(handle.Overdraw_)
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL); 
-            else
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
+			if (handle.Overdraw_)
+				dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+			else
+				dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
              
             //render
             unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
