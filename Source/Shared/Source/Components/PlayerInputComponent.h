@@ -11,6 +11,8 @@ public:
     PlayerInput(void);
 
     bool Jump(void);
+
+    int KillTeamCheat(void);
     
     ursine::Vec2 MoveDir(void);
 

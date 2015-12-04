@@ -4,7 +4,6 @@
 
 #include "SpawnSystem.h"
 #include <Components/CharacterControllerComponent.h>
-#include <Components/PlayerInputComponent.h>
 #include <WorldEvent.h>
 
 #include <SystemManager.h>
@@ -21,6 +20,30 @@ SpawnSystem::SpawnSystem(ursine::ecs::World* world) : EntitySystem(world)
                                                     , m_playerCount(0)
                                                     , m_maxPlayerCount(0)
 {
+}
+
+void SpawnSystem::DespawnTeam(int team)
+{
+    if (team == 0)
+    {
+        while (m_team1.size() > 0)
+        {
+            auto *player = m_team1.front();
+            m_team1.pop_front();
+
+            player->GetOwner()->Delete();
+        }
+    }
+    else if (team == 1)
+    {
+        while (m_team2.size() > 0)
+        {
+            auto *player = m_team2.front();
+            m_team2.pop_front();
+
+            player->GetOwner()->Delete();
+        }
+    }
 }
 
 void SpawnSystem::OnInitialize(void)
@@ -43,12 +66,25 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 
     if (args->component->Is<PlayerInput>())
     {
-        ++m_playerCount;
+        auto playerInput = reinterpret_cast<PlayerInput *>(args->component);
 
-        if (m_playerCount > m_maxPlayerCount)
+        int team = playerInput->id;
+
+        if (team == 0)
         {
-            m_maxPlayerCount = m_playerCount;
+            m_team1.push_front(playerInput);
         }
+        else if (team == 1)
+        {
+            m_team2.push_front(playerInput);
+        }
+
+       // ++m_playerCount;
+
+        //if (m_playerCount > m_maxPlayerCount)
+        //{
+        //    m_maxPlayerCount = m_playerCount;
+        //}
     }
     else if (args->component->Is<Spawnpoint>())
     {
@@ -77,17 +113,17 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 
     if (args->component->Is<PlayerInput>())
     {
-        --m_playerCount;
-
-        if (m_playerCount == 0)
-        {
-            for (unsigned i = 0; i < m_maxPlayerCount / 2; ++i)
-            {
-                spawnPlayer(0);
-                spawnPlayer(1);
-            }
-        }
-        else
+        //--m_playerCount;
+        //
+        //if (m_playerCount == 0)
+        //{
+        //    for (unsigned i = 0; i < m_maxPlayerCount / 2; ++i)
+        //    {
+        //        spawnPlayer(0);
+        //        spawnPlayer(1);
+        //    }
+        //}
+        //else
         {
             PlayerInput *player = reinterpret_cast<PlayerInput *>(args->component);
             spawnPlayer(player->id);

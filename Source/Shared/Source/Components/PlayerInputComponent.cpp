@@ -35,6 +35,22 @@ bool PlayerInput::Jump(void)
     }
 }
 
+int PlayerInput::KillTeamCheat(void)
+{
+    auto *kbManager = GetCoreSystem(KeyboardManager);
+
+    if (kbManager->IsTriggeredDown(KEY_F9))
+    {
+        return 0;
+    }
+    if(kbManager->IsTriggeredDown(KEY_F10))
+    {
+        return 1;
+    }
+    
+    return -1;
+}
+
 ursine::Vec2 PlayerInput::MoveDir(void)
 {
     if (keyboard)
