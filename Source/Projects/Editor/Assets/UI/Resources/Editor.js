@@ -194,6 +194,13 @@ var haxe_ds_IntMap = function() {
 $hxClasses["haxe.ds.IntMap"] = haxe_ds_IntMap;
 haxe_ds_IntMap.__name__ = ["haxe","ds","IntMap"];
 haxe_ds_IntMap.__interfaces__ = [haxe_IMap];
+haxe_ds_IntMap.prototype = {
+	remove: function(key) {
+		if(!this.h.hasOwnProperty(key)) return false;
+		delete(this.h[key]);
+		return true;
+	}
+};
 var haxe_ds__$StringMap_StringMapIterator = function(map,keys) {
 	this.map = map;
 	this.keys = keys;
@@ -1262,6 +1269,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		if(item == null) return;
 		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
 		item.parentNode.removeChild(item);
+		this.m_entityItems.remove(e.uniqueID);
 	}
 	,onEntityNameChanged: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
@@ -1271,10 +1279,19 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	,onEntityParentChanged: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
+		var entity = item.entity;
 		if(item.parentNode != null) item.parentNode.removeChild(item);
-		if(e.newParent == null) this.m_rootView.appendChild(item); else {
+		var targetContainer = null;
+		if(e.newParent == null) targetContainer = this.m_rootView; else {
 			var newItem = this.m_entityItems.h[e.newParent];
-			if(newItem != null) newItem.child.appendChild(item);
+			if(newItem != null) targetContainer = newItem.child;
+		}
+		if(targetContainer != null) {
+			var children = targetContainer.children;
+			if(children.length == 0) targetContainer.appendChild(item); else {
+				var index = Math.clamp(entity.getSiblingIndex(),0,children.length - 1);
+				targetContainer.insertBefore(item,children[index]);
+			}
 		}
 	}
 	,onComponentAdded: function(e) {
@@ -1290,18 +1307,14 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		}
 	}
 	,addEntity: function(entity) {
-		if(!entity.isVisibleInEditor()) {
-			this.m_entityItems.h[entity.uniqueID] = null;
-			null;
-		} else {
-			var item = this.createEntityItem(entity);
-			var parent = entity.getParent();
-			if(parent == null) this.m_rootView.appendChild(item); else {
-				var parentItem = this.m_entityItems.h[parent.uniqueID];
-				if(parentItem != null) parentItem.child.appendChild(item);
-			}
-			if(entity.hasComponent("Selected")) this.selectEntity(item);
+		var item = this.createEntityItem(entity);
+		if(!entity.isVisibleInEditor()) item.classList.add("hidden");
+		var parent = entity.getParent();
+		if(parent == null) this.m_rootView.appendChild(item); else {
+			var parentItem = this.m_entityItems.h[parent.uniqueID];
+			if(parentItem != null) parentItem.child.appendChild(item);
 		}
+		if(entity.hasComponent("Selected")) this.selectEntity(item);
 	}
 	,createEntityItem: function(entity) {
 		var _g = this;

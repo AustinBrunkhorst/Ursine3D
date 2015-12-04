@@ -22,7 +22,7 @@ set(DLL_EXT ${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 set(FBX_STATIC_LIBS
 	debug ${DIR_LIB}/Debug/libfbxsdk-md${LIB_EXT}
-	optimized ${DIR_LIB}/Release/libfbxsdk-md${LIB_EXT}
+	optimized ${DIR_LIB}/Release/libfbxsdk-mt${LIB_EXT}
 )
 
 # Shared Libraries

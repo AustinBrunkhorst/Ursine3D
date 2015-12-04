@@ -364,6 +364,11 @@ namespace ursine
             return m_children[index];
         }
 
+        const std::vector<Transform *> &Transform::GetChildren(void) const
+        {
+            return m_children;
+        }
+
         uint Transform::GetSiblingIndex(void) const
         {
             return GetOwner( )->GetSiblingIndex( );
@@ -376,10 +381,10 @@ namespace ursine
 
         void Transform::SetSiblingIndex(uint index)
         {
+            GetOwner( )->SetSiblingIndex( index );
+
             if (m_parent == nullptr)
                 return;
-
-            GetOwner( )->SetSiblingIndex( index );
 
             auto &childArray = m_parent->m_children;
 

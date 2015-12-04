@@ -116,6 +116,8 @@ class SceneOutline extends WindowHandler {
             selectEntity( null );
 
         item.parentNode.removeChild( item );
+
+        m_entityItems.remove( e.uniqueID );
     }
 
     private function onEntityNameChanged(e) {
@@ -133,16 +135,32 @@ class SceneOutline extends WindowHandler {
         if (item == null)
             return;
 
+        var entity : Entity = untyped item.entity;
+
         if (item.parentNode != null)
             item.parentNode.removeChild( item );
 
+        var targetContainer : HtmlElement = null;
+
         if (e.newParent == null) {
-            m_rootView.appendChild( item );
+            targetContainer = cast m_rootView;
         } else {
             var newItem : TreeViewItem = m_entityItems[ e.newParent ];
 
             if (newItem != null)
-                newItem.child.appendChild( item );
+                targetContainer = cast newItem.child;
+        }
+
+        if (targetContainer != null) {
+            var children = targetContainer.children;
+
+            if (children.length == 0) {
+                targetContainer.appendChild( item );
+            } else {
+                var index = untyped Math.clamp( entity.getSiblingIndex( ), 0, children.length - 1 );
+
+                targetContainer.insertBefore( item, children[ index ] );
+            }
         }
     }
 
@@ -165,25 +183,24 @@ class SceneOutline extends WindowHandler {
     }
 
     private function addEntity(entity : Entity) {
-        if (!entity.isVisibleInEditor( )) {
-            m_entityItems[ entity.uniqueID ] = null;
+        var item = createEntityItem( entity );
+
+        if (!entity.isVisibleInEditor( ))
+            item.classList.add( 'hidden' );
+
+        var parent = entity.getParent( );
+
+        if (parent == null) {
+            m_rootView.appendChild( item );
         } else {
-            var item = createEntityItem( entity );
+            var parentItem : TreeViewItem = m_entityItems[ parent.uniqueID ];
 
-            var parent = entity.getParent( );
-
-            if (parent == null) {
-                m_rootView.appendChild( item );
-            } else {
-                var parentItem : TreeViewItem = m_entityItems[ parent.uniqueID ];
-
-                if (parentItem != null)
-                    parentItem.child.appendChild( item );
-            }
-
-            if (entity.hasComponent( 'Selected' ))
-                selectEntity( item );
+            if (parentItem != null)
+                parentItem.child.appendChild( item );
         }
+
+        if (entity.hasComponent( 'Selected' ))
+            selectEntity( item );
     }
 
     private function createEntityItem(entity : Entity) : TreeViewItem {

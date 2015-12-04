@@ -57,6 +57,7 @@ namespace ursine
 
             ALLOW_ALIGNED_ALLOC(16);
 
+            Meta(Enable)
             Transform(void);
 
             Transform(const Transform &transform);
@@ -71,8 +72,10 @@ namespace ursine
             // Position
             ////////////////////////////////////////////////////////////////////
 
+            Meta(Enable)
             void SetLocalPosition(const SVec3 &position);
 
+            Meta(Enable)
             const SVec3 &GetLocalPosition(void) const;
 
             void SetWorldPosition(const SVec3 &position);
@@ -84,9 +87,13 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             void SetLocalRotation(const SQuat &rotation);
+
+            Meta(Enable)
             void SetLocalEuler(const SVec3 &euler);
 
             const SQuat &GetLocalRotation(void) const;
+
+            Meta(Enable)
             SVec3 GetLocalEuler(void) const;
 
             void SetWorldRotation(const SQuat &rotation);
@@ -101,8 +108,10 @@ namespace ursine
             // Scale
             ////////////////////////////////////////////////////////////////////
 
+            Meta(Enable)
             void SetLocalScale(const SVec3 &scale);
             
+            Meta(Enable)
             const SVec3 &GetLocalScale(void) const;
 
             void SetWorldScale(const SVec3 &scale);
@@ -166,6 +175,8 @@ namespace ursine
             // If the index is too large, return nullptr
             Transform *GetChild(uint index);
             const Transform *GetChild(uint index) const;
+
+            const std::vector<Transform *> &GetChildren(void) const;
 
             // Find this transform's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -263,6 +274,7 @@ namespace ursine
 
         } Meta(
             Enable,
+            WhiteListMethods,
             DisableComponentRemoval, 
             DisplayName( "Transform" )
         );
