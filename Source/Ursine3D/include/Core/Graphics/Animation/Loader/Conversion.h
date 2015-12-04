@@ -1,14 +1,19 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-//	Conversion.h
-//	Converts homgeneous transform matrices between coordinate systems.
-//
-//	Authors: Chris Peters
-//	Copyright 2009, Digipen Institute of Technology
-//
-///////////////////////////////////////////////////////////////////////////////
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Conversion.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
-#include <WholeInformation.h>
+
+#include <fbxsdk.h>
 
 class Converter
 {

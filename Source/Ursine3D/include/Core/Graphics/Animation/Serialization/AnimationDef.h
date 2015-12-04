@@ -1,3 +1,17 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AnimationDef.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <vector>
@@ -393,7 +407,7 @@ namespace ursine
 
 			struct FbxModel
 			{
-				FbxPose*				mAnimPose;
+				std::vector<FbxPose*>	mAnimPose;
 
 				// ===== Data we need to export =======
 				// need to be exported as binary
