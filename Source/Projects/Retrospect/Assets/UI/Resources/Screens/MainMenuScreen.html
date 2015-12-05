@@ -3,21 +3,20 @@
 <head>
     <link rel="stylesheet" href="../Style/Animate.css">
     <link rel="stylesheet" href="../Style/Retrospect.css">
-    <style>
-        header {
-            display: block;
-            width: 100%;
-            margin-top: 25px;
-            color: white;
-            text-transform: uppercase;
-            text-align: center;
-            font-weight: bold;
-            font-size: 64px;
-            animation-duration: 250ms;
-        }
-    </style>
+    <link rel="stylesheet" href="../Style/BasicMenu.css">
 </head>
 <body>
-    <header class="animated fadeInDown"> Main Menu </header>
+    <div class="basic-menu-container centered">
+        <div class="wrapper">
+            <div class="inner-wrapper animated flipInX">
+                <div class="title"> Main Menu </div>
+                <div class="basic-menu">
+                    <div data-handler="play" class="active"> Play </div>
+                    <div data-handler="credits"> Credits </div>
+                    <div data-handler="quit"> Quit </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -83,7 +83,7 @@ namespace ursine
             if (m_loaded)
                 system->OnAfterLoad( );
 
-            return system;
+            return static_cast<SystemType*>( system );
         }
     }
 }

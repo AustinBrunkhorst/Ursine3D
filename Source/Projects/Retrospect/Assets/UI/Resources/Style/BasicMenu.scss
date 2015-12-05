@@ -1,0 +1,58 @@
+.basic-menu-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  &.centered {
+    .wrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate( -50%, -50% );
+    }
+  }
+
+  &.modal {
+    background: rgba(black, 0.75);
+  }
+
+  .wrapper {
+    .inner-wrapper {
+      padding: 25px;
+      border-radius: 10px;
+      background: rgba(78, 183, 255, 1);
+      font-size: 20px;
+      box-shadow: 0 1px 4px rgba(black, 0.75);
+      animation-duration: 600ms;
+
+      .title {
+        padding-bottom: 5px;
+        font-weight: bold;
+        font-size: 2.35em;
+        color: white;
+        text-shadow: 0 2px 2px rgba(black, 0.75);
+      }
+
+      .basic-menu {
+        > div {
+          display: block;
+          padding: 10px;
+          margin: 5px;
+          min-width: 250px;
+          background: #194154;
+          color: #f1f8fc;
+          text-shadow: 0 1px 1px rgba(darken(#194154, 5%), 0.75);
+          box-shadow: 0 1px 2px rgba(black, 0.75);
+          transition: all 175ms ease;
+
+          &.active {
+            background: #316e99;
+          }
+        }
+      }
+    }
+  }
+}
+

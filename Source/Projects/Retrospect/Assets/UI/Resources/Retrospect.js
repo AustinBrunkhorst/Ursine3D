@@ -128,6 +128,52 @@ js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 var ursine_utils_IEventContainer = function() { };
 $hxClasses["ursine.utils.IEventContainer"] = ursine_utils_IEventContainer;
 ursine_utils_IEventContainer.__name__ = true;
+var retrospect_screens_BasicMenu = function(container) {
+	this.events = new ursine_utils_EventManager();
+	this.m_container = container;
+	this.m_activeItem = container.querySelector(".active");
+};
+$hxClasses["retrospect.screens.BasicMenu"] = retrospect_screens_BasicMenu;
+retrospect_screens_BasicMenu.__name__ = true;
+retrospect_screens_BasicMenu.__interfaces__ = [ursine_utils_IEventContainer];
+retrospect_screens_BasicMenu.prototype = {
+	up: function() {
+		var previous = this.findPrevious();
+		if(previous != null) {
+			this.setActive(previous);
+			this.events.trigger("up",{ item : previous});
+		}
+	}
+	,down: function() {
+		var next = this.findNext();
+		if(next != null) {
+			this.setActive(next);
+			this.events.trigger("down",{ item : next});
+		}
+	}
+	,get_container: function() {
+		return this.m_container;
+	}
+	,get_activeItem: function() {
+		return this.m_activeItem;
+	}
+	,setActive: function(item) {
+		if(this.m_activeItem == item) return;
+		this.m_activeItem.classList.remove("active");
+		item.classList.add("active");
+		this.m_activeItem = item;
+	}
+	,findPrevious: function() {
+		var previous = this.m_activeItem;
+		while((previous = previous.previousElementSibling) != null) if(!previous.classList.contains("no-select")) return previous;
+		return null;
+	}
+	,findNext: function() {
+		var next = this.m_activeItem;
+		while((next = next.nextElementSibling) != null) if(!next.classList.contains("no-select")) return next;
+		return null;
+	}
+};
 var ursine_screen_Screen = function(id,frame,data) {
 	this.events = new ursine_utils_EventManager();
 	this.m_id = id;
@@ -149,32 +195,186 @@ ursine_screen_Screen.prototype = {
 		Application.screenManager.removeScreen(this);
 	}
 };
-var retrospect_screens_MainMenuScreen = function(id,frame,data) {
+var retrospect_screens_BasicMenuScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
-	this.m_document.addEventListener("mousedown",$bind(this,this.play));
-	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.play)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.play));
+	this.menu = new retrospect_screens_BasicMenu(this.m_document.querySelector(".basic-menu"));
+	this.handlers = new haxe_ds_StringMap();
+	this.m_exiting = false;
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown));
+};
+$hxClasses["retrospect.screens.BasicMenuScreen"] = retrospect_screens_BasicMenuScreen;
+retrospect_screens_BasicMenuScreen.__name__ = true;
+retrospect_screens_BasicMenuScreen.__super__ = ursine_screen_Screen;
+retrospect_screens_BasicMenuScreen.prototype = $extend(ursine_screen_Screen.prototype,{
+	transitionExit: function(callback,transition) {
+		if(transition == null) transition = "bounceOutUp";
+		var _g = this;
+		this.m_exiting = true;
+		var wrapper = this.menu.get_container().parentNode;
+		wrapper.className = "inner-wrapper classlist " + transition;
+		ElementUtils.once(wrapper,"webkitAnimationEnd",function() {
+			if(callback != null) callback();
+			_g.exit();
+		});
+	}
+	,apply: function() {
+		if(this.menu.get_activeItem() == null) return;
+		var handlerName = this.menu.get_activeItem().getAttribute("data-handler");
+		var handler = this.handlers.get(handlerName);
+		if(handler == null) return;
+		handler();
+	}
+	,onKeyboardKeyDown: function(e) {
+		if(this.m_exiting || !(e.triggered && e.pressed)) return;
+		if(e.key == 13) this.apply(); else if(e.key == 38 || e.key == 87) this.menu.up(); else if(e.key == 40 || e.key == 83) this.menu.down();
+	}
+	,onGamepadButtonDown: function(e) {
+		if(this.m_exiting || !(e.triggered && e.pressed)) return;
+		if(e.button == 0) this.apply(); else if(e.button == 11 || e.button == 18) this.menu.up(); else if(e.button == 12 || e.button == 19) this.menu.down();
+	}
+});
+var retrospect_screens_ConfirmNavigationScreen = function(id,frame,data) {
+	var _g = this;
+	retrospect_screens_BasicMenuScreen.call(this,id,frame,data);
+	var title = this.m_document.querySelector("#navigation-title");
+	title.innerHTML = data.title;
+	{
+		this.handlers.set("yes",function() {
+			_g.transitionExit(function() {
+				if(data.target.name == "quit") ursine_native_Extern.QuitGame();
+				if(data.sender != null) {
+					var sender = Application.screenManager.getScreen(data.sender);
+					if(sender != null) sender.exit();
+				}
+				if(data.removeCurrent != null) Application.screenManager.removeCurrent();
+				var outputData;
+				if(data.target.data == null) outputData = { }; else outputData = data.target.data;
+				if(data.target.type == "screen") Application.screenManager.setScreen(data.target.name,outputData); else Application.screenManager.addOverlay(data.target.name,outputData);
+			},"bounceOut");
+		});
+		(function() {
+			_g.transitionExit(function() {
+				if(data.target.name == "quit") ursine_native_Extern.QuitGame();
+				if(data.sender != null) {
+					var sender = Application.screenManager.getScreen(data.sender);
+					if(sender != null) sender.exit();
+				}
+				if(data.removeCurrent != null) Application.screenManager.removeCurrent();
+				var outputData;
+				if(data.target.data == null) outputData = { }; else outputData = data.target.data;
+				if(data.target.type == "screen") Application.screenManager.setScreen(data.target.name,outputData); else Application.screenManager.addOverlay(data.target.name,outputData);
+			},"bounceOut");
+		});
+	}
+	{
+		this.handlers.set("no",function() {
+			_g.transitionExit(null,"bounceOut");
+		});
+		(function() {
+			_g.transitionExit(null,"bounceOut");
+		});
+	}
+};
+$hxClasses["retrospect.screens.ConfirmNavigationScreen"] = retrospect_screens_ConfirmNavigationScreen;
+retrospect_screens_ConfirmNavigationScreen.__name__ = true;
+retrospect_screens_ConfirmNavigationScreen.__super__ = retrospect_screens_BasicMenuScreen;
+retrospect_screens_ConfirmNavigationScreen.prototype = $extend(retrospect_screens_BasicMenuScreen.prototype,{
+});
+var retrospect_screens_MainMenuScreen = function(id,frame,data) {
+	var _g = this;
+	retrospect_screens_BasicMenuScreen.call(this,id,frame,data);
+	{
+		this.handlers.set("play",function() {
+			_g.transitionExit(function() {
+				Application.screenManager.setScreen("MultiplayerPlayScreen",{ });
+			});
+		});
+		(function() {
+			_g.transitionExit(function() {
+				Application.screenManager.setScreen("MultiplayerPlayScreen",{ });
+			});
+		});
+	}
+	{
+		this.handlers.set("credits",function() {
+		});
+		(function() {
+		});
+	}
+	{
+		this.handlers.set("quit",function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Quit Game?", target : { name : "quit"}});
+		});
+		(function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Quit Game?", target : { name : "quit"}});
+		});
+	}
 };
 $hxClasses["retrospect.screens.MainMenuScreen"] = retrospect_screens_MainMenuScreen;
 retrospect_screens_MainMenuScreen.__name__ = true;
-retrospect_screens_MainMenuScreen.__super__ = ursine_screen_Screen;
-retrospect_screens_MainMenuScreen.prototype = $extend(ursine_screen_Screen.prototype,{
-	exit: function() {
-		ursine_screen_Screen.prototype.exit.call(this);
-		Application.screenManager.setScreen("MultiplayerPlayScreen",{ });
-	}
-	,play: function() {
-		var header = this.m_document.querySelector("header");
-		header.className = "animated fadeOutUp";
-		ElementUtils.once(header,"webkitAnimationEnd",$bind(this,this.exit));
-	}
+retrospect_screens_MainMenuScreen.__super__ = retrospect_screens_BasicMenuScreen;
+retrospect_screens_MainMenuScreen.prototype = $extend(retrospect_screens_BasicMenuScreen.prototype,{
 });
 var retrospect_screens_MultiplayerPlayScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown));
 };
 $hxClasses["retrospect.screens.MultiplayerPlayScreen"] = retrospect_screens_MultiplayerPlayScreen;
 retrospect_screens_MultiplayerPlayScreen.__name__ = true;
 retrospect_screens_MultiplayerPlayScreen.__super__ = ursine_screen_Screen;
 retrospect_screens_MultiplayerPlayScreen.prototype = $extend(ursine_screen_Screen.prototype,{
+	triggerPause: function() {
+		Application.screenManager.addOverlay("PauseScreen",{ });
+	}
+	,onKeyboardKeyDown: function(e) {
+		if(!(e.triggered && e.pressed)) return;
+		if(e.key == 27) this.triggerPause();
+	}
+	,onGamepadButtonDown: function(e) {
+		if(!(e.triggered && e.pressed)) return;
+		if(e.button == 4) this.triggerPause();
+	}
+});
+var retrospect_screens_PauseScreen = function(id,frame,data) {
+	var _g = this;
+	retrospect_screens_BasicMenuScreen.call(this,id,frame,data);
+	{
+		this.handlers.set("resume",function() {
+			_g.transitionExit(null,"bounceOut");
+		});
+		(function() {
+			_g.transitionExit(null,"bounceOut");
+		});
+	}
+	{
+		this.handlers.set("restart",function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Restart?", sender : _g.getID(), target : { name : "MultiplayerPlayScreen", type : "screen"}, removeCurrent : true});
+		});
+		(function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Restart?", sender : _g.getID(), target : { name : "MultiplayerPlayScreen", type : "screen"}, removeCurrent : true});
+		});
+	}
+	{
+		this.handlers.set("main-menu",function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Return to Main Menu?", sender : _g.getID(), target : { name : "MainMenuScreen", type : "overlay"}, removeCurrent : true});
+		});
+		(function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Return to Main Menu?", sender : _g.getID(), target : { name : "MainMenuScreen", type : "overlay"}, removeCurrent : true});
+		});
+	}
+	{
+		this.handlers.set("quit",function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Quit Game?", target : { name : "quit"}});
+		});
+		(function() {
+			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Quit Game?", target : { name : "quit"}});
+		});
+	}
+};
+$hxClasses["retrospect.screens.PauseScreen"] = retrospect_screens_PauseScreen;
+retrospect_screens_PauseScreen.__name__ = true;
+retrospect_screens_PauseScreen.__super__ = retrospect_screens_BasicMenuScreen;
+retrospect_screens_PauseScreen.prototype = $extend(retrospect_screens_BasicMenuScreen.prototype,{
 });
 var retrospect_screens_SplashScreen = function(id,frame,data) {
 	var _g = this;
@@ -210,6 +410,9 @@ ursine_native_Extern.__name__ = true;
 ursine_native_Extern.InitGame = function() {
 	return InitGame();
 };
+ursine_native_Extern.QuitGame = function() {
+	return QuitGame();
+};
 var ursine_screen_ScreenManager = function(screenPackagePrefix) {
 	ursine_screen_ScreenManager.instance = this;
 	this.m_screenPackagePrefix = screenPackagePrefix;
@@ -223,11 +426,17 @@ var ursine_screen_ScreenManager = function(screenPackagePrefix) {
 $hxClasses["ursine.screen.ScreenManager"] = ursine_screen_ScreenManager;
 ursine_screen_ScreenManager.__name__ = true;
 ursine_screen_ScreenManager.prototype = {
-	removeScreen: function(screen) {
+	getScreen: function(id) {
+		return this.m_screens.h[id];
+	}
+	,removeScreen: function(screen) {
 		var id = screen.getID();
 		this.m_nativeManager.removeScreen(id);
 		this.m_screensContainer.removeChild(screen.getFrame());
 		this.m_screens.remove(id);
+	}
+	,removeCurrent: function() {
+		this.m_nativeManager.removeCurrent();
 	}
 	,setScreen: function(name,data) {
 		this.m_nativeManager.setScreen(name,data);
@@ -270,7 +479,7 @@ ursine_screen_ScreenManager.prototype = {
 		var screen;
 		var key = this.m_nativeManager.getFocusedScreen();
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(ursine_input_GamepadEventType.ButtonUp,e);
+		if(screen != null) screen.events.trigger(ursine_input_GamepadEventType.ButtonDown,e);
 	}
 	,onGamepadBtnUp: function(e) {
 		var screen;
