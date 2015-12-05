@@ -17,6 +17,7 @@ namespace ursine
 		friend class ecs::AudioSystem;
 
 		AudioComponentBase(void);
+		AkGameObjectID GetHandle();
 
 		void OnInitialize(ecs::Entity *owner);
 		void OnRemove(ecs::Entity *owner);

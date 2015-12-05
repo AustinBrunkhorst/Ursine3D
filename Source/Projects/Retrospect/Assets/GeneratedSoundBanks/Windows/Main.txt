@@ -7,6 +7,10 @@ Event	ID	Name			Wwise Object Path	Notes
 	3461836331	Player_Step			\Default Work Unit\Player_Step	
 	3629196698	Player_Land			\Default Work Unit\Player_Land	
 
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	2346531308	MusicVolume			\Default Work Unit\MusicVolume	
+	2818820904	StepSpeed			\Default Work Unit\StepSpeed	
+
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	66887663	Jump_Player	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\JumpNoiseV2_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Jump_Player		46872
 	100085542	Land_Player	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\LandingSoundV3_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Land_Player		82752

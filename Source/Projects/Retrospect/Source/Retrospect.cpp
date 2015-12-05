@@ -24,12 +24,6 @@ namespace
 
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
-
-	const std::string kInitBank = "INIT";
-	const std::string kMainBank = "MAIN";
-
-	AkBankID BankID = AK_INVALID_BANK_ID;
-	AkBankID MainID = AK_INVALID_BANK_ID;
 }
 
 JSFunction(InitGame)
@@ -107,9 +101,6 @@ void Retrospect::OnInitialize(void)
     m_mainWindow.window->Show( true );
 
 	m_audioManager = GetCoreSystem( AudioManager );
-
-	m_audioManager->LoadBank( kInitBank, BankID );
-	m_audioManager->LoadBank( kMainBank, MainID );
 }
 
 void Retrospect::OnRemove(void)
@@ -132,8 +123,6 @@ void Retrospect::OnRemove(void)
     
     m_mainWindow.window = nullptr;
 
-	m_audioManager->UnloadBank(kMainBank);
-	m_audioManager->UnloadBank(kInitBank);
 	m_audioManager = nullptr;
 }
 

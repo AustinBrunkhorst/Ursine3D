@@ -10,6 +10,11 @@ namespace ursine
 		: m_handle(AUDIO_UNALLOCATED_ID) 
 	    , m_dirty(false) { }
 
+	AkGameObjectID AudioComponentBase::GetHandle()
+	{
+		return m_handle;
+	}
+
 	void AudioComponentBase::OnInitialize(ecs::Entity* owner)
 	{
 		owner->Listener(this)

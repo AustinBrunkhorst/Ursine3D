@@ -29,13 +29,14 @@ namespace ursine
 			ENTITY_SYSTEM;
 
 		public:
+			Meta(Enable)
 			AudioSystem(World *world);
 
 			void CreateAudioObject(AkGameObjectID& id);
 
 			void DeleteAudioObject(AkGameObjectID& id);
 
-			void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
+			static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
 
 			void AssignListener(AkGameObjectID obj, AkUInt32 listeners);
 
@@ -55,11 +56,11 @@ namespace ursine
 			void SetSoundObstructionAndOcclusion(AkGameObjectID obstruction,
 				const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level);
 
-			void SetGameState(const std::string name, const std::string state);
+			static void SetGameState(const std::string name, const std::string state);
 
-			void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
+			static void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
 
-			void SetTrigger(const std::string name, AkGameObjectID obj);
+			static void SetTrigger(const std::string name, AkGameObjectID obj);
 
 		private:
 			AudioManager* m_audioMan;
@@ -78,6 +79,6 @@ namespace ursine
 
 			void onUpdate(EVENT_HANDLER(World));
 
-		} Meta(Enable);
+		} Meta(Enable, WhiteListMethods);
 	}
 }

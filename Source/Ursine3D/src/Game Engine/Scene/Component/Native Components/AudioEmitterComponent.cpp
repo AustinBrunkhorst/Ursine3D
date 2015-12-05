@@ -72,7 +72,8 @@ namespace ursine
 
 		void AudioEmitterComponent::AddSoundToPlayQueue(std::string sound)
 		{
-			m_soundsFAF.push( sound );
+			if (!m_mute)
+				m_soundsFAF.push( sound );
 		}
 	}
 }

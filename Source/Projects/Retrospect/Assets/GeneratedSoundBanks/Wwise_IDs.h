@@ -22,6 +22,12 @@ namespace AK
         static const AkUniqueID RELOAD_GUN_HAND = 23508243U;
     } // namespace EVENTS
 
+    namespace GAME_PARAMETERS
+    {
+        static const AkUniqueID MUSICVOLUME = 2346531308U;
+        static const AkUniqueID STEPSPEED = 2818820904U;
+    } // namespace GAME_PARAMETERS
+
     namespace BANKS
     {
         static const AkUniqueID INIT = 1355168291U;

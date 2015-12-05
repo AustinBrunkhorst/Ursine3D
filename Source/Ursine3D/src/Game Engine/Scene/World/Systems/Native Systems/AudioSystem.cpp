@@ -30,7 +30,7 @@ namespace ursine
 		void AudioSystem::OnInitialize(void)
 		{
 			m_world->Listener(this)
-				.On(WORLD_RENDER, &AudioSystem::onUpdate)
+				.On(WORLD_UPDATE, &AudioSystem::onUpdate)
 				.On(WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded)
 				.On(WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved);
 		}
@@ -38,7 +38,7 @@ namespace ursine
 		void AudioSystem::OnRemove(void)
 		{
 			m_world->Listener(this)
-				.Off(WORLD_RENDER, &AudioSystem::onUpdate)
+				.Off(WORLD_UPDATE, &AudioSystem::onUpdate)
 				.Off(WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded)
 				.Off(WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved);
 		}
@@ -55,6 +55,7 @@ namespace ursine
 					);
 				auto& handle = m_emitters[args->entity->GetUniqueID()]->m_handle;
 				CreateAudioObject(handle);
+				AssignListener(handle, LISTENER_ONE);
 			}
 
 			else if (args->component->Is<AudioListener>())
@@ -113,7 +114,7 @@ namespace ursine
 
 				auto trans = m_world->GetEntity(emitter.first)->GetTransform();
 
-				if (dirty)
+				//if (dirty)
 					SetObject3DPosition(handle, trans->GetWorldPosition(), 
 						trans->GetForward());
 
@@ -132,7 +133,7 @@ namespace ursine
 
 				auto trans = m_world->GetEntity(listener.first)->GetTransform();
 
-				if (dirty)
+				//if (dirty)
 					SetListener3DPosition(trans->GetForward(), trans->GetUp(), 
 						trans->GetWorldPosition(), index);
 			}
