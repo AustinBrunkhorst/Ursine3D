@@ -88,14 +88,14 @@ namespace ursine
 
         #ifdef BULLET_PHYSICS
 
-            auto rot = transform->GetWorldRotation( );
+            /*auto rot = transform->GetWorldRotation( );
             auto pos = transform->GetWorldPosition( ) + rot * m_offset;
             auto trans = btTransform(
                 btQuaternion( rot.X( ), rot.Y( ), rot.Z( ), rot.W( ) ),
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
             );
 
-            setWorldTransform( trans );
+            setWorldTransform( trans );*/
 
         #endif
 

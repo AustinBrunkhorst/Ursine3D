@@ -57,7 +57,7 @@ void CharacterControllerSystem::Process(Entity *entity)
     auto transform = entity->GetTransform( );
     auto rigidbody = entity->GetComponent<Rigidbody>( );
     
-    float x = controller->lookDir.X( );
+    float x = input->LookDir( ).X( );
 
 	auto child = transform->GetChild(0);
 
@@ -69,7 +69,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 		child->SetWorldRotation( child->GetWorldRotation( ) * SQuat( 0.0f, angle, 0.0f ) );
     }
 
-    auto move = controller->moveDir * moveSpeed;
+    auto move = input->MoveDir( ) * moveSpeed;
 
     auto forward = child->GetForward( ) * move.Y( );
     auto strafe = child->GetRight( ) * move.X( );
@@ -104,5 +104,5 @@ void CharacterControllerSystem::Process(Entity *entity)
 		}
 	}
 
-        rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
+    rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
 }

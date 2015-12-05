@@ -77,7 +77,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     // firing a ray
     // if we had a hotspot, firing controller is ready to fire (firing timer is down), AND we received input from
     // command (IsFiring), fire
-    if ( hotspot != nullptr &&  fireController->CanFire() )
+    if ( hotspot != nullptr &&  fireController->CanFire() && input->Fire( ) )
     {
         // animation stuff
         auto *armAnimator = arm->GetComponent<Animator>( );
