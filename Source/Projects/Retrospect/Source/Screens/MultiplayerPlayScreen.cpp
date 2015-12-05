@@ -7,6 +7,7 @@
 #include <Timer.h>
 
 #include <RoundSystem.h>
+#include <SpawnSystem.h>
 
 using namespace ursine;
 
@@ -24,7 +25,9 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
         
         world->SetOwner( this );
 
+		// This order must be the same.
         world->GetSystemManager( )->AddSystem<RoundSystem>( );
+		world->GetSystemManager( )->AddSystem<SpawnSystem>( );
 
         URSINE_TODO( "This guy should be saved in an editor specific file eventually" );
         auto editorCam = world->GetEntityFromName( "Editor Camera" );

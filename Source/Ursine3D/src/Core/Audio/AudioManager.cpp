@@ -235,6 +235,8 @@ namespace ursine
 				temp->available = true;
 				return;
 			}
+
+			temp = temp->next;
 		}
 		UAssert(false, "Wwise: Could Not Free Listeners [Not Valid Index] ");
 	}

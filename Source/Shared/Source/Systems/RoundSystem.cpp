@@ -44,7 +44,7 @@ void RoundSystem::SetMaxRoundCount(int round)
 
 void RoundSystem::OnInitialize()
 {
-    m_timers.Create(TimeSpan::FromSeconds(0.1f)).Completed(
+    m_timers.Create(TimeSpan::FromSeconds(0)).Completed(
         [=] (void)
     {
         auto *m_map = m_world->CreateEntityFromArchetype(
@@ -52,13 +52,13 @@ void RoundSystem::OnInitialize()
             "gameMapArchetype"
         );
 
+		m_world->GetEntitySystem( SpawnSystem )->Listener( this )
+			.On( ROUND_OVER, &RoundSystem::onRoundOver);
+
         RoundEventArgs e( 1 );
 
         Dispatch( ROUND_START, &e );
     } );
-
-    m_world->GetEntitySystem( SpawnSystem )->Listener( this )
-        .On( ROUND_OVER, &RoundSystem::onRoundOver);
 }
 
 void RoundSystem::OnRemove()

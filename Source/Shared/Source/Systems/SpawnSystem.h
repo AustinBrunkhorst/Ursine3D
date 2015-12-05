@@ -53,4 +53,4 @@ class SpawnSystem : public ursine::ecs::EntitySystem
             std::list<Spawnpoint *> m_team1Spawnpoints;
             std::list<Spawnpoint *> m_team2Spawnpoints;
 
-        } Meta(Enable);
+        } Meta(Enable, DisableEntitySystemAutoAdd);

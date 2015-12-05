@@ -75,9 +75,8 @@ namespace ursine
                 addRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) ) );
             else if ( args->component->Is<Animator>( ) )
             {
-                m_animators.emplace(
-                    args->entity->GetUniqueID( ),
-                    static_cast<Animator*>(const_cast<Component*>(args->component))
+                m_animators.emplace_back(
+					static_cast<Animator*>(const_cast<Component*>(args->component))
                 );
             }
         }
@@ -104,6 +103,17 @@ namespace ursine
                 removeRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) ) );
             else if (args->component->Is<Light>( ))
                 removeRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) ) );
+			else if (args->component->Is<Animator>( ))
+			{
+				auto search = std::find(
+					m_animators.begin(),
+					m_animators.end(),
+					static_cast<Animator*>(const_cast<Component*>(args->component))
+				);
+
+				if (search != m_animators.end( ))
+					m_animators.erase( search );
+			}
         }
 
         void RenderSystem::onRender(EVENT_HANDLER(World))
@@ -111,10 +121,7 @@ namespace ursine
             m_graphics->BeginScene( );
 
             for (auto &animator : m_animators)
-            {
-
-                animator.second->UpdateAnimation( Application::Instance->GetDeltaTime( ) );
-            }
+                animator->UpdateAnimation( Application::Instance->GetDeltaTime( ) );
 
             for (auto &mapPair : m_renderableMap)
             {

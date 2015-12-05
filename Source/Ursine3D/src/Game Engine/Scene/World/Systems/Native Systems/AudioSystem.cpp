@@ -111,8 +111,12 @@ namespace ursine
 				auto& dirty = emitter.second->m_dirty;
 
 				auto& handle = emitter.second->m_handle;
+				auto entity = m_world->GetEntity(emitter.first);
 
-				auto trans = m_world->GetEntity(emitter.first)->GetTransform();
+				if (!entity)
+					continue;
+
+				auto trans = entity->GetTransform();
 
 				if (dirty)
 					SetObject3DPosition(handle, trans->GetWorldPosition(), 
@@ -131,7 +135,12 @@ namespace ursine
 
 				auto index = listener.second->GetListenerIndex();
 
-				auto trans = m_world->GetEntity(listener.first)->GetTransform();
+				auto entity = m_world->GetEntity(listener.first);
+
+				if (!entity)
+					return;
+
+				auto trans = entity->GetTransform();
 
 				if (dirty)
 					SetListener3DPosition(trans->GetForward(), trans->GetUp(), 
