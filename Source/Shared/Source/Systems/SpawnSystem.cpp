@@ -53,7 +53,7 @@ struct doCompare
 
     bool operator()(Spawnpoint *first, Spawnpoint *second)
     {
-        return first->roundSpawnNnumber < second->roundSpawnNnumber;
+        return first->GetRoundSpawnNumber() < second->GetRoundSpawnNumber();
     }
 };
 
@@ -73,11 +73,11 @@ void SpawnSystem::OnInitialize(void)
     {
         auto *spawnComp = spawn->GetComponent<Spawnpoint>();
 
-        if (spawnComp->teamNumber == 1)
+        if (spawnComp->GetTeamNumber() == 1)
         {
             m_team1Spawnpoints.push_back(spawnComp);
         }
-        else if (spawnComp->teamNumber == 2)
+        else if (spawnComp->GetTeamNumber() == 2)
         {
             m_team2Spawnpoints.push_back( spawnComp );
         }
@@ -108,7 +108,7 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
     {
         auto teamComp = reinterpret_cast<TeamComponent *>(args->component);
 
-        int team = teamComp->TeamNumber;
+        int team = teamComp->GetTeamNumber();
 
         if (team == 1)
         {
@@ -123,7 +123,7 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
     else if (args->component->Is<Spawnpoint>())
     {
         auto *spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
-        int team = spawnpoint->teamNumber;
+        int team = spawnpoint->GetTeamNumber();
 
         if (team == 1)
         {
@@ -152,7 +152,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     {        
         TeamComponent *player = reinterpret_cast<TeamComponent *>(args->component);
 
-        if (player->TeamNumber == 1)
+        if (player->GetTeamNumber() == 1)
         {
             m_team1.remove(player);
 
@@ -163,7 +163,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
                 Dispatch(ROUND_OVER, &e);
             }
         }
-        else if(player->TeamNumber == 2)
+        else if(player->GetTeamNumber() == 2)
         {
             m_team2.remove(player);
 
@@ -180,7 +180,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     {
         auto spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
 
-        int team = spawnpoint->teamNumber;
+        int team = spawnpoint->GetTeamNumber();
 
         if (team == 1)
         {
