@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ScoreSystem.h
+**
+** Author:
+** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <EntitySystem.h>
@@ -11,8 +24,6 @@
             ScoreSystem(ursine::ecs::World *world);
 
         private:
-            void OnInitialize(void) override;
-            void OnRemove(void) override;
 
             int m_player1Kills;
             int m_player2Kills;

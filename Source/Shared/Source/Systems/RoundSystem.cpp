@@ -12,6 +12,12 @@ using namespace ursine;
 
 ENTITY_SYSTEM_DEFINITION( RoundSystem );
 
+namespace
+{
+    const std::string team1Wins = "mook";
+    const std::string team2Wins = "spook";
+}
+
 RoundSystem::RoundSystem(ursine::ecs::World* world) : EntitySystem(world)
                                                     , EventDispatcher(this)
                                                     , m_round(1)
