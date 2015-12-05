@@ -17,8 +17,11 @@
 
 enum RoundSystemEventType
 {
+    // args tell what team died
     ROUND_OVER = 0x160,
+    // args tell what round it is
     ROUND_START,
+    // args say what team won
     MATCH_OVER
 };
 

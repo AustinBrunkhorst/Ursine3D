@@ -5,6 +5,7 @@
 #include "RoundSystem.h"
 #include <SystemManager.h>
 #include "SpawnSystem.h"
+#include <AudioManager.h>
 
 
 using namespace ursine;
@@ -14,8 +15,8 @@ ENTITY_SYSTEM_DEFINITION( RoundSystem );
 
 namespace
 {
-    const std::string team1Wins = "mook";
-    const std::string team2Wins = "spook";
+    const std::string team1Wins = "ROUND_END_BLUE";
+    const std::string team2Wins = "ROUND_END_RED";
 }
 
 RoundSystem::RoundSystem(ursine::ecs::World* world) : EntitySystem(world)
@@ -56,32 +57,42 @@ void RoundSystem::OnInitialize()
         Dispatch( ROUND_START, &e );
     } );
 
-    m_world->GetEntitySystem(SpawnSystem)->Listener(this)
+    m_world->GetEntitySystem( SpawnSystem )->Listener( this )
         .On( ROUND_OVER, &RoundSystem::onRoundOver);
 }
 
 void RoundSystem::OnRemove()
 {
-    m_world->GetEntitySystem(SpawnSystem)->Listener(this)
-        .Off(ROUND_OVER, &RoundSystem::onRoundOver);
+    m_world->GetEntitySystem( SpawnSystem )->Listener( this )
+        .Off( ROUND_OVER, &RoundSystem::onRoundOver );
 }
 
 void RoundSystem::onRoundOver(EVENT_HANDLER(ursine::ecs:::World))
 {
-    EVENT_ATTRS(ecs::World, RoundEventArgs);
+    EVENT_ATTRS( ecs::World, RoundEventArgs );
 
     ++m_round;
 
-    if (m_round > m_maxRound)
+    if (args->team == 1)
     {
-        RoundEventArgs e(args->team);
+        AudioManager::PlayGlobalEvent(team1Wins);
 
-        Dispatch(MATCH_OVER, &e);
     }
     else
     {
-        RoundEventArgs e(m_round);
+        AudioManager::PlayGlobalEvent(team2Wins);
+    }
 
-        Dispatch(ROUND_START, &e);
+    if (m_round > m_maxRound)
+    {
+        RoundEventArgs e( args->team );
+
+        Dispatch( MATCH_OVER, &e );
+    }
+    else
+    {
+        RoundEventArgs e( m_round );
+
+        Dispatch( ROUND_START, &e );
     }
 }

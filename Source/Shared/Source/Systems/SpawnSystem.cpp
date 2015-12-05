@@ -11,7 +11,6 @@
 #include "CoreSystem.h"
 #include <WorldEvent.h>
 #include <EventDispatcher.h>
-#include <SystemManager.h>
 
 using namespace ursine;
 
