@@ -30,9 +30,7 @@ void MoveCommand::Execute(ursine::ecs::Entity* receiver)
         controller->moveDir = m_axis;
     else
     {
-        auto dir = m_position - controller->position;
-
-        controller->position = m_position;
+        auto dir = m_position - controller->GetOwner( )->GetTransform( )->GetWorldPosition( );
     }
 }
 
