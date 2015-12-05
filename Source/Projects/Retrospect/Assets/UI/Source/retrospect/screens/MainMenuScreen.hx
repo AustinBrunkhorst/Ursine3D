@@ -7,28 +7,27 @@ import ursine.utils.Utils;
 import ursine.input.KeyboardManager;
 import ursine.input.GamepadManager;
 
-class MainMenuScreen extends Screen {
+class MainMenuScreen extends BasicMenuScreen {
     public function new(id : ScreenID, frame : js.html.IFrameElement, data : Dynamic) {
         super( id, frame, data );
 
-        m_document.addEventListener( 'mousedown', play );
+        handlers[ "play" ] = function() {
+            transitionExit( function() {
+                Application.screenManager.setScreen( 'MultiplayerPlayScreen', { } );
+            } );
+        };
 
-        events
-            .on( KeyboardEventType.KeyDown, play )
-            .on( GamepadEventType.ButtonDown, play );
-    }
+        handlers[ "credits" ] = function() {
 
-    public override function exit() {
-        super.exit( );
+        };
 
-        Application.screenManager.setScreen( 'MultiplayerPlayScreen', { } );
-    }
-
-    private function play() {
-    	var header = m_document.querySelector( 'header' );
-
-    	header.className = 'animated fadeOutUp';
-
-        ElementUtils.once( header, 'webkitAnimationEnd', exit );
+        handlers[ "quit" ] = function() {
+            Application.screenManager.addOverlay( 'ConfirmNavigationScreen', {
+                title: 'Quit Game?',
+                target: {
+                    name: 'quit'
+                }
+            } );
+        };
     }
 }

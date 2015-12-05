@@ -12,6 +12,9 @@
 Meta(Enable, ExposeJavaScript)
 JSFunction(InitGame);
 
+Meta(Enable, ExposeJavaScript)
+JSFunction(QuitGame);
+
 class Retrospect : public ursine::core::CoreSystem
 {
     CORE_SYSTEM

@@ -35,6 +35,13 @@ JSFunction(InitGame)
     return CefV8Value::CreateUndefined( );
 }
 
+JSFunction(QuitGame)
+{
+    Application::Instance->Exit( );
+
+    return CefV8Value::CreateUndefined( );
+}
+
 CORE_SYSTEM_DEFINITION( Retrospect );
 
 Retrospect::Retrospect(void)

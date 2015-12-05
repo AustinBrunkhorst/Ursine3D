@@ -27,11 +27,8 @@ using namespace ursine::ecs;
 
 namespace
 {
-	const std::string kJumpSound = "PLAYER_JUMP";
-	const std::string kLandSound = "PLAYER_LAND";
 	const std::string kRunSound = "PLAYER_STEP";
 	const float Runduration = 0.2f;
-	const float Jumpduration = 1.29f;
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterControllerSystem );
@@ -46,6 +43,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
     auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
+    auto *input = entity->GetComponent<PlayerInput>();
     auto moveSpeed = controller->moveSpeed;
 	auto rotateSpeed = controller->rotateSpeed;
 
@@ -76,24 +74,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 
 	/*if (emitter)
 	{
-		if (input->Jump() && controller->CanJump)
-		{
-			vel.Y() = controller->jumpSpeed;
-			emitter->AddSoundToPlayQueue(kJumpSound);
-			controller->CanJump = false;
-			controller->inAir = true;
-			m_timers.Create(TimeSpan::FromSeconds(Jumpduration)).Completed([=] {
-				if (entity)
-				{
-					auto *jump = entity->GetComponent<CharacterController>();
-					if (jump)
-					{
-						jump->CanJump = true;
-					}
-				}
-			});
-		}
-		else if (move != Vec2::Zero() && controller->CanStep && controller->CanJump)
+		if (move != Vec2::Zero() && controller->CanStep)
 		{
 			emitter->AddSoundToPlayQueue(kRunSound);
 			controller->CanStep = false;
