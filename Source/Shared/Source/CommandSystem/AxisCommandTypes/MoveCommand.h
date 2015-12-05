@@ -15,6 +15,8 @@
 class MoveCommand
     : public RecordableAxisCommand
 {
+	RECORDABLE_COMMAND;
+
 public:
     MoveCommand();
     MoveCommand(const ursine::Vec2 &axis);
@@ -23,8 +25,8 @@ public:
     void StopExecute(ursine::ecs::Entity *receiver) override;
 
     void StartRecording(ursine::ecs::Entity *receiver) override;
-    void Record(ursine::ecs::Entity *receiver, const int time) override;
-    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const int time) override;
+    void Record(ursine::ecs::Entity *receiver, const float time) override;
+    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const float time) override;
 
 private:
     std::vector<ursine::SVec3> m_positionList;

@@ -2,6 +2,8 @@
 
 #include <NativeJSClass.h>
 
+#include <mutex>
+
 class EntityHandler : public ursine::NativeJSClass
 {
     JAVASCRIPT_CLASS;

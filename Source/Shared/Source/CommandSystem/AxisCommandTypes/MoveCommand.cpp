@@ -11,8 +11,10 @@
 #include "Precompiled.h"
 
 #include "MoveCommand.h"
-#include <Game Engine/Scene/Component/Native Components/Physics/RigidbodyComponent.h>
-#include <Components/CharacterControllerComponent.h>
+#include <RigidbodyComponent.h>
+#include <CharacterControllerComponent.h>
+
+RECORDABLE_COMMAND_DEFINITION( MoveCommand );
 
 MoveCommand::MoveCommand() 
     : RecordableAxisCommand( ursine::Vec2(0, 0)) {}
@@ -39,7 +41,7 @@ void MoveCommand::StopExecute(ursine::ecs::Entity* receiver)
     auto *controller = receiver->GetComponent<CharacterController>();
 
     controller->moveDir = ursine::Vec2(0, 0);
-    receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyType(ursine::ecs::BodyType::Static);
+    //receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyType(ursine::ecs::BodyType::Static);
 }
     
 
@@ -49,14 +51,14 @@ void MoveCommand::StartRecording(ursine::ecs::Entity* receiver)
     m_playback = false;
 }
 
-void MoveCommand::Record(ursine::ecs::Entity* receiver, const int time)
+void MoveCommand::Record(ursine::ecs::Entity* receiver, const float time)
 {
     auto *transform = receiver->GetTransform();
 
     m_positionList.push_back(transform->GetWorldPosition());
 }
 
-void MoveCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const int time)
+void MoveCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
 {
     auto index = time - m_startTime;
 
@@ -66,5 +68,5 @@ void MoveCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const int
     m_position = m_positionList[ index ];
     m_playback = true;
 
-    receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyType(ursine::ecs::BodyType::Kinematic);
+    //receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyType(ursine::ecs::BodyType::Kinematic);
 }

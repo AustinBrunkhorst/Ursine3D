@@ -1,7 +1,7 @@
 #include "Precompiled.h"
 
 #include <random>
-
+#include <algorithm>
 #include "SpawnSystem.h"
 #include "RoundSystem.h"
 
@@ -11,7 +11,6 @@
 #include "CoreSystem.h"
 #include <WorldEvent.h>
 #include <EventDispatcher.h>
-#include <SystemManager.h>
 
 using namespace ursine;
 
@@ -46,6 +45,18 @@ void SpawnSystem::DespawnTeam(int team)
     }
 }
 
+struct doCompare
+{
+    doCompare()
+    { }
+
+    bool operator()(Spawnpoint *first, Spawnpoint *second)
+    {
+        return first->GetRoundSpawnNumber() < second->GetRoundSpawnNumber();
+    }
+};
+
+
 void SpawnSystem::OnInitialize(void)
 {
     m_world->Listener(this)
@@ -54,6 +65,7 @@ void SpawnSystem::OnInitialize(void)
 
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
         .On(ROUND_START, &SpawnSystem::onRoundStart);
+
 }
 
 void SpawnSystem::OnRemove(void)
@@ -74,7 +86,7 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
     {
         auto teamComp = reinterpret_cast<TeamComponent *>(args->component);
 
-        int team = teamComp->TeamNumber;
+        int team = teamComp->GetTeamNumber();
 
         if (team == 1)
         {
@@ -89,7 +101,7 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
     else if (args->component->Is<Spawnpoint>())
     {
         auto *spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
-        int team = spawnpoint->teamNumber;
+        int team = spawnpoint->GetTeamNumber();
 
         if (team == 1)
         {
@@ -101,8 +113,11 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 
         }
 
-        // this is to nicely different teams spawnpoints
+        doCompare compfn;
 
+        // this is to nicely different teams spawnpoints
+        m_team1Spawnpoints.sort(compfn);
+        m_team2Spawnpoints.sort(compfn);
     }
 }
 
@@ -115,7 +130,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     {        
         TeamComponent *player = reinterpret_cast<TeamComponent *>(args->component);
 
-        if (player->TeamNumber == 1)
+        if (player->GetTeamNumber() == 1)
         {
             m_team1.remove(player);
 
@@ -126,7 +141,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
                 Dispatch(ROUND_OVER, &e);
             }
         }
-        else if(player->TeamNumber == 2)
+        else if(player->GetTeamNumber() == 2)
         {
             m_team2.remove(player);
 
@@ -143,7 +158,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     {
         auto spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
 
-        int team = spawnpoint->teamNumber;
+        int team = spawnpoint->GetTeamNumber();
 
         if (team == 1)
         {
@@ -201,7 +216,7 @@ ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffse
 
     if (roundNum > spawnList.size())
     {
-        return SVec3( 0.0f, 1000.0f, 0.0f );
+        return SVec3( 0.0f, 10.0f, 0.0f );
     }
 
     int index = roundNum - 1;

@@ -54,6 +54,10 @@ class ScreenManager {
         m_screens.remove( id );
     }
 
+    public function removeCurrent() {
+        m_nativeManager.removeCurrent( );
+    }
+
     public function setScreen(name : String, data : Dynamic) {
         m_nativeManager.setScreen( name, data );
     }
@@ -104,7 +108,7 @@ class ScreenManager {
         var screen = m_screens[ m_nativeManager.getFocusedScreen( ) ];
 
         if (screen != null)
-            screen.events.trigger( GamepadEventType.ButtonUp, e );
+            screen.events.trigger( GamepadEventType.ButtonDown, e );
     }
 
     private function onGamepadBtnUp(e) {

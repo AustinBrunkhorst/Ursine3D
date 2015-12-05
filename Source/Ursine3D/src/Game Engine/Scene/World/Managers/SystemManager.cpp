@@ -85,6 +85,8 @@ namespace ursine
 
         SystemManager::SystemManager(World *world)
             : WorldManager( world )
+            , m_initialized( false )
+            , m_loaded( false )
         {
             configureSystems( );
 
@@ -107,6 +109,16 @@ namespace ursine
                     "Possibly forgot ENTITY_SYSTEM_DEFINITION."
                 );
 
+                auto &systemMeta = systemType.GetMeta( );
+
+                // disabling auto add to the world
+                if (systemMeta.GetProperty<DisableEntitySystemAutoAdd>( ))
+                {
+                    m_systems[ systemID ] = nullptr;
+
+                    continue;
+                }
+
                 auto constructor = 
                     systemType.GetDynamicConstructor( systemConstructor );
 
@@ -127,22 +139,38 @@ namespace ursine
         SystemManager::~SystemManager(void)
         {
             for (auto *system : m_systems)
-                system->OnRemove( );
-
+            {
+                if (system)
+                    system->OnRemove( );
+            }
+                
             for (auto *system : m_systems)
-                delete system;
+            {
+                if (system)
+                    delete system;
+            }
         }
 
         void SystemManager::OnInitialize(void)
         {
             for (auto system : m_systems)
-                system->OnInitialize( );
+            {   
+                if (system)
+                    system->OnInitialize( );
+            }
+                
+            m_initialized = true;
         }
 
         void SystemManager::onAfterLoad(void)
         {
             for (auto system : m_systems)
-                system->OnAfterLoad( );
+            {
+                if (system)
+                    system->OnAfterLoad( );
+            }
+
+            m_loaded = true;
         }
     }
 }

@@ -13,6 +13,8 @@
 #include "FireCommand.h"
 #include <Components/CharacterFireControllerComponent.h>
 
+RECORDABLE_COMMAND_DEFINITION( FireCommand );
+
 FireCommand::FireCommand()
 {
     m_weight = 0;
@@ -20,7 +22,7 @@ FireCommand::FireCommand()
 
 void FireCommand::Execute(ursine::ecs::Entity* receiver)
 {
-    auto *fireComponent = receiver->GetComponent<CharacterFireController>();
+    auto fireComponent = receiver->GetComponentInChildren<CharacterFireController>();
 
     if(fireComponent != nullptr)
     {
@@ -30,12 +32,12 @@ void FireCommand::Execute(ursine::ecs::Entity* receiver)
 
 void FireCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-    auto *fireComponent = receiver->GetComponent<CharacterFireController>();
+	auto fireComponent = receiver->GetComponentInChildren<CharacterFireController>();
 
-    if ( fireComponent != nullptr )
-    {
-        fireComponent->SetFireState(false);
-    }
+	if (fireComponent != nullptr)
+	{
+		fireComponent->SetFireState(false);
+	}
 }
 
 void FireCommand::StartRecording(ursine::ecs::Entity* receiver)
@@ -43,12 +45,12 @@ void FireCommand::StartRecording(ursine::ecs::Entity* receiver)
     
 }
 
-void FireCommand::Record(ursine::ecs::Entity* receiver, const int time)
+void FireCommand::Record(ursine::ecs::Entity* receiver, const float time)
 {
     
 }
 
-void FireCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const int time)
+void FireCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
 {
     
 }

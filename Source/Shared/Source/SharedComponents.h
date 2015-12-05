@@ -8,3 +8,4 @@
 #include "Components/CommandQueueComponent.h"
 #include "Components/CommandInputControllerComponent.h"
 #include "Components/TeamComponent.h"
+#include "Components/RecorderComponent.h"

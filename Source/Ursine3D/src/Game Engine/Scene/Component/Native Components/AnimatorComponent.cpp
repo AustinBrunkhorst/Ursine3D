@@ -53,7 +53,6 @@ namespace ursine
             
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             std::vector<SMat4> tempVeec( 100 );
-            m_state.SetAnimation( currentAnimation );
 
             m_state.SetAnimation( currentAnimation );
 

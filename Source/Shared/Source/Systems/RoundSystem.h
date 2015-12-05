@@ -1,12 +1,27 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** RoundSystem.h
+**
+** Author:
+** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <EntitySystem.h>
 
-
 enum RoundSystemEventType
 {
+    // args tell what team died
     ROUND_OVER = 0x160,
+    // args tell what round it is
     ROUND_START,
+    // args say what team won
     MATCH_OVER
 };
 
@@ -42,4 +57,4 @@ private:
     int m_round;
     int m_maxRound;
 
-} Meta(Enable);
+} Meta(Enable/*, DisableEntitySystemAutoAdd*/);

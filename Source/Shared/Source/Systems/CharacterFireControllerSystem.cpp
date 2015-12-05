@@ -24,7 +24,8 @@ using namespace ursine::ecs;
 namespace
 {
 	const std::string FireGun = "FIRE_GUN_HAND";
-	const std::string TakeDamage = "Player_Take_Damage";
+	const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
+	const std::string kEndRound = "ROUND_END_RED";
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
@@ -37,16 +38,9 @@ CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World
 
 void CharacterFireControllerSystem::Process( Entity *entity )
 {
-    auto *input = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
     auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitterComponent>( );
-
-    // check our states
-    if ( input && input->ResetTrigger( ) )
-    {
-        fireController->SetFireState( true );
-    }
 
     // update fire timer
     URSINE_TODO("Get acutal delta time for firing timer reduction");
@@ -74,13 +68,16 @@ void CharacterFireControllerSystem::Process( Entity *entity )
 		}
     }
 
+	auto *armAnimator = arm->GetComponent<Animator>();
+	armAnimator->UpdateAnimation(0.016);
+
     // firing a ray
     // if we had a hotspot, firing controller is ready to fire (firing timer is down), AND we received input from
     // command (IsFiring), fire
-    if ( hotspot != nullptr &&  fireController->CanFire() && input->Fire( ) )
+    if ( hotspot != nullptr &&  fireController->CanFire() )
     {
         // animation stuff
-        auto *armAnimator = arm->GetComponent<Animator>( );
+        
         float animationScalar = armAnimator->GetTimeScalar( );
 
         // reset firing sequence
@@ -88,8 +85,9 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         armAnimator->SetTimeScalar( 1.0f / fireController->GetFireRate( ) );
 
         // Play that bang sound
-	if (emitter)
-            emitter->AddSoundToPlayQueue(FireGun);
+		if (emitter)
+			emitter->AddSoundToPlayQueue(FireGun);
+            
 
         fireController->Fire( );
 
@@ -141,7 +139,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
             {
                 health->DealDamage( fireController->GetDamage() );
 				if (emitter)
-					emitter->AddSoundToPlayQueue(TakeDamage);
+					emitter->AddSoundToPlayQueue(kTakeDamage);
             }
         }
     }

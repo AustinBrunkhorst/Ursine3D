@@ -27,15 +27,8 @@ using namespace ursine::ecs;
 
 namespace
 {
-	const std::string kJumpSound = "PLAYER_JUMP";
-	const std::string kLandSound = "PLAYER_LAND";
 	const std::string kRunSound = "PLAYER_STEP";
 	const float Runduration = 0.2f;
-	const float Jumpduration = 1.29f;
-	bool step = true;
-	bool jump = false;
-	bool land = false;
-	float startHeight = 0.0f;
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterControllerSystem );
@@ -50,14 +43,14 @@ void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
     auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
-    auto *input = entity->GetComponent<PlayerInput>( );
+    auto *input = entity->GetComponent<PlayerInput>();
     auto moveSpeed = controller->moveSpeed;
 	auto rotateSpeed = controller->rotateSpeed;
 
     auto transform = entity->GetTransform( );
     auto rigidbody = entity->GetComponent<Rigidbody>( );
     
-    float x = input->LookDir( ).X( );
+    float x = controller->lookDir.X( );
 
 	auto child = transform->GetChild(0);
 
@@ -72,40 +65,34 @@ void CharacterControllerSystem::Process(Entity *entity)
 		child->SetWorldRotation( child->GetWorldRotation( ) * SQuat( 0.0f, angle, 0.0f ) );
     }
 
-    auto move = input->MoveDir( ) * moveSpeed;
+    auto move = controller->moveDir * moveSpeed;
 
     auto forward = child->GetForward( ) * move.Y( );
     auto strafe = child->GetRight( ) * move.X( );
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 
-	if (emitter)
+	/*if (emitter)
 	{
-		if (input->Jump() && !jump)
-		{
-			vel.Y() = controller->jumpSpeed;
-			emitter->AddSoundToPlayQueue(kJumpSound);
-			startHeight = transform->GetWorldPosition().Y();
-			jump = true;
-			m_timers.Create(TimeSpan::FromSeconds(Jumpduration)).Completed([&] {
-				jump = false;
-				land = true;
-			});
-		}
-		else if (move != Vec2::Zero() && step && !jump)
+		if (move != Vec2::Zero() && controller->CanStep)
 		{
 			emitter->AddSoundToPlayQueue(kRunSound);
-			step = false;
-			m_timers.Create(TimeSpan::FromSeconds(Runduration)).Completed([&] {
-				step = true;
+			controller->CanStep = false;
+			m_timers.Create(TimeSpan::FromSeconds(Runduration)).Completed([=] {
+				if (entity)
+				{
+					auto *step = entity->GetComponent<CharacterController>();
+					if (step)
+						step->CanStep = true;
+				}
 			});
 		}
-		if (land)
+		if (controller->CanJump && controller->inAir)
 		{
 			emitter->AddSoundToPlayQueue(kLandSound);
-			land = false;
+			controller->inAir = false;
 		}
-	}
+	}*/
 
     rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
 }

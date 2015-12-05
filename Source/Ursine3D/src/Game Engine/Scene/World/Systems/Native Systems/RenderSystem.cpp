@@ -9,6 +9,8 @@
 
 #include "GfxAPI.h"
 
+#include <mutex>
+
 namespace ursine
 {
     namespace ecs
@@ -108,7 +110,7 @@ namespace ursine
         {
             m_graphics->BeginScene( );
 
-            for ( auto &animator : m_animators )
+            for (auto &animator : m_animators)
             {
 
                 animator.second->UpdateAnimation( Application::Instance->GetDeltaTime( ) );
@@ -129,8 +131,10 @@ namespace ursine
 
             RenderHookArgs e( 0 );
 
-            for (auto &camera : m_cameras)
+			for (size_t i = 0; i < m_cameras.size( ); ++i)
             {
+				auto *camera = m_cameras[ i ];
+
                 if (camera->m_dirty)
                     camera->updateRenderer( );
 

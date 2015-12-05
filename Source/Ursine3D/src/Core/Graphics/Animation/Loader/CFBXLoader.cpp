@@ -71,7 +71,7 @@ namespace ursine
 	namespace graphics
 	{
 		CFBXLoader::CFBXLoader() :
-			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr), 
+			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr),
 			mModelInfo(nullptr), mLevelInfo(nullptr),
 			mConverter(nullptr)
 		{
@@ -123,7 +123,7 @@ namespace ursine
 		{
 			if (!filename)
 				return false;
-			
+
 			InitializeSdkObjects(mSdkManager, mScene);
 			if (!mSdkManager)
 				return false;
@@ -976,22 +976,22 @@ namespace ursine
 					const FbxDouble3 lEmissive = GetMaterialProperty(material,
 						FbxSurfaceMaterial::sEmissive, FbxSurfaceMaterial::sEmissiveFactor, &destMat.emissive);
 					destMat.emissive.color = FBXDouble3ToXMFLOAT4(lEmissive);
-					
+
 					// Ambi
 					const FbxDouble3 lAmbient = GetMaterialProperty(material,
 						FbxSurfaceMaterial::sAmbient, FbxSurfaceMaterial::sAmbientFactor, &destMat.ambient);
 					destMat.ambient.color = FBXDouble3ToXMFLOAT4(lAmbient);
-					
+
 					// Diff
 					const FbxDouble3 lDiffuse = GetMaterialProperty(material,
 						FbxSurfaceMaterial::sDiffuse, FbxSurfaceMaterial::sDiffuseFactor, &destMat.diffuse);
 					destMat.diffuse.color = FBXDouble3ToXMFLOAT4(lDiffuse);
-					
+
 					// Spec
 					const FbxDouble3 lSpecular = GetMaterialProperty(material,
 						FbxSurfaceMaterial::sSpecular, FbxSurfaceMaterial::sSpecularFactor, &destMat.specular);
 					destMat.specular.color = FBXDouble3ToXMFLOAT4(lSpecular);
-					
+
 					// Transparency
 					FbxProperty lTransparencyFactorProperty = material->FindProperty(FbxSurfaceMaterial::sTransparencyFactor);
 					if (lTransparencyFactorProperty.IsValid())
@@ -999,7 +999,7 @@ namespace ursine
 						double lTransparencyFactor = lTransparencyFactorProperty.Get<FbxDouble>();
 						destMat.TransparencyFactor = static_cast<float>(lTransparencyFactor);
 					}
-					
+
 					// Shineness
 					FbxProperty lShininessProperty = material->FindProperty(FbxSurfaceMaterial::sShininess);
 					if (lShininessProperty.IsValid())

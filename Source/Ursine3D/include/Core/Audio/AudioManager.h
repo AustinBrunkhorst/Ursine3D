@@ -68,20 +68,21 @@ namespace ursine
 	class AudioManager : public core::CoreSystem
 	{
 		CORE_SYSTEM;
-	public:
 
-		Meta( DisableNonDynamic )
+	public:
+		Meta(Enable)
 		AudioManager(void) { }
 
-		Meta(Disable)
 		void OnInitialize(void) override;
-
-		Meta(Disable)
 		void OnRemove(void) override;
 
 		void PlayEvent(const std::string name, AkGameObjectID obj);
 
+		static void PlayGlobalEvent(const std::string name);
+
 		void PauseAudio();
+
+		static void StopSound(std::string name, AkGameObjectID id);
 
 		void ResumeAudio();
 
@@ -120,5 +121,5 @@ namespace ursine
 		void Init(AkInitSettings* in_pSettings, 
 			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
 
-	} Meta( Enable );
+	} Meta(Enable, WhiteListMethods);
 }

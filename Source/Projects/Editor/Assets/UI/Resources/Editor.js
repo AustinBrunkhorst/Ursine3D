@@ -574,8 +574,10 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 	,createFieldInspector: function(owner,instance,field,type) {
 		var typeOverride = Reflect.field(field.meta,ursine_native_Property.ForceEditorType);
 		var typeName;
-		if(typeOverride == null) typeName = type.name; else typeName = Reflect.field(typeOverride,"type");
-		console.log(typeName);
+		if(typeOverride == null) typeName = type.name; else {
+			typeName = Reflect.field(typeOverride,"type");
+			type = this.m_typeDB.get(typeName);
+		}
 		var handler = this.m_fieldInspectionHandlers.get(typeName);
 		if(handler == null) handler = ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector;
 		return Type.createInstance(handler,[owner,instance,field,type]);
@@ -737,7 +739,7 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
 		var k = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
-		var v = ["Color","Direction"];
+		var v = ["Color","Direction","Intensity"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
 		v;
 		var k1 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
