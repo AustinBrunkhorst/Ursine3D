@@ -80,7 +80,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     if ( hotspot != nullptr &&  fireController->CanFire() )
     {
         // animation stuff
-        auto *armAnimator = armGun->GetComponent<Animator>( );
+        auto *armAnimator = arm->GetComponent<Animator>( );
         float animationScalar = armAnimator->GetTimeScalar( );
 
         // reset firing sequence
