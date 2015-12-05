@@ -6,6 +6,7 @@
 #include "RigidbodyComponent.h"
 
 #include "PlayerInputComponent.h"
+#include "AudioEmitterComponent.h"
 
 #include <GamepadManager.h>
 #include <MouseManager.h>
@@ -20,6 +21,12 @@
 using namespace ursine;
 using namespace ursine::ecs;
 
+namespace
+{
+	const std::string FireGun = "FIRE_GUN_HAND";
+	const std::string TakeDamage = "Player_Take_Damage";
+}
+
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
 
 CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World *world )
@@ -33,6 +40,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     auto *input = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
+	auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitterComponent>( );
 
     // check our states
     if ( input && input->ResetTrigger( ) )
@@ -74,6 +82,10 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         // reset firing sequence
         armAnimator->SetAnimationTimePosition( 0.1 );
         armAnimator->SetTimeScalar( 1.0f / fireController->GetFireRate( ) );
+
+        // Play that bang sound
+	if (emitter)
+            emitter->AddSoundToPlayQueue(FireGun);
 
         fireController->Fire( );
 
@@ -120,6 +132,8 @@ void CharacterFireControllerSystem::Process( Entity *entity )
             if ( health != nullptr )
             {
                 health->DealDamage( fireController->GetDamage() );
+				if (emitter)
+					emitter->AddSoundToPlayQueue(TakeDamage);
             }
         }
     }

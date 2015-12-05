@@ -17,10 +17,17 @@
 
 #include <AK/MusicEngine/Common/AkMusicEngine.h>
 
+#include "AudioID.h"
+
 namespace
 {
-	const AkOSChar *path = L"Assets\\GeneratedSoundBanks\\Windows\\";
 	const AkGameObjectID StartID = 100;
+
+	const std::string kInitBank = "INIT";
+	const std::string kMainBank = "MAIN";
+
+	AkBankID BankID = AK_INVALID_BANK_ID;
+	AkBankID MainID = AK_INVALID_BANK_ID;
 }
 
 namespace ursine
@@ -33,7 +40,7 @@ namespace ursine
 		AK::SoundEngine::GetDefaultInitSettings(m_initSettings);
 		AK::SoundEngine::GetDefaultPlatformInitSettings(m_platSettings);
 
-		Init(&m_initSettings, &m_platSettings, path);
+		Init(&m_initSettings, &m_platSettings, WIDEN( WORLD_AUDIO_BANK_PATH ));
 
 		PopulateList();
 
@@ -70,7 +77,7 @@ namespace ursine
 
 	void AudioManager::PopulateList()
 	{
-		ListenerIndex list[8] = { 
+		ListenerIndex list[8] = {
             ListenerIndex::One, 
             ListenerIndex::Two, 
             ListenerIndex::Three, 
@@ -86,7 +93,6 @@ namespace ursine
 		head->available = true;
 		m_head = head;
 		auto temp = head;
-
 		for (int i = 1; i < 8; ++i)
 		{
 			auto node = new ListenerNode;
@@ -98,16 +104,21 @@ namespace ursine
 		temp->next = nullptr;
 	}
 
-	void AudioManager::PlayEvent(const std::string name, AkGameObjectID obj)
+	void AudioManager::PlayEvent( const std::string name, AkGameObjectID obj )
 	{
-		if (AK::SoundEngine::PostEvent(name.c_str(), obj) != AK_Success)
+		if ( AK::SoundEngine::PostEvent(name.c_str() , obj) == AK_INVALID_PLAYING_ID )
 		{
-			UWarning("Wwise: Cannot Post Event: %s", name.c_str());
+			UWarning( "Wwise: Cannot Post Event: %s", name.c_str( ) );
 		}
 	}
 
 	void AudioManager::OnRemove()
 	{
+		AK::SoundEngine::UnregisterAllGameObj();
+
+		UnloadBank(kMainBank);
+		UnloadBank(kInitBank);
+
 		DestroyList();
 
 		AK::MusicEngine::Term();
@@ -124,7 +135,6 @@ namespace ursine
 
 	void AudioManager::onAppUpdate(void *_sender, const ursine::EventArgs *_args)
 	{
-
 		// Process bank requests, events, positions, RTPC, etc.
 		UAssert(AK::SoundEngine::RenderAudio() == AK_Success, "Wwise: Cannot Render Audio");
 	}
@@ -211,6 +221,8 @@ namespace ursine
 
 		UAssert(AK::MemoryMgr::Init(&memSettings) == AK_Success, "Wwise: Cannot Create The Memory Manager.");
 
+		AK::StreamMgr::SetCurrentLanguage(AKTEXT("English(US)"));
+
 		AkStreamMgrSettings stmSettings;
 		AK::StreamMgr::GetDefaultSettings(stmSettings);
 
@@ -238,5 +250,8 @@ namespace ursine
 
 		UAssert(AK::MusicEngine::Init(&musicInit) == AK_Success, 
 			"Wwise: Cannot Initialize The Music Engine.");
+
+		LoadBank(kInitBank, BankID);
+		LoadBank(kMainBank, MainID);
 	}
 }
