@@ -8,7 +8,7 @@
 ** - Park Hyung Jun - park.hyungjun@digipen.edu
 **
 ** Contributors:
-** - <list in same format as author if applicable>
+** - Hiago Desena - hiago.desena@digipen.edu
 ** -------------------------------------------------------------------------*/
 
 #include "UrsinePrecompiled.h"
@@ -231,89 +231,70 @@ namespace ursine
 			// mesh data
 			strcpy(mModelInfo->name, mModel->name.c_str());
 			mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
-			if (nullptr == mLevelInfo)
-				mLevelInfo = new ufmt_loader::LevelInfo[mModelInfo->mmeshCount];
-			mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
-
 			mModelInfo->marrMeshes = new ufmt_loader::MeshInfo[mModelInfo->mmeshCount];
-			mLevelInfo->marrMeshlvls = new ufmt_loader::MeshInLvl[mModelInfo->mmeshCount];
 			for (i = 0; i < mModelInfo->mmeshCount; ++i)
 			{
+				FBX_DATA::MeshData* currMD = mModel->mMeshData[i];
+				ufmt_loader::MeshInfo* currMI = &mModelInfo->marrMeshes[i];
 				// name & counter initialization
-				std::strcpy(mModelInfo->marrMeshes[i].name, mModel->mMeshData[i]->name.c_str());
-				// store mesh name for level info
-				std::strcpy(mLevelInfo->marrMeshlvls[i].name, mModel->mMeshData[i]->name.c_str());
-				
+				std::strcpy(currMI->name, currMD->name.c_str());
+
 				// mesh Transformation
-				mModelInfo->marrMeshes[i].meshTM = mModel->mMeshData[i]->meshTM;
-				// store mesh transform for level info
-				mLevelInfo->marrMeshlvls[i].meshTM = mModel->mMeshData[i]->meshTM;
+				currMI->meshTM = currMD->meshTM;
+				currMI->meshVtxInfoCount = currMD->vertexCnt;
+				currMI->meshVtxInfos = new ufmt_loader::MeshVertex[currMI->meshVtxInfoCount];
+				for (j = 0; j < currMI->meshVtxInfoCount; ++j)
+				{
+					currMI->meshVtxInfos[j].pos = currMD->vertices[currMD->indices[j]];
 
-				//vtx
-				mModelInfo->marrMeshes[i].vertexCount = static_cast<unsigned int>(mModel->mMeshData[i]->vertexCnt);
-				mModelInfo->marrMeshes[i].vertices = new pseudodx::XMFLOAT3[mModelInfo->marrMeshes[i].vertexCount];
-				for (j = 0; j < mModelInfo->marrMeshes[i].vertexCount; ++j)
-					mModelInfo->marrMeshes[i].vertices[j] = mModel->mMeshData[i]->vertices[j];
+					if (currMD->normalMode == FbxGeometryElement::eByPolygonVertex)
+						currMI->meshVtxInfos[j].normal = currMD->normals[j];
+					else if (currMD->normalMode == FbxGeometryElement::eByControlPoint)
+						currMI->meshVtxInfos[j].normal = currMD->normals[currMD->indices[j]];
 
-				//idx
-				mModelInfo->marrMeshes[i].indexCount = static_cast<unsigned int>(mModel->mMeshData[i]->indexCnt);
-				mModelInfo->marrMeshes[i].indices = new unsigned int[mModelInfo->marrMeshes[i].indexCount];
-				for (j = 0; j < mModelInfo->marrMeshes[i].indexCount; ++j)
-					mModelInfo->marrMeshes[i].indices[j] = mModel->mMeshData[i]->indices[j];
+					if (currMD->tangentMode == FbxGeometryElement::eByPolygonVertex)
+						currMI->meshVtxInfos[j].tangent = currMD->tangents[j];
+					else if (currMD->tangentMode == FbxGeometryElement::eByControlPoint)
+						currMI->meshVtxInfos[j].tangent = currMD->tangents[currMD->indices[j]];
 
-				//normal
-				mModelInfo->marrMeshes[i].normalCount = static_cast<unsigned int>(mModel->mMeshData[i]->normalCnt);
-				mModelInfo->marrMeshes[i].normals = new pseudodx::XMFLOAT3[mModelInfo->marrMeshes[i].normalCount];
-				for (j = 0; j < mModelInfo->marrMeshes[i].normalCount; ++j)
-					mModelInfo->marrMeshes[i].normals[j] = mModel->mMeshData[i]->normals[j];
+					currMI->meshVtxInfos[j].uv = currMD->uvs[j];
+					currMI->meshVtxInfos[j].uv.y = 1.0f - currMI->meshVtxInfos[j].uv.y;
 
-				//tangent
-				mModelInfo->marrMeshes[i].tangentCount = static_cast<unsigned int>(mModel->mMeshData[i]->tangentCnt);
-				mModelInfo->marrMeshes[i].tangents = new pseudodx::XMFLOAT3[mModelInfo->marrMeshes[i].tangentCount];
-				for (j = 0; j < mModelInfo->marrMeshes[i].tangentCount; ++j)
-					mModelInfo->marrMeshes[i].tangents[j] = mModel->mMeshData[i]->tangents[j];
-
-				//uv
-				mModelInfo->marrMeshes[i].uvCount = static_cast<unsigned int>(mModel->mMeshData[i]->uvCnt);
-				mModelInfo->marrMeshes[i].uvs = new pseudodx::XMFLOAT2[mModelInfo->marrMeshes[i].uvCount];
-				for (j = 0; j < mModelInfo->marrMeshes[i].uvCount; ++j)
-					mModelInfo->marrMeshes[i].uvs[j] = mModel->mMeshData[i]->uvs[j];
+					// controls - maybe divide this part later if necessary
+					if (!mModel->mCtrlPoints.empty())
+					{
+						// currently, just for using 1st control point vec
+						currMI->meshVtxInfos[j].ctrlBlendWeights.x = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingWeight);
+						currMI->meshVtxInfos[j].ctrlBlendWeights.y = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingWeight);
+						currMI->meshVtxInfos[j].ctrlBlendWeights.z = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingWeight);
+						currMI->meshVtxInfos[j].ctrlBlendWeights.w = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingWeight);
+						currMI->meshVtxInfos[j].ctrlIndices.x = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingIndex;
+						currMI->meshVtxInfos[j].ctrlIndices.y = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingIndex;
+						currMI->meshVtxInfos[j].ctrlIndices.z = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingIndex;
+						currMI->meshVtxInfos[j].ctrlIndices.w = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingIndex;
+					}
+				}
 
 				//fbxmaterials
-				mModelInfo->marrMeshes[i].mtrlCount = static_cast<unsigned int>(mModel->mMeshData[i]->fbxmaterials.size());
-				for (j = 0; j < mModelInfo->marrMeshes[i].mtrlCount; ++j)
+				currMI->mtrlCount = static_cast<unsigned int>(currMD->fbxmaterials.size());
+				for (j = 0; j < currMI->mtrlCount; ++j)
 				{
-					mModelInfo->marrMeshes[i].mtrlName[j] = new char[MAXTEXTLEN];
-					lstrcpy(mModelInfo->marrMeshes[i].mtrlName[j], mModel->mMeshData[i]->fbxmaterials[j].name.c_str());
+					currMI->mtrlName[j] = new char[MAXTEXTLEN];
+					lstrcpy(currMI->mtrlName[j], currMD->fbxmaterials[j].name.c_str());
 				}
 
 				//this thing and subset stuff will be useful for handling multimaterial model
-				mModelInfo->marrMeshes[i].mtrlIndexCount = static_cast<unsigned int>(mModel->mMeshData[i]->mtrlIndexCnt);
-				mModelInfo->marrMeshes[i].materialIndices = new unsigned int[mModelInfo->marrMeshes[i].mtrlIndexCount];
-				for (j = 0; j < mModelInfo->marrMeshes[i].mtrlIndexCount; ++j)
-				{
-					mModelInfo->marrMeshes[i].materialIndices[j] = mModel->mMeshData[i]->materialIndices[j];
-				}
+				currMI->mtrlIndexCount = mModel->mMeshData[i]->mtrlIndexCnt;
+				currMI->materialIndices = new unsigned int[currMI->mtrlIndexCount];
+				for (j = 0; j < currMI->mtrlIndexCount; ++j)
+					currMI->materialIndices[j] = currMD->materialIndices[j];
 
-				// controls - maybe divide this part later if necessary
-				if (!mModel->mCtrlPoints.empty())
-				{
-					mModelInfo->marrMeshes[i].ctrlPtCount = static_cast<unsigned int>(mModel->mCtrlPoints[i]->size());
-					mModelInfo->marrMeshes[i].subsetCount = static_cast<unsigned int>(mModel->mMeshData[i]->modelSubsets.size());
-					mModelInfo->marrMeshes[i].ctrlBlendWeights = new double*[mModelInfo->marrMeshes[i].ctrlPtCount];
-					mModelInfo->marrMeshes[i].ctrlIndices = new unsigned int*[mModelInfo->marrMeshes[i].ctrlPtCount];
-					for (j = 0; j < mModelInfo->marrMeshes[i].ctrlPtCount; ++j)
-					{
-						mModelInfo->marrMeshes[i].ctrlBlendWeights[j] = new double[4];
-						mModelInfo->marrMeshes[i].ctrlIndices[j] = new unsigned int[4];
-						for (k = 0; k < 4; ++k)
-						{
-							// currently, just for using 1st control point vec
-							mModelInfo->marrMeshes[i].ctrlBlendWeights[j][k] = mModel->mCtrlPoints[i]->at(j)->mBlendingInfo[k].mBlendingWeight;
-							mModelInfo->marrMeshes[i].ctrlIndices[j][k] = mModel->mCtrlPoints[i]->at(j)->mBlendingInfo[k].mBlendingIndex;
-						}
-					}
-				}
+				///////////////////////////////////////////////////////////////
+				// didn't handled subset yet(using more than two materials)
+				///////////////////////////////////////////////////////////////
+				currMI->subsetCount = static_cast<unsigned int>(mModel->mMeshData[i]->modelSubsets.size());
+				for (j = 0; j < currMI->subsetCount; ++j)
+					currMI->modelSubsets[j] = mModel->mMeshData[i]->modelSubsets[j];
 			}
 
 			// material data
@@ -321,56 +302,57 @@ namespace ursine
 			mModelInfo->marrMaterials = new ufmt_loader::MaterialInfo[mModelInfo->mmaterialCount];
 			for (i = 0; i < mModelInfo->mmaterialCount; ++i)
 			{
-				lstrcpy(mModelInfo->marrMaterials[i].name, mModel->mMaterials[i]->name.c_str());
-				mModelInfo->marrMaterials[i].ambitype = mModel->mMaterials[i]->ambient.type;
-				mModelInfo->marrMaterials[i].ambi_mcolor = mModel->mMaterials[i]->ambient.color;
-				mModelInfo->marrMaterials[i].ambi_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->ambient.textureSetArray.size());
+				ufmt_loader::MaterialInfo* currMI = &mModelInfo->marrMaterials[i];
+				lstrcpy(currMI->name, mModel->mMaterials[i]->name.c_str());
+				currMI->ambitype = mModel->mMaterials[i]->ambient.type;
+				currMI->ambi_mcolor = mModel->mMaterials[i]->ambient.color;
+				currMI->ambi_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->ambient.textureSetArray.size());
 				//ambi
 				j = 0;
 				for (auto iter1 = mModel->mMaterials[i]->ambient.textureSetArray.begin();
 				iter1 != mModel->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
 				{
-					mModelInfo->marrMaterials[i].ambi_texNames[j] = new char[MAXTEXTLEN];
+					currMI->ambi_texNames[j] = new char[MAXTEXTLEN];
 					lstrcpy(mModelInfo->marrMaterials[i].ambi_texNames[j], iter1->second[j].c_str());
 				}
-				mModelInfo->marrMaterials[i].difftype = mModel->mMaterials[i]->diffuse.type;
-				mModelInfo->marrMaterials[i].diff_mcolor = mModel->mMaterials[i]->diffuse.color;
-				mModelInfo->marrMaterials[i].diff_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->diffuse.textureSetArray.size());
+				currMI->difftype = mModel->mMaterials[i]->diffuse.type;
+				currMI->diff_mcolor = mModel->mMaterials[i]->diffuse.color;
+				currMI->diff_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->diffuse.textureSetArray.size());
 
 				//diff
 				j = 0;
 				for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
 				iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
 				{
-					mModelInfo->marrMaterials[i].diff_texNames[j] = new char[MAXTEXTLEN];
+					currMI->diff_texNames[j] = new char[MAXTEXTLEN];
 					lstrcpy(mModelInfo->marrMaterials[i].diff_texNames[j], iter1->second[j].c_str());
 				}
-				mModelInfo->marrMaterials[i].emistype = mModel->mMaterials[i]->emissive.type;
-				mModelInfo->marrMaterials[i].emis_mcolor = mModel->mMaterials[i]->emissive.color;
-				mModelInfo->marrMaterials[i].emis_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->emissive.textureSetArray.size());
+				currMI->emistype = mModel->mMaterials[i]->emissive.type;
+				currMI->emis_mcolor = mModel->mMaterials[i]->emissive.color;
+				currMI->emis_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->emissive.textureSetArray.size());
 
 				//emit
 				j = 0;
 				for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
 				iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
 				{
-					mModelInfo->marrMaterials[i].emis_texNames[j] = new char[MAXTEXTLEN];
-					lstrcpy(mModelInfo->marrMaterials[i].emis_texNames[j], iter1->second[j].c_str());
+					currMI->emis_texNames[j] = new char[MAXTEXTLEN];
+					lstrcpy(currMI->emis_texNames[j], iter1->second[j].c_str());
 				}
-				mModelInfo->marrMaterials[i].spectype = mModel->mMaterials[i]->specular.type;
-				mModelInfo->marrMaterials[i].spec_mcolor = mModel->mMaterials[i]->specular.color;
-				mModelInfo->marrMaterials[i].spec_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->specular.textureSetArray.size());
+				currMI->spectype = mModel->mMaterials[i]->specular.type;
+				currMI->spec_mcolor = mModel->mMaterials[i]->specular.color;
+				currMI->spec_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->specular.textureSetArray.size());
 
 				//spec
 				j = 0;
 				for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
 				iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
 				{
-					mModelInfo->marrMaterials[i].spec_texNames[j] = new char[MAXTEXTLEN];
-					lstrcpy(mModelInfo->marrMaterials[i].spec_texNames[j], iter1->second[j].c_str());
+					currMI->spec_texNames[j] = new char[MAXTEXTLEN];
+					lstrcpy(currMI->spec_texNames[j], iter1->second[j].c_str());
 				}
-				mModelInfo->marrMaterials[i].shineness = mModel->mMaterials[i]->shineness;
-				mModelInfo->marrMaterials[i].TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
+				currMI->shineness = mModel->mMaterials[i]->shineness;
+				currMI->TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
 			}
 
 			// bone data
@@ -378,15 +360,16 @@ namespace ursine
 			mModelInfo->marrBones = new ufmt_loader::BoneInfo[mModelInfo->mboneCount];
 			for (i = 0; i < mModelInfo->mboneCount; ++i)
 			{
+				ufmt_loader::BoneInfo* currBI = &mModelInfo->marrBones[i];
 				// skin info will use model's name
-				lstrcpy(mModelInfo->marrBones[i].name, mModel->mBoneData.mbonehierarchy[i].mName.c_str());
-				mModelInfo->marrBones[i].mParentIndex = mModel->mBoneData.mbonehierarchy[i].mParentIndex;
-				mModelInfo->marrBones[i].bindPosition = mModel->mBoneData.mbonehierarchy[i].bindPosition;
-				mModelInfo->marrBones[i].bindRotation = mModel->mBoneData.mbonehierarchy[i].bindRotation;
-				mModelInfo->marrBones[i].bindScaling = mModel->mBoneData.mbonehierarchy[i].bindScaling;
-				mModelInfo->marrBones[i].boneSpacePosition = mModel->mBoneData.mbonehierarchy[i].boneSpacePosition;
-				mModelInfo->marrBones[i].boneSpaceRotation = mModel->mBoneData.mbonehierarchy[i].boneSpaceRotation;
-				mModelInfo->marrBones[i].boneSpaceScaling = mModel->mBoneData.mbonehierarchy[i].boneSpaceScaling;
+				lstrcpy(currBI->name, mModel->mBoneData.mbonehierarchy[i].mName.c_str());
+				currBI->mParentIndex = mModel->mBoneData.mbonehierarchy[i].mParentIndex;
+				currBI->bindPosition = mModel->mBoneData.mbonehierarchy[i].bindPosition;
+				currBI->bindRotation = mModel->mBoneData.mbonehierarchy[i].bindRotation;
+				currBI->bindScaling = mModel->mBoneData.mbonehierarchy[i].bindScaling;
+				currBI->boneSpacePosition = mModel->mBoneData.mbonehierarchy[i].boneSpacePosition;
+				currBI->boneSpaceRotation = mModel->mBoneData.mbonehierarchy[i].boneSpaceRotation;
+				currBI->boneSpaceScaling = mModel->mBoneData.mbonehierarchy[i].boneSpaceScaling;
 			}
 
 			// anim data
@@ -394,29 +377,30 @@ namespace ursine
 			mModelInfo->marrAnims = new ufmt_loader::AnimInfo[mModelInfo->manimCount];
 			for (i = 0; i < mModelInfo->manimCount; ++i)
 			{
+				ufmt_loader::AnimInfo* currAI = &mModelInfo->marrAnims[i];
 				// clips count
-				mModelInfo->marrAnims[i].clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
-				mModelInfo->marrAnims[i].keyIndices = new unsigned int*[mModelInfo->marrAnims[i].clipCount];
-				mModelInfo->marrAnims[i].keyframes = new FBX_DATA::KeyFrame**[mModelInfo->marrAnims[i].clipCount];
+				currAI->clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
+				currAI->keyIndices = new unsigned int*[currAI->clipCount];
+				currAI->keyframes = new FBX_DATA::KeyFrame**[currAI->clipCount];
 				j = 0;
 				for (auto iter = mModel->mAnimationData[i]->animations.begin();
 				iter != mModel->mAnimationData[i]->animations.end();
 					++iter, ++j)
 				{
 					// storing animation name
-					std::strcpy(mModelInfo->marrAnims[i].name, iter->first.c_str());
+					std::strcpy(currAI->name, iter->first.c_str());
 					// set keycount / keyframes
-					mModelInfo->marrAnims[i].boneCount = static_cast<unsigned int>(iter->second.boneAnim.size());
-					mModelInfo->marrAnims[i].keyIndices[j] = new unsigned int[iter->second.boneAnim.size()];
-					mModelInfo->marrAnims[i].keyframes[j] = new FBX_DATA::KeyFrame*[iter->second.boneAnim.size()];
+					currAI->boneCount = static_cast<unsigned int>(iter->second.boneAnim.size());
+					currAI->keyIndices[j] = new unsigned int[iter->second.boneAnim.size()];
+					currAI->keyframes[j] = new FBX_DATA::KeyFrame*[iter->second.boneAnim.size()];
 					for (k = 0; k < iter->second.boneAnim.size(); ++k)
 					{
 						unsigned int kfCount = static_cast<unsigned int>(iter->second.boneAnim[k].keyFrames.size());
-						mModelInfo->marrAnims[i].keyIndices[j][k] = kfCount;
-						mModelInfo->marrAnims[i].keyframes[j][k] = new FBX_DATA::KeyFrame[kfCount];
+						currAI->keyIndices[j][k] = kfCount;
+						currAI->keyframes[j][k] = new FBX_DATA::KeyFrame[kfCount];
 						for (l = 0; l < kfCount; ++l)
 						{
-							mModelInfo->marrAnims[i].keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[l];
+							currAI->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[l];
 						}
 					}
 				}
@@ -544,7 +528,7 @@ namespace ursine
 				// skeleton = bone hierarchy
 				mModel->mBoneData.mbonehierarchy.push_back(currJoint);
 				mModel->mBoneData.mboneNodes.push_back(pNode);
-				SMat4 locTM = FBXAMatrixToXMMatrix(&localMatrix);
+				SMat4 locTM = FBXAMatrixToSMat4(&localMatrix);
 				mModel->mBoneData.mboneLocalTM.push_back(locTM);
 
 				bBone = true;
@@ -583,7 +567,7 @@ namespace ursine
 				//Meshes have a separate geometry transform that also needs to be applied
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
-				newMesh->parentTM = FBXAMatrixToXMMatrix(&parentTransform);
+				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
 				meshTransform = parentTransform * meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
 
@@ -592,7 +576,7 @@ namespace ursine
 				if (!CheckScaling(scl) || !CheckPositive(scl))
 					meshTransform.SetS(FbxVector4(1, 1, 1));
 
-				newMesh->meshTM = FBXAMatrixToXMMatrix(&meshTransform);
+				newMesh->meshTM = FBXAMatrixToSMat4(&meshTransform);
 
 				// vertex, normal, tangent, texcoord, material
 				ProcessVertices(mesh, newMesh);
@@ -764,7 +748,7 @@ namespace ursine
 						if (tangentElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
 							lTangentIndex = tangentElement->GetIndexArray().GetAt(lVertexIndex);
 						FbxVector4 lTangent = tangentElement->GetDirectArray().GetAt(lTangentIndex);
-						//mConverter->ConvertVector(lTangent);
+						mConverter->ConvertVector(lTangent);
 						pData->tangents[lVertexIndex] = FBXVectorToXMFLOAT3(lTangent.mData);
 					}
 				}
@@ -788,7 +772,7 @@ namespace ursine
 							if (tangentElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
 								lTangentIndex = tangentElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
 							FbxVector4 lTangent = tangentElement->GetDirectArray().GetAt(lTangentIndex);
-							//mConverter->ConvertVector(lTangent);
+							mConverter->ConvertVector(lTangent);
 							pData->tangents[lTangentIndex] = FBXVectorToXMFLOAT3(lTangent.mData);
 							lIndexByPolygonVertex++;
 						}
@@ -814,16 +798,18 @@ namespace ursine
 				const char* lUVSetName = lUVSetNameList.GetStringAt(lUVSetIndex);
 				FbxGeometryElementUV* lUVElement = pMesh->GetElementUV(lUVSetIndex);// lUVSetName);
 
-				if (!lUVElement) continue;
+				if (!lUVElement)
+					continue;
 
 				// only support mapping mode eByPolygonVertex and eByControlPoint
-				if (lUVElement->GetMappingMode() != FbxGeometryElement::eByPolygonVertex &&
+				if (lUVElement->GetMappingMode() != FbxGeometryElement::eByPolygonVertex
+					&&
 					lUVElement->GetMappingMode() != FbxGeometryElement::eByControlPoint)
 					return;
 
 				//index array, where holds the index referenced to the uv data
-				//const bool lUseIndex = lUVElement->GetReferenceMode() != FbxGeometryElement::eDirect;
-				//const int lIndexCount = (lUseIndex) ? lUVElement->GetIndexArray().GetCount() : 0;
+				const bool lUseIndex = lUVElement->GetReferenceMode() != FbxGeometryElement::eDirect;
+				const int lIndexCount = (lUseIndex) ? lUVElement->GetIndexArray().GetCount() : 0;
 
 				switch (lUVElement->GetMappingMode())
 				{
@@ -841,94 +827,46 @@ namespace ursine
 						else if (lUVElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
 							lUVIndex = lUVElement->GetIndexArray().GetAt(lVertexIndex);
 						FbxVector2 lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
-						pData->uvs[lVertexIndex] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[0]), static_cast<float>(1.0f - lUVValue.mData[1]));
+						pData->uvs[lVertexIndex] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[0]), static_cast<float>(lUVValue.mData[1]));
+
+						if (2 == lVertexIndex % 3)
+						{
+							pseudodx::XMFLOAT2 tmp = pData->uvs[lVertexIndex];
+							pData->uvs[lVertexIndex] = pData->uvs[lVertexIndex - 1];
+							pData->uvs[lVertexIndex - 1] = tmp;
+						}
 					}
-					break;
 				}
+				break;
 				case FbxGeometryElement::eByPolygonVertex:
 				{
-					int lUVIndexByPolygonVertex = 0;
-					//FbxArray<int> lNewIndexToDirect;
-					//FbxArray<FbxVector2> lNewUVs;
-					//
-					//// convert polygon vertex uv to control point uv
-					//std::unordered_map<int, bool> fbxcpset;
-					//unsigned int uvByCPCount = pMesh->GetControlPointsCount();
-					//for (int i = 0; i < uvByCPCount; ++i)
-					//	fbxcpset[i] = false;
-					//
-					//unsigned uvByPolyCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
-					//for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
-					//{
-					//	for (int j = 0; j < pMesh->GetPolygonSize(i); ++j)
-					//	{
-					//		int lUvIndex = pMesh->GetTextureUVIndex(i, j);
-					//		if (false == fbxcpset[lUvIndex])
-					//		{
-					//			FbxVector2 uv = lUVElement->GetDirectArray().GetAt(lUvIndex);
-					//			lNewUVs.Add(uv);
-					//			lNewIndexToDirect.Add(lUvIndex);
-					//			fbxcpset[lUvIndex] = true;
-					//		}
-					//	}
-					//}
-					//
-					//// change the content of the index array and its mapping
-					//lUVElement->SetMappingMode(FbxGeometryElement::eByControlPoint);
-					//lUVElement->GetIndexArray().Clear();
-					//lUVElement->GetIndexArray().Resize(lNewIndexToDirect.GetCount());
-					//int* lIndexArray = (int*)lUVElement->GetIndexArray().GetLocked();
-					//for (int i = 0; i < lNewIndexToDirect.GetCount(); ++i)
-					//	lIndexArray[i] = lNewIndexToDirect.GetAt(i);
-					//
-					//// and the content of the direct array
-					//lUVElement->GetDirectArray().Clear();
-					//lUVElement->GetDirectArray().Resize(lNewUVs.GetCount());
-					//FbxVector2* lDirectArray = (FbxVector2*)lUVElement->GetDirectArray().GetLocked();
-					//for (int j = 0; j < lNewUVs.GetCount(); ++j)
-					//	lDirectArray[j] = lNewUVs.GetAt(j);
-					//
-					//pData->uvCnt = uvByCPCount;
-					//pData->uvs = new XMFLOAT2[uvByCPCount];
-					//for (unsigned int lVertexIndex = 0; lVertexIndex < uvByCPCount; ++lVertexIndex)
-					//{
-					//	FbxVector2 lUVValue = lDirectArray[lIndexArray[lVertexIndex]];
-					//	pData->uvs[lVertexIndex] = XMFLOAT2(static_cast<float>(lUVValue.mData[0]), static_cast<float>(lUVValue.mData[1]));
-					//}
-					//
-					//lUVElement->GetIndexArray().Release((void**)&lIndexArray);
-					//lUVElement->GetDirectArray().Release((void**)&lDirectArray);
-
-					unsigned int uvByCPCount = pMesh->GetControlPointsCount();
-					pData->uvCnt = uvByCPCount;
-					pData->uvs = new pseudodx::XMFLOAT2[uvByCPCount];
-					for (unsigned int lVertexIndex = 0; lVertexIndex < uvByCPCount; ++lVertexIndex)
+					int lPolyIndexCounter = 0;
+					pData->uvCnt = lIndexCount;
+					pData->uvs = new pseudodx::XMFLOAT2[pData->uvCnt];
+					const int lPolyCount = pMesh->GetPolygonCount();
+					for (int lPolyIndex = 0; lPolyIndex < lPolyCount; ++lPolyIndex)
 					{
-						int lUVIndex = 0;
-						//reference mode
-						if (lUVElement->GetReferenceMode() == FbxGeometryElement::eDirect)
-							lUVIndex = lVertexIndex;
-						else if (lUVElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
-							lUVIndex = lUVElement->GetIndexArray().GetAt(lVertexIndex);
-						FbxVector2 lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
-						pData->uvs[lVertexIndex] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[0]), static_cast<float>(lUVValue.mData[1]));
-					}
-
-					unsigned uvByPolyCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
-					pData->uvCnt = uvByPolyCount;
-					pData->uvs = new pseudodx::XMFLOAT2[uvByPolyCount];
-					for (int i = 0; i < pMesh->GetPolygonCount(); ++i)
-					{
-						for (int j = 0; j < pMesh->GetPolygonSize(i); ++j)
+						// build the max index array that we need to pass into MakePoly
+						const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
+						for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
 						{
-							int lUvIndex = pMesh->GetTextureUVIndex(i, j);
-							if (lUVElement->GetReferenceMode() == FbxGeometryElement::eDirect)
-								lUvIndex = lUVIndexByPolygonVertex;
-							if (lUVElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
-								lUvIndex = lUVElement->GetIndexArray().GetAt(lUVIndexByPolygonVertex);
-							FbxVector2 lUV = lUVElement->GetDirectArray().GetAt(lUvIndex);
-							pData->uvs[lUVIndexByPolygonVertex] = pseudodx::XMFLOAT2(static_cast<float>(lUV.mData[0]), static_cast<float>(lUV.mData[1]));
-							++lUVIndexByPolygonVertex;
+							if (lPolyIndexCounter < lIndexCount)
+							{
+								FbxVector2 lUVValue;
+								//the UV index depends on the reference mode
+								int lUVIndex = lUseIndex ? lUVElement->GetIndexArray().GetAt(lPolyIndexCounter) : lPolyIndexCounter;
+								lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
+								pData->uvs[lPolyIndexCounter] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[0]), static_cast<float>(lUVValue.mData[1]));
+
+								// for converting indicies for texture
+								if (2 == lPolyIndexCounter % 3)
+								{
+									pseudodx::XMFLOAT2 tmp = pData->uvs[lPolyIndexCounter];
+									pData->uvs[lPolyIndexCounter] = pData->uvs[lPolyIndexCounter - 1];
+									pData->uvs[lPolyIndexCounter - 1] = tmp;
+								}
+								lPolyIndexCounter++;
+							}
 						}
 					}
 				}
@@ -1368,7 +1306,7 @@ namespace ursine
 				//Meshes have a separate geometry transform that also needs to be applied
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
-				newMesh->parentTM = FBXAMatrixToXMMatrix(&parentTransform);
+				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
 				//mConverter->ConvertMeshMatrix(meshTransform);
 				meshTransform = parentTransform * meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
@@ -1378,7 +1316,7 @@ namespace ursine
 				if (!CheckScaling(scl) || !CheckPositive(scl))
 					meshTransform.SetS(FbxVector4(1, 1, 1));
 
-				newMesh->meshTM = FBXAMatrixToXMMatrix(&meshTransform);
+				newMesh->meshTM = FBXAMatrixToSMat4(&meshTransform);
 
 				ProcessVertices(mesh, newMesh);
 				ProcessNormals(mesh, newMesh);

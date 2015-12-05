@@ -55,11 +55,43 @@ namespace ursine
 				float shineness;
 				float TransparencyFactor;
 
+				/** @brief material information constructor
+				*
+				*  this will construct material information object
+				*
+				*  @return nothing
+				*/
 				MaterialInfo();
+				/** @brief material information destructor
+				*
+				*  this will destroy material information object
+				*
+				*  @return nothing
+				*/
 				virtual ~MaterialInfo();
+				/** @brief material information release function
+				*
+				*  this will release memory of the material information
+				*
+				*  @return nothing
+				*/
 				void ReleaseData();
 
+				/** @brief material information serialize in function
+				*
+				*  this will read material information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeIn(HANDLE hFile);
+				/** @brief material information serialize out function
+				*
+				*  this will write material information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeOut(HANDLE hFile);
 			};
 		};

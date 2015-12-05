@@ -40,11 +40,43 @@ namespace ursine
 				pseudodx::XMFLOAT4 boneSpaceRotation;
 				pseudodx::XMFLOAT3 boneSpaceScaling;
 
+				/** @brief bone information constructor
+				*
+				*  this will construct bone information object
+				*
+				*  @return nothing
+				*/
 				BoneInfo();
+				/** @brief bone information destructor
+				*
+				*  this will destroy bone information object
+				*
+				*  @return nothing
+				*/
 				virtual ~BoneInfo();
-
+				/** @brief bone information release function
+				*
+				*  this will release memory of the bone information
+				*
+				*  @return nothing
+				*/
 				void ReleaseData();
+
+				/** @brief bone information serialize in function
+				*
+				*  this will read bone information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				virtual bool SerializeIn(HANDLE hFile);
+				/** @brief bone information serialize out function
+				*
+				*  this will write bone information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				virtual bool SerializeOut(HANDLE hFile);
 			};
 		};
