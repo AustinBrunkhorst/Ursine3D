@@ -25,8 +25,11 @@
 			<Path>Main.bnk</Path>
 			<IncludedEvents>
 				<Event Id="1592516662" Name="Fire_Gun_Hand"/>
+				<Event Id="3349503358" Name="Match_End"/>
 				<Event Id="243769941" Name="Match_Start"/>
 				<Event Id="3063554414" Name="Menu_Back"/>
+				<Event Id="976636014" Name="Menu_Cycle_Down"/>
+				<Event Id="1703859381" Name="Menu_Cycle_Up"/>
 				<Event Id="4203375351" Name="Menu_Select"/>
 				<Event Id="733800440" Name="Music_Theme"/>
 				<Event Id="1305133589" Name="Player_Jump"/>
@@ -63,19 +66,35 @@
 				</File>
 				<File Id="125694826" Language="SFX">
 					<ShortName>Jingles11-3-15.wav</ShortName>
-					<Path>SFX\Jingles11-3-15_306EEA49.wem</Path>
+					<Path>SFX\Jingles11-3-15_9309E893.wem</Path>
 				</File>
 				<File Id="163701886" Language="SFX">
 					<ShortName>player_movement_running_heavy.wav</ShortName>
 					<Path>SFX\player_movement_running_heavy_D619E7A7.wem</Path>
 				</File>
+				<File Id="180207855" Language="SFX">
+					<ShortName>Stats_abyssmal.wav</ShortName>
+					<Path>SFX\Stats_abyssmal_9E69E797.wem</Path>
+				</File>
 				<File Id="271770945" Language="SFX">
 					<ShortName>Got_complicated_really_fast.wav</ShortName>
 					<Path>SFX\Got_complicated_really_fast_9E69E797.wem</Path>
 				</File>
+				<File Id="287543815" Language="SFX">
+					<ShortName>Another_round_start.wav</ShortName>
+					<Path>SFX\Another_round_start_9E69E797.wem</Path>
+				</File>
 				<File Id="322396525" Language="SFX">
 					<ShortName>player_movement_running_heavy.wav</ShortName>
 					<Path>SFX\player_movement_running_heavy_B29ED6A0.wem</Path>
+				</File>
+				<File Id="363931410" Language="SFX">
+					<ShortName>700_bullets.wav</ShortName>
+					<Path>SFX\700_bullets_9E69E797.wem</Path>
+				</File>
+				<File Id="418993935" Language="SFX">
+					<ShortName>So_close.wav</ShortName>
+					<Path>SFX\So_close_9E69E797.wem</Path>
 				</File>
 				<File Id="439479536" Language="SFX">
 					<ShortName>OOOo.wav</ShortName>
@@ -121,6 +140,14 @@
 					<ShortName>MenuMewzak.wav</ShortName>
 					<Path>SFX\MenuMewzak_4B8CC0C5.wem</Path>
 					<PrefetchSize>17704</PrefetchSize>
+				</File>
+				<File Id="709827163" Language="SFX">
+					<ShortName>So_close2.wav</ShortName>
+					<Path>SFX\So_close2_9E69E797.wem</Path>
+				</File>
+				<File Id="728021419" Language="SFX">
+					<ShortName>fantastic_Game.wav</ShortName>
+					<Path>SFX\fantastic_Game_9E69E797.wem</Path>
 				</File>
 				<File Id="743313124" Language="SFX">
 					<ShortName>Booing_with_them.wav</ShortName>

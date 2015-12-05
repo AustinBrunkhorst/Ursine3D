@@ -12,11 +12,7 @@ using namespace ursine;
 
 namespace
 {
-<<<<<<< HEAD
-    const auto kWorldFile = "Assets/Worlds/JordanSandbox.uworld";
-=======
     const auto kWorldFile = "Assets/Worlds/BlankWorld.uworld";
->>>>>>> origin/submission-semester-1
 }
 
 MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)

@@ -3,11 +3,14 @@ Event	ID	Name			Wwise Object Path	Notes
 	243769941	Match_Start			\Default Work Unit\Match_Start	
 	733800440	Music_Theme			\Default Work Unit\Music_Theme	
 	820911528	Round_End_Blue			\Default Work Unit\Round_End_Blue	
+	976636014	Menu_Cycle_Down			\Default Work Unit\Menu_Cycle_Down	
 	1305133589	Player_Jump			\Default Work Unit\Player_Jump	
 	1528071400	Player_Take_Damage			\Default Work Unit\Player_Take_Damage	
 	1592516662	Fire_Gun_Hand			\Default Work Unit\Fire_Gun_Hand	
+	1703859381	Menu_Cycle_Up			\Default Work Unit\Menu_Cycle_Up	
 	2463864625	Round_End_Red			\Default Work Unit\Round_End_Red	
 	3063554414	Menu_Back			\Default Work Unit\Menu_Back	
+	3349503358	Match_End			\Default Work Unit\Match_End	
 	3461836331	Player_Step			\Default Work Unit\Player_Step	
 	3629196698	Player_Land			\Default Work Unit\Player_Land	
 	4203375351	Menu_Select			\Default Work Unit\Menu_Select	
@@ -22,21 +25,27 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	75453972	BeginJingle10-29-15	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\BeginJingle10-29-15_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Music\BeginJingle10-29-15		1712104
 	100085542	Land_Player	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\LandingSoundV3_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Land_Player		82752
 	125447984	item_gun_handgun_fire_01	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\item_gun_handgun_fire.01_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\HandGun\item_gun_handgun_fire_01		525376
-	125694826	Player2_Win	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Jingles11-3-15_306EEA49.wem		\Actor-Mixer Hierarchy\Default Work Unit\Music\Player2_Win		596272
+	125694826	Player2_Win	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Jingles11-3-15_9309E893.wem		\Actor-Mixer Hierarchy\Default Work Unit\Music\Player2_Win		596272
 	163701886	Step_Player_07	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_D619E7A7.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_07		41536
+	180207855	Stats_abyssmal	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Stats_abyssmal_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\OutroVoice\Stats_abyssmal		653764
 	271770945	Got_complicated_really_fast	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Got_complicated_really_fast_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\Got_complicated_really_fast		400864
+	287543815	Another_round_start	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Another_round_start_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\Another_round_start		943716
 	322396525	Step_Player_01	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_B29ED6A0.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_01		30344
+	363931410	700_bullets	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\700_bullets_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\IntroVoice\700_bullets		1060964
+	418993935	So_close	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\So_close_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\So_close		564272
 	439479536	OOOo	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\OOOo_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\OOOo		315240
 	446551216	Another_stat	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Another_stat_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\Another_stat		459212
 	513112095	Step_Player_03	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_D4122E0C.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_03		39560
 	530163447	Legally_that's_a_Play	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Legally_that's_a_Play_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\Legally_that's_a_Play		821080
-	531623305	G_G_	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\G_G__9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\G_G_		490336
+	531623305	G_G_	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\G_G__9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\OutroVoice\G_G_		490336
 	537086648	Step_Player_06	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_CCD21496.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_06		44824
 	566493280	Player1_Win	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\TeamWhateverJingle10-29-15_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Music\Player1_Win		1141448
 	638232366	Did_that_just_happen3	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Did_that_just_happen3_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\Did_that_just_happen3		712132
 	641755469	I_am_disapointed_	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\I_am_disapointed__9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\I_am_disapointed_		824968
 	670833295	HIt_percent	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\HIt_percent_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\HIt_percent		381388
 	694681093	MenuMewzak	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\MenuMewzak_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Music\MenuMewzak		17704
+	709827163	So_close2	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\So_close2_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\OutroVoice\So_close2		330804
+	728021419	fantastic_Game	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\fantastic_Game_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\IntroVoice\fantastic_Game		608872
 	743313124	Booing_with_them	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Booing_with_them_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\Booing_with_them		1132364
 	747967216	Step_Player_02	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_FDE9BCCB.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_02		39560
 	749916145	Did_that_just_happen_2	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\Did_that_just_happen_2_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Voice\RandomVoice\Did_that_just_happen_2		400844
