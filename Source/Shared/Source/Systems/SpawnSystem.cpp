@@ -3,13 +3,15 @@
 #include <random>
 
 #include "SpawnSystem.h"
-#include <Components/CharacterControllerComponent.h>
+#include "RoundSystem.h"
+
 #include <WorldEvent.h>
 
 #include <SystemManager.h>
 #include "CoreSystem.h"
 #include <WorldEvent.h>
-#include <Components/HealthComponent.h>
+#include <EventDispatcher.h>
+
 
 using namespace ursine;
 
@@ -17,8 +19,6 @@ using namespace ursine;
 ENTITY_SYSTEM_DEFINITION( SpawnSystem );
 
 SpawnSystem::SpawnSystem(ursine::ecs::World* world) : EntitySystem(world)
-                                                    , m_playerCount(0)
-                                                    , m_maxPlayerCount(0)
 {
 }
 
@@ -79,12 +79,6 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
             m_team2.push_front(teamComp);
         }
 
-       // ++m_playerCount;
-
-        //if (m_playerCount > m_maxPlayerCount)
-        //{
-        //    m_maxPlayerCount = m_playerCount;
-        //}
     }
     else if (args->component->Is<Spawnpoint>())
     {
@@ -118,13 +112,25 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
         if (player->TeamNumber == 1)
         {
             m_team1.remove(player);
+
+            if (m_team1.size() == 0)
+            {
+                RoundSystem::RoundEventArgs e(1);
+
+                Dispatch(ROUND_OVER, &e);
+            }
         }
         else if(player->TeamNumber == 2)
         {
             m_team2.remove(player);
-        }
 
-        spawnPlayer(player->TeamNumber);
+            if (m_team2.size() == 0)
+            {
+                RoundSystem::RoundEventArgs e(2);
+
+                Dispatch(ROUND_OVER, &e);
+            }
+        }
         
     }
     else if (args->component->Is<Spawnpoint>())
@@ -144,7 +150,18 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     }
 }
 
-void SpawnSystem::spawnPlayer(int team)
+void SpawnSystem::onRoundStart(EVENT_HANDLER(ursine::ecs::World))
+{
+    EVENT_ATTRS(ecs::World, RoundSystem::RoundEventArgs);
+
+    for (int i = 1; i <= args->team; ++i)
+    {
+        SpawnPlayer(1, i);
+        SpawnPlayer(2, i);
+    }
+}
+
+void SpawnSystem::SpawnPlayer(int team, int roundNum)
 {
     ecs::Entity *newPlayer = nullptr;
     if (team == 1)
@@ -165,10 +182,10 @@ void SpawnSystem::spawnPlayer(int team)
     auto *playerTransform = newPlayer->GetTransform();
 
     // get spawn position to place the player at and actually spawn the player
-    playerTransform->SetWorldPosition(getSpawnPosition(team, 10.0f));
+    playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum, 10.0f));
 }
 
-ursine::SVec3 SpawnSystem::getSpawnPosition(int team, float yOffset)
+ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffset)
 {
     std::random_device rd;
     std::mt19937 gen(rd());

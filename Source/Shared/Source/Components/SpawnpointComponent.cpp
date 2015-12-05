@@ -8,6 +8,7 @@ using namespace ursine;
 
 Spawnpoint::Spawnpoint(): BaseComponent()
                         , teamNumber(-1)
+                        , roundSpawnNnumber(0)
 {
 
 }

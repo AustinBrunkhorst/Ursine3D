@@ -11,7 +11,6 @@ public:
 
     int teamNumber;
 
-    Meta(Disable)
-    bool alreadyUsed;
+    int roundSpawnNnumber;
     
 } Meta(Enable, DisplayName("Spawnpoint"));

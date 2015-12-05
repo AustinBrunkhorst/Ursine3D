@@ -3,17 +3,42 @@
 #include <EntitySystem.h>
 
 
-        class RoundSystem : public ursine::ecs::EntitySystem
-        {
-            ENTITY_SYSTEM;
+enum RoundSystemEventType
+{
+    ROUND_OVER = 0x160,
+    ROUND_START,
+    MATCH_OVER
+};
 
-        public:
-            RoundSystem(ursine::ecs::World *world);
+class RoundSystem : public ursine::ecs::EntitySystem
+                  , public ursine::EventDispatcher<RoundSystemEventType>
+{
+    ENTITY_SYSTEM;
 
-        private:
-            //void OnInitialize(void) override;
-            //void OnRemove(void) override;
-            //
-            //void onUpdate(EVENT_HANDLER(ursine::ecs:::World));
+public:
 
-        } Meta(Enable);
+    struct RoundEventArgs : ursine::EventArgs
+    {
+        int team;
+
+        RoundEventArgs(int team)
+            : team(team) { }
+    };
+
+    RoundSystem(ursine::ecs::World *world);
+
+    int GetCurrentRound(void) const;
+
+    int GetMaxRoundCount(void) const;
+    void SetMaxRoundCount(int round);
+
+private:
+    void OnInitialize(void) override;
+    void OnRemove(void) override;
+    
+    void onRoundOver(EVENT_HANDLER(ursine::ecs:::World));
+
+    int m_round;
+    int m_maxRound;
+
+} Meta(Enable);
