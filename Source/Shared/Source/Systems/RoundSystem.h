@@ -2,7 +2,6 @@
 
 #include <EntitySystem.h>
 
-
 enum RoundSystemEventType
 {
     ROUND_OVER = 0x160,
@@ -42,4 +41,4 @@ private:
     int m_round;
     int m_maxRound;
 
-} Meta(Disable);
+} Meta(Enable, DisableEntitySystemAutoAdd);

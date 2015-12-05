@@ -34,8 +34,17 @@ namespace ursine
             template<class SystemType>
             inline SystemType *GetSystem(void);
 
+            template<class SystemType>
+            SystemType *AddSystem(void);
+
         private:
             friend class World;
+
+            // OnInitialize has been called
+            bool m_initialized;
+
+            // onAfterLoad has been called
+            bool m_loaded;
 
             std::vector<EntitySystem*> m_systems;
 

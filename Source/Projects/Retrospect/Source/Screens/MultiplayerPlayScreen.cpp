@@ -3,8 +3,10 @@
 #include "MultiplayerPlayScreen.h"
 
 #include <WorldSerializer.h>
-#include <AudioManager.h>
+#include <SystemManager.h>
 #include <Timer.h>
+
+#include <RoundSystem.h>
 
 using namespace ursine;
 
@@ -21,6 +23,8 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
         world = ecs::WorldSerializer( ).Deserialize( kWorldFile );
         
         world->SetOwner( this );
+
+        world->GetSystemManager( )->AddSystem<RoundSystem>( );
 
         URSINE_TODO( "This guy should be saved in an editor specific file eventually" );
         auto editorCam = world->GetEntityFromName( "Editor Camera" );
