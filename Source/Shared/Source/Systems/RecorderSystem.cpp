@@ -62,7 +62,7 @@ namespace ursine
 
 		UAssert(team != nullptr, "Error: You're attempting to record something that does not have a team component.");
 
-		auto teamNum = team->TeamNumber;
+		auto teamNum = team->GetTeamNumber();
 
 		auto &recording = m_recordings[ teamNum ][ m_roundNumber ];
 

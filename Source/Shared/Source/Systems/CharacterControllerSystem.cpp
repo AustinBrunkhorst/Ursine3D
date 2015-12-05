@@ -46,6 +46,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
     auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
+    auto *input = entity->GetComponent<PlayerInput>();
     auto moveSpeed = controller->moveSpeed;
 	auto rotateSpeed = controller->rotateSpeed;
 
