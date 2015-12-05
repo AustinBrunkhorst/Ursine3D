@@ -9,3 +9,5 @@
 #include "Components/CommandInputControllerComponent.h"
 #include "Components/TeamComponent.h"
 #include "Components/RecorderComponent.h"
+#include "Components/RandomSlerpComponent.h"
+
