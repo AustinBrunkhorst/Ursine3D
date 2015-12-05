@@ -40,15 +40,15 @@ void RoundSystem::OnInitialize()
     m_timers.Create(TimeSpan::FromSeconds(0.1f)).Completed(
         [=] (void)
     {
+        auto *m_map = m_world->CreateEntityFromArchetype(
+            WORLD_ARCHETYPE_PATH "map.uatype",
+            "gameMapArchetype"
+        );
+
         RoundEventArgs e( 1 );
 
         Dispatch( ROUND_START, &e );
     } );
-
-    auto *m_map = m_world->CreateEntityFromArchetype(
-        WORLD_ARCHETYPE_PATH "map.uatype",
-        "gameMapArchetype"
-        );
 
     m_world->GetEntitySystem(SpawnSystem)->Listener(this)
         .On( ROUND_OVER, &RoundSystem::onRoundOver);
