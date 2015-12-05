@@ -14,12 +14,17 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID FIRE_GUN_HAND = 1592516662U;
+        static const AkUniqueID MATCH_START = 243769941U;
+        static const AkUniqueID MENU_BACK = 3063554414U;
+        static const AkUniqueID MENU_SELECT = 4203375351U;
         static const AkUniqueID MUSIC_THEME = 733800440U;
         static const AkUniqueID PLAYER_JUMP = 1305133589U;
         static const AkUniqueID PLAYER_LAND = 3629196698U;
         static const AkUniqueID PLAYER_STEP = 3461836331U;
         static const AkUniqueID PLAYER_TAKE_DAMAGE = 1528071400U;
         static const AkUniqueID RELOAD_GUN_HAND = 23508243U;
+        static const AkUniqueID ROUND_END_BLUE = 820911528U;
+        static const AkUniqueID ROUND_END_RED = 2463864625U;
     } // namespace EVENTS
 
     namespace GAME_PARAMETERS

@@ -13,5 +13,8 @@ public:
     float moveSpeed;
     float jumpSpeed;
 	float rotateSpeed;
+	bool inAir;
+	bool CanJump;
+	bool CanStep;
 
 } Meta(Enable, DisplayName("CharacterController"));

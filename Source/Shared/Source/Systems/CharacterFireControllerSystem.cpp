@@ -24,7 +24,8 @@ using namespace ursine::ecs;
 namespace
 {
 	const std::string FireGun = "FIRE_GUN_HAND";
-	const std::string TakeDamage = "Player_Take_Damage";
+	const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
+	const std::string kEndRound = "ROUND_END_RED";
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
@@ -84,7 +85,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         armAnimator->SetTimeScalar( 1.0f / fireController->GetFireRate( ) );
 
         // Play that bang sound
-	if (emitter)
+		if (emitter)
             emitter->AddSoundToPlayQueue(FireGun);
 
         fireController->Fire( );
@@ -133,7 +134,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
             {
                 health->DealDamage( fireController->GetDamage() );
 				if (emitter)
-					emitter->AddSoundToPlayQueue(TakeDamage);
+					emitter->AddSoundToPlayQueue(kTakeDamage);
             }
         }
     }

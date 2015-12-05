@@ -32,10 +32,6 @@ namespace
 	const std::string kRunSound = "PLAYER_STEP";
 	const float Runduration = 0.2f;
 	const float Jumpduration = 1.29f;
-	bool step = true;
-	bool jump = false;
-	bool land = false;
-	float startHeight = 0.0f;
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterControllerSystem );
@@ -78,29 +74,40 @@ void CharacterControllerSystem::Process(Entity *entity)
 
 	if (emitter)
 	{
-		if (input->Jump() && !jump)
+		if (input->Jump() && controller->CanJump)
 		{
 			vel.Y() = controller->jumpSpeed;
 			emitter->AddSoundToPlayQueue(kJumpSound);
-			startHeight = transform->GetWorldPosition().Y();
-			jump = true;
-			m_timers.Create(TimeSpan::FromSeconds(Jumpduration)).Completed([&] {
-				jump = false;
-				land = true;
+			controller->CanJump = false;
+			controller->inAir = true;
+			m_timers.Create(TimeSpan::FromSeconds(Jumpduration)).Completed([=] {
+				if (entity)
+				{
+					auto *jump = entity->GetComponent<CharacterController>();
+					if (jump)
+					{
+						jump->CanJump = true;
+					}
+				}
 			});
 		}
-		else if (move != Vec2::Zero() && step && !jump)
+		else if (move != Vec2::Zero() && controller->CanStep && controller->CanJump)
 		{
 			emitter->AddSoundToPlayQueue(kRunSound);
-			step = false;
-			m_timers.Create(TimeSpan::FromSeconds(Runduration)).Completed([&] {
-				step = true;
+			controller->CanStep = false;
+			m_timers.Create(TimeSpan::FromSeconds(Runduration)).Completed([=] {
+				if (entity)
+				{
+					auto *step = entity->GetComponent<CharacterController>();
+					if (step)
+						step->CanStep = true;
+				}
 			});
 		}
-		if (land)
+		if (controller->CanJump && controller->inAir)
 		{
 			emitter->AddSoundToPlayQueue(kLandSound);
-			land = false;
+			controller->inAir = false;
 		}
 	}
 

@@ -22,6 +22,8 @@ namespace
 {
     const auto kEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
+	const std::string kMainTheme = "MUSIC_THEME";
+
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
 }
@@ -101,6 +103,8 @@ void Retrospect::OnInitialize(void)
     m_mainWindow.window->Show( true );
 
 	m_audioManager = GetCoreSystem( AudioManager );
+
+	m_audioManager->PlayGlobalEvent(kMainTheme);
 }
 
 void Retrospect::OnRemove(void)

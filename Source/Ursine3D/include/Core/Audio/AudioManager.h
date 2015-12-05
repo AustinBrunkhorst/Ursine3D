@@ -81,7 +81,11 @@ namespace ursine
 
 		void PlayEvent(const std::string name, AkGameObjectID obj);
 
+		static void PlayGlobalEvent(const std::string name);
+
 		void PauseAudio();
+
+		void StopSound(std::string name, AkGameObjectID id);
 
 		void ResumeAudio();
 
