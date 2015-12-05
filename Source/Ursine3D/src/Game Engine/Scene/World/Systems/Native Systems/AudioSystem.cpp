@@ -120,7 +120,7 @@ namespace ursine
 
 				if (dirty)
 					SetListener3DPosition(trans->GetForward(), trans->GetUp(), 
-						trans->GetWorldPosition(), index);
+						trans->GetWorldPosition(), static_cast<unsigned>(index));
 			}
 		}
 
@@ -134,7 +134,7 @@ namespace ursine
 
 		void AudioSystem::AssignListener(AkGameObjectID obj, AkUInt32 listeners)
 		{
-			if (listeners == LISTENER_NONE)
+			if (listeners == static_cast<unsigned>( ListenerIndex::None ))
 			{
 				UWarning("Wwise: Cannot Set Zero Active Listeners");
 				return;

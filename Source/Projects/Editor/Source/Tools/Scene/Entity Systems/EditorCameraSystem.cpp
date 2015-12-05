@@ -84,7 +84,7 @@ void EditorCameraSystem::OnAfterLoad(void)
     m_cameraEntity->GetTransform( )->SetWorldPosition( Vec3( -50, 50, -50 ) );
     m_camera->SetViewportSize( Vec2::One( ) );
     m_camera->SetNearPlane( 0.1f );
-    m_camera->SetFarPlane( 700.0f );
+    m_camera->SetFarPlane( 2500.0f );
     m_camera->SetFOV( 45.f );
 
     m_camZoom = SVec3( -50, 50, 50 ).Length( );

@@ -22,3 +22,10 @@ struct DisableSerialization : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
+
+/** @brief Displays an enum field as a bit mask editor
+*/
+struct BitMaskEditor : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};

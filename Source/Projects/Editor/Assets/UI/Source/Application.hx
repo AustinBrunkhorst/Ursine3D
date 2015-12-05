@@ -6,12 +6,7 @@ import ursine.editor.windows.*;
 
 class Application {
     static function main() {
-        trace( js.Browser.document.readyState );
-
-        js.Browser.window.addEventListener( 'load', function() {
-            // TODO: figure out why there is an arbitrary delay
-            haxe.Timer.delay( initWindows, 100 );
-        } );
+        js.Browser.window.addEventListener( 'WebComponentsReady', initWindows );
     }
 
     static private function initWindows() {

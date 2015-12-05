@@ -44,6 +44,9 @@ namespace ursine
             // Creates an entity with only a transform
             Entity *Create(void);
 
+            // Creates a clone of an entity
+            Entity *Clone(Entity *entity);
+
             // Gets all entities without a parent
             EntityVector GetRootEntities(void);
 

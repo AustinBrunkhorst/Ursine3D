@@ -17,6 +17,8 @@
 #include "Entity.h"
 #include "Filter.h"
 #include "TransformComponent.h"
+#include "EntitySerializer.h"
+
 #include <queue>
 
 namespace ursine
@@ -95,6 +97,17 @@ namespace ursine
             dispatchCreated( entity );
 
             return entity;
+        }
+         
+        Entity *EntityManager::Clone(Entity *entity)
+        {
+            URSINE_TODO( "optimize by skipping the serialization step" );
+
+            EntitySerializer serializer;
+
+            auto data = serializer.SerializeArchetype( entity );
+
+            return serializer.DeserializeArchetype( m_world, data );
         }
 
         EntityVector EntityManager::GetRootEntities(void)
