@@ -2,6 +2,10 @@
 
 #include "HealthComponent.h"
 
+#include <SystemManager.h>
+#include <Systems/RoundSystem.h>
+#include "TeamComponent.h"
+
 NATIVE_COMPONENT_DEFINITION( Health );
 
 Health::Health(void)
@@ -28,10 +32,16 @@ void Health::SetHealth(const float health)
 
 void Health::DealDamage(const float damage)
 {
+	if (GetOwner()->GetComponent<TeamComponent>()->IsDead())
+	{
+		return;
+	}
+
     m_health -= damage;
 
     if(m_health <= 0)
     {
-        GetOwner( )->Delete( );
+		GetOwner()->GetWorld()->GetSystemManager()
+			->GetSystem<RoundSystem>()->SendPlayerDiedMessage(this->GetOwner());
     }
 }

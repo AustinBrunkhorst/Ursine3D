@@ -22,7 +22,9 @@ enum RoundSystemEventType
     // args tell what round it is
     ROUND_START,
     // args say what team won
-    MATCH_OVER
+    MATCH_OVER,
+	// args say what player died
+	PLAYER_DIED
 };
 
 class RoundSystem 
@@ -36,9 +38,20 @@ public:
     struct RoundEventArgs : ursine::EventArgs
     {
         int team;
+		ursine::ecs::Entity *entity;
+
 
         RoundEventArgs(int team)
-            : team(team) { }
+            : team(team)
+			, entity(nullptr){ }
+
+		RoundEventArgs(ursine::ecs::Entity *entity)
+			: team(0)
+			, entity(entity) {}
+
+		RoundEventArgs(int team, ursine::ecs::Entity *entity)
+			: team(team)
+			, entity(entity) {}
     };
 
     RoundSystem(ursine::ecs::World *world);
@@ -47,6 +60,10 @@ public:
 
     int GetMaxRoundCount(void) const;
     void SetMaxRoundCount(int round);
+
+	void SendPlayerDiedMessage(ursine::ecs::Entity *died);
+
+	void StartNewRound(int team);
 
 private:
     void OnInitialize(void) override;

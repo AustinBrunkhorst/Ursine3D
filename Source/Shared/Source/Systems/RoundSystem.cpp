@@ -19,10 +19,11 @@ namespace
     const std::string team2Wins = "ROUND_END_RED";
 }
 
-RoundSystem::RoundSystem(ursine::ecs::World* world) : EntitySystem(world)
-                                                    , EventDispatcher(this)
-                                                    , m_round(1)
-                                                    , m_maxRound(5)
+RoundSystem::RoundSystem(ursine::ecs::World* world) 
+	: EntitySystem(world)
+    , EventDispatcher(this)
+    , m_round(1)
+    , m_maxRound(5)
 {
 
 }
@@ -42,7 +43,22 @@ void RoundSystem::SetMaxRoundCount(int round)
     m_maxRound = round;
 }
 
-void RoundSystem::OnInitialize()
+void RoundSystem::SendPlayerDiedMessage(ursine::ecs::Entity* died)
+{
+	RoundEventArgs e( died );
+
+	Dispatch( PLAYER_DIED, &e );
+
+}
+
+void RoundSystem::StartNewRound(int team)
+{
+	RoundEventArgs e(team);
+
+	Dispatch( ROUND_OVER, &e );
+}
+
+void RoundSystem::OnInitialize(void)
 {
     m_timers.Create(TimeSpan::FromSeconds(0)).Completed(
         [=] (void)
@@ -52,7 +68,7 @@ void RoundSystem::OnInitialize()
             "gameMapArchetype"
         );
 
-		m_world->GetEntitySystem( SpawnSystem )->Listener( this )
+		m_world->GetEntitySystem( RoundSystem )->Listener( this )
 			.On( ROUND_OVER, &RoundSystem::onRoundOver);
 
         RoundEventArgs e( 1 );
@@ -63,7 +79,7 @@ void RoundSystem::OnInitialize()
 
 void RoundSystem::OnRemove()
 {
-    m_world->GetEntitySystem( SpawnSystem )->Listener( this )
+    m_world->GetEntitySystem( RoundSystem)->Listener( this )
         .Off( ROUND_OVER, &RoundSystem::onRoundOver );
 }
 

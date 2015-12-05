@@ -16,7 +16,7 @@ namespace ursine
 		// This function is called at the start of each round.
 		// The parameter is an array of team members
 		Meta(Disable)
-		void SetRoundStartTime(std::vector<std::vector<TeamComponent*> > &teamCompnents);
+		void SetRoundStart(std::vector<std::vector<TeamComponent*> > &teamCompnents);
 
 		Meta(Disable)
 		void RecordCommand(RecordableCommandPtr command, ecs::Entity *entity);

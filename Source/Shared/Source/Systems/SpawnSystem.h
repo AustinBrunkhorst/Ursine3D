@@ -20,7 +20,6 @@
 
 
 class SpawnSystem : public ursine::ecs::EntitySystem
-                  , public ursine::EventDispatcher<RoundSystemEventType>
         {
             ENTITY_SYSTEM;
 
@@ -44,11 +43,12 @@ class SpawnSystem : public ursine::ecs::EntitySystem
             // spawn players when the round starts based off of round number
             void onRoundStart(EVENT_HANDLER(RoundSystem));
 
+			// when the players die, this gets called
+			void onPlayerDied(EVENT_HANDLER(RoundSystem));
+
             ursine::SVec3 getSpawnPosition(int team, int roundNum, float yOffset);
 
-            //std::vector<Spawnpoint *> m_spawnpoints;
-            std::list<TeamComponent *> m_team1;
-            std::list<TeamComponent *> m_team2;
+            std::vector<std::vector<TeamComponent *> > m_teams;
 
             std::list<Spawnpoint *> m_team1Spawnpoints;
             std::list<Spawnpoint *> m_team2Spawnpoints;

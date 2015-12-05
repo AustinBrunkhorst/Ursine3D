@@ -37,6 +37,8 @@
 
             void onRoundOver(EVENT_HANDLER(RoundSystem));
 
+			void onPlayerDied(EVENT_HANDLER(RoundSystem));
+
             int m_player1Kills;
             int m_player2Kills;
             

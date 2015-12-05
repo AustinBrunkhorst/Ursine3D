@@ -15,7 +15,7 @@ namespace ursine
 		, m_roundNumber( -1 )
 		, m_running( false ) { }
 
-	void RecorderSystem::SetRoundStartTime(std::vector<std::vector<TeamComponent*> > &teamCompnents)
+	void RecorderSystem::SetRoundStart(std::vector<std::vector<TeamComponent*> > &teamCompnents)
 	{
 		m_roundTimer = 0.0f;
 

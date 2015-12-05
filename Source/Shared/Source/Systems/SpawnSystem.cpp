@@ -11,38 +11,30 @@
 #include "CoreSystem.h"
 #include <WorldEvent.h>
 #include <EventDispatcher.h>
+#include "RecorderSystem.h"
+#include <PlayerInputComponent.h>
 
 using namespace ursine;
 
 
 ENTITY_SYSTEM_DEFINITION( SpawnSystem );
 
-SpawnSystem::SpawnSystem(ursine::ecs::World* world) : EntitySystem(world)
+SpawnSystem::SpawnSystem(ursine::ecs::World* world) 
+	: EntitySystem(world)
+	, m_teams({ std::vector<TeamComponent *>(), std::vector<TeamComponent *>() })
 {
 }
 
 void SpawnSystem::DespawnTeam(int team)
 {
-    if (team == 1)
-    {
-        while (m_team1.size() > 0)
-        {
-            auto *player = m_team1.front();
-            m_team1.pop_front();
+	auto &teamVec = m_teams[ team - 1 ];
 
-            player->GetOwner()->Delete();
-        }
-    }
-    else if (team == 2)
-    {
-        while (m_team2.size() > 0)
-        {
-            auto *player = m_team2.front();
-            m_team2.pop_front();
+	for (auto &p : teamVec)
+	{
+		p->GetOwner( )->Delete( );
+	}
 
-            player->GetOwner()->Delete();
-        }
-    }
+	teamVec.clear( );
 }
 
 struct doCompare
@@ -64,7 +56,8 @@ void SpawnSystem::OnInitialize(void)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
 
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
-        .On(ROUND_START, &SpawnSystem::onRoundStart);
+        .On(ROUND_START, &SpawnSystem::onRoundStart)
+		.On(PLAYER_DIED, &SpawnSystem::onPlayerDied);
 
 }
 
@@ -75,7 +68,8 @@ void SpawnSystem::OnRemove(void)
         .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
 
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
-        .Off(ROUND_START, &SpawnSystem::onRoundStart);
+        .Off(ROUND_START, &SpawnSystem::onRoundStart)
+		.Off(PLAYER_DIED, &SpawnSystem::onPlayerDied);
 }
 
 void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
@@ -88,15 +82,7 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 
         int team = teamComp->GetTeamNumber();
 
-        if (team == 1)
-        {
-            m_team1.push_front(teamComp);
-        }
-        else if (team == 2)
-        {
-            m_team2.push_front(teamComp);
-        }
-
+		m_teams[ team - 1 ].push_back( teamComp );
     }
     else if (args->component->Is<Spawnpoint>())
     {
@@ -125,34 +111,9 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
-
-    if (args->component->Is<TeamComponent>())
-    {        
+    if (args->component->Is<TeamComponent>( ))
+	{
         TeamComponent *player = reinterpret_cast<TeamComponent *>(args->component);
-
-        if (player->GetTeamNumber() == 1)
-        {
-            m_team1.remove(player);
-
-            if (m_team1.size() == 0)
-            {
-                RoundSystem::RoundEventArgs e(1);
-
-                Dispatch(ROUND_OVER, &e);
-            }
-        }
-        else if(player->GetTeamNumber() == 2)
-        {
-            m_team2.remove(player);
-
-            if (m_team2.size() == 0)
-            {
-                RoundSystem::RoundEventArgs e(2);
-
-                Dispatch(ROUND_OVER, &e);
-            }
-        }
-        
     }
     else if (args->component->Is<Spawnpoint>())
     {
@@ -174,12 +135,65 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
 {
     EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
+	
+	// Iterate through current team players, setting them to alive
+	for (auto playerList : m_teams)
+	{
+		int roundNum = 0;
+		for (auto player : playerList)
+		{
+			// Set health to 100
+			player->SetAlive();
 
-    for (int i = 1; i <= args->team; ++i)
-    {
-        SpawnPlayer(1, i);
-        SpawnPlayer(2, i);
-    }
+			// Set spawn point
+			player->GetOwner( )->GetTransform( )->GetRoot( )->SetWorldPosition(
+				getSpawnPosition( player->GetTeamNumber( ), ++roundNum, 0 )
+			);
+		}
+	}
+
+	// Add a new player to each team for this current round (this is our current player entity that is the player)
+	SpawnPlayer( 1, args->team );
+	SpawnPlayer( 2, args->team );
+
+	// Tell the recorder system that the round has started
+	auto recorder = m_world->GetEntitySystem( RecorderSystem );
+
+	recorder->SetRoundStart( m_teams );
+}
+
+void SpawnSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
+{
+	EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
+
+	// set that player to dead
+	args->entity->GetComponent<TeamComponent>()->SetDead();
+
+	// remove the input component
+	args->entity->RemoveComponent<PlayerInput>( );
+
+	// play an animation
+
+	// see if the round ended due to whole team killed
+	auto team = args->entity->GetComponent<TeamComponent>( );
+
+	auto &teamVec = m_teams[ team->GetTeamNumber( ) - 1 ];
+
+	bool allDead = true;
+	for (auto &p : teamVec)
+	{
+		if (!p->IsDead( ))
+		{
+			allDead = false;
+			break;
+		}
+	}
+
+	if (allDead)
+	{
+		m_world->GetSystemManager()->GetSystem<RoundSystem>()
+			->StartNewRound(team->GetTeamNumber());
+	}
 }
 
 void SpawnSystem::SpawnPlayer(int team, int roundNum)
@@ -203,7 +217,7 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
     auto *playerTransform = newPlayer->GetTransform();
 
     // get spawn position to place the player at and actually spawn the player
-    playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum, 10.0f));
+    playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum, 0.0f));
 }
 
 ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffset)
