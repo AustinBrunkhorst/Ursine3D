@@ -87,25 +87,3 @@ void RandomSlerp::Update(const float dt)
     // set rotation
     GetOwner()->GetTransform()->SetWorldRotation(currentRot);
 }
-
-ursine::Vec2 RandomSlerp::GetSlowTimes() const
-{
-    return ursine::Vec2(m_minSlowTime, m_maxSlowTime);
-}
-
-void RandomSlerp::SetSlowTimes(const ursine::Vec2& times)
-{
-    m_minSlowTime = times.X();
-    m_maxSlowTime = times.Y();
-}
-
-ursine::Vec2 RandomSlerp::GetFastTimes() const
-{
-    return ursine::Vec2(m_minFastTime, m_maxFastTime);
-}
-
-void RandomSlerp::SetFastTimes(const ursine::Vec2& times)
-{
-    m_minFastTime = times.X();
-    m_maxFastTime = times.Y();
-}
