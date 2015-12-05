@@ -32,3 +32,8 @@ bool PlayerTwoAxisAction::Acting()
 {
     return m_left.StickLeft() || m_right.StickRight() || m_up.StickUp() || m_down.StickDown();
 }
+
+ursine::Vec2 PlayerTwoAxisAction::GetAxis() const
+{
+    return m_left.GetAxis();
+}

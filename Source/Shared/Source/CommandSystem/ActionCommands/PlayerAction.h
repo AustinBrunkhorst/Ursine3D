@@ -59,6 +59,8 @@ public:
     bool StickLeft(void) const;
     bool StickRight(void) const;
 
+    ursine::Vec2 GetAxis(void) const;
+
     bool operator==(const ActionMode &mode);
 
 private:

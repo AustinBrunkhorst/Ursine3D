@@ -33,6 +33,8 @@ public:
 
     bool Acting(void);
 
+    ursine::Vec2 GetAxis(void) const;
+
 private:
     ursine::ecs::Entity *m_entity;
 

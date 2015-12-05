@@ -61,6 +61,9 @@ void CharacterControllerSystem::Process(Entity *entity)
 
 	auto child = transform->GetChild(0);
 
+	// This is an immidiate fix, cause fuck eet. - Jordan
+	rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
+
     if (abs( x ) > 0.1f)
     {
 		// Get the first child (model + camera) and rotate it.

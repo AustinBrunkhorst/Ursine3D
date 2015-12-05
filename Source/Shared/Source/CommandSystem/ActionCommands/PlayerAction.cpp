@@ -34,6 +34,10 @@ PlayerAction::PlayerAction(ursine::ecs::Entity* entity, const ActionMode action,
 bool PlayerAction::WasPressed() const
 {
     auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    
+    if ( input == nullptr )
+        return false;
+    
     switch(m_binding)
     {
     case Action1:
@@ -52,6 +56,10 @@ bool PlayerAction::WasPressed() const
 bool PlayerAction::IsPressed() const
 {
     auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+
+    if ( input == nullptr )
+        return false;
+
     switch ( m_binding )
     {
     case Action1:
@@ -70,6 +78,10 @@ bool PlayerAction::IsPressed() const
 bool PlayerAction::WasReleased() const
 {
     auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+
+    if ( input == nullptr )
+        return false;
+
     switch ( m_binding )
     {
     case Action1:
@@ -89,6 +101,9 @@ bool PlayerAction::StickUp() const
 {
     auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
 
+    if ( input == nullptr )
+        return false;
+
     switch ( m_binding )
     {
     case LeftStickUp:
@@ -101,6 +116,9 @@ bool PlayerAction::StickUp() const
 bool PlayerAction::StickDown() const
 {
     auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+
+    if ( input == nullptr )
+        return false;
 
     switch ( m_binding )
     {
@@ -115,6 +133,9 @@ bool PlayerAction::StickLeft() const
 {
     auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
 
+    if ( input == nullptr )
+        return false;
+
     switch ( m_binding )
     {
     case LeftStickLeft:
@@ -128,6 +149,9 @@ bool PlayerAction::StickRight() const
 {
     auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
 
+    if ( input == nullptr )
+        return false;
+
     switch ( m_binding )
     {
     case LeftStickRight:
@@ -135,6 +159,19 @@ bool PlayerAction::StickRight() const
     default:
         return input->Sticks().Right().Y() > 0;
     }
+}
+
+ursine::Vec2 PlayerAction::GetAxis() const
+{
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+
+    if ( input == nullptr )
+        return ursine::Vec2(0, 0);
+
+    if ( m_binding >= LeftStickLeft && m_binding <= LeftStickDown )
+        return input->Sticks().Left();
+
+    return input->Sticks().Right();
 }
 
 bool PlayerAction::operator==(const ActionMode& mode) 
