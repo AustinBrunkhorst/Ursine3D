@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <ISerialize.h>>
+#include <ISerialize.h>
 
 namespace ursine
 {

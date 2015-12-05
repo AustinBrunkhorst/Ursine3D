@@ -949,7 +949,16 @@ namespace ursine
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             // map matrix palette
-            bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(reinterpret_cast<MatrixPalBuffer*>(&(current.GetMatrixPalette( )[ 0 ])), SHADERTYPE_VERTEX);
+			MatrixPalBuffer data;
+
+			int index = 0;
+
+			for (auto &x : current.GetMatrixPalette())
+			{
+				data.matPal.matPal[index++] = x.ToD3D();
+			}
+
+            bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(&data, SHADERTYPE_VERTEX);
 
             // map texture
             textureManager->MapTextureByID(handle.Material_);
