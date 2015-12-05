@@ -15,6 +15,8 @@
 class JumpCommand
     : public RecordableCommand
 {
+	RECORDABLE_COMMAND
+
 public:
     JumpCommand(void);
 
@@ -22,8 +24,7 @@ public:
     void StopExecute(ursine::ecs::Entity *receiver) override;
 
     void StartRecording(ursine::ecs::Entity *receiver) override;
-    void Record(ursine::ecs::Entity *receiver, const int time) override;
-    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const int time) override;
+    void Record(ursine::ecs::Entity *receiver, const float time) override;
+    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const float time) override;
 
-private:
 };

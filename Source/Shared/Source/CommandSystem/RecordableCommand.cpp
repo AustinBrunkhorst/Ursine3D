@@ -12,12 +12,29 @@
 
 #include "RecordableCommand.h"
 
-float RecordableCommand::GetStartTime() const
+float RecordableCommand::GetStartTime(void) const
 {
     return m_startTime;
 }
 
-float RecordableCommand::GetDuration() const
+void RecordableCommand::SetStartTime(float startTime)
+{
+	m_startTime = startTime;
+}
+
+float RecordableCommand::GetDuration(void) const
 {
     return m_duration;
+}
+
+void RecordableCommand::SetDuration(float duration)
+{
+	m_duration = duration;
+}
+
+ursine::uint RecordableCommand::GetID(void)
+{
+	static ursine::uint id = 0;
+
+	return id++;
 }

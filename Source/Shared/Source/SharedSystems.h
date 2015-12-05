@@ -6,3 +6,4 @@
 #include "Systems/CommandInputControllerSystem.h"
 #include "Systems/CommandQueueSystem.h"
 #include "Systems/CheatSystem.h"
+#include "Systems/RecorderSystem.h"

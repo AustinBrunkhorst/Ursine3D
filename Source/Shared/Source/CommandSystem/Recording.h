@@ -3,11 +3,12 @@
 #include <vector>
 #include "RecordableCommand.h"
 
+typedef std::shared_ptr<RecordableCommand> RecordableCommandPtr;
+
 class Recording
 {
 public:
 	typedef unsigned int RecordingIndex;
-	typedef std::shared_ptr<RecordableCommand> RecordableCommandPtr;
 
 	Recording(void);
 

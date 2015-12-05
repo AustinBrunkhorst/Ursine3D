@@ -9,7 +9,11 @@
 ** --------------------------------------------------------------------------*/
 
 #pragma once
+
+#include <UrsineTypes.h>
+
 #include "Command.h"
+#include "RecordableCommandConfig.h"
 
 class RecordableCommand 
     : public Command
@@ -19,10 +23,17 @@ public:
     virtual void Record(ursine::ecs::Entity *receiver, const float time) = 0;
     virtual void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const float time) = 0;
 
+	virtual ursine::uint GetTypeID(void) = 0;
+
     float GetStartTime(void) const;
+	void SetStartTime(float startTime);
+
     float GetDuration(void) const;
+	void SetDuration(float duration);
 
 protected:
     float m_startTime;
     float m_duration;
+
+	static ursine::uint GetID(void);
 };

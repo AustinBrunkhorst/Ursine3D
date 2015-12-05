@@ -11,20 +11,27 @@
 #include "Precompiled.h"
 
 #include "JumpCommand.h"
+#include <CharacterControllerComponent.h>
 
-JumpCommand::JumpCommand()
+RECORDABLE_COMMAND_DEFINITION( JumpCommand );
+
+JumpCommand::JumpCommand(void)
 {
     m_weight = 5;
 }
 
 void JumpCommand::Execute(ursine::ecs::Entity* receiver)
 {
-    
+    auto *controller = receiver->GetComponent<CharacterController>( );
+
+	controller->jump = true;
 }
 
 void JumpCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-    
+	auto *controller = receiver->GetComponent<CharacterController>();
+
+	controller->jump = false;
 }
 
 void JumpCommand::StartRecording(ursine::ecs::Entity* receiver)
@@ -32,12 +39,12 @@ void JumpCommand::StartRecording(ursine::ecs::Entity* receiver)
     
 }
 
-void JumpCommand::Record(ursine::ecs::Entity* receiver, const int time)
+void JumpCommand::Record(ursine::ecs::Entity* receiver, const float time)
 {
     
 }
 
-void JumpCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const int time)
+void JumpCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
 {
     
 }

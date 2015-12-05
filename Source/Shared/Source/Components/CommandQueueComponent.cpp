@@ -11,6 +11,9 @@
 #include "Precompiled.h"
 
 #include "CommandQueueComponent.h"
+#include "RecordableCommand.h"
+#include "RecorderSystem.h"
+#include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION(CommandQueue);
 
@@ -50,26 +53,26 @@ void CommandQueue::Update(void)
 
     m_stopQueue.clear();
 
-    while ( m_commandQueue.size() > 0 )
+	auto recordingSystem = GetOwner( )->GetWorld( )->GetEntitySystem( ursine::RecorderSystem );
+	auto entity = GetOwner( );
+
+    while (m_commandQueue.size( ) > 0)
     {
-        auto command = m_commandQueue.top();
-        m_commandQueue.pop();
+        auto command = m_commandQueue.top( );
+        m_commandQueue.pop( );
 
-        command->Execute(GetOwner());
+        command->Execute( entity );
 
-        if ( m_recording )
+        if (m_recording)
         {
-           /* var recordable = command as RecordableCommand;
+			auto recordable = std::dynamic_pointer_cast<RecordableCommand>( command );
 
-            if ( recordable != null )
-                MessageCenter.main.dispatch(new RecordedCommandMessage(recordable, gameObject));*/
+			if (recordable)
+			{
+				recordingSystem->RecordCommand( recordable, GetOwner( ) );
+			}
         }
-        else
-            m_stopQueue.push_back(command);
+        else if (!m_useRecorder)
+            m_stopQueue.push_back( command );
     }
-}
-
-void CommandQueue::RunAllCommands()
-{
-    
 }
