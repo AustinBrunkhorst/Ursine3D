@@ -293,31 +293,33 @@ namespace ursine
 		
 			/////////////////////////////////////////////////////////
 			// GENERATING BONE DATA /////////////////////////////////
-		
+
 			// 1. load rig
-			unsigned rigIndex = AnimationBuilder::LoadBoneData(ufmt_model);
-		
+			unsigned rigIndex = 0;
+			if (ufmt_model.mboneCount > 0)
+				rigIndex = AnimationBuilder::LoadBoneData(ufmt_model);
+
 			// 2. load animation
-      for ( unsigned x = 0; x < ufmt_model.manimCount; ++x )
-        unsigned animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[x]);
-		
-		
+			unsigned animationIndex = 0;
+			if (ufmt_model.manimCount > 0)
+				animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[0]);
+
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////
 			D3D11_BUFFER_DESC vertexBufferDesc;
 			D3D11_SUBRESOURCE_DATA vertexData;
 			HRESULT result;
-		
+
 			m_modelArray[name] = new ModelResource();
 			m_modelArray[name]->MeshCount_ = ufmt_model.mmeshCount;
-		
+
 			for (uint mesh_idx = 0; mesh_idx < ufmt_model.mmeshCount; ++mesh_idx)
 			{
 				/////////////////////////////////////////////////////////////////
-				// ALLOCATE MODEL ///////////////////////////////////////////////
-		
-		
-				uint vertCount = ufmt_model.marrMeshes[mesh_idx].vertexCount;
+				// ALLOCATE MODEL ///////////////////////////////////////////////				
+
+				ufmt_loader::MeshInfo* currMesh = &ufmt_model.marrMeshes[mesh_idx];
+				uint vertCount = ufmt_model.marrMeshes[mesh_idx].meshVtxInfoCount;
 				//Set up the description of the static vertex buffer.
 				vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 				vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
@@ -325,71 +327,68 @@ namespace ursine
 				vertexBufferDesc.CPUAccessFlags = 0;
 				vertexBufferDesc.MiscFlags = 0;
 				vertexBufferDesc.StructureByteStride = 0;
-		
+
 				//Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
 				//can do this with skincount
 				buffer.resize(vertCount);
 				for (size_t i = 0; i < vertCount; ++i)
 				{
 					buffer[i].vPos = DirectX::XMFLOAT3(
-						ufmt_model.marrMeshes[mesh_idx].vertices[i].x,
-						ufmt_model.marrMeshes[mesh_idx].vertices[i].y,
-						ufmt_model.marrMeshes[mesh_idx].vertices[i].z
+						currMesh->meshVtxInfos[i].pos.x,
+						currMesh->meshVtxInfos[i].pos.y,
+						currMesh->meshVtxInfos[i].pos.z
 						);
-		
 					buffer[i].vNor = DirectX::XMFLOAT3(
-						ufmt_model.marrMeshes[mesh_idx].normals[i].x,
-						ufmt_model.marrMeshes[mesh_idx].normals[i].y,
-						ufmt_model.marrMeshes[mesh_idx].normals[i].z
+						currMesh->meshVtxInfos[i].normal.x,
+						currMesh->meshVtxInfos[i].normal.y,
+						currMesh->meshVtxInfos[i].normal.z
 						);
-		
 					buffer[i].vUv = DirectX::XMFLOAT2(
-						ufmt_model.marrMeshes[mesh_idx].uvs[i].x,
-						ufmt_model.marrMeshes[mesh_idx].uvs[i].y
+						currMesh->meshVtxInfos[i].uv.x,
+						currMesh->meshVtxInfos[i].uv.y
 						);
-		
-					if (ufmt_model.marrMeshes[mesh_idx].ctrlPtCount > 0)
+
+					if (ufmt_model.mboneCount > 0)
 					{
-						buffer[i].vBWeight.x = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][0];
-						buffer[i].vBWeight.y = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][1];
-						buffer[i].vBWeight.z = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][2];
-						buffer[i].vBWeight.w = ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][3];
-						buffer[ i ].vBIdx[ 0 ] = ufmt_model.marrMeshes[ mesh_idx ].ctrlIndices[ i ][ 0 ];
-            buffer[ i ].vBIdx[ 1 ] = ufmt_model.marrMeshes[ mesh_idx ].ctrlIndices[ i ][ 1 ];
-            buffer[ i ].vBIdx[ 2 ] = ufmt_model.marrMeshes[ mesh_idx ].ctrlIndices[ i ][ 2 ];
-            buffer[ i ].vBIdx[ 3 ] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][3];
+						buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
+						buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
+						buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
+						buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
+						buffer[i].vBIdx[0] = currMesh->meshVtxInfos[i].ctrlIndices.x;
+						buffer[i].vBIdx[1] = currMesh->meshVtxInfos[i].ctrlIndices.y;
+						buffer[i].vBIdx[2] = currMesh->meshVtxInfos[i].ctrlIndices.z;
+						buffer[i].vBIdx[3] = currMesh->meshVtxInfos[i].ctrlIndices.w;
 					}
 					else
 					{
 						buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-
-                        buffer[ i ].vBIdx[ 0 ] = 0;// = DirectX::XMINT4( 0, 0, 0, 0 );
-                        buffer[ i ].vBIdx[ 1 ] = 0;
-                        buffer[ i ].vBIdx[ 2 ] = 0;
-                        buffer[ i ].vBIdx[ 3 ] = 0;
+						buffer[i].vBIdx[0] = 0;
+						buffer[i].vBIdx[1] = 0;
+						buffer[i].vBIdx[2] = 0;
+						buffer[i].vBIdx[3] = 0;
 					}
 				}
-		
+
 				//Give the subresource structure a pointer to the vertex data.
 				vertexData.pSysMem = &buffer[0];
 				vertexData.SysMemPitch = 0;
 				vertexData.SysMemSlicePitch = 0;
-		
+
 				//Now create the vertex buffer.
 				result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_modelArray[name]->Vertices_[mesh_idx]);
 				UAssert(result == S_OK, "Failed to make vertex buffer!");
 				m_modelArray[name]->VertCount_[mesh_idx] = vertCount;
-		
+
 				/////////////////////////////////////////////////////////////////
 				// CREATE INDEX BUFFER //////////////////////////////////////////
-				m_modelArray[name]->IndexCount_[mesh_idx] = ufmt_model.marrMeshes[mesh_idx].indexCount;
+				m_modelArray[name]->IndexCount_[mesh_idx] = currMesh->meshVtxInfoCount;
 				unsigned *indexArray = new unsigned[m_modelArray[name]->IndexCount_[mesh_idx]];
 				for (unsigned x = 0; x < m_modelArray[name]->IndexCount_[mesh_idx]; ++x)
-					indexArray[x] = ufmt_model.marrMeshes[mesh_idx].indices[x];
-		
+					indexArray[x] = x;// currMesh->indices[x];
+
 				D3D11_BUFFER_DESC indexBufferDesc;
 				D3D11_SUBRESOURCE_DATA indexData;
-		
+
 				//Set up the description of the static index buffer.
 				indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 				indexBufferDesc.ByteWidth = sizeof(unsigned) * m_modelArray[name]->IndexCount_[mesh_idx];
@@ -397,19 +396,19 @@ namespace ursine
 				indexBufferDesc.CPUAccessFlags = 0;
 				indexBufferDesc.MiscFlags = 0;
 				indexBufferDesc.StructureByteStride = 0;
-		
+
 				//Give the subresource structure a pointer to the index data.
 				indexData.pSysMem = indexArray;
 				indexData.SysMemPitch = 0;
 				indexData.SysMemSlicePitch = 0;
-		
+
 				//Create the index buffer.
 				result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_modelArray[name]->Indices_[mesh_idx]);
 				UAssert(result == S_OK, "Failed to make index buffer!");
-		
+
 				m_s2uTable[name] = m_modelCount;
 				m_u2mTable[m_modelCount++] = m_modelArray[name];
-		
+
 				delete[] indexArray;
 			}
 		}
@@ -423,20 +422,22 @@ namespace ursine
 
 			HANDLE hFile = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			ufmt_loader::ModelInfo ufmt_model;
-			ufmt_loader::LevelInfo ufmt_lvl;
 
 			// Serialize in model
 			ufmt_model.SerializeIn(hFile);
 
-            /////////////////////////////////////////////////////////
-            // GENERATING BONE DATA /////////////////////////////////
+			/////////////////////////////////////////////////////////
+			// GENERATING BONE DATA /////////////////////////////////
 
-            // 1. load rig
-            unsigned rigIndex = AnimationBuilder::LoadBoneData( ufmt_model );
-            
-            // 2. load animation
-            unsigned animationIndex = AnimationBuilder::LoadAnimation( ufmt_model.marrAnims[ 0 ] );
+			// 1. load rig
+			unsigned rigIndex = 0;
+			if (ufmt_model.mboneCount > 0)
+				rigIndex = AnimationBuilder::LoadBoneData(ufmt_model);
 
+			// 2. load animation
+			unsigned animationIndex = 0;
+			if (ufmt_model.manimCount > 0)
+				animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[0]);
 
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -444,17 +445,17 @@ namespace ursine
 			D3D11_SUBRESOURCE_DATA vertexData;
 			HRESULT result;
 
-            m_modelArray[ name ] = new ModelResource( );
-            m_modelArray[ name ]->MeshCount_ = ufmt_model.mmeshCount;
+			m_modelArray[name] = new ModelResource();
+			m_modelArray[name]->MeshCount_ = ufmt_model.mmeshCount;
 
 			for (uint mesh_idx = 0; mesh_idx < ufmt_model.mmeshCount; ++mesh_idx)
 			{
 				/////////////////////////////////////////////////////////////////
-				// ALLOCATE MODEL ///////////////////////////////////////////////
-				
+				// ALLOCATE MODEL ///////////////////////////////////////////////				
 
-				uint vertCount = ufmt_model.marrMeshes[mesh_idx].vertexCount;
-				//Set up the description of the static vertex buffer.
+				ufmt_loader::MeshInfo* currMesh = &ufmt_model.marrMeshes[mesh_idx];
+				uint vertCount = ufmt_model.marrMeshes[mesh_idx].meshVtxInfoCount;
+				//Set up the description of the static ve rtex buffer.
 				vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 				vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
 				vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -462,72 +463,70 @@ namespace ursine
 				vertexBufferDesc.MiscFlags = 0;
 				vertexBufferDesc.StructureByteStride = 0;
 
-				//Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
+				//Give the subresource structre a pointer to the vertex data. - need layout_type to determine if static or skinned
 				//can do this with skincount
 				buffer.resize(vertCount);
 				for (size_t i = 0; i < vertCount; ++i)
 				{
-                    buffer[ i ].vPos = DirectX::XMFLOAT3(
-                        ufmt_model.marrMeshes[ mesh_idx ].vertices[ i ].x,
-                        ufmt_model.marrMeshes[ mesh_idx ].vertices[ i ].y,
-                        ufmt_model.marrMeshes[ mesh_idx ].vertices[ i ].z 
-                    );
+					buffer[i].vPos = DirectX::XMFLOAT3(
+						currMesh->meshVtxInfos[i].pos.x,
+						currMesh->meshVtxInfos[i].pos.y,
+						currMesh->meshVtxInfos[i].pos.z
+						);
+					buffer[i].vNor = DirectX::XMFLOAT3(
+						currMesh->meshVtxInfos[i].normal.x,
+						currMesh->meshVtxInfos[i].normal.y,
+						currMesh->meshVtxInfos[i].normal.z
+						);
+					buffer[i].vUv = DirectX::XMFLOAT2(
+						currMesh->meshVtxInfos[i].uv.x,
+						currMesh->meshVtxInfos[i].uv.y
+						);
 
-                    buffer[ i ].vNor = DirectX::XMFLOAT3(
-                        ufmt_model.marrMeshes[ mesh_idx ].normals[ i ].x,
-                        ufmt_model.marrMeshes[ mesh_idx ].normals[ i ].y,
-                        ufmt_model.marrMeshes[ mesh_idx ].normals[ i ].z
-                        );
-
-                    buffer[ i ].vUv = DirectX::XMFLOAT2(
-                        ufmt_model.marrMeshes[ mesh_idx ].uvs[ i ].x,
-                        ufmt_model.marrMeshes[ mesh_idx ].uvs[ i ].y
-                    );
-
-					if (ufmt_model.marrMeshes[mesh_idx].ctrlPtCount > 0)
+					if (ufmt_model.mboneCount > 0)
 					{
-						buffer[i].vBWeight.x = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][0]);
-						buffer[i].vBWeight.y = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][1]);
-						buffer[i].vBWeight.z = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][2]);
-						buffer[i].vBWeight.w = static_cast<float>(ufmt_model.marrMeshes[mesh_idx].ctrlBlendWeights[i][3]);
-						buffer[i].vBIdx[0] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][0];
-						buffer[i].vBIdx[1] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][1];
-						buffer[i].vBIdx[2] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][2];
-						buffer[i].vBIdx[3] = ufmt_model.marrMeshes[mesh_idx].ctrlIndices[i][3];
+						buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
+						buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
+						buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
+						buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
+						buffer[i].vBIdx[0] = currMesh->meshVtxInfos[i].ctrlIndices.x;
+						buffer[i].vBIdx[1] = currMesh->meshVtxInfos[i].ctrlIndices.y;
+						buffer[i].vBIdx[2] = currMesh->meshVtxInfos[i].ctrlIndices.z;
+						buffer[i].vBIdx[3] = currMesh->meshVtxInfos[i].ctrlIndices.w;
 					}
 					else
 					{
 						buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-                        buffer[ i ].vBIdx[ 0 ] = 0;
-                        buffer[ i ].vBIdx[ 1 ] = 0;
-                        buffer[ i ].vBIdx[ 2 ] = 0;
-                        buffer[ i ].vBIdx[ 3 ] = 0;
+						buffer[i].vBIdx[0] = 0;
+						buffer[i].vBIdx[1] = 0;
+						buffer[i].vBIdx[2] = 0;
+						buffer[i].vBIdx[3] = 0;
 					}
 				}
-				 
+
 				//Give the subresource structure a pointer to the vertex data.
 				vertexData.pSysMem = &buffer[0];
 				vertexData.SysMemPitch = 0;
 				vertexData.SysMemSlicePitch = 0;
 
 				//Now create the vertex buffer.
-				result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_modelArray[name]->Vertices_[ mesh_idx ]);
+				result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_modelArray[name]->Vertices_[mesh_idx]);
 				UAssert(result == S_OK, "Failed to make vertex buffer!");
-				m_modelArray[name]->VertCount_[ mesh_idx ] = vertCount;
+				m_modelArray[name]->VertCount_[mesh_idx] = vertCount;
 
 				/////////////////////////////////////////////////////////////////
 				// CREATE INDEX BUFFER //////////////////////////////////////////
-				m_modelArray[name]->IndexCount_[ mesh_idx ] = ufmt_model.marrMeshes[mesh_idx].indexCount;
-				unsigned *indexArray = new unsigned[m_modelArray[name]->IndexCount_[ mesh_idx ] ];
-				for (unsigned x = 0; x < m_modelArray[name]->IndexCount_[ mesh_idx ]; ++x)
-					indexArray[x] = ufmt_model.marrMeshes[mesh_idx].indices[x];
+				m_modelArray[name]->IndexCount_[mesh_idx] = currMesh->meshVtxInfoCount;
+				unsigned *indexArray = new unsigned[m_modelArray[name]->IndexCount_[mesh_idx]];
+				for (unsigned x = 0; x < m_modelArray[name]->IndexCount_[mesh_idx]; ++x)
+					indexArray[x] = x;
 
 				D3D11_BUFFER_DESC indexBufferDesc;
 				D3D11_SUBRESOURCE_DATA indexData;
 
 				//Set up the description of the static index buffer.
 				indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-				indexBufferDesc.ByteWidth = sizeof(unsigned) * m_modelArray[name]->IndexCount_[ mesh_idx ];
+				indexBufferDesc.ByteWidth = sizeof(unsigned) * m_modelArray[name]->IndexCount_[mesh_idx];
 				indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 				indexBufferDesc.CPUAccessFlags = 0;
 				indexBufferDesc.MiscFlags = 0;
@@ -539,7 +538,7 @@ namespace ursine
 				indexData.SysMemSlicePitch = 0;
 
 				//Create the index buffer.
-				result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_modelArray[name]->Indices_[ mesh_idx ]);
+				result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_modelArray[name]->Indices_[mesh_idx]);
 				UAssert(result == S_OK, "Failed to make index buffer!");
 
 				m_s2uTable[name] = m_modelCount;

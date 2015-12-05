@@ -14,4 +14,7 @@ public:
     float jumpSpeed;
 	float rotateSpeed;
 
+    ursine::Vec2 moveDir;
+    ursine::Vec2 lookDir;
+    bool jump;
 } Meta(Enable, DisplayName("CharacterController"));

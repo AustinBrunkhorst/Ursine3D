@@ -31,4 +31,5 @@ extern class EntityHandler {
     function setSiblingIndex(index : UInt) : Void;
 
     function saveAsArchetype() : Void;
+    function clone() : UInt;
 }

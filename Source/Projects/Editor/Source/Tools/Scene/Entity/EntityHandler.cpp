@@ -87,6 +87,11 @@ JSMethod(EntityHandler::remove)
 
     entity->Delete( );
 
+    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+
+    if (scene->IsPaused( ))
+        m_world->clearDeletionQueue( );
+
     return CefV8Value::CreateBool( true );
 }
 
@@ -389,6 +394,18 @@ JSMethod(EntityHandler::saveAsArchetype)
     );
 
     return CefV8Value::CreateBool( true );
+}
+
+JSMethod(EntityHandler::clone)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto clone = entity->Clone( );
+
+    return CefV8Value::CreateUInt( clone->GetUniqueID( ) );
 }
 
 ecs::Entity *EntityHandler::getEntity(void)

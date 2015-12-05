@@ -6,10 +6,10 @@
 **
 ** Author:
 ** - Park Hyung Jun - park.hyungjun@digipen.edu
-** - Matt Yan - m.yan@digipen.edu
+**
 **
 ** Contributors:
-** - <list in same format as author if applicable>
+** - Matt Yan - m.yan@digipen.edu
 ** -------------------------------------------------------------------------*/
 
 #pragma once
@@ -25,6 +25,17 @@
 
 namespace pseudodx
 {
+	struct XMUINT4
+	{
+		uint32_t x;
+		uint32_t y;
+		uint32_t z;
+		uint32_t w;
+		XMUINT4() {}
+		XMUINT4(uint32_t _x, uint32_t _y, uint32_t _z, uint32_t _w) : x(_x), y(_y), z(_z), w(_w) {}
+		XMUINT4& operator= (const XMUINT4& Uint4) { x = Uint4.x; y = Uint4.y; z = Uint4.z; w = Uint4.w; return *this; }
+	};
+
     struct XMFLOAT4
     {
         float x;
@@ -271,51 +282,7 @@ namespace ursine
 			{
 				std::unordered_map<std::string, AnimationClip> animations;
 			};
-
-			// structure which will be used to pass data to shaer
-			// this will replace MATERIAL_DATA
-			struct Material_Data
-			{
-				//FbxMaterial*				fbxmaterial;
-				//ID3D11ShaderResourceView*	pSRV;
-				//ID3D11SamplerState*         pSampler;
-				//ID3D11Buffer*				pMaterialCb;
-				//
-				//Material_Data()
-				//{
-				//	fbxmaterial = nullptr;
-				//	pSRV = nullptr;
-				//	pSampler = nullptr;
-				//	pMaterialCb = nullptr;
-				//}
-				//void Release()
-				//{
-				//	if (fbxmaterial)
-				//	{
-				//		fbxmaterial->Release();
-				//		fbxmaterial = nullptr;
-				//	}
-				//
-				//	if (pMaterialCb)
-				//	{
-				//		pMaterialCb->Release();
-				//		pMaterialCb = nullptr;
-				//	}
-				//
-				//	if (pSRV)
-				//	{
-				//		pSRV->Release();
-				//		pSRV = nullptr;
-				//	}
-				//
-				//	if (pSampler)
-				//	{
-				//		pSampler->Release();
-				//		pSampler = nullptr;
-				//	}
-				//}
-			};
-
+			
 			// This is the actual representation of a joint in a game engine
 			struct Joint
 			{
@@ -419,8 +386,7 @@ namespace ursine
 				std::vector<ControlPoints*> mCtrlPoints;
 				std::vector<AnimationData*> mAnimationData;
 				// ====================================
-
-
+				FbxModel() {}
 				~FbxModel()
 				{
 					Release();

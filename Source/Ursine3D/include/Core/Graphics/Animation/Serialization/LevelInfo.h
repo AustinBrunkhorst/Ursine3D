@@ -33,11 +33,43 @@ namespace ursine
 				unsigned int	mmeshlvlCount;
 				MeshInLvl*		marrMeshlvls;
 
+				/** @brief level information constructor
+				*
+				*  this will construct level information object
+				*
+				*  @return nothing
+				*/
 				LevelInfo();
+				/** @brief level information destructor
+				*
+				*  this will destroy level information object
+				*
+				*  @return nothing
+				*/
 				virtual ~LevelInfo();
+				/** @brief level information release function
+				*
+				*  this will release memory of the level information
+				*
+				*  @return nothing
+				*/
 				void ReleaseData();
 
+				/** @brief level information serialize in function
+				*
+				*  this will read level information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeIn(HANDLE hFile);
+				/** @brief level information serialize out function
+				*
+				*  this will write level information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeOut(HANDLE hFile);
 			};
 		};

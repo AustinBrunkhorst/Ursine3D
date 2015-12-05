@@ -38,6 +38,7 @@ CORE_SYSTEM_DEFINITION( Retrospect );
 Retrospect::Retrospect(void)
     : m_graphics( nullptr )
     , m_screenManager( nullptr )
+	, m_audioManager( nullptr )
     , m_mainWindow( { nullptr } )
 {
 
@@ -98,6 +99,8 @@ void Retrospect::OnInitialize(void)
     }
     m_mainWindow.window->SetFullScreen( true );
     m_mainWindow.window->Show( true );
+
+	m_audioManager = GetCoreSystem( AudioManager );
 }
 
 void Retrospect::OnRemove(void)
@@ -119,6 +122,8 @@ void Retrospect::OnRemove(void)
     m_mainWindow.ui = nullptr;
     
     m_mainWindow.window = nullptr;
+
+	m_audioManager = nullptr;
 }
 
 void Retrospect::initializeGraphics(void)

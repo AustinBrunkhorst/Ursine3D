@@ -8,6 +8,10 @@ CharacterController::CharacterController(void)
     : BaseComponent()
     , moveSpeed( 50.0f )
     , jumpSpeed( 1000.0f )
-	, rotateSpeed( 300.0f ) { }
+	, rotateSpeed( 300.0f )
+{
+    lookDir = ursine::Vec2(0, 0);
+    moveDir = ursine::Vec2(0, 0);
+}
 
 

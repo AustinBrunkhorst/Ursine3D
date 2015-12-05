@@ -10,10 +10,7 @@ var Application = function() { };
 $hxClasses["Application"] = Application;
 Application.__name__ = ["Application"];
 Application.main = function() {
-	console.log(window.document.readyState);
-	window.addEventListener("load",function() {
-		haxe_Timer.delay(Application.initWindows,100);
-	});
+	window.addEventListener("WebComponentsReady",Application.initWindows);
 };
 Application.initWindows = function() {
 	var editor = new ursine_editor_Editor();
@@ -163,6 +160,12 @@ Type.createInstance = function(cl,args) {
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = ["haxe","IMap"];
+var haxe_Log = function() { };
+$hxClasses["haxe.Log"] = haxe_Log;
+haxe_Log.__name__ = ["haxe","Log"];
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -295,6 +298,96 @@ js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
+var js_Boot = function() { };
+$hxClasses["js.Boot"] = js_Boot;
+js_Boot.__name__ = ["js","Boot"];
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg;
+	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
+};
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
 	this.mainMenu = new MainMenuControl();
@@ -455,10 +548,10 @@ var ursine_editor_menus_EditMenu = function() { };
 $hxClasses["ursine.editor.menus.EditMenu"] = ursine_editor_menus_EditMenu;
 ursine_editor_menus_EditMenu.__name__ = ["ursine","editor","menus","EditMenu"];
 ursine_editor_menus_EditMenu.doUndo = function() {
-	console.log("undo");
+	haxe_Log.trace("undo",{ fileName : "EditMenu.hx", lineNumber : 7, className : "ursine.editor.menus.EditMenu", methodName : "doUndo"});
 };
 ursine_editor_menus_EditMenu.doRedo = function() {
-	console.log("redo");
+	haxe_Log.trace("redo",{ fileName : "EditMenu.hx", lineNumber : 12, className : "ursine.editor.menus.EditMenu", methodName : "doRedo"});
 };
 ursine_editor_menus_EditMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_EditMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -822,9 +915,17 @@ $hxClasses["ursine.editor.scene.component.inspectors.fields.DefaultFieldInspecto
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","DefaultFieldInspector"];
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
-	initEnum: function() {
+	updateValue: function(value) {
+		this.m_instance = value;
+		if(this.m_isEnum) {
+			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
+		}
+	}
+	,initEnum: function() {
 		var _g = this;
-		var combo = new ComboInputControl();
+		this.m_isEnum = true;
+		this.m_comboInput = new ComboInputControl();
+		this.m_enumValueOptions = new haxe_ds_StringMap();
 		var values = Reflect.fields(this.m_type.enumValue);
 		var _g1 = 0;
 		while(_g1 < values.length) {
@@ -835,14 +936,45 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 			option = _this.createElement("option");
 			option.text = key;
 			option.value = Reflect.field(this.m_type.enumValue,key);
-			combo.appendChild(option);
+			this.m_comboInput.appendChild(option);
+			{
+				this.m_enumValueOptions.set(key,option);
+				option;
+			}
 		}
-		combo.value = this.m_instance;
-		combo.addEventListener("change",function(e) {
-			_g.m_instance = Std.parseInt(combo.value);
+		this.m_isBitMaskEditor = Reflect.field(this.m_field.meta,"BitMaskEditor") != null;
+		if(this.m_isBitMaskEditor) {
+			this.m_comboInput.multiple = true;
+			this.m_comboInput.size = Std["int"](Math.min(10,values.length));
+		}
+		this.m_comboInput.addEventListener("change",function(e) {
+			_g.m_instance = _g.getEnumBitMaskValue();
 			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
 		});
-		this.inspector.container.appendChild(combo);
+		this.inspector.container.appendChild(this.m_comboInput);
+		this.updateValue(this.m_instance);
+	}
+	,loadEnumBitMaskValue: function(value) {
+		var values = Reflect.fields(this.m_type.enumValue);
+		var _g = 0;
+		while(_g < values.length) {
+			var key = values[_g];
+			++_g;
+			var option = this.m_enumValueOptions.get(key);
+			var keyValue = Reflect.field(this.m_type.enumValue,key);
+			option.selected = (value & keyValue) == keyValue;
+		}
+	}
+	,getEnumBitMaskValue: function() {
+		var value = 0;
+		var values = this.m_comboInput.selectedOptions;
+		var _g = 0;
+		while(_g < values.length) {
+			var option = values[_g];
+			++_g;
+			if(option.selected) value |= Std.parseInt(option.value);
+		}
+		return value;
 	}
 });
 var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = function(owner,instance,field,type) {
@@ -1044,6 +1176,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,saveAsArchetype: function() {
 		this.m_handler.saveAsArchetype();
 	}
+	,clone: function() {
+		return new ursine_editor_scene_entity_Entity(this.m_handler.clone());
+	}
 	,onComponentAdded: function(e) {
 		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentAdded,e);
 	}
@@ -1099,11 +1234,11 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,initializeInspection: function() {
 		if(this.m_inspectedEntity == null) {
-			this.m_btnSaveArchetype.style.display = "none";
+			this.m_headerToolbar.style.display = "none";
 			this.m_btnAddComponent.style.display = "none";
 			return;
 		}
-		this.m_btnSaveArchetype.style.display = "block";
+		this.m_headerToolbar.style.display = "block";
 		this.m_btnAddComponent.style.display = "block";
 		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
 		var inspection = this.m_inspectedEntity.inspect();
@@ -1150,7 +1285,12 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		});
 	}
 	,onArchetypeSaveClicked: function(e) {
-		if(this.m_inspectedEntity != null) this.m_inspectedEntity.saveAsArchetype();
+		this.m_inspectedEntity.saveAsArchetype();
+	}
+	,onCopyEntityClicked: function(e) {
+		var entity = this.m_inspectedEntity.clone();
+		entity.setName(this.m_inspectedEntity.getName() + " Copy");
+		entity.select();
 	}
 	,onAddComponentClicked: function(e) {
 		var types = this.getAvailableComponentTypes(this.m_inspectedEntity);
@@ -1182,9 +1322,13 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.window.container.appendChild(this.m_headerToolbar);
 		this.m_btnSaveArchetype = new ButtonControl();
 		this.m_btnSaveArchetype.classList.add("save-archetype");
-		this.m_btnSaveArchetype.style.display = "none";
 		this.m_btnSaveArchetype.addEventListener("click",$bind(this,this.onArchetypeSaveClicked));
 		this.m_headerToolbar.appendChild(this.m_btnSaveArchetype);
+		this.m_btnCopyEntity = new ButtonControl();
+		this.m_btnCopyEntity.classList.add("copy-entity");
+		this.m_btnCopyEntity.addEventListener("click",$bind(this,this.onCopyEntityClicked));
+		this.m_headerToolbar.appendChild(this.m_btnCopyEntity);
+		this.m_headerToolbar.style.display = "none";
 		var _this1 = window.document;
 		this.m_inspectorsContainer = _this1.createElement("div");
 		this.window.container.appendChild(this.m_inspectorsContainer);
@@ -1266,6 +1410,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	}
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
+		haxe_Log.trace("entity removed",{ fileName : "SceneOutline.hx", lineNumber : 111, className : "ursine.editor.windows.SceneOutline", methodName : "onEntityRemoved", customParams : [e.uniqueID]});
 		if(item == null) return;
 		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
 		item.parentNode.removeChild(item);
@@ -1406,6 +1551,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			++_g;
 			var item = this.m_entityItems.h[uid];
 			if(item == null) continue;
+			haxe_Log.trace("couldnt find selected entity",{ fileName : "SceneOutline.hx", lineNumber : 337, className : "ursine.editor.windows.SceneOutline", methodName : "deleteSelectedEntities"});
 			var entity = item.entity;
 			if(entity.isRemovalEnabled()) entity.remove(); else {
 			}

@@ -42,7 +42,7 @@ namespace ursine
         );
 
         // default FPS
-        m_frameRateController.SetTargetFPS( 144 );
+        m_frameRateController.SetTargetFPS( 60 );
 
         // default sub systems
         SDL_InitSubSystem( SDL_INIT_TIMER | SDL_INIT_EVENTS );

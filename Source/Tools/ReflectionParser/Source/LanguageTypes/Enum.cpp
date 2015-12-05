@@ -28,7 +28,13 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     for (auto &child : cursor.GetChildren( ))
     {
         if (child.GetKind( ) == CXCursor_EnumConstantDecl)
-            m_values.emplace_back( this, child );
+        {
+            MetaDataManager valueMeta( child );
+
+            // don't add disabled values
+            if (!valueMeta.GetFlag( native_property::Disable ))
+                m_values.emplace_back( this, child );
+        }
     }
 }
 

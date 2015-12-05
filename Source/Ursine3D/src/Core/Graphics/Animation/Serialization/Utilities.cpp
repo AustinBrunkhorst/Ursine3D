@@ -32,12 +32,12 @@ namespace Utilities
 		return ursine::SVec3(rhs.x, rhs.y, rhs.z);
 	}
 
-	ursine::SVec4 SetFloat3ToXMVector(const pseudodx::XMFLOAT3& rhs)
+	ursine::SVec4 SetFloat3ToSVec4(const pseudodx::XMFLOAT3& rhs)
 	{
 		return ursine::SVec4(rhs.x, rhs.y, rhs.z, 0.0f);
 	}
 
-	ursine::SVec4 SetFloat4ToXMVector(const pseudodx::XMFLOAT4& rhs)
+	ursine::SVec4 SetFloat4ToSVec4(const pseudodx::XMFLOAT4& rhs)
 	{
 		return ursine::SVec4(rhs.x, rhs.y, rhs.z, rhs.w);
 	}
@@ -51,7 +51,7 @@ namespace Utilities
 		return ret;
 	}
 
-	pseudodx::XMFLOAT3 SetXMVectorToFloat3(const ursine::SVec4& rhs)
+	pseudodx::XMFLOAT3 SetSVec4ToFloat3(const ursine::SVec4& rhs)
 	{
 		pseudodx::XMFLOAT3 ret;
 		ret.x = rhs.X();
@@ -60,7 +60,7 @@ namespace Utilities
 		return ret;
 	}
 
-	pseudodx::XMFLOAT4 SetXMVectorToFloat4(const ursine::SVec4& rhs)
+	pseudodx::XMFLOAT4 SetSVec4rToFloat4(const ursine::SVec4& rhs)
 	{
 		pseudodx::XMFLOAT4 ret;
 		ret.x = rhs.X();
@@ -80,7 +80,7 @@ namespace Utilities
 		return ret;
 	}
 
-	ursine::SMat4 FBXAMatrixToXMMatrix(FbxAMatrix* src)
+	ursine::SMat4 FBXAMatrixToSMat4(FbxAMatrix* src)
 	{
 		return ursine::SMat4(
 			static_cast<float>(src->mData[0][0]), static_cast<float>(src->mData[0][1]), static_cast<float>(src->mData[0][2]), static_cast<float>(src->mData[0][3]),
@@ -105,7 +105,7 @@ namespace Utilities
 			static_cast<float>(quat.mData[3]));
 	}
 
-	FbxVector4 XMVectorToFBXVector(const ursine::SVec4& src)
+	FbxVector4 SVec4ToFBXVector(const ursine::SVec4& src)
 	{
 		return FbxVector4(src.X(), src.Y(), src.Z(), src.W());
 	}
@@ -149,47 +149,5 @@ namespace Utilities
 			static_cast<float>(src.mData[1]),
 			static_cast<float>(src.mData[2]),
 			static_cast<float>(src.mData[3]));
-	}
-
-	int InterpolationFlagToIndex(int flags)
-	{
-		if ((flags & FbxAnimCurveDef::eInterpolationConstant) == FbxAnimCurveDef::eInterpolationConstant) return 1;
-		if ((flags & FbxAnimCurveDef::eInterpolationLinear) == FbxAnimCurveDef::eInterpolationLinear) return 2;
-		if ((flags & FbxAnimCurveDef::eInterpolationCubic) == FbxAnimCurveDef::eInterpolationCubic) return 3;
-		return 0;
-	}
-
-	int ConstantmodeFlagToIndex(int flags)
-	{
-		if ((flags & FbxAnimCurveDef::eConstantStandard) == FbxAnimCurveDef::eConstantStandard) return 1;
-		if ((flags & FbxAnimCurveDef::eConstantNext) == FbxAnimCurveDef::eConstantNext) return 2;
-		return 0;
-	}
-
-	int TangentmodeFlagToIndex(int flags)
-	{
-		if ((flags & FbxAnimCurveDef::eTangentAuto) == FbxAnimCurveDef::eTangentAuto) return 1;
-		if ((flags & FbxAnimCurveDef::eTangentAutoBreak) == FbxAnimCurveDef::eTangentAutoBreak) return 2;
-		if ((flags & FbxAnimCurveDef::eTangentTCB) == FbxAnimCurveDef::eTangentTCB) return 3;
-		if ((flags & FbxAnimCurveDef::eTangentUser) == FbxAnimCurveDef::eTangentUser) return 4;
-		if ((flags & FbxAnimCurveDef::eTangentGenericBreak) == FbxAnimCurveDef::eTangentGenericBreak) return 5;
-		if ((flags & FbxAnimCurveDef::eTangentBreak) == FbxAnimCurveDef::eTangentBreak) return 6;
-		return 0;
-	}
-
-	int TangentweightFlagToIndex(int flags)
-	{
-		if ((flags & FbxAnimCurveDef::eWeightedNone) == FbxAnimCurveDef::eWeightedNone) return 1;
-		if ((flags & FbxAnimCurveDef::eWeightedRight) == FbxAnimCurveDef::eWeightedRight) return 2;
-		if ((flags & FbxAnimCurveDef::eWeightedNextLeft) == FbxAnimCurveDef::eWeightedNextLeft) return 3;
-		return 0;
-	}
-
-	int TangentVelocityFlagToIndex(int flags)
-	{
-		if ((flags & FbxAnimCurveDef::eVelocityNone) == FbxAnimCurveDef::eVelocityNone) return 1;
-		if ((flags & FbxAnimCurveDef::eVelocityRight) == FbxAnimCurveDef::eVelocityRight) return 2;
-		if ((flags & FbxAnimCurveDef::eVelocityNextLeft) == FbxAnimCurveDef::eVelocityNextLeft) return 3;
-		return 0;
 	}
 };

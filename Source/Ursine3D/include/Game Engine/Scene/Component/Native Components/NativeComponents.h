@@ -30,5 +30,5 @@
 // Audio
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "AudioEmitter.h"
+#include "AudioEmitterComponent.h"
 #include "ListenerComponent.h"
