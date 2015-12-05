@@ -1,0 +1,29 @@
+Event	ID	Name			Wwise Object Path	Notes
+	23508243	Reload_Gun_Hand			\Default Work Unit\Reload_Gun_Hand	
+	733800440	Music_Theme			\Default Work Unit\Music_Theme	
+	1305133589	Player_Jump			\Default Work Unit\Player_Jump	
+	1528071400	Player_Take_Damage			\Default Work Unit\Player_Take_Damage	
+	1592516662	Fire_Gun_Hand			\Default Work Unit\Fire_Gun_Hand	
+	3461836331	Player_Step			\Default Work Unit\Player_Step	
+	3629196698	Player_Land			\Default Work Unit\Player_Land	
+
+Game Parameter	ID	Name			Wwise Object Path	Notes
+	2346531308	MusicVolume			\Default Work Unit\MusicVolume	
+	2818820904	StepSpeed			\Default Work Unit\StepSpeed	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	66887663	Jump_Player	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\JumpNoiseV2_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Jump_Player		46872
+	100085542	Land_Player	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\LandingSoundV3_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Land_Player		82752
+	125447984	item_gun_handgun_fire_01	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\item_gun_handgun_fire.01_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\HandGun\item_gun_handgun_fire_01		525376
+	163701886	Step_Player_07	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_D619E7A7.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_07		41536
+	322396525	Step_Player_01	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_B29ED6A0.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_01		30344
+	513112095	Step_Player_03	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_D4122E0C.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_03		39560
+	537086648	Step_Player_06	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_CCD21496.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_06		44824
+	694681093	MenuMewzak	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\MenuMewzak_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Music\MenuMewzak		17581376
+	747967216	Step_Player_02	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_FDE9BCCB.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_02		39560
+	759004709	Step_Player_05	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_D3A91879.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_05		40220
+	827311926	Shot_Player_02	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\HitNoises_FD0A644B.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\RandomHit\Shot_Player_02		106548
+	962611037	Shot_Player_01	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\HitNoises_1976091B.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\RandomHit\Shot_Player_01		88796
+	1004112823	item_reload_gun02_	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\item_reload_gun02._9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\HandGun\item_reload_gun02_		152128
+	1007503104	Step_Player_04	C:\Users\jorio\Documents\WwiseProjects\Retrospect\.cache\Windows\SFX\player_movement_running_heavy_069F7E6C.wem		\Actor-Mixer Hierarchy\Default Work Unit\PlayerSounds\Steps\RandomStep\Step_Player_04		45488
+

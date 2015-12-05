@@ -35,6 +35,7 @@ bool PlayerInput::Jump(void)
     }
 }
 
+
 ursine::Vec2 PlayerInput::MoveDir(void)
 {
     if (keyboard)

@@ -40,7 +40,7 @@
             },
 
             getItems: function() {
-                return this.querySelectorAll( ':scope > x-tree-view-item' );
+                return this.querySelectorAll( ':scope > x-tree-view-item:not(.hidden)' );
             },
 
             /**

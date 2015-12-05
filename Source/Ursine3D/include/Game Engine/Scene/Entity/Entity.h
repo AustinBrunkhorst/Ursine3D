@@ -111,6 +111,9 @@ namespace ursine
             // Utilities
             ////////////////////////////////////////////////////////////////////
 
+            // Creates a clone of this entity
+            Entity *Clone(void);
+
             // Gets the local timer manager for this entity
             LocalTimerManager &GetTimers(void);
 

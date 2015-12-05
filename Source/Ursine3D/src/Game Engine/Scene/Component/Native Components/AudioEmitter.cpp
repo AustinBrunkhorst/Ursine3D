@@ -12,7 +12,7 @@ namespace ursine
 			: BaseComponent()
 		    , m_loop(false)
 			, m_mute(false)
-		    , m_listeners(LISTENER_NONE)
+		    , m_listeners( ListenerIndex::None )
 		    , m_volume(100.0f)  { }
 
 		float AudioEmitter::GetVolume() const
@@ -36,7 +36,19 @@ namespace ursine
 			m_mute = mute;
 		}
 
-		bool AudioEmitter::GetLoop() const
+	    ListenerIndex AudioEmitter::GetListeners(void) const
+		{
+            return m_listeners;
+		}
+
+	    void AudioEmitter::SetListeners(ListenerIndex listeners)
+		{
+            m_listeners = listeners;
+
+            NOTIFY_COMPONENT_CHANGED( "Listeners", m_listeners );
+		}
+
+	    bool AudioEmitter::GetLoop() const
 		{
 			return m_loop;
 		}

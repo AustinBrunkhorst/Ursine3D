@@ -1,8 +1,0 @@
-Event	ID	Name			Wwise Object Path	Notes
-	1327221850	Resume_All_Global			\Default Work Unit\Resume_All_Global	
-	3368417626	Play_Markers_Test			\Default Work Unit\Play_Markers_Test	
-	3493516265	Pause_All_Global			\Default Work Unit\Pause_All_Global	
-
-In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	544694784	Markers_Test	C:\Jenkins\workspace\Wwise_2015.1\Wwise\SDK\samples\IntegrationDemo\WwiseProject\.cache\Windows\SFX\Marker_Test_001_E843A46D.wem		\Actor-Mixer Hierarchy\Default Work Unit\Markers_Test		119257
-

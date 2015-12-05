@@ -26,6 +26,10 @@
       &.save-archetype {
         @include icon-half( $icon-half-floppy-save, 16px );
       }
+
+      &.copy-entity {
+        @include icon-half( $icon-half-copy, 16px );
+      }
     }
   }
 

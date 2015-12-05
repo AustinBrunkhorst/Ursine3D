@@ -10,7 +10,7 @@ namespace ursine
 
 		AudioListener::AudioListener()
 			: BaseComponent()
-			, m_listenerIndex(LISTENER_NONE)
+			, m_listenerIndex( ListenerIndex::None )
 		{ }
 
 		void AudioListener::SetListenerIndex(ListenerIndex index)

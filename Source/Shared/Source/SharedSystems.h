@@ -5,3 +5,4 @@
 #include "Systems/CharacterFireControllerSystem.h"
 #include "Systems/CommandInputControllerSystem.h"
 #include "Systems/CommandQueueSystem.h"
+#include "Systems/CheatSystem.h"

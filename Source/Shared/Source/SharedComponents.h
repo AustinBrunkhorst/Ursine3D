@@ -7,3 +7,4 @@
 #include "Components/SpawnpointComponent.h"
 #include "Components/CommandQueueComponent.h"
 #include "Components/CommandInputControllerComponent.h"
+#include "Components/TeamComponent.h"

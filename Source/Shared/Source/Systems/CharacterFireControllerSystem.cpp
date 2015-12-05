@@ -6,6 +6,7 @@
 #include "RigidbodyComponent.h"
 
 #include "PlayerInputComponent.h"
+#include "AudioEmitterComponent.h"
 
 #include <GamepadManager.h>
 #include <MouseManager.h>
@@ -15,24 +16,37 @@
 #include <PhysicsSystem.h>
 #include <SystemManager.h>
 #include <Components/HealthComponent.h>
-#include <Game Engine/Scene/Component/Native Components/AnimatorComponent.h>
-
+#include <AnimatorComponent.h>
 
 using namespace ursine;
 using namespace ursine::ecs;
 
+namespace
+{
+	const std::string FireGun = "FIRE_GUN_HAND";
+	const std::string TakeDamage = "Player_Take_Damage";
+}
+
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
 
 CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World *world )
-    : FilterSystem( world, Filter( ).All<CharacterFireController, PlayerInput>( ) )
+    : FilterSystem( world, Filter( ).All<CharacterFireController>( ) )
 {
 
 }
 
 void CharacterFireControllerSystem::Process( Entity *entity )
 {
+    auto *input = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
+    auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitterComponent>( );
+
+    // check our states
+    if ( input && input->ResetTrigger( ) )
+    {
+        fireController->SetFireState( true );
+    }
 
     // update fire timer
     URSINE_TODO("Get acutal delta time for firing timer reduction");
@@ -42,7 +56,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     auto childrenVector = entity->GetChildren( );
 
     Entity *hotspot = nullptr;
-    Entity *armGun = nullptr;
+    Entity *arm = nullptr;
 
     for ( auto &x : *childrenVector )
     {
@@ -51,11 +65,13 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         if ( currentChild->GetName( ) == "FiringHotspot" )
         {
             hotspot = currentChild;
+            continue;
         }
-        if ( currentChild->GetName( ) == "FPSArm" )
-        {
-            armGun = currentChild;
-        }
+		if (currentChild->GetName( ) == "FPSArm")
+		{
+			arm = currentChild;
+			continue;
+		}
     }
 
     // firing a ray
@@ -71,7 +87,10 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         armAnimator->SetAnimationTimePosition( 0.1 );
         armAnimator->SetTimeScalar( 1.0f / fireController->GetFireRate( ) );
 
-        // actually firing
+        // Play that bang sound
+	if (emitter)
+            emitter->AddSoundToPlayQueue(FireGun);
+
         fireController->Fire( );
 
         //// get the camera, then get the arm connected to the camera
@@ -121,6 +140,8 @@ void CharacterFireControllerSystem::Process( Entity *entity )
             if ( health != nullptr )
             {
                 health->DealDamage( fireController->GetDamage() );
+				if (emitter)
+					emitter->AddSoundToPlayQueue(TakeDamage);
             }
         }
     }

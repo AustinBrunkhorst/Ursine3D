@@ -15,7 +15,7 @@
 
 #include "CoreSystem.h"
 #include "Meta.h"
-#include "AudioEmitter.h"
+#include "AudioEmitterComponent.h"
 
 #include "ListenerMasks.h"
 #include "WwiseForward.h"

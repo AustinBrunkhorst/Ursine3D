@@ -23,29 +23,9 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
         world->SetOwner( this );
 
         URSINE_TODO( "This guy should be saved in an editor specific file eventually" );
-        world->GetEntityFromName( "Editor Camera" )->Delete( );
+        auto editorCam = world->GetEntityFromName( "Editor Camera" );
+
+		if (editorCam)
+			editorCam->Delete( );
     } );
-
-    const std::string init = "INIT.bnk";
-    const std::string bgm = "BGM.bnk";
-    const std::string car = "Car.bnk";
-    const std::string RPM = "RPM";
-
-    const std::string play_CarEngine = "Play_RecordableMusic";
-
-    AkBankID initID = AK_INVALID_BANK_ID;
-    AkBankID carID = AK_INVALID_BANK_ID;
-    AkBankID bgmID = AK_INVALID_BANK_ID;
-
-    const AkGameObjectID GAME_OBJECT_ID_CAR = 100;
-    const AkGameObjectID GAME_OBJECT_NON_RECORDABLE = 200;
-
-    auto *audio = GetCoreSystem( AudioManager );
-
-    audio->LoadBank( init, initID );
-    audio->LoadBank( car, carID );
-    audio->LoadBank( bgm, bgmID );
-
-    audio->RegisterObject( GAME_OBJECT_ID_CAR, 0x08 );
-    audio->PlayEvent( play_CarEngine, GAME_OBJECT_ID_CAR );
 }

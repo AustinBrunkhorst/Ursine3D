@@ -34,6 +34,7 @@ public:
     JSMethod(setSiblingIndex);
 
     JSMethod(saveAsArchetype);
+    JSMethod(clone);
 
 private:
     ursine::ecs::World *m_world;
