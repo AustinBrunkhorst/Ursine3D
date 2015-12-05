@@ -65,7 +65,7 @@ void CommandQueue::Update(void)
                 MessageCenter.main.dispatch(new RecordedCommandMessage(recordable, gameObject));*/
         }
         else
-            m_stopQueue.push_back(std::shared_ptr<Command>(command));
+            m_stopQueue.push_back(command);
     }
 }
 

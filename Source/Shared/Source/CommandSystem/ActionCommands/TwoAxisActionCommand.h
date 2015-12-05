@@ -48,7 +48,7 @@ bool TwoAxisActionCommand<T>::Acting(void)
 template<typename T>
 std::shared_ptr<Command> TwoAxisActionCommand<T>::CreateCommand(void)
 {
-    return std::shared_ptr<Command>(new T(m_axis));
+    return std::shared_ptr<Command>(new T(m_action.GetAxis()));
 }
 
 template<typename T>

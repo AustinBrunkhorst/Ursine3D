@@ -320,7 +320,7 @@ namespace ursine
             m_sceneActive = true;
 
             //clear draw call list
-            memset(reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof(unsigned long long) * m_drawCount);
+            memset(reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof(unsigned long long) * m_drawCount * 2);
             m_drawCount = 0;
 
             //clear debug buffer
