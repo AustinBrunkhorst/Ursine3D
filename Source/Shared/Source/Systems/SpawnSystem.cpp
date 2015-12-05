@@ -1,7 +1,7 @@
 #include "Precompiled.h"
 
 #include <random>
-
+#include <algorithm>
 #include "SpawnSystem.h"
 #include "RoundSystem.h"
 
@@ -46,6 +46,18 @@ void SpawnSystem::DespawnTeam(int team)
     }
 }
 
+struct doCompare
+{
+    doCompare()
+    { }
+
+    bool operator()(Spawnpoint *first, Spawnpoint *second)
+    {
+        return first->roundSpawnNnumber < second->roundSpawnNnumber;
+    }
+};
+
+
 void SpawnSystem::OnInitialize(void)
 {
     m_world->Listener(this)
@@ -54,6 +66,30 @@ void SpawnSystem::OnInitialize(void)
 
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
         .On(ROUND_START, &SpawnSystem::onRoundStart);
+
+    auto spawns = m_world->GetEntitiesFromFilter(ecs::Filter( ).All<Spawnpoint>());
+
+    for (auto spawn : spawns)
+    {
+        auto *spawnComp = spawn->GetComponent<Spawnpoint>();
+
+        if (spawnComp->teamNumber == 1)
+        {
+            m_team1Spawnpoints.push_back(spawnComp);
+        }
+        else if (spawnComp->teamNumber == 2)
+        {
+            m_team2Spawnpoints.push_back( spawnComp );
+        }
+    }
+
+    //nameList.sort( [] (const name &a, const name &b)->bool{return a.lastName < b.lastName; });
+
+    doCompare compfn;
+    
+    m_team1Spawnpoints.sort(compfn);
+    m_team2Spawnpoints.sort(compfn);
+
 }
 
 void SpawnSystem::OnRemove(void)
@@ -101,8 +137,11 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 
         }
 
-        // this is to nicely different teams spawnpoints
+        doCompare compfn;
 
+        // this is to nicely different teams spawnpoints
+        m_team1Spawnpoints.sort(compfn);
+        m_team2Spawnpoints.sort(compfn);
     }
 }
 
@@ -201,7 +240,7 @@ ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffse
 
     if (roundNum > spawnList.size())
     {
-        return SVec3( 0.0f, 1000.0f, 0.0f );
+        return SVec3( 0.0f, 10.0f, 0.0f );
     }
 
     int index = roundNum - 1;
