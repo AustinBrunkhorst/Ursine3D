@@ -32,11 +32,43 @@ namespace ursine
 				unsigned int** keyIndices; // how many keys does each bone have?
 				FBX_DATA::KeyFrame*** keyframes;
 
+				/** @brief animation information constructor
+				*
+				*  this will construct animation information object
+				*
+				*  @return nothing
+				*/
 				AnimInfo();
+				/** @brief animation information destructor
+				*
+				*  this will destroy animation information object
+				*
+				*  @return nothing
+				*/
 				virtual ~AnimInfo();
+				/** @brief animation information release function
+				*
+				*  this will release memory of the animation information
+				*
+				*  @return nothing
+				*/
 				void ReleaseData();
 
+				/** @brief animation information serialize in function
+				*
+				*  this will read animation information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeIn(HANDLE hFile);
+				/** @brief animation information serialize out function
+				*
+				*  this will write animation information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeOut(HANDLE hFile);
 			};
 		};

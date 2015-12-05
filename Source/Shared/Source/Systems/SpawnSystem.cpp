@@ -1,15 +1,17 @@
 #include "Precompiled.h"
 
 #include <random>
-
+#include <algorithm>
 #include "SpawnSystem.h"
-#include <Components/CharacterControllerComponent.h>
+#include "RoundSystem.h"
+
 #include <WorldEvent.h>
 
 #include <SystemManager.h>
 #include "CoreSystem.h"
 #include <WorldEvent.h>
-#include <Components/HealthComponent.h>
+#include <EventDispatcher.h>
+#include <SystemManager.h>
 
 using namespace ursine;
 
@@ -17,8 +19,6 @@ using namespace ursine;
 ENTITY_SYSTEM_DEFINITION( SpawnSystem );
 
 SpawnSystem::SpawnSystem(ursine::ecs::World* world) : EntitySystem(world)
-                                                    , m_playerCount(0)
-                                                    , m_maxPlayerCount(0)
 {
 }
 
@@ -46,11 +46,48 @@ void SpawnSystem::DespawnTeam(int team)
     }
 }
 
+struct doCompare
+{
+    doCompare()
+    { }
+
+    bool operator()(Spawnpoint *first, Spawnpoint *second)
+    {
+        return first->GetRoundSpawnNumber() < second->GetRoundSpawnNumber();
+    }
+};
+
+
 void SpawnSystem::OnInitialize(void)
 {
     m_world->Listener(this)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
+
+    m_world->GetEntitySystem(RoundSystem)->Listener(this)
+        .On(ROUND_START, &SpawnSystem::onRoundStart);
+
+    auto spawns = m_world->GetEntitiesFromFilter(ecs::Filter( ).All<Spawnpoint>());
+
+    for (auto spawn : spawns)
+    {
+        auto *spawnComp = spawn->GetComponent<Spawnpoint>();
+
+        if (spawnComp->GetTeamNumber() == 1)
+        {
+            m_team1Spawnpoints.push_back(spawnComp);
+        }
+        else if (spawnComp->GetTeamNumber() == 2)
+        {
+            m_team2Spawnpoints.push_back( spawnComp );
+        }
+    }
+
+    doCompare compfn;
+    
+    m_team1Spawnpoints.sort(compfn);
+    m_team2Spawnpoints.sort(compfn);
+
 }
 
 void SpawnSystem::OnRemove(void)
@@ -58,6 +95,9 @@ void SpawnSystem::OnRemove(void)
     m_world->Listener(this)
         .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
         .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
+
+    m_world->GetEntitySystem(RoundSystem)->Listener(this)
+        .Off(ROUND_START, &SpawnSystem::onRoundStart);
 }
 
 void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
@@ -68,7 +108,7 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
     {
         auto teamComp = reinterpret_cast<TeamComponent *>(args->component);
 
-        int team = teamComp->TeamNumber;
+        int team = teamComp->GetTeamNumber();
 
         if (team == 1)
         {
@@ -79,17 +119,11 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
             m_team2.push_front(teamComp);
         }
 
-       // ++m_playerCount;
-
-        //if (m_playerCount > m_maxPlayerCount)
-        //{
-        //    m_maxPlayerCount = m_playerCount;
-        //}
     }
     else if (args->component->Is<Spawnpoint>())
     {
         auto *spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
-        int team = spawnpoint->teamNumber;
+        int team = spawnpoint->GetTeamNumber();
 
         if (team == 1)
         {
@@ -101,8 +135,11 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 
         }
 
-        // this is to nicely different teams spawnpoints
+        doCompare compfn;
 
+        // this is to nicely different teams spawnpoints
+        m_team1Spawnpoints.sort(compfn);
+        m_team2Spawnpoints.sort(compfn);
     }
 }
 
@@ -115,23 +152,35 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     {        
         TeamComponent *player = reinterpret_cast<TeamComponent *>(args->component);
 
-        if (player->TeamNumber == 1)
+        if (player->GetTeamNumber() == 1)
         {
             m_team1.remove(player);
+
+            if (m_team1.size() == 0)
+            {
+                RoundSystem::RoundEventArgs e(1);
+
+                Dispatch(ROUND_OVER, &e);
+            }
         }
-        else if(player->TeamNumber == 2)
+        else if(player->GetTeamNumber() == 2)
         {
             m_team2.remove(player);
-        }
 
-        spawnPlayer(player->TeamNumber);
+            if (m_team2.size() == 0)
+            {
+                RoundSystem::RoundEventArgs e(2);
+
+                Dispatch(ROUND_OVER, &e);
+            }
+        }
         
     }
     else if (args->component->Is<Spawnpoint>())
     {
         auto spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
 
-        int team = spawnpoint->teamNumber;
+        int team = spawnpoint->GetTeamNumber();
 
         if (team == 1)
         {
@@ -144,7 +193,18 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     }
 }
 
-void SpawnSystem::spawnPlayer(int team)
+void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
+{
+    EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
+
+    for (int i = 1; i <= args->team; ++i)
+    {
+        SpawnPlayer(1, i);
+        SpawnPlayer(2, i);
+    }
+}
+
+void SpawnSystem::SpawnPlayer(int team, int roundNum)
 {
     ecs::Entity *newPlayer = nullptr;
     if (team == 1)
@@ -165,22 +225,23 @@ void SpawnSystem::spawnPlayer(int team)
     auto *playerTransform = newPlayer->GetTransform();
 
     // get spawn position to place the player at and actually spawn the player
-    playerTransform->SetWorldPosition(getSpawnPosition(team, 10.0f));
+    playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum, 10.0f));
 }
 
-ursine::SVec3 SpawnSystem::getSpawnPosition(int team, float yOffset)
+ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffset)
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
 
     const std::list<Spawnpoint *>& spawnList = (team == 1) ? m_team1Spawnpoints : m_team2Spawnpoints;
 
 
-    std::uniform_int_distribution<> randNo(0, static_cast<int>(spawnList.size()) - 1);
-
     Spawnpoint *chosenSpawn = nullptr;
 
-    int index = randNo(gen);
+    if (roundNum > spawnList.size())
+    {
+        return SVec3( 0.0f, 10.0f, 0.0f );
+    }
+
+    int index = roundNum - 1;
 
     int count = 0;
     for (auto i = spawnList.begin(); i != spawnList.end(); ++i, ++count)

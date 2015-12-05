@@ -17,4 +17,7 @@ public:
 	bool CanJump;
 	bool CanStep;
 
+    ursine::Vec2 moveDir;
+    ursine::Vec2 lookDir;
+    bool jump;
 } Meta(Enable, DisplayName("CharacterController"));

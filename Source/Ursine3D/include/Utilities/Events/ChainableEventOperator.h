@@ -32,22 +32,28 @@ namespace ursine
 
         // Class member
         ChainableEventOperator &On(const typename DispatcherType::KeyType &type,
-            ClassDelegate<ListenerType, EventArgs> delegate);
+            ClassDelegate<ListenerType, EventArgs> delegate,
+            EventHandlerPriority priority = kDefaultEventHandlerPriority
+        );
 
         // Static function
         ChainableEventOperator &On(
             const typename DispatcherType::KeyType &type,
-            StaticDelegate<EventArgs> delegate);
+            StaticDelegate<EventArgs> delegate,
+            EventHandlerPriority priority = kDefaultEventHandlerPriority
+        );
 
         // Class member
         ChainableEventOperator &Off(
             const typename DispatcherType::KeyType &type,
-            ClassDelegate<ListenerType, EventArgs> delegate);
+            ClassDelegate<ListenerType, EventArgs> delegate
+        );
 
         // Static function
         ChainableEventOperator &Off(
             const typename DispatcherType::KeyType &type,
-            StaticDelegate<EventArgs> delegate);
+            StaticDelegate<EventArgs> delegate
+        );
     };
 }
 

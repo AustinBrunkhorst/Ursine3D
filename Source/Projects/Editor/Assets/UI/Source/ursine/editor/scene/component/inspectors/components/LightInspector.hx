@@ -85,7 +85,8 @@ class LightInspector extends ComponentInspectionHandler {
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
             "Color",
-            "Direction"
+            "Direction",
+            "Intensity"
         ];
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypePoint ) ] = [

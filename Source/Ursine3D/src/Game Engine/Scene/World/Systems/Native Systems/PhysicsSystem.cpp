@@ -32,7 +32,7 @@ namespace ursine
 
 			m_simulation.SetDebugDrawer( &m_debugDrawer );
 
-            SetEnableDebugDraw( false );
+            SetEnableDebugDraw( true );
         }
 
         void PhysicsSystem::SetGravity(const SVec3& gravity)
@@ -142,7 +142,7 @@ namespace ursine
             m_debugSystem = m_world->GetEntitySystem( DebugSystem );
 
             m_world->Listener( this )
-                .On( WORLD_UPDATE, &PhysicsSystem::onUpdate )
+                .On( WORLD_UPDATE, &PhysicsSystem::onUpdate, 100000 )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &PhysicsSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &PhysicsSystem::onComponentRemoved );
         }

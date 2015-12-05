@@ -29,3 +29,39 @@ struct BitMaskEditor : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
+
+/** @brief Forces the editor to use a specific type editor for a field
+*/
+struct ForceEditorType : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    const std::string type;
+
+    ForceEditorType(const char *type)
+        : type( type ) { }
+};
+
+/** @brief Field getter only used when interacting with the editor
+*/
+struct EditorGetter : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    const std::string getter;
+
+    EditorGetter(const char *getter)
+        : getter( getter ) { }
+};
+
+/** @brief Field setter only used when interacting with the editor
+*/
+struct EditorSetter : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    const std::string setter;
+
+    EditorSetter(const char *setter)
+        : setter( setter ) { }
+};

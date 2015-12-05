@@ -45,7 +45,7 @@ CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
 void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
-	auto *emitter = entity->GetComponent<AudioEmitterComponent>();
+    auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
     auto *input = entity->GetComponent<PlayerInput>( );
     auto moveSpeed = controller->moveSpeed;
 	auto rotateSpeed = controller->rotateSpeed;
@@ -56,6 +56,9 @@ void CharacterControllerSystem::Process(Entity *entity)
     float x = input->LookDir( ).X( );
 
 	auto child = transform->GetChild(0);
+
+	// This is an immidiate fix, cause fuck eet. - Jordan
+	rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
 
     if (abs( x ) > 0.1f)
     {
@@ -111,5 +114,5 @@ void CharacterControllerSystem::Process(Entity *entity)
 		}
 	}
 
-        rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
+    rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
 }

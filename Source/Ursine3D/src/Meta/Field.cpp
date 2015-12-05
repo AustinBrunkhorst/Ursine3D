@@ -26,6 +26,19 @@ namespace ursine
             , m_getter( getter )
             , m_setter( setter ) { }
 
+        bool Field::SetValue(Variant &instance, const Variant &value, const Method &setter)
+        {
+             // read only?
+            if (!instance.IsConst( ))
+            {
+                setter.Invoke( instance, value );
+
+                return true;
+            }
+
+            return false;
+        }
+
         bool Field::IsValid(void) const
         {
             return m_getter != nullptr;

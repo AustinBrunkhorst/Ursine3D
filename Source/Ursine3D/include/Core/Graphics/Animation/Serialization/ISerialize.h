@@ -28,10 +28,36 @@ namespace ursine
 				char* m_FileInfoName;
 			protected:
 			public:
+				/** @brief serializer constructor
+				*
+				*  this will construct basic serializer 
+				*
+				*  @return nothing
+				*/
 				ISerialize(const char* FileInfoName = "");
+				/** @brief serializer destructor
+				*
+				*  this will destroy basic serializer
+				*
+				*  @return nothing
+				*/
 				virtual ~ISerialize();
 
+				/** @brief serialize in function interface
+				*
+				*  this will generate basic interface for the serializer
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				virtual bool SerializeIn(HANDLE hFile) = 0;
+				/** @brief serialize out function interface
+				*
+				*  this will generate basic interface for the serializer
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				virtual bool SerializeOut(HANDLE hFile) = 0;
 			};
 		};

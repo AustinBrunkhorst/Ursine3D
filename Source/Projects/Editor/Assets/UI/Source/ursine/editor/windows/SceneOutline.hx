@@ -332,8 +332,6 @@ class SceneOutline extends WindowHandler {
             if (item == null)
                 continue;
 
-            trace( 'couldnt find selected entity' );
-
             var entity : Entity = untyped item.entity;
 
             if (entity.isRemovalEnabled( )) {

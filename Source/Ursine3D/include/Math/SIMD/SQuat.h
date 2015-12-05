@@ -29,8 +29,14 @@ namespace ursine
 		friend class SMat4;
 
 	public:
+        EditorField(float x, X, SetX);
+        EditorField(float y, Y, SetY);
+        EditorField(float z, Z, SetZ);
+        EditorField(float w, W, SetW);
+
 		// Constructors
-		SQuat( );
+        Meta(Enable)
+		SQuat(void);
 		SQuat(float degrees, const SVec3 &axis);
 		SQuat(const SVec3 &from, const SVec3 &to);
 		SQuat(float x_degrees, float y_degrees, float z_degrees);
@@ -95,5 +101,5 @@ namespace ursine
 
 	private:
 		void set(const SMat3 &mat);
-	};
+	} Meta(Enable, WhiteListMethods);
 }

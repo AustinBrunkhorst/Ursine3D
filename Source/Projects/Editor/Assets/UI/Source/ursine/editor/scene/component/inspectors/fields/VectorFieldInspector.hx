@@ -8,7 +8,8 @@ import ursine.editor.scene.component.ComponentDatabase;
     "ursine::Vec3",
     "ursine::SVec3",
     "ursine::Vec4",
-    "ursine::SVec4"
+    "ursine::SVec4",
+    "ursine::SQuat"
 )
 class VectorFieldInspector extends FieldInspectionHandler {
     private var m_fieldsContainer : js.html.DivElement;

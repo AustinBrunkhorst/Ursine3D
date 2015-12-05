@@ -19,7 +19,7 @@ namespace ursine
         {
         #ifdef BULLET_PHYSICS
 
-            //setMotionState( &m_motionState );
+            setMotionState( &m_motionState );
 
             updateRotationFreeze( );
 
@@ -105,8 +105,8 @@ namespace ursine
 
         void Rigidbody::GetTransform(ecs::Transform *transform)
         {
-            /*if (!m_motionState.m_dirty)
-                return;*/
+            if (!m_motionState.m_dirty)
+                return;
 
             // Setting this eleminates a circular get/set from the rigidbody component
             m_gettingTransform = true;
@@ -115,8 +115,8 @@ namespace ursine
 
             btTransform trans;
 
-            //m_motionState.getWorldTransform( trans );
-			trans = getWorldTransform( );
+            m_motionState.getWorldTransform( trans );
+			// trans = getWorldTransform( );
 
             auto rot = trans.getRotation( );
             auto pos = trans.getOrigin( );
@@ -134,7 +134,7 @@ namespace ursine
 
             m_gettingTransform = false;
 
-            // m_motionState.m_dirty = false;
+            m_motionState.m_dirty = false;
         }
 
         void Rigidbody::SetCollider(ColliderBase* collider, bool emptyCollider)
@@ -274,7 +274,12 @@ namespace ursine
         #endif
         }
 
-        void Rigidbody::SetMass(float mass)
+	    const SVec3& Rigidbody::GetGravity(void) const
+	    {
+			return m_gravity;
+	    }
+
+	    void Rigidbody::SetMass(float mass)
         {
             m_mass = mass;
 

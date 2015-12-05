@@ -43,10 +43,13 @@ namespace ursine
                 SetLocalPosition
             );
 
+            Meta(ForceEditorType( "ursine::SVec3" ))
+            Meta(EditorGetter( "GetLocalEulerEditor" ))
+            Meta(EditorSetter( "SetLocalEulerEditor" ))
             EditorField( 
-                SVec3 rotation,
-                GetLocalEuler,
-                SetLocalEuler
+                SQuat rotation,
+                GetLocalRotation,
+                SetLocalRotation
             );
 
             EditorField( 
@@ -72,10 +75,7 @@ namespace ursine
             // Position
             ////////////////////////////////////////////////////////////////////
 
-            Meta(Enable)
             void SetLocalPosition(const SVec3 &position);
-
-            Meta(Enable)
             const SVec3 &GetLocalPosition(void) const;
 
             void SetWorldPosition(const SVec3 &position);
@@ -88,13 +88,15 @@ namespace ursine
 
             void SetLocalRotation(const SQuat &rotation);
 
-            Meta(Enable)
             void SetLocalEuler(const SVec3 &euler);
-
             const SQuat &GetLocalRotation(void) const;
+            SVec3 GetLocalEuler(void) const;
 
             Meta(Enable)
-            SVec3 GetLocalEuler(void) const;
+            void SetLocalEulerEditor(const SQuat &euler);
+
+            Meta(Enable)
+            SQuat GetLocalEulerEditor(void) const;
 
             void SetWorldRotation(const SQuat &rotation);
             void SetWorldEuler(const SVec3 &euler);
@@ -108,10 +110,7 @@ namespace ursine
             // Scale
             ////////////////////////////////////////////////////////////////////
 
-            Meta(Enable)
             void SetLocalScale(const SVec3 &scale);
-            
-            Meta(Enable)
             const SVec3 &GetLocalScale(void) const;
 
             void SetWorldScale(const SVec3 &scale);

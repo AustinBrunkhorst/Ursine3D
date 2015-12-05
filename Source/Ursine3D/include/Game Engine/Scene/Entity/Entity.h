@@ -217,10 +217,19 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             template<typename Args>
-            void Connect(EventID event, StaticDelegate<Args> delegate);
+            void Connect(
+                EventID event, 
+                StaticDelegate<Args> delegate, 
+                EventHandlerPriority priority = kDefaultEventHandlerPriority
+            );
 
             template<typename Class, typename Args>
-            void Connect(EventID event, Class *context, ClassDelegate<Class, Args> delegate);
+            void Connect(
+                EventID event, 
+                Class *context, 
+                ClassDelegate<Class, Args> delegate, 
+                EventHandlerPriority priority = kDefaultEventHandlerPriority
+            );
 
             template<typename Args>
             void Disconnect(EventID event, StaticDelegate<Args> delegate);

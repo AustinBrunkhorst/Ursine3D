@@ -22,47 +22,78 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
+			struct MeshVertex
+			{
+				pseudodx::XMFLOAT3	pos;
+				pseudodx::XMFLOAT3	normal;
+				pseudodx::XMFLOAT3	tangent;
+				pseudodx::XMFLOAT2	uv;
+				pseudodx::XMUINT4	ctrlIndices;
+				pseudodx::XMFLOAT4	ctrlBlendWeights;
+
+				MeshVertex()
+				{
+					pos = pseudodx::XMFLOAT3(0, 0, 0);
+					normal = pseudodx::XMFLOAT3(0, 0, 0);
+					tangent = pseudodx::XMFLOAT3(0, 0, 0);
+					uv = pseudodx::XMFLOAT2(0, 0);
+					ctrlIndices = pseudodx::XMUINT4(0, 0, 0, 0);
+					ctrlBlendWeights = pseudodx::XMFLOAT4(0, 0, 0, 0);
+				}
+			};
+
 			class MeshInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];
-				unsigned int vertexCount;
-				unsigned int indexCount;
-				unsigned int normalCount;
-				unsigned int tangentCount;
-				unsigned int uvCount;
-				unsigned int mtrlIndexCount;
-				unsigned int mtrlCount;
-				unsigned int ctrlPtCount;
-				unsigned int subsetCount;
+				char			name[MAXTEXTLEN];
+				unsigned int	meshVtxInfoCount;
+				char*			mtrlName[MAXTEXTLEN];
+				unsigned int	mtrlCount;
+				unsigned int	mtrlIndexCount;
+				unsigned int	subsetCount;
+				SMat4			meshTM;
 
-				FbxLayerElement::EMappingMode normalMode;
-				FbxLayerElement::EMappingMode tangentMode;
-
-				SMat4					meshTM;
-				pseudodx::XMFLOAT3*		vertices;
-				unsigned int*			indices;
-				pseudodx::XMFLOAT3*		normals;
-				pseudodx::XMFLOAT3*		tangents;
-				pseudodx::XMFLOAT2*		uvs;
-				char*					mtrlName[MAXTEXTLEN];
-
+				MeshVertex*		meshVtxInfos;
 				unsigned int*	materialIndices;
 				FBX_DATA::ModelSubset* modelSubsets;
 
-				// maybe we don't need this, because we already have full infos for materials and textures
-				// maybe materialIndices will be enough
-				// maybe we can find correct material and texture from materialInfo by material Indices and name
-				//FBX_DATA::FbxMaterial* fbxmaterials;
-
-				unsigned int**	ctrlIndices;
-				double**		ctrlBlendWeights;
-
+				/** @brief mesh information constructor
+				*
+				*  this will construct mesh information object
+				*
+				*  @return nothing
+				*/
 				MeshInfo();
+				/** @brief mesh information destructor
+				*
+				*  this will destroy mesh information object
+				*
+				*  @return nothing
+				*/
 				virtual ~MeshInfo();
+				/** @brief mesh information release function
+				*
+				*  this will release memory of the mesh information
+				*
+				*  @return nothing
+				*/
 				void ReleaseData();
 
+				/** @brief mesh information serialize in function
+				*
+				*  this will read mesh information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeIn(HANDLE hFile);
+				/** @brief mesh information serialize out function
+				*
+				*  this will write mesh information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeOut(HANDLE hFile);
 			};
 		};

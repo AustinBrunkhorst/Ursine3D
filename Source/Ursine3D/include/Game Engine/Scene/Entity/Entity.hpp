@@ -75,27 +75,44 @@ namespace ursine
 	    }
 
 	    template<typename Args>
-        void Entity::Connect(EventID event, StaticDelegate<Args> delegate)
+        void Entity::Connect(
+            EventID event, 
+            StaticDelegate<Args> delegate, 
+            EventHandlerPriority priority
+        )
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Connect( event, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Connect( event, delegate, priority );
         }
 
         template<typename Class, typename Args>
-        void Entity::Connect(EventID event, Class *context, ClassDelegate<Class, Args> delegate)
+        void Entity::Connect(
+            EventID event, 
+            Class *context, 
+            ClassDelegate<Class, Args> delegate, 
+            EventHandlerPriority priority
+        )
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Connect( event, context, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Connect( event, context, delegate, priority );
         }
 
         template<typename Args>
         void Entity::Disconnect(EventID event, StaticDelegate<Args> delegate)
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Disconnect( event, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Disconnect( event, delegate );
         }
 
         template<typename Class, typename Args>
-        void Entity::Disconnect(EventID event, Class *context, ClassDelegate<Class, Args> delegate)
+        void Entity::Disconnect(
+            EventID event, 
+            Class *context, 
+            ClassDelegate<Class, Args> delegate
+        )
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Disconnect( event, context, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Disconnect( event, context, delegate );
         }
 
         template<typename ListenerType>

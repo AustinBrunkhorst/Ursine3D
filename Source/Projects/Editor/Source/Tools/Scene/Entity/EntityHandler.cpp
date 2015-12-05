@@ -41,6 +41,31 @@ namespace
             );
         }
     }
+
+    meta::Variant editorGetterOverride(const meta::Variant &instance, const meta::Field &field)
+    {
+        auto &fieldMeta = field.GetMeta( );
+
+        auto *editorGetter = fieldMeta.GetProperty<EditorGetter>( );
+
+        if (editorGetter)
+        {
+            auto componentType = instance.GetType( );
+
+            auto &getter = componentType.GetMethod( editorGetter->getter );
+
+            UAssert( getter.IsValid( ),
+                "Unknown editor getter '%s' on component type '%s'.",
+                editorGetter->getter.c_str( ),
+                componentType.GetName( ).c_str( )
+            );
+
+            // sorry good practice enforcers
+            return getter.Invoke( const_cast<meta::Variant&>( instance ) );
+        }
+        
+        return field.GetValue( instance );
+    }
 }
 
 JSConstructor(EntityHandler)
@@ -138,7 +163,7 @@ JSMethod(EntityHandler::inspect)
 
         componentArray.emplace_back( Json::object {
             { "type", type.GetName( ) },
-            { "value", type.SerializeJson( instance ) }
+            { "value", type.SerializeJson( instance, editorGetterOverride ) }
         } );
     }
 
@@ -258,7 +283,28 @@ JSMethod(EntityHandler::updateComponentField)
 
     auto fieldType = field.GetType( );
 
-    field.SetValue( instance, fieldType.DeserializeJson( value ) );
+    auto &fieldMeta = field.GetMeta( );
+
+    auto *editorSetter = fieldMeta.GetProperty<EditorSetter>( );
+
+    auto valueToSet = fieldType.DeserializeJson( value );
+
+    if (editorSetter)
+    {
+        auto &setter = componentType.GetMethod( editorSetter->setter );
+
+        UAssert( setter.IsValid( ), 
+            "Unknown editor setter '%s' on component type '%s'.",
+            editorSetter->setter.c_str( ),
+            componentType.GetName( ).c_str( )
+        );
+
+        meta::Field::SetValue( instance, valueToSet, setter );
+    }
+    else
+    {
+        field.SetValue( instance, valueToSet );
+    }
 
     return CefV8Value::CreateUndefined( );
 }

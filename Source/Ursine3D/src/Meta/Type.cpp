@@ -544,6 +544,48 @@ namespace ursine
             return object;
         }
 
+        Json Type::SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride) const
+        {
+            UAssert(
+                *this == instance.GetType( ),
+                "Serializing incompatible variant instance.\n"
+                "Got '%s', expected '%s'",
+                instance.GetType( ).GetName( ).c_str( ),
+                GetName( ).c_str( )
+            );
+
+            if (*this == typeof( bool ))
+            {
+                return { instance.ToBool( ) };
+            }
+
+            if (IsPrimitive( ) || IsEnum( ))
+            {
+                if (IsFloatingPoint( ) || !IsSigned( ))
+                    return { instance.ToDouble( ) };
+ 
+                return { instance.ToInt( ) };
+            }
+
+            if (*this == typeof( std::string ))
+            {
+                return { instance.ToString( ) };
+            }
+            
+            Json::object object { };
+
+            auto &fields = database.types[ m_id ].fields;
+
+            for (auto &field : fields)
+            {
+                auto value = getterOverride( instance, field.second );
+
+                object[ field.first ] = value.SerializeJson( );
+            }
+
+            return object;
+        }
+
         Variant Type::DeserializeJson(const Json &value) const
         {
             auto ctor = GetConstructor( );

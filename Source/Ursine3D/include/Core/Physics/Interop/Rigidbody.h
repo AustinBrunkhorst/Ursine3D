@@ -76,6 +76,7 @@ namespace ursine
             void UpdateInertiaTensor(void);
 
             void SetGravity(const SVec3 &gravity);
+			const SVec3 &GetGravity(void) const;
 
             void SetMass(float mass);
             float GetMass(void) const;

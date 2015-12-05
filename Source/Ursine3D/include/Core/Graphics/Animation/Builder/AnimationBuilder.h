@@ -60,7 +60,7 @@ namespace ursine
         *  @param info the animation info
         *  @return index of new resource.
         */
-        static int LoadAnimation(const graphics::ufmt_loader::AnimInfo &info);
+        static int LoadAnimation(const graphics::ufmt_loader::AnimInfo &info, const std::string &name);
 
         /** @brief loads a rig into builder
         *
@@ -70,7 +70,7 @@ namespace ursine
         *  @param info the rig data
         *  @return index of new resource.
         */
-        static int LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData);
+        static int LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData, const std::string &name);
 
     private:
         // interpolate between 2 sets of keyframes
