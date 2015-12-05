@@ -13,6 +13,8 @@
 #include "FireCommand.h"
 #include <Components/CharacterFireControllerComponent.h>
 
+RECORDABLE_COMMAND_DEFINITION( FireCommand );
+
 FireCommand::FireCommand()
 {
     m_weight = 0;
@@ -43,12 +45,12 @@ void FireCommand::StartRecording(ursine::ecs::Entity* receiver)
     
 }
 
-void FireCommand::Record(ursine::ecs::Entity* receiver, const int time)
+void FireCommand::Record(ursine::ecs::Entity* receiver, const float time)
 {
     
 }
 
-void FireCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const int time)
+void FireCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
 {
     
 }

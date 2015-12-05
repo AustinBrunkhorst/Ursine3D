@@ -37,16 +37,9 @@ CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World
 
 void CharacterFireControllerSystem::Process( Entity *entity )
 {
-    auto *input = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
     auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitterComponent>( );
-
-    // check our states
-    if ( input && input->ResetTrigger( ) )
-    {
-        fireController->SetFireState( true );
-    }
 
     // update fire timer
     URSINE_TODO("Get acutal delta time for firing timer reduction");
@@ -77,7 +70,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     // firing a ray
     // if we had a hotspot, firing controller is ready to fire (firing timer is down), AND we received input from
     // command (IsFiring), fire
-    if ( hotspot != nullptr &&  fireController->CanFire() && input->Fire( ) )
+    if ( hotspot != nullptr &&  fireController->CanFire() )
     {
         // animation stuff
         auto *armAnimator = arm->GetComponent<Animator>( );
