@@ -74,7 +74,7 @@ void CharacterControllerSystem::Process(Entity *entity)
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 
-	if (emitter)
+	/*if (emitter)
 	{
 		if (input->Jump() && controller->CanJump)
 		{
@@ -111,7 +111,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 			emitter->AddSoundToPlayQueue(kLandSound);
 			controller->inAir = false;
 		}
-	}
+	}*/
 
     rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
 }

@@ -45,7 +45,7 @@ namespace ursine
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
 
 
-            //if ( currentAnimation == nullptr || rig == nullptr)
+            if ( currentAnimation == nullptr || rig == nullptr)
                 return;
 
             if ( currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount() )
@@ -53,7 +53,6 @@ namespace ursine
             
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             std::vector<SMat4> tempVeec( 100 );
-            m_state.SetAnimation( currentAnimation );
 
             m_state.SetAnimation( currentAnimation );
 

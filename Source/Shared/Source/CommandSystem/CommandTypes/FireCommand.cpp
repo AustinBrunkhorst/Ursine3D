@@ -22,7 +22,7 @@ FireCommand::FireCommand()
 
 void FireCommand::Execute(ursine::ecs::Entity* receiver)
 {
-    auto *fireComponent = receiver->GetComponent<CharacterFireController>();
+    auto fireComponent = receiver->GetComponentInChildren<CharacterFireController>();
 
     if(fireComponent != nullptr)
     {
@@ -32,12 +32,12 @@ void FireCommand::Execute(ursine::ecs::Entity* receiver)
 
 void FireCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-    auto *fireComponent = receiver->GetComponent<CharacterFireController>();
+	auto fireComponent = receiver->GetComponentInChildren<CharacterFireController>();
 
-    if ( fireComponent != nullptr )
-    {
-        fireComponent->SetFireState(false);
-    }
+	if (fireComponent != nullptr)
+	{
+		fireComponent->SetFireState(false);
+	}
 }
 
 void FireCommand::StartRecording(ursine::ecs::Entity* receiver)

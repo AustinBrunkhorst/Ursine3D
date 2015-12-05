@@ -68,13 +68,16 @@ void CharacterFireControllerSystem::Process( Entity *entity )
 		}
     }
 
+	auto *armAnimator = arm->GetComponent<Animator>();
+	armAnimator->UpdateAnimation(0.016);
+
     // firing a ray
     // if we had a hotspot, firing controller is ready to fire (firing timer is down), AND we received input from
     // command (IsFiring), fire
     if ( hotspot != nullptr &&  fireController->CanFire() )
     {
         // animation stuff
-        auto *armAnimator = arm->GetComponent<Animator>( );
+        
         float animationScalar = armAnimator->GetTimeScalar( );
 
         // reset firing sequence
