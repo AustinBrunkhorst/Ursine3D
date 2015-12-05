@@ -23,7 +23,10 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
         world->SetOwner( this );
 
         URSINE_TODO( "This guy should be saved in an editor specific file eventually" );
-        world->GetEntityFromName( "Editor Camera" )->Delete( );
+        auto editorCam = world->GetEntityFromName( "Editor Camera" );
+
+		if (editorCam)
+			editorCam->Delete( );
     } );
 
     const std::string init = "INIT.bnk";

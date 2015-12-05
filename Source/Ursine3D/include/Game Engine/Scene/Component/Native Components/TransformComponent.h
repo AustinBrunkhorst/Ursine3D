@@ -271,6 +271,8 @@ namespace ursine
             bool genericAddChild(Transform *child);
 
             void setParent(Transform *oldParent, Transform *newParent);
+			
+			void setRoot(Transform *root);
 
         } Meta(
             Enable,

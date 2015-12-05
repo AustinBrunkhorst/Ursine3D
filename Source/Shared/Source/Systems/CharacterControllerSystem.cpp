@@ -45,12 +45,13 @@ void CharacterControllerSystem::Process(Entity *entity)
 
     if (abs( x ) > 0.1f)
     {
+		// Get the first child (model + camera) and rotate it.
         float angle = x * rotateSpeed;
 
-        rigidbody->AddTorque({ 0.0f, angle, 0.0f });
+        auto child = transform->GetChild( 0 );
+
+		child->SetWorldRotation( child->GetWorldRotation( ) * SQuat( 0.0f, angle, 0.0f ) );
     }
-    else
-        rigidbody->SetAngularVelocity({ 0.0f, 0.0f, 0.0f });
 
     auto move = input->MoveDir( ) * moveSpeed;
 

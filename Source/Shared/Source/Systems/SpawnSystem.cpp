@@ -124,10 +124,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
         //    }
         //}
         //else
-        {
-            PlayerInput *player = reinterpret_cast<PlayerInput *>(args->component);
-            spawnPlayer(player->id);
-        }
+        
     }
     else if (args->component->Is<Spawnpoint>())
     {

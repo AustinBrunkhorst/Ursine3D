@@ -23,19 +23,19 @@ using namespace ursine::ecs;
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
 
 CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World *world )
-    : FilterSystem( world, Filter( ).All<CharacterFireController, PlayerInput>( ) )
+    : FilterSystem( world, Filter( ).All<CharacterFireController>( ) )
 {
 
 }
 
 void CharacterFireControllerSystem::Process( Entity *entity )
 {
-    auto *input = entity->GetComponent<PlayerInput>( );
+    auto *input = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
 
     // check our states
-    if ( input->ResetTrigger( ) )
+    if ( input && input->ResetTrigger( ) )
     {
         fireController->SetFireState( true );
     }
