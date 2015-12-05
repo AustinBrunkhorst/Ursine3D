@@ -67,27 +67,6 @@ void SpawnSystem::OnInitialize(void)
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
         .On(ROUND_START, &SpawnSystem::onRoundStart);
 
-    auto spawns = m_world->GetEntitiesFromFilter(ecs::Filter( ).All<Spawnpoint>());
-
-    for (auto spawn : spawns)
-    {
-        auto *spawnComp = spawn->GetComponent<Spawnpoint>();
-
-        if (spawnComp->GetTeamNumber() == 1)
-        {
-            m_team1Spawnpoints.push_back(spawnComp);
-        }
-        else if (spawnComp->GetTeamNumber() == 2)
-        {
-            m_team2Spawnpoints.push_back( spawnComp );
-        }
-    }
-
-    doCompare compfn;
-    
-    m_team1Spawnpoints.sort(compfn);
-    m_team2Spawnpoints.sort(compfn);
-
 }
 
 void SpawnSystem::OnRemove(void)

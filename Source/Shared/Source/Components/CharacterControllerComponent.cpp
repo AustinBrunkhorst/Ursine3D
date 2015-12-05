@@ -12,6 +12,7 @@ CharacterController::CharacterController(void)
     , moveSpeed( 50.0f )
     , jumpSpeed( 1000.0f )
 	, rotateSpeed( 300.0f )
+	, jump(false)
 {
     lookDir = ursine::Vec2(0, 0);
     moveDir = ursine::Vec2(0, 0);

@@ -42,9 +42,6 @@ public:
     Meta(Disable)
     void Update(void);
 
-    Meta(Disable)
-    void RunAllCommands(void);
-
 private:
     std::priority_queue<std::shared_ptr<Command>, std::vector<std::shared_ptr<Command>>, CommandComparison> m_commandQueue;
     std::vector<std::shared_ptr<Command>> m_stopQueue;

@@ -46,14 +46,13 @@ void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
     auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
-    auto *input = entity->GetComponent<PlayerInput>( );
     auto moveSpeed = controller->moveSpeed;
 	auto rotateSpeed = controller->rotateSpeed;
 
     auto transform = entity->GetTransform( );
     auto rigidbody = entity->GetComponent<Rigidbody>( );
     
-    float x = input->LookDir( ).X( );
+    float x = controller->lookDir.X( );
 
 	auto child = transform->GetChild(0);
 
@@ -68,7 +67,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 		child->SetWorldRotation( child->GetWorldRotation( ) * SQuat( 0.0f, angle, 0.0f ) );
     }
 
-    auto move = input->MoveDir( ) * moveSpeed;
+    auto move = controller->moveDir * moveSpeed;
 
     auto forward = child->GetForward( ) * move.Y( );
     auto strafe = child->GetRight( ) * move.X( );

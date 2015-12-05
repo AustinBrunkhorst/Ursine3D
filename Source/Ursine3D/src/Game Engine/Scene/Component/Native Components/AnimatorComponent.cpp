@@ -45,7 +45,7 @@ namespace ursine
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
 
 
-            if ( currentAnimation == nullptr || rig == nullptr)
+            //if ( currentAnimation == nullptr || rig == nullptr)
                 return;
 
             if ( currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount() )

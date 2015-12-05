@@ -13,11 +13,16 @@
 #include "LookCommand.h"
 #include <Components/CharacterControllerComponent.h>
 
+RECORDABLE_COMMAND_DEFINITION( LookCommand );
+
 LookCommand::LookCommand() 
-    : RecordableAxisCommand(ursine::Vec2(0,0)) {}
+    : RecordableAxisCommand(ursine::Vec2(0,0))
+	, m_playback( false ) { }
 
 LookCommand::LookCommand(const ursine::Vec2& axis) 
-    : RecordableAxisCommand(axis) {}
+    : RecordableAxisCommand(axis) 
+	, m_playback( false ) {}
+
 
 void LookCommand::Execute(ursine::ecs::Entity* receiver)
 {
@@ -43,14 +48,14 @@ void LookCommand::StartRecording(ursine::ecs::Entity* receiver)
     m_playback = false;
 }
 
-void LookCommand::Record(ursine::ecs::Entity* receiver, const int time)
+void LookCommand::Record(ursine::ecs::Entity* receiver, const float time)
 {
     auto *transform = receiver->GetTransform();
 
     m_characterRot.push_back(transform->GetLocalRotation( ));
 }
 
-void LookCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const int time)
+void LookCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
 {
     auto index = time - m_startTime;
 
