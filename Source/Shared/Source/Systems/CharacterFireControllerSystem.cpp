@@ -86,7 +86,8 @@ void CharacterFireControllerSystem::Process( Entity *entity )
 
         // Play that bang sound
 		if (emitter)
-            emitter->AddSoundToPlayQueue(FireGun);
+			emitter->AddSoundToPlayQueue(FireGun);
+            
 
         fireController->Fire( );
 
