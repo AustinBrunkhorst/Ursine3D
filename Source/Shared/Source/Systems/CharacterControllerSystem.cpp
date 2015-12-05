@@ -43,26 +43,25 @@ void CharacterControllerSystem::Process(Entity *entity)
     
     float x = input->LookDir( ).X( );
 
+	auto child = transform->GetChild(0);
+
     if (abs( x ) > 0.1f)
     {
 		// Get the first child (model + camera) and rotate it.
         float angle = x * rotateSpeed;
-
-        auto child = transform->GetChild( 0 );
 
 		child->SetWorldRotation( child->GetWorldRotation( ) * SQuat( 0.0f, angle, 0.0f ) );
     }
 
     auto move = input->MoveDir( ) * moveSpeed;
 
-    auto forward = transform->GetForward( ) * move.Y( );
-    auto strafe = transform->GetRight( ) * move.X( );
+    auto forward = child->GetForward( ) * move.Y( );
+    auto strafe = child->GetRight( ) * move.X( );
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 
+	if (input->Jump())
+		vel.Y( ) = controller->jumpSpeed;
+
     rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
-
-    if (input->Jump( ))
-        rigidbody->AddForce({ 0.0f, controller->jumpSpeed, 0.0f });
-
 }

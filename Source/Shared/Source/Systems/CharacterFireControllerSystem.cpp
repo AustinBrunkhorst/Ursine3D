@@ -15,7 +15,7 @@
 #include <PhysicsSystem.h>
 #include <SystemManager.h>
 #include <Components/HealthComponent.h>
-
+#include <AnimatorComponent.h>
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -47,6 +47,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     auto childrenVector = entity->GetChildren( );
 
     Entity *hotspot = nullptr;
+	Entity *arm = nullptr;
 
     for ( auto &x : *childrenVector )
     {
@@ -55,14 +56,25 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         if ( currentChild->GetName( ) == "FiringHotspot" )
         {
             hotspot = currentChild;
-            break;
+            continue;
         }
+		if (currentChild->GetName( ) == "FPSArm")
+		{
+			arm = currentChild;
+			continue;
+		}
     }
 
     // firing a ray
     if ( hotspot != nullptr && input->Fire( ) && fireController->CanFire() )
     {
-        printf( "BANG!\n\n" );
+        // animation stuff
+        auto *armAnimator = arm->GetComponent<Animator>( );
+
+        // reset firing sequence
+        armAnimator->SetAnimationTimePosition( 0.1 );
+        armAnimator->SetTimeScalar( 1.0f / fireController->GetFireRate( ) );
+
         fireController->Fire( );
 
         //// get the camera, then get the arm connected to the camera
