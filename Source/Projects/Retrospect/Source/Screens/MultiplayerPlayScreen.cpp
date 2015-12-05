@@ -10,7 +10,7 @@ using namespace ursine;
 
 namespace
 {
-    const auto kWorldFile = "Assets/Worlds/SubmissionSemester1-Cpt.uworld";
+    const auto kWorldFile = "Assets/Worlds/BlankWorld.uworld";
 }
 
 MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
@@ -19,7 +19,7 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
     URSINE_TODO( "this is to fix the transition flicker" );
     Timer::Create( 250 ).Completed( [&] {
         world = ecs::WorldSerializer( ).Deserialize( kWorldFile );
-
+        
         world->SetOwner( this );
 
         URSINE_TODO( "This guy should be saved in an editor specific file eventually" );

@@ -13,17 +13,11 @@ using namespace ursine;
 ENTITY_SYSTEM_DEFINITION( RoundSystem );
 
 RoundSystem::RoundSystem(ursine::ecs::World* world) : EntitySystem(world)
-                                                    ,m_round(1)
-                                                    ,m_maxRound(5)
+                                                    , EventDispatcher(this)
+                                                    , m_round(1)
+                                                    , m_maxRound(5)
 {
-    RoundEventArgs e(1);
 
-    Dispatch(ROUND_START, &e);
-
-    auto *m_map = m_world->CreateEntityFromArchetype(
-        WORLD_ARCHETYPE_PATH "map.uatype",
-        "gameMapArchetype"
-        );
 }
 
 int RoundSystem::GetCurrentRound(void) const
@@ -43,14 +37,27 @@ void RoundSystem::SetMaxRoundCount(int round)
 
 void RoundSystem::OnInitialize()
 {
-    m_world->Listener(this)
-        .On(static_cast<ecs::WorldEventType>(ROUND_OVER), &RoundSystem::onRoundOver);
+    m_timers.Create(TimeSpan::FromSeconds(0.1f)).Completed(
+        [=] (void)
+    {
+        RoundEventArgs e( 1 );
+
+        Dispatch( ROUND_START, &e );
+    } );
+
+    auto *m_map = m_world->CreateEntityFromArchetype(
+        WORLD_ARCHETYPE_PATH "map.uatype",
+        "gameMapArchetype"
+        );
+
+    m_world->GetEntitySystem(SpawnSystem)->Listener(this)
+        .On( ROUND_OVER, &RoundSystem::onRoundOver);
 }
 
 void RoundSystem::OnRemove()
 {
-    m_world->Listener(this)
-        .Off(static_cast<ecs::WorldEventType>(ROUND_OVER), &RoundSystem::onRoundOver);
+    m_world->GetEntitySystem(SpawnSystem)->Listener(this)
+        .Off(ROUND_OVER, &RoundSystem::onRoundOver);
 }
 
 void RoundSystem::onRoundOver(EVENT_HANDLER(ursine::ecs:::World))

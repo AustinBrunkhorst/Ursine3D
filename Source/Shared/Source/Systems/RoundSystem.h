@@ -10,8 +10,9 @@ enum RoundSystemEventType
     MATCH_OVER
 };
 
-class RoundSystem : public ursine::ecs::EntitySystem
-                  , public ursine::EventDispatcher<RoundSystemEventType>
+class RoundSystem 
+    : public ursine::ecs::EntitySystem
+    , public ursine::EventDispatcher<RoundSystemEventType>
 {
     ENTITY_SYSTEM;
 

@@ -11,7 +11,7 @@
 #include "CoreSystem.h"
 #include <WorldEvent.h>
 #include <EventDispatcher.h>
-
+#include <SystemManager.h>
 
 using namespace ursine;
 
@@ -51,6 +51,9 @@ void SpawnSystem::OnInitialize(void)
     m_world->Listener(this)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
+
+    m_world->GetEntitySystem(RoundSystem)->Listener(this)
+        .On(ROUND_START, &SpawnSystem::onRoundStart);
 }
 
 void SpawnSystem::OnRemove(void)
@@ -58,6 +61,9 @@ void SpawnSystem::OnRemove(void)
     m_world->Listener(this)
         .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
         .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
+
+    m_world->GetEntitySystem(RoundSystem)->Listener(this)
+        .Off(ROUND_START, &SpawnSystem::onRoundStart);
 }
 
 void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
@@ -150,9 +156,9 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     }
 }
 
-void SpawnSystem::onRoundStart(EVENT_HANDLER(ursine::ecs::World))
+void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
 {
-    EVENT_ATTRS(ecs::World, RoundSystem::RoundEventArgs);
+    EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
 
     for (int i = 1; i <= args->team; ++i)
     {
@@ -187,17 +193,18 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
 
 ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffset)
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
 
     const std::list<Spawnpoint *>& spawnList = (team == 1) ? m_team1Spawnpoints : m_team2Spawnpoints;
 
 
-    std::uniform_int_distribution<> randNo(0, static_cast<int>(spawnList.size()) - 1);
-
     Spawnpoint *chosenSpawn = nullptr;
 
-    int index = randNo(gen);
+    if (roundNum > spawnList.size())
+    {
+        return SVec3( 0.0f, 1000.0f, 0.0f );
+    }
+
+    int index = roundNum - 1;
 
     int count = 0;
     for (auto i = spawnList.begin(); i != spawnList.end(); ++i, ++count)

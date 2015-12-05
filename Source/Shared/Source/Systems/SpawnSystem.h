@@ -29,7 +29,7 @@ class SpawnSystem : public ursine::ecs::EntitySystem
             void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
 
             // spawn players when the round starts based off of round number
-            void onRoundStart(EVENT_HANDLER(ursine::ecs::world));
+            void onRoundStart(EVENT_HANDLER(RoundSystem));
 
             ursine::SVec3 getSpawnPosition(int team, int roundNum, float yOffset);
 
