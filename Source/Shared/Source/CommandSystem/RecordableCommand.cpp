@@ -12,12 +12,12 @@
 
 #include "RecordableCommand.h"
 
-int RecordableCommand::GetStartTime() const
+float RecordableCommand::GetStartTime() const
 {
     return m_startTime;
 }
 
-int RecordableCommand::GetDuration() const
+float RecordableCommand::GetDuration() const
 {
     return m_duration;
 }

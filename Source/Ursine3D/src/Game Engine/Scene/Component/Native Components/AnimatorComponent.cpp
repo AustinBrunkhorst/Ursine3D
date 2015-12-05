@@ -45,7 +45,7 @@ namespace ursine
             auto *rig = AnimationBuilder::GetAnimationRigByIndex( m_rigIndex );
 
 
-            if ( currentAnimation == nullptr || rig == nullptr)
+            //if ( currentAnimation == nullptr || rig == nullptr)
                 return;
             
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );

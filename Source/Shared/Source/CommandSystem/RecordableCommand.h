@@ -16,13 +16,13 @@ class RecordableCommand
 {
 public:
     virtual void StartRecording(ursine::ecs::Entity *receiver) = 0;
-    virtual void Record(ursine::ecs::Entity *receiver, const int time) = 0;
-    virtual void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const int time) = 0;
+    virtual void Record(ursine::ecs::Entity *receiver, const float time) = 0;
+    virtual void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const float time) = 0;
 
-    int GetStartTime(void) const;
-    int GetDuration(void) const;
+    float GetStartTime(void) const;
+    float GetDuration(void) const;
 
 protected:
-    int m_startTime;
-    int m_duration;
+    float m_startTime;
+    float m_duration;
 };
