@@ -297,12 +297,12 @@ namespace ursine
 			// 1. load rig
 			unsigned rigIndex = 0;
 			if (ufmt_model.mboneCount > 0)
-				rigIndex = AnimationBuilder::LoadBoneData(ufmt_model);
+				rigIndex = AnimationBuilder::LoadBoneData(ufmt_model, name);
 
 			// 2. load animation
 			unsigned animationIndex = 0;
 			if (ufmt_model.manimCount > 0)
-				animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[0]);
+				animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[0], name);
 
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -432,12 +432,12 @@ namespace ursine
 			// 1. load rig
 			unsigned rigIndex = 0;
 			if (ufmt_model.mboneCount > 0)
-				rigIndex = AnimationBuilder::LoadBoneData(ufmt_model);
+				rigIndex = AnimationBuilder::LoadBoneData(ufmt_model, name);
 
 			// 2. load animation
 			unsigned animationIndex = 0;
 			if (ufmt_model.manimCount > 0)
-				animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[0]);
+				animationIndex = AnimationBuilder::LoadAnimation(ufmt_model.marrAnims[0], name);
 
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////

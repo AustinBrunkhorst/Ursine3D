@@ -143,7 +143,7 @@ namespace ursine
         return m_name2Rig[ name ];
     }
 
-    int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info)
+    int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info, const std::string &name)
     {
 		unsigned animIndex = addAnimation();
 		auto animation = GetAnimationByIndex(animIndex);
@@ -205,11 +205,11 @@ namespace ursine
 		}
 
 		// set values, return
-		m_name2Animation[info.name] = animation;
+		m_name2Animation[ name ] = animation;
 		return animIndex;
     }
 
-    int AnimationBuilder::LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData)
+    int AnimationBuilder::LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData, const std::string &name)
     {
         unsigned boneCount = modelData.mboneCount;
 
@@ -241,7 +241,7 @@ namespace ursine
         rec_LoadBoneMesh( hierarchy, 0, -1, modelData.marrBones, rig );
 
         // save the data in the maps, return
-        m_name2Rig[ modelData.marrBones->name ] = rig;
+        m_name2Rig[ name ] = rig;
         return rigIndex;
     }
 
