@@ -24,7 +24,7 @@ SpawnSystem::SpawnSystem(ursine::ecs::World* world) : EntitySystem(world)
 
 void SpawnSystem::DespawnTeam(int team)
 {
-    if (team == 0)
+    if (team == 1)
     {
         while (m_team1.size() > 0)
         {
@@ -34,7 +34,7 @@ void SpawnSystem::DespawnTeam(int team)
             player->GetOwner()->Delete();
         }
     }
-    else if (team == 1)
+    else if (team == 2)
     {
         while (m_team2.size() > 0)
         {
@@ -64,19 +64,19 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
-    if (args->component->Is<PlayerInput>())
+    if (args->component->Is<TeamComponent>())
     {
-        auto playerInput = reinterpret_cast<PlayerInput *>(args->component);
+        auto teamComp = reinterpret_cast<TeamComponent *>(args->component);
 
-        int team = playerInput->id;
+        int team = teamComp->TeamNumber;
 
-        if (team == 0)
+        if (team == 1)
         {
-            m_team1.push_front(playerInput);
+            m_team1.push_front(teamComp);
         }
-        else if (team == 1)
+        else if (team == 2)
         {
-            m_team2.push_front(playerInput);
+            m_team2.push_front(teamComp);
         }
 
        // ++m_playerCount;
@@ -91,11 +91,11 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
         auto *spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
         int team = spawnpoint->teamNumber;
 
-        if (team == 0)
+        if (team == 1)
         {
             m_team1Spawnpoints.push_back(spawnpoint);
         }
-        else if (team == 1)
+        else if (team == 2)
         {
             m_team2Spawnpoints.push_back(spawnpoint);
 
@@ -111,19 +111,20 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
 
-    if (args->component->Is<PlayerInput>())
-    {
-        //--m_playerCount;
-        //
-        //if (m_playerCount == 0)
-        //{
-        //    for (unsigned i = 0; i < m_maxPlayerCount / 2; ++i)
-        //    {
-        //        spawnPlayer(0);
-        //        spawnPlayer(1);
-        //    }
-        //}
-        //else
+    if (args->component->Is<TeamComponent>())
+    {        
+        TeamComponent *player = reinterpret_cast<TeamComponent *>(args->component);
+
+        if (player->TeamNumber == 1)
+        {
+            m_team1.remove(player);
+        }
+        else if(player->TeamNumber == 2)
+        {
+            m_team2.remove(player);
+        }
+
+        spawnPlayer(player->TeamNumber);
         
     }
     else if (args->component->Is<Spawnpoint>())
@@ -132,11 +133,11 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 
         int team = spawnpoint->teamNumber;
 
-        if (team == 0)
+        if (team == 1)
         {
             m_team1Spawnpoints.remove(spawnpoint);
         }
-        else if (team == 1)
+        else if (team == 2)
         {
             m_team2Spawnpoints.remove(spawnpoint);
         }
@@ -146,26 +147,22 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 void SpawnSystem::spawnPlayer(int team)
 {
     ecs::Entity *newPlayer = nullptr;
-    if (team == 0)
+    if (team == 1)
     {
         newPlayer = m_world->CreateEntityFromArchetype(
             WORLD_ARCHETYPE_PATH "Player1.uatype",
-            "SpawnedPlayer"
+            "SpawnedPlayerTeam1"
             );
     }
     else
     {
         newPlayer = m_world->CreateEntityFromArchetype(
             WORLD_ARCHETYPE_PATH "Player2.uatype",
-            "SpawnedPlayer"
+            "SpawnedPlayerTeam2"
             );
     }
 
     auto *playerTransform = newPlayer->GetTransform();
-
-    auto *playerInput = newPlayer->GetComponent<PlayerInput>();
-
-    playerInput->id = team;
 
     // get spawn position to place the player at and actually spawn the player
     playerTransform->SetWorldPosition(getSpawnPosition(team, 10.0f));
@@ -176,7 +173,7 @@ ursine::SVec3 SpawnSystem::getSpawnPosition(int team, float yOffset)
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    const std::list<Spawnpoint *>& spawnList = (team == 0) ? m_team1Spawnpoints : m_team2Spawnpoints;
+    const std::list<Spawnpoint *>& spawnList = (team == 1) ? m_team1Spawnpoints : m_team2Spawnpoints;
 
 
     std::uniform_int_distribution<> randNo(0, static_cast<int>(spawnList.size()) - 1);

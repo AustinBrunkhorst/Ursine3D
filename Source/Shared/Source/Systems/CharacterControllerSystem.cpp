@@ -65,10 +65,4 @@ void CharacterControllerSystem::Process(Entity *entity)
     if (input->Jump( ))
         rigidbody->AddForce({ 0.0f, controller->jumpSpeed, 0.0f });
 
-    int killCheck = input->KillTeamCheat();
-    if (killCheck > -1)
-    {
-        m_world->GetSystemManager()->GetSystem<SpawnSystem>()->DespawnTeam(killCheck);
-    }
-
 }
