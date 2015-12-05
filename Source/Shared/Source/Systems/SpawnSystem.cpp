@@ -52,8 +52,8 @@ void SpawnSystem::OnInitialize(void)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
 
-    m_world->GetEntitySystem(RoundSystem)->Listener(this)
-        .On(ROUND_START, &SpawnSystem::onRoundStart);
+    /*m_world->GetEntitySystem(RoundSystem)->Listener(this)
+        .On(ROUND_START, &SpawnSystem::onRoundStart);*/
 }
 
 void SpawnSystem::OnRemove(void)
@@ -62,8 +62,8 @@ void SpawnSystem::OnRemove(void)
         .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &SpawnSystem::onComponentAdded)
         .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &SpawnSystem::onComponentRemoved);
 
-    m_world->GetEntitySystem(RoundSystem)->Listener(this)
-        .Off(ROUND_START, &SpawnSystem::onRoundStart);
+    /*m_world->GetEntitySystem(RoundSystem)->Listener(this)
+        .Off(ROUND_START, &SpawnSystem::onRoundStart);*/
 }
 
 void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))

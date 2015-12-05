@@ -6,7 +6,7 @@ namespace ursine
 {
     namespace ecs
     {
-        const auto kSerializationVersion = "0.0submission";
+        const auto kSerializationVersion = "0.2submission";
 
         class SerializationException
         {

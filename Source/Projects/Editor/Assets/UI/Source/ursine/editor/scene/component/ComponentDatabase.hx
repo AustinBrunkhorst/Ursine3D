@@ -117,9 +117,9 @@ class ComponentDatabase {
             typeName = type.name;
         } else {
             typeName = Reflect.field( typeOverride, 'type' );
-        }
 
-        trace( typeName );
+            type = m_typeDB[ typeName ];
+        }
 
         var handler = m_fieldInspectionHandlers.get( typeName );
 
