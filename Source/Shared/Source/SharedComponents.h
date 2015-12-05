@@ -5,3 +5,5 @@
 #include "Components/PlayerInputComponent.h"
 #include "Components/HealthComponent.h"
 #include "Components/SpawnpointComponent.h"
+#include "Components/CommandQueueComponent.h"
+#include "Components/CommandInputControllerComponent.h"

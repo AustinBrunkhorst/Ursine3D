@@ -14,4 +14,9 @@ public:
     float jumpSpeed;
 	float rotateSpeed;
 
+    // TEMPORARY I AM SO SORRY
+    ursine::SVec3 position;
+    ursine::Vec2 moveDir;
+    ursine::Vec2 lookDir;
+    bool jump;
 } Meta(Enable, DisplayName("CharacterController"));

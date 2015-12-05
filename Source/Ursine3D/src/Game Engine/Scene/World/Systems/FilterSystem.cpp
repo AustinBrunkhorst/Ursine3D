@@ -20,8 +20,13 @@ namespace ursine
 {
     namespace ecs
     {
-        FilterSystem::FilterSystem(World *world, const Filter &filter)
+        FilterSystem::FilterSystem(
+                World *world, 
+                const Filter &filter, 
+                EventHandlerPriority updatePriority
+            )
             : EntitySystem( world )
+            , m_updatePriority( updatePriority )
             , m_filter( filter ) { }
 
         void FilterSystem::onComponentChange(EVENT_HANDLER(World))
@@ -117,7 +122,7 @@ namespace ursine
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .On( WORLD_UPDATE, &FilterSystem::onUpdate );
+                .On( WORLD_UPDATE, &FilterSystem::onUpdate, m_updatePriority );
         }
 
         void FilterSystem::OnRemove(void)

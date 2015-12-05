@@ -31,14 +31,13 @@ CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
 void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
-    auto *input = entity->GetComponent<PlayerInput>( );
     auto moveSpeed = controller->moveSpeed;
 	auto rotateSpeed = controller->rotateSpeed;
 
     auto transform = entity->GetTransform( );
     auto rigidbody = entity->GetComponent<Rigidbody>( );
     
-    float x = input->LookDir( ).X( );
+    float x = controller->lookDir.X( );
 
     if (abs( x ) > 0.1f)
     {
@@ -49,7 +48,7 @@ void CharacterControllerSystem::Process(Entity *entity)
     else
         rigidbody->SetAngularVelocity({ 0.0f, 0.0f, 0.0f });
 
-    auto move = input->MoveDir( ) * moveSpeed;
+    auto move = controller->moveDir * moveSpeed;
 
     auto forward = transform->GetForward( ) * move.Y( );
     auto strafe = transform->GetRight( ) * move.X( );
@@ -58,6 +57,9 @@ void CharacterControllerSystem::Process(Entity *entity)
 
     rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
 
-    if (input->Jump( ))
+    if ( controller->jump )
+    {
         rigidbody->AddForce({ 0.0f, controller->jumpSpeed, 0.0f });
+        controller->jump = false;
+    }
 }

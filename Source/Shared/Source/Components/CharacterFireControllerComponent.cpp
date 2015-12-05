@@ -4,17 +4,17 @@
 NATIVE_COMPONENT_DEFINITION( CharacterFireController );
 
 CharacterFireController::CharacterFireController(void)
-    : BaseComponent( )
-    , m_fireRate( 0.1 )
-    , m_fireRange( 1000.0f )
-    , m_fireOffset( ursine::SVec3( 0, 0, 0 ) )
-    , m_triggerFire( false )
-    , m_fireTimer( 0.0f )
-    , m_canFire( false )
-    , m_accuracy( 0 )
-    , m_damage( 10 )
-    , m_shotStartColor( ursine::Color( 1, 0, 0, 1 ) )
-    , m_shotEndColor( ursine::Color( 0, 1, 0.5, 1 ) )
+    : BaseComponent()
+    , m_fireRate(0.1)
+    , m_fireRange(1000.0f)
+    , m_fireOffset(ursine::SVec3(0, 0, 0))
+    , m_triggerFire(false)
+    , m_fireTimer(0.0f)
+    , m_canFire(false)
+    , m_accuracy(0)
+    , m_damage(10)
+    , m_shotStartColor(ursine::Color(1, 0, 0, 1))
+    , m_shotEndColor(ursine::Color(0, 1, 0.5, 1))
 {
 
 }
@@ -50,7 +50,7 @@ bool CharacterFireController::CanFire(void) const
     if ( m_triggerFire )
         return m_canFire;
 
-    return m_fireTimer <= 0;
+    return m_fireTimer <= 0 && m_canFire;
 }
 
 float CharacterFireController::GetFireRange(void) const
