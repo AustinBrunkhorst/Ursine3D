@@ -163,15 +163,7 @@ namespace ursine
 
         void World::Update(void)
         {
-            while (m_deleted.size( ))
-            {
-                auto entity = m_deleted.back( );
-
-                m_deleted.pop_back( );
-
-                m_nameManager->Remove( entity );
-                m_entityManager->Remove( entity );
-            }
+            clearDeletionQueue( );
 
             Dispatch( WORLD_UPDATE, EventArgs::Empty );
         }
@@ -211,11 +203,29 @@ namespace ursine
             }
         }
 
-        void World::deleteEntity(Entity *entity)
+        void World::queueEntityDeletion(Entity *entity)
         {
             m_entityManager->BeforeRemove( entity );
 
             m_deleted.push_back( entity );
+        }
+
+        void World::deleteEntity(Entity *entity)
+        {
+            m_nameManager->Remove( entity );
+            m_entityManager->Remove( entity );
+        }
+
+        void World::clearDeletionQueue(void)
+        {
+            while (m_deleted.size( ))
+            {
+                auto entity = m_deleted.back( );
+
+                m_deleted.pop_back( );
+
+                deleteEntity( entity );
+            }
         }
 
         Entity *World::loadArchetype(const Json &data)

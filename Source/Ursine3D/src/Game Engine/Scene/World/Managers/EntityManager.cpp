@@ -17,6 +17,8 @@
 #include "Entity.h"
 #include "Filter.h"
 #include "TransformComponent.h"
+#include "EntitySerializer.h"
+
 #include <queue>
 
 namespace ursine
@@ -95,6 +97,17 @@ namespace ursine
             dispatchCreated( entity );
 
             return entity;
+        }
+         
+        Entity *EntityManager::Clone(Entity *entity)
+        {
+            URSINE_TODO( "optimize by skipping the serialization step" );
+
+            EntitySerializer serializer;
+
+            auto data = serializer.SerializeArchetype( entity );
+
+            return serializer.DeserializeArchetype( m_world, data );
         }
 
         EntityVector EntityManager::GetRootEntities(void)
@@ -310,6 +323,10 @@ namespace ursine
 
         void EntityManager::BeforeRemove(Entity *entity)
         {
+            // for each child, remove it
+            for (auto child : entity->GetTransform( )->GetChildren( ))
+                BeforeRemove( child->GetOwner( ) );
+
             EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
 
             // we're removing man

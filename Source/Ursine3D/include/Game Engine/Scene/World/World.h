@@ -21,6 +21,8 @@
 
 #include <vector>
 
+class EntityHandler;
+
 namespace ursine
 {
     class Screen;
@@ -87,6 +89,7 @@ namespace ursine
             void DispatchLoad(void);
         private:
             friend class Entity;
+            friend class EntityHandler;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
@@ -109,7 +112,10 @@ namespace ursine
             World(const World &rhs) = delete;
 
             // adds an entity to the deletion queue
+            void queueEntityDeletion(Entity *entity);
             void deleteEntity(Entity *entity);
+            
+            void clearDeletionQueue(void);
 
             Entity *loadArchetype(const Json &data);
         } Meta(Enable, WhiteListMethods);

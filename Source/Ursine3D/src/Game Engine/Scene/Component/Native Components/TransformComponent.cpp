@@ -364,6 +364,11 @@ namespace ursine
             return m_children[index];
         }
 
+        const std::vector<Transform *> &Transform::GetChildren(void) const
+        {
+            return m_children;
+        }
+
         uint Transform::GetSiblingIndex(void) const
         {
             return GetOwner( )->GetSiblingIndex( );
@@ -376,10 +381,10 @@ namespace ursine
 
         void Transform::SetSiblingIndex(uint index)
         {
+            GetOwner( )->SetSiblingIndex( index );
+
             if (m_parent == nullptr)
                 return;
-
-            GetOwner( )->SetSiblingIndex( index );
 
             auto &childArray = m_parent->m_children;
 
@@ -561,7 +566,11 @@ namespace ursine
                 return;
 
             m_parent = newParent;
-            m_root = newParent ? newParent->m_root : this;
+
+			if (newParent)
+				setRoot( newParent->m_root );
+			else
+				setRoot( this );
 
             // unsubscribe this entity from the old parent's events
             if (oldParent)
@@ -580,6 +589,16 @@ namespace ursine
 
             // dispatch messages for hierarchical change
             dispatchParentChange( oldParent, newParent );
+        }
+
+		void Transform::setRoot(Transform *root)
+        {
+			m_root = root;
+
+			for (auto &c : m_children)
+			{
+				c->setRoot( root );
+			}
         }
     }
 }

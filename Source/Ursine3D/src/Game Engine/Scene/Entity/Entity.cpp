@@ -56,7 +56,7 @@ namespace ursine
 
             m_deleting = true;
 
-            m_world->deleteEntity( this );
+            m_world->queueEntityDeletion( this );
         }
 
         EntityID Entity::GetID(void) const
@@ -152,6 +152,11 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////
         // Utilities
         ////////////////////////////////////////////////////////////////////////
+
+        Entity *Entity::Clone(void)
+        {
+            return m_world->m_entityManager->Clone( this );
+        }
 
         LocalTimerManager &Entity::GetTimers(void)
         {

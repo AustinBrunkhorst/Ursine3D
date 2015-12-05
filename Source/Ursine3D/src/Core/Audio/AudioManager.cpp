@@ -79,6 +79,16 @@ namespace ursine
 	{
 		ListenerIndex list[8] = { LISTENER_ONE, LISTENER_TWO, LISTENER_THREE, LISTENER_FOUR,
 								LISTENER_FIVE, LISTENER_SIX, LISTENER_SEVEN, LISTENER_EIGHT };
+            ListenerIndex::One, 
+            ListenerIndex::Two, 
+            ListenerIndex::Three, 
+            ListenerIndex::Four,
+            ListenerIndex::Five, 
+            ListenerIndex::Six, 
+            ListenerIndex::Seven, 
+            ListenerIndex::Eight 
+        };
+
 		auto head = new ListenerNode;
 		head->listener = list[0];
 		head->available = true;
@@ -167,7 +177,7 @@ namespace ursine
 		}
 
 		UAssert(false, "Wwise: Requested Too Many Listeners");
-		return LISTENER_NONE;
+		return ListenerIndex::None;
 	}
 
 	void AudioManager::FreeListener(ListenerIndex listener)

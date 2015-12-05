@@ -55,6 +55,8 @@ namespace ursine
                     //lock the buffer
                     result = m_deviceContext->Map(m_bufferArray[ buffer ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
+                    UAssert(result == S_OK, "Failed to lock buffer for writing!");
+
                     //grab data
                     dataPtr = reinterpret_cast<T*>(mappedResource.pData);
 

@@ -16,7 +16,7 @@
 #include <PhysicsSystem.h>
 #include <SystemManager.h>
 #include <Components/HealthComponent.h>
-
+#include <AnimatorComponent.h>
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -29,20 +29,20 @@ namespace
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
 
 CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World *world )
-    : FilterSystem( world, Filter( ).All<CharacterFireController, PlayerInput>( ) )
+    : FilterSystem( world, Filter( ).All<CharacterFireController>( ) )
 {
 
 }
 
 void CharacterFireControllerSystem::Process( Entity *entity )
 {
-    auto *input = entity->GetComponent<PlayerInput>( );
+    auto *input = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
 	auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
 
     // check our states
-    if ( input->ResetTrigger( ) )
+    if ( input && input->ResetTrigger( ) )
     {
         fireController->SetFireState( true );
     }
@@ -54,6 +54,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     auto childrenVector = entity->GetChildren( );
 
     Entity *hotspot = nullptr;
+	Entity *arm = nullptr;
 
     for ( auto &x : *childrenVector )
     {
@@ -62,18 +63,28 @@ void CharacterFireControllerSystem::Process( Entity *entity )
         if ( currentChild->GetName( ) == "FiringHotspot" )
         {
             hotspot = currentChild;
-            break;
+            continue;
         }
+		if (currentChild->GetName( ) == "FPSArm")
+		{
+			arm = currentChild;
+			continue;
+		}
     }
 
     // firing a ray
     if ( hotspot != nullptr && input->Fire( ) && fireController->CanFire() )
     {
-        //printf( "BANG!\n\n" );
+        // animation stuff
+        auto *armAnimator = arm->GetComponent<Animator>( );
 
-		// Play that bang sound
-		if (emitter)
-			emitter->AddSoundToPlayQueue(FireGun);
+        // reset firing sequence
+        armAnimator->SetAnimationTimePosition( 0.1 );
+        armAnimator->SetTimeScalar( 1.0f / fireController->GetFireRate( ) );
+
+        // Play that bang sound
+	if (emitter)
+            emitter->AddSoundToPlayQueue(FireGun);
 
         fireController->Fire( );
 

@@ -180,9 +180,9 @@ namespace ursine
                 {
                     auto *child = entityManager->create( );
 
-                    deserializeInstance( child, childData, version );
+					deserializeInstance(child, childData, version);
 
-                    entity->m_transform->AddChildAlreadyInLocal( child->m_transform );
+					entity->m_transform->AddChildAlreadyInLocal(child->m_transform);
                 }
             }
         }

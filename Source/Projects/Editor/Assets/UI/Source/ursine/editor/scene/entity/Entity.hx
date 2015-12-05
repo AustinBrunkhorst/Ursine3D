@@ -133,6 +133,10 @@ class Entity implements IEventContainer {
         m_handler.saveAsArchetype( );
     }
 
+    public function clone() : Entity {
+        return new Entity( m_handler.clone( ) );
+    }
+
     private function onComponentAdded(e) {
         if (e.uniqueID == uniqueID)
             events.trigger( EntityEvent.ComponentAdded, e );

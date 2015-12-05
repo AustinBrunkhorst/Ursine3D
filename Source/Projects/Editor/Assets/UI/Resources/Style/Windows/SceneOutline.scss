@@ -6,4 +6,8 @@
   x-tree-view.root-view {
     min-height: 100%;
   }
+
+  x-tree-view-item.hidden {
+    display: none;
+  }
 }

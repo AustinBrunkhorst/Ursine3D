@@ -9,6 +9,9 @@
 #include "PlayerInputComponent.h"
 #include "AudioEmitterComponent.h"
 
+#include "SpawnSystem.h"
+
+#include <EntitySystem.h>
 #include <GamepadManager.h>
 #include <MouseManager.h>
 #include <KeyboardManager.h>
@@ -56,35 +59,34 @@ void CharacterControllerSystem::Process(Entity *entity)
     
     float x = input->LookDir( ).X( );
 
+	auto child = transform->GetChild(0);
+
     if (abs( x ) > 0.1f)
     {
+		// Get the first child (model + camera) and rotate it.
         float angle = x * rotateSpeed;
 
-        rigidbody->AddTorque({ 0.0f, angle, 0.0f });
+		child->SetWorldRotation( child->GetWorldRotation( ) * SQuat( 0.0f, angle, 0.0f ) );
     }
-    else
-        rigidbody->SetAngularVelocity({ 0.0f, 0.0f, 0.0f });
 
     auto move = input->MoveDir( ) * moveSpeed;
 
-    auto forward = transform->GetForward( ) * move.Y( );
-    auto strafe = transform->GetRight( ) * move.X( );
+    auto forward = child->GetForward( ) * move.Y( );
+    auto strafe = child->GetRight( ) * move.X( );
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 
-    rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
-
-    if (input->Jump( ) && !jump)
-    {
+	if (input->Jump( ) && !jump)
+        {
+		vel.Y( ) = controller->jumpSpeed;
 		emitter->AddSoundToPlayQueue(kJumpSound);
 		startHeight = transform->GetWorldPosition().Y();
-		rigidbody->AddForce({ 0.0f, controller->jumpSpeed, 0.0f });
 		jump = true;
 		m_timers.Create(TimeSpan::FromSeconds(Jumpduration)).Completed([&] {
 			jump = false;
 			land = true;
 		});
-    }
+       }
 	else if (move != Vec2::Zero() && step && !jump)
 	{
 		emitter->AddSoundToPlayQueue(kRunSound);
@@ -98,4 +100,6 @@ void CharacterControllerSystem::Process(Entity *entity)
 		emitter->AddSoundToPlayQueue(kLandSound);
 		land = false;
 	}
+
+        rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
 }

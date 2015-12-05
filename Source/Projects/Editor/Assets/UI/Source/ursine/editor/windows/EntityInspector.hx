@@ -28,6 +28,7 @@ class EntityInspector extends WindowHandler {
 
     // controls
     private var m_btnSaveArchetype : Button;
+    private var m_btnCopyEntity : Button;
     private var m_btnAddComponent : Button;
 
     private var m_openCache : Map<String, Bool>;
@@ -95,13 +96,13 @@ class EntityInspector extends WindowHandler {
 
     public function initializeInspection() {
         if (m_inspectedEntity == null) {
-            m_btnSaveArchetype.style.display = 'none';
+            m_headerToolbar.style.display = 'none';
             m_btnAddComponent.style.display = 'none';
 
             return;
         }
 
-        m_btnSaveArchetype.style.display = 'block';
+        m_headerToolbar.style.display = 'block';
         m_btnAddComponent.style.display = 'block';
 
         m_inspectedEntity.events
@@ -175,9 +176,15 @@ class EntityInspector extends WindowHandler {
 
     private function onArchetypeSaveClicked(e : js.html.MouseEvent) {
         // @@TODO: multi selection handling
-        if (m_inspectedEntity != null) {
-            m_inspectedEntity.saveAsArchetype( );
-        }
+        m_inspectedEntity.saveAsArchetype( );
+    }
+
+    private function onCopyEntityClicked(e : js.html.MouseEvent) {
+        var entity = m_inspectedEntity.clone( );
+
+        entity.setName( m_inspectedEntity.getName( ) + ' Copy' );
+
+        entity.select( );
     }
 
     private function onAddComponentClicked(e : js.html.MouseEvent) {
@@ -229,13 +236,23 @@ class EntityInspector extends WindowHandler {
             {
                 m_btnSaveArchetype.classList.add( 'save-archetype' );
 
-                // hidden initially
-                m_btnSaveArchetype.style.display = 'none';
-
                 m_btnSaveArchetype.addEventListener( 'click', onArchetypeSaveClicked );
 
                 m_headerToolbar.appendChild( m_btnSaveArchetype );
             }
+
+            // Button Copy Archetype
+            m_btnCopyEntity = new Button( );
+            {
+                m_btnCopyEntity.classList.add( 'copy-entity' );
+
+                m_btnCopyEntity.addEventListener( 'click', onCopyEntityClicked );
+
+                m_headerToolbar.appendChild( m_btnCopyEntity );
+            }
+
+            // hidden initially
+            m_headerToolbar.style.display = 'none';
         }
 
         // Inspectors container
