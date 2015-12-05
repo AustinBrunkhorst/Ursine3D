@@ -14,6 +14,7 @@
 #pragma once
 
 #include <EntitySystem.h>
+#include "RoundSystem.h"
 
 
         class ScoreSystem : public ursine::ecs::EntitySystem
@@ -23,7 +24,18 @@
         public:
             ScoreSystem(ursine::ecs::World *world);
 
+            int GetKills(int player) const;
+            void AddKill(int player);
+
+            int GetCurrentRound(void) const;
+
+
         private:
+
+            void OnInitialize(void) override;
+            void OnRemove(void) override;
+
+            void onRoundOver(EVENT_HANDLER(RoundSystem));
 
             int m_player1Kills;
             int m_player2Kills;
@@ -32,7 +44,5 @@
             int m_player2Wins;
             
             int m_currRound;
-            int m_playerCount;
-            int m_maxPlayerCount;
 
         } Meta(Enable);
