@@ -52,7 +52,7 @@ void CommandQueue::Update(void)
 
     while ( m_commandQueue.size() > 0 )
     {
-        auto &command = m_commandQueue.top();
+        auto command = m_commandQueue.top();
         m_commandQueue.pop();
 
         command->Execute(GetOwner());
