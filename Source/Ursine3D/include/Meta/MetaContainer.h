@@ -19,7 +19,7 @@ namespace ursine
         class MetaContainer
         {
         public:
-            MetaManager &GetMeta(void);
+            const MetaManager &GetMeta(void) const;
 
         private:
             MetaContainer &operator=(const MetaContainer &rhs) = delete;

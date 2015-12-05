@@ -7,7 +7,7 @@ namespace ursine
 {
     namespace meta
     {
-        MetaManager &MetaContainer::GetMeta(void)
+        const MetaManager &MetaContainer::GetMeta(void) const
         {
             return m_meta;
         }

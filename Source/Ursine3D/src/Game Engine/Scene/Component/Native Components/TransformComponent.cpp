@@ -126,6 +126,18 @@ namespace ursine
             return m_localRotation.GetEulerAngles( );
         }
 
+        void Transform::SetLocalEulerEditor(const SQuat &euler)
+        {
+            SetLocalEuler( SVec3( euler.X( ), euler.Y( ), euler.Z( ) ) );
+        }
+
+        SQuat Transform::GetLocalEulerEditor(void) const
+        {
+            auto euler = GetLocalEuler( );
+
+            return SQuat( euler.X( ), euler.Y( ), euler.Z( ), 0.0f );
+        }
+
         void Transform::SetWorldRotation(const SQuat &rotation)
         {
             auto oldRotation = m_localRotation;

@@ -17,7 +17,7 @@ ursine_default_project(Editor
     RECURSIVE_INCLUDES
     BUILD_META
     INCLUDE_INSTALLER
-    INSTALLER_VERSION "0.0submission"
+    INSTALLER_VERSION "0.1submission"
     META_HEADER "Reflection.h"
     META_DEPENDENCIES ${meta_dependencies}
     PCH_NAME "Precompiled"

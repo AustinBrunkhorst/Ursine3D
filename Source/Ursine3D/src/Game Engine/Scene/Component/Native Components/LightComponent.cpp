@@ -42,7 +42,7 @@ namespace ursine
 
             updateRenderer( );
         }
-
+        
         graphics::GfxHND Light::GetHandle(void) const
         {
             return m_handle;

@@ -32,7 +32,7 @@ namespace ursine
 
 			m_simulation.SetDebugDrawer( &m_debugDrawer );
 
-            SetEnableDebugDraw( false );
+            SetEnableDebugDraw( true );
         }
 
         void PhysicsSystem::SetGravity(const SVec3& gravity)

@@ -160,12 +160,6 @@ Type.createInstance = function(cl,args) {
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = ["haxe","IMap"];
-var haxe_Log = function() { };
-$hxClasses["haxe.Log"] = haxe_Log;
-haxe_Log.__name__ = ["haxe","Log"];
-haxe_Log.trace = function(v,infos) {
-	js_Boot.__trace(v,infos);
-};
 var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -298,96 +292,6 @@ js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
-var js_Boot = function() { };
-$hxClasses["js.Boot"] = js_Boot;
-js_Boot.__name__ = ["js","Boot"];
-js_Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-};
-js_Boot.__trace = function(v,i) {
-	var msg;
-	if(i != null) msg = i.fileName + ":" + i.lineNumber + ": "; else msg = "";
-	msg += js_Boot.__string_rec(v,"");
-	if(i != null && i.customParams != null) {
-		var _g = 0;
-		var _g1 = i.customParams;
-		while(_g < _g1.length) {
-			var v1 = _g1[_g];
-			++_g;
-			msg += "," + js_Boot.__string_rec(v1,"");
-		}
-	}
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js_Boot.__unhtml(msg) + "<br/>"; else if(typeof console != "undefined" && console.log != null) console.log(msg);
-};
-js_Boot.__string_rec = function(o,s) {
-	if(o == null) return "null";
-	if(s.length >= 5) return "<...>";
-	var t = typeof(o);
-	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
-	switch(t) {
-	case "object":
-		if(o instanceof Array) {
-			if(o.__enum__) {
-				if(o.length == 2) return o[0];
-				var str2 = o[0] + "(";
-				s += "\t";
-				var _g1 = 2;
-				var _g = o.length;
-				while(_g1 < _g) {
-					var i1 = _g1++;
-					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
-				}
-				return str2 + ")";
-			}
-			var l = o.length;
-			var i;
-			var str1 = "[";
-			s += "\t";
-			var _g2 = 0;
-			while(_g2 < l) {
-				var i2 = _g2++;
-				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
-			}
-			str1 += "]";
-			return str1;
-		}
-		var tostr;
-		try {
-			tostr = o.toString;
-		} catch( e ) {
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
-			return "???";
-		}
-		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
-			var s2 = o.toString();
-			if(s2 != "[object Object]") return s2;
-		}
-		var k = null;
-		var str = "{\n";
-		s += "\t";
-		var hasp = o.hasOwnProperty != null;
-		for( var k in o ) {
-		if(hasp && !o.hasOwnProperty(k)) {
-			continue;
-		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
-			continue;
-		}
-		if(str.length != 2) str += ", \n";
-		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
-		}
-		s = s.substring(1);
-		str += "\n" + s + "}";
-		return str;
-	case "function":
-		return "<function>";
-	case "string":
-		return o;
-	default:
-		return String(o);
-	}
-};
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
 	this.mainMenu = new MainMenuControl();
@@ -548,10 +452,10 @@ var ursine_editor_menus_EditMenu = function() { };
 $hxClasses["ursine.editor.menus.EditMenu"] = ursine_editor_menus_EditMenu;
 ursine_editor_menus_EditMenu.__name__ = ["ursine","editor","menus","EditMenu"];
 ursine_editor_menus_EditMenu.doUndo = function() {
-	haxe_Log.trace("undo",{ fileName : "EditMenu.hx", lineNumber : 7, className : "ursine.editor.menus.EditMenu", methodName : "doUndo"});
+	console.log("undo");
 };
 ursine_editor_menus_EditMenu.doRedo = function() {
-	haxe_Log.trace("redo",{ fileName : "EditMenu.hx", lineNumber : 12, className : "ursine.editor.menus.EditMenu", methodName : "doRedo"});
+	console.log("redo");
 };
 ursine_editor_menus_EditMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_EditMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -668,7 +572,11 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 		return Type.createInstance(handler,[entity,inspection]);
 	}
 	,createFieldInspector: function(owner,instance,field,type) {
-		var handler = this.m_fieldInspectionHandlers.get(type.name);
+		var typeOverride = Reflect.field(field.meta,ursine_native_Property.ForceEditorType);
+		var typeName;
+		if(typeOverride == null) typeName = type.name; else typeName = Reflect.field(typeOverride,"type");
+		console.log(typeName);
+		var handler = this.m_fieldInspectionHandlers.get(typeName);
 		if(handler == null) handler = ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector;
 		return Type.createInstance(handler,[owner,instance,field,type]);
 	}
@@ -1410,7 +1318,6 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	}
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
-		haxe_Log.trace("entity removed",{ fileName : "SceneOutline.hx", lineNumber : 111, className : "ursine.editor.windows.SceneOutline", methodName : "onEntityRemoved", customParams : [e.uniqueID]});
 		if(item == null) return;
 		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
 		item.parentNode.removeChild(item);
@@ -1551,7 +1458,6 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			++_g;
 			var item = this.m_entityItems.h[uid];
 			if(item == null) continue;
-			haxe_Log.trace("couldnt find selected entity",{ fileName : "SceneOutline.hx", lineNumber : 337, className : "ursine.editor.windows.SceneOutline", methodName : "deleteSelectedEntities"});
 			var entity = item.entity;
 			if(entity.isRemovalEnabled()) entity.remove(); else {
 			}
@@ -1679,7 +1585,7 @@ ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__meta__ =
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Color"]}};
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","float","double"]}};
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
-ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4"]}};
+ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4","ursine::SQuat"]}};
 ursine_editor_scene_entity_EntityEvent.EntityAdded = "EntityAdded";
 ursine_editor_scene_entity_EntityEvent.EntityRemoved = "EntityRemoved";
 ursine_editor_scene_entity_EntityEvent.EntityNameChanged = "EntityNameChanged";
@@ -1689,5 +1595,6 @@ ursine_editor_scene_entity_EntityEvent.ComponentRemoved = "ComponentRemoved";
 ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
+ursine_native_Property.ForceEditorType = "ForceEditorType";
 Application.main();
 })();
