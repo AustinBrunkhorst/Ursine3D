@@ -38,13 +38,13 @@ namespace ursine
 
 			static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
 
-			void AssignListener(AkGameObjectID obj, AkUInt32 listeners);
+			void AssignListener(AkGameObjectID obj, ListenerIndex listeners);
 
 			void SetListener3DPosition(const AkVector orientation_forward,
-				const AkVector orientation_up, const AkVector position, const AkUInt32 listeners);
+				const AkVector orientation_up, const AkVector position, const ListenerIndex listeners);
 
 			void SetListener3DPosition(const SVec3 orientation_forward,
-				const SVec3 orientation_up, const SVec3 position, const AkUInt32 listeners);
+				const SVec3 orientation_up, const SVec3 position, const ListenerIndex listeners);
 
 			void SetObject3DPosition(AkGameObjectID obj, const AkSoundPosition position);
 

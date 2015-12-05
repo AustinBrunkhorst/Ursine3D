@@ -12,7 +12,7 @@ namespace ursine
 			: BaseComponent()
 		    , m_loop(false)
 			, m_mute(false)
-		    , m_listeners(LISTENER_NONE)
+		    , m_listeners(ListenerIndex::One)
 		    , m_volume(100.0f)  { }
 
 		float AudioEmitterComponent::GetVolume() const
@@ -74,6 +74,11 @@ namespace ursine
 		{
 			if (!m_mute)
 				m_soundsFAF.push( sound );
+		}
+
+		ListenerIndex AudioEmitterComponent::GetListeners()
+		{
+			return m_listeners;
 		}
 	}
 }

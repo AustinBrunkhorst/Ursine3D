@@ -77,8 +77,7 @@ namespace ursine
 
 	void AudioManager::PopulateList()
 	{
-		ListenerIndex list[8] = { LISTENER_ONE, LISTENER_TWO, LISTENER_THREE, LISTENER_FOUR,
-								LISTENER_FIVE, LISTENER_SIX, LISTENER_SEVEN, LISTENER_EIGHT };
+		ListenerIndex list[8] = {
             ListenerIndex::One, 
             ListenerIndex::Two, 
             ListenerIndex::Three, 

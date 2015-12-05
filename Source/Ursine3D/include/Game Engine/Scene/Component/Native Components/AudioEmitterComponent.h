@@ -50,13 +50,15 @@ namespace ursine
 			bool SoundsEmpty();
 			void AddSoundToPlayQueue( std::string sound );
 
+			ListenerIndex GetListeners();
+
 			Meta( Disable )
 				void OnInitialize( void ) override;
 
 		private:
 			bool m_loop;
 			bool m_mute;
-			AkUInt32 m_listeners;
+			ListenerIndex m_listeners;
 			float m_volume;
 			
 			// fire and forget

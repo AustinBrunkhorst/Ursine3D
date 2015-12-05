@@ -24,6 +24,7 @@ using namespace ursine::ecs;
 namespace
 {
 	const std::string FireGun = "FIRE_GUN_HAND";
+	const std::string TakeDamage = "Player_Take_Damage";
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
@@ -39,7 +40,7 @@ void CharacterFireControllerSystem::Process( Entity *entity )
     auto *input = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<PlayerInput>( );
     auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
-	auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
+	auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitterComponent>( );
 
     // check our states
     if ( input && input->ResetTrigger( ) )
@@ -131,6 +132,8 @@ void CharacterFireControllerSystem::Process( Entity *entity )
             if ( health != nullptr )
             {
                 health->DealDamage( fireController->GetDamage() );
+				if (emitter)
+					emitter->AddSoundToPlayQueue(TakeDamage);
             }
         }
     }

@@ -55,7 +55,7 @@ namespace ursine
 					);
 				auto& handle = m_emitters[args->entity->GetUniqueID()]->m_handle;
 				CreateAudioObject(handle);
-				AssignListener(handle, LISTENER_ONE);
+				AssignListener(handle, m_emitters[args->entity->GetUniqueID()]->GetListeners());
 			}
 
 			else if (args->component->Is<AudioListener>())
@@ -114,7 +114,7 @@ namespace ursine
 
 				auto trans = m_world->GetEntity(emitter.first)->GetTransform();
 
-				//if (dirty)
+				if (dirty)
 					SetObject3DPosition(handle, trans->GetWorldPosition(), 
 						trans->GetForward());
 
@@ -133,9 +133,9 @@ namespace ursine
 
 				auto trans = m_world->GetEntity(listener.first)->GetTransform();
 
-				//if (dirty)
+				if (dirty)
 					SetListener3DPosition(trans->GetForward(), trans->GetUp(), 
-						trans->GetWorldPosition(), static_cast<unsigned>(index));
+						trans->GetWorldPosition(), index);
 			}
 		}
 
@@ -147,22 +147,22 @@ namespace ursine
 			}
 		}
 
-		void AudioSystem::AssignListener(AkGameObjectID obj, AkUInt32 listeners)
+		void AudioSystem::AssignListener(AkGameObjectID obj, ListenerIndex listeners)
 		{
-			if (listeners == static_cast<unsigned>( ListenerIndex::None ))
+			if (listeners == ListenerIndex::None)
 			{
 				UWarning("Wwise: Cannot Set Zero Active Listeners");
 				return;
 			}
 
-			if (AK::SoundEngine::SetActiveListeners(obj, listeners) != AK_Success)
+			if (AK::SoundEngine::SetActiveListeners(obj, static_cast<AkUInt32>(listeners)) != AK_Success)
 			{
 				UWarning("Wwise: Cannot Set Active Listeners");
 			}
 		}
 
 		void AudioSystem::SetListener3DPosition(const AkVector orientation_forward,
-			const AkVector orientation_up, const AkVector position, const AkUInt32 listeners)
+			const AkVector orientation_up, const AkVector position, const ListenerIndex listeners)
 		{
 			if (position.X == 0 &&
 				position.Y == 0 &&
@@ -175,14 +175,14 @@ namespace ursine
 			listenerPosition.OrientationFront = orientation_forward;
 			listenerPosition.Position = position;
 
-			if (AK::SoundEngine::SetListenerPosition(listenerPosition, listeners) != AK_Success)
+			if (AK::SoundEngine::SetListenerPosition(listenerPosition, static_cast<AkUInt32>(listeners)) != AK_Success)
 			{
 				UWarning("Wwise: Cannot Set Listener Postion");
 			}
 		}
 
 		void AudioSystem::SetListener3DPosition(const SVec3 orientation_forward,
-			const SVec3 orientation_up, const SVec3 position, const AkUInt32 listeners)
+			const SVec3 orientation_up, const SVec3 position, const ListenerIndex listeners)
 		{
 			if (position.X() == 0 &&
 				position.Y() == 0 &&
@@ -195,7 +195,7 @@ namespace ursine
 			listenerPosition.OrientationFront = orientation_forward.ToWwise();
 			listenerPosition.Position = position.ToWwise();
 
-			if (AK::SoundEngine::SetListenerPosition(listenerPosition, listeners) != AK_Success)
+			if (AK::SoundEngine::SetListenerPosition(listenerPosition, static_cast<AkUInt32>(listeners)) != AK_Success)
 			{
 				UWarning("Wwise: Cannot Set Listener Postion");
 			}

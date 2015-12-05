@@ -76,29 +76,32 @@ void CharacterControllerSystem::Process(Entity *entity)
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 
-	if (input->Jump( ) && !jump)
-        {
-		vel.Y( ) = controller->jumpSpeed;
-		emitter->AddSoundToPlayQueue(kJumpSound);
-		startHeight = transform->GetWorldPosition().Y();
-		jump = true;
-		m_timers.Create(TimeSpan::FromSeconds(Jumpduration)).Completed([&] {
-			jump = false;
-			land = true;
-		});
-       }
-	else if (move != Vec2::Zero() && step && !jump)
+	if (emitter)
 	{
-		emitter->AddSoundToPlayQueue(kRunSound);
-		step = false;
-		m_timers.Create(TimeSpan::FromSeconds(Runduration)).Completed([&]{
-			step = true;
-		});
-	}
-	if (land)
-	{
-		emitter->AddSoundToPlayQueue(kLandSound);
-		land = false;
+		if (input->Jump() && !jump)
+		{
+			vel.Y() = controller->jumpSpeed;
+			emitter->AddSoundToPlayQueue(kJumpSound);
+			startHeight = transform->GetWorldPosition().Y();
+			jump = true;
+			m_timers.Create(TimeSpan::FromSeconds(Jumpduration)).Completed([&] {
+				jump = false;
+				land = true;
+			});
+		}
+		else if (move != Vec2::Zero() && step && !jump)
+		{
+			emitter->AddSoundToPlayQueue(kRunSound);
+			step = false;
+			m_timers.Create(TimeSpan::FromSeconds(Runduration)).Completed([&] {
+				step = true;
+			});
+		}
+		if (land)
+		{
+			emitter->AddSoundToPlayQueue(kLandSound);
+			land = false;
+		}
 	}
 
         rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
