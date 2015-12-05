@@ -135,10 +135,20 @@ namespace ursine
             m_rigidbody.SetAngularVelocity( angularVelocity );
         }
 
-        SVec3 Rigidbody::GetAngularVelocity(void) const
+	    SVec3 Rigidbody::GetAngularVelocity(void) const
         {
             return m_rigidbody.GetAngularVelocity( );
         }
+
+		void Rigidbody::SetGravity(const SVec3& gravity)
+		{
+			m_rigidbody.SetGravity( gravity );
+		}
+
+		SVec3 Rigidbody::GetGravity(void) const
+		{
+			return m_rigidbody.GetGravity( );
+		}
 
         void Rigidbody::AddForce(const SVec3& force)
         {

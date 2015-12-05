@@ -57,6 +57,12 @@ namespace ursine
                 SetSleepToggle
             );
 
+			EditorField(
+				SVec3 gravity,
+				GetGravity,
+				SetGravity
+			);
+
             Rigidbody(void);
 			~Rigidbody(void);
 
@@ -95,6 +101,9 @@ namespace ursine
 
             void SetAngularVelocity(const SVec3 &angularVelocity);
             SVec3 GetAngularVelocity(void) const;
+
+			void SetGravity(const SVec3 &gravity);
+			SVec3 GetGravity(void) const;
 
             URSINE_TODO("Add ForceMode");
             void AddForce(const SVec3 &force);

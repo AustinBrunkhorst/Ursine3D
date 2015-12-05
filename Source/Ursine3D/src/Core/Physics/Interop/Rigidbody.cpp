@@ -274,7 +274,12 @@ namespace ursine
         #endif
         }
 
-        void Rigidbody::SetMass(float mass)
+	    const SVec3& Rigidbody::GetGravity(void) const
+	    {
+			return m_gravity;
+	    }
+
+	    void Rigidbody::SetMass(float mass)
         {
             m_mass = mass;
 
