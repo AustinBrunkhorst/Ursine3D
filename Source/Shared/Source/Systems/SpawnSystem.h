@@ -3,9 +3,10 @@
 #include <EntitySystem.h>
 #include "SpawnpointComponent.h"
 #include <Components/PlayerInputComponent.h>
+#include <Components/TeamComponent.h>
 
 
-        class SpawnSystem : public ursine::ecs::EntitySystem
+class SpawnSystem : public ursine::ecs::EntitySystem
         {
             ENTITY_SYSTEM;
 
@@ -29,8 +30,8 @@
             ursine::SVec3 getSpawnPosition(int team, float yOffset);
 
             //std::vector<Spawnpoint *> m_spawnpoints;
-            std::list<PlayerInput *> m_team1;
-            std::list<PlayerInput *> m_team2;
+            std::list<TeamComponent *> m_team1;
+            std::list<TeamComponent *> m_team2;
 
             std::list<Spawnpoint *> m_team1Spawnpoints;
             std::list<Spawnpoint *> m_team2Spawnpoints;
