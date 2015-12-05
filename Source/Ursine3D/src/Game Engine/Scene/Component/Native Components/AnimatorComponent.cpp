@@ -17,7 +17,7 @@ namespace ursine
             , m_debug( false )
             , m_speedScalar( 1.0f )
             , m_currentAnimation( "Take 001" )
-            , m_rigIndex( 0 )
+            , m_currentRig( "" )
         {
         }
 
@@ -42,10 +42,13 @@ namespace ursine
 
             // grab what we need
             auto *currentAnimation = AnimationBuilder::GetAnimationByName( m_currentAnimation );
-            auto *rig = AnimationBuilder::GetAnimationRigByIndex( m_rigIndex );
+            auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
 
 
             if ( currentAnimation == nullptr || rig == nullptr)
+                return;
+
+            if ( currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount() )
                 return;
             
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
@@ -205,15 +208,14 @@ namespace ursine
             m_state.SetAnimation( AnimationBuilder::GetAnimationByName( name ) );
         }
 
-        int Animator::GetRigIndex() const
+        const std::string &Animator::GetRig() const
         {
-            return m_rigIndex;
+            return m_currentRig;
         }
 
-        void Animator::SetRigIndex(const int rigIndex)
+        void Animator::SetRig(const std::string &rig)
         {
-            m_rigIndex = rigIndex;
-            if ( m_rigIndex < 0 ) m_rigIndex = 0;
+            m_currentRig = rig;
         }
 
         float Animator::GetAnimationTimePosition( ) const

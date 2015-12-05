@@ -88,9 +88,9 @@ namespace ursine
             );
 
             EditorField(
-                int rigIndex,
-                GetRigIndex,
-                SetRigIndex
+                std::string currentRig,
+                GetRig,
+                SetRig
             );
 
             EditorField(
@@ -143,8 +143,8 @@ namespace ursine
             const std::string &GetAnimation(void) const;
             void SetAnimation(const std::string &name);
 
-            int GetRigIndex( void ) const;
-            void SetRigIndex( const int rigIndex );
+            const std::string &GetRig( void ) const;
+            void SetRig(const std::string &rig);
 
             float GetAnimationTimePosition(void) const;
             void SetAnimationTimePosition(const float position);
@@ -156,7 +156,7 @@ namespace ursine
             bool m_debug;
             float m_speedScalar;
             std::string m_currentAnimation;
-            int m_rigIndex;
+            std::string m_currentRig;
 
         } Meta( Enable, DisplayName( "Animator" ) );
     }

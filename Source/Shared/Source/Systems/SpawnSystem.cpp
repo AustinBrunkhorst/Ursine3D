@@ -83,8 +83,6 @@ void SpawnSystem::OnInitialize(void)
         }
     }
 
-    //nameList.sort( [] (const name &a, const name &b)->bool{return a.lastName < b.lastName; });
-
     doCompare compfn;
     
     m_team1Spawnpoints.sort(compfn);
