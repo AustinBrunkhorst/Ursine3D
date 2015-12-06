@@ -2,13 +2,12 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** ButtonActionCommand.cpp
+** {{=file.filename}}
 **
 ** Author:
-** - Park Hyung Jun - park.hyungjun@digipen.edu
+** - {{=file.author.name}} - {{=file.author.email}}
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#include "Precompiled.h"
