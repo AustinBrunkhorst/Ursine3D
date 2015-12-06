@@ -335,7 +335,6 @@ namespace ursine
 			*  @return FbxAMatrix type matrix of the node's parent matrix
 			*/
 			FbxAMatrix GetParentTransformation(FbxNode* pParentNode);
-			FbxVector4 Transform(const FbxAMatrix& pAMatrix, const FbxVector4& point);
 			/** @brief fbx loader get mesh data function
 			*
 			*  this will get the mesh data of the model
