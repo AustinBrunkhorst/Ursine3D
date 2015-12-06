@@ -1,5 +1,6 @@
 package ursine.screen;
 
+import retrospect.screens.PauseScreen;
 import ursine.utils.IEventContainer;
 import ursine.utils.EventManager;
 
@@ -9,6 +10,9 @@ typedef ScreenID = UInt;
 @:keepSub
 class Screen implements IEventContainer {
     public var events : EventManager;
+
+    private static var m_baseScreenWidth : Int = 1280;
+    private static var m_baseScreenHeight : Int = 720;
 
     private var m_id : ScreenID;
     private var m_frame : js.html.IFrameElement;
@@ -24,6 +28,10 @@ class Screen implements IEventContainer {
         m_document = frame.contentDocument;
 
         m_data = data;
+
+        js.Browser.window.addEventListener( 'resize', handleAspectResize );
+
+        handleAspectResize( );
     }
 
     public function getID() : ScreenID {
@@ -36,5 +44,17 @@ class Screen implements IEventContainer {
 
     public function exit() {
         Application.screenManager.removeScreen( this );
+    }
+
+    private function handleAspectResize() {
+        var aspectContainer = m_document.querySelector( '.aspect-ratio-container' );
+
+        if (aspectContainer == null)
+            return;
+
+        untyped aspectContainer.style.zoom = Math.min(
+            js.Browser.window.innerWidth / m_baseScreenWidth,
+            js.Browser.window.innerHeight / m_baseScreenHeight
+        );
     }
 }

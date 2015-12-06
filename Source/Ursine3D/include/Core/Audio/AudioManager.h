@@ -16,6 +16,7 @@
 #include "CoreSystem.h"
 #include "Meta.h"
 #include "AudioEmitterComponent.h"
+#include "NativeJSFunction.h"
 
 #include "ListenerMasks.h"
 #include "WwiseForward.h"
@@ -78,13 +79,17 @@ namespace ursine
 
 		void PlayEvent(const std::string name, AkGameObjectID obj);
 
-		static void PlayGlobalEvent(const std::string name);
+		static void PlayGlobalEvent(const std::string &name);
+		static void StopGlobalEvent(const std::string &name);
+        static bool IsGlobalEventPlaying(const std::string &name);
+        static void SetGlobalVolume();
+        static void ResetGlobalVolume();
 
-		void PauseAudio();
+		static void PauseAudio();
 
 		static void StopSound(std::string name, AkGameObjectID id);
 
-		void ResumeAudio();
+		static void ResumeAudio();
 
 		void LoadBank(const std::string &bankName, AkBankID &bankID);
 
@@ -123,3 +128,14 @@ namespace ursine
 
 	} Meta(Enable, WhiteListMethods);
 }
+
+// Global JavaScript methods
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(AudioPlayGlobalEvent);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(AudioStopGlobalEvent);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(AudioIsGlobalEventPlaying);

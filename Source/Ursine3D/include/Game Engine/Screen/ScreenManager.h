@@ -36,6 +36,9 @@ namespace ursine
         // Gets a screen with the given id. nullptr if invalid ID (doesn't exist)
         Screen *GetScreen(ScreenID id);
 
+        // Attempts to get the first screen with the given name
+        Screen *GetScreen(const std::string &screenName);
+
         // Sets the current non-overlay screen
         void SetScreen(Screen *screen, const Json &data = Json( ));
 

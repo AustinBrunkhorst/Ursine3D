@@ -180,6 +180,8 @@ var ursine_screen_Screen = function(id,frame,data) {
 	this.m_frame = frame;
 	this.m_document = frame.contentDocument;
 	this.m_data = data;
+	window.addEventListener("resize",$bind(this,this.handleAspectResize));
+	this.handleAspectResize();
 };
 $hxClasses["ursine.screen.Screen"] = ursine_screen_Screen;
 ursine_screen_Screen.__name__ = true;
@@ -194,6 +196,11 @@ ursine_screen_Screen.prototype = {
 	,exit: function() {
 		Application.screenManager.removeScreen(this);
 	}
+	,handleAspectResize: function() {
+		var aspectContainer = this.m_document.querySelector(".aspect-ratio-container");
+		if(aspectContainer == null) return;
+		aspectContainer.style.zoom = Math.min(window.innerWidth / ursine_screen_Screen.m_baseScreenWidth,window.innerHeight / ursine_screen_Screen.m_baseScreenHeight);
+	}
 };
 var retrospect_screens_BasicMenuScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
@@ -201,6 +208,7 @@ var retrospect_screens_BasicMenuScreen = function(id,frame,data) {
 	this.handlers = new haxe_ds_StringMap();
 	this.m_exiting = false;
 	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown));
+	this.menu.events.on("up",$bind(this,this.onMenuUp)).on("down",$bind(this,this.onMenuDown));
 };
 $hxClasses["retrospect.screens.BasicMenuScreen"] = retrospect_screens_BasicMenuScreen;
 retrospect_screens_BasicMenuScreen.__name__ = true;
@@ -222,6 +230,7 @@ retrospect_screens_BasicMenuScreen.prototype = $extend(ursine_screen_Screen.prot
 		var handlerName = this.menu.get_activeItem().getAttribute("data-handler");
 		var handler = this.handlers.get(handlerName);
 		if(handler == null) return;
+		ursine_native_Extern.AudioPlayGlobalEvent(retrospect_screens_BasicMenuScreen.m_menuSelectSound);
 		handler();
 	}
 	,onKeyboardKeyDown: function(e) {
@@ -231,6 +240,12 @@ retrospect_screens_BasicMenuScreen.prototype = $extend(ursine_screen_Screen.prot
 	,onGamepadButtonDown: function(e) {
 		if(this.m_exiting || !(e.triggered && e.pressed)) return;
 		if(e.button == 0) this.apply(); else if(e.button == 11 || e.button == 18) this.menu.up(); else if(e.button == 12 || e.button == 19) this.menu.down();
+	}
+	,onMenuUp: function() {
+		ursine_native_Extern.AudioPlayGlobalEvent(retrospect_screens_BasicMenuScreen.m_menuUpSound);
+	}
+	,onMenuDown: function() {
+		ursine_native_Extern.AudioPlayGlobalEvent(retrospect_screens_BasicMenuScreen.m_menuDownSound);
 	}
 });
 var retrospect_screens_ConfirmNavigationScreen = function(id,frame,data) {
@@ -309,11 +324,18 @@ var retrospect_screens_MainMenuScreen = function(id,frame,data) {
 			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Quit Game?", target : { name : "quit"}});
 		});
 	}
+	var musicPlaying = ursine_native_Extern.AudioIsGlobalEventPlaying(retrospect_screens_MainMenuScreen.m_mainMenuMusic);
+	if(!musicPlaying) ursine_native_Extern.AudioPlayGlobalEvent(retrospect_screens_MainMenuScreen.m_mainMenuMusic);
 };
 $hxClasses["retrospect.screens.MainMenuScreen"] = retrospect_screens_MainMenuScreen;
 retrospect_screens_MainMenuScreen.__name__ = true;
 retrospect_screens_MainMenuScreen.__super__ = retrospect_screens_BasicMenuScreen;
 retrospect_screens_MainMenuScreen.prototype = $extend(retrospect_screens_BasicMenuScreen.prototype,{
+	exit: function() {
+		retrospect_screens_BasicMenuScreen.prototype.exit.call(this);
+		var musicPlaying = ursine_native_Extern.AudioIsGlobalEventPlaying(retrospect_screens_MainMenuScreen.m_mainMenuMusic);
+		if(musicPlaying) ursine_native_Extern.AudioStopGlobalEvent(retrospect_screens_MainMenuScreen.m_mainMenuMusic);
+	}
 });
 var retrospect_screens_MultiplayerPlayScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
@@ -412,6 +434,15 @@ ursine_native_Extern.InitGame = function() {
 };
 ursine_native_Extern.QuitGame = function() {
 	return QuitGame();
+};
+ursine_native_Extern.AudioPlayGlobalEvent = function(event) {
+	return AudioPlayGlobalEvent( event );
+};
+ursine_native_Extern.AudioStopGlobalEvent = function(event) {
+	return AudioStopGlobalEvent( event );
+};
+ursine_native_Extern.AudioIsGlobalEventPlaying = function(event) {
+	return AudioIsGlobalEventPlaying( event );
 };
 var ursine_screen_ScreenManager = function(screenPackagePrefix) {
 	ursine_screen_ScreenManager.instance = this;
@@ -567,6 +598,12 @@ String.__name__ = true;
 $hxClasses.Array = Array;
 Array.__name__ = true;
 var __map_reserved = {}
+ursine_screen_Screen.m_baseScreenWidth = 1280;
+ursine_screen_Screen.m_baseScreenHeight = 720;
+retrospect_screens_BasicMenuScreen.m_menuUpSound = "MENU_CYCLE_UP";
+retrospect_screens_BasicMenuScreen.m_menuDownSound = "MENU_CYCLE_DOWN";
+retrospect_screens_BasicMenuScreen.m_menuSelectSound = "MENU_SELECT";
+retrospect_screens_MainMenuScreen.m_mainMenuMusic = "MUSIC_THEME";
 ursine_input_GamepadEventType.ButtonDown = "GamepadButtonDown";
 ursine_input_GamepadEventType.ButtonUp = "GamepadButtonUp";
 ursine_input_GamepadEventType.Connected = "GamepadConnected";

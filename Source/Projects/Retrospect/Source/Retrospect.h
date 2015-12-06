@@ -26,6 +26,8 @@ public:
     void OnInitialize(void) override;
     void OnRemove(void) override;
 
+    ursine::ScreenManager *GetScreenManager(void) const;
+    ursine::Window::Handle GetMainWindowHandle(void) const;
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
@@ -44,5 +46,6 @@ private:
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
+    void onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window));
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
 } Meta(Enable, WhiteListMethods);

@@ -22,15 +22,15 @@ namespace
 {
     const auto kEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
-	const std::string kMainTheme = "MUSIC_THEME";
-
     const auto kDefaultWindowWidth = 1280;
     const auto kDefaultWindowHeight = 720;
+
+    const auto kSplashScreenName = "SplashScreen";
 }
 
 JSFunction(InitGame)
 {
-    gScreenManager->AddOverlay( "SplashScreen" );
+    gScreenManager->AddOverlay( kSplashScreenName );
 
     return CefV8Value::CreateUndefined( );
 }
@@ -58,6 +58,16 @@ Retrospect::~Retrospect(void)
 
 }
 
+ScreenManager *Retrospect::GetScreenManager(void) const
+{
+    return m_screenManager;
+}
+
+Window::Handle Retrospect::GetMainWindowHandle(void) const
+{
+    return m_mainWindow.window;
+}
+
 void Retrospect::OnInitialize(void)
 {
     auto *app = Application::Instance;
@@ -75,6 +85,7 @@ void Retrospect::OnInitialize(void)
     );
 
     m_mainWindow.window->Listener( this )
+        .On( WINDOW_FOCUS_CHANGED, &Retrospect::onMainWindowFocusChanged )
         .On( WINDOW_RESIZE, &Retrospect::onMainWindowResize );
 
     m_mainWindow.window->SetLocationCentered( );
@@ -93,7 +104,7 @@ void Retrospect::OnInitialize(void)
     m_screenManager = new ScreenManager( );
     m_screenManager->SetUI( m_mainWindow.ui );
 
-    {
+    /*{
         SDL_DisplayMode displayMode;
 
         SDL_GetDesktopDisplayMode( 
@@ -106,12 +117,10 @@ void Retrospect::OnInitialize(void)
             static_cast<float>( displayMode.h ) 
         } );
     }
-    m_mainWindow.window->SetFullScreen( true );
+    m_mainWindow.window->SetFullScreen( true );*/
     m_mainWindow.window->Show( true );
 
 	m_audioManager = GetCoreSystem( AudioManager );
-
-	m_audioManager->PlayGlobalEvent(kMainTheme);
 }
 
 void Retrospect::OnRemove(void)
@@ -127,6 +136,7 @@ void Retrospect::OnRemove(void)
     m_screenManager = nullptr;
 
     m_mainWindow.window->Listener( this )
+        .Off( WINDOW_FOCUS_CHANGED, &Retrospect::onMainWindowFocusChanged )
         .Off( WINDOW_RESIZE, &Retrospect::onMainWindowResize );
 
     m_mainWindow.ui->Close( );
@@ -179,6 +189,24 @@ void Retrospect::onAppUpdate(EVENT_HANDLER(ursine::Application))
     auto dt = sender->GetDeltaTime( );
 
     m_screenManager->Update( );
+
+    SDL_ShowCursor( false );
+}
+
+void Retrospect::onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window))
+{
+    EVENT_ATTRS(Window, WindowFocusArgs);
+
+    if (args->focused)
+    {
+        AudioManager::ResumeAudio( );
+    }
+    else 
+    {
+        AudioManager::PauseAudio( );
+    }
+
+    Application::Instance->SetActive( args->focused );
 }
 
 void Retrospect::onMainWindowResize(EVENT_HANDLER(ursine::Window))

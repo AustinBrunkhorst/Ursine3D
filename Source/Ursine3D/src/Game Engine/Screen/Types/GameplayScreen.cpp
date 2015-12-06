@@ -52,7 +52,7 @@ namespace ursine
 
     void GameplayScreen::Update(void)
     {
-        if (world)
+        if (world && HasInputFocus( ))
             world->Update( );
     }
 

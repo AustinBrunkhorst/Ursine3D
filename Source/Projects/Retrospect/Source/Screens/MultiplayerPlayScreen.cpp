@@ -9,11 +9,15 @@
 #include <RoundSystem.h>
 #include <SpawnSystem.h>
 
+#include "Retrospect.h"
+
 using namespace ursine;
 
 namespace
 {
     const auto kWorldFile = "Assets/Worlds/BlankWorld.uworld";
+
+    const auto kPauseScreenName = "PauseScreen";
 }
 
 MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
@@ -35,4 +39,33 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
 		if (editorCam)
 			editorCam->Delete( );
     } );
+
+    auto *appHandler = GetCoreSystem( Retrospect );
+
+    appHandler->GetMainWindowHandle( )->Listener( this )
+        .On( WINDOW_FOCUS_CHANGED, &MultiplayerPlayScreen::onMainWindowFocusChanged );
+}
+
+MultiplayerPlayScreen::~MultiplayerPlayScreen(void)
+{
+    auto *appHandler = GetCoreSystem( Retrospect );
+
+    appHandler->GetMainWindowHandle( )->Listener( this )
+        .Off( WINDOW_FOCUS_CHANGED, &MultiplayerPlayScreen::onMainWindowFocusChanged );
+}
+
+void MultiplayerPlayScreen::onMainWindowFocusChanged(EVENT_HANDLER(Window))
+{
+    EVENT_ATTRS(Window, WindowFocusArgs);
+
+    if (args->focused)
+        return;
+
+    auto *appHandler = GetCoreSystem( Retrospect );
+    auto *screenManager = appHandler->GetScreenManager( );
+    auto *screen = screenManager->GetScreen( kPauseScreenName );
+
+    // add the pause screen if it doesn't already exist
+    if (!screen) 
+        screenManager->AddOverlay( kPauseScreenName );
 }

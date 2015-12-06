@@ -90,6 +90,22 @@ namespace ursine
         return screen == m_map.end( ) ? nullptr : screen->second;
     }
 
+    Screen *ScreenManager::GetScreen(const std::string &screenName)
+    {
+        if (m_current && m_current->GetType( ).GetName( ) == screenName)
+            return m_current;
+
+        for (auto overlay : m_overlays)
+        {
+            auto *screen = static_cast<OverlayScreen *>( overlay );
+
+            if (screen->GetName( ) == screenName)
+                return screen;
+        }
+
+        return nullptr;
+    }
+
     void ScreenManager::SetScreen(Screen *screen, const Json &data)
     {
         UAssert( !screen->m_isOverlay,
