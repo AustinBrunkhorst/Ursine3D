@@ -71,9 +71,13 @@ private:
     void OnInitialize(void) override;
     void OnRemove(void) override;
     
+    void matchOver(int winner);
+
     void onRoundOver(EVENT_HANDLER(ursine::ecs:::World));
 
     int m_round;
     int m_maxRound;
 
-} Meta(Enable/*, DisableEntitySystemAutoAdd*/);
+    ursine::ecs::Entity *m_map;
+
+} Meta(Enable, DisableEntitySystemAutoAdd);

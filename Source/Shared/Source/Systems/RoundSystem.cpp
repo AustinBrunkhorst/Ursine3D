@@ -20,6 +20,7 @@
 #include "SpawnSystem.h"
 #include <AudioManager.h>
 #include <Screen.h>
+#include <ScreenManager.h>
 
 #include "HealthComponent.h"
 #include "CommandQueueComponent.h"
@@ -33,7 +34,12 @@ namespace
     const std::string team1Wins = "ROUND_END_BLUE";
     const std::string team2Wins = "ROUND_END_RED";
 
+    const auto kUIPlayerDied = "PlayerDied";
     const auto kUIPlayerDamageTaken = "PlayerDamageTaken";
+    const auto kUIRoundReset = "RoundReset";
+
+    const auto kRoundOverlayScreenName = "RoundOverlayScreen";
+    const auto kMainMenuScreenName = "MainMenuScreen";
 }
 
 RoundSystem::RoundSystem(ecs::World *world)
@@ -65,6 +71,12 @@ void RoundSystem::SendPlayerDiedMessage(ecs::Entity *died)
     RoundEventArgs e( died );
 
     Dispatch( PLAYER_DIED, &e );
+
+    auto *teamComponent = died->GetComponent<TeamComponent>( );
+
+    m_world->GetOwner( )->MessageUI( kUIPlayerDied, Json::object {
+        { "player", teamComponent->GetTeamNumber( ) },
+    } );
 }
 
 void RoundSystem::SendPlayerDamageTaken(ecs::Entity *damaged)
@@ -84,17 +96,28 @@ void RoundSystem::SendPlayerDamageTaken(ecs::Entity *damaged)
 
     auto *teamComponent = damaged->GetComponent<TeamComponent>( );
 
-    /*m_world->GetOwner( )->MessageUI( kUIPlayerDamageTaken, Json::object {
+    m_world->GetOwner( )->MessageUI( kUIPlayerDamageTaken, Json::object {
         { "player", teamComponent->GetTeamNumber( ) },
         { "percentage", percent }
-    } );*/
+    } );
 }
 
-void RoundSystem::StartNewRound(int team)
+void RoundSystem::StartNewRound(int winner)
 {
-    RoundEventArgs e( team );
+    RoundEventArgs e( winner );
 
     Dispatch( ROUND_OVER, &e );
+
+    if (m_round > m_maxRound)
+        return;
+
+    auto *screen = m_world->GetOwner( );
+
+    screen->MessageUI( kUIRoundReset, Json::object { } );
+
+    screen->GetManager( )->AddOverlay( kRoundOverlayScreenName, Json::object {
+        { "title", "Round " + std::to_string( m_round ) }
+    } );
 }
 
 void RoundSystem::OnInitialize(void)
@@ -102,7 +125,7 @@ void RoundSystem::OnInitialize(void)
     m_timers.Create( TimeSpan::FromSeconds( 0 ) ).Completed(
         [=] (void)
     {
-        auto *m_map = m_world->CreateEntityFromArchetype(
+        m_map = m_world->CreateEntityFromArchetype(
             WORLD_ARCHETYPE_PATH "map.uatype",
             "gameMapArchetype"
         );
@@ -118,8 +141,24 @@ void RoundSystem::OnInitialize(void)
 
 void RoundSystem::OnRemove(void)
 {
+    m_map->Delete( );
+
     m_world->GetEntitySystem( RoundSystem)->Listener( this )
         .Off( ROUND_OVER, &RoundSystem::onRoundOver );
+}
+
+void RoundSystem::matchOver(int winner)
+{
+    RoundEventArgs e( winner );
+
+    Dispatch( MATCH_OVER, &e );
+
+    auto *screen = m_world->GetOwner( );
+
+    screen->GetManager( )->AddOverlay( kRoundOverlayScreenName, Json::object {
+        { "title", "Player " + std::to_string( winner ) + " Wins" },
+        { "targetScreen", kMainMenuScreenName }
+    } );
 }
 
 void RoundSystem::onRoundOver(EVENT_HANDLER(ecs:::World))
@@ -139,9 +178,7 @@ void RoundSystem::onRoundOver(EVENT_HANDLER(ecs:::World))
 
     if (m_round > m_maxRound)
     {
-        RoundEventArgs e( args->team );
-
-        Dispatch( MATCH_OVER, &e );
+        matchOver( args->team );
     }
     else
     {

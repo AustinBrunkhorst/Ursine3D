@@ -88,10 +88,19 @@ void PlayerAnimation::Update()
 
 void PlayerAnimation::SetPlayerState(const PlayerState state)
 {
+    // A hack to make sure the death animation is persistant and set once.
+    if (m_state == Dead)
+        return;
+
     m_state = state;
 }
 
 void PlayerAnimation::SetShooting(const bool isShooting)
 {
     m_shooting = isShooting;
+}
+
+void PlayerAnimation::UnsetDead(void)
+{
+    m_state = Idle;
 }

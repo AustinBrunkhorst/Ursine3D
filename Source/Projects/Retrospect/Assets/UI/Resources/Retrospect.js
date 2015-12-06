@@ -20,8 +20,8 @@ Math.__name__ = true;
 var Std = function() { };
 $hxClasses["Std"] = Std;
 Std.__name__ = true;
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
+Std["int"] = function(x) {
+	return x | 0;
 };
 var Type = function() { };
 $hxClasses["Type"] = Type;
@@ -131,77 +131,6 @@ js__$Boot_HaxeError.__name__ = true;
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
-var js_Boot = function() { };
-$hxClasses["js.Boot"] = js_Boot;
-js_Boot.__name__ = true;
-js_Boot.__string_rec = function(o,s) {
-	if(o == null) return "null";
-	if(s.length >= 5) return "<...>";
-	var t = typeof(o);
-	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
-	switch(t) {
-	case "object":
-		if(o instanceof Array) {
-			if(o.__enum__) {
-				if(o.length == 2) return o[0];
-				var str2 = o[0] + "(";
-				s += "\t";
-				var _g1 = 2;
-				var _g = o.length;
-				while(_g1 < _g) {
-					var i1 = _g1++;
-					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
-				}
-				return str2 + ")";
-			}
-			var l = o.length;
-			var i;
-			var str1 = "[";
-			s += "\t";
-			var _g2 = 0;
-			while(_g2 < l) {
-				var i2 = _g2++;
-				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
-			}
-			str1 += "]";
-			return str1;
-		}
-		var tostr;
-		try {
-			tostr = o.toString;
-		} catch( e ) {
-			if (e instanceof js__$Boot_HaxeError) e = e.val;
-			return "???";
-		}
-		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
-			var s2 = o.toString();
-			if(s2 != "[object Object]") return s2;
-		}
-		var k = null;
-		var str = "{\n";
-		s += "\t";
-		var hasp = o.hasOwnProperty != null;
-		for( var k in o ) {
-		if(hasp && !o.hasOwnProperty(k)) {
-			continue;
-		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
-			continue;
-		}
-		if(str.length != 2) str += ", \n";
-		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
-		}
-		s = s.substring(1);
-		str += "\n" + s + "}";
-		return str;
-	case "function":
-		return "<function>";
-	case "string":
-		return o;
-	default:
-		return String(o);
-	}
-};
 var ursine_utils_IEventContainer = function() { };
 $hxClasses["ursine.utils.IEventContainer"] = ursine_utils_IEventContainer;
 ursine_utils_IEventContainer.__name__ = true;
@@ -442,7 +371,17 @@ retrospect_screens_MainMenuScreen.prototype = $extend(retrospect_screens_BasicMe
 });
 var retrospect_screens_MultiplayerPlayScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
-	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown)).on("PlayerDamageTaken",$bind(this,this.onPlayerDamageTaken));
+	this.m_kills = new haxe_ds_IntMap();
+	{
+		this.m_kills.h[1] = 0;
+		0;
+	}
+	{
+		this.m_kills.h[2] = 0;
+		0;
+	}
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown)).on("PlayerDied",$bind(this,this.onPlayerDied)).on("PlayerDamageTaken",$bind(this,this.onPlayerDamageTaken)).on("RoundReset",$bind(this,this.onRoundReset));
+	Application.screenManager.addOverlay("RoundOverlayScreen",{ title : "Round 1"});
 };
 $hxClasses["retrospect.screens.MultiplayerPlayScreen"] = retrospect_screens_MultiplayerPlayScreen;
 retrospect_screens_MultiplayerPlayScreen.__name__ = true;
@@ -459,8 +398,43 @@ retrospect_screens_MultiplayerPlayScreen.prototype = $extend(ursine_screen_Scree
 		if(!(e.triggered && e.pressed)) return;
 		if(e.button == 4) this.triggerPause();
 	}
+	,onPlayerDied: function(data) {
+		this.setPlayerHealth(data.player,0);
+		this.givePlayerKill(data.player == 1?2:1);
+	}
 	,onPlayerDamageTaken: function(data) {
-		console.log("${data.player}: ${data.percentage}");
+		this.setPlayerHealth(data.player,data.percentage);
+	}
+	,onRoundReset: function(data) {
+		var _g = this;
+		haxe_Timer.delay(function() {
+			_g.setPlayerHealth(1,1);
+			_g.setPlayerHealth(2,1);
+		},100);
+	}
+	,setPlayerHealth: function(player,percentage) {
+		var container = this.getPlayerContainer(player);
+		container.querySelector(".health .percentage").style.width = Std["int"](Math.round(100 * percentage)) + "%";
+	}
+	,givePlayerKill: function(player) {
+		var kills = this.m_kills.h[player] + 1;
+		{
+			this.m_kills.h[player] = kills;
+			kills;
+		}
+		var killsContainer = this.getPlayerContainer(player).querySelector(".kills");
+		killsContainer.classList.remove("jello","animated");
+		haxe_Timer.delay(function() {
+			killsContainer.classList.add("jello","animated");
+		},100);
+		this.setPlayerKills(player,kills);
+	}
+	,setPlayerKills: function(player,kills) {
+		var container = this.getPlayerContainer(player);
+		container.querySelector(".kills .total").innerHTML = kills;
+	}
+	,getPlayerContainer: function(player) {
+		return this.m_document.querySelector(".player-" + player);
 	}
 });
 var retrospect_screens_PauseScreen = function(id,frame,data) {
@@ -511,6 +485,31 @@ $hxClasses["retrospect.screens.PauseScreen"] = retrospect_screens_PauseScreen;
 retrospect_screens_PauseScreen.__name__ = true;
 retrospect_screens_PauseScreen.__super__ = retrospect_screens_BasicMenuScreen;
 retrospect_screens_PauseScreen.prototype = $extend(retrospect_screens_BasicMenuScreen.prototype,{
+});
+var retrospect_screens_RoundOverlayScreen = function(id,frame,data) {
+	var _g = this;
+	ursine_screen_Screen.call(this,id,frame,data);
+	this.m_targetScreen = data.targetScreen;
+	var title = this.m_document.querySelector(".title");
+	title.innerHTML = data.title;
+	ElementUtils.once(title,"webkitAnimationEnd",function() {
+		haxe_Timer.delay(function() {
+			title.className = "title animated zoomOut";
+		},1000);
+		ElementUtils.once(title,"webkitAnimationEnd",$bind(_g,_g.exit));
+	});
+};
+$hxClasses["retrospect.screens.RoundOverlayScreen"] = retrospect_screens_RoundOverlayScreen;
+retrospect_screens_RoundOverlayScreen.__name__ = true;
+retrospect_screens_RoundOverlayScreen.__super__ = ursine_screen_Screen;
+retrospect_screens_RoundOverlayScreen.prototype = $extend(ursine_screen_Screen.prototype,{
+	exit: function() {
+		ursine_screen_Screen.prototype.exit.call(this);
+		if(this.m_targetScreen != null) {
+			Application.screenManager.removeCurrent();
+			Application.screenManager.addOverlay(this.m_targetScreen,{ });
+		}
+	}
 });
 var retrospect_screens_SplashScreen = function(id,frame,data) {
 	var _g = this;
@@ -609,7 +608,6 @@ ursine_screen_ScreenManager.prototype = {
 		var screen;
 		var key = e.screenID;
 		screen = this.m_screens.h[key];
-		console.log("event: " + Std.string(e));
 		if(screen != null) screen.events.trigger(e.event,e.data);
 	}
 	,onScreenEntered: function(e) {

@@ -31,6 +31,8 @@
 #include <Model3DComponent.h>
 #include <Game Engine/Scene/Component/Native Components/ListenerComponent.h>
 #include <RigidbodyComponent.h>
+#include <PlayerAnimationComponent.h>
+#include <Components/HealthComponent.h>
 
 using namespace ursine;
 
@@ -159,6 +161,17 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
 			// Set health to 100
 			player->SetAlive();
 
+            player->GetOwner( )->GetComponent<Health>( )->SetHealth( 100.0f );
+
+            // play an animation
+            auto animator = player->GetOwner( )->GetComponentInChildren<PlayerAnimation>();
+
+            animator->UnsetDead( );
+
+            // Set the color
+            auto teamColor = player->GetTeamNumber( ) == 1 ? Color::Blue : Color::Red;
+            player->GetOwner( )->GetComponentInChildren<ecs::Model3D>( )->SetColor( teamColor );
+
 			// Set spawn point
 			player->GetOwner( )->GetTransform( )->GetRoot( )->SetWorldPosition(
 				getSpawnPosition( player->GetTeamNumber( ), ++roundNum )
@@ -197,7 +210,11 @@ void SpawnSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
     
     killPlayer( args->entity );
 
-	// play an animation
+    // play an animation
+    auto animator = args->entity->GetComponentInChildren<PlayerAnimation>();
+
+    animator->SetPlayerState(PlayerAnimation::Dead);
+
 
 	// see if the round ended due to whole team killed
 	auto team = args->entity->GetComponent<TeamComponent>( );
@@ -247,6 +264,9 @@ void SpawnSystem::killPlayer(ursine::ecs::Entity* entity)
         else
             model->SetRenderMask( 4 );
     }
+
+    // Set the color
+    entity->GetComponentInChildren<ecs::Model3D>( )->SetColor( Color::Black );
 
     // Remove the camera
     auto cam = entity->GetComponentInChildren<ecs::Camera>( );

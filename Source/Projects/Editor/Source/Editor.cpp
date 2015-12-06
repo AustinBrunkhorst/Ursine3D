@@ -74,7 +74,7 @@ void Editor::OnInitialize(void)
         .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange );
 
     m_mainWindow.window->SetLocationCentered( );
-    m_mainWindow.window->Show( true );
+    m_mainWindow.window->Show( true );   
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );

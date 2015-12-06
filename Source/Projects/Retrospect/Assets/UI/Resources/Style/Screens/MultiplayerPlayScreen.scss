@@ -5,6 +5,16 @@
   top: 0;
   bottom: 0;
 
+  .crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    background: url(../Images/reticle.svgz) center no-repeat;
+    transform: translate(-50%, -50%);
+  }
+
   .player {
     position: absolute;
     width: 100%;
@@ -31,6 +41,7 @@
       .percentage {
         height: 100%;
         background: #6ea276;
+        transition: width 200ms ease;
       }
 
       .kills {

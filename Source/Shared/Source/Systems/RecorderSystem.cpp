@@ -111,6 +111,12 @@ namespace ursine
 				// Tell the recording to play itself
 				auto &recordingPair = teamRecording[ i ];
 
+                // First, check to see if the entity is still alive
+                auto entity = m_world->GetEntityUnique( recordingPair.first );
+
+                if (entity->GetComponent<TeamComponent>( )->IsDead( ))
+                    continue;
+
 				recordingPair.second.Play( m_roundTimer, m_world->GetEntityUnique( recordingPair.first ) );
 			}
             

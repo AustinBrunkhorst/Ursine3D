@@ -41,6 +41,8 @@ public:
     Meta(Disable)
     void SetShooting(const bool isShooting);
 
+    void UnsetDead(void);
+
 private:
     bool m_shooting;
     PlayerState m_state;
