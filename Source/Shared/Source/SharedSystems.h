@@ -22,4 +22,5 @@
 #include "Systems/RoundSystem.h"
 #include "Systems/RecorderSystem.h"
 #include "Systems/RandomSlerpSystem.h"
+#include "Systems/PlayerAnimationSystem.h"
 

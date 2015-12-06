@@ -23,4 +23,4 @@
 #include "Components/TeamComponent.h"
 #include "Components/RecorderComponent.h"
 #include "Components/RandomSlerpComponent.h"
-
+#include "Components/PlayerAnimationComponent.h"
