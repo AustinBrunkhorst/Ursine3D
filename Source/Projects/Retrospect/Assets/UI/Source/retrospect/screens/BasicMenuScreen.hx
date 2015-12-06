@@ -43,7 +43,7 @@ class BasicMenuScreen extends Screen {
 
         var wrapper : js.html.DivElement = cast menu.container.parentNode;
 
-        wrapper.className = 'inner-wrapper classlist '+ transition;
+        wrapper.className = 'inner-wrapper animated '+ transition;
 
         ElementUtils.once( wrapper, 'webkitAnimationEnd', function() {
             if (callback != null)

@@ -34,6 +34,10 @@ class PauseScreen extends BasicMenuScreen {
             } );
         };
 
+        handlers[ "how-to-play" ] = function() {
+            Application.screenManager.addOverlay( 'HowToPlayScreen', { } );
+        };
+
         handlers[ "quit" ] = function() {
             Application.screenManager.addOverlay( 'ConfirmNavigationScreen', {
                 title: 'Quit Game?',

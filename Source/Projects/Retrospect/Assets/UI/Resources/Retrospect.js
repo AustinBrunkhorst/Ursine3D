@@ -219,7 +219,7 @@ retrospect_screens_BasicMenuScreen.prototype = $extend(ursine_screen_Screen.prot
 		var _g = this;
 		this.m_exiting = true;
 		var wrapper = this.menu.get_container().parentNode;
-		wrapper.className = "inner-wrapper classlist " + transition;
+		wrapper.className = "inner-wrapper animated " + transition;
 		ElementUtils.once(wrapper,"webkitAnimationEnd",function() {
 			if(callback != null) callback();
 			_g.exit();
@@ -295,6 +295,24 @@ retrospect_screens_ConfirmNavigationScreen.__name__ = true;
 retrospect_screens_ConfirmNavigationScreen.__super__ = retrospect_screens_BasicMenuScreen;
 retrospect_screens_ConfirmNavigationScreen.prototype = $extend(retrospect_screens_BasicMenuScreen.prototype,{
 });
+var retrospect_screens_HowToPlayScreen = function(id,frame,data) {
+	ursine_screen_Screen.call(this,id,frame,data);
+	this.m_leaving = false;
+	this.m_controls = this.m_document.querySelector("#controls");
+	this.m_document.addEventListener("mousedown",$bind(this,this.leave));
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.leave)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.leave));
+};
+$hxClasses["retrospect.screens.HowToPlayScreen"] = retrospect_screens_HowToPlayScreen;
+retrospect_screens_HowToPlayScreen.__name__ = true;
+retrospect_screens_HowToPlayScreen.__super__ = ursine_screen_Screen;
+retrospect_screens_HowToPlayScreen.prototype = $extend(ursine_screen_Screen.prototype,{
+	leave: function() {
+		if(this.m_leaving) return;
+		this.m_leaving = true;
+		this.m_controls.className = "animated zoomOut";
+		ElementUtils.once(this.m_controls,"webkitAnimationEnd",$bind(this,this.exit));
+	}
+});
 var retrospect_screens_MainMenuScreen = function(id,frame,data) {
 	var _g = this;
 	retrospect_screens_BasicMenuScreen.call(this,id,frame,data);
@@ -308,6 +326,14 @@ var retrospect_screens_MainMenuScreen = function(id,frame,data) {
 			_g.transitionExit(function() {
 				Application.screenManager.setScreen("MultiplayerPlayScreen",{ });
 			});
+		});
+	}
+	{
+		this.handlers.set("how-to-play",function() {
+			Application.screenManager.addOverlay("HowToPlayScreen",{ });
+		});
+		(function() {
+			Application.screenManager.addOverlay("HowToPlayScreen",{ });
 		});
 	}
 	{
@@ -382,6 +408,14 @@ var retrospect_screens_PauseScreen = function(id,frame,data) {
 		});
 		(function() {
 			Application.screenManager.addOverlay("ConfirmNavigationScreen",{ title : "Return to Main Menu?", sender : _g.getID(), target : { name : "MainMenuScreen", type : "overlay"}, removeCurrent : true});
+		});
+	}
+	{
+		this.handlers.set("how-to-play",function() {
+			Application.screenManager.addOverlay("HowToPlayScreen",{ });
+		});
+		(function() {
+			Application.screenManager.addOverlay("HowToPlayScreen",{ });
 		});
 	}
 	{

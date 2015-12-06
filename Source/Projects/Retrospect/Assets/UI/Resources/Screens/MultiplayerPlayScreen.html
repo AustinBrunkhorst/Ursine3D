@@ -1,34 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style>
-        #overlay {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            background: #252526;
-            opacity: 1;
-            transition: opacity 250ms ease;
-        }
-
-        #overlay.entered {
-            opacity: 0;
-        }
-    </style>
-    <script>
-        window.addEventListener( 'load', function() {
-            setTimeout( function() {
-                var overlay = document.querySelector( '#overlay' );
-
-                overlay.classList.add( 'entered' );
-            }, 250 );
-        } );
-    </script>
+    <link rel="stylesheet" href="../Style/Animate.css">
+    <link rel="stylesheet" href="../Style/Retrospect.css">
+    <link rel="stylesheet" href="../Style/Screens/MultiplayerPlayScreen.css">
 </head>
 <body>
-    Play Screen
-    <div id="overlay"></div>
+    <div class="player-hud">
+        <div class="player player-1">
+            <div class="health">
+                <div class="percentage" style="width: 100%"></div>
+                <div class="kills"> <span class="total"> 0 </span> Kills </div>
+            </div>
+        </div>
+        <div class="player player-2">
+            <div class="health">
+                <div class="percentage" style="width: 100%"></div>
+                <div class="kills"> <span class="total"> 0 </span> Kills </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

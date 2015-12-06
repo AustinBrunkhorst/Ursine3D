@@ -20,6 +20,10 @@ class MainMenuScreen extends BasicMenuScreen {
             } );
         };
 
+        handlers[ "how-to-play" ] = function() {
+            Application.screenManager.addOverlay( 'HowToPlayScreen', { } );
+        };
+
         handlers[ "credits" ] = function() {
 
         };
