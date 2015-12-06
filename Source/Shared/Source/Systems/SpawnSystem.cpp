@@ -13,6 +13,7 @@
 #include <EventDispatcher.h>
 #include "RecorderSystem.h"
 #include <PlayerInputComponent.h>
+#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
 
 using namespace ursine;
 
@@ -114,6 +115,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
     if (args->component->Is<TeamComponent>( ))
 	{
         TeamComponent *player = reinterpret_cast<TeamComponent *>(args->component);
+        //????
     }
     else if (args->component->Is<Spawnpoint>())
     {
@@ -147,7 +149,7 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
 
 			// Set spawn point
 			player->GetOwner( )->GetTransform( )->GetRoot( )->SetWorldPosition(
-				getSpawnPosition( player->GetTeamNumber( ), ++roundNum, 0 )
+				getSpawnPosition( player->GetTeamNumber( ), ++roundNum )
 			);
 		}
 	}
@@ -178,6 +180,9 @@ void SpawnSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
 	auto team = args->entity->GetComponent<TeamComponent>( );
 
 	auto &teamVec = m_teams[ team->GetTeamNumber( ) - 1 ];
+
+    args->entity->GetComponentInChildren<ecs::Camera>()
+        ->GetOwner()->RemoveComponent<ecs::Camera>();
 
 	bool allDead = true;
 	for (auto &p : teamVec)
@@ -217,10 +222,10 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
     auto *playerTransform = newPlayer->GetTransform();
 
     // get spawn position to place the player at and actually spawn the player
-    playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum, 0.0f));
+    playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum));
 }
 
-ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffset)
+ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum)
 {
 
     const std::list<Spawnpoint *>& spawnList = (team == 1) ? m_team1Spawnpoints : m_team2Spawnpoints;
@@ -244,5 +249,5 @@ ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum, float yOffse
         }
     }
     auto spawnPos = chosenSpawn->GetOwner()->GetTransform()->GetWorldPosition();
-    return spawnPos + SVec3(0.0f, yOffset, 0.0f);
+    return spawnPos;
 }

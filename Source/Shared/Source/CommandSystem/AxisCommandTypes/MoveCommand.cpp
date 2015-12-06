@@ -29,7 +29,7 @@ void MoveCommand::Execute(ursine::ecs::Entity* receiver)
     auto *controller = receiver->GetComponent<CharacterController>();
 
     if ( !m_playback )
-        controller->moveDir = m_axis;
+        controller->SetMoveDirection(m_axis);
     else
     {
         auto dir = m_position - controller->GetOwner( )->GetTransform( )->GetWorldPosition( );
@@ -40,7 +40,7 @@ void MoveCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
     auto *controller = receiver->GetComponent<CharacterController>();
 
-    controller->moveDir = ursine::Vec2(0, 0);
+    controller->SetMoveDirection( ursine::Vec2(0, 0) );
     //receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyType(ursine::ecs::BodyType::Static);
 }
     

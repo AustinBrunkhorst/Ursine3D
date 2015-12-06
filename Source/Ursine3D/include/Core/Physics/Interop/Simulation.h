@@ -40,6 +40,7 @@ namespace ursine
             // Step the simulation forward
             // If the maxSubSteps > 0, it will interpolate motion between fixedTimeSteps
             void Step(float timeStep, int maxSubSteps = 7, float fixedTimeStep = 1.0f / 60.0f);
+            void DebugDrawSimulation(void);
 
             void SetDebugDrawer(DebugDrawer *debugDrawer);
             

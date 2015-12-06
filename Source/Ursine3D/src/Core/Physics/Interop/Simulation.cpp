@@ -42,6 +42,14 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             m_dynamicsWorld->stepSimulation( timeStep, maxSubSteps, fixedTimeStep );
+
+        #endif
+        }
+
+        void Simulation::DebugDrawSimulation(void)
+        {
+        #ifdef BULLET_PHYSICS
+
             m_dynamicsWorld->debugDrawWorld( );
 
         #endif

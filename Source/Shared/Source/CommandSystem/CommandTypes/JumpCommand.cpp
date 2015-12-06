@@ -31,7 +31,7 @@ void JumpCommand::Execute(ursine::ecs::Entity* receiver)
     auto *controller = receiver->GetComponent<CharacterController>( );
 	auto *emitter = receiver->GetComponent<ursine::ecs::AudioEmitterComponent>();
 
-	controller->jump = true;
+	controller->Jump( );
 
 	if (emitter)
 		emitter->AddSoundToPlayQueue(kJumpSound);
@@ -41,7 +41,7 @@ void JumpCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
 	auto *controller = receiver->GetComponent<CharacterController>();
 
-	controller->jump = false;
+	controller->Jump( );
 }
 
 void JumpCommand::StartRecording(ursine::ecs::Entity* receiver)

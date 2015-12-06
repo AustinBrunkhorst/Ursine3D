@@ -71,6 +71,7 @@ namespace ursine
             void onComponentRemoved(EVENT_HANDLER(World));
 
             void onUpdate(EVENT_HANDLER(World));
+            void onEditorUpdate(EVENT_HANDLER(World));
 
             void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
             void removeCollider(Entity *entity);

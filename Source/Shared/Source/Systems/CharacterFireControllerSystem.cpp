@@ -1,17 +1,9 @@
 #include "Precompiled.h"
 
 #include "CharacterFireControllerSystem.h"
-#include "CharacterFireControllerComponent.h"
 
-#include "RigidbodyComponent.h"
-
-#include "PlayerInputComponent.h"
 #include "AudioEmitterComponent.h"
 
-#include <GamepadManager.h>
-#include <MouseManager.h>
-#include <KeyboardManager.h>
-#include <UrsineMath.h>
 #include <Core/Physics/Interop/Raycasting.h>
 #include <PhysicsSystem.h>
 #include <SystemManager.h>
@@ -31,16 +23,68 @@ namespace
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
 
 CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World *world )
-    : FilterSystem( world, Filter( ).All<CharacterFireController>( ) )
+    : EntitySystem(world)
 {
 
 }
 
-void CharacterFireControllerSystem::Process( Entity *entity )
+void CharacterFireControllerSystem::OnInitialize()
 {
-    auto *fireController = entity->GetComponent<CharacterFireController>( );
+    m_world->Listener(this)
+        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
+            , &CharacterFireControllerSystem::onComponentAdded)
+        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
+            , &CharacterFireControllerSystem::onComponentRemoved)
+        .On(ecs::WorldEventType::WORLD_UPDATE
+            , &CharacterFireControllerSystem::onUpdate);
+}
+
+void CharacterFireControllerSystem::OnRemove()
+{
+    m_world->Listener( this )
+        .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
+            , &CharacterFireControllerSystem::onComponentAdded )
+        .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
+            , &CharacterFireControllerSystem::onComponentRemoved );
+}
+
+void CharacterFireControllerSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
+
+    if (args->component->Is<CharacterFireController>( ))
+    {
+        m_fireControllers.push_front(reinterpret_cast<CharacterFireController *>(args->component));
+    }
+
+}
+
+void CharacterFireControllerSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs:::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
+
+    m_fireControllers.remove(reinterpret_cast<CharacterFireController *>(args->component));
+}
+
+void CharacterFireControllerSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
+{
+
+    for (auto *fireCon : m_fireControllers)
+    {
+        Process( reinterpret_cast<CharacterFireController *>( fireCon ) );
+    }
+}
+
+void CharacterFireControllerSystem::Process( CharacterFireController *fireController)
+{
+    auto *entity = fireController->GetOwner();
     auto *entityTransform = entity->GetTransform( );
     auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitterComponent>( );
+
+    if (fireController == nullptr)
+    {
+        return;
+    }
 
     // update fire timer
     URSINE_TODO("Get acutal delta time for firing timer reduction");

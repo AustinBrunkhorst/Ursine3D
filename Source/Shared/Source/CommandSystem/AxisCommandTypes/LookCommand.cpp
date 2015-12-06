@@ -30,14 +30,14 @@ void LookCommand::Execute(ursine::ecs::Entity* receiver)
         return;
 
     auto *controller = receiver->GetComponent<CharacterController>( );
-    controller->lookDir = m_axis;
+    controller->SetLookDirection(m_axis);
 }
 
 void LookCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
     auto *controller = receiver->GetComponent<CharacterController>( );
 
-    controller->lookDir = ursine::Vec2(0, 0);
+    controller->SetLookDirection( ursine::Vec2(0, 0) );
 }
 
 void LookCommand::StartRecording(ursine::ecs::Entity* receiver)

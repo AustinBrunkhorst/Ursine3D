@@ -9,18 +9,7 @@
 #include "PlayerInputComponent.h"
 #include "AudioEmitterComponent.h"
 
-#include "SpawnSystem.h"
-
-#include <EntitySystem.h>
-#include <GamepadManager.h>
-#include <MouseManager.h>
-#include <KeyboardManager.h>
-#include <UrsineMath.h>
-#include <Core/Physics/Interop/Raycasting.h>
-#include <PhysicsSystem.h>
-#include <SystemManager.h>
-#include <AudioSystem.h>
-#include <Components/HealthComponent.h>
+#include <CameraComponent.h>
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -28,7 +17,7 @@ using namespace ursine::ecs;
 namespace
 {
 	const std::string kRunSound = "PLAYER_STEP";
-	const float Runduration = 0.2f;
+    const std::string kLandSound = "PLAYER_LAND";
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterControllerSystem );
@@ -43,36 +32,72 @@ void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
     auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
-    auto *input = entity->GetComponent<PlayerInput>();
-    auto moveSpeed = controller->moveSpeed;
-	auto rotateSpeed = controller->rotateSpeed;
+    auto moveSpeed = controller->GetMoveSpeed( );
+	auto rotateSpeed = controller->GetRotateSpeed( );
 
     auto transform = entity->GetTransform( );
     auto rigidbody = entity->GetComponent<Rigidbody>( );
     
-    float x = controller->lookDir.X( );
+    auto lookDir = controller->GetLookDirection( );
 
 	auto child = transform->GetChild(0);
+    auto cam = transform->GetComponentInChildren<Camera>( );
 
 	// This is an immidiate fix, cause fuck eet. - Jordan
 	rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
-
-    if (abs( x ) > 0.1f)
+    
+    // Looking logic
+    if (lookDir.LengthSquared( ) > 0.1f)
     {
-		// Get the first child (model + camera) and rotate it.
-        float angle = x * rotateSpeed;
+        auto lookAngle = lookDir * rotateSpeed;
 
-		child->SetWorldRotation( child->GetWorldRotation( ) * SQuat( 0.0f, angle, 0.0f ) );
+        if (cam)
+        {
+            auto camTrans = cam->GetOwner( )->GetTransform( );
+
+            // is this actually doing what we want?
+            auto look = camTrans->GetForward( );
+
+            if (lookAngle.Y( ) < 0.0f)
+            {
+                // look down
+                if (look.Y( ) > -0.75f)
+                {
+                    look = SQuat( -lookAngle.Y( ), camTrans->GetRight( ) ) * look;
+                    
+                    if (look.Y( ) < -0.75)
+                        look.Y( ) = -0.75;
+                }
+            }
+            else if (lookAngle.Y( ) > 0.0f)
+            {
+                // look up
+                if (look.Y( ) < 0.75f)
+                {
+                    look = SQuat( -lookAngle.Y( ), camTrans->GetRight( ) ) * look;
+
+                    if (look.Y( ) > 0.75)
+                        look.Y( ) = 0.75;
+                }
+            }
+
+            camTrans->LookAt( camTrans->GetWorldPosition( ) + look );
+        }
+
+		child->SetWorldRotation( 
+            child->GetWorldRotation( ) * 
+            SQuat( 0.0f, lookAngle.X( ), 0.0f )
+        );
     }
 
-    auto move = controller->moveDir * moveSpeed;
+    auto move = controller->GetMoveDirection( ) * moveSpeed;
 
     auto forward = child->GetForward( ) * move.Y( );
     auto strafe = child->GetRight( ) * move.X( );
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
-
-	/*if (emitter)
+    /*
+	if (emitter)
 	{
 		if (move != Vec2::Zero() && controller->CanStep)
 		{
@@ -93,6 +118,12 @@ void CharacterControllerSystem::Process(Entity *entity)
 			controller->inAir = false;
 		}
 	}*/
+
+    if (controller->m_jump)
+    {
+        vel.Y( ) += controller->m_jumpSpeed;
+        controller->m_jump = false;
+    }
 
     rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
 }
