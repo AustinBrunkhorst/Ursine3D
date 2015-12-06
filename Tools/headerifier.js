@@ -9,7 +9,7 @@ dot.templateSettings.varname = 'file';
 var templates = dot.process( { path: './templates' });
 
 var options = {
-	cwd: 'C:/Game Development/Ursine3D/Source/Projects/',
+	cwd: 'C:/Game Development/Ursine3D/Source/Ursine3D/src',
 	matchBase: true
 };
 
