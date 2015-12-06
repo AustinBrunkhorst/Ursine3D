@@ -57,7 +57,7 @@ namespace ursine
 			DirectX::XMFLOAT3	vNor;
 			DirectX::XMFLOAT2	vUv;
 			DirectX::XMFLOAT4	vBWeight;
-			unsigned	        vBIdx[4];
+			BYTE				vBIdx[4];
 		};
 
         struct PrimitiveVertex
