@@ -579,7 +579,7 @@ namespace ursine
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
 				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
-				meshTransform = meshTransform * geoTransform;
+				meshTransform = parentTransform * meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
 
 				// Check negative scale
@@ -1334,14 +1334,29 @@ namespace ursine
 				ProcessTangent(mesh, newMesh);
 				ProcessTexcoord(mesh, newMesh);
 				ProcessMaterials(pNode, newMesh);
+				//
+				////go through all the control points(verticies) and multiply by the transformation
+				//for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
+				//{
+				//	SVec3 vtx = SetFloat3ToSVec3(newMesh->vertices[i]);
+				//	SMat4 meshTM = newMesh->meshTM;
+				//	SVec3 result = meshTM.TransformVector(vtx);
+				//	newMesh->vertices[i] = SetSVec3ToFloat3(result);
+				//}
 
 				//go through all the control points(verticies) and multiply by the transformation
 				for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
 				{
-					SVec3 vtx = SetFloat3ToSVec3(newMesh->vertices[i]);
-					SMat4 meshTM = newMesh->meshTM;
-					SVec3 result = meshTM.TransformVector(vtx);
-					newMesh->vertices[i] = SetSVec3ToFloat3(result);
+					//XMVECTOR vtx = SetFloat3ToXMVector(modelMesh->vertices[i]);
+					//XMMATRIX meshTM = modelMesh->meshTM;
+					//XMVECTOR result = XMVector3Transform(vtx, meshTM);
+					//modelMesh->vertices[i] = SetXMVectorToFloat3(result);
+					FbxVector4 result;
+					result.mData[0] = newMesh->vertices[i].x;
+					result.mData[1] = newMesh->vertices[i].y;
+					result.mData[2] = newMesh->vertices[i].z;
+					result.mData[3] = 0.0f;
+					newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, result));
 				}
 
 				mModel->mMeshData.push_back(newMesh);
@@ -1507,6 +1522,12 @@ namespace ursine
 			else
 				parentTM = GetGlobalDefaultPosition(pParentNode);
 			return parentTM;
+		}
+
+		FbxVector4 CFBXLoader::Transform(const FbxAMatrix& pAMatrix, const FbxVector4& point)
+		{
+			FbxMatrix * m = (FbxMatrix*)&pAMatrix;
+			return m->MultNormalize(point);
 		}
 	}
 }
