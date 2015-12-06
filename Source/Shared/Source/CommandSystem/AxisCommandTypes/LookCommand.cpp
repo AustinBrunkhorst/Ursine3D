@@ -36,9 +36,7 @@ void LookCommand::Execute(ursine::ecs::Entity* receiver)
 
 void LookCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-    auto *controller = receiver->GetComponent<CharacterController>( );
 
-    controller->SetLookDirection( ursine::Vec2(0, 0) );
 }
 
 void LookCommand::StartRecording(ursine::ecs::Entity* receiver)

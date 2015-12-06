@@ -50,6 +50,8 @@ namespace ursine
                         derived.GetName().c_str( )
                     );
 
+                    UAssert( nextID < kMaxComponentCount, "We're maxed out son." );
+
                     componentID.SetValue( nextID++ );
 
                     auto defaultCtor = derived.GetDynamicConstructor( );

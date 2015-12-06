@@ -187,4 +187,4 @@ set(URSINE_HEADER_FILES "${URSINE_INC}" PARENT_SCOPE)
 
 
 # @@@TODO: this can't be an absolute path in the installer
-add_definitions(-DWORLD_AUDIO_BANK_PATH="Assets/GeneratedSoundBanks/Windows/")
+add_definitions(-DWORLD_AUDIO_BANK_PATH="${CMAKE_SOURCE_DIR}/Projects/Retrospect/Assets/GeneratedSoundBanks/Windows/")

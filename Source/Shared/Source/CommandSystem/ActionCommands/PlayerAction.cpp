@@ -33,7 +33,12 @@ PlayerAction::PlayerAction(ursine::ecs::Entity* entity, const ActionMode action,
 
 bool PlayerAction::WasPressed() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return false;
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
     
     if ( input == nullptr )
         return false;
@@ -55,7 +60,12 @@ bool PlayerAction::WasPressed() const
 
 bool PlayerAction::IsPressed() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return false;
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
 
     if ( input == nullptr )
         return false;
@@ -77,7 +87,12 @@ bool PlayerAction::IsPressed() const
 
 bool PlayerAction::WasReleased() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return false;
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
 
     if ( input == nullptr )
         return false;
@@ -99,7 +114,12 @@ bool PlayerAction::WasReleased() const
 
 bool PlayerAction::StickUp() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return false;
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
 
     if ( input == nullptr )
         return false;
@@ -115,7 +135,12 @@ bool PlayerAction::StickUp() const
 
 bool PlayerAction::StickDown() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return false;
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
 
     if ( input == nullptr )
         return false;
@@ -131,7 +156,12 @@ bool PlayerAction::StickDown() const
 
 bool PlayerAction::StickLeft() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return false;
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
 
     if ( input == nullptr )
         return false;
@@ -147,7 +177,12 @@ bool PlayerAction::StickLeft() const
 
 bool PlayerAction::StickRight() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return false;
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
 
     if ( input == nullptr )
         return false;
@@ -163,7 +198,12 @@ bool PlayerAction::StickRight() const
 
 ursine::Vec2 PlayerAction::GetAxis() const
 {
-    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(m_entity->GetComponent<PlayerInput>()->id);
+    auto *component = m_entity->GetComponent<PlayerInput>( );
+
+    if (!component)
+        return ursine::Vec2::Zero( );
+
+    auto *input = GetCoreSystem(ursine::GamepadManager)->GetState(component->id);
 
     if ( input == nullptr )
         return ursine::Vec2(0, 0);

@@ -30,6 +30,7 @@
 #include "CommandQueueComponent.h"
 #include <Model3DComponent.h>
 #include <Game Engine/Scene/Component/Native Components/ListenerComponent.h>
+#include <RigidbodyComponent.h>
 
 using namespace ursine;
 
@@ -162,6 +163,21 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
 			player->GetOwner( )->GetTransform( )->GetRoot( )->SetWorldPosition(
 				getSpawnPosition( player->GetTeamNumber( ), ++roundNum )
 			);
+
+            // Add back the rigidbody
+            if (!player->GetOwner()->HasComponent<ecs::Rigidbody>())
+            {
+                auto body = player->GetOwner()->AddComponent<ecs::Rigidbody>();
+
+                body->SetBodyType(ecs::BodyType::Dynamic);
+                body->SetMass(50.0f);
+                body->SetGravity(SVec3(0.0f, -100.0f, 0.0f));
+                body->SetRotationFreezeX(true);
+                body->SetRotationFreezeY(true);
+                body->SetRotationFreezeZ(true);
+                body->SetSleepToggle(false);
+                body->SetAwake();
+            }
 		}
 	}
 
@@ -238,8 +254,15 @@ void SpawnSystem::killPlayer(ursine::ecs::Entity* entity)
     if (cam)
         cam->GetOwner( )->RemoveComponent<ecs::Camera>( );
 
-    entity->GetComponentInChildren<ecs::AudioListener>( )
-        ->GetOwner( )->RemoveComponent<ecs::AudioListener>( );
+    // Remove the audio listener
+    auto listener = entity->GetComponentInChildren<ecs::AudioListener>( );
+
+    if (listener)
+        listener->GetOwner( )->RemoveComponent<ecs::AudioListener>( );
+
+    // Remove the rigidbody component (this is to fix an issue with the simulation)
+    
+    entity->RemoveComponent<ecs::Rigidbody>( );
 }
 
 void SpawnSystem::SpawnPlayer(int team, int roundNum)
@@ -267,6 +290,20 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
 
     // Set him to record
     playerTransform->GetOwner( )->GetComponent<CommandQueue>( )->SetRecording( true );
+
+    newPlayer->RemoveComponent<ecs::Rigidbody>( );
+
+    // Add back the rigidbody
+    auto body = newPlayer->AddComponent<ecs::Rigidbody>( );
+
+    body->SetMass( 50.0f );
+    body->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
+    body->SetRotationFreezeX( true );
+    body->SetRotationFreezeY( true );
+    body->SetRotationFreezeZ( true );
+    body->SetBodyType( ecs::BodyType::Dynamic );
+    body->SetSleepToggle( false );
+    body->SetAwake( );
 }
 
 ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum)

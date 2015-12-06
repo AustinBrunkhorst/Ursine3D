@@ -32,8 +32,7 @@ void MoveCommand::Execute(ursine::ecs::Entity* receiver)
         controller->SetMoveDirection(m_axis);
     else
     {
-        auto dir = m_position - controller->GetOwner( )->GetTransform( )->GetWorldPosition( );
-        controller->SetMoveDirection(ursine::Vec2(dir.X( ), dir.Z( )));
+        receiver->GetTransform( )->SetWorldPosition( m_position );
     }
 }
 

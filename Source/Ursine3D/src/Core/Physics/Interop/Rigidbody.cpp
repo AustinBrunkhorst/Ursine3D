@@ -34,6 +34,8 @@ namespace ursine
 
             setMotionState( &m_motionState );
 
+            setLinearFactor( btVector3( 1.0f, 1.0f, 1.0f ) );
+
             updateRotationFreeze( );
 
         #endif

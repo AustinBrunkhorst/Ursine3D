@@ -84,10 +84,10 @@ void RoundSystem::SendPlayerDamageTaken(ecs::Entity *damaged)
 
     auto *teamComponent = damaged->GetComponent<TeamComponent>( );
 
-    m_world->GetOwner( )->MessageUI( kUIPlayerDamageTaken, Json::object {
+    /*m_world->GetOwner( )->MessageUI( kUIPlayerDamageTaken, Json::object {
         { "player", teamComponent->GetTeamNumber( ) },
         { "percentage", percent }
-    } );
+    } );*/
 }
 
 void RoundSystem::StartNewRound(int team)

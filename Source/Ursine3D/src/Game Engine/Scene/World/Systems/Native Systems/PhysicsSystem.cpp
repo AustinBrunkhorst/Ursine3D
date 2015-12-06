@@ -32,7 +32,7 @@ namespace ursine
         ENTITY_SYSTEM_DEFINITION( PhysicsSystem );
 
         PhysicsSystem::PhysicsSystem(World *world)
-            : FilterSystem( world, Filter( ).One<Body, Rigidbody>( ) )
+            : EntitySystem( world )
 			, m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
         {
             m_collisionShapes.One<
@@ -130,28 +130,8 @@ namespace ursine
             return result;
         }
 
-        void PhysicsSystem::Process(Entity* entity)
-        {
-            auto trans = entity->GetTransform( );
-
-            if (entity->HasComponent<Rigidbody>( ))
-            {
-                auto body = entity->GetComponent<Rigidbody>( );
-
-                body->m_rigidbody.GetTransform( trans );
-            }
-            else
-            {
-                auto body = entity->GetComponent<Body>( );
-
-                body->m_body.GetTransform( trans );
-            }
-        }
-
         void PhysicsSystem::OnInitialize(void)
         {
-            FilterSystem::OnInitialize( );
-
             m_debugSystem = m_world->GetEntitySystem( DebugSystem );
 
             m_world->Listener( this )
@@ -163,8 +143,6 @@ namespace ursine
 
         void PhysicsSystem::OnRemove(void)
         {
-            FilterSystem::OnRemove( );
-
             m_world->Listener( this )
                 .Off( WORLD_UPDATE, &PhysicsSystem::onUpdate )
                 .Off( WORLD_EDITOR_UPDATE, &PhysicsSystem::onEditorUpdate )
@@ -224,6 +202,12 @@ namespace ursine
                 m_simulation.AddRigidbody(
                     &rigidbody->m_rigidbody
                 );
+
+                m_rigidbodies.push_back( reinterpret_cast<Rigidbody*>( const_cast<Component*>( args->component ) ) );
+            }
+            else if (component->Is<Body>( ))
+            {
+                m_bodies.push_back( reinterpret_cast<Body*>( const_cast<Component*>( args->component ) ) );
             }
             else if (component->Is<SphereCollider>( ))
             {
@@ -307,6 +291,13 @@ namespace ursine
                 // if there is an empty collider attached, remove it
                 if (entity->HasComponent<EmptyCollider>( ) && !entity->IsDeleting( ))
                     entity->RemoveComponent<EmptyCollider>( );
+
+                // Remove it from our list
+                m_rigidbodies.erase( std::find(
+                    m_rigidbodies.begin( ),
+                    m_rigidbodies.end( ),
+                    args->component
+                ) );
             }
             else if (component->Is<Body>( ))
             {
@@ -315,6 +306,13 @@ namespace ursine
                 m_simulation.RemoveBody(
                     &body->m_body
                 );
+
+                // Remove it from our list
+                m_bodies.erase( std::find(
+                    m_bodies.begin( ),
+                    m_bodies.end( ),
+                    args->component
+                ) );
             }
             else if (m_collisionShapes.Matches( component->GetTypeMask( ) ))
             {
@@ -326,6 +324,18 @@ namespace ursine
         void PhysicsSystem::onUpdate(EVENT_HANDLER(World))
         {
             m_simulation.Step( Application::Instance->GetDeltaTime( ) );
+
+            // update all rigidbodies
+            for (auto &rigid : m_rigidbodies)
+            {
+                rigid->m_rigidbody.GetTransform( rigid->GetOwner( )->GetTransform( ) );
+            }
+
+            // update all bodies
+            for (auto &body : m_bodies)
+            {
+                body->m_body.GetTransform( body->GetOwner( )->GetTransform( ) );
+            }
         }
 
         void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))

@@ -24,9 +24,10 @@ namespace ursine
     namespace ecs
     {
         class Rigidbody;
+        class Body;
 
         class PhysicsSystem 
-            : public FilterSystem
+            : public EntitySystem
         {
             ENTITY_SYSTEM;
 
@@ -49,9 +50,6 @@ namespace ursine
 
             void ClearContacts(Rigidbody *rigidbody);
 
-        protected:
-            void Process(Entity *entity) override;
-
         private:
             physics::Simulation m_simulation;
 			physics::DebugDrawer m_debugDrawer;
@@ -61,6 +59,9 @@ namespace ursine
             DebugSystem *m_debugSystem;
 
             bool m_enableDebugDraw;
+
+            std::vector<Rigidbody*> m_rigidbodies;
+            std::vector<Body*> m_bodies;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
