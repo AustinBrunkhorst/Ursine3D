@@ -89,6 +89,8 @@ class ScreenManager {
     private function onScreenEvent(e : Dynamic) {
         var screen = m_screens[ e.screenID ];
 
+        trace( 'event: ${e}' );
+
         if (screen != null)
             screen.events.trigger( e.event, e.data );
     }

@@ -100,8 +100,7 @@ namespace ursine
 
     void AudioManager::PauseAudio()
     {
-        if (AK::SoundEngine::Suspend( false ) != AK_Success)
-            UWarning( "Wwise: Cannot Suspend Sound Engine" );
+        AK::SoundEngine::Suspend( false );
     }
 
     void AudioManager::StopSound(std::string name, AkGameObjectID id)
@@ -118,8 +117,7 @@ namespace ursine
 
     void AudioManager::ResumeAudio()
     {
-        if (AK::SoundEngine::WakeupFromSuspend( ) != AK_Success)
-            UWarning( "Wwise: Cannot Wake Up Sound Engine From Suspend" );
+        AK::SoundEngine::WakeupFromSuspend( );
     }
 
     void AudioManager::DestroyList()

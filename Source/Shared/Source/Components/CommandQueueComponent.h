@@ -27,20 +27,18 @@ class CommandQueue
     NATIVE_COMPONENT;
 
 public:
+    Meta(Enable)
     CommandQueue(void);
 
     void OnInitialize(void) override;
 
-    Meta(Disable)
     void AddCommand(const std::shared_ptr<Command> &comman);
 
-    Meta(Disable)
     void SetRecording(const bool flag);
+    bool IsRecording(void) const;
 
-    Meta(Disable)
     void UseRecorder(const bool flag);
-    
-    Meta(Disable)
+   
     void Update(void);
 
 private:
@@ -50,5 +48,5 @@ private:
     bool m_useRecorder;
     bool m_recording;
 
-}Meta(Enable, DisplayName("CommandQueue"));
+}Meta(Enable, WhiteListMethods, DisplayName( "CommandQueue" ));
 

@@ -17,6 +17,12 @@ Application.main = function() {
 	ursine_native_Extern.InitGame();
 };
 Math.__name__ = true;
+var Std = function() { };
+$hxClasses["Std"] = Std;
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
 var Type = function() { };
 $hxClasses["Type"] = Type;
 Type.__name__ = true;
@@ -125,6 +131,77 @@ js__$Boot_HaxeError.__name__ = true;
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
 });
+var js_Boot = function() { };
+$hxClasses["js.Boot"] = js_Boot;
+js_Boot.__name__ = true;
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			if (e instanceof js__$Boot_HaxeError) e = e.val;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+};
 var ursine_utils_IEventContainer = function() { };
 $hxClasses["ursine.utils.IEventContainer"] = ursine_utils_IEventContainer;
 ursine_utils_IEventContainer.__name__ = true;
@@ -365,7 +442,7 @@ retrospect_screens_MainMenuScreen.prototype = $extend(retrospect_screens_BasicMe
 });
 var retrospect_screens_MultiplayerPlayScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
-	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown));
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown)).on("PlayerDamageTaken",$bind(this,this.onPlayerDamageTaken));
 };
 $hxClasses["retrospect.screens.MultiplayerPlayScreen"] = retrospect_screens_MultiplayerPlayScreen;
 retrospect_screens_MultiplayerPlayScreen.__name__ = true;
@@ -381,6 +458,9 @@ retrospect_screens_MultiplayerPlayScreen.prototype = $extend(ursine_screen_Scree
 	,onGamepadButtonDown: function(e) {
 		if(!(e.triggered && e.pressed)) return;
 		if(e.button == 4) this.triggerPause();
+	}
+	,onPlayerDamageTaken: function(data) {
+		console.log("${data.player}: ${data.percentage}");
 	}
 });
 var retrospect_screens_PauseScreen = function(id,frame,data) {
@@ -529,6 +609,7 @@ ursine_screen_ScreenManager.prototype = {
 		var screen;
 		var key = e.screenID;
 		screen = this.m_screens.h[key];
+		console.log("event: " + Std.string(e));
 		if(screen != null) screen.events.trigger(e.event,e.data);
 	}
 	,onScreenEntered: function(e) {

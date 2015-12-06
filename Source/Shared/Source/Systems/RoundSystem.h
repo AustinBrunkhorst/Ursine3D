@@ -24,7 +24,9 @@ enum RoundSystemEventType
     // args say what team won
     MATCH_OVER,
 	// args say what player died
-	PLAYER_DIED
+	PLAYER_DIED,
+    // this player took damage
+    INPUT_PLAYER_DAMAGE_TAKEN
 };
 
 class RoundSystem 
@@ -39,7 +41,6 @@ public:
     {
         int team;
 		ursine::ecs::Entity *entity;
-
 
         RoundEventArgs(int team)
             : team(team)
@@ -62,6 +63,7 @@ public:
     void SetMaxRoundCount(int round);
 
 	void SendPlayerDiedMessage(ursine::ecs::Entity *died);
+	void SendPlayerDamageTaken(ursine::ecs::Entity *damaged);
 
 	void StartNewRound(int team);
 

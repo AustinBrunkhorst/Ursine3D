@@ -14,7 +14,8 @@ class MultiplayerPlayScreen extends Screen {
 
         events
             .on( KeyboardEventType.KeyDown, onKeyboardKeyDown )
-            .on( GamepadEventType.ButtonDown, onGamepadButtonDown );
+            .on( GamepadEventType.ButtonDown, onGamepadButtonDown )
+            .on( 'PlayerDamageTaken', onPlayerDamageTaken );
     }
 
     private function triggerPause() {
@@ -37,5 +38,9 @@ class MultiplayerPlayScreen extends Screen {
         if (e.button == GamepadButton.BACK) {
             triggerPause( );
         }
+    }
+
+    private function onPlayerDamageTaken(data : Dynamic) {
+        trace( "${data.player}: ${data.percentage}");
     }
 }

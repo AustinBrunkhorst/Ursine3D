@@ -38,6 +38,11 @@ void CommandQueue::SetRecording(const bool flag)
     m_recording = flag;
 }
 
+bool CommandQueue::IsRecording(void) const
+{
+    return m_recording;
+}
+
 void CommandQueue::UseRecorder(const bool flag) 
 {
     m_useRecorder = flag;

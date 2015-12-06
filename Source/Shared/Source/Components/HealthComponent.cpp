@@ -43,18 +43,35 @@ void Health::SetHealth(const float health)
     m_health = health;
 }
 
+float Health::GetMaxHealth(void) const
+{
+    return m_maxHealth;
+}
+
 void Health::DealDamage(const float damage)
 {
-	if (GetOwner()->GetComponent<TeamComponent>()->IsDead())
+    auto owner = GetOwner( );
+
+	if (owner->GetComponent<TeamComponent>( )->IsDead( ))
 	{
 		return;
 	}
 
     m_health -= damage;
 
-    if(m_health <= 0)
+    auto *roundSystem = owner->GetWorld( )->GetEntitySystem( RoundSystem );
+
+    if (m_health <= 0)
     {
-		GetOwner()->GetWorld()->GetSystemManager()
-			->GetSystem<RoundSystem>()->SendPlayerDiedMessage(this->GetOwner());
+		roundSystem->SendPlayerDiedMessage( owner );
     }
+    else
+    {
+        roundSystem->SendPlayerDamageTaken( owner );
+    }
+}
+
+void Health::OnInitialize(void)
+{
+    m_maxHealth = m_health;
 }

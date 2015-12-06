@@ -15,6 +15,16 @@
 
 #include <Component.h>
 
+struct HealthEventArgs : ursine::EventArgs
+{
+    float health;
+    float percentage;
+
+    HealthEventArgs(float health, float percentage)
+        : health( health )
+        , percentage( percentage ) { }
+};
+
 class Health : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -26,16 +36,19 @@ public:
         SetHealth
     );
 
+    Meta(Enable)
     Health(void);
     ~Health(void);
 
     float GetHealth(void) const;
     void SetHealth(const float health);
+    float GetMaxHealth(void) const;
 
-    Meta(Disable)
     void DealDamage(const float damage);
 
 private:
-    float m_health;
+    void OnInitialize(void) override;
 
-} Meta(Enable, DisplayName("Health"));
+    float m_health;
+    float m_maxHealth;
+} Meta(Enable, WhiteListMethods, DisplayName( "Health" ));
