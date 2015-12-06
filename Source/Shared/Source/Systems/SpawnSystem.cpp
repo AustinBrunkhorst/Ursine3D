@@ -26,7 +26,10 @@
 #include <EventDispatcher.h>
 #include "RecorderSystem.h"
 #include <PlayerInputComponent.h>
-#include <Game Engine/Scene/Component/Native Components/CameraComponent.h>
+#include <CameraComponent.h>
+#include "CommandQueueComponent.h"
+#include <Model3DComponent.h>
+#include <Game Engine/Scene/Component/Native Components/ListenerComponent.h>
 
 using namespace ursine;
 
@@ -125,12 +128,7 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
-    if (args->component->Is<TeamComponent>( ))
-	{
-        TeamComponent *player = reinterpret_cast<TeamComponent *>(args->component);
-        //????
-    }
-    else if (args->component->Is<Spawnpoint>())
+    if (args->component->Is<Spawnpoint>())
     {
         auto spawnpoint = reinterpret_cast<Spawnpoint *>(args->component);
 
@@ -180,22 +178,14 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
 void SpawnSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
 {
 	EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
-
-	// set that player to dead
-	args->entity->GetComponent<TeamComponent>()->SetDead();
-
-	// remove the input component
-	args->entity->RemoveComponent<PlayerInput>( );
+    
+    killPlayer( args->entity );
 
 	// play an animation
 
 	// see if the round ended due to whole team killed
 	auto team = args->entity->GetComponent<TeamComponent>( );
-
 	auto &teamVec = m_teams[ team->GetTeamNumber( ) - 1 ];
-
-    args->entity->GetComponentInChildren<ecs::Camera>()
-        ->GetOwner()->RemoveComponent<ecs::Camera>();
 
 	bool allDead = true;
 	for (auto &p : teamVec)
@@ -209,9 +199,47 @@ void SpawnSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
 
 	if (allDead)
 	{
-		m_world->GetSystemManager()->GetSystem<RoundSystem>()
-			->StartNewRound(team->GetTeamNumber());
+        // 'Kill' the winning team's main player
+        auto winningTeam = team->GetTeamNumber( ) == 1 ? 2 : 1;
+
+        killPlayer( m_teams[ winningTeam - 1 ].back( )->GetOwner( ) );
+
+		m_world->GetSystemManager( )->GetSystem<RoundSystem>( )
+			->StartNewRound( team->GetTeamNumber( ) );
 	}
+}
+
+void SpawnSystem::killPlayer(ursine::ecs::Entity* entity)
+{
+    // set that player to dead
+	entity->GetComponent<TeamComponent>( )->SetDead( );
+
+	// remove the input component
+	entity->RemoveComponent<PlayerInput>( );
+
+    // Set the command queue to stop recording
+    auto commandQueue = entity->GetComponent<CommandQueue>( );
+    commandQueue->SetRecording( false );
+    commandQueue->UseRecorder( true );
+
+    // Set the model's proper layer
+    auto models = entity->GetComponentsInChildren<ecs::Model3D>( );
+    for (auto &model : models)
+    {
+        if (model->GetOwner( )->GetName( ) == "FPSArm")
+            model->SetRenderMask( 0 );
+        else
+            model->SetRenderMask( 4 );
+    }
+
+    // Remove the camera
+    auto cam = entity->GetComponentInChildren<ecs::Camera>( );
+
+    if (cam)
+        cam->GetOwner( )->RemoveComponent<ecs::Camera>( );
+
+    entity->GetComponentInChildren<ecs::AudioListener>( )
+        ->GetOwner( )->RemoveComponent<ecs::AudioListener>( );
 }
 
 void SpawnSystem::SpawnPlayer(int team, int roundNum)
@@ -236,6 +264,9 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
 
     // get spawn position to place the player at and actually spawn the player
     playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum));
+
+    // Set him to record
+    playerTransform->GetOwner( )->GetComponent<CommandQueue>( )->SetRecording( true );
 }
 
 ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum)

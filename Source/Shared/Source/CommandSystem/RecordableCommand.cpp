@@ -17,7 +17,7 @@ float RecordableCommand::GetStartTime(void) const
     return m_startTime;
 }
 
-void RecordableCommand::SetStartTime(float startTime)
+void RecordableCommand::SetStartTime(ursine::uint64 startTime)
 {
 	m_startTime = startTime;
 }
@@ -27,7 +27,7 @@ float RecordableCommand::GetDuration(void) const
     return m_duration;
 }
 
-void RecordableCommand::SetDuration(float duration)
+void RecordableCommand::SetDuration(ursine::uint64 duration)
 {
 	m_duration = duration;
 }

@@ -11,7 +11,7 @@
 #include "Precompiled.h"
 
 #include "FireCommand.h"
-#include <Components/CharacterFireControllerComponent.h>
+#include <CharacterFireControllerComponent.h>
 
 RECORDABLE_COMMAND_DEFINITION( FireCommand );
 
@@ -26,7 +26,10 @@ void FireCommand::Execute(ursine::ecs::Entity* receiver)
 
     if(fireComponent != nullptr)
     {
-        fireComponent->SetFireState(true);
+        if (fireComponent->GetTriggerFire( ))
+            fireComponent->Fire( );
+        else
+            fireComponent->SetFireState(true);
     }
 }
 
@@ -45,12 +48,12 @@ void FireCommand::StartRecording(ursine::ecs::Entity* receiver)
     
 }
 
-void FireCommand::Record(ursine::ecs::Entity* receiver, const float time)
+void FireCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     
 }
 
-void FireCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
+void FireCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     
 }

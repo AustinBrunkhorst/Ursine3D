@@ -40,7 +40,7 @@ namespace ursine
 		Meta(Disable)
 		std::vector<std::vector<std::pair<ecs::EntityUniqueID, Recording> > > m_recordings;
 
-		float m_roundTimer;
+		uint64 m_roundTimer;
 		int m_roundNumber;
 		bool m_running;
 

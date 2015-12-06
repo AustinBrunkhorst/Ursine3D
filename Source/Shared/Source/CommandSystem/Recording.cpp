@@ -31,7 +31,7 @@ void Recording::InitPlayback(void)
 	m_playbackIndex = 0;
 }
 
-void Recording::Play(float timeMarker, ursine::ecs::Entity *receiver)
+void Recording::Play(ursine::uint64 timeMarker, ursine::ecs::Entity *receiver)
 {
 	if (receiver == nullptr)
 		return;
@@ -95,7 +95,7 @@ void Recording::Play(float timeMarker, ursine::ecs::Entity *receiver)
 	}
 }
 
-void Recording::Record(float roundTime, RecordableCommandPtr command, ursine::ecs::Entity *receiver)
+void Recording::Record(ursine::uint64 roundTime, RecordableCommandPtr command, ursine::ecs::Entity *receiver)
 {
 	if (receiver == nullptr)
         return;
@@ -137,7 +137,7 @@ void Recording::Record(float roundTime, RecordableCommandPtr command, ursine::ec
     command->Record( receiver, roundTime );
 }
 
-void Recording::UpdateRecording(float roundTime, ursine::ecs::Entity *receiver)
+void Recording::UpdateRecording(ursine::uint64 roundTime, ursine::ecs::Entity *receiver)
 {
 	if (receiver == nullptr)
         return;
@@ -152,7 +152,7 @@ void Recording::UpdateRecording(float roundTime, ursine::ecs::Entity *receiver)
     m_stopQueue.clear( );
 
     // The time threshold for detemining if a command is stale or not (in frames)
-    const int threshold = ursine::Application::Instance->GetDeltaTime( );
+    ursine::uint64 threshold = 2;
 
     // iterate through all live actions
     for (int i = 0, n = m_live.size( ); i < n; ++i)

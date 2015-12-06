@@ -39,9 +39,7 @@ void JumpCommand::Execute(ursine::ecs::Entity* receiver)
 
 void JumpCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-	auto *controller = receiver->GetComponent<CharacterController>();
 
-	controller->Jump( );
 }
 
 void JumpCommand::StartRecording(ursine::ecs::Entity* receiver)
@@ -49,12 +47,12 @@ void JumpCommand::StartRecording(ursine::ecs::Entity* receiver)
     
 }
 
-void JumpCommand::Record(ursine::ecs::Entity* receiver, const float time)
+void JumpCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     
 }
 
-void JumpCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
+void JumpCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     
 }

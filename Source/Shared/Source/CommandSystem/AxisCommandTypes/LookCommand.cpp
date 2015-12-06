@@ -11,7 +11,8 @@
 #include "Precompiled.h"
 
 #include "LookCommand.h"
-#include <Components/CharacterControllerComponent.h>
+#include <CharacterControllerComponent.h>
+#include <CharacterFireControllerComponent.h>
 
 RECORDABLE_COMMAND_DEFINITION( LookCommand );
 
@@ -48,22 +49,29 @@ void LookCommand::StartRecording(ursine::ecs::Entity* receiver)
     m_playback = false;
 }
 
-void LookCommand::Record(ursine::ecs::Entity* receiver, const float time)
+void LookCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     auto *transform = receiver->GetTransform();
 
     m_characterRot.push_back(transform->GetLocalRotation( ));
+    m_camRot.push_back(
+        transform->GetComponentInChildren<CharacterFireController>( )
+        ->GetOwner( )->GetTransform( )->GetLocalRotation( )
+    );
 }
 
-void LookCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
+void LookCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     auto index = time - m_startTime;
 
-    if ( index > m_characterRot.size() )
-        index = m_characterRot.size() - 1;
+    if ( index >= m_characterRot.size( ) )
+        index = m_characterRot.size( ) - 1;
 
-    auto *transform = receiver->GetTransform();
-    transform->SetLocalRotation(m_characterRot[ index ]);
+    auto *transform = receiver->GetTransform( );
+    transform->SetLocalRotation( m_characterRot[ index ] );
+
+    transform->GetComponentInChildren<CharacterFireController>( )
+        ->GetOwner( )->GetTransform( )->SetLocalRotation( m_characterRot[ index ] );
 
     m_playback = true;
 }

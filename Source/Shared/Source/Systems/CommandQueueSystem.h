@@ -10,17 +10,32 @@
 
 #pragma once
 
-#include <FilterSystem.h>
+#include <EntitySystem.h>
+#include <Components/CommandQueueComponent.h>
 
 class CommandQueueSystem
-    : public ursine::ecs::FilterSystem
+    : public ursine::ecs::EntitySystem
 {
     ENTITY_SYSTEM;
 
 public:
     CommandQueueSystem(ursine::ecs::World *world);
 
-protected:
-    void Process(ursine::ecs::Entity *entity) override;
+private:
+    void OnInitialize(void) override;
+    void OnRemove(void) override;
+
+    // used to maintain player count and spawnpoint list
+    void onComponentAdded(EVENT_HANDLER(ursine::ecs:::World));
+
+    // spawn points and player count
+    void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
+
+    void onWorldUpdate(EVENT_HANDLER(ursine::ecs::World));
+
+
+    void Process(CommandQueue* commandQueue);
+
+    std::list<CommandQueue *> m_commandQueueList;
 
 } Meta(Enable);

@@ -24,13 +24,13 @@ namespace ursine
 
 	RecorderSystem::RecorderSystem(ecs::World *world)
 		: EntitySystem( world )
-		, m_roundTimer( 0.0f )
+		, m_roundTimer( 0 )
 		, m_roundNumber( -1 )
 		, m_running( false ) { }
 
 	void RecorderSystem::SetRoundStart(std::vector<std::vector<TeamComponent*> > &teamCompnents)
 	{
-		m_roundTimer = 0.0f;
+		m_roundTimer = 0;
 
 		// Increment the round number
 		++m_roundNumber;
@@ -77,7 +77,7 @@ namespace ursine
 
 		auto teamNum = team->GetTeamNumber( );
 
-		auto &recording = m_recordings[ teamNum ][ m_roundNumber ];
+		auto &recording = m_recordings[ teamNum - 1 ][ m_roundNumber ];
 
 		recording.second.Record( m_roundTimer, command, entity );
 	}
@@ -101,9 +101,7 @@ namespace ursine
 		if (!m_running)
 			return;
 
-		auto dt = Application::Instance->GetDeltaTime( );
-
-		m_roundTimer += dt;
+        ++m_roundTimer;
 
 		for (auto &teamRecording : m_recordings)
 		{
@@ -115,6 +113,9 @@ namespace ursine
 
 				recordingPair.second.Play( m_roundTimer, m_world->GetEntityUnique( recordingPair.first ) );
 			}
+            
+            auto &pair = teamRecording[ m_roundNumber ];
+            pair.second.UpdateRecording( m_roundTimer, m_world->GetEntityUnique( pair.first ) );
 		}
 	}
 }

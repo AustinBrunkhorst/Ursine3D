@@ -74,4 +74,4 @@ private:
     int m_round;
     int m_maxRound;
 
-} Meta(Enable, DisableEntitySystemAutoAdd);
+} Meta(Enable/*, DisableEntitySystemAutoAdd*/);

@@ -25,8 +25,8 @@ public:
     void StopExecute(ursine::ecs::Entity *receiver) override;
 
     void StartRecording(ursine::ecs::Entity *receiver) override;
-    void Record(ursine::ecs::Entity *receiver, const float time) override;
-    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const float time) override;
+    void Record(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
+    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
 
 private:
     std::vector<ursine::SQuat> m_characterRot;

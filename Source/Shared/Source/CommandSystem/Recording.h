@@ -15,6 +15,7 @@
 
 #include <vector>
 #include "RecordableCommand.h"
+#include "UrsineTypes.h"
 
 typedef std::shared_ptr<RecordableCommand> RecordableCommandPtr;
 
@@ -27,11 +28,11 @@ public:
 
 	void InitPlayback(void);
 
-	void Play(float timeMarker, ursine::ecs::Entity *receiver);
+	void Play(ursine::uint64 timeMarker, ursine::ecs::Entity *receiver);
 
-	void Record(float roundTime, RecordableCommandPtr command, ursine::ecs::Entity *receiver);
+	void Record(ursine::uint64 roundTime, RecordableCommandPtr command, ursine::ecs::Entity *receiver);
 
-	void UpdateRecording(float roundTime, ursine::ecs::Entity *receiver);
+	void UpdateRecording(ursine::uint64 roundTime, ursine::ecs::Entity *receiver);
 
 private:
 

@@ -33,15 +33,13 @@ void MoveCommand::Execute(ursine::ecs::Entity* receiver)
     else
     {
         auto dir = m_position - controller->GetOwner( )->GetTransform( )->GetWorldPosition( );
+        controller->SetMoveDirection(ursine::Vec2(dir.X( ), dir.Z( )));
     }
 }
 
 void MoveCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-    auto *controller = receiver->GetComponent<CharacterController>();
 
-    controller->SetMoveDirection( ursine::Vec2(0, 0) );
-    //receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyType(ursine::ecs::BodyType::Static);
 }
     
 
@@ -51,14 +49,14 @@ void MoveCommand::StartRecording(ursine::ecs::Entity* receiver)
     m_playback = false;
 }
 
-void MoveCommand::Record(ursine::ecs::Entity* receiver, const float time)
+void MoveCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     auto *transform = receiver->GetTransform();
 
     m_positionList.push_back(transform->GetWorldPosition());
 }
 
-void MoveCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const float time)
+void MoveCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
 {
     auto index = time - m_startTime;
 

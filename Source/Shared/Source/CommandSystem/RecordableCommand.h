@@ -20,20 +20,20 @@ class RecordableCommand
 {
 public:
     virtual void StartRecording(ursine::ecs::Entity *receiver) = 0;
-    virtual void Record(ursine::ecs::Entity *receiver, const float time) = 0;
-    virtual void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const float time) = 0;
+    virtual void Record(ursine::ecs::Entity *receiver, const ursine::uint64 time) = 0;
+    virtual void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const ursine::uint64 time) = 0;
 
 	virtual ursine::uint GetTypeID(void) = 0;
 
     float GetStartTime(void) const;
-	void SetStartTime(float startTime);
+	void SetStartTime(ursine::uint64 startTime);
 
     float GetDuration(void) const;
-	void SetDuration(float duration);
+	void SetDuration(ursine::uint64 duration);
 
 protected:
-    float m_startTime;
-    float m_duration;
+    ursine::uint64 m_startTime;
+    ursine::uint64 m_duration;
 
 	static ursine::uint GetID(void);
 };

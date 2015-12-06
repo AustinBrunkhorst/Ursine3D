@@ -46,6 +46,8 @@ class SpawnSystem : public ursine::ecs::EntitySystem
 			// when the players die, this gets called
 			void onPlayerDied(EVENT_HANDLER(RoundSystem));
 
+            void killPlayer(ursine::ecs::Entity *entity);
+
             ursine::SVec3 getSpawnPosition(int team, int roundNum);
 
             std::vector<std::vector<TeamComponent *> > m_teams;
@@ -53,4 +55,4 @@ class SpawnSystem : public ursine::ecs::EntitySystem
             std::list<Spawnpoint *> m_team1Spawnpoints;
             std::list<Spawnpoint *> m_team2Spawnpoints;
 
-        } Meta(Enable, DisableEntitySystemAutoAdd);
+        } Meta(Enable/*, DisableEntitySystemAutoAdd*/);

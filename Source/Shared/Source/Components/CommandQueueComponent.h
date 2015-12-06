@@ -7,6 +7,7 @@
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
 ** --------------------------------------------------------------------------*/
+#pragma once
 
 #include <Component.h>
 #include "Command.h"
