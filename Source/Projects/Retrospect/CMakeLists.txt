@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 
+set(resources_dir "${CMAKE_CURRENT_LIST_DIR}/Resources")
+
+set(windows_resource_file "${resources_dir}/Resources.rc")
+set(install_icon "${resources_dir}/Icon.ico")
+
 include_directories(${Shared_INCLUDE_DIRS})
 
 # external files that will trigger regeneration of meta data
@@ -17,6 +22,10 @@ ursine_default_project(Retrospect
     RECURSIVE_INCLUDES
     BUILD_META
     INCLUDE_INSTALLER
+    INSTALLER_VERSION 1.0s1
+    INSTALLER_ICON ${install_icon}
+    INSTALLER_UNINSTALL_ICON ${install_icon}
+    WINDOWS_RESOURCE_FILE ${windows_resource_file}
     META_HEADER "Reflection.h"
     META_DEPENDENCIES ${meta_dependencies}
     PCH_NAME "Precompiled"
