@@ -268,10 +268,10 @@ namespace ursine
 						currMI->meshVtxInfos[j].ctrlBlendWeights.y = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingWeight);
 						currMI->meshVtxInfos[j].ctrlBlendWeights.z = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingWeight);
 						currMI->meshVtxInfos[j].ctrlBlendWeights.w = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingWeight);
-						currMI->meshVtxInfos[j].ctrlIndices.x = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingIndex;
-						currMI->meshVtxInfos[j].ctrlIndices.y = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingIndex;
-						currMI->meshVtxInfos[j].ctrlIndices.z = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingIndex;
-						currMI->meshVtxInfos[j].ctrlIndices.w = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingIndex;
+						currMI->meshVtxInfos[j].ctrlIndices[0] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingIndex;
+						currMI->meshVtxInfos[j].ctrlIndices[1] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingIndex;
+						currMI->meshVtxInfos[j].ctrlIndices[2] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingIndex;
+						currMI->meshVtxInfos[j].ctrlIndices[3] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingIndex;
 					}
 				}
 
@@ -393,14 +393,25 @@ namespace ursine
 					currAI->boneCount = static_cast<unsigned int>(iter->second.boneAnim.size());
 					currAI->keyIndices[j] = new unsigned int[iter->second.boneAnim.size()];
 					currAI->keyframes[j] = new FBX_DATA::KeyFrame*[iter->second.boneAnim.size()];
+					unsigned int maxkfCount = 0;
 					for (k = 0; k < iter->second.boneAnim.size(); ++k)
 					{
 						unsigned int kfCount = static_cast<unsigned int>(iter->second.boneAnim[k].keyFrames.size());
-						currAI->keyIndices[j][k] = kfCount;
-						currAI->keyframes[j][k] = new FBX_DATA::KeyFrame[kfCount];
-						for (l = 0; l < kfCount; ++l)
+						if (maxkfCount < kfCount)
+							maxkfCount = kfCount;
+					}
+
+					for (k = 0; k < iter->second.boneAnim.size(); ++k)
+					{
+						unsigned int kfCount = static_cast<unsigned int>(iter->second.boneAnim[k].keyFrames.size());
+						currAI->keyIndices[j][k] = maxkfCount;
+						currAI->keyframes[j][k] = new FBX_DATA::KeyFrame[maxkfCount];
+						for (l = 0; l < maxkfCount; ++l)
 						{
-							currAI->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[l];
+							if (l < maxkfCount && l < kfCount)
+								currAI->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[l];
+							else if (l >= kfCount)
+								currAI->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[kfCount - 1];
 						}
 					}
 				}
@@ -568,7 +579,7 @@ namespace ursine
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
 				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
-				meshTransform = parentTransform * meshTransform * geoTransform;
+				meshTransform = meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
 
 				// Check negative scale
@@ -1308,7 +1319,7 @@ namespace ursine
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
 				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
 				//mConverter->ConvertMeshMatrix(meshTransform);
-				meshTransform = parentTransform * meshTransform * geoTransform;
+				meshTransform = meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
 
 				// Check negative scale
@@ -1332,6 +1343,7 @@ namespace ursine
 					SVec3 result = meshTM.TransformVector(vtx);
 					newMesh->vertices[i] = SetSVec3ToFloat3(result);
 				}
+
 				mModel->mMeshData.push_back(newMesh);
 			}
 			//go through all the child node and grab there geometry information

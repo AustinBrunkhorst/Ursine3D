@@ -354,18 +354,18 @@ namespace ursine
 						buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
 						buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
 						buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
-						buffer[i].vBIdx[0] = currMesh->meshVtxInfos[i].ctrlIndices.x;
-						buffer[i].vBIdx[1] = currMesh->meshVtxInfos[i].ctrlIndices.y;
-						buffer[i].vBIdx[2] = currMesh->meshVtxInfos[i].ctrlIndices.z;
-						buffer[i].vBIdx[3] = currMesh->meshVtxInfos[i].ctrlIndices.w;
+						buffer[i].vBIdx[0] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[0]);
+						buffer[i].vBIdx[1] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[1]);
+						buffer[i].vBIdx[2] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[2]);
+						buffer[i].vBIdx[3] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[3]);
 					}
 					else
 					{
 						buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-						buffer[i].vBIdx[0] = 0;
-						buffer[i].vBIdx[1] = 0;
-						buffer[i].vBIdx[2] = 0;
-						buffer[i].vBIdx[3] = 0;
+						buffer[i].vBIdx[0] = static_cast<BYTE>(0);
+						buffer[i].vBIdx[1] = static_cast<BYTE>(0);
+						buffer[i].vBIdx[2] = static_cast<BYTE>(0);
+						buffer[i].vBIdx[3] = static_cast<BYTE>(0);
 					}
 				}
 
@@ -489,18 +489,18 @@ namespace ursine
 						buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
 						buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
 						buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
-						buffer[i].vBIdx[0] = currMesh->meshVtxInfos[i].ctrlIndices.x;
-						buffer[i].vBIdx[1] = currMesh->meshVtxInfos[i].ctrlIndices.y;
-						buffer[i].vBIdx[2] = currMesh->meshVtxInfos[i].ctrlIndices.z;
-						buffer[i].vBIdx[3] = currMesh->meshVtxInfos[i].ctrlIndices.w;
+						buffer[i].vBIdx[0] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[0]);
+						buffer[i].vBIdx[1] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[1]);
+						buffer[i].vBIdx[2] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[2]);
+						buffer[i].vBIdx[3] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices[3]);
 					}
 					else
 					{
 						buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-						buffer[i].vBIdx[0] = 0;
-						buffer[i].vBIdx[1] = 0;
-						buffer[i].vBIdx[2] = 0;
-						buffer[i].vBIdx[3] = 0;
+						buffer[i].vBIdx[0] = static_cast<BYTE>(0);
+						buffer[i].vBIdx[1] = static_cast<BYTE>(0);
+						buffer[i].vBIdx[2] = static_cast<BYTE>(0);
+						buffer[i].vBIdx[3] = static_cast<BYTE>(0);
 					}
 				}
 
