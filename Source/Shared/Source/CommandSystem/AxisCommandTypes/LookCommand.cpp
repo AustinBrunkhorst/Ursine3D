@@ -13,6 +13,7 @@
 #include "LookCommand.h"
 #include <CharacterControllerComponent.h>
 #include <CharacterFireControllerComponent.h>
+#include <Model3DComponent.h>
 
 RECORDABLE_COMMAND_DEFINITION( LookCommand );
 
@@ -51,7 +52,11 @@ void LookCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 tim
 {
     auto *transform = receiver->GetTransform();
 
-    m_characterRot.push_back(transform->GetLocalRotation( ));
+    m_characterRot.push_back(
+        transform->GetComponentInChildren<ursine::ecs::Model3D>( )
+        ->GetOwner( )->GetTransform( )->GetLocalRotation( )
+    );
+
     m_camRot.push_back(
         transform->GetComponentInChildren<CharacterFireController>( )
         ->GetOwner( )->GetTransform( )->GetLocalRotation( )
@@ -65,11 +70,14 @@ void LookCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const urs
     if ( index >= m_characterRot.size( ) )
         index = m_characterRot.size( ) - 1;
 
-    auto *transform = receiver->GetTransform( );
+    auto *transform = receiver->GetComponentInChildren<ursine::ecs::Model3D>( )->GetOwner( )->GetTransform( );
     transform->SetLocalRotation( m_characterRot[ index ] );
 
     transform->GetComponentInChildren<CharacterFireController>( )
-        ->GetOwner( )->GetTransform( )->SetLocalRotation( m_characterRot[ index ] );
+        ->GetOwner( )->GetTransform( )->SetLocalRotation( m_camRot[ index ] );
+
+    auto *controller = receiver->GetComponent<CharacterController>();
+    controller->SetLookDirection( ursine::Vec2::Zero( ) );
 
     m_playback = true;
 }

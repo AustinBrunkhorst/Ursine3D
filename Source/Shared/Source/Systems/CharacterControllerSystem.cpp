@@ -21,8 +21,9 @@
 
 #include "PlayerInputComponent.h"
 #include "AudioEmitterComponent.h"
-
+#include "PlayerAnimationComponent.h"
 #include <CameraComponent.h>
+#include "TeamComponent.h"
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -112,6 +113,8 @@ void CharacterControllerSystem::Process(Entity *entity)
 	auto child = transform->GetChild(0);
     auto cam = transform->GetComponentInChildren<Camera>( );
 
+    auto team = entity->GetComponent<TeamComponent>( );
+
 	// This is an immidiate fix, cause fuck eet. - Jordan
 	rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
     
@@ -159,7 +162,10 @@ void CharacterControllerSystem::Process(Entity *entity)
         );
     }
 
-    auto move = controller->GetMoveDirection( ) * moveSpeed;
+    if (team->IsDead( ))
+        return;
+
+    auto move = -controller->GetMoveDirection( ) * moveSpeed;
 
     auto forward = child->GetForward( ) * move.Y( );
     auto strafe = child->GetRight( ) * move.X( );
@@ -192,6 +198,24 @@ void CharacterControllerSystem::Process(Entity *entity)
     {
         vel.Y( ) += controller->m_jumpSpeed;
         controller->m_jump = false;
+    }
+
+    auto animator = entity->GetComponentInChildren<PlayerAnimation>( );
+
+    if (animator)
+    {
+        if (vel.Y( ) > 0.2f)
+        {
+            animator->SetPlayerState( PlayerAnimation::Jumping );
+        }
+        else if (accum.LengthSquared( ) > 0.2f)
+        {
+            animator->SetPlayerState( PlayerAnimation::Running );
+        }
+        else if (accum.LengthSquared( ) < 0.2f)
+        {
+            animator->SetPlayerState( PlayerAnimation::Idle );
+        }
     }
 
     rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });

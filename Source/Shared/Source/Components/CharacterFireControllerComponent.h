@@ -76,6 +76,8 @@ public:
     void SetFireRate(const float fireRate);
 
     void Fire(void);
+
+    float GetFireTimer(void) const;
     void DecrementFireTimer(const float dt);
 
     void SetFireState(const bool fireState);

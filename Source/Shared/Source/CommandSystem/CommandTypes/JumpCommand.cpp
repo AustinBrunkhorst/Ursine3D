@@ -13,6 +13,7 @@
 #include "JumpCommand.h"
 #include <CharacterControllerComponent.h>
 #include <AudioEmitterComponent.h>
+#include <PlayerAnimationComponent.h>
 
 namespace
 {

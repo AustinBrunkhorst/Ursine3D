@@ -86,7 +86,10 @@ void PlayerAnimation::Update()
     }
 }
 
-void PlayerAnimation::SetPlayerState(const PlayerState state) {}
+void PlayerAnimation::SetPlayerState(const PlayerState state)
+{
+    m_state = state;
+}
 
 void PlayerAnimation::SetShooting(const bool isShooting)
 {

@@ -48,6 +48,11 @@ void CharacterFireController::Fire(void)
     m_canFire = false;
 }
 
+float CharacterFireController::GetFireTimer(void) const
+{
+    return m_fireTimer;
+}
+
 void CharacterFireController::DecrementFireTimer(const float dt)
 {
     m_fireTimer -= dt;

@@ -100,8 +100,7 @@ void CharacterFireControllerSystem::Process( CharacterFireController *fireContro
     }
 
     // update fire timer
-    URSINE_TODO("Get acutal delta time for firing timer reduction");
-    fireController->DecrementFireTimer( 0.016 );
+    fireController->DecrementFireTimer( Application::Instance->GetDeltaTime( ) );
 
     // find the child hotspot for firing
     auto childrenVector = entity->GetChildren( );
@@ -139,7 +138,9 @@ void CharacterFireControllerSystem::Process( CharacterFireController *fireContro
 
         // reset firing sequence
         armAnimator->SetAnimationTimePosition( 0.1 );
-        armAnimator->SetTimeScalar( 1.0f / fireController->GetFireRate( ) );
+        armAnimator->SetTimeScalar(1.2f);
+        armAnimator->SetAnimation( "Gun_Shoot" );
+        armAnimator->SetPlaying( true );
 
         // Play that bang sound
 		if (emitter)
@@ -194,10 +195,17 @@ void CharacterFireControllerSystem::Process( CharacterFireController *fireContro
             auto *health = hitObj->GetComponent<Health>( );
             if ( health != nullptr )
             {
-                health->DealDamage( fireController->GetDamage() );
+                health->DealDamage( fireController->GetDamage( ) );
 				if (emitter)
-					emitter->AddSoundToPlayQueue(kTakeDamage);
+					emitter->AddSoundToPlayQueue( kTakeDamage );
             }
         }
+    }
+    else if (fireController->GetFireTimer( ) < 0.0f)
+    {
+        // reset idle sequence
+        armAnimator->SetTimeScalar( 1.0f );
+        armAnimator->SetAnimation( "Gun_Idle" );
+        armAnimator->SetPlaying( true );
     }
 }
