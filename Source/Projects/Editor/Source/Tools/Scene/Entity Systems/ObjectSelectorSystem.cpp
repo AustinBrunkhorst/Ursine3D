@@ -730,19 +730,19 @@ void ObjectSelectorSystem::updateRotation(const SVec3 &mousePos)
     {
         case 0:
             difference = mousePos.X( ) - m_baseMousePos.X( );
-            sign = camera->GetLook( ).Dot( transf->GetRight( ) ) < 0 ? -1 : 1;
+            sign = camera->GetLook( ).Dot( transf->GetRight( ) ) < 0 ? -1.f : 1.f;
 
             transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( 0, -difference * sign, 0 ) );
 
             break;
         case 1:
             difference = mousePos.Z( ) - m_baseMousePos.Z( );
-            sign = camera->GetLook( ).Dot( transf->GetForward( ) ) < 0 ? -1 : 1;
+            sign = camera->GetLook( ).Dot( transf->GetForward( ) ) < 0 ? -1.f : 1.f;
             transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( -difference * sign, 0, 0 ) );
             break;
         case 2:
             difference = mousePos.Y( ) - m_baseMousePos.Y( );
-            sign = camera->GetLook( ).Dot( transf->GetUp( ) ) < 0 ? -1 : 1;
+            sign = camera->GetLook( ).Dot( transf->GetUp( ) ) < 0 ? -1.f : 1.f;
             transf->SetLocalRotation( transf->GetLocalRotation( ) * SQuat( 0, 0, -difference * sign ) );
             break;
     }

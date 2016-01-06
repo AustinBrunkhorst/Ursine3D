@@ -62,7 +62,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     float subColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //size of a cell
-    float cellSize = settings->GetCellSize();
+    float cellSize = static_cast<float>(settings->GetCellSize());
 
     // # of cells
     int widthCount = settings->GetWidth( );

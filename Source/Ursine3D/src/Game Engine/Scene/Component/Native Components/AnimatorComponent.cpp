@@ -89,7 +89,7 @@ namespace ursine
                 auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
 
                 int maxNodeDistance = 0;
-                unsigned boneCount = hierarchy.size( );
+                unsigned boneCount = static_cast<unsigned>(hierarchy.size( ));
 
                 // calculate max distance for colors, calculate bone position
                 for ( unsigned x = 0; x < boneCount; ++x )

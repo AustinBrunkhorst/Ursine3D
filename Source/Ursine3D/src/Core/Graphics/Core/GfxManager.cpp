@@ -941,7 +941,7 @@ namespace ursine
             //render
             unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
 
-            for (int x = 0; x < count; ++x)
+            for (unsigned x = 0; x < count; ++x)
             {
                 // set model
                 modelManager->BindModel(handle.Model_, x);
@@ -966,7 +966,7 @@ namespace ursine
                 bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
                 textureManager->MapTextureByName("Blank");
                 
-                for (int x = 0; x < count; ++x)
+                for (unsigned x = 0; x < count; ++x)
                 {
                     // set model
                     modelManager->BindModel(handle.Model_, x);
@@ -1075,7 +1075,7 @@ namespace ursine
 
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
 
-            m_currentPosition = SVec3( point.x, point.y, dataFromCS.depth );
+            m_currentPosition = SVec3( static_cast<float>(point.x), static_cast<float>(point.y), dataFromCS.depth );
 
             tempID = dataFromCS.id; 
              
@@ -1525,8 +1525,6 @@ namespace ursine
 
             // transform from screen to world, given a specific camera
             auto worldPosition = camera.ScreenToWorld( Vec2( m_currentPosition.X( ), m_currentPosition.Y( ) ), depth );
-
-            printf( "%f, %f, %f\n\n", worldPosition.X( ), worldPosition.Y( ), worldPosition.Z( ) );
 
             return worldPosition;
         }
