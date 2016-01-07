@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** AnimationInfo.h
+** LevelInfo.h
 **
 ** Author:
 ** - Park Hyung Jun - park.hyungjun@digipen.edu
@@ -13,8 +13,7 @@
 
 #pragma once
 
-#include "AnimationDef.h"
-#include "ISerialize.h"
+#include <ISerialize.h>>
 
 namespace ursine
 {
@@ -22,49 +21,51 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
-			//storing AnimationData
-			class AnimInfo : public ISerialize
+			struct MeshInLvl
+			{
+				char name[MAXTEXTLEN];
+				SMat4 meshTM;
+			};
+
+			class LevelInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];
-				unsigned int clipCount; // how many clips in this animation?
-				unsigned int boneCount; // how many bones in this model?
-				unsigned int** keyIndices; // how many keys does each bone have?
-				FBX_DATA::KeyFrame*** keyframes;
+				unsigned int	mmeshlvlCount;
+				MeshInLvl*		marrMeshlvls;
 
-				/** @brief animation information constructor
+				/** @brief level information constructor
 				*
-				*  this will construct animation information object
-				*
-				*  @return nothing
-				*/
-				AnimInfo();
-				/** @brief animation information destructor
-				*
-				*  this will destroy animation information object
+				*  this will construct level information object
 				*
 				*  @return nothing
 				*/
-				virtual ~AnimInfo();
-				/** @brief animation information release function
+				LevelInfo();
+				/** @brief level information destructor
 				*
-				*  this will release memory of the animation information
+				*  this will destroy level information object
+				*
+				*  @return nothing
+				*/
+				virtual ~LevelInfo();
+				/** @brief level information release function
+				*
+				*  this will release memory of the level information
 				*
 				*  @return nothing
 				*/
 				void ReleaseData();
 
-				/** @brief animation information serialize in function
+				/** @brief level information serialize in function
 				*
-				*  this will read animation information
+				*  this will read level information
 				*
 				*  @param handle of the file
 				*  @return if succeed return true, else return false
 				*/
 				bool SerializeIn(HANDLE hFile);
-				/** @brief animation information serialize out function
+				/** @brief level information serialize out function
 				*
-				*  this will write animation information
+				*  this will write level information
 				*
 				*  @param handle of the file
 				*  @return if succeed return true, else return false
