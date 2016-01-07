@@ -47,14 +47,6 @@ void GetMaterialTexuteMapName(std::string& mapName)
 	char texName[MAXTEXTLEN];
 	lstrcpy(texName, mapName.c_str());
 	char* ptr;
-	ptr = strtok(texName, "/");
-	while (ptr != nullptr)
-	{
-		ptr = strtok(nullptr, "/");
-		if (nullptr != ptr)
-			lstrcpy(texName, ptr);
-	}
-
 	ptr = strtok(texName, "\\");
 	while (ptr != nullptr)
 	{
@@ -62,7 +54,6 @@ void GetMaterialTexuteMapName(std::string& mapName)
 		if (nullptr != ptr)
 			lstrcpy(texName, ptr);
 	}
-
 	mapName = texName;
 }
 
@@ -224,6 +215,9 @@ namespace ursine
 		{
 			if (nullptr == mModelInfo)
 				mModelInfo = new ufmt_loader::ModelInfo;
+
+			if (nullptr == mLevelInfo)
+				mLevelInfo = new ufmt_loader::LevelInfo;
 
 			// unify the loader data structure and exporter data structure someday
 			unsigned int i = 0, j = 0, k = 0, l = 0;
@@ -431,23 +425,29 @@ namespace ursine
 			std::string jlvlFile = _fileName;
 			jdlFile += ".jdl";
 			jlvlFile += ".jlvl";
-			HANDLE hFile = CreateFile(jdlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-			bool ret = false;
-			if (mModelInfo->SerializeOut(hFile))
-				ret = true;
-			else
-				MessageBox(nullptr, "Jdl Export Failed!", "", MB_OK);
-			CloseHandle(hFile);
 
-			hFile = CreateFile(jlvlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-			ret = false;
-			if (mLevelInfo->SerializeOut(hFile))
-				ret = true;
-			else
-				MessageBox(nullptr, "Jlvl Export Failed!", "", MB_OK);
-			CloseHandle(hFile);
-
-			return ret;
+			HANDLE hFile;
+			if (mModelInfo)
+			{
+				hFile = CreateFile(jdlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+				if (!mModelInfo->SerializeOut(hFile))
+				{
+					MessageBox(nullptr, "Jdl Export Failed!", "", MB_OK);
+					return false;
+				}
+				CloseHandle(hFile);
+			}
+			if (mLevelInfo)
+			{
+				hFile = CreateFile(jlvlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+				if (!mLevelInfo->SerializeOut(hFile))
+				{
+					MessageBox(nullptr, "Jlvl Export Failed!", "", MB_OK);
+					return false;
+				}
+				CloseHandle(hFile);
+			}
+			return true;
 		}
 
 		//========================================================================
