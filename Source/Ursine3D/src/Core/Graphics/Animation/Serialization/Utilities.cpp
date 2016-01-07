@@ -82,11 +82,12 @@ namespace Utilities
 
 	ursine::SMat4 FBXAMatrixToSMat4(FbxAMatrix* src)
 	{
-		return ursine::SMat4(
-			static_cast<float>(src->mData[0][0]), static_cast<float>(src->mData[0][1]), static_cast<float>(src->mData[0][2]), static_cast<float>(src->mData[0][3]),
-			static_cast<float>(src->mData[1][0]), static_cast<float>(src->mData[1][1]), static_cast<float>(src->mData[1][2]), static_cast<float>(src->mData[1][3]),
-			static_cast<float>(src->mData[2][0]), static_cast<float>(src->mData[2][1]), static_cast<float>(src->mData[2][2]), static_cast<float>(src->mData[2][3]),
-			static_cast<float>(src->mData[3][0]), static_cast<float>(src->mData[3][1]), static_cast<float>(src->mData[3][2]), static_cast<float>(src->mData[3][3]));
+		ursine::SMat4 ret;
+		ret.Set(static_cast<FLOAT>(src->Get(0, 0)), static_cast<FLOAT>(src->Get(0, 1)), static_cast<FLOAT>(src->Get(0, 2)), static_cast<FLOAT>(src->Get(0, 3)),
+			static_cast<FLOAT>(src->Get(1, 0)), static_cast<FLOAT>(src->Get(1, 1)), static_cast<FLOAT>(src->Get(1, 2)), static_cast<FLOAT>(src->Get(1, 3)),
+			static_cast<FLOAT>(src->Get(2, 0)), static_cast<FLOAT>(src->Get(2, 1)), static_cast<FLOAT>(src->Get(2, 2)), static_cast<FLOAT>(src->Get(2, 3)),
+			static_cast<FLOAT>(src->Get(3, 0)), static_cast<FLOAT>(src->Get(3, 1)), static_cast<FLOAT>(src->Get(3, 2)), static_cast<FLOAT>(src->Get(3, 3)));
+		return ret;
 	}
 
 	ursine::SVec4 ConvertVector4(const FbxVector4& vec)

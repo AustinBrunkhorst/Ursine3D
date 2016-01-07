@@ -235,7 +235,7 @@ namespace ursine
 
 				// mesh Transformation
 				currMI->meshTM = currMD->meshTM;
-				currMI->meshVtxInfoCount = currMD->vertexCnt;
+				currMI->meshVtxInfoCount = currMD->indexCnt;
 				currMI->meshVtxInfos = new ufmt_loader::MeshVertex[currMI->meshVtxInfoCount];
 				for (j = 0; j < currMI->meshVtxInfoCount; ++j)
 				{
@@ -569,9 +569,7 @@ namespace ursine
 				FbxPose* targetFP = nullptr;
 				targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
 				if (targetFP)
-				{
 					meshTransform = GetPoseMatrix(targetFP, nodeIdx);
-				}
 				else
 					meshTransform = GetGlobalDefaultPosition(pNode);
 
@@ -579,14 +577,8 @@ namespace ursine
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
 				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
-				meshTransform = parentTransform * meshTransform * geoTransform;
+				meshTransform = meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
-
-				// Check negative scale
-				FbxVector4 scl = meshTransform.GetS();
-				if (!CheckScaling(scl) || !CheckPositive(scl))
-					meshTransform.SetS(FbxVector4(1, 1, 1));
-
 				newMesh->meshTM = FBXAMatrixToSMat4(&meshTransform);
 
 				// vertex, normal, tangent, texcoord, material
@@ -600,10 +592,12 @@ namespace ursine
 				//go through all the control points(verticies) and multiply by the transformation
 				for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
 				{
-					SVec3 vtx = SetFloat3ToSVec3(newMesh->vertices[i]);
-					SMat4 meshTM = newMesh->meshTM;
-					SVec3 result = meshTM.TransformVector(vtx);
-					newMesh->vertices[i] = SetSVec3ToFloat3(result);
+					FbxVector4 vtx;
+					vtx.mData[0] = newMesh->vertices[i].x;
+					vtx.mData[1] = newMesh->vertices[i].y;
+					vtx.mData[2] = newMesh->vertices[i].z;
+					vtx.mData[3] = 0.0f;
+					newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
 				}
 			}
 			for (int i = 0; i < pNode->GetChildCount(); ++i)
@@ -698,7 +692,7 @@ namespace ursine
 						else if (normalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
 							lNormalIndex = normalElement->GetIndexArray().GetAt(lVertexIndex);
 						FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(lNormalIndex);
-						//mConverter->ConvertVector(lNormal);
+						mConverter->ConvertVector(lNormal);
 						pData->normals[lVertexIndex] = FBXVectorToXMFLOAT3(lNormal);
 					}
 				}
@@ -724,7 +718,7 @@ namespace ursine
 							if (normalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
 								lNormalIndex = normalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
 							FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(lNormalIndex);
-							//mConverter->ConvertVector(lNormal);
+							mConverter->ConvertVector(lNormal);
 							pData->normals[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lNormal);
 							++lIndexByPolygonVertex;
 						}
@@ -784,8 +778,8 @@ namespace ursine
 								lTangentIndex = tangentElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
 							FbxVector4 lTangent = tangentElement->GetDirectArray().GetAt(lTangentIndex);
 							mConverter->ConvertVector(lTangent);
-							pData->tangents[lTangentIndex] = FBXVectorToXMFLOAT3(lTangent.mData);
-							lIndexByPolygonVertex++;
+							pData->tangents[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lTangent.mData);
+							++lIndexByPolygonVertex;
 						}
 					}
 				}
@@ -1308,9 +1302,7 @@ namespace ursine
 				targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
 				FbxAMatrix  meshTransform;
 				if (targetFP)
-				{
 					meshTransform = GetPoseMatrix(targetFP, nodeIdx);
-				}
 				else
 					meshTransform = GetGlobalDefaultPosition(pNode);
 
@@ -1318,15 +1310,8 @@ namespace ursine
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
 				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
-				//mConverter->ConvertMeshMatrix(meshTransform);
 				meshTransform = meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
-
-				// Check negative scale
-				FbxVector4 scl = meshTransform.GetS();
-				if (!CheckScaling(scl) || !CheckPositive(scl))
-					meshTransform.SetS(FbxVector4(1, 1, 1));
-
 				newMesh->meshTM = FBXAMatrixToSMat4(&meshTransform);
 
 				ProcessVertices(mesh, newMesh);
@@ -1334,29 +1319,16 @@ namespace ursine
 				ProcessTangent(mesh, newMesh);
 				ProcessTexcoord(mesh, newMesh);
 				ProcessMaterials(pNode, newMesh);
-				//
-				////go through all the control points(verticies) and multiply by the transformation
-				//for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
-				//{
-				//	SVec3 vtx = SetFloat3ToSVec3(newMesh->vertices[i]);
-				//	SMat4 meshTM = newMesh->meshTM;
-				//	SVec3 result = meshTM.TransformVector(vtx);
-				//	newMesh->vertices[i] = SetSVec3ToFloat3(result);
-				//}
 
 				//go through all the control points(verticies) and multiply by the transformation
 				for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
 				{
-					//XMVECTOR vtx = SetFloat3ToXMVector(modelMesh->vertices[i]);
-					//XMMATRIX meshTM = modelMesh->meshTM;
-					//XMVECTOR result = XMVector3Transform(vtx, meshTM);
-					//modelMesh->vertices[i] = SetXMVectorToFloat3(result);
-					FbxVector4 result;
-					result.mData[0] = newMesh->vertices[i].x;
-					result.mData[1] = newMesh->vertices[i].y;
-					result.mData[2] = newMesh->vertices[i].z;
-					result.mData[3] = 0.0f;
-					newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, result));
+					FbxVector4 vtx;
+					vtx.mData[0] = newMesh->vertices[i].x;
+					vtx.mData[1] = newMesh->vertices[i].y;
+					vtx.mData[2] = newMesh->vertices[i].z;
+					vtx.mData[3] = 0.0f;
+					newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
 				}
 
 				mModel->mMeshData.push_back(newMesh);
@@ -1372,78 +1344,11 @@ namespace ursine
 		{
 			for (auto iter : mModel->mAnimPose)
 			{
-				//mModel->mAnimPose->Find(pNode->GetName());
 				index = iter->Find(pNode);
 				if (-1 != index)
 					return iter;
 			}
 			return nullptr;
-		}
-
-		void CFBXLoader::ReconstructIndices(FBX_DATA::MeshData* pData)
-		{
-			FBX_DATA::ModelSubset subset;
-
-			//current index start location for the first model susbet
-			unsigned int currentSubsetStart = 0;
-			//go through all the materials
-			for (unsigned materialId = 0; materialId < pData->fbxmaterials.size(); ++materialId)
-			{
-				//set the starting location for the model subset
-				subset.vertexStart = currentSubsetStart;
-				//go through all the material indicies starting the vertex start location of the subset in refrence to the material indicies
-				for (unsigned j = currentSubsetStart / 3; j < pData->mtrlIndexCnt; ++j)
-				{
-					if (materialId < pData->materialIndices[j])
-					{
-						//find the next one
-						int loc = FindNextMaterialIndex(pData, j, materialId);
-						if (loc < 0)
-						{
-							//set the id which is the refrence to the material index in the private data
-							subset.id = materialId;
-							//set the end location of the model subset (if we are at the last material the vertexEnd is the VertexCount of the Model
-							subset.vertexCount =
-								((materialId == pData->fbxmaterials.size() - 1) ? pData->vertexCnt : j * 3)
-								- subset.vertexStart;
-
-							//add the subset
-							pData->modelSubsets.push_back(subset);
-
-							//set new the starting location
-							currentSubsetStart = subset.vertexStart + subset.vertexCount;
-							break;
-						}
-						//swap the materialIndicies and the Vertex indicies
-						SwapIndicies(pData, j, loc);
-					}
-				}
-			}
-		}
-
-		int CFBXLoader::FindNextMaterialIndex(FBX_DATA::MeshData* pData, unsigned start, unsigned materialId)
-		{
-			for (unsigned i = start; i < pData->mtrlIndexCnt; ++i)
-				if (pData->materialIndices[i] == materialId)
-					return i;
-
-			return -1;
-		}
-
-		void CFBXLoader::SwapIndicies(FBX_DATA::MeshData* pData, unsigned indexMaterial0, unsigned indexMaterial1)
-		{
-			//get the vertex index start
-			unsigned startIndex0 = indexMaterial0 * 3;
-			unsigned startIndex1 = indexMaterial1 * 3;
-
-			//first lets swap the vertex indicies
-			Utilities::Swap(&pData->indices[1], &pData->indices[2]);
-			//swap the normals
-			Utilities::Swap(&pData->normals[1], &pData->normals[2]);
-			//swap the uv Coords
-			Utilities::Swap(&pData->uvs[1], &pData->uvs[2]);
-			//now lets swap the material id
-			Utilities::Swap(&pData->materialIndices[1], &pData->materialIndices[2]);
 		}
 
 		FbxAMatrix CFBXLoader::GetLocalMatrixFromTime(FbxNode* pNode, FbxTime keyTime)
