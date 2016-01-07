@@ -28,7 +28,7 @@ namespace ursine
 				pseudodx::XMFLOAT3	normal;
 				pseudodx::XMFLOAT3	tangent;
 				pseudodx::XMFLOAT2	uv;
-				unsigned int		ctrlIndices[4];
+				pseudodx::XMUINT4	ctrlIndices;
 				pseudodx::XMFLOAT4	ctrlBlendWeights;
 
 				MeshVertex()
@@ -37,10 +37,7 @@ namespace ursine
 					normal = pseudodx::XMFLOAT3(0, 0, 0);
 					tangent = pseudodx::XMFLOAT3(0, 0, 0);
 					uv = pseudodx::XMFLOAT2(0, 0);
-					ctrlIndices[0] = 0;
-					ctrlIndices[1] = 0;
-					ctrlIndices[2] = 0;
-					ctrlIndices[3] = 0;
+					ctrlIndices = pseudodx::XMUINT4(0, 0, 0, 0);
 					ctrlBlendWeights = pseudodx::XMFLOAT4(0, 0, 0, 0);
 				}
 			};
