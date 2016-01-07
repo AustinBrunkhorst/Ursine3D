@@ -296,7 +296,12 @@ namespace ursine
 			*  @return FbxPose type data structure of the specific node
 			*/
 			FbxPose* GetAnimPoseAndIdx(FbxNode* pNode, int& index);
-			
+
+			//reconstruct indices
+			void ReconstructIndices(FBX_DATA::MeshData* pData);
+			int FindNextMaterialIndex(FBX_DATA::MeshData* pData, unsigned start, unsigned materialId);
+			void SwapIndicies(FBX_DATA::MeshData* pData, unsigned indexMaterial0, unsigned indexMaterial1);
+
 			/** @brief fbx loader get local matrix from time function
 			*
 			*  this will get the local matrix of the node according to time
@@ -330,6 +335,7 @@ namespace ursine
 			*  @return FbxAMatrix type matrix of the node's parent matrix
 			*/
 			FbxAMatrix GetParentTransformation(FbxNode* pParentNode);
+			FbxVector4 Transform(const FbxAMatrix& pAMatrix, const FbxVector4& point);
 			/** @brief fbx loader get mesh data function
 			*
 			*  this will get the mesh data of the model
