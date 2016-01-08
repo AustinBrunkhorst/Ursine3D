@@ -31,7 +31,7 @@ namespace ursine
 			LevelInfo::~LevelInfo()
 			{
 			}
-			
+
 			void LevelInfo::ReleaseData()
 			{
 				if (marrMeshlvls)

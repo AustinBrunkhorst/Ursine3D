@@ -16,7 +16,6 @@
 #include "MeshInfo.h"
 #include "MaterialInfo.h"
 #include "BoneInfo.h"
-#include "AnimationInfo.h"
 
 namespace ursine
 {
@@ -40,11 +39,7 @@ namespace ursine
 				// skin data
 				unsigned int	mboneCount;
 				BoneInfo*		marrBones;
-
-				// anim data
-				unsigned int	manimCount;
-				AnimInfo*		marrAnims;
-
+				
 				/** @brief model information constructor
 				*
 				*  this will construct model information object
@@ -92,7 +87,6 @@ namespace ursine
 				*  @param clipName the name of the animation clip
 				*  @return Animation Info of the animation clip
 				*/
-				AnimInfo* FindAnimClip(int* index, const std::string& clipName) const;
 			};
 		};
 	};

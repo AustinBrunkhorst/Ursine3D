@@ -15,6 +15,7 @@
 // For Parsing FBX infos
 #include <ModelInfo.h>
 #include <LevelInfo.h>
+#include <AnimationInfo.h>
 #include <Utilities.h>
 #include <Conversion.h>
 
@@ -108,6 +109,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessSkeletonHierarchy(FbxNode* pRoot);
+
 			/** @brief fbx loader processing skeleton hierarchy auxiliary function
 			*
 			*  this will help to import bone hierarchy data from fbx file, and saving it into the data structure
@@ -127,6 +129,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessStaticMesh(FbxNode* pNode);
+
 			/** @brief fbx loader control point funciton
 			*
 			*  this will import control points data from fbx file
@@ -135,6 +138,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessControlPoint(FbxNode* pNode);
+
 			/** @brief fbx loader vertices funciton
 			*
 			*  this will import vertices data from fbx file
@@ -143,6 +147,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessVertices(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
+
 			/** @brief fbx loader normal funciton
 			*
 			*  this will import normal data from fbx file
@@ -151,6 +156,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessNormals(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
+
 			/** @brief fbx loader tangent funciton
 			*
 			*  this will import tangent data from fbx file
@@ -159,6 +165,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessTangent(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
+
 			/** @brief fbx loader texcoord funciton
 			*
 			*  this will import uv coordinates data from fbx file
@@ -167,6 +174,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessTexcoord(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
+
 			/** @brief fbx loader get material property funciton
 			*
 			*  this will import material property data from fbx file
@@ -182,6 +190,7 @@ namespace ursine
 				const char * pPropertyName,
 				const char * pFactorPropertyName,
 				FBX_DATA::Material_Eles* pElement);
+
 			/** @brief fbx loader material funciton
 			*
 			*  this will import material data from fbx file
@@ -191,6 +200,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessMaterials(FbxNode* pNode, FBX_DATA::MeshData* pData);
+
 			/** @brief fbx loader weight blend funciton
 			*
 			*  this will import blending weight for control points from fbx file
@@ -200,6 +210,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessWeightBlend(FbxNode* pNode, unsigned int& index);
+
 			/** @brief fbx loader remove unncessary weight funciton
 			*
 			*  sort and remove unnecessary blending weight more than 4
@@ -207,6 +218,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void RemoveUnnecessaryWeights();
+
 			/** @brief fbx loader get joint index by name funciton
 			*
 			*  find joint by name
@@ -215,6 +227,7 @@ namespace ursine
 			*  @return index of the joint
 			*/
 			int GetJointIndexByName(const std::string& inJointName);
+
 			/** @brief fbx loader get pose matrix funciton
 			*
 			*  find animation bind pose matrix of the node in the bind pose array
@@ -224,6 +237,7 @@ namespace ursine
 			*  @return the animation bind pose matrix of the node
 			*/
 			FbxAMatrix GetPoseMatrix(FbxPose* pose, int index);
+
 			/** @brief fbx loader check negative scale funciton
 			*
 			*  check if the scale is positive or negative
@@ -232,6 +246,7 @@ namespace ursine
 			*  @return if scale is not positive return false, else return true
 			*/
 			bool CheckPositive(FbxVector4 scale);
+
 			/** @brief fbx loader check scale factor funciton
 			*
 			*  check if the scale is close to epsilon value
@@ -248,6 +263,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessAnimation();
+
 			/** @brief fbx loader animation auxiliary funciton
 			*
 			*  this will import animation data by searching animation stack
@@ -258,6 +274,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxNode* pNode);
+
 			/** @brief fbx loader animation auxiliary funciton
 			*
 			*  this will import animation keyframe data by searching animation layer
@@ -269,6 +286,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxNode* pNode, FBX_DATA::AnimationClip& animData);
+
 			/** @brief fbx loader animation auxiliary funciton
 			*
 			*  this will import animation keyframe time data by searching animation curve
@@ -278,6 +296,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time);
+
 			/** @brief fbx loader geometry funciton
 			*
 			*  this will import geometric data from each fbx node
@@ -306,6 +325,7 @@ namespace ursine
 			*  @return FbxAMatrix type matrix of the node's local matrix
 			*/
 			FbxAMatrix GetLocalMatrixFromTime(FbxNode* pNode, FbxTime keyTime);
+
 			/** @brief fbx loader get default global matrix function
 			*
 			*  this will get the default global matrix of the node
@@ -314,6 +334,7 @@ namespace ursine
 			*  @return FbxAMatrix type matrix of the node's default global matrix
 			*/
 			FbxAMatrix GetGlobalDefaultPosition(FbxNode* pNode);
+
 			/** @brief fbx loader get geometry matrix function
 			*
 			*  this will get the geometry matrix of the node
@@ -322,6 +343,7 @@ namespace ursine
 			*  @return FbxAMatrix type matrix of the node
 			*/
 			FbxAMatrix GetGeometryTransformation(FbxNode* pNode);
+
 			/** @brief fbx loader get parent matrix function
 			*
 			*  this will get the matrix of the node's parent
@@ -330,7 +352,17 @@ namespace ursine
 			*  @return FbxAMatrix type matrix of the node's parent matrix
 			*/
 			FbxAMatrix GetParentTransformation(FbxNode* pParentNode);
+
+			/** @brief transform vector multiply and normalize by matrix using fbx sdk supported function
+			*
+			*  this will get transformed vector
+			*
+			*  @param pAMatrix the transformation matrix
+			*  @param point the pointer
+			*  @return FbxVector4 type transformed vector
+			*/
 			FbxVector4 Transform(const FbxAMatrix& pAMatrix, const FbxVector4& point);
+
 			/** @brief fbx loader get mesh data function
 			*
 			*  this will get the mesh data of the model
@@ -339,6 +371,7 @@ namespace ursine
 			*  @return the mesh data of the model accoring to its index
 			*/
 			FBX_DATA::MeshData& GetMeshData(int index) const { return (*mModel->mMeshData[index]); }
+
 			/** @brief fbx loader get mesh data count function
 			*
 			*  this will get the number of mesh data
@@ -346,6 +379,7 @@ namespace ursine
 			*  @return the size of the mesh data of the model
 			*/
 			size_t GetMeshDataCount() const { return mModel->mMeshData.size(); }
+
 			/** @brief fbx loader get model function
 			*
 			*  this will get the model data of the fbx file
@@ -353,6 +387,7 @@ namespace ursine
 			*  @return the model data structure
 			*/
 			FBX_DATA::FbxModel& GetModel() const { return *mModel; }
+
 			/** @brief fbx loader is skinned function
 			*
 			*  check if the model is skinned model or just static mesh
@@ -360,6 +395,7 @@ namespace ursine
 			*  @return if there is animation return true, else return false
 			*/
 			bool IsSkinned() { return (mModel->mAnimationData.empty()) ? false : true; }
+
 			/** @brief fbx loader get model info function
 			*
 			*  this will get the model info
@@ -367,6 +403,7 @@ namespace ursine
 			*  @return the model info data structure
 			*/
 			ufmt_loader::ModelInfo GetModelInfo() const { return *mModelInfo; }
+
 			/** @brief fbx loader get level info function
 			*
 			*  this will get the level info(each mesh's transform matrices)
@@ -374,6 +411,14 @@ namespace ursine
 			*  @return the level info data structure
 			*/
 			ufmt_loader::LevelInfo GetLevelInfo() const { return *mLevelInfo; }
+
+			/** @brief fbx loader get animation info function
+			*
+			*  this will get the animation info(each mesh's transform matrices)
+			*
+			*  @return the animation info data structure
+			*/
+			ufmt_loader::AnimInfo GetAnimInfo() const { return *mAnimInfo; }
 
 		private:
 			unsigned int			boneindex;
@@ -384,6 +429,7 @@ namespace ursine
 
 			ufmt_loader::ModelInfo*	mModelInfo;
 			ufmt_loader::LevelInfo*	mLevelInfo;
+			ufmt_loader::AnimInfo*	mAnimInfo;
 		};
 	}
 }	// FBX_LOADER

@@ -149,16 +149,16 @@ namespace ursine
 		auto animation = GetAnimationByIndex(animIndex);
 
 		// total clip count
-		unsigned clipCount = info.clipCount;
+		unsigned clipCount = info.animDataArr[0].clipCount;
 
 		// total bone count
-		unsigned boneCount = info.boneCount;
+		unsigned boneCount = info.animDataArr[0].boneCount;
 
 		// total keyframe Count
 		// since we are using unified animation keyframes,
 		// every keyIndices contain same number of keyframes
 		// but need to be fixed
-		unsigned keyCount = info.keyIndices[0][0]; 
+		unsigned keyCount = info.animDataArr[0].keyIndices[0][0];
 
 		// resize arrays to handle bone size
 		animation->SetData(keyCount, boneCount);
@@ -174,7 +174,7 @@ namespace ursine
 			{
 				// get keyframe from data
 				// need to be fixed too(remove clip or modify it)
-				auto keyframe = info.keyframes[0][boneIndex][rigIndex];
+				auto keyframe = info.animDataArr[0].keyframes[0][boneIndex][rigIndex];
 
 				// get values
 				auto trans = SVec3(

@@ -63,7 +63,7 @@ namespace ursine
 	{
 		CFBXLoader::CFBXLoader() :
 			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr),
-			mModelInfo(nullptr), mLevelInfo(nullptr),
+			mModelInfo(nullptr), mLevelInfo(nullptr), mAnimInfo(nullptr),
 			mConverter(nullptr)
 		{
 		}
@@ -79,11 +79,14 @@ namespace ursine
 			if (mConverter)
 				delete mConverter;
 
-			if (mModelInfo)
-				mModelInfo->ReleaseData();
+			if (mAnimInfo)
+				mAnimInfo->ReleaseData();
 
 			if (mLevelInfo)
 				mLevelInfo->ReleaseData();
+
+			if (mModelInfo)
+				mModelInfo->ReleaseData();
 
 			if (mModel)
 			{
@@ -213,15 +216,16 @@ namespace ursine
 		// divide this huge function part by part layer
 		bool CFBXLoader::Export()
 		{
-			if (nullptr == mModelInfo)
-				mModelInfo = new ufmt_loader::ModelInfo;
-
-			if (nullptr == mLevelInfo)
-				mLevelInfo = new ufmt_loader::LevelInfo;
+			if (nullptr == mModelInfo) mModelInfo = new ufmt_loader::ModelInfo;
+			if (nullptr == mLevelInfo) mLevelInfo = new ufmt_loader::LevelInfo;
+			if (nullptr == mAnimInfo) mAnimInfo = new ufmt_loader::AnimInfo;
 
 			// unify the loader data structure and exporter data structure someday
 			unsigned int i = 0, j = 0, k = 0, l = 0;
 
+			///////////////////////////////////////////////////////////////
+			// Model Info
+			///////////////////////////////////////////////////////////////
 			// mesh data
 			strcpy(mModelInfo->name, mModel->name.c_str());
 			mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
@@ -366,27 +370,34 @@ namespace ursine
 				currBI->boneSpaceScaling = mModel->mBoneData.mbonehierarchy[i].boneSpaceScaling;
 			}
 
-			// anim data
-			mModelInfo->manimCount = static_cast<unsigned int>(mModel->mAnimationData.size());
-			mModelInfo->marrAnims = new ufmt_loader::AnimInfo[mModelInfo->manimCount];
-			for (i = 0; i < mModelInfo->manimCount; ++i)
+			///////////////////////////////////////////////////////////////
+			// Anim Info
+			///////////////////////////////////////////////////////////////
+			// anim datam
+			lstrcpy(mAnimInfo->name, mModel->name.c_str());
+			mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
+			mAnimInfo->animDataArr = new ufmt_loader::AnimData[mAnimInfo->animCount];
+			for (i = 0; i < mAnimInfo->animCount; ++i)
 			{
-				ufmt_loader::AnimInfo* currAI = &mModelInfo->marrAnims[i];
-				// clips count
-				currAI->clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
-				currAI->keyIndices = new unsigned int*[currAI->clipCount];
-				currAI->keyframes = new FBX_DATA::KeyFrame**[currAI->clipCount];
+				ufmt_loader::AnimData* currAD = &mAnimInfo->animDataArr[i];
+				// counts
+				currAD->clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
+				currAD->keyIndices = new unsigned int*[currAD->clipCount];
+				currAD->keyframes = new FBX_DATA::KeyFrame**[currAD->clipCount];
 				j = 0;
 				for (auto iter = mModel->mAnimationData[i]->animations.begin();
 				iter != mModel->mAnimationData[i]->animations.end();
 					++iter, ++j)
 				{
-					// storing animation name
-					std::strcpy(currAI->name, iter->first.c_str());
+					// storing animation clip's name
+					std::strcpy(currAD->clipname, iter->first.c_str());
+
 					// set keycount / keyframes
-					currAI->boneCount = static_cast<unsigned int>(iter->second.boneAnim.size());
-					currAI->keyIndices[j] = new unsigned int[iter->second.boneAnim.size()];
-					currAI->keyframes[j] = new FBX_DATA::KeyFrame*[iter->second.boneAnim.size()];
+					currAD->boneCount = static_cast<unsigned int>(iter->second.boneAnim.size());
+					currAD->keyIndices[j] = new unsigned int[iter->second.boneAnim.size()];
+					currAD->keyframes[j] = new FBX_DATA::KeyFrame*[iter->second.boneAnim.size()];
+
+					// Unifying keyframes of each animation
 					unsigned int maxkfCount = 0;
 					for (k = 0; k < iter->second.boneAnim.size(); ++k)
 					{
@@ -398,14 +409,14 @@ namespace ursine
 					for (k = 0; k < iter->second.boneAnim.size(); ++k)
 					{
 						unsigned int kfCount = static_cast<unsigned int>(iter->second.boneAnim[k].keyFrames.size());
-						currAI->keyIndices[j][k] = maxkfCount;
-						currAI->keyframes[j][k] = new FBX_DATA::KeyFrame[maxkfCount];
+						currAD->keyIndices[j][k] = maxkfCount;
+						currAD->keyframes[j][k] = new FBX_DATA::KeyFrame[maxkfCount];
 						for (l = 0; l < maxkfCount; ++l)
 						{
 							if (l < maxkfCount && l < kfCount)
-								currAI->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[l];
+								currAD->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[l];
 							else if (l >= kfCount)
-								currAI->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[kfCount - 1];
+								currAD->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[kfCount - 1];
 						}
 					}
 				}
@@ -415,7 +426,7 @@ namespace ursine
 
 		bool CFBXLoader::CustomFileExport()
 		{
-			if (nullptr == mModelInfo || nullptr == mLevelInfo)
+			if (nullptr == mModelInfo || nullptr == mLevelInfo || nullptr == mAnimInfo)
 				return false;
 
 			// set name for the custom file format and store it into Output folder
@@ -423,8 +434,10 @@ namespace ursine
 			_fileName += mModelInfo->name;
 			std::string jdlFile = _fileName;
 			std::string jlvlFile = _fileName;
+			std::string janiFile = _fileName;
 			jdlFile += ".jdl";
 			jlvlFile += ".jlvl";
+			janiFile += ".jani";
 
 			HANDLE hFile;
 			if (mModelInfo)
@@ -443,6 +456,16 @@ namespace ursine
 				if (!mLevelInfo->SerializeOut(hFile))
 				{
 					MessageBox(nullptr, "Jlvl Export Failed!", "", MB_OK);
+					return false;
+				}
+				CloseHandle(hFile);
+			}
+			if (mAnimInfo)
+			{
+				hFile = CreateFile(janiFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+				if (!mAnimInfo->SerializeOut(hFile))
+				{
+					MessageBox(nullptr, "Jani Export Failed!", "", MB_OK);
 					return false;
 				}
 				CloseHandle(hFile);

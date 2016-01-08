@@ -28,7 +28,6 @@ namespace ursine
 				mmeshCount(0), marrMeshes(nullptr),
 				mmaterialCount(0), marrMaterials(nullptr),
 				mboneCount(0), marrBones(nullptr),
-				manimCount(0), marrAnims(nullptr),
 				ISerialize("")
 			{
 			}
@@ -54,11 +53,6 @@ namespace ursine
 					delete[] marrBones;
 					marrBones = nullptr;
 				}
-				if (marrAnims)
-				{
-					delete[] marrAnims;
-					marrAnims = nullptr;
-				}
 			}
 
 			bool ModelInfo::SerializeIn(HANDLE hFile)
@@ -71,7 +65,6 @@ namespace ursine
 					ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &manimCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
 					marrMeshes = new MeshInfo[mmeshCount];
 					for (i = 0; i < mmeshCount; ++i)
@@ -88,11 +81,6 @@ namespace ursine
 					{
 						marrBones[i].SerializeIn(hFile);
 					}
-					marrAnims = new AnimInfo[manimCount];
-					for (i = 0; i < manimCount; ++i)
-					{
-						marrAnims[i].SerializeIn(hFile);
-					}
 				}
 				return true;
 			}
@@ -107,7 +95,6 @@ namespace ursine
 					WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &manimCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
 					for (i = 0; i < mmeshCount; ++i)
 					{
@@ -121,25 +108,8 @@ namespace ursine
 					{
 						marrBones[i].SerializeOut(hFile);
 					}
-					for (i = 0; i < manimCount; ++i)
-					{
-						marrAnims[i].SerializeOut(hFile);
-					}
 				}
 				return true;
-			}
-
-			AnimInfo* ModelInfo::FindAnimClip(int* index, const std::string& clipName) const
-			{
-				for (unsigned int i = 0; i < manimCount; ++i)
-				{
-					if (clipName == marrAnims[i].name)
-					{
-						*index = i;
-						return &marrAnims[i];
-					}
-				}
-				return nullptr;
 			}
 		};
 	};

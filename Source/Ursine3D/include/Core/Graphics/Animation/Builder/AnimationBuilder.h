@@ -18,12 +18,12 @@
 #include "Animation.h"
 #include "AnimationState.h"
 #include "BoneInfo.h"
+#include "AnimationInfo.h"
 #include <unordered_map>
 
 namespace ursine
 {
     namespace graphics{namespace ufmt_loader{
-        class AnimInfo;
         class ModelInfo;
     }}
 
@@ -36,8 +36,7 @@ namespace ursine
             const AnimationState &animState, 
             const AnimationRig *rig,
             std::vector<SMat4> &outputMatPal,
-            std::vector<SMat4> &outputBones
-            
+            std::vector<SMat4> &outputBones            
         );
 
         /////////////////////////////////////////////////////////////

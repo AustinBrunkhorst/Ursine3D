@@ -22,15 +22,26 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
-			//storing AnimationData
+			// mesh of the model's animation data
+			struct AnimData
+			{
+				char clipname[MAXTEXTLEN];
+				unsigned int clipCount;		// how many clips in this animation?
+				unsigned int boneCount;		// how many bones in this model
+				unsigned int** keyIndices;	// how many keys does each bone have?
+				FBX_DATA::KeyFrame*** keyframes;
+
+				AnimData() : clipCount(0), boneCount(0), keyIndices(nullptr), keyframes(nullptr) {}
+				void ReleaseData();
+			};
+
+			// model's animation data
 			class AnimInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];
-				unsigned int clipCount; // how many clips in this animation?
-				unsigned int boneCount; // how many bones in this model?
-				unsigned int** keyIndices; // how many keys does each bone have?
-				FBX_DATA::KeyFrame*** keyframes;
+				char name[MAXTEXTLEN];  // model name
+				unsigned int animCount; // animation count is same as the number of meshes of the model
+				AnimData* animDataArr;	// and so does animData
 
 				/** @brief animation information constructor
 				*
@@ -38,7 +49,8 @@ namespace ursine
 				*
 				*  @return nothing
 				*/
-				AnimInfo();
+				AnimInfo() : animCount(0), animDataArr(nullptr), ISerialize("") {}
+
 				/** @brief animation information destructor
 				*
 				*  this will destroy animation information object
@@ -46,6 +58,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				virtual ~AnimInfo();
+
 				/** @brief animation information release function
 				*
 				*  this will release memory of the animation information
@@ -62,6 +75,7 @@ namespace ursine
 				*  @return if succeed return true, else return false
 				*/
 				bool SerializeIn(HANDLE hFile);
+
 				/** @brief animation information serialize out function
 				*
 				*  this will write animation information
