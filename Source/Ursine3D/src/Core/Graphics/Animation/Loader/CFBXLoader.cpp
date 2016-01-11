@@ -371,6 +371,17 @@ namespace ursine
 			}
 
 			///////////////////////////////////////////////////////////////
+			// Level Info
+			///////////////////////////////////////////////////////////////
+			mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
+			mLevelInfo->marrMeshlvls = new ufmt_loader::MeshInLvl[mLevelInfo->mmeshlvlCount];
+			for (i = 0; i < mLevelInfo->mmeshlvlCount; ++i)
+			{
+				lstrcpy(mLevelInfo->marrMeshlvls[i].name, mModelInfo->marrMeshes[i].name);
+				mLevelInfo->marrMeshlvls[i].meshTM = mModelInfo->marrMeshes[i].meshTM;
+			}
+
+			///////////////////////////////////////////////////////////////
 			// Anim Info
 			///////////////////////////////////////////////////////////////
 			// anim datam
