@@ -204,10 +204,21 @@ namespace ursine
                 return;
 
             /////////////////////////////////////////////////////////////////
+            // ALLOCATE MODEL ///////////////////////////////////////////////
+            m_modelArray[ name ] = new ModelResource();
+            auto *newMesh = new Mesh();
+            newMesh->SetName(name);
+            m_modelArray[ name ]->AddMesh(newMesh);
+
+            /////////////////////////////////////////////////////////////////
             // LOAD FILE INTO MEMORY ////////////////////////////////////////
             char size[ 32 ];
             input.getline(size, 32);
             unsigned vertCount = atoi(size);
+
+            newMesh->SetVertexCount(vertCount);
+
+            auto &newMeshVertData = newMesh->GetRawVertices( );
 
             UAssert(vertCount > 0, "Mesh '%s' has 0 vertices!", fileName.c_str());
 
@@ -217,6 +228,7 @@ namespace ursine
 
             for (uint x = 0; x < vertCount; ++x)
             {
+                newMeshVertData[ x ] = Vec3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
                 realbuffer[ x ].vPos = DirectX::XMFLOAT3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
                 realbuffer[ x ].vNor = DirectX::XMFLOAT3(buffer[ x ].normal.x, buffer[ x ].normal.y, buffer[ x ].normal.z);
                 realbuffer[ x ].vUv = buffer[ x ].UV;
@@ -226,13 +238,6 @@ namespace ursine
                 realbuffer[ x ].vBIdx[ 3 ] = 0;
                 realbuffer[ x ].vBWeight = DirectX::XMFLOAT4(1, 0, 0, 0);
             }
-
-            /////////////////////////////////////////////////////////////////
-            // ALLOCATE MODEL ///////////////////////////////////////////////
-            m_modelArray[ name ] = new ModelResource();
-            auto *newMesh = new Mesh();
-            newMesh->SetName(name);
-            m_modelArray[ name ]->AddMesh(newMesh);
 
             /////////////////////////////////////////////////////////////////
             // CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -256,7 +261,6 @@ namespace ursine
             //Now create the vertex buffer.
             result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
             UAssert(result == S_OK, "Failed to make vertex buffer!");
-            newMesh->SetVertexCount( vertCount );
 
             /////////////////////////////////////////////////////////////////
             // CREATE INDEX BUFFER //////////////////////////////////////////
@@ -594,6 +598,14 @@ namespace ursine
 
 			// Serialize in model
 			ufmt_lvl.SerializeIn(hFile);
+            
+            // We now have the transforms for the level.
+
+            // For each mesh,
+
+                // Apply inv transform to move from the global model space to the local space of that mesh
+                
+                // Save that mesh's transformation
 		}
 
         ID3D11Buffer *ModelManager::GetModelVert(std::string name, unsigned index)
