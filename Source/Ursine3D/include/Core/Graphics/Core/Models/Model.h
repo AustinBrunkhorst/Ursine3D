@@ -11,37 +11,43 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      Model.h
-Module:         Graphics
-Purpose:        base model class
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include "D3D11Forward.h"
+#include "Mesh.h"
 
 namespace ursine
 {
     namespace graphics
     {
-        struct ModelResource
+        class ModelResource
         {
-            ID3D11Buffer *Vertices_[64];
-            ID3D11Buffer *Indices_[ 64 ];
-            unsigned VertCount_[ 64 ];
-            unsigned IndexCount_[ 64 ];
-            unsigned MeshCount_;
+        public:
+            ModelResource(void);
+            ~ModelResource(void);
+
+            // add a mesh to this model
+            void AddMesh(Mesh *newMesh);
+
+            // get mesh by index or name
+            Mesh *GetMesh(const unsigned index);
+            Mesh *GetMesh(const std::string &name);
+
+            // get num of meshes
+            unsigned GetMeshCount(void) const;
+
+            // get the vector of meshes
+            std::vector<Mesh *> &GetMeshArray(void);
+
+        private:
+            // root mesh of this model
+            Mesh *m_rootNode;
+
+            // array of all meshes in this array
+            std::vector<Mesh *> m_meshArray;
+
+            // map for name lookup... This might need to get changed
+            std::unordered_map<std::string, Mesh *> m_meshMap;
         };
     }
 }

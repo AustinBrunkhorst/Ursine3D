@@ -118,6 +118,8 @@ namespace ursine
             std::string name = "internalQuad";
 
             m_modelArray[ name ] = new ModelResource();
+            auto *newMesh = new Mesh( );
+            m_modelArray[ name ]->AddMesh(newMesh);
 
             D3D11_BUFFER_DESC vertexBufferDesc;
             D3D11_SUBRESOURCE_DATA vertexData;
@@ -137,12 +139,12 @@ namespace ursine
             vertexData.SysMemSlicePitch = 0;
 
             //Now create the vertex buffer.
-            result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_modelArray[ name ]->Vertices_[ 0 ]);
+            result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer( ));
             UAssert(result == S_OK, "Failed to make vertex buffer!");
-            m_modelArray[ name ]->VertCount_[ 0 ] = 6;
+            newMesh->SetVertexCount(6);
 
-            m_modelArray[ name ]->IndexCount_[ 0 ] = 6;
-            unsigned *indexArray = new unsigned[ m_modelArray[ name ]->IndexCount_[ 0 ] ];
+            newMesh->SetIndexCount(6);
+            auto &indexArray = newMesh->GetRawIndices( );
 
             for (unsigned x = 0; x < 6; ++x)
                 indexArray[ x ] = x;
@@ -152,19 +154,19 @@ namespace ursine
 
             //Set up the description of the static index buffer.
             indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-            indexBufferDesc.ByteWidth = sizeof(unsigned) * m_modelArray[ name ]->IndexCount_[ 0 ];
+            indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount( );
             indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
             indexBufferDesc.CPUAccessFlags = 0;
             indexBufferDesc.MiscFlags = 0;
             indexBufferDesc.StructureByteStride = 0;
 
             //Give the subresource structure a pointer to the index data.
-            indexData.pSysMem = indexArray;
+            indexData.pSysMem = indexArray.data();
             indexData.SysMemPitch = 0;
             indexData.SysMemSlicePitch = 0;
 
             //Create the index buffer.
-            result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_modelArray[ name ]->Indices_[ 0 ]);
+            result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ));
             UAssert(result == S_OK, "Failed to make index buffer!");
 
             m_s2uTable[ name ] = m_modelCount;
@@ -178,12 +180,6 @@ namespace ursine
             {
                 if (x.second == nullptr)
                     continue;
-
-                for (unsigned counter = 0; counter < x.second->MeshCount_; ++counter)
-                {
-                    RELEASE_RESOURCE(x.second->Vertices_[ counter ]);
-                    RELEASE_RESOURCE(x.second->Indices_[ counter ]);
-                }
 
                 delete x.second;
             }
@@ -234,7 +230,9 @@ namespace ursine
             /////////////////////////////////////////////////////////////////
             // ALLOCATE MODEL ///////////////////////////////////////////////
             m_modelArray[ name ] = new ModelResource();
-            m_modelArray[ name ]->MeshCount_ = 1;
+            auto *newMesh = new Mesh();
+            newMesh->SetName(name);
+            m_modelArray[ name ]->AddMesh(newMesh);
 
             /////////////////////////////////////////////////////////////////
             // CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -256,14 +254,15 @@ namespace ursine
             vertexData.SysMemSlicePitch = 0;
 
             //Now create the vertex buffer.
-            result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_modelArray[ name ]->Vertices_[ 0 ]);
+            result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
             UAssert(result == S_OK, "Failed to make vertex buffer!");
-            m_modelArray[ name ]->VertCount_[ 0 ] = vertCount;
+            newMesh->SetVertexCount( vertCount );
 
             /////////////////////////////////////////////////////////////////
             // CREATE INDEX BUFFER //////////////////////////////////////////
-            m_modelArray[ name ]->IndexCount_[ 0 ] = vertCount;
-            unsigned *indexArray = new unsigned[ m_modelArray[ name ]->IndexCount_[ 0 ] ];
+            newMesh->SetIndexCount(vertCount);
+            
+            auto &indexArray = newMesh->GetRawIndices( );
 
             for (unsigned x = 0; x < vertCount; ++x)
                 indexArray[ x ] = x;
@@ -273,25 +272,23 @@ namespace ursine
 
             //Set up the description of the static index buffer.
             indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-            indexBufferDesc.ByteWidth = sizeof(unsigned) * m_modelArray[ name ]->IndexCount_[ 0 ];
+            indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
             indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
             indexBufferDesc.CPUAccessFlags = 0;
             indexBufferDesc.MiscFlags = 0;
             indexBufferDesc.StructureByteStride = 0;
 
             //Give the subresource structure a pointer to the index data.
-            indexData.pSysMem = indexArray;
+            indexData.pSysMem = indexArray.data();
             indexData.SysMemPitch = 0;
             indexData.SysMemSlicePitch = 0;
 
             //Create the index buffer.
-            result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_modelArray[ name ]->Indices_[ 0 ]);
+            result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ));
             UAssert(result == S_OK, "Failed to make index buffer!");
 
             m_s2uTable[ name ] = m_modelCount;
             m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
-
-            delete[] indexArray;
         }
 
 		void ModelManager::LoadModel_Fbx(std::string name, std::string fileName)
@@ -325,16 +322,28 @@ namespace ursine
 			D3D11_SUBRESOURCE_DATA vertexData;
 			HRESULT result;
 
+            // create initial model
 			m_modelArray[name] = new ModelResource();
-			m_modelArray[name]->MeshCount_ = ufmt_model.mmeshCount;
 
+            // for each mesh
 			for (uint mesh_idx = 0; mesh_idx < ufmt_model.mmeshCount; ++mesh_idx)
 			{
+                // create a new mesh
+                Mesh *newMesh = new Mesh( );
+                newMesh->SetID(mesh_idx);
+
+
 				/////////////////////////////////////////////////////////////////
 				// ALLOCATE MODEL ///////////////////////////////////////////////				
 
 				ufmt_loader::MeshInfo* currMesh = &ufmt_model.marrMeshes[mesh_idx];
+
+                newMesh->SetName(currMesh->name);
+
 				uint vertCount = ufmt_model.marrMeshes[mesh_idx].meshVtxInfoCount;
+                newMesh->SetVertexCount(vertCount);
+                auto &meshVertArray = newMesh->GetRawVertices( );
+
 				//Set up the description of the static vertex buffer.
 				vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 				vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
@@ -348,6 +357,14 @@ namespace ursine
 				buffer.resize(vertCount);
 				for (size_t i = 0; i < vertCount; ++i)
 				{
+                    // update raw verts for physics
+                    meshVertArray[ i ] = Vec3(
+                        currMesh->meshVtxInfos[ i ].pos.x,
+                        currMesh->meshVtxInfos[ i ].pos.y,
+                        currMesh->meshVtxInfos[ i ].pos.z
+                    );
+
+                    // Set actual buffer data
 					buffer[i].vPos = DirectX::XMFLOAT3(
 						currMesh->meshVtxInfos[i].pos.x,
 						currMesh->meshVtxInfos[i].pos.y,
@@ -390,15 +407,16 @@ namespace ursine
 				vertexData.SysMemSlicePitch = 0;
 
 				//Now create the vertex buffer.
-				result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_modelArray[name]->Vertices_[mesh_idx]);
+				result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
 				UAssert(result == S_OK, "Failed to make vertex buffer!");
-				m_modelArray[name]->VertCount_[mesh_idx] = vertCount;
+                newMesh->SetVertexCount(vertCount);
 
 				/////////////////////////////////////////////////////////////////
 				// CREATE INDEX BUFFER //////////////////////////////////////////
-				m_modelArray[name]->IndexCount_[mesh_idx] = currMesh->meshVtxInfoCount;
-				unsigned *indexArray = new unsigned[m_modelArray[name]->IndexCount_[mesh_idx]];
-				for (unsigned x = 0; x < m_modelArray[name]->IndexCount_[mesh_idx]; ++x)
+				newMesh->SetIndexCount( currMesh->meshVtxInfoCount );
+
+                auto &indexArray = newMesh->GetRawIndices();
+				for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
 					indexArray[x] = x;// currMesh->indices[x];
 
 				D3D11_BUFFER_DESC indexBufferDesc;
@@ -406,25 +424,25 @@ namespace ursine
 
 				//Set up the description of the static index buffer.
 				indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-				indexBufferDesc.ByteWidth = sizeof(unsigned) * m_modelArray[name]->IndexCount_[mesh_idx];
+				indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
 				indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 				indexBufferDesc.CPUAccessFlags = 0;
 				indexBufferDesc.MiscFlags = 0;
 				indexBufferDesc.StructureByteStride = 0;
 
 				//Give the subresource structure a pointer to the index data.
-				indexData.pSysMem = indexArray;
+				indexData.pSysMem = indexArray.data();
 				indexData.SysMemPitch = 0;
 				indexData.SysMemSlicePitch = 0;
 
 				//Create the index buffer.
-				result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &m_modelArray[name]->Indices_[mesh_idx]);
+				result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
 				UAssert(result == S_OK, "Failed to make index buffer!");
 
 				m_s2uTable[name] = m_modelCount;
 				m_u2mTable[m_modelCount++] = m_modelArray[name];
 
-				delete[] indexArray;
+                m_modelArray[ name ]->AddMesh(newMesh);
 			}
 		}
 
@@ -582,21 +600,21 @@ namespace ursine
         {
             if (m_modelArray[ name ] == nullptr)
                 return nullptr;
-            return m_modelArray[ name ]->Vertices_[ index ];
+            return m_modelArray[ name ]->GetMesh(index)->GetVertexBuffer();
         }
 
         unsigned ModelManager::GetModelVertcount(std::string name, unsigned index)
         {
             if (m_modelArray[ name ] == nullptr)
                 return -1;
-            return m_modelArray[ name ]->VertCount_[ index ];
+            return m_modelArray[ name ]->GetMesh(index)->GetVertexCount( );
         }
 
 		unsigned ModelManager::GetModelIndexcount(std::string name, unsigned index)
 		{
 			if (m_modelArray[name] == nullptr)
 				return -1;
-			return m_modelArray[name]->IndexCount_[ index ];
+            return m_modelArray[ name ]->GetMesh(index)->GetIndexCount( );
 		}
 
         void ModelManager::BindModel(std::string name, unsigned index)
@@ -611,8 +629,8 @@ namespace ursine
             unsigned int strides = sizeof(AnimationVertex);
             unsigned int offset = 0;
 
-            m_deviceContext->IASetVertexBuffers(0, 1, &model->Vertices_[ index ], &strides, &offset);
-            m_deviceContext->IASetIndexBuffer(model->Indices_[ index ], DXGI_FORMAT_R32_UINT, 0);
+            m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
+            m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
             m_currentState = m_s2uTable[ name ];
         }
@@ -629,8 +647,8 @@ namespace ursine
             unsigned int strides = sizeof(AnimationVertex);
             unsigned int offset = 0;
 
-            m_deviceContext->IASetVertexBuffers(0, 1, &model->Vertices_[ index ], &strides, &offset);
-            m_deviceContext->IASetIndexBuffer(model->Indices_[ index ], DXGI_FORMAT_R32_UINT, 0);
+            m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
+            m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
             m_currentState = ID;
         }
@@ -642,21 +660,21 @@ namespace ursine
 
         ID3D11Buffer *ModelManager::GetModelVertByID(unsigned ID, unsigned index)
         {
-            return m_u2mTable[ ID ]->Vertices_[ index ];
+            return m_u2mTable[ ID ]->GetMesh(index)->GetVertexBuffer( );
         }
         unsigned ModelManager::GetModelVertcountByID(unsigned ID, unsigned index)
         {
-            return m_u2mTable[ ID ]->VertCount_[ index ];
+            return m_u2mTable[ ID ]->GetMesh(index)->GetVertexCount( );
         }
 
 		unsigned ModelManager::GetModelIndexcountByID(unsigned ID, unsigned index)
 		{
-			return m_u2mTable[ID]->IndexCount_[index];
+			return m_u2mTable[ID]->GetMesh(index)->GetIndexCount();
 		}
 
         unsigned ModelManager::GetModelMeshCount(unsigned ID)
         {
-            return m_u2mTable[ ID ]->MeshCount_;
+            return m_u2mTable[ ID ]->GetMeshCount();
         }
 
         void ModelManager::Invalidate()
