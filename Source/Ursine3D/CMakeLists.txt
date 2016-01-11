@@ -184,7 +184,3 @@ endif ()
 set(URSINE_DIR_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_INCLUDE}" PARENT_SCOPE)
 set(URSINE_DIR_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_SOURCE}" PARENT_SCOPE)
 set(URSINE_HEADER_FILES "${URSINE_INC}" PARENT_SCOPE)
-
-
-# @@@TODO: this can't be an absolute path in the installer
-add_definitions(-DWORLD_AUDIO_BANK_PATH="${CMAKE_SOURCE_DIR}/Projects/Retrospect/Assets/GeneratedSoundBanks/Windows/")

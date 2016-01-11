@@ -1,16 +1,22 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(resources_dir "${CMAKE_CURRENT_LIST_DIR}/Resources")
+# disable exceptions
+add_definitions(-D_HAS_EXCEPTIONS=0)
 
-set(windows_resource_file "${resources_dir}/Resources.rc")
-set(install_icon "${resources_dir}/Icon.ico")
+include(UrsineProject)
+
+set(RESOURCES_DIR "${CMAKE_CURRENT_LIST_DIR}/Resources")
+set(WINDOWS_RESOURCE_FILE "${RESOURCES_DIR}/Resources.rc")
+set(INSTALL_ICON "${RESOURCES_DIR}/Icon.ico")
+
+add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
 
 include_directories(${Shared_INCLUDE_DIRS})
 
 # external files that will trigger regeneration of meta data
-set(meta_dependencies ${Shared_HEADER_FILES})
+set(META_DEPENDENCIES ${Shared_HEADER_FILES})
 
-ursine_default_project(Retrospect
+ursine_project(Retrospect
     FOLDER "Projects"
     TYPE EXE
     DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
@@ -23,18 +29,12 @@ ursine_default_project(Retrospect
     BUILD_META
     INCLUDE_INSTALLER
     INSTALLER_VERSION 1.0s1
-    INSTALLER_ICON ${install_icon}
-    INSTALLER_UNINSTALL_ICON ${install_icon}
-    WINDOWS_RESOURCE_FILE ${windows_resource_file}
+    INSTALLER_ICON ${INSTALL_ICON}
+    INSTALLER_UNINSTALL_ICON ${INSTALL_ICON}
+    WINDOWS_RESOURCE_FILE ${WINDOWS_RESOURCE_FILE}
     META_HEADER "Reflection.h"
-    META_DEPENDENCIES ${meta_dependencies}
+    META_DEPENDENCIES ${META_DEPENDENCIES}
     PCH_NAME "Precompiled"
 )
-
-# disable exceptions
-add_definitions(-D_HAS_EXCEPTIONS=0)
-
-# add WITH_EDITOR definition to editor and engine targets
-set_target_properties(Retrospect PROPERTIES COMPILE_DEFINITIONS URSINE_WITH_EDITOR=1)
 
 target_link_libraries(Retrospect Shared)

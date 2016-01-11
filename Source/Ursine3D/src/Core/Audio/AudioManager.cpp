@@ -54,7 +54,7 @@ namespace
 
 namespace ursine
 {
-    CORE_SYSTEM_DEFINITION( AudioManager ) ;
+    CORE_SYSTEM_DEFINITION( AudioManager );
 
     void AudioManager::OnInitialize()
     {
