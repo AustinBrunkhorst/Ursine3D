@@ -30,7 +30,7 @@ JumpCommand::JumpCommand(void)
 void JumpCommand::Execute(ursine::ecs::Entity* receiver)
 {
     auto *controller = receiver->GetComponent<CharacterController>( );
-	auto *emitter = receiver->GetComponent<ursine::ecs::AudioEmitterComponent>();
+	auto *emitter = receiver->GetComponent<ursine::ecs::AudioEmitter>();
 
 	controller->Jump( );
 

@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -15,12 +15,9 @@
 
 #include "CharacterControllerSystem.h"
 #include "CharacterControllerComponent.h"
-#include "CharacterFireControllerComponent.h"
 
 #include "RigidbodyComponent.h"
 
-#include "PlayerInputComponent.h"
-#include "AudioEmitterComponent.h"
 #include "PlayerAnimationComponent.h"
 #include <CameraComponent.h>
 #include "TeamComponent.h"
@@ -28,80 +25,17 @@
 using namespace ursine;
 using namespace ursine::ecs;
 
-namespace
-{
-	const std::string kRunSound = "PLAYER_STEP";
-    const std::string kLandSound = "PLAYER_LAND";
-}
-
-ENTITY_SYSTEM_DEFINITION( CharacterControllerSystem );
+ENTITY_SYSTEM_DEFINITION(CharacterControllerSystem);
 
 CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
-    : EntitySystem(world)
+    : FilterSystem( world, Filter( ).All<Rigidbody, CharacterController, TeamComponent>( ) )
 {
     
-}
-
-void CharacterControllerSystem::OnInitialize(void)
-{
-    m_world->Listener(this)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &CharacterControllerSystem::onComponentAdded)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &CharacterControllerSystem::onComponentRemoved)
-        .On(ecs::WorldEventType::WORLD_UPDATE, &CharacterControllerSystem::onUpdate);
-}
-
-void CharacterControllerSystem::OnRemove(void)
-{
-    m_world->Listener(this)
-        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &CharacterControllerSystem::onComponentAdded)
-        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &CharacterControllerSystem::onComponentRemoved)
-        .Off(WORLD_UPDATE, &CharacterControllerSystem::onUpdate);
-}
-
-void CharacterControllerSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
-{
-    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
-
-    if (args->component->Is<CharacterController>( )
-        && args->entity->HasComponent<Rigidbody>( ))
-    {
-        m_entityList.push_front(args->entity);
-    }
-    else if (args->component->Is<Rigidbody>( )
-        && args->entity->HasComponent<CharacterController>())
-    {
-        m_entityList.push_front(args->entity);
-    }
-
-}
-
-void CharacterControllerSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs:::World))
-{
-    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
-
-    if ((args->component->Is<CharacterController>( ) && args->entity->HasComponent<Rigidbody>( )) || 
-        (args->component->Is<Rigidbody>( ) && args->entity->HasComponent<CharacterController>( )))
-    {
-        m_entityList.remove(args->entity);
-    }
-}
-
-void CharacterControllerSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
-{
-    for (auto *entity : m_entityList)
-    {
-        Process(entity);
-    }
 }
 
 void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
-    auto *emitter = entity->GetComponent<AudioEmitterComponent>( );
     auto moveSpeed = controller->GetMoveSpeed( );
 	auto rotateSpeed = controller->GetRotateSpeed( );
 
@@ -171,28 +105,6 @@ void CharacterControllerSystem::Process(Entity *entity)
     auto strafe = child->GetRight( ) * move.X( );
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
-    /*
-	if (emitter)
-	{
-		if (move != Vec2::Zero() && controller->CanStep)
-		{
-			emitter->AddSoundToPlayQueue(kRunSound);
-			controller->CanStep = false;
-			m_timers.Create(TimeSpan::FromSeconds(Runduration)).Completed([=] {
-				if (entity)
-				{
-					auto *step = entity->GetComponent<CharacterController>();
-					if (step)
-						step->CanStep = true;
-				}
-			});
-		}
-		if (controller->CanJump && controller->inAir)
-		{
-			emitter->AddSoundToPlayQueue(kLandSound);
-			controller->inAir = false;
-		}
-	}*/
 
     if (controller->m_jump)
     {

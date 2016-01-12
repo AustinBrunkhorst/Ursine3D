@@ -19,77 +19,77 @@ namespace ursine
 {
 	namespace ecs
 	{
-		NATIVE_COMPONENT_DEFINITION(AudioEmitterComponent);
+		NATIVE_COMPONENT_DEFINITION(AudioEmitter);
 
-		AudioEmitterComponent::AudioEmitterComponent(void)
+		AudioEmitter::AudioEmitter(void)
 			: BaseComponent()
 		    , m_loop(false)
 			, m_mute(false)
 		    , m_listeners(ListenerIndex::One)
 		    , m_volume(100.0f)  { }
 
-		float AudioEmitterComponent::GetVolume() const
+		float AudioEmitter::GetVolume() const
 		{
 			return m_volume;
 		}
 
-		void AudioEmitterComponent::SetVolume(float volume)
+		void AudioEmitter::SetVolume(float volume)
 		{
 			m_volume = math::Clamp(volume, 0.0f, 100.0f);
 			NOTIFY_COMPONENT_CHANGED("Volume", m_volume);
 		}
 
-		bool AudioEmitterComponent::GetMute() const
+		bool AudioEmitter::GetMute() const
 		{
 			return m_mute;
 		}
 
-		void AudioEmitterComponent::SetMute(bool mute)
+		void AudioEmitter::SetMute(bool mute)
 		{
 			m_mute = mute;
 		}
 
-		bool AudioEmitterComponent::GetLoop() const
+		bool AudioEmitter::GetLoop() const
 		{
 			return m_loop;
 		}
 
-		void AudioEmitterComponent::SetLoop(bool loop)
+		void AudioEmitter::SetLoop(bool loop)
 		{
 			m_loop = loop;
 		}
 
-		AudioEmitterComponent::~AudioEmitterComponent(void)
+		AudioEmitter::~AudioEmitter(void)
 		{
 		
 		}
 
-		void AudioEmitterComponent::OnInitialize(void)
+		void AudioEmitter::OnInitialize(void)
 		{
 		}
 
-		std::string AudioEmitterComponent::GetFrontSound(void)
+		std::string AudioEmitter::GetFrontSound(void)
 		{
 			return m_soundsFAF.front();
 		}
 
-		void AudioEmitterComponent::PopFrontSound(void)
+		void AudioEmitter::PopFrontSound(void)
 		{
 			m_soundsFAF.pop();
 		}
 
-		bool AudioEmitterComponent::SoundsEmpty()
+		bool AudioEmitter::SoundsEmpty()
 		{
 			return m_soundsFAF.empty();
 		}
 
-		void AudioEmitterComponent::AddSoundToPlayQueue(std::string sound)
+		void AudioEmitter::AddSoundToPlayQueue(std::string sound)
 		{
 			if (!m_mute)
 				m_soundsFAF.push( sound );
 		}
 
-		ListenerIndex AudioEmitterComponent::GetListeners()
+		ListenerIndex AudioEmitter::GetListeners()
 		{
 			return m_listeners;
 		}

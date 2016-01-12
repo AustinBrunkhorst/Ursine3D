@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** CharacterControllerSystem.h
+** TestFilterSystem.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -15,15 +15,22 @@
 
 #include <FilterSystem.h>
 
-class CharacterControllerSystem : public ursine::ecs::FilterSystem
+namespace ursine
 {
-    ENTITY_SYSTEM;
+	namespace ecs
+	{
+		class TestFilterSystem : public FilterSystem
+		{
+			ENTITY_SYSTEM;
 
-public:
-    CharacterControllerSystem(ursine::ecs::World *world);
+		public:
+			static uint numUpdated;
 
-protected:
+			TestFilterSystem(World *world);
 
-    void Process(ursine::ecs::Entity *entity);
-
-} Meta(Enable);
+		protected:
+			void Process(Entity *entity) override;
+			
+		} Meta(Enable);
+	}
+}

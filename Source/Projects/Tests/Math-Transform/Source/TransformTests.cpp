@@ -69,7 +69,7 @@ TEST_CASE("Transform: Manipulation")
     World world;
 
     auto e = world.CreateEntity();
-    auto t0 = e->GetComponent<Transform>();
+    auto t0 = e->GetTransform();
     
     //////////////////////
     // Testing position //
@@ -83,7 +83,7 @@ TEST_CASE("Transform: Manipulation")
     REQUIRE( lossyEquals( t0->GetWorldPosition( ), parentPos ) );
 
     // create a new entity and parent it to the transform
-    auto t1 = world.CreateEntity( )->GetComponent<Transform>( );
+    auto t1 = world.CreateEntity( )->GetTransform();
 
     t1->SetWorldPosition( SVec3( 51, 394, 3823 ) );
     t0->AddChild( t1 );
@@ -91,7 +91,7 @@ TEST_CASE("Transform: Manipulation")
     REQUIRE( lossyEquals( t1->GetLocalPosition( ), SVec3( 71, 369, 3494 ) ) );
     REQUIRE( lossyEquals( t1->GetWorldPosition( ), SVec3( 51, 394, 3823 ) ) );
 
-    auto t2 = world.CreateEntity( )->GetComponent<Transform>( );
+    auto t2 = world.CreateEntity( )->GetTransform();
     
     t2->SetWorldPosition( SVec3( -2, 23, 39 ) );
     t1->AddChild( t2 );
