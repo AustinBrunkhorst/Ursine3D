@@ -278,6 +278,13 @@ macro (ursine_project PROJECT_NAME)
        
     # engine includes/lib if not disabled
     if ("${PROJ_NO_ENGINE}" STREQUAL "FALSE")
+        get_directory_property(HAS_PARENT PARENT_DIRECTORY)
+
+        # add the engine only at the top level
+        if(NOT HAS_PARENT)
+            add_subdirectory(${ENGINE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/Ursine3D")
+        endif()
+        
         ursine_add_include_directories(${PROJECT_NAME} ${URSINE_INCLUDE_DIRS})
 
         target_link_libraries(${PROJECT_NAME} Ursine3D)

@@ -119,5 +119,3 @@ if (MSVC)
     set(ENGINE_D3DREDIST_FILE "${ENGINE_RESOURCES_DIR}/Installers/${d3dredist_name}")
     set(ENGINE_D3DREDIST_HELPER_DLL "${ENGINE_RESOURCES_DIR}/Installers/D3D11InstallHelper.dll")
 endif ()
-
-add_subdirectory(${ENGINE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/Ursine3D")
