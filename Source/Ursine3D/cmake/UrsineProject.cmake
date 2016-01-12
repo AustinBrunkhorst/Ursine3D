@@ -274,17 +274,13 @@ macro (ursine_project PROJECT_NAME)
 
         # add the defintion "URSINE_DEPENDENCY_NAME"
         add_definitions(-DURSINE_DEPENDENCY_${DEPENDENCY})
+
+        # add it to the engine explicitly too
+        set_property(TARGET Ursine3D APPEND PROPERTY COMPILE_DEFINITIONS URSINE_DEPENDENCY_${DEPENDENCY})
     endforeach ()
        
     # engine includes/lib if not disabled
     if ("${PROJ_NO_ENGINE}" STREQUAL "FALSE")
-        get_directory_property(HAS_PARENT PARENT_DIRECTORY)
-
-        # add the engine only at the top level
-        if(NOT HAS_PARENT)
-            add_subdirectory(${ENGINE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/Ursine3D")
-        endif()
-        
         ursine_add_include_directories(${PROJECT_NAME} ${URSINE_INCLUDE_DIRS})
 
         target_link_libraries(${PROJECT_NAME} Ursine3D)
