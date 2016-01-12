@@ -19,21 +19,16 @@
 #include "Meta.h"
 
 #if defined(URSINE_GRAPHICS_DIRECTX)
+
 namespace DirectX
 {
 	// Forward Declaration
 	struct XMFLOAT3;
 }
-#endif
-
-// URSINE_TODO( "Fix once build system is generator based" );
-#if !defined(URSINE_DEPENDENCY_WWise)
-
-#define URSINE_DEPENDENCY_WWise
 
 #endif
 
-#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+#if defined(URSINE_DEPENDENCY_WWise)
 
 // Forward Declaration
 struct AkVector;
@@ -74,15 +69,19 @@ namespace ursine
 		explicit SVec3(const Vec4 &value);
 
 #if defined(URSINE_GRAPHICS_DIRECTX)
+
 		explicit SVec3(const DirectX::XMFLOAT3 &vec);
 
 		DirectX::XMFLOAT3 ToD3D(void) const;
+
 #endif
 
-#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+#if defined(URSINE_DEPENDENCY_WWise)
+
 		explicit SVec3(const AkVector & vec);
 
 		AkVector ToWwise(void) const;
+
 #endif
 
 		// Properties
@@ -182,7 +181,9 @@ namespace ursine
 		ALLOW_ALIGNED_ALLOC(16);
 
 	private:
+
 #ifdef USE_SSE
+
 		union
 		{
 			SIMDvec m_128;
@@ -194,9 +195,13 @@ namespace ursine
 		};
 
 		explicit SVec3(const SIMDvec &value);
+
 #else
+
 		float m_x, m_y, m_z;
+
 #endif
+
 	} Meta(Enable, WhiteListMethods);
 }
 

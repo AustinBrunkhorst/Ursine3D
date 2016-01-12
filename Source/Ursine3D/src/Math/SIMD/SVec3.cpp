@@ -14,11 +14,15 @@
 #include "UrsinePrecompiled.h"
 
 #ifdef URSINE_GRAPHICS_DIRECTX
+
 #include "DirectXMath.h"
+
 #endif
 
-#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+#if defined(URSINE_DEPENDENCY_WWise)
+
 #include "Ak/SoundEngine/Common/AkTypes.h"
+
 #endif
 
 namespace ursine
@@ -80,7 +84,7 @@ namespace ursine
 	}
 #endif
 
-#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+#if defined(URSINE_DEPENDENCY_WWise)
 	SVec3::SVec3(const AkVector & vec)
 		: m_x( vec.X )
 		, m_y( vec.Y )
