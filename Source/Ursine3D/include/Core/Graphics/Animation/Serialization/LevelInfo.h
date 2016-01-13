@@ -39,8 +39,8 @@ namespace ursine
 				unsigned int	mriglvlCount;
 				MeshInLvl*		marrMeshlvls;
 				RigInLvl*		marrRiglvls;
-				unsigned int*	mMeshHierarchy;	// parent indices
-				unsigned int*	mRigHierarchy;	// parent indices
+				int*			mMeshHierarchy;	// parent indices
+				int*			mRigHierarchy;	// parent indices
 
 				/** @brief level information constructor
 				*

@@ -27,7 +27,9 @@ torus2.8.0.mdl Ring
 #newGunRun.fbx Gun_Run
 #
 # Player animations
-Player_Idle.fbx Player
+Player_Idle.jlvl Player
+#Player_Idle.jani Player
+#Player_Idle.fbx Player
 #Player_Win.fbx Player_Win
 #Player_Run.fbx Player_Run
 #Player_Jump.fbx Player_Jump

@@ -65,17 +65,20 @@ namespace ursine
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
 					ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					marrMeshlvls = new MeshInLvl[mmeshlvlCount];
 					marrRiglvls = new RigInLvl[mriglvlCount];
+					mMeshHierarchy = new int[mmeshlvlCount];
+					mRigHierarchy = new int[mriglvlCount];
 					for (unsigned i = 0; i < mmeshlvlCount; ++i)
 					{
 						ReadFile(hFile, &marrMeshlvls[i], sizeof(MeshInLvl), &nBytesRead, nullptr);
-						ReadFile(hFile, &mMeshHierarchy[i], sizeof(unsigned int), &nBytesRead, nullptr);
+						ReadFile(hFile, &mMeshHierarchy[i], sizeof(int), &nBytesRead, nullptr);
 					}
 					for (unsigned i = 0; i < mriglvlCount; ++i)
 					{
 						ReadFile(hFile, &marrRiglvls[i], sizeof(MeshInLvl), &nBytesRead, nullptr);
-						ReadFile(hFile, &mRigHierarchy[i], sizeof(unsigned int), &nBytesRead, nullptr);
+						ReadFile(hFile, &mRigHierarchy[i], sizeof(int), &nBytesRead, nullptr);
 					}
 				}
 				return true;
@@ -87,15 +90,16 @@ namespace ursine
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
 					WriteFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					for (unsigned i = 0; i < mmeshlvlCount; ++i)
 					{
 						WriteFile(hFile, &marrMeshlvls[i], sizeof(MeshInLvl), &nBytesWrite, nullptr);
-						WriteFile(hFile, &mMeshHierarchy[i], sizeof(unsigned int), &nBytesWrite, nullptr);
+						WriteFile(hFile, &mMeshHierarchy[i], sizeof(int), &nBytesWrite, nullptr);
 					}
 					for (unsigned i = 0; i < mriglvlCount; ++i)
 					{
 						WriteFile(hFile, &marrRiglvls[i], sizeof(MeshInLvl), &nBytesWrite, nullptr);
-						WriteFile(hFile, &mRigHierarchy[i], sizeof(unsigned int), &nBytesWrite, nullptr);
+						WriteFile(hFile, &mRigHierarchy[i], sizeof(int), &nBytesWrite, nullptr);
 					}
 				}
 				return true;
