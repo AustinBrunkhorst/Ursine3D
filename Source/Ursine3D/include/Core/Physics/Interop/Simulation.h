@@ -16,6 +16,7 @@
 #include "PhysicsInteropConfig.h"
 #include "DebugDrawer.h"
 #include "Raycasting.h"
+#include "CollisionEventArgs.h"
 
 namespace ursine
 {
@@ -23,6 +24,8 @@ namespace ursine
     namespace ecs
     {
         class Entity;
+		class Rigidbody;
+		class Body;
     }
 
     namespace physics
@@ -59,12 +62,14 @@ namespace ursine
 
             void ClearContacts(Rigidbody &rigidbody);
 
+			void DispatchCollisionEvents(void);
+
         private:
 
             // terminate the simulation
             void destroySimulation(void);
 
-#ifdef BULLET_PHYSICS
+		#ifdef BULLET_PHYSICS
             // collision configuration contains default setup for memory,
             // collision setup. Advanced users can create their own configuration.
             btDefaultCollisionConfiguration m_collisionConfig;
@@ -82,7 +87,18 @@ namespace ursine
             btSequentialImpulseConstraintSolver *m_solver;
 
             btSoftRigidDynamicsWorld *m_dynamicsWorld;
-#endif
+		#endif
+
+			bool contactCallbackEnabled(const BodyBase *body);
+
+			void dispatchContactEvent(const BodyBase *thisBody, const BodyBase *otherBody,
+								      ecs::Entity *thisEntity, ecs::Entity *otherEntity, PersistentManifold *manifold);
+
+			ecs::Entity *getEntityPointer(const BodyBase *body);
+
+			void calculateContactRelativeVelocity(
+				const BodyBase *thisBody, const BodyBase *otherBody, Contact *contact
+			);
         };
     }
 }

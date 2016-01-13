@@ -349,9 +349,8 @@ namespace ursine
                 body->m_body.GetTransform( body->GetOwner( )->GetTransform( ) );
             }
 
-			// When we iterate through the bodies, check to see if they are DispatchingContactInfo tings
-			// Add file named "CollisionEventArgs.h"
-			// Option for ContactDispatching and Trigger and CCD
+			// dispatch all collision events for this frame
+			m_simulation.DispatchCollisionEvents( );
         }
 
         void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))

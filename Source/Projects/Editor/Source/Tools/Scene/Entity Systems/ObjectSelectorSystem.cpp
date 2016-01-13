@@ -23,6 +23,7 @@
 
 #include <Model3DComponent.h>
 #include <RigidbodyComponent.h>
+#include <BodyComponent.h>
 #include <CameraComponent.h>
 
 #include <SystemManager.h>
@@ -58,7 +59,7 @@ ecs::Entity *ObjectSelectorSystem::GetCurrentFocus(void)
 
 void ObjectSelectorSystem::OnInitialize(void)
 {
-    FilterSystem::OnInitialize( );
+    FilterSystem::OnInitialize( ecs::WorldEventType::WORLD_EDITOR_UPDATE );
 
     //grab graphics
     m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -173,8 +174,9 @@ void ObjectSelectorSystem::Process(ecs::Entity *entity)
         // zero out all selected rigidbodies' velocity and angular velocity
         auto rigidbody = entity->GetComponent<ecs::Rigidbody>( );
 
-        rigidbody->SetVelocity( SVec3::Zero( ) );
-        rigidbody->SetAngularVelocity( SVec3::Zero( ) );
+		rigidbody->SetVelocity( SVec3::Zero( ) );
+		rigidbody->SetAngularVelocity( SVec3::Zero( ) );
+		rigidbody->SetAwake( );
     }
 }
 

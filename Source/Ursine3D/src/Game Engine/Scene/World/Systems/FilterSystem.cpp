@@ -116,13 +116,13 @@ namespace ursine
             m_active.erase( uniqueID );
         }
 
-        void FilterSystem::OnInitialize(void)
+        void FilterSystem::OnInitialize(WorldEventType updateType)
         {
             m_world->Listener( this )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .On( WORLD_UPDATE, &FilterSystem::onUpdate, m_updatePriority );
+                .On( updateType, &FilterSystem::onUpdate, m_updatePriority );
         }
 
         void FilterSystem::OnRemove(void)

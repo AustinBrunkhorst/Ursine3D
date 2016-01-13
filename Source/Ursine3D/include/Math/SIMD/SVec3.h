@@ -35,6 +35,13 @@ struct AkVector;
 
 #endif
 
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+// Forward Declaration
+struct btVector3;
+
+#endif
+
 namespace ursine
 {
 	// Forward declaration
@@ -81,6 +88,14 @@ namespace ursine
 		explicit SVec3(const AkVector & vec);
 
 		AkVector ToWwise(void) const;
+
+#endif
+
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+		explicit SVec3(const btVector3 &vec);
+
+		btVector3 ToBullet(void) const;
 
 #endif
 

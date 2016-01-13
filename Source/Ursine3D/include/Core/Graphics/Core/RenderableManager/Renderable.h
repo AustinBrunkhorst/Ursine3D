@@ -11,22 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      Renderable.h
-Module:         Graphics
-Purpose:        All of the possible renderables in graphics
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include "EntityConfig.h"
