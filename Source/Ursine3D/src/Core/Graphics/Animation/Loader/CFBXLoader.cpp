@@ -238,7 +238,6 @@ namespace ursine
 				std::strcpy(currMI->name, currMD->name.c_str());
 
 				// mesh Transformation
-				currMI->meshTM = currMD->meshTM;
 				currMI->meshVtxInfoCount = currMD->indexCnt;
 				currMI->meshVtxInfos = new ufmt_loader::MeshVertex[currMI->meshVtxInfoCount];
 				for (j = 0; j < currMI->meshVtxInfoCount; ++j)
@@ -286,13 +285,6 @@ namespace ursine
 				currMI->materialIndices = new unsigned int[currMI->mtrlIndexCount];
 				for (j = 0; j < currMI->mtrlIndexCount; ++j)
 					currMI->materialIndices[j] = currMD->materialIndices[j];
-
-				///////////////////////////////////////////////////////////////
-				// didn't handled subset yet(using more than two materials)
-				///////////////////////////////////////////////////////////////
-				currMI->subsetCount = static_cast<unsigned int>(mModel->mMeshData[i]->modelSubsets.size());
-				for (j = 0; j < currMI->subsetCount; ++j)
-					currMI->modelSubsets[j] = mModel->mMeshData[i]->modelSubsets[j];
 			}
 
 			// material data
@@ -373,18 +365,30 @@ namespace ursine
 			///////////////////////////////////////////////////////////////
 			// Level Info
 			///////////////////////////////////////////////////////////////
+			// mesh lvl
 			mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
 			mLevelInfo->marrMeshlvls = new ufmt_loader::MeshInLvl[mLevelInfo->mmeshlvlCount];
+			mLevelInfo->mMeshHierarchy = new unsigned int[mLevelInfo->mmeshlvlCount];
 			for (i = 0; i < mLevelInfo->mmeshlvlCount; ++i)
 			{
 				lstrcpy(mLevelInfo->marrMeshlvls[i].name, mModelInfo->marrMeshes[i].name);
-				mLevelInfo->marrMeshlvls[i].meshTM = mModelInfo->marrMeshes[i].meshTM;
+				mLevelInfo->marrMeshlvls[i].meshTM = mModel->mMeshData[i]->meshTM;
+				mLevelInfo->mMeshHierarchy[i] = mModel->mMeshData[i]->parentIndex;
+			}
+			// rig lvl
+			mLevelInfo->mriglvlCount = mModelInfo->mboneCount;
+			mLevelInfo->marrRiglvls = new ufmt_loader::RigInLvl[mLevelInfo->mriglvlCount];
+			mLevelInfo->mRigHierarchy = new unsigned int[mLevelInfo->mriglvlCount];
+			for (i = 0; i < mLevelInfo->mriglvlCount; ++i)
+			{
+				lstrcpy(mLevelInfo->marrRiglvls[i].name, mModelInfo->marrBones[i].name);
+				mLevelInfo->mRigHierarchy[i] = mModelInfo->marrBones[i].mParentIndex;
 			}
 
 			///////////////////////////////////////////////////////////////
 			// Anim Info
 			///////////////////////////////////////////////////////////////
-			// anim datam
+			// anim data
 			lstrcpy(mAnimInfo->name, mModel->name.c_str());
 			mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
 			mAnimInfo->animDataArr = new ufmt_loader::AnimData[mAnimInfo->animCount];
@@ -499,7 +503,7 @@ namespace ursine
 			if (mModel->mBoneData.mbonehierarchy.empty())
 			{
 				// Process Static Mesh
-				ProcessStaticMesh(pRoot);
+				ProcessStaticMesh(pRoot, 0, -1);
 				return;
 			}
 			else
@@ -516,18 +520,16 @@ namespace ursine
 			ProcessAnimation();
 
 			RemoveUnnecessaryWeights();
-			ProcessGeometry(pRoot);
+			ProcessGeometry(pRoot, 0, -1);
 		}
 
 		void CFBXLoader::ProcessSkeletonHierarchy(FbxNode* pRoot)
 		{
 			for (int childIndex = 0; childIndex < pRoot->GetChildCount(); ++childIndex)
-			{
-				ProcessSkeletonHierarchyRecursively(pRoot->GetChild(childIndex), 0, 0, -1);
-			}
+				ProcessSkeletonHierarchyRecursively(pRoot->GetChild(childIndex), 0, -1);
 		}
 
-		void CFBXLoader::ProcessSkeletonHierarchyRecursively(FbxNode* pNode, int inDepth, int myIndex, int inParentIndex)
+		void CFBXLoader::ProcessSkeletonHierarchyRecursively(FbxNode* pNode, int myIndex, int inParentIndex)
 		{
 			FbxNodeAttribute* attr = pNode->GetNodeAttribute();
 			bool bBone = false;
@@ -556,18 +558,18 @@ namespace ursine
 
 				// Set bind position, bind rotation matrices
 				currJoint.bindPosition = FBXVectorToXMFLOAT3(localMatrix.GetT());
-				Swap(&currJoint.bindPosition.y, &currJoint.bindPosition.z);
 				currJoint.bindRotation = FBXQuaternionToXMLOAT4(localMatrix.GetQ());
-				Swap(&currJoint.bindRotation.y, &currJoint.bindRotation.z);
 				currJoint.bindScaling = FBXVectorToXMFLOAT3(localMatrix.GetS());
+				Swap(&currJoint.bindPosition.y, &currJoint.bindPosition.z);
+				Swap(&currJoint.bindRotation.y, &currJoint.bindRotation.z);
 				Swap(&currJoint.bindScaling.y, &currJoint.bindScaling.z);
 
 				// Set bone space position, rotation matrices
 				currJoint.boneSpacePosition = FBXVectorToXMFLOAT3(inverse.GetT());
-				Swap(&currJoint.boneSpacePosition.y, &currJoint.boneSpacePosition.z);
 				currJoint.boneSpaceRotation = FBXQuaternionToXMLOAT4(inverse.GetQ());
-				Swap(&currJoint.boneSpaceRotation.y, &currJoint.boneSpaceRotation.z);
 				currJoint.boneSpaceScaling = FBXVectorToXMFLOAT3(inverse.GetS());
+				Swap(&currJoint.boneSpacePosition.y, &currJoint.boneSpacePosition.z);
+				Swap(&currJoint.boneSpaceRotation.y, &currJoint.boneSpaceRotation.z);
 				Swap(&currJoint.boneSpaceScaling.y, &currJoint.boneSpaceScaling.z);
 
 				// skeleton = bone hierarchy
@@ -575,26 +577,27 @@ namespace ursine
 				mModel->mBoneData.mboneNodes.push_back(pNode);
 				SMat4 locTM = FBXAMatrixToSMat4(&localMatrix);
 				mModel->mBoneData.mboneLocalTM.push_back(locTM);
-
 				bBone = true;
 			}
 			for (int i = 0; i < pNode->GetChildCount(); ++i)
 			{
-				if (bBone)
-					ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), inDepth + 1, static_cast<int>(mModel->mBoneData.mbonehierarchy.size()), myIndex);
+				if(bBone)
+					ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), mModel->mBoneData.mbonehierarchy.size(), myIndex);
 				else
-					ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), inDepth + 1, myIndex, inParentIndex);
+					ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), myIndex, inParentIndex);
 			}
 		}
 
-		void CFBXLoader::ProcessStaticMesh(FbxNode* pNode)
+		void CFBXLoader::ProcessStaticMesh(FbxNode* pNode, int myindex, int inParentIndex)
 		{
 			FbxMesh* mesh = pNode->GetMesh();
+			bool bMesh = false;
 			if (mesh)
 			{
 				FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
 				newMesh->name = pNode->GetName();
 				newMesh->mLayout = FBX_DATA::STATIC;
+				newMesh->parentIndex = inParentIndex;
 				if ("" == newMesh->name)
 					newMesh->name = mModel->name;
 
@@ -609,11 +612,8 @@ namespace ursine
 
 				//Meshes have a separate geometry transform that also needs to be applied
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
-				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
-				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
 				meshTransform = meshTransform * geoTransform;
-				mConverter->ConvertMatrix(meshTransform);
-				newMesh->meshTM = FBXAMatrixToSMat4(&meshTransform);
+				mConverter->ConvertMatrix(meshTransform);\
 
 				// vertex, normal, tangent, texcoord, material
 				ProcessVertices(mesh, newMesh);
@@ -635,7 +635,12 @@ namespace ursine
 				}
 			}
 			for (int i = 0; i < pNode->GetChildCount(); ++i)
-				ProcessStaticMesh(pNode->GetChild(i));
+			{
+				if(bMesh)
+					ProcessStaticMesh(pNode->GetChild(i), mModel->mMeshData.size(), myindex);
+				else
+					ProcessStaticMesh(pNode->GetChild(i), myindex, inParentIndex);
+			}
 		}
 
 		void CFBXLoader::ProcessControlPoint(FbxNode* pNode)
@@ -1290,10 +1295,10 @@ namespace ursine
 					animClip.boneAnim[boneindex].keyFrames[i].time = static_cast<float>(iter->GetSecondDouble());
 					// Scale keyframe translation interpolation by specified scale
 					animClip.boneAnim[boneindex].keyFrames[i].trans = FBXVectorToXMFLOAT3(localMatrix.GetT());// *_scale;
-					Swap(&animClip.boneAnim[boneindex].keyFrames[i].trans.y, &animClip.boneAnim[boneindex].keyFrames[i].trans.z);
 					animClip.boneAnim[boneindex].keyFrames[i].rot = FBXQuaternionToXMLOAT4(localMatrix.GetQ());
-					Swap(&animClip.boneAnim[boneindex].keyFrames[i].rot.y, &animClip.boneAnim[boneindex].keyFrames[i].rot.z);
 					animClip.boneAnim[boneindex].keyFrames[i].scl = FBXVectorToXMFLOAT3(localMatrix.GetS());
+					Swap(&animClip.boneAnim[boneindex].keyFrames[i].trans.y, &animClip.boneAnim[boneindex].keyFrames[i].trans.z);
+					Swap(&animClip.boneAnim[boneindex].keyFrames[i].rot.y, &animClip.boneAnim[boneindex].keyFrames[i].rot.z);
 					Swap(&animClip.boneAnim[boneindex].keyFrames[i].scl.y, &animClip.boneAnim[boneindex].keyFrames[i].scl.z);
 				}
 				time.clear();
@@ -1320,9 +1325,10 @@ namespace ursine
 			}
 		}
 
-		void CFBXLoader::ProcessGeometry(FbxNode* pNode)
+		void CFBXLoader::ProcessGeometry(FbxNode* pNode, int myindex, int inParentIndex)
 		{
 			FbxMesh* mesh = pNode->GetMesh();
+			bool bMesh = false;
 			if (mesh)
 			{
 				FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
@@ -1342,11 +1348,8 @@ namespace ursine
 
 				//Meshes have a separate geometry transform that also needs to be applied
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
-				FbxAMatrix parentTransform = GetParentTransformation(pNode->GetParent());
-				newMesh->parentTM = FBXAMatrixToSMat4(&parentTransform);
 				meshTransform = meshTransform * geoTransform;
 				mConverter->ConvertMatrix(meshTransform);
-				newMesh->meshTM = FBXAMatrixToSMat4(&meshTransform);
 
 				ProcessVertices(mesh, newMesh);
 				ProcessNormals(mesh, newMesh);
@@ -1364,13 +1367,18 @@ namespace ursine
 					vtx.mData[3] = 0.0f;
 					newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
 				}
-
 				mModel->mMeshData.push_back(newMesh);
+				bMesh = true;
 			}
 			//go through all the child node and grab there geometry information
 			int childCnt = pNode->GetChildCount();
 			for (int i = 0; i < childCnt; ++i)
-				ProcessGeometry(pNode->GetChild(i));
+			{
+				if (bMesh)
+					ProcessGeometry(pNode->GetChild(i), mModel->mMeshData.size(), myindex);
+				else
+					ProcessGeometry(pNode->GetChild(i), myindex, inParentIndex);
+			}
 		}
 
 		//getting anim pose

@@ -99,17 +99,6 @@ namespace ursine
                 float		TransparencyFactor;
             };
 
-            struct ModelSubset
-            {
-                ModelSubset( ) : id( -1 ), vertexStart( 0 ), vertexCount( 0 ) {};
-                //id number of this subset
-                int         id;
-
-                //location of where this subset starts and end
-                unsigned    vertexStart;
-                unsigned    vertexCount;
-            };
-
             struct Material_Eles
             {
                 // determine if material only holds material or only textures
@@ -315,10 +304,6 @@ namespace ursine
 					mToRoot.SetIdentity();
 					mToParent.SetIdentity();
 				}
-
-				~Joint()
-				{
-				}
 			};
 
 			struct FbxBoneData
@@ -334,6 +319,7 @@ namespace ursine
 				{
 					mbonehierarchy.clear();
 					mboneNodes.clear();
+					mboneLocalTM.clear();
 				}
 			};
 
@@ -347,11 +333,11 @@ namespace ursine
 				unsigned int tangentCnt;
 				unsigned int uvCnt;
 				unsigned int mtrlIndexCnt;
+				int parentIndex;
 
 				FbxLayerElement::EMappingMode normalMode;
 				FbxLayerElement::EMappingMode tangentMode;
 				SMat4 meshTM;
-				SMat4 parentTM;
 
 				pseudodx::XMFLOAT3* vertices;
 				unsigned int* indices;
@@ -362,13 +348,11 @@ namespace ursine
 
 				// material
 				std::vector<FbxMaterial> fbxmaterials;
-				std::vector<ModelSubset> modelSubsets;
 
 				MeshData() : mLayout(NONE), vertexCnt(0), indexCnt(0), normalCnt(0), tangentCnt(0), uvCnt(0),
 					normalMode(FbxLayerElement::eNone), tangentMode(FbxLayerElement::eNone),
 					vertices(nullptr), indices(nullptr), normals(nullptr), tangents(nullptr), uvs(nullptr)
 				{
-					parentTM.Identity();
 				}
 			};
 

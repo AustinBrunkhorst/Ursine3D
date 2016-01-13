@@ -53,12 +53,9 @@ namespace ursine
 				char*			mtrlName[MAXTEXTLEN];
 				unsigned int	mtrlCount;
 				unsigned int	mtrlIndexCount;
-				unsigned int	subsetCount;
-				SMat4			meshTM;
 
 				MeshVertex*		meshVtxInfos;
 				unsigned int*	materialIndices;
-				FBX_DATA::ModelSubset* modelSubsets;
 
 				/** @brief mesh information constructor
 				*
@@ -67,6 +64,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				MeshInfo();
+
 				/** @brief mesh information destructor
 				*
 				*  this will destroy mesh information object
@@ -74,6 +72,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				virtual ~MeshInfo();
+
 				/** @brief mesh information release function
 				*
 				*  this will release memory of the mesh information
@@ -90,6 +89,7 @@ namespace ursine
 				*  @return if succeed return true, else return false
 				*/
 				bool SerializeIn(HANDLE hFile);
+
 				/** @brief mesh information serialize out function
 				*
 				*  this will write mesh information

@@ -27,11 +27,20 @@ namespace ursine
 				SMat4 meshTM;
 			};
 
+			struct RigInLvl
+			{
+				char name[MAXTEXTLEN];
+			};
+
 			class LevelInfo : public ISerialize
 			{
 			public:
 				unsigned int	mmeshlvlCount;
+				unsigned int	mriglvlCount;
 				MeshInLvl*		marrMeshlvls;
+				RigInLvl*		marrRiglvls;
+				unsigned int*	mMeshHierarchy;	// parent indices
+				unsigned int*	mRigHierarchy;	// parent indices
 
 				/** @brief level information constructor
 				*
@@ -40,6 +49,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				LevelInfo();
+
 				/** @brief level information destructor
 				*
 				*  this will destroy level information object
@@ -47,6 +57,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				virtual ~LevelInfo();
+
 				/** @brief level information release function
 				*
 				*  this will release memory of the level information
@@ -63,6 +74,7 @@ namespace ursine
 				*  @return if succeed return true, else return false
 				*/
 				bool SerializeIn(HANDLE hFile);
+
 				/** @brief level information serialize out function
 				*
 				*  this will write level information

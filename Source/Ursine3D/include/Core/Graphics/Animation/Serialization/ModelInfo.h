@@ -47,6 +47,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				ModelInfo();
+
 				/** @brief model information destructor
 				*
 				*  this will destroy model information object
@@ -54,6 +55,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				virtual ~ModelInfo();
+
 				/** @brief model information release function
 				*
 				*  this will release memory of the model information
@@ -70,6 +72,7 @@ namespace ursine
 				*  @return if succeed return true, else return false
 				*/
 				bool SerializeIn(HANDLE hFile);
+
 				/** @brief model information serialize out function
 				*
 				*  this will write model information
@@ -78,15 +81,6 @@ namespace ursine
 				*  @return if succeed return true, else return false
 				*/
 				bool SerializeOut(HANDLE hFile);
-				/** @brief find animation clip function
-				*
-				*  this will find animation clip by the name of the clip
-				*  and store the index of the clip
-				*
-				*  @param index the pointer of the animation information
-				*  @param clipName the name of the animation clip
-				*  @return Animation Info of the animation clip
-				*/
 			};
 		};
 	};
