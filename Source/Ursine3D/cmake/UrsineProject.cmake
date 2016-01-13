@@ -329,7 +329,7 @@ macro (ursine_project PROJECT_NAME)
         endforeach ()
 
         if (MSVC)
-            set(META_FLAGS ${META_FLAGS} "\\-IC:/Program Files (x86)/Microsoft Visual Studio ${VS_VERSION}.0/VC/include")
+            set(META_FLAGS ${META_FLAGS} "\\-IC://Program Files (x86)/Microsoft Visual Studio ${VS_VERSION}.0/VC/include")
         else ()
             message(FATAL_ERROR "System include directories not implemented for this compiler.")
         endif ()
