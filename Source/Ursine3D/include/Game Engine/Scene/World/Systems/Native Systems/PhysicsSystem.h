@@ -36,8 +36,8 @@ namespace ursine
 
             PhysicsSystem(World *world);
 
-            bool Raycast(const physics::RaycastInput &input, physics::RaycastOutput &output,
-                         physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
+			bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
+						 ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
                          bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
                          Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
 

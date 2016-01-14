@@ -92,9 +92,9 @@ namespace ursine
             m_simulation.ClearContacts( rigidbody->m_rigidbody );
         }
 
-        bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
-                                    physics::RaycastOutput& output,
-                                    physics::RaycastType type, bool debug, float drawDuration, 
+        bool PhysicsSystem::Raycast(const ursine::physics::RaycastInput& input, 
+                                    ursine::physics::RaycastOutput& output,
+                                    ursine::physics::RaycastType type, bool debug, float drawDuration, 
                                     bool alwaysDrawLine, 
                                     Color colorBegin, Color colorEnd )
         {

@@ -368,7 +368,7 @@ namespace ursine
 			// mesh lvl
 			mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
 			mLevelInfo->marrMeshlvls = new ufmt_loader::MeshInLvl[mLevelInfo->mmeshlvlCount];
-			mLevelInfo->mMeshHierarchy = new unsigned int[mLevelInfo->mmeshlvlCount];
+			mLevelInfo->mMeshHierarchy = new int[mLevelInfo->mmeshlvlCount];
 			for (i = 0; i < mLevelInfo->mmeshlvlCount; ++i)
 			{
 				lstrcpy(mLevelInfo->marrMeshlvls[i].name, mModelInfo->marrMeshes[i].name);
@@ -378,7 +378,7 @@ namespace ursine
 			// rig lvl
 			mLevelInfo->mriglvlCount = mModelInfo->mboneCount;
 			mLevelInfo->marrRiglvls = new ufmt_loader::RigInLvl[mLevelInfo->mriglvlCount];
-			mLevelInfo->mRigHierarchy = new unsigned int[mLevelInfo->mriglvlCount];
+			mLevelInfo->mRigHierarchy = new int[mLevelInfo->mriglvlCount];
 			for (i = 0; i < mLevelInfo->mriglvlCount; ++i)
 			{
 				lstrcpy(mLevelInfo->marrRiglvls[i].name, mModelInfo->marrBones[i].name);

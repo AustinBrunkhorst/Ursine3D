@@ -2,6 +2,7 @@ package ursine.editor.menus;
 
 import ursine.native.Extern;
 
+@menuIndex( 3 )
 class DebugMenu extends MenuItemHandler {
     @mainMenuItem( "Debug/Editor UI/Reload" )
     static function doEditorReload() {
