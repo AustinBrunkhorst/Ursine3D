@@ -470,16 +470,17 @@ ursine_editor_menus_EntityMenu.doCreateFromArchetype = function() {
 	ursine_editor_scene_entity_Entity.createFromArchetype();
 };
 ursine_editor_menus_EntityMenu.doCreatePlane = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Plane");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Plane",["BoxCollider"]);
+	entity.updateComponentField("Transform","scale",{ x : 5, y : 1, z : 5});
 };
 ursine_editor_menus_EntityMenu.doCreateBox = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Box");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Box",["BoxCollider"]);
 };
 ursine_editor_menus_EntityMenu.doCreateCylinder = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Cylinder");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Cylinder",["CylinderCollider"]);
 };
 ursine_editor_menus_EntityMenu.doCreateSphere = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Sphere");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Sphere",["SphereCollider"]);
 };
 ursine_editor_menus_EntityMenu.doCreatePointLight = function() {
 	var entity = ursine_editor_menus_EntityMenu.createLight("Point Light","Point");
@@ -495,6 +496,17 @@ ursine_editor_menus_EntityMenu.createEntity = function(name) {
 	entity.setName(name);
 	ursine_editor_windows_SceneOutline.instance.clearSelectedEntities();
 	entity.select();
+	return entity;
+};
+ursine_editor_menus_EntityMenu.createEntityWithComponents = function(name,components) {
+	var entity = ursine_editor_scene_entity_Entity.create();
+	entity.setName(name);
+	var _g = 0;
+	while(_g < components.length) {
+		var comp = components[_g];
+		++_g;
+		entity.addComponent(comp);
+	}
 	return entity;
 };
 ursine_editor_menus_EntityMenu.createLight = function(name,type) {

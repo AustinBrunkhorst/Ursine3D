@@ -11,6 +11,8 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
+#pragma once
+
 #include "EventArgs.h"
 
 namespace ursine

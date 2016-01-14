@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-ursine_default_project(
+include(UrsineProject)
+
+ursine_project(
     ECS-FilterSystemTests
     FOLDER "Tests"
     TYPE EXE
