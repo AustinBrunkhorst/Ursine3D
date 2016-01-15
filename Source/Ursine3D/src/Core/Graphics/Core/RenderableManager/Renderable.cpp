@@ -104,7 +104,7 @@ namespace ursine
             ModelName_ = "Cube";
             MaterialName_ = "UV";
 
-            m_emissive = 0;
+            m_emissive = 0.45f;
             m_specPow = 0;
             m_specIntensity = 0;
             SetOverdraw(false);

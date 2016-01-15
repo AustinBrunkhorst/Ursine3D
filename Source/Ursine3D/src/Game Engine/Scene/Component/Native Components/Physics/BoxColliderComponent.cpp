@@ -17,6 +17,7 @@
 #include "RigidbodyComponent.h"
 #include "EntityEvent.h"
 #include "PhysicsSystem.h"
+#include "CollisionEventArgs.h"
 
 namespace ursine
 {

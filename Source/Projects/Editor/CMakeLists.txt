@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.0)
 
-include_directories(${Shared_INCLUDE_DIRS})
+add_definitions(
+    # building with editor
+    -DURSINE_WITH_EDITOR
+    # disable exceptions
+    -D_HAS_EXCEPTIONS=0
+)
 
-# external files that will trigger regeneration of meta data
-set(meta_dependencies ${Shared_HEADER_FILES})
+include(UrsineProject)
 
-ursine_default_project(Editor
+ursine_project(Editor
     FOLDER "Engine"
     TYPE EXE
     DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
@@ -19,15 +23,15 @@ ursine_default_project(Editor
     INCLUDE_INSTALLER
     INSTALLER_VERSION "0.1submission"
     META_HEADER "Reflection.h"
-    META_DEPENDENCIES ${meta_dependencies}
+    META_DEPENDENCIES ${META_DEPENDENCIES}
     PCH_NAME "Precompiled"
 )
- 
-# disable exceptions
-add_definitions(-D_HAS_EXCEPTIONS=0)
 
-# add WITH_EDITOR definition to editor and engine targets
-set_target_properties(Editor PROPERTIES COMPILE_DEFINITIONS URSINE_WITH_EDITOR=1)
-set_target_properties(Ursine3D PROPERTIES COMPILE_DEFINITIONS URSINE_WITH_EDITOR=1)
+add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
+
+include_directories(${Shared_INCLUDE_DIRS})
+
+# external files that will trigger regeneration of meta data
+set(META_DEPENDENCIES ${Shared_HEADER_FILES})
 
 target_link_libraries(Editor Shared)

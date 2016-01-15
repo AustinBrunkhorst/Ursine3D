@@ -43,38 +43,38 @@ namespace ursine
             fileText.append("MODELS.8.0.gfx");
             input.open(fileText, std::ios_base::in);
             
-            UAssert(input.is_open(), "Failed to open file for model loading! ('%s')", filePath.c_str());
-            while (input.eof() == false)
-            {
-                //zero it out
-                memset(buffer, 0, sizeof(char) * 512);
-
-                //get the line
-                input.getline(buffer, 512);
-
-                //if nothing on line, or # comment, continue;
-                if (buffer[ 0 ] == '#' || strlen(buffer) == 0)
-                    continue;
-
-                //use string, and vector for holding tokens
-                std::string data(buffer);
-                std::vector<std::string> tokens;
-
-                //deal with data, chop it up by space
-                size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
-                while (pos != std::string::npos)
-                {
-                    size_t end = data.find_first_of(" ", pos + 1);
-                    if (end - pos > 1)
-                        tokens.push_back(data.substr(pos, end - pos + 1));
-                    pos = data.find_first_of(" ", end);
-                }
-
-                //0 is filename
-                tokens[ 0 ].insert(0, filePath);
-                tokens[ 1 ].erase(0, 1);
-                //1 is name
-
+           UAssert(input.is_open(), "Failed to open file for model loading! ('%s')", filePath.c_str());
+           while (input.eof() == false)
+           {
+               //zero it out
+               memset(buffer, 0, sizeof(char) * 512);
+		  
+               //get the line
+               input.getline(buffer, 512);
+		  
+               //if nothing on line, or # comment, continue;
+               if (buffer[ 0 ] == '#' || strlen(buffer) == 0)
+                   continue;
+		  
+               //use string, and vector for holding tokens
+               std::string data(buffer);
+               std::vector<std::string> tokens;
+		  
+               //deal with data, chop it up by space
+               size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
+               while (pos != std::string::npos)
+               {
+                   size_t end = data.find_first_of(" ", pos + 1);
+                   if (end - pos > 1)
+                       tokens.push_back(data.substr(pos, end - pos + 1));
+                   pos = data.find_first_of(" ", end);
+               }
+		  
+               //0 is filename
+               tokens[ 0 ].insert(0, filePath);
+               tokens[ 1 ].erase(0, 1);
+               //1 is name
+		  
 				//determine what loading format to use
 				if (tokens[0].find("8.0.mdl") != std::string::npos)
 					LoadModel(tokens[1], tokens[0]);
@@ -84,7 +84,7 @@ namespace ursine
 					LoadModel_Ursine(tokens[1], tokens[0]);
 				else if (tokens[0].find(".jlvl") != std::string::npos)
 					LoadLevel_Ursine(tokens[1], tokens[0]);
-            }
+           }
 
             input.close();
 

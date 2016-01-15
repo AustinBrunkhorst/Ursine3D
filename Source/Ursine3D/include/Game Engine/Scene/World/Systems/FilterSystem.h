@@ -58,7 +58,7 @@ namespace ursine
             void Enable(Entity *entity);
             void Disable(Entity *entity);
 
-            virtual void OnInitialize(void);
+            virtual void OnInitialize(WorldEventType updateType = WORLD_UPDATE);
             virtual void OnRemove(void);
 
         private:

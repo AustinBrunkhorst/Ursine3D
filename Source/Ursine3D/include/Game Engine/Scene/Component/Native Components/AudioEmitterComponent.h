@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** AudioEmitterComponent.h
+** AudioEmitter.h
 **
 ** Author:
 ** - Jason Burch - j.orion@digipen.edu
@@ -22,7 +22,7 @@ namespace ursine
 {
 	namespace ecs
 	{
-		class AudioEmitterComponent : public Component, public AudioComponentBase
+		class AudioEmitter : public Component, public AudioComponentBase
 		{
 			NATIVE_COMPONENT;
 
@@ -46,8 +46,8 @@ namespace ursine
 				SetMute
 				);
 
-			AudioEmitterComponent( void );
-			~AudioEmitterComponent( void );
+			AudioEmitter( void );
+			~AudioEmitter( void );
 
 			float GetVolume( void ) const;
 			void SetVolume( float volume );

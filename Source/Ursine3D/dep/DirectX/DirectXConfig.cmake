@@ -7,6 +7,9 @@ if (NOT DirectX_D3D11_FOUND)
     message(FATAL_ERROR "Couldn't find DirectX11 dependency")
 endif ()
 
+# DirectX graphics backend
+add_definitions(-DURSINE_GRAPHICS_DIRECTX)
+
 set(DirectX_INCLUDE_DIRS ${DirectX_D3D11_INCLUDE_DIR})
 
 set(DirectX_STATIC_LIBS 

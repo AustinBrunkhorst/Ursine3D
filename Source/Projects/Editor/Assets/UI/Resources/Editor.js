@@ -470,16 +470,17 @@ ursine_editor_menus_EntityMenu.doCreateFromArchetype = function() {
 	ursine_editor_scene_entity_Entity.createFromArchetype();
 };
 ursine_editor_menus_EntityMenu.doCreatePlane = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Plane");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Plane",["BoxCollider"]);
+	entity.updateComponentField("Transform","scale",{ x : 5, y : 1, z : 5});
 };
 ursine_editor_menus_EntityMenu.doCreateBox = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Box");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Box",["BoxCollider"]);
 };
 ursine_editor_menus_EntityMenu.doCreateCylinder = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Cylinder");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Cylinder",["CylinderCollider"]);
 };
 ursine_editor_menus_EntityMenu.doCreateSphere = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntity("Sphere");
+	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Sphere",["SphereCollider"]);
 };
 ursine_editor_menus_EntityMenu.doCreatePointLight = function() {
 	var entity = ursine_editor_menus_EntityMenu.createLight("Point Light","Point");
@@ -495,6 +496,17 @@ ursine_editor_menus_EntityMenu.createEntity = function(name) {
 	entity.setName(name);
 	ursine_editor_windows_SceneOutline.instance.clearSelectedEntities();
 	entity.select();
+	return entity;
+};
+ursine_editor_menus_EntityMenu.createEntityWithComponents = function(name,components) {
+	var entity = ursine_editor_scene_entity_Entity.create();
+	entity.setName(name);
+	var _g = 0;
+	while(_g < components.length) {
+		var comp = components[_g];
+		++_g;
+		entity.addComponent(comp);
+	}
 	return entity;
 };
 ursine_editor_menus_EntityMenu.createLight = function(name,type) {
@@ -518,6 +530,14 @@ ursine_editor_menus_FileMenu.doOpen = function() {
 };
 ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+});
+var ursine_editor_menus_PhysicsMenu = function() { };
+$hxClasses["ursine.editor.menus.PhysicsMenu"] = ursine_editor_menus_PhysicsMenu;
+ursine_editor_menus_PhysicsMenu.__name__ = ["ursine","editor","menus","PhysicsMenu"];
+ursine_editor_menus_PhysicsMenu.doGenerateColliderForModel = function() {
+};
+ursine_editor_menus_PhysicsMenu.__super__ = ursine_editor_MenuItemHandler;
+ursine_editor_menus_PhysicsMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 });
 var ursine_editor_scene_component_ComponentDatabase = function(database) {
 	this.m_componentInspectionHandlers = new haxe_ds_StringMap();
@@ -1571,10 +1591,11 @@ $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
 var __map_reserved = {}
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
-ursine_editor_menus_DebugMenu.__meta__ = { statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
+ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene"]}, doOpen : { mainMenuItem : ["File/Save Scene"]}}};
+ursine_editor_menus_PhysicsMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doGenerateColliderForModel : { mainMenuItem : ["Physics/Generate Collider For Model"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};

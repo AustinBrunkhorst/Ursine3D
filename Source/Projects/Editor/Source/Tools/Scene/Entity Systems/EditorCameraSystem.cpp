@@ -89,6 +89,7 @@ void EditorCameraSystem::OnAfterLoad(void)
     m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
 
     m_cameraEntity->EnableDeletion( false );
+	m_cameraEntity->EnableSerialization( false );
 
     m_camera = m_cameraEntity->AddComponent<ecs::Camera>( );
 

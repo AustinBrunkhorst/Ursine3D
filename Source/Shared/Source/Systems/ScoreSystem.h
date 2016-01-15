@@ -16,35 +16,34 @@
 #include <EntitySystem.h>
 #include "RoundSystem.h"
 
+class ScoreSystem : public ursine::ecs::EntitySystem
+{
+    ENTITY_SYSTEM;
 
-        class ScoreSystem : public ursine::ecs::EntitySystem
-        {
-            ENTITY_SYSTEM;
+public:
+    ScoreSystem(ursine::ecs::World *world);
 
-        public:
-            ScoreSystem(ursine::ecs::World *world);
+    int GetKills(int player) const;
+    void AddKill(int player);
 
-            int GetKills(int player) const;
-            void AddKill(int player);
-
-            int GetCurrentRound(void) const;
+    int GetCurrentRound(void) const;
 
 
-        private:
+private:
 
-            void OnInitialize(void) override;
-            void OnRemove(void) override;
+    void OnInitialize(void) override;
+    void OnRemove(void) override;
 
-            void onRoundOver(EVENT_HANDLER(RoundSystem));
+    void onRoundOver(EVENT_HANDLER(RoundSystem));
 
-			void onPlayerDied(EVENT_HANDLER(RoundSystem));
+	void onPlayerDied(EVENT_HANDLER(RoundSystem));
 
-            int m_player1Kills;
-            int m_player2Kills;
+    int m_player1Kills;
+    int m_player2Kills;
             
-            int m_player1Wins;
-            int m_player2Wins;
+    int m_player1Wins;
+    int m_player2Wins;
             
-            int m_currRound;
+    int m_currRound;
 
-        } Meta(Enable);
+} Meta(Enable);

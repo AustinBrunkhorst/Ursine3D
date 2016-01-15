@@ -16,8 +16,12 @@
 #include "Simulation.h"
 
 #include "Body.h"
+#include "BodyComponent.h"
+
 #include "Rigidbody.h"
-#include "SphereCollider.h"
+#include "RigidbodyComponent.h"
+
+#include "EntityEvent.h"
 
 namespace ursine
 {
@@ -220,7 +224,7 @@ namespace ursine
         #endif
         }
 
-        void Simulation::ClearContacts(Rigidbody& rigidbody)
+	    void Simulation::ClearContacts(Rigidbody& rigidbody)
         {
         #ifdef BULLET_PHYSICS
 
@@ -232,7 +236,46 @@ namespace ursine
         #endif
         }
 
-        void Simulation::destroySimulation(void)
+	    void Simulation::DispatchCollisionEvents(void)
+	    {
+			CollisionEventArgs args;
+
+		#ifdef BULLET_PHYSICS
+
+			auto *dispatcher = m_dynamicsWorld->getDispatcher( );
+			int numManifolds = dispatcher->getNumManifolds( );
+
+			for (int i = 0; i < numManifolds; ++i)
+			{
+				auto *manifold = dispatcher->getManifoldByIndexInternal( i );
+
+				auto *objA = static_cast<const BodyBase*>( manifold->getBody0( ) );
+				auto *objB = static_cast<const BodyBase*>( manifold->getBody1( ) );
+
+				// Get each body's entity pointer
+				ecs::Entity *entityA = getEntityPointer( objA ), 
+					        *entityB = getEntityPointer( objB );
+				
+				bool sendA = contactCallbackEnabled( objA ), 
+					 sendB = contactCallbackEnabled( objB );
+
+				// Process the event for Entity A
+				if (sendA)
+				{
+					dispatchContactEvent( objA, objB, entityA, entityB, manifold );
+				}
+
+				// Process the event for Entity B
+				if (sendB)
+				{
+					dispatchContactEvent( objB, objA, entityB, entityA, manifold );
+				}
+			}
+
+		#endif
+	    }
+
+	    void Simulation::destroySimulation(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -250,5 +293,82 @@ namespace ursine
 
         #endif
         }
+
+		bool Simulation::contactCallbackEnabled(const BodyBase *body)
+        {
+	        // Determine whether the entities have contact callbacks enabled
+			if (body->getInternalType( ) == BT_BODY)
+				return static_cast<ecs::Body*>( body->getUserPointer( ) )->GetEnableContactCallback( );
+			
+			if (body->getInternalType( ) == BT_RIGID_BODY)
+				return static_cast<ecs::Rigidbody*>( body->getUserPointer( ) )->GetEnableContactCallback( );
+			
+			return false;
+        }
+
+	    void Simulation::dispatchContactEvent(const BodyBase* thisBody, const BodyBase* otherBody, 
+											  ecs::Entity* thisEntity, ecs::Entity* otherEntity, PersistentManifold *manifold)
+	    {
+			CollisionEventArgs args;
+
+			args.thisEntity = thisEntity;
+			args.otherEntity = otherEntity;
+
+		#ifdef BULLET_PHYSICS
+
+			auto numContacts = manifold->getNumContacts( );
+			
+			// To determine if a manifold bullet has is just starting,
+			// or persisting, we look at the lifetime (frames) of each contact
+			int greatestLifetime = 0;
+
+			for (int i = 0; i < numContacts; ++i)
+			{
+				args.contacts.emplace_back( );
+				auto &contact = args.contacts.back( );
+
+				btManifoldPoint &pt = manifold->getContactPoint( i );
+
+				contact.normal = SVec3( pt.m_normalWorldOnB );
+				contact.point = SVec3( pt.getPositionWorldOnB( ) );
+				contact.appliedImpulse = pt.getAppliedImpulse( );
+				contact.penDistance = pt.getDistance( );
+				calculateContactRelativeVelocity( thisBody, otherBody, &contact );
+
+				greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
+			}
+
+			thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
+
+		#endif
+	    }
+
+	    ecs::Entity *Simulation::getEntityPointer(const BodyBase *body)
+        {
+	        return static_cast<ecs::Component*>( body->getUserPointer( ) )->GetOwner( );
+        }
+
+		 void Simulation::calculateContactRelativeVelocity(const BodyBase *thisBody, 
+														  const BodyBase *otherBody, 
+														  Contact *contact)
+	    {
+		#ifdef BULLET_PHYSICS
+
+			// Calculate the relative velocity
+			contact->relativeVelocity = SVec3( thisBody->getInterpolationLinearVelocity( ) );
+
+			SVec3 otherVelocity;
+
+			auto linVel = otherBody->getInterpolationLinearVelocity( );
+			auto angVel = otherBody->getInterpolationAngularVelocity( );
+			auto center = otherBody->getWorldTransform( ).getOrigin( );
+			auto point = contact->point.ToBullet( );
+
+			otherVelocity = SVec3( angVel.cross( point - center ) + linVel );
+
+			contact->relativeVelocity = contact->relativeVelocity - otherVelocity;
+
+		#endif
+	    }
     }
 }

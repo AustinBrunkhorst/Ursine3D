@@ -22,6 +22,17 @@
 #include "WwiseForward.h"
 #include "WWiseUtils/AkFilePackageLowLevelIOBlocking.h"
 
+// TODO: remove this when the shared project is removed
+#if defined(URSINE_WITH_EDITOR)
+
+#define WORLD_AUDIO_BANK_PATH URSINE_PROJECTS_DIRECTORY "Retrospect/Assets/GeneratedSoundBanks/Windows/"
+
+#else 
+
+#define WORLD_AUDIO_BANK_PATH "Assets/GeneratedSoundBanks/Windows/"
+
+#endif
+
 namespace AK
 {
 #ifdef WIN32

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-ursine_default_project(Meta
+include(UrsineProject)
+
+ursine_project(Meta
     FOLDER "Tests"
     TYPE EXE
     DEPENDS Boost

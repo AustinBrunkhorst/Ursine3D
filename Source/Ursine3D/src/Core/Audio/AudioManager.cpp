@@ -54,7 +54,7 @@ namespace
 
 namespace ursine
 {
-    CORE_SYSTEM_DEFINITION( AudioManager ) ;
+    CORE_SYSTEM_DEFINITION( AudioManager );
 
     void AudioManager::OnInitialize()
     {
@@ -377,8 +377,8 @@ namespace ursine
         UAssert(AK::MusicEngine::Init(&musicInit) == AK_Success,
             "Wwise: Cannot Initialize The Music Engine.");
 
-        LoadBank( kInitBank, BankID );
-        LoadBank( kMainBank, MainID );
+        // LoadBank( kInitBank, BankID );
+        // LoadBank( kMainBank, MainID );
     }
 }
 

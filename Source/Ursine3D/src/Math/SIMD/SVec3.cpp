@@ -2,7 +2,7 @@
 ** Team Bear King
 ** DigiPen Institute of Technology 2015
 **
-** Vec3.cpp
+** SVec3.cpp
 **
 ** Author:
 ** - Jordan Ellis - J.Ellis@digipen.edu
@@ -14,11 +14,21 @@
 #include "UrsinePrecompiled.h"
 
 #ifdef URSINE_GRAPHICS_DIRECTX
+
 #include "DirectXMath.h"
+
 #endif
 
-#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+#if defined(URSINE_DEPENDENCY_WWise)
+
 #include "Ak/SoundEngine/Common/AkTypes.h"
+
+#endif
+
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+#include "LinearMath/btVector3.h"
+
 #endif
 
 namespace ursine
@@ -80,7 +90,7 @@ namespace ursine
 	}
 #endif
 
-#if defined(__INTELLISENSE__) || defined(URSINE_DEPENDENCY_WWise)
+#if defined(URSINE_DEPENDENCY_WWise)
 	SVec3::SVec3(const AkVector & vec)
 		: m_x( vec.X )
 		, m_y( vec.Y )
@@ -100,6 +110,23 @@ namespace ursine
 		vec.Z = m_z;
 
 		return vec;
+	}
+#endif
+
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+	SVec3::SVec3(const btVector3 &vec)
+		: m_x( vec.getX( ) )
+		, m_y( vec.getY( ) )
+		, m_z( vec.getZ( ) )
+	{
+#ifdef USE_SSE
+		m_w = 0.0f;
+#endif
+	}
+
+	btVector3 SVec3::ToBullet(void) const
+	{
+		return btVector3( m_x, m_y, m_z );
 	}
 #endif
 

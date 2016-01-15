@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include <EntitySystem.h>
+#include <FilterSystem.h>
 
 class CommandInputControllerSystem 
-    : public ursine::ecs::EntitySystem
+    : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
 
@@ -22,18 +22,6 @@ public:
 
 protected:
 
-    void OnInitialize(void) override;
-    void OnRemove(void) override;
-
-private:
-
-    void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));
-    void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
-
-    void onUpdate(EVENT_HANDLER(ursine::ecs::World));
-
     void Process(ursine::ecs::Entity *entity);
-
-    std::vector<ursine::ecs::Entity *> m_entities;
 
 } Meta(Enable);

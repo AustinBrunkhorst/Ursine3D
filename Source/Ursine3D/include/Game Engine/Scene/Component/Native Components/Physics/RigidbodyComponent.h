@@ -20,11 +20,11 @@ namespace ursine
 {
     namespace ecs
     {
-        enum class BodyType
+        enum class BodyFlag
         {
-            Dynamic = physics::BODY_DYNAMIC,
-            Static = physics::BODY_STATIC,
-            Kinematic = physics::BODY_KINEMATIC
+            Dynamic = physics::BF_DYNAMIC,
+            Static = physics::BF_STATIC,
+            Kinematic = physics::BF_KINEMATIC
         } Meta( Enable );
 
         class Rigidbody : public Component
@@ -32,12 +32,13 @@ namespace ursine
             NATIVE_COMPONENT;
 
             friend class PhysicsSystem;
+			friend class physics::Simulation;
 
         public:
             EditorField(
-                BodyType bodyType,
-                GetBodyType,
-                SetBodyType
+                BodyFlag bodyFlag,
+                GetBodyFlag,
+                SetBodyFlag
             );
 
             EditorField(
@@ -76,14 +77,32 @@ namespace ursine
 				SetGravity
 			);
 
+			EditorField(
+				bool ghost,
+				GetGhost,
+				SetGhost
+			);
+
+			EditorField(
+				bool enableContactCallback,
+				GetEnableContactCallback,
+				SetEnableContactCallback
+			);
+
+			EditorField(
+				bool enableContinuousCollisionDetection,
+				GetContinuousCollisionDetection,
+				SetContinuousCollisionDetection
+			);
+
             Rigidbody(void);
 			~Rigidbody(void);
 
             Meta(Disable)
 			void OnInitialize(void) override;
 
-            BodyType GetBodyType(void) const;
-            void SetBodyType(BodyType bodyType);
+            BodyFlag GetBodyFlag(void) const;
+            void SetBodyFlag(BodyFlag bodyFlag);
 
             float GetMass(void) const;
             void SetMass(float mass);
@@ -106,9 +125,6 @@ namespace ursine
             void SetSleepToggle(bool flag);
             bool GetSleepToggle(void) const;
 
-            Meta(Disable)
-            void UpdateInertiaTensor(void);
-
             void SetVelocity(const SVec3 &velocity);
             SVec3 GetVelocity(void) const;
 
@@ -117,6 +133,18 @@ namespace ursine
 
 			void SetGravity(const SVec3 &gravity);
 			SVec3 GetGravity(void) const;
+
+			void SetGhost(bool enable);
+			bool GetGhost(void) const;
+
+			void SetEnableContactCallback(bool enable);
+			bool GetEnableContactCallback(void) const;
+
+			void SetContinuousCollisionDetection(bool enable);
+			bool GetContinuousCollisionDetection(void) const;
+
+			Meta(Disable)
+            void UpdateInertiaTensor(void);
 
             URSINE_TODO("Add ForceMode");
             void AddForce(const SVec3 &force);
@@ -133,6 +161,8 @@ namespace ursine
 
         private:
             physics::Rigidbody m_rigidbody;
+
+			bool m_enableContactCallback;
 
 			void onTransformChange(EVENT_HANDLER(Entity));
 

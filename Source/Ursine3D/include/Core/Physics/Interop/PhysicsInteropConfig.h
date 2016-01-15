@@ -47,6 +47,17 @@ namespace ursine
 
         // Motion state
         typedef btDefaultMotionState MotionStateBase;
+
+		// Manifold
+		typedef btPersistentManifold PersistentManifold;
+
+		enum BodyType
+		{
+			BT_BODY = btCollisionObject::CO_COLLISION_OBJECT,
+			BT_RIGID_BODY = btCollisionObject::CO_RIGID_BODY,
+			BT_GHOST = btCollisionObject::CO_GHOST_OBJECT,
+			BT_SOFT_BODY = btCollisionObject::CO_SOFT_BODY
+		};
     }
 }
 

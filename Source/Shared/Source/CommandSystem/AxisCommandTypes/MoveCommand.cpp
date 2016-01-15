@@ -71,5 +71,5 @@ void MoveCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const urs
     m_position = m_positionList[ index ];
     m_playback = true;
 
-    //receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyType(ursine::ecs::BodyType::Kinematic);
+    //receiver->GetComponent<ursine::ecs::Rigidbody>()->SetBodyFlag(ursine::ecs::BodyFlag::Kinematic);
 }

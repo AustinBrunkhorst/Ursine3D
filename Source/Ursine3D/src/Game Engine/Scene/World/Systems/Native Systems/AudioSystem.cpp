@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -60,11 +60,11 @@ namespace ursine
 		{
 			EVENT_ATTRS(World, ComponentEventArgs);
 
-			if (args->component->Is<AudioEmitterComponent>())
+			if (args->component->Is<AudioEmitter>())
 			{
 				m_emitters.emplace(
 					args->entity->GetUniqueID(),
-					static_cast<AudioEmitterComponent*>(const_cast<Component*>(args->component))
+					static_cast<AudioEmitter*>(const_cast<Component*>(args->component))
 					);
 				auto& handle = m_emitters[args->entity->GetUniqueID()]->m_handle;
 				CreateAudioObject(handle);
@@ -85,7 +85,7 @@ namespace ursine
 		{
 			EVENT_ATTRS(World, ComponentEventArgs);
 
-			if (args->component->Is<AudioEmitterComponent>())
+			if (args->component->Is<AudioEmitter>())
 			{
 				auto search = m_emitters.find(args->entity->GetUniqueID());
 
