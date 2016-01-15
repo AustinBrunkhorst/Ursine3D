@@ -17,6 +17,7 @@
 #include "Renderable.h"
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
+#include "ModelResource.h"
 
 namespace ursine
 {
@@ -37,8 +38,8 @@ namespace ursine
 
             EditorField(
                 std::string modelName,
-                GetModel,
-                SetModel
+                GetModelResourceName,
+                SetModelResourceName
             );
 
             EditorField(
@@ -62,9 +63,13 @@ namespace ursine
             Meta(Disable)
             std::vector<SMat4> &GetMatrixPalette( void );
 
-            //get/set model
-            void SetModel(const std::string &name);
-            const std::string &GetModel(void) const;
+            //get/set model name
+            void SetModelResourceName(const std::string &name);
+            const std::string &GetModelResourceName(void) const;
+
+            // get the model resource to access the mesh
+            Meta(Disable)
+            const graphics::ModelResource *GetModelResource(void) const;
             
             void SetMaterial(const std::string &name);
             const std::string &GetMaterial(void) const;

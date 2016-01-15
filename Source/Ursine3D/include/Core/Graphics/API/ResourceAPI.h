@@ -14,7 +14,7 @@
 #pragma once
 
 #include "GFXAPIDefines.h"
-#include "Model.h"
+#include "ModelResource.h"
 
 namespace ursine
 {
@@ -42,15 +42,9 @@ namespace ursine
             // destroy a texture resource
             void DestroyTexture(GfxHND &handle);
 
-            //validate that a model/texture exists
-
-            //get a list of available models
-
-            //get a list of available textures
-
             // get a model
-            ModelResource *GetModel(const GfxHND &handle);
-            ModelResource *GetModel(const std::string &modelName);
+            ModelResource *GetModelResource(const GfxHND &handle);
+            ModelResource *GetModelResource(const std::string &modelName);
 
 
         private:

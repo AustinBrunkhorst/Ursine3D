@@ -13,7 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 
-#include "Model.h"
+#include "ModelResource.h"
 
 namespace ursine
 {
@@ -21,8 +21,8 @@ namespace ursine
     {
         ModelResource::ModelResource(void)
             : m_rootNode(nullptr)
-            , m_meshArray()
-            , m_meshMap()
+            , m_meshArray( )
+            , m_meshMap( )
         {
         }
 
@@ -36,7 +36,7 @@ namespace ursine
             Mesh *newMesh
         )
         {
-            if ( m_meshArray.size() == 0 )
+            if ( m_meshArray.size( ) == 0 )
                 m_rootNode = newMesh;
 
             m_meshMap[ newMesh->GetName( ) ] = newMesh;
@@ -45,21 +45,21 @@ namespace ursine
 
         Mesh *ModelResource::GetMesh(const unsigned index)
         {
-            UAssert(index < m_meshArray.size(), "Tried to get mesh that does not exist!");
+            UAssert(index < m_meshArray.size( ), "Tried to get mesh that does not exist!");
             return m_meshArray[index];
         }
 
         Mesh *ModelResource::GetMesh(const std::string & name)
         {
-            return m_meshMap[name];
+            return m_meshMap[ name ];
         }
 
         unsigned ModelResource::GetMeshCount(void) const
         {
-            return static_cast<unsigned>(m_meshArray.size());
+            return static_cast<unsigned>( m_meshArray.size(  ) );
         }
 
-        std::vector<Mesh*> &ModelResource::GetMeshArray(void)
+        const std::vector<Mesh*> &ModelResource::GetMeshArray(void)
         {
             return m_meshArray;
         }

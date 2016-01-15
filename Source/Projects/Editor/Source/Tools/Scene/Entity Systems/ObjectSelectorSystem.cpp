@@ -121,9 +121,9 @@ void ObjectSelectorSystem::OnInitialize(void)
     auto zModel = m_zAxis->AddComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cylinder" );
-        yModel->SetModel( "Cylinder" );
-        zModel->SetModel( "Cylinder" );
+        xModel->SetModelResourceName( "Cylinder" );
+        yModel->SetModelResourceName( "Cylinder" );
+        zModel->SetModelResourceName( "Cylinder" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -553,9 +553,9 @@ void ObjectSelectorSystem::setToTranslate()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cylinder" );
-        yModel->SetModel( "Cylinder" );
-        zModel->SetModel( "Cylinder" );
+        xModel->SetModelResourceName( "Cylinder" );
+        yModel->SetModelResourceName( "Cylinder" );
+        zModel->SetModelResourceName( "Cylinder" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -610,9 +610,9 @@ void ObjectSelectorSystem::setToScale()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cube" );
-        yModel->SetModel( "Cube" );
-        zModel->SetModel( "Cube" );
+        xModel->SetModelResourceName( "Cube" );
+        yModel->SetModelResourceName( "Cube" );
+        zModel->SetModelResourceName( "Cube" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -665,9 +665,9 @@ void ObjectSelectorSystem::setToRotation()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Ring" );
-        yModel->SetModel( "Ring" );
-        zModel->SetModel( "Ring" );
+        xModel->SetModelResourceName( "Ring" );
+        yModel->SetModelResourceName( "Ring" );
+        zModel->SetModelResourceName( "Ring" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );

@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Model.h
+** ModelResource.h
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
@@ -37,7 +37,7 @@ namespace ursine
             unsigned GetMeshCount(void) const;
 
             // get the vector of meshes
-            std::vector<Mesh *> &GetMeshArray(void);
+            const std::vector<Mesh *> &GetMeshArray(void);
 
         private:
             // root mesh of this model
