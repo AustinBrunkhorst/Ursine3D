@@ -44,8 +44,6 @@ namespace ursine
             >( );
 
 			m_simulation.SetDebugDrawer( &m_debugDrawer );
-
-            SetEnableDebugDraw( true );
         }
 
         void PhysicsSystem::SetGravity(const SVec3& gravity)
@@ -94,9 +92,9 @@ namespace ursine
             m_simulation.ClearContacts( rigidbody->m_rigidbody );
         }
 
-        bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
-                                    physics::RaycastOutput& output,
-                                    physics::RaycastType type, bool debug, float drawDuration, 
+        bool PhysicsSystem::Raycast(const ursine::physics::RaycastInput& input, 
+                                    ursine::physics::RaycastOutput& output,
+                                    ursine::physics::RaycastType type, bool debug, float drawDuration, 
                                     bool alwaysDrawLine, 
                                     Color colorBegin, Color colorEnd )
         {
@@ -156,6 +154,20 @@ namespace ursine
 
             if (!levelSettings->HasComponent<PhysicsSettings>( ))
                 levelSettings->AddComponent<PhysicsSettings>( );
+
+			auto physicsSettings = levelSettings->GetComponent<PhysicsSettings>( );
+
+		#ifdef URSINE_WITH_EDITOR
+
+			physicsSettings->SetEnableDebugDraw( true );
+			SetEnableDebugDraw( true );
+
+		#else
+
+			physicsSettings->SetEnableDebugDraw( false );
+			SetEnableDebugDraw( false );
+
+		#endif
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
@@ -336,6 +348,9 @@ namespace ursine
             {
                 body->m_body.GetTransform( body->GetOwner( )->GetTransform( ) );
             }
+
+			// dispatch all collision events for this frame
+			m_simulation.DispatchCollisionEvents( );
         }
 
         void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))

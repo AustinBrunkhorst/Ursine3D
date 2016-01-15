@@ -32,7 +32,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <map>
 #include <string>
 
-#include "Model.h"
+#include "ModelResource.h"
 #include "ModelInfo.h"
 
 namespace ursine
@@ -81,6 +81,9 @@ namespace ursine
             unsigned GetModelMeshCount(unsigned ID);
 
             void Invalidate();
+
+            ModelResource *GetModel(const unsigned ID);
+            ModelResource *GetModel(const std::string &name);
 
         private:
 

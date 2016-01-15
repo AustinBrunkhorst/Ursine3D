@@ -15,20 +15,19 @@
 
 #include <EntitySystem.h>
 
+class CheatSystem : public ursine::ecs::EntitySystem
+{
+    ENTITY_SYSTEM;
 
-        class CheatSystem : public ursine::ecs::EntitySystem
-        {
-            ENTITY_SYSTEM;
+public:
+    CheatSystem(ursine::ecs::World *world);
 
-        public:
-            CheatSystem(ursine::ecs::World *world);
+private:
+    void OnInitialize(void) override;
+    void OnRemove(void) override;
 
-        private:
-            void OnInitialize(void) override;
-            void OnRemove(void) override;
+    void onUpdate(EVENT_HANDLER(ursine::ecs:::World));
 
-            void onUpdate(EVENT_HANDLER(ursine::ecs:::World));
+    int killTeamCheat(void);
 
-            int killTeamCheat(void);
-
-        } Meta(Enable);
+} Meta(Enable);

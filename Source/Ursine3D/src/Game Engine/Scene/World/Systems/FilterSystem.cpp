@@ -38,17 +38,8 @@ namespace ursine
             auto contains = utils::IsFlagSet( GetTypeMask( ), entity->m_systemMask );
             auto interests = m_filter.Matches( entity );
             auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
-
-			URSINE_TODO( "Fix the optimized version" );
-			if (interests)
-			{
-				if (removed)
-					Remove( entity );
-				else
-					Add( entity );
-			}
 				
-            /*if (interests && !contains && !removed)
+            if (interests && !contains && !removed)
             {
                 Add( entity );
             }
@@ -63,7 +54,7 @@ namespace ursine
             else
             {
                 Disable( entity );
-            }*/
+            }
         }
 
         void FilterSystem::onEntityRemoved(EVENT_HANDLER(World))
@@ -125,13 +116,13 @@ namespace ursine
             m_active.erase( uniqueID );
         }
 
-        void FilterSystem::OnInitialize(void)
+        void FilterSystem::OnInitialize(WorldEventType updateType)
         {
             m_world->Listener( this )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .On( WORLD_UPDATE, &FilterSystem::onUpdate, m_updatePriority );
+                .On( updateType, &FilterSystem::onUpdate, m_updatePriority );
         }
 
         void FilterSystem::OnRemove(void)

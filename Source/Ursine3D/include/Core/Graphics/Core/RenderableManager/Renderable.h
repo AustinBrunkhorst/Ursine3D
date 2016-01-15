@@ -11,22 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      Renderable.h
-Module:         Graphics
-Purpose:        All of the possible renderables in graphics
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include "EntityConfig.h"
@@ -112,6 +96,9 @@ namespace ursine
 
             std::vector<SMat4> &GetMatrixPalette(void);
 
+            int GetMeshIndex(void) const;
+            void SetMeshIndex(const int index);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -123,6 +110,9 @@ namespace ursine
             float m_animationTime;
 
             std::vector<SMat4> m_matrixPalette;
+
+            // for multimaps
+            int m_meshIndex;
         };
 
         /////////////////////////////////////////////////////////////////

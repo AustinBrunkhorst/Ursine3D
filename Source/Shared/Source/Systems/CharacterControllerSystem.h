@@ -13,10 +13,9 @@
 
 #pragma once
 
-#include <EntitySystem.h>
-#include <Components/CharacterControllerComponent.h>
+#include <FilterSystem.h>
 
-class CharacterControllerSystem : public ursine::ecs::EntitySystem
+class CharacterControllerSystem : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
 
@@ -25,21 +24,6 @@ public:
 
 protected:
 
-    void OnInitialize(void) override;
-    void OnRemove(void) override;
-
-private:
-
-    // used to maintain player count and spawnpoint list
-    void onComponentAdded(EVENT_HANDLER(ursine::ecs:::World));
-
-    // spawn points and player count
-    void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
-
-    void onUpdate(EVENT_HANDLER(ursine::ecs::World));
-
     void Process(ursine::ecs::Entity *entity);
-
-    std::list<ursine::ecs::Entity *> m_entityList;
 
 } Meta(Enable);

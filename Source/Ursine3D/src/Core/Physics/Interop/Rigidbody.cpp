@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -21,7 +21,7 @@ namespace ursine
 {
     namespace physics
     {
-        Rigidbody::Rigidbody(float mass, ColliderBase *collider, BodyType bodyType)
+        Rigidbody::Rigidbody(float mass, ColliderBase *collider, BodyFlag bodyType)
             : RigidbodyBase( RigidbodyConstructionInfo(mass, nullptr, collider) )
             , m_gettingTransform( false )
             , m_mass( mass )
@@ -29,6 +29,8 @@ namespace ursine
             , m_simulation( nullptr )
             , m_emptyCollider( true )
             , m_enableSleeping( true )
+			, m_ghost( false )
+			, m_continuousCollisionDetection( false )
         {
         #ifdef BULLET_PHYSICS
 
@@ -40,7 +42,8 @@ namespace ursine
 
         #endif
 
-            SetBodyType( bodyType );
+            SetBodyFlag( bodyType );
+			SetSleepToggle( m_enableSleeping );
         }
 
         void Rigidbody::SetSimulation(Simulation *simulation)
@@ -53,7 +56,7 @@ namespace ursine
             return m_simulation;
         }
 
-        void Rigidbody::SetID(int id)
+        void Rigidbody::SetUserID(int id)
         {
         #ifdef BULLET_PHYSICS
 
@@ -62,7 +65,7 @@ namespace ursine
         #endif
         }
 
-        int Rigidbody::GetID(void)
+	    int Rigidbody::GetUserID(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -71,27 +74,69 @@ namespace ursine
         #endif
         }
 
-        void Rigidbody::SetBodyType(BodyType bodyType)
+		void Rigidbody::SetUserPointer(void* ptr)
+		{
+		#ifdef BULLET_PHYSICS
+
+			setUserPointer( ptr );
+
+		#endif
+		}
+
+		void *Rigidbody::GetUserPointer(void)
+		{
+		#ifdef BULLET_PHYSICS
+
+			return getUserPointer( );
+
+		#endif
+		}
+
+		Rigidbody *Rigidbody::DownCast(BodyBase* body)
+		{
+		#ifdef BULLET_PHYSICS
+
+			if (!body || body->getInternalType( ) != BT_RIGID_BODY)
+				return nullptr;
+
+			return reinterpret_cast<Rigidbody*>( body );
+
+		#endif
+		}
+
+		const Rigidbody* Rigidbody::DownCast(const BodyBase* body)
+		{
+		#ifdef BULLET_PHYSICS
+
+			if (!body || body->getInternalType() != BT_RIGID_BODY)
+				return nullptr;
+
+			return reinterpret_cast<const Rigidbody*>( body );
+
+		#endif
+		}
+
+        void Rigidbody::SetBodyFlag(BodyFlag bodyFlag)
         {
-            m_bodyType = bodyType;
+            m_bodyType = bodyFlag;
 
         #ifdef BULLET_PHYSICS
 
-            if (m_simulation && bodyType == BODY_STATIC || bodyType == BODY_KINEMATIC)
+            if (m_simulation && bodyFlag == BF_STATIC || bodyFlag == BF_KINEMATIC)
                 m_simulation->ClearContacts( *this );
 
             SetMass( m_mass );
 
         #endif
 
-            if (bodyType == BODY_DYNAMIC)
+            if (bodyFlag == BF_DYNAMIC)
             {
                 SetGravity( m_gravity );
                 SetAwake( );
             }
         }
 
-        BodyType Rigidbody::GetBodyType(void) const
+        BodyFlag Rigidbody::GetBodyFlag(void) const
         {
             return m_bodyType;
         }
@@ -114,8 +159,10 @@ namespace ursine
 
         #endif
 
-            if (m_bodyType == BODY_DYNAMIC)
+            if (m_bodyType == BF_DYNAMIC)
                 SetAwake( );
+
+			updateCCD( );
         }
 
         void Rigidbody::GetTransform(ecs::Transform *transform)
@@ -315,7 +362,7 @@ namespace ursine
 
         #endif
 
-            if (m_bodyType == BODY_DYNAMIC)
+            if (m_bodyType == BF_DYNAMIC)
             {
                 SetGravity( m_gravity );
                 SetAwake( );
@@ -324,7 +371,7 @@ namespace ursine
 
         float Rigidbody::GetMass(void) const
         {
-            if (m_bodyType != BODY_DYNAMIC)
+            if (m_bodyType != BF_DYNAMIC)
                 return 0.0f;
             else
                 return m_mass;
@@ -371,7 +418,7 @@ namespace ursine
         #endif
         }
 
-        SVec3 Rigidbody::GetAngularVelocity(void) const
+	    SVec3 Rigidbody::GetAngularVelocity(void) const
         {
             SVec3 angVel;
 
@@ -389,6 +436,45 @@ namespace ursine
 
             return angVel;
         }
+
+		void Rigidbody::SetGhost(bool enable)
+		{
+			m_ghost = enable;
+
+			if (m_ghost)
+			{
+			#ifdef BULLET_PHYSICS
+
+				setCollisionFlags( getCollisionFlags( ) | CF_NO_CONTACT_RESPONSE );
+
+			#endif
+			}
+			else
+			{
+			#ifdef BULLET_PHYSICS
+
+				setCollisionFlags( getCollisionFlags( ) & ~CF_NO_CONTACT_RESPONSE );
+
+			#endif
+			}
+		}
+
+	    bool Rigidbody::GetGhost(void) const
+		{
+			return m_ghost;
+		}
+
+		void Rigidbody::SetContinuousCollisionDetection(bool enable)
+		{
+			m_continuousCollisionDetection = enable;
+
+			updateCCD( );
+		}
+
+		bool Rigidbody::GetContinuousCollisionDetection(void) const
+		{
+			return m_continuousCollisionDetection;
+		}
 
         void Rigidbody::AddForce(const SVec3& force)
         {
@@ -469,6 +555,35 @@ namespace ursine
             );
 
         #endif
+        }
+
+		void Rigidbody::updateCCD(void)
+        {
+		#ifdef BULLET_PHYSICS
+
+			if (m_continuousCollisionDetection)
+			{
+				// get the maximum scale factor
+				btVector3 min, max;
+
+				getCollisionShape( )->getAabb( getWorldTransform( ), min, max );
+
+				float maxExtent = math::Max( 
+					math::Max(
+						max.x( ) - min.x( ), max.y( ) - min.y( ) 
+					), max.z( ) - min.z( )
+				);
+
+				setCcdMotionThreshold( maxExtent );
+				setCcdSweptSphereRadius( maxExtent * 0.2f );
+			}
+			else
+			{
+				setCcdMotionThreshold( 0.0f );
+				setCcdSweptSphereRadius( 0.0f );
+			}
+
+		#endif
         }
     }
 }

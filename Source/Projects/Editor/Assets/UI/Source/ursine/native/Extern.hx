@@ -40,4 +40,8 @@ class Extern {
     public static function SceneStep() {
         return untyped __js__( "SceneStep()" );
     }
+
+    public static function GenerateColliders() {
+        return untyped __js__( "GenerateColliders()" );
+    }
 }

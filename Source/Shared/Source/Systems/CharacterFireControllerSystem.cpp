@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -14,6 +14,7 @@
 #include "Precompiled.h"
 
 #include "CharacterFireControllerSystem.h"
+#include "CharacterFireControllerComponent.h"
 
 #include "AudioEmitterComponent.h"
 
@@ -24,75 +25,27 @@
 #include <AnimatorComponent.h>
 
 using namespace ursine;
-using namespace ursine::ecs;
+using namespace ecs;
 
 namespace
 {
-	const std::string FireGun = "FIRE_GUN_HAND";
+	const std::string kFireGun = "FIRE_GUN_HAND";
 	const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
-	const std::string kEndRound = "ROUND_END_RED";
 }
 
 ENTITY_SYSTEM_DEFINITION( CharacterFireControllerSystem );
 
-CharacterFireControllerSystem::CharacterFireControllerSystem( ursine::ecs::World *world )
-    : EntitySystem(world)
+CharacterFireControllerSystem::CharacterFireControllerSystem(World *world)
+    : FilterSystem( world, Filter( ).All<CharacterFireController>( ) )
 {
 
 }
 
-void CharacterFireControllerSystem::OnInitialize()
+void CharacterFireControllerSystem::Process(Entity *entity)
 {
-    m_world->Listener(this)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &CharacterFireControllerSystem::onComponentAdded)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &CharacterFireControllerSystem::onComponentRemoved)
-        .On(ecs::WorldEventType::WORLD_UPDATE
-            , &CharacterFireControllerSystem::onUpdate);
-}
-
-void CharacterFireControllerSystem::OnRemove()
-{
-    m_world->Listener( this )
-        .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &CharacterFireControllerSystem::onComponentAdded )
-        .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &CharacterFireControllerSystem::onComponentRemoved );
-}
-
-void CharacterFireControllerSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
-{
-    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
-
-    if (args->component->Is<CharacterFireController>( ))
-    {
-        m_fireControllers.push_front(reinterpret_cast<CharacterFireController *>(args->component));
-    }
-
-}
-
-void CharacterFireControllerSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs:::World))
-{
-    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
-
-    m_fireControllers.remove(reinterpret_cast<CharacterFireController *>(args->component));
-}
-
-void CharacterFireControllerSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
-{
-
-    for (auto *fireCon : m_fireControllers)
-    {
-        Process( reinterpret_cast<CharacterFireController *>( fireCon ) );
-    }
-}
-
-void CharacterFireControllerSystem::Process( CharacterFireController *fireController)
-{
-    auto *entity = fireController->GetOwner();
+    auto *fireController = entity->GetComponent<CharacterFireController>( );
     auto *entityTransform = entity->GetTransform( );
-    auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitterComponent>( );
+    auto *emitter = entity->GetTransform( )->GetRoot( )->GetOwner( )->GetComponent<AudioEmitter>( );
 
     if (fireController == nullptr)
     {
@@ -144,7 +97,7 @@ void CharacterFireControllerSystem::Process( CharacterFireController *fireContro
 
         // Play that bang sound
 		if (emitter)
-			emitter->AddSoundToPlayQueue(FireGun);
+			emitter->AddSoundToPlayQueue(kFireGun);
             
 
         fireController->Fire( );

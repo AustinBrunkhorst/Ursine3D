@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -182,7 +182,7 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
             {
                 auto body = player->GetOwner()->AddComponent<ecs::Rigidbody>();
 
-                body->SetBodyType(ecs::BodyType::Dynamic);
+                body->SetBodyFlag(ecs::BodyFlag::Dynamic);
                 body->SetMass(50.0f);
                 body->SetGravity(SVec3(0.0f, -100.0f, 0.0f));
                 body->SetRotationFreezeX(true);
@@ -321,7 +321,7 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
     body->SetRotationFreezeX( true );
     body->SetRotationFreezeY( true );
     body->SetRotationFreezeZ( true );
-    body->SetBodyType( ecs::BodyType::Dynamic );
+    body->SetBodyFlag( ecs::BodyFlag::Dynamic );
     body->SetSleepToggle( false );
     body->SetAwake( );
 }

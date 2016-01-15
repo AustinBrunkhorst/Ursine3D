@@ -23,6 +23,7 @@
 
 #include <Model3DComponent.h>
 #include <RigidbodyComponent.h>
+#include <BodyComponent.h>
 #include <CameraComponent.h>
 
 #include <SystemManager.h>
@@ -58,7 +59,7 @@ ecs::Entity *ObjectSelectorSystem::GetCurrentFocus(void)
 
 void ObjectSelectorSystem::OnInitialize(void)
 {
-    FilterSystem::OnInitialize( );
+    FilterSystem::OnInitialize( ecs::WorldEventType::WORLD_EDITOR_UPDATE );
 
     //grab graphics
     m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -120,9 +121,9 @@ void ObjectSelectorSystem::OnInitialize(void)
     auto zModel = m_zAxis->AddComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cylinder" );
-        yModel->SetModel( "Cylinder" );
-        zModel->SetModel( "Cylinder" );
+        xModel->SetModelResourceName( "Cylinder" );
+        yModel->SetModelResourceName( "Cylinder" );
+        zModel->SetModelResourceName( "Cylinder" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -173,8 +174,9 @@ void ObjectSelectorSystem::Process(ecs::Entity *entity)
         // zero out all selected rigidbodies' velocity and angular velocity
         auto rigidbody = entity->GetComponent<ecs::Rigidbody>( );
 
-        rigidbody->SetVelocity( SVec3::Zero( ) );
-        rigidbody->SetAngularVelocity( SVec3::Zero( ) );
+		rigidbody->SetVelocity( SVec3::Zero( ) );
+		rigidbody->SetAngularVelocity( SVec3::Zero( ) );
+		rigidbody->SetAwake( );
     }
 }
 
@@ -551,9 +553,9 @@ void ObjectSelectorSystem::setToTranslate()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cylinder" );
-        yModel->SetModel( "Cylinder" );
-        zModel->SetModel( "Cylinder" );
+        xModel->SetModelResourceName( "Cylinder" );
+        yModel->SetModelResourceName( "Cylinder" );
+        zModel->SetModelResourceName( "Cylinder" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -608,9 +610,9 @@ void ObjectSelectorSystem::setToScale()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cube" );
-        yModel->SetModel( "Cube" );
-        zModel->SetModel( "Cube" );
+        xModel->SetModelResourceName( "Cube" );
+        yModel->SetModelResourceName( "Cube" );
+        zModel->SetModelResourceName( "Cube" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -663,9 +665,9 @@ void ObjectSelectorSystem::setToRotation()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Ring" );
-        yModel->SetModel( "Ring" );
-        zModel->SetModel( "Ring" );
+        xModel->SetModelResourceName( "Ring" );
+        yModel->SetModelResourceName( "Ring" );
+        zModel->SetModelResourceName( "Ring" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );

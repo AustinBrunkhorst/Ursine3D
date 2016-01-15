@@ -20,6 +20,8 @@
 #include "RenderableComponentBase.h"
 #include "Filter.h"
 #include <Game Engine/Scene/Component/Native Components/AnimatorComponent.h>
+#include <Game Engine/Scene/Component/Native Components/FbxSceneRootNodeComponent.h>
+
 
 namespace ursine
 {
@@ -69,6 +71,9 @@ namespace ursine
             typedef std::vector<RenderableComponentBase*> RenderableVector;
             typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
             RenderableMap m_renderableMap;
+
+            typedef std::unordered_map<EntityUniqueID, FBXSceneRootNode*> FBXSceneRootNodeMap;
+            FBXSceneRootNodeMap m_fbxSceneRootNodeMap;
 
             std::vector<Animator*> m_animators;
 

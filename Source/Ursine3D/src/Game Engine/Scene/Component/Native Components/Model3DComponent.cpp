@@ -69,7 +69,7 @@ namespace ursine
             return m_model->GetMatrixPalette( );
         }
 
-        void Model3D::SetModel(const std::string &name)
+        void Model3D::SetModelResourceName(const std::string &name)
         {
             m_modelName = name;
 
@@ -79,9 +79,14 @@ namespace ursine
             m_model->SetMaterial( "Cube" );
         }
 
-        const std::string &Model3D::GetModel(void) const
+        const std::string &Model3D::GetModelResourceName(void) const
         {
             return m_modelName;
+        }
+
+        const graphics::ModelResource * Model3D::GetModelResource(void) const
+        {
+            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource(m_modelName);
         }
 
         void Model3D::SetMaterial(const std::string &name)
@@ -148,6 +153,11 @@ namespace ursine
         void Model3D::GetMaterialData(float& emiss, float& pow, float& intensity)
         {
             m_model->GetMaterialData( emiss, pow, intensity );
+        }
+
+        void Model3D::SetMeshIndex(const int index)
+        {
+            m_model->SetMeshIndex( index );
         }
 
         void Model3D::updateRenderer(void)

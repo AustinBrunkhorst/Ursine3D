@@ -13,6 +13,17 @@
 
 #pragma once
 
+// TODO: remove this when the shared project is removed
+#if defined(URSINE_WITH_EDITOR)
+
+#define WORLD_ARCHETYPE_PATH URSINE_PROJECTS_DIRECTORY "Retrospect/Assets/Archetypes/"
+
+#else 
+    
+#define WORLD_ARCHETYPE_PATH "Assets/Archetypes/"
+
+#endif
+
 #include <windows.h>
 
 #include <string>

@@ -11,25 +11,10 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      ResourceAPI.h
-Module:         Graphics
-Purpose:        interface for handling resources
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include "GFXAPIDefines.h"
+#include "ModelResource.h"
 
 namespace ursine
 {
@@ -57,11 +42,10 @@ namespace ursine
             // destroy a texture resource
             void DestroyTexture(GfxHND &handle);
 
-            //validate that a model/texture exists
+            // get a model
+            ModelResource *GetModelResource(const GfxHND &handle);
+            ModelResource *GetModelResource(const std::string &modelName);
 
-            //get a list of available models
-
-            //get a list of available textures
 
         private:
             privData *m_privates;

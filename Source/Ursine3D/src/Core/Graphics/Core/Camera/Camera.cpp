@@ -251,12 +251,18 @@ namespace ursine
 
         bool Camera::CheckMask(const unsigned long long renderMask)
         {
+            // I know the bitshift is crazy, it's handled, don't worry
+#pragma warning( push )
+#pragma warning( disable : 4293)
+
             // check to see if the whitelist bit is set
             if ( renderMask & (0x1u << 63u) )
                 return (renderMask - (0x1u << 63u)) == m_entityID;
 
             // else, return the regular mask comparison
             return renderMask & m_cameraMask;
+
+#pragma warning( pop ) 
         }
 
         unsigned Camera::GetMask() const

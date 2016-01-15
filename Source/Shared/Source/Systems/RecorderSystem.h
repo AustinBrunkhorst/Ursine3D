@@ -49,5 +49,6 @@ namespace ursine
 
 		Meta(Disable)
 		void onUpdate(EVENT_HANDLER(ecs::World));
+
 	} Meta(Enable);
 }

@@ -1,22 +1,15 @@
-cmake_minimum_required(VERSION 3.0)
-
-project(BearKing CXX)
-
 # ------------------------------------------------------------------------------
 # Global Settings
 # ------------------------------------------------------------------------------
 
 # directory to Ursine3D
-set(ENGINE_DIR "${CMAKE_SOURCE_DIR}/Ursine3D")
+set(ENGINE_DIR "${CMAKE_MODULE_PATH}/..")
 
 # directory to Ursine3D dependencies
 set(ENGINE_DEP_DIR "${ENGINE_DIR}/dep")
 
 # directory to Ursine3D resources
 set(ENGINE_RESOURCES_DIR "${ENGINE_DIR}/resources")
-
-# module directory
-set(CMAKE_MODULE_PATH "${ENGINE_DIR}/cmake")
 
 # modules
 
@@ -25,7 +18,6 @@ include(ParseArguments)
 include(Compiler)
 include(Precompiled)
 include(SourceGroup)
-include(DefaultProject)
 
 # add predefined targets to "CMake" folder 
 # (ex - in Visual Studio Solution Explorer)
@@ -37,37 +29,21 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 # Global Dependencies
 # ------------------------------------------------------------------------------
 
-set(SDL2_DIR          "${ENGINE_DEP_DIR}/SDL2")
-set(CEF_DIR           "${ENGINE_DEP_DIR}/CEF")
-set(BENCHMARKS_DIR    "${ENGINE_DEP_DIR}/Benchmarks")
-set(CLANG_DIR         "${ENGINE_DEP_DIR}/Clang")
-set(BulletPhysics_DIR "${ENGINE_DEP_DIR}/Bullet")
-set(WWise_DIR         "${ENGINE_DEP_DIR}/WWise")
-set(FBX_DIR           "${ENGINE_DEP_DIR}/FBX")
+macro (declare_dependency DEPENDENCY)
+    set(DEP_${DEPENDENCY}_DIR "${ENGINE_DEP_DIR}/${DEPENDENCY}")
 
-find_package(SDL2 REQUIRED 
-    HINTS ${SDL2_DIR})
+    find_package(${DEPENDENCY} REQUIRED HINTS ${DEP_${DEPENDENCY}_DIR})
+endmacro ()
 
-find_package(CEF 3.2526 REQUIRED 
-    HINTS ${CEF_DIR})
-
-find_package(BENCHMARKS REQUIRED
-    HINTS ${BENCHMARKS_DIR})
-
-find_package(Clang REQUIRED
-    HINTS ${CLANG_DIR})
-
-find_package(BulletPhysics REQUIRED
-    HINTS ${BulletPhysics_DIR})
-	
-find_package(FBX REQUIRED
-    HINTS ${FBX_DIR})
-
-find_package(WWise REQUIRED
-    HINTS ${WWise_DIR})
-
-# dependencies that require special attention
-include(BoostSetup)
+declare_dependency(Boost)
+declare_dependency(SDL2)
+declare_dependency(CEF)
+declare_dependency(Benchmarks)
+declare_dependency(Clang)
+declare_dependency(BulletPhysics)
+declare_dependency(WWise)
+declare_dependency(FBX)
+declare_dependency(DirectX)
 
 # ------------------------------------------------------------------------------
 # Global Compiler Definitions
@@ -88,12 +64,6 @@ if (MSVC)
         "/bigobj" # increased object file size
     )
 
-    # DirectX requires some special attention
-    include(DirectXSetup)
-
-    # DirectX graphics backend
-    add_definitions(-DURSINE_GRAPHICS_DIRECTX)
-
     #ursine_remove_compile_flags(
     #    "/EHsc" # disable exceptions
     #)
@@ -103,10 +73,11 @@ else ()
     )
 endif ()
 
-#add_definitions(
-#    # disable exceptions
-#    -D_HAS_EXCEPTIONS=0
-#)
+add_definitions(
+    # disable exceptions
+    #-D_HAS_EXCEPTIONS=0
+    -DURSINE_PROJECTS_DIRECTORY="${CMAKE_MODULE_PATH}/../../Projects/"
+)
 
 # ------------------------------------------------------------------------------
 # General Installer Settings
@@ -129,13 +100,13 @@ if (MSVC)
     endif()
 
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(vc_build x64)
+        set(VC_BUILD x64)
     else ()
-        set(vc_build x86)
+        set(VC_BUILD x86)
     endif ()
 
-    set(vcredist_name "vcredist${VS_VERSION}0_${vc_build}.exe")
-    set(d3dredist_name "d3dredist_${vc_build}.exe")
+    set(vcredist_name "vcredist${VS_VERSION}0_${VC_BUILD}.exe")
+    set(d3dredist_name "d3dredist_${VC_BUILD}.exe")
 
     # Visual Studio and DirectX redistributable runtime library installation
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
@@ -149,35 +120,5 @@ if (MSVC)
     set(ENGINE_D3DREDIST_HELPER_DLL "${ENGINE_RESOURCES_DIR}/Installers/D3D11InstallHelper.dll")
 endif ()
 
-# ------------------------------------------------------------------------------
-# Sub Projects
-# ------------------------------------------------------------------------------
-
-# engine
-
-add_subdirectory("Ursine3D")
-
-# all projects to build
-
-set(projects "")
-
-# shared
-file(GLOB_RECURSE shared_files ${CMAKE_SOURCE_DIR}/Shared/CMakeLists.txt)
-set(projects ${projects} ${shared_files})
-
-# projects
-file(GLOB_RECURSE projects_files ${CMAKE_SOURCE_DIR}/Projects/CMakeLists.txt)
-set(projects ${projects} ${projects_files})
-
-# tools
-file(GLOB_RECURSE tools_files ${CMAKE_SOURCE_DIR}/Tools/CMakeLists.txt)
-set(projects ${projects} ${tools_files})
-
-foreach (project ${projects})
-    get_filename_component(project_dir ${project} DIRECTORY)
-    
-    # ignore directories with ".ignore-project" next to the CMake config
-    if (NOT EXISTS "${project_dir}/.ignore-project")
-        add_subdirectory(${project_dir})
-    endif ()
-endforeach ()
+# add engine
+add_subdirectory(${ENGINE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/Ursine3D")

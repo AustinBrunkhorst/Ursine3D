@@ -104,12 +104,13 @@ namespace ursine
             ModelName_ = "Cube";
             MaterialName_ = "UV";
 
-            m_emissive = 0;
+            m_emissive = 0.45f;
             m_specPow = 0;
             m_specIntensity = 0;
             SetOverdraw(false);
             SetDebug(false);
             m_color = Color(1, 1, 1, 1);
+            m_meshIndex = -1;
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -151,6 +152,16 @@ namespace ursine
         std::vector<SMat4>& Model3D::GetMatrixPalette()
         {
             return m_matrixPalette;
+        }
+
+        int Model3D::GetMeshIndex(void) const
+        {
+            return m_meshIndex;
+        }
+
+        void Model3D::SetMeshIndex(const int index)
+        {
+            m_meshIndex = index;
         }
 
 

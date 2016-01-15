@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.0)
+# this project needs exceptions
+add_definitions(-D_HAS_EXCEPTIONS=1)
 
-ursine_default_project(ReflectionParser
+ursine_project(ReflectionParser
     FOLDER "Tools/Meta"
     TYPE EXE
     DEPENDS Clang Boost

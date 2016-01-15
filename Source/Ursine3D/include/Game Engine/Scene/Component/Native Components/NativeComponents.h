@@ -24,6 +24,7 @@
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
+#include "FBXSceneRootNodeComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics

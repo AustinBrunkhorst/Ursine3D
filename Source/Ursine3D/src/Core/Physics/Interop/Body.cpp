@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -20,11 +20,72 @@ namespace ursine
 {
     namespace physics
     {
-        Body::Body(void)
+	    Body::Body(void)
             : BodyBase( )
+			, m_ghost( false )
         {
             
         }
+
+		void Body::SetUserID(int id)
+        {
+        #ifdef BULLET_PHYSICS
+
+            setUserIndex( id );
+
+        #endif
+        }
+
+	    int Body::GetUserID(void)
+        {
+        #ifdef BULLET_PHYSICS
+
+            return getUserIndex( );
+
+        #endif
+        }
+
+		void Body::SetUserPointer(void* ptr)
+		{
+		#ifdef BULLET_PHYSICS
+
+			setUserPointer( ptr );
+
+		#endif
+		}
+
+		void *Body::GetUserPointer(void)
+		{
+		#ifdef BULLET_PHYSICS
+
+			return getUserPointer( );
+
+		#endif
+		}
+
+		Body* Body::DownCast(BodyBase* body)
+		{
+		#ifdef BULLET_PHYSICS
+
+			if (!body || body->getInternalType( ) != BT_BODY)
+				return nullptr;
+
+			return reinterpret_cast<Body*>( body );
+
+		#endif
+		}
+
+		const Body* Body::DownCast(const BodyBase* body)
+		{
+		#ifdef BULLET_PHYSICS
+
+			if (!body || body->getInternalType() != BT_BODY)
+				return nullptr;
+
+			return reinterpret_cast<const Body*>( body );
+
+		#endif
+		}
 
         void Body::SetTransform(ecs::Transform* transform)
         {
@@ -63,23 +124,63 @@ namespace ursine
         void Body::SetCollider(ColliderBase* collider)
         {
 		#ifdef BULLET_PHYSICS
+
             setCollisionShape( collider );
+
 		#endif
         }
 
-        void Body::RemoveCollider(void)
-        {
+	    ColliderBase *Body::GetCollider(void)
+	    {
 		#ifdef BULLET_PHYSICS
-            setCollisionShape( nullptr );
+
+			return getCollisionShape( );
+
 		#endif
-        }
+	    }
 
         void Body::SetOffset(const SVec3 &offset)
         {
             m_offset = offset;
         }
 
-        SVec3 Body::GetOffset(void) const
+	    void Body::SetGhost(bool enable)
+	    {
+			m_ghost = enable;
+
+			if (m_ghost)
+			{
+			#ifdef BULLET_PHYSICS
+
+				setCollisionFlags( getCollisionFlags( ) | CF_NO_CONTACT_RESPONSE );
+
+			#endif
+			}
+			else
+			{
+			#ifdef BULLET_PHYSICS
+
+				setCollisionFlags( getCollisionFlags( ) & ~CF_NO_CONTACT_RESPONSE );
+
+			#endif
+			}
+	    }
+
+	    bool Body::GetGhost(void) const
+	    {
+			return m_ghost;
+	    }
+
+	    void Body::SetAwake(void)
+	    {
+		#ifdef BULLET_PHYSICS
+
+			activate( );
+
+		#endif
+	    }
+
+	    SVec3 Body::GetOffset(void) const
         {
             return m_offset;
         }

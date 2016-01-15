@@ -27,6 +27,18 @@ namespace ursine
             friend class PhysicsSystem;
 
         public:
+			EditorField(
+				bool ghost,
+				GetGhost,
+				SetGhost
+			);
+
+			EditorField(
+				bool enableContactCallback,
+				GetEnableContactCallback,
+				SetEnableContactCallback
+			);
+
             Body(void);
 			~Body(void);
 
@@ -36,11 +48,21 @@ namespace ursine
             void SetOffset(const SVec3 &offset);
             SVec3 GetOffset(void) const;
 
+			void SetGhost(bool enable);
+			bool GetGhost(void) const;
+
+			void SetEnableContactCallback(bool enable);
+			bool GetEnableContactCallback(void) const;
+
+			void SetAwake(void);
+
         private:
             physics::Body m_body;
 
+			bool m_enableContactCallback;
+
 			void onTransformChange(EVENT_HANDLER(Entity));
 
-        } Meta(Enable, HiddenInInspector, DisableSerialization);
+        } Meta(Enable, DisplayName("Body"), DisableSerialization, DisableComponentRemoval);
     }
 }

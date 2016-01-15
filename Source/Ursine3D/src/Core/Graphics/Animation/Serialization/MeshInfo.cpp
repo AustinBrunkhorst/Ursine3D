@@ -22,12 +22,11 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			MeshInfo::MeshInfo() :
-				meshVtxInfoCount(0), mtrlCount(0), mtrlIndexCount(0), subsetCount(0),
+				meshVtxInfoCount(0), mtrlCount(0), mtrlIndexCount(0),
 				meshVtxInfos(nullptr), materialIndices(nullptr),
-				modelSubsets(nullptr), ISerialize("")
+				ISerialize("")
 			{
 				*mtrlName = { nullptr };
-				meshTM = SMat4::Identity();
 			}
 
 			MeshInfo::~MeshInfo()
@@ -52,11 +51,6 @@ namespace ursine
 					delete[] materialIndices;
 					materialIndices = nullptr;
 				}
-				if (modelSubsets)
-				{
-					delete[] modelSubsets;
-					modelSubsets = nullptr;
-				}
 			}
 
 			bool MeshInfo::SerializeIn(HANDLE hFile)
@@ -70,8 +64,6 @@ namespace ursine
 					ReadFile(hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &subsetCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &meshTM, sizeof(SMat4), &nBytesRead, nullptr);
 
 					meshVtxInfos = new MeshVertex[meshVtxInfoCount];
 					for (i = 0; i < meshVtxInfoCount; ++i)
@@ -88,11 +80,6 @@ namespace ursine
 					{
 						ReadFile(hFile, &materialIndices[i], sizeof(unsigned int), &nBytesRead, nullptr);
 					}
-					modelSubsets = new FBX_DATA::ModelSubset[subsetCount];
-					for (i = 0; i < subsetCount; ++i)
-					{
-						ReadFile(hFile, &modelSubsets[i], sizeof(FBX_DATA::ModelSubset), &nBytesRead, nullptr);
-					}
 				}
 				return true;
 			}
@@ -108,9 +95,7 @@ namespace ursine
 					WriteFile(hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &subsetCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					WriteFile(hFile, &meshTM, sizeof(SMat4), &nBytesWrite, nullptr);
 					for (i = 0; i < meshVtxInfoCount; ++i)
 					{
 						WriteFile(hFile, &meshVtxInfos[i], sizeof(MeshVertex), &nBytesWrite, nullptr);
@@ -122,10 +107,6 @@ namespace ursine
 					for (i = 0; i < mtrlIndexCount; ++i)
 					{
 						WriteFile(hFile, &materialIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
-					}
-					for (i = 0; i < subsetCount; ++i)
-					{
-						WriteFile(hFile, &modelSubsets[i], sizeof(FBX_DATA::ModelSubset), &nBytesWrite, nullptr);
 					}
 				}
 				return true;

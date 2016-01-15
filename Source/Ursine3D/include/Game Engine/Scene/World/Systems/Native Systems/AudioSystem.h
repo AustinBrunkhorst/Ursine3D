@@ -21,7 +21,7 @@ namespace ursine
 {
 	namespace ecs
 	{
-		class AudioEmitterComponent;
+		class AudioEmitter;
 		class AudioListener;
 
 		class AudioSystem : EntitySystem
@@ -65,7 +65,7 @@ namespace ursine
 		private:
 			AudioManager* m_audioMan;
 
-			std::unordered_map<EntityUniqueID, ursine::ecs::AudioEmitterComponent*> m_emitters;
+			std::unordered_map<EntityUniqueID, ursine::ecs::AudioEmitter*> m_emitters;
 			std::unordered_map<EntityUniqueID, ursine::ecs::AudioListener*> m_listeners;
 			std::unordered_map<std::string, AkBankID> m_banks;
 

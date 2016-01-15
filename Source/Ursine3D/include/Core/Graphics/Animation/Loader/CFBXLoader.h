@@ -52,6 +52,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			CFBXLoader();
+
 			/** @brief fbx loader destructor
 			*
 			*  this will destroy the fbx loader
@@ -59,6 +60,7 @@ namespace ursine
 			*  @return nothing
 			*/
 			~CFBXLoader();
+
 			/** @brief fbx loader release function
 			*
 			*  this will release the data which has been used to build custom file
@@ -119,7 +121,7 @@ namespace ursine
 			*  @param inParentIndex the index of the parent node's(-1 if there is no parent)
 			*  @return nothing
 			*/
-			void ProcessSkeletonHierarchyRecursively(FbxNode* pNode, int inDepth, int myIndex, int inParentIndex);
+			void ProcessSkeletonHierarchyRecursively(FbxNode* pNode, int myIndex, int inParentIndex);
 
 			/** @brief fbx loader static mesh(no animation mesh) funciton
 			*
@@ -128,7 +130,7 @@ namespace ursine
 			*  @param pNode the pointer of the FbxNode
 			*  @return nothing
 			*/
-			void ProcessStaticMesh(FbxNode* pNode);
+			void ProcessStaticMesh(FbxNode* pNode, int myindex, int inParentIndex);
 
 			/** @brief fbx loader control point funciton
 			*
@@ -304,7 +306,7 @@ namespace ursine
 			*  @param pNode the pointer of the node
 			*  @return nothing
 			*/
-			void ProcessGeometry(FbxNode* pNode);
+			void ProcessGeometry(FbxNode* pNode, int myindex, int inParentIndex);
 
 			/** @brief fbx loader get animation pose and index funciton
 			*
