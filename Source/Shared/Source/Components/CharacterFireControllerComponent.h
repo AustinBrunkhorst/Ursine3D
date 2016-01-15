@@ -71,7 +71,9 @@ public:
 
 public:
     CharacterFireController(void);
-    
+
+    void CheckFire(EVENT_HANDLER(ursine::ecs::Entity));
+
     float GetFireRate(void) const;
     void SetFireRate(const float fireRate);
 

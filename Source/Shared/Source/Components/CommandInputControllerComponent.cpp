@@ -106,9 +106,9 @@ void CommandInputController::OnInitialize()
 
     m_commandList = {
         new ButtonActionCommand<JumpCommand>(
-        m_jump,
+            m_jump,
             ButtonActionCommand<JumpCommand>::Interaction::Down
-            ),
+        ),
 
         new TwoAxisActionCommand<MoveCommand>(m_move),
 
@@ -117,7 +117,7 @@ void CommandInputController::OnInitialize()
         new ButtonActionCommand<FireCommand>(
             m_fire,
             ButtonActionCommand<FireCommand>::Interaction::Held
-            )
+        )
     };
 }
 

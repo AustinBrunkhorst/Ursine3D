@@ -11,6 +11,7 @@
 #include "Precompiled.h"
 
 #include "FireCommand.h"
+#include "GameEvents\GamePlayEvents.h"
 #include <CharacterFireControllerComponent.h>
 
 RECORDABLE_COMMAND_DEFINITION( FireCommand );
@@ -22,25 +23,12 @@ FireCommand::FireCommand()
 
 void FireCommand::Execute(ursine::ecs::Entity* receiver)
 {
-    auto fireComponent = receiver->GetComponentInChildren<CharacterFireController>();
-
-    if(fireComponent != nullptr)
-    {
-        if (fireComponent->GetTriggerFire( ))
-            fireComponent->Fire( );
-        else
-            fireComponent->SetFireState(true);
-    }
+    receiver->Dispatch(gameEvent::FIRE_START, ursine::EventArgs::Empty);
 }
 
 void FireCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-	auto fireComponent = receiver->GetComponentInChildren<CharacterFireController>();
-
-	if (fireComponent != nullptr)
-	{
-		fireComponent->SetFireState(false);
-	}
+    receiver->Dispatch(gameEvent::FIRE_END, ursine::EventArgs::Empty);
 }
 
 void FireCommand::StartRecording(ursine::ecs::Entity* receiver)

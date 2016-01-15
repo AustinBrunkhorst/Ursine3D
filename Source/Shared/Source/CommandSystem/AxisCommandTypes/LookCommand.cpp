@@ -32,7 +32,9 @@ void LookCommand::Execute(ursine::ecs::Entity* receiver)
         return;
 
     auto *controller = receiver->GetComponent<CharacterController>( );
-    controller->SetLookDirection(m_axis);
+
+    if (controller != nullptr)
+        controller->SetLookDirection(m_axis);
 }
 
 void LookCommand::StopExecute(ursine::ecs::Entity* receiver)

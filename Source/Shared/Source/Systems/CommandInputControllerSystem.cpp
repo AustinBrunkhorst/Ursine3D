@@ -89,7 +89,7 @@ void CommandInputControllerSystem::Process(ursine::ecs::Entity* entity)
     URSINE_TODO("THIS IS A HACK, REMOVE IT");
     auto *playerInput = entity->GetComponent<PlayerInput>( );
 
-    if (playerInput && playerInput->keyboard)
+    if (true)
     {
         auto keyboard = GetCoreSystem( KeyboardManager );
 
