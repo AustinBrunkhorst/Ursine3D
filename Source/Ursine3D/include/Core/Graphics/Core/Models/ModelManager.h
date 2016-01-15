@@ -32,7 +32,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <map>
 #include <string>
 
-#include "Model.h"
+#include "ModelResource.h"
 #include "ModelInfo.h"
 
 namespace ursine

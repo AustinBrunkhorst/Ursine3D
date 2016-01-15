@@ -13,16 +13,18 @@
 
 #include "UrsinePrecompiled.h"
 
-#include "Model.h"
+#include "ModelResource.h"
 
 namespace ursine
 {
     namespace graphics
     {
         ModelResource::ModelResource(void)
-            : m_rootNode( nullptr )
+            : m_rootNode(nullptr)
             , m_meshArray( )
-            , m_meshMap( ) { }
+            , m_meshMap( )
+        {
+        }
 
         ModelResource::~ModelResource(void)
         {
@@ -52,7 +54,7 @@ namespace ursine
 
         unsigned ModelResource::GetMeshCount(void) const
         {
-            return static_cast<unsigned>( m_meshArray.size( ) );
+            return static_cast<unsigned>( m_meshArray.size(  ) );
         }
 
         const std::vector<Mesh*> &ModelResource::GetMeshArray(void)

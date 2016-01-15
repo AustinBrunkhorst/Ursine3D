@@ -98,7 +98,7 @@ namespace ursine
             m_rawIndexData.resize(indexCount);
         }
 
-        Material &Mesh::GetMaterial(void)
+        const Material &Mesh::GetMaterial(void)
         {
             return m_material;
         }

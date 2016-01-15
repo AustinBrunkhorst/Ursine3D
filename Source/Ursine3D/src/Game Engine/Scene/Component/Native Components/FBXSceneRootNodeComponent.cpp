@@ -47,7 +47,7 @@ namespace ursine
             m_invalidated = false;
             auto *gfx = GetCoreSystem( graphics::GfxAPI );
 
-            auto *model = gfx->ResourceMgr.GetModel( m_sceneName );
+            auto *model = gfx->ResourceMgr.GetModelResource( m_sceneName );
 
             auto *world = GetOwner( )->GetWorld( );
 
@@ -70,7 +70,7 @@ namespace ursine
                     auto *modelComp = newEntity->AddComponent<Model3D>( );
 
                     // Set the mesh to this mesh
-                    modelComp->SetModel( m_sceneName );
+                    modelComp->SetModelResourceName( m_sceneName );
 
                     // Set its mesh index
                     modelComp->SetMeshIndex( childIndex++ );

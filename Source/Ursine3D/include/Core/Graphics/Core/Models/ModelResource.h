@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Model.h
+** ModelResource.h
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu

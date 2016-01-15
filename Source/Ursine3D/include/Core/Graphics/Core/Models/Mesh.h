@@ -55,7 +55,7 @@ namespace ursine
             void SetIndexCount(const unsigned indexCount);
 
             // getting material data
-            Material &GetMaterial(void);
+            const Material &GetMaterial(void);
 
             // parent data
             Mesh *GetParent(void);

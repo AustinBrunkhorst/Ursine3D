@@ -53,12 +53,12 @@ namespace ursine
             m_privates->textureMgr->DestroyDynamicTexture(handle);
         }
 
-        ModelResource *ResourceAPI::GetModel(const GfxHND & handle)
+        ModelResource *ResourceAPI::GetModelResource(const GfxHND & handle)
         {
-            return m_privates->modelMgr->GetModel(handle);
+            return m_privates->modelMgr->GetModel(static_cast<unsigned>(handle));
         }
 
-        ModelResource * ResourceAPI::GetModel(const std::string & modelName)
+        ModelResource * ResourceAPI::GetModelResource(const std::string & modelName)
         {
             return m_privates->modelMgr->GetModel(modelName);
         }
