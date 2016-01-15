@@ -57,7 +57,7 @@ namespace ursine
             return static_cast<unsigned>( m_meshArray.size(  ) );
         }
 
-        const std::vector<Mesh*> &ModelResource::GetMeshArray(void)
+        const std::vector<Mesh*> &ModelResource::GetMeshArray(void) const
         {
             return m_meshArray;
         }

@@ -26,7 +26,7 @@ using namespace ecs;
 JSFunction(GenerateColliders)
 {
 	// find the selected entity
-	/*auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
+	auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
 	
 	auto selected = world->GetEntitiesFromFilter( Filter( ).All<Selected>( ) );
 
@@ -38,18 +38,20 @@ JSFunction(GenerateColliders)
 		// if (!model)
 			// TODO: Send toast notification to user that you can't generate collider without model
 
-		auto meshes = model->GetMeshArray( );
+		auto meshes = model->GetModelResource( )->GetMeshArray( );
 
-		auto *gfx = GetCoreSystem(graphics::GfxAPI);
-
-		auto *modelS = gfx->ResourceMgr.GetModel( model->GetModel( ) );
-
-		auto arrayS = modelS->GetMeshArray( );
+		for (auto &mesh : meshes)
+		{
+			// pass the physics component the mesh 
+			// (meaning we can have multiple colliders to one body?) 
+			// (Option 2, just have a convex hull component) 
+			// (Option 3 multiple convex hull components, that hvae the name of the mesh they represent, that way you can remove ones you don't want "i.e. fanny pack")
+		}
 	}
 	else
 	{
 		// TODO: Send toast notification to user that they should select an entity first
-	}*/
+	}
 
 
 	// get the mesh

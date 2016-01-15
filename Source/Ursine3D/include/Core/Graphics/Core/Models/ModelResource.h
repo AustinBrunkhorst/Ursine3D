@@ -37,7 +37,7 @@ namespace ursine
             unsigned GetMeshCount(void) const;
 
             // get the vector of meshes
-            const std::vector<Mesh *> &GetMeshArray(void);
+            const std::vector<Mesh *> &GetMeshArray(void) const;
 
         private:
             // root mesh of this model
