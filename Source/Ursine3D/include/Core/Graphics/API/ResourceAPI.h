@@ -11,25 +11,10 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      ResourceAPI.h
-Module:         Graphics
-Purpose:        interface for handling resources
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include "GFXAPIDefines.h"
+#include "Model.h"
 
 namespace ursine
 {
@@ -62,6 +47,11 @@ namespace ursine
             //get a list of available models
 
             //get a list of available textures
+
+            // get a model
+            ModelResource *GetModel(const GfxHND &handle);
+            ModelResource *GetModel(const std::string &modelName);
+
 
         private:
             privData *m_privates;

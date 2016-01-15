@@ -46,8 +46,8 @@ namespace ursine
             SHADER_UI,
 
             //lights need to go after this, post processing stuffz...
-            SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
             SHADER_SPOT_LIGHT,
+            SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
             SHADER_DIRECTIONAL_LIGHT,
 
             /////////////////////////////////////////////////////////

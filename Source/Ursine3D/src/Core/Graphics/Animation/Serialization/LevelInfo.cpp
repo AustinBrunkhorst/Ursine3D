@@ -47,8 +47,9 @@ namespace ursine
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
 					ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					for (unsigned i = 0; i < mmeshlvlCount; ++i)
-						ReadFile(hFile, &marrMeshlvls[i], sizeof(MeshInLvl), &nBytesRead, nullptr);
+                    marrMeshlvls = new MeshInLvl[ mmeshlvlCount ];
+                    for ( unsigned i = 0; i < mmeshlvlCount; ++i )
+                        ReadFile(hFile, &marrMeshlvls[ i ], sizeof(MeshInLvl), &nBytesRead, nullptr);
 				}
 				return true;
 			}

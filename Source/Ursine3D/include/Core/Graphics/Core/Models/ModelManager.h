@@ -82,6 +82,9 @@ namespace ursine
 
             void Invalidate();
 
+            ModelResource *GetModel(const unsigned ID);
+            ModelResource *GetModel(const std::string &name);
+
         private:
 
             ID3D11Device *m_device;

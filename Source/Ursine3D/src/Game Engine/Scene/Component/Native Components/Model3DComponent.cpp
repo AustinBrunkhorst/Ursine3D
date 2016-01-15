@@ -150,6 +150,11 @@ namespace ursine
             m_model->GetMaterialData( emiss, pow, intensity );
         }
 
+        void Model3D::SetMeshIndex(const int index)
+        {
+            m_model->SetMeshIndex(index);
+        }
+
         void Model3D::updateRenderer(void)
         {
             // update the renderer's
@@ -158,5 +163,5 @@ namespace ursine
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }
-    }
+}
 }

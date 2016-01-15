@@ -86,7 +86,7 @@ namespace ursine
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
-
+            void SetMeshIndex(const int index);
 
         private:
 
