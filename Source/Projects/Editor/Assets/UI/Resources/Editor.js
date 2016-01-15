@@ -535,6 +535,7 @@ var ursine_editor_menus_PhysicsMenu = function() { };
 $hxClasses["ursine.editor.menus.PhysicsMenu"] = ursine_editor_menus_PhysicsMenu;
 ursine_editor_menus_PhysicsMenu.__name__ = ["ursine","editor","menus","PhysicsMenu"];
 ursine_editor_menus_PhysicsMenu.doGenerateColliderForModel = function() {
+	ursine_native_Extern.GenerateColliders();
 };
 ursine_editor_menus_PhysicsMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_PhysicsMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -1525,6 +1526,9 @@ ursine_native_Extern.ScenePlay = function(playing) {
 };
 ursine_native_Extern.SceneStep = function() {
 	return SceneStep();
+};
+ursine_native_Extern.GenerateColliders = function() {
+	return GenerateColliders();
 };
 var ursine_native_Property = function() { };
 $hxClasses["ursine.native.Property"] = ursine_native_Property;

@@ -152,7 +152,7 @@ namespace ursine
 
         void Model3D::SetMeshIndex(const int index)
         {
-            m_model->SetMeshIndex(index);
+            m_model->SetMeshIndex( index );
         }
 
         void Model3D::updateRenderer(void)

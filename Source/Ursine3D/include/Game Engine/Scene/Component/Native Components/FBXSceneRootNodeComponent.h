@@ -25,11 +25,13 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
+			friend class RenderSystem;
+
         public:
             EditorField(
-                std::string mapName,
-                GetMapName,
-                SetMapName
+                std::string sceneName,
+				GetSceneName,
+                SetSceneName
             );
 
             FBXSceneRootNode(void);
@@ -38,16 +40,16 @@ namespace ursine
             Meta(Disable)
             void OnInitialize(void);
 
-            const std::string &GetMapName(void) const;
-            void SetMapName(const std::string & map);
+            const std::string &GetSceneName(void) const;
+            void SetSceneName(const std::string & map);
 
-            void UpdateChildMap(void);
         private:
-            std::string m_mapName;
+            std::string m_sceneName;
             bool m_invalidated;
 
-            
-            void ClearChildMap(void);
+			void updateChildren(void);
+            void clearChildren(void);
+
         } Meta(Enable, DisplayName("FBXSceneRootNode"));
     }
 }

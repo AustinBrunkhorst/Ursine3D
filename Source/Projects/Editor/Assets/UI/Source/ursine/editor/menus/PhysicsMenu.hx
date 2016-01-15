@@ -4,6 +4,6 @@ package ursine.editor.menus;
 class PhysicsMenu extends MenuItemHandler {
     @mainMenuItem( "Physics/Generate Collider For Model" )
     static function doGenerateColliderForModel() {
-
+        ursine.native.Extern.GenerateColliders( );
     }
 }

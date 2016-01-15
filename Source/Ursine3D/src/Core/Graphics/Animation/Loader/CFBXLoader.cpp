@@ -254,8 +254,11 @@ namespace ursine
 					else if (currMD->tangentMode == FbxGeometryElement::eByControlPoint)
 						currMI->meshVtxInfos[j].tangent = currMD->tangents[currMD->indices[j]];
 
-					currMI->meshVtxInfos[j].uv = currMD->uvs[j];
-					currMI->meshVtxInfos[j].uv.y = 1.0f - currMI->meshVtxInfos[j].uv.y;
+					if (currMD->uvs)
+					{
+						currMI->meshVtxInfos[j].uv = currMD->uvs[j];
+						currMI->meshVtxInfos[j].uv.y = 1.0f - currMI->meshVtxInfos[j].uv.y;
+					}
 
 					// controls - maybe divide this part later if necessary
 					if (!mModel->mCtrlPoints.empty())

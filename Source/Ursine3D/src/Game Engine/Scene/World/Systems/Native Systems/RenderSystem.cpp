@@ -160,7 +160,7 @@ namespace ursine
 
             for ( auto &fbxNode : m_fbxSceneRootNodeMap )
             {
-                fbxNode.second->UpdateChildMap();
+                fbxNode.second->updateChildren( );
             }
 
             RenderHookArgs e( 0 );

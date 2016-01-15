@@ -13,9 +13,9 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION(FBXSceneRootNode);
 
         FBXSceneRootNode::FBXSceneRootNode(void)
-            : BaseComponent()
-            , m_mapName("")
-            , m_invalidated(false)
+            : BaseComponent( )
+            , m_sceneName( "" )
+            , m_invalidated( false )
         {
         }
 
@@ -28,66 +28,68 @@ namespace ursine
         {
         }
 
-        const std::string & FBXSceneRootNode::GetMapName(void) const
+        const std::string & FBXSceneRootNode::GetSceneName(void) const
         {
-            return m_mapName;
+            return m_sceneName;
         }
 
-        void FBXSceneRootNode::SetMapName(const std::string & map)
+        void FBXSceneRootNode::SetSceneName(const std::string & map)
         {
-            m_mapName = map;
+            m_sceneName = map;
             m_invalidated = true;
         }
 
-        void FBXSceneRootNode::UpdateChildMap(void)
+        void FBXSceneRootNode::updateChildren(void)
         {
-            if ( !m_invalidated )
+            if (!m_invalidated)
                 return;
 
             m_invalidated = false;
-            auto *gfx = GetCoreSystem(graphics::GfxAPI);
+            auto *gfx = GetCoreSystem( graphics::GfxAPI );
 
-            auto *model = gfx->ResourceMgr.GetModel(m_mapName);
+            auto *model = gfx->ResourceMgr.GetModel( m_sceneName );
 
-            auto *world = GetOwner()->GetWorld();
+            auto *world = GetOwner( )->GetWorld( );
 
-            auto *transform = GetOwner()->GetTransform();
+            auto *transform = GetOwner( )->GetTransform( );
 
-            if ( model != nullptr )
+            if (model != nullptr)
             {
-                ClearChildMap();
+                clearChildren( );
 
-                auto &meshVec = model->GetMeshArray();
+                auto &meshVec = model->GetMeshArray( );
 
                 int childIndex = 0;
 
-                for ( auto &x : meshVec )
+                for (auto &x : meshVec)
                 {
                     // Create an entity
-                    auto *newEntity = world->CreateEntity(x->GetName());
+                    auto *newEntity = world->CreateEntity( x->GetName( ) );
 
                     // Add model3d
-                    auto *modelComp = newEntity->AddComponent<Model3D>();
+                    auto *modelComp = newEntity->AddComponent<Model3D>( );
 
                     // Set the mesh to this mesh
-                    modelComp->SetModel(m_mapName);
+                    modelComp->SetModel( m_sceneName );
 
                     // Set its mesh index
-                    modelComp->SetMeshIndex(childIndex++);
+                    modelComp->SetMeshIndex( childIndex++ );
 
                     // We need to grab the data from this... Well shit
-                    transform->AddChild(newEntity->GetTransform());
+                    transform->AddChild( newEntity->GetTransform( ) );
                 }
             }
         }
 
-        void FBXSceneRootNode::ClearChildMap(void)
+        void FBXSceneRootNode::clearChildren(void)
         {
-            auto *childrenVector = GetOwner()->GetChildren();
+			auto *owner = GetOwner( );
+			auto *world = owner->GetWorld( );
+            auto *childrenVector = owner->GetChildren( );
 
-            for ( auto &x : *childrenVector )
+            for (auto &x : *childrenVector)
             {
-                GetOwner()->GetWorld()->GetEntity(x)->Delete();
+				world->GetEntity( x )->Delete( );
             }
         }
     }
