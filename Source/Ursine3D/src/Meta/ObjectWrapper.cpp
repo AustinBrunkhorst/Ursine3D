@@ -63,5 +63,15 @@ namespace ursine
         {
             return new ObjectWrapper( m_object );
         }
+
+        void ObjectWrapper::OnSerialize(Json::object &output) const
+        {
+            m_object->OnSerialize( output );
+        }
+
+        void ObjectWrapper::OnDeserialize(const Json &input)
+        {
+            m_object->OnDeserialize( input );
+        }
     }
 }
