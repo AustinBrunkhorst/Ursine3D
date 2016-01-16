@@ -109,5 +109,16 @@ namespace ursine
 
 		#endif
 		}
+
+		void ConvexHullCollider::SetScale(const SVec3& scale)
+		{
+		#ifdef BULLET_PHYSICS
+
+			m_localScaling = scale.ToBullet( );
+			
+			recalcLocalAabb( );
+
+		#endif
+		}
 	}
 }

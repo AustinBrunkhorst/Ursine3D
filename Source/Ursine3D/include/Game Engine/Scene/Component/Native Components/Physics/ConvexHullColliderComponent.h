@@ -50,6 +50,8 @@ namespace ursine
 		private:
 			physics::ConvexHullCollider m_convexHullCollider;
 
+			void onTransformChange(EVENT_HANDLER(Entity));
+
 		} Meta( Enable, DisplayName( "ConvexHullCollider" ) );
 	}
 }

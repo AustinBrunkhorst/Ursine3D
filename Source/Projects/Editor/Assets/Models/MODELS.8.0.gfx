@@ -26,6 +26,7 @@ Gun_Idle.fbx Gun
 #Gun_Shoot.fbx Gun_Shoot
 #newGunRun.fbx Gun_Run
 #
+<<<<<<< HEAD
 ## Player animations
 #Player_Idle.fbx Player
 #Player_Win.fbx Player_Win
@@ -33,3 +34,16 @@ Gun_Idle.fbx Gun
 #Player_Jump.fbx Player_Jump
 #Player_Idle.fbx Player_Idle
 #Player_Die.fbx Player_Die
+=======
+# Player animations
+# Player_Idle.fbx Player
+# Player_Win.fbx Player_Win
+# Player_Run.fbx Player_Run
+# Player_Jump.fbx Player_Jump
+# Player_Idle.fbx Player_Idle
+# Player_Die.fbx Player_Die
+
+Monkey.fbx Monkey
+
+Entrenched_Test1.fbx Entrenched
+>>>>>>> origin/submission-semester-1
