@@ -20,6 +20,7 @@
 #include <WindowManager.h>
 #include <UIManager.h>
 #include <ScreenManager.h>
+#include <Timer.h>
 
 #include <Color.h>
 #include <Vec3.h>
@@ -43,8 +44,11 @@ namespace
 
 JSFunction(InitGame)
 {
-    gScreenManager->AddOverlay( kSplashScreenName );
-
+	// make sure this is called in the main thread
+	Timer::Create( 0 ).Completed( [] {
+		gScreenManager->AddOverlay( kSplashScreenName );
+	} );
+    
     return CefV8Value::CreateUndefined( );
 }
 
@@ -117,7 +121,7 @@ void Retrospect::OnInitialize(void)
     m_screenManager = new ScreenManager( );
     m_screenManager->SetUI( m_mainWindow.ui );
 
-    {
+    /*{
         SDL_DisplayMode displayMode;
 
         SDL_GetDesktopDisplayMode( 
@@ -131,7 +135,7 @@ void Retrospect::OnInitialize(void)
         } );
     }
     m_mainWindow.window->SetFullScreen( true );
-    m_mainWindow.window->Show( true );
+    m_mainWindow.window->Show( true );*/
 
 	m_audioManager = GetCoreSystem( AudioManager );
 }

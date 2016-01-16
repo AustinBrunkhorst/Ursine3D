@@ -169,7 +169,7 @@ namespace ursine
 
 			// Export FBX model as custom file format
 			Export();
-			CustomFileExport();
+			//CustomFileExport();
 
 			return true;
 		}

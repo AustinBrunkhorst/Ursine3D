@@ -22,6 +22,7 @@ namespace ursine
     class TimerManager : public core::CoreSystem
     {
         CORE_SYSTEM
+
     public:
         Meta(Enable)
         TimerManager(void);

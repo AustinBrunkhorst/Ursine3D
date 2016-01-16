@@ -524,7 +524,7 @@ namespace ursine
                     // create a new mesh
                     Mesh *newMesh = new Mesh();
                     newMesh->SetID(mesh_idx);
-                    SMat4 meshMatrix = ufmt_lvl.marrMeshlvls[ mesh_idx ].meshTM;
+                    SMat4 meshMatrix = ufmt_lvl.mMeshLvVec[ mesh_idx ].meshTM;
 
                     // Save it, we'll need it later for rendering
                     newMesh->SetLocalToParentTransform(meshMatrix);
@@ -536,11 +536,11 @@ namespace ursine
                     /////////////////////////////////////////////////////////////////
                     // ALLOCATE MODEL ///////////////////////////////////////////////				
 
-                    ufmt_loader::MeshInfo* currMesh = &ufmt_model.marrMeshes[ mesh_idx ];
+                    ufmt_loader::MeshInfo* currMesh = &ufmt_model.mMeshInfoVec[ mesh_idx ];
 
                     newMesh->SetName(currMesh->name);
 
-                    uint vertCount = ufmt_model.marrMeshes[ mesh_idx ].meshVtxInfoCount;
+                    uint vertCount = ufmt_model.mMeshInfoVec[ mesh_idx ].meshVtxInfoCount;
                     newMesh->SetVertexCount(vertCount);
                     auto &meshVertArray = newMesh->GetRawVertices();
 
@@ -596,10 +596,10 @@ namespace ursine
                             buffer[ i ].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.y);
                             buffer[ i ].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.z);
                             buffer[ i ].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.w);
-                            buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices[ 0 ]);
-                            buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices[ 1 ]);
-                            buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices[ 2 ]);
-                            buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices[ 3 ]);
+                            buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.x);
+                            buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.y);
+                            buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.z);
+                            buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.w);
                         }
                         else
                         {
