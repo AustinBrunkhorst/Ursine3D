@@ -16,4 +16,10 @@
 #include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(GenerateColliders);
+JSFunction(GenerateColliderForModel);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ReduceConvexHull);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(GenerateCollidersForScene);

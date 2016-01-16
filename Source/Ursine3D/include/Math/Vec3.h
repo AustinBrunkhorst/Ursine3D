@@ -16,6 +16,13 @@
 #include "UrsineTypes.h"
 #include "SIMD.h"
 
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+// Forward Declaration
+class btVector3;
+
+#endif
+
 namespace ursine
 {
 	// Forward declaration
@@ -47,6 +54,14 @@ namespace ursine
 
 		explicit Vec3(const Vec4 &value);
 		explicit Vec3(const SVec4 &value);
+
+		#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+		explicit Vec3(const btVector3 &vec);
+
+		btVector3 ToBullet(void) const;
+
+		#endif
 
 		// Properties
 		static const Vec3 &Zero(void);

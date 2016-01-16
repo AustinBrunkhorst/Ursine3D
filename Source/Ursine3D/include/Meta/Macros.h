@@ -16,6 +16,8 @@
 
 #define EditorField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
 
+// #define SerializerField(expression, getter, setter) Meta(Disable, Getter(#getter), Setter(#setter)) expression
+
 #define __META_EXTERNAL(type, guid)       \                       
     typedef type __META_EXTERNAL__##guid; \
 
@@ -30,6 +32,8 @@
 #define Meta(...)
 
 #define EditorField(expression, getter, setter)
+
+#define SerializerField(expression, getter, setter)
 
 #define MetaExternal(type)
 

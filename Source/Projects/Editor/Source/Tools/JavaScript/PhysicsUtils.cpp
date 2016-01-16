@@ -18,12 +18,14 @@
 #include "Editor.h"
 #include "SelectedComponent.h"
 
+#include <ConvexHullColliderComponent.h>
 #include <Model3DComponent.h>
+#include <FBXSceneRootNodeComponent.h>
 
 using namespace ursine;
 using namespace ecs;
 
-JSFunction(GenerateColliders)
+JSFunction(GenerateColliderForModel)
 {
 	// find the selected entity
 	auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
@@ -38,25 +40,73 @@ JSFunction(GenerateColliders)
 		// if (!model)
 			// TODO: Send toast notification to user that you can't generate collider without model
 
-		auto meshes = model->GetModelResource( )->GetMeshArray( );
+		if (!entity->HasComponent<ConvexHullCollider>( ))
+			entity->AddComponent<ConvexHullCollider>( );
 
-		for (auto &mesh : meshes)
-		{
-			// pass the physics component the mesh 
-			// (meaning we can have multiple colliders to one body?) 
-			// (Option 2, just have a convex hull component) 
-			// (Option 3 multiple convex hull components, that hvae the name of the mesh they represent, that way you can remove ones you don't want "i.e. fanny pack")
-		}
+		auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+
+		convexHull->GenerateConvexHull( model );
 	}
 	else
 	{
 		// TODO: Send toast notification to user that they should select an entity first
 	}
-
-
-	// get the mesh
-
-	// generate a collider for the mesh's vertices
 	
+	return CefV8Value::CreateUndefined( );
+}
+
+JSFunction(ReduceConvexHull)
+{
+	// find the selected entity
+	auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
+
+	auto selected = world->GetEntitiesFromFilter( Filter( ).All<Selected>( ) );
+
+	if (selected.size( ) > 0)
+	{
+		auto entity = selected[ 0 ];
+		auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+
+		if (!convexHull)
+			// TODO: Send toast notification
+			return CefV8Value::CreateUndefined( );
+
+		convexHull->ReduceVertices( );
+	}
+
+	return CefV8Value::CreateUndefined( );
+}
+
+JSFunction(GenerateCollidersForScene)
+{
+	// find the selected entity
+	auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
+
+	auto selected = world->GetEntitiesFromFilter( Filter( ).All<Selected>( ) );
+
+	if (selected.size( ) > 0)
+	{
+		auto selectedEntity = selected[ 0 ];
+		auto sceneRoot = selectedEntity->GetComponent<FBXSceneRootNode>( );
+
+		if (!sceneRoot)
+			// TODO: Send toast notification
+			return CefV8Value::CreateUndefined( );
+
+		auto models = selectedEntity->GetComponentsInChildren<Model3D>( );
+
+		for (auto &model : models)
+		{
+			auto entity = model->GetOwner( );
+
+			if (!entity->HasComponent<ConvexHullCollider>( ))
+				entity->AddComponent<ConvexHullCollider>( );
+
+			auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+
+			convexHull->GenerateConvexHull( model );
+		}
+	}
+
 	return CefV8Value::CreateUndefined( );
 }

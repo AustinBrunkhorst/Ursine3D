@@ -37,6 +37,7 @@
 #include "CylinderColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
+#include "ConvexHullColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
 

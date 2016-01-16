@@ -160,7 +160,12 @@ namespace ursine
             m_model->SetMeshIndex( index );
         }
 
-        void Model3D::updateRenderer(void)
+	    int Model3D::GetMeshIndex(void) const
+	    {
+			return m_model->GetMeshIndex( );
+	    }
+
+	    void Model3D::updateRenderer(void)
         {
             // update the renderer's
             auto trans = GetOwner( )->GetTransform( );
