@@ -35,6 +35,8 @@ namespace ursine
 
 			float GetMargin(void) const;
 			void SetMargin(float margin);
+
+			void SetScale(const SVec3 &scale);
 		};
 	}
 }

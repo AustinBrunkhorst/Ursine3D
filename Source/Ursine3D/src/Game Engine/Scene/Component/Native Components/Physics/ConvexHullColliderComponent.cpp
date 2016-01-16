@@ -14,6 +14,9 @@
 #include "UrsinePrecompiled.h"
 
 #include "ConvexHullColliderComponent.h"
+#include "RigidbodyComponent.h"
+#include "EntityEvent.h"
+#include "PhysicsSystem.h"
 
 namespace ursine
 {
@@ -29,15 +32,21 @@ namespace ursine
 
 		ConvexHullCollider::~ConvexHullCollider(void)
 		{
+			GetOwner( )->Listener( this )
+				.Off( ENTITY_TRANSFORM_DIRTY, &ConvexHullCollider::onTransformChange );
 		}
 
 		void ConvexHullCollider::OnInitialize(void)
 		{
+			GetOwner( )->Listener( this )
+				.On( ENTITY_TRANSFORM_DIRTY, &ConvexHullCollider::onTransformChange );
 		}
 
 		void ConvexHullCollider::GenerateConvexHull(Model3D* model)
 		{
 			m_convexHullCollider.GenerateConvexHull( model );
+
+			m_convexHullCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
 		}
 
 		void ConvexHullCollider::ReduceVertices(void)
@@ -56,6 +65,28 @@ namespace ursine
 				return;
 
 			m_convexHullCollider.SetMargin( margin );
+		}
+
+		void ConvexHullCollider::onTransformChange(EVENT_HANDLER(Entity))
+		{
+			EVENT_ATTRS(Entity, TransformChangedArgs);
+
+			if (!args->scaleChanged)
+				return;
+
+			m_convexHullCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
+
+			auto rigidbody = GetOwner( )->GetComponent<Rigidbody>( );
+
+            if (rigidbody)
+            {
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( rigidbody );
+
+                rigidbody->SetAwake( );
+
+                rigidbody->UpdateInertiaTensor( );
+            }
 		}
 	}
 }

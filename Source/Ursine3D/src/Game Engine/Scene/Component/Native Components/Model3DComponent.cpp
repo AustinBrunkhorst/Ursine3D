@@ -27,6 +27,8 @@ namespace ursine
         Model3D::Model3D(void)
             : BaseComponent( )
             , m_model( nullptr )
+			, m_modelName( "Cube" )
+			, m_materialName( "Blank" )
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
