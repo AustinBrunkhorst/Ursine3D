@@ -1393,6 +1393,8 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var parent = entity.getParent();
 		if(parent == null) this.m_rootView.appendChild(item); else {
 			var parentItem = this.m_entityItems.h[parent.uniqueID];
+			console.log(parent.getName());
+			console.log(item);
 			if(parentItem != null) parentItem.child.appendChild(item);
 		}
 		if(entity.hasComponent("Selected")) this.selectEntity(item);
