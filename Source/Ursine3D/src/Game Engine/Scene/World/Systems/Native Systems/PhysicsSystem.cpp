@@ -21,6 +21,7 @@
 #include "CylinderColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
+#include "ConvexHullColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "GfxAPI.h"
 #include "PhysicsSettingsComponent.h"
@@ -40,7 +41,8 @@ namespace ursine
                 BoxCollider, 
                 CylinderCollider,
                 CapsuleCollider,
-                ConeCollider
+                ConeCollider,
+				ConvexHullCollider
             >( );
 
 			m_simulation.SetDebugDrawer( &m_debugDrawer );
@@ -92,9 +94,9 @@ namespace ursine
             m_simulation.ClearContacts( rigidbody->m_rigidbody );
         }
 
-        bool PhysicsSystem::Raycast(const physics::RaycastInput& input, 
-                                    physics::RaycastOutput& output,
-                                    physics::RaycastType type, bool debug, float drawDuration, 
+        bool PhysicsSystem::Raycast(const ursine::physics::RaycastInput& input, 
+                                    ursine::physics::RaycastOutput& output,
+                                    ursine::physics::RaycastType type, bool debug, float drawDuration, 
                                     bool alwaysDrawLine, 
                                     Color colorBegin, Color colorEnd )
         {
@@ -251,6 +253,12 @@ namespace ursine
 
                 addCollider( entity, &cone->m_coneCollider );
             }
+			else if (component->Is<ConvexHullCollider>( ))
+			{
+				auto *hull = entity->GetComponent<ConvexHullCollider>( );
+
+				addCollider( entity, &hull->m_convexHullCollider );
+			}
             else if (component->Is<EmptyCollider>( ))
             {
                 auto *empty = entity->GetComponent<EmptyCollider>( );

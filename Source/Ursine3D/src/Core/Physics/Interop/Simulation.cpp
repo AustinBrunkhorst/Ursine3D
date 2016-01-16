@@ -338,11 +338,7 @@ namespace ursine
 				greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
 			}
 
-			// If the collision has just started
-			if (greatestLifetime < 2)
-				thisEntity->Dispatch( ecs::ENTITY_COLLISION_STARTED, &args );
-			else
-				thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
+			thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
 
 		#endif
 	    }

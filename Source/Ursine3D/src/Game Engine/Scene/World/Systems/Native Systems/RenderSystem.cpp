@@ -19,6 +19,7 @@
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
 #include "CameraComponent.h"
+#include "FBXSceneRootNodeComponent.h"
 
 #include "GfxAPI.h"
 
@@ -92,6 +93,10 @@ namespace ursine
 					static_cast<Animator*>(const_cast<Component*>(args->component))
                 );
             }
+            else if(args->component->Is<FBXSceneRootNode>() )
+            {
+                m_fbxSceneRootNodeMap[ args->entity->GetUniqueID() ] = static_cast<FBXSceneRootNode*>(const_cast<Component*>(args->component));
+            }
         }
 
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
@@ -127,6 +132,10 @@ namespace ursine
 				if (search != m_animators.end( ))
 					m_animators.erase( search );
 			}
+            else if ( args->component->Is<FBXSceneRootNode>() )
+            {
+                m_fbxSceneRootNodeMap.erase(args->entity->GetUniqueID());
+            }
         }
 
         void RenderSystem::onRender(EVENT_HANDLER(World))
@@ -147,6 +156,11 @@ namespace ursine
 
                     m_graphics->RenderObject( rend->m_handle );
                 }
+            }
+
+            for ( auto &fbxNode : m_fbxSceneRootNodeMap )
+            {
+                fbxNode.second->updateChildren( );
             }
 
             RenderHookArgs e( 0 );

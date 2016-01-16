@@ -69,7 +69,7 @@ void Recording::Play(ursine::uint64 timeMarker, ursine::ecs::Entity *receiver)
 	// go through the live list
 	// if the live item's duration is up, remove it
 	// else, call preexecute, and pass it to the command queue
-	for (int i = 0, n = m_live.size( ); i < n; ++i)
+	for (size_t i = 0, n = m_live.size( ); i < n; ++i)
 	{
 		auto command = m_recording[ m_live[ i ] ];
 		auto endTime = command->GetStartTime( ) + command->GetDuration( );

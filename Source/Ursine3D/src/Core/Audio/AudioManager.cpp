@@ -377,8 +377,8 @@ namespace ursine
         UAssert(AK::MusicEngine::Init(&musicInit) == AK_Success,
             "Wwise: Cannot Initialize The Music Engine.");
 
-        LoadBank( kInitBank, BankID );
-        LoadBank( kMainBank, MainID );
+        // LoadBank( kInitBank, BankID );
+        // LoadBank( kMainBank, MainID );
     }
 }
 

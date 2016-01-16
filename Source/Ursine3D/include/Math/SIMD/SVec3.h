@@ -38,7 +38,7 @@ struct AkVector;
 #if defined(URSINE_DEPENDENCY_BulletPhysics)
 
 // Forward Declaration
-struct btVector3;
+class btVector3;
 
 #endif
 

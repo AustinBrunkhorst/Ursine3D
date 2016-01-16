@@ -39,6 +39,13 @@ public:
 	void addPoint(const btVector3& point, bool recalculateLocalAabb = true);
 
 	
+	void clearPoints(bool recalculateLocalAabb = false)
+	{
+		m_unscaledPoints.resize(0);
+		if (recalculateLocalAabb)
+			recalcLocalAabb();
+	}
+
 	btVector3* getUnscaledPoints()
 	{
 		return &m_unscaledPoints[0];

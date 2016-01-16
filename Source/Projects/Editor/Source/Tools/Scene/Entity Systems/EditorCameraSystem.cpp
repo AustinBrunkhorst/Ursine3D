@@ -79,12 +79,8 @@ void EditorCameraSystem::OnInitialize(void)
         .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
-#include <iostream>
-
 void EditorCameraSystem::OnAfterLoad(void)
 {
-	std::cout << "HERE" << std::endl;
-
     auto *oldCamera = m_world->GetEntityFromName( kEditorCameraEntityName );
 
     if (oldCamera)

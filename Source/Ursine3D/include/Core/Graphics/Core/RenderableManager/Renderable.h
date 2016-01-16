@@ -96,6 +96,9 @@ namespace ursine
 
             std::vector<SMat4> &GetMatrixPalette(void);
 
+            int GetMeshIndex(void) const;
+            void SetMeshIndex(const int index);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -107,6 +110,9 @@ namespace ursine
             float m_animationTime;
 
             std::vector<SMat4> m_matrixPalette;
+
+            // for multimaps
+            int m_meshIndex;
         };
 
         /////////////////////////////////////////////////////////////////

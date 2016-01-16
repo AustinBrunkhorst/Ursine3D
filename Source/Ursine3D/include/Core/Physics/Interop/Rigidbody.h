@@ -96,6 +96,9 @@ namespace ursine
 			void SetGhost(bool enable);
 			bool GetGhost(void) const;
 
+			void SetContinuousCollisionDetection(bool enable);
+			bool GetContinuousCollisionDetection(void) const;
+
 			void UpdateInertiaTensor(void);
 
             void AddForce(const SVec3 &force);
@@ -121,6 +124,8 @@ namespace ursine
 
 			bool m_ghost;
 
+			bool m_continuousCollisionDetection;
+
             Simulation *m_simulation;
 
             float m_mass;
@@ -138,6 +143,7 @@ namespace ursine
             
             void updateRotationFreeze(void);
 
+			void updateCCD(void);
         };
     }
 }

@@ -89,6 +89,12 @@ namespace ursine
 				SetEnableContactCallback
 			);
 
+			EditorField(
+				bool enableContinuousCollisionDetection,
+				GetContinuousCollisionDetection,
+				SetContinuousCollisionDetection
+			);
+
             Rigidbody(void);
 			~Rigidbody(void);
 
@@ -133,6 +139,9 @@ namespace ursine
 
 			void SetEnableContactCallback(bool enable);
 			bool GetEnableContactCallback(void) const;
+
+			void SetContinuousCollisionDetection(bool enable);
+			bool GetContinuousCollisionDetection(void) const;
 
 			Meta(Disable)
             void UpdateInertiaTensor(void);

@@ -24,6 +24,7 @@ namespace ursine
 
         Body::Body(void)
             : BaseComponent( )
+			, m_enableContactCallback( false )
         {
             
         }

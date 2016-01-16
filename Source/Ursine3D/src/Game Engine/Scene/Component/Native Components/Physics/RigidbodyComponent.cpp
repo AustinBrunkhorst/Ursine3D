@@ -180,9 +180,19 @@ namespace ursine
 			m_enableContactCallback = enable;
 		}
 
-		bool Rigidbody::GetEnableContactCallback(void) const
+	    bool Rigidbody::GetEnableContactCallback(void) const
 		{
 			return m_enableContactCallback;
+		}
+
+		void Rigidbody::SetContinuousCollisionDetection(bool enable)
+		{
+			m_rigidbody.SetContinuousCollisionDetection( enable );
+		}
+
+		bool Rigidbody::GetContinuousCollisionDetection(void) const
+		{
+			return m_rigidbody.GetContinuousCollisionDetection( );
 		}
 
         void Rigidbody::AddForce(const SVec3& force)

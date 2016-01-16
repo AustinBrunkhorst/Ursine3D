@@ -205,8 +205,6 @@ namespace ursine
 
         void World::queueEntityDeletion(Entity *entity)
         {
-            m_entityManager->BeforeRemove( entity );
-
             m_deleted.push_back( entity );
         }
 
@@ -218,6 +216,9 @@ namespace ursine
 
         void World::clearDeletionQueue(void)
         {
+			for (auto *entity : m_deleted)
+				m_entityManager->BeforeRemove( entity );
+
             while (m_deleted.size( ))
             {
                 auto entity = m_deleted.back( );

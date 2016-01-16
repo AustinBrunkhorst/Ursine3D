@@ -30,6 +30,7 @@ namespace ursine
             , m_emptyCollider( true )
             , m_enableSleeping( true )
 			, m_ghost( false )
+			, m_continuousCollisionDetection( false )
         {
         #ifdef BULLET_PHYSICS
 
@@ -160,6 +161,8 @@ namespace ursine
 
             if (m_bodyType == BF_DYNAMIC)
                 SetAwake( );
+
+			updateCCD( );
         }
 
         void Rigidbody::GetTransform(ecs::Transform *transform)
@@ -461,6 +464,18 @@ namespace ursine
 			return m_ghost;
 		}
 
+		void Rigidbody::SetContinuousCollisionDetection(bool enable)
+		{
+			m_continuousCollisionDetection = enable;
+
+			updateCCD( );
+		}
+
+		bool Rigidbody::GetContinuousCollisionDetection(void) const
+		{
+			return m_continuousCollisionDetection;
+		}
+
         void Rigidbody::AddForce(const SVec3& force)
         {
         #ifdef BULLET_PHYSICS
@@ -540,6 +555,35 @@ namespace ursine
             );
 
         #endif
+        }
+
+		void Rigidbody::updateCCD(void)
+        {
+		#ifdef BULLET_PHYSICS
+
+			if (m_continuousCollisionDetection)
+			{
+				// get the maximum scale factor
+				btVector3 min, max;
+
+				getCollisionShape( )->getAabb( getWorldTransform( ), min, max );
+
+				float maxExtent = math::Max( 
+					math::Max(
+						max.x( ) - min.x( ), max.y( ) - min.y( ) 
+					), max.z( ) - min.z( )
+				);
+
+				setCcdMotionThreshold( maxExtent );
+				setCcdSweptSphereRadius( maxExtent * 0.2f );
+			}
+			else
+			{
+				setCcdMotionThreshold( 0.0f );
+				setCcdSweptSphereRadius( 0.0f );
+			}
+
+		#endif
         }
     }
 }

@@ -24,6 +24,7 @@
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
+#include "FBXSceneRootNodeComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics
@@ -36,6 +37,7 @@
 #include "CylinderColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
+#include "ConvexHullColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
 
