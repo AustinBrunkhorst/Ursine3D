@@ -22,67 +22,46 @@ namespace ursine
 		{
 			void AnimData::ReleaseData()
 			{
-				unsigned int i, j;
-				for (i = 0; i < clipCount; ++i)
-				{
-					for (j = 0; j < boneCount; ++j)
-					{
-						// 3d pt
-						delete[] keyframes[i][j];
-					}
-					// 2d pt
-					delete[] keyIndices[i];
-					delete[] keyframes[i];
-				}
-				// 1d pt
-				delete[] keyIndices;
-				delete[] keyframes;
-				keyIndices = nullptr;
-				keyframes = nullptr;
+				keyIndices.clear();
+				keyframes.clear();
 			}
 
 			AnimInfo::~AnimInfo()
 			{
+				ReleaseData();
 			}
 
 			void AnimInfo::ReleaseData()
 			{
-				if (nullptr == animDataArr)
-					return;
-
-				for (unsigned int i = 0; i < animCount; ++i)
-					animDataArr[i].ReleaseData();
-				delete[] animDataArr;
-				animDataArr = nullptr;
+				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
+					(*iter).ReleaseData();
 			}
 
 			bool AnimInfo::SerializeIn(HANDLE hFile)
 			{
 				DWORD nByteRead;
 				unsigned int i = 0, j = 0, k = 0, l = 0;
-
 				ReadFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
 				ReadFile(hFile, &animCount, sizeof(unsigned int), &nByteRead, nullptr);
-				for (i = 0; i < animCount; ++i)
+				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
 				{
 					// serializing counts
-					ReadFile(hFile, &animDataArr[i].clipname, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
-					ReadFile(hFile, &animDataArr[i].clipCount, sizeof(unsigned int), &nByteRead, nullptr);
-					ReadFile(hFile, &animDataArr[i].boneCount, sizeof(unsigned int), &nByteRead, nullptr);
-					animDataArr[i].keyIndices = new unsigned int*[animDataArr[i].clipCount];
-					animDataArr[i].keyframes = new FBX_DATA::KeyFrame**[animDataArr[i].clipCount];
+					ReadFile(hFile, &iter->clipname, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
+					ReadFile(hFile, &iter->clipCount, sizeof(unsigned int), &nByteRead, nullptr);
+					ReadFile(hFile, &iter->boneCount, sizeof(unsigned int), &nByteRead, nullptr);
+					iter->keyIndices.resize(iter->clipCount);
+					iter->keyframes.resize(iter->clipCount);
 					for (j = 0; j < animDataArr[i].clipCount; ++j)
 					{
-						animDataArr[i].keyIndices[j] = new unsigned int[animDataArr[i].boneCount];
-						animDataArr[i].keyframes[j] = new FBX_DATA::KeyFrame*[animDataArr[i].boneCount];
-						for (k = 0; k < animDataArr[i].boneCount; ++k)
+						iter->keyIndices[j].resize(iter->boneCount);
+						iter->keyframes[j].resize(iter->boneCount);
+						for (k = 0; k < iter->boneCount; ++k)
 						{
-							ReadFile(hFile, &animDataArr[i].keyIndices[j][k], sizeof(unsigned int), &nByteRead, nullptr);
-							animDataArr[i].keyframes[j][k] = new FBX_DATA::KeyFrame[animDataArr[i].keyIndices[j][k]];
-							for (l = 0; l <animDataArr[i].keyIndices[j][k]; ++l)
+							ReadFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nByteRead, nullptr);
+							iter->keyframes[j][k].resize(iter->keyIndices[j][k]);
+							for (l = 0; l <iter->keyIndices[j][k]; ++l)
 							{
-								FBX_DATA::KeyFrame* currKF = &animDataArr[i].keyframes[j][k][l];
-								ReadFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
+								ReadFile(hFile, &iter->keyframes[j][k][l], sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
 							}
 						}
 					}
@@ -97,20 +76,20 @@ namespace ursine
 
 				WriteFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 				WriteFile(hFile, &animCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-				for (i = 0; i < animCount; ++i)
+				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
 				{
 					// serializing counts
-					WriteFile(hFile, &animDataArr[i].clipname, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					WriteFile(hFile, &animDataArr[i].clipCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &animDataArr[i].boneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					for (j = 0; j < animDataArr[i].clipCount; ++j)
+					WriteFile(hFile, &iter->clipname, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					WriteFile(hFile, &iter->clipCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &iter->boneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					for (j = 0; j < iter->clipCount; ++j)
 					{
-						for (k = 0; k < animDataArr[i].boneCount; ++k)
+						for (k = 0; k < iter->boneCount; ++k)
 						{
-							WriteFile(hFile, &animDataArr[i].keyIndices[j][k], sizeof(unsigned int), &nBytesWrite, nullptr);
-							for (l = 0; l <animDataArr[i].keyIndices[j][k]; ++l)
+							WriteFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nBytesWrite, nullptr);
+							for (l = 0; l < iter->keyIndices[j][k]; ++l)
 							{
-								FBX_DATA::KeyFrame* currKF = &animDataArr[i].keyframes[j][k][l];
+								FBX_DATA::KeyFrame* currKF = &iter->keyframes[j][k][l];
 								WriteFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nBytesWrite, nullptr);
 							}
 						}

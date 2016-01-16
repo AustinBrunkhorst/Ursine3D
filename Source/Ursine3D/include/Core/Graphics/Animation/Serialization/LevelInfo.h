@@ -25,11 +25,13 @@ namespace ursine
 			{
 				char name[MAXTEXTLEN];
 				SMat4 meshTM;
+				int mParentIndex;
 			};
 
 			struct RigInLvl
 			{
 				char name[MAXTEXTLEN];
+				int mParentIndex;
 			};
 
 			class LevelInfo : public ISerialize
@@ -37,10 +39,8 @@ namespace ursine
 			public:
 				unsigned int	mmeshlvlCount;
 				unsigned int	mriglvlCount;
-				MeshInLvl*		marrMeshlvls;
-				RigInLvl*		marrRiglvls;
-				int*			mMeshHierarchy;	// parent indices
-				int*			mRigHierarchy;	// parent indices
+				std::vector<MeshInLvl>		mMeshLvVec;
+				std::vector<RigInLvl>		mRigLvVec;
 
 				/** @brief level information constructor
 				*

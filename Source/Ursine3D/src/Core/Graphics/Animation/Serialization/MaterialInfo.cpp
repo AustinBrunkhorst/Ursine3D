@@ -29,14 +29,8 @@ namespace ursine
 				ambi_mcolor(0, 0, 0, 1), diff_mcolor(0, 0, 0, 1),
 				emis_mcolor(0, 0, 0, 1), spec_mcolor(0, 0, 0, 1),
 				ambi_mapCount(0), diff_mapCount(0), emis_mapCount(0), spec_mapCount(0),
-				//ambi_texIndices(nullptr), diff_texIndices(nullptr),
-				//emis_texIndices(nullptr), spec_texIndices(nullptr),
 				shineness(0), TransparencyFactor(0)
 			{
-				*ambi_texNames = { nullptr };
-				*diff_texNames = { nullptr };
-				*emis_texNames = { nullptr };
-				*spec_texNames = { nullptr };
 			}
 
 			MaterialInfo::~MaterialInfo()
@@ -46,23 +40,10 @@ namespace ursine
 
 			void MaterialInfo::ReleaseData()
 			{
-				//if (ambi_texIndices)
-				//	delete ambi_texIndices;
-				//if (diff_texIndices)
-				//	delete diff_texIndices;
-				//if (emis_texIndices)
-				//	delete emis_texIndices;
-				//if (spec_texIndices)
-				//	delete spec_texIndices;
-
-				for (unsigned int i = 0; i < ambi_mapCount; ++i)
-					delete ambi_texNames[i];
-				for (unsigned int i = 0; i < ambi_mapCount; ++i)
-					delete diff_texNames[i];
-				for (unsigned int i = 0; i < ambi_mapCount; ++i)
-					delete emis_texNames[i];
-				for (unsigned int i = 0; i < ambi_mapCount; ++i)
-					delete spec_texNames[i];
+				ambi_texNames.clear();
+				diff_texNames.clear();
+				emis_texNames.clear();
+				spec_texNames.clear();
 			}
 
 			bool MaterialInfo::SerializeIn(HANDLE hFile)
@@ -88,34 +69,19 @@ namespace ursine
 					ReadFile(hFile, &emis_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &spec_mapCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
-					//ambi_texIndices = new unsigned int[ambi_mapCount];
+					ambi_texNames.resize(ambi_mapCount);
+					diff_texNames.resize(diff_mapCount);
+					emis_texNames.resize(emis_mapCount);
+					spec_texNames.resize(spec_mapCount);
 					for (unsigned int i = 0; i < ambi_mapCount; ++i)
-					{
-						ambi_texNames[i] = new char[MAXTEXTLEN];
-						//ReadFile(hFile, &ambi_texIndices[i], sizeof(unsigned int), &nBytesRead, nullptr);
 						ReadFile(hFile, &ambi_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-					}
-					//diff_texIndices = new unsigned int[diff_mapCount];
 					for (unsigned int i = 0; i < diff_mapCount; ++i)
-					{
-						diff_texNames[i] = new char[MAXTEXTLEN];
-						//ReadFile(hFile, &diff_texIndices[i], sizeof(unsigned int), &nBytesRead, nullptr);
 						ReadFile(hFile, &diff_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-					}
-					//emis_texIndices = new unsigned int[emis_mapCount];
 					for (unsigned int i = 0; i < emis_mapCount; ++i)
-					{
-						emis_texNames[i] = new char[MAXTEXTLEN];
-						//ReadFile(hFile, &emis_texIndices[i], sizeof(unsigned int), &nBytesRead, nullptr);
 						ReadFile(hFile, &emis_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-					}
-					//spec_texIndices = new unsigned int[spec_mapCount];
 					for (unsigned int i = 0; i < spec_mapCount; ++i)
-					{
-						spec_texNames[i] = new char[MAXTEXTLEN];
-						//ReadFile(hFile, &spec_texIndices[i], sizeof(unsigned int), &nBytesRead, nullptr);
 						ReadFile(hFile, &spec_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-					}
+
 					ReadFile(hFile, &shineness, sizeof(float), &nBytesRead, nullptr);
 					ReadFile(hFile, &TransparencyFactor, sizeof(float), &nBytesRead, nullptr);
 				}
@@ -151,25 +117,14 @@ namespace ursine
 					WriteFile(hFile, &spec_mapCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
 					for (unsigned int i = 0; i < ambi_mapCount; ++i)
-					{
-						//WriteFile(hFile, &ambi_texIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
 						WriteFile(hFile, &ambi_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					}
 					for (unsigned int i = 0; i < diff_mapCount; ++i)
-					{
-						//WriteFile(hFile, &diff_texIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
 						WriteFile(hFile, &diff_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					}
 					for (unsigned int i = 0; i < emis_mapCount; ++i)
-					{
-						//WriteFile(hFile, &emis_texIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
 						WriteFile(hFile, &emis_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					}
 					for (unsigned int i = 0; i < spec_mapCount; ++i)
-					{
-						//WriteFile(hFile, &spec_texIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
 						WriteFile(hFile, &spec_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					}
+
 					WriteFile(hFile, &shineness, sizeof(float), &nBytesWrite, nullptr);
 					WriteFile(hFile, &TransparencyFactor, sizeof(float), &nBytesWrite, nullptr);
 				}
