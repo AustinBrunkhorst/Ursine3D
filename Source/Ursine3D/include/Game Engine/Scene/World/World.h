@@ -20,6 +20,7 @@
 #include "Filter.h"
 
 #include <vector>
+#include <mutex>
 
 class EntityHandler;
 
@@ -95,6 +96,7 @@ namespace ursine
 
             bool m_loaded;
 
+			std::mutex m_deletionMutex;
             EntityVector m_deleted;
 
             Entity *m_settings;

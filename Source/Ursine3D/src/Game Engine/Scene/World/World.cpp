@@ -216,6 +216,8 @@ namespace ursine
 
         void World::clearDeletionQueue(void)
         {
+			std::lock_guard<std::mutex> lock( m_deletionMutex );
+
 			for (auto *entity : m_deleted)
 				m_entityManager->BeforeRemove( entity );
 
