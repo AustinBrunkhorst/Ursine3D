@@ -30,15 +30,15 @@ namespace ursine
 
 				// mesh data	 
 				unsigned int	 mmeshCount;
-				MeshInfo*		 marrMeshes;
+				std::vector<MeshInfo> mMeshInfoVec;
 
 				// material data
 				unsigned int	mmaterialCount;
-				MaterialInfo*	marrMaterials;
+				std::vector<MaterialInfo>	mMtrlInfoVec;
 
 				// skin data
 				unsigned int	mboneCount;
-				BoneInfo*		marrBones;
+				std::vector<BoneInfo>	mBoneInfoVec;
 				
 				/** @brief model information constructor
 				*

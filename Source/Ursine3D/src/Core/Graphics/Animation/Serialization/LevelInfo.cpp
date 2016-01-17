@@ -24,21 +24,19 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			LevelInfo::LevelInfo()
-				: mmeshlvlCount(0), marrMeshlvls(0), ISerialize("")
+				: mmeshlvlCount(0), mriglvlCount(0), ISerialize("")
 			{
 			}
 
 			LevelInfo::~LevelInfo()
 			{
+				ReleaseData();
 			}
 
 			void LevelInfo::ReleaseData()
 			{
-				if (marrMeshlvls)
-				{
-					delete[] marrMeshlvls;
-					marrMeshlvls = nullptr;
-				}
+				mMeshLvVec.clear();
+				mRigLvVec.clear();
 			}
 			
 			bool LevelInfo::SerializeIn(HANDLE hFile)
@@ -47,9 +45,17 @@ namespace ursine
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
 					ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    marrMeshlvls = new MeshInLvl[ mmeshlvlCount ];
-                    for ( unsigned i = 0; i < mmeshlvlCount; ++i )
-                        ReadFile(hFile, &marrMeshlvls[ i ], sizeof(MeshInLvl), &nBytesRead, nullptr);
+					ReadFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
+
+					MeshInLvl newMl;
+					RigInLvl newRl;
+					for (unsigned i = 0; i < mmeshlvlCount; ++i)
+						ReadFile(hFile, &newMl, sizeof(MeshInLvl), &nBytesRead, nullptr);
+					for (unsigned i = 0; i < mriglvlCount; ++i)
+						ReadFile(hFile, &newRl, sizeof(RigInLvl), &nBytesRead, nullptr);
+
+					mMeshLvVec.push_back(newMl);
+					mRigLvVec.push_back(newRl);
 				}
 				return true;
 			}
@@ -60,8 +66,11 @@ namespace ursine
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
 					WriteFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					for (unsigned i = 0; i < mmeshlvlCount; ++i)
-						WriteFile(hFile, &marrMeshlvls[i], sizeof(MeshInLvl), &nBytesWrite, nullptr);
+						WriteFile(hFile, &mMeshLvVec[i], sizeof(MeshInLvl), &nBytesWrite, nullptr);
+					for (unsigned i = 0; i < mriglvlCount; ++i)
+						WriteFile(hFile, &mRigLvVec[i], sizeof(RigInLvl), &nBytesWrite, nullptr);
 				}
 				return true;
 			}
