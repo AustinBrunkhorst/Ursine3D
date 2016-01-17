@@ -23,7 +23,10 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			BoneInfo::BoneInfo()
-				: ISerialize("")
+				: mParentIndex(-1),
+				bindPosition(0, 0, 0), bindRotation(0, 0, 0, 1), bindScaling(1, 1, 1),
+				boneSpacePosition(0, 0, 0), boneSpaceRotation(0, 0, 0, 1), boneSpaceScaling(1, 1, 1),
+				ISerialize("")
 			{
 			}
 

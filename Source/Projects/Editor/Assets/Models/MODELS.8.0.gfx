@@ -1,10 +1,6 @@
 #
 #First is file name, second is model name
 
-# Test Map
-Shipment_COD4.jlvl TestMap3
-Player_Idle.jlvl PlayerTest
-
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
 Ship.8.0.mdl Ship
@@ -22,14 +18,13 @@ cone_12.8.0.mdl lightCone
 #cone_16.8.0.mdl Cone
 character.8.0.mdl Character
 torus2.8.0.mdl Ring
-
 #
 # Gun Animations
-# Gun_Idle.fbx Gun
-# Gun_Idle.fbx Gun_Idle
-# Gun_Jump.fbx Gun_Jump
-# Gun_Shoot.fbx Gun_Shoot
-# newGunRun.fbx Gun_Run
+Gun_Idle.fbx Gun
+#Gun_Idle.fbx Gun_Idle
+#Gun_Jump.fbx Gun_Jump
+#Gun_Shoot.fbx Gun_Shoot
+#newGunRun.fbx Gun_Run
 #
 # Player animations
 # Player_Idle.fbx Player

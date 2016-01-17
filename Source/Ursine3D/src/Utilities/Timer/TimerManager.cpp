@@ -33,16 +33,22 @@ namespace ursine
 
     void TimerManager::Pause(TimerGroupID group)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         m_groups[ group ] = true;
     }
 
     void TimerManager::Resume(TimerGroupID group)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         m_groups[ group ] = false;
     }
 
     void TimerManager::Clear(TimerGroupID group)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         for (auto it = m_timers.begin( ); it != m_timers.end( );)
         {
             if (it->second.m_group == group)
@@ -57,6 +63,8 @@ namespace ursine
         EVENT_ATTRS(Application, EventArgs);
 
         auto dt = sender->GetDeltaTime( ) * TimeSpan::MillisPerSecond;
+
+		std::lock_guard<std::mutex> lock( m_mutex );
 
         for (auto &pair : m_timers)
         {
@@ -98,6 +106,8 @@ namespace ursine
 
     TimerID TimerManager::create(const TimeSpan &duration, TimerGroupID group)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         auto id = m_nextID++;
 
         m_timers.emplace( std::make_pair( id, Timer( duration, group ) ) );

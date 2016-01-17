@@ -102,7 +102,7 @@ namespace ursine
             std::vector<std::vector<unsigned>> &hierarchy,
             unsigned currentIndex,
             unsigned parentIndex,
-            graphics::ufmt_loader::BoneInfo *rigData,
+			const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
             AnimationRig *rig
         );
 

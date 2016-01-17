@@ -1,3 +1,6 @@
 # CMake build directories
 /Build-*/
 Source/Ursine3D/dep/FBX/FBX.7z
+Source/Projects/Editor/Assets/Models/MODELS.8.0.gfx
+*.jani
+*.jlvl

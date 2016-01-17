@@ -30,6 +30,15 @@ namespace ursine
 			
 		}
 
+		ConvexHullCollider::~ConvexHullCollider(void)
+		{
+		#ifdef BULLET_PHYSICS
+
+			clearPoints( );
+
+		#endif
+		}
+
 		void ConvexHullCollider::GenerateConvexHull(ecs::Model3D *model)
 		{
 		#ifdef BULLET_PHYSICS
@@ -116,6 +125,56 @@ namespace ursine
 
 			m_localScaling = scale.ToBullet( );
 			
+			recalcLocalAabb( );
+
+		#endif
+		}
+
+		void ConvexHullCollider::Serialize(Json::object& output) const
+		{
+		#ifdef BULLET_PHYSICS
+
+			if (getNumPoints( ) == 0)
+				return;
+
+			Json::array jsonVertArray;
+			auto *vertArray = getUnscaledPoints( );
+			auto vertCnt = getNumPoints( );
+
+			for (int i = 0; i < vertCnt; ++i)
+			{				
+				Json::object elements;
+				auto &vert = vertArray[ i ];
+
+				elements[ "x" ] = vert.x( );
+				elements[ "y" ] = vert.y( );
+				elements[ "z" ] = vert.z( );
+
+				jsonVertArray.push_back( Json( elements ) );
+			}
+			
+			output[ "convexHullVerts" ] = jsonVertArray;
+
+		#endif
+		}
+
+		void ConvexHullCollider::Deserialize(const Json& input)
+		{
+		#ifdef BULLET_PHYSICS
+
+			auto convexHullVerts = input[ "convexHullVerts" ].array_items( );
+
+			clearPoints( );
+
+			for (auto &vert : convexHullVerts)
+			{
+				addPoint( btVector3(
+					vert[ "x" ].number_value( ),
+					vert[ "y" ].number_value( ),
+					vert[ "z" ].number_value( )
+				) );
+			}
+
 			recalcLocalAabb( );
 
 		#endif

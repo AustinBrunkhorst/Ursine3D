@@ -23,7 +23,7 @@ namespace ursine
     {
         CORE_SYSTEM
     public:
-        Meta(Enable)
+        Meta(Enable, DisableNonDynamic)
         TweenManager(void);
         ~TweenManager(void);
 
@@ -43,6 +43,8 @@ namespace ursine
         friend class LocalTweenManager;
 
         uint32 m_nextID;
+
+		std::mutex m_mutex;
 
         std::unordered_map<uint32, Tween> m_tweens;
 

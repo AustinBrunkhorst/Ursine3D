@@ -22,11 +22,8 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			MeshInfo::MeshInfo() :
-				meshVtxInfoCount(0), mtrlCount(0), mtrlIndexCount(0),
-				meshVtxInfos(nullptr), materialIndices(nullptr),
-				ISerialize("")
+				meshVtxInfoCount(0), meshVtxIdxCount(0), mtrlCount(0), mtrlIndexCount(0), ISerialize("")
 			{
-				*mtrlName = { nullptr };
 			}
 
 			MeshInfo::~MeshInfo()
@@ -36,21 +33,10 @@ namespace ursine
 
 			void MeshInfo::ReleaseData()
 			{
-				if (meshVtxInfos)
-				{
-					delete[] meshVtxInfos;
-					meshVtxInfos = nullptr;
-				}
-				if (mtrlName)
-				{
-					for (unsigned int i = 0; i < mtrlCount; ++i)
-						delete mtrlName[i];
-				}
-				if (materialIndices)
-				{
-					delete[] materialIndices;
-					materialIndices = nullptr;
-				}
+				mtrlName.clear();
+				meshVtxInfos.clear();
+				meshVtxIndices.clear();
+				materialIndices.clear();
 			}
 
 			bool MeshInfo::SerializeIn(HANDLE hFile)
@@ -62,23 +48,34 @@ namespace ursine
 				{
 					ReadFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
 					ReadFile(hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
-					meshVtxInfos = new MeshVertex[meshVtxInfoCount];
+
 					for (i = 0; i < meshVtxInfoCount; ++i)
 					{
-						ReadFile(hFile, &meshVtxInfos[i], sizeof(MeshVertex), &nBytesRead, nullptr);
+						MeshVertex newMV;
+						ReadFile(hFile, &newMV, sizeof(MeshVertex), &nBytesRead, nullptr);
+						meshVtxInfos.push_back(newMV);
+					}
+					for (i = 0; i < meshVtxIdxCount; ++i)
+					{
+						unsigned int mvi;
+						ReadFile(hFile, &mvi, sizeof(unsigned int), &nBytesRead, nullptr);
+						meshVtxIndices.push_back(mvi);
 					}
 					for (i = 0; i < mtrlCount; ++i)
 					{
-						mtrlName[i] = new char[MAXTEXTLEN];
-						ReadFile(hFile, mtrlName[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						char name[MAXTEXTLEN];
+						ReadFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						mtrlName.push_back(name);
 					}
-					materialIndices = new unsigned int[mtrlIndexCount];
 					for (i = 0; i < mtrlIndexCount; ++i)
 					{
-						ReadFile(hFile, &materialIndices[i], sizeof(unsigned int), &nBytesRead, nullptr);
+						unsigned int mi;
+						ReadFile(hFile, &mi, sizeof(unsigned int), &nBytesRead, nullptr);
+						materialIndices.push_back(mi);
 					}
 				}
 				return true;
@@ -87,27 +84,24 @@ namespace ursine
 			bool MeshInfo::SerializeOut(HANDLE hFile)
 			{
 				DWORD nBytesWrite;
-				unsigned int i = 0, j = 0;
+				unsigned int i = 0;
 
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
 					WriteFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					WriteFile(hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
 					for (i = 0; i < meshVtxInfoCount; ++i)
-					{
 						WriteFile(hFile, &meshVtxInfos[i], sizeof(MeshVertex), &nBytesWrite, nullptr);
-					}
+					for (i = 0; i < meshVtxIdxCount; ++i)
+						WriteFile(hFile, &meshVtxIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
 					for (i = 0; i < mtrlCount; ++i)
-					{
-						WriteFile(hFile, mtrlName[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					}
+						WriteFile(hFile, mtrlName[i].c_str(), sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					for (i = 0; i < mtrlIndexCount; ++i)
-					{
 						WriteFile(hFile, &materialIndices[i], sizeof(unsigned int), &nBytesWrite, nullptr);
-					}
 				}
 				return true;
 			}

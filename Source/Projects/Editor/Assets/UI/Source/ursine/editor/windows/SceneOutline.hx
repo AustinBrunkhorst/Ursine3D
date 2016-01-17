@@ -193,7 +193,11 @@ class SceneOutline extends WindowHandler {
         if (parent == null) {
             m_rootView.appendChild( item );
         } else {
+
             var parentItem : TreeViewItem = m_entityItems[ parent.uniqueID ];
+
+            trace( parent.getName( ) );
+            trace( item );
 
             if (parentItem != null)
                 parentItem.child.appendChild( item );

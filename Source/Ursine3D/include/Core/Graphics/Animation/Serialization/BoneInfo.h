@@ -47,6 +47,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				BoneInfo();
+
 				/** @brief bone information destructor
 				*
 				*  this will destroy bone information object
@@ -54,6 +55,7 @@ namespace ursine
 				*  @return nothing
 				*/
 				virtual ~BoneInfo();
+
 				/** @brief bone information release function
 				*
 				*  this will release memory of the bone information
@@ -70,6 +72,7 @@ namespace ursine
 				*  @return if succeed return true, else return false
 				*/
 				virtual bool SerializeIn(HANDLE hFile);
+
 				/** @brief bone information serialize out function
 				*
 				*  this will write bone information
