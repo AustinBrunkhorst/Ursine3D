@@ -37,6 +37,9 @@ namespace ursine
 			void SetMargin(float margin);
 
 			void SetScale(const SVec3 &scale);
+
+			void Serialize(Json::object &output) const;
+			void Deserialize(const Json &input);
 		};
 	}
 }

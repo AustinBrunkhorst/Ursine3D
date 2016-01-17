@@ -42,6 +42,18 @@ namespace ursine
 				.On( ENTITY_TRANSFORM_DIRTY, &ConvexHullCollider::onTransformChange );
 		}
 
+		void ConvexHullCollider::OnSerialize(Json::object& output) const
+		{
+			m_convexHullCollider.Serialize( output );
+		}
+
+		void ConvexHullCollider::OnDeserialize(const Json& input)
+		{
+			m_convexHullCollider.Deserialize( input );
+
+			m_convexHullCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
+		}
+
 		void ConvexHullCollider::GenerateConvexHull(Model3D* model)
 		{
 			m_convexHullCollider.GenerateConvexHull( model );
@@ -51,7 +63,9 @@ namespace ursine
 
 		void ConvexHullCollider::ReduceVertices(void)
 		{
+			m_convexHullCollider.SetScale( SVec3( 1.0f, 1.0f, 1.0f ) );
 			m_convexHullCollider.ReduceVertices( );
+			m_convexHullCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
 		}
 
 		float ConvexHullCollider::GetMargin(void) const
