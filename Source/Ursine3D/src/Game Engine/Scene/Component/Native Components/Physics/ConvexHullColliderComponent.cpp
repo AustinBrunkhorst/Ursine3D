@@ -56,6 +56,9 @@ namespace ursine
 
 		void ConvexHullCollider::GenerateConvexHull(Model3D* model)
 		{
+			if (!model)
+				return;
+
 			m_convexHullCollider.GenerateConvexHull( model );
 
 			m_convexHullCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );

@@ -30,6 +30,15 @@ namespace ursine
 			
 		}
 
+		ConvexHullCollider::~ConvexHullCollider(void)
+		{
+		#ifdef BULLET_PHYSICS
+
+			clearPoints( );
+
+		#endif
+		}
+
 		void ConvexHullCollider::GenerateConvexHull(ecs::Model3D *model)
 		{
 		#ifdef BULLET_PHYSICS
@@ -124,6 +133,9 @@ namespace ursine
 		void ConvexHullCollider::Serialize(Json::object& output) const
 		{
 		#ifdef BULLET_PHYSICS
+
+			if (getNumPoints( ) == 0)
+				return;
 
 			Json::array jsonVertArray;
 			auto *vertArray = getUnscaledPoints( );

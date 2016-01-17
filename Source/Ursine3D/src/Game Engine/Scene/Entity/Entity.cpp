@@ -54,7 +54,7 @@ namespace ursine
             if (!(m_active && !m_deleting) || !m_deletionEnabled)
                 return;
 
-            m_deleting = true;
+			setDeletingTrue( );
 
             m_world->queueEntityDeletion( this );
         }
@@ -284,6 +284,14 @@ namespace ursine
             m_hierarchyChangeEnabled = true;
             m_serializationEnabled = true;
             m_visibleInEditor = true;
+        }
+
+		void Entity::setDeletingTrue(void)
+        {
+			m_deleting = true;
+
+			for (auto &child : GetTransform( )->GetChildren( ))
+				child->GetOwner( )->setDeletingTrue( );
         }
     }
 }

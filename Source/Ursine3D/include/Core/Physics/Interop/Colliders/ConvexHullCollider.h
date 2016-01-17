@@ -28,6 +28,7 @@ namespace ursine
 		{
 		public:
 			ConvexHullCollider(void);
+			~ConvexHullCollider(void);
 
 			void GenerateConvexHull(ecs::Model3D *model);
 
