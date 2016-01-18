@@ -14,7 +14,11 @@
 #include "UrsinePrecompiled.h"
 
 #include "BvhTriangleMeshColliderComponent.h"
+#include "RigidbodyComponent.h"
+
+#include "PhysicsSystem.h"
 #include "EntityEvent.h"
+
 
 namespace ursine
 {
@@ -67,6 +71,18 @@ namespace ursine
 				return;
 
 			m_bvhTriangleMeshCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
+
+			auto rigidbody = GetOwner( )->GetComponent<Rigidbody>( );
+
+            if (rigidbody)
+            {
+                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                    ->ClearContacts( rigidbody );
+
+                rigidbody->SetAwake( );
+
+                rigidbody->UpdateInertiaTensor( );
+            }
 		}
 	}
 }
