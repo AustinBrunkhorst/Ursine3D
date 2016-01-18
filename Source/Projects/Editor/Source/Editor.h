@@ -17,10 +17,9 @@
 
 #include <Window.h>
 #include <UIView.h>
+#include <NotificationManager.h>
 
 #include "Project.h"
-
-#include "Notifications/NotificationManager.h"
 
 class NativeEditorTool;
 
@@ -40,14 +39,14 @@ public:
 
     Project::Handle GetProject(void) const;
 
-    notification::NotificationManager &GetNotificationManager(void);
+    ursine::NotificationManager &GetNotificationManager(void);
 
-    notification::Notification PostNotification(const notification::NotificationConfig &config);
+    ursine::Notification PostNotification(const ursine::NotificationConfig &config);
     
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
-    notification::NotificationManager m_notificationManager;
+    ursine::NotificationManager m_notificationManager;
 
     struct
     {

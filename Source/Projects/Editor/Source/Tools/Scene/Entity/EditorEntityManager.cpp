@@ -48,6 +48,30 @@ namespace
             const auto Changed = "ComponentChanged";
         }
     }
+
+    Json::array inspectComponentButtons(const meta::Variant &component)
+    {
+        auto methods = component.GetType( ).GetMethods( );
+
+        Json::array inspection;
+
+        for (auto &method : methods)
+        {
+            auto &meta = method.GetMeta( );
+
+            auto *button = meta.GetProperty<CreateButton>( );
+
+            if (!button)
+                continue;
+
+            inspection.emplace_back( Json::object {
+                { "name", method.GetName( ) },
+                { "text", button->text }
+            } );
+        }
+
+        return inspection;
+    }
 }
 
 EditorEntityManager::EditorEntityManager(Project *project)
@@ -191,7 +215,8 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
-        { "value", component.SerializeJson( ) }
+        { "value", component.SerializeJson( ) },
+        { "buttons", inspectComponentButtons( component ) }
     };
 
     m_project->GetUI( )->Message(

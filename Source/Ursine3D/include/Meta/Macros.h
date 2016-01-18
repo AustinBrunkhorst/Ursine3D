@@ -10,48 +10,69 @@
 
 #pragma once
 
-#ifdef __REFLECTION_PARSER__
+#if defined(__REFLECTION_PARSER__)
 
-#define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
+    #define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
 
-#define EditorField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
+    #define EditorButtonImpl(name, impl)
+    #define EditorField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
 
-// #define SerializerField(expression, getter, setter) Meta(Disable, Getter(#getter), Setter(#setter)) expression
+    #if defined(URSINE_WITH_EDITOR)
 
-#define __META_EXTERNAL(type, guid)       \                       
-    typedef type __META_EXTERNAL__##guid; \
+        #define EditorButton(name, title) Meta(Enable, CreateButton(title)) void name(void);
 
-#define _META_EXTERNAL(type, guid) __META_EXTERNAL(type, guid)
+    #else
 
-#define MetaExternal(type) _META_EXTERNAL(type, __COUNTER__)
+        #define EditorButton(name, title)
 
-#define META_OBJECT
+    #endif
 
-#else
+    #define __META_EXTERNAL(type, guid)       \                       
+        typedef type __META_EXTERNAL__##guid; \
 
-#define Meta(...)
+    #define _META_EXTERNAL(type, guid) __META_EXTERNAL(type, guid)
 
-#define EditorField(expression, getter, setter)
+    #define MetaExternal(type) _META_EXTERNAL(type, __COUNTER__)
 
-#define SerializerField(expression, getter, setter)
+    #define META_OBJECT
 
-#define MetaExternal(type)
 
-// Used in objects to preserve virtual inheritance functionality
-#define META_OBJECT                                  \
-    ursine::meta::Type GetType(void) const override  \
-    {                                                \
-        return typeof( decltype( *this ) );          \
-    }                                                \
-    ursine::meta::Object *Clone(void) const override \
-    {                                                \
-        typedef                                      \
-        std::remove_const<                           \
-            std::remove_reference<                   \
-                decltype( *this )                    \
-            >::type                                  \
-        >::type ClassType;                           \
-        return new ClassType( *this );               \
-    }                                                \
+// !defined(__REFLECTION_PARSER__)
+#else 
+
+    #define Meta(...)
+
+    #define EditorField(expression, getter, setter)
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        #define EditorButton(name, title) void name(void)
+        #define EditorButtonImpl(name, impl) void name(void) ##impl
+
+    #else
+
+        #define EditorButton(name, title)
+        #define EditorButtonImpl(name, impl)
+
+    #endif
+
+    #define MetaExternal(type)
+
+    // Used in objects to preserve virtual inheritance functionality
+    #define META_OBJECT                                  \
+        ursine::meta::Type GetType(void) const override  \
+        {                                                \
+            return typeof( decltype( *this ) );          \
+        }                                                \
+        ursine::meta::Object *Clone(void) const override \
+        {                                                \
+            typedef                                      \
+            std::remove_const<                           \
+                std::remove_reference<                   \
+                    decltype( *this )                    \
+                >::type                                  \
+            >::type ClassType;                           \
+            return new ClassType( *this );               \
+        }                                                \
 
 #endif

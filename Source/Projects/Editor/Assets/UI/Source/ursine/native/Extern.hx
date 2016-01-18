@@ -54,11 +54,11 @@ class Extern {
     }
 
     public static function NotificationButtonCallback(id : UInt, buttonID : UInt) {
-        return untyped __js__( "notification_NotificationButtonCallback(id, buttonID)" );
+        return untyped __js__( "ursine_NotificationButtonCallback(id, buttonID)" );
     }
 
     public static function NotificationCloseCallback(id : UInt) {
-        return untyped __js__( "notification_NotificationCloseCallback(id)" );
+        return untyped __js__( "ursine_NotificationCloseCallback(id)" );
     }
 
     public static function GenerateBvhTriangleColliderForModel() {

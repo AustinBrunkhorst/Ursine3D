@@ -18,6 +18,9 @@
 #include "GfxAPI.h"
 #include "EntityEvent.h"
 
+#include "Notification.h"
+#include "NotificationConfig.h"
+
 namespace ursine
 {
     namespace ecs
@@ -175,5 +178,29 @@ namespace ursine
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        void Model3D::GenerateCollider(void)
+        {
+            NotificationConfig config;
+
+            config.header = "Testing";
+            config.message = "Generate collider called from C++";
+
+            EditorPostNotification( config );
+        }
+
+        void Model3D::ReduceConvexHull(void)
+        {
+            NotificationConfig config;
+
+            config.header = "Testing";
+            config.message = "Reduce convex hull called from C++";
+
+            EditorPostNotification( config );
+        }
+
+    #endif
     }
 }

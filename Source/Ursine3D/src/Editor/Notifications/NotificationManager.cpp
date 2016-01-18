@@ -1,8 +1,8 @@
-#include "Precompiled.h"
+#include "UrsinePrecompiled.h"
 
-#include "Notifications/NotificationManager.h"
+#include "NotificationManager.h"
 
-using namespace ursine;
+#include "UIView.h"
 
 namespace
 {
@@ -18,7 +18,7 @@ namespace
     }
 }
 
-namespace notification
+namespace ursine
 {
     struct NotificationManager::NotificationInternal
     {
@@ -42,7 +42,7 @@ namespace notification
 
     Notification NotificationManager::Create(const NotificationConfig &config)
     {
-        //std::lock_guard<std::mutex> lock( m_mutex );
+        std::lock_guard<std::mutex> lock( m_mutex );
 
         auto id = m_nextID++;
 
@@ -103,7 +103,7 @@ namespace notification
 
     void NotificationManager::onButtonClicked(NotificationID id, NotificationButtonID buttonID)
     {
-        //std::lock_guard<std::mutex> lock( m_mutex );
+        std::lock_guard<std::mutex> lock( m_mutex );
 
         auto search = m_notifications.find( id );
 
@@ -128,7 +128,7 @@ namespace notification
 
     void NotificationManager::onAfterClose(NotificationID id)
     {
-        //std::lock_guard<std::mutex> lock( m_mutex );
+        std::lock_guard<std::mutex> lock( m_mutex );
 
         auto search = m_notifications.find( id );
 

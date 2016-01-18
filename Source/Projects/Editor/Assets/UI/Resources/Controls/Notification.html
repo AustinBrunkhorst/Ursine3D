@@ -55,6 +55,7 @@
                 this.message = message || '';
             },
             created: function() {
+                this._closed = false;
                 this._timeout = null;
             },
 
@@ -77,12 +78,19 @@
                 );
             },
             close: function() {
+                if (this._closed === true)
+                    return;
+
+                clearTimeout( this._timeout );
+
                 if (this.parentNode)
                     this.parentNode.removeChild( this );
 
                 this.fire( 'closed', {
 
                 } );
+
+                this._closed = true;
             }
         });
     </script>

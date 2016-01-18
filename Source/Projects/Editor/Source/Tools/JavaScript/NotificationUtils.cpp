@@ -17,8 +17,15 @@
 
 #include "Editor.h"
 
-namespace notification
+namespace ursine
 {
+    Notification EditorPostNotification(const NotificationConfig &config)
+    {
+        auto *editor = GetCoreSystem( Editor );
+
+        return editor->PostNotification( config );
+    }
+
     JSFunction(NotificationButtonCallback)
     {
         auto *editor = GetCoreSystem( Editor );

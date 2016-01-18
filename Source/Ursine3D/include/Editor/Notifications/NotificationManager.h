@@ -1,17 +1,18 @@
 #pragma once
 
-#include "Notifications/Notification.h"
+#include "Notification.h"
+#include "UIView.h"
 
-#include <NativeJSFunction.h>
+#include "NativeJSFunction.h"
 
-namespace notification
+namespace ursine
 {
     class NotificationManager
     {
     public:
         NotificationManager(void);
 
-        void SetUI(const ursine::UIView::Handle &ui);
+        void SetUI(const UIView::Handle &ui);
 
         Notification Create(const NotificationConfig &config);
 
@@ -22,7 +23,7 @@ namespace notification
 
         struct NotificationInternal;
 
-        NotificationID m_nextID;
+        ursine::NotificationID m_nextID;
 
         std::mutex m_mutex;
 

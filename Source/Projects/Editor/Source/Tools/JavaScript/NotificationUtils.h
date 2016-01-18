@@ -15,7 +15,7 @@
 
 #include <NativeJSFunction.h>
 
-namespace notification
+namespace ursine
 {
     Meta(Enable, ExposeJavaScript)
     JSFunction(NotificationButtonCallback);

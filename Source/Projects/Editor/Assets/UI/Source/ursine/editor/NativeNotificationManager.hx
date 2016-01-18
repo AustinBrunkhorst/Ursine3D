@@ -25,6 +25,8 @@ class NativeNotificationManager {
 
         notification.addEventListener( 'closed', function() {
             Extern.NotificationCloseCallback( e.id );
+
+            m_notifications.remove( e.id );
         } );
 
         notification.show( e.duration );

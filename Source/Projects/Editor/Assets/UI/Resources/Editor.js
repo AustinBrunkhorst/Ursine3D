@@ -520,11 +520,14 @@ $hxClasses["ursine.editor.NativeNotificationManager"] = ursine_editor_NativeNoti
 ursine_editor_NativeNotificationManager.__name__ = ["ursine","editor","NativeNotificationManager"];
 ursine_editor_NativeNotificationManager.prototype = {
 	onCreated: function(e) {
+		var _g = this;
 		var notification = new NotificationControl(e.type,e.message,e.header);
 		notification.dismissible = e.dismissible;
 		this.initNotificationButtons(e.id,notification,e.buttons);
 		notification.addEventListener("closed",function() {
 			ursine_native_Extern.NotificationCloseCallback(e.id);
+			var key = e.id;
+			_g.m_notifications.remove(key);
 		});
 		notification.show(e.duration);
 		var k = e.id;
@@ -791,6 +794,16 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 			if(handler != null) handler.updateValue(value);
 		}
 	}
+	,addButton: function(button) {
+		var _g = this;
+		var element = new ButtonControl();
+		element.classList.add("x-component-inspector");
+		element.text = button.text;
+		element.addEventListener("click",function() {
+			_g.m_entity.invokeComponentButton(_g.m_component.type,button.name);
+		});
+		this.inspector.buttons.appendChild(element);
+	}
 	,addField: function(field) {
 		var k = field.get_name();
 		this.m_fieldHandlers.set(k,field);
@@ -840,10 +853,17 @@ var ursine_editor_scene_component_inspectors_components_DefaultComponentInspecto
 	var database = ursine_editor_Editor.instance.componentDatabase;
 	var componentType = database.getComponentType(component.type);
 	var _g = 0;
-	var _g1 = componentType.fields;
+	var _g1 = component.buttons;
 	while(_g < _g1.length) {
-		var field = _g1[_g];
+		var button = _g1[_g];
 		++_g;
+		this.addButton(button);
+	}
+	var _g2 = 0;
+	var _g11 = componentType.fields;
+	while(_g2 < _g11.length) {
+		var field = _g11[_g2];
+		++_g2;
 		var instance = Reflect.field(component.value,field.name);
 		var type = database.getNativeType(field.type);
 		this.addField(database.createFieldInspector(this,instance,field,type));
@@ -1217,6 +1237,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,updateComponentField: function(componentName,fieldName,value) {
 		this.m_handler.updateComponentField(componentName,fieldName,value);
 	}
+	,invokeComponentButton: function(componentName,buttonName) {
+		this.m_handler.invokeComponentButton(componentName,buttonName);
+	}
 	,getChildren: function() {
 		var children = this.m_handler.getChildren();
 		if(children == false) return [];
@@ -1275,7 +1298,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.initializeInspection();
 	}
 	,onInspectedEntityComponentAdded: function(e) {
-		var inspection = { type : e.component, value : e.value};
+		var inspection = { type : e.component, value : e.value, buttons : e.buttons};
 		this.inspectComponent(inspection);
 	}
 	,onInspectedEntityComponentRemoved: function(e) {
@@ -1672,10 +1695,10 @@ ursine_native_Extern.GenerateCollidersForScene = function() {
 	return GenerateCollidersForScene();
 };
 ursine_native_Extern.NotificationButtonCallback = function(id,buttonID) {
-	return notification_NotificationButtonCallback(id, buttonID);
+	return ursine_NotificationButtonCallback(id, buttonID);
 };
 ursine_native_Extern.NotificationCloseCallback = function(id) {
-	return notification_NotificationCloseCallback(id);
+	return ursine_NotificationCloseCallback(id);
 };
 ursine_native_Extern.GenerateBvhTriangleColliderForModel = function() {
 	return GenerateBvhTriangleColliderForModel();

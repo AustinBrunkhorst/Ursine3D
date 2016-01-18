@@ -20,11 +20,9 @@
 
 #include <WindowManager.h>
 #include <UIManager.h>
-#include <ScreenManager.h>
 
 #include <Color.h> 
 #include <LightComponent.h>
-#include <Model3DComponent.h>
 
 using namespace ursine;
 
@@ -129,12 +127,12 @@ std::shared_ptr<Project> Editor::GetProject(void) const
     return m_project;
 }
 
-notification::NotificationManager &Editor::GetNotificationManager(void)
+NotificationManager &Editor::GetNotificationManager(void)
 {
     return m_notificationManager;
 }
 
-notification::Notification Editor::PostNotification(const notification::NotificationConfig &config)
+Notification Editor::PostNotification(const NotificationConfig &config)
 {
     return m_notificationManager.Create( config );
 }
@@ -199,30 +197,9 @@ void Editor::initializeScene(void)
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
 
-    // This only needs to be called because we manually setup the world
+    // this only needs to be called because we manually setup the world
     // rather than loading from a file
     world->DispatchLoad( );
-
-    /*auto *character = world->CreateEntity( "Character" );
-    {
-        auto *model = character->AddComponent<ecs::Model3D>( );
-
-        model->SetModel( "Character" );
-        model->SetMaterial( "Blank" );
-
-        auto *cube = world->CreateEntity( "Cube" );
-
-        auto *cubeModel = cube->AddComponent<ecs::Model3D>( );
-
-        cubeModel->SetModel( "Cube" );
-
-        auto *cubeTransform = cube->GetTransform( );
-
-        cubeTransform->SetLocalPosition( { 1, 20, 20 } );
-        cubeTransform->SetLocalScale( { 5, 5, 5 } );
-
-        character->GetTransform( )->AddChild( cubeTransform );
-    }*/
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -244,10 +221,6 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 void Editor::onFocusChange(EVENT_HANDLER( ursine::Window ))
 {
     EVENT_ATTRS( Window, WindowFocusArgs );
-
-    //m_graphics->SetFullscreenState( args->focused );
-    //m_mainWindow.window->SetFullScreen( args->focused );
-    printf( "%s\n", args->focused ? "True" : "False" );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

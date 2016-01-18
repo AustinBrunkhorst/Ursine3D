@@ -30,6 +30,16 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+            EditorButton(
+                GenerateCollider, 
+                "Generate Collider"
+            );
+
+            EditorButton(
+                ReduceConvexHull, 
+                "Reduce Convex Hull"
+            );
+
             EditorField(
                 Color color,
                 GetColor,

@@ -57,7 +57,8 @@ class EntityInspector extends WindowHandler {
     private function onInspectedEntityComponentAdded(e) {
         var inspection = {
             type: e.component,
-            value: e.value
+            value: e.value,
+            buttons: e.buttons
         };
 
         inspectComponent( cast inspection );

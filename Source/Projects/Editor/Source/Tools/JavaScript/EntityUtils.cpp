@@ -28,6 +28,11 @@ using namespace std::placeholders;
 
 namespace
 {
+    void doOpenErrorLog(void)
+    {
+        utils::OpenPath( URSINE_ERROR_LOG_FILE );
+    }
+
     void doLoadArchetype(
         ecs::World *world,
         int selectedFilter,
@@ -75,13 +80,18 @@ namespace
 
             auto *editor = GetCoreSystem( Editor );
 
-            URSINE_TODO( "Use UI error popup" );
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_ERROR,
-                "Load Error",
-                "Unable to load archetype.",
-                editor->GetMainWindow( )->GetInternalHandle( )
-            );
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Load Error";
+            error.message = "Unable to load archetype.";
+
+            error.buttons =
+            {
+                { "Open Error Log", doOpenErrorLog }
+            };
+
+            editor->PostNotification( error );
         }
     }
 }

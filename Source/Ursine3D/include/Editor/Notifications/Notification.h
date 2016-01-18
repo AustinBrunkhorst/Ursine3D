@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Notifications/NotificationConfig.h"
+#include "NotificationConfig.h"
 
-namespace notification 
+namespace ursine 
 {
     class NotificationManager;
 

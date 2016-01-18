@@ -7,12 +7,19 @@ $icon-size: 22px;
 :host {
   position: relative;
   display: block;
+  min-width: 200px;
   max-width: 485px;
   padding: 7px;
   margin-bottom: 12px;
   background: #48484d;
   border: 1px solid #6d6d75;
   box-shadow: 0 4px 3px rgba(black, 0.40);
+
+  &:hover {
+    .btn-close {
+      opacity: 1;
+    }
+  }
 
   // none
   &[type="0"] {
@@ -64,7 +71,8 @@ $icon-size: 22px;
     right: 5px;
     top: 5px;
     color: $color-accent;
-    transition: color $duration-transition-btn ease;
+    opacity: 0;
+    transition: color $duration-transition-btn ease, opacity $duration-transition-btn ease;
     cursor: pointer;
 
     @include icon-half( $icon-half-remove-circle, 18px );
@@ -93,6 +101,7 @@ $icon-size: 22px;
 
   #buttons {
     text-align: right;
+    line-height: 30px;
 
     &:not(:empty) {
       margin-top: 10px;

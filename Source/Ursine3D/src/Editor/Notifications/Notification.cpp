@@ -1,9 +1,9 @@
-#include "Precompiled.h"
+#include "UrsinePrecompiled.h"
 
-#include "Notifications/Notification.h"
-#include "Notifications/NotificationManager.h"
+#include "Notification.h"
+#include "NotificationManager.h"
 
-namespace notification
+namespace ursine
 {
     Notification::Notification(NotificationID id, NotificationManager *manager)
         : m_id( id )

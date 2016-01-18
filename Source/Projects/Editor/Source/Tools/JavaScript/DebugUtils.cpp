@@ -23,18 +23,7 @@ JSFunction(DebugEditorUI)
 
     debugURL += std::to_string( ursine::UIManager::REMOTE_DEBUGGING_PORT );
 
-#ifdef PLATFORM_WINDOWS
-
-    ShellExecute(
-        nullptr,
-        "open",
-        debugURL.c_str( ),
-        nullptr,
-        nullptr,
-        SW_SHOWNORMAL
-    );
-
-#endif
+    ursine::utils::OpenPath( debugURL );
 
     return CefV8Value::CreateBool( true );
 }

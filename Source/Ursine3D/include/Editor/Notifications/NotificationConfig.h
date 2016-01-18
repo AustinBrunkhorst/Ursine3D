@@ -1,23 +1,23 @@
 #pragma once
 
-#include "Notifications/NotificationType.h"
-#include "Notifications/NotificationButton.h"
+#include "NotificationType.h"
+#include "NotificationButton.h"
 
-#include <TimeSpan.h>
+#include "TimeSpan.h"
 
 #include <string>
 #include <vector>
 
-namespace notification
+namespace ursine
 {
-    typedef ursine::uint32 NotificationID;
-    typedef ursine::uint32 NotificationButtonID;
+    typedef uint32 NotificationID;
+    typedef uint32 NotificationButtonID;
 
     struct NotificationConfig
     {
         // duration to use for an infinite duration 
         // (does not automatically close)
-        const ursine::TimeSpan InfiniteDuration = 0;
+        const TimeSpan InfiniteDuration = 0;
 
         // determines if this notification is dimissible with
         // the close button in the top right
@@ -31,16 +31,24 @@ namespace notification
         std::string message;
 
         // optional list of buttons to display with the notification
-        std::vector<Button> buttons;
+        std::vector<NotificationButton> buttons;
 
         // duration to be displayed before closing.
         // use "NotificationConfig::InfiniteDuration"
         // to never close automatically
-        ursine::TimeSpan duration { ursine::TimeSpan::FromSeconds( 8 ) };
+        TimeSpan duration { TimeSpan::FromSeconds( 8 ) };
 
         // called when the notification has been closed
         std::function<void(void)> closeCallback { nullptr };
 
         NotificationConfig(void) = default;
     };
+
+    #if defined(URSINE_WITH_EDITOR)
+
+    class Notification;
+
+    extern Notification EditorPostNotification(const NotificationConfig &config);
+
+    #endif
 }

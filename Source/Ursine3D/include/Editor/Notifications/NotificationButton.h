@@ -3,9 +3,9 @@
 #include <string>
 #include <functional>
 
-namespace notification
+namespace ursine
 {
-    struct Button
+    struct NotificationButton
     {
         // text to be displayed in the button
         std::string text;

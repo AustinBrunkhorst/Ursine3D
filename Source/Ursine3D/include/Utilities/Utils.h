@@ -54,18 +54,12 @@ namespace ursine
         void Join(
             const std::vector<std::string> &input,
             const std::string &joiner,
-            std::string &output);
+            std::string &output
+        );
 
-        class NoCopy
-        {
-        protected:
-            NoCopy(void) { }
-            ~NoCopy(void) { }
-
-        private:
-            NoCopy(const NoCopy &rhs) = delete;
-            NoCopy &operator=(const NoCopy &rhs) = delete;
-        };
+        // Does the default OS level "open" operation on the given path
+        // for example, on Windows, it will open Explorer for a valid file path
+        void OpenPath(const std::string &path);
     }
 }
 
