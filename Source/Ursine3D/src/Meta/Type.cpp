@@ -559,7 +559,7 @@ namespace ursine
             return object;
         }
 
-        Json Type::SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride) const
+        Json Type::SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride, bool invokeHook) const
         {
             UAssert(
                 *this == instance.GetType( ),
@@ -598,7 +598,8 @@ namespace ursine
                 object[ field.first ] = value.SerializeJson( );
             }
 
-            instance.m_base->OnSerialize( object );
+			if (invokeHook)
+				instance.m_base->OnSerialize( object );
 
             return object;
         }

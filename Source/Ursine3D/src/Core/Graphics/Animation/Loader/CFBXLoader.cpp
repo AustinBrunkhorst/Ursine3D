@@ -1532,8 +1532,12 @@ namespace ursine
 				else if (md.tangentMode == FbxGeometryElement::eByControlPoint)
 					newMV.tangent = md.tangents[md.indices[i]];
 
-				newMV.uv = md.uvs[i];
-				newMV.uv.y = 1.0f - newMV.uv.y;
+				if (md.uvs)
+				{
+					newMV.uv = md.uvs[i];
+					newMV.uv.y = 1.0f - newMV.uv.y;
+				}
+
 				// controls - maybe divide this part later if necessary
 				if (!mModel->mCtrlPoints.empty())
 				{

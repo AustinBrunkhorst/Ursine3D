@@ -130,6 +130,7 @@ JSMethod(EntityHandler::remove)
 
     if (scene->IsPaused( ))
     {
+		// Have this run in the main thread
 		Timer::Create(0).Completed([=] {
 			m_world->clearDeletionQueue( );
 		} );
@@ -181,7 +182,7 @@ JSMethod(EntityHandler::inspect)
 
         componentArray.emplace_back( Json::object {
             { "type", type.GetName( ) },
-            { "value", type.SerializeJson( instance, editorGetterOverride ) }
+            { "value", type.SerializeJson( instance, editorGetterOverride, false ) }
         } );
     }
 
@@ -232,7 +233,10 @@ JSMethod(EntityHandler::addComponent)
 
     auto instance = componentType.CreateDynamic( );
 
-    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+	// Have this run in the main thread
+	Timer::Create(0).Completed([=] {
+		entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -258,7 +262,10 @@ JSMethod(EntityHandler::removeComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    entity->RemoveComponent( id );
+	// Have this run in the main thread
+	Timer::Create(0).Completed([=] {
+		entity->RemoveComponent( id );
+	} );
 
     return CefV8Value::CreateBool( true );
 }

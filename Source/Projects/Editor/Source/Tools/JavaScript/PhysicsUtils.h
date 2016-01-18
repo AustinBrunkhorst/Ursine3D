@@ -23,3 +23,9 @@ JSFunction(ReduceConvexHull);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(GenerateCollidersForScene);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(GenerateBvhTriangleColliderForModel);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(GenerateBvhTriangleColliderForScene);

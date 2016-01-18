@@ -1,6 +1,8 @@
 #
 #First is file name, second is model name
 
+Entrenched_Test1.fbx Entrenched
+
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
 Ship.8.0.mdl Ship
@@ -24,11 +26,13 @@ Gun_Idle.fbx Gun
 Gun_Idle.fbx Gun_Idle
 Gun_Jump.fbx Gun_Jump
 Gun_Shoot.fbx Gun_Shoot
-#
-Player animations
-Player_Idle.fbx Player
-Player_Win.fbx Player_Win
-Player_Run.fbx Player_Run
-Player_Jump.fbx Player_Jump
-Player_Idle.fbx Player_Idle
-Player_Die.fbx Player_Die
+
+# Player animations
+#Player_Idle.fbx Player
+#Player_Win.fbx Player_Win
+#Player_Run.fbx Player_Run
+#Player_Jump.fbx Player_Jump
+#Player_Idle.fbx Player_Idle
+#Player_Die.fbx Player_Die
+
+Monkey.fbx Monkey

@@ -416,7 +416,7 @@ namespace ursine
 
 				/////////////////////////////////////////////////////////////////
 				// CREATE INDEX BUFFER //////////////////////////////////////////
-				newMesh->SetIndexCount( currMesh->meshVtxInfoCount );
+				newMesh->SetIndexCount( currMesh->meshVtxIdxCount );
 
                 auto &indexArray = newMesh->GetRawIndices();
 				for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)

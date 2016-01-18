@@ -52,4 +52,12 @@ class Extern {
     public static function GenerateCollidersForScene() {
         return untyped __js__( "GenerateCollidersForScene()" );
     }
+
+    public static function GenerateBvhTriangleColliderForModel() {
+        return untyped __js__( "GenerateBvhTriangleColliderForModel()" );
+    }
+
+    public static function GenerateBvhTriangleColliderForScene() {
+        return untyped __js__( "GenerateBvhTriangleColliderForScene()" );
+    }
 }

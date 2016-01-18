@@ -38,6 +38,7 @@
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
 #include "ConvexHullColliderComponent.h"
+#include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
 
