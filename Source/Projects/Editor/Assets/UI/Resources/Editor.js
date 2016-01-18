@@ -1458,6 +1458,19 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			item.entity.deselect();
 		}
 	}
+	,deleteSelectedEntities: function() {
+		var _g = 0;
+		var _g1 = this.m_selectedEntities;
+		while(_g < _g1.length) {
+			var uid = _g1[_g];
+			++_g;
+			var item = this.m_entityItems.h[uid];
+			if(item == null) continue;
+			var entity = item.entity;
+			if(entity.isRemovalEnabled()) entity.remove(); else {
+			}
+		}
+	}
 	,resetScene: function() {
 		this.m_selectedEntities = [];
 		this.m_rootView.innerHTML = "";
@@ -1632,29 +1645,25 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			});
 		}
 	}
-	,deleteSelectedEntities: function() {
-		var _g = 0;
-		var _g1 = this.m_selectedEntities;
-		while(_g < _g1.length) {
-			var uid = _g1[_g];
-			++_g;
-			var item = this.m_entityItems.h[uid];
-			if(item == null) continue;
-			var entity = item.entity;
-			if(entity.isRemovalEnabled()) entity.remove(); else {
-			}
-		}
-	}
 });
 var ursine_editor_windows_SceneView = function() {
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
 	this.window.heading = "Scene";
 	this.onViewportInvalidated();
+	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
 $hxClasses["ursine.editor.windows.SceneView"] = ursine_editor_windows_SceneView;
 ursine_editor_windows_SceneView.__name__ = ["ursine","editor","windows","SceneView"];
 ursine_editor_windows_SceneView.__super__ = ursine_editor_NativeCanvasWindowHandler;
 ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWindowHandler.prototype,{
+	onWindowKeyDown: function(e) {
+		var _g = e.keyCode;
+		switch(_g) {
+		case 46:
+			ursine_editor_windows_SceneOutline.instance.deleteSelectedEntities();
+			break;
+		}
+	}
 });
 var ursine_native_Extern = function() { };
 $hxClasses["ursine.native.Extern"] = ursine_native_Extern;
