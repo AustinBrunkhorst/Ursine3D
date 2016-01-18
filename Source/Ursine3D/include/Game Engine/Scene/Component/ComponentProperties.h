@@ -78,3 +78,15 @@ struct EditorSetter : ursine::meta::MetaProperty
     EditorSetter(const char *setter)
         : setter( setter ) { }
 };
+
+struct RequiresComponents : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    Meta(Disable)
+    std::vector<ursine::meta::Type> componentTypes;
+
+    template<typename... Types>
+    RequiresComponents(Types &&...types)
+        : componentTypes( { std::forward( types... ) } ) { }
+};

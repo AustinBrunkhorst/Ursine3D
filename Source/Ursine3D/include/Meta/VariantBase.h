@@ -34,6 +34,9 @@ namespace ursine
             virtual std::string ToString(void) const = 0;
 
             virtual VariantBase *Clone(void) const = 0;
+
+            virtual void OnSerialize(Json::object &output) const { }
+            virtual void OnDeserialize(const Json &input) { }
         };
     }
 }

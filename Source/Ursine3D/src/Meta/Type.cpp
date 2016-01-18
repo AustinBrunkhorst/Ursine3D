@@ -554,6 +554,8 @@ namespace ursine
                 object[ field.first ] = value.SerializeJson( );
             }
 
+            instance.m_base->OnSerialize( object );
+
             return object;
         }
 
@@ -595,6 +597,8 @@ namespace ursine
 
                 object[ field.first ] = value.SerializeJson( );
             }
+
+            instance.m_base->OnSerialize( object );
 
             return object;
         }
@@ -662,10 +666,12 @@ namespace ursine
 				if (!fieldData.is_null( ))
 				{
 					field.second.SetValue( instance, 
-						fieldType.DeserializeJson( fieldData ) 
+						fieldType.DeserializeJson( fieldData )
 					);
 				}
             }
+
+            instance.m_base->OnDeserialize( value );
         }
     }
 }

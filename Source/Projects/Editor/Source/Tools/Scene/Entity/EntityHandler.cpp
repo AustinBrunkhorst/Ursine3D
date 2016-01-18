@@ -18,6 +18,7 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include <Timer.h>
 #include <Meta.h>
 #include <ComponentConfig.h>
 
@@ -128,7 +129,11 @@ JSMethod(EntityHandler::remove)
     auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
 
     if (scene->IsPaused( ))
-        m_world->clearDeletionQueue( );
+    {
+		Timer::Create(0).Completed([=] {
+			m_world->clearDeletionQueue( );
+		} );
+    }
 
     return CefV8Value::CreateBool( true );
 }

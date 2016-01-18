@@ -24,7 +24,7 @@ namespace ursine
         CORE_SYSTEM
 
     public:
-        Meta(Enable)
+        Meta(Enable, DisableNonDynamic)
         TimerManager(void);
         ~TimerManager(void);
 
@@ -44,6 +44,8 @@ namespace ursine
         friend class LocalTimerManager;
 
         uint32 m_nextID;
+
+		std::mutex m_mutex;
 
         std::unordered_map<uint32, Timer> m_timers;
 

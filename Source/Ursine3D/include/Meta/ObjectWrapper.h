@@ -32,6 +32,8 @@ namespace ursine
 
             VariantBase *Clone(void) const override;
 
+            void OnSerialize(Json::object &output) const override;
+            void OnDeserialize(const Json &input) override;
         private:
             Object *m_object;
         };

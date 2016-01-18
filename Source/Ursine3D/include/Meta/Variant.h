@@ -84,6 +84,7 @@ namespace ursine
             bool IsConst(void) const;
 
         private:
+            friend class Type;
             friend class Argument;
             friend class Destructor;
 

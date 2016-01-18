@@ -40,6 +40,12 @@ namespace ursine
 			Meta(Disable)
 			void OnInitialize(void) override;
 
+			Meta(Disable)
+			void OnSerialize(Json::object &output) const override;
+
+			Meta(Disable)
+			void OnDeserialize(const Json &input) override;
+
 			void GenerateConvexHull(Model3D *model);
 
 			void ReduceVertices(void);
