@@ -27,7 +27,6 @@ namespace ursine
 			friend class PhysicsSystem;
 
 		public:
-
 			BvhTriangleMeshCollider(void);
 			~BvhTriangleMeshCollider(void);
 

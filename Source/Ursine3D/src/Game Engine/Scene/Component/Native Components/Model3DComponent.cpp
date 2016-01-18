@@ -89,9 +89,9 @@ namespace ursine
             return m_modelName;
         }
 
-        const graphics::ModelResource * Model3D::GetModelResource(void) const
+        const graphics::ModelResource *Model3D::GetModelResource(void) const
         {
-            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource(m_modelName);
+            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource( m_modelName );
         }
 
         void Model3D::SetMaterial(const std::string &name)
@@ -140,7 +140,7 @@ namespace ursine
 
         int Model3D::GetRenderMask() const
         {
-            int retVal = static_cast<int>(m_model->GetRenderMask( ) & 0xFFFFFFFF);
+            int retVal = static_cast<int>( m_model->GetRenderMask( ) & 0xFFFFFFFF );
 
             return retVal;
         }
@@ -178,6 +178,16 @@ namespace ursine
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }
+
+	    void Model3D::OnSerialize(Json::object &output) const
+	    {
+			output[ "meshIndex" ] = GetMeshIndex( );
+	    }
+
+	    void Model3D::OnDeserialize(const Json &input)
+	    {
+			SetMeshIndex( input[ "meshIndex" ].int_value( ) );
+	    }
 
     #if defined(URSINE_WITH_EDITOR)
 

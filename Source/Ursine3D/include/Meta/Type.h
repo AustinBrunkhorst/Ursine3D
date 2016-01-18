@@ -403,7 +403,7 @@ namespace ursine
              */
             const Global &GetStaticField(const std::string &name) const;
 
-            Json SerializeJson(const Variant &instance) const;
+            Json SerializeJson(const Variant &instance, bool invokeHook = true) const;
             Json SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride, bool invokeHook = true) const;
             Variant DeserializeJson(const Json &value) const;
             Variant DeserializeJson(const Json &value, const Constructor &ctor) const;

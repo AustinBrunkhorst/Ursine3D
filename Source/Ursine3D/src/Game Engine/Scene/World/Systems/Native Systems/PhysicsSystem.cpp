@@ -138,7 +138,7 @@ namespace ursine
 
             m_world->Listener( this )
                 .On( WORLD_UPDATE, &PhysicsSystem::onUpdate, 100000 )
-                .On( WORLD_EDITOR_UPDATE, &PhysicsSystem::onEditorUpdate )
+                .On( WORLD_EDITOR_UPDATE, &PhysicsSystem::onEditorUpdate, -10000 )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &PhysicsSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &PhysicsSystem::onComponentRemoved );
         }

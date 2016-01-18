@@ -515,7 +515,7 @@ namespace ursine
             return database.types[ m_id ].staticFields[ name ];
         }
 
-        Json Type::SerializeJson(const Variant &instance) const
+        Json Type::SerializeJson(const Variant &instance, bool invokeHook) const
         {
             UAssert(
                 *this == instance.GetType( ),
@@ -554,7 +554,8 @@ namespace ursine
                 object[ field.first ] = value.SerializeJson( );
             }
 
-            instance.m_base->OnSerialize( object );
+			if (invokeHook)
+				instance.m_base->OnSerialize( object );
 
             return object;
         }

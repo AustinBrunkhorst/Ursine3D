@@ -17,6 +17,10 @@
 
 #include "Model3DComponent.h"
 
+#include "base91.hpp"
+
+#include "BulletWorldImporter/btBulletWorldImporter.h"
+
 namespace ursine
 {
 	namespace physics
@@ -24,9 +28,14 @@ namespace ursine
 	#ifdef BULLET_PHYSICS
 
 		BvhTriangleMeshCollider::BvhTriangleMeshCollider(void)
-			: BvhTriangleMeshColliderBase( new btTriangleIndexVertexArray( ), true, false )
+			: BvhTriangleMeshColliderBase( 
+				new btBvhTriangleMeshShape( new btTriangleIndexVertexArray( ), true, false ), btVector3(1.0f, 1.0f, 1.0f)
+			)
 		{
-			m_triangleIndexVertexArray = reinterpret_cast<btTriangleIndexVertexArray*>( m_meshInterface );
+			m_triangleIndexVertexArray = reinterpret_cast<btTriangleIndexVertexArray*>( getChildShape( )->getMeshInterface( ) );
+
+			// Turn off debug drawing at first (until the mesh is generated)
+			m_shapeType = INVALID_SHAPE_PROXYTYPE;
 		}
 
 	#endif
@@ -78,9 +87,14 @@ namespace ursine
 				m_triangleIndexVertexArray->addIndexedMesh( part );
 			}
 
-			m_triangleIndexVertexArray->calculateAabbBruteForce( m_localAabbMin, m_localAabbMax );
+			m_triangleIndexVertexArray->calculateAabbBruteForce( 
+				const_cast<btVector3&>( getChildShape( )->getLocalAabbMin( ) ),
+				const_cast<btVector3&>( getChildShape( )->getLocalAabbMax( ) ) 
+			);
 
-			buildOptimizedBvh( );
+			getChildShape( )->buildOptimizedBvh( );
+
+			m_shapeType = SCALED_TRIANGLE_MESH_SHAPE_PROXYTYPE;
 
 		#endif
 		}
@@ -99,8 +113,21 @@ namespace ursine
 		#ifdef BULLET_PHYSICS
 
 			btDefaultSerializer serializer;
+			
+			serializer.startSerialization( );
 
-			// serialize( reinterpret_cast<void*>( this ), &serializer );
+			getChildShape( )->serializeSingleShape( &serializer );
+
+			serializer.finishSerialization( );
+
+			auto buffer = serializer.getBufferPointer( );
+			auto size = serializer.getCurrentBufferSize( );
+
+			auto encoded_91 = base91::encode( std::string( 
+				reinterpret_cast<const char *>( buffer ), size 
+			) );
+
+			output[ "data" ] = encoded_91;
 
 		#endif
 		}
@@ -109,7 +136,24 @@ namespace ursine
 		{
 		#ifdef BULLET_PHYSICS
 
+			auto encoded_91 = input[ "data" ].string_value( );
+			auto decoded_91 = base91::decode( encoded_91 );
 
+			btBulletWorldImporter import;
+
+			import.loadFileFromMemory( 
+				reinterpret_cast<char*>( &decoded_91[ 0 ] ), decoded_91.size( )
+			);
+
+			auto numShapes = import.getNumCollisionShapes( );
+
+			UAssert( numShapes > 0, "Something went wrong when Serializeing the BvhTriangleMeshCollider." );
+
+			setChildShape( 
+				reinterpret_cast<btBvhTriangleMeshShape*>( import.getCollisionShapeByIndex( 0 ) ) 
+			);
+
+			m_shapeType = SCALED_TRIANGLE_MESH_SHAPE_PROXYTYPE;
 
 		#endif
 		}

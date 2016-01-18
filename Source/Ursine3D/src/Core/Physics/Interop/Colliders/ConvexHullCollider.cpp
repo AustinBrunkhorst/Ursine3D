@@ -25,7 +25,12 @@ namespace ursine
 	{
 		ConvexHullCollider::ConvexHullCollider(void)
 		{
-			
+		#ifdef BULLET_PHYSICS
+
+			// Turn off debug drawing at first (until the mesh is generated)
+			m_shapeType = EMPTY_SHAPE_PROXYTYPE;
+
+		#endif
 		}
 
 		ConvexHullCollider::~ConvexHullCollider(void)
@@ -72,6 +77,8 @@ namespace ursine
 
 			// recalculate the AABB
 			recalcLocalAabb( );
+
+			m_shapeType = CONVEX_HULL_SHAPE_PROXYTYPE;
 
 		#endif
 		}
