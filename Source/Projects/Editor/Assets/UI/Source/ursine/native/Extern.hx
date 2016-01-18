@@ -60,4 +60,12 @@ class Extern {
     public static function NotificationCloseCallback(id : UInt) {
         return untyped __js__( "notification_NotificationCloseCallback(id)" );
     }
+
+    public static function GenerateBvhTriangleColliderForModel() {
+        return untyped __js__( "GenerateBvhTriangleColliderForModel()" );
+    }
+
+    public static function GenerateBvhTriangleColliderForScene() {
+        return untyped __js__( "GenerateBvhTriangleColliderForScene()" );
+    }
 }

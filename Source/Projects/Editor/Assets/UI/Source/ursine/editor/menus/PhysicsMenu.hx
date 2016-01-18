@@ -16,4 +16,14 @@ class PhysicsMenu extends MenuItemHandler {
     static function doGenerateCollidersForScene() {
         ursine.native.Extern.GenerateCollidersForScene( );
     }
+
+    @mainMenuItem( "Physics/Model3D: Generate Bvh Triangle Mesh Collider For Model" )
+    static function doGenerateBvhTriangleMeshColliderForModel() {
+        ursine.native.Extern.GenerateBvhTriangleColliderForModel( );
+    }
+
+    @mainMenuItem( "Physics/FBXSceneRootNode: Generate Bvh Triangle Mesh Colliders For Scene" )
+    static function doGenerateBvhTriangleMeshCollidersForScene() {
+        ursine.native.Extern.GenerateBvhTriangleColliderForScene( );
+    }
 }

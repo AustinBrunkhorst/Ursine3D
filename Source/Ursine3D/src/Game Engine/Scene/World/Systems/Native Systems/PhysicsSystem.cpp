@@ -22,6 +22,7 @@
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
 #include "ConvexHullColliderComponent.h"
+#include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "GfxAPI.h"
 #include "PhysicsSettingsComponent.h"
@@ -42,7 +43,8 @@ namespace ursine
                 CylinderCollider,
                 CapsuleCollider,
                 ConeCollider,
-				ConvexHullCollider
+				ConvexHullCollider,
+				BvhTriangleMeshCollider
             >( );
 
 			m_simulation.SetDebugDrawer( &m_debugDrawer );
@@ -258,6 +260,12 @@ namespace ursine
 				auto *hull = entity->GetComponent<ConvexHullCollider>( );
 
 				addCollider( entity, &hull->m_convexHullCollider );
+			}
+			else if (component->Is<BvhTriangleMeshCollider>( ))
+			{
+				auto *bvhMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
+
+				addCollider( entity, &bvhMesh->m_bvhTriangleMeshCollider );
 			}
             else if (component->Is<EmptyCollider>( ))
             {

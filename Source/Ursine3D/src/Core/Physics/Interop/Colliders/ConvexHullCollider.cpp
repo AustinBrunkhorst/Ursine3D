@@ -11,8 +11,6 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#pragma once
-
 #include "UrsinePrecompiled.h"
 
 #include "ConvexHullCollider.h"
@@ -54,7 +52,7 @@ namespace ursine
 				return;
 			}
 
-			auto meshesArray = model->GetModelResource( )->GetMeshArray( );
+			auto meshesArray = modelResource->GetMeshArray( );
 			auto meshIndex = model->GetMeshIndex( );
 			std::vector<graphics::Mesh*> meshesToGenerate;
 
