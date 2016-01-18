@@ -52,4 +52,12 @@ class Extern {
     public static function GenerateCollidersForScene() {
         return untyped __js__( "GenerateCollidersForScene()" );
     }
+
+    public static function NotificationButtonCallback(id : UInt, buttonID : UInt) {
+        return untyped __js__( "notification_NotificationButtonCallback(id, buttonID)" );
+    }
+
+    public static function NotificationCloseCallback(id : UInt) {
+        return untyped __js__( "notification_NotificationCloseCallback(id)" );
+    }
 }

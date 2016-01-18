@@ -20,13 +20,15 @@
 
 #include "Project.h"
 
+#include "Notifications/NotificationManager.h"
+
 class NativeEditorTool;
 
 class Editor : public ursine::core::CoreSystem
 {
     CORE_SYSTEM
 public:
-    Meta(Enable)
+    Meta(Enable, DisableNonDynamic)
     Editor(void);
     ~Editor(void);
 
@@ -37,9 +39,15 @@ public:
     ursine::UIView::Handle GetMainUI(void) const;
 
     Project::Handle GetProject(void) const;
+
+    notification::NotificationManager &GetNotificationManager(void);
+
+    notification::Notification PostNotification(const notification::NotificationConfig &config);
     
 private:
     ursine::graphics::GfxAPI *m_graphics;
+
+    notification::NotificationManager m_notificationManager;
 
     struct
     {

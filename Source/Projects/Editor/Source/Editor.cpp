@@ -90,6 +90,8 @@ void Editor::OnInitialize(void)
 
     m_project = std::make_shared<Project>( m_mainWindow.ui );
 
+    m_notificationManager.SetUI( m_mainWindow.ui );
+
     initializeScene( );
 }
 
@@ -125,6 +127,16 @@ UIView::Handle Editor::GetMainUI(void) const
 std::shared_ptr<Project> Editor::GetProject(void) const
 {
     return m_project;
+}
+
+notification::NotificationManager &Editor::GetNotificationManager(void)
+{
+    return m_notificationManager;
+}
+
+notification::Notification Editor::PostNotification(const notification::NotificationConfig &config)
+{
+    return m_notificationManager.Create( config );
 }
 
 void Editor::initializeGraphics(void)
