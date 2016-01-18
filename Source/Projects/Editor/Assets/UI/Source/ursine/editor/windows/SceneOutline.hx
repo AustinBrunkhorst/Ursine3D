@@ -102,7 +102,10 @@ class SceneOutline extends WindowHandler {
     private function onEntityAdded(e) {
         var entity = new Entity( e.uniqueID );
 
-        addEntity( entity );
+        // race conditions...
+        haxe.Timer.delay( function() {
+            addEntity( entity );
+        }, 0 );
     }
 
     private function onEntityRemoved(e) {
@@ -195,9 +198,6 @@ class SceneOutline extends WindowHandler {
         } else {
 
             var parentItem : TreeViewItem = m_entityItems[ parent.uniqueID ];
-
-            trace( parent.getName( ) );
-            trace( item );
 
             if (parentItem != null)
                 parentItem.child.appendChild( item );

@@ -1492,8 +1492,11 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		}
 	}
 	,onEntityAdded: function(e) {
+		var _g = this;
 		var entity = new ursine_editor_scene_entity_Entity(e.uniqueID);
-		this.addEntity(entity);
+		haxe_Timer.delay(function() {
+			_g.addEntity(entity);
+		},0);
 	}
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
@@ -1543,8 +1546,6 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var parent = entity.getParent();
 		if(parent == null) this.m_rootView.appendChild(item); else {
 			var parentItem = this.m_entityItems.h[parent.uniqueID];
-			console.log(parent.getName());
-			console.log(item);
 			if(parentItem != null) parentItem.child.appendChild(item);
 		}
 		if(entity.hasComponent("Selected")) this.selectEntity(item);
