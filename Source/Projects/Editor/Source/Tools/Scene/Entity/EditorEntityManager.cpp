@@ -191,7 +191,8 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
-        { "value", component.SerializeJson( ) }
+		// note: false is to ensure no serialization hooks are called
+        { "value", component.GetType( ).SerializeJson( component, false ) }
     };
 
     m_project->GetUI( )->Message(
@@ -239,7 +240,8 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
             { "component", args->component->GetType( ).GetName( ) },
             { "field", args->field },
-            { "value", args->value.SerializeJson( ) }
+			// note: false is to ensure no serialization hooks are called
+            { "value", args->value.GetType( ).SerializeJson( args->value, false ) }
         };
 
         m_project->GetUI( )->Message(

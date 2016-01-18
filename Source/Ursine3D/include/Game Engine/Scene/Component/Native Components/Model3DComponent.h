@@ -94,6 +94,12 @@ namespace ursine
             void SetMeshIndex(const int index);
 			int GetMeshIndex(void) const;
 
+			Meta(Disable)
+			void OnSerialize(Json::object &output) const override;
+
+			Meta(Disable)
+			void OnDeserialize(const Json &input) override;
+
         private:
 
             // This model component's model in the renderer

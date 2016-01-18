@@ -175,5 +175,15 @@ namespace ursine
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }
+
+	    void Model3D::OnSerialize(Json::object& output) const
+	    {
+			output[ "meshIndex" ] = GetMeshIndex( );
+	    }
+
+	    void Model3D::OnDeserialize(const Json& input)
+	    {
+			SetMeshIndex( input[ "meshIndex" ].int_value( ) );
+	    }
     }
 }

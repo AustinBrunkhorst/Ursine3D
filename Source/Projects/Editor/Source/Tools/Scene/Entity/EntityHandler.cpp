@@ -231,10 +231,9 @@ JSMethod(EntityHandler::addComponent)
     if (!componentType.IsValid( ))
         return CefV8Value::CreateBool( false );
 
-    auto instance = componentType.CreateDynamic( );
-
 	// Have this run in the main thread
-	Timer::Create(0).Completed([=] {
+	Timer::Create( 0 ).Completed( [=] {
+		auto instance = componentType.CreateDynamic( );
 		entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
 	} );
 

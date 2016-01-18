@@ -56,6 +56,11 @@ public:
 		return m_bvhTriMeshShape;
 	}
 
+	void setChildShape(btBvhTriangleMeshShape *shape)
+	{
+		m_bvhTriMeshShape = shape;
+	}
+
 	//debugging
 	virtual const char*	getName()const {return "SCALEDBVHTRIANGLEMESH";}
 
