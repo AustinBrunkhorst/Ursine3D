@@ -16,10 +16,8 @@
 #include "Model3DComponent.h"
 #include "CoreSystem.h"
 #include "GfxAPI.h"
-#include "EntityEvent.h"
-
+#include "ConvexHullColliderComponent.h"
 #include "Notification.h"
-#include "NotificationConfig.h"
 
 namespace ursine
 {
@@ -191,24 +189,37 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-        void Model3D::GenerateCollider(void)
+        void Model3D::GenerateConvexHull(void)
         {
-            NotificationConfig config;
+			auto entity = GetOwner( );
 
-            config.header = "Testing";
-            config.message = "Generate collider called from C++";
+            if (!entity->HasComponent<ConvexHullCollider>( ))
+				entity->AddComponent<ConvexHullCollider>( );
 
-            EditorPostNotification( config );
+			auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+
+			convexHull->GenerateConvexHull( this );
         }
 
         void Model3D::ReduceConvexHull(void)
         {
-            NotificationConfig config;
+			auto entity = GetOwner( );
+			auto convexHull = entity->GetComponent<ConvexHullCollider>( );
 
-            config.header = "Testing";
-            config.message = "Reduce convex hull called from C++";
+			if (!convexHull)
+			{
+				// Send notification of invalid action
+				NotificationConfig config;
 
-            EditorPostNotification( config );
+				config.type = NOTIFY_ERROR;
+				config.dismissible = true;
+				config.header = "Invalid Operation";
+				config.message = "You must first generate a convex hull in order to reduce it.";
+
+				EditorPostNotification( config );
+			}
+			else
+				convexHull->ReduceVertices( );
         }
 
     #endif

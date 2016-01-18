@@ -31,8 +31,8 @@ namespace ursine
 
         public:
             EditorButton(
-                GenerateCollider, 
-                "Generate Collider"
+                GenerateConvexHull, 
+                "Generate Convex Hull"
             );
 
             EditorButton(

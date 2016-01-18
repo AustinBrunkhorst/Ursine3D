@@ -42,46 +42,12 @@ static Entity *GetSelectedEntity(void)
 }
 
 JSFunction(GenerateColliderForModel)
-{
-	auto entity = GetSelectedEntity( );
-
-	if (entity)
-	{
-		auto model = entity->GetComponent<Model3D>( );
-
-		// if (!model)
-			// TODO: Send toast notification to user that you can't generate collider without model
-
-		if (!entity->HasComponent<ConvexHullCollider>( ))
-			entity->AddComponent<ConvexHullCollider>( );
-
-		auto convexHull = entity->GetComponent<ConvexHullCollider>( );
-
-		convexHull->GenerateConvexHull( model );
-	}
-	else
-	{
-		// TODO: Send toast notification to user that they should select an entity first
-	}
-	
+{	
 	return CefV8Value::CreateUndefined( );
 }
 
 JSFunction(ReduceConvexHull)
 {
-	auto entity = GetSelectedEntity();
-
-	if (entity)
-	{
-		auto convexHull = entity->GetComponent<ConvexHullCollider>( );
-
-		if (!convexHull)
-			// TODO: Send toast notification
-			return CefV8Value::CreateUndefined( );
-
-		convexHull->ReduceVertices( );
-	}
-
 	return CefV8Value::CreateUndefined( );
 }
 
