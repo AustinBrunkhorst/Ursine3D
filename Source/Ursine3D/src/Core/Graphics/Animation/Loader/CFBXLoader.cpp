@@ -168,7 +168,7 @@ namespace ursine
 			ProcessScene(mScene->GetRootNode());
 
 			// Export FBX model as custom file format
-			Export();
+			ReadyToExport();
 			//CustomFileExport();
 
 			return true;
@@ -228,7 +228,7 @@ namespace ursine
 		}
 
 		// divide this huge function part by part layer
-		bool CFBXLoader::Export()
+		bool CFBXLoader::ReadyToExport()
 		{
 			if (nullptr == mModelInfo) mModelInfo = new ufmt_loader::ModelInfo;
 			if (nullptr == mLevelInfo) mLevelInfo = new ufmt_loader::LevelInfo;
@@ -250,82 +250,83 @@ namespace ursine
 				// name & counter initialization
 				std::strcpy(newMeshInfo.name, currMD->name.c_str());
 
-				//// Reconstruct Vertices and Indices for data compression
-				//std::vector<FileSystem::MeshVertex> rmvVec;
-				//std::vector<unsigned int> rIVec;
-				//Reconstruct(i, rmvVec, rIVec, *currMD);
-				//
-				//currMI->meshVtxInfoCount = rmvVec.size();
-				//currMI->meshVtxIdxCount = rIVec.size();
-				//currMI->meshVtxInfos = new MeshVertex[currMI->meshVtxInfoCount];
-				//currMI->meshVtxIndices = new unsigned int[currMI->meshVtxIdxCount];
-				//for (j = 0; j < currMI->meshVtxInfoCount; ++j)
-				//	currMI->meshVtxInfos[j] = rmvVec[j];
-				//for (j = 0; j < currMI->meshVtxIdxCount; ++j)
-				//	currMI->meshVtxIndices[j] = rIVec[j];
-
-				// mesh Transformation
-				//currMI->meshTM = currMD->meshTM;
-				newMeshInfo.meshVtxInfoCount = currMD->indexCnt;
+				// Reconstruct Vertices and Indices for data compression
+				std::vector<ufmt_loader::MeshVertex> rmvVec;
+				std::vector<unsigned int> rIVec;
+				Reconstruct(i, rmvVec, rIVec, *currMD);
+				
+				newMeshInfo.meshVtxInfoCount = rmvVec.size();
+				newMeshInfo.meshVtxIdxCount = rIVec.size();
 				for (j = 0; j < newMeshInfo.meshVtxInfoCount; ++j)
-				{
-					ufmt_loader::MeshVertex newMV;
-					if(currMD->vertices && currMD->indices)
-						newMV.pos = currMD->vertices[currMD->indices[j]];
-
-					if (currMD->normals)
-					{
-						if (currMD->normalMode == FbxGeometryElement::eByPolygonVertex)
-							newMV.normal = currMD->normals[j];
-						else if (currMD->normalMode == FbxGeometryElement::eByControlPoint)
-							newMV.normal = currMD->normals[currMD->indices[j]];
-					}
-
-					if (currMD->tangents)
-					{
-						if (currMD->tangentMode == FbxGeometryElement::eByPolygonVertex)
-							newMV.tangent = currMD->tangents[j];
-						else if (currMD->tangentMode == FbxGeometryElement::eByControlPoint)
-							newMV.tangent = currMD->tangents[currMD->indices[j]];
-					}
-
-					if (currMD->uvs)
-					{
-						newMV.uv = currMD->uvs[j];
-						newMV.uv.y = 1.0f - newMV.uv.y;
-					}
-
-					// controls - maybe divide this part later if necessary
-					if (!mModel->mCtrlPoints.empty())
-					{
-						if (currMD->indices)
-						{
-							// currently, just for using 1st control point vec
-							newMV.ctrlBlendWeights.x = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingWeight;
-							newMV.ctrlBlendWeights.y = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingWeight;
-							newMV.ctrlBlendWeights.z = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingWeight;
-							newMV.ctrlBlendWeights.w = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingWeight;
-							newMV.ctrlIndices.x = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingIndex;
-							newMV.ctrlIndices.y = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingIndex;
-							newMV.ctrlIndices.z = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingIndex;
-							newMV.ctrlIndices.w = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingIndex;
-						}
-					}
-					newMeshInfo.meshVtxInfos.push_back(newMV);
-				}
-
-				//fbxmaterials
-				newMeshInfo.mtrlCount = static_cast<unsigned int>(currMD->fbxmaterials.size());
-				for (j = 0; j < newMeshInfo.mtrlCount; ++j)
-					newMeshInfo.mtrlName.push_back(currMD->fbxmaterials[j].name.c_str());
-
-				//this thing and subset stuff will be useful for handling multimaterial model
-				newMeshInfo.mtrlIndexCount = mModel->mMeshData[i]->mtrlIndexCnt;
-				for (j = 0; j < newMeshInfo.mtrlIndexCount; ++j)
-					newMeshInfo.materialIndices.push_back(currMD->materialIndices[j]);
+					newMeshInfo.meshVtxInfos.push_back(rmvVec[j]);
+				for (j = 0; j < newMeshInfo.meshVtxIdxCount; ++j)
+					newMeshInfo.meshVtxIndices.push_back(rIVec[j]);
 
 				// push back into the vector
 				mModelInfo->mMeshInfoVec.push_back(newMeshInfo);
+
+				//// mesh Transformation
+				////currMI->meshTM = currMD->meshTM;
+				//newMeshInfo.meshVtxInfoCount = currMD->indexCnt;
+				//for (j = 0; j < newMeshInfo.meshVtxInfoCount; ++j)
+				//{
+				//	ufmt_loader::MeshVertex newMV;
+				//	if(currMD->vertices && currMD->indices)
+				//		newMV.pos = currMD->vertices[currMD->indices[j]];
+				//
+				//	if (currMD->normals)
+				//	{
+				//		if (currMD->normalMode == FbxGeometryElement::eByPolygonVertex)
+				//			newMV.normal = currMD->normals[j];
+				//		else if (currMD->normalMode == FbxGeometryElement::eByControlPoint)
+				//			newMV.normal = currMD->normals[currMD->indices[j]];
+				//	}
+				//
+				//	if (currMD->tangents)
+				//	{
+				//		if (currMD->tangentMode == FbxGeometryElement::eByPolygonVertex)
+				//			newMV.tangent = currMD->tangents[j];
+				//		else if (currMD->tangentMode == FbxGeometryElement::eByControlPoint)
+				//			newMV.tangent = currMD->tangents[currMD->indices[j]];
+				//	}
+				//
+				//	if (currMD->uvs)
+				//	{
+				//		newMV.uv = currMD->uvs[j];
+				//		newMV.uv.y = 1.0f - newMV.uv.y;
+				//	}
+				//
+				//	// controls - maybe divide this part later if necessary
+				//	if (!mModel->mCtrlPoints.empty())
+				//	{
+				//		if (currMD->indices)
+				//		{
+				//			// currently, just for using 1st control point vec
+				//			newMV.ctrlBlendWeights.x = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingWeight;
+				//			newMV.ctrlBlendWeights.y = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingWeight;
+				//			newMV.ctrlBlendWeights.z = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingWeight;
+				//			newMV.ctrlBlendWeights.w = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingWeight;
+				//			newMV.ctrlIndices.x = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingIndex;
+				//			newMV.ctrlIndices.y = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingIndex;
+				//			newMV.ctrlIndices.z = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingIndex;
+				//			newMV.ctrlIndices.w = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingIndex;
+				//		}
+				//	}
+				//	newMeshInfo.meshVtxInfos.push_back(newMV);
+				//}
+				//
+				////fbxmaterials
+				//newMeshInfo.mtrlCount = static_cast<unsigned int>(currMD->fbxmaterials.size());
+				//for (j = 0; j < newMeshInfo.mtrlCount; ++j)
+				//	newMeshInfo.mtrlName.push_back(currMD->fbxmaterials[j].name.c_str());
+				//
+				////this thing and subset stuff will be useful for handling multimaterial model
+				//newMeshInfo.mtrlIndexCount = mModel->mMeshData[i]->mtrlIndexCnt;
+				//for (j = 0; j < newMeshInfo.mtrlIndexCount; ++j)
+				//	newMeshInfo.materialIndices.push_back(currMD->materialIndices[j]);
+				//
+				//// push back into the vector
+				//mModelInfo->mMeshInfoVec.push_back(newMeshInfo);
 			}
 
 			// material data
@@ -1512,6 +1513,65 @@ namespace ursine
 		{
 			FbxMatrix * m = (FbxMatrix*)&pAMatrix;
 			return m->MultNormalize(point);
+		}
+		
+		//reconstruct vertices and indices
+		void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md)
+		{
+			for (unsigned int i = 0; i < md.indexCnt; ++i)
+			{
+				ufmt_loader::MeshVertex newMV;
+				newMV.pos = md.vertices[md.indices[i]];
+				if (md.normalMode == FbxGeometryElement::eByPolygonVertex)
+					newMV.normal = md.normals[i];
+				else if (md.normalMode == FbxGeometryElement::eByControlPoint)
+					newMV.normal = md.normals[md.indices[i]];
+
+				if (md.tangentMode == FbxGeometryElement::eByPolygonVertex)
+					newMV.tangent = md.tangents[i];
+				else if (md.tangentMode == FbxGeometryElement::eByControlPoint)
+					newMV.tangent = md.tangents[md.indices[i]];
+
+				newMV.uv = md.uvs[i];
+				newMV.uv.y = 1.0f - newMV.uv.y;
+				// controls - maybe divide this part later if necessary
+				if (!mModel->mCtrlPoints.empty())
+				{
+					if (!(*mModel->mCtrlPoints[meshIdx]).empty())
+					{
+						// currently, just for using 1st control point vec
+						newMV.ctrlBlendWeights.x = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingWeight;
+						newMV.ctrlBlendWeights.y = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingWeight;
+						newMV.ctrlBlendWeights.z = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingWeight;
+						newMV.ctrlBlendWeights.w = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingWeight;
+						newMV.ctrlIndices.x = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingIndex;
+						newMV.ctrlIndices.y = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingIndex;
+						newMV.ctrlIndices.z = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingIndex;
+						newMV.ctrlIndices.w = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingIndex;
+					}
+				}
+
+				bool bFound = false;
+				unsigned int index = 0;
+				for (unsigned int j = 0; j < mvVec.size(); ++j)
+				{
+					if (newMV == mvVec[j])
+					{
+						bFound = true;
+						// if there is same MeshVertex, just add the index of it.
+						miVec.push_back(j);
+						break;
+					}
+					++index;
+				}
+
+				// if there is no MeshVertex, store the vertex and set a index as the last one
+				if (!bFound)
+				{
+					mvVec.push_back(newMV);
+					miVec.push_back(index);
+				}
+			}
 		}
 	}
 }

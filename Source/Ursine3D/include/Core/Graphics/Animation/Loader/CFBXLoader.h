@@ -75,7 +75,7 @@ namespace ursine
 			*
 			*  @return if success return true, else return false
 			*/
-			bool Export();
+			bool ReadyToExport();
 
 			/** @brief fbx loader export function
 			*
@@ -364,6 +364,8 @@ namespace ursine
 			*  @return FbxVector4 type transformed vector
 			*/
 			FbxVector4 Transform(const FbxAMatrix& pAMatrix, const FbxVector4& point);
+
+			void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md);
 
 			/** @brief fbx loader get mesh data function
 			*

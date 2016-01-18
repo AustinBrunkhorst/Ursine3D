@@ -336,7 +336,6 @@ namespace ursine
                 Mesh *newMesh = new Mesh( );
                 newMesh->SetID(mesh_idx);
 
-
 				/////////////////////////////////////////////////////////////////
 				// ALLOCATE MODEL ///////////////////////////////////////////////				
 
@@ -421,7 +420,7 @@ namespace ursine
 
                 auto &indexArray = newMesh->GetRawIndices();
 				for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
-					indexArray[x] = x;// currMesh->indices[x];
+					indexArray[x] = currMesh->meshVtxIndices[x];
 
 				D3D11_BUFFER_DESC indexBufferDesc;
 				D3D11_SUBRESOURCE_DATA indexData;
