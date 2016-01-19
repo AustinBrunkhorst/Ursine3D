@@ -67,6 +67,8 @@ namespace ursine
 			else
 				meshesToGenerate.push_back( meshesArray[ meshIndex ] );
 
+			m_shapeType = CONVEX_HULL_SHAPE_PROXYTYPE;
+
 			for (auto &mesh : meshesToGenerate)
 			{
 				auto verts = mesh->GetRawVertices( );
@@ -77,8 +79,6 @@ namespace ursine
 
 			// recalculate the AABB
 			recalcLocalAabb( );
-
-			m_shapeType = CONVEX_HULL_SHAPE_PROXYTYPE;
 
 		#endif
 		}

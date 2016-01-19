@@ -16,6 +16,12 @@
 #include "Component.h"
 #include <string>
 
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
+
 namespace ursine
 {
     namespace ecs
@@ -28,6 +34,22 @@ namespace ursine
 			friend class RenderSystem;
 
         public:
+
+			EditorButton(
+				ImportScene,
+				"Import Scene"
+			);
+
+			EditorButton(
+				GenerateConvexHullForScene,
+				"Generate Convex Hull Colliders For Scene"
+			);
+
+			EditorButton(
+				GenerateBvhTriangleMeshCollidersForScene,
+				"Generate BVH Triangle Mesh Colliders For Scene"
+			);
+
             EditorField(
                 std::string sceneName,
 				GetSceneName,
@@ -45,10 +67,19 @@ namespace ursine
 
         private:
             std::string m_sceneName;
-            bool m_invalidated;
 
-			void updateChildren(void);
-            void clearChildren(void);
+			
+		#if defined(URSINE_WITH_EDITOR)
+
+			static void recursClearChildren(std::vector<Transform *> children);
+			void clearChildren(void);
+			void importScene(void);
+
+			Notification *m_notification;
+
+			void clearNotification(void);
+
+		#endif
 
         } Meta(Enable, DisplayName("FBXSceneRootNode"));
     }

@@ -72,9 +72,6 @@ namespace ursine
             typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
             RenderableMap m_renderableMap;
 
-            typedef std::unordered_map<EntityUniqueID, FBXSceneRootNode*> FBXSceneRootNodeMap;
-            FBXSceneRootNodeMap m_fbxSceneRootNodeMap;
-
             std::vector<Animator*> m_animators;
 
             void onComponentAdded(EVENT_HANDLER(World));

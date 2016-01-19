@@ -71,6 +71,7 @@ namespace ursine
 			m_convexHullCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
 		}
 
+
 		float ConvexHullCollider::GetMargin(void) const
 		{
 			return m_convexHullCollider.GetMargin( );
@@ -105,5 +106,14 @@ namespace ursine
                 rigidbody->UpdateInertiaTensor( );
             }
 		}
+
+	#if defined(URSINE_WITH_EDITOR)
+
+		void ConvexHullCollider::ReduceConvexHull(void)
+        {
+			ReduceVertices( );
+        }
+
+	#endif
 	}
 }

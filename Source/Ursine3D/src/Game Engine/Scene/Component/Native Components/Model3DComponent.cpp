@@ -17,6 +17,7 @@
 #include "CoreSystem.h"
 #include "GfxAPI.h"
 #include "ConvexHullColliderComponent.h"
+#include "BvhTriangleMeshColliderComponent.h"
 #include "Notification.h"
 
 namespace ursine
@@ -201,25 +202,32 @@ namespace ursine
 			convexHull->GenerateConvexHull( this );
         }
 
-        void Model3D::ReduceConvexHull(void)
+		void Model3D::GenerateBvhTriangleMeshCollider(void)
         {
 			auto entity = GetOwner( );
-			auto convexHull = entity->GetComponent<ConvexHullCollider>( );
 
-			if (!convexHull)
-			{
-				// Send notification of invalid action
-				NotificationConfig config;
+	        Timer::Create(0).Completed([=] {
+				if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
+					entity->AddComponent<BvhTriangleMeshCollider>( );
 
-				config.type = NOTIFY_ERROR;
-				config.dismissible = true;
-				config.header = "Invalid Operation";
-				config.message = "You must first generate a convex hull in order to reduce it.";
+				auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
 
-				EditorPostNotification( config );
-			}
-			else
-				convexHull->ReduceVertices( );
+				bvhTriangleMesh->GenerateBvhTriangleMesh( this );
+			} );
+
+			// Send notification of collider's limitations
+			NotificationConfig config;
+
+			config.type = NOTIFY_INFO;
+			config.dismissible = true;
+			config.duration = TimeSpan::FromSeconds( 15.0f );
+			config.header = "BVH Triangle Mesh Collider Limitations";
+			config.message = "The BVH Triangle Mesh Collider has limitations and performance implications."
+							 " 1. Dynamic rigidbodies using this collider will not function properly."
+							 " 2. Scaling this collider during runtime has been optimized, but may still cause performance issues."
+							 " 3. Please also consider \"Convex Decomposition\", this is useful if a dynamic mesh is required.";
+
+			EditorPostNotification( config );
         }
 
     #endif

@@ -34,11 +34,11 @@ namespace ursine
                 GenerateConvexHull, 
                 "Generate Convex Hull"
             );
-
-            EditorButton(
-                ReduceConvexHull, 
-                "Reduce Convex Hull"
-            );
+			
+			EditorButton(
+				GenerateBvhTriangleMeshCollider,
+				"Generate BVH Triangle Mesh Collider"
+			);
 
             EditorField(
                 Color color,
