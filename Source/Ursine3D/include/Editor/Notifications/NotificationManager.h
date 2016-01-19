@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** NotificationManager.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Notification.h"
@@ -23,11 +36,11 @@ namespace ursine
 
         struct NotificationInternal;
 
-        ursine::NotificationID m_nextID;
+        NotificationID m_nextID;
 
         std::mutex m_mutex;
 
-        ursine::UIView::Handle m_ui;
+        UIView::Handle m_ui;
 
         std::unordered_map<
             NotificationID, 

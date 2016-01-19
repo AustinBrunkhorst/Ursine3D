@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** NotificationConfig.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "NotificationType.h"
@@ -10,8 +23,11 @@
 
 namespace ursine
 {
+    class Notification;
+
     typedef uint32 NotificationID;
     typedef uint32 NotificationButtonID;
+    typedef std::function<void(const Notification &)> NotificationClosedCallback;
 
     struct NotificationConfig
     {
@@ -39,7 +55,7 @@ namespace ursine
         TimeSpan duration { TimeSpan::FromSeconds( 8 ) };
 
         // called when the notification has been closed
-        std::function<void(void)> closeCallback { nullptr };
+        NotificationClosedCallback closeCallback { nullptr };
 
         NotificationConfig(void) = default;
     };

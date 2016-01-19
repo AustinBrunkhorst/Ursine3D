@@ -31,7 +31,7 @@ using namespace std::placeholders;
 
 namespace
 {
-    void doOpenErrorLog(void)
+    void doOpenErrorLog(Notification &notification)
     {
         utils::OpenPath( URSINE_ERROR_LOG_FILE );
     }

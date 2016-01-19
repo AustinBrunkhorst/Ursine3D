@@ -56,6 +56,7 @@ namespace ursine
         };
 
         DECLARE_STANDARD_VARIANT( int );
+        DECLARE_STANDARD_VARIANT( unsigned int );
         DECLARE_STANDARD_VARIANT( bool );
         DECLARE_STANDARD_VARIANT( float );
         DECLARE_STANDARD_VARIANT( double );

@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** NotificationManager.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "NotificationManager.h"
@@ -122,8 +135,10 @@ namespace ursine
 
         auto &button = buttons[ buttonID ];
 
+        Notification notification( id, this );
+
         if (button.onClick)
-            button.onClick( );
+            button.onClick( notification );
     }
 
     void NotificationManager::onAfterClose(NotificationID id)
@@ -138,8 +153,10 @@ namespace ursine
 
         auto &callback = search->second->config.closeCallback;
 
+        Notification notification( id, this );
+
         if (callback)
-            callback( );
+            callback( notification );
 
         m_notifications.erase( search );
     }

@@ -54,7 +54,7 @@ namespace ursine
 
                     componentID.SetValue( nextID++ );
 
-                    auto defaultCtor = derived.GetDynamicConstructor( );
+                    auto &defaultCtor = derived.GetDynamicConstructor( );
 
                     UAssert( defaultCtor.IsValid( ), 
                         "Component type '%s' doesn't have a default dynamic constructor.",

@@ -36,8 +36,6 @@
 
     #define META_OBJECT
 
-
-// !defined(__REFLECTION_PARSER__)
 #else 
 
     #define Meta(...)

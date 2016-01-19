@@ -12,13 +12,18 @@
 
 #include <type_traits>
 
+#include "MetaTraits.h"
+
 // converts the type name into a meta::Type instance
-#define typeof(type)                          \
-	ursine::meta::Type( 					  \
-		ursine::meta::TypeInfo<               \
-			ursine::meta::CleanedType< type > \
-		>::ID                                 \
-	)                                         \
+#define typeof(expr)                                                  \
+	ursine::meta::Type( 					                          \
+		ursine::meta::TypeInfo<                                       \
+			ursine::meta::CleanedType<                                \
+                typename ursine::meta_traits::RemoveArray<expr>::type \
+            >                                                         \
+		>::ID,                                                        \
+        ursine::meta_traits::IsArray<expr>::value                     \
+	)                                                                 \
 
 namespace ursine
 {

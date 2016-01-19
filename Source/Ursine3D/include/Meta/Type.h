@@ -48,7 +48,7 @@ namespace ursine
 
             Type(void);
             Type(const Type &rhs);
-            Type(TypeID id);
+            Type(TypeID id, bool isArray = false);
 
             operator bool(void) const;
 
@@ -166,6 +166,11 @@ namespace ursine
              */
             bool IsClass(void) const;
 
+            /** @brief Determines if this type is an array type.
+             *  @return true if the type is an array type.
+             */
+            bool IsArray(void) const;
+
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
@@ -238,6 +243,13 @@ namespace ursine
              */
             Type GetDecayedType(void) const;
 
+            /** @brief Gets the type that this array type holds.
+            *  @return Type this array type holds.
+            *          ie - Array<double> -> double
+            *          Non array types return itself.
+            */
+            Type GetArrayType(void) const;
+
             /** @brief Gets the enumeration representing this type, 
              *         assuming it's an enum type.
              *  @return Reference to the enum type in the reflection database.
@@ -306,6 +318,11 @@ namespace ursine
             const Constructor &GetDynamicConstructor(
                   const InvokableSignature &signature = InvokableSignature( )
             ) const;
+
+            /** @brief Gets the constructor for this array type.
+             *  @return Reference to the array constructor in the reflection database.
+             */
+            const Constructor &GetArrayConstructor(void) const;
 
             /** @brief Gets the destructor for this type assuming it's a 
              *         class type.
@@ -426,6 +443,7 @@ namespace ursine
             friend class Global;
 
             TypeID m_id;
+            bool m_isArray;
         };
     }
 }

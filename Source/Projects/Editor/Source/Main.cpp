@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     ursine::Application app( argc, argv );
 
-    app.Run( ); 
+    app.Run( );
     
     return 0; 
 }

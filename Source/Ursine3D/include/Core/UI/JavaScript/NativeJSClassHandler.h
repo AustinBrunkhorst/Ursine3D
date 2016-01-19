@@ -58,7 +58,7 @@ namespace ursine
 
         meta::Type m_classType;
 
-        meta::Constructor m_constructor;
+        const meta::Constructor &m_constructor;
 
         CefRefPtr<PrototypeHandler> m_prototypeHandler;
 

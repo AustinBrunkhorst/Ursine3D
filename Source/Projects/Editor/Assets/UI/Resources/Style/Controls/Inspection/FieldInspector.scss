@@ -64,6 +64,11 @@
     }
   }
 
+  .invalid-type {
+    font-style: italic;
+    color: #cf6753;
+  }
+
   .color-preview {
     display: block;
     // TODO:

@@ -28,7 +28,7 @@
 #define REGISTER_NATIVE_TYPE_VARIANTS(type) \
     REGISTER_NATIVE_TYPE( type )            \
     REGISTER_NATIVE_TYPE( type* )           \
-    REGISTER_NATIVE_TYPE( const type*)      \
+    REGISTER_NATIVE_TYPE( const type* )     \
 
 namespace ursine
 {

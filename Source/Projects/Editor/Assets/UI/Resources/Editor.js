@@ -1044,6 +1044,7 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_number = new NumberInputControl();
+	if(type.name.indexOf("unsigned") != -1) this.m_number.min = "0";
 	this.m_number.addEventListener("change",function() {
 		var value = _g.m_number.valueAsNumber;
 		if((function($this) {
@@ -1096,6 +1097,20 @@ ursine_editor_scene_component_inspectors_fields_StringFieldInspector.prototype =
 		this.m_string.value = value;
 		this.m_instance = value;
 	}
+});
+var ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector = function(owner,instance,field,type) {
+	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
+	var message;
+	var _this = window.document;
+	message = _this.createElement("div");
+	message.classList.add("invalid-type");
+	message.innerHTML = "Unknown field type. Is this type exposed in reflection?";
+	this.inspector.container.appendChild(message);
+};
+$hxClasses["ursine.editor.scene.component.inspectors.fields.UnknownTypeInspector"] = ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector;
+ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","UnknownTypeInspector"];
+ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
+ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
 });
 var ursine_editor_scene_component_inspectors_fields_VectorFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -1759,8 +1774,9 @@ ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePo
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot = "Spot";
 ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__meta__ = { obj : { fieldInspector : ["bool"]}};
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Color"]}};
-ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","float","double"]}};
+ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","unsigned int","float","double"]}};
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
+ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__meta__ = { obj : { fieldInspector : ["UNKNOWN"]}};
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4","ursine::SQuat"]}};
 ursine_editor_scene_entity_EntityEvent.EntityAdded = "EntityAdded";
 ursine_editor_scene_entity_EntityEvent.EntityRemoved = "EntityRemoved";
