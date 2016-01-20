@@ -44,5 +44,18 @@ namespace ursine
         {
             return m_base != nullptr;
         }
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        ArrayEventDispatcher &ArrayWrapper::GetModifyEvents(void) const
+        {
+            UAssert( m_base != nullptr, 
+                "Invalid array." 
+            );
+
+            return m_base->GetModifyEvents( );
+        }
+
+    #endif
     }
 }

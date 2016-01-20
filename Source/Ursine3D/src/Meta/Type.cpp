@@ -273,9 +273,14 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        const std::string &Type::GetName(void) const
+        std::string Type::GetName(void) const
         {
-            return database.types[ m_id ].name;
+            auto &name = database.types[ m_id ].name;
+
+            if (IsArray( ))
+                return "Array<" + name + ">";
+
+            return name;
         }
 
         const MetaManager &Type::GetMeta(void) const

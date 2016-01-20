@@ -15,8 +15,50 @@
 
 #include <vector>
 
+// by default, enable modification notifcations with editor
+#if defined(URSINE_WITH_EDITOR) && !defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+#define URSINE_ARRAY_NOTIFY_MODIFICATION
+
+#endif
+
+
+#if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+#include "EventDispatcher.h"
+
 namespace ursine
 {
+    enum ArrayModifyAction
+    {
+        AMODIFY_INSERT,
+        AMODIFY_SET,
+        AMODIFY_REMOVE
+    };
+
+    struct ArrayModificationArgs : EventArgs
+    {
+        ArrayModifyAction action;
+        size_t index;
+
+        ArrayModificationArgs(ArrayModifyAction action, size_t index)
+            : action( action )
+            , index( index ) { }
+    };
+
+    typedef EventDispatcher<ArrayModifyAction, LambdaHandler> ArrayEventDispatcher;
+}
+
+#endif
+
+namespace ursine
+{
+    namespace meta
+    {
+        template<typename T>
+        class ArrayWrapperContainer;
+    }
+
     template<typename T>
     class Array
     {
@@ -78,7 +120,16 @@ namespace ursine
         SizeType Size(void) const;
 
     private:
+
         std::vector<T> m_impl;
+
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+        friend class meta::ArrayWrapperContainer<T>;
+
+        ArrayEventDispatcher m_modifyEvents;
+
+    #endif
     };
 }
 

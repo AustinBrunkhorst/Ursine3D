@@ -16,12 +16,6 @@
 #include "Component.h"
 #include <string>
 
-#if defined(URSINE_WITH_EDITOR)
-
-#include "Notification.h"
-
-#endif
-
 namespace ursine
 {
     namespace ecs
@@ -74,10 +68,6 @@ namespace ursine
 			static void recursClearChildren(std::vector<Transform *> children);
 			void clearChildren(void);
 			void importScene(void);
-
-			Notification *m_notification;
-
-			void clearNotification(void);
 
 		#endif
 

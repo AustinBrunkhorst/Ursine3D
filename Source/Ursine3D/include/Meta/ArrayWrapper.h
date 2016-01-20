@@ -39,6 +39,12 @@ namespace ursine
 
             bool IsValid(void) const;
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            ArrayEventDispatcher &GetModifyEvents(void) const;
+
+        #endif
+
         private:
             ArrayWrapperBase *m_base;
         };

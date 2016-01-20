@@ -47,7 +47,13 @@ namespace ursine
             // An entity's parent has changed
             WORLD_EDITOR_ENTITY_PARENT_CHANGED,
             // A component's field has changed
-            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED
+            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED
+
+        #endif
         };
 
         struct WorldEventArgs : EventArgs

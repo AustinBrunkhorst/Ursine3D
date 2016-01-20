@@ -28,6 +28,10 @@ extern class NativeField {
 
 extern class NativeType {
     var name : String;
+
+    var isArray : Bool;
+    var arrayType : String;
+
     var enumValue : Null<NativeEnum>;
 
     var fields : Array<NativeField>;

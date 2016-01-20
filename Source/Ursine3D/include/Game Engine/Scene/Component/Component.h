@@ -26,20 +26,12 @@ namespace ursine
 
         class Component : public meta::Object
         {
-            // component type id
-            ComponentTypeID m_typeID;
-
-            // unique instance id
-            ComponentUniqueID m_uniqueID;
-            
-            // entity that this component is attached to
-            Entity *m_owner;
         public:
             // can set the owner
             friend class EntityManager;
             friend class EntitySerializer;
 
-            explicit inline Component(ComponentTypeID typeID);
+            inline explicit Component(ComponentTypeID typeID);
 
             Component(const Component &rhs) = default;
 
@@ -60,6 +52,26 @@ namespace ursine
             // Determines if this component is of the specified type
             template<class ComponentType>
             inline bool Is(void) const;
+
+        private:
+            // component type id
+            ComponentTypeID m_typeID;
+
+            // unique instance id
+            ComponentUniqueID m_uniqueID;
+
+            // entity that this component is attached to
+            Entity *m_owner;
+
+        #if defined(URSINE_WITH_EDITOR)
+
+        protected:
+
+            static void initArrayEvents(Component *instance);
+
+            void onArrayModified(EVENT_HANDLER(meta::Variant));
+
+        #endif
         } Meta(WhiteListMethods);
     }
 }

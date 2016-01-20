@@ -4,6 +4,7 @@ import ursine.controls.ComboInput;
 import ursine.editor.scene.component.ComponentDatabase;
 
 class DefaultFieldInspector extends FieldInspectionHandler {
+    private var m_arrayInspector : ArrayTypeInspector;
     private var m_isEnum : Bool;
     private var m_isBitMaskEditor : Bool;
     private var m_comboInput : ComboInput;
@@ -12,8 +13,10 @@ class DefaultFieldInspector extends FieldInspectionHandler {
     public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
-        // handle enum types
-        if (type.enumValue != null) {
+
+        if (type.isArray) {
+            initArray( );
+        } else if (type.enumValue != null) {
             initEnum( );
         }
     }
@@ -28,6 +31,10 @@ class DefaultFieldInspector extends FieldInspectionHandler {
                 m_comboInput.value = value;
             }
         }
+    }
+
+    private function initArray() {
+        m_arrayInspector= new ArrayTypeInspector( inspector, m_owner, m_instance, m_field, m_type );
     }
 
     private function initEnum() {

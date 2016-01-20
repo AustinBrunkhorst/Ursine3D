@@ -28,31 +28,32 @@ namespace ursine
         ListenerType *m_listener;
 
     public:
-        ChainableEventOperator(DispatcherType *dispatcher, ListenerType *listener);
+        ChainableEventOperator(typename DispatcherType *dispatcher, ListenerType *listener);
 
         // Class member
-        ChainableEventOperator &On(const typename DispatcherType::KeyType &type,
-            ClassDelegate<ListenerType, EventArgs> delegate,
+        ChainableEventOperator &On(
+            const typename DispatcherType::EventDispatcher::KeyType &type,
+            typename DispatcherType::EventDispatcher::HandlerType::template ClassDelegate<ListenerType, EventArgs> delegate,
             EventHandlerPriority priority = kDefaultEventHandlerPriority
         );
 
         // Static function
         ChainableEventOperator &On(
-            const typename DispatcherType::KeyType &type,
-            StaticDelegate<EventArgs> delegate,
+            const typename DispatcherType::EventDispatcher::KeyType &type,
+            typename DispatcherType::EventDispatcher::HandlerType::template StaticDelegate<EventArgs> delegate,
             EventHandlerPriority priority = kDefaultEventHandlerPriority
         );
 
         // Class member
         ChainableEventOperator &Off(
-            const typename DispatcherType::KeyType &type,
-            ClassDelegate<ListenerType, EventArgs> delegate
+            const typename DispatcherType::EventDispatcher::KeyType &type,
+            typename DispatcherType::EventDispatcher::HandlerType::template ClassDelegate<ListenerType, EventArgs> delegate
         );
 
         // Static function
         ChainableEventOperator &Off(
-            const typename DispatcherType::KeyType &type,
-            StaticDelegate<EventArgs> delegate
+            const typename DispatcherType::EventDispatcher::KeyType &type,
+            typename DispatcherType::EventDispatcher::HandlerType::template StaticDelegate<EventArgs> delegate
         );
     };
 }

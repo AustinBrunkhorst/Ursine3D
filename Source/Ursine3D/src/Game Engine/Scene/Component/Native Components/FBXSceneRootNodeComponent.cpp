@@ -8,6 +8,8 @@
 #include "ConvexHullColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 
+#include "Notification.h"
+
 namespace ursine
 {
     namespace ecs
@@ -17,8 +19,8 @@ namespace ursine
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
             , m_sceneName( "" )
-			, m_notification( nullptr )
         {
+
         }
 
         FBXSceneRootNode::~FBXSceneRootNode(void)
@@ -28,14 +30,15 @@ namespace ursine
 
         void FBXSceneRootNode::OnInitialize(void)
         {
+
         }
 
-        const std::string & FBXSceneRootNode::GetSceneName(void) const
+        const std::string &FBXSceneRootNode::GetSceneName(void) const
         {
             return m_sceneName;
         }
 
-        void FBXSceneRootNode::SetSceneName(const std::string & map)
+        void FBXSceneRootNode::SetSceneName(const std::string &map)
         {
             m_sceneName = map;
         }
@@ -100,8 +103,6 @@ namespace ursine
 
 			if (children->size( ) > 0)
 			{
-				clearNotification( );
-
 				NotificationConfig config;
 
 				config.type = NOTIFY_QUESTION;
@@ -113,34 +114,28 @@ namespace ursine
 				NotificationButton yes, no;
 
 				yes.text = "Confirm Action";
-				yes.onClick = [=] {
-					Timer::Create( 0 ).Completed( [=] {
-						clearNotification( );
+				yes.onClick = [=](Notification &notification) {
+					Timer::Create( 0 ).Completed( [=](void) mutable {
+                        notification.Close( );
+
 						clearChildren( );
 
-						GetOwner( )->GetWorld( )->clearDeletionQueue( );
+						//GetOwner( )->GetWorld( )->clearDeletionQueue( );
 
 						importScene( );
 					} );
 				};
 
 				no.text = "Cancel Action";
-				no.onClick = [=] {
-					Timer::Create( 0 ).Completed( [=] {
-						clearNotification( );
+				no.onClick = [=](Notification &notification) {
+					Timer::Create( 0 ).Completed( [=](void) mutable {
+                        notification.Close( );
 					} );
 				};
 
 				config.buttons = { yes, no };
 
-				if (m_notification)
-				{
-					m_notification->Close( );
-
-					delete m_notification;
-				}
-
-				m_notification = new Notification( EditorPostNotification( config ) );
+				EditorPostNotification( config );
 			}
 			else
 			{
@@ -184,18 +179,6 @@ namespace ursine
 					bvhTriangleMesh->GenerateBvhTriangleMesh( model );
 				}
 			} );
-        }
-
-		void FBXSceneRootNode::clearNotification(void)
-        {
-	        if (m_notification)
-	        {
-		        m_notification->Close( );
-
-				delete m_notification;
-
-				m_notification = nullptr;
-	        }
         }
 
 	#endif
