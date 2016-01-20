@@ -17,7 +17,7 @@ namespace ursine
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
             , m_sceneName( "" )
-			, m_notification( nullptr )
+			, m_notificationPresent( false )
         {
         }
 
@@ -91,6 +91,9 @@ namespace ursine
         void FBXSceneRootNode::clearChildren(void)
         {
 			recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
+
+			// Clear the deletion queue if the scene is paused
+			EditorClearDeletionQueue( );
         }
 
 		void FBXSceneRootNode::ImportScene(void)
@@ -100,8 +103,6 @@ namespace ursine
 
 			if (children->size( ) > 0)
 			{
-				clearNotification( );
-
 				NotificationConfig config;
 
 				config.type = NOTIFY_QUESTION;
@@ -113,37 +114,31 @@ namespace ursine
 				NotificationButton yes, no;
 
 				yes.text = "Confirm Action";
-				yes.onClick = [=] {
+				yes.onClick = [=] (Notification &notification) {
+					notification.Close( );
+					m_notificationPresent = false;
+
+					// Main thread operation
 					Timer::Create( 0 ).Completed( [=] {
-						clearNotification( );
 						clearChildren( );
-
-						GetOwner( )->GetWorld( )->clearDeletionQueue( );
-
 						importScene( );
 					} );
 				};
 
 				no.text = "Cancel Action";
-				no.onClick = [=] {
-					Timer::Create( 0 ).Completed( [=] {
-						clearNotification( );
-					} );
+				no.onClick = [=] (Notification &notification) {
+					notification.Close( );
+					m_notificationPresent = false;
 				};
 
 				config.buttons = { yes, no };
 
-				if (m_notification)
-				{
-					m_notification->Close( );
-
-					delete m_notification;
-				}
-
-				m_notification = new Notification( EditorPostNotification( config ) );
+				EditorPostNotification( config );
+				m_notificationPresent = true;
 			}
 			else
 			{
+				// Main thread operation
 				Timer::Create( 0 ).Completed( [=] {
 					importScene( );
 				} );
@@ -184,18 +179,6 @@ namespace ursine
 					bvhTriangleMesh->GenerateBvhTriangleMesh( model );
 				}
 			} );
-        }
-
-		void FBXSceneRootNode::clearNotification(void)
-        {
-	        if (m_notification)
-	        {
-		        m_notification->Close( );
-
-				delete m_notification;
-
-				m_notification = nullptr;
-	        }
         }
 
 	#endif

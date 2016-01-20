@@ -19,6 +19,7 @@
 #if defined(URSINE_WITH_EDITOR)
 
 #include "Notification.h"
+#include "EditorConfig.h"
 
 #endif
 
@@ -75,9 +76,7 @@ namespace ursine
 			void clearChildren(void);
 			void importScene(void);
 
-			Notification *m_notification;
-
-			void clearNotification(void);
+			bool m_notificationPresent;
 
 		#endif
 
