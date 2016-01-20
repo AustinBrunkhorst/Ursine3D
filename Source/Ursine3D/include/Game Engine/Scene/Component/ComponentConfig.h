@@ -28,24 +28,9 @@
 // Determines if a component of this type has been registered
 #define IsComponentRegistered(componentType) (typeof( componentType ).IsValid( ))
 
-#if defined(URSINE_WITH_EDITOR)
-
-    #define _ARRAY_EVENT_INITIALIZER initArrayEvents( this )
-
-#else
-
-    #define _ARRAY_EVENT_INITIALIZER void
-
-#endif
-
 // Cleaner way of calling a base component constructor in the member 
 // initialization list (used to assign the component type id).
-// Uses the comma operator to allow us to call a initalization function for
-// connecting array modification events in the editor automatically
-#define BaseComponent() ursine::ecs::Component    \
-    (                                             \
-        ( _ARRAY_EVENT_INITIALIZER, ComponentID ) \
-    )                                             \
+#define BaseComponent() ursine::ecs::Component( ComponentID )
 
 // Required at the top of all native component declarations
 #define NATIVE_COMPONENT                                 \

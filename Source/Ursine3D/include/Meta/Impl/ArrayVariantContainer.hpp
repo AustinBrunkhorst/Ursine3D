@@ -1,3 +1,7 @@
+#pragma once
+
+#include "ArrayWrapper.h"
+
 namespace ursine
 {
     namespace meta

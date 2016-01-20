@@ -138,18 +138,28 @@ namespace ursine
 
             m_world->Listener( this )
                 .On( WORLD_UPDATE, &PhysicsSystem::onUpdate, 100000 )
-                .On( WORLD_EDITOR_UPDATE, &PhysicsSystem::onEditorUpdate, -10000 )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &PhysicsSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &PhysicsSystem::onComponentRemoved );
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            m_world->Connect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate, -10000 );
+
+        #endif
         }
 
         void PhysicsSystem::OnRemove(void)
         {
             m_world->Listener( this )
                 .Off( WORLD_UPDATE, &PhysicsSystem::onUpdate )
-                .Off( WORLD_EDITOR_UPDATE, &PhysicsSystem::onEditorUpdate )
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &PhysicsSystem::onComponentAdded )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &PhysicsSystem::onComponentRemoved );
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            m_world->Disconnect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate );
+
+        #endif
         }
 
         void PhysicsSystem::OnAfterLoad(void)
@@ -369,10 +379,14 @@ namespace ursine
 			m_simulation.DispatchCollisionEvents( );
         }
 
+    #if defined(URSINE_WITH_EDITOR)
+
         void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))
         {
             m_simulation.DebugDrawSimulation( );
         }
+
+    #endif
 
         void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider)
         {

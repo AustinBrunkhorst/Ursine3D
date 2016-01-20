@@ -30,7 +30,7 @@ namespace ursine
 
         void FBXSceneRootNode::OnInitialize(void)
         {
-
+            Component::OnInitialize( );
         }
 
         const std::string &FBXSceneRootNode::GetSceneName(void) const

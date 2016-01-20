@@ -45,6 +45,8 @@ namespace ursine
 
         void Billboard2D::OnInitialize() 
         {
+            Component::OnInitialize( );
+
             RenderableComponentBase::OnInitialize( GetOwner( ) );
 
             // set the unique id

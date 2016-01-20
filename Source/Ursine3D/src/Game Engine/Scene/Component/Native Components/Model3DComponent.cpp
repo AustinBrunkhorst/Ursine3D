@@ -51,6 +51,8 @@ namespace ursine
 
         void Model3D::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             auto *owner = GetOwner( );
 
             RenderableComponentBase::OnInitialize( owner );

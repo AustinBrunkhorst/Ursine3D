@@ -6,14 +6,14 @@ namespace ursine
 {
     namespace ecs
     {
-    #if defined(URSINE_WITH_EDITOR)
-
-        void Component::initArrayEvents(Component *component)
+        void Component::OnInitialize(void)
         {
-            auto type = component->GetType( );
+        #if defined(URSINE_WITH_EDITOR)
+
+            auto type = GetType( );
             auto fields = type.GetFields( );
 
-            auto instance = meta::Variant { component, meta::variant_policy::WrapObject( ) };
+            auto instance = meta::Variant { this, meta::variant_policy::WrapObject( ) };
 
             for (auto &field : fields)
             {
@@ -23,21 +23,31 @@ namespace ursine
 
                     auto &events = fieldInstance.GetArray( ).GetModifyEvents( );
 
+                    auto onModification = [=](EVENT_HANDLER(meta::Variant))
+                    {
+                        EVENT_ATTRS(meta::Variant, ArrayModificationArgs);
+
+                        auto *owner = GetOwner( );
+                        
+                        if (owner)
+                        {
+                            EditorComponentArrayModfiedArgs e( *args, field.GetName( ) );
+
+                            owner->GetWorld( )->Dispatch( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &e );
+                        }
+                    };
+
                     // we can get away with not disconnecting this because the events have the same
                     // scope as the component itself
-                    //events.Connect( AMODIFY_INSERT, events::bind( &Component::onArrayModified, component, 5 ) );
-
-                    //.On( AMODIFY_SET, &Component::onArrayModified )
-                    //.On( AMODIFY_REMOVE, &Component::onArrayModified );
+                    events.Connect<EventArgs>( AMODIFY_INSERT, onModification );
+                    events.Connect<EventArgs>( AMODIFY_SET, onModification );
+                    events.Connect<EventArgs>( AMODIFY_REMOVE, onModification );
                 }
             }
-        }
 
-        void onArrayModified(EVENT_HANDLER(meta::Variant))
-        {
-            EVENT_ATTRS(meta::Variant, ArrayModificationArgs);
-        }
+            m_baseInitialized = true;
 
-    #endif
+        #endif
+        }
     }
 }

@@ -16,6 +16,8 @@
 #include "Type.h"
 #include "UrsineTypes.h"
 
+#include "ArrayConfig.h"
+
 namespace ursine
 {
     namespace meta

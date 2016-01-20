@@ -35,6 +35,8 @@ CommandInputController::~CommandInputController()
 
 void CommandInputController::OnInitialize()
 {
+    Component::OnInitialize( );
+
     /////////////////////////////////////////////////////////////////
     // this is all XBOX specific ////////////////////////////////////
     m_moveForward = PlayerAction(

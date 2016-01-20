@@ -15,41 +15,7 @@
 
 #include <vector>
 
-// by default, enable modification notifcations with editor
-#if defined(URSINE_WITH_EDITOR) && !defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
-
-#define URSINE_ARRAY_NOTIFY_MODIFICATION
-
-#endif
-
-
-#if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
-
-#include "EventDispatcher.h"
-
-namespace ursine
-{
-    enum ArrayModifyAction
-    {
-        AMODIFY_INSERT,
-        AMODIFY_SET,
-        AMODIFY_REMOVE
-    };
-
-    struct ArrayModificationArgs : EventArgs
-    {
-        ArrayModifyAction action;
-        size_t index;
-
-        ArrayModificationArgs(ArrayModifyAction action, size_t index)
-            : action( action )
-            , index( index ) { }
-    };
-
-    typedef EventDispatcher<ArrayModifyAction, LambdaHandler> ArrayEventDispatcher;
-}
-
-#endif
+#include "ArrayConfig.h"
 
 namespace ursine
 {

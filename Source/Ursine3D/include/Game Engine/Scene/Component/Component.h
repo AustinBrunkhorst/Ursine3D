@@ -38,7 +38,7 @@ namespace ursine
             Component &operator=(const Component &rhs) = default;
 
             // Called when the component has been initialized and added to an entity
-            virtual void OnInitialize(void) { }
+            virtual void OnInitialize(void);
 
             // The type ID of this component
             inline ComponentTypeID GetTypeID(void) const;
@@ -54,6 +54,13 @@ namespace ursine
             inline bool Is(void) const;
 
         private:
+        #if defined(URSINE_WITH_EDITOR)
+
+            // whether or not OnInitialize has been called on the base component type
+            bool m_baseInitialized;
+
+        #endif
+
             // component type id
             ComponentTypeID m_typeID;
 
@@ -62,16 +69,6 @@ namespace ursine
 
             // entity that this component is attached to
             Entity *m_owner;
-
-        #if defined(URSINE_WITH_EDITOR)
-
-        protected:
-
-            static void initArrayEvents(Component *instance);
-
-            void onArrayModified(EVENT_HANDLER(meta::Variant));
-
-        #endif
         } Meta(WhiteListMethods);
     }
 }

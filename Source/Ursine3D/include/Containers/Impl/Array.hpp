@@ -1,9 +1,28 @@
+#pragma once
+
 #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
 
-#define NOTIFY_MODIFICATION(index, action)              \
-    ursine::ArrayModificationArgs __e( action, index ); \
-                                                        \
-    m_modifyEvents.Dispatch( action, this, &__e );      \
+#include "Variant.h"
+
+namespace ursine
+{
+    struct ArrayModificationArgs : EventArgs
+    {
+        ArrayModifyAction action;
+        size_t index;
+        meta::Variant value;
+
+        ArrayModificationArgs(ArrayModifyAction action, size_t index, const meta::Variant &value = nullptr)
+            : action( action )
+            , index( index )
+            , value( value ) { }
+    };
+}
+
+#define NOTIFY_MODIFICATION(index, action, ...)                        \
+    ursine::ArrayModificationArgs __e( action, index, ##__VA_ARGS__ ); \
+                                                                       \
+    m_modifyEvents.Dispatch( action, this, &__e );                     \
 
 #else
 
@@ -123,7 +142,7 @@ namespace ursine
     {
         m_impl.push_back( value );
 
-        NOTIFY_MODIFICATION( m_impl.size( ) - 1, AMODIFY_INSERT );
+        NOTIFY_MODIFICATION( m_impl.size( ) - 1, AMODIFY_INSERT, value );
     }
 
     template<typename T>
@@ -131,7 +150,7 @@ namespace ursine
     {
         m_impl.emplace_back( std::move( value ) );
 
-        NOTIFY_MODIFICATION( m_impl.size( ) - 1, AMODIFY_INSERT );
+        NOTIFY_MODIFICATION( m_impl.size( ) - 1, AMODIFY_INSERT, value );
     }
 
     template<typename T>
@@ -139,7 +158,7 @@ namespace ursine
     {
         m_impl.insert( begin( ) + index, value );
 
-        NOTIFY_MODIFICATION( index, AMODIFY_INSERT );
+        NOTIFY_MODIFICATION( index, AMODIFY_INSERT, value );
     }
 
     template<typename T>
@@ -147,7 +166,7 @@ namespace ursine
     {
         m_impl.emplace( begin( ) + index, std::move( value ) );
 
-        NOTIFY_MODIFICATION( index, AMODIFY_INSERT );
+        NOTIFY_MODIFICATION( index, AMODIFY_INSERT, value );
     }
 
     template<typename T>
@@ -155,7 +174,7 @@ namespace ursine
     {
         m_impl.insert( position, value );
 
-        NOTIFY_MODIFICATION( position - m_impl.cbegin( ), AMODIFY_INSERT );
+        NOTIFY_MODIFICATION( position - m_impl.cbegin( ), AMODIFY_INSERT, value );
     }
 
     template<typename T>
@@ -163,7 +182,7 @@ namespace ursine
     {
         m_impl.emplace( position, std::move( value ) );
 
-        NOTIFY_MODIFICATION( position - m_impl.cbegin( ), AMODIFY_INSERT );
+        NOTIFY_MODIFICATION( position - m_impl.cbegin( ), AMODIFY_INSERT, value );
     }
 
     template<typename T>
@@ -252,7 +271,7 @@ namespace ursine
     {
         m_impl[ index ] = value;
 
-        NOTIFY_MODIFICATION( index, AMODIFY_SET );
+        NOTIFY_MODIFICATION( index, AMODIFY_SET, value );
     }
 
     template<typename T>
@@ -260,7 +279,7 @@ namespace ursine
     {
         m_impl[ index ] = std::move( value );
 
-        NOTIFY_MODIFICATION( index, AMODIFY_SET );
+        NOTIFY_MODIFICATION( index, AMODIFY_SET, value );
     }
 
     template<typename T>

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "VariantContainer.h"
 #include "ObjectWrapper.h"
 #include "ArrayVariantContainer.h"

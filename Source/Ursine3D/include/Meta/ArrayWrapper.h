@@ -15,7 +15,7 @@
 
 #include "ArrayWrapperBase.h"
 
-#include "Array.h"
+//#include "Array.h"
 
 namespace ursine
 {

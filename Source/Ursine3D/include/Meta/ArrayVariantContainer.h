@@ -15,13 +15,12 @@
 
 #include "VariantBase.h"
 
-#include "Array.h"
-#include "ArrayWrapper.h"
-
 namespace ursine
 {
     namespace meta
     {
+        class ArrayWrapper;
+
         template<typename T, typename StorageType>
         class ArrayVariantContainer : public VariantBase
         {
