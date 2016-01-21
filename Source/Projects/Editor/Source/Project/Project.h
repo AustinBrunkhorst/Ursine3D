@@ -30,6 +30,8 @@ public:
 
     void SetWorld(ursine::ecs::World::Handle world);
 
+	void ClearDeletionQueue(void);
+
 private:
     ursine::UIView::Handle m_ui;
 

@@ -156,15 +156,10 @@ JSMethod(EntityHandler::remove)
 
     entity->Delete( );
 
-    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
-
-    if (scene->IsPaused( ))
-    {
-		// Have this run in the main thread
-		Timer::Create( 0 ).Completed([=] {
-			m_world->clearDeletionQueue( );
-		} );
-    }
+	// Have this run in the main thread
+	Timer::Create( 0 ).Completed([=] {
+		GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
+	} );
 
     return CefV8Value::CreateBool( true );
 }

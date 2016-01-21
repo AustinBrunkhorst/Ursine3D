@@ -18,6 +18,10 @@
 #include "ComponentUtils.h"
 
 #include "SelectedComponent.h"
+#include "EditorConfig.h"
+
+#include <Editor.h>
+#include <Timer.h>
 
 using namespace ursine;
 
@@ -255,4 +259,9 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             message
         );
     }
+}
+
+void ecs::EditorClearDeletionQueue(void)
+{
+	GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
 }

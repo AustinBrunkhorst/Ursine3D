@@ -16,6 +16,12 @@
 #include "Component.h"
 #include <string>
 
+#if defined(URSINE_WITH_EDITOR)
+
+#include "EditorConfig.h"
+
+#endif
+
 namespace ursine
 {
     namespace ecs
@@ -68,6 +74,8 @@ namespace ursine
 			static void recursClearChildren(std::vector<Transform *> children);
 			void clearChildren(void);
 			void importScene(void);
+
+			bool m_notificationPresent;
 
 		#endif
 
