@@ -80,10 +80,10 @@ namespace ursine
 			class MeshInfo : public ISerialize
 			{
 			public:
-				char			name[MAXTEXTLEN];
+				std::string		name;
 				unsigned int	meshVtxInfoCount;
 				unsigned int	meshVtxIdxCount;
-				std::vector<std::string> mtrlName;
+				std::vector< std::string > mtrlName;
 				unsigned int	mtrlCount;
 				unsigned int	mtrlIndexCount;
 

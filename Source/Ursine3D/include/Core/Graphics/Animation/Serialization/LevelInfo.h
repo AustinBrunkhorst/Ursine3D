@@ -23,20 +23,21 @@ namespace ursine
 		{
 			struct MeshInLvl
 			{
-				char name[MAXTEXTLEN];
+				std::string name;
 				SMat4 meshTM;
 				int mParentIndex;
 			};
 
 			struct RigInLvl
 			{
-				char name[MAXTEXTLEN];
+				std::string name;
 				int mParentIndex;
 			};
 
 			class LevelInfo : public ISerialize
 			{
 			public:
+				std::string name;
 				unsigned int	mmeshlvlCount;
 				unsigned int	mriglvlCount;
 				std::vector<MeshInLvl>		mMeshLvVec;

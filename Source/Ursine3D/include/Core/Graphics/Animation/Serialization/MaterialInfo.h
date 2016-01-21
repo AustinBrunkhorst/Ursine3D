@@ -25,7 +25,7 @@ namespace ursine
 			class MaterialInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];
+				std::string name;
 				FBX_DATA::FbxMaterial::eMaterial_Type type;
 				FBX_DATA::Material_Eles::eMaterial_Fac ambitype;
 				FBX_DATA::Material_Eles::eMaterial_Fac difftype;
@@ -42,10 +42,10 @@ namespace ursine
 				unsigned int emis_mapCount;
 				unsigned int spec_mapCount;
 
-				std::vector<std::string> ambi_texNames;
-				std::vector<std::string> diff_texNames;
-				std::vector<std::string> emis_texNames;
-				std::vector<std::string> spec_texNames;
+				std::vector< std::string > ambi_texNames;
+				std::vector< std::string > diff_texNames;
+				std::vector< std::string > emis_texNames;
+				std::vector< std::string > spec_texNames;
 
 				float shineness;
 				float TransparencyFactor;

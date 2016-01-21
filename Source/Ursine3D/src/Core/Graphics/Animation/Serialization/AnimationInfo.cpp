@@ -41,12 +41,15 @@ namespace ursine
 			{
 				DWORD nByteRead;
 				unsigned int i = 0, j = 0, k = 0, l = 0;
-				ReadFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
+				char tmp_name[MAXTEXTLEN];
+				ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
+				name = tmp_name;
 				ReadFile(hFile, &animCount, sizeof(unsigned int), &nByteRead, nullptr);
 				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
 				{
 					// serializing counts
-					ReadFile(hFile, &iter->clipname, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
+					ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
+					iter->clipname = tmp_name;
 					ReadFile(hFile, &iter->clipCount, sizeof(unsigned int), &nByteRead, nullptr);
 					ReadFile(hFile, &iter->boneCount, sizeof(unsigned int), &nByteRead, nullptr);
 					iter->keyIndices.resize(iter->clipCount);
@@ -74,23 +77,29 @@ namespace ursine
 				DWORD nBytesWrite;
 				unsigned int i = 0, j = 0, k = 0, l = 0;
 
-				WriteFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-				WriteFile(hFile, &animCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
+				if (INVALID_HANDLE_VALUE != hFile)
 				{
-					// serializing counts
-					WriteFile(hFile, &iter->clipname, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					WriteFile(hFile, &iter->clipCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &iter->boneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					for (j = 0; j < iter->clipCount; ++j)
+					char tmp_name[MAXTEXTLEN];
+					lstrcpy(tmp_name, name.c_str());
+					WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					WriteFile(hFile, &animCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
 					{
-						for (k = 0; k < iter->boneCount; ++k)
+						// serializing counts
+						lstrcpy(tmp_name, iter->clipname.c_str());
+						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						WriteFile(hFile, &iter->clipCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+						WriteFile(hFile, &iter->boneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+						for (j = 0; j < iter->clipCount; ++j)
 						{
-							WriteFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nBytesWrite, nullptr);
-							for (l = 0; l < iter->keyIndices[j][k]; ++l)
+							for (k = 0; k < iter->boneCount; ++k)
 							{
-								FBX_DATA::KeyFrame* currKF = &iter->keyframes[j][k][l];
-								WriteFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nBytesWrite, nullptr);
+								WriteFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nBytesWrite, nullptr);
+								for (l = 0; l < iter->keyIndices[j][k]; ++l)
+								{
+									FBX_DATA::KeyFrame* currKF = &iter->keyframes[j][k][l];
+									WriteFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nBytesWrite, nullptr);
+								}
 							}
 						}
 					}

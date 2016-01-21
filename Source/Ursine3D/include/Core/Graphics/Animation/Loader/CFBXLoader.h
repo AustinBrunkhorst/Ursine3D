@@ -406,7 +406,7 @@ namespace ursine
 			*
 			*  @return the model info data structure
 			*/
-			ufmt_loader::ModelInfo GetModelInfo() const { return *mModelInfo; }
+			ufmt_loader::ModelInfo* GetModelInfo() const { return mModelInfo; }
 
 			/** @brief fbx loader get level info function
 			*
@@ -414,7 +414,7 @@ namespace ursine
 			*
 			*  @return the level info data structure
 			*/
-			ufmt_loader::LevelInfo GetLevelInfo() const { return *mLevelInfo; }
+			ufmt_loader::LevelInfo* GetLevelInfo() const { return mLevelInfo; }
 
 			/** @brief fbx loader get animation info function
 			*
@@ -422,7 +422,7 @@ namespace ursine
 			*
 			*  @return the animation info data structure
 			*/
-			ufmt_loader::AnimInfo GetAnimInfo() const { return *mAnimInfo; }
+			ufmt_loader::AnimInfo* GetAnimInfo() const { return mAnimInfo; }
 
 		private:
 			unsigned int			boneindex;
