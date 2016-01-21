@@ -15,6 +15,10 @@
 
 #include "EditorEntityManager.h"
 #include "SelectedComponent.h"
+#include "EditorConfig.h"
+
+#include <Editor.h>
+#include <Timer.h>
 
 using namespace ursine;
 
@@ -47,6 +51,30 @@ namespace
             const auto Removed = "ComponentRemoved";
             const auto Changed = "ComponentChanged";
         }
+    }
+
+    Json::array inspectComponentButtons(const meta::Variant &component)
+    {
+        auto methods = component.GetType( ).GetMethods( );
+
+        Json::array inspection;
+
+        for (auto &method : methods)
+        {
+            auto &meta = method.GetMeta( );
+
+            auto *button = meta.GetProperty<CreateButton>( );
+
+            if (!button)
+                continue;
+
+            inspection.emplace_back( Json::object {
+                { "name", method.GetName( ) },
+                { "text", button->text }
+            } );
+        }
+
+        return inspection;
     }
 }
 
@@ -191,7 +219,9 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
-        { "value", component.SerializeJson( ) }
+        // note: false is to ensure no serialization hooks are called
+        { "value", component.GetType( ).SerializeJson( component, false ) },
+        { "buttons", inspectComponentButtons( component ) }
     };
 
     m_project->GetUI( )->Message(
@@ -239,7 +269,8 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
             { "component", args->component->GetType( ).GetName( ) },
             { "field", args->field },
-            { "value", args->value.SerializeJson( ) }
+			// note: false is to ensure no serialization hooks are called
+            { "value", args->value.GetType( ).SerializeJson( args->value, false ) }
         };
 
         m_project->GetUI( )->Message(
@@ -249,4 +280,9 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             message
         );
     }
+}
+
+void ecs::EditorClearDeletionQueue(void)
+{
+	GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
 }

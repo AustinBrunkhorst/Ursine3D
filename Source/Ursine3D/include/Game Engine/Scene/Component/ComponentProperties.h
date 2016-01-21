@@ -16,35 +16,35 @@
 #include "Meta.h"
 
 /** @brief Makes sure this component can't be removed from an entity in the editor.
-*/
+ */
 struct DisableComponentRemoval : ursine::meta::MetaProperty
 {
     META_OBJECT
 };
 
 /** @brief Makes sure this component doesn't display in the entity inspector.
-*/
+ */
 struct HiddenInInspector : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
 
 /** @brief Disable serialization of this object
-*/
+ */
 struct DisableSerialization : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
 
 /** @brief Displays an enum field as a bit mask editor
-*/
+ */
 struct BitMaskEditor : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
 
 /** @brief Forces the editor to use a specific type editor for a field
-*/
+ */
 struct ForceEditorType : ursine::meta::MetaProperty
 {
     META_OBJECT;
@@ -56,7 +56,7 @@ struct ForceEditorType : ursine::meta::MetaProperty
 };
 
 /** @brief Field getter only used when interacting with the editor
-*/
+ */
 struct EditorGetter : ursine::meta::MetaProperty
 {
     META_OBJECT;
@@ -68,7 +68,7 @@ struct EditorGetter : ursine::meta::MetaProperty
 };
 
 /** @brief Field setter only used when interacting with the editor
-*/
+ */
 struct EditorSetter : ursine::meta::MetaProperty
 {
     META_OBJECT;
@@ -79,6 +79,9 @@ struct EditorSetter : ursine::meta::MetaProperty
         : setter( setter ) { }
 };
 
+/** @brief Declares that this component type requires all 
+ * of the listed component types
+ */
 struct RequiresComponents : ursine::meta::MetaProperty
 {
     META_OBJECT;
@@ -89,4 +92,16 @@ struct RequiresComponents : ursine::meta::MetaProperty
     template<typename... Types>
     RequiresComponents(Types &&...types)
         : componentTypes( { std::forward( types... ) } ) { }
+};
+
+/** @brief Treats a component method as a button in the editor
+ */
+struct CreateButton : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    const std::string text;
+
+    CreateButton(const char *text)
+        : text( text ) { }
 };

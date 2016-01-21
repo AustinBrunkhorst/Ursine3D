@@ -1472,6 +1472,7 @@ namespace ursine
 			{
 				ufmt_loader::MeshVertex newMV;
 				newMV.pos = md.vertices[md.indices[i]];
+
 				if (md.normals)
 				{
 					if (md.normalMode == FbxGeometryElement::eByPolygonVertex)

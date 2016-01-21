@@ -11,8 +11,6 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#pragma once
-
 #include "UrsinePrecompiled.h"
 
 #include "ConvexHullCollider.h"
@@ -27,7 +25,12 @@ namespace ursine
 	{
 		ConvexHullCollider::ConvexHullCollider(void)
 		{
-			
+		#ifdef BULLET_PHYSICS
+
+			// Turn off debug drawing at first (until the mesh is generated)
+			m_shapeType = EMPTY_SHAPE_PROXYTYPE;
+
+		#endif
 		}
 
 		ConvexHullCollider::~ConvexHullCollider(void)
@@ -54,7 +57,7 @@ namespace ursine
 				return;
 			}
 
-			auto meshesArray = model->GetModelResource( )->GetMeshArray( );
+			auto meshesArray = modelResource->GetMeshArray( );
 			auto meshIndex = model->GetMeshIndex( );
 			std::vector<graphics::Mesh*> meshesToGenerate;
 
@@ -63,6 +66,8 @@ namespace ursine
 					meshesToGenerate.push_back( mesh );
 			else
 				meshesToGenerate.push_back( meshesArray[ meshIndex ] );
+
+			m_shapeType = CONVEX_HULL_SHAPE_PROXYTYPE;
 
 			for (auto &mesh : meshesToGenerate)
 			{

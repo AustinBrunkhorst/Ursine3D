@@ -1,6 +1,8 @@
 #
 #First is file name, second is model name
 
+Entrenched_Test1.fbx Entrenched
+
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
 Ship.8.0.mdl Ship
@@ -24,7 +26,9 @@ Player_Idle.jdl Player
 #Player_Idle.jani Player
 
 # Gun Animations
-#Gun_Idle.fbx Gun
-#
-# Monkey
+Gun_Idle.fbx Gun
+Gun_Idle.fbx Gun_Idle
+Gun_Jump.fbx Gun_Jump
+Gun_Shoot.fbx Gun_Shoot
+
 Monkey.fbx Monkey

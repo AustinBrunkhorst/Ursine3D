@@ -64,6 +64,23 @@ class SceneOutline extends WindowHandler {
         }
     }
 
+    public function deleteSelectedEntities() {
+        for (uid in m_selectedEntities) {
+            var item = m_entityItems[ uid ];
+
+            if (item == null)
+                continue;
+
+            var entity : Entity = untyped item.entity;
+
+            if (entity.isRemovalEnabled( )) {
+                entity.remove( );
+            } else {
+                // TODO: add removal warning
+            }
+        }
+    }
+
     private function resetScene() {
         m_selectedEntities = new Array<UInt>( );
         m_rootView.innerHTML = '';
@@ -102,7 +119,10 @@ class SceneOutline extends WindowHandler {
     private function onEntityAdded(e) {
         var entity = new Entity( e.uniqueID );
 
-        addEntity( entity );
+        // race conditions...
+        haxe.Timer.delay( function() {
+            addEntity( entity );
+        }, 0 );
     }
 
     private function onEntityRemoved(e) {
@@ -195,9 +215,6 @@ class SceneOutline extends WindowHandler {
         } else {
 
             var parentItem : TreeViewItem = m_entityItems[ parent.uniqueID ];
-
-            trace( parent.getName( ) );
-            trace( item );
 
             if (parentItem != null)
                 parentItem.child.appendChild( item );
@@ -326,23 +343,6 @@ class SceneOutline extends WindowHandler {
             m_selectedEntities = m_selectedEntities.filter( function(x) {
                 return x != untyped item.entity.uniqueID;
             } );
-        }
-    }
-
-    private function deleteSelectedEntities() {
-        for (uid in m_selectedEntities) {
-            var item = m_entityItems[ uid ];
-
-            if (item == null)
-                continue;
-
-            var entity : Entity = untyped item.entity;
-
-            if (entity.isRemovalEnabled( )) {
-                entity.remove( );
-            } else {
-                // TODO: add removal warning
-            }
         }
     }
 }

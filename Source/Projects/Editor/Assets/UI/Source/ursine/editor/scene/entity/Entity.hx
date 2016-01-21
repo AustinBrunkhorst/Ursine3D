@@ -100,6 +100,10 @@ class Entity implements IEventContainer {
         m_handler.updateComponentField( componentName, fieldName, value );
     }
 
+    public function invokeComponentButton(componentName : String, buttonName : String) : Void {
+        m_handler.invokeComponentButton( componentName, buttonName );
+    }
+
     public function getChildren() : Array<Entity> {
         var children : Dynamic = m_handler.getChildren( );
 

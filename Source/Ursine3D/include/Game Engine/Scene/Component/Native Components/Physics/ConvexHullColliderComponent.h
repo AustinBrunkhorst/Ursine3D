@@ -28,6 +28,11 @@ namespace ursine
 
 		public:
 
+			EditorButton(
+                ReduceConvexHull, 
+                "Reduce Convex Hull"
+            );
+
 			EditorField(
 				float margin,
 				GetMargin,

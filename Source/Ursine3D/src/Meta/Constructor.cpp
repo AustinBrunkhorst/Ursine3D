@@ -27,6 +27,24 @@ namespace ursine
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
+        Constructor::Constructor(const Constructor &rhs)
+            : Invokable( "constructor" )
+            , m_isDynamic( rhs.m_isDynamic )
+            , m_classType( rhs.m_classType )
+            , m_invoker( rhs.m_invoker )
+        {
+            m_signature = rhs.m_signature;
+        }
+
+        Constructor::Constructor(const Constructor &&rhs)
+            : Invokable( "constructor" )
+            , m_isDynamic( rhs.m_isDynamic )
+            , m_classType( rhs.m_classType )
+            , m_invoker( std::move( rhs.m_invoker ) )
+        {
+            m_signature = std::move( rhs.m_signature );
+        }
+
         Constructor::Constructor(
             Type classType, 
             InvokableSignature signature, 
@@ -39,6 +57,17 @@ namespace ursine
             , m_invoker( invoker )
         {
             m_signature = signature;
+        }
+
+        Constructor &Constructor::operator=(const Constructor &&rhs)
+        {
+            m_isDynamic = rhs.m_isDynamic;
+            m_classType = rhs.m_classType;
+            m_invoker = std::move( rhs.m_invoker );
+
+            m_signature = std::move( rhs.m_signature );
+
+            return *this;
         }
 
         const Constructor &Constructor::Invalid(void)

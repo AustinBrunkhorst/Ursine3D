@@ -30,6 +30,11 @@ Cursor Cursor::GetLexicalParent(void) const
     return clang_getCursorLexicalParent( m_handle );
 }
 
+Cursor Cursor::GetTemplateSpecialization(void) const
+{
+    return clang_getSpecializedCursorTemplate( m_handle );
+}
+
 std::string Cursor::GetSpelling(void) const
 {
     std::string spelling;

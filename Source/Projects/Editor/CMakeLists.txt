@@ -23,6 +23,7 @@ ursine_project(Editor
     INCLUDE_INSTALLER
     INSTALLER_VERSION "0.1submission"
     META_HEADER "Reflection.h"
+    META_FLAGS -DURSINE_WITH_EDITOR
     META_DEPENDENCIES ${META_DEPENDENCIES}
     PCH_NAME "Precompiled"
 )

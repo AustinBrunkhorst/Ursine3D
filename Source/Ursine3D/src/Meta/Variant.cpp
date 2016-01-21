@@ -68,6 +68,11 @@ namespace ursine
             return m_base ? m_base->GetType( ) : Type::Invalid;
         }
 
+        ArrayWrapper Variant::GetArray(void) const
+        {
+            return m_base ? m_base->GetArray( ) : ArrayWrapper( );
+        }
+
         int Variant::ToInt(void) const
         {
             return m_base ? m_base->ToInt( ) : int( );
@@ -111,6 +116,11 @@ namespace ursine
         bool Variant::IsConst(void) const
         {
             return m_isConst;
+        }
+
+        bool Variant::IsArray(void) const
+        {
+            return m_base ? m_base->IsArray( ) : false;
         }
 
         void *Variant::getPtr(void) const

@@ -215,7 +215,7 @@ namespace ursine
                 throw SerializationException( error.str( ) );
             }
 
-            auto ctor = componentType.GetDynamicConstructor( );
+            auto &ctor = componentType.GetDynamicConstructor( );
 
             if (!ctor.IsValid( ))
             {

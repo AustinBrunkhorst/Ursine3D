@@ -3,7 +3,12 @@ package ursine.editor.scene.component.inspectors.fields;
 import ursine.controls.NumberInput;
 import ursine.editor.scene.component.ComponentDatabase;
 
-@fieldInspector( "int", "float", "double" )
+@fieldInspector(
+    "int",
+    "unsigned int",
+    "float",
+    "double"
+)
 class NumberFieldInspector extends FieldInspectionHandler {
     private var m_number : NumberInput;
 
@@ -11,6 +16,10 @@ class NumberFieldInspector extends FieldInspectionHandler {
         super( owner, instance, field, type );
 
         m_number = new NumberInput( );
+
+        // make sure we don't cause any overflow issues
+        if (type.name.indexOf( "unsigned" ) != -1)
+            m_number.min = "0";
 
         m_number.addEventListener( 'change', function() {
             var value : Dynamic = m_number.valueAsNumber;

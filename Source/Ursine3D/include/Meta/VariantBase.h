@@ -17,6 +17,7 @@ namespace ursine
     namespace meta
     {
         class Type;
+        class ArrayWrapper;
 
         class VariantBase
         {
@@ -32,6 +33,9 @@ namespace ursine
             virtual float ToFloat(void) const = 0;
             virtual double ToDouble(void) const = 0;
             virtual std::string ToString(void) const = 0;
+
+            virtual bool IsArray(void) const;
+            virtual ArrayWrapper GetArray(void) const;
 
             virtual VariantBase *Clone(void) const = 0;
 

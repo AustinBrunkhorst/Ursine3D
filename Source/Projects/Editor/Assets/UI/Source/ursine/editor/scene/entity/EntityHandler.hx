@@ -23,6 +23,7 @@ extern class EntityHandler {
     function removeComponent(name : String) : Void;
 
     function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void;
+    function invokeComponentButton(componentName : String, buttonName : String) : Void;
 
     function getChildren() : Array<UInt>;
     function getParent() : UInt;

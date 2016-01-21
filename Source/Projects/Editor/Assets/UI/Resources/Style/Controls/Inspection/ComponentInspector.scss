@@ -53,6 +53,19 @@
     display: none;
     margin: 0 0 0 5px;
 
+    #buttons {
+      &:not(:empty) {
+        margin-top: 5px;
+        padding-right: 8px;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+      }
+    }
+
     #fieldInspectors {
       overflow: auto;
     }

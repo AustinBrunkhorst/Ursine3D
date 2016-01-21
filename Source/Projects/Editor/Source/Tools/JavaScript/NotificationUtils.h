@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TraitUtils.h
+** DebugUtils.h
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -13,21 +13,13 @@
 
 #pragma once
 
+#include <NativeJSFunction.h>
+
 namespace ursine
 {
-    template<typename T, typename = void>
-    struct TypeOrEnumType
-    {
-        typedef T type;
-    };
+    Meta(Enable, ExposeJavaScript)
+    JSFunction(NotificationButtonCallback);
 
-    template<typename T>
-    struct TypeOrEnumType<T,
-        typename std::enable_if<
-            std::is_enum<T>::value
-        >::type
-    >
-    {
-        typedef typename std::underlying_type<T>::type type;
-    };
+    Meta(Enable, ExposeJavaScript)
+    JSFunction(NotificationCloseCallback);
 }

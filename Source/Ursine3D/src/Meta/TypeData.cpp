@@ -26,7 +26,7 @@ namespace ursine
             , isPrimitive( false )
             , isPointer( false )
             , isClass( false )
-            , enumeration { nullptr } { }
+            , enumeration { nullptr }  { }
 
         ///////////////////////////////////////////////////////////////////////
 

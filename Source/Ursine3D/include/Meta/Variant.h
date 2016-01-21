@@ -15,6 +15,7 @@
 
 #include "TypeConfig.h"
 
+#include "Array.h"
 #include "Json.h"
 
 namespace ursine
@@ -52,6 +53,22 @@ namespace ursine
                 >::type* = nullptr
             );
 
+            // array types (non-const)
+            template<typename T>
+            Variant(Array<T> &rhs);
+
+            // array types (const)
+            template<typename T>
+            Variant(const Array<T> &rhs);
+
+            // r-value array types (non-const)
+            template<typename T>
+            Variant(Array<T> &&rhs);
+
+            // r-value array types (const)
+            template<typename T>
+            Variant(const Array<T> &&rhs);
+
             Variant(const Variant &rhs);
             Variant(Variant &&rhs);
 
@@ -66,6 +83,7 @@ namespace ursine
             operator bool(void) const;
 
             Type GetType(void) const;
+            ArrayWrapper GetArray(void) const;
 
             void Swap(Variant &other);
 
@@ -82,6 +100,7 @@ namespace ursine
 
             bool IsValid(void) const;
             bool IsConst(void) const;
+            bool IsArray(void) const;
 
         private:
             friend class Type;

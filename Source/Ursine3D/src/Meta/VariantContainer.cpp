@@ -169,6 +169,84 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////// 
+        // unsigned int
+        ///////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////// 
+
+        #pragma region unsigned unsigned
+
+        VariantContainer<unsigned>::VariantContainer(const unsigned &value)
+            : m_value( value ) { }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        VariantContainer<unsigned>::VariantContainer(const unsigned &&value)
+            : m_value( std::move( value ) ) { }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        Type VariantContainer<unsigned>::GetType(void) const
+        {
+            return typeof( unsigned );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        void *VariantContainer<unsigned>::GetPtr(void) const
+        {
+            return const_cast<void*>(
+                reinterpret_cast<const void*>(
+                    std::addressof( m_value )
+                )
+            );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        int VariantContainer<unsigned>::ToInt(void) const
+        {
+            return static_cast<int>( m_value );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        bool VariantContainer<unsigned>::ToBool(void) const
+        {
+            return m_value == 0 ? false : true;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        float VariantContainer<unsigned>::ToFloat(void) const
+        {
+            return static_cast<float>( m_value );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        double VariantContainer<unsigned>::ToDouble(void) const
+        {
+            return static_cast<double>( m_value );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        std::string VariantContainer<unsigned>::ToString(void) const
+        {
+            return std::to_string( m_value );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        VariantBase *VariantContainer<unsigned>::Clone(void) const
+        {
+            return new VariantContainer<unsigned>( m_value );
+        }
+
+        #pragma endregion
+
+        ///////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////// 
         // bool
         ///////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////// 
