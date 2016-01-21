@@ -7,8 +7,8 @@
             <div class="btn-close" on-click="close"></div>
         </template>
         <div class="icon"></div>
-        <div class="header">{{header}}</div>
-        <div class="message">{{message}}</div>
+        <div id="header" class="header"></div>
+        <div id="message" class="message"></div>
         <div id="buttons"></div>
     </template>
     <script>
@@ -42,11 +42,13 @@
                 },
                 header: {
                     type: String,
-                    notify: true
+                    notify: true,
+                    observer: '_onHeaderChange'
                 },
                 message: {
                     type: String,
-                    notify: true
+                    notify: true,
+                    observer: '_onMessageChange'
                 }
             },
             factoryImpl: function(type, message, header) {
@@ -91,6 +93,13 @@
                 } );
 
                 this._closed = true;
+            },
+
+            _onHeaderChange: function() {
+                this.$.header.innerHTML = this.header;
+            },
+            _onMessageChange: function() {
+                this.$.message.innerHTML = this.message;
             }
         });
     </script>

@@ -25,6 +25,7 @@ namespace ursine
             NATIVE_COMPONENT;
 
             friend class PhysicsSystem;
+			friend class Model3D;
 
         public:
 			EditorField(

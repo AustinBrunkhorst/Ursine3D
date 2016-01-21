@@ -41,6 +41,8 @@ namespace ursine
 
 			void Serialize(Json::object &output) const;
 			void Deserialize(const Json &input);
+
+			void ToggleDebugDraw(bool toggle);
 		};
 	}
 }

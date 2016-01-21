@@ -105,15 +105,15 @@ namespace ursine
 			{
 				NotificationConfig config;
 
-				config.type = NOTIFY_QUESTION;
-				config.header = "Confirmation Of Destructive Action";
+				config.type = NOTIFY_WARNING;
+				config.header = "Warning";
 				config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
 				config.dismissible = false;
 				config.duration = 0;
 
 				NotificationButton yes, no;
 
-				yes.text = "Confirm Action";
+				yes.text = "Yes";
 				yes.onClick = [=] (Notification &notification) {
 					notification.Close( );
 					m_notificationPresent = false;
@@ -125,7 +125,7 @@ namespace ursine
 					} );
 				};
 
-				no.text = "Cancel Action";
+				no.text = "No";
 				no.onClick = [=] (Notification &notification) {
 					notification.Close( );
 					m_notificationPresent = false;

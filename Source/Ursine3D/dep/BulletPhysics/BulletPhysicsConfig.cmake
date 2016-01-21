@@ -32,12 +32,14 @@ set(BulletPhysics_STATIC_LIBS
     debug ${DIR_LIB}/Debug/LinearMath${LIB_EXT}
     debug ${DIR_LIB}/Debug/BulletWorldImporter${LIB_EXT}
     debug ${DIR_LIB}/Debug/BulletFileLoader${LIB_EXT}
+    debug ${DIR_LIB}/Debug/HACD${LIB_EXT}
     optimized ${DIR_LIB}/Release/BulletCollision${LIB_EXT}
     optimized ${DIR_LIB}/Release/BulletDynamics${LIB_EXT}
     optimized ${DIR_LIB}/Release/BulletSoftBody${LIB_EXT}
     optimized ${DIR_LIB}/Release/LinearMath${LIB_EXT}
     optimized ${DIR_LIB}/Release/BulletWorldImporter${LIB_EXT}
-    optimized ${DIR_LIB}/Release/BulletFileLoader${LIB_EXT})
+    optimized ${DIR_LIB}/Release/BulletFileLoader${LIB_EXT}
+    optimized ${DIR_LIB}/Release/HACD${LIB_EXT})
 
 # Shared Libraries
 

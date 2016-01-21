@@ -26,9 +26,9 @@ Player_Idle.jdl Player
 #Player_Idle.jani Player
 
 # Gun Animations
-Gun_Idle.fbx Gun
-Gun_Idle.fbx Gun_Idle
-Gun_Jump.fbx Gun_Jump
-Gun_Shoot.fbx Gun_Shoot
+#Gun_Idle.fbx Gun
+#Gun_Idle.fbx Gun_Idle
+#Gun_Jump.fbx Gun_Jump
+#Gun_Shoot.fbx Gun_Shoot
 
 Monkey.fbx Monkey

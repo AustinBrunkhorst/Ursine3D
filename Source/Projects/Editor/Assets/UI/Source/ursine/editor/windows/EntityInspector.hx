@@ -181,6 +181,8 @@ class EntityInspector extends WindowHandler {
     }
 
     private function onCopyEntityClicked(e : js.html.MouseEvent) {
+        SceneOutline.instance.clearSelectedEntities( );
+
         var entity = m_inspectedEntity.clone( );
 
         entity.setName( m_inspectedEntity.getName( ) + ' Copy' );

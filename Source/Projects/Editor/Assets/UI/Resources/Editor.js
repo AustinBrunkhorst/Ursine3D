@@ -1369,6 +1369,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.m_inspectedEntity.saveAsArchetype();
 	}
 	,onCopyEntityClicked: function(e) {
+		ursine_editor_windows_SceneOutline.instance.clearSelectedEntities();
 		var entity = this.m_inspectedEntity.clone();
 		entity.setName(this.m_inspectedEntity.getName() + " Copy");
 		entity.select();
