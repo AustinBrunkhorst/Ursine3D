@@ -490,6 +490,7 @@ namespace ursine
 				{
 					for (auto iter : ufmt_model.maniNameVec)
 					{
+						// not finished. need to be changed when it really works.
 						std::string janiFileName = fileName.substr(0, fileName.find(".jdl")) + iter.c_str();
 						janiFileName += ".jani";
 						LoadAni_Ursine(ufmt_model.name, janiFileName);
