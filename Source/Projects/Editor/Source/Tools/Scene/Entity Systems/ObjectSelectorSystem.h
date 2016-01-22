@@ -55,9 +55,6 @@ private:
     // when the mouse is released
     void onMouseUp(EVENT_HANDLER(ursine::MouseManager));
 
-    // when the mouse is released
-    void onMouseScroll(EVENT_HANDLER(ursine::MouseManager));
-
     // when a key is pressed
     void onKeyDown(EVENT_HANDLER(ursine::KeyboardManager));
 
@@ -65,9 +62,6 @@ private:
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
     void onSelectedAdd(EVENT_HANDLER(ursine::ecs::World));
-
-    // change the offset values of the tool
-    void calculateOffset(ursine::Vec2 mousePos);
 
     // change where tool should be
     void updateToolPosition(ursine::Vec3 pos);
@@ -83,15 +77,21 @@ private:
 
     // set tool to translation
     void setToTranslate(void);
-    void updateTranslation(const ursine::SVec3 &mousePos);
+    void updateTranslation(
+        const ursine::SVec3 &mousePos
+    );
 
     // set tool to scale
     void setToScale(void);
-    void updateScale(const ursine::SVec3 &mousePos);
+    void updateScale(
+        const ursine::SVec3 &mousePos
+    );
 
     // set tool to rotation
     void setToRotation(void);
-    void updateRotation(const ursine::SVec3 &mousePos);
+    void updateRotation(
+        const ursine::SVec3 &mousePos
+    );
 
     // hide tool
     void hideTool(void);
@@ -103,6 +103,21 @@ private:
 
     // update out current bases for the current obj
     void updateBases(void);
+
+    // calculate intersection of vector and plane
+    ursine::SVec3 LinePlaneIntersection(
+        const ursine::SVec3 &pointOnPlane, 
+        const ursine::SVec3 &axis1, 
+        const ursine::SVec3 &axis2, 
+        const ursine::SVec3 &vector, 
+        const ursine::SVec3& vectorStart 
+    );
+
+    ursine::SVec3 ProjectPointToLine( 
+        const ursine::SVec3 &linePoint1, 
+        const ursine::SVec3 &linePoint2, 
+        const ursine::SVec3 &point 
+    );
 
     // members
 private:
@@ -135,4 +150,5 @@ private:
     ursine::Vec3 m_baseScale;
     ursine::SQuat m_baseRotation;
     ursine::Vec3 m_baseMousePos;
+    ursine::Vec2 m_baseMouseScreenPos;
 } Meta(Enable);

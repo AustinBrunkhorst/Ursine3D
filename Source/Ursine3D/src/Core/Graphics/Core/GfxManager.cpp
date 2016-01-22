@@ -772,7 +772,11 @@ namespace ursine
 #endif
         }
 
+<<<<<<< HEAD
         void GfxManager::PrepForLightPass(const SMat4 &view, const SMat4 &proj)
+=======
+        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera )
+>>>>>>> origin/editor
         {
 #if defined(URSINE_WITH_EDITOR)
             gfxProfiler->Stamp(PROFILE_COMPUTEMOUSE);
@@ -793,6 +797,7 @@ namespace ursine
             temp.Inverse();
 
             ipb.invProj = temp.ToD3D();
+            currentCamera.GetPlanes( ipb.nearPlane, ipb.farPlane );
             bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
             //map camera buffer
@@ -970,6 +975,7 @@ namespace ursine
             //render
             unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
 
+<<<<<<< HEAD
             auto *modelResource = modelManager->GetModel(handle.Model_);
 
             // If the whole model is to be rendered
@@ -1018,6 +1024,9 @@ namespace ursine
                 }
             }
             else // we only want to render a specific part
+=======
+            for (unsigned x = 0; x < count; ++x)
+>>>>>>> origin/editor
             {
                 int x = current.GetMeshIndex();
 
@@ -1030,9 +1039,31 @@ namespace ursine
                 modelManager->BindModel(handle.Model_, x);
                 shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
 
+<<<<<<< HEAD
                 //render debug lines
                 Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
                 if ( model.GetDebug() )
+=======
+            //render debug lines
+            Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
+            if(model.GetDebug())
+            {
+                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+
+                pcb.color.x = 0.75f;
+                pcb.color.y = 0.75f;
+                pcb.color.z = 0.45f;
+                bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+
+                mdb.emissive = 4;
+                mdb.specularPower = 0;
+                mdb.specularIntensity = 0;
+                bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+                textureManager->MapTextureByName("Blank");
+                
+                for (unsigned x = 0; x < count; ++x)
+>>>>>>> origin/editor
                 {
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
                     dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
@@ -1135,6 +1166,8 @@ namespace ursine
             //set input
             bufferManager->MapBuffer<BUFFER_MOUSEPOS>(&dataToCS, SHADERTYPE_COMPUTE, 0);
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
+            ID3D11ShaderResourceView *srv = dxCore->GetDepthMgr( )->GetDepthStencilSRV( DEPTH_STENCIL_MAIN );
+            dxCore->GetDeviceContext( )->CSSetShaderResources( 1, 1, &srv );
 
             //set UAV as output 
             dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID ], nullptr);
@@ -1148,12 +1181,14 @@ namespace ursine
             dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
 
             //read from intermediary buffer
-            ComputeIDOutput dataFromCS[5]; 
+            ComputeIDOutput dataFromCS; 
             bufferManager->ReadComputeBuffer<COMPUTE_BUFFER_ID_CPU>(&dataFromCS, SHADERTYPE_COMPUTE);
 
             dxCore->GetDeviceContext()->CSSetShaderResources(0, 0, nullptr);
 
-            tempID = dataFromCS[0].id; 
+            m_currentPosition = SVec3( static_cast<float>(point.x), static_cast<float>(point.y), dataFromCS.depth );
+
+            tempID = dataFromCS.id; 
              
             int index = tempID & 0x7FF;
             int type = (tempID >> 12) & 0x3;
@@ -1592,6 +1627,19 @@ namespace ursine
             return m_currentID;
         }
 
+        SVec3 GfxManager::GetCurrentWorldPosition(const GfxHND& cameraHandle)
+        {
+            auto &camera = cameraManager->GetCamera( cameraHandle );
+
+            // get the saved depth
+            float depth = m_currentPosition.Z( );
+
+            // transform from screen to world, given a specific camera
+            auto worldPosition = camera.ScreenToWorld( Vec2( m_currentPosition.X( ), m_currentPosition.Y( ) ), depth );
+
+            return worldPosition;
+        }
+
         // misc stuff /////////////////////////////////////////////////////
         DXCore::DirectXCore *GfxManager::GetDXCore()
         {
@@ -1604,11 +1652,6 @@ namespace ursine
                 return;
 
             gfxInfo->SetDimensions(width, height);
-
-            //what needs to be resized?
-            //ui
-            //@UI
-            //uiManager->Resize( width, height );
 
             //MAIN render targets, not viewports
             dxCore->ResizeDX(width, height);

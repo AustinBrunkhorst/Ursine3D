@@ -1,5 +1,6 @@
 //input texture we want to read from
 Texture2D inputTexture : register(t0);
+Texture2D depthTexture : register(t1);
 
 //input of what position we want to get
 cbuffer MousePosition : register(b0)
@@ -11,6 +12,9 @@ cbuffer MousePosition : register(b0)
 struct CS_OUTPUT
 {
     uint id;
+    uint x;
+    uint y;
+    float depth;
 };
 
 //specify the output to the CPU as a read-write buffer
@@ -42,6 +46,8 @@ void main()
     uint bestAnswer = -1;
     uint num1 = -1;
     uint num2 = 0;
+
+    uint xPos = 0, yPos = 0;
 
     bool currentStatus = false;
 
@@ -87,6 +93,9 @@ void main()
 
                 num1 = w1;
                 num2 = w2;
+
+                xPos = x;
+                yPos = y;
                 continue;
             }
 
@@ -96,6 +105,8 @@ void main()
                 bestAnswer = currID;
                 bestDistance = distanceSqr;
 
+                xPos = x;
+                yPos = y;
 
                 num1 = w1;
                 num2 = w2;
@@ -103,9 +114,12 @@ void main()
             }
         }
 
+    // we now need to calculate other stuff, like the world position
+
     gOutput[ 0 ].id = bestAnswer; 
-    gOutput[ 1 ].id = num1;
-    gOutput[2].id = num2;
+    gOutput[ 0 ].x = xPos;
+    gOutput[ 0 ].y = yPos;
+    gOutput[ 0 ].depth = depthTexture.Load( int3(xPos, yPos, 0) );
     return;
 }
 
