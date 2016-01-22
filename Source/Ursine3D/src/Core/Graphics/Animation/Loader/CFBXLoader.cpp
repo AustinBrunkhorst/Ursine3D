@@ -25,7 +25,7 @@ namespace ursine
 	{
 		CFBXLoader::CFBXLoader() :
 			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr),
-			mModelInfo(nullptr), mLevelInfo(nullptr), mAnimInfo(nullptr),
+			mModelInfo(nullptr), mAnimInfo(nullptr),
 			mConverter(nullptr)
 		{
 		}
@@ -46,13 +46,6 @@ namespace ursine
 				mAnimInfo->ReleaseData();
 				delete mAnimInfo;
 				mAnimInfo = nullptr;
-			}
-
-			if (mLevelInfo)
-			{
-				mLevelInfo->ReleaseData();
-				delete mLevelInfo;
-				mLevelInfo = nullptr;
 			}
 
 			if (mModelInfo)
@@ -407,16 +400,6 @@ namespace ursine
 				if (!mModelInfo->SerializeOut(hFile))
 				{
 					MessageBox(nullptr, "Jdl Export Failed!", "", MB_OK);
-					return false;
-				}
-				CloseHandle(hFile);
-			}
-			if (mLevelInfo)
-			{
-				hFile = CreateFile(jlvlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-				if (!mLevelInfo->SerializeOut(hFile))
-				{
-					MessageBox(nullptr, "Jlvl Export Failed!", "", MB_OK);
 					return false;
 				}
 				CloseHandle(hFile);
