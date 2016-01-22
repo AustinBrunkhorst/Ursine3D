@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -39,6 +39,16 @@ void Spawnpoint::SetTeamNumber(int teamNo)
 int Spawnpoint::GetRoundSpawnNumber() const
 {
     return m_roundSpawnNumber;
+}
+
+float Spawnpoint::GetYRotationDegrees(void) const
+{
+	return m_yRotationDegrees;
+}
+
+void Spawnpoint::SetYRotationDegrees(float degrees)
+{
+	m_yRotationDegrees = degrees;
 }
 
 void Spawnpoint::SetRoundSpawnNumber(int spawnNo)

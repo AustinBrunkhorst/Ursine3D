@@ -23,7 +23,7 @@ namespace ursine
 		class ConvexHullCollider : public Component
 		{
 			NATIVE_COMPONENT;
-
+            
 			friend class PhysicsSystem;
 
 		public:
@@ -32,7 +32,8 @@ namespace ursine
                 ReduceConvexHull, 
                 "Reduce Convex Hull"
             );
-
+            
+            Meta(InputRange( 0, 5, 0.001 ))
 			EditorField(
 				float margin,
 				GetMargin,
@@ -41,18 +42,18 @@ namespace ursine
 
 			ConvexHullCollider(void);
 			~ConvexHullCollider(void);
-
+            
 			Meta(Disable)
 			void OnInitialize(void) override;
 
 			Meta(Disable)
 			void OnSerialize(Json::object &output) const override;
-
+            
 			Meta(Disable)
 			void OnDeserialize(const Json &input) override;
 
 			void GenerateConvexHull(Model3D *model);
-
+            
 			void ReduceVertices(void);
 
 			float GetMargin(void) const;

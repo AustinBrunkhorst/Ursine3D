@@ -80,7 +80,7 @@ struct EditorSetter : ursine::meta::MetaProperty
 };
 
 /** @brief Declares that this component type requires all 
- * of the listed component types
+ *         of the listed component types
  */
 struct RequiresComponents : ursine::meta::MetaProperty
 {
@@ -104,4 +104,29 @@ struct CreateButton : ursine::meta::MetaProperty
 
     CreateButton(const char *text)
         : text( text ) { }
+};
+
+/** @brief Modifies the field to be restricted to the input range
+ *         specified by min and max. This only applies to number types.
+ */
+struct InputRange : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    const double min;
+    const double max;
+    const double step;
+    const std::string format;
+
+    /** @param min Minimum allowed value.
+     *  @param max Maximum allowed value.
+     *  @param step Optional input step precision. 
+     *         A negative value ensures a nice default.
+     *  @param format Optional format to display. "{{value}}" is replaced with the calculated value
+     */
+    InputRange(double min, double max, double step = -1.0, const std::string &format = "{{value}}")
+        : min( min )
+        , max( max )
+        , step( step )
+        , format( format ) { }
 };

@@ -14,6 +14,9 @@
 #include "Precompiled.h"
 
 #include "EditorEntityManager.h"
+
+#include "ComponentUtils.h"
+
 #include "SelectedComponent.h"
 #include "EditorConfig.h"
 
@@ -51,30 +54,6 @@ namespace
             const auto Removed = "ComponentRemoved";
             const auto Changed = "ComponentChanged";
         }
-    }
-
-    Json::array inspectComponentButtons(const meta::Variant &component)
-    {
-        auto methods = component.GetType( ).GetMethods( );
-
-        Json::array inspection;
-
-        for (auto &method : methods)
-        {
-            auto &meta = method.GetMeta( );
-
-            auto *button = meta.GetProperty<CreateButton>( );
-
-            if (!button)
-                continue;
-
-            inspection.emplace_back( Json::object {
-                { "name", method.GetName( ) },
-                { "text", button->text }
-            } );
-        }
-
-        return inspection;
     }
 }
 
@@ -221,7 +200,7 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
         { "component", args->component->GetType( ).GetName( ) },
         // note: false is to ensure no serialization hooks are called
         { "value", component.GetType( ).SerializeJson( component, false ) },
-        { "buttons", inspectComponentButtons( component ) }
+        { "buttons", InspectComponentButtons( component ) }
     };
 
     m_project->GetUI( )->Message(

@@ -78,6 +78,12 @@
 // Meta
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "ArrayWrapper.h"
+#include "ArrayWrapperBase.h"
+#include "ArrayWrapperContainer.h"
+
+#include "ArrayVariantContainer.h"
+
 #include "MetaManager.h"
 #include "ReflectionDatabase.h"
 #include "Meta.h"

@@ -40,8 +40,13 @@ public:
     JSMethod(addComponent);
     JSMethod(removeComponent);
 
-    JSMethod(updateComponentField);
-    JSMethod(invokeComponentButton);
+    JSMethod(componentFieldUpdate);
+
+    JSMethod(componentFieldArrayUpdate);
+    JSMethod(componentFieldArrayInsert);
+    JSMethod(componentFieldArrayRemove);
+
+    JSMethod(componentButtonInvoke);
 
     JSMethod(getChildren);
     JSMethod(getParent);

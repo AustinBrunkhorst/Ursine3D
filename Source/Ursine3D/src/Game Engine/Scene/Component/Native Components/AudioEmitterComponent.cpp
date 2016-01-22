@@ -66,6 +66,7 @@ namespace ursine
 
 		void AudioEmitter::OnInitialize(void)
 		{
+            Component::OnInitialize( );
 		}
 
 		std::string AudioEmitter::GetFrontSound(void)

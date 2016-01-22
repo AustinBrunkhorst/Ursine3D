@@ -18,7 +18,6 @@
 
 #if defined(URSINE_WITH_EDITOR)
 
-#include "Notification.h"
 #include "EditorConfig.h"
 
 #endif

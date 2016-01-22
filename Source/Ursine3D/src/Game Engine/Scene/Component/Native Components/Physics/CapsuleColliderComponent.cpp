@@ -41,6 +41,8 @@ namespace ursine
 
         void CapsuleCollider::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &CapsuleCollider::onTransformChange );
 

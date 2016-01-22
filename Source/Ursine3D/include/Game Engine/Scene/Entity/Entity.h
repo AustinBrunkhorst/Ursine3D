@@ -41,9 +41,6 @@ namespace ursine
             typedef uint32 EventID;
             typedef EventDispatcher<EventID> EventDispatcher;
 
-            // Allow use of ChainableEventOperator
-            typedef EventID KeyType;
-
             ////////////////////////////////////////////////////////////////////
             // State/Identification
             ////////////////////////////////////////////////////////////////////
@@ -219,7 +216,7 @@ namespace ursine
             template<typename Args>
             void Connect(
                 EventID event, 
-                StaticDelegate<Args> delegate, 
+                EventDispatcher::HandlerType::StaticDelegate<Args> delegate,
                 EventHandlerPriority priority = kDefaultEventHandlerPriority
             );
 
@@ -227,15 +224,15 @@ namespace ursine
             void Connect(
                 EventID event, 
                 Class *context, 
-                ClassDelegate<Class, Args> delegate, 
+                EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate,
                 EventHandlerPriority priority = kDefaultEventHandlerPriority
             );
 
             template<typename Args>
-            void Disconnect(EventID event, StaticDelegate<Args> delegate);
+            void Disconnect(EventID event, EventDispatcher::HandlerType::StaticDelegate<Args> delegate);
 
             template<typename Class, typename Args>
-            void Disconnect(EventID event, Class *context, ClassDelegate<Class, Args> delegate);
+            void Disconnect(EventID event, Class *context, EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate);
 
             void Dispatch(EventID event, const EventArgs *args);
             

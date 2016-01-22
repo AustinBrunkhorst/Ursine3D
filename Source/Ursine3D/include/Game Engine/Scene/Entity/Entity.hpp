@@ -77,7 +77,7 @@ namespace ursine
 	    template<typename Args>
         void Entity::Connect(
             EventID event, 
-            StaticDelegate<Args> delegate, 
+            EventDispatcher::HandlerType::StaticDelegate<Args> delegate,
             EventHandlerPriority priority
         )
         {
@@ -89,7 +89,7 @@ namespace ursine
         void Entity::Connect(
             EventID event, 
             Class *context, 
-            ClassDelegate<Class, Args> delegate, 
+            EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate,
             EventHandlerPriority priority
         )
         {
@@ -98,7 +98,7 @@ namespace ursine
         }
 
         template<typename Args>
-        void Entity::Disconnect(EventID event, StaticDelegate<Args> delegate)
+        void Entity::Disconnect(EventID event, EventDispatcher::HandlerType::StaticDelegate<Args> delegate)
         {
             m_world->m_entityManager->GetEntityEvents( this )
                 .Disconnect( event, delegate );
@@ -108,7 +108,7 @@ namespace ursine
         void Entity::Disconnect(
             EventID event, 
             Class *context, 
-            ClassDelegate<Class, Args> delegate
+            EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate
         )
         {
             m_world->m_entityManager->GetEntityEvents( this )
