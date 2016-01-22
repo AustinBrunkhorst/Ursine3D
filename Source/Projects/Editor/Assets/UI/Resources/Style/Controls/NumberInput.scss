@@ -22,6 +22,7 @@
 
   &[type=range] {
     padding: 0;
+    margin: 0 0 5px 0;
     -webkit-appearance: none;
 
     &:hover::-webkit-slider-thumb {
@@ -51,7 +52,8 @@
     left: 50%;
     top: 50%;
     font-size: 12px;
-    color: white;
+    color: #dcdcdc;
     transform: translate(-50%, -50%);
+    pointer-events: none;
   }
 }

@@ -1079,6 +1079,7 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 	if(Object.prototype.hasOwnProperty.call(field.meta,ursine_native_Property.InputRange)) {
 		this.m_number.slider = true;
 		var range = Reflect.field(field.meta,ursine_native_Property.InputRange);
+		this.m_number.format = range.format;
 		this.m_number.min = range.min;
 		this.m_number.max = range.max;
 		if(range.step > 0.0) if(range.step == null) this.m_number.step = "null"; else this.m_number.step = "" + range.step;

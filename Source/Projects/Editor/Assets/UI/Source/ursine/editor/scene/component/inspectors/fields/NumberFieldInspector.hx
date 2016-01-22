@@ -24,6 +24,7 @@ class NumberFieldInspector extends FieldInspectionHandler {
 
             var range = Reflect.field( field.meta, Property.InputRange );
 
+            m_number.format = range.format;
             m_number.min = range.min;
             m_number.max = range.max;
 
