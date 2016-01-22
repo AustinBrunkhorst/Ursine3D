@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Field.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Field.h"
@@ -25,6 +38,19 @@ namespace ursine
             , m_name( name )
             , m_getter( getter )
             , m_setter( setter ) { }
+
+        bool Field::SetValue(Variant &instance, const Variant &value, const Method &setter)
+        {
+             // read only?
+            if (!instance.IsConst( ))
+            {
+                setter.Invoke( instance, value );
+
+                return true;
+            }
+
+            return false;
+        }
 
         bool Field::IsValid(void) const
         {

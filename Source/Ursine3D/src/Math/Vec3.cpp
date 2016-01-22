@@ -13,6 +13,12 @@
 
 #include "UrsinePrecompiled.h"
 
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+#include "LinearMath/btVector3.h"
+
+#endif
+
 namespace ursine
 {
 	Vec3::Vec3(const SVec3 &value)
@@ -42,6 +48,20 @@ namespace ursine
 		, m_z( value.Z( ) )
 	{
 	}
+
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+	Vec3::Vec3(const btVector3 &vec)
+		: m_x( vec.getX( ) )
+		, m_y( vec.getY( ) )
+		, m_z( vec.getZ( ) )
+	{
+	}
+
+	btVector3 Vec3::ToBullet(void) const
+	{
+		return btVector3( m_x, m_y, m_z );
+	}
+#endif
 
 	// Public Methods
 	void Vec3::Clean(void)

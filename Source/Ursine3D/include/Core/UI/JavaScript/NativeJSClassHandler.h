@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** NativeJSClassHandler.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Meta.h"
@@ -45,7 +58,7 @@ namespace ursine
 
         meta::Type m_classType;
 
-        meta::Constructor m_constructor;
+        const meta::Constructor &m_constructor;
 
         CefRefPtr<PrototypeHandler> m_prototypeHandler;
 

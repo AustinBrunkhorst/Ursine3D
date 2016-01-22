@@ -1,9 +1,11 @@
 package ursine.editor.scene.component.inspectors;
 
 import ursine.utils.EventManager;
+import ursine.controls.Button;
 import ursine.controls.inspection.ComponentInspector;
 import ursine.editor.scene.entity.Entity;
 import ursine.editor.scene.component.ComponentDatabase;
+import ursine.editor.scene.component.ComponentInspection;
 
 @:keepInit
 @:keepSub
@@ -43,6 +45,20 @@ class ComponentInspectionHandler {
             if (handler != null)
                 handler.updateValue( value );
         }
+    }
+
+    public function addButton(button : ComponentEditorButton) {
+        var element = new Button( );
+
+        // kinda hacky, but it works
+        element.classList.add( 'x-component-inspector' );
+        element.text = button.text;
+
+        element.addEventListener( 'click', function() {
+            m_entity.invokeComponentButton( m_component.type, button.name );
+        } );
+
+        inspector.buttons.appendChild( element );
     }
 
     public function addField(field : FieldInspectionHandler) {

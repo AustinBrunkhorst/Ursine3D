@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** SceneView.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "SceneView.h"
@@ -87,7 +100,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
     auto handle = scene->GetViewport( );
 
     auto &viewport =
-            GetCoreSystem( graphics::GfxAPI )->ViewportMgr.GetViewport( handle );
+        GetCoreSystem( graphics::GfxAPI )->ViewportMgr.GetViewport( handle );
 
     unsigned oldX, oldY;
 

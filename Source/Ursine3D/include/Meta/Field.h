@@ -27,6 +27,8 @@ namespace ursine
             typedef std::function<Variant(const Variant &)> Getter;
             typedef std::function<void(Variant &, const Variant &)> Setter;
 
+            static bool SetValue(Variant &instance, const Variant &value, const Method &setter);
+
             Field(void);
 
             Field(

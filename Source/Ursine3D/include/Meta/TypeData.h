@@ -50,6 +50,8 @@ namespace ursine
             Type::Set baseClasses;
             Type::Set derivedClasses;
 
+            Constructor arrayConstructor;
+
             Destructor destructor;
 
             std::unordered_map<

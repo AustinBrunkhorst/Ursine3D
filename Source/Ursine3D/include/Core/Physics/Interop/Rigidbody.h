@@ -27,28 +27,36 @@ namespace ursine
     {
         class Simulation;
 
-        enum BodyType
+        enum BodyFlag
         {
         #ifdef BULLET_PHYSICS
-            BODY_DYNAMIC = 0,
-            BODY_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
-            BODY_STATIC = btRigidBody::CF_STATIC_OBJECT
+
+            BF_DYNAMIC = 0,
+            BF_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
+            BF_STATIC = btRigidBody::CF_STATIC_OBJECT
+
         #endif
         };
 
         class Rigidbody : public virtual RigidbodyBase
         {
         public:
-            Rigidbody(float mass, ColliderBase *collider, BodyType bodyType = BODY_STATIC);
+            Rigidbody(float mass, ColliderBase *collider, BodyFlag bodyType = BF_STATIC);
 
             void SetSimulation(Simulation *simulation);
             Simulation *GetSimulation(void);
 
-            void SetID(int id);
-            int GetID(void);
+            void SetUserID(int id);
+            int GetUserID(void);
 
-            void SetBodyType(BodyType bodyType);
-            BodyType GetBodyType(void) const;
+			void SetUserPointer(void *ptr);
+			void *GetUserPointer(void);
+
+			static Rigidbody *DownCast(BodyBase *body);
+			static const Rigidbody *DownCast(const BodyBase *body);
+
+            void SetBodyFlag(BodyFlag bodyFlag);
+            BodyFlag GetBodyFlag(void) const;
 
             void SetTransform(ecs::Transform *transform);
             void GetTransform(ecs::Transform *transform);
@@ -70,9 +78,11 @@ namespace ursine
             void SetRotationFreezeZ(bool flag);
             bool GetRotationFreezeZ(void) const;
 
-            void UpdateInertiaTensor(void);
+            void SetSleepToggle(bool flag);
+            bool GetSleepToggle(void) const;
 
             void SetGravity(const SVec3 &gravity);
+			const SVec3 &GetGravity(void) const;
 
             void SetMass(float mass);
             float GetMass(void) const;
@@ -83,12 +93,38 @@ namespace ursine
             void SetAngularVelocity(const SVec3 &angularVelocity);
             SVec3 GetAngularVelocity(void) const;
 
+			void SetGhost(bool enable);
+			bool GetGhost(void) const;
+
+			void SetContinuousCollisionDetection(bool enable);
+			bool GetContinuousCollisionDetection(void) const;
+
+			void UpdateInertiaTensor(void);
+
+            void AddForce(const SVec3 &force);
+
+            // Relative to the transforms coordinate system
+            void AddForceRelative(const SVec3 &force, ecs::Transform *transform);
+
+            void AddForceAtPosition(const SVec3 &force, const SVec3 &worldPosition, ecs::Transform *transform);
+
+            void AddTorque(const SVec3 &torque);
+
+            // Relative to the transforms coordinate system
+            void AddTorqueRelative(const SVec3 &torque, ecs::Transform *transform);
+
         private:
-            BodyType m_bodyType;
+            BodyFlag m_bodyType;
 
             bool m_gettingTransform;
 
             bool m_emptyCollider;
+
+            bool m_enableSleeping;
+
+			bool m_ghost;
+
+			bool m_continuousCollisionDetection;
 
             Simulation *m_simulation;
 
@@ -107,6 +143,7 @@ namespace ursine
             
             void updateRotationFreeze(void);
 
+			void updateCCD(void);
         };
     }
 }

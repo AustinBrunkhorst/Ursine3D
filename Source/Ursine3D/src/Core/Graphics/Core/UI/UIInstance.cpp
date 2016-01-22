@@ -66,7 +66,7 @@ namespace ursine
             //this is VERY VERY VERY temporary. Just so you can see it works.
             if (m_popupRect.y != 0)
             {
-                GfxManager->RenderDynamicTexture(m_popup, m_popupRect.x, m_popupRect.y);
+                GfxManager->RenderDynamicTexture(m_popup, static_cast<float>(m_popupRect.x), static_cast<float>(m_popupRect.y));
             }
         }
 

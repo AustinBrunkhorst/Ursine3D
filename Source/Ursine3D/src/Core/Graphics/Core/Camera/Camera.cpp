@@ -35,7 +35,7 @@ namespace ursine
 
             m_renderMode = VIEWPORT_RENDER_DEFERRED;
 
-            m_cameraMask = 0xFFFFFFFFFFFFFFFF;
+            m_cameraMask = 0x7FFFFFFF;
         }
 
         void Camera::Uninitialize(void)
@@ -108,6 +108,7 @@ namespace ursine
         void Camera::SetPlanes(const float nearPlane, const float farPlane)
         {
             UAssert(nearPlane < farPlane, "Near and far planes cannot be the same!");
+
             m_nearPlane = nearPlane;
             m_farPlane = farPlane;
         }
@@ -126,6 +127,7 @@ namespace ursine
         void Camera::SetFOV(const float fov)
         {
             UAssert(fov > 0, "FOV can't be less than 0!");
+            
             m_fov = fov;
         }
 
@@ -167,13 +169,13 @@ namespace ursine
             height = m_height;
         }
 
-        void Camera::SetPosition(const float x, const float y)
+        void Camera::SetViewportPosition(const float x, const float y)
         {
             m_xPos = x;
             m_yPos = y;
         }
 
-        void Camera::GetPosition(float &x, float &y) const
+        void Camera::GetViewportPosition(float &x, float &y) const
         {
             x = m_xPos;
             y = m_yPos;
@@ -189,7 +191,7 @@ namespace ursine
             return m_renderMode;
         }
 
-        Vec3 Camera::ScreenToWorld(const Vec2& screenPos, const float depth)
+        SVec3 Camera::ScreenToWorld(const Vec2& screenPos, const float depth)
         {
             UAssert(depth > 0, "Can't use a number less than 0 for depth!");
 
@@ -232,7 +234,7 @@ namespace ursine
             //Vec3 finalPoint;
             //finalPoint.Set(point.X(), point.Y(), point.Z());
             //return finalPoint;
-            return Vec3(pos.X(), pos.Y(), pos.Z());
+            return SVec3(pos.X(), pos.Y(), pos.Z());
         }
 
         void Camera::SetScreenDimensions(const float width, const float height)
@@ -249,12 +251,23 @@ namespace ursine
 
         bool Camera::CheckMask(const unsigned long long renderMask)
         {
+            // I know the bitshift is crazy, it's handled, don't worry
+#pragma warning( push )
+#pragma warning( disable : 4293)
+
             // check to see if the whitelist bit is set
             if ( renderMask & (0x1u << 63u) )
                 return (renderMask - (0x1u << 63u)) == m_entityID;
 
             // else, return the regular mask comparison
             return renderMask & m_cameraMask;
+
+#pragma warning( pop ) 
+        }
+
+        unsigned Camera::GetMask() const
+        {
+            return m_cameraMask;
         }
 
         void Camera::SetMask(const unsigned long long renderMask)

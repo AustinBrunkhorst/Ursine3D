@@ -1,6 +1,21 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GridRendererSettingsComponent.h
+**
+** Author:
+** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <Component.h>
+
+#include <Array.h>
 
 class GridRendererSettings : public ursine::ecs::Component
 {
@@ -31,6 +46,8 @@ public:
         SetSubDivisions
     );
 
+    ursine::Array<double> testing;
+
     GridRendererSettings(void);
     ~GridRendererSettings(void);
 
@@ -54,4 +71,4 @@ private:
     int m_width;
     int m_height;
     int m_subDivisions;
-} Meta(Enable);
+} Meta(Enable, DisableSerialization);

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** UIView.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "UIConfig.h"
@@ -48,7 +61,7 @@ namespace ursine
 
         bool IsValid(void) const;
 
-        void Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data);
+        void Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data);
 
     private:
         friend class UIManager;

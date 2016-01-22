@@ -54,9 +54,9 @@ namespace ursine
             if (!(m_active && !m_deleting) || !m_deletionEnabled)
                 return;
 
-            m_deleting = true;
+			setDeletingTrue( );
 
-            m_world->deleteEntity( this );
+            m_world->queueEntityDeletion( this );
         }
 
         EntityID Entity::GetID(void) const
@@ -152,6 +152,11 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////
         // Utilities
         ////////////////////////////////////////////////////////////////////////
+
+        Entity *Entity::Clone(void)
+        {
+            return m_world->m_entityManager->Clone( this );
+        }
 
         LocalTimerManager &Entity::GetTimers(void)
         {
@@ -280,5 +285,15 @@ namespace ursine
             m_serializationEnabled = true;
             m_visibleInEditor = true;
         }
+
+		void Entity::setDeletingTrue(void)
+        {
+			m_deleting = true;
+
+			for (auto &child : GetTransform( )->GetChildren( ))
+				child->GetOwner( )->setDeletingTrue( );
+        }
     }
 }
+
+//To make gameplay pause: 

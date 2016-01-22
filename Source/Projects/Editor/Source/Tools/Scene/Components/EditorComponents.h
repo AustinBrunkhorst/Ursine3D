@@ -1,7 +1,19 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EditorComponents.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "SelectedComponent.h"
-#include "EditorCameraComponent.h"
 #include "GridRendererSettingsComponent.h"
-#include "CharacterControllerComponent.h"
 #include "EditorIconComponent.h"
+#include <SharedComponents.h>

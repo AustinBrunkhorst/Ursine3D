@@ -23,6 +23,8 @@
 #include "UtilityManager.h"
 #include "SystemManager.h"
 
+#include <EntitySerializer.h>
+
 namespace
 {
     const auto kWorldSettingsEntityName = "World Settings";
@@ -34,11 +36,13 @@ namespace ursine
     {
         World::World(void)
             : EventDispatcher( this )
+            , m_loaded( false )
             , m_settings( nullptr )
             , m_entityManager( nullptr )
             , m_systemManager( nullptr )
             , m_nameManager( nullptr )
             , m_utilityManager( nullptr )
+            , m_owner( nullptr )
         {
             m_entityManager = new EntityManager( this );
             m_entityManager->OnInitialize( );
@@ -73,6 +77,51 @@ namespace ursine
             auto entity = m_entityManager->Create( );
 
             entity->SetName( name );
+
+            return entity;
+        }
+
+        Entity *World::CreateEntityFromArchetype(
+            const std::string &filename, 
+            const std::string &name
+        )
+        {
+            auto cache = m_archetypeCache.find( filename );
+
+            Entity *entity;
+
+            if (cache == m_archetypeCache.end( ))
+            {
+                std::string jsonData;
+
+                UAssert(
+                    fs::LoadText( filename, jsonData ),
+                    "Failed to load archetype.\nfile: %s", 
+                    filename.c_str( )
+                );
+
+                std::string jsonError;
+
+                auto data = Json::parse( jsonData, jsonError );
+
+                UAssert(
+                    jsonError.empty( ),
+                    "Failed to load archetype.\nJSON error: %s\nfile: %s",
+                    jsonError.c_str( ),
+                    filename.c_str( )
+                );
+
+                m_archetypeCache[ filename ] = data;
+
+                entity = loadArchetype( data );
+            }
+            else
+            {
+                entity = loadArchetype( cache->second );
+            }
+            
+            if (entity)
+                entity->SetName( name );
 
             return entity;
         }
@@ -114,15 +163,7 @@ namespace ursine
 
         void World::Update(void)
         {
-            while (m_deleted.size( ))
-            {
-                auto entity = m_deleted.back( );
-
-                m_deleted.pop_back( );
-
-                m_nameManager->Remove( entity );
-                m_entityManager->Remove( entity );
-            }
+            clearDeletionQueue( );
 
             Dispatch( WORLD_UPDATE, EventArgs::Empty );
         }
@@ -142,16 +183,69 @@ namespace ursine
             return m_systemManager;
         }
 
+        Screen *World::GetOwner(void) const
+        {
+            return m_owner;
+        }
+
+        void World::SetOwner(Screen *owner)
+        {
+            m_owner = owner;
+        }
+
         void World::DispatchLoad(void)
         {
-            m_systemManager->onAfterLoad( );
+            if (!m_loaded)
+            {
+                m_systemManager->onAfterLoad( );
+
+                m_loaded = true;
+            }
+        }
+
+        void World::queueEntityDeletion(Entity *entity)
+        {
+            m_deleted.push_back( entity );
         }
 
         void World::deleteEntity(Entity *entity)
         {
-            m_entityManager->BeforeRemove( entity );
+            m_nameManager->Remove( entity );
+            m_entityManager->Remove( entity );
+        }
 
-            m_deleted.push_back( entity );
+        void World::clearDeletionQueue(void)
+        {
+			std::lock_guard<std::mutex> lock( m_deletionMutex );
+
+			for (auto *entity : m_deleted)
+				m_entityManager->BeforeRemove( entity );
+
+            while (m_deleted.size( ))
+            {
+                auto entity = m_deleted.back( );
+
+                m_deleted.pop_back( );
+
+                deleteEntity( entity );
+            }
+        }
+
+        Entity *World::loadArchetype(const Json &data)
+        {
+            try
+            {
+                return EntitySerializer( ).DeserializeArchetype( this, data );
+            }
+            catch (SerializationException &e)
+            {
+                UError( 
+                    "Unable to deserialize archetype.\nerror: %s",
+                    e.GetError( ).c_str( )
+                );
+
+                return nullptr;
+            }
         }
     }
 }

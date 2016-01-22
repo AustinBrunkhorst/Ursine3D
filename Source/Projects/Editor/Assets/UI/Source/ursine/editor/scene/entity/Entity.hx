@@ -20,6 +20,10 @@ class Entity implements IEventContainer {
         return new Entity( Extern.CreateEntity( ) );
     }
 
+    public static function createFromArchetype() : Void {
+        Extern.CreateEntityFromArchetype( );
+    }
+
     public function new(uniqueID : UInt) {
         events = new EventManager( );
 
@@ -96,6 +100,10 @@ class Entity implements IEventContainer {
         m_handler.updateComponentField( componentName, fieldName, value );
     }
 
+    public function invokeComponentButton(componentName : String, buttonName : String) : Void {
+        m_handler.invokeComponentButton( componentName, buttonName );
+    }
+
     public function getChildren() : Array<Entity> {
         var children : Dynamic = m_handler.getChildren( );
 
@@ -114,7 +122,23 @@ class Entity implements IEventContainer {
     }
 
     public function setParent(parent : Entity) : Bool {
-        return m_handler.setParent( parent.uniqueID );
+        return m_handler.setParent( parent == null ? null : parent.uniqueID );
+    }
+
+    public function getSiblingIndex() : UInt {
+        return m_handler.getSiblingIndex( );
+    }
+
+    public function setSiblingIndex(index : UInt) : Void {
+        m_handler.setSiblingIndex( index );
+    }
+
+    public function saveAsArchetype() : Void {
+        m_handler.saveAsArchetype( );
+    }
+
+    public function clone() : Entity {
+        return new Entity( m_handler.clone( ) );
     }
 
     private function onComponentAdded(e) {

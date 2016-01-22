@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** DirectXCore.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -22,6 +35,8 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "RasterStateManager.h"
 #include "DepthStencilManager.h"
 #include "D3D11Forward.h"
+#include <D3D11SDKLayers.h>
+#include <d3d11_1.h>
 
 namespace ursine
 {
@@ -80,6 +95,11 @@ namespace ursine
 
                 void SetFullscreenState( const bool state );
 
+                // debug stuff
+                void StartDebugEvent(std::string eventStr);
+
+                void EndDebugEvent();
+
                 //private methods
             private:
                 void backendResizeDX(const int width, const int height);
@@ -94,6 +114,8 @@ namespace ursine
                 ID3D11DeviceContext *m_deviceContext;
                 IDXGISwapChain *m_swapChain;
                 ID3D11Debug *m_debugInterface;
+                ID3D11InfoQueue *m_infoQueue;
+                ID3DUserDefinedAnnotation *m_userAnnotation;
 
                 BlendStateManager *m_blendManager;
                 DepthStencilStateManager *m_depthStateManager;

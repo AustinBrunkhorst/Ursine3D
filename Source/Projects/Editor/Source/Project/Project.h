@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Project.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <Scene.h>
@@ -16,6 +29,8 @@ public:
     ursine::UIView::Handle GetUI(void);
 
     void SetWorld(ursine::ecs::World::Handle world);
+
+	void ClearDeletionQueue(void);
 
 private:
     ursine::UIView::Handle m_ui;

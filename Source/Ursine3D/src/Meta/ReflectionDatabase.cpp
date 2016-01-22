@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ReflectionDatabase.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "ReflectionDatabase.h"
@@ -15,7 +28,7 @@
 #define REGISTER_NATIVE_TYPE_VARIANTS(type) \
     REGISTER_NATIVE_TYPE( type )            \
     REGISTER_NATIVE_TYPE( type* )           \
-    REGISTER_NATIVE_TYPE( const type*)      \
+    REGISTER_NATIVE_TYPE( const type* )     \
 
 namespace ursine
 {

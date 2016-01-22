@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "Json.h"
+
 namespace ursine
 {
     namespace meta
@@ -23,6 +25,9 @@ namespace ursine
 
             virtual Type GetType(void) const = 0;
             virtual Object *Clone(void) const = 0;
+
+            virtual void OnSerialize(Json::object &output) const { }
+            virtual void OnDeserialize(const Json &input) { }
         };
     }
 }

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** UIFileDialogCallback.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "FileSystem.h"
@@ -7,7 +20,7 @@ namespace ursine
     class UIFileDialogCallback : public CefRunFileDialogCallback
     {
     public:
-        typedef std::function<void(int, std::vector<fs::path>)> Callback;
+        typedef std::function<void(int, fs::FileList)> Callback;
 
         UIFileDialogCallback(Callback callback);
 

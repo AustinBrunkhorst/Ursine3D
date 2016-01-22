@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EntitySerializer.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "SerializationConfig.h"
@@ -18,11 +31,17 @@ namespace ursine
             EntitySerializer(void);
 
             Json Serialize(Entity *entity) const;
+            Json SerializeArchetype(Entity *entity) const;
 
             Entity *Deserialize(
-                const World::Handle &world, 
+                World *world, 
                 const Json &data, 
                 const char *version = kSerializationVersion
+            ) const;
+
+            Entity *DeserializeArchetype(
+                World *world,
+                const Json &data
             ) const;
 
         private:

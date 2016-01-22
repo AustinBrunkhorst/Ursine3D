@@ -1,0 +1,34 @@
+#
+#First is file name, second is model name
+
+Cube.8.0.mdl Cube
+pedestal.8.0.mdl Pedestal
+Ship.8.0.mdl Ship
+skeleton.8.0.mdl Skeleton
+Sphere.8.0.mdl Sphere
+skybox.8.0.mdl Skybox
+Quad.8.0.mdl Quad
+Cylinder.8.0.mdl Cylinder
+HalfSphere.8.0.mdl HalfSphere
+CapsuleBody.8.0.mdl CapsuleBody
+Plane.8.0.mdl Plane
+cone_8.8.0.mdl Cone
+Sprite.8.0.mdl Sprite
+cone_12.8.0.mdl lightCone
+#cone_16.8.0.mdl Cone
+character.8.0.mdl Character
+torus2.8.0.mdl Ring
+#
+# Gun Animations
+Gun_Idle.fbx Gun
+#Gun_Idle.fbx Gun_Idle
+#Gun_Jump.fbx Gun_Jump
+#Gun_Shoot.fbx Gun_Shoot
+#
+## Player animations
+#Player_Idle.fbx Player
+#Player_Win.fbx Player_Win
+#Player_Run.fbx Player_Run
+#Player_Jump.fbx Player_Jump
+#Player_Idle.fbx Player_Idle
+#Player_Die.fbx Player_Die

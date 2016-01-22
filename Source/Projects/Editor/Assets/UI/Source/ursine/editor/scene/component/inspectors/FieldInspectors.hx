@@ -1,5 +1,7 @@
 package ursine.editor.scene.component.inspectors;
 
+import ursine.editor.scene.component.inspectors.fields.UnknownTypeInspector;
+
 // built in types
 import ursine.editor.scene.component.inspectors.fields.BooleanFieldInspector;
 import ursine.editor.scene.component.inspectors.fields.NumberFieldInspector;

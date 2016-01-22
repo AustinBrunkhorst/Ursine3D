@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EntityHandler.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "EntityHandler.h"
@@ -5,10 +18,109 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include <Timer.h>
 #include <Meta.h>
 #include <ComponentConfig.h>
 
+#include <FileSystem.h>
+#include <UIFileDialogCallback.h>
+#include <EntitySerializer.h>
+
 using namespace ursine;
+using namespace std::placeholders;
+
+namespace
+{
+    void doOpenErrorLog(Notification &notification)
+    {
+        utils::OpenPath( URSINE_ERROR_LOG_FILE );
+    }
+
+    void doSaveArchetype(
+        ecs::Entity *entity, 
+        int selectedFilter, 
+        const fs::FileList &files
+    )
+    {
+        if (files.empty( ))
+            return;
+
+        auto data = ecs::EntitySerializer( ).SerializeArchetype( entity );
+        
+        auto file = files[ 0 ].string( );
+
+        if (!fs::WriteText( file, data.dump( ) ))
+        {
+            auto *editor = GetCoreSystem( Editor );
+
+            UWarning( "Could not write to archetype file.\nfile: %s",
+                file.c_str( )
+            );
+
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Save Error";
+            error.message = "Unable to save archetype.";
+
+            error.buttons =
+            {
+                { "Open Error Log", doOpenErrorLog }
+            };
+
+            editor->PostNotification( error );
+        }
+    }
+
+    meta::Variant editorGetterOverride(const meta::Variant &instance, const meta::Field &field)
+    {
+        auto &fieldMeta = field.GetMeta( );
+
+        auto *editorGetter = fieldMeta.GetProperty<EditorGetter>( );
+
+        if (editorGetter)
+        {
+            auto componentType = instance.GetType( );
+
+            auto &getter = componentType.GetMethod( editorGetter->getter );
+
+            UAssert( getter.IsValid( ),
+                "Unknown editor getter '%s' on component type '%s'.",
+                editorGetter->getter.c_str( ),
+                componentType.GetName( ).c_str( )
+            );
+
+            // sorry good practice enforcers
+            return getter.Invoke( const_cast<meta::Variant&>( instance ) );
+        }
+        
+        return field.GetValue( instance );
+    }
+
+    Json::array inspectComponentButtons(const meta::Variant &component)
+    {
+        auto methods = component.GetType( ).GetMethods( );
+
+        Json::array inspection;
+
+        for (auto &method : methods)
+        {
+            auto &meta = method.GetMeta( );
+
+            auto *button = meta.GetProperty<CreateButton>( );
+
+            if (!button)
+                continue;
+
+            inspection.emplace_back( Json::object {
+                { "name", method.GetName( ) },
+                { "text", button->text }
+            } );
+        }
+
+        return inspection;
+    }
+}
 
 JSConstructor(EntityHandler)
 {
@@ -53,6 +165,11 @@ JSMethod(EntityHandler::remove)
         return CefV8Value::CreateBool( false );
 
     entity->Delete( );
+
+	// Have this run in the main thread
+	Timer::Create( 0 ).Completed([=] {
+		GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
+	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -100,7 +217,8 @@ JSMethod(EntityHandler::inspect)
 
         componentArray.emplace_back( Json::object {
             { "type", type.GetName( ) },
-            { "value", type.SerializeJson( instance ) }
+            { "value", type.SerializeJson( instance, editorGetterOverride, false ) },
+            { "buttons", inspectComponentButtons( instance ) }
         } );
     }
 
@@ -149,9 +267,11 @@ JSMethod(EntityHandler::addComponent)
     if (!componentType.IsValid( ))
         return CefV8Value::CreateBool( false );
 
-    auto instance = componentType.CreateDynamic( );
-
-    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+	// Have this run in the main thread
+	Timer::Create( 0 ).Completed( [=] {
+		auto instance = componentType.CreateDynamic( );
+		entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -177,7 +297,10 @@ JSMethod(EntityHandler::removeComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    entity->RemoveComponent( id );
+	// Have this run in the main thread
+	Timer::Create(0).Completed([=] {
+		entity->RemoveComponent( id );
+	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -220,7 +343,74 @@ JSMethod(EntityHandler::updateComponentField)
 
     auto fieldType = field.GetType( );
 
-    field.SetValue( instance, fieldType.DeserializeJson( value ) );
+    auto &fieldMeta = field.GetMeta( );
+
+    auto *editorSetter = fieldMeta.GetProperty<EditorSetter>( );
+
+    auto valueToSet = fieldType.DeserializeJson( value );
+
+    if (editorSetter)
+    {
+        auto &setter = componentType.GetMethod( editorSetter->setter );
+
+        UAssert( setter.IsValid( ), 
+            "Unknown editor setter '%s' on component type '%s'.",
+            editorSetter->setter.c_str( ),
+            componentType.GetName( ).c_str( )
+        );
+
+        meta::Field::SetValue( instance, valueToSet, setter );
+    }
+    else
+    {
+        field.SetValue( instance, valueToSet );
+    }
+
+    return CefV8Value::CreateUndefined( );
+}
+
+JSMethod(EntityHandler::invokeComponentButton)
+{
+    if (arguments.size( ) != 2)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+    auto buttonName = arguments[ 1 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        JSThrow( "Unknown component type.", nullptr );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        JSThrow( "Invalid component type.", nullptr );
+
+    auto *component = entity->GetComponent( 
+        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
+    );
+
+    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+
+    auto method = componentType.GetMethod( buttonName );
+
+    if (!method.IsValid( ))
+        JSThrow( "Invalid button name.", nullptr );
+
+    UAssert( method.GetSignature( ).empty( ), 
+        "Component buttons must have signature void(void).\n"
+        "Component: %s, Button: %s",
+        componentType.GetName( ).c_str( ),
+        buttonName.c_str( )
+    );
+
+    method.Invoke( instance );
 
     return CefV8Value::CreateUndefined( );
 }
@@ -234,13 +424,15 @@ JSMethod(EntityHandler::getChildren)
 
     auto &children = *entity->GetChildren( );
 
-    auto childrenArray = CefV8Value::CreateArray( children.size( ) );
+    auto childrenArray = CefV8Value::CreateArray( 
+        static_cast<int>( children.size( ) ) 
+    );
 
     for (size_t i = 0; i < children.size( ); ++i)
     {
         auto *child = m_world->GetEntity( children[ i ] );
 
-        childrenArray->SetValue( i, 
+        childrenArray->SetValue( static_cast<int>( i ), 
             CefV8Value::CreateUInt( child->GetUniqueID( ) ) 
         );
     }
@@ -273,14 +465,99 @@ JSMethod(EntityHandler::setParent)
     if (!entity)
         return CefV8Value::CreateBool( false );
 
-    auto *parent = m_world->GetEntityUnique( arguments[ 0 ]->GetUIntValue( ) );
+    auto *transform = entity->GetTransform( );
 
-    if (!parent)
-        return CefV8Value::CreateBool( false );
+    auto targetParent = arguments[ 0 ];
 
-    parent->GetTransform( )->AddChildAlreadyInLocal( entity->GetTransform( ) );
+    // detaching parent
+    if (targetParent->IsNull( ))
+    {
+        auto *currentParent = transform->GetParent( );
+
+        if (currentParent)
+            currentParent->RemoveChild( transform );
+    }
+    else
+    {
+        auto *targetEntity = 
+            m_world->GetEntityUnique( targetParent->GetUIntValue( ) );
+
+        if (!targetEntity)
+            return CefV8Value::CreateBool( false );
+
+        targetEntity->GetTransform( )->AddChildAlreadyInLocal( transform );
+    }
 
     return CefV8Value::CreateBool( true );
+}
+
+JSMethod(EntityHandler::getSiblingIndex)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto index = entity->GetTransform( )->GetSiblingIndex( );
+
+    return CefV8Value::CreateUInt( index );
+}
+
+JSMethod(EntityHandler::setSiblingIndex)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    entity->GetTransform( )->SetSiblingIndex( 
+        arguments[ 0 ]->GetUIntValue( ) 
+    );
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSMethod(EntityHandler::saveAsArchetype)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    CefRefPtr<UIFileDialogCallback> callback = 
+        new UIFileDialogCallback( std::bind( &doSaveArchetype, entity, _1, _2 ) );
+
+    std::vector<CefString> filters {
+        "Archetype Files|.uatype"
+    };
+
+    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+        static_cast<CefBrowserHost::FileDialogMode>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG ),
+        "Save Archetype",
+        "",
+        filters,
+        0,
+        callback
+    );
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSMethod(EntityHandler::clone)
+{
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto clone = entity->Clone( );
+
+    return CefV8Value::CreateUInt( clone->GetUniqueID( ) );
 }
 
 ecs::Entity *EntityHandler::getEntity(void)

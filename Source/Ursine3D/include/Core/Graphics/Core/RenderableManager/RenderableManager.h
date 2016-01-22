@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** RenderableManager.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -54,7 +67,7 @@ namespace ursine
                 UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
                 UAssert(render->Type_ == RENDERABLE_MODEL3D, "Attempted to use invalid handle to get a model!");
 
-                return m_currentRenderableModel3D[ render->Index_ ];
+                return m_renderableModel3D[ render->Index_ ];
             }
 
             template<>
@@ -65,7 +78,7 @@ namespace ursine
                 UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
                 UAssert(render->Type_ == RENDERABLE_PRIMITIVE, "Attempted to use invalid handle to get a primitive!");
 
-                return m_currentRenderablePrimitives[ render->Index_ ];
+                return m_renderablePrimitives[ render->Index_ ];
             }
 
             template<>
@@ -76,7 +89,7 @@ namespace ursine
                 UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
                 UAssert(render->Type_ == RENDERABLE_BILLBOARD2D, "Attempted to use invalid handle to get a billboard2D!");
 
-                return m_currentRenderableBillboards[ render->Index_ ];
+                return m_renderableBillboards[ render->Index_ ];
             }
 
             template<>
@@ -87,7 +100,7 @@ namespace ursine
                 UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
                 UAssert(render->Type_ == RENDERABLE_LIGHT, "Attempted to use invalid handle to get a billboard2D!");
 
-                return m_currentRenderableLights[ render->Index_ ];
+                return m_renderableLights[ render->Index_ ];
             }
 
         private:

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** UIView.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "UIView.h"
@@ -96,7 +109,7 @@ namespace ursine
         URSINE_TODO( "..." );
         //m_viewport = viewport;
 
-        resize(viewport.width, viewport.height);
+        resize( viewport.width, viewport.height );
 
         m_browser->GetHost( )->WasResized( );
     }
@@ -106,7 +119,7 @@ namespace ursine
         return m_browser != nullptr;
     }
 
-    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, Json &data)
+    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data)
     {
         auto processMessage = CefProcessMessage::Create( target );
 
@@ -133,8 +146,42 @@ namespace ursine
 
     bool UIView::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString &message, const CefString &source, int line)
     {
+        SetConsoleColor( CC_TEXT_BRIGHT_GREEN );
 
-        return true;
+        printf( "javascript " );
+
+        SetConsoleColor( CC_TEXT_BRIGHT_YELLOW );
+
+        auto filename = fs::path( source ).filename( ).string( );
+
+        if (!filename.empty( ))
+        {
+            printf( "[" );
+
+            SetConsoleColor( CC_TEXT_YELLOW );
+
+            printf( "%s", filename.c_str( ) );
+
+            SetConsoleColor( CC_TEXT_WHITE );
+
+            printf( " %i", line );
+
+            SetConsoleColor( CC_TEXT_BRIGHT_YELLOW );
+
+            printf( "]" );
+        }
+
+        SetConsoleColor( CC_TEXT_WHITE );
+
+        printf( "\n> " );
+
+        SetConsoleColor( CC_TEXT_BRIGHT_WHITE );
+
+        printf( "%s\n\n", message.ToString( ).c_str( ) );
+
+        SetConsoleColor( CC_TEXT_WHITE );
+
+        return false;
     }
 
     void UIView::OnCursorChange(CefRefPtr<CefBrowser> browser, CefCursorHandle cursor, CursorType type, const CefCursorInfo &customCursorInfo)

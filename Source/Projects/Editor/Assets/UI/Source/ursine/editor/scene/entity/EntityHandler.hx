@@ -23,8 +23,14 @@ extern class EntityHandler {
     function removeComponent(name : String) : Void;
 
     function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void;
+    function invokeComponentButton(componentName : String, buttonName : String) : Void;
 
     function getChildren() : Array<UInt>;
     function getParent() : UInt;
     function setParent(parentUniqueID : UInt) : Bool;
+    function getSiblingIndex() : UInt;
+    function setSiblingIndex(index : UInt) : Void;
+
+    function saveAsArchetype() : Void;
+    function clone() : UInt;
 }

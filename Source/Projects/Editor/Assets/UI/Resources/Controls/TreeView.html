@@ -15,6 +15,9 @@
                     value: true
                 }
             },
+            created: function() {
+                this.isRoot = false;
+            },
             attached: function() {
                 this._initItems( );
 
@@ -31,11 +34,13 @@
             },
 
             setAsRoot: function(root) {
+                this.isRoot = root;
+
                 this.toggleClass( 'root-view', root );
             },
 
             getItems: function() {
-                return this.querySelectorAll( ':scope > x-tree-view-item' );
+                return this.querySelectorAll( ':scope > x-tree-view-item:not(.hidden)' );
             },
 
             /**

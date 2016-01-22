@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** UrsineReflection.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Meta.h"
@@ -15,6 +28,7 @@
 #include "SVec3.h"
 #include "Vec4.h"
 #include "SVec4.h"
+#include "SQuat.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Core Systems

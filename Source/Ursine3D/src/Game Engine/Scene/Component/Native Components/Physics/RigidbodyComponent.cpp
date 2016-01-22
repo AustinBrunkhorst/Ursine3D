@@ -1,3 +1,16 @@
+﻿/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** RigidbodyComponent.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "RigidbodyComponent.h"
@@ -12,7 +25,8 @@ namespace ursine
 
         Rigidbody::Rigidbody(void)
             : BaseComponent( )
-            , m_rigidbody( 1.0f, nullptr ) { }
+            , m_rigidbody( 1.0f, nullptr )
+			, m_enableContactCallback( false ) { }
 
 		Rigidbody::~Rigidbody(void)
 		{
@@ -28,15 +42,16 @@ namespace ursine
                 &owner->GetWorld( )->GetEntitySystem( PhysicsSystem )->m_simulation 
             );
 
-            m_rigidbody.SetID( owner->GetUniqueID( ) );
+            m_rigidbody.SetUserID( owner->GetUniqueID( ) );
+			m_rigidbody.SetUserPointer( this );
 
 			GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
 		}
 
-        BodyType Rigidbody::GetBodyType(void) const
+        BodyFlag Rigidbody::GetBodyFlag(void) const
         {
-            return static_cast<BodyType>( m_rigidbody.GetBodyType( ) );
+            return static_cast<BodyFlag>( m_rigidbody.GetBodyFlag( ) );
         }
 
         float Rigidbody::GetMass(void) const
@@ -46,13 +61,16 @@ namespace ursine
 
         void Rigidbody::SetMass(float mass)
         {
+            if (mass < 0.0f)
+                return;
+            
             m_rigidbody.SetMass( mass );
         }
 
-        void Rigidbody::SetBodyType(BodyType bodyType)
+        void Rigidbody::SetBodyFlag(BodyFlag bodyFlag)
         {
-            m_rigidbody.SetBodyType(
-                static_cast<physics::BodyType>( bodyType )
+            m_rigidbody.SetBodyFlag(
+                static_cast<physics::BodyFlag>( bodyFlag )
             );
         }
 
@@ -97,6 +115,16 @@ namespace ursine
             m_rigidbody.SetRotationFreezeZ( flag );
         }
 
+        void Rigidbody::SetSleepToggle(bool flag)
+        {
+            m_rigidbody.SetSleepToggle( flag );
+        }
+
+        bool Rigidbody::GetSleepToggle(void) const
+        {
+            return m_rigidbody.GetSleepToggle( );
+        }
+
         bool Rigidbody::GetRotationFreezeZ(void) const
         {
             return m_rigidbody.GetRotationFreezeZ( );
@@ -122,9 +150,74 @@ namespace ursine
             m_rigidbody.SetAngularVelocity( angularVelocity );
         }
 
-        SVec3 Rigidbody::GetAngularVelocity(void) const
+	    SVec3 Rigidbody::GetAngularVelocity(void) const
         {
             return m_rigidbody.GetAngularVelocity( );
+        }
+
+		void Rigidbody::SetGravity(const SVec3& gravity)
+		{
+			m_rigidbody.SetGravity( gravity );
+		}
+
+	    SVec3 Rigidbody::GetGravity(void) const
+		{
+			return m_rigidbody.GetGravity( );
+		}
+
+		void Rigidbody::SetGhost(bool enable)
+	    {
+			m_rigidbody.SetGhost( enable );
+	    }
+
+	    bool Rigidbody::GetGhost(void) const
+	    {
+			return m_rigidbody.GetGhost( );
+	    }
+
+		void Rigidbody::SetEnableContactCallback(bool enable)
+		{
+			m_enableContactCallback = enable;
+		}
+
+	    bool Rigidbody::GetEnableContactCallback(void) const
+		{
+			return m_enableContactCallback;
+		}
+
+		void Rigidbody::SetContinuousCollisionDetection(bool enable)
+		{
+			m_rigidbody.SetContinuousCollisionDetection( enable );
+		}
+
+		bool Rigidbody::GetContinuousCollisionDetection(void) const
+		{
+			return m_rigidbody.GetContinuousCollisionDetection( );
+		}
+
+        void Rigidbody::AddForce(const SVec3& force)
+        {
+            m_rigidbody.AddForce( force );
+        }
+
+        void Rigidbody::AddForceRelative(const SVec3& force)
+        {
+            m_rigidbody.AddForceRelative( force, GetOwner( )->GetTransform( ) );
+        }
+
+        void Rigidbody::AddForceAtPosition(const SVec3& force, const SVec3& worldPosition)
+        {
+            m_rigidbody.AddForceAtPosition( force, worldPosition, GetOwner( )->GetTransform( ) );
+        }
+
+        void Rigidbody::AddTorque(const SVec3& torque)
+        {
+            m_rigidbody.AddTorque( torque );
+        }
+
+        void Rigidbody::AddTorqueRelative(const SVec3& torque)
+        {
+            m_rigidbody.AddTorqueRelative( torque, GetOwner( )->GetTransform( ) );
         }
 
         void Rigidbody::onTransformChange(EVENT_HANDLER(Entity))

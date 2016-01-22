@@ -34,7 +34,6 @@ namespace ursine
         static Application *Instance;
 
         Application(int argc, char *argv[]);
-
         ~Application(void);
 
         void Run(void);

@@ -27,6 +27,8 @@ class EntityInspector extends WindowHandler {
     private var m_inspectorsContainer : DivElement;
 
     // controls
+    private var m_btnSaveArchetype : Button;
+    private var m_btnCopyEntity : Button;
     private var m_btnAddComponent : Button;
 
     private var m_openCache : Map<String, Bool>;
@@ -55,7 +57,8 @@ class EntityInspector extends WindowHandler {
     private function onInspectedEntityComponentAdded(e) {
         var inspection = {
             type: e.component,
-            value: e.value
+            value: e.value,
+            buttons: e.buttons
         };
 
         inspectComponent( cast inspection );
@@ -94,11 +97,13 @@ class EntityInspector extends WindowHandler {
 
     public function initializeInspection() {
         if (m_inspectedEntity == null) {
+            m_headerToolbar.style.display = 'none';
             m_btnAddComponent.style.display = 'none';
 
             return;
         }
 
+        m_headerToolbar.style.display = 'block';
         m_btnAddComponent.style.display = 'block';
 
         m_inspectedEntity.events
@@ -170,6 +175,21 @@ class EntityInspector extends WindowHandler {
             } );
     }
 
+    private function onArchetypeSaveClicked(e : js.html.MouseEvent) {
+        // @@TODO: multi selection handling
+        m_inspectedEntity.saveAsArchetype( );
+    }
+
+    private function onCopyEntityClicked(e : js.html.MouseEvent) {
+        SceneOutline.instance.clearSelectedEntities( );
+
+        var entity = m_inspectedEntity.clone( );
+
+        entity.setName( m_inspectedEntity.getName( ) + ' Copy' );
+
+        entity.select( );
+    }
+
     private function onAddComponentClicked(e : js.html.MouseEvent) {
         var types = getAvailableComponentTypes( m_inspectedEntity );
 
@@ -207,23 +227,49 @@ class EntityInspector extends WindowHandler {
     private function initWindow() {
         window.classList.add( 'entity-inspector-window' );
 
+        // Header Toolbar
         m_headerToolbar = js.Browser.document.createDivElement( );
         {
             m_headerToolbar.classList.add( 'header-toolbar' );
 
             window.container.appendChild( m_headerToolbar );
+
+            // Button Save Archetype
+            m_btnSaveArchetype = new Button( );
+            {
+                m_btnSaveArchetype.classList.add( 'save-archetype' );
+
+                m_btnSaveArchetype.addEventListener( 'click', onArchetypeSaveClicked );
+
+                m_headerToolbar.appendChild( m_btnSaveArchetype );
+            }
+
+            // Button Copy Archetype
+            m_btnCopyEntity = new Button( );
+            {
+                m_btnCopyEntity.classList.add( 'copy-entity' );
+
+                m_btnCopyEntity.addEventListener( 'click', onCopyEntityClicked );
+
+                m_headerToolbar.appendChild( m_btnCopyEntity );
+            }
+
+            // hidden initially
+            m_headerToolbar.style.display = 'none';
         }
 
+        // Inspectors container
         m_inspectorsContainer = js.Browser.document.createDivElement( );
         {
             window.container.appendChild( m_inspectorsContainer );
         }
 
+        // Button Add Component
         m_btnAddComponent = new Button( );
         {
             m_btnAddComponent.text = 'Add Component';
 
-            m_btnAddComponent.classList.add( 'btn-add-component' );
+            m_btnAddComponent.classList.add( 'add-component' );
 
             // hidden initially
             m_btnAddComponent.style.display = 'none';

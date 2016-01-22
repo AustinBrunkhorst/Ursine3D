@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** PhysicsSettingsComponent.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "PhysicsSettingsComponent.h"
@@ -35,6 +48,20 @@ namespace ursine
 
             if (m_physicsSystem)
                 m_physicsSystem->SetGravity( gravity );
+        }
+
+        bool PhysicsSettings::GetEnableDebugDraw(void) const
+        {
+            if (m_physicsSystem)
+                return m_physicsSystem->GetEnableDebugDraw( );
+            else
+                return false;
+        }
+
+        void PhysicsSettings::SetEnableDebugDraw(bool enable)
+        {
+            if (m_physicsSystem)
+                m_physicsSystem->SetEnableDebugDraw( enable );
         }
 
         void PhysicsSettings::OnInitialize(void)

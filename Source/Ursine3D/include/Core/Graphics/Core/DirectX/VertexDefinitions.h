@@ -1,18 +1,15 @@
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      VertexDefinitions.h
-Module:         Graphics
-Purpose:        definitions of vertices
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** VertexDefinitions.h
+**
+** Author:
+** - Jason Burch - j.orion@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
 
 #pragma once
 
@@ -57,7 +54,7 @@ namespace ursine
 			DirectX::XMFLOAT3	vNor;
 			DirectX::XMFLOAT2	vUv;
 			DirectX::XMFLOAT4	vBWeight;
-			unsigned	        vBIdx[4];
+			BYTE				vBIdx[4];
 		};
 
         struct PrimitiveVertex

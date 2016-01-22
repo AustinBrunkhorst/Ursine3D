@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AudioComponentBase.h
+**
+** Author:
+** - Jason Burch - j.orion@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "AudioID.h"
@@ -17,6 +30,7 @@ namespace ursine
 		friend class ecs::AudioSystem;
 
 		AudioComponentBase(void);
+		AkGameObjectID GetHandle();
 
 		void OnInitialize(ecs::Entity *owner);
 		void OnRemove(ecs::Entity *owner);

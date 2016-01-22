@@ -11,6 +11,9 @@ class DefaultComponentInspector extends ComponentInspectionHandler {
 
         var componentType = database.getComponentType( component.type );
 
+        for (button in component.buttons)
+            addButton( button );
+
         for (field in componentType.fields) {
             var instance = Reflect.field( component.value, field.name );
 

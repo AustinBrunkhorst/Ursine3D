@@ -19,8 +19,8 @@
 #include <complex>
 #include "DepthStencilStateList.h"
 #include <d3d11.h>
-#include <Core/Graphics/Animations/AnimationState.h>
-#include <Core/Graphics/Animations/AnimationBuilder.h>
+#include <Core/Graphics/Animation/Builder/AnimationState.h>
+#include <Core/Graphics/Animation/Builder/AnimationBuilder.h>
 
 static int tempID = -1;
 static HWND wHND = 0;
@@ -302,6 +302,7 @@ namespace ursine
 
             m_rendering = true;
 
+            dxCore->StartDebugEvent("FrameStart");
 
             dxCore->ClearSwapchain();
             dxCore->ClearTargetBuffers();
@@ -319,7 +320,7 @@ namespace ursine
             m_sceneActive = true;
 
             //clear draw call list
-            memset(reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof(unsigned long long) * m_drawCount);
+            memset(reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof(unsigned long long) * m_drawCount * 2);
             m_drawCount = 0;
 
             //clear debug buffer
@@ -337,13 +338,15 @@ namespace ursine
 
             Camera &cam = cameraManager->GetCamera(camera);
 
+            dxCore->StartDebugEvent("CameraRenderScene");
+
             //get game vp dimensions
             Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
             D3D11_VIEWPORT gvp = gameVP.GetViewportData();
 
             //set directx viewport
             float w, h, x, y;
-            cam.GetPosition(x, y);
+            cam.GetViewportPosition(x, y);
             cam.GetDimensions(w, h);
 
             w *= gvp.Width;
@@ -363,9 +366,10 @@ namespace ursine
             dxCore->GetDeviceContext()->RSSetViewports(1, &vpData);
 
             //clear it
-            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+            dxCore->StartDebugEvent("Clear Viewport");
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
+            dxCore->SetDepthState( DEPTH_STATE_PASSDEPTH_NOSTENCIL );
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
             dxCore->SetBlendState(BLEND_STATE_DEFAULT);
 
@@ -382,13 +386,15 @@ namespace ursine
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-
+            dxCore->EndDebugEvent( );
+            dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
             /////////////////////////////////////////////////////////////////
             if (cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
                 RenderScene_Deferred(dt, camera);
             else
                 RenderScene_Forward(dt, camera);
 
+            dxCore->EndDebugEvent( );
             return;
             //close thread handle if needed
             if (m_threadHandle != nullptr)
@@ -432,6 +438,7 @@ namespace ursine
             // init buffers for frame
             dxCore->ClearDeferredBuffers();
             dxCore->ClearDepthBuffers();
+            dxCore->ClearDebugBuffer( );
             gfxProfiler->Stamp(PROFILE_CLEAR_BUFFERS);
 
             // get camera
@@ -467,6 +474,7 @@ namespace ursine
             //keep track of where we are 
             int currentIndex = 0;
 
+            dxCore->StartDebugEvent("GBuffer Pass");
             //render 3d models deferred
             PrepForBillboard2D(view, proj, currentCamera);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
@@ -475,16 +483,21 @@ namespace ursine
             PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
+            dxCore->EndDebugEvent( );
+
+            // LIGHT PASS
+            dxCore->StartDebugEvent("Light Pass");
+            PrepForLightPass(view, proj);
+
+            //spot light pass
+            PrepForSpotlightPass(view, proj);
+            while ( m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT )
+                RenderSpotLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
             //point light pass
             PrepForPointLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
-
-            //spot light pass
-            PrepForSpotlightPass(view, proj);
-            while (m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT)
-                RenderSpotLight(m_drawList[ currentIndex++ ], currentCamera, proj);
 
             //directional light pass
             PrepForDirectionalLightPass(view, proj);
@@ -495,17 +508,21 @@ namespace ursine
             PrepForPrimitives(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
                 RenderPrimitive(m_drawList[ currentIndex++ ], currentCamera );
+            dxCore->EndDebugEvent( );
 
             //debug 
+            dxCore->StartDebugEvent("Debug Pass");
             PrepForDebugRender();
             dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
             RenderDebugPoints(view, proj, currentCamera);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera);
             gfxProfiler->Stamp(PROFILE_DEBUG);
+            dxCore->EndDebugEvent( );
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
+            dxCore->StartDebugEvent("Final Pass");
             PrepForFinalOutput();
 
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
@@ -513,8 +530,11 @@ namespace ursine
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
             gfxProfiler->Stamp(PROFILE_SCENE_MAIN);
 
+            dxCore->EndDebugEvent( );
+
             /////////////////////////////////////////////////////////////////
             //render primitive layer
+            dxCore->StartDebugEvent("Primitive Pass");
             dxCore->SetDepthState(DEPTH_STATE_NODEPTH_STENCIL);
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEBUG)->ShaderMap);
 
@@ -530,6 +550,8 @@ namespace ursine
             RenderDebugPoints(view, proj, currentCamera, true);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera, true);
+
+            dxCore->EndDebugEvent( );
 
             //clearing all buffers
             textureManager->MapTextureByName("Wire");
@@ -658,6 +680,8 @@ namespace ursine
 
             // end profiler
             gfxProfiler->WaitForCalls(m_profile);
+            
+            dxCore->EndDebugEvent( );
 
             // present
             dxCore->SwapChainBuffer();
@@ -674,6 +698,7 @@ namespace ursine
             //invalidate CPU-side gfx engine for next frame
             dxCore->Invalidate();
             Invalidate();
+            
         }
 
         // preparing for different stages /////////////////////////////////
@@ -747,15 +772,13 @@ namespace ursine
 #endif
         }
 
-        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
+        void GfxManager::PrepForLightPass(const SMat4 &view, const SMat4 &proj)
         {
-            //if in editor mode, we need to compute the mouse pos
 #if defined(URSINE_WITH_EDITOR)
             gfxProfiler->Stamp(PROFILE_COMPUTEMOUSE);
 #else
             gfxProfiler->Stamp(PROFILE_DEFERRED);
 #endif
-            modelManager->BindModel(modelManager->GetModelIDByName("Sphere"));
 
             //set states
             dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, false);
@@ -785,20 +808,21 @@ namespace ursine
             gbub.perspectiveVals.w = -tempMat(2, 2);
             bufferManager->MapBuffer<BUFFER_GBUFFER_UNPACK>(&gbub, SHADERTYPE_PIXEL);
 
-            //bind shader
-            shaderManager->BindShader(SHADER_POINT_LIGHT);
-            layoutManager->SetInputLayout(SHADER_POINT_LIGHT);
-
-            ////clear index/vertex buffers
-            //dxCore->GetDeviceContext()->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
-            //dxCore->GetDeviceContext( )->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
-
             //set gbuffer resources
             ID3D11ShaderResourceView *srv = dxCore->GetDepthMgr()->GetDepthStencilSRV(DEPTH_STENCIL_MAIN);
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);
             dxCore->GetDeviceContext()->PSSetShaderResources(1, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
             dxCore->GetDeviceContext()->PSSetShaderResources(2, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_NORMAL)->ShaderMap);
             dxCore->GetDeviceContext()->PSSetShaderResources(3, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->ShaderMap);
+        }
+
+        void GfxManager::PrepForPointLightPass(const SMat4 &view, const SMat4 &proj)
+        {
+            modelManager->BindModel(modelManager->GetModelIDByName("Sphere"));
+
+            //bind shader
+            shaderManager->BindShader(SHADER_POINT_LIGHT);
+            layoutManager->SetInputLayout(SHADER_POINT_LIGHT);
         }
 
         void GfxManager::PrepForSpotlightPass(const SMat4& view, const SMat4& proj)
@@ -908,9 +932,6 @@ namespace ursine
             pcb.color.w = c.a;
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, SHADERTYPE_PIXEL );
 
-            // map transform
-            bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
-
             // material buffer 
             MaterialDataBuffer mdb;
 
@@ -927,53 +948,113 @@ namespace ursine
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             // map matrix palette
-            bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(reinterpret_cast<MatrixPalBuffer*>(&(current.GetMatrixPalette( )[ 0 ])), SHADERTYPE_VERTEX);
+			MatrixPalBuffer data;
+
+			int index = 0;
+
+			for (auto &x : current.GetMatrixPalette())
+			{
+				data.matPal.matPal[index++] = x.ToD3D();
+			}
+
+            bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(&data, SHADERTYPE_VERTEX);
 
             // map texture
             textureManager->MapTextureByID(handle.Material_);
 
-            if(handle.Overdraw_)
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL); 
-            else
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);              
+			if (handle.Overdraw_)
+				dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+			else
+				dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
              
             //render
             unsigned count = modelManager->GetModelMeshCount( handle.Model_ );
 
-            for (int x = 0; x < count; ++x)
+            auto *modelResource = modelManager->GetModel(handle.Model_);
+
+            // If the whole model is to be rendered
+            if ( current.GetMeshIndex() == -1 )
             {
-                // set model
-                modelManager->BindModel(handle.Model_, x);
-                shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
-            }
-
-            //render debug lines
-            Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
-            if(model.GetDebug())
-            {
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-                dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
-
-                pcb.color.x = 0.75f;
-                pcb.color.y = 0.75f;
-                pcb.color.z = 0.45f;
-                bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
-
-                mdb.emissive = 4;
-                mdb.specularPower = 0;
-                mdb.specularIntensity = 0;
-                bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
-                textureManager->MapTextureByName("Blank");
-                
-                for (int x = 0; x < count; ++x)
+                // rendering each model
+                for ( unsigned x = 0; x < count; ++x )
                 {
+                    auto *mesh = modelResource->GetMesh(x);
+
+                    // map transform
+                    bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix());
+
                     // set model
                     modelManager->BindModel(handle.Model_, x);
                     shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
                 }
 
-                dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                //render debug lines
+                Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
+                if ( model.GetDebug() )
+                {
+                    dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                    dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+
+                    pcb.color.x = 0.75f;
+                    pcb.color.y = 0.75f;
+                    pcb.color.z = 0.45f;
+                    bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+
+                    mdb.emissive = 4;
+                    mdb.specularPower = 0;
+                    mdb.specularIntensity = 0;
+                    bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+                    textureManager->MapTextureByName("Blank");
+
+                    for ( uint x = 0; x < count; ++x )
+                    {
+                        // set model
+                        modelManager->BindModel(handle.Model_, x);
+                        shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
+                    }
+
+                    dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+                    dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                }
+            }
+            else // we only want to render a specific part
+            {
+                int x = current.GetMeshIndex();
+
+                auto *mesh = modelResource->GetMesh(x);
+
+                // map transform
+                bufferManager->MapTransformBuffer(renderableManager->m_renderableModel3D[ handle.Index_ ].GetWorldMatrix() /** mesh->GetLocalToParentTransform( )*/);
+
+                // set model
+                modelManager->BindModel(handle.Model_, x);
+                shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
+
+                //render debug lines
+                Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
+                if ( model.GetDebug() )
+                {
+                    dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                    dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+
+                    pcb.color.x = 0.75f;
+                    pcb.color.y = 0.75f;
+                    pcb.color.z = 0.45f;
+                    bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+
+                    mdb.emissive = 4;
+                    mdb.specularPower = 0;
+                    mdb.specularIntensity = 0;
+                    bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+                    textureManager->MapTextureByName("Blank");
+
+                    // set model
+                    modelManager->BindModel(handle.Model_, x);
+                    shaderManager->Render(modelManager->GetModelIndexcountByID(handle.Model_, x));
+
+                    dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+                    dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                }
             }
         }
 
@@ -1427,7 +1508,7 @@ namespace ursine
             float w, h, x, y;
             Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
             D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
-            cam.GetPosition(x, y);
+            cam.GetViewportPosition(x, y);
             cam.GetDimensions(w, h);
 
             w *= gvp.Width;
@@ -1564,7 +1645,7 @@ namespace ursine
 
             //set directx viewport
             float w, h, x, y;
-            cam.GetPosition(x, y);
+            cam.GetViewportPosition(x, y);
             cam.GetDimensions(w, h);
 
             w *= gvp.Width;
