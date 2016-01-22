@@ -178,7 +178,7 @@ namespace ursine
              *  @return Qualified name of the type as it is declared.
              *          ie - "boost::regex"
              */
-            const std::string &GetName(void) const;
+            std::string GetName(void) const;
 
             /** @brief Gets meta data for this type.
              *  @return Meta Data Manager for this type.

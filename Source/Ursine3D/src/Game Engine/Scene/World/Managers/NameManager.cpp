@@ -61,6 +61,8 @@ namespace ursine
         {
             setName( entity, name );
 
+        #if defined(URSINE_WITH_EDITOR)
+
             EditorEntityNameChangedArgs e( 
                 WORLD_EDITOR_ENTITY_NAME_CHANGED, 
                 entity, 
@@ -68,6 +70,8 @@ namespace ursine
             );
 
             m_world->Dispatch( WORLD_EDITOR_ENTITY_NAME_CHANGED, &e );
+
+        #endif
         }
 
         void NameManager::setName(Entity *entity, const std::string &name)

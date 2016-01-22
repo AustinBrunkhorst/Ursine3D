@@ -29,8 +29,8 @@
 #define IsComponentRegistered(componentType) (typeof( componentType ).IsValid( ))
 
 // Cleaner way of calling a base component constructor in the member 
-// initialization list (used to assign the component type id)
-#define BaseComponent() ursine::ecs::Component( GetComponentID( std::remove_reference<decltype( *this )>::type ) )
+// initialization list (used to assign the component type id).
+#define BaseComponent() ursine::ecs::Component( ComponentID )
 
 // Required at the top of all native component declarations
 #define NATIVE_COMPONENT                                 \

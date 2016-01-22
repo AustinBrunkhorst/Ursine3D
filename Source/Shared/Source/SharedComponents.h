@@ -24,3 +24,10 @@
 #include "Components/RecorderComponent.h"
 #include "Components/RandomSlerpComponent.h"
 #include "Components/PlayerAnimationComponent.h"
+#include "Components/BaseWeaponComponent.h"
+#include "Components/TimeDeathComponent.h"
+#include "Components/ProjectileComponent.h"
+#include "Components/DamageOnCollideComponent.h"
+#include "Components/PlayerIdComponent.h"
+#include "Components/ControlPointComponent.h"
+

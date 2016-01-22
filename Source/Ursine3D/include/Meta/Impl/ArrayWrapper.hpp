@@ -6,7 +6,16 @@ namespace ursine
     {
         template<typename T>
         ArrayWrapper::ArrayWrapper(Array<T> &rhs)
-            : m_base( new ArrayWrapperContainer<T>( rhs ) )
+            : m_isConst( false )
+            , m_base( new ArrayWrapperContainer<T>( rhs ) )
+        {
+            
+        }
+
+        template<typename T>
+        ArrayWrapper::ArrayWrapper(const Array<T> &rhs)
+            : m_isConst( true )
+            , m_base( new ArrayWrapperContainer<T>( const_cast<Array<T> &>( rhs ) ) )
         {
             
         }

@@ -22,6 +22,7 @@
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
 #include "ConvexHullColliderComponent.h"
+#include "ConvexDecompColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "GfxAPI.h"
@@ -44,6 +45,7 @@ namespace ursine
                 CapsuleCollider,
                 ConeCollider,
 				ConvexHullCollider,
+				ConvexDecompCollider,
 				BvhTriangleMeshCollider
             >( );
 
@@ -138,18 +140,28 @@ namespace ursine
 
             m_world->Listener( this )
                 .On( WORLD_UPDATE, &PhysicsSystem::onUpdate, 100000 )
-                .On( WORLD_EDITOR_UPDATE, &PhysicsSystem::onEditorUpdate, -10000 )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &PhysicsSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &PhysicsSystem::onComponentRemoved );
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            m_world->Connect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate, -10000 );
+
+        #endif
         }
 
         void PhysicsSystem::OnRemove(void)
         {
             m_world->Listener( this )
                 .Off( WORLD_UPDATE, &PhysicsSystem::onUpdate )
-                .Off( WORLD_EDITOR_UPDATE, &PhysicsSystem::onEditorUpdate )
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &PhysicsSystem::onComponentAdded )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &PhysicsSystem::onComponentRemoved );
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            m_world->Disconnect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate );
+
+        #endif
         }
 
         void PhysicsSystem::OnAfterLoad(void)
@@ -177,9 +189,14 @@ namespace ursine
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
         {
             EVENT_ATTRS(World, ComponentEventArgs);
-         
+
             auto &entity = args->entity;
             auto &component = args->component;
+
+			// If the user added a collider, remove the others that may exist
+			if (m_collisionShapes.Matches( entity ) && 
+				m_collisionShapes.Matches( component->GetTypeMask( ) ))
+				removeExistingCollider( entity, component->GetTypeID( ) );
 
             if (component->Is<Rigidbody>( ))
             {
@@ -260,6 +277,12 @@ namespace ursine
 				auto *hull = entity->GetComponent<ConvexHullCollider>( );
 
 				addCollider( entity, &hull->m_convexHullCollider );
+			}
+			else if (component->Is<ConvexDecompCollider>( ))
+			{
+				auto *convex = entity->GetComponent<ConvexDecompCollider>( );
+
+				addCollider( entity, &convex->m_convexDecompCollider );
 			}
 			else if (component->Is<BvhTriangleMeshCollider>( ))
 			{
@@ -369,10 +392,14 @@ namespace ursine
 			m_simulation.DispatchCollisionEvents( );
         }
 
+    #if defined(URSINE_WITH_EDITOR)
+
         void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))
         {
             m_simulation.DebugDrawSimulation( );
         }
+
+    #endif
 
         void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider)
         {
@@ -435,5 +462,15 @@ namespace ursine
             }
         }
 
+		void PhysicsSystem::removeExistingCollider(Entity *entity, ComponentTypeID newCollider)
+        {
+			for (auto *comp : entity->GetComponents( ))
+			{
+				auto compID = comp->GetTypeID( );
+
+				if (compID != newCollider && m_collisionShapes.Matches( comp->GetTypeMask( ) ))
+					entity->RemoveComponent( compID );
+			}
+        }
     }
 }

@@ -19,6 +19,7 @@
 #include "Project.h"
 
 #include <WorldSerializer.h>
+#include <Timer.h>
 
 #include <FileSystem.h>
 #include <UIFileDialogCallback.h>
@@ -149,16 +150,16 @@ namespace
 
         auto *editor = GetCoreSystem( Editor );
 
-        ecs::WorldSerializer serializer;
-        ecs::World::Handle world;
-
         auto file = files[ 0 ].string( );
 
         try
         {
-            world = serializer.Deserialize( file );
+			Timer::Create(0).Completed( [=] {
+				ecs::WorldSerializer serializer;
+				auto world = serializer.Deserialize( file );
 
-            editor->GetProject( )->SetWorld( world );
+				editor->GetProject( )->SetWorld( world );
+			} );
         }
         catch (const ecs::SerializationException &e)
         {

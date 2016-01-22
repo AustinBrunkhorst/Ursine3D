@@ -14,7 +14,7 @@
 #include "Precompiled.h"
 
 #include "CharacterControllerComponent.h"
-
+#include "GameEvents.h"
 #include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( CharacterController );
@@ -30,8 +30,12 @@ CharacterController::CharacterController(void)
 
 CharacterController::~CharacterController(void)
 {
-    GetOwner( )->GetWorld( )->Listener( this )
-        .Off( ursine::ecs::WORLD_UPDATE, &CharacterController::onUpdate );
+    GetOwner( )->GetWorld( )->Listener(this)
+        .Off(ursine::ecs::WORLD_UPDATE, &CharacterController::onUpdate);
+
+    GetOwner( )->Listener( this )
+        .Off( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
+        .Off( game::JUMP_COMMAND, &CharacterController::Jump );
 }
 
 float CharacterController::GetMoveSpeed(void) const
@@ -86,15 +90,6 @@ void CharacterController::SetJumpInterval(float jumpInterval)
     m_jumpInterval = jumpInterval;
 }
 
-void CharacterController::Jump(void)
-{
-    if (m_jumpTimer >= m_jumpInterval)
-    {
-        m_jump = true;
-        m_jumpTimer = 0.0f;
-    }
-}
-
 const ursine::Vec2& CharacterController::GetMoveDirection(void) const
 {
     return m_moveDir;
@@ -117,8 +112,14 @@ void CharacterController::SetLookDirection(const ursine::Vec2& lookDir)
 
 void CharacterController::OnInitialize(void)
 {
+    Component::OnInitialize( );
+
     GetOwner( )->GetWorld( )->Listener( this )
         .On( ursine::ecs::WORLD_UPDATE, &CharacterController::onUpdate );
+
+    GetOwner( )->Listener(this)
+        .On( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
+        .On( game::JUMP_COMMAND, &CharacterController::Jump );
 }
 
 void CharacterController::onUpdate(EVENT_HANDLER(World))
@@ -126,4 +127,20 @@ void CharacterController::onUpdate(EVENT_HANDLER(World))
     // Increment the timer
     if (m_jumpTimer <= m_jumpInterval)
         m_jumpTimer += ursine::Application::Instance->GetDeltaTime( );
+}
+
+void CharacterController::SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND))
+{
+    EVENT_ATTRS(ursine::ecs::Entity, game::MovementEventArgs);
+
+    m_lookDir = args->m_moveDir;
+}
+
+void CharacterController::Jump(EVENT_HANDLER(game::JUMP_COMMAND))
+{
+    if ( m_jumpTimer >= m_jumpInterval )
+    {
+        m_jump = true;
+        m_jumpTimer = 0.0f;
+    }
 }

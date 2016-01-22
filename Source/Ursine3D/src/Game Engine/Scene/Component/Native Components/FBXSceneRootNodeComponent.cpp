@@ -8,6 +8,8 @@
 #include "ConvexHullColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 
+#include "Notification.h"
+
 namespace ursine
 {
     namespace ecs
@@ -17,8 +19,11 @@ namespace ursine
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
             , m_sceneName( "" )
-			, m_notificationPresent( false )
+        #if defined(URSINE_WITH_EDITOR)
+            , m_notificationPresent( false )
+        #endif
         {
+
         }
 
         FBXSceneRootNode::~FBXSceneRootNode(void)
@@ -28,19 +33,20 @@ namespace ursine
 
         void FBXSceneRootNode::OnInitialize(void)
         {
+            Component::OnInitialize( );
         }
 
-        const std::string & FBXSceneRootNode::GetSceneName(void) const
+        const std::string &FBXSceneRootNode::GetSceneName(void) const
         {
             return m_sceneName;
         }
 
-        void FBXSceneRootNode::SetSceneName(const std::string & map)
+        void FBXSceneRootNode::SetSceneName(const std::string &map)
         {
             m_sceneName = map;
         }
 
-	#if defined(URSINE_WITH_EDITOR)
+    #if defined(URSINE_WITH_EDITOR)
 
         void FBXSceneRootNode::importScene(void)
         {
@@ -78,25 +84,25 @@ namespace ursine
             }
         }
 
-		void FBXSceneRootNode::recursClearChildren(std::vector<Transform *> children)
+        void FBXSceneRootNode::recursClearChildren(std::vector<Transform *> children)
         {
-	        for (auto &child : children)
-			{
-				recursClearChildren( child->GetChildren( ) );
+            for (auto &child : children)
+            {
+                recursClearChildren( child->GetChildren( ) );
 
-				child->GetOwner( )->Delete( );
-			}
+                child->GetOwner( )->Delete( );
+            }
         }
 
         void FBXSceneRootNode::clearChildren(void)
         {
-			recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
+            recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
 
-			// Clear the deletion queue if the scene is paused
-			EditorClearDeletionQueue( );
+            // Clear the deletion queue if the scene is paused
+            EditorClearDeletionQueue( );
         }
 
-		void FBXSceneRootNode::ImportScene(void)
+        void FBXSceneRootNode::ImportScene(void)
         {
 	        auto owner = GetOwner( );
 			auto *children = owner->GetChildren( );
@@ -105,15 +111,15 @@ namespace ursine
 			{
 				NotificationConfig config;
 
-				config.type = NOTIFY_QUESTION;
-				config.header = "Confirmation Of Destructive Action";
+				config.type = NOTIFY_WARNING;
+				config.header = "Warning";
 				config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
 				config.dismissible = false;
 				config.duration = 0;
 
 				NotificationButton yes, no;
 
-				yes.text = "Confirm Action";
+				yes.text = "Yes";
 				yes.onClick = [=] (Notification &notification) {
 					notification.Close( );
 					m_notificationPresent = false;
@@ -125,7 +131,7 @@ namespace ursine
 					} );
 				};
 
-				no.text = "Cancel Action";
+				no.text = "No";
 				no.onClick = [=] (Notification &notification) {
 					notification.Close( );
 					m_notificationPresent = false;
@@ -145,42 +151,42 @@ namespace ursine
 			}
         }
 
-		void FBXSceneRootNode::GenerateConvexHullForScene(void)
+        void FBXSceneRootNode::GenerateConvexHullForScene(void)
         {
-	        auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
+            auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
 
-			for (auto &model : models)
-			{
-				auto entity = model->GetOwner( );
+            for (auto &model : models)
+            {
+                auto entity = model->GetOwner( );
 
-				if (!entity->HasComponent<ConvexHullCollider>( ))
-					entity->AddComponent<ConvexHullCollider>( );
+                if (!entity->HasComponent<ConvexHullCollider>( ))
+                    entity->AddComponent<ConvexHullCollider>( );
 
-				auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+                auto convexHull = entity->GetComponent<ConvexHullCollider>( );
 
-				convexHull->GenerateConvexHull( model );
-			}
+                convexHull->GenerateConvexHull( model );
+            }
         }
 
-		void FBXSceneRootNode::GenerateBvhTriangleMeshCollidersForScene(void)
+        void FBXSceneRootNode::GenerateBvhTriangleMeshCollidersForScene(void)
         {
-	        auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
+            auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
 
-			Timer::Create( 0 ).Completed( [=] {
-				for (auto &model : models)
-				{
-					auto entity = model->GetOwner( );
+            Timer::Create( 0 ).Completed( [=] {
+                for (auto &model : models)
+                {
+                    auto entity = model->GetOwner( );
 
-					if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
-						entity->AddComponent<BvhTriangleMeshCollider>( );
+                    if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
+                        entity->AddComponent<BvhTriangleMeshCollider>( );
 
-					auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
+                    auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
 
-					bvhTriangleMesh->GenerateBvhTriangleMesh( model );
-				}
-			} );
+                    bvhTriangleMesh->GenerateBvhTriangleMesh( model );
+                }
+            } );
         }
 
-	#endif
+    #endif
     }
 }

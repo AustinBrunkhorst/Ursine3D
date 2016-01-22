@@ -13,6 +13,7 @@
 
 #include "UrsinePrecompiled.h"
 #include <CFBXLoader.h>
+#include <FileSystem.h>
 
 #pragma warning (disable : 4996)
 #pragma warning (disable : 4244)
@@ -260,7 +261,6 @@ namespace ursine
 					for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
 						newMtrlInfo.spec_texNames.push_back(iter1->second[j]);
-
 					newMtrlInfo.shineness = mModel->mMaterials[i]->shineness;
 					newMtrlInfo.TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
 
@@ -380,10 +380,8 @@ namespace ursine
 			std::string _fileName("Assets/Models/");
 			_fileName += mModelInfo->name;
 			std::string jdlFile = _fileName;
-			std::string jlvlFile = _fileName;
 			std::string janiFile = _fileName;
 			jdlFile += ".jdl";
-			jlvlFile += ".jlvl";
 			janiFile += ".jani";
 
 			HANDLE hFile;

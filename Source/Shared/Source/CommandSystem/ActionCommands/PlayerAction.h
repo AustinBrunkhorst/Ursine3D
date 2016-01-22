@@ -12,6 +12,20 @@
 
 #include <Entity.h>
 
+namespace ursine
+{
+    class KeyboardManager;
+    enum KeyboardKey;
+    class GamepadManager;
+    class GamepadState;
+    enum GamepadButton;
+    class MouseManager;
+    enum MouseButton;
+} // ursine namespace
+
+class PlayerID;
+
+
 class PlayerAction
 {
 public:
@@ -40,6 +54,16 @@ public:
         RightStickUp,
         RightStickDown,
 
+        MouseLeft,
+        MouseRight,
+        MouseUp,
+        MouseDown,
+
+        KeyLeft,
+        KeyRight,
+        KeyUp,
+        KeyDown,
+
         LeftTrigger,
         RightTrigger,
 
@@ -48,25 +72,40 @@ public:
 
 public:
     PlayerAction();
-    PlayerAction(ursine::ecs::Entity *entity, const ActionMode action, const InputBinding binding);
-    
-    bool WasPressed(void) const;
-    bool IsPressed(void) const;
-    bool WasReleased(void) const;
+    PlayerAction(PlayerID* idComp, const ActionMode action, const InputBinding binding);
 
-    bool StickUp(void) const;
-    bool StickDown(void) const;
-    bool StickLeft(void) const;
-    bool StickRight(void) const;
+    bool WasPressed(void);
+    bool IsPressed(void);
+    bool WasReleased(void);
 
-    ursine::Vec2 GetAxis(void) const;
+    bool StickUp(void);
+    bool StickDown(void);
+    bool StickLeft(void);
+    bool StickRight(void);
 
-    bool operator==(const ActionMode &mode);
+    ursine::Vec2 GetAxis(void);
+
+    bool operator==(const ActionMode &mode) const;
 
 private:
-    ursine::ecs::Entity *m_entity;
-
     ActionMode m_actionMode;
 
     InputBinding m_binding;
+
+    PlayerID* m_playerIDComp;
+
+    ursine::GamepadState* m_gamepadState;
+
+    ursine::GamepadManager* m_gamepadManager;
+    ursine::KeyboardManager* m_keyboardManager;
+    ursine::MouseManager* m_mouseManager;
+
+    bool PrepForInput(void);
+
+    ursine::Vec2 GetMouseVec(void) const;
+    
+    bool EvalXboxButtons(bool(ursine::GamepadState::*)(ursine::GamepadButton, float) const);
+    bool EvalKeyboardButtons(bool( ursine::KeyboardManager::* )(ursine::KeyboardKey),
+                             bool( ursine::MouseManager::* )( ursine::MouseButton ) const ) const;
+    bool EvalMouseButtons(bool( ursine::MouseManager::* )( ursine::MouseButton ) const) const;
 };

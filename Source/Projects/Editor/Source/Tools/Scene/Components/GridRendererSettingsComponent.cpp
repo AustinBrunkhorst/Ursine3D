@@ -29,7 +29,10 @@ GridRendererSettings::GridRendererSettings(void)
 
 GridRendererSettings::~GridRendererSettings(void) { }
 
-void GridRendererSettings::OnInitialize(void) { }
+void GridRendererSettings::OnInitialize(void)
+{
+    Component::OnInitialize( );
+}
 
 int GridRendererSettings::GetCellSize(void) const 
 {

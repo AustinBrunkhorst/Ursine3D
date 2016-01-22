@@ -32,13 +32,11 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             m_dispatcher = new btCollisionDispatcher( &m_collisionConfig );
-            m_overlappingPairCache = new btDbvtBroadphase( );
-            m_solver = new btSequentialImpulseConstraintSolver( );
 
             m_dynamicsWorld = new btSoftRigidDynamicsWorld(
                 m_dispatcher,
-                m_overlappingPairCache,
-                m_solver,
+                &m_overlappingPairCache,
+                &m_solver,
                 &m_collisionConfig
             );
 
@@ -281,12 +279,6 @@ namespace ursine
 
             //delete dynamics world
             delete m_dynamicsWorld;
-
-            //delete solver
-            delete m_solver;
-
-            //delete broadphase
-            delete m_overlappingPairCache;
 
             //delete dispatcher
             delete m_dispatcher;

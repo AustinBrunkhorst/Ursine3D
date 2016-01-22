@@ -1,6 +1,11 @@
 #
 #First is file name, second is model name
 
+<<<<<<< HEAD
+=======
+#Entrenched_Test1.fbx Entrenched
+rome.fbx Rome
+
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
 Ship.8.0.mdl Ship

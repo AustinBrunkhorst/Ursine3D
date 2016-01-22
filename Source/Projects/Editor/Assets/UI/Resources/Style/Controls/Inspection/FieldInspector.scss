@@ -43,6 +43,14 @@
     }
   }
 
+  .array-items-wrapper {
+    border: 1px solid red;
+
+    .array-items {
+
+    }
+  }
+
   .vector-fields {
     display: flex;
     flex-direction: row;

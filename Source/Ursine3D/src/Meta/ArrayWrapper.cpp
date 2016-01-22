@@ -7,7 +7,8 @@ namespace ursine
     namespace meta
     {
         ArrayWrapper::ArrayWrapper(void)
-            : m_base( nullptr )
+            : m_isConst( true )
+            , m_base( nullptr )
         {
 
         }
@@ -19,18 +20,24 @@ namespace ursine
 
         void ArrayWrapper::SetValue(size_t index, const Argument &value)
         {
+            UAssert( !m_isConst, "Array is const." );
+
             if (m_base)
                 m_base->SetValue( index, value );
         }
 
         void ArrayWrapper::Insert(size_t index, const Argument &value)
         {
+            UAssert( !m_isConst, "Array is const." );
+
             if (m_base)
                 m_base->Insert( index, value );
         }
 
         void ArrayWrapper::Remove(size_t index)
         {
+            UAssert( !m_isConst, "Array is const." );
+
             if (m_base)
                 m_base->Remove( index );
         }
@@ -44,5 +51,23 @@ namespace ursine
         {
             return m_base != nullptr;
         }
+
+        bool ArrayWrapper::IsConst(void) const
+        {
+            return m_isConst;
+        }
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        ArrayEventDispatcher &ArrayWrapper::GetModifyEvents(void) const
+        {
+            UAssert( m_base != nullptr, 
+                "Invalid array." 
+            );
+
+            return m_base->GetModifyEvents( );
+        }
+
+    #endif
     }
 }

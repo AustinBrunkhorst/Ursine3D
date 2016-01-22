@@ -31,6 +31,7 @@
 #include <AK/MusicEngine/Common/AkMusicEngine.h>
 
 #include "AudioID.h"
+#include "SoundFrameClient.h"
 
 namespace
 {

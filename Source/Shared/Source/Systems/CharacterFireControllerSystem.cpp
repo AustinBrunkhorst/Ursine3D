@@ -78,7 +78,7 @@ void CharacterFireControllerSystem::Process(Entity *entity)
     }
 
 	auto *armAnimator = arm->GetComponent<Animator>();
-	armAnimator->UpdateAnimation(0.016);
+	armAnimator->UpdateAnimation(0.016f);
 
     // firing a ray
     // if we had a hotspot, firing controller is ready to fire (firing timer is down), AND we received input from
@@ -90,7 +90,7 @@ void CharacterFireControllerSystem::Process(Entity *entity)
         float animationScalar = armAnimator->GetTimeScalar( );
 
         // reset firing sequence
-        armAnimator->SetAnimationTimePosition( 0.1 );
+        armAnimator->SetAnimationTimePosition( 0.1f );
         armAnimator->SetTimeScalar(1.2f);
         armAnimator->SetAnimation( "Gun_Shoot" );
         armAnimator->SetPlaying( true );
@@ -135,7 +135,7 @@ void CharacterFireControllerSystem::Process(Entity *entity)
             rayOutput, 
             physics::RAYCAST_ALL_HITS, 
             true, 
-            0.1, 
+            0.1f, 
             true, 
             fireController->GetShotStartColor(),
             fireController->GetShotEndColor( )

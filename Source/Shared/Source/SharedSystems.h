@@ -23,4 +23,9 @@
 #include "Systems/RecorderSystem.h"
 #include "Systems/RandomSlerpSystem.h"
 #include "Systems/PlayerAnimationSystem.h"
+#include "Systems/BaseWeaponSystem.h"
+#include "Systems/TimeDeathSystem.h"
+#include "Systems/ProjectileSystem.h"
+#include "Systems/ControlPointSystem.h"
+
 

@@ -40,6 +40,8 @@ namespace ursine
 
         void CylinderCollider::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &CylinderCollider::onTransformChange );
 

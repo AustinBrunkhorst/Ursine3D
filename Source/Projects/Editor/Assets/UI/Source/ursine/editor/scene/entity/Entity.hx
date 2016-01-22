@@ -96,12 +96,24 @@ class Entity implements IEventContainer {
         m_handler.removeComponent( name );
     }
 
-    public function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void {
-        m_handler.updateComponentField( componentName, fieldName, value );
+    public function componentFieldUpdate(componentName : String, fieldName : String, value : Dynamic) : Void {
+        m_handler.componentFieldUpdate( componentName, fieldName, value );
     }
 
-    public function invokeComponentButton(componentName : String, buttonName : String) : Void {
-        m_handler.invokeComponentButton( componentName, buttonName );
+    function componentFieldArrayUpdate(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
+        m_handler.componentFieldArrayUpdate( componentName, fieldName, index, value );
+    }
+
+    function componentFieldArrayInsert(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
+        m_handler.componentFieldArrayInsert( componentName, fieldName, index, value );
+    }
+
+    function componentFieldArrayRemove(componentName : String, fieldName : String, index : UInt) : Void {
+        m_handler.componentFieldArrayRemove( componentName, fieldName, index );
+    }
+
+    public function componentButtonInvoke(componentName : String, buttonName : String) : Void {
+        m_handler.componentButtonInvoke( componentName, buttonName );
     }
 
     public function getChildren() : Array<Entity> {

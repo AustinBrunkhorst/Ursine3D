@@ -19,7 +19,7 @@ class EntityMenu extends MenuItemHandler {
     static function doCreatePlane() {
         var entity = createEntityWithComponents( "Plane", [ "BoxCollider" ] );
 
-        entity.updateComponentField( "Transform", "scale", {
+        entity.componentFieldUpdate( "Transform", "scale", {
             x: 5,
             y: 1,
             z: 5
@@ -90,7 +90,7 @@ class EntityMenu extends MenuItemHandler {
         ).enumValue;
 
         // TODO: create defines for this
-        entity.updateComponentField( "Light", "Type", Reflect.field( lightType, type ) );
+        entity.componentFieldUpdate( "Light", "Type", Reflect.field( lightType, type ) );
 
         return entity;
     }

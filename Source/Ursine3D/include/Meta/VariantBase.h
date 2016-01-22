@@ -12,6 +12,8 @@
 
 #include <string>
 
+#include "Json.h"
+
 namespace ursine
 {
     namespace meta
