@@ -18,47 +18,6 @@
 #pragma warning (disable : 4244)
 #pragma warning (disable : 4267)
 
-// cut off unneccessary things, extensions to get name
-std::string GetName(const char* filename)
-{
-	std::string ret;
-	char fName[MAXTEXTLEN];
-	std::strcpy(fName, filename);
-
-	// get pure file name
-	char* ptr;
-	ptr = strtok(fName, "/");
-	while (ptr != nullptr)
-	{
-		ptr = strtok(nullptr, "/");
-		if (nullptr != ptr)
-			ret = ptr;
-	}
-
-	// get rid of extension
-	std::strcpy(fName, ret.c_str());
-	ptr = strtok(fName, ".");
-	if (nullptr != ptr)
-		ret = ptr;
-
-	return ret;
-}
-
-void GetMaterialTexuteMapName(std::string& mapName)
-{
-	char texName[MAXTEXTLEN];
-	lstrcpy(texName, mapName.c_str());
-	char* ptr;
-	ptr = strtok(texName, "\\");
-	while (ptr != nullptr)
-	{
-		ptr = strtok(nullptr, "\\");
-		if (nullptr != ptr)
-			lstrcpy(texName, ptr);
-	}
-	mapName = texName;
-}
-
 namespace ursine
 {
 	namespace graphics
@@ -159,7 +118,9 @@ namespace ursine
 
 			// Process Scene
 			mModel = new FBX_DATA::FbxModel;
-			mModel->name = GetName(filename);
+			fs::path fName(filename);
+			mModel->name = fName.filename().string();
+			mModel->name = mModel->name.substr(0, mModel->name.rfind("."));
 			// Getting Anim Pose
 			mModel->mAnimPose.resize(mScene->GetPoseCount());
 			for (unsigned i = 0; i < mModel->mAnimPose.size(); ++i)
@@ -270,44 +231,43 @@ namespace ursine
 				ufmt_loader::MaterialInfo newMtrlInfo;
 				for (i = 0; i < mModelInfo->mmaterialCount; ++i)
 				{
+					//ambi
+					j = 0;
 					newMtrlInfo.name = mModel->mMaterials[i]->name.c_str();
 					newMtrlInfo.ambitype = mModel->mMaterials[i]->ambient.type;
 					newMtrlInfo.ambi_mcolor = mModel->mMaterials[i]->ambient.color;
 					newMtrlInfo.ambi_mapCount = mModel->mMaterials[i]->ambient.textureSetArray.size();
-					//ambi
-					j = 0;
 					for (auto iter1 = mModel->mMaterials[i]->ambient.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
-					{
-						mModelInfo->mMtrlInfoVec[i].ambi_texNames.push_back(iter1->second[j].c_str());
-					}
-					newMtrlInfo.difftype = mModel->mMaterials[i]->diffuse.type;
-					newMtrlInfo.diff_mcolor = mModel->mMaterials[i]->diffuse.color;
-					newMtrlInfo.diff_mapCount = mModel->mMaterials[i]->diffuse.textureSetArray.size();
+						newMtrlInfo.ambi_texNames.push_back(iter1->second[j].c_str());
 
 					//diff
 					j = 0;
+					newMtrlInfo.difftype = mModel->mMaterials[i]->diffuse.type;
+					newMtrlInfo.diff_mcolor = mModel->mMaterials[i]->diffuse.color;
+					newMtrlInfo.diff_mapCount = mModel->mMaterials[i]->diffuse.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
-						mModelInfo->mMtrlInfoVec[i].diff_texNames.push_back(iter1->second[j].c_str());
-					newMtrlInfo.emistype = mModel->mMaterials[i]->emissive.type;
-					newMtrlInfo.emis_mcolor = mModel->mMaterials[i]->emissive.color;
-					newMtrlInfo.emis_mapCount = mModel->mMaterials[i]->emissive.textureSetArray.size();
+						newMtrlInfo.diff_texNames.push_back(iter1->second[j].c_str());
 
 					//emit
 					j = 0;
+					newMtrlInfo.emistype = mModel->mMaterials[i]->emissive.type;
+					newMtrlInfo.emis_mcolor = mModel->mMaterials[i]->emissive.color;
+					newMtrlInfo.emis_mapCount = mModel->mMaterials[i]->emissive.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
-						mModelInfo->mMtrlInfoVec[i].emis_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.emis_texNames.push_back(iter1->second[j].c_str());
+					
+					//spec
+					j = 0;
 					newMtrlInfo.spectype = mModel->mMaterials[i]->specular.type;
 					newMtrlInfo.spec_mcolor = mModel->mMaterials[i]->specular.color;
 					newMtrlInfo.spec_mapCount = mModel->mMaterials[i]->specular.textureSetArray.size();
-
-					//spec
-					j = 0;
 					for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
-						mModelInfo->mMtrlInfoVec[i].spec_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.spec_texNames.push_back(iter1->second[j].c_str());
+
 					newMtrlInfo.shineness = mModel->mMaterials[i]->shineness;
 					newMtrlInfo.TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
 
@@ -936,7 +896,7 @@ namespace ursine
 				int existTextureCount = 0;
 				// Normal Texture
 				const int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
-				for (int i = 0; i < lTextureCount; i++)
+				for (int i = 0; i < lTextureCount; ++i)
 				{
 					FbxFileTexture* lFileTexture = lProperty.GetSrcObject<FbxFileTexture>(i);
 					if (!lFileTexture)
@@ -944,20 +904,18 @@ namespace ursine
 
 					FbxString uvsetName = lFileTexture->UVSet.Get();
 					std::string uvSetString = uvsetName.Buffer();
-					std::string fileName = lFileTexture->GetFileName();
-					GetMaterialTexuteMapName(fileName);
-
-					pElement->textureSetArray[uvSetString].push_back(fileName);
-					existTextureCount++;
+					fs::path fName(lFileTexture->GetFileName());
+					pElement->textureSetArray[uvSetString].push_back(fName.filename().string());
+					++existTextureCount;
 				}
 
 				// Layered Texture
 				const int lLayeredTextureCount = lProperty.GetSrcObjectCount<FbxLayeredTexture>();
-				for (int i = 0; i < lLayeredTextureCount; i++)
+				for (int i = 0; i < lLayeredTextureCount; ++i)
 				{
 					FbxLayeredTexture* lLayeredTexture = lProperty.GetSrcObject<FbxLayeredTexture>(i);
 					const int lTextureFileCount = lLayeredTexture->GetSrcObjectCount<FbxFileTexture>();
-					for (int j = 0; j < lTextureFileCount; j++)
+					for (int j = 0; j < lTextureFileCount; ++j)
 					{
 						FbxFileTexture* lFileTexture = lLayeredTexture->GetSrcObject<FbxFileTexture>(j);
 						if (!lFileTexture)
@@ -965,11 +923,9 @@ namespace ursine
 
 						FbxString uvsetName = lFileTexture->UVSet.Get();
 						std::string uvSetString = uvsetName.Buffer();
-						std::string fileName = lFileTexture->GetFileName();
-						GetMaterialTexuteMapName(fileName);
-
-						pElement->textureSetArray[uvSetString].push_back(fileName);
-						existTextureCount++;
+						fs::path fName(lFileTexture->GetFileName());
+						pElement->textureSetArray[uvSetString].push_back(fName.filename().string());
+						++existTextureCount;
 					}
 				}
 
@@ -1055,23 +1011,26 @@ namespace ursine
 
 			//get the material index
 			FbxGeometryElementMaterial* materialElement = pNode->GetMesh()->GetElementMaterial();
-			FbxLayerElementArrayTemplate<int>& materialIndicies = materialElement->GetIndexArray();
-			if (materialElement->GetMappingMode() == FbxGeometryElement::eByPolygon)
+			if (materialElement)
 			{
-				pData->mtrlIndexCnt = materialIndicies.GetCount();
-				if (materialIndicies.GetCount() > 0)
+				FbxLayerElementArrayTemplate<int>& materialIndicies = materialElement->GetIndexArray();
+				if (materialElement->GetMappingMode() == FbxGeometryElement::eByPolygon)
 				{
-					pData->materialIndices = new unsigned[pData->mtrlIndexCnt];
-					for (int i = 0; i < materialIndicies.GetCount(); ++i)
-						pData->materialIndices[i] = materialIndicies[i];
+					pData->mtrlIndexCnt = materialIndicies.GetCount();
+					if (materialIndicies.GetCount() > 0)
+					{
+						pData->materialIndices = new unsigned[pData->mtrlIndexCnt];
+						for (int i = 0; i < materialIndicies.GetCount(); ++i)
+							pData->materialIndices[i] = materialIndicies[i];
+					}
 				}
-			}
-			else if (materialElement->GetMappingMode() == FbxGeometryElement::eAllSame)
-			{
-				pData->mtrlIndexCnt = pData->indexCnt / pNode->GetMesh()->GetPolygonSize(0);
-				pData->materialIndices = new unsigned[pData->mtrlIndexCnt];
-				for (int i = 0; i < static_cast<int>(pData->mtrlIndexCnt); ++i)
-					pData->materialIndices[i] = materialIndicies[0];
+				else if (materialElement->GetMappingMode() == FbxGeometryElement::eAllSame)
+				{
+					pData->mtrlIndexCnt = pData->indexCnt / pNode->GetMesh()->GetPolygonSize(0);
+					pData->materialIndices = new unsigned[pData->mtrlIndexCnt];
+					for (int i = 0; i < static_cast<int>(pData->mtrlIndexCnt); ++i)
+						pData->materialIndices[i] = materialIndicies[0];
+				}
 			}
 		}
 

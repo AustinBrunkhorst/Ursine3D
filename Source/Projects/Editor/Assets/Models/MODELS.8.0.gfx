@@ -1,8 +1,6 @@
 #
 #First is file name, second is model name
 
-Entrenched_Test1.fbx Entrenched
-
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
 Ship.8.0.mdl Ship
@@ -21,8 +19,9 @@ cone_12.8.0.mdl lightCone
 character.8.0.mdl Character
 torus2.8.0.mdl Ring
 #
+romekolezyum.fbx remeko
 # Player Animations
-Player_Idle.jdl Player
+#Player_Idle.jdl Player
 #Player_Idle.jani Player
 
 # Gun Animations
@@ -30,4 +29,4 @@ Player_Idle.jdl Player
 #Gun_Jump.fbx Gun_Jump
 #Gun_Shoot.fbx Gun_Shoot
 
-Monkey.fbx Monkey
+#Monkey.fbx Monkey
