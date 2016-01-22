@@ -26,4 +26,7 @@
 #include "Components/PlayerAnimationComponent.h"
 #include "Components/BaseWeaponComponent.h"
 #include "Components/TimeDeathComponent.h"
+#include "Components/ProjectileComponent.h"
+#include "Components/DamageOnCollideComponent.h"
+#include "Components/PlayerIdComponent.h"
 

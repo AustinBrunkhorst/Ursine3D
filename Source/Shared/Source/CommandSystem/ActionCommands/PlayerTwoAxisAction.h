@@ -12,7 +12,7 @@
 
 #include "PlayerAction.h"
 #include <Entity.h>
-#include "Command.h"
+
 
 class Command;
 
@@ -33,10 +33,9 @@ public:
 
     bool Acting(void);
 
-    ursine::Vec2 GetAxis(void) const;
+    ursine::Vec2 GetAxis(void);
 
 private:
-    ursine::ecs::Entity *m_entity;
 
     PlayerAction    m_left, 
                     m_right, 

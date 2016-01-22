@@ -62,8 +62,6 @@ public:
     float GetJumpInterval(void) const;
     void SetJumpInterval(float jumpInterval);
 
-    void Jump(void);
-
     const ursine::Vec2 &GetMoveDirection(void) const;
     void SetMoveDirection(const ursine::Vec2 &moveDir);
 
@@ -75,6 +73,8 @@ public:
 private:
 
     void onUpdate(EVENT_HANDLER(World));
+    void SetLookDirection(EVENT_HANDLER(commandEvent::LOOK_COMMAND));
+    void Jump(EVENT_HANDLER(commandEvent::JUMP_COMMAND));
 
     float m_moveSpeed;
     

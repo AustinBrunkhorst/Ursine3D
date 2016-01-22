@@ -14,7 +14,6 @@
 #include <CommandSystem/ActionCommands/PlayerAction.h>
 #include <CommandSystem/ActionCommands/PlayerTwoAxisAction.h>
 #include <CommandSystem/ActionCommands/ActionCommand.h>
-#include <CommandSystem/CommandTypes/JumpCommand.h>
 
 // this needs to go in another header
 // what input will we listen to?
@@ -41,10 +40,21 @@ public:
 
     void OnInitialize(void) override;
 
+    EditorField(
+        bool UseKeyboard,
+        GetKeyBoard,
+        SetKeyBoard
+        );
+    bool GetKeyBoard(void) const;
+    void SetKeyBoard(const bool useKeyBoard);
+
     Meta(Disable)
     std::vector<ActionCommandBase*> &GetCommandList(void);
 
 private:
+    // is user using keyboard
+    bool m_keyBoard;
+
     // action commands
     std::vector<ActionCommandBase*> m_commandList;
 
@@ -66,4 +76,8 @@ private:
     PlayerAction m_fire;
 
     PlayerAction m_jump;
+
+    void MapXboxContoller(void);
+    void MapKeyboard(void);
+
 }Meta(Enable, DisplayName("CommandInputController"));

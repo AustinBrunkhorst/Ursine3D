@@ -13,6 +13,7 @@
 #pragma once
 
 #include <Component.h>
+#include "CommandEvents.h"
 
 // Weapon Statuses
 #define MUST_RELOAD         0b00000001
@@ -52,10 +53,10 @@ class BaseWeapon : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-    /*EditorField(
+    EditorField(
         float Damage,
-        GetDamage,
-        SetDamage
+        GetDamageToApply,
+        SetDamageToApply
         );
 
     EditorField(
@@ -65,10 +66,22 @@ public:
         );
 
     EditorField(
-        float CritChance,
-        GetCritChance,
-        SetCritChance
-        );*/
+        float DamageInterval,
+        GetDamageInterval,
+        SetDamageInterval
+        );
+
+    EditorField(
+        bool DelBulletOnCollision,
+        GetDeleteOnCollision,
+        SetDeleteOnCollision
+        );
+
+    EditorField(
+        float ProjectileSpeed,
+        GetProjSpeed,
+        SetProjSpeed
+        );
 
     EditorField(
         float FireRate,
@@ -107,9 +120,9 @@ public:
         );
 
     EditorField(
-        ShotType Shot_Type,
-        GetShotType,
-        SetShotType
+        int FireCount,
+        GetProjFireCount,
+        SetProjFireCount
         );
 
     EditorField(
@@ -123,25 +136,31 @@ public:
         GetArchetypeToShoot,
         SetArchetypeToShoot
         );
-
+    
 
     BaseWeapon(void);
     ~BaseWeapon(void);
 
     void OnInitialize(void) override;
 
-    /*float GetDamage(void);
-    void SetDamage(const float damage);
-
-    float GetCritModifier(void);
-    void SetCritModifier(const float modifier);
-
-    float GetCritChance(void);
-    void SetCritChance(const float critChance); */
 
     ///////////////////////////////
     ////  Gettors and Settors  ////
     ///////////////////////////////
+    float GetDamageToApply(void) const;
+    void  SetDamageToApply(const float damage);
+
+    float GetCritModifier(void) const;
+    void SetCritModifier(const float modifier);
+
+    float GetDamageInterval(void) const;
+    void SetDamageInterval(const float damageInterval);
+
+    bool GetDeleteOnCollision(void) const;
+    void SetDeleteOnCollision(const bool state);
+
+    float GetProjSpeed(void) const;
+    void SetProjSpeed(const float speed);
 
     float GetFireRate(void) const;
     void SetFireRate(const float rate);
@@ -167,8 +186,8 @@ public:
     int GetClipSize(void) const;
     void SetClipSize(const int size);
 
-    ShotType GetShotType(void) const;
-    void SetShotType(const ShotType type);
+    int GetProjFireCount(void) const;
+    void SetProjFireCount(const int count);
 
     AOEType GetAOEType(void) const;
     void SetAOEType(const AOEType type);
@@ -209,6 +228,22 @@ private:
         reload speed, recoil, aiming FOV, base movement modifier,
         and aiming movement modifier.
    */
+    URSINE_TODO("Damage on collide and Pojectile stats in weapon is a hack for designers");
+   // damage to apply when triggered
+    float m_damageToApply;
+
+    // scalar to apply to damage
+    float m_critModifier;
+
+    // time to wait until apply damage again
+    //   (keeps from applying damage each frame)
+    float m_damageInterval;
+
+    // does projectile die on first collision
+    bool m_deleteOnCollision;
+
+    // projectile speed
+    float m_projSpeed;
 
     // Rate at which bullets can be fired
     float m_fireRate;
@@ -228,6 +263,8 @@ private:
     // How far is weapons range
     float m_maxRange;
 
+    // 
+
     // How much ammo does weapon have
     int m_ammoCount;
 
@@ -240,8 +277,8 @@ private:
     // Max amount that clip can hold
     int m_clipSize;
 
-    // Num of bullets to be shot
-    ShotType m_shotType;
+    // count of how many projectiles weapon fires per shot
+    int m_projFireCount;
     
     // Area of affect to be applied to shot
     AOEType m_aoeType;
@@ -255,18 +292,18 @@ private:
 
     // Weapons trigger is being pulled
     Meta(Disable)
-    void TriggerPulled(EVENT_HANDLER(gameEvent::FIRE_START));
+    void TriggerPulled(EVENT_HANDLER(commandEvent::FIRE_START));
 
     // Weapon's trigger was released
     Meta(Disable)
-    void TriggerReleased(EVENT_HANDLER(gameEvent::FIRE_END));
+    void TriggerReleased(EVENT_HANDLER(commandEvent::FIRE_END));
 
     // Tries to remove the number of rounds specified from the clip
     //   and returns the actual number of rounds removed
     int RemoveRoundsFromClip(int roundCount);
 
     // Is weapon out of ammo
-    bool OutofAmmo( void );
+    bool OutofAmmo(void) const;
 
     // Is weapon's clip full
     bool ClipFull( void );

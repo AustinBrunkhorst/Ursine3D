@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** BaseWeaponSystem.h
 **
@@ -30,13 +30,16 @@ public:
 
 protected:
     void OnInitialize(void) override;
-    void Process(ursine::ecs::Entity* entity);
+    void Begin(void) override;
+    void Process(ursine::ecs::Entity* entity) override;
 
 private:
+    float m_dt;
+
     void EvaluateWeapon(BaseWeapon& weapon);
     void ShootWeapon( BaseWeapon& weapon );
-    void ReloadWeapon( BaseWeapon& weapon );
-    void CreateBullets(BaseWeapon& weapon, int bulletsFired );
+    void ReloadWeapon( BaseWeapon& weapon ) const;
+    void CreateProjectiles(BaseWeapon& weapon, int projectilesFired );
 
 } Meta(Enable);
 

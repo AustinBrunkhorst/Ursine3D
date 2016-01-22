@@ -1,5 +1,3 @@
-#pragma once
-
 /* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2016 DigiPen Institute of Technology, All Rights Reserved.
@@ -10,6 +8,8 @@
 ** - Chad George - chad.george@digipen.edu
 **
 ** --------------------------------------------------------------------------*/
+
+#pragma once
 
 #include <Component.h>
 
@@ -39,5 +39,3 @@ private:
     float m_timeBeforeDeath;
 
 } Meta( Enable, DisplayName( "TimeDeath" ) );
-
-

@@ -25,3 +25,4 @@ void CommandQueueSystem::Process(ursine::ecs::Entity* entity)
 	auto *commandQueue = entity->GetComponent<CommandQueue>();
 	commandQueue->Update();
 }
+

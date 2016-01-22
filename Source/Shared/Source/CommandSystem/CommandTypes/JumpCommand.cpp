@@ -11,9 +11,8 @@
 #include "Precompiled.h"
 
 #include "JumpCommand.h"
-#include <CharacterControllerComponent.h>
 #include <AudioEmitterComponent.h>
-#include <PlayerAnimationComponent.h>
+#include "CommandEvents.h"
 
 namespace
 {
@@ -29,13 +28,15 @@ JumpCommand::JumpCommand(void)
 
 void JumpCommand::Execute(ursine::ecs::Entity* receiver)
 {
-    auto *controller = receiver->GetComponent<CharacterController>( );
-	auto *emitter = receiver->GetComponent<ursine::ecs::AudioEmitter>();
+    URSINE_TODO("possibly move jump sound out of command");
 
-	controller->Jump( );
+	auto *emitter = receiver->GetComponent<ursine::ecs::AudioEmitter>();
 
 	if (emitter)
 		emitter->AddSoundToPlayQueue(kJumpSound);
+    
+    commandEvent::CommandEventArgs jumpArgs( commandEvent::JUMP_COMMAND );
+    receiver->Dispatch(commandEvent::JUMP_COMMAND, &jumpArgs);
 }
 
 void JumpCommand::StopExecute(ursine::ecs::Entity* receiver)

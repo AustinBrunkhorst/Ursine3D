@@ -1,13 +1,13 @@
 #include "Precompiled.h"
 #include "BaseWeaponComponent.h"
-#include "GameEvents\GamePlayEvents.h"
+#include "CommandEvents.h"
 
 NATIVE_COMPONENT_DEFINITION( BaseWeapon );
 
 using namespace ursine;
 
-#define UNLIMITED_AMMO  INFINITE
-#define UNLIMITED_CLIP  INFINITE
+#define UNLIMITED_AMMO  MAXINT
+#define UNLIMITED_CLIP  MAXINT
 
 #define RELOAD_SUCCESS  true
 
@@ -28,6 +28,10 @@ int getRandomNum( int num )
 
 BaseWeapon::BaseWeapon( void ) :
     BaseComponent( ),
+    m_damageToApply( 1.0f ),
+    m_critModifier( 1.0f ),
+    m_damageInterval( 1.0f ),
+    m_deleteOnCollision( false ),
     m_fireRate( 0.2f ),
     m_fireTimer( 0.0f ),
     m_reloadTime( 0.0f ),
@@ -36,7 +40,7 @@ BaseWeapon::BaseWeapon( void ) :
     m_maxRange( 0 ),
     m_maxAmmoCount( 0 ),
     m_clipSize( 0 ),
-    m_shotType( Single_Shot ),
+    m_projFireCount( 1 ),
     m_aoeType( None ),
     m_archetypeToShoot( "BaseBullet" ),
     m_triggerPulled( false )
@@ -48,20 +52,20 @@ BaseWeapon::BaseWeapon( void ) :
 BaseWeapon::~BaseWeapon( void )
 {
     GetOwner( )->Listener( this )
-        .Off( gameEvent::FIRE_START, &BaseWeapon::TriggerPulled )
-        .Off( gameEvent::FIRE_END, &BaseWeapon::TriggerReleased );
+        .Off( commandEvent::FIRE_START, &BaseWeapon::TriggerPulled )
+        .Off( commandEvent::FIRE_END, &BaseWeapon::TriggerReleased );
 }
 
 void BaseWeapon::OnInitialize( void )
 {
     GetOwner( )->Listener( this )
-        .On( gameEvent::FIRE_START, &BaseWeapon::TriggerPulled )
-        .On( gameEvent::FIRE_END, &BaseWeapon::TriggerReleased );
+        .On( commandEvent::FIRE_START, &BaseWeapon::TriggerPulled )
+        .On( commandEvent::FIRE_END, &BaseWeapon::TriggerReleased );
 
-    if ( m_maxAmmoCount == 0 )
+    if ( m_maxAmmoCount == UNLIMITED_AMMO )
         m_maxAmmoCount = UNLIMITED_AMMO;
 
-    if ( m_clipSize == 0 )
+    if ( m_clipSize == UNLIMITED_CLIP )
         m_clipSize = UNLIMITED_CLIP;
 
     m_ammoCount = m_maxAmmoCount;
@@ -74,39 +78,55 @@ void BaseWeapon::OnInitialize( void )
 ///////////////////////////////
 
 //// Damage
-//float BaseWeapon::GetDamage(void)
-//{
-//    return m_damage;
-//}
-//
-//void BaseWeapon::SetDamage(const float damage)
-//{
-//    m_damage = damage;
-//}
-//
-//
-//// Crit Modifier
-//float BaseWeapon::GetCritModifier(void)
-//{
-//    return m_critModifier;
-//}
-//
-//void BaseWeapon::SetCritModifier(const float modifier)
-//{
-//    m_critModifier = modifier;
-//}
-//
-//
-//// Crit Chance
-//float BaseWeapon::GetCritChance(void)
-//{
-//    return m_critChance;
-//}
-//
-//void BaseWeapon::SetCritChance(const float critChance)
-//{
-//    m_critChance = critChance;
-//}
+float BaseWeapon::GetDamageToApply(void) const
+{
+    return m_damageToApply;
+}
+
+void BaseWeapon::SetDamageToApply(const float damage)
+{
+    m_damageToApply = damage;
+}
+
+float BaseWeapon::GetCritModifier(void) const
+{
+    return m_critModifier;
+}
+
+void BaseWeapon::SetCritModifier(const float modifier)
+{
+    m_critModifier = modifier;
+}
+
+float BaseWeapon::GetDamageInterval(void) const
+{
+    return m_damageInterval;
+}
+
+void BaseWeapon::SetDamageInterval(const float damageInterval)
+{
+    m_damageInterval = damageInterval;
+}
+
+bool BaseWeapon::GetDeleteOnCollision(void) const
+{
+    return m_deleteOnCollision;
+}
+
+float BaseWeapon::GetProjSpeed(void) const
+{
+    return m_projSpeed;
+}
+
+void BaseWeapon::SetProjSpeed(const float speed)
+{
+    m_projSpeed = speed;
+}
+
+void BaseWeapon::SetDeleteOnCollision(const bool state)
+{
+    m_deleteOnCollision = state;
+}
 
 
 // Fire Rate
@@ -182,6 +202,9 @@ void BaseWeapon::SetMaxAmmoCount( const int maxAmmo )
         m_maxAmmoCount = UNLIMITED_AMMO;
         m_ammoCount = m_maxAmmoCount;
     }
+
+    else if ( m_ammoCount > m_maxAmmoCount )
+        m_ammoCount = m_maxAmmoCount;
 }
 
 
@@ -212,18 +235,20 @@ void BaseWeapon::SetClipSize( const int size )
         m_clipSize = UNLIMITED_AMMO;
         m_clipCount = m_clipSize;
     }
+
+    else if ( m_clipCount > m_clipSize )
+        m_clipCount = m_clipSize;
 }
 
-
-// Shot Type
-ShotType BaseWeapon::GetShotType( void ) const
+// Projectile fire count
+int BaseWeapon::GetProjFireCount( ) const
 {
-    return m_shotType;
+    return m_projFireCount;
 }
 
-void BaseWeapon::SetShotType( const ShotType type )
+void BaseWeapon::SetProjFireCount(const int count)
 {
-    m_shotType = type;
+    m_projFireCount = count;
 }
 
 
@@ -245,15 +270,25 @@ const std::string& BaseWeapon::GetArchetypeToShoot( void ) const
     return m_archetypeToShoot;
 }
 
+// Helper to check if the archetype to shoot needs to have .uatype appended to it
+void CheckArchetypeToShoot(std::string& archetype)
+{
+    if ( archetype.find( ".uatype" ) == std::string::npos )
+        archetype += ".uatype";
+}
+
 void BaseWeapon::SetArchetypeToShoot( const char * archetype )
 {
     m_archetypeToShoot = archetype;
-    m_archetypeToShoot += ".uatype";
+
+    CheckArchetypeToShoot( m_archetypeToShoot );
 }
 
 void BaseWeapon::SetArchetypeToShoot( const std::string& archetype )
 {
-    m_archetypeToShoot = archetype + ".uatype";
+    m_archetypeToShoot = archetype;
+
+    CheckArchetypeToShoot( m_archetypeToShoot );
 }
 
 
@@ -295,45 +330,9 @@ int BaseWeapon::Fire( void )
     m_fireTimer = m_fireRate;
 
     // number of rounds that were fired
-    int roundsShot = 0;
+    int roundsShot = RemoveRoundsFromClip( m_projFireCount );
 
-    // fire shot type
-    switch ( m_shotType )
-    {
-    case Single_Shot:
-        roundsShot = RemoveRoundsFromClip( 1 );
-        break;
-    case Two_Burst:
-        roundsShot = RemoveRoundsFromClip( 2 );
-        break;
-    case Triple_Burst:
-        roundsShot = RemoveRoundsFromClip( 3 );
-        break;
-    case Quad_Burst:
-        roundsShot = RemoveRoundsFromClip( 4 );
-        break;
-    case Full_Clip:
-        roundsShot = RemoveRoundsFromClip( m_clipSize );
-        break;
-    case Random_Burst:
-    {
-        // get random number 1 - 5
-        int randomNum = getRandomNum( 5 );
-
-        // anything that is not full clip
-        if ( randomNum != 5 )
-            roundsShot = RemoveRoundsFromClip( randomNum );
-
-        // shoot full clip
-        else
-            roundsShot = RemoveRoundsFromClip( m_clipSize );
-
-        break;
-    }
-    default:
-        roundsShot = RemoveRoundsFromClip( 1 );
-        break;
-    }
+    printf( "Rounds Shot: %d \n Ammo: %d\n Clip: %d\n", roundsShot, m_ammoCount, m_clipCount );
 
     return roundsShot;
 }
@@ -414,6 +413,8 @@ void BaseWeapon::TriggerReleased( EVENT_HANDLER( gameEvent::FIRE_END ) )
 //   and returns the actual number of rounds removed
 int BaseWeapon::RemoveRoundsFromClip( int roundCount )
 {
+    URSINE_TODO( "check for unlimited clip" );
+
     // only shoot 5 if clip is unlimited
     if ( roundCount == UNLIMITED_CLIP )
         return 5;
@@ -428,14 +429,14 @@ int BaseWeapon::RemoveRoundsFromClip( int roundCount )
     if ( m_clipCount < 0 )
     {
         // calculating actual count removed
-        roundsRemoved = -m_clipCount;
+        roundsRemoved += m_clipCount;
         m_clipCount = 0;
     }
 
     return roundsRemoved;
 }
 
-bool BaseWeapon::OutofAmmo( void )
+bool BaseWeapon::OutofAmmo( void ) const
 {
     // can't reload if no ammo or clip is full
     if ( m_ammoCount == 0 )
