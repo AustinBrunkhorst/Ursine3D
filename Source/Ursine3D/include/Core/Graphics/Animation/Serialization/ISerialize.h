@@ -15,7 +15,7 @@
 
 #include <windows.h>
 
-#define MAXTEXTLEN 256
+#define MAXTEXTLEN 128
 namespace ursine
 {
 	namespace graphics

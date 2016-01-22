@@ -14,6 +14,7 @@
 #pragma once
 // For Parsing FBX infos
 #include <ModelInfo.h>
+#include <LevelInfo.h>
 #include <AnimationInfo.h>
 #include <Utilities.h>
 #include <Conversion.h>
@@ -407,6 +408,14 @@ namespace ursine
 			*/
 			ufmt_loader::ModelInfo* GetModelInfo() const { return mModelInfo; }
 
+			/** @brief fbx loader get level info function
+			*
+			*  this will get the level info(each mesh's transform matrices)
+			*
+			*  @return the level info data structure
+			*/
+			ufmt_loader::LevelInfo* GetLevelInfo() const { return mLevelInfo; }
+
 			/** @brief fbx loader get animation info function
 			*
 			*  this will get the animation info(each mesh's transform matrices)
@@ -423,6 +432,7 @@ namespace ursine
 			FBX_DATA::FbxModel*		mModel;
 
 			ufmt_loader::ModelInfo*	mModelInfo;
+			ufmt_loader::LevelInfo*	mLevelInfo;
 			ufmt_loader::AnimInfo*	mAnimInfo;
 		};
 	}

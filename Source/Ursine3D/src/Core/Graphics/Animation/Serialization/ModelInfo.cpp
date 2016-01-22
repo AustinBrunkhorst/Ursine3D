@@ -40,8 +40,6 @@ namespace ursine
 				mMtrlInfoVec.clear();
 				mBoneInfoVec.clear();
 				maniNameVec.clear();
-				mMeshLvVec.clear();
-				mRigLvVec.clear();
 			}
 
 			bool ModelInfo::SerializeIn(HANDLE hFile)
@@ -51,14 +49,12 @@ namespace ursine
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
 					char tmp_name[MAXTEXTLEN];
-					ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
 					name = tmp_name;
 					ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &maniCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
 					mMeshInfoVec.resize(mmeshCount);
 					for (i = 0; i < mmeshCount; ++i)
@@ -71,13 +67,10 @@ namespace ursine
 						mBoneInfoVec[i].SerializeIn(hFile);
 					maniNameVec.resize(maniCount);
 					for (i = 0; i < maniCount; ++i)
-						ReadFile(hFile, &maniNameVec[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-					mMeshLvVec.resize(mmeshlvlCount);
-					for (i = 0; i < mmeshlvlCount; ++i)
-						ReadFile(hFile, &mMeshLvVec[i], sizeof(MeshInLvl), &nBytesRead, nullptr);
-					mRigLvVec.resize(mriglvlCount);
-					for (i = 0; i < mriglvlCount; ++i)
-						ReadFile(hFile, &mRigLvVec[i], sizeof(RigInLvl), &nBytesRead, nullptr);
+					{
+						ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						maniNameVec[i] = tmp_name;
+					}
 				}
 				return true;
 			}
@@ -90,46 +83,22 @@ namespace ursine
 				{
 					char tmp_name[MAXTEXTLEN];
 					lstrcpy(tmp_name, name.c_str());
-					WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);					
 					WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &maniCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					if (mMeshInfoVec.size() > 0)
+					for (auto iter : mMeshInfoVec)
+						iter.SerializeOut(hFile);
+					for (auto iter : mMtrlInfoVec)
+						iter.SerializeOut(hFile);
+					for (auto iter : mBoneInfoVec)
+						iter.SerializeOut(hFile);
+					for (auto iter : maniNameVec)
 					{
-						for (auto iter : mMeshInfoVec)
-							iter.SerializeOut(hFile);
-					}
-					if (mMtrlInfoVec.size() > 0)
-					{
-						for (auto iter : mMtrlInfoVec)
-							iter.SerializeOut(hFile);
-					}
-					if (mBoneInfoVec.size() > 0)
-					{
-						for (auto iter : mBoneInfoVec)
-							iter.SerializeOut(hFile);
-					}
-					if (maniNameVec.size() > 0)
-					{
-						for (auto iter : maniNameVec)
-						{
-							lstrcpy(tmp_name, iter.c_str());
-							WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-						}
-					}
-					if (mMeshLvVec.size() > 0)
-					{
-						for (auto iter : mMeshLvVec)
-							WriteFile(hFile, &iter, sizeof(MeshInLvl), &nBytesWrite, nullptr);
-					}
-					if (mRigLvVec.size() > 0)
-					{
-						for (auto iter : mRigLvVec)
-							WriteFile(hFile, &iter, sizeof(RigInLvl), &nBytesWrite, nullptr);
+						lstrcpy(tmp_name, iter.c_str());
+						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					}
 				}
 				return true;

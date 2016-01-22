@@ -23,35 +23,22 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
-			// This structure contains hierarchy among meshes. This will makes easy to find it.
-			struct MeshInLvl
-			{
-				SMat4 meshTM;
-				int mParentIndex;
-			};
-
-			// This structure contains hierarchy among bones.
-			struct RigInLvl
-			{
-				int mParentIndex;
-			};
-
 			class ModelInfo : public ISerialize
 			{
 			public:
 				std::string name;
 
 				// mesh data	 
-				unsigned int	mmeshCount;
+				unsigned int	 mmeshCount;
 				std::vector<MeshInfo> mMeshInfoVec;
 
 				// material data
 				unsigned int	mmaterialCount;
-				std::vector<MaterialInfo> mMtrlInfoVec;
+				std::vector<MaterialInfo>	mMtrlInfoVec;
 
 				// skin data
 				unsigned int	mboneCount;
-				std::vector<BoneInfo> mBoneInfoVec;
+				std::vector<BoneInfo>	mBoneInfoVec;
 
 				// animation data - this will store the list of animation which will be used to 
 				// save/load the result of editor
@@ -61,12 +48,6 @@ namespace ursine
 				// after modifying jdl and store it, then there will be some changes
 				unsigned int maniCount;
 				std::vector< std::string > maniNameVec;
-
-				// level info - hierarchy
-				unsigned int	mmeshlvlCount;
-				unsigned int	mriglvlCount;
-				std::vector<MeshInLvl> mMeshLvVec;
-				std::vector<RigInLvl> mRigLvVec;	
 				
 				/** @brief model information constructor
 				*
