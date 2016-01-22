@@ -279,9 +279,8 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
         return;
 
     auto *cameraEntity = m_editorCameraSystem->GetEditorCameraEntity( );
-    auto handle = cameraEntity->GetComponent<ecs::Camera>( )->GetHandle( );
 
-    SVec3 worldMousePos = m_graphics->GetMousedOverWorldPosition( handle );
+    SVec3 worldMousePos = cameraEntity->GetComponent<ecs::Camera>()->GetMouseWorldPosition();
 
     //some switch for detecting tool type
     if (!(m_keyboardManager->GetModifiers( ) & KMD_ALT))
@@ -291,7 +290,9 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
 
         // we need to calculate mouse position w/ respect to the current window
         float width, height;
-        cam->GetDimensions( width, height );
+		auto dimensions = cam->GetViewportSize( );
+		width = dimensions.X( );
+		height = dimensions.Y( );
         
         //get the mouse position
         Vec2 screenPos = GetCoreSystem(MouseManager)->GetPosition( );
@@ -736,7 +737,7 @@ void ObjectSelectorSystem::updateRotation(const SVec3 &mousePos)
 
     // get camera position
     auto *cameraEntity = m_editorCameraSystem->GetEditorCameraEntity( );
-    auto *camera = cameraEntity->GetComponent<ecs::Camera>( )->GetCamera( );
+    auto *camera = cameraEntity->GetComponent<ecs::Camera>( );
     auto cameraPos = cameraEntity->GetTransform( )->GetWorldPosition( );
 
     float sign = 0;
