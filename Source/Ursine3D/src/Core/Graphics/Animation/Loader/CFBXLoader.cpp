@@ -267,12 +267,7 @@ namespace ursine
 					newMtrlInfo.spec_mapCount = mModel->mMaterials[i]->specular.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
-<<<<<<< HEAD
 						newMtrlInfo.spec_texNames.push_back(iter1->second[j]);
-=======
-						newMtrlInfo.spec_texNames.push_back(iter1->second[j].c_str());
-
->>>>>>> parent of 700ad81... Combined JDL & JLVL. Checked successful loading
 					newMtrlInfo.shineness = mModel->mMaterials[i]->shineness;
 					newMtrlInfo.TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
 
