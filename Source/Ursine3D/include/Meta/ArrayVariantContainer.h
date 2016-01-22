@@ -25,7 +25,7 @@ namespace ursine
         class ArrayVariantContainer : public VariantBase
         {
         public:
-            ArrayVariantContainer(Array<T> &rhs);
+            ArrayVariantContainer(StorageType &rhs);
 
             Type GetType(void) const override;
             void *GetPtr(void) const override;

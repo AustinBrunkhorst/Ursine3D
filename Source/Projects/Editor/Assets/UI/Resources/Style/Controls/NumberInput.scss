@@ -6,6 +6,8 @@
   border: 1px solid #3f3f46;
   color: #dcdcdc;
   outline: none;
+  transition: border $duration-transition-btn ease,
+              background $duration-transition-btn ease;
 
   // hide buttons
   /*&::-webkit-inner-spin-button,
@@ -16,5 +18,40 @@
 
   &:hover, &:focus {
     border: 1px solid $color-accent;
+  }
+
+  &[type=range] {
+    padding: 0;
+    -webkit-appearance: none;
+
+    &:hover::-webkit-slider-thumb {
+      background: #7a7a87;
+    }
+
+    &:active::-webkit-slider-thumb {
+      background: $color-accent;
+    }
+
+    &::-webkit-slider-thumb {
+      height: 20px;
+      width: 15px;
+      background: #3f3f46;
+      cursor: pointer;
+      -webkit-appearance: none;
+      transition: background $duration-transition-btn ease;
+    }
+  }
+}
+
+.slider-wrapper {
+  position: relative;
+
+  .value {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 12px;
+    color: white;
+    transform: translate(-50%, -50%);
   }
 }

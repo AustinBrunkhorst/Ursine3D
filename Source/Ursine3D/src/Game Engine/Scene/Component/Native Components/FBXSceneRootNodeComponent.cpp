@@ -19,7 +19,9 @@ namespace ursine
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
             , m_sceneName( "" )
+        #if defined(URSINE_WITH_EDITOR)
             , m_notificationPresent( false )
+        #endif
         {
 
         }

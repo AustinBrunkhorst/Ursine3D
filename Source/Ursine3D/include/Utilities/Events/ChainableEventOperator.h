@@ -28,7 +28,7 @@ namespace ursine
         ListenerType *m_listener;
 
     public:
-        ChainableEventOperator(typename DispatcherType *dispatcher, ListenerType *listener);
+        ChainableEventOperator(DispatcherType *dispatcher, ListenerType *listener);
 
         // Class member
         ChainableEventOperator &On(

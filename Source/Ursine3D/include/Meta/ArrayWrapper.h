@@ -29,6 +29,9 @@ namespace ursine
             template<typename T>
             ArrayWrapper(Array<T> &rhs);
 
+            template<typename T>
+            ArrayWrapper(const Array<T> &rhs);
+
             Variant GetValue(size_t index) const;
             void SetValue(size_t index, const Argument &value);
 
@@ -38,6 +41,7 @@ namespace ursine
             size_t Size(void) const;
 
             bool IsValid(void) const;
+            bool IsConst(void) const;
 
         #if defined(URSINE_WITH_EDITOR)
 
@@ -46,6 +50,8 @@ namespace ursine
         #endif
 
         private:
+            bool m_isConst;
+
             ArrayWrapperBase *m_base;
         };
     }

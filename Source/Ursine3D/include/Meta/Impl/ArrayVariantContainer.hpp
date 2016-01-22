@@ -7,7 +7,7 @@ namespace ursine
     namespace meta
     {
         template<typename T, typename StorageType>
-        ArrayVariantContainer<T, StorageType>::ArrayVariantContainer(Array<T> &rhs)
+        ArrayVariantContainer<T, StorageType>::ArrayVariantContainer(StorageType &rhs)
             : m_array( rhs )
         {
 

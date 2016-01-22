@@ -1,8 +1,8 @@
 #pragma once
 
-#if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
-
 #include "Variant.h"
+
+#if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
 
 namespace ursine
 {
@@ -26,7 +26,7 @@ namespace ursine
 
 #else
 
-#define NOTIFY_MODIFICATION(index, action)
+#define NOTIFY_MODIFICATION(index, action, ...)
 
 #endif
 

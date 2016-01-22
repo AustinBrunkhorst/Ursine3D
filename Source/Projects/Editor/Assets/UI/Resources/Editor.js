@@ -1076,8 +1076,15 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_number = new NumberInputControl();
+	if(Object.prototype.hasOwnProperty.call(field.meta,ursine_native_Property.InputRange)) {
+		this.m_number.slider = true;
+		var range = Reflect.field(field.meta,ursine_native_Property.InputRange);
+		this.m_number.min = range.min;
+		this.m_number.max = range.max;
+		if(range.step > 0.0) if(range.step == null) this.m_number.step = "null"; else this.m_number.step = "" + range.step;
+	}
 	if(type.name.indexOf("unsigned") != -1) this.m_number.min = "0";
-	this.m_number.addEventListener("change",function() {
+	var changeHandler = function() {
 		var value = _g.m_number.valueAsNumber;
 		if((function($this) {
 			var $r;
@@ -1087,7 +1094,9 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 		}(this))) value = 0;
 		if(!(_g.m_type.name == "float" || _g.m_type.name == "double")) value = Std["int"](value);
 		_g.m_owner.notifyChanged(_g.m_field,value);
-	});
+	};
+	this.m_number.addEventListener("change",changeHandler);
+	if(this.m_number.type == "range") this.m_number.addEventListener("input",changeHandler);
 	this.m_number.addEventListener("focus",function(e) {
 		_g.m_number.select();
 		e.preventDefault();
@@ -1829,5 +1838,6 @@ ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";
+ursine_native_Property.InputRange = "InputRange";
 Application.main();
 })();
