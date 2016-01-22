@@ -1,41 +1,15 @@
-/* ---------------------------------------------------------------------------
-** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
-**
-** AnimationDef.h
-**
-** Author:
-** - Park Hyung Jun - park.hyungjun@digipen.edu
-**
-**
-** Contributors:
-** - Matt Yan - m.yan@digipen.edu
-** -------------------------------------------------------------------------*/
-
 #pragma once
 
 #include <vector>
 #include <string>
+#include <queue>
 #include <memory>
 #include <unordered_map>
-#include <set>
 #include <fbxsdk.h>
 #include <iostream>
-#include <SMat4.h>
 
 namespace pseudodx
 {
-	struct XMUINT4
-	{
-		uint32_t x;
-		uint32_t y;
-		uint32_t z;
-		uint32_t w;
-		XMUINT4() {}
-		XMUINT4(uint32_t _x, uint32_t _y, uint32_t _z, uint32_t _w) : x(_x), y(_y), z(_z), w(_w) {}
-		XMUINT4& operator= (const XMUINT4& Uint4) { x = Uint4.x; y = Uint4.y; z = Uint4.z; w = Uint4.w; return *this; }
-	};
-
     struct XMFLOAT4
     {
         float x;
@@ -79,15 +53,6 @@ namespace ursine
             typedef std::tr1::unordered_map<std::string, int> UVsetID;
             // UVSet
             typedef std::tr1::unordered_map<std::string, std::vector<std::string>> TextureSet;
-
-			// layout
-			enum eLayout
-			{
-				NONE = -1,
-				STATIC = 0,
-				INSTANCE = 0,
-				SKINNED,
-			};
             
             struct Material_Consts
             {
@@ -232,173 +197,8 @@ namespace ursine
             {
                 std::vector<KeyFrame> keyFrames;
             };
-			
-			struct BlendIdxWeight
-			{
-				unsigned int mBlendingIndex;
-				double mBlendingWeight;
 
-				BlendIdxWeight() :
-					mBlendingIndex(0),
-					mBlendingWeight(0)
-				{}
-
-				bool operator<(const BlendIdxWeight& rhs)
-				{
-					return mBlendingWeight < rhs.mBlendingWeight;
-				}
-			};
-			
-			static bool compare_bw_ascend(BlendIdxWeight lhs, BlendIdxWeight rhs)
-			{
-				return lhs.mBlendingWeight < rhs.mBlendingWeight;
-			}
-			
-			static bool compare_bw_descend(BlendIdxWeight lhs, BlendIdxWeight rhs)
-			{
-				return lhs.mBlendingWeight > rhs.mBlendingWeight;
-			}
-
-			// Each Control Point in FBX is basically a vertex  in the physical world. For example, a cube has 8
-			// vertices(Control Points) in FBX Joints are associated with Control Points in FBX
-			// The mapping is one joint corresponding to 4 Control Points(Reverse of what is done in a game engine)
-			// As a result, this struct stores a XMFLOAT3 and a vector of joint indices
-			struct CtrlPoint
-			{
-				pseudodx::XMFLOAT3 mPosition;
-				std::vector<BlendIdxWeight> mBlendingInfo;
-			};
-
-			// Control Points
-			typedef std::unordered_map<unsigned int, CtrlPoint*> ControlPoints;
-
-			struct AnimationClip
-			{
-				// animation of each bones
-				std::vector<BoneAnimation> boneAnim;
-			};
-
-			struct AnimationData
-			{
-				std::unordered_map<std::string, AnimationClip> animations;
-			};
-			
-			// This is the actual representation of a joint in a game engine
-			struct Joint
-			{
-				std::string mName;
-				int mParentIndex;
-				FbxAMatrix mToRoot;
-				FbxAMatrix mToParent;
-
-				// bind - local coord system that the entire skin is defined relative to
-				// local tm. local about to the skinned mesh
-				pseudodx::XMFLOAT3 bindPosition;
-				pseudodx::XMFLOAT3 bindScaling;
-				pseudodx::XMFLOAT4 bindRotation;
-
-				// bone space - the space that influences the vertices. so-called offset transformation
-				// bone offset tm
-				pseudodx::XMFLOAT3 boneSpacePosition;
-				pseudodx::XMFLOAT3 boneSpaceScaling;
-				pseudodx::XMFLOAT4 boneSpaceRotation;
-
-				Joint()
-				{
-					mParentIndex = -1;
-					bindPosition = pseudodx::XMFLOAT3(0, 0, 0);
-					bindRotation = pseudodx::XMFLOAT4(0, 0, 0, 1);
-					bindScaling = pseudodx::XMFLOAT3(1, 1, 1);
-					boneSpacePosition = pseudodx::XMFLOAT3(0, 0, 0);
-					boneSpaceRotation = pseudodx::XMFLOAT4(0, 0, 0, 1);
-					boneSpaceScaling = pseudodx::XMFLOAT3(1, 1, 1);
-					mToRoot.SetIdentity();
-					mToParent.SetIdentity();
-				}
-
-				~Joint()
-				{
-				}
-			};
-
-			struct FbxBoneData
-			{
-				std::vector<Joint>		mbonehierarchy;
-				std::vector<FbxNode*>	mboneNodes;
-				std::vector<SMat4>		mboneLocalTM;
-				~FbxBoneData()
-				{
-					Release();
-				}
-				void Release()
-				{
-					mbonehierarchy.clear();
-					mboneNodes.clear();
-				}
-			};
-
-			struct MeshData
-			{
-				eLayout mLayout;
-				std::string name;
-				unsigned int vertexCnt;
-				unsigned int indexCnt;
-				unsigned int normalCnt;
-				unsigned int tangentCnt;
-				unsigned int uvCnt;
-				unsigned int mtrlIndexCnt;
-
-				FbxLayerElement::EMappingMode normalMode;
-				FbxLayerElement::EMappingMode tangentMode;
-				SMat4 meshTM;
-				SMat4 parentTM;
-
-				pseudodx::XMFLOAT3* vertices;
-				unsigned int* indices;
-				pseudodx::XMFLOAT3* normals;
-				pseudodx::XMFLOAT3* tangents;
-				pseudodx::XMFLOAT2* uvs;
-				unsigned int* materialIndices;
-
-				// material
-				std::vector<FbxMaterial> fbxmaterials;
-				std::vector<ModelSubset> modelSubsets;
-
-				MeshData() : mLayout(NONE), vertexCnt(0), indexCnt(0), normalCnt(0), tangentCnt(0), uvCnt(0),
-					normalMode(FbxLayerElement::eNone), tangentMode(FbxLayerElement::eNone),
-					vertices(nullptr), indices(nullptr), normals(nullptr), tangents(nullptr), uvs(nullptr)
-				{
-					parentTM.Identity();
-				}
-			};
-
-			struct FbxModel
-			{
-				std::vector<FbxPose*>	mAnimPose;
-
-				// ===== Data we need to export =======
-				// need to be exported as binary
-				eLayout					mLayout;
-				std::string				name;
-				FbxBoneData				mBoneData;
-				std::vector<MeshData*>	mMeshData;
-				std::vector<FbxMaterial*> mMaterials;
-				std::vector<ControlPoints*> mCtrlPoints;
-				std::vector<AnimationData*> mAnimationData;
-				// ====================================
-				FbxModel() {}
-				~FbxModel()
-				{
-					Release();
-				}
-				void Release()
-				{
-					mMeshData.clear();
-					mMaterials.clear();
-					mCtrlPoints.clear();
-					mAnimationData.clear();
-				}
-			};
-		}
-	}
+            /////////////////////////////////////////////////////////
+        }
+    }
 }
