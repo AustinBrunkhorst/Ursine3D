@@ -29,4 +29,5 @@
 #include "Components/ProjectileComponent.h"
 #include "Components/DamageOnCollideComponent.h"
 #include "Components/PlayerIdComponent.h"
+#include "Components/ControlPointComponent.h"
 

@@ -1,6 +1,6 @@
 #include "Precompiled.h"
 #include "BaseWeaponComponent.h"
-#include "CommandEvents.h"
+#include "GameEvents.h"
 
 NATIVE_COMPONENT_DEFINITION( BaseWeapon );
 
@@ -52,15 +52,15 @@ BaseWeapon::BaseWeapon( void ) :
 BaseWeapon::~BaseWeapon( void )
 {
     GetOwner( )->Listener( this )
-        .Off( commandEvent::FIRE_START, &BaseWeapon::TriggerPulled )
-        .Off( commandEvent::FIRE_END, &BaseWeapon::TriggerReleased );
+        .Off( game::FIRE_START, &BaseWeapon::TriggerPulled )
+        .Off( game::FIRE_END, &BaseWeapon::TriggerReleased );
 }
 
 void BaseWeapon::OnInitialize( void )
 {
     GetOwner( )->Listener( this )
-        .On( commandEvent::FIRE_START, &BaseWeapon::TriggerPulled )
-        .On( commandEvent::FIRE_END, &BaseWeapon::TriggerReleased );
+        .On( game::FIRE_START, &BaseWeapon::TriggerPulled )
+        .On( game::FIRE_END, &BaseWeapon::TriggerReleased );
 
     if ( m_maxAmmoCount == UNLIMITED_AMMO )
         m_maxAmmoCount = UNLIMITED_AMMO;
@@ -398,12 +398,12 @@ int BaseWeapon::Reload( void )
     return RELOAD_SUCCESS;
 }
 
-void BaseWeapon::TriggerPulled( EVENT_HANDLER( gameEvent::FIRE_START ) )
+void BaseWeapon::TriggerPulled( EVENT_HANDLER( game::FIRE_START ) )
 {
     m_triggerPulled = true;
 }
 
-void BaseWeapon::TriggerReleased( EVENT_HANDLER( gameEvent::FIRE_END ) )
+void BaseWeapon::TriggerReleased( EVENT_HANDLER( game::FIRE_END ) )
 {
     m_triggerPulled = false;
 }

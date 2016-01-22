@@ -20,6 +20,9 @@ class ControlPoint : public ursine::ecs::Component
 public:
 
     ControlPoint(void);
+    ~ControlPoint(void);
+
+    void OnInitialize(void) override;
 
     EditorField(
         float Timer,
@@ -29,14 +32,13 @@ public:
     float GetControlTimer(void) const;
     void SetControlTimer(const float time);
 
-    bool GetActive(void) const;
 
-    void DecrementTimer(const float dt);
-
-private:
     // timer for how long control point is active
+    Meta( Disable )
     float m_controlTimer;
     
+    // Is control point active
+    Meta( Disable )
     bool m_active;
 
     void Activate(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));

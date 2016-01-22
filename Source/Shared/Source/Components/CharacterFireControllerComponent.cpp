@@ -18,7 +18,7 @@ NATIVE_COMPONENT_DEFINITION( CharacterFireController );
 
 CharacterFireController::CharacterFireController(void)
     : BaseComponent()
-    , m_fireRate(0.1)
+    , m_fireRate(0.1f)
     , m_fireRange(1000.0f)
     , m_fireOffset(ursine::SVec3(0, 0, 0))
     , m_triggerFire(false)

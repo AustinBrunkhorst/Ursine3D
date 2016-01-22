@@ -73,8 +73,8 @@ public:
 private:
 
     void onUpdate(EVENT_HANDLER(World));
-    void SetLookDirection(EVENT_HANDLER(commandEvent::LOOK_COMMAND));
-    void Jump(EVENT_HANDLER(commandEvent::JUMP_COMMAND));
+    void SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND));
+    void Jump(EVENT_HANDLER(game::JUMP_COMMAND));
 
     float m_moveSpeed;
     

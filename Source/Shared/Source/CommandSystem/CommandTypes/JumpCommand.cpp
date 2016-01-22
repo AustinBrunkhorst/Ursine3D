@@ -12,7 +12,7 @@
 
 #include "JumpCommand.h"
 #include <AudioEmitterComponent.h>
-#include "CommandEvents.h"
+#include "GameEvents.h"
 
 namespace
 {
@@ -35,8 +35,7 @@ void JumpCommand::Execute(ursine::ecs::Entity* receiver)
 	if (emitter)
 		emitter->AddSoundToPlayQueue(kJumpSound);
     
-    commandEvent::CommandEventArgs jumpArgs( commandEvent::JUMP_COMMAND );
-    receiver->Dispatch(commandEvent::JUMP_COMMAND, &jumpArgs);
+    receiver->Dispatch(game::JUMP_COMMAND, ursine::EventArgs::Empty);
 }
 
 void JumpCommand::StopExecute(ursine::ecs::Entity* receiver)

@@ -16,3 +16,4 @@
 #include <Core/CoreSystem.h>
 #include <Core/Input/Keyboard/KeyboardManager.h>
 #include <Core/Input/Mouse/MouseManager.h>
+#include "GameEvents.h"

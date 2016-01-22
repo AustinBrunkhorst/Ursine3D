@@ -30,6 +30,8 @@ DamageOnCollide::DamageOnCollide( void )
 
 DamageOnCollide::~DamageOnCollide( void )
 {
+    GetOwner( )->Listener(this)
+        .Off( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::ApplyDamage );
 }
 
 void DamageOnCollide::OnInitialize( void )

@@ -13,7 +13,6 @@
 #pragma once
 
 #include <Component.h>
-#include "CommandEvents.h"
 
 // Weapon Statuses
 #define MUST_RELOAD         0b00000001
@@ -292,11 +291,11 @@ private:
 
     // Weapons trigger is being pulled
     Meta(Disable)
-    void TriggerPulled(EVENT_HANDLER(commandEvent::FIRE_START));
+    void TriggerPulled(EVENT_HANDLER(game::FIRE_START));
 
     // Weapon's trigger was released
     Meta(Disable)
-    void TriggerReleased(EVENT_HANDLER(commandEvent::FIRE_END));
+    void TriggerReleased(EVENT_HANDLER(game::FIRE_END));
 
     // Tries to remove the number of rounds specified from the clip
     //   and returns the actual number of rounds removed

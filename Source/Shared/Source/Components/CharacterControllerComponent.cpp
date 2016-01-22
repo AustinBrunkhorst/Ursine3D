@@ -14,7 +14,7 @@
 #include "Precompiled.h"
 
 #include "CharacterControllerComponent.h"
-#include "CommandEvents.h"
+#include "GameEvents.h"
 #include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( CharacterController );
@@ -34,8 +34,8 @@ CharacterController::~CharacterController(void)
         .Off(ursine::ecs::WORLD_UPDATE, &CharacterController::onUpdate);
 
     GetOwner( )->Listener( this )
-        .Off( commandEvent::LOOK_COMMAND, &CharacterController::SetLookDirection)
-        .Off( commandEvent::JUMP_COMMAND, &CharacterController::Jump);
+        .Off( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
+        .Off( game::JUMP_COMMAND, &CharacterController::Jump );
 }
 
 float CharacterController::GetMoveSpeed(void) const
@@ -116,8 +116,8 @@ void CharacterController::OnInitialize(void)
         .On( ursine::ecs::WORLD_UPDATE, &CharacterController::onUpdate );
 
     GetOwner( )->Listener(this)
-        .On(commandEvent::LOOK_COMMAND, &CharacterController::SetLookDirection)
-        .On(commandEvent::JUMP_COMMAND, &CharacterController::Jump);
+        .On( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
+        .On( game::JUMP_COMMAND, &CharacterController::Jump );
 }
 
 void CharacterController::onUpdate(EVENT_HANDLER(World))
@@ -127,14 +127,14 @@ void CharacterController::onUpdate(EVENT_HANDLER(World))
         m_jumpTimer += ursine::Application::Instance->GetDeltaTime( );
 }
 
-void CharacterController::SetLookDirection(EVENT_HANDLER(commandEvent::LOOK_COMMAND))
+void CharacterController::SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, commandEvent::MovementEventArgs);
+    EVENT_ATTRS(ursine::ecs::Entity, game::MovementEventArgs);
 
     m_lookDir = args->m_moveDir;
 }
 
-void CharacterController::Jump(EVENT_HANDLER(commandEvent::JUMP_COMMAND))
+void CharacterController::Jump(EVENT_HANDLER(game::JUMP_COMMAND))
 {
     if ( m_jumpTimer >= m_jumpInterval )
     {

@@ -26,3 +26,6 @@
 #include "Systems/BaseWeaponSystem.h"
 #include "Systems/TimeDeathSystem.h"
 #include "Systems/ProjectileSystem.h"
+#include "Systems/ControlPointSystem.h"
+
+
