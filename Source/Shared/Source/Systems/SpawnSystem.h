@@ -48,7 +48,7 @@ private:
 
     void killPlayer(ursine::ecs::Entity *entity);
 
-    ursine::SVec3 getSpawnPosition(int team, int roundNum);
+    Spawnpoint* getSpawner(int team, int roundNum);
 
     std::vector<std::vector<TeamComponent *> > m_teams;
 

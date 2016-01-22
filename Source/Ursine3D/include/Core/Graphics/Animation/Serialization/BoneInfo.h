@@ -25,7 +25,7 @@ namespace ursine
 			class BoneInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];
+				std::string name;
 				int mParentIndex;
 
 				// bind - local coord system that the entire skin is defined relative to

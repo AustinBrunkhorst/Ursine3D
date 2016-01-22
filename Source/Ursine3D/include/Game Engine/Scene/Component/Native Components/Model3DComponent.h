@@ -40,6 +40,11 @@ namespace ursine
 				"Generate BVH Triangle Mesh Collider"
 			);
 
+			EditorButton(
+				GenerateConvexDecompCollider,
+				"Generate Convex Decomposition Collider"
+			);
+
             EditorField(
                 Color color,
                 GetColor,

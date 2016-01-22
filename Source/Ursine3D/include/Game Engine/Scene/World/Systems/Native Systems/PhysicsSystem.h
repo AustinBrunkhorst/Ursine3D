@@ -34,10 +34,11 @@ namespace ursine
         public:
             friend class Rigidbody;
 
+            Meta(DisableNonDynamic)
             PhysicsSystem(World *world);
 
-			bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
-						 ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
+            bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
+                         ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
                          bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
                          Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
 
@@ -51,7 +52,7 @@ namespace ursine
 
         private:
             physics::Simulation m_simulation;
-			physics::DebugDrawer m_debugDrawer;
+            physics::DebugDrawer m_debugDrawer;
 
             Filter m_collisionShapes;
 
@@ -80,6 +81,8 @@ namespace ursine
             void onEditorUpdate(EVENT_HANDLER(World));
 
     #endif
+
+            void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
 
         } Meta(Enable);
     }

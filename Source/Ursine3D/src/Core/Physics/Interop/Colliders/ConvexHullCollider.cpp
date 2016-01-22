@@ -28,7 +28,7 @@ namespace ursine
 		#ifdef BULLET_PHYSICS
 
 			// Turn off debug drawing at first (until the mesh is generated)
-			m_shapeType = EMPTY_SHAPE_PROXYTYPE;
+			ToggleDebugDraw( false );
 
 		#endif
 		}
@@ -67,7 +67,7 @@ namespace ursine
 			else
 				meshesToGenerate.push_back( meshesArray[ meshIndex ] );
 
-			m_shapeType = CONVEX_HULL_SHAPE_PROXYTYPE;
+			ToggleDebugDraw( true );
 
 			for (auto &mesh : meshesToGenerate)
 			{
@@ -128,9 +128,7 @@ namespace ursine
 		{
 		#ifdef BULLET_PHYSICS
 
-			m_localScaling = scale.ToBullet( );
-			
-			recalcLocalAabb( );
+			setLocalScaling( scale.ToBullet( ) );
 
 		#endif
 		}
@@ -181,6 +179,20 @@ namespace ursine
 			}
 
 			recalcLocalAabb( );
+
+			ToggleDebugDraw( true );
+
+		#endif
+		}
+
+		void ConvexHullCollider::ToggleDebugDraw(bool toggle)
+		{
+		#ifdef BULLET_PHYSICS
+
+			if (toggle)
+				m_shapeType = CONVEX_HULL_SHAPE_PROXYTYPE;
+			else
+				m_shapeType = EMPTY_SHAPE_PROXYTYPE;
 
 		#endif
 		}

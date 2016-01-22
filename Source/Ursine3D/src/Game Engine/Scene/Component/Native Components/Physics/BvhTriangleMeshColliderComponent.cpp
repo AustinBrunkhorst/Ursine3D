@@ -63,6 +63,8 @@ namespace ursine
 				return;
 
 			m_bvhTriangleMeshCollider.GenerateBvhTriangleMesh( model );
+
+			m_bvhTriangleMeshCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
 		}
 
 		void BvhTriangleMeshCollider::onTransformChange(EVENT_HANDLER(Entity))

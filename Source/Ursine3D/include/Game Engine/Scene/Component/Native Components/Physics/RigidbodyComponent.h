@@ -33,6 +33,7 @@ namespace ursine
 
             friend class PhysicsSystem;
 			friend class physics::Simulation;
+			friend class Model3D;
 
         public:
             EditorField(

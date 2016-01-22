@@ -9,6 +9,13 @@ add_definitions(
 
 include(UrsineProject)
 
+add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
+
+include_directories(${Shared_INCLUDE_DIRS})
+
+# external files that will trigger regeneration of meta data
+set(META_DEPENDENCIES ${Shared_HEADER_FILES})
+
 ursine_project(Editor
     FOLDER "Engine"
     TYPE EXE
@@ -27,12 +34,5 @@ ursine_project(Editor
     META_DEPENDENCIES ${META_DEPENDENCIES}
     PCH_NAME "Precompiled"
 )
-
-add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
-
-include_directories(${Shared_INCLUDE_DIRS})
-
-# external files that will trigger regeneration of meta data
-set(META_DEPENDENCIES ${Shared_HEADER_FILES})
 
 target_link_libraries(Editor Shared)

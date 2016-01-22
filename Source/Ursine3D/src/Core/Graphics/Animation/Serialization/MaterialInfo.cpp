@@ -51,7 +51,9 @@ namespace ursine
 				DWORD nBytesRead;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					ReadFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					name = tmp_name;
 					ReadFile(hFile, &type, sizeof(unsigned int), &nBytesRead, nullptr);
 
 					ReadFile(hFile, &ambitype, sizeof(unsigned int), &nBytesRead, nullptr);
@@ -74,14 +76,26 @@ namespace ursine
 					emis_texNames.resize(emis_mapCount);
 					spec_texNames.resize(spec_mapCount);
 					for (unsigned int i = 0; i < ambi_mapCount; ++i)
-						ReadFile(hFile, &ambi_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					{
+						ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						ambi_texNames[i] = tmp_name;
+					}
 					for (unsigned int i = 0; i < diff_mapCount; ++i)
-						ReadFile(hFile, &diff_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					{
+						ReadFile(hFile, &tmp_name[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						diff_texNames[i] = tmp_name;
+					}
 					for (unsigned int i = 0; i < emis_mapCount; ++i)
-						ReadFile(hFile, &emis_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					{
+						ReadFile(hFile, &tmp_name[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						emis_texNames[i] = tmp_name;
+					}
 					for (unsigned int i = 0; i < spec_mapCount; ++i)
-						ReadFile(hFile, &spec_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-
+					{
+						ReadFile(hFile, &tmp_name[i], sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						spec_texNames[i] = tmp_name;
+					}
+						
 					ReadFile(hFile, &shineness, sizeof(float), &nBytesRead, nullptr);
 					ReadFile(hFile, &TransparencyFactor, sizeof(float), &nBytesRead, nullptr);
 				}
@@ -93,7 +107,9 @@ namespace ursine
 				DWORD nBytesWrite;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					WriteFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					lstrcpy(tmp_name, name.c_str());
+					WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					unsigned int int_type = static_cast<unsigned int>(type);
 					WriteFile(hFile, &int_type, sizeof(unsigned int), &nBytesWrite, nullptr);
 
@@ -116,15 +132,27 @@ namespace ursine
 					WriteFile(hFile, &emis_mapCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &spec_mapCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					for (unsigned int i = 0; i < ambi_mapCount; ++i)
-						WriteFile(hFile, &ambi_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					for (unsigned int i = 0; i < diff_mapCount; ++i)
-						WriteFile(hFile, &diff_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					for (unsigned int i = 0; i < emis_mapCount; ++i)
-						WriteFile(hFile, &emis_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					for (unsigned int i = 0; i < spec_mapCount; ++i)
-						WriteFile(hFile, &spec_texNames[i], sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-
+					for (auto iter : ambi_texNames)
+					{
+						lstrcpy(tmp_name, iter.c_str());
+						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					}
+					for (auto iter : diff_texNames)
+					{
+						lstrcpy(tmp_name, iter.c_str());
+						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					}
+					for (auto iter : emis_texNames)
+					{
+						lstrcpy(tmp_name, iter.c_str());
+						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					}
+					for (auto iter : spec_texNames)
+					{
+						lstrcpy(tmp_name, iter.c_str());
+						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					}
+						
 					WriteFile(hFile, &shineness, sizeof(float), &nBytesWrite, nullptr);
 					WriteFile(hFile, &TransparencyFactor, sizeof(float), &nBytesWrite, nullptr);
 				}

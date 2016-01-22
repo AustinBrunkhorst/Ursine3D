@@ -44,6 +44,9 @@ namespace ursine
 				DWORD nBytesRead;
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
+					char tmp_name[MAXTEXTLEN];
+					ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					name = tmp_name;
 					ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
@@ -65,6 +68,9 @@ namespace ursine
 				DWORD nBytesWrite;
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
+					char tmp_name[MAXTEXTLEN];
+					lstrcpy(tmp_name, name.c_str());
+					WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					for (unsigned i = 0; i < mmeshlvlCount; ++i)

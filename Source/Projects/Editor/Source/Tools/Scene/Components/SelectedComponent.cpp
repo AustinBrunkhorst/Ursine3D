@@ -22,8 +22,7 @@ using namespace ursine;
 NATIVE_COMPONENT_DEFINITION( Selected );
 
 Selected::Selected(void)
-    : BaseComponent( ) 
-    , m_emissive( 0 ) { }
+    : BaseComponent( ) { }
 
 Selected::~Selected(void)
 {
@@ -48,17 +47,4 @@ void Selected::tryDebugModel(bool enabled)
         return;
 
     model->SetDebug( enabled );
-
-    float e, p, i;
-    model->GetMaterialData(e, p, i);
-
-    //save the emissive?
-    if (enabled)
-        m_emissive = e;
-
-    URSINE_TODO( "This should probably be removed" );
-    if (enabled)
-        model->SetMaterialData( 1, 0, 0 );
-    else
-        model->SetMaterialData(m_emissive, 0, 0 );
 }

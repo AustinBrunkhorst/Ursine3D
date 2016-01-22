@@ -26,8 +26,6 @@ public:
     void OnInitialize(void) override;
 
 private:
-    float m_emissive;
-
     void tryDebugModel(bool enabled);
 
 } Meta(Enable, WhiteListMethods, HiddenInInspector, DisableSerialization);

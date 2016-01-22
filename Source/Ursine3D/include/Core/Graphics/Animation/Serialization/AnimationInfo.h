@@ -31,7 +31,7 @@ namespace ursine
 			// mesh of the model's animation data
 			struct AnimData
 			{
-				char clipname[MAXTEXTLEN];
+				std::string clipname;
 				unsigned int clipCount;	// how many clips in this animation?
 				unsigned int boneCount;	// how many bones in this model
 				KeyIndices keyIndices;	// how many keys does each bone have?
@@ -45,7 +45,7 @@ namespace ursine
 			class AnimInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];  // model name
+				std::string name;  // model name
 				unsigned int animCount; // animation count is same as the number of meshes of the model
 				std::vector<AnimData> animDataArr;	// and so does animData
 

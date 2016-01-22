@@ -104,56 +104,51 @@ namespace ursine
 
         void FBXSceneRootNode::ImportScene(void)
         {
-            auto owner = GetOwner( );
-            auto *children = owner->GetChildren( );
+	        auto owner = GetOwner( );
+			auto *children = owner->GetChildren( );
 
-            if (children->size( ) > 0)
-            {
-                NotificationConfig config;
+			if (children->size( ) > 0)
+			{
+				NotificationConfig config;
 
-                config.type = NOTIFY_QUESTION;
-                config.header = "Confirmation Of Destructive Action";
-                config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
-                config.dismissible = false;
-                config.duration = 0;
+				config.type = NOTIFY_WARNING;
+				config.header = "Warning";
+				config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
+				config.dismissible = false;
+				config.duration = 0;
 
-                NotificationButton yes, no;
+				NotificationButton yes, no;
 
-                yes.text = "Confirm Action";
+				yes.text = "Yes";
+				yes.onClick = [=] (Notification &notification) {
+					notification.Close( );
+					m_notificationPresent = false;
 
-                yes.onClick = [=] (Notification &notification) {
-                    notification.Close( );
+					// Main thread operation
+					Timer::Create( 0 ).Completed( [=] {
+						clearChildren( );
+						importScene( );
+					} );
+				};
 
-                    m_notificationPresent = false;
+				no.text = "No";
+				no.onClick = [=] (Notification &notification) {
+					notification.Close( );
+					m_notificationPresent = false;
+				};
 
-                    // Main thread operation
-                    Timer::Create( 0 ).Completed( [=] {
-                        clearChildren( );
-                        importScene( );
-                    } );
-                };
+				config.buttons = { yes, no };
 
-                no.text = "Cancel Action";
-
-                no.onClick = [=] (Notification &notification) {
-                    notification.Close( );
-
-                    m_notificationPresent = false;
-                };
-
-                config.buttons = { yes, no };
-
-                EditorPostNotification( config );
-
-                m_notificationPresent = true;
-            }
-            else
-            {
-                // Main thread operation
-                Timer::Create( 0 ).Completed( [=] {
-                    importScene( );
-                } );
-            }
+				EditorPostNotification( config );
+				m_notificationPresent = true;
+			}
+			else
+			{
+				// Main thread operation
+				Timer::Create( 0 ).Completed( [=] {
+					importScene( );
+				} );
+			}
         }
 
         void FBXSceneRootNode::GenerateConvexHullForScene(void)

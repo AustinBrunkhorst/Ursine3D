@@ -44,7 +44,9 @@ namespace ursine
 				DWORD nBytesRead;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					ReadFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					name = tmp_name;
 					ReadFile(hFile, &mParentIndex, sizeof(int), &nBytesRead, nullptr);
 					ReadFile(hFile, &bindPosition, sizeof(pseudodx::XMFLOAT3), &nBytesRead, nullptr);
 					ReadFile(hFile, &bindRotation, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
@@ -61,7 +63,9 @@ namespace ursine
 				DWORD nBytesWrite;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					WriteFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					lstrcpy(tmp_name, name.c_str());
+					WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					WriteFile(hFile, &mParentIndex, sizeof(int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &bindPosition, sizeof(pseudodx::XMFLOAT3), &nBytesWrite, nullptr);
 					WriteFile(hFile, &bindRotation, sizeof(pseudodx::XMFLOAT4), &nBytesWrite, nullptr);

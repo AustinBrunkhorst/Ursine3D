@@ -94,17 +94,18 @@ namespace ursine
 			if (!args->scaleChanged)
 				return;
 
-			m_convexHullCollider.SetScale( GetOwner( )->GetTransform( )->GetWorldScale( ) );
+			auto owner = GetOwner( );
 
-			auto rigidbody = GetOwner( )->GetComponent<Rigidbody>( );
+			m_convexHullCollider.SetScale( owner->GetTransform( )->GetWorldScale( ) );
+
+			auto rigidbody = owner->GetComponent<Rigidbody>( );
 
             if (rigidbody)
             {
-                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+				owner->GetWorld( )->GetEntitySystem( PhysicsSystem )
                     ->ClearContacts( rigidbody );
 
                 rigidbody->SetAwake( );
-
                 rigidbody->UpdateInertiaTensor( );
             }
 		}

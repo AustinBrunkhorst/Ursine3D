@@ -172,10 +172,16 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
             auto teamColor = player->GetTeamNumber( ) == 1 ? Color::Blue : Color::Red;
             player->GetOwner( )->GetComponentInChildren<ecs::Model3D>( )->SetColor( teamColor );
 
+			auto transform = player->GetOwner( )->GetTransform( );
+			auto spawner = getSpawner( player->GetTeamNumber( ), ++roundNum );
+
 			// Set spawn point
-			player->GetOwner( )->GetTransform( )->GetRoot( )->SetWorldPosition(
-				getSpawnPosition( player->GetTeamNumber( ), ++roundNum )
+			transform->GetRoot( )->SetWorldPosition(
+				spawner->GetOwner( )->GetTransform( )->GetWorldPosition( )
 			);
+
+			// Set spawn rotation
+			transform->SetWorldRotation( SQuat( 0.0f, spawner->GetYRotationDegrees( ), 0.0f ) );
 
             // Add back the rigidbody
             if (!player->GetOwner()->HasComponent<ecs::Rigidbody>())
@@ -306,7 +312,9 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
     auto *playerTransform = newPlayer->GetTransform();
 
     // get spawn position to place the player at and actually spawn the player
-    playerTransform->SetWorldPosition(getSpawnPosition(team, roundNum));
+    playerTransform->SetWorldPosition(
+		getSpawner(team, roundNum)->GetOwner( )->GetTransform( )->GetWorldPosition( )
+	);
 
     // Set him to record
     playerTransform->GetOwner( )->GetComponent<CommandQueue>( )->SetRecording( true );
@@ -326,7 +334,7 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
     body->SetAwake( );
 }
 
-ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum)
+Spawnpoint *SpawnSystem::getSpawner(int team, int roundNum)
 {
 
     const std::list<Spawnpoint *>& spawnList = (team == 1) ? m_team1Spawnpoints : m_team2Spawnpoints;
@@ -336,7 +344,7 @@ ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum)
 
     if (roundNum > spawnList.size())
     {
-        return SVec3( 0.0f, 10.0f, 0.0f );
+        return nullptr;
     }
 
     int index = roundNum - 1;
@@ -349,6 +357,5 @@ ursine::SVec3 SpawnSystem::getSpawnPosition(int team, int roundNum)
             chosenSpawn = *i;
         }
     }
-    auto spawnPos = chosenSpawn->GetOwner()->GetTransform()->GetWorldPosition();
-    return spawnPos;
+    return chosenSpawn;
 }

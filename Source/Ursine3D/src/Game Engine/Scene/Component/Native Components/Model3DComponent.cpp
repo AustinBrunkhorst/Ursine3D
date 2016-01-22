@@ -17,7 +17,10 @@
 #include "CoreSystem.h"
 #include "GfxAPI.h"
 #include "ConvexHullColliderComponent.h"
+#include "ConvexDecompColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
+#include "RigidbodyComponent.h"
+#include "BodyComponent.h"
 #include "Notification.h"
 
 namespace ursine
@@ -80,9 +83,6 @@ namespace ursine
             m_modelName = name;
 
             m_model->SetModel( name );
-
-            // Default
-            m_model->SetMaterial( "Cube" );
         }
 
         const std::string &Model3D::GetModelResourceName(void) const
@@ -196,19 +196,21 @@ namespace ursine
         {
 			auto entity = GetOwner( );
 
-            if (!entity->HasComponent<ConvexHullCollider>( ))
-				entity->AddComponent<ConvexHullCollider>( );
+			Timer::Create( 0 ).Completed([=] {
+				if (!entity->HasComponent<ConvexHullCollider>( ))
+					entity->AddComponent<ConvexHullCollider>( );
 
-			auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+				auto convexHull = entity->GetComponent<ConvexHullCollider>( );
 
-			convexHull->GenerateConvexHull( this );
+				convexHull->GenerateConvexHull( this );
+			} );
         }
 
 		void Model3D::GenerateBvhTriangleMeshCollider(void)
         {
 			auto entity = GetOwner( );
 
-	        Timer::Create(0).Completed([=] {
+	        Timer::Create( 0 ).Completed([=] {
 				if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
 					entity->AddComponent<BvhTriangleMeshCollider>( );
 
@@ -224,12 +226,25 @@ namespace ursine
 			config.dismissible = true;
 			config.duration = TimeSpan::FromSeconds( 15.0f );
 			config.header = "BVH Triangle Mesh Collider Limitations";
-			config.message = "The BVH Triangle Mesh Collider has limitations and performance implications."
-							 " 1. Dynamic rigidbodies using this collider will not function properly."
-							 " 2. Scaling this collider during runtime has been optimized, but may still cause performance issues."
-							 " 3. Please also consider \"Convex Decomposition\", this is useful if a dynamic mesh is required.";
+			config.message = "<ol><li>Performance intensive.<li/>"
+							 "<li>Cannot be Dynamic.<li/>"
+							 "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
 
 			EditorPostNotification( config );
+        }
+
+		void Model3D::GenerateConvexDecompCollider(void)
+        {
+	        auto entity = GetOwner( );
+
+			Timer::Create( 0 ).Completed( [=] {
+				if (!entity->HasComponent<ConvexDecompCollider>( ))
+					entity->AddComponent<ConvexDecompCollider>( );
+
+				auto convex = entity->GetComponent<ConvexDecompCollider>( );
+
+				convex->GenerateConvexHulls( this );
+			} );
         }
 
     #endif
