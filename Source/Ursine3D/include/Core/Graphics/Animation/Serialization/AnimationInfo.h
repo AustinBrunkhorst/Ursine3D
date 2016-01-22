@@ -15,6 +15,7 @@
 
 #include "AnimationDef.h"
 #include "ISerialize.h"
+#include "BoneInfo.h"
 
 namespace ursine
 {
@@ -22,16 +23,21 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
+			typedef std::vector<unsigned int> KeyIndex;
+			typedef std::vector<KeyIndex> KeyIndices;
+			typedef std::vector<FBX_DATA::KeyFrame> KFrame;
+			typedef std::vector<KFrame> KFrames;
+			typedef std::vector<KFrames> KFrms;
 			// mesh of the model's animation data
 			struct AnimData
 			{
-				char clipname[MAXTEXTLEN];
-				unsigned int clipCount;		// how many clips in this animation?
-				unsigned int boneCount;		// how many bones in this model
-				unsigned int** keyIndices;	// how many keys does each bone have?
-				FBX_DATA::KeyFrame*** keyframes;
+				std::string clipname;
+				unsigned int clipCount;	// how many clips in this animation?
+				unsigned int boneCount;	// how many bones in this model
+				KeyIndices keyIndices;	// how many keys does each bone have?
+				KFrms keyframes;
 
-				AnimData() : clipCount(0), boneCount(0), keyIndices(nullptr), keyframes(nullptr) {}
+				AnimData() : clipname(""), clipCount(0), boneCount(0) {}
 				void ReleaseData();
 			};
 
@@ -39,9 +45,9 @@ namespace ursine
 			class AnimInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];  // model name
+				std::string name;  // model name
 				unsigned int animCount; // animation count is same as the number of meshes of the model
-				AnimData* animDataArr;	// and so does animData
+				std::vector<AnimData> animDataArr;	// and so does animData
 
 				/** @brief animation information constructor
 				*
@@ -49,7 +55,7 @@ namespace ursine
 				*
 				*  @return nothing
 				*/
-				AnimInfo() : animCount(0), animDataArr(nullptr), ISerialize("") {}
+				AnimInfo() : name(""), animCount(0), ISerialize("") {}
 
 				/** @brief animation information destructor
 				*

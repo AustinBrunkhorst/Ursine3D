@@ -20,8 +20,9 @@
 #include "Filter.h"
 
 #include <vector>
+#include <mutex>
 
-class EntityHandler;
+class Project;
 
 namespace ursine
 {
@@ -89,12 +90,13 @@ namespace ursine
             void DispatchLoad(void);
         private:
             friend class Entity;
-            friend class EntityHandler;
+			friend class Project;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
             bool m_loaded;
 
+			std::mutex m_deletionMutex;
             EntityVector m_deleted;
 
             Entity *m_settings;

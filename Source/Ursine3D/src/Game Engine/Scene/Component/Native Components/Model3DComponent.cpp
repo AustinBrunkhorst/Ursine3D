@@ -16,7 +16,12 @@
 #include "Model3DComponent.h"
 #include "CoreSystem.h"
 #include "GfxAPI.h"
-#include "EntityEvent.h"
+#include "ConvexHullColliderComponent.h"
+#include "ConvexDecompColliderComponent.h"
+#include "BvhTriangleMeshColliderComponent.h"
+#include "RigidbodyComponent.h"
+#include "BodyComponent.h"
+#include "Notification.h"
 
 namespace ursine
 {
@@ -27,6 +32,8 @@ namespace ursine
         Model3D::Model3D(void)
             : BaseComponent( )
             , m_model( nullptr )
+			, m_modelName( "Cube" )
+			, m_materialName( "Blank" )
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
@@ -74,9 +81,6 @@ namespace ursine
             m_modelName = name;
 
             m_model->SetModel( name );
-
-            // Default
-            m_model->SetMaterial( "Cube" );
         }
 
         const std::string &Model3D::GetModelResourceName(void) const
@@ -84,9 +88,9 @@ namespace ursine
             return m_modelName;
         }
 
-        const graphics::ModelResource * Model3D::GetModelResource(void) const
+        const graphics::ModelResource *Model3D::GetModelResource(void) const
         {
-            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource(m_modelName);
+            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource( m_modelName );
         }
 
         void Model3D::SetMaterial(const std::string &name)
@@ -135,7 +139,7 @@ namespace ursine
 
         int Model3D::GetRenderMask() const
         {
-            int retVal = static_cast<int>(m_model->GetRenderMask( ) & 0xFFFFFFFF);
+            int retVal = static_cast<int>( m_model->GetRenderMask( ) & 0xFFFFFFFF );
 
             return retVal;
         }
@@ -160,7 +164,12 @@ namespace ursine
             m_model->SetMeshIndex( index );
         }
 
-        void Model3D::updateRenderer(void)
+	    int Model3D::GetMeshIndex(void) const
+	    {
+			return m_model->GetMeshIndex( );
+	    }
+
+	    void Model3D::updateRenderer(void)
         {
             // update the renderer's
             auto trans = GetOwner( )->GetTransform( );
@@ -168,5 +177,74 @@ namespace ursine
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }
+
+	    void Model3D::OnSerialize(Json::object &output) const
+	    {
+			output[ "meshIndex" ] = GetMeshIndex( );
+	    }
+
+	    void Model3D::OnDeserialize(const Json &input)
+	    {
+			SetMeshIndex( input[ "meshIndex" ].int_value( ) );
+	    }
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        void Model3D::GenerateConvexHull(void)
+        {
+			auto entity = GetOwner( );
+
+			Timer::Create( 0 ).Completed([=] {
+				if (!entity->HasComponent<ConvexHullCollider>( ))
+					entity->AddComponent<ConvexHullCollider>( );
+
+				auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+
+				convexHull->GenerateConvexHull( this );
+			} );
+        }
+
+		void Model3D::GenerateBvhTriangleMeshCollider(void)
+        {
+			auto entity = GetOwner( );
+
+	        Timer::Create( 0 ).Completed([=] {
+				if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
+					entity->AddComponent<BvhTriangleMeshCollider>( );
+
+				auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
+
+				bvhTriangleMesh->GenerateBvhTriangleMesh( this );
+			} );
+
+			// Send notification of collider's limitations
+			NotificationConfig config;
+
+			config.type = NOTIFY_INFO;
+			config.dismissible = true;
+			config.duration = TimeSpan::FromSeconds( 15.0f );
+			config.header = "BVH Triangle Mesh Collider Limitations";
+			config.message = "<ol><li>Performance intensive.<li/>"
+							 "<li>Cannot be Dynamic.<li/>"
+							 "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
+
+			EditorPostNotification( config );
+        }
+
+		void Model3D::GenerateConvexDecompCollider(void)
+        {
+	        auto entity = GetOwner( );
+
+			Timer::Create( 0 ).Completed( [=] {
+				if (!entity->HasComponent<ConvexDecompCollider>( ))
+					entity->AddComponent<ConvexDecompCollider>( );
+
+				auto convex = entity->GetComponent<ConvexDecompCollider>( );
+
+				convex->GenerateConvexHulls( this );
+			} );
+        }
+
+    #endif
     }
 }

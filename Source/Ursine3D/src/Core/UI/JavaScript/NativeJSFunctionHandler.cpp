@@ -17,6 +17,8 @@
 
 #include "NativeJSFunction.h"
 
+#include <boost/regex.hpp>
+
 namespace ursine 
 {
     void NativeJSFunctionHandler::Bind(CefRefPtr<CefV8Value> context)
@@ -31,7 +33,12 @@ namespace ursine
             if (!function.GetMeta( ).GetProperty( exposeProperty ).IsValid( ))
                 continue;
 
-            auto &name = function.GetName( );
+            // replace namespace qualifiers with underscores
+            auto name = boost::regex_replace(
+                function.GetName( ), 
+                boost::regex( "::" ), 
+                "_" 
+            );
 
             m_functions.emplace( name, function );
 

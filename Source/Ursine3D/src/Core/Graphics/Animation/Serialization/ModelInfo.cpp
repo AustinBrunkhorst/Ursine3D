@@ -25,34 +25,21 @@ namespace ursine
 		{
 			ModelInfo::ModelInfo()
 				:
-				mmeshCount(0), marrMeshes(nullptr),
-				mmaterialCount(0), marrMaterials(nullptr),
-				mboneCount(0), marrBones(nullptr),
-				ISerialize("")
+				mmeshCount(0), mmaterialCount(0), mboneCount(0),  maniCount(0), ISerialize("")
 			{
 			}
 
 			ModelInfo::~ModelInfo()
 			{
+				ReleaseData();
 			}
 
 			void ModelInfo::ReleaseData()
 			{
-				if (marrMeshes)
-				{
-					delete[] marrMeshes;
-					marrMeshes = nullptr;
-				}
-				if (marrMaterials)
-				{
-					delete[] marrMaterials;
-					marrMaterials = nullptr;
-				}
-				if (marrBones)
-				{
-					delete[] marrBones;
-					marrBones = nullptr;
-				}
+				mMeshInfoVec.clear();
+				mMtrlInfoVec.clear();
+				mBoneInfoVec.clear();
+				maniNameVec.clear();
 			}
 
 			bool ModelInfo::SerializeIn(HANDLE hFile)
@@ -61,25 +48,28 @@ namespace ursine
 				unsigned int i = 0;
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
-					ReadFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					name = tmp_name;
 					ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &maniCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
-					marrMeshes = new MeshInfo[mmeshCount];
+					mMeshInfoVec.resize(mmeshCount);
 					for (i = 0; i < mmeshCount; ++i)
-					{
-						marrMeshes[i].SerializeIn(hFile);
-					}
-					marrMaterials = new MaterialInfo[mmaterialCount];
+						mMeshInfoVec[i].SerializeIn(hFile);
+					mMtrlInfoVec.resize(mmaterialCount);
 					for (i = 0; i < mmaterialCount; ++i)
-					{
-						marrMaterials[i].SerializeIn(hFile);
-					}
-					marrBones = new BoneInfo[mboneCount];
+						mMtrlInfoVec[i].SerializeIn(hFile);
+					mBoneInfoVec.resize(mboneCount);
 					for (i = 0; i < mboneCount; ++i)
+						mBoneInfoVec[i].SerializeIn(hFile);
+					maniNameVec.resize(maniCount);
+					for (i = 0; i < maniCount; ++i)
 					{
-						marrBones[i].SerializeIn(hFile);
+						ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						maniNameVec[i] = tmp_name;
 					}
 				}
 				return true;
@@ -91,22 +81,24 @@ namespace ursine
 				unsigned int i = 0;
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
-					WriteFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					lstrcpy(tmp_name, name.c_str());
+					WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);					
 					WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &maniCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					for (i = 0; i < mmeshCount; ++i)
+					for (auto iter : mMeshInfoVec)
+						iter.SerializeOut(hFile);
+					for (auto iter : mMtrlInfoVec)
+						iter.SerializeOut(hFile);
+					for (auto iter : mBoneInfoVec)
+						iter.SerializeOut(hFile);
+					for (auto iter : maniNameVec)
 					{
-						marrMeshes[i].SerializeOut(hFile);
-					}
-					for (i = 0; i < mmaterialCount; ++i)
-					{
-						marrMaterials[i].SerializeOut(hFile);
-					}
-					for (i = 0; i < mboneCount; ++i)
-					{
-						marrBones[i].SerializeOut(hFile);
+						lstrcpy(tmp_name, iter.c_str());
+						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					}
 				}
 				return true;

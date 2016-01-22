@@ -275,7 +275,10 @@ void ReflectionParser::buildClasses(
         }
         else if (kind == CXCursor_TypedefDecl)
         {
-            if (boost::starts_with( child.GetDisplayName( ), kMetaExternalTypeDefName ))
+            auto displayName = child.GetDisplayName( );
+
+            // external declaration
+            if (boost::starts_with( displayName, kMetaExternalTypeDefName ))
             {
                 m_classes.emplace_back(
                     new External( child.GetTypedefType( ).GetDeclaration( ) )

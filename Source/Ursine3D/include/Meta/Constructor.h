@@ -30,6 +30,8 @@ namespace ursine
             typedef std::function<Variant(ArgumentList&)> Invoker;
 
             Constructor(void);
+            Constructor(const Constructor &rhs);
+            Constructor(const Constructor &&rhs);
             
             Constructor(
                 Type classType, 
@@ -37,6 +39,8 @@ namespace ursine
                 Invoker invoker, 
                 bool isDynamic
             );
+
+            Constructor &operator=(const Constructor &&rhs);
 
             static const Constructor &Invalid(void);
 

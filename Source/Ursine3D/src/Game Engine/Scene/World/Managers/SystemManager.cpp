@@ -119,7 +119,7 @@ namespace ursine
                     continue;
                 }
 
-                auto constructor = 
+                auto &constructor = 
                     systemType.GetDynamicConstructor( systemConstructor );
 
                 UAssert( constructor.IsValid( ), 

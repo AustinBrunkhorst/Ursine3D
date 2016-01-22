@@ -41,6 +41,7 @@ public:
     JSMethod(removeComponent);
 
     JSMethod(updateComponentField);
+    JSMethod(invokeComponentButton);
 
     JSMethod(getChildren);
     JSMethod(getParent);

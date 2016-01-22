@@ -17,6 +17,8 @@ class Editor {
 
     public var componentDatabase : ComponentDatabase;
 
+    private var m_notificationManager : NativeNotificationManager;
+
     public function new() {
         instance = this;
 
@@ -27,6 +29,8 @@ class Editor {
         componentDatabase = new ComponentDatabase(
             Extern.GetNativeComponentDatabase( )
         );
+
+        m_notificationManager = new NativeNotificationManager( broadcastManager );
 
         buildMenus( );
 

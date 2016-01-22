@@ -15,12 +15,14 @@
 #include <CFBXLoader.h>
 
 #pragma warning (disable : 4996)
+#pragma warning (disable : 4244)
+#pragma warning (disable : 4267)
 
 // cut off unneccessary things, extensions to get name
 std::string GetName(const char* filename)
 {
 	std::string ret;
-	char fName[128];
+	char fName[MAXTEXTLEN];
 	std::strcpy(fName, filename);
 
 	// get pure file name
@@ -80,13 +82,25 @@ namespace ursine
 				delete mConverter;
 
 			if (mAnimInfo)
+			{
 				mAnimInfo->ReleaseData();
+				delete mAnimInfo;
+				mAnimInfo = nullptr;
+			}
 
 			if (mLevelInfo)
+			{
 				mLevelInfo->ReleaseData();
+				delete mLevelInfo;
+				mLevelInfo = nullptr;
+			}
 
 			if (mModelInfo)
+			{
 				mModelInfo->ReleaseData();
+				delete mModelInfo;
+				mModelInfo = nullptr;
+			}
 
 			if (mModel)
 			{
@@ -154,7 +168,7 @@ namespace ursine
 			ProcessScene(mScene->GetRootNode());
 
 			// Export FBX model as custom file format
-			Export();
+			ReadyToExport();
 			CustomFileExport();
 
 			return true;
@@ -214,12 +228,8 @@ namespace ursine
 		}
 
 		// divide this huge function part by part layer
-		bool CFBXLoader::Export()
+		bool CFBXLoader::ReadyToExport()
 		{
-			if (nullptr == mModelInfo) mModelInfo = new ufmt_loader::ModelInfo;
-			if (nullptr == mLevelInfo) mLevelInfo = new ufmt_loader::LevelInfo;
-			if (nullptr == mAnimInfo) mAnimInfo = new ufmt_loader::AnimInfo;
-
 			// unify the loader data structure and exporter data structure someday
 			unsigned int i = 0, j = 0, k = 0, l = 0;
 
@@ -227,221 +237,196 @@ namespace ursine
 			// Model Info
 			///////////////////////////////////////////////////////////////
 			// mesh data
-			strcpy(mModelInfo->name, mModel->name.c_str());
-			mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
-			mModelInfo->marrMeshes = new ufmt_loader::MeshInfo[mModelInfo->mmeshCount];
-			for (i = 0; i < mModelInfo->mmeshCount; ++i)
+			if (nullptr == mModelInfo)
 			{
-				FBX_DATA::MeshData* currMD = mModel->mMeshData[i];
-				ufmt_loader::MeshInfo* currMI = &mModelInfo->marrMeshes[i];
-				// name & counter initialization
-				std::strcpy(currMI->name, currMD->name.c_str());
-
-				// mesh Transformation
-				currMI->meshVtxInfoCount = currMD->indexCnt;
-				currMI->meshVtxInfos = new ufmt_loader::MeshVertex[currMI->meshVtxInfoCount];
-				for (j = 0; j < currMI->meshVtxInfoCount; ++j)
+				mModelInfo = new ufmt_loader::ModelInfo;
+				mModelInfo->name = mModel->name.c_str();
+				mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
+				for (i = 0; i < mModelInfo->mmeshCount; ++i)
 				{
-					currMI->meshVtxInfos[j].pos = currMD->vertices[currMD->indices[j]];
+					ufmt_loader::MeshInfo newMeshInfo;
+					FBX_DATA::MeshData* currMD = mModel->mMeshData[i];
+					// name & counter initialization
+					newMeshInfo.name = currMD->name.c_str();
 
-					if (currMD->normalMode == FbxGeometryElement::eByPolygonVertex)
-						currMI->meshVtxInfos[j].normal = currMD->normals[j];
-					else if (currMD->normalMode == FbxGeometryElement::eByControlPoint)
-						currMI->meshVtxInfos[j].normal = currMD->normals[currMD->indices[j]];
+					// Reconstruct Vertices and Indices for data compression
+					std::vector<ufmt_loader::MeshVertex> rmvVec;
+					std::vector<unsigned int> rIVec;
+					Reconstruct(i, rmvVec, rIVec, *currMD);
 
-					if (currMD->tangentMode == FbxGeometryElement::eByPolygonVertex)
-						currMI->meshVtxInfos[j].tangent = currMD->tangents[j];
-					else if (currMD->tangentMode == FbxGeometryElement::eByControlPoint)
-						currMI->meshVtxInfos[j].tangent = currMD->tangents[currMD->indices[j]];
+					newMeshInfo.meshVtxInfoCount = rmvVec.size();
+					newMeshInfo.meshVtxIdxCount = rIVec.size();
+					for (j = 0; j < newMeshInfo.meshVtxInfoCount; ++j)
+						newMeshInfo.meshVtxInfos.push_back(rmvVec[j]);
+					for (j = 0; j < newMeshInfo.meshVtxIdxCount; ++j)
+						newMeshInfo.meshVtxIndices.push_back(rIVec[j]);
 
-					if (currMD->uvs)
+					// push back into the vector
+					mModelInfo->mMeshInfoVec.push_back(newMeshInfo);
+				}
+
+				// material data
+				mModelInfo->mmaterialCount = static_cast<unsigned int>(mModel->mMaterials.size());
+				ufmt_loader::MaterialInfo newMtrlInfo;
+				for (i = 0; i < mModelInfo->mmaterialCount; ++i)
+				{
+					newMtrlInfo.name = mModel->mMaterials[i]->name.c_str();
+					newMtrlInfo.ambitype = mModel->mMaterials[i]->ambient.type;
+					newMtrlInfo.ambi_mcolor = mModel->mMaterials[i]->ambient.color;
+					newMtrlInfo.ambi_mapCount = mModel->mMaterials[i]->ambient.textureSetArray.size();
+					//ambi
+					j = 0;
+					for (auto iter1 = mModel->mMaterials[i]->ambient.textureSetArray.begin();
+					iter1 != mModel->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
 					{
-						currMI->meshVtxInfos[j].uv = currMD->uvs[j];
-						currMI->meshVtxInfos[j].uv.y = 1.0f - currMI->meshVtxInfos[j].uv.y;
+						mModelInfo->mMtrlInfoVec[i].ambi_texNames.push_back(iter1->second[j].c_str());
 					}
+					newMtrlInfo.difftype = mModel->mMaterials[i]->diffuse.type;
+					newMtrlInfo.diff_mcolor = mModel->mMaterials[i]->diffuse.color;
+					newMtrlInfo.diff_mapCount = mModel->mMaterials[i]->diffuse.textureSetArray.size();
 
-					// controls - maybe divide this part later if necessary
-					if (!mModel->mCtrlPoints.empty())
-					{
-						// currently, just for using 1st control point vec
-						currMI->meshVtxInfos[j].ctrlBlendWeights.x = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingWeight);
-						currMI->meshVtxInfos[j].ctrlBlendWeights.y = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingWeight);
-						currMI->meshVtxInfos[j].ctrlBlendWeights.z = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingWeight);
-						currMI->meshVtxInfos[j].ctrlBlendWeights.w = static_cast<float>(mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingWeight);
-						currMI->meshVtxInfos[j].ctrlIndices[0] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[0].mBlendingIndex;
-						currMI->meshVtxInfos[j].ctrlIndices[1] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[1].mBlendingIndex;
-						currMI->meshVtxInfos[j].ctrlIndices[2] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[2].mBlendingIndex;
-						currMI->meshVtxInfos[j].ctrlIndices[3] = mModel->mCtrlPoints[i]->at(currMD->indices[j])->mBlendingInfo[3].mBlendingIndex;
-					}
+					//diff
+					j = 0;
+					for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
+					iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
+						mModelInfo->mMtrlInfoVec[i].diff_texNames.push_back(iter1->second[j].c_str());
+					newMtrlInfo.emistype = mModel->mMaterials[i]->emissive.type;
+					newMtrlInfo.emis_mcolor = mModel->mMaterials[i]->emissive.color;
+					newMtrlInfo.emis_mapCount = mModel->mMaterials[i]->emissive.textureSetArray.size();
+
+					//emit
+					j = 0;
+					for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
+					iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
+						mModelInfo->mMtrlInfoVec[i].emis_texNames.push_back(iter1->second[j].c_str());
+					newMtrlInfo.spectype = mModel->mMaterials[i]->specular.type;
+					newMtrlInfo.spec_mcolor = mModel->mMaterials[i]->specular.color;
+					newMtrlInfo.spec_mapCount = mModel->mMaterials[i]->specular.textureSetArray.size();
+
+					//spec
+					j = 0;
+					for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
+					iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
+						mModelInfo->mMtrlInfoVec[i].spec_texNames.push_back(iter1->second[j].c_str());
+					newMtrlInfo.shineness = mModel->mMaterials[i]->shineness;
+					newMtrlInfo.TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
+
+					// push back into the vector
+					mModelInfo->mMtrlInfoVec.push_back(newMtrlInfo);
 				}
 
-				//fbxmaterials
-				currMI->mtrlCount = static_cast<unsigned int>(currMD->fbxmaterials.size());
-				for (j = 0; j < currMI->mtrlCount; ++j)
+				// bone data
+				mModelInfo->mboneCount = static_cast<unsigned int>(mModel->mBoneData.mbonehierarchy.size());
+				ufmt_loader::BoneInfo newBoneInfo;
+				for (i = 0; i < mModelInfo->mboneCount; ++i)
 				{
-					currMI->mtrlName[j] = new char[MAXTEXTLEN];
-					lstrcpy(currMI->mtrlName[j], currMD->fbxmaterials[j].name.c_str());
+					// skin info will use model's name
+					newBoneInfo.name = mModel->mBoneData.mbonehierarchy[i].mName.c_str();
+					newBoneInfo.mParentIndex = mModel->mBoneData.mbonehierarchy[i].mParentIndex;
+					newBoneInfo.bindPosition = mModel->mBoneData.mbonehierarchy[i].bindPosition;
+					newBoneInfo.bindRotation = mModel->mBoneData.mbonehierarchy[i].bindRotation;
+					newBoneInfo.bindScaling = mModel->mBoneData.mbonehierarchy[i].bindScaling;
+					newBoneInfo.boneSpacePosition = mModel->mBoneData.mbonehierarchy[i].boneSpacePosition;
+					newBoneInfo.boneSpaceRotation = mModel->mBoneData.mbonehierarchy[i].boneSpaceRotation;
+					newBoneInfo.boneSpaceScaling = mModel->mBoneData.mbonehierarchy[i].boneSpaceScaling;
+
+					// push back into the vector
+					mModelInfo->mBoneInfoVec.push_back(newBoneInfo);
 				}
-
-				//this thing and subset stuff will be useful for handling multimaterial model
-				currMI->mtrlIndexCount = mModel->mMeshData[i]->mtrlIndexCnt;
-				currMI->materialIndices = new unsigned int[currMI->mtrlIndexCount];
-				for (j = 0; j < currMI->mtrlIndexCount; ++j)
-					currMI->materialIndices[j] = currMD->materialIndices[j];
-			}
-
-			// material data
-			mModelInfo->mmaterialCount = static_cast<unsigned int>(mModel->mMaterials.size());
-			mModelInfo->marrMaterials = new ufmt_loader::MaterialInfo[mModelInfo->mmaterialCount];
-			for (i = 0; i < mModelInfo->mmaterialCount; ++i)
-			{
-				ufmt_loader::MaterialInfo* currMI = &mModelInfo->marrMaterials[i];
-				lstrcpy(currMI->name, mModel->mMaterials[i]->name.c_str());
-				currMI->ambitype = mModel->mMaterials[i]->ambient.type;
-				currMI->ambi_mcolor = mModel->mMaterials[i]->ambient.color;
-				currMI->ambi_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->ambient.textureSetArray.size());
-				//ambi
-				j = 0;
-				for (auto iter1 = mModel->mMaterials[i]->ambient.textureSetArray.begin();
-				iter1 != mModel->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
-				{
-					currMI->ambi_texNames[j] = new char[MAXTEXTLEN];
-					lstrcpy(mModelInfo->marrMaterials[i].ambi_texNames[j], iter1->second[j].c_str());
-				}
-				currMI->difftype = mModel->mMaterials[i]->diffuse.type;
-				currMI->diff_mcolor = mModel->mMaterials[i]->diffuse.color;
-				currMI->diff_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->diffuse.textureSetArray.size());
-
-				//diff
-				j = 0;
-				for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
-				iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
-				{
-					currMI->diff_texNames[j] = new char[MAXTEXTLEN];
-					lstrcpy(mModelInfo->marrMaterials[i].diff_texNames[j], iter1->second[j].c_str());
-				}
-				currMI->emistype = mModel->mMaterials[i]->emissive.type;
-				currMI->emis_mcolor = mModel->mMaterials[i]->emissive.color;
-				currMI->emis_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->emissive.textureSetArray.size());
-
-				//emit
-				j = 0;
-				for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
-				iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
-				{
-					currMI->emis_texNames[j] = new char[MAXTEXTLEN];
-					lstrcpy(currMI->emis_texNames[j], iter1->second[j].c_str());
-				}
-				currMI->spectype = mModel->mMaterials[i]->specular.type;
-				currMI->spec_mcolor = mModel->mMaterials[i]->specular.color;
-				currMI->spec_mapCount = static_cast<unsigned int>(mModel->mMaterials[i]->specular.textureSetArray.size());
-
-				//spec
-				j = 0;
-				for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
-				iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
-				{
-					currMI->spec_texNames[j] = new char[MAXTEXTLEN];
-					lstrcpy(currMI->spec_texNames[j], iter1->second[j].c_str());
-				}
-				currMI->shineness = mModel->mMaterials[i]->shineness;
-				currMI->TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
-			}
-
-			// bone data
-			mModelInfo->mboneCount = static_cast<unsigned int>(mModel->mBoneData.mbonehierarchy.size());
-			mModelInfo->marrBones = new ufmt_loader::BoneInfo[mModelInfo->mboneCount];
-			for (i = 0; i < mModelInfo->mboneCount; ++i)
-			{
-				ufmt_loader::BoneInfo* currBI = &mModelInfo->marrBones[i];
-				// skin info will use model's name
-				lstrcpy(currBI->name, mModel->mBoneData.mbonehierarchy[i].mName.c_str());
-				currBI->mParentIndex = mModel->mBoneData.mbonehierarchy[i].mParentIndex;
-				currBI->bindPosition = mModel->mBoneData.mbonehierarchy[i].bindPosition;
-				currBI->bindRotation = mModel->mBoneData.mbonehierarchy[i].bindRotation;
-				currBI->bindScaling = mModel->mBoneData.mbonehierarchy[i].bindScaling;
-				currBI->boneSpacePosition = mModel->mBoneData.mbonehierarchy[i].boneSpacePosition;
-				currBI->boneSpaceRotation = mModel->mBoneData.mbonehierarchy[i].boneSpaceRotation;
-				currBI->boneSpaceScaling = mModel->mBoneData.mbonehierarchy[i].boneSpaceScaling;
 			}
 
 			///////////////////////////////////////////////////////////////
 			// Level Info
 			///////////////////////////////////////////////////////////////
 			// mesh lvl
-			mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
-			mLevelInfo->marrMeshlvls = new ufmt_loader::MeshInLvl[mLevelInfo->mmeshlvlCount];
-			mLevelInfo->mMeshHierarchy = new int[mLevelInfo->mmeshlvlCount];
-			for (i = 0; i < mLevelInfo->mmeshlvlCount; ++i)
+			if (nullptr == mLevelInfo)
 			{
-				lstrcpy(mLevelInfo->marrMeshlvls[i].name, mModelInfo->marrMeshes[i].name);
-				mLevelInfo->marrMeshlvls[i].meshTM = mModel->mMeshData[i]->meshTM;
-				mLevelInfo->mMeshHierarchy[i] = mModel->mMeshData[i]->parentIndex;
-			}
-			// rig lvl
-			mLevelInfo->mriglvlCount = mModelInfo->mboneCount;
-			mLevelInfo->marrRiglvls = new ufmt_loader::RigInLvl[mLevelInfo->mriglvlCount];
-			mLevelInfo->mRigHierarchy = new int[mLevelInfo->mriglvlCount];
-			for (i = 0; i < mLevelInfo->mriglvlCount; ++i)
-			{
-				lstrcpy(mLevelInfo->marrRiglvls[i].name, mModelInfo->marrBones[i].name);
-				mLevelInfo->mRigHierarchy[i] = mModelInfo->marrBones[i].mParentIndex;
-			}
+				mLevelInfo = new ufmt_loader::LevelInfo;
+				mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
+				mLevelInfo->name = mModelInfo->name;
+				for (i = 0; i < mLevelInfo->mmeshlvlCount; ++i)
+				{
+					ufmt_loader::MeshInLvl newMLvl;
+					newMLvl.name = mModelInfo->mMeshInfoVec[i].name;
+					newMLvl.meshTM = mModel->mMeshData[i]->meshTM;
+					newMLvl.mParentIndex = mModel->mMeshData[i]->parentIndex;
+					mLevelInfo->mMeshLvVec.push_back(newMLvl);
+				}
+				// rig lvl
+				mLevelInfo->mriglvlCount = mModelInfo->mboneCount;
+				for (i = 0; i < mLevelInfo->mriglvlCount; ++i)
+				{
+					ufmt_loader::RigInLvl newRLvl;
+					newRLvl.name = mModelInfo->mBoneInfoVec[i].name;
+					newRLvl.mParentIndex = mModelInfo->mBoneInfoVec[i].mParentIndex;
+					mLevelInfo->mRigLvVec.push_back(newRLvl);
+				}
+			}				
 
 			///////////////////////////////////////////////////////////////
 			// Anim Info
 			///////////////////////////////////////////////////////////////
 			// anim data
-			lstrcpy(mAnimInfo->name, mModel->name.c_str());
-			mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
-			mAnimInfo->animDataArr = new ufmt_loader::AnimData[mAnimInfo->animCount];
-			for (i = 0; i < mAnimInfo->animCount; ++i)
+			if (nullptr == mAnimInfo && !mModel->mAnimationData.empty())
 			{
-				ufmt_loader::AnimData* currAD = &mAnimInfo->animDataArr[i];
-				// counts
-				currAD->clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
-				currAD->keyIndices = new unsigned int*[currAD->clipCount];
-				currAD->keyframes = new FBX_DATA::KeyFrame**[currAD->clipCount];
-				j = 0;
-				for (auto iter = mModel->mAnimationData[i]->animations.begin();
-				iter != mModel->mAnimationData[i]->animations.end();
-					++iter, ++j)
+				mAnimInfo = new ufmt_loader::AnimInfo;
+
+				mAnimInfo->name = mModel->name.c_str();
+				mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
+				for (unsigned int i = 0; i < mAnimInfo->animCount; ++i)
 				{
-					// storing animation clip's name
-					std::strcpy(currAD->clipname, iter->first.c_str());
+					ufmt_loader::AnimData newAD;
+					ufmt_loader::KeyIndex newKIs;
+					ufmt_loader::KFrames newKFs;
 
-					// set keycount / keyframes
-					currAD->boneCount = static_cast<unsigned int>(iter->second.boneAnim.size());
-					currAD->keyIndices[j] = new unsigned int[iter->second.boneAnim.size()];
-					currAD->keyframes[j] = new FBX_DATA::KeyFrame*[iter->second.boneAnim.size()];
+					// counts
+					newAD.clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
 
-					// Unifying keyframes of each animation
-					unsigned int maxkfCount = 0;
-					for (k = 0; k < iter->second.boneAnim.size(); ++k)
+					j = 0;
+					for (auto iter2 = mModel->mAnimationData[i]->animations.begin();
+					iter2 != mModel->mAnimationData[i]->animations.end(); ++iter2, ++j)
 					{
-						unsigned int kfCount = static_cast<unsigned int>(iter->second.boneAnim[k].keyFrames.size());
-						if (maxkfCount < kfCount)
-							maxkfCount = kfCount;
-					}
+						// storing animation clip's name
+						newAD.clipname = iter2->first.c_str();
 
-					for (k = 0; k < iter->second.boneAnim.size(); ++k)
-					{
-						unsigned int kfCount = static_cast<unsigned int>(iter->second.boneAnim[k].keyFrames.size());
-						currAD->keyIndices[j][k] = maxkfCount;
-						currAD->keyframes[j][k] = new FBX_DATA::KeyFrame[maxkfCount];
-						for (l = 0; l < maxkfCount; ++l)
+						// set keycount / keyframes
+						newAD.boneCount = static_cast<unsigned int>(iter2->second.boneAnim.size());
+
+						// Unifying keyframes of each animation
+						unsigned int maxkfCount = 0;
+						for (k = 0; k < iter2->second.boneAnim.size(); ++k)
 						{
-							if (l < maxkfCount && l < kfCount)
-								currAD->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[l];
-							else if (l >= kfCount)
-								currAD->keyframes[j][k][l] = iter->second.boneAnim[k].keyFrames[kfCount - 1];
+							unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+							if (maxkfCount < kfCount)
+								maxkfCount = kfCount;
+						}
+
+						for (k = 0; k < iter2->second.boneAnim.size(); ++k)
+						{
+							ufmt_loader::KFrame newKF;
+							unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+							newKIs.push_back(maxkfCount);
+							for (l = 0; l < maxkfCount; ++l)
+							{
+								if (l < maxkfCount && l < kfCount)
+									newKF.push_back(iter2->second.boneAnim[k].keyFrames[l]);
+								else if (l >= kfCount)
+									newKF.push_back(iter2->second.boneAnim[k].keyFrames[kfCount - 1]);
+							}
+							newKFs.push_back(newKF);
 						}
 					}
+					newAD.keyIndices.push_back(newKIs);
+					newAD.keyframes.push_back(newKFs);
+
+					// push back into the vector
+					mAnimInfo->animDataArr.push_back(newAD);
 				}
 			}
+			
 			return true;
 		}
-
+		
 		bool CFBXLoader::CustomFileExport()
 		{
 			if (nullptr == mModelInfo || nullptr == mLevelInfo || nullptr == mAnimInfo)
@@ -1478,6 +1463,76 @@ namespace ursine
 		{
 			FbxMatrix * m = (FbxMatrix*)&pAMatrix;
 			return m->MultNormalize(point);
+		}
+		
+		//reconstruct vertices and indices
+		void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md)
+		{
+			for (unsigned int i = 0; i < md.indexCnt; ++i)
+			{
+				ufmt_loader::MeshVertex newMV;
+				newMV.pos = md.vertices[md.indices[i]];
+
+				if (md.normals)
+				{
+					if (md.normalMode == FbxGeometryElement::eByPolygonVertex)
+						newMV.normal = md.normals[i];
+					else if (md.normalMode == FbxGeometryElement::eByControlPoint)
+						newMV.normal = md.normals[md.indices[i]];
+				}
+
+				if (md.tangents)
+				{
+					if (md.tangentMode == FbxGeometryElement::eByPolygonVertex)
+						newMV.tangent = md.tangents[i];
+					else if (md.tangentMode == FbxGeometryElement::eByControlPoint)
+						newMV.tangent = md.tangents[md.indices[i]];
+				}
+
+				if (md.uvs)
+				{
+					newMV.uv = md.uvs[i];
+					newMV.uv.y = 1.0f - newMV.uv.y;
+				}
+
+				// controls - maybe divide this part later if necessary
+				if (!mModel->mCtrlPoints.empty())
+				{
+					if (!(*mModel->mCtrlPoints[meshIdx]).empty())
+					{
+						// currently, just for using 1st control point vec
+						newMV.ctrlBlendWeights.x = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingWeight;
+						newMV.ctrlBlendWeights.y = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingWeight;
+						newMV.ctrlBlendWeights.z = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingWeight;
+						newMV.ctrlBlendWeights.w = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingWeight;
+						newMV.ctrlIndices.x = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingIndex;
+						newMV.ctrlIndices.y = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingIndex;
+						newMV.ctrlIndices.z = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingIndex;
+						newMV.ctrlIndices.w = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingIndex;
+					}
+				}
+
+				bool bFound = false;
+				unsigned int index = 0;
+				for (unsigned int j = 0; j < mvVec.size(); ++j)
+				{
+					if (newMV == mvVec[j])
+					{
+						bFound = true;
+						// if there is same MeshVertex, just add the index of it.
+						miVec.push_back(j);
+						break;
+					}
+					++index;
+				}
+
+				// if there is no MeshVertex, store the vertex and set a index as the last one
+				if (!bFound)
+				{
+					mvVec.push_back(newMV);
+					miVec.push_back(index);
+				}
+			}
 		}
 	}
 }

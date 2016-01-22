@@ -32,18 +32,24 @@ namespace ursine
 
     void TweenManager::Pause(TweenGroupID group)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         if (group + 1u <= m_groups.size( ))
             m_groups[ group ] = true;
     }
 
     void TweenManager::Resume(TweenGroupID group)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         if (group + 1u <= m_groups.size( ))
             m_groups[ group ] = false;
     }
 
     void TweenManager::Clear(TweenGroupID group)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         for (auto it = m_tweens.begin( ); it != m_tweens.end( );)
         {
             if (it->second.m_group == group)
@@ -56,6 +62,8 @@ namespace ursine
     void TweenManager::onAppUpdate(EVENT_HANDLER(Application))
     {
         EVENT_ATTRS(Application, EventArgs);
+
+		std::lock_guard<std::mutex> lock( m_mutex );
 
         for (auto &pair : m_tweens)
         {
@@ -79,6 +87,8 @@ namespace ursine
     {
         auto id = m_nextID++;
 
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         if (group + 1u > m_groups.size( ))
             m_groups.resize( group + 1u, false );
 
@@ -96,6 +106,8 @@ namespace ursine
 
     void TweenManager::cancel(uint32 id, bool invoke_removed)
     {
+		std::lock_guard<std::mutex> lock( m_mutex );
+
         auto tween = get( id );
 
         if (tween && !tween->m_deleting)

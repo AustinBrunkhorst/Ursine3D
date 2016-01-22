@@ -30,6 +30,21 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+            EditorButton(
+                GenerateConvexHull, 
+                "Generate Convex Hull"
+            );
+			
+			EditorButton(
+				GenerateBvhTriangleMeshCollider,
+				"Generate BVH Triangle Mesh Collider"
+			);
+
+			EditorButton(
+				GenerateConvexDecompCollider,
+				"Generate Convex Decomposition Collider"
+			);
+
             EditorField(
                 Color color,
                 GetColor,
@@ -92,6 +107,13 @@ namespace ursine
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
             void SetMeshIndex(const int index);
+			int GetMeshIndex(void) const;
+
+			Meta(Disable)
+			void OnSerialize(Json::object &output) const override;
+
+			Meta(Disable)
+			void OnDeserialize(const Json &input) override;
 
         private:
 

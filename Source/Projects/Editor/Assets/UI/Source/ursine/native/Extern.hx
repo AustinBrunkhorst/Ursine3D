@@ -41,7 +41,11 @@ class Extern {
         return untyped __js__( "SceneStep()" );
     }
 
-    public static function GenerateColliders() {
-        return untyped __js__( "GenerateColliders()" );
+    public static function NotificationButtonCallback(id : UInt, buttonID : UInt) {
+        return untyped __js__( "ursine_NotificationButtonCallback(id, buttonID)" );
+    }
+
+    public static function NotificationCloseCallback(id : UInt) {
+        return untyped __js__( "ursine_NotificationCloseCallback(id)" );
     }
 }

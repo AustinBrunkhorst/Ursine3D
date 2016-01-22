@@ -41,3 +41,11 @@ void Project::SetWorld(ecs::World::Handle world)
     m_scene->SetWorld( world );
     m_entityManager.SetWorld( world );
 }
+
+void Project::ClearDeletionQueue(void)
+{
+	if (m_scene->IsPaused( ))
+	{
+		m_scene->GetWorld( )->clearDeletionQueue( );
+	}
+}

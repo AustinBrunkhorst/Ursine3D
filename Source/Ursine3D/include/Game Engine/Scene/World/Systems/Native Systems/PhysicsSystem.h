@@ -34,6 +34,7 @@ namespace ursine
         public:
             friend class Rigidbody;
 
+			Meta(DisableNonDynamic)
             PhysicsSystem(World *world);
 
 			bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
@@ -75,6 +76,8 @@ namespace ursine
 
             void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
             void removeCollider(Entity *entity);
+
+			void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
 
         } Meta(Enable);
     }

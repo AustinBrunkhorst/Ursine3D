@@ -18,8 +18,8 @@
 namespace ursine
 {
     JsonSerializer::JsonSerializer(Serializer serialize, Deserializer deserialize)
-        : SerializeFn(serialize)
-        , DeserializeFn(deserialize) {}
+        : SerializeFn( serialize )
+        , DeserializeFn( deserialize ) { }
 
     ////////////////////////////////////////////////////////////////////////////
     // Integral Serializers
@@ -28,31 +28,31 @@ namespace ursine
     template<>
     Json JsonSerializer::Serialize(bool &instance)
     {
-        return Json(instance);
+        return Json( instance );
     }
 
     template<>
     Json JsonSerializer::Serialize(int &instance)
     {
-        return Json(instance);
+        return Json( instance );
     }
 
     template<>
     Json JsonSerializer::Serialize(float &instance)
     {
-        return Json(static_cast<double>(instance));
+        return Json( static_cast<double>( instance ) );
     }
 
     template<>
     Json JsonSerializer::Serialize(double &instance)
     {
-        return Json(instance);
+        return Json( instance );
     }
 
     template<>
     Json JsonSerializer::Serialize(std::string &instance)
     {
-        return Json(instance);
+        return Json( instance );
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -62,30 +62,30 @@ namespace ursine
     template<>
     void JsonSerializer::Deserialize(const Json &data, bool &out)
     {
-        out = data.bool_value();
+        out = data.bool_value( );
     }
 
     template<>
     void JsonSerializer::Deserialize(const Json &data, int &out)
     {
-        out = data.int_value();
+        out = data.int_value( );
     }
 
     template<>
     void JsonSerializer::Deserialize(const Json &data, float &out)
     {
-        out = static_cast<float>(data.number_value());
+        out = static_cast<float>( data.number_value( ) );
     }
 
     template<>
     void JsonSerializer::Deserialize(const Json &data, double &out)
     {
-        out = data.number_value();
+        out = data.number_value( );
     }
 
     template<>
     void JsonSerializer::Deserialize(const Json &data, std::string &out)
     {
-        out = data.string_value();
+        out = data.string_value( );
     }
 }

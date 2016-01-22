@@ -71,7 +71,7 @@ namespace ursine
             screenName.c_str( )
         );
 
-        const auto ctor = screenType.GetDynamicConstructor( {
+        const auto &ctor = screenType.GetDynamicConstructor( {
             typeof( ScreenManager* ) 
         } );
 

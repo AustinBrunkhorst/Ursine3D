@@ -18,6 +18,7 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include <Timer.h>
 #include <Meta.h>
 #include <ComponentConfig.h>
 
@@ -30,6 +31,11 @@ using namespace std::placeholders;
 
 namespace
 {
+    void doOpenErrorLog(Notification &notification)
+    {
+        utils::OpenPath( URSINE_ERROR_LOG_FILE );
+    }
+
     void doSaveArchetype(
         ecs::Entity *entity, 
         int selectedFilter, 
@@ -41,17 +47,28 @@ namespace
 
         auto data = ecs::EntitySerializer( ).SerializeArchetype( entity );
         
-        if (!fs::WriteText( files[ 0 ].string( ), data.dump( ) ))
+        auto file = files[ 0 ].string( );
+
+        if (!fs::WriteText( file, data.dump( ) ))
         {
             auto *editor = GetCoreSystem( Editor );
 
-            URSINE_TODO( "Use UI error popup" );
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_ERROR,
-                "Save Error",
-                "Unable to save archetype.",
-                editor->GetMainWindow( )->GetInternalHandle( )
+            UWarning( "Could not write to archetype file.\nfile: %s",
+                file.c_str( )
             );
+
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Save Error";
+            error.message = "Unable to save archetype.";
+
+            error.buttons =
+            {
+                { "Open Error Log", doOpenErrorLog }
+            };
+
+            editor->PostNotification( error );
         }
     }
 
@@ -78,6 +95,30 @@ namespace
         }
         
         return field.GetValue( instance );
+    }
+
+    Json::array inspectComponentButtons(const meta::Variant &component)
+    {
+        auto methods = component.GetType( ).GetMethods( );
+
+        Json::array inspection;
+
+        for (auto &method : methods)
+        {
+            auto &meta = method.GetMeta( );
+
+            auto *button = meta.GetProperty<CreateButton>( );
+
+            if (!button)
+                continue;
+
+            inspection.emplace_back( Json::object {
+                { "name", method.GetName( ) },
+                { "text", button->text }
+            } );
+        }
+
+        return inspection;
     }
 }
 
@@ -125,10 +166,10 @@ JSMethod(EntityHandler::remove)
 
     entity->Delete( );
 
-    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
-
-    if (scene->IsPaused( ))
-        m_world->clearDeletionQueue( );
+	// Have this run in the main thread
+	Timer::Create( 0 ).Completed([=] {
+		GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
+	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -176,7 +217,8 @@ JSMethod(EntityHandler::inspect)
 
         componentArray.emplace_back( Json::object {
             { "type", type.GetName( ) },
-            { "value", type.SerializeJson( instance, editorGetterOverride ) }
+            { "value", type.SerializeJson( instance, editorGetterOverride, false ) },
+            { "buttons", inspectComponentButtons( instance ) }
         } );
     }
 
@@ -225,9 +267,11 @@ JSMethod(EntityHandler::addComponent)
     if (!componentType.IsValid( ))
         return CefV8Value::CreateBool( false );
 
-    auto instance = componentType.CreateDynamic( );
-
-    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+	// Have this run in the main thread
+	Timer::Create( 0 ).Completed( [=] {
+		auto instance = componentType.CreateDynamic( );
+		entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -253,7 +297,10 @@ JSMethod(EntityHandler::removeComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    entity->RemoveComponent( id );
+	// Have this run in the main thread
+	Timer::Create(0).Completed([=] {
+		entity->RemoveComponent( id );
+	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -318,6 +365,52 @@ JSMethod(EntityHandler::updateComponentField)
     {
         field.SetValue( instance, valueToSet );
     }
+
+    return CefV8Value::CreateUndefined( );
+}
+
+JSMethod(EntityHandler::invokeComponentButton)
+{
+    if (arguments.size( ) != 2)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+    auto buttonName = arguments[ 1 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        JSThrow( "Unknown component type.", nullptr );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        JSThrow( "Invalid component type.", nullptr );
+
+    auto *component = entity->GetComponent( 
+        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
+    );
+
+    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+
+    auto method = componentType.GetMethod( buttonName );
+
+    if (!method.IsValid( ))
+        JSThrow( "Invalid button name.", nullptr );
+
+    UAssert( method.GetSignature( ).empty( ), 
+        "Component buttons must have signature void(void).\n"
+        "Component: %s, Button: %s",
+        componentType.GetName( ).c_str( ),
+        buttonName.c_str( )
+    );
+
+    method.Invoke( instance );
 
     return CefV8Value::CreateUndefined( );
 }

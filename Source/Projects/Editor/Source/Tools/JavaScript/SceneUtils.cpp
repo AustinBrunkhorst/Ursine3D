@@ -19,11 +19,10 @@
 #include "Project.h"
 
 #include <WorldSerializer.h>
+#include <Timer.h>
 
 #include <FileSystem.h>
 #include <UIFileDialogCallback.h>
-
-#include <SDL_messagebox.h>
 
 using namespace ursine;
 
@@ -31,6 +30,8 @@ namespace
 {
     void doLoadScene(int selectedFilter, const fs::FileList &files);
     void doSaveScene(int selectedFilter, const fs::FileList &files);
+
+    void doOpenErrorLog(Notification &notification);
 }
 
 JSFunction(SceneGetRootEntities)
@@ -149,29 +150,37 @@ namespace
 
         auto *editor = GetCoreSystem( Editor );
 
-        ecs::WorldSerializer serializer;
-        ecs::World::Handle world;
+        auto file = files[ 0 ].string( );
 
         try
         {
-            world = serializer.Deserialize( files[ 0 ].string( ) );
+			Timer::Create(0).Completed( [=] {
+				ecs::WorldSerializer serializer;
+				auto world = serializer.Deserialize( file );
+
+				editor->GetProject( )->SetWorld( world );
+			} );
         }
         catch (const ecs::SerializationException &e)
         {
-            UWarning( "World deserialization failure.\n%s",
+            UWarning( "World deserialization failure.\nfile: %s\n\n%s",
+                file.c_str( ),
                 e.GetError( ).c_str( ) 
             );
 
-            URSINE_TODO( "Use UI error popup" );
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_ERROR,
-                "Load Error",
-                "Unable to load world.",
-                editor->GetMainWindow( )->GetInternalHandle( )
-            );
-        }
+            NotificationConfig error;
 
-        editor->GetProject( )->SetWorld( world );
+            error.type = NOTIFY_ERROR;
+            error.header = "Load Error";
+            error.message = "Unable to load world.";
+            
+            error.buttons = 
+            {
+                { "Open Error Log", doOpenErrorLog }
+            };
+
+            editor->PostNotification( error );
+        }
     }
 
     void doSaveScene(int selectedFilter, const fs::FileList &files)
@@ -190,13 +199,27 @@ namespace
 
         if (!fs::WriteText( path.string( ), serialized.dump( ) ))
         {
-            URSINE_TODO( "Use UI error popup" );
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_ERROR,
-                "Save Error",
-                "Unable to save world.",
-                editor->GetMainWindow( )->GetInternalHandle( )
+            UWarning( "Could not write to world file.\nfile: %s",
+                path.string( ).c_str( )
             );
+
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Save Error";
+            error.message = "Unable to save world.";
+
+            error.buttons =
+            {
+                { "Open Error Log", doOpenErrorLog }
+            };
+
+            editor->PostNotification( error );
         }
+    }
+
+    void doOpenErrorLog(Notification &notification)
+    {
+        utils::OpenPath( URSINE_ERROR_LOG_FILE );
     }
 }

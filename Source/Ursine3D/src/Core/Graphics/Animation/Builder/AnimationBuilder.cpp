@@ -221,7 +221,7 @@ namespace ursine
         for ( unsigned x = 0; x < boneCount; ++x )
         {
             // grab current node
-            auto &node = modelData.marrBones[ x ];
+            auto &node = modelData.mBoneInfoVec[ x ];
 
             if ( node.mParentIndex == -1 )
                 continue;
@@ -236,9 +236,9 @@ namespace ursine
         // get a pointer to the rig
         auto rig = GetAnimationRigByIndex( rigIndex );
 
-        rig->SetName( modelData.marrBones->name );
+        rig->SetName( modelData.name );
         rig->InitializeRig( boneCount );
-        rec_LoadBoneMesh( hierarchy, 0, -1, modelData.marrBones, rig );
+        rec_LoadBoneMesh( hierarchy, 0, -1, modelData.mBoneInfoVec, rig );
 
         // save the data in the maps, return
         m_name2Rig[ name ] = rig;
@@ -283,7 +283,7 @@ namespace ursine
         std::vector<std::vector<unsigned>>& hierarchy,
         unsigned currentIndex,
         unsigned parentIndex,
-        graphics::ufmt_loader::BoneInfo* rigData,
+		const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
         AnimationRig* rig
     )
     {

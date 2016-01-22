@@ -303,6 +303,9 @@ namespace ursine
 
             // resets data for this entity
             void reset(void);
+
+			// set the entity and all of it's children's deleting flags
+			void setDeletingTrue(void);
         };
     }
 }

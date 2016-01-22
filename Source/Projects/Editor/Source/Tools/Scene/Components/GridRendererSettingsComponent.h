@@ -15,6 +15,8 @@
 
 #include <Component.h>
 
+#include <Array.h>
+
 class GridRendererSettings : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -43,6 +45,8 @@ public:
         GetSubDivisions,
         SetSubDivisions
     );
+
+    ursine::Array<double> testing;
 
     GridRendererSettings(void);
     ~GridRendererSettings(void);

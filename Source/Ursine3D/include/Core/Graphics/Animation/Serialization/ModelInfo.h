@@ -26,19 +26,28 @@ namespace ursine
 			class ModelInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];
+				std::string name;
 
 				// mesh data	 
 				unsigned int	 mmeshCount;
-				MeshInfo*		 marrMeshes;
+				std::vector<MeshInfo> mMeshInfoVec;
 
 				// material data
 				unsigned int	mmaterialCount;
-				MaterialInfo*	marrMaterials;
+				std::vector<MaterialInfo>	mMtrlInfoVec;
 
 				// skin data
 				unsigned int	mboneCount;
-				BoneInfo*		marrBones;
+				std::vector<BoneInfo>	mBoneInfoVec;
+
+				// animation data - this will store the list of animation which will be used to 
+				// save/load the result of editor
+				// so that jdl format can load animations by this list
+				// the name we will store, is jani's name
+				// if loading fbx, maniCount = 0, maniNameVec = empty.
+				// after modifying jdl and store it, then there will be some changes
+				unsigned int maniCount;
+				std::vector< std::string > maniNameVec;
 				
 				/** @brief model information constructor
 				*

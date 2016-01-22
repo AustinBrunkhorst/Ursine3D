@@ -75,7 +75,7 @@ namespace ursine
 			*
 			*  @return if success return true, else return false
 			*/
-			bool Export();
+			bool ReadyToExport();
 
 			/** @brief fbx loader export function
 			*
@@ -365,6 +365,8 @@ namespace ursine
 			*/
 			FbxVector4 Transform(const FbxAMatrix& pAMatrix, const FbxVector4& point);
 
+			void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md);
+
 			/** @brief fbx loader get mesh data function
 			*
 			*  this will get the mesh data of the model
@@ -404,7 +406,7 @@ namespace ursine
 			*
 			*  @return the model info data structure
 			*/
-			ufmt_loader::ModelInfo GetModelInfo() const { return *mModelInfo; }
+			ufmt_loader::ModelInfo* GetModelInfo() const { return mModelInfo; }
 
 			/** @brief fbx loader get level info function
 			*
@@ -412,7 +414,7 @@ namespace ursine
 			*
 			*  @return the level info data structure
 			*/
-			ufmt_loader::LevelInfo GetLevelInfo() const { return *mLevelInfo; }
+			ufmt_loader::LevelInfo* GetLevelInfo() const { return mLevelInfo; }
 
 			/** @brief fbx loader get animation info function
 			*
@@ -420,7 +422,7 @@ namespace ursine
 			*
 			*  @return the animation info data structure
 			*/
-			ufmt_loader::AnimInfo GetAnimInfo() const { return *mAnimInfo; }
+			ufmt_loader::AnimInfo* GetAnimInfo() const { return mAnimInfo; }
 
 		private:
 			unsigned int			boneindex;
