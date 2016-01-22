@@ -45,7 +45,7 @@ namespace ursine
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
 					char tmp_name[MAXTEXTLEN];
-					ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
 					name = tmp_name;
 					ReadFile(hFile, &mParentIndex, sizeof(int), &nBytesRead, nullptr);
 					ReadFile(hFile, &bindPosition, sizeof(pseudodx::XMFLOAT3), &nBytesRead, nullptr);

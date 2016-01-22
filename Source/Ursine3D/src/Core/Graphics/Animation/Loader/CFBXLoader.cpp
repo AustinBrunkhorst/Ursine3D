@@ -24,7 +24,7 @@ namespace ursine
 	{
 		CFBXLoader::CFBXLoader() :
 			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr),
-			mModelInfo(nullptr), mLevelInfo(nullptr), mAnimInfo(nullptr),
+			mModelInfo(nullptr), mAnimInfo(nullptr),
 			mConverter(nullptr)
 		{
 		}
@@ -45,13 +45,6 @@ namespace ursine
 				mAnimInfo->ReleaseData();
 				delete mAnimInfo;
 				mAnimInfo = nullptr;
-			}
-
-			if (mLevelInfo)
-			{
-				mLevelInfo->ReleaseData();
-				delete mLevelInfo;
-				mLevelInfo = nullptr;
 			}
 
 			if (mModelInfo)
@@ -201,7 +194,7 @@ namespace ursine
 			if (nullptr == mModelInfo)
 			{
 				mModelInfo = new ufmt_loader::ModelInfo;
-				mModelInfo->name = mModel->name.c_str();
+				mModelInfo->name = mModel->name;
 				mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
 				for (i = 0; i < mModelInfo->mmeshCount; ++i)
 				{
@@ -233,13 +226,13 @@ namespace ursine
 				{
 					//ambi
 					j = 0;
-					newMtrlInfo.name = mModel->mMaterials[i]->name.c_str();
+					newMtrlInfo.name = mModel->mMaterials[i]->name;
 					newMtrlInfo.ambitype = mModel->mMaterials[i]->ambient.type;
 					newMtrlInfo.ambi_mcolor = mModel->mMaterials[i]->ambient.color;
 					newMtrlInfo.ambi_mapCount = mModel->mMaterials[i]->ambient.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->ambient.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
-						newMtrlInfo.ambi_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.ambi_texNames.push_back(iter1->second[j]);
 
 					//diff
 					j = 0;
@@ -248,7 +241,7 @@ namespace ursine
 					newMtrlInfo.diff_mapCount = mModel->mMaterials[i]->diffuse.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
-						newMtrlInfo.diff_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.diff_texNames.push_back(iter1->second[j]);
 
 					//emit
 					j = 0;
@@ -257,7 +250,7 @@ namespace ursine
 					newMtrlInfo.emis_mapCount = mModel->mMaterials[i]->emissive.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
-						newMtrlInfo.emis_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.emis_texNames.push_back(iter1->second[j]);
 					
 					//spec
 					j = 0;
@@ -266,7 +259,7 @@ namespace ursine
 					newMtrlInfo.spec_mapCount = mModel->mMaterials[i]->specular.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
-						newMtrlInfo.spec_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.spec_texNames.push_back(iter1->second[j]);
 
 					newMtrlInfo.shineness = mModel->mMaterials[i]->shineness;
 					newMtrlInfo.TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
@@ -281,7 +274,7 @@ namespace ursine
 				for (i = 0; i < mModelInfo->mboneCount; ++i)
 				{
 					// skin info will use model's name
-					newBoneInfo.name = mModel->mBoneData.mbonehierarchy[i].mName.c_str();
+					newBoneInfo.name = mModel->mBoneData.mbonehierarchy[i].mName;
 					newBoneInfo.mParentIndex = mModel->mBoneData.mbonehierarchy[i].mParentIndex;
 					newBoneInfo.bindPosition = mModel->mBoneData.mbonehierarchy[i].bindPosition;
 					newBoneInfo.bindRotation = mModel->mBoneData.mbonehierarchy[i].bindRotation;
@@ -293,35 +286,26 @@ namespace ursine
 					// push back into the vector
 					mModelInfo->mBoneInfoVec.push_back(newBoneInfo);
 				}
-			}
 
-			///////////////////////////////////////////////////////////////
-			// Level Info
-			///////////////////////////////////////////////////////////////
-			// mesh lvl
-			if (nullptr == mLevelInfo)
-			{
-				mLevelInfo = new ufmt_loader::LevelInfo;
-				mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
-				mLevelInfo->name = mModelInfo->name;
-				for (i = 0; i < mLevelInfo->mmeshlvlCount; ++i)
+				// level data
+				// mesh lvl
+				mModelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
+				for (i = 0; i < mModelInfo->mmeshlvlCount; ++i)
 				{
 					ufmt_loader::MeshInLvl newMLvl;
-					newMLvl.name = mModelInfo->mMeshInfoVec[i].name;
 					newMLvl.meshTM = mModel->mMeshData[i]->meshTM;
 					newMLvl.mParentIndex = mModel->mMeshData[i]->parentIndex;
-					mLevelInfo->mMeshLvVec.push_back(newMLvl);
+					mModelInfo->mMeshLvVec.push_back(newMLvl);
 				}
 				// rig lvl
-				mLevelInfo->mriglvlCount = mModelInfo->mboneCount;
-				for (i = 0; i < mLevelInfo->mriglvlCount; ++i)
+				mModelInfo->mriglvlCount = mModelInfo->mboneCount;
+				for (i = 0; i < mModelInfo->mriglvlCount; ++i)
 				{
 					ufmt_loader::RigInLvl newRLvl;
-					newRLvl.name = mModelInfo->mBoneInfoVec[i].name;
 					newRLvl.mParentIndex = mModelInfo->mBoneInfoVec[i].mParentIndex;
-					mLevelInfo->mRigLvVec.push_back(newRLvl);
+					mModelInfo->mRigLvVec.push_back(newRLvl);
 				}
-			}				
+			}		
 
 			///////////////////////////////////////////////////////////////
 			// Anim Info
@@ -331,7 +315,7 @@ namespace ursine
 			{
 				mAnimInfo = new ufmt_loader::AnimInfo;
 
-				mAnimInfo->name = mModel->name.c_str();
+				mAnimInfo->name = mModel->name;
 				mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
 				for (unsigned int i = 0; i < mAnimInfo->animCount; ++i)
 				{
@@ -347,7 +331,7 @@ namespace ursine
 					iter2 != mModel->mAnimationData[i]->animations.end(); ++iter2, ++j)
 					{
 						// storing animation clip's name
-						newAD.clipname = iter2->first.c_str();
+						newAD.clipname = iter2->first;
 
 						// set keycount / keyframes
 						newAD.boneCount = static_cast<unsigned int>(iter2->second.boneAnim.size());
@@ -389,7 +373,7 @@ namespace ursine
 		
 		bool CFBXLoader::CustomFileExport()
 		{
-			if (nullptr == mModelInfo || nullptr == mLevelInfo || nullptr == mAnimInfo)
+			if (nullptr == mModelInfo || nullptr == mAnimInfo)
 				return false;
 
 			// set name for the custom file format and store it into Output folder
@@ -409,16 +393,6 @@ namespace ursine
 				if (!mModelInfo->SerializeOut(hFile))
 				{
 					MessageBox(nullptr, "Jdl Export Failed!", "", MB_OK);
-					return false;
-				}
-				CloseHandle(hFile);
-			}
-			if (mLevelInfo)
-			{
-				hFile = CreateFile(jlvlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-				if (!mLevelInfo->SerializeOut(hFile))
-				{
-					MessageBox(nullptr, "Jlvl Export Failed!", "", MB_OK);
 					return false;
 				}
 				CloseHandle(hFile);

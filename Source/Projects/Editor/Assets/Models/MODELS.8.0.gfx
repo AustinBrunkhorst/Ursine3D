@@ -13,15 +13,14 @@ HalfSphere.8.0.mdl HalfSphere
 CapsuleBody.8.0.mdl CapsuleBody
 Plane.8.0.mdl Plane
 cone_8.8.0.mdl Cone
-Sprite.8.0.mdl Sprite
 cone_12.8.0.mdl lightCone
+Sprite.8.0.mdl Sprite
 #cone_16.8.0.mdl Cone
 character.8.0.mdl Character
 torus2.8.0.mdl Ring
 #
-romekolezyum.fbx remeko
 # Player Animations
-#Player_Idle.jdl Player
+Player_Idle.jdl Player
 #Player_Idle.jani Player
 
 # Gun Animations
