@@ -25,13 +25,19 @@ public:
         int TeamNumber,
         GetTeamNumber,
         SetTeamNumber
-        );
+    );
 
     EditorField(
         int RoundSpawnNumber,
         GetRoundSpawnNumber,
         SetRoundSpawnNumber
-        );
+    );
+
+	EditorField(
+		float yRotationDegrees,
+		GetYRotationDegrees,
+		SetYRotationDegrees
+	);
 
     Spawnpoint(void);
 
@@ -41,9 +47,14 @@ public:
     int GetRoundSpawnNumber(void) const;
     void SetRoundSpawnNumber(int spawnNo);
 
+	float GetYRotationDegrees(void) const;
+	void SetYRotationDegrees(float degrees);
+
 private:
     int m_teamNumber;
 
     int m_roundSpawnNumber;
+
+	float m_yRotationDegrees;
     
 } Meta(Enable, DisplayName("Spawnpoint"));
