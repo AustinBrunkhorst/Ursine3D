@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EditorCameraSystem.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "EditorCameraSystem.h"
@@ -47,12 +60,12 @@ void EditorCameraSystem::SetMouseFocus(bool focus)
     m_hasMouseFocus = focus;
 }
 
-graphics::Camera *EditorCameraSystem::GetEditorCamera(void)
+ecs::Camera *EditorCameraSystem::GetEditorCamera(void)
 {
     if (!m_cameraEntity)
         return nullptr;
 
-    return m_cameraEntity->GetComponent<ecs::Camera>( )->GetCamera( );
+    return m_cameraEntity->GetComponent<ecs::Camera>( );
 }
 
 ursine::ecs::Entity* EditorCameraSystem::GetEditorCameraEntity()
@@ -68,7 +81,7 @@ void EditorCameraSystem::OnInitialize(void)
         .On( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
 
     m_world->Listener( this )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+        .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::OnAfterLoad(void)
@@ -81,20 +94,20 @@ void EditorCameraSystem::OnAfterLoad(void)
     m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
 
     m_cameraEntity->EnableDeletion( false );
+	m_cameraEntity->EnableSerialization( false );
 
-    auto *component = m_cameraEntity->AddComponent<ecs::Camera>( );
+    m_camera = m_cameraEntity->AddComponent<ecs::Camera>( );
 
-    m_camera = component->GetCamera( );
 
-    m_camera->SetPosition( 0.0f, 0.0f );
-    m_camera->SetPosition( Vec3( -50, 50, -50 ) );
-    m_camera->SetRenderMode( graphics::VIEWPORT_RENDER_DEFERRED );
-    m_camera->SetDimensions( 1.0f, 1.0f );
-    m_camera->SetPlanes( 0.1f, 700.0f );
+    m_camera->SetViewportPosition( Vec2::Zero( ) );
+    m_cameraEntity->GetTransform( )->SetWorldPosition( Vec3( -50, 50, -50 ) );
+    m_camera->SetViewportSize( Vec2::One( ) );
+    m_camera->SetNearPlane( 0.1f );
+    m_camera->SetFarPlane( 2500.0f );
     m_camera->SetFOV( 45.f );
 
     m_camZoom = SVec3( -50, 50, 50 ).Length( );
-    m_camera->LookAtPoint( { 0.0f, 0.0f, 0.0f } );
+    m_cameraEntity->GetTransform( )->LookAt( { 0.0f, 0.0f, 0.0f } );
 }
 
 void EditorCameraSystem::OnRemove(void)
@@ -105,7 +118,7 @@ void EditorCameraSystem::OnRemove(void)
         .Off( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
 
     m_world->Listener( this )
-        .Off( ecs::WorldEventType::WORLD_UPDATE, &EditorCameraSystem::onUpdate );
+        .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
 void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
@@ -131,14 +144,14 @@ void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
     }
 
     // our position always needs to be relative to the center position
-    auto look = m_camera->GetLook( );
+    auto look = m_cameraEntity->GetTransform( )->GetForward( );
 
     // normalize look and scale by zoom
     look.Normalize( );
     look = look * m_camZoom;
 
     // negate the vector, opposite of look is going away from center
-    m_camera->SetPosition( m_camPos - look );
+    m_cameraEntity->GetTransform( )->SetWorldPosition( m_camPos - look );
 }
 
 void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
@@ -149,7 +162,7 @@ void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
     if (!m_hasFocus)
         return;
 
-    m_camZoom -= args->delta.Y( );
+    m_camZoom -= args->delta.Y( ) * 15.0f;
 
     if (m_camZoom < 1)
         m_camZoom = 1.0f;
@@ -159,7 +172,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
 {
     auto *keyboardMgr = GetCoreSystem(KeyboardManager);
 
-    float speed = 3;
+    float speed = 15;
 
     // focus with f
     if (keyboardMgr->IsTriggeredDown( KEY_F ))
@@ -216,12 +229,12 @@ void EditorCameraSystem::updateCameraKeys(float dt)
 
         if (keyboardMgr->IsDown( KEY_A ))
         {
-            dir += right;
+            dir -= right;
         }
 
         if (keyboardMgr->IsDown( KEY_D ))
         {
-            dir -= right;
+            dir += right;
         }
 
         if (keyboardMgr->IsDown( KEY_E ))
@@ -255,7 +268,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     auto *mouseMgr = GetCoreSystem( MouseManager );
 
     //get the camera
-    graphics::Camera &cam = *m_camera;
+    auto &cam = *m_camera;
 
     auto look = cam.GetLook( );
     auto up = cam.GetUp( );
@@ -267,9 +280,6 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     {
         auto mouseDelta = mouseMgr->GetPositionDelta( );
         auto camTransform = cam.GetViewMatrix( );
-
-        //we need to limit the up delta so that we can't wrap if we are at the very top/bottom
-        mouseDelta /= 2.f;
 
         if (mouseDelta.Length( ) > 0)
         {
@@ -283,7 +293,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
             look = sideRotation.Rotate( look );
             look = upRotation.Rotate( look );
 
-            cam.SetLook( look );
+            cam.SetLook( m_camPos + look * m_camZoom );
         }
     }
 
@@ -295,13 +305,11 @@ void EditorCameraSystem::updateCameraMouse(float dt)
 
         if (mouseDelta.Length( ) > 0)
         {
-            float width, height;
+            auto size = cam.GetViewportSize( );
 
-            cam.GetDimensions( width, height );
+            m_camPos += right * mouseDelta.X( ) * dt * size.X( ) * 2;
 
-            m_camPos += right * -mouseDelta.X( ) * dt * width;
-
-            m_camPos += up * -mouseDelta.Y( ) * dt * height;
+            m_camPos -= up * mouseDelta.Y( ) * dt * size.Y( ) * 2;
         }
     }
 
@@ -313,7 +321,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
 
         if (mouseDelta.Length( ) > 0)
         {
-            m_camZoom += -mouseDelta.Y( ) * dt;
+            m_camZoom += -mouseDelta.Y( ) * 15.0f * dt;
 
             if (m_camZoom < 1)
             {

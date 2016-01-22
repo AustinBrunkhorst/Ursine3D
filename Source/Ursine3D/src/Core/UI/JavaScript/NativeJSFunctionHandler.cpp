@@ -1,8 +1,23 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** NativeJSFunctionHandler.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "NativeJSFunctionHandler.h"
 
 #include "NativeJSFunction.h"
+
+#include <boost/regex.hpp>
 
 namespace ursine 
 {
@@ -18,7 +33,12 @@ namespace ursine
             if (!function.GetMeta( ).GetProperty( exposeProperty ).IsValid( ))
                 continue;
 
-            auto &name = function.GetName( );
+            // replace namespace qualifiers with underscores
+            auto name = boost::regex_replace(
+                function.GetName( ), 
+                boost::regex( "::" ), 
+                "_" 
+            );
 
             m_functions.emplace( name, function );
 

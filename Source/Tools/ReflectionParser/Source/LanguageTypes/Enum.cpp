@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Enum.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Enum.h"
@@ -28,7 +41,13 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     for (auto &child : cursor.GetChildren( ))
     {
         if (child.GetKind( ) == CXCursor_EnumConstantDecl)
-            m_values.emplace_back( this, child );
+        {
+            MetaDataManager valueMeta( child );
+
+            // don't add disabled values
+            if (!valueMeta.GetFlag( native_property::Disable ))
+                m_values.emplace_back( this, child );
+        }
     }
 }
 

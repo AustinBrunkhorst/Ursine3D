@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxDefines.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -37,10 +50,10 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define MAX_CAMERAS             32
 
 //max points/lines
-#define MAX_DRAW_OBJ            800192
+#define MAX_DRAW_OBJ            800019
 
 //max renderables of each type
-#define MAX_RENDERABLES         2048
+#define MAX_RENDERABLES         512
 
 //max draw calls for a single scene
 #define MAX_DRAW_CALLS          2048

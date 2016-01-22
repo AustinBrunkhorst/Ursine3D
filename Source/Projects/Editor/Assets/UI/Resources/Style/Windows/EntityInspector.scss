@@ -1,5 +1,39 @@
+@import '../Config';
+@import '../Utils';
+@import '../Icons';
+
 .entity-inspector-window {
-  .btn-add-component {
+  .header-toolbar {
+    margin: 5px 2px;
+    text-align: center;
+
+    > button {
+      display: inline-block;
+      padding: 0;
+      width: 28px;
+      height: 28px;
+      text-align: center;
+      line-height: 20px;
+      vertical-align: middle;
+      border: 1px solid #3f3f46;
+      transition: color $duration-transition-btn ease, border-color $duration-transition-btn ease;
+
+      &:hover {
+        color: $color-accent;
+        border-color: $color-accent;
+      }
+
+      &.save-archetype {
+        @include icon-half( $icon-half-floppy-save, 16px );
+      }
+
+      &.copy-entity {
+        @include icon-half( $icon-half-copy, 16px );
+      }
+    }
+  }
+
+  .add-component {
     display: block;
     width: 100%;
     margin: 2px 0;

@@ -9,6 +9,10 @@ class Extern {
         return untyped __js__( "CreateEntity()" );
     }
 
+    public static function CreateEntityFromArchetype() {
+        return untyped __js__( "CreateEntityFromArchetype()" );
+    }
+
     public static function GetNativeComponentDatabase() {
         return untyped __js__( "GetNativeComponentDatabase()" );
     }
@@ -29,4 +33,19 @@ class Extern {
         return untyped __js__( "SceneSave()" );
     }
 
+    public static function ScenePlay(playing : Bool) {
+        return untyped __js__( "ScenePlay(playing)" );
+    }
+
+    public static function SceneStep() {
+        return untyped __js__( "SceneStep()" );
+    }
+
+    public static function NotificationButtonCallback(id : UInt, buttonID : UInt) {
+        return untyped __js__( "ursine_NotificationButtonCallback(id, buttonID)" );
+    }
+
+    public static function NotificationCloseCallback(id : UInt) {
+        return untyped __js__( "ursine_NotificationCloseCallback(id)" );
+    }
 }

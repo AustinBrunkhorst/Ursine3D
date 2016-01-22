@@ -8,6 +8,7 @@
             <div id="btnRemove"></div>
         </header>
         <div id="container">
+            <div id="buttons"></div>
             <content></content>
             <div id="fieldInspectors"></div>
         </div>
@@ -38,6 +39,9 @@
             },
             get container() {
                 return this.$.container;
+            },
+            get buttons() {
+                return this.$.buttons;
             },
             get fieldInspectors() {
                 return this.$.fieldInspectors;

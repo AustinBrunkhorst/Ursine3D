@@ -11,27 +11,27 @@
 // possible loss of data
 #pragma warning(disable : 4244)
 
-#define DEFAULT_TYPE_HANDLER_IMPL(typeName)                                         \
-    template<typename T>                                                            \
-    template<typename U = T>                                                        \
-    typeName VariantContainer<T>::get##typeName(                                    \
-        typename std::enable_if<                                                    \
-            !std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value \
-        >::type* = nullptr                                                          \
-        ) const                                                                     \
-    {                                                                               \
-        return typeName( );                                                         \
-    }                                                                               \
-    template<typename T>                                                            \
-    template<typename U = T>                                                        \
-    typeName VariantContainer<T>::get##typeName(                                    \
-        typename std::enable_if<                                                    \
-            std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value  \
-        >::type* = nullptr                                                          \
-    ) const                                                                         \
-    {                                                                               \
-        return static_cast<typeName>( m_value );                                    \
-    }                                                                               \
+#define DEFAULT_TYPE_HANDLER_IMPL(typeName)                                                      \
+    template<typename T>                                                                         \
+    template<typename U = T>                                                                     \
+    typeName VariantContainer<T>::get##typeName(                                                 \
+        typename std::enable_if<                                                                 \
+            !std::is_convertible<typename meta_traits::TypeOrEnumType<U>::type, typeName>::value \
+        >::type* = nullptr                                                                       \
+        ) const                                                                                  \
+    {                                                                                            \
+        return typeName( );                                                                      \
+    }                                                                                            \
+    template<typename T>                                                                         \
+    template<typename U = T>                                                                     \
+    typeName VariantContainer<T>::get##typeName(                                                 \
+        typename std::enable_if<                                                                 \
+            std::is_convertible<typename meta_traits::TypeOrEnumType<U>::type, typeName>::value  \
+        >::type* = nullptr                                                                       \
+    ) const                                                                                      \
+    {                                                                                            \
+        return static_cast<typeName>( m_value );                                                 \
+    }                                                                                            \
 
 namespace ursine
 {

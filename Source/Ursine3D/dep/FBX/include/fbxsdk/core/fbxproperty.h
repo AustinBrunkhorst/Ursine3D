@@ -1,6 +1,6 @@
 /****************************************************************************************
  
-   Copyright (C) 2014 Autodesk, Inc.
+   Copyright (C) 2015 Autodesk, Inc.
    All rights reserved.
  
    Use of this software is subject to the terms of the Autodesk license agreement
@@ -408,8 +408,10 @@ public:
 	//@{
 		/** Adds a string value at the end of the enumeration list.
 		  * \param pStringValue The string value to be added.
-		  * \return The index in the list where the string is added.
-		  * \remarks This function is only valid if the property type is eFbxEnum.
+		  * \return The index in the list where the string is added or -1 if the action failed.
+		  * \remarks This function is only valid if the property type is eFbxEnum or eFbxEnumM.
+		  * \remarks If the property is of type eFbxEnum, trying to add a value that is already
+          * in the enumeration list will fail. 
 		  * Empty strings are not allowed.
 		  */
 		int AddEnumValue(const char* pStringValue);
@@ -417,7 +419,9 @@ public:
 		/** Inserts a string value at the specific index.
 		  * \param pIndex Zero bound index.
 		  * \param pStringValue The string value to be inserted.
-		  * \remarks This function is only valid if the property type is eFbxEnum.
+		  * \remarks This function is only valid if the property type is eFbxEnum or eFbxEnumM.
+		  * \remarks If the property is of type eFbxEnum, trying to insert a value that is already
+          * in the enumeration list will fail. 
 		  * pIndex must be in the range [0, ListValueGetCount()].
 		  * Empty strings are not allowed.
 		  */
@@ -425,14 +429,16 @@ public:
 
 		/** Returns the number of elements in the enumeration list.
 		  * \return The number of elements in the enumeration list.
-		  * \remarks This function returns 0 if the property type is not eFbxEnum.
+		  * \remarks This function returns 0 if the property type is not eFbxEnum or eFbxEnumM.
 		  */
 		int GetEnumCount() const;
 
 		/** Sets a string value at the specific index.
 		  * \param pIndex Zero bound index.
 		  * \param pStringValue The string value at the specific index.
-		  * \remarks This function is only valid if the property type is eFbxEnum.
+		  * \remarks This function is only valid if the property type is eFbxEnum or eFbxEnumM.
+		  * \remarks If the property is of type eFbxEnum, trying to set a value that is already
+          * in the enumeration list will fail. 
 		  * The function assigns the string value to the specific index.
 		  * A string value must exist at the specific index in order to be changed.
 		  * Empty strings are not allowed.
@@ -441,13 +447,13 @@ public:
 
 		/** Removes the string value at the specified index.
 		  * \param pIndex Index of the string value to be removed.
-		  * \remarks This function is only valid if the property type is eFbxEnum.
+		  * \remarks This function is only valid if the property type is eFbxEnum or eFbxEnuM.
 		  */
 		void RemoveEnumValue(int pIndex);
 
 		/** Returns a string value at the specified index
 		  * \param pIndex Zero bound index.
-		  * \remarks This function is only valid if the property type is eFbxEnum.
+		  * \remarks This function is only valid if the property type is eFbxEnum or eFbxEnumM.
 		  */
 		const char* GetEnumValue(int pIndex) const;
 	//@}
@@ -477,12 +483,6 @@ public:
 		  * \return The parent of this property.
 		  */
 		inline FbxProperty GetParent() const { return FbxProperty(mPropertyHandle.GetParent());  }
-
-		/** Sets the parent for this property (this function has not been implemented, so it always return \c false).
-		  * \param pOther The parent to be set.
-		  * \return \c True on success, \c false otherwise.
-		  */
-		FBX_DEPRECATED bool SetParent(const FbxProperty& pOther);
 
 		/** Returns the first child of this property.
 		  * \return The first child of this property, if there is none, an invalid property is returned.
@@ -566,32 +566,6 @@ public:
 			FbxProperty& mProp;
 			FbxPropertyNameCache& operator=(const FbxPropertyNameCache& pOther){ mProp = pOther.mProp; mProp.BeginCreateOrFindProperty(); return *this; }
 		};
-	//@}
-
-	/**
-	  * \name Array Management
-	  */
-	//@{
-		/** Sets the array size(not implemented).
-		  * \param pSize
-		  * \param pVariableArray
-		  */
-		FBX_DEPRECATED bool	SetArraySize( int pSize, bool pVariableArray );
-
-		//! Returns the array size(not implemented).
-		FBX_DEPRECATED int		GetArraySize() const;
-
-		/** Returns the (pIndex)th array item.
-		  * \param pIndex The item index.
-		  * \return The (pIndex)th array item.
-		  */
-		FBX_DEPRECATED FbxProperty GetArrayItem(int pIndex) const;
-
-		/** Returns the (pIndex)th array item.
-		  * \param pIndex The item index.
-		  * \return The (pIndex)th array item.
-		  */
-		FBX_DEPRECATED inline FbxProperty operator[](int /*pIndex*/) const { return FbxProperty(); }
 	//@}
 
 	/**

@@ -20,8 +20,13 @@ namespace ursine
 {
     namespace ecs
     {
-        FilterSystem::FilterSystem(World *world, const Filter &filter)
+        FilterSystem::FilterSystem(
+                World *world, 
+                const Filter &filter, 
+                EventHandlerPriority updatePriority
+            )
             : EntitySystem( world )
+            , m_updatePriority( updatePriority )
             , m_filter( filter ) { }
 
         void FilterSystem::onComponentChange(EVENT_HANDLER(World))
@@ -33,7 +38,7 @@ namespace ursine
             auto contains = utils::IsFlagSet( GetTypeMask( ), entity->m_systemMask );
             auto interests = m_filter.Matches( entity );
             auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
-
+				
             if (interests && !contains && !removed)
             {
                 Add( entity );
@@ -69,7 +74,7 @@ namespace ursine
             Begin( );
 
             for (auto &entity : m_active)
-                Process( entity.second );
+				Process( entity.second );
 
             End( );
         }
@@ -111,13 +116,13 @@ namespace ursine
             m_active.erase( uniqueID );
         }
 
-        void FilterSystem::OnInitialize(void)
+        void FilterSystem::OnInitialize(WorldEventType updateType)
         {
             m_world->Listener( this )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .On( WORLD_UPDATE, &FilterSystem::onUpdate );
+                .On( updateType, &FilterSystem::onUpdate, m_updatePriority );
         }
 
         void FilterSystem::OnRemove(void)

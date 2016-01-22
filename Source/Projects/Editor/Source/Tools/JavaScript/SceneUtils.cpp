@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** SceneUtils.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "SceneUtils.h"
@@ -6,18 +19,19 @@
 #include "Project.h"
 
 #include <WorldSerializer.h>
-#include <UIFileDialogCallback.h>
+#include <Timer.h>
 
-#include <SDL_messagebox.h>
+#include <FileSystem.h>
+#include <UIFileDialogCallback.h>
 
 using namespace ursine;
 
 namespace
 {
-    typedef std::vector<fs::path> FileList;
+    void doLoadScene(int selectedFilter, const fs::FileList &files);
+    void doSaveScene(int selectedFilter, const fs::FileList &files);
 
-    void doLoadScene(int selectedFilter, const FileList &files);
-    void doSaveScene(int selectedFilter, const FileList &files);
+    void doOpenErrorLog(Notification &notification);
 }
 
 JSFunction(SceneGetRootEntities)
@@ -58,7 +72,6 @@ JSFunction(SceneGetActiveEntities)
     return ids;
 }
 
-Meta(Enable, ExposeJavaScript)
 JSFunction(SceneLoad)
 {
     auto *editor = GetCoreSystem( Editor );
@@ -82,7 +95,6 @@ JSFunction(SceneLoad)
     return CefV8Value::CreateUndefined( );
 }
 
-Meta(Enable, ExposeJavaScript)
 JSFunction(SceneSave)
 {
     auto *editor = GetCoreSystem( Editor );
@@ -106,41 +118,72 @@ JSFunction(SceneSave)
     return CefV8Value::CreateUndefined( );
 }
 
+JSFunction(ScenePlay)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto playing = arguments[ 0 ]->GetBoolValue( );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->GetScene( )->SetPaused( !playing );
+
+    return CefV8Value::CreateUndefined( );
+}
+
+JSFunction(SceneStep)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->GetScene( )->Step( );
+
+    return CefV8Value::CreateUndefined( );
+}
+
 namespace
 {
-    void doLoadScene(int selectedFilter, const FileList &files)
+    void doLoadScene(int selectedFilter, const fs::FileList &files)
     {
         if (files.empty( ))
             return;
 
         auto *editor = GetCoreSystem( Editor );
 
-        ecs::WorldSerializer serializer;
-        ecs::World::Handle world;
+        auto file = files[ 0 ].string( );
 
         try
         {
-            world = serializer.Deserialize( files[ 0 ].string( ) );
+			Timer::Create(0).Completed( [=] {
+				ecs::WorldSerializer serializer;
+				auto world = serializer.Deserialize( file );
+
+				editor->GetProject( )->SetWorld( world );
+			} );
         }
         catch (const ecs::SerializationException &e)
         {
-            UWarning( "World deserialization failure.\n%s",
+            UWarning( "World deserialization failure.\nfile: %s\n\n%s",
+                file.c_str( ),
                 e.GetError( ).c_str( ) 
             );
 
-            URSINE_TODO( "Use UI error popup" );
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_ERROR,
-                "Load Error",
-                "Unable to load world.",
-                editor->GetMainWindow( )->GetInternalHandle( )
-            );
-        }
+            NotificationConfig error;
 
-        editor->GetProject( )->SetWorld( world );
+            error.type = NOTIFY_ERROR;
+            error.header = "Load Error";
+            error.message = "Unable to load world.";
+            
+            error.buttons = 
+            {
+                { "Open Error Log", doOpenErrorLog }
+            };
+
+            editor->PostNotification( error );
+        }
     }
 
-    void doSaveScene(int selectedFilter, const FileList &files)
+    void doSaveScene(int selectedFilter, const fs::FileList &files)
     {
         if (files.empty( ))
             return;
@@ -156,13 +199,27 @@ namespace
 
         if (!fs::WriteText( path.string( ), serialized.dump( ) ))
         {
-            URSINE_TODO( "Use UI error popup" );
-            SDL_ShowSimpleMessageBox(
-                SDL_MESSAGEBOX_ERROR,
-                "Save Error",
-                "Unable to save world.",
-                editor->GetMainWindow( )->GetInternalHandle( )
+            UWarning( "Could not write to world file.\nfile: %s",
+                path.string( ).c_str( )
             );
+
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Save Error";
+            error.message = "Unable to save world.";
+
+            error.buttons =
+            {
+                { "Open Error Log", doOpenErrorLog }
+            };
+
+            editor->PostNotification( error );
         }
+    }
+
+    void doOpenErrorLog(Notification &notification)
+    {
+        utils::OpenPath( URSINE_ERROR_LOG_FILE );
     }
 }

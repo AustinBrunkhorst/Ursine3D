@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ListenerComponent.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "ListenerComponent.h"
@@ -10,7 +23,7 @@ namespace ursine
 
 		AudioListener::AudioListener()
 			: BaseComponent()
-			, m_listenerIndex(LISTENER_NONE)
+			, m_listenerIndex( ListenerIndex::None )
 		{ }
 
 		void AudioListener::SetListenerIndex(ListenerIndex index)

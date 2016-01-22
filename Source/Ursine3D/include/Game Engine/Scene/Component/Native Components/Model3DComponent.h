@@ -1,9 +1,23 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Model3DComponent.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Component.h"
 #include "Renderable.h"
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
+#include "ModelResource.h"
 
 namespace ursine
 {
@@ -16,6 +30,21 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+            EditorButton(
+                GenerateConvexHull, 
+                "Generate Convex Hull"
+            );
+			
+			EditorButton(
+				GenerateBvhTriangleMeshCollider,
+				"Generate BVH Triangle Mesh Collider"
+			);
+
+			EditorButton(
+				GenerateConvexDecompCollider,
+				"Generate Convex Decomposition Collider"
+			);
+
             EditorField(
                 Color color,
                 GetColor,
@@ -24,8 +53,8 @@ namespace ursine
 
             EditorField(
                 std::string modelName,
-                GetModel,
-                SetModel
+                GetModelResourceName,
+                SetModelResourceName
             );
 
             EditorField(
@@ -49,9 +78,13 @@ namespace ursine
             Meta(Disable)
             std::vector<SMat4> &GetMatrixPalette( void );
 
-            //get/set model
-            void SetModel(const std::string &name);
-            const std::string &GetModel(void) const;
+            //get/set model name
+            void SetModelResourceName(const std::string &name);
+            const std::string &GetModelResourceName(void) const;
+
+            // get the model resource to access the mesh
+            Meta(Disable)
+            const graphics::ModelResource *GetModelResource(void) const;
             
             void SetMaterial(const std::string &name);
             const std::string &GetMaterial(void) const;
@@ -73,7 +106,14 @@ namespace ursine
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+            void SetMeshIndex(const int index);
+			int GetMeshIndex(void) const;
 
+			Meta(Disable)
+			void OnSerialize(Json::object &output) const override;
+
+			Meta(Disable)
+			void OnDeserialize(const Json &input) override;
 
         private:
 

@@ -24,6 +24,7 @@ class SceneOutline extends WindowHandler {
         super( );
 
         window.heading = "Outline";
+        window.classList.add( 'scene-outline-window' );
 
         m_rootView = new TreeView( );
         {
@@ -60,6 +61,23 @@ class SceneOutline extends WindowHandler {
                 continue;
 
             untyped item.entity.deselect( );
+        }
+    }
+
+    public function deleteSelectedEntities() {
+        for (uid in m_selectedEntities) {
+            var item = m_entityItems[ uid ];
+
+            if (item == null)
+                continue;
+
+            var entity : Entity = untyped item.entity;
+
+            if (entity.isRemovalEnabled( )) {
+                entity.remove( );
+            } else {
+                // TODO: add removal warning
+            }
         }
     }
 
@@ -101,7 +119,10 @@ class SceneOutline extends WindowHandler {
     private function onEntityAdded(e) {
         var entity = new Entity( e.uniqueID );
 
-        addEntity( entity );
+        // race conditions...
+        haxe.Timer.delay( function() {
+            addEntity( entity );
+        }, 0 );
     }
 
     private function onEntityRemoved(e) {
@@ -115,6 +136,8 @@ class SceneOutline extends WindowHandler {
             selectEntity( null );
 
         item.parentNode.removeChild( item );
+
+        m_entityItems.remove( e.uniqueID );
     }
 
     private function onEntityNameChanged(e) {
@@ -132,16 +155,32 @@ class SceneOutline extends WindowHandler {
         if (item == null)
             return;
 
+        var entity : Entity = untyped item.entity;
+
         if (item.parentNode != null)
             item.parentNode.removeChild( item );
 
+        var targetContainer : HtmlElement = null;
+
         if (e.newParent == null) {
-            m_rootView.appendChild( item );
+            targetContainer = cast m_rootView;
         } else {
             var newItem : TreeViewItem = m_entityItems[ e.newParent ];
 
             if (newItem != null)
-                newItem.child.appendChild( item );
+                targetContainer = cast newItem.child;
+        }
+
+        if (targetContainer != null) {
+            var children = targetContainer.children;
+
+            if (children.length == 0) {
+                targetContainer.appendChild( item );
+            } else {
+                var index = untyped Math.clamp( entity.getSiblingIndex( ), 0, children.length - 1 );
+
+                targetContainer.insertBefore( item, children[ index ] );
+            }
         }
     }
 
@@ -164,66 +203,91 @@ class SceneOutline extends WindowHandler {
     }
 
     private function addEntity(entity : Entity) {
-        if (!entity.isVisibleInEditor( )) {
-            m_entityItems[ entity.uniqueID ] = null;
+        var item = createEntityItem( entity );
+
+        if (!entity.isVisibleInEditor( ))
+            item.classList.add( 'hidden' );
+
+        var parent = entity.getParent( );
+
+        if (parent == null) {
+            m_rootView.appendChild( item );
         } else {
-            var item = createEntityItem( entity );
 
-            var parent = entity.getParent( );
+            var parentItem : TreeViewItem = m_entityItems[ parent.uniqueID ];
 
-            if (parent == null) {
-                m_rootView.appendChild( item );
-            } else {
-                var parentItem : TreeViewItem = m_entityItems[ parent.uniqueID ];
-
-                if (parentItem != null)
-                    parentItem.child.appendChild( item );
-            }
-
-            if (entity.hasComponent( 'Selected' ))
-                selectEntity( item );
+            if (parentItem != null)
+                parentItem.child.appendChild( item );
         }
+
+        if (entity.hasComponent( 'Selected' ))
+            selectEntity( item );
     }
 
     private function createEntityItem(entity : Entity) : TreeViewItem {
         var item = new TreeViewItem( );
 
         item.addEventListener( 'drag-start', function(e) {
-            return entity.isHierarchyChangeEnabled( );
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
+
+            e.preventStart = !entity.isHierarchyChangeEnabled( );
         } );
 
         item.addEventListener( 'drag-drop', function(e) {
-            untyped item.entity.setParent( untyped e.detail.dropTarget.entity );
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
 
-            // handle manipulation explicitly for new parents
-            if (e.detail.newParent == true) {
-                return false;
-            } else {
-                return true;
+            if (!entity.isHierarchyChangeEnabled( )) {
+                e.preventDrop = true;
+
+                return;
             }
+
+            var target : Entity = e.detail.dropTarget.entity;
+
+            var parent = entity.getParent( );
+
+            var targetID = target == null ? -1 : target.uniqueID;
+            var parentID = parent == null ? -1 : parent.uniqueID;
+
+            // disable dropping onto the same entity
+            if (targetID == parentID) {
+                e.preventDrop = e.detail.newParent;
+
+                return;
+            }
+
+            // default case
+            entity.setParent( target );
         } );
 
-        item.textElement.addEventListener( 'dblclick', function() {
-            /*item.textElement.contentEditable = 'true';
+        item.addEventListener( 'drag-drop-after', function(e) {
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
+
+            var childIndex = untyped ElementUtils.childIndex( item );
+
+            entity.setSiblingIndex( childIndex );
+        } );
+
+        item.textContentElement.addEventListener( 'dblclick', function() {
+            item.textContentElement.contentEditable = 'true';
 
             var range = js.Browser.document.createRange( );
 
-            range.selectNodeContents( item.textElement );
+            range.selectNodeContents( item.textContentElement );
 
             var selection = js.Browser.window.getSelection( );
 
             selection.removeAllRanges( );
-            selection.addRange( range );*/
-            var result = js.Browser.window.prompt( 'Edit Entity Name', entity.getName( ) );
-
-            if (result != null)
-                entity.setName( result );
+            selection.addRange( range );
         } );
 
-        /*item.textElement.addEventListener( 'keydown', function(e) {
+        item.textContentElement.addEventListener( 'keydown', function(e) {
             // return key
             if (e.keyCode == 13) {
-                item.textElement.blur( );
+                item.textContentElement.blur( );
 
                 e.preventDefault( );
 
@@ -233,11 +297,11 @@ class SceneOutline extends WindowHandler {
             return true;
         } );
 
-        item.textElement.addEventListener( 'blur', function() {
-            item.textElement.contentEditable = 'false';
+        item.textContentElement.addEventListener( 'blur', function() {
+            item.textContentElement.contentEditable = 'false';
 
-            entity.setName( item.textElement.innerText );
-        } );*/
+            entity.setName( item.textContentElement.innerText );
+        } );
 
         item.text = entity.getName( );
 
@@ -279,23 +343,6 @@ class SceneOutline extends WindowHandler {
             m_selectedEntities = m_selectedEntities.filter( function(x) {
                 return x != untyped item.entity.uniqueID;
             } );
-        }
-    }
-
-    private function deleteSelectedEntities() {
-        for (uid in m_selectedEntities) {
-            var item = m_entityItems[ uid ];
-
-            if (item == null)
-                continue;
-
-            var entity : Entity = untyped item.entity;
-
-            if (entity.isRemovalEnabled( )) {
-                entity.remove( );
-            } else {
-                // TODO: add removal warning
-            }
         }
     }
 }

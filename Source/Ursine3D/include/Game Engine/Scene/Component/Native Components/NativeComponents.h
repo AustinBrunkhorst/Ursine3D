@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** NativeComponents.h
+**
+** Author:
+** - Jason Burch - j.orion@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 // All native components are to be added here
 
 #include "TransformComponent.h"
@@ -11,6 +24,7 @@
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
+#include "FBXSceneRootNodeComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics
@@ -23,6 +37,9 @@
 #include "CylinderColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "ConeColliderComponent.h"
+#include "ConvexHullColliderComponent.h"
+#include "ConvexDecompColliderComponent.h"
+#include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
 
@@ -30,5 +47,5 @@
 // Audio
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "AudioEmitter.h"
+#include "AudioEmitterComponent.h"
 #include "ListenerComponent.h"

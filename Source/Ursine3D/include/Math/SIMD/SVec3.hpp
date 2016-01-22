@@ -401,13 +401,9 @@ namespace ursine
 	// Operators
 	INLINE bool SVec3::operator==(const SVec3 &rhs) const
 	{
-#ifdef USE_SSE
-		return ( 0xf == _mm_movemask_ps( _mm_cmpeq_ps( m_128, rhs.m_128 ) ) );
-#else
         return math::IsEqual(m_x, rhs.X()) &&
                math::IsEqual(m_y, rhs.Y()) &&
                math::IsEqual(m_z, rhs.Z());
-#endif
 	}
 
 	INLINE bool SVec3::operator!=(const SVec3 &rhs) const

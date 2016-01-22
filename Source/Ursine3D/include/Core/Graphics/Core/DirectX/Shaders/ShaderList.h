@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ShaderList.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -33,8 +46,8 @@ namespace ursine
             SHADER_UI,
 
             //lights need to go after this, post processing stuffz...
-            SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
             SHADER_SPOT_LIGHT,
+            SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
             SHADER_DIRECTIONAL_LIGHT,
 
             /////////////////////////////////////////////////////////

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** PhysicsSettingsComponent.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <Component.h>
@@ -18,6 +31,12 @@ namespace ursine
                 SetGravity
             );
 
+            EditorField(
+                bool enableDebugDraw,
+                GetEnableDebugDraw,
+                SetEnableDebugDraw
+            );
+
             PhysicsSettings(void);
             ~PhysicsSettings(void);
 
@@ -25,6 +44,9 @@ namespace ursine
 
             SVec3 GetGravity(void) const;
             void SetGravity(const SVec3 &gravity);
+
+            bool GetEnableDebugDraw(void) const;
+            void SetEnableDebugDraw(bool enable);
 
         private:
             PhysicsSystem *m_physicsSystem;

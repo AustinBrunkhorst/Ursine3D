@@ -1,9 +1,23 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** BoxColliderComponent.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "BoxColliderComponent.h"
 #include "RigidbodyComponent.h"
 #include "EntityEvent.h"
 #include "PhysicsSystem.h"
+#include "CollisionEventArgs.h"
 
 namespace ursine
 {

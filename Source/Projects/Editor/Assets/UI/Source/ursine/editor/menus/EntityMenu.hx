@@ -10,24 +10,35 @@ class EntityMenu extends MenuItemHandler {
         createEntity( "Empty Entity" );
     }
 
+    @mainMenuItem( "Entity/Create/From Archetype" )
+    static function doCreateFromArchetype() {
+        Entity.createFromArchetype( );
+    }
+
     @mainMenuItem( "Entity/Create/Plane", true )
     static function doCreatePlane() {
-        var entity = createEntity( "Plane" );
+        var entity = createEntityWithComponents( "Plane", [ "BoxCollider" ] );
+
+        entity.updateComponentField( "Transform", "scale", {
+            x: 5,
+            y: 1,
+            z: 5
+        } );
     }
 
     @mainMenuItem( "Entity/Create/Box" )
     static function doCreateBox() {
-        var entity = createEntity( "Box" );
+        var entity = createEntityWithComponents( "Box", [ "BoxCollider" ] );
     }
 
     @mainMenuItem( "Entity/Create/Cylinder" )
     static function doCreateCylinder() {
-        var entity = createEntity( "Cylinder" );
+        var entity = createEntityWithComponents( "Cylinder", [ "CylinderCollider" ] );
     }
 
     @mainMenuItem( "Entity/Create/Sphere" )
     static function doCreateSphere() {
-        var entity = createEntity( "Sphere" );
+        var entity = createEntityWithComponents( "Sphere", [ "SphereCollider" ] );
     }
 
     @mainMenuItem( "Entity/Create/Point Light", true )
@@ -57,6 +68,18 @@ class EntityMenu extends MenuItemHandler {
         return entity;
     }
 
+    private static function createEntityWithComponents(name : String, components : Array<String>) : Entity {
+        var entity = Entity.create( );
+
+        entity.setName( name );
+
+        for (comp in components) {
+            entity.addComponent( comp );
+        }
+
+        return entity;
+    }
+
     private static function createLight(name : String, type : String) : Entity {
         var entity = createEntity( name );
 
@@ -71,4 +94,5 @@ class EntityMenu extends MenuItemHandler {
 
         return entity;
     }
+
 }

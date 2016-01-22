@@ -30,7 +30,8 @@ class FieldInspectionHandler {
     }
 
     public function remove() {
-        inspector.parentNode.removeChild( inspector );
+        if (inspector.parentNode != null)
+            inspector.parentNode.removeChild( inspector );
     }
 
     private function get_name() : String {

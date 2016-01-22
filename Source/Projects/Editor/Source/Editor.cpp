@@ -1,3 +1,16 @@
+﻿/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Editor.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "Editor.h"
@@ -10,15 +23,12 @@
 
 #include <Color.h> 
 #include <LightComponent.h>
-#include <Model3DComponent.h>
-
-#include <AudioManager.h>
 
 using namespace ursine;
 
 namespace
 {
-    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html"; 
+    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
     const auto kEditorClearColor = Color( 0xFF252526 );
 
@@ -62,7 +72,7 @@ void Editor::OnInitialize(void)
         .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange );
 
     m_mainWindow.window->SetLocationCentered( );
-    m_mainWindow.window->Show( true );
+    m_mainWindow.window->Show( true );   
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -77,6 +87,8 @@ void Editor::OnInitialize(void)
     } );
 
     m_project = std::make_shared<Project>( m_mainWindow.ui );
+
+    m_notificationManager.SetUI( m_mainWindow.ui );
 
     initializeScene( );
 }
@@ -113,6 +125,16 @@ UIView::Handle Editor::GetMainUI(void) const
 std::shared_ptr<Project> Editor::GetProject(void) const
 {
     return m_project;
+}
+
+NotificationManager &Editor::GetNotificationManager(void)
+{
+    return m_notificationManager;
+}
+
+Notification Editor::PostNotification(const NotificationConfig &config)
+{
+    return m_notificationManager.Create( config );
 }
 
 void Editor::initializeGraphics(void)
@@ -163,8 +185,6 @@ void Editor::initializeScene(void)
         m_graphics->SetGameViewport( viewport );
     }
 
-    world->DispatchLoad( );
-
     auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
@@ -177,26 +197,9 @@ void Editor::initializeScene(void)
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
 
-    /*auto *character = world->CreateEntity( "Character" );
-    {
-        auto *model = character->AddComponent<ecs::Model3D>( );
-
-        model->SetModel( "Character" );
-        model->SetMaterial( "Blank" );
-
-        auto *cube = world->CreateEntity( "Cube" );
-
-        auto *cubeModel = cube->AddComponent<ecs::Model3D>( );
-
-        cubeModel->SetModel( "Cube" );
-
-        auto *cubeTransform = cube->GetTransform( );
-
-        cubeTransform->SetLocalPosition( { 1, 20, 20 } );
-        cubeTransform->SetLocalScale( { 5, 5, 5 } );
-
-        character->GetTransform( )->AddChild( cubeTransform );
-    }*/
+    // this only needs to be called because we manually setup the world
+    // rather than loading from a file
+    world->DispatchLoad( );
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -207,24 +210,17 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto scene = m_project->GetScene( );
 
+    scene->GetWorld( )->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
+
     scene->Update( dt );
+    scene->Render( );
 
-    m_graphics->StartFrame( );  
-
-    scene->Render( ); 
-
-    m_mainWindow.ui->DrawMain( );  
-
-    m_graphics->EndFrame( );
+    m_mainWindow.ui->DrawMain( );
 }
 
 void Editor::onFocusChange(EVENT_HANDLER( ursine::Window ))
 {
     EVENT_ATTRS( Window, WindowFocusArgs );
-
-    //m_graphics->SetFullscreenState( args->focused );
-    //m_mainWindow.window->SetFullScreen( args->focused );
-    printf( "%s\n", args->focused ? "True" : "False" );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

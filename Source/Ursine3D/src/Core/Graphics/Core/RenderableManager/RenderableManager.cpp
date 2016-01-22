@@ -58,20 +58,20 @@ namespace ursine
             switch (type)
             {
             case RENDERABLE_MODEL3D:
-                m_currentRenderableModel3D[ newRender->Index_ ].Active_ = true;
-                m_currentRenderableModel3D[ newRender->Index_ ].Initialize( );
+                m_renderableModel3D[ newRender->Index_ ].Active_ = true;
+                m_renderableModel3D[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_PRIMITIVE:
-                m_currentRenderablePrimitives[ newRender->Index_ ].Active_ = true;
-                m_currentRenderablePrimitives[ newRender->Index_ ].Initialize( );
+                m_renderablePrimitives[ newRender->Index_ ].Active_ = true;
+                m_renderablePrimitives[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_LIGHT:
-                m_currentRenderableLights[ newRender->Index_ ].Active_ = true;
-                m_currentRenderableLights[ newRender->Index_ ].Initialize( );
+                m_renderableLights[ newRender->Index_ ].Active_ = true;
+                m_renderableLights[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_BILLBOARD2D:
-                m_currentRenderableBillboards[ newRender->Index_ ].Active_ = true;
-                m_currentRenderableBillboards[ newRender->Index_ ].Initialize();
+                m_renderableBillboards[ newRender->Index_ ].Active_ = true;
+                m_renderableBillboards[ newRender->Index_ ].Initialize();
                 break;
             default:
                 UAssert(false, "Tried to add an invalid renderable!");
@@ -94,20 +94,20 @@ namespace ursine
             switch (rend->Type_)
             {
             case RENDERABLE_MODEL3D:
-                UAssert(m_currentRenderableModel3D[ rend->Index_ ].Active_ == true, "Attempted to free an already free model3d!");
-                m_currentRenderableModel3D[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderableModel3D[ rend->Index_ ].Active_ == true, "Attempted to free an already free model3d!");
+				m_renderableModel3D[ rend->Index_ ].Active_ = false;
                 break; 
             case RENDERABLE_PRIMITIVE:
-                UAssert(m_currentRenderablePrimitives[ rend->Index_ ].Active_ == true, "Attempted to free an already free primitive!");
-                m_currentRenderablePrimitives[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderablePrimitives[ rend->Index_ ].Active_ == true, "Attempted to free an already free primitive!");
+                m_renderablePrimitives[ rend->Index_ ].Active_ = false;
                 break;
             case RENDERABLE_BILLBOARD2D:
-                UAssert(m_currentRenderableBillboards[ rend->Index_ ].Active_ == true, "Attempted to free an already free billboard2d!");
-                m_currentRenderableBillboards[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderableBillboards[ rend->Index_ ].Active_ == true, "Attempted to free an already free billboard2d!");
+                m_renderableBillboards[ rend->Index_ ].Active_ = false;
                 break;
             case RENDERABLE_LIGHT:
-                UAssert(m_currentRenderableLights[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
-                m_currentRenderableLights[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderableLights[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
+				m_renderableLights[ rend->Index_ ].Active_ = false;
                 break;
             default:
                 UAssert(false, "Attempted to destroy corrupted handle!");
@@ -119,10 +119,10 @@ namespace ursine
 
         void RenderableManager::CacheFrame(void)
         {
-            m_renderableModel3D = m_currentRenderableModel3D;
-            m_renderablePrimitives = m_currentRenderablePrimitives;
-            m_renderableBillboards = m_currentRenderableBillboards;
-            m_renderableLights = m_currentRenderableLights;
+            //m_renderableModel3D = m_currentRenderableModel3D;
+            //m_renderablePrimitives = m_currentRenderablePrimitives;
+            //m_renderableBillboards = m_currentRenderableBillboards;
+            //m_renderableLights = m_currentRenderableLights;
         }
     }
 }

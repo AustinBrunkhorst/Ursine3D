@@ -4,7 +4,9 @@
     <template>
         <div id="text" class="text">
             <span id="arrow" class="arrow"></span>
-            <content>{{text}}</content>
+            <content>
+                <span id="textContent" class="text-content">{{text}}</span>
+            </content>
             <div id="dropAfterContainer" class="drop-after-container"></div>
         </div>
         <x-tree-view id="child" class="child-view"></x-tree-view>
@@ -37,7 +39,6 @@
                 }
             },
             listeners: {
-                'click': '_onClick',
                 'text.mousedown': '_onTextMouseDown',
                 'arrow.click': '_onArrowClick'
             },
@@ -58,6 +59,9 @@
             },
             get textElement() {
                 return this.$.text;
+            },
+            get textContentElement() {
+                return this.$.textContent;
             },
             get rootView() {
                 var node = this;
@@ -80,14 +84,6 @@
             _onDraggingChanged: function() {
                 this.classList.toggle( 'dragging', this.dragging );
             },
-            _onClick: function (e) {
-                // TODO:
-                /*// make sure this event doesn't bubble to the parent
-                e.stopImmediatePropagation( );
-                e.stopPropagation( );
-
-                var result = this.fire( 'open', e );*/
-            },
             _onTextMouseDown: function(e) {
                 document.addEventListener( 'mouseup', this._textMouseUpHandler, true );
                 document.addEventListener( 'mousemove', this._textMouseMoveHandler, true );
@@ -97,8 +93,11 @@
                     var result = this.fire( 'drag-start', e );
 
                     // drag start was cancelled
-                    if (result === false)
+                    if (result.preventStart === true) {
+                        this._lastDragTarget = null;
+
                         return;
+                    }
 
                     this._setDragging( true );
                 }
@@ -112,33 +111,54 @@
 
                 var treeItem = this._findClosestTreeViewItem( element );
 
-                // aren't dragging on a tree view item, or the tree item is this
-                if (treeItem === null || treeItem === this || this.contains( treeItem ))
-                    return;
+                // specific case: the point dragged on is an empty area of the root tree view
+                // simply use the last item in the root as put after
+                if (treeItem === true) {
+                    var lastRootChild = ObjectUtils.lastElement( element.getItems( ) );
 
-                var dropAfterContainerBounds = treeItem.$.dropAfterContainer.getBoundingClientRect( );
+                    // the last root child is being dropped after itself
+                    if (lastRootChild === this) {
+                        this._lastDragTarget = null;
 
-                // within the drop after container
-                if (e.clientY >= dropAfterContainerBounds.top && e.clientY <= dropAfterContainerBounds.bottom) {
+                        return;
+                    }
+
+                    treeItem = this._findLastTreeItem( lastRootChild );
+
                     treeItem.classList.add( 'drop-after-target' );
-                // within the container to "parent"
                 } else {
-                    var previousTreeItem = treeItem.previousElementSibling;
+                    // aren't dragging on a tree view item, or the tree item is this
+                    if (treeItem === null || treeItem === this || this.contains( treeItem )) {
+                        this._lastDragTarget = null;
 
-                    if (previousTreeItem && previousTreeItem !== this && !this.contains( previousTreeItem )) {
-                        var bounds = previousTreeItem.$.dropAfterContainer.getBoundingClientRect( );
+                        return;
+                    }
 
-                        if (e.clientY >= bounds.top && e.clientY <= bounds.bottom) {
-                            previousTreeItem.classList.add( 'drop-after-target' );
+                    var dropAfterContainerBounds = treeItem.$.dropAfterContainer.getBoundingClientRect( );
 
-                            treeItem = previousTreeItem;
+                    // within the drop after container OR
+                    // dragging on the empty area after the view, so just use the last
+                    if (e.clientY >= dropAfterContainerBounds.top && e.clientY <= dropAfterContainerBounds.bottom) {
+                        treeItem.classList.add( 'drop-after-target' );
+                        // within the container to "parent"
+                    } else {
+                        var previousTreeItem = this._findPreviousTreeItem( treeItem );
+
+                        if (previousTreeItem && previousTreeItem !== this && !this.contains( previousTreeItem )) {
+                            var bounds = previousTreeItem.$.dropAfterContainer.getBoundingClientRect( );
+
+                            if (e.clientY >= bounds.top && e.clientY <= bounds.bottom) {
+                                previousTreeItem.classList.add( 'drop-after-target' );
+
+                                treeItem = previousTreeItem;
+                            } else {
+                                if (this._canSetDropTarget( treeItem, e ))
+                                    treeItem.classList.add( 'drop-target' );
+                            }
                         } else {
                             if (this._canSetDropTarget( treeItem, e ))
                                 treeItem.classList.add( 'drop-target' );
                         }
-                    } else {
-                        if (this._canSetDropTarget( treeItem, e ))
-                            treeItem.classList.add( 'drop-target' );
                     }
                 }
 
@@ -151,11 +171,13 @@
 
                         // inserting after
                         if (this._lastDragTarget.classList.contains( 'drop-after-target' )) {
-                            if (this._lastDragTarget.child.empty) {
+                            // adding in the same parent of the target, but after
+                            if (!this._lastDragTarget.opened || this._lastDragTarget.child.empty) {
                                 this._lastDragTarget.parentNode.insertBefore(
                                     this,
                                     this._lastDragTarget.nextElementSibling
                                 );
+                            // actually insert it into the target, but as the first child
                             } else {
                                 this._lastDragTarget.child.insertBefore(
                                     this,
@@ -166,6 +188,8 @@
                         } else {
                             this._lastDragTarget.child.appendChild( this );
                         }
+
+                        this.fire( 'drag-drop-after', e );
                     }
 
                     this._lastDragTarget.classList.remove( 'drop-after-target' );
@@ -190,11 +214,13 @@
             },
 
             _canSetDropTarget: function(target, e) {
-                return target.fire( 'drag-feedback', e ) !== false;
+                e.dropTarget = target;
+
+                return target.fire( 'drag-feedback', e ).preventFeedback !== true;
             },
             _canDropTarget: function(e) {
                 if (this._lastDragTarget.classList.contains( 'drop-after-target' )) {
-                    if (this._lastDragTarget.child.empty) {
+                    if (!this._lastDragTarget.opened || this._lastDragTarget.child.empty) {
                         e.dropTarget = this._lastDragTarget.parentNode;
 
                     } else {
@@ -207,16 +233,20 @@
 
                 e.newParent = (e.dropTarget.parentNode === this.parentNode);
 
-                return this.fire( 'drag-drop', e ) !== false;
+                return this.fire( 'drag-drop', e ).preventDrop !== true;
             },
             /**
              * Finds the closest tree view item based on the given element (within the same hierarchy)
              * @param element
-             * @returns {TreeViewItemControl|null}
+             * @returns {TreeViewItemControl|null|boolean}
              * @private
              */
             _findClosestTreeViewItem: function(element) {
                 var node = element;
+
+                // if it's the root menu, return the item element in the root
+                if (element instanceof TreeViewControl && element.isRoot)
+                    return true;
 
                 for (; node && node !== document; node = node.parentNode) {
                     if (node instanceof TreeViewItemControl)
@@ -225,6 +255,28 @@
 
                 // the input element doesn't have a tree
                 return null;
+            },
+            _findPreviousTreeItem: function(item) {
+                var previous = item.previousElementSibling;
+
+                while (previous && previous.classList.contains( 'hidden' ))
+                    previous = previous.previousElementSibling;
+
+                return previous;
+            },
+            /**
+             * Finds the last tree item based on it physical location
+             * @param element {TreeViewItemControl}
+             * @returns {TreeViewItemControl}
+             * @private
+             */
+            _findLastTreeItem: function(element) {
+                var last = ObjectUtils.lastElement( element.child.getItems( ) );
+
+                if (last)
+                    return this._findLastTreeItem( last );
+
+                return element;
             }
         } );
     </script>

@@ -7,5 +7,16 @@ class SceneView extends NativeCanvasWindowHandler {
         window.heading = "Scene";
 
         onViewportInvalidated( );
+
+        window.addEventListener( 'keydown', onWindowKeyDown );
+    }
+
+    private function onWindowKeyDown(e) {
+        switch (e.keyCode) {
+            // delete
+            case 46: {
+                SceneOutline.instance.deleteSelectedEntities( );
+            }
+        }
     }
 }

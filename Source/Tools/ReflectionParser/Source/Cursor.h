@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Cursor.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "CursorType.h"
@@ -13,6 +26,7 @@ public:
     CXCursorKind GetKind(void) const;
 
     Cursor GetLexicalParent(void) const;
+    Cursor GetTemplateSpecialization(void) const;
 
     std::string GetSpelling(void) const;
     std::string GetDisplayName(void) const;

@@ -29,21 +29,33 @@ namespace ursine
         public:
             Body(void);
 
-            void SetTransform(ecs::Transform *transform);
+			void SetUserID(int id);
+			int GetUserID(void);
 
+			void SetUserPointer(void *ptr);
+			void *GetUserPointer(void);
+
+			static Body *DownCast(BodyBase *body);
+			static const Body *DownCast(const BodyBase *body);
+
+            void SetTransform(ecs::Transform *transform);
             void GetTransform(ecs::Transform *transform);
 
             void SetCollider(ColliderBase *collider);
-
-            void RemoveCollider(void);
+			ColliderBase *GetCollider(void);
              
             void SetOffset(const SVec3 &offset);
-
             SVec3 GetOffset(void) const;
 
-        private:
-            SVec3 m_offset;
+			void SetGhost(bool enable);
+			bool GetGhost(void) const;
 
+			void SetAwake(void);
+
+        private:
+			bool m_ghost;
+			
+			SVec3 m_offset;
         };
     }
 }

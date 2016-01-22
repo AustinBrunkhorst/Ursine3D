@@ -1,8 +1,29 @@
+﻿/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EditorCameraSystem.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <EntitySystem.h>
 
 #include <GfxAPI.h>
+
+namespace ursine
+{
+    namespace ecs
+    {
+        class Camera;
+    }
+}
 
 class EditorCameraSystem : public ursine::ecs::EntitySystem
 {
@@ -21,7 +42,7 @@ public:
     bool HasMouseFocus(void) const;
     void SetMouseFocus(bool focus);
 
-    ursine::graphics::Camera *GetEditorCamera(void);
+    ursine::ecs::Camera *GetEditorCamera(void);
     ursine::ecs::Entity *GetEditorCameraEntity( void );
 
     ursine::SVec3 GetEditorFocusPosition(void);
@@ -33,7 +54,7 @@ private:
 
     ursine::ecs::Entity *m_cameraEntity;
 
-    ursine::graphics::Camera *m_camera;
+    ursine::ecs::Camera *m_camera;
     float m_camZoom;
     ursine::SVec3 m_camPos;
 

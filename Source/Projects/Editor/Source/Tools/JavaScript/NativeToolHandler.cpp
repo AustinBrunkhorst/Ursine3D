@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** NativeToolHandler.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "NativeToolHandler.h"
@@ -21,7 +34,7 @@ JSConstructor(NativeToolHandler)
         typeof( CefString& )
     };
 
-    auto constructor = toolType.GetDynamicConstructor( constructorType );
+    auto &constructor = toolType.GetDynamicConstructor( constructorType );
 
     if (!constructor.IsValid( ))
         JSThrow( "Tool does not have valid constructor." );

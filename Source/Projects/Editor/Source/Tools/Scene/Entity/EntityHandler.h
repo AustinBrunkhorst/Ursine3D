@@ -1,6 +1,21 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EntityHandler.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <NativeJSClass.h>
+
+#include <mutex>
 
 class EntityHandler : public ursine::NativeJSClass
 {
@@ -26,10 +41,16 @@ public:
     JSMethod(removeComponent);
 
     JSMethod(updateComponentField);
+    JSMethod(invokeComponentButton);
 
     JSMethod(getChildren);
     JSMethod(getParent);
     JSMethod(setParent);
+    JSMethod(getSiblingIndex);
+    JSMethod(setSiblingIndex);
+
+    JSMethod(saveAsArchetype);
+    JSMethod(clone);
 
 private:
     ursine::ecs::World *m_world;

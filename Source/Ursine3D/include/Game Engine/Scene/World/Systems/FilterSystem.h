@@ -31,6 +31,13 @@ namespace ursine
             : public EntitySystem
             , public EntityProcessor
         {
+        public:
+            FilterSystem(
+                World *world, 
+                const Filter &filter, 
+                EventHandlerPriority updatePriority = kDefaultEventHandlerPriority
+            );
+
             // entity's components changed
             void onComponentChange(EVENT_HANDLER(World));
 
@@ -51,10 +58,11 @@ namespace ursine
             void Enable(Entity *entity);
             void Disable(Entity *entity);
 
-            virtual void OnInitialize(void);
+            virtual void OnInitialize(WorldEventType updateType = WORLD_UPDATE);
             virtual void OnRemove(void);
-        public:
-            FilterSystem(World *world, const Filter &filter);
+
+        private:
+            EventHandlerPriority m_updatePriority;
         } Meta(Enable, WhiteListMethods);
     }
 }

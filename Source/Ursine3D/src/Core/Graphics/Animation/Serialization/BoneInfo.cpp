@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** BoneInfo.cpp
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "UrsinePrecompiled.h"
@@ -10,7 +23,10 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			BoneInfo::BoneInfo()
-				: ISerialize("")
+				: mParentIndex(-1),
+				bindPosition(0, 0, 0), bindRotation(0, 0, 0, 1), bindScaling(1, 1, 1),
+				boneSpacePosition(0, 0, 0), boneSpaceRotation(0, 0, 0, 1), boneSpaceScaling(1, 1, 1),
+				ISerialize("")
 			{
 			}
 
@@ -28,7 +44,9 @@ namespace ursine
 				DWORD nBytesRead;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					ReadFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					name = tmp_name;
 					ReadFile(hFile, &mParentIndex, sizeof(int), &nBytesRead, nullptr);
 					ReadFile(hFile, &bindPosition, sizeof(pseudodx::XMFLOAT3), &nBytesRead, nullptr);
 					ReadFile(hFile, &bindRotation, sizeof(pseudodx::XMFLOAT4), &nBytesRead, nullptr);
@@ -45,7 +63,9 @@ namespace ursine
 				DWORD nBytesWrite;
 				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					WriteFile(hFile, &name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					lstrcpy(tmp_name, name.c_str());
+					WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
 					WriteFile(hFile, &mParentIndex, sizeof(int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &bindPosition, sizeof(pseudodx::XMFLOAT3), &nBytesWrite, nullptr);
 					WriteFile(hFile, &bindRotation, sizeof(pseudodx::XMFLOAT4), &nBytesWrite, nullptr);

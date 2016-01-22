@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Pool.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /*******************************************
 * File: Pool.h
 * Author: Jordan Ellis
@@ -8,7 +21,7 @@
 * improved data locality. This in turn 
 * boosts cache performance.
 *
-* Copyright: All content © 2013-2014 DigiPen
+* Copyright: All content ï¿½ 2013-2014 DigiPen
 * (USA) Corporation, all rights reserved.
 ********************************************/
 

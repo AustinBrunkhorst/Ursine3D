@@ -12,21 +12,21 @@
 
 #include "VariantBase.h"
 
-#include "TraitUtils.h"
+#include "MetaTraits.h"
 
-#define DEFAULT_TYPE_HANDLER(typeName)                                              \
-    template<typename U = T>                                                        \
-    typeName get##typeName(                                                         \
-        typename std::enable_if<                                                    \
-            !std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value \
-        >::type* = nullptr                                                          \
-    ) const;                                                                        \
-    template<typename U = T>                                                        \
-    typeName get##typeName(                                                         \
-        typename std::enable_if<                                                    \
-            std::is_convertible<typename TypeOrEnumType<U>::type, typeName>::value  \
-        >::type* = nullptr                                                          \
-    ) const;                                                                        \
+#define DEFAULT_TYPE_HANDLER(typeName)                                                           \
+    template<typename U = T>                                                                     \
+    typeName get##typeName(                                                                      \
+        typename std::enable_if<                                                                 \
+            !std::is_convertible<typename meta_traits::TypeOrEnumType<U>::type, typeName>::value \
+        >::type* = nullptr                                                                       \
+    ) const;                                                                                     \
+    template<typename U = T>                                                                     \
+    typeName get##typeName(                                                                      \
+        typename std::enable_if<                                                                 \
+            std::is_convertible<typename meta_traits::TypeOrEnumType<U>::type, typeName>::value  \
+        >::type* = nullptr                                                                       \
+    ) const;                                                                                     \
 
 namespace ursine
 {

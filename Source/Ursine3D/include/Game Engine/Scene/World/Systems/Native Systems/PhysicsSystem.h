@@ -24,29 +24,31 @@ namespace ursine
     namespace ecs
     {
         class Rigidbody;
+        class Body;
 
         class PhysicsSystem 
-            : public FilterSystem
+            : public EntitySystem
         {
             ENTITY_SYSTEM;
 
         public:
             friend class Rigidbody;
 
+			Meta(DisableNonDynamic)
             PhysicsSystem(World *world);
 
-            bool Raycast(const ursine::physics::RaycastInput &input, 
-                         ursine::physics::RaycastOutput &output,
-                         ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT, 
-                         bool debugDraw = false, float drawDuration = 2.0f);
+			bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
+						 ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
+                         bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
+                         Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
 
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
 
-            void ClearContacts(Rigidbody *rigidbody);
+            void SetEnableDebugDraw(bool enable);
+            bool GetEnableDebugDraw(void) const;
 
-        protected:
-            void Process(Entity *entity) override;
+            void ClearContacts(Rigidbody *rigidbody);
 
         private:
             physics::Simulation m_simulation;
@@ -55,6 +57,11 @@ namespace ursine
             Filter m_collisionShapes;
 
             DebugSystem *m_debugSystem;
+
+            bool m_enableDebugDraw;
+
+            std::vector<Rigidbody*> m_rigidbodies;
+            std::vector<Body*> m_bodies;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
@@ -65,9 +72,12 @@ namespace ursine
             void onComponentRemoved(EVENT_HANDLER(World));
 
             void onUpdate(EVENT_HANDLER(World));
+            void onEditorUpdate(EVENT_HANDLER(World));
 
             void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
             void removeCollider(Entity *entity);
+
+			void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
 
         } Meta(Enable);
     }

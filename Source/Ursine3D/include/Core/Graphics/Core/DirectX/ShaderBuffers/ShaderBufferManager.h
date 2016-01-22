@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ShaderBufferManager.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -54,6 +67,8 @@ namespace ursine
 
                     //lock the buffer
                     result = m_deviceContext->Map(m_bufferArray[ buffer ], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+                    UAssert(result == S_OK, "Failed to lock buffer for writing!");
 
                     //grab data
                     dataPtr = reinterpret_cast<T*>(mappedResource.pData);

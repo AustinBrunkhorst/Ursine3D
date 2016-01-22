@@ -1,14 +1,31 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ListenerMasks.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
-enum ListenerIndex
+namespace ursine
 {
-	LISTENER_NONE,
-	LISTENER_ONE = 1 << 0u,
-	LISTENER_TWO = 1 << 1u,
-	LISTENER_THREE = 1 << 2u,
-	LISTENER_FOUR = 1 << 3u,
-	LISTENER_FIVE = 1 << 4u,
-	LISTENER_SIX = 1 << 5u,
-	LISTENER_SEVEN = 1 << 6u,
-	LISTENER_EIGHT = 1 << 7u
-} Meta(Enable);
+    enum class ListenerIndex
+    {
+        Meta(Disable)
+        None,
+        One = 1 << 0u,
+        Two = 1 << 1u,
+        Three = 1 << 2u,
+        Four = 1 << 3u,
+        Five = 1 << 4u,
+        Six = 1 << 5u,
+        Seven = 1 << 6u,
+        Eight = 1 << 7u
+    } Meta(Enable);
+}

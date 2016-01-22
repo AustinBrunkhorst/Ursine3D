@@ -9,3 +9,12 @@ ElementUtils.once = function(element, event, handler) {
 
     element.addEventListener( event, callback );
 };
+
+ElementUtils.childIndex = function(element) {
+    var i = 0;
+
+    while ((element = element.previousElementSibling) != null)
+        ++i;
+
+    return i;
+};

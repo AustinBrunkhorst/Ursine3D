@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ModelManager.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -19,7 +32,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include <map>
 #include <string>
 
-#include "Model.h"
+#include "ModelResource.h"
 #include "ModelInfo.h"
 
 namespace ursine
@@ -33,7 +46,10 @@ namespace ursine
             void Uninitialize();
 
             void LoadModel(std::string name, std::string fileName);
-			void LoadModel_Ursine(std::string name, std::string fileName);
+			void LoadModel_Fbx(std::string name, std::string fileName);
+			void LoadModel_Ursine(std::string name, std::string fileName); 
+			void LoadLevel_Ursine(std::string name, std::string fileName);
+			void LoadAni_Ursine(std::string name, std::string fileName);
 
             ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
             unsigned GetModelVertcount(std::string name, unsigned index = 0);
@@ -66,6 +82,9 @@ namespace ursine
             unsigned GetModelMeshCount(unsigned ID);
 
             void Invalidate();
+
+            ModelResource *GetModel(const unsigned ID);
+            ModelResource *GetModel(const std::string &name);
 
         private:
 
