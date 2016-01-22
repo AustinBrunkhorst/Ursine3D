@@ -1,0 +1,4 @@
+/*class TranslateTool : public EditorTool
+{
+	
+};*/
