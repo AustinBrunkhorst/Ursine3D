@@ -19,54 +19,13 @@
 #pragma warning (disable : 4244)
 #pragma warning (disable : 4267)
 
-// cut off unneccessary things, extensions to get name
-std::string GetName(const char* filename)
-{
-	std::string ret;
-	char fName[MAXTEXTLEN];
-	std::strcpy(fName, filename);
-
-	// get pure file name
-	char* ptr;
-	ptr = strtok(fName, "/");
-	while (ptr != nullptr)
-	{
-		ptr = strtok(nullptr, "/");
-		if (nullptr != ptr)
-			ret = ptr;
-	}
-
-	// get rid of extension
-	std::strcpy(fName, ret.c_str());
-	ptr = strtok(fName, ".");
-	if (nullptr != ptr)
-		ret = ptr;
-
-	return ret;
-}
-
-void GetMaterialTexuteMapName(std::string& mapName)
-{
-	char texName[MAXTEXTLEN];
-	lstrcpy(texName, mapName.c_str());
-	char* ptr;
-	ptr = strtok(texName, "\\");
-	while (ptr != nullptr)
-	{
-		ptr = strtok(nullptr, "\\");
-		if (nullptr != ptr)
-			lstrcpy(texName, ptr);
-	}
-	mapName = texName;
-}
-
 namespace ursine
 {
 	namespace graphics
 	{
 		CFBXLoader::CFBXLoader() :
 			mSdkManager(nullptr), mScene(nullptr), mModel(nullptr),
-			mModelInfo(nullptr), mLevelInfo(nullptr), mAnimInfo(nullptr),
+			mModelInfo(nullptr), mAnimInfo(nullptr),
 			mConverter(nullptr)
 		{
 		}
@@ -87,13 +46,6 @@ namespace ursine
 				mAnimInfo->ReleaseData();
 				delete mAnimInfo;
 				mAnimInfo = nullptr;
-			}
-
-			if (mLevelInfo)
-			{
-				mLevelInfo->ReleaseData();
-				delete mLevelInfo;
-				mLevelInfo = nullptr;
 			}
 
 			if (mModelInfo)
@@ -160,7 +112,9 @@ namespace ursine
 
 			// Process Scene
 			mModel = new FBX_DATA::FbxModel;
-			mModel->name = GetName(filename);
+			fs::path fName(filename);
+			mModel->name = fName.filename().string();
+			mModel->name = mModel->name.substr(0, mModel->name.rfind("."));
 			// Getting Anim Pose
 			mModel->mAnimPose.resize(mScene->GetPoseCount());
 			for (unsigned i = 0; i < mModel->mAnimPose.size(); ++i)
@@ -271,46 +225,42 @@ namespace ursine
 				ufmt_loader::MaterialInfo newMtrlInfo;
 				for (i = 0; i < mModelInfo->mmaterialCount; ++i)
 				{
-					newMtrlInfo.name = mModel->mMaterials[i]->name.c_str();
+					//ambi
+					j = 0;
+					newMtrlInfo.name = mModel->mMaterials[i]->name;
 					newMtrlInfo.ambitype = mModel->mMaterials[i]->ambient.type;
 					newMtrlInfo.ambi_mcolor = mModel->mMaterials[i]->ambient.color;
 					newMtrlInfo.ambi_mapCount = mModel->mMaterials[i]->ambient.textureSetArray.size();
-					//ambi
-					j = 0;
 					for (auto iter1 = mModel->mMaterials[i]->ambient.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
-					{
-						newMtrlInfo.ambi_texNames.push_back(iter1->second[j].c_str());
-					}
-					newMtrlInfo.difftype = mModel->mMaterials[i]->diffuse.type;
-					newMtrlInfo.diff_mcolor = mModel->mMaterials[i]->diffuse.color;
-					newMtrlInfo.diff_mapCount = mModel->mMaterials[i]->diffuse.textureSetArray.size();
+						newMtrlInfo.ambi_texNames.push_back(iter1->second[j]);
 
 					//diff
 					j = 0;
-
-					if (mModelInfo->mMtrlInfoVec.size( ) > 0)
-						for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
-						iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
-							newMtrlInfo.diff_texNames.push_back(iter1->second[j].c_str());
-					newMtrlInfo.emistype = mModel->mMaterials[i]->emissive.type;
-					newMtrlInfo.emis_mcolor = mModel->mMaterials[i]->emissive.color;
-					newMtrlInfo.emis_mapCount = mModel->mMaterials[i]->emissive.textureSetArray.size();
+					newMtrlInfo.difftype = mModel->mMaterials[i]->diffuse.type;
+					newMtrlInfo.diff_mcolor = mModel->mMaterials[i]->diffuse.color;
+					newMtrlInfo.diff_mapCount = mModel->mMaterials[i]->diffuse.textureSetArray.size();
+					for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
+					iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
+						newMtrlInfo.diff_texNames.push_back(iter1->second[j]);
 
 					//emit
 					j = 0;
+					newMtrlInfo.emistype = mModel->mMaterials[i]->emissive.type;
+					newMtrlInfo.emis_mcolor = mModel->mMaterials[i]->emissive.color;
+					newMtrlInfo.emis_mapCount = mModel->mMaterials[i]->emissive.textureSetArray.size();
 					for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
-						newMtrlInfo.emis_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.emis_texNames.push_back(iter1->second[j]);
+					
+					//spec
+					j = 0;
 					newMtrlInfo.spectype = mModel->mMaterials[i]->specular.type;
 					newMtrlInfo.spec_mcolor = mModel->mMaterials[i]->specular.color;
 					newMtrlInfo.spec_mapCount = mModel->mMaterials[i]->specular.textureSetArray.size();
-
-					//spec
-					j = 0;
 					for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
-						newMtrlInfo.spec_texNames.push_back(iter1->second[j].c_str());
+						newMtrlInfo.spec_texNames.push_back(iter1->second[j]);
 					newMtrlInfo.shineness = mModel->mMaterials[i]->shineness;
 					newMtrlInfo.TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
 
@@ -336,35 +286,26 @@ namespace ursine
 					// push back into the vector
 					mModelInfo->mBoneInfoVec.push_back(newBoneInfo);
 				}
-			}
 
-			///////////////////////////////////////////////////////////////
-			// Level Info
-			///////////////////////////////////////////////////////////////
-			// mesh lvl
-			if (nullptr == mLevelInfo)
-			{
-				mLevelInfo = new ufmt_loader::LevelInfo;
-				mLevelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
-				mLevelInfo->name = mModelInfo->name;
-				for (i = 0; i < mLevelInfo->mmeshlvlCount; ++i)
+				// level data
+				// mesh lvl
+				mModelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
+				for (i = 0; i < mModelInfo->mmeshlvlCount; ++i)
 				{
 					ufmt_loader::MeshInLvl newMLvl;
-					newMLvl.name = mModelInfo->mMeshInfoVec[i].name;
 					newMLvl.meshTM = mModel->mMeshData[i]->meshTM;
 					newMLvl.mParentIndex = mModel->mMeshData[i]->parentIndex;
-					mLevelInfo->mMeshLvVec.push_back(newMLvl);
+					mModelInfo->mMeshLvVec.push_back(newMLvl);
 				}
 				// rig lvl
-				mLevelInfo->mriglvlCount = mModelInfo->mboneCount;
-				for (i = 0; i < mLevelInfo->mriglvlCount; ++i)
+				mModelInfo->mriglvlCount = mModelInfo->mboneCount;
+				for (i = 0; i < mModelInfo->mriglvlCount; ++i)
 				{
 					ufmt_loader::RigInLvl newRLvl;
-					newRLvl.name = mModelInfo->mBoneInfoVec[i].name;
 					newRLvl.mParentIndex = mModelInfo->mBoneInfoVec[i].mParentIndex;
-					mLevelInfo->mRigLvVec.push_back(newRLvl);
+					mModelInfo->mRigLvVec.push_back(newRLvl);
 				}
-			}				
+			}
 
 			///////////////////////////////////////////////////////////////
 			// Anim Info
@@ -374,7 +315,7 @@ namespace ursine
 			{
 				mAnimInfo = new ufmt_loader::AnimInfo;
 
-				mAnimInfo->name = mModel->name.c_str();
+				mAnimInfo->name = mModel->name;
 				mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
 				for (unsigned int i = 0; i < mAnimInfo->animCount; ++i)
 				{
@@ -432,17 +373,15 @@ namespace ursine
 		
 		bool CFBXLoader::CustomFileExport()
 		{
-			if (nullptr == mModelInfo || nullptr == mLevelInfo || nullptr == mAnimInfo)
+			if (nullptr == mModelInfo || nullptr == mAnimInfo)
 				return false;
 
 			// set name for the custom file format and store it into Output folder
 			std::string _fileName("Assets/Models/");
 			_fileName += mModelInfo->name;
 			std::string jdlFile = _fileName;
-			std::string jlvlFile = _fileName;
 			std::string janiFile = _fileName;
 			jdlFile += ".jdl";
-			jlvlFile += ".jlvl";
 			janiFile += ".jani";
 
 			HANDLE hFile;
@@ -452,16 +391,6 @@ namespace ursine
 				if (!mModelInfo->SerializeOut(hFile))
 				{
 					MessageBox(nullptr, "Jdl Export Failed!", "", MB_OK);
-					return false;
-				}
-				CloseHandle(hFile);
-			}
-			if (mLevelInfo)
-			{
-				hFile = CreateFile(jlvlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-				if (!mLevelInfo->SerializeOut(hFile))
-				{
-					MessageBox(nullptr, "Jlvl Export Failed!", "", MB_OK);
 					return false;
 				}
 				CloseHandle(hFile);
@@ -939,7 +868,7 @@ namespace ursine
 				int existTextureCount = 0;
 				// Normal Texture
 				const int lTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
-				for (int i = 0; i < lTextureCount; i++)
+				for (int i = 0; i < lTextureCount; ++i)
 				{
 					FbxFileTexture* lFileTexture = lProperty.GetSrcObject<FbxFileTexture>(i);
 					if (!lFileTexture)
@@ -947,24 +876,18 @@ namespace ursine
 
 					FbxString uvsetName = lFileTexture->UVSet.Get();
 					std::string uvSetString = uvsetName.Buffer();
-					std::string fileName = lFileTexture->GetFileName();
-
-					fs::path p( fileName );
-					fileName = p.filename( ).string( );
-
-					GetMaterialTexuteMapName(fileName);
-
-					pElement->textureSetArray[uvSetString].push_back(fileName);
-					existTextureCount++;
+					fs::path fName(lFileTexture->GetFileName());
+					pElement->textureSetArray[uvSetString].push_back(fName.filename().string());
+					++existTextureCount;
 				}
 
 				// Layered Texture
 				const int lLayeredTextureCount = lProperty.GetSrcObjectCount<FbxLayeredTexture>();
-				for (int i = 0; i < lLayeredTextureCount; i++)
+				for (int i = 0; i < lLayeredTextureCount; ++i)
 				{
 					FbxLayeredTexture* lLayeredTexture = lProperty.GetSrcObject<FbxLayeredTexture>(i);
 					const int lTextureFileCount = lLayeredTexture->GetSrcObjectCount<FbxFileTexture>();
-					for (int j = 0; j < lTextureFileCount; j++)
+					for (int j = 0; j < lTextureFileCount; ++j)
 					{
 						FbxFileTexture* lFileTexture = lLayeredTexture->GetSrcObject<FbxFileTexture>(j);
 						if (!lFileTexture)
@@ -972,11 +895,9 @@ namespace ursine
 
 						FbxString uvsetName = lFileTexture->UVSet.Get();
 						std::string uvSetString = uvsetName.Buffer();
-						std::string fileName = lFileTexture->GetFileName();
-						GetMaterialTexuteMapName(fileName);
-
-						pElement->textureSetArray[uvSetString].push_back(fileName);
-						existTextureCount++;
+						fs::path fName(lFileTexture->GetFileName());
+						pElement->textureSetArray[uvSetString].push_back(fName.filename().string());
+						++existTextureCount;
 					}
 				}
 
@@ -1062,11 +983,9 @@ namespace ursine
 
 			//get the material index
 			FbxGeometryElementMaterial* materialElement = pNode->GetMesh()->GetElementMaterial();
-
 			if (materialElement)
 			{
 				FbxLayerElementArrayTemplate<int>& materialIndicies = materialElement->GetIndexArray();
-
 				if (materialElement->GetMappingMode() == FbxGeometryElement::eByPolygon)
 				{
 					pData->mtrlIndexCnt = materialIndicies.GetCount();

@@ -132,25 +132,37 @@ namespace ursine
 					WriteFile(hFile, &emis_mapCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &spec_mapCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					for (auto iter : ambi_texNames)
+					if (ambi_texNames.size() > 0)
 					{
-						lstrcpy(tmp_name, iter.c_str());
-						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						for (auto iter : ambi_texNames)
+						{
+							lstrcpy(tmp_name, iter.c_str());
+							WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						}
 					}
-					for (auto iter : diff_texNames)
+					if (diff_texNames.size() > 0)
 					{
-						lstrcpy(tmp_name, iter.c_str());
-						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						for (auto iter : diff_texNames)
+						{
+							lstrcpy(tmp_name, iter.c_str());
+							WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						}
 					}
-					for (auto iter : emis_texNames)
+					if (emis_texNames.size() > 0)
 					{
-						lstrcpy(tmp_name, iter.c_str());
-						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						for (auto iter : emis_texNames)
+						{
+							lstrcpy(tmp_name, iter.c_str());
+							WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						}
 					}
-					for (auto iter : spec_texNames)
+					if (spec_texNames.size() > 0)
 					{
-						lstrcpy(tmp_name, iter.c_str());
-						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						for (auto iter : spec_texNames)
+						{
+							lstrcpy(tmp_name, iter.c_str());
+							WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						}
 					}
 						
 					WriteFile(hFile, &shineness, sizeof(float), &nBytesWrite, nullptr);

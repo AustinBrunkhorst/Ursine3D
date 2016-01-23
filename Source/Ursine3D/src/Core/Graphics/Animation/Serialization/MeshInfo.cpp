@@ -100,17 +100,29 @@ namespace ursine
 					WriteFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					for (auto iter : meshVtxInfos)
-						WriteFile(hFile, &iter, sizeof(MeshVertex), &nBytesWrite, nullptr);
-					for (auto iter : meshVtxIndices)
-						WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
-					for (auto iter : mtrlName)
+					if (meshVtxInfos.size() > 0)
 					{
-						lstrcpy(tmp_name, iter.c_str());
-						WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						for (auto iter : meshVtxInfos)
+							WriteFile(hFile, &iter, sizeof(MeshVertex), &nBytesWrite, nullptr);
 					}
-					for (auto iter : materialIndices)
-						WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
+					if (meshVtxIndices.size() > 0)
+					{
+						for (auto iter : meshVtxIndices)
+							WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
+					}
+					if (mtrlName.size() > 0)
+					{
+						for (auto iter : mtrlName)
+						{
+							lstrcpy(tmp_name, iter.c_str());
+							WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						}
+					}
+					if (materialIndices.size() > 0)
+					{
+						for (auto iter : materialIndices)
+							WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
+					}
 				}
 				return true;
 			}

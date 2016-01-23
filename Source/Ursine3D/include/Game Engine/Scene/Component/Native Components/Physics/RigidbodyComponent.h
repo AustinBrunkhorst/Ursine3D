@@ -147,7 +147,7 @@ namespace ursine
 			Meta(Disable)
             void UpdateInertiaTensor(void);
 
-            URSINE_TODO("Add ForceMode");
+            // URSINE_TODO("Add ForceMode");
             void AddForce(const SVec3 &force);
 
             // Relative to the transforms coordinate system
