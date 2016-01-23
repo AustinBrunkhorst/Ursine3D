@@ -16,6 +16,7 @@
 #include <FilterSystem.h>
 #include <MouseManager.h>
 #include <KeyboardManager.h>
+#include <EditorTool.h>
 
 class EditorToolSystem : public ursine::ecs::EntitySystem
 {
@@ -51,10 +52,15 @@ private:
 	void onKeyUp(EVENT_HANDLER(ursine::KeyboardManager));
 
 	void onSelectedAdd(EVENT_HANDLER(ursine::ecs::World));
+	void onSelectedRemoved(EVENT_HANDLER(ursine::ecs::World));
 
 	ursine::MouseManager *m_mouseManager;
 	ursine::KeyboardManager *m_keyboardManager;
 
 	// current ID we're locked onto
 	ursine::ecs::EntityUniqueID m_currentID;
+
+	std::unordered_map<ursine::KeyboardKey, EditorTool*> m_tools;
+
+	EditorTool *m_currentTool;
 };
