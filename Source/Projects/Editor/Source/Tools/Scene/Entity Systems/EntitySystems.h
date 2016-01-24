@@ -16,6 +16,5 @@
 #include "EditorCameraSystem.h"
 #include "GridRenderer.h"
 #include "EditorToolSystem.h"
-//#include "ObjectSelectorSystem.h"
 #include "EditorIconSystem.h"
 #include <SharedSystems.h>
