@@ -1,5 +1,6 @@
 package ursine.editor.windows;
 
+import ursine.controls.PolymerElement;
 import js.html.DOMElement;
 import ursine.native.Property;
 import ursine.editor.scene.entity.Entity;
@@ -80,12 +81,36 @@ class EntityInspector extends WindowHandler {
             handler.updateField( e.field, e.value );
     }
 
+    private function onInspectedEntityComponentArrayInserted(e) {
+        var handler : ComponentInspectionHandler = m_componentHandlers[ e.component ];
+
+        if (handler != null)
+            handler.arrayInsert( e.field, e.index, e.value );
+    }
+
+    private function onInspectedEntityComponentArrayItemSet(e) {
+        var handler : ComponentInspectionHandler = m_componentHandlers[ e.component ];
+
+        if (handler != null)
+            handler.arraySet( e.field, e.index, e.value );
+    }
+
+    private function onInspectedEntityComponentArrayItemRemoved(e) {
+        var handler : ComponentInspectionHandler = m_componentHandlers[ e.component ];
+
+        if (handler != null)
+            handler.arrayRemove( e.field, e.index );
+    }
+
     private function clearOldInspection() {
         if (m_inspectedEntity != null) {
             m_inspectedEntity.events
                 .off( EntityEvent.ComponentAdded, onInspectedEntityComponentAdded )
                 .off( EntityEvent.ComponentRemoved, onInspectedEntityComponentRemoved )
-                .off( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
+                .off( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged )
+                .off( EntityEvent.ComponentArrayInserted, onInspectedEntityComponentArrayInserted )
+                .off( EntityEvent.ComponentArraySet, onInspectedEntityComponentArrayItemSet )
+                .off( EntityEvent.ComponentArrayRemove, onInspectedEntityComponentArrayItemRemoved );
         }
 
         for (handler in m_componentHandlers)
@@ -109,7 +134,10 @@ class EntityInspector extends WindowHandler {
         m_inspectedEntity.events
             .on( EntityEvent.ComponentAdded, onInspectedEntityComponentAdded )
             .on( EntityEvent.ComponentRemoved, onInspectedEntityComponentRemoved )
-            .on( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged );
+            .on( EntityEvent.ComponentChanged, onInspectedEntityComponentChanged )
+            .on( EntityEvent.ComponentArrayInserted, onInspectedEntityComponentArrayInserted )
+            .on( EntityEvent.ComponentArraySet, onInspectedEntityComponentArrayItemSet )
+            .on( EntityEvent.ComponentArrayRemove, onInspectedEntityComponentArrayItemRemoved );
 
         var inspection = m_inspectedEntity.inspect( );
 

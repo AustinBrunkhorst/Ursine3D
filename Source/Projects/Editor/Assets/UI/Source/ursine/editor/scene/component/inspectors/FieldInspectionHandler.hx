@@ -29,6 +29,10 @@ class FieldInspectionHandler {
         m_instance = value;
     }
 
+    public function arrayInsert(index : UInt, value : Dynamic) { }
+    public function arraySet(index : UInt, value : Dynamic) { }
+    public function arrayRemove(index : UInt) { }
+
     public function remove() {
         if (inspector.parentNode != null)
             inspector.parentNode.removeChild( inspector );

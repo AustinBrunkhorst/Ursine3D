@@ -33,8 +33,23 @@ class DefaultFieldInspector extends FieldInspectionHandler {
         }
     }
 
+    public override function arrayInsert(index : UInt, value : Dynamic) {
+        if (m_arrayInspector != null)
+            m_arrayInspector.arrayInsert( index, value );
+    }
+
+    public override function arraySet(index : UInt, value : Dynamic) {
+        if (m_arrayInspector != null)
+            m_arrayInspector.arraySet( index, value );
+    }
+
+    public override function arrayRemove(index : UInt) {
+        if (m_arrayInspector != null)
+            m_arrayInspector.arrayRemove( index );
+    }
+
     private function initArray() {
-        m_arrayInspector= new ArrayTypeInspector( inspector, m_owner, m_instance, m_field, m_type );
+        m_arrayInspector = new ArrayTypeInspector( inspector, m_owner, m_instance, m_field, m_type );
     }
 
     private function initEnum() {
