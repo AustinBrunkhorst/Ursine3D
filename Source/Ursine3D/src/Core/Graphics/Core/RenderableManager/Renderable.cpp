@@ -30,6 +30,7 @@ namespace ursine
         {
             Overdraw_ = false;
             Debug_ = false;
+            m_mask = 0x7FFFFFFFFFFFFFFF;
         }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
@@ -62,6 +63,16 @@ namespace ursine
             return Debug_;
         }
 
+        RenderMask Renderable::GetRenderMask(void) const
+        {
+            return m_mask;
+        }
+
+        void Renderable::SetRenderMask(const RenderMask mask)
+        {
+            m_mask = mask;
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
@@ -79,24 +90,27 @@ namespace ursine
             Transform_ = matrix;
         }
 
-        Model3D::Model3D()
+        Model3D::Model3D(void)
         {
             m_matrixPalette.resize(MAX_BONE_COUNT);
         }
 
         ///////////////////////////////////////////////////////////////////
         //model3d
-        void Model3D::Initialize()
+        void Model3D::Initialize(void)
         {
+			Renderable::Initialize( );
+
             ModelName_ = "Cube";
             MaterialName_ = "UV";
 
-            m_emissive = 0;
+            m_emissive = 0.45f;
             m_specPow = 0;
             m_specIntensity = 0;
             SetOverdraw(false);
             SetDebug(false);
             m_color = Color(1, 1, 1, 1);
+            m_meshIndex = -1;
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -138,6 +152,16 @@ namespace ursine
         std::vector<SMat4>& Model3D::GetMatrixPalette()
         {
             return m_matrixPalette;
+        }
+
+        int Model3D::GetMeshIndex(void) const
+        {
+            return m_meshIndex;
+        }
+
+        void Model3D::SetMeshIndex(const int index)
+        {
+            m_meshIndex = index;
         }
 
 
@@ -217,6 +241,8 @@ namespace ursine
         //primitives
         void Primitive::Initialize()
         {
+			Renderable::Initialize( );
+
             Type_ = Primitive::PRIM_CUBE;
             Radius_ = 1;
             Height_ = 1;
@@ -316,6 +342,8 @@ namespace ursine
             m_intensity = 1.0f;;
 
             m_spotlightAngles = Vec2(15, 30);
+
+            Renderable::Initialize( );
         }
 
         Light::LightType Light::GetType(void)

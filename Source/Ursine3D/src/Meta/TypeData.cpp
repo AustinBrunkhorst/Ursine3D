@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** TypeData.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "TypeData.h"
@@ -13,7 +26,7 @@ namespace ursine
             , isPrimitive( false )
             , isPointer( false )
             , isClass( false )
-            , enumeration { nullptr } { }
+            , enumeration { nullptr }  { }
 
         ///////////////////////////////////////////////////////////////////////
 

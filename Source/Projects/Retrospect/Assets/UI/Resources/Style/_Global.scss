@@ -1,0 +1,24 @@
+@import 'Config';
+@import 'Utils';
+
+body {
+  cursor: none !important;
+  overflow: hidden;
+  font-family: Roboto;
+}
+
+* {
+  cursor: none !important;
+  -webkit-user-select: none;
+}
+
+.aspect-ratio-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: $base-screen-width;
+  height: $base-screen-height;
+  margin: (-$base-screen-height / 2) 0 0 (-$base-screen-width / 2);
+  padding: 0;
+  box-sizing: border-box;
+}

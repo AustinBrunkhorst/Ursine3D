@@ -9,4 +9,7 @@ class EntityEvent {
     public static var ComponentAdded = "ComponentAdded";
     public static var ComponentRemoved = "ComponentRemoved";
     public static var ComponentChanged = "ComponentChanged";
+    public static var ComponentArrayInserted = "ComponentArrayInserted";
+    public static var ComponentArraySet = "ComponentArraySet";
+    public static var ComponentArrayRemove = "ComponentArrayRemove";
 }

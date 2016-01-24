@@ -17,8 +17,15 @@
 
 #include "CoreSystem.h"
 
+#include "GfxAPI.h"
+
 namespace ursine
 {
+    namespace
+    {
+        graphics::GfxAPI *gGraphics = nullptr;
+    }
+
     Application *Application::Instance = nullptr;
 
     Application::Application(int argc, char *argv[])
@@ -56,7 +63,7 @@ namespace ursine
 
             id.SetValue( m_systems.size( ) );
 
-            auto ctor = derived.GetDynamicConstructor( );
+            auto &ctor = derived.GetDynamicConstructor( );
 
             UAssert( ctor.IsValid( ),
               "Core system \"%s\" doesn't have a default constructor.",
@@ -76,6 +83,8 @@ namespace ursine
         // initialize systems after all have been constructed
         for (auto &system : m_systems)
             system->OnInitialize( );
+
+        gGraphics = CoreSystem<graphics::GfxAPI>( );
     }
 
     Application::~Application(void)
@@ -117,7 +126,11 @@ namespace ursine
 
             if (m_isActive)
             {
+                gGraphics->StartFrame( );
+
                 Dispatch( APP_UPDATE, this, EventArgs::Empty );
+
+                gGraphics->EndFrame( );
             }
             else
             {

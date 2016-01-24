@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EntityEvent.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "EventArgs.h"
 
 namespace ursine
@@ -32,6 +45,15 @@ namespace ursine
 
             // An entities parent has changed
             ENTITY_PARENT_CHANGED,
+
+			///////////////////////////////////////////////////////////////////
+			// Physics
+			///////////////////////////////////////////////////////////////////
+
+			// A collision is persisting between this entity and the other entity.
+			// NOTE: This event is only sent when one of the two objects has a 
+			// non-kinematic (or static) rigidbody attached.
+			ENTITY_COLLISION_PERSISTED,
 
             ///////////////////////////////////////////////////////////////////
             // User Defined

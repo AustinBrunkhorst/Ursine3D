@@ -15,10 +15,13 @@
 
 #include "TypeConfig.h"
 
-#include "Json.h"
+#include "Object.h"
 
 namespace ursine
 {
+    template<typename T>
+    class Array;
+
     namespace meta
     {
         class Variant
@@ -52,6 +55,22 @@ namespace ursine
                 >::type* = nullptr
             );
 
+            // array types (non-const)
+            template<typename T>
+            Variant(Array<T> &rhs);
+
+            // array types (const)
+            template<typename T>
+            Variant(const Array<T> &rhs);
+
+            // r-value array types (non-const)
+            template<typename T>
+            Variant(Array<T> &&rhs);
+
+            // r-value array types (const)
+            template<typename T>
+            Variant(const Array<T> &&rhs);
+
             Variant(const Variant &rhs);
             Variant(Variant &&rhs);
 
@@ -66,6 +85,7 @@ namespace ursine
             operator bool(void) const;
 
             Type GetType(void) const;
+            ArrayWrapper GetArray(void) const;
 
             void Swap(Variant &other);
 
@@ -82,8 +102,10 @@ namespace ursine
 
             bool IsValid(void) const;
             bool IsConst(void) const;
+            bool IsArray(void) const;
 
         private:
+            friend class Type;
             friend class Argument;
             friend class Destructor;
 

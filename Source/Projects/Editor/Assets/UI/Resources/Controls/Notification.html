@@ -1,0 +1,106 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-notification">
+    <link rel="import" type="css" href="../Style/Controls/Notification.css">
+    <template>
+        <template is="dom-if" if="{{dismissible}}">
+            <div class="btn-close" on-click="close"></div>
+        </template>
+        <div class="icon"></div>
+        <div id="header" class="header"></div>
+        <div id="message" class="message"></div>
+        <div id="buttons"></div>
+    </template>
+    <script>
+        var NotificationType = {
+            None: 0,
+            Warning: 1,
+            Error: 2,
+            Info: 3,
+            Question: 4
+        };
+
+        var NotificationConfig = {
+            // default duration before closing in milliseconds
+            duration: 8000,
+            // duration that makes the notification never automatically close
+            infiniteDuration: 0
+        };
+
+        var NotificationControl = Polymer({
+            is: 'x-notification',
+            properties: {
+                dismissible: {
+                    type: Boolean,
+                    notify: true,
+                    value: true
+                },
+                type: {
+                    type: Number,
+                    notify: true,
+                    reflectToAttribute: true
+                },
+                header: {
+                    type: String,
+                    notify: true,
+                    observer: '_onHeaderChange'
+                },
+                message: {
+                    type: String,
+                    notify: true,
+                    observer: '_onMessageChange'
+                }
+            },
+            factoryImpl: function(type, message, header) {
+                this.type = type;
+                this.header = header || '';
+                this.message = message || '';
+            },
+            created: function() {
+                this._closed = false;
+                this._timeout = null;
+            },
+
+            get buttons() {
+                return this.$.buttons;
+            },
+
+            show: function(duration) {
+                document.querySelector( '#notification-container' ).appendChild( this );
+
+                if (duration == NotificationConfig.infiniteDuration)
+                    return;
+
+                if (this._timeout !== null)
+                    clearTimeout( this._timeout );
+
+                this._timeout = setTimeout(
+                    this.close.bind( this ),
+                    duration || NotificationConfig.duration
+                );
+            },
+            close: function() {
+                if (this._closed === true)
+                    return;
+
+                clearTimeout( this._timeout );
+
+                if (this.parentNode)
+                    this.parentNode.removeChild( this );
+
+                this.fire( 'closed', {
+
+                } );
+
+                this._closed = true;
+            },
+
+            _onHeaderChange: function() {
+                this.$.header.innerHTML = this.header;
+            },
+            _onMessageChange: function() {
+                this.$.message.innerHTML = this.message;
+            }
+        });
+    </script>
+</dom-module>

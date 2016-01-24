@@ -8,7 +8,8 @@ import ursine.editor.scene.component.ComponentDatabase;
     "ursine::Vec3",
     "ursine::SVec3",
     "ursine::Vec4",
-    "ursine::SVec4"
+    "ursine::SVec4",
+    "ursine::SQuat"
 )
 class VectorFieldInspector extends FieldInspectionHandler {
     private var m_fieldsContainer : js.html.DivElement;
@@ -72,6 +73,6 @@ class VectorFieldInspector extends FieldInspectionHandler {
     private function updateVectorField(name : String, value : Dynamic) {
         var field = m_fields[ name ];
 
-        field.value = untyped value.toPrecision( 4 );
+        field.value = untyped Math.toMaxPrecision( value, 5 );
     }
 }

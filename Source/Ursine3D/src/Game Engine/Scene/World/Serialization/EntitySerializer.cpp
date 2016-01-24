@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EntitySerializer.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "EntitySerializer.h"
@@ -15,6 +28,8 @@ namespace ursine
             const auto kKeyEntityChildren = "children";
 
             const auto kKeyComponentUID = ".uid";
+
+            const auto kKeyArchetypeVersion = "v";
 
             struct ComponentDeserializationData
             {
@@ -50,8 +65,19 @@ namespace ursine
             return data;
         }
 
+        Json EntitySerializer::SerializeArchetype(Entity *entity) const
+        {
+            Json::object data;
+
+            data[ kKeyArchetypeVersion ] = kSerializationVersion;
+            data[ kKeyEntityComponents ] = serializeComponents( entity );
+            data[ kKeyEntityChildren ] = serializeChildren( entity );
+
+            return data;
+        }
+
         Entity *EntitySerializer::Deserialize(
-            const World::Handle &world,
+            World *world,
             const Json &data,
             const char *version
         ) const
@@ -65,6 +91,28 @@ namespace ursine
             entityManager->dispatchCreated( entity );
 
             return entity;
+        }
+
+        Entity *EntitySerializer::DeserializeArchetype(World *world, const Json &data) const
+        {
+            const char *version;
+
+            auto &versionData = data[ kKeyArchetypeVersion ];
+
+            if (!versionData.is_string( ))
+            {
+                UWarning( 
+                    "Unknown or missing archetype version, assuming latest."
+                );
+
+                version = kSerializationVersion;
+            }
+            else
+            {
+                version = versionData.string_value( ).c_str( );
+            }
+
+            return Deserialize( world, data, version );
         }
 
         Json EntitySerializer::serializeComponents(const Entity *entity) const
@@ -145,9 +193,9 @@ namespace ursine
                 {
                     auto *child = entityManager->create( );
 
-                    deserializeInstance( child, childData, version );
+					deserializeInstance( child, childData, version );
 
-                    entity->m_transform->AddChildAlreadyInLocal( child->m_transform );
+					entity->m_transform->AddChildAlreadyInLocal( child->m_transform );
                 }
             }
         }
@@ -167,7 +215,7 @@ namespace ursine
                 throw SerializationException( error.str( ) );
             }
 
-            auto ctor = componentType.GetDynamicConstructor( );
+            auto &ctor = componentType.GetDynamicConstructor( );
 
             if (!ctor.IsValid( ))
             {

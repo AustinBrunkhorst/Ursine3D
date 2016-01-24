@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Type.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Type.h"
@@ -21,22 +34,25 @@ namespace ursine
     {
         namespace
         {
-            // static database instance
-            auto &database = ReflectionDatabase::Instance( );
+            // make sure we always have a reference to the database
+            #define database ReflectionDatabase::Instance( )
         }
 
         Type::Type(void)
-            : m_id( Invalid ) { }
+            : m_id( Invalid )
+            , m_isArray( false ) { }
 
         ///////////////////////////////////////////////////////////////////////
 
         Type::Type(const Type &rhs)
-            : m_id( rhs.m_id ) { }
+            : m_id( rhs.m_id )
+            , m_isArray( rhs.m_isArray ) { }
 
         ///////////////////////////////////////////////////////////////////////
 
-        Type::Type(TypeID id)
-            : m_id( id ) { }
+        Type::Type(TypeID id, bool isArray)
+            : m_id( id )
+            , m_isArray( isArray ) { }
 
         ///////////////////////////////////////////////////////////////////////
 
@@ -50,6 +66,7 @@ namespace ursine
         Type &Type::operator=(const Type &rhs)
         {
             m_id = rhs.m_id;
+            m_isArray = rhs.m_isArray;
 
             return *this;
         }
@@ -249,9 +266,21 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        const std::string &Type::GetName(void) const
+        bool Type::IsArray(void) const
         {
-            return database.types[ m_id ].name;
+            return m_isArray;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        std::string Type::GetName(void) const
+        {
+            auto &name = database.types[ m_id ].name;
+
+            if (IsArray( ))
+                return "Array<" + name + ">";
+
+            return name;
         }
 
         const MetaManager &Type::GetMeta(void) const
@@ -301,6 +330,13 @@ namespace ursine
         {
             URSINE_TODO( "convert to non pointer/const pointer type" );
             return Type( );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        Type Type::GetArrayType(void) const
+        {
+            return Type( m_id, false );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -377,6 +413,13 @@ namespace ursine
         ) const
         {
             return database.types[ m_id ].GetDynamicConstructor( signature );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        const Constructor &Type::GetArrayConstructor(void) const
+        {
+            return database.types[ m_id ].arrayConstructor;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -502,7 +545,9 @@ namespace ursine
             return database.types[ m_id ].staticFields[ name ];
         }
 
-        Json Type::SerializeJson(const Variant &instance) const
+        ///////////////////////////////////////////////////////////////////////
+
+        Json Type::SerializeJson(const Variant &instance, bool invokeHook) const
         {
             UAssert(
                 *this == instance.GetType( ),
@@ -511,6 +556,25 @@ namespace ursine
                 instance.GetType( ).GetName( ).c_str( ),
                 GetName( ).c_str( )
             );
+
+            if (m_isArray)
+            {
+                Json::array array;
+
+                auto wrapper = instance.GetArray( );
+                auto size = wrapper.Size( );
+
+                for (size_t i = 0; i < size; ++i)
+                {
+                    auto value = wrapper.GetValue( i );
+
+                    array.emplace_back( 
+                        value.GetType( ).SerializeJson( value, invokeHook ) 
+                    );
+                }
+
+                return array;
+            }
 
             if (*this == typeof( bool ))
             {
@@ -541,12 +605,83 @@ namespace ursine
                 object[ field.first ] = value.SerializeJson( );
             }
 
+			if (invokeHook)
+				instance.m_base->OnSerialize( object );
+
             return object;
         }
 
+        ///////////////////////////////////////////////////////////////////////
+
+        Json Type::SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride, bool invokeHook) const
+        {
+            UAssert(
+                *this == instance.GetType( ),
+                "Serializing incompatible variant instance.\n"
+                "Got '%s', expected '%s'",
+                instance.GetType( ).GetName( ).c_str( ),
+                GetName( ).c_str( )
+            );
+
+            if (IsArray( ))
+            {
+                Json::array array;
+
+                auto wrapper = instance.GetArray( );
+                auto size = wrapper.Size( );
+
+                for (size_t i = 0; i < size; ++i)
+                {
+                    auto value = wrapper.GetValue( i );
+
+                    array.emplace_back( 
+                        value.GetType( ).SerializeJson( value, invokeHook )
+                    );
+                }
+
+                return array;
+            }
+
+            if (*this == typeof( bool ))
+            {
+                return { instance.ToBool( ) };
+            }
+
+            if (IsPrimitive( ) || IsEnum( ))
+            {
+                if (IsFloatingPoint( ) || !IsSigned( ))
+                    return { instance.ToDouble( ) };
+ 
+                return { instance.ToInt( ) };
+            }
+
+            if (*this == typeof( std::string ))
+            {
+                return { instance.ToString( ) };
+            }
+            
+            Json::object object { };
+
+            auto &fields = database.types[ m_id ].fields;
+
+            for (auto &field : fields)
+            {
+                auto value = getterOverride( instance, field.second );
+
+                object[ field.first ] = value.SerializeJson( );
+            }
+
+			if (invokeHook)
+				instance.m_base->OnSerialize( object );
+
+            return object;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
         Variant Type::DeserializeJson(const Json &value) const
         {
-            auto ctor = GetConstructor( );
+            auto &ctor = GetConstructor( );
 
             UAssert( ctor.IsValid( ),
                 "Serialization requires a default constructor.\nWith type '%s'.",
@@ -556,10 +691,31 @@ namespace ursine
             return DeserializeJson( value, ctor );
         }
 
+        ///////////////////////////////////////////////////////////////////////
+
         Variant Type::DeserializeJson(const Json &value, const Constructor &ctor) const
         {
+            // array types get special care
+            if (IsArray( ))
+            {
+                auto nonArrayType = GetArrayType( );
+                auto instance = GetArrayConstructor( ).Invoke( );
+                auto wrapper = instance.GetArray( );
+
+                size_t i = 0;
+
+                for (auto &item : value.array_items( ))
+                {
+                    wrapper.Insert( 
+                        i++, 
+                        nonArrayType.DeserializeJson( item, ctor ) 
+                    );
+                }
+
+                return instance;
+            }
             // we have to handle all primitive types explicitly
-            if (IsPrimitive( ))
+            else if (IsPrimitive( ))
             {
                 if (*this == typeof( int ))
                     return { value.int_value( ) };
@@ -581,12 +737,15 @@ namespace ursine
                 return { value.string_value( ) };
             }
 
+            URSINE_TODO( "forward arguments to constructor" );
             auto instance = ctor.Invoke( );
 
             DeserializeJson( instance, value );
 
             return instance;
         }
+
+        ///////////////////////////////////////////////////////////////////////
 
         void Type::DeserializeJson(Variant &instance, const Json &value) const
         {
@@ -602,10 +761,17 @@ namespace ursine
                     GetName( ).c_str( )
                 );
 
-                field.second.SetValue( instance, 
-                    fieldType.DeserializeJson( value[ field.first ] ) 
-                );
+				auto &fieldData = value[ field.first ];
+
+				if (!fieldData.is_null( ))
+				{
+					field.second.SetValue( instance, 
+						fieldType.DeserializeJson( fieldData )
+					);
+				}
             }
+
+            instance.m_base->OnDeserialize( value );
         }
     }
 }

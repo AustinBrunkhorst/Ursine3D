@@ -20,9 +20,15 @@ namespace ursine
 {
     namespace ecs
     {
-        FilterSystem::FilterSystem(World *world, const Filter &filter)
+        FilterSystem::FilterSystem(
+                World *world, 
+                const Filter &filter, 
+                EventHandlerPriority updatePriority
+            )
             : EntitySystem( world )
-            , m_filter( filter ) { }
+            , m_updatePriority( updatePriority )
+            , m_filter( filter )
+            , m_updateType( WORLD_UPDATE ) { }
 
         void FilterSystem::onComponentChange(EVENT_HANDLER(World))
         {
@@ -33,7 +39,7 @@ namespace ursine
             auto contains = utils::IsFlagSet( GetTypeMask( ), entity->m_systemMask );
             auto interests = m_filter.Matches( entity );
             auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
-
+				
             if (interests && !contains && !removed)
             {
                 Add( entity );
@@ -69,7 +75,7 @@ namespace ursine
             Begin( );
 
             for (auto &entity : m_active)
-                Process( entity.second );
+				Process( entity.second );
 
             End( );
         }
@@ -117,7 +123,7 @@ namespace ursine
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .On( WORLD_UPDATE, &FilterSystem::onUpdate );
+                .On( m_updateType, &FilterSystem::onUpdate, m_updatePriority );
         }
 
         void FilterSystem::OnRemove(void)
@@ -126,7 +132,17 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .Off( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .Off( WORLD_UPDATE, &FilterSystem::onUpdate );
+                .Off( m_updateType, &FilterSystem::onUpdate );
+        }
+
+        void FilterSystem::SetUpdateType(WorldEventType updateType)
+        { 
+            m_updateType = updateType;
+        }
+
+        WorldEventType FilterSystem::GetUpdateType(void) const
+        {
+            return m_updateType;
         }
     }
 }

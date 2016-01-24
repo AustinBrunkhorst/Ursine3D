@@ -43,10 +43,13 @@ namespace ursine
                 SetLocalPosition
             );
 
+            Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
+            Meta(EditorGetter( "GetLocalEulerEditor" ))
+            Meta(EditorSetter( "SetLocalEulerEditor" ))
             EditorField( 
-                SVec3 rotation,
-                GetLocalEuler,
-                SetLocalEuler
+                SQuat rotation,
+                GetLocalRotation,
+                SetLocalRotation
             );
 
             EditorField( 
@@ -57,6 +60,7 @@ namespace ursine
 
             ALLOW_ALIGNED_ALLOC(16);
 
+            Meta(Enable)
             Transform(void);
 
             Transform(const Transform &transform);
@@ -72,7 +76,6 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             void SetLocalPosition(const SVec3 &position);
-
             const SVec3 &GetLocalPosition(void) const;
 
             void SetWorldPosition(const SVec3 &position);
@@ -84,10 +87,16 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             void SetLocalRotation(const SQuat &rotation);
-            void SetLocalEuler(const SVec3 &euler);
 
+            void SetLocalEuler(const SVec3 &euler);
             const SQuat &GetLocalRotation(void) const;
             SVec3 GetLocalEuler(void) const;
+
+            Meta(Enable)
+            void SetLocalEulerEditor(const SQuat &euler);
+
+            Meta(Enable)
+            SQuat GetLocalEulerEditor(void) const;
 
             void SetWorldRotation(const SQuat &rotation);
             void SetWorldEuler(const SVec3 &euler);
@@ -102,7 +111,6 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             void SetLocalScale(const SVec3 &scale);
-            
             const SVec3 &GetLocalScale(void) const;
 
             void SetWorldScale(const SVec3 &scale);
@@ -166,6 +174,8 @@ namespace ursine
             // If the index is too large, return nullptr
             Transform *GetChild(uint index);
             const Transform *GetChild(uint index) const;
+
+            const std::vector<Transform *> &GetChildren(void) const;
 
             // Find this transform's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -251,18 +261,21 @@ namespace ursine
             void recalculateMatrices(void);
 
             // notify the editor our values have changed
-            void notifyPositionChanged(void);
-            void notifyRotationChanged(void);
-            void notifyScaleChanged(void);
+            void notifyPositionChanged(const SVec3 *oldPosition);
+            void notifyRotationChanged(const SQuat *oldRotation);
+            void notifyScaleChanged(const SVec3 *oldScale);
 
             // Generically add a child to our hierarch, without 
             // handling value changes in scale, position, or rotation
             bool genericAddChild(Transform *child);
 
             void setParent(Transform *oldParent, Transform *newParent);
+			
+			void setRoot(Transform *root);
 
         } Meta(
             Enable,
+            WhiteListMethods,
             DisableComponentRemoval, 
             DisplayName( "Transform" )
         );

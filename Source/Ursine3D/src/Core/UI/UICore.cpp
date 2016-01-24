@@ -21,7 +21,7 @@ namespace ursine
 
     UICore::UICore(void)
     {
-        atexit( Shutdown );
+        atexit( Shutdown ); 
     }
 
     UICore::~UICore(void)
@@ -66,6 +66,11 @@ namespace ursine
 
     void UICore::Shutdown(void)
     {
+        URSINE_TODO( "Find CEF reference counting leak" );
+    #if !defined(CONFIG_DEBUG)
+
         CefShutdown( );
+
+    #endif
     }
 }

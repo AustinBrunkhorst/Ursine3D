@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EditorIconComponent.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "EditorIconComponent.h"
@@ -27,6 +40,8 @@ void EditorIcon::SetIcon(const std::string &text)
 
 void EditorIcon::OnInitialize(void)
 {
+    Component::OnInitialize( );
+
     auto *owner = GetOwner( );
 
     m_billboard = owner->GetWorld( )->CreateEntity( );

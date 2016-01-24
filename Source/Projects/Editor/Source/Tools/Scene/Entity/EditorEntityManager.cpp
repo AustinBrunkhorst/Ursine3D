@@ -1,7 +1,27 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EditorEntityManager.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "EditorEntityManager.h"
+
+#include "ComponentUtils.h"
+
 #include "SelectedComponent.h"
+#include "EditorConfig.h"
+
+#include <Editor.h>
+#include <Timer.h>
 
 using namespace ursine;
 
@@ -33,6 +53,9 @@ namespace
             const auto Added = "ComponentAdded";
             const auto Removed = "ComponentRemoved";
             const auto Changed = "ComponentChanged";
+            const auto ArrayInserted = "ComponentArrayInserted";
+            const auto ArraySet = "ComponentArraySet";
+            const auto ArrayRemove = "ComponentArrayRemove";
         }
     }
 }
@@ -60,7 +83,8 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
         .On( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .On( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
-        .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged );
+        .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
+        .On( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 
     m_world = world;
 
@@ -86,7 +110,8 @@ void EditorEntityManager::clearWorld(ecs::World::Handle world)
         .Off( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
         .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .Off( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
-        .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged );
+        .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
+        .Off( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 }
 
 void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
@@ -178,7 +203,9 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
-        { "value", component.SerializeJson( ) }
+        // note: false is to ensure no serialization hooks are called
+        { "value", component.GetType( ).SerializeJson( component, false ) },
+        { "buttons", InspectComponentButtons( component ) }
     };
 
     m_project->GetUI( )->Message(
@@ -217,7 +244,7 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             "Notifying change of unknown field.\n"
             "Component: %s\n"
             "Field: %s",
-            args->component->GetType( ).GetName( ),
+            args->component->GetType( ).GetName( ).c_str( ),
             args->field.c_str( )
         );
     #endif
@@ -226,7 +253,8 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
             { "component", args->component->GetType( ).GetName( ) },
             { "field", args->field },
-            { "value", args->value.SerializeJson( ) }
+			// note: false is to ensure no serialization hooks are called
+            { "value", args->value.GetType( ).SerializeJson( args->value, false ) }
         };
 
         m_project->GetUI( )->Message(
@@ -236,4 +264,58 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             message
         );
     }
+}
+
+void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::EditorComponentArrayModfiedArgs);
+
+    if (args->entity->HasComponent<Selected>( ))
+    {
+    #if defined(CONFIG_DEBUG)
+        UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
+            "Notifying change of unknown field.\n"
+            "Component: %s\n"
+            "Field: %s",
+            args->component->GetType( ).GetName( ).c_str( ),
+            args->field.c_str( )
+        );
+    #endif
+
+        Json::object message = Json::object {
+            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+            { "component", args->component->GetType( ).GetName( ) },
+            { "field", args->field },
+            { "index", static_cast<int>( args->modification.index ) }
+        };
+
+        if (args->modification.value.IsValid( ))
+        {
+            // note: false is to ensure no serialization hooks are called
+            message[ "value" ] = args->modification.value.GetType( ).SerializeJson( args->modification.value, false );
+        }
+        else
+        {
+            message[ "value" ] = nullptr;
+        }
+
+        static std::unordered_map<ArrayModifyAction, std::string> actionToType
+        {
+            { AMODIFY_INSERT, events::component::ArrayInserted },
+            { AMODIFY_SET, events::component::ArraySet },
+            { AMODIFY_REMOVE, events::component::ArrayRemove }
+        };
+
+        m_project->GetUI( )->Message(
+            UI_CMD_BROADCAST, 
+            channel::EntityManager, 
+            actionToType[ args->modification.action ],
+            message
+        );
+    }
+}
+
+void ecs::EditorClearDeletionQueue(void)
+{
+	GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
 }

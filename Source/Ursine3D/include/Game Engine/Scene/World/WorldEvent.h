@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** WorldEvent.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Entity.h"
@@ -27,12 +40,20 @@ namespace ursine
             // The screen that owns this world's focus state changed
             WORLD_SCREEN_FOCUS_CHANGED,
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            // Update event called specifically for editor systems
+            WORLD_EDITOR_UPDATE,
             // An entity's name changed
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
             // An entity's parent has changed
             WORLD_EDITOR_ENTITY_PARENT_CHANGED,
             // A component's field has changed
-            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED
+            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
+            // A component's array field has been modified
+            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED
+
+        #endif
         };
 
         struct WorldEventArgs : EventArgs
@@ -81,6 +102,8 @@ namespace ursine
                 , focused( focused ) { }
         };
 
+    #if defined(URSINE_WITH_EDITOR)
+
         struct EditorEntityNameChangedArgs : EntityEventArgs
         {
             std::string newName;
@@ -108,5 +131,18 @@ namespace ursine
                 , field( field )
                 , value( value ) { }
         };
+
+        struct EditorComponentArrayModfiedArgs : ComponentEventArgs
+        {
+            const ArrayModificationArgs &modification;
+            std::string field;
+
+            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, Entity *entity, Component *component, const std::string &field)
+                : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
+                , modification( args )
+                , field( field ) { }
+        };
+
+    #endif
     }
 }

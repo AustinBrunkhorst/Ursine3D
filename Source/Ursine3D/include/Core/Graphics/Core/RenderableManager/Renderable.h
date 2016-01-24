@@ -1,18 +1,15 @@
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      Renderable.h
-Module:         Graphics
-Purpose:        All of the possible renderables in graphics
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Renderable.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
 
 #pragma once
 
@@ -44,11 +41,16 @@ namespace ursine
 
             void SetDebug(bool debug);
             bool GetDebug() const;
+
+            RenderMask GetRenderMask(void) const;
+            void SetRenderMask(const RenderMask mask);
+
         private:
             ecs::EntityUniqueID entityID;
             bool Active_;
             bool Overdraw_;
             bool Debug_;
+            RenderMask m_mask;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -94,6 +96,9 @@ namespace ursine
 
             std::vector<SMat4> &GetMatrixPalette(void);
 
+            int GetMeshIndex(void) const;
+            void SetMeshIndex(const int index);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -105,6 +110,9 @@ namespace ursine
             float m_animationTime;
 
             std::vector<SMat4> m_matrixPalette;
+
+            // for multimaps
+            int m_meshIndex;
         };
 
         /////////////////////////////////////////////////////////////////

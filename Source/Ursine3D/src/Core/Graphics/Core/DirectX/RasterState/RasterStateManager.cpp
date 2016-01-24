@@ -46,7 +46,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_SOLID;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -64,7 +64,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_SOLID;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -82,7 +82,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_SOLID;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -119,7 +119,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 
@@ -137,7 +137,7 @@ namespace ursine
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
                 rasterDesc.FrontCounterClockwise = false;
-                rasterDesc.MultisampleEnable = true;
+                rasterDesc.MultisampleEnable = false;
                 rasterDesc.ScissorEnable = false;
                 rasterDesc.SlopeScaledDepthBias = 0.0f;
 

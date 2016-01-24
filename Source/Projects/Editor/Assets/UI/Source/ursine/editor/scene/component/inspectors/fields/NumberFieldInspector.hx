@@ -1,9 +1,15 @@
 package ursine.editor.scene.component.inspectors.fields;
 
+import ursine.native.Property;
 import ursine.controls.NumberInput;
 import ursine.editor.scene.component.ComponentDatabase;
 
-@fieldInspector( "int", "float", "double" )
+@fieldInspector(
+    "int",
+    "unsigned int",
+    "float",
+    "double"
+)
 class NumberFieldInspector extends FieldInspectionHandler {
     private var m_number : NumberInput;
 
@@ -12,9 +18,25 @@ class NumberFieldInspector extends FieldInspectionHandler {
 
         m_number = new NumberInput( );
 
-        m_number.value = m_instance;
+        if (Reflect.hasField( field.meta, Property.InputRange ))
+        {
+            m_number.slider = true;
 
-        m_number.addEventListener( 'change', function() {
+            var range = Reflect.field( field.meta, Property.InputRange );
+
+            m_number.format = range.format;
+            m_number.min = range.min;
+            m_number.max = range.max;
+
+            if (range.step > 0.0)
+                m_number.step = Std.string( range.step );
+        }
+
+        // make sure we don't cause any overflow issues
+        if (type.name.indexOf( "unsigned" ) != -1)
+            m_number.min = "0";
+
+        var changeHandler = function() {
             var value : Dynamic = m_number.valueAsNumber;
 
             if (Math.isNaN( value ))
@@ -25,7 +47,13 @@ class NumberFieldInspector extends FieldInspectionHandler {
                 value = Std.int( value );
 
             m_owner.notifyChanged( m_field, value );
-        } );
+        };
+
+        m_number.addEventListener( 'change', changeHandler );
+
+        // add events on immediate input for sliders
+        if (m_number.type == 'range')
+            m_number.addEventListener( 'input', changeHandler );
 
         // select all text on focus
         m_number.addEventListener( 'focus', function(e) {
@@ -34,6 +62,9 @@ class NumberFieldInspector extends FieldInspectionHandler {
             e.preventDefault( );
         } );
 
+        // initially set the value
+        updateValue( instance );
+
         inspector.container.appendChild( m_number );
     }
 
@@ -41,7 +72,7 @@ class NumberFieldInspector extends FieldInspectionHandler {
         var number : Dynamic;
 
         if (m_type.name == "float" || m_type.name == "double")
-            number = untyped value.toPrecision( 4 );
+            number = untyped Math.toMaxPrecision( value, 5 );
         else
             number = Std.int( value );
 

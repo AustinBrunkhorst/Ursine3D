@@ -17,6 +17,8 @@
 #include "Entity.h"
 #include "Filter.h"
 #include "TransformComponent.h"
+#include "EntitySerializer.h"
+
 #include <queue>
 
 namespace ursine
@@ -48,9 +50,11 @@ namespace ursine
                         derived.GetName().c_str( )
                     );
 
+                    UAssert( nextID < kMaxComponentCount, "We're maxed out son." );
+
                     componentID.SetValue( nextID++ );
 
-                    auto defaultCtor = derived.GetDynamicConstructor( );
+                    auto &defaultCtor = derived.GetDynamicConstructor( );
 
                     UAssert( defaultCtor.IsValid( ), 
                         "Component type '%s' doesn't have a default dynamic constructor.",
@@ -96,6 +100,17 @@ namespace ursine
 
             return entity;
         }
+         
+        Entity *EntityManager::Clone(Entity *entity)
+        {
+            URSINE_TODO( "optimize by skipping the serialization step" );
+
+            EntitySerializer serializer;
+
+            auto data = serializer.SerializeArchetype( entity );
+
+            return serializer.DeserializeArchetype( m_world, data );
+        }
 
         EntityVector EntityManager::GetRootEntities(void)
         {
@@ -123,6 +138,15 @@ namespace ursine
             addComponent( entity, component );
 
             component->OnInitialize( );
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            UAssert( component->m_baseInitialized, 
+                "Component type '%s' does not call Component::OnInitialize( ).",
+                component->GetType( ).GetName( ).c_str( )
+            );
+
+        #endif
 
             ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
 
@@ -310,6 +334,10 @@ namespace ursine
 
         void EntityManager::BeforeRemove(Entity *entity)
         {
+            // for each child, remove it
+            for (auto child : entity->GetTransform( )->GetChildren( ))
+                BeforeRemove( child->GetOwner( ) );
+
             EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
 
             // we're removing man
@@ -472,6 +500,15 @@ namespace ursine
                     auto *component = m_componentTypes[ i ][ id ];
 
                     component->OnInitialize( );
+
+                #if defined(URSINE_WITH_EDITOR)
+
+                    UAssert( component->m_baseInitialized, 
+                        "Component type '%s' does not call Component::OnInitialize( ).",
+                        component->GetType( ).GetName( ).c_str( )
+                    );
+
+                #endif
 
                     args.component = component;
 

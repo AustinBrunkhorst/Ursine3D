@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Constructor.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Invokable.h"
@@ -14,6 +27,24 @@ namespace ursine
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
+        Constructor::Constructor(const Constructor &rhs)
+            : Invokable( "constructor" )
+            , m_isDynamic( rhs.m_isDynamic )
+            , m_classType( rhs.m_classType )
+            , m_invoker( rhs.m_invoker )
+        {
+            m_signature = rhs.m_signature;
+        }
+
+        Constructor::Constructor(const Constructor &&rhs)
+            : Invokable( "constructor" )
+            , m_isDynamic( rhs.m_isDynamic )
+            , m_classType( rhs.m_classType )
+            , m_invoker( std::move( rhs.m_invoker ) )
+        {
+            m_signature = std::move( rhs.m_signature );
+        }
+
         Constructor::Constructor(
             Type classType, 
             InvokableSignature signature, 
@@ -26,6 +57,17 @@ namespace ursine
             , m_invoker( invoker )
         {
             m_signature = signature;
+        }
+
+        Constructor &Constructor::operator=(const Constructor &&rhs)
+        {
+            m_isDynamic = rhs.m_isDynamic;
+            m_classType = rhs.m_classType;
+            m_invoker = std::move( rhs.m_invoker );
+
+            m_signature = std::move( rhs.m_signature );
+
+            return *this;
         }
 
         const Constructor &Constructor::Invalid(void)

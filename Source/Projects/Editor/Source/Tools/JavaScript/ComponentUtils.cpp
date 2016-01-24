@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ComponentUtils.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "ComponentUtils.h"
@@ -57,6 +70,30 @@ JSFunction(GetNativeComponentDatabase)
     return object;
 }
 
+Json::array InspectComponentButtons(const meta::Variant &component)
+{
+    auto methods = component.GetType( ).GetMethods( );
+
+    Json::array inspection;
+
+    for (auto &method : methods)
+    {
+        auto &meta = method.GetMeta( );
+
+        auto *button = meta.GetProperty<CreateButton>( );
+
+        if (!button)
+            continue;
+
+        inspection.emplace_back( Json::object {
+            { "name", method.GetName( ) },
+            { "text", button->text }
+        } );
+    }
+
+    return inspection;
+}
+
 namespace
 {
     void addType(Json::object &types, meta::Type type)
@@ -67,9 +104,12 @@ namespace
         if (types.find( typeName ) != types.end( ))
             return;
 
+        auto isArray = type.IsArray( );
+
         Json::object typeObj 
         {
-            { "name", typeName }
+            { "name", typeName },
+            { "isArray", isArray }
         };
 
         if (type.IsEnum( ))
@@ -95,16 +135,25 @@ namespace
 
         Json::array fieldsObj;
 
-        for (auto &field : type.GetFields( ))
+        if (!isArray)
         {
-            auto fieldType = field.GetType( );
-            auto &fieldName = field.GetName( );
+            for (auto &field : type.GetFields( ))
+            {
+                auto fieldType = field.GetType( );
+                auto &fieldName = field.GetName( );
 
-            fieldsObj.emplace_back( Json::object {
-                { "name", fieldName },
-                { "type", fieldType.GetName( ) },
-                { "meta", field.GetMeta( ).SerializeJson( ) }
-            } );
+                fieldsObj.emplace_back( Json::object {
+                    { "name", fieldName },
+                    { "type", fieldType.GetName( ) },
+                    { "meta", field.GetMeta( ).SerializeJson( ) }
+                } );
+            }
+
+            typeObj[ "arrayType" ] = nullptr;
+        }
+        else
+        {
+            typeObj[ "arrayType" ] = type.GetArrayType( ).GetName( );
         }
 
         typeObj[ "fields" ] = fieldsObj;

@@ -41,9 +41,6 @@ namespace ursine
             typedef uint32 EventID;
             typedef EventDispatcher<EventID> EventDispatcher;
 
-            // Allow use of ChainableEventOperator
-            typedef EventID KeyType;
-
             ////////////////////////////////////////////////////////////////////
             // State/Identification
             ////////////////////////////////////////////////////////////////////
@@ -110,6 +107,9 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
             // Utilities
             ////////////////////////////////////////////////////////////////////
+
+            // Creates a clone of this entity
+            Entity *Clone(void);
 
             // Gets the local timer manager for this entity
             LocalTimerManager &GetTimers(void);
@@ -214,16 +214,25 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             template<typename Args>
-            void Connect(EventID event, StaticDelegate<Args> delegate);
+            void Connect(
+                EventID event, 
+                EventDispatcher::HandlerType::StaticDelegate<Args> delegate,
+                EventHandlerPriority priority = kDefaultEventHandlerPriority
+            );
 
             template<typename Class, typename Args>
-            void Connect(EventID event, Class *context, ClassDelegate<Class, Args> delegate);
+            void Connect(
+                EventID event, 
+                Class *context, 
+                EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate,
+                EventHandlerPriority priority = kDefaultEventHandlerPriority
+            );
 
             template<typename Args>
-            void Disconnect(EventID event, StaticDelegate<Args> delegate);
+            void Disconnect(EventID event, EventDispatcher::HandlerType::StaticDelegate<Args> delegate);
 
             template<typename Class, typename Args>
-            void Disconnect(EventID event, Class *context, ClassDelegate<Class, Args> delegate);
+            void Disconnect(EventID event, Class *context, EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate);
 
             void Dispatch(EventID event, const EventArgs *args);
             
@@ -291,6 +300,9 @@ namespace ursine
 
             // resets data for this entity
             void reset(void);
+
+			// set the entity and all of it's children's deleting flags
+			void setDeletingTrue(void);
         };
     }
 }

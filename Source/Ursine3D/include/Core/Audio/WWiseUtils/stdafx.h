@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** stdafx.h
+**
+** Author:
+** - Jason Burch - j.orion@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 //////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2006 Audiokinetic Inc. / All Rights Reserved

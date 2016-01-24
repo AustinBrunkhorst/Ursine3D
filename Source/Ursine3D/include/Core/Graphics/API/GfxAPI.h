@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxAPI.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -90,6 +103,9 @@ namespace ursine
 
             // resize the window
             void Resize(int width, int height);
+
+            // set fullscreen state
+            void SetFullscreenState(const bool state);
 
             // set the main screen viewport. All cameras are sized 
             // w/ respect to this size. Should always be width

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** SelectedComponent.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <Component.h>
@@ -13,8 +26,6 @@ public:
     void OnInitialize(void) override;
 
 private:
-    float m_emissive;
-
     void tryDebugModel(bool enabled);
 
-} Meta(Enable, WhiteListMethods, DisableSerialization, HiddenInInspector);
+} Meta(Enable, WhiteListMethods, HiddenInInspector, DisableSerialization);

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ReflectionParser.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "ReflectionParser.h"
@@ -262,7 +275,10 @@ void ReflectionParser::buildClasses(
         }
         else if (kind == CXCursor_TypedefDecl)
         {
-            if (boost::starts_with( child.GetDisplayName( ), kMetaExternalTypeDefName ))
+            auto displayName = child.GetDisplayName( );
+
+            // external declaration
+            if (boost::starts_with( displayName, kMetaExternalTypeDefName ))
             {
                 m_classes.emplace_back(
                     new External( child.GetTypedefType( ).GetDeclaration( ) )

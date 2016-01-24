@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ObjectSelectorSystem.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "ObjectSelectorSystem.h"
@@ -10,6 +23,8 @@
 
 #include <Model3DComponent.h>
 #include <RigidbodyComponent.h>
+#include <BodyComponent.h>
+#include <CameraComponent.h>
 
 #include <SystemManager.h>
 #include <GfxAPI.h>
@@ -44,6 +59,7 @@ ecs::Entity *ObjectSelectorSystem::GetCurrentFocus(void)
 
 void ObjectSelectorSystem::OnInitialize(void)
 {
+    FilterSystem::SetUpdateType( ecs::WorldEventType::WORLD_EDITOR_UPDATE );
     FilterSystem::OnInitialize( );
 
     //grab graphics
@@ -63,8 +79,8 @@ void ObjectSelectorSystem::OnInitialize(void)
         .On( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
 
     m_world->Listener( this )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate )
-        .On( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
+        .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onUpdate )
+        .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
         .On( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd );
 
     //construct the 3 axis
@@ -106,9 +122,9 @@ void ObjectSelectorSystem::OnInitialize(void)
     auto zModel = m_zAxis->AddComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cylinder" );
-        yModel->SetModel( "Cylinder" );
-        zModel->SetModel( "Cylinder" );
+        xModel->SetModelResourceName( "Cylinder" );
+        yModel->SetModelResourceName( "Cylinder" );
+        zModel->SetModelResourceName( "Cylinder" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -141,8 +157,8 @@ void ObjectSelectorSystem::OnRemove(void)
         .Off( KM_KEY_DOWN, &ObjectSelectorSystem::onKeyDown );
      
     m_world->Listener(this)
-        .Off( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onUpdate )
-        .Off( ecs::WorldEventType::WORLD_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
+        .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onUpdate )
+        .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &ObjectSelectorSystem::onMouseUpdate )
         .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, &ObjectSelectorSystem::onSelectedAdd );
 
     m_zAxis->Delete( );
@@ -159,8 +175,9 @@ void ObjectSelectorSystem::Process(ecs::Entity *entity)
         // zero out all selected rigidbodies' velocity and angular velocity
         auto rigidbody = entity->GetComponent<ecs::Rigidbody>( );
 
-        rigidbody->SetVelocity( SVec3::Zero( ) );
-        rigidbody->SetAngularVelocity( SVec3::Zero( ) );
+		rigidbody->SetVelocity( SVec3::Zero( ) );
+		rigidbody->SetAngularVelocity( SVec3::Zero( ) );
+		rigidbody->SetAwake( );
     }
 }
 
@@ -265,19 +282,19 @@ void ObjectSelectorSystem::onMouseUpdate(EVENT_HANDLER(ursine::ecs::World))
     if (!(m_keyboardManager->GetModifiers( ) & KMD_ALT))
     {
         //get the editor camera
-        graphics::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
+        ecs::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
 
         //get the mouse position
         Vec2 screenPos = GetCoreSystem(MouseManager)->GetPosition( );
 
-        Vec3 camPos = cam->GetPosition( );
+        SVec3 camPos = cam->GetOwner( )->GetTransform( )->GetWorldPosition( );
 
         //get the mouse world positions
-        Vec3 p1 = cam->ScreenToWorld( screenPos, 0.1f );
-        Vec3 p2 = cam->ScreenToWorld( screenPos, 1.f );
+        SVec3 p1 = cam->ScreenToWorld( screenPos, 0.1f );
+        SVec3 p2 = cam->ScreenToWorld( screenPos, 1.f );
 
         //create a vector going out from the eye
-        Vec3 mouseVec = p1 - p2;
+        SVec3 mouseVec = p1 - p2;
         mouseVec.Set( mouseVec.X( ), mouseVec.Y( ), mouseVec.Z( ) );
 
         //project onto the CURRENT place, which is dependent on the base position
@@ -537,9 +554,9 @@ void ObjectSelectorSystem::setToTranslate()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cylinder" );
-        yModel->SetModel( "Cylinder" );
-        zModel->SetModel( "Cylinder" );
+        xModel->SetModelResourceName( "Cylinder" );
+        yModel->SetModelResourceName( "Cylinder" );
+        zModel->SetModelResourceName( "Cylinder" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -594,9 +611,9 @@ void ObjectSelectorSystem::setToScale()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Cube" );
-        yModel->SetModel( "Cube" );
-        zModel->SetModel( "Cube" );
+        xModel->SetModelResourceName( "Cube" );
+        yModel->SetModelResourceName( "Cube" );
+        zModel->SetModelResourceName( "Cube" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -649,9 +666,9 @@ void ObjectSelectorSystem::setToRotation()
     auto zModel = m_zAxis->GetComponent<ecs::Model3D>( );
 
     {
-        xModel->SetModel( "Ring" );
-        yModel->SetModel( "Ring" );
-        zModel->SetModel( "Ring" );
+        xModel->SetModelResourceName( "Ring" );
+        yModel->SetModelResourceName( "Ring" );
+        zModel->SetModelResourceName( "Ring" );
 
         xModel->SetMaterial( "Blank" );
         yModel->SetMaterial( "Blank" );
@@ -727,12 +744,12 @@ void ObjectSelectorSystem::hideTool(void)
 SVec3 ObjectSelectorSystem::getMousePosition(const Vec2 &mousePos)
 {
     //get the editor camera
-    graphics::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
+    ecs::Camera *cam = m_editorCameraSystem->GetEditorCamera( );
 
     //get the mouse position
     Vec2 screenPos = mousePos;
 
-    Vec3 camPos = cam->GetPosition( );
+    Vec3 camPos = cam->GetOwner( )->GetTransform( )->GetWorldPosition( );
 
     //get the mouse world positions
     Vec3 p1 = cam->ScreenToWorld( screenPos, 0.1f );

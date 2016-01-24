@@ -17,6 +17,8 @@ class Editor {
 
     public var componentDatabase : ComponentDatabase;
 
+    private var m_notificationManager : NativeNotificationManager;
+
     public function new() {
         instance = this;
 
@@ -28,11 +30,15 @@ class Editor {
             Extern.GetNativeComponentDatabase( )
         );
 
+        m_notificationManager = new NativeNotificationManager( broadcastManager );
+
         buildMenus( );
 
         js.Browser.document
             .querySelector( '#header-toolbar' )
             .appendChild( mainMenu );
+
+        initSimulationPlayback( );
     }
 
     private function buildMenus() {
@@ -141,5 +147,28 @@ class Editor {
         }
 
         return parent;
+    }
+
+    private function initSimulationPlayback() {
+        var btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
+        var btnStep = js.Browser.document.querySelector( '#simulation-step' );
+
+        btnToggle.addEventListener( 'click', function() {
+            btnToggle.classList.toggle( 'running' );
+
+            var running = btnToggle.classList.contains( 'running' );
+
+            // hide step button if running
+            btnStep.classList.toggle( 'disabled', running );
+
+            Extern.ScenePlay( running );
+        } );
+
+        btnStep.addEventListener( 'click', function() {
+            if (btnStep.classList.contains( 'disabled' ))
+                return;
+
+            Extern.SceneStep( );
+        } );
     }
 }

@@ -16,6 +16,7 @@
 #include "PhysicsInteropConfig.h"
 #include "DebugDrawer.h"
 #include "Raycasting.h"
+#include "CollisionEventArgs.h"
 
 namespace ursine
 {
@@ -23,6 +24,8 @@ namespace ursine
     namespace ecs
     {
         class Entity;
+		class Rigidbody;
+		class Body;
     }
 
     namespace physics
@@ -39,7 +42,8 @@ namespace ursine
 
             // Step the simulation forward
             // If the maxSubSteps > 0, it will interpolate motion between fixedTimeSteps
-            void Step(float timeStep, int maxSubSteps = 1, float fixedTimeStep = 1.0f / 60.0f);
+            void Step(float timeStep, int maxSubSteps = 7, float fixedTimeStep = 1.0f / 60.0f);
+            void DebugDrawSimulation(void);
 
             void SetDebugDrawer(DebugDrawer *debugDrawer);
             
@@ -58,12 +62,14 @@ namespace ursine
 
             void ClearContacts(Rigidbody &rigidbody);
 
+			void DispatchCollisionEvents(void);
+
         private:
 
             // terminate the simulation
             void destroySimulation(void);
 
-#ifdef BULLET_PHYSICS
+		#ifdef BULLET_PHYSICS
             // collision configuration contains default setup for memory,
             // collision setup. Advanced users can create their own configuration.
             btDefaultCollisionConfiguration m_collisionConfig;
@@ -74,14 +80,25 @@ namespace ursine
 
             // btDbvtBroadphase is a good general purpose broadphase. 
             // You can also try out btAxis3Sweep.
-            btDbvtBroadphase *m_overlappingPairCache;
+            btDbvtBroadphase m_overlappingPairCache;
 
             // the default constraint solver. For parallel processing 
             // you can use a different solver (see Extras/BulletMultiThreaded)
-            btSequentialImpulseConstraintSolver *m_solver;
+            btSequentialImpulseConstraintSolver m_solver;
 
             btSoftRigidDynamicsWorld *m_dynamicsWorld;
-#endif
+		#endif
+
+			bool contactCallbackEnabled(const BodyBase *body);
+
+			void dispatchContactEvent(const BodyBase *thisBody, const BodyBase *otherBody,
+								      ecs::Entity *thisEntity, ecs::Entity *otherEntity, PersistentManifold *manifold);
+
+			ecs::Entity *getEntityPointer(const BodyBase *body);
+
+			void calculateContactRelativeVelocity(
+				const BodyBase *thisBody, const BodyBase *otherBody, Contact *contact
+			);
         };
     }
 }

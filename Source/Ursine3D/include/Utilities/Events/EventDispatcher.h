@@ -15,9 +15,8 @@
 
 #include "EventConfig.h"
 
-#include "FastDelegate.h"
-
 #include "ChainableEventOperator.h"
+#include "Utils.h"
 
 #include <string>
 #include <unordered_map>
@@ -36,50 +35,51 @@
 
 namespace ursine
 {
-    template<typename Key = std::string>
+    template<
+        typename Key = std::string,
+        typename Handler = FastDelegateHandler
+    >
     class EventDispatcher
     {
     public:
-        using KeyType = Key;
+        typedef Key KeyType;
+        typedef Handler HandlerType;
 
         template<typename Listener>
         using ChainType = ChainableEventOperator<EventDispatcher<Key>, Listener>;
 
-        // Callback function handler
-        using Handler = fastdelegate::FastDelegate<void(void*, const EventArgs *)>;
-
         EventDispatcher(void *defaultSender = nullptr);
 
         // Binds a connection to a static function
-        template<typename Args>
+        template<typename Args = EventArgs>
         void Connect(
-            const Key &event, 
-            StaticDelegate<Args> delegate, 
+            const Key &event,
+            typename Handler::template StaticDelegate<Args> delegate, 
             EventHandlerPriority priority = kDefaultEventHandlerPriority
         );
 
         // Binds a connection to a class member function
-        template<typename Class, typename Args>
+        template<typename Class, typename Args = EventArgs>
         void Connect(
             const Key &event, 
             Class *context, 
-            ClassDelegate<Class, Args> delegate, 
+            typename Handler::template ClassDelegate<Class, Args> delegate,
             EventHandlerPriority priority = kDefaultEventHandlerPriority
         );
 
         // Removes a bound static function from this dispatcher
-        template<typename Args>
+        template<typename Args = EventArgs>
         void Disconnect(
             const Key &event, 
-            StaticDelegate<Args> delegate
+            typename Handler::template StaticDelegate<Args> delegate
         );
 
         // Removes a bound class member function from this dispatcher
-        template<typename Class, typename Args>
+        template<typename Class, typename Args = EventArgs>
         void Disconnect(
             const Key &event,
             Class *context, 
-            ClassDelegate<Class, Args> delegate
+            typename Handler::template ClassDelegate<Class, Args> delegate
         );
 
         // Dispatches the given event with the given args. "this" is used for the sender.
@@ -111,7 +111,7 @@ namespace ursine
         struct HandlerData
         {
             EventHandlerPriority priority;
-            Handler handler;
+            typename Handler::Handler handler;
         };
 
         typedef std::vector<HandlerData> HandlerListType;

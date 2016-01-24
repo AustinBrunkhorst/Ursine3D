@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AnimatorComponent.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "AnimatorComponent.h"
@@ -17,6 +30,7 @@ namespace ursine
             , m_debug( false )
             , m_speedScalar( 1.0f )
             , m_currentAnimation( "Take 001" )
+            , m_currentRig( "" )
         {
         }
 
@@ -27,6 +41,8 @@ namespace ursine
 
         void Animator::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             // clean up our model's matrices
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             for ( auto &x : matrixPalette )
@@ -41,13 +57,18 @@ namespace ursine
 
             // grab what we need
             auto *currentAnimation = AnimationBuilder::GetAnimationByName( m_currentAnimation );
-            auto *rig = AnimationBuilder::GetAnimationRigByIndex( 0 );
+            auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
 
-            if ( currentAnimation == nullptr || rig == nullptr )
+
+            if ( currentAnimation == nullptr || rig == nullptr)
+                return;
+
+            if ( currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount() )
                 return;
             
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             std::vector<SMat4> tempVeec( 100 );
+
             m_state.SetAnimation( currentAnimation );
 
             // update time
@@ -89,10 +110,10 @@ namespace ursine
                 auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
 
                 int maxNodeDistance = 0;
-                unsigned boneCount = hierarchy.size( );
+                size_t boneCount = hierarchy.size( );
 
                 // calculate max distance for colors, calculate bone position
-                for ( unsigned x = 0; x < boneCount; ++x )
+                for (size_t x = 0; x < boneCount; ++x)
                 {
                     // distance
                     int distance = 0;
@@ -137,7 +158,7 @@ namespace ursine
                 }
 
                 // render lines
-                for ( unsigned x = boneCount - 1; x >= 1; --x )
+                for ( size_t x = boneCount - 1; x >= 1; --x )
                 {
                     SVec3 &p1 = bonePoints[ x ];
                     SVec3 &p2 = bonePoints[ hierarchy[ x ] ];
@@ -199,6 +220,16 @@ namespace ursine
         {
             m_currentAnimation = name;
             m_state.SetAnimation( AnimationBuilder::GetAnimationByName( name ) );
+        }
+
+        const std::string &Animator::GetRig() const
+        {
+            return m_currentRig;
+        }
+
+        void Animator::SetRig(const std::string &rig)
+        {
+            m_currentRig = rig;
         }
 
         float Animator::GetAnimationTimePosition( ) const

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** SphereColliderComponent.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "SphereColliderComponent.h"
@@ -23,6 +36,8 @@ namespace ursine
 
         void SphereCollider::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &SphereCollider::onTransformChange );
 

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Main.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include <Application.h>
@@ -10,7 +23,7 @@ int main(int argc, char *argv[])
 
     ursine::Application app( argc, argv );
 
-    app.Run( ); 
+    app.Run( );
     
     return 0; 
 }

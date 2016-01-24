@@ -13,46 +13,46 @@
 
 namespace ursine
 {
-    template<typename Key>
-    EventDispatcher<Key>::EventDispatcher(void *defaultSender /*= nullptr*/)
+    template<typename Key, typename Handler>
+    EventDispatcher<Key, Handler>::EventDispatcher(void *defaultSender /*= nullptr*/)
         : m_defaultSender( defaultSender ) { }
 
-    template<typename Key>
+    template<typename Key, typename Handler>
     template<typename Args>
-    void EventDispatcher<Key>::Connect(
+    void EventDispatcher<Key, Handler>::Connect(
         const Key &event,
-        StaticDelegate<Args> delegate,
+        typename Handler::template StaticDelegate<Args> delegate,
         EventHandlerPriority priority
     )
     {
         auto &handlers = m_events[ event ];
 
-        HandlerData data { priority, Handler( delegate ) };
+        HandlerData data { priority, Handler::Handler( delegate ) };
 
         utils::InsertionSort( handlers, data, compareHandlers );
     }
 
-    template<typename Key>
+    template<typename Key, typename Handler>
     template<typename Class, typename Args>
-    void EventDispatcher<Key>::Connect(
+    void EventDispatcher<Key, Handler>::Connect(
         const Key &event,
         Class *context,
-        ClassDelegate<Class, Args> delegate,
+        typename Handler::template ClassDelegate<Class, Args> delegate,
         EventHandlerPriority priority
     )
     {
         auto &handlers = m_events[ event ];
 
-        HandlerData data { priority, Handler( context, delegate ) };
+        HandlerData data { priority, Handler::Handler( context, delegate ) };
 
         utils::InsertionSort( handlers, data, compareHandlers );
     }
 
-    template<typename Key>
+    template<typename Key, typename Handler>
     template<typename Args>
-    void EventDispatcher<Key>::Disconnect(
+    void EventDispatcher<Key, Handler>::Disconnect(
         const Key &event,
-        StaticDelegate<Args> delegate
+        typename Handler::template StaticDelegate<Args> delegate
     )
     {
         auto handlers = m_events.find( event );
@@ -80,12 +80,12 @@ namespace ursine
             vector.erase( handler );
     }
 
-    template<typename Key>
+    template<typename Key, typename Handler>
     template<typename Class, typename Args>
-    void EventDispatcher<Key>::Disconnect(
+    void EventDispatcher<Key, Handler>::Disconnect(
         const Key &event,
         Class *context,
-        ClassDelegate<Class, Args> delegate
+        typename Handler::template ClassDelegate<Class, Args> delegate
     )
     {
         auto handlers = m_events.find( event );
@@ -96,7 +96,7 @@ namespace ursine
 
         auto &vector = handlers->second;
 
-        auto handlerType = Handler( context, delegate );
+        auto handlerType = Handler::Handler( context, delegate );
 
         auto isHandler = [&](const HandlerData &data)
         {
@@ -113,8 +113,8 @@ namespace ursine
             vector.erase( handler );
     }
 
-    template<typename Key>
-    void EventDispatcher<Key>::Dispatch(
+    template<typename Key, typename Handler>
+    void EventDispatcher<Key, Handler>::Dispatch(
         const Key &event,
         const EventArgs *args
     )
@@ -122,8 +122,8 @@ namespace ursine
         Dispatch( event, m_defaultSender, args );
     }
 
-    template<typename Key>
-    void EventDispatcher<Key>::Dispatch(
+    template<typename Key, typename Handler>
+    void EventDispatcher<Key, Handler>::Dispatch(
         const Key &event,
         void *sender,
         const EventArgs *args
@@ -143,22 +143,22 @@ namespace ursine
         }
     }
 
-    template<typename Key>
-    void EventDispatcher<Key>::ClearHandlers(void)
+    template<typename Key, typename Handler>
+    void EventDispatcher<Key, Handler>::ClearHandlers(void)
     {
         m_events.clear( );
     }
 
-    template<typename Key>
+    template<typename Key, typename Handler>
     template<typename ListenerType>
-    typename EventDispatcher<Key>::ChainType<ListenerType>
-    EventDispatcher<Key>::Listener(ListenerType *listener /*= nullptr*/)
+    typename EventDispatcher<Key, Handler>::ChainType<ListenerType>
+    EventDispatcher<Key, Handler>::Listener(ListenerType *listener /*= nullptr*/)
     {
         return ChainType<ListenerType>( this, listener );
     }
 
-    template<typename Key>
-    bool EventDispatcher<Key>::compareHandlers(
+    template<typename Key, typename Handler>
+    bool EventDispatcher<Key, Handler>::compareHandlers(
         const HandlerData &a, 
         const HandlerData &b
     )

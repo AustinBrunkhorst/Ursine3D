@@ -164,5 +164,8 @@ float4 main(DS_OUTPUT In) : SV_TARGET
     finalColor.xyz = CalcPoint(pos, mat);
     finalColor.w = 1.0;
 
+    if ( finalColor.x < 0 || finalColor.y < 0 || finalColor.z < 0 )
+        return float4(0, 0, 0, 0);
+
     return finalColor;
 }

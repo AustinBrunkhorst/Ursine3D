@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ObjectWrapper.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "ObjectWrapper.h"
@@ -49,6 +62,16 @@ namespace ursine
         VariantBase *ObjectWrapper::Clone(void) const
         {
             return new ObjectWrapper( m_object );
+        }
+
+        void ObjectWrapper::OnSerialize(Json::object &output) const
+        {
+            m_object->OnSerialize( output );
+        }
+
+        void ObjectWrapper::OnDeserialize(const Json &input)
+        {
+            m_object->OnDeserialize( input );
         }
     }
 }

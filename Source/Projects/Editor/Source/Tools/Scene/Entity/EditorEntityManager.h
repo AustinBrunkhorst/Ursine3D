@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EditorEntityManager.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <Scene.h>
@@ -27,4 +40,5 @@ private:
     void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));
     void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
     void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
+    void onComponentArrayModified(EVENT_HANDLER(ursine::ecs::World));
 };

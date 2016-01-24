@@ -13,3 +13,10 @@ ObjectUtils.clone = function(obj) {
 
     return copy;
 };
+
+ObjectUtils.lastElement = function(arrayLike) {
+    if (!arrayLike.length)
+        return null;
+
+    return arrayLike[ arrayLike.length - 1 ];
+};

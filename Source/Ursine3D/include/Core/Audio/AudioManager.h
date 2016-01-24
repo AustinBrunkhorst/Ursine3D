@@ -15,11 +15,23 @@
 
 #include "CoreSystem.h"
 #include "Meta.h"
-#include "AudioEmitter.h"
+#include "AudioEmitterComponent.h"
+#include "NativeJSFunction.h"
 
 #include "ListenerMasks.h"
 #include "WwiseForward.h"
 #include "WWiseUtils/AkFilePackageLowLevelIOBlocking.h"
+
+// TODO: remove this when the shared project is removed
+#if defined(URSINE_WITH_EDITOR)
+
+#define WORLD_AUDIO_BANK_PATH URSINE_PROJECTS_DIRECTORY "Retrospect/Assets/GeneratedSoundBanks/Windows/"
+
+#else 
+
+#define WORLD_AUDIO_BANK_PATH "Assets/GeneratedSoundBanks/Windows/"
+
+#endif
 
 namespace AK
 {
@@ -68,22 +80,27 @@ namespace ursine
 	class AudioManager : public core::CoreSystem
 	{
 		CORE_SYSTEM;
-	public:
 
-		Meta( DisableNonDynamic )
+	public:
+		Meta(Enable)
 		AudioManager(void) { }
 
-		Meta(Disable)
 		void OnInitialize(void) override;
-
-		Meta(Disable)
 		void OnRemove(void) override;
 
 		void PlayEvent(const std::string name, AkGameObjectID obj);
 
-		void PauseAudio();
+		static void PlayGlobalEvent(const std::string &name);
+		static void StopGlobalEvent(const std::string &name);
+        static bool IsGlobalEventPlaying(const std::string &name);
+        static void SetGlobalVolume();
+        static void ResetGlobalVolume();
 
-		void ResumeAudio();
+		static void PauseAudio();
+
+		static void StopSound(std::string name, AkGameObjectID id);
+
+		static void ResumeAudio();
 
 		void LoadBank(const std::string &bankName, AkBankID &bankID);
 
@@ -120,5 +137,16 @@ namespace ursine
 		void Init(AkInitSettings* in_pSettings, 
 			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
 
-	} Meta( Enable );
+	} Meta(Enable, WhiteListMethods);
 }
+
+// Global JavaScript methods
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(AudioPlayGlobalEvent);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(AudioStopGlobalEvent);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(AudioIsGlobalEventPlaying);

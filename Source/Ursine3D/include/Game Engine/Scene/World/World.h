@@ -20,9 +20,14 @@
 #include "Filter.h"
 
 #include <vector>
+#include <mutex>
+
+class Project;
 
 namespace ursine
 {
+    class Screen;
+
     namespace ecs
     {
         class Entity;
@@ -32,7 +37,9 @@ namespace ursine
         class NameManager;
         class UtilityManager;
 
-        class World : public EventDispatcher<WorldEventType>
+        typedef uint32 WorldEventID;
+
+        class World : public EventDispatcher<WorldEventID>
         {
         public:
             typedef std::shared_ptr<World> Handle;
@@ -41,6 +48,12 @@ namespace ursine
             ~World(void);
 
             Entity *CreateEntity(const std::string &name = "Entity");
+
+            // Creates an entity from an archetype file
+            Entity *CreateEntityFromArchetype(
+                const std::string &filename, 
+                const std::string &name = "Entity"
+            );
 
             // Gets an entity based on its active id
             Entity *GetEntity(EntityID id) const;
@@ -73,12 +86,19 @@ namespace ursine
 
             SystemManager *GetSystemManager(void) const;
 
+            Screen *GetOwner(void) const;
+            void SetOwner(Screen *owner);
+
             void DispatchLoad(void);
         private:
             friend class Entity;
+			friend class Project;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
+            bool m_loaded;
+
+			std::mutex m_deletionMutex;
             EntityVector m_deleted;
 
             Entity *m_settings;
@@ -89,10 +109,19 @@ namespace ursine
             NameManager *m_nameManager;
             UtilityManager *m_utilityManager;
 
+            Screen *m_owner;
+
+            std::unordered_map<std::string, Json> m_archetypeCache;
+
             World(const World &rhs) = delete;
 
             // adds an entity to the deletion queue
+            void queueEntityDeletion(Entity *entity);
             void deleteEntity(Entity *entity);
+            
+            void clearDeletionQueue(void);
+
+            Entity *loadArchetype(const Json &data);
         } Meta(Enable, WhiteListMethods);
     }
 }

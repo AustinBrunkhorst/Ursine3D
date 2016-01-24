@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** SerializationConfig.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <exception>
@@ -6,7 +19,7 @@ namespace ursine
 {
     namespace ecs
     {
-        const auto kSerializationVersion = "0.0";
+        const auto kSerializationVersion = "0.2submission";
 
         class SerializationException
         {
