@@ -39,4 +39,4 @@ private:
 
 	void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));
 
-} Meta(Enable, WhiteListMethods, /*HiddenInInspector,*/ DisableSerialization);
+} Meta(Enable, WhiteListMethods, HiddenInInspector, DisableSerialization);
