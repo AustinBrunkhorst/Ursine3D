@@ -14,7 +14,6 @@
 #pragma once
 // For Parsing FBX infos
 #include <ModelInfo.h>
-#include <LevelInfo.h>
 #include <AnimationInfo.h>
 #include <Utilities.h>
 #include <Conversion.h>

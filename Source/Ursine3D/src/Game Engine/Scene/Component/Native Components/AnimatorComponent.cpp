@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -110,6 +110,7 @@ namespace ursine
                 auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
 
                 int maxNodeDistance = 0;
+
                 size_t boneCount = hierarchy.size( );
 
                 // calculate max distance for colors, calculate bone position

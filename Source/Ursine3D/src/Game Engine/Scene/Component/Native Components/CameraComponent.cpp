@@ -194,5 +194,10 @@ namespace ursine
         {
             return GetCoreSystem(graphics::GfxAPI)->CameraMgr.GetCamera(m_handle).ScreenToWorld( screenPos, depth );
         }
+
+	    SVec3 Camera::GetMouseWorldPosition(void) const
+	    {
+			return GetCoreSystem(graphics::GfxAPI)->GetMousedOverWorldPosition(m_handle);
+	    }
     }
 }
