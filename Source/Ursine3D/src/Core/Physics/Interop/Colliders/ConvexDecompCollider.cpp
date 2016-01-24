@@ -74,7 +74,7 @@ namespace ursine
 
 				auto &indices = mesh->GetRawIndices( );
 
-				for (int i = 0, n = indices.size( ); i < n; i += 3)
+				for (size_t i = 0, n = indices.size( ); i < n; i += 3)
 				{
 					triangles.push_back( {
 						static_cast<int>( indices[ i ] ),
@@ -124,7 +124,11 @@ namespace ursine
 					// Add the points and calculate the centroid
 					for (auto &p : pointsCH)
 					{
-						auto point = btVector3( p.X( ), p.Y( ), p.Z( ) );
+						auto point = btVector3( 
+                            static_cast<btScalar>( p.X( ) ),
+                            static_cast<btScalar>( p.Y( ) ),
+                            static_cast<btScalar>( p.Z( ) )
+                        );
 
 						centroid += point;
 					}
@@ -133,7 +137,11 @@ namespace ursine
 
 					for (auto &p : pointsCH)
 					{
-						auto point = btVector3( p.X( ), p.Y( ), p.Z( ) );
+						auto point = btVector3( 
+                            static_cast<btScalar>( p.X( ) ),
+                            static_cast<btScalar>( p.Y( ) ),
+                            static_cast<btScalar>( p.Z( ) )
+                        );
 
 						point -= centroid;
 

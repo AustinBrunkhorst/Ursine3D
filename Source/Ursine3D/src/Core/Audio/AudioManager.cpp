@@ -112,8 +112,9 @@ namespace ursine
             id
         );
 
-        if (result != AK_Success)
-        UWarning( "Wwise: Could Not Stop The Music!! Or this event." );
+        UWarningIf( result != AK_Success, 
+            "Wwise: Could Not Stop The Music!! Or this event." 
+        );
     }
 
     void AudioManager::ResumeAudio()

@@ -99,15 +99,13 @@ namespace ursine
     const CefRect &UIView::GetViewport(void) const
     {
         URSINE_TODO( "..." );
-        CefRect todo;
-
-        return todo;
+        return m_viewport;
     }
 
     void UIView::SetViewport(const CefRect &viewport)
     {
         URSINE_TODO( "..." );
-        //m_viewport = viewport;
+        m_viewport = viewport;
 
         resize( viewport.width, viewport.height );
 

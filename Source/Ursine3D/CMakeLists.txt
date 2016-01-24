@@ -92,6 +92,9 @@ ursine_parse_source_groups(
 
 # DirectX
 if (MSVC)
+	# treat warnings as errors
+	target_compile_options(Ursine3D PUBLIC /WX)
+
 	set(URSINE_SHADER_DIR "${ENGINE_RESOURCES_DIR}/Shaders")
 
 	file(GLOB_RECURSE URSINE_SHADER_FILES "${URSINE_SHADER_DIR}/*.hlsl")

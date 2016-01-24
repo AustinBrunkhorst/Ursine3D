@@ -26,6 +26,12 @@
 
 #endif
 
+#if defined(CONFIG_RELEASE)
+
+#define URSINE_DISPLAY_TODOS
+
+#endif
+
 // Outputs a warning during compile time
 #define URSINE_WARNING(text) __MESSAGE( " : Warning: " ##text )
 
@@ -40,9 +46,13 @@
 // Outputs a TODO message during compile time
 #define URSINE_TODO(text) __MESSAGE( " : Warning: TODO: " ##text )
 
-#else
+#elseif defined(URSINE_DISPLAY_TODOS)
 
 // Outputs a TODO message during compile time
 #define URSINE_TODO(text) __MESSAGE( ": TODO: " ##text )
+
+#else
+
+#define URSINE_TODO(text)
 
 #endif

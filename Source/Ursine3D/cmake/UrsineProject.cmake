@@ -288,6 +288,9 @@ macro (ursine_project PROJECT_NAME)
     endif ()
 
     if (MSVC)
+        # treat warnings as errors
+        target_compile_options(${PROJECT_NAME} PUBLIC /WX)
+
         # default to console as subsytem if not defined
         if ("${PROJ_SUBSYSTEM_DEBUG}" STREQUAL "")
             set(PROJ_SUBSYSTEM_DEBUG "CONSOLE")

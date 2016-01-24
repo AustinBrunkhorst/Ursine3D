@@ -82,7 +82,7 @@ namespace ursine
             void SetProjMode(const ProjectionMode mode);
 
             //orthographic size
-            const float GetSize(void);
+            float GetSize(void);
             void SetSize(const float size);
 
             //look at point in world space

@@ -172,9 +172,9 @@ namespace ursine
 			for (auto &vert : convexHullVerts)
 			{
 				addPoint( btVector3(
-					vert[ "x" ].number_value( ),
-					vert[ "y" ].number_value( ),
-					vert[ "z" ].number_value( )
+					static_cast<btScalar>( vert[ "x" ].number_value( ) ),
+                    static_cast<btScalar>( vert[ "y" ].number_value( ) ),
+                    static_cast<btScalar>( vert[ "z" ].number_value( ) )
 				) );
 			}
 

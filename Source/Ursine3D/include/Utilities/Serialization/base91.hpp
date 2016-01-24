@@ -244,7 +244,7 @@ namespace {
             "abcdefghijklmnopqrstuvwxyz"
             "0123456789+/";
 
-        int in_len = encoded.size();
+        int in_len = static_cast<int>(encoded.size());
         int i = 0;
         int j = 0;
         int in_ = 0;
@@ -256,7 +256,7 @@ namespace {
             char_array_4[i++] = encoded[in_]; in_++;
             if (i ==4) {
                 for (i = 0; i <4; i++)
-                    char_array_4[i] = chars.find(char_array_4[i]);
+                    char_array_4[i] = static_cast<int>(chars.find(char_array_4[i]));
 
                 char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
                 char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
@@ -273,7 +273,7 @@ namespace {
                 char_array_4[j] = 0;
 
             for (j = 0; j <4; j++)
-                char_array_4[j] = chars.find(char_array_4[j]);
+                char_array_4[j] = static_cast<int>(chars.find(char_array_4[j]));
 
             char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
             char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
