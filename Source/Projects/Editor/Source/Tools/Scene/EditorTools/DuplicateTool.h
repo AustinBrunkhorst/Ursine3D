@@ -2,19 +2,19 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** EditorTool.cpp
+** DuplicateTool.h
 **
 ** Authors:
 ** - Jordan Ellis - j.ellis@digipen.edu
 ** - Matt Yan - m.yan@digipen.edu
 ** --------------------------------------------------------------------------*/
 
-#include "Precompiled.h"
+#pragma once
 
 #include "EditorTool.h"
 
-EditorTool::EditorTool(Editor *editor)
-	: m_editor( editor )
+class DuplicateTool : public EditorTool
 {
-	
-}
+public:
+	DuplicateTool(Editor *editor);
+};

@@ -4,16 +4,20 @@
 **
 ** ObjectSelectorSystem.h
 **
-** Author:
+** Authors:
 ** - Jordan Ellis - j.ellis@digipen.edu
-**
-** Contributors:
 ** - Matt Yan m.yan@digipen.edu
 ** --------------------------------------------------------------------------*/
 
 #include "Precompiled.h"
 
 #include "EditorToolSystem.h"
+
+#include "SelectTool.h"
+#include "TranslateTool.h"
+#include "ScaleTool.h"
+#include "RotateTool.h"
+#include "DuplicateTool.h"
 
 #include "SelectedComponent.h"
 
@@ -24,26 +28,34 @@ ENTITY_SYSTEM_DEFINITION(EditorToolSystem);
 EditorToolSystem::EditorToolSystem(ursine::ecs::World* world)
 	: EntitySystem( world )
 	, m_currentTool( nullptr )
-	, m_currentID( -1 )
+	, m_currentSelected( -1 )
 {
-	// m_tools[ KEY_1 ] = new SelectTool( );
-	// m_tools[ KEY_2 ] = new TranslateTool( );
-	// m_tools[ KEY_3 ] = new ScaleTool( );
-	// m_tools[ KEY_4 ] = new RotateTool( );
-	// m_tools[ KEY_5 ] = new DuplicateTool( );
-
-	m_currentTool = m_tools[ KEY_1 ];
 }
 
 ursine::ecs::Entity* EditorToolSystem::GetCurrentFocus(void)
 {
-	return m_world->GetEntityUnique( m_currentID );
+	return m_world->GetEntityUnique( m_currentSelected );
 }
 
-void EditorToolSystem::OnInitialize(void)
+void EditorToolSystem::OnAfterLoad(void)
 {
+	auto editor = GetCoreSystem( Editor );
+	auto world = editor->GetProject( )->GetScene( )->GetWorld( );
+
+	m_selectTool = new SelectTool( editor );
+
+	m_tools[ KEY_1 ] = m_selectTool;
+	m_tools[ KEY_2 ] = new TranslateTool( editor );
+	m_tools[ KEY_3 ] = new ScaleTool( editor );
+	m_tools[ KEY_4 ] = new RotateTool( editor );
+	m_tools[ KEY_5 ] = new DuplicateTool( editor );
+
+	m_currentTool = m_tools[ KEY_1 ];
+
 	m_mouseManager = GetCoreSystem( MouseManager );
 	m_keyboardManager = GetCoreSystem( KeyboardManager );
+
+	m_editorCameraSystem = world->GetEntitySystem( EditorCameraSystem );
 
 	m_mouseManager->Listener( this )
 		.On( MM_BUTTON_DOWN, &EditorToolSystem::onMouseDown )
@@ -63,6 +75,11 @@ void EditorToolSystem::OnInitialize(void)
 
 void EditorToolSystem::OnRemove(void)
 {
+	for (auto &p : m_tools)
+	{
+		delete p.second;
+	}
+
 	m_mouseManager->Listener( this )
 		.Off( MM_BUTTON_DOWN, &EditorToolSystem::onMouseDown )
 		.Off( MM_BUTTON_UP, &EditorToolSystem::onMouseUp )
@@ -81,37 +98,94 @@ void EditorToolSystem::OnRemove(void)
 
 void EditorToolSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
 {
-
+	m_currentTool->OnUpdate( m_keyboardManager, m_mouseManager );
 }
 
 void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
 {
 	EVENT_ATTRS(ursine::MouseManager, MouseButtonArgs);
+	
+	// must have focus or mouse focus
+    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+        return;
+
+	// We always update the select tool
+	if (m_currentTool != m_selectTool)
+		m_selectTool->OnMouseDown( *args );
+
+	m_currentTool->OnMouseDown( *args );
 }
 
 void EditorToolSystem::onMouseUp(EVENT_HANDLER(ursine:MouseManager))
 {
 	EVENT_ATTRS(ursine::MouseManager, MouseButtonArgs);
+
+	// We always update the select tool
+	if (m_currentTool != m_selectTool)
+		m_selectTool->OnMouseUp( *args );
+
+	m_currentTool->OnMouseUp( *args );
 }
 
 void EditorToolSystem::onMouseMove(EVENT_HANDLER(ursine:MouseManager))
 {
 	EVENT_ATTRS(ursine::MouseManager, MouseMoveArgs);
+
+    // must have focus or mouse focus
+    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+        return;
+
+	// We always update the select tool
+	if (m_currentTool != m_selectTool)
+		m_selectTool->OnMouseMove( *args );
+
+	m_currentTool->OnMouseMove( *args );
 }
 
 void EditorToolSystem::onMouseScroll(EVENT_HANDLER(ursine::MouseManager))
 {
 	EVENT_ATTRS(ursine::MouseManager, MouseScrollArgs);
+
+	// must have focus or mouse focus
+    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+        return;
+
+	m_currentTool->OnMouseScroll( *args );
 }
 
 void EditorToolSystem::onKeyDown(EVENT_HANDLER(ursine::KeyboardManager))
 {
 	EVENT_ATTRS(ursine::KeyboardManager, KeyboardKeyArgs);
+
+	// must have focus or mouse focus
+    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+        return;
+
+	// Check to see if the key pressed is a selection key for one of our tools
+	if (m_tools.end( ) != m_tools.find( args->key ))
+	{
+		auto tool = m_tools[ args->key ];
+
+		if (tool != m_currentTool)
+		{
+			m_currentTool->OnDisable( );
+			m_currentTool = tool;
+			m_currentTool->OnEnable( m_currentSelected );
+		}
+	}
+
+	m_currentTool->OnKeyDown( *args );
 }
 
 void EditorToolSystem::onKeyUp(EVENT_HANDLER(ursine::KeyboardManager))
 {
 	EVENT_ATTRS(ursine::KeyboardManager, KeyboardKeyArgs);
+
+	// must have focus or mouse focus
+    if (!m_editorCameraSystem->HasFocus( ))
+        return;
+
+	m_currentTool->OnKeyUp( *args );
 }
 
 void EditorToolSystem::onSelectedAdd(EVENT_HANDLER(ursine::ecs::World))
@@ -120,7 +194,7 @@ void EditorToolSystem::onSelectedAdd(EVENT_HANDLER(ursine::ecs::World))
 
 	if (args->component->Is<Selected>( ))
 	{
-		m_currentID = args->entity->GetUniqueID( );
+		m_currentSelected = args->entity->GetUniqueID( );
 		m_currentTool->OnSelect( args->entity );
 	}
 }
@@ -131,7 +205,7 @@ void EditorToolSystem::onSelectedRemoved(EVENT_HANDLER(ursine::ecs::World))
 
 	if (args->component->Is<Selected>( ))
 	{
-		m_currentID = -1;
+		m_currentSelected = -1;
 		m_currentTool->OnDeselect( args->entity );
 	}
 }

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "SelectedComponent.h"
+#include "DisableSelectionComponent.h"
 #include "GridRendererSettingsComponent.h"
 #include "EditorIconComponent.h"
 #include <SharedComponents.h>

@@ -1,6 +1,17 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ScaleTool.cpp
+**
+** Authors:
+** - Jordan Ellis - j.ellis@digipen.edu
+** - Matt Yan - m.yan@digipen.edu
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
-#include "TranslateTool.h"
+#include "ScaleTool.h"
 
 #include <EditorConfig.h>
 #include <SystemManager.h>
@@ -10,7 +21,7 @@
 using namespace ursine;
 using namespace ecs;
 
-TranslateTool::TranslateTool(Editor* editor)
+ScaleTool::ScaleTool(Editor *editor)
 	: EditorTool( editor )
 	, m_gizmo( nullptr )
 	, m_selected( -1 )
@@ -23,7 +34,7 @@ TranslateTool::TranslateTool(Editor* editor)
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 }
 
-void TranslateTool::OnEnable(EntityUniqueID selected)
+void ScaleTool::OnEnable(EntityUniqueID selected)
 {
 	m_selected = selected;
 
@@ -31,28 +42,28 @@ void TranslateTool::OnEnable(EntityUniqueID selected)
 		enableAxis( );
 }
 
-void TranslateTool::OnDisable(void)
+void ScaleTool::OnDisable(void)
 {
 	m_selected = -1;
 	m_dragging = false;
 	m_snapping = false;
-
+	
 	disableAxis( );
 }
 
-void TranslateTool::OnSelect(Entity* entity)
+void ScaleTool::OnSelect(Entity* entity)
 {
 	m_selected = entity->GetUniqueID( );
 	enableAxis( );
 }
 
-void TranslateTool::OnDeselect(Entity* entity)
+void ScaleTool::OnDeselect(Entity* entity)
 {
 	m_selected = -1;
 	disableAxis( );
 }
 
-void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
+void ScaleTool::OnMouseDown(const MouseButtonArgs& args)
 {
 	// get the current entity ID the mouse is over
 	auto newID = m_graphics->GetMousedOverID( );
@@ -67,7 +78,7 @@ void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
 
 	// if we're clicking on ourselves, set the dragging flag,
 	// and the vector we're dragging on
-	if (rootName == "TranslationGizmo")
+	if (rootName == "ScaleGizmo")
 	{
 		m_dragging = true;
 
@@ -83,27 +94,18 @@ void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
 			setDirectionVectors( SVec3::UnitY( ), selected );
 		else if (name == "zAxis")
 			setDirectionVectors( SVec3::UnitZ( ), selected );
-		else
-		{
-			name = entity->GetName( );
-
-			if (name == "zxPlane")
-				setDirectionVectors( SVec3( 1.0f, 0.0f, 1.0f ), selected );
-			else if (name == "yzPlane")
-				setDirectionVectors( SVec3( 0.0f, 1.0f, 1.0f ), selected );
-			else if (name == "xyPlane")
-				setDirectionVectors( SVec3( 1.0f, 1.0f, 0.0f ), selected );
-		}
+		else if (name == "allAxis")
+			setDirectionVectors( SVec3( 1.0f, 1.0f, 1.0f ), selected );
 	}
 }
 
-void TranslateTool::OnMouseUp(const MouseButtonArgs& args)
+void ScaleTool::OnMouseUp(const MouseButtonArgs& args)
 {
 	if (m_dragging)
 		m_dragging = false;
 }
 
-void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
+void ScaleTool::OnMouseMove(const MouseMoveArgs& args)
 {
 	if (m_dragging && m_selected != -1)
 	{
@@ -118,7 +120,6 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 		auto proj = ( dot / b.LengthSquared( ) ) * b;
 		auto dist = proj.Length( );
 		auto selected = m_world->GetEntityUnique( m_selected )->GetTransform( );
-		auto gizmo = m_gizmo->GetTransform( );
 
 		if (dot < 0.0f)
 			dist = -dist;
@@ -128,28 +129,33 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 		// and then apply it to the world space direction vector.
 		dist *= 0.5f;
 
-		auto newP = gizmo->GetWorldPosition( ) + m_worldDir * dist;
+		auto modifier = m_worldDir * dist;
 
-		gizmo->SetWorldPosition( newP );
+		if (m_local)
+			modifier = selected->GetWorldRotation( ).GetInverse( ) * modifier;
+		else
+			modifier = selected->GetWorldRotation( ) * modifier;
+
+		auto newS = selected->GetLocalScale( ) + modifier;
 
 		if (m_snapping)
 		{
 			for (int i = 0; i < 3; ++i)
 			{
-				if (newP[ i ] > 0.0f)
-					newP[ i ] = float(int(newP[ i ] * 2.0f + 0.5f)) / 2.0f;
+				if (newS[ i ] > 0.0f)
+					newS[ i ] = float(int(newS[ i ] * 2.0f + 0.5f)) / 2.0f;
 				else
-					newP[ i ] = float(int(newP[ i ] * 2.0f - 0.5f)) / 2.0f;
+					newS[ i ] = float(int(newS[ i ] * 2.0f - 0.5f)) / 2.0f;
 			}
 
-			selected->SetWorldPosition( newP );
+			selected->SetLocalScale( newS );
 		}
 		else
-			selected->SetWorldPosition( newP );
+			selected->SetLocalScale( newS );
 	}
 }
 
-void TranslateTool::OnKeyDown(const KeyboardKeyArgs &args)
+void ScaleTool::OnKeyDown(const KeyboardKeyArgs& args)
 {
 	if (args.key == KEY_SPACE)
 		m_local = !m_local;
@@ -161,18 +167,18 @@ void TranslateTool::OnKeyDown(const KeyboardKeyArgs &args)
 		m_dragging = false;
 }
 
-void TranslateTool::OnKeyUp(const KeyboardKeyArgs &args)
+void ScaleTool::OnKeyUp(const KeyboardKeyArgs& args)
 {
 	if (args.key == KEY_CONTROL)
 		m_snapping = false;
 }
 
-void TranslateTool::OnUpdate(KeyboardManager *kManager, MouseManager *mManager)
+void ScaleTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 {
 	updateAxis( );
 }
 
-void TranslateTool::setDirectionVectors(const SVec3& basisVector, Entity *selected)
+void ScaleTool::setDirectionVectors(const SVec3& basisVector, Entity* selected)
 {
 	if (m_local)
 		m_worldDir = selected->GetTransform( )->GetWorldRotation( ) * basisVector;
@@ -189,11 +195,11 @@ void TranslateTool::setDirectionVectors(const SVec3& basisVector, Entity *select
 	m_screenDir.Normalize( );
 }
 
-void TranslateTool::enableAxis(void)
+void ScaleTool::enableAxis(void)
 {
 	m_gizmo = m_world->CreateEntityFromArchetype( 
-		EDITOR_ARCHETYPE_PATH "EditorTools/TranslationGizmo.uatype",
-		"TranslationGizmo" 
+		EDITOR_ARCHETYPE_PATH "EditorTools/ScaleGizmo.uatype",
+		"ScaleGizmo" 
 	);
 
 	setEntitySerializationToggle( false, m_gizmo );
@@ -209,7 +215,7 @@ void TranslateTool::enableAxis(void)
 	}
 }
 
-void TranslateTool::disableAxis(void)
+void ScaleTool::disableAxis(void)
 {
 	if (m_gizmo)
 	{
@@ -222,7 +228,7 @@ void TranslateTool::disableAxis(void)
 	m_gizmo = nullptr;
 }
 
-void TranslateTool::updateAxis(void)
+void ScaleTool::updateAxis(void)
 {
 	if (m_selected == -1 || m_gizmo == nullptr)
 		return;
@@ -239,7 +245,7 @@ void TranslateTool::updateAxis(void)
 		gizTrans->SetLocalRotation( SQuat::Identity( ) );
 }
 
-void TranslateTool::setEntitySerializationToggle(bool toggle, Entity *entity)
+void ScaleTool::setEntitySerializationToggle(bool toggle, Entity* entity)
 {
 	for (auto *child : entity->GetTransform( )->GetChildren( ))
 	{

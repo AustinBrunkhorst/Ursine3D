@@ -4,10 +4,8 @@
 **
 ** ObjectSelectorSystem.h
 **
-** Author:
+** Authors:
 ** - Jordan Ellis - j.ellis@digipen.edu
-**
-** Contributors:
 ** - Matt Yan m.yan@digipen.edu
 ** --------------------------------------------------------------------------*/
 
@@ -16,7 +14,9 @@
 #include <FilterSystem.h>
 #include <MouseManager.h>
 #include <KeyboardManager.h>
+#include <EditorCameraSystem.h>
 #include <EditorTool.h>
+#include <SelectTool.h>
 
 class EditorToolSystem : public ursine::ecs::EntitySystem
 {
@@ -28,7 +28,7 @@ public:
 	ursine::ecs::Entity *GetCurrentFocus(void);
 
 private:
-	void OnInitialize(void) override;
+	void OnAfterLoad(void) override;
 	void OnRemove(void) override;
 
 	void onUpdate(EVENT_HANDLER(ursine::ecs::World));
@@ -57,10 +57,14 @@ private:
 	ursine::MouseManager *m_mouseManager;
 	ursine::KeyboardManager *m_keyboardManager;
 
+	EditorCameraSystem *m_editorCameraSystem;
+
 	// current ID we're locked onto
-	ursine::ecs::EntityUniqueID m_currentID;
+	ursine::ecs::EntityUniqueID m_currentSelected;
 
 	std::unordered_map<ursine::KeyboardKey, EditorTool*> m_tools;
 
 	EditorTool *m_currentTool;
-};
+
+	SelectTool *m_selectTool;
+} Meta(Enable);

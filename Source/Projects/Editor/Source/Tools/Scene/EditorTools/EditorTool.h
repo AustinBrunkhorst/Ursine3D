@@ -4,10 +4,8 @@
 **
 ** EditorTool.h
 **
-** Author:
+** Authors:
 ** - Jordan Ellis - j.ellis@digipen.edu
-**
-** Contributors:
 ** - Matt Yan - m.yan@digipen.edu
 ** --------------------------------------------------------------------------*/
 
@@ -16,14 +14,14 @@
 #include <KeyboardManager.h>
 #include <MouseManager.h>
 
-class Editor;
+#include "Editor.h"
 
 class EditorTool
 {
 public:
 	EditorTool(Editor *editor);
 
-	virtual void OnEnable(void) { }
+	virtual void OnEnable(ursine::ecs::EntityUniqueID selected) { }
 	virtual void OnDisable(void) { }
 
 	virtual void OnSelect(ursine::ecs::Entity *selected) { }

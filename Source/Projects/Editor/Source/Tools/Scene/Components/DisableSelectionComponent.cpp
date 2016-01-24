@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** EntitySystems.h
+** SelectedComponent.cpp
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -11,11 +11,15 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#pragma once
+#include "Precompiled.h"
 
-#include "EditorCameraSystem.h"
-#include "GridRenderer.h"
-#include "EditorToolSystem.h"
-//#include "ObjectSelectorSystem.h"
-#include "EditorIconSystem.h"
-#include <SharedSystems.h>
+#include "DisableSelectionComponent.h"
+
+using namespace ursine;
+
+NATIVE_COMPONENT_DEFINITION( DisableSelection );
+
+DisableSelection::DisableSelection(void)
+	: BaseComponent( )
+{
+}

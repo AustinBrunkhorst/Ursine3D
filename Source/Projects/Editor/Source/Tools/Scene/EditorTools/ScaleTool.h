@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TranslateTool.h
+** ScaleTool.h
 **
 ** Authors:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -14,10 +14,10 @@
 #include "EditorTool.h"
 #include "EditorCameraSystem.h"
 
-class TranslateTool : public EditorTool
+class ScaleTool : public EditorTool
 {
 public:
-	TranslateTool(Editor *editor);
+	ScaleTool(Editor *editor);
 
 	void OnEnable(ursine::ecs::EntityUniqueID selected) override;
 	void OnDisable(void) override;
@@ -47,15 +47,15 @@ private:
 
 	ursine::ecs::EntityUniqueID m_selected;
 
-	// Whether or not the user is clicking and dragging on this gizmo
+	// Whether or not the user is clicking and dragging on the gizmo
 	bool m_dragging;
-	
+
 	// Whether the user is holding down the snap to grid key or not
 	bool m_snapping;
 
 	// A flag letting us know if we're using local space transformations or not
 	bool m_local;
-	
+
 	// The direction we're dragging in world coordinates
 	ursine::SVec3 m_worldDir;
 
@@ -65,11 +65,11 @@ private:
 	// Helper for setting world and screen directions
 	void setDirectionVectors(const ursine::SVec3 &basisVector, ursine::ecs::Entity *selected);
 
-	// Helerps for handling the spawned translation archetype
+	// Helpers for handling the spawned translation archetype
 	void enableAxis(void);
 	void disableAxis(void);
 	void updateAxis(void);
 
-	// recursive helper functions
+	// recursive helper function
 	void setEntitySerializationToggle(bool toggle, ursine::ecs::Entity *entity);
 };
