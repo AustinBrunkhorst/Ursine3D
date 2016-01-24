@@ -49,10 +49,10 @@ struct ForceEditorType : ursine::meta::MetaProperty
 {
     META_OBJECT;
 
-    const std::string type;
+    const std::string typeName;
 
-    ForceEditorType(const char *type)
-        : type( type ) { }
+    ForceEditorType(const ursine::meta::Type &type)
+        : typeName( type.GetName( ) ) { }
 };
 
 /** @brief Field getter only used when interacting with the editor

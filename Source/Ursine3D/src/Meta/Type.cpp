@@ -34,8 +34,8 @@ namespace ursine
     {
         namespace
         {
-            // static database instance
-            auto &database = ReflectionDatabase::Instance( );
+            // make sure we always have a reference to the database
+            #define database ReflectionDatabase::Instance( )
         }
 
         Type::Type(void)

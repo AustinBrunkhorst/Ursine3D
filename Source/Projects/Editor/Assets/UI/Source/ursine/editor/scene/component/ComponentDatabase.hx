@@ -120,7 +120,7 @@ class ComponentDatabase {
         if (typeOverride == null) {
             typeName = type.name;
         } else {
-            typeName = Reflect.field( typeOverride, 'type' );
+            typeName = Reflect.field( typeOverride, 'typeName' );
 
             type = m_typeDB[ typeName ];
         }

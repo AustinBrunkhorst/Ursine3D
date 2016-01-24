@@ -43,7 +43,7 @@ namespace ursine
                 SetLocalPosition
             );
 
-            Meta(ForceEditorType( "ursine::SVec3" ))
+            Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
             Meta(EditorGetter( "GetLocalEulerEditor" ))
             Meta(EditorSetter( "SetLocalEulerEditor" ))
             EditorField( 

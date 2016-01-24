@@ -711,7 +711,7 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 		var typeOverride = Reflect.field(field.meta,ursine_native_Property.ForceEditorType);
 		var typeName;
 		if(typeOverride == null) typeName = type.name; else {
-			typeName = Reflect.field(typeOverride,"type");
+			typeName = Reflect.field(typeOverride,"typeName");
 			type = this.m_typeDB.get(typeName);
 		}
 		var handler = this.m_fieldInspectionHandlers.get(typeName);

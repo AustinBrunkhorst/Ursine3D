@@ -132,12 +132,14 @@ namespace ursine
                 , value( value ) { }
         };
 
-        struct EditorComponentArrayModfiedArgs : ArrayModificationArgs
+        struct EditorComponentArrayModfiedArgs : ComponentEventArgs
         {
+            const ArrayModificationArgs &modification;
             std::string field;
 
-            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, const std::string &field)
-                : ArrayModificationArgs( args ) 
+            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, Entity *entity, Component *component, const std::string &field)
+                : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
+                , modification( args )
                 , field( field ) { }
         };
 

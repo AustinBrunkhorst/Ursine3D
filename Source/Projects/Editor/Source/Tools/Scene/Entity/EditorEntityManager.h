@@ -40,4 +40,5 @@ private:
     void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));
     void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
     void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
+    void onComponentArrayModified(EVENT_HANDLER(ursine::ecs::World));
 };
