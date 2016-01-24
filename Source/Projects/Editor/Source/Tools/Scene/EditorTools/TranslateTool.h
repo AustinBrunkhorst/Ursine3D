@@ -55,6 +55,11 @@ private:
 
 	// A flag letting us know if we're using local space transformations or not
 	bool m_local;
+
+	bool m_altDown;
+
+	// This flag is needed to solve a circular locking problem with clear deletion queue
+	bool m_deleteGizmo;
 	
 	// The direction we're dragging in world coordinates
 	ursine::SVec3 m_worldDir;

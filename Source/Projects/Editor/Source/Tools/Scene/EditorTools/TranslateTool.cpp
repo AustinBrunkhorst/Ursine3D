@@ -49,7 +49,8 @@ void TranslateTool::OnSelect(Entity* entity)
 void TranslateTool::OnDeselect(Entity* entity)
 {
 	m_selected = -1;
-	disableAxis( );
+
+	m_deleteGizmo = true;
 }
 
 void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
@@ -58,7 +59,7 @@ void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
 	auto newID = m_graphics->GetMousedOverID( );
 	auto entity = m_world->GetEntityUnique( newID );
 
-	if (!entity)
+	if (!entity || m_altDown)
 		return;
 
 	auto entityTrans = entity->GetTransform( );
@@ -156,9 +157,6 @@ void TranslateTool::OnKeyDown(const KeyboardKeyArgs &args)
 
 	if (args.key == KEY_LCONTROL)
 		m_snapping = true;
-
-	if (args.key == KEY_LMENU)
-		m_dragging = false;
 }
 
 void TranslateTool::OnKeyUp(const KeyboardKeyArgs &args)
@@ -169,6 +167,17 @@ void TranslateTool::OnKeyUp(const KeyboardKeyArgs &args)
 
 void TranslateTool::OnUpdate(KeyboardManager *kManager, MouseManager *mManager)
 {
+	if (m_deleteGizmo)
+	{
+		disableAxis( );
+		m_deleteGizmo = false;
+	}
+
+	if (kManager->IsDown( KEY_LMENU ))
+		m_altDown = true;
+	else
+		m_altDown = false;
+
 	updateAxis( );
 }
 
@@ -227,9 +236,14 @@ void TranslateTool::updateAxis(void)
 	if (m_selected == -1 || m_gizmo == nullptr)
 		return;
 
+	// update the size of the gizmo
+	auto gizTrans = m_gizmo->GetTransform( );
+
+	gizTrans->SetWorldScale( SVec3( m_editorCameraSystem->GetCamZoom( ) * 0.03f ) );
+
+	// Update the position of things
 	auto selected = m_world->GetEntityUnique( m_selected );
 	auto selTrans = selected->GetTransform( );
-	auto gizTrans = m_gizmo->GetTransform( );
 
 	gizTrans->SetWorldPosition( selTrans->GetWorldPosition( ) );
 

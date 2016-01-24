@@ -14,6 +14,7 @@
 #include "Precompiled.h"
 
 #include "EntityUtils.h"
+#include "SelectedComponent.h"
 
 #include <Editor.h>
 

@@ -21,6 +21,7 @@
 SelectTool::SelectTool(Editor* editor)
 	: EditorTool( editor )
 	, m_currentID( -1 )
+	, m_altDown( false )
 {
 	m_graphics = GetCoreSystem( ursine::graphics::GfxAPI );
 	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
@@ -28,9 +29,12 @@ SelectTool::SelectTool(Editor* editor)
 
 void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 {
+	if (m_altDown)
+		return;
+
 	// get the current entity ID the mouse if over
 	auto newID = m_graphics->GetMousedOverID( );
-
+	
 	if (newID == -1 && m_currentID != -1)
 	{
 		unpickObject( );
@@ -75,6 +79,14 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 void SelectTool::OnSelect(ursine::ecs::Entity* selected)
 {
 	m_currentID = selected->GetUniqueID( );
+}
+
+void SelectTool::OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager)
+{
+	if (kManager->IsDown( ursine::KEY_LMENU ))
+		m_altDown = true;
+	else
+		m_altDown = false;
 }
 
 void SelectTool::unpickObject(void)

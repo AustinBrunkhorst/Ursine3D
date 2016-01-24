@@ -99,6 +99,9 @@ void EditorToolSystem::OnRemove(void)
 void EditorToolSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
 {
 	m_currentTool->OnUpdate( m_keyboardManager, m_mouseManager );
+
+	if (m_currentTool != m_selectTool)
+		m_selectTool->OnUpdate( m_keyboardManager, m_mouseManager );
 }
 
 void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
@@ -106,7 +109,7 @@ void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
 	EVENT_ATTRS(ursine::MouseManager, MouseButtonArgs);
 	
 	// must have focus or mouse focus
-    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+    if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
         return;
 
 	// We always update the select tool
@@ -157,12 +160,8 @@ void EditorToolSystem::onKeyDown(EVENT_HANDLER(ursine::KeyboardManager))
 {
 	EVENT_ATTRS(ursine::KeyboardManager, KeyboardKeyArgs);
 
-	// must have focus or mouse focus
-    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
-        return;
-
 	// Check to see if the key pressed is a selection key for one of our tools
-	if (m_tools.end( ) != m_tools.find( args->key ))
+	if (m_editorCameraSystem->HasMouseFocus( ) && m_tools.end( ) != m_tools.find( args->key ))
 	{
 		auto tool = m_tools[ args->key ];
 
@@ -174,18 +173,24 @@ void EditorToolSystem::onKeyDown(EVENT_HANDLER(ursine::KeyboardManager))
 		}
 	}
 
+	// must have focus or mouse focus
+    if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
+        return;
+
 	m_currentTool->OnKeyDown( *args );
+
+	if (m_currentTool != m_selectTool)
+		m_selectTool->OnKeyDown( *args );
 }
 
 void EditorToolSystem::onKeyUp(EVENT_HANDLER(ursine::KeyboardManager))
 {
 	EVENT_ATTRS(ursine::KeyboardManager, KeyboardKeyArgs);
 
-	// must have focus or mouse focus
-    if (!m_editorCameraSystem->HasFocus( ))
-        return;
-
 	m_currentTool->OnKeyUp( *args );
+
+	if (m_currentTool != m_selectTool)
+		m_selectTool->OnKeyUp( *args );
 }
 
 void EditorToolSystem::onSelectedAdd(EVENT_HANDLER(ursine::ecs::World))
@@ -196,6 +201,9 @@ void EditorToolSystem::onSelectedAdd(EVENT_HANDLER(ursine::ecs::World))
 	{
 		m_currentSelected = args->entity->GetUniqueID( );
 		m_currentTool->OnSelect( args->entity );
+		
+		if (m_currentTool != m_selectTool)
+			m_selectTool->OnSelect( args->entity );
 	}
 }
 
@@ -205,7 +213,14 @@ void EditorToolSystem::onSelectedRemoved(EVENT_HANDLER(ursine::ecs::World))
 
 	if (args->component->Is<Selected>( ))
 	{
+		// Wait one frame.  This way we avoid having a dead lock
+		// when inside "World.cpp" at line 219. - Jordan
+
 		m_currentSelected = -1;
+
 		m_currentTool->OnDeselect( args->entity );
+
+		if (m_currentTool != m_selectTool)
+			m_selectTool->OnDeselect( args->entity );
 	}
 }

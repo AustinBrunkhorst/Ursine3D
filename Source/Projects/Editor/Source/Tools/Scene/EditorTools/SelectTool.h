@@ -22,6 +22,8 @@ public:
 
 	void OnSelect(ursine::ecs::Entity *selected) override;
 
+	void OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager) override;
+
 	void unpickObject(void);
 
 private:
@@ -30,4 +32,6 @@ private:
 	ursine::ecs::World::Handle m_world;
 
 	ursine::ecs::EntityUniqueID m_currentID;
+
+	bool m_altDown;
 };

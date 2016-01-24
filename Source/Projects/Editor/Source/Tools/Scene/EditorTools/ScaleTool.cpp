@@ -28,6 +28,7 @@ ScaleTool::ScaleTool(Editor *editor)
 	, m_dragging( false )
 	, m_snapping( false )
 	, m_local( false )
+	, m_deleteGizmo( false )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
 	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
@@ -60,7 +61,8 @@ void ScaleTool::OnSelect(Entity* entity)
 void ScaleTool::OnDeselect(Entity* entity)
 {
 	m_selected = -1;
-	disableAxis( );
+	
+	m_deleteGizmo = true;
 }
 
 void ScaleTool::OnMouseDown(const MouseButtonArgs& args)
@@ -69,7 +71,7 @@ void ScaleTool::OnMouseDown(const MouseButtonArgs& args)
 	auto newID = m_graphics->GetMousedOverID( );
 	auto entity = m_world->GetEntityUnique( newID );
 
-	if (!entity)
+	if (!entity || m_altDown)
 		return;
 
 	auto entityTrans = entity->GetTransform( );
@@ -175,6 +177,17 @@ void ScaleTool::OnKeyUp(const KeyboardKeyArgs& args)
 
 void ScaleTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 {
+	if (m_deleteGizmo)
+	{
+		disableAxis( );
+		m_deleteGizmo = false;
+	}
+
+	if (kManager->IsDown( KEY_LMENU ))
+		m_altDown = true;
+	else
+		m_altDown = false;
+
 	updateAxis( );
 }
 
@@ -233,9 +246,13 @@ void ScaleTool::updateAxis(void)
 	if (m_selected == -1 || m_gizmo == nullptr)
 		return;
 
+	// update the size of the gizmo
+	auto gizTrans = m_gizmo->GetTransform( );
+
+	gizTrans->SetWorldScale( SVec3( m_editorCameraSystem->GetCamZoom( ) * 0.03f ) );
+
 	auto selected = m_world->GetEntityUnique( m_selected );
 	auto selTrans = selected->GetTransform( );
-	auto gizTrans = m_gizmo->GetTransform( );
 
 	gizTrans->SetWorldPosition( selTrans->GetWorldPosition( ) );
 
