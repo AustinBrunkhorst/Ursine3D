@@ -161,7 +161,8 @@ void EditorToolSystem::onKeyDown(EVENT_HANDLER(ursine::KeyboardManager))
 	EVENT_ATTRS(ursine::KeyboardManager, KeyboardKeyArgs);
 
 	// Check to see if the key pressed is a selection key for one of our tools
-	if (m_editorCameraSystem->HasMouseFocus( ) && m_tools.end( ) != m_tools.find( args->key ))
+	if (( m_editorCameraSystem->HasMouseFocus( ) || m_editorCameraSystem->HasFocus( ) )
+		&& m_tools.end( ) != m_tools.find( args->key ))
 	{
 		auto tool = m_tools[ args->key ];
 

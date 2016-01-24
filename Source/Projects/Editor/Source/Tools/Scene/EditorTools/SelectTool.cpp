@@ -78,6 +78,9 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 
 void SelectTool::OnSelect(ursine::ecs::Entity* selected)
 {
+	if (m_currentID != -1)
+		unpickObject( );
+
 	m_currentID = selected->GetUniqueID( );
 }
 

@@ -54,8 +54,14 @@ void ScaleTool::OnDisable(void)
 
 void ScaleTool::OnSelect(Entity* entity)
 {
+	auto prevSelected = m_gizmo != nullptr;
+	
 	m_selected = entity->GetUniqueID( );
-	enableAxis( );
+
+	if (!prevSelected)
+		enableAxis( );
+
+	m_deleteGizmo = false;
 }
 
 void ScaleTool::OnDeselect(Entity* entity)
@@ -138,6 +144,17 @@ void ScaleTool::OnMouseMove(const MouseMoveArgs& args)
 		else
 			modifier = selected->GetWorldRotation( ) * modifier;
 
+		if (m_uniform)
+		{
+			auto max = math::Max( modifier.X( ), modifier.Y( ), modifier.Z( ) );
+			auto min = math::Min( modifier.X( ), modifier.Y( ), modifier.Z( ) );
+
+			if (abs( max ) > abs( min ))
+				modifier = SVec3( max );
+			else
+				modifier = SVec3( min );
+		}
+
 		auto newS = selected->GetLocalScale( ) + modifier;
 
 		if (m_snapping)
@@ -183,10 +200,8 @@ void ScaleTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 		m_deleteGizmo = false;
 	}
 
-	if (kManager->IsDown( KEY_LMENU ))
-		m_altDown = true;
-	else
-		m_altDown = false;
+	m_altDown = kManager->IsDown( KEY_LMENU );
+	m_uniform = kManager->IsDown( KEY_LSHIFT );
 
 	updateAxis( );
 }

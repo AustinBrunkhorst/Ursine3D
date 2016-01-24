@@ -61,6 +61,9 @@ private:
 	// This flag is needed to solve a circular locking problem with clear deletion queue
 	bool m_deleteGizmo;
 
+	// Flag letting us know if we're uniform scaling the object
+	bool m_uniform;
+
 	// The direction we're dragging in world coordinates
 	ursine::SVec3 m_worldDir;
 

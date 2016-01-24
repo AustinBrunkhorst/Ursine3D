@@ -42,8 +42,14 @@ void TranslateTool::OnDisable(void)
 
 void TranslateTool::OnSelect(Entity* entity)
 {
+	auto prevSelected = m_gizmo != nullptr;
+	
 	m_selected = entity->GetUniqueID( );
-	enableAxis( );
+
+	if (!prevSelected)
+		enableAxis( );
+
+	m_deleteGizmo = false;
 }
 
 void TranslateTool::OnDeselect(Entity* entity)

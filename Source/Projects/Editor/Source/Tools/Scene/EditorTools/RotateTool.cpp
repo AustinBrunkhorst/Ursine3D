@@ -54,8 +54,14 @@ void RotateTool::OnDisable(void)
 
 void RotateTool::OnSelect(Entity* entity)
 {
+	auto prevSelected = m_gizmo != nullptr;
+	
 	m_selected = entity->GetUniqueID( );
-	enableAxis( );
+
+	if (!prevSelected)
+		enableAxis( );
+
+	m_deleteGizmo = false;
 }
 
 void RotateTool::OnDeselect(Entity* entity)
@@ -128,6 +134,7 @@ void RotateTool::OnMouseMove(const MouseMoveArgs& args)
 
 		dist *= 5.0f;
 
+		// Snap object, move tool
 		/*if (m_snapping)
 		{
 			m_accum += dist;
