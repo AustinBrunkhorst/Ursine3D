@@ -122,6 +122,9 @@ namespace ursine
 
             SVec3 ScreenToWorld(const Vec2 &screenPos, float depth);
 
+			// grabs object position from the gpu
+			SVec3 GetMouseWorldPosition(void) const;
+
         private:
 
             bool m_active;

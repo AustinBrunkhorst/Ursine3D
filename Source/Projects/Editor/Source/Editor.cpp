@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -28,7 +28,7 @@ using namespace ursine;
 
 namespace
 {
-	const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
+    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
     const auto kEditorClearColor = Color( 0xFF252526 );
 
@@ -102,14 +102,14 @@ void Editor::OnRemove(void)
     );
 
     m_mainWindow.window->Listener( this )
-        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
+        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize ); 
 
     m_mainWindow.ui->Close( );
     m_mainWindow.ui = nullptr;
 
     m_mainWindow.window = nullptr;
 
-    m_project = nullptr;
+    m_project = nullptr;   
 }
 
 Window::Handle Editor::GetMainWindow(void) const

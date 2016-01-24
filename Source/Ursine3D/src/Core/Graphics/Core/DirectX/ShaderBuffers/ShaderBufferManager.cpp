@@ -60,14 +60,14 @@ namespace ursine
 
                 //this is output from compute shader, GPU write only. CPU can't read
                 //                   type     1 element  buffer enum           usage                  binding         cpu access
-                MakeComputeBuffer<ComputeIDOutput>(5, COMPUTE_BUFFER_ID, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 0);
+                MakeComputeBuffer<ComputeIDOutput>(1, COMPUTE_BUFFER_ID, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 0);
 
                 //requires UAV to write as compute output
-                MakeComputeUAV(5, COMPUTE_BUFFER_ID);
+                MakeComputeUAV(1, COMPUTE_BUFFER_ID);
 
                 //create a buffer for copying data from the gpu onto the cpu
                 //                   type     1 element  buffer enum           usage           binding     cpu access
-                MakeComputeBuffer<ComputeIDOutput>(5, COMPUTE_BUFFER_ID_CPU, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, false);
+                MakeComputeBuffer<ComputeIDOutput>(1, COMPUTE_BUFFER_ID_CPU, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, false);
             }
 
             void ShaderBufferManager::Uninitialize(void)
@@ -175,7 +175,7 @@ namespace ursine
             template<typename T>
             void ShaderBufferManager::MakeBuffer(const BUFFER_LIST type, unsigned gpuUsage, unsigned cpuAccess)
             {
-                UAssert(sizeof(T) % 16 == 0, "Invalid constant buffer! Constant buffer must have a multiple of 16 as its byte width!");
+                static_assert(sizeof( T ) % 16 == 0, "Invalid constant buffer! Constant buffer must have a multiple of 16 as its byte width!");
 
                 HRESULT result;
                 D3D11_BUFFER_DESC bufferDesc;

@@ -39,7 +39,7 @@ namespace ursine
 		const float runtime
 		)
 	{
-		int index = m_keyframes.size();
+		unsigned index = static_cast<unsigned>(m_keyframes.size());
 
 		m_keyframes[rigKeyIndex][boneIndex].translation = trans;
 		m_keyframes[rigKeyIndex][boneIndex].scale = scale;

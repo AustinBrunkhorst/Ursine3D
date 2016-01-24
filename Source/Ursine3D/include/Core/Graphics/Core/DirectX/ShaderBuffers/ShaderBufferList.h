@@ -88,6 +88,8 @@ namespace ursine
         struct InvProjBuffer
         {
             DirectX::XMMATRIX invProj;
+            float nearPlane;
+            float farPlane;
         };
 
         struct PointLightBuffer
@@ -158,6 +160,9 @@ namespace ursine
         struct ComputeIDOutput
         {
             unsigned id;
+            unsigned x;
+            unsigned y;
+            float depth;
         };
     }
 }

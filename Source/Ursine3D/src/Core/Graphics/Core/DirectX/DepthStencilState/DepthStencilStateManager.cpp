@@ -171,7 +171,7 @@ namespace ursine
 
                 //Set up the description of the stencil state.
                 depthCheckStencilDesc.DepthEnable = true;
-                depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+                depthCheckStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
                 depthCheckStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
 
                 depthCheckStencilDesc.StencilEnable = true;
