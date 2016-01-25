@@ -131,6 +131,10 @@ class ComponentInspectionHandler {
         entity.componentFieldUpdate( component.type, field.name, value );
     }
 
+    public function notifyArrayChanged(field : NativeField, index : UInt, value : Dynamic) {
+        entity.componentFieldArrayUpdate( component.type, field.name, index, value );
+    }
+
     public function remove() {
         for (handler in m_fieldHandlers)
             handler.remove( );

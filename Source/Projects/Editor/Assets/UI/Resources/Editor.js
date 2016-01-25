@@ -160,6 +160,13 @@ Type.createInstance = function(cl,args) {
 	}
 	return null;
 };
+var _$UInt_UInt_$Impl_$ = {};
+$hxClasses["_UInt.UInt_Impl_"] = _$UInt_UInt_$Impl_$;
+_$UInt_UInt_$Impl_$.__name__ = ["_UInt","UInt_Impl_"];
+_$UInt_UInt_$Impl_$.toFloat = function(this1) {
+	var $int = this1;
+	if($int < 0) return 4294967296.0 + $int; else return $int + 0.0;
+};
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = ["haxe","IMap"];
@@ -821,6 +828,9 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 	,notifyChanged: function(field,value) {
 		this.entity.componentFieldUpdate(this.component.type,field.name,value);
 	}
+	,notifyArrayChanged: function(field,index,value) {
+		this.entity.componentFieldArrayUpdate(this.component.type,field.name,index,value);
+	}
 	,remove: function() {
 		var $it0 = this.m_fieldHandlers.iterator();
 		while( $it0.hasNext() ) {
@@ -837,6 +847,7 @@ var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(o
 	this.m_type = type;
 	this.inspector = new FieldInspectorControl();
 	this.inspector.heading = field.name;
+	this.arrayIndex = 0;
 };
 $hxClasses["ursine.editor.scene.component.inspectors.FieldInspectionHandler"] = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","FieldInspectionHandler"];
@@ -852,6 +863,9 @@ ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype = {
 	}
 	,remove: function() {
 		if(this.inspector.parentNode != null) this.inspector.parentNode.removeChild(this.inspector);
+	}
+	,notifyChanged: function(field,value) {
+		if(this.m_type.isArray) this.m_owner.notifyArrayChanged(this.m_field,this.arrayIndex,value); else this.m_owner.notifyChanged(this.m_field,value);
 	}
 	,get_name: function() {
 		return this.m_field.name;
@@ -950,23 +964,28 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 	arrayInsert: function(index,value) {
 		var handler = this.inspectItem(value);
 		var container = new ArrayItemContainerControl();
-		if(this.m_arrayItems.length == 0) {
-			this.m_itemsContainer.appendChild(container);
-			container.index = 0;
-			container.container.appendChild(handler.inspector);
-			this.m_arrayItems.push(container);
-			return;
-		}
-		var item = this.m_arrayItems[index - 1];
-		console.log(item);
-		this.m_itemsContainer.insertBefore(item,handler.inspector);
+		handler.arrayIndex = index;
+		container.opened = true;
+		container.container.appendChild(handler.inspector);
 		this.m_arrayItems.splice(index,0,container);
-		var _g1 = index;
-		var _g = this.m_arrayItems.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var element = this.m_arrayItems[i];
-			element.index = i;
+		if((function($this) {
+			var $r;
+			var b = Math.max(0,$this.m_arrayItems.length - 1);
+			$r = _$UInt_UInt_$Impl_$.toFloat(index) == b;
+			return $r;
+		}(this))) {
+			this.m_itemsContainer.appendChild(container);
+			container.index = index;
+		} else {
+			var item = this.m_arrayItems[index + 1];
+			this.m_itemsContainer.insertBefore(item,container);
+			var _g1 = index;
+			var _g = this.m_arrayItems.length;
+			while(_g1 < _g) {
+				var i = _g1++;
+				var element = this.m_arrayItems[i];
+				element.index = i;
+			}
 		}
 	}
 	,arraySet: function(index,value) {
@@ -1004,7 +1023,7 @@ var ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector = func
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_bool = new CheckBoxInputControl();
 	this.m_bool.addEventListener("change",function() {
-		_g.m_owner.notifyChanged(_g.m_field,_g.m_bool.checked);
+		_g.notifyChanged(_g.m_field,_g.m_bool.checked);
 	});
 	this.inspector.container.appendChild(this.m_bool);
 	this.updateValue(instance);
@@ -1058,7 +1077,7 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.prototype = 
 		window.document.body.appendChild(this.m_colorInput);
 	}
 	,onColorChanged: function(e) {
-		this.m_owner.notifyChanged(this.m_field,e.detail.color);
+		this.notifyChanged(this.m_field,e.detail.color);
 	}
 	,onColorClosed: function(e) {
 		this.m_colorInput = null;
@@ -1118,7 +1137,7 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		}
 		this.m_comboInput.addEventListener("change",function(e) {
 			_g.m_instance = _g.getEnumBitMaskValue();
-			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+			_g.notifyChanged(_g.m_field,_g.m_instance);
 		});
 		this.inspector.container.appendChild(this.m_comboInput);
 		this.updateValue(this.m_instance);
@@ -1168,7 +1187,7 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 			return $r;
 		}(this))) value = 0;
 		if(!(_g.m_type.name == "float" || _g.m_type.name == "double")) value = Std["int"](value);
-		_g.m_owner.notifyChanged(_g.m_field,value);
+		_g.notifyChanged(_g.m_field,value);
 	};
 	this.m_number.addEventListener("change",changeHandler);
 	if(this.m_number.type == "range") this.m_number.addEventListener("input",changeHandler);
@@ -1194,7 +1213,7 @@ var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = funct
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_string = new TextInputControl();
 	this.m_string.addEventListener("change",function() {
-		_g.m_owner.notifyChanged(_g.m_field,_g.m_string.value);
+		_g.notifyChanged(_g.m_field,_g.m_string.value);
 	});
 	this.m_string.addEventListener("focus",function(e) {
 		haxe_Timer.delay(function() {
@@ -1263,7 +1282,7 @@ ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.prototype =
 			var value = number.valueAsNumber;
 			if(isNaN(value)) value = 0;
 			_g.m_instance[field.name] = value;
-			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+			_g.notifyChanged(_g.m_field,_g.m_instance);
 		});
 		number.addEventListener("focus",function(e) {
 			haxe_Timer.delay(function() {
@@ -1537,7 +1556,11 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,onAddComponentTypeSelected: function(e) {
 		var componentType = e.detail.type;
-		if(this.m_inspectedEntity.hasComponent(componentType)) throw new js__$Boot_HaxeError("Entity already has component type " + componentType);
+		if(this.m_inspectedEntity.hasComponent(componentType)) {
+			var notification = new NotificationControl(2,"Entity already has component type <strong>" + componentType + "</strong>","Error");
+			notification.show();
+			return;
+		}
 		this.m_inspectedEntity.addComponent(componentType);
 	}
 	,onOpenChanged: function(component,e) {

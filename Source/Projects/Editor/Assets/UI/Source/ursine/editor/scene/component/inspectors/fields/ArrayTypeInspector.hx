@@ -34,28 +34,29 @@ class ArrayTypeInspector {
         var handler = inspectItem( value );
         var container = new ArrayItemContainer( );
 
-        if (m_arrayItems.length == 0) {
-            m_itemsContainer.appendChild( container );
+        handler.arrayIndex = index;
 
-            container.index = 0;
-            container.container.appendChild( handler.inspector );
-
-            m_arrayItems.push( container );
-
-            return;
-        }
-
-        var item = m_arrayItems[ index - 1 ];
-
-        m_itemsContainer.insertBefore( item, handler.inspector );
+        container.opened = true;
+        container.container.appendChild( handler.inspector );
 
         m_arrayItems.insert( index, container );
 
-        // update index stuff
-        for (i in index...m_arrayItems.length) {
-            var element = m_arrayItems[ i ];
+        // adding to the end
+        if (index == Math.max( 0, m_arrayItems.length - 1 )) {
+            m_itemsContainer.appendChild( container );
 
-            element.index = i;
+            container.index = index;
+        } else {
+            var item = m_arrayItems[ index + 1 ];
+
+            m_itemsContainer.insertBefore( item, container );
+
+            // update index stuff
+            for (i in index...m_arrayItems.length) {
+                var element = m_arrayItems[ i ];
+
+                element.index = i;
+            }
         }
     }
 

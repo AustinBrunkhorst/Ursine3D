@@ -80,7 +80,7 @@ class DefaultFieldInspector extends FieldInspectionHandler {
         m_comboInput.addEventListener( 'change', function(e) {
             m_instance = getEnumBitMaskValue( );
 
-            m_owner.notifyChanged( m_field, m_instance );
+            notifyChanged( m_field, m_instance );
         } );
 
         inspector.container.appendChild( m_comboInput );

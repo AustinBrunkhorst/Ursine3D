@@ -1,5 +1,6 @@
 package ursine.editor.windows;
 
+import ursine.controls.Notification;
 import ursine.controls.PolymerElement;
 import js.html.DOMElement;
 import ursine.native.Property;
@@ -241,8 +242,15 @@ class EntityInspector extends WindowHandler {
         var componentType = e.detail.type;
 
         if (m_inspectedEntity.hasComponent( componentType )) {
-            // TODO: create error dialog
-            throw 'Entity already has component type ${componentType}';
+            var notification = new Notification(
+                NotificationType.Error,
+                'Entity already has component type <strong>${componentType}</strong>',
+                'Error'
+            );
+
+            notification.show( );
+
+            return;
         }
 
         m_inspectedEntity.addComponent( componentType );

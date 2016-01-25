@@ -13,7 +13,7 @@ class StringFieldInspector extends FieldInspectionHandler {
         m_string = new TextInput( );
 
         m_string.addEventListener( 'change', function() {
-            m_owner.notifyChanged( m_field, m_string.value );
+            notifyChanged( m_field, m_string.value );
         } );
 
         m_string.addEventListener( 'focus', function(e) {
