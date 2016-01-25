@@ -53,10 +53,8 @@ namespace ursine
             return SMat4( DirectX::XMMatrixLookAtLH( eyePos, targetPos, upDir ) );
         }
 
-        SMat4 Camera::GetProjMatrix() const
+        SMat4 Camera::GetProjMatrix(void) const
         {
-            SMat4 mat;
-
             if (m_projMode == PROJECTION_PERSPECTIVE)
             {
                 return SMat4( DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f,

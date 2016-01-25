@@ -120,7 +120,8 @@ namespace ursine
             int GetRenderMask(void) const;
             void SetRenderMask(const int mask);
 
-            SVec3 ScreenToWorld(const Vec2 &screenPos, float depth);
+            SVec3 ScreenToWorld(const Vec2 &screenPos, float depth) const;
+			Vec2 WorldToScreen(const SVec3 &worldPos) const;
 
 			// grabs object position from the gpu
 			SVec3 GetMouseWorldPosition(void) const;

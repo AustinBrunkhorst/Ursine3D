@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** EditorComponents.h
+** SelectedComponent.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,8 +13,13 @@
 
 #pragma once
 
-#include "SelectedComponent.h"
-#include "DisableSelectionComponent.h"
-#include "GridRendererSettingsComponent.h"
-#include "EditorIconComponent.h"
-#include <SharedComponents.h>
+#include <Component.h>
+
+class DisableSelection : public ursine::ecs::Component
+{
+	NATIVE_COMPONENT;
+public:
+	Meta(Enable)
+	DisableSelection(void);
+
+} Meta(Enable, WhiteListMethods, HiddenInInspector);

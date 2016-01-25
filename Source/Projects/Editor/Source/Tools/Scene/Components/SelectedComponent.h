@@ -15,9 +15,18 @@
 
 #include <Component.h>
 
+namespace ursine
+{
+	namespace ecs
+	{
+		class World;
+	}
+}
+
 class Selected : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
+
 public:
     Meta(Enable)
     Selected(void);
@@ -27,5 +36,7 @@ public:
 
 private:
     void tryDebugModel(bool enabled);
+
+	void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));
 
 } Meta(Enable, WhiteListMethods, HiddenInInspector, DisableSerialization);
