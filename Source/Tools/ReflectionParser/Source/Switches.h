@@ -25,6 +25,7 @@
 
 DEFINE_SWITCH_FULL( Help,              "help",           "h" );
 DEFINE_SWITCH_FULL( TargetName,        "target-name",    "t" );
+DEFINE_SWITCH_FULL( SourceRoot,        "source-root",    "r" );
 DEFINE_SWITCH_FULL( InputSource,       "in-source",      "i" );
 DEFINE_SWITCH_FULL( OutputHeader,      "out-header",     "a" );
 DEFINE_SWITCH_FULL( OutputSource,      "out-source",     "b" );

@@ -62,6 +62,15 @@ std::string Cursor::GetMangledName(void) const
     return mangled;
 }
 
+std::string Cursor::GetUSR(void) const
+{
+    std::string usr;
+
+    utils::ToString( clang_getCursorUSR( m_handle ), usr );
+
+    return usr;
+}
+
 bool Cursor::IsDefinition(void) const
 {
     return clang_isCursorDefinition( m_handle ) ? true : false;
@@ -126,4 +135,9 @@ Cursor::List Cursor::GetChildren(void) const
 void Cursor::VisitChildren(Visitor visitor, void *data)
 {
     clang_visitChildren( m_handle, visitor, data );
+}
+
+unsigned Cursor::GetHash(void) const
+{
+    return clang_hashCursor( m_handle );
 }

@@ -14,6 +14,7 @@ struct ReflectionOptions
 {
     std::string targetName;
 
+    std::string sourceRoot;
     std::string inputSourceFile;
 
     std::string outputHeaderFile;

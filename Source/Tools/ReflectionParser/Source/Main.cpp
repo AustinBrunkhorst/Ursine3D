@@ -49,6 +49,11 @@ int main(int argc, char *argv[])
             "Input target project name." 
         )
         ( 
+            SWITCH_OPTION( SourceRoot ), 
+            po::value<std::string>( )->required( ),
+            "Root source directory that is shared by all header files." 
+        )
+        ( 
             SWITCH_OPTION( InputSource ), 
             po::value<std::string>( )->required( ), 
             "Source file (header) to compile reflection data from." 
@@ -119,6 +124,9 @@ void parse(const po::variables_map &cmdLine)
     options.targetName = 
         cmdLine.at( kSwitchTargetName ).as<std::string>( );
 
+    options.sourceRoot = 
+        cmdLine.at( kSwitchSourceRoot ).as<std::string>( );
+
     options.inputSourceFile = 
         cmdLine.at( kSwitchInputSource ).as<std::string>( );
 
@@ -127,6 +135,8 @@ void parse(const po::variables_map &cmdLine)
 
     options.outputSourceFile = 
         cmdLine.at( kSwitchOutputSource ).as<std::string>( );
+
+    std::cout << "SOURCE DIR: " << options.sourceRoot << std::endl;
 
     // default arguments
     options.arguments =

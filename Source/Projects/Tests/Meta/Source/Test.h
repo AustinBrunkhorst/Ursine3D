@@ -13,13 +13,14 @@
 
 #pragma once
 
-#include <Meta.h>
+//#include <Meta.h>
 
 class BaseClass { };
 
 class Test : public BaseClass
 {
 public:
-    Meta(RequiresComponents( typeof( int ) ), _ok::Test<int>( typeof( std::string ), "(\")", typeof( int ) ))
-    int foo;
-} Meta(Enable);
+    double potato;
+    
+    int Foo(void);
+};

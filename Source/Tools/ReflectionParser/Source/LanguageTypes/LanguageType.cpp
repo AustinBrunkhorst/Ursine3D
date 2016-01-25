@@ -25,7 +25,8 @@ LanguageType::LanguageType(
     , m_constPtrTypeEnabled( !m_metaData.GetFlag( native_property::DisableConstPtrType ) )
     , m_accessModifier( cursor.GetAccessModifier( ) )
 {
-    
+    std::cout << "display name: " << cursor.GetDisplayName( ) << std::endl;
+    std::cout << " ------- usr: " << cursor.GetUSR() << std::endl;
 }
 
 const MetaDataManager &LanguageType::GetMetaData(void) const

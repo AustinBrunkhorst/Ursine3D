@@ -372,6 +372,7 @@ macro (ursine_project PROJECT_NAME)
             DEPENDS ${META_DEPENDS}
             COMMAND call "$<TARGET_FILE:ReflectionParser>"
             --target-name "${PROJECT_NAME}"
+            --source-root "${ROOT_SOURCE_DIR}"
             --in-source "${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SOURCE_DIR}/${PROJ_META_HEADER}"
             --out-header "${META_GENERATED_HEADER}"
             --out-source "${META_GENERATED_SRC}"
