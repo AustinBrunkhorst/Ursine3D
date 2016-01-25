@@ -28,4 +28,11 @@
 #include "Systems/ProjectileSystem.h"
 #include "Systems/ControlPointSystem.h"
 
+///////////////////////////////////////////////////////////////////////////////
+//AI
+///////////////////////////////////////////////////////////////////////////////
+#include "Systems/AI/AIReasonerSystem.h"
+#include "Systems/AI/AIControllerSystem.h"
+#include "Systems/AI/WaypointSystem.h"
+
 

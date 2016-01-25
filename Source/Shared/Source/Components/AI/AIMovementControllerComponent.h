@@ -42,7 +42,7 @@ namespace ursine
 
             void Update(void);
 
-            float GetSpeed(void);
+            float GetSpeed(void) const;
             void SetSpeed(float newSpeed);
 
         private:

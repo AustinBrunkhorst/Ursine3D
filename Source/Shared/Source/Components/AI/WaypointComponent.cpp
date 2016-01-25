@@ -23,6 +23,7 @@ namespace ursine
 
 		void Waypoint::OnInitialize(void)
 		{
+            Component::OnInitialize();
 		}
 
         float Waypoint::GetRadius()

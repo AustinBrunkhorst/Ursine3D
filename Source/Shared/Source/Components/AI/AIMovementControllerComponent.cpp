@@ -10,7 +10,7 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION(AIMovementController);
 
         AIMovementController::AIMovementController(void)
-            : BaseComponent()
+            : BaseComponent( )
             , m_rigid(nullptr)
             , m_speed(0.0f)
         {
@@ -26,8 +26,10 @@ namespace ursine
             m_targetDir = Vec3(dir.X(), 0, dir.Y());
         }
 
-        void AIMovementController::OnInitialize()
+        void AIMovementController::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             m_rigid = GetOwner()->GetComponent<Rigidbody>();
         }
 
@@ -37,7 +39,7 @@ namespace ursine
             m_rigid->SetVelocity(gravity + m_targetDir * m_speed);
         }
 
-        float AIMovementController::GetSpeed()
+        float AIMovementController::GetSpeed() const
         {
             return m_speed;
         }

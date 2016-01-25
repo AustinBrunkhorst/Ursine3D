@@ -15,6 +15,8 @@ namespace ursine
 
         void AIReasoner::OnInitialize()
         {
+            Component::OnInitialize();
+
             m_trans = GetOwner()->GetTransform();
         }
     }
