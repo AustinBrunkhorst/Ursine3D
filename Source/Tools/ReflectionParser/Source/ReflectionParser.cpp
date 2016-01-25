@@ -77,7 +77,13 @@ void ReflectionParser::Parse(void)
 
     std::vector<const char *> arguments;
 
-    for (auto &argument : m_options.arguments)
+#if defined(SYSTEM_INCLUDE_DIRECTORY)
+
+	arguments.emplace_back( "-I" SYSTEM_INCLUDE_DIRECTORY );
+
+#endif
+
+    for (std::string &argument : m_options.arguments)
     { 
         // unescape flags
         boost::algorithm::replace_all( argument, "\\-", "-" );
