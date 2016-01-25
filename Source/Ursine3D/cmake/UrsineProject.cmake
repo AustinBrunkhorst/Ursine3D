@@ -291,6 +291,9 @@ macro (ursine_project PROJECT_NAME)
         # treat warnings as errors
         target_compile_options(${PROJECT_NAME} PUBLIC /WX)
 
+        # multi process compilation
+        target_compile_options(${PROJECT_NAME} PUBLIC /MP)
+
         # default to console as subsytem if not defined
         if ("${PROJ_SUBSYSTEM_DEBUG}" STREQUAL "")
             set(PROJ_SUBSYSTEM_DEBUG "CONSOLE")
