@@ -263,7 +263,7 @@ void RotateTool::updateAxis(void)
 
 void RotateTool::setEntitySerializationToggle(bool toggle, Entity* entity)
 {
-	for (auto *child : entity->GetTransform( )->GetChildren( ))
+	for (auto child : entity->GetTransform( )->GetChildren( ))
 	{
 		setEntitySerializationToggle( toggle, child->GetOwner( ) );
 	}

@@ -261,7 +261,7 @@ void TranslateTool::updateAxis(void)
 
 void TranslateTool::setEntitySerializationToggle(bool toggle, Entity *entity)
 {
-	for (auto *child : entity->GetTransform( )->GetChildren( ))
+	for (auto child : entity->GetTransform( )->GetChildren( ))
 	{
 		setEntitySerializationToggle( toggle, child->GetOwner( ) );
 	}
