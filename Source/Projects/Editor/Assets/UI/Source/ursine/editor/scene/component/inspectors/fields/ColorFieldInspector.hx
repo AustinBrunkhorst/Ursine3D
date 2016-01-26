@@ -64,7 +64,7 @@ class ColorFieldInspector extends FieldInspectionHandler {
     }
 
     private function onColorChanged(e : js.html.CustomEvent) {
-        m_owner.notifyChanged( m_field, e.detail.color );
+        notifyChanged( m_field, e.detail.color );
     }
 
     private function onColorClosed(e : js.html.CustomEvent) {

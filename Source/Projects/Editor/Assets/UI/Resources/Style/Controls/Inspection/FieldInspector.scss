@@ -44,10 +44,18 @@
   }
 
   .array-items-wrapper {
-    border: 1px solid red;
+    border: 1px solid #424242;
+
+    button {
+      width: calc(100% - 10px);
+      margin: 5px;
+    }
 
     .array-items {
-
+      x-array-item-container {
+        display: block;
+        margin-bottom: 2px;
+      }
     }
   }
 

@@ -112,7 +112,7 @@ void Recording::Record(ursine::uint64 roundTime, RecordableCommandPtr command, u
         if (newType == liveType)
         {
             // Update the duration
-			currentCommand->SetDuration( roundTime - currentCommand->GetStartTime( ) );
+			currentCommand->SetDuration( roundTime - static_cast<ursine::uint64>( currentCommand->GetStartTime( ) ) );
                         
             // Call the record function
 			currentCommand->Record( receiver, roundTime );
@@ -124,13 +124,13 @@ void Recording::Record(ursine::uint64 roundTime, RecordableCommandPtr command, u
     // We've made it to this point, meaning this command is
     // a new one and should be added to the recording and live list
     m_recording.push_back( command );
-    m_live.push_back( m_recording.size( ) - 1 );
+    m_live.push_back( static_cast<RecordingIndex>( m_recording.size( ) - 1 ) );
 
     // set the command's start time
     command->SetStartTime( roundTime );
 
     // reset the duration
-    command->SetDuration( ursine::Application::Instance->GetDeltaTime( ) );
+    command->SetDuration( static_cast<ursine::uint64>( ursine::Application::Instance->GetDeltaTime( ) ) );
 
     // Call the start recording function and the record function
     command->StartRecording( receiver );
@@ -155,7 +155,7 @@ void Recording::UpdateRecording(ursine::uint64 roundTime, ursine::ecs::Entity *r
     ursine::uint64 threshold = 2;
 
     // iterate through all live actions
-    for (int i = 0, n = m_live.size( ); i < n; ++i)
+    for (size_t i = 0, n = m_live.size( ); i < n; ++i)
     {
         // check to see if they are stale
         auto &command = m_recording[ m_live[ i ] ];

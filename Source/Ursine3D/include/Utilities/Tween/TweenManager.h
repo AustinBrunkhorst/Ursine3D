@@ -22,6 +22,7 @@ namespace ursine
     class TweenManager : public core::CoreSystem
     {
         CORE_SYSTEM
+
     public:
         Meta(Enable, DisableNonDynamic)
         TweenManager(void);
@@ -62,5 +63,5 @@ namespace ursine
         Tween *get(uint32 id);
 
         void cancel(uint32 id, bool invokeRemoved = true);
-    } Meta(Enable, WhiteListMethods);
+    } Meta(WhiteListMethods, Enable);
 }

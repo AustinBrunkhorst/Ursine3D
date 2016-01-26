@@ -1,92 +1,76 @@
 @import '../../Config';
+@import '../../Utils';
+@import '../../Icons';
 
 :host {
   #header {
-    color: #dcdcdc;
-    margin: 5px 0;
+    position: relative;
+    padding: 5px;
+    background: #424242;
+    color: #cccccc;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:before {
+      display: inline-block;
+      padding-right: 4px;
+      margin-right: 4px;
+      -webkit-transform: rotate(0deg);
+      -webkit-transform-origin: center;
+      -webkit-transition: -webkit-transform $duration-transition-btn * 0.5 ease;
+      @include triangle( 'right', #c4c4c4, 4px );
+    }
+
+    &:hover {
+      #btnRemoveItem {
+        opacity: 1;
+      }
+    }
+
+    #btnRemoveItem {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      color: #dddddd;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity $duration-transition-btn ease, color $duration-transition-btn ease;
+
+      @include icon-half( $icon-half-remove-circle, 14px );
+
+      &:hover {
+        color: #cf6753;
+      }
+    }
   }
 
   #container {
-    padding-right: 5px;
-  }
-}
-
-::content {
-  input {
-    display: block;
-    width: 100%;
-    margin-bottom: 5px;
-
-    &[type=checkbox] {
-      width: auto;
-    }
+    display: none;
+    padding: 4px;
   }
 
-  select {
-    display: block;
-    width: 100%;
-    padding: 2px;
-    margin-bottom: 5px;
-    background: #333337;
-    border: 1px solid #3f3f46;
-    color: #dcdcdc;
-    outline: none;
-    cursor: pointer;
-
-    &:hover, &:focus {
-      border: 1px solid $color-accent;
+  &.opened {
+    #header {
+      &:before {
+        -webkit-transform: rotate(90deg);
+      }
     }
 
-    option {
-      background: #333337;
-      color: #dcdcdc;
-    }
-  }
-
-  .vector-fields {
-    display: flex;
-    flex-direction: row;
-    align-content: stretch;
-
-    input {
+    #container {
       display: block;
-      flex: 1 1 100%;
-      align-self: auto;
-      width: 100%;
-
-      &:not(:first-child) {
-        margin-left: 2px;
-      }
-
-      &:not(:last-child) {
-        margin-right: 2px;
-      }
     }
   }
 
-  .invalid-type {
-    font-style: italic;
-    color: #cf6753;
-  }
+  ::content {
+    x-field-inspector {
+      background: pink;
 
-  .color-preview {
-    display: block;
-    // TODO:
-    width: 100%;
-    height: 20px;
-    margin-bottom: 5px;
-    background-image: url(../../Images/checkerboard.png);
-    background-repeat: repeat;
-    border: 1px solid #3f3f46;
-    cursor: pointer;
-
-    &:hover, &:focus {
-      border: 1px solid $color-accent;
-    }
-
-    > div {
-      width: 100%;
-      height: 100%;
+      .field-header {
+        display: none;
+      }
     }
   }
 }
+

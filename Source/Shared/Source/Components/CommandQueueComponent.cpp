@@ -26,6 +26,7 @@ CommandQueue::CommandQueue(void)
 
 void CommandQueue::OnInitialize(void)
 {
+    Component::OnInitialize( );
 }
 
 void CommandQueue::AddCommand(const std::shared_ptr<Command> &command) 

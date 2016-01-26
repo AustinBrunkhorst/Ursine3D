@@ -537,6 +537,54 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     return CefV8Value::CreateBool( true );
 }
 
+JSMethod(EntityHandler::componentFieldArrayGetLength)
+{
+    if (arguments.size( ) != 2)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+    auto fieldName = arguments[ 1 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        JSThrow( "Unknown component type.", nullptr );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        JSThrow( "Invalid component type.", nullptr );
+
+    auto *component = entity->GetComponent( 
+        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
+    );
+
+    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+
+    auto field = componentType.GetField( fieldName );
+
+    if (!field.IsValid( ))
+        JSThrow( "Invalid field.", nullptr );
+
+    auto fieldType = field.GetType( );
+
+    if (!fieldType.IsArray( ))
+        JSThrow( "Field is not an array type.", nullptr );
+
+    auto fieldInstance = field.GetValue( instance );
+
+    auto arrayWrapper = fieldInstance.GetArray( );
+
+    return CefV8Value::CreateUInt(
+        static_cast<unsigned>( arrayWrapper.Size( ) )
+    );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 JSMethod(EntityHandler::componentButtonInvoke)
@@ -621,7 +669,7 @@ JSMethod(EntityHandler::getParent)
     if (!entity)
         return CefV8Value::CreateBool( false );
 
-    auto *parent = entity->GetTransform( )->GetParent( );
+    auto parent = entity->GetTransform( )->GetParent( );
 
     if (!parent)
         return CefV8Value::CreateNull( );
@@ -648,7 +696,7 @@ JSMethod(EntityHandler::setParent)
     // detaching parent
     if (targetParent->IsNull( ))
     {
-        auto *currentParent = transform->GetParent( );
+        auto currentParent = transform->GetParent( );
 
         if (currentParent)
             currentParent->RemoveChild( transform );

@@ -65,8 +65,8 @@
 
 /// Utilities
 
-#include "TimerManager.h"
-#include "TweenManager.h"
+#include "Utilities/Timer/TimerManager.h"
+#include "Utilities/Tween/TweenManager.h"
 
 /// Game Engine
 

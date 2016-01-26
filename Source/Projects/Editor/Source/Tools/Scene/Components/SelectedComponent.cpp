@@ -27,11 +27,21 @@ Selected::Selected(void)
 Selected::~Selected(void)
 {
     tryDebugModel( false );
+
+	auto owner = GetOwner( );
+
+	owner->GetWorld( )->Listener( this )
+		.Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &Selected::onComponentAdded);
 }
 
 void Selected::OnInitialize(void)
 {
+    Component::OnInitialize( );
+
     auto owner = GetOwner( );
+
+	owner->GetWorld( )->Listener( this )
+		.On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &Selected::onComponentAdded);
 
     tryDebugModel( true );
 }
@@ -45,4 +55,12 @@ void Selected::tryDebugModel(bool enabled)
         return;
 
     model->SetDebug( enabled );
+}
+
+void Selected::onComponentAdded(EVENT_HANDLER(ecs::World))
+{
+	EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
+	
+	if (args->component->Is<ecs::Model3D>( ))
+		tryDebugModel( true );
 }

@@ -77,11 +77,11 @@ namespace ursine
 
 				part.m_vertexBase = reinterpret_cast<const unsigned char*>( &rawVertices[ 0 ] );
 				part.m_vertexStride = sizeof( rawVertices[ 0 ] );
-				part.m_numVertices = rawVertices.size( );
+				part.m_numVertices = static_cast<int>( rawVertices.size( ) );
 
 				part.m_triangleIndexBase = reinterpret_cast<const unsigned char*>( &rawIndices[ 0 ] );
 				part.m_triangleIndexStride = 3 * sizeof( rawIndices[ 0 ] );
-				part.m_numTriangles = rawIndices.size( ) / 3;
+				part.m_numTriangles = static_cast<int>( rawIndices.size( ) / 3u );
 				part.m_indexType = PHY_INTEGER;
 
 				m_triangleIndexVertexArray->addIndexedMesh( part );
@@ -136,18 +136,21 @@ namespace ursine
 		{
 		#ifdef BULLET_PHYSICS
 
-			auto encoded_91 = input[ "data" ].string_value( );
-			auto decoded_91 = base91::decode( encoded_91 );
+			auto encoded91 = input[ "data" ].string_value( );
+			auto decoded91 = base91::decode( encoded91 );
 
 			btBulletWorldImporter import;
 
 			import.loadFileFromMemory( 
-				reinterpret_cast<char*>( &decoded_91[ 0 ] ), decoded_91.size( )
+				reinterpret_cast<char*>( &decoded91[ 0 ] ), 
+                static_cast<int>( decoded91.size( ) )
 			);
 
 			auto numShapes = import.getNumCollisionShapes( );
 
-			UAssert( numShapes > 0, "Something went wrong when Serializeing the BvhTriangleMeshCollider." );
+			UAssert( numShapes > 0, 
+                "Something went wrong when Serializeing the BvhTriangleMeshCollider." 
+            );
 
 			setChildShape( 
 				reinterpret_cast<btBvhTriangleMeshShape*>( import.getCollisionShapeByIndex( 0 ) ) 

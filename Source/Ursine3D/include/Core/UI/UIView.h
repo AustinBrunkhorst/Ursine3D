@@ -66,6 +66,7 @@ namespace ursine
     private:
         friend class UIManager;
 
+        CefRect m_viewport;
         Window::Handle m_window;
 
         CefRefPtr<CefBrowser> m_browser;

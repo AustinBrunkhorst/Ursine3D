@@ -41,6 +41,8 @@ namespace ursine
 
         void Animator::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             // clean up our model's matrices
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             for ( auto &x : matrixPalette )

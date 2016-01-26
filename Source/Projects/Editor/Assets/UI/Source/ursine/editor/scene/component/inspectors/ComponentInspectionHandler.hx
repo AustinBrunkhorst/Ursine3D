@@ -10,29 +10,39 @@ import ursine.editor.scene.component.ComponentInspection;
 @:keepInit
 @:keepSub
 class ComponentInspectionHandler {
+    public var entity(default, null) : Entity;
+    public var component(default, null) : ComponentInspection;
+
     public var fieldChangeEvents : EventManager;
+    public var fieldArrayInsertEvents : EventManager;
+    public var fieldArrayItemSetEvents : EventManager;
+    public var fieldArrayItemRemoveEvents : EventManager;
+
     public var inspector : ComponentInspector;
 
-    private var m_entity : Entity;
-    private var m_component : ComponentInspection;
-    private var m_componentType : ComponentType;
+    private var componentType : ComponentType;
 
     private var m_fieldHandlers : Map<String, FieldInspectionHandler>;
 
     public function new(entity : Entity, component : ComponentInspection) {
-        m_entity = entity;
-        m_component = component;
-        m_componentType = Editor.instance.componentDatabase.getComponentType( m_component.type );
+        this.entity = entity;
+        this.component = component;
+
+        componentType = Editor.instance.componentDatabase.getComponentType( component.type );
         m_fieldHandlers = new Map<String, FieldInspectionHandler>( );
 
         fieldChangeEvents = new EventManager( );
+        fieldArrayInsertEvents = new EventManager( );
+        fieldArrayItemSetEvents = new EventManager( );
+        fieldArrayItemRemoveEvents = new EventManager( );
+
         inspector = new ComponentInspector( );
 
         inspector.heading = component.type;
     }
 
     public function updateField(name : String, value : Dynamic) {
-        Reflect.setField( m_component.value, name, value );
+        Reflect.setField( component.value, name, value );
 
         var result = fieldChangeEvents.trigger( name, {
             name: name,
@@ -47,6 +57,50 @@ class ComponentInspectionHandler {
         }
     }
 
+    public function arrayInsert(name : String, index : UInt, value : Dynamic) {
+        var result = fieldArrayInsertEvents.trigger( name, {
+            name: name,
+            index: index,
+            value: value
+        } );
+
+        if (result != false) {
+            var handler : FieldInspectionHandler = m_fieldHandlers[ name ];
+
+            if (handler != null)
+                handler.arrayInsert( index, value );
+        }
+    }
+
+    public function arraySet(name : String, index : UInt, value : Dynamic) {
+        var result = fieldArrayInsertEvents.trigger( name, {
+            name: name,
+            index: index,
+            value: value
+        } );
+
+        if (result != false) {
+            var handler : FieldInspectionHandler = m_fieldHandlers[ name ];
+
+            if (handler != null)
+                handler.arraySet( index, value );
+        }
+    }
+
+    public function arrayRemove(name : String, index : UInt) {
+        var result = fieldArrayInsertEvents.trigger( name, {
+            name: name,
+            index: index
+        } );
+
+        if (result != false) {
+            var handler : FieldInspectionHandler = m_fieldHandlers[ name ];
+
+            if (handler != null)
+                handler.arrayRemove( index );
+        }
+    }
+
     public function addButton(button : ComponentEditorButton) {
         var element = new Button( );
 
@@ -55,7 +109,7 @@ class ComponentInspectionHandler {
         element.text = button.text;
 
         element.addEventListener( 'click', function() {
-            m_entity.componentButtonInvoke( m_component.type, button.name );
+            entity.componentButtonInvoke( component.type, button.name );
         } );
 
         inspector.buttons.appendChild( element );
@@ -74,7 +128,11 @@ class ComponentInspectionHandler {
     }
 
     public function notifyChanged(field : NativeField, value : Dynamic) {
-        m_entity.componentFieldUpdate( m_component.type, field.name, value );
+        entity.componentFieldUpdate( component.type, field.name, value );
+    }
+
+    public function notifyArrayChanged(field : NativeField, index : UInt, value : Dynamic) {
+        entity.componentFieldArrayUpdate( component.type, field.name, index, value );
     }
 
     public function remove() {

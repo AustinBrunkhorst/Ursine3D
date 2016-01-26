@@ -73,5 +73,7 @@ void Health::DealDamage(const float damage)
 
 void Health::OnInitialize(void)
 {
+    Component::OnInitialize( );
+
     m_maxHealth = m_health;
 }

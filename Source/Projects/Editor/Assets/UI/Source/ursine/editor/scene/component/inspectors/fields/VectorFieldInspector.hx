@@ -53,7 +53,7 @@ class VectorFieldInspector extends FieldInspectionHandler {
 
             Reflect.setField( m_instance, field.name, value );
 
-            m_owner.notifyChanged( m_field, m_instance );
+            notifyChanged( m_field, m_instance );
         } );
 
         // select all text on focus

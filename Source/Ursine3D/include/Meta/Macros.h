@@ -27,7 +27,7 @@
 
     #endif
 
-    #define __META_EXTERNAL(type, guid)       \                       
+    #define __META_EXTERNAL(type, guid)       \
         typedef type __META_EXTERNAL__##guid; \
 
     #define _META_EXTERNAL(type, guid) __META_EXTERNAL(type, guid)

@@ -3,7 +3,10 @@
 <dom-module id="x-array-item-container">
     <link rel="import" type="css" href="../../Style/Controls/Inspection/ArrayItemContainer.css">
     <template>
-        <div id="header">Item <span>{{index}}</span></div>
+        <div id="header" class="item-header">
+            Item <span>{{index}}</span>
+            <div id="btnRemoveItem"></div>
+        </div>
         <div id="container">
             <content></content>
         </div>
@@ -15,10 +18,31 @@
                 index: {
                     type: Number,
                     notify: true
+                },
+                opened: {
+                    type: Boolean,
+                    notify: true,
+                    value: false,
+                    observer: '_onOpenedChanged'
                 }
+            },
+            listeners: {
+                'header.click': '_onHeaderClick',
+                'btnRemoveItem.click': '_onRemoveClick'
             },
             get container() {
                 return this.$.container;
+            },
+
+            _onHeaderClick: function() {
+                this.opened = !this.opened;
+            },
+            _onRemoveClick: function() {
+                this.fire( 'item-removed', { } );
+            },
+
+            _onOpenedChanged: function() {
+                this.classList.toggle( 'opened', !!this.opened );
             }
         });
     </script>

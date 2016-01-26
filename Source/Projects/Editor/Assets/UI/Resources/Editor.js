@@ -160,6 +160,13 @@ Type.createInstance = function(cl,args) {
 	}
 	return null;
 };
+var _$UInt_UInt_$Impl_$ = {};
+$hxClasses["_UInt.UInt_Impl_"] = _$UInt_UInt_$Impl_$;
+_$UInt_UInt_$Impl_$.__name__ = ["_UInt","UInt_Impl_"];
+_$UInt_UInt_$Impl_$.toFloat = function(this1) {
+	var $int = this1;
+	if($int < 0) return 4294967296.0 + $int; else return $int + 0.0;
+};
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = ["haxe","IMap"];
@@ -711,7 +718,7 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 		var typeOverride = Reflect.field(field.meta,ursine_native_Property.ForceEditorType);
 		var typeName;
 		if(typeOverride == null) typeName = type.name; else {
-			typeName = Reflect.field(typeOverride,"type");
+			typeName = Reflect.field(typeOverride,"typeName");
 			type = this.m_typeDB.get(typeName);
 		}
 		var handler = this.m_fieldInspectionHandlers.get(typeName);
@@ -754,11 +761,14 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 	}
 };
 var ursine_editor_scene_component_inspectors_ComponentInspectionHandler = function(entity,component) {
-	this.m_entity = entity;
-	this.m_component = component;
-	this.m_componentType = ursine_editor_Editor.instance.componentDatabase.getComponentType(this.m_component.type);
+	this.entity = entity;
+	this.component = component;
+	this.componentType = ursine_editor_Editor.instance.componentDatabase.getComponentType(component.type);
 	this.m_fieldHandlers = new haxe_ds_StringMap();
 	this.fieldChangeEvents = new ursine_utils_EventManager();
+	this.fieldArrayInsertEvents = new ursine_utils_EventManager();
+	this.fieldArrayItemSetEvents = new ursine_utils_EventManager();
+	this.fieldArrayItemRemoveEvents = new ursine_utils_EventManager();
 	this.inspector = new ComponentInspectorControl();
 	this.inspector.heading = component.type;
 };
@@ -766,11 +776,32 @@ $hxClasses["ursine.editor.scene.component.inspectors.ComponentInspectionHandler"
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","ComponentInspectionHandler"];
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = {
 	updateField: function(name,value) {
-		this.m_component.value[name] = value;
+		this.component.value[name] = value;
 		var result = this.fieldChangeEvents.trigger(name,{ name : name, value : value});
 		if(result != false) {
 			var handler = this.m_fieldHandlers.get(name);
 			if(handler != null) handler.updateValue(value);
+		}
+	}
+	,arrayInsert: function(name,index,value) {
+		var result = this.fieldArrayInsertEvents.trigger(name,{ name : name, index : index, value : value});
+		if(result != false) {
+			var handler = this.m_fieldHandlers.get(name);
+			if(handler != null) handler.arrayInsert(index,value);
+		}
+	}
+	,arraySet: function(name,index,value) {
+		var result = this.fieldArrayInsertEvents.trigger(name,{ name : name, index : index, value : value});
+		if(result != false) {
+			var handler = this.m_fieldHandlers.get(name);
+			if(handler != null) handler.arraySet(index,value);
+		}
+	}
+	,arrayRemove: function(name,index) {
+		var result = this.fieldArrayInsertEvents.trigger(name,{ name : name, index : index});
+		if(result != false) {
+			var handler = this.m_fieldHandlers.get(name);
+			if(handler != null) handler.arrayRemove(index);
 		}
 	}
 	,addButton: function(button) {
@@ -779,7 +810,7 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 		element.classList.add("x-component-inspector");
 		element.text = button.text;
 		element.addEventListener("click",function() {
-			_g.m_entity.componentButtonInvoke(_g.m_component.type,button.name);
+			_g.entity.componentButtonInvoke(_g.component.type,button.name);
 		});
 		this.inspector.buttons.appendChild(element);
 	}
@@ -795,7 +826,10 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 		this.inspector.fieldInspectors.removeChild(field.inspector);
 	}
 	,notifyChanged: function(field,value) {
-		this.m_entity.componentFieldUpdate(this.m_component.type,field.name,value);
+		this.entity.componentFieldUpdate(this.component.type,field.name,value);
+	}
+	,notifyArrayChanged: function(field,index,value) {
+		this.entity.componentFieldArrayUpdate(this.component.type,field.name,index,value);
 	}
 	,remove: function() {
 		var $it0 = this.m_fieldHandlers.iterator();
@@ -813,6 +847,7 @@ var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(o
 	this.m_type = type;
 	this.inspector = new FieldInspectorControl();
 	this.inspector.heading = field.name;
+	this.arrayIndex = 0;
 };
 $hxClasses["ursine.editor.scene.component.inspectors.FieldInspectionHandler"] = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","FieldInspectionHandler"];
@@ -820,8 +855,17 @@ ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype = {
 	updateValue: function(value) {
 		this.m_instance = value;
 	}
+	,arrayInsert: function(index,value) {
+	}
+	,arraySet: function(index,value) {
+	}
+	,arrayRemove: function(index) {
+	}
 	,remove: function() {
 		if(this.inspector.parentNode != null) this.inspector.parentNode.removeChild(this.inspector);
+	}
+	,notifyChanged: function(field,value) {
+		if(this.m_type.isArray) this.m_owner.notifyArrayChanged(this.m_field,this.arrayIndex,value); else this.m_owner.notifyChanged(this.m_field,value);
 	}
 	,get_name: function() {
 		return this.m_field.name;
@@ -860,7 +904,7 @@ var ursine_editor_scene_component_inspectors_components_LightInspector = functio
 	if(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum == null) this.initTypeToFields();
 	var database = ursine_editor_Editor.instance.componentDatabase;
 	var typeInstance = Reflect.field(component.value,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName);
-	this.addField(database.createFieldInspector(this,typeInstance,database.getComponentTypeField(this.m_componentType,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName),database.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName)));
+	this.addField(database.createFieldInspector(this,typeInstance,database.getComponentTypeField(this.componentType,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName),database.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName)));
 	this.setType(typeInstance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.components.LightInspector"] = ursine_editor_scene_component_inspectors_components_LightInspector;
@@ -869,16 +913,16 @@ ursine_editor_scene_component_inspectors_components_LightInspector.__super__ = u
 ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $extend(ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype,{
 	setType: function(type) {
 		var database = ursine_editor_Editor.instance.componentDatabase;
-		var componentType = database.getComponentType(this.m_component.type);
+		var componentType = database.getComponentType(this.component.type);
 		while(this.m_typeFields.length > 0) this.m_typeFields.pop().remove();
 		var fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[type];
 		var _g = 0;
 		while(_g < fields.length) {
 			var fieldName = fields[_g];
 			++_g;
-			var field = database.getComponentTypeField(this.m_componentType,fieldName);
+			var field = database.getComponentTypeField(componentType,fieldName);
 			if(field.name == ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName) continue;
-			var instance = Reflect.field(this.m_component.value,field.name);
+			var instance = Reflect.field(this.component.value,field.name);
 			var type1 = database.getNativeType(field.type);
 			var inspector = database.createFieldInspector(this,instance,field,type1);
 			this.addField(inspector);
@@ -911,12 +955,45 @@ var ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector = functio
 	this.m_instance = instance;
 	this.m_field = field;
 	this.m_type = type;
+	this.m_arrayItems = [];
 	this.initElements();
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.ArrayTypeInspector"] = ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector;
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","ArrayTypeInspector"];
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
-	initElements: function() {
+	arrayInsert: function(index,value) {
+		var handler = this.inspectItem(value);
+		var container = new ArrayItemContainerControl();
+		handler.arrayIndex = index;
+		container.opened = true;
+		container.container.appendChild(handler.inspector);
+		this.m_arrayItems.splice(index,0,container);
+		if((function($this) {
+			var $r;
+			var b = Math.max(0,$this.m_arrayItems.length - 1);
+			$r = _$UInt_UInt_$Impl_$.toFloat(index) == b;
+			return $r;
+		}(this))) {
+			this.m_itemsContainer.appendChild(container);
+			container.index = index;
+		} else {
+			var item = this.m_arrayItems[index + 1];
+			this.m_itemsContainer.insertBefore(item,container);
+			var _g1 = index;
+			var _g = this.m_arrayItems.length;
+			while(_g1 < _g) {
+				var i = _g1++;
+				var element = this.m_arrayItems[i];
+				element.index = i;
+			}
+		}
+	}
+	,arraySet: function(index,value) {
+		var handler = this.inspectItem(value);
+	}
+	,arrayRemove: function(index) {
+	}
+	,initElements: function() {
 		var itemsWrapper;
 		var _this = window.document;
 		itemsWrapper = _this.createElement("div");
@@ -931,7 +1008,14 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		this.m_btnAddItem.addEventListener("click",$bind(this,this.onAddItemClicked));
 		itemsWrapper.appendChild(this.m_btnAddItem);
 	}
+	,inspectItem: function(value) {
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		var type = database.getNativeType(this.m_field.type);
+		var arrayType = database.getNativeType(type.arrayType);
+		return database.createFieldInspector(this.m_owner,value,this.m_field,arrayType);
+	}
 	,onAddItemClicked: function(e) {
+		this.m_owner.entity.componentFieldArrayPush(this.m_owner.component.type,this.m_field.name,{ });
 	}
 };
 var ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector = function(owner,instance,field,type) {
@@ -939,7 +1023,7 @@ var ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector = func
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_bool = new CheckBoxInputControl();
 	this.m_bool.addEventListener("change",function() {
-		_g.m_owner.notifyChanged(_g.m_field,_g.m_bool.checked);
+		_g.notifyChanged(_g.m_field,_g.m_bool.checked);
 	});
 	this.inspector.container.appendChild(this.m_bool);
 	this.updateValue(instance);
@@ -993,7 +1077,7 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.prototype = 
 		window.document.body.appendChild(this.m_colorInput);
 	}
 	,onColorChanged: function(e) {
-		this.m_owner.notifyChanged(this.m_field,e.detail.color);
+		this.notifyChanged(this.m_field,e.detail.color);
 	}
 	,onColorClosed: function(e) {
 		this.m_colorInput = null;
@@ -1012,6 +1096,15 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		if(this.m_isEnum) {
 			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
 		}
+	}
+	,arrayInsert: function(index,value) {
+		if(this.m_arrayInspector != null) this.m_arrayInspector.arrayInsert(index,value);
+	}
+	,arraySet: function(index,value) {
+		if(this.m_arrayInspector != null) this.m_arrayInspector.arraySet(index,value);
+	}
+	,arrayRemove: function(index) {
+		if(this.m_arrayInspector != null) this.m_arrayInspector.arrayRemove(index);
 	}
 	,initArray: function() {
 		this.m_arrayInspector = new ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector(this.inspector,this.m_owner,this.m_instance,this.m_field,this.m_type);
@@ -1044,7 +1137,7 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		}
 		this.m_comboInput.addEventListener("change",function(e) {
 			_g.m_instance = _g.getEnumBitMaskValue();
-			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+			_g.notifyChanged(_g.m_field,_g.m_instance);
 		});
 		this.inspector.container.appendChild(this.m_comboInput);
 		this.updateValue(this.m_instance);
@@ -1094,7 +1187,7 @@ var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = funct
 			return $r;
 		}(this))) value = 0;
 		if(!(_g.m_type.name == "float" || _g.m_type.name == "double")) value = Std["int"](value);
-		_g.m_owner.notifyChanged(_g.m_field,value);
+		_g.notifyChanged(_g.m_field,value);
 	};
 	this.m_number.addEventListener("change",changeHandler);
 	if(this.m_number.type == "range") this.m_number.addEventListener("input",changeHandler);
@@ -1120,7 +1213,7 @@ var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = funct
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_string = new TextInputControl();
 	this.m_string.addEventListener("change",function() {
-		_g.m_owner.notifyChanged(_g.m_field,_g.m_string.value);
+		_g.notifyChanged(_g.m_field,_g.m_string.value);
 	});
 	this.m_string.addEventListener("focus",function(e) {
 		haxe_Timer.delay(function() {
@@ -1189,7 +1282,7 @@ ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.prototype =
 			var value = number.valueAsNumber;
 			if(isNaN(value)) value = 0;
 			_g.m_instance[field.name] = value;
-			_g.m_owner.notifyChanged(_g.m_field,_g.m_instance);
+			_g.notifyChanged(_g.m_field,_g.m_instance);
 		});
 		number.addEventListener("focus",function(e) {
 			haxe_Timer.delay(function() {
@@ -1215,7 +1308,7 @@ var ursine_editor_scene_entity_Entity = function(uniqueID) {
 	this.events = new ursine_utils_EventManager();
 	this.uniqueID = uniqueID;
 	this.m_handler = new EntityHandler(uniqueID);
-	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onComponentChanged));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onComponentChanged)).on(ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted,$bind(this,this.onComponentArrayInserted)).on(ursine_editor_scene_entity_EntityEvent.ComponentArraySet,$bind(this,this.onComponentArraySet)).on(ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove,$bind(this,this.onComponentArrayRemove));
 };
 $hxClasses["ursine.editor.scene.entity.Entity"] = ursine_editor_scene_entity_Entity;
 ursine_editor_scene_entity_Entity.__name__ = ["ursine","editor","scene","entity","Entity"];
@@ -1279,6 +1372,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,componentFieldArrayInsert: function(componentName,fieldName,index,value) {
 		this.m_handler.componentFieldArrayInsert(componentName,fieldName,index,value);
 	}
+	,componentFieldArrayPush: function(componentName,fieldName,value) {
+		this.m_handler.componentFieldArrayInsert(componentName,fieldName,this.m_handler.componentFieldArrayGetLength(componentName,fieldName),value);
+	}
 	,componentFieldArrayRemove: function(componentName,fieldName,index) {
 		this.m_handler.componentFieldArrayRemove(componentName,fieldName,index);
 	}
@@ -1320,6 +1416,15 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,onComponentChanged: function(e) {
 		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentChanged,e);
 	}
+	,onComponentArrayInserted: function(e) {
+		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted,e);
+	}
+	,onComponentArraySet: function(e) {
+		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentArraySet,e);
+	}
+	,onComponentArrayRemove: function(e) {
+		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove,e);
+	}
 };
 var ursine_editor_scene_entity_EntityEvent = function() { };
 $hxClasses["ursine.editor.scene.entity.EntityEvent"] = ursine_editor_scene_entity_EntityEvent;
@@ -1355,8 +1460,20 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		var handler = this.m_componentHandlers.get(e.component);
 		if(handler != null) handler.updateField(e.field,e.value);
 	}
+	,onInspectedEntityComponentArrayInserted: function(e) {
+		var handler = this.m_componentHandlers.get(e.component);
+		if(handler != null) handler.arrayInsert(e.field,e.index,e.value);
+	}
+	,onInspectedEntityComponentArrayItemSet: function(e) {
+		var handler = this.m_componentHandlers.get(e.component);
+		if(handler != null) handler.arraySet(e.field,e.index,e.value);
+	}
+	,onInspectedEntityComponentArrayItemRemoved: function(e) {
+		var handler = this.m_componentHandlers.get(e.component);
+		if(handler != null) handler.arrayRemove(e.field,e.index);
+	}
 	,clearOldInspection: function() {
-		if(this.m_inspectedEntity != null) this.m_inspectedEntity.events.off(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).off(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).off(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
+		if(this.m_inspectedEntity != null) this.m_inspectedEntity.events.off(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).off(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).off(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged)).off(ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted,$bind(this,this.onInspectedEntityComponentArrayInserted)).off(ursine_editor_scene_entity_EntityEvent.ComponentArraySet,$bind(this,this.onInspectedEntityComponentArrayItemSet)).off(ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove,$bind(this,this.onInspectedEntityComponentArrayItemRemoved));
 		var $it0 = this.m_componentHandlers.iterator();
 		while( $it0.hasNext() ) {
 			var handler = $it0.next();
@@ -1372,7 +1489,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		}
 		this.m_headerToolbar.style.display = "block";
 		this.m_btnAddComponent.style.display = "block";
-		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged));
+		this.m_inspectedEntity.events.on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onInspectedEntityComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onInspectedEntityComponentRemoved)).on(ursine_editor_scene_entity_EntityEvent.ComponentChanged,$bind(this,this.onInspectedEntityComponentChanged)).on(ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted,$bind(this,this.onInspectedEntityComponentArrayInserted)).on(ursine_editor_scene_entity_EntityEvent.ComponentArraySet,$bind(this,this.onInspectedEntityComponentArrayItemSet)).on(ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove,$bind(this,this.onInspectedEntityComponentArrayItemRemoved));
 		var inspection = this.m_inspectedEntity.inspect();
 		var _g = 0;
 		while(_g < inspection.length) {
@@ -1439,7 +1556,11 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,onAddComponentTypeSelected: function(e) {
 		var componentType = e.detail.type;
-		if(this.m_inspectedEntity.hasComponent(componentType)) throw new js__$Boot_HaxeError("Entity already has component type " + componentType);
+		if(this.m_inspectedEntity.hasComponent(componentType)) {
+			var notification = new NotificationControl(2,"Entity already has component type <strong>" + componentType + "</strong>","Error");
+			notification.show();
+			return;
+		}
 		this.m_inspectedEntity.addComponent(componentType);
 	}
 	,onOpenChanged: function(component,e) {
@@ -1837,6 +1958,9 @@ ursine_editor_scene_entity_EntityEvent.EntityParentChanged = "EntityParentChange
 ursine_editor_scene_entity_EntityEvent.ComponentAdded = "ComponentAdded";
 ursine_editor_scene_entity_EntityEvent.ComponentRemoved = "ComponentRemoved";
 ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";
+ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted = "ComponentArrayInserted";
+ursine_editor_scene_entity_EntityEvent.ComponentArraySet = "ComponentArraySet";
+ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove = "ComponentArrayRemove";
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";

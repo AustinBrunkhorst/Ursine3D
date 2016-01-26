@@ -92,89 +92,95 @@ ursine_parse_source_groups(
 
 # DirectX
 if (MSVC)
-	set(URSINE_SHADER_DIR "${ENGINE_RESOURCES_DIR}/Shaders")
+    # treat warnings as errors
+    target_compile_options(Ursine3D PUBLIC /WX)
 
-	file(GLOB_RECURSE URSINE_SHADER_FILES "${URSINE_SHADER_DIR}/*.hlsl")
+    # multi process compilation
+    target_compile_options(Ursine3D PUBLIC /MP)
 
-	foreach (shader ${URSINE_SHADER_FILES})
-		get_filename_component(filename "${shader}" NAME_WE)
+    set(URSINE_SHADER_DIR "${ENGINE_RESOURCES_DIR}/Shaders")
 
-		string(LENGTH ${filename} filename_length)
-		math(EXPR filename_length "${filename_length} - 2")
+    file(GLOB_RECURSE URSINE_SHADER_FILES "${URSINE_SHADER_DIR}/*.hlsl")
 
-		# filename suffix
-		string(SUBSTRING ${filename} ${filename_length} -1 shader_type)
+    foreach (shader ${URSINE_SHADER_FILES})
+        get_filename_component(filename "${shader}" NAME_WE)
 
-		# type of shader to compile (vs, ps, gs, etc.)
-		string(TOLOWER ${shader_type} shader_type)
+        string(LENGTH ${filename} filename_length)
+        math(EXPR filename_length "${filename_length} - 2")
 
-		# default to vertex shader
-		set(vs_shader_type "Vertex")
+        # filename suffix
+        string(SUBSTRING ${filename} ${filename_length} -1 shader_type)
 
-		# map to correct Visual Studio FXCompiler shader type
+        # type of shader to compile (vs, ps, gs, etc.)
+        string(TOLOWER ${shader_type} shader_type)
 
-		if (shader_type STREQUAL "ps")
-			set(vs_shader_type "Pixel")
-		elseif (shader_type STREQUAL "gs")
-			set(vs_shader_type "Geometry")
-		elseif (shader_type STREQUAL "hs")
-			set(vs_shader_type "Hull")
-		elseif (shader_type STREQUAL "ds")
-			set(vs_shader_type "Domain")
+        # default to vertex shader
+        set(vs_shader_type "Vertex")
+
+        # map to correct Visual Studio FXCompiler shader type
+
+        if (shader_type STREQUAL "ps")
+            set(vs_shader_type "Pixel")
+        elseif (shader_type STREQUAL "gs")
+            set(vs_shader_type "Geometry")
+        elseif (shader_type STREQUAL "hs")
+            set(vs_shader_type "Hull")
+        elseif (shader_type STREQUAL "ds")
+            set(vs_shader_type "Domain")
         elseif (shader_type STREQUAL "cs")
-			set(vs_shader_type "Compute")
-		endif ()
+            set(vs_shader_type "Compute")
+        endif ()
 
-		# set the properties in Visual Studio
-		set_source_files_properties(
-			TARGET Shaders
-			"${shader}"
-			PROPERTIES
-			VS_SHADER_TYPE ${vs_shader_type}
-			VS_SHADER_MODEL 5.0
-			VS_SHADER_ENTRYPOINT main
-		)
-	endforeach ()
+        # set the properties in Visual Studio
+        set_source_files_properties(
+            TARGET Shaders
+            "${shader}"
+            PROPERTIES
+            VS_SHADER_TYPE ${vs_shader_type}
+            VS_SHADER_MODEL 5.0
+            VS_SHADER_ENTRYPOINT main
+        )
+    endforeach ()
 
-	# build the source group folders for the shader files
-	ursine_source_group_files(
-		"${URSINE_SHADER_DIR}" 
-		"${URSINE_SHADER_FILES}"
-	)
+    # build the source group folders for the shader files
+    ursine_source_group_files(
+        "${URSINE_SHADER_DIR}" 
+        "${URSINE_SHADER_FILES}"
+    )
 
-	set(shader_out_dir "${CMAKE_CURRENT_BINARY_DIR}/Shaders/")
+    set(shader_out_dir "${CMAKE_CURRENT_BINARY_DIR}/Shaders/")
 
-	# create an empty dummy file
-	set(shader_dummy_file "${shader_out_dir}/Shaders.cpp")
+    # create an empty dummy file
+    set(shader_dummy_file "${shader_out_dir}/Shaders.cpp")
 
-	file(WRITE "${shader_dummy_file}" "")
+    file(WRITE "${shader_dummy_file}" "")
 
-	# exclude it from the build
-	set_source_files_properties(
-		TARGET Shaders
-		"${shader_dummy_file}"
-		PROPERTIES
-		HEADER_FILE_ONLY TRUE
-	)
+    # exclude it from the build
+    set_source_files_properties(
+        TARGET Shaders
+        "${shader_dummy_file}"
+        PROPERTIES
+        HEADER_FILE_ONLY TRUE
+    )
 
-	source_group("" FILES "${shader_dummy_file}")
+    source_group("" FILES "${shader_dummy_file}")
 
-	# create a target with the shader files (and dummy file)
-	add_library(Shaders
-		${shader_dummy_file}
-		${URSINE_SHADER_FILES}
-	)
+    # create a target with the shader files (and dummy file)
+    add_library(Shaders
+        ${shader_dummy_file}
+        ${URSINE_SHADER_FILES}
+    )
 
-	# give it a better output directory
-	set_target_properties(Shaders 
-		PROPERTIES 
-		ARCHIVE_OUTPUT_DIRECTORY "${shader_out_dir}"
-	)
+    # give it a better output directory
+    set_target_properties(Shaders 
+        PROPERTIES 
+        ARCHIVE_OUTPUT_DIRECTORY "${shader_out_dir}"
+    )
 
-	ursine_set_folder(Shaders "Engine")
+    ursine_set_folder(Shaders "Engine")
 
-	# export to parent scope
-	set(URSINE_SHADER_FILES "${URSINE_SHADER_FILES}" PARENT_SCOPE)
+    # export to parent scope
+    set(URSINE_SHADER_FILES "${URSINE_SHADER_FILES}" PARENT_SCOPE)
 endif ()
 
 # ------------------------------------------------------------------------------

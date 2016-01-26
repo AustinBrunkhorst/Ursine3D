@@ -16,25 +16,23 @@
 
 namespace ursine
 {
-    AnimationBone::AnimationBone( void )
+    AnimationBone::AnimationBone(void)
         : m_name( "undefined" )
         , m_translation( SVec3( ) )
         , m_scale( SVec3( ) )
         , m_rotation( SQuat( ) )
         , m_boneID( -1 )
         , m_parentID( -1 )
-        , m_parent( nullptr )
-    {
-    }
+        , m_parent( nullptr ) { }
 
     void AnimationBone::InitializeBone(
-        const std::string& name,
-        const SVec3& trans,
-        const SVec3& scale,
-        const SQuat& rotation,
+        const std::string &name,
+        const SVec3 &trans,
+        const SVec3 &scale,
+        const SQuat &rotation,
         const unsigned boneID,
         const unsigned parentID,
-        AnimationBone* parent
+        AnimationBone *parent
     )
     {
         m_name = name;
@@ -45,7 +43,7 @@ namespace ursine
         m_parentID = parentID;
         m_parent = parent;
 
-        if ( m_parent != nullptr )
+        if (m_parent != nullptr)
             m_parent->AddChild( this );
     }
 
@@ -54,47 +52,47 @@ namespace ursine
         return m_parent == nullptr;
     }
 
-    void AnimationBone::AddChild(const AnimationBone* child)
+    void AnimationBone::AddChild(const AnimationBone *child)
     {
         m_children.push_back( child );
     }
 
-    const std::string& AnimationBone::GetName() const
+    const std::string &AnimationBone::GetName(void) const
     {
         return m_name;
     }
 
-    void AnimationBone::SetName(const std::string& name)
+    void AnimationBone::SetName(const std::string &name)
     {
         m_name = name;
     }
 
-    const SVec3& AnimationBone::GetTranslation() const
+    const SVec3 &AnimationBone::GetTranslation(void) const
     {
         return m_translation;
     }
 
-    void AnimationBone::SetTranslation(const SVec3& trans)
+    void AnimationBone::SetTranslation(const SVec3 &trans)
     {
         m_translation = trans;
     }
 
-    const SVec3& AnimationBone::GetScale(void) const
+    const SVec3 &AnimationBone::GetScale(void) const
     {
         return m_scale;
     }
 
-    void AnimationBone::SetScale(const SVec3& scale)
+    void AnimationBone::SetScale(const SVec3 &scale)
     {
         m_scale = scale;
     }
 
-    const SQuat& AnimationBone::GetRotation(void) const
+    const SQuat &AnimationBone::GetRotation(void) const
     {
         return m_rotation;
     }
 
-    void AnimationBone::SetRotation(const SQuat& rot)
+    void AnimationBone::SetRotation(const SQuat &rot)
     {
         m_rotation = rot;
     }
@@ -109,18 +107,18 @@ namespace ursine
         return m_parentID;
     }
 
-    const AnimationBone* AnimationBone::GetParent(void) const
+    const AnimationBone *AnimationBone::GetParent(void) const
     {
         return m_parent;
     }
 
-    const AnimationBone* AnimationBone::GetChild(const unsigned childID) const
+    const AnimationBone *AnimationBone::GetChild(const unsigned childID) const
     {
         return m_children[ childID ];
     }
 
     unsigned AnimationBone::GetChildCount(void) const
     {
-        return m_children.size( );
+        return static_cast<unsigned>( m_children.size( ) );
     }
 }

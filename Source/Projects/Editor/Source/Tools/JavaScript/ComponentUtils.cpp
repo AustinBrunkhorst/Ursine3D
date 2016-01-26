@@ -153,7 +153,12 @@ namespace
         }
         else
         {
-            typeObj[ "arrayType" ] = type.GetArrayType( ).GetName( );
+            auto arrayType = type.GetArrayType( );
+
+            typeObj[ "arrayType" ] = arrayType.GetName( );
+
+            // make sure the array type is also included
+            addType( types, arrayType );
         }
 
         typeObj[ "fields" ] = fieldsObj;

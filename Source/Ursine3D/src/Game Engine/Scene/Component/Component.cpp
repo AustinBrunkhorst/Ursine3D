@@ -31,7 +31,7 @@ namespace ursine
                         
                         if (owner)
                         {
-                            EditorComponentArrayModfiedArgs e( *args, field.GetName( ) );
+                            EditorComponentArrayModfiedArgs e( *args, owner, this, field.GetName( ) );
 
                             owner->GetWorld( )->Dispatch( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &e );
                         }
@@ -52,8 +52,18 @@ namespace ursine
             OnInitialize( );
         }
 
+		template<>
+		Transform *Component::Handle<Transform>::operator->(void)
+		{
+			return m_entity->GetTransform( );
+		}
+
+		template<>
+		const Transform *Component::Handle<Transform>::operator->(void) const
+		{
+			return m_entity->GetTransform( );
+		}
+
         void Component::OnInitialize(void) { }
-
-    } // ecs namespece
-
-}  // ursine namespace
+    }
+}

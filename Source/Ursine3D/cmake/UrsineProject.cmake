@@ -24,6 +24,10 @@ macro (ursine_project PROJECT_NAME)
 
     set(BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
+    # cmake is gross sometimes
+    set(_PROGRAM_FILES_x86 "ProgramFiles(x86)")
+    set(PROGRAM_FILES_x86 "$ENV{${_PROGRAM_FILES_x86}}")
+
     add_definitions(-D${PROJECT_NAME}_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     set_property(TARGET Ursine3D APPEND PROPERTY COMPILE_DEFINITIONS ${PROJECT_NAME}_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     
@@ -288,6 +292,12 @@ macro (ursine_project PROJECT_NAME)
     endif ()
 
     if (MSVC)
+        # treat warnings as errors
+        target_compile_options(${PROJECT_NAME} PUBLIC /WX)
+
+        # multi process compilation
+        target_compile_options(${PROJECT_NAME} PUBLIC /MP)
+
         # default to console as subsytem if not defined
         if ("${PROJ_SUBSYSTEM_DEBUG}" STREQUAL "")
             set(PROJ_SUBSYSTEM_DEBUG "CONSOLE")
@@ -326,18 +336,24 @@ macro (ursine_project PROJECT_NAME)
 
         # build the include directory flags
         foreach (directory ${DIRECTORIES})
-            set(META_FLAGS ${META_FLAGS} "\\-I${directory}")
+            list(APPEND META_FLAGS "\\-I${directory}")
         endforeach ()
 
         if (MSVC)
-            set(META_FLAGS ${META_FLAGS} "\\-IC://Program Files (x86)/Microsoft Visual Studio ${VS_VERSION}.0/VC/include")
+            set(SYSTEM_INCLUDES "${PROGRAM_FILES_x86}\\Microsoft Visual Studio ${VS_VERSION}.0\\VC\\include")
+
+            # normalize slashes
+            string(REPLACE "\\" "/" SYSTEM_INCLUDES "${SYSTEM_INCLUDES}")
+
+            # visual studio seems to have issues with escape characters in post build commands
+            set_property(TARGET ReflectionParser APPEND PROPERTY COMPILE_DEFINITIONS SYSTEM_INCLUDE_DIRECTORY="${SYSTEM_INCLUDES}")
         else ()
             message(FATAL_ERROR "System include directories not implemented for this compiler.")
         endif ()
 
         if ("${PROJ_PCH_NAME}" STREQUAL "")
             set(PCH_SWITCH "")
-        else ()
+        else () 
             set(PCH_SWITCH "--pch \"${PROJ_PCH_NAME}.h\"")
         endif ()
 

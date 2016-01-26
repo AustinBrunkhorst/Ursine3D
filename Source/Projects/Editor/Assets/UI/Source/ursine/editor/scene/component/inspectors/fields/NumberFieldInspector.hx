@@ -46,7 +46,7 @@ class NumberFieldInspector extends FieldInspectionHandler {
             if (!(m_type.name == "float" || m_type.name == "double"))
                 value = Std.int( value );
 
-            m_owner.notifyChanged( m_field, value );
+            notifyChanged( m_field, value );
         };
 
         m_number.addEventListener( 'change', changeHandler );

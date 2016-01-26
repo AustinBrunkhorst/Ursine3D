@@ -44,6 +44,8 @@ namespace ursine
 
         void Camera::OnInitialize(void)
         {
+            Component::OnInitialize( );
+
             RenderableComponentBase::OnInitialize( GetOwner( ) );
         }
 
@@ -188,9 +190,23 @@ namespace ursine
             GetCoreSystem( graphics::GfxAPI )->CameraMgr.GetCamera( m_handle ).SetMask( mask );
         }
 
-        SVec3 Camera::ScreenToWorld(const Vec2& screenPos, float depth)
+        SVec3 Camera::ScreenToWorld(const Vec2& screenPos, float depth) const
         {
             return GetCoreSystem(graphics::GfxAPI)->CameraMgr.GetCamera(m_handle).ScreenToWorld( screenPos, depth );
+        }
+
+		Vec2 Camera::WorldToScreen(const SVec3 &worldPos) const
+        {
+			auto &cam = GetCoreSystem(graphics::GfxAPI)->CameraMgr.GetCamera(m_handle);
+	        auto viewMatrix = SMat4::Transpose( cam.GetViewMatrix( ) );
+			auto projMatrix = SMat4::Transpose( cam.GetProjMatrix( ) );
+
+			SVec4 point = SVec4( worldPos, 1.0f );
+
+			point = viewMatrix * point;
+			point = projMatrix * point;
+
+			return{ point.X(), point.Y() };			
         }
 
 	    SVec3 Camera::GetMouseWorldPosition(void) const
