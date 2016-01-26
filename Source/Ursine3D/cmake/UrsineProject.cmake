@@ -1,4 +1,5 @@
 include(GlobalConfig)
+include(MetaGeneration)
 
 macro (_install_expand_files EXPR)
     file(GLOB_RECURSE EXPR_EXPANDED ${EXPR})
@@ -24,24 +25,11 @@ macro (ursine_project PROJECT_NAME)
 
     set(BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-    # cmake is gross sometimes
-    set(_PROGRAM_FILES_x86 "ProgramFiles(x86)")
-    set(PROGRAM_FILES_x86 "$ENV{${_PROGRAM_FILES_x86}}")
-
     add_definitions(-D${PROJECT_NAME}_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     set_property(TARGET Ursine3D APPEND PROPERTY COMPILE_DEFINITIONS ${PROJECT_NAME}_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
     
     file(GLOB_RECURSE FILES_SRC ${PROJ_SOURCE_DIR}/*.cpp)
     file(GLOB_RECURSE FILES_INC ${PROJ_INCLUDE_DIR}/*.h ${PROJ_INCLUDE_DIR}/*.hpp)
-
-    if ("${PROJ_BUILD_META}" STREQUAL "TRUE")
-        set(META_GENERATED_HEADER "${BUILD_DIR}/Meta.Generated.h")
-        set(META_GENERATED_SRC "${BUILD_DIR}/Meta.Generated.cpp")
-
-        # add to the sources
-        list(APPEND FILES_SRC ${META_GENERATED_SRC})
-        list(APPEND FILES_INC ${META_GENERATED_HEADER})
-    endif ()
 
     set(FILES_MISC "")
 
@@ -319,66 +307,9 @@ macro (ursine_project PROJECT_NAME)
         )
     endif ()
 
-    # add reflection parser
+	# add reflection parser
     if ("${PROJ_BUILD_META}" STREQUAL "TRUE")
-        if ("${PROJ_NO_ENGINE}" STREQUAL "TRUE")
-            message(FATAL_ERROR "Building meta requires the project to built with Ursine3D.")
-        endif ()
-
-        add_subdirectory("${ENGINE_DIR}/../Tools/ReflectionParser" "${CMAKE_CURRENT_BINARY_DIR}/ReflectionParser")
-
-        # add the generated files to the source generated source group
-        source_group("Generated" FILES ${META_GENERATED_HEADER} ${META_GENERATED_SRC})
-
-        get_property(DIRECTORIES TARGET ${PROJECT_NAME} PROPERTY INCLUDE_DIRECTORIES)
-
-        set(META_FLAGS "${PROJ_META_FLAGS}")
-
-        # build the include directory flags
-        foreach (directory ${DIRECTORIES})
-            list(APPEND META_FLAGS "\\-I${directory}")
-        endforeach ()
-
-        if (MSVC)
-            set(SYSTEM_INCLUDES "${PROGRAM_FILES_x86}\\Microsoft Visual Studio ${VS_VERSION}.0\\VC\\include")
-
-            # normalize slashes
-            string(REPLACE "\\" "/" SYSTEM_INCLUDES "${SYSTEM_INCLUDES}")
-
-            # visual studio seems to have issues with escape characters in post build commands
-            set_property(TARGET ReflectionParser APPEND PROPERTY COMPILE_DEFINITIONS SYSTEM_INCLUDE_DIRECTORY="${SYSTEM_INCLUDES}")
-        else ()
-            message(FATAL_ERROR "System include directories not implemented for this compiler.")
-        endif ()
-
-        if ("${PROJ_PCH_NAME}" STREQUAL "")
-            set(PCH_SWITCH "")
-        else () 
-            set(PCH_SWITCH "--pch \"${PROJ_PCH_NAME}.h\"")
-        endif ()
-
-        set(META_DEPENDS ${FILES_INC} ${URSINE_HEADER_FILES})
-
-        # add the explicit dependencies if applicable
-        if (NOT "${PROJ_META_DEPENDENCIES}" STREQUAL "")
-            set(META_DEPENDS ${META_DEPENDS} ${PROJ_META_DEPENDENCIES})
-        endif ()
-
-        list(REMOVE_ITEM META_DEPENDS ${META_GENERATED_HEADER})
-
-        # add the command that generates the header and source files
-        add_custom_command(
-            OUTPUT ${META_GENERATED_HEADER} ${META_GENERATED_SRC}
-            DEPENDS ${META_DEPENDS}
-            COMMAND call "$<TARGET_FILE:ReflectionParser>"
-            --target-name "${PROJECT_NAME}"
-            --source-root "${ROOT_SOURCE_DIR}"
-            --in-source "${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SOURCE_DIR}/${PROJ_META_HEADER}"
-            --out-header "${META_GENERATED_HEADER}"
-            --out-source "${META_GENERATED_SRC}"
-            ${PCH_SWITCH}
-            --flags ${META_FLAGS}
-        )
+		ursine_build_meta(${PROJECT_NAME} FILES_INC FILES_SRC)
     endif ()
 
     # project folder

@@ -4,7 +4,7 @@ include(UrsineProject)
 
 add_definitions(-D_HAS_EXCEPTIONS=0)
 
-ursine_project(Meta
+ursine_project(MetaTest
     FOLDER "Tests"
     TYPE EXE
     DEPENDS Boost BulletPhysics WWise

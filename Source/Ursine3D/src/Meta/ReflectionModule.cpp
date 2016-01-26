@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Test.h
+** ReflectionModule.h
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -11,16 +11,15 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#pragma once
+#include "UrsinePrecompiled.h"
 
-#include <Meta.h>
+#include "ReflectionModule.h"
 
-class BaseClass { };
-
-class Test : public BaseClass
+namespace ursine
 {
-public:
-    double potato;
-    
-    int Foo(void);
-} Meta(Enable);
+    namespace meta
+    {
+        ReflectionModule::ReflectionModule(ReflectionDatabase &db)
+            : db( db ) { }
+    }
+}

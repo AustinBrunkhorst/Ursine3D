@@ -56,8 +56,7 @@ namespace ProjectGenerator.Forms
                 Directory.CreateDirectory( m_binaryDir );
 
             var cmakeArgs = string.Format(
-                "-DROOT_SOURCE_DIR=\"{0}\" -DCMAKE_MODULE_PATH=\"{1}\" -G \"{2}\" \"{3}\"",
-                CMakeProject.SourceDirectory.Replace( '\\', '/' ),
+                "-DCMAKE_MODULE_PATH=\"{0}\" -G \"{1}\" \"{2}\"",
                 CMakeProject.ModuleDirectory.Replace( '\\', '/' ),
                 generator.Name.Replace( '\\', '/' ),
                 m_sourceDir

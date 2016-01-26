@@ -71,6 +71,24 @@ std::string Cursor::GetUSR(void) const
     return usr;
 }
 
+std::string Cursor::GetSourceFile(void) const
+{
+    auto range = clang_Cursor_getSpellingNameRange( m_handle, 0, 0 );
+
+    auto start = clang_getRangeStart( range );
+
+    CXFile file;
+    unsigned line, column, offset;
+
+    clang_getFileLocation( start, &file, &line, &column, &offset );
+
+    std::string filename;
+
+    utils::ToString( clang_getFileName( file ), filename );
+
+    return filename;
+}
+
 bool Cursor::IsDefinition(void) const
 {
     return clang_isCursorDefinition( m_handle ) ? true : false;

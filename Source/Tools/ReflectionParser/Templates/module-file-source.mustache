@@ -1,22 +1,20 @@
+/* ----------------------------------------------------------------------------
+** GENERATED SOURCE FILE
+** Do not modify the contents of this file.
+**
+** Ursine3D Meta Generator v{{version}}
+** --------------------------------------------------------------------------*/
 {{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
 {{/usingPrecompiledHeader}}
-#include "{{ouputHeaderFile}}"
-
-#if !defined(URSINE_REFLECTION_INCLUDED)
-
-#include <Utilities/MacroUtils.h>
-
-URSINE_ERROR( "<UrsineReflection.h> must be included in the input header file." )
-
-#endif
+#include "{{inputSourceFile}}"
 
 namespace m = ursine::meta;
+namespace mf = meta_generated::file::{{targetName}};
 
-m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
-    auto &db = m::ReflectionDatabase::Instance( );
-
+void mf::allocate::{{moduleFileName}}(m::ReflectionDatabase &db)
+{
     ///////////////////////////////////////////////////////////////////////////
-    // Class Allocations
+    // Class Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#class}}
     {
@@ -45,7 +43,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     }
     {{/class}}
     ///////////////////////////////////////////////////////////////////////////
-    // Enum Allocations
+    // Enum Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#enum}}
     {
@@ -73,6 +71,10 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
         {{/constPtrTypeEnabled}}
     }
     {{/enum}}
+}
+
+void mf::define::{{moduleFileName}}(m::ReflectionDatabase &db)
+{
     ///////////////////////////////////////////////////////////////////////////
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
@@ -272,4 +274,4 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             m::TypeInfo<{{& qualifiedName}}>::Defined = true;
         }
     }{{/class}}
-});
+}

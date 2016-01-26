@@ -33,6 +33,8 @@ public:
     std::string GetMangledName(void) const;
     std::string GetUSR(void) const;
 
+    std::string GetSourceFile(void) const;
+
     bool IsDefinition(void) const;
     bool IsConst(void) const;
     bool IsStatic(void) const;

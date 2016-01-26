@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Test.h
+** Version.h
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -13,14 +13,4 @@
 
 #pragma once
 
-#include <Meta.h>
-
-class BaseClass { };
-
-class Test : public BaseClass
-{
-public:
-    double potato;
-    
-    int Foo(void);
-} Meta(Enable);
+const auto kMetaGeneratorVersion = "1.0";

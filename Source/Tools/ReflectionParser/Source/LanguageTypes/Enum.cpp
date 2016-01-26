@@ -91,23 +91,6 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
     return data;
 }
 
-void Enum::LoadAnonymous(
-    std::vector<Global*> &output, 
-    const Cursor &cursor, 
-    const Namespace &currentNamespace
-)
-{
-    for (auto &child : cursor.GetChildren( ))
-    {
-        if (child.GetKind( ) == CXCursor_EnumConstantDecl)
-        {
-            output.emplace_back( 
-                new Global( child, currentNamespace, nullptr ) 
-            );
-        }
-    }
-}
-
 bool Enum::isAccessible(void) const
 {
     return m_metaData.GetFlag( native_property::Enable );
