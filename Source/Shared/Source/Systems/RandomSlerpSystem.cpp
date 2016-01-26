@@ -20,5 +20,5 @@ RandomSlerpSystem::RandomSlerpSystem(ursine::ecs::World* world)
 
 void RandomSlerpSystem::Process(ursine::ecs::Entity* entity)
 {
-    entity->GetComponent<RandomSlerp>()->Update(0.016);
+    entity->GetComponent<RandomSlerp>()->Update(0.016f);
 }

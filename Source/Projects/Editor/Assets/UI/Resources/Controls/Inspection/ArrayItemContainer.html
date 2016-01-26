@@ -1,0 +1,25 @@
+<link rel="import" href="../../LIB/Polymer/polymer.html">
+
+<dom-module id="x-array-item-container">
+    <link rel="import" type="css" href="../../Style/Controls/Inspection/ArrayItemContainer.css">
+    <template>
+        <div id="header">Item <span>{{index}}</span></div>
+        <div id="container">
+            <content></content>
+        </div>
+    </template>
+    <script>
+        var ArrayItemContainerControl = Polymer({
+            is: "x-array-item-container",
+            properties: {
+                index: {
+                    type: Number,
+                    notify: true
+                }
+            },
+            get container() {
+                return this.$.container;
+            }
+        });
+    </script>
+</dom-module>

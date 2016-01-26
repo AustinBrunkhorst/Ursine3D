@@ -11,6 +11,7 @@
 #include "Precompiled.h"
 
 #include "LookCommand.h"
+#include "GameEvents.h"
 #include <CharacterControllerComponent.h>
 #include <CharacterFireControllerComponent.h>
 #include <Model3DComponent.h>
@@ -31,8 +32,9 @@ void LookCommand::Execute(ursine::ecs::Entity* receiver)
     if ( m_playback )
         return;
 
-    auto *controller = receiver->GetComponent<CharacterController>( );
-    controller->SetLookDirection(m_axis);
+    game::MovementEventArgs lookChange( m_axis );
+    receiver->Dispatch( game::LOOK_COMMAND, &lookChange );
+
 }
 
 void LookCommand::StopExecute(ursine::ecs::Entity* receiver)

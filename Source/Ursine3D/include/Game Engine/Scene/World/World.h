@@ -37,7 +37,9 @@ namespace ursine
         class NameManager;
         class UtilityManager;
 
-        class World : public EventDispatcher<WorldEventType>
+        typedef uint32 WorldEventID;
+
+        class World : public EventDispatcher<WorldEventID>
         {
         public:
             typedef std::shared_ptr<World> Handle;

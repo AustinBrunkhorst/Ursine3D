@@ -27,7 +27,8 @@ namespace ursine
             )
             : EntitySystem( world )
             , m_updatePriority( updatePriority )
-            , m_filter( filter ) { }
+            , m_filter( filter )
+            , m_updateType( WORLD_UPDATE ) { }
 
         void FilterSystem::onComponentChange(EVENT_HANDLER(World))
         {
@@ -116,13 +117,13 @@ namespace ursine
             m_active.erase( uniqueID );
         }
 
-        void FilterSystem::OnInitialize(WorldEventType updateType)
+        void FilterSystem::OnInitialize(void)
         {
             m_world->Listener( this )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .On( updateType, &FilterSystem::onUpdate, m_updatePriority );
+                .On( m_updateType, &FilterSystem::onUpdate, m_updatePriority );
         }
 
         void FilterSystem::OnRemove(void)
@@ -131,7 +132,17 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &FilterSystem::onComponentChange )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .Off( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
-                .Off( WORLD_UPDATE, &FilterSystem::onUpdate );
+                .Off( m_updateType, &FilterSystem::onUpdate );
+        }
+
+        void FilterSystem::SetUpdateType(WorldEventType updateType)
+        { 
+            m_updateType = updateType;
+        }
+
+        WorldEventType FilterSystem::GetUpdateType(void) const
+        {
+            return m_updateType;
         }
     }
 }

@@ -9,10 +9,75 @@
             is: 'x-number-input',
             extends: 'input',
             properties: {
-
+                slider: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                    observer: '_onSliderChanged'
+                },
+                format: {
+                    type: String,
+                    value: '{{value}}'
+                }
             },
             created: function() {
                 this.type = 'number';
+
+                this._sliderWrapper = null;
+                this._sliderValueDisplay = null;
+            },
+            attached: function() {
+                if (this.slider && this._sliderWrapper === null)
+                    this._onSliderAttached( );
+            },
+            detached: function() {
+                if (this._sliderWrapper !== null) {
+                    if (this._sliderWrapper.parentNode)
+                        this._sliderWrapper.parentNode.removeChild( this._sliderWrapper );
+
+                    this._sliderWrapper = null;
+                }
+            },
+
+            _onSliderChanged: function() {
+                this.type = this.slider ? 'range' : 'number';
+
+                if (this.slider && this.parentNode)
+                    this._onSliderAttached( );
+            },
+            _onSliderInput: function() {
+                // used in the format closure
+                var value = this.value;
+
+                this._sliderValueDisplay.innerHTML = this.format.replace( /\{\{(.*)}}/g, function() {
+                    var expression = arguments[ 1 ];
+
+                    return eval( expression );
+                } );
+            },
+
+            _onSliderAttached: function() {
+                var wrapper = document.createElement( 'div' );
+
+                wrapper.classList.add( 'slider-wrapper', 'x-number-input' );
+
+                this.parentNode.insertBefore( wrapper, this );
+
+                this.parentNode.removeChild( this );
+
+                this._sliderWrapper = wrapper;
+
+                wrapper.appendChild( this );
+
+                this._sliderValueDisplay = document.createElement( 'div' );
+
+                this._sliderValueDisplay.classList.add( 'value', 'x-number-input' );
+
+                this._sliderWrapper.appendChild( this._sliderValueDisplay );
+
+                this.addEventListener( 'input', this._onSliderInput.bind( this ) );
+
+                this._onSliderInput( );
             }
         });
     </script>

@@ -61,7 +61,8 @@ ecs::Entity *ObjectSelectorSystem::GetCurrentFocus(void)
 
 void ObjectSelectorSystem::OnInitialize(void)
 {
-    FilterSystem::OnInitialize( ecs::WorldEventType::WORLD_EDITOR_UPDATE );
+    FilterSystem::SetUpdateType( ecs::WorldEventType::WORLD_EDITOR_UPDATE );
+    FilterSystem::OnInitialize( );
 
     //grab graphics
     m_graphics = GetCoreSystem( graphics::GfxAPI );

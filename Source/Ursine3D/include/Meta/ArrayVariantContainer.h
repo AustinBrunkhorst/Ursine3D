@@ -15,18 +15,17 @@
 
 #include "VariantBase.h"
 
-#include "Array.h"
-#include "ArrayWrapper.h"
-
 namespace ursine
 {
     namespace meta
     {
+        class ArrayWrapper;
+
         template<typename T, typename StorageType>
         class ArrayVariantContainer : public VariantBase
         {
         public:
-            ArrayVariantContainer(Array<T> &rhs);
+            ArrayVariantContainer(StorageType &rhs);
 
             Type GetType(void) const override;
             void *GetPtr(void) const override;

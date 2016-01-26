@@ -55,7 +55,7 @@ class ComponentInspectionHandler {
         element.text = button.text;
 
         element.addEventListener( 'click', function() {
-            m_entity.invokeComponentButton( m_component.type, button.name );
+            m_entity.componentButtonInvoke( m_component.type, button.name );
         } );
 
         inspector.buttons.appendChild( element );
@@ -74,7 +74,7 @@ class ComponentInspectionHandler {
     }
 
     public function notifyChanged(field : NativeField, value : Dynamic) {
-        m_entity.updateComponentField( m_component.type, field.name, value );
+        m_entity.componentFieldUpdate( m_component.type, field.name, value );
     }
 
     public function remove() {

@@ -13,6 +13,10 @@
 #include <memory>
 
 #include "Command.h"
+#include <Core/CoreSystem.h>
+#include <Core/Input/Gamepad/GamepadManager.h>
+#include <Core/Input/Keyboard/KeyboardManager.h>
+#include <Core/Input/Mouse/MouseManager.h>
 
 class ActionCommandBase
 {

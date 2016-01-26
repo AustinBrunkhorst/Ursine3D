@@ -13,10 +13,11 @@
 
 #pragma once
 
-#include "Array.h"
-
 namespace ursine
 {
+    template<typename T>
+    class Array;
+
     namespace meta_traits
     {
         template<typename T, typename = void>

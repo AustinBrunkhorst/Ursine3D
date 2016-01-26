@@ -15,9 +15,13 @@ namespace ursine
 {
     namespace ecs
     {
-        Component::Component(ComponentTypeID typeID) 
+        Component::Component(ComponentTypeID typeID)
             : m_typeID( typeID )
-            , m_owner( nullptr ) { }
+            , m_owner( nullptr ) 
+        #if defined(URSINE_WITH_EDITOR)
+            , m_baseInitialized( false )
+        #endif
+            { }
 
         ComponentTypeID Component::GetTypeID(void) const
         {

@@ -38,5 +38,15 @@ namespace ursine
         {
             return m_array.Size( );
         }
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        template<typename T>
+        ArrayEventDispatcher &ArrayWrapperContainer<T>::GetModifyEvents(void) const
+        {
+            return m_array.m_modifyEvents;
+        }
+
+    #endif
     }
 }
