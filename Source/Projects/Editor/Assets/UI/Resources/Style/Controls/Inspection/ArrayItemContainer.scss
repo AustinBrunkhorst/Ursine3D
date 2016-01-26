@@ -49,12 +49,6 @@
   #container {
     display: none;
     padding: 4px;
-
-    x-field-inspector {
-      #header {
-        display: none;
-      }
-    }
   }
 
   &.opened {
@@ -68,4 +62,15 @@
       display: block;
     }
   }
+
+  ::content {
+    x-field-inspector {
+      background: pink;
+
+      .field-header {
+        display: none;
+      }
+    }
+  }
 }
+

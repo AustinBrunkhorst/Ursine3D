@@ -46,8 +46,6 @@ public:
         SetSubDivisions
     );
 
-    ursine::Array<double> testing;
-
     GridRendererSettings(void);
     ~GridRendererSettings(void);
 
