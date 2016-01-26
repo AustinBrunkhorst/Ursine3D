@@ -144,8 +144,6 @@ void parse(const po::variables_map &cmdLine)
     options.outputModuleFileDirectory = 
         cmdLine.at( kSwitchOutputModuleFileDirectory ).as<std::string>( );
 
-    std::cout << "SOURCE DIR: " << options.sourceRoot << std::endl;
-
     // default arguments
     options.arguments =
     { {

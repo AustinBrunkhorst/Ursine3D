@@ -6,12 +6,16 @@
 ** --------------------------------------------------------------------------*/
 {{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
 {{/usingPrecompiledHeader}}
-#include "{{inputSourceFile}}"
+
+#include "{{moduleFileHeader}}"
+#include "{{moduleFileSourceHeader}}"
+
+#include <ReflectionDatabase.h>
 
 namespace m = ursine::meta;
-namespace mf = meta_generated::file::{{targetName}};
+namespace mf = meta_generated::file::Module{{targetName}};
 
-void mf::allocate::{{moduleFileName}}(m::ReflectionDatabase &db)
+void mf::allocate::ModuleFile{{moduleFileName}}(m::ReflectionDatabase &db)
 {
     ///////////////////////////////////////////////////////////////////////////
     // Class Allocation
@@ -73,7 +77,7 @@ void mf::allocate::{{moduleFileName}}(m::ReflectionDatabase &db)
     {{/enum}}
 }
 
-void mf::define::{{moduleFileName}}(m::ReflectionDatabase &db)
+void mf::define::ModuleFile{{moduleFileName}}(m::ReflectionDatabase &db)
 {
     ///////////////////////////////////////////////////////////////////////////
     // Global Definitions

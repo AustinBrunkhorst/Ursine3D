@@ -85,6 +85,7 @@ private:
     void generateModuleFile(
         const fs::path &fileHeader, 
         const fs::path &fileSource, 
+        const std::string &sourceHeader,
         const ModuleFile &file
     );
 };

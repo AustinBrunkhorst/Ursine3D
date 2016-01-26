@@ -6,20 +6,21 @@
 ** --------------------------------------------------------------------------*/
 {{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
 {{/usingPrecompiledHeader}}
-#include "{{inputSourceFile}}"
+
 #include "{{moduleHeaderFile}}"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Module Files
 ///////////////////////////////////////////////////////////////////////////////
 
-{{#moduleFile}}#include <{{& header}}>{{/moduleFile}}
+{{#moduleFile}}
+#include "{{& header}}"{{/moduleFile}}
 
 namespace m = ursine::meta;
-namespace mf = meta_generated::file::{{targetName}};
+namespace mf = meta_generated::file::Module{{targetName}};
 
-meta_generated::module::{{targetName}}::{{targetName}}(m::ReflectionDatabase &db)
-    : m::ReflectionModule( db )
+meta_generated::module::Module{{targetName}}::Module{{targetName}}(m::ReflectionDatabase &db)
+    : ReflectionModule( db )
 {
     ///////////////////////////////////////////////////////////////////////////
     // External Allocation
@@ -54,14 +55,14 @@ meta_generated::module::{{targetName}}::{{targetName}}(m::ReflectionDatabase &db
     // Module File Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#moduleFile}}
-    mf::allocate::{{& name}}( db );{{/moduleFile}}
+    mf::allocate::ModuleFile{{& name}}( db );{{/moduleFile}}
 }
 
-meta_generated::module::{{targetName}}::~{{targetName}}(void)
+meta_generated::module::Module{{targetName}}::~Module{{targetName}}(void)
 {
     ///////////////////////////////////////////////////////////////////////////
     // Module File Definition
     ///////////////////////////////////////////////////////////////////////////
     {{#moduleFile}}
-    mf::define::{{& name}}( db );{{/moduleFile}}
+    mf::define::ModuleFile{{& name}}( db );{{/moduleFile}}
 }

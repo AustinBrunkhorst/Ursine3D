@@ -23,6 +23,7 @@
 #include "LanguageTypes/Enum.h"
 
 #include <FileSystem.h>
+#include <Utils.h>
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
@@ -163,24 +164,37 @@ void ReflectionParser::GenerateFiles(void)
 
     TemplateData moduleFilesData { TemplateData::Type::List };
 
+    fs::path metaCacheFileName = m_options.outputModuleFileDirectory;
+
+    metaCacheFileName /= ".meta-cache";
+
+    auto metaCacheFileExists = exists( metaCacheFileName );
+
+    std::string moduleFileCache;
+
     for (auto &file : m_moduleFiles)
     {
         fs::path filePath( file.first );
 
         // path relative to the source root
         auto relativeDir = ursine::fs::MakeRelativePath( sourceRootDirectory, filePath )
-            .replace_extension( "" );
+            .replace_extension( "" ).string( );
+
+        if (relativeDir.find_first_of( ".." ) != std::string::npos)
+            continue;
 
         auto outputFile = outputFileDirectory / relativeDir;
-        auto outputFileHeader = change_extension( outputFile, ".h" );
-        auto outputFileSource = change_extension( outputFile, ".cpp" );
+        auto outputFileHeader = change_extension( outputFile, "Generated.h" );
+        auto outputFileSource = change_extension( outputFile, "Generated.cpp" );
 
         // module file name
         file.second.name = boost::regex_replace(
-            relativeDir.string( ),
+            relativeDir,
             kSpecialCharsRegex,
             "_"
         );
+
+        moduleFileCache += file.second.name + '\n';
 
         TemplateData moduleFileData { TemplateData::Type::Object };
 
@@ -190,9 +204,9 @@ void ReflectionParser::GenerateFiles(void)
         moduleFilesData << moduleFileData;
 
         // if the generated file header doesn't exist, we need to regenerate
-        if (!exists( outputFileHeader ))
+        if (!metaCacheFileExists || !exists( outputFileHeader ))
         {
-            generateModuleFile( outputFileHeader, outputFileSource, file.second );
+            generateModuleFile( outputFileHeader, outputFileSource, file.first, file.second );
 
             continue;
         }
@@ -202,8 +216,35 @@ void ReflectionParser::GenerateFiles(void)
 
         // if the generated file is older than the source file, we need to regenerate
         if (lastSourceWrite > lastGeneratedWrite)
-            generateModuleFile( outputFileHeader, outputFileSource, file.second );
+            generateModuleFile( outputFileHeader, outputFileSource, file.first, file.second );
     }
+
+    fs::path moduleCacheFileName = m_options.outputModuleFileDirectory;
+
+    moduleCacheFileName /= ".meta-cache";
+
+    if (metaCacheFileExists)
+    {
+        std::ifstream cacheFile( moduleCacheFileName.string( ) );
+
+        std::istreambuf_iterator<char> cacheFileBegin( cacheFile );
+        std::istreambuf_iterator<char> cacheFileEnd( nullptr );
+        
+        // the cache is the same, so we don't need to write the source files
+        if (ursine::utils::RangeEqual( 
+                moduleFileCache.begin( ), moduleFileCache.end( ), 
+                cacheFileBegin, cacheFileEnd 
+            ))
+        {
+            return;
+        }
+    }
+
+    // update the cache
+    utils::WriteText(
+        moduleCacheFileName.string( ),
+        moduleFileCache
+    );
 
     // module source file
     {
@@ -457,7 +498,8 @@ void ReflectionParser::addGlobalTemplateData(TemplateData &data)
 
 void ReflectionParser::generateModuleFile(
     const fs::path &fileHeader,
-    const fs::path &fileSource, 
+    const fs::path &fileSource,
+    const std::string &sourceHeader,
     const ModuleFile &file
 )
 {
@@ -484,6 +526,8 @@ void ReflectionParser::generateModuleFile(
         addGlobalTemplateData( sourceData );
 
         sourceData[ "moduleFileName" ] = file.name;
+        sourceData[ "moduleFileSourceHeader" ] = sourceHeader;
+        sourceData[ "moduleFileHeader" ] = fileHeader.string( );
 
         COMPILE_TYPE_TEMPLATES( sourceData, "class", file.classes );
         COMPILE_TYPE_TEMPLATES( sourceData, "global", file.globals );
