@@ -669,7 +669,7 @@ JSMethod(EntityHandler::getParent)
     if (!entity)
         return CefV8Value::CreateBool( false );
 
-    auto *parent = entity->GetTransform( )->GetParent( );
+    auto parent = entity->GetTransform( )->GetParent( );
 
     if (!parent)
         return CefV8Value::CreateNull( );
@@ -696,7 +696,7 @@ JSMethod(EntityHandler::setParent)
     // detaching parent
     if (targetParent->IsNull( ))
     {
-        auto *currentParent = transform->GetParent( );
+        auto currentParent = transform->GetParent( );
 
         if (currentParent)
             currentParent->RemoveChild( transform );
