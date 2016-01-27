@@ -1682,7 +1682,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
 		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
-		item.parentNode.removeChild(item);
+		if(item.parentNode != null) item.parentNode.removeChild(item);
 		this.m_entityItems.remove(e.uniqueID);
 	}
 	,onEntityNameChanged: function(e) {

@@ -65,7 +65,15 @@ namespace ursine
 		Component::Handle<ComponentType>::Handle(const ComponentType *other)
 		{
 			if (other)
+			{
 				m_entity = other->GetOwner();
+
+				UAssert(
+					m_entity != nullptr, 
+					"If the owner of the component is null, you're probably constructing"
+					" this handle inside the component's constructor."
+				);
+			}
 			else
 				m_entity = nullptr;
 		}

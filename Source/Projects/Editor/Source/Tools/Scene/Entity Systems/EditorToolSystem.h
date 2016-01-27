@@ -17,6 +17,7 @@
 #include <EditorCameraSystem.h>
 #include <EditorTool.h>
 #include <SelectTool.h>
+#include <DuplicateTool.h>
 
 class EditorToolSystem : public ursine::ecs::EntitySystem
 {
@@ -67,4 +68,5 @@ private:
 	EditorTool *m_currentTool;
 
 	SelectTool *m_selectTool;
+	DuplicateTool *m_dupTool;
 } Meta(Enable);
