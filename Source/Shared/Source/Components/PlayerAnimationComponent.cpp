@@ -26,28 +26,28 @@ void PlayerAnimation::Update()
 
     if(m_state == Winning)
     {
-        if (animator->GetAnimation( ) != "Player_Winning")
+        if (animator->GetCurrentState( ) != "Win")
         {
             animator->SetAnimationTimePosition(0);
-            animator->SetAnimation("Player_Winning");
+            animator->SetCurrentState("Win");
             animator->SetLooping(true);
         }
     }
     else if(m_state == Dead)
     {
-        if (animator->GetAnimation( ) != "Player_Dead")
+        if (animator->GetCurrentState( ) != "Die")
         {
             animator->SetAnimationTimePosition(0);
-            animator->SetAnimation("Player_Dead");
+            animator->SetCurrentState("Die");
             animator->SetLooping(false);
         }
     }
     else if(m_state == Jumping)
     {
-        if (animator->GetAnimation( ) != "Player_Jump")
+        if (animator->GetCurrentState( ) != "Jump")
         {
             animator->SetAnimationTimePosition(0);
-            animator->SetAnimation("Player_Jump");
+            animator->SetCurrentState("Jump");
             animator->SetLooping(false);
 
             if(!m_shooting)
@@ -58,10 +58,10 @@ void PlayerAnimation::Update()
     }
     else if(m_state == Running)
     {
-        if (animator->GetAnimation( ) != "Player_Run")
+        if (animator->GetCurrentState( ) != "Run")
         {
             animator->SetAnimationTimePosition(0);
-            animator->SetAnimation("Player_Run");
+            animator->SetCurrentState("Run");
             animator->SetLooping(true);
 
             if (!m_shooting)
@@ -72,10 +72,10 @@ void PlayerAnimation::Update()
     }
     else if(m_state == Idle)
     {
-        if (animator->GetAnimation( ) != "Player_Idle")
+        if (animator->GetCurrentState( ) != "Idle")
         {
             animator->SetAnimationTimePosition(0);
-            animator->SetAnimation("Player_Idle");
+            animator->SetCurrentState("Idle");
             animator->SetLooping(true);
 
             if (!m_shooting)

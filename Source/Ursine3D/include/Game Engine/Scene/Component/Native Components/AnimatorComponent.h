@@ -102,10 +102,20 @@ namespace ursine
 				);
 			
             EditorField(
-                std::string currentAnimation,
+                std::string animationName,
                 GetAnimation,
                 SetAnimation
             );
+
+			EditorButton(
+				AddAnimation,
+				"Add Animation"
+				);
+
+			EditorButton(
+				RemoveAnimation,
+				"Remove Animation"
+				);
 
             EditorField(
                 std::string currentRig,
@@ -160,9 +170,6 @@ namespace ursine
             float GetTimeScalar(void) const;
             void SetTimeScalar(const float scalar);
 
-            const std::string &GetAnimation(void) const;
-            void SetAnimation(const std::string &name);
-
             const std::string &GetRig( void ) const;
             void SetRig(const std::string &rig);
 
@@ -176,6 +183,9 @@ namespace ursine
 
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
+
+			const std::string &GetAnimation(void) const;
+			void SetAnimation(const std::string &name);
 
 			// CrossFade ("State Name", transition time, ...)
 
@@ -191,7 +201,9 @@ namespace ursine
             std::string m_currentAnimation;
             std::string m_currentRig;
 			std::string m_currentState;
+
 			std::string m_stateName;
+			std::string m_animationName;
 
         } Meta( Enable, DisplayName( "Animator" ) );
     }

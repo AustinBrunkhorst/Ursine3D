@@ -32,6 +32,7 @@ namespace ursine
             , m_currentRig( "" )
 			, m_currentState("")
 			, m_stateName( "" )
+			, m_animationName( "" )
         {
         }
 
@@ -55,7 +56,7 @@ namespace ursine
             URSINE_TODO( "Fix animations so they aren't so hard-coded" );
 
             // grab what we need
-            auto *currentAnimation = AnimationBuilder::GetAnimationByName( m_currentAnimation );
+			auto *currentAnimation = m_states[m_currentState].GetAnimation();
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
 			
             if ( currentAnimation == nullptr || rig == nullptr)
@@ -206,43 +207,92 @@ namespace ursine
         {
             m_speedScalar = scalar;
         }
-
-        const std::string &Animator::GetAnimation( void ) const
-        {
-            return m_currentAnimation;
-        }
-
-        void Animator::SetAnimation(const std::string& name)
-        {
-            m_currentAnimation = name;
-			m_states[m_currentState].SetAnimation( AnimationBuilder::GetAnimationByName( name ) );
-        }
-		
+				
 		void Animator::AddState(void)
 		{
-			m_states[m_stateName].SetName(m_stateName);
+			if ("" == m_stateName)
+				return;
+
+			m_states[ m_stateName ].SetName( m_stateName );
 			
 			auto *gfx = GetCoreSystem(graphics::GfxAPI);			
-			auto *world = GetOwner()->GetWorld();
-			if (world != nullptr)
-				auto *newEntity = world->CreateEntity(m_stateName);
+			auto *world = GetOwner( )->GetWorld( );
+			auto *newEntity = world->CreateEntity( m_stateName );			
+			auto *newTrans = newEntity->GetTransform( );
+			auto *ownerTrans = GetOwner( )->GetTransform( );
+			ownerTrans->AddChild( newTrans );
+
+			SetCurrentState( m_stateName );
 		}
 
 		void Animator::RemoveState(void)
-		{			
-			auto *gfx = GetCoreSystem(graphics::GfxAPI);
-			auto *world = GetOwner()->GetWorld();
-			if(world != nullptr)
-				world->queueEntityDeletion(world->GetEntityFromName(m_stateName));
-			
-			for (auto iter : m_states)
+		{
+			if ( "" == m_stateName )
+				return;
+
+			auto *gfx = GetCoreSystem( graphics::GfxAPI );
+			auto *world = GetOwner( )->GetWorld( );
+			Entity* targetEntity = world->GetEntityFromName( m_stateName );
+			if ( targetEntity )
 			{
-				if (iter.first == m_stateName)
+				targetEntity->Delete( );
+				world->Update( );
+			}
+			
+			for ( auto iter : m_states )
+			{
+				if ( iter.first == m_stateName )
 				{
-					m_states.erase(iter.first);
+					m_states.erase( iter.first );
 					return;
 				}
 			}
+		}
+
+		const std::string &Animator::GetAnimation(void) const
+		{
+			return m_animationName;
+		}
+
+		void Animator::SetAnimation(const std::string& name)
+		{
+			m_animationName = name;
+		}
+		
+		void Animator::AddAnimation(void)
+		{
+			if ( "" == m_animationName )
+				return;
+
+			Animation* targetAnimation = AnimationBuilder::GetAnimationByName( m_animationName );
+			if ( !targetAnimation )
+				return;
+
+			m_states[ m_currentState ].SetAnimation( targetAnimation );
+
+			auto *gfx = GetCoreSystem( graphics::GfxAPI );
+			auto *world = GetOwner( )->GetWorld( );
+			auto *newEntity = world->CreateEntity( m_animationName );
+			auto *newTrans = newEntity->GetTransform( );
+			auto *ownerTrans = GetOwner( )->GetTransform( );
+			ownerTrans->AddChild( newTrans );
+		}
+
+		void Animator::RemoveAnimation(void)
+		{
+			if ( "" == m_animationName )
+				return;
+
+			auto *gfx = GetCoreSystem( graphics::GfxAPI );
+			auto *world = GetOwner( )->GetWorld( );
+			Entity* targetEntity = world->GetEntityFromName( m_animationName );
+			if ( targetEntity )
+			{
+				targetEntity->Delete( );
+				world->Update( );
+			}
+
+			m_states[m_currentState].SetAnimation(nullptr);
 		}
 
         const std::string &Animator::GetRig() const
@@ -257,17 +307,17 @@ namespace ursine
 
         float Animator::GetAnimationTimePosition( ) const
         {
-			for (auto &x : m_states)
+			for ( auto &x : m_states )
 			{
-				if (x.first == m_currentState)
-					return x.second.GetTimePosition();
+				if ( x.first == m_currentState )
+					return x.second.GetTimePosition( );
 			}
 			return 0.0f;
         }
 
         void Animator::SetAnimationTimePosition( const float position )
         {
-			m_states[m_currentState].SetTimePosition( position );
+			m_states[ m_currentState ].SetTimePosition( position );
         }
 		
 		const std::string& Animator::GetCurrentState(void) const
