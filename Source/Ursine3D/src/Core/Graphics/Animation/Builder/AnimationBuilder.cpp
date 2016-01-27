@@ -128,7 +128,10 @@ namespace ursine
 
     Animation* AnimationBuilder::GetAnimationByName(const std::string& name)
     {
-        return m_name2Animation[ name ];
+		if(m_name2Animation.end() == m_name2Animation.find(name))
+			return nullptr;
+		else
+			return m_name2Animation[name];
     }
 
     AnimationRig *AnimationBuilder::GetAnimationRigByIndex(const unsigned index)
@@ -140,7 +143,10 @@ namespace ursine
 
     AnimationRig* AnimationBuilder::GetAnimationRigByName(const std::string& name)
     {
-        return m_name2Rig[ name ];
+		if (m_name2Rig.end() == m_name2Rig.find(name))
+			return nullptr;
+		else
+			return m_name2Rig[name];
     }
 
     int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info, const std::string &name)
@@ -163,8 +169,8 @@ namespace ursine
 		// resize arrays to handle bone size
 		animation->SetData(keyCount, boneCount);
 
-		// set name
-		animation->SetName(info.name);
+		// set name - let's use model name
+		animation->SetName(name);
 
 		// LOAD ANIMATION
 		// iterate through all keyframes in this RigKeyframe, iterate through each RigKeyframe,

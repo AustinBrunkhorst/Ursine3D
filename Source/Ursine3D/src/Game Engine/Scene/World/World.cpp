@@ -81,6 +81,11 @@ namespace ursine
             return entity;
         }
 
+		void World::queueEntityDeletion(Entity *entity)
+		{
+			m_deleted.push_back(entity);
+		}
+
         Entity *World::CreateEntityFromArchetype(
             const std::string &filename, 
             const std::string &name
@@ -203,17 +208,12 @@ namespace ursine
             }
         }
 
-        void World::queueEntityDeletion(Entity *entity)
-        {
-            m_deleted.push_back( entity );
-        }
-
-        void World::deleteEntity(Entity *entity)
-        {
-            m_nameManager->Remove( entity );
-            m_entityManager->Remove( entity );
-        }
-
+		void World::deleteEntity(Entity *entity)
+		{
+			m_nameManager->Remove(entity);
+			m_entityManager->Remove(entity);
+		}
+				
         void World::clearDeletionQueue(void)
         {
 			std::lock_guard<std::mutex> lock( m_deletionMutex );

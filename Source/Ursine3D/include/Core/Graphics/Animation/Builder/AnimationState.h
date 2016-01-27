@@ -64,9 +64,13 @@ namespace ursine
         */
         void SetAnimation(const Animation *animation);
 
+		const std::string &GetName(void) const;
+		void SetName(const std::string &name);
+
     private:
         //current runtime
         float m_timePos;
+		std::string m_name;
 
         //current animation
         const Animation *m_animation;

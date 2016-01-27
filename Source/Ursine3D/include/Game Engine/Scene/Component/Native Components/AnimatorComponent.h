@@ -25,8 +25,6 @@ namespace ursine
         // not implemented yet
         class AnimationClip
         {
-            
-
         public:
             enum MaskBlendMode
             {
@@ -81,6 +79,28 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+			EditorField(
+				std::string stateName,
+				GetStateName,
+				SetStateName
+				);
+
+			EditorButton(
+				AddState,
+				"Add State"
+				);
+			
+			EditorButton(
+				RemoveState,
+				"Remove State"
+				);
+
+			EditorField(
+				std::string currentState,
+				GetCurrentState,
+				SetCurrentState
+				);
+			
             EditorField(
                 std::string currentAnimation,
                 GetAnimation,
@@ -148,15 +168,30 @@ namespace ursine
 
             float GetAnimationTimePosition(void) const;
             void SetAnimationTimePosition(const float position);
+			
+			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
+			// start with adding/removing state
+			const std::string &GetCurrentState(void) const;
+			void SetCurrentState(const std::string &state);
+
+			const std::string &GetStateName(void) const;
+			void SetStateName(const std::string &state);
+
+			// CrossFade ("State Name", transition time, ...)
+
+			// let's don't care about in-state-blending. 
+			// just care about between-state blending first.
 
         private:
-            AnimationState m_state;
-            bool m_playing;
+            std::unordered_map<std::string, AnimationState> m_states;
+			bool m_playing;
             bool m_looping;
             bool m_debug;
             float m_speedScalar;
             std::string m_currentAnimation;
             std::string m_currentRig;
+			std::string m_currentState;
+			std::string m_stateName;
 
         } Meta( Enable, DisplayName( "Animator" ) );
     }

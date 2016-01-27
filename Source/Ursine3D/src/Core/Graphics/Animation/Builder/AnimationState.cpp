@@ -45,4 +45,14 @@ namespace ursine
     {
         m_animation = animation;
     }
+
+	const std::string& AnimationState::GetName(void) const
+	{
+		return m_name;
+	}
+
+	void AnimationState::SetName(const std::string& name)
+	{
+		m_name = name;
+	}
 }

@@ -24,19 +24,20 @@ namespace ursine
 
         Animator::Animator( )
             : BaseComponent( )
-            , m_state( )
             , m_playing( false )
             , m_looping( true )
             , m_debug( false )
             , m_speedScalar( 1.0f )
-            , m_currentAnimation( "Take 001" )
+            , m_currentAnimation( "" )
             , m_currentRig( "" )
+			, m_currentState("")
+			, m_stateName( "" )
         {
         }
 
         Animator::~Animator()
         {
-            
+			m_states.clear();
         }
 
         void Animator::OnInitialize(void)
@@ -56,118 +57,114 @@ namespace ursine
             // grab what we need
             auto *currentAnimation = AnimationBuilder::GetAnimationByName( m_currentAnimation );
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
-
-
+			
             if ( currentAnimation == nullptr || rig == nullptr)
                 return;
-
+			
             if ( currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount() )
                 return;
             
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
-            std::vector<SMat4> tempVeec( 100 );
-
-            m_state.SetAnimation( currentAnimation );
-
+            std::vector<SMat4> tempVec( 100 );
+						
             // update time
             if ( m_playing )
             {
-                m_state.IncrementTimePosition( dt * m_speedScalar );
-
+				m_states[m_currentState].IncrementTimePosition( dt * m_speedScalar );
+			
                 unsigned keyframeCount = currentAnimation->GetRigKeyFrameCount( );
                 auto &lastFrame = currentAnimation->GetKeyframe( keyframeCount - 1, 0 );
                 auto &firstFrame = currentAnimation->GetKeyframe( 0, 0 );
-                if ( m_state.GetTimePosition( ) > lastFrame.length )
+                if (m_states[m_currentState].GetTimePosition( ) > lastFrame.length )
                 {
                     
                     // if we need to loop, go back to 0, maybe the first frame time?
                     if ( m_looping )
-                        m_state.SetTimePosition( firstFrame.length );
+						m_states[m_currentState].SetTimePosition( firstFrame.length );
                     else
-                        m_state.SetTimePosition( lastFrame.length );
+						m_states[m_currentState].SetTimePosition( lastFrame.length );
                 }
             }
-
+			
             // generate the matrices
             AnimationBuilder::GenerateAnimationData( 
-                m_state, 
+				m_states[m_currentState],
                 rig, 
                 matrixPalette, 
-                tempVeec 
+                tempVec 
             );
-
-            ////////////////////////////////////////////////////////////////
-            // TEMPORARY DEBUG STUFF
-            // render the debug data
-            if ( m_debug )
-            {
-                auto *graphics = GetCoreSystem( graphics::GfxAPI );
-                URSINE_TODO( "Remove this when we implement proper animation clips and stuf" )
-                    std::vector<SVec3> bonePoints( 100 );
-                auto &hierarchy = rig->GetHierarchyTable( );
-                auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
-
-                int maxNodeDistance = 0;
-
-                size_t boneCount = hierarchy.size( );
-
-                // calculate max distance for colors, calculate bone position
-                for (size_t x = 0; x < boneCount; ++x)
-                {
-                    // distance
-                    int distance = 0;
-                    int walker = hierarchy[ x ];
-
-                    while ( walker != -1 )
-                    {
-                        walker = hierarchy[ walker ];
-                        distance++;
-                    }
-
-                    if ( distance > maxNodeDistance ) maxNodeDistance = distance;
-
-                    // bone values
-                    bonePoints[ x ] = worldTransform.TransformPoint( tempVeec[ x ].TransformPoint( SVec3( 0, 0, 0 ) ) );
-                }
-
-                // render points
-                graphics->DrawingMgr.SetOverdraw( true );
-                for ( unsigned x = 0; x < boneCount; ++x )
-                {
-                    int distance = 0;
-                    int walker = hierarchy[ x ];
-
-                    while ( walker != -1 )
-                    {
-                        walker = hierarchy[ walker ];
-                        distance++;
-                    }
-
-                    float interp = (float)distance / (float)maxNodeDistance;
-                    //draw points
-                    
-                    graphics->DrawingMgr.SetColor( Color( 1 * interp, (1.f - interp), 0, 1 ) );
-
-                    if ( distance == 0 )
-                        graphics->DrawingMgr.SetColor( 0, 0, 1, 1 );
-
-                    graphics->DrawingMgr.SetSize( 10 );
-                    SVec3 &p = bonePoints[ x ];
-                    graphics->DrawingMgr.DrawPoint( p );
-                }
-
-                // render lines
-                for ( size_t x = boneCount - 1; x >= 1; --x )
-                {
-                    SVec3 &p1 = bonePoints[ x ];
-                    SVec3 &p2 = bonePoints[ hierarchy[ x ] ];
-
-                    graphics->DrawingMgr.DrawLine( p1, p2 );
-                }
-
-                graphics->DrawingMgr.SetOverdraw( false );
-            }
-            
+			
+            //////////////////////////////////////////////////////////////////
+            //// TEMPORARY DEBUG STUFF
+            //// render the debug data
+            //if ( m_debug )
+            //{
+            //    auto *graphics = GetCoreSystem( graphics::GfxAPI );
+            //    URSINE_TODO( "Remove this when we implement proper animation clips and stuf" )
+            //        std::vector<SVec3> bonePoints( 100 );
+            //    auto &hierarchy = rig->GetHierarchyTable( );
+            //    auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
+			//
+            //    int maxNodeDistance = 0;
+			//
+            //    size_t boneCount = hierarchy.size( );
+			//
+            //    // calculate max distance for colors, calculate bone position
+            //    for (size_t x = 0; x < boneCount; ++x)
+            //    {
+            //        // distance
+            //        int distance = 0;
+            //        int walker = hierarchy[ x ];
+			//
+            //        while ( walker != -1 )
+            //        {
+            //            walker = hierarchy[ walker ];
+            //            distance++;
+            //        }
+			//
+            //        if ( distance > maxNodeDistance ) maxNodeDistance = distance;
+			//
+            //        // bone values
+            //        bonePoints[ x ] = worldTransform.TransformPoint( tempVec[ x ].TransformPoint( SVec3( 0, 0, 0 ) ) );
+            //    }
+			//
+            //    // render points
+            //    graphics->DrawingMgr.SetOverdraw( true );
+            //    for ( unsigned x = 0; x < boneCount; ++x )
+            //    {
+            //        int distance = 0;
+            //        int walker = hierarchy[ x ];
+			//
+            //        while ( walker != -1 )
+            //        {
+            //            walker = hierarchy[ walker ];
+            //            distance++;
+            //        }
+			//
+            //        float interp = (float)distance / (float)maxNodeDistance;
+            //        //draw points
+            //        
+            //        graphics->DrawingMgr.SetColor( Color( 1 * interp, (1.f - interp), 0, 1 ) );
+			//
+            //        if ( distance == 0 )
+            //            graphics->DrawingMgr.SetColor( 0, 0, 1, 1 );
+			//
+            //        graphics->DrawingMgr.SetSize( 10 );
+            //        SVec3 &p = bonePoints[ x ];
+            //        graphics->DrawingMgr.DrawPoint( p );
+            //    }
+			//
+            //    // render lines
+            //    for ( size_t x = boneCount - 1; x >= 1; --x )
+            //    {
+            //        SVec3 &p1 = bonePoints[ x ];
+            //        SVec3 &p2 = bonePoints[ hierarchy[ x ] ];
+			//
+            //        graphics->DrawingMgr.DrawLine( p1, p2 );
+            //    }
+			//
+            //    graphics->DrawingMgr.SetOverdraw( false );
+            //}            
         }
 
         bool Animator::IsPlaying(void) const
@@ -218,8 +215,35 @@ namespace ursine
         void Animator::SetAnimation(const std::string& name)
         {
             m_currentAnimation = name;
-            m_state.SetAnimation( AnimationBuilder::GetAnimationByName( name ) );
+			m_states[m_currentState].SetAnimation( AnimationBuilder::GetAnimationByName( name ) );
         }
+		
+		void Animator::AddState(void)
+		{
+			m_states[m_stateName].SetName(m_stateName);
+			
+			auto *gfx = GetCoreSystem(graphics::GfxAPI);			
+			auto *world = GetOwner()->GetWorld();
+			if (world != nullptr)
+				auto *newEntity = world->CreateEntity(m_stateName);
+		}
+
+		void Animator::RemoveState(void)
+		{			
+			auto *gfx = GetCoreSystem(graphics::GfxAPI);
+			auto *world = GetOwner()->GetWorld();
+			if(world != nullptr)
+				world->queueEntityDeletion(world->GetEntityFromName(m_stateName));
+			
+			for (auto iter : m_states)
+			{
+				if (iter.first == m_stateName)
+				{
+					m_states.erase(iter.first);
+					return;
+				}
+			}
+		}
 
         const std::string &Animator::GetRig() const
         {
@@ -233,12 +257,37 @@ namespace ursine
 
         float Animator::GetAnimationTimePosition( ) const
         {
-            return m_state.GetTimePosition( );
+			for (auto &x : m_states)
+			{
+				if (x.first == m_currentState)
+					return x.second.GetTimePosition();
+			}
+			return 0.0f;
         }
 
         void Animator::SetAnimationTimePosition( const float position )
         {
-            m_state.SetTimePosition( position );
+			m_states[m_currentState].SetTimePosition( position );
         }
+		
+		const std::string& Animator::GetCurrentState(void) const
+		{
+			return m_currentState;
+		}
+
+		void Animator::SetCurrentState(const std::string &state)
+		{
+			m_currentState = state;
+		}
+
+		const std::string& Animator::GetStateName(void) const
+		{
+			return m_stateName;
+		}
+
+		void Animator::SetStateName(const std::string &state)
+		{
+			m_stateName = state;
+		}
     }
 }

@@ -23,11 +23,8 @@ character.8.0.mdl Character
 torus2.8.0.mdl Ring
 #
 # Player Animations
-Player_Idle.jdl Player
-#Player_Idle.jani Player
 
 # Gun Animations
-#Gun_Idle.fbx Gun
 #Gun_Idle.fbx Gun_Idle
 #Gun_Jump.fbx Gun_Jump
 #Gun_Shoot.fbx Gun_Shoot
