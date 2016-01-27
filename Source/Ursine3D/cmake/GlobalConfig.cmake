@@ -18,6 +18,7 @@ include(ParseArguments)
 include(Compiler)
 include(Precompiled)
 include(SourceGroup)
+include(UrsineProject)
 
 # add predefined targets to "CMake" folder 
 # (ex - in Visual Studio Solution Explorer)

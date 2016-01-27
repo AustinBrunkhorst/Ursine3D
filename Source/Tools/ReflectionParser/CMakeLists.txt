@@ -4,6 +4,7 @@ add_definitions(-D_HAS_EXCEPTIONS=1)
 ursine_project(ReflectionParser
     FOLDER "Tools/Meta"
     TYPE EXE
+    NO_ENGINE
     DEPENDS Clang Boost
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"

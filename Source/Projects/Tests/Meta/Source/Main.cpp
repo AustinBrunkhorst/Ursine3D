@@ -17,7 +17,12 @@
 
 #include <iostream>
 
+#include "MetaTestReflectionModule.h"
+#include <UrsineReflectionModule.h>
+
 int main(void)
 {
+    MetaInitialize( META_MODULE_INITIALIZER );
+
     return 0;
 }

@@ -1,61 +1,62 @@
-macro(ursine_prebuild_meta)
+function(ursine_prebuild_meta)
     ursine_parse_arguments(
         PREBUILD_META 
-        "SOURCE_ROOT;HEADER_FILES;OUT_GENERATED_DIR;OUT_GENERATED_FILES;OUT_FILES_INC;OUT_FILES_SRC;PCH_NAME" 
+        "TARGET;GENERATED_DIR;SOURCE_ROOT;HEADER_FILES;MODULE_HEADER;OUT_MODULE_SOURCE;OUT_GENERATED_FILES;OUT_INC;OUT_SRC;PCH_NAME" 
         "" 
         ${ARGN}
     )
 
-    set(${PREBUILD_META_OUT_GENERATED_DIR} "${CMAKE_CURRENT_BINARY_DIR}/Generated")
-    set(${PREBUILD_META_OUT_MODULE_SOURCE} "${META_GENERATED_DIR}/Module.${PROJECT_NAME}.cpp")
+    # source file for this reflection module
+    set(MODULE_SOURCE "${PREBUILD_META_GENERATED_DIR}/Module.${PREBUILD_META_TARGET}.Generated.cpp")
+    
+    # output the source file
+    set(${PREBUILD_META_OUT_MODULE_SOURCE} ${MODULE_SOURCE} PARENT_SCOPE)
 
-    set(${PREBUILD_META_OUT_GENERATED_FILES} "${${PREBUILD_META_OUT_MODULE_SOURCE}}")
+    set(GENERATED_FILES "${MODULE_SOURCE}")
+    set(GENERATED_HEADERS "")
+    set(GENERATED_SOURCES "${MODULE_SOURCE}")
 
-    list(APPEND ${PREBUILD_META_OUT_FILES_SRC} ${${PREBUILD_META_OUT_MODULE_SOURCE}})
+    # output it to the output source files
+    set(${PREBUILD_META_OUT_SRC} ${${PREBUILD_META_OUT_SRC}} "${MODULE_SOURCE}" PARENT_SCOPE)
 
-    if (NOT "${PREBUILD_META_PCH_NAME}" STREQUAL "")
-        set(EMPTY_SOURCE_CONTENTS "#include \"${PREBUILD_META_PCH_NAME}.h\"")
-    else ()
-        set(EMPTY_SOURCE_CONTENTS "")
-    endif ()
+    # exclude the module header from the included headers
+    list(REMOVE_ITEM PREBUILD_META_HEADER_FILES "${PREBUILD_META_SOURCE_ROOT}/${PREBUILD_META_MODULE_HEADER}")
 
     foreach (HEADER ${PREBUILD_META_HEADER_FILES})
         get_filename_component(DIRECTORY_NAME ${HEADER} DIRECTORY)
         get_filename_component(BASE_NAME ${HEADER} NAME_WE)
+        get_filename_component(EXTENSION ${HEADER} EXT)
 
-        file(RELATIVE_PATH RELATIVE ${PREBUILD_META_SOURCE_ROOT} "${DIRECTORY_NAME}/${BASE_NAME}.Generated")
+        # skip hpp files
+        if (NOT "${EXTENSION}" STREQUAL ".hpp")
+            file(RELATIVE_PATH RELATIVE 
+                ${PREBUILD_META_SOURCE_ROOT} 
+                "${DIRECTORY_NAME}/${BASE_NAME}.Generated"
+            )
 
-        set(GENERATED_HEADER "${GENERATED_DIR}/${RELATIVE}.h")
-        set(GENERATED_SOURCE "${GENERATED_DIR}/${RELATIVE}.cpp")
+            set(GENERATED_HEADER "${PREBUILD_META_GENERATED_DIR}/${RELATIVE}.h")
+            set(GENERATED_SOURCE "${PREBUILD_META_GENERATED_DIR}/${RELATIVE}.cpp")
 
-        # we have to create the files, as they might not be written to
-        if (NOT EXISTS ${GENERATED_HEADER})
-            file(WRITE ${GENERATED_HEADER} "")
+            list(APPEND GENERATED_FILES ${GENERATED_HEADER} ${GENERATED_SOURCE})
+            list(APPEND GENERATED_HEADERS ${GENERATED_HEADER})
+            list(APPEND GENERATED_SOURCES ${GENERATED_SOURCE})
         endif ()
-
-        if (NOT EXISTS ${GENERATED_SOURCE})
-            file(WRITE ${GENERATED_SOURCE} ${EMPTY_SOURCE_CONTENTS})
-        endif ()
-        
-        list(APPEND ${PREBUILD_META_OUT_GENERATED_FILES} ${GENERATED_HEADER} ${GENERATED_SOURCE})
-
-        list(APPEND ${PREBUILD_META_OUT_FILES_INC} ${GENERATED_HEADER})
-        list(APPEND ${PREBUILD_META_OUT_FILES_SRC} ${GENERATED_SOURCE})
     endforeach ()
-endmacro()
 
-macro(ursine_build_meta)
+    source_group(".Generated" FILES ${GENERATED_FILES})
+
+    set(${PREBUILD_META_OUT_GENERATED_FILES} "${GENERATED_FILES}" PARENT_SCOPE)
+    set(${PREBUILD_META_OUT_INC} ${${PREBUILD_META_OUT_INC}} ${GENERATED_HEADERS} PARENT_SCOPE)
+    set(${PREBUILD_META_OUT_SRC} ${${PREBUILD_META_OUT_SRC}} ${GENERATED_SOURCES} PARENT_SCOPE)
+endfunction ()
+
+function(ursine_build_meta)
     ursine_parse_arguments(
         BUILD_META 
         "TARGET;FLAGS;SOURCE_ROOT;SOURCE_FILE;MODULE_HEADER;MODULE_SOURCE_FILE;GENERATED_DIR;GENERATED_FILES;HEADER_FILES;PCH_NAME" 
         "" 
         ${ARGN}
     )
-
-    # add the ReflectionParser target if it doesn't exist
-    if (NOT TARGET ReflectionParser)
-        add_subdirectory("${ENGINE_DIR}/../Tools/ReflectionParser" "${CMAKE_BINARY_DIR}/ReflectionParser")
-    endif ()
 
     get_property(DIRECTORIES TARGET ${BUILD_META_TARGET} PROPERTY INCLUDE_DIRECTORIES)
 
@@ -66,13 +67,31 @@ macro(ursine_build_meta)
         list(APPEND FLAGS "\\-I${DIRECTORY}")
     endforeach ()
 
-    source_group("Generated" FILES ${BUILD_META_GENERATED_FILES})
-
-    if ("${BUILD_META_PCH_NAME}" STREQUAL "")
-        set(PCH_SWITCH "")
-    else () 
+    # empty source files need to include the precompiled header
+    if (NOT "${BUILD_META_PCH_NAME}" STREQUAL "")
+        set(EMPTY_SOURCE_CONTENTS "#include \"${BUILD_META_PCH_NAME}.h\"")
         set(PCH_SWITCH "--pch \"${BUILD_META_PCH_NAME}.h\"")
+    else ()
+        set(EMPTY_SOURCE_CONTENTS "")
+        set(PCH_SWITCH "")
     endif ()
+
+    list(REMOVE_ITEM BUILD_META_GENERATED_FILES "${BUILD_META_SOURCE_ROOT}/${BUILD_META_MODULE_HEADER}")
+
+    foreach (GENERATED_FILE ${BUILD_META_GENERATED_FILES})
+        get_filename_component(EXTENSION ${GENERATED_FILE} EXT)
+
+        set_source_files_properties(${GENERATED_FILE} PROPERTIES GENERATED TRUE)
+
+        # we have to create the files, as they might not be written to
+        if (NOT EXISTS ${GENERATED_FILE})
+            if ("${EXTENSION}" STREQUAL ".Generated.h")
+                file(WRITE ${GENERATED_FILE} "")
+            else ()
+                file(WRITE ${GENERATED_FILE} ${EMPTY_SOURCE_CONTENTS})
+            endif ()
+        endif ()
+    endforeach ()
 
     # add the command that generates the header and source files
     add_custom_command(
@@ -88,4 +107,4 @@ macro(ursine_build_meta)
         ${PCH_SWITCH}
         --flags ${FLAGS}
     )
-endmacro ()
+endfunction ()

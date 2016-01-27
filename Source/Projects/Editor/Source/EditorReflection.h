@@ -40,18 +40,3 @@
 #include "Tools/JavaScript/SceneUtils.h"
 #include "Tools/JavaScript/EntityUtils.h"
 #include "Tools/JavaScript/ComponentUtils.h"
-
-#include <ReflectionModule.h>
-
-namespace meta_generated
-{
-    namespace module
-    {
-        class ModuleEditor : public ursine::meta::ReflectionModule
-        {
-        public:
-            ModuleEditor(ursine::meta::ReflectionDatabase &db);
-            ~ModuleEditor(void);
-        };
-    }
-}

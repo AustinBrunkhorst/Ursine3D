@@ -171,6 +171,7 @@ void parse(const po::variables_map &cmdLine)
     options.templateDirectory = 
         cmdLine.at( kSwitchTemplateDirectory ).as<std::string>( );
     
+    std::cout << std::endl;
     std::cout << "Parsing reflection data for target \"" 
               << options.targetName << "\"" 
               << std::endl;

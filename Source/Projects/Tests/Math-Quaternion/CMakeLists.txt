@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-include(UrsineProject)
+include(GlobalConfig)
 
 ursine_project(
     Math-QuaternionTests

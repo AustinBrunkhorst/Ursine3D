@@ -22,9 +22,6 @@
 #include "LanguageTypes/Function.h"
 #include "LanguageTypes/Enum.h"
 
-#include <FileSystem.h>
-#include <Utils.h>
-
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -177,7 +174,7 @@ void ReflectionParser::GenerateFiles(void)
         fs::path filePath( file.first );
 
         // path relative to the source root
-        auto relativeDir = ursine::fs::MakeRelativePath( sourceRootDirectory, filePath )
+        auto relativeDir = utils::MakeRelativePath( sourceRootDirectory, filePath )
             .replace_extension( "" ).string( );
 
         if (relativeDir.find_first_of( ".." ) != std::string::npos)
@@ -231,7 +228,7 @@ void ReflectionParser::GenerateFiles(void)
         std::istreambuf_iterator<char> cacheFileEnd( nullptr );
         
         // the cache is the same, so we don't need to write the source files
-        if (ursine::utils::RangeEqual( 
+        if (utils::RangeEqual( 
                 moduleFileCache.begin( ), moduleFileCache.end( ), 
                 cacheFileBegin, cacheFileEnd 
             ))

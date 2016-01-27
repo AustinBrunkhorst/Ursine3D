@@ -48,9 +48,6 @@ namespace ursine
         template<typename Container, class T, class Predicate>
         void InsertionSort(Container &v, const T &item, Predicate predicate = std::less<T>( ));
 
-        template<typename A, typename B>
-        bool RangeEqual(A startA, A endA, B startB, B endB);
-
         URSINE_TODO("Implement the binary search utility"
                     " (http://stackoverflow.com/questions/446296/where-can-i-get-a-useful-c-binary-search-algorithm)");
 

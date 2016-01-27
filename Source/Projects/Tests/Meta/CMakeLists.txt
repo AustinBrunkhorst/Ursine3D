@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-include(UrsineProject)
+include(GlobalConfig)
 
 add_definitions(-D_HAS_EXCEPTIONS=0)
 
@@ -15,4 +15,6 @@ ursine_project(MetaTest
     SUBSYSTEM_RELEASE "CONSOLE"
     BUILD_META
     META_HEADER "Test.h"
+    META_MODULE_HEADER "MetaTestReflectionModule.h"
+    META_MODULE_DEPENDS Ursine3D
 )

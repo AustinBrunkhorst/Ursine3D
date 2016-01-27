@@ -11,19 +11,6 @@ namespace ursine { namespace meta { class ReflectionDatabase; } }
 
 namespace meta_generated 
 {
-	namespace file
-	{
-		namespace Module{{targetName}}
-		{
-			namespace allocate 
-			{
-				extern void ModuleFile{{moduleFileName}}(ursine::meta::ReflectionDatabase &db);
-			}
-
-			namespace define 
-			{
-				extern void ModuleFile{{moduleFileName}}(ursine::meta::ReflectionDatabase &db);
-			}
-		}
-	}
+	extern void AllocateModuleFile{{targetName}}{{moduleFileName}}(ursine::meta::ReflectionDatabase &db);
+	extern void DefineModuleFile{{targetName}}{{moduleFileName}}(ursine::meta::ReflectionDatabase &db);
 }

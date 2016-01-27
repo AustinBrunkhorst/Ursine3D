@@ -7,6 +7,7 @@ ursine_project(Shared
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META
-    META_HEADER "Reflection.h"
+    META_HEADER "SharedReflection.h"
+    META_MODULE_HEADER "SharedReflectionModule.h"
     PCH_NAME "Precompiled"
 )

@@ -17,9 +17,8 @@
 #include "{{& header}}"{{/moduleFile}}
 
 namespace m = ursine::meta;
-namespace mf = meta_generated::file::Module{{targetName}};
 
-meta_generated::module::Module{{targetName}}::Module{{targetName}}(m::ReflectionDatabase &db)
+meta_generated::Module{{targetName}}::Module{{targetName}}(m::ReflectionDatabase &db)
     : ReflectionModule( db )
 {
     ///////////////////////////////////////////////////////////////////////////
@@ -55,14 +54,14 @@ meta_generated::module::Module{{targetName}}::Module{{targetName}}(m::Reflection
     // Module File Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#moduleFile}}
-    mf::allocate::ModuleFile{{& name}}( db );{{/moduleFile}}
+    AllocateModuleFile{{targetName}}{{& name}}( db );{{/moduleFile}}
 }
 
-meta_generated::module::Module{{targetName}}::~Module{{targetName}}(void)
+meta_generated::Module{{targetName}}::~Module{{targetName}}(void)
 {
     ///////////////////////////////////////////////////////////////////////////
     // Module File Definition
     ///////////////////////////////////////////////////////////////////////////
     {{#moduleFile}}
-    mf::define::ModuleFile{{& name}}( db );{{/moduleFile}}
+    DefineModuleFile{{targetName}}{{& name}}( db );{{/moduleFile}}
 }

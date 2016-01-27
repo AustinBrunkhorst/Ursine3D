@@ -56,39 +56,5 @@ namespace ursine
 
             return true;
         }
-
-        path MakeRelativePath(const path &from, const path &to)
-        {
-            // Start at the root path and while they are the same then do nothing then when they first
-            // diverge take the remainder of the two path and replace the entire from path with ".."
-            // segments.
-            auto itFrom = from.begin( );
-            auto itTo = to.begin( );
-
-            // Loop through both
-            while (itFrom != from.end( ) && itTo != to.end( ) && (*itTo) == (*itFrom))
-            {
-                ++itTo;
-                ++itFrom;
-            }
-
-            path finalPath;
-
-            while (itFrom != from.end( ))
-            {
-                finalPath /= "..";
-
-                ++itFrom;
-            }
-
-            while (itTo != to.end( ))
-            {
-                finalPath /= *itTo;
-
-                ++itTo;
-            }
-
-            return finalPath;
-        }
     }
 }
