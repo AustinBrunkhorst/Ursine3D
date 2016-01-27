@@ -50,7 +50,7 @@ namespace ursine
             Randomizer m_eminRange;
 
             // max emit count, 0 is unlimited
-
+             
             // lifetime
             float m_lifetime;
             Randomizer m_lifetimeRange;
