@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include <UrsineReflection.h>
-
 #include "Editor.h"
 #include "Project.h"
 
@@ -42,3 +40,4 @@
 #include "Tools/JavaScript/SceneUtils.h"
 #include "Tools/JavaScript/EntityUtils.h"
 #include "Tools/JavaScript/ComponentUtils.h"
+#include "Tools/JavaScript/NotificationUtils.h"

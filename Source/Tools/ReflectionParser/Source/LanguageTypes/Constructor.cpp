@@ -16,7 +16,7 @@
 #include "LanguageTypes/Class.h"
 #include "LanguageTypes/Constructor.h"
 
-#include <Utils.h>
+#include <boost/algorithm/string/join.hpp>
 
 Constructor::Constructor(
     const Cursor &cursor, 
@@ -88,10 +88,6 @@ std::string Constructor::getTemplateParameters(void) const
 
     params.insert( params.begin( ), m_parent->m_qualifiedName );
 
-    std::string output;
-
-    ursine::utils::Join( params, ", ", output );
-
     // parent type, arg types, ...
-    return output;
+    return boost::join( params, ", " );
 }

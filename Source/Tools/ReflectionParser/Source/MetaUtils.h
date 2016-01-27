@@ -36,5 +36,15 @@ namespace utils
     void LoadText(const std::string &filename, std::string &output);
     void WriteText(const std::string &filename, const std::string &text);
 
+    boost::filesystem::path MakeRelativePath(
+        const boost::filesystem::path &from, 
+        const boost::filesystem::path &to
+    );
+
     void FatalError(const std::string &error);
+
+    template<typename A, typename B>
+    bool RangeEqual(A startA, A endA, B startB, B endB);
 }
+
+#include "MetaUtils.hpp"

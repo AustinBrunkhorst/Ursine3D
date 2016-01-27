@@ -15,8 +15,6 @@
 
 #include "LanguageTypes/Invokable.h"
 
-#include <Utils.h>
-
 Invokable::Invokable(const Cursor &cursor)
     : m_returnType( utils::GetQualifiedName( cursor.GetReturnType( ) ))
 {

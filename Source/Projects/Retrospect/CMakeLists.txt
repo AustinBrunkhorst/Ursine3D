@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 # disable exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
 
-include(UrsineProject)
+include(GlobalConfig)
 
 set(RESOURCES_DIR "${CMAKE_CURRENT_LIST_DIR}/Resources")
 set(WINDOWS_RESOURCE_FILE "${RESOURCES_DIR}/Resources.rc")

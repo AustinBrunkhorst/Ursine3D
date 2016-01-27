@@ -27,6 +27,8 @@ public:
 
     const MetaDataManager &GetMetaData(void) const;
 
+    std::string GetSourceFile(void) const;
+
     virtual TemplateData CompileTemplate(
         const ReflectionParser *context
     ) const = 0;
@@ -48,4 +50,6 @@ protected:
     CX_CXXAccessSpecifier m_accessModifier;
 
 private:
+    // cursor that represents the root of this language type
+    Cursor m_rootCursor;
 };

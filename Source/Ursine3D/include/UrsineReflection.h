@@ -13,10 +13,9 @@
 
 #pragma once
 
-#include "Meta.h"
-
 #include "UrsineReflectionExternal.h"
 
+#include "Type.h"
 #include "UrsineTypes.h"
 
 ///////////////////////////////////////////////////////////////////////////////

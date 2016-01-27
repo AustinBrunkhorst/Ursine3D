@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+include(MetaGeneration)
+
 project(Ursine3D CXX)
 
 # ------------------------------------------------------------------------------
@@ -54,8 +56,26 @@ set(URSINE_RESOURCES "${URSINE_RESOURCES}" PARENT_SCOPE)
 # Project Properties
 # ------------------------------------------------------------------------------
 
-file(GLOB_RECURSE URSINE_SRC ${URSINE_DIR_SOURCE}/*.cpp)
 file(GLOB_RECURSE URSINE_INC ${URSINE_DIR_INCLUDE}/*.h ${URSINE_DIR_INCLUDE}/*.hpp)
+file(GLOB_RECURSE URSINE_SRC ${URSINE_DIR_SOURCE}/*.cpp)
+
+set(URSINE_INC_NO_GENERATED ${URSINE_INC})
+
+set(META_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/Generated")
+set(META_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_INCLUDE}")
+
+ursine_prebuild_meta(
+    TARGET Ursine3D
+    GENERATED_DIR ${META_GENERATED_DIR}
+    SOURCE_ROOT ${META_SOURCE_ROOT}
+    HEADER_FILES ${URSINE_INC}
+    MODULE_HEADER "UrsineReflectionModule.h"
+    OUT_MODULE_SOURCE META_MODULE_SOURCE
+    OUT_GENERATED_FILES META_GENERATED_FILES
+    OUT_INC URSINE_INC
+    OUT_SRC URSINE_SRC
+    PCH_NAME "UrsinePrecompiled"
+)
 
 # disable exceptions for this project
 add_definitions(-D_HAS_EXCEPTIONS=0)
@@ -98,6 +118,9 @@ if (MSVC)
     # multi process compilation
     target_compile_options(Ursine3D PUBLIC /MP)
 
+    # ignore linker warnings for no symbols or pdbs
+    set_property(TARGET Ursine3D APPEND PROPERTY STATIC_LIBRARY_FLAGS "/ignore:4099 /ignore:4221")
+    
     set(URSINE_SHADER_DIR "${ENGINE_RESOURCES_DIR}/Shaders")
 
     file(GLOB_RECURSE URSINE_SHADER_FILES "${URSINE_SHADER_DIR}/*.hlsl")
@@ -190,3 +213,25 @@ endif ()
 set(URSINE_DIR_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_INCLUDE}" PARENT_SCOPE)
 set(URSINE_DIR_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_SOURCE}" PARENT_SCOPE)
 set(URSINE_HEADER_FILES "${URSINE_INC}" PARENT_SCOPE)
+set(URSINE_HEADER_FILES_NO_GENERATED "${URSINE_INC_NO_GENERATED}" PARENT_SCOPE)
+
+set(URSINE_META_GENERATED_DIR "${META_GENERATED_DIR}" PARENT_SCOPE)
+set(URSINE_META_SOURCE_ROOT "${META_SOURCE_ROOT}" PARENT_SCOPE)
+set(URSINE_META_MODULE_SOURCE "${META_MODULE_SOURCE}" PARENT_SCOPE)
+set(URSINE_META_GENERATED_FILES "${META_GENERATED_FILES}" PARENT_SCOPE)
+
+# add reflection parser
+add_subdirectory("${ENGINE_DIR}/../Tools/ReflectionParser" "${CMAKE_BINARY_DIR}/ReflectionParser")
+
+# build reflection for the engine
+ursine_build_meta(
+    TARGET Ursine3D
+    SOURCE_ROOT ${META_SOURCE_ROOT}
+    GENERATED_DIR ${META_GENERATED_DIR}
+    GENERATED_FILES ${META_GENERATED_FILES}
+    SOURCE_FILE "UrsineReflection.h"
+    MODULE_HEADER "UrsineReflectionModule.h"
+    MODULE_SOURCE_FILE ${META_MODULE_SOURCE}
+    HEADER_FILES ${URSINE_INC_NO_GENERATED}
+    PCH_NAME "UrsinePrecompiled"
+)

@@ -86,12 +86,11 @@ struct RequiresComponents : ursine::meta::MetaProperty
 {
     META_OBJECT;
 
-    Meta(Disable)
-    std::vector<ursine::meta::Type> componentTypes;
+    ursine::Array<ursine::meta::Type> componentTypes;
 
     template<typename... Types>
     RequiresComponents(Types &&...types)
-        : componentTypes( { std::forward( types... ) } ) { }
+        : componentTypes( { std::forward<Types>( types )... } ) { }
 };
 
 /** @brief Treats a component method as a button in the editor
