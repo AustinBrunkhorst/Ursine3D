@@ -63,16 +63,16 @@ namespace ursine
             void OnRemove(void) override;
 
             // vector of cameras sorted based on their render layer (low to high)
-            std::vector<ursine::ecs::Camera*> m_cameras;
+            std::vector< Component::Handle<Camera> > m_cameras;
 
-            static bool cameraSortPredicate(ursine::ecs::Camera *a, ursine::ecs::Camera *b);
+            static bool cameraSortPredicate(Component::Handle<Camera> a, Component::Handle<Camera> b);
 
 
             typedef std::vector<RenderableComponentBase*> RenderableVector;
             typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
             RenderableMap m_renderableMap;
 
-            std::vector<Animator*> m_animators;
+            std::vector< Component::Handle<Animator> > m_animators;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));

@@ -29,10 +29,13 @@ namespace ursine
     public:
         friend class ecs::RenderSystem;
 
-        RenderableComponentBase(void);
+        RenderableComponentBase(std::function<void(void)> UpdateRenderer);
 
         void OnInitialize(ecs::Entity *owner);
         void OnRemove(ecs::Entity *owner);
+
+		graphics::GfxHND &GetHandle(void);
+		void SetHandle(const graphics::GfxHND &handle);
 
     protected:
 
@@ -45,6 +48,6 @@ namespace ursine
 
         // the base class is responsible for implementing this function
         // and setting the appropriate values in the renderer
-        virtual void updateRenderer(void) = 0;
+        std::function<void(void)> m_updateRenderer;
     };
 }

@@ -54,12 +54,12 @@ namespace ursine
             m_privates->renderMgr = reinterpret_cast<RenderableManager*>(priv);
         }
 
-        void RenderableAPI::Initialize()
+        void RenderableAPI::Initialize(void)
         {
             m_privates = new RenderableAPI::privData;
         }
 
-        void RenderableAPI::Uninitialize()
+        void RenderableAPI::Uninitialize(void)
         {
             delete m_privates;
         }

@@ -28,11 +28,11 @@ namespace ursine
             Spot = graphics::Light::LIGHT_SPOTLIGHT,
         } Meta(Enable);
 
-        class Light 
-            : public Component
-            , public RenderableComponentBase
+        class Light : public Component
         {
             NATIVE_COMPONENT;
+
+			friend class RenderSystem;
 
         public:
             EditorField(
@@ -106,9 +106,11 @@ namespace ursine
 
             //private methods
         private:
-            void updateRenderer(void) override;
+			void updateRenderer(void);
 
             graphics::Light *m_light;
+
+			RenderableComponentBase *m_base;
 
             friend class RenderSystem;
         } Meta(Enable, DisplayName( "Light" ));

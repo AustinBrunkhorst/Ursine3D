@@ -85,7 +85,7 @@ namespace ursine
 
             void OnInitialize(void) override;
 
-            void updateRenderer(void) override;
+            void updateRenderer(void);
 
             Vec2 GetViewportPosition(void) const;
             void SetViewportPosition(const Vec2 &position);

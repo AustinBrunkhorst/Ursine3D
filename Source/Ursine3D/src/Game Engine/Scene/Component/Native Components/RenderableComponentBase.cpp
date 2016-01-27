@@ -18,8 +18,9 @@
 
 namespace ursine
 {
-    RenderableComponentBase::RenderableComponentBase(void)
-        : m_handle( 0 ) { }
+    RenderableComponentBase::RenderableComponentBase(std::function<void(void)> UpdateRenderer)
+        : m_handle( 0 )
+		, m_updateRenderer( UpdateRenderer ) { }
 
     void RenderableComponentBase::OnInitialize(ecs::Entity* owner)
     {
@@ -37,4 +38,14 @@ namespace ursine
     {
         m_dirty = true;
     }
+
+	graphics::GfxHND &RenderableComponentBase::GetHandle(void)
+	{
+		return m_handle;
+	}
+
+	void RenderableComponentBase::SetHandle(const graphics::GfxHND& handle)
+	{
+		m_handle = handle;
+	}
 }

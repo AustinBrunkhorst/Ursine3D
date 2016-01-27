@@ -63,7 +63,7 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
 
-        bool RenderSystem::cameraSortPredicate(ursine::ecs::Camera* a, ursine::ecs::Camera* b)
+        bool RenderSystem::cameraSortPredicate(Component::Handle<Camera> a, Component::Handle<Camera> b)
         {
             return a->GetRenderLayer( ) <= b->GetRenderLayer( );
         }
@@ -82,11 +82,11 @@ namespace ursine
             }
 
             else if (args->component->Is<Model3D>( ))
-                addRenderable( args->entity, static_cast<Model3D*>( const_cast<Component*>( args->component ) ) );
+                addRenderable( args->entity, static_cast<Model3D*>( const_cast<Component*>( args->component ) )->m_base );
             else if (args->component->Is<Billboard2D>( ))
-                addRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) ) );
+                addRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) )->m_base );
             else if (args->component->Is<Light>( ))
-                addRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) ) );
+                addRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) )->m_base );
             else if ( args->component->Is<Animator>( ) )
             {
                 m_animators.emplace_back(
@@ -112,11 +112,11 @@ namespace ursine
                     m_cameras.erase( search );
             }
             else if (args->component->Is<Model3D>( ))
-                removeRenderable( args->entity, static_cast<Model3D*>( const_cast<Component*>( args->component ) ) );
+                removeRenderable( args->entity, static_cast<Model3D*>( const_cast<Component*>( args->component ) )->m_base );
             else if (args->component->Is<Billboard2D>( ))
-                removeRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) ) );
+                removeRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) )->m_base );
             else if (args->component->Is<Light>( ))
-                removeRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) ) );
+                removeRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) )->m_base );
 			else if (args->component->Is<Animator>( ))
 			{
 				auto search = std::find(
@@ -144,7 +144,7 @@ namespace ursine
                 for (auto &rend : renderableVec)
                 {
                     if (rend->m_dirty)
-                        rend->updateRenderer( );
+                        rend->m_updateRenderer( );
 
                     m_graphics->RenderObject( rend->m_handle );
                 }
@@ -154,7 +154,7 @@ namespace ursine
 
 			for (size_t i = 0; i < m_cameras.size( ); ++i)
             {
-				auto *camera = m_cameras[ i ];
+				auto camera = m_cameras[ i ];
 
                 if (camera->m_dirty)
                     camera->updateRenderer( );
