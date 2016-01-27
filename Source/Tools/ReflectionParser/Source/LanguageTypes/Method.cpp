@@ -16,9 +16,8 @@
 #include "LanguageTypes/Class.h"
 #include "LanguageTypes/Method.h"
 
-#include <Utils.h>
-
 #include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 Method::Method(
     const Cursor &cursor, 
@@ -78,9 +77,7 @@ bool Method::isAccessible(void) const
 
 std::string Method::getQualifiedSignature(void) const
 {
-    std::string argsList;
-
-    ursine::utils::Join( m_signature, ", ", argsList );
+    auto argsList = boost::join( m_signature, ", " );
 
     std::string constNess = m_isConst ? " const" : "";
 

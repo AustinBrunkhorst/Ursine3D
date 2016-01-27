@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Main.cpp
+** ReflectionModule.h
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -11,18 +11,15 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#include "Test.h"
+#include "UrsinePrecompiled.h"
 
-#include <Meta.h>
+#include "ReflectionModule.h"
 
-#include <iostream>
-
-#include "MetaTestReflectionModule.h"
-#include <UrsineReflectionModule.h>
-
-int main(void)
+namespace ursine
 {
-    MetaInitialize( META_MODULE_INITIALIZER );
-
-    return 0;
+    namespace meta
+    {
+        ReflectionModule::ReflectionModule(ReflectionDatabase &db)
+            : db( db ) { }
+    }
 }

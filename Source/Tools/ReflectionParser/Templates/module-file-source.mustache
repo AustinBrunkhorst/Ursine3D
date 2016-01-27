@@ -1,22 +1,23 @@
+/* ----------------------------------------------------------------------------
+** GENERATED SOURCE FILE
+** Do not modify the contents of this file.
+**
+** Ursine3D Meta Generator v{{version}}
+** --------------------------------------------------------------------------*/
 {{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
 {{/usingPrecompiledHeader}}
-#include "{{ouputHeaderFile}}"
 
-#if !defined(URSINE_REFLECTION_INCLUDED)
+#include "{{moduleFileHeader}}"
+#include "{{moduleFileSourceHeader}}"
 
-#include <Utilities/MacroUtils.h>
-
-URSINE_ERROR( "<UrsineReflection.h> must be included in the input header file." )
-
-#endif
+#include <ReflectionDatabase.h>
 
 namespace m = ursine::meta;
 
-m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
-    auto &db = m::ReflectionDatabase::Instance( );
-
+void meta_generated::AllocateModuleFile{{targetName}}{{moduleFileName}}(m::ReflectionDatabase &db)
+{
     ///////////////////////////////////////////////////////////////////////////
-    // Class Allocations
+    // Class Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#class}}
     {
@@ -45,7 +46,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     }
     {{/class}}
     ///////////////////////////////////////////////////////////////////////////
-    // Enum Allocations
+    // Enum Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#enum}}
     {
@@ -73,6 +74,10 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
         {{/constPtrTypeEnabled}}
     }
     {{/enum}}
+}
+
+void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::ReflectionDatabase &db)
+{
     ///////////////////////////////////////////////////////////////////////////
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
@@ -272,4 +277,4 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             m::TypeInfo<{{& qualifiedName}}>::Defined = true;
         }
     }{{/class}}
-});
+}

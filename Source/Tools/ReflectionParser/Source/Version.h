@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Main.cpp
+** Version.h
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -11,18 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#include "Test.h"
+#pragma once
 
-#include <Meta.h>
-
-#include <iostream>
-
-#include "MetaTestReflectionModule.h"
-#include <UrsineReflectionModule.h>
-
-int main(void)
-{
-    MetaInitialize( META_MODULE_INITIALIZER );
-
-    return 0;
-}
+const auto kMetaGeneratorVersion = "1.0";

@@ -39,12 +39,6 @@ public:
         const ReflectionParser *context
     ) const override;
 
-    static void LoadAnonymous(
-        std::vector<Global*> &output, 
-        const Cursor &cursor, 
-        const Namespace &currentNamespace
-    );
-
 private:
     std::string m_name;
     std::string m_displayName;
