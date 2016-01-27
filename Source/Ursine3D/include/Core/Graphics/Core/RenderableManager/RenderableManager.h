@@ -11,26 +11,10 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      RenderableManager.h
-Module:         Graphics
-Purpose:        Class manager for holding all renderables
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include <vector>
-#include <list> 
+#include <stack> 
 
 #include "GfxDefines.h"
 #include "GfxHandle.h"
@@ -71,17 +55,6 @@ namespace ursine
             }
 
             template<>
-            Primitive &GetRenderable<Primitive>(GfxHND handle)
-            {
-                _RENDERABLEHND *render = HND_RENDER(handle);
-
-                UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
-                UAssert(render->Type_ == RENDERABLE_PRIMITIVE, "Attempted to use invalid handle to get a primitive!");
-
-                return m_renderablePrimitives[ render->Index_ ];
-            }
-
-            template<>
             Billboard2D &GetRenderable<Billboard2D>(GfxHND handle)
             {
                 _RENDERABLEHND *render = HND_RENDER(handle);
@@ -103,24 +76,35 @@ namespace ursine
                 return m_renderableLights[ render->Index_ ];
             }
 
+            template<>
+            ParticleSystem &GetRenderable<ParticleSystem>(GfxHND handle)
+            {
+                _RENDERABLEHND *render = HND_RENDER(handle);
+
+                UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
+                UAssert(render->Type_ == RENDERABLE_PS, "Attempted to use invalid handle to get a particle system!");
+
+                return m_renderableParticleSystems[ render->Index_ ];
+            }
+
         private:
             void CacheFrame(void);
 
         private:
             //all the renderables
             std::vector<Model3D> m_currentRenderableModel3D;
-            std::vector<Primitive> m_currentRenderablePrimitives;
             std::vector<Billboard2D> m_currentRenderableBillboards;
             std::vector<Light> m_currentRenderableLights;
+            std::vector<ParticleSystem> m_currentParticleSystems;
 
             //cahced data used to render frame N while updating frame N + 1
             std::vector<Model3D> m_renderableModel3D;
-            std::vector<Primitive> m_renderablePrimitives;
             std::vector<Billboard2D> m_renderableBillboards;
             std::vector<Light> m_renderableLights;
+            std::vector<ParticleSystem> m_renderableParticleSystems;
 
             //all the free handles
-            std::vector<std::list<unsigned>*> m_handleList;
+            std::vector<std::stack<unsigned>> m_handleList;
         };
     }
 }

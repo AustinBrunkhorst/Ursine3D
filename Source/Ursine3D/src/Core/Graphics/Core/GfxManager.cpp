@@ -219,25 +219,6 @@ namespace ursine
                 drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
-            case RENDERABLE_PRIMITIVE:
-            {
-                Primitive *current = &renderableManager->m_renderablePrimitives[ render->Index_ ];
-
-                URSINE_TODO("Remove hack for Jordan");
-                if (!current->Active_)
-                {
-                    --m_drawCount;
-                    return;
-                }
-
-                drawCall.Index_ = render->Index_;
-                drawCall.Type_ = render->Type_;
-
-                drawCall.Shader_ = SHADER_PRIMITIVE;
-                drawCall.debug_ = 1;
-                drawCall.Overdraw_ = current->GetOverdraw();
-            }
-            break;
             case RENDERABLE_BILLBOARD2D:
             {
                 Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
@@ -504,10 +485,6 @@ namespace ursine
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT)
                 RenderDirectionalLight(m_drawList[ currentIndex++ ], currentCamera);
 
-            //primitive pass
-            PrepForPrimitives(view, proj);
-            while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
-                RenderPrimitive(m_drawList[ currentIndex++ ], currentCamera );
             dxCore->EndDebugEvent( );
 
             //debug 
@@ -634,11 +611,8 @@ namespace ursine
             shaderManager->BindShader(SHADER_PRIMITIVE);
             layoutManager->SetInputLayout(SHADER_PRIMITIVE);
 
-            while (m_drawList[ currentIndex ].Shader_ == SHADER_PRIMITIVE)
-                RenderPrimitive(m_drawList[ currentIndex++ ], currentCamera );
 
             //render points and lines
-            gfxProfiler->Stamp(PROFILE_PRIMITIVES);
             dxCore->SetBlendState(BLEND_STATE_NONE);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
@@ -848,21 +822,9 @@ namespace ursine
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1));
         }
 
-        void GfxManager::PrepForPrimitives(const SMat4 &view, const SMat4 &proj)
-        {
-            gfxProfiler->Stamp(PROFILE_LIGHTS);
-
-            bufferManager->MapCameraBuffer(view, proj);
-            dxCore->SetBlendState(BLEND_STATE_DEFAULT);
-            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-            dxCore->SetRenderTarget(RENDER_TARGET_DEBUG);
-            shaderManager->BindShader(SHADER_PRIMITIVE);
-            layoutManager->SetInputLayout(SHADER_PRIMITIVE);
-        }
-
         void GfxManager::PrepForDebugRender()
         {
-            gfxProfiler->Stamp(PROFILE_PRIMITIVES);
+            gfxProfiler->Stamp(PROFILE_LIGHTS);
 
             dxCore->SetBlendState(BLEND_STATE_NONE);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
@@ -1301,74 +1263,6 @@ namespace ursine
 
             bufferManager->MapBuffer<BUFFER_DIRECTIONAL_LIGHT>(&lightB, SHADERTYPE_PIXEL);
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-        }
-
-        void GfxManager::RenderPrimitive(_DRAWHND handle, Camera &currentCamera )
-        {
-            Primitive &prim = renderableManager->m_renderablePrimitives[ handle.Index_ ];
-
-            if ( !currentCamera.CheckMask( prim.GetRenderMask( ) ) )
-                return;
-
-            //set data if it is wireframe or not
-            if (prim.GetWireFrameMode() == true)
-            {
-                dxCore->SetRasterState(RASTER_STATE_WIREFRAME_NOCULL);
-                dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-            }
-            else
-            {
-                dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
-                dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            }
-
-            //set color
-            PrimitiveColorBuffer pcb;
-            pcb.color = prim.GetColor().ToVector4().ToD3D();
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
-
-            //render specific primitive, based upon data
-            switch (prim.GetType())
-            {
-            case Primitive::PRIM_PLANE:
-                dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-                bufferManager->MapTransformBuffer(SMat4(prim.GetWidth(), 0, prim.GetHeight()) * prim.GetWorldMatrix());
-                modelManager->BindModel(modelManager->GetModelIDByName("Plane"));
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Plane")));
-                break;
-
-            case Primitive::PRIM_SPHERE:
-                bufferManager->MapTransformBuffer(SMat4(prim.GetRadius() / 2.f, prim.GetRadius() / 2.f, prim.GetRadius() / 2.f) * prim.GetWorldMatrix());
-                modelManager->BindModel(modelManager->GetModelIDByName("Sphere"));
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Sphere")));
-                break;
-            case Primitive::PRIM_CUBE:
-                bufferManager->MapTransformBuffer(SMat4(prim.GetWidth(), prim.GetHeight(), prim.GetDepth()) * prim.GetWorldMatrix());
-                modelManager->BindModel(modelManager->GetModelIDByName("Cube"));
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("Cube")));
-                break;
-            case Primitive::PRIM_CAPSULE:
-                modelManager->BindModel(modelManager->GetModelIDByName("HalfSphere"));
-
-                //render top cap
-                SMat4 trans;
-                trans.Translate(SVec3(0.0f, prim.GetHeight() * 0.5f, 0.0f));
-                bufferManager->MapTransformBuffer(SMat4(prim.GetRadius(), prim.GetRadius(), prim.GetRadius()) * trans * prim.GetWorldMatrix());
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("HalfSphere")));
-
-                //render bottom cap
-                SMat4 mat;
-                mat.TRS(SVec3(0, -prim.GetHeight() / 2.f, 0), SQuat(180.0f, 0.0f, 0.0f), SVec3(prim.GetRadius()));
-
-                bufferManager->MapTransformBuffer(mat * prim.GetWorldMatrix());
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("HalfSphere")));
-
-                //render body
-                modelManager->BindModel(modelManager->GetModelIDByName("CapsuleBody"));
-                bufferManager->MapTransformBuffer(SMat4(prim.GetRadius(), prim.GetHeight(), prim.GetRadius()) * prim.GetWorldMatrix());
-                shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("CapsuleBody")));
-                break;
-            }
         }
 
         void GfxManager::RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw)
