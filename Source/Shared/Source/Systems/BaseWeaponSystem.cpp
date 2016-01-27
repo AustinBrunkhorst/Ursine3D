@@ -13,8 +13,9 @@
 #include "Precompiled.h"
 #include "BaseWeaponSystem.h"
 #include "WeaponLogic/Weapons/AbstractWeapon.h"
-#include "WeaponLogic/Weapons/BaseWeaponComponent.h"
 #include "WeaponLogic/Weapons/AbstractHitScanWeapon.h"
+#include "WeaponLogic/Weapons/BaseWeaponComponent.h"
+#include "WeaponLogic/Weapons/HitscanWeaponComponent.h"
 #include "WallComponent.h"
 #include "DamageOnCollideComponent.h"
 #include "ProjectileComponent.h"
@@ -29,7 +30,7 @@
 
 
 ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
-
+ENTITY_SYSTEM_DEFINITION(HitscanWeaponSystem);
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -206,8 +207,7 @@ namespace
 ////  Base Weapon System  ////
 //////////////////////////////
 BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World* world ) 
-    : EntitySystem( world ),
-    m_physicsSystem( *world->GetEntitySystem(PhysicsSystem) )
+    : EntitySystem( world )
 {
 }
 
@@ -349,13 +349,14 @@ void BaseWeaponSystem::CreateProjectiles(const AbstractWeapon& weapon, ursine::e
 /////////////////////////////////
 
 HitscanWeaponSystem::HitscanWeaponSystem(ursine::ecs::World* world)
-    : EntitySystem(world),
-    m_physicsSystem(*world->GetEntitySystem(PhysicsSystem))
+    : EntitySystem(world)
 {
 }
 
 void HitscanWeaponSystem::OnInitialize(void)
 {
+    m_physicsSystem = m_world->GetEntitySystem(PhysicsSystem);
+
     m_world->Listener(this)
         .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
             , &HitscanWeaponSystem::OnComponentAdded)
@@ -483,7 +484,7 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         rayin.end = pos = trans.GetWorldPosition( ) + trans.GetForward( ) * weapon.m_maxRange + spray;
 
         // get ray to first wall / end of range from center of camera
-        m_physicsSystem.Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS);
+        m_physicsSystem->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS);
 
         for ( auto it : rayout.entity )
         {
@@ -500,7 +501,7 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         rayin.start = trans.GetWorldPosition( );
         rayin.end = pos;
 
-        if ( m_physicsSystem.Raycast(rayin, rayout, weapon.m_raycastType) )
+        if ( m_physicsSystem->Raycast(rayin, rayout, weapon.m_raycastType) )
         {
             switch ( weapon.m_raycastType )
             {

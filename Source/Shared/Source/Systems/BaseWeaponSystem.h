@@ -52,8 +52,6 @@ private:
     void FireProjectileWeapon(AbstractWeapon& weapon, ursine::ecs::Transform& trans);
 
     void CreateProjectiles(const AbstractWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
-
-    ursine::ecs::PhysicsSystem& m_physicsSystem;
     
     std::unordered_map < ursine::ecs::EntityUniqueID, AbstractWeapon* > m_weapons;
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
@@ -88,7 +86,7 @@ private:
 
     void CreateRaycasts(const AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
 
-    ursine::ecs::PhysicsSystem& m_physicsSystem;
+    ursine::ecs::PhysicsSystem* m_physicsSystem;
 
     std::unordered_map < ursine::ecs::EntityUniqueID, AbstractHitscanWeapon* > m_weapons;
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;

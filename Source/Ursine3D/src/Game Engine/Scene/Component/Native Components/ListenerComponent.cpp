@@ -43,7 +43,6 @@ namespace ursine
 
 		void AudioListener::OnInitialize(void)
 		{
-            Component::OnInitialize( );
 		}
 	}
 }

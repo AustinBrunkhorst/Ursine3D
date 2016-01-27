@@ -37,8 +37,6 @@ namespace ursine
 
 		void Body::OnInitialize(void)
 		{
-            Component::OnInitialize( );
-
 			GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Body::onTransformChange );
 

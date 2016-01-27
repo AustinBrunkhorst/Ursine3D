@@ -66,8 +66,6 @@ namespace ursine
 
         void PhysicsSettings::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
             m_physicsSystem = GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem );
 
             m_physicsSystem->SetGravity( m_gravity );

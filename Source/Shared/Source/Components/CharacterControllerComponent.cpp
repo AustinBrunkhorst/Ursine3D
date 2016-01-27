@@ -112,8 +112,6 @@ void CharacterController::SetLookDirection(const ursine::Vec2& lookDir)
 
 void CharacterController::OnInitialize(void)
 {
-    Component::OnInitialize( );
-
     GetOwner( )->GetWorld( )->Listener( this )
         .On( ursine::ecs::WORLD_UPDATE, &CharacterController::onUpdate );
 

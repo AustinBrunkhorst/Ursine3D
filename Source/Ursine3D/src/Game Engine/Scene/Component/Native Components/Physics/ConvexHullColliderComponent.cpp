@@ -38,8 +38,6 @@ namespace ursine
 
 		void ConvexHullCollider::OnInitialize(void)
 		{
-            Component::OnInitialize( );
-
 			GetOwner( )->Listener( this )
 				.On( ENTITY_TRANSFORM_DIRTY, &ConvexHullCollider::onTransformChange );
 		}

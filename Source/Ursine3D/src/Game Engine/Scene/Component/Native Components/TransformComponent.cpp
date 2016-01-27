@@ -53,8 +53,6 @@ namespace ursine
 
         void Transform::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
             dispatchAndSetDirty( true, true, true );
         }
 

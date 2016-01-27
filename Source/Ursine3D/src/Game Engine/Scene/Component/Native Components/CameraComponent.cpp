@@ -44,8 +44,6 @@ namespace ursine
 
         void Camera::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
             RenderableComponentBase::OnInitialize( GetOwner( ) );
         }
 
