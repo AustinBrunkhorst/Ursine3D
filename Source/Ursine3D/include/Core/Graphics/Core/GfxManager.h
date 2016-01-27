@@ -11,21 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      GfxManager.h
-Module:         Graphics
-Purpose:        Core of graphics
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
 #pragma once
 
 #include "DirectXCore.h"
@@ -140,7 +125,6 @@ namespace ursine
             void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForSpotlightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj);
-            void PrepForPrimitives(const SMat4 &view, const SMat4 &proj);
             void PrepForDebugRender(void);
             void PrepForFinalOutput(void);
             void PrepForUI(void);
@@ -153,7 +137,6 @@ namespace ursine
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderSpotLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
-            void RenderPrimitive(_DRAWHND handle, Camera &currentcamera );
             void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
             void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
 

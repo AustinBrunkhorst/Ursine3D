@@ -39,11 +39,6 @@ namespace ursine
             return m_privates->renderMgr->GetRenderable<Model3D>(handle);
         }
 
-        Primitive &RenderableAPI::GetPrimitive(GfxHND &handle)
-        {
-            return m_privates->renderMgr->GetRenderable<Primitive>(handle);
-        }
-
         Billboard2D &RenderableAPI::GetBillboard2D(GfxHND &handle)
         {
             return m_privates->renderMgr->GetRenderable<Billboard2D>(handle);
