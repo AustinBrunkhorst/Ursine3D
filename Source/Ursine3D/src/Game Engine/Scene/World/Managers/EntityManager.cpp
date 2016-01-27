@@ -21,6 +21,12 @@
 
 #include <queue>
 
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
+
 namespace ursine
 {
     namespace ecs
@@ -135,6 +141,58 @@ namespace ursine
                 "Component already exists: %s",
                 component->GetType( ).GetName( ).c_str( ) );
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            auto type = component->GetType( );
+            auto *required = type.GetMeta( ).GetProperty<RequiresComponents>( );
+
+            if (required)
+            {
+                for (auto &componentType : required->componentTypes)
+                {
+                    auto id = componentType.GetStaticField( "ComponentID" );
+                    
+                    UAssert( id.IsValid( ),
+                        "Required component '%s' doesn't have ComponentID static field.",
+                        componentType.GetName( ).c_str( )
+                    );
+
+                    ComponentTypeMask mask = 1ull << id.GetValue( ).GetValue<ComponentTypeID>( );
+
+                    if (!entity->HasComponent( mask ))
+                    {
+                        NotificationConfig error;
+
+                        error.type = NOTIFY_ERROR;
+                        error.header = "Error";
+                        error.message = 
+                            "Component <strong class=\"highlight\">" + type.GetName( ) + "</strong> requires component "+ 
+                            "<strong class=\"highlight\">" + componentType.GetName( ) + "</strong>";
+
+                        error.buttons = {
+                            { 
+                                "Add Dependency", 
+                                [=](Notification &notification)
+                                {
+                                    notification.Close( );
+
+                                    entity->AddComponent( componentType.CreateDynamic( ).GetValue<Component*>( ) );
+                                }
+                            }
+                        };
+
+                        EditorPostNotification( error );
+
+                        // we ain't want this guy
+                        delete component;
+
+                        return;
+                    }
+                }
+            }
+
+        #endif
+
             addComponent( entity, component );
 
             component->OnInitialize( );
@@ -159,6 +217,43 @@ namespace ursine
 
             UAssert( id != GetComponentID( Transform ),
                 "You can't remove a Transform component." );
+
+        #endif
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            if (!entity->HasComponent( 1ull << id ))
+                return;
+
+            auto removedType = m_componentTypes[ id ][ entity->m_id ]->GetType( );
+            auto components = GetComponents( entity );
+
+            for (auto *component : components)
+            {
+                auto type = component->GetType( );
+
+                auto *required = type.GetMeta( ).GetProperty<RequiresComponents>( );
+
+                if (required)
+                {
+                    auto search = required->componentTypes.Find( removedType );
+
+                    if (search != required->componentTypes.end( ))
+                    {
+                        NotificationConfig error;
+
+                        error.type = NOTIFY_ERROR;
+                        error.header = "Error";
+                        error.message = 
+                            "Component <strong>" + type.GetName( ) + "</strong> requires component " + 
+                            "<strong>" + removedType.GetName( ) + "</strong>";
+
+                        EditorPostNotification( error );
+
+                        return;
+                    }
+                }
+            }
 
         #endif
 

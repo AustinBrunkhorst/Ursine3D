@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "Macros.h"
+
 #include "TypeConfig.h"
 #include "InvokableConfig.h"
 #include "ArgumentConfig.h"
@@ -45,6 +47,13 @@ namespace ursine
             typedef std::function<Variant(const Variant &, const Field &)> SerializationGetterOverride;
 
             static const TypeID Invalid = 0;
+
+            #if defined(___REFLECTION_PARSER__)
+
+            Meta(Enable, Getter( "GetName" ))
+            const std::string name;
+
+            #endif
 
             Type(void);
             Type(const Type &rhs);
@@ -444,7 +453,7 @@ namespace ursine
 
             TypeID m_id;
             bool m_isArray;
-        };
+        } Meta(Enable, WhiteListMethods);
     }
 }
 

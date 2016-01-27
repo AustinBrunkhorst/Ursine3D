@@ -40,3 +40,4 @@
 #include "Tools/JavaScript/SceneUtils.h"
 #include "Tools/JavaScript/EntityUtils.h"
 #include "Tools/JavaScript/ComponentUtils.h"
+#include "Tools/JavaScript/NotificationUtils.h"

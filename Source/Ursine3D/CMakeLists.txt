@@ -119,7 +119,7 @@ if (MSVC)
     target_compile_options(Ursine3D PUBLIC /MP)
 
     # ignore linker warnings for no symbols or pdbs
-    set_property(TARGET Ursine3D APPEND PROPERTY LINK_FLAGS "/ignore:4099 /ignore:4221")
+    set_property(TARGET Ursine3D APPEND PROPERTY STATIC_LIBRARY_FLAGS "/ignore:4099 /ignore:4221")
     
     set(URSINE_SHADER_DIR "${ENGINE_RESOURCES_DIR}/Shaders")
 
