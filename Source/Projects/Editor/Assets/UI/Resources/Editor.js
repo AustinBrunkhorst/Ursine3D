@@ -662,6 +662,15 @@ ursine_editor_menus_FileMenu.doOpen = function() {
 ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 });
+var ursine_editor_menus_HelpMenu = function() { };
+$hxClasses["ursine.editor.menus.HelpMenu"] = ursine_editor_menus_HelpMenu;
+ursine_editor_menus_HelpMenu.__name__ = ["ursine","editor","menus","HelpMenu"];
+ursine_editor_menus_HelpMenu.doOpenGettingStarted = function() {
+	window.open("Documentation/Getting Started/GettingStarted.html");
+};
+ursine_editor_menus_HelpMenu.__super__ = ursine_editor_MenuItemHandler;
+ursine_editor_menus_HelpMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+});
 var ursine_editor_scene_component_ComponentDatabase = function(database) {
 	this.m_componentInspectionHandlers = new haxe_ds_StringMap();
 	this.m_fieldInspectionHandlers = new haxe_ds_StringMap();
@@ -1937,6 +1946,7 @@ ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : {
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene"]}, doOpen : { mainMenuItem : ["File/Save Scene"]}}};
+ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Getting Started"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};

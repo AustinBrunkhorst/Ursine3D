@@ -184,10 +184,7 @@ void TranslateTool::OnUpdate(KeyboardManager *kManager, MouseManager *mManager)
 		m_deleteGizmo = false;
 	}
 
-	if (kManager->IsDown( KEY_LMENU ))
-		m_altDown = true;
-	else
-		m_altDown = false;
+	m_altDown = kManager->IsDown( KEY_LMENU );
 
 	updateAxis( );
 }

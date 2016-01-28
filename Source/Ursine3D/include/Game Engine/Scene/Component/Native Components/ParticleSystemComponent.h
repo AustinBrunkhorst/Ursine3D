@@ -23,11 +23,11 @@ namespace ursine
 {
     namespace ecs
     {
-        class ParticleSystem
-            : public Component
-            , public RenderableComponentBase
+        class ParticleSystem : public Component
         {
             NATIVE_COMPONENT;
+
+			friend class RenderSystem;
 
         public:
             //EditorField(
@@ -58,11 +58,13 @@ namespace ursine
 
             void DestroyParticle(const int index);
 
-            // command all particle components to operate on the set of particles
-            void updateRenderer(void) override;
-
         private:
             graphics::ParticleSystem *m_particleSystem;
+
+			// command all particle components to operate on the set of particles
+			void updateRenderer(void);
+
+			RenderableComponentBase *m_base;
 
             // color
         } Meta(Enable, DisplayName("ParticleSystem"));
