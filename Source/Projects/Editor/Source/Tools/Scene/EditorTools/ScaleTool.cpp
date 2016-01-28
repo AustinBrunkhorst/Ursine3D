@@ -82,7 +82,12 @@ void ScaleTool::OnMouseDown(const MouseButtonArgs& args)
 
 	auto entityTrans = entity->GetTransform( );
 
-	auto rootName = entityTrans->GetRoot( )->GetOwner( )->GetName( );
+	auto root = entityTrans->GetRoot( );
+
+	if (!root)
+		return;
+
+	auto rootName = root->GetOwner( )->GetName( );
 
 	// if we're clicking on ourselves, set the dragging flag,
 	// and the vector we're dragging on

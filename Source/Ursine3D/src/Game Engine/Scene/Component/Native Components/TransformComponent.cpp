@@ -26,8 +26,6 @@ namespace ursine
         Transform::Transform(void)
             : BaseComponent( )
             , m_dirty( true )
-            , m_root( this )
-            , m_parent( nullptr )
             , m_localScale( 1.0f ) { }
 
         Transform::Transform(const Transform &transform)
@@ -53,6 +51,11 @@ namespace ursine
 
         void Transform::OnInitialize(void)
         {
+			if (!m_root)
+				m_root = this;
+			if (!m_parent)
+				m_parent = nullptr;
+
             dispatchAndSetDirty( true, true, true );
         }
 

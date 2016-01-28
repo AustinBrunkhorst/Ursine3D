@@ -56,6 +56,12 @@
 
     #define MetaExternal(type)
 
+    #define MetaInitialize(initializer)                               \
+        {                                                             \
+            auto &db = ursine::meta::ReflectionDatabase::Instance( ); \
+            initializer;                                              \
+        }                                                             \
+
     // Used in objects to preserve virtual inheritance functionality
     #define META_OBJECT                                  \
         ursine::meta::Type GetType(void) const override  \

@@ -47,10 +47,10 @@ AbstractWeapon::~AbstractWeapon(void)
 void AbstractWeapon::Initialize(void)
 {
     if ( m_maxAmmoCount == 0 )
-        m_maxAmmoCount = UNLIMITED_AMMO - 1;
+        m_maxAmmoCount = UNLIMITED_AMMO;
 
     if ( m_clipSize == 0 )
-        m_clipSize = UNLIMITED_CLIP - 1;
+        m_clipSize = UNLIMITED_CLIP;
 
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;

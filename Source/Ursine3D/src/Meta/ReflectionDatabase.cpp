@@ -139,14 +139,5 @@ namespace ursine
 
             return search->second;
         }
-
-        ///////////////////////////////////////////////////////////////////////
-
-        ReflectionDatabase::Initializer::Initializer(
-            std::function<void()> initializer
-        )
-        {
-            initializer( );
-        }
     }
 }

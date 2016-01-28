@@ -43,12 +43,13 @@ void EditorToolSystem::OnAfterLoad(void)
 	auto world = editor->GetProject( )->GetScene( )->GetWorld( );
 
 	m_selectTool = new SelectTool( editor );
+	m_dupTool = new DuplicateTool( editor );
 
 	m_tools[ KEY_1 ] = m_selectTool;
 	m_tools[ KEY_2 ] = new TranslateTool( editor );
 	m_tools[ KEY_3 ] = new ScaleTool( editor );
 	m_tools[ KEY_4 ] = new RotateTool( editor );
-	m_tools[ KEY_5 ] = new DuplicateTool( editor );
+	m_tools[ KEY_5 ] = m_dupTool;
 
 	m_currentTool = m_tools[ KEY_1 ];
 
@@ -112,11 +113,12 @@ void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
     if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
         return;
 
-	// We always update the select tool
-	if (m_currentTool != m_selectTool)
-		m_selectTool->OnMouseDown( *args );
-
 	m_currentTool->OnMouseDown( *args );
+
+	// We always update the select tool
+	if (m_currentTool != m_selectTool && 
+	   (m_currentTool != m_dupTool || args->button == MBTN_RIGHT || m_currentSelected == -1))
+		m_selectTool->OnMouseDown( *args );
 }
 
 void EditorToolSystem::onMouseUp(EVENT_HANDLER(ursine:MouseManager))

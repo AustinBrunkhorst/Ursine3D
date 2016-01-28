@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include "Meta.h"
-
 #include "UrsineReflectionExternal.h"
 
 #include "UrsineTypes.h"

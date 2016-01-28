@@ -207,71 +207,31 @@ namespace
 ////  Base Weapon System  ////
 //////////////////////////////
 BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World* world ) 
-    : EntitySystem( world )
+    : FilterSystem( world, Filter( ).One<BaseWeapon>( ) )
 {
 }
 
-void BaseWeaponSystem::OnInitialize( void )
+void BaseWeaponSystem::Enable(ursine::ecs::Entity& entity)
 {
-    m_world->Listener(this)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &BaseWeaponSystem::OnComponentAdded)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &BaseWeaponSystem::OnComponentRemoved)
-        .On(ecs::WorldEventType::WORLD_UPDATE
-            , &BaseWeaponSystem::Process);
-}
-
-void BaseWeaponSystem::OnRemove(void)
-{
-    m_world->Listener(this)
-        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &BaseWeaponSystem::OnComponentAdded)
-        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &BaseWeaponSystem::OnComponentRemoved)
-        .Off(ecs::WorldEventType::WORLD_UPDATE
-            , &BaseWeaponSystem::Process);
-}
-
-void BaseWeaponSystem::OnComponentAdded(EVENT_HANDLER(World))
-{
-    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
+    auto uniqueID = entity.GetUniqueID( );
     
-    auto id = args->entity->GetID( );
-    auto it = m_weapons.find( id );
+    // grab all comps needed
+    if ( entity.HasComponent< BaseWeapon >( ) )
+        m_weapons[ uniqueID ] = entity.GetComponent< BaseWeapon >( );
 
-    if ( it == m_weapons.end( ) )
-    {
-        AbstractWeapon* weapon = nullptr;
+    m_transforms[ uniqueID ] = entity.GetTransform( );
 
-        if ( args->component->Is<BaseWeapon>( ) )
-        {
-            weapon = args->entity->GetComponent<BaseWeapon>( );
-        }
-
-        if ( weapon != nullptr )
-        {
-            m_weapons[ id ] = weapon;
-
-            m_transforms[ id ] = args->entity->GetTransform( );
-        }
-    }
 }
 
-void BaseWeaponSystem::OnComponentRemoved(EVENT_HANDLER(World))
+void BaseWeaponSystem::Disable(ursine::ecs::Entity& entity)
 {
-    EVENT_ATTRS(World, ComponentEventArgs);
+    auto uniqueID = entity.GetUniqueID( );
 
-    auto it = m_weapons.find(args->entity->GetID( ));
-
-    if ( it != m_weapons.end( ) )
-    {
-        m_weapons.erase( it );
-        m_transforms.erase( it->first );
-    }
+    m_weapons.erase( uniqueID );
+    m_transforms.erase( uniqueID );
 }
 
-void BaseWeaponSystem::Process(EVENT_HANDLER(World))
+void BaseWeaponSystem::onUpdate(EVENT_HANDLER(World))
 {
     float dt = Application::Instance->GetDeltaTime( );
 
@@ -349,73 +309,36 @@ void BaseWeaponSystem::CreateProjectiles(const AbstractWeapon& weapon, ursine::e
 /////////////////////////////////
 
 HitscanWeaponSystem::HitscanWeaponSystem(ursine::ecs::World* world)
-    : EntitySystem(world)
+    : FilterSystem( world, Filter( ).One< HitscanWeapon >( ) )
 {
 }
 
-void HitscanWeaponSystem::OnInitialize(void)
+void HitscanWeaponSystem::Initialize(void)
 {
     m_physicsSystem = m_world->GetEntitySystem(PhysicsSystem);
-
-    m_world->Listener(this)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &HitscanWeaponSystem::OnComponentAdded)
-        .On(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &HitscanWeaponSystem::OnComponentRemoved)
-        .On(ecs::WorldEventType::WORLD_UPDATE
-            , &HitscanWeaponSystem::Process);
 }
 
-void HitscanWeaponSystem::OnRemove(void)
+void HitscanWeaponSystem::Enable(ursine::ecs::Entity& entity)
 {
-    m_world->Listener(this)
-        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED
-            , &HitscanWeaponSystem::OnComponentAdded)
-        .Off(ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED
-            , &HitscanWeaponSystem::OnComponentRemoved)
-        .Off(ecs::WorldEventType::WORLD_UPDATE
-            , &HitscanWeaponSystem::Process);
+    auto uniqueID = entity.GetUniqueID( );
+
+    // grab all comps needed
+    if ( entity.HasComponent< HitscanWeapon >( ) )
+        m_weapons[ uniqueID ] = entity.GetComponent< HitscanWeapon >( );
+
+    m_transforms[ uniqueID ] = entity.GetTransform( );
+
 }
 
-void HitscanWeaponSystem::OnComponentAdded(EVENT_HANDLER(World))
+void HitscanWeaponSystem::Disable(ursine::ecs::Entity& entity)
 {
-    EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
+    auto uniqueID = entity.GetUniqueID( );
 
-    auto id = args->entity->GetID( );
-    auto it = m_weapons.find(id);
-
-    if ( it == m_weapons.end( ) )
-    {
-        AbstractHitscanWeapon* weapon = nullptr;
-
-        if ( args->component->Is<HitscanWeapon>( ) )
-        {
-            weapon = args->entity->GetComponent<HitscanWeapon>( );
-        }
-
-        if ( weapon != nullptr )
-        {
-            m_weapons[ id ] = weapon;
-
-            m_transforms[ id ] = args->entity->GetTransform( );
-        }
-    }
+    m_weapons.erase(uniqueID);
+    m_transforms.erase(uniqueID);
 }
 
-void HitscanWeaponSystem::OnComponentRemoved(EVENT_HANDLER(World))
-{
-    EVENT_ATTRS(World, ComponentEventArgs);
-
-    auto it = m_weapons.find(args->entity->GetID( ));
-
-    if ( it != m_weapons.end( ) )
-    {
-        m_weapons.erase(it);
-        m_transforms.erase(it->first);
-    }
-}
-
-void HitscanWeaponSystem::Process(EVENT_HANDLER(World))
+void HitscanWeaponSystem::onUpdate(EVENT_HANDLER(World))
 {
     float dt = Application::Instance->GetDeltaTime( );
 
@@ -484,7 +407,7 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         rayin.end = pos = trans.GetWorldPosition( ) + trans.GetForward( ) * weapon.m_maxRange + spray;
 
         // get ray to first wall / end of range from center of camera
-        m_physicsSystem->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS);
+        m_physicsSystem->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS, true, 1.0f, true);
 
         for ( auto it : rayout.entity )
         {
@@ -501,7 +424,7 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         rayin.start = trans.GetWorldPosition( );
         rayin.end = pos;
 
-        if ( m_physicsSystem->Raycast(rayin, rayout, weapon.m_raycastType) )
+        if ( m_physicsSystem->Raycast(rayin, rayout, weapon.m_raycastType, true, 1.0f, true) )
         {
             switch ( weapon.m_raycastType )
             {

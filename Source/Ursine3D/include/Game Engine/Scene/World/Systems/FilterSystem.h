@@ -45,20 +45,21 @@ namespace ursine
             void onEntityRemoved(EVENT_HANDLER(World));
 
             // game tick
-            void onUpdate(EVENT_HANDLER(World));
+            virtual void onUpdate(EVENT_HANDLER(World));
 
             const Filter m_filter;
 
         protected:
             std::unordered_map<EntityUniqueID, Entity*> m_active;
 
-            void Add(Entity *entity);
-            void Remove(Entity *entity);
+            void Add(Entity &entity);
+            void Remove(Entity &entity);
 
-            void Enable(Entity *entity);
-            void Disable(Entity *entity);
+            virtual void Enable(Entity &entity);
+            virtual void Disable(Entity &entity);
 
             virtual void OnInitialize(void) override;
+            virtual void Initialize(void);
             virtual void OnRemove(void) override;
 
             // Setting the update type must happen before OnInitialize is called
