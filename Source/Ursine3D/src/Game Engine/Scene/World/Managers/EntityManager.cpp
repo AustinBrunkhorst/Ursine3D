@@ -245,8 +245,8 @@ namespace ursine
                         error.type = NOTIFY_ERROR;
                         error.header = "Error";
                         error.message = 
-                            "Component <strong>" + type.GetName( ) + "</strong> requires component " + 
-                            "<strong>" + removedType.GetName( ) + "</strong>";
+                            "Component <strong class=\"highlight\">" + type.GetName( ) + "</strong> requires component " + 
+                            "<strong class=\"highlight\">" + removedType.GetName( ) + "</strong>";
 
                         EditorPostNotification( error );
 

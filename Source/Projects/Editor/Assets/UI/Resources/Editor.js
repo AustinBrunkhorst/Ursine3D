@@ -1557,7 +1557,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	,onAddComponentTypeSelected: function(e) {
 		var componentType = e.detail.type;
 		if(this.m_inspectedEntity.hasComponent(componentType)) {
-			var notification = new NotificationControl(2,"Entity already has component type <strong>" + componentType + "</strong>","Error");
+			var notification = new NotificationControl(2,"Entity already has component type <strong class=\"highlight\">" + componentType + "</strong>","Error");
 			notification.show();
 			return;
 		}

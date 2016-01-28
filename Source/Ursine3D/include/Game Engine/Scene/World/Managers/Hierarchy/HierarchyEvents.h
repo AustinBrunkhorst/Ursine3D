@@ -22,7 +22,7 @@ namespace ursine
     {
         struct ParentChangedArgs : public EventArgs
         {
-			EntityID newParent, oldParent;
+			Entity *newParent, *oldParent;
       
             ParentChangedArgs(Entity *newParent, Entity *oldParent);
         };

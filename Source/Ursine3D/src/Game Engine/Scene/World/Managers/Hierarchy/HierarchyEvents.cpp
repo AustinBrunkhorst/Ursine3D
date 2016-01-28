@@ -20,8 +20,8 @@ namespace ursine
 {
     namespace ecs
     {
-        ParentChangedArgs::ParentChangedArgs(Entity* newParent, Entity* oldParent)
-            : newParent( newParent ? newParent->GetID( ) : -1 )
-		    , oldParent( oldParent ? oldParent->GetID( ) : -1 ) { }
+        ParentChangedArgs::ParentChangedArgs(Entity *newParent, Entity *oldParent)
+            : newParent( newParent )
+		    , oldParent( oldParent ) { }
     }
 }
