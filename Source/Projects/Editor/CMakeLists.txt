@@ -7,6 +7,9 @@ add_definitions(
     -D_HAS_EXCEPTIONS=0
 )
 
+# make sure we're building with editor
+set(GLOBAL_META_FLAGS "-DURSINE_WITH_EDITOR")
+
 include(GlobalConfig)
 
 add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
@@ -28,7 +31,6 @@ ursine_project(Editor
     INSTALLER_VERSION "0.1submission"
     META_HEADER "EditorReflection.h"
     META_MODULE_HEADER "EditorReflectionModule.h"
-    META_FLAGS -DURSINE_WITH_EDITOR
     META_MODULE_DEPENDS Ursine3D Shared
     PCH_NAME "Precompiled"
 )
