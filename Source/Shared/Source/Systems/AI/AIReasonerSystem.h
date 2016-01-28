@@ -1,5 +1,5 @@
 #include "EntitySystem.h"
-#include "AIReasonerComponent.h"
+#include "AIHordeReasoner.h"
 
 namespace ursine
 {
@@ -11,7 +11,9 @@ namespace ursine
 
         class AIReasonerSystem : EntitySystem
         {
-            explicit AIReasonerSystem(World* world);
+            ENTITY_SYSTEM;
+
+            AIReasonerSystem(World* world);
 
 
             void OnInitialize(void) override;
@@ -22,7 +24,8 @@ namespace ursine
 
             void onUpdate(EVENT_HANDLER(World));
 
-            std::vector<AIReasoner *> m_reasoners;
-        };
+            std::vector<AIHorde *> m_reasoners;
+
+        }Meta( Enable );
     }
 }

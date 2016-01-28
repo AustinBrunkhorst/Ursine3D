@@ -48,4 +48,20 @@ class Extern {
     public static function NotificationCloseCallback(id : UInt) {
         return untyped __js__( "ursine_NotificationCloseCallback(id)" );
     }
+
+    public static function WaypointUnidirectionalConnector() {
+        return untyped __js__( "WaypointUnidirectionalConnector()" );
+    }
+
+    public static function WaypointBidirectionalConnector() {
+        return untyped __js__( "WaypointBidirectionalConnector()" );
+    }
+
+    public static function WaypointEnableDrawLines() {
+        return untyped __js__( "WaypointEnableDrawLines()");
+    }
+
+    public static function WaypointDisableDrawLines() {
+        return untyped __js__( "WaypointDisableDrawLines()");
+    }
 }
