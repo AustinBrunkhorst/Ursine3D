@@ -13,12 +13,13 @@ namespace ursine
         {
             ENTITY_SYSTEM;
 
+        public:
             AIReasonerSystem(World* world);
 
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
-
+        private:
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
