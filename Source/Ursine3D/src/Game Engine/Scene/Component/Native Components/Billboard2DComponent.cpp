@@ -30,24 +30,30 @@ namespace ursine
             // store a pointer to the GfxAPI core system
             m_graphics = GetCoreSystem(graphics::GfxAPI);
 
-            m_handle = m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_BILLBOARD2D);
+			m_base = new RenderableComponentBase([=] {
+				updateRenderer( );
+			});
+
+            m_base->SetHandle( m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_BILLBOARD2D) );
 
             // store a pointer to the model
-            m_billboard = &m_graphics->RenderableMgr.GetBillboard2D(m_handle);
+            m_billboard = &m_graphics->RenderableMgr.GetBillboard2D(m_base->GetHandle( ));
         } 
 
         Billboard2D::~Billboard2D(void)
         {
-            RenderableComponentBase::OnRemove( GetOwner( ) );
+            m_base->OnRemove( GetOwner( ) );
 
-            m_graphics->RenderableMgr.DestroyRenderable( m_handle );
+            m_graphics->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
+
+			delete m_base;
         }
 
         void Billboard2D::OnInitialize() 
         {
             Component::OnInitialize( );
 
-            RenderableComponentBase::OnInitialize( GetOwner( ) );
+            m_base->OnInitialize( GetOwner( ) );
 
             // set the unique id
             m_billboard->SetEntityUniqueID(GetOwner()->GetUniqueID());
@@ -56,7 +62,7 @@ namespace ursine
         void Billboard2D::updateRenderer(void)
         {
             auto trans = GetOwner()->GetTransform();
-            auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D( m_handle );
+            auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D( m_base->GetHandle( ) );
 
             billboard.SetPosition(trans->GetWorldPosition());
         }

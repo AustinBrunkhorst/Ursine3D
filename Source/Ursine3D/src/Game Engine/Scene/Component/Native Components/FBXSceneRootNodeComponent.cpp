@@ -84,7 +84,7 @@ namespace ursine
             }
         }
 
-        void FBXSceneRootNode::recursClearChildren(std::vector<Transform *> children)
+        void FBXSceneRootNode::recursClearChildren(const std::vector< Handle<Transform> > &children)
         {
             for (auto &child : children)
             {

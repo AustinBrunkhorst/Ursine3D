@@ -22,4 +22,4 @@ public:
 	Meta(Enable)
 	DisableSelection(void);
 
-} Meta(Enable, WhiteListMethods, HiddenInInspector);
+} Meta(Enable, WhiteListMethods, /*HiddenInInspector*/);

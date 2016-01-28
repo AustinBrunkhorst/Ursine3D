@@ -135,7 +135,8 @@ class SceneOutline extends WindowHandler {
         if (m_selectedEntities.indexOf( e.uniqueID ) != -1)
             selectEntity( null );
 
-        item.parentNode.removeChild( item );
+        if (item.parentNode != null)
+            item.parentNode.removeChild( item );
 
         m_entityItems.remove( e.uniqueID );
     }

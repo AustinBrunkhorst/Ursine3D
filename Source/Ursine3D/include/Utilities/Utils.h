@@ -46,7 +46,7 @@ namespace ursine
 
         // Sort inserts into a given container (assuming it's already sorted)
         template<typename Container, class T, class Predicate>
-        void InsertionSort(Container &v, const T &item, Predicate predicate);
+        void InsertionSort(Container &v, const T &item, Predicate predicate = std::less<T>( ));
 
         URSINE_TODO("Implement the binary search utility"
                     " (http://stackoverflow.com/questions/446296/where-can-i-get-a-useful-c-binary-search-algorithm)");

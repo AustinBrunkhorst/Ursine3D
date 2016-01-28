@@ -82,7 +82,12 @@ void RotateTool::OnMouseDown(const MouseButtonArgs& args)
 
 	auto entityTrans = entity->GetTransform( );
 
-	auto rootName = entityTrans->GetRoot( )->GetOwner( )->GetName( );
+	auto root = entityTrans->GetRoot( );
+
+	if (!root)
+		return;
+
+	auto rootName = root->GetOwner( )->GetName( );
 
 	// if we're clicking on ourselves, set the dragging flag,
 	// and the vector we're dragging on
@@ -178,10 +183,7 @@ void RotateTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 		m_deleteGizmo = false;
 	}
 
-	if (kManager->IsDown( KEY_LMENU ))
-		m_altDown = true;
-	else
-		m_altDown = false;
+	m_altDown = kManager->IsDown( KEY_LMENU );
 
 	updateAxis( );
 }
@@ -263,7 +265,7 @@ void RotateTool::updateAxis(void)
 
 void RotateTool::setEntitySerializationToggle(bool toggle, Entity* entity)
 {
-	for (auto *child : entity->GetTransform( )->GetChildren( ))
+	for (auto child : entity->GetTransform( )->GetChildren( ))
 	{
 		setEntitySerializationToggle( toggle, child->GetOwner( ) );
 	}

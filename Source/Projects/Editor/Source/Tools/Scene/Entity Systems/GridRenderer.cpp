@@ -57,7 +57,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
 {
     EVENT_ATTRS(ecs::RenderSystem, ecs::RenderHookArgs);
 
-    auto settings = m_world->GetSettings()->GetComponent<GridRendererSettings>( );
+     auto settings = m_world->GetSettings()->GetComponent<GridRendererSettings>( );
 
     if (!settings)
         return;
@@ -132,7 +132,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
         else if (( int )(posZ * ( int )scalar) % subSector == 0)
             m_graphics->DrawingMgr.SetColor( subColor[ 0 ], subColor[ 1 ], subColor[ 2 ], subColor[ 3 ] );
         else
-            m_graphics->DrawingMgr.SetColor( gridColor[ 0 ], gridColor[ 1 ], gridColor[ 2 ], gridColor[ 3 ] );
+            m_graphics->DrawingMgr.SetColor( gridColor[ 0 ], gridColor[ 1 ], gridColor[ 2 ], gridColor[ 3 ] ); 
 
         m_graphics->DrawingMgr.DrawLine( posX + (widthCount / 2) * cellSize, 0, posZ, posX - (widthCount / 2) * cellSize, 0, posZ );
         posZ += cellSize;

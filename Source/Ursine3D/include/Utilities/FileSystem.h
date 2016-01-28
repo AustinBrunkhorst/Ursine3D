@@ -20,7 +20,7 @@ namespace ursine
     namespace fs
     {
         using namespace boost::filesystem;
-
+        
         typedef std::vector<path> FileList;
 
         bool LoadText(const std::string &filename, std::string &output);

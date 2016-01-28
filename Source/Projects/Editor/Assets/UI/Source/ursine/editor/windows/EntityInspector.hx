@@ -244,7 +244,7 @@ class EntityInspector extends WindowHandler {
         if (m_inspectedEntity.hasComponent( componentType )) {
             var notification = new Notification(
                 NotificationType.Error,
-                'Entity already has component type <strong>${componentType}</strong>',
+                'Entity already has component type <strong class="highlight">${componentType}</strong>',
                 'Error'
             );
 

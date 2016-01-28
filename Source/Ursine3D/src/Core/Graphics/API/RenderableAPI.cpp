@@ -39,11 +39,6 @@ namespace ursine
             return m_privates->renderMgr->GetRenderable<Model3D>(handle);
         }
 
-        Primitive &RenderableAPI::GetPrimitive(GfxHND &handle)
-        {
-            return m_privates->renderMgr->GetRenderable<Primitive>(handle);
-        }
-
         Billboard2D &RenderableAPI::GetBillboard2D(GfxHND &handle)
         {
             return m_privates->renderMgr->GetRenderable<Billboard2D>(handle);
@@ -59,12 +54,12 @@ namespace ursine
             m_privates->renderMgr = reinterpret_cast<RenderableManager*>(priv);
         }
 
-        void RenderableAPI::Initialize()
+        void RenderableAPI::Initialize(void)
         {
             m_privates = new RenderableAPI::privData;
         }
 
-        void RenderableAPI::Uninitialize()
+        void RenderableAPI::Uninitialize(void)
         {
             delete m_privates;
         }

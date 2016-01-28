@@ -21,12 +21,10 @@ namespace ursine
         void RenderableManager::Initialize(void)
         {
             m_currentRenderableModel3D.resize(MAX_RENDERABLES);
-            m_currentRenderablePrimitives.resize(MAX_RENDERABLES);
             m_currentRenderableBillboards.resize(MAX_RENDERABLES);
             m_currentRenderableLights.resize(MAX_RENDERABLES);
 
             m_renderableModel3D.resize(MAX_RENDERABLES);
-            m_renderablePrimitives.resize(MAX_RENDERABLES);
             m_renderableBillboards.resize(MAX_RENDERABLES);
             m_renderableLights.resize(MAX_RENDERABLES);
 
@@ -34,36 +32,28 @@ namespace ursine
 
             for (unsigned x = 0; x < RENDERABLE_TYPE_COUNT; ++x)
             {
-                m_handleList[ x ] = new std::list<unsigned>();
                 for (int y = 0; y < MAX_RENDERABLES; ++y)
-                    m_handleList[ x ]->push_back(y);
+                    m_handleList[ x ].push(y);
             }
         }
 
         void RenderableManager::Uninitialize()
         {
-            for (unsigned x = 0; x < RENDERABLE_TYPE_COUNT; ++x)
-            {
-                delete m_handleList[ x ];
-            }
         }
 
         GfxHND RenderableManager::AddRenderable(const RENDERABLE_TYPE type)
         {
+            UAssert(m_handleList[ type ].size() > 0, "Out of room for renderables!");
             GfxHND data;
             _RENDERABLEHND *newRender = reinterpret_cast<_RENDERABLEHND*>(&data);
-            newRender->Index_ = m_handleList[ type ]->front();
-            m_handleList[ type ]->pop_front();
+            newRender->Index_ = m_handleList[ type ].top( );
+            m_handleList[ type ].pop( );
 
             switch (type)
             {
             case RENDERABLE_MODEL3D:
                 m_renderableModel3D[ newRender->Index_ ].Active_ = true;
                 m_renderableModel3D[ newRender->Index_ ].Initialize( );
-                break;
-            case RENDERABLE_PRIMITIVE:
-                m_renderablePrimitives[ newRender->Index_ ].Active_ = true;
-                m_renderablePrimitives[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_LIGHT:
                 m_renderableLights[ newRender->Index_ ].Active_ = true;
@@ -72,6 +62,10 @@ namespace ursine
             case RENDERABLE_BILLBOARD2D:
                 m_renderableBillboards[ newRender->Index_ ].Active_ = true;
                 m_renderableBillboards[ newRender->Index_ ].Initialize();
+                break;
+            case RENDERABLE_PS:
+                m_renderableParticleSystems[ newRender->Index_ ].Active_ = true;
+                m_renderableParticleSystems[ newRender->Index_ ].Initialize();
                 break;
             default:
                 UAssert(false, "Tried to add an invalid renderable!");
@@ -89,7 +83,7 @@ namespace ursine
 
             UAssert(rend->Index_ != ID_RENDERABLE, "attempted to free a non-valid renderable handle");
 
-            m_handleList[ rend->Type_ ]->push_front(rend->Index_);
+            m_handleList[ rend->Type_ ].push(rend->Index_);
 
             switch (rend->Type_)
             {
@@ -97,10 +91,6 @@ namespace ursine
                 UAssert(m_renderableModel3D[ rend->Index_ ].Active_ == true, "Attempted to free an already free model3d!");
 				m_renderableModel3D[ rend->Index_ ].Active_ = false;
                 break; 
-            case RENDERABLE_PRIMITIVE:
-                UAssert(m_renderablePrimitives[ rend->Index_ ].Active_ == true, "Attempted to free an already free primitive!");
-                m_renderablePrimitives[ rend->Index_ ].Active_ = false;
-                break;
             case RENDERABLE_BILLBOARD2D:
                 UAssert(m_renderableBillboards[ rend->Index_ ].Active_ == true, "Attempted to free an already free billboard2d!");
                 m_renderableBillboards[ rend->Index_ ].Active_ = false;
@@ -108,6 +98,10 @@ namespace ursine
             case RENDERABLE_LIGHT:
                 UAssert(m_renderableLights[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
 				m_renderableLights[ rend->Index_ ].Active_ = false;
+                break;
+            case RENDERABLE_PS:
+                UAssert(m_renderableParticleSystems[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
+                m_renderableParticleSystems[ rend->Index_ ].Active_ = false;
                 break;
             default:
                 UAssert(false, "Attempted to destroy corrupted handle!");

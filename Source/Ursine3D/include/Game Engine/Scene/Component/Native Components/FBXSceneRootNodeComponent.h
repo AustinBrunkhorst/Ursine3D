@@ -71,7 +71,7 @@ namespace ursine
 			
 		#if defined(URSINE_WITH_EDITOR)
 
-			static void recursClearChildren(std::vector<Transform *> children);
+			static void recursClearChildren(const std::vector< Handle<Transform> > &children);
 			void clearChildren(void);
 			void importScene(void);
 

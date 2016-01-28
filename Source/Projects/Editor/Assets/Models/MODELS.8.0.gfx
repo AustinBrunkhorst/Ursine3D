@@ -1,7 +1,7 @@
 #
 #First is file name, second is model name
 
-#Entrenched_Test1.fbx Entrenched
+Entrenched_Test1.fbx Entrenched
 #rome.fbx Rome
 
 Cube.8.0.mdl Cube
@@ -32,4 +32,4 @@ torus2.8.0.mdl Ring
 #Gun_Jump.fbx Gun_Jump
 #Gun_Shoot.fbx Gun_Shoot
 
-#Monkey.fbx Monkey
+Monkey.fbx Monkey

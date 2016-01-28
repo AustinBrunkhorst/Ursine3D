@@ -7,14 +7,14 @@ add_definitions(
     -D_HAS_EXCEPTIONS=0
 )
 
-include(UrsineProject)
+# make sure we're building with editor
+set(GLOBAL_META_FLAGS "-DURSINE_WITH_EDITOR")
+
+include(GlobalConfig)
 
 add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
 
 include_directories(${Shared_INCLUDE_DIRS})
-
-# external files that will trigger regeneration of meta data
-set(META_DEPENDENCIES ${Shared_HEADER_FILES})
 
 ursine_project(Editor
     FOLDER "Engine"
@@ -29,9 +29,9 @@ ursine_project(Editor
     BUILD_META
     INCLUDE_INSTALLER
     INSTALLER_VERSION "0.1submission"
-    META_HEADER "Reflection.h"
-    META_FLAGS -DURSINE_WITH_EDITOR
-    META_DEPENDENCIES ${META_DEPENDENCIES}
+    META_HEADER "EditorReflection.h"
+    META_MODULE_HEADER "EditorReflectionModule.h"
+    META_MODULE_DEPENDS Ursine3D Shared
     PCH_NAME "Precompiled"
 )
 

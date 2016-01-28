@@ -26,8 +26,6 @@ namespace ursine
         Transform::Transform(void)
             : BaseComponent( )
             , m_dirty( true )
-            , m_root( this )
-            , m_parent( nullptr )
             , m_localScale( 1.0f ) { }
 
         Transform::Transform(const Transform &transform)
@@ -54,6 +52,11 @@ namespace ursine
         void Transform::OnInitialize(void)
         {
             Component::OnInitialize( );
+
+			if (!m_root)
+				m_root = this;
+			if (!m_parent)
+				m_parent = nullptr;
 
             dispatchAndSetDirty( true, true, true );
         }
@@ -291,17 +294,17 @@ namespace ursine
                 return m_localRotation * quat;
         }
 
-        Transform *Transform::GetRoot(void)
+		Component::Handle<Transform> Transform::GetRoot(void)
         {
             return m_root;
         }
 
-        Transform *Transform::GetParent(void)
+        Component::Handle<Transform> Transform::GetParent(void)
         {
             return m_parent;
         }
 
-        bool Transform::IsChildOf(Transform* parent)
+        bool Transform::IsChildOf(Handle<Transform> parent)
         {
             if (parent == m_parent)
                 return true;
@@ -353,6 +356,7 @@ namespace ursine
                 return;
 
             m_children.erase( itr );
+
             child->setParent( this, nullptr );
         }
 
@@ -364,21 +368,21 @@ namespace ursine
             m_children.clear( );
         }
 
-        Transform *Transform::GetChild(uint index)
+        Component::Handle<Transform> Transform::GetChild(uint index)
         {
             UAssert(index < m_children.size( ), "The index must be less than the child count");
 
             return m_children[ index ];
         }
 
-        const Transform *Transform::GetChild(uint index) const
+        const Component::Handle<Transform> Transform::GetChild(uint index) const
         {
             UAssert(index < m_children.size( ), "The index must be less than the child count");
 
             return m_children[index];
         }
 
-        const std::vector<Transform *> &Transform::GetChildren(void) const
+        const std::vector< Component::Handle<Transform> > &Transform::GetChildren(void) const
         {
             return m_children;
         }
@@ -455,7 +459,8 @@ namespace ursine
 
             if (transform.m_parent)
             {
-                transform.m_parent->AddChild( this );
+				auto *p = const_cast<Transform*>( transform.m_parent.operator->( ) );
+                p->AddChild( this );
             }
             else
             {
@@ -487,8 +492,8 @@ namespace ursine
             GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY, args );
         }
 
-        void Transform::dispatchParentChange(Transform *oldParent, Transform *newParent) const
-        {            
+        void Transform::dispatchParentChange(Handle<Transform> oldParent, Handle<Transform> newParent) const
+        {
             ParentChangedArgs args( 
                 newParent ? newParent->GetOwner( ) : nullptr,
                 oldParent ? oldParent->GetOwner( ) : nullptr
@@ -558,7 +563,7 @@ namespace ursine
             }
         }
 
-        bool Transform::genericAddChild(Transform *child)
+        bool Transform::genericAddChild(Handle<Transform> child)
         {
             if (child->m_parent == this)
                 return false;
@@ -574,7 +579,7 @@ namespace ursine
             return true;
         }
 
-        void Transform::setParent(Transform *oldParent, Transform *newParent)
+        void Transform::setParent(Handle<Transform> oldParent, Handle<Transform> newParent)
         {
             if (oldParent == newParent)
                 return;
@@ -605,7 +610,7 @@ namespace ursine
             dispatchParentChange( oldParent, newParent );
         }
 
-		void Transform::setRoot(Transform *root)
+		void Transform::setRoot(Handle<Transform> root)
         {
 			m_root = root;
 

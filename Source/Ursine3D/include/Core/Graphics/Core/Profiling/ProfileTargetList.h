@@ -49,7 +49,6 @@ namespace ursine
 #endif
 
             PROFILE_LIGHTS, //big (1st)
-            PROFILE_PRIMITIVES,
             PROFILE_DEBUG,
             PROFILE_SCENE_MAIN, //big (3rd)
             PROFILE_SCENE_PRIMITIVE,
