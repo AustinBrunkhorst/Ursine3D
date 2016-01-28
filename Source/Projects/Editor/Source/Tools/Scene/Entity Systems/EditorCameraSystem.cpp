@@ -274,6 +274,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     auto up = cam.GetUp( );
     auto right = cam.GetRight( );
 
+
     ///////////////////////////////////////////////////////////////////
     // CAMERA ROTATION
     if (mouseMgr->IsButtonDown( MBTN_LEFT ))
@@ -329,6 +330,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
             }
         }
     }
+
 
     // if in here, draw the center mark
     float halfSize = 0.3f;

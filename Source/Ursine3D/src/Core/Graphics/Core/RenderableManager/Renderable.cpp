@@ -238,96 +238,6 @@ namespace ursine
         }
 
         ///////////////////////////////////////////////////////////////////
-        //primitives
-        void Primitive::Initialize()
-        {
-			Renderable::Initialize( );
-
-            Type_ = Primitive::PRIM_CUBE;
-            Radius_ = 1;
-            Height_ = 1;
-            Width_ = 1;
-            Depth_ = 1;
-            UseWireFrame_ = true;
-            Color_ = Color(1.0f, 1.0f, 1.0f, 1.0f);
-        }
-
-        void Primitive::SetType(PRIMITIVE_TYPE type)
-        {
-            Type_ = type;
-        }
-
-        Primitive::PRIMITIVE_TYPE Primitive::GetType()
-        {
-            return Type_;
-        }
-
-        void Primitive::SetRadius(float r)
-        {
-            Radius_ = r;
-        }
-
-        float Primitive::GetRadius()
-        {
-            return Radius_;
-        }
-
-        void Primitive::SetWidth(float r)
-        {
-            Width_ = r;
-        }
-
-        float Primitive::GetWidth()
-        {
-            return Width_;
-        }
-
-        void Primitive::SetDepth(float r)
-        {
-            Depth_ = r;
-        }
-
-        float Primitive::GetDepth()
-        {
-            return Depth_;
-        }
-
-        void Primitive::SetHeight(float r)
-        {
-            Height_ = r;
-        }
-
-        float Primitive::GetHeight()
-        {
-            return Height_;
-        }
-
-        void Primitive::SetWireFrameMode(bool useWireframe)
-        {
-            UseWireFrame_ = useWireframe;
-        }
-
-        bool Primitive::GetWireFrameMode()
-        {
-            return UseWireFrame_;
-        }
-
-        Color &Primitive::GetColor()
-        {
-            return Color_;
-        }
-
-        void Primitive::SetColor(const Color &color)
-        {
-            Color_ = color;
-        }
-
-        void Primitive::SetColor(float x, float y, float z, float a)
-        {
-            Color_ = Color(x, y, z, a);
-        }
-
-        ///////////////////////////////////////////////////////////////////
         //lights
 
         ///////////////////////////////////////////////////////////////////
@@ -444,6 +354,69 @@ namespace ursine
         const SMat4& Light::GetSpotlightTransform()
         {
             return m_spotlightTransform;
+        }
+
+        /////////////////////////////////////////////////////////////
+        // PARTICLE SYSTEM //////////////////////////////////////////
+        ParticleSystem::ParticleSystem(void)
+            : m_backIndex(-1)
+        {
+        }
+
+        void ParticleSystem::Initialize(void)
+        {
+            m_backIndex = -1;
+            Renderable::Initialize();
+        }
+
+        std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
+        {
+            return m_gpuParticleData;
+        }
+
+        std::vector<Particle_CPU>& ParticleSystem::GetCPUParticleData(void)
+        {
+            return m_cpuParticleData;
+        }
+
+        unsigned ParticleSystem::GetParticleVectorSize(void) const
+        {
+            return static_cast<unsigned>(m_gpuParticleData.size( ));
+        }
+
+        unsigned ParticleSystem::GetActiveParticleCount(void) const
+        {
+            return m_backIndex > 0 ? static_cast<unsigned>(m_backIndex) : 0;
+        }
+
+        unsigned ParticleSystem::GetInactiveParticleCount(void) const
+        {
+            return static_cast<unsigned>( m_gpuParticleData.size( ) ) - (m_backIndex + 1);
+        }
+
+        int ParticleSystem::SpawnParticle(void)
+        {
+            // no available particles, we need to expand
+            // should be amortized
+            if ( GetInactiveParticleCount() == 0 )
+            {
+                // push new particle to the back
+                m_gpuParticleData.push_back(Particle_GPU( ));
+                m_cpuParticleData.push_back(Particle_CPU());
+            }
+            
+            // bam! allocated
+            return m_backIndex++;
+        }
+
+        void ParticleSystem::DestroyParticle(const int index)
+        {
+            // swap with the backmost data
+            m_gpuParticleData[ index ] = m_gpuParticleData[ m_backIndex ];
+            m_cpuParticleData[ index ] = m_cpuParticleData[ m_backIndex ];
+
+            // decrement
+            --m_backIndex;
         }
     }
 }

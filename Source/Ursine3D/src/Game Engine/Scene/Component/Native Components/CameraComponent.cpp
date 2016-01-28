@@ -27,6 +27,7 @@ namespace ursine
 
         Camera::Camera(void)
             : BaseComponent( )
+			, RenderableComponentBase([=] { updateRenderer( ); })
             , m_active( true )
             , m_renderLayer( 0 )
         {

@@ -273,6 +273,11 @@ macro (ursine_project PROJECT_NAME)
     elseif ("${PROJ_TYPE}" STREQUAL "LIB")
         # library
         add_library(${PROJECT_NAME} STATIC ${FILES_INC} ${FILES_SRC} ${FILES_MISC})
+
+        if (MSVC)
+            # ignore linker warnings for no symbols or pdbs
+            set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY STATIC_LIBRARY_FLAGS "/ignore:4099 /ignore:4221")
+        endif ()
     else ()
         message(FATAL_ERROR "Project \"${PROJECT_NAME}\" missing option \"TYPE\".")
     endif ()

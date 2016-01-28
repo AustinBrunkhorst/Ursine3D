@@ -16,10 +16,12 @@
 #include "EntityConfig.h"
 #include "GFXAPIDefines.h"
 #include <string>
+#include <stack>
 #include "SMat4.h"
 #include "SVec3.h"
 #include "Vec2.h"
 #include "Color.h"
+#include "Particle.h"
 
 namespace ursine
 {
@@ -145,58 +147,8 @@ namespace ursine
             std::string TextureName_;
         };
 
-        /////////////////////////////////////////////////////////////////
-        //3d primitve class
-        class Primitive : public Model
-        {
-        public:
-            enum PRIMITIVE_TYPE
-            {
-                PRIM_SPHERE = 0,
-                PRIM_CUBE, //done
-                PRIM_PLANE,
-                PRIM_CAPSULE, //done
-                PRIM_COUNT
-            };
-
-            void Initialize(void);
-
-            void SetType(PRIMITIVE_TYPE type);
-            PRIMITIVE_TYPE GetType();
-
-            void SetRadius(float r);
-            float GetRadius();
-
-            void SetWidth(float r);
-            float GetWidth();
-
-            void SetDepth(float r);
-            float GetDepth();
-
-            void SetHeight(float r);
-            float GetHeight();
-
-            void SetWireFrameMode(bool useWireframe);
-            bool GetWireFrameMode();
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b, float a = 1.0f);
-        private:
-            PRIMITIVE_TYPE Type_;
-            float Radius_;
-            float Height_;
-            float Width_;
-            float Depth_;
-            bool UseWireFrame_;
-            Color Color_;
-        };
-
-        ///////////////////////////////////////////////////////////////////
-        // LIGHTS /////////////////////////////////////////////////////////
-
         /////////////////////////////////////////////////////////////
-        // universal light class
+        // LIGHT ////////////////////////////////////////////////////
         class Light : public Renderable
         {
         public:
@@ -251,6 +203,41 @@ namespace ursine
 
             Vec2 m_spotlightAngles;
             SMat4 m_spotlightTransform;
+        };
+
+        /////////////////////////////////////////////////////////////
+        // PARTICLE SYSTEM //////////////////////////////////////////
+        class ParticleSystem : public Renderable
+        {
+        public:
+            ParticleSystem(void);
+
+            void Initialize(void);
+
+            // get the particles
+            std::vector<Particle_GPU> &GetGPUParticleData(void);
+            std::vector<Particle_CPU> &GetCPUParticleData(void);
+
+            // get total number of particles
+            unsigned GetParticleVectorSize(void) const;
+
+            // get number of active particles
+            unsigned GetActiveParticleCount(void) const;
+
+            // get number of inactive particles
+            unsigned GetInactiveParticleCount(void) const;
+
+            // attempt to spawn a particle, ret index of new particle
+            // -1 if no free particles left
+            int SpawnParticle(void);
+
+            void DestroyParticle(const int index);
+
+        private:
+            // members
+            int m_backIndex;
+            std::vector<Particle_GPU> m_gpuParticleData;
+            std::vector<Particle_CPU> m_cpuParticleData;
         };
     }
 }

@@ -14,7 +14,6 @@
 
     #define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
 
-    #define EditorButtonImpl(name, impl)
     #define EditorField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
 
     #if defined(URSINE_WITH_EDITOR)
@@ -45,12 +44,10 @@
     #if defined(URSINE_WITH_EDITOR)
 
         #define EditorButton(name, title) void name(void)
-        #define EditorButtonImpl(name, impl) void name(void) ##impl
 
     #else
 
         #define EditorButton(name, title)
-        #define EditorButtonImpl(name, impl)
 
     #endif
 

@@ -60,7 +60,7 @@ function(ursine_build_meta)
 
     get_property(DIRECTORIES TARGET ${BUILD_META_TARGET} PROPERTY INCLUDE_DIRECTORIES)
 
-    set(FLAGS ${BUILD_META_FLAGS})
+    set(FLAGS ${GLOBAL_META_FLAGS} ${BUILD_META_FLAGS})
 
     # build the include directory flags
     foreach (DIRECTORY ${DIRECTORIES})

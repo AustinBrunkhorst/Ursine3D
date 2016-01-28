@@ -30,23 +30,29 @@ namespace ursine
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
-            m_handle = graphics->
-                RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT );
+			m_base = new RenderableComponentBase([=] {
+				updateRenderer( );
+			});
+
+            m_base->SetHandle( graphics->
+                RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT ) );
 
             m_light = &graphics->
-                RenderableMgr.GetLight( m_handle );
+                RenderableMgr.GetLight( m_base->GetHandle( ) );
 
             m_light->Initialize( );
         }
 
         Light::~Light(void)
         {
-            RenderableComponentBase::OnRemove( GetOwner( ) );
+            m_base->OnRemove( GetOwner( ) );
             
             m_light = nullptr;
 
             GetCoreSystem( graphics::GfxAPI )
-                ->RenderableMgr.DestroyRenderable( m_handle );
+                ->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
+
+			delete m_base;
         }
 
         void Light::OnInitialize(void)
@@ -58,7 +64,7 @@ namespace ursine
         
         graphics::GfxHND Light::GetHandle(void) const
         {
-            return m_handle;
+            return m_base->GetHandle( );
         }
 
         const graphics::Light *Light::GetLight(void)
@@ -153,7 +159,7 @@ namespace ursine
         void Light::updateRenderer(void)
         {
             auto trans = GetOwner()->GetTransform();
-            auto &light = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetLight(m_handle);
+            auto &light = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetLight( m_base->GetHandle( ) );
 
             //set position using the transform
             light.SetPosition(trans->GetWorldPosition());

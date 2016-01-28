@@ -24,16 +24,17 @@ namespace ursine
     {
         class Billboard2D 
             : public Component
-            , public RenderableComponentBase
         {
             NATIVE_COMPONENT;
+
+			friend class RenderSystem;
 
         public:
             Billboard2D(void);
             ~Billboard2D(void);
 
             Meta(Disable)
-                void OnInitialize(void) override;
+            void OnInitialize(void) override;
 
             //get/set model
             ursine::graphics::Billboard2D *GetBillboard(void);
@@ -46,7 +47,9 @@ namespace ursine
             // The graphics core API
             graphics::GfxAPI *m_graphics;
 
-            void updateRenderer(void) override;
+            void updateRenderer(void);
+
+			RenderableComponentBase *m_base;
 
         } Meta(Enable, DisplayName("Billboard2D")); 
     }

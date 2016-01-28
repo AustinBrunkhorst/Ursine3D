@@ -86,10 +86,7 @@ void SelectTool::OnSelect(ursine::ecs::Entity* selected)
 
 void SelectTool::OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager)
 {
-	if (kManager->IsDown( ursine::KEY_LMENU ))
-		m_altDown = true;
-	else
-		m_altDown = false;
+	m_altDown = kManager->IsDown( ursine::KEY_LMENU );
 }
 
 void SelectTool::unpickObject(void)

@@ -169,15 +169,15 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
 
     Json oldUniqueID, newUniqueID;
 
-    if (args->oldParent == -1)
+    if (args->oldParent == nullptr)
         oldUniqueID = nullptr;
     else
-        oldUniqueID = static_cast<int>( args->oldParent );
+        oldUniqueID = static_cast<int>( args->oldParent->GetUniqueID( ) );
 
-    if (args->newParent == -1)
+    if (args->newParent == nullptr)
         newUniqueID = nullptr;
     else
-        newUniqueID = static_cast<int>( args->newParent );
+        newUniqueID = static_cast<int>( args->newParent->GetUniqueID( ) );
 
     Json message = Json::object {
         { "uniqueID", static_cast<int>( sender->GetUniqueID( ) ) },
