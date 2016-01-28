@@ -15,10 +15,16 @@
 
 namespace ursine
 {
-    class KeyboardManager;
-}
+    namespace ecs
+    {
+        class PhysicsSystem;
 
-class BaseWeapon;
+    } // ecs namespace
+
+} // ursine namespace
+
+struct AbstractWeapon;
+struct AbstractHitscanWeapon;
 
 class BaseWeaponSystem
     : public ursine::ecs::FilterSystem
@@ -29,17 +35,61 @@ public:
     BaseWeaponSystem(ursine::ecs::World* world);
 
 protected:
-    void OnInitialize(void) override;
-    void Begin(void) override;
-    void Process(ursine::ecs::Entity* entity) override;
+    void onUpdate(EVENT_HANDLER(World)) override;
+    void Enable(ursine::ecs::Entity& entity) override;
+    void Disable(ursine::ecs::Entity& entity) override;
+private:
+
+    // entity's components changed
+    void OnComponentAdded(EVENT_HANDLER(World));
+
+    // entity removed
+    void OnEntityRemoved(EVENT_HANDLER(World));
+
+    void EvaluateProjectileWeapons(const float dt);
+
+    void FireProjectileWeapon(AbstractWeapon& weapon, ursine::ecs::Transform& trans);
+
+    void CreateProjectiles(const AbstractWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
+    
+    std::unordered_map < ursine::ecs::EntityUniqueID, AbstractWeapon* > m_weapons;
+    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
+
+} Meta(Enable);
+
+
+class HitscanWeaponSystem
+    : public ursine::ecs::FilterSystem
+{
+    ENTITY_SYSTEM;
+
+public:
+    HitscanWeaponSystem(ursine::ecs::World* world);
+
+protected:
+    void Initialize(void) override;
+    void onUpdate(EVENT_HANDLER(World)) override;
+    void Enable(ursine::ecs::Entity& entity) override;
+    void Disable(ursine::ecs::Entity& entity) override;
 
 private:
-    float m_dt;
 
-    void EvaluateWeapon(BaseWeapon& weapon);
-    void ShootWeapon( BaseWeapon& weapon );
-    void ReloadWeapon( BaseWeapon& weapon ) const;
-    void CreateProjectiles(BaseWeapon& weapon, int projectilesFired );
+    // entity's components changed
+    void OnComponentAdded(EVENT_HANDLER(World));
+
+    // entity removed
+    void OnEntityRemoved(EVENT_HANDLER(World));
+
+    void EvaluateHitscanWeapons(const float dt);
+
+    void FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans);
+
+    void CreateRaycasts(const AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
+
+    ursine::ecs::PhysicsSystem* m_physicsSystem;
+
+    std::unordered_map < ursine::ecs::EntityUniqueID, AbstractHitscanWeapon* > m_weapons;
+    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
 
 } Meta(Enable);
 

@@ -31,6 +31,9 @@ namespace ursine
         {
             SVec3 start, end;
 
+            RaycastInput(void)
+                : start( SVec3( ) ), end( SVec3( ) )  { }
+
             RaycastInput(const SVec3 &start, const SVec3 &end)
                 : start( start ), end( end ) { }
         };

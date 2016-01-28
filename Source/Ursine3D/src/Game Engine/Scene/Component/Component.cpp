@@ -6,7 +6,7 @@ namespace ursine
 {
     namespace ecs
     {
-        void Component::OnInitialize(void)
+        void Component::Initialize(void)
         {
         #if defined(URSINE_WITH_EDITOR)
 
@@ -48,6 +48,8 @@ namespace ursine
             m_baseInitialized = true;
 
         #endif
+
+            OnInitialize( );
         }
 
 		template<>
@@ -61,5 +63,7 @@ namespace ursine
 		{
 			return m_entity->GetTransform( );
 		}
+
+        void Component::OnInitialize(void) { }
     }
 }

@@ -36,8 +36,6 @@ Selected::~Selected(void)
 
 void Selected::OnInitialize(void)
 {
-    Component::OnInitialize( );
-
     auto owner = GetOwner( );
 
 	owner->GetWorld( )->Listener( this )

@@ -195,16 +195,7 @@ namespace ursine
 
             addComponent( entity, component );
 
-            component->OnInitialize( );
-
-        #if defined(URSINE_WITH_EDITOR)
-
-            UAssert( component->m_baseInitialized, 
-                "Component type '%s' does not call Component::OnInitialize( ).",
-                component->GetType( ).GetName( ).c_str( )
-            );
-
-        #endif
+            component->Initialize( );
 
             ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
 
@@ -594,16 +585,7 @@ namespace ursine
                 {
                     auto *component = m_componentTypes[ i ][ id ];
 
-                    component->OnInitialize( );
-
-                #if defined(URSINE_WITH_EDITOR)
-
-                    UAssert( component->m_baseInitialized, 
-                        "Component type '%s' does not call Component::OnInitialize( ).",
-                        component->GetType( ).GetName( ).c_str( )
-                    );
-
-                #endif
+                    component->Initialize( );
 
                     args.component = component;
 

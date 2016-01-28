@@ -20,7 +20,7 @@ namespace ursine
             : BaseComponent( )
             , m_sceneName( "" )
         #if defined(URSINE_WITH_EDITOR)
-            , m_notificationPresent( false )
+			, m_notificationPresent( false )
         #endif
         {
 
@@ -33,7 +33,6 @@ namespace ursine
 
         void FBXSceneRootNode::OnInitialize(void)
         {
-            Component::OnInitialize( );
         }
 
         const std::string &FBXSceneRootNode::GetSceneName(void) const
@@ -46,7 +45,7 @@ namespace ursine
             m_sceneName = map;
         }
 
-    #if defined(URSINE_WITH_EDITOR)
+	#if defined(URSINE_WITH_EDITOR)
 
         void FBXSceneRootNode::importScene(void)
         {
@@ -86,23 +85,23 @@ namespace ursine
 
         void FBXSceneRootNode::recursClearChildren(const std::vector< Handle<Transform> > &children)
         {
-            for (auto &child : children)
-            {
-                recursClearChildren( child->GetChildren( ) );
+	        for (auto &child : children)
+			{
+				recursClearChildren( child->GetChildren( ) );
 
-                child->GetOwner( )->Delete( );
-            }
+				child->GetOwner( )->Delete( );
+			}
         }
 
         void FBXSceneRootNode::clearChildren(void)
         {
-            recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
+			recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
 
-            // Clear the deletion queue if the scene is paused
-            EditorClearDeletionQueue( );
+			// Clear the deletion queue if the scene is paused
+			EditorClearDeletionQueue( );
         }
 
-        void FBXSceneRootNode::ImportScene(void)
+		void FBXSceneRootNode::ImportScene(void)
         {
 	        auto owner = GetOwner( );
 			auto *children = owner->GetChildren( );
@@ -151,42 +150,42 @@ namespace ursine
 			}
         }
 
-        void FBXSceneRootNode::GenerateConvexHullForScene(void)
+		void FBXSceneRootNode::GenerateConvexHullForScene(void)
         {
-            auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
+	        auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
 
-            for (auto &model : models)
-            {
-                auto entity = model->GetOwner( );
+			for (auto &model : models)
+			{
+				auto entity = model->GetOwner( );
 
-                if (!entity->HasComponent<ConvexHullCollider>( ))
-                    entity->AddComponent<ConvexHullCollider>( );
+				if (!entity->HasComponent<ConvexHullCollider>( ))
+					entity->AddComponent<ConvexHullCollider>( );
 
-                auto convexHull = entity->GetComponent<ConvexHullCollider>( );
+				auto convexHull = entity->GetComponent<ConvexHullCollider>( );
 
-                convexHull->GenerateConvexHull( model );
-            }
+				convexHull->GenerateConvexHull( model );
+			}
         }
 
-        void FBXSceneRootNode::GenerateBvhTriangleMeshCollidersForScene(void)
+		void FBXSceneRootNode::GenerateBvhTriangleMeshCollidersForScene(void)
         {
-            auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
+	        auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
 
-            Timer::Create( 0 ).Completed( [=] {
-                for (auto &model : models)
-                {
-                    auto entity = model->GetOwner( );
+			Timer::Create( 0 ).Completed( [=] {
+				for (auto &model : models)
+				{
+					auto entity = model->GetOwner( );
 
-                    if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
-                        entity->AddComponent<BvhTriangleMeshCollider>( );
+					if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
+						entity->AddComponent<BvhTriangleMeshCollider>( );
 
-                    auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
+					auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
 
-                    bvhTriangleMesh->GenerateBvhTriangleMesh( model );
-                }
-            } );
+					bvhTriangleMesh->GenerateBvhTriangleMesh( model );
+				}
+			} );
         }
 
-    #endif
+	#endif
     }
 }

@@ -40,8 +40,6 @@ void EditorIcon::SetIcon(const std::string &text)
 
 void EditorIcon::OnInitialize(void)
 {
-    Component::OnInitialize( );
-
     auto *owner = GetOwner( );
 
     m_billboard = owner->GetWorld( )->CreateEntity( );

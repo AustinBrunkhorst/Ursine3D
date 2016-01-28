@@ -60,8 +60,6 @@ namespace ursine
 
         void Model3D::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
             auto *owner = GetOwner( );
 
             m_base->OnInitialize( owner );

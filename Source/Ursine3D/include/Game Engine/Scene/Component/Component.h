@@ -39,6 +39,7 @@ namespace ursine
             Component &operator=(const Component &rhs) = default;
 
             // Called when the component has been initialized and added to an entity
+            // anything that derives can overload this to init their values
             virtual void OnInitialize(void);
 
             // The type ID of this component
@@ -92,6 +93,9 @@ namespace ursine
             bool m_baseInitialized;
 
         #endif
+
+            // Called when the component has been initialized and added to an entity
+            void Initialize(void);
 
             // component type id
             ComponentTypeID m_typeID;
