@@ -488,6 +488,8 @@ namespace ursine
             dxCore->EndDebugEvent( );
 
             //debug 
+            PrepFor3DModels(view, proj); // I don't think gets set properly
+
             dxCore->StartDebugEvent("Debug Pass");
             PrepForDebugRender();
             dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
