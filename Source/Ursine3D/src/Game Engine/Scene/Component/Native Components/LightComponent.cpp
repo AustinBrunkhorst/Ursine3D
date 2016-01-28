@@ -57,7 +57,7 @@ namespace ursine
 
         void Light::OnInitialize(void)
         {
-            RenderableComponentBase::OnInitialize( GetOwner( ) );
+            m_base->OnInitialize(GetOwner( ));
 
             updateRenderer( );
         }
