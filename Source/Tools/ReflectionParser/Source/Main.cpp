@@ -83,6 +83,10 @@ int main(int argc, char *argv[])
             po::value<std::string>( ), 
             "Optional name of the precompiled header file for the project." 
         )
+        (
+            SWITCH_OPTION( ForceRebuild ),
+            "Whether or not to ignore cache and write the header / source files."
+        )
         ( 
             SWITCH_OPTION( CompilerFlags ), 
             po::value<std::vector<std::string>>( )->multitoken( )->required( ),
@@ -125,6 +129,9 @@ int main(int argc, char *argv[])
 void parse(const po::variables_map &cmdLine)
 {
     ReflectionOptions options;
+
+    options.forceRebuild = 
+        cmdLine.count( kSwitchForceRebuild ) > 0;
 
     options.targetName = 
         cmdLine.at( kSwitchTargetName ).as<std::string>( );

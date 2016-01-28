@@ -12,6 +12,8 @@
 
 struct ReflectionOptions
 {
+    bool forceRebuild;
+
     std::string targetName;
 
     std::string sourceRoot;

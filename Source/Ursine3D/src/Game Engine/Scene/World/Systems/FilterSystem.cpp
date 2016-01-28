@@ -36,25 +36,16 @@ namespace ursine
 
             auto entity = args->entity;
 
-            auto contains = utils::IsFlagSet( GetTypeMask( ), entity->m_systemMask );
             auto interests = m_filter.Matches( entity );
             auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
 				
-            if (interests && !contains && !removed)
-            {
-                Add( entity );
-            }
-            else if (!interests && contains)
+            if (removed || !interests)
             {
                 Remove( entity );
             }
-            else if (entity->IsAvailable( ))
+            else if(interests)
             {
-                Enable( entity );
-            }
-            else
-            {
-                Disable( entity );
+                Add( entity );
             }
         }
 

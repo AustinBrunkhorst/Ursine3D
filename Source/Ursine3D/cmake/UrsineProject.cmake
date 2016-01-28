@@ -208,7 +208,7 @@ macro (ursine_project PROJECT_NAME)
 
             # project folder
             if (NOT "${PROJ_FOLDER}" STREQUAL "")
-                ursine_set_folder(${INSTALLER_TARGET} ${PROJ_FOLDER})
+                ursine_set_folder(${INSTALLER_TARGET} ".Utility/Installers")
             endif ()
 
             if ("${PROJ_INSTALLER_DISPLAY_NAME}" STREQUAL "")
