@@ -666,7 +666,7 @@ var ursine_editor_menus_HelpMenu = function() { };
 $hxClasses["ursine.editor.menus.HelpMenu"] = ursine_editor_menus_HelpMenu;
 ursine_editor_menus_HelpMenu.__name__ = ["ursine","editor","menus","HelpMenu"];
 ursine_editor_menus_HelpMenu.doOpenGettingStarted = function() {
-	window.open("Documentation/build/html/index.html");
+	window.open("Documentation/html/index.html");
 };
 ursine_editor_menus_HelpMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_HelpMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
