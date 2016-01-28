@@ -36,8 +36,8 @@ public:
 
 protected:
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity& entity) override;
-    void Disable(ursine::ecs::Entity& entity) override;
+    void Enable(ursine::ecs::Entity *entity) override;
+    void Disable(ursine::ecs::Entity *entity) override;
 private:
 
     // entity's components changed
@@ -69,8 +69,8 @@ public:
 protected:
     void Initialize(void) override;
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity& entity) override;
-    void Disable(ursine::ecs::Entity& entity) override;
+    void Enable(ursine::ecs::Entity *entity) override;
+    void Disable(ursine::ecs::Entity *entity) override;
 
 private:
 

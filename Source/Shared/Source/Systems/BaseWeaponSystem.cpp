@@ -206,26 +206,26 @@ namespace
 //////////////////////////////
 ////  Base Weapon System  ////
 //////////////////////////////
-BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World* world ) 
+BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World *world ) 
     : FilterSystem( world, Filter( ).One<BaseWeapon>( ) )
 {
 }
 
-void BaseWeaponSystem::Enable(ursine::ecs::Entity& entity)
+void BaseWeaponSystem::Enable(ursine::ecs::Entity *entity)
 {
-    auto uniqueID = entity.GetUniqueID( );
+    auto uniqueID = entity->GetUniqueID( );
     
     // grab all comps needed
-    if ( entity.HasComponent< BaseWeapon >( ) )
-        m_weapons[ uniqueID ] = entity.GetComponent< BaseWeapon >( );
+    if (entity->HasComponent<BaseWeapon>( ))
+        m_weapons[ uniqueID ] = entity->GetComponent<BaseWeapon>( );
 
-    m_transforms[ uniqueID ] = entity.GetTransform( );
+    m_transforms[ uniqueID ] = entity->GetTransform( );
 
 }
 
-void BaseWeaponSystem::Disable(ursine::ecs::Entity& entity)
+void BaseWeaponSystem::Disable(ursine::ecs::Entity *entity)
 {
-    auto uniqueID = entity.GetUniqueID( );
+    auto uniqueID = entity->GetUniqueID( );
 
     m_weapons.erase( uniqueID );
     m_transforms.erase( uniqueID );
@@ -318,21 +318,21 @@ void HitscanWeaponSystem::Initialize(void)
     m_physicsSystem = m_world->GetEntitySystem(PhysicsSystem);
 }
 
-void HitscanWeaponSystem::Enable(ursine::ecs::Entity& entity)
+void HitscanWeaponSystem::Enable(ursine::ecs::Entity *entity)
 {
-    auto uniqueID = entity.GetUniqueID( );
+    auto uniqueID = entity->GetUniqueID( );
 
     // grab all comps needed
-    if ( entity.HasComponent< HitscanWeapon >( ) )
-        m_weapons[ uniqueID ] = entity.GetComponent< HitscanWeapon >( );
+    if (entity->HasComponent<HitscanWeapon>( ))
+        m_weapons[ uniqueID ] = entity->GetComponent<HitscanWeapon>( );
 
-    m_transforms[ uniqueID ] = entity.GetTransform( );
+    m_transforms[ uniqueID ] = entity->GetTransform( );
 
 }
 
-void HitscanWeaponSystem::Disable(ursine::ecs::Entity& entity)
+void HitscanWeaponSystem::Disable(ursine::ecs::Entity *entity)
 {
-    auto uniqueID = entity.GetUniqueID( );
+    auto uniqueID = entity->GetUniqueID( );
 
     m_weapons.erase(uniqueID);
     m_transforms.erase(uniqueID);
