@@ -23,12 +23,15 @@ public:
     EditorEntityManager(Project *project);
     ~EditorEntityManager(void);
 
-    void SetWorld(ursine::ecs::World::Handle world);
+    void SetWorld(ursine::ecs::World *world);
+
+	void RelayUIResetWorld(void);
+
 private:
     Project *m_project;
-    ursine::ecs::World::Handle m_world;
+    ursine::ecs::World *m_world;
 
-    void clearWorld(ursine::ecs::World::Handle world);
+    void clearWorld(ursine::ecs::World *world);
 
     // entity events
     void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
@@ -40,4 +43,5 @@ private:
     void onComponentAdded(EVENT_HANDLER(ursine::ecs::World));
     void onComponentRemoved(EVENT_HANDLER(ursine::ecs::World));
     void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
+    void onComponentArrayModified(EVENT_HANDLER(ursine::ecs::World));
 };

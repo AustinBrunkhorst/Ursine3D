@@ -1,0 +1,7 @@
+
+World Settings
+======================================================
+
+.. image:: WorldSettings.png
+
+- The **World Settings** entity can be used to change things about the world. For instance, what is gravity? Is debug draw turned on for Physics?

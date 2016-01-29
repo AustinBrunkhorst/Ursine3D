@@ -37,26 +37,32 @@ namespace ursine
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
-            m_handle = graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
+			m_base = new RenderableComponentBase([=] {
+				updateRenderer( );
+			});
+            
+			m_base->SetHandle( graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D ) );
 
             // store a pointer to the model
-            m_model = &graphics->RenderableMgr.GetModel3D( m_handle );
+            m_model = &graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
         }
 
         Model3D::~Model3D(void)
         {
-            RenderableComponentBase::OnRemove( GetOwner( ) );
+            m_base->OnRemove( GetOwner( ) );
 
             m_model->SetDebug( false );
 
-            GetCoreSystem( graphics::GfxAPI )->RenderableMgr.DestroyRenderable( m_handle );
+            GetCoreSystem( graphics::GfxAPI )->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
+
+			delete m_base;
         }
 
         void Model3D::OnInitialize(void)
         {
             auto *owner = GetOwner( );
 
-            RenderableComponentBase::OnInitialize( owner );
+            m_base->OnInitialize( owner );
 
             // set the unique id
             m_model->SetEntityUniqueID( GetOwner( )->GetUniqueID( ) );
@@ -173,7 +179,7 @@ namespace ursine
         {
             // update the renderer's
             auto trans = GetOwner( )->GetTransform( );
-            auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( m_handle );
+            auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }

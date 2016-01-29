@@ -1,0 +1,17 @@
+
+Saving / Loading Archetypes
+==================================================
+
+1. Select the entity you want to save.
+
+.. image:: Select.png
+
+2. Click on the **Save** button in the *Inspector*.
+
+.. image:: SaveArchButton.png
+
+3. Pick a file location, and type a name.
+
+4. Load the archetype from the menu shown below:
+
+.. image:: LoadArchButton.png

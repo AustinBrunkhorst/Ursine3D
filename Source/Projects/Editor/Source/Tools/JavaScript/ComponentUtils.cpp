@@ -70,6 +70,30 @@ JSFunction(GetNativeComponentDatabase)
     return object;
 }
 
+Json::array InspectComponentButtons(const meta::Variant &component)
+{
+    auto methods = component.GetType( ).GetMethods( );
+
+    Json::array inspection;
+
+    for (auto &method : methods)
+    {
+        auto &meta = method.GetMeta( );
+
+        auto *button = meta.GetProperty<CreateButton>( );
+
+        if (!button)
+            continue;
+
+        inspection.emplace_back( Json::object {
+            { "name", method.GetName( ) },
+            { "text", button->text }
+        } );
+    }
+
+    return inspection;
+}
+
 namespace
 {
     void addType(Json::object &types, meta::Type type)
@@ -80,9 +104,12 @@ namespace
         if (types.find( typeName ) != types.end( ))
             return;
 
+        auto isArray = type.IsArray( );
+
         Json::object typeObj 
         {
-            { "name", typeName }
+            { "name", typeName },
+            { "isArray", isArray }
         };
 
         if (type.IsEnum( ))
@@ -108,16 +135,30 @@ namespace
 
         Json::array fieldsObj;
 
-        for (auto &field : type.GetFields( ))
+        if (!isArray)
         {
-            auto fieldType = field.GetType( );
-            auto &fieldName = field.GetName( );
+            for (auto &field : type.GetFields( ))
+            {
+                auto fieldType = field.GetType( );
+                auto &fieldName = field.GetName( );
 
-            fieldsObj.emplace_back( Json::object {
-                { "name", fieldName },
-                { "type", fieldType.GetName( ) },
-                { "meta", field.GetMeta( ).SerializeJson( ) }
-            } );
+                fieldsObj.emplace_back( Json::object {
+                    { "name", fieldName },
+                    { "type", fieldType.GetName( ) },
+                    { "meta", field.GetMeta( ).SerializeJson( ) }
+                } );
+            }
+
+            typeObj[ "arrayType" ] = nullptr;
+        }
+        else
+        {
+            auto arrayType = type.GetArrayType( );
+
+            typeObj[ "arrayType" ] = arrayType.GetName( );
+
+            // make sure the array type is also included
+            addType( types, arrayType );
         }
 
         typeObj[ "fields" ] = fieldsObj;

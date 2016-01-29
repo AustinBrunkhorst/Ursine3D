@@ -17,3 +17,5 @@
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(GetNativeComponentDatabase);
+
+ursine::Json::array InspectComponentButtons(const ursine::meta::Variant &component);

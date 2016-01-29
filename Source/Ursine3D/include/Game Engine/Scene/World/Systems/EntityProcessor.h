@@ -27,7 +27,7 @@ namespace ursine
             virtual void Begin(void) { }
 
             // Called on each interesting entity when processing
-            virtual void Process(Entity *entity) = 0;
+            virtual void Process(Entity *entity) { };
 
             // Called after processing for this frame has complete
             virtual void End(void) { }

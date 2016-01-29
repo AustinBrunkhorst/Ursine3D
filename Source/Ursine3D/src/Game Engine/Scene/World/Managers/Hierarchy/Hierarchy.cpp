@@ -143,18 +143,17 @@ namespace ursine
             auto entityID = sender->GetID( );
             auto &entityNode = m_nodes[ entityID ];
 
-            // Save the old parent
-            auto oldParent = args->oldParent;
-            auto newParent = args->newParent;
+            auto oldID = args->oldParent ? args->oldParent->GetID( ) : -1;
+            auto newID = args->newParent ? args->newParent->GetID( ) : -1;
 
-            if (newParent == oldParent)
+            if (oldID == newID)
                 return;
-
+            
             // assign the new parent
-            entityNode.SetParent( newParent );
+            entityNode.SetParent( newID );
 
             // Add to the root node if it has no parent
-            if (newParent == -1)
+            if (newID == -1)
             {
                 m_root.AddChild( entityID );
                 entityNode.SetRoot( entityID );
@@ -162,16 +161,16 @@ namespace ursine
             // Add to the new parent node
             else
             {
-                auto &parentNode = m_nodes[ newParent ];
+                auto &parentNode = m_nodes[ newID ];
                 parentNode.AddChild( entityID );
                 entityNode.SetRoot( parentNode.Root( ) );
             }
 
             // Remove it from the old parent (root or other entity)
-            if (oldParent == -1)
+            if (oldID == -1)
                 m_root.RemoveChild( entityID );
             else
-                m_nodes[ oldParent ].RemoveChild( entityID );
+                m_nodes[ oldID ].RemoveChild( entityID );
         }
 
         const std::vector<EntityID> *Hierarchy::getSiblingArray(EntityID id) const

@@ -17,8 +17,15 @@
 
 #include "UISubProcess.h"
 
+#include <ReflectionDatabase.h>
+#include <UrsineReflectionModule.h>
+#include <SharedReflectionModule.h>
+#include "EditorReflectionModule.h"
+
 int main(int argc, char *argv[])
 {
+    MetaInitialize( META_MODULE_INITIALIZER );
+
     UI_MAIN( argc, argv );
 
     ursine::Application app( argc, argv );

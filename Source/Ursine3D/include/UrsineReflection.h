@@ -13,10 +13,9 @@
 
 #pragma once
 
-#include "Meta.h"
-
 #include "UrsineReflectionExternal.h"
 
+#include "Type.h"
 #include "UrsineTypes.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,8 +64,8 @@
 
 /// Utilities
 
-#include "TimerManager.h"
-#include "TweenManager.h"
+#include "Utilities/Timer/TimerManager.h"
+#include "Utilities/Tween/TweenManager.h"
 
 /// Game Engine
 

@@ -28,7 +28,7 @@ using namespace ursine::ecs;
 ENTITY_SYSTEM_DEFINITION(CharacterControllerSystem);
 
 CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
-    : FilterSystem( world, Filter( ).All<Rigidbody, CharacterController, TeamComponent>( ) )
+    : FilterSystem( world, Filter( ).All<Rigidbody, CharacterController>( ) )
 {
     
 }
@@ -43,11 +43,9 @@ void CharacterControllerSystem::Process(Entity *entity)
     auto rigidbody = entity->GetComponent<Rigidbody>( );
     
     auto lookDir = controller->GetLookDirection( );
-
+    
 	auto child = transform->GetChild(0);
     auto cam = transform->GetComponentInChildren<Camera>( );
-
-    auto team = entity->GetComponent<TeamComponent>( );
 
 	// This is an immidiate fix, cause fuck eet. - Jordan
 	rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
@@ -57,52 +55,49 @@ void CharacterControllerSystem::Process(Entity *entity)
     {
         auto lookAngle = lookDir * rotateSpeed;
 
-        if (cam)
+        if ( cam )
         {
             auto camTrans = cam->GetOwner( )->GetTransform( );
 
             // is this actually doing what we want?
             auto look = camTrans->GetForward( );
 
-            if (lookAngle.Y( ) < 0.0f)
+            if ( lookAngle.Y( ) < 0.0f )
             {
                 // look down
-                if (look.Y( ) > -0.75f)
+                if ( look.Y( ) > -0.75f )
                 {
-                    look = SQuat( -lookAngle.Y( ), camTrans->GetRight( ) ) * look;
-                    
-                    if (look.Y( ) < -0.75)
+                    look = SQuat(-lookAngle.Y( ), camTrans->GetRight( )) * look;
+
+                    if ( look.Y( ) < -0.75 )
                         look.Y( ) = -0.75;
                 }
             }
-            else if (lookAngle.Y( ) > 0.0f)
+            else if ( lookAngle.Y( ) > 0.0f )
             {
                 // look up
-                if (look.Y( ) < 0.75f)
+                if ( look.Y( ) < 0.75f )
                 {
-                    look = SQuat( -lookAngle.Y( ), camTrans->GetRight( ) ) * look;
+                    look = SQuat(-lookAngle.Y( ), camTrans->GetRight( )) * look;
 
-                    if (look.Y( ) > 0.75)
+                    if ( look.Y( ) > 0.75 )
                         look.Y( ) = 0.75;
                 }
             }
 
-            camTrans->LookAt( camTrans->GetWorldPosition( ) + look );
+            camTrans->LookAt(camTrans->GetWorldPosition( ) + look);
         }
 
-		child->SetWorldRotation( 
-            child->GetWorldRotation( ) * 
-            SQuat( 0.0f, lookAngle.X( ), 0.0f )
-        );
+        child->SetWorldRotation(
+            child->GetWorldRotation( ) *
+            SQuat(0.0f, lookAngle.X( ), 0.0f)
+            );
     }
-
-    if (team->IsDead( ))
-        return;
 
     auto move = -controller->GetMoveDirection( ) * moveSpeed;
 
-    auto forward = child->GetForward( ) * move.Y( );
-    auto strafe = child->GetRight( ) * move.X( );
+    auto forward = transform->GetForward( ) * move.Y( );
+    auto strafe = transform->GetRight( ) * move.X( );
     auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 

@@ -34,8 +34,8 @@ namespace ursine
     {
         namespace
         {
-            // static database instance
-            auto &database = ReflectionDatabase::Instance( );
+            // make sure we always have a reference to the database
+            #define database ReflectionDatabase::Instance( )
         }
 
         Type::Type(void)
@@ -273,9 +273,14 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        const std::string &Type::GetName(void) const
+        std::string Type::GetName(void) const
         {
-            return database.types[ m_id ].name;
+            auto &name = database.types[ m_id ].name;
+
+            if (IsArray( ))
+                return "Array<" + name + ">";
+
+            return name;
         }
 
         const MetaManager &Type::GetMeta(void) const

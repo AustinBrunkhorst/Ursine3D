@@ -48,7 +48,7 @@
         background: darken(#2d2d30, 1%);
       }
 
-      &:hover {
+      &:hover, &.selected {
         background: darken($color-accent, 25%);
         transition: background $duration-transition-btn ease;
       }

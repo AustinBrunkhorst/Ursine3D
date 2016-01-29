@@ -14,6 +14,7 @@
 #include "Precompiled.h"
 
 #include "EntityUtils.h"
+#include "SelectedComponent.h"
 
 #include <Editor.h>
 
@@ -110,7 +111,7 @@ JSFunction(CreateEntityFromArchetype)
     auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
 
     CefRefPtr<UIFileDialogCallback> callback = 
-        new UIFileDialogCallback( std::bind( &doLoadArchetype, world.get( ), _1, _2 ) );
+        new UIFileDialogCallback( std::bind( &doLoadArchetype, world, _1, _2 ) );
 
     std::vector<CefString> filters {
         "Archetype Files|.uatype"

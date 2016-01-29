@@ -15,7 +15,6 @@
 
 #include "Component.h"
 #include "Renderable.h"
-#include "GfxAPI.h"
 #include "RenderableComponentBase.h"
 #include "ModelResource.h"
 
@@ -25,9 +24,10 @@ namespace ursine
     {
         class Model3D 
             : public Component
-            , public RenderableComponentBase
         {
             NATIVE_COMPONENT;
+
+			friend class RenderSystem;
 
         public:
             EditorButton(
@@ -120,10 +120,12 @@ namespace ursine
             // This model component's model in the renderer
             graphics::Model3D *m_model;
 
+			RenderableComponentBase *m_base;
+
             std::string m_modelName;
             std::string m_materialName;
 
-            void updateRenderer(void) override;
+            void updateRenderer(void);
 
         } Meta(Enable, DisplayName( "Model3D" ));
     }

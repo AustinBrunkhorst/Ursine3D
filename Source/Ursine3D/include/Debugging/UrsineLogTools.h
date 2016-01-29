@@ -75,13 +75,16 @@
 
     #if (URSINE_OUTPUT_WARNINGS)
         #define UWarning(message, ...) ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__)
+        #define UWarningIf(condition, message, ...)
     #else
         #define UWarning(message, ...)
+        #define UWarningIf(condition, message, ...) if(!(condition)) { UWarning( message, __VA_ARGS__ ); }
     #endif
 #else
     #define UAssert(assertion, ...)
     #define UError(message, ...)
     #define UWarning(message, ...)
+    #define UWarningIf(condition, message, ...)
 #endif
 
 #define URSINE_FFL_ARGS const std::string &file,    \

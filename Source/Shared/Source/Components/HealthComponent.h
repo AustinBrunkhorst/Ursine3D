@@ -14,6 +14,7 @@
 #pragma once
 
 #include <Component.h>
+#include <RigidbodyComponent.h>
 
 struct HealthEventArgs : ursine::EventArgs
 {
@@ -51,4 +52,4 @@ private:
 
     float m_health;
     float m_maxHealth;
-} Meta(Enable, WhiteListMethods, DisplayName( "Health" ));
+} Meta(Enable, WhiteListMethods, DisplayName( "Health" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ));

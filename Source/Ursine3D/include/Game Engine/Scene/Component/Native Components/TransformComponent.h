@@ -43,7 +43,7 @@ namespace ursine
                 SetLocalPosition
             );
 
-            Meta(ForceEditorType( "ursine::SVec3" ))
+            Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
             Meta(EditorGetter( "GetLocalEulerEditor" ))
             Meta(EditorSetter( "SetLocalEulerEditor" ))
             EditorField( 
@@ -150,13 +150,13 @@ namespace ursine
             // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
-            Transform *GetRoot(void);
+			Handle<Transform> GetRoot(void);
 
-            Transform *GetParent(void);
+			Handle<Transform> GetParent(void);
 
             // Check to see if this transform is a 
             // child (anywhere in the hierarchy) of the given parent
-            bool IsChildOf(Transform *parent);
+            bool IsChildOf(Handle<Transform> parent);
 
             // Add a child to the hierarchy, assuming its coordinates are in world space
             void AddChild(Transform *child);
@@ -172,10 +172,10 @@ namespace ursine
 
             // Find child by their index in the list
             // If the index is too large, return nullptr
-            Transform *GetChild(uint index);
-            const Transform *GetChild(uint index) const;
+			Handle<Transform> GetChild(uint index);
+            const Handle<Transform> GetChild(uint index) const;
 
-            const std::vector<Transform *> &GetChildren(void) const;
+            const std::vector< Handle<Transform> > &GetChildren(void) const;
 
             // Find this transform's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -229,14 +229,14 @@ namespace ursine
 
             // The top most transform in the hierarchy
             // If this is the top most, root == this
-            Transform *m_root;
+            Handle<Transform> m_root;
 
             // The parent of this transform.
             // If there is no parent, parent == nullptr
-            Transform *m_parent;
+            Handle<Transform> m_parent;
 
             // Child pointers.
-            std::vector<Transform*> m_children;
+            std::vector< Handle<Transform> > m_children;
 
             // Local coordinates (coordinates in relation to the parent)
             SVec3 m_localPosition,
@@ -253,7 +253,7 @@ namespace ursine
 
             void dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged);
             void dispatchAndSetDirty(const TransformChangedArgs *args);
-            void dispatchParentChange(Transform *oldParent, Transform *newParent) const;
+            void dispatchParentChange(Handle<Transform> oldParent, Handle<Transform> newParent) const;
 
             void onParentDirty(EVENT_HANDLER(Entity));
 
@@ -267,11 +267,11 @@ namespace ursine
 
             // Generically add a child to our hierarch, without 
             // handling value changes in scale, position, or rotation
-            bool genericAddChild(Transform *child);
+            bool genericAddChild(Handle<Transform> child);
 
-            void setParent(Transform *oldParent, Transform *newParent);
+            void setParent(Handle<Transform> oldParent, Handle<Transform> newParent);
 			
-			void setRoot(Transform *root);
+			void setRoot(Handle<Transform> root);
 
         } Meta(
             Enable,

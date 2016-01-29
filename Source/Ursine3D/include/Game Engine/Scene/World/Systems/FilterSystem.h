@@ -45,7 +45,7 @@ namespace ursine
             void onEntityRemoved(EVENT_HANDLER(World));
 
             // game tick
-            void onUpdate(EVENT_HANDLER(World));
+            virtual void onUpdate(EVENT_HANDLER(World));
 
             const Filter m_filter;
 
@@ -55,14 +55,23 @@ namespace ursine
             void Add(Entity *entity);
             void Remove(Entity *entity);
 
-            void Enable(Entity *entity);
-            void Disable(Entity *entity);
+            virtual void Enable(Entity *entity);
+            virtual void Disable(Entity *entity);
 
-            virtual void OnInitialize(WorldEventType updateType = WORLD_UPDATE);
-            virtual void OnRemove(void);
+            virtual void OnInitialize(void) override;
+            virtual void Initialize(void);
+            virtual void OnRemove(void) override;
+
+            // Setting the update type must happen before OnInitialize is called
+            void SetUpdateType(WorldEventType updateType);
+            WorldEventType GetUpdateType(void) const;
 
         private:
             EventHandlerPriority m_updatePriority;
+            
+            // The world event that this filter system subscribes to (Editor vs Playmode)
+            WorldEventType m_updateType;
+
         } Meta(Enable, WhiteListMethods);
     }
 }

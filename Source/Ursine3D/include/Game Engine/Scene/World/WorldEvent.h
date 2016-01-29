@@ -40,6 +40,8 @@ namespace ursine
             // The screen that owns this world's focus state changed
             WORLD_SCREEN_FOCUS_CHANGED,
 
+        #if defined(URSINE_WITH_EDITOR)
+
             // Update event called specifically for editor systems
             WORLD_EDITOR_UPDATE,
             // An entity's name changed
@@ -47,7 +49,11 @@ namespace ursine
             // An entity's parent has changed
             WORLD_EDITOR_ENTITY_PARENT_CHANGED,
             // A component's field has changed
-            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED
+            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
+            // A component's array field has been modified
+            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED
+
+        #endif
         };
 
         struct WorldEventArgs : EventArgs
@@ -96,6 +102,8 @@ namespace ursine
                 , focused( focused ) { }
         };
 
+    #if defined(URSINE_WITH_EDITOR)
+
         struct EditorEntityNameChangedArgs : EntityEventArgs
         {
             std::string newName;
@@ -123,5 +131,18 @@ namespace ursine
                 , field( field )
                 , value( value ) { }
         };
+
+        struct EditorComponentArrayModfiedArgs : ComponentEventArgs
+        {
+            const ArrayModificationArgs &modification;
+            std::string field;
+
+            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, Entity *entity, Component *component, const std::string &field)
+                : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
+                , modification( args )
+                , field( field ) { }
+        };
+
+    #endif
     }
 }

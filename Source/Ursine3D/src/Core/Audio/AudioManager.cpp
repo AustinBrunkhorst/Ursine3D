@@ -31,6 +31,7 @@
 #include <AK/MusicEngine/Common/AkMusicEngine.h>
 
 #include "AudioID.h"
+#include "SoundFrameClient.h"
 
 namespace
 {
@@ -111,8 +112,9 @@ namespace ursine
             id
         );
 
-        if (result != AK_Success)
-        UWarning( "Wwise: Could Not Stop The Music!! Or this event." );
+        UWarningIf( result != AK_Success, 
+            "Wwise: Could Not Stop The Music!! Or this event." 
+        );
     }
 
     void AudioManager::ResumeAudio()

@@ -28,7 +28,7 @@ public:
     ursine::Scene::Handle GetScene(void);
     ursine::UIView::Handle GetUI(void);
 
-    void SetWorld(ursine::ecs::World::Handle world);
+    void SetWorld(ursine::ecs::World *world);
 
 	void ClearDeletionQueue(void);
 

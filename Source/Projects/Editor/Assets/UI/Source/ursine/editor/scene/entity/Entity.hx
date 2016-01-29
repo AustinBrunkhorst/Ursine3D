@@ -34,7 +34,10 @@ class Entity implements IEventContainer {
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
             .on( EntityEvent.ComponentAdded, onComponentAdded )
             .on( EntityEvent.ComponentRemoved, onComponentRemoved )
-            .on( EntityEvent.ComponentChanged, onComponentChanged );
+            .on( EntityEvent.ComponentChanged, onComponentChanged )
+            .on( EntityEvent.ComponentArrayInserted, onComponentArrayInserted )
+            .on( EntityEvent.ComponentArraySet, onComponentArraySet )
+            .on( EntityEvent.ComponentArrayRemove, onComponentArrayRemove );
     }
 
     public function isValid() : Bool {
@@ -96,12 +99,33 @@ class Entity implements IEventContainer {
         m_handler.removeComponent( name );
     }
 
-    public function updateComponentField(componentName : String, fieldName : String, value : Dynamic) : Void {
-        m_handler.updateComponentField( componentName, fieldName, value );
+    public function componentFieldUpdate(componentName : String, fieldName : String, value : Dynamic) : Void {
+        m_handler.componentFieldUpdate( componentName, fieldName, value );
     }
 
-    public function invokeComponentButton(componentName : String, buttonName : String) : Void {
-        m_handler.invokeComponentButton( componentName, buttonName );
+    public function componentFieldArrayUpdate(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
+        m_handler.componentFieldArrayUpdate( componentName, fieldName, index, value );
+    }
+
+    public function componentFieldArrayInsert(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
+        m_handler.componentFieldArrayInsert( componentName, fieldName, index, value );
+    }
+
+    public function componentFieldArrayPush(componentName : String, fieldName : String, value : Dynamic) : Void {
+        m_handler.componentFieldArrayInsert(
+            componentName,
+            fieldName,
+            m_handler.componentFieldArrayGetLength( componentName, fieldName ),
+            value
+        );
+    }
+
+    public function componentFieldArrayRemove(componentName : String, fieldName : String, index : UInt) : Void {
+        m_handler.componentFieldArrayRemove( componentName, fieldName, index );
+    }
+
+    public function componentButtonInvoke(componentName : String, buttonName : String) : Void {
+        m_handler.componentButtonInvoke( componentName, buttonName );
     }
 
     public function getChildren() : Array<Entity> {
@@ -154,5 +178,20 @@ class Entity implements IEventContainer {
     private function onComponentChanged(e) {
         if (e.uniqueID == uniqueID)
             events.trigger( EntityEvent.ComponentChanged, e );
+    }
+
+    private function onComponentArrayInserted(e) {
+        if (e.uniqueID == uniqueID)
+            events.trigger( EntityEvent.ComponentArrayInserted, e );
+    }
+
+    private function onComponentArraySet(e) {
+        if (e.uniqueID == uniqueID)
+            events.trigger( EntityEvent.ComponentArraySet, e );
+    }
+
+    private function onComponentArrayRemove(e) {
+        if (e.uniqueID == uniqueID)
+            events.trigger( EntityEvent.ComponentArrayRemove, e );
     }
 }

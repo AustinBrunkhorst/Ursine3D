@@ -49,19 +49,29 @@ int main(int argc, char *argv[])
             "Input target project name." 
         )
         ( 
+            SWITCH_OPTION( SourceRoot ), 
+            po::value<std::string>( )->required( ),
+            "Root source directory that is shared by all header files." 
+        )
+        ( 
             SWITCH_OPTION( InputSource ), 
             po::value<std::string>( )->required( ), 
             "Source file (header) to compile reflection data from." 
         )
-        ( 
-            SWITCH_OPTION( OutputHeader ), 
+            ( 
+            SWITCH_OPTION( ModuleHeaderFile ), 
             po::value<std::string>( )->required( ), 
-            "Output generated C++ header file." 
+            "Header file that declares this reflection module." 
         )
         ( 
-            SWITCH_OPTION( OutputSource ), 
+            SWITCH_OPTION( OutputModuleSource ), 
             po::value<std::string>( )->required( ), 
-            "Output generated C++ source file." 
+            "Output generated C++ module source file." 
+        )
+        ( 
+            SWITCH_OPTION( OutputModuleFileDirectory ), 
+            po::value<std::string>( )->required( ), 
+            "Output directory for generated C++ module file, header/source files." 
         )
         ( 
             SWITCH_OPTION( TemplateDirectory ), 
@@ -72,6 +82,10 @@ int main(int argc, char *argv[])
             SWITCH_OPTION( PrecompiledHeader ), 
             po::value<std::string>( ), 
             "Optional name of the precompiled header file for the project." 
+        )
+        (
+            SWITCH_OPTION( ForceRebuild ),
+            "Whether or not to ignore cache and write the header / source files."
         )
         ( 
             SWITCH_OPTION( CompilerFlags ), 
@@ -116,17 +130,26 @@ void parse(const po::variables_map &cmdLine)
 {
     ReflectionOptions options;
 
+    options.forceRebuild = 
+        cmdLine.count( kSwitchForceRebuild ) > 0;
+
     options.targetName = 
         cmdLine.at( kSwitchTargetName ).as<std::string>( );
+
+    options.sourceRoot = 
+        cmdLine.at( kSwitchSourceRoot ).as<std::string>( );
 
     options.inputSourceFile = 
         cmdLine.at( kSwitchInputSource ).as<std::string>( );
 
-    options.outputHeaderFile = 
-        cmdLine.at( kSwitchOutputHeader ).as<std::string>( );
+    options.moduleHeaderFile = 
+        cmdLine.at( kSwitchModuleHeaderFile ).as<std::string>( );
 
-    options.outputSourceFile = 
-        cmdLine.at( kSwitchOutputSource ).as<std::string>( );
+    options.outputModuleSource = 
+        cmdLine.at( kSwitchOutputModuleSource ).as<std::string>( );
+
+    options.outputModuleFileDirectory = 
+        cmdLine.at( kSwitchOutputModuleFileDirectory ).as<std::string>( );
 
     // default arguments
     options.arguments =
@@ -155,6 +178,7 @@ void parse(const po::variables_map &cmdLine)
     options.templateDirectory = 
         cmdLine.at( kSwitchTemplateDirectory ).as<std::string>( );
     
+    std::cout << std::endl;
     std::cout << "Parsing reflection data for target \"" 
               << options.targetName << "\"" 
               << std::endl;
@@ -163,30 +187,11 @@ void parse(const po::variables_map &cmdLine)
 
     parser.Parse( );
 
-    // header template
     try
     {
-        std::string headerTemplate;
-
-        parser.GenerateHeader( headerTemplate );
-
-        utils::WriteText( options.outputHeaderFile, headerTemplate );
-    } 
-    catch (std::exception &e)
-    {
-        utils::FatalError( e.what( ) );
+        parser.GenerateFiles( );
     }
-
-    // source template
-    try
-    {
-        std::string sourceTemplate;
-
-        parser.GenerateSource( sourceTemplate );
-
-        utils::WriteText( options.outputSourceFile, sourceTemplate );
-    } 
-    catch (std::exception &e)
+    catch(std::exception &e)
     {
         utils::FatalError( e.what( ) );
     }

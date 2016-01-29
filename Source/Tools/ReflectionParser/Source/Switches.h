@@ -23,11 +23,14 @@
 #define SWITCH_OPTION(name)                                 \
     ((kSwitch##name) + (kSwitch##name##Shorthand)).c_str( ) \
 
-DEFINE_SWITCH_FULL( Help,              "help",           "h" );
-DEFINE_SWITCH_FULL( TargetName,        "target-name",    "t" );
-DEFINE_SWITCH_FULL( InputSource,       "in-source",      "i" );
-DEFINE_SWITCH_FULL( OutputHeader,      "out-header",     "a" );
-DEFINE_SWITCH_FULL( OutputSource,      "out-source",     "b" );
-DEFINE_SWITCH_FULL( TemplateDirectory, "tmpl-directory", "d" );
-DEFINE_SWITCH_FULL( PrecompiledHeader, "pch",            "p" );
-DEFINE_SWITCH_FULL( CompilerFlags,     "flags",          "f" );
+DEFINE_SWITCH_FULL( Help,                      "help",           "h" );
+DEFINE_SWITCH_FULL( TargetName,                "target-name",    "t" );
+DEFINE_SWITCH_FULL( SourceRoot,                "source-root",    "r" );
+DEFINE_SWITCH_FULL( InputSource,               "in-source",      "i" );
+DEFINE_SWITCH_FULL( ModuleHeaderFile,          "module-header",  "m" );
+DEFINE_SWITCH_FULL( OutputModuleSource,        "out-source",     "s" );
+DEFINE_SWITCH_FULL( OutputModuleFileDirectory, "out-dir",        "c" );
+DEFINE_SWITCH_FULL( TemplateDirectory,         "tmpl-directory", "d" );
+DEFINE_SWITCH_FULL( PrecompiledHeader,         "pch",            "p" );
+DEFINE_SWITCH_FULL( ForceRebuild,              "force-rebuild",  "e" );
+DEFINE_SWITCH_FULL( CompilerFlags,             "flags",          "f" );

@@ -227,7 +227,9 @@ namespace ursine
 				{
 					//ambi
 					j = 0;
+
 					newMtrlInfo.name = mModel->mMaterials[i]->name;
+
 					newMtrlInfo.ambitype = mModel->mMaterials[i]->ambient.type;
 					newMtrlInfo.ambi_mcolor = mModel->mMaterials[i]->ambient.color;
 					newMtrlInfo.ambi_mapCount = mModel->mMaterials[i]->ambient.textureSetArray.size();

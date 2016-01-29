@@ -31,6 +31,12 @@
       @include triangle( 'right', $color-accent, 5px );
     }
 
+    &:hover {
+      #btnRemove {
+        opacity: 1;
+      }
+    }
+
     #btnRemove {
       position: absolute;
       right: 10px;
@@ -38,8 +44,9 @@
       width: 15px;
       height: 15px;
       color: $color-accent;
+      opacity: 0;
       transform: translateY(-50%);
-      transition: color $duration-transition-btn ease;
+      transition: opacity $duration-transition-btn ease, color $duration-transition-btn ease;
 
       @include icon-half( $icon-half-remove-circle, 15px );
 

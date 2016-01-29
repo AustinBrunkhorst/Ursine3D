@@ -18,7 +18,7 @@ NATIVE_COMPONENT_DEFINITION( CharacterFireController );
 
 CharacterFireController::CharacterFireController(void)
     : BaseComponent()
-    , m_fireRate(0.1)
+    , m_fireRate(0.1f)
     , m_fireRange(1000.0f)
     , m_fireOffset(ursine::SVec3(0, 0, 0))
     , m_triggerFire(false)
@@ -27,9 +27,16 @@ CharacterFireController::CharacterFireController(void)
     , m_accuracy(0)
     , m_damage(10)
     , m_shotStartColor(ursine::Color(1, 0, 0, 1))
-    , m_shotEndColor(ursine::Color(0, 1, 0.5, 1))
+    , m_shotEndColor(ursine::Color(0, 1, 0.5f, 1))
 {
+}
 
+void CharacterFireController::CheckFire(EVENT_HANDLER(ursine::ecs::Entity))
+{
+    if (m_triggerFire)
+        Fire();
+    else
+        SetFireState(true);
 }
 
 float CharacterFireController::GetFireRate(void) const

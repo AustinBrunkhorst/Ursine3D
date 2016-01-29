@@ -16,6 +16,8 @@
 #include "Type.h"
 #include "UrsineTypes.h"
 
+#include "ArrayConfig.h"
+
 namespace ursine
 {
     namespace meta
@@ -35,6 +37,12 @@ namespace ursine
             virtual void Remove(size_t index) = 0;
 
             virtual size_t Size(void) const = 0;
+    
+        #if defined(URSINE_WITH_EDITOR)
+
+            virtual ArrayEventDispatcher &GetModifyEvents(void) const = 0;
+
+        #endif
         };
     }
 }

@@ -8,6 +8,8 @@
 #include "ConvexHullColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 
+#include "Notification.h"
+
 namespace ursine
 {
     namespace ecs
@@ -17,8 +19,11 @@ namespace ursine
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
             , m_sceneName( "" )
+        #if defined(URSINE_WITH_EDITOR)
 			, m_notificationPresent( false )
+        #endif
         {
+
         }
 
         FBXSceneRootNode::~FBXSceneRootNode(void)
@@ -30,12 +35,12 @@ namespace ursine
         {
         }
 
-        const std::string & FBXSceneRootNode::GetSceneName(void) const
+        const std::string &FBXSceneRootNode::GetSceneName(void) const
         {
             return m_sceneName;
         }
 
-        void FBXSceneRootNode::SetSceneName(const std::string & map)
+        void FBXSceneRootNode::SetSceneName(const std::string &map)
         {
             m_sceneName = map;
         }
@@ -78,7 +83,7 @@ namespace ursine
             }
         }
 
-		void FBXSceneRootNode::recursClearChildren(std::vector<Transform *> children)
+        void FBXSceneRootNode::recursClearChildren(const std::vector< Handle<Transform> > &children)
         {
 	        for (auto &child : children)
 			{

@@ -15,8 +15,16 @@
 
 #include <vector>
 
+#include "ArrayConfig.h"
+
 namespace ursine
 {
+    namespace meta
+    {
+        template<typename T>
+        class ArrayWrapperContainer;
+    }
+
     template<typename T>
     class Array
     {
@@ -78,7 +86,16 @@ namespace ursine
         SizeType Size(void) const;
 
     private:
+
         std::vector<T> m_impl;
+
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+        friend class meta::ArrayWrapperContainer<T>;
+
+        ArrayEventDispatcher m_modifyEvents;
+
+    #endif
     };
 }
 

@@ -20,6 +20,7 @@ body {
 
 ::-webkit-scrollbar {
   width: 18px;
+  height: 18px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -34,6 +35,11 @@ body {
     background: #efebef;
   }
 
+  &:horizontal {
+    border-top: 4px solid #3e3e42;
+    border-bottom: 4px solid #3e3e42;
+  }
+
   &:vertical {
     border-left: 4px solid #3e3e42;
     border-right: 4px solid #3e3e42;
@@ -46,6 +52,16 @@ body {
   background-color: #3e3e42;
   background-position: center;
   background-repeat: no-repeat;
+
+  &:horizontal {
+    &:start {
+      background-image: url(Images/scroll-left.png);
+    }
+
+    &:end {
+      background-image: url(Images/scroll-right.png);
+    }
+  }
 
   &:vertical {
     &:start {

@@ -9,7 +9,7 @@
             <div id="filter-icon"></div>
         </div>
         <ul id="types">
-        <template is="dom-repeat" items="{{types}}" as="type">
+        <template id="typeItems" is="dom-repeat" items="{{types}}" as="type">
             <li on-click="_onTypeSelected">{{type}}</li>
         </template>
         </ul>
@@ -27,6 +27,7 @@
                 }
             },
             listeners: {
+                'keydown': '_onContainerKeyDown',
                 'blur': '_onContainerBlur',
                 'filter.blur': '_onContainerBlur',
                 'filter.input': '_onFilterInput'
@@ -41,7 +42,7 @@
                 this.set( 'types', this._rawTypes );
             },
             created: function() {
-
+                this._selectedIndex = -1;
             },
             attached: function() {
                 this.$.filter.focus( );
@@ -69,6 +70,28 @@
                 }, 175 );
             },
 
+            _onContainerKeyDown: function(e) {
+                switch (e.keyCode) {
+                    // up
+                    case 38:
+                        this._selectedIndex =
+                            Math.max( 0, this._selectedIndex - 1 );
+
+                        this._onSelectedIndexChanged( );
+                        break;
+                    // down
+                    case 40:
+                        this._selectedIndex =
+                            Math.min( this.get( 'types' ).length - 1, this._selectedIndex + 1 );
+
+                        this._onSelectedIndexChanged( );
+                        break;
+                    // return
+                    case 13:
+                        this._selectSelectedType( );
+                        break;
+                }
+            },
             _onContainerBlur: function(e) {
                 // needs to be bound to a timeout so document.activeElement has time to update
                 setTimeout( function() {
@@ -84,19 +107,57 @@
                 var value = this.$.filter.value.toLowerCase( );
 
                 if (value.length) {
-                    // filter types that doesn't start with this value
-                    output = this._rawTypes.filter( function(type) {
-                        return type.toLowerCase( ).indexOf( value ) == 0;
+                    output = this._rawTypes
+                    // filter types that don't contain this value
+                    .filter( function(type) {
+                        return type.toLowerCase( ).indexOf( value ) != -1;
+                    } )
+                    // sort based on where the name exists
+                    .sort( function(a, b) {
+                        return a.toLowerCase( ).indexOf( value ) -
+                               b.toLowerCase( ).indexOf( value );
                     } );
                 } else {
                     output = this._rawTypes;
                 }
 
+                this._selectedIndex = 0;
+
                 this.set( 'types', output );
+
+                this._onSelectedIndexChanged( );
             },
             _onTypeSelected: function(e) {
+                this._notifySelected( e.model.type );
+            },
+
+            _onSelectedIndexChanged: function() {
+                var lastSelected = this.$.types.querySelector( 'li.selected' );
+                var items = this.$.types.querySelectorAll( 'li' );
+
+                if (lastSelected)
+                    lastSelected.classList.remove( 'selected' );
+
+                var item = items[ this._selectedIndex ];
+
+                if (item) {
+                    item.classList.add( 'selected' );
+
+                    item.scrollIntoViewIfNeeded( );
+                }
+            },
+
+            _selectSelectedType: function() {
+                var selected = this.$.types.querySelector( 'li.selected' );
+
+                if (!selected)
+                    return;
+
+                this._notifySelected( this.$.typeItems.modelForElement( selected ).type );
+            },
+            _notifySelected: function(type) {
                 this.fire( 'type-selected', {
-                    type: e.model.type
+                    type: type
                 } );
 
                 this.close( );

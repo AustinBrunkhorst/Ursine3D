@@ -34,6 +34,12 @@ namespace ursine
 
             size_t Size(void) const override;
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            ArrayEventDispatcher &GetModifyEvents(void) const override;
+
+        #endif
+
         private:
             Array<T> &m_array;
         };

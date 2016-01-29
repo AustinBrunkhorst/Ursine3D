@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+include(MetaGeneration)
+
 project(Ursine3D CXX)
 
 # ------------------------------------------------------------------------------
@@ -54,8 +56,26 @@ set(URSINE_RESOURCES "${URSINE_RESOURCES}" PARENT_SCOPE)
 # Project Properties
 # ------------------------------------------------------------------------------
 
-file(GLOB_RECURSE URSINE_SRC ${URSINE_DIR_SOURCE}/*.cpp)
 file(GLOB_RECURSE URSINE_INC ${URSINE_DIR_INCLUDE}/*.h ${URSINE_DIR_INCLUDE}/*.hpp)
+file(GLOB_RECURSE URSINE_SRC ${URSINE_DIR_SOURCE}/*.cpp)
+
+set(URSINE_INC_NO_GENERATED ${URSINE_INC})
+
+set(META_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/Generated")
+set(META_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_INCLUDE}")
+
+ursine_prebuild_meta(
+    TARGET Ursine3D
+    GENERATED_DIR ${META_GENERATED_DIR}
+    SOURCE_ROOT ${META_SOURCE_ROOT}
+    HEADER_FILES ${URSINE_INC}
+    MODULE_HEADER "UrsineReflectionModule.h"
+    OUT_MODULE_SOURCE META_MODULE_SOURCE
+    OUT_GENERATED_FILES META_GENERATED_FILES
+    OUT_INC URSINE_INC
+    OUT_SRC URSINE_SRC
+    PCH_NAME "UrsinePrecompiled"
+)
 
 # disable exceptions for this project
 add_definitions(-D_HAS_EXCEPTIONS=0)
@@ -92,89 +112,98 @@ ursine_parse_source_groups(
 
 # DirectX
 if (MSVC)
-	set(URSINE_SHADER_DIR "${ENGINE_RESOURCES_DIR}/Shaders")
+    # treat warnings as errors
+    target_compile_options(Ursine3D PUBLIC /WX)
 
-	file(GLOB_RECURSE URSINE_SHADER_FILES "${URSINE_SHADER_DIR}/*.hlsl")
+    # multi process compilation
+    target_compile_options(Ursine3D PUBLIC /MP)
 
-	foreach (shader ${URSINE_SHADER_FILES})
-		get_filename_component(filename "${shader}" NAME_WE)
+    # ignore linker warnings for no symbols or pdbs
+    set_property(TARGET Ursine3D APPEND PROPERTY STATIC_LIBRARY_FLAGS "/ignore:4099 /ignore:4221")
+    
+    set(URSINE_SHADER_DIR "${ENGINE_RESOURCES_DIR}/Shaders")
 
-		string(LENGTH ${filename} filename_length)
-		math(EXPR filename_length "${filename_length} - 2")
+    file(GLOB_RECURSE URSINE_SHADER_FILES "${URSINE_SHADER_DIR}/*.hlsl")
 
-		# filename suffix
-		string(SUBSTRING ${filename} ${filename_length} -1 shader_type)
+    foreach (shader ${URSINE_SHADER_FILES})
+        get_filename_component(filename "${shader}" NAME_WE)
 
-		# type of shader to compile (vs, ps, gs, etc.)
-		string(TOLOWER ${shader_type} shader_type)
+        string(LENGTH ${filename} filename_length)
+        math(EXPR filename_length "${filename_length} - 2")
 
-		# default to vertex shader
-		set(vs_shader_type "Vertex")
+        # filename suffix
+        string(SUBSTRING ${filename} ${filename_length} -1 shader_type)
 
-		# map to correct Visual Studio FXCompiler shader type
+        # type of shader to compile (vs, ps, gs, etc.)
+        string(TOLOWER ${shader_type} shader_type)
 
-		if (shader_type STREQUAL "ps")
-			set(vs_shader_type "Pixel")
-		elseif (shader_type STREQUAL "gs")
-			set(vs_shader_type "Geometry")
-		elseif (shader_type STREQUAL "hs")
-			set(vs_shader_type "Hull")
-		elseif (shader_type STREQUAL "ds")
-			set(vs_shader_type "Domain")
+        # default to vertex shader
+        set(vs_shader_type "Vertex")
+
+        # map to correct Visual Studio FXCompiler shader type
+
+        if (shader_type STREQUAL "ps")
+            set(vs_shader_type "Pixel")
+        elseif (shader_type STREQUAL "gs")
+            set(vs_shader_type "Geometry")
+        elseif (shader_type STREQUAL "hs")
+            set(vs_shader_type "Hull")
+        elseif (shader_type STREQUAL "ds")
+            set(vs_shader_type "Domain")
         elseif (shader_type STREQUAL "cs")
-			set(vs_shader_type "Compute")
-		endif ()
+            set(vs_shader_type "Compute")
+        endif ()
 
-		# set the properties in Visual Studio
-		set_source_files_properties(
-			TARGET Shaders
-			"${shader}"
-			PROPERTIES
-			VS_SHADER_TYPE ${vs_shader_type}
-			VS_SHADER_MODEL 5.0
-			VS_SHADER_ENTRYPOINT main
-		)
-	endforeach ()
+        # set the properties in Visual Studio
+        set_source_files_properties(
+            TARGET Shaders
+            "${shader}"
+            PROPERTIES
+            VS_SHADER_TYPE ${vs_shader_type}
+            VS_SHADER_MODEL 5.0
+            VS_SHADER_ENTRYPOINT main
+        )
+    endforeach ()
 
-	# build the source group folders for the shader files
-	ursine_source_group_files(
-		"${URSINE_SHADER_DIR}" 
-		"${URSINE_SHADER_FILES}"
-	)
+    # build the source group folders for the shader files
+    ursine_source_group_files(
+        "${URSINE_SHADER_DIR}" 
+        "${URSINE_SHADER_FILES}"
+    )
 
-	set(shader_out_dir "${CMAKE_CURRENT_BINARY_DIR}/Shaders/")
+    set(shader_out_dir "${CMAKE_CURRENT_BINARY_DIR}/Shaders/")
 
-	# create an empty dummy file
-	set(shader_dummy_file "${shader_out_dir}/Shaders.cpp")
+    # create an empty dummy file
+    set(shader_dummy_file "${shader_out_dir}/Shaders.cpp")
 
-	file(WRITE "${shader_dummy_file}" "")
+    file(WRITE "${shader_dummy_file}" "")
 
-	# exclude it from the build
-	set_source_files_properties(
-		TARGET Shaders
-		"${shader_dummy_file}"
-		PROPERTIES
-		HEADER_FILE_ONLY TRUE
-	)
+    # exclude it from the build
+    set_source_files_properties(
+        TARGET Shaders
+        "${shader_dummy_file}"
+        PROPERTIES
+        HEADER_FILE_ONLY TRUE
+    )
 
-	source_group("" FILES "${shader_dummy_file}")
+    source_group("" FILES "${shader_dummy_file}")
 
-	# create a target with the shader files (and dummy file)
-	add_library(Shaders
-		${shader_dummy_file}
-		${URSINE_SHADER_FILES}
-	)
+    # create a target with the shader files (and dummy file)
+    add_library(Shaders
+        ${shader_dummy_file}
+        ${URSINE_SHADER_FILES}
+    )
 
-	# give it a better output directory
-	set_target_properties(Shaders 
-		PROPERTIES 
-		ARCHIVE_OUTPUT_DIRECTORY "${shader_out_dir}"
-	)
+    # give it a better output directory
+    set_target_properties(Shaders 
+        PROPERTIES 
+        ARCHIVE_OUTPUT_DIRECTORY "${shader_out_dir}"
+    )
 
-	ursine_set_folder(Shaders "Engine")
+    ursine_set_folder(Shaders "Engine")
 
-	# export to parent scope
-	set(URSINE_SHADER_FILES "${URSINE_SHADER_FILES}" PARENT_SCOPE)
+    # export to parent scope
+    set(URSINE_SHADER_FILES "${URSINE_SHADER_FILES}" PARENT_SCOPE)
 endif ()
 
 # ------------------------------------------------------------------------------
@@ -184,3 +213,25 @@ endif ()
 set(URSINE_DIR_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_INCLUDE}" PARENT_SCOPE)
 set(URSINE_DIR_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_SOURCE}" PARENT_SCOPE)
 set(URSINE_HEADER_FILES "${URSINE_INC}" PARENT_SCOPE)
+set(URSINE_HEADER_FILES_NO_GENERATED "${URSINE_INC_NO_GENERATED}" PARENT_SCOPE)
+
+set(URSINE_META_GENERATED_DIR "${META_GENERATED_DIR}" PARENT_SCOPE)
+set(URSINE_META_SOURCE_ROOT "${META_SOURCE_ROOT}" PARENT_SCOPE)
+set(URSINE_META_MODULE_SOURCE "${META_MODULE_SOURCE}" PARENT_SCOPE)
+set(URSINE_META_GENERATED_FILES "${META_GENERATED_FILES}" PARENT_SCOPE)
+
+# add reflection parser
+add_subdirectory("${ENGINE_DIR}/../Tools/ReflectionParser" "${CMAKE_BINARY_DIR}/ReflectionParser")
+
+# build reflection for the engine
+ursine_build_meta(
+    TARGET Ursine3D
+    SOURCE_ROOT ${META_SOURCE_ROOT}
+    GENERATED_DIR ${META_GENERATED_DIR}
+    GENERATED_FILES ${META_GENERATED_FILES}
+    SOURCE_FILE "UrsineReflection.h"
+    MODULE_HEADER "UrsineReflectionModule.h"
+    MODULE_SOURCE_FILE ${META_MODULE_SOURCE}
+    HEADER_FILES ${URSINE_INC_NO_GENERATED}
+    PCH_NAME "UrsinePrecompiled"
+)

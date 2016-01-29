@@ -4,6 +4,7 @@ import ursine.controls.ComboInput;
 import ursine.editor.scene.component.ComponentDatabase;
 
 class DefaultFieldInspector extends FieldInspectionHandler {
+    private var m_arrayInspector : ArrayTypeInspector;
     private var m_isEnum : Bool;
     private var m_isBitMaskEditor : Bool;
     private var m_comboInput : ComboInput;
@@ -12,8 +13,10 @@ class DefaultFieldInspector extends FieldInspectionHandler {
     public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
-        // handle enum types
-        if (type.enumValue != null) {
+
+        if (type.isArray) {
+            initArray( );
+        } else if (type.enumValue != null) {
             initEnum( );
         }
     }
@@ -28,6 +31,25 @@ class DefaultFieldInspector extends FieldInspectionHandler {
                 m_comboInput.value = value;
             }
         }
+    }
+
+    public override function arrayInsert(index : UInt, value : Dynamic) {
+        if (m_arrayInspector != null)
+            m_arrayInspector.arrayInsert( index, value );
+    }
+
+    public override function arraySet(index : UInt, value : Dynamic) {
+        if (m_arrayInspector != null)
+            m_arrayInspector.arraySet( index, value );
+    }
+
+    public override function arrayRemove(index : UInt) {
+        if (m_arrayInspector != null)
+            m_arrayInspector.arrayRemove( index );
+    }
+
+    private function initArray() {
+        m_arrayInspector = new ArrayTypeInspector( inspector, m_owner, m_instance, m_field, m_type );
     }
 
     private function initEnum() {
@@ -58,7 +80,7 @@ class DefaultFieldInspector extends FieldInspectionHandler {
         m_comboInput.addEventListener( 'change', function(e) {
             m_instance = getEnumBitMaskValue( );
 
-            m_owner.notifyChanged( m_field, m_instance );
+            notifyChanged( m_field, m_instance );
         } );
 
         inspector.container.appendChild( m_comboInput );

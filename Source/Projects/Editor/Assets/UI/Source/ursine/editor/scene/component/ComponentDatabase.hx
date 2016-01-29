@@ -28,6 +28,10 @@ extern class NativeField {
 
 extern class NativeType {
     var name : String;
+
+    var isArray : Bool;
+    var arrayType : String;
+
     var enumValue : Null<NativeEnum>;
 
     var fields : Array<NativeField>;
@@ -116,7 +120,7 @@ class ComponentDatabase {
         if (typeOverride == null) {
             typeName = type.name;
         } else {
-            typeName = Reflect.field( typeOverride, 'type' );
+            typeName = Reflect.field( typeOverride, 'typeName' );
 
             type = m_typeDB[ typeName ];
         }

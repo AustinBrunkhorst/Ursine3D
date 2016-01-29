@@ -12,8 +12,6 @@
 
 #include <type_traits>
 
-#include "MetaTraits.h"
-
 // converts the type name into a meta::Type instance
 #define typeof(expr)                                                  \
 	ursine::meta::Type( 					                          \

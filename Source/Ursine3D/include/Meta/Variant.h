@@ -15,11 +15,13 @@
 
 #include "TypeConfig.h"
 
-#include "Array.h"
-#include "Json.h"
+#include "Object.h"
 
 namespace ursine
 {
+    template<typename T>
+    class Array;
+
     namespace meta
     {
         class Variant

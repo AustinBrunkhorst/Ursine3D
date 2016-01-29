@@ -14,6 +14,9 @@
 #include "Precompiled.h"
 
 #include "EditorEntityManager.h"
+
+#include "ComponentUtils.h"
+
 #include "SelectedComponent.h"
 #include "EditorConfig.h"
 
@@ -50,31 +53,10 @@ namespace
             const auto Added = "ComponentAdded";
             const auto Removed = "ComponentRemoved";
             const auto Changed = "ComponentChanged";
+            const auto ArrayInserted = "ComponentArrayInserted";
+            const auto ArraySet = "ComponentArraySet";
+            const auto ArrayRemove = "ComponentArrayRemove";
         }
-    }
-
-    Json::array inspectComponentButtons(const meta::Variant &component)
-    {
-        auto methods = component.GetType( ).GetMethods( );
-
-        Json::array inspection;
-
-        for (auto &method : methods)
-        {
-            auto &meta = method.GetMeta( );
-
-            auto *button = meta.GetProperty<CreateButton>( );
-
-            if (!button)
-                continue;
-
-            inspection.emplace_back( Json::object {
-                { "name", method.GetName( ) },
-                { "text", button->text }
-            } );
-        }
-
-        return inspection;
     }
 }
 
@@ -90,7 +72,7 @@ EditorEntityManager::~EditorEntityManager(void)
     clearWorld( m_world );
 }
 
-void EditorEntityManager::SetWorld(ecs::World::Handle world)
+void EditorEntityManager::SetWorld(ecs::World *world)
 {
     clearWorld( m_world );
 
@@ -101,11 +83,15 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
         .On( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .On( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
-        .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged );
+        .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
+        .On( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 
     m_world = world;
+}
 
-    Json data;
+void EditorEntityManager::RelayUIResetWorld(void)
+{
+	Json data;
 
     m_project->GetUI( )->Message(
         UI_CMD_BROADCAST, 
@@ -115,7 +101,7 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
     );
 }
 
-void EditorEntityManager::clearWorld(ecs::World::Handle world)
+void EditorEntityManager::clearWorld(ecs::World *world)
 {
     if (!world)
         return;
@@ -127,7 +113,8 @@ void EditorEntityManager::clearWorld(ecs::World::Handle world)
         .Off( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
         .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .Off( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
-        .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged );
+        .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
+        .Off( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 }
 
 void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
@@ -185,15 +172,15 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
 
     Json oldUniqueID, newUniqueID;
 
-    if (args->oldParent == -1)
+    if (args->oldParent == nullptr)
         oldUniqueID = nullptr;
     else
-        oldUniqueID = static_cast<int>( args->oldParent );
+        oldUniqueID = static_cast<int>( args->oldParent->GetUniqueID( ) );
 
-    if (args->newParent == -1)
+    if (args->newParent == nullptr)
         newUniqueID = nullptr;
     else
-        newUniqueID = static_cast<int>( args->newParent );
+        newUniqueID = static_cast<int>( args->newParent->GetUniqueID( ) );
 
     Json message = Json::object {
         { "uniqueID", static_cast<int>( sender->GetUniqueID( ) ) },
@@ -221,7 +208,7 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
         { "component", args->component->GetType( ).GetName( ) },
         // note: false is to ensure no serialization hooks are called
         { "value", component.GetType( ).SerializeJson( component, false ) },
-        { "buttons", inspectComponentButtons( component ) }
+        { "buttons", InspectComponentButtons( component ) }
     };
 
     m_project->GetUI( )->Message(
@@ -277,6 +264,55 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             UI_CMD_BROADCAST, 
             channel::EntityManager, 
             events::component::Changed,
+            message
+        );
+    }
+}
+
+void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::EditorComponentArrayModfiedArgs);
+
+    if (args->entity->HasComponent<Selected>( ))
+    {
+    #if defined(CONFIG_DEBUG)
+        UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
+            "Notifying change of unknown field.\n"
+            "Component: %s\n"
+            "Field: %s",
+            args->component->GetType( ).GetName( ).c_str( ),
+            args->field.c_str( )
+        );
+    #endif
+
+        Json::object message = Json::object {
+            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+            { "component", args->component->GetType( ).GetName( ) },
+            { "field", args->field },
+            { "index", static_cast<int>( args->modification.index ) }
+        };
+
+        if (args->modification.value.IsValid( ))
+        {
+            // note: false is to ensure no serialization hooks are called
+            message[ "value" ] = args->modification.value.GetType( ).SerializeJson( args->modification.value, false );
+        }
+        else
+        {
+            message[ "value" ] = nullptr;
+        }
+
+        static std::unordered_map<ArrayModifyAction, std::string> actionToType
+        {
+            { AMODIFY_INSERT, events::component::ArrayInserted },
+            { AMODIFY_SET, events::component::ArraySet },
+            { AMODIFY_REMOVE, events::component::ArrayRemove }
+        };
+
+        m_project->GetUI( )->Message(
+            UI_CMD_BROADCAST, 
+            channel::EntityManager, 
+            actionToType[ args->modification.action ],
             message
         );
     }

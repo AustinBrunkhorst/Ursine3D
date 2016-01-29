@@ -60,10 +60,28 @@ namespace ursine
             return (a > b) ? a : b;
         }
 
+		template<typename T, typename ...Args>
+        inline T Max(T a, T b, Args &&...args)
+        {
+			return Max( 
+				Max( a, b ),
+				std::forward<Args>( args )...
+			);
+        }
+
         template<typename T>
         inline T Min(T a, T b)
         {
             return (a < b) ? a : b;
+        }
+
+		template<typename T, typename ...Args>
+        inline T Min(T a, T b, Args &&...args)
+        {
+			return Min(
+				Min( a, b ),
+				std::forward<Args>( args )...
+			);
         }
 
         inline float Wrap(float in_val, float min, float max)

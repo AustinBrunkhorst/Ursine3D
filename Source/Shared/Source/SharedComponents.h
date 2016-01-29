@@ -24,3 +24,23 @@
 #include "Components/RecorderComponent.h"
 #include "Components/RandomSlerpComponent.h"
 #include "Components/PlayerAnimationComponent.h"
+#include "Components/TimeDeathComponent.h"
+#include "Components/ProjectileComponent.h"
+#include "Components/DamageOnCollideComponent.h"
+#include "Components/PlayerIdComponent.h"
+#include "Components/ControlPointComponent.h"
+#include "Components/WallComponent.h"
+
+
+/////////////////////////////////
+//// WeaponLogic Components  ////
+/////////////////////////////////
+
+// weapons
+#include "Components/WeaponLogic/Weapons/BaseWeaponComponent.h"
+#include "Components/WeaponLogic/Weapons/HitscanWeaponComponent.h"
+
+// micelaneous weapon logic
+#include "Components/WeaponLogic/AmmoPickUpComponent.h"
+
+

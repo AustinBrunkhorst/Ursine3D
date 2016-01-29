@@ -24,11 +24,17 @@ LanguageType::LanguageType(
     , m_ptrTypeEnabled( !m_metaData.GetFlag( native_property::DisablePtrType ) )
     , m_constPtrTypeEnabled( !m_metaData.GetFlag( native_property::DisableConstPtrType ) )
     , m_accessModifier( cursor.GetAccessModifier( ) )
+    , m_rootCursor( cursor )
 {
-    
+
 }
 
 const MetaDataManager &LanguageType::GetMetaData(void) const
 {
     return m_metaData;
+}
+
+std::string LanguageType::GetSourceFile(void) const
+{
+    return m_rootCursor.GetSourceFile( );
 }

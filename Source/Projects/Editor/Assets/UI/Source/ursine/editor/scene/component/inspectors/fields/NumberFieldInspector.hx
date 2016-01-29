@@ -1,5 +1,6 @@
 package ursine.editor.scene.component.inspectors.fields;
 
+import ursine.native.Property;
 import ursine.controls.NumberInput;
 import ursine.editor.scene.component.ComponentDatabase;
 
@@ -17,11 +18,25 @@ class NumberFieldInspector extends FieldInspectionHandler {
 
         m_number = new NumberInput( );
 
+        if (Reflect.hasField( field.meta, Property.InputRange ))
+        {
+            m_number.slider = true;
+
+            var range = Reflect.field( field.meta, Property.InputRange );
+
+            m_number.format = range.format;
+            m_number.min = range.min;
+            m_number.max = range.max;
+
+            if (range.step > 0.0)
+                m_number.step = Std.string( range.step );
+        }
+
         // make sure we don't cause any overflow issues
         if (type.name.indexOf( "unsigned" ) != -1)
             m_number.min = "0";
 
-        m_number.addEventListener( 'change', function() {
+        var changeHandler = function() {
             var value : Dynamic = m_number.valueAsNumber;
 
             if (Math.isNaN( value ))
@@ -31,8 +46,14 @@ class NumberFieldInspector extends FieldInspectionHandler {
             if (!(m_type.name == "float" || m_type.name == "double"))
                 value = Std.int( value );
 
-            m_owner.notifyChanged( m_field, value );
-        } );
+            notifyChanged( m_field, value );
+        };
+
+        m_number.addEventListener( 'change', changeHandler );
+
+        // add events on immediate input for sliders
+        if (m_number.type == 'range')
+            m_number.addEventListener( 'input', changeHandler );
 
         // select all text on focus
         m_number.addEventListener( 'focus', function(e) {

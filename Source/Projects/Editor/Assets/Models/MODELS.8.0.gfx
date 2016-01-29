@@ -1,7 +1,7 @@
 #
 #First is file name, second is model name
 
-#Entrenched_Test1.fbx Entrenched
+Entrenched_Test1.fbx Entrenched
 #rome.fbx Rome
 
 Cube.8.0.mdl Cube
@@ -22,11 +22,14 @@ cone_12.8.0.mdl lightCone
 character.8.0.mdl Character
 torus2.8.0.mdl Ring
 #
+#romekolezyum.fbx remeko
 # Player Animations
+Player_Idle.jdl Player
+#Player_Idle.jani Player
 
 # Gun Animations
 #Gun_Idle.fbx Gun_Idle
 #Gun_Jump.fbx Gun_Jump
 #Gun_Shoot.fbx Gun_Shoot
 
-#Monkey.fbx Monkey
+Monkey.fbx Monkey

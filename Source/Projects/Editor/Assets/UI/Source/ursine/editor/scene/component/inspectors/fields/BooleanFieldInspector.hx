@@ -13,7 +13,7 @@ class BooleanFieldInspector extends FieldInspectionHandler {
         m_bool = new CheckBoxInput( );
 
         m_bool.addEventListener( 'change', function() {
-            m_owner.notifyChanged( m_field, m_bool.checked );
+            notifyChanged( m_field, m_bool.checked );
         } );
 
         inspector.container.appendChild( m_bool );
