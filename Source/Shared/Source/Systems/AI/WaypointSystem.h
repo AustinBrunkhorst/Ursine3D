@@ -12,7 +12,6 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
-
 #include "EntitySystem.h"
 #include "WaypointComponent.h"
 #include "WaypointAgentComponent.h"
@@ -46,7 +45,7 @@ namespace ursine
             static float CalculateHeurisitic(const Vec3 &pos, const Vec3 &goal);
 
             Meta(Disable)
-            std::unordered_map<EntityUniqueID, Waypoint*> m_waypoints;
+            std::unordered_map<EntityUniqueID, Component::Handle<Waypoint> > m_waypoints;
 
         } Meta(Enable);
     }

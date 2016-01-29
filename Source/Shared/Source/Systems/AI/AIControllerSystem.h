@@ -41,7 +41,7 @@ namespace ursine
 
             void onUpdate(EVENT_HANDLER(World));
 
-            std::vector<AIMovementController *> m_kinematicControllers;
+            std::vector<Component::Handle<AIMovementController> > m_kinematicControllers;
 
 
         } Meta(Enable);

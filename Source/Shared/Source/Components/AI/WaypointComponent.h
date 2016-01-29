@@ -27,8 +27,19 @@ namespace ursine
 
             friend class WaypointSystem;
 
+            struct waypointPair
+            {
+                waypointPair(float wpCost, const Handle<Waypoint> wp) : cost(wpCost), waypoint(wp) { }
+
+                bool operator==(const Handle<Waypoint> wp) const;
+
+                float cost;
+
+                const Handle<Waypoint> waypoint;
+            };
+
         public:
-            typedef std::unordered_map<const ursine::ecs::Waypoint *, float> waypointConList;
+            typedef std::vector<waypointPair> waypointConList;
 
             EditorField(
                 float Radius,
@@ -66,23 +77,31 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
             Meta(Enable)
             float GetRadius(void);
+
             Meta(Enable)
             void SetRadius(float radius);
 
+
             Meta(Enable)
             float GetCost(void) const;
+
             Meta(Enable)
             void SetCost(float cost);
 
+
             Meta(Enable)
             bool GetJumpPoint(void);
+
             Meta(Enable)
             void SetJumpPoint(bool isJumpPoint);
 
+
             Meta(Enable)
             bool GetAutoWPConnect(void);
+
             Meta(Enable)
             void SetAutoWPConnect(bool isAutoConnecting);
+
 
             Meta(Enable)
             Vec3 GetPosition(void) const;
@@ -91,12 +110,13 @@ namespace ursine
             // Functions for waypoint connections
             ////////////////////////////////////////////////////////////////////
             Meta(Enable)
-            void AddWaypointConnection(const Waypoint *wp);
+            void Waypoint::AddWaypointConnection(const Handle<Waypoint> wp);
+            
             Meta(Enable)
-            void RemoveWaypointConnection(const Waypoint *wp);
+            void RemoveWaypointConnection(const Handle<Waypoint> wp);
 
             Meta(Enable)
-            bool HasWaypointConnection(const Waypoint *wp) const;
+            bool HasWaypointConnection(const Handle<Waypoint> wp) const;
 
             Meta(Disable)
             const waypointConList &GetConnectedWaypoints(void) const;
@@ -105,6 +125,9 @@ namespace ursine
             unsigned GetIndex(void) const;
 
         private:
+
+            waypointConList::const_iterator Waypoint::find_waypoint_pair(const Handle<Waypoint> wp) const;
+
             waypointConList m_connectedWaypoints;
 
             float m_cost;

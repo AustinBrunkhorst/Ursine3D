@@ -34,7 +34,7 @@ namespace ursine
             virtual void LogicUpdate(void) {};
 
         private:
-            Transform *m_trans;
+            Handle<Transform> m_trans;
         };
 
     }

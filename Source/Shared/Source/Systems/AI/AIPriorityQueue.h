@@ -22,13 +22,13 @@ namespace ursine
 
     struct Node
     {
-        Node(ecs::Waypoint *wp, float fx, float hx);
+        Node(ecs::Component::Handle<ecs::Waypoint> wp, float fx, float hx);
     
         bool operator<(const Node& rhs) const;
     
         float GetPriority(void) const;
     
-        ecs::Waypoint *waypoint;
+        ecs::Component::Handle<ecs::Waypoint> waypoint;
     
         Node *parent;
     

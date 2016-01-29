@@ -34,7 +34,7 @@ namespace ursine
 
             if (args->component->Is<AIMovementController>())
             {
-                m_kinematicControllers.push_back(static_cast<AIMovementController *>(args->component));
+                m_kinematicControllers.push_back(static_cast< Component::Handle<AIMovementController> >( static_cast<AIMovementController *>( args->component ) ) );
             }
         }
 

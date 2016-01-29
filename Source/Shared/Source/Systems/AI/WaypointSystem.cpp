@@ -62,7 +62,7 @@ namespace ursine
                 // otherwise, for all nodes the parent Node has connections to
                 for (auto wpPair : pNode->waypoint->GetConnectedWaypoints())
                 {
-                    const Waypoint *wp = wpPair.first;
+                    const Component::Handle<Waypoint> wp = wpPair.first;
                     Node *cNode = &nodeList[wp->GetIndex()];
             
                     // compute cost of node (h(x) + g(x)
@@ -164,7 +164,7 @@ namespace ursine
                 // add waypoint to our map of waypoints
                 m_waypoints.emplace(
                     args->entity->GetUniqueID(),
-                    static_cast<Waypoint*>( const_cast<Component*>( args->component ) )
+                    static_cast<Component::Handle<Waypoint>>(static_cast<Waypoint *>(args->component ) )
                 );
 
                 // if it is set to auto connect, find everything it can connect to

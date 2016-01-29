@@ -31,13 +31,12 @@ namespace ursine
 
             void OnInitialize(void) override;
 
-            void SetTarget(const Vec3 &pos) const;
+            void SetTarget(const Vec3 &pos);
 
         private:
-            AIMovementController *m_move;
+            Handle<AIMovementController> m_move;
+
         }Meta(Enable, DisplayName("AIHordeReasoner"));
 
     }
 }
-
-

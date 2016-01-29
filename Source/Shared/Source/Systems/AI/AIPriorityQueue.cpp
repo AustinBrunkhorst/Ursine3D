@@ -12,13 +12,14 @@ namespace ursine
     ////////////////////////////////////////
     //Node Class
     ////////////////////////////////////////
-    Node::Node(ecs::Waypoint *wp, float fx, float hx) : waypoint(wp)
+    Node::Node(ecs::Component::Handle<ecs::Waypoint> wp, float fx, float hx) : waypoint(wp)
                                                  , parent(nullptr)
                                                  , costSoFar(fx)
                                                  , hueristic(hx)
                                                  , onClosed(false)
     {
     }
+
     
     bool Node::operator<(const Node& rhs) const
     {

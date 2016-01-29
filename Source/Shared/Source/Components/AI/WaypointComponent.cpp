@@ -10,6 +10,11 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION( Waypoint );
 
 
+        bool Waypoint::waypointPair::operator==(const Handle<Waypoint> wp) const
+        {
+            return waypoint == wp;
+        }
+
         Waypoint::Waypoint(void)
             : BaseComponent( )
             , m_cost( 1.0f )
@@ -71,9 +76,9 @@ namespace ursine
             return GetOwner()->GetTransform()->GetWorldPosition();
         }
 
-        void Waypoint::AddWaypointConnection(const Waypoint* wp)
+        void Waypoint::AddWaypointConnection(const Handle<Waypoint> wp)
         {
-            if (wp == nullptr)
+            if (!wp)
                 return;
 
             // calculate distance
@@ -82,23 +87,23 @@ namespace ursine
                             );
             
             // add waypoint to our map of waypoints
-            m_connectedWaypoints.emplace(wp, distance);
+            m_connectedWaypoints.push_back(waypointPair(distance, wp));
         }
 
-        void Waypoint::RemoveWaypointConnection(const Waypoint* wp)
+        void Waypoint::RemoveWaypointConnection(const Handle<Waypoint> wp)
         {
-            if (wp != nullptr)
+            if ( wp )
             {
-                auto search = m_connectedWaypoints.find( wp );
+                auto search = find_waypoint_pair( wp );
 
-                if (search != m_connectedWaypoints.end())
+                if ( search != m_connectedWaypoints.end() )
                     m_connectedWaypoints.erase( search );
             }
         }
 
-        bool Waypoint::HasWaypointConnection(const Waypoint* wp) const
+        bool Waypoint::HasWaypointConnection(const Handle<Waypoint> wp) const
         {
-            auto mapIterator = m_connectedWaypoints.find(wp);
+            auto mapIterator = find_waypoint_pair(wp);
 
             if (mapIterator == m_connectedWaypoints.end())
             {
@@ -116,6 +121,14 @@ namespace ursine
         unsigned Waypoint::GetIndex() const
         {
             return m_index;
+        }
+
+        Waypoint::waypointConList::const_iterator Waypoint::find_waypoint_pair(const Handle<Waypoint> wp) const
+        {
+            return std::find(
+                m_connectedWaypoints.begin(),
+                m_connectedWaypoints.end(),
+                wp);
         }
     }
 }

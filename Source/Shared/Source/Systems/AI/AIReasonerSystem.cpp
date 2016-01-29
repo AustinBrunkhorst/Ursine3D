@@ -37,7 +37,9 @@ namespace ursine
 
             if (args->component->Is<AIHorde>())
             {
-                m_reasoners.push_back(static_cast<AIHorde *>(args->component));
+                //m_reasoners.push_back( static_cast<AIHorde *>(args->component) );
+
+                m_reasoners.push_back(static_cast<Component::Handle<AIHorde>>(static_cast<AIHorde *>(args->component)));
             }
         }
 
@@ -51,7 +53,7 @@ namespace ursine
                 m_reasoners.erase(std::find(
                     m_reasoners.begin(),
                     m_reasoners.end(),
-                    args->component
+                    static_cast<Component::Handle<AIHorde>>(static_cast<AIHorde *>(args->component))
                     ));
             }
         }

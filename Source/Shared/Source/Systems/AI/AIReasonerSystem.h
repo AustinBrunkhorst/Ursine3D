@@ -25,7 +25,7 @@ namespace ursine
 
             void onUpdate(EVENT_HANDLER(World));
 
-            std::vector<AIHorde *> m_reasoners;
+            std::vector<Component::Handle<AIHorde>> m_reasoners;
 
         }Meta( Enable );
     }

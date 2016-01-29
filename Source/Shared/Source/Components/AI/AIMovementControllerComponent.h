@@ -48,7 +48,7 @@ namespace ursine
         private:
             Vec3 m_targetDir;
 
-            Rigidbody *m_rigid;
+            Handle<Rigidbody> m_rigid;
 
             float m_speed;
         } Meta(Enable, DisplayName("AIMovementController"));

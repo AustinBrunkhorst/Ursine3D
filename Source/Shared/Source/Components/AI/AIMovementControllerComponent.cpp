@@ -11,7 +11,7 @@ namespace ursine
 
         AIMovementController::AIMovementController(void)
             : BaseComponent( )
-            , m_rigid(nullptr)
+            , m_rigid()
             , m_speed(0.0f)
         {
         }
@@ -30,12 +30,13 @@ namespace ursine
         {
             Component::OnInitialize( );
 
-            m_rigid = GetOwner()->GetComponent<Rigidbody>();
+            m_rigid = static_cast< Handle<Rigidbody> >(GetOwner()->GetComponent<Rigidbody>());
         }
 
         void AIMovementController::Update()
         {
             auto gravity = Vec3(0, m_rigid->GetVelocity().Y(), 0);
+
             m_rigid->SetVelocity(gravity + m_targetDir * m_speed);
         }
 

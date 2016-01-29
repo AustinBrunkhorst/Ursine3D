@@ -20,7 +20,8 @@ namespace ursine
             m_move = GetOwner()->GetComponent<AIMovementController>();
         }
 
-        void AIHorde::SetTarget(const Vec3& pos) const
+        // NOTE: this actually can't be const due to weird handle stuff
+        void AIHorde::SetTarget(const Vec3& pos)
         {
             m_move->SetTargetDirection(pos - GetOwner()->GetTransform()->GetWorldPosition());
         }
