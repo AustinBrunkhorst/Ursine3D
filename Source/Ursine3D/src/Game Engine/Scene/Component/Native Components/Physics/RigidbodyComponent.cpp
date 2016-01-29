@@ -36,8 +36,6 @@ namespace ursine
 
 		void Rigidbody::OnInitialize(void)
 		{
-            Component::OnInitialize( );
-
             auto owner = GetOwner( );
 
             m_rigidbody.SetSimulation( 

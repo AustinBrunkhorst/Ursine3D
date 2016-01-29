@@ -30,6 +30,7 @@ namespace ursine
         public:
             WaypointAgent(void);
 
+            Meta(Disable)
             Node *GetClosestNode(const Vec3 &pos);
 
             Meta(Disable)

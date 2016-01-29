@@ -40,8 +40,6 @@ namespace ursine
 
         void ConeCollider::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &ConeCollider::onTransformChange );
 

@@ -32,7 +32,9 @@ namespace ursine
         public:
             WaypointSystem(World *world);
 
+            Meta(Disable)
             void CalculatePath(WaypointAgent &agent, const Vec3 &goal);
+
         private:
 
             void OnInitialize(void) override;
@@ -43,6 +45,7 @@ namespace ursine
 
             static float CalculateHeurisitic(const Vec3 &pos, const Vec3 &goal);
 
+            Meta(Disable)
             std::unordered_map<EntityUniqueID, Waypoint*> m_waypoints;
 
         } Meta(Enable);

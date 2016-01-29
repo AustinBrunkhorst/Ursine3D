@@ -36,8 +36,6 @@ namespace ursine
 
         void SphereCollider::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &SphereCollider::onTransformChange );
 

@@ -51,8 +51,6 @@ namespace ursine
 
         void Transform::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
 			if (!m_root)
 				m_root = this;
 			if (!m_parent)

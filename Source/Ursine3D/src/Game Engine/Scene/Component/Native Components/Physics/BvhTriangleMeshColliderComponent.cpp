@@ -39,8 +39,6 @@ namespace ursine
 
 		void BvhTriangleMeshCollider::OnInitialize()
 		{
-            Component::OnInitialize( );
-
 			GetOwner( )->Listener( this )
 				.On( ENTITY_TRANSFORM_DIRTY, &BvhTriangleMeshCollider::onTransformChange );
 		}

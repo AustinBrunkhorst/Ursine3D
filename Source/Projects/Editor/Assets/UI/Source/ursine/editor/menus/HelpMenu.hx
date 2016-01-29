@@ -4,6 +4,6 @@ package ursine.editor.menus;
 class HelpMenu extends MenuItemHandler {
     @mainMenuItem( "Help/Editor Documentation" )
     static function doOpenGettingStarted() {
-        js.Browser.window.open( 'Documentation/build/html/index.html' );
+        js.Browser.window.open( 'Documentation/html/index.html' );
     }
 }
