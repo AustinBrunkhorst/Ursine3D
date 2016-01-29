@@ -17,6 +17,11 @@
 
 #include <mutex>
 
+namespace ursine
+{
+	class Scene;
+}
+
 class EntityHandler : public ursine::NativeJSClass
 {
     JAVASCRIPT_CLASS;
@@ -59,7 +64,7 @@ public:
     JSMethod(clone);
 
 private:
-    ursine::ecs::World *m_world;
+	ursine::Scene::Handle m_scene;
     ursine::ecs::EntityUniqueID m_handle;
 
     ursine::ecs::Entity *getEntity(void);  

@@ -5,6 +5,10 @@ class Extern {
         return untyped __js__( "DebugEditorUI()" );
     }
 
+    public static function ProcessOpen(path, relative: Bool = false) {
+        return untyped __js__( "ProcessOpen(path, relative)" );
+    }
+
     public static function CreateEntity() {
         return untyped __js__( "CreateEntity()" );
     }

@@ -19,7 +19,7 @@
 class DuplicateTool : public EditorTool
 {
 public:
-	DuplicateTool(Editor *editor);
+	DuplicateTool(Editor *editor, ursine::ecs::World *world);
 
 	void OnEnable(ursine::ecs::EntityUniqueID selected) override;
 	void OnDisable(void) override;
@@ -38,8 +38,6 @@ private:
 	ursine::graphics::GfxAPI *m_graphics;
 
 	EditorCameraSystem *m_editorCameraSystem;
-
-	ursine::ecs::World::Handle m_world;
 	
 	ursine::ecs::DebugSystem *m_drawer;
 
