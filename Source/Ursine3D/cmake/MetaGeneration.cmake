@@ -107,4 +107,22 @@ function(ursine_build_meta)
         ${PCH_SWITCH}
         --flags ${FLAGS}
     )
+
+    set(REBUILD_TARGET "${BUILD_META_TARGET}-RebuildMeta")
+
+    add_custom_target(
+        ${REBUILD_TARGET}
+        COMMAND call "$<TARGET_FILE:ReflectionParser>"
+        --target-name "${BUILD_META_TARGET}"
+        --source-root "${BUILD_META_SOURCE_ROOT}"
+        --in-source "${BUILD_META_SOURCE_ROOT}/${BUILD_META_SOURCE_FILE}"
+        --module-header "${BUILD_META_SOURCE_ROOT}/${BUILD_META_MODULE_HEADER}"
+        --out-source "${BUILD_META_MODULE_SOURCE_FILE}"
+        --out-dir "${BUILD_META_GENERATED_DIR}"
+        ${PCH_SWITCH}
+        --force-rebuild
+        --flags ${FLAGS}
+    )
+
+    ursine_set_folder(${REBUILD_TARGET} ".Utility/Meta")
 endfunction ()

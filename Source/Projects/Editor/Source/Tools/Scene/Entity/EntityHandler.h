@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -66,6 +66,6 @@ public:
 private:
 	ursine::Scene::Handle m_scene;
     ursine::ecs::EntityUniqueID m_handle;
-
+    
     ursine::ecs::Entity *getEntity(void);  
 } Meta(Enable);

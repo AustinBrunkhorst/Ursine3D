@@ -201,7 +201,7 @@ void ReflectionParser::GenerateFiles(void)
         moduleFilesData << moduleFileData;
 
         // if the generated file header doesn't exist, we need to regenerate
-        if (!metaCacheFileExists || !exists( outputFileHeader ))
+        if (m_options.forceRebuild || !metaCacheFileExists || !exists( outputFileHeader ))
         {
             generateModuleFile( outputFileHeader, outputFileSource, file.first, file.second );
 
@@ -220,7 +220,7 @@ void ReflectionParser::GenerateFiles(void)
 
     moduleCacheFileName /= ".meta-cache";
 
-    if (metaCacheFileExists)
+    if (!m_options.forceRebuild && metaCacheFileExists)
     {
         std::ifstream cacheFile( moduleCacheFileName.string( ) );
 

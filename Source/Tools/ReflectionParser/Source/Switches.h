@@ -32,4 +32,5 @@ DEFINE_SWITCH_FULL( OutputModuleSource,        "out-source",     "s" );
 DEFINE_SWITCH_FULL( OutputModuleFileDirectory, "out-dir",        "c" );
 DEFINE_SWITCH_FULL( TemplateDirectory,         "tmpl-directory", "d" );
 DEFINE_SWITCH_FULL( PrecompiledHeader,         "pch",            "p" );
+DEFINE_SWITCH_FULL( ForceRebuild,              "force-rebuild",  "e" );
 DEFINE_SWITCH_FULL( CompilerFlags,             "flags",          "f" );

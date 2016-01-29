@@ -34,27 +34,18 @@ namespace ursine
         {
             EVENT_ATTRS(World, EntityEventArgs);
 
-            Entity& entity = *(args->entity);
+            auto *entity = args->entity;
 
-            auto contains = utils::IsFlagSet( GetTypeMask( ), entity.m_systemMask );
-            auto interests = m_filter.Matches( &entity );
+            auto interests = m_filter.Matches( entity );
             auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
 				
-            if (interests && !contains && !removed)
-            {
-                Add( entity );
-            }
-            else if (!interests && contains)
+            if (removed || !interests)
             {
                 Remove( entity );
             }
-            else if (entity.IsAvailable( ))
+            else if(interests)
             {
-                Enable( entity );
-            }
-            else
-            {
-                Disable( entity );
+                Add( entity );
             }
         }
 
@@ -67,7 +58,7 @@ namespace ursine
             // remove the entity from this system if it interested us before
             // removal
             if (m_filter.Matches( entity ))
-                Remove( *entity );
+                Remove( entity );
         }
 
         void FilterSystem::onUpdate(EVENT_HANDLER(World))
@@ -80,41 +71,45 @@ namespace ursine
             End( );
         }
 
-        void FilterSystem::Add(Entity &entity)
+        void FilterSystem::Add(Entity *entity)
         {
-            entity.setSystem( GetTypeMask( ) );
+            if (entity->IsActive( ))
+            { 
+                entity->setSystem( GetTypeMask( ) );
 
-            if (entity.IsActive( ))
                 Enable( entity );
+            }
         }
 
-        void FilterSystem::Remove(Entity &entity)
+        void FilterSystem::Remove(Entity *entity)
         {
-            entity.unsetSystem( GetTypeMask( ) );
+            entity->unsetSystem( GetTypeMask( ) );
 
             Disable( entity );
         }
 
-        void FilterSystem::Enable(Entity &entity)
+        void FilterSystem::Enable(Entity *entity)
         {
-            auto uniqueID = entity.GetUniqueID( );
+            auto uniqueID = entity->GetUniqueID( );
 
             // already enabled
             if (m_active.find( uniqueID ) != m_active.end( ))
                 return;
 
-            m_active[ uniqueID ] = &entity;
+            m_active[ uniqueID ] = entity;
         }
 
-        void FilterSystem::Disable(Entity &entity)
+        void FilterSystem::Disable(Entity *entity)
         {
-            auto uniqueID = entity.GetUniqueID( );
+            auto uniqueID = entity->GetUniqueID( );
+
+            auto search = m_active.find( uniqueID );
 
             // doesn't exist
-            if (m_active.find( uniqueID ) == m_active.end( ))
+            if (search == m_active.end( ))
                 return;
 
-            m_active.erase( uniqueID );
+            m_active.erase( search );
         }
 
         void FilterSystem::OnInitialize(void)

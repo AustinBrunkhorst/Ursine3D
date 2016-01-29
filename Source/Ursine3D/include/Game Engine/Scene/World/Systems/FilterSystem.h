@@ -52,11 +52,11 @@ namespace ursine
         protected:
             std::unordered_map<EntityUniqueID, Entity*> m_active;
 
-            void Add(Entity &entity);
-            void Remove(Entity &entity);
+            void Add(Entity *entity);
+            void Remove(Entity *entity);
 
-            virtual void Enable(Entity &entity);
-            virtual void Disable(Entity &entity);
+            virtual void Enable(Entity *entity);
+            virtual void Disable(Entity *entity);
 
             virtual void OnInitialize(void) override;
             virtual void Initialize(void);
