@@ -270,11 +270,19 @@ JSMethod(EntityHandler::addComponent)
     if (!componentType.IsValid( ))
         return CefV8Value::CreateBool( false );
 
+    auto componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        JSThrow( "Invalid component type.", nullptr );
+
+    auto componentTypeMask = 1ull << componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
 	// have this run in the main thread
 	Timer::Create( 0 ).Completed( [=] {
 		auto instance = componentType.CreateDynamic( );
 
-		entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+        if (!entity->HasComponent( componentTypeMask ))
+		    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
 	} );
 
     return CefV8Value::CreateBool( true );
@@ -709,7 +717,7 @@ JSMethod(EntityHandler::setParent)
         if (!targetEntity)
             return CefV8Value::CreateBool( false );
 
-        targetEntity->GetTransform( )->AddChildAlreadyInLocal( transform );
+        targetEntity->GetTransform( )->AddChild( transform );
     }
 
     return CefV8Value::CreateBool( true );

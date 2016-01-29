@@ -178,9 +178,9 @@ bool PlayerAction::StickRight()
 
 ursine::Vec2 PlayerAction::GetMouseVec(void) const
 {
-    ursine::Vec2 mouseVec = m_mouseManager->GetPositionDelta( ) * 0.5f;
+    ursine::Vec2 mouseVec = m_mouseManager->GetPositionDelta( );
     mouseVec.Normalize( );
-    mouseVec = -mouseVec;
+    mouseVec.X( ) = -mouseVec.X( );
     return mouseVec;
 }
 
