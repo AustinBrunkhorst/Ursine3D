@@ -79,43 +79,62 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-			EditorField(
-				std::string stateName,
-				GetStateName,
-				SetStateName
-				);
-
-			EditorButton(
+			EditorButton( 
 				AddState,
 				"Add State"
 				);
-			
+
 			EditorButton(
 				RemoveState,
 				"Remove State"
 				);
 
+			// let's don't care about in-state-blending. 
+			// just care about between-state blending first.
+			// let's try change animation state when timedelta reaches
+			// at the end of that keyframe of the state
+
+			// temporary
+			// this is for testing just changing between states
+			// not for changing between animations in state
+			EditorButton(
+				ChangeState,
+				"Change State"
+			);
+
+			EditorButton(
+				AddAnimation,
+				"Add Animation"
+			);
+
+			EditorButton(
+				RemoveAnimation,
+				"Remove Animation"
+			);
+
+			EditorField(
+				std::string stateName,
+				GetStateName,
+				SetStateName
+			);
+
 			EditorField(
 				std::string currentState,
 				GetCurrentState,
 				SetCurrentState
-				);
-			
+			);		
+
+			EditorField(
+				std::string futureState,
+				GetFutureState,
+				SetFutureState
+			);
+
             EditorField(
                 std::string animationName,
                 GetAnimation,
                 SetAnimation
             );
-
-			EditorButton(
-				AddAnimation,
-				"Add Animation"
-				);
-
-			EditorButton(
-				RemoveAnimation,
-				"Remove Animation"
-				);
 
             EditorField(
                 std::string currentRig,
@@ -184,14 +203,14 @@ namespace ursine
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
 
+			const std::string &GetFutureState(void) const;
+			void SetFutureState(const std::string& name);
+
 			const std::string &GetAnimation(void) const;
 			void SetAnimation(const std::string &name);
 
 			// CrossFade ("State Name", transition time, ...)
-
-			// let's don't care about in-state-blending. 
-			// just care about between-state blending first.
-
+			
         private:
             std::unordered_map<std::string, AnimationState> m_states;
 			bool m_playing;
@@ -201,8 +220,10 @@ namespace ursine
             std::string m_currentAnimation;
             std::string m_currentRig;
 			std::string m_currentState;
+			std::string m_futureState;
 
 			std::string m_stateName;
+			std::string m_futureStateName;
 			std::string m_animationName;
 
         } Meta( Enable, DisplayName( "Animator" ) );

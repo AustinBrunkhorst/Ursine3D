@@ -34,9 +34,11 @@ namespace ursine
 
         static void GenerateAnimationData(
             const AnimationState &animState, 
+			const AnimationState &fut_animState,
             const AnimationRig *rig,
             std::vector<SMat4> &outputMatPal,
-            std::vector<SMat4> &outputBones            
+            std::vector<SMat4> &outputBones,
+			const float &transFactor
         );
 
         /////////////////////////////////////////////////////////////
@@ -118,5 +120,6 @@ namespace ursine
         static std::unordered_map<std::string, AnimationRig*> m_name2Rig;
 
         static std::vector<SMat4> m_toParentTransforms;
+		static std::vector<SMat4> m_toFutParentTransforms;
     };
 }

@@ -32,6 +32,8 @@ namespace ursine
             , m_currentRig( "" )
 			, m_currentState("")
 			, m_stateName( "" )
+			, m_futureState( "" )
+			, m_futureStateName( "" )
 			, m_animationName( "" )
         {
         }
@@ -51,48 +53,76 @@ namespace ursine
             }
         }
 
-        void Animator::UpdateAnimation(const float dt)
-        {
-            URSINE_TODO( "Fix animations so they aren't so hard-coded" );
+		void Animator::UpdateAnimation(const float dt)
+		{
+			URSINE_TODO("Try playing every animation states");
 
-            // grab what we need
-			auto *currentAnimation = m_states[m_currentState].GetAnimation();
-            auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
-			
-            if ( currentAnimation == nullptr || rig == nullptr)
-                return;
-			
-            if ( currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount() )
-                return;
-            
+			// grab what we need
+			auto *currentAnimation = m_states[ m_currentState ].GetAnimation( );
+			auto *futureAnimation = m_states[ m_futureState ].GetAnimation( );
+			auto *rig = AnimationBuilder::GetAnimationRigByName( m_currentRig );
+
+			if ( currentAnimation == nullptr || rig == nullptr )
+				return;
+
+			if ( currentAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ) )
+				return;
+
+			// default transition time takes 1 sec this will be used as interpolation factor
+			static float transFactor = 0.0f;
+			// selected time of next animation which the blending will ends up
+			float transTime = 1.0f;
+			if ( nullptr != futureAnimation )
+			{
+				if ( futureAnimation->GetDesiredBoneCount() != rig->GetBoneCount( ) )
+					return;
+			}
+
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             std::vector<SMat4> tempVec( 100 );
-						
+			
             // update time
             if ( m_playing )
             {
-				m_states[m_currentState].IncrementTimePosition( dt * m_speedScalar );
-			
-                unsigned keyframeCount = currentAnimation->GetRigKeyFrameCount( );
-                auto &lastFrame = currentAnimation->GetKeyframe( keyframeCount - 1, 0 );
-                auto &firstFrame = currentAnimation->GetKeyframe( 0, 0 );
-                if (m_states[m_currentState].GetTimePosition( ) > lastFrame.length )
+				unsigned keyframeCount = currentAnimation->GetRigKeyFrameCount();
+				auto &curr_firstFrame = currentAnimation->GetKeyframe(0, 0);
+				auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount - 1, 0);
+
+				m_states[ m_currentState ].IncrementTimePosition( dt * m_speedScalar );
+				if (nullptr != futureAnimation)
+				{
+					m_states[m_futureState].IncrementTimePosition(dt * m_speedScalar);
+					transFactor += 0.05f;// dt * m_speedScalar / transTime;
+					// if there is future animation
+					if (transFactor >= 1.0f)
+					{
+						m_currentState = m_futureState;
+						SetCurrentState(m_currentState);
+						SetFutureState("");
+						m_futureState = "";
+						transFactor = 0.f;
+					}
+				}
+
+				// if current state reached at the end of its frame
+                if (m_states[ m_currentState ].GetTimePosition( ) > curr_lastFrame.length )
                 {
-                    
                     // if we need to loop, go back to 0, maybe the first frame time?
                     if ( m_looping )
-						m_states[m_currentState].SetTimePosition( firstFrame.length );
+						m_states[ m_currentState ].SetTimePosition( curr_firstFrame.length );
                     else
-						m_states[m_currentState].SetTimePosition( lastFrame.length );
+						m_states[ m_currentState ].SetTimePosition( curr_lastFrame.length );
                 }
             }
 			
             // generate the matrices
             AnimationBuilder::GenerateAnimationData( 
-				m_states[m_currentState],
+				m_states[ m_currentState ],
+				m_states[ m_futureState ],
                 rig, 
                 matrixPalette, 
-                tempVec 
+                tempVec,
+				transFactor
             );
 			
             //////////////////////////////////////////////////////////////////
@@ -248,7 +278,7 @@ namespace ursine
 				}
 			}
 		}
-
+		
 		const std::string &Animator::GetAnimation(void) const
 		{
 			return m_animationName;
@@ -328,6 +358,21 @@ namespace ursine
 		void Animator::SetCurrentState(const std::string &state)
 		{
 			m_currentState = state;
+		}
+
+		void Animator::ChangeState(void)
+		{
+			m_futureState = m_futureStateName;
+		}
+
+		const std::string &Animator::GetFutureState(void) const
+		{
+			return m_futureStateName;
+		}
+
+		void Animator::SetFutureState(const std::string& name)
+		{
+			m_futureStateName = name;
 		}
 
 		const std::string& Animator::GetStateName(void) const
