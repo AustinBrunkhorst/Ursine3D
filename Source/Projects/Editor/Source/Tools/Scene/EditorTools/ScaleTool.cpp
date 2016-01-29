@@ -21,8 +21,8 @@
 using namespace ursine;
 using namespace ecs;
 
-ScaleTool::ScaleTool(Editor *editor)
-	: EditorTool( editor )
+ScaleTool::ScaleTool(Editor *editor, ursine::ecs::World *world)
+	: EditorTool( editor, world )
 	, m_gizmo( nullptr )
 	, m_selected( -1 )
 	, m_dragging( false )
@@ -31,7 +31,6 @@ ScaleTool::ScaleTool(Editor *editor)
 	, m_deleteGizmo( false )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 }
 

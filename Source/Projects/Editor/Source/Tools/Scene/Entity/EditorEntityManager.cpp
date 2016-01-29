@@ -72,7 +72,7 @@ EditorEntityManager::~EditorEntityManager(void)
     clearWorld( m_world );
 }
 
-void EditorEntityManager::SetWorld(ecs::World::Handle world)
+void EditorEntityManager::SetWorld(ecs::World *world)
 {
     clearWorld( m_world );
 
@@ -87,8 +87,11 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
         .On( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 
     m_world = world;
+}
 
-    Json data;
+void EditorEntityManager::RelayUIResetWorld(void)
+{
+	Json data;
 
     m_project->GetUI( )->Message(
         UI_CMD_BROADCAST, 
@@ -98,7 +101,7 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
     );
 }
 
-void EditorEntityManager::clearWorld(ecs::World::Handle world)
+void EditorEntityManager::clearWorld(ecs::World *world)
 {
     if (!world)
         return;

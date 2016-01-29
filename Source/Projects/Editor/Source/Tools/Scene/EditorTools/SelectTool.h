@@ -16,7 +16,8 @@
 class SelectTool : public EditorTool
 {
 public:
-	SelectTool(Editor *editor);
+	SelectTool(Editor *editor, ursine::ecs::World *world);
+	~SelectTool(void);
 
 	void OnMouseDown(const ursine::MouseButtonArgs &args) override;
 
@@ -28,8 +29,6 @@ public:
 
 private:
 	ursine::graphics::GfxAPI *m_graphics;
-
-	ursine::ecs::World::Handle m_world;
 
 	ursine::ecs::EntityUniqueID m_currentID;
 

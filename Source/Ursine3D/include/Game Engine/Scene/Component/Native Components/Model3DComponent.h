@@ -15,7 +15,6 @@
 
 #include "Component.h"
 #include "Renderable.h"
-#include "GfxAPI.h"
 #include "RenderableComponentBase.h"
 #include "ModelResource.h"
 

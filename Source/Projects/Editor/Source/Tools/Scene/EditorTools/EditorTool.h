@@ -19,7 +19,7 @@
 class EditorTool
 {
 public:
-	EditorTool(Editor *editor);
+	EditorTool(Editor *editor, ursine::ecs::World *world);
 
 	virtual void OnEnable(ursine::ecs::EntityUniqueID selected) { }
 	virtual void OnDisable(void) { }
@@ -41,4 +41,5 @@ public:
 
 protected:
 	Editor *m_editor;
+	ursine::ecs::World *m_world;
 };

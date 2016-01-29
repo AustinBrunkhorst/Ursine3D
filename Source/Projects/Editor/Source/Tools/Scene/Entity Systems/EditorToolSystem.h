@@ -25,6 +25,7 @@ class EditorToolSystem : public ursine::ecs::EntitySystem
 
 public:
 	EditorToolSystem(ursine::ecs::World *world);
+	~EditorToolSystem(void);
 
 	ursine::ecs::Entity *GetCurrentFocus(void);
 

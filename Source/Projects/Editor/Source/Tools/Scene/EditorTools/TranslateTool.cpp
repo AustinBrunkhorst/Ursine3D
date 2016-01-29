@@ -10,8 +10,8 @@
 using namespace ursine;
 using namespace ecs;
 
-TranslateTool::TranslateTool(Editor* editor)
-	: EditorTool( editor )
+TranslateTool::TranslateTool(Editor* editor, ursine::ecs::World *world)
+	: EditorTool( editor, world )
 	, m_gizmo( nullptr )
 	, m_selected( -1 )
 	, m_dragging( false )
@@ -19,7 +19,6 @@ TranslateTool::TranslateTool(Editor* editor)
 	, m_local( false )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 }
 

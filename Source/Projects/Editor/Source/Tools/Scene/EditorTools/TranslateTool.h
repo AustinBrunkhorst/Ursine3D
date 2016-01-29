@@ -17,7 +17,7 @@
 class TranslateTool : public EditorTool
 {
 public:
-	TranslateTool(Editor *editor);
+	TranslateTool(Editor *editor, ursine::ecs::World *world);
 
 	void OnEnable(ursine::ecs::EntityUniqueID selected) override;
 	void OnDisable(void) override;
@@ -39,8 +39,6 @@ private:
 	ursine::graphics::GfxAPI *m_graphics;
 
 	EditorCameraSystem *m_editorCameraSystem;
-
-	ursine::ecs::World::Handle m_world;
 
 	// visual representation of the 3 axis
 	ursine::ecs::Entity *m_gizmo;

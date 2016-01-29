@@ -106,7 +106,7 @@ JSConstructor(EntityHandler)
         JSThrow( "Invalid constructor arguments." );
 
     m_handle = arguments[ 0 ]->GetUIntValue( );
-    m_world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( ).get( );
+    m_scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -658,7 +658,7 @@ JSMethod(EntityHandler::getChildren)
 
     for (size_t i = 0; i < children.size( ); ++i)
     {
-        auto *child = m_world->GetEntity( children[ i ] );
+        auto *child = m_scene->GetWorld( )->GetEntity( children[ i ] );
 
         childrenArray->SetValue( static_cast<int>( i ), 
             CefV8Value::CreateUInt( child->GetUniqueID( ) ) 
@@ -712,7 +712,7 @@ JSMethod(EntityHandler::setParent)
     else
     {
         auto *targetEntity = 
-            m_world->GetEntityUnique( targetParent->GetUIntValue( ) );
+            m_scene->GetWorld( )->GetEntityUnique( targetParent->GetUIntValue( ) );
 
         if (!targetEntity)
             return CefV8Value::CreateBool( false );
@@ -805,5 +805,5 @@ JSMethod(EntityHandler::clone)
 
 ecs::Entity *EntityHandler::getEntity(void)
 {
-    return m_world->GetEntityUnique( m_handle );
+	return m_scene->GetWorld( )->GetEntityUnique( m_handle );
 }

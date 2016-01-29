@@ -25,8 +25,6 @@ namespace ursine
         // not implemented yet
         class AnimationClip
         {
-            
-
         public:
             enum MaskBlendMode
             {
@@ -81,8 +79,59 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+			EditorButton( 
+				AddState,
+				"Add State"
+				);
+
+			EditorButton(
+				RemoveState,
+				"Remove State"
+				);
+
+			// let's don't care about in-state-blending. 
+			// just care about between-state blending first.
+			// let's try change animation state when timedelta reaches
+			// at the end of that keyframe of the state
+
+			// temporary
+			// this is for testing just changing between states
+			// not for changing between animations in state
+			EditorButton(
+				ChangeState,
+				"Change State"
+			);
+
+			EditorButton(
+				AddAnimation,
+				"Add Animation"
+			);
+
+			EditorButton(
+				RemoveAnimation,
+				"Remove Animation"
+			);
+
+			EditorField(
+				std::string stateName,
+				GetStateName,
+				SetStateName
+			);
+
+			EditorField(
+				std::string currentState,
+				GetCurrentState,
+				SetCurrentState
+			);		
+
+			EditorField(
+				std::string futureState,
+				GetFutureState,
+				SetFutureState
+			);
+
             EditorField(
-                std::string currentAnimation,
+                std::string animationName,
                 GetAnimation,
                 SetAnimation
             );
@@ -140,23 +189,42 @@ namespace ursine
             float GetTimeScalar(void) const;
             void SetTimeScalar(const float scalar);
 
-            const std::string &GetAnimation(void) const;
-            void SetAnimation(const std::string &name);
-
             const std::string &GetRig( void ) const;
             void SetRig(const std::string &rig);
 
             float GetAnimationTimePosition(void) const;
             void SetAnimationTimePosition(const float position);
+			
+			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
+			// start with adding/removing state
+			const std::string &GetCurrentState(void) const;
+			void SetCurrentState(const std::string &state);
 
+			const std::string &GetStateName(void) const;
+			void SetStateName(const std::string &state);
+
+			const std::string &GetFutureState(void) const;
+			void SetFutureState(const std::string& name);
+
+			const std::string &GetAnimation(void) const;
+			void SetAnimation(const std::string &name);
+
+			// CrossFade ("State Name", transition time, ...)
+			
         private:
-            AnimationState m_state;
-            bool m_playing;
+            std::unordered_map<std::string, AnimationState> m_states;
+			bool m_playing;
             bool m_looping;
             bool m_debug;
             float m_speedScalar;
             std::string m_currentAnimation;
             std::string m_currentRig;
+			std::string m_currentState;
+			std::string m_futureState;
+
+			std::string m_stateName;
+			std::string m_futureStateName;
+			std::string m_animationName;
 
         } Meta( Enable, DisplayName( "Animator" ) );
     }

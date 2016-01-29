@@ -48,6 +48,7 @@ namespace ursine
             ~World(void);
 
             Entity *CreateEntity(const std::string &name = "Entity");
+			void queueEntityDeletion(Entity *entity);
 
             // Creates an entity from an archetype file
             Entity *CreateEntityFromArchetype(
@@ -116,7 +117,6 @@ namespace ursine
             World(const World &rhs) = delete;
 
             // adds an entity to the deletion queue
-            void queueEntityDeletion(Entity *entity);
             void deleteEntity(Entity *entity);
             
             void clearDeletionQueue(void);

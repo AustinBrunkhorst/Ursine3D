@@ -45,6 +45,7 @@ namespace ursine
 				ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
 				name = tmp_name;
 				ReadFile(hFile, &animCount, sizeof(unsigned int), &nByteRead, nullptr);
+				animDataArr.resize(animCount);
 				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
 				{
 					// serializing counts
