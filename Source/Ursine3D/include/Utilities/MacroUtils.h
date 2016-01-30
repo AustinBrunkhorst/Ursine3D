@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 201x DigiPen Institute of Technology, All Rights Reserved.
+** ?201x DigiPen Institute of Technology, All Rights Reserved.
 **
 ** MacroUtils.h
 **
