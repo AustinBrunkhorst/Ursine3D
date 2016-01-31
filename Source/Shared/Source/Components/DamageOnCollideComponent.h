@@ -40,6 +40,33 @@ public:
 
     void DecrementDamageIntervalTimes( const float dt );
 
+    ////////////////////////////////////////////////////////////////////
+    // Expose data to editor
+    ////////////////////////////////////////////////////////////////////
+    EditorField(
+        float DamageToApply,
+        GetDamageToApply,
+        SetDamageToApply
+        );
+
+    EditorField(
+        float CritModifier,
+        GetCritModifier,
+        SetCritModifier
+        );
+
+    EditorField(
+        float DamageInterval,
+        GetDamageInterval,
+        SetDamageInterval
+        );
+
+    EditorField(
+        bool DeleteOnCollision,
+        GetDeleteOnCollision,
+        SetDeleteOnCollision
+        );
+
 private:
 
     // damage to apply when triggered
