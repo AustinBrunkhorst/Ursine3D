@@ -666,7 +666,7 @@ var ursine_editor_menus_HelpMenu = function() { };
 $hxClasses["ursine.editor.menus.HelpMenu"] = ursine_editor_menus_HelpMenu;
 ursine_editor_menus_HelpMenu.__name__ = ["ursine","editor","menus","HelpMenu"];
 ursine_editor_menus_HelpMenu.doOpenGettingStarted = function() {
-	window.open("Documentation/html/index.html");
+	ursine_native_Extern.ProcessOpen("Assets/UI/Resources/Documentation/html/index.html",true);
 };
 ursine_editor_menus_HelpMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_HelpMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -1864,6 +1864,10 @@ $hxClasses["ursine.native.Extern"] = ursine_native_Extern;
 ursine_native_Extern.__name__ = ["ursine","native","Extern"];
 ursine_native_Extern.DebugEditorUI = function() {
 	return DebugEditorUI();
+};
+ursine_native_Extern.ProcessOpen = function(path,relative) {
+	if(relative == null) relative = false;
+	return ProcessOpen(path, relative);
 };
 ursine_native_Extern.CreateEntity = function() {
 	return CreateEntity();

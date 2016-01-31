@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** AnimationState.cpp
 **
@@ -45,4 +45,14 @@ namespace ursine
     {
         m_animation = animation;
     }
+
+	const std::string& AnimationState::GetName(void) const
+	{
+		return m_name;
+	}
+
+	void AnimationState::SetName(const std::string& name)
+	{
+		m_name = name;
+	}
 }

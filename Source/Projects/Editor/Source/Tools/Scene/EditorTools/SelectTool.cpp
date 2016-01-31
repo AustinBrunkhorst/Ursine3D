@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SelectTool.h
 **
@@ -18,13 +18,17 @@
 #include <CoreSystem.h>
 #include <GfxAPI.h>
 
-SelectTool::SelectTool(Editor* editor)
-	: EditorTool( editor )
+SelectTool::SelectTool(Editor* editor, ursine::ecs::World *world)
+	: EditorTool( editor, world )
 	, m_currentID( -1 )
 	, m_altDown( false )
 {
 	m_graphics = GetCoreSystem( ursine::graphics::GfxAPI );
-	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
+}
+
+SelectTool::~SelectTool(void)
+{
+	m_world = nullptr;
 }
 
 void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)

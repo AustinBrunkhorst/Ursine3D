@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ObjectSelectorSystem.h
 **
@@ -25,6 +25,7 @@ class EditorToolSystem : public ursine::ecs::EntitySystem
 
 public:
 	EditorToolSystem(ursine::ecs::World *world);
+	~EditorToolSystem(void);
 
 	ursine::ecs::Entity *GetCurrentFocus(void);
 

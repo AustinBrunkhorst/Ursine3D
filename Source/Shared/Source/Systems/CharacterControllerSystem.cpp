@@ -88,8 +88,8 @@ void CharacterControllerSystem::Process(Entity *entity)
             camTrans->LookAt(camTrans->GetWorldPosition( ) + look);
         }
 
-        child->SetWorldRotation(
-            child->GetWorldRotation( ) *
+        transform->SetWorldRotation(
+            transform->GetWorldRotation( ) *
             SQuat(0.0f, lookAngle.X( ), 0.0f)
             );
     }

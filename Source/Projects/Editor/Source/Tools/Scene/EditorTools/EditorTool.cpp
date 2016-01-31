@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EditorTool.cpp
 **
@@ -13,8 +13,9 @@
 
 #include "EditorTool.h"
 
-EditorTool::EditorTool(Editor *editor)
+EditorTool::EditorTool(Editor *editor, ursine::ecs::World *world)
 	: m_editor( editor )
+	, m_world( world )
 {
 	
 }

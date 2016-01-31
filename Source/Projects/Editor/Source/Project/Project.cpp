@@ -36,10 +36,12 @@ UIView::Handle Project::GetUI(void)
     return m_ui;
 }
 
-void Project::SetWorld(ecs::World::Handle world)
+void Project::SetWorld(ecs::World *world)
 {
+	m_entityManager.SetWorld( world );
     m_scene->SetWorld( world );
-    m_entityManager.SetWorld( world );
+
+	m_entityManager.RelayUIResetWorld( );
 }
 
 void Project::ClearDeletionQueue(void)

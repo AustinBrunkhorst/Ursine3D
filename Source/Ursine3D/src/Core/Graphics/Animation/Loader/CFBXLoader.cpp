@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Conversion.cpp
 **
@@ -313,60 +313,63 @@ namespace ursine
 			// Anim Info
 			///////////////////////////////////////////////////////////////
 			// anim data
-			if (nullptr == mAnimInfo && !mModel->mAnimationData.empty())
+			if (nullptr == mAnimInfo)
 			{
-				mAnimInfo = new ufmt_loader::AnimInfo;
-
-				mAnimInfo->name = mModel->name;
-				mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
-				for (unsigned int i = 0; i < mAnimInfo->animCount; ++i)
+				if (!mModel->mAnimationData.empty())
 				{
-					ufmt_loader::AnimData newAD;
-					ufmt_loader::KeyIndex newKIs;
-					ufmt_loader::KFrames newKFs;
+					mAnimInfo = new ufmt_loader::AnimInfo;
 
-					// counts
-					newAD.clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
-
-					j = 0;
-					for (auto iter2 = mModel->mAnimationData[i]->animations.begin();
-					iter2 != mModel->mAnimationData[i]->animations.end(); ++iter2, ++j)
+					mAnimInfo->name = mModel->name;
+					mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
+					for (unsigned int i = 0; i < mAnimInfo->animCount; ++i)
 					{
-						// storing animation clip's name
-						newAD.clipname = iter2->first.c_str();
+						ufmt_loader::AnimData newAD;
+						ufmt_loader::KeyIndex newKIs;
+						ufmt_loader::KFrames newKFs;
 
-						// set keycount / keyframes
-						newAD.boneCount = static_cast<unsigned int>(iter2->second.boneAnim.size());
+						// counts
+						newAD.clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
 
-						// Unifying keyframes of each animation
-						unsigned int maxkfCount = 0;
-						for (k = 0; k < iter2->second.boneAnim.size(); ++k)
+						j = 0;
+						for (auto iter2 = mModel->mAnimationData[i]->animations.begin();
+						iter2 != mModel->mAnimationData[i]->animations.end(); ++iter2, ++j)
 						{
-							unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
-							if (maxkfCount < kfCount)
-								maxkfCount = kfCount;
-						}
+							// storing animation clip's name
+							newAD.clipname = iter2->first.c_str();
 
-						for (k = 0; k < iter2->second.boneAnim.size(); ++k)
-						{
-							ufmt_loader::KFrame newKF;
-							unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
-							newKIs.push_back(maxkfCount);
-							for (l = 0; l < maxkfCount; ++l)
+							// set keycount / keyframes
+							newAD.boneCount = static_cast<unsigned int>(iter2->second.boneAnim.size());
+
+							// Unifying keyframes of each animation
+							unsigned int maxkfCount = 0;
+							for (k = 0; k < iter2->second.boneAnim.size(); ++k)
 							{
-								if (l < maxkfCount && l < kfCount)
-									newKF.push_back(iter2->second.boneAnim[k].keyFrames[l]);
-								else if (l >= kfCount)
-									newKF.push_back(iter2->second.boneAnim[k].keyFrames[kfCount - 1]);
+								unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+								if (maxkfCount < kfCount)
+									maxkfCount = kfCount;
 							}
-							newKFs.push_back(newKF);
-						}
-					}
-					newAD.keyIndices.push_back(newKIs);
-					newAD.keyframes.push_back(newKFs);
 
-					// push back into the vector
-					mAnimInfo->animDataArr.push_back(newAD);
+							for (k = 0; k < iter2->second.boneAnim.size(); ++k)
+							{
+								ufmt_loader::KFrame newKF;
+								unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+								newKIs.push_back(maxkfCount);
+								for (l = 0; l < maxkfCount; ++l)
+								{
+									if (l < maxkfCount && l < kfCount)
+										newKF.push_back(iter2->second.boneAnim[k].keyFrames[l]);
+									else if (l >= kfCount)
+										newKF.push_back(iter2->second.boneAnim[k].keyFrames[kfCount - 1]);
+								}
+								newKFs.push_back(newKF);
+							}
+						}
+						newAD.keyIndices.push_back(newKIs);
+						newAD.keyframes.push_back(newKFs);
+
+						// push back into the vector
+						mAnimInfo->animDataArr.push_back(newAD);
+					}
 				}
 			}
 			
@@ -379,10 +382,9 @@ namespace ursine
 				return false;
 
 			// set name for the custom file format and store it into Output folder
-			std::string _fileName("Assets/Models/");
-			_fileName += mModelInfo->name;
-			std::string jdlFile = _fileName;
-			std::string janiFile = _fileName;
+			std::string _filePath("Assets/");
+			std::string jdlFile = _filePath + "Models/" + mModelInfo->name;
+			std::string janiFile = _filePath + "Animations/" + mModelInfo->name;
 			jdlFile += ".jdl";
 			janiFile += ".jani";
 

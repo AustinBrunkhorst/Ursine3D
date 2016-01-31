@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EditorTool.h
 **
@@ -19,7 +19,7 @@
 class EditorTool
 {
 public:
-	EditorTool(Editor *editor);
+	EditorTool(Editor *editor, ursine::ecs::World *world);
 
 	virtual void OnEnable(ursine::ecs::EntityUniqueID selected) { }
 	virtual void OnDisable(void) { }
@@ -41,4 +41,5 @@ public:
 
 protected:
 	Editor *m_editor;
+	ursine::ecs::World *m_world;
 };

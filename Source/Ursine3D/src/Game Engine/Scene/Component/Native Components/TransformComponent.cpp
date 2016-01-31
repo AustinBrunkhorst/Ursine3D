@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TransformComponent.h
 **
@@ -347,6 +347,19 @@ namespace ursine
 
         void Transform::RemoveChild(Transform* child)
         {
+            // Make the child's local space transform == to world space
+            if (!child->GetOwner( )->IsDeleting( ))
+            {
+                auto worldPosition = child->GetWorldPosition( );
+                auto worldScale = child->GetWorldScale( );
+                auto worldRotation = child->GetWorldRotation( );
+
+                child->SetLocalPosition( worldPosition );
+                child->SetLocalScale( worldScale );
+                child->SetLocalRotation( worldRotation );
+            }
+            
+
             // find the child in our local array of children
             auto itr = std::find( m_children.begin( ), m_children.end( ), child );
 
@@ -355,7 +368,7 @@ namespace ursine
 
             m_children.erase( itr );
 
-            child->setParent( this, nullptr );
+            child->setParent( this, nullptr, true );
         }
 
         void Transform::RemoveChildren(void)
@@ -577,7 +590,7 @@ namespace ursine
             return true;
         }
 
-        void Transform::setParent(Handle<Transform> oldParent, Handle<Transform> newParent)
+        void Transform::setParent(Handle<Transform> oldParent, Handle<Transform> newParent, bool removing)
         {
             if (oldParent == newParent)
                 return;
@@ -595,8 +608,9 @@ namespace ursine
                 oldParent->GetOwner( )->Listener( this )
                     .Off( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
 
-                // remove this transform from the old parent
-                oldParent->RemoveChild( this );
+                if (!removing)
+                    // remove this transform from the old parent
+                    oldParent->RemoveChild( this );
             }
 
             // subscribe this entity to my events
