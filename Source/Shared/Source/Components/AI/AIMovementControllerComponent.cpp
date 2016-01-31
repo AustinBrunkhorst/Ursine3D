@@ -35,9 +35,15 @@ namespace ursine
 
         void AIMovementController::Update()
         {
+            auto transform = GetOwner()->GetTransform();
+
             auto gravity = Vec3(0, m_rigid->GetVelocity().Y(), 0);
 
             m_rigid->SetVelocity(gravity + m_targetDir * m_speed);
+
+            auto lookangle = transform->GetForward().Dot(m_targetDir);
+
+            m_rigid->SetAngularVelocity( Vec3(0.0f, lookangle, 0.0f) );
         }
 
         float AIMovementController::GetSpeed() const
