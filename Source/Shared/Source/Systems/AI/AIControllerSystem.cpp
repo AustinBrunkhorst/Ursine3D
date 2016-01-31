@@ -34,6 +34,7 @@ namespace ursine
 
             if (args->component->Is<AIMovementController>())
             {
+                // this casting seems to be the only way to get push back or std::find to work
                 m_kinematicControllers.push_back(static_cast< Component::Handle<AIMovementController> >( static_cast<AIMovementController *>( args->component ) ) );
             }
         }
@@ -41,13 +42,13 @@ namespace ursine
         void AIControllerSystem::onComponentRemoved(EVENT_HANDLER(World))
         {
             EVENT_ATTRS(World, ComponentEventArgs);
-
+            
             if (args->component->Is<AIMovementController>())
             {
                 m_kinematicControllers.erase(std::find(
                     m_kinematicControllers.begin(),
                     m_kinematicControllers.end(),
-                    args->component));
+                    static_cast<AIMovementController *>( args->component ) ) );
             }
         }
 

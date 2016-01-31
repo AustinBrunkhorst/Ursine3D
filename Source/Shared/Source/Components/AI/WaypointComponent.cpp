@@ -10,7 +10,7 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION( Waypoint );
 
 
-        bool Waypoint::waypointPair::operator==(const Handle<Waypoint> wp) const
+        bool Waypoint::waypointPair::operator==(Component::Handle<Waypoint> wp) const
         {
             return waypoint == wp;
         }
@@ -76,7 +76,7 @@ namespace ursine
             return GetOwner()->GetTransform()->GetWorldPosition();
         }
 
-        void Waypoint::AddWaypointConnection(const Handle<Waypoint> wp)
+        void Waypoint::AddWaypointConnection(ursine::ecs::Component::Handle<Waypoint> wp)
         {
             if (!wp)
                 return;
@@ -90,7 +90,7 @@ namespace ursine
             m_connectedWaypoints.push_back(waypointPair(distance, wp));
         }
 
-        void Waypoint::RemoveWaypointConnection(const Handle<Waypoint> wp)
+        void Waypoint::RemoveWaypointConnection(ursine::ecs::Component::Handle<Waypoint> wp)
         {
             if ( wp )
             {
@@ -101,7 +101,7 @@ namespace ursine
             }
         }
 
-        bool Waypoint::HasWaypointConnection(const Handle<Waypoint> wp) const
+        bool Waypoint::HasWaypointConnection(ursine::ecs::Component::Handle<Waypoint> wp)
         {
             auto mapIterator = find_waypoint_pair(wp);
 
@@ -123,7 +123,7 @@ namespace ursine
             return m_index;
         }
 
-        Waypoint::waypointConList::const_iterator Waypoint::find_waypoint_pair(const Handle<Waypoint> wp) const
+        Waypoint::waypointConList::iterator Waypoint::find_waypoint_pair(ursine::ecs::Component::Handle<Waypoint> wp)
         {
             return std::find(
                 m_connectedWaypoints.begin(),

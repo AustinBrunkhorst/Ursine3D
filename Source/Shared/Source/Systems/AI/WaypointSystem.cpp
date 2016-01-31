@@ -62,14 +62,14 @@ namespace ursine
                 // otherwise, for all nodes the parent Node has connections to
                 for (auto wpPair : pNode->waypoint->GetConnectedWaypoints())
                 {
-                    const Component::Handle<Waypoint> wp = wpPair.first;
+                    const Component::Handle<Waypoint> wp = wpPair.waypoint;
                     Node *cNode = &nodeList[wp->GetIndex()];
             
                     // compute cost of node (h(x) + g(x)
                     auto newHeuristic = CalculateHeurisitic(goalData->waypoint->GetPosition(), wp->GetPosition());
 
                     // var cost_so_far = pNode.cost_so_far + (1.2f * pNode.waypoint.conWaypointDistances[iter]);
-                    auto newCostSoFar = pNode->costSoFar + (wp->GetCost() * 1.2f * wpPair.second);
+                    auto newCostSoFar = pNode->costSoFar + (wp->GetCost() * 1.2f * wpPair.cost);
             
                     auto priority = newHeuristic + newCostSoFar;
             

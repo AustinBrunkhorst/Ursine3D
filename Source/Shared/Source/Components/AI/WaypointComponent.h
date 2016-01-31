@@ -29,13 +29,13 @@ namespace ursine
 
             struct waypointPair
             {
-                waypointPair(float wpCost, const Handle<Waypoint> wp) : cost(wpCost), waypoint(wp) { }
+                waypointPair(float wpCost, ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp) : cost(wpCost), waypoint(wp) { }
 
-                bool operator==(const Handle<Waypoint> wp) const;
+                bool operator==(const ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp) const;
 
                 float cost;
 
-                const Handle<Waypoint> waypoint;
+                ursine::ecs::Component::Handle<ursine::ecs::Waypoint> waypoint;
             };
 
         public:
@@ -110,13 +110,13 @@ namespace ursine
             // Functions for waypoint connections
             ////////////////////////////////////////////////////////////////////
             Meta(Enable)
-            void Waypoint::AddWaypointConnection(const Handle<Waypoint> wp);
+            void Waypoint::AddWaypointConnection(ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp);
             
             Meta(Enable)
-            void RemoveWaypointConnection(const Handle<Waypoint> wp);
+            void RemoveWaypointConnection(ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp);
 
             Meta(Enable)
-            bool HasWaypointConnection(const Handle<Waypoint> wp) const;
+            bool HasWaypointConnection(ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp);
 
             Meta(Disable)
             const waypointConList &GetConnectedWaypoints(void) const;
@@ -126,7 +126,7 @@ namespace ursine
 
         private:
 
-            waypointConList::const_iterator Waypoint::find_waypoint_pair(const Handle<Waypoint> wp) const;
+            waypointConList::iterator Waypoint::find_waypoint_pair(ursine::ecs::Component::Handle<Waypoint> wp);
 
             waypointConList m_connectedWaypoints;
 
