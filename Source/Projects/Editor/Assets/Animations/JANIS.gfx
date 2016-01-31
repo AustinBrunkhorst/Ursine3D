@@ -1,7 +1,7 @@
 #
 #First is file name, // second is model name which it will be linked(not sure its real necessary)
-Player_Idle.jani
-Player_Run.jani
-Player_Jump.jani
-Player_Win.jani
-Player_Die.jani
+#Player_Idle.jani
+#Player_Run.jani
+#Player_Jump.jani
+#Player_Win.jani
+#Player_Die.jani

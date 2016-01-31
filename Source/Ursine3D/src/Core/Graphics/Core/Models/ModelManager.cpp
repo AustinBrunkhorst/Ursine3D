@@ -547,7 +547,7 @@ namespace ursine
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Jump.jani");
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Win.jani");
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Die.jani");
-				ufmt_model.maniCount = ufmt_model.maniNameVec.size();
+				ufmt_model.maniCount = static_cast<unsigned int>( ufmt_model.maniNameVec.size() );
 				for (auto iter : ufmt_model.maniNameVec)
 				{
 					LoadAni(name, iter);
