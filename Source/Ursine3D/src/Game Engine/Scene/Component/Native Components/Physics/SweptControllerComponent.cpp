@@ -342,7 +342,10 @@ namespace ursine
 			if (rigidbody && 
 				rigidbody->GetBodyFlag( ) == BodyFlag::Kinematic)
 			{
-				
+				auto found = std::find( m_kinematicPending.begin( ), m_kinematicPending.end( ), entity );
+
+				if (found == m_kinematicPending.end( ))
+					m_kinematicPending.push_back( entity );
 			}
 		}
 

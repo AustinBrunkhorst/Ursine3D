@@ -145,30 +145,87 @@ namespace ursine
 			if (c.m_controllerVelocity.Dot( c.m_worldUp ) <= 0.0f)
 				c.m_jumping = false;
 
-			// TODO:
 			// Does a "collide and slide" like behavior, starting with controller velocity.
-			/// sweptCollision( c.m_controllerVelocity, dt, false );
+			sweptCollision( c, c.m_controllerVelocity, dt, false );
 
 			// Does a sweep for every kinematic object the character is in contact with
 			// using the velocity of that object. (for moving platforms and such)
-			/// for (auto &cog : c.m_kinematicContacts)
+			for (auto *e : c.m_kinematicContacts)
 			{
 				// Objects stored are from previous frame, so make sure they are still valid.
 				// Additionally, do not sweep with another player's velocity, nothing meaningful will come of that
-				/// if (cog != nullptr && cog.Rigidbody != nullptr && cog.SweptController == nullptr)
+				if (e && e->HasComponent<Rigidbody>( ) && !e->HasComponent<SweptController>( ))
 				{
-					/// sweptCollision( cog.Rigidbody.Velocity, dt, true );
+					auto rigidbody = e->GetComponent<Rigidbody>( );
+
+					sweptCollision( c, rigidbody->GetVelocity( ), dt, true );
 				}
 			}
 
 			// Done after the sweep to stay in contact with the ground when detected
-			/// snapToGround( );
+			snapToGround( c );
 
 			// Event and data management for the end of the update.
-			/// sweptCompleted( );
+			sweptCompleted( c );
 
 			// Reset the movement direction per frame.
 			c.m_movementDirection = SVec3::Zero( );
+		}
+
+		void SweptControllerSystem::sweptCollision(SweptController& controller, const SVec3& sweptVelocity, float timeLeft, bool kinematic)
+		{
+			// TODO:
+		}
+
+		void SweptControllerSystem::sweptCompleted(SweptController& controller)
+		{
+			// TODO:
+		}
+
+		void SweptControllerSystem::snapToGround(SweptController &controller)
+		{
+			// TODO:
+		}
+
+		bool SweptControllerSystem::isGroundSurface(SweptController &controller, const SVec3 &normal)
+		{
+			auto theta = normal.Dot( controller.m_worldUp );
+			theta = math::Clamp( theta, -1.0f ,1.0f );
+			
+			auto angle = acos( theta );
+
+			return math::RadiansToDegrees( angle - controller.m_epsilon ) <= 
+				   controller.m_maxGroundSlope;
+		}
+
+		bool SweptControllerSystem::isCeilingSurface(SweptController &controller, const SVec3& normal)
+		{
+			auto theta = normal.Dot( -controller.m_worldUp );
+			theta = math::Clamp( theta, -1.0f ,1.0f );
+			
+			auto angle = acos( theta );
+
+			return math::RadiansToDegrees( angle - controller.m_epsilon ) <= 
+				   controller.m_maxCeilingSlope;
+		}
+
+		SVec3 SweptControllerSystem::skewProjection(SweptController &controller, const SVec3& velocity, const SVec3& direction, const SVec3& normal)
+		{
+			auto vDotn = velocity.Dot( normal );
+			auto dDotn = direction.Dot( normal );
+
+			// No intersection if direction and plane are parallel.
+			// Will only hapen if slope properties are set to meaningless values.
+			if (abs( dDotn ) < controller.m_epsilon)
+				return SVec3::Zero( );
+
+			return velocity + direction * -(vDotn / dDotn);
+		}
+
+		void SweptControllerSystem::updateKinematicList(SweptController &controller)
+		{
+			controller.m_kinematicContacts = controller.m_kinematicPending;
+			controller.m_kinematicPending.clear( );
 		}
 	}
 }
