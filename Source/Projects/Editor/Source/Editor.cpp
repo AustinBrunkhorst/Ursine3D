@@ -23,6 +23,7 @@
 
 #include <Color.h> 
 #include <LightComponent.h>
+#include <iostream>
 
 using namespace ursine;
 
@@ -41,7 +42,7 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_project( nullptr ) { }
+    , m_project(nullptr) { }
 
 Editor::~Editor(void) { }
 
