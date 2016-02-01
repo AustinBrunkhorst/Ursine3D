@@ -26,7 +26,16 @@ namespace ursine
 		{
 			NATIVE_COMPONENT;
 
+			friend class SweptControllerSystem;
+
 		public:
+			// Flag for enabling and disabling the character controller
+			EditorField(
+				bool active,
+				GetActive,
+				SetActive
+			);
+
 			// Normal of the world's ground plane.
 			// Used to decompose movement into horizontal and vertical pieces.
 			// Used to determine what surfaces are walkable.
@@ -151,6 +160,13 @@ namespace ursine
 			Meta(Disable)
 			void OnInitialize(void) override;
 
+			/////////////////////////////////////////////////////////////////
+			// Property Getters and Setters
+			/////////////////////////////////////////////////////////////////
+
+			bool GetActive(void) const;
+			void SetActive(bool active);
+
 			const SVec3 &GetWorldUp(void) const;
 			void SetWorldUp(const SVec3 &up);
 
@@ -197,6 +213,17 @@ namespace ursine
 
 			bool GetJumping(void) const;
 
+			// Tell the character controller what movement direction
+			// it should move in for this next frame.
+			// This is the only function needed to move the controller,
+			// and needs to be set per frame.
+			void SetMovementDirection(const SVec3 &movementDirection);
+			const SVec3 &GetMovementDirection(void) const;
+
+			/////////////////////////////////////////////////////////////////
+			// User Manipulation Functions For The Controller
+			/////////////////////////////////////////////////////////////////
+
 			// Jump actions should be called before calling Update for that frame.
 			// Will only cause the character to jump when grounded.
 			// User does not need to check for grounded or anything else before calling.
@@ -230,8 +257,10 @@ namespace ursine
 			float GetAirTraction(void) const;
 			void SetAirTraction(float airTraction);
 
-			// Update function + all helper functions
+
 		private:
+			bool m_active;
+			
 			bool m_forwardEvents;
 
 			// Controller state for being on a ground surface.
@@ -246,6 +275,9 @@ namespace ursine
 			// The velocity that reflects the intended movement.
 			// Does not reflect the rigidbody's actual velocity.
 			SVec3 m_controllerVelocity;
+			
+			// The user defined (per frame) desired movement direction.
+			SVec3 m_movementDirection;
 
 			SVec3 m_worldUp;
 			float m_gravity;
@@ -277,7 +309,7 @@ namespace ursine
 			Handle<Rigidbody> m_rigidbody;
 			Handle<CylinderCollider> m_collider;
 
-			// TODO Cast Filter
+			// TODO: Cast Filter
 			/*
 				struct CastFilter
 				{
@@ -296,16 +328,16 @@ namespace ursine
 				};
 			*/
 
-			// List of kinematic objects detected during the controller's update.
+			// TODO: List of kinematic objects detected during the controller's update.
 			// Copied to KinematicContacts at the end of the update.
 			// Vector<Cog> m_kinematicPending;
 
-			// List of kinematic objects that the character came into contact with.
+			// TODO: List of kinematic objects that the character came into contact with.
 			// Used to run sweep with the velocities of kinematic objects so that
 			// the character can be moved by them.
 			// Vector<Cog> m_kinematicContacts;
 
-			// This component dispatches:
+			// TODO: This component dispatches:
 			
 			// Sent for every object that the main sweep resolves against
 			// (1) SweptCollision

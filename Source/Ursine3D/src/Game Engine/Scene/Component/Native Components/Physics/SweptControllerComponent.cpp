@@ -24,6 +24,7 @@ namespace ursine
 	{
 		SweptController::SweptController(void)
 			: BaseComponent( )
+			, m_active( true )
 			, m_forwardEvents( true )
 			, m_grounded( true )
 			, m_jumping( false )
@@ -52,6 +53,9 @@ namespace ursine
 			m_transform = nullptr;
 			m_rigidbody = nullptr;
 			m_collider = nullptr;
+
+			GetOwner( )->Listener( this )
+				.Off( ENTITY_COLLISION_PERSISTED, &SweptController::onCollision );
 		}
 
 		void SweptController::OnInitialize(void)
@@ -65,7 +69,7 @@ namespace ursine
 			// Set the rigidbody to kinematic (in case the user didn't)
 			m_rigidbody->SetBodyFlag( BodyFlag::Kinematic );
 
-			// Only want to resolve collision with static and kinematic.
+			// TODO: Only want to resolve collision with static and kinematic.
 			// this.CastFilter = this.Space.PhysicsSpace.CreateDefaultCastFilter();
 			// this.CastFilter.IgnoreDynamic = true;
 			// this.CastFilter.IgnoreGhost = true;
@@ -75,6 +79,16 @@ namespace ursine
 
 			GetOwner( )->Listener( this )
 				.On( ENTITY_COLLISION_PERSISTED, &SweptController::onCollision );
+		}
+
+		bool SweptController::GetActive(void) const
+		{
+			return m_active;
+		}
+
+		void SweptController::SetActive(bool active)
+		{
+			m_active = active;
 		}
 
 		const SVec3& SweptController::GetWorldUp(void) const
@@ -236,6 +250,16 @@ namespace ursine
 			return m_jumping;
 		}
 
+		void SweptController::SetMovementDirection(const SVec3& movementDirection)
+		{
+			m_movementDirection = movementDirection;
+		}
+
+		const SVec3& SweptController::GetMovementDirection() const
+		{
+			return m_movementDirection;
+		}
+
 		void SweptController::Jump(void)
 		{
 			if (m_grounded)
@@ -305,7 +329,7 @@ namespace ursine
 		{
 			EVENT_ATTRS(Entity, physics::CollisionEventArgs);
 
-			// if (this.SkipResolution(this.Collider, event.OtherObject.Collider) == false)
+			// TODO: if (this.SkipResolution(this.Collider, event.OtherObject.Collider) == false)
 			// {
 			//     this.AddIfKinematic(event.OtherObject);
 			// }
