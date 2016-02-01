@@ -30,7 +30,6 @@ namespace ursine
         GfxAPI::GfxAPI(void)
             : m_privates(nullptr)
         {
-            std::cout << "Graphics was Initialized" << std::endl;
         }
 
         GfxAPI::~GfxAPI(void)
