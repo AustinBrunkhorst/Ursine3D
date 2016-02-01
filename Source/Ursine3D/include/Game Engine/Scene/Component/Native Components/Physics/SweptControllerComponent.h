@@ -328,14 +328,14 @@ namespace ursine
 				};
 			*/
 
-			// TODO: List of kinematic objects detected during the controller's update.
+			// List of kinematic objects detected during the controller's update.
 			// Copied to KinematicContacts at the end of the update.
-			// Vector<Cog> m_kinematicPending;
+			std::vector<Entity*> m_kinematicPending;
 
-			// TODO: List of kinematic objects that the character came into contact with.
+			// List of kinematic objects that the character came into contact with.
 			// Used to run sweep with the velocities of kinematic objects so that
 			// the character can be moved by them.
-			// Vector<Cog> m_kinematicContacts;
+			std::vector<Entity*> m_kinematicContacts;
 
 			// TODO: This component dispatches:
 			
@@ -352,6 +352,13 @@ namespace ursine
 			// i.e. A platform moving into the character rather than the
 			// character moving into a platform.
 			void onCollision(EVENT_HANDLER(Entity));
+
+			// Adds kinematic objects to the list that will be resolved next update.
+			// Does not add duplicate entries.
+			void addIfKinematic(Entity *entity);
+
+
+			bool skipResolution(/*TODO: CollisionFilter a, CollisionFilter b*/);
 
 		} Meta(
 			Enable,

@@ -329,10 +329,33 @@ namespace ursine
 		{
 			EVENT_ATTRS(Entity, physics::CollisionEventArgs);
 
-			// TODO: if (this.SkipResolution(this.Collider, event.OtherObject.Collider) == false)
+			if (!skipResolution( /*this.Collider, event.OtherObject.Collider*/ ))
+			{
+			    addIfKinematic( args->otherEntity );
+			}
+		}
+
+		void SweptController::addIfKinematic(Entity* entity)
+		{
+			auto *rigidbody = entity->GetComponent<Rigidbody>( );
+
+			if (rigidbody && 
+				rigidbody->GetBodyFlag( ) == BodyFlag::Kinematic)
+			{
+				
+			}
+		}
+
+		bool SweptController::skipResolution(/*TODO: CollisionFilter a, CollisionFilter b*/)
+		{
+			// var collisionTable = this.Space.PhysicsSpace.CollisionTable;
+			// var filter = collisionTable.FindFilter(colliderA.CollisionGroup, colliderB.CollisionGroup);
+			// if (filter != null && filter.CollisionFlag == FilterCollisionFlags.SkipResolution)
 			// {
-			//     this.AddIfKinematic(event.OtherObject);
+			// 	return true;
 			// }
+
+			return false;
 		}
 	}
 }
