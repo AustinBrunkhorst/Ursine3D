@@ -197,12 +197,12 @@ namespace ursine
 			
 			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
 			// start with adding/removing state
-			const std::string &GetCurrentState(void) const;
-			void SetCurrentState(const std::string &state);
-
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
 
+			const std::string &GetCurrentState(void) const;
+			void SetCurrentState(const std::string &state);
+			
 			const std::string &GetFutureState(void) const;
 			void SetFutureState(const std::string& name);
 
