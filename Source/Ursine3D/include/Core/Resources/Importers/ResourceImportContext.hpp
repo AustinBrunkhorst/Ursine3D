@@ -15,7 +15,7 @@ namespace ursine
         auto optionsType = typeof( OptionsType );
 
         UAssert( optionsType.IsValid( ),
-            "Invalid options type (is it enabled in reflection?).\nWith OptionsTypes = '%s'.",
+            "Invalid options type (is it enabled in reflection?).\nWith OptionsType = '%s'.",
             typeid( OptionsType ).name( )
         );
 

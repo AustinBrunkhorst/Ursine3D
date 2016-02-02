@@ -14,7 +14,7 @@ struct ResourceHandlerConfig : ursine::meta::MetaProperty
     /** @param extension file extension in which this importer handles.
      *  @param optionsType ResourceImportOptions type this importer expects.
      */
-    ResourceHandlerConfig(const std::initializer_list<std::string> &extensions, const ursine::meta::Type &optionsType)
-        : extensions( extensions )
+    ResourceHandlerConfig(const std::initializer_list<std::string> &&extensions, const ursine::meta::Type &optionsType)
+        : extensions( std::move( extensions ) )
         , optionsType( optionsType ) { }
 };

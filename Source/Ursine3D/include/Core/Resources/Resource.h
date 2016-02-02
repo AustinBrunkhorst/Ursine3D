@@ -1,11 +1,11 @@
 #pragma once
 
 #include "GUID.h"
+#include "ResourceMetaData.h"
 
 namespace ursine
 {
     class ResourceManager;
-    class ResourceImportOptions;
     class ResourceData;
 
     class Resource
@@ -17,15 +17,14 @@ namespace ursine
         fs::path GetAbsolutePath(void) const;
         fs::path GetOutputPath(void) const;
 
-        ResourceImportOptions *GetImportOptions(void);
+        const ResourceMetaData &GetMeta(void) const;
 
     private:
         friend class ResourceManager;
 
-        GUID m_guid;
         ResourceManager *m_manager;
-        ResourceImportOptions *m_importOptions;
         ResourceData *m_data;
+        ResourceMetaData m_meta;
         fs::path m_path;
     };
 }

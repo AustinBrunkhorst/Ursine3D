@@ -39,8 +39,8 @@ namespace ursine
         return outputPath;
     }
 
-    ResourceImportOptions *Resource::GetImportOptions(void)
+    const ResourceMetaData &Resource::GetMeta(void) const
     {
-        return m_importOptions;
+        return m_meta;
     }
 }
