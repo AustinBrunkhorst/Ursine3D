@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Raycasting.h
 **
@@ -30,6 +30,9 @@ namespace ursine
         struct RaycastInput
         {
             SVec3 start, end;
+
+            RaycastInput(void)
+                : start( SVec3( ) ), end( SVec3( ) )  { }
 
             RaycastInput(const SVec3 &start, const SVec3 &end)
                 : start( start ), end( end ) { }

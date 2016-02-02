@@ -13,8 +13,8 @@
 
 #pragma once
 
-#include "Meta.h"
-#include "Application.h"
+#include <Meta.h>
+#include <Application.h>
 
 #define CORE_SYSTEM               \
     public:                       \

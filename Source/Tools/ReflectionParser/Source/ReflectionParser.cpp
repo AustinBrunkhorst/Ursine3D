@@ -84,7 +84,7 @@ ReflectionParser::~ReflectionParser(void)
 
 void ReflectionParser::Parse(void)
 {
-    m_index = clang_createIndex( true, false );
+    m_index = clang_createIndex( true, m_options.displayDiagnostics );
 
     std::vector<const char *> arguments;
 
@@ -95,11 +95,12 @@ void ReflectionParser::Parse(void)
 #endif
 
     for (auto &argument : m_options.arguments)
-    { 
-        // unescape flags
-        boost::algorithm::replace_all( argument, "\\-", "-" );
-
         arguments.emplace_back( argument.c_str( ) );
+
+    if (m_options.displayDiagnostics)
+    {
+        for (auto *argument : arguments)
+            std::cout << argument << std::endl;
     }
 
     m_translationUnit = clang_createTranslationUnitFromSourceFile(
@@ -201,7 +202,7 @@ void ReflectionParser::GenerateFiles(void)
         moduleFilesData << moduleFileData;
 
         // if the generated file header doesn't exist, we need to regenerate
-        if (!metaCacheFileExists || !exists( outputFileHeader ))
+        if (m_options.forceRebuild || !metaCacheFileExists || !exists( outputFileHeader ))
         {
             generateModuleFile( outputFileHeader, outputFileSource, file.first, file.second );
 
@@ -220,7 +221,7 @@ void ReflectionParser::GenerateFiles(void)
 
     moduleCacheFileName /= ".meta-cache";
 
-    if (metaCacheFileExists)
+    if (!m_options.forceRebuild && metaCacheFileExists)
     {
         std::ifstream cacheFile( moduleCacheFileName.string( ) );
 

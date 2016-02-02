@@ -43,13 +43,14 @@ namespace ursine
         {
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
+			void InitializeJdl(std::string fileText);
+			void InitializeModel(std::string fileText);
             void Uninitialize();
 
             void LoadModel(std::string name, std::string fileName);
 			void LoadModel_Fbx(std::string name, std::string fileName);
-			void LoadModel_Ursine(std::string name, std::string fileName); 
-			void LoadLevel_Ursine(std::string name, std::string fileName);
-			void LoadAni_Ursine(std::string name, std::string fileName);
+			void LoadModel_Jdl(std::string name, std::string fileName); 
+			void LoadAni(std::string name, std::string fileName); // this will be used for animation builder
 
             ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
             unsigned GetModelVertcount(std::string name, unsigned index = 0);
@@ -94,6 +95,7 @@ namespace ursine
             std::map<std::string, ModelResource *> m_modelArray;
             std::map<std::string, unsigned> m_s2uTable;
             std::map<unsigned, ModelResource *> m_u2mTable;
+			std::vector<std::string> m_jdllist;
 
             unsigned m_modelCount;
             unsigned m_currentState;

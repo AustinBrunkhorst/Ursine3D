@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ObjectSelectorSystem.h
 **
@@ -25,14 +25,19 @@ using namespace ursine;
 
 ENTITY_SYSTEM_DEFINITION(EditorToolSystem);
 
-EditorToolSystem::EditorToolSystem(ursine::ecs::World* world)
+EditorToolSystem::EditorToolSystem(ecs::World* world)
 	: EntitySystem( world )
 	, m_currentTool( nullptr )
 	, m_currentSelected( -1 )
 {
 }
 
-ursine::ecs::Entity* EditorToolSystem::GetCurrentFocus(void)
+EditorToolSystem::~EditorToolSystem(void)
+{
+	m_currentTool = nullptr;
+}
+
+ecs::Entity* EditorToolSystem::GetCurrentFocus(void)
 {
 	return m_world->GetEntityUnique( m_currentSelected );
 }
@@ -42,13 +47,13 @@ void EditorToolSystem::OnAfterLoad(void)
 	auto editor = GetCoreSystem( Editor );
 	auto world = editor->GetProject( )->GetScene( )->GetWorld( );
 
-	m_selectTool = new SelectTool( editor );
-	m_dupTool = new DuplicateTool( editor );
+	m_selectTool = new SelectTool( editor, m_world );
+	m_dupTool = new DuplicateTool( editor, m_world );
 
 	m_tools[ KEY_1 ] = m_selectTool;
-	m_tools[ KEY_2 ] = new TranslateTool( editor );
-	m_tools[ KEY_3 ] = new ScaleTool( editor );
-	m_tools[ KEY_4 ] = new RotateTool( editor );
+	m_tools[ KEY_2 ] = new TranslateTool( editor, m_world );
+	m_tools[ KEY_3 ] = new ScaleTool( editor, m_world );
+	m_tools[ KEY_4 ] = new RotateTool( editor, m_world );
 	m_tools[ KEY_5 ] = m_dupTool;
 
 	m_currentTool = m_tools[ KEY_1 ];
@@ -108,7 +113,7 @@ void EditorToolSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
 void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
 {
 	EVENT_ATTRS(ursine::MouseManager, MouseButtonArgs);
-	
+
 	// must have focus or mouse focus
     if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
         return;

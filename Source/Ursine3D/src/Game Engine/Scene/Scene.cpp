@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Scene.cpp
 **
@@ -27,14 +27,14 @@ namespace ursine
         
     }
 
-    ecs::World::Handle Scene::GetWorld(void)
+    ecs::World *Scene::GetWorld(void)
     {
-        return m_world;
+        return m_world.get( );
     }
 
-    void Scene::SetWorld(ecs::World::Handle world)
+    void Scene::SetWorld(ecs::World *world)
     {
-        m_world = world;
+        m_world = std::shared_ptr<ecs::World>( world );
     }
 
     graphics::GfxHND Scene::GetViewport(void) const

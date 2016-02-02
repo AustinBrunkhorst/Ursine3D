@@ -13,8 +13,8 @@
 using namespace ursine;
 using namespace ecs;
 
-DuplicateTool::DuplicateTool(Editor *editor)
-	: EditorTool( editor )
+DuplicateTool::DuplicateTool(Editor *editor, ursine::ecs::World *world)
+	: EditorTool( editor, world )
 	, m_gizmo( nullptr )
 	, m_selected( -1 )
 	, m_snapping( false )
@@ -25,7 +25,6 @@ DuplicateTool::DuplicateTool(Editor *editor)
 	, m_origin( false )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
 	m_drawer = m_world->GetEntitySystem( DebugSystem );
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 }

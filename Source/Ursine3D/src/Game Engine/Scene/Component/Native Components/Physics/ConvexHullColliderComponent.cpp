@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ConvexHullColliderComponent.cpp
 **
@@ -38,8 +38,6 @@ namespace ursine
 
 		void ConvexHullCollider::OnInitialize(void)
 		{
-            Component::OnInitialize( );
-
 			GetOwner( )->Listener( this )
 				.On( ENTITY_TRANSFORM_DIRTY, &ConvexHullCollider::onTransformChange );
 		}

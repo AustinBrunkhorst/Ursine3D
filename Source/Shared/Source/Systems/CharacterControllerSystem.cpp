@@ -44,7 +44,7 @@ void CharacterControllerSystem::Process(Entity *entity)
     
     auto lookDir = controller->GetLookDirection( );
     
-	//auto child = transform->GetChild(0);
+	auto child = transform->GetChild(0);
     auto cam = transform->GetComponentInChildren<Camera>( );
 
 	// This is an immidiate fix, cause fuck eet. - Jordan
@@ -55,45 +55,43 @@ void CharacterControllerSystem::Process(Entity *entity)
     {
         auto lookAngle = lookDir * rotateSpeed;
 
-        auto camTrans = transform;
-
-        // is this actually doing what we want?
-        auto look = camTrans->GetForward( );
-
-        if (lookAngle.Y( ) < 0.0f)
-        {
-            // look down
-            if (look.Y( ) > -0.75f)
-            {
-                look = SQuat( -lookAngle.Y( ), camTrans->GetRight( ) ) * look;
-                    
-                if (look.Y( ) < -0.75)
-                    look.Y( ) = -0.75;
-            }
-        }
-        else if (lookAngle.Y( ) > 0.0f)
-        {
-            // look up
-            if (look.Y( ) < 0.75f)
-            {
-                look = SQuat( -lookAngle.Y( ), camTrans->GetRight( ) ) * look;
-
-                if (look.Y( ) > 0.75)
-                    look.Y( ) = 0.75;
-            }
-        }
-
-        
-        camTrans->SetWorldRotation(
-            camTrans->GetWorldRotation( ) *
-            SQuat(0.0f, lookAngle.X( ), 0.0f));
-
         if ( cam )
-            cam->GetOwner( )->GetTransform( )->LookAt(camTrans->GetWorldPosition( ) + look);
-		/*child->SetWorldRotation( 
-            child->GetWorldRotation( ) * 
-            SQuat( 0.0f, lookAngle.X( ), 0.0f )*/
-        // );
+        {
+            auto camTrans = cam->GetOwner( )->GetTransform( );
+
+            // is this actually doing what we want?
+            auto look = camTrans->GetForward( );
+
+            if ( lookAngle.Y( ) < 0.0f )
+            {
+                // look down
+                if ( look.Y( ) > -0.75f )
+                {
+                    look = SQuat(-lookAngle.Y( ), camTrans->GetRight( )) * look;
+
+                    if ( look.Y( ) < -0.75 )
+                        look.Y( ) = -0.75;
+                }
+            }
+            else if ( lookAngle.Y( ) > 0.0f )
+            {
+                // look up
+                if ( look.Y( ) < 0.75f )
+                {
+                    look = SQuat(-lookAngle.Y( ), camTrans->GetRight( )) * look;
+
+                    if ( look.Y( ) > 0.75 )
+                        look.Y( ) = 0.75;
+                }
+            }
+
+            camTrans->LookAt(camTrans->GetWorldPosition( ) + look);
+        }
+
+        transform->SetWorldRotation(
+            transform->GetWorldRotation( ) *
+            SQuat(0.0f, lookAngle.X( ), 0.0f)
+            );
     }
 
     auto move = -controller->GetMoveDirection( ) * moveSpeed;

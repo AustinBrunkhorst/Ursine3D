@@ -49,6 +49,9 @@ public:
 
 private:
     void OnInitialize(void) override;
+    void ConnectToAllCritSpots(void);
+
+    void OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT));
 
     float m_health;
     float m_maxHealth;

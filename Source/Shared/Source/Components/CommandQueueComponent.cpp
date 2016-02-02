@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** CommandQueueComponent.cpp
 **
@@ -26,7 +26,6 @@ CommandQueue::CommandQueue(void)
 
 void CommandQueue::OnInitialize(void)
 {
-    Component::OnInitialize( );
 }
 
 void CommandQueue::AddCommand(const std::shared_ptr<Command> &command) 

@@ -17,6 +17,8 @@
 
 #include <UIManager.h>
 
+#include <FileSystem.h>
+
 JSFunction(DebugEditorUI)
 {
     std::string debugURL( "http://localhost:" );
@@ -24,6 +26,30 @@ JSFunction(DebugEditorUI)
     debugURL += std::to_string( ursine::UIManager::REMOTE_DEBUGGING_PORT );
 
     ursine::utils::OpenPath( debugURL );
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(ProcessOpen)
+{
+	if (arguments.size( ) != 2)
+		JSThrow( "Invalid arguments.", nullptr );
+
+	auto path = arguments[ 0 ]->GetStringValue( ).ToString( );
+	auto relative = arguments[ 1 ]->GetBoolValue( );
+
+	std::string outputPath;
+
+	if (relative)
+	{
+		outputPath = (ursine::fs::current_path( ) / path).string( );
+	}
+	else
+	{
+		outputPath = path;
+	}
+
+    ursine::utils::OpenPath( outputPath );
 
     return CefV8Value::CreateBool( true );
 }

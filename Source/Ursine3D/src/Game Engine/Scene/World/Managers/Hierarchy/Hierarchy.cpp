@@ -105,10 +105,13 @@ namespace ursine
             SetSiblingIndex( entity, 0 );
         }
 
+#include <iostream>
         void Hierarchy::SetSiblingIndex(const Entity *entity, uint index)
         {
             auto ID = entity->GetID( );
             auto &children = *getSiblingArray( ID );
+
+            std::cout << entity->GetName( ) << std::endl;
 
             UAssert( index < children.size( ), 
                 "This is an invalid index." 

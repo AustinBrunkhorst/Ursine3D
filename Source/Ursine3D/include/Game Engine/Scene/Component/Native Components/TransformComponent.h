@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TransformComponent.h
 **
@@ -269,7 +269,7 @@ namespace ursine
             // handling value changes in scale, position, or rotation
             bool genericAddChild(Handle<Transform> child);
 
-            void setParent(Handle<Transform> oldParent, Handle<Transform> newParent);
+            void setParent(Handle<Transform> oldParent, Handle<Transform> newParent, bool removing = false);
 			
 			void setRoot(Handle<Transform> root);
 

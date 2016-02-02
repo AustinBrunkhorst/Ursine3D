@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** BvhTriangleMeshColliderComponent.cpp
 **
@@ -39,8 +39,6 @@ namespace ursine
 
 		void BvhTriangleMeshCollider::OnInitialize()
 		{
-            Component::OnInitialize( );
-
 			GetOwner( )->Listener( this )
 				.On( ENTITY_TRANSFORM_DIRTY, &BvhTriangleMeshCollider::onTransformChange );
 		}

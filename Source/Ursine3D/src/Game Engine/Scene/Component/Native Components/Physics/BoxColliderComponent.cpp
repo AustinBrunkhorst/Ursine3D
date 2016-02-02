@@ -37,8 +37,6 @@ namespace ursine
 
         void BoxCollider::OnInitialize(void)
         {
-            Component::OnInitialize( );
-
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &BoxCollider::onTransformChange );
 

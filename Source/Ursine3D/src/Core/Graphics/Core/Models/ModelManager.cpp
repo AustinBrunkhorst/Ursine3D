@@ -35,56 +35,10 @@ namespace ursine
             m_currentState = -1;
 
             AnimationBuilder::InitializeStaticData( );
-
-            //loading all models
-            char buffer[ 1024 ];
-			std::ifstream input;
 			std::string fileText = filePath;
-			fileText.append("MODELS.8.0.gfx");
-			input.open(fileText, std::ios_base::in);
 
-			UAssert(input.is_open(), "Failed to open file for model loading! ('%s')", filePath.c_str());
-			while (input.eof() == false)
-			{
-				//zero it out
-				memset(buffer, 0, sizeof(char) * 1024);
-
-				//get the line
-				input.getline(buffer, 1024);
-
-				//if nothing on line, or # comment, continue;
-				if (buffer[0] == '#' || strlen(buffer) == 0)
-					continue;
-
-				//use string, and vector for holding tokens
-				std::string data(buffer);
-				std::vector<std::string> tokens;
-
-				//deal with data, chop it up by space
-				size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
-				while (pos != std::string::npos)
-				{
-					size_t end = data.find_first_of(" ", pos + 1);
-					if (end - pos > 1)
-						tokens.push_back(data.substr(pos, end - pos + 1));
-					pos = data.find_first_of(" ", end);
-				}
-
-				//0 is filename
-				tokens[0].insert(0, filePath);
-				tokens[1].erase(0, 1);
-				//1 is name
-
-				//determine what loading format to use
-				if (tokens[0].find("8.0.mdl") != std::string::npos)
-					LoadModel(tokens[1], tokens[0]);
-				else if (tokens[0].find(".fbx") != std::string::npos)
-					LoadModel_Fbx(tokens[1], tokens[0]);
-				else if (tokens[0].find(".jdl") != std::string::npos)
-					LoadModel_Ursine(tokens[1], tokens[0]);
-			}
-
-			input.close();
+			InitializeJdl(fileText);
+			InitializeModel(fileText);            
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
@@ -209,6 +163,108 @@ namespace ursine
             m_u2mTable[ m_modelCount ] = m_modelArray[ name ];
 			++m_modelCount;
         }
+
+		void ModelManager::InitializeJdl(std::string fileText)
+		{
+			char buffer[1024];
+			std::ifstream input;
+
+			//loading jdl files first, then loading fbx
+			//if jdl exists, then we don't need to load fbx again
+			//if jdl doesn't exists, load fbx and store it into the list
+			//why do we need this?
+			//because we don't have other method to load edited model by drag & drop or typing name of it.
+			input.open(fileText + "JDLS.gfx", std::ios_base::in);
+			UAssert(input.is_open(), "Failed to open file for jdl loading! ('%s')", fileText.c_str());
+			while (input.eof() == false)
+			{
+				//zero it out
+				memset(buffer, 0, sizeof(char) * 1024);
+
+				//get the line
+				input.getline(buffer, 1024);
+
+				//if nothing on line, or # comment, continue;
+				if (buffer[0] == '#' || strlen(buffer) == 0)
+					continue;
+
+				//use string, and vector for holding tokens
+				std::string data(buffer);
+				std::vector<std::string> tokens;
+
+				//deal with data, chop it up by space
+				size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
+				while (pos != std::string::npos)
+				{
+					size_t end = data.find_first_of(" ", pos + 1);
+					if (end - pos > 1)
+						tokens.push_back(data.substr(pos, end - pos + 1));
+					pos = data.find_first_of(" ", end);
+				}
+
+				//0 is filename
+				tokens[0].insert(0, fileText);
+				tokens[1].erase(0, 1);
+				//1 is name
+
+				//determine what loading format to use
+				m_jdllist.push_back(tokens[0]);
+				if (tokens[0].find(".jdl") != std::string::npos)
+					LoadModel_Jdl(tokens[1], tokens[0]);
+			}
+			input.close();
+		}
+
+		void ModelManager::InitializeModel(std::string fileText)
+		{
+			char buffer[1024];
+			std::ifstream input;
+
+			//loading all models
+			input.open(fileText + "MODELS.8.0.gfx", std::ios_base::in);
+			UAssert(input.is_open(), "Failed to open file for model loading! ('%s')", fileText.c_str());
+			while (input.eof() == false)
+			{
+				//zero it out
+				memset(buffer, 0, sizeof(char) * 1024);
+
+				//get the line
+				input.getline(buffer, 1024);
+
+				//if nothing on line, or # comment, continue;
+				if (buffer[0] == '#' || strlen(buffer) == 0)
+					continue;
+
+				//use string, and vector for holding tokens
+				std::string data(buffer);
+				std::vector<std::string> tokens;
+
+				//deal with data, chop it up by space
+				size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
+				while (pos != std::string::npos)
+				{
+					size_t end = data.find_first_of(" ", pos + 1);
+					if (end - pos > 1)
+						tokens.push_back(data.substr(pos, end - pos + 1));
+					pos = data.find_first_of(" ", end);
+				}
+
+				//0 is filename
+				tokens[0].insert(0, fileText);
+				tokens[1].erase(0, 1);
+				//1 is name
+
+				//determine what loading format to use
+				if (tokens[0].find("8.0.mdl") != std::string::npos)
+					LoadModel(tokens[1], tokens[0]);
+				else if (tokens[0].find(".fbx") != std::string::npos)
+				{
+					LoadModel_Fbx(tokens[1], tokens[0]);
+					// need to store name of fbx file into jdl.gfx if there isn't
+				}
+			}
+			input.close();
+		}
 
         void ModelManager::Uninitialize()
         {
@@ -483,7 +539,6 @@ namespace ursine
 
 				m_s2uTable[name] = m_modelCount;
 				m_u2mTable[m_modelCount++] = m_modelArray[name];
-
                 m_modelArray[ name ]->AddMesh(newMesh);
 			}
 		}
@@ -491,7 +546,7 @@ namespace ursine
 		// how can i load animation with jdl format?
 		// I'm thinking of loading animation(jani) separately.
 		// for here, you can load jdl, and through the ani-count and ani-name vec to load animation info
-		void ModelManager::LoadModel_Ursine(std::string name, std::string fileName)
+		void ModelManager::LoadModel_Jdl(std::string name, std::string fileName)
 		{
 			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
@@ -521,16 +576,19 @@ namespace ursine
 				// => need to build jani LoadAnimation Function
 				// if there is a name list in jdl, load every animations and renew the list
 				// the aniNames will be the file name of jani files.
-				unsigned animationIndex = 0;
-				if (ufmt_model.maniCount > 0)
+
+				/////////////////////////////////////////////////////////
+				// Let's test storing multi janis into one jdl /////////////////////////////////
+				std::string janiFileName("Assets/Animations/");
+				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Idle.jani");
+				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Run.jani");
+				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Jump.jani");
+				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Win.jani");
+				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Die.jani");
+				ufmt_model.maniCount = static_cast<unsigned int>( ufmt_model.maniNameVec.size() );
+				for (auto iter : ufmt_model.maniNameVec)
 				{
-					for (auto iter : ufmt_model.maniNameVec)
-					{
-						// not finished. need to be changed when it really works.
-						std::string janiFileName = fileName.substr(0, fileName.find(".jdl")) + iter.c_str();
-						janiFileName += ".jani";
-						LoadAni_Ursine(ufmt_model.name, janiFileName);
-					}
+					LoadAni(name, iter);
 				}
 
 				///////////////////////////////////////////////////////////////
@@ -669,7 +727,7 @@ namespace ursine
 			CloseHandle(hFile_model);
 		}
 
-		void ModelManager::LoadAni_Ursine(std::string name, std::string fileName)
+		void ModelManager::LoadAni(std::string name, std::string fileName)
 		{
 			std::ifstream input;
 			std::vector<AnimationVertex> buffer;
@@ -680,6 +738,11 @@ namespace ursine
 			// Serialize in model and animation
 			ufmt_ani.SerializeIn(hFile_ani);
 			// need to execute AnimationBuilder::LoadAnimation here?
+			unsigned animationIndex = 0;
+			fs::path fName(fileName);
+			std::string aniName = fName.filename().string();
+			aniName = aniName.substr(0, aniName.rfind("."));
+			animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, aniName);
 			CloseHandle(hFile_ani);
 		}
 
@@ -706,6 +769,7 @@ namespace ursine
 
         void ModelManager::BindModel(std::string name, unsigned index, bool indexOnly)
         {
+<<<<<<< HEAD
             if ( !indexOnly )
             {
                 ModelResource *model = m_modelArray[ name ];
@@ -715,6 +779,9 @@ namespace ursine
                 //map mesh
                 unsigned int strides = sizeof(AnimationVertex);
                 unsigned int offset = 0;
+=======
+            ModelResource *model = m_modelArray[ name ];
+>>>>>>> origin/editor
 
                 m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
                 m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
