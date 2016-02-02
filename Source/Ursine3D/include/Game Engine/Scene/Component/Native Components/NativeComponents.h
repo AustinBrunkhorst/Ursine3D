@@ -29,6 +29,7 @@
 #include "ParticleEmitterComponent.h"
 #include "ParticleColorAnimatorComponent.h"
 #include "ParticleAnimatorComponent.h"
+#include "ParticleAttractorComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics

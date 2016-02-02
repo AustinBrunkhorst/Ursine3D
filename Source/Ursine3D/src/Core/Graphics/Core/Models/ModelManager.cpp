@@ -769,7 +769,6 @@ namespace ursine
 
         void ModelManager::BindModel(std::string name, unsigned index, bool indexOnly)
         {
-<<<<<<< HEAD
             if ( !indexOnly )
             {
                 ModelResource *model = m_modelArray[ name ];
@@ -779,9 +778,6 @@ namespace ursine
                 //map mesh
                 unsigned int strides = sizeof(AnimationVertex);
                 unsigned int offset = 0;
-=======
-            ModelResource *model = m_modelArray[ name ];
->>>>>>> origin/editor
 
                 m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
                 m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);

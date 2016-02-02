@@ -119,7 +119,7 @@ void main()
     gOutput[ 0 ].id = bestAnswer; 
     gOutput[ 0 ].x = xPos;
     gOutput[ 0 ].y = yPos;
-    gOutput[ 0 ].depth = depthTexture.Load( int3(xPos, yPos, 0) );
+    gOutput[ 0 ].depth = depthTexture.Load( int3(xPos, yPos, 0) ).x;
     return;
 }
 
