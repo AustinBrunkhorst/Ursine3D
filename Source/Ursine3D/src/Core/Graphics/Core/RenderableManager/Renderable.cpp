@@ -379,6 +379,16 @@ namespace ursine
             return m_cpuParticleData;
         }
 
+        Particle_GPU &ParticleSystem::GetGPUParticle(const int index)
+        {
+            return m_gpuParticleData[ index ];
+        }
+
+        Particle_CPU &ParticleSystem::GetCPUParticle(const int index)
+        {
+            return m_cpuParticleData[ index ];
+        }
+
         unsigned ParticleSystem::GetParticleVectorSize(void) const
         {
             return static_cast<unsigned>(m_gpuParticleData.size( ));
@@ -417,6 +427,26 @@ namespace ursine
 
             // decrement
             --m_backIndex;
+        }
+
+        const SVec3 & ParticleSystem::GetPosition(void) const
+        {
+            return m_position;
+        }
+
+        void ParticleSystem::SetPosition(const SVec3 & position)
+        {
+            m_position = position;
+        }
+
+        const Color &ParticleSystem::GetColor(void) const
+        {
+            return m_particleColor;
+        }
+
+        void ParticleSystem::SetColor(const Color &color)
+        {
+            m_particleColor = color;
         }
     }
 }

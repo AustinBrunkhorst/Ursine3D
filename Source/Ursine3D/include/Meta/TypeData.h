@@ -64,7 +64,7 @@ namespace ursine
                 Constructor
             > dynamicConstructors;
 
-            std::unordered_map<
+            std::map<
                 std::string, 
                 Field
             > fields;

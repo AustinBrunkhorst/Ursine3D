@@ -58,6 +58,8 @@ namespace ursine
             //get a universal light
             Light &GetLight(GfxHND &handle);
 
+            ParticleSystem &GetParticleSystem(GfxHND &handle);
+
         private:
             privData *m_privates;
 

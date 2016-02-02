@@ -25,6 +25,10 @@
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
 #include "FBXSceneRootNodeComponent.h"
+#include "ParticleSystemComponent.h"
+#include "ParticleEmitterComponent.h"
+#include "ParticleColorAnimatorComponent.h"
+#include "ParticleAnimatorComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics

@@ -46,6 +46,8 @@ namespace ursine
 
             DEPTH_STATE_PASSDEPTH_NOSTENCIL,
 
+            DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL,
+
             DEPTH_STATE_COUNT
         };
     }

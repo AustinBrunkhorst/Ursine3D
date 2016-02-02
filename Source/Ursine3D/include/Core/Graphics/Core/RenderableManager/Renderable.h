@@ -218,6 +218,9 @@ namespace ursine
             std::vector<Particle_GPU> &GetGPUParticleData(void);
             std::vector<Particle_CPU> &GetCPUParticleData(void);
 
+            Particle_GPU &GetGPUParticle(const int index);
+            Particle_CPU &GetCPUParticle(const int index);
+
             // get total number of particles
             unsigned GetParticleVectorSize(void) const;
 
@@ -233,11 +236,19 @@ namespace ursine
 
             void DestroyParticle(const int index);
 
+            const SVec3 &GetPosition(void) const;
+            void SetPosition(const SVec3 &position);
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
         private:
             // members
             int m_backIndex;
             std::vector<Particle_GPU> m_gpuParticleData;
             std::vector<Particle_CPU> m_cpuParticleData;
+            SVec3 m_position;
+
+            Color m_particleColor;
         };
     }
 }

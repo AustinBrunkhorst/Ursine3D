@@ -23,7 +23,8 @@ namespace ursine
 {
     namespace ecs
     {
-        class ParticleSystem : public Component
+        class ParticleSystem 
+            : public Component
         {
             NATIVE_COMPONENT;
 
@@ -36,35 +37,60 @@ namespace ursine
             //    SetType
             //    );
 
+            EditorField(
+                Color color,
+                GetColor,
+                SetColor
+            );
+
 
             ParticleSystem(void);
             ~ParticleSystem(void);
 
             Meta(Disable)
-                void OnInitialize(void) override;
+            void OnInitialize(void) override;
 
             // count
             unsigned GetActiveParticleCount(void) const;
             unsigned GetInactiveParticleCount(void) const;
 
             // gpu vector
+            Meta(Disable)
             std::vector<graphics::Particle_GPU> &GetGPUParticleData(void);
 
+            Meta(Disable)
+            graphics::Particle_GPU &GetGPUParticle(const int index);
+
             // cpu vector
+            Meta(Disable)
             std::vector<graphics::Particle_CPU> &GetCPUParticleData(void);
+
+            Meta(Disable)
+            graphics::Particle_CPU &GetCPUParticle(const int index);
 
             // generate particle, returns index
             int SpawnParticle(void);
 
+            // destroys a particle, given an index
             void DestroyParticle(const int index);
 
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
+
         private:
+            // command all particle components to operate on the set of particles
+            void updateRenderer(void);
+
             graphics::ParticleSystem *m_particleSystem;
 
-			// command all particle components to operate on the set of particles
-			void updateRenderer(void);
+            // The graphics core API
+            graphics::GfxAPI *m_graphics;
 
 			RenderableComponentBase *m_base;
+
+            // data for this component
+            Color m_particleColor;
 
             // color
         } Meta(Enable, DisplayName("ParticleSystem"));

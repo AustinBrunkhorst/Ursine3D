@@ -86,6 +86,43 @@ namespace ursine
 
 			input.close();
 
+            /////////////////////////////////////////////////////////////////////////////
+            // GENERATING INTERNAL PS INDEX BUFFER
+            {
+                std::string name = "ParticleIndices";
+
+                m_modelArray[ name ] = new ModelResource();
+                auto *newMesh = new Mesh();
+                m_modelArray[ name ]->AddMesh(newMesh);
+
+                unsigned indices[ 1024 ];
+
+                for ( int x = 0; x < 1024; ++x )
+                    indices[ x ] = x;
+
+                D3D11_BUFFER_DESC indexBufferDesc;
+                D3D11_SUBRESOURCE_DATA indexData;
+
+                //Set up the description of the static index buffer.
+                indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+                indexBufferDesc.ByteWidth = sizeof(unsigned) * 1024;
+                indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+                indexBufferDesc.CPUAccessFlags = 0;
+                indexBufferDesc.MiscFlags = 0;
+                indexBufferDesc.StructureByteStride = 0;
+
+                //Give the subresource structure a pointer to the index data.
+                indexData.pSysMem = indices;
+                indexData.SysMemPitch = 0;
+                indexData.SysMemSlicePitch = 0;
+
+                //Create the index buffer.
+                HRESULT result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
+                UAssert(result == S_OK, "Failed to make index buffer!");
+            }
+
+            /////////////////////////////////////////////////////////////////////////////
+            // GENERATING INTERNAL QUAD FOR RENDERING
             std::vector<AnimationVertex> temp;
             temp.resize(6);
 
@@ -112,6 +149,7 @@ namespace ursine
             temp[ 5 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
             temp[ 5 ].vUv = DirectX::XMFLOAT2(1, 1);
             temp[ 5 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+
 
             std::string name = "internalQuad";
 
@@ -666,22 +704,34 @@ namespace ursine
             return m_modelArray[ name ]->GetMesh(index)->GetIndexCount( );
 		}
 
-        void ModelManager::BindModel(std::string name, unsigned index)
+        void ModelManager::BindModel(std::string name, unsigned index, bool indexOnly)
         {
+            if ( !indexOnly )
+            {
+                ModelResource *model = m_modelArray[ name ];
 
+                UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
 
-            ModelResource *model = m_modelArray[ name ];
+                //map mesh
+                unsigned int strides = sizeof(AnimationVertex);
+                unsigned int offset = 0;
 
-            UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
+                m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
+                m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-            //map mesh
-            unsigned int strides = sizeof(AnimationVertex);
-            unsigned int offset = 0;
+                m_currentState = m_s2uTable[ name ];
+            }
+            else
+            {
+                ModelResource *model = m_modelArray[ name ];
 
-            m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
-            m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+                UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
 
-            m_currentState = m_s2uTable[ name ];
+                m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+                m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+
+                m_currentState = m_s2uTable[ name ];
+            }
         }
 
         void ModelManager::BindModel(unsigned ID, unsigned index)

@@ -27,6 +27,7 @@ namespace ursine
             m_renderableModel3D.resize(MAX_RENDERABLES);
             m_renderableBillboards.resize(MAX_RENDERABLES);
             m_renderableLights.resize(MAX_RENDERABLES);
+            m_renderableParticleSystems.resize(MAX_RENDERABLES);
 
             m_handleList.resize(RENDERABLE_TYPE_COUNT);
 

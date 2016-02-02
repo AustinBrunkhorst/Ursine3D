@@ -44,9 +44,14 @@ namespace ursine
             return m_privates->renderMgr->GetRenderable<Billboard2D>(handle);
         }
 
-        Light& RenderableAPI::GetLight(GfxHND &handle)
+        Light &RenderableAPI::GetLight(GfxHND &handle)
         {
             return m_privates->renderMgr->GetRenderable<Light>(handle);
+        }
+
+        ParticleSystem &RenderableAPI::GetParticleSystem(GfxHND & handle)
+        {
+            return m_privates->renderMgr->GetRenderable<ParticleSystem>(handle);
         }
 
         void RenderableAPI::SetPrivates(void *priv)

@@ -55,7 +55,7 @@ namespace ursine
             unsigned GetModelVertcount(std::string name, unsigned index = 0);
 			unsigned GetModelIndexcount(std::string name, unsigned index = 0);
 
-            void BindModel(std::string name, unsigned index = 0);
+            void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
             void BindModel(unsigned ID, unsigned index = 0);
 
             //manual binding
