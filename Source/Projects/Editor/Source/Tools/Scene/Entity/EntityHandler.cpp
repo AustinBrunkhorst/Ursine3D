@@ -341,6 +341,9 @@ JSMethod(EntityHandler::componentFieldUpdate)
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
+    if (!component)
+        JSThrow( "Component doesn't exist.", nullptr );
+
     auto value = JsonSerializer::Serialize( arguments[ 2 ] );
 
     meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
@@ -408,6 +411,9 @@ JSMethod(EntityHandler::componentFieldArrayUpdate)
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
+    if (!component)
+        JSThrow( "Component doesn't exist.", nullptr );
+
     meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
 
     auto field = componentType.GetField( fieldName );
@@ -461,6 +467,9 @@ JSMethod(EntityHandler::componentFieldArrayInsert)
     auto *component = entity->GetComponent( 
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
+
+    if (!component)
+        JSThrow( "Component doesn't exist.", nullptr );
 
     meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
 
@@ -516,6 +525,9 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
+    if (!component)
+        JSThrow( "Component doesn't exist.", nullptr );
+
     meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
 
     auto field = componentType.GetField( fieldName );
@@ -563,6 +575,9 @@ JSMethod(EntityHandler::componentFieldArrayGetLength)
     auto *component = entity->GetComponent( 
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
+
+    if (!component)
+        JSThrow( "Component doesn't exist.", nullptr );
 
     meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
 

@@ -14,12 +14,14 @@
 #pragma once
 
 #include <boost/filesystem.hpp>
+#include <FileWatcher.h>
 
 namespace ursine
 {
     namespace fs
     {
         using namespace boost::filesystem;
+        using namespace efsw;
         
         typedef std::vector<path> FileList;
 

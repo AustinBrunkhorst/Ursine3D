@@ -21,14 +21,14 @@ namespace ursine
     namespace ecs
     {
         FilterSystem::FilterSystem(
-                World *world, 
-                const Filter &filter, 
-                EventHandlerPriority updatePriority
-            )
-            : EntitySystem( world )
-            , m_updatePriority( updatePriority )
-            , m_filter( filter )
-            , m_updateType( WORLD_UPDATE ) { }
+            World *world, 
+            const Filter &filter, 
+            EventHandlerPriority updatePriority
+        )
+        : EntitySystem( world )
+        , m_filter( filter )
+        , m_updatePriority( updatePriority )
+        , m_updateType( WORLD_UPDATE ) { }
 
         void FilterSystem::onComponentChange(EVENT_HANDLER(World))
         {

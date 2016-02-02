@@ -45,6 +45,7 @@ declare_dependency(BulletPhysics)
 declare_dependency(WWise)
 declare_dependency(FBX)
 declare_dependency(DirectX)
+declare_dependency(FileWatcher)
 
 # ------------------------------------------------------------------------------
 # Global Compiler Definitions

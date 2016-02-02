@@ -62,29 +62,43 @@ namespace ProjectGenerator.Forms
                 m_sourceDir
             );
 
-            m_cmakeProcess = new Process
+            try
             {
-                StartInfo =
+                m_cmakeProcess = new Process
                 {
-                    CreateNoWindow = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    FileName = CMakeGenerator.ExecutableName,
-                    Arguments = cmakeArgs,
-                    UseShellExecute = false,
-                    WorkingDirectory = m_binaryDir
-                },
-                EnableRaisingEvents = true
-            };
+                    StartInfo =
+                    {
+                        CreateNoWindow = true,
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true,
+                        FileName = CMakeGenerator.ExecutableName,
+                        Arguments = cmakeArgs,
+                        UseShellExecute = false,
+                        WorkingDirectory = m_binaryDir
+                    },
+                    EnableRaisingEvents = true
+                };
 
 
-            m_cmakeProcess.OutputDataReceived += cmakeOnData;
-            m_cmakeProcess.ErrorDataReceived += cmakeOnError;
-            m_cmakeProcess.Exited += cmakeOnExit;
+                m_cmakeProcess.OutputDataReceived += cmakeOnData;
+                m_cmakeProcess.ErrorDataReceived += cmakeOnError;
+                m_cmakeProcess.Exited += cmakeOnExit;
 
-            m_cmakeProcess.Start( );
-            m_cmakeProcess.BeginOutputReadLine( );
-            m_cmakeProcess.BeginErrorReadLine( );
+                m_cmakeProcess.Start( );
+                m_cmakeProcess.BeginOutputReadLine( );
+                m_cmakeProcess.BeginErrorReadLine( );
+            }
+            catch
+            {
+                MessageBox.Show( 
+                    string.Format( "Unable to execute \"{0}\".\n\nMake sure your path is correct.", CMakeGenerator.ExecutableName ),
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error 
+                );
+
+                Close( );
+            }
         }
 
         private void cmakeOnData(object sender, DataReceivedEventArgs e)
