@@ -29,6 +29,7 @@ ScaleTool::ScaleTool(Editor *editor, ursine::ecs::World *world)
 	, m_snapping( false )
 	, m_local( false )
 	, m_deleteGizmo( false )
+	, m_hovering( false )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
@@ -72,43 +73,8 @@ void ScaleTool::OnDeselect(Entity* entity)
 
 void ScaleTool::OnMouseDown(const MouseButtonArgs& args)
 {
-	// get the current entity ID the mouse is over
-	auto newID = m_graphics->GetMousedOverID( );
-	auto entity = m_world->GetEntityUnique( newID );
-
-	if (!entity || m_altDown)
-		return;
-
-	auto entityTrans = entity->GetTransform( );
-
-	auto root = entityTrans->GetRoot( );
-
-	if (!root)
-		return;
-
-	auto rootName = root->GetOwner( )->GetName( );
-
-	// if we're clicking on ourselves, set the dragging flag,
-	// and the vector we're dragging on
-	if (rootName == "ScaleGizmo")
-	{
+	if (m_hovering)
 		m_dragging = true;
-
-		// Get the selected entity
-		auto selected = m_world->GetEntityUnique( m_selected );
-
-		// Get the gizmo's name (the models are under the parent named the axis' name)
-		auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );
-
-		if (name == "xAxis")
-			setDirectionVectors( SVec3::UnitX( ), selected );
-		else if (name == "yAxis")
-			setDirectionVectors( SVec3::UnitY( ), selected );
-		else if (name == "zAxis")
-			setDirectionVectors( SVec3::UnitZ( ), selected );
-		else if (name == "allAxis")
-			setDirectionVectors( SVec3( 1.0f, 1.0f, 1.0f ), selected );
-	}
 }
 
 void ScaleTool::OnMouseUp(const MouseButtonArgs& args)
@@ -208,6 +174,11 @@ void ScaleTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 	m_uniform = kManager->IsDown( KEY_LSHIFT );
 
 	updateAxis( );
+
+	if (!m_dragging)
+	{
+		updateHoverAxis( );
+	}
 }
 
 void ScaleTool::setDirectionVectors(const SVec3& basisVector, Entity* selected)
@@ -258,6 +229,7 @@ void ScaleTool::disableAxis(void)
 	}
 
 	m_gizmo = nullptr;
+	m_axis = nullptr;
 }
 
 void ScaleTool::updateAxis(void)
@@ -268,7 +240,7 @@ void ScaleTool::updateAxis(void)
 	// update the size of the gizmo
 	auto gizTrans = m_gizmo->GetTransform( );
 
-	gizTrans->SetWorldScale( SVec3( m_editorCameraSystem->GetCamZoom( ) * 0.03f ) );
+	gizTrans->SetWorldScale( SVec3( m_editorCameraSystem->GetCamZoom( ) * 0.04f ) );
 
 	auto selected = m_world->GetEntityUnique( m_selected );
 	auto selTrans = selected->GetTransform( );
@@ -279,6 +251,83 @@ void ScaleTool::updateAxis(void)
 		gizTrans->SetWorldRotation( selTrans->GetWorldRotation( ) );
 	else
 		gizTrans->SetLocalRotation( SQuat::Identity( ) );
+}
+
+void ScaleTool::updateHoverAxis(void)
+{
+	// get the current entity ID the mouse is over
+	auto newID = m_graphics->GetMousedOverID( );
+	auto entity = m_world->GetEntityUnique( newID );
+
+	if (!entity || m_altDown)
+	{
+		disableHover( );
+		return;
+	}
+
+	auto entityTrans = entity->GetTransform( );
+
+	auto root = entityTrans->GetRoot( );
+
+	if (!root)
+	{
+		disableHover( );
+		return;
+	}
+
+	auto rootName = root->GetOwner( )->GetName( );
+
+	// if we're clicking on ourselves, set the dragging flag,
+	// and the vector we're dragging on
+	if (rootName == "ScaleGizmo")
+	{
+		// Get the selected entity
+		auto selected = m_world->GetEntityUnique( m_selected );
+
+		// Get the gizmo's name (the models are under the parent named the axis' name)
+		auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );
+
+		if (name == "xAxis")
+			setDirectionVectors( SVec3::UnitX( ), selected );
+		else if (name == "yAxis")
+			setDirectionVectors( SVec3::UnitY( ), selected );
+		else if (name == "zAxis")
+			setDirectionVectors( SVec3::UnitZ( ), selected );
+		else if (name == "allAxis")
+			setDirectionVectors( SVec3( 1.0f, 1.0f, 1.0f ), selected );
+
+		auto model = entity->GetComponent<Model3D>( );
+
+		if (!model)
+			return;
+
+		// If we're hovering over a new axis
+		if (m_axis && entity != m_axis->GetOwner( ))
+			disableHover( );
+
+		// if the handle is null, store the original color
+		if (!m_axis)
+			m_axisOrigColor = model->GetColor( );
+
+		// set the axis handle
+		m_axis = entity->GetComponent<Model3D>( );
+
+		// set the axis' color
+		m_axis->SetColor( Color::Yellow );
+
+		m_hovering = true;
+	}
+}
+
+void ScaleTool::disableHover(void)
+{
+	m_hovering = false;
+		
+	if (m_axis)
+	{
+		m_axis->SetColor( m_axisOrigColor );
+		m_axis = nullptr;
+	}
 }
 
 void ScaleTool::setEntitySerializationToggle(bool toggle, Entity* entity)

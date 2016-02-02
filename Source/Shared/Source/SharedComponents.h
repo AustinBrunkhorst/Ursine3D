@@ -44,3 +44,11 @@
 #include "Components/WeaponLogic/AmmoPickUpComponent.h"
 
 
+///////////////////////////////////////////////////////////////////////////////
+//AI
+///////////////////////////////////////////////////////////////////////////////
+
+#include "Components/AI/WaypointComponent.h"
+#include "Components/AI/WaypointAgentComponent.h"
+#include "Components/AI/AIMovementControllerComponent.h"
+#include "Components/AI/AIHordeReasoner.h"

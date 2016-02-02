@@ -671,6 +671,24 @@ ursine_editor_menus_HelpMenu.doOpenGettingStarted = function() {
 ursine_editor_menus_HelpMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_HelpMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 });
+var ursine_editor_menus_ToolsMenu = function() { };
+$hxClasses["ursine.editor.menus.ToolsMenu"] = ursine_editor_menus_ToolsMenu;
+ursine_editor_menus_ToolsMenu.__name__ = ["ursine","editor","menus","ToolsMenu"];
+ursine_editor_menus_ToolsMenu.uniConnector = function() {
+	ursine_native_Extern.WaypointUnidirectionalConnector();
+};
+ursine_editor_menus_ToolsMenu.biConnector = function() {
+	ursine_native_Extern.WaypointBidirectionalConnector();
+};
+ursine_editor_menus_ToolsMenu.enableLines = function() {
+	ursine_native_Extern.WaypointEnableDrawLines();
+};
+ursine_editor_menus_ToolsMenu.disableLines = function() {
+	ursine_native_Extern.WaypointDisableDrawLines();
+};
+ursine_editor_menus_ToolsMenu.__super__ = ursine_editor_MenuItemHandler;
+ursine_editor_menus_ToolsMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+});
 var ursine_editor_scene_component_ComponentDatabase = function(database) {
 	this.m_componentInspectionHandlers = new haxe_ds_StringMap();
 	this.m_fieldInspectionHandlers = new haxe_ds_StringMap();
@@ -1881,6 +1899,18 @@ ursine_native_Extern.NotificationButtonCallback = function(id,buttonID) {
 ursine_native_Extern.NotificationCloseCallback = function(id) {
 	return ursine_NotificationCloseCallback(id);
 };
+ursine_native_Extern.WaypointUnidirectionalConnector = function() {
+	return WaypointUnidirectionalConnector();
+};
+ursine_native_Extern.WaypointBidirectionalConnector = function() {
+	return WaypointBidirectionalConnector();
+};
+ursine_native_Extern.WaypointEnableDrawLines = function() {
+	return WaypointEnableDrawLines();
+};
+ursine_native_Extern.WaypointDisableDrawLines = function() {
+	return WaypointDisableDrawLines();
+};
 var ursine_native_Property = function() { };
 $hxClasses["ursine.native.Property"] = ursine_native_Property;
 ursine_native_Property.__name__ = ["ursine","native","Property"];
@@ -1951,6 +1981,7 @@ ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { 
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene"]}, doOpen : { mainMenuItem : ["File/Save Scene"]}}};
 ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
+ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};

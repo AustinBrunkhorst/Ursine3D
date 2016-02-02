@@ -110,12 +110,9 @@ void EditorToolSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
 		m_selectTool->OnUpdate( m_keyboardManager, m_mouseManager );
 }
 
-#include <iostream>
 void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
 {
 	EVENT_ATTRS(ursine::MouseManager, MouseButtonArgs);
-	
-	std::cout << (m_editorCameraSystem->HasFocus( ) ? "T " : "F ") << (m_editorCameraSystem->HasMouseFocus( ) ? "T" : "F") << std::endl;
 
 	// must have focus or mouse focus
     if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))

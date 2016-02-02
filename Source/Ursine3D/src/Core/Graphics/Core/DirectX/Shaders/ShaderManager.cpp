@@ -247,6 +247,7 @@ namespace ursine
                 m_shaderArray[ shader ]->ds = nullptr;
                 m_shaderArray[ shader ]->gs = nullptr;
                 m_shaderArray[ shader ]->cs = nullptr;
+                m_shaderArray[ shader ]->type = shader;
 
                 //attempt to load all shaders
                 int result = 0;

@@ -51,6 +51,7 @@ namespace ursine
                 MakeBuffer<SpotlightBuffer>(BUFFER_SPOTLIGHT);
 				MakeBuffer<MatrixPalBuffer>(BUFFER_MATRIX_PAL);
                 MakeBuffer<MouseBuffer>(BUFFER_MOUSEPOS);
+                MakeBuffer<ParticleBuffer>(BUFFER_PARTICLEDATA);
 
                 // COMPUTE SHADERS //////////////////////////////////
                 //GPU-readonly buffer that can only be written to by the CPU 

@@ -10,19 +10,20 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
-
+ 
 #include "Precompiled.h"
 
 #include "Editor.h"
 #include "Project.h"
-
-#include <Application.h>
+ 
+#include <Application.h> 
 
 #include <WindowManager.h>
 #include <UIManager.h>
 
 #include <Color.h> 
 #include <LightComponent.h>
+#include <iostream>
 
 using namespace ursine;
 
@@ -41,7 +42,7 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_project( nullptr ) { }
+    , m_project(nullptr) { }
 
 Editor::~Editor(void) { }
 
@@ -52,9 +53,9 @@ void Editor::OnInitialize(void)
     app->Connect(
         APP_UPDATE,
         this,
-        &Editor::onAppUpdate
+        &Editor::onAppUpdate 
     );
-
+     
     auto *windowManager = GetCoreSystem( WindowManager );
     auto *uiManager = GetCoreSystem( UIManager );
 
@@ -68,11 +69,11 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
-    m_mainWindow.window->Listener( this )
-        .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange );
-
-    m_mainWindow.window->SetLocationCentered( );
-    m_mainWindow.window->Show( true );   
+    m_mainWindow.window->Listener( this ) 
+        .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange ); 
+     
+    m_mainWindow.window->SetLocationCentered( ); 
+    m_mainWindow.window->Show( true );    
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -90,7 +91,7 @@ void Editor::OnInitialize(void)
 
     m_notificationManager.SetUI( m_mainWindow.ui );
 
-    initializeScene( );
+    initializeScene( ); 
 }
 
 void Editor::OnRemove(void)
@@ -135,30 +136,31 @@ NotificationManager &Editor::GetNotificationManager(void)
 Notification Editor::PostNotification(const NotificationConfig &config)
 {
     return m_notificationManager.Create( config );
-}
+}  
 
 void Editor::initializeGraphics(void)
-{
+{ 
     graphics::GfxConfig config;
 
     config.Fullscreen_ = false;
-
+      
     config.HandleToWindow_ =
         static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
-
+      
     config.ModelListPath_ = "Assets/Models/";
     config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
     config.TextureListPath_ = "Assets/Textures/";
     config.WindowWidth_ = 1366;
     config.WindowHeight_ = 768;
 
-    URSINE_TODO( "..." );
-
-    config.m_renderUI = true;
+    URSINE_TODO( "..." ); 
+     
+    config.m_renderUI = true; 
     config.debug = false;
 
-    config.Profile_ = false;
-
+    config.Profile_ = false; 
+    
+     
     m_graphics->StartGraphics( config );
     m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
     //m_graphics->SetFullscreenState( true );
@@ -166,10 +168,10 @@ void Editor::initializeGraphics(void)
     //m_mainWindow.window->SetFullScreen( true );
 }
 
-void Editor::initializeScene(void)
-{
+void Editor::initializeScene(void) 
+{ 
     auto scene = m_project->GetScene( );
-
+       
     auto world = scene->GetWorld( );
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );

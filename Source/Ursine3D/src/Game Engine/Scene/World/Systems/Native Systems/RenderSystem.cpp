@@ -20,6 +20,7 @@
 #include "Billboard2DComponent.h"
 #include "CameraComponent.h"
 #include "FBXSceneRootNodeComponent.h"
+#include "ParticleSystemComponent.h"
 
 #include "GfxAPI.h"
 
@@ -93,6 +94,11 @@ namespace ursine
 					static_cast<Animator*>(const_cast<Component*>(args->component))
                 );
             }
+            else if ( args->component->Is<ParticleSystem>() )
+            {
+                addRenderable(args->entity, static_cast<ParticleSystem*>(const_cast<Component*>(args->component))->m_base);
+            }
+            
         }
 
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
@@ -128,6 +134,10 @@ namespace ursine
 				if (search != m_animators.end( ))
 					m_animators.erase( search );
 			}
+            else if ( args->component->Is<ParticleSystem>() )
+            {
+                removeRenderable(args->entity, static_cast<ParticleSystem*>(const_cast<Component*>(args->component))->m_base);
+            }
         }
 
         void RenderSystem::onRender(EVENT_HANDLER(World))

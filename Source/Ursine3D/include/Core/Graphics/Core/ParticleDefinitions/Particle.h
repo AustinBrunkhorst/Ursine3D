@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Particle.h
 **
@@ -44,6 +44,9 @@ namespace ursine
 
             // how long does this particle have to live?
             float lifeTime;
+
+            // how much life did this particle start with?
+            float totalLifetime;
 
             // in what direction is this particle accelerating?
             SVec3 acceleration;

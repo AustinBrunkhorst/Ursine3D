@@ -30,7 +30,6 @@ namespace ursine
         GfxAPI::GfxAPI(void)
             : m_privates(nullptr)
         {
-
         }
 
         GfxAPI::~GfxAPI(void)
