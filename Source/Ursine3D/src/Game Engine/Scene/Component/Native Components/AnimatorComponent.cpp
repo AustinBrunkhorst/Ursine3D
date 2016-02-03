@@ -14,7 +14,8 @@
 #include "UrsinePrecompiled.h"
 
 #include "AnimatorComponent.h"
-#include <Game Engine/Scene/Component/Native Components/Model3DComponent.h>
+#include <Model3DComponent.h>
+#include <GfxAPI.h>
 
 namespace ursine
 {
@@ -33,6 +34,7 @@ namespace ursine
 			, m_currentState("")
 			, m_stateName( "" )
 			, m_futureState( "" )
+			, m_futureStateName( "" )
 			, m_animationName( "" )
         {
         }
@@ -54,7 +56,10 @@ namespace ursine
 
 		void Animator::UpdateAnimation(const float dt)
 		{
-			URSINE_TODO("Try playing every animation states");
+			URSINE_TODO("Try playing blending repeatedly");
+			URSINE_TODO("But first, generalize");
+			// animation should be child entity of the state
+			// but just skip this until austin finish the array thing
 
 			// grab what we need
 			auto *currentAnimation = m_states[ m_currentState ].GetAnimation( );
@@ -88,10 +93,10 @@ namespace ursine
 				auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount - 1, 0);
 
 				m_states[ m_currentState ].IncrementTimePosition( dt * m_speedScalar );
-				if (nullptr != futureAnimation && currentAnimation != futureAnimation)
+				if (nullptr != futureAnimation)
 				{
 					m_states[m_futureState].IncrementTimePosition(dt * m_speedScalar);
-					transFactor += 0.05f * m_speedScalar; // / transTime;
+					transFactor += 0.05f;// dt * m_speedScalar / transTime;
 					// if there is future animation
 					if (transFactor >= 1.0f)
 					{
@@ -250,7 +255,7 @@ namespace ursine
 			auto *newTrans = newEntity->GetTransform( );
 			auto *ownerTrans = GetOwner( )->GetTransform( );
 			ownerTrans->AddChild( newTrans );
-			
+
 			SetCurrentState( m_stateName );
 		}
 
@@ -357,18 +362,21 @@ namespace ursine
 		void Animator::SetCurrentState(const std::string &state)
 		{
 			m_currentState = state;
-			NOTIFY_COMPONENT_CHANGED("currentState", m_currentState);
+		}
+
+		void Animator::ChangeState(void)
+		{
+			m_futureState = m_futureStateName;
 		}
 
 		const std::string &Animator::GetFutureState(void) const
 		{
-			return m_futureState;
+			return m_futureStateName;
 		}
 
 		void Animator::SetFutureState(const std::string& name)
 		{
-			m_futureState = name;
-			NOTIFY_COMPONENT_CHANGED("futureState", m_futureState);
+			m_futureStateName = name;
 		}
 
 		const std::string& Animator::GetStateName(void) const

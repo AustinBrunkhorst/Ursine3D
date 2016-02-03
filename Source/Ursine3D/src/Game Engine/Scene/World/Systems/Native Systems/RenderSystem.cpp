@@ -104,7 +104,7 @@ namespace ursine
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
         {
             EVENT_ATTRS(World, ComponentEventArgs);
-
+			
             if (args->component->Is<Camera>( ))
             {
                 URSINE_TODO("Replace this with a utils::BinarySearch call");
@@ -126,9 +126,9 @@ namespace ursine
 			else if (args->component->Is<Animator>( ))
 			{
 				auto search = std::find(
-					m_animators.begin(),
-					m_animators.end(),
-					static_cast<Animator*>(const_cast<Component*>(args->component))
+					m_animators.begin( ),
+					m_animators.end( ),
+					static_cast<Animator*>( const_cast<Component*>( args->component ) )
 				);
 
 				if (search != m_animators.end( ))

@@ -85,19 +85,6 @@ namespace ursine
                 { },
                 true
             );
-
-            // set the good 'ol array constructor
-            // array types need a default constructor so we can safely assume
-            // that Array<T> is valid
-            data.arrayConstructor = Constructor(
-                typeof( T ),
-                { },
-                [](ArgumentList &args)
-                {
-                    return Array<T>( );
-                },
-                false
-            );
         }
 
         template<typename T>

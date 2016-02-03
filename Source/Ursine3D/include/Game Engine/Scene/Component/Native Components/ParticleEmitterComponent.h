@@ -34,11 +34,6 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-            EditorButton(
-                ResetSpawnCount,
-                "Reset Spawn Count"
-            );
-
             EditorField(
                 float emitRate,
                 GetEmitRate,
@@ -105,18 +100,6 @@ namespace ursine
                 SetVelocityRange
             );
 
-            EditorField(
-                float emitterSize,
-                GetEmitterSize,
-                SetEmitterSize
-            );
-
-            EditorField(
-                float fill,
-                GetFill,
-                SetFill
-                );
-
             ParticleEmitter(void);
             ~ParticleEmitter(void);
 
@@ -124,11 +107,11 @@ namespace ursine
                 void OnInitialize(void) override;
 
             // generators for particle data
-            float GenerateLifetime(void);
-            float GenerateScale(void);
-            float GenerateRotation(void);
-            SVec3 GenerateVelocity(void);
-            SVec3 GeneratePosition(void);
+            float GenerateLifetime(void) const;
+            float GenerateScale(void) const;
+            float GenerateRotation(void) const;
+            SVec3 GenerateVelocity(void) const;
+            SVec3 GeneratePosition(void) const;
 
             // getter/setters
             float GetEmitRate(void) const;
@@ -163,15 +146,6 @@ namespace ursine
 
             const SVec3 GetVelocityRange(void) const;
             void SetVelocityRange(const SVec3 &range);
-
-            const float GetEmitterSize(void) const;
-            void SetEmitterSize(const float size);
-
-            const float GetEmitterSizeRange(void) const;
-            void SetEmitterSizeRange(const float range);
-
-            const float GetFill(void) const;
-            void SetFill(const float fill);
 
         private:
             // temporary updating
@@ -209,16 +183,10 @@ namespace ursine
             Randomizer m_zVelRange;
 
             // emitter size (related to scale of transform?)
-            float m_emitterSize;
-            Randomizer m_emitterSizeRange;
+            float m_radius;
+            Randomizer m_radiusRange;
 
             float m_currentTime;
-            unsigned m_spawnCount;
-
-            Randomizer m_angleGenerator;
-            Randomizer m_radiusGenerator;
-
-            float m_fill;
 
         } Meta(
             Enable, 

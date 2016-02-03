@@ -47,6 +47,9 @@ protected:
     // generated in the reflection database
     bool m_constPtrTypeEnabled;
 
+    // determines if this type generates data for its respective array type
+    bool m_arrayTypeEnabled;
+
     CX_CXXAccessSpecifier m_accessModifier;
 
 private:

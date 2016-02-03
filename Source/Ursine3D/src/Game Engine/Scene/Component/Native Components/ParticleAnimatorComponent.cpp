@@ -33,8 +33,6 @@ namespace ursine
 
         ParticleAnimator::~ParticleAnimator(void)
         {
-            GetOwner()->Listener(this)
-                .Off(ENTITY_PARTICLE_UPDATE, &ParticleAnimator::onParticleUpdate);
         }
 
         void ParticleAnimator::OnInitialize(void)
@@ -79,7 +77,6 @@ namespace ursine
 
         void ParticleAnimator::onParticleUpdate(EVENT_HANDLER(Entity))
         {
-            m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
             float dt = Application::Instance->GetDeltaTime();
 
             // get all the particles

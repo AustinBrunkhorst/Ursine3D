@@ -39,12 +39,6 @@ namespace ursine
                 SetHeight
             );
 
-            EditorField(
-                SVec3 offset,
-                GetOffset,
-                SetOffset
-            );
-
             CapsuleCollider(void);
             ~CapsuleCollider(void);
 
@@ -56,9 +50,6 @@ namespace ursine
 
             float GetHeight(void) const;
             void SetHeight(float height);
-
-            SVec3 GetOffset(void) const;
-            void SetOffset(const SVec3 &offset);
 
         private:
             physics::CapsuleCollider m_capsuleCollider;

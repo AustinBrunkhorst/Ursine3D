@@ -16,7 +16,6 @@
 #include "MeshInfo.h"
 #include "MaterialInfo.h"
 #include "BoneInfo.h"
-#include "LvlHierarchy.h"
 
 namespace ursine
 {
@@ -24,6 +23,19 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
+			// This structure contains hierarchy among meshes. This will makes easy to find it.
+			struct MeshInLvl
+			{
+				SMat4 meshTM;
+				int mParentIndex;
+			};
+
+			// This structure contains hierarchy among bones.
+			struct RigInLvl
+			{
+				int mParentIndex;
+			};
+
 			class ModelInfo : public ISerialize
 			{
 			public:
@@ -47,10 +59,6 @@ namespace ursine
 				// the name we will store, is jani's name
 				// if loading fbx, maniCount = 0, maniNameVec = empty.
 				// after modifying jdl and store it, then there will be some changes
-
-				// this will be changed to something like this
-				// std::unordered_map<std::string, AnimationState> m_states
-				// and will be used in Animator Component
 				unsigned int maniCount;
 				std::vector< std::string > maniNameVec;
 

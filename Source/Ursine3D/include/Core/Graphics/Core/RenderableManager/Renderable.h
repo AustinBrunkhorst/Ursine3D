@@ -241,17 +241,12 @@ namespace ursine
 
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
-
-            const std::string &GetParticleTexture(void) const;
-            void SetParticleTexture(const std::string &texName);
         private:
             // members
-            unsigned m_backIndex;
+            int m_backIndex;
             std::vector<Particle_GPU> m_gpuParticleData;
             std::vector<Particle_CPU> m_cpuParticleData;
             SVec3 m_position;
-
-            std::string m_textureName;
 
             Color m_particleColor;
         };

@@ -365,9 +365,8 @@ namespace ursine
 
         void ParticleSystem::Initialize(void)
         {
-            m_backIndex = 0;
+            m_backIndex = -1;
             Renderable::Initialize();
-            m_textureName = "Blank";
         }
 
         std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
@@ -397,12 +396,12 @@ namespace ursine
 
         unsigned ParticleSystem::GetActiveParticleCount(void) const
         {
-            return m_backIndex;
+            return m_backIndex > 0 ? static_cast<unsigned>(m_backIndex) : 0;
         }
 
         unsigned ParticleSystem::GetInactiveParticleCount(void) const
         {
-            return static_cast<unsigned>(m_gpuParticleData.size()) - m_backIndex;
+            return static_cast<unsigned>( m_gpuParticleData.size( ) ) - (m_backIndex + 1);
         }
 
         int ParticleSystem::SpawnParticle(void)
@@ -422,14 +421,12 @@ namespace ursine
 
         void ParticleSystem::DestroyParticle(const int index)
         {
-            // decrement
-            --m_backIndex;
-
             // swap with the backmost data
             m_gpuParticleData[ index ] = m_gpuParticleData[ m_backIndex ];
             m_cpuParticleData[ index ] = m_cpuParticleData[ m_backIndex ];
 
-            m_cpuParticleData[ m_backIndex ].lifeTime = -1.0f;
+            // decrement
+            --m_backIndex;
         }
 
         const SVec3 & ParticleSystem::GetPosition(void) const
@@ -450,16 +447,6 @@ namespace ursine
         void ParticleSystem::SetColor(const Color &color)
         {
             m_particleColor = color;
-        }
-
-        const std::string & ParticleSystem::GetParticleTexture(void) const
-        {
-            return m_textureName;
-        }
-
-        void ParticleSystem::SetParticleTexture(const std::string & texName)
-        {
-            m_textureName = texName;
         }
     }
 }

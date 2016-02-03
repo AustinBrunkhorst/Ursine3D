@@ -26,7 +26,7 @@ class Application {
 
         var leftColumn = mainDock.addColumn( );
         {
-            leftColumn.style.width = '15%';
+            leftColumn.style.width = '20%';
 
             var row = leftColumn.addRow( );
 
@@ -41,7 +41,7 @@ class Application {
 
         var middleColumn = mainDock.addColumn( );
         {
-            middleColumn.style.width = '70%';
+            middleColumn.style.width = '60%';
 
             var row = middleColumn.addRow( );
 
@@ -56,7 +56,7 @@ class Application {
 
         var rightColumn = mainDock.addColumn( );
         {
-            rightColumn.style.width = '15%';
+            rightColumn.style.width = '20%';
 
             var row = rightColumn.addRow( );
 

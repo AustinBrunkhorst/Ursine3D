@@ -15,6 +15,7 @@
 
 #include "CylinderColliderComponent.h"
 #include "RigidbodyComponent.h"
+#include "BodyComponent.h"
 #include "EntityEvent.h"
 #include "PhysicsSystem.h"
 

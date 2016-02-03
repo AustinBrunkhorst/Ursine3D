@@ -30,6 +30,22 @@ namespace ursine
         ///////////////////////////////////////////////////////////////////////
 
         template<typename ClassType>
+        void TypeData::SetArrayConstructor(void)
+        {
+            arrayConstructor = Constructor {
+                typeof( ClassType ),
+                { },
+                [](ArgumentList &args)
+                {
+                    return Array<ClassType>( );
+                },
+                false
+            };
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        template<typename ClassType>
         void TypeData::SetDestructor(void)
         {
             destructor = { 

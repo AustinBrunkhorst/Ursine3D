@@ -43,12 +43,6 @@ namespace ursine
                 SetColor
             );
 
-            EditorField(
-                std::string texture,
-                GetParticleTextureName,
-                SetParticleTextureName
-            );
-
 
             ParticleSystem(void);
             ~ParticleSystem(void);
@@ -80,11 +74,9 @@ namespace ursine
             // destroys a particle, given an index
             void DestroyParticle(const int index);
 
+
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
-
-            const std::string &GetParticleTextureName(void) const;
-            void SetParticleTextureName(const std::string &texture);
 
         private:
             // command all particle components to operate on the set of particles

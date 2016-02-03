@@ -217,7 +217,7 @@ namespace ursine
 
 #endif
 
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "SVec3.hpp"

@@ -133,7 +133,7 @@ namespace ursine
 
 	protected:
 		float m_x, m_y, m_z, m_w;
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "Vec4.hpp"

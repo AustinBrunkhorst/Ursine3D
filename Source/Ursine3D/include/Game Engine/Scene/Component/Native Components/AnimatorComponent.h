@@ -14,8 +14,7 @@
 #pragma once
 
 #include "Component.h"
-#include "Renderable.h"
-#include "GfxAPI.h"
+#include "Model3DComponent.h"
 #include "AnimationBuilder.h"
 
 namespace ursine
@@ -93,6 +92,15 @@ namespace ursine
 			// just care about between-state blending first.
 			// let's try change animation state when timedelta reaches
 			// at the end of that keyframe of the state
+
+			// temporary
+			// this is for testing just changing between states
+			// not for changing between animations in state
+			EditorButton(
+				ChangeState,
+				"Change State"
+			);
+
 			EditorButton(
 				AddAnimation,
 				"Add Animation"
@@ -117,7 +125,7 @@ namespace ursine
 
 			EditorField(
 				std::string futureState,
-				GetFutureState,		
+				GetFutureState,
 				SetFutureState
 			);
 
@@ -188,12 +196,12 @@ namespace ursine
 			
 			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
 			// start with adding/removing state
-			const std::string &GetCurrentState(void) const;
-			void SetCurrentState(const std::string &state);
-
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
 
+			const std::string &GetCurrentState(void) const;
+			void SetCurrentState(const std::string &state);
+			
 			const std::string &GetFutureState(void) const;
 			void SetFutureState(const std::string& name);
 
@@ -204,8 +212,6 @@ namespace ursine
 			
         private:
             std::unordered_map<std::string, AnimationState> m_states;
-			// this will be changed to std::unordered_map<std::string, std::vector<AnimationState> > m_states;
-			// and will do blending not only between states, but inside of the state too.
 			bool m_playing;
             bool m_looping;
             bool m_debug;
@@ -216,8 +222,9 @@ namespace ursine
 			std::string m_futureState;
 
 			std::string m_stateName;
+			std::string m_futureStateName;
 			std::string m_animationName;
 
-        } Meta( Enable, DisplayName( "Animator" ) );
+        } Meta( Enable, DisplayName( "Animator" ), RequiresComponents( typeof(ursine::ecs::Model3D) ) );
     }
 }

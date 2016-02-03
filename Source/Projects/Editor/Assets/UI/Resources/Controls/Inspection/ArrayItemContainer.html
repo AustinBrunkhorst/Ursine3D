@@ -37,8 +37,14 @@
             _onHeaderClick: function() {
                 this.opened = !this.opened;
             },
-            _onRemoveClick: function() {
+            _onRemoveClick: function(e) {
                 this.fire( 'item-removed', { } );
+
+                e.preventDefault( );
+                e.stopPropagation( );
+                e.stopImmediatePropagation( );
+
+                return false;
             },
 
             _onOpenedChanged: function() {

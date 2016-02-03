@@ -107,8 +107,6 @@ namespace ursine
 
         void ParticleColorAnimator::onParticleUpdate(EVENT_HANDLER(Entity))
         {
-            m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
-
             // get all the particles
             auto &gpuData = m_particleComponent->GetGPUParticleData();
             auto &cpuData = m_particleComponent->GetCPUParticleData();

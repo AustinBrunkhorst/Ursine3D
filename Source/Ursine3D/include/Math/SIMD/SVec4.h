@@ -164,7 +164,7 @@ namespace ursine
 #else
 		float m_x, m_y, m_z, m_w;
 #endif
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "SVec4.hpp"

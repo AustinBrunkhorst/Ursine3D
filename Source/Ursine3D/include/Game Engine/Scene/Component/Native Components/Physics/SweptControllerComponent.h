@@ -124,7 +124,7 @@ namespace ursine
 			// Ground can be walked on and jumped off of.
 			// A value of 0 means only flat surfaces are walkable.
 			// A value near 90 means almost all surface are walkable.
-			Meta(InputRange(0.0f, 90.0f, 0.5f))
+			Meta(InputRange(0.0f, 90.0f, 0.5f, "{{value.toFixed( 2 )}} deg"))
 			EditorField(
 				float maxGroundSlope,
 				GetMaxGroundSlope,
@@ -135,7 +135,7 @@ namespace ursine
 			// based upon the WorldUp vector.
 			// Used to prevent collide and slide along a ceiling surface.
 			// Stops upward velocity when jumping into the ceiling.
-			Meta(InputRange(0.0f, 90.0f, 0.5f))
+			Meta(InputRange(0.0f, 90.0f, 0.5f, "{{value.toFixed( 2 )}} deg"))
 			EditorField(
 				float maxCeilingSlope,
 				GetMaxCeilingSlope,

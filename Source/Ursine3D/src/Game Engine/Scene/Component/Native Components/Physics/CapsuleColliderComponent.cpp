@@ -76,26 +76,6 @@ namespace ursine
             updateHeightAndRadius( );
         }
 
-        SVec3 CapsuleCollider::GetOffset(void) const
-        {
-            auto owner = GetOwner( );
-
-            if (owner->HasComponent<Rigidbody>( ))
-                return owner->GetComponent<Rigidbody>( )->GetOffset( );
-            else
-                return owner->GetComponent<Body>( )->GetOffset( );
-        }
-
-        void CapsuleCollider::SetOffset(const SVec3& offset)
-        {
-            auto owner = GetOwner( );
-
-            if (owner->HasComponent<Rigidbody>( ))
-                return owner->GetComponent<Rigidbody>( )->SetOffset( offset );
-            else
-                return owner->GetComponent<Body>( )->SetOffset( offset );
-        }
-
         void CapsuleCollider::onTransformChange(EVENT_HANDLER(Entity))
         {
             EVENT_ATTRS(Entity, TransformChangedArgs);

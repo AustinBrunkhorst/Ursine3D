@@ -18,40 +18,42 @@
 namespace ursine
 {
     Randomizer::Randomizer(void)
-        : m_distributor(0.0f, 0.0f)
+        : _min(0)
+        , _max(0)
     {
 
     }
 
     Randomizer::Randomizer(float min, float max)
-        : m_distributor(min, max)
+        : _min(min)
+        , _max(max)
     {
 
     }
 
-    float Randomizer::GetValue(void)
+    float Randomizer::GetValue(void) const
     {
-        return m_distributor(m_engine);
+        return math::Rand(_min, _max);
     }
 
     float Randomizer::GetMin(void) const
     {
-        return m_distributor.min();
+        return _min;
     }
 
     void Randomizer::SetMin(float min)
     {
-        m_distributor = std::uniform_real_distribution<float>(min, m_distributor.max());
+        _min = min;
     }
 
     float Randomizer::GetMax(void) const
     {
-        return m_distributor.max();
+        return _max;
     }
 
     void Randomizer::SetMax(float max)
     {
-        m_distributor = std::uniform_real_distribution<float>(m_distributor.min(), max);
+        _max = max;
     }
 
     template<>

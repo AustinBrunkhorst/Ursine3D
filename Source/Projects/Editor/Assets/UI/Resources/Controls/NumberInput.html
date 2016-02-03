@@ -47,7 +47,7 @@
             },
             _onSliderInput: function() {
                 // used in the format closure
-                var value = this.value;
+                var value = Number( this.value );
 
                 this._sliderValueDisplay.innerHTML = this.format.replace( /\{\{(.*)}}/g, function() {
                     var expression = arguments[ 1 ];

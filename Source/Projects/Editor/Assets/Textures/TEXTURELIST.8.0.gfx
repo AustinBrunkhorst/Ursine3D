@@ -10,17 +10,4 @@ normal3.DDS n3 256 256
 Blank.dds Blank 256 256
 Sun.dds Sun 256 256
 CameraIcon.dds CameraIcon 512 512
-#particles BB
-Smoke0.dds Smoke0 256 256
-Smoke1.dds Smoke1 256 256
-Smoke2.dds Smoke2 256 256
-
-FastSpark.dds Spark 128 128
-Twinkle.dds Twinkle 64 64
-ShockWave.dds ShockWave 256 256
-Laser.dds Laser 64 64
-FlashParticle.dds Flash 256 256
-
-FireParticle02.dds FireParticle02 256 256
-FireParticle03.dds FireParticle03 256 256
-JORDAN.dds kek 400 400
+FireParticle02.dds Smoke 256 256

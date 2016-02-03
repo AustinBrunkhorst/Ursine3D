@@ -115,15 +115,5 @@ namespace ursine
             m_particleSystem->SetColor(color);
             NOTIFY_COMPONENT_CHANGED("color", color);
         }
-
-        const std::string & ParticleSystem::GetParticleTextureName(void) const
-        {
-            return m_particleSystem->GetParticleTexture();
-        }
-
-        void ParticleSystem::SetParticleTextureName(const std::string & texture)
-        {
-            m_particleSystem->SetParticleTexture(texture);
-        }
     }
 }

@@ -61,6 +61,13 @@ namespace ursine
 			BT_GHOST = btCollisionObject::CO_GHOST_OBJECT,
 			BT_SOFT_BODY = btCollisionObject::CO_SOFT_BODY
 		};
+
+		enum BodyFlag
+		{
+			BF_DYNAMIC = 0,
+			BF_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
+			BF_STATIC = btRigidBody::CF_STATIC_OBJECT
+		};
     }
 }
 
