@@ -20,6 +20,7 @@
 
 #include "PlayerAnimationComponent.h"
 #include <CameraComponent.h>
+#include <SweptControllerComponent.h>
 #include "TeamComponent.h"
 
 using namespace ursine;
@@ -36,6 +37,7 @@ CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
 void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
+	auto *swept = entity->GetComponent<SweptController>( );
     auto moveSpeed = controller->GetMoveSpeed( );
 	auto rotateSpeed = controller->GetRotateSpeed( );
 
@@ -98,12 +100,11 @@ void CharacterControllerSystem::Process(Entity *entity)
 
     auto forward = transform->GetForward( ) * move.Y( );
     auto strafe = transform->GetRight( ) * move.X( );
-    auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 
     if (controller->m_jump)
     {
-        vel.Y( ) += controller->m_jumpSpeed;
+        swept->Jump( );
         controller->m_jump = false;
     }
 
@@ -111,7 +112,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 
     if (animator)
     {
-        if (vel.Y( ) > 0.2f)
+        if (swept->GetJumping( ))
         {
             animator->SetPlayerState( PlayerAnimation::Jumping );
         }
@@ -125,7 +126,7 @@ void CharacterControllerSystem::Process(Entity *entity)
         }
     }
 
-    rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
+    swept->SetMovementDirection({ accum.X( ), 0.0f, accum.Z( ) });
 
     // Reset the look direction
     controller->SetLookDirection( Vec2::Zero( ) );

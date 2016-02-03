@@ -30,6 +30,7 @@
 #include "Components/PlayerIdComponent.h"
 #include "Components/ControlPointComponent.h"
 #include "Components/WallComponent.h"
+#include "Components/CritSpotComponent.h"
 
 
 /////////////////////////////////
