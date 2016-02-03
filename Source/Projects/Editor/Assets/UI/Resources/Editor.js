@@ -28,14 +28,14 @@ Application.initWindows = function() {
 	column.style.width = "100%";
 	column.appendChild(new ursine_editor_windows_EntityInspector().window);
 	var middleColumn = mainDock.addColumn();
-	middleColumn.style.width = "66%";
+	middleColumn.style.width = "60%";
 	var row1 = middleColumn.addRow();
 	row1.style.height = "100%";
 	var column1 = row1.addColumn();
 	column1.style.width = "100%";
 	column1.appendChild(sceneView.window);
 	var rightColumn = mainDock.addColumn();
-	rightColumn.style.width = "14%";
+	rightColumn.style.width = "20%";
 	var row2 = rightColumn.addRow();
 	row2.style.height = "100%";
 	var column2 = row2.addColumn();
@@ -907,7 +907,8 @@ var ursine_editor_scene_component_inspectors_ComponentInspectionHandler = functi
 	this.fieldArrayItemSetEvents = new ursine_utils_EventManager();
 	this.fieldArrayItemRemoveEvents = new ursine_utils_EventManager();
 	this.inspector = new ComponentInspectorControl();
-	this.inspector.heading = component.type;
+	var prettyName = ursine_editor_scene_component_inspectors_ComponentInspectionHandler.m_componentNameRegex.replace(component.type,"$1 ");
+	this.inspector.heading = prettyName.charAt(0).toUpperCase() + HxOverrides.substr(prettyName,1,null);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.ComponentInspectionHandler"] = ursine_editor_scene_component_inspectors_ComponentInspectionHandler;
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","ComponentInspectionHandler"];
@@ -2189,6 +2190,7 @@ ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { 
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
+ursine_editor_scene_component_inspectors_ComponentInspectionHandler.m_componentNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName = "ursine::ecs::LightType";
