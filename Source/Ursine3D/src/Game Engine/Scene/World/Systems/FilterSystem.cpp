@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** FilterSystem.cpp
 **
@@ -38,8 +38,8 @@ namespace ursine
 
             auto interests = m_filter.Matches( entity );
             auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
-				
-            if (removed || !interests)
+
+            if (removed && !interests)
             {
                 Remove( entity );
             }

@@ -14,7 +14,8 @@
 #include "UrsinePrecompiled.h"
 
 #include "AnimatorComponent.h"
-#include <Game Engine/Scene/Component/Native Components/Model3DComponent.h>
+#include <Model3DComponent.h>
+#include <GfxAPI.h>
 
 namespace ursine
 {
@@ -55,7 +56,10 @@ namespace ursine
 
 		void Animator::UpdateAnimation(const float dt)
 		{
-			URSINE_TODO("Try playing every animation states");
+			URSINE_TODO("Try playing blending repeatedly");
+			URSINE_TODO("But first, generalize");
+			// animation should be child entity of the state
+			// but just skip this until austin finish the array thing
 
 			// grab what we need
 			auto *currentAnimation = m_states[ m_currentState ].GetAnimation( );

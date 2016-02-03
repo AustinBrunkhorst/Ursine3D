@@ -699,7 +699,15 @@ namespace ursine
             if (IsArray( ))
             {
                 auto nonArrayType = GetArrayType( );
-                auto instance = GetArrayConstructor( ).Invoke( );
+                auto arrayCtor = GetArrayConstructor( );
+
+                UAssert( arrayCtor.IsValid( ),
+                    "Type '%s' does not have an array constructor.\n"
+                    "Makes sure it is enabled with the meta property 'EnableArrayType'.",
+                    nonArrayType.GetName( ).c_str( )
+                );
+
+                auto instance = arrayCtor.Invoke( );
                 auto wrapper = instance.GetArray( );
 
                 size_t i = 0;

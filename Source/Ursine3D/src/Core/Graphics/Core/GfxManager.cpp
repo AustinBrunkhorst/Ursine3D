@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** GfxManager.cpp
 **
@@ -107,6 +107,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_POINT, "PointShader");
                 shaderManager->LoadShader(SHADER_SHADOW, "ShadowMap");
                 shaderManager->LoadShader(SHADER_BILLBOARD2D, "BillboardedSprite");
+                shaderManager->LoadShader(SHADER_PARTICLE, "ParticleShader");
 
                 //load compute
                 shaderManager->LoadShader(SHADER_MOUSEPOSITION, "MouseTypeID");
@@ -267,6 +268,23 @@ namespace ursine
                 default:
                     break;
                 }
+            }
+            break;
+            case RENDERABLE_PS:
+            {
+                ParticleSystem *current = &renderableManager->m_renderableParticleSystems[ render->Index_ ];
+
+                URSINE_TODO("Remove hack for Jordan");
+                if ( !current->Active_ )
+                {
+                    --m_drawCount;
+                    return;
+                }
+
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
+                drawCall.Overdraw_ = current->GetOverdraw();
+                drawCall.Shader_ = SHADER_PARTICLE;
             }
             break;
             default:
@@ -464,6 +482,8 @@ namespace ursine
             PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
+
+
             dxCore->EndDebugEvent( );
 
             // LIGHT PASS
@@ -529,6 +549,10 @@ namespace ursine
             RenderDebugPoints(view, proj, currentCamera, true);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera, true);
+
+            PrepForParticleSystems(view, proj);
+            while ( m_drawList[ currentIndex ].Shader_ == SHADER_PARTICLE )
+                RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
 
             dxCore->EndDebugEvent( );
 
@@ -730,6 +754,40 @@ namespace ursine
             modelManager->BindModel("Sprite");
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+        }
+
+        void GfxManager::PrepForParticleSystems(const SMat4 & view, const SMat4 & proj)
+        {
+            // set index buffer
+            modelManager->BindModel("ParticleIndices", 0, true);
+
+            textureManager->MapTextureByName("Smoke");
+
+            // set topology
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            layoutManager->SetInputLayout(SHADER_COUNT);
+
+            // set inv view, viewproj matrices
+            bufferManager->MapCameraBuffer(view, proj);
+
+            //map inv view
+            InvProjBuffer ipb;
+            SMat4 temp = view;
+            temp.Transpose();
+            temp.Inverse();
+
+            ipb.invProj = temp.ToD3D();
+            bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_VERTEX);
+
+            // bind shader
+            shaderManager->BindShader(SHADER_PARTICLE);
+
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+
+            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
+
+            dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
+            dxCore->SetDepthState(DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL);
         }
 
         void GfxManager::PrepForCompute(void)
@@ -1078,6 +1136,57 @@ namespace ursine
 
             //render
             shaderManager->Render(1);
+        }
+
+        void GfxManager::RenderParticleSystem(_DRAWHND handle, Camera &currentCamera)
+        {
+            auto &particleSystem = renderableManager->m_renderableParticleSystems[ handle.Index_ ];
+
+            // material buffer 
+            MaterialDataBuffer mdb;
+
+            // set unique ID for this model
+            int overdrw = particleSystem.GetOverdraw() == true ? 1 : 0;
+
+            //             16                8
+            mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
+
+            // map buffer
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+
+            if ( !currentCamera.CheckMask(particleSystem.GetRenderMask()) )
+                return;
+
+            if ( particleSystem.GetActiveParticleCount() > 0 )
+            {
+                unsigned passCount = 1 + (particleSystem.GetActiveParticleCount() / 1024);
+
+                unsigned totalParticlesToRender = particleSystem.GetActiveParticleCount();
+
+                do
+                {
+                    unsigned particlesInPass;
+
+                    // calculate how many to render in pass
+                    if ( totalParticlesToRender > 1024 )
+                        particlesInPass = 1024;
+                    else
+                        particlesInPass = totalParticlesToRender;
+
+                    // bind particle data
+                    ParticleBuffer pb;
+                    memcpy(&pb.data, particleSystem.GetGPUParticleData().data(), sizeof(Particle_GPU) * particlesInPass);
+
+                    bufferManager->MapBuffer<BUFFER_PARTICLEDATA>(&pb, SHADERTYPE_VERTEX, 13);
+
+                    printf("%i\n", particlesInPass);
+                    shaderManager->Render(6 * particleSystem.GetActiveParticleCount());
+
+                    // update particles left to render
+                    totalParticlesToRender -= particlesInPass;
+
+                } while ( totalParticlesToRender > 0 );
+            }
         }
 
         void GfxManager::RenderComputeMousePos()

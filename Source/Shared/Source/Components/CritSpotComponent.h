@@ -1,7 +1,7 @@
 #pragma once
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** CritSpotComponent.h
 **
@@ -15,7 +15,7 @@
 
 struct CritSpot : ursine::ecs::Component
 {
-    NATIVE_COMPONENT
+	NATIVE_COMPONENT;
 public:
 
     CritSpot(void);

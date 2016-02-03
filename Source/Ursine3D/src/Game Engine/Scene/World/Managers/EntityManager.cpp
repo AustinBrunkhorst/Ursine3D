@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EntityManager.cpp
 **
@@ -182,6 +182,9 @@ namespace ursine
                         };
 
                         EditorPostNotification( error );
+
+                        // this is so we can ensure dependencies in the deconstructor
+                        component->m_owner = entity;
 
                         // we ain't want this guy
                         delete component;
