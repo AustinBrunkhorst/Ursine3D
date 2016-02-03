@@ -25,8 +25,7 @@ torus2.8.0.mdl Ring
 #romekolezyum.fbx remeko
 
 # Player Animations
-Player_Idle.jdl Player
-#Player_Idle.jani Player
+#Player_Idle.fbx Player
 
 # Gun Animations
 #Gun_Idle.fbx Gun_Idle

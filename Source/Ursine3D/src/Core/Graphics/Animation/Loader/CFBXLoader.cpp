@@ -1256,6 +1256,7 @@ namespace ursine
 			{
 				FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
 				newMesh->name = pNode->GetName();
+				newMesh->parentIndex = inParentIndex;
 				newMesh->mLayout = FBX_DATA::SKINNED;
 				if ("" == newMesh->name)
 					newMesh->name = mModel->name;

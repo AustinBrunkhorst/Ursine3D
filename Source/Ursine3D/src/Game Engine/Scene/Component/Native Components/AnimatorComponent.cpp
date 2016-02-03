@@ -33,7 +33,6 @@ namespace ursine
 			, m_currentState("")
 			, m_stateName( "" )
 			, m_futureState( "" )
-			, m_futureStateName( "" )
 			, m_animationName( "" )
         {
         }
@@ -89,10 +88,10 @@ namespace ursine
 				auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount - 1, 0);
 
 				m_states[ m_currentState ].IncrementTimePosition( dt * m_speedScalar );
-				if (nullptr != futureAnimation)
+				if (nullptr != futureAnimation && currentAnimation != futureAnimation)
 				{
 					m_states[m_futureState].IncrementTimePosition(dt * m_speedScalar);
-					transFactor += 0.05f;// dt * m_speedScalar / transTime;
+					transFactor += 0.05f * m_speedScalar; // / transTime;
 					// if there is future animation
 					if (transFactor >= 1.0f)
 					{
@@ -251,7 +250,7 @@ namespace ursine
 			auto *newTrans = newEntity->GetTransform( );
 			auto *ownerTrans = GetOwner( )->GetTransform( );
 			ownerTrans->AddChild( newTrans );
-
+			
 			SetCurrentState( m_stateName );
 		}
 
@@ -358,21 +357,18 @@ namespace ursine
 		void Animator::SetCurrentState(const std::string &state)
 		{
 			m_currentState = state;
-		}
-
-		void Animator::ChangeState(void)
-		{
-			m_futureState = m_futureStateName;
+			NOTIFY_COMPONENT_CHANGED("currentState", m_currentState);
 		}
 
 		const std::string &Animator::GetFutureState(void) const
 		{
-			return m_futureStateName;
+			return m_futureState;
 		}
 
 		void Animator::SetFutureState(const std::string& name)
 		{
-			m_futureStateName = name;
+			m_futureState = name;
+			NOTIFY_COMPONENT_CHANGED("futureState", m_futureState);
 		}
 
 		const std::string& Animator::GetStateName(void) const
