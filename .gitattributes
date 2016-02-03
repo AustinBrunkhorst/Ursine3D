@@ -34,6 +34,8 @@
 #*.modelproj merge=binary
 #*.sqlproj   merge=binary
 #*.wwaproj   merge=binary
+*.jdl        merge=binary
+*.jani       merge=binary
 
 ###############################################################################
 # behavior for image files

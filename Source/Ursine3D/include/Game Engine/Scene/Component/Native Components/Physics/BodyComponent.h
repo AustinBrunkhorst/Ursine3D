@@ -29,6 +29,12 @@ namespace ursine
 
         public:
 			EditorField(
+                SVec3 offset,
+                GetOffset,
+                SetOffset
+            );
+
+			EditorField(
 				bool ghost,
 				GetGhost,
 				SetGhost
