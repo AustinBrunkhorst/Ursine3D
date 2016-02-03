@@ -576,8 +576,6 @@ namespace ursine
 				// => need to build jani LoadAnimation Function
 				// if there is a name list in jdl, load every animations and renew the list
 				// the aniNames will be the file name of jani files.
-				// this is rely on how do we gonna load .jani file, so I won't do this
-				// until Austin finish array stuff.
 
 				/////////////////////////////////////////////////////////
 				// Let's test storing multi janis into one jdl /////////////////////////////////
