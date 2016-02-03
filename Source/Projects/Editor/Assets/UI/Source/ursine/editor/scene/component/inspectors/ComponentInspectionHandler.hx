@@ -10,8 +10,6 @@ import ursine.editor.scene.component.ComponentInspection;
 @:keepInit
 @:keepSub
 class ComponentInspectionHandler implements IFieldInspectionOwner {
-    private static var m_componentNameRegex = ~/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))/g;
-
     public var entity(default, null) : Entity;
     public var component(default, null) : ComponentInspection;
 
@@ -39,10 +37,8 @@ class ComponentInspectionHandler implements IFieldInspectionOwner {
         fieldArrayItemRemoveEvents = new EventManager( );
 
         inspector = new ComponentInspector( );
-
-        var prettyName = m_componentNameRegex.replace( component.type, '$1 ' );
-
-        inspector.heading = prettyName.charAt( 0 ).toUpperCase( ) + prettyName.substr( 1 );
+        
+        inspector.heading = component.type;
     }
 
     public function updateField(name : String, value : Dynamic) {
@@ -150,5 +146,9 @@ class ComponentInspectionHandler implements IFieldInspectionOwner {
 
     public function notifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) {
         entity.componentFieldUpdate( component.type, field.name, value );
+    }
+
+    public function ownerNotifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) : Void {
+        notifyChanged( handler, field, value );
     }
 }

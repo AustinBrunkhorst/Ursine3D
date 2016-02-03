@@ -139,7 +139,7 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
         return handlers;
     }
 
-    public function notifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) {
+    public function ownerNotifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) {
         m_owner.entity.componentFieldArrayUpdate(
             m_owner.component.type,
             field.name,

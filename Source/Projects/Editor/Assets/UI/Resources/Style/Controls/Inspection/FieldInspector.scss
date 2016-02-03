@@ -27,6 +27,7 @@ $max-header-width: 225px;
 
   &.array-owner {
     display: block;
+    margin-bottom: 10px;
 
     #header {
       width: 100%;
@@ -39,6 +40,14 @@ $max-header-width: 225px;
 }
 
 ::content {
+  &.default-struct {
+    x-field-inspector {
+      #header {
+        display: block !important;
+      }
+    }
+  }
+
   x-editor-window.small-width {
     x-field-inspector {
       display: block;
@@ -113,7 +122,7 @@ $max-header-width: 225px;
     flex-direction: row;
     align-content: stretch;
 
-    input {
+    > input {
       display: block;
       flex: 1 1 100%;
       align-self: auto;

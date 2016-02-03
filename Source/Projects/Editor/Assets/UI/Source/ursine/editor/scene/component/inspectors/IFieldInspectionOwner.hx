@@ -5,5 +5,5 @@ import ursine.editor.scene.component.ComponentDatabase;
 interface IFieldInspectionOwner {
     function getFieldHandlers() : Array<FieldInspectionHandler>;
 
-    function notifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) : Void;
+    function ownerNotifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) : Void;
 }

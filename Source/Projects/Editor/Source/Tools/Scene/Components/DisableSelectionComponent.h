@@ -21,5 +21,4 @@ class DisableSelection : public ursine::ecs::Component
 public:
 	Meta(Enable)
 	DisableSelection(void);
-
 } Meta(Enable, WhiteListMethods, /*HiddenInInspector*/);

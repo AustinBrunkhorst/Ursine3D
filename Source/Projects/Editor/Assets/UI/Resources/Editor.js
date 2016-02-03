@@ -907,8 +907,7 @@ var ursine_editor_scene_component_inspectors_ComponentInspectionHandler = functi
 	this.fieldArrayItemSetEvents = new ursine_utils_EventManager();
 	this.fieldArrayItemRemoveEvents = new ursine_utils_EventManager();
 	this.inspector = new ComponentInspectorControl();
-	var prettyName = ursine_editor_scene_component_inspectors_ComponentInspectionHandler.m_componentNameRegex.replace(component.type,"$1 ");
-	this.inspector.heading = prettyName.charAt(0).toUpperCase() + HxOverrides.substr(prettyName,1,null);
+	this.inspector.heading = component.type;
 };
 $hxClasses["ursine.editor.scene.component.inspectors.ComponentInspectionHandler"] = ursine_editor_scene_component_inspectors_ComponentInspectionHandler;
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","ComponentInspectionHandler"];
@@ -984,6 +983,9 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 	,notifyChanged: function(handler,field,value) {
 		this.entity.componentFieldUpdate(this.component.type,field.name,value);
 	}
+	,ownerNotifyChanged: function(handler,field,value) {
+		this.notifyChanged(handler,field,value);
+	}
 	,__class__: ursine_editor_scene_component_inspectors_ComponentInspectionHandler
 };
 var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(owner,instance,field,type) {
@@ -1012,7 +1014,7 @@ ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype = {
 		if(this.inspector.parentNode != null) this.inspector.parentNode.removeChild(this.inspector);
 	}
 	,notifyChanged: function(field,value) {
-		this.m_owner.notifyChanged(this,field,value);
+		this.m_owner.ownerNotifyChanged(this,field,value);
 	}
 	,get_name: function() {
 		return this.m_field.name;
@@ -1197,7 +1199,7 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		}
 		return handlers;
 	}
-	,notifyChanged: function(handler,field,value) {
+	,ownerNotifyChanged: function(handler,field,value) {
 		this.m_owner.entity.componentFieldArrayUpdate(this.m_owner.component.type,field.name,handler.arrayIndex,value);
 	}
 	,inspectItem: function(value) {
@@ -1294,16 +1296,29 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.prototype = 
 });
 var ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
-	if(type.isArray) this.initArray(); else if(type.enumValue != null) this.initEnum(); else console.log(type);
+	if(type.isArray) this.initArray(); else if(type.enumValue != null) this.initEnum(); else this.initDefaultStruct();
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.DefaultFieldInspector"] = ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector;
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","DefaultFieldInspector"];
+ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
 	updateValue: function(value) {
 		this.m_instance = value;
 		if(this.m_isEnum) {
 			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
+		} else {
+			var _g = 0;
+			var _g1 = this.m_type.fields;
+			while(_g < _g1.length) {
+				var field = _g1[_g];
+				++_g;
+				var handler = this.m_structFieldHandlers.get(field.name);
+				if(handler == null) throw new js__$Boot_HaxeError("Unable to find handler for field " + field.name);
+				var fieldInstance = Reflect.field(value,field.name);
+				handler.updateValue(fieldInstance);
+			}
 		}
 	}
 	,arrayInsert: function(index,value) {
@@ -1314,6 +1329,21 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 	}
 	,arrayRemove: function(index) {
 		if(this.m_arrayInspector != null) this.m_arrayInspector.arrayRemove(index);
+	}
+	,getFieldHandlers: function() {
+		var handlers = [];
+		var $it0 = this.m_structFieldHandlers.iterator();
+		while( $it0.hasNext() ) {
+			var handler = $it0.next();
+			handlers.push(handler);
+		}
+		return handlers;
+	}
+	,ownerNotifyChanged: function(handler,field,value) {
+		if(this.m_isEnum) ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype.notifyChanged.call(this,field,value); else {
+			this.m_instance[field.name] = value;
+			this.m_owner.ownerNotifyChanged(this,this.m_field,this.m_instance);
+		}
 	}
 	,initArray: function() {
 		this.m_arrayInspector = new ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector(this.inspector,this.m_owner,this.m_instance,this.m_field,this.m_type);
@@ -1349,7 +1379,26 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 			_g.notifyChanged(_g.m_field,_g.m_instance);
 		});
 		this.inspector.container.appendChild(this.m_comboInput);
-		this.updateValue(this.m_instance);
+	}
+	,initDefaultStruct: function() {
+		this.inspector.classList.add("default-struct");
+		this.m_structFieldHandlers = new haxe_ds_StringMap();
+		var componentOwner = this.m_owner;
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		var _g = 0;
+		var _g1 = this.m_type.fields;
+		while(_g < _g1.length) {
+			var field = _g1[_g];
+			++_g;
+			var fieldInstance = Reflect.field(this.m_instance,field.name);
+			var fieldType = database.getNativeType(field.type);
+			var fieldInspector = database.createFieldInspector(this,fieldInstance,field,fieldType);
+			this.inspector.container.appendChild(fieldInspector.inspector);
+			{
+				this.m_structFieldHandlers.set(field.name,fieldInspector);
+				fieldInspector;
+			}
+		}
 	}
 	,loadEnumBitMaskValue: function(value) {
 		var values = Reflect.fields(this.m_type.enumValue);
@@ -2190,7 +2239,6 @@ ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { 
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
-ursine_editor_scene_component_inspectors_ComponentInspectionHandler.m_componentNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName = "ursine::ecs::LightType";

@@ -47,7 +47,7 @@ class FieldInspectionHandler {
     }
 
     private function notifyChanged(field : NativeField, value : Dynamic) {
-        m_owner.notifyChanged( this, field, value );
+        m_owner.ownerNotifyChanged( this, field, value );
     }
 
     private function get_name() : String {
