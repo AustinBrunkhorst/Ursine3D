@@ -21,7 +21,7 @@ class EntityInspector extends WindowHandler {
     public static var instance : EntityInspector;
 
     // width in pixels to consider the window to be "small"
-    private static var m_smallWindowWidth = 190;
+    private static var m_smallWindowWidth = 245;
 
     private var m_inspectedEntity : Entity = null;
 

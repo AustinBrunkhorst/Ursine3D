@@ -1,6 +1,6 @@
 @import '../../Config';
 
-$max-header-width: 140px;
+$max-header-width: 225px;
 
 :host {
   display: flex;
@@ -9,12 +9,13 @@ $max-header-width: 140px;
 
   #header {
     display: block;
-    flex: 0 1 $max-header-width;
-    width: 50%;
+    flex: 1 1 $max-header-width;
+    width: 35%;
     max-width: $max-header-width;
+    margin: 5px 0;
+    padding-right: 3px;
     color: #dcdcdc;
     font-size: 13px;
-    margin: 5px 0;
   }
 
   #container {

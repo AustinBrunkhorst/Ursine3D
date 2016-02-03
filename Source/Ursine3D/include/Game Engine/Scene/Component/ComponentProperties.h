@@ -123,7 +123,7 @@ struct InputRange : ursine::meta::MetaProperty
      *         A negative value ensures a nice default.
      *  @param format Optional format to display. "{{value}}" is replaced with the calculated value
      */
-    InputRange(double min, double max, double step = -1.0, const std::string &format = "{{value}}")
+    InputRange(double min, double max, double step = -1.0, const std::string &format = "{{value.toPrecision( 4 )}}")
         : min( min )
         , max( max )
         , step( step )
