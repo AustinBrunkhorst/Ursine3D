@@ -398,7 +398,7 @@ namespace ursine
 
 			ufmt_loader::ModelInfo* ufmt_model = fbx_model.GetModelInfo();
 			ufmt_loader::AnimInfo* ufmt_anim = fbx_model.GetAnimInfo();
-		
+					
 			/////////////////////////////////////////////////////////
 			// GENERATING BONE DATA /////////////////////////////////
 
@@ -541,6 +541,12 @@ namespace ursine
 				m_u2mTable[m_modelCount++] = m_modelArray[name];
                 m_modelArray[ name ]->AddMesh(newMesh);
 			}
+
+			for (auto &x : ufmt_model->mMeshLvVec)
+				m_modelArray[name]->AddMesh2Tree(x);
+			
+			for (auto &x : ufmt_model->mRigLvVec)
+				m_modelArray[name]->AddRig2Tree(x);
 		}
 
 		// how can i load animation with jdl format?
@@ -555,7 +561,7 @@ namespace ursine
 
 			HANDLE hFile_model = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			ufmt_loader::ModelInfo ufmt_model;
-
+			
 			// Serialize in model and animation
 			ufmt_model.SerializeIn(hFile_model);
 
@@ -585,7 +591,7 @@ namespace ursine
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Jump.jani");
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Win.jani");
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Die.jani");
-				ufmt_model.maniCount = static_cast<unsigned int>( ufmt_model.maniNameVec.size() );
+				ufmt_model.maniCount = static_cast<unsigned int>(ufmt_model.maniNameVec.size());
 				for (auto iter : ufmt_model.maniNameVec)
 				{
 					LoadAni(name, iter);
@@ -598,25 +604,25 @@ namespace ursine
 				HRESULT result;
 				//create initial model
 				m_modelArray[name] = new ModelResource();
-				
+
 				// for each mesh
 				for (uint mesh_idx = 0; mesh_idx < ufmt_model.mmeshCount; ++mesh_idx)
 				{
 					// create a new mesh
 					Mesh *newMesh = new Mesh();
 					newMesh->SetID(mesh_idx);
-				
+
 					/////////////////////////////////////////////////////////////////
 					// ALLOCATE MODEL ///////////////////////////////////////////////				
-				
+
 					ufmt_loader::MeshInfo* currMesh = &ufmt_model.mMeshInfoVec[mesh_idx];
-				
+
 					newMesh->SetName(currMesh->name);
-				
+
 					uint vertCount = currMesh->meshVtxInfoCount;
 					newMesh->SetVertexCount(vertCount);
 					auto &meshVertArray = newMesh->GetRawVertices();
-				
+
 					//Set up the description of the static vertex buffer.
 					vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 					vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
@@ -624,7 +630,7 @@ namespace ursine
 					vertexBufferDesc.CPUAccessFlags = 0;
 					vertexBufferDesc.MiscFlags = 0;
 					vertexBufferDesc.StructureByteStride = 0;
-				
+
 					//Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
 					//can do this with skincount
 					buffer.resize(vertCount);
@@ -636,21 +642,21 @@ namespace ursine
 							currMesh->meshVtxInfos[i].pos.y,
 							currMesh->meshVtxInfos[i].pos.z
 							);
-				
+
 						// transform these points from their global model space into their local space
 						SVec4 tempPosition = SVec4(currMesh->meshVtxInfos[i].pos.x,
 							currMesh->meshVtxInfos[i].pos.y,
 							currMesh->meshVtxInfos[i].pos.z,
 							1.0f
 							);
-				
+
 						// Set data
 						buffer[i].vPos = DirectX::XMFLOAT3(
 							tempPosition.ToD3D().x,
 							tempPosition.ToD3D().y,
 							tempPosition.ToD3D().z
 							);
-				
+
 						buffer[i].vNor = DirectX::XMFLOAT3(
 							currMesh->meshVtxInfos[i].normal.x,
 							currMesh->meshVtxInfos[i].normal.y,
@@ -660,7 +666,7 @@ namespace ursine
 							currMesh->meshVtxInfos[i].uv.x,
 							currMesh->meshVtxInfos[i].uv.y
 							);
-				
+
 						if (ufmt_model.mboneCount > 0)
 						{
 							buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
@@ -681,28 +687,28 @@ namespace ursine
 							buffer[i].vBIdx[3] = static_cast<BYTE>(0);
 						}
 					}
-				
+
 					//Give the subresource structure a pointer to the vertex data.
 					vertexData.pSysMem = &buffer[0];
 					vertexData.SysMemPitch = 0;
 					vertexData.SysMemSlicePitch = 0;
-				
+
 					//Now create the vertex buffer.
 					result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
 					UAssert(result == S_OK, "Failed to make vertex buffer!");
 					newMesh->SetVertexCount(vertCount);
-				
+
 					/////////////////////////////////////////////////////////////////
 					// CREATE INDEX BUFFER //////////////////////////////////////////
 					newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
-				
+
 					auto &indexArray = newMesh->GetRawIndices();
 					for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
 						indexArray[x] = currMesh->meshVtxIndices[x];
-				
+
 					D3D11_BUFFER_DESC indexBufferDesc;
 					D3D11_SUBRESOURCE_DATA indexData;
-				
+
 					//Set up the description of the static index buffer.
 					indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 					indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
@@ -710,20 +716,27 @@ namespace ursine
 					indexBufferDesc.CPUAccessFlags = 0;
 					indexBufferDesc.MiscFlags = 0;
 					indexBufferDesc.StructureByteStride = 0;
-				
+
 					//Give the subresource structure a pointer to the index data.
 					indexData.pSysMem = indexArray.data();
 					indexData.SysMemPitch = 0;
 					indexData.SysMemSlicePitch = 0;
-				
+
 					//Create the index buffer.
 					result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
 					UAssert(result == S_OK, "Failed to make index buffer!");
 					m_modelArray[name]->AddMesh(newMesh);
-				}				
+				}
 				m_s2uTable[name] = m_modelCount;
 				m_u2mTable[m_modelCount++] = m_modelArray[name];
-			}			
+			}
+
+			for (auto &x : ufmt_model.mMeshLvVec)
+				m_modelArray[name]->AddMesh2Tree(x);
+
+			for (auto &x : ufmt_model.mRigLvVec)
+				m_modelArray[name]->AddRig2Tree(x);
+
 			CloseHandle(hFile_model);
 		}
 
