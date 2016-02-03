@@ -20,6 +20,7 @@ namespace ursine
 	namespace ecs
 	{
 		class SweptController;
+		class PhysicsSystem;
 
 		class SweptControllerSystem : public FilterSystem
 		{
@@ -28,9 +29,14 @@ namespace ursine
 		public:
 
 			Meta(DisableNonDynamic)
-			SweptControllerSystem(World *world);
+			SweptControllerSystem(ursine::ecs::World *world);
+			~SweptControllerSystem(void);
 
 		private:
+			PhysicsSystem *m_physics;
+
+			void OnInitialize(void) override;
+
 			void Process(Entity *entity) override;
 
 			// Each frame update, sweepVelocity starts out as the intended movement of the controller (ControllerVelocity).
@@ -38,7 +44,7 @@ namespace ursine
 			// represent the possible path of motion that is still within the initial direction of motion.
 			// The ControllerVelocity is only modified when velocity in a particular direction is not
 			// desired for the following frame updates.
-			void sweptCollision(SweptController &controller, const SVec3 &sweptVelocity, float timeLeft, bool kinematic);
+			void sweptCollision(SweptController &controller, SVec3 sweptVelocity, float timeLeft, bool kinematic);
 
 			// Sends out script events and invokes tracker events to be sent.
 			// Updating the list of kinematic contacts must be done after evets are sent

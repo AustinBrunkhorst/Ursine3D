@@ -22,6 +22,8 @@ namespace ursine
 {
 	namespace ecs
 	{
+		NATIVE_COMPONENT_DEFINITION( SweptController );
+
 		SweptController::SweptController(void)
 			: BaseComponent( )
 			, m_active( true )

@@ -25,7 +25,7 @@ namespace ursine
 		class SweptController : public Component
 		{
 			NATIVE_COMPONENT;
-
+			
 			friend class SweptControllerSystem;
 
 		public:
@@ -363,7 +363,7 @@ namespace ursine
 		} Meta(
 			Enable,
 			DisplayName("SweptController"), 
-			RequiresComponents(typeof(Rigidbody), typeof(CylinderCollider))
+			RequiresComponents(typeof(ursine::ecs::Rigidbody), typeof(ursine::ecs::CylinderCollider))
 		);
 	}
 }

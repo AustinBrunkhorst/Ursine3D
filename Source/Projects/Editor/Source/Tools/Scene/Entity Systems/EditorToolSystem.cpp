@@ -45,7 +45,6 @@ ecs::Entity* EditorToolSystem::GetCurrentFocus(void)
 void EditorToolSystem::OnAfterLoad(void)
 {
 	auto editor = GetCoreSystem( Editor );
-	auto world = editor->GetProject( )->GetScene( )->GetWorld( );
 
 	m_selectTool = new SelectTool( editor, m_world );
 	m_dupTool = new DuplicateTool( editor, m_world );
@@ -61,7 +60,7 @@ void EditorToolSystem::OnAfterLoad(void)
 	m_mouseManager = GetCoreSystem( MouseManager );
 	m_keyboardManager = GetCoreSystem( KeyboardManager );
 
-	m_editorCameraSystem = world->GetEntitySystem( EditorCameraSystem );
+	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 
 	m_mouseManager->Listener( this )
 		.On( MM_BUTTON_DOWN, &EditorToolSystem::onMouseDown )
