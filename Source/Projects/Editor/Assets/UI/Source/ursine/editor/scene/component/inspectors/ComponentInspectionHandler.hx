@@ -37,7 +37,7 @@ class ComponentInspectionHandler implements IFieldInspectionOwner {
         fieldArrayItemRemoveEvents = new EventManager( );
 
         inspector = new ComponentInspector( );
-        
+
         inspector.heading = component.type;
     }
 
