@@ -125,6 +125,19 @@ $max-header-width: 140px;
       &:not(:last-child) {
         margin-right: 2px;
       }
+
+      &:nth-child(1) {
+        border-color: #a84d3f;
+      }
+
+      &:nth-child(2) {
+        border-color: #4f8046;
+      }
+
+      &:nth-child(3) {
+
+        border-color: #3673ff;
+      }
     }
   }
 
