@@ -21,7 +21,6 @@
 #include "PlayerAnimationComponent.h"
 #include <CameraComponent.h>
 #include <SweptControllerComponent.h>
-#include "TeamComponent.h"
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -38,7 +37,6 @@ void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
 	auto *swept = entity->GetComponent<SweptController>( );
-    auto moveSpeed = controller->GetMoveSpeed( );
 	auto rotateSpeed = controller->GetRotateSpeed( );
 
     auto transform = entity->GetTransform( );
@@ -96,7 +94,7 @@ void CharacterControllerSystem::Process(Entity *entity)
             );
     }
 
-    auto move = controller->GetMoveDirection( ) * moveSpeed;
+    auto move = controller->GetMoveDirection( );
 
     auto forward = transform->GetForward( ) * move.Y( );
     auto strafe = transform->GetRight( ) * move.X( );
