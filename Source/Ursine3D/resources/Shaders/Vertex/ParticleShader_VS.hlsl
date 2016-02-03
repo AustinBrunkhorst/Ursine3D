@@ -11,6 +11,12 @@ cbuffer invProj : register(b4)
     float farPlane;
 };
 
+cbuffer posAndColor : register(b6)
+{
+    float4 cameraPosition;
+    float4 color;
+}
+
 struct Particle_GPU
 {
     // alignment is really, really important
@@ -117,11 +123,11 @@ PixelInputType main(uint id : SV_VERTEXID)
     position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[0]));
 
     // into world -> translate
-    position = mul(position, (float3x3)InvProj) + g_bufPosColor[ particleIndex ].position;
+    position = mul(position, (float3x3)InvProj) + g_bufPosColor[ particleIndex ].position + cameraPosition;
     
     output.position = mul(float4(position, 1.0f), g_mInvView);
     output.position = mul(output.position, g_mWorldViewProj);
-    output.color = g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w;
+    output.color = (g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w) * color;
     
     return output;
 } 

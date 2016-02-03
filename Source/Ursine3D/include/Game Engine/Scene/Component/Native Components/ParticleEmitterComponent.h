@@ -106,16 +106,16 @@ namespace ursine
             );
 
             EditorField(
-                float emitterSize,
-                GetEmitterSize,
-                SetEmitterSize
-            );
-
-            EditorField(
                 float fill,
                 GetFill,
                 SetFill
                 );
+
+            EditorField(
+                Vec3 emitterSize,
+                GetEmitterSize,
+                SetEmitterSize
+            );
 
             ParticleEmitter(void);
             ~ParticleEmitter(void);
@@ -164,11 +164,8 @@ namespace ursine
             const SVec3 GetVelocityRange(void) const;
             void SetVelocityRange(const SVec3 &range);
 
-            const float GetEmitterSize(void) const;
-            void SetEmitterSize(const float size);
-
-            const float GetEmitterSizeRange(void) const;
-            void SetEmitterSizeRange(const float range);
+            const SVec3 &GetEmitterSize(void) const;
+            void SetEmitterSize(const SVec3 &size);
 
             const float GetFill(void) const;
             void SetFill(const float fill);
@@ -180,7 +177,7 @@ namespace ursine
             int spawnParticle(void);
 
             // parent component, this is kinda important
-            ParticleSystem *m_particleComponent;
+            Component::Handle<ParticleSystem> m_particleComponent;
 
             // all of these need variance /////////////////////////////////////
             // emit speed
@@ -209,14 +206,17 @@ namespace ursine
             Randomizer m_zVelRange;
 
             // emitter size (related to scale of transform?)
-            float m_emitterSize;
-            Randomizer m_emitterSizeRange;
+            SVec3 m_emitterSize;
 
             float m_currentTime;
             unsigned m_spawnCount;
 
-            Randomizer m_angleGenerator;
+            Randomizer m_fillGenerator;
             Randomizer m_radiusGenerator;
+
+            Randomizer m_xGenerator;
+            Randomizer m_yGenerator;
+            Randomizer m_zGenerator;
 
             float m_fill;
 

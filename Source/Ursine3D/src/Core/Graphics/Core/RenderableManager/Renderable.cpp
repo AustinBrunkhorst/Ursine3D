@@ -73,6 +73,16 @@ namespace ursine
             m_mask = mask;
         }
 
+        bool Renderable::GetActive(void) const
+        {
+            return Active_;
+        }
+
+        void Renderable::SetActive(const bool isActive)
+        {
+            Active_ = isActive;
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
@@ -368,6 +378,8 @@ namespace ursine
             m_backIndex = 0;
             Renderable::Initialize();
             m_textureName = "Blank";
+            m_useAdditive = true;
+            m_worldSpace = true;
         }
 
         std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
@@ -460,6 +472,23 @@ namespace ursine
         void ParticleSystem::SetParticleTexture(const std::string & texName)
         {
             m_textureName = texName;
+        }
+        bool ParticleSystem::GetAdditive(void) const
+        {
+            return m_useAdditive;
+        }
+        void ParticleSystem::SetAdditive(const bool useAdditive)
+        {
+            m_useAdditive = useAdditive;
+        }
+             
+        bool ParticleSystem::GetSystemSpace(void) const
+        {
+            return m_worldSpace;
+        }
+        void ParticleSystem::SetSystemSpace(const bool useWorldCoordinates)
+        {
+            m_worldSpace = useWorldCoordinates;
         }
     }
 }

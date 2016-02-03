@@ -941,6 +941,9 @@ namespace ursine
         {
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
 
+            if ( !current.Active_ )
+                return;
+
             if ( !currentcamera.CheckMask( current.GetRenderMask( ) ) )
                 return;
                     
@@ -1084,6 +1087,9 @@ namespace ursine
         {
             auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
 
+            if ( !billboard.Active_ )
+                return;
+
             if ( !currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
                 return;
 
@@ -1140,6 +1146,37 @@ namespace ursine
         {
             auto &particleSystem = renderableManager->m_renderableParticleSystems[ handle.Index_ ];
 
+            if ( !particleSystem.Active_ )
+                return;
+
+            if(particleSystem.GetAdditive())
+                dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
+            else
+                dxCore->SetBlendState(BLEND_STATE_DEFAULT);
+
+            // bind color and space
+            PointGeometryBuffer pgb;
+            
+            if ( particleSystem.GetSystemSpace() )
+            {
+                // use world space
+                pgb.cameraPosition = DirectX::XMFLOAT4(0, 0, 0, 0);
+            }
+            else
+            {
+                // use local space
+                pgb.cameraPosition = DirectX::XMFLOAT4(particleSystem.GetPosition().GetFloatPtr());
+            }
+
+            // set color
+            auto &color = particleSystem.GetColor();
+            pgb.cameraUp.x = color.r;
+            pgb.cameraUp.y = color.g;
+            pgb.cameraUp.z = color.b;
+            pgb.cameraUp.w = color.a;
+
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_VERTEX);
+
             textureManager->MapTextureByName(particleSystem.GetParticleTexture());
 
             // material buffer 
@@ -1179,8 +1216,7 @@ namespace ursine
 
                     bufferManager->MapBuffer<BUFFER_PARTICLEDATA>(&pb, SHADERTYPE_VERTEX, 13);
 
-                    printf("%i\n", particlesInPass);
-                    shaderManager->Render(6 * particleSystem.GetActiveParticleCount());
+                    shaderManager->Render(6 * particlesInPass);
 
                     // update particles left to render
                     totalParticlesToRender -= particlesInPass;
@@ -1261,6 +1297,9 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if ( !pl.Active_ )
+                return;
+
             if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
@@ -1319,6 +1358,9 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
+            if(!pl.Active_)
+                return;
+
             if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
@@ -1354,6 +1396,9 @@ namespace ursine
         void GfxManager::RenderDirectionalLight(_DRAWHND handle, Camera &currentCamera)
         {
             Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
+
+            if ( !l.Active_ )
+                return;
 
             if ( !currentCamera.CheckMask( l.GetRenderMask( ) ) )
                 return;

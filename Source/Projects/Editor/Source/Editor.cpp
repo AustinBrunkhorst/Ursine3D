@@ -20,9 +20,9 @@
 
 #include <WindowManager.h>
 #include <UIManager.h>
-
+   
 #include <Color.h> 
-#include <LightComponent.h>
+#include <LightComponent.h> 
 #include <iostream>
 
 using namespace ursine;
@@ -125,8 +125,8 @@ UIView::Handle Editor::GetMainUI(void) const
 
 std::shared_ptr<Project> Editor::GetProject(void) const
 {
-    return m_project;
-}
+    return m_project; 
+} 
 
 NotificationManager &Editor::GetNotificationManager(void)
 {
@@ -178,11 +178,11 @@ void Editor::initializeScene(void)
 
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-        handle.SetPosition( 0, 0 );
-
+        handle.SetPosition( 0, 0 ); 
+         
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
-
-        scene->SetViewport( viewport );
+         
+        scene->SetViewport( viewport ); 
 
         m_graphics->SetGameViewport( viewport );
     }
