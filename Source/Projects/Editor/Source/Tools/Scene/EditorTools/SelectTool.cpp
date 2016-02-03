@@ -39,6 +39,7 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 	// get the current entity ID the mouse if over
 	auto newID = m_graphics->GetMousedOverID( );
 	
+	// Unpick the previous object if the user clicked off of an entity
 	if (newID == -1 && m_currentID != -1)
 	{
 		unpickObject( );
@@ -48,30 +49,44 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 	}
 
 	// grab the new object, add the component
-	auto obj = m_world->GetEntityUnique( newID );
+	auto newObj = m_world->GetEntityUnique( newID );
 
-	if (!obj)
+	if (!newObj)
 		return;
 
 	if (newID != m_currentID)
 	{
-		auto disableComponents = obj->GetComponentsInParents<DisableSelection>( );
+		// Check to see if this object, or it's parents have the "DisableSelection" component
+		auto disableComponents = newObj->GetComponentsInParents<DisableSelection>( );
 
-		if (obj->IsDeleting( ) || 
-			obj->HasComponent<DisableSelection>( ) ||
+		if (newObj->IsDeleting( ) ||
+			newObj->HasComponent<DisableSelection>( ) ||
 			disableComponents.size( ) != 0)
 			return;
 
-		// remove all selected from the currently saved IDs
-		if (m_currentID != -1)
-			unpickObject( );
-
-		if (!obj->HasComponent<Selected>( ))
+		// If the new object already has the selected component, unpick it
+		if (newObj->HasComponent<Selected>( ))
 		{
-			obj->AddComponent<Selected>( );
-
-			m_currentID = newID;
+			unpickObject( );
+			return;
 		}
+
+		// This pointer stores the entity that is to be selected
+		ursine::ecs::Entity *toSelect = newObj;
+
+		// grab the new object's root, and see if it is selected
+		auto rootObj = newObj->GetRoot( );
+
+		// if it is selected, remove it from root
+		if (rootObj->HasComponent<Selected>( ))
+			rootObj->RemoveComponent<Selected>( );
+		// else, if root is different entity, select that one first
+		else if (rootObj != newObj)
+			toSelect = rootObj;		
+
+		toSelect->AddComponent<Selected>( );
+
+		m_currentID = toSelect->GetUniqueID( );
 	}
 	else
 	{

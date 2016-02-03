@@ -124,10 +124,10 @@ namespace ursine
 	    template<class ComponentType>
 		bool Component::Handle<ComponentType>::operator==(const ComponentType* rhs) const
 		{
-			if (m_entity)
-				return operator->( ) == rhs;
-			else
-				return rhs == nullptr;
+			if (rhs == nullptr)
+				return false;
+
+			return m_entity == rhs->GetOwner( );
 		}
 
 		template<class ComponentType>

@@ -14,8 +14,7 @@
 #pragma once
 
 #include "Component.h"
-#include "Renderable.h"
-#include "GfxAPI.h"
+#include "Model3DComponent.h"
 #include "AnimationBuilder.h"
 
 namespace ursine
@@ -226,6 +225,6 @@ namespace ursine
 			std::string m_futureStateName;
 			std::string m_animationName;
 
-        } Meta( Enable, DisplayName( "Animator" ) );
+        } Meta( Enable, DisplayName( "Animator" ), RequiresComponents( typeof(ursine::ecs::Model3D) ) );
     }
 }

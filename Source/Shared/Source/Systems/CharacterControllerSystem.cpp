@@ -96,7 +96,7 @@ void CharacterControllerSystem::Process(Entity *entity)
             );
     }
 
-    auto move = -controller->GetMoveDirection( ) * moveSpeed;
+    auto move = controller->GetMoveDirection( ) * moveSpeed;
 
     auto forward = transform->GetForward( ) * move.Y( );
     auto strafe = transform->GetRight( ) * move.X( );
