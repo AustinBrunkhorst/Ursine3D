@@ -761,8 +761,6 @@ namespace ursine
             // set index buffer
             modelManager->BindModel("ParticleIndices", 0, true);
 
-            textureManager->MapTextureByName("Smoke");
-
             // set topology
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             layoutManager->SetInputLayout(SHADER_COUNT);
@@ -1142,6 +1140,8 @@ namespace ursine
         {
             auto &particleSystem = renderableManager->m_renderableParticleSystems[ handle.Index_ ];
 
+            textureManager->MapTextureByName(particleSystem.GetParticleTexture());
+
             // material buffer 
             MaterialDataBuffer mdb;
 
@@ -1163,7 +1163,7 @@ namespace ursine
 
                 unsigned totalParticlesToRender = particleSystem.GetActiveParticleCount();
 
-                do
+                for ( unsigned x = 0; x < passCount; ++x )
                 {
                     unsigned particlesInPass;
 
@@ -1175,7 +1175,7 @@ namespace ursine
 
                     // bind particle data
                     ParticleBuffer pb;
-                    memcpy(&pb.data, particleSystem.GetGPUParticleData().data(), sizeof(Particle_GPU) * particlesInPass);
+                    memcpy(&pb.data, &(particleSystem.GetGPUParticleData()[ x * 1024]), sizeof(Particle_GPU) * particlesInPass);
 
                     bufferManager->MapBuffer<BUFFER_PARTICLEDATA>(&pb, SHADERTYPE_VERTEX, 13);
 
@@ -1185,7 +1185,7 @@ namespace ursine
                     // update particles left to render
                     totalParticlesToRender -= particlesInPass;
 
-                } while ( totalParticlesToRender > 0 );
+                }
             }
         }
 
