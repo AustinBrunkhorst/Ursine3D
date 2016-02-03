@@ -108,9 +108,6 @@ namespace ursine
                 bool isDynamic
             );
 
-            template<typename ClassType>
-            void SetArrayConstructor(void);
-
             const Constructor &GetConstructor(
                 const InvokableSignature &signature
             );

@@ -18,7 +18,7 @@ namespace ursine
         template<typename T>
         void ArrayWrapperContainer<T>::SetValue(size_t index, const Argument &value)
         {
-            m_array.SetValue( index, value.GetValue<T>( ) );
+            m_array[ index ] = value.GetValue<T>( );
         }
 
         template<typename T>
@@ -44,7 +44,7 @@ namespace ursine
         template<typename T>
         ArrayEventDispatcher &ArrayWrapperContainer<T>::GetModifyEvents(void) const
         {
-            return m_array.GetModifyEvents( );
+            return m_array.m_modifyEvents;
         }
 
     #endif

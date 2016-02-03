@@ -148,9 +148,6 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     data[ "constPtrTypeEnabled" ] = 
         utils::TemplateBool( m_constPtrTypeEnabled );
 
-    data[ "arrayTypeEnabled" ] = 
-        utils::TemplateBool( m_arrayTypeEnabled );
-
     m_metaData.CompileTemplateData( data, context );
 
     // base classes

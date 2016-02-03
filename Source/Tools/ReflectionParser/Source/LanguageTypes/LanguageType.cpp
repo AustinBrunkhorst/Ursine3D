@@ -23,7 +23,6 @@ LanguageType::LanguageType(
     , m_enabled( m_metaData.GetFlag( native_property::Enable ) )
     , m_ptrTypeEnabled( !m_metaData.GetFlag( native_property::DisablePtrType ) )
     , m_constPtrTypeEnabled( !m_metaData.GetFlag( native_property::DisableConstPtrType ) )
-    , m_arrayTypeEnabled( m_metaData.GetFlag( native_property::EnableArrayType ) )
     , m_accessModifier( cursor.GetAccessModifier( ) )
     , m_rootCursor( cursor )
 {

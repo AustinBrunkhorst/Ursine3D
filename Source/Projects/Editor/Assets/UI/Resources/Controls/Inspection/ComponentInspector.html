@@ -61,14 +61,8 @@
             _onHeaderClick: function() {
                 this.opened = !this.opened;
             },
-            _onRemoveClicked: function(e) {
+            _onRemoveClicked: function() {
                 this.fire( 'removed', { } );
-
-                e.preventDefault( );
-                e.stopPropagation( );
-                e.stopImmediatePropagation( );
-
-                return false;
             }
         });
     </script>

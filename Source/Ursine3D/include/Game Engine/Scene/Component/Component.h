@@ -67,9 +67,6 @@ namespace ursine
 				Handle(const ComponentType *);
 				~Handle(void);
 
-				ComponentType *Get(void);
-				const ComponentType *Get(void) const;
-				
 				// Assignment and Equivalency
 				const ComponentType *operator=(const ComponentType *rhs);
 				const Handle<ComponentType> &operator=(const Handle<ComponentType> &rhs);

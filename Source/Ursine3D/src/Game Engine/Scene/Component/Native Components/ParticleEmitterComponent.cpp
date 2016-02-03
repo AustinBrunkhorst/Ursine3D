@@ -19,7 +19,7 @@
 
 #include "GfxAPI.h"
 
-#define PI 3.14f
+#define PI 3.14159265359f
 
 namespace ursine
 {
@@ -42,11 +42,14 @@ namespace ursine
             , m_xVelRange(-1.0f, 1.0f)
             , m_yVelRange(-1.0f, 1.0f)
             , m_zVelRange(-1.0f, 1.0f)
-            , m_radius(0.0f)
-            , m_radiusRange(0.0f, 0.0f)
+            , m_emitterSize(0.0f)
+            , m_emitterSizeRange(0.0f, 0.0f)
             , m_currentTime(0.0f)
+            , m_spawnCount(0)
+            , m_angleGenerator(0.0f, 0.0f)
+            , m_radiusGenerator(-1.0f, 1.0f)
+            , m_fill(0.0f)
         {
-            
         }
 
         ParticleEmitter::~ParticleEmitter(void)
@@ -67,33 +70,63 @@ namespace ursine
 
         // GENERATOR METHODS ////////////////////////////////////////
 
-        float ParticleEmitter::GenerateLifetime(void) const
+        float ParticleEmitter::GenerateLifetime(void)
         {
             return m_lifetime + m_lifetimeRange.GetValue();
         }
 
-        float ParticleEmitter::GenerateScale(void) const
+        float ParticleEmitter::GenerateScale(void)
         {
             return m_size + m_sizeRange.GetValue();
         }
 
-        float ParticleEmitter::GenerateRotation(void) const
+        float ParticleEmitter::GenerateRotation(void)
         {
             return m_rotation + m_rotationRange.GetValue();
         }
 
-        SVec3 ParticleEmitter::GenerateVelocity(void) const
+        SVec3 ParticleEmitter::GenerateVelocity(void)
         {
-            return m_initialVelocity + SVec3(
-                m_xVelRange.GetValue(),
-                m_yVelRange.GetValue(),
-                m_zVelRange.GetValue()
-                );
+            SVec3 offset;
+
+            // this should be faster than a ton of trig operations... I think
+            do
+            {
+                offset.SetX(m_radiusGenerator.GetValue());
+                offset.SetY(m_radiusGenerator.GetValue());
+                offset.SetZ(m_radiusGenerator.GetValue());
+            } while ( offset.LengthSquared() > 1 );
+
+            offset *= SVec3(m_xVelRange.GetValue(), m_yVelRange.GetValue(), m_zVelRange.GetValue());
+
+            return m_initialVelocity + offset;
         }
 
-        SVec3 ParticleEmitter::GeneratePosition(void) const
+        SVec3 ParticleEmitter::GeneratePosition(void)
         {
-            return GetOwner()->GetTransform()->GetWorldPosition();
+            // generate random sphere position in range -1, 1
+            // scale by values
+
+            SVec3 offset;
+
+            // this should be faster than a ton of trig operations... I think
+            offset.SetX(m_radiusGenerator.GetValue());
+            offset.SetY(m_radiusGenerator.GetValue());
+            offset.SetZ(m_radiusGenerator.GetValue());
+
+            offset.Normalize();
+
+            // modify to fit within fill
+            float scalar = m_angleGenerator.GetValue();
+
+            offset *= scalar;
+
+            return GetOwner()->GetTransform()->GetWorldPosition() + offset;
+        }
+
+        void ParticleEmitter::ResetSpawnCount(void)
+        {
+            m_spawnCount = 0;
         }
 
         // GETTER / SETTERS /////////////////////////////////////////
@@ -209,19 +242,59 @@ namespace ursine
             m_yVelRange.SetMin(-range.Y());
             m_zVelRange.SetMin(-range.Z());
         }
+
+        const float ParticleEmitter::GetEmitterSize(void) const
+        {
+            return m_emitterSize;
+        }
+
+        void ParticleEmitter::SetEmitterSize(const float size)
+        {
+            m_emitterSize = size;
+
+            m_angleGenerator = Randomizer(m_fill * m_emitterSize, m_emitterSize);
+        }
+
+        const float ParticleEmitter::GetEmitterSizeRange(void) const
+        {
+            return m_emitterSizeRange.GetMax( );
+        }
+
+        void ParticleEmitter::SetEmitterSizeRange(const float range)
+        {
+            m_emitterSizeRange.SetMax(range);
+            m_emitterSizeRange.SetMin(-range);
+        }
+
+        const float ParticleEmitter::GetFill(void) const
+        {
+            return m_fill;
+        }
+
+        void ParticleEmitter::SetFill(const float fill)
+        {
+            m_fill = fill;
+
+            m_angleGenerator = Randomizer(fill * m_emitterSize, m_emitterSize);
+        }
+
         void ParticleEmitter::onParticleUpdate(EVENT_HANDLER(Entity))
         {
+            m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
             float dt = Application::Instance->GetDeltaTime();
 
-            m_currentTime += dt;
-
-            // calculate time needed to spawn 1 particle
-            float spawnTime = 1.f / static_cast<float>(m_emitRate);
-
-            while( m_currentTime >= spawnTime )
+            if ( (m_spawnCount < m_emitCount) || m_emitCount == 0 )
             {
-                m_currentTime -= spawnTime;
-                spawnParticle();
+                m_currentTime += dt;
+
+                // calculate time needed to spawn 1 particle
+                float spawnTime = 1.f / static_cast<float>(m_emitRate);
+
+                while ( m_currentTime >= spawnTime && ((m_spawnCount < m_emitCount) || m_emitCount == 0) )
+                {
+                    m_currentTime -= spawnTime;
+                    spawnParticle();
+                }
             }
 
             auto &gpuData = m_particleComponent->GetGPUParticleData();
@@ -286,6 +359,8 @@ namespace ursine
                 cpuData.velocity = GenerateVelocity( );
                 cpuData.lifeTime = cpuData.totalLifetime = GenerateLifetime( );
                 cpuData.acceleration = SVec3(0.f, 0.f, 0.f);
+
+                ++m_spawnCount;
             }
 
             return newParticle;

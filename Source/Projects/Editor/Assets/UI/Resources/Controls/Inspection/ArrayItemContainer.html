@@ -37,14 +37,8 @@
             _onHeaderClick: function() {
                 this.opened = !this.opened;
             },
-            _onRemoveClick: function(e) {
+            _onRemoveClick: function() {
                 this.fire( 'item-removed', { } );
-
-                e.preventDefault( );
-                e.stopPropagation( );
-                e.stopImmediatePropagation( );
-
-                return false;
             },
 
             _onOpenedChanged: function() {

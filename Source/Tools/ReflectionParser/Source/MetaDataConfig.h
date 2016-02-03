@@ -23,8 +23,6 @@ namespace native_property
     const auto DisablePtrType = "DisablePtrType";
     const auto DisableConstPtrType = "DisableConstPtrType";
 
-    const auto EnableArrayType = "EnableArrayType";
-
     const auto DisableNonDynamicCtor = "DisableNonDynamic";
     const auto DynamicCtorWrap = "WrapObject";
 

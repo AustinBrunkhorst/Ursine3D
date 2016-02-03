@@ -15,7 +15,7 @@ class VectorFieldInspector extends FieldInspectionHandler {
     private var m_fieldsContainer : js.html.DivElement;
     private var m_fields : Map<String, NumberInput>;
 
-    public function new(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) {
+    public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
         m_fieldsContainer = js.Browser.document.createDivElement( );

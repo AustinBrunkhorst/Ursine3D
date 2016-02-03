@@ -135,36 +135,6 @@ namespace ursine
             return m_transform;
         }
 
-		const Entity *Entity::GetParent(void) const
-        {
-	        auto parent = GetTransform( )->GetParent( );
-
-			if (parent)
-				return parent->GetOwner( );
-			else
-				return nullptr;
-        }
-
-		Entity *Entity::GetParent(void)
-		{
-			auto parent = GetTransform( )->GetParent( );
-
-			if (parent)
-				return parent->GetOwner( );
-			else
-				return nullptr;
-		}
-
-		const Entity *Entity::GetRoot(void) const
-		{
-			return GetTransform( )->GetRoot( )->GetOwner( );
-		}
-
-		Entity *Entity::GetRoot(void)
-		{
-			return GetTransform( )->GetRoot( )->GetOwner( );
-		}
-
         ////////////////////////////////////////////////////////////////////////
         // Naming
         ////////////////////////////////////////////////////////////////////////

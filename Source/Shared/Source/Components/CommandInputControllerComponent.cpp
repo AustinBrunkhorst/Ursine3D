@@ -21,14 +21,14 @@
 
 NATIVE_COMPONENT_DEFINITION(CommandInputController);
 
-CommandInputController::CommandInputController(void)
-    : BaseComponent( )
+CommandInputController::CommandInputController()
+    : BaseComponent()
     , m_keyBoard( false )
 {
 
 }
 
-CommandInputController::~CommandInputController(void)
+CommandInputController::~CommandInputController()
 {
     for(auto &x : m_commandList)
     {
@@ -44,18 +44,31 @@ bool CommandInputController::GetKeyBoard(void) const
 void CommandInputController::SetKeyBoard(const bool useKeyBoard)
 {
     m_keyBoard = useKeyBoard;
+}
 
-	if (m_keyBoard)
+void CommandInputController::OnInitialize()
+{
+    if ( m_keyBoard )
         MapKeyboard( );
+
     else
         MapXboxContoller( );
 
-	MapCommandList( );
-}
+    m_commandList = {
+        new ButtonActionCommand<JumpCommand>(
+            m_jump,
+            ButtonActionCommand<JumpCommand>::Interaction::Down
+        ),
 
-void CommandInputController::OnInitialize(void)
-{
-    SetKeyBoard( m_keyBoard );
+        new TwoAxisActionCommand<MoveCommand>(m_move),
+
+        new TwoAxisActionCommand<LookCommand>(m_look),
+
+        new ButtonActionCommand<FireCommand>(
+            m_fire,
+            ButtonActionCommand<FireCommand>::Interaction::Held
+        )
+    };
 }
 
 void CommandInputController::MapXboxContoller( void )
@@ -134,7 +147,7 @@ void CommandInputController::MapXboxContoller( void )
         );
 }
 
-void CommandInputController::MapKeyboard(void)
+void CommandInputController::MapKeyboard( void )
 {
     PlayerID* idComp =  GetOwner( )->GetComponent<PlayerID>( );
 
@@ -208,32 +221,7 @@ void CommandInputController::MapKeyboard(void)
         );
 }
 
-void CommandInputController::MapCommandList(void)
-{
-	// clear all commands previously created
-	for (auto &command : m_commandList)
-		delete command;
-
-	m_commandList.clear( );
-
-	 m_commandList = {
-        new ButtonActionCommand<JumpCommand>(
-            m_jump,
-            ButtonActionCommand<JumpCommand>::Interaction::Down
-        ),
-
-        new TwoAxisActionCommand<MoveCommand>( m_move ),
-
-        new TwoAxisActionCommand<LookCommand>( m_look ),
-
-        new ButtonActionCommand<FireCommand>(
-            m_fire,
-            ButtonActionCommand<FireCommand>::Interaction::Held
-        )
-    };
-}
-
-std::vector<ActionCommandBase*> &CommandInputController::GetCommandList(void)
+std::vector<ActionCommandBase*>& CommandInputController::GetCommandList()
 {
     return m_commandList;
 }

@@ -30,6 +30,8 @@
 #include "ParticleColorAnimatorComponent.h"
 #include "ParticleAnimatorComponent.h"
 #include "ParticleAttractorComponent.h"
+#include "ParticleTwisterComponent.h"
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics
@@ -47,8 +49,6 @@
 #include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
-
-#include "SweptControllerComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Audio

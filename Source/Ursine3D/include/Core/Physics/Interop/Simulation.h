@@ -16,7 +16,6 @@
 #include "PhysicsInteropConfig.h"
 #include "DebugDrawer.h"
 #include "Raycasting.h"
-#include "Sweeping.h"
 #include "CollisionEventArgs.h"
 
 namespace ursine
@@ -57,9 +56,6 @@ namespace ursine
             void RemoveBody(Body *body);
 
             bool Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type);
-
-			bool Sweep(ColliderBase *collider, BodyBase *body, const SVec3 &velocity, 
-					   float dt, SweepOutput &output, SweepType type, bool sorted = false);
 
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;

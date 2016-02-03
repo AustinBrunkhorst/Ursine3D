@@ -6,7 +6,7 @@ import ursine.controls.inspection.FieldInspector;
 
 import ursine.editor.scene.component.ComponentDatabase;
 
-class ArrayTypeInspector implements IFieldInspectionOwner {
+class ArrayTypeInspector {
     private var m_parent : FieldInspector;
     private var m_owner : ComponentInspectionHandler;
     private var m_instance : Dynamic;
@@ -28,12 +28,6 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
         m_arrayItems = new Array<ArrayItemContainer>( );
 
         initElements( );
-
-        for (i in 0 ... untyped instance.length) {
-            arrayInsert( i, instance[ i ] );
-
-            m_arrayItems[ i ].opened = false;
-        }
     }
 
     public function arrayInsert(index : UInt, value : Dynamic) {
@@ -44,15 +38,6 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
 
         container.opened = true;
         container.container.appendChild( handler.inspector );
-        container.handler = handler;
-
-        container.addEventListener( 'item-removed', function() {
-            m_owner.entity.componentFieldArrayRemove(
-                m_owner.component.type,
-                m_field.name,
-                handler.arrayIndex
-            );
-        } );
 
         m_arrayItems.insert( index, container );
 
@@ -76,36 +61,14 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
     }
 
     public function arraySet(index : UInt, value : Dynamic) {
-        var container = m_arrayItems[ index ];
-
-        if (container == null)
-            throw 'Invalid array index.';
-
-        container.handler.updateValue( value );
+        var handler = inspectItem( value );
     }
 
     public function arrayRemove(index : UInt) {
-        var container = m_arrayItems[ index ];
 
-        if (container == null)
-            throw 'Invalid array index.';
-
-        m_arrayItems.splice( index, 1 );
-
-        m_itemsContainer.removeChild( container );
-
-        // update index stuff
-        for (i in index...m_arrayItems.length) {
-            var element = m_arrayItems[ i ];
-
-            element.index = i;
-            element.handler.arrayIndex = i;
-        }
     }
 
     private function initElements() {
-        m_parent.classList.add( 'array-owner' );
-
         var itemsWrapper = js.Browser.document.createDivElement( );
         {
             itemsWrapper.classList.add( 'array-items-wrapper' );
@@ -122,7 +85,7 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
 
         m_btnAddItem = new Button( );
         {
-            m_btnAddItem.text = 'Add ${m_type.arrayType}';
+            m_btnAddItem.text = 'Add Item';
 
             m_btnAddItem.addEventListener( 'click', onAddItemClicked );
 
@@ -130,30 +93,13 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
         }
     }
 
-    public function getFieldHandlers() : Array<FieldInspectionHandler> {
-        var handlers = m_owner.getFieldHandlers( );
-
-        for (item in m_arrayItems)
-            handlers.push( item.handler );
-
-        return handlers;
-    }
-
-    public function notifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) {
-        m_owner.entity.componentFieldArrayUpdate(
-            m_owner.component.type,
-            field.name,
-            handler.arrayIndex,
-            value
-        );
-    }
-
     private function inspectItem(value) : FieldInspectionHandler {
         var database = Editor.instance.componentDatabase;
 
-        var arrayType = database.getNativeType( m_type.arrayType );
+        var type = database.getNativeType( m_field.type );
+        var arrayType = database.getNativeType( type.arrayType );
 
-        return database.createFieldInspector( this, value, m_field, arrayType );
+        return database.createFieldInspector( m_owner, value, m_field, arrayType );
     }
 
     private function onAddItemClicked(e : js.html.MouseEvent) {

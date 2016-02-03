@@ -85,17 +85,13 @@ namespace ursine
 
         SizeType Size(void) const;
 
-    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
-
-        ArrayEventDispatcher &GetModifyEvents(void);
-
-    #endif
-
     private:
 
         std::vector<T> m_impl;
 
     #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+        friend class meta::ArrayWrapperContainer<T>;
 
         ArrayEventDispatcher m_modifyEvents;
 

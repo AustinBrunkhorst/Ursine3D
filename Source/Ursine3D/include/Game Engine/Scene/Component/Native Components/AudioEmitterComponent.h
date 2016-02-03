@@ -22,53 +22,51 @@ namespace ursine
 {
 	namespace ecs
 	{
-		class AudioEmitter 
-            : public Component
-            , public AudioComponentBase
+		class AudioEmitter : public Component, public AudioComponentBase
 		{
 			NATIVE_COMPONENT;
 
 		public:
-            Meta(InputRange( 0.0f, 100.0f, 1, "{{value}}%" ))
+
 			EditorField(
 				float Volume,
 				GetVolume,
 				SetVolume
-			);
+				);
 
 			EditorField(
 				bool Loop,
 				GetLoop,
 				SetLoop
-			);
+				);
 
 			EditorField(
 				bool Mute,
 				GetMute,
 				SetMute
-			);
+				);
 
-            Meta(Enable)
-			AudioEmitter(void);
-			~AudioEmitter(void);
+			AudioEmitter( void );
+			~AudioEmitter( void );
 
-			float GetVolume(void) const;
-			void SetVolume(float volume);
+			float GetVolume( void ) const;
+			void SetVolume( float volume );
 
-			bool GetLoop(void) const;
-			void SetLoop(bool loop);
+			bool GetLoop( void ) const;
+			void SetLoop( bool loop );
 
-			bool GetMute(void) const;
-			void SetMute(bool mute);
+			bool GetMute( void ) const;
+			void SetMute( bool mute );
 
-			std::string GetFrontSound(void);
-			void PopFrontSound(void);
-			bool SoundsEmpty(void);
-			void AddSoundToPlayQueue(std::string sound);
+			std::string GetFrontSound( void );
+			void PopFrontSound( void );
+			bool SoundsEmpty();
+			void AddSoundToPlayQueue( std::string sound );
 
-			ListenerIndex GetListeners(void);
+			ListenerIndex GetListeners();
 
-			void OnInitialize(void) override;
+			Meta( Disable )
+				void OnInitialize( void ) override;
 
 		private:
 			bool m_loop;
@@ -79,6 +77,6 @@ namespace ursine
 			// fire and forget
 			std::queue<std::string> m_soundsFAF;
 
-		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Emitter" ));
+		} Meta( Enable, DisplayName( "Audio Emitter" ) );
 	}
 }

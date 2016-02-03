@@ -27,6 +27,17 @@ namespace ursine
     {
         class Simulation;
 
+        enum BodyFlag
+        {
+        #ifdef BULLET_PHYSICS
+
+            BF_DYNAMIC = 0,
+            BF_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
+            BF_STATIC = btRigidBody::CF_STATIC_OBJECT
+
+        #endif
+        };
+
         class Rigidbody : public virtual RigidbodyBase
         {
         public:

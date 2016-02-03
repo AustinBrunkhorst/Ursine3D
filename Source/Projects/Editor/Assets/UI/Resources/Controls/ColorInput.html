@@ -117,11 +117,6 @@
             },
             attached: function() {
                 this._initColor( );
-            },
-
-            show: function(x, y) {
-                this.style.left = x +'px';
-                this.style.top = y +'px';
 
                 setTimeout( function() {
                     var bounds = this.getBoundingClientRect( );
@@ -129,10 +124,9 @@
                     // fit inside window
                     if (bounds.bottom > window.innerHeight)
                         this.style.top = (window.innerHeight - bounds.height) + 'px';
-
-                    this.classList.add( 'shown' );
-                }.bind( this ), 0 );
+                }.bind( this ), 25 );
             },
+
             close: function() {
                 if (this.parentNode)
                     this.parentNode.removeChild( this );

@@ -13,12 +13,8 @@
 
 #pragma once
 
-#if defined(_DEBUG)
-    #if !defined(CONFIG_DEBUG)
-        #define CONFIG_DEBUG
-    #endif
+#ifdef _DEBUG
+#define CONFIG_DEBUG
 #else
-    #if !defined(CONFIG_RELEASE)
-        #define CONFIG_RELEASE
-    #endif
+#define CONFIG_RELEASE
 #endif

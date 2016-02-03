@@ -21,27 +21,24 @@ namespace ursine
 {
 	namespace ecs
 	{
-		class AudioListener 
-            : public Component
-            , public AudioComponentBase
+		class AudioListener : public Component, public AudioComponentBase
 		{
 			NATIVE_COMPONENT;
 
 		public:
-            Meta(Enable)
-			AudioListener(void);
+
+			AudioListener();
 			~AudioListener(void);
 
-            ursine::Array<ursine::Color> testing;
-
-			ListenerIndex GetListenerIndex(void);
+			ListenerIndex GetListenerIndex();
 			void SetListenerIndex(ListenerIndex index);
 
-			void OnInitialize(void) override;
+			Meta(Disable)
+				void OnInitialize(void) override;
 
 		private:
 			 ListenerIndex m_listenerIndex;
 
-		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Listener 3D" ));
+		} Meta(Enable, DisplayName("Audio Listener 3D"));
 	}
 }

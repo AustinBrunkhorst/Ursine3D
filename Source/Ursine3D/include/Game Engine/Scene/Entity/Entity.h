@@ -209,12 +209,6 @@ namespace ursine
             // Sets this entity's index in the parent's children list
             void SetSiblingIndex(uint index) const;
 
-			const Entity *GetParent(void) const;
-			Entity *GetParent(void);
-
-			const Entity *GetRoot(void) const;
-			Entity *GetRoot(void);
-
             ////////////////////////////////////////////////////////////////////
             // Events
             ////////////////////////////////////////////////////////////////////

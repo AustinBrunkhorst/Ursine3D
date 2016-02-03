@@ -87,6 +87,66 @@ namespace ursine
             m_modelName = name;
 
             m_model->SetModel( name );
+
+			auto *gfx = GetCoreSystem(graphics::GfxAPI);
+			
+			
+			auto *model = gfx->ResourceMgr.GetModelResource(name);
+			
+			auto *world = GetOwner()->GetWorld();
+						
+			if (model != nullptr)
+			{
+				auto &meshVec = model->GetMeshArray();
+				auto &meshLvlhVec = model->GetMeshLvlArray();
+				auto &rigLvlhVec = model->GetRigLvlArray();
+			
+				//int childIndex = 0;
+
+				// create root entity
+				auto *rootEntity = world->CreateEntity("RootNode");
+				auto *meshEntity = world->CreateEntity("Model");
+				auto *rigEntity = world->CreateEntity("Rig");
+
+				auto *transform = rootEntity->GetTransform();
+				transform->AddChild( meshEntity->GetTransform() );
+				transform->AddChild( rigEntity->GetTransform() );
+			
+				unsigned int index = 0;
+				// show mesh hierarchy
+				for (auto &x : meshVec)
+				{
+					// Create an entity
+					auto *newEntity = world->CreateEntity(x->GetName());
+					auto currentMeshLvl = meshLvlhVec[ index ];
+
+					// Add model3d
+					auto *modelComp = newEntity->AddComponent<Model3D>();
+					if (currentMeshLvl.mParentIndex == -1)
+					{
+						// Attach to the root node entity
+						auto *transform = meshEntity->GetTransform();
+
+						// We need to grab the data from this... Well shit
+						transform->AddChild( newEntity->GetTransform() );
+					}
+					else
+					{
+						// Attach to the parent node entity
+						auto *transform = world->GetEntityFromName(meshVec[ currentMeshLvl.mParentIndex ]->GetName() )->GetTransform();
+
+						// We need to grab the data from this... Well shit
+						transform->AddChild( newEntity->GetTransform() );
+					}
+					++index;
+					//// set the mesh and bone later
+					//// Set the mesh to this mesh
+					//modelComp->SetModelResourceName(name);
+					//
+					//// Set its mesh index
+					//modelComp->SetMeshIndex(childIndex++);			
+				}				
+			}
         }
 
         const std::string &Model3D::GetModelResourceName(void) const
@@ -96,6 +156,7 @@ namespace ursine
 
         const graphics::ModelResource *Model3D::GetModelResource(void) const
         {
+			// need to show mesh, bone hierarchy here
             return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource( m_modelName );
         }
 

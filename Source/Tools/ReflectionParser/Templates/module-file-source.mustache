@@ -164,9 +164,6 @@ void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::Reflect
             type.LoadBaseClasses( db, typeID, { 
                 {{#baseClass}}typeof( {{& name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
             } );
-            {{#arrayTypeEnabled}}
-            // Array Constructor
-			type.SetArrayConstructor<{{& qualifiedName}}>( );{{/arrayTypeEnabled}}
 
             // Constructors
             {{#constructor}}{{#enableNonDynamic}}

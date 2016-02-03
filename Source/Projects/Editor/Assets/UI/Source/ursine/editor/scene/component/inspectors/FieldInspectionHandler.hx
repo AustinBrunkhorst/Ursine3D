@@ -11,14 +11,12 @@ class FieldInspectionHandler {
 
     public var arrayIndex : UInt;
 
-    private var m_owner : IFieldInspectionOwner;
+    private var m_owner : ComponentInspectionHandler;
     private var m_instance : Dynamic;
     private var m_field : NativeField;
     private var m_type : NativeType;
 
-    private static var m_fieldNameRegex = ~/([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))/g;
-
-    public function new(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) {
+    public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
         m_owner = owner;
         m_instance = instance;
         m_field = field;
@@ -26,9 +24,7 @@ class FieldInspectionHandler {
 
         inspector = new FieldInspector( );
 
-        var prettyName = m_fieldNameRegex.replace( field.name, '$1 ' );
-
-        inspector.heading = prettyName.charAt( 0 ).toUpperCase( ) + prettyName.substr( 1 );
+        inspector.heading = field.name;
 
         arrayIndex = 0;
     }
@@ -47,7 +43,10 @@ class FieldInspectionHandler {
     }
 
     private function notifyChanged(field : NativeField, value : Dynamic) {
-        m_owner.notifyChanged( this, field, value );
+        if (m_type.isArray)
+            m_owner.notifyArrayChanged( m_field, arrayIndex, value );
+        else
+            m_owner.notifyChanged( m_field, value );
     }
 
     private function get_name() : String {

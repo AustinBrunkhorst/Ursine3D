@@ -12,7 +12,6 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
-
 #include "EntitySystem.h"
 #include "WaypointComponent.h"
 #include "WaypointAgentComponent.h"
@@ -36,7 +35,6 @@ namespace ursine
             void CalculatePath(WaypointAgent &agent, const Vec3 &goal);
 
         private:
-            std::unordered_map<EntityUniqueID, Component::Handle<Waypoint> > m_waypoints;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
@@ -45,6 +43,9 @@ namespace ursine
             void onComponentRemoved(EVENT_HANDLER(World));
 
             static float CalculateHeurisitic(const Vec3 &pos, const Vec3 &goal);
+
+            Meta(Disable)
+            std::unordered_map<EntityUniqueID, Component::Handle<Waypoint> > m_waypoints;
 
         } Meta(Enable);
     }

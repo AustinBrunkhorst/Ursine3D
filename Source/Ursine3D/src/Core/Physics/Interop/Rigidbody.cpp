@@ -31,7 +31,6 @@ namespace ursine
             , m_enableSleeping( true )
 			, m_ghost( false )
 			, m_continuousCollisionDetection( false )
-			, m_motionState( bodyType )
         {
         #ifdef BULLET_PHYSICS
 
@@ -123,12 +122,10 @@ namespace ursine
 
         #ifdef BULLET_PHYSICS
 
-            if (m_simulation && (bodyFlag == BF_STATIC || bodyFlag == BF_KINEMATIC))
+            if (m_simulation && bodyFlag == BF_STATIC || bodyFlag == BF_KINEMATIC)
                 m_simulation->ClearContacts( *this );
 
             SetMass( m_mass );
-
-			m_motionState.m_bodyFlag = bodyFlag;
 
         #endif
 
@@ -158,17 +155,12 @@ namespace ursine
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
             );
 
-			setWorldTransform( trans );
-
-			// Set the graphics world transform directly (this is because of kinematic bodies)
-			m_motionState.m_graphicsWorldTrans = trans * m_motionState.m_centerOfMassOffset;
+            setWorldTransform( trans );
 
         #endif
 
-            if (m_bodyType != BF_STATIC)
-			{
+            if (m_bodyType == BF_DYNAMIC)
                 SetAwake( );
-			}
 
 			updateCCD( );
         }
@@ -183,16 +175,10 @@ namespace ursine
 
         #ifdef BULLET_PHYSICS
 
-			btTransform trans;
-			
-			if (m_bodyType == BF_STATIC)
-			{
-				trans = getWorldTransform( );
-			}
-			else
-			{
-				m_motionState.getWorldTransform( trans );
-			}
+            btTransform trans;
+
+            m_motionState.getWorldTransform( trans );
+			// trans = getWorldTransform( );
 
             auto rot = trans.getRotation( );
             auto pos = trans.getOrigin( );

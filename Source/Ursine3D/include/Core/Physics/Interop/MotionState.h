@@ -22,20 +22,13 @@ namespace ursine
         class MotionState : public MotionStateBase
         {
         public:
-			MotionState(BodyFlag bodyFlag);
+            MotionState(void);
 
         #ifdef BULLET_PHYSICS
-
-			// Used by bullet for getting the user's position (kinematic and dynamic)
-			void getWorldTransform(btTransform &centerOfMassWorldTrans) const override;
-
-			// Used by bullet to set the user's position (dynamic only)
             void setWorldTransform(const btTransform &centerOfMassWorldTrans) override;
-
         #endif
 
             bool m_dirty;
-			BodyFlag m_bodyFlag;
         };
     }
 }

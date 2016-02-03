@@ -1,57 +1,17 @@
 @import '../../Config';
 
-$max-header-width: 140px;
-
 :host {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-
   #header {
-    display: block;
-    flex: 0 1 $max-header-width;
-    width: 50%;
-    max-width: $max-header-width;
     color: #dcdcdc;
-    font-size: 13px;
     margin: 5px 0;
   }
 
   #container {
-    display: block;
-    flex: 0 1 100%;
-    width: 65%;
     padding-right: 5px;
-  }
-
-  &.array-owner {
-    display: block;
-
-    #header {
-      width: 100%;
-    }
-
-    #container {
-      width: 100%;
-    }
   }
 }
 
 ::content {
-  x-editor-window.small-width {
-    x-field-inspector {
-      display: block;
-
-      #header {
-        width: 100%;
-      }
-
-      #container {
-        width: 100%;
-      }
-    }
-  }
-
   input {
     display: block;
     width: 100%;
@@ -59,7 +19,6 @@ $max-header-width: 140px;
 
     &[type=checkbox] {
       width: auto;
-      margin-left: 0;
     }
   }
 
@@ -93,16 +52,9 @@ $max-header-width: 140px;
     }
 
     .array-items {
-      &:not(:empty) {
-        border-bottom: 1px solid #424242;
-      }
-
       x-array-item-container {
         display: block;
-
-        &:not(.opened) {
-          margin-bottom: 2px;
-        }
+        margin-bottom: 2px;
       }
     }
   }

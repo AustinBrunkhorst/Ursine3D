@@ -9,7 +9,7 @@ import ursine.editor.scene.component.ComponentInspection;
 
 @:keepInit
 @:keepSub
-class ComponentInspectionHandler implements IFieldInspectionOwner {
+class ComponentInspectionHandler {
     public var entity(default, null) : Entity;
     public var component(default, null) : ComponentInspection;
 
@@ -127,24 +127,19 @@ class ComponentInspectionHandler implements IFieldInspectionOwner {
         inspector.fieldInspectors.removeChild( field.inspector );
     }
 
+    public function notifyChanged(field : NativeField, value : Dynamic) {
+        entity.componentFieldUpdate( component.type, field.name, value );
+    }
+
+    public function notifyArrayChanged(field : NativeField, index : UInt, value : Dynamic) {
+        entity.componentFieldArrayUpdate( component.type, field.name, index, value );
+    }
+
     public function remove() {
         for (handler in m_fieldHandlers)
             handler.remove( );
 
         if (inspector.parentNode != null)
             inspector.parentNode.removeChild( inspector );
-    }
-
-    public function getFieldHandlers() : Array<FieldInspectionHandler> {
-        var handlers = [ ];
-
-        for (handler in m_fieldHandlers)
-            handlers.push( handler );
-
-        return handlers;
-    }
-
-    public function notifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) {
-        entity.componentFieldUpdate( component.type, field.name, value );
     }
 }

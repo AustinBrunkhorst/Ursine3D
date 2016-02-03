@@ -17,4 +17,3 @@
 #include "PhysicsSystem.h"
 #include "DebugSystem.h"
 #include "AudioSystem.h"
-#include "SweptControllerSystem.h"
