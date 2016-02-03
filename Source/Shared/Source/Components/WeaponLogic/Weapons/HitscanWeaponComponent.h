@@ -22,11 +22,13 @@ struct HitscanWeapon : ursine::ecs::Component, AbstractHitscanWeapon
 public:
 
     AbstractWeaponFields( );
+    HitscanEditorFields( );
 
     HitscanWeapon(void);
     ~HitscanWeapon(void);
 
     void OnInitialize(void) override;
 
+    void RemoveMySelf(void) override;
 
 } Meta(Enable, DisplayName("HitscanWeapon"));

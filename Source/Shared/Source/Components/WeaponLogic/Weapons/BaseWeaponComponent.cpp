@@ -25,3 +25,8 @@ void BaseWeapon::OnInitialize( void )
     AbstractWeaponInit( BaseWeapon );
 }
 
+void BaseWeapon::RemoveMySelf(void)
+{
+    GetOwner( )->Delete( );
+}
+

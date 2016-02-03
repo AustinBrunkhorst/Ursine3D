@@ -173,6 +173,10 @@ namespace ursine
 			// nullptr if it doesn't exist. Use the type safe version when possible
 			Component *GetComponentInChildren(ComponentTypeID id) const;
 
+            // Gets a child by desired name
+            // nullptr if it doesn't exist
+            Entity* GetChildByName(const std::string& name) const;
+
 			// Gets a component of the specified type in this entity's parent (type safe)
 			// nullptr if it doesn't exist
 			template<class ComponentType>

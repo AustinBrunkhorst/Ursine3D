@@ -40,12 +40,6 @@ protected:
     void Disable(ursine::ecs::Entity *entity) override;
 private:
 
-    // entity's components changed
-    void OnComponentAdded(EVENT_HANDLER(World));
-
-    // entity removed
-    void OnEntityRemoved(EVENT_HANDLER(World));
-
     void EvaluateProjectileWeapons(const float dt);
 
     void FireProjectileWeapon(AbstractWeapon& weapon, ursine::ecs::Transform& trans);
@@ -73,12 +67,6 @@ protected:
     void Disable(ursine::ecs::Entity *entity) override;
 
 private:
-
-    // entity's components changed
-    void OnComponentAdded(EVENT_HANDLER(World));
-
-    // entity removed
-    void OnEntityRemoved(EVENT_HANDLER(World));
 
     void EvaluateHitscanWeapons(const float dt);
 

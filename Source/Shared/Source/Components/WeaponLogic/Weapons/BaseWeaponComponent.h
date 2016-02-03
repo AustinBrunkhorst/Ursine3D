@@ -28,5 +28,6 @@ public:
 
     void OnInitialize(void) override;
 
-} Meta(Enable, DisplayName("ProjectileWeapon"));
+    void RemoveMySelf(void) override;
 
+} Meta(Enable, DisplayName("ProjectileWeapon"));

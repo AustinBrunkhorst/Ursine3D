@@ -108,6 +108,8 @@ namespace ursine
 
             void AddForceAtPosition(const SVec3 &force, const SVec3 &worldPosition, ecs::Transform *transform);
 
+            void AddImpulse(const SVec3 &impulse);
+
             void AddTorque(const SVec3 &torque);
 
             // Relative to the transforms coordinate system

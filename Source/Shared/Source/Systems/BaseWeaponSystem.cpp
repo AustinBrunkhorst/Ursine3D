@@ -92,8 +92,6 @@ namespace
         damageComp.SetDeleteOnCollision(weapon.GetDeleteOnCollision( ));
 
         proj.GetTransform( )->SetWorldPosition(trans.GetWorldPosition( ));
-
-        ProjectileVelocity(weapon, proj, trans);
     }
 
     // Is weapon out of ammo
@@ -242,24 +240,28 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
 {
     for ( auto it : m_weapons )
     {
-        AbstractWeapon& weapon = *it.second;
+        AbstractWeapon* weapon = it.second;
+
+        // skip if not active
+        if ( !weapon->m_active )
+            continue;
 
         // Can weapon be fired
-        switch ( weapon.CanFire( ) )
+        switch ( weapon->CanFire( ) )
         {
         case RELOAD_IN_PROCESS:
-            DecrementReloadTimer(dt, weapon);
+            DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            ReloadWeapon(weapon);
+            ReloadWeapon( *weapon );
             break;
         case FIRE_TIMER_SET:
-            DecrementFireTimer(dt, weapon);
+            DecrementFireTimer( dt, *weapon );
             break;
         case TRIGGER_NOT_PULLED:
             break;
         case CAN_FIRE:
-            FireProjectileWeapon(weapon, *m_transforms[ it.first ]);
+            FireProjectileWeapon( *weapon, *m_transforms[ it.first ] );
             break;
         default:
             break;
@@ -292,7 +294,7 @@ void BaseWeaponSystem::CreateProjectiles(const AbstractWeapon& weapon, ursine::e
     ursine::SVec3 forwardVec = trans.GetForward( );
 
     // create the number of projectiles fired
-    for ( int i = 1; i < projectilesFired; ++i )
+    for ( int i = 0; i < projectilesFired; ++i )
     {
         // create clone
         cloneProj = proj->Clone( );
@@ -301,6 +303,7 @@ void BaseWeaponSystem::CreateProjectiles(const AbstractWeapon& weapon, ursine::e
         ProjectileVelocity(weapon, *cloneProj, trans);
     }
 }
+
 
 
 
@@ -349,24 +352,27 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
 {
     for ( auto it : m_weapons )
     {
-        AbstractHitscanWeapon& weapon = *it.second;
+        AbstractHitscanWeapon* weapon = it.second;
+
+        if ( !weapon->m_active )
+            continue;
 
         // Can weapon be fired
-        switch ( weapon.CanFire( ) )
+        switch ( weapon->CanFire( ) )
         {
         case RELOAD_IN_PROCESS:
-            DecrementReloadTimer(dt, weapon);
+            DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            ReloadWeapon(weapon);
+            ReloadWeapon( *weapon );
             break;
         case FIRE_TIMER_SET:
-            DecrementFireTimer(dt, weapon);
+            DecrementFireTimer(dt, *weapon);
             break;
         case TRIGGER_NOT_PULLED:
             break;
         case CAN_FIRE:
-            FireHitscanWeapon(weapon, *m_transforms[ it.first ]);
+            FireHitscanWeapon( *weapon, *m_transforms[ it.first ] );
             break;
         default:
             break;
@@ -450,4 +456,5 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         }
     }
 }
+
 

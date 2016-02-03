@@ -2,6 +2,7 @@
 
 #include <EntityEvent.h>
 #include <EventArgs.h>
+#include "PickupEventArgs.h"
 
 class DamageOnCollide;
 
@@ -17,21 +18,19 @@ namespace game
         // Damage events
         DAMAGE_EVENT,
 
+        ACTIVATE_WEAPON,
+        DETACH_WEAPON,
+        DEACTIVATE_WEAPON,
 
-        //////////////////////////
+
         ////  Command Events  ////
-        //////////////////////////
 #define ENUMERATE(eventName) eventName,
 #include "CommandEvents.inl"
 #undef ENUMERATE
 
-
-        /////////////////////////
         ////  Pickup Events  ////
-        /////////////////////////
-#define ENUMERATE(eventName) eventName,
 #include "PickupEvents.inl"
-#undef ENUMERATE
+
 
 
         GAME_EVENTS_END
@@ -54,6 +53,27 @@ namespace game
 
         DamageEventArgs(float damage, DamageOnCollide* damageComp)
             : m_damage(damage), m_damageComp(damageComp)
+        { }
+    };
+
+    struct WeaponDeactivationEventArgs : ursine::EventArgs
+    {
+        int m_ammo;
+        int m_clip;
+
+        WeaponDeactivationEventArgs(int ammo = 1, int clip = -1)
+            : m_ammo( ammo ), m_clip( clip )
+        { }
+    };
+
+
+    struct WeaponActivationEventArgs : WeaponDeactivationEventArgs
+    {
+        ursine::ecs::Component::Handle<ursine::ecs::Transform>* m_camHandle;
+        ursine::SVec3 spawnOffset;
+
+        WeaponActivationEventArgs(ursine::ecs::Component::Handle<ursine::ecs::Transform>* camHandle = nullptr, int ammo = -1, int clip = -1)
+            : WeaponDeactivationEventArgs( ammo, clip ), m_camHandle( camHandle )
         { }
     };
 

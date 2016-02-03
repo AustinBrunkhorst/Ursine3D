@@ -35,5 +35,9 @@ void HitscanWeapon::OnInitialize(void)
 }
 
 
+void HitscanWeapon::RemoveMySelf(void)
+{
+    GetOwner( )->Delete( );
+}
 
 

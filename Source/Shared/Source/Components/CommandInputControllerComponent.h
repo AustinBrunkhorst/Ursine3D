@@ -31,6 +31,9 @@ public:
         Move,
         Look,
         Shoot,
+        Reload,
+        Swap,
+
         ActionCount
     };
 
@@ -73,7 +76,10 @@ private:
 
     PlayerTwoAxisAction m_look;
 
-    PlayerAction m_fire;
+    // weapon actions
+    PlayerAction    m_fire,
+                    m_reload,
+                    m_swap;
 
     PlayerAction m_jump;
 

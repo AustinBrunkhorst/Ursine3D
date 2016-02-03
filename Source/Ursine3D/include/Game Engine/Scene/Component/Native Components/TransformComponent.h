@@ -101,8 +101,8 @@ namespace ursine
             void SetWorldRotation(const SQuat &rotation);
             void SetWorldEuler(const SVec3 &euler);
 
-            SQuat GetWorldRotation(void);
-            SVec3 GetWorldEuler(void);
+            SQuat GetWorldRotation(void) const;
+            SVec3 GetWorldEuler(void) const;
 
             void LookAt(const SVec3 &worldPosition);
 
@@ -115,16 +115,16 @@ namespace ursine
 
             void SetWorldScale(const SVec3 &scale);
 
-            SVec3 GetWorldScale(void);
+            SVec3 GetWorldScale(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Axis
             ////////////////////////////////////////////////////////////////////
 
             // Do this in the quaternion class
-            SVec3 GetForward(void);
-            SVec3 GetRight(void);
-            SVec3 GetUp(void);
+            SVec3 GetForward(void) const;
+            SVec3 GetRight(void) const;
+            SVec3 GetUp(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Matrix
@@ -141,22 +141,22 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             SVec3 ToLocal(const SVec3 &point);
-            SQuat ToLocal(const SQuat &quat);
+            SQuat ToLocal(const SQuat &quat) const;
 
             SVec3 ToWorld(const SVec3 &point);
-            SQuat ToWorld(const SQuat &quat);
+            SQuat ToWorld(const SQuat &quat) const;
 
             ////////////////////////////////////////////////////////////////////
             // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
-			Handle<Transform> GetRoot(void);
+			Handle<Transform> GetRoot(void) const;
 
-			Handle<Transform> GetParent(void);
+			Handle<Transform> GetParent(void) const;
 
             // Check to see if this transform is a 
             // child (anywhere in the hierarchy) of the given parent
-            bool IsChildOf(Handle<Transform> parent);
+            bool IsChildOf(const Handle<Transform> parent) const;
 
             // Add a child to the hierarchy, assuming its coordinates are in world space
             void AddChild(Transform *child);
@@ -169,6 +169,9 @@ namespace ursine
 
             // Remove all children from the hiearchy (adding to root node)
             void RemoveChildren(void);
+
+            // Detach from current parent
+            void DetachFromParent(void);
 
             // Find child by their index in the list
             // If the index is too large, return nullptr
