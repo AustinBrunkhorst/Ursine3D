@@ -14,7 +14,8 @@
 #include "UrsinePrecompiled.h"
 
 #include "AnimatorComponent.h"
-#include <Game Engine/Scene/Component/Native Components/Model3DComponent.h>
+#include <Model3DComponent.h>
+#include <GfxAPI.h>
 
 namespace ursine
 {

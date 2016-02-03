@@ -14,7 +14,14 @@
 #pragma once
 
 #include <Component.h>
-#include <UrsineLogTools.h>
+
+namespace ursine
+{
+	namespace ecs
+	{
+		class SweptController;
+	}
+}
 
 class CharacterController : public ursine::ecs::Component
 {
@@ -88,4 +95,5 @@ private:
     ursine::Vec2 m_moveDir;
     ursine::Vec2 m_lookDir;
 
-} Meta(Enable, DisplayName("CharacterController"));
+} Meta(Enable, DisplayName("CharacterController"), 
+	   RequiresComponents(typeof(ursine::ecs::SweptController)));
