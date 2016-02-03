@@ -418,7 +418,61 @@ namespace ursine
 
 		void SweptControllerSystem::snapToGround(SweptController &controller)
 		{
-			//if (controller.m_grounded)
+			if (controller.m_grounded)
+			{
+				// Assume not grounded anymore and reset flag only if ground is still detected below the character.
+				controller.m_grounded = false;
+
+				// Maximum distance allowed to snap in opposite direction of worldUp.
+				auto maxDisplacement = controller.m_worldUp * -controller.m_groundSnapDistance;
+
+				// Passing a timestep of 1 makes a displacement no different than velocity.
+				// Time of impacts will return a value between 0 and 1,
+				// effectively parameterizing the allowed snap distance.
+				auto rigidbody = controller.m_rigidbody;
+				physics::SweepOutput output;
+
+				m_physics->Sweep( rigidbody.Get( ), maxDisplacement, 1.0f, /*TODO: Filter*/
+							      output, physics::SweepType::SWEEP_ALL_HITS, true );
+
+				for (size_t i = 0, n = output.hit.size( ); i < n; ++i)
+				{
+					auto normal = output.normal[ i ];
+					auto relativeVel = -SVec3::Dot( normal, maxDisplacement );
+
+					// Ignore seperating velocity for the same reasons as the regular sweep.
+					if (relativeVel < controller.m_epsilon)
+						continue;
+
+					// Skip everything that's not ground.
+					// Doesn't matter if something else is hit first because the controller
+					// shouldn't unground when on the edge of the ground and a wall slope simultaniously.
+					// The allowed distance from the ground is meant to be fairly small anyway.
+					if (!isGroundSurface( controller, normal ))
+						continue;
+
+					// Sending this event unique from the sweep events so the user can
+					// choose to do something only when in contact with the ground.
+					// TODO: this.SendCollisionEvent( Events.GroundSnapCollision, result );
+
+					// Check collision groups for skip resolution after detection event is sent.
+					// TODO: if (controller.skipResolution( this.collider, result.othercollider ))
+					// continue;
+
+					// Keep track of kinematic objects for next update.
+					controller.addIfKinematic( m_world->GetEntityUnique( output.entity[ i ] ) );
+
+					auto trans = controller.m_transform;
+					
+					trans->SetWorldPosition( trans->GetWorldPosition( ) + maxDisplacement * output.time[ i ] );
+
+					// Reset flag since ground was detected.
+					controller.m_grounded = true;
+
+					// First detection with a ground surface is all that's needed.
+					break;
+				}
+			}
 		}
 
 		bool SweptControllerSystem::isGroundSurface(SweptController &controller, const SVec3 &normal)

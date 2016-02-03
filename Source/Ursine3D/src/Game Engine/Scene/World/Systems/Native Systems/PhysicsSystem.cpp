@@ -137,6 +137,9 @@ namespace ursine
 		bool PhysicsSystem::Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
 					              physics::SweepOutput &output, physics::SweepType type, bool sorted)
         {
+			if (velocity == SVec3::Zero( ) || dt == 0.0f)
+				return false;
+
 			auto *bodyBase = &body->m_rigidbody;
 	        auto *collider = bodyBase->GetCollider( );
 
