@@ -20,6 +20,9 @@ import ursine.controls.Button;
 class EntityInspector extends WindowHandler {
     public static var instance : EntityInspector;
 
+    // width in pixels to consider the window to be "small"
+    private static var m_smallWindowWidth = 190;
+
     private var m_inspectedEntity : Entity = null;
 
     private var m_componentHandlers : Map<String, ComponentInspectionHandler>;
@@ -260,8 +263,15 @@ class EntityInspector extends WindowHandler {
         m_openCache[ component.type ] = e.detail.open;
     }
 
+    private function onWindowResized() {
+        window.classList.toggle( 'small-width', window.container.offsetWidth < m_smallWindowWidth );
+    }
+
     private function initWindow() {
         window.classList.add( 'entity-inspector-window' );
+
+        window.addEventListener( 'resize', onWindowResized );
+        js.Browser.window.addEventListener( 'resize', onWindowResized );
 
         // Header Toolbar
         m_headerToolbar = js.Browser.document.createDivElement( );

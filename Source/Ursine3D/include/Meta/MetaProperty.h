@@ -82,6 +82,12 @@ class DisableConstPtrType : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/** @brief Explicitly disables generation of the array type for this type.
+ */
+class DisableArrayType : public ursine::meta::MetaProperty { };
+
+///////////////////////////////////////////////////////////////////////////////
+
 /** @brief Defines an explicit getter for this type.
  *         Applies to Globals, Fields and Static Fields.
  */

@@ -10,14 +10,15 @@ class DefaultFieldInspector extends FieldInspectionHandler {
     private var m_comboInput : ComboInput;
     private var m_enumValueOptions : Map<String, js.html.OptionElement>;
 
-    public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
+    public function new(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
-
 
         if (type.isArray) {
             initArray( );
         } else if (type.enumValue != null) {
             initEnum( );
+        } else {
+            trace( type );
         }
     }
 
@@ -49,7 +50,7 @@ class DefaultFieldInspector extends FieldInspectionHandler {
     }
 
     private function initArray() {
-        m_arrayInspector = new ArrayTypeInspector( inspector, m_owner, m_instance, m_field, m_type );
+        m_arrayInspector = new ArrayTypeInspector( inspector, cast m_owner, m_instance, m_field, m_type );
     }
 
     private function initEnum() {

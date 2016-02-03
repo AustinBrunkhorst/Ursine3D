@@ -6,7 +6,7 @@ import ursine.controls.inspection.FieldInspector;
 
 import ursine.editor.scene.component.ComponentDatabase;
 
-class ArrayTypeInspector implements IFieldInspectionOwner {
+class DefaultStructureInspector implements IFieldInspectionOwner {
     private var m_parent : FieldInspector;
     private var m_owner : ComponentInspectionHandler;
     private var m_instance : Dynamic;
@@ -104,8 +104,6 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
     }
 
     private function initElements() {
-        m_parent.classList.add( 'array-owner' );
-
         var itemsWrapper = js.Browser.document.createDivElement( );
         {
             itemsWrapper.classList.add( 'array-items-wrapper' );
