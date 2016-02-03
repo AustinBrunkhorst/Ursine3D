@@ -63,5 +63,5 @@ namespace ursine
         Tween *get(uint32 id);
 
         void cancel(uint32 id, bool invokeRemoved = true);
-    } Meta(Enable, DisableArrayType, WhiteListMethods);
+    } Meta(Enable, WhiteListMethods);
 }

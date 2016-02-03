@@ -227,12 +227,11 @@ class EntityInspector extends WindowHandler {
 
         var selector = new ComponentTypeSelector( types );
 
-        selector.style.left = '${e.clientX}px';
-        selector.style.top = '${e.clientY}px';
-
         selector.addEventListener( 'type-selected', onAddComponentTypeSelected );
 
         js.Browser.document.body.appendChild( selector );
+
+        selector.show( e.clientX, e.clientY );
     }
 
     private function onRemoveComponentClicked(component : ComponentInspection, e : js.html.MouseEvent) {

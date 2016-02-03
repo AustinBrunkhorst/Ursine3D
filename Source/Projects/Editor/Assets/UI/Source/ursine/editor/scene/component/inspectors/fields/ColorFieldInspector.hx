@@ -56,17 +56,14 @@ class ColorFieldInspector extends FieldInspectionHandler {
         m_colorInput.addEventListener( 'color-changed', onColorChanged );
         m_colorInput.addEventListener( 'closed', onColorClosed );
 
-        m_colorInput.style.left = '${e.clientX}px';
-        m_colorInput.style.top = '${e.clientY}px';
-
         js.Browser.document.body.appendChild( m_colorInput );
+
+        m_colorInput.show( e.clientX, e.clientY );
 
         var handlers = m_owner.getFieldHandlers( );
 
-        var colorFieldType = Type.typeof( this );
-
         for (handler in handlers) {
-            if (Type.typeof( handler ) == colorFieldType) {
+            if (Std.is( handler, ColorFieldInspector) && handler != this) {
                 var colorHandler : ColorFieldInspector = cast handler;
 
                 colorHandler.clearColorInput( );
@@ -83,7 +80,10 @@ class ColorFieldInspector extends FieldInspectionHandler {
     }
 
     private function clearColorInput() {
-        if (m_colorInput != null)
+        if (m_colorInput != null) {
             js.Browser.document.body.removeChild( m_colorInput );
+
+            m_colorInput = null;
+        }
     }
 }

@@ -20,28 +20,28 @@
 struct DisableComponentRemoval : ursine::meta::MetaProperty
 {
     META_OBJECT
-} Meta(DisableArrayType);
+};
 
 /** @brief Makes sure this component doesn't display in the entity inspector.
  */
 struct HiddenInInspector : ursine::meta::MetaProperty
 {
     META_OBJECT;
-} Meta(DisableArrayType);
+};
 
 /** @brief Disable serialization of this object
  */
 struct DisableSerialization : ursine::meta::MetaProperty
 {
     META_OBJECT;
-} Meta(DisableArrayType);
+};
 
 /** @brief Displays an enum field as a bit mask editor
  */
 struct BitMaskEditor : ursine::meta::MetaProperty
 {
     META_OBJECT;
-} Meta(DisableArrayType);
+};
 
 /** @brief Forces the editor to use a specific type editor for a field
  */
@@ -53,7 +53,7 @@ struct ForceEditorType : ursine::meta::MetaProperty
 
     ForceEditorType(const ursine::meta::Type &type)
         : typeName( type.GetName( ) ) { }
-} Meta(DisableArrayType);
+};
 
 /** @brief Field getter only used when interacting with the editor
  */
@@ -65,7 +65,7 @@ struct EditorGetter : ursine::meta::MetaProperty
 
     EditorGetter(const char *getter)
         : getter( getter ) { }
-} Meta(DisableArrayType);
+};
 
 /** @brief Field setter only used when interacting with the editor
  */
@@ -77,7 +77,7 @@ struct EditorSetter : ursine::meta::MetaProperty
 
     EditorSetter(const char *setter)
         : setter( setter ) { }
-} Meta(DisableArrayType);
+};
 
 /** @brief Declares that this component type requires all 
  *         of the listed component types
@@ -91,7 +91,7 @@ struct RequiresComponents : ursine::meta::MetaProperty
     template<typename... Types>
     RequiresComponents(Types &&...types)
         : componentTypes( { std::forward<Types>( types )... } ) { }
-} Meta(DisableArrayType);
+};
 
 /** @brief Treats a component method as a button in the editor
  */
@@ -103,7 +103,7 @@ struct CreateButton : ursine::meta::MetaProperty
 
     CreateButton(const char *text)
         : text( text ) { }
-} Meta(DisableArrayType);
+};
 
 /** @brief Modifies the field to be restricted to the input range
  *         specified by min and max. This only applies to number types.
@@ -128,4 +128,4 @@ struct InputRange : ursine::meta::MetaProperty
         , max( max )
         , step( step )
         , format( format ) { }
-} Meta(DisableArrayType);
+};

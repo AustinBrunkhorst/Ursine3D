@@ -82,9 +82,9 @@ class DisableConstPtrType : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/** @brief Explicitly disables generation of the array type for this type.
+/** @brief Explicitly enables generation of the array type for this type.
  */
-class DisableArrayType : public ursine::meta::MetaProperty { };
+class EnableArrayType : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 

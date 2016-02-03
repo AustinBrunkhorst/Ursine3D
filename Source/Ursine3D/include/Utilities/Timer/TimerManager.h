@@ -62,5 +62,5 @@ namespace ursine
         Timer *get(uint32 id);
 
         void cancel(uint32 id, bool invoke_removed = true);
-    } Meta(Enable, DisableArrayType, WhiteListMethods);
+    } Meta(Enable, WhiteListMethods);
 }
