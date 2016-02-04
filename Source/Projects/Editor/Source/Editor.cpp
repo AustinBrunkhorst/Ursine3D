@@ -23,7 +23,7 @@
 
 #include <Color.h> 
 #include <LightComponent.h>
-#include <iostream>
+#include <WorldConfigComponent.h>
 
 using namespace ursine;
 

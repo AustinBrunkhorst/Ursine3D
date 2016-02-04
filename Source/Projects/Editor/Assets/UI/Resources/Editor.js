@@ -1808,8 +1808,8 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,onAddComponentClicked: function(e) {
 		var types = this.getAvailableComponentTypes(this.m_inspectedEntity);
-		var selector = new ComponentTypeSelectorControl(types);
-		selector.addEventListener("type-selected",$bind(this,this.onAddComponentTypeSelected));
+		var selector = new ItemSelectionPopupControl(types);
+		selector.addEventListener("item-selected",$bind(this,this.onAddComponentTypeSelected));
 		window.document.body.appendChild(selector);
 		selector.show(e.clientX,e.clientY);
 	}
@@ -1818,7 +1818,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		e.stopPropagation();
 	}
 	,onAddComponentTypeSelected: function(e) {
-		var componentType = e.detail.type;
+		var componentType = e.detail.item;
 		if(this.m_inspectedEntity.hasComponent(componentType)) {
 			var notification = new NotificationControl(2,"Entity already has component type <strong class=\"highlight\">" + componentType + "</strong>","Error");
 			notification.show();

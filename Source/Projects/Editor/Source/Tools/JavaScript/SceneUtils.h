@@ -32,3 +32,6 @@ JSFunction(ScenePlay);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(SceneStep);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneGetEntitySystems);
