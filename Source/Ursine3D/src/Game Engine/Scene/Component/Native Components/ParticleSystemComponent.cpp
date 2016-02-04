@@ -26,6 +26,9 @@ namespace ursine
 
         ParticleSystem::ParticleSystem(void)
             : BaseComponent()
+            , m_particleColor(Color::White)
+            , m_systemSpace(SystemSpace::WorldSpace)
+            , m_renderMode(RenderMode::Additive)
         {
             // store a pointer to the GfxAPI core system
             m_graphics = GetCoreSystem(graphics::GfxAPI);
@@ -114,6 +117,44 @@ namespace ursine
         {
             m_particleSystem->SetColor(color);
             NOTIFY_COMPONENT_CHANGED("color", color);
+        }
+
+        const std::string & ParticleSystem::GetParticleTextureName(void) const
+        {
+            return m_particleSystem->GetParticleTexture();
+        }
+
+        void ParticleSystem::SetParticleTextureName(const std::string & texture)
+        {
+            m_particleSystem->SetParticleTexture(texture);
+        }
+
+        SystemSpace ParticleSystem::GetSystemSpace(void) const
+        {
+            return m_systemSpace;
+        }
+        void ParticleSystem::SetSystemSpace(const SystemSpace &space)
+        {
+            m_systemSpace = space;
+
+            if ( m_systemSpace == SystemSpace::WorldSpace )
+                m_particleSystem->SetSystemSpace(true);
+            else
+                m_particleSystem->SetSystemSpace(false);
+        }
+
+        RenderMode ParticleSystem::GetRenderMode(void) const
+        {
+            return m_renderMode;
+        }
+        void ParticleSystem::SetRenderMode(const RenderMode &renderMode)
+        {
+            m_renderMode = renderMode;
+
+            if ( m_renderMode == RenderMode::Additive )
+                m_particleSystem->SetAdditive(true);
+            else
+                m_particleSystem->SetAdditive(false);
         }
     }
 }

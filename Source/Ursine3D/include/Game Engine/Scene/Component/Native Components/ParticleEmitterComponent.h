@@ -34,6 +34,11 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+            EditorButton(
+                ResetSpawnCount,
+                "Reset Spawn Count"
+            );
+
             EditorField(
                 float emitRate,
                 GetEmitRate,
@@ -100,6 +105,18 @@ namespace ursine
                 SetVelocityRange
             );
 
+            EditorField(
+                float fill,
+                GetFill,
+                SetFill
+                );
+
+            EditorField(
+                Vec3 emitterSize,
+                GetEmitterSize,
+                SetEmitterSize
+            );
+
             ParticleEmitter(void);
             ~ParticleEmitter(void);
 
@@ -107,11 +124,11 @@ namespace ursine
                 void OnInitialize(void) override;
 
             // generators for particle data
-            float GenerateLifetime(void) const;
-            float GenerateScale(void) const;
-            float GenerateRotation(void) const;
-            SVec3 GenerateVelocity(void) const;
-            SVec3 GeneratePosition(void) const;
+            float GenerateLifetime(void);
+            float GenerateScale(void);
+            float GenerateRotation(void);
+            SVec3 GenerateVelocity(void);
+            SVec3 GeneratePosition(void);
 
             // getter/setters
             float GetEmitRate(void) const;
@@ -147,6 +164,12 @@ namespace ursine
             const SVec3 GetVelocityRange(void) const;
             void SetVelocityRange(const SVec3 &range);
 
+            const SVec3 &GetEmitterSize(void) const;
+            void SetEmitterSize(const SVec3 &size);
+
+            const float GetFill(void) const;
+            void SetFill(const float fill);
+
         private:
             // temporary updating
             void onParticleUpdate(EVENT_HANDLER(Entity));
@@ -154,7 +177,7 @@ namespace ursine
             int spawnParticle(void);
 
             // parent component, this is kinda important
-            ParticleSystem *m_particleComponent;
+            Component::Handle<ParticleSystem> m_particleComponent;
 
             // all of these need variance /////////////////////////////////////
             // emit speed
@@ -183,10 +206,19 @@ namespace ursine
             Randomizer m_zVelRange;
 
             // emitter size (related to scale of transform?)
-            float m_radius;
-            Randomizer m_radiusRange;
+            SVec3 m_emitterSize;
 
             float m_currentTime;
+            unsigned m_spawnCount;
+
+            Randomizer m_fillGenerator;
+            Randomizer m_radiusGenerator;
+
+            Randomizer m_xGenerator;
+            Randomizer m_yGenerator;
+            Randomizer m_zGenerator;
+
+            float m_fill;
 
         } Meta(
             Enable, 
