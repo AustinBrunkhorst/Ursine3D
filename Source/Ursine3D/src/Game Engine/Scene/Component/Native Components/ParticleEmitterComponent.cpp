@@ -19,7 +19,7 @@
 
 #include "GfxAPI.h"
 
-#define PI 3.14f
+#define PI 3.14159265359f
 
 namespace ursine
 {
@@ -28,7 +28,7 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION(ParticleEmitter);
 
         ParticleEmitter::ParticleEmitter(void)
-            : BaseComponent()
+            : BaseComponent( )
             , m_emitRate(100)
             , m_emitRateRange(0.0f, 0.0f)
             , m_emitCount(0)
@@ -42,58 +42,100 @@ namespace ursine
             , m_xVelRange(-1.0f, 1.0f)
             , m_yVelRange(-1.0f, 1.0f)
             , m_zVelRange(-1.0f, 1.0f)
-            , m_radius(0.0f)
-            , m_radiusRange(0.0f, 0.0f)
+            , m_emitterSize(0.0f, 0.0f, 0.0f)
             , m_currentTime(0.0f)
+            , m_spawnCount(0)
+            , m_fillGenerator(0.0f, 0.0f)
+            , m_radiusGenerator(-1.0f, 1.0f)
+            , m_fill(0.0f)
+            , m_xGenerator(0, 0)
+            , m_yGenerator(0, 0)
+            , m_zGenerator(0, 0)
         {
-            
         }
 
         ParticleEmitter::~ParticleEmitter(void)
         {
-            GetOwner()->Listener(this)
+            GetOwner( )->Listener(this)
                 .Off(ENTITY_PARTICLE_UPDATE, &ParticleEmitter::onParticleUpdate);
         }
 
         void ParticleEmitter::OnInitialize(void)
         {
-            Component::OnInitialize();
+            Component::OnInitialize( );
 
-            m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
+            m_particleComponent = GetOwner( )->GetComponent<ParticleSystem>( );
 
-            GetOwner()->Listener(this)
+            GetOwner( )->Listener(this)
                 .On(ENTITY_PARTICLE_UPDATE, &ParticleEmitter::onParticleUpdate);
         }
 
         // GENERATOR METHODS ////////////////////////////////////////
 
-        float ParticleEmitter::GenerateLifetime(void) const
+        float ParticleEmitter::GenerateLifetime(void)
         {
-            return m_lifetime + m_lifetimeRange.GetValue();
+            return m_lifetime + m_lifetimeRange.GetValue( );
         }
 
-        float ParticleEmitter::GenerateScale(void) const
+        float ParticleEmitter::GenerateScale(void)
         {
-            return m_size + m_sizeRange.GetValue();
+            return m_size + m_sizeRange.GetValue( );
         }
 
-        float ParticleEmitter::GenerateRotation(void) const
+        float ParticleEmitter::GenerateRotation(void)
         {
-            return m_rotation + m_rotationRange.GetValue();
+            return m_rotation + m_rotationRange.GetValue( );
         }
 
-        SVec3 ParticleEmitter::GenerateVelocity(void) const
+        SVec3 ParticleEmitter::GenerateVelocity(void)
         {
-            return m_initialVelocity + SVec3(
-                m_xVelRange.GetValue(),
-                m_yVelRange.GetValue(),
-                m_zVelRange.GetValue()
-                );
+            SVec3 offset;
+
+            // this should be faster than a ton of trig operations... I think
+            do
+            {
+                offset.SetX(m_radiusGenerator.GetValue( ));
+                offset.SetY(m_radiusGenerator.GetValue( ));
+                offset.SetZ(m_radiusGenerator.GetValue( ));
+            } while ( offset.LengthSquared( ) > 1 );
+
+            offset *= SVec3(m_xVelRange.GetValue( ), m_yVelRange.GetValue( ), m_zVelRange.GetValue( ));
+
+            return GetOwner( )->GetTransform( )->GetWorldRotation( ) * (m_initialVelocity + offset);
         }
 
-        SVec3 ParticleEmitter::GeneratePosition(void) const
+        SVec3 ParticleEmitter::GeneratePosition(void)
         {
-            return GetOwner()->GetTransform()->GetWorldPosition();
+            // generate random sphere position in range -1, 1
+            // scale by values
+
+            SVec3 offset;
+
+            // this should be faster than a ton of trig operations... I think
+            offset.SetX(m_radiusGenerator.GetValue( ) * m_emitterSize.X());
+            offset.SetY(m_radiusGenerator.GetValue( ) * m_emitterSize.Y());
+            offset.SetZ(m_radiusGenerator.GetValue( ) * m_emitterSize.Z());
+
+            // normalize
+            if(offset.LengthSquared() > 0)
+                offset.Normalize( );
+
+            // scale by offset * size to size
+            offset *= SVec3(
+                m_xGenerator.GetValue( ), 
+                m_yGenerator.GetValue( ), 
+                m_zGenerator.GetValue( )
+            );
+
+            if(m_particleComponent->GetSystemSpace( ) == SystemSpace::LocalSpace)
+                return offset;
+
+            return GetOwner( )->GetTransform( )->GetWorldPosition( ) + offset;
+        }
+
+        void ParticleEmitter::ResetSpawnCount(void)
+        {
+            m_spawnCount = 0;
         }
 
         // GETTER / SETTERS /////////////////////////////////////////
@@ -108,7 +150,7 @@ namespace ursine
 
         float ParticleEmitter::GetEmitRateRange(void) const
         {
-            return m_emitRateRange.GetMax();
+            return m_emitRateRange.GetMax( );
         }
         void ParticleEmitter::SetEmitRateRange(const float range)
         {
@@ -136,7 +178,7 @@ namespace ursine
 
         float ParticleEmitter::GetLifetimeRange(void) const
         {
-            return m_lifetimeRange.GetMax();
+            return m_lifetimeRange.GetMax( );
         }
         void ParticleEmitter::SetLifetimeRange(const float range)
         {
@@ -155,7 +197,7 @@ namespace ursine
 
         float ParticleEmitter::GetSizeRange(void) const
         {
-            return m_sizeRange.GetMax();
+            return m_sizeRange.GetMax( );
         }
         void ParticleEmitter::SetSizeRange(const float range)
         {
@@ -174,7 +216,7 @@ namespace ursine
 
         float ParticleEmitter::GetRotationRange(void) const
         {
-            return m_rotationRange.GetMax();
+            return m_rotationRange.GetMax( );
         }
         void ParticleEmitter::SetRotationRange(const float range)
         {
@@ -194,38 +236,69 @@ namespace ursine
         const SVec3 ParticleEmitter::GetVelocityRange(void) const
         {
             return SVec3(
-                m_xVelRange.GetMax(),
-                m_yVelRange.GetMax(),
-                m_zVelRange.GetMax()
+                m_xVelRange.GetMax( ),
+                m_yVelRange.GetMax( ),
+                m_zVelRange.GetMax( )
                 );
         }
         void ParticleEmitter::SetVelocityRange(const SVec3 & range)
         {
-            m_xVelRange.SetMax(range.X());
-            m_yVelRange.SetMax(range.Y());
-            m_zVelRange.SetMax(range.Z());
+            m_xVelRange.SetMax(range.X( ));
+            m_yVelRange.SetMax(range.Y( ));
+            m_zVelRange.SetMax(range.Z( ));
 
-            m_xVelRange.SetMin(-range.X());
-            m_yVelRange.SetMin(-range.Y());
-            m_zVelRange.SetMin(-range.Z());
+            m_xVelRange.SetMin(-range.X( ));
+            m_yVelRange.SetMin(-range.Y( ));
+            m_zVelRange.SetMin(-range.Z( ));
         }
+
+        const SVec3 &ParticleEmitter::GetEmitterSize(void) const
+        {
+            return m_emitterSize;
+        }
+        void ParticleEmitter::SetEmitterSize(const SVec3 &size)
+        {
+            m_emitterSize = size;
+
+            m_xGenerator = Randomizer(m_fill * size.X( ), size.X( ));
+            m_yGenerator = Randomizer(m_fill * size.Y( ), size.Y( ));
+            m_zGenerator = Randomizer(m_fill * size.Z( ), size.Z( ));
+        }
+
+        const float ParticleEmitter::GetFill(void) const
+        {
+            return m_fill;
+        }
+
+        void ParticleEmitter::SetFill(const float fill)
+        {
+            m_fill = fill;
+
+            m_xGenerator = Randomizer(m_fill * m_emitterSize.X( ), m_emitterSize.X( ));
+            m_yGenerator = Randomizer(m_fill * m_emitterSize.Y( ), m_emitterSize.Y( ));
+            m_zGenerator = Randomizer(m_fill * m_emitterSize.Z( ), m_emitterSize.Z( ));
+        }
+
         void ParticleEmitter::onParticleUpdate(EVENT_HANDLER(Entity))
         {
-            float dt = Application::Instance->GetDeltaTime();
+            float dt = Application::Instance->GetDeltaTime( );
 
-            m_currentTime += dt;
-
-            // calculate time needed to spawn 1 particle
-            float spawnTime = 1.f / static_cast<float>(m_emitRate);
-
-            while( m_currentTime >= spawnTime )
+            if ( (m_spawnCount < m_emitCount) || m_emitCount == 0 )
             {
-                m_currentTime -= spawnTime;
-                spawnParticle();
+                m_currentTime += dt;
+
+                // calculate time needed to spawn 1 particle
+                float spawnTime = 1.f / static_cast<float>(m_emitRate);
+
+                while ( m_currentTime >= spawnTime && ((m_spawnCount < m_emitCount) || m_emitCount == 0) )
+                {
+                    m_currentTime -= spawnTime;
+                    spawnParticle( );
+                }
             }
 
-            auto &gpuData = m_particleComponent->GetGPUParticleData();
-            auto &cpuData = m_particleComponent->GetCPUParticleData();
+            auto &gpuData = m_particleComponent->GetGPUParticleData( );
+            auto &cpuData = m_particleComponent->GetCPUParticleData( );
 
             // update ALL particles
             int activeParticles = m_particleComponent->GetActiveParticleCount( );
@@ -243,13 +316,9 @@ namespace ursine
                 }
 
                 // update position with velocity
-                gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X() * dt;
-                gpuData[ x ].position[ 1 ] += cpuData[ x ].velocity.Y() * dt;
-                gpuData[ x ].position[ 2 ] += cpuData[ x ].velocity.Z() * dt;
-
-                /*GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetColor(gpuData[ x ].color[ 0 ], gpuData[ x ].color[ 1 ], gpuData[ x ].color[ 2 ], gpuData[ x ].color[ 3 ]);
-                GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetSize(gpuData[ x ].scaleX);
-                GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawPoint(gpuData[ x ].position[ 0 ], gpuData[ x ].position[ 1 ], gpuData[ x ].position[ 2 ]);*/
+                gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;
+                gpuData[ x ].position[ 1 ] += cpuData[ x ].velocity.Y( ) * dt;
+                gpuData[ x ].position[ 2 ] += cpuData[ x ].velocity.Z( ) * dt;
             }                                                         
         }                                                             
         int ParticleEmitter::spawnParticle(void)
@@ -286,6 +355,8 @@ namespace ursine
                 cpuData.velocity = GenerateVelocity( );
                 cpuData.lifeTime = cpuData.totalLifetime = GenerateLifetime( );
                 cpuData.acceleration = SVec3(0.f, 0.f, 0.f);
+
+                ++m_spawnCount;
             }
 
             return newParticle;

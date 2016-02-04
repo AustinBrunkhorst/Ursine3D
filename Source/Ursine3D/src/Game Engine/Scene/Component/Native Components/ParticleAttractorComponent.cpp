@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ParticleAttractorComponent.cpp
 **
@@ -33,6 +33,8 @@ namespace ursine
 
         ParticleAttractor::~ParticleAttractor(void)
         {
+            GetOwner()->Listener(this)
+                .Off(ENTITY_PARTICLE_UPDATE, &ParticleAttractor::onParticleUpdate);
         }
 
         void ParticleAttractor::OnInitialize(void)
@@ -77,6 +79,8 @@ namespace ursine
 
         void ParticleAttractor::onParticleUpdate(EVENT_HANDLER(Entity))
         {
+            m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
+
             float dt = Application::Instance->GetDeltaTime();
 
             // get all the particles
