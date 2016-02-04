@@ -93,12 +93,12 @@ int main(int argc, char *argv[])
         )
         ( 
             SWITCH_OPTION( CompilerIncludes ), 
-            po::value<std::vector<std::string>>( )->multitoken( )->required( ),
+            po::value<std::vector<std::string>>( )->multitoken( ),
             "Optional list of files to include for the compiler." 
         )
         (
             SWITCH_OPTION( CompilerDefines ),
-            po::value<std::vector<std::string>>( )->multitoken( )->required( ),
+            po::value<std::vector<std::string>>( )->multitoken( ),
             "Optional list of definitions to include for the compiler."
         );
 
