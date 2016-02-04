@@ -125,7 +125,7 @@ namespace ursine
 		bool Component::Handle<ComponentType>::operator==(const ComponentType* rhs) const
 		{
 			if (rhs == nullptr)
-				return false;
+				return m_entity == nullptr;
 
 			return m_entity == rhs->GetOwner( );
 		}
