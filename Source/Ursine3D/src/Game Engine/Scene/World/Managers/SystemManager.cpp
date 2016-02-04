@@ -83,6 +83,11 @@ namespace ursine
             }
         }
 
+        const meta::Type::List &SystemManager::GetExposedTypes(void)
+        {
+            return getSystemTypes( );
+        }
+
         SystemManager::SystemManager(World *world)
             : WorldManager( world )
             , m_initialized( false )

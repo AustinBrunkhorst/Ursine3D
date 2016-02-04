@@ -59,7 +59,7 @@ namespace ursine
             // Gets an entity based on its active id
             Entity *GetEntity(EntityUniqueID id) const;
 
-            const std::string& GetEntityName(EntityID id) const;
+            const std::string &GetEntityName(EntityID id) const;
 
             // Gets an entity based its name (first entity with this name)
             Entity *GetEntityFromName(const std::string &name) const;

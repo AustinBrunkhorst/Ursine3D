@@ -19,12 +19,11 @@
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
 #include "CameraComponent.h"
-#include "FBXSceneRootNodeComponent.h"
 #include "ParticleSystemComponent.h"
+#include "AnimatorComponent.h"
 
 #include "GfxAPI.h"
-
-#include <mutex>
+#include "RenderableComponentBase.h"
 
 namespace ursine
 {
@@ -38,14 +37,13 @@ namespace ursine
             m_graphics = GetCoreSystem( graphics::GfxAPI );
         }
 
-        void RenderSystem::SortCameraArray()
+        void RenderSystem::SortCameraArray(void)
         {
             utils::InsertionSort( m_cameras, cameraSortPredicate );
         }
 
         RenderSystem::~RenderSystem(void)
         {
-            
         }
 
         void RenderSystem::OnInitialize(void)
@@ -76,9 +74,9 @@ namespace ursine
             if (args->component->Is<Camera>( ))
             {
                 utils::InsertionSort(
-                    m_cameras, 
-                    static_cast<Camera*>( const_cast<Component*>( args->component ) ), 
-                    cameraSortPredicate 
+                    m_cameras,
+                    static_cast<Camera*>( const_cast<Component*>( args->component ) ),
+                    cameraSortPredicate
                 );
             }
 
@@ -88,29 +86,28 @@ namespace ursine
                 addRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) )->m_base );
             else if (args->component->Is<Light>( ))
                 addRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) )->m_base );
-            else if ( args->component->Is<Animator>( ) )
+            else if (args->component->Is<Animator>( ))
             {
                 m_animators.emplace_back(
-					static_cast<Animator*>(const_cast<Component*>(args->component))
+                    static_cast<Animator*>( const_cast<Component*>( args->component ) )
                 );
             }
-            else if ( args->component->Is<ParticleSystem>() )
+            else if (args->component->Is<ParticleSystem>( ))
             {
-                addRenderable(args->entity, static_cast<ParticleSystem*>(const_cast<Component*>(args->component))->m_base);
+                addRenderable( args->entity, static_cast<ParticleSystem*>( const_cast<Component*>( args->component ) )->m_base );
             }
-            
         }
 
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
         {
             EVENT_ATTRS(World, ComponentEventArgs);
-			
+
             if (args->component->Is<Camera>( ))
             {
                 URSINE_TODO("Replace this with a utils::BinarySearch call");
                 auto search = std::find(
-                    m_cameras.begin( ), 
-                    m_cameras.end( ), 
+                    m_cameras.begin( ),
+                    m_cameras.end( ),
                     static_cast<Camera*>( const_cast<Component*>( args->component ) )
                 );
 
@@ -123,20 +120,20 @@ namespace ursine
                 removeRenderable( args->entity, static_cast<Billboard2D*>( const_cast<Component*>( args->component ) )->m_base );
             else if (args->component->Is<Light>( ))
                 removeRenderable( args->entity, static_cast<Light*>( const_cast<Component*>( args->component ) )->m_base );
-			else if (args->component->Is<Animator>( ))
-			{
-				auto search = std::find(
-					m_animators.begin( ),
-					m_animators.end( ),
-					static_cast<Animator*>( const_cast<Component*>( args->component ) )
-				);
-
-				if (search != m_animators.end( ))
-					m_animators.erase( search );
-			}
-            else if ( args->component->Is<ParticleSystem>() )
+            else if (args->component->Is<Animator>( ))
             {
-                removeRenderable(args->entity, static_cast<ParticleSystem*>(const_cast<Component*>(args->component))->m_base);
+                auto search = std::find(
+                    m_animators.begin( ),
+                    m_animators.end( ),
+                    static_cast<Animator*>( const_cast<Component*>( args->component ) )
+                );
+
+                if (search != m_animators.end( ))
+                    m_animators.erase( search );
+            }
+            else if (args->component->Is<ParticleSystem>( ))
+            {
+                removeRenderable( args->entity, static_cast<ParticleSystem*>( const_cast<Component*>( args->component ) )->m_base );
             }
         }
 
@@ -150,7 +147,7 @@ namespace ursine
             for (auto &mapPair : m_renderableMap)
             {
                 auto &renderableVec = mapPair.second;
-                
+
                 for (auto &rend : renderableVec)
                 {
                     if (rend->m_dirty)
@@ -162,9 +159,9 @@ namespace ursine
 
             RenderHookArgs e( 0 );
 
-			for (size_t i = 0; i < m_cameras.size( ); ++i)
+            for (size_t i = 0; i < m_cameras.size( ); ++i)
             {
-				auto camera = m_cameras[ i ];
+                auto camera = m_cameras[ i ];
 
                 if (camera->m_dirty)
                     camera->updateRenderer( );

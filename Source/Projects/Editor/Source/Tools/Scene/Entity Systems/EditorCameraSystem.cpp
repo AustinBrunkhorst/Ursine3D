@@ -98,7 +98,6 @@ void EditorCameraSystem::OnAfterLoad(void)
 
     m_camera = m_cameraEntity->AddComponent<ecs::Camera>( );
 
-
     m_camera->SetViewportPosition( Vec2::Zero( ) );
     m_cameraEntity->GetTransform( )->SetWorldPosition( Vec3( -50, 50, -50 ) );
     m_camera->SetViewportSize( Vec2::One( ) );

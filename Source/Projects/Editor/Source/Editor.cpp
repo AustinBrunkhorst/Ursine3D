@@ -42,7 +42,7 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_project(nullptr) { }
+    , m_project( nullptr ) { }
 
 Editor::~Editor(void) { }
 
@@ -191,8 +191,8 @@ void Editor::initializeScene(void)
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
-        univLight->GetTransform( )->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
-        univLight->GetTransform( )->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+        univLight->GetTransform( )->SetLocalPosition( { 0.0f, 60.0f, 0.0f } );
+        univLight->GetTransform( )->SetLocalRotation( { 0.0f, 0.0f, 0.0f } );
 
         component->SetType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
@@ -210,12 +210,10 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    auto scene = m_project->GetScene( );
+    auto world = m_project->GetScene( )->GetWorld( );
 
-    scene->GetWorld( )->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
-
-    scene->Update( dt );
-    scene->Render( );
+    world->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
+    world->Dispatch( ecs::WORLD_EDITOR_RENDER, EventArgs::Empty );
 
     m_mainWindow.ui->DrawMain( );
 }

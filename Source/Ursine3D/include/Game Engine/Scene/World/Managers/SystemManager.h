@@ -37,6 +37,9 @@ namespace ursine
             template<class SystemType>
             SystemType *AddSystem(void);
 
+            // Gets all systems registered
+            static const meta::Type::List &GetExposedTypes(void);
+
         private:
             friend class World;
 
