@@ -24,145 +24,145 @@
 
 namespace ursine
 {
-    namespace graphics
-    {
-        void ModelManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath)
-        {
-            m_device = device;
-            m_deviceContext = context;
+	namespace graphics
+	{
+		void ModelManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath)
+		{
+			m_device = device;
+			m_deviceContext = context;
 
-            m_modelCount = 0;
-            m_currentState = -1;
+			m_modelCount = 0;
+			m_currentState = -1;
 
-            AnimationBuilder::InitializeStaticData( );
+			AnimationBuilder::InitializeStaticData();
 			std::string fileText = filePath;
 
 			InitializeJdl(fileText);
-			InitializeModel(fileText);            
+			InitializeModel(fileText);
 
-            /////////////////////////////////////////////////////////////////////////////
-            // GENERATING INTERNAL PS INDEX BUFFER
-            {
-                std::string name = "ParticleIndices";
+			/////////////////////////////////////////////////////////////////////////////
+			// GENERATING INTERNAL PS INDEX BUFFER
+			{
+				std::string name = "ParticleIndices";
 
-                m_modelArray[ name ] = new ModelResource();
-                auto *newMesh = new Mesh();
-                m_modelArray[ name ]->AddMesh(newMesh);
+				m_modelArray[name] = new ModelResource();
+				auto *newMesh = new Mesh();
+				m_modelArray[name]->AddMesh(newMesh);
 
-                unsigned indices[ 1024 ];
+				unsigned indices[1024];
 
-                for ( int x = 0; x < 1024; ++x )
-                    indices[ x ] = x;
+				for (int x = 0; x < 1024; ++x)
+					indices[x] = x;
 
-                D3D11_BUFFER_DESC indexBufferDesc;
-                D3D11_SUBRESOURCE_DATA indexData;
+				D3D11_BUFFER_DESC indexBufferDesc;
+				D3D11_SUBRESOURCE_DATA indexData;
 
-                //Set up the description of the static index buffer.
-                indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-                indexBufferDesc.ByteWidth = sizeof(unsigned) * 1024;
-                indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-                indexBufferDesc.CPUAccessFlags = 0;
-                indexBufferDesc.MiscFlags = 0;
-                indexBufferDesc.StructureByteStride = 0;
+				//Set up the description of the static index buffer.
+				indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+				indexBufferDesc.ByteWidth = sizeof(unsigned) * 1024;
+				indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+				indexBufferDesc.CPUAccessFlags = 0;
+				indexBufferDesc.MiscFlags = 0;
+				indexBufferDesc.StructureByteStride = 0;
 
-                //Give the subresource structure a pointer to the index data.
-                indexData.pSysMem = indices;
-                indexData.SysMemPitch = 0;
-                indexData.SysMemSlicePitch = 0;
+				//Give the subresource structure a pointer to the index data.
+				indexData.pSysMem = indices;
+				indexData.SysMemPitch = 0;
+				indexData.SysMemSlicePitch = 0;
 
-                //Create the index buffer.
-                HRESULT result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
-                UAssert(result == S_OK, "Failed to make index buffer!");
-            }
+				//Create the index buffer.
+				HRESULT result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
+				UAssert(result == S_OK, "Failed to make index buffer!");
+			}
 
-            /////////////////////////////////////////////////////////////////////////////
-            // GENERATING INTERNAL QUAD FOR RENDERING
-            std::vector<AnimationVertex> temp;
-            temp.resize(6);
+			/////////////////////////////////////////////////////////////////////////////
+			// GENERATING INTERNAL QUAD FOR RENDERING
+			std::vector<AnimationVertex> temp;
+			temp.resize(6);
 
-            temp[ 0 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-            temp[ 0 ].vUv = DirectX::XMFLOAT2(1, 1);
-            temp[ 0 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+			temp[0].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
+			temp[0].vUv = DirectX::XMFLOAT2(1, 1);
+			temp[0].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[ 1 ].vPos = DirectX::XMFLOAT3(0.5, -0.5, 0.5);
-            temp[ 1 ].vUv = DirectX::XMFLOAT2(0, 1);
-            temp[ 1 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+			temp[1].vPos = DirectX::XMFLOAT3(0.5, -0.5, 0.5);
+			temp[1].vUv = DirectX::XMFLOAT2(0, 1);
+			temp[1].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[ 2 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-            temp[ 2 ].vUv = DirectX::XMFLOAT2(0, 0);
-            temp[ 2 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+			temp[2].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
+			temp[2].vUv = DirectX::XMFLOAT2(0, 0);
+			temp[2].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[ 3 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-            temp[ 3 ].vUv = DirectX::XMFLOAT2(0, 0);
-            temp[ 3 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+			temp[3].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
+			temp[3].vUv = DirectX::XMFLOAT2(0, 0);
+			temp[3].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[ 4 ].vPos = DirectX::XMFLOAT3(-0.5, 0.5, 0.5);
-            temp[ 4 ].vUv = DirectX::XMFLOAT2(1, 0);
-            temp[ 4 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+			temp[4].vPos = DirectX::XMFLOAT3(-0.5, 0.5, 0.5);
+			temp[4].vUv = DirectX::XMFLOAT2(1, 0);
+			temp[4].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[ 5 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-            temp[ 5 ].vUv = DirectX::XMFLOAT2(1, 1);
-            temp[ 5 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+			temp[5].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
+			temp[5].vUv = DirectX::XMFLOAT2(1, 1);
+			temp[5].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
 
-            std::string name = "internalQuad";
+			std::string name = "internalQuad";
 
-            m_modelArray[ name ] = new ModelResource();
-            auto *newMesh = new Mesh( );
-            m_modelArray[ name ]->AddMesh(newMesh);
+			m_modelArray[name] = new ModelResource();
+			auto *newMesh = new Mesh();
+			m_modelArray[name]->AddMesh(newMesh);
 
-            D3D11_BUFFER_DESC vertexBufferDesc;
-            D3D11_SUBRESOURCE_DATA vertexData;
-            HRESULT result;
+			D3D11_BUFFER_DESC vertexBufferDesc;
+			D3D11_SUBRESOURCE_DATA vertexData;
+			HRESULT result;
 
-            //Set up the description of the static vertex buffer.
-            vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-            vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * 6;
-            vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            vertexBufferDesc.CPUAccessFlags = 0;
-            vertexBufferDesc.MiscFlags = 0;
-            vertexBufferDesc.StructureByteStride = 0;
+			//Set up the description of the static vertex buffer.
+			vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * 6;
+			vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			vertexBufferDesc.CPUAccessFlags = 0;
+			vertexBufferDesc.MiscFlags = 0;
+			vertexBufferDesc.StructureByteStride = 0;
 
-            //Give the subresource structure a pointer to the vertex data.
-            vertexData.pSysMem = &temp[ 0 ];
-            vertexData.SysMemPitch = 0;
-            vertexData.SysMemSlicePitch = 0;
+			//Give the subresource structure a pointer to the vertex data.
+			vertexData.pSysMem = &temp[0];
+			vertexData.SysMemPitch = 0;
+			vertexData.SysMemSlicePitch = 0;
 
-            //Now create the vertex buffer.
-            result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer( ));
-            UAssert(result == S_OK, "Failed to make vertex buffer!");
-            newMesh->SetVertexCount(6);
+			//Now create the vertex buffer.
+			result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
+			UAssert(result == S_OK, "Failed to make vertex buffer!");
+			newMesh->SetVertexCount(6);
 
-            newMesh->SetIndexCount(6);
-            auto &indexArray = newMesh->GetRawIndices( );
+			newMesh->SetIndexCount(6);
+			auto &indexArray = newMesh->GetRawIndices();
 
-            for (unsigned x = 0; x < 6; ++x)
-                indexArray[ x ] = x;
+			for (unsigned x = 0; x < 6; ++x)
+				indexArray[x] = x;
 
-            D3D11_BUFFER_DESC indexBufferDesc;
-            D3D11_SUBRESOURCE_DATA indexData;
+			D3D11_BUFFER_DESC indexBufferDesc;
+			D3D11_SUBRESOURCE_DATA indexData;
 
-            //Set up the description of the static index buffer.
-            indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-            indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount( );
-            indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-            indexBufferDesc.CPUAccessFlags = 0;
-            indexBufferDesc.MiscFlags = 0;
-            indexBufferDesc.StructureByteStride = 0;
+			//Set up the description of the static index buffer.
+			indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
+			indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			indexBufferDesc.CPUAccessFlags = 0;
+			indexBufferDesc.MiscFlags = 0;
+			indexBufferDesc.StructureByteStride = 0;
 
-            //Give the subresource structure a pointer to the index data.
-            indexData.pSysMem = indexArray.data();
-            indexData.SysMemPitch = 0;
-            indexData.SysMemSlicePitch = 0;
+			//Give the subresource structure a pointer to the index data.
+			indexData.pSysMem = indexArray.data();
+			indexData.SysMemPitch = 0;
+			indexData.SysMemSlicePitch = 0;
 
-            //Create the index buffer.
-            result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ));
-            UAssert(result == S_OK, "Failed to make index buffer!");
+			//Create the index buffer.
+			result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
+			UAssert(result == S_OK, "Failed to make index buffer!");
 
-            m_s2uTable[ name ] = m_modelCount;
-            m_u2mTable[ m_modelCount ] = m_modelArray[ name ];
+			m_s2uTable[name] = m_modelCount;
+			m_u2mTable[m_modelCount] = m_modelArray[name];
 			++m_modelCount;
-        }
+		}
 
 		void ModelManager::InitializeJdl(std::string fileText)
 		{
@@ -266,131 +266,131 @@ namespace ursine
 			input.close();
 		}
 
-        void ModelManager::Uninitialize()
-        {
-            for (auto &x : m_modelArray)
-            {
-                if (x.second == nullptr)
-                    continue;
+		void ModelManager::Uninitialize()
+		{
+			for (auto &x : m_modelArray)
+			{
+				if (x.second == nullptr)
+					continue;
 
-                delete x.second;
-            }
+				delete x.second;
+			}
 
-            m_device = nullptr;
-            m_deviceContext = nullptr;
-        }
+			m_device = nullptr;
+			m_deviceContext = nullptr;
+		}
 
-        void ModelManager::LoadModel(std::string name, std::string fileName)
-        {
-            UAssert(m_modelArray[ name ] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+		void ModelManager::LoadModel(std::string name, std::string fileName)
+		{
+			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
-            std::ifstream input;
-            std::vector<DiffuseTextureVertex> buffer;
-            std::vector<AnimationVertex> realbuffer;
+			std::ifstream input;
+			std::vector<DiffuseTextureVertex> buffer;
+			std::vector<AnimationVertex> realbuffer;
 
-            input.open(fileName, std::ios::in | std::ios::binary);
+			input.open(fileName, std::ios::in | std::ios::binary);
 
-            UAssert(input.is_open() == true, "Failed to open model '%s'", fileName.c_str());
+			UAssert(input.is_open() == true, "Failed to open model '%s'", fileName.c_str());
 
-            if (!input.is_open())
-                return;
+			if (!input.is_open())
+				return;
 
-            /////////////////////////////////////////////////////////////////
-            // ALLOCATE MODEL ///////////////////////////////////////////////
-            m_modelArray[ name ] = new ModelResource();
-            auto *newMesh = new Mesh();
-            newMesh->SetName(name);
-            m_modelArray[ name ]->AddMesh(newMesh);
+			/////////////////////////////////////////////////////////////////
+			// ALLOCATE MODEL ///////////////////////////////////////////////
+			m_modelArray[name] = new ModelResource();
+			auto *newMesh = new Mesh();
+			newMesh->SetName(name);
+			m_modelArray[name]->AddMesh(newMesh);
 
-            /////////////////////////////////////////////////////////////////
-            // LOAD FILE INTO MEMORY ////////////////////////////////////////
-            char size[ 32 ];
-            input.getline(size, 32);
-            unsigned vertCount = atoi(size);
+			/////////////////////////////////////////////////////////////////
+			// LOAD FILE INTO MEMORY ////////////////////////////////////////
+			char size[32];
+			input.getline(size, 32);
+			unsigned vertCount = atoi(size);
 
-            newMesh->SetVertexCount(vertCount);
+			newMesh->SetVertexCount(vertCount);
 
-            auto &newMeshVertData = newMesh->GetRawVertices( );
+			auto &newMeshVertData = newMesh->GetRawVertices();
 
-            UAssert(vertCount > 0, "Mesh '%s' has 0 vertices!", fileName.c_str());
+			UAssert(vertCount > 0, "Mesh '%s' has 0 vertices!", fileName.c_str());
 
-            buffer.resize(vertCount);
-            realbuffer.resize(vertCount);
-            input.read((char*)&buffer[ 0 ], sizeof(DiffuseTextureVertex) * vertCount);
+			buffer.resize(vertCount);
+			realbuffer.resize(vertCount);
+			input.read((char*)&buffer[0], sizeof(DiffuseTextureVertex) * vertCount);
 
-            for (uint x = 0; x < vertCount; ++x)
-            {
-                newMeshVertData[ x ] = Vec3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
-                realbuffer[ x ].vPos = DirectX::XMFLOAT3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
-                realbuffer[ x ].vNor = DirectX::XMFLOAT3(buffer[ x ].normal.x, buffer[ x ].normal.y, buffer[ x ].normal.z);
-                realbuffer[ x ].vUv = buffer[ x ].UV;
-                realbuffer[ x ].vBIdx[ 0 ] = 0;// = DirectX::XMINT4( 0, 0, 0, 0 );
-                realbuffer[ x ].vBIdx[ 1 ] = 0;
-                realbuffer[ x ].vBIdx[ 2 ] = 0;
-                realbuffer[ x ].vBIdx[ 3 ] = 0;
-                realbuffer[ x ].vBWeight = DirectX::XMFLOAT4(1, 0, 0, 0);
-            }
+			for (uint x = 0; x < vertCount; ++x)
+			{
+				newMeshVertData[x] = Vec3(buffer[x].pos.x, buffer[x].pos.y, buffer[x].pos.z);
+				realbuffer[x].vPos = DirectX::XMFLOAT3(buffer[x].pos.x, buffer[x].pos.y, buffer[x].pos.z);
+				realbuffer[x].vNor = DirectX::XMFLOAT3(buffer[x].normal.x, buffer[x].normal.y, buffer[x].normal.z);
+				realbuffer[x].vUv = buffer[x].UV;
+				realbuffer[x].vBIdx[0] = 0;// = DirectX::XMINT4( 0, 0, 0, 0 );
+				realbuffer[x].vBIdx[1] = 0;
+				realbuffer[x].vBIdx[2] = 0;
+				realbuffer[x].vBIdx[3] = 0;
+				realbuffer[x].vBWeight = DirectX::XMFLOAT4(1, 0, 0, 0);
+			}
 
-            /////////////////////////////////////////////////////////////////
-            // CREATE VERTEX BUFFER /////////////////////////////////////////
-            D3D11_BUFFER_DESC vertexBufferDesc;
-            D3D11_SUBRESOURCE_DATA vertexData;
-            HRESULT result;
+			/////////////////////////////////////////////////////////////////
+			// CREATE VERTEX BUFFER /////////////////////////////////////////
+			D3D11_BUFFER_DESC vertexBufferDesc;
+			D3D11_SUBRESOURCE_DATA vertexData;
+			HRESULT result;
 
-            //Set up the description of the static vertex buffer.
-            vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-            vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
-            vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            vertexBufferDesc.CPUAccessFlags = 0;
-            vertexBufferDesc.MiscFlags = 0;
-            vertexBufferDesc.StructureByteStride = 0;
+			//Set up the description of the static vertex buffer.
+			vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
+			vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			vertexBufferDesc.CPUAccessFlags = 0;
+			vertexBufferDesc.MiscFlags = 0;
+			vertexBufferDesc.StructureByteStride = 0;
 
-            //Give the subresource structure a pointer to the vertex data.
-            vertexData.pSysMem = &realbuffer[ 0 ];
-            vertexData.SysMemPitch = 0;
-            vertexData.SysMemSlicePitch = 0;
+			//Give the subresource structure a pointer to the vertex data.
+			vertexData.pSysMem = &realbuffer[0];
+			vertexData.SysMemPitch = 0;
+			vertexData.SysMemSlicePitch = 0;
 
-            //Now create the vertex buffer.
-            result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
-            UAssert(result == S_OK, "Failed to make vertex buffer!");
+			//Now create the vertex buffer.
+			result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
+			UAssert(result == S_OK, "Failed to make vertex buffer!");
 
-            /////////////////////////////////////////////////////////////////
-            // CREATE INDEX BUFFER //////////////////////////////////////////
-            newMesh->SetIndexCount(vertCount);
-            
-            auto &indexArray = newMesh->GetRawIndices( );
+			/////////////////////////////////////////////////////////////////
+			// CREATE INDEX BUFFER //////////////////////////////////////////
+			newMesh->SetIndexCount(vertCount);
 
-            for (unsigned x = 0; x < vertCount; ++x)
-                indexArray[ x ] = x;
+			auto &indexArray = newMesh->GetRawIndices();
 
-            D3D11_BUFFER_DESC indexBufferDesc;
-            D3D11_SUBRESOURCE_DATA indexData;
+			for (unsigned x = 0; x < vertCount; ++x)
+				indexArray[x] = x;
 
-            //Set up the description of the static index buffer.
-            indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-            indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
-            indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-            indexBufferDesc.CPUAccessFlags = 0;
-            indexBufferDesc.MiscFlags = 0;
-            indexBufferDesc.StructureByteStride = 0;
+			D3D11_BUFFER_DESC indexBufferDesc;
+			D3D11_SUBRESOURCE_DATA indexData;
 
-            //Give the subresource structure a pointer to the index data.
-            indexData.pSysMem = indexArray.data();
-            indexData.SysMemPitch = 0;
-            indexData.SysMemSlicePitch = 0;
+			//Set up the description of the static index buffer.
+			indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
+			indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			indexBufferDesc.CPUAccessFlags = 0;
+			indexBufferDesc.MiscFlags = 0;
+			indexBufferDesc.StructureByteStride = 0;
 
-            //Create the index buffer.
-            result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ));
-            UAssert(result == S_OK, "Failed to make index buffer!");
+			//Give the subresource structure a pointer to the index data.
+			indexData.pSysMem = indexArray.data();
+			indexData.SysMemPitch = 0;
+			indexData.SysMemSlicePitch = 0;
 
-            m_s2uTable[ name ] = m_modelCount;
-            m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
-        }
+			//Create the index buffer.
+			result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
+			UAssert(result == S_OK, "Failed to make index buffer!");
+
+			m_s2uTable[name] = m_modelCount;
+			m_u2mTable[m_modelCount++] = m_modelArray[name];
+		}
 
 		void ModelManager::LoadModel_Fbx(std::string name, std::string fileName)
 		{
 			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
-		
+
 			std::vector<AnimationVertex> buffer;
 			CFBXLoader fbx_model;
 			if (false == fbx_model.LoadFBX(fileName.c_str()))
@@ -398,7 +398,7 @@ namespace ursine
 
 			ufmt_loader::ModelInfo* ufmt_model = fbx_model.GetModelInfo();
 			ufmt_loader::AnimInfo* ufmt_anim = fbx_model.GetAnimInfo();
-					
+
 			/////////////////////////////////////////////////////////
 			// GENERATING BONE DATA /////////////////////////////////
 
@@ -421,26 +421,26 @@ namespace ursine
 			D3D11_SUBRESOURCE_DATA vertexData;
 			HRESULT result;
 
-            // create initial model
+			// create initial model
 			m_modelArray[name] = new ModelResource();
 
-            // for each mesh
+			// for each mesh
 			for (uint mesh_idx = 0; mesh_idx < ufmt_model->mmeshCount; ++mesh_idx)
 			{
-                // create a new mesh
-                Mesh *newMesh = new Mesh( );
-                newMesh->SetID(mesh_idx);
+				// create a new mesh
+				Mesh *newMesh = new Mesh();
+				newMesh->SetID(mesh_idx);
 
 				/////////////////////////////////////////////////////////////////
 				// ALLOCATE MODEL ///////////////////////////////////////////////				
 
 				ufmt_loader::MeshInfo* currMesh = &ufmt_model->mMeshInfoVec[mesh_idx];
 
-                newMesh->SetName(currMesh->name);
+				newMesh->SetName(currMesh->name);
 
 				uint vertCount = ufmt_model->mMeshInfoVec[mesh_idx].meshVtxInfoCount;
-                newMesh->SetVertexCount(vertCount);
-                auto &meshVertArray = newMesh->GetRawVertices( );
+				newMesh->SetVertexCount(vertCount);
+				auto &meshVertArray = newMesh->GetRawVertices();
 
 				//Set up the description of the static vertex buffer.
 				vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -455,14 +455,14 @@ namespace ursine
 				buffer.resize(vertCount);
 				for (size_t i = 0; i < vertCount; ++i)
 				{
-                    // update raw verts for physics
-                    meshVertArray[ i ] = Vec3(
-                        currMesh->meshVtxInfos[ i ].pos.x,
-                        currMesh->meshVtxInfos[ i ].pos.y,
-                        currMesh->meshVtxInfos[ i ].pos.z
-                    );
+					// update raw verts for physics
+					meshVertArray[i] = Vec3(
+						currMesh->meshVtxInfos[i].pos.x,
+						currMesh->meshVtxInfos[i].pos.y,
+						currMesh->meshVtxInfos[i].pos.z
+						);
 
-                    // Set actual buffer data
+					// Set actual buffer data
 					buffer[i].vPos = DirectX::XMFLOAT3(
 						currMesh->meshVtxInfos[i].pos.x,
 						currMesh->meshVtxInfos[i].pos.y,
@@ -507,13 +507,13 @@ namespace ursine
 				//Now create the vertex buffer.
 				result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
 				UAssert(result == S_OK, "Failed to make vertex buffer!");
-                newMesh->SetVertexCount(vertCount);
+				newMesh->SetVertexCount(vertCount);
 
 				/////////////////////////////////////////////////////////////////
 				// CREATE INDEX BUFFER //////////////////////////////////////////
-				newMesh->SetIndexCount( currMesh->meshVtxIdxCount );
+				newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
 
-                auto &indexArray = newMesh->GetRawIndices();
+				auto &indexArray = newMesh->GetRawIndices();
 				for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
 					indexArray[x] = currMesh->meshVtxIndices[x];
 
@@ -539,12 +539,12 @@ namespace ursine
 
 				m_s2uTable[name] = m_modelCount;
 				m_u2mTable[m_modelCount++] = m_modelArray[name];
-                m_modelArray[ name ]->AddMesh(newMesh);
+				m_modelArray[name]->AddMesh(newMesh);
 			}
 
 			for (auto &x : ufmt_model->mMeshLvVec)
 				m_modelArray[name]->AddMesh2Tree(x);
-			
+
 			for (auto &x : ufmt_model->mRigLvVec)
 				m_modelArray[name]->AddRig2Tree(x);
 		}
@@ -561,7 +561,7 @@ namespace ursine
 
 			HANDLE hFile_model = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			ufmt_loader::ModelInfo ufmt_model;
-			
+
 			// Serialize in model and animation
 			ufmt_model.SerializeIn(hFile_model);
 
@@ -582,6 +582,8 @@ namespace ursine
 				// => need to build jani LoadAnimation Function
 				// if there is a name list in jdl, load every animations and renew the list
 				// the aniNames will be the file name of jani files.
+				// this is rely on how do we gonna load .jani file, so I won't do this
+				// until Austin finish array stuff.
 
 				/////////////////////////////////////////////////////////
 				// Let's test storing multi janis into one jdl /////////////////////////////////
@@ -591,6 +593,7 @@ namespace ursine
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Jump.jani");
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Win.jani");
 				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Die.jani");
+
 				ufmt_model.maniCount = static_cast<unsigned int>(ufmt_model.maniNameVec.size());
 				for (auto iter : ufmt_model.maniNameVec)
 				{
@@ -759,111 +762,111 @@ namespace ursine
 			CloseHandle(hFile_ani);
 		}
 
-        ID3D11Buffer *ModelManager::GetModelVert(std::string name, unsigned index)
-        {
-            if (m_modelArray[ name ] == nullptr)
-                return nullptr;
-            return m_modelArray[ name ]->GetMesh(index)->GetVertexBuffer();
-        }
+		ID3D11Buffer *ModelManager::GetModelVert(std::string name, unsigned index)
+		{
+			if (m_modelArray[name] == nullptr)
+				return nullptr;
+			return m_modelArray[name]->GetMesh(index)->GetVertexBuffer();
+		}
 
-        unsigned ModelManager::GetModelVertcount(std::string name, unsigned index)
-        {
-            if (m_modelArray[ name ] == nullptr)
-                return -1;
-            return m_modelArray[ name ]->GetMesh(index)->GetVertexCount( );
-        }
+		unsigned ModelManager::GetModelVertcount(std::string name, unsigned index)
+		{
+			if (m_modelArray[name] == nullptr)
+				return -1;
+			return m_modelArray[name]->GetMesh(index)->GetVertexCount();
+		}
 
 		unsigned ModelManager::GetModelIndexcount(std::string name, unsigned index)
 		{
 			if (m_modelArray[name] == nullptr)
 				return -1;
-            return m_modelArray[ name ]->GetMesh(index)->GetIndexCount( );
+			return m_modelArray[name]->GetMesh(index)->GetIndexCount();
 		}
 
-        void ModelManager::BindModel(std::string name, unsigned index, bool indexOnly)
-        {
-            if ( !indexOnly )
-            {
-                ModelResource *model = m_modelArray[ name ];
+		void ModelManager::BindModel(std::string name, unsigned index, bool indexOnly)
+		{
+			if (!indexOnly)
+			{
+				ModelResource *model = m_modelArray[name];
 
-                UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
+				UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
 
-                //map mesh
-                unsigned int strides = sizeof(AnimationVertex);
-                unsigned int offset = 0;
+				//map mesh
+				unsigned int strides = sizeof(AnimationVertex);
+				unsigned int offset = 0;
 
-                m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
-                m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+				m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
+				m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-                m_currentState = m_s2uTable[ name ];
-            }
-            else
-            {
-                ModelResource *model = m_modelArray[ name ];
+				m_currentState = m_s2uTable[name];
+			}
+			else
+			{
+				ModelResource *model = m_modelArray[name];
 
-                UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
+				UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
 
-                m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-                m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+				m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+				m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-                m_currentState = m_s2uTable[ name ];
-            }
-        }
+				m_currentState = m_s2uTable[name];
+			}
+		}
 
-        void ModelManager::BindModel(unsigned ID, unsigned index)
-        {
-            ModelResource *model = m_u2mTable[ ID ];
+		void ModelManager::BindModel(unsigned ID, unsigned index)
+		{
+			ModelResource *model = m_u2mTable[ID];
 
-            UAssert(model != nullptr, "Failed to bind model ID:%i", ID);
+			UAssert(model != nullptr, "Failed to bind model ID:%i", ID);
 
-            //map mesh
-            unsigned int strides = sizeof(AnimationVertex);
-            unsigned int offset = 0;
+			//map mesh
+			unsigned int strides = sizeof(AnimationVertex);
+			unsigned int offset = 0;
 
-            m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
-            m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+			m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
+			m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-            m_currentState = ID;
-        }
+			m_currentState = ID;
+		}
 
-        unsigned ModelManager::GetModelIDByName(std::string name)
-        {
-            return m_s2uTable[ name ];
-        }
+		unsigned ModelManager::GetModelIDByName(std::string name)
+		{
+			return m_s2uTable[name];
+		}
 
-        ID3D11Buffer *ModelManager::GetModelVertByID(unsigned ID, unsigned index)
-        {
-            return m_u2mTable[ ID ]->GetMesh(index)->GetVertexBuffer( );
-        }
+		ID3D11Buffer *ModelManager::GetModelVertByID(unsigned ID, unsigned index)
+		{
+			return m_u2mTable[ID]->GetMesh(index)->GetVertexBuffer();
+		}
 
-        unsigned ModelManager::GetModelVertcountByID(unsigned ID, unsigned index)
-        {
-            return m_u2mTable[ ID ]->GetMesh(index)->GetVertexCount( );
-        }
+		unsigned ModelManager::GetModelVertcountByID(unsigned ID, unsigned index)
+		{
+			return m_u2mTable[ID]->GetMesh(index)->GetVertexCount();
+		}
 
 		unsigned ModelManager::GetModelIndexcountByID(unsigned ID, unsigned index)
 		{
 			return m_u2mTable[ID]->GetMesh(index)->GetIndexCount();
 		}
 
-        unsigned ModelManager::GetModelMeshCount(unsigned ID)
-        {
-            return m_u2mTable[ ID ]->GetMeshCount();
-        }
+		unsigned ModelManager::GetModelMeshCount(unsigned ID)
+		{
+			return m_u2mTable[ID]->GetMeshCount();
+		}
 
-        void ModelManager::Invalidate()
-        {
-            m_currentState = -1;
-        }
+		void ModelManager::Invalidate()
+		{
+			m_currentState = -1;
+		}
 
-        ModelResource * ModelManager::GetModel(const unsigned ID)
-        {
-            return m_u2mTable[ ID ];
-        }
+		ModelResource * ModelManager::GetModel(const unsigned ID)
+		{
+			return m_u2mTable[ID];
+		}
 
-        ModelResource * ModelManager::GetModel(const std::string & name)
-        {
-            return m_modelArray[ name ];
-        }
-    }
+		ModelResource * ModelManager::GetModel(const std::string & name)
+		{
+			return m_modelArray[name];
+		}
+	}
 }

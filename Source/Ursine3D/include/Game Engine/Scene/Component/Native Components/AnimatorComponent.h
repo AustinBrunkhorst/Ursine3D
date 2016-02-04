@@ -14,214 +14,186 @@
 #pragma once
 
 #include "Component.h"
-#include "Model3DComponent.h"
+#include "Renderable.h"
+#include "GfxAPI.h"
 #include "AnimationBuilder.h"
-
-// You can use a class with the typical getters and setters
-//
-// Connect to the modification events in OnInitialize by getting
-// the EventDispatcher object through array.GetModifyEvents( )
-//
-// NOTE: EnableArrayType must be included
-struct ExampleAnimationState
-{
-    std::string name;
-    std::string nextState;
-    float duration;
-    
-    // Custom structurs must have a default constructor in order
-    // to work in an array inspector
-    ExampleAnimationState(void)
-        : duration( 0.0f ) { }
-} Meta(Enable, EnableArrayType);
 
 namespace ursine
 {
-    namespace ecs
-    {
-        // not implemented yet
-        class AnimationClip
-        {
-        public:
-            enum MaskBlendMode
-            {
-                MASKBLEND_OVERRIDE = 0, // only override for now, can't blend multiple masks
+	namespace ecs
+	{
+		// not implemented yet
+		class AnimationClip
+		{
+		public:
+			enum MaskBlendMode
+			{
+				MASKBLEND_OVERRIDE = 0, // only override for now, can't blend multiple masks
 
-                MASKBLEND_COUNT
-            };
+				MASKBLEND_COUNT
+			};
 
-        public:
-            const std::string &GetName(void) const;
-            void SetName(const std::string &name);
-            
-            float GetStartTime(void) const;
-            void SetStartTime(const float startTime);
+		public:
+			const std::string &GetName(void) const;
+			void SetName(const std::string &name);
 
-            float GetEndTime(void) const;
-            void SetEndTime(const float endTime);
+			float GetStartTime(void) const;
+			void SetStartTime(const float startTime);
 
-            bool IsLooping(void);
-            bool SetLooping(const bool looping);
+			float GetEndTime(void) const;
+			void SetEndTime(const float endTime);
 
-            MaskBlendMode GetMaskBlendingMode(void) const;
-            void SetMaskBlendingMode(const MaskBlendMode mode);
+			bool IsLooping(void);
+			bool SetLooping(const bool looping);
 
-            ursine::AnimationState &GetAnimationState(void);
-            void SetAnimationState(const ursine::AnimationState &state);
+			MaskBlendMode GetMaskBlendingMode(void) const;
+			void SetMaskBlendingMode(const MaskBlendMode mode);
 
-        private:
-            // name of this clip
-            std::string m_name; 
+			ursine::AnimationState &GetAnimationState(void);
+			void SetAnimationState(const ursine::AnimationState &state);
 
-            // start time in the animation
-            float m_start;
+		private:
+			// name of this clip
+			std::string m_name;
 
-            // end time in the animation
-            float m_end;
+			// start time in the animation
+			float m_start;
 
-            // should we loop playing?
-            bool m_looping;
+			// end time in the animation
+			float m_end;
 
-            // how should we blend when applying multiple masks?
-            MaskBlendMode m_maskBlendMode;
+			// should we loop playing?
+			bool m_looping;
 
-            // the animation state for this clip
-            ursine::AnimationState m_animationState;
-        };
+			// how should we blend when applying multiple masks?
+			MaskBlendMode m_maskBlendMode;
 
-        /////////////////////////////////////////////////////////////
+			// the animation state for this clip
+			ursine::AnimationState m_animationState;
+		};
 
-        class Animator : public Component
-        {
-            NATIVE_COMPONENT;
+		/////////////////////////////////////////////////////////////
 
-        public:
-			EditorButton( 
+		class Animator : public Component
+		{
+			NATIVE_COMPONENT;
+
+		public:
+			EditorButton(
 				AddState,
 				"Add State"
-			);
+				);
 
 			EditorButton(
 				RemoveState,
 				"Remove State"
-			);
+				);
 
 			// let's don't care about in-state-blending. 
 			// just care about between-state blending first.
 			// let's try change animation state when timedelta reaches
 			// at the end of that keyframe of the state
-
-			// temporary
-			// this is for testing just changing between states
-			// not for changing between animations in state
-			EditorButton(
-				ChangeState,
-				"Change State"
-			);
-
 			EditorButton(
 				AddAnimation,
 				"Add Animation"
-			);
+				);
 
 			EditorButton(
 				RemoveAnimation,
 				"Remove Animation"
-			);
-
-            ursine::Array<ExampleAnimationState> states;
+				);
 
 			EditorField(
 				std::string stateName,
 				GetStateName,
 				SetStateName
-			);
+				);
 
 			EditorField(
 				std::string currentState,
 				GetCurrentState,
 				SetCurrentState
-			);		
+				);
 
 			EditorField(
 				std::string futureState,
 				GetFutureState,
 				SetFutureState
-			);
+				);
 
-            EditorField(
-                std::string animationName,
-                GetAnimation,
-                SetAnimation
-            );
+			EditorField(
+				std::string animationName,
+				GetAnimation,
+				SetAnimation
+				);
 
-            EditorField(
-                std::string currentRig,
-                GetRig,
-                SetRig
-            );
+			EditorField(
+				std::string currentRig,
+				GetRig,
+				SetRig
+				);
 
-            EditorField(
-                bool loopAnimation,
-                IsLooping,
-                SetLooping
-            );
+			EditorField(
+				bool loopAnimation,
+				IsLooping,
+				SetLooping
+				);
 
-            EditorField(
-                bool playAnimation,
-                IsPlaying,
-                SetPlaying
-            );
+			EditorField(
+				bool playAnimation,
+				IsPlaying,
+				SetPlaying
+				);
 
-            EditorField(
-                bool renderDebug,
-                IsDebug,
-                SetDebug
-            );
+			EditorField(
+				bool renderDebug,
+				IsDebug,
+				SetDebug
+				);
 
-            EditorField(
-                float timeScalar,
-                GetTimeScalar,
-                SetTimeScalar
-            );
+			EditorField(
+				float timeScalar,
+				GetTimeScalar,
+				SetTimeScalar
+				);
 
-        public:
-            Animator(void);
-            ~Animator(void);
+		public:
+			Animator(void);
+			~Animator(void);
 
-            Meta( Disable )
-                void OnInitialize(void) override;
+			Meta(Disable)
+				void OnInitialize(void) override;
 
-            // stick this in a system
-            void UpdateAnimation(const float dt);
+			// stick this in a system
+			void UpdateAnimation(const float dt);
 
-            // getter / setter //////////////////////////////////////
-            bool IsPlaying(void) const;
-            void SetPlaying(const bool isPlaying);
+			// getter / setter //////////////////////////////////////
+			bool IsPlaying(void) const;
+			void SetPlaying(const bool isPlaying);
 
-            bool IsLooping(void) const;
-            void SetLooping(const bool isLooping);
+			bool IsLooping(void) const;
+			void SetLooping(const bool isLooping);
 
-            bool IsDebug(void) const;
-            void SetDebug(const bool useDebug );
+			bool IsDebug(void) const;
+			void SetDebug(const bool useDebug);
 
-            float GetTimeScalar(void) const;
-            void SetTimeScalar(const float scalar);
+			float GetTimeScalar(void) const;
+			void SetTimeScalar(const float scalar);
 
-            const std::string &GetRig( void ) const;
-            void SetRig(const std::string &rig);
+			const std::string &GetRig(void) const;
+			void SetRig(const std::string &rig);
 
-            float GetAnimationTimePosition(void) const;
-            void SetAnimationTimePosition(const float position);
-			
+			float GetAnimationTimePosition(void) const;
+			void SetAnimationTimePosition(const float position);
+
 			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
 			// start with adding/removing state
+			const std::string &GetCurrentState(void) const;
+			void SetCurrentState(const std::string &state);
+
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
 
-			const std::string &GetCurrentState(void) const;
-			void SetCurrentState(const std::string &state);
-			
 			const std::string &GetFutureState(void) const;
 			void SetFutureState(const std::string& name);
 
@@ -229,22 +201,23 @@ namespace ursine
 			void SetAnimation(const std::string &name);
 
 			// CrossFade ("State Name", transition time, ...)
-			
-        private:
-            std::unordered_map<std::string, AnimationState> m_states;
+
+		private:
+			std::unordered_map<std::string, AnimationState> m_states;
+			// this will be changed to std::unordered_map<std::string, std::vector<AnimationState> > m_states;
+			// and will do blending not only between states, but inside of the state too.
 			bool m_playing;
-            bool m_looping;
-            bool m_debug;
-            float m_speedScalar;
-            std::string m_currentAnimation;
-            std::string m_currentRig;
+			bool m_looping;
+			bool m_debug;
+			float m_speedScalar;
+			std::string m_currentAnimation;
+			std::string m_currentRig;
 			std::string m_currentState;
 			std::string m_futureState;
 
 			std::string m_stateName;
-			std::string m_futureStateName;
 			std::string m_animationName;
 
-        } Meta( Enable, DisplayName( "Animator" ), RequiresComponents( typeof(ursine::ecs::Model3D) ) );
-    }
+		} Meta(Enable, DisplayName("Animator"));
+	}
 }
