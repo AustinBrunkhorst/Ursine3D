@@ -169,7 +169,7 @@ namespace ursine
             notifyRotationChanged( &oldRotation );
         }
 
-        SQuat Transform::GetWorldRotation(void)
+        SQuat Transform::GetWorldRotation(void) const
         {
             if (m_parent)
                 return m_parent->ToWorld( m_localRotation );
@@ -177,7 +177,7 @@ namespace ursine
                 return m_localRotation;
         }
 
-        SVec3 Transform::GetWorldEuler(void)
+        SVec3 Transform::GetWorldEuler(void) const
         {
             if (m_parent)
                 return m_parent->ToWorld( m_localRotation ).GetEulerAngles( );
@@ -208,7 +208,7 @@ namespace ursine
             return m_localScale;
         }
 
-        SVec3 Transform::GetWorldScale(void)
+        SVec3 Transform::GetWorldScale(void) const
         {
             if (m_parent)
                 return m_localScale * m_parent->GetWorldScale();
@@ -230,17 +230,17 @@ namespace ursine
             notifyScaleChanged( &oldScale );
         }
 
-        SVec3 Transform::GetForward(void)
+        SVec3 Transform::GetForward(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitZ( );
         }
 
-        SVec3 Transform::GetRight(void)
+        SVec3 Transform::GetRight(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitX( );
         }
 
-        SVec3 Transform::GetUp(void)
+        SVec3 Transform::GetUp(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitY( );
         }
@@ -271,7 +271,7 @@ namespace ursine
             return GetWorldToLocalMatrix( ).TransformPoint( point );
         }
 
-        SQuat Transform::ToLocal(const SQuat& quat)
+        SQuat Transform::ToLocal(const SQuat& quat) const
         {
             if (m_parent)
                 return m_localRotation.GetInverse( ) * m_parent->ToLocal( quat );
@@ -284,7 +284,7 @@ namespace ursine
             return GetLocalToWorldMatrix( ).TransformPoint( point );
         }
 
-        SQuat Transform::ToWorld(const SQuat& quat)
+        SQuat Transform::ToWorld(const SQuat& quat) const
         {
             if (m_parent)
                 return m_parent->GetWorldRotation( ) * m_localRotation * quat;
@@ -292,17 +292,17 @@ namespace ursine
                 return m_localRotation * quat;
         }
 
-		Component::Handle<Transform> Transform::GetRoot(void)
-        {
+		Component::Handle<Transform> Transform::GetRoot(void) const
+		{
             return m_root;
         }
 
-        Component::Handle<Transform> Transform::GetParent(void)
+        Component::Handle<Transform> Transform::GetParent(void) const
         {
             return m_parent;
         }
 
-        bool Transform::IsChildOf(Handle<Transform> parent)
+        bool Transform::IsChildOf(const Handle<Transform> parent) const
         {
             if (parent == m_parent)
                 return true;
@@ -369,6 +369,11 @@ namespace ursine
             m_children.erase( itr );
 
             child->setParent( this, nullptr, true );
+        }
+
+        void Transform::DetachFromParent(void)
+        {
+            GetParent( )->RemoveChild( this );
         }
 
         void Transform::RemoveChildren(void)

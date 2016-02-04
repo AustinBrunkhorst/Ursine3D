@@ -12,6 +12,7 @@
 #pragma once
 
 #include <Component.h>
+#include <BoxColliderComponent.h>
 
 class Health;
 
@@ -98,4 +99,4 @@ private:
     // map of all objects hit
     std::unordered_map<ursine::ecs::EntityUniqueID, float> m_damageTimeMap;
 
-} Meta (Enable, DisplayName( "DamageOnCollide" ));
+} Meta (Enable, DisplayName( "DamageOnCollide" ), RequiresComponents(typeof(ursine::ecs::BoxCollider)));

@@ -75,6 +75,8 @@ namespace ursine
 				const Handle<ComponentType> &operator=(const Handle<ComponentType> &rhs);
 				bool operator==(const ComponentType *rhs) const;
 				bool operator==(const Handle<ComponentType> &rhs) const;
+                bool operator!=(const ComponentType *rhs) const;
+                bool operator!=(const Handle<ComponentType> &rhs) const;
 
 				// Checking for null
 				explicit operator bool(void) const;

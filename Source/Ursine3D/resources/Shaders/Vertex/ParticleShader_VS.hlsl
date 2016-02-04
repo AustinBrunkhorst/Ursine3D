@@ -123,7 +123,7 @@ PixelInputType main(uint id : SV_VERTEXID)
     position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[0]));
 
     // into world -> translate
-    position = mul(position, (float3x3)InvProj) + g_bufPosColor[ particleIndex ].position + cameraPosition;
+    position = mul(position, (float3x3)InvProj) + g_bufPosColor[ particleIndex ].position + cameraPosition.xyz;
     
     output.position = mul(float4(position, 1.0f), g_mInvView);
     output.position = mul(output.position, g_mWorldViewProj);

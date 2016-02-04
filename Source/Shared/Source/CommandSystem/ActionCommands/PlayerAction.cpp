@@ -245,6 +245,8 @@ bool PlayerAction::EvalXboxButtons(bool(ursine::GamepadState::*func)(ursine::Gam
         return ( m_gamepadState->*func )(ursine::GamepadButton::BTN_X, Threshold );
     case RightTrigger:
         return ( m_gamepadState->*func )(ursine::GamepadButton::BTN_TRIGGER_RIGHT, Threshold );
+    case LeftTrigger:
+        return ( m_gamepadState->*func )( ursine::GamepadButton::BTN_TRIGGER_LEFT, Threshold );
     default:
         return ( m_gamepadState->*func )(ursine::GamepadButton::BTN_Y, Threshold );
     }

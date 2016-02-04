@@ -1,6 +1,6 @@
-@import '../../Config';
-@import '../../Utils';
-@import '../../Icons';
+@import '../Config';
+@import '../Utils';
+@import '../Icons';
 
 :host {
   display: block;
@@ -37,7 +37,7 @@
     @include icon-half( $icon-half-search, 15px );
   }
 
-  #types {
+  #items {
     overflow-y: auto;
     min-width: 225px;
     max-height: 300px;

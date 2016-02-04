@@ -118,27 +118,48 @@
         );                              \
                                         \
     EditorField(                        \
+        WeaponType WeaponTier,          \
+        GetWeaponType,                  \
+        SetWeaponType                   \
+        );                              \
+                                        \
+    EditorField(                        \
+        ursine::SVec3 SpawnOffset,      \
+        GetSpawnOffset,                 \
+        SetSpawnOffset                  \
+        );                              \
+                                        \
+    EditorField(                        \
         std::string ArchetypeToShoot,   \
         GetArchetypeToShoot,            \
         SetArchetypeToShoot             \
         );
-
-#define AbstractWeaponConnect( Obj )                  \
-    GetOwner( )->Listener( this )                     \
-        .On(game::FIRE_START, &Obj::TriggerPulled)    \
+  
+#define AbstractWeaponConnect( Obj )                            \
+    GetOwner( )->Listener( this )                               \
+        .On(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
+        .On(game::DETACH_WEAPON, &Obj::DetachWeapon)            \
+        .On(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon)    \
+        .On(game::FIRE_START, &Obj::TriggerPulled)              \
         .On(game::FIRE_END, &Obj::TriggerReleased);
 
-#define AbstractWeaponDisconnect( Obj )                \
-    GetOwner( )->Listener( this )                      \
-        .Off(game::FIRE_START, &Obj::TriggerPulled)    \
+#define AbstractWeaponDisconnect( Obj )                          \
+    GetOwner( )->Listener( this )                                \
+        .Off(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
+        .Off(game::DETACH_WEAPON, &Obj::DetachWeapon)            \
+        .Off(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon)    \
+        .Off(game::FIRE_START, &Obj::TriggerPulled)              \
         .Off(game::FIRE_END, &Obj::TriggerReleased);
 
 
-    enum WeaponType
-    {
-        HITSCAN_WEAPON,
-        PROJECTILE_WEAPON
-    } Meta(Enable);
+enum WeaponType
+{
+    LAST_STAND,
+    SECONDARY_WEAPON,
+    PRIMARY_WEAPON,
+    MELEE_WEAPON,
+    GOD_WEAPON
+} Meta(Enable);
 
 
 struct AbstractWeapon
@@ -199,14 +220,26 @@ public:
     // count of how many projectiles weapon fires per shot
     int m_projFireCount;
 
-    // weapon type (what type of projectile does it shot)
-    WeaponType m_weaponFireType;
+    // weapon type 
+    WeaponType m_weaponType;
+
+    // what offset to add on activation
+    ursine::SVec3 m_spawnOffset;
+
+    // Camera Handle for shooting
+    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_camHandle;
 
     // Archetype weapon should fire
     std::string m_archetypeToShoot;
 
     // Is trigger being pulled
     bool m_triggerPulled;
+
+    // can i shoot?
+    bool m_active;
+
+    // should i be removed
+    bool m_remove;
 
 
     AbstractWeapon( void );
@@ -272,6 +305,12 @@ public:
     int GetProjFireCount(void) const;
     void SetProjFireCount(const int count);
 
+    WeaponType GetWeaponType(void) const;
+    void SetWeaponType(const WeaponType type);
+
+    ursine::SVec3 GetSpawnOffset(void) const;
+    void SetSpawnOffset(const ursine::SVec3& offset);
+
     const std::string& GetArchetypeToShoot(void) const;
     void SetArchetypeToShoot(const char* archetype);
     void SetArchetypeToShoot(const std::string& archetype);
@@ -286,14 +325,28 @@ protected:
     // Weapon's trigger was released
     void TriggerReleased(EVENT_HANDLER(game::FIRE_END));
 
+    // Activate Weapon for use
+    void ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON));
+
+    // Detatch weapon from parent and turn into interactable
+    void DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON));
+
+    // Deactivate Weapon for use
+    void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
+
+
     bool AddAmmo(const int ammo);
 
     void PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
+
+    //***************************************//
+    //  MUST IMPLEMENT, so base class can    //
+    //  remove component from its owner      //
+    //***************************************//
+    virtual void RemoveMySelf(void) = 0;
+
 };
-
-
-
 
 
 #define AbstractWeaponInit( Obj )   AbstractWeapon::Initialize( );    \

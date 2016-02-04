@@ -53,7 +53,7 @@ void ForceComponent::OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSI
 
     if ( args->otherEntity->HasComponent<ursine::ecs::Rigidbody>( ) )
     {
-        args->otherEntity->GetComponent<ursine::ecs::Rigidbody>( )->AddForce( m_force );
+        args->otherEntity->GetComponent<ursine::ecs::Rigidbody>( )->AddImpulse( m_force );
     }
 
 }

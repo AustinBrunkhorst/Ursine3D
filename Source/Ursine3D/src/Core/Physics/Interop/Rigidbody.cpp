@@ -526,6 +526,17 @@ namespace ursine
         #endif
         }
 
+        void Rigidbody::AddImpulse(const SVec3& impulse)
+        {
+        #ifdef BULLET_PHYSICS
+
+            btVector3 btImpulse(impulse.X( ), impulse.Y( ), impulse.Z( ));
+
+            applyCentralImpulse(btImpulse);
+
+        #endif
+        }
+
         void Rigidbody::AddTorque(const SVec3& torque)
         {
         #ifdef BULLET_PHYSICS

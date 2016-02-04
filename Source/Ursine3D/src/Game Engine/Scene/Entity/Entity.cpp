@@ -232,6 +232,29 @@ namespace ursine
 			return m_world->m_entityManager->GetComponentInChildren( this, id );
 	    }
 
+        Entity* Entity::GetChildByName(const std::string& name) const
+        {
+            // get all children
+            auto children = m_world->m_entityManager->GetChildren( this );
+
+            // id of child found with disired name
+            ursine::ecs::EntityID child = -1;
+
+            // search for desired child
+            for ( auto childID : *children )
+            {
+                // check if names are same
+                if ( name == m_world->m_nameManager->GetName( childID ) )
+                {
+                    child = childID;
+                    break;
+                }
+            }
+
+            // return entity
+            return  m_world->m_entityManager->GetEntity(child);
+        }
+
 	    Component* Entity::GetComponentInParent(ComponentTypeID id) const
 	    {
 			return m_world->m_entityManager->GetComponentInParent( this, id );

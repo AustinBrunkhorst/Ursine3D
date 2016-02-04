@@ -12,6 +12,7 @@
 
 
 #include <Component.h>
+#include <BoxColliderComponent.h>
 
 struct CritSpot : ursine::ecs::Component
 {
@@ -25,4 +26,4 @@ public:
 
     void OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
-} Meta(Enable, DisplayName("CritSpot"));
+} Meta(Enable, DisplayName("CritSpot"), RequiresComponents(typeof(ursine::ecs::BoxCollider)));
