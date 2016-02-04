@@ -57,6 +57,11 @@ namespace ursine
             return m_names[ entity->m_uniqueID ];
         }
 
+        const std::string &NameManager::GetName(const EntityUniqueID id)
+        {
+            return m_names[ id ];
+        }
+
         void NameManager::SetName(Entity *entity, const std::string &name)
         {
             setName( entity, name );

@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "Meta.h"
 #include "UrsineTypes.h"
 
 // Required at the top of all entity system declarations

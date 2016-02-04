@@ -61,6 +61,7 @@ function(ursine_build_meta)
     get_property(DIRECTORIES TARGET ${BUILD_META_TARGET} PROPERTY INCLUDE_DIRECTORIES)
 
     set(INCLUDES ${GLOBAL_META_INCLUDES} ${DIRECTORIES} ${BUILD_META_INCLUDES})
+	
     set(DEFINES ${GLOBAL_META_DEFINES} ${BUILD_META_DEFINES})
 
     # empty source files need to include the precompiled header

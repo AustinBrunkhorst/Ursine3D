@@ -23,7 +23,6 @@ AbstractHitscanWeapon::AbstractHitscanWeapon(void) :
     m_alwaysDraw( false ),
     m_debug( false )
 {
-    m_weaponFireType = HITSCAN_WEAPON;
 }
 
 ursine::physics::RaycastType AbstractHitscanWeapon::GetRaycastType( ) const

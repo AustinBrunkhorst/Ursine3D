@@ -13,7 +13,7 @@ import ursine.editor.scene.component.inspectors.ComponentInspectionHandler;
 import js.html.CustomEvent;
 import js.html.DivElement;
 
-import ursine.controls.inspection.ComponentTypeSelector;
+import ursine.controls.ItemSelectionPopup;
 
 import ursine.controls.Button;
 
@@ -225,9 +225,9 @@ class EntityInspector extends WindowHandler {
     private function onAddComponentClicked(e : js.html.MouseEvent) {
         var types = getAvailableComponentTypes( m_inspectedEntity );
 
-        var selector = new ComponentTypeSelector( types );
+        var selector = new ItemSelectionPopup( types );
 
-        selector.addEventListener( 'type-selected', onAddComponentTypeSelected );
+        selector.addEventListener( 'item-selected', onAddComponentTypeSelected );
 
         js.Browser.document.body.appendChild( selector );
 
@@ -241,7 +241,7 @@ class EntityInspector extends WindowHandler {
     }
 
     private function onAddComponentTypeSelected(e : CustomEvent) {
-        var componentType = e.detail.type;
+        var componentType = e.detail.item;
 
         if (m_inspectedEntity.hasComponent( componentType )) {
             var notification = new Notification(

@@ -27,6 +27,8 @@
 #include "Systems/TimeDeathSystem.h"
 #include "Systems/ProjectileSystem.h"
 #include "Systems/ControlPointSystem.h"
+#include "Systems/InventorySystem.h"
+#include "Systems/InteractionBaySystem.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //AI

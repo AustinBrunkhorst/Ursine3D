@@ -1,9 +1,14 @@
 
 #include "Precompiled.h"
 #include "AbstractWeapon.h"
-#include <CollisionEventArgs.h>
 #include "AmmoPickupComponent.h"
 #include "GameEvents.h"
+#include <CollisionEventArgs.h>
+#include <Entity.h>
+#include <RigidbodyComponent.h>
+#include <BoxColliderComponent.h>
+#include "InteractableComponent.h"
+#include "WeaponPickup.h"
 
 using namespace ursine;
 
@@ -32,9 +37,12 @@ AbstractWeapon::AbstractWeapon(void) :
     m_maxAmmoCount(0),
     m_clipSize(0),
     m_projFireCount(1),
-    m_weaponFireType(PROJECTILE_WEAPON),
+    m_weaponType(PRIMARY_WEAPON),
+    m_camHandle(nullptr),
     m_archetypeToShoot("BaseBullet"),
-    m_triggerPulled(false)
+    m_triggerPulled(false),
+    m_active(true),
+    m_remove(false)
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -305,6 +313,30 @@ void AbstractWeapon::SetArchetypeToShoot(const char * archetype)
     CheckArchetypeToShoot(m_archetypeToShoot);
 }
 
+// weapon type
+WeaponType AbstractWeapon::GetWeaponType( ) const
+{
+    return m_weaponType;
+}
+
+void AbstractWeapon::SetWeaponType(const WeaponType type)
+{
+    m_weaponType = type;
+}
+
+
+// spawn offset
+ursine::SVec3 AbstractWeapon::GetSpawnOffset(void) const
+{
+    return m_spawnOffset;
+}
+
+void AbstractWeapon::SetSpawnOffset(const ursine::SVec3& offset)
+{
+    m_spawnOffset = offset;
+}
+
+
 void AbstractWeapon::SetArchetypeToShoot(const std::string& archetype)
 {
     m_archetypeToShoot = archetype;
@@ -345,6 +377,59 @@ void AbstractWeapon::TriggerReleased( EVENT_HANDLER( game::FIRE_END ) )
     m_triggerPulled = false;
 }
 
+
+void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
+{
+    EVENT_ATTRS(ursine::ecs::Entity, game::WeaponActivationEventArgs);
+
+    // Gun is being reloaded from inventory (swapped in) so update
+    //   ammo and clip to previous values before swapped out
+    if ( args->m_ammo != -1 )
+    {
+        SetAmmoCount( args->m_ammo );
+        SetClipCount( args->m_clip );
+    }
+
+    // Grab camera handle for shooting
+    m_camHandle = *args->m_camHandle;
+}
+
+void AbstractWeapon::DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON))
+{
+    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+
+    // unattach from parent
+    sender->GetTransform( )->DetachFromParent( );
+
+    // give rigidbody so fall to the ground
+    ursine::ecs::Rigidbody* body = sender->AddComponent<ursine::ecs::Rigidbody>( );
+
+    // give body an impulse to simulate throwing
+    body->AddImpulse( sender->GetTransform( )->GetForward( ) * 3 + ursine::SVec3(0.0f, 3.0f, 0.0f) );
+
+    // need dat collision for floor
+    sender->AddComponent<ursine::ecs::BoxCollider>( );
+
+    // need dat interactability
+    sender->AddComponent<Interactable>( );
+
+    // make a weapon pick up
+    WeaponPickup* pickup = sender->AddComponent<WeaponPickup>( );
+    pickup->SetAmmoInfo( m_ammoCount, m_clipCount );
+
+    // flag to remove this component
+    RemoveMySelf( );
+}
+
+void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
+{
+    game::WeaponActivationEventArgs* args = static_cast<game::WeaponActivationEventArgs*>( const_cast<ursine::EventArgs*>(_args) );
+
+    args->m_ammo = m_ammoCount;
+    args->m_clip = m_clipCount;
+}
+
+
 void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
 {
     EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
@@ -359,3 +444,7 @@ void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
         }
     }
 }
+
+
+
+

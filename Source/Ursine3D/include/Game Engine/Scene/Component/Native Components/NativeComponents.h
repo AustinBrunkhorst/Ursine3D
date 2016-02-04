@@ -14,6 +14,7 @@
 // All native components are to be added here
 
 #include "TransformComponent.h"
+#include "WorldConfigComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Graphics

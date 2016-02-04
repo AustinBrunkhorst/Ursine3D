@@ -136,6 +136,22 @@ namespace ursine
 			return m_entity == rhs.m_entity;
 		}
 
+        template<class ComponentType>
+        bool Component::Handle<ComponentType>::operator!=(const ComponentType* rhs) const
+        {
+            if ( m_entity )
+                return operator->( ) != rhs;
+            else
+                return rhs != nullptr;
+        }
+
+        template<class ComponentType>
+        bool Component::Handle<ComponentType>::operator!=(const Handle<ComponentType> &rhs) const
+        {
+            return m_entity != rhs.m_entity;
+        }
+
+
 		template<class ComponentType>
 	    Component::Handle<ComponentType>::operator bool(void) const
 	    {

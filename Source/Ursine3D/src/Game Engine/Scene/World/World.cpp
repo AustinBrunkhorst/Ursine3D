@@ -136,6 +136,11 @@ namespace ursine
             return m_entityManager->GetEntity( id );
         }
 
+        const std::string& World::GetEntityName(EntityUniqueID id) const
+        {
+            return m_nameManager->GetName( id );
+        }
+
         Entity *World::GetEntityFromName(const std::string &name) const
         {
             return m_nameManager->GetEntity( name );
