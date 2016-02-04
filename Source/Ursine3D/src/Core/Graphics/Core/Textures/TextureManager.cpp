@@ -165,7 +165,10 @@ namespace ursine
 
         void TextureManager::MapTextureByName(const std::string name, const unsigned int bufferIndex)
         {
-            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureList[ name ]->m_shaderResource);
+            if( m_textureList[ name ] == nullptr )
+                m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureList[ "Blank" ]->m_shaderResource);
+            else
+                m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureList[ name ]->m_shaderResource);
         }
 
         void TextureManager::MapTextureByID(const unsigned ID, const unsigned int bufferIndex)

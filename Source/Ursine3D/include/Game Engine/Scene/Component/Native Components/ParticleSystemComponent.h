@@ -23,6 +23,18 @@ namespace ursine
 {
     namespace ecs
     {
+        enum class SystemSpace
+        {
+            WorldSpace,
+            LocalSpace
+        } Meta(Enable);
+
+        enum class RenderMode
+        {
+            Additive,
+            Blended
+        } Meta(Enable);
+
         class ParticleSystem 
             : public Component
         {
@@ -43,6 +55,23 @@ namespace ursine
                 SetColor
             );
 
+            EditorField(
+                std::string texture,
+                GetParticleTextureName,
+                SetParticleTextureName
+            );
+
+            EditorField(
+                SystemSpace systemSpace,
+                GetSystemSpace,
+                SetSystemSpace
+            );
+
+            EditorField(
+                RenderMode renderMode,
+                GetRenderMode,
+                SetRenderMode
+            );
 
             ParticleSystem(void);
             ~ParticleSystem(void);
@@ -74,9 +103,17 @@ namespace ursine
             // destroys a particle, given an index
             void DestroyParticle(const int index);
 
-
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
+
+            const std::string &GetParticleTextureName(void) const;
+            void SetParticleTextureName(const std::string &texture);
+
+            SystemSpace GetSystemSpace(void) const;
+            void SetSystemSpace(const SystemSpace &space);
+
+            RenderMode GetRenderMode(void) const;
+            void SetRenderMode(const RenderMode &renderMode);
 
         private:
             // command all particle components to operate on the set of particles
@@ -91,6 +128,10 @@ namespace ursine
 
             // data for this component
             Color m_particleColor;
+
+            SystemSpace m_systemSpace;
+
+            RenderMode m_renderMode;
 
             // color
         } Meta(Enable, DisplayName("ParticleSystem"));

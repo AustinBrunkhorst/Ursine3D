@@ -26,17 +26,17 @@ torus2.8.0.mdl Ring
 #romekolezyum.fbx remeko
 
 # Player Animations
-Player_Idle.fbx Player
-Player_Death.fbx Player_Death
-Player_Die.fbx Player_Die
-Player_Jump.fbx Player_Jump
-Player_Run.fbx Player_Run
-Player_Win.fbx Player_Win
+#Player_Idle.fbx Player
+#Player_Death.fbx Player_Death
+#Player_Die.fbx Player_Die
+#Player_Jump.fbx Player_Jump
+#Player_Run.fbx Player_Run
+#Player_Win.fbx Player_Win
 
 # Gun Animations
-Gun_Idle.fbx Gun_Idle
-Gun_Jump.fbx Gun_Jump
-Gun_Run.fbx Gun_Run
-Gun_Shoot.fbx Gun_Shoot
+#Gun_Idle.fbx Gun_Idle
+#Gun_Jump.fbx Gun_Jump
+#Gun_Run.fbx Gun_Run
+#Gun_Shoot.fbx Gun_Shoot
 
 #Monkey.fbx Monkey
