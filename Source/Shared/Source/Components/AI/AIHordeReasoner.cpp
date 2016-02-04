@@ -25,5 +25,15 @@ namespace ursine
         {
             m_move->SetTargetDirection(pos - GetOwner()->GetTransform()->GetWorldPosition());
         }
+
+        AIHorde::EnemyType AIHorde::GetEnemyType(void) const
+        {
+            return m_type;
+        }
+
+        void AIHorde::SetEnemyType(EnemyType newType)
+        {
+            m_type = newType;
+        }
     }
 }

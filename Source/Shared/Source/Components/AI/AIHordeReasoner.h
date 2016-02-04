@@ -27,14 +27,37 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+
+            enum EnemyType
+            {
+                Hordeling,
+                BigHordeling,
+                Boomling,
+                INVALID_ENEMY
+            };
+
             AIHorde(void);
 
             void OnInitialize(void) override;
 
             void SetTarget(const Vec3 &pos);
 
+            EnemyType GetEnemyType(void) const;
+            void SetEnemyType(EnemyType newType);
+
+            ////////////////////////////////////////////////////////////////////
+            // Expose data to editor
+            ////////////////////////////////////////////////////////////////////
+            EditorField(
+                EnemyType TypeOfEnemy,
+                GetEnemyType,
+                SetEnemyType
+                );
+
         private:
             Handle<AIMovementController> m_move;
+
+            EnemyType m_type;
 
         }Meta(Enable, DisplayName("AIHordeReasoner"));
 
