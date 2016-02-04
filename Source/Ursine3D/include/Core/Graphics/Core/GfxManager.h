@@ -120,6 +120,7 @@ namespace ursine
             //preparing for rendering
             void PrepFor3DModels(const SMat4 &view, const SMat4 &proj);
             void PrepForBillboard2D(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
+            void PrepForParticleSystems(const SMat4 &view, const SMat4 &proj);
             void PrepForCompute(void);
             void PrepForLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
             void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
@@ -133,6 +134,7 @@ namespace ursine
             //rendering funcs
             void Render3DModel(_DRAWHND handle, Camera &currentcamera );
             void Render2DBillboard(_DRAWHND handle, Camera &currentCamera);
+            void RenderParticleSystem(_DRAWHND handle, Camera &currentCamera);
             void RenderComputeMousePos(void);
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderSpotLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);

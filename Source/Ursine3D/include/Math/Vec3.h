@@ -151,7 +151,7 @@ namespace ursine
 
 	private:
 		float m_x, m_y, m_z;
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "Vec3.hpp"

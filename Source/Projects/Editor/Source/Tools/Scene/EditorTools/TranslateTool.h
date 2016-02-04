@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TranslateTool.h
 **
@@ -13,6 +13,7 @@
 
 #include "EditorTool.h"
 #include "EditorCameraSystem.h"
+#include <Model3DComponent.h>
 
 class TranslateTool : public EditorTool
 {
@@ -48,6 +49,12 @@ private:
 	// Whether or not the user is clicking and dragging on this gizmo
 	bool m_dragging;
 	
+	// Whether or not the user is hovering over an axis
+	bool m_hovering;
+
+	ursine::ecs::Component::Handle<ursine::ecs::Model3D> m_axis;
+	ursine::Color m_axisOrigColor;
+
 	// Whether the user is holding down the snap to grid key or not
 	bool m_snapping;
 
@@ -72,6 +79,9 @@ private:
 	void enableAxis(void);
 	void disableAxis(void);
 	void updateAxis(void);
+
+	void updateHoverAxis(void);
+	void disableHover(void);
 
 	// recursive helper functions
 	void setEntitySerializationToggle(bool toggle, ursine::ecs::Entity *entity);

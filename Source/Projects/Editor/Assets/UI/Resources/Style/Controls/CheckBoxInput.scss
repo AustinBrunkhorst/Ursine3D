@@ -1,5 +1,43 @@
 @import '../Config';
+@import '../Utils';
+@import '../Icons';
 
 :host {
-  
+  display: block;
+  padding: 5px;
+  background: #333337;
+  border: 1px solid #3f3f46;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  transition: border $duration-transition-btn ease,
+              background $duration-transition-btn ease;
+  $color: #dcdcdc;
+
+  @include icon-half( $icon-half-ok, 9px );
+
+  &:before {
+    color: rgba($color, 0);
+    transition: color $duration-transition-btn ease;
+  }
+
+  &:checked {
+    &:before {
+      color: rgba($color, 1);
+    }
+  }
+
+  &:hover, &:focus {
+    border: 1px solid $color-accent;
+  }
+
+  &:hover {
+    &:not(:checked):before {
+      color: rgba($color, 0.5);
+    }
+
+    &:checked:before {
+      color: $color-accent;
+    }
+  }
 }

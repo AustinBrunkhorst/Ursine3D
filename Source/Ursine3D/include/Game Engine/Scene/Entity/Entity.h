@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Entity.h
 **
@@ -212,6 +212,12 @@ namespace ursine
 
             // Sets this entity's index in the parent's children list
             void SetSiblingIndex(uint index) const;
+
+			const Entity *GetParent(void) const;
+			Entity *GetParent(void);
+
+			const Entity *GetRoot(void) const;
+			Entity *GetRoot(void);
 
             ////////////////////////////////////////////////////////////////////
             // Events

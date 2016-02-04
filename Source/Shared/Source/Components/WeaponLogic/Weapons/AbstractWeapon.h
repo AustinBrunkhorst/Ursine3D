@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** AbstractComponent.h
 **
@@ -152,14 +152,14 @@
         .Off(game::FIRE_END, &Obj::TriggerReleased);
 
 
-    enum WeaponType
-    {
-        LAST_STAND,
-        SECONDARY_WEAPON,
-        PRIMARY_WEAPON,
-        MELEE_WEAPON,
-        GOD_WEAPON
-    } Meta(Enable);
+enum WeaponType
+{
+    LAST_STAND,
+    SECONDARY_WEAPON,
+    PRIMARY_WEAPON,
+    MELEE_WEAPON,
+    GOD_WEAPON
+} Meta(Enable);
 
 
 struct AbstractWeapon

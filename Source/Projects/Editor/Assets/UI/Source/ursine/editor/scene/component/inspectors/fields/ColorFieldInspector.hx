@@ -8,7 +8,7 @@ class ColorFieldInspector extends FieldInspectionHandler {
     var m_colorPreview : js.html.DivElement;
     var m_colorInput : ColorInput;
 
-    public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
+    public function new(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
         var previewContainer = js.Browser.document.createDivElement( );
@@ -42,8 +42,7 @@ class ColorFieldInspector extends FieldInspectionHandler {
     }
 
     public override function remove() {
-        if (m_colorInput != null)
-            js.Browser.document.body.removeChild( m_colorInput );
+        clearColorInput( );
 
         super.remove( );
     }
@@ -57,10 +56,19 @@ class ColorFieldInspector extends FieldInspectionHandler {
         m_colorInput.addEventListener( 'color-changed', onColorChanged );
         m_colorInput.addEventListener( 'closed', onColorClosed );
 
-        m_colorInput.style.left = '${e.clientX}px';
-        m_colorInput.style.top = '${e.clientY}px';
-
         js.Browser.document.body.appendChild( m_colorInput );
+
+        m_colorInput.show( e.clientX, e.clientY );
+
+        var handlers = m_owner.getFieldHandlers( );
+
+        for (handler in handlers) {
+            if (Std.is( handler, ColorFieldInspector) && handler != this) {
+                var colorHandler : ColorFieldInspector = cast handler;
+
+                colorHandler.clearColorInput( );
+            }
+        }
     }
 
     private function onColorChanged(e : js.html.CustomEvent) {
@@ -69,5 +77,13 @@ class ColorFieldInspector extends FieldInspectionHandler {
 
     private function onColorClosed(e : js.html.CustomEvent) {
         m_colorInput = null;
+    }
+
+    private function clearColorInput() {
+        if (m_colorInput != null) {
+            js.Browser.document.body.removeChild( m_colorInput );
+
+            m_colorInput = null;
+        }
     }
 }

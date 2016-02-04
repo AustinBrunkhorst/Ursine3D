@@ -46,6 +46,11 @@
             },
             attached: function() {
                 this.$.filter.focus( );
+            },
+
+            show: function(x, y) {
+                this.style.left = x +'px';
+                this.style.top = y +'px';
 
                 setTimeout( function() {
                     var bounds = this.getBoundingClientRect( );
@@ -53,9 +58,10 @@
                     // fit inside window
                     if (bounds.bottom > window.innerHeight)
                         this.style.top = (window.innerHeight - bounds.height) + 'px';
-                }.bind( this ), 25 );
-            },
 
+                    this.classList.add( 'shown' );
+                }.bind( this ), 0 );
+            },
             close: function() {
                 var self = this;
 

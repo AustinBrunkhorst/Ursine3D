@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** PhysicsInteropConfig.h
 **
@@ -60,6 +60,13 @@ namespace ursine
 			BT_RIGID_BODY = btCollisionObject::CO_RIGID_BODY,
 			BT_GHOST = btCollisionObject::CO_GHOST_OBJECT,
 			BT_SOFT_BODY = btCollisionObject::CO_SOFT_BODY
+		};
+
+		enum BodyFlag
+		{
+			BF_DYNAMIC = 0,
+			BF_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
+			BF_STATIC = btRigidBody::CF_STATIC_OBJECT
 		};
     }
 }

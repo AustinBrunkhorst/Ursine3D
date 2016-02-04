@@ -30,6 +30,7 @@ class EditorCameraSystem : public ursine::ecs::EntitySystem
     ENTITY_SYSTEM;
 
 public:
+    Meta(Enable)
     EditorCameraSystem(ursine::ecs::World *world);
 
     // Determines if the scene representing this world currently has focus
@@ -72,4 +73,4 @@ private:
     void updateCameraKeys(float dt);
     void updateCameraMouse(float dt);
 
-} Meta(Enable);
+} Meta(Enable, WhiteListMethods);

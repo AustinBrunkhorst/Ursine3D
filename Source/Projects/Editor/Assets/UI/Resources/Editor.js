@@ -1,4 +1,4 @@
-(function () { "use strict";
+(function ($global) { "use strict";
 var $hxClasses = {};
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
@@ -21,27 +21,39 @@ Application.initWindows = function() {
 	mainDockContainer.appendChild(mainDock);
 	var sceneView = new ursine_editor_windows_SceneView();
 	var leftColumn = mainDock.addColumn();
-	leftColumn.style.width = "15%";
+	leftColumn.style.width = "20%";
 	var row = leftColumn.addRow();
 	row.style.height = "100%";
 	var column = row.addColumn();
 	column.style.width = "100%";
 	column.appendChild(new ursine_editor_windows_EntityInspector().window);
 	var middleColumn = mainDock.addColumn();
-	middleColumn.style.width = "70%";
+	middleColumn.style.width = "60%";
 	var row1 = middleColumn.addRow();
 	row1.style.height = "100%";
 	var column1 = row1.addColumn();
 	column1.style.width = "100%";
 	column1.appendChild(sceneView.window);
 	var rightColumn = mainDock.addColumn();
-	rightColumn.style.width = "15%";
+	rightColumn.style.width = "20%";
 	var row2 = rightColumn.addRow();
 	row2.style.height = "100%";
 	var column2 = row2.addColumn();
 	column2.style.width = "100%";
 	column2.appendChild(new ursine_editor_windows_SceneOutline().window);
 	sceneView.onViewportInvalidated();
+};
+var EReg = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+};
+$hxClasses["EReg"] = EReg;
+EReg.__name__ = ["EReg"];
+EReg.prototype = {
+	replace: function(s,by) {
+		return s.replace(this.r,by);
+	}
+	,__class__: EReg
 };
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
@@ -50,6 +62,15 @@ HxOverrides.cca = function(s,index) {
 	var x = s.charCodeAt(index);
 	if(x != x) return undefined;
 	return x;
+};
+HxOverrides.substr = function(s,pos,len) {
+	if(pos != null && pos != 0 && len != null && len < 0) return "";
+	if(len == null) len = s.length;
+	if(pos < 0) {
+		pos = s.length + pos;
+		if(pos < 0) pos = 0;
+	} else if(len < 0) len = s.length + len - pos;
+	return s.substr(pos,len);
 };
 HxOverrides.remove = function(a,obj) {
 	var i = a.indexOf(obj);
@@ -194,6 +215,7 @@ haxe_Timer.prototype = {
 	}
 	,run: function() {
 	}
+	,__class__: haxe_Timer
 };
 var haxe_ds_IntMap = function() {
 	this.h = { };
@@ -207,6 +229,7 @@ haxe_ds_IntMap.prototype = {
 		delete(this.h[key]);
 		return true;
 	}
+	,__class__: haxe_ds_IntMap
 };
 var haxe_ds__$StringMap_StringMapIterator = function(map,keys) {
 	this.map = map;
@@ -223,6 +246,7 @@ haxe_ds__$StringMap_StringMapIterator.prototype = {
 	,next: function() {
 		return this.map.get(this.keys[this.index++]);
 	}
+	,__class__: haxe_ds__$StringMap_StringMapIterator
 };
 var haxe_ds_StringMap = function() {
 	this.h = { };
@@ -276,6 +300,7 @@ haxe_ds_StringMap.prototype = {
 	,iterator: function() {
 		return new haxe_ds__$StringMap_StringMapIterator(this,this.arrayKeys());
 	}
+	,__class__: haxe_ds_StringMap
 };
 var haxe_rtti_Meta = function() { };
 $hxClasses["haxe.rtti.Meta"] = haxe_rtti_Meta;
@@ -301,10 +326,20 @@ $hxClasses["js._Boot.HaxeError"] = js__$Boot_HaxeError;
 js__$Boot_HaxeError.__name__ = ["js","_Boot","HaxeError"];
 js__$Boot_HaxeError.__super__ = Error;
 js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+	__class__: js__$Boot_HaxeError
 });
 var js_Boot = function() { };
 $hxClasses["js.Boot"] = js_Boot;
 js_Boot.__name__ = ["js","Boot"];
+js_Boot.getClass = function(o) {
+	if((o instanceof Array) && o.__enum__ == null) return Array; else {
+		var cl = o.__class__;
+		if(cl != null) return cl;
+		var name = js_Boot.__nativeClassName(o);
+		if(name != null) return js_Boot.__resolveNativeClass(name);
+		return null;
+	}
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
@@ -372,6 +407,61 @@ js_Boot.__string_rec = function(o,s) {
 	default:
 		return String(o);
 	}
+};
+js_Boot.__interfLoop = function(cc,cl) {
+	if(cc == null) return false;
+	if(cc == cl) return true;
+	var intf = cc.__interfaces__;
+	if(intf != null) {
+		var _g1 = 0;
+		var _g = intf.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var i1 = intf[i];
+			if(i1 == cl || js_Boot.__interfLoop(i1,cl)) return true;
+		}
+	}
+	return js_Boot.__interfLoop(cc.__super__,cl);
+};
+js_Boot.__instanceof = function(o,cl) {
+	if(cl == null) return false;
+	switch(cl) {
+	case Int:
+		return (o|0) === o;
+	case Float:
+		return typeof(o) == "number";
+	case Bool:
+		return typeof(o) == "boolean";
+	case String:
+		return typeof(o) == "string";
+	case Array:
+		return (o instanceof Array) && o.__enum__ == null;
+	case Dynamic:
+		return true;
+	default:
+		if(o != null) {
+			if(typeof(cl) == "function") {
+				if(o instanceof cl) return true;
+				if(js_Boot.__interfLoop(js_Boot.getClass(o),cl)) return true;
+			} else if(typeof(cl) == "object" && js_Boot.__isNativeObj(cl)) {
+				if(o instanceof cl) return true;
+			}
+		} else return false;
+		if(cl == Class && o.__name__ != null) return true;
+		if(cl == Enum && o.__ename__ != null) return true;
+		return o.__enum__ == cl;
+	}
+};
+js_Boot.__nativeClassName = function(o) {
+	var name = js_Boot.__toStr.call(o).slice(8,-1);
+	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") return null;
+	return name;
+};
+js_Boot.__isNativeObj = function(o) {
+	return js_Boot.__nativeClassName(o) != null;
+};
+js_Boot.__resolveNativeClass = function(name) {
+	return $global[name];
 };
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
@@ -465,6 +555,7 @@ ursine_editor_Editor.prototype = {
 			ursine_native_Extern.SceneStep();
 		});
 	}
+	,__class__: ursine_editor_Editor
 };
 var ursine_editor_MenuItemHandler = function() { };
 $hxClasses["ursine.editor.MenuItemHandler"] = ursine_editor_MenuItemHandler;
@@ -488,12 +579,16 @@ ursine_editor_NativeBroadcastManager.prototype = {
 		}
 		return channel;
 	}
+	,__class__: ursine_editor_NativeBroadcastManager
 };
 var ursine_editor_WindowHandler = function() {
 	this.window = new EditorWindowControl();
 };
 $hxClasses["ursine.editor.WindowHandler"] = ursine_editor_WindowHandler;
 ursine_editor_WindowHandler.__name__ = ["ursine","editor","WindowHandler"];
+ursine_editor_WindowHandler.prototype = {
+	__class__: ursine_editor_WindowHandler
+};
 var ursine_editor_NativeCanvasWindowHandler = function(toolName) {
 	ursine_editor_WindowHandler.call(this);
 	this.m_nativeHandler = new NativeToolHandler(toolName);
@@ -518,6 +613,7 @@ ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_Window
 		var bounds = this.window.container.getBoundingClientRect();
 		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left, y : bounds.top, width : bounds.width, height : bounds.height});
 	}
+	,__class__: ursine_editor_NativeCanvasWindowHandler
 });
 var ursine_editor_NativeNotificationManager = function(broadcastManager) {
 	this.m_notifications = new haxe_ds_IntMap();
@@ -567,6 +663,7 @@ ursine_editor_NativeNotificationManager.prototype = {
 			++i;
 		}
 	}
+	,__class__: ursine_editor_NativeNotificationManager
 };
 var ursine_editor_menus_DebugMenu = function() { };
 $hxClasses["ursine.editor.menus.DebugMenu"] = ursine_editor_menus_DebugMenu;
@@ -578,6 +675,7 @@ ursine_editor_menus_DebugMenu.doEditorDebugTools = function() {
 };
 ursine_editor_menus_DebugMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_DebugMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_DebugMenu
 });
 var ursine_editor_menus_EditMenu = function() { };
 $hxClasses["ursine.editor.menus.EditMenu"] = ursine_editor_menus_EditMenu;
@@ -590,6 +688,7 @@ ursine_editor_menus_EditMenu.doRedo = function() {
 };
 ursine_editor_menus_EditMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_EditMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_EditMenu
 });
 var ursine_editor_menus_EntityMenu = function() { };
 $hxClasses["ursine.editor.menus.EntityMenu"] = ursine_editor_menus_EntityMenu;
@@ -649,6 +748,7 @@ ursine_editor_menus_EntityMenu.createLight = function(name,type) {
 };
 ursine_editor_menus_EntityMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_EntityMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_EntityMenu
 });
 var ursine_editor_menus_FileMenu = function() { };
 $hxClasses["ursine.editor.menus.FileMenu"] = ursine_editor_menus_FileMenu;
@@ -661,6 +761,7 @@ ursine_editor_menus_FileMenu.doOpen = function() {
 };
 ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_FileMenu
 });
 var ursine_editor_menus_HelpMenu = function() { };
 $hxClasses["ursine.editor.menus.HelpMenu"] = ursine_editor_menus_HelpMenu;
@@ -670,6 +771,26 @@ ursine_editor_menus_HelpMenu.doOpenGettingStarted = function() {
 };
 ursine_editor_menus_HelpMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_HelpMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_HelpMenu
+});
+var ursine_editor_menus_ToolsMenu = function() { };
+$hxClasses["ursine.editor.menus.ToolsMenu"] = ursine_editor_menus_ToolsMenu;
+ursine_editor_menus_ToolsMenu.__name__ = ["ursine","editor","menus","ToolsMenu"];
+ursine_editor_menus_ToolsMenu.uniConnector = function() {
+	ursine_native_Extern.WaypointUnidirectionalConnector();
+};
+ursine_editor_menus_ToolsMenu.biConnector = function() {
+	ursine_native_Extern.WaypointBidirectionalConnector();
+};
+ursine_editor_menus_ToolsMenu.enableLines = function() {
+	ursine_native_Extern.WaypointEnableDrawLines();
+};
+ursine_editor_menus_ToolsMenu.disableLines = function() {
+	ursine_native_Extern.WaypointDisableDrawLines();
+};
+ursine_editor_menus_ToolsMenu.__super__ = ursine_editor_MenuItemHandler;
+ursine_editor_menus_ToolsMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_ToolsMenu
 });
 var ursine_editor_scene_component_ComponentDatabase = function(database) {
 	this.m_componentInspectionHandlers = new haxe_ds_StringMap();
@@ -768,6 +889,13 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 			}
 		}
 	}
+	,__class__: ursine_editor_scene_component_ComponentDatabase
+};
+var ursine_editor_scene_component_inspectors_IFieldInspectionOwner = function() { };
+$hxClasses["ursine.editor.scene.component.inspectors.IFieldInspectionOwner"] = ursine_editor_scene_component_inspectors_IFieldInspectionOwner;
+ursine_editor_scene_component_inspectors_IFieldInspectionOwner.__name__ = ["ursine","editor","scene","component","inspectors","IFieldInspectionOwner"];
+ursine_editor_scene_component_inspectors_IFieldInspectionOwner.prototype = {
+	__class__: ursine_editor_scene_component_inspectors_IFieldInspectionOwner
 };
 var ursine_editor_scene_component_inspectors_ComponentInspectionHandler = function(entity,component) {
 	this.entity = entity;
@@ -783,6 +911,7 @@ var ursine_editor_scene_component_inspectors_ComponentInspectionHandler = functi
 };
 $hxClasses["ursine.editor.scene.component.inspectors.ComponentInspectionHandler"] = ursine_editor_scene_component_inspectors_ComponentInspectionHandler;
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","ComponentInspectionHandler"];
+ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = {
 	updateField: function(name,value) {
 		this.component.value[name] = value;
@@ -834,12 +963,6 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 		this.m_fieldHandlers.remove(key);
 		this.inspector.fieldInspectors.removeChild(field.inspector);
 	}
-	,notifyChanged: function(field,value) {
-		this.entity.componentFieldUpdate(this.component.type,field.name,value);
-	}
-	,notifyArrayChanged: function(field,index,value) {
-		this.entity.componentFieldArrayUpdate(this.component.type,field.name,index,value);
-	}
 	,remove: function() {
 		var $it0 = this.m_fieldHandlers.iterator();
 		while( $it0.hasNext() ) {
@@ -848,6 +971,22 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 		}
 		if(this.inspector.parentNode != null) this.inspector.parentNode.removeChild(this.inspector);
 	}
+	,getFieldHandlers: function() {
+		var handlers = [];
+		var $it0 = this.m_fieldHandlers.iterator();
+		while( $it0.hasNext() ) {
+			var handler = $it0.next();
+			handlers.push(handler);
+		}
+		return handlers;
+	}
+	,notifyChanged: function(handler,field,value) {
+		this.entity.componentFieldUpdate(this.component.type,field.name,value);
+	}
+	,ownerNotifyChanged: function(handler,field,value) {
+		this.notifyChanged(handler,field,value);
+	}
+	,__class__: ursine_editor_scene_component_inspectors_ComponentInspectionHandler
 };
 var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(owner,instance,field,type) {
 	this.m_owner = owner;
@@ -855,7 +994,8 @@ var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(o
 	this.m_field = field;
 	this.m_type = type;
 	this.inspector = new FieldInspectorControl();
-	this.inspector.heading = field.name;
+	var prettyName = ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex.replace(field.name,"$1 ");
+	this.inspector.heading = prettyName.charAt(0).toUpperCase() + HxOverrides.substr(prettyName,1,null);
 	this.arrayIndex = 0;
 };
 $hxClasses["ursine.editor.scene.component.inspectors.FieldInspectionHandler"] = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
@@ -874,11 +1014,12 @@ ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype = {
 		if(this.inspector.parentNode != null) this.inspector.parentNode.removeChild(this.inspector);
 	}
 	,notifyChanged: function(field,value) {
-		if(this.m_type.isArray) this.m_owner.notifyArrayChanged(this.m_field,this.arrayIndex,value); else this.m_owner.notifyChanged(this.m_field,value);
+		this.m_owner.ownerNotifyChanged(this,field,value);
 	}
 	,get_name: function() {
 		return this.m_field.name;
 	}
+	,__class__: ursine_editor_scene_component_inspectors_FieldInspectionHandler
 };
 var ursine_editor_scene_component_inspectors_components_DefaultComponentInspector = function(entity,component) {
 	ursine_editor_scene_component_inspectors_ComponentInspectionHandler.call(this,entity,component);
@@ -905,6 +1046,7 @@ $hxClasses["ursine.editor.scene.component.inspectors.components.DefaultComponent
 ursine_editor_scene_component_inspectors_components_DefaultComponentInspector.__name__ = ["ursine","editor","scene","component","inspectors","components","DefaultComponentInspector"];
 ursine_editor_scene_component_inspectors_components_DefaultComponentInspector.__super__ = ursine_editor_scene_component_inspectors_ComponentInspectionHandler;
 ursine_editor_scene_component_inspectors_components_DefaultComponentInspector.prototype = $extend(ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype,{
+	__class__: ursine_editor_scene_component_inspectors_components_DefaultComponentInspector
 });
 var ursine_editor_scene_component_inspectors_components_LightInspector = function(entity,component) {
 	ursine_editor_scene_component_inspectors_ComponentInspectionHandler.call(this,entity,component);
@@ -957,6 +1099,7 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
 		v2;
 	}
+	,__class__: ursine_editor_scene_component_inspectors_components_LightInspector
 });
 var ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector = function(parent,owner,instance,field,type) {
 	this.m_parent = parent;
@@ -966,16 +1109,29 @@ var ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector = functio
 	this.m_type = type;
 	this.m_arrayItems = [];
 	this.initElements();
+	var _g1 = 0;
+	var _g = instance.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		this.arrayInsert(i,instance[i]);
+		this.m_arrayItems[i].opened = false;
+	}
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.ArrayTypeInspector"] = ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector;
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","ArrayTypeInspector"];
+ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 	arrayInsert: function(index,value) {
+		var _g = this;
 		var handler = this.inspectItem(value);
 		var container = new ArrayItemContainerControl();
 		handler.arrayIndex = index;
 		container.opened = true;
 		container.container.appendChild(handler.inspector);
+		container.handler = handler;
+		container.addEventListener("item-removed",function() {
+			_g.m_owner.entity.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
+		});
 		this.m_arrayItems.splice(index,0,container);
 		if((function($this) {
 			var $r;
@@ -989,8 +1145,8 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 			var item = this.m_arrayItems[index + 1];
 			this.m_itemsContainer.insertBefore(item,container);
 			var _g1 = index;
-			var _g = this.m_arrayItems.length;
-			while(_g1 < _g) {
+			var _g2 = this.m_arrayItems.length;
+			while(_g1 < _g2) {
 				var i = _g1++;
 				var element = this.m_arrayItems[i];
 				element.index = i;
@@ -998,11 +1154,26 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		}
 	}
 	,arraySet: function(index,value) {
-		var handler = this.inspectItem(value);
+		var container = this.m_arrayItems[index];
+		if(container == null) throw new js__$Boot_HaxeError("Invalid array index.");
+		container.handler.updateValue(value);
 	}
 	,arrayRemove: function(index) {
+		var container = this.m_arrayItems[index];
+		if(container == null) throw new js__$Boot_HaxeError("Invalid array index.");
+		this.m_arrayItems.splice(index,1);
+		this.m_itemsContainer.removeChild(container);
+		var _g1 = index;
+		var _g = this.m_arrayItems.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var element = this.m_arrayItems[i];
+			element.index = i;
+			element.handler.arrayIndex = i;
+		}
 	}
 	,initElements: function() {
+		this.m_parent.classList.add("array-owner");
 		var itemsWrapper;
 		var _this = window.document;
 		itemsWrapper = _this.createElement("div");
@@ -1013,19 +1184,33 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		this.m_itemsContainer.classList.add("array-items");
 		itemsWrapper.appendChild(this.m_itemsContainer);
 		this.m_btnAddItem = new ButtonControl();
-		this.m_btnAddItem.text = "Add Item";
+		this.m_btnAddItem.text = "Add " + this.m_type.arrayType;
 		this.m_btnAddItem.addEventListener("click",$bind(this,this.onAddItemClicked));
 		itemsWrapper.appendChild(this.m_btnAddItem);
 	}
+	,getFieldHandlers: function() {
+		var handlers = this.m_owner.getFieldHandlers();
+		var _g = 0;
+		var _g1 = this.m_arrayItems;
+		while(_g < _g1.length) {
+			var item = _g1[_g];
+			++_g;
+			handlers.push(item.handler);
+		}
+		return handlers;
+	}
+	,ownerNotifyChanged: function(handler,field,value) {
+		this.m_owner.entity.componentFieldArrayUpdate(this.m_owner.component.type,field.name,handler.arrayIndex,value);
+	}
 	,inspectItem: function(value) {
 		var database = ursine_editor_Editor.instance.componentDatabase;
-		var type = database.getNativeType(this.m_field.type);
-		var arrayType = database.getNativeType(type.arrayType);
-		return database.createFieldInspector(this.m_owner,value,this.m_field,arrayType);
+		var arrayType = database.getNativeType(this.m_type.arrayType);
+		return database.createFieldInspector(this,value,this.m_field,arrayType);
 	}
 	,onAddItemClicked: function(e) {
 		this.m_owner.entity.componentFieldArrayPush(this.m_owner.component.type,this.m_field.name,{ });
 	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector
 };
 var ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector = function(owner,instance,field,type) {
 	var _g = this;
@@ -1045,6 +1230,7 @@ ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.prototype 
 		this.m_bool.checked = value;
 		this.m_instance = value;
 	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector
 });
 var ursine_editor_scene_component_inspectors_fields_ColorFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -1073,7 +1259,7 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.prototype = 
 		this.m_instance = value;
 	}
 	,remove: function() {
-		if(this.m_colorInput != null) window.document.body.removeChild(this.m_colorInput);
+		this.clearColorInput();
 		ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype.remove.call(this);
 	}
 	,onPreviewClick: function(e) {
@@ -1081,9 +1267,18 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.prototype = 
 		this.m_colorInput = new ColorInputControl(this.m_instance);
 		this.m_colorInput.addEventListener("color-changed",$bind(this,this.onColorChanged));
 		this.m_colorInput.addEventListener("closed",$bind(this,this.onColorClosed));
-		this.m_colorInput.style.left = "" + e.clientX + "px";
-		this.m_colorInput.style.top = "" + e.clientY + "px";
 		window.document.body.appendChild(this.m_colorInput);
+		this.m_colorInput.show(e.clientX,e.clientY);
+		var handlers = this.m_owner.getFieldHandlers();
+		var _g = 0;
+		while(_g < handlers.length) {
+			var handler = handlers[_g];
+			++_g;
+			if(js_Boot.__instanceof(handler,ursine_editor_scene_component_inspectors_fields_ColorFieldInspector) && handler != this) {
+				var colorHandler = handler;
+				colorHandler.clearColorInput();
+			}
+		}
 	}
 	,onColorChanged: function(e) {
 		this.notifyChanged(this.m_field,e.detail.color);
@@ -1091,19 +1286,39 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.prototype = 
 	,onColorClosed: function(e) {
 		this.m_colorInput = null;
 	}
+	,clearColorInput: function() {
+		if(this.m_colorInput != null) {
+			window.document.body.removeChild(this.m_colorInput);
+			this.m_colorInput = null;
+		}
+	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_ColorFieldInspector
 });
 var ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
-	if(type.isArray) this.initArray(); else if(type.enumValue != null) this.initEnum();
+	if(type.isArray) this.initArray(); else if(type.enumValue != null) this.initEnum(); else this.initDefaultStruct();
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.DefaultFieldInspector"] = ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector;
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","DefaultFieldInspector"];
+ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
 	updateValue: function(value) {
 		this.m_instance = value;
 		if(this.m_isEnum) {
 			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
+		} else {
+			var _g = 0;
+			var _g1 = this.m_type.fields;
+			while(_g < _g1.length) {
+				var field = _g1[_g];
+				++_g;
+				var handler = this.m_structFieldHandlers.get(field.name);
+				if(handler == null) throw new js__$Boot_HaxeError("Unable to find handler for field " + field.name);
+				var fieldInstance = Reflect.field(value,field.name);
+				handler.updateValue(fieldInstance);
+			}
 		}
 	}
 	,arrayInsert: function(index,value) {
@@ -1114,6 +1329,21 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 	}
 	,arrayRemove: function(index) {
 		if(this.m_arrayInspector != null) this.m_arrayInspector.arrayRemove(index);
+	}
+	,getFieldHandlers: function() {
+		var handlers = [];
+		var $it0 = this.m_structFieldHandlers.iterator();
+		while( $it0.hasNext() ) {
+			var handler = $it0.next();
+			handlers.push(handler);
+		}
+		return handlers;
+	}
+	,ownerNotifyChanged: function(handler,field,value) {
+		if(this.m_isEnum) ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype.notifyChanged.call(this,field,value); else {
+			this.m_instance[field.name] = value;
+			this.m_owner.ownerNotifyChanged(this,this.m_field,this.m_instance);
+		}
 	}
 	,initArray: function() {
 		this.m_arrayInspector = new ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector(this.inspector,this.m_owner,this.m_instance,this.m_field,this.m_type);
@@ -1149,7 +1379,26 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 			_g.notifyChanged(_g.m_field,_g.m_instance);
 		});
 		this.inspector.container.appendChild(this.m_comboInput);
-		this.updateValue(this.m_instance);
+	}
+	,initDefaultStruct: function() {
+		this.inspector.classList.add("default-struct");
+		this.m_structFieldHandlers = new haxe_ds_StringMap();
+		var componentOwner = this.m_owner;
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		var _g = 0;
+		var _g1 = this.m_type.fields;
+		while(_g < _g1.length) {
+			var field = _g1[_g];
+			++_g;
+			var fieldInstance = Reflect.field(this.m_instance,field.name);
+			var fieldType = database.getNativeType(field.type);
+			var fieldInspector = database.createFieldInspector(this,fieldInstance,field,fieldType);
+			this.inspector.container.appendChild(fieldInspector.inspector);
+			{
+				this.m_structFieldHandlers.set(field.name,fieldInspector);
+				fieldInspector;
+			}
+		}
 	}
 	,loadEnumBitMaskValue: function(value) {
 		var values = Reflect.fields(this.m_type.enumValue);
@@ -1173,6 +1422,7 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		}
 		return value;
 	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector
 });
 var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = function(owner,instance,field,type) {
 	var _g = this;
@@ -1216,6 +1466,7 @@ ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.prototype =
 		if(this.m_type.name == "float" || this.m_type.name == "double") number = Math.toMaxPrecision(value,5); else number = Std["int"](value);
 		this.m_number.value = number;
 	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_NumberFieldInspector
 });
 var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = function(owner,instance,field,type) {
 	var _g = this;
@@ -1241,6 +1492,7 @@ ursine_editor_scene_component_inspectors_fields_StringFieldInspector.prototype =
 		this.m_string.value = value;
 		this.m_instance = value;
 	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_StringFieldInspector
 });
 var ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -1255,6 +1507,7 @@ $hxClasses["ursine.editor.scene.component.inspectors.fields.UnknownTypeInspector
 ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","UnknownTypeInspector"];
 ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
+	__class__: ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector
 });
 var ursine_editor_scene_component_inspectors_fields_VectorFieldInspector = function(owner,instance,field,type) {
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -1309,6 +1562,7 @@ ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.prototype =
 		var field = this.m_fields.get(name);
 		field.value = Math.toMaxPrecision(value,5);
 	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_VectorFieldInspector
 });
 var ursine_utils_IEventContainer = function() { };
 $hxClasses["ursine.utils.IEventContainer"] = ursine_utils_IEventContainer;
@@ -1434,6 +1688,7 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,onComponentArrayRemove: function(e) {
 		if(e.uniqueID == this.uniqueID) this.events.trigger(ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove,e);
 	}
+	,__class__: ursine_editor_scene_entity_Entity
 };
 var ursine_editor_scene_entity_EntityEvent = function() { };
 $hxClasses["ursine.editor.scene.entity.EntityEvent"] = ursine_editor_scene_entity_EntityEvent;
@@ -1554,10 +1809,9 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	,onAddComponentClicked: function(e) {
 		var types = this.getAvailableComponentTypes(this.m_inspectedEntity);
 		var selector = new ComponentTypeSelectorControl(types);
-		selector.style.left = "" + e.clientX + "px";
-		selector.style.top = "" + e.clientY + "px";
 		selector.addEventListener("type-selected",$bind(this,this.onAddComponentTypeSelected));
 		window.document.body.appendChild(selector);
+		selector.show(e.clientX,e.clientY);
 	}
 	,onRemoveComponentClicked: function(component,e) {
 		this.m_inspectedEntity.removeComponent(component.type);
@@ -1577,8 +1831,13 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.m_openCache.set(component.type,v);
 		v;
 	}
+	,onWindowResized: function() {
+		this.window.classList.toggle("small-width",this.window.container.offsetWidth < ursine_editor_windows_EntityInspector.m_smallWindowWidth);
+	}
 	,initWindow: function() {
 		this.window.classList.add("entity-inspector-window");
+		this.window.addEventListener("resize",$bind(this,this.onWindowResized));
+		window.addEventListener("resize",$bind(this,this.onWindowResized));
 		var _this = window.document;
 		this.m_headerToolbar = _this.createElement("div");
 		this.m_headerToolbar.classList.add("header-toolbar");
@@ -1602,6 +1861,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.m_btnAddComponent.addEventListener("click",$bind(this,this.onAddComponentClicked));
 		this.window.container.appendChild(this.m_btnAddComponent);
 	}
+	,__class__: ursine_editor_windows_EntityInspector
 });
 var ursine_editor_windows_SceneOutline = function() {
 	this.m_selectedEntities = null;
@@ -1821,6 +2081,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			});
 		}
 	}
+	,__class__: ursine_editor_windows_SceneOutline
 });
 var ursine_editor_windows_SceneView = function() {
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
@@ -1840,6 +2101,7 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 			break;
 		}
 	}
+	,__class__: ursine_editor_windows_SceneView
 });
 var ursine_native_Extern = function() { };
 $hxClasses["ursine.native.Extern"] = ursine_native_Extern;
@@ -1881,6 +2143,18 @@ ursine_native_Extern.NotificationButtonCallback = function(id,buttonID) {
 ursine_native_Extern.NotificationCloseCallback = function(id) {
 	return ursine_NotificationCloseCallback(id);
 };
+ursine_native_Extern.WaypointUnidirectionalConnector = function() {
+	return WaypointUnidirectionalConnector();
+};
+ursine_native_Extern.WaypointBidirectionalConnector = function() {
+	return WaypointBidirectionalConnector();
+};
+ursine_native_Extern.WaypointEnableDrawLines = function() {
+	return WaypointEnableDrawLines();
+};
+ursine_native_Extern.WaypointDisableDrawLines = function() {
+	return WaypointDisableDrawLines();
+};
 var ursine_native_Property = function() { };
 $hxClasses["ursine.native.Property"] = ursine_native_Property;
 ursine_native_Property.__name__ = ["ursine","native","Property"];
@@ -1919,6 +2193,7 @@ ursine_utils_EventManager.prototype = {
 		}
 		return result;
 	}
+	,__class__: ursine_utils_EventManager
 };
 var ursine_utils_MetaUtils = function() { };
 $hxClasses["ursine.utils.MetaUtils"] = ursine_utils_MetaUtils;
@@ -1941,18 +2216,30 @@ function $iterator(o) { if( o instanceof Array ) return function() { return HxOv
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 $hxClasses.Math = Math;
+String.prototype.__class__ = $hxClasses.String = String;
 String.__name__ = ["String"];
 $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
+var Int = $hxClasses.Int = { __name__ : ["Int"]};
+var Dynamic = $hxClasses.Dynamic = { __name__ : ["Dynamic"]};
+var Float = $hxClasses.Float = Number;
+Float.__name__ = ["Float"];
+var Bool = Boolean;
+Bool.__ename__ = ["Bool"];
+var Class = $hxClasses.Class = { __name__ : ["Class"]};
+var Enum = { };
 var __map_reserved = {}
+js_Boot.__toStr = {}.toString;
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
 ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene"]}, doOpen : { mainMenuItem : ["File/Save Scene"]}}};
 ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
+ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
+ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName = "ursine::ecs::LightType";
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName = "Type";
@@ -1975,9 +2262,10 @@ ursine_editor_scene_entity_EntityEvent.ComponentChanged = "ComponentChanged";
 ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted = "ComponentArrayInserted";
 ursine_editor_scene_entity_EntityEvent.ComponentArraySet = "ComponentArraySet";
 ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove = "ComponentArrayRemove";
+ursine_editor_windows_EntityInspector.m_smallWindowWidth = 245;
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
 Application.main();
-})();
+})(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

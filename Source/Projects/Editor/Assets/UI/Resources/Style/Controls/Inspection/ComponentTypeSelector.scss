@@ -10,13 +10,18 @@
   outline: none;
   border: 1px solid #3f3f46;
   box-shadow: 0 2px 3px 0 rgba(black, 0.75);
+  opacity: 0;
+  transition: opacity $duration-transition-btn ease;
   // arbitrarily high
   // TODO: put in container meant for these type of controls
   z-index: 9999;
 
+  &.shown {
+    opacity: 1;
+  }
+
   &.closing {
     opacity: 0;
-    transition: opacity $duration-transition-btn ease;
   }
 
   #filter {

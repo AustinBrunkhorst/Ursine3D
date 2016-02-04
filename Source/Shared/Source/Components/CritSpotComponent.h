@@ -12,6 +12,7 @@
 
 
 #include <Component.h>
+#include <BoxColliderComponent.h>
 
 struct CritSpot : ursine::ecs::Component
 {

@@ -11,22 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      ShaderList.h
-Module:         Graphics
-Purpose:        list of the current shaders in the engine
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 namespace ursine
@@ -41,8 +25,10 @@ namespace ursine
             SHADER_NORMAL,
             SHADER_DEFFERED_TEXTURE,
             SHADER_BILLBOARD2D,
+            
             SHADER_DEFERRED_DEPTH,
             SHADER_DEFERRED_DEPTH_NORM,
+            
             SHADER_UI,
 
             //lights need to go after this, post processing stuffz...
@@ -54,11 +40,15 @@ namespace ursine
             // and past this is debug!
             SHADER_PRIMITIVE,
 
+            
+
             //shaders not part of the regular pipeline
             SHADER_POINT,
             SHADER_SHADOW,
 
             SHADER_MOUSEPOSITION,
+
+            SHADER_PARTICLE,
 
             SHADER_COUNT
         };

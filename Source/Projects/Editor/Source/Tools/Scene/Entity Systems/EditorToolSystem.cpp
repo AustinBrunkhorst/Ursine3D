@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ObjectSelectorSystem.h
 **
@@ -45,7 +45,6 @@ ecs::Entity* EditorToolSystem::GetCurrentFocus(void)
 void EditorToolSystem::OnAfterLoad(void)
 {
 	auto editor = GetCoreSystem( Editor );
-	auto world = editor->GetProject( )->GetScene( )->GetWorld( );
 
 	m_selectTool = new SelectTool( editor, m_world );
 	m_dupTool = new DuplicateTool( editor, m_world );
@@ -61,7 +60,7 @@ void EditorToolSystem::OnAfterLoad(void)
 	m_mouseManager = GetCoreSystem( MouseManager );
 	m_keyboardManager = GetCoreSystem( KeyboardManager );
 
-	m_editorCameraSystem = world->GetEntitySystem( EditorCameraSystem );
+	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 
 	m_mouseManager->Listener( this )
 		.On( MM_BUTTON_DOWN, &EditorToolSystem::onMouseDown )
@@ -110,12 +109,9 @@ void EditorToolSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
 		m_selectTool->OnUpdate( m_keyboardManager, m_mouseManager );
 }
 
-#include <iostream>
 void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
 {
 	EVENT_ATTRS(ursine::MouseManager, MouseButtonArgs);
-	
-	std::cout << (m_editorCameraSystem->HasFocus( ) ? "T " : "F ") << (m_editorCameraSystem->HasMouseFocus( ) ? "T" : "F") << std::endl;
 
 	// must have focus or mouse focus
     if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))

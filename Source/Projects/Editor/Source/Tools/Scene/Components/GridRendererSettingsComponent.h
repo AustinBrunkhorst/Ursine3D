@@ -15,8 +15,6 @@
 
 #include <Component.h>
 
-#include <Array.h>
-
 class GridRendererSettings : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;

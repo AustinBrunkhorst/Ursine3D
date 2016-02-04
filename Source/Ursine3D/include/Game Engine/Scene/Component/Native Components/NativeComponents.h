@@ -25,6 +25,11 @@
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
 #include "FBXSceneRootNodeComponent.h"
+#include "ParticleSystemComponent.h"
+#include "ParticleEmitterComponent.h"
+#include "ParticleColorAnimatorComponent.h"
+#include "ParticleAnimatorComponent.h"
+#include "ParticleAttractorComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics
@@ -42,6 +47,8 @@
 #include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
+
+#include "SweptControllerComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Audio

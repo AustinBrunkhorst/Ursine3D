@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** CommandInputControllerComponent.h
 **
@@ -85,5 +85,7 @@ private:
 
     void MapXboxContoller(void);
     void MapKeyboard(void);
+
+	void MapCommandList(void);
 
 }Meta(Enable, DisplayName("CommandInputController"));

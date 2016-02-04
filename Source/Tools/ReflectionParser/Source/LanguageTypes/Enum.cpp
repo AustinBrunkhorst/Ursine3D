@@ -34,6 +34,8 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     else
         m_displayName = utils::GetQualifiedName( cursor, currentNamespace );
 
+    std::cout << m_displayName << std::endl;
+
     // it's an anonymous enum?
     if (m_displayName.find( "anonymous enum" ) != std::string::npos)
         m_displayName = "";

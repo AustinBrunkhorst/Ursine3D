@@ -30,7 +30,8 @@ public:
         float PickupTime,
         GetPickupTime,
         SetPickupTime
-        );
+    );
+
     float GetPickupTime(void) const;
     void SetPickupTime(const float time);
 
@@ -38,7 +39,8 @@ public:
         WeaponType Weapon,
         GetWeaponType,
         SetWeaponType
-        );
+    );
+
     WeaponType GetWeaponType(void) const;
     void SetWeaponType(WeaponType weaponType);
 
@@ -46,7 +48,8 @@ public:
         std::string Weapon,
         GetWeaponToPickup,
         SetWeaponToPickup
-        );
+    );
+
     const std::string& GetWeaponToPickup(void) const;
     void SetWeaponToPickup(const std::string& weapon);
 
@@ -54,7 +57,8 @@ public:
         std::string Texture,
         GetTexture,
         SetTexture
-        );
+    );
+
     const std::string& GetTexture(void) const;
     void SetTexture(const std::string& texture);
 
@@ -90,9 +94,6 @@ private:
 
     // Texture to display to object
     std::string m_texture;
-
-    
-
 
     void OnInitialize(void) override;
 } Meta(Enable, DisplayName("WeaponPickup"));

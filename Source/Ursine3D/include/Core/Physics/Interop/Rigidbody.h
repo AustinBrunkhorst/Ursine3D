@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Rigidbody.h
 **
@@ -26,17 +26,6 @@ namespace ursine
     namespace physics
     {
         class Simulation;
-
-        enum BodyFlag
-        {
-        #ifdef BULLET_PHYSICS
-
-            BF_DYNAMIC = 0,
-            BF_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
-            BF_STATIC = btRigidBody::CF_STATIC_OBJECT
-
-        #endif
-        };
 
         class Rigidbody : public virtual RigidbodyBase
         {

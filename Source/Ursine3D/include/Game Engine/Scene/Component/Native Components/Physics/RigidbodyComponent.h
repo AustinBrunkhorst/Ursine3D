@@ -48,6 +48,12 @@ namespace ursine
                 SetMass
             );
 
+			EditorField(
+                SVec3 offset,
+                GetOffset,
+                SetOffset
+            );
+
             EditorField(
                 bool freezeXRotation,
                 GetRotationFreezeX,

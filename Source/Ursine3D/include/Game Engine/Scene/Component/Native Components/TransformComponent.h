@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TransformComponent.h
 **
@@ -43,6 +43,12 @@ namespace ursine
                 SetLocalPosition
             );
 
+			EditorField( 
+                SVec3 scale,
+                GetLocalScale,
+                SetLocalScale
+            );
+
             Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
             Meta(EditorGetter( "GetLocalEulerEditor" ))
             Meta(EditorSetter( "SetLocalEulerEditor" ))
@@ -50,12 +56,6 @@ namespace ursine
                 SQuat rotation,
                 GetLocalRotation,
                 SetLocalRotation
-            );
-
-            EditorField( 
-                SVec3 scale,
-                GetLocalScale,
-                SetLocalScale
             );
 
             ALLOW_ALIGNED_ALLOC(16);

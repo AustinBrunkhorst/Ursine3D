@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Color.h
 **
@@ -211,7 +211,7 @@ namespace ursine
 
         // Converts the color to its hexadecimal representation
         uint32 ToHex(void) const;
-    } Meta(Enable, WhiteListMethods);
+    } Meta(Enable, EnableArrayType, WhiteListMethods);
 
     extern template
     Json JsonSerializer::Serialize(Color &instance);

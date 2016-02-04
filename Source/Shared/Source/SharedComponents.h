@@ -30,11 +30,22 @@
 #include "Components/PlayerIdComponent.h"
 #include "Components/ControlPointComponent.h"
 #include "Components/WallComponent.h"
+#include "Components/CritSpotComponent.h"
+#include "Components/ForceComponent.h"
 
 
-/////////////////////////////////
-//// WeaponLogic Components  ////
-/////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//// Interacton Components 
+///////////////////////////////////////////////////////////////////////////////
+
+#include "Components/Interactables/InteractionBay.h"
+#include "Components/Interactables/InteractableComponent.h"
+#include "Components/Interactables/Pickups/WeaponPickup.h"
+
+
+///////////////////////////////////////////////////////////////////////////////
+//// WeaponLogic Components 
+///////////////////////////////////////////////////////////////////////////////
 
 // weapons
 #include "Components/WeaponLogic/Weapons/BaseWeaponComponent.h"
@@ -44,3 +55,11 @@
 #include "Components/WeaponLogic/AmmoPickUpComponent.h"
 
 
+///////////////////////////////////////////////////////////////////////////////
+//AI
+///////////////////////////////////////////////////////////////////////////////
+
+#include "Components/AI/WaypointComponent.h"
+#include "Components/AI/WaypointAgentComponent.h"
+#include "Components/AI/AIMovementControllerComponent.h"
+#include "Components/AI/AIHordeReasoner.h"

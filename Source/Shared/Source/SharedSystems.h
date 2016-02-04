@@ -27,5 +27,14 @@
 #include "Systems/TimeDeathSystem.h"
 #include "Systems/ProjectileSystem.h"
 #include "Systems/ControlPointSystem.h"
+#include "Systems/InventorySystem.h"
+#include "Systems/InteractionBaySystem.h"
+
+///////////////////////////////////////////////////////////////////////////////
+//AI
+///////////////////////////////////////////////////////////////////////////////
+#include "Systems/AI/AIReasonerSystem.h"
+#include "Systems/AI/AIControllerSystem.h"
+#include "Systems/AI/WaypointSystem.h"
 
 

@@ -64,7 +64,7 @@ namespace ursine
                 Constructor
             > dynamicConstructors;
 
-            std::unordered_map<
+            std::map<
                 std::string, 
                 Field
             > fields;
@@ -107,6 +107,9 @@ namespace ursine
                 const MetaManager::Initializer &meta, 
                 bool isDynamic
             );
+
+            template<typename ClassType>
+            void SetArrayConstructor(void);
 
             const Constructor &GetConstructor(
                 const InvokableSignature &signature

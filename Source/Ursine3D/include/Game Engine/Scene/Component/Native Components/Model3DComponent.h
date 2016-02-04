@@ -22,8 +22,7 @@ namespace ursine
 {
     namespace ecs
     {
-        class Model3D 
-            : public Component
+        class Model3D : public Component
         {
             NATIVE_COMPONENT;
 

@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** PhysicsSystem.h
 **
@@ -41,6 +41,9 @@ namespace ursine
                          ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
                          bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
                          Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
+
+			bool Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
+					   ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);
 
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;

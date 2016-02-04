@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** AnimatorComponent.h
 **
@@ -14,9 +14,26 @@
 #pragma once
 
 #include "Component.h"
-#include "Renderable.h"
-#include "GfxAPI.h"
+#include "Model3DComponent.h"
 #include "AnimationBuilder.h"
+
+// You can use a class with the typical getters and setters
+//
+// Connect to the modification events in OnInitialize by getting
+// the EventDispatcher object through array.GetModifyEvents( )
+//
+// NOTE: EnableArrayType must be included
+struct ExampleAnimationState
+{
+    std::string name;
+    std::string nextState;
+    float duration;
+    
+    // Custom structurs must have a default constructor in order
+    // to work in an array inspector
+    ExampleAnimationState(void)
+        : duration( 0.0f ) { }
+} Meta(Enable, EnableArrayType);
 
 namespace ursine
 {
@@ -82,12 +99,12 @@ namespace ursine
 			EditorButton( 
 				AddState,
 				"Add State"
-				);
+			);
 
 			EditorButton(
 				RemoveState,
 				"Remove State"
-				);
+			);
 
 			// let's don't care about in-state-blending. 
 			// just care about between-state blending first.
@@ -111,6 +128,8 @@ namespace ursine
 				RemoveAnimation,
 				"Remove Animation"
 			);
+
+            ursine::Array<ExampleAnimationState> states;
 
 			EditorField(
 				std::string stateName,
@@ -197,12 +216,12 @@ namespace ursine
 			
 			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
 			// start with adding/removing state
-			const std::string &GetCurrentState(void) const;
-			void SetCurrentState(const std::string &state);
-
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
 
+			const std::string &GetCurrentState(void) const;
+			void SetCurrentState(const std::string &state);
+			
 			const std::string &GetFutureState(void) const;
 			void SetFutureState(const std::string& name);
 
@@ -226,6 +245,6 @@ namespace ursine
 			std::string m_futureStateName;
 			std::string m_animationName;
 
-        } Meta( Enable, DisplayName( "Animator" ) );
+        } Meta( Enable, DisplayName( "Animator" ), RequiresComponents( typeof(ursine::ecs::Model3D) ) );
     }
 }

@@ -43,9 +43,9 @@ public:
 
     void Clear(void);
 
-    InteractVec m_interactables;
-    TransVec m_transforms;
+    InteractionBay::InteractVec m_interactables;
+    InteractionBay::TransVec m_transforms;
 
-    Handle<Interactable> m_prevInteractable;
+    ursine::ecs::Component::Handle<Interactable> m_prevInteractable;
 
 } Meta(Enable, DisplayName("InteractionBay"));

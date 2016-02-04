@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Component.hpp
 **
@@ -78,11 +78,23 @@ namespace ursine
 				m_entity = nullptr;
 		}
 
-		template<class ComponentType>
+	    template<class ComponentType>
 		Component::Handle<ComponentType>::~Handle(void)
 		{
 			m_entity = nullptr;
 		}
+
+		template<class ComponentType>
+		ComponentType *Component::Handle<ComponentType>::Get(void)
+		{
+			return operator->( );
+		}
+
+		template<class ComponentType>
+		const ComponentType *Component::Handle<ComponentType>::Get(void) const
+        {
+	        return operator->( );
+        }
 
 	    template<class ComponentType>
 		const ComponentType* Component::Handle<ComponentType>::operator=(const ComponentType* rhs)
@@ -112,10 +124,10 @@ namespace ursine
 	    template<class ComponentType>
 		bool Component::Handle<ComponentType>::operator==(const ComponentType* rhs) const
 		{
-			if (m_entity)
-				return operator->( ) == rhs;
-			else
-				return rhs == nullptr;
+			if (rhs == nullptr)
+				return false;
+
+			return m_entity == rhs->GetOwner( );
 		}
 
 		template<class ComponentType>

@@ -8,7 +8,7 @@ add_definitions(
 )
 
 # make sure we're building with editor
-set(GLOBAL_META_FLAGS "\\-DURSINE_WITH_EDITOR")
+set(GLOBAL_META_DEFINES "URSINE_WITH_EDITOR")
 
 include(GlobalConfig)
 
