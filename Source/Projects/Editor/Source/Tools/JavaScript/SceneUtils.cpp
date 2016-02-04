@@ -141,6 +141,11 @@ JSFunction(SceneStep)
     return CefV8Value::CreateUndefined( );
 }
 
+JSFunction(SceneGetEntitySystems)
+{
+    return CefV8Value::CreateUndefined( );
+}
+
 namespace
 {
     void doLoadScene(int selectedFilter, const fs::FileList &files)
