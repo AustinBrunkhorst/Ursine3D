@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ParticleColorAnimatorComponent.cpp
 **
@@ -107,6 +107,8 @@ namespace ursine
 
         void ParticleColorAnimator::onParticleUpdate(EVENT_HANDLER(Entity))
         {
+            m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
+
             // get all the particles
             auto &gpuData = m_particleComponent->GetGPUParticleData();
             auto &cpuData = m_particleComponent->GetCPUParticleData();
