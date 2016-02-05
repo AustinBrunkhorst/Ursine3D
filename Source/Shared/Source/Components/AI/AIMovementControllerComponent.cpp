@@ -18,12 +18,14 @@ namespace ursine
 
         void AIMovementController::SetTargetDirection(const Vec3& dir)
         {
-            m_targetDir = Vec3(dir.X(), 0, dir.Z());
+            m_targetDir = Vec3 (dir.X(), 0, dir.Z() );
         }
 
         void AIMovementController::SettargetDirection(const Vec2& dir)
         {
-            m_targetDir = Vec3(dir.X(), 0, dir.Y());
+            m_targetDir = Vec3( dir.X(), 0, dir.Y() );
+
+            m_targetDir.Normalize();
         }
 
         void AIMovementController::OnInitialize(void)
@@ -42,7 +44,7 @@ namespace ursine
 
             auto gravity = Vec3(0, m_rigid->GetVelocity().Y(), 0);
 
-            m_rigid->SetVelocity(gravity + m_targetDir * m_speed);
+            m_rigid->SetVelocity (gravity + m_targetDir * m_speed );
 
             auto lookangle = transform->GetForward().Dot(m_targetDir);
 
