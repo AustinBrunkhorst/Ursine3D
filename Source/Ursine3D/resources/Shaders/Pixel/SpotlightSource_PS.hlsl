@@ -93,7 +93,7 @@ SURFACE_DATA UnpackGBuffer(int2 location)
 
     // Get the depth value and convert it to linear depth
     float depth = DepthTexture.Load(location3).x;
-    Out.LinearDepth = ConvertDepthToLinear(depth);
+    Out.LinearDepth = depth;
 
     // Get the base color and specular intensity
     float4 baseColor = ColorSpecIntTexture.Load(location3);
@@ -120,7 +120,13 @@ float3 CalcPoint(float3 position, Material material)
 {
     float3 ToLight = -lightDirection.xyz;
     float3 ToEye = -position;
-    float3 light2pos = normalize(position - lightPosition);
+    float3 light2pos = (position - lightPosition);
+
+    float distanceToLight = length(light2pos);
+
+    light2pos /= distanceToLight;
+
+    float attenuation = clamp(1.f / (1.f + 0.1f * distanceToLight), 0, 1);
 
     // Phong diffuse
     float NDotL = saturate(dot(ToLight, material.normal));
@@ -133,13 +139,13 @@ float3 CalcPoint(float3 position, Material material)
     finalColor += diffuseColor.rgb * max(pow(NDotH, material.specPow), 0) * material.specIntensity;
 
     //spotlight atten
-    float directionPosAngle = dot(light2pos, lightDirection.xyz);
+    float directionPosAngle = dot(light2pos, -ToLight);
     float spotlightFalloff = ((directionPosAngle)-outerAngle) / 
         (innerAngle - outerAngle);
 
-    finalColor *= NDotL * spotlightFalloff; 
+    finalColor *= NDotL * spotlightFalloff * attenuation;
 
-    return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
+    return finalColor + material.diffuseColor.xyz;
 }
 
 
