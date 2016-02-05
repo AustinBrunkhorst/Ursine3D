@@ -63,12 +63,15 @@ namespace ursine
 
                 auto eType = component->GetEnemyType();
 
-                // Remove it from our list
-                m_reasoners[eType].erase(std::find(
-                    m_reasoners[eType].begin(),
-                    m_reasoners[eType].end(),
-                    component
-                    ));
+                if (eType < EnemyType::INVALID_ENEMY)
+                {
+                    // Remove it from our list
+                    m_reasoners[eType].erase(std::find(
+                        m_reasoners[eType].begin(),
+                        m_reasoners[eType].end(),
+                        component
+                        ));
+                }
             }
         }
 
