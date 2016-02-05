@@ -749,6 +749,9 @@ namespace ursine
 			std::vector<AnimationVertex> buffer;
 
 			HANDLE hFile_ani = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+			if (!hFile_ani)
+				return;
+
 			ufmt_loader::AnimInfo ufmt_ani;
 
 			// Serialize in model and animation
