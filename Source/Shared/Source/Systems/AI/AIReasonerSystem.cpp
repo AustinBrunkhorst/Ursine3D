@@ -12,6 +12,10 @@ namespace ursine
 
         AIReasonerSystem::AIReasonerSystem(World* world): EntitySystem(world)
         {
+            for (int i = EnemyType::HORDELING; i < EnemyType::INVALID_ENEMY; ++i)
+            {
+                m_reasoners.push_back(std::vector<Component::Handle<AIHorde> >());
+            }
         }
 
         void AIReasonerSystem::OnInitialize()
@@ -44,7 +48,7 @@ namespace ursine
 
                 if (eType < EnemyType::INVALID_ENEMY)
                 {
-                    m_reasoners[enemy->GetEnemyType()].push_back(enemy);
+                    m_reasoners[eType].push_back(enemy);
                 }
             }
         }
@@ -97,20 +101,20 @@ namespace ursine
 
             Vec3 targetPos = target->GetTransform()->GetWorldPosition();
 
-            for (int i = EnemyType::Hordeling; i < EnemyType::INVALID_ENEMY; ++i)
+            for (int i = EnemyType::HORDELING; i < EnemyType::INVALID_ENEMY; ++i)
             for (auto hordeComp : m_reasoners[i])
             {
                 hordeComp->SetTarget(targetPos);
             }
 
-            for (auto boomlings : m_reasoners[EnemyType::Boomling])
+            for (auto BOOMLINGs : m_reasoners[EnemyType::BOOMLING])
             {
                 // check distance from target
-                auto m_transform = boomlings->GetOwner()->GetTransform();
+                auto m_transform = BOOMLINGs->GetOwner()->GetTransform();
                 if (targetPos.Distance( m_transform->GetWorldPosition( ) ) < 8.0f)
                 {
                     //TODO: Add effects
-                    boomlings->GetOwner()->Delete();
+                    BOOMLINGs->GetOwner()->Delete();
                 }
             }
         }

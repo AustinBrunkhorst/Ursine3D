@@ -10,6 +10,7 @@ namespace ursine
 
         AIHorde::AIHorde(void) : BaseComponent()
             , m_move(nullptr)
+            , m_type(EnemyType::HORDELING)
         {
         }
 
@@ -26,7 +27,7 @@ namespace ursine
             m_move->SetTargetDirection(pos - GetOwner()->GetTransform()->GetWorldPosition());
         }
 
-        AIHorde::EnemyType AIHorde::GetEnemyType(void) const
+        EnemyType AIHorde::GetEnemyType(void) const
         {
             return m_type;
         }

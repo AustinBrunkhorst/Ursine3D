@@ -12,8 +12,8 @@ namespace ursine
         class AIReasonerSystem : EntitySystem
         {
             ENTITY_SYSTEM;
-
-            typedef AIHorde::EnemyType EnemyType;
+            
+            //typedef AIHorde::EnemyType EnemyType;
 
         public:
             AIReasonerSystem(World* world);

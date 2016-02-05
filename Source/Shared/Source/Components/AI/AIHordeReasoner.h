@@ -22,19 +22,19 @@ namespace ursine
 {
     namespace ecs
     {
+        enum EnemyType
+        {
+            HORDELING,
+            BIG_HORDELING,
+            BOOMLING,
+            INVALID_ENEMY
+        } Meta(Enable);
+
         class AIHorde : public Component
         {
             NATIVE_COMPONENT;
 
         public:
-
-            enum EnemyType
-            {
-                Hordeling,
-                BigHordeling,
-                Boomling,
-                INVALID_ENEMY
-            };
 
             AIHorde(void);
 

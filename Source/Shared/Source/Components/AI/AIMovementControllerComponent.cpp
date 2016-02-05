@@ -35,6 +35,9 @@ namespace ursine
 
         void AIMovementController::Update()
         {
+            m_rigid = static_cast< Handle<Rigidbody> >(GetOwner()->GetComponent<Rigidbody>());
+
+
             auto transform = GetOwner()->GetTransform();
 
             auto gravity = Vec3(0, m_rigid->GetVelocity().Y(), 0);
