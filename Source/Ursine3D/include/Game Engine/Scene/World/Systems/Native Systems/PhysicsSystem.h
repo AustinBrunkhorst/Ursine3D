@@ -87,6 +87,6 @@ namespace ursine
 
             void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
 
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

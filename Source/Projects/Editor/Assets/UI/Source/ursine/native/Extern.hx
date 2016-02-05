@@ -45,6 +45,10 @@ class Extern {
         return untyped __js__( "SceneStep()" );
     }
 
+    public static function SceneGetEntitySystems() {
+        return untyped __js__( "SceneGetEntitySystems()" );
+    }
+
     public static function NotificationButtonCallback(id : UInt, buttonID : UInt) {
         return untyped __js__( "ursine_NotificationButtonCallback(id, buttonID)" );
     }

@@ -23,7 +23,9 @@
 #include "UtilityManager.h"
 #include "SystemManager.h"
 
-#include <EntitySerializer.h>
+#include "EntitySerializer.h"
+
+#include "WorldConfigComponent.h"
 
 namespace
 {
@@ -205,6 +207,9 @@ namespace ursine
 
         void World::DispatchLoad(void)
         {
+            if (!m_settings->HasComponent<WorldConfig>( ))
+                m_settings->AddComponent<WorldConfig>( );
+
             if (!m_loaded)
             {
                 m_systemManager->onAfterLoad( );
@@ -215,8 +220,8 @@ namespace ursine
 
 		void World::deleteEntity(Entity *entity)
 		{
-			m_nameManager->Remove(entity);
-			m_entityManager->Remove(entity);
+			m_nameManager->Remove( entity );
+			m_entityManager->Remove( entity );
 		}
 				
         void World::clearDeletionQueue(void)

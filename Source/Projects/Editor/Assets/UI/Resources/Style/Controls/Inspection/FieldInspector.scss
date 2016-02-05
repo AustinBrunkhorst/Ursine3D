@@ -178,4 +178,23 @@ $max-header-width: 225px;
       height: 100%;
     }
   }
+
+  .entity-system-selector {
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 23px;
+    text-align: center;
+    color: $color-accent;
+    word-wrap: break-word;
+    transition: color $duration-transition-btn ease;
+
+    &.empty {
+      color: #cf6753;
+
+      &:before {
+        display: block;
+        content: 'Invalid System';
+      }
+    }
+  }
 }

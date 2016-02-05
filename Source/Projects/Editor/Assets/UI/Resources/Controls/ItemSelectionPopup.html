@@ -157,7 +157,7 @@
                 if (!selected)
                     return;
 
-                this._notifySelected( this.$.itemRepeat.modelForElement( selected ).type );
+                this._notifySelected( this.$.itemRepeat.modelForElement( selected ).item );
             },
             _notifySelected: function(item) {
                 this.fire( 'item-selected', {

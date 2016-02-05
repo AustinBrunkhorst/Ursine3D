@@ -121,7 +121,7 @@ namespace ursine
             ~ParticleEmitter(void);
 
             Meta(Disable)
-                void OnInitialize(void) override;
+            void OnInitialize(void) override;
 
             // generators for particle data
             float GenerateLifetime(void);

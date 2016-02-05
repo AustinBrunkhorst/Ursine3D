@@ -18,6 +18,7 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include <SystemManager.h>
 #include <WorldSerializer.h>
 #include <Timer.h>
 
@@ -143,7 +144,22 @@ JSFunction(SceneStep)
 
 JSFunction(SceneGetEntitySystems)
 {
-    return CefV8Value::CreateUndefined( );
+    Json::array systems;
+
+    for (auto &type : ecs::SystemManager::GetExposedTypes( ))
+    {
+        auto &meta = type.GetMeta( );
+
+        // exclude auto added systems
+        if (!meta.GetProperty<AutoAddEntitySystem>( ))
+            systems.emplace_back( type.GetName( ) );
+    }
+
+    CefRefPtr<CefV8Value> items;
+
+    JsonSerializer::Deserialize( systems, items );
+
+    return items;
 }
 
 namespace

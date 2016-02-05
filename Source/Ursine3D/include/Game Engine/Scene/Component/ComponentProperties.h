@@ -53,6 +53,9 @@ struct ForceEditorType : ursine::meta::MetaProperty
 
     ForceEditorType(const ursine::meta::Type &type)
         : typeName( type.GetName( ) ) { }
+
+    ForceEditorType(const char *editorName)
+        : typeName( editorName ) { }
 };
 
 /** @brief Field getter only used when interacting with the editor

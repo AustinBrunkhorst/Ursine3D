@@ -134,8 +134,8 @@ void Retrospect::OnInitialize(void)
             static_cast<float>( displayMode.h ) 
         } );
     }
-    m_mainWindow.window->SetFullScreen( true );
-    m_mainWindow.window->Show( true );*/
+    m_mainWindow.window->SetFullScreen( true );*/
+    m_mainWindow.window->Show( true );
 
 	m_audioManager = GetCoreSystem( AudioManager );
 }

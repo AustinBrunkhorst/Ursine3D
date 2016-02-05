@@ -17,12 +17,6 @@ Application.main = function() {
 	ursine_native_Extern.InitGame();
 };
 Math.__name__ = true;
-var Std = function() { };
-$hxClasses["Std"] = Std;
-Std.__name__ = true;
-Std["int"] = function(x) {
-	return x | 0;
-};
 var Type = function() { };
 $hxClasses["Type"] = Type;
 Type.__name__ = true;
@@ -371,17 +365,7 @@ retrospect_screens_MainMenuScreen.prototype = $extend(retrospect_screens_BasicMe
 });
 var retrospect_screens_MultiplayerPlayScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
-	this.m_kills = new haxe_ds_IntMap();
-	{
-		this.m_kills.h[1] = 0;
-		0;
-	}
-	{
-		this.m_kills.h[2] = 0;
-		0;
-	}
-	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown)).on("PlayerDied",$bind(this,this.onPlayerDied)).on("PlayerDamageTaken",$bind(this,this.onPlayerDamageTaken)).on("RoundReset",$bind(this,this.onRoundReset));
-	Application.screenManager.addOverlay("RoundOverlayScreen",{ title : "Round 1"});
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown));
 };
 $hxClasses["retrospect.screens.MultiplayerPlayScreen"] = retrospect_screens_MultiplayerPlayScreen;
 retrospect_screens_MultiplayerPlayScreen.__name__ = true;
@@ -397,44 +381,6 @@ retrospect_screens_MultiplayerPlayScreen.prototype = $extend(ursine_screen_Scree
 	,onGamepadButtonDown: function(e) {
 		if(!(e.triggered && e.pressed)) return;
 		if(e.button == 4) this.triggerPause();
-	}
-	,onPlayerDied: function(data) {
-		this.setPlayerHealth(data.player,0);
-		this.givePlayerKill(data.player == 1?2:1);
-	}
-	,onPlayerDamageTaken: function(data) {
-		this.setPlayerHealth(data.player,data.percentage);
-	}
-	,onRoundReset: function(data) {
-		var _g = this;
-		haxe_Timer.delay(function() {
-			_g.setPlayerHealth(1,1);
-			_g.setPlayerHealth(2,1);
-		},100);
-	}
-	,setPlayerHealth: function(player,percentage) {
-		var container = this.getPlayerContainer(player);
-		container.querySelector(".health .percentage").style.width = Std["int"](Math.round(100 * percentage)) + "%";
-	}
-	,givePlayerKill: function(player) {
-		var kills = this.m_kills.h[player] + 1;
-		{
-			this.m_kills.h[player] = kills;
-			kills;
-		}
-		var killsContainer = this.getPlayerContainer(player).querySelector(".kills");
-		killsContainer.classList.remove("jello","animated");
-		haxe_Timer.delay(function() {
-			killsContainer.classList.add("jello","animated");
-		},100);
-		this.setPlayerKills(player,kills);
-	}
-	,setPlayerKills: function(player,kills) {
-		var container = this.getPlayerContainer(player);
-		container.querySelector(".kills .total").innerHTML = kills;
-	}
-	,getPlayerContainer: function(player) {
-		return this.m_document.querySelector(".player-" + player);
 	}
 });
 var retrospect_screens_PauseScreen = function(id,frame,data) {
@@ -485,31 +431,6 @@ $hxClasses["retrospect.screens.PauseScreen"] = retrospect_screens_PauseScreen;
 retrospect_screens_PauseScreen.__name__ = true;
 retrospect_screens_PauseScreen.__super__ = retrospect_screens_BasicMenuScreen;
 retrospect_screens_PauseScreen.prototype = $extend(retrospect_screens_BasicMenuScreen.prototype,{
-});
-var retrospect_screens_RoundOverlayScreen = function(id,frame,data) {
-	var _g = this;
-	ursine_screen_Screen.call(this,id,frame,data);
-	this.m_targetScreen = data.targetScreen;
-	var title = this.m_document.querySelector(".title");
-	title.innerHTML = data.title;
-	ElementUtils.once(title,"webkitAnimationEnd",function() {
-		haxe_Timer.delay(function() {
-			title.className = "title animated zoomOut";
-		},1000);
-		ElementUtils.once(title,"webkitAnimationEnd",$bind(_g,_g.exit));
-	});
-};
-$hxClasses["retrospect.screens.RoundOverlayScreen"] = retrospect_screens_RoundOverlayScreen;
-retrospect_screens_RoundOverlayScreen.__name__ = true;
-retrospect_screens_RoundOverlayScreen.__super__ = ursine_screen_Screen;
-retrospect_screens_RoundOverlayScreen.prototype = $extend(ursine_screen_Screen.prototype,{
-	exit: function() {
-		ursine_screen_Screen.prototype.exit.call(this);
-		if(this.m_targetScreen != null) {
-			Application.screenManager.removeCurrent();
-			Application.screenManager.addOverlay(this.m_targetScreen,{ });
-		}
-	}
 });
 var retrospect_screens_SplashScreen = function(id,frame,data) {
 	var _g = this;

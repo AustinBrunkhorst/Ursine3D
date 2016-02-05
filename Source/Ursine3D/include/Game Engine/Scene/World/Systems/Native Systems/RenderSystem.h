@@ -81,6 +81,6 @@ namespace ursine
 
             void addRenderable(Entity *entity, RenderableComponentBase* renderable);
             void removeRenderable(Entity *entity, RenderableComponentBase* renderable);
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

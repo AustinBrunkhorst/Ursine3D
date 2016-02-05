@@ -38,7 +38,7 @@
   }
 
   #items {
-    overflow-y: auto;
+    overflow-y: scroll;
     min-width: 225px;
     max-height: 300px;
     border: 1px solid darken(#2d2d30, 1%);

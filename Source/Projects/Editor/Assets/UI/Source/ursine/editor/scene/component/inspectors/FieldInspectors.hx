@@ -11,3 +11,6 @@ import ursine.editor.scene.component.inspectors.fields.StringFieldInspector;
 import ursine.editor.scene.component.inspectors.fields.VectorFieldInspector;
 
 import ursine.editor.scene.component.inspectors.fields.ColorFieldInspector;
+
+
+import ursine.editor.scene.component.inspectors.fields.EntitySystemSelectorInspector;

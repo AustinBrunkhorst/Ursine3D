@@ -1424,6 +1424,36 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 	}
 	,__class__: ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector
 });
+var ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector = function(owner,instance,field,type) {
+	var _g = this;
+	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
+	this.m_entitySystems = ursine_native_Extern.SceneGetEntitySystems();
+	var _this = window.document;
+	this.m_displayText = _this.createElement("div");
+	this.m_displayText.classList.add("entity-system-selector");
+	this.m_displayText.addEventListener("click",function(e) {
+		var selector = new ItemSelectionPopupControl(_g.m_entitySystems);
+		selector.addEventListener("item-selected",$bind(_g,_g.onEntitySystemSelected));
+		window.document.body.appendChild(selector);
+		selector.show(e.clientX,e.clientY);
+	});
+	this.inspector.container.appendChild(this.m_displayText);
+	this.updateValue(instance);
+};
+$hxClasses["ursine.editor.scene.component.inspectors.fields.EntitySystemSelectorInspector"] = ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector;
+ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","EntitySystemSelectorInspector"];
+ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
+ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
+	updateValue: function(value) {
+		this.m_displayText.innerText = value;
+		this.m_displayText.classList.toggle("empty",value.length == 0);
+		this.m_instance = value;
+	}
+	,onEntitySystemSelected: function(e) {
+		this.notifyChanged(this.m_field,e.detail.item);
+	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector
+});
 var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = function(owner,instance,field,type) {
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -2137,6 +2167,9 @@ ursine_native_Extern.ScenePlay = function(playing) {
 ursine_native_Extern.SceneStep = function() {
 	return SceneStep();
 };
+ursine_native_Extern.SceneGetEntitySystems = function() {
+	return SceneGetEntitySystems();
+};
 ursine_native_Extern.NotificationButtonCallback = function(id,buttonID) {
 	return ursine_NotificationButtonCallback(id, buttonID);
 };
@@ -2248,6 +2281,7 @@ ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePo
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot = "Spot";
 ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__meta__ = { obj : { fieldInspector : ["bool"]}};
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Color"]}};
+ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.__meta__ = { obj : { fieldInspector : ["EntitySystemSelector"]}};
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","unsigned int","float","double"]}};
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
 ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__meta__ = { obj : { fieldInspector : ["UNKNOWN"]}};
