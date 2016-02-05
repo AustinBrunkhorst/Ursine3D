@@ -43,7 +43,7 @@ namespace ursine
             {
                 Remove( entity );
             }
-            else if(interests)
+            else if(!removed && interests)
             {
                 Add( entity );
             }
@@ -83,9 +83,9 @@ namespace ursine
 
         void FilterSystem::Remove(Entity *entity)
         {
-            entity->unsetSystem( GetTypeMask( ) );
-
             Disable( entity );
+
+			entity->unsetSystem( GetTypeMask( ) );
         }
 
         void FilterSystem::Enable(Entity *entity)

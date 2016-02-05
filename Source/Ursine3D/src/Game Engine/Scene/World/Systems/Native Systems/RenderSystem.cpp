@@ -236,7 +236,11 @@ namespace ursine
                 for (auto &rend : renderableVec)
                 {
                     if (rend->m_dirty)
+					{
+						rend->m_dirty = false;
+
                         rend->m_updateRenderer( );
+					}
 
                     m_graphics->RenderObject( rend->m_handle );
                 }
