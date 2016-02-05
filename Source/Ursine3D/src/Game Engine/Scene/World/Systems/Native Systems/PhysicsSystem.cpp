@@ -480,8 +480,6 @@ namespace ursine
 
                 ClearContacts( rigidbody );
 
-                rigidbody->SetOffset( SVec3( 0.0f, 0.0f, 0.0f ) );
-
                 entity->AddComponent<EmptyCollider>( );
             }
         }

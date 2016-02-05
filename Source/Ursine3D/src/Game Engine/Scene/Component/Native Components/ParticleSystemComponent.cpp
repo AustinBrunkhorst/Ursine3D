@@ -53,6 +53,9 @@ namespace ursine
 
             // set the unique id
             m_particleSystem->SetEntityUniqueID(GetOwner()->GetUniqueID());
+
+			SetRenderMode( m_renderMode );
+			SetSystemSpace( m_systemSpace );
         }
 
         // count

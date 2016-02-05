@@ -2,7 +2,9 @@
 #First is file name, second is model name
 
 #Entrenched_Test1.fbx Entrenched
-#rome.fbx Rome
+BossArenaFBX.fbx BossRoom
+EntryRoomFBX.fbx EntryRoom
+PlantMonster.fbx PlantMonster
 
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
