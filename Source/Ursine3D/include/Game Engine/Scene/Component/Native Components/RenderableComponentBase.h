@@ -37,12 +37,12 @@ namespace ursine
 		graphics::GfxHND &GetHandle(void);
 		void SetHandle(const graphics::GfxHND &handle);
 
+		// lets us know if we need to update the matrix in the renderer
+        bool m_dirty;
+
     protected:
 
         graphics::GfxHND m_handle;
-
-        // lets us know if we need to update the matrix in the renderer
-        bool m_dirty;
 
         void onTransformChange(EVENT_HANDLER(ecs::Entity));
 

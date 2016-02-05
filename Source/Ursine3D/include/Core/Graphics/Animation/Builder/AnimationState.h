@@ -24,6 +24,7 @@ namespace ursine
         *
         *  @return Void.
         */
+		Meta(Enable)
         AnimationState(void);
 
         /** @brief gets the time position of the current animation state
@@ -74,5 +75,5 @@ namespace ursine
 
         //current animation
         const Animation *m_animation;
-    };
+    } Meta(Enable, DisplayName("State"), WhiteListMethods);
 }
