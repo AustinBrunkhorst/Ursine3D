@@ -130,13 +130,42 @@ namespace ursine
             m_specIntensity = intensity;
         }
 
-        void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
+	    void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
         {
             emiss = m_emissive;
             pow = m_specPow;
             intensity = m_specIntensity;
         }
 
+		void Model3D::SetEmissive(float emiss)
+		{
+			m_emissive = emiss;
+		}
+
+		float Model3D::GetEmissive(void) const
+		{
+			return m_emissive;
+		}
+
+		void Model3D::SetSpecularPower(float power)
+		{
+			m_specPow = power;
+		}
+
+		float Model3D::GetSpecularPower(void) const
+		{
+			return m_specPow;
+		}
+
+		void Model3D::SetSpecularIntensity(float intensity)
+		{
+			m_specIntensity = intensity;
+		}
+
+		float Model3D::GetSpecularIntensity(void) const
+		{
+			return m_specIntensity;
+		}
 
 		void Model3D::SetAnimationTime(const float time)
 		{

@@ -88,10 +88,17 @@ namespace ursine
             const char *GetMaterialslName(void);
             void SetMaterial(std::string materialName);
 
-    
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+			void SetEmissive(float emiss);
+			float GetEmissive(void) const;
+
+			void SetSpecularPower(float power);
+			float GetSpecularPower(void) const;
+
+			void SetSpecularIntensity(float intensity);
+			float GetSpecularIntensity(void) const;
 
             void SetAnimationTime(const float time);
             float &GetAnimationTime(void);
