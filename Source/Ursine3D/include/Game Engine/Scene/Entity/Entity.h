@@ -151,7 +151,7 @@ namespace ursine
 
             // Determines if the entity has this component type based on 
             // the specified type mask
-            bool HasComponent(ComponentTypeMask mask) const;
+            bool HasComponent(const ComponentTypeMask &mask) const;
 
             // Gets all components for this entity. Avoid this, it's slow.
             // (chances are you don't need to use it)
@@ -305,8 +305,8 @@ namespace ursine
             void unsetSystem(SystemTypeMask mask);
 
             // sets/unsets component types for this entity (which components it has)
-            void setType(ComponentTypeMask mask);
-            void unsetType(ComponentTypeMask mask);
+            void setType(const ComponentTypeMask &mask);
+            void unsetType(const ComponentTypeMask &mask);
 
             // resets data for this entity
             void reset(void);

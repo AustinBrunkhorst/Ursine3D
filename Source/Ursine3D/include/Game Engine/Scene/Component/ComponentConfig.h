@@ -18,12 +18,13 @@
 #include "ComponentProperties.h"
 
 #include <vector>
+#include <bitset>
 
 // Gets the unique id of this component type
 #define GetComponentID(componentType) (componentType::ComponentID)
 
 // Gets the unique mask for this component type
-#define GetComponentMask(componentType) (1ull << componentType::ComponentID)
+#define GetComponentMask(componentType) (componentType::TypeMask)
 
 // Determines if a component of this type has been registered
 #define IsComponentRegistered(componentType) (typeof( componentType ).IsValid( ))
@@ -33,16 +34,25 @@
 #define BaseComponent() ursine::ecs::Component( ComponentID )
 
 // Required at the top of all native component declarations
-#define NATIVE_COMPONENT                                 \
-    META_OBJECT                                          \
-    public:                                              \
-        Meta(Enable)                                     \
-        static ursine::ecs::ComponentTypeID ComponentID; \
-    private:                                             \
+#define NATIVE_COMPONENT                                             \
+    META_OBJECT                                                      \
+    public:                                                          \
+        Meta(Enable)                                                 \
+        static ursine::ecs::ComponentTypeID ComponentID;             \
+        static ursine::ecs::ComponentTypeMask TypeMask;              \
+        Meta(Enable)                                                 \
+        static void SetComponentID(ursine::ecs::ComponentTypeID id); \
+    private:                                                         \
 
-// Required in the translation unit of all native components
-#define NATIVE_COMPONENT_DEFINITION(type)                \
-    ursine::ecs::ComponentTypeID type::ComponentID = -1; \
+// Required in the translation unit of all native components DICKBUTT
+#define NATIVE_COMPONENT_DEFINITION(type)                      \
+    ursine::ecs::ComponentTypeID type::ComponentID = -1;       \
+    ursine::ecs::ComponentTypeMask type::TypeMask;             \
+    void type::SetComponentID(ursine::ecs::ComponentTypeID id) \
+    {                                                          \
+        ComponentID = id;                                      \
+        TypeMask.set( id, true );                              \
+    }                                                          \
 
 #if defined(URSINE_WITH_EDITOR)
 
@@ -68,6 +78,10 @@ namespace ursine
     {
         class Component;
 
+        // Maximum number of components able to be stored (number of bits able
+        // to be stored in ComponentTypeMask).
+        const uint8 kMaxComponentCount = 128;
+
         // Type for unique ids mapped to component types
         typedef uint8 ComponentTypeID;
 
@@ -75,13 +89,9 @@ namespace ursine
         typedef uint32 ComponentUniqueID;
 
         // Type for unique bit masks mapped to component types
-        typedef uint64 ComponentTypeMask;
+        typedef std::bitset<kMaxComponentCount> ComponentTypeMask;
 
         // Vector of component pointers
         typedef std::vector<Component*> ComponentVector;
-
-        // Maximum number of components able to be stored (number of bits able
-        // to be stored in ComponentTypeMask).
-        const uint8 kMaxComponentCount = sizeof( ComponentTypeMask ) * kBitsPerByte;
     }
 }

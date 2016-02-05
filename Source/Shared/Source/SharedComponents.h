@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -33,6 +33,7 @@
 #include "Components/CritSpotComponent.h"
 #include "Components/ForceComponent.h"
 #include "Components/InventoryComponent.h"
+#include "Components/ExplosionComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Interacton Components 
@@ -76,3 +77,4 @@
 
 #include "Components/CameraAnimation/CameraAnimatorComponent.h"
 #include "Components/CameraAnimation/CameraAnimatorNodeComponent.h"
+

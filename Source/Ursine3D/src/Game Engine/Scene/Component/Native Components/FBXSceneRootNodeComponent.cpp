@@ -14,7 +14,7 @@ namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(FBXSceneRootNode);
+        NATIVE_COMPONENT_DEFINITION( FBXSceneRootNode );
 
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
