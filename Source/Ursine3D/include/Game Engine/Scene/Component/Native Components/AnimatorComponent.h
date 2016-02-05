@@ -17,6 +17,7 @@
 #include "Renderable.h"
 #include "GfxAPI.h"
 #include "AnimationBuilder.h"
+#include "Array.h"
 
 namespace ursine
 {
@@ -162,7 +163,7 @@ namespace ursine
 			~Animator(void);
 
 			Meta(Disable)
-				void OnInitialize(void) override;
+			void OnInitialize(void) override;
 
 			// stick this in a system
 			void UpdateAnimation(const float dt);
@@ -201,6 +202,7 @@ namespace ursine
 			void SetAnimation(const std::string &name);
 
 			// CrossFade ("State Name", transition time, ...)
+			ursine::Array<ursine::AnimationState> m_stateArray;
 
 		private:
 			std::unordered_map<std::string, AnimationState> m_states;
@@ -217,7 +219,7 @@ namespace ursine
 
 			std::string m_stateName;
 			std::string m_animationName;
-
+			
 		} Meta(Enable, DisplayName("Animator"));
 	}
 }

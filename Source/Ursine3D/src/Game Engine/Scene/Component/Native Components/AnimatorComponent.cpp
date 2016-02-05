@@ -252,6 +252,11 @@ namespace ursine
 			ownerTrans->AddChild(newTrans);
 
 			SetCurrentState(m_stateName);
+
+			//// testing array
+			//AnimationState newState;
+			//newState.SetName(m_stateName);
+			//m_stateArray.Push(newState);
 		}
 
 		void Animator::RemoveState(void)
@@ -276,6 +281,17 @@ namespace ursine
 					return;
 				}
 			}
+
+			//// testing array
+			//for (Array<AnimationState>::Iterator iter = m_stateArray.begin();
+			//	iter != m_stateArray.end(); ++iter)
+			//{
+			//	if (iter->GetName() == m_stateName)
+			//	{
+			//		m_stateArray.Remove(iter);
+			//		break;
+			//	}
+			//}
 		}
 
 		const std::string &Animator::GetAnimation(void) const
