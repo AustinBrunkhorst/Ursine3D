@@ -92,8 +92,8 @@ void Health::DealDamage(const float damage)
     URSINE_TODO("Fix sound hack for health");
     ursine::ecs::AudioEmitter* emitter = owner->GetComponent<ursine::ecs::AudioEmitter>( );
 
-    if ( emitter )
-        emitter->AddSoundToPlayQueue(kTakeDamage);
+    //if ( emitter )
+       // emitter->AddSoundToPlayQueue(kTakeDamage);
 }
 
 void Health::OnInitialize(void)
@@ -137,7 +137,7 @@ void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
     if ( m_spawnOnDeath )
     {
-        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(m_objToSpawn);
+        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
 
         obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
     }

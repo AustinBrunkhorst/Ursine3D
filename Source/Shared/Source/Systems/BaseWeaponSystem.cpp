@@ -206,9 +206,9 @@ namespace
     void ResetIdleSequence(AbstractWeapon* weapon)
     {
         // reset idle sequence
-        weapon->m_animatorHandle->SetTimeScalar(1.0f);
+        /*weapon->m_animatorHandle->SetTimeScalar(1.0f);
         weapon->m_animatorHandle->SetAnimation("Gun_Idle");
-        weapon->m_animatorHandle->SetPlaying(true);
+        weapon->m_animatorHandle->SetPlaying(true);*/
     }
 
 }
@@ -258,7 +258,7 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
     {
         AbstractWeapon* weapon = &*it.second;
 
-        weapon->m_animatorHandle->UpdateAnimation(dt);
+        //weapon->m_animatorHandle->UpdateAnimation(dt);
 
         // skip if not active
         if ( !weapon->m_active )
@@ -296,14 +296,14 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractWeapon& weapon, ursine::ecs:
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        URSINE_TODO("Fix sound hack for weapons");
-        m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
+        //URSINE_TODO("Fix sound hack for weapons");
+       // m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
     
         // reset firing sequence
-        weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
+        /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
         weapon.m_animatorHandle->SetTimeScalar(1.2f);
         weapon.m_animatorHandle->SetAnimation("Gun_Shoot");
-        weapon.m_animatorHandle->SetPlaying(true);
+        weapon.m_animatorHandle->SetPlaying(true);*/
 
         // number of rounds that were fired
         CreateProjectiles(weapon, *m_transforms[  id ], RemoveRoundsFromClip(weapon));
@@ -385,9 +385,9 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
 {
     for ( auto it : m_weapons )
     {
-        AbstractHitscanWeapon* weapon = &*it.second;
+        AbstractHitscanWeapon* weapon = it.second;
 
-        weapon->m_animatorHandle->UpdateAnimation( dt );
+        //weapon->m_animatorHandle->UpdateAnimation( dt );
 
         if ( !weapon->m_active )
             continue;
@@ -424,13 +424,13 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursin
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
+        //m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
 
-        // reset firing sequence
-        weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
-        weapon.m_animatorHandle->SetTimeScalar(1.2f);
-        weapon.m_animatorHandle->SetAnimation("Gun_Shoot");
-        weapon.m_animatorHandle->SetPlaying(true);
+        //// reset firing sequence
+        //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
+        //weapon.m_animatorHandle->SetTimeScalar(1.2f);
+        //weapon.m_animatorHandle->SetAnimation("Gun_Shoot");
+        //weapon.m_animatorHandle->SetPlaying(true);
 
         // number of rounds that were fired
         CreateRaycasts(weapon, *m_transforms[ id ], RemoveRoundsFromClip(weapon));

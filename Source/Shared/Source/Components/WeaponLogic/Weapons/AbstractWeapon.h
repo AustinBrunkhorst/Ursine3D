@@ -152,6 +152,7 @@ namespace ursine
 {
     namespace ecs
     {
+        class Transform;
         class Animator;
     } // ecs namespace
 } // ursine namespace
@@ -237,15 +238,15 @@ public:
 
     // Camera Handle for shooting
     Meta(Disable)
-    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_camHandle;
+    ursine::ecs::Transform* m_camHandle;
 
     // fire position Handle for shooting
     Meta(Disable)
-    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_firePosHandle;
+    ursine::ecs::Transform* m_firePosHandle;
 
     // fire position Handle for shooting
     Meta(Disable)
-    ursine::ecs::Component::Handle<ursine::ecs::Animator> m_animatorHandle;
+    ursine::ecs::Animator* m_animatorHandle;
 
     // Archetype weapon should fire
     std::string m_archetypeToShoot;
@@ -334,6 +335,8 @@ public:
 
     bool GetTriggerPulled(void) const;
 
+    void ConnectTrigger(ursine::ecs::Entity* obj);
+
 protected:
 
     // Weapons trigger is being pulled
@@ -367,7 +370,7 @@ protected:
 
 
 #define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );    \
-                                    AbstractWeaponConnect(Obj);
+                                           AbstractWeaponConnect(Obj);
 
 
 

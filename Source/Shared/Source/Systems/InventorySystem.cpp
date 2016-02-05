@@ -14,6 +14,11 @@
 #include "InventorySystem.h"
 #include "GameEvents.h"
 #include "InventoryComponent.h"
+#include <Components/WeaponLogic/Weapons/HitscanWeaponComponent.h>
+#include "HitscanWeaponComponent.h"
+#include "AbstractWeapon.h"
+#include <AnimatorComponent.h>
+#include "FirePos.h"
 
 
 ENTITY_SYSTEM_DEFINITION( InventorySystem ) ;
@@ -146,7 +151,7 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
 void InventorySystem::ActivateWeapon(Inventory* inventory)
 {
     //create event args
-    game::WeaponActivationEventArgs args( inventory->GetOwner( ), &inventory->m_cameraHandle);
+    game::WeaponActivationEventArgs args( inventory->GetOwner( ), inventory->m_cameraHandle);
 
     ursine::ecs::Transform* trans = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( );
 
@@ -162,11 +167,22 @@ void InventorySystem::ActivateWeapon(Inventory* inventory)
     // activate current weapon
     inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->Dispatch(game::ACTIVATE_WEAPON, &args);
 
+    //HitscanWeapon* weapon = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetComponent<HitscanWeapon>( );
+    //weapon->m_camHandle = inventory->m_cameraHandle;
+
+    //ursine::ecs::Entity* firePos = weapon->GetOwner( )->GetComponentInChildren<FirePos>( )->GetOwner( );
+
+    //if ( firePos )
+    //    weapon->m_firePosHandle = firePos->GetTransform( );
+
+    //weapon->m_animatorHandle = weapon->GetOwner( )->GetTransform( )->GetComponentInChildren<ursine::ecs::Animator>( );
+
     // set spawn offset
     ursine::SVec3 spawnOffset = trans->GetLocalRotation( ) * *args.m_spawnOffset;
     trans->SetWorldPosition( trans->GetLocalPosition(  ) + spawnOffset );
-}
 
+    //weapon->ConnectTrigger(inventory->GetOwner( ));
+}
 
 void InventorySystem::DeactivateWeapon(Inventory* inventory, const int index)
 {

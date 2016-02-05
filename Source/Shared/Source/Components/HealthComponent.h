@@ -38,7 +38,7 @@ public:
     );
 
     EditorField(
-        std::string SpawnOnDeath,
+        std::string ArchetypeToSpawnOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
         );

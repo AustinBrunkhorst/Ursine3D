@@ -78,10 +78,10 @@ namespace game
 
     struct WeaponActivationEventArgs : WeaponDeactivationEventArgs
     {
-        ursine::ecs::Component::Handle<ursine::ecs::Transform>* m_camHandle;
+        ursine::ecs::Transform* m_camHandle;
         ursine::SVec3* m_spawnOffset;
 
-        WeaponActivationEventArgs(ursine::ecs::Entity* who, ursine::ecs::Component::Handle<ursine::ecs::Transform>* camHandle = nullptr, int ammo = -1, int clip = -1)
+        WeaponActivationEventArgs(ursine::ecs::Entity* who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
             : WeaponDeactivationEventArgs(  who, ammo, clip ), m_camHandle( camHandle ), m_spawnOffset( nullptr )
         { }
     };

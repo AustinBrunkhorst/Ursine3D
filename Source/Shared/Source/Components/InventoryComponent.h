@@ -120,11 +120,11 @@ public:
 
     // position of camera
     Meta(Disable)
-    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_cameraHandle;
+    ursine::ecs::Transform* m_cameraHandle;
 
     // position of arm
     Meta(Disable)
-    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_armHandle;
+    ursine::ecs::Transform* m_armHandle;
 
     // what archetype to load
     Meta(Disable)

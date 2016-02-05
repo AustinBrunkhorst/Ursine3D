@@ -14,7 +14,7 @@
 #include "Precompiled.h"
 
 #include "ElevatorLiftMoverComponent.h"
-
+#include "GameEvents.h"
 #include <LocalTweenManager.h>
 
 NATIVE_COMPONENT_DEFINITION( ElevatorLiftMover );
@@ -27,6 +27,18 @@ ElevatorLiftMover::ElevatorLiftMover(void)
 	, m_duration( 1.0f )
 {
 
+}
+
+ElevatorLiftMover::~ElevatorLiftMover(void)
+{
+    GetOwner( )->GetWorld( )->Listener(this)
+        .Off(game::AREA_CLEAR, &ElevatorLiftMover::StartMoving);
+}
+
+void ElevatorLiftMover::OnInitialize(void)
+{
+    GetOwner( )->GetWorld( )->Listener(this)
+        .On(game::AREA_CLEAR, &ElevatorLiftMover::StartMoving);
 }
 
 const SVec3& ElevatorLiftMover::GetStartPosition(void) const
@@ -69,6 +81,11 @@ void ElevatorLiftMover::StartMoving(void)
 			trans, &Transform::SetLocalPosition, m_startPos, m_endPos,
 			TimeSpan::FromSeconds( m_duration ), ease::QuadraticInOut
 		);
+}
+
+void ElevatorLiftMover::StartMoving(EVENT_HANDLER(game::OPEN_DOOR))
+{
+    StartMoving( );
 }
 
 #if defined(URSINE_WITH_EDITOR)

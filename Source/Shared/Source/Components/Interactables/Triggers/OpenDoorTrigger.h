@@ -26,6 +26,9 @@ public:
     OpenDoorTrigger(void);
     ~OpenDoorTrigger(void);
 
+protected:
+    void OnInitialize(void) override;
+
 private:
     // interaction logic
     void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
@@ -33,7 +36,7 @@ private:
     void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
 
 
-    void OnInitialize(void) override;
+    
     void OnAreaClear(EVENT_HANDLER(game::AREA_CLEAR));
 
     bool m_clear;

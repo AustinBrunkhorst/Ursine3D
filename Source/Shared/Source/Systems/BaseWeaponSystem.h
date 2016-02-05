@@ -49,9 +49,9 @@ private:
 
     void CreateProjectiles(AbstractWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
     
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<BaseWeapon >> m_weapons;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<ursine::ecs::Transform >> m_transforms;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<ursine::ecs::AudioEmitter >> m_emitters;
+    std::unordered_map < ursine::ecs::EntityUniqueID, BaseWeapon* > m_weapons;
+    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
+    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::AudioEmitter* > m_emitters;
 
 } Meta(Enable);
 
@@ -80,9 +80,9 @@ private:
 
     ursine::ecs::PhysicsSystem* m_physicsSystem;
 
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<HitscanWeapon >> m_weapons;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<ursine::ecs::Transform >> m_transforms;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<ursine::ecs::AudioEmitter >> m_emitters;
+    std::unordered_map < ursine::ecs::EntityUniqueID, HitscanWeapon* > m_weapons;
+    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
+    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::AudioEmitter* > m_emitters;
 
 
 } Meta(Enable);

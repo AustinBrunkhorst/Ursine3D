@@ -1,4 +1,3 @@
-
 #include "Precompiled.h"
 #include "AbstractWeapon.h"
 #include "AmmoPickupComponent.h"
@@ -11,6 +10,7 @@
 #include "InteractableComponent.h"
 #include "WeaponPickup.h"
 #include <AnimatorComponent.h>
+#include <Components/WeaponLogic/FirePos.h>
 
 using namespace ursine;
 
@@ -42,6 +42,7 @@ AbstractWeapon::AbstractWeapon(void) :
     m_clipSize(0),
     m_projFireCount(1),
     m_weaponType(PRIMARY_WEAPON),
+    m_spawnOffset( 0, 0, 0 ),
     m_camHandle(nullptr),
     m_firePosHandle(nullptr),
     m_archetypeToShoot("BaseBullet"),
@@ -68,6 +69,13 @@ void AbstractWeapon::Initialize(ursine::ecs::Entity* owner)
 
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
+}
+
+void AbstractWeapon::ConnectTrigger(ursine::ecs::Entity* obj)
+{
+    obj->Listener(this)
+        .On(game::FIRE_START, &AbstractWeapon::TriggerPulled)
+        .On(game::FIRE_END, &AbstractWeapon::TriggerReleased);
 }
 
 int AbstractWeapon::FireLogic(void)
@@ -415,13 +423,14 @@ void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
     }
 
     // Grab camera handle for shooting
-    m_camHandle = *args->m_camHandle;
+    m_camHandle = args->m_camHandle;
 
     // Give access to spawn offset
     args->m_spawnOffset = &m_spawnOffset;
 
+
     // Grab fire position child
-    ursine::ecs::Entity* firePos = sender->GetChildByName("FirePos");
+    ursine::ecs::Entity* firePos = sender->GetComponentInChildren<FirePos>( )->GetOwner( );
 
     // if the fire position was a child then grab transform for shooting
     if ( firePos )

@@ -53,6 +53,6 @@ private:
     // Deactivate previous weapon of swap
     void DeactivateWeapon(Inventory* inventory, const int index);
 
-    std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle< Inventory > > m_inventories;
-} Meta(Enable, DisableEntitySystemAutoAdd);
+    std::unordered_map< ursine::ecs::EntityUniqueID, Inventory* > m_inventories;
+} Meta(Enable);
 

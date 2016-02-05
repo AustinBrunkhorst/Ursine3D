@@ -15,6 +15,7 @@
 
 #include <Component.h>
 
+
 class ElevatorLiftMover : public ursine::ecs::Component
 {
 	NATIVE_COMPONENT;
@@ -47,6 +48,9 @@ public:
 	);
 
 	ElevatorLiftMover(void);
+    ~ElevatorLiftMover(void);
+
+    void OnInitialize(void);
 
 	const ursine::SVec3 &GetStartPosition(void) const;
 	void SetStartPosition(const ursine::SVec3 &startPosition);
@@ -58,6 +62,8 @@ public:
 	void SetDuration(float duration);
 
 	void StartMoving(void);
+
+    void StartMoving(EVENT_HANDLER(game::OPEN_DOOR));
 
 private:
 	ursine::SVec3 m_startPos;

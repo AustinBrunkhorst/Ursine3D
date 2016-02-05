@@ -55,6 +55,7 @@
 
 // micelaneous weapon logic
 #include "Components/WeaponLogic/AmmoPickUpComponent.h"
+#include "Components/WeaponLogic/FirePos.h"
 
 
 /////////////////////////////////
