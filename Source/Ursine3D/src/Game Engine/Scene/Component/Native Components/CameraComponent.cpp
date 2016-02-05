@@ -280,7 +280,10 @@ namespace ursine
                 camera.SetMask( m_renderMask );
             }
 
-            GetOwner( )->GetWorld( )->GetEntitySystem( RenderSystem )->SortCameraArray( );
+            auto *renderSystem = GetOwner( )->GetWorld( )->GetEntitySystem( RenderSystem );
+
+            if (renderSystem)
+                renderSystem->SortCameraArray( );
         }
     }
 }

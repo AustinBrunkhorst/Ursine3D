@@ -33,9 +33,7 @@ namespace ursine
             // store a pointer to the GfxAPI core system
             m_graphics = GetCoreSystem(graphics::GfxAPI);
 
-            m_base = new RenderableComponentBase([=] {
-                updateRenderer();
-            });
+            m_base = new RenderableComponentBase( std::bind( &ParticleSystem::updateRenderer, this ) );
 
             m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_PS));
 
