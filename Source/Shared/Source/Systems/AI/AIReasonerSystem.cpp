@@ -3,6 +3,7 @@
 #include "AIReasonerSystem.h"
 #include <Components/PlayerIdComponent.h>
 #include <Components/AI/WaypointComponent.h>
+#include <Components/ExplosionComponent.h>
 
 namespace ursine
 {
@@ -12,6 +13,10 @@ namespace ursine
 
         AIReasonerSystem::AIReasonerSystem(World* world): EntitySystem(world)
         {
+            for (int i = EnemyType::HORDELING; i < EnemyType::INVALID_ENEMY; ++i)
+            {
+                m_reasoners.push_back(std::vector<Component::Handle<AIHorde> >());
+            }
         }
 
         void AIReasonerSystem::OnInitialize()
@@ -37,9 +42,15 @@ namespace ursine
 
             if (args->component->Is<AIHorde>())
             {
-                //m_reasoners.push_back( static_cast<AIHorde *>(args->component) );
 
-                m_reasoners.push_back(static_cast<Component::Handle<AIHorde>>(static_cast<AIHorde *>(args->component)));
+                auto enemy = static_cast<Component::Handle<AIHorde>>(static_cast<AIHorde *>(args->component));
+
+                EnemyType eType = enemy->GetEnemyType();
+
+                if (eType < EnemyType::INVALID_ENEMY)
+                {
+                    m_reasoners[eType].push_back(enemy);
+                }
             }
         }
 
@@ -49,12 +60,19 @@ namespace ursine
 
             if (args->component->Is<AIHorde>())
             {
-                // Remove it from our list
-                m_reasoners.erase(std::find(
-                    m_reasoners.begin(),
-                    m_reasoners.end(),
-                    static_cast<Component::Handle<AIHorde>>(static_cast<AIHorde *>(args->component))
-                    ));
+                auto component = static_cast<Component::Handle<AIHorde>>(static_cast<AIHorde *>(args->component));
+
+                auto eType = component->GetEnemyType();
+
+                if (eType < EnemyType::INVALID_ENEMY)
+                {
+                    // Remove it from our list
+                    m_reasoners[eType].erase(std::find(
+                        m_reasoners[eType].begin(),
+                        m_reasoners[eType].end(),
+                        component
+                        ));
+                }
             }
         }
 
@@ -85,11 +103,31 @@ namespace ursine
                 target = players[0];
             }
 
-            Vec3 TargetPos = target->GetTransform()->GetWorldPosition();
+            Vec3 targetPos = target->GetTransform()->GetWorldPosition();
 
-            for (auto hordeComp : m_reasoners)
+            for (int i = EnemyType::HORDELING; i < EnemyType::INVALID_ENEMY; ++i)
+            for (auto hordeComp : m_reasoners[i])
             {
-                hordeComp->SetTarget(TargetPos);
+                hordeComp->SetTarget(targetPos);
+            }
+
+            for (auto boomling : m_reasoners[EnemyType::BOOMLING])
+            {
+                // check distance from target
+                auto m_transform = boomling->GetOwner( )->GetTransform( );
+                if (targetPos.Distance( m_transform->GetWorldPosition( ) ) < 10.0f)
+                {
+                    auto explosion = boomling->GetOwner()->GetComponent<ExplosionComponent>();
+
+                    if ( explosion )
+                    {
+                        explosion->Explode();
+                    }
+                    else
+                    {
+                        boomling->GetOwner()->Delete();
+                    }
+                }
             }
         }
     }

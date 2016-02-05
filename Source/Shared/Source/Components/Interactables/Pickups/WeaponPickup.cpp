@@ -14,6 +14,7 @@
 #include "ComponentIncludes.h"
 #include "CommandQueueComponent.h"
 #include "InventoryComponent.h"
+#include <Components/Interactables/InteractableComponent.h>
 
 NATIVE_COMPONENT_DEFINITION( WeaponPickup ) ;
 
@@ -37,6 +38,7 @@ WeaponPickup::~WeaponPickup(void)
 
 void WeaponPickup::OnInitialize(void)
 {
+    GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this);
 }
 
 ///////////////////////////////

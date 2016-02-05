@@ -139,17 +139,22 @@
     GetOwner( )->Listener( this )                               \
         .On(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
         .On(game::DETACH_WEAPON, &Obj::DetachWeapon)            \
-        .On(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon)    \
-        .On(game::FIRE_START, &Obj::TriggerPulled)              \
-        .On(game::FIRE_END, &Obj::TriggerReleased);
+        .On(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon);
 
 #define AbstractWeaponDisconnect( Obj )                          \
     GetOwner( )->Listener( this )                                \
         .Off(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
         .Off(game::DETACH_WEAPON, &Obj::DetachWeapon)            \
-        .Off(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon)    \
-        .Off(game::FIRE_START, &Obj::TriggerPulled)              \
-        .Off(game::FIRE_END, &Obj::TriggerReleased);
+        .Off(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon);
+
+
+namespace ursine
+{
+    namespace ecs
+    {
+        class Animator;
+    } // ecs namespace
+} // ursine namespace
 
 
 enum WeaponType
@@ -165,6 +170,10 @@ enum WeaponType
 struct AbstractWeapon
 {
 public:
+    // who is my owner
+    Meta(Disable)
+    ursine::ecs::Entity* m_owner;
+
     // damage to apply when triggered
     float m_damageToApply;
 
@@ -227,25 +236,33 @@ public:
     ursine::SVec3 m_spawnOffset;
 
     // Camera Handle for shooting
+    Meta(Disable)
     ursine::ecs::Component::Handle<ursine::ecs::Transform> m_camHandle;
+
+    // fire position Handle for shooting
+    Meta(Disable)
+    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_firePosHandle;
+
+    // fire position Handle for shooting
+    Meta(Disable)
+    ursine::ecs::Component::Handle<ursine::ecs::Animator> m_animatorHandle;
 
     // Archetype weapon should fire
     std::string m_archetypeToShoot;
 
     // Is trigger being pulled
+    Meta(Disable)
     bool m_triggerPulled;
 
     // can i shoot?
+    Meta(Disable)
     bool m_active;
 
-    // should i be removed
-    bool m_remove;
 
-
-    AbstractWeapon( void );
+    AbstractWeapon( );
     virtual ~AbstractWeapon( void );
 
-    void Initialize(void);
+    void Initialize( ursine::ecs::Entity* owner );
 
     /////////////////////////////
     ////  Weapon Fire Logic  ////
@@ -349,7 +366,7 @@ protected:
 };
 
 
-#define AbstractWeaponInit( Obj )   AbstractWeapon::Initialize( );    \
+#define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );    \
                                     AbstractWeaponConnect(Obj);
 
 

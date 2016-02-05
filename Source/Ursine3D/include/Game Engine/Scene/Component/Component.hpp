@@ -21,7 +21,9 @@ namespace ursine
         #if defined(URSINE_WITH_EDITOR)
             , m_baseInitialized( false )
         #endif
-            { }
+        {
+            m_typeMask.set( typeID, true );
+        }
 
         ComponentTypeID Component::GetTypeID(void) const
         {
@@ -30,7 +32,7 @@ namespace ursine
 
         ComponentTypeMask Component::GetTypeMask(void) const
         {
-            return 1ull << m_typeID;
+            return m_typeMask;
         }
 
         Entity *Component::GetOwner(void) const

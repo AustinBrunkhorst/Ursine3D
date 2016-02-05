@@ -22,19 +22,42 @@ namespace ursine
 {
     namespace ecs
     {
+        enum EnemyType
+        {
+            HORDELING,
+            BIG_HORDELING,
+            BOOMLING,
+            INVALID_ENEMY
+        } Meta(Enable);
+
         class AIHorde : public Component
         {
             NATIVE_COMPONENT;
 
         public:
+
             AIHorde(void);
 
             void OnInitialize(void) override;
 
             void SetTarget(const Vec3 &pos);
 
+            EnemyType GetEnemyType(void) const;
+            void SetEnemyType(EnemyType newType);
+
+            ////////////////////////////////////////////////////////////////////
+            // Expose data to editor
+            ////////////////////////////////////////////////////////////////////
+            EditorField(
+                EnemyType TypeOfEnemy,
+                GetEnemyType,
+                SetEnemyType
+                );
+
         private:
             Handle<AIMovementController> m_move;
+
+            EnemyType m_type;
 
         }Meta(Enable, DisplayName("AIHordeReasoner"));
 

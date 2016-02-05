@@ -105,6 +105,8 @@ namespace ursine
             // component type id
             ComponentTypeID m_typeID;
 
+            ComponentTypeMask m_typeMask;
+
             // unique instance id
             ComponentUniqueID m_uniqueID;
 

@@ -75,5 +75,5 @@ namespace ursine
 
         //current animation
         const Animation *m_animation;
-    } Meta(Enable, DisplayName("State"), WhiteListMethods);
+    } Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ), WhiteListMethods);
 }

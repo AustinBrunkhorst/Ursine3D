@@ -12,6 +12,8 @@ namespace ursine
         class AIReasonerSystem : EntitySystem
         {
             ENTITY_SYSTEM;
+            
+            //typedef AIHorde::EnemyType EnemyType;
 
         public:
             AIReasonerSystem(World* world);
@@ -19,13 +21,15 @@ namespace ursine
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
+
         private:
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
             void onUpdate(EVENT_HANDLER(World));
 
-            std::vector<Component::Handle<AIHorde>> m_reasoners;
+            Meta(Enable)
+            std::vector< std::vector<Component::Handle<AIHorde> > > m_reasoners;
 
         }Meta( Enable );
     }

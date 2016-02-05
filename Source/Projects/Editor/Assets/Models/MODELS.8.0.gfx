@@ -37,7 +37,7 @@ torus2.8.0.mdl Ring
 #Player_Win.fbx Player_Win
 
 # Gun Animations
-#Gun_Idle.fbx Gun_Idle
+Gun_Idle.fbx Gun_Idle
 #Gun_Jump.fbx Gun_Jump
 #Gun_Run.fbx Gun_Run
 #Gun_Shoot.fbx Gun_Shoot

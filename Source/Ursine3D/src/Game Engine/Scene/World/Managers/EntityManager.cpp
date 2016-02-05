@@ -18,6 +18,7 @@
 #include "Filter.h"
 #include "TransformComponent.h"
 #include "EntitySerializer.h"
+#include "EntityEvent.h"
 
 #include <queue>
 
@@ -48,17 +49,17 @@ namespace ursine
 
                 for (auto derived : componentType.GetDerivedClasses( ))
                 {
-                    auto componentID = derived.GetStaticField( "ComponentID" );
+                    auto setter = derived.GetStaticMethod( "SetComponentID", { typeof( ComponentTypeID ) } );
 
-                    UAssert( componentID.IsValid( ),
-                        "Native component '%s' doesn't have a static field ComponentID.\n"
+                    UAssert( setter.IsValid( ),
+                        "Native component '%s' doesn't have a static method SetComponentID.\n"
                         "Most likely missing NATIVE_COMPONENT in declaration",
-                        derived.GetName().c_str( )
+                        derived.GetName( ).c_str( )
                     );
 
                     UAssert( nextID < kMaxComponentCount, "We're maxed out son." );
 
-                    componentID.SetValue( nextID++ );
+                    setter.Invoke( nextID++ );
 
                     auto &defaultCtor = derived.GetDynamicConstructor( );
 
@@ -157,7 +158,9 @@ namespace ursine
                         componentType.GetName( ).c_str( )
                     );
 
-                    ComponentTypeMask mask = 1ull << id.GetValue( ).GetValue<ComponentTypeID>( );
+                    ComponentTypeMask mask;
+
+                    mask.set( id.GetValue( ).GetValue<ComponentTypeID>( ), true );
 
                     if (!entity->HasComponent( mask ))
                     {
@@ -216,7 +219,11 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            if (!entity->HasComponent( 1ull << id ))
+            ComponentTypeMask mask;
+
+            mask.set( id, true );
+
+            if (!entity->HasComponent( mask ))
                 return;
 
             auto removedType = m_componentTypes[ id ][ entity->m_id ]->GetType( );
@@ -256,8 +263,12 @@ namespace ursine
 
         Component *EntityManager::GetComponent(const Entity *entity, ComponentTypeID id) const
         {
+            ComponentTypeMask mask;
+
+            mask.set( id, true );
+
             // he doesn't have this...
-            if (!entity->HasComponent( 1ull << id ))
+            if (!entity->HasComponent( mask ))
                 return nullptr;
 
             return m_componentTypes[ id ][ entity->m_id ];
@@ -275,7 +286,11 @@ namespace ursine
 
             for (uint32 i = 0; i < m_componentTypes.size( ); ++i)
             {
-                if (entity->HasComponent( 1ull << i ))
+                ComponentTypeMask mask;
+
+                mask.set( i, true );
+
+                if (entity->HasComponent( mask ))
                     found.emplace_back( m_componentTypes[ i ][ entityID ] );
             }
 
@@ -427,9 +442,10 @@ namespace ursine
             for (auto child : entity->GetTransform( )->GetChildren( ))
                 BeforeRemove( child->GetOwner( ) );
 
-            EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
+            EntityEventArgs e(WORLD_ENTITY_REMOVED, entity);
 
             // we're removing man
+            entity->Dispatch(ENTITY_REMOVED, EventArgs::Empty);
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
@@ -542,7 +558,11 @@ namespace ursine
 
             components[ entityID ] = component;
 
-            entity->setType( 1ull << componentID );
+            ComponentTypeMask mask;
+
+            mask.set( componentID, true );
+
+            entity->setType( mask );
 
             component->m_uniqueID = m_nextComponentUID++;
             component->m_owner = entity;
@@ -550,7 +570,9 @@ namespace ursine
 
         void EntityManager::removeComponent(Entity *entity, ComponentTypeID id, bool dispatch)
         {
-            const ComponentTypeMask mask = 1ull << id;
+            ComponentTypeMask mask;
+
+            mask.set( id, true );
 
             // he doesn't have this...
             if (!entity->HasComponent( mask ))
@@ -584,7 +606,11 @@ namespace ursine
             // transform can be assumed to be the first component type
             for (uint32 i = 0; i < size; ++i)
             {
-                if (entity->HasComponent( 1ull << i ))
+                ComponentTypeMask mask;
+
+                mask.set( i, true );
+
+                if (entity->HasComponent( mask ))
                 {
                     auto *component = m_componentTypes[ i ][ id ];
 
@@ -607,10 +633,14 @@ namespace ursine
 
             for (ComponentTypeID i = 0; i < size; ++i)
             {
+                ComponentTypeMask mask;
+
+                mask.set( i, true );
+
                 // if the entity has this component, sort insert it into the 
                 // the queue to remove (based on instance id)
                 // this is so components with dependencies are deleted in the correct order
-                if (entity->HasComponent( 1ull << i ))
+                if (entity->HasComponent( mask ))
                     utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponents );
             }
 

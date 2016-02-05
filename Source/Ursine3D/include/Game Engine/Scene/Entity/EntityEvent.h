@@ -69,6 +69,6 @@ namespace ursine
 
             // Starting index for events defined out of engine
             ENTITY_EVENT_USER = 0x8000,
-        };
+        } Meta(Enable);
     }
 }

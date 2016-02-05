@@ -66,12 +66,14 @@ void CameraAnimatorSystem::Process(Entity* entity)
 			// if index == nodes.count - 1, playing is done
 			if (animator->m_index >= animator->m_nodes.size( ) - 1)
 			{
-				animator->updateAnimation( *animator->m_nodes.end( ) );
+				animator->updateAnimation( animator->m_nodes.back( ) );
 				animator->m_playing = false;
 				animator->m_time = 0.0f;
 				animator->m_index = static_cast<int>( animator->m_nodes.size( ) - 1 );
 				return;
 			}
+
+			animator->m_time -= node2->GetTransitionToTime( );
 
 			// set the two current nodes
 			node1 = animator->m_nodes[ animator->m_index ];

@@ -44,7 +44,7 @@ void CameraAnimator::Play(void)
 	m_time = 0.0f;
 	m_index = 0;
 
-	m_nodes = GetOwner( )->GetComponentsInChildren<CameraAnimatorNode>( );
+	getChildren( );
 	m_camera = GetOwner( )->GetComponentInChildren<Camera>( );
 
 	enableDeletionNodes( false );
@@ -56,7 +56,7 @@ void CameraAnimator::Reset(void)
 	m_playing = false;
 	m_time = 0.0f;
 
-	m_nodes = GetOwner( )->GetComponentsInChildren<CameraAnimatorNode>( );
+	getChildren( );
 	m_camera = GetOwner( )->GetComponentInChildren<Camera>( );
 
 	if (m_nodes.size( ))
@@ -104,6 +104,28 @@ void CameraAnimator::enableDeletionNodes(bool flag)
 	for (auto *node : m_nodes)
 	{
 		node->GetOwner( )->EnableDeletion( flag );
+	}
+}
+
+void CameraAnimator::getChildren(void)
+{
+	auto nodes = GetOwner( )->GetComponentsInChildren<CameraAnimatorNode>( );
+
+	m_nodes.clear( );
+
+	for (auto node : nodes)
+	{
+		int i = 0;
+		bool found = false;
+
+		for (; found == false && i < m_nodes.size( ); ++i)
+			if (m_nodes[ i ]->m_order > node->m_order)
+			{
+				found = true;
+				--i;
+			}
+
+		m_nodes.insert( m_nodes.begin( ) + i, node );
 	}
 }
 
