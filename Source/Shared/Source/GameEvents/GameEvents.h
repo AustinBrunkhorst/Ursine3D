@@ -26,6 +26,9 @@ namespace game
         DETACH_WEAPON,
         DEACTIVATE_WEAPON,
 
+        ENEMY_DEATH,
+        AREA_CLEAR,
+
 
         ////  Command Events  ////
 #define ENUMERATE(eventName) eventName,

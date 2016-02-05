@@ -34,8 +34,9 @@ private:
 
 
     void OnInitialize(void) override;
+    void OnAreaClear(EVENT_HANDLER(game::AREA_CLEAR));
 
-    bool m_active;
+    bool m_clear;
 
 } Meta(Enable, DisplayName("OpenDoorTrigger"));
 

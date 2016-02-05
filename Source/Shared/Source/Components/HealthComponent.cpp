@@ -14,10 +14,6 @@
 #include "Precompiled.h"
 
 #include "HealthComponent.h"
-
-#include <SystemManager.h>
-#include <Systems/RoundSystem.h>
-#include "TeamComponent.h"
 #include "GameEvents.h"
 #include "DamageOnCollideComponent.h"
 #include "AudioEmitterComponent.h"

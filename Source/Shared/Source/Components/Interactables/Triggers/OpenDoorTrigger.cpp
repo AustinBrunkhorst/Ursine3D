@@ -20,7 +20,7 @@ NATIVE_COMPONENT_DEFINITION(OpenDoorTrigger);
 
 OpenDoorTrigger::OpenDoorTrigger(void) :
     BaseComponent( ),
-    m_active( true )
+    m_clear( false )
 {
     
 }
@@ -34,18 +34,27 @@ OpenDoorTrigger::~OpenDoorTrigger(void)
 
 void OpenDoorTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
 {
-    if ( queue->GetOwner( )->HasComponent<PlayerID>( ) && m_active )
+    if ( queue->GetOwner( )->HasComponent<PlayerID>( ) && m_clear )
     {
         GetOwner( )->Dispatch(game::OPEN_DOOR, ursine::ecs::EntityEventArgs::Empty );
-        m_active = false;
+        GetOwner( )->Delete( );
     }
 }
 
 void OpenDoorTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
 {
-    
+    if ( queue->GetOwner( )->HasComponent<PlayerID>( ) && m_clear )
+    {
+        GetOwner( )->Dispatch(game::OPEN_DOOR, ursine::ecs::EntityEventArgs::Empty);
+        GetOwner( )->Delete( );
+    }
 }
 
 void OpenDoorTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
 {
+}
+
+void OpenDoorTrigger::OnAreaClear(EVENT_HANDLER(game::AREA_CLEAR))
+{
+    m_clear = true;
 }
