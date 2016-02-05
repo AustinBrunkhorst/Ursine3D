@@ -14,12 +14,7 @@ namespace ursine
 {
     namespace ecs
     {
-        ursine::ecs::ComponentTypeID FBXSceneRootNode::ComponentID = -1; ursine::ecs::ComponentTypeMask FBXSceneRootNode::TypeMask; 
-        void FBXSceneRootNode::SetComponentID(ursine::ecs::ComponentTypeID id)
-        {
-            ComponentID = id; 
-            TypeMask.set( id, true );
-        } ;
+        NATIVE_COMPONENT_DEFINITION( FBXSceneRootNode );
 
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )

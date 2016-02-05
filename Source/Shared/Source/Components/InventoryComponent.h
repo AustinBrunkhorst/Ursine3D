@@ -62,31 +62,31 @@ public:
         WeaponType StartWeapon,
         GetStartWeapon,
         SetStartWeapon
-        );
+    );
    
     EditorField(
         std::string LastStand,
         GetLastStandWeapon,
         SetLastStandWeapon
-        );
+    );
    
     EditorField(
         std::string SecondaryWeapon,
         GetSecondaryWeapon,
         SetSecondaryWeapon
-        );
+    );
 
     EditorField(
         std::string PrimaryWeapon,
         GetPrimaryWeapon,
         SetPrimaryWeapon
-        );
+    );
 
     EditorField(
         std::string MeleeWeapon,
         GetMeleeWeapon,
         SetMeleeWeapon
-        );
+    );
 
     void SetNewWeapon(const WeaponType type, const std::string& weaponToLoad, int ammo, int clip);
 
@@ -131,4 +131,4 @@ private:
     const std::string& GetMeleeWeapon(void) const;
     void SetMeleeWeapon(const std::string& archetype);
 
-} Meta(Disable, DisplayName("Inventory"));
+} Meta(Enable, DisplayName("Inventory"));

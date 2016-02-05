@@ -289,7 +289,7 @@ namespace ursine
 
                 mask.set( i, true );
 
-                if (entity->HasComponent( 1ull << i ))
+                if (entity->HasComponent( mask ))
                     found.emplace_back( m_componentTypes[ i ][ entityID ] );
             }
 
