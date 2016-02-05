@@ -20,6 +20,7 @@ NATIVE_COMPONENT_DEFINITION( CameraAnimatorNode );
 CameraAnimatorNode::CameraAnimatorNode(void)
 	: BaseComponent( )
 	, m_transitionSeconds( 0.0f )
+	, m_order( 0 )
 {
 
 }
@@ -27,6 +28,16 @@ CameraAnimatorNode::CameraAnimatorNode(void)
 float CameraAnimatorNode::GetTransitionToTime(void) const
 {
 	return m_transitionSeconds;
+}
+
+int CameraAnimatorNode::GetOrder(void) const
+{
+	return m_order;
+}
+
+void CameraAnimatorNode::SetOrder(int order)
+{
+	m_order = order;
 }
 
 void CameraAnimatorNode::SetTransitionToTime(float seconds)
