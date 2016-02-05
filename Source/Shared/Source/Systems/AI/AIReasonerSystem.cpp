@@ -49,6 +49,7 @@ namespace ursine
 
                 if (eType < EnemyType::INVALID_ENEMY)
                 {
+
                     m_reasoners[eType].push_back(enemy);
                 }
             }
