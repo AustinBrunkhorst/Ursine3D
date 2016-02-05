@@ -96,7 +96,7 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 		// and then apply it to the world space direction vector.
 		dist *= 0.5f;
 
-		auto newP = gizmo->GetWorldPosition( ) + m_worldDir * dist;
+		auto newP = gizmo->GetWorldPosition( ) + m_worldDir * dist * sqrt(m_editorCameraSystem->GetCamZoom( ));
 
 		gizmo->SetWorldPosition( newP );
 
