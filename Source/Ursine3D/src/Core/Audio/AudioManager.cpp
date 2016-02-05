@@ -171,7 +171,7 @@ namespace ursine
 
     void AudioManager::PlayGlobalEvent(const std::string &name)
     {
-        auto result = AK::SoundEngine::PostEvent(
+        /*auto result = AK::SoundEngine::PostEvent(
             name.c_str( ),
             AUDIO_GLOBAL_OBJECT_ID,
             AK_EnableGetSourcePlayPosition
@@ -186,12 +186,12 @@ namespace ursine
             auto &globalEvents = getCreatedGlobalEvents( );
 
             globalEvents[ name ] = result;
-        }
+        }*/
     }
 
     void AudioManager::StopGlobalEvent(const std::string &name)
     {
-        auto &globalEvents = getCreatedGlobalEvents( );
+        /*auto &globalEvents = getCreatedGlobalEvents( );
 
         auto result = ExecuteActionOnEvent(
             name.c_str( ),
@@ -206,7 +206,7 @@ namespace ursine
         else
         {
             UWarning( "Wwise: Could Not Stop The Music!! Or this event." );
-        }
+        }*/
     }
 
     void AudioManager::SetGlobalVolume()

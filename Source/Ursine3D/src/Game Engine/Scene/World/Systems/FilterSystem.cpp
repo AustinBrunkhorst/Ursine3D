@@ -120,6 +120,13 @@ namespace ursine
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
                 .On( m_updateType, &FilterSystem::onUpdate, m_updatePriority );
 
+			auto entities = m_world->GetEntitiesFromFilter( m_filter );
+
+			for (auto e : entities)
+			{
+				Add( e );
+			}
+
             Initialize( );
         }
 

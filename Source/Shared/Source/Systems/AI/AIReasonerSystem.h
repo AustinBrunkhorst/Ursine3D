@@ -31,6 +31,6 @@ namespace ursine
             Meta(Enable)
             std::vector< std::vector<Component::Handle<AIHorde> > > m_reasoners;
 
-        }Meta( Enable );
+        }Meta( Enable, AutoAddEntitySystem );
     }
 }

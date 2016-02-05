@@ -53,7 +53,7 @@ private:
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<ursine::ecs::Transform >> m_transforms;
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<ursine::ecs::AudioEmitter >> m_emitters;
 
-} Meta(Enable);
+} Meta(Enable, AutoAddEntitySystem);
 
 
 class HitscanWeaponSystem
@@ -85,7 +85,4 @@ private:
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle<ursine::ecs::AudioEmitter >> m_emitters;
 
 
-} Meta(Enable);
-
-
-
+} Meta(Enable, AutoAddEntitySystem);

@@ -831,16 +831,6 @@ namespace ursine
             //map camera buffer
             bufferManager->MapCameraBuffer(view, proj);
 
-            //map perspective values
-            SMat4 tempMat = proj;
-            tempMat.Transpose();
-            GBufferUnpackBuffer gbub;
-            gbub.perspectiveVals.x = 1.f / tempMat(0, 0);
-            gbub.perspectiveVals.y = 1.f / tempMat(1, 1);
-            gbub.perspectiveVals.z = tempMat(3, 2);
-            gbub.perspectiveVals.w = -tempMat(2, 2);
-            bufferManager->MapBuffer<BUFFER_GBUFFER_UNPACK>(&gbub, SHADERTYPE_PIXEL);
-
             //set gbuffer resources
             ID3D11ShaderResourceView *srv = dxCore->GetDepthMgr()->GetDepthStencilSRV(DEPTH_STENCIL_MAIN);
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &srv);

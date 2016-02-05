@@ -35,7 +35,7 @@ struct DS_OUTPUT
 //data from the buffers
 struct SURFACE_DATA
 {
-    float LinearDepth;
+    float depth;
     float4 Color;
     float3 Normal;
     float SpecInt;
@@ -55,22 +55,12 @@ struct Material
 
 /////////////////////////////////////////////////////////////////////
 // FUNCTIONS
-//converting depth
-//near is 0.1, far is 100, this needs to be modified
-float ConvertDepthToLinear( float depth )
-{
-    float f = nearPlane;
-    float n = farPlane;
-    float z = (2 * n) / (f + n - depth * (f - n));
-    return z;
-}
-
-//calculating world position
-float3 CalcWorldPos( float2 csPos, float linearDepth )
+//calculating view position
+float3 CalcWorldPos( float2 csPos, float depth )
 {
     float4 position;
     position.xy = csPos.xy;
-    position.z = linearDepth;
+    position.z = depth;
     position.w = 1.0;
     position = mul( position, InvProj );
     position.xyz /= position.w;
@@ -87,7 +77,7 @@ SURFACE_DATA UnpackGBuffer(int2 location)
 
     // Get the depth value and convert it to linear depth
     float depth = DepthTexture.Load(location3).x;
-    Out.LinearDepth = ConvertDepthToLinear(depth);
+    Out.depth = depth;
 
     // Get the base color and specular intensity
     float4 baseColor = ColorSpecIntTexture.Load(location3);
@@ -152,7 +142,7 @@ float4 main( DS_OUTPUT In ) : SV_TARGET
 
     //calculate world position
     In.cpPos.xy /= In.cpPos.w;
-    float3 pos = CalcWorldPos(In.cpPos.xy, gbd.LinearDepth);
+    float3 pos = CalcWorldPos(In.cpPos.xy, gbd.depth);
 
     //get the final color
     float4 finalColor;
