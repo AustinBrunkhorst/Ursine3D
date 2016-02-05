@@ -309,6 +309,10 @@ class SceneOutline extends WindowHandler {
         untyped item.entity = entity;
 
         item.textElement.addEventListener( 'click', function(e) {
+            // already selected
+            if (m_selectedEntities.indexOf( untyped item.entity.uniqueID ) != -1)
+                return;
+
             clearSelectedEntities( );
 
             untyped item.entity.select( );
