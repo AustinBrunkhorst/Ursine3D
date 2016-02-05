@@ -49,8 +49,8 @@ struct Inventory : ursine::ecs::Component
         int m_clipCount;
     };
 
+    NATIVE_COMPONENT;
 
-    NATIVE_COMPONENT
 public:
     static const int INVENTORY_COUNT = 4;
 
@@ -63,31 +63,31 @@ public:
         WeaponType StartWeapon,
         GetStartWeapon,
         SetStartWeapon
-        );
+    );
    
     EditorField(
         std::string LastStand,
         GetLastStandWeapon,
         SetLastStandWeapon
-        );
+    );
    
     EditorField(
         std::string SecondaryWeapon,
         GetSecondaryWeapon,
         SetSecondaryWeapon
-        );
+    );
 
     EditorField(
         std::string PrimaryWeapon,
         GetPrimaryWeapon,
         SetPrimaryWeapon
-        );
+    );
 
     EditorField(
         std::string MeleeWeapon,
         GetMeleeWeapon,
         SetMeleeWeapon
-        );
+    );
 
     WeaponType GetStartWeapon(void) const;
     void SetStartWeapon(const WeaponType slot);

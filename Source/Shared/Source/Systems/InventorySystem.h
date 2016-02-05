@@ -54,5 +54,5 @@ private:
     void DeactivateWeapon(Inventory* inventory, const int index);
 
     std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle< Inventory > > m_inventories;
-} Meta(Enable);
+} Meta(Enable, DisableEntitySystemAutoAdd);
 
