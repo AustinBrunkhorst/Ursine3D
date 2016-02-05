@@ -39,6 +39,8 @@ namespace ursine
 
             m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_PS));
 
+			m_base->m_dirty = true;
+
             // store a pointer to the model
             m_particleSystem = &m_graphics->RenderableMgr.GetParticleSystem(m_base->GetHandle());
         }
@@ -108,6 +110,8 @@ namespace ursine
             m_particleSystem->SetPosition(trans->GetWorldPosition( ));
 
             GetOwner()->Dispatch(ENTITY_PARTICLE_UPDATE, nullptr);
+
+			m_base->m_dirty = true;
         }
 
         const Color &ParticleSystem::GetColor(void) const
