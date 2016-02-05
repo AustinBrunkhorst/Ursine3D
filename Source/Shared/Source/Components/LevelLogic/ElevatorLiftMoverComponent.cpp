@@ -59,16 +59,6 @@ void ElevatorLiftMover::SetDuration(float duration)
 	m_duration = duration;
 }
 
-void ElevatorLiftMover::reset(void)
-{
-	GetOwner( )->GetTransform( )->SetLocalPosition( m_startPos );
-}
-
-void ElevatorLiftMover::startMoving(void)
-{
-	StartMoving( );
-}
-
 void ElevatorLiftMover::StartMoving(void)
 {
 	auto *owner = GetOwner( );
@@ -80,3 +70,17 @@ void ElevatorLiftMover::StartMoving(void)
 			TimeSpan::FromSeconds( m_duration ), ease::QuadraticInOut
 		);
 }
+
+#if defined(URSINE_WITH_EDITOR)
+
+void ElevatorLiftMover::reset(void)
+{
+	GetOwner( )->GetTransform( )->SetLocalPosition( m_startPos );
+}
+
+void ElevatorLiftMover::startMoving(void)
+{
+	StartMoving( );
+}
+
+#endif
