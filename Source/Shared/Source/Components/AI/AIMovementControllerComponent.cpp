@@ -11,49 +11,63 @@ namespace ursine
 
         AIMovementController::AIMovementController(void)
             : BaseComponent( )
-            , m_rigid()
-            , m_speed(0.0f)
+            , m_rigid( )
+            , m_speed( 0.0f )
+			, m_enable( true )
         {
         }
 
         void AIMovementController::SetTargetDirection(const Vec3& dir)
         {
-            m_targetDir = Vec3 (dir.X(), 0, dir.Z() );
+            m_targetDir = Vec3( dir.X( ), 0, dir.Z( ) );
         }
 
         void AIMovementController::SettargetDirection(const Vec2& dir)
         {
-            m_targetDir = Vec3( dir.X(), 0, dir.Y() );
+            m_targetDir = Vec3( dir.X( ), 0, dir.Y( ) );
 
-            m_targetDir.Normalize();
+            m_targetDir.Normalize( );
         }
 
         void AIMovementController::OnInitialize(void)
         {
             Component::OnInitialize( );
 
-            m_rigid = static_cast< Handle<Rigidbody> >(GetOwner()->GetComponent<Rigidbody>());
+            m_rigid = static_cast< Handle<Rigidbody> >( GetOwner( )->GetComponent<Rigidbody>( ) );
         }
 
-        void AIMovementController::Update()
+        void AIMovementController::Update(void)
         {
-            m_rigid = static_cast< Handle<Rigidbody> >(GetOwner()->GetComponent<Rigidbody>());
+			if (!m_enable)
+				return;
+			
+            m_rigid = static_cast< Handle<Rigidbody> >( GetOwner( )->GetComponent<Rigidbody>( ) );
 
 
-            auto transform = GetOwner()->GetTransform();
+            auto transform = GetOwner( )->GetTransform( );
 
-            auto gravity = Vec3(0, m_rigid->GetVelocity().Y(), 0);
+            auto gravity = Vec3( 0, m_rigid->GetVelocity( ).Y( ), 0 );
 
-            m_rigid->SetVelocity (gravity + m_targetDir * m_speed );
+            m_rigid->SetVelocity( gravity + m_targetDir * m_speed );
 
-            auto lookangle = transform->GetForward().Dot(m_targetDir);
+            auto lookangle = transform->GetForward( ).Dot( m_targetDir );
 
-            auto oldV = m_rigid->GetAngularVelocity();
+            auto oldV = m_rigid->GetAngularVelocity( );
 
-            m_rigid->SetAngularVelocity( Vec3(oldV.X(), lookangle, oldV.Z()) );
+            m_rigid->SetAngularVelocity( Vec3( oldV.X( ), lookangle, oldV.Z( ) ) );
         }
 
-        float AIMovementController::GetSpeed() const
+		bool AIMovementController::GetEnable(void) const
+		{
+			return m_enable;
+		}
+
+		void AIMovementController::SetEnable(bool enable)
+		{
+			m_enable = enable;
+		}
+
+        float AIMovementController::GetSpeed(void) const
         {
             return m_speed;
         }

@@ -38,9 +38,18 @@ namespace ursine
                 SetSpeed
                 );
 
+			EditorField(
+				bool enabled,
+				GetEnable,
+				SetEnable
+			);
+
             void OnInitialize(void) override;
 
             void Update(void);
+
+			bool GetEnable(void) const;
+			void SetEnable(bool enable);
 
             float GetSpeed(void) const;
             void SetSpeed(float newSpeed);
@@ -51,8 +60,8 @@ namespace ursine
             Handle<Rigidbody> m_rigid;
 
             float m_speed;
+
+			bool m_enable;
         } Meta(Enable, DisplayName("AIMovementController"));
-
-
     }
 }
