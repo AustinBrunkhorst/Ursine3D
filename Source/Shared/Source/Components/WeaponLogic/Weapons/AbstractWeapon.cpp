@@ -6,6 +6,7 @@
 #include <CollisionEventArgs.h>
 #include <Entity.h>
 #include <RigidbodyComponent.h>
+#include <TransformComponent.h>
 #include <BoxColliderComponent.h>
 #include "InteractableComponent.h"
 #include "WeaponPickup.h"
@@ -23,6 +24,7 @@ namespace
 
 
 AbstractWeapon::AbstractWeapon(void) :
+    m_owner( nullptr ),
     m_damageToApply(1.0f),
     m_critModifier(1.0f),
     m_damageInterval(1.0f),
@@ -54,8 +56,10 @@ AbstractWeapon::~AbstractWeapon(void)
 {
 }
 
-void AbstractWeapon::Initialize(void)
+void AbstractWeapon::Initialize(ursine::ecs::Entity* owner)
 {
+    m_owner = owner;
+
     if ( m_maxAmmoCount == 0 )
         m_maxAmmoCount = UNLIMITED_AMMO;
 
@@ -335,6 +339,17 @@ ursine::SVec3 AbstractWeapon::GetSpawnOffset(void) const
 
 void AbstractWeapon::SetSpawnOffset(const ursine::SVec3& offset)
 {
+    if ( m_owner )
+    {
+        ursine::ecs::Transform* trans = m_owner->GetTransform( );
+    
+        trans->SetLocalPosition(m_owner->GetTransform( )->GetLocalPosition( ) - ( trans->GetLocalRotation( ) * m_spawnOffset ));
+
+        m_spawnOffset = offset;
+
+        trans->SetLocalPosition(m_owner->GetTransform( )->GetLocalPosition( ) + ( trans->GetLocalRotation( ) * m_spawnOffset ));
+    }
+
     m_spawnOffset = offset;
 }
 

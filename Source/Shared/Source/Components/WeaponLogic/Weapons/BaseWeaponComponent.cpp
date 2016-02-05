@@ -20,7 +20,7 @@ BaseWeapon::~BaseWeapon( void )
 
 void BaseWeapon::OnInitialize( void )
 {
-    AbstractWeaponInit( BaseWeapon );
+    AbstractWeaponInit( BaseWeapon, GetOwner( ) );
 }
 
 void BaseWeapon::RemoveMySelf(void)

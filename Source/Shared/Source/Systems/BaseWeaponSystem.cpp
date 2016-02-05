@@ -459,7 +459,7 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::
         rayin.end = pos = rayin.start + weapon.m_camHandle->GetForward( ) * (weapon.m_maxRange + 10) + spray;
 
         // get ray to first wall / end of range from center of camera
-        m_physicsSystem->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS, true, 1.0f, true);
+        m_physicsSystem->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS, false, weapon.m_drawDuration, weapon.m_alwaysDraw);
 
         for ( auto it : rayout.entity )
         {
@@ -476,7 +476,7 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::
         rayin.start = weapon.m_firePosHandle->GetWorldPosition( );
         rayin.end = pos;
 
-        if ( m_physicsSystem->Raycast(rayin, rayout, weapon.m_raycastType, true, 1.0f, true) )
+        if ( m_physicsSystem->Raycast(rayin, rayout, weapon.m_raycastType, weapon.m_debug, weapon.m_drawDuration, weapon.m_alwaysDraw) )
         {
             switch ( weapon.m_raycastType )
             {

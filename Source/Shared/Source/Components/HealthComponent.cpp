@@ -33,6 +33,7 @@ Health::Health(void)
     : BaseComponent( )
     , m_health( 100 )
     , m_objToSpawn( "" )
+    , m_spawnOnDeath( false )
 {
     
 }
@@ -87,15 +88,9 @@ void Health::DealDamage(const float damage)
 
     m_health -= damage;
 
-    auto *roundSystem = owner->GetWorld( )->GetEntitySystem( RoundSystem );
-
     if (m_health <= 0)
     {
-		roundSystem->SendPlayerDiedMessage( owner );
-    }
-    else
-    {
-        roundSystem->SendPlayerDamageTaken( owner );
+        GetOwner( )->Delete( );
     }
 
     URSINE_TODO("Fix sound hack for health");

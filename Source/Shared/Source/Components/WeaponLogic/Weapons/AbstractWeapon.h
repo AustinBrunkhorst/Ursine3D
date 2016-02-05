@@ -170,6 +170,10 @@ enum WeaponType
 struct AbstractWeapon
 {
 public:
+    // who is my owner
+    Meta(Disable)
+    ursine::ecs::Entity* m_owner;
+
     // damage to apply when triggered
     float m_damageToApply;
 
@@ -255,10 +259,10 @@ public:
     bool m_active;
 
 
-    AbstractWeapon( void );
+    AbstractWeapon( );
     virtual ~AbstractWeapon( void );
 
-    void Initialize(void);
+    void Initialize( ursine::ecs::Entity* owner );
 
     /////////////////////////////
     ////  Weapon Fire Logic  ////
@@ -362,7 +366,7 @@ protected:
 };
 
 
-#define AbstractWeaponInit( Obj )   AbstractWeapon::Initialize( );    \
+#define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );    \
                                     AbstractWeaponConnect(Obj);
 
 
