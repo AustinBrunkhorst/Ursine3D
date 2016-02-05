@@ -16,6 +16,7 @@
 #include "SelectedComponent.h"
 #include "Model3DComponent.h"
 #include "CameraComponent.h"
+#include "WorldConfigComponent.h"
 
 namespace ursine
 {
@@ -41,8 +42,13 @@ namespace ursine
         {
             auto owner = GetOwner( );
 
-	        owner->GetWorld( )->Listener( this )
+            auto world = owner->GetWorld( );
+
+	        world->Listener( this )
 		        .On( WORLD_ENTITY_COMPONENT_ADDED, &Selected::onComponentAdded );
+
+            if (!world->GetSettings( )->GetComponent<WorldConfig>( )->IsInEditorMode( ))
+                return;
 
             tryDebugModel( true );
             tryDebugCamera( true );

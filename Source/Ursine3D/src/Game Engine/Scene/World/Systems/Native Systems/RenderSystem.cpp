@@ -181,7 +181,7 @@ namespace ursine
             {
                 auto camera = m_cameras[ i ];
 
-                if (!camera->GetActive( ))
+                if (!camera->GetActive( ) || camera->IsEditorCamera( ))
                     continue;
 
                 renderCamera( camera, e, RENDER_HOOK );

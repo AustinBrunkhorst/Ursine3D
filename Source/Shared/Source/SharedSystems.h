@@ -30,11 +30,12 @@
 #include "Systems/InventorySystem.h"
 #include "Systems/InteractionBaySystem.h"
 
+#include "Systems/LevelLogic/StartRoomDirectorSystem.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 //AI
 ///////////////////////////////////////////////////////////////////////////////
+
 #include "Systems/AI/AIReasonerSystem.h"
 #include "Systems/AI/AIControllerSystem.h"
 #include "Systems/AI/WaypointSystem.h"
-
-
