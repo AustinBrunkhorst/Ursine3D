@@ -127,27 +127,28 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
     // create weapon
     weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weaponSlot.m_weaponToLoad, weaponSlot.m_weaponToLoad );
 
-    ursine::ecs::Transform* weaponsTrans = weaponSlot.m_weaponLoaded->GetTransform( );
     // move weapon to arm
-    weaponsTrans->SetWorldPosition( inventory->m_armHandle->GetWorldPosition( ) );
+    //weaponsTrans->SetWorldPosition( inventory->m_armHandle->GetWorldPosition( ) );
 
     // activate weapon and grab spawn offset
-    ActivateWeapon(inventory, weaponsTrans);
+    ActivateWeapon(inventory);
 
     // set rotation of arm
-    weaponsTrans->SetWorldRotation( inventory->m_armHandle->GetWorldRotation(  ) );
+    //weaponsTrans->SetWorldRotation( inventory->m_armHandle->GetWorldRotation(  ) );
 
     // Parent weapon to arm
-    inventory->m_cameraHandle->AddChild( weaponSlot.m_weaponLoaded->GetTransform( ) );
+    inventory->m_cameraHandle->AddChildAlreadyInLocal( weaponSlot.m_weaponLoaded->GetTransform( ) );
 
     inventory->m_newWeapon = false;
 }
 
 
-void InventorySystem::ActivateWeapon(Inventory* inventory, ursine::ecs::Transform* trans)
+void InventorySystem::ActivateWeapon(Inventory* inventory)
 {
     //create event args
     game::WeaponActivationEventArgs args( inventory->GetOwner( ), &inventory->m_cameraHandle);
+
+    ursine::ecs::Transform* trans = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( );
 
     // was weapon swapped in (if so give it its' previous stats)
     if ( inventory->m_swap )
@@ -162,8 +163,8 @@ void InventorySystem::ActivateWeapon(Inventory* inventory, ursine::ecs::Transfor
     inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->Dispatch(game::ACTIVATE_WEAPON, &args);
 
     // set spawn offset
-    ursine::SVec3 spawnOffset = trans->GetWorldRotation( ) * *args.m_spawnOffset;
-    trans->SetWorldPosition( trans->GetWorldPosition( ) + spawnOffset );
+    ursine::SVec3 spawnOffset = trans->GetLocalRotation( ) * *args.m_spawnOffset;
+    trans->SetWorldPosition( trans->GetLocalPosition(  ) + spawnOffset );
 }
 
 

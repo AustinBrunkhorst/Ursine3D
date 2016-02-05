@@ -12,12 +12,16 @@ namespace game
     {
         GAME_EVENTS_START = ursine::ecs::ENTITY_EVENT_USER,
 
-        // Control Point Events
+        // control point events
         CONTROL_POINT_SUCCESS,
 
-        // Damage events
+        // damage events
         DAMAGE_EVENT,
 
+        // open door
+        OPEN_DOOR,
+
+        // weapon events
         ACTIVATE_WEAPON,
         DETACH_WEAPON,
         DEACTIVATE_WEAPON,

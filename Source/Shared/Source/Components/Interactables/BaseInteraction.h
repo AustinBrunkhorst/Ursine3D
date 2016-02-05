@@ -20,6 +20,8 @@
 **
 ** -------------------------------------------------------------------------*/
 
+#include "InteractableComponent.h"
+
 namespace ursine
 {
     namespace ecs

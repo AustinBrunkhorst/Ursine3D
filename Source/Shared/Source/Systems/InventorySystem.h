@@ -48,7 +48,7 @@ private:
     // load new weapon archetype
     void LoadWeapon(Inventory* inventory);
 
-    void ActivateWeapon(Inventory* inventory, ursine::ecs::Transform* trans);
+    void ActivateWeapon(Inventory* inventory);
 
     // Deactivate previous weapon of swap
     void DeactivateWeapon(Inventory* inventory, const int index);

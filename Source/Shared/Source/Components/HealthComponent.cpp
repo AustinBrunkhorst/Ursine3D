@@ -58,17 +58,26 @@ float Health::GetMaxHealth(void) const
     return m_maxHealth;
 }
 
-const std::string& Health::GetSpawnOnDeath(void) const
+const std::string& Health::GetArchetypeOnDeath(void) const
 {
     return m_objToSpawn;
 }
 
-void Health::SetSpawnOnDeath(const std::string& objToSpawn)
+void Health::SetArchetypeOnDeath(const std::string& objToSpawn)
 {
     m_objToSpawn = objToSpawn;
 
     if ( m_objToSpawn.find(".uatype") == std::string::npos )
         m_objToSpawn += ".uatype";
+}
+
+bool Health::GetSpawnOnDeath(void) const
+{
+    return m_spawnOnDeath;
+}
+void Health::SetSpawnOnDeath(const bool state)
+{
+    m_spawnOnDeath = state;
 }
 
 
@@ -135,7 +144,7 @@ void Health::OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT))
 
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if ( m_objToSpawn.find(".uatype") == std::string::npos )
+    if ( m_spawnOnDeath )
     {
         ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(m_objToSpawn);
 
