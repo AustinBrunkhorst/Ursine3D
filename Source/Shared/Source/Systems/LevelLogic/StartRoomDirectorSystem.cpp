@@ -6,6 +6,8 @@
 #include <Screen.h>
 #include <AIMovementControllerComponent.h>
 
+#include <KeyboardManager.h>
+
 #include "ElevatorLiftMoverComponent.h"
 #include "CameraAnimatorComponent.h"
 
@@ -20,8 +22,24 @@ StartRoomDirectorSystem::StartRoomDirectorSystem(ursine::ecs::World *world)
 
 }
 
+void StartRoomDirectorSystem::onUpdate(EVENT_HANDLER(World))
+{
+    auto km = GetCoreSystem(KeyboardManager);
+
+    if (km->IsDown(KeyboardKey::KEY_SPACE))
+    {
+        auto ais = m_world->GetEntitiesFromFilter( Filter( ).All<AIMovementController>( ) );
+
+        for (auto ai : ais)
+            ai->GetComponent<AIMovementController>( )->SetEnable( false );
+    }
+}
+
 void StartRoomDirectorSystem::OnAfterLoad(void)
 {
+    m_world->Listener( this )
+        .On( WORLD_UPDATE, &StartRoomDirectorSystem::onUpdate );
+
     auto elevators = m_world->GetEntitiesFromFilter( Filter( ).All<ElevatorLiftMover>( ) );
 
 	if (elevators.size( ) == 0)
@@ -104,5 +122,6 @@ void StartRoomDirectorSystem::OnAfterLoad(void)
 
 void StartRoomDirectorSystem::OnRemove(void)
 {
-    
+    m_world->Listener( this )
+        .Off( WORLD_UPDATE, &StartRoomDirectorSystem::onUpdate );
 }

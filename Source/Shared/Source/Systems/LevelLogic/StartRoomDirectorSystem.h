@@ -34,4 +34,7 @@ public:
 private:
 	void OnAfterLoad(void) override;
 	void OnRemove(void) override;
+
+    void onUpdate(EVENT_HANDLER(World));
+
 } Meta(Enable);
