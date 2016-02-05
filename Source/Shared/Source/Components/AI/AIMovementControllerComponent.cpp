@@ -46,7 +46,9 @@ namespace ursine
 
             auto lookangle = transform->GetForward().Dot(m_targetDir);
 
-            m_rigid->SetAngularVelocity( Vec3(0.0f, lookangle, 0.0f) );
+            auto oldV = m_rigid->GetAngularVelocity();
+
+            m_rigid->SetAngularVelocity( Vec3(oldV.X(), lookangle, oldV.Z()) );
         }
 
         float AIMovementController::GetSpeed() const
