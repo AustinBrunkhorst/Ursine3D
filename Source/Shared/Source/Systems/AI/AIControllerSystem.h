@@ -44,6 +44,6 @@ namespace ursine
             std::vector<Component::Handle<AIMovementController> > m_kinematicControllers;
 
 
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }
