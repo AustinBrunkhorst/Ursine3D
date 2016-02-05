@@ -13,8 +13,11 @@
 
 // All native components are to be added here
 
+#include "RenderMask.h"
+
 #include "TransformComponent.h"
 #include "WorldConfigComponent.h"
+#include "SelectedComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Graphics

@@ -76,6 +76,6 @@ namespace ursine
 			// copies all entires over and clears old list for tracking next update.
 			static void updateKinematicList(SweptController &controller);
 
-		} Meta(Enable);
+		} Meta(Enable, AutoAddEntitySystem);
 	}
 }

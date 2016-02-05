@@ -180,9 +180,21 @@ namespace ursine
             Dispatch( WORLD_UPDATE, EventArgs::Empty );
         }
 
+        void World::EditorUpdate(void)
+        {
+            clearDeletionQueue( );
+
+            Dispatch( WORLD_EDITOR_UPDATE, EventArgs::Empty );
+        }
+
         void World::Render(void)
         {
             Dispatch( WORLD_RENDER, EventArgs::Empty );
+        }
+
+        void World::EditorRender(void)
+        {
+            Dispatch( WORLD_EDITOR_RENDER, EventArgs::Empty );
         }
 
         Entity *World::GetSettings(void) const

@@ -19,7 +19,7 @@
 #include "RotateTool.h"
 #include "DuplicateTool.h"
 
-#include "SelectedComponent.h"
+#include <SelectedComponent.h>
 
 using namespace ursine;
 
@@ -204,7 +204,7 @@ void EditorToolSystem::onSelectedAdd(EVENT_HANDLER(ursine::ecs::World))
 {
     EVENT_ATTRS(ursine::ecs::World, ursine::ecs::ComponentEventArgs);
 
-    if (args->component->Is<Selected>( ))
+    if (args->component->Is<ecs::Selected>( ))
     {
         m_currentSelected = args->entity->GetUniqueID( );
         m_currentTool->OnSelect( args->entity );
@@ -218,7 +218,7 @@ void EditorToolSystem::onSelectedRemoved(EVENT_HANDLER(ursine::ecs::World))
 {
     EVENT_ATTRS(ursine::ecs::World, ursine::ecs::ComponentEventArgs);
 
-    if (args->component->Is<Selected>( ))
+    if (args->component->Is<ecs::Selected>( ))
     {
         // Wait one frame.  This way we avoid having a dead lock
         // when inside "World.cpp" at line 219. - Jordan

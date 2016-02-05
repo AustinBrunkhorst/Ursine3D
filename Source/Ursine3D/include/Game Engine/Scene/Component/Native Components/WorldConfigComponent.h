@@ -25,7 +25,7 @@ namespace ursine
             std::string type;
 
             WorldEntitySystem(void) { }
-        } Meta(Enable, DisplayName( "WorldEntitySystem" ));
+        } Meta(Enable, EnableArrayType, DisplayName( "WorldEntitySystem" ));
 
 		class WorldConfig : public Component
 		{

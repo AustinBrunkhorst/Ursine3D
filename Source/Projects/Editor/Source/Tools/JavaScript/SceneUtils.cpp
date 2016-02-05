@@ -19,6 +19,7 @@
 #include "Project.h"
 
 #include <WorldSerializer.h>
+#include <WorldConfigComponent.h>
 #include <SystemManager.h>
 #include <Timer.h>
 
@@ -119,7 +120,16 @@ JSFunction(SceneSave)
     return CefV8Value::CreateUndefined( );
 }
 
-JSFunction(ScenePlay)
+JSFunction(ScenePlayStart)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->SetPlayState( PS_PLAYING );
+
+    return CefV8Value::CreateUndefined( );
+}
+
+JSFunction(SceneSetPlayState)
 {
     if (arguments.size( ) != 1)
         JSThrow( "Invalid arguments.", nullptr );
@@ -128,7 +138,7 @@ JSFunction(ScenePlay)
 
     auto *editor = GetCoreSystem( Editor );
 
-    editor->GetProject( )->GetScene( )->SetPaused( !playing );
+    editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
 
     return CefV8Value::CreateUndefined( );
 }
@@ -142,13 +152,26 @@ JSFunction(SceneStep)
     return CefV8Value::CreateUndefined( );
 }
 
+JSFunction(ScenePlayStop)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->SetPlayState( PS_EDITOR );
+
+    return CefV8Value::CreateUndefined( );
+}
+
 JSFunction(SceneGetEntitySystems)
 {
     Json::array systems;
 
     for (auto &type : ecs::SystemManager::GetExposedTypes( ))
     {
-        systems.emplace_back( type.GetName( ) );
+        auto &meta = type.GetMeta( );
+
+        // exclude auto added systems
+        if (!meta.GetProperty<AutoAddEntitySystem>( ))
+            systems.emplace_back( type.GetName( ) );
     }
 
     CefRefPtr<CefV8Value> items;
@@ -174,6 +197,9 @@ namespace
 			Timer::Create(0).Completed( [=] {
 				ecs::WorldSerializer serializer;
 				auto world = serializer.Deserialize( file );
+
+                URSINE_TODO( "this is hacky and weirdly placed" );
+                world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
 
 				editor->GetProject( )->SetWorld( world );
 			} );

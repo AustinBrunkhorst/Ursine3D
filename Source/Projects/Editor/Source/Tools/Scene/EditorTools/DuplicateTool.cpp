@@ -1,7 +1,7 @@
 #include "Precompiled.h"
 
 #include "DuplicateTool.h"
-#include "SelectedComponent.h"
+#include <SelectedComponent.h>
 
 #include <EditorConfig.h>
 #include <SystemManager.h>
@@ -154,9 +154,6 @@ void DuplicateTool::disableGizmo(void)
 	if (m_gizmo)
 	{
 		m_gizmo->Delete( );
-		
-		// Clear the deletion queue if the scene is paused
-		EditorClearDeletionQueue( );
 	}
 
 	m_gizmo = nullptr;

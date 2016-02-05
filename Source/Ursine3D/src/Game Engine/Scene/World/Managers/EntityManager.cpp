@@ -53,7 +53,7 @@ namespace ursine
                     UAssert( componentID.IsValid( ),
                         "Native component '%s' doesn't have a static field ComponentID.\n"
                         "Most likely missing NATIVE_COMPONENT in declaration",
-                        derived.GetName().c_str( )
+                        derived.GetName( ).c_str( )
                     );
 
                     UAssert( nextID < kMaxComponentCount, "We're maxed out son." );

@@ -55,4 +55,4 @@ private:
     std::list<Spawnpoint *> m_team1Spawnpoints;
     std::list<Spawnpoint *> m_team2Spawnpoints;
 
-} Meta(Enable, DisableEntitySystemAutoAdd);
+} Meta(Enable);

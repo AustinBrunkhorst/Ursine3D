@@ -206,9 +206,6 @@ void RotateTool::disableAxis(void)
 	if (m_gizmo)
 	{
 		m_gizmo->Delete( );
-		
-		// Clear the deletion queue if the scene is paused
-		EditorClearDeletionQueue( );
 	}
 
 	m_gizmo = nullptr;

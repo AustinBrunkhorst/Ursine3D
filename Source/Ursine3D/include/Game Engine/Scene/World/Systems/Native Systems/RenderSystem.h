@@ -28,12 +28,14 @@ namespace ursine
 
     namespace ecs
     {
+        class WorldConfig;
         class Camera;
         class Animator;
 
         enum RenderSystemEventType
         {
-            RENDER_HOOK
+            RENDER_HOOK,
+            RENDER_HOOK_EDITOR
         };
 
         struct RenderHookArgs : EventArgs
@@ -48,7 +50,7 @@ namespace ursine
             : public EntitySystem
             , public EventDispatcher<RenderSystemEventType>
         {
-            ENTITY_SYSTEM ;
+            ENTITY_SYSTEM;
 
         public:
             RenderSystem(World *world);
@@ -61,9 +63,11 @@ namespace ursine
             typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
 
             graphics::GfxAPI *m_graphics;
+            Component::Handle<WorldConfig> m_worldConfig;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
+            void OnAfterLoad(void) override;
 
             // vector of cameras sorted based on their render layer (low to high)
             std::vector<Component::Handle<Camera>> m_cameras;
@@ -77,10 +81,17 @@ namespace ursine
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
+            void onUpdate(EVENT_HANDLER(World));
             void onRender(EVENT_HANDLER(World));
+
+            void onEditorUpdate(EVENT_HANDLER(World));
+            void onEditorRender(EVENT_HANDLER(World));
+
+            void renderObjects(void);
+            void renderCamera(Component::Handle<Camera> camera, RenderHookArgs &args, RenderSystemEventType hook);
 
             void addRenderable(Entity *entity, RenderableComponentBase *renderable);
             void removeRenderable(Entity *entity, RenderableComponentBase *renderable);
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

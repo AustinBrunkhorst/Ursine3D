@@ -542,17 +542,27 @@ ursine_editor_Editor.prototype = {
 		return parent;
 	}
 	,initSimulationPlayback: function() {
+		var toolsContainer = window.document.querySelector("#simulation-tools");
+		var btnPlay = window.document.querySelector("#simulation-play");
 		var btnToggle = window.document.querySelector("#simulation-toggle");
 		var btnStep = window.document.querySelector("#simulation-step");
+		var btnStop = window.document.querySelector("#simulation-stop");
+		btnPlay.addEventListener("click",function() {
+			toolsContainer.classList.add("running");
+			ursine_native_Extern.ScenePlayStart();
+		});
 		btnToggle.addEventListener("click",function() {
-			btnToggle.classList.toggle("running");
-			var running = btnToggle.classList.contains("running");
-			btnStep.classList.toggle("disabled",running);
-			ursine_native_Extern.ScenePlay(running);
+			var paused = toolsContainer.classList.contains("paused");
+			toolsContainer.classList.toggle("paused",!paused);
+			ursine_native_Extern.SceneSetPlayState(paused);
 		});
 		btnStep.addEventListener("click",function() {
 			if(btnStep.classList.contains("disabled")) return;
 			ursine_native_Extern.SceneStep();
+		});
+		btnStop.addEventListener("click",function() {
+			toolsContainer.classList.remove("running");
+			ursine_native_Extern.ScenePlayStop();
 		});
 	}
 	,__class__: ursine_editor_Editor
@@ -2161,11 +2171,17 @@ ursine_native_Extern.SceneLoad = function() {
 ursine_native_Extern.SceneSave = function() {
 	return SceneSave();
 };
-ursine_native_Extern.ScenePlay = function(playing) {
-	return ScenePlay(playing);
+ursine_native_Extern.ScenePlayStart = function() {
+	return ScenePlayStart();
+};
+ursine_native_Extern.SceneSetPlayState = function(playing) {
+	return SceneSetPlayState(playing);
 };
 ursine_native_Extern.SceneStep = function() {
 	return SceneStep();
+};
+ursine_native_Extern.ScenePlayStop = function() {
+	return ScenePlayStop();
 };
 ursine_native_Extern.SceneGetEntitySystems = function() {
 	return SceneGetEntitySystems();

@@ -15,6 +15,7 @@
 
 #include "Component.h"
 #include "Renderable.h"
+#include "RenderMask.h"
 #include "RenderableComponentBase.h"
 #include "ModelResource.h"
 
@@ -62,8 +63,9 @@ namespace ursine
                 SetMaterial
             );
 
+            Meta(BitMaskEditor)
             EditorField(
-                int renderMask,
+                ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
                 SetRenderMask
             );
@@ -75,7 +77,7 @@ namespace ursine
             void OnInitialize(void) override;
 
             Meta(Disable)
-            std::vector<SMat4> &GetMatrixPalette( void );
+            std::vector<SMat4> &GetMatrixPalette(void);
 
             //get/set model name
             void SetModelResourceName(const std::string &name);
@@ -99,8 +101,8 @@ namespace ursine
             void SetDebug(bool flag);
             bool GetDebug(void) const;
 
-            int GetRenderMask(void) const;
-            void SetRenderMask(const int mask);
+            unsigned GetRenderMask(void) const;
+            void SetRenderMask(unsigned mask);
 
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);

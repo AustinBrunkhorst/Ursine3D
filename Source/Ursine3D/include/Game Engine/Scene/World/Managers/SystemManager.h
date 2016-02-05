@@ -31,11 +31,15 @@ namespace ursine
             template<class SystemType>
             inline bool HasSystem(void);
 
+            bool HasSystem(const meta::Type &systemType);
+
             template<class SystemType>
             inline SystemType *GetSystem(void);
 
             template<class SystemType>
             SystemType *AddSystem(void);
+
+            void AddSystem(const meta::Type &systemType);
 
             // Gets all systems registered
             static const meta::Type::List &GetExposedTypes(void);

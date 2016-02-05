@@ -68,7 +68,7 @@ ecs::Camera *EditorCameraSystem::GetEditorCamera(void)
     return m_cameraEntity->GetComponent<ecs::Camera>( );
 }
 
-ursine::ecs::Entity* EditorCameraSystem::GetEditorCameraEntity()
+ursine::ecs::Entity* EditorCameraSystem::GetEditorCameraEntity(void)
 {
     return m_cameraEntity;
 }
@@ -98,6 +98,7 @@ void EditorCameraSystem::OnAfterLoad(void)
 
     m_camera = m_cameraEntity->AddComponent<ecs::Camera>( );
 
+    m_camera->SetEditorCamera( true );
     m_camera->SetViewportPosition( Vec2::Zero( ) );
     m_cameraEntity->GetTransform( )->SetWorldPosition( Vec3( -50, 50, -50 ) );
     m_camera->SetViewportSize( Vec2::One( ) );

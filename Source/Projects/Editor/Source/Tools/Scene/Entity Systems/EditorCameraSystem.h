@@ -73,4 +73,4 @@ private:
     void updateCameraKeys(float dt);
     void updateCameraMouse(float dt);
 
-} Meta(Enable, WhiteListMethods);
+} Meta(Enable, WhiteListMethods, AutoAddEntitySystem);

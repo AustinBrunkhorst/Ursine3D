@@ -169,7 +169,7 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            m_world->Connect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate, -10000 );
+            m_world->Connect( WORLD_EDITOR_RENDER, this, &PhysicsSystem::onEditorRender, -10000 );
 
         #endif
         }
@@ -183,7 +183,7 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            m_world->Disconnect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate );
+            m_world->Disconnect( WORLD_EDITOR_RENDER, this, &PhysicsSystem::onEditorRender );
 
         #endif
         }
@@ -418,7 +418,7 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-        void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))
+        void PhysicsSystem::onEditorRender(EVENT_HANDLER(World))
         {
             m_simulation.DebugDrawSimulation( );
         }

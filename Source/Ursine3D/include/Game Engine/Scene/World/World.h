@@ -82,8 +82,14 @@ namespace ursine
             // Updates the world
             void Update(void);
 
+            // Updates the world in editor mode
+            void EditorUpdate(void);
+
             // Renders the world
             void Render(void);
+
+            // Renders the world in editor mode
+            void EditorRender(void);
 
             Entity *GetSettings(void) const;
 

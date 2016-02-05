@@ -16,7 +16,6 @@ namespace ursine
         public:
             AIReasonerSystem(World* world);
 
-
             void OnInitialize(void) override;
             void OnRemove(void) override;
         private:
@@ -27,6 +26,6 @@ namespace ursine
 
             std::vector<Component::Handle<AIHorde>> m_reasoners;
 
-        }Meta( Enable );
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

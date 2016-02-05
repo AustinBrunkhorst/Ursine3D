@@ -12,7 +12,7 @@
 #include "Precompiled.h"
 
 #include "SelectTool.h"
-#include "SelectedComponent.h"
+#include <SelectedComponent.h>
 #include "DisableSelectionComponent.h"
 
 #include <CoreSystem.h>
@@ -65,7 +65,7 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 			return;
 
 		// If the new object already has the selected component, unpick it
-		if (newObj->HasComponent<Selected>( ))
+		if (newObj->HasComponent<ursine::ecs::Selected>( ))
 		{
 			unpickObject( );
 			return;
@@ -78,13 +78,13 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 		auto rootObj = newObj->GetRoot( );
 
 		// if it is selected, remove it from root
-		if (rootObj->HasComponent<Selected>( ))
-			rootObj->RemoveComponent<Selected>( );
+		if (rootObj->HasComponent<ursine::ecs::Selected>( ))
+			rootObj->RemoveComponent<ursine::ecs::Selected>( );
 		// else, if root is different entity, select that one first
 		else if (rootObj != newObj)
 			toSelect = rootObj;		
 
-		toSelect->AddComponent<Selected>( );
+		toSelect->AddComponent<ursine::ecs::Selected>( );
 
 		m_currentID = toSelect->GetUniqueID( );
 	}
@@ -113,9 +113,9 @@ void SelectTool::unpickObject(void)
 	auto obj = m_world->GetEntityUnique( m_currentID );
 
     //if it existed and it was selected, unselect
-    if (obj != nullptr && obj->HasComponent<Selected>( ))
+    if (obj != nullptr && obj->HasComponent<ursine::ecs::Selected>( ))
 	{
-        obj->RemoveComponent<Selected>( );
+        obj->RemoveComponent<ursine::ecs::Selected>( );
 
 		m_currentID = -1;
 	}

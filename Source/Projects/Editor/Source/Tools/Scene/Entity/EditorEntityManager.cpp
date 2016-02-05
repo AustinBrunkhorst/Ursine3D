@@ -17,7 +17,7 @@
 
 #include "ComponentUtils.h"
 
-#include "SelectedComponent.h"
+#include <SelectedComponent.h>
 #include "EditorConfig.h"
 
 #include <Editor.h>
@@ -240,7 +240,7 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
 
-    if (args->entity->HasComponent<Selected>( ))
+    if (args->entity->HasComponent<ecs::Selected>( ))
     {
     #if defined(CONFIG_DEBUG)
         UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
@@ -273,7 +273,7 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentArrayModfiedArgs);
 
-    if (args->entity->HasComponent<Selected>( ))
+    if (args->entity->HasComponent<ecs::Selected>( ))
     {
     #if defined(CONFIG_DEBUG)
         UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
@@ -316,9 +316,4 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
             message
         );
     }
-}
-
-void ecs::EditorClearDeletionQueue(void)
-{
-	GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
 }

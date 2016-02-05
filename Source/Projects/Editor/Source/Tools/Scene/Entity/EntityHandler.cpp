@@ -156,11 +156,6 @@ JSMethod(EntityHandler::remove)
 
     entity->Delete( );
 
-	// Have this run in the main thread
-	Timer::Create( 0 ).Completed([=] {
-		GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
-	} );
-
     return CefV8Value::CreateBool( true );
 }
 

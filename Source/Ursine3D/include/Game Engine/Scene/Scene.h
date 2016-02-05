@@ -21,12 +21,20 @@ namespace ursine
 {
     class GfxAPI;
 
+    enum ScenePlayState
+    {
+        PS_EDITOR,
+        PS_PLAYING,
+        PS_PAUSED
+    };
+
     class Scene
     {
     public:
         typedef std::shared_ptr<Scene> Handle;
 
         Scene(void);
+        ~Scene(void);
 
         ecs::World *GetWorld(void);
         void SetWorld(ecs::World *world);
@@ -34,19 +42,21 @@ namespace ursine
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);
 
-        void SetPaused(bool paused);
-        bool IsPaused(void) const;
+        ScenePlayState GetPlayState(void) const;
+        void SetPlayState(ScenePlayState state);
 
         void Step(void) const;
 
         void Update(DeltaTime dt) const;
         void Render(void) const;
 
+        void LoadConfiguredSystems(void);
+
     private:
-        bool m_paused;
+        ScenePlayState m_playState;
 
         graphics::GfxHND m_viewport;
 
-        ecs::World::Handle m_world;
+        ecs::World *m_world;
     };
 }

@@ -79,6 +79,6 @@ namespace ursine
 
 			void onUpdate(EVENT_HANDLER(World));
 
-		} Meta(Enable, WhiteListMethods);
+		} Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
 	}
 }

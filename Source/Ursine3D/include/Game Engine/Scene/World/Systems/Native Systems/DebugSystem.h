@@ -109,6 +109,6 @@ namespace ursine
 
             std::vector< std::shared_ptr<Request> > m_requests;
 
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

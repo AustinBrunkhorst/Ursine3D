@@ -310,6 +310,9 @@ namespace ursine
 
             //cache state of all graphics objects
             renderableManager->CacheFrame();
+
+            float colorArray[4] = { 0,0,0,1 };
+            dxCore->GetDeviceContext()->ClearRenderTargetView(dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->RenderTargetView, colorArray);
         }
 
         void GfxManager::BeginScene()
@@ -944,7 +947,7 @@ namespace ursine
             if ( !current.Active_ )
                 return;
 
-            if ( !currentcamera.CheckMask( current.GetRenderMask( ) ) )
+            if ( currentcamera.CheckMask( current.GetRenderMask( ) ) )
                 return;
                     
             // map color
@@ -1090,7 +1093,7 @@ namespace ursine
             if ( !billboard.Active_ )
                 return;
 
-            if ( !currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
                 return;
 
             BillboardSpriteBuffer bsb;
@@ -1146,7 +1149,7 @@ namespace ursine
         {
             auto &particleSystem = renderableManager->m_renderableParticleSystems[ handle.Index_ ];
 
-            if ( !particleSystem.Active_ )
+            if ( particleSystem.Active_ )
                 return;
 
             if(particleSystem.GetAdditive())
@@ -1300,7 +1303,7 @@ namespace ursine
             if ( !pl.Active_ )
                 return;
 
-            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
             //get data
@@ -1361,7 +1364,7 @@ namespace ursine
             if(!pl.Active_)
                 return;
 
-            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
             SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
@@ -1400,7 +1403,7 @@ namespace ursine
             if ( !l.Active_ )
                 return;
 
-            if ( !currentCamera.CheckMask( l.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( l.GetRenderMask( ) ) )
                 return;
 
             SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)

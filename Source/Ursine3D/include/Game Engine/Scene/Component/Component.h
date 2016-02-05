@@ -87,6 +87,8 @@ namespace ursine
 				ComponentType *operator->(void);
 				const ComponentType *operator->(void) const;
 
+                Entity *GetEntity(void) const;
+
 			private:
 				Entity *m_entity;
 			};

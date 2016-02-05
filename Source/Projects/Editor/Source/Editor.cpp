@@ -23,7 +23,6 @@
 
 #include <Color.h> 
 #include <LightComponent.h>
-#include <WorldConfigComponent.h>
 
 using namespace ursine;
 
@@ -210,10 +209,10 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    auto world = m_project->GetScene( )->GetWorld( );
+    auto scene = m_project->GetScene( );
 
-    world->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
-    world->Dispatch( ecs::WORLD_EDITOR_RENDER, EventArgs::Empty );
+    scene->Update( dt );
+    scene->Render( );
 
     m_mainWindow.ui->DrawMain( );
 }

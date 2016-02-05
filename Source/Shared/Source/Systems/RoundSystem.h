@@ -80,4 +80,4 @@ private:
 
     ursine::ecs::Entity *m_map;
 
-} Meta(Enable, DisableEntitySystemAutoAdd);
+} Meta(Enable);
