@@ -93,10 +93,12 @@ void StartRoomDirectorSystem::OnAfterLoad(void)
 			[=] {elevatorCam->GetOwner()->Delete(); }
 		);
 
-		auto ais = m_world->GetEntitiesFromFilter( Filter( ).All<AIMovementController>( ) );
+        m_timers.Create(TimeSpan::FromSeconds(3.0f)).Completed([=] {
+            auto ais = m_world->GetEntitiesFromFilter( Filter( ).All<AIMovementController>( ) );
 
-		for (auto ai : ais)
-			ai->GetComponent<AIMovementController>( )->SetEnable( true );
+		    for (auto ai : ais)
+			    ai->GetComponent<AIMovementController>( )->SetEnable( true );
+        });
 	});
 }
 
