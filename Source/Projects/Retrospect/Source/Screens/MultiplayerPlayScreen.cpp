@@ -36,7 +36,7 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
     : GameplayScreen( manager )
 {
     URSINE_TODO( "this is to fix the transition flicker" );
-    Timer::Create( 250 ).Completed( [&] {
+    Timer::Create( 0 ).Completed( [&] {
         world = ecs::World::Handle( ecs::WorldSerializer( ).Deserialize( kWorldFile ) );
         
         world->SetOwner( this );
