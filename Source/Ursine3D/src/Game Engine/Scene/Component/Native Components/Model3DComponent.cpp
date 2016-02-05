@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -116,7 +116,42 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 
-        void Model3D::SetOverdraw(bool flag)
+	    const Color &Model3D::GetColor(void)
+        {
+            return m_model->GetColor( );
+        }
+
+		float Model3D::GetEmissive(void) const
+		{
+			return m_model->GetEmissive( );
+		}
+
+		void Model3D::SetEmissive(float emissive)
+		{
+			m_model->SetEmissive( emissive );
+		}
+
+		float Model3D::GetSpecularPower(void) const
+		{
+			return m_model->GetSpecularPower( );
+		}
+
+		void Model3D::SetSpecularPower(float power)
+		{
+			m_model->SetSpecularPower( power );
+		}
+
+		float Model3D::GetSpecularIntensity(void) const
+		{
+			return m_model->GetSpecularIntensity( );
+		}
+
+		void Model3D::SetSpecularIntensity(float intensity)
+		{
+			m_model->SetSpecularIntensity( intensity );
+		}
+
+		void Model3D::SetOverdraw(bool flag)
         {
             m_model->SetOverdraw( flag );
         }
@@ -124,11 +159,6 @@ namespace ursine
         bool Model3D::GetOverdraw(void) const
         {
             return m_model->GetOverdraw( );
-        }
-
-        const Color &Model3D::GetColor()
-        {
-            return m_model->GetColor( );
         }
 
         void Model3D::SetDebug(bool flag)

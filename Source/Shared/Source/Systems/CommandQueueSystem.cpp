@@ -23,6 +23,9 @@ CommandQueueSystem::CommandQueueSystem(ursine::ecs::World* world)
 void CommandQueueSystem::Process(ursine::ecs::Entity* entity)
 {
 	auto *commandQueue = entity->GetComponent<CommandQueue>();
+
+	UAssert(commandQueue != nullptr, "HEY THERE");
+
 	commandQueue->Update();
 }
 

@@ -70,6 +70,6 @@ namespace ursine
 
 			void onTransformChange(EVENT_HANDLER(Entity));
 
-        } Meta(Enable, DisplayName("Body"), DisableSerialization, DisableComponentRemoval);
+        } Meta(Enable, DisplayName("Body"), DisableComponentRemoval);
     }
 }

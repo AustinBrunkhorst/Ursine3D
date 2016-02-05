@@ -68,7 +68,7 @@ namespace ursine
                     m_entity != nullptr,
                     "If the owner of the component is null, you're probably constructing"
                     " this handle inside the component's constructor."
-                )                ;
+                );
             }
             else
                 m_entity = nullptr;

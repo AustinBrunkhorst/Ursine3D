@@ -1219,7 +1219,8 @@ namespace ursine
 
                     bufferManager->MapBuffer<BUFFER_PARTICLEDATA>(&pb, SHADERTYPE_VERTEX, 13);
 
-                    shaderManager->Render(6 * particlesInPass);
+					if (particlesInPass != 0)
+						shaderManager->Render(6 * particlesInPass);
 
                     // update particles left to render
                     totalParticlesToRender -= particlesInPass;

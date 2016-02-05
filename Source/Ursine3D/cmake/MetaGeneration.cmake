@@ -60,17 +60,27 @@ function(ursine_build_meta)
 
     get_property(DIRECTORIES TARGET ${BUILD_META_TARGET} PROPERTY INCLUDE_DIRECTORIES)
 
-    set(INCLUDES ${GLOBAL_META_INCLUDES} ${DIRECTORIES} ${BUILD_META_INCLUDES})
+    set(RAW_INCLUDES ${GLOBAL_META_INCLUDES} ${DIRECTORIES} ${BUILD_META_INCLUDES})
+
+    set(INCLUDES "")
+
+    foreach (INC ${RAW_INCLUDES})
+        set(INCLUDES "${INCLUDES}${INC}\n")
+    endforeach ()
+
+    set(INCLUDES_FILE "${BUILD_META_GENERATED_DIR}/Module.${BUILD_META_TARGET}.Includes.txt")
+
+    file(WRITE ${INCLUDES_FILE} ${INCLUDES})
 	
     set(DEFINES ${GLOBAL_META_DEFINES} ${BUILD_META_DEFINES})
 
     # empty source files need to include the precompiled header
     if (NOT "${BUILD_META_PCH_NAME}" STREQUAL "")
         set(EMPTY_SOURCE_CONTENTS "#include \"${BUILD_META_PCH_NAME}.h\"")
-        set(PCH_SWITCH "--pch \"${BUILD_META_PCH_NAME}.h\"")
+        set(PCH_SWITCH --pch \"${BUILD_META_PCH_NAME}.h\")
     else ()
         set(EMPTY_SOURCE_CONTENTS "")
-        set(PCH_SWITCH "")
+        set(PCH_SWITCH )
     endif ()
 
     list(REMOVE_ITEM BUILD_META_GENERATED_FILES "${BUILD_META_SOURCE_ROOT}/${BUILD_META_MODULE_HEADER}")
@@ -102,7 +112,7 @@ function(ursine_build_meta)
         --out-source "${BUILD_META_MODULE_SOURCE_FILE}"
         --out-dir "${BUILD_META_GENERATED_DIR}"
         ${PCH_SWITCH}
-        --includes ${INCLUDES}
+        --includes "${INCLUDES_FILE}"
         --defines ${DEFINES}
     )
 
@@ -120,7 +130,7 @@ function(ursine_build_meta)
         ${PCH_SWITCH}
         --force-rebuild
         --display-diagnostics
-        --includes ${INCLUDES}
+        --includes "${INCLUDES_FILE}"
         --defines ${DEFINES}
     )
 

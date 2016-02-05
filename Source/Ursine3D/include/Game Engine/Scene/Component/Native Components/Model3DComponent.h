@@ -70,6 +70,24 @@ namespace ursine
                 SetRenderMask
             );
 
+			EditorField(
+				float emissive,
+				GetEmissive,
+				SetEmissive
+			);
+
+			EditorField(
+				float specularPower,
+				GetSpecularPower,
+				SetSpecularPower
+			);
+
+			EditorField(
+				float specularIntensity,
+				GetSpecularIntensity,
+				SetSpecularIntensity
+			);
+
             Model3D(void);
             ~Model3D(void);
 
@@ -93,6 +111,16 @@ namespace ursine
             //get/set color
             void SetColor(const ursine::Color &color);
             const ursine::Color &GetColor(void);
+
+			//get/set material properties
+			float GetEmissive(void) const;
+			void SetEmissive(float emissive);
+
+			float GetSpecularPower(void) const;
+			void SetSpecularPower(float power);
+
+			float GetSpecularIntensity(void) const;
+			void SetSpecularIntensity(float intesnity);
 
             void SetOverdraw(bool flag);
             bool GetOverdraw(void) const;
