@@ -114,6 +114,8 @@ void EditorCameraSystem::OnAfterLoad(void)
     }
 
     m_camera->SetEditorCamera( true );
+
+    m_camPos = m_cameraEntity->GetTransform( )->GetWorldPosition( );
 }
 
 void EditorCameraSystem::OnRemove(void)
