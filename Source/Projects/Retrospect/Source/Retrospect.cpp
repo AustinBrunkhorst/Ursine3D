@@ -121,7 +121,7 @@ void Retrospect::OnInitialize(void)
     m_screenManager = new ScreenManager( );
     m_screenManager->SetUI( m_mainWindow.ui );
 
-    /*{
+    {
         SDL_DisplayMode displayMode;
 
         SDL_GetDesktopDisplayMode( 
@@ -134,7 +134,7 @@ void Retrospect::OnInitialize(void)
             static_cast<float>( displayMode.h ) 
         } );
     }
-    m_mainWindow.window->SetFullScreen( true );*/
+    m_mainWindow.window->SetFullScreen( true );
     m_mainWindow.window->Show( true );
 
 	m_audioManager = GetCoreSystem( AudioManager );
