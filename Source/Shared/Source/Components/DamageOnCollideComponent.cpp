@@ -24,6 +24,7 @@ DamageOnCollide::DamageOnCollide( void )
     , m_damageToApply( 1.0f )
     , m_critModifier( 2.0f )
     , m_damageInterval( 0.5f )
+    , m_objToSpawn("")
     , m_deleteOnCollision( true )
     , m_deleted ( false )
 {
@@ -32,6 +33,7 @@ DamageOnCollide::DamageOnCollide( void )
 DamageOnCollide::~DamageOnCollide( void )
 {
     GetOwner( )->Listener(this)
+        .Off( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::OnDeath )
         .Off( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::OnCollide );
 
     m_damageTimeMap.clear( );
@@ -40,7 +42,8 @@ DamageOnCollide::~DamageOnCollide( void )
 void DamageOnCollide::OnInitialize( void )
 {
     GetOwner( )->Listener( this )
-        .On( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::OnCollide);
+        .On( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::OnDeath )
+        .On( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::OnCollide );
 }
 
 float DamageOnCollide::GetDamageToApply( void ) const
@@ -74,6 +77,19 @@ float DamageOnCollide::GetDamageInterval( void ) const
 void DamageOnCollide::SetDamageInterval( const float damageInterval )
 {
     m_damageInterval = damageInterval;
+}
+
+const std::string& DamageOnCollide::GetSpawnOnDeath(void) const
+{
+    return m_objToSpawn;
+}
+
+void DamageOnCollide::SetSpawnOnDeath(const std::string& objToSpawn)
+{
+    m_objToSpawn = objToSpawn;
+
+    if ( m_objToSpawn.find(".uatype") == std::string::npos )
+        m_objToSpawn += ".uatype";
 }
 
 bool DamageOnCollide::GetDeleteOnCollision( void ) const
@@ -168,4 +184,15 @@ bool DamageOnCollide::DeleteOnCollision(void)
     }
 
     return m_deleteOnCollision;
+}
+
+
+void DamageOnCollide::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
+{
+    if ( m_objToSpawn.find(".uatype") == std::string::npos )
+    {
+        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(m_objToSpawn);
+
+        obj->GetTransform( )->SetWorldPosition(GetOwner( )->GetTransform( )->GetWorldPosition( ));
+    }
 }

@@ -20,19 +20,27 @@
 #include "TeamComponent.h"
 #include "GameEvents.h"
 #include "DamageOnCollideComponent.h"
+#include "AudioEmitterComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
+
+namespace
+{
+    const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
+}
 
 Health::Health(void)
     : BaseComponent( )
     , m_health( 100 )
+    , m_objToSpawn( "" )
 {
     
 }
 
 Health::~Health(void)
 {
-    
+    GetOwner( )->Listener(this)
+        .Off(ursine::ecs::ENTITY_REMOVED, &Health::OnDeath);
 }
 
 float Health::GetHealth(void) const
@@ -50,14 +58,23 @@ float Health::GetMaxHealth(void) const
     return m_maxHealth;
 }
 
+const std::string& Health::GetSpawnOnDeath(void) const
+{
+    return m_objToSpawn;
+}
+
+void Health::SetSpawnOnDeath(const std::string& objToSpawn)
+{
+    m_objToSpawn = objToSpawn;
+
+    if ( m_objToSpawn.find(".uatype") == std::string::npos )
+        m_objToSpawn += ".uatype";
+}
+
+
 void Health::DealDamage(const float damage)
 {
     auto owner = GetOwner( );
-
-	if (owner->GetComponent<TeamComponent>( )->IsDead( ))
-	{
-		return;
-	}
 
     m_health -= damage;
 
@@ -71,11 +88,20 @@ void Health::DealDamage(const float damage)
     {
         roundSystem->SendPlayerDamageTaken( owner );
     }
+
+    URSINE_TODO("Fix sound hack for health");
+    ursine::ecs::AudioEmitter* emitter = owner->GetComponent<ursine::ecs::AudioEmitter>( );
+
+    if ( emitter )
+        emitter->AddSoundToPlayQueue(kTakeDamage);
 }
 
 void Health::OnInitialize(void)
 {
     m_maxHealth = m_health;
+
+    GetOwner( )->Listener(this)
+        .On(ursine::ecs::ENTITY_REMOVED, &Health::OnDeath);
 
     ConnectToAllCritSpots( );
 }
@@ -104,6 +130,17 @@ void Health::OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT))
     DealDamage(args->m_damage);
 
     args->m_damageComp->AddEntityToIntervals( GetOwner( )->GetUniqueID( ) );
+}
+
+
+void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
+{
+    if ( m_objToSpawn.find(".uatype") == std::string::npos )
+    {
+        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(m_objToSpawn);
+
+        obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
+    }
 }
 
 

@@ -37,6 +37,13 @@ public:
         SetHealth
     );
 
+    EditorField(
+        std::string SpawnOnDeath,
+        GetSpawnOnDeath,
+        SetSpawnOnDeath
+        );
+
+
     Meta(Enable)
     Health(void);
     ~Health(void);
@@ -45,6 +52,9 @@ public:
     void SetHealth(const float health);
     float GetMaxHealth(void) const;
 
+    const std::string& GetSpawnOnDeath(void) const;
+    void SetSpawnOnDeath(const std::string& objToSpawn);
+
     void DealDamage(const float damage);
 
 private:
@@ -52,7 +62,11 @@ private:
     void ConnectToAllCritSpots(void);
 
     void OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT));
+    void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
 
     float m_health;
     float m_maxHealth;
+
+    std::string m_objToSpawn;
+
 } Meta(Enable, WhiteListMethods, DisplayName( "Health" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ));

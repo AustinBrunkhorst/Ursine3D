@@ -35,6 +35,9 @@ public:
     float GetDamageInterval( void ) const;
     void SetDamageInterval( const float damageInterval );
 
+    const std::string& GetSpawnOnDeath(void) const;
+    void SetSpawnOnDeath(const std::string& objToSpawn);
+
     bool GetDeleteOnCollision( void ) const;
     void SetDeleteOnCollision( const bool state );
 
@@ -64,6 +67,12 @@ public:
         );
 
     EditorField(
+        std::string SpawnOnDeath,
+        GetSpawnOnDeath,
+        SetSpawnOnDeath
+        );
+
+    EditorField(
         float DamageInterval,
         GetDamageInterval,
         SetDamageInterval
@@ -74,6 +83,7 @@ public:
         GetDeleteOnCollision,
         SetDeleteOnCollision
         );
+
 
 private:
     // damage to apply when triggered
@@ -86,12 +96,18 @@ private:
     //   (keeps from applying damage each frame)
     float m_damageInterval;
 
+    // archetype that will be spawned at the point that the 
+    //   object dies
+    std::string m_objToSpawn;
+
     // does projectile die on first collision
     bool m_deleteOnCollision;
 
     // was projectile already deleted this frame
     //   (make sure damage only applied to one collision if delete on collision is set)
     bool m_deleted;
+
+    void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
 
     Meta(Disable)
     bool DeleteOnCollision(void);

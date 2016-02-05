@@ -23,7 +23,7 @@
         );                                                \
                                                           \
     EditorField(                                          \
-        bool DrawDuration,                                \
+        float DrawDuration,                               \
         GetDrawDuration,                                  \
         SetDrawDuration                                   \
     );                                                    \

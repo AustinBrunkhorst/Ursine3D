@@ -64,6 +64,9 @@ void InventorySystem::onUpdate(EVENT_HANDLER(World))
 
 void InventorySystem::EvaluateInventory(Inventory* inventory)
 {
+    if ( !inventory->m_init )
+        inventory->Init( );
+
     SwapWeapons( inventory );
 
     ChangeCurrentWeapon( inventory );
@@ -85,7 +88,7 @@ void InventorySystem::SwapWeapons(Inventory* inventory)
             if ( inventory->m_inventory[ i ].m_weaponLoaded )
             {
                 DeactivateWeapon( inventory, i );
-
+                inventory->m_newWeapon = true;
                 break;
             }
         }
@@ -102,9 +105,9 @@ void InventorySystem::SwapWeapons(Inventory* inventory)
 void InventorySystem::ChangeCurrentWeapon(Inventory* inventory)
 {
     // did we recieve a new weapon or swap weapons
-    if ( inventory->m_currWeapon != inventory->m_prevWeapon )
+    if ( inventory->m_newWeapon )
     {
-        if ( !inventory->m_swap )
+        if ( !inventory->m_swap && inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded )
         {
             // activate current weapon
             inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded->Dispatch(game::DETACH_WEAPON, ursine::ecs::EntityEventArgs::Empty);
@@ -122,7 +125,7 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
     Inventory::WeaponSlotInfo& weaponSlot = inventory->m_inventory[ inventory->m_currWeapon ];
 
     // create weapon
-    weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( weaponSlot.m_weaponToLoad );
+    weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weaponSlot.m_weaponToLoad, weaponSlot.m_weaponToLoad );
 
     ursine::ecs::Transform* weaponsTrans = weaponSlot.m_weaponLoaded->GetTransform( );
     // move weapon to arm
@@ -132,17 +135,19 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
     ActivateWeapon(inventory, weaponsTrans);
 
     // set rotation of arm
-    weaponsTrans->SetWorldRotation( inventory->m_armHandle->GetWorldRotation( ) );
+    weaponsTrans->SetWorldRotation( inventory->m_armHandle->GetWorldRotation(  ) );
 
     // Parent weapon to arm
-    inventory->m_armHandle->AddChild( weaponSlot.m_weaponLoaded->GetTransform( ) );
+    inventory->m_cameraHandle->AddChild( weaponSlot.m_weaponLoaded->GetTransform( ) );
+
+    inventory->m_newWeapon = false;
 }
 
 
 void InventorySystem::ActivateWeapon(Inventory* inventory, ursine::ecs::Transform* trans)
 {
     //create event args
-    game::WeaponActivationEventArgs args(&inventory->m_cameraHandle);
+    game::WeaponActivationEventArgs args( inventory->GetOwner( ), &inventory->m_cameraHandle);
 
     // was weapon swapped in (if so give it its' previous stats)
     if ( inventory->m_swap )
@@ -157,8 +162,8 @@ void InventorySystem::ActivateWeapon(Inventory* inventory, ursine::ecs::Transfor
     inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->Dispatch(game::ACTIVATE_WEAPON, &args);
 
     // set spawn offset
-    args.spawnOffset = trans->GetWorldRotation( ) * args.spawnOffset;
-    trans->SetWorldPosition( trans->GetWorldPosition( ) + args.spawnOffset );
+    ursine::SVec3 spawnOffset = trans->GetWorldRotation( ) * *args.m_spawnOffset;
+    trans->SetWorldPosition( trans->GetWorldPosition( ) + spawnOffset );
 }
 
 
@@ -168,7 +173,7 @@ void InventorySystem::DeactivateWeapon(Inventory* inventory, const int index)
     inventory->m_currWeapon = inventory->m_inventory[ index ].m_weaponSlotType;
 
     //create event args
-    game::WeaponDeactivationEventArgs args;
+    game::WeaponDeactivationEventArgs args( inventory->GetOwner( ) );
 
     // deactivate weapon
     inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded->Dispatch(game::DEACTIVATE_WEAPON, &args);

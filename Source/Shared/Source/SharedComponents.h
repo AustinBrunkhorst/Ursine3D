@@ -32,7 +32,7 @@
 #include "Components/WallComponent.h"
 #include "Components/CritSpotComponent.h"
 #include "Components/ForceComponent.h"
-
+#include "Components/InventoryComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Interacton Components 

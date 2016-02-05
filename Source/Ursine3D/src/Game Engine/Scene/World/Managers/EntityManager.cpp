@@ -18,6 +18,7 @@
 #include "Filter.h"
 #include "TransformComponent.h"
 #include "EntitySerializer.h"
+#include "EntityEvent.h"
 
 #include <queue>
 
@@ -427,9 +428,10 @@ namespace ursine
             for (auto child : entity->GetTransform( )->GetChildren( ))
                 BeforeRemove( child->GetOwner( ) );
 
-            EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
+            EntityEventArgs e(WORLD_ENTITY_REMOVED, entity);
 
             // we're removing man
+            entity->Dispatch(ENTITY_REMOVED, EventArgs::Empty);
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
