@@ -3,6 +3,7 @@
 #include "AIReasonerSystem.h"
 #include <Components/PlayerIdComponent.h>
 #include <Components/AI/WaypointComponent.h>
+#include <Components/ExplosionComponent.h>
 
 namespace ursine
 {
@@ -110,14 +111,22 @@ namespace ursine
                 hordeComp->SetTarget(targetPos);
             }
 
-            for (auto BOOMLINGs : m_reasoners[EnemyType::BOOMLING])
+            for (auto boomling : m_reasoners[EnemyType::BOOMLING])
             {
                 // check distance from target
-                auto m_transform = BOOMLINGs->GetOwner()->GetTransform();
-                if (targetPos.Distance( m_transform->GetWorldPosition( ) ) < 8.0f)
+                auto m_transform = boomling->GetOwner( )->GetTransform( );
+                if (targetPos.Distance( m_transform->GetWorldPosition( ) ) < 10.0f)
                 {
-                    //TODO: Add effects
-                    BOOMLINGs->GetOwner()->Delete();
+                    auto explosion = boomling->GetOwner()->GetComponent<ExplosionComponent>();
+
+                    if ( explosion )
+                    {
+                        explosion->Explode();
+                    }
+                    else
+                    {
+                        boomling->GetOwner()->Delete();
+                    }
                 }
             }
         }

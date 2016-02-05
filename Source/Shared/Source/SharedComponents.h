@@ -32,6 +32,7 @@
 #include "Components/WallComponent.h"
 #include "Components/CritSpotComponent.h"
 #include "Components/ForceComponent.h"
+#include "Components/ExplosionComponent.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,4 +70,6 @@
 /////////////////////////////////
 
 #include "Components/LevelLogic/ElevatorLiftMoverComponent.h"
+
+
 
