@@ -14,7 +14,8 @@ class MultiplayerPlayScreen extends Screen {
 
         events
             .on( KeyboardEventType.KeyDown, onKeyboardKeyDown )
-            .on( GamepadEventType.ButtonDown, onGamepadButtonDown );
+            .on( GamepadEventType.ButtonDown, onGamepadButtonDown )
+            .on( 'RaidStart', onRaidStart );
     }
 
     private function triggerPause() {
@@ -37,5 +38,9 @@ class MultiplayerPlayScreen extends Screen {
         if (e.button == GamepadButton.BACK) {
             triggerPause( );
         }
+    }
+
+    private function onRaidStart() {
+        m_document.querySelector( '.player-hud' ).classList.add( 'active' );
     }
 }

@@ -365,7 +365,7 @@ retrospect_screens_MainMenuScreen.prototype = $extend(retrospect_screens_BasicMe
 });
 var retrospect_screens_MultiplayerPlayScreen = function(id,frame,data) {
 	ursine_screen_Screen.call(this,id,frame,data);
-	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown));
+	this.events.on(ursine_input_KeyboardEventType.KeyDown,$bind(this,this.onKeyboardKeyDown)).on(ursine_input_GamepadEventType.ButtonDown,$bind(this,this.onGamepadButtonDown)).on("RaidStart",$bind(this,this.onRaidStart));
 };
 $hxClasses["retrospect.screens.MultiplayerPlayScreen"] = retrospect_screens_MultiplayerPlayScreen;
 retrospect_screens_MultiplayerPlayScreen.__name__ = true;
@@ -381,6 +381,9 @@ retrospect_screens_MultiplayerPlayScreen.prototype = $extend(ursine_screen_Scree
 	,onGamepadButtonDown: function(e) {
 		if(!(e.triggered && e.pressed)) return;
 		if(e.button == 4) this.triggerPause();
+	}
+	,onRaidStart: function() {
+		this.m_document.querySelector(".player-hud").classList.add("active");
 	}
 });
 var retrospect_screens_PauseScreen = function(id,frame,data) {
