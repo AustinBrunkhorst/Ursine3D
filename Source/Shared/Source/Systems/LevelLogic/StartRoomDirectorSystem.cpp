@@ -54,12 +54,40 @@ void StartRoomDirectorSystem::OnAfterLoad(void)
 	p2->GetOwner( )->GetComponentInChildren<Camera>( )->SetActive( false );
 
 	// Turn on the elevator camera
-	elevator->GetComponentInChildren<Camera>( )->SetActive( true );
+	auto elevatorCam = elevator->GetComponentInChildren<Camera>( );
+	elevatorCam->SetActive( true );
+	elevatorCam->SetRenderLayer( 1 );
 
 	// Tell the camera animator to animate
 	auto animator = elevator->GetComponentInChildren<CameraAnimator>( );
 	animator->Reset( );
 	animator->Play( );
+
+	m_timers.Create(TimeSpan::FromSeconds(18.5f)).Completed([=] {
+		auto p1Cam = p1->GetOwner( )->GetComponentInChildren<Camera>( );
+		auto p2Cam = p2->GetOwner( )->GetComponentInChildren<Camera>( );
+
+		p1Cam->SetActive( true );
+		p2Cam->SetActive( true );
+
+		p1Cam->SetViewportSize( Vec2( 1.0f, 0.5f ) );
+		p2Cam->SetViewportSize( Vec2( 1.0f, 0.5f ) );
+
+		p1Cam->SetRenderLayer( 2 );
+		p2Cam->SetRenderLayer( 2 );
+
+		p1Cam->GetOwner( )->GetTweens( ).Create().Setter(
+			p1Cam, &Camera::SetViewportPosition, Vec2(0, -0.5f), Vec2::Zero( ), TimeSpan::FromSeconds( 1.0f )
+		);
+
+		p2Cam->GetOwner( )->GetTweens( ).Create().Setter(
+			p2Cam, &Camera::SetViewportPosition, Vec2(0, 1.0f), Vec2(0, 0.5f), TimeSpan::FromSeconds( 1.0f )
+		);
+
+		elevatorCam->GetOwner()->GetTimers().Create(TimeSpan::FromSeconds(1.0f)).Completed(
+			[=] {elevatorCam->GetOwner()->Delete(); }
+		);
+	});
 }
 
 void StartRoomDirectorSystem::OnRemove(void)

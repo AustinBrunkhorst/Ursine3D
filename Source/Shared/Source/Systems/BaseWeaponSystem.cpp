@@ -387,7 +387,7 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
     {
         AbstractHitscanWeapon* weapon = &*it.second;
 
-        weapon->m_animatorHandle->UpdateAnimation( dt );
+        //weapon->m_animatorHandle->UpdateAnimation( dt );
 
         if ( !weapon->m_active )
             continue;
@@ -405,13 +405,13 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
             DecrementFireTimer(dt, *weapon);
             break;
         case TRIGGER_NOT_PULLED:
-            ResetIdleSequence( weapon );
+            //ResetIdleSequence( weapon );
             break;
         case CAN_FIRE:
             FireHitscanWeapon( *weapon, it.first );
             break;
         default:
-            ResetIdleSequence( weapon );
+            //ResetIdleSequence( weapon );
             break;
         }
     }
@@ -427,10 +427,10 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursin
         m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
 
         // reset firing sequence
-        weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
+        /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
         weapon.m_animatorHandle->SetTimeScalar(1.2f);
         weapon.m_animatorHandle->SetAnimation("Gun_Shoot");
-        weapon.m_animatorHandle->SetPlaying(true);
+        weapon.m_animatorHandle->SetPlaying(true);*/
 
         // number of rounds that were fired
         CreateRaycasts(weapon, *m_transforms[ id ], RemoveRoundsFromClip(weapon));

@@ -2085,6 +2085,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		item.text = entity.getName();
 		item.entity = entity;
 		item.textElement.addEventListener("click",function(e4) {
+			if(_g.m_selectedEntities.indexOf(item.entity.uniqueID) != -1) return;
 			_g.clearSelectedEntities();
 			item.entity.select();
 		});
