@@ -67,9 +67,20 @@ namespace ursine
         World::~World(void)
         {
             delete m_systemManager;
+
+            m_systemManager = nullptr;
+
             delete m_utilityManager;
+
+            m_utilityManager = nullptr;
+
             delete m_nameManager;
+
+            m_nameManager = nullptr;
+
             delete m_entityManager;
+
+            m_entityManager = nullptr;
             
             m_settings = nullptr;
         }

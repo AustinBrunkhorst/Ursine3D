@@ -1149,7 +1149,10 @@ namespace ursine
         {
             auto &particleSystem = renderableManager->m_renderableParticleSystems[ handle.Index_ ];
 
-            if ( particleSystem.Active_ )
+            if (!particleSystem.Active_)
+                return;
+
+            if (currentCamera.CheckMask(particleSystem.GetRenderMask()))
                 return;
 
             if(particleSystem.GetAdditive())
@@ -1194,7 +1197,7 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            if ( !currentCamera.CheckMask(particleSystem.GetRenderMask()) )
+            if ( currentCamera.CheckMask(particleSystem.GetRenderMask()) )
                 return;
 
             if ( particleSystem.GetActiveParticleCount() > 0 )

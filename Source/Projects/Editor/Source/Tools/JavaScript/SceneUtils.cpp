@@ -122,9 +122,11 @@ JSFunction(SceneSave)
 
 JSFunction(ScenePlayStart)
 {
-    auto *editor = GetCoreSystem( Editor );
+    Timer::Create( 0 ).Completed( [] {
+        auto *editor = GetCoreSystem( Editor );
 
-    editor->GetProject( )->SetPlayState( PS_PLAYING );
+        editor->GetProject( )->SetPlayState( PS_PLAYING );
+    } );
 
     return CefV8Value::CreateUndefined( );
 }
@@ -136,27 +138,33 @@ JSFunction(SceneSetPlayState)
 
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
-    auto *editor = GetCoreSystem( Editor );
+    Timer::Create( 0 ).Completed( [=] {
+        auto *editor = GetCoreSystem( Editor );
 
-    editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
+        editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
+    } );
 
     return CefV8Value::CreateUndefined( );
 }
 
 JSFunction(SceneStep)
 {
-    auto *editor = GetCoreSystem( Editor );
+     Timer::Create( 0 ).Completed( [=] {
+        auto *editor = GetCoreSystem( Editor );
 
-    editor->GetProject( )->GetScene( )->Step( );
+        editor->GetProject( )->GetScene( )->Step( );
+    } );
 
     return CefV8Value::CreateUndefined( );
 }
 
 JSFunction(ScenePlayStop)
 {
-    auto *editor = GetCoreSystem( Editor );
+    Timer::Create( 0 ).Completed( [] {
+        auto *editor = GetCoreSystem( Editor );
 
-    editor->GetProject( )->SetPlayState( PS_EDITOR );
+        editor->GetProject( )->SetPlayState( PS_EDITOR );
+    } );
 
     return CefV8Value::CreateUndefined( );
 }

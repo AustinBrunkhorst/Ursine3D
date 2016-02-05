@@ -57,6 +57,6 @@ namespace ursine
 
         graphics::GfxHND m_viewport;
 
-        ecs::World *m_world;
+        ecs::World::Handle m_world;
     };
 }

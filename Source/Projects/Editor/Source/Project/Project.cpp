@@ -73,8 +73,6 @@ void Project::SetPlayState(ScenePlayState state)
     }
     else if((lastState == PS_PLAYING || lastState == PS_PAUSED) && state == PS_EDITOR)
     {
-        auto *world = m_scene->GetWorld( );
-
         ecs::WorldSerializer serializer;
 
         auto *cachedWorld = serializer.Deserialize( m_worldCache );
@@ -82,8 +80,6 @@ void Project::SetPlayState(ScenePlayState state)
         SetWorld( cachedWorld );
 
         cachedWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
-
-        delete world;
     } 
     else
     {

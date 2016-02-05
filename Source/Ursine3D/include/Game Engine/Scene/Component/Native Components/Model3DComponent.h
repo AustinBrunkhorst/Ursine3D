@@ -15,8 +15,8 @@
 
 #include "Component.h"
 #include "Renderable.h"
-#include "RenderMask.h"
 #include "RenderableComponentBase.h"
+#include "RenderMask.h"
 #include "ModelResource.h"
 
 namespace ursine

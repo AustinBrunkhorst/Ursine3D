@@ -47,9 +47,6 @@ namespace ursine
 	        world->Listener( this )
 		        .On( WORLD_ENTITY_COMPONENT_ADDED, &Selected::onComponentAdded );
 
-            if (!world->GetSettings( )->GetComponent<WorldConfig>( )->IsInEditorMode( ))
-                return;
-
             tryDebugModel( true );
             tryDebugCamera( true );
         }

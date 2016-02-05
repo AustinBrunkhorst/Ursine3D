@@ -89,25 +89,31 @@ void EditorCameraSystem::OnAfterLoad(void)
     auto *oldCamera = m_world->GetEntityFromName( kEditorCameraEntityName );
 
     if (oldCamera)
-        oldCamera->Delete( );
-
-    m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
+        m_cameraEntity = oldCamera;
+    else
+        m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
 
     m_cameraEntity->EnableDeletion( false );
-	m_cameraEntity->EnableSerialization( false );
+	m_cameraEntity->EnableSerialization( true );
 
-    m_camera = m_cameraEntity->AddComponent<ecs::Camera>( );
+    m_camera = m_cameraEntity->GetComponent<ecs::Camera>( );
+
+    if (!m_camera)
+    {
+        m_camera = m_cameraEntity->AddComponent<ecs::Camera>( );
+
+        m_camera->SetViewportPosition( Vec2::Zero( ) );
+        m_cameraEntity->GetTransform( )->SetWorldPosition( Vec3( -50, 50, -50 ) );
+        m_camera->SetViewportSize( Vec2::One( ) );
+        m_camera->SetNearPlane( 0.1f );
+        m_camera->SetFarPlane( 2500.0f );
+        m_camera->SetFOV( 45.f );
+
+        m_camZoom = SVec3( -50, 50, 50 ).Length( );
+        m_cameraEntity->GetTransform( )->LookAt( { 0.0f, 0.0f, 0.0f } );
+    }
 
     m_camera->SetEditorCamera( true );
-    m_camera->SetViewportPosition( Vec2::Zero( ) );
-    m_cameraEntity->GetTransform( )->SetWorldPosition( Vec3( -50, 50, -50 ) );
-    m_camera->SetViewportSize( Vec2::One( ) );
-    m_camera->SetNearPlane( 0.1f );
-    m_camera->SetFarPlane( 2500.0f );
-    m_camera->SetFOV( 45.f );
-
-    m_camZoom = SVec3( -50, 50, 50 ).Length( );
-    m_cameraEntity->GetTransform( )->LookAt( { 0.0f, 0.0f, 0.0f } );
 }
 
 void EditorCameraSystem::OnRemove(void)

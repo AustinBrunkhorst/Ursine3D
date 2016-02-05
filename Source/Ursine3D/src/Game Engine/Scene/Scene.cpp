@@ -25,25 +25,24 @@ namespace ursine
     Scene::Scene(void)
         : m_playState( PS_EDITOR )
         , m_viewport( 0 )
-        , m_world( new ecs::World( ) )
+        , m_world( std::make_shared<ecs::World>( ) )
     {
         
     }
 
     Scene::~Scene(void)
     {
-        if (m_world)
-            delete m_world;
+
     }
 
     ecs::World *Scene::GetWorld(void)
     {
-        return m_world;
+        return m_world.get( );
     }
 
     void Scene::SetWorld(ecs::World *world)
     {
-        m_world = world;
+        m_world = ecs::World::Handle( world );
     }
 
     graphics::GfxHND Scene::GetViewport(void) const

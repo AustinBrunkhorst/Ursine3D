@@ -98,11 +98,11 @@ namespace ursine
             void SetScreenPosition(const float x, const float y);
 
             // check to see if a given mask will pass this camera's mask
-            bool CheckMask( const unsigned long long renderMask );
+            bool CheckMask(const unsigned long long renderMask);
 
             // set the mask this camera will use for culling operations
             unsigned GetMask(void) const;
-            void SetMask( const unsigned long long renderMask );
+            void SetMask(const unsigned long long renderMask);
 
             ecs::EntityID GetEntityID(void) const;
             void SetEntityID(const ecs::EntityID id);

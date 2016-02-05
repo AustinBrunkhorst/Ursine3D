@@ -195,10 +195,12 @@ namespace ursine
                     system->OnRemove( );
             }
                 
-            for (auto *system : m_systems)
+            for (auto *&system : m_systems)
             {
                 if (system)
                     delete system;
+
+                system = nullptr;
             }
         }
 

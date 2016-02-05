@@ -274,10 +274,12 @@ JSMethod(EntityHandler::addComponent)
 
 	// have this run in the main thread
 	Timer::Create( 0 ).Completed( [=] {
-		auto instance = componentType.CreateDynamic( );
-
         if (!entity->HasComponent( componentTypeMask ))
-		    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+        {
+            auto instance = componentType.CreateDynamic( );
+
+            entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+        }
 	} );
 
     return CefV8Value::CreateBool( true );
@@ -307,7 +309,7 @@ JSMethod(EntityHandler::removeComponent)
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
 	// Have this run in the main thread
-	Timer::Create(0).Completed([=] {
+	Timer::Create( 0 ).Completed( [=] {
 		entity->RemoveComponent( id );
 	} );
 
