@@ -25,4 +25,4 @@ private:
 	
 	void Process(ursine::ecs::Entity *entity) override;
 
-} Meta(Enable);
+} Meta(Enable, AutoAddEntitySystem);
