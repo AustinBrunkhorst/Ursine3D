@@ -70,3 +70,9 @@
 
 #include "Components/LevelLogic/ElevatorLiftMoverComponent.h"
 
+/////////////////////////////////
+////     Camera Animation    ////
+/////////////////////////////////
+
+#include "Components/CameraAnimation/CameraAnimatorComponent.h"
+#include "Components/CameraAnimation/CameraAnimatorNodeComponent.h"
