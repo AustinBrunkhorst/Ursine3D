@@ -10,6 +10,7 @@ namespace ursine
 
         WorldConfig::WorldConfig(void)
             : BaseComponent( )
+            , m_inEditorMode( false )
         {
             
         }
@@ -17,6 +18,16 @@ namespace ursine
         WorldConfig::~WorldConfig(void)
         {
             
+        }
+
+        bool WorldConfig::IsInEditorMode(void) const
+        {
+            return m_inEditorMode;
+        }
+
+        void WorldConfig::SetInEditorMode(bool inEditorMode)
+        {
+            m_inEditorMode = inEditorMode;
         }
 
         void WorldConfig::OnInitialize(void)

@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -35,6 +35,7 @@
 #include "Components/ExplosionComponent.h"
 
 #include "Components/InventoryComponent.h"
+#include "Components/ExplosionComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Interacton Components 

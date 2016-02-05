@@ -28,33 +28,5 @@
     &.player-2 {
       top: 50%;
     }
-
-    .health {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 65%;
-      height: 25px;
-      background: rgba(194, 194, 194, 0.7);
-
-      .percentage {
-        height: 100%;
-        background: #6ea276;
-        transition: width 200ms ease;
-      }
-
-      .kills {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        margin-top: 5px;
-        color: white;
-        font-size: 22px;
-        font-weight: bold;
-        font-style: italic;
-        text-shadow: 0 0 15px rgba(white, 0.75), 0 1px 2px black;
-      }
-    }
   }
 }

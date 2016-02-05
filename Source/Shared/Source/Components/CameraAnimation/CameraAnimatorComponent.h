@@ -55,6 +55,8 @@ private:
 
 	void enableDeletionNodes(bool flag);
 
+	void getChildren(void);
+	
 	// The animation nodes
 	std::vector<CameraAnimatorNode*> m_nodes;
 	ursine::ecs::Camera *m_camera;

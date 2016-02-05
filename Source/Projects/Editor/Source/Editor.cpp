@@ -13,14 +13,14 @@
  
 #include "Precompiled.h"
 
-#include "Editor.h"
+#include "Editor.h" 
 #include "Project.h"
  
-#include <Application.h> 
-
+#include <Application.h>  
+   
 #include <WindowManager.h>
-#include <UIManager.h>
-
+#include <UIManager.h> 
+  
 #include <Color.h> 
 #include <LightComponent.h>
 #include <WorldConfigComponent.h>
@@ -33,7 +33,7 @@ namespace
 
     const auto kEditorClearColor = Color( 0xFF252526 );
 
-    const auto kDefaultWindowWidth = 1280;
+    const auto kDefaultWindowWidth = 1280; 
     const auto kDefaultWindowHeight = 720;
 }
 
@@ -179,7 +179,7 @@ void Editor::initializeScene(void)
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
         handle.SetPosition( 0, 0 );
-
+         
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
         scene->SetViewport( viewport );

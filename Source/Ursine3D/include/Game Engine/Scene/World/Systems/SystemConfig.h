@@ -33,9 +33,9 @@
 // Gets the given entity system from the world
 #define GetEntitySystem(systemType) GetSystemManager( )->GetSystem<systemType>( )
 
-/** @brief Disables auto adding of an entity system
+/** @brief Enables auto adding of an entity system
 */
-struct DisableEntitySystemAutoAdd : ursine::meta::MetaProperty
+struct AutoAddEntitySystem : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };

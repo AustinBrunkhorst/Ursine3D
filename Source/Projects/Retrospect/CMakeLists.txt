@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+set(GLOBAL_META_DEFINES "RETROSPECT")
+
 # disable exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
 
@@ -12,9 +14,6 @@ set(INSTALL_ICON "${RESOURCES_DIR}/Icon.ico")
 add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
 
 include_directories(${Shared_INCLUDE_DIRS})
-
-# external files that will trigger regeneration of meta data
-set(META_DEPENDENCIES ${Shared_HEADER_FILES})
 
 ursine_project(Retrospect
     FOLDER "Projects"
@@ -33,7 +32,8 @@ ursine_project(Retrospect
     INSTALLER_UNINSTALL_ICON ${INSTALL_ICON}
     WINDOWS_RESOURCE_FILE ${WINDOWS_RESOURCE_FILE}
     META_HEADER "Reflection.h"
-    META_DEPENDENCIES ${META_DEPENDENCIES}
+    META_MODULE_HEADER "RetrospectReflectionModule.h"
+    META_MODULE_DEPENDS Ursine3D Shared
     PCH_NAME "Precompiled"
 )
 
