@@ -93,8 +93,8 @@ int main(int argc, char *argv[])
         )
         ( 
             SWITCH_OPTION( CompilerIncludes ), 
-            po::value<std::vector<std::string>>( )->multitoken( ),
-            "Optional list of files to include for the compiler." 
+            po::value<std::string>( ),
+            "Optional file that includes the include directories for this target." 
         )
         (
             SWITCH_OPTION( CompilerDefines ),
@@ -181,10 +181,14 @@ void parse(const po::variables_map &cmdLine)
     if (cmdLine.count( kSwitchCompilerIncludes ))
     {
         auto includes = 
-            cmdLine.at( kSwitchCompilerIncludes ).as<std::vector<std::string>>( );
+            cmdLine.at( kSwitchCompilerIncludes ).as<std::string>( );
 
-        for (auto &include : includes) 
-            options.arguments.emplace_back( "-I"+ include );
+		std::ifstream includesFile( includes );
+
+		std::string include;
+
+		while (std::getline( includesFile, include ))
+			options.arguments.emplace_back( "-I"+ include );
     }
 
     if (cmdLine.count( kSwitchCompilerDefines ))
