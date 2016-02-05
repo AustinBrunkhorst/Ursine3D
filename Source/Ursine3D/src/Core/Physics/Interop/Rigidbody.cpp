@@ -591,7 +591,12 @@ namespace ursine
 				// get the maximum scale factor
 				btVector3 min, max;
 
-				getCollisionShape( )->getAabb( getWorldTransform( ), min, max );
+                auto shape = getCollisionShape( );
+
+                if (!shape)
+                    return;
+
+                shape->getAabb( getWorldTransform( ), min, max );
 
 				float maxExtent = math::Max( 
 					math::Max(

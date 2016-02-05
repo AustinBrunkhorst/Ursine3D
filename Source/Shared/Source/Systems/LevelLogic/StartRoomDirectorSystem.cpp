@@ -3,6 +3,8 @@
 #include "StartRoomDirectorSystem.h"
 
 #include <CameraComponent.h>
+#include <Screen.h>
+#include <AIMovementControllerComponent.h>
 
 #include "ElevatorLiftMoverComponent.h"
 #include "CameraAnimatorComponent.h"
@@ -76,9 +78,12 @@ void StartRoomDirectorSystem::OnAfterLoad(void)
 		p1Cam->SetRenderLayer( 2 );
 		p2Cam->SetRenderLayer( 2 );
 
-		p1Cam->GetOwner( )->GetTweens( ).Create().Setter(
+		p1Cam->GetOwner( )->GetTweens( ).Create().BeginGroup( ).Setter(
 			p1Cam, &Camera::SetViewportPosition, Vec2(0, -0.5f), Vec2::Zero( ), TimeSpan::FromSeconds( 1.0f )
-		);
+		).EndGroup( )
+		.Call( [=] {
+			m_world->GetOwner( )->MessageUI( "RaidStart", Json( ) );
+		} );
 
 		p2Cam->GetOwner( )->GetTweens( ).Create().Setter(
 			p2Cam, &Camera::SetViewportPosition, Vec2(0, 1.0f), Vec2(0, 0.5f), TimeSpan::FromSeconds( 1.0f )
@@ -87,6 +92,13 @@ void StartRoomDirectorSystem::OnAfterLoad(void)
 		elevatorCam->GetOwner()->GetTimers().Create(TimeSpan::FromSeconds(1.0f)).Completed(
 			[=] {elevatorCam->GetOwner()->Delete(); }
 		);
+
+        m_timers.Create(TimeSpan::FromSeconds(3.0f)).Completed([=] {
+            auto ais = m_world->GetEntitiesFromFilter( Filter( ).All<AIMovementController>( ) );
+
+		    for (auto ai : ais)
+			    ai->GetComponent<AIMovementController>( )->SetEnable( true );
+        });
 	});
 }
 
