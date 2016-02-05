@@ -93,7 +93,7 @@ SURFACE_DATA UnpackGBuffer(int2 location)
 
     // Get the depth value and convert it to linear depth
     float depth = DepthTexture.Load(location3).x;
-    Out.LinearDepth = ConvertDepthToLinear(depth);
+    Out.LinearDepth = depth;
 
     // Get the base color and specular intensity
     float4 baseColor = ColorSpecIntTexture.Load(location3);
