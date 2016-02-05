@@ -200,6 +200,9 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
+	if (args->component == nullptr || args->entity == nullptr)
+		return;
+
     auto component = 
         meta::Variant( args->component, meta::variant_policy::WrapObject( ) );
 

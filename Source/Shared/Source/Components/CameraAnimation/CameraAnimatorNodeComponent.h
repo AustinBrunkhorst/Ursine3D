@@ -28,13 +28,24 @@ public:
 		SetTransitionToTime
 	);
 
+	EditorField(
+		int order,
+		GetOrder,
+		SetOrder
+	);
+
 	CameraAnimatorNode(void);
 
 	float GetTransitionToTime(void) const;
 	void SetTransitionToTime(float seconds);
 
+	int GetOrder(void) const;
+	void SetOrder(int order);
+
 private:
 	
 	float m_transitionSeconds;
+
+	int m_order;
 
 } Meta(Enable);

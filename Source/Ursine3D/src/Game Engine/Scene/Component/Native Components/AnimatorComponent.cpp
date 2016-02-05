@@ -237,6 +237,8 @@ namespace ursine
 			m_speedScalar = scalar;
 		}
 
+        #if defined(URSINE_WITH_EDITOR)
+
 		void Animator::AddState(void)
 		{
 			if ("" == m_stateName)
@@ -294,6 +296,8 @@ namespace ursine
 			//}
 		}
 
+        #endif
+
 		const std::string &Animator::GetAnimation(void) const
 		{
 			return m_animationName;
@@ -303,6 +307,8 @@ namespace ursine
 		{
 			m_animationName = name;
 		}
+
+        #if defined(URSINE_WITH_EDITOR)
 
 		void Animator::AddAnimation(void)
 		{
@@ -339,6 +345,8 @@ namespace ursine
 
 			m_states[m_currentState].SetAnimation(nullptr);
 		}
+
+        #endif
 
 		const std::string &Animator::GetRig() const
 		{

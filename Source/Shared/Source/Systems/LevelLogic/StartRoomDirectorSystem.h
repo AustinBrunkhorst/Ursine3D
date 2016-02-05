@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-/*#pragma once
+#pragma once
 
 #include <EntitySystem.h>
 
@@ -29,10 +29,9 @@ class StartRoomDirectorSystem
 	ENTITY_SYSTEM;
 
 public:
-
 	StartRoomDirectorSystem(ursine::ecs::World *world);
 
 private:
 	void OnAfterLoad(void) override;
 	void OnRemove(void) override;
-};*/
+} Meta(Enable);

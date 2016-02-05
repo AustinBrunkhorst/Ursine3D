@@ -35,8 +35,20 @@ public:
     float GetDamageInterval( void ) const;
     void SetDamageInterval( const float damageInterval );
 
+    const std::string& GetArchetypeOnDeath(void) const;
+    void SetArchetypeOnDeath(const std::string& objToSpawn);
+
+    const std::string& GetArchetypeOnHit(void) const;
+    void SetArchetypeOnHit(const std::string& objToSpawn);
+
     bool GetDeleteOnCollision( void ) const;
     void SetDeleteOnCollision( const bool state );
+
+    bool GetSpawnOnDeath(void) const;
+    void SetSpawnOnDeath(const bool state);
+
+    bool GetSpawnOnHit(void) const;
+    void SetSpawnOnHit(const bool state);
 
     void OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
@@ -64,6 +76,18 @@ public:
         );
 
     EditorField(
+        std::string ArchetypeOnDeath,
+        GetArchetypeOnDeath,
+        SetArchetypeOnDeath
+        );
+
+    EditorField(
+        std::string ArchetypeOnHit,
+        GetArchetypeOnHit,
+        SetArchetypeOnHit
+        );
+
+    EditorField(
         float DamageInterval,
         GetDamageInterval,
         SetDamageInterval
@@ -73,6 +97,18 @@ public:
         bool DeleteOnCollision,
         GetDeleteOnCollision,
         SetDeleteOnCollision
+        );
+
+    EditorField(
+        bool SpawnOnDeath,
+        GetSpawnOnDeath,
+        SetSpawnOnDeath
+        );
+
+    EditorField(
+        bool SpawnOnHit,
+        GetSpawnOnHit,
+        SetSpawnOnHit
         );
 
 private:
@@ -86,12 +122,25 @@ private:
     //   (keeps from applying damage each frame)
     float m_damageInterval;
 
+    // archetype that will be spawned at the point that the 
+    //   object dies
+    std::string m_objToSpawn;
+
+    // archetype that will be spawned at the point that the 
+    //   object deals damage to another object
+    std::string m_objToSpawnOnHit;
+
     // does projectile die on first collision
     bool m_deleteOnCollision;
 
     // was projectile already deleted this frame
     //   (make sure damage only applied to one collision if delete on collision is set)
     bool m_deleted;
+
+    bool m_spawnOnHit;
+    bool m_spawnOnDeath;
+
+    void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
 
     Meta(Disable)
     bool DeleteOnCollision(void);

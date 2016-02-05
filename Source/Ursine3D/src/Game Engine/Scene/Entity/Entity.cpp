@@ -237,22 +237,18 @@ namespace ursine
             // get all children
             auto children = m_world->m_entityManager->GetChildren( this );
 
-            // id of child found with disired name
-            ursine::ecs::EntityID child = -1;
-
             // search for desired child
             for ( auto childID : *children )
             {
                 // check if names are same
                 if ( name == m_world->m_nameManager->GetName( childID ) )
                 {
-                    child = childID;
-                    break;
+                    return  m_world->m_entityManager->GetEntity( childID );
                 }
             }
 
             // return entity
-            return  m_world->m_entityManager->GetEntity(child);
+            return  nullptr;
         }
 
 	    Component* Entity::GetComponentInParent(ComponentTypeID id) const

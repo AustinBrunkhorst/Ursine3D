@@ -70,4 +70,4 @@ private:
 
 	SelectTool *m_selectTool;
 	DuplicateTool *m_dupTool;
-} Meta(Enable);
+} Meta(Enable, AutoAddEntitySystem);
