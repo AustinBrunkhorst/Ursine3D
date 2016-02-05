@@ -254,7 +254,7 @@ namespace ursine
 					for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
 					iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
 						newMtrlInfo.emis_texNames.push_back(iter1->second[j]);
-					
+
 					//spec
 					j = 0;
 					newMtrlInfo.spectype = mModel->mMaterials[i]->specular.type;
@@ -372,10 +372,10 @@ namespace ursine
 					}
 				}
 			}
-			
+
 			return true;
 		}
-		
+
 		bool CFBXLoader::CustomFileExport()
 		{
 			if (nullptr == mModelInfo || nullptr == mAnimInfo)
@@ -505,7 +505,7 @@ namespace ursine
 			}
 			for (int i = 0; i < pNode->GetChildCount(); ++i)
 			{
-				if(bBone)
+				if (bBone)
 					ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), mModel->mBoneData.mbonehierarchy.size(), myIndex);
 				else
 					ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), myIndex, inParentIndex);
@@ -537,10 +537,10 @@ namespace ursine
 				//Meshes have a separate geometry transform that also needs to be applied
 				FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
 				meshTransform = meshTransform * geoTransform;
-				mConverter->ConvertMatrix(meshTransform);\
+				mConverter->ConvertMatrix(meshTransform); \
 
-				// vertex, normal, tangent, texcoord, material
-				ProcessVertices(mesh, newMesh);
+					// vertex, normal, tangent, texcoord, material
+					ProcessVertices(mesh, newMesh);
 				ProcessNormals(mesh, newMesh);
 				ProcessTangent(mesh, newMesh);
 				ProcessTexcoord(mesh, newMesh);
@@ -560,7 +560,7 @@ namespace ursine
 			}
 			for (int i = 0; i < pNode->GetChildCount(); ++i)
 			{
-				if(bMesh)
+				if (bMesh)
 					ProcessStaticMesh(pNode->GetChild(i), mModel->mMeshData.size(), myindex);
 				else
 					ProcessStaticMesh(pNode->GetChild(i), myindex, inParentIndex);
@@ -1257,8 +1257,10 @@ namespace ursine
 				FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
 				newMesh->name = pNode->GetName();
 				newMesh->mLayout = FBX_DATA::SKINNED;
+				newMesh->parentIndex = inParentIndex;
 				if ("" == newMesh->name)
-					newMesh->name = mModel->name;
+					newMesh->mLayout = FBX_DATA::SKINNED;
+				newMesh->name = mModel->name;
 
 				int nodeIdx = 0;
 				FbxPose* targetFP = nullptr;
@@ -1399,7 +1401,7 @@ namespace ursine
 			FbxMatrix * m = (FbxMatrix*)&pAMatrix;
 			return m->MultNormalize(point);
 		}
-		
+
 		//reconstruct vertices and indices
 		void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md)
 		{
