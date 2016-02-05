@@ -45,7 +45,7 @@ namespace ursine
         template<class ComponentType>
         bool Entity::HasComponent(void) const
         {
-            static const auto mask = GetComponentMask( ComponentType );
+            static const auto &mask = GetComponentMask( ComponentType );
 
             return HasComponent( mask );
         }

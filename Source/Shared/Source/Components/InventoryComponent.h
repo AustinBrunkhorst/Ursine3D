@@ -49,8 +49,8 @@ struct Inventory : ursine::ecs::Component
         int m_clipCount;
     };
 
+    NATIVE_COMPONENT;
 
-    NATIVE_COMPONENT
 public:
     static const int INVENTORY_COUNT = 4;
 

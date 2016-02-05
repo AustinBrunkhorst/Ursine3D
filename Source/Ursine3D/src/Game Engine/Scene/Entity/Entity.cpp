@@ -207,7 +207,7 @@ namespace ursine
             m_world->m_entityManager->AddComponent( this, component );
         }
 
-        bool Entity::HasComponent(ComponentTypeMask mask) const
+        bool Entity::HasComponent(const ComponentTypeMask &mask) const
         {
             return utils::IsFlagSet( m_typeMask, mask );
         }
@@ -313,12 +313,12 @@ namespace ursine
             utils::FlagUnset( m_systemMask, mask );
         }
 
-        void Entity::setType(ComponentTypeMask mask)
+        void Entity::setType(const ComponentTypeMask &mask)
         {
             utils::FlagSet( m_typeMask, mask );
         }
 
-        void Entity::unsetType(ComponentTypeMask mask)
+        void Entity::unsetType(const ComponentTypeMask &mask)
         {
             utils::FlagUnset( m_typeMask, mask );
         }

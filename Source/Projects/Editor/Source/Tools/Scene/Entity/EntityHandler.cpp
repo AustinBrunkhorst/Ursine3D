@@ -251,7 +251,11 @@ JSMethod(EntityHandler::hasComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    return CefV8Value::CreateBool( entity->HasComponent( 1ull << id ) );
+    ecs::ComponentTypeMask mask;
+
+    mask.set( id, true );
+
+    return CefV8Value::CreateBool( entity->HasComponent( mask ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -275,7 +279,9 @@ JSMethod(EntityHandler::addComponent)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto componentTypeMask = 1ull << componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+    ecs::ComponentTypeMask componentTypeMask;
+
+    componentTypeMask.set( componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ), true );
 
 	// have this run in the main thread
 	Timer::Create( 0 ).Completed( [=] {
