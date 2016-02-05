@@ -1376,10 +1376,7 @@ namespace ursine
             bufferManager->MapTransformBuffer(pl.GetSpotlightTransform( ) * SMat4(SVec3(0, -0.5, 0)));
 
             //what culling to use?
-            if(currentCamera.GetLook().Dot(lightDirection) > 0)
-                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
-            else
-                dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("lightCone")));
         }
