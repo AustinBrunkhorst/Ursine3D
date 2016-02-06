@@ -4,6 +4,12 @@
   right: 0;
   top: 0;
   bottom: 0;
+  opacity: 0;
+  transition: opacity 175ms ease;
+
+  &.active {
+    opacity: 1;
+  }
 
   .crosshair {
     position: absolute;

@@ -49,6 +49,7 @@ namespace ursine
 
                 if (eType < EnemyType::INVALID_ENEMY)
                 {
+
                     m_reasoners[eType].push_back(enemy);
                 }
             }
@@ -115,7 +116,7 @@ namespace ursine
             {
                 // check distance from target
                 auto m_transform = boomling->GetOwner( )->GetTransform( );
-                if (targetPos.Distance( m_transform->GetWorldPosition( ) ) < 10.0f)
+                if (targetPos.Distance( m_transform->GetWorldPosition( ) ) < 50.0f)
                 {
                     auto explosion = boomling->GetOwner()->GetComponent<ExplosionComponent>();
 
