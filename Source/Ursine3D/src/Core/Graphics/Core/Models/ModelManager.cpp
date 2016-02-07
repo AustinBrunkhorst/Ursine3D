@@ -389,7 +389,7 @@ namespace ursine
 
 		void ModelManager::LoadModel_Fbx(std::string name, std::string fileName)
 		{
-			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+			UAssert(m_modelArray[name] == nullptr, "Model with name '%s' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
 			std::vector<AnimationVertex> buffer;
 			CFBXLoader fbx_model;

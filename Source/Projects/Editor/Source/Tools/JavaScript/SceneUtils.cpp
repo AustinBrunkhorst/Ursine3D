@@ -18,6 +18,7 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include <SystemManager.h>
 #include <WorldSerializer.h>
 #include <WorldConfigComponent.h>
 #include <SystemManager.h>
@@ -139,7 +140,7 @@ JSFunction(SceneSetPlayState)
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
     Timer::Create( 0 ).Completed( [=] {
-        auto *editor = GetCoreSystem( Editor );
+    auto *editor = GetCoreSystem( Editor );
 
         editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
     } );
@@ -150,9 +151,9 @@ JSFunction(SceneSetPlayState)
 JSFunction(SceneStep)
 {
      Timer::Create( 0 ).Completed( [=] {
-        auto *editor = GetCoreSystem( Editor );
+    auto *editor = GetCoreSystem( Editor );
 
-        editor->GetProject( )->GetScene( )->Step( );
+    editor->GetProject( )->GetScene( )->Step( );
     } );
 
     return CefV8Value::CreateUndefined( );

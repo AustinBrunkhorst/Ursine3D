@@ -39,3 +39,9 @@
 #include "Systems/AI/AIReasonerSystem.h"
 #include "Systems/AI/AIControllerSystem.h"
 #include "Systems/AI/WaypointSystem.h"
+
+/////////////////////////////////
+////     Camera Animation    ////
+/////////////////////////////////
+
+#include "Systems/CameraAnimation/CameraAnimatorSystem.h"

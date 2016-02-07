@@ -12,15 +12,22 @@ namespace game
     {
         GAME_EVENTS_START = ursine::ecs::ENTITY_EVENT_USER,
 
-        // Control Point Events
+        // control point events
         CONTROL_POINT_SUCCESS,
 
-        // Damage events
+        // damage events
         DAMAGE_EVENT,
 
+        // open door
+        OPEN_DOOR,
+
+        // weapon events
         ACTIVATE_WEAPON,
         DETACH_WEAPON,
         DEACTIVATE_WEAPON,
+
+        ENEMY_DEATH,
+        AREA_CLEAR,
 
 
         ////  Command Events  ////
@@ -61,8 +68,10 @@ namespace game
         int m_ammo;
         int m_clip;
 
-        WeaponDeactivationEventArgs(int ammo = 1, int clip = -1)
-            : m_ammo( ammo ), m_clip( clip )
+        ursine::ecs::Entity* whoToConnect;
+
+        WeaponDeactivationEventArgs(ursine::ecs::Entity* who, int ammo = 1, int clip = -1)
+            : m_ammo( ammo ), m_clip( clip ), whoToConnect( who )
         { }
     };
 
@@ -70,10 +79,10 @@ namespace game
     struct WeaponActivationEventArgs : WeaponDeactivationEventArgs
     {
         ursine::ecs::Component::Handle<ursine::ecs::Transform>* m_camHandle;
-        ursine::SVec3 spawnOffset;
+        ursine::SVec3* m_spawnOffset;
 
-        WeaponActivationEventArgs(ursine::ecs::Component::Handle<ursine::ecs::Transform>* camHandle = nullptr, int ammo = -1, int clip = -1)
-            : WeaponDeactivationEventArgs( ammo, clip ), m_camHandle( camHandle )
+        WeaponActivationEventArgs(ursine::ecs::Entity* who, ursine::ecs::Component::Handle<ursine::ecs::Transform>* camHandle = nullptr, int ammo = -1, int clip = -1)
+            : WeaponDeactivationEventArgs(  who, ammo, clip ), m_camHandle( camHandle ), m_spawnOffset( nullptr )
         { }
     };
 

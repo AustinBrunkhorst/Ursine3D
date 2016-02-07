@@ -59,10 +59,10 @@ namespace ursine
 
         void DebugSystem::OnInitialize(void)
         {
-            EntitySystem::OnInitialize();
+            EntitySystem::OnInitialize( );
 
             m_world->Listener(this)
-                .On( WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate );
+                .On(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate);
         }
 
         void DebugSystem::OnRemove(void)
@@ -70,7 +70,7 @@ namespace ursine
             EntitySystem::OnRemove();
 
             m_world->Listener(this)
-                .Off( WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate );
+                .Off(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate);
         }
 
         void DebugSystem::onUpdate(EVENT_HANDLER(World))

@@ -49,72 +49,45 @@ struct Inventory : ursine::ecs::Component
         int m_clipCount;
     };
 
+    NATIVE_COMPONENT;
 
-    NATIVE_COMPONENT
 public:
     static const int INVENTORY_COUNT = 4;
 
     Inventory(void);
 
     void OnInitialize(void) override;
+    void Init(void);
 
     EditorField(
         WeaponType StartWeapon,
         GetStartWeapon,
         SetStartWeapon
-        );
+    );
    
     EditorField(
         std::string LastStand,
         GetLastStandWeapon,
         SetLastStandWeapon
-        );
+    );
    
     EditorField(
         std::string SecondaryWeapon,
         GetSecondaryWeapon,
         SetSecondaryWeapon
-        );
+    );
 
     EditorField(
         std::string PrimaryWeapon,
         GetPrimaryWeapon,
         SetPrimaryWeapon
-        );
+    );
 
     EditorField(
         std::string MeleeWeapon,
         GetMeleeWeapon,
         SetMeleeWeapon
-        );
-
-    void SetNewWeapon(const WeaponType type, const std::string& weaponToLoad, int ammo, int clip);
-
-
-    ///////////////////
-    ////  Members  ////
-    ///////////////////
-
-    // current weapon out
-    WeaponType m_currWeapon;
-
-    // current weapon out
-    WeaponType m_prevWeapon;
-
-    // position of camera
-    Handle<ursine::ecs::Transform> m_cameraHandle;
-
-    // position of arm
-    Handle<ursine::ecs::Transform> m_armHandle;
-
-    // what archetype to load
-    WeaponSlotInfo m_inventory[ 5 ];
-
-    // was swap key triggered
-    bool m_swap;
-
-private:
-    void TriggerSwapWeapons(EVENT_HANDLER(game::SWAP_COMMAND));
+    );
 
     WeaponType GetStartWeapon(void) const;
     void SetStartWeapon(const WeaponType slot);
@@ -131,4 +104,44 @@ private:
     const std::string& GetMeleeWeapon(void) const;
     void SetMeleeWeapon(const std::string& archetype);
 
-} Meta(Disable, DisplayName("Inventory"));
+    void SetNewWeapon(const WeaponType type, const std::string& weaponToLoad, int ammo, int clip);
+
+
+    ///////////////////
+    ////  Members  ////
+    ///////////////////
+
+    // current weapon out
+    WeaponType m_currWeapon;
+
+    // current weapon out
+    Meta(Disable)
+    WeaponType m_prevWeapon;
+
+    // position of camera
+    Meta(Disable)
+    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_cameraHandle;
+
+    // position of arm
+    Meta(Disable)
+    ursine::ecs::Component::Handle<ursine::ecs::Transform> m_armHandle;
+
+    // what archetype to load
+    Meta(Disable)
+    WeaponSlotInfo m_inventory[ 5 ];
+
+    // was swap key triggered
+    Meta(Disable)
+    bool m_swap;
+
+    Meta(Disable)
+    bool m_newWeapon;
+
+    Meta(Disable)
+    bool m_init;
+
+
+private:
+    void TriggerSwapWeapons(EVENT_HANDLER(game::SWAP_COMMAND));
+
+} Meta(Enable, DisplayName("Inventory"));

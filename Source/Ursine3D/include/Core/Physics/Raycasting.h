@@ -25,7 +25,7 @@ namespace ursine
             RAYCAST_CLOSEST_HIT,
             RAYCAST_ALL_HITS,
             RAYCAST_NUM
-        };
+        } Meta(Enable);
 
         struct RaycastInput
         {

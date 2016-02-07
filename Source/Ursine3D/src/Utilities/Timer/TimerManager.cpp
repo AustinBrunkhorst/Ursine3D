@@ -16,6 +16,16 @@
 #include "TimerManager.h"
 #include "TimerID.h"
 
+#if defined(URSINE_WITH_EDITOR)
+
+#define TIMER_MANAGER_LOCK std::lock_guard<std::mutex> lock( m_mutex )
+
+#else
+
+#define TIMER_MANAGER_LOCK
+
+#endif
+
 namespace ursine
 {
     CORE_SYSTEM_DEFINITION( TimerManager );
@@ -33,21 +43,21 @@ namespace ursine
 
     void TimerManager::Pause(TimerGroupID group)
     {
-		std::lock_guard<std::mutex> lock( m_mutex );
+        TIMER_MANAGER_LOCK;
 
         m_groups[ group ] = true;
     }
 
     void TimerManager::Resume(TimerGroupID group)
     {
-		std::lock_guard<std::mutex> lock( m_mutex );
+        TIMER_MANAGER_LOCK;
 
         m_groups[ group ] = false;
     }
 
     void TimerManager::Clear(TimerGroupID group)
     {
-		std::lock_guard<std::mutex> lock( m_mutex );
+        TIMER_MANAGER_LOCK;
 
         for (auto it = m_timers.begin( ); it != m_timers.end( );)
         {
@@ -63,8 +73,8 @@ namespace ursine
         EVENT_ATTRS(Application, EventArgs);
 
         auto dt = sender->GetDeltaTime( ) * TimeSpan::MillisPerSecond;
-		
-		std::lock_guard<std::mutex> lock( m_mutex );
+
+        TIMER_MANAGER_LOCK;
 
         for (auto &pair : m_timers)
         {
@@ -106,7 +116,7 @@ namespace ursine
 
     TimerID TimerManager::create(const TimeSpan &duration, TimerGroupID group)
     {
-		std::lock_guard<std::mutex> lock( m_mutex );
+        TIMER_MANAGER_LOCK;
 
         auto id = m_nextID++;
 

@@ -34,6 +34,7 @@
 #include "ParticleColorAnimatorComponent.h"
 #include "ParticleAnimatorComponent.h"
 #include "ParticleAttractorComponent.h"
+#include "ParticleTwisterComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics

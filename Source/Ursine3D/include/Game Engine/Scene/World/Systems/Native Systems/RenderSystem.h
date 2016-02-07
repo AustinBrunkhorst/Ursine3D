@@ -23,7 +23,7 @@ namespace ursine
 
     namespace graphics
     {
-        class GfxAPI;
+    class GfxAPI;
     }
 
     namespace ecs
@@ -46,7 +46,7 @@ namespace ursine
                 : camera( camera ) { }
         };
 
-        class RenderSystem
+        class RenderSystem 
             : public EntitySystem
             , public EventDispatcher<RenderSystemEventType>
         {

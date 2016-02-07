@@ -554,7 +554,7 @@ ursine_editor_Editor.prototype = {
 		btnToggle.addEventListener("click",function() {
 			var paused = toolsContainer.classList.contains("paused");
 			toolsContainer.classList.toggle("paused",!paused);
-			ursine_native_Extern.SceneSetPlayState(paused);
+			ursine_native_Extern.SceneSetPlayState(!paused);
 		});
 		btnStep.addEventListener("click",function() {
 			if(btnStep.classList.contains("disabled")) return;
@@ -2095,6 +2095,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		item.text = entity.getName();
 		item.entity = entity;
 		item.textElement.addEventListener("click",function(e4) {
+			if(_g.m_selectedEntities.indexOf(item.entity.uniqueID) != -1) return;
 			_g.clearSelectedEntities();
 			item.entity.select();
 		});

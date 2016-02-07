@@ -79,7 +79,7 @@ namespace ursine
             m_nameManager = nullptr;
 
             delete m_entityManager;
-
+            
             m_entityManager = nullptr;
             
             m_settings = nullptr;

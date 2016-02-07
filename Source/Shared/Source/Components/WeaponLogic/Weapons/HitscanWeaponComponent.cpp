@@ -31,7 +31,7 @@ HitscanWeapon::~HitscanWeapon(void)
 
 void HitscanWeapon::OnInitialize(void)
 {
-    AbstractWeaponInit(HitscanWeapon);
+    AbstractWeaponInit(HitscanWeapon, GetOwner( ));
 }
 
 
