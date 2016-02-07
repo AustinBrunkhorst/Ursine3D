@@ -63,7 +63,7 @@ namespace ursine
         EVENT_ATTRS(Application, EventArgs);
 
         auto dt = sender->GetDeltaTime( ) * TimeSpan::MillisPerSecond;
-
+		
 		std::lock_guard<std::mutex> lock( m_mutex );
 
         for (auto &pair : m_timers)

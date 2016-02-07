@@ -106,6 +106,10 @@ namespace ursine
 
         for (auto &system : config->systems)
         {
+			// If this system is the equivalent of null
+			if (system.type.size( ) == 0)
+				continue;
+
             auto type = meta::Type::GetFromName( system.type );
 
             if (!type.IsValid( ))

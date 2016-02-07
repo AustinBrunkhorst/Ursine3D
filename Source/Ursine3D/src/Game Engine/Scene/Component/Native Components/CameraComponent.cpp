@@ -57,6 +57,7 @@ namespace ursine
 
             SetNearPlane( 0.1f );
             SetFarPlane( 1000.0f );
+			SetViewportSize( Vec2::One( ) );
         }
 
         Camera::~Camera(void)
