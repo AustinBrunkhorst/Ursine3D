@@ -249,7 +249,7 @@ namespace
 
         auto path = files[ 0 ];
 
-        if (!fs::WriteText( path.string( ), serialized.dump( ) ))
+        if (!fs::WriteText( path.string( ), serialized.dump( true ) ))
         {
             UWarning( "Could not write to world file.\nfile: %s",
                 path.string( ).c_str( )

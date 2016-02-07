@@ -155,12 +155,12 @@ namespace ursine
         const Json &operator[](const std::string &key) const;
 
         // Serialize.
-        void dump(std::string &out) const;
+        void dump(std::string &out, bool multiline = false) const;
 
-        std::string dump() const
+        std::string dump(bool multiline = false) const
         {
             std::string out;
-            dump(out);
+            dump(out, multiline);
             return out;
         }
 
@@ -228,7 +228,7 @@ namespace ursine
         virtual Json::Type type() const = 0;
         virtual bool equals(const JsonValue *other) const = 0;
         virtual bool less(const JsonValue *other) const = 0;
-        virtual void dump(std::string &out) const = 0;
+        virtual void dump(std::string &out, bool multiline = false) const = 0;
         virtual double number_value() const;
         virtual int int_value() const;
         virtual bool bool_value() const;

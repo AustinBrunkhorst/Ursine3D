@@ -64,7 +64,7 @@ namespace ursine
 		{
 			if (other)
 			{
-                m_entity = other->m_owner;
+                m_entity = other->GetOwner( );
 
 				UAssert(
 					m_entity != nullptr, 
@@ -99,7 +99,7 @@ namespace ursine
 		{
 			if (rhs)
 			{
-                m_entity = rhs->m_owner;
+                m_entity = rhs->GetOwner( );
 
 				return operator->( );
 			}
@@ -125,7 +125,7 @@ namespace ursine
 			if (rhs == nullptr)
 				return m_entity == nullptr;
 
-            return m_entity == rhs->m_owner;
+            return m_entity == rhs->GetOwner( );
 		}
 
 		template<class ComponentType>

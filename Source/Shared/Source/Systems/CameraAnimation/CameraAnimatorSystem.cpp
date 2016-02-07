@@ -58,7 +58,7 @@ void CameraAnimatorSystem::Process(Entity* entity)
 		if (t > 1.0f)
 		{
 			// decrease t value
-			t -= 1.0f;
+			t -= floor( t );
 
 			// increment index
 			++(animator->m_index);
