@@ -181,6 +181,9 @@ namespace ursine
             {
                 auto camera = m_cameras[ i ];
 
+				if (camera->m_dirty)
+					camera->updateRenderer( );
+
                 if (!camera->GetActive( ) || camera->IsEditorCamera( ))
                     continue;
 

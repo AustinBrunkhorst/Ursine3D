@@ -21,6 +21,8 @@
 
 #include "GfxAPI.h"
 
+#include "EntityEvent.h"
+
 namespace ursine
 {
     namespace ecs
@@ -80,6 +82,8 @@ namespace ursine
 
             cam.SetPosition( trans->GetWorldPosition( ) );
             cam.SetLook( trans->GetForward( ) );
+
+			m_dirty = false;
         }
 
         Vec2 Camera::GetViewportPosition(void) const
