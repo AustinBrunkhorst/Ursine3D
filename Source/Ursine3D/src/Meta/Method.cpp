@@ -25,6 +25,11 @@ namespace ursine
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
+        Method::~Method(void)
+        {
+            delete m_invoker;
+        }
+
         const Method &Method::Invalid(void)
         {
             static Method invalid;
@@ -58,14 +63,14 @@ namespace ursine
                 "Invalid method invoked" );
 
             UAssert( !(instance.IsConst( ) && !m_isConst), 
-                "Non-const method invoked on const object" )
+                "Non-const method invoked on const object" );
 
             UAssert( instance.GetType( ) == m_classType, 
                 "Incompatible method invoked with instance" );
 
         #endif
 
-            return m_invoker( instance, arguments );
+            return m_invoker->Invoke( instance, arguments );
         }
     }
 }

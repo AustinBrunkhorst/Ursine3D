@@ -24,5 +24,8 @@ namespace ursine
         template<typename T>
         using InvokableOverloadMap = 
             std::unordered_multimap<InvokableSignature, T>;
+
+        // maximum number of arguments supported
+        const size_t MaxArgumentCount = 10;
     }
 }

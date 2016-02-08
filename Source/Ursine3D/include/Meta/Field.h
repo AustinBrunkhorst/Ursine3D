@@ -14,8 +14,8 @@
 
 #include "Variant.h"
 
-#include <vector>
-#include <functional>
+#include "FieldGetter.h"
+#include "FieldSetter.h"
 
 namespace ursine
 {
@@ -24,9 +24,6 @@ namespace ursine
         class Field : public MetaContainer
         {
         public:
-            typedef std::function<Variant(const Variant &)> Getter;
-            typedef std::function<void(Variant &, const Variant &)> Setter;
-
             static bool SetValue(Variant &instance, const Variant &value, const Method &setter);
 
             Field(void);
@@ -35,9 +32,11 @@ namespace ursine
                 const std::string &name, 
                 Type type, 
                 Type classType, 
-                Getter getter, 
-                Setter setter
+                FieldGetterBase *getter, 
+                FieldSetterBase *setter
             );
+
+            ~Field(void);
 
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
@@ -56,8 +55,8 @@ namespace ursine
 
             std::string m_name;
 
-            const Getter m_getter;
-            Setter m_setter;
+            FieldGetterBase *m_getter;
+            FieldSetterBase *m_setter;
         };
     }
 }

@@ -29,8 +29,8 @@ namespace ursine
         Global::Global(
             const std::string &name, 
             Type type, 
-            Getter getter, 
-            Setter setter, 
+            GlobalGetterBase *getter,
+            GlobalSetterBase *setter,
             Type parentType
         ) 
             : m_type( type )
@@ -38,6 +38,12 @@ namespace ursine
             , m_name( name ) 
             , m_getter( getter )
             , m_setter( setter ) { }
+
+        Global::~Global(void)
+        {
+            delete m_getter;
+            delete m_setter;
+        }
 
         bool Global::IsValid(void) const
         {
@@ -66,7 +72,7 @@ namespace ursine
 
         Variant Global::GetValue(void) const
         {
-            return m_getter( );
+            return m_getter->GetValue( );
         }
 
         bool Global::SetValue(const Argument &value) const
@@ -74,7 +80,7 @@ namespace ursine
             // read only?
             if (m_setter != nullptr)
             {
-                m_setter( value );
+                m_setter->SetValue( value );
 
                 return true;
             }

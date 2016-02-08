@@ -14,8 +14,8 @@
 
 #include "Variant.h"
 
-#include <vector>
-#include <functional>
+#include "GlobalGetter.h"
+#include "GlobalSetter.h"
 
 namespace ursine
 {
@@ -32,10 +32,12 @@ namespace ursine
             Global(
                 const std::string &name, 
                 Type type, 
-                Getter getter, 
-                Setter setter, 
+                GlobalGetterBase *getter, 
+                GlobalSetterBase *setter, 
                 Type parentType = Type::Invalid
             );
+
+            ~Global(void);
 
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
@@ -54,8 +56,8 @@ namespace ursine
 
             std::string m_name;
 
-            Getter m_getter;
-            Setter m_setter;
-        };
+            GlobalGetterBase *m_getter;
+            GlobalSetterBase *m_setter;
+        };  
     }
 }

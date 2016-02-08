@@ -158,10 +158,10 @@ namespace ursine
             float GetRotationRange(void) const;
             void SetRotationRange(const float range);
 
-            const SVec3 &GetVelocity(void) const;
+            SVec3 &GetVelocity(void) const;
             void SetVelocity(const SVec3 &velocity);
 
-            const SVec3 GetVelocityRange(void) const;
+            SVec3 GetVelocityRange(void) const;
             void SetVelocityRange(const SVec3 &range);
 
             const SVec3 &GetEmitterSize(void) const;

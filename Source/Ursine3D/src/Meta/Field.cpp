@@ -30,14 +30,20 @@ namespace ursine
             const std::string &name, 
             Type type, 
             Type classType, 
-            Getter getter, 
-            Setter setter
+            FieldGetterBase *getter,
+            FieldSetterBase *setter
         ) 
             : m_type( type )
             , m_classType( classType )
             , m_name( name )
             , m_getter( getter )
             , m_setter( setter ) { }
+
+        Field::~Field(void)
+        {
+            delete m_getter;
+            delete m_setter;
+        }
 
         bool Field::SetValue(Variant &instance, const Variant &value, const Method &setter)
         {
@@ -79,7 +85,7 @@ namespace ursine
 
         Variant Field::GetValue(const Variant &instance) const
         {
-            return m_getter( instance );
+            return m_getter->GetValue( instance );
         }
 
         bool Field::SetValue(Variant &instance, const Variant &value) const
@@ -87,7 +93,7 @@ namespace ursine
             // read only?
             if (m_setter && !instance.IsConst( ))
             {
-                m_setter( instance, value );
+                m_setter->SetValue( instance, value );
 
                 return true;
             }

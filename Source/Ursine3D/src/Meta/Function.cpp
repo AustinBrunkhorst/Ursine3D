@@ -21,7 +21,13 @@ namespace ursine
     {
         Function::Function(void)
             : Invokable( "INVALID" )
-            , m_parentType( { Type::Invalid } ) { }
+            , m_parentType( { Type::Invalid } )
+            , m_invoker( nullptr ) { }
+
+        Function::~Function(void)
+        {
+            delete m_invoker;
+        }
 
         const Function &Function::Invalid(void)
         {
@@ -48,7 +54,7 @@ namespace ursine
 
         #endif
         
-            return m_invoker( arguments );
+            return m_invoker->Invoke( arguments );
         }
     }
 }

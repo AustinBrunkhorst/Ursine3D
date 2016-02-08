@@ -120,6 +120,7 @@ namespace ursine
 		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
 			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
 
+        Meta(Disable)
 		CAkFilePackageLowLevelIOBlocking g_lowLevelIO;
 
 	private:

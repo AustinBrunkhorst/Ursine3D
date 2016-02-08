@@ -127,34 +127,89 @@ namespace ursine
 
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
+            
+            // Method Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename MethodGetterType, typename MethodSetterType>
+            void AddField(
+                const std::string &name, 
+                MethodGetterType methodGetter,
+                MethodSetterType methodSetter,
+                const MetaManager::Initializer &meta
+            );
 
+            // Method Getter, Field Setter
+            template<typename ClassType, typename FieldType, typename MethodGetterType>
+            void AddField(
+                const std::string &name, 
+                MethodGetterType methodGetter,
+                typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename MethodSetterType>
+            void AddField(
+                const std::string &name, 
+                typename FieldGetter<ClassType, FieldType, false>::Signature fieldGetter,
+                MethodSetterType methodSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Field Setter
             template<typename ClassType, typename FieldType>
             void AddField(
                 const std::string &name, 
-                Field::Getter getter, 
-                Field::Setter setter, 
+                typename FieldGetter<ClassType, FieldType, false>::Signature fieldGetter,
+                typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
                 const MetaManager::Initializer &meta
             );
 
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
+            // Method Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename GetterType, typename SetterType>
+            void AddStaticField(
+                const std::string &name, 
+                GetterType getter,
+                SetterType setter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Method Getter, Field Setter
+            template<typename ClassType, typename FieldType, typename GetterType>
+            void AddStaticField(
+                const std::string &name, 
+                GetterType getter,
+                FieldType *fieldSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename SetterType>
+            void AddStaticField(
+                const std::string &name, 
+                FieldType *fieldGetter,
+                SetterType setter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Field Setter
             template<typename ClassType, typename FieldType>
             void AddStaticField(
                 const std::string &name, 
-                Global::Getter getter, 
-                Global::Setter setter, 
+                FieldType *fieldGetter,
+                FieldType *fieldSetter,
                 const MetaManager::Initializer &meta
             );
 
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
-            template<typename MethodType, typename MethodInvoker>
+            template<typename MethodType>
             void AddMethod(
                 const std::string &name, 
-                MethodType type, 
-                MethodInvoker invoker, 
+                MethodType method,
                 const MetaManager::Initializer &meta
             );
 
@@ -172,13 +227,11 @@ namespace ursine
 
             template<
                 typename ClassType, 
-                typename FunctionType, 
-                typename FunctionInvoker
+                typename FunctionType
             >
             void AddStaticMethod(
                 const std::string &name, 
-                FunctionType type, 
-                FunctionInvoker invoker, 
+                FunctionType function,
                 const MetaManager::Initializer &meta
             );
 

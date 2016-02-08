@@ -116,7 +116,7 @@ namespace ursine
         template<typename T>
         T &Variant::GetValue(void) const
         {
-            return *static_cast<T*>( m_base->GetPtr( ) );
+            return *static_cast<T*>( getPtr( ) );
         }
     }
 }

@@ -37,8 +37,8 @@ namespace ursine
         public:
             EditorField(
                 LightType Type,
-                GetType,
-                SetType
+                GetLightType,
+                SetLightType
             );
 
             EditorField(
@@ -83,8 +83,8 @@ namespace ursine
             Meta(Disable)
             const ursine::graphics::Light *GetLight(void);
 
-            LightType GetType(void);
-            void SetType(LightType type);
+            LightType GetLightType(void);
+            void SetLightType(LightType type);
 
             const SVec3 &GetDirection(void);
             void SetDirection(const SVec3 &dir);

@@ -72,12 +72,12 @@ namespace ursine
             return m_light;
         }
 
-        LightType Light::GetType(void)
+        LightType Light::GetLightType(void)
         {
             return static_cast<LightType>( m_light->GetType( ) );
         }
 
-        void Light::SetType(LightType type)
+        void Light::SetLightType(LightType type)
         {
             m_light->SetType( static_cast<graphics::Light::LightType>( type ) );
 

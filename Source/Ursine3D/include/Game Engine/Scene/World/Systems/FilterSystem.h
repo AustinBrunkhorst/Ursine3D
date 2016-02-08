@@ -47,9 +47,8 @@ namespace ursine
             // game tick
             virtual void onUpdate(EVENT_HANDLER(World));
 
-            const Filter m_filter;
-
         protected:
+            const Filter m_filter;
             std::unordered_map<EntityUniqueID, Entity*> m_active;
 
             void Add(Entity *entity);
