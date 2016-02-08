@@ -36,37 +36,37 @@ namespace ursine
 
         public:
             EditorField(
-                LightType Type,
-                GetType,
-                SetType
+                ursine::ecs::LightType type,
+                GetLightType,
+                SetLightType
             );
 
             EditorField(
-                SVec3 Direction,
+                SVec3 direction,
                 GetDirection,
                 SetDirection
             );
 
             EditorField(
-                Color Color,
+                Color color,
                 GetColor,
                 SetColor
             );
 
             EditorField(
-                float Intensity,
+                float intensity,
                 GetIntensity,
                 SetIntensity
             );
 
             EditorField(
-                float Radius,
+                float radius,
                 GetRadius,
                 SetRadius
             );
 
             EditorField(
-                Vec2 SpotlightAngles,
+                Vec2 spotlightAngles,
                 GetSpotlightAngles,
                 SetSpotlightAngles
             );
@@ -83,8 +83,8 @@ namespace ursine
             Meta(Disable)
             const ursine::graphics::Light *GetLight(void);
 
-            LightType GetType(void);
-            void SetType(LightType type);
+            ursine::ecs::LightType GetLightType(void);
+            void SetLightType(ursine::ecs::LightType type);
 
             const SVec3 &GetDirection(void);
             void SetDirection(const SVec3 &dir);

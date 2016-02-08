@@ -44,15 +44,15 @@
         static void SetComponentID(ursine::ecs::ComponentTypeID id); \
     private:                                                         \
 
-// Required in the translation unit of all native components DICKBUTT
-#define NATIVE_COMPONENT_DEFINITION(type)                      \
-    ursine::ecs::ComponentTypeID type::ComponentID = -1;       \
-    ursine::ecs::ComponentTypeMask type::TypeMask;             \
-    void type::SetComponentID(ursine::ecs::ComponentTypeID id) \
-    {                                                          \
-        ComponentID = id;                                      \
-        TypeMask.set( id, true );                              \
-    }                                                          \
+// Required in the translation unit of all native components
+#define NATIVE_COMPONENT_DEFINITION(type)                                              \
+    ursine::ecs::ComponentTypeID type::ComponentID = ursine::ecs::kInvalidComponentID; \
+    ursine::ecs::ComponentTypeMask type::TypeMask;                                     \
+    void type::SetComponentID(ursine::ecs::ComponentTypeID id)                         \
+    {                                                                                  \
+        ComponentID = id;                                                              \
+        TypeMask.set( id, true );                                                      \
+    }                                                                                  \
 
 #if defined(URSINE_WITH_EDITOR)
 
@@ -93,5 +93,8 @@ namespace ursine
 
         // Vector of component pointers
         typedef std::vector<Component*> ComponentVector;
+
+        // Default value for uninitialized components
+        const ComponentTypeID kInvalidComponentID = -1;
     }
 }

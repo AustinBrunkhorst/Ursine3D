@@ -22,15 +22,14 @@ namespace ursine
             globals.emplace( name, global );
         }
 
-        template<typename FunctionType, typename FunctionInvoker>
+        template<typename FunctionType>
         void ReflectionDatabase::AddGlobalFunction(
             const std::string &name, 
-            FunctionType type, 
-            FunctionInvoker invoker, 
+            FunctionType globalFunction,
             const MetaManager::Initializer &meta
         )
         {
-            Function function( name, type, invoker );
+            Function function( name, globalFunction );
 
             function.m_meta = meta;
 

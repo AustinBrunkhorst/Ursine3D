@@ -312,13 +312,6 @@ void CheckArchetypeToShoot(std::string& archetype)
         archetype += ".uatype";
 }
 
-void AbstractWeapon::SetArchetypeToShoot(const char * archetype)
-{
-    m_archetypeToShoot = archetype;
-
-    CheckArchetypeToShoot(m_archetypeToShoot);
-}
-
 // weapon type
 WeaponType AbstractWeapon::GetWeaponType( ) const
 {

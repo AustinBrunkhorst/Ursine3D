@@ -329,8 +329,7 @@ public:
     void SetSpawnOffset(const ursine::SVec3& offset);
 
     const std::string& GetArchetypeToShoot(void) const;
-    void SetArchetypeToShoot(const char* archetype);
-    void SetArchetypeToShoot(const std::string& archetype);
+    void SetArchetypeToShoot(const std::string &archetype);
 
     bool GetTriggerPulled(void) const;
 

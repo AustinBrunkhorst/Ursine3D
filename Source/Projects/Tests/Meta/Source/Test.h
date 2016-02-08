@@ -17,7 +17,7 @@
 
 class BaseClass { };
 
-class Test : public BaseClass
+class Testing : public BaseClass
 {
 public:
     double potato;

@@ -194,7 +194,7 @@ void Editor::initializeScene(void)
         univLight->GetTransform( )->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
         univLight->GetTransform( )->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
 
-        component->SetType( ecs::LightType::Directional );
+        component->SetLightType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }

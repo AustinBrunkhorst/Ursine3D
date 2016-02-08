@@ -31,9 +31,16 @@ namespace ursine
 		friend class SVec4;
 
 	public:
+        Meta(ExplicitGetter( "(float (ursine::Vec4::*)(void) const) &ursine::Vec4::X" ))
         EditorField(float x, X, SetX);
+
+        Meta(ExplicitGetter( "(float (ursine::Vec4::*)(void) const) &ursine::Vec4::Y" ))
         EditorField(float y, Y, SetY);
+
+        Meta(ExplicitGetter( "(float (ursine::Vec4::*)(void) const) &ursine::Vec4::Z" ))
         EditorField(float z, Z, SetZ);
+
+        Meta(ExplicitGetter( "(float (ursine::Vec4::*)(void) const) &ursine::Vec4::W" ))
         EditorField(float w, W, SetW);
 
 		// Constructors

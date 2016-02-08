@@ -43,7 +43,7 @@ namespace ursine
 
             Enum(const EnumBase *base);
 
-            const EnumBase *m_base;
+            std::shared_ptr<const EnumBase> m_base;
         };
     }
 }

@@ -19,9 +19,9 @@
 
 struct ForceComponent : ursine::ecs::Component
 {
-    NATIVE_COMPONENT
-public:
+    NATIVE_COMPONENT;
 
+public:
     ForceComponent(void);
     ~ForceComponent(void);
 
@@ -37,7 +37,12 @@ public:
     
     void OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
+private:
     ursine::SVec3 m_force;
 
-} Meta(Enable, DisplayName("ForceComponent"), RequiresComponents(typeof(ursine::physics::BoxCollider)));
+} Meta(
+    Enable, 
+    DisplayName( "ForceComponent" ), 
+    RequiresComponents( typeof( ursine::physics::BoxCollider ) )
+);
 

@@ -6,7 +6,7 @@ import ursine.editor.scene.component.ComponentDatabase;
 @componentInspector( "Light" )
 class LightInspector extends ComponentInspectionHandler {
     private static var m_lightTypeName = "ursine::ecs::LightType";
-    private static var m_lightTypeFieldName = "Type";
+    private static var m_lightTypeFieldName = "type";
     private static var m_lightTypeEnum : NativeEnum = null;
 
     private static var m_lightTypeDirectional = "Directional";
@@ -84,22 +84,22 @@ class LightInspector extends ComponentInspectionHandler {
         m_typeToFields = new Map<UInt, Array<String>>( );
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
-            "Color",
-            "Direction",
-            "Intensity"
+            "color",
+            "direction",
+            "intensity"
         ];
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypePoint ) ] = [
-            "Color",
-            "Intensity",
-            "Radius"
+            "color",
+            "intensity",
+            "radius"
         ];
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeSpot ) ] = [
-            "Color",
-            "Direction",
-            "Intensity",
-            "SpotlightAngles"
+            "color",
+            "direction",
+            "intensity",
+            "spotlightAngles"
         ];
     }
 }

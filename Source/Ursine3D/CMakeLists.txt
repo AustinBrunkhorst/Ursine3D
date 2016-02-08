@@ -17,7 +17,7 @@ set(URSINE_DEPENDENCIES_INCLUDE_DIRS
     ${DirectX_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${WWise_INCLUDE_DIRS}  
-    ${BulletPhysics_INCLUDE_DIRS} 
+    ${BulletPhysics_INCLUDE_DIRS}
     ${FBX_INCLUDE_DIRS}
 )
 

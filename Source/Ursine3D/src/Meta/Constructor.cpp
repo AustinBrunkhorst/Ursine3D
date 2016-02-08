@@ -48,7 +48,7 @@ namespace ursine
         Constructor::Constructor(
             Type classType, 
             InvokableSignature signature, 
-            Invoker invoker, 
+            ConstructorInvokerBase *invoker,
             bool isDynamic
         )
             : Invokable( "constructor" )
@@ -96,7 +96,7 @@ namespace ursine
         {
             UAssert( IsValid( ), "Invalid constructor invoked" );
 
-            return m_invoker( arguments );
+            return m_invoker->Invoke( arguments );
         }
     }
 }

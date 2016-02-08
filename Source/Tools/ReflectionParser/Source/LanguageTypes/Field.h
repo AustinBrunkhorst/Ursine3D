@@ -49,6 +49,9 @@ private:
     std::string m_explicitGetter;
     std::string m_explicitSetter;
 
+    std::string m_veryExplicitGetter;
+    std::string m_veryExplicitSetter;
+
     bool isAccessible(void) const;
     bool isGetterAccessible(void) const;
     bool isSetterAccessible(void) const;

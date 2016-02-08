@@ -61,11 +61,10 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////
 
-            template<typename FunctionType, typename FunctionInvoker>
+            template<typename FunctionType>
             void AddGlobalFunction(
                 const std::string &name, 
-                FunctionType type, 
-                FunctionInvoker invoker, 
+                FunctionType globalFunction,
                 const MetaManager::Initializer &meta
             );
 

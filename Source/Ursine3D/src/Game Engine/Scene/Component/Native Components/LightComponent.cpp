@@ -72,16 +72,17 @@ namespace ursine
             return m_light;
         }
 
-        LightType Light::GetType(void)
+        LightType Light::GetLightType(void)
         {
+            return LightType::Directional;
             return static_cast<LightType>( m_light->GetType( ) );
         }
 
-        void Light::SetType(LightType type)
+        void Light::SetLightType(LightType type)
         {
             m_light->SetType( static_cast<graphics::Light::LightType>( type ) );
 
-            NOTIFY_COMPONENT_CHANGED( "Type", type );
+            NOTIFY_COMPONENT_CHANGED( "type", type );
         }
 
         const SVec3 &Light::GetDirection(void)
@@ -93,7 +94,7 @@ namespace ursine
         {
             m_light->SetDirection( direction );
 
-            NOTIFY_COMPONENT_CHANGED( "Direction", direction );
+            NOTIFY_COMPONENT_CHANGED( "direction", direction );
         }
 
         const SVec3 &Light::GetPosition(void)
@@ -105,7 +106,7 @@ namespace ursine
         {
             m_light->SetPosition( position );
 
-            NOTIFY_COMPONENT_CHANGED( "Position", position );
+            NOTIFY_COMPONENT_CHANGED( "position", position );
         }
 
         const Color &Light::GetColor(void)
@@ -117,7 +118,7 @@ namespace ursine
         {
             m_light->SetColor( color );
 
-            NOTIFY_COMPONENT_CHANGED( "Color", color );
+            NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 
         float Light::GetRadius(void)
@@ -129,7 +130,7 @@ namespace ursine
         {
             m_light->SetRadius( radius );
 
-            NOTIFY_COMPONENT_CHANGED( "Radius", radius );
+            NOTIFY_COMPONENT_CHANGED( "radius", radius );
         }
 
         float Light::GetIntensity(void)
@@ -141,7 +142,7 @@ namespace ursine
         {
             m_light->SetIntensity( intensity );
 
-            NOTIFY_COMPONENT_CHANGED( "Intensity", intensity );
+            NOTIFY_COMPONENT_CHANGED( "intensity", intensity );
         }
 
         const Vec2 &Light::GetSpotlightAngles(void)
@@ -153,7 +154,7 @@ namespace ursine
         {
             m_light->SetSpotlightAngles( angles );
 
-            NOTIFY_COMPONENT_CHANGED( "SpotLightAngles", angles );
+            NOTIFY_COMPONENT_CHANGED( "spotLightAngles", angles );
         }
 
         void Light::updateRenderer(void)
