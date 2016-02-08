@@ -10,7 +10,7 @@ namespace ursine
         class GlobalSetter : public GlobalSetterBase
         {
         public:
-            void SetValue(const Variant &value) override;
+            void SetValue(const Argument &value) override;
         };
     }
 }

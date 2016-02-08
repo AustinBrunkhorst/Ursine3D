@@ -38,17 +38,6 @@ namespace ursine
             , name( name )
             , enumeration { nullptr } { }
 
-        TypeData::~TypeData(void)
-        {
-            if (isEnum)
-            {
-                // free allocated enum container
-                delete enumeration.m_base;
-
-                enumeration.m_base = nullptr;
-            }
-        }
-
         void TypeData::LoadBaseClasses(
             ReflectionDatabase &db, 
             TypeID thisType, 

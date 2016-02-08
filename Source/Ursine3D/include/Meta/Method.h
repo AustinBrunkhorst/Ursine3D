@@ -33,7 +33,6 @@ namespace ursine
         {
         public:
             Method(void);
-            ~Method(void);
 
             template<
                 class ClassType, 
@@ -73,7 +72,7 @@ namespace ursine
 
             Type m_classType;
 
-            MethodInvokerBase *m_invoker;
+            std::shared_ptr<MethodInvokerBase> m_invoker;
         };
     }
 }

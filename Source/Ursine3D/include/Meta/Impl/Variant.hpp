@@ -45,10 +45,13 @@ namespace ursine
         template<typename T>
         Variant::Variant(T &&data, 
             typename std::enable_if< 
-                !std::is_same<Variant&, T>::value 
+                !std::is_same<Variant, T>::value 
             >::type*, 
             typename std::enable_if< 
                 !std::is_const<T>::value 
+            >::type*,
+            typename std::enable_if<
+                !std::is_same<Argument, T>::value
             >::type*
         )
             : m_isConst( false )

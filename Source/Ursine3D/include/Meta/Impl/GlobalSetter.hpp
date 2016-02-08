@@ -15,7 +15,7 @@ namespace ursine
             GlobalSetter(Signature function)
                 : m_function( function ) { }
 
-            void SetValue(const Variant &value) override
+            void SetValue(const Argument &value) override
             {
                 m_function( value.GetValue<GlobalType>( ) );
             }
@@ -35,7 +35,7 @@ namespace ursine
             GlobalSetter(GlobalType *field)
                 : m_field( field ) { }
 
-            void SetValue(const Variant &value) override
+            void SetValue(const Argument &value) override
             {
                 const_cast<GlobalType&>( *m_field ) = value.GetValue<GlobalType>( );
             }

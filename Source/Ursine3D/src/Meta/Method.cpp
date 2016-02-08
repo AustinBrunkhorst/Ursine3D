@@ -25,11 +25,6 @@ namespace ursine
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
-        Method::~Method(void)
-        {
-            delete m_invoker;
-        }
-
         const Method &Method::Invalid(void)
         {
             static Method invalid;

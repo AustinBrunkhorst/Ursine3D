@@ -24,11 +24,6 @@ namespace ursine
             , m_parentType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
-        Function::~Function(void)
-        {
-            delete m_invoker;
-        }
-
         const Function &Function::Invalid(void)
         {
             static Function invalid;

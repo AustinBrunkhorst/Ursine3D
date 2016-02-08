@@ -39,12 +39,6 @@ namespace ursine
             , m_getter( getter )
             , m_setter( setter ) { }
 
-        Field::~Field(void)
-        {
-            delete m_getter;
-            delete m_setter;
-        }
-
         bool Field::SetValue(Variant &instance, const Variant &value, const Method &setter)
         {
              // read only?

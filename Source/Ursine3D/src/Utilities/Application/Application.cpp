@@ -61,7 +61,9 @@ namespace ursine
                 "Core system \"%s\" doesn't have static SystemID field.",
                 derived.GetName( ).c_str( ) );
 
-            id.SetValue( m_systems.size( ) );
+            auto index = m_systems.size( );
+
+            id.SetValue( index );
 
             auto &ctor = derived.GetDynamicConstructor( );
 

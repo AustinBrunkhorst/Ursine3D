@@ -10,7 +10,7 @@ namespace ursine
         class FieldSetter : public FieldSetterBase
         {
         public:
-            void SetValue(Variant &obj, const Variant &value) override;
+            void SetValue(Variant &obj, const Argument &value) override;
         };
     }
 }

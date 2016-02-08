@@ -36,8 +36,6 @@ namespace ursine
                 FieldSetterBase *setter
             );
 
-            ~Field(void);
-
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
 
@@ -50,13 +48,15 @@ namespace ursine
             bool SetValue(Variant &instance, const Variant &value) const;
             
         private:
+            friend struct TypeData;
+
             Type m_type;
             Type m_classType;
 
             std::string m_name;
 
-            FieldGetterBase *m_getter;
-            FieldSetterBase *m_setter;
+            std::shared_ptr<FieldGetterBase> m_getter;
+            std::shared_ptr<FieldSetterBase> m_setter;
         };
     }
 }

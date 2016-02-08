@@ -39,8 +39,6 @@ namespace ursine
                 Type parentType = Type::Invalid
             );
 
-            ~Function(void);
-
             static const Function &Invalid(void);
 
             Type GetParentType(void) const;
@@ -55,7 +53,7 @@ namespace ursine
         private:
             Type m_parentType;
 
-            FunctionInvokerBase *m_invoker;
+            std::shared_ptr<FunctionInvokerBase> m_invoker;
         };
     }
 }

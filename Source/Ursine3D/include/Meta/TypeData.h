@@ -90,8 +90,6 @@ namespace ursine
             TypeData(void);
             TypeData(const std::string &name);
 
-            ~TypeData(void);
-
             void LoadBaseClasses(
                 ReflectionDatabase &db, 
                 TypeID thisType, 

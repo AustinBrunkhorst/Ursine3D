@@ -9,7 +9,7 @@ namespace ursine
         public:
             virtual ~GlobalSetterBase(void) { }
 
-            virtual void SetValue(const Variant &value) = 0;
+            virtual void SetValue(const Argument &value) = 0;
         };
     }
 }

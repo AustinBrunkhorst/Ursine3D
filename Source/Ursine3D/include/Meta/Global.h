@@ -37,8 +37,6 @@ namespace ursine
                 Type parentType = Type::Invalid
             );
 
-            ~Global(void);
-
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
 
@@ -51,13 +49,15 @@ namespace ursine
             bool SetValue(const Argument &value) const;
             
         private:
+            friend struct TypeData;
+
             Type m_type;
             Type m_parentType;
 
             std::string m_name;
 
-            GlobalGetterBase *m_getter;
-            GlobalSetterBase *m_setter;
+            std::shared_ptr<GlobalGetterBase> m_getter;
+            std::shared_ptr<GlobalSetterBase> m_setter;
         };  
     }
 }

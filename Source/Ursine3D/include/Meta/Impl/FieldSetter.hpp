@@ -37,7 +37,7 @@ namespace ursine
             FieldSetter(ConstRefSignatureConst method)
                 : m_method( reinterpret_cast<ConstRefSignature>( method ) ) { }
 
-            void SetValue(Variant &obj, const Variant &value) override
+            void SetValue(Variant &obj, const Argument &value) override
             {
                 auto &instance = obj.GetValue<ClassType>( );
 
@@ -57,15 +57,16 @@ namespace ursine
         {
         public:
             typedef FieldType (ClassType::*Signature);
+            typedef typename std::remove_const<FieldType>::type NonConstFieldType;
 
             FieldSetter(Signature field)
                 : m_field( field ) { }
 
-            void SetValue(Variant &obj, const Variant &value) override
+            void SetValue(Variant &obj, const Argument &value) override
             {
                 auto &instance = obj.GetValue<ClassType>( );
 
-                const_cast<typename std::remove_const<FieldType>::type&>( instance.*m_field ) = value.GetValue<FieldType>( );
+                const_cast<NonConstFieldType&>( instance.*m_field ) = value.GetValue<FieldType>( );
             }
 
         private:
