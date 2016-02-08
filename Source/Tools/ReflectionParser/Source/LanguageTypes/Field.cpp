@@ -70,7 +70,7 @@ TemplateData Field::CompileTemplate(const ReflectionParser *context) const
 
         if (m_parent && m_veryExplicitGetter.empty( ))
         {
-            explicitGetter = "(m::FieldGetter<"+ m_parent->m_qualifiedName +","+ m_type +", true>::ConstRefSignatureConst)&"+ m_parent->m_qualifiedName + "::" + m_explicitGetter;
+            explicitGetter = "&"+ m_parent->m_qualifiedName + "::" + m_explicitGetter;
         }
         else
         {

@@ -9,7 +9,7 @@ namespace ursine
         public:
             virtual ~FieldSetterBase(void) { }
 
-            virtual void SetValue(Variant &obj, const Argument &value) = 0;
+            virtual void SetValue(Variant &obj, const Variant &value) = 0;
         };
     }
 }

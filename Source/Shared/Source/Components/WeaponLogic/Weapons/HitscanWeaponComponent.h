@@ -31,4 +31,4 @@ public:
 
     void RemoveMySelf(void) override;
 
-} Meta(Disable, DisplayName("HitscanWeapon"));
+} Meta(Enable, DisplayName("HitscanWeapon"));

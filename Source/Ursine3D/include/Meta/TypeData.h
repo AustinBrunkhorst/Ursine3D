@@ -99,11 +99,9 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
-            template<typename ClassType, typename ...Args>
+            template<typename ClassType, bool IsDynamic, bool IsWrapped, typename ...Args>
             void AddConstructor(
-                Constructor::Invoker invoker, 
-                const MetaManager::Initializer &meta, 
-                bool isDynamic
+                const MetaManager::Initializer &meta
             );
 
             template<typename ClassType>
@@ -127,29 +125,48 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////
             
             // Method Getter, Method Setter
-            template<typename ClassType, typename FieldType, typename MethodGetterType, typename MethodSetterType>
+            template<typename ClassType, typename FieldType, typename GetterReturnType, typename SetterArgumentType>
             void AddField(
-                const std::string &name, 
-                MethodGetterType methodGetter,
-                MethodSetterType methodSetter,
+                const std::string &name,
+                GetterReturnType (ClassType::*methodGetter)(void),
+                void (ClassType::*methodSetter)(SetterArgumentType),
                 const MetaManager::Initializer &meta
             );
 
+            // Const Method Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename GetterReturnType, typename SetterArgumentType>
+            void AddField(
+                const std::string &name,
+                GetterReturnType (ClassType::*methodGetter)(void) const,
+                void (ClassType::*methodSetter)(SetterArgumentType),
+                const MetaManager::Initializer &meta
+            );
+
+
             // Method Getter, Field Setter
-            template<typename ClassType, typename FieldType, typename MethodGetterType>
+            template<typename ClassType, typename FieldType, typename GetterReturnType>
             void AddField(
                 const std::string &name, 
-                MethodGetterType methodGetter,
+                GetterReturnType (ClassType::*methodGetter)(void),
+                typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Const Method Getter, Field Setter
+            template<typename ClassType, typename FieldType, typename GetterReturnType>
+            void AddField(
+                const std::string &name, 
+                GetterReturnType (ClassType::*methodGetter)(void) const,
                 typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
                 const MetaManager::Initializer &meta
             );
 
             // Field Getter, Method Setter
-            template<typename ClassType, typename FieldType, typename MethodSetterType>
+            template<typename ClassType, typename FieldType, typename SetterArgumentType>
             void AddField(
                 const std::string &name, 
                 typename FieldGetter<ClassType, FieldType, false>::Signature fieldGetter,
-                MethodSetterType methodSetter,
+                void (ClassType::*methodSetter)(SetterArgumentType),
                 const MetaManager::Initializer &meta
             );
 

@@ -1,1 +1,1 @@
-{{#hasExplicitSetter}}(m::FieldSetter<{{& parentQualifiedName}}, {{& type}}, true>::ConstRefSignature)&{{& parentQualifiedName}}::{{& explicitSetter}}{{/hasExplicitSetter}}{{^hasExplicitSetter}}&{{& parentQualifiedName}}::{{& name}}{{/hasExplicitSetter}}
+{{#hasExplicitSetter}}&{{& parentQualifiedName}}::{{& explicitSetter}}{{/hasExplicitSetter}}{{^hasExplicitSetter}}&{{& parentQualifiedName}}::{{& name}}{{/hasExplicitSetter}}

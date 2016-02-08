@@ -58,27 +58,8 @@ namespace ursine
 
             // explicitly add default constructors for string
 
-            stringType.AddConstructor<std::string>(
-                [](ArgumentList &args)
-                {
-                    return Variant {
-                        std::string( )
-                    };
-                },
-                { },
-                false
-            );
-
-            stringType.AddConstructor<std::string>(
-                [](ArgumentList &args)
-                {
-                    return Variant {
-                        new std::string( )
-                    };
-                },
-                { },
-                true
-            );
+            stringType.AddConstructor<std::string, false, false>( { } );
+            stringType.AddConstructor<std::string, false, true>( { } );
         }
 
         ///////////////////////////////////////////////////////////////////////

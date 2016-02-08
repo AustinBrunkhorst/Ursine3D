@@ -2,11 +2,9 @@ namespace ursine
 {
     namespace meta
     {
-        template<typename ClassType, typename ... Args>
+        template<typename ClassType, bool IsDynamic, bool IsWrapped, typename ...Args>
         void TypeData::AddConstructor(
-            Constructor::Invoker invoker,
-            const MetaManager::Initializer &meta,
-            bool isDynamic
+            const MetaManager::Initializer &meta
         )
         {
             InvokableSignature signature =
@@ -15,13 +13,13 @@ namespace ursine
             Constructor ctor {
                 typeof( ClassType ),
                 signature,
-                invoker,
-                isDynamic
+                new ConstructorInvoker<ClassType, IsDynamic, IsWrapped, Args...>( ),
+                IsDynamic
             };
 
             ctor.m_meta = meta;
 
-            if (isDynamic)
+            if (IsDynamic)
                 dynamicConstructors.emplace( signature, ctor );
             else
                 constructors.emplace( signature, ctor );
@@ -35,26 +33,31 @@ namespace ursine
             arrayConstructor = Constructor {
                 typeof( ClassType ),
                 { },
-                [](ArgumentList &args)
-                {
-                    return Array<ClassType>( );
-                },
+                new ConstructorInvoker<Array<ClassType>, false, false>( ),
                 false
             };
         }
 
-        ///////////////////////////////////////////////////////////////////////
-
-        template<typename ClassType, typename FieldType, typename MethodGetterType, typename MethodSetterType>
+        template<typename ClassType, typename FieldType, typename GetterReturnType, typename SetterArgumentType>
         void TypeData::AddField(
-            const std::string &name,
-            MethodGetterType methodGetter,
-            MethodSetterType methodSetter,
+            const std::string &name, 
+            GetterReturnType (ClassType::*methodGetter)(void), 
+            void (ClassType::*methodSetter)(SetterArgumentType), 
             const MetaManager::Initializer &meta
         )
         {
-            typedef FieldGetter<ClassType, FieldType, true> GetterType;
-            typedef FieldSetter<ClassType, FieldType, true> SetterType;
+            typedef FieldGetter<ClassType, GetterReturnType, true> GetterType;
+            typedef FieldSetter<ClassType, SetterArgumentType, true> SetterType;
+
+            static_assert( std::is_same<typename std::decay<GetterReturnType>::type, typename std::decay<FieldType>::type>::value,
+                "Return type of getter does not match field type. "
+                "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
+            );
+
+            static_assert( std::is_same<typename std::decay<SetterArgumentType>::type, typename std::decay<FieldType>::type>::value,
+                "Argument type of setter does not match field type. "
+                "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
+            );
 
             Field field(
                 name,
@@ -71,15 +74,54 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        template<typename ClassType, typename FieldType, typename MethodGetterType>
+        template<typename ClassType, typename FieldType, typename GetterReturnType, typename SetterArgumentType>
         void TypeData::AddField(
             const std::string &name,
-            MethodGetterType methodGetter,
-            typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
+            GetterReturnType (ClassType::*methodGetter)(void) const,
+            void (ClassType::*methodSetter)(SetterArgumentType),
             const MetaManager::Initializer &meta
         )
         {
-            typedef FieldGetter<ClassType, FieldType, true> GetterType;
+            typedef FieldGetter<ClassType, GetterReturnType, true> GetterType;
+            typedef FieldSetter<ClassType, SetterArgumentType, true> SetterType;
+
+            static_assert( std::is_same<typename std::decay<GetterReturnType>::type, typename std::decay<FieldType>::type>::value,
+                "Return type of getter does not match field type. "
+                "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
+            );
+
+            static_assert( std::is_same<typename std::decay<SetterArgumentType>::type, typename std::decay<FieldType>::type>::value,
+                "Argument type of setter does not match field type. "
+                "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
+            );
+
+            Field field(
+                name,
+                typeof( FieldType ),
+                typeof( ClassType ),
+                !methodGetter ? nullptr : new GetterType( methodGetter ),
+                !methodSetter ? nullptr : new SetterType( methodSetter )
+            );
+
+            field.m_meta = meta;
+
+            fields.emplace( name, field );
+        }
+
+        template<typename ClassType, typename FieldType, typename GetterReturnType>
+        void TypeData::AddField(
+            const std::string &name, 
+            GetterReturnType (ClassType::*methodGetter)(void), 
+            typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter, 
+            const MetaManager::Initializer &meta
+        )
+        {
+            typedef FieldGetter<ClassType, GetterReturnType, true> GetterType;
+
+            static_assert( std::is_same<typename std::decay<GetterReturnType>::type, typename std::decay<FieldType>::type>::value,
+                "Return type of getter does not match field type. "
+                "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
+            );
 
             Field field(
                 name,
@@ -96,15 +138,50 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        template<typename ClassType, typename FieldType, typename MethodSetterType>
+        template<typename ClassType, typename FieldType, typename GetterReturnType>
         void TypeData::AddField(
             const std::string &name,
-            typename FieldGetter<ClassType, FieldType, false>::Signature fieldGetter,
-            MethodSetterType methodSetter,
+            GetterReturnType (ClassType::*methodGetter)(void) const,
+            typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
             const MetaManager::Initializer &meta
         )
         {
-            typedef FieldSetter<ClassType, FieldType, true> SetterType;
+            typedef FieldGetter<ClassType, GetterReturnType, true> GetterType;
+
+            static_assert( std::is_same<typename std::decay<GetterReturnType>::type, typename std::decay<FieldType>::type>::value,
+                "Return type of getter does not match field type. "
+                "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
+            );
+
+            Field field(
+                name,
+                typeof( FieldType ),
+                typeof( ClassType ),
+                !methodGetter ? nullptr : new GetterType( methodGetter ),
+                !fieldSetter ? nullptr : new FieldSetter<ClassType, FieldType, false>( fieldSetter )
+            );
+
+            field.m_meta = meta;
+
+            fields.emplace( name, field );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        template<typename ClassType, typename FieldType, typename SetterArgumentType>
+        void TypeData::AddField(
+            const std::string &name,
+            typename FieldGetter<ClassType, FieldType, false>::Signature fieldGetter,
+            void (ClassType::*methodSetter)(SetterArgumentType),
+            const MetaManager::Initializer &meta
+        )
+        {
+            typedef FieldSetter<ClassType, SetterArgumentType, true> SetterType;
+
+            static_assert( std::is_same<typename std::decay<SetterArgumentType>::type, typename std::decay<FieldType>::type>::value,
+                "Argument type of setter does not match field type. "
+                "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
+            );
 
             Field field(
                 name,
@@ -198,7 +275,7 @@ namespace ursine
             typedef GlobalGetter<FieldType, false> GlobalGetterType;
             typedef GlobalSetter<FieldType, true> GlobalSetterType;
 
-             Global global {
+            Global global {
                 name,
                 typeof( FieldType ),
                 !fieldGetter ? nullptr : new GlobalGetterType( fieldGetter ),
@@ -221,7 +298,7 @@ namespace ursine
             typedef GlobalGetter<FieldType, false> GlobalGetterType;
             typedef GlobalSetter<FieldType, false> GlobalSetterType;
 
-             Global global {
+            Global global {
                 name,
                 typeof( FieldType ),
                 !fieldGetter ? nullptr : new GlobalGetterType( fieldGetter ),
@@ -241,10 +318,7 @@ namespace ursine
         {
             destructor = {
                 typeof( ClassType ),
-                [](Variant &instance)
-                {
-                    instance.GetValue<ClassType>( ).~ClassType( );
-                }
+                new DestructorInvoker<ClassType>( )
             };
         }
 

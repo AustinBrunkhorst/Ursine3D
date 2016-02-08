@@ -30,4 +30,4 @@ public:
 
     void RemoveMySelf(void) override;
 
-} Meta(Disable, DisplayName("ProjectileWeapon"));
+} Meta(Enable , DisplayName("ProjectileWeapon"));

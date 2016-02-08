@@ -6,35 +6,17 @@ namespace ursine
         // Getter from Method
         ///////////////////////////////////////////////////////////////////////
 
-        template<typename ClassType, typename FieldType>
-        class FieldGetter<ClassType, FieldType, true> : public FieldGetterBase
+        template<typename ClassType, typename ReturnType>
+        class FieldGetter<ClassType, ReturnType, true> : public FieldGetterBase
         {
         public:
-            typedef typename std::remove_const<FieldType>::type NonConstFieldType;
-
-            typedef NonConstFieldType (ClassType::*Signature)(void);
-            typedef NonConstFieldType (ClassType::*SignatureConst)(void) const;
-            typedef NonConstFieldType &(ClassType::*RefSignature)(void);
-            typedef NonConstFieldType &(ClassType::*RefSignatureConst)(void) const;
-            typedef const NonConstFieldType &(ClassType::*ConstRefSignature)(void);
-            typedef const NonConstFieldType &(ClassType::*ConstRefSignatureConst)(void) const;
+            typedef ReturnType (ClassType::*Signature)(void);
+            typedef ReturnType (ClassType::*SignatureConst)(void) const;
 
             FieldGetter(Signature method)
-                : m_method( reinterpret_cast<ConstRefSignatureConst>( method ) ) { }
+                : m_method( reinterpret_cast<SignatureConst>( method ) ) { }
 
             FieldGetter(SignatureConst method)
-                : m_method( reinterpret_cast<ConstRefSignatureConst>( method ) ) { }
-
-            FieldGetter(RefSignature method)
-                : m_method( reinterpret_cast<ConstRefSignatureConst>( method ) ) { }
-
-            FieldGetter(RefSignatureConst method)
-                : m_method( reinterpret_cast<ConstRefSignatureConst>( method ) ) { }
-
-            FieldGetter(ConstRefSignature method)
-                : m_method( reinterpret_cast<ConstRefSignatureConst>( method ) ) { }
-
-            FieldGetter(ConstRefSignatureConst method)
                 : m_method( method ) { }
 
             Variant GetValue(const Variant &obj) override
@@ -45,7 +27,7 @@ namespace ursine
             }
 
         private:
-            ConstRefSignatureConst m_method;
+            SignatureConst m_method;
         };
 
         ///////////////////////////////////////////////////////////////////////

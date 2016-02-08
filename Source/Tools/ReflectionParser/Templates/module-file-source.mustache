@@ -162,32 +162,17 @@ void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::Reflect
             // Constructors
             {{#constructor}}{{#enableNonDynamic}}
             type.AddConstructor<{{& templateParameters}}>(
-                [](m::ArgumentList &args)
-                {
-                    return m::Variant { 
-                        {{> invocationBody}}
-                    };
-                }, 
                 {
                     {{> metaDataInitializerList}}
-                },
-                false
+                }
             );
             {{/enableNonDynamic}}{{/constructor}}
             // Dynamic Constructors
             {{#dynamicConstructor}}
-            type.AddConstructor<{{& templateParameters}}>(
-                [](m::ArgumentList &args)
-                {
-                    return m::Variant { 
-                        {{> dynamicInvocationBody}}{{#dynamicWrapObject}},
-                        m::variant_policy::WrapObject( ){{/dynamicWrapObject}}
-                    };
-                }, 
+            type.AddConstructor<{{& dynamicTemplateParameters}}>( 
                 {
                     {{> metaDataInitializerList}}
-                },
-                true
+                }
             );
             {{/dynamicConstructor}}
             // Fields

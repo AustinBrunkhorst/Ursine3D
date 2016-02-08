@@ -90,7 +90,7 @@ class EntityMenu extends MenuItemHandler {
         ).enumValue;
 
         // TODO: create defines for this
-        entity.componentFieldUpdate( "Light", "Type", Reflect.field( lightType, type ) );
+        entity.componentFieldUpdate( "Light", "type", Reflect.field( lightType, type ) );
 
         return entity;
     }

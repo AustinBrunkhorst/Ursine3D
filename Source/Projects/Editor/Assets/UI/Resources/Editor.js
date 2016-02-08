@@ -743,7 +743,7 @@ ursine_editor_menus_EntityMenu.createLight = function(name,type) {
 	var entity = ursine_editor_menus_EntityMenu.createEntity(name);
 	entity.addComponent("Light");
 	var lightType = ursine_editor_Editor.instance.componentDatabase.getNativeType("ursine::ecs::LightType").enumValue;
-	entity.componentFieldUpdate("Light","Type",Reflect.field(lightType,type));
+	entity.componentFieldUpdate("Light","type",Reflect.field(lightType,type));
 	return entity;
 };
 ursine_editor_menus_EntityMenu.__super__ = ursine_editor_MenuItemHandler;
@@ -1087,15 +1087,15 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
 		var k = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
-		var v = ["Color","Direction","Intensity"];
+		var v = ["color","direction","intensity"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
 		v;
 		var k1 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
-		var v1 = ["Color","Intensity","Radius"];
+		var v1 = ["color","intensity","radius"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k1] = v1;
 		v1;
 		var k2 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
-		var v2 = ["Color","Direction","Intensity","SpotlightAngles"];
+		var v2 = ["color","direction","intensity","spotlightAngles"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
 		v2;
 	}
@@ -2276,7 +2276,7 @@ ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldIns
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName = "ursine::ecs::LightType";
-ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName = "Type";
+ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName = "type";
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional = "Directional";
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint = "Point";
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot = "Spot";
