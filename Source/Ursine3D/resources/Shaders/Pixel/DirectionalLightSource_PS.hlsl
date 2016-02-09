@@ -95,7 +95,6 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     // Get the base color and specular intensity
     float4 baseColor = ColorSpecIntTexture.Load( location3 );
     Out.Color = baseColor;
-    Out.SpecInt;
 
     // Sample the normal, convert it to the full range and noramalize it
     float4 normalValue = NormalTexture.Load(location3);
@@ -153,7 +152,7 @@ float3 CalcPoint( float3 position, Material material )
     // apply normal scalar
     finalLightColor *= normalScalar;
 
-    return finalLightColor;
+    return finalLightColor * material.diffuseColor.rgb;
 }
 
 
