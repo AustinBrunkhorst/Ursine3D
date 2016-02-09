@@ -156,12 +156,12 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "spotLightAngles", angles );
         }
 
-		unsigned Light::GetRenderMask(void) const
+		RenderMask Light::GetRenderMask(void) const
 		{
-			return static_cast<unsigned>(m_light->GetRenderMask() & 0xFFFFFFFF);
+			return static_cast<RenderMask>(m_light->GetRenderMask() & 0xFFFFFFFF);
 		}
 
-		void Light::SetRenderMask(unsigned mask)
+		void Light::SetRenderMask(RenderMask mask)
 		{
 			m_light->SetRenderMask(static_cast<unsigned long long>(mask));
 		}

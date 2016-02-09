@@ -123,8 +123,8 @@ namespace ursine
             RenderMode GetRenderMode(void) const;
             void SetRenderMode(const RenderMode &renderMode);
 
-            unsigned GetRenderMask(void) const;
-            void SetRenderMask(unsigned mask);
+			ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
 
         private:
             // command all particle components to operate on the set of particles

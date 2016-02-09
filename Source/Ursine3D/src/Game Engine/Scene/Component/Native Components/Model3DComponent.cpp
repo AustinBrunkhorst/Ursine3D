@@ -171,12 +171,12 @@ namespace ursine
             return m_model->GetDebug( );
         }
 
-        unsigned Model3D::GetRenderMask(void) const
+        RenderMask Model3D::GetRenderMask(void) const
         {
-            return static_cast<unsigned>( m_model->GetRenderMask( ) & 0xFFFFFFFF );
+            return static_cast<RenderMask>( m_model->GetRenderMask( ) & 0xFFFFFFFF );
         }
 
-        void Model3D::SetRenderMask(unsigned mask)
+        void Model3D::SetRenderMask(RenderMask mask)
         {
             m_model->SetRenderMask( static_cast<unsigned long long>( mask ) );
         }

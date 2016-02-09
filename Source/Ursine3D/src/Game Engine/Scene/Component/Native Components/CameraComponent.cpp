@@ -49,7 +49,7 @@ namespace ursine
             , m_isEditorCamera( false )
             , m_inEditorSelectionMode( false )
             , m_renderLayer( 0 )
-            , m_renderMask( 0 )
+            , m_renderMask( RenderMask::Any )
             , m_graphics( GetCoreSystem( graphics::GfxAPI ) )
         {
             m_handle = m_graphics->CameraMgr.AddCamera( );
@@ -210,21 +210,21 @@ namespace ursine
             return m_graphics->CameraMgr.GetCamera( m_handle ).GetProjMatrix( );
         }
 
-        unsigned Camera::GetRenderMask(void) const
+		RenderMask Camera::GetRenderMask(void) const
         {
             return m_renderMask;
         }
 
-        void Camera::SetRenderMask(unsigned mask)
+        void Camera::SetRenderMask(RenderMask mask)
         {
             m_renderMask = mask;
 
             if (m_inEditorSelectionMode)
-				utils::FlagSet( mask, MEditorTool );
+				utils::FlagSet( mask, RenderMask::MEditorTool );
 			else
-				utils::FlagUnset( mask, MEditorTool );
+				utils::FlagUnset( mask, RenderMask::MEditorTool );
 
-            m_graphics->CameraMgr.GetCamera( m_handle ).SetMask( mask );
+            m_graphics->CameraMgr.GetCamera( m_handle ).SetMask( static_cast<unsigned long long>( mask ) );
         }
 
         SVec3 Camera::ScreenToWorld(const Vec2 &screenPos, float depth) const
@@ -276,17 +276,17 @@ namespace ursine
             {
                 auto excludeEditorToolMask = m_renderMask;
 
-                utils::FlagSet( excludeEditorToolMask, MEditorTool );
+                utils::FlagSet( excludeEditorToolMask, RenderMask::MEditorTool );
 
                 camera.SetViewportPosition( kEditorSelectedLocation.X( ), kEditorSelectedLocation.Y( ) );
                 camera.SetDimensions( kEditorSelectedSize.X( ), kEditorSelectedSize.Y( ) );
-                camera.SetMask( excludeEditorToolMask );
+                camera.SetMask( static_cast<unsigned long long>( excludeEditorToolMask ) );
             }
             else
             {
                 camera.SetViewportPosition( m_viewportPosition.X( ), m_viewportPosition.Y( ) );
                 camera.SetDimensions( m_viewportSize.X( ), m_viewportSize.Y( ) );
-                camera.SetMask( m_renderMask );
+                camera.SetMask( static_cast<unsigned long long>( m_renderMask ) );
             }
 
             auto *world = GetOwner( )->GetWorld( );

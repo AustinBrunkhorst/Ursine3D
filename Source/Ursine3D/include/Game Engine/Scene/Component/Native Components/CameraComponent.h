@@ -126,8 +126,8 @@ namespace ursine
             SMat4 GetViewMatrix(void);
             SMat4 GetProjMatrix(void);
 
-            unsigned GetRenderMask(void) const;
-            void SetRenderMask(unsigned mask);
+            ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
 
             SVec3 ScreenToWorld(const Vec2 &screenPos, float depth) const;
 			Vec2 WorldToScreen(const SVec3 &worldPos) const;
@@ -148,7 +148,7 @@ namespace ursine
             bool m_inEditorSelectionMode;
 
             int m_renderLayer;
-            unsigned m_renderMask;
+			ursine::ecs::RenderMask m_renderMask;
 
             Vec2 m_viewportPosition;
             Vec2 m_viewportSize;

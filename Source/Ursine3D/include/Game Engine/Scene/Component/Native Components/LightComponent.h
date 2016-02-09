@@ -106,8 +106,8 @@ namespace ursine
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
 
-			unsigned GetRenderMask(void) const;
-			void SetRenderMask(unsigned mask);
+			ursine::ecs::RenderMask GetRenderMask(void) const;
+			void SetRenderMask(ursine::ecs::RenderMask mask);
 
             //private methods
         private:

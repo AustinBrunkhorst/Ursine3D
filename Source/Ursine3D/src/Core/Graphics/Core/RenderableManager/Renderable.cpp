@@ -28,8 +28,8 @@ namespace ursine
 
         void Renderable::Initialize()
         {
-            Overdraw_ = false;
-            Debug_ = false;
+			m_useOverdraw = false;
+			m_useDebugRendering = false;
             m_mask = 0;
         }
 

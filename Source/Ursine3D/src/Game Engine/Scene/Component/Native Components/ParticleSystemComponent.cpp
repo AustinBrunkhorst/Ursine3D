@@ -42,7 +42,7 @@ namespace ursine
             // store a pointer to the model
             m_particleSystem = &m_graphics->RenderableMgr.GetParticleSystem(m_base->GetHandle());
 
-            SetRenderMask( 0 );
+            SetRenderMask( RenderMask::Any );
         }
 
         ParticleSystem::~ParticleSystem(void)
@@ -156,14 +156,14 @@ namespace ursine
             return m_renderMode;
         }
 
-        unsigned ParticleSystem::GetRenderMask(void) const
+		RenderMask ParticleSystem::GetRenderMask(void) const
         {
-            return static_cast<unsigned>( m_particleSystem->GetRenderMask( ) );
+            return static_cast<RenderMask>( m_particleSystem->GetRenderMask( ) );
         }
 
-        void ParticleSystem::SetRenderMask(unsigned mask)
+        void ParticleSystem::SetRenderMask(RenderMask mask)
         {
-            m_particleSystem->SetRenderMask( mask );
+            m_particleSystem->SetRenderMask( static_cast<unsigned long long>( mask ) );
         }
 
         void ParticleSystem::SetRenderMode(const RenderMode &renderMode)
