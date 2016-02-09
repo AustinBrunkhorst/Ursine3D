@@ -130,7 +130,7 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
     Inventory::WeaponSlotInfo& weaponSlot = inventory->m_inventory[ inventory->m_currWeapon ];
 
     // create weapon
-    weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weaponSlot.m_weaponToLoad, weaponSlot.m_weaponToLoad );
+    weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weaponSlot.m_weaponToLoad, "Weapoon" );
 
     // move weapon to arm
     //weaponsTrans->SetWorldPosition( inventory->m_armHandle->GetWorldPosition( ) );
@@ -175,7 +175,7 @@ void InventorySystem::ActivateWeapon(Inventory* inventory)
     //if ( firePos )
     //    weapon->m_firePosHandle = firePos->GetTransform( );
 
-    //weapon->m_animatorHandle = weapon->GetOwner( )->GetTransform( )->GetComponentInChildren<ursine::ecs::Animator>( );
+    //weapon->m_animatorHandle = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( )->GetComponentInChildren<ursine::ecs::Animator>( );
 
     // set spawn offset
     ursine::SVec3 spawnOffset = trans->GetLocalRotation( ) * *args.m_spawnOffset;
