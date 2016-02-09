@@ -51,10 +51,10 @@ namespace ursine
             void SetActive(const bool isActive);
 
         private:
-            ecs::EntityUniqueID entityID;
-            bool Active_;
-            bool Overdraw_;
-            bool Debug_;
+            ecs::EntityUniqueID m_entityID;
+            bool m_active;
+            bool m_useOverdraw;
+            bool m_useDebugRendering;
             RenderMask m_mask;
         };
 
@@ -70,7 +70,7 @@ namespace ursine
             Model(void);
 
         private:
-            SMat4 Transform_;
+            SMat4 m_transform;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -116,8 +116,8 @@ namespace ursine
             float m_specPow;
             float m_specIntensity;
             Color m_color;
-            std::string ModelName_;
-            std::string MaterialName_;
+            std::string m_modelResourceName;
+            std::string m_materialTextureName;
 
             float m_animationTime;
 
@@ -154,7 +154,7 @@ namespace ursine
             ursine::Vec2 m_scale;
             ursine::SVec3 m_position;
             Color m_color;
-            std::string TextureName_;
+            std::string m_textureName;
         };
 
         /////////////////////////////////////////////////////////////

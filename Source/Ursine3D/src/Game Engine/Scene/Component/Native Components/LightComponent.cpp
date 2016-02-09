@@ -74,7 +74,6 @@ namespace ursine
 
         LightType Light::GetLightType(void)
         {
-            return LightType::Directional;
             return static_cast<LightType>( m_light->GetType( ) );
         }
 

@@ -42,12 +42,6 @@ namespace ursine
             );
 
             EditorField(
-                SVec3 direction,
-                GetDirection,
-                SetDirection
-            );
-
-            EditorField(
                 Color color,
                 GetColor,
                 SetColor
