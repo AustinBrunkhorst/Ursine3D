@@ -369,8 +369,8 @@ protected:
 };
 
 
-#define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );    \
-                                           AbstractWeaponConnect(Obj);
+#define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );  
+                                         //  AbstractWeaponConnect(Obj);
 
 
 

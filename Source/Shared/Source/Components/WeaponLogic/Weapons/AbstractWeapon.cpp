@@ -69,6 +69,11 @@ void AbstractWeapon::Initialize(ursine::ecs::Entity* owner)
 
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
+
+    m_owner->Listener(this)                               
+        .On(game::ACTIVATE_WEAPON, &AbstractWeapon::ActivateWeapon)        
+        .On(game::DETACH_WEAPON, &AbstractWeapon::DetachWeapon)            
+        .On(game::DEACTIVATE_WEAPON, &AbstractWeapon::DeactivateWeapon);
 }
 
 void AbstractWeapon::ConnectTrigger(ursine::ecs::Entity* obj)
