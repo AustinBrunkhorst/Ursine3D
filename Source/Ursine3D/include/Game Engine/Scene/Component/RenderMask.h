@@ -4,7 +4,7 @@ namespace ursine
 {
     namespace ecs
     {
-        enum class RenderMask : unsigned
+        enum class RenderMask
         {
             Any = 0,
             M0 = 1 << 0,
@@ -20,56 +20,5 @@ namespace ursine
             Meta(Disable)
             MEditorTool = 1 << 10
         } Meta(Enable);
-
-        namespace render_mask_t
-        {
-            using T = std::underlying_type_t<RenderMask>;
-        }
-
-        inline RenderMask operator|(const RenderMask &lhs, const RenderMask &rhs)
-        {
-            using namespace render_mask_t;
-
-            return static_cast<RenderMask>( static_cast<T>( lhs ) | static_cast<T>( rhs ) );
-        }
-
-        inline const RenderMask &operator|=(RenderMask &lhs, const RenderMask &rhs)
-        {
-            using namespace render_mask_t;
-
-            lhs = static_cast<RenderMask>( static_cast<T>( lhs ) | static_cast<T>( rhs ) );
-
-            return lhs;
-        }
-
-        inline RenderMask operator&(const RenderMask &lhs, const RenderMask &rhs)
-        {
-            using namespace render_mask_t;
-
-            return static_cast<RenderMask>( static_cast<T>( lhs ) & static_cast<T>( rhs ) );
-        }
-
-        inline const RenderMask &operator&=(RenderMask &lhs, const RenderMask &rhs)
-        {
-            using namespace render_mask_t;
-
-            lhs = static_cast<RenderMask>( static_cast<T>( lhs ) & static_cast<T>( rhs ) );
-
-            return lhs;
-        }
-
-        inline RenderMask operator~(const RenderMask &rhs)
-        {
-            using namespace render_mask_t;
-
-            return static_cast<RenderMask>( static_cast<T>( rhs ) );
-        }
-
-        inline const RenderMask &operator<<(RenderMask &lhs, const RenderMask &rhs)
-        {
-            using namespace render_mask_t;
-
-            return static_cast<RenderMask>( static_cast<T>( lhs ) << static_cast<T>( rhs ) );
-        }
     }
 }

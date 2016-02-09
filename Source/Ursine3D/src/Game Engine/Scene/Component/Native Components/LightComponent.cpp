@@ -158,12 +158,12 @@ namespace ursine
 
 		RenderMask Light::GetRenderMask(void) const
 		{
-			return static_cast<RenderMask>(m_light->GetRenderMask() & 0xFFFFFFFF);
+			return static_cast<RenderMask>( m_light->GetRenderMask( ) & 0xFFFFFFFF );
 		}
 
 		void Light::SetRenderMask(RenderMask mask)
 		{
-			m_light->SetRenderMask(static_cast<unsigned long long>(mask));
+			m_light->SetRenderMask( static_cast<unsigned long long>( mask ) );
 		}
 
         void Light::updateRenderer(void)

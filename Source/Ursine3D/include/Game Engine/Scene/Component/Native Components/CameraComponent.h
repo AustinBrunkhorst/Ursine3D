@@ -148,7 +148,7 @@ namespace ursine
             bool m_inEditorSelectionMode;
 
             int m_renderLayer;
-			ursine::ecs::RenderMask m_renderMask;
+			unsigned m_renderMask;
 
             Vec2 m_viewportPosition;
             Vec2 m_viewportSize;

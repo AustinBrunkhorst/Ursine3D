@@ -49,7 +49,7 @@ namespace ursine
             , m_isEditorCamera( false )
             , m_inEditorSelectionMode( false )
             , m_renderLayer( 0 )
-            , m_renderMask( RenderMask::Any )
+            , m_renderMask( static_cast<unsigned>( RenderMask::Any ) )
             , m_graphics( GetCoreSystem( graphics::GfxAPI ) )
         {
             m_handle = m_graphics->CameraMgr.AddCamera( );
@@ -212,19 +212,19 @@ namespace ursine
 
 		RenderMask Camera::GetRenderMask(void) const
         {
-            return m_renderMask;
+            return static_cast<RenderMask>( m_renderMask );
         }
 
         void Camera::SetRenderMask(RenderMask mask)
         {
-            m_renderMask = mask;
+            m_renderMask = static_cast<unsigned>( mask );
 
             if (m_inEditorSelectionMode)
-				utils::FlagSet( mask, RenderMask::MEditorTool );
+				utils::FlagSet( m_renderMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
 			else
-				utils::FlagUnset( mask, RenderMask::MEditorTool );
+				utils::FlagUnset( m_renderMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
 
-            m_graphics->CameraMgr.GetCamera( m_handle ).SetMask( static_cast<unsigned long long>( mask ) );
+            m_graphics->CameraMgr.GetCamera( m_handle ).SetMask( m_renderMask );
         }
 
         SVec3 Camera::ScreenToWorld(const Vec2 &screenPos, float depth) const
@@ -276,7 +276,7 @@ namespace ursine
             {
                 auto excludeEditorToolMask = m_renderMask;
 
-                utils::FlagSet( excludeEditorToolMask, RenderMask::MEditorTool );
+                utils::FlagSet( excludeEditorToolMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
 
                 camera.SetViewportPosition( kEditorSelectedLocation.X( ), kEditorSelectedLocation.Y( ) );
                 camera.SetDimensions( kEditorSelectedSize.X( ), kEditorSelectedSize.Y( ) );
