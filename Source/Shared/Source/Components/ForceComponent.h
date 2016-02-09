@@ -14,7 +14,7 @@
 #pragma once
 
 #include <Component.h>
-#include <BoxCollider.h>
+#include <BoxColliderComponent.h>
 #include <SVec3.h>
 
 struct ForceComponent : ursine::ecs::Component
@@ -39,5 +39,5 @@ public:
 
     ursine::SVec3 m_force;
 
-} Meta(Enable, DisplayName("ForceComponent"), RequiresComponents(typeof(ursine::physics::BoxCollider)));
+} Meta(Enable, DisplayName("ForceComponent"), RequiresComponents(typeof(ursine::ecs::BoxCollider)));
 
