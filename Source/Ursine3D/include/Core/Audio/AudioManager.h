@@ -137,7 +137,7 @@ namespace ursine
 		void Init(AkInitSettings* in_pSettings, 
 			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
 
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Disable, WhiteListMethods);
 }
 
 // Global JavaScript methods

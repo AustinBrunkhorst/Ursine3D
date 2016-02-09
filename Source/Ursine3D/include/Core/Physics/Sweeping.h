@@ -124,10 +124,10 @@ namespace ursine
 									 btDispatcher *dispatcher)
 				: m_convexFromWorld( from )
 				, m_convexToWorld( to )
-				, m_me(me)
-				, m_allowedPenetration(0.0f)
-				, m_pairCache(pairCache)
-				, m_dispatcher(dispatcher)
+				, m_me( me )
+				, m_allowedPenetration( 0.0f )
+				, m_pairCache( pairCache )
+				, m_dispatcher( dispatcher )
 			{
 				
 			}

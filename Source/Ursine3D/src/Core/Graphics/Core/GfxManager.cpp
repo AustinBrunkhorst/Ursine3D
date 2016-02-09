@@ -1139,13 +1139,13 @@ namespace ursine
         {
             auto &particleSystem = renderableManager->m_renderableParticleSystems[ handle.Index_ ];
 
-            if (!particleSystem.Active_)
+            if ( !particleSystem.Active_ ) 
                 return;
 
-            if (currentCamera.CheckMask(particleSystem.GetRenderMask()))
+            if ( currentCamera.CheckMask( particleSystem.GetRenderMask( ) ) )
                 return;
 
-            if(particleSystem.GetAdditive())
+            if( particleSystem.GetAdditive( ) )
                 dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
             else
                 dxCore->SetBlendState(BLEND_STATE_DEFAULT);
@@ -1153,27 +1153,27 @@ namespace ursine
             // bind color and space
             PointGeometryBuffer pgb;
             
-            if ( particleSystem.GetSystemSpace() )
+            if ( particleSystem.GetSystemSpace( ) )
             {
                 // use world space
-                pgb.cameraPosition = DirectX::XMFLOAT4(0, 0, 0, 0);
+                pgb.cameraPosition = DirectX::XMFLOAT4( 0, 0, 0, 0 );
             }
             else
             {
                 // use local space
-                pgb.cameraPosition = DirectX::XMFLOAT4(particleSystem.GetPosition().GetFloatPtr());
+                pgb.cameraPosition = DirectX::XMFLOAT4( particleSystem.GetPosition( ).GetFloatPtr( ) );
             }
 
             // set color
-            auto &color = particleSystem.GetColor();
+            auto &color = particleSystem.GetColor( );
             pgb.cameraUp.x = color.r;
             pgb.cameraUp.y = color.g;
             pgb.cameraUp.z = color.b;
             pgb.cameraUp.w = color.a;
 
-            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_VERTEX);
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>( &pgb, SHADERTYPE_VERTEX );
 
-            textureManager->MapTextureByName(particleSystem.GetParticleTexture());
+            textureManager->MapTextureByName( particleSystem.GetParticleTexture( ) );
 
             // material buffer 
             MaterialDataBuffer mdb;

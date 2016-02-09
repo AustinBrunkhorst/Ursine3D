@@ -1,1 +1,254 @@
-{"children": [{"children": [], "components": {"Animator": {".uid": 29, "animationName": "", "currentRig": "Player", "currentState": "Player_Idle", "futureState": "", "loopAnimation": true, "m_stateArray": [], "playAnimation": true, "renderDebug": false, "stateName": "", "timeScalar": 1}, "Model3D": {".uid": 30, "color": {"a": 1, "b": 1, "g": 1, "r": 1}, "emissive": 0.20000000298023224, "materialName": "Blank", "meshIndex": -1, "modelName": "Player", "renderMask": 2, "specularIntensity": 0, "specularPower": 0}, "Transform": {".uid": 28, "rotation": {"w": -4.3711388286737929e-08, "x": 0, "y": 1, "z": -0}, "scale": {"x": 1, "y": 1, "z": 1}, "translation": {"x": 0, "y": 0, "z": 0}}}, "name": "Model"}, {"children": [{"children": [], "components": {"Transform": {".uid": 39, "rotation": {"w": 0.49999997019767761, "x": 0.49999997019767761, "y": 0.49999997019767761, "z": -0.49999997019767761}, "scale": {"x": 1, "y": 1, "z": 1}, "translation": {"x": 1.2000000476837158, "y": -0.80000001192092896, "z": 2}}}, "name": "RightArm"}, {"children": [], "components": {"Transform": {".uid": 40, "rotation": {"w": 0.49999997019767761, "x": 0.49999997019767761, "y": 0.49999997019767761, "z": -0.49999997019767761}, "scale": {"x": 1, "y": 1, "z": 1}, "translation": {"x": -1.2000000476837158, "y": -0.80000001192092896, "z": 2}}}, "name": "LeftArm"}], "components": {"Audio Listener 3D": {".uid": 32, "testing": []}, "Camera": {".uid": 33, "active": false, "farPlane": 1000, "fov": 45, "nearPlane": 0.10000000149011612, "renderLayer": 1, "renderMask": 8, "viewportPosition": {"x": 0, "y": 0}, "viewportSize": {"x": 1, "y": 0.5}}, "Transform": {".uid": 31, "rotation": {"w": 1, "x": 0, "y": 0, "z": 0}, "scale": {"x": 1, "y": 1, "z": 1}, "translation": {"x": 0, "y": 24.188358306884766, "z": 0}}}, "name": "Camera"}], "components": {"Audio Emitter": {".uid": 19, "Loop": false, "Mute": false, "Volume": 100}, "CharacterController": {".uid": 20, "rotateSpeed": 4}, "CommandInputController": {".uid": 21, "UseKeyboard": false}, "CommandQueue": {".uid": 22}, "CylinderCollider": {".uid": 23, "height": 30, "radius": 5}, "Inventory": {".uid": 24, "LastStand": "P1HitScanWeapon.uatype", "MeleeWeapon": "", "PrimaryWeapon": "", "SecondaryWeapon": "", "StartWeapon": 0, "m_currWeapon": 0}, "PlayerID": {".uid": 25, "PlayerId": 0}, "Rigidbody": {".uid": 26, "bodyFlag": 2, "enableContactCallback": true, "enableContinuousCollisionDetection": false, "freezeXRotation": true, "freezeYRotation": true, "freezeZRotation": true, "ghost": false, "gravity": {"x": 0, "y": -10, "z": 0}, "mass": 0, "offset": {"x": 0, "y": 15, "z": 0}, "sleepToggle": true}, "SweptController": {".uid": 27, "active": true, "airAcceleration": 30, "airDeceleration": 40, "forwardEvents": true, "gravity": 160, "groundAcceleration": 150, "groundDeceleration": 250, "groundSnapDistance": 2, "jumpCancelFactor": 0.5, "jumpSpeed": 100, "maxCeilingSlope": 12.5, "maxFallSpeed": 180, "maxGroundSlope": 35.5, "maxMoveSpeed": 60, "worldUp": {"x": 0, "y": 1, "z": 0}}, "Transform": {".uid": 18, "rotation": {"w": -4.3711388286737929e-08, "x": 0, "y": 1, "z": -0}, "scale": {"x": 1, "y": 1, "z": 1}, "translation": {"x": 0, "y": 0, "z": 0}}}, "v": "0.2submission"}
+{
+"children": [
+{
+"children": [], 
+"components": {
+"Animator": {
+".uid": 487, 
+"animationName": "", 
+"currentRig": "Player", 
+"currentState": "Player_Idle", 
+"futureState": "", 
+"loopAnimation": true, 
+"m_stateArray": [], 
+"playAnimation": true, 
+"renderDebug": false, 
+"stateName": "", 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 488, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.20000000298023224, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
+"renderMask": 2, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 486, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 497, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "RightArm"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 498, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "LeftArm"
+}
+], 
+"components": {
+"Audio Listener 3D": {
+".uid": 490, 
+"testing": []
+}, 
+"Camera": {
+".uid": 491, 
+"active": true, 
+"farPlane": 1000, 
+"fov": 60, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 1, 
+"renderMask": 18, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 489, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 24.188358306884766, 
+"z": 0
+}
+}
+}, 
+"name": "Camera"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 477, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"CharacterController": {
+".uid": 478, 
+"rotateSpeed": 10
+}, 
+"CommandInputController": {
+".uid": 479, 
+"UseKeyboard": false
+}, 
+"CommandQueue": {
+".uid": 480
+}, 
+"CylinderCollider": {
+".uid": 481, 
+"height": 30, 
+"radius": 5
+}, 
+"Inventory": {
+".uid": 482, 
+"LastStand": "P1HitScanWeapon.uatype", 
+"MeleeWeapon": "", 
+"PrimaryWeapon": "", 
+"SecondaryWeapon": "", 
+"StartWeapon": 0, 
+"m_currWeapon": 0
+}, 
+"PlayerID": {
+".uid": 483, 
+"PlayerId": 0
+}, 
+"Rigidbody": {
+".uid": 484, 
+"bodyFlag": 2, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 15, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"SweptController": {
+".uid": 485, 
+"active": true, 
+"airAcceleration": 30, 
+"airDeceleration": 40, 
+"forwardEvents": true, 
+"gravity": 160, 
+"groundAcceleration": 200, 
+"groundDeceleration": 300, 
+"groundSnapDistance": 8, 
+"jumpCancelFactor": 0.5, 
+"jumpSpeed": 100, 
+"maxCeilingSlope": 43.5, 
+"maxFallSpeed": 180, 
+"maxGroundSlope": 42, 
+"maxMoveSpeed": 100, 
+"worldUp": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}
+}, 
+"Transform": {
+".uid": 476, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 46.3299560546875, 
+"y": 36.405448913574219, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

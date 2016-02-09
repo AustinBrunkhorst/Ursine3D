@@ -94,7 +94,7 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 		// Multiply by an arbitrary value so that it feels nice.
 		// Ideally we would convert the screen space to a world space distance
 		// and then apply it to the world space direction vector.
-		dist *= 0.5f;
+		dist *= 0.25f;
 
 		auto newP = gizmo->GetWorldPosition( ) + m_worldDir * dist * sqrt(m_editorCameraSystem->GetCamZoom( ));
 
@@ -250,6 +250,13 @@ void TranslateTool::updateHoverAxis(void)
 	{
 		// Get the selected entity
 		auto selected = m_world->GetEntityUnique( m_selected );
+
+		if (!selected)
+		{
+			m_deleteGizmo = true;
+			m_selected = -1;
+			return;
+		}
 
 		// Get the gizmo's name (the models are under the parent named the axis' name)
 		auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );

@@ -52,12 +52,12 @@ void StartRoomDirectorSystem::onUpdate(EVENT_HANDLER(World))
 		auto s1 = elevator->GetChildByName( "SpawnPoint1" );
 		auto s2 = elevator->GetChildByName( "SpawnPoint2" );
 
-		auto p1 = m_world->CreateEntityFromArchetype(
-			WORLD_ARCHETYPE_PATH "Player1.uatype", "Player1"
+		auto p2 = m_world->CreateEntityFromArchetype(
+			WORLD_ARCHETYPE_PATH "Player2.uatype", "Player2"
 		)->GetTransform( );
 
-		auto p2 = m_world->CreateEntityFromArchetype(
-			WORLD_ARCHETYPE_PATH "Player2.uatype", "Player1"
+		auto p1 = m_world->CreateEntityFromArchetype(
+			WORLD_ARCHETYPE_PATH "Player1.uatype", "Player1"
 		)->GetTransform( );
 
 		p1->SetWorldPosition( s1->GetTransform( )->GetWorldPosition( ) );

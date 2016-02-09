@@ -127,7 +127,7 @@ namespace ursine
             SMat4 GetProjMatrix(void);
 
             unsigned GetRenderMask(void) const;
-            void SetRenderMask(const unsigned mask);
+            void SetRenderMask(unsigned mask);
 
             SVec3 ScreenToWorld(const Vec2 &screenPos, float depth) const;
 			Vec2 WorldToScreen(const SVec3 &worldPos) const;

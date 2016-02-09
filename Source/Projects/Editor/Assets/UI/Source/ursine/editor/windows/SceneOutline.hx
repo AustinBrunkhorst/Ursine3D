@@ -204,6 +204,10 @@ class SceneOutline extends WindowHandler {
     }
 
     private function addEntity(entity : Entity) {
+        // this entity already exists
+        if (m_entityItems[ entity.uniqueID ] != null)
+            return;
+
         var item = createEntityItem( entity );
 
         if (!entity.isVisibleInEditor( ))

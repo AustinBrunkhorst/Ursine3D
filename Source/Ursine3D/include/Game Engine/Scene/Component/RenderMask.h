@@ -17,6 +17,7 @@ namespace ursine
             M7 = 1 << 7,
             M8 = 1 << 8,
             M9 = 1 << 9,
+			Meta(Disable)
             MEditorTool = 1 << 10
         } Meta(Enable);
     }

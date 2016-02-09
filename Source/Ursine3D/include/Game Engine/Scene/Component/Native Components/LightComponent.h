@@ -16,6 +16,7 @@
 #include "Component.h"
 #include "Renderable.h"
 #include "RenderableComponentBase.h"
+#include "RenderMask.h"
 
 namespace ursine
 {
@@ -52,6 +53,13 @@ namespace ursine
                 GetColor,
                 SetColor
             );
+
+			Meta(BitMaskEditor)
+			EditorField(
+				ursine::ecs::RenderMask renderMask,
+				GetRenderMask,
+				SetRenderMask
+			);
 
             EditorField(
                 float Intensity,
@@ -103,6 +111,9 @@ namespace ursine
 
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
+
+			unsigned GetRenderMask(void) const;
+			void SetRenderMask(unsigned mask);
 
             //private methods
         private:

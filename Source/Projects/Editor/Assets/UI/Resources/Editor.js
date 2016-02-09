@@ -2030,6 +2030,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		}
 	}
 	,addEntity: function(entity) {
+		if(this.m_entityItems.h[entity.uniqueID] != null) return;
 		var item = this.createEntityItem(entity);
 		if(!entity.isVisibleInEditor()) item.classList.add("hidden");
 		var parent = entity.getParent();

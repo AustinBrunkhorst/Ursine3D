@@ -215,12 +215,16 @@ namespace ursine
             return m_renderMask;
         }
 
-        void Camera::SetRenderMask(const unsigned mask)
+        void Camera::SetRenderMask(unsigned mask)
         {
             m_renderMask = mask;
 
-            if (!m_inEditorSelectionMode)
-                m_graphics->CameraMgr.GetCamera( m_handle ).SetMask( mask );
+            if (m_inEditorSelectionMode)
+				utils::FlagSet( mask, MEditorTool );
+			else
+				utils::FlagUnset( mask, MEditorTool );
+
+            m_graphics->CameraMgr.GetCamera( m_handle ).SetMask( mask );
         }
 
         SVec3 Camera::ScreenToWorld(const Vec2 &screenPos, float depth) const

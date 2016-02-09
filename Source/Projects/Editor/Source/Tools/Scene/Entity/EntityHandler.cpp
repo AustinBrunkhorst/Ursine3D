@@ -51,7 +51,7 @@ namespace
         
         auto file = files[ 0 ].string( );
 
-        if (!fs::WriteText( file, data.dump( ) ))
+        if (!fs::WriteText( file, data.dump( true ) ))
         {
             auto *editor = GetCoreSystem( Editor );
 
