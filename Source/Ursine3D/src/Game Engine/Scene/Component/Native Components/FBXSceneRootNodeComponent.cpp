@@ -96,9 +96,6 @@ namespace ursine
         void FBXSceneRootNode::clearChildren(void)
         {
 			recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
-
-			// Clear the deletion queue if the scene is paused
-			EditorClearDeletionQueue( );
         }
 
 		void FBXSceneRootNode::ImportScene(void)

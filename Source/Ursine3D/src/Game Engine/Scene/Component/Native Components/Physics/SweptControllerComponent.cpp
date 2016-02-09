@@ -45,7 +45,7 @@ namespace ursine
 			, m_groundSnapDistance( 0.1f )
 			, m_groundTraction( 1.0f )
 			, m_airTraction( 1.0f )
-			, m_epsilon( 0.001f )
+			, m_epsilon( 0.0001f )
 		{
 			
 		}

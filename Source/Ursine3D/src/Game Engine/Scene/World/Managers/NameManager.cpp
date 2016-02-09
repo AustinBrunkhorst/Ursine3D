@@ -104,7 +104,10 @@ namespace ursine
         {
             auto &group = m_grouped[ name ];
 
-            group.erase( find( group.begin( ), group.end( ), entity ) );
+			auto itr = find( group.begin( ), group.end( ), entity );
+
+			if (itr != group.end( ))
+				group.erase( itr );
         }
     }
 }

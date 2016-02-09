@@ -51,7 +51,7 @@ namespace
         
         auto file = files[ 0 ].string( );
 
-        if (!fs::WriteText( file, data.dump( ) ))
+        if (!fs::WriteText( file, data.dump( true ) ))
         {
             auto *editor = GetCoreSystem( Editor );
 
@@ -155,11 +155,6 @@ JSMethod(EntityHandler::remove)
         return CefV8Value::CreateBool( false );
 
     entity->Delete( );
-
-	// Have this run in the main thread
-	Timer::Create( 0 ).Completed([=] {
-		GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
-	} );
 
     return CefV8Value::CreateBool( true );
 }
@@ -285,10 +280,12 @@ JSMethod(EntityHandler::addComponent)
 
 	// have this run in the main thread
 	Timer::Create( 0 ).Completed( [=] {
-		auto instance = componentType.CreateDynamic( );
-
         if (!entity->HasComponent( componentTypeMask ))
-		    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+        {
+            auto instance = componentType.CreateDynamic( );
+
+            entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+        }
 	} );
 
     return CefV8Value::CreateBool( true );
@@ -318,7 +315,7 @@ JSMethod(EntityHandler::removeComponent)
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
 	// Have this run in the main thread
-	Timer::Create(0).Completed([=] {
+	Timer::Create( 0 ).Completed( [=] {
 		entity->RemoveComponent( id );
 	} );
 

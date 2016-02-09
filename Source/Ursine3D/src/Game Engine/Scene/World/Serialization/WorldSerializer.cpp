@@ -97,6 +97,11 @@ namespace ursine
                 throw SerializationException( error.str( ) );
             }
 
+            return Deserialize( worldData );
+        }
+
+        World *WorldSerializer::Deserialize(const Json &worldData) const
+        {
             auto &versionData = worldData[ kKeyVersion ];
 
             if (versionData.is_null( ))

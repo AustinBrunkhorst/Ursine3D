@@ -28,9 +28,9 @@ namespace ursine
 
         void Renderable::Initialize()
         {
-            m_useOverdraw = false;
-            m_useDebugRendering = false;
-            m_mask = 0x7FFFFFFFFFFFFFFF;
+            Overdraw_ = false;
+            Debug_ = false;
+            m_mask = 0;
         }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)

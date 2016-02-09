@@ -61,24 +61,16 @@ namespace ursine
         {
             EntitySystem::OnInitialize( );
 
-        #if defined(URSINE_WITH_EDITOR)
-
             m_world->Listener(this)
                 .On(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate);
-
-        #endif
         }
 
         void DebugSystem::OnRemove(void)
         {
             EntitySystem::OnRemove();
 
-            #if defined(URSINE_WITH_EDITOR)
-
             m_world->Listener(this)
                 .Off(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate);
-
-        #endif
         }
 
         void DebugSystem::onUpdate(EVENT_HANDLER(World))

@@ -63,7 +63,7 @@ namespace ursine
             void OnInitialize(void);
 
             const std::string &GetSceneName(void) const;
-            void SetSceneName(const std::string & map);
+            void SetSceneName(const std::string &map);
 
         private:
             std::string m_sceneName;

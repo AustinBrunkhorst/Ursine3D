@@ -55,31 +55,31 @@ namespace ursine
      * Serialization
      */
 
-    static void dump(std::nullptr_t, string &out)
+    static void dump(std::nullptr_t, string &out, bool multiline)
     {
         out += "null";
     }
 
-    static void dump(double value, string &out)
+    static void dump(double value, string &out, bool multiline)
     {
         char buf[32];
         snprintf(buf, sizeof buf, "%.17g", value);
         out += buf;
     }
 
-    static void dump(int value, string &out)
+    static void dump(int value, string &out, bool multiline)
     {
         char buf[32];
         snprintf(buf, sizeof buf, "%d", value);
         out += buf;
     }
 
-    static void dump(bool value, string &out)
+    static void dump(bool value, string &out, bool multiline)
     {
         out += value ? "true" : "false";
     }
 
-    static void dump(const string &value, string &out)
+    static void dump(const string &value, string &out, bool multiline)
     {
         out += '"';
         for (size_t i = 0; i < value.length(); i++)
@@ -139,39 +139,60 @@ namespace ursine
         out += '"';
     }
 
-    static void dump(const Json::array &values, string &out)
+    static void dump(const Json::array &values, string &out, bool multiline)
     {
         bool first = true;
         out += "[";
+
         for (auto &value : values)
         {
+			if (first)
+			{
+				out += "\n";
+			}
+
             if (!first)
                 out += ", ";
-            value.dump(out);
+            value.dump(out, multiline);
             first = false;
         }
+
+		if (multiline && values.size( ))
+			out += "\n";
+
         out += "]";
     }
 
-    static void dump(const Json::object &values, string &out)
+    static void dump(const Json::object &values, string &out, bool multiline)
     {
         bool first = true;
         out += "{";
+
         for (const std::pair<string, Json> &kv : values)
         {
-            if (!first)
-                out += ", ";
-            dump(kv.first, out);
+			if (!first)
+			{
+				out += ", ";
+			}
+
+			if (multiline)
+				out += "\n";
+
+            dump(kv.first, out, multiline);
             out += ": ";
-            kv.second.dump(out);
+            kv.second.dump(out, multiline);
             first = false;
         }
+
+		if (multiline && values.size())
+			out += "\n";
+
         out += "}";
     }
 
-    void Json::dump(string &out) const
+    void Json::dump(string &out, bool multiline) const
     {
-        m_ptr->dump(out);
+        m_ptr->dump(out, multiline);
     }
 
     /* * * * * * * * * * * * * * * * * * * *
@@ -207,9 +228,9 @@ namespace ursine
 
         const T m_value;
 
-        void dump(string &out) const override
+        void dump(string &out, bool multiline) const override
         {
-            ursine::dump(m_value, out);
+            ursine::dump(m_value, out, multiline);
         }
     };
 

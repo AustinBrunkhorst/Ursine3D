@@ -76,7 +76,6 @@ namespace ursine
             {
                 m_debugDrawer.setDebugMode(
 			        physics::DRAW_WIRE_FRAME |
-			        physics::DRAW_AABB |
 			        physics::DRAW_CONTACT_POINTS
 		        );
             }
@@ -147,11 +146,11 @@ namespace ursine
 
 			if (m_enableDebugDraw)
 			{
-				for (size_t i = 0, n = output.hit.size(); i < n; ++i)
+				for (size_t i = 0, n = output.hit.size( ); i < n; ++i)
 				{
-					auto &hit = output.hit[i];
+					auto &hit = output.hit[ i ];
 
-					m_debugSystem->DrawPoint(hit, 10.0f, Color::Pink, 0.2f);
+					m_debugSystem->DrawPoint( hit, 10.0f, Color::Pink, 0.2f );
 				}
 			}
 
@@ -169,7 +168,7 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            m_world->Connect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate, -10000 );
+            m_world->Connect( WORLD_EDITOR_RENDER, this, &PhysicsSystem::onEditorRender, -10000 );
 
         #endif
         }
@@ -183,7 +182,7 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            m_world->Disconnect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate );
+            m_world->Disconnect( WORLD_EDITOR_RENDER, this, &PhysicsSystem::onEditorRender );
 
         #endif
         }
@@ -418,7 +417,7 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-        void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))
+        void PhysicsSystem::onEditorRender(EVENT_HANDLER(World))
         {
             m_simulation.DebugDrawSimulation( );
         }

@@ -10,7 +10,7 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
-   
+ 
 #include "Precompiled.h"
  
 #include "Editor.h" 
@@ -19,19 +19,18 @@
 #include <Application.h>  
    
 #include <WindowManager.h>
-#include <UIManager.h>  
+#include <UIManager.h> 
   
 #include <Color.h> 
 #include <LightComponent.h> 
-#include <WorldConfigComponent.h>
 
 using namespace ursine;
 
-namespace  
+namespace
 {
     const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
-    const auto kEditorClearColor = Color( 0xFF252526 );  
+    const auto kEditorClearColor = Color( 0xFF252526 );
 
     const auto kDefaultWindowWidth = 1280; 
     const auto kDefaultWindowHeight = 720;
@@ -41,14 +40,14 @@ CORE_SYSTEM_DEFINITION( Editor );
 
 Editor::Editor(void)
     : m_graphics( nullptr )
-    , m_mainWindow( { nullptr } )  
-    , m_project(nullptr) { }
+    , m_mainWindow( { nullptr } )
+    , m_project( nullptr ) { }
 
 Editor::~Editor(void) { }
 
 void Editor::OnInitialize(void)
 {
-    auto *app = Application::Instance;  
+    auto *app = Application::Instance;
 
     app->Connect(
         APP_UPDATE,
@@ -57,7 +56,7 @@ void Editor::OnInitialize(void)
     );
      
     auto *windowManager = GetCoreSystem( WindowManager );
-    auto *uiManager = GetCoreSystem( UIManager );  
+    auto *uiManager = GetCoreSystem( UIManager );
 
     m_mainWindow.window = windowManager->AddWindow(
         "Ursine3D Editor",
@@ -186,8 +185,8 @@ void Editor::initializeScene(void)
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
-        univLight->GetTransform( )->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
-        univLight->GetTransform( )->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+        univLight->GetTransform( )->SetLocalPosition( { 0.0f, 60.0f, 0.0f } );
+        univLight->GetTransform( )->SetLocalRotation( { 0.0f, 0.0f, 0.0f } );
 
         component->SetLightType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
@@ -206,8 +205,6 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto dt = sender->GetDeltaTime( );
 
     auto scene = m_project->GetScene( );
-
-    scene->GetWorld( )->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
 
     scene->Update( dt );
     scene->Render( );

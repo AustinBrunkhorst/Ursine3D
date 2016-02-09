@@ -11,21 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      Camera.h
-Module:         Graphics
-Purpose:        Camera class for viewing 3d world
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
 
 #pragma once
 
@@ -113,11 +98,11 @@ namespace ursine
             void SetScreenPosition(const float x, const float y);
 
             // check to see if a given mask will pass this camera's mask
-            bool CheckMask( const unsigned long long renderMask );
+            bool CheckMask(const unsigned long long renderMask);
 
             // set the mask this camera will use for culling operations
             unsigned GetMask(void) const;
-            void SetMask( const unsigned long long renderMask );
+            void SetMask(const unsigned long long renderMask);
 
             ecs::EntityID GetEntityID(void) const;
             void SetEntityID(const ecs::EntityID id);

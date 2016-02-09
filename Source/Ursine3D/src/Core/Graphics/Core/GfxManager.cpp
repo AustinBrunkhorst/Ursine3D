@@ -134,7 +134,7 @@ namespace ursine
             drawingManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext());
 
             gfxProfiler->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), m_profile);
-            
+
             //create layouts
             layoutManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), shaderManager);
 
@@ -284,6 +284,9 @@ namespace ursine
 
             //cache state of all graphics objects
             renderableManager->CacheFrame();
+
+            float colorArray[4] = { 0,0,0,1 };
+            dxCore->GetDeviceContext()->ClearRenderTargetView(dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->RenderTargetView, colorArray);
         }
 
         void GfxManager::BeginScene()
@@ -664,7 +667,7 @@ namespace ursine
             RenderComputeMousePos();
 
             m_currentlyRendering = false;
-            
+
             dxCore->EndDebugEvent( );
 
             // present
@@ -909,7 +912,7 @@ namespace ursine
             if ( !current.m_active )
                 return;
 
-            if ( !currentcamera.CheckMask( current.GetRenderMask( ) ) )
+            if ( currentcamera.CheckMask( current.GetRenderMask( ) ) )
                 return;
                     
             /////////////////////////////////////////////////////////
@@ -1059,7 +1062,7 @@ namespace ursine
             if ( !billboard.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
                 return;
 
             BillboardSpriteBuffer bsb;
@@ -1118,7 +1121,10 @@ namespace ursine
             if ( !particleSystem.m_active )
                 return;
 
-            if(particleSystem.GetAdditive())
+            if ( currentCamera.CheckMask( particleSystem.GetRenderMask( ) ) )
+                return;
+
+            if( particleSystem.GetAdditive( ) )
                 dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
             else
                 dxCore->SetBlendState(BLEND_STATE_DEFAULT);
@@ -1126,27 +1132,27 @@ namespace ursine
             // bind color and space
             PointGeometryBuffer pgb;
             
-            if ( particleSystem.GetSystemSpace() )
+            if ( particleSystem.GetSystemSpace( ) )
             {
                 // use world space
-                pgb.cameraPosition = DirectX::XMFLOAT4(0, 0, 0, 0);
+                pgb.cameraPosition = DirectX::XMFLOAT4( 0, 0, 0, 0 );
             }
             else
             {
                 // use local space
-                pgb.cameraPosition = DirectX::XMFLOAT4(particleSystem.GetPosition().GetFloatPtr());
+                pgb.cameraPosition = DirectX::XMFLOAT4( particleSystem.GetPosition( ).GetFloatPtr( ) );
             }
 
             // set color
-            auto &color = particleSystem.GetColor();
+            auto &color = particleSystem.GetColor( );
             pgb.cameraUp.x = color.r;
             pgb.cameraUp.y = color.g;
             pgb.cameraUp.z = color.b;
             pgb.cameraUp.w = color.a;
 
-            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_VERTEX);
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>( &pgb, SHADERTYPE_VERTEX );
 
-            textureManager->MapTextureByName(particleSystem.GetParticleTexture());
+            textureManager->MapTextureByName( particleSystem.GetParticleTexture( ) );
 
             // material buffer 
             MaterialDataBuffer mdb;
@@ -1160,7 +1166,7 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            if ( !currentCamera.CheckMask(particleSystem.GetRenderMask()) )
+            if ( currentCamera.CheckMask(particleSystem.GetRenderMask()) )
                 return;
 
             if ( particleSystem.GetActiveParticleCount() > 0 )
@@ -1179,7 +1185,7 @@ namespace ursine
 
                     if ( x == passCount - 1 )
                         particlesInPass = particleSystem.GetActiveParticleCount() % 1024;
-                    
+
                     // bind particle data
                     ParticleBuffer pb;
                     memcpy(&pb.data, &(particleSystem.GetGPUParticleData()[ x * 1024]), sizeof(Particle_GPU) * particlesInPass);
@@ -1271,7 +1277,7 @@ namespace ursine
             if ( !pl.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
             //get data
@@ -1332,7 +1338,7 @@ namespace ursine
             if(!pl.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
             SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
@@ -1368,7 +1374,7 @@ namespace ursine
             if ( !l.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( l.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( l.GetRenderMask( ) ) )
                 return;
 
             SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)

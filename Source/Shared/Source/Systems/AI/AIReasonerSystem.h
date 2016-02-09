@@ -12,12 +12,11 @@ namespace ursine
         class AIReasonerSystem : EntitySystem
         {
             ENTITY_SYSTEM;
-            
+
             //typedef AIHorde::EnemyType EnemyType;
 
         public:
             AIReasonerSystem(World* world);
-
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
@@ -31,6 +30,6 @@ namespace ursine
             Meta(Enable)
             std::vector< std::vector<Component::Handle<AIHorde> > > m_reasoners;
 
-        }Meta( Enable, AutoAddEntitySystem );
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

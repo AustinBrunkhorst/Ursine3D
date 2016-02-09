@@ -286,7 +286,7 @@ namespace ursine
 							// Walk the array of times to find the index that is greater than the new time
 							for (auto &t : output.time)
 							{
-								if (t > newtime)
+								if (t >= newtime)
 									break;
 								else
 									++insert;
