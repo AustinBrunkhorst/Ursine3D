@@ -235,6 +235,12 @@ class SceneOutline extends WindowHandler {
 
         item.addEventListener( 'contextmenu', function(e) {
             openContextMenu( e, item );
+
+            e.preventDefault( );
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
+            
+            return false;
         } );
 
         item.addEventListener( 'drag-start', function(e) {
@@ -330,9 +336,11 @@ class SceneOutline extends WindowHandler {
             startRenamingEntity( item );
         } );
 
-        menu.addItem( 'Delete', function() {
+        var delete = menu.addItem( 'Delete', function() {
             untyped item.entity.remove( );
         } );
+
+        delete.disabled = untyped !item.entity.isRemovalEnabled( );
 
         menu.addItem( 'Duplicate', function() {
             var clone : Entity = untyped item.entity.clone( );

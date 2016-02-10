@@ -240,11 +240,11 @@ class EntityInspector extends WindowHandler {
 
         var clipboard = m_componentClipboard[ inspector.component.type ];
 
-        if (clipboard != null) {
-            menu.addItem( 'Paste ${inspector.component.type}', function() {
-                inspector.entity.componentSet( inspector.component.type, clipboard.value );
-            } );
-        }
+        var paste = menu.addItem( 'Paste ${inspector.component.type}', function() {
+            inspector.entity.componentSet( inspector.component.type, clipboard.value );
+        } );
+
+        paste.disabled = (clipboard == null);
 
         menu.open( e.clientX, e.clientY );
     }

@@ -30,6 +30,18 @@ namespace ursine
             m_inEditorMode = inEditorMode;
         }
 
+        const WorldSystemArray &WorldConfig::GetSystems(void) const
+        {
+            return m_systems;
+        }
+
+        void WorldConfig::SetSystems(const WorldSystemArray &systems)
+        {
+            m_systems = systems;
+
+            NOTIFY_COMPONENT_CHANGED( "systems", systems );
+        }
+
         void WorldConfig::OnInitialize(void)
         {
             Component::OnInitialize( );

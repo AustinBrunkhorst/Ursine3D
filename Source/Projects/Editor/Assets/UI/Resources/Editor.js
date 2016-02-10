@@ -1097,19 +1097,24 @@ var ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector = functio
 	this.m_type = type;
 	this.m_arrayItems = [];
 	this.initElements();
-	var _g1 = 0;
-	var _g = instance.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		this.arrayInsert(i,instance[i]);
-		this.m_arrayItems[i].opened = false;
-	}
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.ArrayTypeInspector"] = ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector;
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","ArrayTypeInspector"];
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
-	arrayInsert: function(index,value) {
+	updateValue: function(value) {
+		this.m_itemsContainer.innerHTML = "";
+		this.m_arrayItems = [];
+		var _g1 = 0;
+		var _g = value.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			this.arrayInsert(i,value[i]);
+			this.m_arrayItems[i].opened = false;
+		}
+	}
+	,arrayInsert: function(index,value) {
 		var _g = this;
 		var handler = this.inspectItem(value);
 		var container = new ArrayItemContainerControl();
@@ -1296,7 +1301,7 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		this.m_instance = value;
 		if(this.m_isEnum) {
 			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
-		} else {
+		} else if(this.m_arrayInspector != null) this.m_arrayInspector.updateValue(value); else {
 			var _g = 0;
 			var _g1 = this.m_type.fields;
 			while(_g < _g1.length) {
@@ -1846,9 +1851,10 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 			v;
 		});
 		var clipboard = this.m_componentClipboard.get(inspector.component.type);
-		if(clipboard != null) menu.addItem("Paste " + inspector.component.type,function() {
+		var paste = menu.addItem("Paste " + inspector.component.type,function() {
 			inspector.entity.componentSet(inspector.component.type,clipboard.value);
 		});
+		paste.disabled = clipboard == null;
 		menu.open(e.clientX,e.clientY);
 	}
 	,onArchetypeSaveClicked: function(e) {
@@ -2059,6 +2065,10 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var item = new TreeViewItemControl();
 		item.addEventListener("contextmenu",function(e) {
 			_g.openContextMenu(e,item);
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			return false;
 		});
 		item.addEventListener("drag-start",function(e1) {
 			e1.stopPropagation();
@@ -2124,9 +2134,10 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		menu.addItem("Rename",function() {
 			_g.startRenamingEntity(item);
 		});
-		menu.addItem("Delete",function() {
+		var $delete = menu.addItem("Delete",function() {
 			item.entity.remove();
 		});
+		$delete.disabled = !item.entity.isRemovalEnabled();
 		menu.addItem("Duplicate",function() {
 			var clone = item.entity.clone();
 			clone.setName(item.entity.getName() + " Copy");

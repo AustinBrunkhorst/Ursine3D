@@ -104,7 +104,7 @@ namespace ursine
 
         auto *systemManager = m_world->GetSystemManager( );
 
-        for (auto &system : config->systems)
+        for (auto &system : config->GetSystems( ))
         {
 			// If this system is the equivalent of null
 			if (system.type.size( ) == 0)
