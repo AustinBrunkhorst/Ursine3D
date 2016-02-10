@@ -1,20 +1,16 @@
 package ursine.native;
 
 class Extern {
-    public static function DebugEditorUI() {
-        return untyped __js__( "DebugEditorUI()" );
-    }
-
     public static function ProcessOpen(path, relative: Bool = false) {
         return untyped __js__( "ProcessOpen(path, relative)" );
     }
 
-    public static function CreateEntity() {
-        return untyped __js__( "CreateEntity()" );
+    public static function GetEditorCommands() {
+        return untyped __js__( "editor_commands_GetEditorCommands()" );
     }
 
-    public static function CreateEntityFromArchetype() {
-        return untyped __js__( "CreateEntityFromArchetype()" );
+    public static function CreateEntity() {
+        return untyped __js__( "CreateEntity()" );
     }
 
     public static function GetNativeComponentDatabase() {

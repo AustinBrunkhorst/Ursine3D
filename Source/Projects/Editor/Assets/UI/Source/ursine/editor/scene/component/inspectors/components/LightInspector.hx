@@ -59,6 +59,9 @@ class LightInspector extends ComponentInspectionHandler {
         for (fieldName in fields) {
             var field = database.getComponentTypeField( componentType, fieldName );
 
+            if (field == null)
+                throw 'Unknown field "${fieldName}" on type "${m_lightTypeName}"';
+
             // ignore light type
             if (field.name == m_lightTypeFieldName)
                 continue;
@@ -85,21 +88,22 @@ class LightInspector extends ComponentInspectionHandler {
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
             "color",
-            "direction",
-            "intensity"
+            "intensity",
+            "renderMask"
         ];
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypePoint ) ] = [
             "color",
             "intensity",
-            "radius"
+            "radius",
+            "renderMask"
         ];
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeSpot ) ] = [
             "color",
-            "direction",
             "intensity",
-            "spotlightAngles"
+            "spotlightAngles",
+            "renderMask"
         ];
     }
 }

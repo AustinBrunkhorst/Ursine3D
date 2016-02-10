@@ -22,6 +22,12 @@
 #include "NameManager.h"
 #include "UtilityManager.h"
 
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
+
 namespace ursine
 {
     namespace ecs
@@ -51,8 +57,24 @@ namespace ursine
         void Entity::Delete(void)
         {
             // it's already being deleted or deletion is disabled
-            if (!(m_active && !m_deleting) || !m_deletionEnabled)
+            if (!(m_active && !m_deleting))
                 return;
+
+            if (!m_deletionEnabled)
+            {
+            #if defined(URSINE_WITH_EDITOR)
+
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Error";
+                error.message = "The entity <strong class=\"highlight\">"+ GetName( ) +"</strong> cannot be deleted.";
+
+                EditorPostNotification( error );
+
+            #endif
+                return;
+            }
 
 			setDeletingTrue( );
 

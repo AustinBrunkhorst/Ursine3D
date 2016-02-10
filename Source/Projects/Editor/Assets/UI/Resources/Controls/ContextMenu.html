@@ -1,0 +1,76 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="Behaviors/Menu.html">
+
+<dom-module id="x-context-menu">
+    <link rel="import" type="css" href="../Style/Controls/ContextMenu.css">
+    <template>
+        <content></content>
+    </template>
+    <script>
+        var ContextMenuControl = Polymer({
+            is: "x-context-menu",
+            hostAttributes: {
+                tabindex: -1
+            },
+            properties: {
+
+            },
+            listeners: {
+                'blur': '_onBlur'
+            },
+            created: function() {
+                // make this the root menu by default
+                this.classList.add( 'root-menu' );
+
+                this.listen( this, 'item-added', '_onItemAdded' );
+            },
+            behaviors: [ MenuBehavior ],
+
+            open: function(x, y) {
+                document.body.appendChild( this );
+
+                // TODO: fix bounds
+                this.style.left = x +'px';
+                this.style.top = y +'px';
+
+                this.focus( );
+
+                if (ContextMenuControl.LastOpened)
+                    ContextMenuControl.LastOpened._delete( );
+
+                ContextMenuControl.LastOpened = this;
+            },
+            close: function() {
+                this._delete( );
+            },
+            addItem: function(text, callback) {
+                var item = new MenuItemControl( );
+
+                item.text = text;
+
+                if (callback)
+                    item.addEventListener( 'open', callback );
+
+                this.appendChild( item );
+
+                return item;
+            },
+
+            _onItemAdded: function(e) {
+
+            },
+            _onBlur: function() {
+                this.close( );
+            },
+
+            _delete: function() {
+                setTimeout(function() {
+                    if (this.parentNode)
+                        this.parentNode.removeChild( this );
+                }.bind( this ), 0 );
+            }
+        });
+
+        ContextMenuControl.LastOpened = null;
+    </script>
+</dom-module>

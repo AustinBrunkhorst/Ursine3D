@@ -42,6 +42,16 @@ ecs::Entity *EditorToolSystem::GetCurrentFocus(void)
     return m_world->GetEntityUnique( m_currentSelected );
 }
 
+void EditorToolSystem::ClearSelectedEntities(void)
+{
+    URSINE_TODO( "@multi selection" );
+    
+    auto *current = GetCurrentFocus( );
+
+    if (current && current->HasComponent<ecs::Selected>( ))
+        current->RemoveComponent<ecs::Selected>( );
+}
+
 void EditorToolSystem::OnAfterLoad(void)
 {
     auto editor = GetCoreSystem( Editor );

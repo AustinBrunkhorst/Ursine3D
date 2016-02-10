@@ -20,10 +20,6 @@ class Entity implements IEventContainer {
         return new Entity( Extern.CreateEntity( ) );
     }
 
-    public static function createFromArchetype() : Void {
-        Extern.CreateEntityFromArchetype( );
-    }
-
     public function new(uniqueID : UInt) {
         events = new EventManager( );
 
@@ -87,6 +83,10 @@ class Entity implements IEventContainer {
         return m_handler.inspect( );
     }
 
+    public function inspectComponent(component : String) : ComponentInspection {
+        return m_handler.inspectComponent( component );
+    }
+
     public function hasComponent(name : String) : Bool {
         return m_handler.hasComponent( name );
     }
@@ -97,6 +97,10 @@ class Entity implements IEventContainer {
 
     public function removeComponent(name : String) : Void {
         m_handler.removeComponent( name );
+    }
+
+    public function componentSet(componentName : String, value : Dynamic) : Void {
+        m_handler.componentSet( componentName, value );
     }
 
     public function componentFieldUpdate(componentName : String, fieldName : String, value : Dynamic) : Void {

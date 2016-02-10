@@ -29,6 +29,8 @@ public:
 
 	ursine::ecs::Entity *GetCurrentFocus(void);
 
+    void ClearSelectedEntities(void);
+
 private:
 	void OnAfterLoad(void) override;
 	void OnRemove(void) override;

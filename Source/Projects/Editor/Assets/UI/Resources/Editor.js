@@ -681,7 +681,7 @@ ursine_editor_menus_DebugMenu.__name__ = ["ursine","editor","menus","DebugMenu"]
 ursine_editor_menus_DebugMenu.doEditorReload = function() {
 };
 ursine_editor_menus_DebugMenu.doEditorDebugTools = function() {
-	ursine_native_Extern.DebugEditorUI();
+	editor_commands_InspectEditorUI();
 };
 ursine_editor_menus_DebugMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_DebugMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -704,57 +704,31 @@ var ursine_editor_menus_EntityMenu = function() { };
 $hxClasses["ursine.editor.menus.EntityMenu"] = ursine_editor_menus_EntityMenu;
 ursine_editor_menus_EntityMenu.__name__ = ["ursine","editor","menus","EntityMenu"];
 ursine_editor_menus_EntityMenu.doCreateEmpty = function() {
-	ursine_editor_menus_EntityMenu.createEntity("Empty Entity");
+	editor_commands_CreateEntity();
 };
 ursine_editor_menus_EntityMenu.doCreateFromArchetype = function() {
-	ursine_editor_scene_entity_Entity.createFromArchetype();
+	editor_commands_CreateEntityFromArchetype();
 };
 ursine_editor_menus_EntityMenu.doCreatePlane = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Plane",["BoxCollider"]);
-	entity.componentFieldUpdate("Transform","scale",{ x : 5, y : 1, z : 5});
+	editor_commands_CreatePlane();
 };
 ursine_editor_menus_EntityMenu.doCreateBox = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Box",["BoxCollider"]);
+	editor_commands_CreateBox();
 };
 ursine_editor_menus_EntityMenu.doCreateCylinder = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Cylinder",["CylinderCollider"]);
+	editor_commands_CreateCylinder();
 };
 ursine_editor_menus_EntityMenu.doCreateSphere = function() {
-	var entity = ursine_editor_menus_EntityMenu.createEntityWithComponents("Sphere",["SphereCollider"]);
+	editor_commands_CreateSphere();
 };
 ursine_editor_menus_EntityMenu.doCreatePointLight = function() {
-	var entity = ursine_editor_menus_EntityMenu.createLight("Point Light","Point");
+	editor_commands_CreatePointLight();
 };
 ursine_editor_menus_EntityMenu.doCreateSpotLight = function() {
-	var entity = ursine_editor_menus_EntityMenu.createLight("Spot Light","Spot");
+	editor_commands_CreateSpotLight();
 };
 ursine_editor_menus_EntityMenu.doCreateDirectionalLight = function() {
-	var entity = ursine_editor_menus_EntityMenu.createLight("Directional Light","Directional");
-};
-ursine_editor_menus_EntityMenu.createEntity = function(name) {
-	var entity = ursine_editor_scene_entity_Entity.create();
-	entity.setName(name);
-	ursine_editor_windows_SceneOutline.instance.clearSelectedEntities();
-	entity.select();
-	return entity;
-};
-ursine_editor_menus_EntityMenu.createEntityWithComponents = function(name,components) {
-	var entity = ursine_editor_scene_entity_Entity.create();
-	entity.setName(name);
-	var _g = 0;
-	while(_g < components.length) {
-		var comp = components[_g];
-		++_g;
-		entity.addComponent(comp);
-	}
-	return entity;
-};
-ursine_editor_menus_EntityMenu.createLight = function(name,type) {
-	var entity = ursine_editor_menus_EntityMenu.createEntity(name);
-	entity.addComponent("Light");
-	var lightType = ursine_editor_Editor.instance.componentDatabase.getNativeType("ursine::ecs::LightType").enumValue;
-	entity.componentFieldUpdate("Light","type",Reflect.field(lightType,type));
-	return entity;
+	editor_commands_CreateDirectionalLight();
 };
 ursine_editor_menus_EntityMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_EntityMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -923,7 +897,10 @@ $hxClasses["ursine.editor.scene.component.inspectors.ComponentInspectionHandler"
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = ["ursine","editor","scene","component","inspectors","ComponentInspectionHandler"];
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = {
-	updateField: function(name,value) {
+	copyInstance: function() {
+		return this.entity.inspectComponent(this.component.type);
+	}
+	,updateField: function(name,value) {
 		this.component.value[name] = value;
 		var result = this.fieldChangeEvents.trigger(name,{ name : name, value : value});
 		if(result != false) {
@@ -1082,6 +1059,7 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 			var fieldName = fields[_g];
 			++_g;
 			var field = database.getComponentTypeField(componentType,fieldName);
+			if(field == null) throw new js__$Boot_HaxeError("Unknown field \"" + fieldName + "\" on type \"" + ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName + "\"");
 			if(field.name == ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName) continue;
 			var instance = Reflect.field(this.component.value,field.name);
 			var type1 = database.getNativeType(field.type);
@@ -1097,15 +1075,15 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
 		var k = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
-		var v = ["color","intensity"];
+		var v = ["color","intensity","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
 		v;
 		var k1 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
-		var v1 = ["color","intensity","radius"];
+		var v1 = ["color","intensity","radius","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k1] = v1;
 		v1;
 		var k2 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
-		var v2 = ["color","intensity","spotlightAngles"];
+		var v2 = ["color","intensity","spotlightAngles","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
 		v2;
 	}
@@ -1619,9 +1597,6 @@ ursine_editor_scene_entity_Entity.__interfaces__ = [ursine_utils_IEventContainer
 ursine_editor_scene_entity_Entity.create = function() {
 	return new ursine_editor_scene_entity_Entity(ursine_native_Extern.CreateEntity());
 };
-ursine_editor_scene_entity_Entity.createFromArchetype = function() {
-	ursine_native_Extern.CreateEntityFromArchetype();
-};
 ursine_editor_scene_entity_Entity.prototype = {
 	isValid: function() {
 		return this.m_handler.isValid();
@@ -1657,6 +1632,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,inspect: function() {
 		return this.m_handler.inspect();
 	}
+	,inspectComponent: function(component) {
+		return this.m_handler.inspectComponent(component);
+	}
 	,hasComponent: function(name) {
 		return this.m_handler.hasComponent(name);
 	}
@@ -1665,6 +1643,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	}
 	,removeComponent: function(name) {
 		this.m_handler.removeComponent(name);
+	}
+	,componentSet: function(componentName,value) {
+		this.m_handler.componentSet(componentName,value);
 	}
 	,componentFieldUpdate: function(componentName,fieldName,value) {
 		this.m_handler.componentFieldUpdate(componentName,fieldName,value);
@@ -1739,6 +1720,7 @@ var ursine_editor_windows_EntityInspector = function() {
 	ursine_editor_WindowHandler.call(this);
 	this.m_componentHandlers = new haxe_ds_StringMap();
 	this.m_openCache = new haxe_ds_StringMap();
+	this.m_componentClipboard = new haxe_ds_StringMap();
 	this.window.heading = "Inspector";
 	this.initWindow();
 };
@@ -1802,24 +1784,38 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 			this.inspectComponent(component);
 		}
 	}
+	,createComponentInspector: function(component) {
+		var _g = this;
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		var type = database.getComponentType(component.type);
+		var handler = database.createComponentInspector(this.m_inspectedEntity,component);
+		handler.inspector.header.addEventListener("contextmenu",function(e) {
+			_g.createComponentContextMenu(handler,e);
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			return false;
+		});
+		handler.inspector.canRemove = !Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.DisableComponentRemoval);
+		handler.inspector.opened = this.m_openCache.get(component.type) == true;
+		handler.inspector.addEventListener("removed",(function(f,a1) {
+			return function(e1) {
+				f(a1,e1);
+			};
+		})($bind(this,this.onRemoveComponentClicked),component));
+		handler.inspector.addEventListener("open-changed",(function(f1,a11) {
+			return function(e2) {
+				f1(a11,e2);
+			};
+		})($bind(this,this.onOpenChanged),component));
+		return handler;
+	}
 	,inspectComponent: function(component) {
 		if(this.m_componentHandlers.get(component.type) != null) return;
 		var database = ursine_editor_Editor.instance.componentDatabase;
 		var type = database.getComponentType(component.type);
 		if(Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.HiddenInInspector)) return;
-		var handler = database.createComponentInspector(this.m_inspectedEntity,component);
-		handler.inspector.canRemove = !Object.prototype.hasOwnProperty.call(type.meta,ursine_native_Property.DisableComponentRemoval);
-		handler.inspector.opened = this.m_openCache.get(component.type) == true;
-		handler.inspector.addEventListener("removed",(function(f,a1) {
-			return function(e) {
-				f(a1,e);
-			};
-		})($bind(this,this.onRemoveComponentClicked),component));
-		handler.inspector.addEventListener("open-changed",(function(f1,a11) {
-			return function(e1) {
-				f1(a11,e1);
-			};
-		})($bind(this,this.onOpenChanged),component));
+		var handler = this.createComponentInspector(component);
 		{
 			this.m_componentHandlers.set(component.type,handler);
 			handler;
@@ -1828,6 +1824,10 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,removeInspector: function(inspector) {
 		inspector.remove();
+		{
+			this.m_componentHandlers.set(inspector.component.type,null);
+			null;
+		}
 	}
 	,getAvailableComponentTypes: function(entity) {
 		var db = ursine_editor_Editor.instance.componentDatabase;
@@ -1836,6 +1836,20 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 			var isHidden = Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInInspector);
 			return !entity.hasComponent(type) && !isHidden;
 		});
+	}
+	,createComponentContextMenu: function(inspector,e) {
+		var _g = this;
+		var menu = new ContextMenuControl();
+		menu.addItem("Copy " + inspector.component.type,function() {
+			var v = inspector.copyInstance();
+			_g.m_componentClipboard.set(inspector.component.type,v);
+			v;
+		});
+		var clipboard = this.m_componentClipboard.get(inspector.component.type);
+		if(clipboard != null) menu.addItem("Paste " + inspector.component.type,function() {
+			inspector.entity.componentSet(inspector.component.type,clipboard.value);
+		});
+		menu.open(e.clientX,e.clientY);
 	}
 	,onArchetypeSaveClicked: function(e) {
 		this.m_inspectedEntity.saveAsArchetype();
@@ -2043,48 +2057,46 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	,createEntityItem: function(entity) {
 		var _g = this;
 		var item = new TreeViewItemControl();
-		item.addEventListener("drag-start",function(e) {
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-			e.preventStart = !entity.isHierarchyChangeEnabled();
+		item.addEventListener("contextmenu",function(e) {
+			_g.openContextMenu(e,item);
 		});
-		item.addEventListener("drag-drop",function(e1) {
+		item.addEventListener("drag-start",function(e1) {
 			e1.stopPropagation();
 			e1.stopImmediatePropagation();
+			e1.preventStart = !entity.isHierarchyChangeEnabled();
+		});
+		item.addEventListener("drag-drop",function(e2) {
+			e2.stopPropagation();
+			e2.stopImmediatePropagation();
 			if(!entity.isHierarchyChangeEnabled()) {
-				e1.preventDrop = true;
+				e2.preventDrop = true;
 				return;
 			}
-			var target = e1.detail.dropTarget.entity;
+			var target = e2.detail.dropTarget.entity;
 			var parent = entity.getParent();
 			var targetID;
 			if(target == null) targetID = -1; else targetID = target.uniqueID;
 			var parentID;
 			if(parent == null) parentID = -1; else parentID = parent.uniqueID;
 			if(targetID == parentID) {
-				e1.preventDrop = e1.detail.newParent;
+				e2.preventDrop = e2.detail.newParent;
 				return;
 			}
 			entity.setParent(target);
 		});
-		item.addEventListener("drag-drop-after",function(e2) {
-			e2.stopPropagation();
-			e2.stopImmediatePropagation();
+		item.addEventListener("drag-drop-after",function(e3) {
+			e3.stopPropagation();
+			e3.stopImmediatePropagation();
 			var childIndex = ElementUtils.childIndex(item);
 			entity.setSiblingIndex(childIndex);
 		});
-		item.textContentElement.addEventListener("dblclick",function() {
-			item.textContentElement.contentEditable = "true";
-			var range = window.document.createRange();
-			range.selectNodeContents(item.textContentElement);
-			var selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(range);
+		item.textContentElement.addEventListener("dblclick",function(e4) {
+			_g.startRenamingEntity(item);
 		});
-		item.textContentElement.addEventListener("keydown",function(e3) {
-			if(e3.keyCode == 13) {
+		item.textContentElement.addEventListener("keydown",function(e5) {
+			if(e5.keyCode == 13) {
 				item.textContentElement.blur();
-				e3.preventDefault();
+				e5.preventDefault();
 				return false;
 			}
 			return true;
@@ -2095,7 +2107,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		});
 		item.text = entity.getName();
 		item.entity = entity;
-		item.textElement.addEventListener("click",function(e4) {
+		item.textElement.addEventListener("click",function(e6) {
 			if(_g.m_selectedEntities.indexOf(item.entity.uniqueID) != -1) return;
 			_g.clearSelectedEntities();
 			item.entity.select();
@@ -2105,6 +2117,29 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			item;
 		}
 		return item;
+	}
+	,openContextMenu: function(e,item) {
+		var _g = this;
+		var menu = new ContextMenuControl();
+		menu.addItem("Rename",function() {
+			_g.startRenamingEntity(item);
+		});
+		menu.addItem("Delete",function() {
+			item.entity.remove();
+		});
+		menu.addItem("Duplicate",function() {
+			var clone = item.entity.clone();
+			clone.setName(item.entity.getName() + " Copy");
+		});
+		menu.open(e.clientX,e.clientY);
+	}
+	,startRenamingEntity: function(item) {
+		item.textContentElement.contentEditable = "true";
+		var range = window.document.createRange();
+		range.selectNodeContents(item.textContentElement);
+		var selection = window.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
 	}
 	,selectEntity: function(item) {
 		if(item == null) ursine_editor_windows_EntityInspector.instance.inspect(null); else {
@@ -2126,6 +2161,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	,__class__: ursine_editor_windows_SceneOutline
 });
 var ursine_editor_windows_SceneView = function() {
+	this.m_selector = null;
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
 	this.window.heading = "Scene";
 	this.onViewportInvalidated();
@@ -2141,25 +2177,56 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 		case 46:
 			ursine_editor_windows_SceneOutline.instance.deleteSelectedEntities();
 			break;
+		case 32:
+			this.openEditorCommands();
+			break;
 		}
+		return true;
+	}
+	,openEditorCommands: function() {
+		var _g = this;
+		if(this.m_selector != null) return;
+		var items = ursine_native_Extern.GetEditorCommands();
+		this.m_selector = new ItemSelectionPopupControl(items);
+		this.m_selector.addEventListener("item-selected",function(e) {
+			eval('editor_commands_'+ e.detail.item +'()');
+			_g.clearCommandSelector();
+		});
+		this.m_selector.filterInput.addEventListener("keydown",function(e1) {
+			if(e1.keyCode == 32 && _g.m_selector.currentFilter.length == 0) {
+				_g.m_selector.close();
+				e1.preventDefault();
+				e1.stopPropagation();
+				e1.stopImmediatePropagation();
+				return false;
+			}
+			return true;
+		});
+		this.m_selector.addEventListener("closed",$bind(this,this.clearCommandSelector));
+		haxe_Timer.delay(function() {
+			window.document.body.appendChild(_g.m_selector);
+			var bounds = _g.window.container.getBoundingClientRect();
+			_g.m_selector.show(bounds.left + (bounds.width - 225) * 0.5,bounds.height * 0.35);
+		},10);
+	}
+	,clearCommandSelector: function() {
+		this.m_selector = null;
+		haxe_Timer.delay(($_=this.window,$bind($_,$_.focus)),1);
 	}
 	,__class__: ursine_editor_windows_SceneView
 });
 var ursine_native_Extern = function() { };
 $hxClasses["ursine.native.Extern"] = ursine_native_Extern;
 ursine_native_Extern.__name__ = ["ursine","native","Extern"];
-ursine_native_Extern.DebugEditorUI = function() {
-	return DebugEditorUI();
-};
 ursine_native_Extern.ProcessOpen = function(path,relative) {
 	if(relative == null) relative = false;
 	return ProcessOpen(path, relative);
 };
+ursine_native_Extern.GetEditorCommands = function() {
+	return editor_commands_GetEditorCommands();
+};
 ursine_native_Extern.CreateEntity = function() {
 	return CreateEntity();
-};
-ursine_native_Extern.CreateEntityFromArchetype = function() {
-	return CreateEntityFromArchetype();
 };
 ursine_native_Extern.GetNativeComponentDatabase = function() {
 	return GetNativeComponentDatabase();

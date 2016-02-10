@@ -57,7 +57,7 @@ namespace ursine
 				const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level);
 
 			static void SetGameState(const std::string name, const std::string state);
-
+            
 			static void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
 
 			static void SetTrigger(const std::string name, AkGameObjectID obj);
