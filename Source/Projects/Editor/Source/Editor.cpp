@@ -152,7 +152,7 @@ void Editor::initializeGraphics(void)
     config.windowWidth = 1366;
     config.windowHeight = 768;      
     config.enableDebugInfo = false; 
-    config.enableProfiling = false;   
+    config.enableProfiling = false;    
         
       
     m_graphics->StartGraphics( config );
