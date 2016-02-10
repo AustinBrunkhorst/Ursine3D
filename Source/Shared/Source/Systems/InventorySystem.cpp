@@ -163,7 +163,7 @@ void InventorySystem::ActivateWeapon(Inventory* inventory)
 
         inventory->m_swap = false;
     }
-
+    
     // activate current weapon
     inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->Dispatch(game::ACTIVATE_WEAPON, &args);
 

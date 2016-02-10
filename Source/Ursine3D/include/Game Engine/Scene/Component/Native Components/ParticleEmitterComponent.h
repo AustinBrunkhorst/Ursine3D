@@ -94,13 +94,13 @@ namespace ursine
             );
 
             EditorField(
-                Vec3 velocity,
+                SVec3 velocity,
                 GetVelocity,
                 SetVelocity
             );
 
             EditorField(
-                Vec3 velocityVariance,
+                SVec3 velocityVariance,
                 GetVelocityRange,
                 SetVelocityRange
             );
@@ -109,10 +109,10 @@ namespace ursine
                 float fill,
                 GetFill,
                 SetFill
-                );
+            );
 
             EditorField(
-                Vec3 emitterSize,
+                SVec3 emitterSize,
                 GetEmitterSize,
                 SetEmitterSize
             );
@@ -161,7 +161,7 @@ namespace ursine
             const SVec3 &GetVelocity(void) const;
             void SetVelocity(const SVec3 &velocity);
 
-            const SVec3 GetVelocityRange(void) const;
+            SVec3 GetVelocityRange(void) const;
             void SetVelocityRange(const SVec3 &range);
 
             const SVec3 &GetEmitterSize(void) const;

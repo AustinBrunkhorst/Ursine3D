@@ -26,7 +26,7 @@ namespace ursine
         
         }
 
-        Destructor::Destructor(Type classType, Invoker invoker)
+        Destructor::Destructor(Type classType, DestructorInvokerBase *invoker)
             : Invokable( "destructor" )
             , m_classType( classType )
             , m_invoker( invoker )
@@ -47,7 +47,7 @@ namespace ursine
             UAssert( m_classType == instance.GetType( ), 
                 "Destructor called on incompatible type" );
         
-            m_invoker( instance );
+            m_invoker->Invoke( instance );
 
             delete instance.m_base;
 

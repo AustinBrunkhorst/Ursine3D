@@ -56,7 +56,8 @@ namespace ursine
                         // for now we are going to ignore falloff for testing
                         auto health = dmgEntity->GetComponent<Health>();
 
-                        health->DealDamage(scaledDmg);
+						if (health)
+							health->DealDamage(scaledDmg);
                     } 
                 }
             }

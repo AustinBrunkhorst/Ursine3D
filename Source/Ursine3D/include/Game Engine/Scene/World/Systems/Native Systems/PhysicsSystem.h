@@ -81,7 +81,7 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-            void onEditorUpdate(EVENT_HANDLER(World));
+            void onEditorRender(EVENT_HANDLER(World));
 
     #endif
 

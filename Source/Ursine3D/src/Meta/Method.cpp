@@ -58,14 +58,14 @@ namespace ursine
                 "Invalid method invoked" );
 
             UAssert( !(instance.IsConst( ) && !m_isConst), 
-                "Non-const method invoked on const object" )
+                "Non-const method invoked on const object" );
 
             UAssert( instance.GetType( ) == m_classType, 
                 "Incompatible method invoked with instance" );
 
         #endif
 
-            return m_invoker( instance, arguments );
+            return m_invoker->Invoke( instance, arguments );
         }
     }
 }

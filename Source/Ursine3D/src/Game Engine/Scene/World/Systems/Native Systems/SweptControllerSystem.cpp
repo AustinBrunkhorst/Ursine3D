@@ -244,8 +244,19 @@ namespace ursine
 					
 					// Move forward to the first time of impact.
 					// A time of 0 is valid, it just wont result in any translation.
+
+					// Account for the case when the distance returned in the sweep is less than the amount
+					// we're taking off to account for Bullet's epsilon internally
+					const float resolutionEpsilon = 0.01f;
+					auto delta = sweptVelocity * output.time[ i ];
+					auto normVel = SVec3::Normalize( sweptVelocity );
+
 					timeLeft -= output.time[ i ];
-					trans->SetWorldPosition( trans->GetWorldPosition( ) + sweptVelocity * output.time[ i ] );
+
+					trans->SetWorldPosition( 
+						trans->GetWorldPosition( ) + delta - 
+						normVel * resolutionEpsilon 
+					);
 
 					// Determine what kind of surface was contacdted
 					auto ground = isGroundSurface( controller, normal );
@@ -281,7 +292,10 @@ namespace ursine
 						}
 
 						// Project out the horizontal motion that's in the direction of the surface.
-						auto hirzontalNormal = normal - SVec3::ProjectToNorm( normal, controller.m_worldUp );
+						auto horizontalNormal = normal - SVec3::ProjectToNorm( normal, controller.m_worldUp );
+						horizontalNormal.Normalize( );
+						sweptVelocity -= SVec3::ProjectToNorm( sweptVelocity, horizontalNormal );
+						sweptVelocity += verticalSweep;
 					}
 					// Jumping upward into the ceiling.
 					else if (controller.m_grounded && ceiling && sweptVelocity.Dot( controller.m_worldUp ) > 0.0f)

@@ -35,6 +35,7 @@ namespace ursine
             SHADER_SPOT_LIGHT,
             SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
             SHADER_DIRECTIONAL_LIGHT,
+            SHADER_EMISSIVE,
 
             /////////////////////////////////////////////////////////
             // and past this is debug!

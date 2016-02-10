@@ -23,6 +23,36 @@ body {
   top: 0;
   transform: translateX(-50%);
 
+  $font-size: 22px;
+
+  &.running {
+    #simulation-play {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #simulation-toggle {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #simulation-step {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #simulation-stop {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+
+  &.paused {
+    #simulation-toggle {
+      @include icon-half( $icon-half-play, $font-size );
+    }
+  }
+
   > div {
     display: inline-block;
     width: 30px;
@@ -35,26 +65,40 @@ body {
     transition: color $duration-transition-btn ease, opacity $duration-transition-btn ease;
     cursor: pointer;
 
-    $font-size: 22px;
-
     &:hover:not(.disabled) {
-      color: $color-accent;
+      color: $color-accent !important;
     }
 
     &.disabled {
       opacity: 0.5;
     }
 
-    &#simulation-toggle {
-      @include icon-half( $icon-half-play, $font-size );
+    &#simulation-play {
+      opacity: 1;
 
-      &.running {
-        @include icon-half( $icon-half-pause, $font-size );
-      }
+      @include icon-half( $icon-half-play, $font-size );
+    }
+
+    &#simulation-toggle {
+      opacity: 0;
+      pointer-events: none;
+
+      @include icon-half( $icon-half-pause, $font-size );
     }
 
     &#simulation-step {
+      opacity: 0;
+      pointer-events: none;
+
       @include icon-half( $icon-half-step-forward, $font-size );
+    }
+
+    &#simulation-stop {
+      opacity: 0;
+      color: #cf6753;
+      pointer-events: none;
+
+      @include icon-half( $icon-half-stop, $font-size );
     }
   }
 }

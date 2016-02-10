@@ -58,10 +58,9 @@ namespace ursine
             // INITIALIZING /////////////////////////////////////////////////
             m_drawList.resize(MAX_DRAW_CALLS);
             m_drawCount = 0;
-            m_renderUI = config.m_renderUI;
-            m_profile = config.Profile_;
+            m_profile = config.enableProfiling;
             m_threadHandle = nullptr;
-            m_debug = config.debug;
+            m_debug = config.enableDebugInfo;
             m_currentlyRendering = false;
             m_sceneActive = false;
             m_currentID = -1;
@@ -69,26 +68,26 @@ namespace ursine
             //writing log stuff
             LogMessage("GRAPHICS");
             LogMessage("Graphics Config:", 1);
-            LogMessage("Width: %i", 2, config.WindowWidth_);
-            LogMessage("Height: %i", 2, config.WindowHeight_);
-            LogMessage("Model Path: %s", 2, config.ModelListPath_.c_str());
-            LogMessage("Texture Path: %s", 2, config.TextureListPath_.c_str());
-            LogMessage("Shader Path: %s", 2, config.ShaderListPath_.c_str());
-            LogMessage("Fullscreen: %s", 2, config.Fullscreen_ == true ? "True" : "False");
+            LogMessage("Width: %i", 2, config.windowWidth);
+            LogMessage("Height: %i", 2, config.windowHeight);
+            LogMessage("Model Path: %s", 2, config.modelListPath.c_str());
+            LogMessage("Texture Path: %s", 2, config.textureListPath.c_str());
+            LogMessage("Shader Path: %s", 2, config.shaderListPath.c_str());
+            LogMessage("Fullscreen: %s", 2, config.fullscreen == true ? "True" : "False");
             LogMessage("GPU Info", 1);
             gfxInfo->Initialize();
-            gfxInfo->SetDimensions(config.WindowWidth_, config.WindowHeight_);
+            gfxInfo->SetDimensions(config.windowWidth, config.windowHeight);
 
-            wHND = config.HandleToWindow_;
+            wHND = config.handleToWindow;
 
             /////////////////////////////////////////////////////////////////
             // INITIALIZE MANAGERS //////////////////////////////////////////
 
             LogMessage("Initialize DirectX", 1);
-            dxCore->Initialize(config.WindowWidth_, config.WindowHeight_, config.HandleToWindow_, gfxInfo, config.Fullscreen_, m_debug);
+            dxCore->Initialize(config.windowWidth, config.windowHeight, config.handleToWindow, gfxInfo, config.fullscreen, m_debug);
 
             LogMessage("Initialize Shaders", 1);
-            shaderManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.ShaderListPath_);
+            shaderManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.shaderListPath);
 
             {
                 //load shaders
@@ -108,22 +107,25 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_SHADOW, "ShadowMap");
                 shaderManager->LoadShader(SHADER_BILLBOARD2D, "BillboardedSprite");
                 shaderManager->LoadShader(SHADER_PARTICLE, "ParticleShader");
+                shaderManager->LoadShader(SHADER_EMISSIVE, "EmissiveShader");
 
                 //load compute
                 shaderManager->LoadShader(SHADER_MOUSEPOSITION, "MouseTypeID");
+
+                
             }
 
             LogMessage("Initialize Buffers", 1);
             bufferManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext());
 
             LogMessage("Initialize Models", 1);
-            modelManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.ModelListPath_);
+            modelManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.modelListPath);
 
             renderableManager->Initialize();
             cameraManager->Initialize();
 
             LogMessage("Initialize Textures", 1);
-            textureManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.TextureListPath_);
+            textureManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.textureListPath);
 
             viewportManager->Initialize(dxCore->GetRenderTargetMgr());
 
@@ -204,13 +206,6 @@ namespace ursine
             {
                 Model3D *current = &renderableManager->m_renderableModel3D[ render->Index_ ];
 
-                URSINE_TODO("Remove hack for Jordan");
-                if(!current->Active_)
-                {
-                    --m_drawCount;
-                    return;
-                }
-
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetMaterialslName());
@@ -224,13 +219,6 @@ namespace ursine
             {
                 Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
 
-                URSINE_TODO("Remove hack for Jordan");
-                if (!current->Active_)
-                {
-                    --m_drawCount;
-                    return;
-                }
-
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetTextureName());
@@ -242,13 +230,6 @@ namespace ursine
             case RENDERABLE_LIGHT:
             {
                 Light *current = &renderableManager->m_renderableLights[ render->Index_ ];
-
-                URSINE_TODO("Remove hack for Jordan");
-                if (!current->Active_)
-                {
-                    --m_drawCount;
-                    return;
-                }
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
@@ -273,13 +254,6 @@ namespace ursine
             case RENDERABLE_PS:
             {
                 ParticleSystem *current = &renderableManager->m_renderableParticleSystems[ render->Index_ ];
-
-                URSINE_TODO("Remove hack for Jordan");
-                if ( !current->Active_ )
-                {
-                    --m_drawCount;
-                    return;
-                }
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
@@ -310,6 +284,9 @@ namespace ursine
 
             //cache state of all graphics objects
             renderableManager->CacheFrame();
+
+            float colorArray[4] = { 0,0,0,1 };
+            dxCore->GetDeviceContext()->ClearRenderTargetView(dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->RenderTargetView, colorArray);
         }
 
         void GfxManager::BeginScene()
@@ -438,7 +415,6 @@ namespace ursine
             dxCore->ClearDeferredBuffers();
             dxCore->ClearDepthBuffers();
             dxCore->ClearDebugBuffer( );
-            gfxProfiler->Stamp(PROFILE_CLEAR_BUFFERS);
 
             // get camera
             Camera &currentCamera = cameraManager->GetCamera(camera);
@@ -478,10 +454,12 @@ namespace ursine
             PrepForBillboard2D(view, proj, currentCamera);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
                 Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+            STAMP("Billboard Rendering");
 
             PrepFor3DModels(view, proj); 
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH)
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
+            STAMP("Model Rendering");
 
 
             dxCore->EndDebugEvent( );
@@ -494,18 +472,30 @@ namespace ursine
             PrepForSpotlightPass(view, proj);
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT )
                 RenderSpotLight(m_drawList[ currentIndex++ ], currentCamera, proj);
+            STAMP("Spotlight Rendering");
 
             //point light pass
             PrepForPointLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
                 RenderPointLight(m_drawList[ currentIndex++ ], currentCamera, proj);
+            STAMP("Point Light Rendering");
 
             //directional light pass
             PrepForDirectionalLightPass(view, proj);
             while (m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT)
                 RenderDirectionalLight(m_drawList[ currentIndex++ ], currentCamera);
+            STAMP("Directional Light Rendering");
+
+            // emissive pass
+            // switch to no blending
+            dxCore->SetBlendState(BLEND_STATE_NONE);
+            shaderManager->BindShader(SHADER_EMISSIVE);
+
+            // one fullscreen pass
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
 
             dxCore->EndDebugEvent( );
+            STAMP("Emissive Pass");
 
             //debug 
             PrepFor3DModels(view, proj); // I don't think gets set properly
@@ -516,8 +506,9 @@ namespace ursine
             RenderDebugPoints(view, proj, currentCamera);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera);
-            gfxProfiler->Stamp(PROFILE_DEBUG);
+
             dxCore->EndDebugEvent( );
+            STAMP("Debug Pass");
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
@@ -527,9 +518,10 @@ namespace ursine
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
             dxCore->GetDeviceContext()->PSSetShaderResources(1, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_LIGHTMAP)->ShaderMap);
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-            gfxProfiler->Stamp(PROFILE_SCENE_MAIN);
+
 
             dxCore->EndDebugEvent( );
+            STAMP("Main Screen Pass");
 
             /////////////////////////////////////////////////////////////////
             //render primitive layer
@@ -541,7 +533,7 @@ namespace ursine
             layoutManager->SetInputLayout(SHADER_QUAD);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-            gfxProfiler->Stamp(PROFILE_SCENE_PRIMITIVE);
+            STAMP("Primitive Pass");
 
             //overdraw render
             PrepForOverdrawDebugRender(view, proj);
@@ -549,10 +541,12 @@ namespace ursine
             RenderDebugPoints(view, proj, currentCamera, true);
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             RenderDebugLines(view, proj, currentCamera, true);
+            STAMP("Overdraw Pass");
 
             PrepForParticleSystems(view, proj);
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_PARTICLE )
                 RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
+            STAMP("Forward Particle Pass");
 
             dxCore->EndDebugEvent( );
 
@@ -570,7 +564,7 @@ namespace ursine
             // init buffers for frame
             dxCore->ClearDeferredBuffers();
             dxCore->ClearDepthBuffers();
-            gfxProfiler->Stamp(PROFILE_CLEAR_BUFFERS);
+
 
             // get camera
             Camera &currentCamera = cameraManager->GetCamera(camera);
@@ -600,8 +594,6 @@ namespace ursine
             // SORT ALL DRAW CALLS
             std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
 
-            gfxProfiler->Stamp(PROFILE_SORT);
-
             /////////////////////////////////////////////////////////////////
             // BEGIN RENDERING
             //keep track of where we are
@@ -623,8 +615,6 @@ namespace ursine
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera );
             while (m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D)
                 Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
-
-            gfxProfiler->Stamp(PROFILE_LIGHTS);
 
             //go through lights
             while (m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT)
@@ -678,9 +668,6 @@ namespace ursine
 
             m_currentlyRendering = false;
 
-            // end profiler
-            gfxProfiler->WaitForCalls(m_profile);
-            
             dxCore->EndDebugEvent( );
 
             // present
@@ -688,6 +675,9 @@ namespace ursine
 
             // end the frame
             gfxProfiler->EndFrame();
+
+            // end profiler
+            gfxProfiler->WaitForCalls(m_profile);
 
             //end rendering
             m_rendering = false;
@@ -726,9 +716,6 @@ namespace ursine
 
         void GfxManager::PrepForBillboard2D(const SMat4& view, const SMat4& proj, Camera &currentCamera)
         {
-            //end sorting
-            gfxProfiler->Stamp(PROFILE_SORT);
-
             float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
             dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
@@ -791,7 +778,6 @@ namespace ursine
         void GfxManager::PrepForCompute(void)
         {
 #if defined(URSINE_WITH_EDITOR)
-            gfxProfiler->Stamp(PROFILE_DEFERRED);
 
             //set states
             dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, false);
@@ -806,12 +792,6 @@ namespace ursine
 
         void GfxManager::PrepForLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera)
         {
-#if defined(URSINE_WITH_EDITOR)
-            gfxProfiler->Stamp(PROFILE_COMPUTEMOUSE);
-#else
-            gfxProfiler->Stamp(PROFILE_DEFERRED);
-#endif
-
             //set states
             dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, false);
             dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
@@ -872,8 +852,6 @@ namespace ursine
 
         void GfxManager::PrepForDebugRender()
         {
-            gfxProfiler->Stamp(PROFILE_LIGHTS);
-
             dxCore->SetBlendState(BLEND_STATE_NONE);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
             dxCore->SetRenderTarget(RENDER_TARGET_DEBUG);
@@ -931,12 +909,13 @@ namespace ursine
         {
             Model3D &current = renderableManager->m_renderableModel3D[ handle.Index_ ];
 
-            if ( !current.Active_ )
+            if ( !current.m_active )
                 return;
 
-            if ( !currentcamera.CheckMask( current.GetRenderMask( ) ) )
+            if ( currentcamera.CheckMask( current.GetRenderMask( ) ) )
                 return;
                     
+            /////////////////////////////////////////////////////////
             // map color
             Color c = renderableManager->m_renderableModel3D[ handle.Index_ ].GetColor( );
             PrimitiveColorBuffer pcb;
@@ -946,6 +925,7 @@ namespace ursine
             pcb.color.w = c.a;
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>( &pcb, SHADERTYPE_PIXEL );
 
+            /////////////////////////////////////////////////////////
             // material buffer 
             MaterialDataBuffer mdb;
 
@@ -961,18 +941,18 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
+            /////////////////////////////////////////////////////////
             // map matrix palette
 			MatrixPalBuffer data;
 
 			int index = 0;
-
 			for (auto &x : current.GetMatrixPalette())
 			{
 				data.matPal.matPal[index++] = x.ToD3D();
 			}
-
             bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(&data, SHADERTYPE_VERTEX);
 
+            /////////////////////////////////////////////////////////
             // map texture
             textureManager->MapTextureByID(handle.Material_);
 
@@ -986,6 +966,7 @@ namespace ursine
 
             auto *modelResource = modelManager->GetModel(handle.Model_);
 
+            /////////////////////////////////////////////////////////
             // If the whole model is to be rendered
             if ( current.GetMeshIndex() == -1 )
             {
@@ -1003,8 +984,7 @@ namespace ursine
                 }
 
                 //render debug lines
-                Model3D &model = renderableManager->m_renderableModel3D[ handle.Index_ ];
-                if ( model.GetDebug() )
+                if ( current.GetDebug() )
                 {
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
                     dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
@@ -1031,7 +1011,9 @@ namespace ursine
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
                 }
             }
-			else // we only want to render a specific part
+            /////////////////////////////////////////////////////////
+            // SPECIFIC RENDERING
+			else
 			{
 				int x = current.GetMeshIndex();
 
@@ -1077,10 +1059,10 @@ namespace ursine
         {
             auto billboard = renderableManager->m_renderableBillboards[ handle.Index_ ];
 
-            if ( !billboard.Active_ )
+            if ( !billboard.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
                 return;
 
             BillboardSpriteBuffer bsb;
@@ -1136,10 +1118,13 @@ namespace ursine
         {
             auto &particleSystem = renderableManager->m_renderableParticleSystems[ handle.Index_ ];
 
-            if ( !particleSystem.Active_ )
+            if ( !particleSystem.m_active )
                 return;
 
-            if(particleSystem.GetAdditive())
+            if ( currentCamera.CheckMask( particleSystem.GetRenderMask( ) ) )
+                return;
+
+            if( particleSystem.GetAdditive( ) )
                 dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
             else
                 dxCore->SetBlendState(BLEND_STATE_DEFAULT);
@@ -1147,27 +1132,27 @@ namespace ursine
             // bind color and space
             PointGeometryBuffer pgb;
             
-            if ( particleSystem.GetSystemSpace() )
+            if ( particleSystem.GetSystemSpace( ) )
             {
                 // use world space
-                pgb.cameraPosition = DirectX::XMFLOAT4(0, 0, 0, 0);
+                pgb.cameraPosition = DirectX::XMFLOAT4( 0, 0, 0, 0 );
             }
             else
             {
                 // use local space
-                pgb.cameraPosition = DirectX::XMFLOAT4(particleSystem.GetPosition().GetFloatPtr());
+                pgb.cameraPosition = DirectX::XMFLOAT4( particleSystem.GetPosition( ).GetFloatPtr( ) );
             }
 
             // set color
-            auto &color = particleSystem.GetColor();
+            auto &color = particleSystem.GetColor( );
             pgb.cameraUp.x = color.r;
             pgb.cameraUp.y = color.g;
             pgb.cameraUp.z = color.b;
             pgb.cameraUp.w = color.a;
 
-            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_VERTEX);
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>( &pgb, SHADERTYPE_VERTEX );
 
-            textureManager->MapTextureByName(particleSystem.GetParticleTexture());
+            textureManager->MapTextureByName( particleSystem.GetParticleTexture( ) );
 
             // material buffer 
             MaterialDataBuffer mdb;
@@ -1181,24 +1166,25 @@ namespace ursine
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
-            if ( !currentCamera.CheckMask(particleSystem.GetRenderMask()) )
+            if ( currentCamera.CheckMask(particleSystem.GetRenderMask()) )
                 return;
 
             if ( particleSystem.GetActiveParticleCount() > 0 )
             {
-                unsigned passCount = 1 + (particleSystem.GetActiveParticleCount() / 1024);
+                unsigned passCount;
+                if ( particleSystem.GetActiveParticleCount() > 1024 )
+                    passCount = (particleSystem.GetActiveParticleCount() / 1024) + 1;
+                else
+                    passCount = 1;
 
                 unsigned totalParticlesToRender = particleSystem.GetActiveParticleCount();
 
                 for ( unsigned x = 0; x < passCount; ++x )
                 {
-                    unsigned particlesInPass;
+                    unsigned particlesInPass = 1024;
 
-                    // calculate how many to render in pass
-                    if ( totalParticlesToRender > 1024 )
-                        particlesInPass = 1024;
-                    else
-                        particlesInPass = totalParticlesToRender;
+                    if ( x == passCount - 1 )
+                        particlesInPass = particleSystem.GetActiveParticleCount() % 1024;
 
                     // bind particle data
                     ParticleBuffer pb;
@@ -1288,10 +1274,10 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
-            if ( !pl.Active_ )
+            if ( !pl.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
             //get data
@@ -1349,10 +1335,10 @@ namespace ursine
         {
             Light &pl = renderableManager->m_renderableLights[ handle.Index_ ];
 
-            if(!pl.Active_)
+            if(!pl.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( pl.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( pl.GetRenderMask( ) ) )
                 return;
 
             SMat4 view = currentCamera.GetViewMatrix(); //need to transpose view (dx11 gg)
@@ -1376,7 +1362,7 @@ namespace ursine
             bufferManager->MapTransformBuffer(pl.GetSpotlightTransform( ) * SMat4(SVec3(0, -0.5, 0)));
 
             //what culling to use?
-            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("lightCone")));
         }
@@ -1385,10 +1371,10 @@ namespace ursine
         {
             Light &l = renderableManager->m_renderableLights[ handle.Index_ ];
 
-            if ( !l.Active_ )
+            if ( !l.m_active )
                 return;
 
-            if ( !currentCamera.CheckMask( l.GetRenderMask( ) ) )
+            if ( currentCamera.CheckMask( l.GetRenderMask( ) ) )
                 return;
 
             SMat4 view = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)

@@ -162,7 +162,7 @@ namespace ursine
 
                 auto &systemMeta = systemType.GetMeta( );
 
-                // disabling auto add to the world
+                // not auto added
                 if (!systemMeta.GetProperty<AutoAddEntitySystem>( ))
                 {
                     m_systems[ systemID ] = nullptr;
@@ -195,10 +195,12 @@ namespace ursine
                     system->OnRemove( );
             }
                 
-            for (auto *system : m_systems)
+            for (auto *&system : m_systems)
             {
                 if (system)
                     delete system;
+
+                system = nullptr;
             }
         }
 

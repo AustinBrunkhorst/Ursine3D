@@ -23,7 +23,6 @@
   
 #include <Color.h> 
 #include <LightComponent.h> 
-#include <WorldConfigComponent.h>
 
 using namespace ursine;
 
@@ -42,7 +41,7 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
-    , m_project(nullptr) { }
+    , m_project( nullptr ) { }
 
 Editor::~Editor(void) { }
 
@@ -142,23 +141,18 @@ void Editor::initializeGraphics(void)
 { 
     graphics::GfxConfig config;
 
-    config.Fullscreen_ = false;
+    config.fullscreen = false;
       
-    config.HandleToWindow_ =
+    config.handleToWindow =
         static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
       
-    config.ModelListPath_ = "Assets/Models/";
-    config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
-    config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = 1366;
-    config.WindowHeight_ = 768;
-
-    URSINE_TODO( "..." ); 
-     
-    config.m_renderUI = true; 
-    config.debug = false;
-
-    config.Profile_ = false; 
+    config.modelListPath = "Assets/Models/";
+    config.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
+    config.textureListPath = "Assets/Textures/";
+    config.windowWidth = 1366;
+    config.windowHeight = 768;     
+    config.enableDebugInfo = false;
+    config.enableProfiling = false; 
     
      
     m_graphics->StartGraphics( config );
@@ -191,10 +185,10 @@ void Editor::initializeScene(void)
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
-        univLight->GetTransform( )->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
-        univLight->GetTransform( )->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+        univLight->GetTransform( )->SetLocalPosition( { 0.0f, 60.0f, 0.0f } );
+        univLight->GetTransform( )->SetLocalRotation( { 0.0f, 0.0f, 0.0f } );
 
-        component->SetType( ecs::LightType::Directional );
+        component->SetLightType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
@@ -211,8 +205,6 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto dt = sender->GetDeltaTime( );
 
     auto scene = m_project->GetScene( );
-
-    scene->GetWorld( )->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
 
     scene->Update( dt );
     scene->Render( );

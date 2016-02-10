@@ -39,7 +39,7 @@ void GridRenderer::OnInitialize(void)
     m_renderSystem = m_world->GetEntitySystem( ecs::RenderSystem );
 
     m_renderSystem->Listener( this )
-        .On( ecs::RENDER_HOOK, &GridRenderer::onRenderHook );
+        .On( ecs::RENDER_HOOK_EDITOR, &GridRenderer::onRenderHook );
 
     auto settingsEntity = m_world->GetSettings( );
 
@@ -50,7 +50,7 @@ void GridRenderer::OnInitialize(void)
 void GridRenderer::OnRemove(void)
 {
     m_renderSystem->Listener( this )
-        .Off( ecs::RENDER_HOOK, &GridRenderer::onRenderHook );
+        .Off( ecs::RENDER_HOOK_EDITOR, &GridRenderer::onRenderHook );
 }
 
 void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))

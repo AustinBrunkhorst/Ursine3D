@@ -43,6 +43,9 @@ Author:         Matt Yan, m.yan@digipen.edu
     resource = nullptr;\
     }
 
+// max profiling targets
+#define MAX_PROFILER_TARGETS    24
+
 //maximum simultaneous queries
 #define MAX_QUERIES             36
 

@@ -20,7 +20,7 @@ namespace ursine
         template<class ComponentType, typename... Args>
         ComponentType *Entity::AddComponent(Args &&... args)
         {
-            UAssert( GetComponentID( ComponentType ) != -1, 
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID,
                 "This component is not exposed to reflection."
             );
 
@@ -34,7 +34,7 @@ namespace ursine
         template<class ComponentType>
         void Entity::RemoveComponent(void)
         {
-            UAssert( GetComponentID( ComponentType ) != -1, 
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID,
                 "This component is not exposed to reflection."
             );
 
@@ -45,9 +45,10 @@ namespace ursine
         ComponentType *Entity::GetComponent(void) const
         {
             static_assert( !std::is_same<ComponentType, Transform>::value, 
-                "Use GetTransform( ) to get the Transform component." );
+                "Use GetTransform( ) to get the Transform component." 
+            );
 
-            UAssert( GetComponentID( ComponentType ) != -1, 
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID, 
                 "This component is not exposed to reflection."
             );
 
@@ -59,7 +60,7 @@ namespace ursine
         {
             static const auto &mask = GetComponentMask( ComponentType );
 
-            UAssert( GetComponentID( ComponentType ) != -1, 
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID,
                 "This component is not exposed to reflection."
             );
 

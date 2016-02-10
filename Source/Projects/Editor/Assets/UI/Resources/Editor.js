@@ -542,17 +542,27 @@ ursine_editor_Editor.prototype = {
 		return parent;
 	}
 	,initSimulationPlayback: function() {
+		var toolsContainer = window.document.querySelector("#simulation-tools");
+		var btnPlay = window.document.querySelector("#simulation-play");
 		var btnToggle = window.document.querySelector("#simulation-toggle");
 		var btnStep = window.document.querySelector("#simulation-step");
+		var btnStop = window.document.querySelector("#simulation-stop");
+		btnPlay.addEventListener("click",function() {
+			toolsContainer.classList.add("running");
+			ursine_native_Extern.ScenePlayStart();
+		});
 		btnToggle.addEventListener("click",function() {
-			btnToggle.classList.toggle("running");
-			var running = btnToggle.classList.contains("running");
-			btnStep.classList.toggle("disabled",running);
-			ursine_native_Extern.ScenePlay(running);
+			var paused = toolsContainer.classList.contains("paused");
+			toolsContainer.classList.toggle("paused",!paused);
+			ursine_native_Extern.SceneSetPlayState(!paused);
 		});
 		btnStep.addEventListener("click",function() {
 			if(btnStep.classList.contains("disabled")) return;
 			ursine_native_Extern.SceneStep();
+		});
+		btnStop.addEventListener("click",function() {
+			toolsContainer.classList.remove("running");
+			ursine_native_Extern.ScenePlayStop();
 		});
 	}
 	,__class__: ursine_editor_Editor
@@ -743,7 +753,7 @@ ursine_editor_menus_EntityMenu.createLight = function(name,type) {
 	var entity = ursine_editor_menus_EntityMenu.createEntity(name);
 	entity.addComponent("Light");
 	var lightType = ursine_editor_Editor.instance.componentDatabase.getNativeType("ursine::ecs::LightType").enumValue;
-	entity.componentFieldUpdate("Light","Type",Reflect.field(lightType,type));
+	entity.componentFieldUpdate("Light","type",Reflect.field(lightType,type));
 	return entity;
 };
 ursine_editor_menus_EntityMenu.__super__ = ursine_editor_MenuItemHandler;
@@ -1087,15 +1097,15 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
 		var k = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
-		var v = ["Color","Direction","Intensity"];
+		var v = ["color","intensity"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
 		v;
 		var k1 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
-		var v1 = ["Color","Intensity","Radius"];
+		var v1 = ["color","intensity","radius"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k1] = v1;
 		v1;
 		var k2 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
-		var v2 = ["Color","Direction","Intensity","SpotlightAngles"];
+		var v2 = ["color","intensity","spotlightAngles"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
 		v2;
 	}
@@ -2020,6 +2030,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		}
 	}
 	,addEntity: function(entity) {
+		if(this.m_entityItems.h[entity.uniqueID] != null) return;
 		var item = this.createEntityItem(entity);
 		if(!entity.isVisibleInEditor()) item.classList.add("hidden");
 		var parent = entity.getParent();
@@ -2162,11 +2173,17 @@ ursine_native_Extern.SceneLoad = function() {
 ursine_native_Extern.SceneSave = function() {
 	return SceneSave();
 };
-ursine_native_Extern.ScenePlay = function(playing) {
-	return ScenePlay(playing);
+ursine_native_Extern.ScenePlayStart = function() {
+	return ScenePlayStart();
+};
+ursine_native_Extern.SceneSetPlayState = function(playing) {
+	return SceneSetPlayState(playing);
 };
 ursine_native_Extern.SceneStep = function() {
 	return SceneStep();
+};
+ursine_native_Extern.ScenePlayStop = function() {
+	return ScenePlayStop();
 };
 ursine_native_Extern.SceneGetEntitySystems = function() {
 	return SceneGetEntitySystems();
@@ -2276,7 +2293,7 @@ ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldIns
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");
 ursine_editor_scene_component_inspectors_components_LightInspector.__meta__ = { obj : { componentInspector : ["Light"]}};
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName = "ursine::ecs::LightType";
-ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName = "Type";
+ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeFieldName = "type";
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional = "Directional";
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint = "Point";
 ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot = "Spot";

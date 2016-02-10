@@ -56,8 +56,6 @@ namespace ursine
                 "Possibly forgot ENTITY_SYSTEM_DEFINITION."
             );
 
-            auto &systemMeta = systemType.GetMeta( );
-
             // systems take a pointer to a world as the first argument
             const auto systemConstructor = 
                 meta::InvokableSignature { typeof( World* ) };

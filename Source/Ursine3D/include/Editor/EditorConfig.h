@@ -19,8 +19,6 @@ namespace ursine
 	{
 	#if defined(URSINE_WITH_EDITOR)
 
-		extern void EditorClearDeletionQueue(void);
-
 	#endif
 	}
 }

@@ -23,44 +23,44 @@ namespace ursine
         // renderable class
         Renderable::Renderable()
         {
-            Active_ = false;
+            m_active = false;
         }
 
         void Renderable::Initialize()
         {
-            Overdraw_ = false;
-            Debug_ = false;
-            m_mask = 0x7FFFFFFFFFFFFFFF;
+			m_useOverdraw = false;
+			m_useDebugRendering = false;
+            m_mask = 0;
         }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
         {
-            entityID = id;
+            m_entityID = id;
         }
 
         ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
         {
-            return entityID;
+            return m_entityID;
         }
 
         void Renderable::SetOverdraw(bool draw)
         {
-            Overdraw_ = draw;
+            m_useOverdraw = draw;
         }
 
         bool Renderable::GetOverdraw() const
         {
-            return Overdraw_;
+            return m_useOverdraw;
         }
 
         void Renderable::SetDebug(bool debug)
         {
-            Debug_ = debug;
+            m_useDebugRendering = debug;
         }
 
         bool Renderable::GetDebug() const
         {
-            return Debug_;
+            return m_useDebugRendering;
         }
 
         RenderMask Renderable::GetRenderMask(void) const
@@ -75,29 +75,29 @@ namespace ursine
 
         bool Renderable::GetActive(void) const
         {
-            return Active_;
+            return m_active;
         }
 
         void Renderable::SetActive(const bool isActive)
         {
-            Active_ = isActive;
+            m_active = isActive;
         }
 
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
         {
-            Transform_ = SMat4::Identity();
+            m_transform = SMat4::Identity();
         }
 
         const SMat4 &Model::GetWorldMatrix(void)
         {
-            return Transform_;
+            return m_transform;
         }
 
         void Model::SetWorldMatrix(const SMat4 &matrix)
         {
-            Transform_ = matrix;
+            m_transform = matrix;
         }
 
         Model3D::Model3D(void)
@@ -111,8 +111,8 @@ namespace ursine
         {
 			Renderable::Initialize( );
 
-            ModelName_ = "Cube";
-            MaterialName_ = "UV";
+            m_modelResourceName = "Cube";
+            m_materialTextureName = "UV";
 
             m_emissive = 0.45f;
             m_specPow = 0;
@@ -206,22 +206,22 @@ namespace ursine
 
         const char *Model3D::GetModelName(void)
         {
-            return ModelName_.c_str();
+            return m_modelResourceName.c_str();
         }
 
         void Model3D::SetModel(std::string modelName)
         {
-            ModelName_ = modelName;
+            m_modelResourceName = modelName;
         }
 
         const char *Model3D::GetMaterialslName(void)
         {
-            return MaterialName_.c_str();
+            return m_materialTextureName.c_str();
         }
 
         void Model3D::SetMaterial(std::string materialName)
         {
-            MaterialName_ = materialName;
+            m_materialTextureName = materialName;
         }
 
 
@@ -229,19 +229,19 @@ namespace ursine
         //billboard2d
         Billboard2D::Billboard2D(void)
         {
-            TextureName_ = "Default";
+            m_textureName = "Default";
             m_width = 1;
             m_height = 1;
         }
 
         const char *Billboard2D::GetTextureName(void)
         {
-            return TextureName_.c_str();
+            return m_textureName.c_str();
         }
 
         void Billboard2D::SetTexture(std::string texName)
         {
-            TextureName_ = texName;
+            m_textureName = texName;
         }
 
         void Billboard2D::SetDimensions(float width, float height)

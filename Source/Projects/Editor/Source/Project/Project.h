@@ -24,15 +24,18 @@ public:
     typedef std::shared_ptr<Project> Handle;
 
     Project(ursine::UIView::Handle ui);
+    ~Project(void);
 
     ursine::Scene::Handle GetScene(void);
     ursine::UIView::Handle GetUI(void);
 
+    ursine::ScenePlayState GetPlayState(void) const;
+    void SetPlayState(ursine::ScenePlayState state);
+
     void SetWorld(ursine::ecs::World *world);
-
-	void ClearDeletionQueue(void);
-
 private:
+    ursine::Json m_worldCache;
+
     ursine::UIView::Handle m_ui;
 
     ursine::Scene::Handle m_scene;

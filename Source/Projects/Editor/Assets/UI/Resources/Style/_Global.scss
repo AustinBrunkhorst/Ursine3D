@@ -78,6 +78,11 @@ body {
   }
 }
 
+::-webkit-scrollbar-corner {
+  background-color: #3e3e42;
+}
+
+
 ::selection {
   background: lighten($color-accent, 10%);
   color: white;

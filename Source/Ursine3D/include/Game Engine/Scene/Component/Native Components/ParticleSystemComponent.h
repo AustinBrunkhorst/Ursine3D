@@ -17,6 +17,7 @@
 #include "Renderable.h"
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
+#include "RenderMask.h"
 #include "Color.h"
 
 namespace ursine
@@ -73,6 +74,13 @@ namespace ursine
                 SetRenderMode
             );
 
+            Meta(BitMaskEditor)
+            EditorField(
+                ursine::ecs::RenderMask renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
             ParticleSystem(void);
             ~ParticleSystem(void);
 
@@ -114,6 +122,9 @@ namespace ursine
 
             RenderMode GetRenderMode(void) const;
             void SetRenderMode(const RenderMode &renderMode);
+
+			ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
 
         private:
             // command all particle components to operate on the set of particles

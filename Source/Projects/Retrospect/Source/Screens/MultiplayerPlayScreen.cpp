@@ -27,7 +27,7 @@ using namespace ursine;
 
 namespace
 {
-    const auto kWorldFile = "Assets/Worlds/Demo/DemoWorld.uworld";
+    const auto kWorldFile = "Assets/Worlds/Demo/MainLevel.uworld";
 
     const auto kPauseScreenName = "PauseScreen";
 }

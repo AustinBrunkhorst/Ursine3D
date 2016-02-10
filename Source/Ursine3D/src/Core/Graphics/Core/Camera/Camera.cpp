@@ -35,7 +35,7 @@ namespace ursine
 
             m_renderMode = VIEWPORT_RENDER_DEFERRED;
 
-            m_cameraMask = 0x7FFFFFFF;
+            m_cameraMask = 0;
         }
 
         void Camera::Uninitialize(void) { }

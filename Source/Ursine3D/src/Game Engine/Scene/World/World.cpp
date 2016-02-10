@@ -67,9 +67,20 @@ namespace ursine
         World::~World(void)
         {
             delete m_systemManager;
+
+            m_systemManager = nullptr;
+
             delete m_utilityManager;
+
+            m_utilityManager = nullptr;
+
             delete m_nameManager;
+
+            m_nameManager = nullptr;
+
             delete m_entityManager;
+            
+            m_entityManager = nullptr;
             
             m_settings = nullptr;
         }
@@ -180,9 +191,21 @@ namespace ursine
             Dispatch( WORLD_UPDATE, EventArgs::Empty );
         }
 
+        void World::EditorUpdate(void)
+        {
+            clearDeletionQueue( );
+
+            Dispatch( WORLD_EDITOR_UPDATE, EventArgs::Empty );
+        }
+
         void World::Render(void)
         {
             Dispatch( WORLD_RENDER, EventArgs::Empty );
+        }
+
+        void World::EditorRender(void)
+        {
+            Dispatch( WORLD_EDITOR_RENDER, EventArgs::Empty );
         }
 
         Entity *World::GetSettings(void) const
@@ -207,7 +230,8 @@ namespace ursine
 
         void World::DispatchLoad(void)
         {
-            if (!m_settings->HasComponent<WorldConfig>( ))
+            // make sure we have a the world configuration component
+            if (!m_settings->HasComponent<WorldConfig>( ) )
                 m_settings->AddComponent<WorldConfig>( );
 
             if (!m_loaded)
