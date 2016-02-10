@@ -145,40 +145,40 @@ void Editor::initializeGraphics(void)
       
     config.handleToWindow =
         static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
-      
-    config.modelListPath = "Assets/Models/";
+       
+    config.modelListPath = "Assets/Models/"; 
     config.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
     config.textureListPath = "Assets/Textures/";
     config.windowWidth = 1366;
-    config.windowHeight = 768;     
-    config.enableDebugInfo = false;
-    config.enableProfiling = false; 
-    
-     
+    config.windowHeight = 768;      
+    config.enableDebugInfo = false; 
+    config.enableProfiling = false;   
+        
+      
     m_graphics->StartGraphics( config );
-    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
+    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight ); 
     //m_graphics->SetFullscreenState( true );
-
+     
     //m_mainWindow.window->SetFullScreen( true );
-}
+}    
 
-void Editor::initializeScene(void) 
-{ 
-    auto scene = m_project->GetScene( );
+void Editor::initializeScene(void)   
+{   
+    auto scene = m_project->GetScene( ); 
        
-    auto world = scene->GetWorld( );
+    auto world = scene->GetWorld( ); 
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
-
+         
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-        handle.SetPosition( 0, 0 );
+        handle.SetPosition( 0, 0 ); 
          
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
         scene->SetViewport( viewport );
 
-        m_graphics->SetGameViewport( viewport );
+        m_graphics->SetGameViewport( viewport ); 
     }
 
     auto *univLight = world->CreateEntity( "Global Light" );

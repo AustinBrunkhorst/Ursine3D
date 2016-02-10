@@ -30,6 +30,12 @@ namespace ursine
 
     namespace ecs
     {
+        enum class CameraRenderMode
+        {
+            Deferred = graphics::VIEWPORT_RENDER_DEFERRED,
+            Forward = graphics::VIEWPORT_RENDER_FORWARD
+        } Meta(Enable);
+
         class Camera 
             : public Component
             , public RenderableComponentBase
@@ -37,6 +43,13 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
+            EditorField(
+                ursine::ecs::CameraRenderMode renderMode,
+                GetRenderMode,
+                SetRenderMode
+            );
+
+
             EditorField(
                 Vec2 viewportPosition,
                 GetViewportPosition,
@@ -111,6 +124,9 @@ namespace ursine
 
             bool GetActive(void) const;
             void SetActive(bool active);
+
+            ursine::ecs::CameraRenderMode GetRenderMode(void);
+            void SetRenderMode(ursine::ecs::CameraRenderMode type);
 
             int GetRenderLayer(void) const;
             void SetRenderLayer(int layer);

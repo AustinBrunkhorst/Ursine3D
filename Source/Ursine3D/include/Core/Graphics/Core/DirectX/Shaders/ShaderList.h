@@ -44,6 +44,7 @@ namespace ursine
             
 
             //shaders not part of the regular pipeline
+            SHADER_FORWARD,
             SHADER_POINT,
             SHADER_SHADOW,
 

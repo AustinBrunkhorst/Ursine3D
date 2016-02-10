@@ -161,6 +161,15 @@ namespace ursine
             m_active = active;
         }
 
+        ursine::ecs::CameraRenderMode Camera::GetRenderMode(void)
+        {
+            return static_cast<ursine::ecs::CameraRenderMode>(m_graphics->CameraMgr.GetCamera(m_handle).GetRenderMode( ));
+        }
+        void Camera::SetRenderMode(ursine::ecs::CameraRenderMode type)
+        {
+            m_graphics->CameraMgr.GetCamera(m_handle).SetRenderMode(static_cast<graphics::ViewportRenderMode>(type));
+        }
+
         int Camera::GetRenderLayer(void) const
         {
             return m_renderLayer;
