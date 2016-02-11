@@ -48,6 +48,9 @@ namespace ursine
         bool IsFullScreen(void) const;
         void SetFullScreen(bool fullscreen);
 
+        void SetMaximized(bool maximized);
+        void SetMinimized(bool minimized);
+
         bool IsShown(void) const;
         void Show(bool show);
 

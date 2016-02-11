@@ -20,27 +20,43 @@ Application.initWindows = function() {
 	mainDock.style.height = "100%";
 	mainDockContainer.appendChild(mainDock);
 	var sceneView = new ursine_editor_windows_SceneView();
+	var entityInspector = new ursine_editor_windows_EntityInspector();
+	var sceneOutline = new ursine_editor_windows_SceneOutline();
+	var projectBrowser = new ursine_editor_windows_ProjectBrowser();
 	var leftColumn = mainDock.addColumn();
 	leftColumn.style.width = "20%";
 	var row = leftColumn.addRow();
 	row.style.height = "100%";
 	var column = row.addColumn();
 	column.style.width = "100%";
-	column.appendChild(new ursine_editor_windows_EntityInspector().window);
-	var middleColumn = mainDock.addColumn();
-	middleColumn.style.width = "60%";
-	var row1 = middleColumn.addRow();
+	column.appendChild(entityInspector.window);
+	var rightColumn = mainDock.addColumn();
+	rightColumn.style.width = "80%";
+	var topRow = rightColumn.addRow();
+	topRow.style.height = "65%";
+	var innerLeftColumn = topRow.addColumn();
+	innerLeftColumn.style.width = "80%";
+	var row1 = innerLeftColumn.addRow();
 	row1.style.height = "100%";
 	var column1 = row1.addColumn();
 	column1.style.width = "100%";
 	column1.appendChild(sceneView.window);
-	var rightColumn = mainDock.addColumn();
-	rightColumn.style.width = "20%";
-	var row2 = rightColumn.addRow();
+	var innerRightColumn = topRow.addColumn();
+	innerRightColumn.style.width = "20%";
+	var row2 = innerRightColumn.addRow();
 	row2.style.height = "100%";
 	var column2 = row2.addColumn();
 	column2.style.width = "100%";
-	column2.appendChild(new ursine_editor_windows_SceneOutline().window);
+	column2.appendChild(sceneOutline.window);
+	var bottomRow = rightColumn.addRow();
+	bottomRow.style.height = "35%";
+	var column3 = bottomRow.addColumn();
+	column3.style.width = "100%";
+	var row3 = column3.addRow();
+	row3.style.height = "100%";
+	var column4 = row3.addColumn();
+	column4.style.width = "100%";
+	column4.appendChild(projectBrowser.window);
 	sceneView.onViewportInvalidated();
 };
 var EReg = function(r,opt) {
@@ -1945,6 +1961,16 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.window.container.appendChild(this.m_btnAddComponent);
 	}
 	,__class__: ursine_editor_windows_EntityInspector
+});
+var ursine_editor_windows_ProjectBrowser = function() {
+	ursine_editor_WindowHandler.call(this);
+	this.window.heading = "Project";
+};
+$hxClasses["ursine.editor.windows.ProjectBrowser"] = ursine_editor_windows_ProjectBrowser;
+ursine_editor_windows_ProjectBrowser.__name__ = ["ursine","editor","windows","ProjectBrowser"];
+ursine_editor_windows_ProjectBrowser.__super__ = ursine_editor_WindowHandler;
+ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHandler.prototype,{
+	__class__: ursine_editor_windows_ProjectBrowser
 });
 var ursine_editor_windows_SceneOutline = function() {
 	this.m_selectedEntities = null;

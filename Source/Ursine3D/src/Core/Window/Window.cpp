@@ -146,6 +146,22 @@ namespace ursine
         m_isFullscreen = fullscreen;
     }
 
+    void Window::SetMaximized(bool maximized)
+    {
+        if (maximized)
+            SDL_MaximizeWindow( m_handle );
+        else
+            SDL_RestoreWindow( m_handle );
+    }
+
+    void Window::SetMinimized(bool minimized)
+    {
+        if (minimized)
+            SDL_MinimizeWindow( m_handle );
+        else
+            SDL_RestoreWindow( m_handle );
+    }
+
     bool Window::IsShown(void) const
     {
         return m_isShown;

@@ -72,6 +72,7 @@ void Editor::OnInitialize(void)
         .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange ); 
      
     m_mainWindow.window->SetLocationCentered( ); 
+    m_mainWindow.window->SetMaximized( true );
     m_mainWindow.window->Show( true );    
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
@@ -90,7 +91,7 @@ void Editor::OnInitialize(void)
 
     m_notificationManager.SetUI( m_mainWindow.ui );
 
-    initializeScene( ); 
+    initializeScene( );
 }
 
 void Editor::OnRemove(void)
@@ -154,7 +155,6 @@ void Editor::initializeGraphics(void)
     config.enableDebugInfo = false; 
     config.enableProfiling = false;    
         
-      
     m_graphics->StartGraphics( config );
     m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight ); 
     //m_graphics->SetFullscreenState( true );

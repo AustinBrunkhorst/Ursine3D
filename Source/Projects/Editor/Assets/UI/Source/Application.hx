@@ -23,6 +23,10 @@ class Application {
         mainDockContainer.appendChild( mainDock );
 
         var sceneView = new SceneView( );
+        var entityInspector = new EntityInspector( );
+        var sceneOutline = new SceneOutline( );
+
+        var projectBrowser = new ProjectBrowser( );
 
         var leftColumn = mainDock.addColumn( );
         {
@@ -36,37 +40,67 @@ class Application {
 
             column.style.width = '100%';
 
-            column.appendChild( new EntityInspector( ).window );
-        }
-
-        var middleColumn = mainDock.addColumn( );
-        {
-            middleColumn.style.width = '60%';
-
-            var row = middleColumn.addRow( );
-
-            row.style.height = '100%';
-
-            var column = row.addColumn( );
-
-            column.style.width = '100%';
-
-            column.appendChild( sceneView.window );
+            column.appendChild( entityInspector.window );
         }
 
         var rightColumn = mainDock.addColumn( );
         {
-            rightColumn.style.width = '20%';
+            rightColumn.style.width = '80%';
 
-            var row = rightColumn.addRow( );
+            var topRow = rightColumn.addRow( );
+            {
+                topRow.style.height = '65%';
 
-            row.style.height = '100%';
+                var innerLeftColumn = topRow.addColumn( );
+                {
+                    innerLeftColumn.style.width = '80%';
 
-            var column = row.addColumn( );
+                    var row = innerLeftColumn.addRow( );
 
-            column.style.width = '100%';
+                    row.style.height = '100%';
 
-            column.appendChild( new SceneOutline( ).window );
+                    var column = row.addColumn( );
+
+                    column.style.width = '100%';
+
+                    column.appendChild( sceneView.window );
+                }
+
+                var innerRightColumn = topRow.addColumn( );
+                {
+                    innerRightColumn.style.width = '20%';
+
+                    var row = innerRightColumn.addRow( );
+
+                    row.style.height = '100%';
+
+                    var column = row.addColumn( );
+
+                    column.style.width = '100%';
+
+                    column.appendChild( sceneOutline.window );
+                }
+            }
+
+            var bottomRow = rightColumn.addRow( );
+            {
+                bottomRow.style.height = '35%';
+
+                var column = bottomRow.addColumn( );
+                {
+                    column.style.width = '100%';
+
+                    var row = column.addRow( );
+
+                    row.style.height = '100%';
+
+                    var column = row.addColumn( );
+
+                    column.style.width = '100%';
+
+                    column.appendChild( projectBrowser.window );
+                }
+            }
         }
 
         // TODO: remove after dock calls made

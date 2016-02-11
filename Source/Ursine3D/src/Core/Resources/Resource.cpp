@@ -32,7 +32,7 @@ namespace ursine
     fs::path Resource::GetOutputPath(void) const
     {
         fs::path outputPath = 
-            m_manager->m_libraryDirectory / kResourceOuputDirectory / to_string( m_guid );
+            m_manager->m_libraryDirectory / kResourceOuputDirectory / to_string( m_meta.GetGUID( ) );
 
         outputPath.replace_extension( kResourceOuputExtension );
 
