@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SystemConfig.h
 **
@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "Meta.h"
 #include "UrsineTypes.h"
 
 // Required at the top of all entity system declarations
@@ -26,7 +27,18 @@
 #define ENTITY_SYSTEM_DEFINITION(type)             \
     ursine::ecs::SystemTypeID type::SystemID = -1; \
 
+// Determines if the world has the given system type
+#define HasEntitySystem(systemType) GetSystemManager( )->HasSystem<systemType>( )
+
+// Gets the given entity system from the world
 #define GetEntitySystem(systemType) GetSystemManager( )->GetSystem<systemType>( )
+
+/** @brief Enables auto adding of an entity system
+*/
+struct AutoAddEntitySystem : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};
 
 namespace ursine
 {

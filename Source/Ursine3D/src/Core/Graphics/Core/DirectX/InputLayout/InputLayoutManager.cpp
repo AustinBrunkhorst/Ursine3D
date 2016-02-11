@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** InputLayoutManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "InputLayoutManager.h"
 #include <d3d11.h>
@@ -24,12 +37,23 @@ namespace ursine
                     m_layoutArray[ x ] = nullptr;
                     Shader *current = shdrmgr->GetShader((SHADER_TYPES)x);
 
-                    if (current != nullptr)
+                    if (current != nullptr && current->vs != nullptr && x != SHADER_DEFERRED_DEPTH)
                     {
                         HRESULT result = GetLayoutFromBlob(current, &m_layoutArray[ x ]);
                         UAssert(result == S_OK, "Failed to load layout from blob for shader %i.  (Error '%s')", x, GetDXErrorMessage(result));
                     }
                 }
+
+				// create super fucking finicky layout
+				D3D11_INPUT_ELEMENT_DESC SKINNED_LAYOUT[5];
+
+				SKINNED_LAYOUT[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+				SKINNED_LAYOUT[1] = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+				SKINNED_LAYOUT[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+				SKINNED_LAYOUT[3] = { "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+				SKINNED_LAYOUT[4] = { "BLENDINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+				
+				HRESULT hr = m_device->CreateInputLayout(SKINNED_LAYOUT, static_cast<UINT>(5), shdrmgr->GetShader((SHADER_TYPES)SHADER_DEFERRED_DEPTH)->rawData, shdrmgr->GetShader((SHADER_TYPES)SHADER_DEFERRED_DEPTH)->size, &m_layoutArray[SHADER_DEFERRED_DEPTH]);
             }
 
             void InputLayoutManager::Uninitialize(void)
@@ -47,6 +71,12 @@ namespace ursine
 
             void InputLayoutManager::SetInputLayout(const SHADER_TYPES type)
             {
+                if ( type == SHADER_COUNT )
+                {
+                    m_deviceContext->IASetInputLayout(nullptr);
+                    return;
+                }
+
                 if (m_currentState == type)
                     return;
 
@@ -88,42 +118,52 @@ namespace ursine
                     elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
                     elementDesc.InstanceDataStepRate = 0;
 
+                    std::string semanticName = std::string( paramDesc.SemanticName );
+
+
                     // determine DXGI format
                     if (paramDesc.Mask == 1)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-                            elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
+                        {
+                            if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32_UINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32_SINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
+                        }
                     }
                     else if (paramDesc.Mask <= 3)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+                        {
+                            if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32_SINT;
+                            else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+                                elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+                        }
                     }
                     else if (paramDesc.Mask <= 7)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
+                        if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
                             elementDesc.Format = DXGI_FORMAT_R32G32B32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
+                        else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
                             elementDesc.Format = DXGI_FORMAT_R32G32B32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+                        else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32 )
                             elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
                     }
                     else if (paramDesc.Mask <= 15)
                     {
-                        if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32B32A32_SINT;
-                        else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
-                            elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+                        {
+                            if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32B32A32_SINT;
+                            else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32 )
+                                elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                        }
                     }
 
                     //save element desc

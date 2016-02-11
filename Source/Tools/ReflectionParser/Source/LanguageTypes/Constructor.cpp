@@ -1,9 +1,22 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Constructor.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Class.h"
 #include "LanguageTypes/Constructor.h"
 
-#include <Utils.h>
+#include <boost/algorithm/string/join.hpp>
 
 Constructor::Constructor(
     const Cursor &cursor, 
@@ -30,25 +43,14 @@ TemplateData Constructor::CompileTemplate(
 
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
 
-    data[ "templateParameters" ] = getTemplateParameters( );
+    auto enableNonDynamic = !m_metaData.GetFlag( native_property::DisableNonDynamicCtor );
 
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialConstructorInvocation );
+    if (enableNonDynamic)
+        data[ "templateParameters" ] = getTemplateParameters( false );
 
-    data[ "dynamicInvocationBody" ] = 
-        context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
+    data[ "dynamicTemplateParameters" ] = getTemplateParameters( true );
 
-    data[ "enableNonDynamic" ] = 
-        utils::TemplateBool( 
-            !m_metaData.GetFlag( native_property::DisableNonDynamicCtor ) 
-        );
-
-    data[ "dynamicWrapObject" ] = 
-        utils::TemplateBool( 
-            m_metaData.GetFlag( native_property::DynamicCtorWrap ) 
-        );
-
-    data[ "argument" ] = compileSignatureTemplate( );
+    data[ "enableNonDynamic" ] = utils::TemplateBool( enableNonDynamic );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -69,16 +71,23 @@ bool Constructor::isAccessible(void) const
     return !m_metaData.GetFlag( native_property::Disable );
 }
 
-std::string Constructor::getTemplateParameters(void) const
+std::string Constructor::getTemplateParameters(bool isDynamic) const
 {
-    auto params( m_signature );
+    std::vector<std::string> params;
 
-    params.insert( params.begin( ), m_parent->m_qualifiedName );
+    // ClassType
+    params.push_back( m_parent->m_qualifiedName );
 
-    std::string output;
+    // IsDynamic
+    params.emplace_back( isDynamic ? "true" : "false" );
 
-    ursine::utils::Join( params, ", ", output );
+    // IsWrapped
+    params.emplace_back( 
+        m_metaData.GetFlag( native_property::DynamicCtorWrap ) ? "true" : "false"
+    );
 
-    // parent type, arg types, ...
-    return output;
+    // Args...
+    params.insert( params.end( ), m_signature.begin( ), m_signature.end( ) );
+
+    return boost::join( params, ", " );
 }

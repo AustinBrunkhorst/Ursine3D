@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Destructor.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Destructor.h"
@@ -13,7 +26,7 @@ namespace ursine
         
         }
 
-        Destructor::Destructor(Type classType, Invoker invoker)
+        Destructor::Destructor(Type classType, DestructorInvokerBase *invoker)
             : Invokable( "destructor" )
             , m_classType( classType )
             , m_invoker( invoker )
@@ -34,7 +47,7 @@ namespace ursine
             UAssert( m_classType == instance.GetType( ), 
                 "Destructor called on incompatible type" );
         
-            m_invoker( instance );
+            m_invoker->Invoke( instance );
 
             delete instance.m_base;
 

@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Filter.h
 **
@@ -32,6 +32,7 @@ namespace ursine
             inline ComponentTypeMask ContainsMask(void) const;
 
             bool Matches(const Entity *entity) const;
+            bool Matches(const ComponentTypeMask &typeMask) const;
 
             template<class... Types>
             Filter &All(void);

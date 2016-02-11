@@ -30,8 +30,13 @@ struct PS_GBUFFER_OUT
     float4 SpecPow: SV_TARGET2;
 };
 
+cbuffer PrimColorBuffer : register(b5)
+{
+    float4 color;
+}
+
 // func to pack
-PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
+PS_GBUFFER_OUT PackGBuffer( float4 BaseColor, float3 Normal, float
     SpecIntensity, float SpecPower, float emissive )
 {
     PS_GBUFFER_OUT Out;
@@ -39,22 +44,22 @@ PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
     float SpecPowerNorm = (SpecPower - g_SpecPowerRange.x) / g_SpecPowerRange.y;
 
     // convert id into proper sizes
-    int size16 = objID & 0xff;
-    int size8_1 = (objID >> 8) & 0xf;
-    int size8_2 = (objID >> 16) & 0xf;
+    int word1 = objID & 0xff;           //first 8 bits
+    int word2 = (objID >> 8) & 0xff;  //second 8 bits
 
     // Pack all the data into the GBuffer structure
-    Out.ColorSpecInt = float4(BaseColor.rgb, SpecIntensity);
-    Out.Normal = float4(Normal.xyz * 0.5 + 0.5, (float)size16);
-    Out.SpecPow = float4(SpecPowerNorm, emissive, (float)size8_1, (float)size8_2);
-
+    Out.ColorSpecInt = float4(BaseColor);
+    Out.Normal = float4(Normal.xyz * 0.5 + 0.5, emissive);
+    //                                            first 2 are handle index      last 8 is type
+    Out.SpecPow = float4(SpecPowerNorm, word1 /255.f, word2 / 255.f, SpecIntensity);
+     
     // return
     return Out;
 }
 
 PS_GBUFFER_OUT main( PixelInputType input )
 {
-    float3 baseColor = shaderTexture.Sample(SampleType, input.uv).xyz;
+    float4 baseColor = float4(shaderTexture.Sample(SampleType, input.uv).xyz * color.xyz, color.a);
     float3 normal = input.normal.xyz;
 
     PS_GBUFFER_OUT buff = PackGBuffer( baseColor, normal, specularIntensity, specularPower, emissive );

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** D3D11Forward.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 
@@ -18,6 +31,7 @@ struct ID3D11PixelShader;
 struct ID3D11HullShader;
 struct ID3D11DomainShader;
 struct ID3D11GeometryShader;
+struct ID3D11ComputeShader;
 struct ID3D11ShaderReflection;
 struct ID3D10Blob;
 typedef ID3D10Blob ID3DBlob;
@@ -27,4 +41,10 @@ struct D3D11_VIEWPORT;
 struct DXGI_MODE_DESC;
 struct IDXGISwapChain;
 struct ID3D11Debug;
+struct ID3D11UnorderedAccessView;
+struct ID3D11Resource;
+struct XMVECTOR;
+struct XMFLOAT2;
+struct XMFLOAT3;
+struct XMFLOAT4;
 

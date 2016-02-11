@@ -2,13 +2,13 @@ package ursine.editor.menus;
 
 @menuIndex( 0 )
 class FileMenu extends MenuItemHandler {
-    @mainMenuItem( "File/New" )
+    @mainMenuItem( "File/Load Scene", false, false, "file-open" )
     static function doNew() {
-        trace( "NativeEditorHandler" );
+        ursine.native.Extern.SceneLoad( );
     }
 
-    @mainMenuItem( "File/Open" )
+    @mainMenuItem( "File/Save Scene", false, false, "file-save" )
     static function doOpen() {
-        trace( "open" );
+        ursine.native.Extern.SceneSave( );
     }
 }

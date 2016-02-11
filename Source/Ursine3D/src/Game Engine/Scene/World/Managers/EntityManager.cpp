@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EntityManager.cpp
 **
@@ -17,7 +17,16 @@
 #include "Entity.h"
 #include "Filter.h"
 #include "TransformComponent.h"
+#include "EntitySerializer.h"
+#include "EntityEvent.h"
+
 #include <queue>
+
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
 
 namespace ursine
 {
@@ -40,15 +49,24 @@ namespace ursine
 
                 for (auto derived : componentType.GetDerivedClasses( ))
                 {
-                    auto componentID = derived.GetStaticField( "ComponentID" );
+                    auto setter = derived.GetStaticMethod( "SetComponentID", { typeof( ComponentTypeID ) } );
 
-                    UAssert( componentID.IsValid( ),
-                        "Native component '%s' doesn't have a static field ComponentID.\n"
+                    UAssert( setter.IsValid( ),
+                        "Native component '%s' doesn't have a static method SetComponentID.\n"
                         "Most likely missing NATIVE_COMPONENT in declaration",
-                        derived.GetName().c_str( )
+                        derived.GetName( ).c_str( )
                     );
 
-                    componentID.SetValue( nextID++ );
+                    UAssert( nextID < kMaxComponentCount, "We're maxed out son." );
+
+                    setter.Invoke( nextID++ );
+
+                    auto &defaultCtor = derived.GetDynamicConstructor( );
+
+                    UAssert( defaultCtor.IsValid( ), 
+                        "Component type '%s' doesn't have a default dynamic constructor.",
+                        derived.GetName( ).c_str( )
+                    )
                 }
             }
         }
@@ -89,6 +107,29 @@ namespace ursine
 
             return entity;
         }
+         
+        Entity *EntityManager::Clone(Entity *entity)
+        {
+            URSINE_TODO( "optimize by skipping the serialization step" );
+
+            EntitySerializer serializer;
+
+            auto data = serializer.SerializeArchetype( entity );
+
+            return serializer.DeserializeArchetype( m_world, data );
+        }
+
+        EntityVector EntityManager::GetRootEntities(void)
+        {
+            auto &children = *m_hierarchy.GetRootNode( ).Children( );
+
+            EntityVector entities;
+
+            for (auto child : children)
+                entities.emplace_back( GetEntity( child ) );
+
+            return entities;
+        }
 
         const EntityVector &EntityManager::GetActiveEntities(void) const
         {
@@ -101,9 +142,66 @@ namespace ursine
                 "Component already exists: %s",
                 component->GetType( ).GetName( ).c_str( ) );
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            auto type = component->GetType( );
+            auto *required = type.GetMeta( ).GetProperty<RequiresComponents>( );
+
+            if (required)
+            {
+                for (auto &componentType : required->componentTypes)
+                {
+                    auto id = componentType.GetStaticField( "ComponentID" );
+                    
+                    UAssert( id.IsValid( ),
+                        "Required component '%s' doesn't have ComponentID static field.",
+                        componentType.GetName( ).c_str( )
+                    );
+
+                    ComponentTypeMask mask;
+
+                    mask.set( id.GetValue( ).GetValue<ComponentTypeID>( ), true );
+
+                    if (!entity->HasComponent( mask ))
+                    {
+                        NotificationConfig error;
+
+                        error.type = NOTIFY_ERROR;
+                        error.header = "Error";
+                        error.message = 
+                            "Component <strong class=\"highlight\">" + type.GetName( ) + "</strong> requires component "+ 
+                            "<strong class=\"highlight\">" + componentType.GetName( ) + "</strong>";
+
+                        error.buttons = {
+                            { 
+                                "Add Dependency", 
+                                [=](Notification &notification)
+                                {
+                                    notification.Close( );
+
+                                    entity->AddComponent( componentType.CreateDynamic( ).GetValue<Component*>( ) );
+                                }
+                            }
+                        };
+
+                        EditorPostNotification( error );
+
+                        // this is so we can ensure dependencies in the deconstructor
+                        component->m_owner = entity;
+
+                        // we ain't want this guy
+                        delete component;
+
+                        return;
+                    }
+                }
+            }
+
+        #endif
+
             addComponent( entity, component );
 
-            component->OnInitialize( );
+            component->Initialize( );
 
             ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
 
@@ -112,10 +210,51 @@ namespace ursine
 
         void EntityManager::RemoveComponent(Entity *entity, ComponentTypeID id)
         {
-        #ifdef CONFIG_DEBUG
+        #if defined(CONFIG_DEBUG)
 
             UAssert( id != GetComponentID( Transform ),
                 "You can't remove a Transform component." );
+
+        #endif
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            ComponentTypeMask mask;
+
+            mask.set( id, true );
+
+            if (!entity->HasComponent( mask ))
+                return;
+
+            auto removedType = m_componentTypes[ id ][ entity->m_id ]->GetType( );
+            auto components = GetComponents( entity );
+
+            for (auto *component : components)
+            {
+                auto type = component->GetType( );
+
+                auto *required = type.GetMeta( ).GetProperty<RequiresComponents>( );
+
+                if (required)
+                {
+                    auto search = required->componentTypes.Find( removedType );
+
+                    if (search != required->componentTypes.end( ))
+                    {
+                        NotificationConfig error;
+
+                        error.type = NOTIFY_ERROR;
+                        error.header = "Error";
+                        error.message = 
+                            "Component <strong class=\"highlight\">" + type.GetName( ) + "</strong> requires component " + 
+                            "<strong class=\"highlight\">" + removedType.GetName( ) + "</strong>";
+
+                        EditorPostNotification( error );
+
+                        return;
+                    }
+                }
+            }
 
         #endif
 
@@ -124,8 +263,12 @@ namespace ursine
 
         Component *EntityManager::GetComponent(const Entity *entity, ComponentTypeID id) const
         {
+            ComponentTypeMask mask;
+
+            mask.set( id, true );
+
             // he doesn't have this...
-            if (!entity->HasComponent( 1ull << id ))
+            if (!entity->HasComponent( mask ))
                 return nullptr;
 
             return m_componentTypes[ id ][ entity->m_id ];
@@ -139,29 +282,31 @@ namespace ursine
             if (!entity)
                 return found;
 
-            const auto entity_id = entity->m_id;
+            const auto entityID = entity->m_id;
 
             for (uint32 i = 0; i < m_componentTypes.size( ); ++i)
             {
-                auto &components = m_componentTypes[ i ];
+                ComponentTypeMask mask;
 
-                Component *component;
+                mask.set( i, true );
 
-                if (entity_id + 1u <= components.size( ) &&
-                    (component = components[ entity_id ]) != nullptr)
-                {
-                    found.push_back( component );
-                }
+                if (entity->HasComponent( mask ))
+                    found.emplace_back( m_componentTypes[ i ][ entityID ] );
             }
 
             return found;
         }
 
-        Component* EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+        const std::vector<EntityID> *EntityManager::GetChildren(const Entity *entity) const
+        {
+            return m_hierarchy.GetChildren( entity );
+        }
+
+        Component *EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
         {
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
-            childrenContainer.push( m_hierarchy.GetChildren( entity ));
+            childrenContainer.push( m_hierarchy.GetChildren( entity ) );
 
             while (childrenContainer.size( ) > 0)
             {
@@ -175,7 +320,7 @@ namespace ursine
                     if (component)
                         return component;
 
-                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ));
+                    childrenContainer.push( m_hierarchy.GetChildren( childEntity )) ;
                 }
 
                 childrenContainer.pop( );
@@ -184,7 +329,7 @@ namespace ursine
             return nullptr;
         }
 
-        Component* EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+        Component *EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
         {
             auto parentID = m_hierarchy.GetParent( entity );
 
@@ -201,7 +346,7 @@ namespace ursine
             ComponentVector components;
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
-            childrenContainer.push( m_hierarchy.GetChildren( entity ));
+            childrenContainer.push( m_hierarchy.GetChildren( entity ) );
 
             while (childrenContainer.size( ) > 0)
             {
@@ -215,7 +360,7 @@ namespace ursine
                     if (component)
                         components.push_back( component );
 
-                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ));
+                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ) );
                 }
 
                 childrenContainer.pop( );
@@ -293,9 +438,14 @@ namespace ursine
 
         void EntityManager::BeforeRemove(Entity *entity)
         {
-            EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
+            // for each child, remove it
+            for (auto child : entity->GetTransform( )->GetChildren( ))
+                BeforeRemove( child->GetOwner( ) );
+
+            EntityEventArgs e(WORLD_ENTITY_REMOVED, entity);
 
             // we're removing man
+            entity->Dispatch(ENTITY_REMOVED, EventArgs::Empty);
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
@@ -308,17 +458,17 @@ namespace ursine
             // Remove the children before the parent is removed
             auto children = m_hierarchy.GetChildren( entity );
 
-            while (children->size() > 0)
+            while (children->size( ) > 0)
             {
                 auto &child = ( *children )[ 0 ];
-                Remove( m_active[ child ] );
+                Remove( &m_cache[ child ] );
             }
 
             m_hierarchy.RemoveEntity( entity );
 
             clearComponents( entity, true );
 
-            utils::FlagUnset( entity->m_flags, Entity::ACTIVE );
+            entity->m_active = false;
 
             m_active.erase( find( m_active.begin( ), m_active.end( ), entity ) );
 
@@ -386,13 +536,19 @@ namespace ursine
             EntityEventArgs e( WORLD_ENTITY_ADDED, entity );
 
             m_world->Dispatch( WORLD_ENTITY_ADDED, &e );
+
+            auto &children = *m_hierarchy.GetChildren( entity );
+
+            // dispatch children AFTER dispatching parent
+            for (auto childID : children)
+                dispatchCreated( GetEntity( childID ) );
         }
 
         void EntityManager::addComponent(Entity *entity, Component *component)
         {
             auto componentID = component->GetTypeID( );
 
-            ComponentVector &components = m_componentTypes[ componentID ];
+            auto &components = m_componentTypes[ componentID ];
 
             const auto entityID = entity->m_id;
 
@@ -402,7 +558,11 @@ namespace ursine
 
             components[ entityID ] = component;
 
-            entity->setType( 1ull << componentID );
+            ComponentTypeMask mask;
+
+            mask.set( componentID, true );
+
+            entity->setType( mask );
 
             component->m_uniqueID = m_nextComponentUID++;
             component->m_owner = entity;
@@ -410,19 +570,23 @@ namespace ursine
 
         void EntityManager::removeComponent(Entity *entity, ComponentTypeID id, bool dispatch)
         {
-            const ComponentTypeMask mask = 1ull << id;
+            ComponentTypeMask mask;
+
+            mask.set( id, true );
 
             // he doesn't have this...
             if (!entity->HasComponent( mask ))
                 return;
 
+            auto oldMask = entity->m_typeMask;
+
             entity->unsetType( mask );
 
-            Component *&component = m_componentTypes[ id ][ entity->m_id ];
+            auto *&component = m_componentTypes[ id ][ entity->m_id ];
 
             if (dispatch)
             {
-                ComponentEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component );
+                ComponentRemovedEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component, oldMask );
 
                 m_world->Dispatch( WORLD_ENTITY_COMPONENT_REMOVED, &e );
             }
@@ -442,11 +606,15 @@ namespace ursine
             // transform can be assumed to be the first component type
             for (uint32 i = 0; i < size; ++i)
             {
-                if (entity->HasComponent( 1ull << i ))
+                ComponentTypeMask mask;
+
+                mask.set( i, true );
+
+                if (entity->HasComponent( mask ))
                 {
                     auto *component = m_componentTypes[ i ][ id ];
 
-                    component->OnInitialize( );
+                    component->Initialize( );
 
                     args.component = component;
 
@@ -458,18 +626,22 @@ namespace ursine
         void EntityManager::clearComponents(Entity *entity, bool dispatch)
         {
             const auto size = m_componentTypes.size( );
-            const auto id = entity->m_id;
+            const auto entityID = entity->m_id;
 
             // components to remove
             ComponentVector toRemove;
 
             for (ComponentTypeID i = 0; i < size; ++i)
             {
+                ComponentTypeMask mask;
+
+                mask.set( i, true );
+
                 // if the entity has this component, sort insert it into the 
                 // the queue to remove (based on instance id)
                 // this is so components with dependencies are deleted in the correct order
-                if (entity->HasComponent( 1ull << i ))
-                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ id ], CompareComponents );
+                if (entity->HasComponent( mask ))
+                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponents );
             }
 
             auto const removeCount = toRemove.size( );
@@ -486,8 +658,18 @@ namespace ursine
                 }
             }
 
-            for (uint32 i = 0; i < removeCount; ++i)
-                delete toRemove[ i ];
+            for (uint32 i = 0; i < removeCount; ++i) 
+            {
+                auto *component = toRemove[ i ];
+
+                // reference to the pointer of this component for this entity
+                auto *&componentReference = m_componentTypes[ component->m_typeID ][ entityID ];
+
+                delete component;
+
+                // make sure the value in the container is set to null
+                componentReference = nullptr;
+            }
         }
     }
 }

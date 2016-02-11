@@ -2,5 +2,7 @@ package ursine.controls;
 
 @:native( "ColorInputControl" )
 extern class ColorInput extends js.html.InputElement {
-    public function new() : Void;
+    function new(color : Dynamic) : Void;
+
+    function show(x : Int, y : Int) : Void;
 }

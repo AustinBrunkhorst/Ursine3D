@@ -1,26 +1,27 @@
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      Renderable.h
-Module:         Graphics
-Purpose:        All of the possible renderables in graphics
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Renderable.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
 
 #pragma once
 
 #include "EntityConfig.h"
 #include "GFXAPIDefines.h"
 #include <string>
+#include <stack>
 #include "SMat4.h"
+#include "SVec3.h"
+#include "Vec2.h"
 #include "Color.h"
+#include "Particle.h"
 
 namespace ursine
 {
@@ -37,10 +38,24 @@ namespace ursine
             void Initialize(void);
             void SetEntityUniqueID(const ecs::EntityUniqueID id);
             ecs::EntityUniqueID GetEntityUniqueID() const;
+            void SetOverdraw(bool draw);
+            bool GetOverdraw() const;
+
+            void SetDebug(bool debug);
+            bool GetDebug() const;
+
+            RenderMask GetRenderMask(void) const;
+            void SetRenderMask(const RenderMask mask);
+
+            bool GetActive(void) const;
+            void SetActive(const bool isActive);
 
         private:
-            ecs::EntityUniqueID entityID;
-            bool Active_;
+            ecs::EntityUniqueID m_entityID;
+            bool m_active;
+            bool m_useOverdraw;
+            bool m_useDebugRendering;
+            RenderMask m_mask;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -55,7 +70,7 @@ namespace ursine
             Model(void);
 
         private:
-            SMat4 Transform_;
+            SMat4 m_transform;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -64,6 +79,7 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
+            Model3D(void);
             void Initialize(void);
 
             const char *GetModelName(void);
@@ -72,142 +88,77 @@ namespace ursine
             const char *GetMaterialslName(void);
             void SetMaterial(std::string materialName);
 
-    
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
+
+			void SetEmissive(float emiss);
+			float GetEmissive(void) const;
+
+			void SetSpecularPower(float power);
+			float GetSpecularPower(void) const;
+
+			void SetSpecularIntensity(float intensity);
+			float GetSpecularIntensity(void) const;
+
+            void SetAnimationTime(const float time);
+            float &GetAnimationTime(void);
+
+            void SetColor(const Color color);
+            const Color &GetColor() const;
+
+            std::vector<SMat4> &GetMatrixPalette(void);
+
+            int GetMeshIndex(void) const;
+            void SetMeshIndex(const int index);
 
         private:
             float m_emissive;
             float m_specPow;
             float m_specIntensity;
-            std::string ModelName_;
-            std::string MaterialName_;
-			
-			//float m_animationTime;
-			//AnimInfo *myCurrentAnimation;
-			//int currentKeyframe;
-			//int nextKeyframe;
+            Color m_color;
+            std::string m_modelResourceName;
+            std::string m_materialTextureName;
+
+            float m_animationTime;
+
+            std::vector<SMat4> m_matrixPalette;
+
+            // for multimaps
+            int m_meshIndex;
         };
 
         /////////////////////////////////////////////////////////////////
         //2d billboard class
-        class Billboard2D : public Model
+        class Billboard2D : public Renderable
         {
             friend class RenderableManager;
         public:
+            Billboard2D(void);
+
             const char *GetTextureName(void);
-            const GfxHND &GetTextureID(void);
 
             void SetTexture(std::string texName);
 
             void SetDimensions(float width, float height);
             void GetDimensions(float &width, float &height);
 
-            Billboard2D(void);
+            void SetPosition(const ursine::SVec3 &position);
+            const ursine::SVec3 &GetPosition(void) const;
+            
+            void SetColor(const Color color);
+            const Color &GetColor() const;
 
         private:
             float m_width;
             float m_height;
-            std::string TextureName_;
-        };
-
-        /////////////////////////////////////////////////////////////////
-        //3d primitve class
-        class Primitive : public Model
-        {
-        public:
-            enum PRIMITIVE_TYPE
-            {
-                PRIM_SPHERE = 0,
-                PRIM_CUBE, //done
-                PRIM_PLANE,
-                PRIM_CAPSULE, //done
-                PRIM_COUNT
-            };
-
-            void Initialize(void);
-
-            void SetType(PRIMITIVE_TYPE type);
-            PRIMITIVE_TYPE GetType();
-
-            void SetRadius(float r);
-            float GetRadius();
-
-            void SetWidth(float r);
-            float GetWidth();
-
-            void SetDepth(float r);
-            float GetDepth();
-
-            void SetHeight(float r);
-            float GetHeight();
-
-            void SetWireFrameMode(bool useWireframe);
-            bool GetWireFrameMode();
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b, float a = 1.0f);
-        private:
-            PRIMITIVE_TYPE Type_;
-            float Radius_;
-            float Height_;
-            float Width_;
-            float Depth_;
-            bool UseWireFrame_;
-            Color Color_;
-        };
-
-        ///////////////////////////////////////////////////////////////////
-        // LIGHTS /////////////////////////////////////////////////////////
-
-        ///////////////////////////////////////////////////////////////////
-        // directional light
-        class DirectionalLight : public Renderable
-        {
-            friend class RenderableManager;
-        public:
-            SVec3 &GetDirection();
-            void SetDirection(const SVec3 &dir);
-            void SetDirection(float x, float y, float z);
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b);
-
-            DirectionalLight();
-
-        private:
-            SVec3 Direction_;
-            Color Color_;
-        };
-
-        ///////////////////////////////////////////////////////////////////
-        // point light
-        class PointLight : public Renderable
-        {
-        public:
-            SVec3 &GetPosition();
-            void SetPosition(const SVec3 &position);
-            void SetPosition(float x, float y, float z);
-
-            Color &GetColor();
-            void SetColor(const Color &color);
-            void SetColor(float r, float g, float b);
-
-            float &GetRadius();
-            void SetRadius(float radius);
-
-            PointLight();
-
-        private:
-            SVec3 m_position;
-            Color Color_;
-            float Radius_;
+            ursine::Vec2 m_scale;
+            ursine::SVec3 m_position;
+            Color m_color;
+            std::string m_textureName;
         };
 
         /////////////////////////////////////////////////////////////
-        // universal light class
+        // LIGHT ////////////////////////////////////////////////////
         class Light : public Renderable
         {
         public:
@@ -249,6 +200,9 @@ namespace ursine
             void SetSpotlightAngles(const Vec2 &angles);
             void SetSpotlightAngles(const float inner, const float outer);
 
+            void SetSpotlightTransform(const SMat4 &transf);
+            const SMat4 &GetSpotlightTransform(void);
+
         private:
             LightType m_type;
             SVec3 m_position;
@@ -258,6 +212,67 @@ namespace ursine
             float m_intensity;
 
             Vec2 m_spotlightAngles;
+            SMat4 m_spotlightTransform;
+        };
+
+        /////////////////////////////////////////////////////////////
+        // PARTICLE SYSTEM //////////////////////////////////////////
+        class ParticleSystem : public Renderable
+        {
+        public:
+            ParticleSystem(void);
+
+            void Initialize(void);
+
+            // get the particles
+            std::vector<Particle_GPU> &GetGPUParticleData(void);
+            std::vector<Particle_CPU> &GetCPUParticleData(void);
+
+            Particle_GPU &GetGPUParticle(const int index);
+            Particle_CPU &GetCPUParticle(const int index);
+
+            // get total number of particles
+            unsigned GetParticleVectorSize(void) const;
+
+            // get number of active particles
+            unsigned GetActiveParticleCount(void) const;
+
+            // get number of inactive particles
+            unsigned GetInactiveParticleCount(void) const;
+
+            // attempt to spawn a particle, ret index of new particle
+            // -1 if no free particles left
+            int SpawnParticle(void);
+
+            void DestroyParticle(const int index);
+
+            const SVec3 &GetPosition(void) const;
+            void SetPosition(const SVec3 &position);
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
+
+            const std::string &GetParticleTexture(void) const;
+            void SetParticleTexture(const std::string &texName);
+
+            bool GetAdditive(void) const;
+            void SetAdditive(const bool useAdditive);
+
+            bool GetSystemSpace(void) const;
+            void SetSystemSpace(const bool useWorldCoordinates);
+        private:
+            // members
+            unsigned m_backIndex;
+            std::vector<Particle_GPU> m_gpuParticleData;
+            std::vector<Particle_CPU> m_cpuParticleData;
+            SVec3 m_position;
+
+            std::string m_textureName;
+
+            Color m_particleColor;
+
+            bool m_useAdditive;
+            bool m_worldSpace;
         };
     }
 }

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Enum.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "LanguageType.h"
@@ -25,12 +38,6 @@ public:
     TemplateData CompileTemplate(
         const ReflectionParser *context
     ) const override;
-
-    static void LoadAnonymous(
-        std::vector<Global*> &output, 
-        const Cursor &cursor, 
-        const Namespace &currentNamespace
-    );
 
 private:
     std::string m_name;

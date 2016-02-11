@@ -1,3 +1,17 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EntityEvent.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+#pragma once
+
 #include "EventArgs.h"
 
 namespace ursine
@@ -33,13 +47,21 @@ namespace ursine
             // An entities parent has changed
             ENTITY_PARENT_CHANGED,
 
-            ///////////////////////////////////////////////////////////////////
-            // Renderer
-            ///////////////////////////////////////////////////////////////////
+			///////////////////////////////////////////////////////////////////
+			// Physics
+			///////////////////////////////////////////////////////////////////
 
-            // Tells components (model, light) to update the
-            // renderer with their info (position, scale, ect.)
-            ENTITY_UPDATE_RENDERER,
+			// A collision is persisting between this entity and the other entity.
+			// NOTE: This event is only sent when one of the two objects has a 
+			// non-kinematic (or static) rigidbody attached.
+			ENTITY_COLLISION_PERSISTED,
+
+            ///////////////////////////////////////////////////////////////////
+            // Particle Systems
+            ///////////////////////////////////////////////////////////////////
+            // Commands all particle modifiers to operate on the set of 
+            // particles
+            ENTITY_PARTICLE_UPDATE,
 
             ///////////////////////////////////////////////////////////////////
             // User Defined
@@ -47,6 +69,6 @@ namespace ursine
 
             // Starting index for events defined out of engine
             ENTITY_EVENT_USER = 0x8000,
-        };
+        } Meta(Enable);
     }
 }

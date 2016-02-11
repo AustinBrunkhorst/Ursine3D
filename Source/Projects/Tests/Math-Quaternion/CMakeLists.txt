@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-ursine_default_project(
+include(GlobalConfig)
+
+ursine_project(
     Math-QuaternionTests
     FOLDER "Tests"
     TYPE EXE

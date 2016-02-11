@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SystemManager.cpp
 **
@@ -19,6 +19,43 @@ namespace ursine
 {
     namespace ecs
     {
+        const auto &getSystemTypes(void)
+        {
+            static bool configured = false;
+
+            // types of base system types
+            static meta::Type::List baseTypes
+            {
+                typeof( EntitySystem ),
+                typeof( FilterSystem )
+            };
+
+            static meta::Type::List systemTypes;
+
+            if (!configured)
+            {
+                for (auto systemType : baseTypes)
+                {
+                    for (auto derived : systemType.GetDerivedClasses( ))
+                    {
+                        auto search = find(
+							baseTypes.begin( ),
+							baseTypes.end( ),
+                            derived
+                        );
+
+                        // skip base clases of base system types
+                        if (search == baseTypes.end( ))
+                            systemTypes.emplace_back( derived );
+                    }
+                }
+            }
+
+            configured = true;
+
+            return systemTypes;
+        }
+
         void configureSystems(void)
         {
             static bool configured = false;
@@ -28,32 +65,83 @@ namespace ursine
 
             configured = true;
 
-            auto systemType = typeof( EntitySystem );
+            auto &systemTypes = getSystemTypes( );
 
             SystemTypeID nextID = 0;
 
-            for (auto derived : systemType.GetDerivedClasses( ))
+            for (auto systemType : systemTypes)
             {
-                auto systemID = derived.GetStaticField( "SystemID" );
+                auto systemID = systemType.GetStaticField( "SystemID" );
 
                 UAssert( systemID.IsValid( ),
                     "Entity system '%s' doesn't have a static field SystemID.\n"
                     "Most likely missing ENTITY_SYSTEM in declaration",
-                    derived.GetName( ).c_str( )
+                    systemType.GetName( ).c_str( )
                 );
 
                 systemID.SetValue( nextID++ );
             }
         }
 
+        bool SystemManager::HasSystem(const meta::Type &systemType)
+        {
+            auto systemID = systemType.GetStaticField( "SystemID" )
+                .GetValue( )
+                .GetValue<SystemTypeID>( );
+
+            return m_systems.size( ) > systemID && m_systems[ systemID ] != nullptr;
+        }
+
+        void SystemManager::AddSystem(const meta::Type &systemType)
+        {
+            auto systemID = systemType.GetStaticField( "SystemID" )
+                .GetValue( )
+                .GetValue<SystemTypeID>( );
+                
+            UAssert( systemID != -1, 
+                "System ID for type '%s' has not been initialized.\n"
+                "Possibly forgot ENTITY_SYSTEM_DEFINITION."
+            );
+
+            // systems take a pointer to a world as the first argument
+            const auto systemConstructor = 
+                meta::InvokableSignature { typeof( World* ) };
+
+            auto constructor = 
+                systemType.GetDynamicConstructor( systemConstructor );
+
+            UAssert( constructor.IsValid( ), 
+                "System type missing dynamic constructor %s(World *)",
+                systemType.GetName( ).c_str( )
+            );
+
+            auto *system = 
+                constructor.Invoke( m_world ).GetValue<EntitySystem*>( );
+
+            system->m_typeID = systemID;
+
+            m_systems[ systemID ] = system;
+
+            if (m_initialized)
+                system->OnInitialize( );
+
+            if (m_loaded)
+                system->OnAfterLoad( );
+        }
+
+        const meta::Type::List &SystemManager::GetExposedTypes(void)
+        {
+            return getSystemTypes( );
+        }
+
         SystemManager::SystemManager(World *world)
             : WorldManager( world )
+            , m_initialized( false )
+            , m_loaded( false )
         {
             configureSystems( );
 
-            auto systemType = typeof( EntitySystem );
-
-            auto &systemTypes = systemType.GetDerivedClasses( );
+            auto &systemTypes = getSystemTypes( );
 
             m_systems.resize( systemTypes.size( ) );
 
@@ -61,9 +149,9 @@ namespace ursine
             const auto systemConstructor = 
                 meta::InvokableSignature { typeof( World* ) };
 
-            for (auto derived : systemType.GetDerivedClasses( ))
+            for (auto systemType : systemTypes)
             {
-                auto systemID = derived.GetStaticField( "SystemID" )
+                auto systemID = systemType.GetStaticField( "SystemID" )
                     .GetValue( )
                     .GetValue<SystemTypeID>( );
                 
@@ -72,12 +160,22 @@ namespace ursine
                     "Possibly forgot ENTITY_SYSTEM_DEFINITION."
                 );
 
-                auto constructor = 
-                    derived.GetDynamicConstructor( systemConstructor );
+                auto &systemMeta = systemType.GetMeta( );
+
+                // not auto added
+                if (!systemMeta.GetProperty<AutoAddEntitySystem>( ))
+                {
+                    m_systems[ systemID ] = nullptr;
+
+                    continue;
+                }
+
+                auto &constructor = 
+                    systemType.GetDynamicConstructor( systemConstructor );
 
                 UAssert( constructor.IsValid( ), 
                     "System type missing dynamic constructor %s(World *)",
-                    derived.GetName( ).c_str( )
+                    systemType.GetName( ).c_str( )
                 );
 
                 auto *system = 
@@ -92,16 +190,40 @@ namespace ursine
         SystemManager::~SystemManager(void)
         {
             for (auto *system : m_systems)
-                system->OnRemove( );
+            {
+                if (system)
+                    system->OnRemove( );
+            }
+                
+            for (auto *&system : m_systems)
+            {
+                if (system)
+                    delete system;
 
-            for (auto *system : m_systems)
-                delete system;
+                system = nullptr;
+            }
         }
 
         void SystemManager::OnInitialize(void)
         {
             for (auto system : m_systems)
-                system->OnInitialize( );
+            {   
+                if (system)
+                    system->OnInitialize( );
+            }
+                
+            m_initialized = true;
+        }
+
+        void SystemManager::onAfterLoad(void)
+        {
+            for (auto system : m_systems)
+            {
+                if (system)
+                    system->OnAfterLoad( );
+            }
+
+            m_loaded = true;
         }
     }
 }

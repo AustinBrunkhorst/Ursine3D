@@ -25,8 +25,7 @@ struct GSInputType
 GSInputType main( VertexInputType input )
 {
   GSInputType output;
-
-  output.position = mul( input.position, transform );
+  output.position = mul( float4(0,0,0,1), transform );
 
   return output;
 }

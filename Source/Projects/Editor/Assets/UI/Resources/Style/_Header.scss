@@ -1,5 +1,6 @@
 @import 'Config';
 @import 'Utils';
+@import 'Icons';
 
 body {
   padding-top: $header-height;
@@ -12,5 +13,92 @@ body {
   top: 0;
   height: $header-height;
   background: $header-bg-color;
+  border-bottom: 1px solid #3f3f46;
   z-index: 9999;
+}
+
+#simulation-tools {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+
+  $font-size: 22px;
+
+  &.running {
+    #simulation-play {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #simulation-toggle {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #simulation-step {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #simulation-stop {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+
+  &.paused {
+    #simulation-toggle {
+      @include icon-half( $icon-half-play, $font-size );
+    }
+  }
+
+  > div {
+    display: inline-block;
+    width: 30px;
+    height: $header-height - 1px;
+    opacity: 1;
+    color: white;
+    line-height: $header-height;
+    vertical-align: middle;
+    text-align: center;
+    transition: color $duration-transition-btn ease, opacity $duration-transition-btn ease;
+    cursor: pointer;
+
+    &:hover:not(.disabled) {
+      color: $color-accent !important;
+    }
+
+    &.disabled {
+      opacity: 0.5;
+    }
+
+    &#simulation-play {
+      opacity: 1;
+
+      @include icon-half( $icon-half-play, $font-size );
+    }
+
+    &#simulation-toggle {
+      opacity: 0;
+      pointer-events: none;
+
+      @include icon-half( $icon-half-pause, $font-size );
+    }
+
+    &#simulation-step {
+      opacity: 0;
+      pointer-events: none;
+
+      @include icon-half( $icon-half-step-forward, $font-size );
+    }
+
+    &#simulation-stop {
+      opacity: 0;
+      color: #cf6753;
+      pointer-events: none;
+
+      @include icon-half( $icon-half-stop, $font-size );
+    }
+  }
 }

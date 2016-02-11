@@ -1,21 +1,48 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Scene.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Scene.h"
 
-#include "GfxAPI.h"
+#include "WorldConfigComponent.h"
+#include "SystemManager.h"
+
+#include "Notification.h"
 
 namespace ursine
 {
     Scene::Scene(void)
-        : m_graphics( GetCoreSystem(graphics::GfxAPI) )
+        : m_playState( PS_EDITOR )
         , m_viewport( 0 )
+        , m_world( std::make_shared<ecs::World>( ) )
     {
         
     }
 
-    ecs::World &Scene::GetWorld(void)
+    Scene::~Scene(void)
     {
-        return m_world;
+
+    }
+
+    ecs::World *Scene::GetWorld(void)
+    {
+        return m_world.get( );
+    }
+
+    void Scene::SetWorld(ecs::World *world)
+    {
+        m_world = ecs::World::Handle( world );
     }
 
     graphics::GfxHND Scene::GetViewport(void) const
@@ -28,23 +55,86 @@ namespace ursine
         m_viewport = viewport;
     }
 
-    graphics::GfxHND Scene::GetEditorCamera(void) const
+    ScenePlayState Scene::GetPlayState(void) const
     {
-        return m_editorCamera;
+        return m_playState;
     }
 
-    void Scene::SetEditorCamera(GfxHND camera)
+    void Scene::SetPlayState(ScenePlayState state)
     {
-        m_editorCamera = camera;
+        m_playState = state;
     }
 
-    void Scene::Update(DeltaTime dt)
+    void Scene::Step(void) const
     {
-        m_world.Update( );
+        m_world->Update( );
     }
 
-    void Scene::Render(void)
+    void Scene::Update(DeltaTime dt) const
     {
-        m_world.Render( );
+        switch (m_playState)
+        {
+        case PS_PAUSED:
+        case PS_EDITOR:
+            m_world->EditorUpdate( );
+            break;
+        case PS_PLAYING:
+            m_world->Update( );
+            break;
+        }
+    }
+
+    void Scene::Render(void) const
+    {
+        switch (m_playState)
+        {
+        case PS_PAUSED:
+        case PS_EDITOR:
+            m_world->EditorRender( );
+            break;
+        case PS_PLAYING:
+            m_world->Render( );
+            break;
+        }
+    }
+
+    void Scene::LoadConfiguredSystems(void)
+    {
+        auto *config = m_world->GetSettings( )->GetComponent<ecs::WorldConfig>( );
+
+        auto *systemManager = m_world->GetSystemManager( );
+
+        for (auto &system : config->GetSystems( ))
+        {
+			// If this system is the equivalent of null
+			if (system.type.size( ) == 0)
+				continue;
+
+            auto type = meta::Type::GetFromName( system.type );
+
+            if (!type.IsValid( ))
+            {
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Play System";
+                error.message = "Unknown world play system configured.";
+
+                EditorPostNotification( error );
+            }
+
+            if (systemManager->HasSystem( type ))
+            {
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Play System Exists";
+                error.message = "World play system <strong class=\"highlight\">" + type.GetName( ) + "</strong> already exists.";
+
+                EditorPostNotification( error );
+            }
+
+            systemManager->AddSystem( type );
+        }
     }
 }

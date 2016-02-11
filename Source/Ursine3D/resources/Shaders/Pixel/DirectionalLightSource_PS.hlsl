@@ -19,6 +19,8 @@ cbuffer DirectionalLightBuffer : register(b2)
 cbuffer InvProj : register(b4)
 {
     float4x4 InvProj;
+    float nearPlane;
+    float farPlane;
 };
 
 //specular power range
@@ -37,7 +39,7 @@ struct DS_OUTPUT
 struct SURFACE_DATA
 {
     float LinearDepth;
-    float3 Color;
+    float4 Color;
     float3 Normal;
     float SpecInt;
     float SpecPow;
@@ -60,10 +62,10 @@ struct Material
 //near is 0.1, far is 100, this needs to be modified
 float ConvertDepthToLinear( float depth )
 {
-    float f = 100.0;
-    float n = 0.1;
+    float f = farPlane;
+    float n = nearPlane;
     float z = (2 * n) / (f + n - depth * (f - n));
-    return depth;
+    return z;
 }
 
 //calculating world position
@@ -91,40 +93,66 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     Out.LinearDepth = ConvertDepthToLinear( depth );
 
     // Get the base color and specular intensity
-    float4 baseColorSpecInt = ColorSpecIntTexture.Load( location3 );
-    Out.Color = baseColorSpecInt.xyz;
-    Out.SpecInt = baseColorSpecInt.w;
+    float4 baseColor = ColorSpecIntTexture.Load( location3 );
+    Out.Color = baseColor;
 
     // Sample the normal, convert it to the full range and noramalize it
-    Out.Normal = NormalTexture.Load( location3 ).xyz;
+    float4 normalValue = NormalTexture.Load(location3);
+    Out.Normal = normalValue.xyz;
     Out.Normal = normalize( Out.Normal * 2.0 - 1.0 );
 
-    // Scale the specular power back to the original range
-    float2 SpecPowerNorm = SpecPowTexture.Load( location3 ).xy;
-    Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
-
     //grab emissive value
-    Out.Emissive = SpecPowerNorm.y;
+    Out.Emissive = normalValue.w;
+
+    // Scale the specular power back to the original range
+    float4 SpecPowerNorm = SpecPowTexture.Load(location3);
+    Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
+    Out.SpecInt = SpecPowerNorm.w;
 
     return Out;
 }
 
 float3 CalcPoint( float3 position, Material material )
 {
-    float3 ToLight = -lightDirection.xyz;
-    float3 ToEye = -position;
+    //float3 ToLight = -lightDirection.xyz;
+    //float3 ToEye = -position;
 
-    // Phong diffuse
-    float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (intensity) * material.diffuseColor.xyz;
+    //// Phong diffuse
+    //float NDotL = saturate( dot( ToLight, material.normal ) );
+    //float3 finalColor = diffuseColor.rgb * (intensity) * material.diffuseColor.xyz;
+
+    //// Blinn specular
+    //ToEye = normalize( ToEye );
+    //float3 HalfWay = normalize( ToEye + ToLight );
+    //float NDotH = saturate( dot( HalfWay, material.normal ) );
+    //finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
+
+    //finalColor *= NDotL;
+
+    //return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
+
+    ///////////////////////////
+
+
+    float3 toLight = -lightDirection.xyz;
+    float3 pixelToCamera = -position;
 
     // Blinn specular
-    ToEye = normalize( ToEye );
-    float3 HalfWay = normalize( ToEye + ToLight );
-    float NDotH = saturate( dot( HalfWay, material.normal ) );
-    finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
+    pixelToCamera = normalize(pixelToCamera);
+    float3 HalfWay = normalize(pixelToCamera + toLight);
+    float NDotH = saturate(dot(HalfWay, material.normal));
+    float specularValue = saturate(pow(NDotH, material.specPow));
 
-    return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
+    // diffuse scalar from normal
+    float normalScalar = saturate(dot(material.normal, toLight));
+
+    // calculate final light color
+    float3 finalLightColor = (diffuseColor.rgb + specularValue * material.specIntensity);
+
+    // apply normal scalar
+    finalLightColor *= normalScalar;
+
+    return finalLightColor * material.diffuseColor.rgb;
 }
 
 
@@ -136,8 +164,7 @@ float4 main( DS_OUTPUT In ) : SV_TARGET
     // Convert the data into the material structure
     Material mat;
     mat.normal = gbd.Normal;
-    mat.diffuseColor.xyz = gbd.Color;
-    mat.diffuseColor.w = 1.0; // Fully opaque
+    mat.diffuseColor = gbd.Color;
     mat.specPow = gbd.SpecPow;
     mat.specIntensity = gbd.SpecInt;
     mat.emissive = gbd.Emissive;

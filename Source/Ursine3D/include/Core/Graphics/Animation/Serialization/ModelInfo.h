@@ -1,9 +1,22 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ModelInfo.h
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "MeshInfo.h"
 #include "MaterialInfo.h"
-#include "SkinInfo.h"
-#include "AnimationInfo.h"
+#include "BoneInfo.h"
+#include "LvlHierarchy.h"
 
 namespace ursine
 {
@@ -14,32 +27,76 @@ namespace ursine
 			class ModelInfo : public ISerialize
 			{
 			public:
-				char name[MAXTEXTLEN];
+				std::string name;
 
 				// mesh data	 
-				unsigned int	mmeshCount;
-				MeshInfo*		marrMeshes;
+				unsigned int	 mmeshCount;
+				std::vector<MeshInfo> mMeshInfoVec;
 
 				// material data
 				unsigned int	mmaterialCount;
-				MaterialInfo*	marrMaterials;
+				std::vector<MaterialInfo>	mMtrlInfoVec;
 
 				// skin data
-				unsigned int	mskinCount;
-				SkinInfo*		marrSkins;
+				unsigned int	mboneCount;
+				std::vector<BoneInfo>	mBoneInfoVec;
 
-				// anim data
-				unsigned int	manimCount;
-				AnimInfo*		marrAnims;
+				// animation data - this will store the list of animation which will be used to 
+				// save/load the result of editor
+				// so that jdl format can load animations by this list
+				// the name we will store, is jani's name
+				// if loading fbx, maniCount = 0, maniNameVec = empty.
+				// after modifying jdl and store it, then there will be some changes
+				unsigned int maniCount;
+				std::vector< std::string > maniNameVec;
 
+				// level info - hierarchy
+				unsigned int	mmeshlvlCount;
+				unsigned int	mriglvlCount;
+				std::vector<MeshInLvl> mMeshLvVec;
+				std::vector<RigInLvl> mRigLvVec;
+
+				/** @brief model information constructor
+				*
+				*  this will construct model information object
+				*
+				*  @return nothing
+				*/
 				ModelInfo();
+
+				/** @brief model information destructor
+				*
+				*  this will destroy model information object
+				*
+				*  @return nothing
+				*/
 				virtual ~ModelInfo();
+
+				/** @brief model information release function
+				*
+				*  this will release memory of the model information
+				*
+				*  @return nothing
+				*/
 				void ReleaseData();
 
+				/** @brief model information serialize in function
+				*
+				*  this will read model information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeIn(HANDLE hFile);
+
+				/** @brief model information serialize out function
+				*
+				*  this will write model information
+				*
+				*  @param handle of the file
+				*  @return if succeed return true, else return false
+				*/
 				bool SerializeOut(HANDLE hFile);
-				void GetFinalTransform(const std::string& clipName, double timePos, std::vector<XMMATRIX>& finalTransform) const;
-				AnimInfo* FindAnimClip(int* index, const std::string& clipName) const;
 			};
 		};
 	};

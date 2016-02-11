@@ -15,6 +15,8 @@
 #include "Variant.h"
 #include "Argument.h"
 
+#include "FunctionInvoker.h"
+
 #include <functional>
 
 namespace ursine
@@ -33,8 +35,7 @@ namespace ursine
             template<typename ReturnType, typename ...ArgTypes>
             Function(
                 const std::string &name, 
-                ReturnType(*type)(ArgTypes...), 
-                Invoker invoker, 
+                ReturnType (*function)(ArgTypes...),
                 Type parentType = Type::Invalid
             );
 
@@ -52,7 +53,7 @@ namespace ursine
         private:
             Type m_parentType;
 
-            Invoker m_invoker;
+            std::shared_ptr<FunctionInvokerBase> m_invoker;
         };
     }
 }

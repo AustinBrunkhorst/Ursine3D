@@ -1,3 +1,5 @@
 include/
 lib/
 resources/
+CEFConfig.cmake
+CEFConfigVersion.cmake

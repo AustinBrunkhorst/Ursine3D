@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** WorldEvent.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Entity.h"
@@ -14,6 +27,12 @@ namespace ursine
             // The world is being rendered
             WORLD_RENDER,
 
+            // Update event called specifically for editor systems
+            WORLD_EDITOR_UPDATE,
+
+            // Render event called specifically for editor systems
+            WORLD_EDITOR_RENDER,
+
             // An entity was created
             WORLD_ENTITY_ADDED,
             // An entity was removed
@@ -24,8 +43,21 @@ namespace ursine
             // A component has been removed from an entity
             WORLD_ENTITY_COMPONENT_REMOVED,
 
+            // The screen that owns this world's focus state changed
+            WORLD_SCREEN_FOCUS_CHANGED,
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            // An entity's name changed
+            WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
+            // An entity's parent has changed
+            WORLD_EDITOR_ENTITY_PARENT_CHANGED,
             // A component's field has changed
-            WORLD_ENTITY_EDITOR_COMPONENT_CHANGED = 0x100,
+            WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
+            // A component's array field has been modified
+            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED
+
+        #endif
         };
 
         struct WorldEventArgs : EventArgs
@@ -47,13 +79,42 @@ namespace ursine
 
         struct ComponentEventArgs : WorldEventArgs
         {
-            const Entity *entity;
-            const Component *component;
+            Entity *entity;
+            Component *component;
 
-            ComponentEventArgs(WorldEventType type, const Entity *entity, const Component *component)
+            ComponentEventArgs(WorldEventType type, Entity *entity, Component *component)
                 : WorldEventArgs( type )
                 , entity( entity )
                 , component( component ) { }
+        };
+
+        struct ComponentRemovedEventArgs : ComponentEventArgs
+        {
+            ComponentTypeMask oldTypeMask;
+
+            ComponentRemovedEventArgs(WorldEventType type, Entity *entity, Component *component, ComponentTypeMask oldTypeMask)
+                : ComponentEventArgs( type, entity, component )
+                , oldTypeMask( oldTypeMask ) { }
+        };
+
+        struct ScreenFocusArgs : WorldEventArgs
+        {
+            bool focused;
+
+            ScreenFocusArgs(WorldEventType type, bool focused)
+                : WorldEventArgs( type )
+                , focused( focused ) { }
+        };
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        struct EditorEntityNameChangedArgs : EntityEventArgs
+        {
+            std::string newName;
+
+            EditorEntityNameChangedArgs(WorldEventType type, Entity *entity, const std::string &newName)
+                : EntityEventArgs( type, entity )
+                , newName( newName ) { }
         };
 
         struct EditorComponentChangedArgs : ComponentEventArgs
@@ -64,8 +125,8 @@ namespace ursine
 
             EditorComponentChangedArgs(
                 WorldEventType type,
-                const Entity *entity,
-                const Component *component,
+                Entity *entity,
+                Component *component,
                 const std::string &field,
                 const meta::Variant &value
             )
@@ -74,5 +135,18 @@ namespace ursine
                 , field( field )
                 , value( value ) { }
         };
+
+        struct EditorComponentArrayModfiedArgs : ComponentEventArgs
+        {
+            const ArrayModificationArgs &modification;
+            std::string field;
+
+            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, Entity *entity, Component *component, const std::string &field)
+                : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
+                , modification( args )
+                , field( field ) { }
+        };
+
+    #endif
     }
 }

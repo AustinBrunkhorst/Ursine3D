@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** DrawingAPI.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "DrawingAPI.h"
@@ -50,6 +63,11 @@ namespace ursine
         void DrawingAPI::SetSize(float size)
         {
             m_privates->mgr->SetSize(size);
+        }
+
+        void DrawingAPI::SetOverdraw(bool draw)
+        {
+            m_privates->mgr->SetOverdraw(draw);
         }
 
         void DrawingAPI::SetPrivates(void *priv)

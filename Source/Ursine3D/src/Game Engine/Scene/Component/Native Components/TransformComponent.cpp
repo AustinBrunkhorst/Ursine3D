@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TransformComponent.h
 **
@@ -26,8 +26,6 @@ namespace ursine
         Transform::Transform(void)
             : BaseComponent( )
             , m_dirty( true )
-            , m_root( this )
-            , m_parent( nullptr )
             , m_localScale( 1.0f ) { }
 
         Transform::Transform(const Transform &transform)
@@ -53,29 +51,42 @@ namespace ursine
 
         void Transform::OnInitialize(void)
         {
-            dispatchAndSetDirty( );
+			if (!m_root)
+				m_root = this;
+			if (!m_parent)
+				m_parent = nullptr;
+
+            dispatchAndSetDirty( true, true, true );
         }
 
         void Transform::SetLocalPosition(const SVec3& position)
         {
+            auto oldPosition = m_localPosition;
+
             m_localPosition = position;
 
-            dispatchAndSetDirty( );
+            dispatchAndSetDirty( true, false, false );
+
+            notifyPositionChanged( &oldPosition );
         }
 
-        const SVec3& Transform::GetLocalPosition(void) const
+        const SVec3 &Transform::GetLocalPosition(void) const
         {
             return m_localPosition;
         }
 
         void Transform::SetWorldPosition(const SVec3 &position)
         {
+            auto oldPosition = m_localPosition;
+
             if (m_parent)
                 m_localPosition = m_parent->ToLocal(position);
             else
                 m_localPosition = position;
 
-            dispatchAndSetDirty( );
+            dispatchAndSetDirty( true, false, false );
+
+            notifyPositionChanged( &oldPosition );
         }
 
         SVec3 Transform::GetWorldPosition(void)
@@ -88,16 +99,24 @@ namespace ursine
 
         void Transform::SetLocalRotation(const SQuat& rotation)
         {
+            auto oldRotation = m_localRotation;
+
             m_localRotation = rotation;
 
-            dispatchAndSetDirty( );
+            dispatchAndSetDirty( false, false, true );
+
+            notifyRotationChanged( &oldRotation );
         }
 
         void Transform::SetLocalEuler(const SVec3& euler)
         {
+            auto oldRotation = m_localRotation;
+
             m_localRotation.SetEulerAngles( euler );
 
-            dispatchAndSetDirty( );
+            dispatchAndSetDirty( false, false, true );
+
+            notifyRotationChanged( &oldRotation );
         }
 
         const SQuat& Transform::GetLocalRotation(void) const
@@ -110,7 +129,47 @@ namespace ursine
             return m_localRotation.GetEulerAngles( );
         }
 
-        SQuat Transform::GetWorldRotation(void)
+        void Transform::SetLocalEulerEditor(const SQuat &euler)
+        {
+            SetLocalEuler( SVec3( euler.X( ), euler.Y( ), euler.Z( ) ) );
+        }
+
+        SQuat Transform::GetLocalEulerEditor(void) const
+        {
+            auto euler = GetLocalEuler( );
+
+            return SQuat( euler.X( ), euler.Y( ), euler.Z( ), 0.0f );
+        }
+
+        void Transform::SetWorldRotation(const SQuat &rotation)
+        {
+            auto oldRotation = m_localRotation;
+
+            if (m_parent)
+                m_localRotation = m_parent->ToLocal( rotation );
+            else
+                m_localRotation = rotation;
+
+            dispatchAndSetDirty( false, false, true );
+
+            notifyRotationChanged( &oldRotation );
+        }
+
+        void Transform::SetWorldEuler(const SVec3 &euler)
+        {
+            auto oldRotation = m_localRotation;
+
+            if (m_parent)
+                m_localRotation = m_parent->ToLocal( SQuat( euler.X( ), euler.Y( ), euler.Z( ) ) );
+            else
+                m_localRotation.SetEulerAngles( euler );
+
+            dispatchAndSetDirty( false, false, true );
+
+            notifyRotationChanged( &oldRotation );
+        }
+
+        SQuat Transform::GetWorldRotation(void) const
         {
             if (m_parent)
                 return m_parent->ToWorld( m_localRotation );
@@ -118,17 +177,7 @@ namespace ursine
                 return m_localRotation;
         }
 
-        void Transform::SetWorldRotation(const SQuat &rotation)
-        {
-            if (m_parent)
-                m_localRotation = m_parent->ToLocal( rotation );
-            else
-                m_localRotation = rotation;
-
-            dispatchAndSetDirty( );
-        }
-
-        SVec3 Transform::GetWorldEuler(void)
+        SVec3 Transform::GetWorldEuler(void) const
         {
             if (m_parent)
                 return m_parent->ToWorld( m_localRotation ).GetEulerAngles( );
@@ -138,34 +187,28 @@ namespace ursine
 
         void Transform::LookAt(const SVec3& worldPosition)
         {
-            auto dir = ToLocal( worldPosition );
+            SVec3 dir = worldPosition - GetWorldPosition( );
 
-            m_localRotation.SetLookAt( dir );
+            SetWorldRotation( SQuat::LookAt( dir ) );
         }
 
         void Transform::SetLocalScale(const SVec3& scale)
         {
+            auto oldScale = m_localScale;
+
             m_localScale = scale;
 
-            dispatchAndSetDirty( );
+            dispatchAndSetDirty( false, true, false );
+
+            notifyScaleChanged( &oldScale );
         }
 
-        const SVec3& Transform::GetLocalScale(void) const
+        const SVec3 &Transform::GetLocalScale(void) const
         {
             return m_localScale;
         }
 
-        void Transform::SetWorldEuler(const SVec3 &euler)
-        {
-            if (m_parent)
-                m_localRotation = m_parent->ToLocal( SQuat( euler.X( ), euler.Y( ), euler.Z( ) ) );
-            else
-                m_localRotation.SetEulerAngles( euler );
-
-            dispatchAndSetDirty( );
-        }
-
-        SVec3 Transform::GetWorldScale(void)
+        SVec3 Transform::GetWorldScale(void) const
         {
             if (m_parent)
                 return m_localScale * m_parent->GetWorldScale();
@@ -173,19 +216,33 @@ namespace ursine
                 return m_localScale;
         }
 
-        SVec3 Transform::GetForward(void)
+        void Transform::SetWorldScale(const SVec3 &scale)
+        {
+            auto oldScale = m_localScale;
+
+            if (m_parent)
+                m_localScale = m_parent->GetWorldScale( ) * scale;
+            else
+                m_localScale = scale;
+
+            dispatchAndSetDirty( false, true, false );
+
+            notifyScaleChanged( &oldScale );
+        }
+
+        SVec3 Transform::GetForward(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitZ( );
         }
 
-        SVec3 Transform::GetRight(void)
+        SVec3 Transform::GetRight(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitX( );
         }
 
-        SVec3 Transform::GetUp(void)
+        SVec3 Transform::GetUp(void) const
         {
-            return GetWorldRotation( ) * SVec3::UnitZ( );
+            return GetWorldRotation( ) * SVec3::UnitY( );
         }
 
         bool Transform::GetDirty(void) const
@@ -214,9 +271,12 @@ namespace ursine
             return GetWorldToLocalMatrix( ).TransformPoint( point );
         }
 
-        SQuat Transform::ToLocal(const SQuat& quat)
+        SQuat Transform::ToLocal(const SQuat& quat) const
         {
-            return m_localRotation * quat;
+            if (m_parent)
+                return m_localRotation.GetInverse( ) * m_parent->ToLocal( quat );
+            else
+                return m_localRotation.GetInverse( ) * quat;
         }
 
         SVec3 Transform::ToWorld(const SVec3& point)
@@ -224,7 +284,7 @@ namespace ursine
             return GetLocalToWorldMatrix( ).TransformPoint( point );
         }
 
-        SQuat Transform::ToWorld(const SQuat& quat)
+        SQuat Transform::ToWorld(const SQuat& quat) const
         {
             if (m_parent)
                 return m_parent->GetWorldRotation( ) * m_localRotation * quat;
@@ -232,17 +292,17 @@ namespace ursine
                 return m_localRotation * quat;
         }
 
-        Transform *Transform::GetRoot(void)
-        {
+		Component::Handle<Transform> Transform::GetRoot(void) const
+		{
             return m_root;
         }
 
-        Transform *Transform::GetParent(void)
+        Component::Handle<Transform> Transform::GetParent(void) const
         {
             return m_parent;
         }
 
-        bool Transform::IsChildOf(Transform* parent)
+        bool Transform::IsChildOf(const Handle<Transform> parent) const
         {
             if (parent == m_parent)
                 return true;
@@ -260,7 +320,8 @@ namespace ursine
             auto oldWorldScale = child->GetWorldScale( );
             auto oldWorldRot = child->GetWorldRotation( );
 
-            genericAddChild( child );
+            if (!genericAddChild( child ))
+                return;
 
             // Set the new local values
             child->SetLocalPosition( ToLocal( oldWorldPos ) );
@@ -275,7 +336,8 @@ namespace ursine
             auto oldWorldScale = child->GetWorldScale( );
             auto oldWorldRot = child->GetWorldRotation( );
 
-            genericAddChild( child );
+            if (!genericAddChild( child ))
+                return;
 
             // Set the new local values
             child->SetLocalPosition( oldWorldPos );
@@ -285,15 +347,33 @@ namespace ursine
 
         void Transform::RemoveChild(Transform* child)
         {
+            // Make the child's local space transform == to world space
+            if (!child->GetOwner( )->IsDeleting( ))
+            {
+                auto worldPosition = child->GetWorldPosition( );
+                auto worldScale = child->GetWorldScale( );
+                auto worldRotation = child->GetWorldRotation( );
+
+                child->SetLocalPosition( worldPosition );
+                child->SetLocalScale( worldScale );
+                child->SetLocalRotation( worldRotation );
+            }
+            
+
             // find the child in our local array of children
             auto itr = std::find( m_children.begin( ), m_children.end( ), child );
 
-            UAssert( itr != m_children.end( ), 
-                     "You're trying to remove a child "
-                     "that isn't a child of this transform" );
+            if ( itr == m_children.end( ) )
+                return;
 
             m_children.erase( itr );
-            child->setParent( this, nullptr );
+
+            child->setParent( this, nullptr, true );
+        }
+
+        void Transform::DetachFromParent(void)
+        {
+            GetParent( )->RemoveChild( this );
         }
 
         void Transform::RemoveChildren(void)
@@ -304,18 +384,23 @@ namespace ursine
             m_children.clear( );
         }
 
-        Transform *Transform::GetChild(uint index)
+        Component::Handle<Transform> Transform::GetChild(uint index)
         {
-            UAssert(m_children.size() < index, "The index must be less than the child count");
+            UAssert(index < m_children.size( ), "The index must be less than the child count");
 
             return m_children[ index ];
         }
 
-        const Transform *Transform::GetChild(uint index) const
+        const Component::Handle<Transform> Transform::GetChild(uint index) const
         {
-            UAssert(m_children.size() < index, "The index must be less than the child count");
+            UAssert(index < m_children.size( ), "The index must be less than the child count");
 
             return m_children[index];
+        }
+
+        const std::vector< Component::Handle<Transform> > &Transform::GetChildren(void) const
+        {
+            return m_children;
         }
 
         uint Transform::GetSiblingIndex(void) const
@@ -325,42 +410,56 @@ namespace ursine
 
         void Transform::SetAsFirstSibling(void)
         {
-            GetOwner( )->SetAsFirstSibling( );
+            SetSiblingIndex( 0 );
         }
 
-        void Transform::SetSiblingIndex(uint index) const
+        void Transform::SetSiblingIndex(uint index)
         {
             GetOwner( )->SetSiblingIndex( index );
+
+            if (m_parent == nullptr)
+                return;
+
+            auto &childArray = m_parent->m_children;
+
+            int i = 0;
+            for (auto child : childArray)
+            {
+                if (child == this)
+                    break;
+                else
+                    ++i;
+            }
+
+            UAssert(i != childArray.size( ), "This shouldn't happen. Something is wrong with the parent's children array.");
+
+            // walk from the old place to the new place, making sure all things are moved
+            int dir = static_cast<int>( index ) > i ? 1 : -1;
+            for (int j = i; j != index; j += dir)
+            {
+                childArray[ j ] = childArray[ j + dir ];
+                childArray[ j + dir ] = this;
+            }
         }
 
-        void Transform::SetWorldScale(const SVec3 &scale)
-        {
-            if (m_parent)
-                m_localScale = m_parent->GetWorldScale( ) * scale;
-            else
-                m_localScale = scale;
-
-            dispatchAndSetDirty( );
-        }
-
-		Component *Transform::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+		Component *Transform::GetComponentInChildren(ComponentTypeID id) const
 		{
-			return GetOwner( )->GetComponentInChildren( entity, id );
+			return GetOwner( )->GetComponentInChildren( id );
 		}
 
-	    Component *Transform::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+	    Component *Transform::GetComponentInParent(ComponentTypeID id) const
 	    {
-			return GetOwner( )->GetComponentInParent( entity, id );
+			return GetOwner( )->GetComponentInParent( id );
 	    }
 
-	    ComponentVector Transform::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const
 	    {
-			return GetOwner( )->GetComponentsInChildren( entity, id );
+			return GetOwner( )->GetComponentsInChildren( id );
 	    }
 
-	    ComponentVector Transform::GetComponentsInParents(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Transform::GetComponentsInParents(ComponentTypeID id) const
 	    {
-			return GetOwner( )->GetComponentsInParents( entity, id );
+			return GetOwner( )->GetComponentsInParents( id );
 	    }
 
 	    void Transform::copy(const Transform &transform)
@@ -376,7 +475,8 @@ namespace ursine
 
             if (transform.m_parent)
             {
-                transform.m_parent->AddChild( this );
+				auto *p = const_cast<Transform*>( transform.m_parent.operator->( ) );
+                p->AddChild( this );
             }
             else
             {
@@ -387,32 +487,51 @@ namespace ursine
             URSINE_TODO( "Test this and make sure it is called AFTER"
                          " the 'Create' function has been called in EntityManager.cpp" );
 
+            notifyPositionChanged( nullptr );
+            notifyRotationChanged( nullptr );
+            notifyScaleChanged( nullptr );
+
             // We don't copy over children
         }
 
-        void Transform::dispatchAndSetDirty(void)
+        void Transform::dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged)
+        {
+            TransformChangedArgs args( transChanged, scaleChanged, rotChanged );
+
+            dispatchAndSetDirty( &args );
+        }
+
+        void Transform::dispatchAndSetDirty(const TransformChangedArgs *args)
         {
             m_dirty = true;
 
-            GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY, EventArgs::Empty );
+            GetOwner( )->Dispatch( ENTITY_TRANSFORM_DIRTY, args );
         }
 
-        void Transform::dispatchParentChange(Transform *oldParent, Transform *newParent) const
+        void Transform::dispatchParentChange(Handle<Transform> oldParent, Handle<Transform> newParent) const
         {
             ParentChangedArgs args( 
                 newParent ? newParent->GetOwner( ) : nullptr,
-                oldParent ? oldParent->GetOwner() : nullptr
+                oldParent ? oldParent->GetOwner( ) : nullptr
             );
 
-            GetOwner( )->Dispatch( ENTITY_PARENT_CHANGED, &args );
+            auto *owner = GetOwner( );
+
+            owner->Dispatch( ENTITY_PARENT_CHANGED, &args );
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            owner->GetWorld( )->Dispatch( WORLD_EDITOR_ENTITY_PARENT_CHANGED, owner, &args );
+
+        #endif
         }
 
         void Transform::onParentDirty(EVENT_HANDLER(Entity))
         {
-            EVENT_ATTRS(Entity, EventArgs);
+            EVENT_ATTRS(Entity, TransformChangedArgs);
             
             // dispatch to notify my children and anyone else who cares
-            dispatchAndSetDirty( );
+            dispatchAndSetDirty( args );
         }
 
         void Transform::recalculateMatrices(void)
@@ -430,52 +549,92 @@ namespace ursine
                 }
 
                 m_worldToLocal = m_localToWorld;
-                m_worldToLocal.Inverse();
+                m_worldToLocal.Inverse( );
 
                 m_dirty = false;
             }
         }
 
-        void Transform::notifyPositionChanged(void)
+        void Transform::notifyPositionChanged(const SVec3 *oldPosition)
         {
-            NOTIFY_COMPONENT_CHANGED( "position", m_localPosition );
+            if (!oldPosition || m_localPosition != *oldPosition)
+            {
+                NOTIFY_COMPONENT_CHANGED( "translation", m_localPosition );
+            }
         }
 
-        void Transform::notifyRotationChanged(void)
+        void Transform::notifyRotationChanged(const SQuat *oldRotation)
         {
-            NOTIFY_COMPONENT_CHANGED( "rotation", m_localRotation.GetEulerAngles( ) );
+            if (!oldRotation || m_localRotation != *oldRotation)
+            {
+                NOTIFY_COMPONENT_CHANGED("rotation", m_localRotation.GetEulerAngles());
+            }
         }
 
-        void Transform::notifyScaleChanged(void)
+        void Transform::notifyScaleChanged(const SVec3 *oldScale)
         {
-            NOTIFY_COMPONENT_CHANGED( "scale", m_localScale );
+            if (!oldScale || m_localScale != *oldScale)
+            {
+                NOTIFY_COMPONENT_CHANGED("scale", m_localScale);
+            }
         }
 
-        void Transform::genericAddChild(Transform *child)
+        bool Transform::genericAddChild(Handle<Transform> child)
         {
+            if (child->m_parent == this)
+                return false;
+
+            // edge case for if the child is my parent
+            if (IsChildOf( child ))
+                return false;
+            
             // Add the child to this transform
-            m_children.push_back( child );
             child->setParent( child->m_parent, this );
+            m_children.push_back( child );
+
+            return true;
         }
 
-        void Transform::setParent(Transform *oldParent, Transform *newParent)
+        void Transform::setParent(Handle<Transform> oldParent, Handle<Transform> newParent, bool removing)
         {
+            if (oldParent == newParent)
+                return;
+
             m_parent = newParent;
-            m_root = newParent ? newParent->m_root : this;
+
+			if (newParent)
+				setRoot( newParent->m_root );
+			else
+				setRoot( this );
 
             // unsubscribe this entity from the old parent's events
             if (oldParent)
+            {
                 oldParent->GetOwner( )->Listener( this )
                     .Off( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
+
+                if (!removing)
+                    // remove this transform from the old parent
+                    oldParent->RemoveChild( this );
+            }
 
             // subscribe this entity to my events
             if (newParent)
                 newParent->GetOwner( )->Listener( this )
                     .On( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
 
-            // dispatch messages for dirty and hierarchical change
+            // dispatch messages for hierarchical change
             dispatchParentChange( oldParent, newParent );
-            dispatchAndSetDirty( );
+        }
+
+		void Transform::setRoot(Handle<Transform> root)
+        {
+			m_root = root;
+
+			for (auto &c : m_children)
+			{
+				c->setRoot( root );
+			}
         }
     }
 }

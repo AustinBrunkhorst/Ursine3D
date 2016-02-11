@@ -1,0 +1,147 @@
+@import '../Config';
+@import '../Utils';
+
+$base-item-indent: 5px;
+$item-indent: 6px;
+
+:host {
+  display: block;
+  font-size: 13px;
+  color: white;
+
+  ::content {
+    @for $i from 2 through 10 {
+      @include repeat-selector( 'x-tree-view-item', $i, '.text' ) {
+        padding-left: $base-item-indent + ($item-indent * $i) !important;
+      }
+    }
+
+    > x-tree-view-item {
+      opacity: 1;
+      transition: opacity $duration-transition-btn ease;
+
+      > .child-view {
+        display: none;
+      }
+
+      &.opened {
+        > .text {
+          .arrow {
+            &:before {
+              -webkit-transform: rotate(90deg);
+            }
+          }
+        }
+
+        > .child-view {
+          display: block;
+        }
+      }
+
+      &.dragging {
+        opacity: 0.65;
+      }
+
+      &.drop-target {
+        > .text {
+          background: $color-accent !important;
+        }
+      }
+
+      &.drop-after-target {
+        > .text {
+          .drop-after-container {
+            opacity: 1;
+          }
+        }
+      }
+
+      > .text {
+        position: relative;
+
+        .arrow {
+          display: inline-block;
+          width: 7px;
+          height: 100%;
+          margin-right: 4px;
+          cursor: pointer;
+
+          &:before {
+            -webkit-transform: rotate(0deg);
+            -webkit-transform-origin: center;
+            -webkit-transition: -webkit-transform $duration-transition-btn ease, border $duration-transition-btn ease;
+          }
+        }
+
+        .drop-after-container {
+          opacity: 0;
+          position: absolute;
+          height: 6px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          margin-bottom: -3px;
+          z-index: 5;
+          background: $color-accent;
+          transition: opacity $duration-transition-btn ease;
+          pointer-events: none;
+        }
+      }
+
+      &[has-sub-view] {
+        > .text {
+          .arrow {
+            &:before {
+              display: inline-block;
+              @include triangle(right, $color-accent, 5px);
+            }
+          }
+        }
+      }
+    }
+
+    x-tree-view-item {
+      display: block;
+
+      &:not(.dragging) {
+        .text {
+          &:hover {
+            background: #5a5a5a !important;
+          }
+        }
+      }
+
+      .text {
+        display: flex;
+        padding: 5px 5px 5px $base-item-indent;
+        cursor: pointer;
+        transition: all $duration-transition-btn ease;
+
+        .text-content {
+          flex: 1 1 auto;
+          width: 100%;
+          padding-bottom: 1px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &[contentEditable=true] {
+            padding: 2px;
+            background: #333337;
+            border: 1px solid #bdbd73;
+            color: #dcdcdc;
+            outline: none;
+            text-overflow: clip;
+          }
+        }
+      }
+
+      &.selected {
+        > .text {
+          background: #414141;
+        }
+      }
+    }
+  }
+}
+

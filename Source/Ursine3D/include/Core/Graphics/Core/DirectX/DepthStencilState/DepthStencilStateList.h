@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** DepthStencilStateList.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -29,6 +42,11 @@ namespace ursine
             DEPTH_STATE_NODEPTH_STENCIL,
 
             DEPTH_STATE_POINTLIGHT,
+            DEPTH_STATE_PASSDEPTH_WRITESTENCIL,
+
+            DEPTH_STATE_PASSDEPTH_NOSTENCIL,
+
+            DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL,
 
             DEPTH_STATE_COUNT
         };

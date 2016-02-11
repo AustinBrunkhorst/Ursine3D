@@ -1,11 +1,23 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Method.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Class.h"
 #include "LanguageTypes/Method.h"
 
-#include <Utils.h>
-
 #include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 Method::Method(
     const Cursor &cursor, 
@@ -33,16 +45,8 @@ TemplateData Method::CompileTemplate(const ReflectionParser *context) const
     data[ "name" ] = m_name;
         
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
-    
-    data[ "isVoidReturnType" ] = 
-        utils::TemplateBool( m_returnType == kReturnTypeVoid );
 
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialMethodInvocation );
-
-    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -65,9 +69,7 @@ bool Method::isAccessible(void) const
 
 std::string Method::getQualifiedSignature(void) const
 {
-    std::string argsList;
-
-    ursine::utils::Join( m_signature, ", ", argsList );
+    auto argsList = boost::join( m_signature, ", " );
 
     std::string constNess = m_isConst ? " const" : "";
 

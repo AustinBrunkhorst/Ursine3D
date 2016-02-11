@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Utils.cpp
 **
@@ -29,6 +29,22 @@ namespace ursine
 
             // append last element without joiner
             output += input.back( );
+        }
+
+        void OpenPath(const std::string &path)
+        {
+        #ifdef PLATFORM_WINDOWS
+
+            ShellExecute(
+                nullptr,
+                "open",
+                path.c_str( ),
+                nullptr,
+                nullptr,
+                SW_SHOWNORMAL
+            );
+
+        #endif
         }
     }
 }

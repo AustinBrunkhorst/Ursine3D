@@ -1,27 +1,33 @@
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      ShaderBufferList.h
-Module:         Graphics
-Purpose:        Enum of buffers + their definitions
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ShaderBufferList.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
 
 #pragma once
 
 #include <DirectXMath.h>
+#include "Particle.h"
 
 namespace ursine
 {
     namespace graphics
     {
+        enum COMPUTE_BUFFER_LIST
+        {
+            COMPUTE_BUFFER_ID = 0,
+            COMPUTE_BUFFER_ID_CPU,
+            COMPUTE_BUFFER_MOUSEPOS,
+            COMPUTE_BUFFER_COUNT
+        };
+
         enum BUFFER_LIST
         {
             BUFFER_CAMERA = 0,
@@ -36,7 +42,9 @@ namespace ursine
             BUFFER_LIGHT_PROJ,
             BUFFER_MATERIAL_DATA,
             BUFFER_SPOTLIGHT,
-			BUFFER_MATRIX_PAL,
+            BUFFER_MATRIX_PAL,
+            BUFFER_MOUSEPOS,
+            BUFFER_PARTICLEDATA,
 
             BUFFER_COUNT,
 
@@ -65,6 +73,8 @@ namespace ursine
         struct InvProjBuffer
         {
             DirectX::XMMATRIX invProj;
+            float nearPlane;
+            float farPlane;
         };
 
         struct PointLightBuffer
@@ -110,16 +120,39 @@ namespace ursine
         struct SpotlightBuffer
         {
             DirectX::XMFLOAT3 lightPosition;
-            float falloff;
+            float intensity;
             DirectX::XMFLOAT3 lightDirection;
             float innerAngle;
             DirectX::XMFLOAT3 diffuseColor;
             float outerAngle;
         };
 
-		struct MatrixPalBuffer
-		{
-			DirectX::XMMATRIX matPal[96];
-		};
+        struct MatrixPalette
+        {
+            DirectX::XMMATRIX matPal[ 96 ];
+        };
+
+        struct MatrixPalBuffer
+        {
+            MatrixPalette matPal;
+        };
+
+        struct MouseBuffer
+        {
+            DirectX::XMINT4 mousePos;
+        };
+
+        struct ComputeIDOutput
+        {
+            unsigned id;
+            unsigned x;
+            unsigned y;
+            float depth;
+        };
+
+        struct ParticleBuffer
+        {
+            Particle_GPU data[ 1024 ];
+        };
     }
 }

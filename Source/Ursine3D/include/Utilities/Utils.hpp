@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Utils.hpp
 **
@@ -39,6 +39,12 @@ namespace ursine
         inline A FlagNegateAll(A value)
         {
             return ~value;
+        }
+
+        template<typename A>
+        constexpr A IndexToMask(A value)
+        {
+            return static_cast<A>( 1 ) << value;
         }
 
         template<typename Container, class Predicate>

@@ -2,23 +2,23 @@
 <link rel="import" href="Behaviors/Menu.html">
 
 <dom-module id="x-main-menu">
-    <link rel="import" type="css" href="../Style/Controls/MainMenu.css">
     <template>
         <content></content>
     </template>
     <script>
         var MainMenuControl = Polymer({
             is: "x-main-menu",
+            hostAttributes: {
+                tabindex: -1
+            },
             properties: {
 
             },
             listeners: {
-                'blur': '_onBlur'
+                'blur': '_onBlur',
+                'mouseleave': '_onMouseLeave'
             },
             created: function() {
-                // make this element focusable
-                this.tabIndex = -1;
-
                 // make this the root menu by default
                 this.classList.add( 'root-menu' );
 
@@ -46,6 +46,20 @@
                 [].forEach.call( hovered, function (item) {
                     item.classList.remove( 'hover' );
                 } );
+
+                var items = this.querySelectorAll( '.left, .clear-left, .top' );
+
+                // remove computed classes
+                [ ].forEach.call( items, function(item) {
+                    item.classList.remove( 'left', 'clear-left', 'top' );
+                } );
+            },
+            _onMouseLeave: function() {
+                var focused = document.activeElement;
+
+                // make sure we remove the hover state explicitly when not focused on mouse exit
+                if (!(this === focused || this.contains( focused )))
+                    this._onBlur( );
             }
         });
     </script>

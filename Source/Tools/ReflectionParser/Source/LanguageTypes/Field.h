@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Field.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "LanguageType.h"
@@ -35,6 +48,9 @@ private:
 
     std::string m_explicitGetter;
     std::string m_explicitSetter;
+
+    std::string m_veryExplicitGetter;
+    std::string m_veryExplicitSetter;
 
     bool isAccessible(void) const;
     bool isGetterAccessible(void) const;

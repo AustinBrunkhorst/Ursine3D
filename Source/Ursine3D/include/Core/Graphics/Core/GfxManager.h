@@ -1,18 +1,16 @@
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      GfxManager.h
-Module:         Graphics
-Purpose:        Core of graphics
-Language:       C++
+﻿/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxManager.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
 
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
 #pragma once
 
 #include "DirectXCore.h"
@@ -58,6 +56,8 @@ namespace ursine
 
             void Resize(int width, int height);
 
+            void SetFullscreenState( const bool state );
+
             void Invalidate();
 
             void RenderUI(GfxHND camera, RENDER_TARGETS input);
@@ -75,6 +75,11 @@ namespace ursine
 
             //render onto a texture
             void RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void *input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY);
+
+            // get the currently selected object
+            int GetCurrentUniqueID();
+
+            SVec3 GetCurrentWorldPosition(const GfxHND &cameraHandle);
 
             //public members
         public:
@@ -114,21 +119,28 @@ namespace ursine
 
             //preparing for rendering
             void PrepFor3DModels(const SMat4 &view, const SMat4 &proj);
+            void PrepForBillboard2D(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
+            void PrepForParticleSystems(const SMat4 &view, const SMat4 &proj);
+            void PrepForCompute(void);
+            void PrepForLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
             void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
+            void PrepForSpotlightPass(const SMat4 &view, const SMat4 &proj);
             void PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj);
-            void PrepForPrimitives(const SMat4 &view, const SMat4 &proj);
-            void PrepForDebugRender();
-            void PrepForFinalOutput();
-            void PrepForUI();
+            void PrepForDebugRender(void);
+            void PrepForFinalOutput(void);
+            void PrepForUI(void);
+            void PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj);
 
             //rendering funcs
-            void Render3DModel(_DRAWHND handle);
-            void Render2DBillboard(_DRAWHND handle);
+            void Render3DModel(_DRAWHND handle, Camera &currentcamera );
+            void Render2DBillboard(_DRAWHND handle, Camera &currentCamera);
+            void RenderParticleSystem(_DRAWHND handle, Camera &currentCamera);
+            void RenderComputeMousePos(void);
             void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
+            void RenderSpotLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
-            void RenderPrimitive(_DRAWHND handle);
-            void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
-            void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
+            void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
+            void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
 
             //privates members
         private:
@@ -140,6 +152,9 @@ namespace ursine
             bool m_profile;
             bool m_debug;
             bool m_ready = false;
+
+            int m_currentID;            // current object we are moused over
+            SVec3 m_currentPosition;    // view position of current object, stored in x pos, y pos, depth
 
             GfxHND m_GameViewport;
 

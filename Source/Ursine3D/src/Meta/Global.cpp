@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Global.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Global.h"
@@ -16,8 +29,8 @@ namespace ursine
         Global::Global(
             const std::string &name, 
             Type type, 
-            Getter getter, 
-            Setter setter, 
+            GlobalGetterBase *getter,
+            GlobalSetterBase *setter,
             Type parentType
         ) 
             : m_type( type )
@@ -53,7 +66,7 @@ namespace ursine
 
         Variant Global::GetValue(void) const
         {
-            return m_getter( );
+            return m_getter->GetValue( );
         }
 
         bool Global::SetValue(const Argument &value) const
@@ -61,7 +74,7 @@ namespace ursine
             // read only?
             if (m_setter != nullptr)
             {
-                m_setter( value );
+                m_setter->SetValue( value );
 
                 return true;
             }

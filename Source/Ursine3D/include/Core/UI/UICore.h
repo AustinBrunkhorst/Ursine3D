@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Core.h
 **
@@ -29,6 +29,8 @@ namespace ursine
         , public ResourceBundleHandler
     {
     public:
+        static CefRefPtr<UICore> Instance;
+
         UICore(void);
         ~UICore(void);
 

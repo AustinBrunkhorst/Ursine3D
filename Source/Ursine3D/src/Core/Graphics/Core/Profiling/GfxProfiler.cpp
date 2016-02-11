@@ -1,7 +1,22 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxProfiler.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "GfxProfiler.h"
 #include <d3d11.h>
 #include "GfxDefines.h"
+
+#define PROFILE(target) #target
 
 namespace ursine
 {
@@ -19,6 +34,7 @@ namespace ursine
             //init variables
             m_frame = 0;
             m_lastFrame = -1;
+            m_lastBaseLine = 0;
 
             //create disjointed queries
             HRESULT hr;
@@ -31,9 +47,12 @@ namespace ursine
             hr = m_device->CreateQuery(&queryDesc, &m_disjointedQueries[ 1 ]);
             UAssert(hr == S_OK, "Failed to create query device!");
 
+            m_targetNames.resize(MAX_PROFILER_TARGETS);
+            m_profiled.resize(MAX_PROFILER_TARGETS);
+            m_timeStamps.resize(MAX_PROFILER_TARGETS);
 
             //create queries
-            for (int x = 0; x < PROFILE_COUNT; ++x)
+            for (int x = 0; x < MAX_PROFILER_TARGETS; ++x)
             {
                 HRESULT hr;
                 D3D11_QUERY_DESC queryDesc;
@@ -44,6 +63,8 @@ namespace ursine
                 UAssert(hr == S_OK, "Failed to create query device!");
                 hr = m_device->CreateQuery(&queryDesc, &m_queryList[ x ][ 1 ]);
                 UAssert(hr == S_OK, "Failed to create query device!");
+
+                m_timeStamps[ x ] = -1;
             }
         }
 
@@ -73,8 +94,14 @@ namespace ursine
             if (!m_run)
                 return;
 
+            for ( auto &x : m_profiled )
+                x = false;
+
             m_devCon->Begin(m_disjointedQueries[ m_frame ]);
-            Stamp(PROFILE_FRAME_BEGIN);
+
+            m_numberOfTargets = 0;
+            m_maxNameSize = 0;
+            Stamp("Frame Begin");
         }
 
         //end frame
@@ -84,23 +111,34 @@ namespace ursine
                 return;
 
             //stamp last
-            //Stamp( PROFILE_FRAME_END );
+
+
+            Stamp("FRC");
+
             m_devCon->End(m_disjointedQueries[ m_frame ]);
 
             //alternate frames
-            if (m_frame == 0)
+            if ( m_frame == 0 )
                 m_frame = 1;
             else
                 m_frame = 0;
         }
 
         //call "Time" on each segment
-        void GfxProfiler::Stamp(ProfilingTargets target)
+        void GfxProfiler::Stamp(std::string name)
         {
             if (!m_run)
                 return;
 
-            m_devCon->End(m_queryList[ target ][ m_frame ]);
+            UAssert(m_numberOfTargets + 1 <= MAX_PROFILER_TARGETS, "Out of profiling targets!");
+
+            m_targetNames[ m_numberOfTargets ] = name;
+            m_profiled[ m_numberOfTargets ] = true;
+
+            if ( name.length() > m_maxNameSize )
+                m_maxNameSize = static_cast<int>(name.length());
+
+            m_devCon->End(m_queryList[ m_numberOfTargets++ ][ m_frame ]);
         }
 
         void GfxProfiler::WaitForCalls(bool output)
@@ -128,15 +166,13 @@ namespace ursine
 
             //grab the baseline for the whole frame
             UINT64 baseline;
-            m_devCon->GetData(m_queryList[ PROFILE_FRAME_BEGIN ][ m_lastFrame ], &baseline, sizeof(UINT64), 0);
+            m_devCon->GetData(m_queryList[ 0 ][ m_lastFrame ], &baseline, sizeof(UINT64), 0);
+            m_timeStamps[ 0 ] = 0;
 
-            static float total = 0;
-            static int frameCount = 1;
-
-            float currentTotal = 0;
+            double totalTime = 0;
 
             //for each query, get the time w/ respect to the baseline
-            for (int x = 1; x < PROFILE_COUNT; ++x)
+            for (int x = 1; x < m_numberOfTargets; ++x)
             {
                 UINT64 current;
 
@@ -144,26 +180,41 @@ namespace ursine
                 m_devCon->GetData(m_queryList[ x ][ m_lastFrame ], &current, sizeof(UINT64), 0);
 
                 //save data
-                m_timeStamps[ x ] = (float)(current - baseline) / (float)disjointStamp.Frequency;
+                m_timeStamps[ x ] = (double)(current - baseline) / (double)disjointStamp.Frequency;
 
                 //update
                 baseline = current;
 
-                total += m_timeStamps[ x ];
-                currentTotal += m_timeStamps[ x ];
-
-                if (output)
-                    printf("PROFILE: %i, %5.3f\n", x, m_timeStamps[ x ] / 0.016f);
+                totalTime += m_timeStamps[ x ];
             }
 
-            if (output)
-                printf("TOTAL: %5.3f, FPS: %5.3f\n\n", currentTotal, 1.f / (total / frameCount++));
+            // time to output data
+            if ( output )
+            {
+                //get the total time of the frame, as well as the time that wasn't profiled
+                printf("%f, %f\n", totalTime, totalTime);
+
+                // calculate the values for each time
+                for ( int x = 1; x < m_numberOfTargets - 1; ++x )
+                {
+                    // print name, time, and percent of time
+                    if( m_timeStamps[ x ] >= 0.00001)
+                        printf("%-*s, %10.5f, %2.0f%% of frame\n", static_cast<int>(m_maxNameSize + 1), m_targetNames[x].c_str(), m_timeStamps[x], (m_timeStamps[x] / totalTime) * 100.0f);
+                }
+
+                printf("TOTAL FRAME TIME: %f\n", totalTime);
+            }
 
             //alternate the last frame
             if (m_lastFrame == 0)
                 m_lastFrame = 1;
             else
                 m_lastFrame = 0;
+
+            m_lastBaseLine = baseline;
+
+            for ( auto &x : m_profiled )
+                x = false;
         }
     }
 }

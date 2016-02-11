@@ -1,7 +1,20 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** CoreSystem.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
-#include "Meta.h"
-#include "Application.h"
+#include <Meta.h>
+#include <Application.h>
 
 #define CORE_SYSTEM               \
     public:                       \

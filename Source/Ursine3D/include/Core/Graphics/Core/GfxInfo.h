@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxInfo.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -36,16 +49,16 @@ namespace ursine
             void GetDimensions(unsigned &w, unsigned &h);
             void SetDimensions(unsigned w, unsigned h);
         private:
-            unsigned ModeCount_;
-            DXGI_MODE_DESC *DisplayModeList_;
-            unsigned int DedicatedVideoMemory_;
-            unsigned int SharedVideoMemory_;
-            bool VSync_;
-            unsigned Width_;
-            unsigned Height_;
+            unsigned m_modeCount;
+            DXGI_MODE_DESC *m_displayModeList;
+            unsigned int m_dedicatedVideoMemory;
+            unsigned int m_sharedVideoMemory;
+            bool m_useVSync;
+            unsigned m_windowWidth;
+            unsigned m_windowHeight;
 
-            unsigned SampleCount_;
-            unsigned SampleQuality_;
+            unsigned m_maxSampleCount;
+            unsigned m_maxSampleQuality;
         };
     }
 }

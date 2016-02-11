@@ -7,13 +7,12 @@ namespace ursine
         template<class ClassType, typename ReturnType, typename ...ArgTypes>
         Method::Method(
             const std::string &name, 
-            ReturnType(ClassType::*method)(ArgTypes...), 
-            Invoker invoker
+            ReturnType(ClassType::*method)(ArgTypes...)
         )
             : Invokable( name )
             , m_isConst( false )
             , m_classType( typeof( ClassType ) )
-            , m_invoker( invoker )
+            , m_invoker( new MethodInvoker<ClassType, ReturnType, ArgTypes...>( method ) )
         {
             TypeUnpacker<ArgTypes...>::Apply( m_signature );
         }
@@ -21,13 +20,12 @@ namespace ursine
         template<class ClassType, typename ReturnType, typename ...ArgTypes>
         Method::Method(
             const std::string &name, 
-            ReturnType(ClassType::*method)(ArgTypes...) const, 
-            Invoker invoker
+            ReturnType(ClassType::*method)(ArgTypes...) const
         )
             : Invokable( name )
             , m_isConst( true )
             , m_classType( typeof( ClassType ) )
-            , m_invoker( invoker )
+            , m_invoker( new MethodInvoker<ClassType, ReturnType, ArgTypes...>( method ) )
         {
             TypeUnpacker<ArgTypes...>::Apply( m_signature );
         }

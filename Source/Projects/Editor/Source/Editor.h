@@ -1,48 +1,67 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Editor.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <CoreSystem.h>
 
 #include <Window.h>
 #include <UIView.h>
+#include <NotificationManager.h>
 
-#include <NativeJSFunction.h>
+#include "Project.h"
 
-class Project;
 class NativeEditorTool;
 
 class Editor : public ursine::core::CoreSystem
 {
     CORE_SYSTEM
 public:
-    Meta(Enable)
+    Meta(Enable, DisableNonDynamic)
     Editor(void);
     ~Editor(void);
 
     void OnInitialize(void) override;
     void OnRemove(void) override;
     
-    Project *GetProject(void) const;
+    ursine::Window::Handle GetMainWindow(void) const;
+    ursine::UIView::Handle GetMainUI(void) const;
+
+    Project::Handle GetProject(void) const;
+
+    ursine::NotificationManager &GetNotificationManager(void);
+
+    ursine::Notification PostNotification(const ursine::NotificationConfig &config);
     
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
+    ursine::NotificationManager m_notificationManager;
+
     struct
     {
-        ursine::Window *window;
-        CefRefPtr<ursine::UIView> ui;
-        GfxHND viewport;
-        GfxHND camera;
+        ursine::Window::Handle window;
+        ursine::UIView::Handle ui;
     } m_mainWindow;
 
-    Project *m_project;
+    Project::Handle m_project;
 
     void initializeGraphics(void);
     void initializeScene(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
-    void onMainWindowResize(EVENT_HANDLER(ursine::Window));
+    void onFocusChange(EVENT_HANDLER( ursine::Window ));
 
-    void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
-    void onComponentChanged(EVENT_HANDLER(ursine::ecs::World));
+    void onMainWindowResize(EVENT_HANDLER(ursine::Window));
 } Meta(Enable, WhiteListMethods);

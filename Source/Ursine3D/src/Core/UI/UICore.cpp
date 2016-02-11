@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Core.cpp
 **
@@ -17,9 +17,11 @@
 
 namespace ursine
 {
+    CefRefPtr<UICore> UICore::Instance = nullptr;
+
     UICore::UICore(void)
     {
-        atexit( Shutdown );
+        atexit( Shutdown ); 
     }
 
     UICore::~UICore(void)
@@ -32,6 +34,8 @@ namespace ursine
         CefRefPtr<CefCommandLine> cmdLine
     )
     {
+        cmdLine->AppendSwitch( "disable-extensions" );
+
         // fixes v8 errors on startup
         cmdLine->AppendSwitch( "no-proxy-server" );
         cmdLine->AppendSwitch( "winhttp-proxy-resolver" );
@@ -62,6 +66,11 @@ namespace ursine
 
     void UICore::Shutdown(void)
     {
+        URSINE_TODO( "Find CEF reference counting leak" );
+    #if !defined(CONFIG_DEBUG)
+
         CefShutdown( );
+
+    #endif
     }
 }

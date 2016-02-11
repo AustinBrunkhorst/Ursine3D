@@ -1,8 +1,11 @@
 package ursine.editor.scene.component;
 
-import ursine.editor.scene.component.inspectors.fields.DefaultFieldInspector;
+
+import ursine.editor.scene.component.inspectors.IFieldInspectionOwner;
 import haxe.rtti.Meta;
 import ursine.utils.MetaUtils;
+import ursine.native.Property;
+import ursine.editor.scene.component.inspectors.fields.DefaultFieldInspector;
 import ursine.editor.scene.component.inspectors.components.DefaultComponentInspector;
 import ursine.editor.scene.component.inspectors.fields.DefaultFieldInspector;
 import ursine.editor.scene.component.inspectors.ComponentInspectionHandler;
@@ -13,7 +16,7 @@ import ursine.editor.scene.component.inspectors.ComponentInspectors;
 import ursine.editor.scene.component.inspectors.FieldInspectors;
 
 // Map<String, Dynamic>
-typedef NativeMeta = Map<String, Dynamic>;
+typedef NativeMeta = Dynamic;
 
 // Map<String, Dynamic>
 typedef NativeEnum = Dynamic;
@@ -26,17 +29,19 @@ extern class NativeField {
 
 extern class NativeType {
     var name : String;
+
+    var isArray : Bool;
+    var arrayType : String;
+
     var enumValue : Null<NativeEnum>;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 extern class ComponentType {
     var meta : NativeMeta;
 
-    // Map<String, NativeField>
-    var fields : Dynamic;
+    var fields : Array<NativeField>;
 }
 
 class ComponentDatabase {
@@ -67,7 +72,7 @@ class ComponentDatabase {
         var components = Reflect.fields( database.components );
 
         for (name in components) {
-            var component = Reflect.field( database.components, name );
+            var component : ComponentType = Reflect.field( database.components, name );
 
             m_db.set( name, component );
         }
@@ -80,8 +85,23 @@ class ComponentDatabase {
         return m_typeDB.get( name );
     }
 
+    public function getComponentTypes() : Array<String> {
+        var keys : Array<String> = new Array<String>( );
+
+        for (key in m_db.keys( ))
+            keys.push( key );
+
+        return keys;
+    }
+
     public function getComponentType(name : String) : ComponentType {
         return m_db.get( name );
+    }
+
+    public function getComponentTypeField(type : ComponentType, name : String) : NativeField {
+        return Lambda.find( type.fields, function(f) {
+            return f.name == name;
+        } );
     }
 
     public function createComponentInspector(entity : Entity, inspection : ComponentInspection) : ComponentInspectionHandler {
@@ -93,8 +113,20 @@ class ComponentDatabase {
         return Type.createInstance( handler, [ entity, inspection ] );
     }
 
-    public function createFieldInspector(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) : FieldInspectionHandler {
-        var handler = m_fieldInspectionHandlers.get( type.name );
+    public function createFieldInspector(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) : FieldInspectionHandler {
+        var typeOverride = Reflect.field( field.meta, Property.ForceEditorType );
+
+        var typeName : String;
+
+        if (typeOverride == null) {
+            typeName = type.name;
+        } else {
+            typeName = Reflect.field( typeOverride, 'typeName' );
+
+            type = m_typeDB[ typeName ];
+        }
+
+        var handler = m_fieldInspectionHandlers.get( typeName );
 
         if (handler == null)
             handler = DefaultFieldInspector;

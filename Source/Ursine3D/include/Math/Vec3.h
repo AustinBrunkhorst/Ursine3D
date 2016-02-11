@@ -16,6 +16,13 @@
 #include "UrsineTypes.h"
 #include "SIMD.h"
 
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+// Forward Declaration
+class btVector3;
+
+#endif
+
 namespace ursine
 {
 	// Forward declaration
@@ -32,8 +39,13 @@ namespace ursine
 		friend class SVec4;
 
 	public:
+        Meta(ExplicitGetter( "(float (ursine::Vec3::*)(void) const) &ursine::Vec3::X" ))
         EditorField(float x, X, SetX);
+
+        Meta(ExplicitGetter( "(float (ursine::Vec3::*)(void) const) &ursine::Vec3::Y" ))
         EditorField(float y, Y, SetY);
+
+        Meta(ExplicitGetter( "(float (ursine::Vec3::*)(void) const) &ursine::Vec3::Z" ))
         EditorField(float z, Z, SetZ);
 
 		// Constructors
@@ -47,6 +59,14 @@ namespace ursine
 
 		explicit Vec3(const Vec4 &value);
 		explicit Vec3(const SVec4 &value);
+
+		#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+		explicit Vec3(const btVector3 &vec);
+
+		btVector3 ToBullet(void) const;
+
+		#endif
 
 		// Properties
 		static const Vec3 &Zero(void);
@@ -136,7 +156,7 @@ namespace ursine
 
 	private:
 		float m_x, m_y, m_z;
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "Vec3.hpp"

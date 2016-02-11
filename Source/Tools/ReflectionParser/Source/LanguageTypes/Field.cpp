@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Field.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Class.h"
@@ -22,7 +35,8 @@ Field::Field(
         m_displayName = displayName;
 
     m_explicitGetter = m_metaData.GetNativeString( native_property::ExplicitGetter );
-    m_hasExplicitGetter = !m_explicitGetter.empty( );
+    m_veryExplicitGetter = m_metaData.GetNativeString( native_property::VeryExplicitGetter );
+    m_hasExplicitGetter = !m_explicitGetter.empty( ) || !m_veryExplicitGetter.empty( );
 
     m_explicitSetter = m_metaData.GetNativeString( native_property::ExplicitSetter );
     m_hasExplicitSetter = !m_explicitSetter.empty( );
@@ -49,7 +63,23 @@ TemplateData Field::CompileTemplate(const ReflectionParser *context) const
 
     data[ "isGetterAccessible" ] = utils::TemplateBool( isGetterAccessible( ) );
     data[ "hasExplicitGetter" ] = utils::TemplateBool( m_hasExplicitGetter );
-    data[ "explicitGetter" ] = m_explicitGetter;
+
+    if (m_hasExplicitGetter)
+    {
+        std::string explicitGetter;
+
+        if (m_parent && m_veryExplicitGetter.empty( ))
+        {
+            explicitGetter = "&"+ m_parent->m_qualifiedName + "::" + m_explicitGetter;
+        }
+        else
+        {
+            explicitGetter = m_veryExplicitGetter;
+        }
+
+        data[ "explicitGetter" ] = explicitGetter;
+    }
+
     data[ "getterBody" ] = context->LoadTemplatePartial( kPartialFieldGetter );
 
     // setter

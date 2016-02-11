@@ -12,12 +12,17 @@
 
 struct ReflectionOptions
 {
+    bool forceRebuild;
+    bool displayDiagnostics;
+
     std::string targetName;
 
+    std::string sourceRoot;
     std::string inputSourceFile;
+    std::string moduleHeaderFile;
 
-    std::string outputHeaderFile;
-    std::string outputSourceFile;
+    std::string outputModuleSource;
+    std::string outputModuleFileDirectory;
 
     std::string precompiledHeader;
 

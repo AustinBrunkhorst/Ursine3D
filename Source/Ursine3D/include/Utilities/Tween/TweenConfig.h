@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ActionConfig.h
 **
@@ -22,4 +22,6 @@ namespace ursine
     typedef std::function<void(float)> TweenPercentageCallback;
 
     typedef uint32 TweenGroupID;
+
+    const TweenGroupID kTweenGroupGameplay = 5;
 }

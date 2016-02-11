@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** UIManager.cpp
 **
@@ -21,7 +21,6 @@ namespace ursine
 
     UIManager::UIManager(void)
         : EventDispatcher( this )
-        , m_core( new UICore )
     {
         auto *app = Application::Instance;
 
@@ -50,7 +49,6 @@ namespace ursine
 #else
 
         settings.log_severity = LOGSEVERITY_DISABLE;
-        //settings.pack_loading_disabled = true;
 
 #endif
 
@@ -62,9 +60,13 @@ namespace ursine
 
         settings.background_color = CefColorSetARGB( 0, 0, 0, 0 );
 
+        UICore::Instance = new UICore( );
+
         URSINE_TODO( "configurable handlers" );
-        UAssert( CefInitialize( mainArgs, settings, m_core, nullptr ),
+        UAssert( CefInitialize( mainArgs, settings, UICore::Instance, nullptr ),
             "Unable to initialize CEF." );
+
+        CefEnableHighDPISupport( );
 
         app->Connect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
@@ -74,13 +76,12 @@ namespace ursine
         Application::Instance->Disconnect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
 
-    CefRefPtr<UIView> UIManager::CreateView(Window *window, const std::string &url)
+    UIView::Handle UIManager::CreateView(Window::Handle window, const std::string &url) const
     {
         CefBrowserSettings settings;
 
         settings.windowless_frame_rate = 144;
         settings.webgl = STATE_DISABLED;
-        settings.java = STATE_DISABLED;
         settings.plugins = STATE_DISABLED;
         settings.javascript = STATE_ENABLED;
         settings.javascript_access_clipboard = STATE_ENABLED;

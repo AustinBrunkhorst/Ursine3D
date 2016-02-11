@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ShaderTypes.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -22,14 +35,16 @@ namespace ursine
 {
     namespace graphics
     {
-        enum SHADERDEF
+        enum SHADERTYPE
         {
-            VERTEX_SHADER = 0,
-            PIXEL_SHADER,
-            HULL_SHADER,
-            DOMAIN_SHADER,
-            GEOMETRY_SHADER,
-            DEF_COUNT
+            SHADERTYPE_VERTEX = 0,
+            SHADERTYPE_PIXEL,
+            SHADERTYPE_HULL,
+            SHADERTYPE_DOMAIN,
+            SHADERTYPE_GEOMETRY,
+            SHADERTYPE_COMPUTE,
+
+            SHADERTYPE_COUNT
         };
     }
 }

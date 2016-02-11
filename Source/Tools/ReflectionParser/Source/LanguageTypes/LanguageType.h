@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** LanguageType.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Cursor.h"
@@ -13,6 +26,8 @@ public:
     virtual ~LanguageType(void) { }
 
     const MetaDataManager &GetMetaData(void) const;
+
+    std::string GetSourceFile(void) const;
 
     virtual TemplateData CompileTemplate(
         const ReflectionParser *context
@@ -32,7 +47,12 @@ protected:
     // generated in the reflection database
     bool m_constPtrTypeEnabled;
 
+    // determines if this type generates data for its respective array type
+    bool m_arrayTypeEnabled;
+
     CX_CXXAccessSpecifier m_accessModifier;
 
 private:
+    // cursor that represents the root of this language type
+    Cursor m_rootCursor;
 };

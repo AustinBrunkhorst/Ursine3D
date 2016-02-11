@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.0)
 
-ursine_default_project(
+include(GlobalConfig)
+
+ursine_project(
     Math-TransformTests
     FOLDER "Tests"
     TYPE EXE
-	DEPENDS SDL2 CEF DirectX BulletPhysics
+	DEPENDS SDL2 CEF DirectX BulletPhysics WWise FBX
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
     PARSE_SOURCE_GROUPS
@@ -14,4 +16,4 @@ ursine_default_project(
 )
 
 add_definitions(-D_HAS_EXCEPTIONS=0)
-add_definitions(-SDL_MAIN_HANDLED)
+add_definitions(-DSDL_MAIN_HANDLED)

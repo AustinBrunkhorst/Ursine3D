@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Application.h
 **
@@ -34,7 +34,6 @@ namespace ursine
         static Application *Instance;
 
         Application(int argc, char *argv[]);
-
         ~Application(void);
 
         void Run(void);

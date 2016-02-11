@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ModelInfo.cpp
+**
+** Author:
+** - Park Hyung Jun - park.hyungjun@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <string>
@@ -12,40 +25,25 @@ namespace ursine
 		{
 			ModelInfo::ModelInfo()
 				:
-				mmeshCount(0), marrMeshes(nullptr),
-				mmaterialCount(0), marrMaterials(nullptr),
-				mskinCount(0), marrSkins(nullptr),
-				manimCount(0), marrAnims(nullptr),
+				mmeshCount(0), mmaterialCount(0), mboneCount(0),  maniCount(0), 
+				mmeshlvlCount(0), mriglvlCount(0),
 				ISerialize("")
 			{
 			}
 
 			ModelInfo::~ModelInfo()
 			{
+				ReleaseData();
 			}
 
 			void ModelInfo::ReleaseData()
 			{
-				if (marrMeshes)
-				{
-					delete[] marrMeshes;
-					marrMeshes = nullptr;
-				}
-				if (marrMaterials)
-				{
-					delete[] marrMaterials;
-					marrMaterials = nullptr;
-				}
-				if (marrSkins)
-				{
-					delete[] marrSkins;
-					marrSkins = nullptr;
-				}
-				if (marrAnims)
-				{
-					delete[] marrAnims;
-					marrAnims = nullptr;
-				}
+				mMeshInfoVec.clear();
+				mMtrlInfoVec.clear();
+				mBoneInfoVec.clear();
+				maniNameVec.clear();
+				mMeshLvVec.clear();
+				mRigLvVec.clear();
 			}
 
 			bool ModelInfo::SerializeIn(HANDLE hFile)
@@ -54,32 +52,37 @@ namespace ursine
 				unsigned int i = 0;
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
-					ReadFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+					name = tmp_name;
 					ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &mskinCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &manimCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &maniCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
+					ReadFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
-					marrMeshes = new MeshInfo[mmeshCount];
+					mMeshInfoVec.resize(mmeshCount);
 					for (i = 0; i < mmeshCount; ++i)
-					{
-						marrMeshes[i].SerializeIn(hFile);
-					}
-					marrMaterials = new MaterialInfo[mmaterialCount];
+						mMeshInfoVec[i].SerializeIn(hFile);
+					mMtrlInfoVec.resize(mmaterialCount);
 					for (i = 0; i < mmaterialCount; ++i)
+						mMtrlInfoVec[i].SerializeIn(hFile);
+					mBoneInfoVec.resize(mboneCount);
+					for (i = 0; i < mboneCount; ++i)
+						mBoneInfoVec[i].SerializeIn(hFile);
+					maniNameVec.resize(maniCount);
+					for (i = 0; i < maniCount; ++i)
 					{
-						marrMaterials[i].SerializeIn(hFile);
+						ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+						maniNameVec[i] = tmp_name;
 					}
-					marrSkins = new SkinInfo[mskinCount];
-					for (i = 0; i < mskinCount; ++i)
-					{
-						marrSkins[i].SerializeIn(hFile);
-					}
-					marrAnims = new AnimInfo[manimCount];
-					for (i = 0; i < manimCount; ++i)
-					{
-						marrAnims[i].SerializeIn(hFile);
-					}
+					mMeshLvVec.resize(mmeshlvlCount);
+					for (i = 0; i < mmeshlvlCount; ++i)
+						ReadFile(hFile, &mMeshLvVec[i], sizeof(MeshInLvl), &nBytesRead, nullptr);
+					mRigLvVec.resize(mriglvlCount);
+					for (i = 0; i < mriglvlCount; ++i)
+						ReadFile(hFile, &mRigLvVec[i], sizeof(RigInLvl), &nBytesRead, nullptr);
 				}
 				return true;
 			}
@@ -90,92 +93,51 @@ namespace ursine
 				unsigned int i = 0;
 				if (INVALID_HANDLE_VALUE != hFile)
 				{
-					WriteFile(hFile, name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+					char tmp_name[MAXTEXTLEN];
+					lstrcpy(tmp_name, name.c_str());
+					WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);					
 					WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &mskinCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &manimCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &maniCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+					WriteFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
-					for (i = 0; i < mmeshCount; ++i)
+					if (mMeshInfoVec.size() > 0)
 					{
-						marrMeshes[i].SerializeOut(hFile);
+						for (auto iter : mMeshInfoVec)
+							iter.SerializeOut(hFile);
 					}
-					for (i = 0; i < mmaterialCount; ++i)
+					if (mMtrlInfoVec.size() > 0)
 					{
-						marrMaterials[i].SerializeOut(hFile);
+						for (auto iter : mMtrlInfoVec)
+							iter.SerializeOut(hFile);
 					}
-					for (i = 0; i < mskinCount; ++i)
+					if (mBoneInfoVec.size() > 0)
 					{
-						marrSkins[i].SerializeOut(hFile);
+						for (auto iter : mBoneInfoVec)
+							iter.SerializeOut(hFile);
 					}
-					for (i = 0; i < manimCount; ++i)
+					if (maniNameVec.size() > 0)
 					{
-						marrAnims[i].SerializeOut(hFile);
+						for (auto iter : maniNameVec)
+						{
+							lstrcpy(tmp_name, iter.c_str());
+							WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+						}
+					}
+					if (mMeshLvVec.size() > 0)
+					{
+						for (auto iter : mMeshLvVec)
+							WriteFile(hFile, &iter, sizeof(MeshInLvl), &nBytesWrite, nullptr);
+					}
+					if (mRigLvVec.size() > 0)
+					{
+						for (auto iter : mRigLvVec)
+							WriteFile(hFile, &iter, sizeof(RigInLvl), &nBytesWrite, nullptr);
 					}
 				}
 				return true;
-			}
-
-			void ModelInfo::GetFinalTransform(const std::string& clipName, double timePos, std::vector<XMMATRIX>& finalTransform) const
-			{
-				// Calculating Final Transform
-				size_t numBones = mskinCount;
-				std::vector<XMMATRIX> toParentTransforms(numBones);
-				std::vector<XMMATRIX> toRootTransforms(numBones);
-				if (0 == manimCount)
-					return;
-
-				// find animation by name
-				int AnimClipIdx = -1;
-				auto AnimClip = FindAnimClip(&AnimClipIdx, clipName);
-				if (-1 == AnimClipIdx || nullptr == AnimClip)
-					return;
-
-				// currently, we can only handle one animation
-				// Interpolate all the bones of this clip at the given time instance.
-				AnimClip->Interpolate(AnimClipIdx, timePos, toParentTransforms); // need clip index
-																				 //
-																				 // Traverse the hierarchy and transform all the bones to the root space.
-																				 //
-																				 // The root bone has index 0. The root bone has no parent, so
-																				 // its toRootTransform is just its local bone transform.
-				toRootTransforms[0] = toParentTransforms[0];
-				// Now find the toRootTransform of the children.
-				for (size_t i = 1; i < numBones; ++i)
-				{
-					// toParent = animTM
-					XMMATRIX toParent = toParentTransforms[i];
-					int parentIndex = marrSkins[i].mbones.mParentIndex;
-					// parentToRoot = parent to root transformation
-					XMMATRIX parentToRoot = toRootTransforms[parentIndex];
-					// toRootTransform = local bone transform
-					toRootTransforms[i] = XMMatrixMultiply(toParent, parentToRoot);
-				}
-
-				// Premultiply by the bone offset transform to get the final transform.
-				for (size_t i = 0; i < numBones; ++i)
-				{
-					XMVECTOR S = XMLoadFloat3(&marrSkins[i].mbones.boneSpaceScaling);
-					XMVECTOR P = XMLoadFloat3(&marrSkins[i].mbones.boneSpacePosition);
-					XMVECTOR Q = XMLoadFloat4(&marrSkins[i].mbones.boneSpaceRotation);
-					XMVECTOR zero = XMVectorSet(0.f, 0.f, 0.f, 1.0f);
-					XMMATRIX offset = XMMatrixAffineTransformation(S, zero, Q, P);
-					XMMATRIX toroot = toRootTransforms[i];
-					finalTransform[i] = XMMatrixMultiply(offset, toroot);
-				}
-			}
-
-			AnimInfo* ModelInfo::FindAnimClip(int* index, const std::string& clipName) const
-			{
-				for (unsigned int i = 0; i < manimCount; ++i)
-				{
-					if (clipName == marrAnims[i].name)
-					{
-						*index = i;
-						return &marrAnims[i];
-					}
-				}
-				return nullptr;
 			}
 		};
 	};

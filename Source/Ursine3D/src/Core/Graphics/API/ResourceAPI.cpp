@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ResourceAPI.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "ResourceAPI.h"
 #include "ModelManager.h"
@@ -38,6 +51,16 @@ namespace ursine
         void ResourceAPI::DestroyTexture(GfxHND& handle)
         {
             m_privates->textureMgr->DestroyDynamicTexture(handle);
+        }
+
+        ModelResource *ResourceAPI::GetModelResource(const GfxHND & handle)
+        {
+            return m_privates->modelMgr->GetModel(static_cast<unsigned>(handle));
+        }
+
+        ModelResource * ResourceAPI::GetModelResource(const std::string & modelName)
+        {
+            return m_privates->modelMgr->GetModel(modelName);
         }
 
         void ResourceAPI::SetPrivates(void *priv, void *priv2)

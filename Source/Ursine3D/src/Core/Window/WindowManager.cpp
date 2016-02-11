@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** WindowManager.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "WindowManager.h"
@@ -9,6 +22,7 @@ namespace ursine
     CORE_SYSTEM_DEFINITION( WindowManager );
 
     WindowManager::WindowManager(void)
+        : EventDispatcher( this )
     {
         Application::Instance->GetPlatformEvents( )
             .Connect( SDL_WINDOWEVENT, this, &WindowManager::onWindowEvent );
@@ -21,17 +35,15 @@ namespace ursine
 
         for (auto it = m_created.begin( ); it != m_created.end( );)
         {
-            auto *window = it->second;
+            auto window = it->second;
 
             SDL_DestroyWindow( window->m_handle );
-
-            delete window;
 
             it = m_created.erase( it );
         }
     }
 
-    Window *WindowManager::AddWindow(const std::string &title, const Vec2 &location, const Vec2 &size, uint32 flags)
+    Window::Handle WindowManager::AddWindow(const std::string &title, const Vec2 &location, const Vec2 &size, uint32 flags)
     {
         auto *handle = SDL_CreateWindow(
             title.c_str( ), 
@@ -42,7 +54,7 @@ namespace ursine
             SDL_WINDOW_HIDDEN | flags
         );
 
-        auto *window = new Window( this, handle );
+        auto window = Window::Handle( new Window( this, handle ) );
 
         if (utils::IsFlagSet( flags, SDL_WINDOW_FULLSCREEN ))
             window->m_isFullscreen = true;
@@ -55,7 +67,7 @@ namespace ursine
         return window;
     }
 
-    Window *WindowManager::GetWindow(uint32 windowID)
+    Window::Handle WindowManager::GetWindow(uint32 windowID)
     {
         auto search = m_created.find( windowID );
 

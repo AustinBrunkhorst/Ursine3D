@@ -4,8 +4,9 @@ package ursine.controls;
 extern class MenuItem extends PolymerElement {
     var disabled : Bool;
     var text : String;
+    var icon : String;
 
     var menu : Menu;
 
-    public function new() : Void;
+    function new() : Void;
 }

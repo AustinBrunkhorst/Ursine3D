@@ -1,19 +1,28 @@
+﻿/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Editor.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+ 
 #include "Precompiled.h"
-
-#include "Editor.h"
-#include "Project.h"
-
-#include <Application.h>
-
+ 
+#include "Editor.h" 
+#include "Project.h"  
+ 
+#include <Application.h>  
+   
 #include <WindowManager.h>
-#include <UIManager.h>
-
-#include <Color.h>
-
-#include <CameraComponent.h>
-#include <RenderableComponent.h>
-#include <LightComponent.h>
-#include <Model3DComponent.h>
+#include <UIManager.h> 
+  
+#include <Color.h> 
+#include <LightComponent.h> 
 
 using namespace ursine;
 
@@ -23,11 +32,11 @@ namespace
 
     const auto kEditorClearColor = Color( 0xFF252526 );
 
-    const auto kDefaultWindowWidth = 1280;
+    const auto kDefaultWindowWidth = 1280; 
     const auto kDefaultWindowHeight = 720;
 }
 
-CORE_SYSTEM_DEFINITION( Editor ) ;
+CORE_SYSTEM_DEFINITION( Editor );
 
 Editor::Editor(void)
     : m_graphics( nullptr )
@@ -43,9 +52,9 @@ void Editor::OnInitialize(void)
     app->Connect(
         APP_UPDATE,
         this,
-        &Editor::onAppUpdate
+        &Editor::onAppUpdate 
     );
-
+     
     auto *windowManager = GetCoreSystem( WindowManager );
     auto *uiManager = GetCoreSystem( UIManager );
 
@@ -59,16 +68,16 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
-    m_mainWindow.window->SetLocationCentered( );
-    m_mainWindow.window->Show( true );
+    m_mainWindow.window->Listener( this ) 
+        .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange ); 
+     
+    m_mainWindow.window->SetLocationCentered( ); 
+    m_mainWindow.window->Show( true );    
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
-    m_project = new Project( );
-
     initializeGraphics( );
-    initializeScene( );
 
     m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEditorEntryPoint );
 
@@ -76,6 +85,12 @@ void Editor::OnInitialize(void)
         0, 0,
         kDefaultWindowWidth, kDefaultWindowHeight
     } );
+
+    m_project = std::make_shared<Project>( m_mainWindow.ui );
+
+    m_notificationManager.SetUI( m_mainWindow.ui );
+
+    initializeScene( ); 
 }
 
 void Editor::OnRemove(void)
@@ -87,188 +102,100 @@ void Editor::OnRemove(void)
     );
 
     m_mainWindow.window->Listener( this )
-        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize );
+        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize ); 
 
     m_mainWindow.ui->Close( );
-
-    delete m_mainWindow.window;
+    m_mainWindow.ui = nullptr;
 
     m_mainWindow.window = nullptr;
 
-    delete m_project;
-
-    m_project = nullptr;
+    m_project = nullptr;   
 }
 
-Project *Editor::GetProject(void) const
+Window::Handle Editor::GetMainWindow(void) const
+{
+    return m_mainWindow.window;
+}
+
+UIView::Handle Editor::GetMainUI(void) const
+{
+    return m_mainWindow.ui;
+}
+
+std::shared_ptr<Project> Editor::GetProject(void) const
 {
     return m_project;
 }
 
-void Editor::initializeGraphics(void)
+NotificationManager &Editor::GetNotificationManager(void)
 {
-    graphics::GfxConfig config;
-
-    config.Fullscreen_ = false;
-
-    config.HandleToWindow_ =
-            static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
-
-    config.ModelListPath_ = "Assets/Models/";
-    config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
-    config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = kDefaultWindowWidth;
-    config.WindowHeight_ = kDefaultWindowHeight;
-
-    URSINE_TODO( "..." );
-
-    config.m_renderUI = true;
-    config.debug = false;
-
-    config.Profile_ = false;
-
-    m_graphics->StartGraphics( config );
-    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
-
-    auto &scene = m_project->GetScene( );
-    {
-        auto viewport = m_graphics->ViewportMgr.CreateViewport(
-            static_cast<int>( 0.85f * kDefaultWindowWidth ),
-            static_cast<int>( kDefaultWindowHeight - (30.0f + 27.0f) )
-        );
-
-        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
-
-        handle.SetPosition(
-            static_cast<int>( 0.15f * kDefaultWindowWidth ),
-            static_cast<int>( 30.0f + 27.0f )
-        );
-
-        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
-
-        scene.SetViewport( viewport );
-
-        m_graphics->SetGameViewport( viewport );
-    }
+    return m_notificationManager;
 }
 
-void Editor::initializeScene(void)
+Notification Editor::PostNotification(const NotificationConfig &config)
 {
-    auto &scene = m_project->GetScene( );
+    return m_notificationManager.Create( config );
+}  
 
-    auto &world = scene.GetWorld( );
+void Editor::initializeGraphics(void)
+{ 
+    graphics::GfxConfig config;
 
-    auto *cameraEntity = world.CreateEntity( "Camera" );
+    config.fullscreen = false;
+      
+    config.handleToWindow =
+        static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
+       
+    config.modelListPath = "Assets/Models/"; 
+    config.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
+    config.textureListPath = "Assets/Textures/";
+    config.windowWidth = 1366;
+    config.windowHeight = 768;      
+    config.enableDebugInfo = false; 
+    config.enableProfiling = false;    
+        
+      
+    m_graphics->StartGraphics( config );
+    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight ); 
+    //m_graphics->SetFullscreenState( true );
+     
+    //m_mainWindow.window->SetFullScreen( true );
+}    
+
+void Editor::initializeScene(void)   
+{   
+    auto scene = m_project->GetScene( ); 
+       
+    auto world = scene->GetWorld( ); 
     {
-        auto *component = cameraEntity->AddComponent<ecs::Camera>( );
-		 
-        auto &camera = component->GetCamera( );
+        auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
+         
+        auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-        camera.SetPosition( 0.0f, 0.0f );
-        camera.SetRenderMode( graphics::VIEWPORT_RENDER_FORWARD );
-        camera.SetDimensions( 1.0f, 1.0f );
-        camera.SetPlanes( 0.1f, 700.0f );
+        handle.SetPosition( 0, 0 ); 
+         
+        handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
-        camera.LookAtPoint( { 0.0f, 0.0f, 0.0f } );
-		 
-        scene.SetEditorCamera( component->GetHandle( ) ); 
+        scene->SetViewport( viewport );
+
+        m_graphics->SetGameViewport( viewport ); 
     }
 
-	// animation model entities - custom file format stuff
-	auto *entity_cfmt_model = world.CreateEntity();  
-	{ 
-		entity_cfmt_model->AddComponent<ecs::Renderable>();
-		auto model = entity_cfmt_model->AddComponent<ecs::Model3D>();
+    auto *univLight = world->CreateEntity( "Global Light" );
+    {
+        auto *component = univLight->AddComponent<ecs::Light>( );
 
-		auto name = "Custom";
+        univLight->GetTransform( )->SetLocalPosition( { 0.0f, 60.0f, 0.0f } );
+        univLight->GetTransform( )->SetLocalRotation( { 0.0f, 0.0f, 0.0f } );
 
-		entity_cfmt_model->SetName(name); 
+        component->SetLightType( ecs::LightType::Directional );
+        component->SetRadius( 40.0f );
+        component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
+    }
 
-		model->SetModel(name);
-		model->GetModel()->SetMaterialData(1, 0, 0);
-
-		auto transform = entity_cfmt_model->GetTransform();
-		transform->SetWorldPosition(SVec3{ 0.0f, 0.0f, 0.0f });
-		transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
-		transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f }); 
-	}
-
-	//// character entities
- //   for (int i = 0; i < 25; ++i)
- //   {
- //       auto *entity_char = world.CreateEntity( );
- //       auto *entity_cube = world.CreateEntity( ); 
- //       {
- //           entity_char->AddComponent<ecs::Renderable>();
- //           auto model = entity_char->AddComponent<ecs::Model3D>();
-
- //           auto name = "Character";
-
- //           entity_char->SetName( name );
-
- //           model->SetModel( name );
-
- //           auto transform = entity_char->GetTransform( );
-
- //           transform->SetWorldPosition( SVec3{ i * 1.0f, 0.0f, 0.0f } );
- //           transform->SetWorldRotation( SQuat{ 0.0f, 0.0f, 0.0f } );
- //           transform->SetWorldScale( SVec3{ 1.0f, 1.0f, 1.0f } );
- //       }
- //       {
- //           entity_cube->AddComponent<ecs::Renderable>();
- //           auto model = entity_cube->AddComponent<ecs::Model3D>();
-
- //           auto name = "Cube";
-
- //           entity_cube->SetName(name);
-
- //           model->SetModel(name);
-
- //           auto transform = entity_cube->GetTransform();
-
- //           transform->SetWorldPosition(SVec3{ i * 1.0f, 0.0f, 0.0f });
- //           transform->SetWorldRotation(SQuat{ 0.0f, 0.0f, 0.0f });
- //           transform->SetWorldScale(SVec3{ 1.0f, 1.0f, 1.0f });
- //       }
-
- //       // parent the character to the cube
- //       entity_cube->GetTransform( )->AddChild( entity_char->GetTransform( ) );
- //   }
-
- //   auto *sky = world.CreateEntity( "Skybox" );
- //   {
- //       auto skyHND = m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D );
-
- //       auto &skybox = m_graphics->RenderableMgr.GetModel3D( skyHND );
-
- //       skybox.SetModel( "Skybox" );
- //       skybox.SetMaterial( "Skybox" );
- //       skybox.SetMaterialData( 1, 0, 0 );
-
- //       SQuat rot = SQuat( 90, SVec3( 0, 0, 1 ) );
- //       SMat4 final = SMat4( rot ) * SMat4( 600, 600, 600 );
- //       skybox.SetMaterialData( 1, 0, 0 ); 
- //       skybox.SetWorldMatrix( final );
-
- //       auto *component = sky->AddComponent<ecs::Renderable>( );
-
- //       component->SetHandle( skyHND );
- //   }
-
- //   auto *univLight = world.CreateEntity( "Global Light" );
- //   {
- //       auto *component = univLight->AddComponent<ecs::Light>( );
-
- //       component->SetType( ecs::LightType::Point );
- //       component->SetPosition( { 10.0f, -10.0f, 0.0f } );
- //       component->SetRadius( 400.0f );
- //       component->SetDirection( { 0.0f, 1.0f, 0.0f } );
- //       component->SetColor( Color::White );
- //   }
-
-    m_project->GetScene( ).GetWorld( ).Listener( this )
-        .On( ecs::WORLD_ENTITY_ADDED, &Editor::onEntityAdded )
-        .On( ecs::WORLD_ENTITY_EDITOR_COMPONENT_CHANGED, &Editor::onComponentChanged );
+    // this only needs to be called because we manually setup the world
+    // rather than loading from a file
+    world->DispatchLoad( );
 }
 
 void Editor::onAppUpdate(EVENT_HANDLER(Application))
@@ -277,41 +204,17 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    auto &scene = m_project->GetScene( );
-	 
-    scene.Update( dt ); 
+    auto scene = m_project->GetScene( );
 
-    m_graphics->StartFrame( );
-
-    scene.Render( );
+    scene->Update( dt );
+    scene->Render( );
 
     m_mainWindow.ui->DrawMain( );
-
-    m_graphics->EndFrame( );
 }
 
-void Editor::onEntityAdded(EVENT_HANDLER(ecs::World))
+void Editor::onFocusChange(EVENT_HANDLER( ursine::Window ))
 {
-    EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
-
-    Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
-    };
-
-    m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "EntityAdded", message );
-}
-
-void Editor::onComponentChanged(EVENT_HANDLER(ecs::World))
-{
-    EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
-
-    Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
-        { "field", args->field },
-        { "value", args->value.SerializeJson( ) }
-    };
-
-    m_mainWindow.ui->Message( UI_CMD_BROADCAST, "EntityManager", "ComponentChanged", message );
+    EVENT_ATTRS( Window, WindowFocusArgs );
 }
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))

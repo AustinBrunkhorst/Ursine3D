@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxDefines.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -30,6 +43,9 @@ Author:         Matt Yan, m.yan@digipen.edu
     resource = nullptr;\
     }
 
+// max profiling targets
+#define MAX_PROFILER_TARGETS    24
+
 //maximum simultaneous queries
 #define MAX_QUERIES             36
 
@@ -37,13 +53,15 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define MAX_CAMERAS             32
 
 //max points/lines
-#define MAX_DRAW_OBJ            4096
+#define MAX_DRAW_OBJ            800019
 
 //max renderables of each type
-#define MAX_RENDERABLES         2048
+#define MAX_RENDERABLES         512
 
 //max draw calls for a single scene
-#define MAX_DRAW_CALLS 2048
+#define MAX_DRAW_CALLS          2048
+
+#define MAX_BONE_COUNT          60
 
 //handle IDs
 #define ID_RENDERABLE 170

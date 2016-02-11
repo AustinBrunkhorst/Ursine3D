@@ -1,40 +1,66 @@
+﻿/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GridRenderer.cpp
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "GridRenderer.h"
+
+#include "EditorCameraSystem.h"
+#include "GridRendererSettingsComponent.h"
 
 #include <SystemManager.h>
 #include <GfxAPI.h>
 
 using namespace ursine;
 
-ENTITY_SYSTEM_DEFINITION( GridRenderer ) ;
+ENTITY_SYSTEM_DEFINITION( GridRenderer );
 
 GridRenderer::GridRenderer(ecs::World *world)
     : EntitySystem( world )
-      , m_graphics( nullptr )
-      , m_renderSystem( nullptr )
+    , m_graphics( nullptr )
+    , m_renderSystem( nullptr )
 {
 }
 
 void GridRenderer::OnInitialize(void)
 {
-    m_graphics = GetCoreSystem(graphics::GfxAPI );
+    m_graphics = GetCoreSystem( graphics::GfxAPI );
 
     m_renderSystem = m_world->GetEntitySystem( ecs::RenderSystem );
 
     m_renderSystem->Listener( this )
-        .On( ecs::RENDER_HOOK, &GridRenderer::onRenderHook );
+        .On( ecs::RENDER_HOOK_EDITOR, &GridRenderer::onRenderHook );
+
+    auto settingsEntity = m_world->GetSettings( );
+
+    if (!settingsEntity->HasComponent<GridRendererSettings>( ))
+        settingsEntity->AddComponent<GridRendererSettings>( );
 }
 
 void GridRenderer::OnRemove(void)
 {
     m_renderSystem->Listener( this )
-        .Off( ecs::RENDER_HOOK, &GridRenderer::onRenderHook );
+        .Off( ecs::RENDER_HOOK_EDITOR, &GridRenderer::onRenderHook );
 }
 
 void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
 {
     EVENT_ATTRS(ecs::RenderSystem, ecs::RenderHookArgs);
+
+     auto settings = m_world->GetSettings()->GetComponent<GridRendererSettings>( );
+
+    if (!settings)
+        return;
 
     auto &camera = m_graphics->CameraMgr.GetCamera( args->camera );
 
@@ -49,18 +75,19 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     float subColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //size of a cell
-    float cellSize = 1;
+    auto cellSize = settings->GetCellSize();
 
     // # of cells
-    int widthCount = 200;
-    int heightCount = 200;
+    int widthCount = settings->GetWidth( );
+    int heightCount = settings->GetHeight( );
 
     //number of cells between dividers
-    static int subSector = 10;
+    int subSector = settings->GetSubDivisions( );
 
     //current center position of the grid
-    float centerX = position.X( );
-    float centerZ = position.Z( );
+    SVec3 pos = m_world->GetEntitySystem(EditorCameraSystem)->GetEditorFocusPosition( );
+    float centerX = pos.X( );
+    float centerZ = pos.Z( );
 
     ///////////////////////////////////////////////////////////////////
     // IMPLEMENTATION
@@ -70,7 +97,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     if (heightCount % 2 == 0)
         heightCount++;
 
-    float scalar = (1.f / cellSize);
+    float scalar = (cellSize == 0 ? 1 : 1.f / cellSize);
     if (scalar < 1) scalar = 1;
 
     //round to the right size
@@ -105,7 +132,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
         else if (( int )(posZ * ( int )scalar) % subSector == 0)
             m_graphics->DrawingMgr.SetColor( subColor[ 0 ], subColor[ 1 ], subColor[ 2 ], subColor[ 3 ] );
         else
-            m_graphics->DrawingMgr.SetColor( gridColor[ 0 ], gridColor[ 1 ], gridColor[ 2 ], gridColor[ 3 ] );
+            m_graphics->DrawingMgr.SetColor( gridColor[ 0 ], gridColor[ 1 ], gridColor[ 2 ], gridColor[ 3 ] ); 
 
         m_graphics->DrawingMgr.DrawLine( posX + (widthCount / 2) * cellSize, 0, posZ, posX - (widthCount / 2) * cellSize, 0, posZ );
         posZ += cellSize;

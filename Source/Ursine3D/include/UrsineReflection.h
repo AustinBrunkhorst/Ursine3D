@@ -1,9 +1,21 @@
-#pragma once
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** UrsineReflection.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
 
-#include "Meta.h"
+#pragma once
 
 #include "UrsineReflectionExternal.h"
 
+#include "Type.h"
 #include "UrsineTypes.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,6 +27,7 @@
 #include "SVec3.h"
 #include "Vec4.h"
 #include "SVec4.h"
+#include "SQuat.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Core Systems
@@ -24,8 +37,6 @@
 
 #include "GfxAPI.h"
 #include "Color.h"
-
-#include "PhysicsManager.h"
 
 /// UI
 
@@ -43,10 +54,22 @@
 #include "KeyboardManager.h"
 #include "MouseManager.h"
 
+/// Screen Management
+
+#include "ScreenManager.h"
+
+/// Audio
+
+#include "AudioManager.h"
+
 /// Utilities
 
-#include "TimerManager.h"
-#include "TweenManager.h"
+#include "Utilities/Timer/TimerManager.h"
+#include "Utilities/Tween/TweenManager.h"
+
+#include "JSKeyboardManager.h"
+#include "JSGamepadManager.h"
+#include "JSScreenManager.h"
 
 /// Game Engine
 

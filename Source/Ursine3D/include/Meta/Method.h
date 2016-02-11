@@ -17,6 +17,8 @@
 #include "Variant.h"
 #include "Argument.h"
 
+#include "MethodInvoker.h"
+
 #include <vector>
 #include <unordered_map>
 #include <functional>
@@ -30,8 +32,6 @@ namespace ursine
             , public Invokable
         {
         public:
-            typedef std::function<Variant(Variant&, ArgumentList&)> Invoker;
-
             Method(void);
 
             template<
@@ -41,8 +41,7 @@ namespace ursine
             >
             Method(
                 const std::string &name, 
-                ReturnType(ClassType::*method)(ArgTypes...), 
-                Invoker invoker
+                ReturnType(ClassType::*method)(ArgTypes...)
             );
 
             // detect const-ness
@@ -53,8 +52,7 @@ namespace ursine
             >
             Method(
                 const std::string &name, 
-                ReturnType(ClassType::*method)(ArgTypes...) const, 
-                Invoker invoker
+                ReturnType(ClassType::*method)(ArgTypes...) const
             );
 
             static const Method &Invalid(void);
@@ -74,7 +72,7 @@ namespace ursine
 
             Type m_classType;
 
-            Invoker m_invoker;
+            std::shared_ptr<MethodInvokerBase> m_invoker;
         };
     }
 }

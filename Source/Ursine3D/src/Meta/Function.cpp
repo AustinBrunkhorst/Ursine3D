@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Function.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Function.h"
@@ -8,7 +21,8 @@ namespace ursine
     {
         Function::Function(void)
             : Invokable( "INVALID" )
-            , m_parentType( { Type::Invalid } ) { }
+            , m_parentType( { Type::Invalid } )
+            , m_invoker( nullptr ) { }
 
         const Function &Function::Invalid(void)
         {
@@ -35,7 +49,7 @@ namespace ursine
 
         #endif
         
-            return m_invoker( arguments );
+            return m_invoker->Invoke( arguments );
         }
     }
 }

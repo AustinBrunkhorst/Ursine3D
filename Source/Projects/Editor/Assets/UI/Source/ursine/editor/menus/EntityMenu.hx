@@ -4,41 +4,46 @@ package ursine.editor.menus;
 class EntityMenu extends MenuItemHandler {
     @mainMenuItem( "Entity/Create/Empty" )
     static function doCreateEmpty() {
-        trace( "create empty" );
+        untyped __js__( "editor_commands_CreateEntity()" );
+    }
+
+    @mainMenuItem( "Entity/Create/From Archetype" )
+    static function doCreateFromArchetype() {
+        untyped __js__( "editor_commands_CreateEntityFromArchetype()" );
     }
 
     @mainMenuItem( "Entity/Create/Plane", true )
     static function doCreatePlane() {
-        trace( "create plane" );
+        untyped __js__( "editor_commands_CreatePlane()" );
     }
 
     @mainMenuItem( "Entity/Create/Box" )
     static function doCreateBox() {
-        trace( "create box" );
+        untyped __js__( "editor_commands_CreateBox()" );
     }
 
     @mainMenuItem( "Entity/Create/Cylinder" )
     static function doCreateCylinder() {
-        trace( "create Cylinder" );
+        untyped __js__( "editor_commands_CreateCylinder()" );
     }
 
     @mainMenuItem( "Entity/Create/Sphere" )
     static function doCreateSphere() {
-        trace( "create Sphere" );
+        untyped __js__( "editor_commands_CreateSphere()" );
     }
 
     @mainMenuItem( "Entity/Create/Point Light", true )
     static function doCreatePointLight() {
-        trace( "create Point Light" );
+        untyped __js__( "editor_commands_CreatePointLight()" );
     }
 
     @mainMenuItem( "Entity/Create/Spot Light" )
     static function doCreateSpotLight() {
-        trace( "create Spot Light" );
+        untyped __js__( "editor_commands_CreateSpotLight()" );
     }
 
     @mainMenuItem( "Entity/Create/Directional Light" )
     static function doCreateDirectionalLight() {
-        trace( "create Directional Light" );
+        untyped __js__( "editor_commands_CreateDirectionalLight()" );
     }
 }

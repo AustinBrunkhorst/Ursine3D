@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TimerManager.cpp
 **
@@ -15,6 +15,16 @@
 
 #include "TimerManager.h"
 #include "TimerID.h"
+
+#if defined(URSINE_WITH_EDITOR)
+
+#define TIMER_MANAGER_LOCK std::lock_guard<std::mutex> lock( m_mutex )
+
+#else
+
+#define TIMER_MANAGER_LOCK
+
+#endif
 
 namespace ursine
 {
@@ -33,16 +43,22 @@ namespace ursine
 
     void TimerManager::Pause(TimerGroupID group)
     {
+        TIMER_MANAGER_LOCK;
+
         m_groups[ group ] = true;
     }
 
     void TimerManager::Resume(TimerGroupID group)
     {
+        TIMER_MANAGER_LOCK;
+
         m_groups[ group ] = false;
     }
 
     void TimerManager::Clear(TimerGroupID group)
     {
+        TIMER_MANAGER_LOCK;
+
         for (auto it = m_timers.begin( ); it != m_timers.end( );)
         {
             if (it->second.m_group == group)
@@ -56,7 +72,9 @@ namespace ursine
     {
         EVENT_ATTRS(Application, EventArgs);
 
-        auto dt = sender->GetDeltaTime( );
+        auto dt = sender->GetDeltaTime( ) * TimeSpan::MillisPerSecond;
+
+        TIMER_MANAGER_LOCK;
 
         for (auto &pair : m_timers)
         {
@@ -98,6 +116,8 @@ namespace ursine
 
     TimerID TimerManager::create(const TimeSpan &duration, TimerGroupID group)
     {
+        TIMER_MANAGER_LOCK;
+
         auto id = m_nextID++;
 
         m_timers.emplace( std::make_pair( id, Timer( duration, group ) ) );

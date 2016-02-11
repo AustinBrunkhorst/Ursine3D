@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ComponentUtils.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "ComponentUtils.h"
@@ -24,7 +37,7 @@ JSFunction(GetNativeComponentDatabase)
             { "meta", component.GetMeta( ).SerializeJson( ) }
         };
 
-        auto fieldsObj = Json::object { };
+        auto fieldsObj = Json::array { };
 
         for (auto &field : component.GetFields( ))
         {
@@ -33,13 +46,11 @@ JSFunction(GetNativeComponentDatabase)
 
             addType( types, fieldType );
 
-            auto fieldObj = Json::object {
+            fieldsObj.emplace_back( Json::object {
                 { "name", fieldName },
                 { "type", fieldType.GetName( ) },
                 { "meta", field.GetMeta( ).SerializeJson( ) }
-            };
-
-            fieldsObj.insert( std::make_pair( fieldName, fieldObj ) );
+            } );
         }
 
         componentObj[ "fields" ] = fieldsObj;
@@ -59,6 +70,30 @@ JSFunction(GetNativeComponentDatabase)
     return object;
 }
 
+Json::array InspectComponentButtons(const meta::Variant &component)
+{
+    auto methods = component.GetType( ).GetMethods( );
+
+    Json::array inspection;
+
+    for (auto &method : methods)
+    {
+        auto &meta = method.GetMeta( );
+
+        auto *button = meta.GetProperty<CreateButton>( );
+
+        if (!button)
+            continue;
+
+        inspection.emplace_back( Json::object {
+            { "name", method.GetName( ) },
+            { "text", button->text }
+        } );
+    }
+
+    return inspection;
+}
+
 namespace
 {
     void addType(Json::object &types, meta::Type type)
@@ -69,9 +104,12 @@ namespace
         if (types.find( typeName ) != types.end( ))
             return;
 
+        auto isArray = type.IsArray( );
+
         Json::object typeObj 
         {
-            { "name", typeName }
+            { "name", typeName },
+            { "isArray", isArray }
         };
 
         if (type.IsEnum( ))
@@ -95,19 +133,32 @@ namespace
             typeObj[ "enumValue" ] = nullptr;
         }
 
-        Json::object fieldsObj;
+        Json::array fieldsObj;
 
-        for (auto &field : type.GetFields( ))
+        if (!isArray)
         {
-            auto fieldType = field.GetType( );
-            auto &fieldName = field.GetName( );
-
-            fieldsObj[ fieldName ] = Json::object 
+            for (auto &field : type.GetFields( ))
             {
-                { "name", fieldName },
-                { "type", fieldType.GetName( ) },
-                { "meta", field.GetMeta( ).SerializeJson( ) }
-            };
+                auto fieldType = field.GetType( );
+                auto &fieldName = field.GetName( );
+
+                fieldsObj.emplace_back( Json::object {
+                    { "name", fieldName },
+                    { "type", fieldType.GetName( ) },
+                    { "meta", field.GetMeta( ).SerializeJson( ) }
+                } );
+            }
+
+            typeObj[ "arrayType" ] = nullptr;
+        }
+        else
+        {
+            auto arrayType = type.GetArrayType( );
+
+            typeObj[ "arrayType" ] = arrayType.GetName( );
+
+            // make sure the array type is also included
+            addType( types, arrayType );
         }
 
         typeObj[ "fields" ] = fieldsObj;

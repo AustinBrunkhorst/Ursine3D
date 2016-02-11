@@ -1,0 +1,86 @@
+@import '../../Config';
+@import '../../Utils';
+@import '../../Icons';
+
+:host {
+  #header {
+    position: relative;
+    padding: 5px;
+    background: #424242;
+    color: #cccccc;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:before {
+      display: inline-block;
+      padding-right: 4px;
+      margin-right: 4px;
+      -webkit-transform: rotate(0deg);
+      -webkit-transform-origin: center;
+      -webkit-transition: -webkit-transform $duration-transition-btn * 0.5 ease;
+      @include triangle( 'right', #c4c4c4, 4px );
+    }
+
+    &:hover {
+      #btnRemoveItem {
+        opacity: 1;
+      }
+    }
+
+    #btnRemoveItem {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      color: #dddddd;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity $duration-transition-btn ease, color $duration-transition-btn ease;
+
+      @include icon-half( $icon-half-remove-circle, 14px );
+
+      &:hover {
+        color: #cf6753;
+      }
+    }
+  }
+
+  #container {
+    display: none;
+    padding: 4px;
+  }
+
+  &.opened {
+    #header {
+      &:before {
+        -webkit-transform: rotate(90deg);
+      }
+    }
+
+    #container {
+      display: block;
+    }
+  }
+
+  ::content {
+    x-field-inspector {
+      .field-header {
+        display: none !important;
+      }
+
+      .field-container {
+        padding-right: 0 !important;
+
+        input {
+          margin-bottom: 0 !important;
+        }
+
+        > .color-preview {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+

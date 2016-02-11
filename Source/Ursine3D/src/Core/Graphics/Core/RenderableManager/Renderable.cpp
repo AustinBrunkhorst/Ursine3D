@@ -1,5 +1,19 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Renderable.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
+#include <Core/Graphics/Core/GfxDefines.h>
 
 namespace ursine
 {
@@ -9,48 +23,104 @@ namespace ursine
         // renderable class
         Renderable::Renderable()
         {
-            Active_ = false;
+            m_active = false;
         }
 
-        void Renderable::Initialize() {}
+        void Renderable::Initialize()
+        {
+			m_useOverdraw = false;
+			m_useDebugRendering = false;
+            m_mask = 0;
+        }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
         {
-            entityID = id;
+            m_entityID = id;
         }
 
         ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
         {
-            return entityID;
+            return m_entityID;
+        }
+
+        void Renderable::SetOverdraw(bool draw)
+        {
+            m_useOverdraw = draw;
+        }
+
+        bool Renderable::GetOverdraw() const
+        {
+            return m_useOverdraw;
+        }
+
+        void Renderable::SetDebug(bool debug)
+        {
+            m_useDebugRendering = debug;
+        }
+
+        bool Renderable::GetDebug() const
+        {
+            return m_useDebugRendering;
+        }
+
+        RenderMask Renderable::GetRenderMask(void) const
+        {
+            return m_mask;
+        }
+
+        void Renderable::SetRenderMask(const RenderMask mask)
+        {
+            m_mask = mask;
+        }
+
+        bool Renderable::GetActive(void) const
+        {
+            return m_active;
+        }
+
+        void Renderable::SetActive(const bool isActive)
+        {
+            m_active = isActive;
         }
 
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
         {
-            Transform_ = SMat4::Identity();
+            m_transform = SMat4::Identity();
         }
 
         const SMat4 &Model::GetWorldMatrix(void)
         {
-            return Transform_;
+            return m_transform;
         }
 
         void Model::SetWorldMatrix(const SMat4 &matrix)
         {
-            Transform_ = matrix;
+            m_transform = matrix;
+        }
+
+        Model3D::Model3D(void)
+        {
+            m_matrixPalette.resize(MAX_BONE_COUNT);
         }
 
         ///////////////////////////////////////////////////////////////////
         //model3d
-        void Model3D::Initialize()
+        void Model3D::Initialize(void)
         {
-            ModelName_ = "Cube";
-            MaterialName_ = "UV";
+			Renderable::Initialize( );
 
-            m_emissive = 0;
+            m_modelResourceName = "Cube";
+            m_materialTextureName = "UV";
+
+            m_emissive = 0.45f;
             m_specPow = 0;
             m_specIntensity = 0;
+            SetOverdraw(false);
+            SetDebug(false);
+            m_color = Color(1, 1, 1, 1);
+            m_meshIndex = -1;
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -60,31 +130,98 @@ namespace ursine
             m_specIntensity = intensity;
         }
 
-        void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
+	    void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
         {
             emiss = m_emissive;
             pow = m_specPow;
             intensity = m_specIntensity;
         }
 
+		void Model3D::SetEmissive(float emiss)
+		{
+			m_emissive = emiss;
+		}
+
+		float Model3D::GetEmissive(void) const
+		{
+			return m_emissive;
+		}
+
+		void Model3D::SetSpecularPower(float power)
+		{
+			m_specPow = power;
+		}
+
+		float Model3D::GetSpecularPower(void) const
+		{
+			return m_specPow;
+		}
+
+		void Model3D::SetSpecularIntensity(float intensity)
+		{
+			m_specIntensity = intensity;
+		}
+
+		float Model3D::GetSpecularIntensity(void) const
+		{
+			return m_specIntensity;
+		}
+
+		void Model3D::SetAnimationTime(const float time)
+		{
+			m_animationTime = time;
+		}
+
+		float & Model3D::GetAnimationTime(void)
+		{
+			// TODO: insert return statement here
+			return m_animationTime;
+		}
+
+        void Model3D::SetColor(const Color color)
+        {
+            m_color = color;
+        }
+
+        const Color &Model3D::GetColor() const
+        {
+            return m_color;
+        }
+
+        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        {
+            return m_matrixPalette;
+        }
+
+        int Model3D::GetMeshIndex(void) const
+        {
+            return m_meshIndex;
+        }
+
+        void Model3D::SetMeshIndex(const int index)
+        {
+            m_meshIndex = index;
+        }
+
+
         const char *Model3D::GetModelName(void)
         {
-            return ModelName_.c_str();
+            return m_modelResourceName.c_str();
         }
 
         void Model3D::SetModel(std::string modelName)
         {
-            ModelName_ = modelName;
+            m_modelResourceName = modelName;
         }
 
         const char *Model3D::GetMaterialslName(void)
         {
-            return MaterialName_.c_str();
+            return m_materialTextureName.c_str();
         }
 
         void Model3D::SetMaterial(std::string materialName)
         {
-            MaterialName_ = materialName;
+            m_materialTextureName = materialName;
         }
 
 
@@ -92,19 +229,19 @@ namespace ursine
         //billboard2d
         Billboard2D::Billboard2D(void)
         {
-            TextureName_ = "Default";
+            m_textureName = "Default";
             m_width = 1;
             m_height = 1;
         }
 
         const char *Billboard2D::GetTextureName(void)
         {
-            return TextureName_.c_str();
+            return m_textureName.c_str();
         }
 
         void Billboard2D::SetTexture(std::string texName)
         {
-            TextureName_ = texName;
+            m_textureName = texName;
         }
 
         void Billboard2D::SetDimensions(float width, float height)
@@ -119,188 +256,28 @@ namespace ursine
             height = m_height;
         }
 
-        ///////////////////////////////////////////////////////////////////
-        //primitives
-        void Primitive::Initialize()
-        {
-            Type_ = Primitive::PRIM_CUBE;
-            Radius_ = 1;
-            Height_ = 1;
-            Width_ = 1;
-            Depth_ = 1;
-            UseWireFrame_ = true;
-            Color_ = Color(1.0f, 1.0f, 1.0f, 1.0f);
-        }
-
-        void Primitive::SetType(PRIMITIVE_TYPE type)
-        {
-            Type_ = type;
-        }
-
-        Primitive::PRIMITIVE_TYPE Primitive::GetType()
-        {
-            return Type_;
-        }
-
-        void Primitive::SetRadius(float r)
-        {
-            Radius_ = r;
-        }
-
-        float Primitive::GetRadius()
-        {
-            return Radius_;
-        }
-
-        void Primitive::SetWidth(float r)
-        {
-            Width_ = r;
-        }
-
-        float Primitive::GetWidth()
-        {
-            return Width_;
-        }
-
-        void Primitive::SetDepth(float r)
-        {
-            Depth_ = r;
-        }
-
-        float Primitive::GetDepth()
-        {
-            return Depth_;
-        }
-
-        void Primitive::SetHeight(float r)
-        {
-            Height_ = r;
-        }
-
-        float Primitive::GetHeight()
-        {
-            return Height_;
-        }
-
-        void Primitive::SetWireFrameMode(bool useWireframe)
-        {
-            UseWireFrame_ = useWireframe;
-        }
-
-        bool Primitive::GetWireFrameMode()
-        {
-            return UseWireFrame_;
-        }
-
-        Color &Primitive::GetColor()
-        {
-            return Color_;
-        }
-
-        void Primitive::SetColor(const Color &color)
-        {
-            Color_ = color;
-        }
-
-        void Primitive::SetColor(float x, float y, float z, float a)
-        {
-            Color_ = Color(x, y, z, a);
-        }
-
-        ///////////////////////////////////////////////////////////////////
-        //lights
-
-        ///////////////////////////////////////////////////////////////////
-        // directional light
-        DirectionalLight::DirectionalLight()
-        {
-            Direction_ = Vec3(0, 0, 1);
-            Color_ = Color(1, 1, 1, 1);
-        }
-
-        SVec3 &DirectionalLight::GetDirection()
-        {
-            return Direction_;
-        }
-
-        void DirectionalLight::SetDirection(const SVec3 &dir)
-        {
-            Direction_ = dir;
-            Direction_.Normalize();
-        }
-
-        void DirectionalLight::SetDirection(float x, float y, float z)
-        {
-            Direction_.Set(x, y, z);
-            Direction_.Normalize();
-        }
-
-        Color &DirectionalLight::GetColor()
-        {
-            return Color_;
-        }
-
-        void DirectionalLight::SetColor(const Color &color)
-        {
-            Color_ = color;
-        }
-
-        void DirectionalLight::SetColor(float x, float y, float z)
-        {
-            Color_ = Color(x, y, z, 1);
-        }
-
-        
-
-        ///////////////////////////////////////////////////////////////////
-        // point light
-        PointLight::PointLight()
-        {
-            m_position = Vec3(0, 0, 0);
-            Color_ = Color(1, 1, 1, 1);
-            Radius_ = 5;
-        }
-
-        SVec3 &PointLight::GetPosition()
-        {
-            return m_position;
-        }
-
-        void PointLight::SetPosition(const SVec3 &position)
+        void Billboard2D::SetPosition(const ursine::SVec3& position)
         {
             m_position = position;
         }
 
-        void PointLight::SetPosition(float x, float y, float z)
+        const ursine::SVec3& Billboard2D::GetPosition() const
         {
-            m_position = SVec3(x, y, z);
+            return m_position;
         }
 
-        Color &PointLight::GetColor()
+        void Billboard2D::SetColor(const Color color)
         {
-            return Color_;
+            m_color = color;
         }
 
-        void PointLight::SetColor(const Color &color)
+        const Color &Billboard2D::GetColor() const
         {
-            Color_ = color;
+            return m_color;
         }
 
-        void PointLight::SetColor(float x, float y, float z)
-        {
-            Color_ = Color(x, y, z, 1);
-        }
-
-
-        float &PointLight::GetRadius()
-        {
-            return Radius_;
-        }
-
-        void PointLight::SetRadius(float radius)
-        {
-            Radius_ = radius;
-        }
+        ///////////////////////////////////////////////////////////////////
+        //lights
 
         ///////////////////////////////////////////////////////////////////
         // universal light
@@ -313,7 +290,9 @@ namespace ursine
             m_direction = SVec3(0, -1, 0);
             m_intensity = 1.0f;;
 
-            m_spotlightAngles = Vec2(30, 30);
+            m_spotlightAngles = Vec2(15, 30);
+
+            Renderable::Initialize( );
         }
 
         Light::LightType Light::GetType(void)
@@ -404,6 +383,141 @@ namespace ursine
         void Light::SetSpotlightAngles(const float inner, const float outer)
         {
             m_spotlightAngles = Vec2(inner, outer);
+        }
+
+        void Light::SetSpotlightTransform(const SMat4& transf)
+        {
+            m_spotlightTransform = transf;
+        }
+
+        const SMat4& Light::GetSpotlightTransform()
+        {
+            return m_spotlightTransform;
+        }
+
+        /////////////////////////////////////////////////////////////
+        // PARTICLE SYSTEM //////////////////////////////////////////
+        ParticleSystem::ParticleSystem(void)
+            : m_backIndex(-1)
+        {
+        }
+
+        void ParticleSystem::Initialize(void)
+        {
+            m_backIndex = 0;
+            Renderable::Initialize();
+            m_textureName = "Blank";
+            m_useAdditive = true;
+            m_worldSpace = true;
+        }
+
+        std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
+        {
+            return m_gpuParticleData;
+        }
+
+        std::vector<Particle_CPU>& ParticleSystem::GetCPUParticleData(void)
+        {
+            return m_cpuParticleData;
+        }
+
+        Particle_GPU &ParticleSystem::GetGPUParticle(const int index)
+        {
+            return m_gpuParticleData[ index ];
+        }
+
+        Particle_CPU &ParticleSystem::GetCPUParticle(const int index)
+        {
+            return m_cpuParticleData[ index ];
+        }
+
+        unsigned ParticleSystem::GetParticleVectorSize(void) const
+        {
+            return static_cast<unsigned>(m_gpuParticleData.size( ));
+        }
+
+        unsigned ParticleSystem::GetActiveParticleCount(void) const
+        {
+            return m_backIndex;
+        }
+
+        unsigned ParticleSystem::GetInactiveParticleCount(void) const
+        {
+            return static_cast<unsigned>(m_gpuParticleData.size()) - m_backIndex;
+        }
+
+        int ParticleSystem::SpawnParticle(void)
+        {
+            // no available particles, we need to expand
+            // should be amortized
+            if ( GetInactiveParticleCount() == 0 )
+            {
+                // push new particle to the back
+                m_gpuParticleData.push_back(Particle_GPU( ));
+                m_cpuParticleData.push_back(Particle_CPU());
+            }
+            
+            // bam! allocated
+            return m_backIndex++;
+        }
+
+        void ParticleSystem::DestroyParticle(const int index)
+        {
+            // decrement
+            --m_backIndex;
+
+            // swap with the backmost data
+            m_gpuParticleData[ index ] = m_gpuParticleData[ m_backIndex ];
+            m_cpuParticleData[ index ] = m_cpuParticleData[ m_backIndex ];
+
+            m_cpuParticleData[ m_backIndex ].lifeTime = -1.0f;
+        }
+
+        const SVec3 & ParticleSystem::GetPosition(void) const
+        {
+            return m_position;
+        }
+
+        void ParticleSystem::SetPosition(const SVec3 & position)
+        {
+            m_position = position;
+        }
+
+        const Color &ParticleSystem::GetColor(void) const
+        {
+            return m_particleColor;
+        }
+
+        void ParticleSystem::SetColor(const Color &color)
+        {
+            m_particleColor = color;
+        }
+
+        const std::string & ParticleSystem::GetParticleTexture(void) const
+        {
+            return m_textureName;
+        }
+
+        void ParticleSystem::SetParticleTexture(const std::string & texName)
+        {
+            m_textureName = texName;
+        }
+        bool ParticleSystem::GetAdditive(void) const
+        {
+            return m_useAdditive;
+        }
+        void ParticleSystem::SetAdditive(const bool useAdditive)
+        {
+            m_useAdditive = useAdditive;
+        }
+             
+        bool ParticleSystem::GetSystemSpace(void) const
+        {
+            return m_worldSpace;
+        }
+        void ParticleSystem::SetSystemSpace(const bool useWorldCoordinates)
+        {
+            m_worldSpace = useWorldCoordinates;
         }
     }
 }

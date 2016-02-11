@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** CameraManager.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "CameraManager.h"
@@ -50,7 +63,7 @@ namespace ursine
 
             UAssert(newRender->ID_ == ID_CAMERA, "Attempted to destroy invalid camera handle!");
             m_cameraArray[ newRender->Index_ ].Uninitialize();
-            m_freeCameraList.push_front(newRender->ID_);
+            m_freeCameraList.push_front(newRender->Index_);
             handle = 0;
         }
     }

@@ -17,6 +17,8 @@ class Editor {
 
     public var componentDatabase : ComponentDatabase;
 
+    private var m_notificationManager : NativeNotificationManager;
+
     public function new() {
         instance = this;
 
@@ -28,11 +30,15 @@ class Editor {
             Extern.GetNativeComponentDatabase( )
         );
 
+        m_notificationManager = new NativeNotificationManager( broadcastManager );
+
         buildMenus( );
 
         js.Browser.document
             .querySelector( '#header-toolbar' )
             .appendChild( mainMenu );
+
+        initSimulationPlayback( );
     }
 
     private function buildMenus() {
@@ -98,6 +104,7 @@ class Editor {
                 var item = new MenuItem( );
 
                 item.text = itemName;
+                item.icon = details[ 3 ];
 
                 var handler = Reflect.field( handler.type, name );
 
@@ -141,5 +148,41 @@ class Editor {
         }
 
         return parent;
+    }
+
+    private function initSimulationPlayback() {
+        var toolsContainer = js.Browser.document.querySelector( '#simulation-tools' );
+
+        var btnPlay = js.Browser.document.querySelector( '#simulation-play' );
+        var btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
+        var btnStep = js.Browser.document.querySelector( '#simulation-step' );
+        var btnStop = js.Browser.document.querySelector( '#simulation-stop' );
+
+        btnPlay.addEventListener( 'click', function() {
+            toolsContainer.classList.add( 'running' );
+
+            Extern.ScenePlayStart( );
+        } );
+
+        btnToggle.addEventListener( 'click', function() {
+            var paused = toolsContainer.classList.contains( 'paused' );
+
+            toolsContainer.classList.toggle( 'paused', !paused );
+
+            Extern.SceneSetPlayState( !paused );
+        } );
+
+        btnStep.addEventListener( 'click', function() {
+            if (btnStep.classList.contains( 'disabled' ))
+                return;
+
+            Extern.SceneStep( );
+        } );
+
+        btnStop.addEventListener( 'click', function() {
+            toolsContainer.classList.remove( 'running' );
+
+            Extern.ScenePlayStop( );
+        } );
     }
 }

@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TransformComponent.h
 **
@@ -22,31 +22,45 @@ namespace ursine
 {
     namespace ecs
     {
+        struct TransformChangedArgs : public EventArgs
+        {
+            bool transChanged, scaleChanged, rotChanged;
+
+            TransformChangedArgs(bool transChanged, bool scaleChanged, bool rotChanged)
+                : transChanged( transChanged )
+                , scaleChanged( scaleChanged )
+                , rotChanged( rotChanged ) { }
+        };
+
         class Transform : public Component
         {
             NATIVE_COMPONENT;
 
         public:
             EditorField( 
-                SVec3 Translation,
+                SVec3 translation,
                 GetLocalPosition,
                 SetLocalPosition
             );
 
-            EditorField( 
-                SVec3 Rotation,
-                GetLocalEuler,
-                SetLocalEuler
-            );
-
-            EditorField( 
-                SVec3 Scale,
+			EditorField( 
+                SVec3 scale,
                 GetLocalScale,
                 SetLocalScale
             );
 
+            Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
+            Meta(EditorGetter( "GetLocalEulerEditor" ))
+            Meta(EditorSetter( "SetLocalEulerEditor" ))
+            EditorField( 
+                SQuat rotation,
+                GetLocalRotation,
+                SetLocalRotation
+            );
+
             ALLOW_ALIGNED_ALLOC(16);
 
+            Meta(Enable)
             Transform(void);
 
             Transform(const Transform &transform);
@@ -62,7 +76,6 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             void SetLocalPosition(const SVec3 &position);
-
             const SVec3 &GetLocalPosition(void) const;
 
             void SetWorldPosition(const SVec3 &position);
@@ -74,16 +87,22 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             void SetLocalRotation(const SQuat &rotation);
-            void SetLocalEuler(const SVec3 &euler);
 
+            void SetLocalEuler(const SVec3 &euler);
             const SQuat &GetLocalRotation(void) const;
             SVec3 GetLocalEuler(void) const;
+
+            Meta(Enable)
+            void SetLocalEulerEditor(const SQuat &euler);
+
+            Meta(Enable)
+            SQuat GetLocalEulerEditor(void) const;
 
             void SetWorldRotation(const SQuat &rotation);
             void SetWorldEuler(const SVec3 &euler);
 
-            SQuat GetWorldRotation(void);
-            SVec3 GetWorldEuler(void);
+            SQuat GetWorldRotation(void) const;
+            SVec3 GetWorldEuler(void) const;
 
             void LookAt(const SVec3 &worldPosition);
 
@@ -92,21 +111,20 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             void SetLocalScale(const SVec3 &scale);
-            
             const SVec3 &GetLocalScale(void) const;
 
             void SetWorldScale(const SVec3 &scale);
 
-            SVec3 GetWorldScale(void);
+            SVec3 GetWorldScale(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Axis
             ////////////////////////////////////////////////////////////////////
 
             // Do this in the quaternion class
-            SVec3 GetForward(void);
-            SVec3 GetRight(void);
-            SVec3 GetUp(void);
+            SVec3 GetForward(void) const;
+            SVec3 GetRight(void) const;
+            SVec3 GetUp(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Matrix
@@ -123,22 +141,22 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             SVec3 ToLocal(const SVec3 &point);
-            SQuat ToLocal(const SQuat &quat);
+            SQuat ToLocal(const SQuat &quat) const;
 
             SVec3 ToWorld(const SVec3 &point);
-            SQuat ToWorld(const SQuat &quat);
+            SQuat ToWorld(const SQuat &quat) const;
 
             ////////////////////////////////////////////////////////////////////
             // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
-            Transform *GetRoot(void);
+			Handle<Transform> GetRoot(void) const;
 
-            Transform *GetParent(void);
+			Handle<Transform> GetParent(void) const;
 
             // Check to see if this transform is a 
             // child (anywhere in the hierarchy) of the given parent
-            bool IsChildOf(Transform *parent);
+            bool IsChildOf(const Handle<Transform> parent) const;
 
             // Add a child to the hierarchy, assuming its coordinates are in world space
             void AddChild(Transform *child);
@@ -152,10 +170,15 @@ namespace ursine
             // Remove all children from the hiearchy (adding to root node)
             void RemoveChildren(void);
 
+            // Detach from current parent
+            void DetachFromParent(void);
+
             // Find child by their index in the list
             // If the index is too large, return nullptr
-            Transform *GetChild(uint index);
-            const Transform *GetChild(uint index) const;
+			Handle<Transform> GetChild(uint index);
+            const Handle<Transform> GetChild(uint index) const;
+
+            const std::vector< Handle<Transform> > &GetChildren(void) const;
 
             // Find this transform's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -164,43 +187,43 @@ namespace ursine
             void SetAsFirstSibling(void);
 
             // Sets this transform's index in the parent's children list
-            void SetSiblingIndex(uint index) const;
+            void SetSiblingIndex(uint index);
 
             // Gets a component of the specified type in this entity's children (type safe) (depth first)
             // nullptr if it doesn't exist
             template<class ComponentType>
-            inline ComponentType *GetComponentInChildren(const Entity *entity) const;
+            inline ComponentType *GetComponentInChildren(void) const;
 
             // Gets a component of the specified type id in this entity's children (depth first)
             // nullptr if it doesn't exist. Use the type safe version when possible
-            Component *GetComponentInChildren(const Entity *entity, ComponentTypeID id) const;
+            Component *GetComponentInChildren(ComponentTypeID id) const;
 
             // Gets a component of the specified type in this entity's parent (type safe)
             // nullptr if it doesn't exist
             template<class ComponentType>
-            inline ComponentType *GetComponentInParent(const Entity *entity) const;
+            inline ComponentType *GetComponentInParent(void) const;
 
             // Gets a component of the specified type id in this entity's parent
             // nullptr if it doesn't exist. Use the type safe version when possible
-            Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
+            Component *GetComponentInParent(ComponentTypeID id) const;
 
             // Gets the components of the specified type in this entity's children (type safe)
             // nullptr if it doesn't exist
             template<class ComponentType>
-            inline std::vector<ComponentType*> GetComponentsInChildren(const Entity *entity) const;
+            inline std::vector<ComponentType*> GetComponentsInChildren(void) const;
 
             // Gets the components of the specified type id in this entity's children
             // nullptr if it doesn't exist. Use the type safe version when possible
-            ComponentVector GetComponentsInChildren(const Entity *entity, ComponentTypeID id) const;
+            ComponentVector GetComponentsInChildren(ComponentTypeID id) const;
 
             // Gets the components of the specified type in this entity's parents (type safe)
             // nullptr if it doesn't exist
             template<class ComponentType>
-            inline std::vector<ComponentType*> GetComponentsInParents(const Entity *entity) const;
+            inline std::vector<ComponentType*> GetComponentsInParents(void) const;
 
             // Gets the components of the specified type id in this entity's parents
             // nullptr if it doesn't exist. Use the type safe version when possible
-            ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
+            ComponentVector GetComponentsInParents(ComponentTypeID id) const;
 
         protected:
 
@@ -209,14 +232,14 @@ namespace ursine
 
             // The top most transform in the hierarchy
             // If this is the top most, root == this
-            Transform *m_root;
+            Handle<Transform> m_root;
 
             // The parent of this transform.
             // If there is no parent, parent == nullptr
-            Transform *m_parent;
+            Handle<Transform> m_parent;
 
             // Child pointers.
-            std::vector<Transform*> m_children;
+            std::vector< Handle<Transform> > m_children;
 
             // Local coordinates (coordinates in relation to the parent)
             SVec3 m_localPosition,
@@ -231,8 +254,9 @@ namespace ursine
         private:
             void copy(const Transform &transform);
 
-            void dispatchAndSetDirty(void);
-            void dispatchParentChange(Transform *oldParent, Transform *newParent) const;
+            void dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged);
+            void dispatchAndSetDirty(const TransformChangedArgs *args);
+            void dispatchParentChange(Handle<Transform> oldParent, Handle<Transform> newParent) const;
 
             void onParentDirty(EVENT_HANDLER(Entity));
 
@@ -240,17 +264,24 @@ namespace ursine
             void recalculateMatrices(void);
 
             // notify the editor our values have changed
-            void notifyPositionChanged(void);
-            void notifyRotationChanged(void);
-            void notifyScaleChanged(void);
+            void notifyPositionChanged(const SVec3 *oldPosition);
+            void notifyRotationChanged(const SQuat *oldRotation);
+            void notifyScaleChanged(const SVec3 *oldScale);
 
             // Generically add a child to our hierarch, without 
             // handling value changes in scale, position, or rotation
-            void genericAddChild(Transform *child);
+            bool genericAddChild(Handle<Transform> child);
 
-            void setParent(Transform *oldParent, Transform *newParent);
+            void setParent(Handle<Transform> oldParent, Handle<Transform> newParent, bool removing = false);
+			
+			void setRoot(Handle<Transform> root);
 
-        } Meta(Enable, WhiteListMethods, DisplayName( "Transform" ));
+        } Meta(
+            Enable,
+            WhiteListMethods,
+            DisableComponentRemoval, 
+            DisplayName( "Transform" )
+        );
     }
 }
 

@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** RenderableAPI.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -39,14 +52,13 @@ namespace ursine
             // get a model
             Model3D &GetModel3D(GfxHND &handle);
 
-            // get a point light
-            Primitive &GetPrimitive(GfxHND &handle);
-
             //get billboarded quad
             Billboard2D &GetBillboard2D(GfxHND &handle);
 
             //get a universal light
             Light &GetLight(GfxHND &handle);
+
+            ParticleSystem &GetParticleSystem(GfxHND &handle);
 
         private:
             privData *m_privates;

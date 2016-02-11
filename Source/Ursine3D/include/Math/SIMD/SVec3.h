@@ -18,12 +18,28 @@
 
 #include "Meta.h"
 
-#ifdef URSINE_GRAPHICS_DIRECTX
+#if defined(URSINE_GRAPHICS_DIRECTX)
+
 namespace DirectX
 {
 	// Forward Declaration
 	struct XMFLOAT3;
 }
+
+#endif
+
+#if defined(URSINE_DEPENDENCY_WWise)
+
+// Forward Declaration
+struct AkVector;
+
+#endif
+
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+// Forward Declaration
+class btVector3;
+
 #endif
 
 namespace ursine
@@ -44,8 +60,13 @@ namespace ursine
 		friend class SMat4;
 
 	public:
+        Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::X" ))
         EditorField(float x, X, SetX);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::Y" ))
         EditorField(float y, Y, SetY);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::Z" ))
         EditorField(float z, Z, SetZ);
 
 		// Constructors
@@ -59,10 +80,28 @@ namespace ursine
 		explicit SVec3(const SVec4 &value);
 		explicit SVec3(const Vec4 &value);
 
-#ifdef URSINE_GRAPHICS_DIRECTX
+#if defined(URSINE_GRAPHICS_DIRECTX)
+
 		explicit SVec3(const DirectX::XMFLOAT3 &vec);
 
 		DirectX::XMFLOAT3 ToD3D(void) const;
+
+#endif
+
+#if defined(URSINE_DEPENDENCY_WWise)
+
+		explicit SVec3(const AkVector & vec);
+
+		AkVector ToWwise(void) const;
+
+#endif
+
+#if defined(URSINE_DEPENDENCY_BulletPhysics)
+
+		explicit SVec3(const btVector3 &vec);
+
+		btVector3 ToBullet(void) const;
+
 #endif
 
 		// Properties
@@ -162,7 +201,9 @@ namespace ursine
 		ALLOW_ALIGNED_ALLOC(16);
 
 	private:
+
 #ifdef USE_SSE
+
 		union
 		{
 			SIMDvec m_128;
@@ -174,10 +215,14 @@ namespace ursine
 		};
 
 		explicit SVec3(const SIMDvec &value);
+
 #else
+
 		float m_x, m_y, m_z;
+
 #endif
-	} Meta(Enable, WhiteListMethods);
+
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "SVec3.hpp"

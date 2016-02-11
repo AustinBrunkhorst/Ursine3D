@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EntitySystem.h
 **
@@ -44,6 +44,9 @@ namespace ursine
 
             // Called when the system is initialized
             virtual void OnInitialize(void) { }
+
+            // Called when the world completed serialization
+            virtual void OnAfterLoad(void) { }
 
             // Called when the system is removed from the world
             virtual void OnRemove(void) { }

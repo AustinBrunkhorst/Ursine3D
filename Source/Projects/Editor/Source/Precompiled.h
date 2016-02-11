@@ -1,4 +1,26 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Precompiled.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
+
+// TODO: remove this when the shared project is removed
+#if defined(URSINE_WITH_EDITOR)
+
+#define EDITOR_ARCHETYPE_PATH URSINE_PROJECTS_DIRECTORY "Editor/Assets/Archetypes/"
+
+#endif
+
+#define URSINE_OUTPUT_WARNINGS 1
 
 #include <windows.h>
 
@@ -45,3 +67,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <EntityManager.h>
+
+#include "EditorEntityManager.h"
+#include "Project.h"

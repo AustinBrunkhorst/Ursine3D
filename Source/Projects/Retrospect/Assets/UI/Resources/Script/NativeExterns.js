@@ -1,0 +1,1 @@
+function NativeBroadcast(target, message, data) { }

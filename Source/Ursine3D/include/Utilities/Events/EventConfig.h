@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EventConfig.h
 **
@@ -13,13 +13,36 @@
 
 #pragma once
 
+#include "FastDelegate.h"
+#include <functional>
+
 namespace ursine
 {
-    // Static function delegate
-    template<typename Args>
-    using StaticDelegate = void(*)(void *, const Args *);
+    struct EventArgs;
 
-    // Class member function delegate
-    template<typename Class, typename Args>
-    using ClassDelegate = void(Class::*)(void *, const Args *);
+    struct FastDelegateHandler
+    {
+        using Handler = fastdelegate::FastDelegate<void(void*, const EventArgs *)>;
+
+        template<typename Args = EventArgs>
+        using StaticDelegate = void(*)(void *, const Args *);
+
+        template<typename Class, typename Args = EventArgs>
+        using ClassDelegate = void(Class::*)(void *, const Args *);
+    };
+
+    struct LambdaHandler
+    {
+        using Handler = std::function<void(void*, const EventArgs *)>;
+
+        template<typename Args = EventArgs>
+        using StaticDelegate = std::function<void(void *, const Args *)>;
+
+        template<typename Class, typename Args = EventArgs>
+        using ClassDelegate = void(Class::*)(void *, const Args *);
+    };
+
+    typedef int EventHandlerPriority;
+
+    const EventHandlerPriority kDefaultEventHandlerPriority = 0;
 }

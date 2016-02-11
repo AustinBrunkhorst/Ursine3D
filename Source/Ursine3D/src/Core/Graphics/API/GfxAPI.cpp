@@ -1,3 +1,16 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** GfxAPI.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 #include "GfxManager.h"
 #include "GfxAPI.h"
@@ -17,7 +30,6 @@ namespace ursine
         GfxAPI::GfxAPI(void)
             : m_privates(nullptr)
         {
-
         }
 
         GfxAPI::~GfxAPI(void)
@@ -110,6 +122,11 @@ namespace ursine
             m_privates->gfxCore_->Resize(width, height);
         }
 
+        void GfxAPI::SetFullscreenState(const bool state)
+        {
+            m_privates->gfxCore_->SetFullscreenState( state );
+        }
+
         void GfxAPI::SetGameViewport(GfxHND vp)
         {
             m_privates->gfxCore_->SetGameViewport(vp);
@@ -132,6 +149,16 @@ namespace ursine
                                             const int destinationX, const int destinationY)
         {
             m_privates->gfxCore_->RenderToDynamicTexture(srcWidth, srcHeight, input, inputWidth, inputHeight, destTexture, destinationX, destinationX);
+        }
+
+        ursine::ecs::EntityUniqueID GfxAPI::GetMousedOverID()
+        {
+            return m_privates->gfxCore_->GetCurrentUniqueID();
+        }
+
+        SVec3 GfxAPI::GetMousedOverWorldPosition(const GfxHND& cameraHandle)
+        {
+            return m_privates->gfxCore_->GetCurrentWorldPosition( cameraHandle );
         }
     }
 }

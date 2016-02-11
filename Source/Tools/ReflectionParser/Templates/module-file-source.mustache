@@ -1,0 +1,223 @@
+/* ----------------------------------------------------------------------------
+** GENERATED SOURCE FILE
+** Do not modify the contents of this file.
+**
+** Ursine3D Meta Generator v{{version}}
+** --------------------------------------------------------------------------*/
+{{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
+{{/usingPrecompiledHeader}}
+
+#include "{{moduleFileHeader}}"
+#include "{{moduleFileSourceHeader}}"
+
+#include <ReflectionDatabase.h>
+
+namespace m = ursine::meta;
+
+void meta_generated::AllocateModuleFile{{targetName}}{{moduleFileName}}(m::ReflectionDatabase &db)
+{
+    ///////////////////////////////////////////////////////////////////////////
+    // Class Allocation
+    ///////////////////////////////////////////////////////////////////////////
+    {{#class}}
+    {
+        { // Base Type
+            auto id = db.AllocateType( "{{& displayName}}" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, true );
+        }
+        {{#ptrTypeEnabled}}
+        { // Pointer Type
+            auto id = db.AllocateType( "{{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/ptrTypeEnabled}}
+        {{#constPtrTypeEnabled}}
+        { // Const Pointer Type
+            auto id = db.AllocateType( "const {{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/constPtrTypeEnabled}}
+    }
+    {{/class}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Enum Allocation
+    ///////////////////////////////////////////////////////////////////////////
+    {{#enum}}
+    {
+        { // Base Type
+            auto id = db.AllocateType( "{{& displayName}}" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, true );
+        }
+        {{#ptrTypeEnabled}}
+        { // Pointer Type
+            auto id = db.AllocateType( "{{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/ptrTypeEnabled}}
+        {{#constPtrTypeEnabled}}
+        { // Const Pointer Type
+            auto id = db.AllocateType( "const {{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/constPtrTypeEnabled}}
+    }
+    {{/enum}}
+}
+
+void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::ReflectionDatabase &db)
+{
+    ///////////////////////////////////////////////////////////////////////////
+    // Global Definitions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#global}}
+    db.AddGlobal<{{& type}}>( "{{& qualifiedName}}",{{#isGetterAccessible}}
+        [](void)
+        {
+            return m::Variant { {{> getterBody}} };
+        },{{/isGetterAccessible}}{{^isGetterAccessible}}
+        nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+        [](const m::Argument &value)
+        {
+            {{> setterBody}}
+        },{{/isSetterAccessible}}{{^isSetterAccessible}}
+        nullptr,{{/isSetterAccessible}}
+        {
+            {{> metaDataInitializerList}}
+        }
+    );
+    {{/global}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Global Functions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#globalFunction}}
+    db.AddGlobalFunction( "{{& qualifiedName}}",
+        static_cast<{{& qualifiedSignature}}>( {{& qualifiedName}} ),
+        {
+            {{> metaDataInitializerList}}
+        }
+    );
+    {{/globalFunction}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Enum Definitions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#enum}}
+    {
+        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
+
+        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
+        {
+            auto &type = db.types[ typeID ];
+
+            type.meta = {
+                {{> metaDataInitializerList}}
+            };
+
+            type.SetEnum<{{& qualifiedName}}>( "{{& displayName}}", {
+                {{#member}} 
+                    { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
+                {{/member}}
+            } );
+
+            m::TypeInfo<{{& qualifiedName}}>::Defined = true;
+        }
+    }
+    {{/enum}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Class Definitions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#class}}
+    /**
+     * {{& qualifiedName}}
+     */
+    {
+        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
+
+        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
+        {
+            auto &type = db.types[ typeID ];
+
+            type.meta = {
+                {{> metaDataInitializerList}}
+            };
+
+            type.LoadBaseClasses( db, typeID, { 
+                {{#baseClass}}typeof( {{& name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
+            } );
+            {{#arrayTypeEnabled}}
+            // Array Constructor
+			type.SetArrayConstructor<{{& qualifiedName}}>( );{{/arrayTypeEnabled}}
+
+            // Constructors
+            {{#constructor}}{{#enableNonDynamic}}
+            type.AddConstructor<{{& templateParameters}}>(
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/enableNonDynamic}}{{/constructor}}
+            // Dynamic Constructors
+            {{#dynamicConstructor}}
+            type.AddConstructor<{{& dynamicTemplateParameters}}>( 
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/dynamicConstructor}}
+            // Fields
+            {{#field}}
+            type.AddField<{{& parentQualifiedName}}, {{& type}}>( "{{& displayName}}",
+                {{#isGetterAccessible}}{{> getterBody}},{{/isGetterAccessible}}{{^isGetterAccessible}}
+                ((m::FieldGetter<{{& parentQualifiedName}}, {{& type}}, true>::Signature))nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+                {{> setterBody}},{{/isSetterAccessible}}{{^isSetterAccessible}}
+                (m::FieldSetter<{{& parentQualifiedName}}, {{& type}}, true>::Signature)nullptr,{{/isSetterAccessible}}
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/field}}
+            // Static Fields
+            {{#staticField}}
+            type.AddStaticField<{{& parentQualifiedName}}, {{& type}}>( "{{& displayName}}",
+                {{#isGetterAccessible}}{{> getterBody}},{{/isGetterAccessible}}{{^isGetterAccessible}}
+                nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+                {{> setterBody}},{{/isSetterAccessible}}{{^isSetterAccessible}}
+                nullptr,{{/isSetterAccessible}}
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/staticField}}
+            // Methods
+            {{#method}}
+            type.AddMethod( "{{name}}",
+                static_cast<{{& qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/method}}
+            // Static Methods
+            {{#staticMethod}}
+            type.AddStaticMethod<{{parentQualifiedName}}>( "{{name}}",
+                static_cast<{{& qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );{{/staticMethod}}
+
+            m::TypeInfo<{{& qualifiedName}}>::Defined = true;
+        }
+    }{{/class}}
+}

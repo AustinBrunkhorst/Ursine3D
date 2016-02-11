@@ -1,0 +1,81 @@
+
+Editor Tool Shortcuts
+==================================================
+
+==================================================
+Navigation
+==================================================
+.. image:: WASDKeys.png
+
+- **WASD** keys can be used for navigation inside the Scene view.
+
+.. image:: ALTKey.png
+
+- While holding the **ALT** key, you can **click and drag** (*left, right and middle mouse*) for different types of scene view navigation. This is similar to Maya or any other editor. Using the **scroll wheel** on your mouse is also an option.
+
+.. image:: FKey.png
+
+- The **F** key can be used when an entity is selected. This will zoom the camera in on the entity.
+
+==================================================
+Manipulation Tools
+==================================================
+.. image:: NumberKeys.png
+
+- The **1, 2, 3, 4, and 5** keys can be used to select the different tools.
+
+.. image:: Select.png
+
+(1) Selection Tool: must have a graphical model to click on.
+
+.. image:: Translate.png
+
+(2) Translation Tool
+
+.. image:: Scale.png
+
+(3) Scale Tool
+
+.. image:: Rotation.png
+
+(4) Rotation Tool
+
+.. image:: Duplicate1.png
+
+(5) Duplication Tool: Used to duplicate the selected entity in the world.
+
+.. image:: CTRLKey.png
+
+- The **CTRL** key can be used to *Snap To Grid*.
+
+.. image:: ShiftKey.png
+
+- The **SHIFT** key can be used while scaling. Hold it down and drag on any axis, this will result in linear scaling across all axis.
+
+.. image:: SpaceBar.png
+
+- The **SPACE** bar can be used to switch a tool in and out of world / local space. An example is shown below: 
+
+.. image:: TranslateLocal.png
+
+- The **SPACE** bar can also be used to change what *plane* you're duplicating an object onto. An example is shown below:
+
+.. image:: Duplicate1.png
+   :width: 50%
+   :align: left
+
+.. image:: Duplicate2.png
+   :width: 50%
+   :align: right
+
+.. image:: TildaKey.png
+
+- The **~** key can be used to switch what relative axis you're snapping to (object's axis or the world's axis). For instance, notice how the flat plane goes from the height of the model, to the ground level. This is a change from the **object's** axis to the **world's**.
+
+.. image:: Duplicate1.png
+   :width: 50%
+   :align: left
+   
+.. image:: Duplicate3.png
+   :width: 50%
+   :align: right

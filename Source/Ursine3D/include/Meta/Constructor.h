@@ -14,7 +14,7 @@
 
 #include "Invokable.h"
 
-#include <functional>
+#include "ConstructorInvoker.h"
 
 namespace ursine
 {
@@ -27,16 +27,18 @@ namespace ursine
             , public Invokable
         {
         public:
-            typedef std::function<Variant(ArgumentList&)> Invoker;
-
             Constructor(void);
+            Constructor(const Constructor &rhs);
+            Constructor(const Constructor &&rhs);
             
             Constructor(
                 Type classType, 
                 InvokableSignature signature, 
-                Invoker invoker, 
+                ConstructorInvokerBase *invoker, 
                 bool isDynamic
             );
+
+            Constructor &operator=(const Constructor &&rhs);
 
             static const Constructor &Invalid(void);
 
@@ -55,7 +57,7 @@ namespace ursine
 
             Type m_classType;
 
-            Invoker m_invoker;
+            std::shared_ptr<ConstructorInvokerBase> m_invoker;
         };
     }
 }

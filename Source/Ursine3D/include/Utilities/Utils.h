@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Utils.h
 **
@@ -37,29 +37,29 @@ namespace ursine
         template<typename A>
         inline A FlagNegateAll(A value);
 
+        template<typename A>
+        constexpr A IndexToMask(A value);
+
         // Insertions sorts the given container
         template<typename Container, class Predicate>
         void InsertionSort(Container &v, Predicate predicate);
 
         // Sort inserts into a given container (assuming it's already sorted)
         template<typename Container, class T, class Predicate>
-        void InsertionSort(Container &v, const T &item, Predicate predicate);
+        void InsertionSort(Container &v, const T &item, Predicate predicate = std::less<T>( ));
+
+        URSINE_TODO("Implement the binary search utility"
+                    " (http://stackoverflow.com/questions/446296/where-can-i-get-a-useful-c-binary-search-algorithm)");
 
         void Join(
             const std::vector<std::string> &input,
             const std::string &joiner,
-            std::string &output);
+            std::string &output
+        );
 
-        class NoCopy
-        {
-        protected:
-            NoCopy(void) { }
-            ~NoCopy(void) { }
-
-        private:
-            NoCopy(const NoCopy &rhs) = delete;
-            NoCopy &operator=(const NoCopy &rhs) = delete;
-        };
+        // Does the default OS level "open" operation on the given path
+        // for example, on Windows, it will open Explorer for a valid file path
+        void OpenPath(const std::string &path);
     }
 }
 

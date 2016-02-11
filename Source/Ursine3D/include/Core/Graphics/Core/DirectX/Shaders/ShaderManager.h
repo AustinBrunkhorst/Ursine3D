@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ShaderManager.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 /* Start Header ---------------------------------------------------------------
 Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
 disclosure of this file or its contents without the prior written
@@ -31,29 +44,42 @@ namespace ursine
             {
                 SHADER_TYPES type;
 
-                ID3D11VertexShader *vs;
-                ID3D11PixelShader *ps;
-                ID3D11HullShader *hs;
-                ID3D11DomainShader *ds;
-                ID3D11GeometryShader *gs;
+                ID3D11VertexShader          *vs;
+                ID3D11PixelShader           *ps;
+                ID3D11HullShader            *hs;
+                ID3D11DomainShader          *ds;
+                ID3D11GeometryShader        *gs;
+                ID3D11ComputeShader         *cs;
 
-                ID3D11ShaderReflection *reflectionData;
-                ID3DBlob *vsBlob;
-                void *rawData;
-                unsigned size;
+                ID3D11ShaderReflection      *reflectionData;
+                ID3DBlob                    *vsBlob;
+                void                        *rawData;
+                unsigned                    size;
 
-                std::vector<std::string> filenames;
-                std::vector<time_t> timestamps;
+                std::vector<std::string>    filenames;
+                std::vector<time_t>         timestamps;
 
-                Shader()
+                Shader() 
+                    : type(SHADER_COUNT)
+                    , vs(nullptr)
+                    , ps(nullptr)
+                    , hs(nullptr)
+                    , ds(nullptr)
+                    , gs(nullptr)
+                    , cs(nullptr)
+                    , reflectionData(nullptr)
+                    , vsBlob(nullptr)
+                    , rawData(nullptr)
+                    , size(0)
                 {
-                    filenames.resize(DEF_COUNT);
-                    timestamps.resize(DEF_COUNT);
+                    filenames.resize(SHADERTYPE_COUNT);
+                    timestamps.resize(SHADERTYPE_COUNT);
                 }
             };
 
             class ShaderManager
             {
+            //public methods
             public:
                 void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath = "");
                 void Uninitialize(void);
@@ -67,6 +93,8 @@ namespace ursine
                 Shader *GetShader(const SHADER_TYPES shader);
 
                 void Invalidate(void);
+
+            //private members
             private:
                 std::string m_shaderPath;
                 ID3D11Device *m_device;

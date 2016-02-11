@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Class.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Class.h"
@@ -134,6 +147,9 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 
     data[ "constPtrTypeEnabled" ] = 
         utils::TemplateBool( m_constPtrTypeEnabled );
+
+    data[ "arrayTypeEnabled" ] = 
+        utils::TemplateBool( m_arrayTypeEnabled );
 
     m_metaData.CompileTemplateData( data, context );
 

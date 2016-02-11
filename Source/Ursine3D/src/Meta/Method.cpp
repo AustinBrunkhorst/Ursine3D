@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Method.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Method.h"
@@ -45,14 +58,14 @@ namespace ursine
                 "Invalid method invoked" );
 
             UAssert( !(instance.IsConst( ) && !m_isConst), 
-                "Non-const method invoked on const object" )
+                "Non-const method invoked on const object" );
 
             UAssert( instance.GetType( ) == m_classType, 
                 "Incompatible method invoked with instance" );
 
         #endif
 
-            return m_invoker( instance, arguments );
+            return m_invoker->Invoke( instance, arguments );
         }
     }
 }

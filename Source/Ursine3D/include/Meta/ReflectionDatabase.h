@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 201x DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ReflectionDatabase.h
 **
@@ -15,7 +15,6 @@
 
 #include <vector>
 #include <unordered_map>
-#include <functional>
 
 namespace ursine
 {
@@ -24,11 +23,6 @@ namespace ursine
         class ReflectionDatabase
         {
         public:
-            struct Initializer
-            {
-                Initializer(std::function<void(void)> initializer);
-            };
-
             ReflectionDatabase(void);
             ~ReflectionDatabase(void);
 
@@ -67,11 +61,10 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////
 
-            template<typename FunctionType, typename FunctionInvoker>
+            template<typename FunctionType>
             void AddGlobalFunction(
                 const std::string &name, 
-                FunctionType type, 
-                FunctionInvoker invoker, 
+                FunctionType globalFunction,
                 const MetaManager::Initializer &meta
             );
 

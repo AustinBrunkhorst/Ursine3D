@@ -40,9 +40,16 @@ namespace ursine
 		friend class Vec4;
 
 	public:
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::X" ))
         EditorField(float x, X, SetX);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::Y" ))
         EditorField(float y, Y, SetY);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::Z" ))
         EditorField(float z, Z, SetZ);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::W" ))
         EditorField(float w, W, SetW);
 
 		// Constructors
@@ -164,7 +171,7 @@ namespace ursine
 #else
 		float m_x, m_y, m_z, m_w;
 #endif
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "SVec4.hpp"

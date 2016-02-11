@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Entity.hpp
 **
@@ -20,6 +20,10 @@ namespace ursine
         template<class ComponentType, typename... Args>
         ComponentType *Entity::AddComponent(Args &&... args)
         {
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID,
+                "This component is not exposed to reflection."
+            );
+
             auto component = new ComponentType( std::forward<Args>( args )... );
 
             m_world->m_entityManager->AddComponent( this, component );
@@ -30,69 +34,102 @@ namespace ursine
         template<class ComponentType>
         void Entity::RemoveComponent(void)
         {
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID,
+                "This component is not exposed to reflection."
+            );
+
             m_world->m_entityManager->RemoveComponent<ComponentType>( this );
         }
 
         template<class ComponentType>
         ComponentType *Entity::GetComponent(void) const
         {
+            static_assert( !std::is_same<ComponentType, Transform>::value, 
+                "Use GetTransform( ) to get the Transform component." 
+            );
+
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID, 
+                "This component is not exposed to reflection."
+            );
+
             return m_world->m_entityManager->GetComponent<ComponentType>( this );
         }
 
         template<class ComponentType>
         bool Entity::HasComponent(void) const
         {
-            static const auto mask = GetComponentMask( ComponentType );
+            static const auto &mask = GetComponentMask( ComponentType );
+
+            UAssert( GetComponentID( ComponentType ) != kInvalidComponentID,
+                "This component is not exposed to reflection."
+            );
 
             return HasComponent( mask );
         }
 
 	    template <class ComponentType>
-	    ComponentType* Entity::GetComponentInChildren(const Entity* entity) const
+	    ComponentType* Entity::GetComponentInChildren(void) const
 	    {
-			return m_world->m_entityManager->GetComponentInChildren( entity );
+			return m_world->m_entityManager->GetComponentInChildren<ComponentType>( this );
 	    }
 
 	    template <class ComponentType>
-	    ComponentType* Entity::GetComponentInParent(const Entity* entity) const
+	    ComponentType* Entity::GetComponentInParent(void) const
 	    {
-			return m_world->m_entityManager->GetComponentInParent( entity );
+			return m_world->m_entityManager->GetComponentInParent<ComponentType>( this );
 	    }
 
 	    template <class ComponentType>
-	    std::vector<ComponentType*> Entity::GetComponentsInChildren(const Entity* entity) const
+	    std::vector<ComponentType*> Entity::GetComponentsInChildren(void) const
 	    {
-			return m_world->m_entityManager->GetComponentsInChildren( entity );
+			return m_world->m_entityManager->GetComponentsInChildren<ComponentType>( this );
 	    }
 
 	    template <class ComponentType>
-	    std::vector<ComponentType*> Entity::GetComponentsInParents(const Entity* entity) const
+	    std::vector<ComponentType*> Entity::GetComponentsInParents(void) const
 	    {
-			return m_world->m_entityManager->GetComponentsInParents( entity );
+			return m_world->m_entityManager->GetComponentsInParents<ComponentType>( this );
 	    }
 
 	    template<typename Args>
-        void Entity::Connect(EventID event, StaticDelegate<Args> delegate)
+        void Entity::Connect(
+            EventID event, 
+            EventDispatcher::HandlerType::StaticDelegate<Args> delegate,
+            EventHandlerPriority priority
+        )
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Connect( event, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Connect( event, delegate, priority );
         }
 
         template<typename Class, typename Args>
-        void Entity::Connect(EventID event, Class *context, ClassDelegate<Class, Args> delegate)
+        void Entity::Connect(
+            EventID event, 
+            Class *context, 
+            EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate,
+            EventHandlerPriority priority
+        )
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Connect( event, context, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Connect( event, context, delegate, priority );
         }
 
         template<typename Args>
-        void Entity::Disconnect(EventID event, StaticDelegate<Args> delegate)
+        void Entity::Disconnect(EventID event, EventDispatcher::HandlerType::StaticDelegate<Args> delegate)
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Disconnect( event, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Disconnect( event, delegate );
         }
 
         template<typename Class, typename Args>
-        void Entity::Disconnect(EventID event, Class *context, ClassDelegate<Class, Args> delegate)
+        void Entity::Disconnect(
+            EventID event, 
+            Class *context, 
+            EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate
+        )
         {
-            m_world->m_entityManager->GetEntityEvents( this ).Disconnect( event, context, delegate );
+            m_world->m_entityManager->GetEntityEvents( this )
+                .Disconnect( event, context, delegate );
         }
 
         template<typename ListenerType>

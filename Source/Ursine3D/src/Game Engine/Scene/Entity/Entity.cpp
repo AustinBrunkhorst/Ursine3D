@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Entity.cpp
 **
@@ -10,7 +10,6 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
-
 
 #include "UrsinePrecompiled.h"
 
@@ -23,6 +22,12 @@
 #include "NameManager.h"
 #include "UtilityManager.h"
 
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
+
 namespace ursine
 {
     namespace ecs
@@ -32,13 +37,18 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////
 
         Entity::Entity(World *world, EntityUniqueID id)
-            : m_flags( ACTIVE )
-              , m_id( id )
-              , m_uniqueID( 0 )
-              , m_world( world )
-              , m_transform( nullptr )
-              , m_systemMask( 0 )
-              , m_typeMask( 0 ) { }
+            : m_active( true )
+            , m_deleting( false )
+            , m_deletionEnabled( true )
+            , m_hierarchyChangeEnabled( true )
+            , m_serializationEnabled( true )
+            , m_visibleInEditor( true )
+            , m_id( id )
+            , m_uniqueID( 0 )
+            , m_world( world )
+            , m_transform( nullptr )
+            , m_systemMask( 0 )
+            , m_typeMask( 0 ) { }
 
         ////////////////////////////////////////////////////////////////////////
         // State/Identification
@@ -46,13 +56,29 @@ namespace ursine
 
         void Entity::Delete(void)
         {
-            // it's already being deleted
-            if (m_flags != ACTIVE)
+            // it's already being deleted or deletion is disabled
+            if (!(m_active && !m_deleting))
                 return;
 
-            utils::FlagSet( m_flags, DELETING );
+            if (!m_deletionEnabled)
+            {
+            #if defined(URSINE_WITH_EDITOR)
 
-            m_world->deleteEntity( this );
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Error";
+                error.message = "The entity <strong class=\"highlight\">"+ GetName( ) +"</strong> cannot be deleted.";
+
+                EditorPostNotification( error );
+
+            #endif
+                return;
+            }
+
+			setDeletingTrue( );
+
+            m_world->queueEntityDeletion( this );
         }
 
         EntityID Entity::GetID(void) const
@@ -67,18 +93,58 @@ namespace ursine
 
         bool Entity::IsDeleting(void) const
         {
-            return utils::IsFlagSet( m_flags, DELETING );
+            return m_deleting;
         }
 
         bool Entity::IsActive(void) const
         {
-            return utils::IsFlagSet( m_flags, ACTIVE );
+            return m_active;
         }
 
         bool Entity::IsAvailable(void) const
         {
             // active, but not deleting
-            return (m_flags & (ACTIVE | DELETING)) == ACTIVE;
+            return m_active && !m_deleting;
+        }
+
+        bool Entity::IsDeletionEnabled(void) const
+        {
+            return m_deletionEnabled;
+        }
+
+        void Entity::EnableDeletion(bool enabled)
+        {
+            m_deletionEnabled = enabled;
+        }
+
+        bool Entity::IsHierarchyChangeEnabled(void) const
+        {
+            return m_hierarchyChangeEnabled;
+        }
+
+        void Entity::EnableHierarchyChange(bool enabled)
+        {
+            m_hierarchyChangeEnabled = enabled;
+        }
+
+        bool Entity::IsSerializationEnabled(void) const
+        {
+            return m_serializationEnabled;
+        }
+
+        void Entity::EnableSerialization(bool enabled)
+        {
+            m_serializationEnabled = enabled;
+        }
+
+        bool Entity::IsVisibleInEditor(void) const
+        {
+            return m_visibleInEditor;
+        }
+
+        void Entity::SetVisibleInEditor(bool visible)
+        {
+            m_visibleInEditor = visible;
         }
 
         World *Entity::GetWorld(void) const
@@ -90,6 +156,36 @@ namespace ursine
         {
             return m_transform;
         }
+
+		const Entity *Entity::GetParent(void) const
+        {
+	        auto parent = GetTransform( )->GetParent( );
+
+			if (parent)
+				return parent->GetOwner( );
+			else
+				return nullptr;
+        }
+
+		Entity *Entity::GetParent(void)
+		{
+			auto parent = GetTransform( )->GetParent( );
+
+			if (parent)
+				return parent->GetOwner( );
+			else
+				return nullptr;
+		}
+
+		const Entity *Entity::GetRoot(void) const
+		{
+			return GetTransform( )->GetRoot( )->GetOwner( );
+		}
+
+		Entity *Entity::GetRoot(void)
+		{
+			return GetTransform( )->GetRoot( )->GetOwner( );
+		}
 
         ////////////////////////////////////////////////////////////////////////
         // Naming
@@ -109,6 +205,11 @@ namespace ursine
         // Utilities
         ////////////////////////////////////////////////////////////////////////
 
+        Entity *Entity::Clone(void)
+        {
+            return m_world->m_entityManager->Clone( this );
+        }
+
         LocalTimerManager &Entity::GetTimers(void)
         {
             return m_world->m_utilityManager->GetTimers( this );
@@ -123,7 +224,12 @@ namespace ursine
         // Components
         ////////////////////////////////////////////////////////////////////////
 
-        bool Entity::HasComponent(ComponentTypeMask mask) const
+        void Entity::AddComponent(Component *component)
+        {
+            m_world->m_entityManager->AddComponent( this, component );
+        }
+
+        bool Entity::HasComponent(const ComponentTypeMask &mask) const
         {
             return utils::IsFlagSet( m_typeMask, mask );
         }
@@ -138,24 +244,48 @@ namespace ursine
             return m_world->m_entityManager->GetComponents( this );
         }
 
-	    Component* Entity::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+        const std::vector<EntityID> *Entity::GetChildren(void) const
+        {
+            return m_world->m_entityManager->GetChildren( this );
+        }
+
+        Component* Entity::GetComponentInChildren(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentInChildren( entity, id );
+			return m_world->m_entityManager->GetComponentInChildren( this, id );
 	    }
 
-	    Component* Entity::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+        Entity* Entity::GetChildByName(const std::string& name) const
+        {
+            // get all children
+            auto children = m_world->m_entityManager->GetChildren( this );
+
+            // search for desired child
+            for ( auto childID : *children )
+            {
+                // check if names are same
+                if ( name == m_world->m_nameManager->GetName( childID ) )
+                {
+                    return  m_world->m_entityManager->GetEntity( childID );
+                }
+            }
+
+            // return entity
+            return  nullptr;
+        }
+
+	    Component* Entity::GetComponentInParent(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentInParent( entity, id );
+			return m_world->m_entityManager->GetComponentInParent( this, id );
 	    }
 
-	    ComponentVector Entity::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Entity::GetComponentsInChildren(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentsInChildren( entity, id );
+			return m_world->m_entityManager->GetComponentsInChildren( this, id );
 	    }
 
-	    ComponentVector Entity::GetComponentsInParents(const Entity* entity, ComponentTypeID id) const
+	    ComponentVector Entity::GetComponentsInParents(ComponentTypeID id) const
 	    {
-			return m_world->m_entityManager->GetComponentsInParents( entity, id );
+			return m_world->m_entityManager->GetComponentsInParents( this, id );
 	    }
 
         uint Entity::GetSiblingIndex(void) const
@@ -165,12 +295,12 @@ namespace ursine
 
         void Entity::SetAsFirstSibling(void)
         {
-
+            m_world->m_entityManager->SetAsFirstSibling( this );
         }
 
         void Entity::SetSiblingIndex(uint index) const
         {
-
+            m_world->m_entityManager->SetSiblingIndex( this, index );
         }
 
         void Entity::RemoveComponent(ComponentTypeID id)
@@ -191,22 +321,22 @@ namespace ursine
         // Private Functions
         ////////////////////////////////////////////////////////////////////////
 
-        void Entity::setSystem(ComponentTypeMask mask)
+        void Entity::setSystem(SystemTypeMask mask)
         {
             utils::FlagSet( m_systemMask, mask );
         }
 
-        void Entity::unsetSystem(ComponentTypeMask mask)
+        void Entity::unsetSystem(SystemTypeMask mask)
         {
             utils::FlagUnset( m_systemMask, mask );
         }
 
-        void Entity::setType(ComponentTypeMask mask)
+        void Entity::setType(const ComponentTypeMask &mask)
         {
             utils::FlagSet( m_typeMask, mask );
         }
 
-        void Entity::unsetType(ComponentTypeMask mask)
+        void Entity::unsetType(const ComponentTypeMask &mask)
         {
             utils::FlagUnset( m_typeMask, mask );
         }
@@ -217,7 +347,24 @@ namespace ursine
             m_typeMask = 0;
 
             // active and not deleting
-            m_flags = ACTIVE;
+            m_active = true;
+            m_deleting = false;
+
+            // default settings
+            m_deletionEnabled = true;
+            m_hierarchyChangeEnabled = true;
+            m_serializationEnabled = true;
+            m_visibleInEditor = true;
+        }
+
+		void Entity::setDeletingTrue(void)
+        {
+			m_deleting = true;
+
+			for (auto &child : GetTransform( )->GetChildren( ))
+				child->GetOwner( )->setDeletingTrue( );
         }
     }
 }
+
+//To make gameplay pause: 

@@ -1,7 +1,9 @@
 @import 'Config';
 @import 'Utils';
 
-body {
+html, body {
+  overflow: hidden;
+  white-space: nowrap;
   font-family: Roboto;
 }
 
@@ -19,6 +21,7 @@ body {
 
 ::-webkit-scrollbar {
   width: 18px;
+  height: 18px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -31,6 +34,11 @@ body {
 
   &:active {
     background: #efebef;
+  }
+
+  &:horizontal {
+    border-top: 4px solid #3e3e42;
+    border-bottom: 4px solid #3e3e42;
   }
 
   &:vertical {
@@ -46,6 +54,16 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 
+  &:horizontal {
+    &:start {
+      background-image: url(Images/scroll-left.png);
+    }
+
+    &:end {
+      background-image: url(Images/scroll-right.png);
+    }
+  }
+
   &:vertical {
     &:start {
       background-image: url(Images/scroll-up.png);
@@ -59,4 +77,14 @@ body {
   &:hover {
     background-color: darken(#3e3e42, 10%);
   }
+}
+
+::-webkit-scrollbar-corner {
+  background-color: #3e3e42;
+}
+
+
+::selection {
+  background: lighten($color-accent, 10%);
+  color: white;
 }

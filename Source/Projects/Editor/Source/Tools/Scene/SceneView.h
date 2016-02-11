@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** SceneView.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "NativeEditorTool.h"
@@ -16,19 +29,9 @@ public:
 private:
     Editor *m_editor;
 
-    float m_camZoom;
+    void onFocusChanged(EVENT_HANDLER(NativeEditorTool));
+    void onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool));
 
-    ursine::SVec3 m_camPos;
-    
-    ursine::graphics::Camera &getEditorCamera(void);
-
-    void onAppUpdate(EVENT_HANDLER( ursine::Application ));
-
-    void onViewportInvalidated(EVENT_HANDLER( NativeEditorTool ));
-
-    void onMouseScroll(EVENT_HANDLER( ursine::MouseManager ));
-
-    void UpdateCameraKeys(float dt);
-    void UpdateCameraMouse(float dt);
+    void onViewportInvalidated(EVENT_HANDLER(NativeEditorTool));
 
 } Meta(Enable);

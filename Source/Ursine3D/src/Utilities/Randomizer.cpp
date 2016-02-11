@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Randomizer.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Randomizer.h"
@@ -5,42 +18,40 @@
 namespace ursine
 {
     Randomizer::Randomizer(void)
-        : _min(0)
-        , _max(0)
+        : m_distributor(0.0f, 0.0f)
     {
 
     }
 
     Randomizer::Randomizer(float min, float max)
-        : _min(min)
-        , _max(max)
+        : m_distributor(min, max)
     {
 
     }
 
-    float Randomizer::GetValue(void) const
+    float Randomizer::GetValue(void)
     {
-        return math::Rand(_min, _max);
+        return m_distributor(m_engine);
     }
 
     float Randomizer::GetMin(void) const
     {
-        return _min;
+        return m_distributor.min();
     }
 
     void Randomizer::SetMin(float min)
     {
-        _min = min;
+        m_distributor = std::uniform_real_distribution<float>(min, m_distributor.max());
     }
 
     float Randomizer::GetMax(void) const
     {
-        return _max;
+        return m_distributor.max();
     }
 
     void Randomizer::SetMax(float max)
     {
-        _max = max;
+        m_distributor = std::uniform_real_distribution<float>(m_distributor.min(), max);
     }
 
     template<>

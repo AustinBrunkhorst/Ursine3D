@@ -1,11 +1,23 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Function.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Function.h"
 #include "LanguageTypes/Class.h"
 
-#include <Utils.h>
-
 #include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 Function::Function(
     const Cursor &cursor, 
@@ -36,15 +48,7 @@ TemplateData Function::CompileTemplate(const ReflectionParser *context) const
     if (m_parent)
         data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
     
-    data[ "isVoidReturnType" ] = 
-        utils::TemplateBool( m_returnType == kReturnTypeVoid );
-
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-    
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialFunctionInvocation );
-
-    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -61,9 +65,7 @@ bool Function::isAccessible(void) const
 
 std::string Function::getQualifiedSignature(void) const
 {
-    std::string argsList;
-
-    ursine::utils::Join( m_signature, ", ", argsList );
+    auto argsList = boost::join( m_signature, ", " );
 
     return (boost::format( "%1%(*)(%2%)" ) % m_returnType % argsList).str( );
 }

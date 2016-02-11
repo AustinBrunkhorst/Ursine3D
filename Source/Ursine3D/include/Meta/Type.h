@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "Macros.h"
+
 #include "TypeConfig.h"
 #include "InvokableConfig.h"
 #include "ArgumentConfig.h"
@@ -19,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <functional>
 
 namespace ursine
 {
@@ -41,12 +44,20 @@ namespace ursine
         public:
             typedef std::vector<Type> List;
             typedef std::set<Type> Set;
+            typedef std::function<Variant(const Variant &, const Field &)> SerializationGetterOverride;
 
             static const TypeID Invalid = 0;
 
+            #if defined(___REFLECTION_PARSER__)
+
+            Meta(Enable, Getter( "GetName" ))
+            const std::string name;
+
+            #endif
+
             Type(void);
             Type(const Type &rhs);
-            Type(TypeID id);
+            Type(TypeID id, bool isArray = false);
 
             operator bool(void) const;
 
@@ -164,6 +175,11 @@ namespace ursine
              */
             bool IsClass(void) const;
 
+            /** @brief Determines if this type is an array type.
+             *  @return true if the type is an array type.
+             */
+            bool IsArray(void) const;
+
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
@@ -171,7 +187,7 @@ namespace ursine
              *  @return Qualified name of the type as it is declared.
              *          ie - "boost::regex"
              */
-            const std::string &GetName(void) const;
+            std::string GetName(void) const;
 
             /** @brief Gets meta data for this type.
              *  @return Meta Data Manager for this type.
@@ -235,6 +251,13 @@ namespace ursine
              *          ie - const int * -> int
              */
             Type GetDecayedType(void) const;
+
+            /** @brief Gets the type that this array type holds.
+            *  @return Type this array type holds.
+            *          ie - Array<double> -> double
+            *          Non array types return itself.
+            */
+            Type GetArrayType(void) const;
 
             /** @brief Gets the enumeration representing this type, 
              *         assuming it's an enum type.
@@ -304,6 +327,11 @@ namespace ursine
             const Constructor &GetDynamicConstructor(
                   const InvokableSignature &signature = InvokableSignature( )
             ) const;
+
+            /** @brief Gets the constructor for this array type.
+             *  @return Reference to the array constructor in the reflection database.
+             */
+            const Constructor &GetArrayConstructor(void) const;
 
             /** @brief Gets the destructor for this type assuming it's a 
              *         class type.
@@ -401,8 +429,11 @@ namespace ursine
              */
             const Global &GetStaticField(const std::string &name) const;
 
-            Json SerializeJson(const Variant &instance) const;
+            Json SerializeJson(const Variant &instance, bool invokeHook = true) const;
+            Json SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride, bool invokeHook = true) const;
             Variant DeserializeJson(const Json &value) const;
+            Variant DeserializeJson(const Json &value, const Constructor &ctor) const;
+            void DeserializeJson(Variant &instance, const Json &value) const;
 
         private:
             friend class std::allocator<Type>;
@@ -421,7 +452,8 @@ namespace ursine
             friend class Global;
 
             TypeID m_id;
-        };
+            bool m_isArray;
+        } Meta(Enable, WhiteListMethods);
     }
 }
 

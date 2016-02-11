@@ -5,8 +5,10 @@
     <template>
         <header id="header">
             <span class="text">{{heading}}</span>
+            <div id="btnRemove"></div>
         </header>
         <div id="container">
+            <div id="buttons"></div>
             <content></content>
             <div id="fieldInspectors"></div>
         </div>
@@ -23,13 +25,26 @@
                     type: Boolean,
                     notify: true,
                     observer: '_onOpenedChanged'
+                },
+                canRemove: {
+                    type: Boolean,
+                    notify: true,
+                    value: true,
+                    observer: '_onCanRemoveChanged'
                 }
             },
             listeners: {
-                'header.click': '_onHeaderClick'
+                'header.click': '_onHeaderClick',
+                'btnRemove.click': '_onRemoveClicked'
+            },
+            get header() {
+                return this.$.header;
             },
             get container() {
                 return this.$.container;
+            },
+            get buttons() {
+                return this.$.buttons;
             },
             get fieldInspectors() {
                 return this.$.fieldInspectors;
@@ -37,10 +52,26 @@
 
             _onOpenedChanged: function() {
                 this.classList.toggle( 'opened', !!this.opened );
+
+                this.fire( 'open-changed', {
+                    open: this.opened
+                } );
+            },
+            _onCanRemoveChanged: function() {
+                this.$.btnRemove.style.display = this.canRemove ? 'block' : 'none';
             },
 
             _onHeaderClick: function() {
                 this.opened = !this.opened;
+            },
+            _onRemoveClicked: function(e) {
+                this.fire( 'removed', { } );
+
+                e.preventDefault( );
+                e.stopPropagation( );
+                e.stopImmediatePropagation( );
+
+                return false;
             }
         });
     </script>

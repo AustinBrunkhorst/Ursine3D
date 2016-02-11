@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Entity.h
 **
@@ -15,6 +15,7 @@
 
 #include "EntityConfig.h"
 #include "ComponentConfig.h"
+#include "SystemConfig.h"
 
 #include "TransformComponent.h"
 
@@ -40,9 +41,6 @@ namespace ursine
             typedef uint32 EventID;
             typedef EventDispatcher<EventID> EventDispatcher;
 
-            // Allow use of ChainableEventOperator
-            typedef EventID KeyType;
-
             ////////////////////////////////////////////////////////////////////
             // State/Identification
             ////////////////////////////////////////////////////////////////////
@@ -54,7 +52,7 @@ namespace ursine
             // world when this entity was created)
             EntityUniqueID GetUniqueID(void) const;
 
-            // determines if the entity is currently being deleted
+            // Determines if the entity is currently being deleted
             bool IsDeleting(void) const;
 
             // Determines if the entity is active (being used in the world)
@@ -62,6 +60,30 @@ namespace ursine
 
             // Determines if this entity is both active and not being deleted
             bool IsAvailable(void) const;
+
+            // Determines if this entity can be deleted
+            bool IsDeletionEnabled(void) const;
+
+            // Enables deletion for this entity
+            void EnableDeletion(bool enabled);
+
+            // Determines if this entity change change it's hierarchy
+            bool IsHierarchyChangeEnabled(void) const;
+
+            // Enables hierarchy change for this entity
+            void EnableHierarchyChange(bool enabled);
+
+            // Determines if this entity will be serialized
+            bool IsSerializationEnabled(void) const;
+
+            // Enables serialization for this entity
+            void EnableSerialization(bool enabled);
+
+            // Determines if this entity is visible in the editor
+            bool IsVisibleInEditor(void) const;
+
+            // Sets whether or not the entity is visible in the editor
+            void SetVisibleInEditor(bool visible);
 
             // Removes this entity from the world
             void Delete(void);
@@ -86,6 +108,9 @@ namespace ursine
             // Utilities
             ////////////////////////////////////////////////////////////////////
 
+            // Creates a clone of this entity
+            Entity *Clone(void);
+
             // Gets the local timer manager for this entity
             LocalTimerManager &GetTimers(void);
 
@@ -95,6 +120,9 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
             // Components
             ////////////////////////////////////////////////////////////////////
+
+            // Adds a component based on an existing instance
+            void AddComponent(Component *component);
 
             // Adds a component this entity. Arguments passed are forwarded to 
             // the components constructor
@@ -123,7 +151,7 @@ namespace ursine
 
             // Determines if the entity has this component type based on 
             // the specified type mask
-            bool HasComponent(ComponentTypeMask mask) const;
+            bool HasComponent(const ComponentTypeMask &mask) const;
 
             // Gets all components for this entity. Avoid this, it's slow.
             // (chances are you don't need to use it)
@@ -133,41 +161,48 @@ namespace ursine
 			// Hierarchy
 			////////////////////////////////////////////////////////////////////
 
+            // Gets children of this entity
+            const std::vector<EntityID> *GetChildren(void) const;
+
 			// Gets a component of the specified type in this entity's children (type safe) (depth first)
 			// nullptr if it doesn't exist
 			template<class ComponentType>
-			inline ComponentType *GetComponentInChildren(const Entity *entity) const;
+			inline ComponentType *GetComponentInChildren(void) const;
 
 			// Gets a component of the specified type id in this entity's children (depth first)
 			// nullptr if it doesn't exist. Use the type safe version when possible
-			Component *GetComponentInChildren(const Entity *entity, ComponentTypeID id) const;
+			Component *GetComponentInChildren(ComponentTypeID id) const;
+
+            // Gets a child by desired name
+            // nullptr if it doesn't exist
+            Entity* GetChildByName(const std::string& name) const;
 
 			// Gets a component of the specified type in this entity's parent (type safe)
 			// nullptr if it doesn't exist
 			template<class ComponentType>
-			inline ComponentType *GetComponentInParent(const Entity *entity) const;
+			inline ComponentType *GetComponentInParent(void) const;
 
 			// Gets a component of the specified type id in this entity's parent
 			// nullptr if it doesn't exist. Use the type safe version when possible
-			Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
+			Component *GetComponentInParent(ComponentTypeID id) const;
 
 			// Gets the components of the specified type in this entity's children (type safe)
 			// nullptr if it doesn't exist
 			template<class ComponentType>
-			inline std::vector<ComponentType*> GetComponentsInChildren(const Entity *entity) const;
+			inline std::vector<ComponentType*> GetComponentsInChildren(void) const;
 
 			// Gets the components of the specified type id in this entity's children
 			// nullptr if it doesn't exist. Use the type safe version when possible
-			ComponentVector GetComponentsInChildren(const Entity *entity, ComponentTypeID id) const;
+			ComponentVector GetComponentsInChildren(ComponentTypeID id) const;
 
 			// Gets the components of the specified type in this entity's parents (type safe)
 			// nullptr if it doesn't exist
 			template<class ComponentType>
-			inline std::vector<ComponentType*> GetComponentsInParents(const Entity *entity) const;
+			inline std::vector<ComponentType*> GetComponentsInParents(void) const;
 
 			// Gets the components of the specified type id in this entity's parents
 			// nullptr if it doesn't exist. Use the type safe version when possible
-			ComponentVector GetComponentsInParents(const Entity *entity, ComponentTypeID id) const;
+			ComponentVector GetComponentsInParents(ComponentTypeID id) const;
 
             // Find this entity's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -178,21 +213,36 @@ namespace ursine
             // Sets this entity's index in the parent's children list
             void SetSiblingIndex(uint index) const;
 
+			const Entity *GetParent(void) const;
+			Entity *GetParent(void);
+
+			const Entity *GetRoot(void) const;
+			Entity *GetRoot(void);
+
             ////////////////////////////////////////////////////////////////////
             // Events
             ////////////////////////////////////////////////////////////////////
 
             template<typename Args>
-            void Connect(EventID event, StaticDelegate<Args> delegate);
+            void Connect(
+                EventID event, 
+                EventDispatcher::HandlerType::StaticDelegate<Args> delegate,
+                EventHandlerPriority priority = kDefaultEventHandlerPriority
+            );
 
             template<typename Class, typename Args>
-            void Connect(EventID event, Class *context, ClassDelegate<Class, Args> delegate);
+            void Connect(
+                EventID event, 
+                Class *context, 
+                EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate,
+                EventHandlerPriority priority = kDefaultEventHandlerPriority
+            );
 
             template<typename Args>
-            void Disconnect(EventID event, StaticDelegate<Args> delegate);
+            void Disconnect(EventID event, EventDispatcher::HandlerType::StaticDelegate<Args> delegate);
 
             template<typename Class, typename Args>
-            void Disconnect(EventID event, Class *context, ClassDelegate<Class, Args> delegate);
+            void Disconnect(EventID event, Class *context, EventDispatcher::HandlerType::ClassDelegate<Class, Args> delegate);
 
             void Dispatch(EventID event, const EventArgs *args);
             
@@ -200,14 +250,10 @@ namespace ursine
             ChainableEventOperator<Entity, Listener> Listener(Listener *listener = nullptr);
 
         private:
-            enum Flags
-            {
-                DELETING = 1,
-                ACTIVE = 2
-            };
-
             // entity manager needs to be able to construct entities
             friend class EntityManager;
+            friend class WorldSerializer;
+            friend class EntitySerializer;
 
             // access ids directly
             friend class NameManager;
@@ -222,8 +268,12 @@ namespace ursine
             // access type and system bits
             friend class FilterSystem;
 
-            // misc flags for the state of this entity
-            uint32 m_flags;
+            bool m_active                 : 1;
+            bool m_deleting               : 1;
+            bool m_deletionEnabled        : 1;
+            bool m_hierarchyChangeEnabled : 1;
+            bool m_serializationEnabled   : 1;
+            bool m_visibleInEditor        : 1;
 
             // active id in the entity manager
             EntityID m_id;
@@ -238,7 +288,7 @@ namespace ursine
             Transform *m_transform;
 
             // systems using this entity
-            ComponentTypeMask m_systemMask;
+            SystemTypeMask m_systemMask;
 
             // components attached to this entity
             ComponentTypeMask m_typeMask;
@@ -251,15 +301,18 @@ namespace ursine
             Entity(World *world, EntityID id);
 
             // sets/unsets component systems for this entity (which filter systems own it)
-            void setSystem(ComponentTypeMask mask);
-            void unsetSystem(ComponentTypeMask mask);
+            void setSystem(SystemTypeMask mask);
+            void unsetSystem(SystemTypeMask mask);
 
             // sets/unsets component types for this entity (which components it has)
-            void setType(ComponentTypeMask mask);
-            void unsetType(ComponentTypeMask mask);
+            void setType(const ComponentTypeMask &mask);
+            void unsetType(const ComponentTypeMask &mask);
 
             // resets data for this entity
             void reset(void);
+
+			// set the entity and all of it's children's deleting flags
+			void setDeletingTrue(void);
         };
     }
 }

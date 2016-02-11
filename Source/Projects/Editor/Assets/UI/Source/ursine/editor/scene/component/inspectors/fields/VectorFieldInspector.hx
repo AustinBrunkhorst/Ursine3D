@@ -8,18 +8,35 @@ import ursine.editor.scene.component.ComponentDatabase;
     "ursine::Vec3",
     "ursine::SVec3",
     "ursine::Vec4",
-    "ursine::SVec4"
+    "ursine::SVec4",
+    "ursine::SQuat"
 )
 class VectorFieldInspector extends FieldInspectionHandler {
-    public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
+    private var m_fieldsContainer : js.html.DivElement;
+    private var m_fields : Map<String, NumberInput>;
+
+    public function new(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
-        var fields = Reflect.fields( type.fields );
+        m_fieldsContainer = js.Browser.document.createDivElement( );
+        {
+            m_fieldsContainer.classList.add( 'vector-fields' );
 
-        for (name in fields) {
-            var vectorField = Reflect.field( type.fields, name );
+            inspector.container.appendChild( m_fieldsContainer );
+        }
 
-            createVectorField( vectorField );
+        m_fields = new Map<String, NumberInput>( );
+
+        for (field in type.fields) {
+            createVectorField( field );
+        }
+
+        updateValue( instance );
+    }
+
+    public override function updateValue(value : Dynamic) {
+        for (field in m_fields.keys( )) {
+            updateVectorField( field, Reflect.field( value, field ) );
         }
     }
 
@@ -27,14 +44,35 @@ class VectorFieldInspector extends FieldInspectionHandler {
         var number = new NumberInput( );
 
         number.step = '0.1';
-        number.value = Reflect.field( m_instance, field.name );
 
-        number.addEventListener( 'input', function() {
-            Reflect.setField( m_instance, field.name, number.valueAsNumber );
+        number.addEventListener( 'change', function() {
+            var value : Float = number.valueAsNumber;
 
-            m_owner.notifyChanged( m_field, m_instance );
+            if (Math.isNaN( value ))
+                value = 0;
+
+            Reflect.setField( m_instance, field.name, value );
+
+            notifyChanged( m_field, m_instance );
         } );
 
-        inspector.container.appendChild( number );
+        // select all text on focus
+        number.addEventListener( 'focus', function(e) {
+            haxe.Timer.delay( function() {
+                number.select( );
+            }, 50 );
+
+            e.preventDefault( );
+        } );
+
+        m_fields[ field.name ] = number;
+
+        m_fieldsContainer.appendChild( number );
+    }
+
+    private function updateVectorField(name : String, value : Dynamic) {
+        var field = m_fields[ name ];
+
+        field.value = untyped Math.toMaxPrecision( value, 5 );
     }
 }

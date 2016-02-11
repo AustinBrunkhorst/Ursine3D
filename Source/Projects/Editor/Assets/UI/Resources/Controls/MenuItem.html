@@ -2,6 +2,7 @@
 
 <dom-module id="x-menu-item">
     <template>
+        <span id="icon"></span>
         <span id="text">
             <content>{{text}}</content>
         </span>
@@ -15,6 +16,12 @@
                     type: String,
                     notify: true
                 },
+                icon: {
+                    type: String,
+                    value: '',
+                    notify: true,
+                    observer: '_onIconChanged'
+                },
                 disabled: {
                     type: Boolean,
                     value: false,
@@ -26,6 +33,9 @@
                 'mouseover': '_onMouseEnter',
                 'mouseout': '_onMouseLeave',
                 'click': '_onClick'
+            },
+            created: function() {
+                this._lastIcon = '';
             },
             attached: function () {
                 this._onItemsChanged( );
@@ -49,18 +59,35 @@
             },
 
             _onMouseEnter: function (e) {
-                if (this.disabled)
-                    return;
-
                 var hovered = this.parentNode.querySelectorAll( ':scope > .hover' );
 
                 // remove hover from all siblings
-                [].forEach.call( hovered, function (item) {
+                [].forEach.call( hovered, function(item) {
                     item.classList.remove( 'hover' );
                 } );
 
+                if (this.disabled)
+                    return;
+
                 // make this item hovered
                 this.classList.add( 'hover' );
+
+                var menu = this.$.menu;
+                var bounds = menu.getBoundingClientRect( );
+
+                if (bounds.right > window.innerWidth) {
+                    menu.classList.add( 'left' );
+                } else if (bounds.left <= 0) {
+                    menu.classList.remove( 'clear-left' );
+                }
+
+                if (bounds.bottom > window.innerHeight) {
+                    menu.classList.add( 'top' );
+                }
+
+                // make sure this event doesn't bubble to the parent
+                e.stopPropagation( );
+                e.stopImmediatePropagation( );
             },
             _onMouseLeave: function (e) {
                 // make sure this event doesn't bubble to the parent
@@ -79,7 +106,7 @@
 
                 var result = this.fire( 'open', e );
 
-                if (!result.disableClose && this.$.menu.empty) {
+                if (result.disableClose !== true && this.$.menu.empty) {
                     this._clearChildrenFocus( );
 
                     this.rootMenu.close( );
@@ -90,6 +117,15 @@
                     this.removeAttribute( 'has-sub-menu' );
                 else
                     this.setAttribute( 'has-sub-menu', true );
+            },
+            _onIconChanged: function() {
+                if (this._lastIcon != '')
+                    this.$.icon.classList.remove( this._lastIcon );
+
+                if (this.icon != '')
+                    this.$.icon.classList.add( this.icon );
+
+                this._lastIcon = this.icon;
             },
             _onDisabledChanged: function () {
                 if (this.disabled)
@@ -102,8 +138,9 @@
                 var hovered = this.$.menu.querySelectorAll( '.hover' );
 
                 // remove hover from child menus
-                [].forEach.call( hovered, function (item) {
+                [ ].forEach.call( hovered, function(item) {
                     item.classList.remove( 'hover' );
+
                 } );
             }
         } );

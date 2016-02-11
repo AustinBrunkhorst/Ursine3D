@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EntityConfig.h
 **
@@ -25,6 +25,7 @@ namespace ursine
 
         typedef uint32 EntityID;
         typedef uint32 EntityUniqueID;
+
         typedef std::vector<Entity*> EntityVector;
         typedef std::vector<std::string> EntityGroupVector;
     }

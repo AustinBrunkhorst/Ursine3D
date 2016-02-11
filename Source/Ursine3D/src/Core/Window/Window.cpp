@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Window.cpp
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Window.h"
@@ -9,7 +22,7 @@
 
 namespace ursine
 {
-     Window::Window(WindowManager *manager, WindowHandle *handle)
+     Window::Window(WindowManager *manager, InternalWindowHandle handle)
         : EventDispatcher( this )
         , m_isFocused( true )
         , m_isFullscreen( false )
@@ -18,7 +31,11 @@ namespace ursine
         , m_manager( manager )
         , m_handle( handle )
     {
-        
+        int width, height;
+
+        SDL_GetWindowSize( handle, &width, &height );
+
+        m_size.Set( static_cast<float>( width ), static_cast<float>( height ) );
     }
 
     Window::~Window(void)
@@ -85,7 +102,7 @@ namespace ursine
         return m_isFocused;
     }
 
-    WindowHandle *Window::GetHandle(void) const
+    InternalWindowHandle Window::GetInternalHandle(void) const
     {
         return m_handle;
     }
