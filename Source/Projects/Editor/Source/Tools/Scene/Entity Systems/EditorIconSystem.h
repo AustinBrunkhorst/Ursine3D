@@ -26,4 +26,4 @@ private:
     void OnRemove(void) override;
 
     void onIconAdd(EVENT_HANDLER(ursine::ecs::World));
-} Meta(Enable);
+} Meta(Enable, AutoAddEntitySystem);

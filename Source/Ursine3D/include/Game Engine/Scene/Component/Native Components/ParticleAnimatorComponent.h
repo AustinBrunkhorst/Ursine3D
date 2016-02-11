@@ -31,7 +31,7 @@ namespace ursine
 
         public:
             EditorField(
-                Vec3 force,
+                SVec3 force,
                 GetForce,
                 SetForce
             );
@@ -77,8 +77,8 @@ namespace ursine
 
         } Meta(
             Enable,
-            DisplayName("ParticleAnimator"),
-            RequiresComponents(typeof(ursine::ecs::ParticleSystem))
+            DisplayName( "ParticleAnimator" ),
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )
         );
     }
 }

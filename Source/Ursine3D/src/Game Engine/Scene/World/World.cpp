@@ -23,7 +23,9 @@
 #include "UtilityManager.h"
 #include "SystemManager.h"
 
-#include <EntitySerializer.h>
+#include "EntitySerializer.h"
+
+#include "WorldConfigComponent.h"
 
 namespace
 {
@@ -65,9 +67,20 @@ namespace ursine
         World::~World(void)
         {
             delete m_systemManager;
+
+            m_systemManager = nullptr;
+
             delete m_utilityManager;
+
+            m_utilityManager = nullptr;
+
             delete m_nameManager;
+
+            m_nameManager = nullptr;
+
             delete m_entityManager;
+            
+            m_entityManager = nullptr;
             
             m_settings = nullptr;
         }
@@ -178,9 +191,21 @@ namespace ursine
             Dispatch( WORLD_UPDATE, EventArgs::Empty );
         }
 
+        void World::EditorUpdate(void)
+        {
+            clearDeletionQueue( );
+
+            Dispatch( WORLD_EDITOR_UPDATE, EventArgs::Empty );
+        }
+
         void World::Render(void)
         {
             Dispatch( WORLD_RENDER, EventArgs::Empty );
+        }
+
+        void World::EditorRender(void)
+        {
+            Dispatch( WORLD_EDITOR_RENDER, EventArgs::Empty );
         }
 
         Entity *World::GetSettings(void) const
@@ -205,6 +230,10 @@ namespace ursine
 
         void World::DispatchLoad(void)
         {
+            // make sure we have a the world configuration component
+            if (!m_settings->HasComponent<WorldConfig>( ) )
+                m_settings->AddComponent<WorldConfig>( );
+
             if (!m_loaded)
             {
                 m_systemManager->onAfterLoad( );
@@ -215,8 +244,8 @@ namespace ursine
 
 		void World::deleteEntity(Entity *entity)
 		{
-			m_nameManager->Remove(entity);
-			m_entityManager->Remove(entity);
+			m_nameManager->Remove( entity );
+			m_entityManager->Remove( entity );
 		}
 				
         void World::clearDeletionQueue(void)

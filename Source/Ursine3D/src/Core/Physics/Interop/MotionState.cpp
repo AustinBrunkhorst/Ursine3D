@@ -33,7 +33,7 @@ namespace ursine
 
         void MotionState::setWorldTransform(const btTransform& centerOfMassWorldTrans)
         {
-			if (m_bodyFlag == BF_KINEMATIC)
+		   if (m_bodyFlag == BF_KINEMATIC)
 				return;
 
             btDefaultMotionState::setWorldTransform( centerOfMassWorldTrans );

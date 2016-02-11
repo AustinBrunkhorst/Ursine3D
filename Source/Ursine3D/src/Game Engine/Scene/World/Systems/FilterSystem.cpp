@@ -43,7 +43,7 @@ namespace ursine
             {
                 Remove( entity );
             }
-            else if(interests)
+            else if(!removed && interests)
             {
                 Add( entity );
             }
@@ -83,9 +83,9 @@ namespace ursine
 
         void FilterSystem::Remove(Entity *entity)
         {
-            entity->unsetSystem( GetTypeMask( ) );
-
             Disable( entity );
+
+			entity->unsetSystem( GetTypeMask( ) );
         }
 
         void FilterSystem::Enable(Entity *entity)
@@ -119,6 +119,13 @@ namespace ursine
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
                 .On( m_updateType, &FilterSystem::onUpdate, m_updatePriority );
+
+			auto entities = m_world->GetEntitiesFromFilter( m_filter );
+
+			for (auto e : entities)
+			{
+				Add( e );
+			}
 
             Initialize( );
         }

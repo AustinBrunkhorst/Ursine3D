@@ -29,6 +29,8 @@ public:
 
 	ursine::ecs::Entity *GetCurrentFocus(void);
 
+    void ClearSelectedEntities(void);
+
 private:
 	void OnAfterLoad(void) override;
 	void OnRemove(void) override;
@@ -70,4 +72,4 @@ private:
 
 	SelectTool *m_selectTool;
 	DuplicateTool *m_dupTool;
-} Meta(Enable);
+} Meta(Enable, AutoAddEntitySystem);

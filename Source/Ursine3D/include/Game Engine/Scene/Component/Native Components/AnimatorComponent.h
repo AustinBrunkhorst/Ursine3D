@@ -90,11 +90,11 @@ namespace ursine
 			//	RemoveState,
 			//	"Remove State"
 			//	);
-			//
-			//// let's don't care about in-state-blending. 
-			//// just care about between-state blending first.
-			//// let's try change animation state when timedelta reaches
-			//// at the end of that keyframe of the state
+			
+			// let's don't care about in-state-blending. 
+			// just care about between-state blending first.
+			// let's try change animation state when timedelta reaches
+			// at the end of that keyframe of the state
 			//EditorButton(
 			//	AddAnimation,
 			//	"Add Animation"
@@ -104,12 +104,12 @@ namespace ursine
 			//	RemoveAnimation,
 			//	"Remove Animation"
 			//	);
-			//
-			//EditorField(
-			//	std::string stateName,
-			//	GetStateName,
-			//	SetStateName
-			//	);
+			
+			EditorField(
+				std::string stateName,
+				GetStateName,
+				SetStateName
+				);
 
 			EditorField(
 				std::string currentState,

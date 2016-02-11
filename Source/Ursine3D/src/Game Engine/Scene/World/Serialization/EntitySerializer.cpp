@@ -48,7 +48,6 @@ namespace ursine
             }
         }
 
-
         EntitySerializer::EntitySerializer(void)
         {
             
@@ -266,7 +265,7 @@ namespace ursine
             }
             else
             {
-                Component *transform = new Transform( );
+                auto *transform = new Transform( );
 
                 entity->m_world->m_entityManager->addComponent( 
                     entity, 
@@ -275,7 +274,7 @@ namespace ursine
 
                 deserializeComponent( transform, transformData );
 
-                entity->m_transform = static_cast<Transform*>( transform );
+                entity->m_transform = transform;
             }
 
             std::vector<ComponentDeserializationData> components;
@@ -315,7 +314,7 @@ namespace ursine
 
         void EntitySerializer::deserializeComponent(Component *component, const Json &data) const
         {
-            auto instance = meta::Variant { 
+            auto instance = meta::Variant {
                 component, 
                 meta::variant_policy::WrapObject( ) 
             };

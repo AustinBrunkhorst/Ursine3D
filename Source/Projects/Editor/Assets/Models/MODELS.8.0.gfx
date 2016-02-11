@@ -9,6 +9,13 @@
 #Pipe_Straight.fbx PipeStraight
 BaseModel.fbx Base
 
+#Entrenched_Test1.fbx Entrenched
+#BossArenaFBX.fbx BossRoom
+#EntryRoomFBX(Revised).fbx EntryRoom
+#PlantMonster.fbx PlantMonster
+#Pipe_Bent.fbx PipeBent
+#Pipe_Straight.fbx PipeStraight
+
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
 Ship.8.0.mdl Ship
@@ -26,6 +33,7 @@ cone_12.8.0.mdl lightCone
 #cone_16.8.0.mdl Cone
 character.8.0.mdl Character
 torus2.8.0.mdl Ring
+bomber.8.0.mdl Bomber
 
 #romekolezyum.fbx remeko
 

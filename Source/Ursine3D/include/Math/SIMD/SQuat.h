@@ -29,9 +29,16 @@ namespace ursine
 		friend class SMat4;
 
 	public:
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::X" ))
         EditorField(float x, X, SetX);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::Y" ))
         EditorField(float y, Y, SetY);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::Z" ))
         EditorField(float z, Z, SetZ);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec4::*)(void) const) &ursine::SVec4::W" ))
         EditorField(float w, W, SetW);
 
 		// Constructors

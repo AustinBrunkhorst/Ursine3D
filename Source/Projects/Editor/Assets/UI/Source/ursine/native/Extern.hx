@@ -1,20 +1,16 @@
 package ursine.native;
 
 class Extern {
-    public static function DebugEditorUI() {
-        return untyped __js__( "DebugEditorUI()" );
-    }
-
     public static function ProcessOpen(path, relative: Bool = false) {
         return untyped __js__( "ProcessOpen(path, relative)" );
     }
 
-    public static function CreateEntity() {
-        return untyped __js__( "CreateEntity()" );
+    public static function GetEditorCommands() {
+        return untyped __js__( "editor_commands_GetEditorCommands()" );
     }
 
-    public static function CreateEntityFromArchetype() {
-        return untyped __js__( "CreateEntityFromArchetype()" );
+    public static function CreateEntity() {
+        return untyped __js__( "CreateEntity()" );
     }
 
     public static function GetNativeComponentDatabase() {
@@ -37,12 +33,24 @@ class Extern {
         return untyped __js__( "SceneSave()" );
     }
 
-    public static function ScenePlay(playing : Bool) {
-        return untyped __js__( "ScenePlay(playing)" );
+    public static function ScenePlayStart() {
+        return untyped __js__( "ScenePlayStart()" );
+    }
+
+    public static function SceneSetPlayState(playing : Bool) {
+        return untyped __js__( "SceneSetPlayState(playing)" );
     }
 
     public static function SceneStep() {
         return untyped __js__( "SceneStep()" );
+    }
+
+    public static function ScenePlayStop() {
+        return untyped __js__( "ScenePlayStop()" );
+    }
+
+    public static function SceneGetEntitySystems() {
+        return untyped __js__( "SceneGetEntitySystems()" );
     }
 
     public static function NotificationButtonCallback(id : UInt, buttonID : UInt) {

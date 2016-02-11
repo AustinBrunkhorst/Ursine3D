@@ -31,4 +31,4 @@ private:
     void OnRemove(void) override;
 
     void onRenderHook(EVENT_HANDLER(ursine::ecs::RenderSystem));
-} Meta(Enable);
+} Meta(Enable, AutoAddEntitySystem);

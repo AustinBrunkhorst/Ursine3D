@@ -35,6 +35,7 @@ namespace ursine
             SHADER_SPOT_LIGHT,
             SHADER_POINT_LIGHT, //this order is important, DO NOT SWAP
             SHADER_DIRECTIONAL_LIGHT,
+            SHADER_EMISSIVE,
 
             /////////////////////////////////////////////////////////
             // and past this is debug!
@@ -43,6 +44,7 @@ namespace ursine
             
 
             //shaders not part of the regular pipeline
+            SHADER_FORWARD,
             SHADER_POINT,
             SHADER_SHADOW,
 

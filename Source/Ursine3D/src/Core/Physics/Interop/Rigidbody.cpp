@@ -118,10 +118,30 @@ namespace ursine
 		}
 
         void Rigidbody::SetBodyFlag(BodyFlag bodyFlag)
-        {
-            m_bodyType = bodyFlag;
-
+        {			
         #ifdef BULLET_PHYSICS
+
+			if (m_bodyType != BF_DYNAMIC)
+			{
+				// unset the old flag
+				setCollisionFlags( getCollisionFlags( ) & ~m_bodyType );
+			}
+
+			if (bodyFlag != BF_DYNAMIC)
+			{
+				// set the new flag
+				setCollisionFlags( getCollisionFlags( ) | bodyFlag );
+				setActivationState( DISABLE_DEACTIVATION );
+			}
+			else
+			{
+				if (m_enableSleeping)
+					forceActivationState( ACTIVE_TAG );
+				else
+					forceActivationState( DISABLE_DEACTIVATION );
+			}
+
+            m_bodyType = bodyFlag;
 
             if (m_simulation && (bodyFlag == BF_STATIC || bodyFlag == BF_KINEMATIC))
                 m_simulation->ClearContacts( *this );
@@ -591,7 +611,12 @@ namespace ursine
 				// get the maximum scale factor
 				btVector3 min, max;
 
-				getCollisionShape( )->getAabb( getWorldTransform( ), min, max );
+                auto shape = getCollisionShape( );
+
+                if (!shape)
+                    return;
+
+                shape->getAabb( getWorldTransform( ), min, max );
 
 				float maxExtent = math::Max( 
 					math::Max(

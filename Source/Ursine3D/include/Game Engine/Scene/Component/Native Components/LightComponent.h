@@ -16,6 +16,7 @@
 #include "Component.h"
 #include "Renderable.h"
 #include "RenderableComponentBase.h"
+#include "RenderMask.h"
 
 namespace ursine
 {
@@ -36,37 +37,38 @@ namespace ursine
 
         public:
             EditorField(
-                LightType Type,
-                GetType,
-                SetType
+                ursine::ecs::LightType type,
+                GetLightType,
+                SetLightType
             );
 
             EditorField(
-                SVec3 Direction,
-                GetDirection,
-                SetDirection
-            );
-
-            EditorField(
-                Color Color,
+                Color color,
                 GetColor,
                 SetColor
             );
 
+			Meta(BitMaskEditor)
+			EditorField(
+				ursine::ecs::RenderMask renderMask,
+				GetRenderMask,
+				SetRenderMask
+			);
+
             EditorField(
-                float Intensity,
+                float intensity,
                 GetIntensity,
                 SetIntensity
             );
 
             EditorField(
-                float Radius,
+                float radius,
                 GetRadius,
                 SetRadius
             );
 
             EditorField(
-                Vec2 SpotlightAngles,
+                Vec2 spotlightAngles,
                 GetSpotlightAngles,
                 SetSpotlightAngles
             );
@@ -83,8 +85,8 @@ namespace ursine
             Meta(Disable)
             const ursine::graphics::Light *GetLight(void);
 
-            LightType GetType(void);
-            void SetType(LightType type);
+            ursine::ecs::LightType GetLightType(void);
+            void SetLightType(ursine::ecs::LightType type);
 
             const SVec3 &GetDirection(void);
             void SetDirection(const SVec3 &dir);
@@ -103,6 +105,9 @@ namespace ursine
 
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
+
+			ursine::ecs::RenderMask GetRenderMask(void) const;
+			void SetRenderMask(ursine::ecs::RenderMask mask);
 
             //private methods
         private:

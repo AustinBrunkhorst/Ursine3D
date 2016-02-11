@@ -49,9 +49,9 @@ namespace ursine
 				auto *newMesh = new Mesh();
 				m_modelArray[name]->AddMesh(newMesh);
 
-				unsigned indices[1024];
+				unsigned indices[ 1024 * 6];
 
-				for (int x = 0; x < 1024; ++x)
+				for (int x = 0; x < 1024 * 6; ++x)
 					indices[x] = x;
 
 				D3D11_BUFFER_DESC indexBufferDesc;
@@ -59,7 +59,7 @@ namespace ursine
 
 				//Set up the description of the static index buffer.
 				indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-				indexBufferDesc.ByteWidth = sizeof(unsigned) * 1024;
+				indexBufferDesc.ByteWidth = sizeof(unsigned) * 1024 * 6;
 				indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 				indexBufferDesc.CPUAccessFlags = 0;
 				indexBufferDesc.MiscFlags = 0;
@@ -389,7 +389,7 @@ namespace ursine
 
 		void ModelManager::LoadModel_Fbx(std::string name, std::string fileName)
 		{
-			UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+			UAssert(m_modelArray[name] == nullptr, "Model with name '%s' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
 			std::vector<AnimationVertex> buffer;
 			CFBXLoader fbx_model;

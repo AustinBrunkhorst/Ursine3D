@@ -42,5 +42,5 @@ private:
 
     bool isAccessible(void) const;
 
-    std::string getTemplateParameters(void) const;
+    std::string getTemplateParameters(bool isDynamic) const;
 };

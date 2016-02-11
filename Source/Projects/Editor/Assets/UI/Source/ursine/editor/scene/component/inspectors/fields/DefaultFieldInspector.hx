@@ -34,6 +34,8 @@ class DefaultFieldInspector extends FieldInspectionHandler implements IFieldInsp
             } else {
                 m_comboInput.value = value;
             }
+        } else if (m_arrayInspector != null) {
+            m_arrayInspector.updateValue( value );
         } else {
             for (field in m_type.fields) {
                 var handler : FieldInspectionHandler = m_structFieldHandlers[ field.name ];

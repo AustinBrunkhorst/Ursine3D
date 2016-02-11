@@ -81,12 +81,12 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-            void onEditorUpdate(EVENT_HANDLER(World));
+            void onEditorRender(EVENT_HANDLER(World));
 
     #endif
 
             void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
 
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

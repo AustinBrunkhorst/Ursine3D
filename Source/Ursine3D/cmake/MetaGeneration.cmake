@@ -74,6 +74,14 @@ function(ursine_build_meta)
 	
     set(DEFINES ${GLOBAL_META_DEFINES} ${BUILD_META_DEFINES})
 
+    string(REPLACE " " "" DEFINES_TRIMMED "${DEFINES}")
+
+    if ("${DEFINES_TRIMMED}" STREQUAL "")
+    	set(DEFINES_SWITCH )
+    else ()
+    	set(DEFINES_SWITCH --defines "${DEFINES}")
+    endif ()
+
     # empty source files need to include the precompiled header
     if (NOT "${BUILD_META_PCH_NAME}" STREQUAL "")
         set(EMPTY_SOURCE_CONTENTS "#include \"${BUILD_META_PCH_NAME}.h\"")
@@ -113,7 +121,7 @@ function(ursine_build_meta)
         --out-dir "${BUILD_META_GENERATED_DIR}"
         ${PCH_SWITCH}
         --includes "${INCLUDES_FILE}"
-        --defines ${DEFINES}
+        ${DEFINES_SWITCH}
     )
 
     set(REBUILD_TARGET "${BUILD_META_TARGET}-RebuildMeta")
@@ -131,7 +139,7 @@ function(ursine_build_meta)
         --force-rebuild
         --display-diagnostics
         --includes "${INCLUDES_FILE}"
-        --defines ${DEFINES}
+        ${DEFINES_SWITCH}
     )
 
     ursine_set_folder(${REBUILD_TARGET} ".Utility/Meta")

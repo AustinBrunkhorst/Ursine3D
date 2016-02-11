@@ -1,1 +1,1 @@
-instance.{{#hasExplicitGetter}}{{& explicitGetter}}( ){{/hasExplicitGetter}}{{^hasExplicitGetter}}{{& name}}{{/hasExplicitGetter}}
+{{#hasExplicitGetter}}{{& explicitGetter}}{{/hasExplicitGetter}}{{^hasExplicitGetter}}&{{& parentQualifiedName}}::{{& name}}{{/hasExplicitGetter}}

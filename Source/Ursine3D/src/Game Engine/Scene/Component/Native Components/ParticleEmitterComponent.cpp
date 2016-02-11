@@ -133,10 +133,14 @@ namespace ursine
             return GetOwner( )->GetTransform( )->GetWorldPosition( ) + offset;
         }
 
+        #if defined(URSINE_WITH_EDITOR)
+
         void ParticleEmitter::ResetSpawnCount(void)
         {
             m_spawnCount = 0;
         }
+
+        #endif
 
         // GETTER / SETTERS /////////////////////////////////////////
         float ParticleEmitter::GetEmitRate(void) const
@@ -224,16 +228,17 @@ namespace ursine
             m_rotationRange.SetMin(-range);
         }
 
-        const SVec3 & ParticleEmitter::GetVelocity(void) const
+        const SVec3 &ParticleEmitter::GetVelocity(void) const
         {
             return m_initialVelocity;
         }
+
         void ParticleEmitter::SetVelocity(const SVec3 & velocity)
         {
             m_initialVelocity = velocity;
         }
 
-        const SVec3 ParticleEmitter::GetVelocityRange(void) const
+        SVec3 ParticleEmitter::GetVelocityRange(void) const
         {
             return SVec3(
                 m_xVelRange.GetMax( ),
@@ -241,6 +246,7 @@ namespace ursine
                 m_zVelRange.GetMax( )
                 );
         }
+
         void ParticleEmitter::SetVelocityRange(const SVec3 & range)
         {
             m_xVelRange.SetMax(range.X( ));

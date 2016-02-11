@@ -27,4 +27,6 @@ public:
 
 private:
     void onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window));
+
+    void loadSystems(void);
 } Meta(Enable, WhiteListMethods);

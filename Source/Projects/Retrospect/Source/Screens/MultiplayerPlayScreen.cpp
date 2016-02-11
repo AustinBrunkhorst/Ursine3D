@@ -19,8 +19,7 @@
 #include <SystemManager.h>
 #include <Timer.h>
 
-#include <RoundSystem.h>
-#include <SpawnSystem.h>
+#include <WorldConfigComponent.h>
 
 #include "Retrospect.h"
 
@@ -28,7 +27,7 @@ using namespace ursine;
 
 namespace
 {
-    const auto kWorldFile = "Assets/Worlds/BlankWorld.uworld";
+    const auto kWorldFile = "Assets/Worlds/Demo/MainLevel.uworld";
 
     const auto kPauseScreenName = "PauseScreen";
 }
@@ -37,20 +36,18 @@ MultiplayerPlayScreen::MultiplayerPlayScreen(ScreenManager *manager)
     : GameplayScreen( manager )
 {
     URSINE_TODO( "this is to fix the transition flicker" );
-    Timer::Create( 250 ).Completed( [&] {
-        world = ecs::WorldSerializer( ).Deserialize( kWorldFile );
+    Timer::Create( 0 ).Completed( [&] {
+        world = ecs::World::Handle( ecs::WorldSerializer( ).Deserialize( kWorldFile ) );
         
         world->SetOwner( this );
-
-		// This order must be the same.
-        world->GetSystemManager( )->AddSystem<RoundSystem>( );
-		world->GetSystemManager( )->AddSystem<SpawnSystem>( );
 
         URSINE_TODO( "This guy should be saved in an editor specific file eventually" );
         auto editorCam = world->GetEntityFromName( "Editor Camera" );
 
 		if (editorCam)
 			editorCam->Delete( );
+
+        loadSystems( );
     } );
 
     auto *appHandler = GetCoreSystem( Retrospect );
@@ -81,4 +78,28 @@ void MultiplayerPlayScreen::onMainWindowFocusChanged(EVENT_HANDLER(Window))
     // add the pause screen if it doesn't already exist
     if (!screen) 
         screenManager->AddOverlay( kPauseScreenName );
+}
+
+void MultiplayerPlayScreen::loadSystems(void)
+{
+    auto *config = world->GetSettings( )->GetComponent<ecs::WorldConfig>( );
+
+    auto *systemManager = world->GetSystemManager( );
+
+    for (auto &system : config->systems)
+    {
+        auto type = meta::Type::GetFromName( system.type );
+
+        UAssert( type.IsValid( ), 
+            "Invalid system type '%s'.", 
+            system.type.c_str( ) 
+        );
+
+        UAssert( !systemManager->HasSystem( type ), 
+            "System '%s' already exists.", 
+            system.type.c_str( ) 
+        );
+
+        systemManager->AddSystem( type );
+    }
 }

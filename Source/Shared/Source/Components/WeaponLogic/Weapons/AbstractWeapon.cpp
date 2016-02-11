@@ -6,9 +6,11 @@
 #include <CollisionEventArgs.h>
 #include <Entity.h>
 #include <RigidbodyComponent.h>
+#include <TransformComponent.h>
 #include <BoxColliderComponent.h>
 #include "InteractableComponent.h"
 #include "WeaponPickup.h"
+#include <AnimatorComponent.h>
 
 using namespace ursine;
 
@@ -22,6 +24,7 @@ namespace
 
 
 AbstractWeapon::AbstractWeapon(void) :
+    m_owner( nullptr ),
     m_damageToApply(1.0f),
     m_critModifier(1.0f),
     m_damageInterval(1.0f),
@@ -32,17 +35,18 @@ AbstractWeapon::AbstractWeapon(void) :
     m_reloadTime(0.0f),
     m_reloadTimer(0.0f),
     m_recoilAngle(10),
-    m_maxRange(0),
+    m_maxRange(10.0f),
     m_accuracy( 1.0f ),
+    m_spreadFactor( 1.0f ),
     m_maxAmmoCount(0),
     m_clipSize(0),
     m_projFireCount(1),
     m_weaponType(PRIMARY_WEAPON),
     m_camHandle(nullptr),
+    m_firePosHandle(nullptr),
     m_archetypeToShoot("BaseBullet"),
     m_triggerPulled(false),
-    m_active(true),
-    m_remove(false)
+    m_active(true)
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -52,8 +56,10 @@ AbstractWeapon::~AbstractWeapon(void)
 {
 }
 
-void AbstractWeapon::Initialize(void)
+void AbstractWeapon::Initialize(ursine::ecs::Entity* owner)
 {
+    m_owner = owner;
+
     if ( m_maxAmmoCount == 0 )
         m_maxAmmoCount = UNLIMITED_AMMO;
 
@@ -212,7 +218,7 @@ float AbstractWeapon::GetSpreadFactor(void) const
 
 void AbstractWeapon::SetSpreadFactor(const float spread)
 {
-    m_spreadFactor = clamp(0.0f, 1.0f, spread);
+    m_spreadFactor = spread;
 }
 
 // Ammo Count
@@ -306,13 +312,6 @@ void CheckArchetypeToShoot(std::string& archetype)
         archetype += ".uatype";
 }
 
-void AbstractWeapon::SetArchetypeToShoot(const char * archetype)
-{
-    m_archetypeToShoot = archetype;
-
-    CheckArchetypeToShoot(m_archetypeToShoot);
-}
-
 // weapon type
 WeaponType AbstractWeapon::GetWeaponType( ) const
 {
@@ -333,6 +332,17 @@ ursine::SVec3 AbstractWeapon::GetSpawnOffset(void) const
 
 void AbstractWeapon::SetSpawnOffset(const ursine::SVec3& offset)
 {
+    if ( m_owner )
+    {
+        ursine::ecs::Transform* trans = m_owner->GetTransform( );
+    
+        trans->SetLocalPosition(m_owner->GetTransform( )->GetLocalPosition( ) - ( trans->GetLocalRotation( ) * m_spawnOffset ));
+
+        m_spawnOffset = offset;
+
+        trans->SetLocalPosition(m_owner->GetTransform( )->GetLocalPosition( ) + ( trans->GetLocalRotation( ) * m_spawnOffset ));
+    }
+
     m_spawnOffset = offset;
 }
 
@@ -380,7 +390,14 @@ void AbstractWeapon::TriggerReleased( EVENT_HANDLER( game::FIRE_END ) )
 
 void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, game::WeaponActivationEventArgs);
+    EVENT_SENDER(ursine::ecs::Entity, sender);
+
+    game::WeaponActivationEventArgs* args = static_cast<game::WeaponActivationEventArgs*>( const_cast<ursine::EventArgs*>( _args ) );
+
+    // connect to parent's fire event
+    args->whoToConnect->Listener(this)
+        .On(game::FIRE_START, &AbstractWeapon::TriggerPulled)
+        .On(game::FIRE_END, &AbstractWeapon::TriggerReleased);
 
     // Gun is being reloaded from inventory (swapped in) so update
     //   ammo and clip to previous values before swapped out
@@ -392,11 +409,29 @@ void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
 
     // Grab camera handle for shooting
     m_camHandle = *args->m_camHandle;
+
+    // Give access to spawn offset
+    args->m_spawnOffset = &m_spawnOffset;
+
+    // Grab fire position child
+    ursine::ecs::Entity* firePos = sender->GetChildByName("FirePos");
+
+    // if the fire position was a child then grab transform for shooting
+    if ( firePos )
+        m_firePosHandle = firePos->GetTransform( );
+
+    // Grab animator of weapon's child model
+    m_animatorHandle = sender->GetComponentInChildren<ursine::ecs::Animator>( );
 }
 
 void AbstractWeapon::DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+    EVENT_ATTRS(ursine::ecs::Entity, game::WeaponDeactivationEventArgs);
+
+    // disconnect from parent's fire event
+    args->whoToConnect->Listener(this)
+        .Off(game::FIRE_START, &AbstractWeapon::TriggerPulled)
+        .Off(game::FIRE_END, &AbstractWeapon::TriggerReleased);
 
     // unattach from parent
     sender->GetTransform( )->DetachFromParent( );
@@ -423,7 +458,12 @@ void AbstractWeapon::DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON))
 
 void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
 {
-    game::WeaponActivationEventArgs* args = static_cast<game::WeaponActivationEventArgs*>( const_cast<ursine::EventArgs*>(_args) );
+    game::WeaponDeactivationEventArgs* args = static_cast<game::WeaponDeactivationEventArgs*>( const_cast<ursine::EventArgs*>(_args) );
+
+    // disconnect from parent's fire event
+    args->whoToConnect->Listener(this)
+        .Off(game::FIRE_START, &AbstractWeapon::TriggerPulled)
+        .Off(game::FIRE_END, &AbstractWeapon::TriggerReleased);
 
     args->m_ammo = m_ammoCount;
     args->m_clip = m_clipCount;

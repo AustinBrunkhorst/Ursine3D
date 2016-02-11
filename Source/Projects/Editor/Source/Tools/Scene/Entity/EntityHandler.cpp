@@ -51,7 +51,7 @@ namespace
         
         auto file = files[ 0 ].string( );
 
-        if (!fs::WriteText( file, data.dump( ) ))
+        if (!fs::WriteText( file, data.dump( true ) ))
         {
             auto *editor = GetCoreSystem( Editor );
 
@@ -97,6 +97,19 @@ namespace
         }
         
         return field.GetValue( instance );
+    }
+
+    Json::object inspectComponent(ecs::Component *component)
+    {
+        meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+
+        auto type = instance.GetType( );
+
+        return Json::object {
+            { "type", type.GetName( ) },
+            { "value", type.SerializeJson( instance, editorGetterOverride, false ) },
+            { "buttons", InspectComponentButtons( instance ) }
+        };
     }
 }
 
@@ -156,11 +169,6 @@ JSMethod(EntityHandler::remove)
 
     entity->Delete( );
 
-	// Have this run in the main thread
-	Timer::Create( 0 ).Completed([=] {
-		GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
-	} );
-
     return CefV8Value::CreateBool( true );
 }
 
@@ -208,21 +216,49 @@ JSMethod(EntityHandler::inspect)
     Json::array componentArray;
 
     for (auto *component : components)
-    {
-        meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
-
-        auto type = instance.GetType( );
-
-        componentArray.emplace_back( Json::object {
-            { "type", type.GetName( ) },
-            { "value", type.SerializeJson( instance, editorGetterOverride, false ) },
-            { "buttons", InspectComponentButtons( instance ) }
-        } );
-    }
+        componentArray.emplace_back( ::inspectComponent( component ) );
 
     CefRefPtr<CefV8Value> output;
 
     JsonSerializer::Deserialize( componentArray, output );
+
+    return output;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+JSMethod(EntityHandler::inspectComponent)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid constructor arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        return CefV8Value::CreateBool( false );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        return CefV8Value::CreateBool( false );
+
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    auto component = entity->GetComponent( id );
+
+    if (!component)
+        return CefV8Value::CreateBool( false );
+
+    CefRefPtr<CefV8Value> output;
+
+    JsonSerializer::Deserialize( ::inspectComponent( component ), output );
 
     return output;
 }
@@ -251,7 +287,11 @@ JSMethod(EntityHandler::hasComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    return CefV8Value::CreateBool( entity->HasComponent( 1ull << id ) );
+    ecs::ComponentTypeMask mask;
+
+    mask.set( id, true );
+
+    return CefV8Value::CreateBool( entity->HasComponent( mask ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -275,14 +315,18 @@ JSMethod(EntityHandler::addComponent)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto componentTypeMask = 1ull << componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+    ecs::ComponentTypeMask componentTypeMask;
+
+    componentTypeMask.set( componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ), true );
 
 	// have this run in the main thread
 	Timer::Create( 0 ).Completed( [=] {
-		auto instance = componentType.CreateDynamic( );
-
         if (!entity->HasComponent( componentTypeMask ))
-		    entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+        {
+            auto instance = componentType.CreateDynamic( );
+
+            entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
+        }
 	} );
 
     return CefV8Value::CreateBool( true );
@@ -312,7 +356,7 @@ JSMethod(EntityHandler::removeComponent)
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
 	// Have this run in the main thread
-	Timer::Create(0).Completed([=] {
+	Timer::Create( 0 ).Completed( [=] {
 		entity->RemoveComponent( id );
 	} );
 
@@ -321,6 +365,44 @@ JSMethod(EntityHandler::removeComponent)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+JSMethod(EntityHandler::componentSet)
+{
+    if (arguments.size( ) != 2)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        JSThrow( "Unknown component type.", nullptr );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        JSThrow( "Invalid component type.", nullptr );
+
+    auto *component = entity->GetComponent( 
+        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
+    );
+
+    if (!component)
+        return CefV8Value::CreateBool( false );
+
+    auto value = JsonSerializer::Serialize( arguments[ 1 ] );
+
+    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+
+    componentType.DeserializeJson( instance, value );
+
+    return CefV8Value::CreateUndefined( );
+}
 
 JSMethod(EntityHandler::componentFieldUpdate)
 {

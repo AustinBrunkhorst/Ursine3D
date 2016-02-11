@@ -15,14 +15,12 @@ BaseWeapon::BaseWeapon( void ) :
 
 BaseWeapon::~BaseWeapon( void )
 {
-    GetOwner( )->Listener( this )
-        .Off( game::FIRE_START, &BaseWeapon::TriggerPulled )
-        .Off( game::FIRE_END, &BaseWeapon::TriggerReleased );
+    AbstractWeaponDisconnect( BaseWeapon );
 }
 
 void BaseWeapon::OnInitialize( void )
 {
-    AbstractWeaponInit( BaseWeapon );
+    AbstractWeaponInit( BaseWeapon, GetOwner( ) );
 }
 
 void BaseWeapon::RemoveMySelf(void)

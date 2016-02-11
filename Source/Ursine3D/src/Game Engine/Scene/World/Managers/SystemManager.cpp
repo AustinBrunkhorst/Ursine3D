@@ -83,6 +83,57 @@ namespace ursine
             }
         }
 
+        bool SystemManager::HasSystem(const meta::Type &systemType)
+        {
+            auto systemID = systemType.GetStaticField( "SystemID" )
+                .GetValue( )
+                .GetValue<SystemTypeID>( );
+
+            return m_systems.size( ) > systemID && m_systems[ systemID ] != nullptr;
+        }
+
+        void SystemManager::AddSystem(const meta::Type &systemType)
+        {
+            auto systemID = systemType.GetStaticField( "SystemID" )
+                .GetValue( )
+                .GetValue<SystemTypeID>( );
+                
+            UAssert( systemID != -1, 
+                "System ID for type '%s' has not been initialized.\n"
+                "Possibly forgot ENTITY_SYSTEM_DEFINITION."
+            );
+
+            // systems take a pointer to a world as the first argument
+            const auto systemConstructor = 
+                meta::InvokableSignature { typeof( World* ) };
+
+            auto constructor = 
+                systemType.GetDynamicConstructor( systemConstructor );
+
+            UAssert( constructor.IsValid( ), 
+                "System type missing dynamic constructor %s(World *)",
+                systemType.GetName( ).c_str( )
+            );
+
+            auto *system = 
+                constructor.Invoke( m_world ).GetValue<EntitySystem*>( );
+
+            system->m_typeID = systemID;
+
+            m_systems[ systemID ] = system;
+
+            if (m_initialized)
+                system->OnInitialize( );
+
+            if (m_loaded)
+                system->OnAfterLoad( );
+        }
+
+        const meta::Type::List &SystemManager::GetExposedTypes(void)
+        {
+            return getSystemTypes( );
+        }
+
         SystemManager::SystemManager(World *world)
             : WorldManager( world )
             , m_initialized( false )
@@ -111,8 +162,8 @@ namespace ursine
 
                 auto &systemMeta = systemType.GetMeta( );
 
-                // disabling auto add to the world
-                if (systemMeta.GetProperty<DisableEntitySystemAutoAdd>( ))
+                // not auto added
+                if (!systemMeta.GetProperty<AutoAddEntitySystem>( ))
                 {
                     m_systems[ systemID ] = nullptr;
 
@@ -144,10 +195,12 @@ namespace ursine
                     system->OnRemove( );
             }
                 
-            for (auto *system : m_systems)
+            for (auto *&system : m_systems)
             {
                 if (system)
                     delete system;
+
+                system = nullptr;
             }
         }
 

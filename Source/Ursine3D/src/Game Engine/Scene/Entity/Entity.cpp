@@ -22,6 +22,12 @@
 #include "NameManager.h"
 #include "UtilityManager.h"
 
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
+
 namespace ursine
 {
     namespace ecs
@@ -51,8 +57,24 @@ namespace ursine
         void Entity::Delete(void)
         {
             // it's already being deleted or deletion is disabled
-            if (!(m_active && !m_deleting) || !m_deletionEnabled)
+            if (!(m_active && !m_deleting))
                 return;
+
+            if (!m_deletionEnabled)
+            {
+            #if defined(URSINE_WITH_EDITOR)
+
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Error";
+                error.message = "The entity <strong class=\"highlight\">"+ GetName( ) +"</strong> cannot be deleted.";
+
+                EditorPostNotification( error );
+
+            #endif
+                return;
+            }
 
 			setDeletingTrue( );
 
@@ -207,7 +229,7 @@ namespace ursine
             m_world->m_entityManager->AddComponent( this, component );
         }
 
-        bool Entity::HasComponent(ComponentTypeMask mask) const
+        bool Entity::HasComponent(const ComponentTypeMask &mask) const
         {
             return utils::IsFlagSet( m_typeMask, mask );
         }
@@ -237,22 +259,18 @@ namespace ursine
             // get all children
             auto children = m_world->m_entityManager->GetChildren( this );
 
-            // id of child found with disired name
-            ursine::ecs::EntityID child = -1;
-
             // search for desired child
             for ( auto childID : *children )
             {
                 // check if names are same
                 if ( name == m_world->m_nameManager->GetName( childID ) )
                 {
-                    child = childID;
-                    break;
+                    return  m_world->m_entityManager->GetEntity( childID );
                 }
             }
 
             // return entity
-            return  m_world->m_entityManager->GetEntity(child);
+            return  nullptr;
         }
 
 	    Component* Entity::GetComponentInParent(ComponentTypeID id) const
@@ -313,12 +331,12 @@ namespace ursine
             utils::FlagUnset( m_systemMask, mask );
         }
 
-        void Entity::setType(ComponentTypeMask mask)
+        void Entity::setType(const ComponentTypeMask &mask)
         {
             utils::FlagSet( m_typeMask, mask );
         }
 
-        void Entity::unsetType(ComponentTypeMask mask)
+        void Entity::unsetType(const ComponentTypeMask &mask)
         {
             utils::FlagUnset( m_typeMask, mask );
         }

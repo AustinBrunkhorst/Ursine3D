@@ -24,6 +24,8 @@ namespace ursine
 
     namespace meta
     {
+        class Argument;
+
         class Variant
         {
         public:
@@ -44,14 +46,17 @@ namespace ursine
             template<typename T>
             Variant(T &data);
 
-            // non-const r-value references, excluding other variants
+            // non-const r-value references, excluding other variants and arguments
             template<typename T>
             Variant(T &&data, 
                 typename std::enable_if< 
-                    !std::is_same<Variant&, T>::value 
+                    !std::is_same<Variant, T>::value 
                 >::type* = nullptr,
                 typename std::enable_if< 
                     !std::is_const<T>::value 
+                >::type* = nullptr,
+                typename std::enable_if< 
+                    !std::is_same<Argument, T>::value
                 >::type* = nullptr
             );
 

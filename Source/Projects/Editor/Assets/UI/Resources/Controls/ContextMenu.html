@@ -1,0 +1,93 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="Behaviors/Menu.html">
+
+<dom-module id="x-context-menu">
+    <template>
+        <content></content>
+    </template>
+    <script>
+        var ContextMenuControl = Polymer({
+            is: "x-context-menu",
+            hostAttributes: {
+                tabindex: -1
+            },
+            properties: {
+
+            },
+            listeners: {
+                'blur': '_onBlur',
+                'mouseleave': '_onMouseLeave'
+            },
+            created: function() {
+                // make this the root menu by default
+                this.classList.add( 'root-menu' );
+
+                this.listen( this, 'item-added', '_onItemAdded' );
+            },
+            behaviors: [ MenuBehavior ],
+
+            open: function(x, y) {
+                document.querySelector( '#context-menu-container' ).appendChild( this );
+
+                this.style.left = x +'px';
+                this.style.top = y +'px';
+
+                this.focus( );
+
+                var bounds = this.getBoundingClientRect( );
+
+                if (bounds.right > window.innerWidth)
+                    this.style.left = Math.max( 0, window.innerWidth - bounds.width ) + 'px';
+
+                if (bounds.bottom > window.innerHeight)
+                    this.style.top = Math.max( 0, window.innerHeight - bounds.height ) + 'px';
+
+                if (ContextMenuControl.LastOpened)
+                    ContextMenuControl.LastOpened._delete( );
+
+                ContextMenuControl.LastOpened = this;
+            },
+            close: function() {
+                this._delete( );
+            },
+            addItem: function(text, callback) {
+                var item = new MenuItemControl( );
+
+                item.text = text;
+
+                if (callback)
+                    item.addEventListener( 'open', callback );
+
+                this.appendChild( item );
+
+                return item;
+            },
+            addSeparator: function() {
+                this.appendChild( new MenuSeparatorControl( ) );
+            },
+
+            _onItemAdded: function(e) {
+
+            },
+            _onBlur: function() {
+                this.close( );
+            },
+            _onMouseLeave: function() {
+                var hovered = this.querySelector( ':scope > .hover' );
+
+                if (hovered && hovered.menu && hovered.menu.empty) {
+                    hovered.classList.remove( 'hover' );
+                }
+            },
+
+            _delete: function() {
+                setTimeout(function() {
+                    if (this.parentNode)
+                        this.parentNode.removeChild( this );
+                }.bind( this ), 0 );
+            }
+        });
+
+        ContextMenuControl.LastOpened = null;
+    </script>
+</dom-module>

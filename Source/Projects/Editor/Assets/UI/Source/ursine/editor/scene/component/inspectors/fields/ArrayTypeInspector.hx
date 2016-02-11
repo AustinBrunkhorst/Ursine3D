@@ -29,8 +29,15 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
 
         initElements( );
 
-        for (i in 0 ... untyped instance.length) {
-            arrayInsert( i, instance[ i ] );
+        updateValue( instance );
+    }
+
+    public function updateValue(value : Dynamic)  {
+        m_itemsContainer.innerHTML = '';
+        m_arrayItems = [ ];
+
+        for (i in 0 ... untyped value.length) {
+            arrayInsert( i, value[ i ] );
 
             m_arrayItems[ i ].opened = false;
         }

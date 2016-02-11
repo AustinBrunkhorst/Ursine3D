@@ -48,15 +48,7 @@ TemplateData Function::CompileTemplate(const ReflectionParser *context) const
     if (m_parent)
         data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
     
-    data[ "isVoidReturnType" ] = 
-        utils::TemplateBool( m_returnType == kReturnTypeVoid );
-
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-    
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialFunctionInvocation );
-
-    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data, context );
 

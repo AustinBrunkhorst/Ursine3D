@@ -67,6 +67,10 @@
 #include "Utilities/Timer/TimerManager.h"
 #include "Utilities/Tween/TweenManager.h"
 
+#include "JSKeyboardManager.h"
+#include "JSGamepadManager.h"
+#include "JSScreenManager.h"
+
 /// Game Engine
 
 #include "NativeComponents.h"

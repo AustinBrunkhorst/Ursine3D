@@ -1,8 +1,9 @@
 @import 'Config';
 @import 'Utils';
 
-body {
+html, body {
   overflow: hidden;
+  white-space: nowrap;
   font-family: Roboto;
 }
 
@@ -77,6 +78,11 @@ body {
     background-color: darken(#3e3e42, 10%);
   }
 }
+
+::-webkit-scrollbar-corner {
+  background-color: #3e3e42;
+}
+
 
 ::selection {
   background: lighten($color-accent, 10%);

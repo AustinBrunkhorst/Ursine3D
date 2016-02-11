@@ -33,15 +33,18 @@ namespace ursine
             // store a pointer to the GfxAPI core system
             m_graphics = GetCoreSystem(graphics::GfxAPI);
 
-            m_base = new RenderableComponentBase([=] {
-                updateRenderer();
-            });
+            m_base = new RenderableComponentBase( std::bind( &ParticleSystem::updateRenderer, this ) );
 
             m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_PS));
 
+			m_base->m_dirty = true;
+
             // store a pointer to the model
             m_particleSystem = &m_graphics->RenderableMgr.GetParticleSystem(m_base->GetHandle());
+
+            SetRenderMask( RenderMask::Any );
         }
+
         ParticleSystem::~ParticleSystem(void)
         {
 
@@ -108,6 +111,8 @@ namespace ursine
             m_particleSystem->SetPosition(trans->GetWorldPosition( ));
 
             GetOwner()->Dispatch(ENTITY_PARTICLE_UPDATE, nullptr);
+
+			m_base->m_dirty = true;
         }
 
         const Color &ParticleSystem::GetColor(void) const
@@ -150,6 +155,17 @@ namespace ursine
         {
             return m_renderMode;
         }
+
+		RenderMask ParticleSystem::GetRenderMask(void) const
+        {
+            return static_cast<RenderMask>( m_particleSystem->GetRenderMask( ) );
+        }
+
+        void ParticleSystem::SetRenderMask(RenderMask mask)
+        {
+            m_particleSystem->SetRenderMask( static_cast<unsigned long long>( mask ) );
+        }
+
         void ParticleSystem::SetRenderMode(const RenderMode &renderMode)
         {
             m_renderMode = renderMode;

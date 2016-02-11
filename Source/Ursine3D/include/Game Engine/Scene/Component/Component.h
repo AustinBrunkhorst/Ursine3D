@@ -87,6 +87,8 @@ namespace ursine
 				ComponentType *operator->(void);
 				const ComponentType *operator->(void) const;
 
+                Entity *GetEntity(void) const;
+
 			private:
 				Entity *m_entity;
 			};
@@ -104,6 +106,8 @@ namespace ursine
 
             // component type id
             ComponentTypeID m_typeID;
+
+            ComponentTypeMask m_typeMask;
 
             // unique instance id
             ComponentUniqueID m_uniqueID;

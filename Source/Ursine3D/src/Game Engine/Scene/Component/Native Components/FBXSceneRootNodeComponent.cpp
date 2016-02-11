@@ -14,7 +14,7 @@ namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(FBXSceneRootNode);
+        NATIVE_COMPONENT_DEFINITION( FBXSceneRootNode );
 
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
@@ -96,9 +96,6 @@ namespace ursine
         void FBXSceneRootNode::clearChildren(void)
         {
 			recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
-
-			// Clear the deletion queue if the scene is paused
-			EditorClearDeletionQueue( );
         }
 
 		void FBXSceneRootNode::ImportScene(void)

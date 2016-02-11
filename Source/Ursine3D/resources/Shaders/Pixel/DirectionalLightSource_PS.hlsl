@@ -95,7 +95,6 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     // Get the base color and specular intensity
     float4 baseColor = ColorSpecIntTexture.Load( location3 );
     Out.Color = baseColor;
-    Out.SpecInt;
 
     // Sample the normal, convert it to the full range and noramalize it
     float4 normalValue = NormalTexture.Load(location3);
@@ -115,22 +114,45 @@ SURFACE_DATA UnpackGBuffer( int2 location )
 
 float3 CalcPoint( float3 position, Material material )
 {
-    float3 ToLight = -lightDirection.xyz;
-    float3 ToEye = -position;
+    //float3 ToLight = -lightDirection.xyz;
+    //float3 ToEye = -position;
 
-    // Phong diffuse
-    float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * (intensity) * material.diffuseColor.xyz;
+    //// Phong diffuse
+    //float NDotL = saturate( dot( ToLight, material.normal ) );
+    //float3 finalColor = diffuseColor.rgb * (intensity) * material.diffuseColor.xyz;
+
+    //// Blinn specular
+    //ToEye = normalize( ToEye );
+    //float3 HalfWay = normalize( ToEye + ToLight );
+    //float NDotH = saturate( dot( HalfWay, material.normal ) );
+    //finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
+
+    //finalColor *= NDotL;
+
+    //return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
+
+    ///////////////////////////
+
+
+    float3 toLight = -lightDirection.xyz;
+    float3 pixelToCamera = -position;
 
     // Blinn specular
-    ToEye = normalize( ToEye );
-    float3 HalfWay = normalize( ToEye + ToLight );
-    float NDotH = saturate( dot( HalfWay, material.normal ) );
-    finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
+    pixelToCamera = normalize(pixelToCamera);
+    float3 HalfWay = normalize(pixelToCamera + toLight);
+    float NDotH = saturate(dot(HalfWay, material.normal));
+    float specularValue = saturate(pow(NDotH, material.specPow));
 
-    finalColor *= NDotL;
+    // diffuse scalar from normal
+    float normalScalar = saturate(dot(material.normal, toLight));
 
-    return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
+    // calculate final light color
+    float3 finalLightColor = (diffuseColor.rgb + specularValue * material.specIntensity);
+
+    // apply normal scalar
+    finalLightColor *= normalScalar;
+
+    return finalLightColor * material.diffuseColor.rgb;
 }
 
 

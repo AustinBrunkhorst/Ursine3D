@@ -15,16 +15,24 @@
 
 #include "Scene.h"
 
-#include "GfxAPI.h"
+#include "WorldConfigComponent.h"
+#include "SystemManager.h"
+
+#include "Notification.h"
 
 namespace ursine
 {
     Scene::Scene(void)
-        : m_paused( true )
+        : m_playState( PS_EDITOR )
         , m_viewport( 0 )
         , m_world( std::make_shared<ecs::World>( ) )
     {
         
+    }
+
+    Scene::~Scene(void)
+    {
+
     }
 
     ecs::World *Scene::GetWorld(void)
@@ -34,7 +42,7 @@ namespace ursine
 
     void Scene::SetWorld(ecs::World *world)
     {
-        m_world = std::shared_ptr<ecs::World>( world );
+        m_world = ecs::World::Handle( world );
     }
 
     graphics::GfxHND Scene::GetViewport(void) const
@@ -47,14 +55,14 @@ namespace ursine
         m_viewport = viewport;
     }
 
-    void Scene::SetPaused(bool paused)
+    ScenePlayState Scene::GetPlayState(void) const
     {
-        m_paused = paused;
+        return m_playState;
     }
 
-    bool Scene::IsPaused(void) const
+    void Scene::SetPlayState(ScenePlayState state)
     {
-        return m_paused;
+        m_playState = state;
     }
 
     void Scene::Step(void) const
@@ -64,12 +72,69 @@ namespace ursine
 
     void Scene::Update(DeltaTime dt) const
     {
-        if (!m_paused)
+        switch (m_playState)
+        {
+        case PS_PAUSED:
+        case PS_EDITOR:
+            m_world->EditorUpdate( );
+            break;
+        case PS_PLAYING:
             m_world->Update( );
+            break;
+        }
     }
 
     void Scene::Render(void) const
     {
-        m_world->Render( );
+        switch (m_playState)
+        {
+        case PS_PAUSED:
+        case PS_EDITOR:
+            m_world->EditorRender( );
+            break;
+        case PS_PLAYING:
+            m_world->Render( );
+            break;
+        }
+    }
+
+    void Scene::LoadConfiguredSystems(void)
+    {
+        auto *config = m_world->GetSettings( )->GetComponent<ecs::WorldConfig>( );
+
+        auto *systemManager = m_world->GetSystemManager( );
+
+        for (auto &system : config->GetSystems( ))
+        {
+			// If this system is the equivalent of null
+			if (system.type.size( ) == 0)
+				continue;
+
+            auto type = meta::Type::GetFromName( system.type );
+
+            if (!type.IsValid( ))
+            {
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Play System";
+                error.message = "Unknown world play system configured.";
+
+                EditorPostNotification( error );
+            }
+
+            if (systemManager->HasSystem( type ))
+            {
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Play System Exists";
+                error.message = "World play system <strong class=\"highlight\">" + type.GetName( ) + "</strong> already exists.";
+
+                EditorPostNotification( error );
+            }
+
+            systemManager->AddSystem( type );
+        }
     }
 }

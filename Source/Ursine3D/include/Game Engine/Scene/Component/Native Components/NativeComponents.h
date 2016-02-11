@@ -13,8 +13,11 @@
 
 // All native components are to be added here
 
+#include "RenderMask.h"
+
 #include "TransformComponent.h"
 #include "WorldConfigComponent.h"
+#include "SelectedComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Graphics
@@ -31,6 +34,7 @@
 #include "ParticleColorAnimatorComponent.h"
 #include "ParticleAnimatorComponent.h"
 #include "ParticleAttractorComponent.h"
+#include "ParticleTwisterComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics

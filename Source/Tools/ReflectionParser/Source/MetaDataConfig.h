@@ -30,6 +30,9 @@ namespace native_property
 
     const auto ExplicitGetter = "Getter";
     const auto ExplicitSetter = "Setter";
+
+    const auto VeryExplicitGetter = "ExplicitGetter";
+    const auto VeryExplicitSetter = "ExplicitSetter";
 }
 
 const auto kMetaExternalTypeDefName = "__META_EXTERNAL__";

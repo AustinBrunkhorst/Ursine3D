@@ -21,7 +21,9 @@ namespace ursine
         #if defined(URSINE_WITH_EDITOR)
             , m_baseInitialized( false )
         #endif
-            { }
+        {
+            m_typeMask.set( typeID, true );
+        }
 
         ComponentTypeID Component::GetTypeID(void) const
         {
@@ -30,7 +32,7 @@ namespace ursine
 
         ComponentTypeMask Component::GetTypeMask(void) const
         {
-            return 1ull << m_typeID;
+            return m_typeMask;
         }
 
         Entity *Component::GetOwner(void) const
@@ -51,22 +53,18 @@ namespace ursine
 
 	    template<class ComponentType>
 		Component::Handle<ComponentType>::Handle(void)
-			: m_entity( nullptr )
-		{
-		}
+            : m_entity( nullptr ) { }
 
 		template<class ComponentType>
 		Component::Handle<ComponentType>::Handle(const Handle<ComponentType> &other)
-			: m_entity( other.m_entity )
-		{
-		}
+            : m_entity( other.m_entity ) { }
 
 		template<class ComponentType>
 		Component::Handle<ComponentType>::Handle(const ComponentType *other)
 		{
 			if (other)
 			{
-				m_entity = other->GetOwner();
+                m_entity = other->GetOwner( );
 
 				UAssert(
 					m_entity != nullptr, 
@@ -97,11 +95,11 @@ namespace ursine
         }
 
 	    template<class ComponentType>
-		const ComponentType* Component::Handle<ComponentType>::operator=(const ComponentType* rhs)
+        const ComponentType *Component::Handle<ComponentType>::operator=(const ComponentType *rhs)
 		{
 			if (rhs)
 			{
-				m_entity = rhs->GetOwner( );
+                m_entity = rhs->GetOwner( );
 
 				return operator->( );
 			}
@@ -114,7 +112,7 @@ namespace ursine
 		}
 
 		template<class ComponentType>
-		const Component::Handle<ComponentType> &Component::Handle<ComponentType>::operator=(const Handle<ComponentType>& rhs)
+        const Component::Handle<ComponentType> &Component::Handle<ComponentType>::operator=(const Handle<ComponentType> &rhs)
 		{
 			m_entity = rhs.m_entity;
 
@@ -122,12 +120,12 @@ namespace ursine
 		}
 
 	    template<class ComponentType>
-		bool Component::Handle<ComponentType>::operator==(const ComponentType* rhs) const
+        bool Component::Handle<ComponentType>::operator==(const ComponentType *rhs) const
 		{
 			if (rhs == nullptr)
 				return m_entity == nullptr;
 
-			return m_entity == rhs->GetOwner( );
+            return m_entity == rhs->GetOwner( );
 		}
 
 		template<class ComponentType>
@@ -137,9 +135,9 @@ namespace ursine
 		}
 
         template<class ComponentType>
-        bool Component::Handle<ComponentType>::operator!=(const ComponentType* rhs) const
+        bool Component::Handle<ComponentType>::operator!=(const ComponentType *rhs) const
         {
-            if ( m_entity )
+            if (m_entity)
                 return operator->( ) != rhs;
             else
                 return rhs != nullptr;
@@ -159,13 +157,13 @@ namespace ursine
 	    }
 
 		template<class ComponentType>
-		ComponentType& Component::Handle<ComponentType>::operator*(void)
+        ComponentType &Component::Handle<ComponentType>::operator*(void)
 		{
 			return *operator->( );
 		}
 
 		template<class ComponentType>
-		const ComponentType& Component::Handle<ComponentType>::operator*(void) const
+        const ComponentType &Component::Handle<ComponentType>::operator*(void) const
 		{
 			return *operator->( );
 		}
@@ -177,10 +175,16 @@ namespace ursine
 		}
 
 		template<class ComponentType>
-		const ComponentType* Component::Handle<ComponentType>::operator->(void) const
+        const ComponentType *Component::Handle<ComponentType>::operator->(void) const
 		{
 			return m_entity->GetComponent<ComponentType>( );
 		}
+
+        template<class ComponentType>
+        Entity *Component::Handle<ComponentType>::GetEntity(void) const
+        {
+            return m_entity;
+        }
 
 		extern template Transform *Component::Handle<Transform>::operator->(void);
 		extern template const Transform *Component::Handle<Transform>::operator->(void) const;

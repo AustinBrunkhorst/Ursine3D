@@ -10,6 +10,7 @@ namespace ursine
 
         WorldConfig::WorldConfig(void)
             : BaseComponent( )
+            , m_inEditorMode( false )
         {
             
         }
@@ -17,6 +18,28 @@ namespace ursine
         WorldConfig::~WorldConfig(void)
         {
             
+        }
+
+        bool WorldConfig::IsInEditorMode(void) const
+        {
+            return m_inEditorMode;
+        }
+
+        void WorldConfig::SetInEditorMode(bool inEditorMode)
+        {
+            m_inEditorMode = inEditorMode;
+        }
+
+        const WorldSystemArray &WorldConfig::GetSystems(void) const
+        {
+            return m_systems;
+        }
+
+        void WorldConfig::SetSystems(const WorldSystemArray &systems)
+        {
+            m_systems = systems;
+
+            NOTIFY_COMPONENT_CHANGED( "systems", systems );
         }
 
         void WorldConfig::OnInitialize(void)

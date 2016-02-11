@@ -20,9 +20,32 @@
 #include "MetaTestReflectionModule.h"
 #include <UrsineReflectionModule.h>
 
+#include <UrsineLogTools.h>
+using namespace ursine;
+using namespace meta;
+
+class Test
+{
+public:
+    Test(int foo)
+        : m_foo( foo ) { }
+
+    void Foo()
+    {
+        
+    }
+
+private:
+    int m_foo;
+};
+
 int main(void)
 {
-    MetaInitialize( META_MODULE_INITIALIZER );
+    MethodInvoker<Test, void> invoker( &Test::Foo );
+
+    Variant instance = Test( 5 );
+
+    auto result = invoker.Invoke( instance, { } );
 
     return 0;
 }

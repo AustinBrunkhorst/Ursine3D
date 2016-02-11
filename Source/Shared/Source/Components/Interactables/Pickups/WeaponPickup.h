@@ -96,5 +96,5 @@ private:
     std::string m_texture;
 
     void OnInitialize(void) override;
-} Meta(Enable, DisplayName("WeaponPickup"));
+} Meta(Enable, DisplayName("WeaponPickup"), RequiresComponents(typeof(Interactable)));
 
