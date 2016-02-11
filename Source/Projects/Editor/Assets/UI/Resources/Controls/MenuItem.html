@@ -59,15 +59,15 @@
             },
 
             _onMouseEnter: function (e) {
-                if (this.disabled)
-                    return;
-
                 var hovered = this.parentNode.querySelectorAll( ':scope > .hover' );
 
                 // remove hover from all siblings
                 [].forEach.call( hovered, function(item) {
                     item.classList.remove( 'hover' );
                 } );
+
+                if (this.disabled)
+                    return;
 
                 // make this item hovered
                 this.classList.add( 'hover' );

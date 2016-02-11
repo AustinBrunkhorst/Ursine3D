@@ -79,7 +79,7 @@ namespace ursine
         template<typename T>
         Variant::Variant(const Array<T> &rhs)
             : m_isConst( true )
-            , m_base( new ArrayVariantContainer<T, const meta_traits::ArrayByReference<T>>( rhs ) )
+            , m_base( new ArrayVariantContainer<T, const meta_traits::ArrayByReference<T>>( const_cast<const meta_traits::ArrayByReference<T>>( rhs ) ) )
         {
 
         }

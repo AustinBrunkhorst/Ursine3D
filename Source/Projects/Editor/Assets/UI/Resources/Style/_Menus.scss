@@ -69,8 +69,8 @@ x-main-menu, x-context-menu {
       color: darken($context-menu-item-color, 25%) !important;
       cursor: default;
 
-      > #icon {
-        color: #5e5e5e;
+      > #icon:before {
+        color: #4c4c4c !important;
       }
     }
 

@@ -27,12 +27,18 @@ namespace ursine
             WorldEntitySystem(void) { }
         } Meta(Enable, EnableArrayType, DisplayName( "WorldEntitySystem" ));
 
+        typedef ursine::Array<ursine::ecs::WorldEntitySystem> WorldSystemArray;
+
 		class WorldConfig : public Component
 		{
 			NATIVE_COMPONENT;
 
 		public:
-            ursine::Array<ursine::ecs::WorldEntitySystem> systems;
+            EditorField(
+                WorldSystemArray systems,
+                GetSystems,
+                SetSystems
+            );
 
             Meta(Enable)
             WorldConfig(void);
@@ -40,8 +46,13 @@ namespace ursine
 
             bool IsInEditorMode(void) const;
             void SetInEditorMode(bool inEditorMode);
+
+            const WorldSystemArray &GetSystems(void) const;
+            void SetSystems(const WorldSystemArray &systems);
 		private:
             bool m_inEditorMode;
+
+            WorldSystemArray m_systems;
 
             void OnInitialize(void) override;
 

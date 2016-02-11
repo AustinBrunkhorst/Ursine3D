@@ -15,7 +15,8 @@
 
             },
             listeners: {
-                'blur': '_onBlur'
+                'blur': '_onBlur',
+                'mouseleave': '_onMouseLeave'
             },
             created: function() {
                 // make this the root menu by default
@@ -70,6 +71,13 @@
             },
             _onBlur: function() {
                 this.close( );
+            },
+            _onMouseLeave: function() {
+                var hovered = this.querySelector( ':scope > .hover' );
+
+                if (hovered && hovered.menu && hovered.menu.empty) {
+                    hovered.classList.remove( 'hover' );
+                }
             },
 
             _delete: function() {

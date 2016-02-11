@@ -20,6 +20,22 @@ class Entity implements IEventContainer {
         return new Entity( Extern.CreateEntity( ) );
     }
 
+    public static function createCopyName(name : String) {
+        var copyMatch = ~/\(([0-9]+)\)$/i;
+
+        // has (x)
+        if (copyMatch.match( name )) {
+            var index = Std.parseInt( copyMatch.matched( 1 ) );
+
+            name = '${copyMatch.matchedLeft( )} (${index + 1})';
+        // doesn't have anything, base case
+        } else {
+            name += ' (1)';
+        }
+
+        return name;
+    }
+
     public function new(uniqueID : UInt) {
         events = new EventManager( );
 

@@ -240,11 +240,12 @@ class EntityInspector extends WindowHandler {
 
         var clipboard = m_componentClipboard[ inspector.component.type ];
 
-        if (clipboard != null) {
-            menu.addItem( 'Paste', function() {
-                inspector.entity.componentSet( inspector.component.type, clipboard.value );
-            } ).icon = 'paste';
-        }
+        var paste = menu.addItem( 'Paste', function() {
+            inspector.entity.componentSet( inspector.component.type, clipboard.value );
+        } );
+
+        paste.icon = 'paste';
+        paste.disabled = (clipboard == null);
 
         menu.open( e.clientX, e.clientY );
     }
@@ -259,7 +260,7 @@ class EntityInspector extends WindowHandler {
 
         var entity = m_inspectedEntity.clone( );
 
-        entity.setName( m_inspectedEntity.getName( ) + ' Copy' );
+        entity.setName( Entity.createCopyName( m_inspectedEntity.getName( ) ) );
 
         entity.select( );
     }

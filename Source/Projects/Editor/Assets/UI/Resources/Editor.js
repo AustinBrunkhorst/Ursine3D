@@ -50,7 +50,20 @@ var EReg = function(r,opt) {
 $hxClasses["EReg"] = EReg;
 EReg.__name__ = ["EReg"];
 EReg.prototype = {
-	replace: function(s,by) {
+	match: function(s) {
+		if(this.r.global) this.r.lastIndex = 0;
+		this.r.m = this.r.exec(s);
+		this.r.s = s;
+		return this.r.m != null;
+	}
+	,matched: function(n) {
+		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw new js__$Boot_HaxeError("EReg::matched");
+	}
+	,matchedLeft: function() {
+		if(this.r.m == null) throw new js__$Boot_HaxeError("No string matched");
+		return HxOverrides.substr(this.r.s,0,this.r.m.index);
+	}
+	,replace: function(s,by) {
 		return s.replace(this.r,by);
 	}
 	,__class__: EReg
@@ -1098,19 +1111,24 @@ var ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector = functio
 	this.m_type = type;
 	this.m_arrayItems = [];
 	this.initElements();
-	var _g1 = 0;
-	var _g = instance.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		this.arrayInsert(i,instance[i]);
-		this.m_arrayItems[i].opened = false;
-	}
+	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.ArrayTypeInspector"] = ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector;
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","ArrayTypeInspector"];
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
-	arrayInsert: function(index,value) {
+	updateValue: function(value) {
+		this.m_itemsContainer.innerHTML = "";
+		this.m_arrayItems = [];
+		var _g1 = 0;
+		var _g = value.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			this.arrayInsert(i,value[i]);
+			this.m_arrayItems[i].opened = false;
+		}
+	}
+	,arrayInsert: function(index,value) {
 		var _g = this;
 		var handler = this.inspectItem(value);
 		var container = new ArrayItemContainerControl();
@@ -1297,7 +1315,7 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		this.m_instance = value;
 		if(this.m_isEnum) {
 			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
-		} else {
+		} else if(this.m_arrayInspector != null) this.m_arrayInspector.updateValue(value); else {
 			var _g = 0;
 			var _g1 = this.m_type.fields;
 			while(_g < _g1.length) {
@@ -1598,6 +1616,14 @@ ursine_editor_scene_entity_Entity.__interfaces__ = [ursine_utils_IEventContainer
 ursine_editor_scene_entity_Entity.create = function() {
 	return new ursine_editor_scene_entity_Entity(ursine_native_Extern.CreateEntity());
 };
+ursine_editor_scene_entity_Entity.createCopyName = function(name) {
+	var copyMatch = new EReg("\\(([0-9]+)\\)$","i");
+	if(copyMatch.match(name)) {
+		var index = Std.parseInt(copyMatch.matched(1));
+		name = "" + copyMatch.matchedLeft() + " (" + (index + 1) + ")";
+	} else name += " (1)";
+	return name;
+};
 ursine_editor_scene_entity_Entity.prototype = {
 	isValid: function() {
 		return this.m_handler.isValid();
@@ -1847,9 +1873,11 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 			v;
 		}).icon = "copy";
 		var clipboard = this.m_componentClipboard.get(inspector.component.type);
-		if(clipboard != null) menu.addItem("Paste",function() {
+		var paste = menu.addItem("Paste",function() {
 			inspector.entity.componentSet(inspector.component.type,clipboard.value);
-		}).icon = "paste";
+		});
+		paste.icon = "paste";
+		paste.disabled = clipboard == null;
 		menu.open(e.clientX,e.clientY);
 	}
 	,onArchetypeSaveClicked: function(e) {
@@ -1858,7 +1886,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	,onCopyEntityClicked: function(e) {
 		ursine_editor_windows_SceneOutline.instance.clearSelectedEntities();
 		var entity = this.m_inspectedEntity.clone();
-		entity.setName(this.m_inspectedEntity.getName() + " Copy");
+		entity.setName(ursine_editor_scene_entity_Entity.createCopyName(this.m_inspectedEntity.getName()));
 		entity.select();
 	}
 	,onAddComponentClicked: function(e) {
@@ -2060,6 +2088,10 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var item = new TreeViewItemControl();
 		item.addEventListener("contextmenu",function(e) {
 			_g.openContextMenu(e,item);
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			return false;
 		});
 		item.addEventListener("drag-start",function(e1) {
 			e1.stopPropagation();
@@ -2127,12 +2159,14 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		}).icon = "edit";
 		menu.addItem("Duplicate",function() {
 			var clone = item.entity.clone();
-			clone.setName(item.entity.getName() + " Copy");
+			clone.setName(ursine_editor_scene_entity_Entity.createCopyName(item.entity.getName()));
 		}).icon = "duplicate";
 		menu.addSeparator();
-		menu.addItem("Delete",function() {
+		var $delete = menu.addItem("Delete",function() {
 			item.entity.remove();
-		}).icon = "remove";
+		});
+		$delete.icon = "remove";
+		$delete.disabled = !item.entity.isRemovalEnabled();
 		menu.open(e.clientX,e.clientY);
 	}
 	,startRenamingEntity: function(item) {
