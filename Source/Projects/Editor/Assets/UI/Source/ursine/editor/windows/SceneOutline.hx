@@ -328,17 +328,19 @@ class SceneOutline extends WindowHandler {
 
         menu.addItem( 'Rename', function() {
             startRenamingEntity( item );
-        } );
-
-        menu.addItem( 'Delete', function() {
-            untyped item.entity.remove( );
-        } );
+        } ).icon = 'edit';
 
         menu.addItem( 'Duplicate', function() {
             var clone : Entity = untyped item.entity.clone( );
 
             clone.setName( untyped item.entity.getName( ) +' Copy' );
-        } );
+        } ).icon = 'duplicate';
+
+        menu.addSeparator( );
+
+        menu.addItem( 'Delete', function() {
+            untyped item.entity.remove( );
+        } ).icon = 'remove';
 
         menu.open( e.clientX, e.clientY );
     }

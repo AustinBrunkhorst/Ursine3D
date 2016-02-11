@@ -2,7 +2,6 @@
 <link rel="import" href="Behaviors/Menu.html">
 
 <dom-module id="x-main-menu">
-    <link rel="import" type="css" href="../Style/Controls/MainMenu.css">
     <template>
         <content></content>
     </template>
@@ -46,6 +45,13 @@
                 // remove hover from child menus
                 [].forEach.call( hovered, function (item) {
                     item.classList.remove( 'hover' );
+                } );
+
+                var items = this.querySelectorAll( '.left, .clear-left, .top' );
+
+                // remove computed classes
+                [ ].forEach.call( items, function(item) {
+                    item.classList.remove( 'left', 'clear-left', 'top' );
                 } );
             },
             _onMouseLeave: function() {

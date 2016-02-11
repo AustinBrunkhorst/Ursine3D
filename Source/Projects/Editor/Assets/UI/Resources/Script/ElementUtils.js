@@ -18,3 +18,15 @@ ElementUtils.childIndex = function(element) {
 
     return i;
 };
+
+ElementUtils.parent = function(element, selector) {
+    var node = element.parentNode;
+
+    for (; node && node !== document; node = node.parentNode) {
+        if (node.matches( selector ))
+            return node;
+    }
+
+    // couldn't find it
+    return null;
+};

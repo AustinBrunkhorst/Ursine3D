@@ -37,7 +37,8 @@
              * @param {Array<String>} items
              */
             factoryImpl: function(items) {
-                this._rawItems = items || [ ];
+                // make sure it's sorted
+                this._rawItems = (items || [ ]).sort( );
 
                 this.set( 'items', this._rawItems );
             },

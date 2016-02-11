@@ -515,6 +515,7 @@ ursine_editor_Editor.prototype = {
 				var parentMenu = this.populateMenuLevels(levels);
 				var item = new MenuItemControl();
 				item.text = itemName;
+				item.icon = details[3];
 				var handler1 = [Reflect.field(handler.type,name)];
 				item.addEventListener("open",(function(handler1) {
 					return function(e) {
@@ -1840,15 +1841,15 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	,createComponentContextMenu: function(inspector,e) {
 		var _g = this;
 		var menu = new ContextMenuControl();
-		menu.addItem("Copy " + inspector.component.type,function() {
+		menu.addItem("Copy",function() {
 			var v = inspector.copyInstance();
 			_g.m_componentClipboard.set(inspector.component.type,v);
 			v;
-		});
+		}).icon = "copy";
 		var clipboard = this.m_componentClipboard.get(inspector.component.type);
-		if(clipboard != null) menu.addItem("Paste " + inspector.component.type,function() {
+		if(clipboard != null) menu.addItem("Paste",function() {
 			inspector.entity.componentSet(inspector.component.type,clipboard.value);
-		});
+		}).icon = "paste";
 		menu.open(e.clientX,e.clientY);
 	}
 	,onArchetypeSaveClicked: function(e) {
@@ -2123,14 +2124,15 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var menu = new ContextMenuControl();
 		menu.addItem("Rename",function() {
 			_g.startRenamingEntity(item);
-		});
-		menu.addItem("Delete",function() {
-			item.entity.remove();
-		});
+		}).icon = "edit";
 		menu.addItem("Duplicate",function() {
 			var clone = item.entity.clone();
 			clone.setName(item.entity.getName() + " Copy");
-		});
+		}).icon = "duplicate";
+		menu.addSeparator();
+		menu.addItem("Delete",function() {
+			item.entity.remove();
+		}).icon = "remove";
 		menu.open(e.clientX,e.clientY);
 	}
 	,startRenamingEntity: function(item) {
@@ -2352,7 +2354,7 @@ ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mou
 ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
-ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene"]}, doOpen : { mainMenuItem : ["File/Save Scene"]}}};
+ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene",false,false,"file-open"]}, doOpen : { mainMenuItem : ["File/Save Scene",false,false,"file-save"]}}};
 ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";

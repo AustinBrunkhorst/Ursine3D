@@ -234,16 +234,16 @@ class EntityInspector extends WindowHandler {
     private function createComponentContextMenu(inspector : ComponentInspectionHandler, e : js.html.MouseEvent) {
         var menu = new ContextMenu( );
 
-        menu.addItem( 'Copy ${inspector.component.type}', function() {
+        menu.addItem( 'Copy', function() {
             m_componentClipboard[ inspector.component.type ] = inspector.copyInstance( );
-        } );
+        } ).icon = 'copy';
 
         var clipboard = m_componentClipboard[ inspector.component.type ];
 
         if (clipboard != null) {
-            menu.addItem( 'Paste ${inspector.component.type}', function() {
+            menu.addItem( 'Paste', function() {
                 inspector.entity.componentSet( inspector.component.type, clipboard.value );
-            } );
+            } ).icon = 'paste';
         }
 
         menu.open( e.clientX, e.clientY );

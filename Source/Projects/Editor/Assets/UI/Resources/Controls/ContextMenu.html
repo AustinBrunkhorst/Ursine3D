@@ -2,7 +2,6 @@
 <link rel="import" href="Behaviors/Menu.html">
 
 <dom-module id="x-context-menu">
-    <link rel="import" type="css" href="../Style/Controls/ContextMenu.css">
     <template>
         <content></content>
     </template>
@@ -27,13 +26,20 @@
             behaviors: [ MenuBehavior ],
 
             open: function(x, y) {
-                document.body.appendChild( this );
+                document.querySelector( '#context-menu-container' ).appendChild( this );
 
-                // TODO: fix bounds
                 this.style.left = x +'px';
                 this.style.top = y +'px';
 
                 this.focus( );
+
+                var bounds = this.getBoundingClientRect( );
+
+                if (bounds.right > window.innerWidth)
+                    this.style.left = Math.max( 0, window.innerWidth - bounds.width ) + 'px';
+
+                if (bounds.bottom > window.innerHeight)
+                    this.style.top = Math.max( 0, window.innerHeight - bounds.height ) + 'px';
 
                 if (ContextMenuControl.LastOpened)
                     ContextMenuControl.LastOpened._delete( );
@@ -54,6 +60,9 @@
                 this.appendChild( item );
 
                 return item;
+            },
+            addSeparator: function() {
+                this.appendChild( new MenuSeparatorControl( ) );
             },
 
             _onItemAdded: function(e) {
