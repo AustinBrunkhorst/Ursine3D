@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** AnimationState.h
 **
@@ -24,6 +24,7 @@ namespace ursine
         *
         *  @return Void.
         */
+		Meta(Enable)
         AnimationState(void);
 
         /** @brief gets the time position of the current animation state
@@ -64,11 +65,15 @@ namespace ursine
         */
         void SetAnimation(const Animation *animation);
 
+		const std::string &GetName(void) const;
+		void SetName(const std::string &name);
+
     private:
         //current runtime
         float m_timePos;
+		std::string m_name;
 
         //current animation
         const Animation *m_animation;
-    };
+    } Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ), WhiteListMethods);
 }

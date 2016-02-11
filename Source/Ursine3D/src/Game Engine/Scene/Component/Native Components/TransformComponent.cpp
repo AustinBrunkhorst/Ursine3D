@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** TransformComponent.h
 **
@@ -169,7 +169,7 @@ namespace ursine
             notifyRotationChanged( &oldRotation );
         }
 
-        SQuat Transform::GetWorldRotation(void)
+        SQuat Transform::GetWorldRotation(void) const
         {
             if (m_parent)
                 return m_parent->ToWorld( m_localRotation );
@@ -177,7 +177,7 @@ namespace ursine
                 return m_localRotation;
         }
 
-        SVec3 Transform::GetWorldEuler(void)
+        SVec3 Transform::GetWorldEuler(void) const
         {
             if (m_parent)
                 return m_parent->ToWorld( m_localRotation ).GetEulerAngles( );
@@ -208,7 +208,7 @@ namespace ursine
             return m_localScale;
         }
 
-        SVec3 Transform::GetWorldScale(void)
+        SVec3 Transform::GetWorldScale(void) const
         {
             if (m_parent)
                 return m_localScale * m_parent->GetWorldScale();
@@ -230,17 +230,17 @@ namespace ursine
             notifyScaleChanged( &oldScale );
         }
 
-        SVec3 Transform::GetForward(void)
+        SVec3 Transform::GetForward(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitZ( );
         }
 
-        SVec3 Transform::GetRight(void)
+        SVec3 Transform::GetRight(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitX( );
         }
 
-        SVec3 Transform::GetUp(void)
+        SVec3 Transform::GetUp(void) const
         {
             return GetWorldRotation( ) * SVec3::UnitY( );
         }
@@ -271,7 +271,7 @@ namespace ursine
             return GetWorldToLocalMatrix( ).TransformPoint( point );
         }
 
-        SQuat Transform::ToLocal(const SQuat& quat)
+        SQuat Transform::ToLocal(const SQuat& quat) const
         {
             if (m_parent)
                 return m_localRotation.GetInverse( ) * m_parent->ToLocal( quat );
@@ -284,7 +284,7 @@ namespace ursine
             return GetLocalToWorldMatrix( ).TransformPoint( point );
         }
 
-        SQuat Transform::ToWorld(const SQuat& quat)
+        SQuat Transform::ToWorld(const SQuat& quat) const
         {
             if (m_parent)
                 return m_parent->GetWorldRotation( ) * m_localRotation * quat;
@@ -292,17 +292,17 @@ namespace ursine
                 return m_localRotation * quat;
         }
 
-		Component::Handle<Transform> Transform::GetRoot(void)
-        {
+		Component::Handle<Transform> Transform::GetRoot(void) const
+		{
             return m_root;
         }
 
-        Component::Handle<Transform> Transform::GetParent(void)
+        Component::Handle<Transform> Transform::GetParent(void) const
         {
             return m_parent;
         }
 
-        bool Transform::IsChildOf(Handle<Transform> parent)
+        bool Transform::IsChildOf(const Handle<Transform> parent) const
         {
             if (parent == m_parent)
                 return true;
@@ -347,6 +347,19 @@ namespace ursine
 
         void Transform::RemoveChild(Transform* child)
         {
+            // Make the child's local space transform == to world space
+            if (!child->GetOwner( )->IsDeleting( ))
+            {
+                auto worldPosition = child->GetWorldPosition( );
+                auto worldScale = child->GetWorldScale( );
+                auto worldRotation = child->GetWorldRotation( );
+
+                child->SetLocalPosition( worldPosition );
+                child->SetLocalScale( worldScale );
+                child->SetLocalRotation( worldRotation );
+            }
+            
+
             // find the child in our local array of children
             auto itr = std::find( m_children.begin( ), m_children.end( ), child );
 
@@ -355,7 +368,12 @@ namespace ursine
 
             m_children.erase( itr );
 
-            child->setParent( this, nullptr );
+            child->setParent( this, nullptr, true );
+        }
+
+        void Transform::DetachFromParent(void)
+        {
+            GetParent( )->RemoveChild( this );
         }
 
         void Transform::RemoveChildren(void)
@@ -577,7 +595,7 @@ namespace ursine
             return true;
         }
 
-        void Transform::setParent(Handle<Transform> oldParent, Handle<Transform> newParent)
+        void Transform::setParent(Handle<Transform> oldParent, Handle<Transform> newParent, bool removing)
         {
             if (oldParent == newParent)
                 return;
@@ -595,8 +613,9 @@ namespace ursine
                 oldParent->GetOwner( )->Listener( this )
                     .Off( ENTITY_TRANSFORM_DIRTY, &Transform::onParentDirty );
 
-                // remove this transform from the old parent
-                oldParent->RemoveChild( this );
+                if (!removing)
+                    // remove this transform from the old parent
+                    oldParent->RemoveChild( this );
             }
 
             // subscribe this entity to my events

@@ -82,6 +82,12 @@ class DisableConstPtrType : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/** @brief Explicitly enables generation of the array type for this type.
+ */
+class EnableArrayType : public ursine::meta::MetaProperty { };
+
+///////////////////////////////////////////////////////////////////////////////
+
 /** @brief Defines an explicit getter for this type.
  *         Applies to Globals, Fields and Static Fields.
  */
@@ -110,6 +116,30 @@ public:
      *         In a Global or Static Field, it's a globally accessible function.
      */
     Setter(const char *setterName);
+};
+
+/** @brief Defines an explicit getter for this type. Parent type is not assumed
+*         Applies to Globals, Fields and Static Fields.
+*/
+class ExplicitGetter : public ursine::meta::MetaProperty
+{
+public:
+    /** @param getterName Name of the getter function.
+    */
+    ExplicitGetter(const char *getterName);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+/** @brief Defines an explicit setter for this type. Parent type is not assumed
+*         Applies to Globals, Fields and Static Fields.
+*/
+class ExplicitSetter : public ursine::meta::MetaProperty
+{
+public:
+    /** @param setterName Name of the setter function.
+    */
+    ExplicitSetter(const char *setterName);
 };
 
 ///////////////////////////////////////////////////////////////////////////////

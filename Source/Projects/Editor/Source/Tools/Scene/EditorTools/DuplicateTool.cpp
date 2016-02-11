@@ -1,7 +1,7 @@
 #include "Precompiled.h"
 
 #include "DuplicateTool.h"
-#include "SelectedComponent.h"
+#include <SelectedComponent.h>
 
 #include <EditorConfig.h>
 #include <SystemManager.h>
@@ -13,8 +13,8 @@
 using namespace ursine;
 using namespace ecs;
 
-DuplicateTool::DuplicateTool(Editor *editor)
-	: EditorTool( editor )
+DuplicateTool::DuplicateTool(Editor *editor, ursine::ecs::World *world)
+	: EditorTool( editor, world )
 	, m_gizmo( nullptr )
 	, m_selected( -1 )
 	, m_snapping( false )
@@ -25,7 +25,6 @@ DuplicateTool::DuplicateTool(Editor *editor)
 	, m_origin( false )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
 	m_drawer = m_world->GetEntitySystem( DebugSystem );
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 }
@@ -155,9 +154,6 @@ void DuplicateTool::disableGizmo(void)
 	if (m_gizmo)
 	{
 		m_gizmo->Delete( );
-		
-		// Clear the deletion queue if the scene is paused
-		EditorClearDeletionQueue( );
 	}
 
 	m_gizmo = nullptr;

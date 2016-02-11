@@ -47,11 +47,14 @@ namespace ursine
             RenderMask GetRenderMask(void) const;
             void SetRenderMask(const RenderMask mask);
 
+            bool GetActive(void) const;
+            void SetActive(const bool isActive);
+
         private:
-            ecs::EntityUniqueID entityID;
-            bool Active_;
-            bool Overdraw_;
-            bool Debug_;
+            ecs::EntityUniqueID m_entityID;
+            bool m_active;
+            bool m_useOverdraw;
+            bool m_useDebugRendering;
             RenderMask m_mask;
         };
 
@@ -67,7 +70,7 @@ namespace ursine
             Model(void);
 
         private:
-            SMat4 Transform_;
+            SMat4 m_transform;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -85,10 +88,17 @@ namespace ursine
             const char *GetMaterialslName(void);
             void SetMaterial(std::string materialName);
 
-    
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
+			void SetEmissive(float emiss);
+			float GetEmissive(void) const;
+
+			void SetSpecularPower(float power);
+			float GetSpecularPower(void) const;
+
+			void SetSpecularIntensity(float intensity);
+			float GetSpecularIntensity(void) const;
 
             void SetAnimationTime(const float time);
             float &GetAnimationTime(void);
@@ -106,8 +116,8 @@ namespace ursine
             float m_specPow;
             float m_specIntensity;
             Color m_color;
-            std::string ModelName_;
-            std::string MaterialName_;
+            std::string m_modelResourceName;
+            std::string m_materialTextureName;
 
             float m_animationTime;
 
@@ -144,7 +154,7 @@ namespace ursine
             ursine::Vec2 m_scale;
             ursine::SVec3 m_position;
             Color m_color;
-            std::string TextureName_;
+            std::string m_textureName;
         };
 
         /////////////////////////////////////////////////////////////
@@ -218,6 +228,9 @@ namespace ursine
             std::vector<Particle_GPU> &GetGPUParticleData(void);
             std::vector<Particle_CPU> &GetCPUParticleData(void);
 
+            Particle_GPU &GetGPUParticle(const int index);
+            Particle_CPU &GetCPUParticle(const int index);
+
             // get total number of particles
             unsigned GetParticleVectorSize(void) const;
 
@@ -233,11 +246,33 @@ namespace ursine
 
             void DestroyParticle(const int index);
 
+            const SVec3 &GetPosition(void) const;
+            void SetPosition(const SVec3 &position);
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
+
+            const std::string &GetParticleTexture(void) const;
+            void SetParticleTexture(const std::string &texName);
+
+            bool GetAdditive(void) const;
+            void SetAdditive(const bool useAdditive);
+
+            bool GetSystemSpace(void) const;
+            void SetSystemSpace(const bool useWorldCoordinates);
         private:
             // members
-            int m_backIndex;
+            unsigned m_backIndex;
             std::vector<Particle_GPU> m_gpuParticleData;
             std::vector<Particle_CPU> m_cpuParticleData;
+            SVec3 m_position;
+
+            std::string m_textureName;
+
+            Color m_particleColor;
+
+            bool m_useAdditive;
+            bool m_worldSpace;
         };
     }
 }

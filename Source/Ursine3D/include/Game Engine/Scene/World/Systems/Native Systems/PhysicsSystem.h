@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** PhysicsSystem.h
 **
@@ -42,6 +42,9 @@ namespace ursine
                          bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
                          Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
 
+			bool Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
+					   ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);
+
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
 
@@ -78,12 +81,12 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-            void onEditorUpdate(EVENT_HANDLER(World));
+            void onEditorRender(EVENT_HANDLER(World));
 
     #endif
 
             void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
 
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

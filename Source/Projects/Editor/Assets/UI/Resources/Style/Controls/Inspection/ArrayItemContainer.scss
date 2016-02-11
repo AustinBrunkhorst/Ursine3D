@@ -65,10 +65,20 @@
 
   ::content {
     x-field-inspector {
-      background: pink;
-
       .field-header {
-        display: none;
+        display: none !important;
+      }
+
+      .field-container {
+        padding-right: 0 !important;
+
+        input {
+          margin-bottom: 0 !important;
+        }
+
+        > .color-preview {
+          margin-bottom: 0;
+        }
       }
     }
   }

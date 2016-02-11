@@ -7,6 +7,7 @@ import js.html.UListElement;
 import ursine.native.Extern;
 import ursine.controls.TreeView;
 import ursine.controls.TreeViewItem;
+import ursine.controls.ContextMenu;
 import ursine.editor.scene.entity.EntityEvent;
 import ursine.editor.scene.entity.Entity;
 
@@ -204,6 +205,10 @@ class SceneOutline extends WindowHandler {
     }
 
     private function addEntity(entity : Entity) {
+        // this entity already exists
+        if (m_entityItems[ entity.uniqueID ] != null)
+            return;
+
         var item = createEntityItem( entity );
 
         if (!entity.isVisibleInEditor( ))
@@ -227,6 +232,16 @@ class SceneOutline extends WindowHandler {
 
     private function createEntityItem(entity : Entity) : TreeViewItem {
         var item = new TreeViewItem( );
+
+        item.addEventListener( 'contextmenu', function(e) {
+            openContextMenu( e, item );
+
+            e.preventDefault( );
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
+            
+            return false;
+        } );
 
         item.addEventListener( 'drag-start', function(e) {
             e.stopPropagation( );
@@ -272,17 +287,8 @@ class SceneOutline extends WindowHandler {
             entity.setSiblingIndex( childIndex );
         } );
 
-        item.textContentElement.addEventListener( 'dblclick', function() {
-            item.textContentElement.contentEditable = 'true';
-
-            var range = js.Browser.document.createRange( );
-
-            range.selectNodeContents( item.textContentElement );
-
-            var selection = js.Browser.window.getSelection( );
-
-            selection.removeAllRanges( );
-            selection.addRange( range );
+        item.textContentElement.addEventListener( 'dblclick', function(e) {
+            startRenamingEntity( item );
         } );
 
         item.textContentElement.addEventListener( 'keydown', function(e) {
@@ -309,6 +315,10 @@ class SceneOutline extends WindowHandler {
         untyped item.entity = entity;
 
         item.textElement.addEventListener( 'click', function(e) {
+            // already selected
+            if (m_selectedEntities.indexOf( untyped item.entity.uniqueID ) != -1)
+                return;
+
             clearSelectedEntities( );
 
             untyped item.entity.select( );
@@ -317,6 +327,44 @@ class SceneOutline extends WindowHandler {
         m_entityItems[ entity.uniqueID ] = item;
 
         return item;
+    }
+
+    private function openContextMenu(e : js.html.MouseEvent, item : TreeViewItem) {
+        var menu = new ContextMenu( );
+
+        menu.addItem( 'Rename', function() {
+            startRenamingEntity( item );
+        } ).icon = 'edit';
+
+        menu.addItem( 'Duplicate', function() {
+            var clone : Entity = untyped item.entity.clone( );
+
+            clone.setName( Entity.createCopyName( untyped item.entity.getName( ) ) );
+        } ).icon = 'duplicate';
+
+        menu.addSeparator( );
+
+        var delete = menu.addItem( 'Delete', function() {
+            untyped item.entity.remove( );
+        } );
+
+        delete.icon = 'remove';
+        delete.disabled = untyped !item.entity.isRemovalEnabled( );
+
+        menu.open( e.clientX, e.clientY );
+    }
+
+    private function startRenamingEntity(item : TreeViewItem) {
+        item.textContentElement.contentEditable = 'true';
+
+        var range = js.Browser.document.createRange( );
+
+        range.selectNodeContents( item.textContentElement );
+
+        var selection = js.Browser.window.getSelection( );
+
+        selection.removeAllRanges( );
+        selection.addRange( range );
     }
 
     private function selectEntity(item : TreeViewItem) {

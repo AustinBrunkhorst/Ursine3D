@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** InputLayoutManager.cpp
 **
@@ -71,6 +71,12 @@ namespace ursine
 
             void InputLayoutManager::SetInputLayout(const SHADER_TYPES type)
             {
+                if ( type == SHADER_COUNT )
+                {
+                    m_deviceContext->IASetInputLayout(nullptr);
+                    return;
+                }
+
                 if (m_currentState == type)
                     return;
 
@@ -114,36 +120,10 @@ namespace ursine
 
                     std::string semanticName = std::string( paramDesc.SemanticName );
 
-                    // check if we need to override the size
-                    bool sizeOverride = false;
-                    unsigned overrideSize = 0;
-                    auto pos = semanticName.find( "_" );
-                    if ( pos != std::string::npos )
-                    {
-                        sizeOverride = true;
-                        std::string subStr = semanticName.substr( pos + 1 );
-
-                        if ( subStr == "EIGHT" )
-                            overrideSize = 8;
-                        else
-                            UAssert( false, "Failed to override vertex layout!" );
-                    }
 
                     // determine DXGI format
                     if (paramDesc.Mask == 1)
                     {
-                        // check if we need to override the size
-                        if( sizeOverride)
-                        {
-                            if(overrideSize == 8)
-                            {
-                                if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
-                                    elementDesc.Format = DXGI_FORMAT_R8_UINT;
-                                else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
-                                    elementDesc.Format = DXGI_FORMAT_R8_SINT;
-                            }
-                        }
-                        else // handle it normally
                         {
                             if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
                                 elementDesc.Format = DXGI_FORMAT_R32_UINT;
@@ -155,18 +135,6 @@ namespace ursine
                     }
                     else if (paramDesc.Mask <= 3)
                     {
-                        // check if we need to override the size
-                        if ( sizeOverride )
-                        {
-                            if ( overrideSize == 8 )
-                            {
-                                if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
-                                    elementDesc.Format = DXGI_FORMAT_R8G8_UINT;
-                                else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
-                                    elementDesc.Format = DXGI_FORMAT_R8G8_SINT;
-                            }
-                        }
-                        else // handle it normally
                         {
                             if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
                                 elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
@@ -187,18 +155,7 @@ namespace ursine
                     }
                     else if (paramDesc.Mask <= 15)
                     {
-                        // check if we need to override the size
-                        if ( sizeOverride )
-                        {
-                            if ( overrideSize == 8 )
-                            {
-                                if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
-                                    elementDesc.Format = DXGI_FORMAT_R8G8B8A8_UINT;
-                                else if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32 )
-                                    elementDesc.Format = DXGI_FORMAT_R8G8B8A8_SINT;
-                            }
-                        }
-                        else // handle it normally
+
                         {
                             if ( paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32 )
                                 elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;

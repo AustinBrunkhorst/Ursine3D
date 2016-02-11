@@ -13,7 +13,11 @@
 
 // All native components are to be added here
 
+#include "RenderMask.h"
+
 #include "TransformComponent.h"
+#include "WorldConfigComponent.h"
+#include "SelectedComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Graphics
@@ -25,6 +29,12 @@
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
 #include "FBXSceneRootNodeComponent.h"
+#include "ParticleSystemComponent.h"
+#include "ParticleEmitterComponent.h"
+#include "ParticleColorAnimatorComponent.h"
+#include "ParticleAnimatorComponent.h"
+#include "ParticleAttractorComponent.h"
+#include "ParticleTwisterComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics
@@ -42,6 +52,8 @@
 #include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
 #include "PhysicsSettingsComponent.h"
+
+#include "SweptControllerComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Audio

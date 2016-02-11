@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -14,6 +14,13 @@
 #pragma once
 
 #include <NativeJSClass.h>
+
+#include <mutex>
+
+namespace ursine
+{
+	class Scene;
+}
 
 class EntityHandler : public ursine::NativeJSClass
 {
@@ -33,11 +40,13 @@ public:
     JSMethod(setName);
     
     JSMethod(inspect);
+    JSMethod(inspectComponent);
 
     JSMethod(hasComponent);
     JSMethod(addComponent);
     JSMethod(removeComponent);
 
+    JSMethod(componentSet);
     JSMethod(componentFieldUpdate);
 
     JSMethod(componentFieldArrayUpdate);
@@ -57,7 +66,7 @@ public:
     JSMethod(clone);
 
 private:
-    ursine::ecs::World *m_world;
+	ursine::Scene::Handle m_scene;
     ursine::ecs::EntityUniqueID m_handle;
     
     ursine::ecs::Entity *getEntity(void);  

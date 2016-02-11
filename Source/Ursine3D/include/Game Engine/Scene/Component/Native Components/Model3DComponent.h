@@ -15,16 +15,15 @@
 
 #include "Component.h"
 #include "Renderable.h"
-#include "GfxAPI.h"
 #include "RenderableComponentBase.h"
+#include "RenderMask.h"
 #include "ModelResource.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Model3D 
-            : public Component
+        class Model3D : public Component
         {
             NATIVE_COMPONENT;
 
@@ -64,11 +63,30 @@ namespace ursine
                 SetMaterial
             );
 
+            Meta(BitMaskEditor)
             EditorField(
-                int renderMask,
+                ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
                 SetRenderMask
             );
+
+			EditorField(
+				float emissive,
+				GetEmissive,
+				SetEmissive
+			);
+
+			EditorField(
+				float specularPower,
+				GetSpecularPower,
+				SetSpecularPower
+			);
+
+			EditorField(
+				float specularIntensity,
+				GetSpecularIntensity,
+				SetSpecularIntensity
+			);
 
             Model3D(void);
             ~Model3D(void);
@@ -77,7 +95,7 @@ namespace ursine
             void OnInitialize(void) override;
 
             Meta(Disable)
-            std::vector<SMat4> &GetMatrixPalette( void );
+            std::vector<SMat4> &GetMatrixPalette(void);
 
             //get/set model name
             void SetModelResourceName(const std::string &name);
@@ -94,6 +112,16 @@ namespace ursine
             void SetColor(const ursine::Color &color);
             const ursine::Color &GetColor(void);
 
+			//get/set material properties
+			float GetEmissive(void) const;
+			void SetEmissive(float emissive);
+
+			float GetSpecularPower(void) const;
+			void SetSpecularPower(float power);
+
+			float GetSpecularIntensity(void) const;
+			void SetSpecularIntensity(float intesnity);
+
             void SetOverdraw(bool flag);
             bool GetOverdraw(void) const;
 
@@ -101,8 +129,8 @@ namespace ursine
             void SetDebug(bool flag);
             bool GetDebug(void) const;
 
-            int GetRenderMask(void) const;
-            void SetRenderMask(const int mask);
+			ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
 
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);

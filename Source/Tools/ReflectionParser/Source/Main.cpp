@@ -87,10 +87,19 @@ int main(int argc, char *argv[])
             SWITCH_OPTION( ForceRebuild ),
             "Whether or not to ignore cache and write the header / source files."
         )
+        (
+            SWITCH_OPTION( DisplayDiagnostics ),
+            "Whether or not to display diagnostics from clang."
+        )
         ( 
-            SWITCH_OPTION( CompilerFlags ), 
-            po::value<std::vector<std::string>>( )->multitoken( )->required( ),
-            "Optional list of flags to pass to the compiler." 
+            SWITCH_OPTION( CompilerIncludes ), 
+            po::value<std::string>( ),
+            "Optional file that includes the include directories for this target." 
+        )
+        (
+            SWITCH_OPTION( CompilerDefines ),
+            po::value<std::vector<std::string>>( )->multitoken( ),
+            "Optional list of definitions to include for the compiler."
         );
 
         po::variables_map cmdLine;
@@ -133,6 +142,9 @@ void parse(const po::variables_map &cmdLine)
     options.forceRebuild = 
         cmdLine.count( kSwitchForceRebuild ) > 0;
 
+    options.displayDiagnostics = 
+        cmdLine.count( kSwitchDisplayDiagnostics ) > 0;
+
     options.targetName = 
         cmdLine.at( kSwitchTargetName ).as<std::string>( );
 
@@ -165,14 +177,27 @@ void parse(const po::variables_map &cmdLine)
         options.precompiledHeader = 
             cmdLine.at( kSwitchPrecompiledHeader ).as<std::string>( );
     }
-
-    if (cmdLine.count( kSwitchCompilerFlags ))
+    
+    if (cmdLine.count( kSwitchCompilerIncludes ))
     {
-        auto flags = 
-            cmdLine.at( kSwitchCompilerFlags ).as<std::vector<std::string>>( );
+        auto includes = 
+            cmdLine.at( kSwitchCompilerIncludes ).as<std::string>( );
 
-        for (auto &flag : flags) 
-            options.arguments.emplace_back( flag.c_str( ) );
+		std::ifstream includesFile( includes );
+
+		std::string include;
+
+		while (std::getline( includesFile, include ))
+			options.arguments.emplace_back( "-I"+ include );
+    }
+
+    if (cmdLine.count( kSwitchCompilerDefines ))
+    {
+        auto defines = 
+            cmdLine.at( kSwitchCompilerDefines ).as<std::vector<std::string>>( );
+
+        for (auto &define : defines)
+            options.arguments.emplace_back( "-D"+ define );
     }
 
     options.templateDirectory = 

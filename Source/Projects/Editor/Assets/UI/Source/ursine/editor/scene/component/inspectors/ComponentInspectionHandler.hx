@@ -9,7 +9,7 @@ import ursine.editor.scene.component.ComponentInspection;
 
 @:keepInit
 @:keepSub
-class ComponentInspectionHandler {
+class ComponentInspectionHandler implements IFieldInspectionOwner {
     public var entity(default, null) : Entity;
     public var component(default, null) : ComponentInspection;
 
@@ -39,6 +39,10 @@ class ComponentInspectionHandler {
         inspector = new ComponentInspector( );
 
         inspector.heading = component.type;
+    }
+
+    public function copyInstance() : ComponentInspection {
+        return entity.inspectComponent( component.type );
     }
 
     public function updateField(name : String, value : Dynamic) {
@@ -127,19 +131,28 @@ class ComponentInspectionHandler {
         inspector.fieldInspectors.removeChild( field.inspector );
     }
 
-    public function notifyChanged(field : NativeField, value : Dynamic) {
-        entity.componentFieldUpdate( component.type, field.name, value );
-    }
-
-    public function notifyArrayChanged(field : NativeField, index : UInt, value : Dynamic) {
-        entity.componentFieldArrayUpdate( component.type, field.name, index, value );
-    }
-
     public function remove() {
         for (handler in m_fieldHandlers)
             handler.remove( );
 
         if (inspector.parentNode != null)
             inspector.parentNode.removeChild( inspector );
+    }
+
+    public function getFieldHandlers() : Array<FieldInspectionHandler> {
+        var handlers = [ ];
+
+        for (handler in m_fieldHandlers)
+            handlers.push( handler );
+
+        return handlers;
+    }
+
+    public function notifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) {
+        entity.componentFieldUpdate( component.type, field.name, value );
+    }
+
+    public function ownerNotifyChanged(handler : FieldInspectionHandler, field : NativeField, value : Dynamic) : Void {
+        notifyChanged( handler, field, value );
     }
 }

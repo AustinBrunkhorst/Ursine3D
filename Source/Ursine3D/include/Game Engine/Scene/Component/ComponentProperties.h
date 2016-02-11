@@ -53,6 +53,9 @@ struct ForceEditorType : ursine::meta::MetaProperty
 
     ForceEditorType(const ursine::meta::Type &type)
         : typeName( type.GetName( ) ) { }
+
+    ForceEditorType(const char *editorName)
+        : typeName( editorName ) { }
 };
 
 /** @brief Field getter only used when interacting with the editor
@@ -123,7 +126,7 @@ struct InputRange : ursine::meta::MetaProperty
      *         A negative value ensures a nice default.
      *  @param format Optional format to display. "{{value}}" is replaced with the calculated value
      */
-    InputRange(double min, double max, double step = -1.0, const std::string &format = "{{value}}")
+    InputRange(double min, double max, double step = -1.0, const std::string &format = "{{value.toPrecision( 4 )}}")
         : min( min )
         , max( max )
         , step( step )

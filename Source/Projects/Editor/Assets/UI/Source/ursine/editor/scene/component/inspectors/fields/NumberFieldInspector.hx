@@ -13,7 +13,7 @@ import ursine.editor.scene.component.ComponentDatabase;
 class NumberFieldInspector extends FieldInspectionHandler {
     private var m_number : NumberInput;
 
-    public function new(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) {
+    public function new(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) {
         super( owner, instance, field, type );
 
         m_number = new NumberInput( );

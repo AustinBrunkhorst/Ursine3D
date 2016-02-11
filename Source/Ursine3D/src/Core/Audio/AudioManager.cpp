@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** AudioManager.cpp
 **
@@ -57,7 +57,7 @@ namespace ursine
 {
     CORE_SYSTEM_DEFINITION( AudioManager );
 
-    void AudioManager::OnInitialize()
+    void AudioManager::OnInitialize(void)
     {
         // Init all things from web page
         AK::SoundEngine::GetDefaultInitSettings( m_initSettings );
@@ -99,7 +99,7 @@ namespace ursine
         app->Connect( APP_UPDATE, this, &AudioManager::onAppUpdate );
     }
 
-    void AudioManager::PauseAudio()
+    void AudioManager::PauseAudio(void)
     {
         AK::SoundEngine::Suspend( false );
     }
@@ -117,12 +117,12 @@ namespace ursine
         );
     }
 
-    void AudioManager::ResumeAudio()
+    void AudioManager::ResumeAudio(void)
     {
         AK::SoundEngine::WakeupFromSuspend( );
     }
 
-    void AudioManager::DestroyList()
+    void AudioManager::DestroyList(void)
     {
         for (int i = 0; i < 8; ++i)
         {
@@ -132,7 +132,7 @@ namespace ursine
         }
     }
 
-    void AudioManager::PopulateList()
+    void AudioManager::PopulateList(void)
     {
         ListenerIndex list[8] = {
             ListenerIndex::One,
@@ -209,12 +209,12 @@ namespace ursine
         }
     }
 
-    void AudioManager::SetGlobalVolume()
+    void AudioManager::SetGlobalVolume(void)
     {
        //AK::SoundEngine::SetRTPCValue(  );
     }
 
-    void AudioManager::ResetGlobalVolume()
+    void AudioManager::ResetGlobalVolume(void)
     {
         //AK::SoundEngine::ResetRTPCValue();
     }
@@ -239,7 +239,7 @@ namespace ursine
         return result == AK_Success;
     }
 
-    void AudioManager::OnRemove()
+    void AudioManager::OnRemove(void)
     {
         AK::SoundEngine::UnregisterAllGameObj( );
 
@@ -288,7 +288,7 @@ namespace ursine
         }
     }
 
-    ListenerIndex AudioManager::GetListener()
+    ListenerIndex AudioManager::GetListener(void)
     {
         auto temp = m_head;
         while (temp)
@@ -336,8 +336,9 @@ namespace ursine
 
     void AudioManager::UnloadBank(const std::string &bankName)
     {
-        UAssert(AK::SoundEngine::UnloadBank(bankName.c_str(),
-            nullptr) == AK_Success, "Wwise: Cannot Unload Bank: %s", bankName.c_str());
+        URSINE_TODO( "@Jason" );
+       /* UAssert(AK::SoundEngine::UnloadBank(bankName.c_str(),
+            nullptr) == AK_Success, "Wwise: Cannot Unload Bank: %s", bankName.c_str());*/
     }
 
     void AudioManager::Init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings, const AkOSChar *path)
@@ -379,8 +380,8 @@ namespace ursine
         UAssert(AK::MusicEngine::Init(&musicInit) == AK_Success,
             "Wwise: Cannot Initialize The Music Engine.");
 
-        // LoadBank( kInitBank, BankID );
-        // LoadBank( kMainBank, MainID );
+        LoadBank( kInitBank, BankID );
+        LoadBank( kMainBank, MainID );
     }
 }
 

@@ -104,6 +104,7 @@ class Editor {
                 var item = new MenuItem( );
 
                 item.text = itemName;
+                item.icon = details[ 3 ];
 
                 var handler = Reflect.field( handler.type, name );
 
@@ -150,18 +151,25 @@ class Editor {
     }
 
     private function initSimulationPlayback() {
+        var toolsContainer = js.Browser.document.querySelector( '#simulation-tools' );
+
+        var btnPlay = js.Browser.document.querySelector( '#simulation-play' );
         var btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
         var btnStep = js.Browser.document.querySelector( '#simulation-step' );
+        var btnStop = js.Browser.document.querySelector( '#simulation-stop' );
+
+        btnPlay.addEventListener( 'click', function() {
+            toolsContainer.classList.add( 'running' );
+
+            Extern.ScenePlayStart( );
+        } );
 
         btnToggle.addEventListener( 'click', function() {
-            btnToggle.classList.toggle( 'running' );
+            var paused = toolsContainer.classList.contains( 'paused' );
 
-            var running = btnToggle.classList.contains( 'running' );
+            toolsContainer.classList.toggle( 'paused', !paused );
 
-            // hide step button if running
-            btnStep.classList.toggle( 'disabled', running );
-
-            Extern.ScenePlay( running );
+            Extern.SceneSetPlayState( !paused );
         } );
 
         btnStep.addEventListener( 'click', function() {
@@ -169,6 +177,12 @@ class Editor {
                 return;
 
             Extern.SceneStep( );
+        } );
+
+        btnStop.addEventListener( 'click', function() {
+            toolsContainer.classList.remove( 'running' );
+
+            Extern.ScenePlayStop( );
         } );
     }
 }

@@ -2,7 +2,7 @@
 
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** HitsanWeaponComponent.h
 **
@@ -22,11 +22,13 @@ struct HitscanWeapon : ursine::ecs::Component, AbstractHitscanWeapon
 public:
 
     AbstractWeaponFields( );
+    HitscanEditorFields( );
 
     HitscanWeapon(void);
     ~HitscanWeapon(void);
 
     void OnInitialize(void) override;
 
+    void RemoveMySelf(void) override;
 
 } Meta(Enable, DisplayName("HitscanWeapon"));

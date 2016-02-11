@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** BaseWeaponComponent.h
 **
@@ -28,5 +28,6 @@ public:
 
     void OnInitialize(void) override;
 
-} Meta(Enable, DisplayName("ProjectileWeapon"));
+    void RemoveMySelf(void) override;
 
+} Meta(Enable , DisplayName("ProjectileWeapon"));

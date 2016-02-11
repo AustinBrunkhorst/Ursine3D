@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** PhysicsSystem.h
 **
@@ -109,6 +109,6 @@ namespace ursine
 
             std::vector< std::shared_ptr<Request> > m_requests;
 
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }

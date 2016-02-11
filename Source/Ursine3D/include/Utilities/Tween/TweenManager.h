@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ActionManager.h
 **
@@ -63,5 +63,5 @@ namespace ursine
         Tween *get(uint32 id);
 
         void cancel(uint32 id, bool invokeRemoved = true);
-    } Meta(WhiteListMethods, Enable);
+    } Meta(Enable, WhiteListMethods);
 }

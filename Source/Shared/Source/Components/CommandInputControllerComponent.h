@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** CommandInputControllerComponent.h
 **
@@ -31,6 +31,9 @@ public:
         Move,
         Look,
         Shoot,
+        Reload,
+        Swap,
+
         ActionCount
     };
 
@@ -73,11 +76,16 @@ private:
 
     PlayerTwoAxisAction m_look;
 
-    PlayerAction m_fire;
+    // weapon actions
+    PlayerAction    m_fire,
+                    m_reload,
+                    m_swap;
 
     PlayerAction m_jump;
 
     void MapXboxContoller(void);
     void MapKeyboard(void);
+
+	void MapCommandList(void);
 
 }Meta(Enable, DisplayName("CommandInputController"));

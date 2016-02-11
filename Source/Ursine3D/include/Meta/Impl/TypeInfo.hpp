@@ -65,39 +65,10 @@ namespace ursine
         )
         {
             // add the good 'ol default constructor
-            data.AddConstructor<T>( 
-                [](ArgumentList &args)
-                {
-                    return T( );
-                },
-                // meta info
-                { },
-                false
-            );
+            data.AddConstructor<T, false, false>( { } );
 
              // add the good 'ol dynamic default constructor
-            data.AddConstructor<T>( 
-                [](ArgumentList &args)
-                {
-                    return new T( );
-                },
-                // meta info
-                { },
-                true
-            );
-
-            // set the good 'ol array constructor
-            // array types need a default constructor so we can safely assume
-            // that Array<T> is valid
-            data.arrayConstructor = Constructor(
-                typeof( T ),
-                { },
-                [](ArgumentList &args)
-                {
-                    return Array<T>( );
-                },
-                false
-            );
+            data.AddConstructor<T, true, false>( { } );
         }
 
         template<typename T>

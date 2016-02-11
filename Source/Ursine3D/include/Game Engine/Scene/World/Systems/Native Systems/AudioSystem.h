@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** PhysicsSystem.h
 **
@@ -57,7 +57,7 @@ namespace ursine
 				const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level);
 
 			static void SetGameState(const std::string name, const std::string state);
-
+            
 			static void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
 
 			static void SetTrigger(const std::string name, AkGameObjectID obj);
@@ -79,6 +79,6 @@ namespace ursine
 
 			void onUpdate(EVENT_HANDLER(World));
 
-		} Meta(Enable, WhiteListMethods);
+		} Meta(Disable, WhiteListMethods, AutoAddEntitySystem);
 	}
 }

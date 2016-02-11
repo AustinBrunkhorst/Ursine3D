@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Entity.cpp
 **
@@ -21,6 +21,12 @@
 #include "EntityManager.h"
 #include "NameManager.h"
 #include "UtilityManager.h"
+
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
 
 namespace ursine
 {
@@ -51,8 +57,24 @@ namespace ursine
         void Entity::Delete(void)
         {
             // it's already being deleted or deletion is disabled
-            if (!(m_active && !m_deleting) || !m_deletionEnabled)
+            if (!(m_active && !m_deleting))
                 return;
+
+            if (!m_deletionEnabled)
+            {
+            #if defined(URSINE_WITH_EDITOR)
+
+                NotificationConfig error;
+
+                error.type = NOTIFY_ERROR;
+                error.header = "Error";
+                error.message = "The entity <strong class=\"highlight\">"+ GetName( ) +"</strong> cannot be deleted.";
+
+                EditorPostNotification( error );
+
+            #endif
+                return;
+            }
 
 			setDeletingTrue( );
 
@@ -135,6 +157,36 @@ namespace ursine
             return m_transform;
         }
 
+		const Entity *Entity::GetParent(void) const
+        {
+	        auto parent = GetTransform( )->GetParent( );
+
+			if (parent)
+				return parent->GetOwner( );
+			else
+				return nullptr;
+        }
+
+		Entity *Entity::GetParent(void)
+		{
+			auto parent = GetTransform( )->GetParent( );
+
+			if (parent)
+				return parent->GetOwner( );
+			else
+				return nullptr;
+		}
+
+		const Entity *Entity::GetRoot(void) const
+		{
+			return GetTransform( )->GetRoot( )->GetOwner( );
+		}
+
+		Entity *Entity::GetRoot(void)
+		{
+			return GetTransform( )->GetRoot( )->GetOwner( );
+		}
+
         ////////////////////////////////////////////////////////////////////////
         // Naming
         ////////////////////////////////////////////////////////////////////////
@@ -177,7 +229,7 @@ namespace ursine
             m_world->m_entityManager->AddComponent( this, component );
         }
 
-        bool Entity::HasComponent(ComponentTypeMask mask) const
+        bool Entity::HasComponent(const ComponentTypeMask &mask) const
         {
             return utils::IsFlagSet( m_typeMask, mask );
         }
@@ -201,6 +253,25 @@ namespace ursine
 	    {
 			return m_world->m_entityManager->GetComponentInChildren( this, id );
 	    }
+
+        Entity* Entity::GetChildByName(const std::string& name) const
+        {
+            // get all children
+            auto children = m_world->m_entityManager->GetChildren( this );
+
+            // search for desired child
+            for ( auto childID : *children )
+            {
+                // check if names are same
+                if ( name == m_world->m_nameManager->GetName( childID ) )
+                {
+                    return  m_world->m_entityManager->GetEntity( childID );
+                }
+            }
+
+            // return entity
+            return  nullptr;
+        }
 
 	    Component* Entity::GetComponentInParent(ComponentTypeID id) const
 	    {
@@ -260,12 +331,12 @@ namespace ursine
             utils::FlagUnset( m_systemMask, mask );
         }
 
-        void Entity::setType(ComponentTypeMask mask)
+        void Entity::setType(const ComponentTypeMask &mask)
         {
             utils::FlagSet( m_typeMask, mask );
         }
 
-        void Entity::unsetType(ComponentTypeMask mask)
+        void Entity::unsetType(const ComponentTypeMask &mask)
         {
             utils::FlagUnset( m_typeMask, mask );
         }

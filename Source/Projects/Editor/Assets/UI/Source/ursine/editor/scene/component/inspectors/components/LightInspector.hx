@@ -6,7 +6,7 @@ import ursine.editor.scene.component.ComponentDatabase;
 @componentInspector( "Light" )
 class LightInspector extends ComponentInspectionHandler {
     private static var m_lightTypeName = "ursine::ecs::LightType";
-    private static var m_lightTypeFieldName = "Type";
+    private static var m_lightTypeFieldName = "type";
     private static var m_lightTypeEnum : NativeEnum = null;
 
     private static var m_lightTypeDirectional = "Directional";
@@ -59,6 +59,9 @@ class LightInspector extends ComponentInspectionHandler {
         for (fieldName in fields) {
             var field = database.getComponentTypeField( componentType, fieldName );
 
+            if (field == null)
+                throw 'Unknown field "${fieldName}" on type "${m_lightTypeName}"';
+
             // ignore light type
             if (field.name == m_lightTypeFieldName)
                 continue;
@@ -84,22 +87,23 @@ class LightInspector extends ComponentInspectionHandler {
         m_typeToFields = new Map<UInt, Array<String>>( );
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
-            "Color",
-            "Direction",
-            "Intensity"
+            "color",
+            "intensity",
+            "renderMask"
         ];
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypePoint ) ] = [
-            "Color",
-            "Intensity",
-            "Radius"
+            "color",
+            "intensity",
+            "radius",
+            "renderMask"
         ];
 
         m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeSpot ) ] = [
-            "Color",
-            "Direction",
-            "Intensity",
-            "SpotlightAngles"
+            "color",
+            "intensity",
+            "spotlightAngles",
+            "renderMask"
         ];
     }
 }

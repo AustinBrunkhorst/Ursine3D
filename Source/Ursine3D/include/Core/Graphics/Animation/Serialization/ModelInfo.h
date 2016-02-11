@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ModelInfo.h
 **
@@ -16,6 +16,7 @@
 #include "MeshInfo.h"
 #include "MaterialInfo.h"
 #include "BoneInfo.h"
+#include "LvlHierarchy.h"
 
 namespace ursine
 {
@@ -23,19 +24,6 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
-			// This structure contains hierarchy among meshes. This will makes easy to find it.
-			struct MeshInLvl
-			{
-				SMat4 meshTM;
-				int mParentIndex;
-			};
-
-			// This structure contains hierarchy among bones.
-			struct RigInLvl
-			{
-				int mParentIndex;
-			};
-
 			class ModelInfo : public ISerialize
 			{
 			public:

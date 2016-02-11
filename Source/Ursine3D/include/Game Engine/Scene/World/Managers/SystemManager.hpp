@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SystemManager.hpp
 **
@@ -55,8 +55,6 @@ namespace ursine
                 "System ID for type '%s' has not been initialized.\n"
                 "Possibly forgot ENTITY_SYSTEM_DEFINITION."
             );
-
-            auto &systemMeta = systemType.GetMeta( );
 
             // systems take a pointer to a world as the first argument
             const auto systemConstructor = 

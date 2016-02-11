@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** FilterSystem.cpp
 **
@@ -38,12 +38,12 @@ namespace ursine
 
             auto interests = m_filter.Matches( entity );
             auto removed = args->type == WORLD_ENTITY_COMPONENT_REMOVED;
-				
-            if (removed || !interests)
+
+            if (removed && !interests)
             {
                 Remove( entity );
             }
-            else if(interests)
+            else if(!removed && interests)
             {
                 Add( entity );
             }
@@ -83,9 +83,9 @@ namespace ursine
 
         void FilterSystem::Remove(Entity *entity)
         {
-            entity->unsetSystem( GetTypeMask( ) );
-
             Disable( entity );
+
+			entity->unsetSystem( GetTypeMask( ) );
         }
 
         void FilterSystem::Enable(Entity *entity)
@@ -119,6 +119,13 @@ namespace ursine
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
                 .On( m_updateType, &FilterSystem::onUpdate, m_updatePriority );
+
+			auto entities = m_world->GetEntitiesFromFilter( m_filter );
+
+			for (auto e : entities)
+			{
+				Add( e );
+			}
 
             Initialize( );
         }

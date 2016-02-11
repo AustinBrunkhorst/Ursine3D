@@ -35,6 +35,7 @@
 #include <Components/HealthComponent.h>
 
 using namespace ursine;
+using namespace ecs;
 
 
 ENTITY_SYSTEM_DEFINITION( SpawnSystem );
@@ -266,9 +267,9 @@ void SpawnSystem::killPlayer(ursine::ecs::Entity* entity)
     for (auto &model : models)
     {
         if (model->GetOwner( )->GetName( ) == "FPSArm")
-            model->SetRenderMask( 0 );
+            model->SetRenderMask( RenderMask::Any );
         else
-            model->SetRenderMask( 4 );
+            model->SetRenderMask( RenderMask::M4 );
     }
 
     // Set the color

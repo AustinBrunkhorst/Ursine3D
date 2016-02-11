@@ -10,11 +10,11 @@
               background $duration-transition-btn ease;
 
   // hide buttons
-  /*&::-webkit-inner-spin-button,
+  &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
+    display: none;
     -webkit-appearance: none;
-    margin: 0;
-  }*/
+  }
 
   &:hover, &:focus {
     border: 1px solid $color-accent;

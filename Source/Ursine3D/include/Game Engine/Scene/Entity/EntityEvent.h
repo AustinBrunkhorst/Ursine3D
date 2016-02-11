@@ -10,6 +10,7 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
+#pragma once
 
 #include "EventArgs.h"
 
@@ -56,11 +57,18 @@ namespace ursine
 			ENTITY_COLLISION_PERSISTED,
 
             ///////////////////////////////////////////////////////////////////
+            // Particle Systems
+            ///////////////////////////////////////////////////////////////////
+            // Commands all particle modifiers to operate on the set of 
+            // particles
+            ENTITY_PARTICLE_UPDATE,
+
+            ///////////////////////////////////////////////////////////////////
             // User Defined
             ///////////////////////////////////////////////////////////////////
 
             // Starting index for events defined out of engine
             ENTITY_EVENT_USER = 0x8000,
-        };
+        } Meta(Enable);
     }
 }

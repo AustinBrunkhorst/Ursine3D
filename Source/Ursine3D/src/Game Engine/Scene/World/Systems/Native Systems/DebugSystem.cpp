@@ -59,7 +59,7 @@ namespace ursine
 
         void DebugSystem::OnInitialize(void)
         {
-            EntitySystem::OnInitialize();
+            EntitySystem::OnInitialize( );
 
             m_world->Listener(this)
                 .On(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate);

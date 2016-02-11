@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** RotateTool.cpp
 **
@@ -21,17 +21,17 @@
 using namespace ursine;
 using namespace ecs;
 
-RotateTool::RotateTool(Editor *editor)
-	: EditorTool( editor )
+RotateTool::RotateTool(Editor *editor, World *world)
+	: EditorTool( editor, world )
 	, m_gizmo( nullptr )
 	, m_selected( -1 )
 	, m_dragging( false )
 	, m_snapping( false )
 	, m_local( false )
 	, m_deleteGizmo( false )
+	, m_hovering( false )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_world = m_editor->GetProject( )->GetScene( )->GetWorld( );
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
 }
 
@@ -73,41 +73,8 @@ void RotateTool::OnDeselect(Entity* entity)
 
 void RotateTool::OnMouseDown(const MouseButtonArgs& args)
 {
-	// get the current entity ID the mouse is over
-	auto newID = m_graphics->GetMousedOverID( );
-	auto entity = m_world->GetEntityUnique( newID );
-
-	if (!entity || m_altDown)
-		return;
-
-	auto entityTrans = entity->GetTransform( );
-
-	auto root = entityTrans->GetRoot( );
-
-	if (!root)
-		return;
-
-	auto rootName = root->GetOwner( )->GetName( );
-
-	// if we're clicking on ourselves, set the dragging flag,
-	// and the vector we're dragging on
-	if (rootName == "RotationGizmo")
-	{
+	if (m_hovering)
 		m_dragging = true;
-
-		// Get the selected entity
-		auto selected = m_world->GetEntityUnique( m_selected );
-
-		// Get the gizmo's name (the models are under the parent named the axis' name)
-		auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );
-
-		if (name == "xAxis")
-			setDirectionVectors( SVec3::UnitX( ), selected );
-		else if (name == "yAxis")
-			setDirectionVectors( SVec3::UnitY( ), selected );
-		else if (name == "zAxis")
-			setDirectionVectors( SVec3::UnitZ( ), selected );
-	}
 }
 
 void RotateTool::OnMouseUp(const MouseButtonArgs& args)
@@ -186,6 +153,11 @@ void RotateTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 	m_altDown = kManager->IsDown( KEY_LMENU );
 
 	updateAxis( );
+
+	if (!m_dragging)
+	{
+		updateHoverAxis( );
+	}
 }
 
 void RotateTool::setDirectionVectors(const SVec3& basisVector, Entity* selected)
@@ -234,12 +206,10 @@ void RotateTool::disableAxis(void)
 	if (m_gizmo)
 	{
 		m_gizmo->Delete( );
-		
-		// Clear the deletion queue if the scene is paused
-		EditorClearDeletionQueue( );
 	}
 
 	m_gizmo = nullptr;
+	m_axis = nullptr;
 }
 
 void RotateTool::updateAxis(void)
@@ -261,6 +231,83 @@ void RotateTool::updateAxis(void)
 		gizTrans->SetWorldRotation( selTrans->GetWorldRotation( ) );
 	else
 		gizTrans->SetLocalRotation( SQuat::Identity( ) );
+}
+
+void RotateTool::updateHoverAxis(void)
+{
+	// get the current entity ID the mouse is over
+	auto newID = m_graphics->GetMousedOverID();
+	auto entity = m_world->GetEntityUnique(newID);
+
+	if (!entity || m_altDown)
+	{
+		disableHover( );
+		return;
+	}
+
+	auto entityTrans = entity->GetTransform();
+
+	auto root = entityTrans->GetRoot();
+
+	if (!root)
+	{
+		disableHover( );
+		return;
+	}
+
+	auto rootName = root->GetOwner()->GetName();
+
+	// if we're clicking on ourselves, set the dragging flag,
+	// and the vector we're dragging on
+	if (rootName == "RotationGizmo")
+	{
+		// Get the selected entity
+		auto selected = m_world->GetEntityUnique(m_selected);
+
+		// Get the gizmo's name (the models are under the parent named the axis' name)
+		auto name = entityTrans->GetParent()->GetOwner()->GetName();
+
+		if (name == "xAxis")
+			setDirectionVectors(SVec3::UnitX(), selected);
+		else if (name == "yAxis")
+			setDirectionVectors(SVec3::UnitY(), selected);
+		else if (name == "zAxis")
+			setDirectionVectors(SVec3::UnitZ(), selected);
+		else
+			return;
+
+		auto model = entity->GetComponent<Model3D>( );
+
+		if (!model)
+			return;
+
+		// If we're hovering over a new axis
+		if (m_axis && entity != m_axis->GetOwner( ))
+			disableHover( );
+
+		// if the handle is null, store the original color
+		if (!m_axis)
+			m_axisOrigColor = model->GetColor( );
+
+		// set the axis handle
+		m_axis = entity->GetComponent<Model3D>( );
+
+		// set the axis' color
+		m_axis->SetColor( Color::Yellow );
+
+		m_hovering = true;
+	}
+}
+
+void RotateTool::disableHover(void)
+{
+	m_hovering = false;
+		
+	if (m_axis)
+	{
+		m_axis->SetColor( m_axisOrigColor );
+		m_axis = nullptr;
+	}
 }
 
 void RotateTool::setEntitySerializationToggle(bool toggle, Entity* entity)

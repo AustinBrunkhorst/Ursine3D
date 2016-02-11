@@ -48,6 +48,12 @@ namespace ursine
                 SetMass
             );
 
+			EditorField(
+                SVec3 offset,
+                GetOffset,
+                SetOffset
+            );
+
             EditorField(
                 bool freezeXRotation,
                 GetRotationFreezeX,
@@ -154,6 +160,8 @@ namespace ursine
             void AddForceRelative(const SVec3 &force);
 
             void AddForceAtPosition(const SVec3 &force, const SVec3 &worldPosition);
+
+            void AddImpulse(const SVec3 &impulse);
 
             void AddTorque(const SVec3 &torque);
 

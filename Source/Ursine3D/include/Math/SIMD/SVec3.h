@@ -60,8 +60,13 @@ namespace ursine
 		friend class SMat4;
 
 	public:
+        Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::X" ))
         EditorField(float x, X, SetX);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::Y" ))
         EditorField(float y, Y, SetY);
+
+        Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::Z" ))
         EditorField(float z, Z, SetZ);
 
 		// Constructors
@@ -217,7 +222,7 @@ namespace ursine
 
 #endif
 
-	} Meta(Enable, WhiteListMethods);
+	} Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "SVec3.hpp"

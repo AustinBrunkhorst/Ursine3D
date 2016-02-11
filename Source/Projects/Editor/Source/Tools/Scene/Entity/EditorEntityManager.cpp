@@ -17,7 +17,7 @@
 
 #include "ComponentUtils.h"
 
-#include "SelectedComponent.h"
+#include <SelectedComponent.h>
 #include "EditorConfig.h"
 
 #include <Editor.h>
@@ -72,7 +72,7 @@ EditorEntityManager::~EditorEntityManager(void)
     clearWorld( m_world );
 }
 
-void EditorEntityManager::SetWorld(ecs::World::Handle world)
+void EditorEntityManager::SetWorld(ecs::World *world)
 {
     clearWorld( m_world );
 
@@ -87,8 +87,11 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
         .On( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 
     m_world = world;
+}
 
-    Json data;
+void EditorEntityManager::RelayUIResetWorld(void)
+{
+	Json data;
 
     m_project->GetUI( )->Message(
         UI_CMD_BROADCAST, 
@@ -98,7 +101,7 @@ void EditorEntityManager::SetWorld(ecs::World::Handle world)
     );
 }
 
-void EditorEntityManager::clearWorld(ecs::World::Handle world)
+void EditorEntityManager::clearWorld(ecs::World *world)
 {
     if (!world)
         return;
@@ -197,6 +200,9 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
+	if (args->component == nullptr || args->entity == nullptr)
+		return;
+
     auto component = 
         meta::Variant( args->component, meta::variant_policy::WrapObject( ) );
 
@@ -237,7 +243,7 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
 
-    if (args->entity->HasComponent<Selected>( ))
+    if (args->entity->HasComponent<ecs::Selected>( ))
     {
     #if defined(CONFIG_DEBUG)
         UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
@@ -270,7 +276,7 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentArrayModfiedArgs);
 
-    if (args->entity->HasComponent<Selected>( ))
+    if (args->entity->HasComponent<ecs::Selected>( ))
     {
     #if defined(CONFIG_DEBUG)
         UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
@@ -313,9 +319,4 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
             message
         );
     }
-}
-
-void ecs::EditorClearDeletionQueue(void)
-{
-	GetCoreSystem( Editor )->GetProject( )->ClearDeletionQueue( );
 }

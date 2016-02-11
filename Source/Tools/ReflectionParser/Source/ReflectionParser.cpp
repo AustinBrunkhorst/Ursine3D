@@ -84,7 +84,7 @@ ReflectionParser::~ReflectionParser(void)
 
 void ReflectionParser::Parse(void)
 {
-    m_index = clang_createIndex( true, false );
+    m_index = clang_createIndex( true, m_options.displayDiagnostics );
 
     std::vector<const char *> arguments;
 
@@ -95,11 +95,12 @@ void ReflectionParser::Parse(void)
 #endif
 
     for (auto &argument : m_options.arguments)
-    { 
-        // unescape flags
-        boost::algorithm::replace_all( argument, "\\-", "-" );
-
         arguments.emplace_back( argument.c_str( ) );
+
+    if (m_options.displayDiagnostics)
+    {
+        for (auto *argument : arguments)
+            std::cout << argument << std::endl;
     }
 
     m_translationUnit = clang_createTranslationUnitFromSourceFile(

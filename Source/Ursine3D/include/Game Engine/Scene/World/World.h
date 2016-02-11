@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** World.h
 **
@@ -48,6 +48,7 @@ namespace ursine
             ~World(void);
 
             Entity *CreateEntity(const std::string &name = "Entity");
+			void queueEntityDeletion(Entity *entity);
 
             // Creates an entity from an archetype file
             Entity *CreateEntityFromArchetype(
@@ -56,7 +57,9 @@ namespace ursine
             );
 
             // Gets an entity based on its active id
-            Entity *GetEntity(EntityID id) const;
+            Entity *GetEntity(EntityUniqueID id) const;
+
+            const std::string &GetEntityName(EntityID id) const;
 
             // Gets an entity based its name (first entity with this name)
             Entity *GetEntityFromName(const std::string &name) const;
@@ -79,8 +82,14 @@ namespace ursine
             // Updates the world
             void Update(void);
 
+            // Updates the world in editor mode
+            void EditorUpdate(void);
+
             // Renders the world
             void Render(void);
+
+            // Renders the world in editor mode
+            void EditorRender(void);
 
             Entity *GetSettings(void) const;
 
@@ -116,7 +125,6 @@ namespace ursine
             World(const World &rhs) = delete;
 
             // adds an entity to the deletion queue
-            void queueEntityDeletion(Entity *entity);
             void deleteEntity(Entity *entity);
             
             void clearDeletionQueue(void);

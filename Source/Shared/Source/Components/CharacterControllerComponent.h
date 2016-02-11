@@ -14,7 +14,14 @@
 #pragma once
 
 #include <Component.h>
-#include <UrsineLogTools.h>
+
+namespace ursine
+{
+	namespace ecs
+	{
+		class SweptController;
+	}
+}
 
 class CharacterController : public ursine::ecs::Component
 {
@@ -27,15 +34,6 @@ public:
     ~CharacterController(void);
 
     EditorField(
-        float moveSpeed,
-        GetMoveSpeed,
-        SetMoveSpeed
-    );
-
-    float GetMoveSpeed(void) const;
-    void SetMoveSpeed(float moveSpeed);
-
-    EditorField(
         float rotateSpeed,
         GetRotateSpeed,
         SetRotateSpeed
@@ -43,24 +41,6 @@ public:
 
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
-
-    EditorField(
-        float jumpSpeed,
-        GetJumpSpeed,
-        SetJumpSpeed
-    );
-
-    float GetJumpSpeed(void) const;
-    void SetJumpSpeed(float jumpSpeed);
-
-    EditorField(
-        float jumpInterval,
-        GetJumpInterval,
-        SetJumpInterval
-    );
-
-    float GetJumpInterval(void) const;
-    void SetJumpInterval(float jumpInterval);
 
     const ursine::Vec2 &GetMoveDirection(void) const;
     void SetMoveDirection(const ursine::Vec2 &moveDir);
@@ -72,20 +52,15 @@ public:
 
 private:
 
-    void onUpdate(EVENT_HANDLER(World));
     void SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND));
     void Jump(EVENT_HANDLER(game::JUMP_COMMAND));
 
-    float m_moveSpeed;
-    
     float m_rotateSpeed;
     
-    float m_jumpSpeed;
-    float m_jumpInterval;
-    float m_jumpTimer;
     bool m_jump;
 
     ursine::Vec2 m_moveDir;
     ursine::Vec2 m_lookDir;
 
-} Meta(Enable, DisplayName("CharacterController"));
+} Meta(Enable, DisplayName("CharacterController"), 
+	   RequiresComponents(typeof(ursine::ecs::SweptController)));

@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** FilterSystem.h
 **
@@ -47,9 +47,8 @@ namespace ursine
             // game tick
             virtual void onUpdate(EVENT_HANDLER(World));
 
-            const Filter m_filter;
-
         protected:
+            const Filter m_filter;
             std::unordered_map<EntityUniqueID, Entity*> m_active;
 
             void Add(Entity *entity);

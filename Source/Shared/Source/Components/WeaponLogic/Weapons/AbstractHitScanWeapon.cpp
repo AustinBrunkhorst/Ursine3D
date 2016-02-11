@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** HitScanWeapon.cpp
 **
@@ -23,7 +23,6 @@ AbstractHitscanWeapon::AbstractHitscanWeapon(void) :
     m_alwaysDraw( false ),
     m_debug( false )
 {
-    m_weaponFireType = HITSCAN_WEAPON;
 }
 
 ursine::physics::RaycastType AbstractHitscanWeapon::GetRaycastType( ) const

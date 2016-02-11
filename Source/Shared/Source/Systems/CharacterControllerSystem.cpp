@@ -20,7 +20,7 @@
 
 #include "PlayerAnimationComponent.h"
 #include <CameraComponent.h>
-#include "TeamComponent.h"
+#include <SweptControllerComponent.h>
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -36,7 +36,7 @@ CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
 void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
-    auto moveSpeed = controller->GetMoveSpeed( );
+	auto *swept = entity->GetComponent<SweptController>( );
 	auto rotateSpeed = controller->GetRotateSpeed( );
 
     auto transform = entity->GetTransform( );
@@ -88,22 +88,21 @@ void CharacterControllerSystem::Process(Entity *entity)
             camTrans->LookAt(camTrans->GetWorldPosition( ) + look);
         }
 
-        child->SetWorldRotation(
-            child->GetWorldRotation( ) *
+        transform->SetWorldRotation(
+            transform->GetWorldRotation( ) *
             SQuat(0.0f, lookAngle.X( ), 0.0f)
             );
     }
 
-    auto move = -controller->GetMoveDirection( ) * moveSpeed;
+    auto move = controller->GetMoveDirection( );
 
     auto forward = transform->GetForward( ) * move.Y( );
     auto strafe = transform->GetRight( ) * move.X( );
-    auto vel = rigidbody->GetVelocity( );
     auto accum = forward + strafe;
 
     if (controller->m_jump)
     {
-        vel.Y( ) += controller->m_jumpSpeed;
+        swept->Jump( );
         controller->m_jump = false;
     }
 
@@ -111,7 +110,7 @@ void CharacterControllerSystem::Process(Entity *entity)
 
     if (animator)
     {
-        if (vel.Y( ) > 0.2f)
+        if (swept->GetJumping( ))
         {
             animator->SetPlayerState( PlayerAnimation::Jumping );
         }
@@ -125,7 +124,7 @@ void CharacterControllerSystem::Process(Entity *entity)
         }
     }
 
-    rigidbody->SetVelocity({ accum.X( ), vel.Y( ), accum.Z( ) });
+    swept->SetMovementDirection({ accum.X( ), 0.0f, accum.Z( ) });
 
     // Reset the look direction
     controller->SetLookDirection( Vec2::Zero( ) );

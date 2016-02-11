@@ -10,19 +10,19 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
-
+ 
 #include "Precompiled.h"
-
-#include "Editor.h"
-#include "Project.h"
-
-#include <Application.h>
-
+ 
+#include "Editor.h" 
+#include "Project.h"  
+ 
+#include <Application.h>  
+   
 #include <WindowManager.h>
-#include <UIManager.h>
-
+#include <UIManager.h> 
+  
 #include <Color.h> 
-#include <LightComponent.h>
+#include <LightComponent.h> 
 
 using namespace ursine;
 
@@ -32,7 +32,7 @@ namespace
 
     const auto kEditorClearColor = Color( 0xFF252526 );
 
-    const auto kDefaultWindowWidth = 1280;
+    const auto kDefaultWindowWidth = 1280; 
     const auto kDefaultWindowHeight = 720;
 }
 
@@ -52,9 +52,9 @@ void Editor::OnInitialize(void)
     app->Connect(
         APP_UPDATE,
         this,
-        &Editor::onAppUpdate
+        &Editor::onAppUpdate 
     );
-
+     
     auto *windowManager = GetCoreSystem( WindowManager );
     auto *uiManager = GetCoreSystem( UIManager );
 
@@ -68,11 +68,11 @@ void Editor::OnInitialize(void)
     m_mainWindow.window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
-    m_mainWindow.window->Listener( this )
-        .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange );
-
-    m_mainWindow.window->SetLocationCentered( );
-    m_mainWindow.window->Show( true );   
+    m_mainWindow.window->Listener( this ) 
+        .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange ); 
+     
+    m_mainWindow.window->SetLocationCentered( ); 
+    m_mainWindow.window->Show( true );    
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -90,7 +90,7 @@ void Editor::OnInitialize(void)
 
     m_notificationManager.SetUI( m_mainWindow.ui );
 
-    initializeScene( );
+    initializeScene( ); 
 }
 
 void Editor::OnRemove(void)
@@ -135,64 +135,60 @@ NotificationManager &Editor::GetNotificationManager(void)
 Notification Editor::PostNotification(const NotificationConfig &config)
 {
     return m_notificationManager.Create( config );
-}
+}  
 
 void Editor::initializeGraphics(void)
-{
+{ 
     graphics::GfxConfig config;
 
-    config.Fullscreen_ = false;
-
-    config.HandleToWindow_ =
+    config.fullscreen = false;
+      
+    config.handleToWindow =
         static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
-
-    config.ModelListPath_ = "Assets/Models/";
-    config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
-    config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = 1366;
-    config.WindowHeight_ = 768;
-
-    URSINE_TODO( "..." );
-
-    config.m_renderUI = true;
-    config.debug = false;
-
-    config.Profile_ = false;
-
+       
+    config.modelListPath = "Assets/Models/"; 
+    config.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
+    config.textureListPath = "Assets/Textures/";
+    config.windowWidth = 1366;
+    config.windowHeight = 768;      
+    config.enableDebugInfo = false; 
+    config.enableProfiling = false;    
+        
+      
     m_graphics->StartGraphics( config );
-    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
+    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight ); 
     //m_graphics->SetFullscreenState( true );
-
+     
     //m_mainWindow.window->SetFullScreen( true );
-}
+}    
 
-void Editor::initializeScene(void)
-{
-    auto scene = m_project->GetScene( );
-
-    auto world = scene->GetWorld( );
+void Editor::initializeScene(void)   
+{   
+    auto scene = m_project->GetScene( ); 
+       
+    auto world = scene->GetWorld( ); 
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
-
+         
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
-        handle.SetPosition( 0, 0 );
-
+        handle.SetPosition( 0, 0 ); 
+         
         handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
 
         scene->SetViewport( viewport );
 
-        m_graphics->SetGameViewport( viewport );
+        m_graphics->SetGameViewport( viewport ); 
     }
 
     auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 
-        univLight->GetTransform( )->SetLocalPosition({ 0.0f, 60.0f, 0.0f });
-        univLight->GetTransform( )->SetLocalRotation({ 0.0f, 0.0f, 0.0f });
+        univLight->GetTransform( )->SetLocalPosition( { 0.0f, 60.0f, 0.0f } );
+        univLight->GetTransform( )->SetLocalRotation( { 0.0f, 0.0f, 0.0f } );
 
-        component->SetType( ecs::LightType::Directional );
+        component->SetLightType( ecs::LightType::Directional );
         component->SetRadius( 40.0f );
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
@@ -209,8 +205,6 @@ void Editor::onAppUpdate(EVENT_HANDLER(Application))
     auto dt = sender->GetDeltaTime( );
 
     auto scene = m_project->GetScene( );
-
-    scene->GetWorld( )->Dispatch( ecs::WORLD_EDITOR_UPDATE, EventArgs::Empty );
 
     scene->Update( dt );
     scene->Render( );

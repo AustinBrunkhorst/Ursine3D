@@ -24,8 +24,10 @@
     <link rel="import" href="Controls/MenuSeparator.html" />
     <link rel="import" href="Controls/Menu.html" />
     <link rel="import" href="Controls/MainMenu.html" />
+    <link rel="import" href="Controls/ContextMenu.html" />
     <link rel="import" href="Controls/EditorWindow.html" />
     <link rel="import" href="Controls/Notification.html" />
+    <link rel="import" href="Controls/ItemSelectionPopup.html" />
 
     <link rel="import" href="Controls/Docking/DockContainer.html" />
     <link rel="import" href="Controls/Docking/DockColumn.html" />
@@ -34,14 +36,16 @@
     <link rel="import" href="Controls/Inspection/ComponentInspector.html" />
     <link rel="import" href="Controls/Inspection/FieldInspector.html" />
     <link rel="import" href="Controls/Inspection/ArrayItemContainer.html" />
-    <link rel="import" href="Controls/Inspection/ComponentTypeSelector.html" />
 </head>
 <body>
     <div id="notification-container"></div>
+    <div id="context-menu-container"></div>
 	<div id="header-toolbar">
         <div id="simulation-tools">
+            <div id="simulation-play"></div>
             <div id="simulation-toggle"></div>
             <div id="simulation-step"></div>
+            <div id="simulation-stop"></div>
         </div>
     </div>
     <div id="main-dock-container"></div>

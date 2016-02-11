@@ -22,6 +22,7 @@ namespace ursine
     CORE_SYSTEM_DEFINITION( WindowManager );
 
     WindowManager::WindowManager(void)
+        : EventDispatcher( this )
     {
         Application::Instance->GetPlatformEvents( )
             .Connect( SDL_WINDOWEVENT, this, &WindowManager::onWindowEvent );

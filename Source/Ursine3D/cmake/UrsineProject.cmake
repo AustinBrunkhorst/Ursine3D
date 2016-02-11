@@ -335,34 +335,6 @@ macro (ursine_project PROJECT_NAME)
         )
     endif ()
 
-	# add reflection parser
-    if ("${PROJ_BUILD_META}" STREQUAL "TRUE")
-		ursine_build_meta(
-            TARGET ${PROJECT_NAME}
-            FLAGS ${PROJ_META_FLAGS}
-            SOURCE_ROOT ${META_SOURCE_ROOT}
-            GENERATED_DIR ${META_GENERATED_DIR}
-            GENERATED_FILES ${META_GENERATED_FILES}
-            SOURCE_FILE ${PROJ_META_HEADER}
-            MODULE_HEADER ${PROJ_META_MODULE_HEADER}
-            MODULE_SOURCE_FILE ${META_MODULE_SOURCE}
-            HEADER_FILES ${FILES_INC_NO_GENERATED}
-            PCH_NAME ${PROJ_PCH_NAME}
-        )
-
-		# the project is implicitly a dependency
-		list(APPEND PROJ_META_MODULE_DEPENDS ${PROJECT_NAME})
-
-		set(MODULE_DEPENDS_INITIALIZER "")
-
-		foreach (DEPENDENCY ${PROJ_META_MODULE_DEPENDS})
-			set(MODULE_DEPENDS_INITIALIZER "${MODULE_DEPENDS_INITIALIZER}CONSTRUCT_MODULE(${DEPENDENCY}) ")
-		endforeach ()
-
-		# add compile definition
-        set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPILE_DEFINITIONS META_MODULE_INITIALIZER=${MODULE_DEPENDS_INITIALIZER})
-    endif ()
-
     # project folder
     if (NOT "${PROJ_FOLDER}" STREQUAL "")
         ursine_set_folder(${PROJECT_NAME} ${PROJ_FOLDER})
@@ -400,6 +372,35 @@ macro (ursine_project PROJECT_NAME)
     endif ()
     
     ursine_add_include_directories(${PROJECT_NAME} ${ALL_INCLUDES})
+	
+	# add reflection parser
+    if ("${PROJ_BUILD_META}" STREQUAL "TRUE")
+		ursine_build_meta(
+            TARGET ${PROJECT_NAME}
+            DEFINES ${PROJ_META_DEFINES}
+            INCLUDES ${PROJ_META_INCLUDES}
+            SOURCE_ROOT ${META_SOURCE_ROOT}
+            GENERATED_DIR ${META_GENERATED_DIR}
+            GENERATED_FILES ${META_GENERATED_FILES}
+            SOURCE_FILE ${PROJ_META_HEADER}
+            MODULE_HEADER ${PROJ_META_MODULE_HEADER}
+            MODULE_SOURCE_FILE ${META_MODULE_SOURCE}
+            HEADER_FILES ${FILES_INC_NO_GENERATED}
+            PCH_NAME ${PROJ_PCH_NAME}
+        )
+
+		# the project is implicitly a dependency
+		list(APPEND PROJ_META_MODULE_DEPENDS ${PROJECT_NAME})
+
+		set(MODULE_DEPENDS_INITIALIZER "")
+
+		foreach (DEPENDENCY ${PROJ_META_MODULE_DEPENDS})
+			set(MODULE_DEPENDS_INITIALIZER "${MODULE_DEPENDS_INITIALIZER}CONSTRUCT_MODULE(${DEPENDENCY}) ")
+		endforeach ()
+
+		# add compile definition
+        set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPILE_DEFINITIONS META_MODULE_INITIALIZER=${MODULE_DEPENDS_INITIALIZER})
+    endif ()
     
     get_directory_property(HAS_PARENT PARENT_DIRECTORY)
 

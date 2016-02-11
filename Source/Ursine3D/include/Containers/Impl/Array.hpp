@@ -299,4 +299,14 @@ namespace ursine
     {
         return m_impl.size( );
     }
+
+#if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+    template<typename T>
+    ArrayEventDispatcher &Array<T>::GetModifyEvents(void)
+    {
+        return m_modifyEvents;
+    }
+
+#endif
 }

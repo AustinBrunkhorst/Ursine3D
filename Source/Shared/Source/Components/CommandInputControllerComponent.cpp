@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** CommandInputControllerComponent.cpp
 **
@@ -21,14 +21,14 @@
 
 NATIVE_COMPONENT_DEFINITION(CommandInputController);
 
-CommandInputController::CommandInputController()
-    : BaseComponent()
+CommandInputController::CommandInputController(void)
+    : BaseComponent( )
     , m_keyBoard( false )
 {
 
 }
 
-CommandInputController::~CommandInputController()
+CommandInputController::~CommandInputController(void)
 {
     for(auto &x : m_commandList)
     {
@@ -44,31 +44,18 @@ bool CommandInputController::GetKeyBoard(void) const
 void CommandInputController::SetKeyBoard(const bool useKeyBoard)
 {
     m_keyBoard = useKeyBoard;
-}
 
-void CommandInputController::OnInitialize()
-{
-    if ( m_keyBoard )
+	if (m_keyBoard)
         MapKeyboard( );
-
     else
         MapXboxContoller( );
 
-    m_commandList = {
-        new ButtonActionCommand<JumpCommand>(
-            m_jump,
-            ButtonActionCommand<JumpCommand>::Interaction::Down
-        ),
+	MapCommandList( );
+}
 
-        new TwoAxisActionCommand<MoveCommand>(m_move),
-
-        new TwoAxisActionCommand<LookCommand>(m_look),
-
-        new ButtonActionCommand<FireCommand>(
-            m_fire,
-            ButtonActionCommand<FireCommand>::Interaction::Held
-        )
-    };
+void CommandInputController::OnInitialize(void)
+{
+    SetKeyBoard( m_keyBoard );
 }
 
 void CommandInputController::MapXboxContoller( void )
@@ -147,7 +134,7 @@ void CommandInputController::MapXboxContoller( void )
         );
 }
 
-void CommandInputController::MapKeyboard( void )
+void CommandInputController::MapKeyboard(void)
 {
     PlayerID* idComp =  GetOwner( )->GetComponent<PlayerID>( );
 
@@ -221,7 +208,32 @@ void CommandInputController::MapKeyboard( void )
         );
 }
 
-std::vector<ActionCommandBase*>& CommandInputController::GetCommandList()
+void CommandInputController::MapCommandList(void)
+{
+	// clear all commands previously created
+	for (auto &command : m_commandList)
+		delete command;
+
+	m_commandList.clear( );
+
+	 m_commandList = {
+        new ButtonActionCommand<JumpCommand>(
+            m_jump,
+            ButtonActionCommand<JumpCommand>::Interaction::Down
+        ),
+
+        new TwoAxisActionCommand<MoveCommand>( m_move ),
+
+        new TwoAxisActionCommand<LookCommand>( m_look ),
+
+        new ButtonActionCommand<FireCommand>(
+            m_fire,
+            ButtonActionCommand<FireCommand>::Interaction::Held
+        )
+    };
+}
+
+std::vector<ActionCommandBase*> &CommandInputController::GetCommandList(void)
 {
     return m_commandList;
 }

@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** RenderableAPI.cpp
 **
@@ -44,9 +44,14 @@ namespace ursine
             return m_privates->renderMgr->GetRenderable<Billboard2D>(handle);
         }
 
-        Light& RenderableAPI::GetLight(GfxHND &handle)
+        Light &RenderableAPI::GetLight(GfxHND &handle)
         {
             return m_privates->renderMgr->GetRenderable<Light>(handle);
+        }
+
+        ParticleSystem &RenderableAPI::GetParticleSystem(GfxHND & handle)
+        {
+            return m_privates->renderMgr->GetRenderable<ParticleSystem>(handle);
         }
 
         void RenderableAPI::SetPrivates(void *priv)

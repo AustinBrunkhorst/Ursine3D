@@ -53,27 +53,42 @@ endfunction ()
 function(ursine_build_meta)
     ursine_parse_arguments(
         BUILD_META 
-        "TARGET;FLAGS;SOURCE_ROOT;SOURCE_FILE;MODULE_HEADER;MODULE_SOURCE_FILE;GENERATED_DIR;GENERATED_FILES;HEADER_FILES;PCH_NAME" 
+        "TARGET;DEFINES;INCLUDES;SOURCE_ROOT;SOURCE_FILE;MODULE_HEADER;MODULE_SOURCE_FILE;GENERATED_DIR;GENERATED_FILES;HEADER_FILES;PCH_NAME" 
         "" 
         ${ARGN}
     )
 
     get_property(DIRECTORIES TARGET ${BUILD_META_TARGET} PROPERTY INCLUDE_DIRECTORIES)
 
-    set(FLAGS ${GLOBAL_META_FLAGS} ${BUILD_META_FLAGS})
+    set(RAW_INCLUDES ${GLOBAL_META_INCLUDES} ${DIRECTORIES} ${BUILD_META_INCLUDES})
 
-    # build the include directory flags
-    foreach (DIRECTORY ${DIRECTORIES})
-        list(APPEND FLAGS "\\-I${DIRECTORY}")
+    set(INCLUDES "")
+
+    foreach (INC ${RAW_INCLUDES})
+        set(INCLUDES "${INCLUDES}${INC}\n")
     endforeach ()
+
+    set(INCLUDES_FILE "${BUILD_META_GENERATED_DIR}/Module.${BUILD_META_TARGET}.Includes.txt")
+
+    file(WRITE ${INCLUDES_FILE} ${INCLUDES})
+	
+    set(DEFINES ${GLOBAL_META_DEFINES} ${BUILD_META_DEFINES})
+
+    string(REPLACE " " "" DEFINES_TRIMMED "${DEFINES}")
+
+    if ("${DEFINES_TRIMMED}" STREQUAL "")
+    	set(DEFINES_SWITCH )
+    else ()
+    	set(DEFINES_SWITCH --defines "${DEFINES}")
+    endif ()
 
     # empty source files need to include the precompiled header
     if (NOT "${BUILD_META_PCH_NAME}" STREQUAL "")
         set(EMPTY_SOURCE_CONTENTS "#include \"${BUILD_META_PCH_NAME}.h\"")
-        set(PCH_SWITCH "--pch \"${BUILD_META_PCH_NAME}.h\"")
+        set(PCH_SWITCH --pch \"${BUILD_META_PCH_NAME}.h\")
     else ()
         set(EMPTY_SOURCE_CONTENTS "")
-        set(PCH_SWITCH "")
+        set(PCH_SWITCH )
     endif ()
 
     list(REMOVE_ITEM BUILD_META_GENERATED_FILES "${BUILD_META_SOURCE_ROOT}/${BUILD_META_MODULE_HEADER}")
@@ -105,7 +120,8 @@ function(ursine_build_meta)
         --out-source "${BUILD_META_MODULE_SOURCE_FILE}"
         --out-dir "${BUILD_META_GENERATED_DIR}"
         ${PCH_SWITCH}
-        --flags ${FLAGS}
+        --includes "${INCLUDES_FILE}"
+        ${DEFINES_SWITCH}
     )
 
     set(REBUILD_TARGET "${BUILD_META_TARGET}-RebuildMeta")
@@ -121,7 +137,9 @@ function(ursine_build_meta)
         --out-dir "${BUILD_META_GENERATED_DIR}"
         ${PCH_SWITCH}
         --force-rebuild
-        --flags ${FLAGS}
+        --display-diagnostics
+        --includes "${INCLUDES_FILE}"
+        ${DEFINES_SWITCH}
     )
 
     ursine_set_folder(${REBUILD_TARGET} ".Utility/Meta")

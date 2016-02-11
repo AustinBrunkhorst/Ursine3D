@@ -6,6 +6,7 @@ extern class ComponentInspector extends PolymerElement {
     var canRemove : Bool;
     var opened : Bool;
 
+    var header : js.html.DOMElement;
     var container : js.html.DOMElement;
     var buttons : js.html.DOMElement;
     var fieldInspectors : js.html.DOMElement;

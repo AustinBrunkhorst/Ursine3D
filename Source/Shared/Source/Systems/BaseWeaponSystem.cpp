@@ -1,7 +1,7 @@
 
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** BaseWeaponSystem.cpp
 **
@@ -27,6 +27,8 @@
 #include <Core/CoreSystem.h>
 #include <SVec3.h>
 #include <PhysicsSystem.h>
+#include <AnimatorComponent.h>
+#include "AudioEmitterComponent.h"
 
 
 ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
@@ -38,6 +40,9 @@ using namespace ursine::ecs;
 
 namespace
 {
+    const std::string kFireGun = "FIRE_GUN_HAND";
+    const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
+
     // Apply spread / accuracy to shooting
     float GetSpreadValue(const float spread, const float accuracy)
     {
@@ -58,7 +63,7 @@ namespace
         proj.GetComponent<ursine::ecs::Rigidbody>( )->SetVelocity(trans.GetForward( ) * proj.GetComponent<Projectile>( )->GetSpeed( ) + spray);
     }
 
-    void ProjectileSetUp(ursine::ecs::Entity& proj, const AbstractWeapon& weapon, ursine::ecs::Transform& trans)
+    void ProjectileSetUp(ursine::ecs::Entity& proj, AbstractWeapon& weapon)
     {
         // add projectile component if not found
         if ( !proj.HasComponent<Projectile>( ) )
@@ -80,20 +85,18 @@ namespace
 
         Projectile& projComp = *proj.GetComponent<Projectile>( );
         // set proj speed
-        projComp.SetSpeed(weapon.GetProjSpeed( ));
+        projComp.SetSpeed( weapon.GetProjSpeed( ) );
         // calc the lifet of proj base on weapons range
-        projComp.CalculateLifeTime(weapon.GetMaxRange( ));
+        projComp.CalculateLifeTime( weapon.GetMaxRange( ) );
 
         // set proj damage stats
         DamageOnCollide& damageComp = *proj.GetComponent<DamageOnCollide>( );
-        damageComp.SetDamageToApply(weapon.GetDamageToApply( ));
-        damageComp.SetCritModifier(weapon.GetCritModifier( ));
-        damageComp.SetDamageInterval(weapon.GetDamageInterval( ));
-        damageComp.SetDeleteOnCollision(weapon.GetDeleteOnCollision( ));
+        damageComp.SetDamageToApply( weapon.GetDamageToApply( ) );
+        damageComp.SetCritModifier( weapon.GetCritModifier( ) );
+        damageComp.SetDamageInterval( weapon.GetDamageInterval( ) );
+        damageComp.SetDeleteOnCollision( weapon.GetDeleteOnCollision( ) );
 
-        proj.GetTransform( )->SetWorldPosition(trans.GetWorldPosition( ));
-
-        ProjectileVelocity(weapon, proj, trans);
+        proj.GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
     }
 
     // Is weapon out of ammo
@@ -200,6 +203,14 @@ namespace
         otherHealth.DealDamage( weapon.GetDamageToApply( ) );
     }
 
+    void ResetIdleSequence(AbstractWeapon* weapon)
+    {
+        // reset idle sequence
+        weapon->m_animatorHandle->SetTimeScalar(1.0f);
+        weapon->m_animatorHandle->SetAnimation("Gun_Idle");
+        weapon->m_animatorHandle->SetPlaying(true);
+    }
+
 }
 
 
@@ -207,7 +218,7 @@ namespace
 ////  Base Weapon System  ////
 //////////////////////////////
 BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World *world ) 
-    : FilterSystem( world, Filter( ).One<BaseWeapon>( ) )
+    : FilterSystem( world, Filter( ).One< BaseWeapon>( ).All< AudioEmitter >( ) )
 {
 }
 
@@ -221,6 +232,8 @@ void BaseWeaponSystem::Enable(ursine::ecs::Entity *entity)
 
     m_transforms[ uniqueID ] = entity->GetTransform( );
 
+    // grab audio emitter from root
+    m_emitters[ uniqueID ] = entity->GetComponent<AudioEmitter>( );
 }
 
 void BaseWeaponSystem::Disable(ursine::ecs::Entity *entity)
@@ -229,6 +242,7 @@ void BaseWeaponSystem::Disable(ursine::ecs::Entity *entity)
 
     m_weapons.erase( uniqueID );
     m_transforms.erase( uniqueID );
+    m_emitters.erase(uniqueID);
 }
 
 void BaseWeaponSystem::onUpdate(EVENT_HANDLER(World))
@@ -242,57 +256,75 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
 {
     for ( auto it : m_weapons )
     {
-        AbstractWeapon& weapon = *it.second;
+        AbstractWeapon* weapon = &*it.second;
+
+        weapon->m_animatorHandle->UpdateAnimation(dt);
+
+        // skip if not active
+        if ( !weapon->m_active )
+            continue;
 
         // Can weapon be fired
-        switch ( weapon.CanFire( ) )
+        switch ( weapon->CanFire( ) )
         {
         case RELOAD_IN_PROCESS:
-            DecrementReloadTimer(dt, weapon);
+            DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            ReloadWeapon(weapon);
+            ReloadWeapon( *weapon );
             break;
         case FIRE_TIMER_SET:
-            DecrementFireTimer(dt, weapon);
+            DecrementFireTimer( dt, *weapon );
             break;
         case TRIGGER_NOT_PULLED:
+            ResetIdleSequence( weapon );
             break;
         case CAN_FIRE:
-            FireProjectileWeapon(weapon, *m_transforms[ it.first ]);
+            FireProjectileWeapon( *weapon, it.first );
             break;
         default:
+            ResetIdleSequence( weapon );
             break;
         }
     }
 }
 
-void BaseWeaponSystem::FireProjectileWeapon(AbstractWeapon& weapon, ursine::ecs::Transform& trans)
+void BaseWeaponSystem::FireProjectileWeapon(AbstractWeapon& weapon, ursine::ecs::EntityUniqueID id)
 {
     if ( weapon.FireLogic( ) )
     {
         weapon.m_fireTimer = weapon.m_fireRate;
 
+        // play sound
+        URSINE_TODO("Fix sound hack for weapons");
+        m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
+    
+        // reset firing sequence
+        weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
+        weapon.m_animatorHandle->SetTimeScalar(1.2f);
+        weapon.m_animatorHandle->SetAnimation("Gun_Shoot");
+        weapon.m_animatorHandle->SetPlaying(true);
+
         // number of rounds that were fired
-        CreateProjectiles(weapon, trans, RemoveRoundsFromClip(weapon));
+        CreateProjectiles(weapon, *m_transforms[  id ], RemoveRoundsFromClip(weapon));
     }
 }
 
-void BaseWeaponSystem::CreateProjectiles(const AbstractWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
+void BaseWeaponSystem::CreateProjectiles(AbstractWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
 {
     // Create the projectile that is desired to shoot
     ursine::ecs::Entity* proj =
         m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.GetArchetypeToShoot( ), "Bullet");
 
     // set up projectile stats based on gun
-    ProjectileSetUp(*proj, weapon, trans);
+    ProjectileSetUp(*proj, weapon);
 
     // temp vars for  creating projectiles
     ursine::ecs::Entity* cloneProj = nullptr;
     ursine::SVec3 forwardVec = trans.GetForward( );
 
     // create the number of projectiles fired
-    for ( int i = 1; i < projectilesFired; ++i )
+    for ( int i = 0; i < projectilesFired; ++i )
     {
         // create clone
         cloneProj = proj->Clone( );
@@ -304,12 +336,13 @@ void BaseWeaponSystem::CreateProjectiles(const AbstractWeapon& weapon, ursine::e
 
 
 
+
 /////////////////////////////////
 ////  Hitscan Weapon System  ////
 /////////////////////////////////
 
 HitscanWeaponSystem::HitscanWeaponSystem(ursine::ecs::World* world)
-    : FilterSystem( world, Filter( ).One< HitscanWeapon >( ) )
+    : FilterSystem( world, Filter( ).One< HitscanWeapon>( ).All< AudioEmitter >( ) )
 {
 }
 
@@ -328,6 +361,8 @@ void HitscanWeaponSystem::Enable(ursine::ecs::Entity *entity)
 
     m_transforms[ uniqueID ] = entity->GetTransform( );
 
+    // grab audio emitter from root
+    m_emitters[ uniqueID ] = entity->GetComponent<AudioEmitter>( );
 }
 
 void HitscanWeaponSystem::Disable(ursine::ecs::Entity *entity)
@@ -336,6 +371,7 @@ void HitscanWeaponSystem::Disable(ursine::ecs::Entity *entity)
 
     m_weapons.erase(uniqueID);
     m_transforms.erase(uniqueID);
+    m_emitters.erase(uniqueID);
 }
 
 void HitscanWeaponSystem::onUpdate(EVENT_HANDLER(World))
@@ -349,43 +385,59 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
 {
     for ( auto it : m_weapons )
     {
-        AbstractHitscanWeapon& weapon = *it.second;
+        AbstractHitscanWeapon* weapon = &*it.second;
+
+        //weapon->m_animatorHandle->UpdateAnimation( dt );
+
+        if ( !weapon->m_active )
+            continue;
 
         // Can weapon be fired
-        switch ( weapon.CanFire( ) )
+        switch ( weapon->CanFire( ) )
         {
         case RELOAD_IN_PROCESS:
-            DecrementReloadTimer(dt, weapon);
+            DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            ReloadWeapon(weapon);
+            ReloadWeapon( *weapon );
             break;
         case FIRE_TIMER_SET:
-            DecrementFireTimer(dt, weapon);
+            DecrementFireTimer(dt, *weapon);
             break;
         case TRIGGER_NOT_PULLED:
+            //ResetIdleSequence( weapon );
             break;
         case CAN_FIRE:
-            FireHitscanWeapon(weapon, *m_transforms[ it.first ]);
+            FireHitscanWeapon( *weapon, it.first );
             break;
         default:
+            //ResetIdleSequence( weapon );
             break;
         }
     }
 }
 
-void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans)
+void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursine::ecs::EntityUniqueID id)
 {
     if ( weapon.FireLogic( ) )
     {
         weapon.m_fireTimer = weapon.m_fireRate;
 
+        // play sound
+        m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
+
+        // reset firing sequence
+        /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
+        weapon.m_animatorHandle->SetTimeScalar(1.2f);
+        weapon.m_animatorHandle->SetAnimation("Gun_Shoot");
+        weapon.m_animatorHandle->SetPlaying(true);*/
+
         // number of rounds that were fired
-        CreateRaycasts(weapon, trans, RemoveRoundsFromClip(weapon));
+        CreateRaycasts(weapon, *m_transforms[ id ], RemoveRoundsFromClip(weapon));
     }
 }
 
-void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
+void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
 {
     float x_spread; // x spread for proj
     float y_spread; // y spread for proj
@@ -401,13 +453,13 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         y_spread = GetSpreadValue(weapon.m_spreadFactor, weapon.m_accuracy);
 
         // Get spray vecs
-        spray = trans.GetUp( ) * y_spread + trans.GetRight( ) * x_spread;
+        spray = weapon.m_camHandle->GetUp( ) * y_spread + weapon.m_camHandle->GetRight( ) * x_spread;
 
-        rayin.start = trans.GetWorldPosition( );
-        rayin.end = pos = trans.GetWorldPosition( ) + trans.GetForward( ) * weapon.m_maxRange + spray;
+        rayin.start = weapon.m_camHandle->GetWorldPosition( );
+        rayin.end = pos = rayin.start + weapon.m_camHandle->GetForward( ) * (weapon.m_maxRange + 10) + spray;
 
         // get ray to first wall / end of range from center of camera
-        m_physicsSystem->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS, true, 1.0f, true);
+        m_physicsSystem->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS, false, weapon.m_drawDuration, weapon.m_alwaysDraw);
 
         for ( auto it : rayout.entity )
         {
@@ -421,10 +473,10 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         }
 
         // get ray cast from weapon
-        rayin.start = trans.GetWorldPosition( );
+        rayin.start = weapon.m_firePosHandle->GetWorldPosition( );
         rayin.end = pos;
 
-        if ( m_physicsSystem->Raycast(rayin, rayout, weapon.m_raycastType, true, 1.0f, true) )
+        if ( m_physicsSystem->Raycast(rayin, rayout, weapon.m_raycastType, weapon.m_debug, weapon.m_drawDuration, weapon.m_alwaysDraw) )
         {
             switch ( weapon.m_raycastType )
             {
@@ -435,6 +487,9 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
             {
                 // get first object hit w/ health and apply damage
                 ursine::ecs::Entity& objHit = *m_world->GetEntityUnique(rayout.entity.front( ));
+
+				ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH"bullet.uatype");
+				e->GetTransform()->SetWorldPosition(rayout.hit[0]);
 
                 // if
                 if ( objHit.HasComponent<Health>( ) )
@@ -450,4 +505,5 @@ void HitscanWeaponSystem::CreateRaycasts(const AbstractHitscanWeapon& weapon, ur
         }
     }
 }
+
 

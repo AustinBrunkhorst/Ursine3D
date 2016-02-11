@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** DirectXCore.cpp
 **
@@ -346,7 +346,7 @@ namespace ursine
 
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_LIGHTMAP)->RenderTargetView, lightMap);
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->RenderTargetView, color);
-                m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->RenderTargetView, color);
+                
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_DEFERRED_NORMAL)->RenderTargetView, colorNormal);
             }
 

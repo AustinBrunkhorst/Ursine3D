@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Component.h
 **
@@ -67,11 +67,16 @@ namespace ursine
 				Handle(const ComponentType *);
 				~Handle(void);
 
+				ComponentType *Get(void);
+				const ComponentType *Get(void) const;
+				
 				// Assignment and Equivalency
 				const ComponentType *operator=(const ComponentType *rhs);
 				const Handle<ComponentType> &operator=(const Handle<ComponentType> &rhs);
 				bool operator==(const ComponentType *rhs) const;
 				bool operator==(const Handle<ComponentType> &rhs) const;
+                bool operator!=(const ComponentType *rhs) const;
+                bool operator!=(const Handle<ComponentType> &rhs) const;
 
 				// Checking for null
 				explicit operator bool(void) const;
@@ -81,6 +86,8 @@ namespace ursine
 				const ComponentType &operator*(void) const;
 				ComponentType *operator->(void);
 				const ComponentType *operator->(void) const;
+
+                Entity *GetEntity(void) const;
 
 			private:
 				Entity *m_entity;
@@ -99,6 +106,8 @@ namespace ursine
 
             // component type id
             ComponentTypeID m_typeID;
+
+            ComponentTypeMask m_typeMask;
 
             // unique instance id
             ComponentUniqueID m_uniqueID;

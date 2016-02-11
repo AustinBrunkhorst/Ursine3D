@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SelectedComponent.h
 **
@@ -21,5 +21,4 @@ class DisableSelection : public ursine::ecs::Component
 public:
 	Meta(Enable)
 	DisableSelection(void);
-
 } Meta(Enable, WhiteListMethods, /*HiddenInInspector*/);

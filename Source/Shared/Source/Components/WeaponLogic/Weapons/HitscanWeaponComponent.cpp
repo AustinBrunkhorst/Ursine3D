@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** HitscanWeaponComponent.cpp
 **
@@ -31,9 +31,13 @@ HitscanWeapon::~HitscanWeapon(void)
 
 void HitscanWeapon::OnInitialize(void)
 {
-    AbstractWeaponInit(HitscanWeapon);
+    AbstractWeaponInit(HitscanWeapon, GetOwner( ));
 }
 
 
+void HitscanWeapon::RemoveMySelf(void)
+{
+    GetOwner( )->Delete( );
+}
 
 

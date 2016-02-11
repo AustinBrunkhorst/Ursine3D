@@ -17,10 +17,13 @@ extern class EntityHandler {
     function setName(name : String) : Void;
 
     function inspect() : Array<ComponentInspection>;
+    function inspectComponent(component : String) : ComponentInspection;
 
     function hasComponent(name : String) : Bool;
     function addComponent(name : String) : Void;
     function removeComponent(name : String) : Void;
+
+    function componentSet(componentName : String, value : Dynamic) : Void;
 
     function componentFieldUpdate(componentName : String, fieldName : String, value : Dynamic) : Void;
 

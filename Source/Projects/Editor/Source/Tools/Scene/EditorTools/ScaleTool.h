@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ScaleTool.h
 **
@@ -13,11 +13,12 @@
 
 #include "EditorTool.h"
 #include "EditorCameraSystem.h"
+#include <Model3DComponent.h>
 
 class ScaleTool : public EditorTool
 {
 public:
-	ScaleTool(Editor *editor);
+	ScaleTool(Editor *editor, ursine::ecs::World *world);
 
 	void OnEnable(ursine::ecs::EntityUniqueID selected) override;
 	void OnDisable(void) override;
@@ -40,8 +41,6 @@ private:
 
 	EditorCameraSystem *m_editorCameraSystem;
 
-	ursine::ecs::World::Handle m_world;
-
 	// visual representation of the 3 axis
 	ursine::ecs::Entity *m_gizmo;
 
@@ -49,6 +48,12 @@ private:
 
 	// Whether or not the user is clicking and dragging on the gizmo
 	bool m_dragging;
+
+	// Whether or not the user is hovering over an axis
+	bool m_hovering;
+
+	ursine::ecs::Component::Handle<ursine::ecs::Model3D> m_axis;
+	ursine::Color m_axisOrigColor;
 
 	// Whether the user is holding down the snap to grid key or not
 	bool m_snapping;
@@ -77,6 +82,9 @@ private:
 	void enableAxis(void);
 	void disableAxis(void);
 	void updateAxis(void);
+
+	void updateHoverAxis(void);
+	void disableHover(void);
 
 	// recursive helper function
 	void setEntitySerializationToggle(bool toggle, ursine::ecs::Entity *entity);

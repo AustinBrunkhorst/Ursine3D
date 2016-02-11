@@ -1,6 +1,7 @@
 package ursine.editor.scene.component;
 
 
+import ursine.editor.scene.component.inspectors.IFieldInspectionOwner;
 import haxe.rtti.Meta;
 import ursine.utils.MetaUtils;
 import ursine.native.Property;
@@ -112,7 +113,7 @@ class ComponentDatabase {
         return Type.createInstance( handler, [ entity, inspection ] );
     }
 
-    public function createFieldInspector(owner : ComponentInspectionHandler, instance : Dynamic, field : NativeField, type : NativeType) : FieldInspectionHandler {
+    public function createFieldInspector(owner : IFieldInspectionOwner, instance : Dynamic, field : NativeField, type : NativeType) : FieldInspectionHandler {
         var typeOverride = Reflect.field( field.meta, Property.ForceEditorType );
 
         var typeName : String;

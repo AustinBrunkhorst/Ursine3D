@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** GroupManager.h
 **
@@ -37,6 +37,7 @@ namespace ursine
 
             // Gets the name of a specific entity
             const std::string &GetName(const Entity *entity);
+            const std::string &GetName(const EntityUniqueID id);
             void SetName(Entity *entity, const std::string &name);
 
         private:

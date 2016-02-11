@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** CommandQueueSystem.h
 **
@@ -23,6 +23,9 @@ CommandQueueSystem::CommandQueueSystem(ursine::ecs::World* world)
 void CommandQueueSystem::Process(ursine::ecs::Entity* entity)
 {
 	auto *commandQueue = entity->GetComponent<CommandQueue>();
+
+	UAssert(commandQueue != nullptr, "HEY THERE");
+
 	commandQueue->Update();
 }
 

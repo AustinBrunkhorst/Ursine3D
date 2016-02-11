@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SpawnSystem.h
 **
@@ -55,4 +55,4 @@ private:
     std::list<Spawnpoint *> m_team1Spawnpoints;
     std::list<Spawnpoint *> m_team2Spawnpoints;
 
-} Meta(Enable, DisableEntitySystemAutoAdd);
+} Meta(Enable);

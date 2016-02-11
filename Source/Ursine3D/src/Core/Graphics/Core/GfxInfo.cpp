@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** GfxInfo.cpp
 **
@@ -17,11 +17,14 @@
 #include <d3d11.h>
 #include <locale>
 #include <codecvt>
+#include "DXErrorHandling.h"
 
 namespace ursine
 {
     namespace graphics
     {
+        using namespace DXCore;
+
         std::string ws2s(const std::wstring &wstr)
         {
             typedef std::codecvt_utf8<wchar_t> convert_typeX;
@@ -40,38 +43,38 @@ namespace ursine
 
             //Create a DirectX graphics interface factory.
             result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
-            UAssert(result == S_OK, "Failed to make factory! (Error '%i')", result);
+            UAssert(result == S_OK, "Failed to make factory! (Error '%s')", GetDXErrorMessage(result));
 
             //Use the factory to create an adapter for the primary graphics interface (video card).
             result = factory->EnumAdapters(0, &adapter);
-            UAssert(result == S_OK, "Failed to get adapter! (Error '%i')", result);
+            UAssert(result == S_OK, "Failed to get adapter! (Error '%s')", GetDXErrorMessage(result));
 
             //Enumerate the primary adapter output (monitor).
             result = adapter->EnumOutputs(0, &adapterOutput);
-            UAssert(result == S_OK, "Failed to make adapter enum! (Error '%i')", result);
+            UAssert(result == S_OK, "Failed to make adapter enum! (Error '%s')", GetDXErrorMessage(result));
 
             //Get the number of modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format for the adapter output (monitor).
-            result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_SCALING, &ModeCount_, nullptr);
-            UAssert(result == S_OK, "Failed to get sampler state! (Error '%i')", result);
+            result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_SCALING, &m_modeCount, nullptr);
+            UAssert(result == S_OK, "Failed to get sampler state! (Error '%s')", GetDXErrorMessage(result));
 
-            UAssert(ModeCount_ > 0, "No modes available");
+            UAssert(m_modeCount > 0, "No modes available");
 
             //get all of the display modes
-            DisplayModeList_ = new DXGI_MODE_DESC[ ModeCount_ ];
-            result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &ModeCount_, DisplayModeList_);
-            UAssert(result == S_OK, "Failed to get display mode list! (Error '%i')", result);
+            m_displayModeList = new DXGI_MODE_DESC[ m_modeCount ];
+            result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &m_modeCount, m_displayModeList);
+            UAssert(result == S_OK, "Failed to get display mode list! (Error '%s')", GetDXErrorMessage(result));
 
             //Get the adapter (video card) description.
             result = adapter->GetDesc(&adapterDesc);
-            UAssert(result == S_OK, "Failed to get adapter description (Error '%i')", result);
+            UAssert(result == S_OK, "Failed to get adapter description (Error '%s')", GetDXErrorMessage(result));
 
             //get size of video memory
-            DedicatedVideoMemory_ = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
-            SharedVideoMemory_ = (int)(adapterDesc.SharedSystemMemory / 1024 / 1024);
+            m_dedicatedVideoMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
+            m_sharedVideoMemory = (int)(adapterDesc.SharedSystemMemory / 1024 / 1024);
 
             LogMessage("Video Card: %s", 2, ws2s(adapterDesc.Description).c_str());
-            LogMessage("Dedicated Video Memory: %i", 2, DedicatedVideoMemory_);
-            LogMessage("Shared Video Memory: %i", 2, SharedVideoMemory_);
+            LogMessage("Dedicated Video Memory: %i", 2, m_dedicatedVideoMemory);
+            LogMessage("Shared Video Memory: %i", 2, m_sharedVideoMemory);
 
             //Release the adapter output.
             adapterOutput->Release();
@@ -86,47 +89,47 @@ namespace ursine
             factory = nullptr;
 
             URSINE_TODO( "Enable multisampling toggling" );
-            SampleCount_ = 1;
-            SampleQuality_ = 0;
+            m_maxSampleCount = 1;
+            m_maxSampleQuality = 0;
         }
 
         void GfxInfo::Uninitialize()
         {
-            if (DisplayModeList_ != nullptr)
-                delete[] DisplayModeList_;
+            if (m_displayModeList != nullptr)
+                delete[] m_displayModeList;
         }
 
         DXGI_MODE_DESC &GfxInfo::GetDisplayInfo(unsigned index)
         {
-            UAssert(index < ModeCount_, "Index out of gfxinfo");
-            return DisplayModeList_[ index ];
+            UAssert(index < m_modeCount, "Index out of gfxinfo");
+            return m_displayModeList[ index ];
         }
 
         unsigned GfxInfo::GetModeCount()
         {
-            return ModeCount_;
+            return m_modeCount;
         }
 
         unsigned GfxInfo::GetSampleCount()
         {
-            return SampleCount_;
+            return m_maxSampleCount;
         }
 
         unsigned GfxInfo::GetSampleQuality()
         {
-            return SampleQuality_;
+            return m_maxSampleQuality;
         }
 
         void GfxInfo::GetDimensions(unsigned &w, unsigned &h)
         {
-            w = Width_;
-            h = Height_;
+            w = m_windowWidth;
+            h = m_windowHeight;
         }
 
         void GfxInfo::SetDimensions(unsigned w, unsigned h)
         {
-            Width_ = w;
-            Height_ = h;
+            m_windowWidth = w;
+            m_windowHeight = h;
         }
     }
 }

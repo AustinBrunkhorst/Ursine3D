@@ -128,9 +128,12 @@ void MetaDataManager::CompileTemplateData(
         native_property::DynamicCtorWrap,
         native_property::DisablePtrType,
         native_property::DisableConstPtrType,
+        native_property::EnableArrayType,
         native_property::DisplayName,
         native_property::ExplicitGetter,
-        native_property::ExplicitSetter
+        native_property::ExplicitSetter,
+        native_property::VeryExplicitGetter,
+        native_property::VeryExplicitSetter
     };
 
     int i = 0;

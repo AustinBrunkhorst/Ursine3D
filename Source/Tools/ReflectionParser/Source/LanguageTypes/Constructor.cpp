@@ -43,25 +43,14 @@ TemplateData Constructor::CompileTemplate(
 
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
 
-    data[ "templateParameters" ] = getTemplateParameters( );
+    auto enableNonDynamic = !m_metaData.GetFlag( native_property::DisableNonDynamicCtor );
 
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialConstructorInvocation );
+    if (enableNonDynamic)
+        data[ "templateParameters" ] = getTemplateParameters( false );
 
-    data[ "dynamicInvocationBody" ] = 
-        context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
+    data[ "dynamicTemplateParameters" ] = getTemplateParameters( true );
 
-    data[ "enableNonDynamic" ] = 
-        utils::TemplateBool( 
-            !m_metaData.GetFlag( native_property::DisableNonDynamicCtor ) 
-        );
-
-    data[ "dynamicWrapObject" ] = 
-        utils::TemplateBool( 
-            m_metaData.GetFlag( native_property::DynamicCtorWrap ) 
-        );
-
-    data[ "argument" ] = compileSignatureTemplate( );
+    data[ "enableNonDynamic" ] = utils::TemplateBool( enableNonDynamic );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -82,12 +71,23 @@ bool Constructor::isAccessible(void) const
     return !m_metaData.GetFlag( native_property::Disable );
 }
 
-std::string Constructor::getTemplateParameters(void) const
+std::string Constructor::getTemplateParameters(bool isDynamic) const
 {
-    auto params( m_signature );
+    std::vector<std::string> params;
 
-    params.insert( params.begin( ), m_parent->m_qualifiedName );
+    // ClassType
+    params.push_back( m_parent->m_qualifiedName );
 
-    // parent type, arg types, ...
+    // IsDynamic
+    params.emplace_back( isDynamic ? "true" : "false" );
+
+    // IsWrapped
+    params.emplace_back( 
+        m_metaData.GetFlag( native_property::DynamicCtorWrap ) ? "true" : "false"
+    );
+
+    // Args...
+    params.insert( params.end( ), m_signature.begin( ), m_signature.end( ) );
+
     return boost::join( params, ", " );
 }

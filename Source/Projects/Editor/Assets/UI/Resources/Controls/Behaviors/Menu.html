@@ -2,7 +2,6 @@
 
 <script>
     var MenuBehavior = {
-        is: "x-menu",
         properties: {
             empty: {
                 type: Boolean,
@@ -32,9 +31,10 @@
         close: function() {
             var hovered = this.querySelectorAll( '.hover' );
 
-            // remove hover from all child nodes
-            [].forEach.call( hovered, function (item) {
+            // remove hover from child menus
+            [ ].forEach.call( hovered, function(item) {
                 item.classList.remove( 'hover' );
+
             } );
         },
         /**

@@ -20,8 +20,20 @@ class Entity implements IEventContainer {
         return new Entity( Extern.CreateEntity( ) );
     }
 
-    public static function createFromArchetype() : Void {
-        Extern.CreateEntityFromArchetype( );
+    public static function createCopyName(name : String) {
+        var copyMatch = ~/\(([0-9]+)\)$/i;
+
+        // has (x)
+        if (copyMatch.match( name )) {
+            var index = Std.parseInt( copyMatch.matched( 1 ) );
+
+            name = '${copyMatch.matchedLeft( )} (${index + 1})';
+        // doesn't have anything, base case
+        } else {
+            name += ' (1)';
+        }
+
+        return name;
     }
 
     public function new(uniqueID : UInt) {
@@ -87,6 +99,10 @@ class Entity implements IEventContainer {
         return m_handler.inspect( );
     }
 
+    public function inspectComponent(component : String) : ComponentInspection {
+        return m_handler.inspectComponent( component );
+    }
+
     public function hasComponent(name : String) : Bool {
         return m_handler.hasComponent( name );
     }
@@ -97,6 +113,10 @@ class Entity implements IEventContainer {
 
     public function removeComponent(name : String) : Void {
         m_handler.removeComponent( name );
+    }
+
+    public function componentSet(componentName : String, value : Dynamic) : Void {
+        m_handler.componentSet( componentName, value );
     }
 
     public function componentFieldUpdate(componentName : String, fieldName : String, value : Dynamic) : Void {

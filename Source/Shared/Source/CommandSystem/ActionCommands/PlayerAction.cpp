@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** PlayerAction.cpp
 **
@@ -178,9 +178,9 @@ bool PlayerAction::StickRight()
 
 ursine::Vec2 PlayerAction::GetMouseVec(void) const
 {
-    ursine::Vec2 mouseVec = m_mouseManager->GetPositionDelta( ) * 0.5f;
+    ursine::Vec2 mouseVec = m_mouseManager->GetPositionDelta( );
     mouseVec.Normalize( );
-    mouseVec = -mouseVec;
+    mouseVec.X( ) = -mouseVec.X( );
     return mouseVec;
 }
 
@@ -245,6 +245,8 @@ bool PlayerAction::EvalXboxButtons(bool(ursine::GamepadState::*func)(ursine::Gam
         return ( m_gamepadState->*func )(ursine::GamepadButton::BTN_X, Threshold );
     case RightTrigger:
         return ( m_gamepadState->*func )(ursine::GamepadButton::BTN_TRIGGER_RIGHT, Threshold );
+    case LeftTrigger:
+        return ( m_gamepadState->*func )( ursine::GamepadButton::BTN_TRIGGER_LEFT, Threshold );
     default:
         return ( m_gamepadState->*func )(ursine::GamepadButton::BTN_Y, Threshold );
     }

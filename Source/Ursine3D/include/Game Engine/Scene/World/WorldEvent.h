@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** WorldEvent.h
 **
@@ -27,6 +27,12 @@ namespace ursine
             // The world is being rendered
             WORLD_RENDER,
 
+            // Update event called specifically for editor systems
+            WORLD_EDITOR_UPDATE,
+
+            // Render event called specifically for editor systems
+            WORLD_EDITOR_RENDER,
+
             // An entity was created
             WORLD_ENTITY_ADDED,
             // An entity was removed
@@ -42,8 +48,6 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            // Update event called specifically for editor systems
-            WORLD_EDITOR_UPDATE,
             // An entity's name changed
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
             // An entity's parent has changed

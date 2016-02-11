@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Entity.h
 **
@@ -151,7 +151,7 @@ namespace ursine
 
             // Determines if the entity has this component type based on 
             // the specified type mask
-            bool HasComponent(ComponentTypeMask mask) const;
+            bool HasComponent(const ComponentTypeMask &mask) const;
 
             // Gets all components for this entity. Avoid this, it's slow.
             // (chances are you don't need to use it)
@@ -172,6 +172,10 @@ namespace ursine
 			// Gets a component of the specified type id in this entity's children (depth first)
 			// nullptr if it doesn't exist. Use the type safe version when possible
 			Component *GetComponentInChildren(ComponentTypeID id) const;
+
+            // Gets a child by desired name
+            // nullptr if it doesn't exist
+            Entity* GetChildByName(const std::string& name) const;
 
 			// Gets a component of the specified type in this entity's parent (type safe)
 			// nullptr if it doesn't exist
@@ -208,6 +212,12 @@ namespace ursine
 
             // Sets this entity's index in the parent's children list
             void SetSiblingIndex(uint index) const;
+
+			const Entity *GetParent(void) const;
+			Entity *GetParent(void);
+
+			const Entity *GetRoot(void) const;
+			Entity *GetRoot(void);
 
             ////////////////////////////////////////////////////////////////////
             // Events
@@ -295,8 +305,8 @@ namespace ursine
             void unsetSystem(SystemTypeMask mask);
 
             // sets/unsets component types for this entity (which components it has)
-            void setType(ComponentTypeMask mask);
-            void unsetType(ComponentTypeMask mask);
+            void setType(const ComponentTypeMask &mask);
+            void unsetType(const ComponentTypeMask &mask);
 
             // resets data for this entity
             void reset(void);

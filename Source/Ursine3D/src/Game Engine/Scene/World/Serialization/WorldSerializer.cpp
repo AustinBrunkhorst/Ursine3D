@@ -36,7 +36,7 @@ namespace ursine
 
         }
 
-        Json WorldSerializer::Serialize(World::Handle world) const
+        Json WorldSerializer::Serialize(World *world) const
         {
             Json::object data;
 
@@ -76,7 +76,7 @@ namespace ursine
             return data;
         }
 
-        World::Handle WorldSerializer::Deserialize(const std::string &filename) const
+        World *WorldSerializer::Deserialize(const std::string &filename) const
         {
             std::string data;
 
@@ -97,6 +97,11 @@ namespace ursine
                 throw SerializationException( error.str( ) );
             }
 
+            return Deserialize( worldData );
+        }
+
+        World *WorldSerializer::Deserialize(const Json &worldData) const
+        {
             auto &versionData = worldData[ kKeyVersion ];
 
             if (versionData.is_null( ))
@@ -110,7 +115,7 @@ namespace ursine
 
             EntitySerializer entitySerializer;
 
-            auto world = std::make_shared<World>( );
+            auto world = new World;
 
             auto &settingsData = worldData[ kKeySettings ];
 
@@ -140,7 +145,7 @@ namespace ursine
             for (auto &entityData : entitiesData.array_items( ))
             {
                 entitySerializer.Deserialize( 
-                    world.get( ), 
+                    world, 
                     entityData, 
                     version 
                 );

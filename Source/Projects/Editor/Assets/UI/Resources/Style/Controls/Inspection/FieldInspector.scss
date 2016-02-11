@@ -1,17 +1,69 @@
 @import '../../Config';
 
+$max-header-width: 225px;
+
 :host {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
   #header {
-    color: #dcdcdc;
+    display: block;
+    flex: 1 1 $max-header-width;
+    width: 35%;
+    max-width: $max-header-width;
     margin: 5px 0;
+    padding-right: 3px;
+    color: #dcdcdc;
+    font-size: 13px;
   }
 
   #container {
+    display: block;
+    flex: 0 1 100%;
+    width: 65%;
     padding-right: 5px;
+  }
+
+  &.array-owner {
+    display: block;
+    margin-bottom: 10px;
+
+    #header {
+      width: 100%;
+    }
+
+    #container {
+      width: 100%;
+    }
   }
 }
 
 ::content {
+  &.default-struct {
+    x-field-inspector {
+      #header {
+        display: block !important;
+        color: #aeaeae;
+        font-style: italic;
+      }
+    }
+  }
+
+  x-editor-window.small-width {
+    x-field-inspector {
+      display: block;
+
+      #header {
+        width: 100%;
+      }
+
+      #container {
+        width: 100%;
+      }
+    }
+  }
+
   input {
     display: block;
     width: 100%;
@@ -19,6 +71,7 @@
 
     &[type=checkbox] {
       width: auto;
+      margin-left: 0;
     }
   }
 
@@ -52,9 +105,16 @@
     }
 
     .array-items {
+      &:not(:empty) {
+        border-bottom: 1px solid #424242;
+      }
+
       x-array-item-container {
         display: block;
-        margin-bottom: 2px;
+
+        &:not(.opened) {
+          margin-bottom: 2px;
+        }
       }
     }
   }
@@ -64,7 +124,7 @@
     flex-direction: row;
     align-content: stretch;
 
-    input {
+    > input {
       display: block;
       flex: 1 1 100%;
       align-self: auto;
@@ -76,6 +136,19 @@
 
       &:not(:last-child) {
         margin-right: 2px;
+      }
+
+      &:nth-child(1) {
+        border-color: #a84d3f;
+      }
+
+      &:nth-child(2) {
+        border-color: #4f8046;
+      }
+
+      &:nth-child(3) {
+
+        border-color: #3673ff;
       }
     }
   }
@@ -103,6 +176,25 @@
     > div {
       width: 100%;
       height: 100%;
+    }
+  }
+
+  .entity-system-selector {
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 23px;
+    text-align: center;
+    color: $color-accent;
+    word-wrap: break-word;
+    transition: color $duration-transition-btn ease;
+
+    &.empty {
+      color: #cf6753;
+
+      &:before {
+        display: block;
+        content: 'Invalid System';
+      }
     }
   }
 }

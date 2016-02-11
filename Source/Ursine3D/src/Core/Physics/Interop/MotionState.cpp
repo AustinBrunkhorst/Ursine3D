@@ -19,17 +19,28 @@ namespace ursine
 {
     namespace physics
     {
-        MotionState::MotionState(void)
+        MotionState::MotionState(BodyFlag bodyFlag)
             : MotionStateBase( ) 
-            , m_dirty( false ) { }
+            , m_dirty( false )
+		    , m_bodyFlag( bodyFlag ) { }
 
     #ifdef BULLET_PHYSICS
+
+		void MotionState::getWorldTransform(btTransform &centerOfMassWorldTrans) const
+        {
+	        btDefaultMotionState::getWorldTransform( centerOfMassWorldTrans );
+        }
+
         void MotionState::setWorldTransform(const btTransform& centerOfMassWorldTrans)
         {
+		   if (m_bodyFlag == BF_KINEMATIC)
+				return;
+
             btDefaultMotionState::setWorldTransform( centerOfMassWorldTrans );
 
             m_dirty = true;
         }
+
     #endif
     }
 }

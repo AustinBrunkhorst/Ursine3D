@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** FBXSceneRootNodeComponentee.h
 **
@@ -63,7 +63,7 @@ namespace ursine
             void OnInitialize(void);
 
             const std::string &GetSceneName(void) const;
-            void SetSceneName(const std::string & map);
+            void SetSceneName(const std::string &map);
 
         private:
             std::string m_sceneName;

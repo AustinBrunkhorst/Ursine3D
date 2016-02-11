@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** GroupManager.cpp
 **
@@ -57,6 +57,11 @@ namespace ursine
             return m_names[ entity->m_uniqueID ];
         }
 
+        const std::string &NameManager::GetName(const EntityUniqueID id)
+        {
+            return m_names[ id ];
+        }
+
         void NameManager::SetName(Entity *entity, const std::string &name)
         {
             setName( entity, name );
@@ -99,7 +104,10 @@ namespace ursine
         {
             auto &group = m_grouped[ name ];
 
-            group.erase( find( group.begin( ), group.end( ), entity ) );
+			auto itr = find( group.begin( ), group.end( ), entity );
+
+			if (itr != group.end( ))
+				group.erase( itr );
         }
     }
 }

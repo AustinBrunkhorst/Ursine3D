@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** EditorConfig.h
 **
@@ -18,8 +18,6 @@ namespace ursine
 	namespace ecs
 	{
 	#if defined(URSINE_WITH_EDITOR)
-
-		extern void EditorClearDeletionQueue(void);
 
 	#endif
 	}

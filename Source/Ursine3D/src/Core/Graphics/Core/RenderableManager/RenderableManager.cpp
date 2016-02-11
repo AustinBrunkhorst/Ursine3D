@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** RenderableManager.cpp
 **
@@ -27,6 +27,7 @@ namespace ursine
             m_renderableModel3D.resize(MAX_RENDERABLES);
             m_renderableBillboards.resize(MAX_RENDERABLES);
             m_renderableLights.resize(MAX_RENDERABLES);
+            m_renderableParticleSystems.resize(MAX_RENDERABLES);
 
             m_handleList.resize(RENDERABLE_TYPE_COUNT);
 
@@ -52,19 +53,19 @@ namespace ursine
             switch (type)
             {
             case RENDERABLE_MODEL3D:
-                m_renderableModel3D[ newRender->Index_ ].Active_ = true;
+                m_renderableModel3D[ newRender->Index_ ].m_active = true;
                 m_renderableModel3D[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_LIGHT:
-                m_renderableLights[ newRender->Index_ ].Active_ = true;
+                m_renderableLights[ newRender->Index_ ].m_active = true;
                 m_renderableLights[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_BILLBOARD2D:
-                m_renderableBillboards[ newRender->Index_ ].Active_ = true;
+                m_renderableBillboards[ newRender->Index_ ].m_active = true;
                 m_renderableBillboards[ newRender->Index_ ].Initialize();
                 break;
             case RENDERABLE_PS:
-                m_renderableParticleSystems[ newRender->Index_ ].Active_ = true;
+                m_renderableParticleSystems[ newRender->Index_ ].m_active = true;
                 m_renderableParticleSystems[ newRender->Index_ ].Initialize();
                 break;
             default:
@@ -88,20 +89,20 @@ namespace ursine
             switch (rend->Type_)
             {
             case RENDERABLE_MODEL3D:
-                UAssert(m_renderableModel3D[ rend->Index_ ].Active_ == true, "Attempted to free an already free model3d!");
-				m_renderableModel3D[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderableModel3D[ rend->Index_ ].m_active == true, "Attempted to free an already free model3d!");
+				m_renderableModel3D[ rend->Index_ ].m_active = false;
                 break; 
             case RENDERABLE_BILLBOARD2D:
-                UAssert(m_renderableBillboards[ rend->Index_ ].Active_ == true, "Attempted to free an already free billboard2d!");
-                m_renderableBillboards[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderableBillboards[ rend->Index_ ].m_active == true, "Attempted to free an already free billboard2d!");
+                m_renderableBillboards[ rend->Index_ ].m_active = false;
                 break;
             case RENDERABLE_LIGHT:
-                UAssert(m_renderableLights[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
-				m_renderableLights[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderableLights[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
+				m_renderableLights[ rend->Index_ ].m_active = false;
                 break;
             case RENDERABLE_PS:
-                UAssert(m_renderableParticleSystems[ rend->Index_ ].Active_ == true, "Attempted to free an already free light!");
-                m_renderableParticleSystems[ rend->Index_ ].Active_ = false;
+                UAssert(m_renderableParticleSystems[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
+                m_renderableParticleSystems[ rend->Index_ ].m_active = false;
                 break;
             default:
                 UAssert(false, "Attempted to destroy corrupted handle!");

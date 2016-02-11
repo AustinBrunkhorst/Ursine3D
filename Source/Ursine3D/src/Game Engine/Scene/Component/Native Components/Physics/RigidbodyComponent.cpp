@@ -210,6 +210,11 @@ namespace ursine
             m_rigidbody.AddForceAtPosition( force, worldPosition, GetOwner( )->GetTransform( ) );
         }
 
+        void Rigidbody::AddImpulse(const SVec3& impulse)
+        {
+            m_rigidbody.AddImpulse( impulse );
+        }
+
         void Rigidbody::AddTorque(const SVec3& torque)
         {
             m_rigidbody.AddTorque( torque );

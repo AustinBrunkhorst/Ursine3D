@@ -76,7 +76,6 @@ namespace ursine
             {
                 m_debugDrawer.setDebugMode(
 			        physics::DRAW_WIRE_FRAME |
-			        physics::DRAW_AABB |
 			        physics::DRAW_CONTACT_POINTS
 		        );
             }
@@ -134,6 +133,30 @@ namespace ursine
             return result;
         }
 
+		bool PhysicsSystem::Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
+					              physics::SweepOutput &output, physics::SweepType type, bool sorted)
+        {
+			if (velocity == SVec3::Zero( ) || dt == 0.0f)
+				return false;
+
+			auto *bodyBase = &body->m_rigidbody;
+	        auto *collider = bodyBase->GetCollider( );
+
+			auto result = m_simulation.Sweep( collider, bodyBase, velocity, dt, output, type, sorted );
+
+			if (m_enableDebugDraw)
+			{
+				for (size_t i = 0, n = output.hit.size( ); i < n; ++i)
+				{
+					auto &hit = output.hit[ i ];
+
+					m_debugSystem->DrawPoint( hit, 10.0f, Color::Pink, 0.2f );
+				}
+			}
+
+			return result;
+        }
+
         void PhysicsSystem::OnInitialize(void)
         {
             m_debugSystem = m_world->GetEntitySystem( DebugSystem );
@@ -145,7 +168,7 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            m_world->Connect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate, -10000 );
+            m_world->Connect( WORLD_EDITOR_RENDER, this, &PhysicsSystem::onEditorRender, -10000 );
 
         #endif
         }
@@ -159,7 +182,7 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            m_world->Disconnect( WORLD_EDITOR_UPDATE, this, &PhysicsSystem::onEditorUpdate );
+            m_world->Disconnect( WORLD_EDITOR_RENDER, this, &PhysicsSystem::onEditorRender );
 
         #endif
         }
@@ -394,7 +417,7 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-        void PhysicsSystem::onEditorUpdate(EVENT_HANDLER(World))
+        void PhysicsSystem::onEditorRender(EVENT_HANDLER(World))
         {
             m_simulation.DebugDrawSimulation( );
         }
@@ -455,8 +478,6 @@ namespace ursine
                 auto rigidbody = entity->GetComponent<Rigidbody>( );
 
                 ClearContacts( rigidbody );
-
-                rigidbody->SetOffset( SVec3( 0.0f, 0.0f, 0.0f ) );
 
                 entity->AddComponent<EmptyCollider>( );
             }

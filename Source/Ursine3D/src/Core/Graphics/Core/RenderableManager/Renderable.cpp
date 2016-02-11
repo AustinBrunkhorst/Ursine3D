@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Renderable.cpp
 **
@@ -23,44 +23,44 @@ namespace ursine
         // renderable class
         Renderable::Renderable()
         {
-            Active_ = false;
+            m_active = false;
         }
 
         void Renderable::Initialize()
         {
-            Overdraw_ = false;
-            Debug_ = false;
-            m_mask = 0x7FFFFFFFFFFFFFFF;
+			m_useOverdraw = false;
+			m_useDebugRendering = false;
+            m_mask = 0;
         }
 
         void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
         {
-            entityID = id;
+            m_entityID = id;
         }
 
         ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
         {
-            return entityID;
+            return m_entityID;
         }
 
         void Renderable::SetOverdraw(bool draw)
         {
-            Overdraw_ = draw;
+            m_useOverdraw = draw;
         }
 
         bool Renderable::GetOverdraw() const
         {
-            return Overdraw_;
+            return m_useOverdraw;
         }
 
         void Renderable::SetDebug(bool debug)
         {
-            Debug_ = debug;
+            m_useDebugRendering = debug;
         }
 
         bool Renderable::GetDebug() const
         {
-            return Debug_;
+            return m_useDebugRendering;
         }
 
         RenderMask Renderable::GetRenderMask(void) const
@@ -73,21 +73,31 @@ namespace ursine
             m_mask = mask;
         }
 
+        bool Renderable::GetActive(void) const
+        {
+            return m_active;
+        }
+
+        void Renderable::SetActive(const bool isActive)
+        {
+            m_active = isActive;
+        }
+
         ///////////////////////////////////////////////////////////////////
         //model class
         Model::Model(void)
         {
-            Transform_ = SMat4::Identity();
+            m_transform = SMat4::Identity();
         }
 
         const SMat4 &Model::GetWorldMatrix(void)
         {
-            return Transform_;
+            return m_transform;
         }
 
         void Model::SetWorldMatrix(const SMat4 &matrix)
         {
-            Transform_ = matrix;
+            m_transform = matrix;
         }
 
         Model3D::Model3D(void)
@@ -101,8 +111,8 @@ namespace ursine
         {
 			Renderable::Initialize( );
 
-            ModelName_ = "Cube";
-            MaterialName_ = "UV";
+            m_modelResourceName = "Cube";
+            m_materialTextureName = "UV";
 
             m_emissive = 0.45f;
             m_specPow = 0;
@@ -120,13 +130,42 @@ namespace ursine
             m_specIntensity = intensity;
         }
 
-        void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
+	    void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
         {
             emiss = m_emissive;
             pow = m_specPow;
             intensity = m_specIntensity;
         }
 
+		void Model3D::SetEmissive(float emiss)
+		{
+			m_emissive = emiss;
+		}
+
+		float Model3D::GetEmissive(void) const
+		{
+			return m_emissive;
+		}
+
+		void Model3D::SetSpecularPower(float power)
+		{
+			m_specPow = power;
+		}
+
+		float Model3D::GetSpecularPower(void) const
+		{
+			return m_specPow;
+		}
+
+		void Model3D::SetSpecularIntensity(float intensity)
+		{
+			m_specIntensity = intensity;
+		}
+
+		float Model3D::GetSpecularIntensity(void) const
+		{
+			return m_specIntensity;
+		}
 
 		void Model3D::SetAnimationTime(const float time)
 		{
@@ -167,22 +206,22 @@ namespace ursine
 
         const char *Model3D::GetModelName(void)
         {
-            return ModelName_.c_str();
+            return m_modelResourceName.c_str();
         }
 
         void Model3D::SetModel(std::string modelName)
         {
-            ModelName_ = modelName;
+            m_modelResourceName = modelName;
         }
 
         const char *Model3D::GetMaterialslName(void)
         {
-            return MaterialName_.c_str();
+            return m_materialTextureName.c_str();
         }
 
         void Model3D::SetMaterial(std::string materialName)
         {
-            MaterialName_ = materialName;
+            m_materialTextureName = materialName;
         }
 
 
@@ -190,19 +229,19 @@ namespace ursine
         //billboard2d
         Billboard2D::Billboard2D(void)
         {
-            TextureName_ = "Default";
+            m_textureName = "Default";
             m_width = 1;
             m_height = 1;
         }
 
         const char *Billboard2D::GetTextureName(void)
         {
-            return TextureName_.c_str();
+            return m_textureName.c_str();
         }
 
         void Billboard2D::SetTexture(std::string texName)
         {
-            TextureName_ = texName;
+            m_textureName = texName;
         }
 
         void Billboard2D::SetDimensions(float width, float height)
@@ -365,8 +404,11 @@ namespace ursine
 
         void ParticleSystem::Initialize(void)
         {
-            m_backIndex = -1;
+            m_backIndex = 0;
             Renderable::Initialize();
+            m_textureName = "Blank";
+            m_useAdditive = true;
+            m_worldSpace = true;
         }
 
         std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
@@ -379,6 +421,16 @@ namespace ursine
             return m_cpuParticleData;
         }
 
+        Particle_GPU &ParticleSystem::GetGPUParticle(const int index)
+        {
+            return m_gpuParticleData[ index ];
+        }
+
+        Particle_CPU &ParticleSystem::GetCPUParticle(const int index)
+        {
+            return m_cpuParticleData[ index ];
+        }
+
         unsigned ParticleSystem::GetParticleVectorSize(void) const
         {
             return static_cast<unsigned>(m_gpuParticleData.size( ));
@@ -386,12 +438,12 @@ namespace ursine
 
         unsigned ParticleSystem::GetActiveParticleCount(void) const
         {
-            return m_backIndex > 0 ? static_cast<unsigned>(m_backIndex) : 0;
+            return m_backIndex;
         }
 
         unsigned ParticleSystem::GetInactiveParticleCount(void) const
         {
-            return static_cast<unsigned>( m_gpuParticleData.size( ) ) - (m_backIndex + 1);
+            return static_cast<unsigned>(m_gpuParticleData.size()) - m_backIndex;
         }
 
         int ParticleSystem::SpawnParticle(void)
@@ -411,12 +463,61 @@ namespace ursine
 
         void ParticleSystem::DestroyParticle(const int index)
         {
+            // decrement
+            --m_backIndex;
+
             // swap with the backmost data
             m_gpuParticleData[ index ] = m_gpuParticleData[ m_backIndex ];
             m_cpuParticleData[ index ] = m_cpuParticleData[ m_backIndex ];
 
-            // decrement
-            --m_backIndex;
+            m_cpuParticleData[ m_backIndex ].lifeTime = -1.0f;
+        }
+
+        const SVec3 & ParticleSystem::GetPosition(void) const
+        {
+            return m_position;
+        }
+
+        void ParticleSystem::SetPosition(const SVec3 & position)
+        {
+            m_position = position;
+        }
+
+        const Color &ParticleSystem::GetColor(void) const
+        {
+            return m_particleColor;
+        }
+
+        void ParticleSystem::SetColor(const Color &color)
+        {
+            m_particleColor = color;
+        }
+
+        const std::string & ParticleSystem::GetParticleTexture(void) const
+        {
+            return m_textureName;
+        }
+
+        void ParticleSystem::SetParticleTexture(const std::string & texName)
+        {
+            m_textureName = texName;
+        }
+        bool ParticleSystem::GetAdditive(void) const
+        {
+            return m_useAdditive;
+        }
+        void ParticleSystem::SetAdditive(const bool useAdditive)
+        {
+            m_useAdditive = useAdditive;
+        }
+             
+        bool ParticleSystem::GetSystemSpace(void) const
+        {
+            return m_worldSpace;
+        }
+        void ParticleSystem::SetSystemSpace(const bool useWorldCoordinates)
+        {
+            m_worldSpace = useWorldCoordinates;
         }
     }
 }
