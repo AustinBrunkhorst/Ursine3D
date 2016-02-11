@@ -16,6 +16,7 @@
 #include "Component.h"
 #include "Renderable.h"
 #include "GfxAPI.h"
+#include "AnimationState.h"
 #include "AnimationBuilder.h"
 #include "Array.h"
 
@@ -80,35 +81,35 @@ namespace ursine
 			NATIVE_COMPONENT;
 
 		public:
-			EditorButton(
-				AddState,
-				"Add State"
-				);
-
-			EditorButton(
-				RemoveState,
-				"Remove State"
-				);
-
-			// let's don't care about in-state-blending. 
-			// just care about between-state blending first.
-			// let's try change animation state when timedelta reaches
-			// at the end of that keyframe of the state
-			EditorButton(
-				AddAnimation,
-				"Add Animation"
-				);
-
-			EditorButton(
-				RemoveAnimation,
-				"Remove Animation"
-				);
-
-			EditorField(
-				std::string stateName,
-				GetStateName,
-				SetStateName
-				);
+			//EditorButton(
+			//	AddState,
+			//	"Add State"
+			//	);
+			//
+			//EditorButton(
+			//	RemoveState,
+			//	"Remove State"
+			//	);
+			//
+			//// let's don't care about in-state-blending. 
+			//// just care about between-state blending first.
+			//// let's try change animation state when timedelta reaches
+			//// at the end of that keyframe of the state
+			//EditorButton(
+			//	AddAnimation,
+			//	"Add Animation"
+			//	);
+			//
+			//EditorButton(
+			//	RemoveAnimation,
+			//	"Remove Animation"
+			//	);
+			//
+			//EditorField(
+			//	std::string stateName,
+			//	GetStateName,
+			//	SetStateName
+			//	);
 
 			EditorField(
 				std::string currentState,
@@ -122,11 +123,11 @@ namespace ursine
 				SetFutureState
 				);
 
-			EditorField(
-				std::string animationName,
-				GetAnimation,
-				SetAnimation
-				);
+			//EditorField(
+			//	std::string animationName,
+			//	GetAnimation,
+			//	SetAnimation
+			//	);
 
 			EditorField(
 				std::string currentRig,
@@ -202,10 +203,12 @@ namespace ursine
 			void SetAnimation(const std::string &name);
 
 			// CrossFade ("State Name", transition time, ...)
+
+			// Array of animation states
 			ursine::Array<ursine::AnimationState> m_stateArray;
 
 		private:
-			std::unordered_map<std::string, AnimationState> m_states;
+			//std::unordered_map<std::string, AnimationState> m_states;
 			// this will be changed to std::unordered_map<std::string, std::vector<AnimationState> > m_states;
 			// and will do blending not only between states, but inside of the state too.
 			bool m_playing;

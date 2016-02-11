@@ -94,7 +94,6 @@ namespace ursine
     private:
         unsigned m_rigKeyframeCount;
         unsigned m_boneCount;
-
         std::string m_name;
 
         // vector (each keyframe) of vectors (each bone's keyframes)

@@ -672,6 +672,7 @@ namespace ursine
 					for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
 					{
 						int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
+						UAssert(lPolygonSize == 3, "This model is not triangulated");
 						for (int i = 0; i < lPolygonSize; ++i)
 						{
 							int lNormalIndex = 0;
@@ -732,6 +733,7 @@ namespace ursine
 					for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); lPolygonIndex++)
 					{
 						int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
+						UAssert(lPolygonSize == 3, "This model is not triangulated");
 						for (int i = 0; i < lPolygonSize; ++i)
 						{
 							int lTangentIndex = 0;
@@ -816,6 +818,7 @@ namespace ursine
 					{
 						// build the max index array that we need to pass into MakePoly
 						const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
+						UAssert(lPolySize == 3, "This model is not triangulated");
 						for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
 						{
 							if (lPolyIndexCounter < lIndexCount)

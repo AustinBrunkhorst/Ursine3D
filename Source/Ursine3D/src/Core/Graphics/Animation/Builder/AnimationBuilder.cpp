@@ -27,8 +27,10 @@ namespace ursine
     unsigned AnimationBuilder::m_animationCount;
 
 	void AnimationBuilder::GenerateAnimationData(
-        const AnimationState& animState,
-		const AnimationState &fut_animState,
+		const float &currAnimTimePos,
+		const float &futureAnimTimePos,
+		const Animation &currentAnim,
+		const Animation &futureAnim,
         const AnimationRig* rig, 
         std::vector<SMat4>& outputMatPal,
         std::vector<SMat4> &outputBones,
@@ -36,15 +38,15 @@ namespace ursine
     )
 	{
 		// get the current time
-		float time = animState.GetTimePosition();
+		float time = currAnimTimePos;
 		// get the currently running animation
-		auto currentAnimation = animState.GetAnimation();
+		auto currentAnimation = currentAnim;
 		// get the total keyframes for this animation
-		unsigned frameCount = currentAnimation->GetRigKeyFrameCount();
+		unsigned frameCount = currentAnimation.GetRigKeyFrameCount();
 		// get num of bones in this rig
 		unsigned boneCount = rig->GetBoneCount();
 		// make sure the rig bones match animation bones
-        if ( boneCount != currentAnimation->GetDesiredBoneCount( ) )
+        if ( boneCount != currentAnimation.GetDesiredBoneCount( ) )
             return;
 
 		// determine the 2 current keyframes to use
@@ -52,8 +54,8 @@ namespace ursine
 		for (unsigned x = 0; x < frameCount - 1; ++x)
 		{
 			// get the two current keyframes
-			const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
-			const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
+			const std::vector<AnimationKeyframe> &f1 = currentAnimation.GetKeyframes(x);
+			const std::vector<AnimationKeyframe> &f2 = currentAnimation.GetKeyframes(x + 1);
 
 			// check if the current keyframe set holds the time value between them
 			if (f1[0].length <= time && time < f2[0].length)
@@ -74,24 +76,23 @@ namespace ursine
 
 		// for the future animation
 		// get the future running animation
-		auto futAnimation = fut_animState.GetAnimation();
+		auto futAnimation = futureAnimTimePos;
 		if (futAnimation)
 		{
 			// get the future time
-			float fut_time = 0.f;
+			float fut_time = futureAnimTimePos;
 			// get the total keyframes for future animation
 			unsigned futframeCount = 0;
-			fut_time = fut_animState.GetTimePosition();
-			futframeCount = futAnimation->GetRigKeyFrameCount();
+			futframeCount = futureAnim.GetRigKeyFrameCount();
 			// make sure the rig bones match animation bones
-			if (boneCount != futAnimation->GetDesiredBoneCount())
+			if (boneCount != futureAnim.GetDesiredBoneCount())
 				return;
 
 			for (unsigned x = 0; x < futframeCount - 1; ++x)
 			{
 				// get the two current keyframes
-				const std::vector<AnimationKeyframe> &f1 = futAnimation->GetKeyframes(x);
-				const std::vector<AnimationKeyframe> &f2 = futAnimation->GetKeyframes(x + 1);
+				const std::vector<AnimationKeyframe> &f1 = futureAnim.GetKeyframes(x);
+				const std::vector<AnimationKeyframe> &f2 = futureAnim.GetKeyframes(x + 1);
 
 				// check if the current keyframe set holds the time value between them
 				if (f1[0].length <= fut_time && fut_time < f2[0].length)

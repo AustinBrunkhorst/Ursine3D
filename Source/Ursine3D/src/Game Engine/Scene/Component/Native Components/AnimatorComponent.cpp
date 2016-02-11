@@ -39,7 +39,7 @@ namespace ursine
 
 		Animator::~Animator()
 		{
-			m_states.clear();
+			//m_states.clear();
 		}
 
 		void Animator::OnInitialize(void)
@@ -56,73 +56,88 @@ namespace ursine
 		{
 			URSINE_TODO("Try playing every animation states");
 
-			// grab what we need
-			auto *currentAnimation = m_states[m_currentState].GetAnimation();
-			auto *futureAnimation = m_states[m_futureState].GetAnimation();
-			auto *rig = AnimationBuilder::GetAnimationRigByName(m_currentRig);
-
-			if (currentAnimation == nullptr || rig == nullptr)
-				return;
-
-			if (currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
-				return;
-
-			// default transition time takes 1 sec this will be used as interpolation factor
-			static float transFactor = 0.0f;
-			// selected time of next animation which the blending will ends up
-			float transTime = 1.0f;
-			if (nullptr != futureAnimation)
-			{
-				if (futureAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
-					return;
-			}
-
-			auto &matrixPalette = GetOwner()->GetComponent<Model3D>()->GetMatrixPalette();
-			std::vector<SMat4> tempVec(100);
-
-			// update time
-			if (m_playing)
-			{
-				unsigned keyframeCount = currentAnimation->GetRigKeyFrameCount();
-				auto &curr_firstFrame = currentAnimation->GetKeyframe(0, 0);
-				auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount - 1, 0);
-
-				m_states[m_currentState].IncrementTimePosition(dt * m_speedScalar);
-				if (nullptr != futureAnimation && currentAnimation != futureAnimation)
-				{
-					m_states[m_futureState].IncrementTimePosition(dt * m_speedScalar);
-					transFactor += 0.05f * m_speedScalar; // / transTime;
-														  // if there is future animation
-					if (transFactor >= 1.0f)
-					{
-						m_currentState = m_futureState;
-						SetCurrentState(m_currentState);
-						SetFutureState("");
-						m_futureState = "";
-						transFactor = 0.f;
-					}
-				}
-
-				// if current state reached at the end of its frame
-				if (m_states[m_currentState].GetTimePosition() > curr_lastFrame.length)
-				{
-					// if we need to loop, go back to 0, maybe the first frame time?
-					if (m_looping)
-						m_states[m_currentState].SetTimePosition(curr_firstFrame.length);
-					else
-						m_states[m_currentState].SetTimePosition(curr_lastFrame.length);
-				}
-			}
-
-			// generate the matrices
-			AnimationBuilder::GenerateAnimationData(
-				m_states[m_currentState],
-				m_states[m_futureState],
-				rig,
-				matrixPalette,
-				tempVec,
-				transFactor
-				);
+			//// grab what we need
+			//AnimationState *currentState = nullptr;//m_states[m_currentState].GetAnimation();
+			//AnimationState *futureState = nullptr;
+			//for (auto iter = m_stateArray.begin(); iter != m_stateArray.end(); ++iter)
+			//{
+			//	if ((*iter).GetName() == m_currentState)
+			//		currentState = &(*iter);
+			//	if ((*iter).GetName() == m_futureState)
+			//		futureState = &(*iter);
+			//}
+			//
+			//if (!currentState)
+			//	return;
+			//
+			//Animation *currentAnimation = (nullptr == currentState)? nullptr : currentState->GetAnimation();
+			//Animation *futrueAnimation = (nullptr == futureState)? nullptr : futureState->GetAnimation();
+			//auto *rig = AnimationBuilder::GetAnimationRigByName(m_currentRig);
+			//
+			//if ( nullptr == currentAnimation || nullptr == rig )
+			//	return;
+			//
+			//if (currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
+			//	return;
+			//
+			//// default transition time takes 1 sec this will be used as interpolation factor
+			//static float transFactor = 0.0f;
+			//// selected time of next animation which the blending will ends up
+			//float transTime = 1.0f;
+			//if (nullptr != futrueAnimation)
+			//{
+			//	if (futrueAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
+			//		return;
+			//}
+			//
+			//auto &matrixPalette = GetOwner()->GetComponent<Model3D>()->GetMatrixPalette();
+			//std::vector<SMat4> tempVec(100);
+			//
+			//// update time
+			//if (m_playing)
+			//{
+			//	unsigned keyframeCount = currentAnimation->GetRigKeyFrameCount();
+			//	auto &curr_firstFrame = currentAnimation->GetKeyframe(0, 0);
+			//	auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount - 1, 0);
+			//
+			//	currentState->IncrementTimePosition(dt * m_speedScalar);
+			//	if (nullptr != futrueAnimation && currentAnimation != futrueAnimation)
+			//	{
+			//		futureState->IncrementTimePosition(dt * m_speedScalar);
+			//		transFactor += 0.05f * m_speedScalar; // / transTime;
+			//											  // if there is future animation
+			//		if (transFactor >= 1.0f)
+			//		{
+			//			m_currentState = m_futureState;
+			//			SetCurrentState(m_currentState);
+			//			SetFutureState("");
+			//			m_futureState = "";
+			//			transFactor = 0.f;
+			//		}
+			//	}
+			//
+			//	// if current state reached at the end of its frame
+			//	if (currentState->GetTimePosition() > curr_lastFrame.length)
+			//	{
+			//		// if we need to loop, go back to 0, maybe the first frame time?
+			//		if (m_looping)
+			//			currentState->SetTimePosition(curr_firstFrame.length);
+			//		else
+			//			currentState->SetTimePosition(curr_lastFrame.length);
+			//	}
+			//}
+			//
+			//// generate the matrices
+			//AnimationBuilder::GenerateAnimationData(
+			//	currentState->GetTimePosition(),
+			//	futureState->GetTimePosition(),
+			//	*currentState->GetAnimation(),
+			//	*futureState->GetAnimation(),
+			//	rig,
+			//	matrixPalette,
+			//	tempVec,
+			//	transFactor
+			//	);
 
 			//////////////////////////////////////////////////////////////////
 			//// TEMPORARY DEBUG STUFF
@@ -237,108 +252,108 @@ namespace ursine
 			m_speedScalar = scalar;
 		}
 
-		void Animator::AddState(void)
-		{
-			if ("" == m_stateName)
-				return;
-
-			m_states[m_stateName].SetName(m_stateName);
-
-			auto *gfx = GetCoreSystem(graphics::GfxAPI);
-			auto *world = GetOwner()->GetWorld();
-			auto *newEntity = world->CreateEntity(m_stateName);
-			auto *newTrans = newEntity->GetTransform();
-			auto *ownerTrans = GetOwner()->GetTransform();
-			ownerTrans->AddChild(newTrans);
-
-			SetCurrentState(m_stateName);
-
-			//// testing array
-			//AnimationState newState;
-			//newState.SetName(m_stateName);
-			//m_stateArray.Push(newState);
-		}
-
-		void Animator::RemoveState(void)
-		{
-			if ("" == m_stateName)
-				return;
-
-			auto *gfx = GetCoreSystem(graphics::GfxAPI);
-			auto *world = GetOwner()->GetWorld();
-			Entity* targetEntity = world->GetEntityFromName(m_stateName);
-			if (targetEntity)
-			{
-				targetEntity->Delete();
-				world->Update();
-			}
-
-			for (auto iter : m_states)
-			{
-				if (iter.first == m_stateName)
-				{
-					m_states.erase(iter.first);
-					return;
-				}
-			}
-
-			//// testing array
-			//for (Array<AnimationState>::Iterator iter = m_stateArray.begin();
-			//	iter != m_stateArray.end(); ++iter)
-			//{
-			//	if (iter->GetName() == m_stateName)
-			//	{
-			//		m_stateArray.Remove(iter);
-			//		break;
-			//	}
-			//}
-		}
+		//void Animator::AddState(void)
+		//{
+		//	if ("" == m_stateName)
+		//		return;
+		//
+		//	m_states[m_stateName].SetName(m_stateName);
+		//
+		//	auto *gfx = GetCoreSystem(graphics::GfxAPI);
+		//	auto *world = GetOwner()->GetWorld();
+		//	auto *newEntity = world->CreateEntity(m_stateName);
+		//	auto *newTrans = newEntity->GetTransform();
+		//	auto *ownerTrans = GetOwner()->GetTransform();
+		//	ownerTrans->AddChild(newTrans);
+		//
+		//	SetCurrentState(m_stateName);
+		//
+		//	//// testing array
+		//	//AnimationState newState;
+		//	//newState.SetName(m_stateName);
+		//	//m_stateArray.Push(newState);
+		//}
+		//
+		//void Animator::RemoveState(void)
+		//{
+		//	if ("" == m_stateName)
+		//		return;
+		//
+		//	auto *gfx = GetCoreSystem(graphics::GfxAPI);
+		//	auto *world = GetOwner()->GetWorld();
+		//	Entity* targetEntity = world->GetEntityFromName(m_stateName);
+		//	if (targetEntity)
+		//	{
+		//		targetEntity->Delete();
+		//		world->Update();
+		//	}
+		//
+		//	for (auto iter : m_states)
+		//	{
+		//		if (iter.first == m_stateName)
+		//		{
+		//			m_states.erase(iter.first);
+		//			return;
+		//		}
+		//	}
+		//
+		//	//// testing array
+		//	//for (Array<AnimationState>::Iterator iter = m_stateArray.begin();
+		//	//	iter != m_stateArray.end(); ++iter)
+		//	//{
+		//	//	if (iter->GetName() == m_stateName)
+		//	//	{
+		//	//		m_stateArray.Remove(iter);
+		//	//		break;
+		//	//	}
+		//	//}
+		//}
 
 		const std::string &Animator::GetAnimation(void) const
 		{
 			return m_animationName;
 		}
-
+		
 		void Animator::SetAnimation(const std::string& name)
 		{
 			m_animationName = name;
 		}
 
-		void Animator::AddAnimation(void)
-		{
-			if ("" == m_animationName)
-				return;
-
-			Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animationName);
-			if (!targetAnimation)
-				return;
-
-			m_states[m_currentState].SetAnimation(targetAnimation);
-
-			auto *gfx = GetCoreSystem(graphics::GfxAPI);
-			auto *world = GetOwner()->GetWorld();
-			auto *newEntity = world->CreateEntity(m_animationName);
-			auto *newTrans = newEntity->GetTransform();
-			auto *ownerTrans = GetOwner()->GetTransform();
-			ownerTrans->AddChild(newTrans);
-		}
-
-		void Animator::RemoveAnimation(void)
-		{
-			if ("" == m_animationName)
-				return;
-
-			auto *gfx = GetCoreSystem(graphics::GfxAPI);
-			auto *world = GetOwner()->GetWorld();
-			Entity* targetEntity = world->GetEntityFromName(m_animationName);
-			if (targetEntity)
-			{
-				targetEntity->Delete();
-				world->Update();
-			}
-
-			m_states[m_currentState].SetAnimation(nullptr);
-		}
+		//void Animator::AddAnimation(void)
+		//{
+		//	if ("" == m_animationName)
+		//		return;
+		//
+		//	Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animationName);
+		//	if (!targetAnimation)
+		//		return;
+		//
+		//	m_states[m_currentState].SetAnimation(targetAnimation);
+		//
+		//	auto *gfx = GetCoreSystem(graphics::GfxAPI);
+		//	auto *world = GetOwner()->GetWorld();
+		//	auto *newEntity = world->CreateEntity(m_animationName);
+		//	auto *newTrans = newEntity->GetTransform();
+		//	auto *ownerTrans = GetOwner()->GetTransform();
+		//	ownerTrans->AddChild(newTrans);
+		//}
+		//
+		//void Animator::RemoveAnimation(void)
+		//{
+		//	if ("" == m_animationName)
+		//		return;
+		//
+		//	auto *gfx = GetCoreSystem(graphics::GfxAPI);
+		//	auto *world = GetOwner()->GetWorld();
+		//	Entity* targetEntity = world->GetEntityFromName(m_animationName);
+		//	if (targetEntity)
+		//	{
+		//		targetEntity->Delete();
+		//		world->Update();
+		//	}
+		//
+		//	m_states[m_currentState].SetAnimation(nullptr);
+		//}
 
 		const std::string &Animator::GetRig() const
 		{
@@ -352,17 +367,17 @@ namespace ursine
 
 		float Animator::GetAnimationTimePosition() const
 		{
-			for (auto &x : m_states)
-			{
-				if (x.first == m_currentState)
-					return x.second.GetTimePosition();
-			}
+			//for (auto &x : m_states)
+			//{
+			//	if (x.first == m_currentState)
+			//		return x.second.GetTimePosition();
+			//}
 			return 0.0f;
 		}
 
 		void Animator::SetAnimationTimePosition(const float position)
 		{
-			m_states[m_currentState].SetTimePosition(position);
+			//m_states[m_currentState].SetTimePosition(position);
 		}
 
 		const std::string& Animator::GetCurrentState(void) const
