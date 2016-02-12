@@ -1,8 +1,13 @@
 #pragma once
 
-#include "GUID.h"
+#include "ResourceData.h"
+
+#include <memory>
 
 namespace ursine
 {
-    
+    namespace resources
+    {
+        typedef std::shared_ptr<ResourceData> ResourceDataHandle;
+    }
 }

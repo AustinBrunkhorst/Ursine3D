@@ -71,7 +71,7 @@ namespace ursine
             if (search == m_properties.end( ))
                 return Variant { };
 
-            return Variant { search->second, variant_policy::WrapObject( ) };
+            return ObjectVariant( search->second );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ namespace ursine
             PropertyList properties;
 
             for (auto &property : m_properties)
-                properties.emplace_back( property.second, variant_policy::WrapObject( ) );
+                properties.push_back( ObjectVariant( property.second ) );
 
             return properties;
         }
@@ -103,7 +103,7 @@ namespace ursine
 
             for (auto &property : m_properties)
             {
-                Variant instance { property.second, variant_policy::WrapObject( ) };
+                auto instance = ObjectVariant( property.second );
 
                 auto type = instance.GetType( );
 

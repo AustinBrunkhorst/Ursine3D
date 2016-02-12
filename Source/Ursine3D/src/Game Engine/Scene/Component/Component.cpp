@@ -13,7 +13,7 @@ namespace ursine
             auto type = GetType( );
             auto fields = type.GetFields( );
 
-            auto instance = meta::Variant { this, meta::variant_policy::WrapObject( ) };
+            auto instance = ObjectVariant( this );
 
             for (auto &field : fields)
             {

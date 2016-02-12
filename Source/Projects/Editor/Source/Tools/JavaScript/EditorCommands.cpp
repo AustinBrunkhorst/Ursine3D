@@ -12,6 +12,7 @@
 #include <EntitySerializer.h>
 
 #include <SelectedComponent.h>
+#include <CameraComponent.h>
 #include <BoxColliderComponent.h>
 #include <CylinderColliderComponent.h>
 #include <SphereColliderComponent.h>
@@ -83,6 +84,15 @@ namespace editor_commands
             0,
             callback
         );
+
+        return CefV8Value::CreateUndefined( );
+    }
+
+    JSFunction(CreateCamera)
+    {
+        createEntity( "Camera" )
+            ->AddComponent<ecs::Camera>( )
+            ->SetViewportSize( { 1, 1 } );
 
         return CefV8Value::CreateUndefined( );
     }

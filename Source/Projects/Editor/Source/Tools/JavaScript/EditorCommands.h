@@ -26,6 +26,9 @@ namespace editor_commands
     JSFunction(CreatePlane);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(CreateCamera);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
     JSFunction(CreateBox);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)

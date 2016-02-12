@@ -126,10 +126,7 @@ namespace ursine
                 if (componentType.GetMeta( ).GetProperty<DisableSerialization>( ))
                     continue;
 
-                auto instance = meta::Variant { 
-                    component, 
-                    meta::variant_policy::WrapObject( )
-                };
+                auto instance = ObjectVariant( component );
 
                 auto serialized = instance.SerializeJson( );
 
@@ -314,10 +311,7 @@ namespace ursine
 
         void EntitySerializer::deserializeComponent(Component *component, const Json &data) const
         {
-            auto instance = meta::Variant {
-                component, 
-                meta::variant_policy::WrapObject( ) 
-            };
+            auto instance = ObjectVariant( component );
 
             instance.GetType( ).DeserializeJson( instance, data );
         }

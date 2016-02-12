@@ -16,7 +16,6 @@
 #include <d3d11.h>
 #include "DXErrorHandling.h"
 
-
 namespace ursine
 {
     namespace graphics
@@ -148,7 +147,7 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
                 // LINE RENDERING
                 //Setup the raster description which will determine how and what polygons will be drawn.
-                rasterDesc.AntialiasedLineEnable = false;
+                rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_NONE;
                 rasterDesc.DepthBias = 0;
                 rasterDesc.DepthBiasClamp = 0.0f;
