@@ -20,25 +20,28 @@ namespace ursine
 	class AnimationState
 	{
 	public:
+		EditorField(
+			std::string name,
+			GetName,
+			SetName
+		);
+		
+		EditorField(
+			float timePosition,
+			GetTimePosition,
+			SetTimePosition
+			);
+		
+		// how can I add multiple animations in animation state?
+		// how can I use combo box for this?
+		// Array<Animation> => no, in this case, we should edit
+		EditorField(
+			std::string animName,
+			GetAnimationName,
+			SetAnimationName
+			);
 
-		//EditorField(
-		//	std::string name,
-		//	GetName,
-		//	SetName
-		//);
-
-		//EditorField(
-		//	float timePosition,
-		//	GetTimePosition,
-		//	SetTimePosition
-		//	);
-		//
-		//EditorField(
-		//	std::string animName,
-		//	GetAnimationName,
-		//	SetAnimationName
-		//	);
-
+	public:
 		/** @brief constructor
 		*
 		*  @return Void.
@@ -91,14 +94,16 @@ namespace ursine
 
 		const Animation* GetAnimationByName(void) const;
 		void SetAnimationByName(const std::string& name);
-
+		
+	private:
 		//current runtime
 		std::string m_name;
 		float m_timePos;
 		std::string m_animname;
-
-	private:
-		//current animation - what if there is multiple animations
-		const Animation* m_animation;
-	}; //Meta(Enable, DisplayName( "AnimationState" ), WhiteListMethods);
+        //current animation
+        const Animation *m_animation;
+		////vector for animation name and animation itselfitself
+		//std::vector<std::string> m_animNameVec;
+		//std::vector<Animation> m_animVec;
+	} Meta(Enable, DisplayName( "AnimationState" ));
 }

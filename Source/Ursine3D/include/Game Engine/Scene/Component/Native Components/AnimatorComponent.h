@@ -24,6 +24,8 @@ namespace ursine
 {
 	namespace ecs
 	{
+		typedef std::vector<AnimationState> AnimStateStream;
+
 		// not implemented yet
 		class AnimationClip
 		{
@@ -80,31 +82,7 @@ namespace ursine
 		{
 			NATIVE_COMPONENT;
 
-		public:
-			//EditorButton(
-			//	AddState,
-			//	"Add State"
-			//	);
-			//
-			//EditorButton(
-			//	RemoveState,
-			//	"Remove State"
-			//	);
-			
-			// let's don't care about in-state-blending. 
-			// just care about between-state blending first.
-			// let's try change animation state when timedelta reaches
-			// at the end of that keyframe of the state
-			//EditorButton(
-			//	AddAnimation,
-			//	"Add Animation"
-			//	);
-			//
-			//EditorButton(
-			//	RemoveAnimation,
-			//	"Remove Animation"
-			//	);
-			
+		public:			
 			EditorField(
 				std::string stateName,
 				GetStateName,
@@ -123,11 +101,11 @@ namespace ursine
 				SetFutureState
 				);
 
-			//EditorField(
-			//	std::string animationName,
-			//	GetAnimation,
-			//	SetAnimation
-			//	);
+			EditorField(
+				std::string currentAnimation,
+				GetAnimation,
+				SetAnimation
+				);
 
 			EditorField(
 				std::string currentRig,
@@ -184,8 +162,8 @@ namespace ursine
 
 			const std::string &GetRig(void) const;
 			void SetRig(const std::string &rig);
-
-			float GetAnimationTimePosition(void) const;
+			
+			float GetAnimationTimePosition() const;
 			void SetAnimationTimePosition(const float position);
 
 			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
@@ -215,13 +193,11 @@ namespace ursine
 			bool m_looping;
 			bool m_debug;
 			float m_speedScalar;
-			std::string m_currentAnimation;
-			std::string m_currentRig;
-			std::string m_currentState;
-			std::string m_futureState;
-
-			std::string m_stateName;
+			std::string m_Rig;
+			std::string m_currentStateName;
+			std::string m_futureStateName;
 			std::string m_animationName;
+			std::string m_stateName;
 			
 		} Meta(Enable, DisplayName("Animator"));
 	}

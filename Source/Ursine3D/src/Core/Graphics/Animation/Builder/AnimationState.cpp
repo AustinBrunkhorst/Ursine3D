@@ -64,10 +64,18 @@ namespace ursine
 	{
 		return m_animname;
 	}
-
+	
 	void AnimationState::SetAnimationName(const std::string& name)
 	{
+		if ("" == name)
+			return;
 		m_animname = name;
+		
+		Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
+		if (!targetAnimation)
+			return;
+
+		m_animation = targetAnimation;
 	}
 
 	// make this can handle multiple names of animation name
