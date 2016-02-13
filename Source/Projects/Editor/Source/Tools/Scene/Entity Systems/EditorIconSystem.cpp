@@ -33,6 +33,31 @@ void EditorIconSystem::OnInitialize(void)
 {
     m_world->Listener( this )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
+
+	// Get all entities already in the world
+	auto cams = m_world->GetEntitiesFromFilter( ecs::Filter( ).All<ecs::Camera>( ) );
+
+	for (auto &cam : cams)
+	{
+		ecs::ComponentEventArgs args( 
+			ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, 
+			cam, cam->GetComponent<ecs::Camera>( ) 
+		);
+
+		onIconAdd( m_world, &args );
+	}
+
+	auto lights = m_world->GetEntitiesFromFilter( ecs::Filter( ).All<ecs::Light>( ) );
+
+	for (auto &light : lights)
+	{
+		ecs::ComponentEventArgs args( 
+			ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, 
+			light, light->GetComponent<ecs::Light>( )
+		);
+
+		onIconAdd( m_world, &args );
+	}
 }
 
 void EditorIconSystem::OnRemove(void)
