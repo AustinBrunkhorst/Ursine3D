@@ -112,6 +112,16 @@ namespace ursine
             m_active.erase( search );
         }
 
+		void FilterSystem::Initialize(void)
+		{
+
+		}
+
+		void FilterSystem::Remove(void)
+        {
+	        
+        }
+
         void FilterSystem::OnInitialize(void)
         {
             m_world->Listener( this )
@@ -130,11 +140,6 @@ namespace ursine
             Initialize( );
         }
 
-        void FilterSystem::Initialize(void)
-        {
-            
-        }
-
         void FilterSystem::OnRemove(void)
         {
             m_world->Listener( this )
@@ -142,6 +147,8 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .Off( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
                 .Off( m_updateType, &FilterSystem::onUpdate );
+
+			Remove( );
         }
 
         void FilterSystem::SetUpdateType(WorldEventType updateType)

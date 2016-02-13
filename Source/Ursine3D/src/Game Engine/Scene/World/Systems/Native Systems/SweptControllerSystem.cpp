@@ -35,10 +35,8 @@ namespace ursine
 			m_physics = nullptr;
 		}
 
-		void SweptControllerSystem::OnInitialize(void)
+		void SweptControllerSystem::Initialize(void)
 		{
-			FilterSystem::OnInitialize( );
-
 			m_physics = m_world->GetEntitySystem( PhysicsSystem );
 		}
 

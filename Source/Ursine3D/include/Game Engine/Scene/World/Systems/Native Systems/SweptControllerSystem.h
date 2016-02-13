@@ -35,7 +35,7 @@ namespace ursine
 		private:
 			PhysicsSystem *m_physics;
 
-			void OnInitialize(void) override;
+			void Initialize(void) override;
 
 			void Process(Entity *entity) override;
 

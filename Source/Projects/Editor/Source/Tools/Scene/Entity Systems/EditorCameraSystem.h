@@ -13,9 +13,7 @@
 
 #pragma once
 
-#include <EntitySystem.h>
-
-#include <GfxAPI.h>
+#include <FilterSystem.h>
 
 namespace ursine
 {
@@ -25,7 +23,7 @@ namespace ursine
     }
 }
 
-class EditorCameraSystem : public ursine::ecs::EntitySystem
+class EditorCameraSystem : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
 
@@ -61,9 +59,11 @@ private:
 
     ursine::TweenID m_focusTransition;
 
-    void OnInitialize(void) override;
+    void Initialize(void) override;
     void OnAfterLoad(void) override;
-    void OnRemove(void) override;
+    void Remove(void) override;
+
+	void Process(ursine::ecs::Entity *entity) override;
 
     // events
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
