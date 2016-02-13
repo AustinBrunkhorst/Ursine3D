@@ -8,7 +8,12 @@ namespace ursine
     {
         namespace pipeline
         {
-            
+            ResourceWriter &ResourceWriter::WriteBytes(const char *bytes, size_t count)
+            {
+                m_stream.write( bytes, count );
+
+                return *this;
+            }
         }
     }
 }

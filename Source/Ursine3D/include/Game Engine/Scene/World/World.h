@@ -22,11 +22,11 @@
 #include <vector>
 #include <mutex>
 
-class Project;
+class ProjectTemp;
 
 namespace ursine
 {
-    class Screen;
+    class Scene;
 
     namespace ecs
     {
@@ -95,13 +95,13 @@ namespace ursine
 
             SystemManager *GetSystemManager(void) const;
 
-            Screen *GetOwner(void) const;
-            void SetOwner(Screen *owner);
+            Scene *GetOwner(void) const;
+            void SetOwner(Scene *owner);
 
             void DispatchLoad(void);
         private:
             friend class Entity;
-			friend class Project;
+			friend class ProjectTemp;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
@@ -118,7 +118,7 @@ namespace ursine
             NameManager *m_nameManager;
             UtilityManager *m_utilityManager;
 
-            Screen *m_owner;
+            Scene *m_owner;
 
             std::unordered_map<std::string, Json> m_archetypeCache;
 

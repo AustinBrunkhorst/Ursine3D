@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -51,7 +51,7 @@ namespace
         
         auto file = files[ 0 ].string( );
 
-        if (!fs::WriteText( file, data.dump( true ) ))
+        if (!fs::WriteAllText( file, data.dump( true ) ))
         {
             auto *editor = GetCoreSystem( Editor );
 
@@ -119,7 +119,7 @@ JSConstructor(EntityHandler)
         JSThrow( "Invalid constructor arguments." );
 
     m_handle = arguments[ 0 ]->GetUIntValue( );
-    m_scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+    m_scene = &GetCoreSystem( Editor )->GetProject( ).GetScene( );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -755,7 +755,7 @@ JSMethod(EntityHandler::getChildren)
 
     for (size_t i = 0; i < children.size( ); ++i)
     {
-        auto *child = m_scene->GetWorld( )->GetEntity( children[ i ] );
+        auto *child = m_scene->GetActiveWorld( )->GetEntity( children[ i ] );
 
         childrenArray->SetValue( static_cast<int>( i ), 
             CefV8Value::CreateUInt( child->GetUniqueID( ) ) 
@@ -809,7 +809,7 @@ JSMethod(EntityHandler::setParent)
     else
     {
         auto *targetEntity = 
-            m_scene->GetWorld( )->GetEntityUnique( targetParent->GetUIntValue( ) );
+            m_scene->GetActiveWorld( )->GetEntityUnique( targetParent->GetUIntValue( ) );
 
         if (!targetEntity)
             return CefV8Value::CreateBool( false );
@@ -872,7 +872,7 @@ JSMethod(EntityHandler::saveAsArchetype)
         "Archetype Files|.uatype"
     };
 
-    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+    editor->GetMainWindow( ).GetUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
         static_cast<CefBrowserHost::FileDialogMode>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG ),
         "Save Archetype",
         "",
@@ -902,5 +902,5 @@ JSMethod(EntityHandler::clone)
 
 ecs::Entity *EntityHandler::getEntity(void)
 {
-	return m_scene->GetWorld( )->GetEntityUnique( m_handle );
+	return m_scene->GetActiveWorld( )->GetEntityUnique( m_handle );
 }

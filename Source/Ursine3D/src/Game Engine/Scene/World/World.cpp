@@ -113,7 +113,7 @@ namespace ursine
                 std::string jsonData;
 
                 UAssert(
-                    fs::LoadText( filename, jsonData ),
+                    fs::LoadAllText( filename, jsonData ),
                     "Failed to load archetype.\nfile: %s", 
                     filename.c_str( )
                 );
@@ -149,7 +149,7 @@ namespace ursine
             return m_entityManager->GetEntity( id );
         }
 
-        const std::string& World::GetEntityName(EntityUniqueID id) const
+        const std::string &World::GetEntityName(EntityUniqueID id) const
         {
             return m_nameManager->GetName( id );
         }
@@ -218,12 +218,12 @@ namespace ursine
             return m_systemManager;
         }
 
-        Screen *World::GetOwner(void) const
+        Scene *World::GetOwner(void) const
         {
             return m_owner;
         }
 
-        void World::SetOwner(Screen *owner)
+        void World::SetOwner(Scene *owner)
         {
             m_owner = owner;
         }

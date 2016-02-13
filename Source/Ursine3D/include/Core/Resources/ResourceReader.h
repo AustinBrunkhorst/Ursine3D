@@ -4,9 +4,11 @@ namespace ursine
 {
     namespace resources
     {
-        class ResourceReader : public meta::Object
+        class ResourceReader
         {
         public:
+            size_t ReadBytes(char *output, size_t count);
+
             template<typename T>
             ResourceReader &operator>>(T &output);
 

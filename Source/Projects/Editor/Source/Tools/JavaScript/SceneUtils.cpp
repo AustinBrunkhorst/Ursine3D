@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -39,9 +39,9 @@ namespace
 
 JSFunction(SceneGetRootEntities)
 {
-    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+    /*auto scene = GetCoreSystem( Editor )->GetProject( ).GetScene( );
 
-    auto root = scene->GetWorld( )->GetRootEntities( );
+    auto root = scene.GetActiveWorld( )->GetRootEntities( );
 
     auto ids = CefV8Value::CreateArray( static_cast<int>( root.size( ) ) );
 
@@ -51,16 +51,16 @@ JSFunction(SceneGetRootEntities)
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( root[ i ]->GetUniqueID( ) )
         );
-    }
+    }*/
 
-    return ids;
+    return CefV8Value::CreateArray( 0 );
 }
 
 JSFunction(SceneGetActiveEntities)
 {
-    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+    /*auto &scene = GetCoreSystem( Editor )->GetProject( ).GetScene( );
 
-    auto &active = scene->GetWorld( )->GetActiveEntities( );
+    auto &active = scene.GetActiveWorld( )->GetActiveEntities( );
 
     auto ids = CefV8Value::CreateArray( static_cast<int>( active.size( ) ) );
 
@@ -70,9 +70,9 @@ JSFunction(SceneGetActiveEntities)
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( active[ i ]->GetUniqueID( ) )
         );
-    }
+    }*/
 
-    return ids;
+    return CefV8Value::CreateArray( 0 );
 }
 
 JSFunction(SceneLoad)
@@ -86,7 +86,7 @@ JSFunction(SceneLoad)
         "World Files|.uworld"
     };
 
-    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+    editor->GetMainWindow( ).GetUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
         FILE_DIALOG_OPEN,
         "Load World",
         "",
@@ -109,7 +109,7 @@ JSFunction(SceneSave)
         "World Files|.uworld"
     };
 
-    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+    editor->GetMainWindow( ).GetUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
         static_cast<CefBrowserHost::FileDialogMode>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG ),
         "Save World",
         "",
@@ -126,7 +126,7 @@ JSFunction(ScenePlayStart)
     Timer::Create( 0 ).Completed( [] {
         auto *editor = GetCoreSystem( Editor );
 
-        editor->GetProject( )->SetPlayState( PS_PLAYING );
+        //editor->GetProject( )->SetPlayState( PS_PLAYING );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -140,9 +140,9 @@ JSFunction(SceneSetPlayState)
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
     Timer::Create( 0 ).Completed( [=] {
-    auto *editor = GetCoreSystem( Editor );
+        auto *editor = GetCoreSystem( Editor );
 
-        editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
+        //editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -151,9 +151,9 @@ JSFunction(SceneSetPlayState)
 JSFunction(SceneStep)
 {
      Timer::Create( 0 ).Completed( [=] {
-    auto *editor = GetCoreSystem( Editor );
+        auto *editor = GetCoreSystem( Editor );
 
-    editor->GetProject( )->GetScene( )->Step( );
+        //editor->GetProject( )->GetScene( )->Step( );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -164,7 +164,7 @@ JSFunction(ScenePlayStop)
     Timer::Create( 0 ).Completed( [] {
         auto *editor = GetCoreSystem( Editor );
 
-        editor->GetProject( )->SetPlayState( PS_EDITOR );
+        //editor->GetProject( )->SetPlayState( PS_EDITOR );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -210,7 +210,7 @@ namespace
                 URSINE_TODO( "this is hacky and weirdly placed" );
                 world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
 
-				editor->GetProject( )->SetWorld( world );
+				//editor->GetProject( )->SetActiveWorld( world );
 			} );
         }
         catch (const ecs::SerializationException &e)
@@ -240,8 +240,8 @@ namespace
         if (files.empty( ))
             return;
 
-        auto *editor = GetCoreSystem( Editor );
-        auto world = editor->GetProject( )->GetScene( )->GetWorld( );
+        /*auto *editor = GetCoreSystem( Editor );
+        auto world = editor->GetProject( )->GetScene( )->GetActiveWorld( );
 
         ecs::WorldSerializer serializer;
 
@@ -249,7 +249,7 @@ namespace
 
         auto path = files[ 0 ];
 
-        if (!fs::WriteText( path.string( ), serialized.dump( true ) ))
+        if (!fs::WriteAllText( path.string( ), serialized.dump( true ) ))
         {
             UWarning( "Could not write to world file.\nfile: %s",
                 path.string( ).c_str( )
@@ -267,7 +267,7 @@ namespace
             };
 
             editor->PostNotification( error );
-        }
+        }*/
     }
 
     void doOpenErrorLog(Notification &notification)

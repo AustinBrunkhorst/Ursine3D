@@ -34,6 +34,7 @@ namespace ursine
         , public CefApp
     {
         CORE_SYSTEM;
+
     public:
         static const int REMOTE_DEBUGGING_PORT = 6999;
 

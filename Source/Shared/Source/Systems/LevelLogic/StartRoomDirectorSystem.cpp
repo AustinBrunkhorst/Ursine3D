@@ -3,7 +3,7 @@
 #include "StartRoomDirectorSystem.h"
 
 #include <CameraComponent.h>
-#include <Screen.h>
+#include <Scene.h>
 #include <AIMovementControllerComponent.h>
 
 #include <KeyboardManager.h>
@@ -98,10 +98,10 @@ void StartRoomDirectorSystem::onUpdate(EVENT_HANDLER(World))
 			).EndGroup( )
 			.Call( [=] {
 
-				auto screen = m_world->GetOwner( );
+				/*auto screen = m_world->GetOwner( );
 
 				if (screen)
-					screen->MessageUI( "RaidStart", Json( ) );
+					screen->MessageUI( "RaidStart", Json( ) );*/
 
 				auto ais = m_world->GetEntitiesFromFilter( Filter( ).All<AIMovementController>( ) );
 

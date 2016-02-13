@@ -65,7 +65,7 @@ namespace editor_commands
 
     JSFunction(CreateEntityFromArchetype)
     {
-        auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
+        auto *world = GetCoreSystem( Editor )->GetProject( ).GetScene( ).GetActiveWorld( );
 
         CefRefPtr<UIFileDialogCallback> callback = 
             new UIFileDialogCallback( std::bind( &doLoadArchetype, world, _1, _2 ) );
@@ -76,7 +76,7 @@ namespace editor_commands
 
         auto *editor = GetCoreSystem( Editor );
 
-        editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
+        editor->GetMainWindow( ).GetUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
             FILE_DIALOG_OPEN,
             "Create Entity From Archetype",
             "",
@@ -186,7 +186,7 @@ namespace editor_commands
             {
                 std::string jsonData;
 
-                if (!fs::LoadText( file.string( ), jsonData ))
+                if (!fs::LoadAllText( file.string( ), jsonData ))
                 {
                     throw ecs::SerializationException( "Unable to load file." );
                 }
@@ -243,7 +243,7 @@ namespace editor_commands
 
         ecs::World *getActiveWorld(void)
         {
-            return GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
+            return GetCoreSystem( Editor )->GetProject( ).GetScene( ).GetActiveWorld( );
         }
 
         ecs::Entity *createEntity(const std::string &name)

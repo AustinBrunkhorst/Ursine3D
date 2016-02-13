@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -17,7 +17,7 @@ namespace ursine
 {
     namespace fs
     {
-        bool LoadText(const std::string &filename, std::string &output)
+        bool LoadAllText(const std::string &filename, std::string &output)
         {
             std::ifstream input( filename );
 
@@ -43,7 +43,7 @@ namespace ursine
             return true;
         }
 
-        bool WriteText(const std::string &filename, const std::string &text)
+        bool WriteAllText(const std::string &filename, const std::string &text)
         {
             std::ofstream output( filename );
 

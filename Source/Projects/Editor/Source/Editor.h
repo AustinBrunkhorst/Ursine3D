@@ -15,11 +15,10 @@
 
 #include <CoreSystem.h>
 
-#include <Window.h>
-#include <UIView.h>
 #include <NotificationManager.h>
 
 #include "Project.h"
+#include "EditorWindow.h"
 
 class NativeEditorTool;
 
@@ -31,37 +30,28 @@ public:
     Editor(void);
     ~Editor(void);
 
-    void OnInitialize(void) override;
-    void OnRemove(void) override;
-    
-    ursine::Window::Handle GetMainWindow(void) const;
-    ursine::UIView::Handle GetMainUI(void) const;
+    const EditorWindow &GetMainWindow(void) const;
 
-    Project::Handle GetProject(void) const;
+    Project &GetProject(void);
 
     ursine::NotificationManager &GetNotificationManager(void);
-
     ursine::Notification PostNotification(const ursine::NotificationConfig &config);
     
 private:
+    void OnInitialize(void) override;
+    void OnRemove(void) override;
+
     ursine::graphics::GfxAPI *m_graphics;
 
     ursine::NotificationManager m_notificationManager;
 
-    struct
-    {
-        ursine::Window::Handle window;
-        ursine::UIView::Handle ui;
-    } m_mainWindow;
+    EditorWindow m_mainWindow;
 
-    Project::Handle m_project;
+    Project m_project;
 
     void initializeGraphics(void);
-    void initializeScene(void);
+    void initializeUI(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
-
-    void onFocusChange(EVENT_HANDLER( ursine::Window ));
-
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
 } Meta(Enable, WhiteListMethods);

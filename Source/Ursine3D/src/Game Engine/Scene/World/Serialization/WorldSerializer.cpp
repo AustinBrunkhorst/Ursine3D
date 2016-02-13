@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -80,7 +80,7 @@ namespace ursine
         {
             std::string data;
 
-            if (!fs::LoadText( filename, data ))
+            if (!fs::LoadAllText( filename, data ))
                 throw SerializationException( "Unable to read world file." );
 
             std::string jsonError;

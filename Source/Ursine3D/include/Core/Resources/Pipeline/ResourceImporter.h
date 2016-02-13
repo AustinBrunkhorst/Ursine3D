@@ -2,6 +2,7 @@
 
 #include "ResourceImportContext.h"
 #include "ResourceConfig.h"
+#include "FileSystem.h"
 
 namespace ursine
 {
@@ -12,7 +13,7 @@ namespace ursine
             class ResourceImporter : public meta::Object
             {
             public:
-                virtual ResourceDataHandle Import(const std::string &filename, const ResourceImportContext &context) = 0;
+                virtual ResourceDataHandle Import(const fs::path &filename, const ResourceImportContext &context) = 0;
             };
         }
     }

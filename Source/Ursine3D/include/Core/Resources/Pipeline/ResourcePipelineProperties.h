@@ -16,3 +16,12 @@ public:
         : fileExtensions( move( extensions ) )
         , defaultProcessor( defaultProcessor ) { }
 };
+
+class ResourceProcessorConfig : public ursine::meta::MetaProperty
+{
+public:
+    const ursine::meta::Type optionsType;
+
+    ResourceProcessorConfig(const ursine::meta::Type &optionsType)
+        : optionsType( optionsType ) { }
+};

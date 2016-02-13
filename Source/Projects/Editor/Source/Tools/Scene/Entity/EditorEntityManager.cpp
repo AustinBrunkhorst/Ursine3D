@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -15,12 +15,11 @@
 
 #include "EditorEntityManager.h"
 
+#include "Editor.h"
+#include "Project.h"
 #include "ComponentUtils.h"
 
 #include <SelectedComponent.h>
-#include "EditorConfig.h"
-
-#include <Editor.h>
 #include <Timer.h>
 
 using namespace ursine;
@@ -93,12 +92,13 @@ void EditorEntityManager::RelayUIResetWorld(void)
 {
 	Json data;
 
-    m_project->GetUI( )->Message(
+    // TODO:
+    /*m_project->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::SceneManager, 
         events::scene::Reset,
         data
-    );
+    );*/
 }
 
 void EditorEntityManager::clearWorld(ecs::World *world)
@@ -125,12 +125,13 @@ void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
     };
 
-    m_project->GetUI( )->Message(
+    // TODO:
+    /*m_project->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::Added, 
         message 
-    );
+    );*/
 }
 
 void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
@@ -141,12 +142,13 @@ void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
         { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
     };
 
-    m_project->GetUI( )->Message(
+    // TODO:
+    /*m_project->GetMainWindow( )->GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::Removed, 
         message 
-    );
+    );*/
 }
 
 void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
@@ -158,12 +160,13 @@ void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
         { "name", args->newName },
     };
 
-    m_project->GetUI( )->Message(
+    // TODO:
+    /*m_project->GetMainWindow( )->GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::NameChanged,
         message
-    );
+    );*/
 }
 
 void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
@@ -188,12 +191,13 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
         { "newParent", newUniqueID }
     };
 
-    m_project->GetUI( )->Message(
+    // TODO:
+    /*m_project->GetMainWindow( )->GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::ParentChanged,
         message
-    );
+    );*/
 }
 
 void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
@@ -214,12 +218,13 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
         { "buttons", InspectComponentButtons( component ) }
     };
 
-    m_project->GetUI( )->Message(
+    // TODO:
+    /*m_project->GetMainWindow( )->GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::component::Added,
         message
-    );
+    );*/
 }
 
 void EditorEntityManager::onComponentRemoved(EVENT_HANDLER(ecs::World))
@@ -231,12 +236,13 @@ void EditorEntityManager::onComponentRemoved(EVENT_HANDLER(ecs::World))
         { "component", args->component->GetType( ).GetName( ) },
     };
 
-    m_project->GetUI( )->Message(
+    // TODO:
+    /*m_project->GetMainWindow( )->GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::component::Removed,
         message
-    );
+    );*/
 }
 
 void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
@@ -263,12 +269,13 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             { "value", args->value.GetType( ).SerializeJson( args->value, false ) }
         };
 
-        m_project->GetUI( )->Message(
+        // TODO:
+        /*m_project->GetMainWindow( )->GetUI( )->Message(
             UI_CMD_BROADCAST, 
             channel::EntityManager, 
             events::component::Changed,
             message
-        );
+        );*/
     }
 }
 
@@ -312,11 +319,12 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
             { AMODIFY_REMOVE, events::component::ArrayRemove }
         };
 
-        m_project->GetUI( )->Message(
+        // TODO:
+        /*m_project->GetMainWindow( )->GetUI( )->Message(
             UI_CMD_BROADCAST, 
             channel::EntityManager, 
             actionToType[ args->modification.action ],
             message
-        );
+        );*/
     }
 }

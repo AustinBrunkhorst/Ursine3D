@@ -25,7 +25,7 @@ namespace ursine
         
         typedef std::vector<path> FileList;
 
-        bool LoadText(const std::string &filename, std::string &output);
-        bool WriteText(const std::string &filename, const std::string &text);
+        bool LoadAllText(const std::string &filename, std::string &output);
+        bool WriteAllText(const std::string &filename, const std::string &text);
     }
 }

@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -14,85 +14,48 @@
 #include "Precompiled.h"
 
 #include "Project.h"
-#include "EditorEntityManager.h"
+#include "ResourcePipelineConfig.h"
 
-#include <WorldSerializer.h>
-#include <WorldConfigComponent.h>
+namespace resource_pipeline = ursine::resources::pipeline;
 
-using namespace ursine;
-
-Project::Project(UIView::Handle ui)
-    : m_ui( ui )
-    , m_scene( std::make_shared<Scene>( ) )
-    , m_entityManager( this )
+namespace
 {
-    m_entityManager.SetWorld( m_scene->GetWorld( ) );
+    const auto kResourcesBuildDirectory = "Resources";
+}
+
+Project::Project(void)
+{
+    
 }
 
 Project::~Project(void)
 {
-
+    
 }
 
-Scene::Handle Project::GetScene(void)
+const ProjectConfig &Project::GetConfig(void) const
+{
+    return m_config;
+}
+
+ursine::Scene &Project::GetScene(void)
 {
     return m_scene;
 }
 
-UIView::Handle Project::GetUI(void)
+void Project::initialize(const ProjectConfig &config)
 {
-    return m_ui;
-}
+    m_config = config;
 
-ScenePlayState Project::GetPlayState(void) const
-{
-    return m_scene->GetPlayState( );
-}
+    resource_pipeline::ResourcePipelineConfig resourceConfig;
 
-void Project::SetPlayState(ScenePlayState state)
-{
-    auto lastState = m_scene->GetPlayState( );
+    resourceConfig.buildDirectory = config.buildDirectory;
 
-    m_scene->SetPlayState( state );
-
-    if (lastState == PS_EDITOR && (state == PS_PLAYING || state == PS_PAUSED))
+    resourceConfig.resourceDirectory = config.resourceDirectory;
     {
-        ecs::WorldSerializer serializer;
-
-        auto *oldWorld = m_scene->GetWorld( );
-
-        m_worldCache = serializer.Serialize( oldWorld );
-
-        auto *playWorld = serializer.Deserialize( m_worldCache );
-
-        playWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( false );
-
-        SetWorld( playWorld );
-
-        m_scene->LoadConfiguredSystems( );
+        // add the resource directory
+        resourceConfig.resourceDirectory /= kResourcesBuildDirectory;
     }
-    else if((lastState == PS_PLAYING || lastState == PS_PAUSED) && state == PS_EDITOR)
-    {
-        ecs::WorldSerializer serializer;
 
-        auto *cachedWorld = serializer.Deserialize( m_worldCache );
-
-        SetWorld( cachedWorld );
-
-        cachedWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
-    } 
-    else
-    {
-        m_scene->GetWorld( )->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( 
-            state == PS_PAUSED 
-        );
-    }
-}
-
-void Project::SetWorld(ecs::World *world)
-{
-	m_entityManager.SetWorld( world );
-    m_scene->SetWorld( world );
-
-	m_entityManager.RelayUIResetWorld( );
+    m_resourcePipeline.SetConfig( resourceConfig );
 }

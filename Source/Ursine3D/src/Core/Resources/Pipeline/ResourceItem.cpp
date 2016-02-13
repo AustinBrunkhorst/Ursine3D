@@ -1,11 +1,14 @@
 #include "UrsinePrecompiled.h"
 
-#include "ResourceManager.h"
+#include "ResourceItem.h"
 
 namespace ursine 
 {
     namespace resources
     {
-        
+        namespace pipeline
+        {
+
+        }
     }
 }

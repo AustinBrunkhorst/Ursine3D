@@ -13,32 +13,30 @@
 
 #pragma once
 
-#include <Scene.h>
-#include <UIView.h>
+#include "ProjectConfig.h"
 
-class EditorEntityManager;
+#include <ResourcePipelineManager.h>
+#include <Scene.h>
 
 class Project
 {
 public:
-    typedef std::shared_ptr<Project> Handle;
-
-    Project(ursine::UIView::Handle ui);
+    Project(void);
     ~Project(void);
 
-    ursine::Scene::Handle GetScene(void);
-    ursine::UIView::Handle GetUI(void);
+    const ProjectConfig &GetConfig(void) const;
 
-    ursine::ScenePlayState GetPlayState(void) const;
-    void SetPlayState(ursine::ScenePlayState state);
+    ursine::Scene &GetScene(void);
 
-    void SetWorld(ursine::ecs::World *world);
 private:
-    ursine::Json m_worldCache;
+    Project(const Project &rhs) = delete;
+    Project &operator=(const Project &rhs) = delete;
 
-    ursine::UIView::Handle m_ui;
+    void initialize(const ProjectConfig &config);
 
-    ursine::Scene::Handle m_scene;
+    ProjectConfig m_config;
 
-    EditorEntityManager m_entityManager;
+    ursine::resources::pipeline::ResourcePipelineManager m_resourcePipeline;
+
+    ursine::Scene m_scene;
 };

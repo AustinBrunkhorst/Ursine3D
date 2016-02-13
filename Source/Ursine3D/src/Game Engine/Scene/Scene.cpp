@@ -25,7 +25,7 @@ namespace ursine
     Scene::Scene(void)
         : m_playState( PS_EDITOR )
         , m_viewport( 0 )
-        , m_world( std::make_shared<ecs::World>( ) )
+        , m_activeWorld( nullptr )
     {
         
     }
@@ -35,14 +35,14 @@ namespace ursine
 
     }
 
-    ecs::World *Scene::GetWorld(void)
+    ecs::World *Scene::GetActiveWorld(void)
     {
-        return m_world.get( );
+        return m_activeWorld.get( );
     }
 
-    void Scene::SetWorld(ecs::World *world)
+    void Scene::SetActiveWorld(ecs::World *world)
     {
-        m_world = ecs::World::Handle( world );
+        m_activeWorld = ecs::World::Handle( world );
     }
 
     graphics::GfxHND Scene::GetViewport(void) const
@@ -67,42 +67,49 @@ namespace ursine
 
     void Scene::Step(void) const
     {
-        m_world->Update( );
+        if (m_activeWorld)
+            m_activeWorld->Update( );
     }
 
     void Scene::Update(DeltaTime dt) const
     {
+        if (!m_activeWorld)
+            return;
+
         switch (m_playState)
         {
         case PS_PAUSED:
         case PS_EDITOR:
-            m_world->EditorUpdate( );
+            m_activeWorld->EditorUpdate( );
             break;
         case PS_PLAYING:
-            m_world->Update( );
+            m_activeWorld->Update( );
             break;
         }
     }
 
     void Scene::Render(void) const
     {
+        if (!m_activeWorld)
+            return;
+
         switch (m_playState)
         {
         case PS_PAUSED:
         case PS_EDITOR:
-            m_world->EditorRender( );
+            m_activeWorld->EditorRender( );
             break;
         case PS_PLAYING:
-            m_world->Render( );
+            m_activeWorld->Render( );
             break;
         }
     }
 
     void Scene::LoadConfiguredSystems(void)
     {
-        auto *config = m_world->GetSettings( )->GetComponent<ecs::WorldConfig>( );
+        auto *config = m_activeWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( );
 
-        auto *systemManager = m_world->GetSystemManager( );
+        auto *systemManager = m_activeWorld->GetSystemManager( );
 
         for (auto &system : config->GetSystems( ))
         {
@@ -121,6 +128,8 @@ namespace ursine
                 error.message = "Unknown world play system configured.";
 
                 EditorPostNotification( error );
+
+                continue;
             }
 
             if (systemManager->HasSystem( type ))
@@ -132,6 +141,8 @@ namespace ursine
                 error.message = "World play system <strong class=\"highlight\">" + type.GetName( ) + "</strong> already exists.";
 
                 EditorPostNotification( error );
+
+                continue;
             }
 
             systemManager->AddSystem( type );

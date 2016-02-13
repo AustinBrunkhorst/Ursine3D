@@ -8,7 +8,10 @@ namespace ursine
     {
         namespace pipeline
         {
-
+            void ResourcePipelineManager::SetConfig(const ResourcePipelineConfig &config)
+            {
+                m_config = config;
+            }
         }
     }
 }

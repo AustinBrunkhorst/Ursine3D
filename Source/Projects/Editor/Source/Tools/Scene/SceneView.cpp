@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -15,6 +15,7 @@
 
 #include "SceneView.h"
 
+#include "Editor.h"
 #include "Project.h"
 
 #include "EditorCameraSystem.h"
@@ -49,35 +50,38 @@ void SceneView::onFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto world = m_editor->GetProject( )->GetScene( )->GetWorld( );
+    // TODO:
+    /*auto *world = m_editor->GetProject( ).GetScene( ).GetActiveWorld( );
 
     auto focused = (args->name == event::Focus);
 
     if (world->HasEntitySystem( EditorCameraSystem ))
     {
         world->GetEntitySystem( EditorCameraSystem )->SetFocus( focused );
-    }
+    }*/
 }
 
 void SceneView::onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto world = m_editor->GetProject( )->GetScene( )->GetWorld( );
+    // TODO:
+    /*auto world = m_editor->GetProject( )->GetScene( )->GetActiveWorld( );
 
     auto focused = (args->name == event::MouseOver);
 
     if (world->HasEntitySystem( EditorCameraSystem ))
     {
         world->GetEntitySystem( EditorCameraSystem )->SetMouseFocus( focused );
-    }
+    }*/
 }
 
 void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto scene = m_editor->GetProject( )->GetScene( );
+    // TODO:
+    /*auto scene = m_editor->GetProject( )->GetScene( );
 
     auto x = static_cast<unsigned>(
         args->data->GetValue( "x" )->GetDoubleValue( )
@@ -118,5 +122,5 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
     if (width != oldWidth || height != oldHeight)
     {
         viewport.SetDimensions( width, height );
-    }
+    }*/
 }
