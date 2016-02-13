@@ -58,7 +58,7 @@ namespace ursine
 		}
 	}
 
-	SQuat::SQuat( )
+	SQuat::SQuat(void)
 		: SQuat( 0.0f, 0.0f, 0.0f, 1.0f )
 	{
 	}
@@ -107,7 +107,7 @@ namespace ursine
 		return math::RadiansToDegrees( acos( Dot( other ) / scalar ) ) * 2.0f;
 	}
 
-	SVec3 SQuat::GetAxis( ) const
+	SVec3 SQuat::GetAxis(void) const
 	{
 		float scalar_2 = 1.0f - m_w * m_w;
 
@@ -119,7 +119,7 @@ namespace ursine
 		return SVec3( m_x * scalar, m_y * scalar, m_z * scalar );
 	}
 
-	float SQuat::GetAngle( ) const
+	float SQuat::GetAngle(void) const
 	{
 		float angle = 2.0f * acos( m_w );
 
@@ -174,7 +174,7 @@ namespace ursine
 		     cos_z * cos_x * cos_y + sin_z * sin_x * sin_y );
 	}
 
-	SVec3 SQuat::GetEulerAngles( ) const
+	SVec3 SQuat::GetEulerAngles(void) const
 	{
 		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 
@@ -214,7 +214,7 @@ namespace ursine
 		Normalize( );
 	}
 
-	SQuat SQuat::GetInverse( ) const
+	SQuat SQuat::GetInverse(void) const
 	{
 		return SQuat( -m_x, -m_y, -m_z, m_w );
 	}

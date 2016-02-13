@@ -58,11 +58,25 @@ namespace ursine
                 return false;
         }
 
-        void PhysicsSettings::SetEnableDebugDraw(bool enable)
+	    void PhysicsSettings::SetEnableDebugDraw(bool enable)
         {
             if (m_physicsSystem)
                 m_physicsSystem->SetEnableDebugDraw( enable );
         }
+
+		bool PhysicsSettings::GetPlaymodeDebugDraw(void) const
+		{
+			if (m_physicsSystem)
+				return m_physicsSystem->GetPlaymodeDebugDraw( );
+			else
+				return false;
+		}
+
+		void PhysicsSettings::SetPlaymodeDebugDraw(bool enable)
+		{
+			if (m_physicsSystem)
+				m_physicsSystem->SetPlaymodeDebugDraw( enable );
+		}
 
         void PhysicsSettings::OnInitialize(void)
         {

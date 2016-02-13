@@ -37,6 +37,8 @@ namespace ursine
         PhysicsSystem::PhysicsSystem(World *world)
             : EntitySystem( world )
 			, m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
+			, m_enableDebugDraw( true )
+			, m_playmodeDebugDraw( false )
         {
             m_collisionShapes.One<
                 SphereCollider, 
@@ -87,10 +89,20 @@ namespace ursine
             }
         }
 
-        bool PhysicsSystem::GetEnableDebugDraw(void) const
+	    bool PhysicsSystem::GetEnableDebugDraw(void) const
         {
             return m_enableDebugDraw;
         }
+
+		void PhysicsSystem::SetPlaymodeDebugDraw(bool enable)
+		{
+			m_playmodeDebugDraw = enable;
+		}
+
+		bool PhysicsSystem::GetPlaymodeDebugDraw(void) const
+		{
+			return m_playmodeDebugDraw;
+		}
 
         void PhysicsSystem::ClearContacts(Rigidbody* rigidbody)
         {
@@ -413,6 +425,13 @@ namespace ursine
 
 			// dispatch all collision events for this frame
 			m_simulation.DispatchCollisionEvents( );
+
+		#if defined(URSINE_WITH_EDITOR)
+
+			if (m_playmodeDebugDraw)
+				m_simulation.DebugDrawSimulation( );
+
+		#endif
         }
 
     #if defined(URSINE_WITH_EDITOR)

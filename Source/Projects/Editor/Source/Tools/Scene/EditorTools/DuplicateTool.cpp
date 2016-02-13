@@ -92,7 +92,7 @@ void DuplicateTool::OnMouseDown(const MouseButtonArgs& args)
 
 void DuplicateTool::OnKeyDown(const KeyboardKeyArgs& args)
 {
-	if (args.key == KEY_SPACE)
+	if (args.key == KEY_G)
 	{
 		m_planeType = static_cast<PlaneType>( m_planeType + 1 );
 

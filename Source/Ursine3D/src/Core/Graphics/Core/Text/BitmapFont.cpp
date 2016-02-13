@@ -1,3 +1,5 @@
+#include "UrsinePrecompiled.h"
+
 #include "BitmapFont.h"
 #include <iostream>
 

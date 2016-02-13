@@ -146,7 +146,7 @@ void ScaleTool::OnMouseMove(const MouseMoveArgs& args)
 
 void ScaleTool::OnKeyDown(const KeyboardKeyArgs& args)
 {
-	if (args.key == KEY_SPACE)
+	if (args.key == KEY_G)
 		m_local = !m_local;
 
 	if (args.key == KEY_LCONTROL)

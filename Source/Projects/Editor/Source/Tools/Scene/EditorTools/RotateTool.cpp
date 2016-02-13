@@ -126,7 +126,7 @@ void RotateTool::OnMouseMove(const MouseMoveArgs& args)
 
 void RotateTool::OnKeyDown(const KeyboardKeyArgs& args)
 {
-	if (args.key == KEY_SPACE)
+	if (args.key == KEY_G)
 		m_local = !m_local;
 
 	if (args.key == KEY_LCONTROL)

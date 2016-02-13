@@ -51,6 +51,9 @@ namespace ursine
             void SetEnableDebugDraw(bool enable);
             bool GetEnableDebugDraw(void) const;
 
+			void SetPlaymodeDebugDraw(bool enable);
+			bool GetPlaymodeDebugDraw(void) const;
+
             void ClearContacts(Rigidbody *rigidbody);
 
         private:
@@ -62,6 +65,7 @@ namespace ursine
             DebugSystem *m_debugSystem;
 
             bool m_enableDebugDraw;
+			bool m_playmodeDebugDraw;
 
             std::vector<Rigidbody*> m_rigidbodies;
             std::vector<Body*> m_bodies;

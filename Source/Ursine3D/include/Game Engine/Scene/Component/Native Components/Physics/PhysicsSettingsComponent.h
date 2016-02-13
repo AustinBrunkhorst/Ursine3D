@@ -37,6 +37,12 @@ namespace ursine
                 SetEnableDebugDraw
             );
 
+			EditorField(
+				bool playmodeDebugDraw,
+				GetPlaymodeDebugDraw,
+				SetPlaymodeDebugDraw
+			);
+
             PhysicsSettings(void);
             ~PhysicsSettings(void);
 
@@ -47,6 +53,9 @@ namespace ursine
 
             bool GetEnableDebugDraw(void) const;
             void SetEnableDebugDraw(bool enable);
+
+			bool GetPlaymodeDebugDraw(void) const;
+			void SetPlaymodeDebugDraw(bool enable);
 
         private:
             PhysicsSystem *m_physicsSystem;
