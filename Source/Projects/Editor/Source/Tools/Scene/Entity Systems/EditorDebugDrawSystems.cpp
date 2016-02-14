@@ -46,29 +46,56 @@ void LightDebugDrawSystem::Process(Entity* entity)
 
     switch (lightType)
     {
-    case LightType::Directional:
+		case LightType::Directional:
+		{
 
-        drawer->DrawCircle( light->GetPosition( ), light->GetDirection( ), 30.0f, Color::Yellow, 0.0f );
+			static const float circleRadius = 3.0f;
+			static const float rayLength = 8.0f;
+			static const int resolution = 8;
 
-        break;
+			auto lightTrans = light->GetOwner( )->GetTransform( );
+			auto lightPos = light->GetPosition( );
+			auto lightRight = lightTrans->GetRight( );
+			auto lightUp = lightTrans->GetUp( );
+			auto lightForward = lightTrans->GetForward( );
 
-    case LightType::Spot:
-        
-        // Draw the ellipse that's formed by the angles
-        // NEED: distance of projection (intensity?)
-        /*drawer->DrawCircle(
-            light->GetPosition( ) + light->Get)*/
+			drawer->DrawCircle( light->GetPosition( ), lightForward, circleRadius, Color::Yellow, 0.0f );
 
-        break;
+			float theta = 0.0f;
+			float step = 360.0f / resolution;
 
-    case LightType::Point:
+			for (int i = 0; i < resolution; ++i)
+			{
+				SQuat q1( theta, lightForward );
 
-        drawer->DrawSphere( 
-            light->GetPosition( ), light->GetRadius( ), 
-            Color::Yellow, 0.0f 
-        );
+				theta += step;
 
-        break;
+				auto p1 = lightPos + q1.Rotate( lightRight ) * circleRadius;
+				auto p2 = p1 + lightForward * rayLength;
+
+				drawer->DrawLine( p1, p2, Color::Gold, 0.0f );
+			}
+
+			break;
+		}
+		case LightType::Spot:
+		{
+			// Draw the ellipse that's formed by the angles
+			// NEED: distance of projection (intensity?)
+			/*drawer->DrawCircle(
+				light->GetPosition( ) + light->Get)*/
+
+			break;
+		}
+		case LightType::Point:
+		{
+			drawer->DrawSphere( 
+				light->GetPosition( ), light->GetRadius( ), 
+				Color::Yellow, 0.0f 
+			);
+
+			break;
+		}
     }
 
 }

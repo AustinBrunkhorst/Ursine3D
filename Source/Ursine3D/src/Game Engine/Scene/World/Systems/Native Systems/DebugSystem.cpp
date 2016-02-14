@@ -60,11 +60,10 @@ namespace ursine
             static const int resolution = 30;
 
             auto normDir = SVec3::Normalize( normal );
-            auto perpDir = SVec3::Cross( normDir, SVec3::UnitY( ) );
+            auto perpDir = SVec3::Cross( normDir, normDir == SVec3::UnitY( ) ? SVec3::UnitX( ) : SVec3::UnitY( ) );
 
             perpDir.Normalize( );
 
-            const int sixthPrecision = resolution / 6;
             float theta = 0.0f;
             float step = 360.0f / resolution;
 

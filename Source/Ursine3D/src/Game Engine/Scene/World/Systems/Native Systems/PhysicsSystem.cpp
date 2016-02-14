@@ -265,11 +265,15 @@ namespace ursine
                 rigidbody->m_rigidbody.SetGravity( GetGravity( ) );
 
                 // Add the body to the simulation
+				auto *addr = &rigidbody->m_rigidbody;
+
+				UAssert(std::find(m_rigidbodies.begin(), m_rigidbodies.end(), rigidbody) == m_rigidbodies.end(), "SHEET");
+
                 m_simulation.AddRigidbody(
                     &rigidbody->m_rigidbody
                 );
 
-                m_rigidbodies.push_back( reinterpret_cast<Rigidbody*>( const_cast<Component*>( args->component ) ) );
+                m_rigidbodies.push_back( rigidbody );
             }
             else if (component->Is<Body>( ))
             {
