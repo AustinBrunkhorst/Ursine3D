@@ -1009,7 +1009,7 @@ namespace ursine
                 if ( current.GetDebug() )
                 {
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-                    dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+                    dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
                     pcb.color.x = 0.75f;
                     pcb.color.y = 0.75f;
@@ -1054,7 +1054,7 @@ namespace ursine
                 if ( model.GetDebug() )
                 {
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-                    dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+                    dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
                     pcb.color.x = 0.75f;
                     pcb.color.y = 0.75f;
