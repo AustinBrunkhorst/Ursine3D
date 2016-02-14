@@ -125,6 +125,8 @@ namespace ursine
             float innerAngle;
             DirectX::XMFLOAT3 diffuseColor;
             float outerAngle;
+            DirectX::XMFLOAT3 falloffValues;
+            float lightSize;
         };
 
         struct MatrixPalette

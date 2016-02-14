@@ -50,9 +50,12 @@ namespace ursine
 				m_modelArray[name]->AddMesh(newMesh);
 
 				unsigned indices[ 1024 * 6];
+                unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
 
-				for (int x = 0; x < 1024 * 6; ++x)
-					indices[x] = x;
+                for ( int x = 0; x < 1024 * 6; ++x )
+                {
+                    indices[x] = indexArray[ x % 6 ] + (6 * (x / 6));
+                }
 
 				D3D11_BUFFER_DESC indexBufferDesc;
 				D3D11_SUBRESOURCE_DATA indexData;

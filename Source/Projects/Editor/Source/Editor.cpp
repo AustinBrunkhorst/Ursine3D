@@ -14,7 +14,7 @@
 #include "Precompiled.h"
  
 #include "Editor.h" 
-#include "Project.h"  
+#include "Project.h"     
  
 #include <Application.h>  
    
@@ -31,19 +31,19 @@ namespace
     const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
     const auto kEditorClearColor = Color( 0xFF252526 );
-
+     
     const auto kDefaultWindowWidth = 1280; 
     const auto kDefaultWindowHeight = 720;
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
-
+ 
 Editor::Editor(void)
     : m_graphics( nullptr )
     , m_mainWindow( { nullptr } )
     , m_project( nullptr ) { }
 
-Editor::~Editor(void) { }
+Editor::~Editor(void) { } 
 
 void Editor::OnInitialize(void)
 {

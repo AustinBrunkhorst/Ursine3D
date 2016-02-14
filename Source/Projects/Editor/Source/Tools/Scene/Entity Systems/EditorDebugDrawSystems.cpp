@@ -94,6 +94,8 @@ void LightDebugDrawSystem::Process(Entity* entity)
 				Color::Yellow, 0.0f 
 			);
 
+
+
 			break;
 		}
     }

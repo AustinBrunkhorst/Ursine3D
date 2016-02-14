@@ -182,6 +182,10 @@ namespace ursine
             scale.SetZ(tanf(outer / 2.f) * scale.Y() * 2.2f);
             trans->SetWorldScale(scale);
 
+            // get size for spotlight, if needed
+            if ( m_light->GetType() == graphics::Light::LIGHT_SPOTLIGHT )
+                m_light->SetRadius(scale.Z());
+
             //update transform for the spotlight
             light.SetSpotlightTransform(trans->GetLocalToWorldMatrix());
 

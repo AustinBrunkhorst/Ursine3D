@@ -1330,6 +1330,7 @@ namespace ursine
             pointB.color.x = pl.GetColor().r;
             pointB.color.y = pl.GetColor().g;
             pointB.color.z = pl.GetColor().b;
+            
             bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, SHADERTYPE_PIXEL);
 
             //light transform
@@ -1380,6 +1381,7 @@ namespace ursine
             slb.intensity = pl.GetIntensity();
             slb.innerAngle = cosf((pl.GetSpotlightAngles().X() / 2.f) * (3.141596f / 180.0f));   //needs to be in radians
             slb.outerAngle = cosf((pl.GetSpotlightAngles().Y() / 2.f) * (3.141596f / 180.0f));
+            slb.lightSize = pl.GetRadius( );
 
             bufferManager->MapBuffer<BUFFER_SPOTLIGHT>(&slb, SHADERTYPE_PIXEL);
 
