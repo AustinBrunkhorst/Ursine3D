@@ -57,15 +57,18 @@ namespace ursine
             virtual void Enable(Entity *entity);
             virtual void Disable(Entity *entity);
 
-            virtual void OnInitialize(void) override;
+            
             virtual void Initialize(void);
-            virtual void OnRemove(void) override;
+			virtual void Remove(void);
 
             // Setting the update type must happen before OnInitialize is called
             void SetUpdateType(WorldEventType updateType);
             WorldEventType GetUpdateType(void) const;
 
         private:
+			virtual void OnInitialize(void) override;
+			virtual void OnRemove(void) override;
+
             EventHandlerPriority m_updatePriority;
             
             // The world event that this filter system subscribes to (Editor vs Playmode)

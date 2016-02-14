@@ -28,7 +28,6 @@
 #include "Tools/Scene/SceneView.h"
 
 #include "Tools/Scene/Entity Systems/GridRenderer.h"
-#include "Tools/Scene/Components/SelectedComponent.h"
 
 #include "Tools/Scene/Entity/EntityHandler.h"
 
@@ -36,6 +35,7 @@
 // Native JavaScript Bindings
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "Tools/JavaScript/EditorCommands.h"
 #include "Tools/JavaScript/DebugUtils.h"
 #include "Tools/JavaScript/SceneUtils.h"
 #include "Tools/JavaScript/EntityUtils.h"

@@ -1,8 +1,9 @@
 @import 'Config';
 @import 'Utils';
 
-body {
+html, body {
   overflow: hidden;
+  white-space: nowrap;
   font-family: Roboto;
 }
 

@@ -92,7 +92,7 @@ void DuplicateTool::OnMouseDown(const MouseButtonArgs& args)
 
 void DuplicateTool::OnKeyDown(const KeyboardKeyArgs& args)
 {
-	if (args.key == KEY_SPACE)
+	if (args.key == KEY_G)
 	{
 		m_planeType = static_cast<PlaneType>( m_planeType + 1 );
 
@@ -257,7 +257,7 @@ void DuplicateTool::debugDraw(void)
 
 		for (int j = 0; j <= num; ++j)
 		{
-			m_drawer->DrawLine( axis + start, axis + end, Color::Green, Color::Green, 0.0f);
+			m_drawer->DrawLine( axis + start, axis + end, Color::Green, 0.0f);
 			
 			axis += mod * v1;
 		}

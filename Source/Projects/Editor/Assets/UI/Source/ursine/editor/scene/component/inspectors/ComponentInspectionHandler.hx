@@ -41,6 +41,10 @@ class ComponentInspectionHandler implements IFieldInspectionOwner {
         inspector.heading = component.type;
     }
 
+    public function copyInstance() : ComponentInspection {
+        return entity.inspectComponent( component.type );
+    }
+
     public function updateField(name : String, value : Dynamic) {
         Reflect.setField( component.value, name, value );
 

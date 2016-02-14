@@ -342,30 +342,6 @@ namespace ursine
 
             dxCore->GetDeviceContext()->RSSetViewports(1, &vpData);
 
-            //clear it
-            dxCore->StartDebugEvent("Clear Viewport");
-            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
-            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_NOSTENCIL);
-            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
-            dxCore->SetBlendState(BLEND_STATE_DEFAULT);
-
-            modelManager->BindModel(modelManager->GetModelIDByName("internalQuad"));
-            shaderManager->BindShader(SHADER_PRIMITIVE);
-            layoutManager->SetInputLayout(SHADER_PRIMITIVE);
-
-            bufferManager->MapCameraBuffer(SMat4::Identity(), SMat4::Identity());
-            bufferManager->MapTransformBuffer(SMat4(-2, 2, 1));
-
-            PrimitiveColorBuffer pcb;
-            //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
-            pcb.color = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
-
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-            dxCore->EndDebugEvent();
-            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
-
             /////////////////////////////////////////////////////////////////
             if ( cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED )
                 RenderScene_Deferred(dt, camera);
@@ -1033,7 +1009,7 @@ namespace ursine
                 if ( current.GetDebug() )
                 {
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-                    dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+                    dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
                     pcb.color.x = 0.75f;
                     pcb.color.y = 0.75f;
@@ -1078,7 +1054,7 @@ namespace ursine
                 if ( model.GetDebug() )
                 {
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
-                    dxCore->SetRasterState(RASTER_STATE_WIREFRAME_BACKCULL);
+                    dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
                     pcb.color.x = 0.75f;
                     pcb.color.y = 0.75f;

@@ -15,20 +15,7 @@
 
 #include "DebugUtils.h"
 
-#include <UIManager.h>
-
 #include <FileSystem.h>
-
-JSFunction(DebugEditorUI)
-{
-    std::string debugURL( "http://localhost:" );
-
-    debugURL += std::to_string( ursine::UIManager::REMOTE_DEBUGGING_PORT );
-
-    ursine::utils::OpenPath( debugURL );
-
-    return CefV8Value::CreateBool( true );
-}
 
 JSFunction(ProcessOpen)
 {

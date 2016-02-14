@@ -1,12 +1,13 @@
 #
 #First is file name, second is model name
 
-Entrenched_Test1.fbx Entrenched
+#Entrenched_Test1.fbx Entrenched
 BossArenaFBX.fbx BossRoom
-EntryRoomFBX(Revised).fbx EntryRoom
+EntryRoomFBX.fbx EntryRoom
 PlantMonster.fbx PlantMonster
 Pipe_Bent.fbx PipeBent
 Pipe_Straight.fbx PipeStraight
+BaseModel.fbx Base
 
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
@@ -38,7 +39,7 @@ bomber.8.0.mdl Bomber
 #Player_Win.fbx Player_Win
 
 # Gun Animations
-Gun_Idle.fbx Gun_Idle
+#Gun_Idle.fbx Gun_Idle
 #Gun_Jump.fbx Gun_Jump
 #Gun_Run.fbx Gun_Run
 #Gun_Shoot.fbx Gun_Shoot

@@ -37,6 +37,8 @@ namespace ursine
         PhysicsSystem::PhysicsSystem(World *world)
             : EntitySystem( world )
 			, m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
+			, m_enableDebugDraw( true )
+			, m_playmodeDebugDraw( false )
         {
             m_collisionShapes.One<
                 SphereCollider, 
@@ -87,21 +89,29 @@ namespace ursine
             }
         }
 
-        bool PhysicsSystem::GetEnableDebugDraw(void) const
+	    bool PhysicsSystem::GetEnableDebugDraw(void) const
         {
             return m_enableDebugDraw;
         }
+
+		void PhysicsSystem::SetPlaymodeDebugDraw(bool enable)
+		{
+			m_playmodeDebugDraw = enable;
+		}
+
+		bool PhysicsSystem::GetPlaymodeDebugDraw(void) const
+		{
+			return m_playmodeDebugDraw;
+		}
 
         void PhysicsSystem::ClearContacts(Rigidbody* rigidbody)
         {
             m_simulation.ClearContacts( rigidbody->m_rigidbody );
         }
 
-        bool PhysicsSystem::Raycast(const ursine::physics::RaycastInput& input, 
-                                    ursine::physics::RaycastOutput& output,
-                                    ursine::physics::RaycastType type, bool debug, float drawDuration, 
-                                    bool alwaysDrawLine, 
-                                    Color colorBegin, Color colorEnd )
+        bool PhysicsSystem::Raycast(const physics::RaycastInput& input, physics::RaycastOutput& output,
+                                    physics::RaycastType type, bool debug, float drawDuration, 
+                                    Color color, bool alwaysDrawLine)
         {
             bool result = m_simulation.Raycast( input, output, type );
 
@@ -116,7 +126,7 @@ namespace ursine
                     auto &norm = output.normal[ i ];
 
                     // Draw the ray to the hit
-                    m_debugSystem->DrawLine( start, hit, colorBegin, colorEnd, drawDuration );
+                    m_debugSystem->DrawLine( start, hit, color, drawDuration );
 
                     // Draw the normal
                     m_debugSystem->DrawLine( hit, hit + norm * 1.0f, Color::White, drawDuration );
@@ -127,7 +137,7 @@ namespace ursine
             }
             else if(debug && alwaysDrawLine)
             {
-                m_debugSystem->DrawLine( input.start, input.end, colorBegin, colorEnd, drawDuration );
+                m_debugSystem->DrawLine( input.start, input.end, color, drawDuration );
             }
 
             return result;
@@ -255,11 +265,15 @@ namespace ursine
                 rigidbody->m_rigidbody.SetGravity( GetGravity( ) );
 
                 // Add the body to the simulation
+				auto *addr = &rigidbody->m_rigidbody;
+
+				UAssert(std::find(m_rigidbodies.begin(), m_rigidbodies.end(), rigidbody) == m_rigidbodies.end(), "SHEET");
+
                 m_simulation.AddRigidbody(
                     &rigidbody->m_rigidbody
                 );
 
-                m_rigidbodies.push_back( reinterpret_cast<Rigidbody*>( const_cast<Component*>( args->component ) ) );
+                m_rigidbodies.push_back( rigidbody );
             }
             else if (component->Is<Body>( ))
             {
@@ -413,6 +427,13 @@ namespace ursine
 
 			// dispatch all collision events for this frame
 			m_simulation.DispatchCollisionEvents( );
+
+		#if defined(URSINE_WITH_EDITOR)
+
+			if (m_playmodeDebugDraw)
+				m_simulation.DebugDrawSimulation( );
+
+		#endif
         }
 
     #if defined(URSINE_WITH_EDITOR)

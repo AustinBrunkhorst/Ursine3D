@@ -17,6 +17,7 @@
 #include "EditorToolSystem.h"
 
 #include <CameraComponent.h>
+#include <SelectedComponent.h>
 
 #include <MouseManager.h>
 #include <KeyboardManager.h>
@@ -38,7 +39,10 @@ EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     , m_cameraEntity( nullptr )
     , m_camera( nullptr )
     , m_camZoom( 50.0f )
-    , m_camPos( SVec3( 0, 0, 0 ) ) { }
+    , m_camPos( SVec3( 0, 0, 0 ) )
+{
+
+}
 
 bool EditorCameraSystem::HasFocus(void) const
 {
@@ -120,6 +124,7 @@ void EditorCameraSystem::OnAfterLoad(void)
 
 void EditorCameraSystem::OnRemove(void)
 {
+
     auto *mm = GetCoreSystem( MouseManager );
 
     GetCoreSystem( MouseManager )->Listener( this )

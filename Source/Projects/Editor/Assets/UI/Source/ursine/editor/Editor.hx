@@ -104,6 +104,7 @@ class Editor {
                 var item = new MenuItem( );
 
                 item.text = itemName;
+                item.icon = details[ 3 ];
 
                 var handler = Reflect.field( handler.type, name );
 

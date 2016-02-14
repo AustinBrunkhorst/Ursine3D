@@ -16,7 +16,4 @@
 #include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(DebugEditorUI);
-
-Meta(Enable, ExposeJavaScript)
 JSFunction(ProcessOpen);

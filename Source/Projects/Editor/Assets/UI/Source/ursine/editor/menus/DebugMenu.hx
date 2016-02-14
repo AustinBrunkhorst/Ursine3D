@@ -12,6 +12,6 @@ class DebugMenu extends MenuItemHandler {
 
     @mainMenuItem( "Debug/Editor UI/Inspect" )
     static function doEditorDebugTools() {
-        Extern.DebugEditorUI( );
+        untyped __js__( "editor_commands_InspectEditorUI()" );
     }
 }

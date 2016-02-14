@@ -37,7 +37,8 @@
              * @param {Array<String>} items
              */
             factoryImpl: function(items) {
-                this._rawItems = items || [ ];
+                // make sure it's sorted
+                this._rawItems = (items || [ ]).sort( );
 
                 this.set( 'items', this._rawItems );
             },
@@ -46,6 +47,12 @@
             },
             attached: function() {
                 this.$.filter.focus( );
+            },
+            get currentFilter() {
+                return this.$.filter.value;
+            },
+            get filterInput() {
+                return this.$.filter;
             },
 
             show: function(x, y) {
@@ -70,6 +77,8 @@
                 this.classList.add( 'closing' );
 
                 setTimeout( function() {
+                    this.fire( 'closed', { } );
+
                     this.parentNode.removeChild( this );
                 }.bind( this ), 175 );
             },

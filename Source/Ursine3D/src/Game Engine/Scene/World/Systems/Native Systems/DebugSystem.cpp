@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -38,23 +38,48 @@ namespace ursine
             );
         }
 
-        void DebugSystem::DrawLine(
-            const SVec3& start, const SVec3& end, 
-            const Color& colorBegin, const Color& colorEnd, 
-            float duration
-        )
-        {
-            m_requests.emplace_back(
-                std::make_shared<LineRequest>( start, end, colorBegin, colorEnd, duration )
-                );
-        }
-
         void DebugSystem::DrawPoint(const SVec3 &point, float size, 
                                     const Color &color, float duration)
         {
             m_requests.emplace_back( 
                 std::make_shared<PointRequest>(point, size, color, duration )
             );
+        }
+
+        void DebugSystem::DrawSphere(const SVec3& center, float radius, 
+                                     const Color& color, float duration)
+        {
+            DrawCircle(center, SVec3::UnitX( ), radius, color, duration );
+            DrawCircle(center, SVec3::UnitY( ), radius, color, duration );
+            DrawCircle(center, SVec3::UnitZ( ), radius, color, duration );
+        }
+
+        void DebugSystem::DrawCircle(const SVec3& center, const SVec3& normal, float radius, 
+                                     const Color& color, float duration)
+        {
+            static const int resolution = 30;
+
+            auto normDir = SVec3::Normalize( normal );
+            auto perpDir = SVec3::Cross( normDir, normDir == SVec3::UnitY( ) ? SVec3::UnitX( ) : SVec3::UnitY( ) );
+
+            perpDir.Normalize( );
+
+            float theta = 0.0f;
+            float step = 360.0f / resolution;
+
+            for (int i = 0; i < resolution; ++i)
+            {
+                SQuat q1( theta, normDir );
+
+                theta += step;
+
+                SQuat q2( theta, normDir );
+
+                auto p1 = center + q1.Rotate( perpDir ) * radius;
+                auto p2 = center + q2.Rotate( perpDir ) * radius;
+
+                DrawLine( p1, p2, color, duration );
+            }
         }
 
         void DebugSystem::OnInitialize(void)
@@ -93,18 +118,7 @@ namespace ursine
 
         void DebugSystem::LineRequest::Draw(graphics::DrawingAPI &draw)
         {
-            Color current;
-            float startScalar = (1.f - timer / duration);
-            float endScalar = timer / duration;
-
-            current = Color( 
-                colorStart.r * startScalar + colorEnd.r * endScalar,
-                colorStart.g * startScalar + colorEnd.g * endScalar,
-                colorStart.b * startScalar + colorEnd.b * endScalar,
-                colorStart.a * startScalar + colorEnd.a * endScalar
-            );
-            
-            draw.SetColor( current );
+            draw.SetColor( color );
             draw.DrawLine( start, end );
         }
 

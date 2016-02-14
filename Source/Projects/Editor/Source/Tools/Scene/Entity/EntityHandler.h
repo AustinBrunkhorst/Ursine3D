@@ -40,11 +40,13 @@ public:
     JSMethod(setName);
     
     JSMethod(inspect);
+    JSMethod(inspectComponent);
 
     JSMethod(hasComponent);
     JSMethod(addComponent);
     JSMethod(removeComponent);
 
+    JSMethod(componentSet);
     JSMethod(componentFieldUpdate);
 
     JSMethod(componentFieldArrayUpdate);
