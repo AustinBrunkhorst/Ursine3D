@@ -109,11 +109,9 @@ namespace ursine
             m_simulation.ClearContacts( rigidbody->m_rigidbody );
         }
 
-        bool PhysicsSystem::Raycast(const ursine::physics::RaycastInput& input, 
-                                    ursine::physics::RaycastOutput& output,
-                                    ursine::physics::RaycastType type, bool debug, float drawDuration, 
-                                    bool alwaysDrawLine, 
-                                    Color colorBegin, Color colorEnd )
+        bool PhysicsSystem::Raycast(const physics::RaycastInput& input, physics::RaycastOutput& output,
+                                    physics::RaycastType type, bool debug, float drawDuration, 
+                                    Color color, bool alwaysDrawLine)
         {
             bool result = m_simulation.Raycast( input, output, type );
 
@@ -128,7 +126,7 @@ namespace ursine
                     auto &norm = output.normal[ i ];
 
                     // Draw the ray to the hit
-                    m_debugSystem->DrawLine( start, hit, colorBegin, colorEnd, drawDuration );
+                    m_debugSystem->DrawLine( start, hit, color, drawDuration );
 
                     // Draw the normal
                     m_debugSystem->DrawLine( hit, hit + norm * 1.0f, Color::White, drawDuration );
@@ -139,7 +137,7 @@ namespace ursine
             }
             else if(debug && alwaysDrawLine)
             {
-                m_debugSystem->DrawLine( input.start, input.end, colorBegin, colorEnd, drawDuration );
+                m_debugSystem->DrawLine( input.start, input.end, color, drawDuration );
             }
 
             return result;

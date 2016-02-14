@@ -12,7 +12,6 @@
 
 #include "ReloadCommand.h"
 #include "GameEvents.h"
-#include <CharacterFireControllerComponent.h>
 
 RECORDABLE_COMMAND_DEFINITION(ReloadCommand);
 

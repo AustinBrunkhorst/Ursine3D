@@ -39,8 +39,7 @@ namespace ursine
 
             bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
                          ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
-                         bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
-                         Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
+                         bool debugDraw = false, float drawDuration = 2.0f, Color color = Color::Blue, bool alwaysDrawLine = false);
 
 			bool Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
 					   ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);

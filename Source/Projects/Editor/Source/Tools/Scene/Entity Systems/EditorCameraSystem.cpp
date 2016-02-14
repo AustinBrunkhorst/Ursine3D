@@ -33,7 +33,7 @@ namespace
 }
 
 EditorCameraSystem::EditorCameraSystem(ecs::World *world)
-    : FilterSystem( world, ecs::Filter( ).All<ecs::Selected, ecs::Camera>( ) )
+    : EntitySystem( world )
     , m_hasFocus( false )
     , m_hasMouseFocus( false )
     , m_cameraEntity( nullptr )
@@ -41,7 +41,7 @@ EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     , m_camZoom( 50.0f )
     , m_camPos( SVec3( 0, 0, 0 ) )
 {
-	SetUpdateType( ecs::WORLD_EDITOR_UPDATE );
+
 }
 
 bool EditorCameraSystem::HasFocus(void) const
@@ -77,7 +77,7 @@ ursine::ecs::Entity* EditorCameraSystem::GetEditorCameraEntity(void)
     return m_cameraEntity;
 }
 
-void EditorCameraSystem::Initialize(void)
+void EditorCameraSystem::OnInitialize(void)
 {
     m_focusTransition = m_tweens.Create( );
 
@@ -122,7 +122,7 @@ void EditorCameraSystem::OnAfterLoad(void)
     m_camPos = m_cameraEntity->GetTransform( )->GetWorldPosition( );
 }
 
-void EditorCameraSystem::Remove(void)
+void EditorCameraSystem::OnRemove(void)
 {
 
     auto *mm = GetCoreSystem( MouseManager );
@@ -134,66 +134,9 @@ void EditorCameraSystem::Remove(void)
         .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
-void EditorCameraSystem::Process(ecs::Entity* entity)
-{
-	auto cam = entity->GetComponent<ecs::Camera>( );
-
-	if (cam->IsEditorCamera( ))
-		return;
-
-	// debug draw this camera
-	auto drawer = m_world->GetEntitySystem( ecs::DebugSystem );
-
-	if (!drawer)
-		return;
-
-	auto look = cam->GetLook( );
-	auto right = cam->GetRight( );
-	auto up = cam->GetUp( );
-	auto pos = entity->GetTransform( )->GetWorldPosition( );
-	auto fov = cam->GetFOV( );
-
-	auto viewSize = cam->GetViewportSize( );
-	auto ratio = viewSize.Y( ) / viewSize.X( );
-
-	float tanValue = tan( fov * 0.5f );
-	auto nearW = 2.0f * (tanValue * cam->GetNearPlane( ));
-	auto nearH = ratio * nearW;
-
-	auto farW = 2.0f * (tanValue * cam->GetFarPlane( ));
-	auto farH = ratio * farW;
-
-	auto p0 = (pos + look * cam->GetNearPlane( )) - (right * nearW * 0.5f) - (up * nearH * 0.5f);
-	auto p1 = p0 + right * nearW;
-	auto p2 = p1 + up * nearH;
-	auto p3 = p2 - right * nearW;
-
-	auto p4 = (pos + look * cam->GetFarPlane( )) - (right * farW * 0.5f) - (up * farH * 0.5f);
-	auto p5 = p4 + right * farW;
-	auto p6 = p5 + up * farH;
-	auto p7 = p6 - right * farW;
-
-	drawer->DrawLine( p0, p1, Color::Yellow, 0.0f );
-	drawer->DrawLine( p1, p2, Color::Yellow, 0.0f );
-	drawer->DrawLine( p2, p3, Color::Yellow, 0.0f );
-	drawer->DrawLine( p3, p0, Color::Yellow, 0.0f );
-
-	drawer->DrawLine( p4, p5, Color::Yellow, 0.0f );
-	drawer->DrawLine( p5, p6, Color::Yellow, 0.0f );
-	drawer->DrawLine( p6, p7, Color::Yellow, 0.0f );
-	drawer->DrawLine( p7, p4, Color::Yellow, 0.0f );
-
-	drawer->DrawLine( p0, p4, Color::Yellow, 0.0f );
-	drawer->DrawLine( p1, p5, Color::Yellow, 0.0f );
-	drawer->DrawLine( p2, p6, Color::Yellow, 0.0f );
-	drawer->DrawLine( p3, p7, Color::Yellow, 0.0f );
-}
-
 void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, EventArgs);
-
-	FilterSystem::onUpdate( _sender, _args );
 
     // don't update on focus
     if (!m_hasFocus)

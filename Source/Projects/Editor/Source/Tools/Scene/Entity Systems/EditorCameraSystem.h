@@ -23,7 +23,7 @@ namespace ursine
     }
 }
 
-class EditorCameraSystem : public ursine::ecs::FilterSystem
+class EditorCameraSystem : public ursine::ecs::EntitySystem
 {
     ENTITY_SYSTEM;
 
@@ -59,11 +59,9 @@ private:
 
     ursine::TweenID m_focusTransition;
 
-    void Initialize(void) override;
+    void OnInitialize(void) override;
     void OnAfterLoad(void) override;
-    void Remove(void) override;
-
-	void Process(ursine::ecs::Entity *entity) override;
+    void OnRemove(void) override;
 
     // events
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));

@@ -186,7 +186,7 @@ namespace ursine
             light.SetSpotlightTransform(trans->GetLocalToWorldMatrix());
 
             //set our direction using our rotation 
-            SVec3 lightDir = SVec3(0, -1, 0);
+            SVec3 lightDir = SVec3(0, 0, 1);
             lightDir = trans->GetWorldRotation() * lightDir;
 
             light.SetDirection(lightDir);
