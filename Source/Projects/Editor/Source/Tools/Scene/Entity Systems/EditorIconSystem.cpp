@@ -32,7 +32,8 @@ EditorIconSystem::EditorIconSystem(ecs::World* world)
 void EditorIconSystem::OnInitialize(void)
 {
     m_world->Listener( this )
-        .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
+        .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd )
+        .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorIconSystem::onLightTypeChange );
 
 	// Get all entities already in the world
 	auto cams = m_world->GetEntitiesFromFilter( ecs::Filter( ).All<ecs::Camera>( ) );
@@ -63,7 +64,8 @@ void EditorIconSystem::OnInitialize(void)
 void EditorIconSystem::OnRemove(void)
 {
     m_world->Listener( this )
-        .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd );
+        .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd )
+        .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorIconSystem::onLightTypeChange );
 }
 
 void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
@@ -71,18 +73,57 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
     auto comp = args->component;
+    auto entity = args->entity;
 
     // if the object added was a selected component
     if (comp->Is<ecs::Light>( ))
     {
-        if ( !args->entity->HasComponent<EditorIcon>( ) )
-            args->entity->AddComponent<EditorIcon>( );
-        args->entity->GetComponent<EditorIcon>( )->SetIcon( "Sun" );
+        if (!entity->HasComponent<EditorIcon>( ))
+            entity->AddComponent<EditorIcon>( );
+        
+        auto light = reinterpret_cast<ecs::Light*>( comp );
+
+        setLightIcon( light->GetLightType( ), entity->GetComponent<EditorIcon>( ) );
     }
     else if (comp->Is<ecs::Camera>( ))
     {
-        if ( !args->entity->HasComponent<EditorIcon>( ) )
-            args->entity->AddComponent<EditorIcon>( );
-        args->entity->GetComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
+        if (!entity->HasComponent<EditorIcon>( ))
+            entity->AddComponent<EditorIcon>( );
+
+        entity->GetComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
+    }
+}
+
+void EditorIconSystem::onLightTypeChange(EVENT_HANDLER(ecs::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
+
+    if (args->component->Is<ecs::Light>( ) && args->field == "type")
+    {
+        auto type = static_cast<ecs::LightType>( args->value.ToInt( ) );
+        auto icon = args->entity->GetComponent<EditorIcon>( );
+
+        if (!icon)
+            return;
+
+        setLightIcon( type, icon );
+    }
+}
+
+void EditorIconSystem::setLightIcon(ursine::ecs::LightType type, EditorIcon* icon)
+{
+    switch (type)
+    {
+    case ecs::LightType::Directional:
+        icon->SetIcon( "DirectionalLightIcon" );
+        break;
+
+    case ecs::LightType::Point:
+        icon->SetIcon( "PointLightIcon" );
+        break;
+
+    case ecs::LightType::Spot:
+        icon->SetIcon( "SpotLightIcon" );
+        break;
     }
 }
