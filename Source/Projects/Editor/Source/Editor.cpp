@@ -13,26 +13,25 @@
  
 #include "Precompiled.h"
  
-#include "Editor.h" 
-#include "Project.h"  
+#include "Editor.h"
+#include "Project.h" 
  
-#include <Application.h>  
+#include <Application.h>
    
 #include <Scene.h>
 #include <WindowManager.h>
-#include <UIManager.h> 
+#include <UIManager.h>
 
 using namespace ursine;
 
 namespace
 {
-    const auto kLauncherEntryPoint = "file:///Assets/UI/Resources/Launcher.html";
-    const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Editor.html";
+    const auto kWindowTitle = "Ursine3D Editor";
 
-    const Vec2 kLauncherWindowSize { 640, 480 };
+    const std::string kEntryPointDir = "file:///Assets/UI/Resources/";
 
-    const auto kDefaultWindowWidth = 1280;
-    const auto kDefaultWindowHeight = 720;
+    const auto kEntryPointLauncher = "Launcher.html";
+    const auto kEntryPointEditor = "Editor.html";
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
@@ -42,22 +41,112 @@ Editor::Editor(void)
 
 Editor::~Editor(void) { }
 
+///////////////////////////////////////////////////////////////////////////////
+// Misc
+///////////////////////////////////////////////////////////////////////////////
+
+const EditorWindow &Editor::GetMainWindow(void) const
+{
+    return m_mainWindow;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+Project &Editor::GetProject(void)
+{
+    return m_project;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Notifications
+///////////////////////////////////////////////////////////////////////////////
+
+NotificationManager &Editor::GetNotificationManager(void)
+{
+    return m_notificationManager;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+Notification Editor::PostNotification(const NotificationConfig &config)
+{
+    return m_notificationManager.Create( config );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Core System
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::OnInitialize(void)
 {
     auto *app = Application::Instance;
 
-    app->Connect(
+    auto argc = app->GetArgC( );
+    auto argv = app->GetArgV( );
+
+    m_startupConfig.windowSize = Vec2::One( ) * 600.0f;
+
+    // no project file, open launcher
+    if (argc == 1)
+    {
+        m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointLauncher;
+        m_startupConfig.updateHandler = &Editor::onLauncherUpdate;
+    }
+    else
+    {
+        m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointEditor;
+        m_startupConfig.updateHandler = &Editor::onEditorUpdate;
+    }
+
+    startup( );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::OnRemove(void)
+{
+    Application::Instance->Disconnect(
         APP_UPDATE,
         this,
-        &Editor::onAppUpdate 
+        m_startupConfig.updateHandler
+    );
+
+    m_mainWindow.m_window->Listener( this )
+        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize ); 
+
+    m_mainWindow.m_ui->Close( );
+    m_mainWindow.m_ui = nullptr;
+
+    m_mainWindow.m_window = nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Initialization
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::startup(void)
+{
+    Application::Instance->Connect(
+        APP_UPDATE,
+        this,
+        m_startupConfig.updateHandler
     );
      
+    initializeWindow( );
+    initializeGraphics( );
+    initializeUI( );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::initializeWindow(void)
+{
     auto *windowManager = GetCoreSystem( WindowManager );
 
     m_mainWindow.m_window = windowManager->AddWindow(
-        "Ursine3D Editor",
-        { 0, 0 },
-        { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
+        kWindowTitle,
+        Vec2::Zero( ),
+        m_startupConfig.windowSize,
         SDL_WINDOW_RESIZABLE
     );
 
@@ -67,10 +156,31 @@ void Editor::OnInitialize(void)
     m_mainWindow.m_window->SetLocationCentered( );
     m_mainWindow.m_window->Show( true );
     m_mainWindow.m_window->SetIcon( "Assets/Resources/Icon.png" );
+}
 
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::initializeGraphics(void)
+{ 
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
-    initializeGraphics( );
+    graphics::GfxConfig gfxConfig;
+
+    gfxConfig.fullscreen = false;
+      
+    gfxConfig.handleToWindow =
+        static_cast<HWND>( m_mainWindow.m_window->GetPlatformHandle( ) );
+       
+    gfxConfig.modelListPath = "Assets/Models/";
+    gfxConfig.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
+    gfxConfig.textureListPath = "Assets/Textures/";
+    gfxConfig.windowWidth = static_cast<unsigned>( m_startupConfig.windowSize.X( ) );
+    gfxConfig.windowHeight = static_cast<unsigned>( m_startupConfig.windowSize.Y( ) );
+    gfxConfig.enableDebugInfo = false;
+    gfxConfig.enableProfiling = false;
+        
+    m_graphics->StartGraphics( gfxConfig );
+    m_graphics->Resize( gfxConfig.windowWidth, gfxConfig.windowHeight );
 
     auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
 
@@ -78,111 +188,57 @@ void Editor::OnInitialize(void)
 
     handle.SetPosition( 0, 0 );
 
-    handle.SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
-
     m_project.GetScene( ).SetViewport( viewport );
 
     m_graphics->SetGameViewport( viewport );
+}
 
-    initializeUI( );
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::initializeUI(void)
+{
+    auto *uiManager = GetCoreSystem( UIManager );
+
+    m_mainWindow.m_ui = uiManager->CreateView( 
+        m_mainWindow.m_window, 
+        m_startupConfig.uiEntryPoint 
+    );
 
     m_mainWindow.m_ui->SetViewport( {
         0, 0,
-        kDefaultWindowWidth, kDefaultWindowHeight
+        static_cast<int>( m_startupConfig.windowSize.X( ) ), 
+        static_cast<int>( m_startupConfig.windowSize.Y( ) )
     } );
 
     m_notificationManager.SetUI( m_mainWindow.m_ui );
 }
 
-void Editor::OnRemove(void)
+///////////////////////////////////////////////////////////////////////////////
+// Event Handlers
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::onLauncherUpdate(EVENT_HANDLER(Application))
 {
-    Application::Instance->Disconnect(
-        APP_UPDATE,
-        this,
-        &Editor::onAppUpdate
-    );
-
-   m_mainWindow.m_window->Listener( this )
-        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize ); 
-
-    m_mainWindow.m_ui->Close( );
-    m_mainWindow.m_ui = nullptr;
-
-    m_mainWindow.m_window = nullptr;
+    m_mainWindow.m_ui->DrawMain( );
 }
 
-const EditorWindow &Editor::GetMainWindow(void) const
-{
-    return m_mainWindow;
-}
+///////////////////////////////////////////////////////////////////////////////
 
-Project &Editor::GetProject(void)
-{
-    return m_project;
-}
-
-NotificationManager &Editor::GetNotificationManager(void)
-{
-    return m_notificationManager;
-}
-
-Notification Editor::PostNotification(const NotificationConfig &config)
-{
-    return m_notificationManager.Create( config );
-}
-
-void Editor::initializeGraphics(void)
-{ 
-    graphics::GfxConfig config;
-
-    config.fullscreen = false;
-      
-    config.handleToWindow =
-        static_cast<HWND>( m_mainWindow.m_window->GetPlatformHandle( ) );
-       
-    config.modelListPath = "Assets/Models/"; 
-    config.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
-    config.textureListPath = "Assets/Textures/";
-    config.windowWidth = kDefaultWindowWidth;
-    config.windowHeight = kDefaultWindowHeight;
-    config.enableDebugInfo = false; 
-    config.enableProfiling = false;    
-        
-    m_graphics->StartGraphics( config );
-    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight ); 
-}
-
-void Editor::initializeUI(void)
-{
-    auto *uiManager = GetCoreSystem( UIManager );
-    auto *app = Application::Instance;
-
-    auto argc = app->GetArgC( );
-    auto argv = app->GetArgV( );
-
-    std::string entryPoint;
-
-    if (argc == 1)
-        entryPoint = kLauncherEntryPoint;
-    else
-        entryPoint = kEditorEntryPoint;
-
-    m_mainWindow.m_ui = uiManager->CreateView( m_mainWindow.m_window, entryPoint );
-}
-
-void Editor::onAppUpdate(EVENT_HANDLER(Application))
+void Editor::onEditorUpdate(EVENT_HANDLER(Application))
 {
     EVENT_ATTRS(Application, EventArgs);
 
-    /*auto dt = sender->GetDeltaTime( );
+    auto dt = sender->GetDeltaTime( );
 
     auto &scene = m_project.GetScene( );
 
     scene.Update( dt );
-    scene.Render( );*/
+    scene.Render( );
 
     m_mainWindow.m_ui->DrawMain( );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::onMainWindowResize(EVENT_HANDLER(Window))
 {
