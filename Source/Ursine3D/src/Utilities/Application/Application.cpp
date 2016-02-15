@@ -130,6 +130,8 @@ namespace ursine
             {
                 gGraphics->StartFrame( );
 
+				executeMainThreadCallbacks( );
+
                 Dispatch( APP_UPDATE, this, EventArgs::Empty );
 
                 gGraphics->EndFrame( );
@@ -182,5 +184,31 @@ namespace ursine
     EventDispatcher<uint32> &Application::GetPlatformEvents(void)
     {
         return m_platformEvents;
+    }
+
+	void Application::ExecuteOnMainThread(MainThreadCallback callback)
+	{
+		std::lock_guard<std::mutex> lock( m_mutex );
+
+		m_mainThreadCallbacks.push_back( callback );
+	}
+
+	void Application::executeMainThreadCallbacks(void)
+    {
+		// Make a copy of the vector
+		auto copy = m_mainThreadCallbacks;
+
+		// lock the vector
+		{
+			std::lock_guard<std::mutex> lock( m_mutex );
+
+			m_mainThreadCallbacks.clear( );
+		}
+
+		// iterate through all callbacks and execute them
+		for (auto &callback : copy)
+		{
+			callback( );
+		}
     }
 }

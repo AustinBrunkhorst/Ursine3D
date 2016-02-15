@@ -37,6 +37,4 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-	bool m_init;
-
 } Meta(Enable);

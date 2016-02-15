@@ -20,6 +20,8 @@
 
 #include "FrameRateController.h"
 
+#include <mutex>
+
 namespace ursine
 {
     namespace core
@@ -55,6 +57,10 @@ namespace ursine
         template<typename SystemType>
         SystemType *CoreSystem(void);
 
+		typedef std::function<void(void)> MainThreadCallback;
+
+		void ExecuteOnMainThread(MainThreadCallback callback);
+
     protected:
         // determines if the application should continue updating
         bool m_isRunning;
@@ -76,6 +82,12 @@ namespace ursine
         std::vector<core::CoreSystem *> m_systems;
 
         EventDispatcher<uint32> m_platformEvents;
+
+		std::mutex m_mutex;
+
+		std::vector<MainThreadCallback> m_mainThreadCallbacks;
+
+		void executeMainThreadCallbacks(void);
     };
 }
 

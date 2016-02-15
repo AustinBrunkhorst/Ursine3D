@@ -320,7 +320,7 @@ JSMethod(EntityHandler::addComponent)
     componentTypeMask.set( componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ), true );
 
 	// have this run in the main thread
-	Timer::Create( 0 ).Completed( [=] {
+	Application::Instance->ExecuteOnMainThread( [=] {
         if (!entity->HasComponent( componentTypeMask ))
         {
             auto instance = componentType.CreateDynamic( );
@@ -356,7 +356,7 @@ JSMethod(EntityHandler::removeComponent)
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
 	// Have this run in the main thread
-	Timer::Create( 0 ).Completed( [=] {
+	Application::Instance->ExecuteOnMainThread( [=] {
 		entity->RemoveComponent( id );
 	} );
 
