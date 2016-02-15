@@ -1386,7 +1386,7 @@ namespace ursine
             bufferManager->MapBuffer<BUFFER_SPOTLIGHT>(&slb, SHADERTYPE_PIXEL);
 
             //transform data  
-            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform() * SMat4(SVec3(0, -0.5, 0)));
+            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform() * SMat4(SVec3(0, 0, 0.5f), SQuat(-90.0f, 0.0f, 0.0f), SVec3::One()));
 
             //what culling to use?
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);

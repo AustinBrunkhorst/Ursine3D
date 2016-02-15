@@ -137,7 +137,6 @@ namespace ursine
 				SetTimeScalar
 				);
 
-		public:
 			Animator(void);
 			~Animator(void);
 

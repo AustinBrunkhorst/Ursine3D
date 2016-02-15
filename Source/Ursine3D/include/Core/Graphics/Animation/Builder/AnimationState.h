@@ -41,7 +41,6 @@ namespace ursine
 			SetAnimationName
 			);
 
-	public:
 		/** @brief constructor
 		*
 		*  @return Void.
@@ -105,5 +104,5 @@ namespace ursine
 		////vector for animation name and animation itselfitself
 		//std::vector<std::string> m_animNameVec;
 		//std::vector<Animation> m_animVec;
-	} Meta(Enable, DisplayName( "AnimationState" ));
+	} Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ));
 }
