@@ -54,7 +54,7 @@ namespace ursine
 
                 for ( int x = 0; x < 1024 * 6; ++x )
                 {
-                    indices[x] = indexArray[ x % 6 ] + (6 * (x / 6));
+                    indices[ x ] = x;
                 }
 
 				D3D11_BUFFER_DESC indexBufferDesc;

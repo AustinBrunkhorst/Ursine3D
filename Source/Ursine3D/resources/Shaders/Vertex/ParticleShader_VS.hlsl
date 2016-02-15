@@ -58,36 +58,79 @@ float2x2 GenerateRotation(float radianAngle)
 PixelInputType main(uint id : SV_VERTEXID)
 {
     PixelInputType output;
-    
+
     uint particleIndex = id / 6;
-    uint vertexInQuad = id % 4;
-    
+    uint vertexInQuad = id % 6;
+
     float3 position;
-    
-    position.x = (vertexInQuad % 2) ? 1.0f : -1.0f;
-    position.y = (vertexInQuad & 2) ? -1.0f : 1.0f;
-    position.z = 0;
-    position.xy *= g_bufPosColor[ particleIndex ].scaleX;
-    
+
+    switch ( vertexInQuad )
+    {
+    case 0:
+        position.x = -1.f;
+        position.y = 1.f;
+        position.z = 0.f;
+
+        output.uv.x = 0;
+        output.uv.y = 0;
+        break;
+    case 1:
+        position.x = 1.f;
+        position.y = 1.f;
+        position.z = 0.f;
+
+        output.uv.x = 1;
+        output.uv.y = 0;
+        break;
+    case 2:
+        position.x = -1.f;
+        position.y = -1.f;
+        position.z = 0.f;
+
+        output.uv.x = 0;
+        output.uv.y = 1;
+        break;
+    case 3:
+        position.x = 1.f;
+        position.y = 1.f;
+        position.z = 0.f;
+
+        output.uv.x = 1;
+        output.uv.y = 0;
+        break;
+    case 4:
+        position.x = 1.f;
+        position.y = -1.f;
+        position.z = 0.f;
+
+        output.uv.x = 1;
+        output.uv.y = 1;
+        break;
+    default:
+        position.x = -1.f;
+        position.y = -1.f;
+        position.z = 0.f;
+
+        output.uv.x = 0;
+        output.uv.y = 1;
+        break;
+    }
+
     // scale
     position.xy *= g_bufPosColor[ particleIndex ].scaleX / 2.0f;
 
     // rotate
-    position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[0]));
-     
+    position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));
+
     // into world -> translate
     position = mul(position, (float3x3)InvProj) + g_bufPosColor[ particleIndex ].position + cameraPosition.xyz;
-    
+
     output.position = mul(float4(position, 1.0f), g_mInvView);
     output.position = mul(output.position, g_mWorldViewProj);
     output.color = (g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w) * color;
-    
-    output.uv.x = (vertexInQuad % 2) ? 1.0f : 0.0f;
-    output.uv.y = (vertexInQuad & 2) ? 1.0f : 0.0f;
 
     return output;
-} 
-
+}
 
 //cbuffer CameraBuffer : register(b0)
 //{

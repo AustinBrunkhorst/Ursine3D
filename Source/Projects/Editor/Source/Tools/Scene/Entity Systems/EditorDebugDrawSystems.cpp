@@ -82,8 +82,34 @@ void LightDebugDrawSystem::Process(Entity* entity)
 		{
 			// Draw the ellipse that's formed by the angles
 			// NEED: distance of projection (intensity?)
-			/*drawer->DrawCircle(
-				light->GetPosition( ) + light->Get)*/
+			// get length
+            auto *transform = entity->GetTransform( );
+            float height = transform->GetWorldScale( ).Z( );
+
+            // from the size, we can determine the diameter of the circle at the bottom  
+            float radius = height * sinf( light->GetSpotlightAngles( ).Y( ) );
+
+            // get the light direction
+            auto lightDir = light->GetDirection( );
+
+            // get position
+            auto lightPos = light->GetPosition( ); 
+
+            // calculate bottom position
+            auto bottomPos = lightPos + lightDir * height;
+
+            // calculate orthogonal vectors
+            SVec3 u, v;
+            lightDir.GenerateOrthogonalVectors(u, v);
+
+            // render the bottom circle
+            drawer->DrawCircle(bottomPos, lightDir, radius, Color::Gold, 0.0f);
+
+            // render the side lines
+            drawer->DrawLine(lightPos, bottomPos + u, Color::Gold, 0.0f);
+            drawer->DrawLine(lightPos, bottomPos - u, Color::Gold, 0.0f);
+            drawer->DrawLine(lightPos, bottomPos + v, Color::Gold, 0.0f);
+            drawer->DrawLine(lightPos, bottomPos - v, Color::Gold, 0.0f);
 
 			break;
 		}

@@ -153,6 +153,9 @@ namespace ursine
 		void Reflect(const SVec3 &normal);
 		static SVec3 Reflect(const SVec3 &vec, const SVec3 &normal);
 
+        void GenerateOrthogonalVectors(SVec3 &u, SVec3 &v);
+        static void GenerateOrthogonalVectors(const SVec3 &inputVec, SVec3 &u, SVec3 &v);
+
 		// This vector must be normalized
 		void ProjectToNorm(const SVec3 &normal);
 
