@@ -82,7 +82,8 @@ namespace ursine
 		{
 			NATIVE_COMPONENT;
 
-		public:			
+		public:
+			//Meta(InputRange(0.0f, 100.0f, 1, "{{value}}%"))
 			EditorField(
 				std::string stateName,
 				GetStateName,

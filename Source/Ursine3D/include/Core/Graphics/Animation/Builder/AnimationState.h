@@ -21,7 +21,7 @@ namespace ursine
 	{
 	public:
 		EditorField(
-			std::string name,
+			std::string stateName,
 			GetName,
 			SetName
 		);
@@ -97,6 +97,7 @@ namespace ursine
 	private:
 		//current runtime
 		std::string m_name;
+		// Use time pos as the time which ends the changing blending
 		float m_timePos;
 		std::string m_animname;
         //current animation

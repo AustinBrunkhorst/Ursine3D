@@ -83,10 +83,5 @@ namespace ursine
 		{
 			m_rigHierarchy.push_back(rigLvl);
 		}
-
-		//Mesh *ModelResource::GetAnimationMap(const std::string & name)
-		//{
-		//	return m_animMap[name];
-		//}
     }
 }

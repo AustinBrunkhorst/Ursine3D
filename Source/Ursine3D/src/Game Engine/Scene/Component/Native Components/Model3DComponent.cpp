@@ -20,6 +20,8 @@
 #include "ConvexDecompColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 #include "Notification.h"
+#include "ModelResource.h"
+#include "LvlHierarchy.h"
 
 namespace ursine
 {
@@ -85,6 +87,79 @@ namespace ursine
             m_modelName = name;
 
             m_model->SetModel( name );
+
+			// Constructing Model's mesh hierarchy tree
+			const graphics::ModelResource* modelrsrc = GetModelResource();
+			const std::vector<ursine::graphics::Mesh*>& meshArray = modelrsrc->GetMeshArray();
+			const std::vector<ursine::graphics::ufmt_loader::MeshInLvl>& meshLvlVec = modelrsrc->GetMeshLvlArray();
+			const std::vector<ursine::graphics::ufmt_loader::RigInLvl>& rigLvlVec = modelrsrc->GetRigLvlArray();
+			
+			auto *gfx = GetCoreSystem(graphics::GfxAPI);
+			auto *world = GetOwner()->GetWorld();
+			if (modelrsrc != nullptr)
+			{
+				// Check if model is FBX or JDL
+				if (meshLvlVec.empty())
+					return;
+
+				auto *rootEntity = world->CreateEntity("Model");
+				auto *meshEntity = world->CreateEntity("Mesh Tree");
+				auto *rigEntity = world->CreateEntity("Rig Tree");
+
+				// Create an entity
+				auto *transform = rootEntity->GetTransform();
+				transform->AddChild(meshEntity->GetTransform());
+				transform->AddChild(rigEntity->GetTransform());
+
+				unsigned int index = 0;
+				for (auto &x : meshLvlVec)
+				{
+					auto &mesh = meshArray[index];
+					if (-1 == x.mParentIndex)
+					{
+						auto *newEntity = world->CreateEntity(mesh->GetName());
+						auto *meshTreeTrans = meshEntity->GetTransform();
+						meshTreeTrans->AddChild(newEntity->GetTransform());
+					}
+					else
+					{
+						const std::string parentName = meshArray[x.mParentIndex]->GetName();
+						auto *newEntity = world->CreateEntity(mesh->GetName());
+						auto *parent = world->GetEntityFromName(parentName);
+						if (parent)
+						{
+							auto *parentTrans = parent->GetTransform();
+							parentTrans->AddChild(newEntity->GetTransform());
+						}
+					}
+					++index;
+				}
+
+				// Check if there's any bone
+				if (rigLvlVec.empty())
+					return;
+								
+				for (auto &x : rigLvlVec)
+				{
+					if (-1 == x.mParentIndex)
+					{
+						auto *newEntity = world->CreateEntity(x.boneName);
+						auto *rigTreeTrans = rigEntity->GetTransform();
+						rigTreeTrans->AddChild(newEntity->GetTransform());
+					}
+					else
+					{
+						const std::string parentName = rigLvlVec[x.mParentIndex].boneName;
+						auto *newEntity = world->CreateEntity(x.boneName);
+						auto *parent = world->GetEntityFromName(parentName);
+						if (parent)
+						{
+							auto *parentTrans = parent->GetTransform();
+							parentTrans->AddChild(newEntity->GetTransform());
+						}
+					}
+				}
+			}
         }
 
         const std::string &Model3D::GetModelResourceName(void) const

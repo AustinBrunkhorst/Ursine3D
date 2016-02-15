@@ -275,8 +275,7 @@ namespace ursine
         {
             // grab current node
             auto &node = modelData.mBoneInfoVec[ x ];
-
-            if ( node.mParentIndex == -1 )
+            if ( -1 == node.mParentIndex )
                 continue;
 
             // push index into parent's vector

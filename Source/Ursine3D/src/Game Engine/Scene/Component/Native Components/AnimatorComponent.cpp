@@ -24,7 +24,7 @@ namespace ursine
 
 		Animator::Animator()
 			: BaseComponent()
-			, m_playing(false)
+			, m_playing(true)
 			, m_looping(true)
 			, m_debug(false)
 			, m_speedScalar(1.0f)
@@ -58,12 +58,12 @@ namespace ursine
 			// grab what we need
 			AnimationState *currentState = nullptr;
 			AnimationState *futureState = nullptr;
-			for (auto iter = m_stateArray.begin(); iter != m_stateArray.end(); ++iter)
+			for (auto &x : m_stateArray)
 			{
-				if ((*iter).GetName() == m_currentStateName)
-					currentState = &(*iter);
-				if ((*iter).GetName() == m_futureStateName)
-					futureState = &(*iter);
+				if (x.GetName() == m_currentStateName)
+					currentState = &x;
+				if (x.GetName() == m_futureStateName)
+					futureState = &x;
 			}
 			
 			if (!currentState)
@@ -103,14 +103,17 @@ namespace ursine
 				if (nullptr != futrueAnimation && currentAnimation != futrueAnimation)
 				{
 					futureState->IncrementTimePosition(dt * m_speedScalar);
-					transFactor += 0.05f * m_speedScalar; // / transTime;
-														  // if there is future animation
+					transFactor += dt * m_speedScalar; // if there is future animation
+
 					if (transFactor >= 1.0f)
 					{
-						m_currentStateName = m_futureStateName;
-						SetCurrentState(m_currentStateName);
+						// Change State name
+						SetCurrentState(m_futureStateName);
 						SetFutureState("");
-						m_futureStateName = "";
+						// Change actual state too
+						currentState = futureState;
+						futureState = nullptr;
+						// reset transfactor 0
 						transFactor = 0.f;
 					}
 				}
@@ -267,6 +270,8 @@ namespace ursine
 		void Animator::SetRig(const std::string &rig)
 		{
 			m_Rig = rig;
+
+			// Create rig Hierarchy tree
 		}
 
 		float Animator::GetAnimationTimePosition() const

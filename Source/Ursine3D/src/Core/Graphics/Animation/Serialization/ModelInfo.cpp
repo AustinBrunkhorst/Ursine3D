@@ -79,10 +79,14 @@ namespace ursine
 					}
 					mMeshLvVec.resize(mmeshlvlCount);
 					for (i = 0; i < mmeshlvlCount; ++i)
+					{
 						ReadFile(hFile, &mMeshLvVec[i], sizeof(MeshInLvl), &nBytesRead, nullptr);
+					}
 					mRigLvVec.resize(mriglvlCount);
 					for (i = 0; i < mriglvlCount; ++i)
+					{
 						ReadFile(hFile, &mRigLvVec[i], sizeof(RigInLvl), &nBytesRead, nullptr);
+					}
 				}
 				return true;
 			}
@@ -129,12 +133,16 @@ namespace ursine
 					if (mMeshLvVec.size() > 0)
 					{
 						for (auto iter : mMeshLvVec)
+						{
 							WriteFile(hFile, &iter, sizeof(MeshInLvl), &nBytesWrite, nullptr);
+						}
 					}
 					if (mRigLvVec.size() > 0)
 					{
 						for (auto iter : mRigLvVec)
+						{
 							WriteFile(hFile, &iter, sizeof(RigInLvl), &nBytesWrite, nullptr);
+						}
 					}
 				}
 				return true;
