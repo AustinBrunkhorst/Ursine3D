@@ -140,7 +140,7 @@ namespace ursine
                 auto p1 = center + q1.Rotate( perpDir ) * radius;
                 auto p2 = center + q2.Rotate( perpDir ) * radius;
 
-                DrawLine( p1, p2, color, duration );
+                DrawLine( p1, p2, color, duration, overdraw );
             }
         }
 

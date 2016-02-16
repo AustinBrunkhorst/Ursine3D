@@ -434,10 +434,9 @@ namespace ursine
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Model Rendering");
-
-
             dxCore->EndDebugEvent();
 
+            /////////////////////////////////////////////////////////
             // LIGHT PASS
             dxCore->StartDebugEvent("Light Pass");
             PrepForLightPass(view, proj, currentCamera);
@@ -460,6 +459,17 @@ namespace ursine
                 RenderDirectionalLight(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Directional Light Rendering");
 
+            /////////////////////////////////////////////////////////
+            // EMISSIVE
+            shaderManager->BindShader(SHADER_EMISSIVE);
+
+            // one fullscreen pass
+            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+
+            dxCore->EndDebugEvent();
+            STAMP("Emissive Pass");
+
+            /////////////////////////////////////////////////////////
             //debug 
             PrepFor3DModels(view, proj); // I don't think gets set properly
 
@@ -473,6 +483,7 @@ namespace ursine
             dxCore->EndDebugEvent();
             STAMP("Debug Pass");
 
+            /////////////////////////////////////////////////////////
             // overdraw pass for weird stuff
             PrepFor3DModels(view, proj);
             {
@@ -488,13 +499,7 @@ namespace ursine
             // switch to no blending
             PrepForLightPass(view, proj, currentCamera);
             PrepForDirectionalLightPass(view, proj);
-            shaderManager->BindShader(SHADER_EMISSIVE);
-
-            // one fullscreen pass
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-
-            dxCore->EndDebugEvent();
-            STAMP("Emissive Pass");
+            
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
