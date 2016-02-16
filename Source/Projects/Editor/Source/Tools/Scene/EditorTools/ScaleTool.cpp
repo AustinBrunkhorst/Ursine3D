@@ -305,7 +305,7 @@ void ScaleTool::renderAxis()
         drawer->DrawLine(position, position + yAxis, yColor, 0, true);
         drawer->DrawLine(position, position + zAxis, zColor, 0, true);
 
-        drawer->DrawCube(position, size * 0.2f, mainColor, 0, true);
+        drawer->DrawCube(position, size * 0.1f, mainColor, 0, true);
 
         drawer->DrawSphere(position + xAxis, size * 0.1f, xColor, 0, true);
         drawer->DrawSphere(position + yAxis, size * 0.1f, yColor, 0, true);
