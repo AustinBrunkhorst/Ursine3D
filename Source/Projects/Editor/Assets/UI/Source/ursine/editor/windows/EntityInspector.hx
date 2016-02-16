@@ -223,7 +223,8 @@ class EntityInspector extends WindowHandler {
             .filter( function(type) {
                 var componentType = db.getComponentType( type );
 
-                var isHidden = Reflect.hasField( componentType.meta, Property.HiddenInInspector );
+                var isHidden = Reflect.hasField( componentType.meta, Property.HiddenInInspector ) ||
+                               Reflect.hasField( componentType.meta, Property.HiddenInSelector );
 
                 // entity must not already have this component and this component type must not be
                 // explicitly hidden
