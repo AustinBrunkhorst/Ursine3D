@@ -47,14 +47,14 @@ namespace ursine
             // An entities parent has changed
             ENTITY_PARENT_CHANGED,
 
-			///////////////////////////////////////////////////////////////////
-			// Physics
-			///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            // Physics
+            ///////////////////////////////////////////////////////////////////
 
-			// A collision is persisting between this entity and the other entity.
-			// NOTE: This event is only sent when one of the two objects has a 
-			// non-kinematic (or static) rigidbody attached.
-			ENTITY_COLLISION_PERSISTED,
+            // A collision is persisting between this entity and the other entity.
+            // NOTE: This event is only sent when one of the two objects has a 
+            // non-kinematic (or static) rigidbody attached.
+            ENTITY_COLLISION_PERSISTED,
 
             ///////////////////////////////////////////////////////////////////
             // Particle Systems

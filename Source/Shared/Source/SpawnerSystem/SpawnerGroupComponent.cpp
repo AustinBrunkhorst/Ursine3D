@@ -50,5 +50,6 @@ void SpawnerGroup::createSpawner(void)
 
     // IN ON REMOVE IN THIS COMPONENT:
     // Delete all children.
+}
 
 #endif
