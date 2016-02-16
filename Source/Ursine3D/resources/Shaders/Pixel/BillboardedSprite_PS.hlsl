@@ -51,11 +51,11 @@ PS_GBUFFER_OUT PackGBuffer(float4 BaseColor, float3 Normal, float
     Out.ColorSpecInt = float4(BaseColor);
     Out.Normal = float4(Normal.xyz * 0.5 + 0.5, emissive);
     //                                            first 2 are handle index      last 8 is type
-    Out.SpecPow = float4(SpecPowerNorm, word1 / 255.f, word2 / 255.f, SpecIntensity);
+    Out.SpecPow = float4(1.0f, word1 / 255.f, word2 / 255.f, SpecIntensity);
 
     // return
     return Out;
-}
+} 
 
 PS_GBUFFER_OUT main(PixelInputType input)
 {

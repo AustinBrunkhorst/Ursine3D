@@ -429,10 +429,6 @@ namespace ursine
 
             dxCore->StartDebugEvent("GBuffer Pass");
             //render 3d models deferred
-            PrepForBillboard2D(view, proj, currentCamera);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
-                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
-            STAMP("Billboard Rendering");
 
             PrepFor3DModels(view, proj);
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
@@ -524,6 +520,11 @@ namespace ursine
                 RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Forward Particle Pass");
 
+            PrepForBillboard2D(view, proj, currentCamera);
+            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+            STAMP("Billboard Rendering");
+
             dxCore->EndDebugEvent();
 
             //clearing all buffers
@@ -576,11 +577,6 @@ namespace ursine
             int currentIndex = 0;
 
             dxCore->StartDebugEvent("Forward Pass");
-            //render 3d models deferred
-            PrepForBillboard2D(view, proj, currentCamera);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
-                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
-            STAMP("Billboard Rendering");
 
             // rendering models
             PrepFor3DModels(view, proj);
@@ -660,6 +656,12 @@ namespace ursine
                 RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Forward Particle Pass");
 
+            //render 3d models deferred
+            PrepForBillboard2D(view, proj, currentCamera);
+            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+            STAMP("Billboard Rendering");
+
             dxCore->EndDebugEvent();
 
             //clearing all buffers
@@ -716,12 +718,17 @@ namespace ursine
         // preparing for different stages /////////////////////////////////
         void GfxManager::PrepFor3DModels(const SMat4 &view, const SMat4 &proj)
         {
+            float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+            dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             shaderManager->BindShader(SHADER_DEFERRED_DEPTH);
             layoutManager->SetInputLayout(SHADER_DEFERRED_DEPTH);
 
             //set render type
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
 
             //map the sampler
             textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
@@ -743,7 +750,7 @@ namespace ursine
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //deferred shading
-            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
 
             //set input
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -758,6 +765,8 @@ namespace ursine
             //bind shader 
             shaderManager->BindShader(SHADER_BILLBOARD2D);
             layoutManager->SetInputLayout(SHADER_BILLBOARD2D);
+
+            textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
 
             //set model
             modelManager->BindModel("Sprite");

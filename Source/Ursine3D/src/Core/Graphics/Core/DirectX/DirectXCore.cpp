@@ -500,8 +500,6 @@ namespace ursine
 
             void DirectXCore::backendResizeDX(const int width, const int height)
             {
-                m_targetManager->ResizeDeferred(width, height);
-                m_targetManager->ResizeEngineTargets(width, height);
 
                 //swapchain
                 //set render target to null
@@ -511,7 +509,7 @@ namespace ursine
 
                 //release swapchain
                 m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView->Release();
-                m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView = nullptr;
+                m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView = nullptr;                
 
                 HRESULT hr;
 
@@ -530,6 +528,9 @@ namespace ursine
 
                 //depth stuff
                 m_depthStencilManager->Resize(width, height);
+                m_targetManager->ResizeDeferred(width, height);
+                m_targetManager->ResizeEngineTargets(width, height);
+
             }
         }
     }
