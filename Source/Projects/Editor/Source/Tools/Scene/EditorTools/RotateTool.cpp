@@ -17,6 +17,7 @@
 #include <SystemManager.h>
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
+#include <Game Engine/Scene/World/Systems/Native Systems/DebugSystem.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -30,6 +31,7 @@ RotateTool::RotateTool(Editor *editor, World *world)
 	, m_local( false )
 	, m_deleteGizmo( false )
 	, m_hovering( false )
+    , m_axisType( -1 )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
 	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
@@ -153,6 +155,7 @@ void RotateTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 	m_altDown = kManager->IsDown( KEY_LMENU );
 
 	updateAxis( );
+    renderAxis( );
 
 	if (!m_dragging)
 	{
@@ -220,7 +223,10 @@ void RotateTool::updateAxis(void)
 	// update the size of the gizmo
 	auto gizTrans = m_gizmo->GetTransform( );
 
-	gizTrans->SetWorldScale( SVec3( m_editorCameraSystem->GetCamZoom( ) * 0.03f ) );
+    auto camVec = gizTrans->GetWorldPosition() -
+        m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
+
+	gizTrans->SetWorldScale( SVec3(camVec.Length() * 0.03f ) );
 
 	auto selected = m_world->GetEntityUnique( m_selected );
 	auto selTrans = selected->GetTransform( );
@@ -231,6 +237,67 @@ void RotateTool::updateAxis(void)
 		gizTrans->SetWorldRotation( selTrans->GetWorldRotation( ) );
 	else
 		gizTrans->SetLocalRotation( SQuat::Identity( ) );
+}
+
+void RotateTool::renderAxis()
+{
+    auto drawer = m_world->GetEntitySystem(DebugSystem);
+
+    if ( m_gizmo )
+    {
+        auto gizTrans = m_gizmo->GetTransform();
+
+        auto camVec = gizTrans->GetWorldPosition() -
+            m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
+
+        float size = (camVec.Length() * 0.18f) * 0.54f;
+
+        auto position = gizTrans->GetWorldPosition();
+
+        SVec3 xAxis = SVec3(0, 1, 0), yAxis = SVec3(0, 0, 1), zAxis = SVec3(1, 0, 0);
+
+        if ( m_local )
+        {
+            xAxis = gizTrans->GetWorldRotation().Rotate(xAxis);
+            yAxis = gizTrans->GetWorldRotation().Rotate(yAxis);
+            zAxis = gizTrans->GetWorldRotation().Rotate(zAxis);
+        }
+
+        Color xColor = Color::Red, yColor = Color::Green, zColor = Color::Blue;
+
+        switch ( m_axisType )
+        {
+        case 2:
+            xColor = Color::Yellow;
+            break;
+        case 3:
+            yColor = Color::Yellow;
+            break;
+        case 1:
+            zColor = Color::Yellow;
+            break;
+        default:
+            break;
+        }
+
+        drawer->DrawCircle(position, xAxis, size, xColor, 0.0f, true);
+        drawer->DrawCircle(position, yAxis, size, yColor, 0.0f, true);
+        drawer->DrawCircle(position, zAxis, size, zColor, 0.0f, true);
+
+        // render horizon disk
+        auto camPos = m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
+        auto viewVec = position - camPos;
+        float dist = viewVec.Length();
+
+        viewVec /= dist;
+
+        float l = sqrtf(dist * dist - size * size);
+        float rPrime = (size * l) / dist;
+        float z = sqrtf(size * size - rPrime * rPrime);
+
+        auto finalPoint = position - viewVec * z;
+        drawer->DrawCircle(finalPoint, viewVec, rPrime, Color::Gray, 0.0f, true);
+    }
 }
 
 void RotateTool::updateHoverAxis(void)
@@ -267,14 +334,26 @@ void RotateTool::updateHoverAxis(void)
 		// Get the gizmo's name (the models are under the parent named the axis' name)
 		auto name = entityTrans->GetParent()->GetOwner()->GetName();
 
-		if (name == "xAxis")
-			setDirectionVectors(SVec3::UnitX(), selected);
-		else if (name == "yAxis")
-			setDirectionVectors(SVec3::UnitY(), selected);
-		else if (name == "zAxis")
-			setDirectionVectors(SVec3::UnitZ(), selected);
-		else
-			return;
+        if ( name == "xAxis" )
+        {
+            setDirectionVectors(SVec3::UnitX(), selected);
+            m_axisType = 1;
+        }
+        else if ( name == "yAxis" )
+        {
+            setDirectionVectors(SVec3::UnitY(), selected);
+            m_axisType = 2;
+        }
+        else if ( name == "zAxis" )
+        {
+            setDirectionVectors(SVec3::UnitZ(), selected);
+            m_axisType = 3;
+        }
+        else
+        {
+            m_axisType = 0;
+            return;
+        }
 
 		auto model = entity->GetComponent<Model3D>( );
 
@@ -307,6 +386,7 @@ void RotateTool::disableHover(void)
 	{
 		m_axis->SetColor( m_axisOrigColor );
 		m_axis = nullptr;
+        m_axisType = 0;
 	}
 }
 

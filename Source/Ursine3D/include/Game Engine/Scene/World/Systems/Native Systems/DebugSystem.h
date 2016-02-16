@@ -35,16 +35,22 @@ namespace ursine
             DebugSystem(World *world);
 
             void DrawLine(const SVec3 &start, const SVec3 &end, 
-                          const Color &color, float duration);
+                          const Color &color, float duration, bool overdraw = false);
 
             void DrawPoint(const SVec3 &point, float size, 
-                           const Color &color, float duration);
+                           const Color &color, float duration, bool overdraw = false);
 
             void DrawSphere(const SVec3 &center, float radius,
-                            const Color &color, float duration);
+                            const Color &color, float duration, bool overdraw = false);
 
             void DrawCircle(const SVec3 &center, const SVec3 &normal, float radius,
-                            const Color &color, float duration);
+                            const Color &color, float duration, bool overdraw = false);
+
+            void DrawRay(const SVec3 &start, const SVec3 &direction, float length, 
+                         const Color &color,float duration, bool overdraw = false);
+
+            void DrawCube(const SVec3 &center, float size,
+                          const Color &color, float duration, bool overdraw = false);
 
         private:
 
@@ -61,12 +67,14 @@ namespace ursine
             {
                 float duration;
                 float timer;
+                bool overdraw;
 
                 virtual void Draw(graphics::DrawingAPI &drawer) = 0;
 
-                Request(float duration)
+                Request(float duration, bool overdraw)
                     : duration( duration )
-                    , timer( 0.0f ) { }
+                    , timer( 0.0f ) 
+                    , overdraw(overdraw) { }
             };
 
             struct LineRequest : Request
@@ -75,8 +83,9 @@ namespace ursine
                 Color color;
 
                 LineRequest(const SVec3 &start, const SVec3 &end,
-                            const Color &color, float duration)
-                    : Request( duration )
+                            const Color &color, float duration, 
+                            bool useOverdraw)
+                    : Request( duration, useOverdraw)
                     , start( start )
                     , end( end )
                     , color( color ) { }
@@ -91,8 +100,9 @@ namespace ursine
                 Color color;
 
                 PointRequest(const SVec3 point, float size,
-                             const Color &color, float duration)
-                    : Request( duration )
+                             const Color &color, float duration, 
+                             bool useOverdraw)
+                    : Request( duration, useOverdraw)
                     , point( point )
                     , size( size )
                     , color( color ) { }

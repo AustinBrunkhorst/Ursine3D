@@ -36,6 +36,9 @@ namespace ursine
             SHADER_DIRECTIONAL_LIGHT,
             SHADER_EMISSIVE,
 
+            // needed for overdraw to work
+            SHADER_OVERDRAW_MODEL,
+
             // forward pass on particles and billboards
             SHADER_PARTICLE,
             SHADER_BILLBOARD2D,

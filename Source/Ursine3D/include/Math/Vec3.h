@@ -115,7 +115,7 @@ namespace ursine
 		void Reflect(const Vec3 &normal);
 		static Vec3 Reflect(const Vec3 &vec, const Vec3 &normal);
 
-        void GenerateOrthogonalVectors(Vec3 &u, Vec3 &v);
+        void GenerateOrthogonalVectors(Vec3 &u, Vec3 &v) const;
         static void GenerateOrthogonalVectors(const Vec3 &inputVec, Vec3 &u, Vec3 &v);
 
 		std::string ToString(void) const;
