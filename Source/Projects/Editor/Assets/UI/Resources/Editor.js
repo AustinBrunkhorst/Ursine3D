@@ -1136,6 +1136,12 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		container.opened = true;
 		container.container.appendChild(handler.inspector);
 		container.handler = handler;
+		container.header.addEventListener("contextmenu",function(e) {
+			_g.openItemContextMenu(e,handler,container);
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+		});
 		container.addEventListener("item-removed",function() {
 			_g.m_owner.entity.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
 		});
@@ -1213,6 +1219,26 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		var database = ursine_editor_Editor.instance.componentDatabase;
 		var arrayType = database.getNativeType(this.m_type.arrayType);
 		return database.createFieldInspector(this,value,this.m_field,arrayType);
+	}
+	,openItemContextMenu: function(e,handler,container) {
+		var _g = this;
+		var menu = new ContextMenuControl();
+		var moveUp = menu.addItem("Move Up",function() {
+			_g.m_owner.entity.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex - 1);
+		});
+		moveUp.icon = "arrow-up";
+		moveUp.disabled = handler.arrayIndex == 0;
+		var moveDown = menu.addItem("Move Down",function() {
+			_g.m_owner.entity.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex + 1);
+		});
+		moveDown.icon = "arrow-down";
+		moveDown.disabled = handler.arrayIndex == this.m_arrayItems.length - 1;
+		menu.addSeparator();
+		var $delete = menu.addItem("Delete",function() {
+			_g.m_owner.entity.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
+		});
+		$delete.icon = "remove";
+		menu.open(e.clientX,e.clientY);
 	}
 	,onAddItemClicked: function(e) {
 		this.m_owner.entity.componentFieldArrayPush(this.m_owner.component.type,this.m_field.name,{ });
@@ -1688,6 +1714,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	}
 	,componentFieldArrayRemove: function(componentName,fieldName,index) {
 		this.m_handler.componentFieldArrayRemove(componentName,fieldName,index);
+	}
+	,componentFieldArraySwap: function(componentName,fieldName,index1,index2) {
+		this.m_handler.componentFieldArraySwap(componentName,fieldName,index1,index2);
 	}
 	,componentButtonInvoke: function(componentName,buttonName) {
 		this.m_handler.componentButtonInvoke(componentName,buttonName);

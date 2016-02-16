@@ -52,6 +52,7 @@ public:
     JSMethod(componentFieldArrayUpdate);
     JSMethod(componentFieldArrayInsert);
     JSMethod(componentFieldArrayRemove);
+    JSMethod(componentFieldArraySwap);
     JSMethod(componentFieldArrayGetLength);
 
     JSMethod(componentButtonInvoke);
