@@ -14,12 +14,72 @@
 #include "UrsinePrecompiled.h"
 
 #include "AnimatorComponent.h"
+#include "Notification.h"
+#include "../Serialization/AnimationInfo.h"
 #include <Game Engine/Scene/Component/Native Components/Model3DComponent.h>
+
+typedef ursine::graphics::ufmt_loader::AnimInfo AniInfo;
 
 namespace ursine
 {
 	namespace ecs
 	{
+		StateBlender::StateBlender(void)
+			: m_currState("")
+			, m_futState("")
+			, m_currtransPos(0.f)
+			, m_futtransPos(0.f)
+		{}
+
+		const std::string &StateBlender::GetcurrState(void) const
+		{
+			return m_currState;
+		}
+
+		void StateBlender::SetcurrState(const std::string& cstate)
+		{
+			m_currState = cstate;
+		}
+
+		const std::string &StateBlender::GetfutState(void) const
+		{
+			return m_futState;
+		}
+
+		void StateBlender::SetfutState(const std::string& fstate)
+		{
+			m_futState = fstate;
+		}
+
+		const float &StateBlender::GetcurrTransPos(void) const
+		{
+			return m_currtransPos;
+		}
+
+		void StateBlender::SetcurrTransPos(const float& tPos)
+		{
+			m_currtransPos = tPos;
+			//NOTIFY_COMPONENT_CHANGED("currtransPos", m_currtransPos);
+		}
+
+		const float &StateBlender::GetfutTransPos(void) const
+		{
+			return m_futtransPos;
+		}
+
+		void StateBlender::SetfutTransPos(const float& tPos)
+		{
+			m_futtransPos = 1.0f - m_currtransPos;
+			//NOTIFY_COMPONENT_CHANGED("futtransPos", m_futtransPos);
+		}
+		
+		const StateBlender *StateBlender::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
+		{
+			if (currst == m_currState && futst == m_futState)
+				return this;
+			return nullptr;
+		}
+
 		NATIVE_COMPONENT_DEFINITION(Animator);
 
 		Animator::Animator()
@@ -33,12 +93,13 @@ namespace ursine
 			, m_futureStateName("")
 			, m_animationName("")
 			, m_stateName("")
+			, m_animlist(0)
 		{
 		}
 
 		Animator::~Animator()
 		{
-			//m_states.clear();
+			m_animlist.clear();
 		}
 
 		void Animator::OnInitialize(void)
@@ -49,16 +110,25 @@ namespace ursine
 			{
 				x = SMat4::Identity();
 			}
+			
+			auto *gfx = GetCoreSystem(graphics::GfxAPI);
+			auto *world = GetOwner()->GetWorld();
+			auto *animListEntity = world->CreateEntity("Animation List");
+			auto *blendTreeEntity = world->CreateEntity("Blending Tree");
 		}
 
 		void Animator::UpdateAnimation(const float dt)
 		{
 			URSINE_TODO("Try playing every animation states");
 
+#if defined(URSINE_WITH_EDITOR)
+			// Could update the situation of Blend Tree Entity here
+#endif
+
 			// grab what we need
 			AnimationState *currentState = nullptr;
 			AnimationState *futureState = nullptr;
-			for (auto &x : m_stateArray)
+			for (auto &x : StateArray)
 			{
 				if (x.GetName() == m_currentStateName)
 					currentState = &x;
@@ -81,8 +151,8 @@ namespace ursine
 			
 			// default transition time takes 1 sec this will be used as interpolation factor
 			static float transFactor = 0.0f;
-			// selected time of next animation which the blending will ends up
-			float transTime = 1.0f;
+			//// selected time of next animation which the blending will ends up
+			//float transTime = 1.0f;
 			if (nullptr != futrueAnimation)
 			{
 				if (futrueAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
@@ -103,8 +173,13 @@ namespace ursine
 				if (nullptr != futrueAnimation && currentAnimation != futrueAnimation)
 				{
 					futureState->IncrementTimePosition(dt * m_speedScalar);
-					transFactor += dt * m_speedScalar; // if there is future animation
-
+					// blending = transfactor control X, mix two animation with interp method
+					// what do I need?
+					// curr transPos - blending starting time position of curr state anim
+					// fut transPos - blending end time position of future state anim
+					// trans time - time takes for blending
+					// to see this, curr->fut animation should be looped.
+					transFactor += dt * m_speedScalar;
 					if (transFactor >= 1.0f)
 					{
 						// Change State name
@@ -276,7 +351,7 @@ namespace ursine
 
 		float Animator::GetAnimationTimePosition() const
 		{
-			for (auto &x : m_stateArray)
+			for (auto &x : StateArray)
 			{
 				if (x.GetName() == m_currentStateName)
 					return x.GetTimePosition();
@@ -286,7 +361,7 @@ namespace ursine
 
 		void Animator::SetAnimationTimePosition(const float position)
 		{
-			for (auto &x : m_stateArray)
+			for (auto &x : StateArray)
 			{
 				if (x.GetName() == m_currentStateName)
 				{
@@ -327,5 +402,119 @@ namespace ursine
 		{
 			m_stateName = state;
 		}
+
+		void Animator::ImportAnimation(void)
+		{
+			auto owner = GetOwner();
+			auto *children = owner->GetChildren();
+
+			if (children->size() > 0)
+			{
+				NotificationConfig config;
+
+				config.type = NOTIFY_WARNING;
+				config.header = "Warning";
+				config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
+				config.dismissible = false;
+				config.duration = 0;
+
+				NotificationButton yes, no;
+
+				yes.text = "Yes";
+				yes.onClick = [=](Notification &notification) {
+					notification.Close();
+
+					// Main thread operation
+					Timer::Create(0).Completed([=] {
+						clearChildren();
+						importAnimation();
+					});
+				};
+
+				no.text = "No";
+				no.onClick = [=](Notification &notification) {
+					notification.Close();
+				};
+
+				config.buttons = { yes, no };
+
+				EditorPostNotification(config);
+			}
+			else
+			{
+				// Main thread operation
+				Timer::Create(0).Completed([=] {
+					importAnimation();
+				});
+			}
+		}
+
+		void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
+		{
+			for (auto &child : children)
+			{
+				recursClearChildren(child->GetChildren());
+
+				child->GetOwner()->Delete();
+			}
+		}
+
+		void Animator::clearChildren(void)
+		{
+			recursClearChildren(GetOwner()->GetTransform()->GetChildren());
+		}
+
+		// import animation to the current state
+		// if I get animation builder here, how can I put animation to the state?
+		void Animator::importAnimation(void)
+		{
+			std::string janiFileName("Assets/Animations/");
+			janiFileName += m_animationName + ".jani";
+			HANDLE hFile_ani = CreateFile(janiFileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+			if (!hFile_ani)
+				return;
+
+			AniInfo ufmt_ani;
+			// Serialize in model and animation
+			UAssert(true == ufmt_ani.SerializeIn(hFile_ani), "Fail to serialize jani file.", janiFileName.c_str());
+			// need to execute AnimationBuilder::LoadAnimation here?
+			unsigned animationIndex = 0;
+			// Check if there is same animation already
+			const Animation* checker = AnimationBuilder::GetAnimationByName(m_animationName);
+			if(nullptr == checker)
+				animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, m_animationName);
+			CloseHandle(hFile_ani);
+
+			// Check if the animation is in animlist, push back if not
+			bool bExist = false;
+			for (auto &x : m_animlist)
+			{
+				if (m_animationName == x->GetName())
+				{
+					bExist = true;
+					break;
+				}
+			}
+
+			if (!bExist)
+			{
+				// add to animlist
+				m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
+
+				auto *gfx = GetCoreSystem(graphics::GfxAPI);
+				auto *world = GetOwner()->GetWorld();
+				auto *animList = world->GetEntityFromName("Animation List");
+				auto *alTrans = animList->GetTransform();
+				auto *newEntity = world->CreateEntity(m_animationName.c_str());
+				alTrans->AddChild(newEntity->GetTransform());
+			}
+		}
+
+		// Question
+		// I'm trying to add/remove entity by StateArray.
+		// Adding is not hard(Except naming), but how can I remove entity from the blending tree?
+		// how can I add/remove entity by updating Array?
+		// And how will you control BlendTree for all model?
+		// how can I save blendtree? -> by new file format
 	}
 }

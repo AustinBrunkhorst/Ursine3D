@@ -1,7 +1,7 @@
 #pragma once
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** InventorySystem.h
 **

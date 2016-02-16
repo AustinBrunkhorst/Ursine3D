@@ -24,14 +24,14 @@ namespace ursine
 			std::string stateName,
 			GetName,
 			SetName
-		);
-		
-		EditorField(
-			float timePosition,
-			GetTimePosition,
-			SetTimePosition
 			);
-		
+
+		//EditorField(
+		//	float timePosition,
+		//	GetTimePosition,
+		//	SetTimePosition
+		//	);
+
 		// how can I add multiple animations in animation state?
 		// how can I use combo box for this?
 		// Array<Animation> => no, in this case, we should edit
@@ -97,7 +97,7 @@ namespace ursine
 	private:
 		//current runtime
 		std::string m_name;
-		// Use time pos as the time which ends the changing blending
+		//time position to play animation
 		float m_timePos;
 		std::string m_animname;
         //current animation
