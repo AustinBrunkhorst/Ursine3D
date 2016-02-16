@@ -30,4 +30,4 @@ public:
     // Array of spawn patterns
     ursine::Array<SpawnPattern> spawnPatterns;
 
-} Meta(Enable);
+} Meta(Enable, HiddenInSelector, DisableComponentRemoval);
