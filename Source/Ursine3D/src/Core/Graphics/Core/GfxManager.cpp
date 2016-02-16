@@ -591,13 +591,12 @@ namespace ursine
                 bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
                 shaderManager->BindShader(SHADER_FORWARD);
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
             }
 
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Model Rendering");
-
-
             dxCore->EndDebugEvent();
 
             // LIGHT PASS
@@ -621,9 +620,6 @@ namespace ursine
             // RENDER MAIN //////////////////////////////////////////////////
             dxCore->StartDebugEvent("Final Pass");
             PrepForFinalOutput();
-            dxCore->GetDeviceContext()->PSSetShaderResources(1, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-
 
             dxCore->EndDebugEvent();
             STAMP("Main Screen Pass");
@@ -737,6 +733,8 @@ namespace ursine
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
 
             bufferManager->MapCameraBuffer(view, proj);
+
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //TEMP
             URSINE_TODO("Remove this");
@@ -988,9 +986,9 @@ namespace ursine
             textureManager->MapTextureByID(handle.Material_);
 
             if ( handle.Overdraw_ )
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
-            else
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+            {
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+            }
 
             //render
             unsigned count = modelManager->GetModelMeshCount(handle.Model_);
@@ -1083,6 +1081,11 @@ namespace ursine
                     dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
                     dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
                 }
+            }
+
+            if ( handle.Overdraw_ )
+            {
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
             }
         }
 
