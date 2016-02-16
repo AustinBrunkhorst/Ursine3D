@@ -21,6 +21,7 @@
 #include <Scene.h>
 #include <WindowManager.h>
 #include <UIManager.h>
+#include <Timer.h>
 
 using namespace ursine;
 
@@ -31,7 +32,15 @@ namespace
     const std::string kEntryPointDir = "file:///Assets/UI/Resources/";
 
     const auto kEntryPointLauncher = "Launcher.html";
+    const auto kEntryPointSplash = "Splash.html";
     const auto kEntryPointEditor = "Editor.html";
+
+    const auto kDefaultPreferencesFile = "Assets/Config/DefaultEditor.prefs";
+    const auto kPreferencesFile = "Editor.prefs";
+    
+    const auto kWindowLocationCentered = Vec2 { -1, -1 };
+
+    const auto kProjectExtension = "ursineproj";
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
@@ -48,6 +57,11 @@ Editor::~Editor(void) { }
 const EditorWindow &Editor::GetMainWindow(void) const
 {
     return m_mainWindow;
+}
+
+const EditorPreferences &Editor::GetPreferences(void) const
+{
+    return m_preferences;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,27 +88,80 @@ Notification Editor::PostNotification(const NotificationConfig &config)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Projects
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::CreateNewProject(const std::string &name, const std::string &directory)
+{
+    auto sanitizedName = fs::SafeFileName( name, '_' );
+
+    auto projectDirectory = fs::path( directory ) / sanitizedName;
+
+    auto projectFileName = (projectDirectory / sanitizedName)
+        .replace_extension( kProjectExtension );
+
+    // make sure the directory exists
+    fs::create_directory( projectDirectory );
+
+    auto projectConfig = ProjectConfig::CreateDefault( name );
+
+    auto projectData = 
+        meta::Type::SerializeJson<ProjectConfig>( projectConfig );
+
+    fs::WriteAllText( projectFileName.string( ), projectData.dump( true ) );
+
+#if defined(PLATFORM_WINDOWS)
+
+    SHELLEXECUTEINFO shExecInfo;
+
+    shExecInfo.cbSize = sizeof( SHELLEXECUTEINFO );
+
+    std::string args;
+
+    args += '"';
+    args += projectFileName.string( );
+    args += '"';
+
+    shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+    shExecInfo.hwnd = nullptr;
+    shExecInfo.lpVerb = nullptr;
+    shExecInfo.lpFile = "Editor.exe";
+    shExecInfo.lpParameters = args.c_str( );
+    shExecInfo.lpDirectory = nullptr;
+    shExecInfo.nShow = SW_NORMAL;
+    shExecInfo.hInstApp = nullptr;
+
+    ShellExecuteEx( &shExecInfo );
+
+#endif
+
+    Application::Instance->Exit( );
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Core System
 ///////////////////////////////////////////////////////////////////////////////
 
 void Editor::OnInitialize(void)
 {
-    auto *app = Application::Instance;
+    loadPreferences( );
 
-    auto argc = app->GetArgC( );
-    auto argv = app->GetArgV( );
+    auto projectFileName = findAvailableProject( );
 
-    m_startupConfig.windowSize = Vec2::One( ) * 600.0f;
-
-    // no project file, open launcher
-    if (argc == 1)
+    // couldn't find a project, open the launcher
+    if (projectFileName.empty( ))
     {
         m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointLauncher;
+        m_startupConfig.windowSize = { 660, 430 };
+        m_startupConfig.windowFlags = 0;
         m_startupConfig.updateHandler = &Editor::onLauncherUpdate;
     }
+    // open the splash screen
     else
     {
-        m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointEditor;
+        m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointSplash;
+        m_startupConfig.windowFlags = SDL_WINDOW_BORDERLESS;
+        m_startupConfig.windowSize = { 660, 430 };
         m_startupConfig.updateHandler = &Editor::onEditorUpdate;
     }
 
@@ -105,6 +172,8 @@ void Editor::OnInitialize(void)
 
 void Editor::OnRemove(void)
 {
+    writePreferences( );
+
     Application::Instance->Disconnect(
         APP_UPDATE,
         this,
@@ -118,6 +187,63 @@ void Editor::OnRemove(void)
     m_mainWindow.m_ui = nullptr;
 
     m_mainWindow.m_window = nullptr;
+}
+
+void Editor::loadPreferences(void)
+{
+    std::string prefsJsonText;
+
+    if (!fs::LoadAllText( kPreferencesFile, prefsJsonText ))
+    {
+        UAssert( fs::LoadAllText( kDefaultPreferencesFile, prefsJsonText ),
+            "Unable to load default preferences."
+        );
+    }
+
+    std::string prefsJsonError;
+
+    auto prefsJson = Json::parse( prefsJsonText, prefsJsonError );
+
+    UAssert( prefsJsonError.empty( ),
+        "Unable to parse preferences."
+    );
+
+    m_preferences = meta::Type::DeserializeJson<EditorPreferences>( prefsJson );
+}
+
+void Editor::writePreferences(void)
+{
+    auto window = m_mainWindow.m_window;
+
+    m_preferences.windowSize = window->GetSize( );
+    m_preferences.windowLocation = window->GetLocation( );
+    m_preferences.windowMaximized = window->IsMaximized( );
+
+    auto prefsJson = meta::Type::SerializeJson<EditorPreferences>( m_preferences ).dump( true );
+
+    fs::WriteAllText( kPreferencesFile, prefsJson );
+}
+
+std::string Editor::findAvailableProject(void) const
+{
+    auto *app = Application::Instance;
+
+    auto argc = app->GetArgC( );
+    auto argv = app->GetArgV( );
+
+    // a project was passed in - make sure it exists
+    if (argc > 1 && fs::exists( argv[ 1 ] ))
+        return argv[ 1 ];
+
+    // take first recent project that exists
+    for (auto &file : m_preferences.recentProjects)
+    {
+        if (fs::exists( file ))
+            return file;
+    }
+
+    // couldn't find one
+    return "";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -147,12 +273,12 @@ void Editor::initializeWindow(void)
         kWindowTitle,
         Vec2::Zero( ),
         m_startupConfig.windowSize,
-        SDL_WINDOW_RESIZABLE
+        m_startupConfig.windowFlags
     );
 
     m_mainWindow.m_window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
-
+    
     m_mainWindow.m_window->SetLocationCentered( );
     m_mainWindow.m_window->Show( true );
     m_mainWindow.m_window->SetIcon( "Assets/Resources/Icon.png" );

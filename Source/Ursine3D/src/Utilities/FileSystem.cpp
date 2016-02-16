@@ -56,5 +56,20 @@ namespace ursine
 
             return true;
         }
+
+        std::string SafeFileName(const std::string &filename, char replacement)
+        {
+            auto sanitized = filename;
+
+            std::string illegalChars = "\\/:?\"<>|";
+
+            for (auto &character : sanitized) 
+            {
+                if (illegalChars.find( character ) != std::string::npos)
+                    character = replacement;
+            }
+
+            return sanitized;
+        }
     }
 }

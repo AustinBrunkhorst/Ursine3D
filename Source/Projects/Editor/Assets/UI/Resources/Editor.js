@@ -6,13 +6,38 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var Application = function() { };
-$hxClasses["Application"] = Application;
-Application.__name__ = ["Application"];
-Application.main = function() {
-	window.addEventListener("WebComponentsReady",Application.initWindows);
+var EReg = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
 };
-Application.initWindows = function() {
+$hxClasses["EReg"] = EReg;
+EReg.__name__ = ["EReg"];
+EReg.prototype = {
+	match: function(s) {
+		if(this.r.global) this.r.lastIndex = 0;
+		this.r.m = this.r.exec(s);
+		this.r.s = s;
+		return this.r.m != null;
+	}
+	,matched: function(n) {
+		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw new js__$Boot_HaxeError("EReg::matched");
+	}
+	,matchedLeft: function() {
+		if(this.r.m == null) throw new js__$Boot_HaxeError("No string matched");
+		return HxOverrides.substr(this.r.s,0,this.r.m.index);
+	}
+	,replace: function(s,by) {
+		return s.replace(this.r,by);
+	}
+	,__class__: EReg
+};
+var EditorMain = function() { };
+$hxClasses["EditorMain"] = EditorMain;
+EditorMain.__name__ = ["EditorMain"];
+EditorMain.main = function() {
+	window.addEventListener("WebComponentsReady",EditorMain.initWindows);
+};
+EditorMain.initWindows = function() {
 	var editor = new ursine_editor_Editor();
 	var mainDockContainer = window.document.body.querySelector("#main-dock-container");
 	var mainDock = new DockContainerControl();
@@ -58,31 +83,6 @@ Application.initWindows = function() {
 	column4.style.width = "100%";
 	column4.appendChild(projectBrowser.window);
 	sceneView.onViewportInvalidated();
-};
-var EReg = function(r,opt) {
-	opt = opt.split("u").join("");
-	this.r = new RegExp(r,opt);
-};
-$hxClasses["EReg"] = EReg;
-EReg.__name__ = ["EReg"];
-EReg.prototype = {
-	match: function(s) {
-		if(this.r.global) this.r.lastIndex = 0;
-		this.r.m = this.r.exec(s);
-		this.r.s = s;
-		return this.r.m != null;
-	}
-	,matched: function(n) {
-		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw new js__$Boot_HaxeError("EReg::matched");
-	}
-	,matchedLeft: function() {
-		if(this.r.m == null) throw new js__$Boot_HaxeError("No string matched");
-		return HxOverrides.substr(this.r.s,0,this.r.m.index);
-	}
-	,replace: function(s,by) {
-		return s.replace(this.r,by);
-	}
-	,__class__: EReg
 };
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
@@ -2448,5 +2448,5 @@ ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
-Application.main();
+EditorMain.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

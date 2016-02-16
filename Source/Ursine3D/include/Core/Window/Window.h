@@ -48,6 +48,7 @@ namespace ursine
         bool IsFullScreen(void) const;
         void SetFullScreen(bool fullscreen);
 
+        bool IsMaximized(void) const;
         void SetMaximized(bool maximized);
         void SetMinimized(bool minimized);
 
@@ -78,6 +79,9 @@ namespace ursine
 
         // determines if the window is currently shown
         bool m_isShown;
+
+        // determines if this window is explicitly maximized
+        bool m_isMaximized;
 
         uint32 m_id;
 

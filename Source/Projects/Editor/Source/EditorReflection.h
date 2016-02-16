@@ -35,6 +35,7 @@
 // Native JavaScript Bindings
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "Tools/JavaScript/LauncherUtils.h"
 #include "Tools/JavaScript/EditorCommands.h"
 #include "Tools/JavaScript/DebugUtils.h"
 #include "Tools/JavaScript/SceneUtils.h"

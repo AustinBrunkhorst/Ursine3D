@@ -2,9 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="Style/Launcher.css" />
+
+    <link rel="import" href="Controls/Button.html" />
+    <link rel="import" href="Controls/TextInput.html" />
+
     <title> Ursine3D Launcher </title>
 </head>
 <body>
-    testing
+    <div id="wrapper">
+        <img id="logo" src="Style/Images/BearKingLogo.png">
+        <div id="header"> Ursine3D Editor </div>
+        <div id="version"></div>
+        <ul id="actions">
+            <li class="new"> New Project </li>
+            <li class="open"> Open Project </li>
+        </ul>
+    </div>
+    <div id="new-project-modal">
+        <ul id="project-options">
+            <li>
+                <div class="name"> Project Name </div>
+                <div class="value">
+                    <input is="x-text-input" id="project-new-name" />
+                </div>
+            </li>
+            <li>
+                <div class="name"> Location </div>
+                <div class="value">
+                    <input is="x-text-input" id="project-new-location" spellcheck="false" />
+                    <button is="x-button" id="btn-project-new-location-browse"> ... </button>
+                </div>
+            </li>
+            <li class="buttons">
+                <button is="x-button" id="btn-project-new-create"> Ok </button>
+                <button is="x-button" id="btn-project-new-cancel"> Cancel </button>
+            </li>
+        </ul>
+    </div>
 </body>
+<script type="text/javascript" src="Launcher.js"></script>
 </html>

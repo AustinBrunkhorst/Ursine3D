@@ -27,6 +27,7 @@ namespace ursine
         , m_isFocused( true )
         , m_isFullscreen( false )
         , m_isShown( false )
+        , m_isMaximized( false )
         , m_id( SDL_GetWindowID( handle ) )
         , m_manager( manager )
         , m_handle( handle )
@@ -146,12 +147,19 @@ namespace ursine
         m_isFullscreen = fullscreen;
     }
 
+    bool Window::IsMaximized(void) const
+    {
+        return m_isMaximized;
+    }
+
     void Window::SetMaximized(bool maximized)
     {
         if (maximized)
             SDL_MaximizeWindow( m_handle );
         else
             SDL_RestoreWindow( m_handle );
+
+        m_isMaximized = maximized;
     }
 
     void Window::SetMinimized(bool minimized)

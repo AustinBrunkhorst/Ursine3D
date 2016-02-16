@@ -4,7 +4,7 @@ import ursine.controls.EditorWindow;
 import ursine.controls.docking.*;
 import ursine.editor.windows.*;
 
-class Application {
+class EditorMain {
     static function main() {
         js.Browser.window.addEventListener( 'WebComponentsReady', initWindows );
     }

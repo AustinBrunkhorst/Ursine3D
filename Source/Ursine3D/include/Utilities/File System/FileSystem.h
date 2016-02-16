@@ -27,5 +27,7 @@ namespace ursine
 
         bool LoadAllText(const std::string &filename, std::string &output);
         bool WriteAllText(const std::string &filename, const std::string &text);
+
+        std::string SafeFileName(const std::string &filename, char replacement);
     }
 }

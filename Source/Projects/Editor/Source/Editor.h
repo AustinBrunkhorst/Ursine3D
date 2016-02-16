@@ -17,6 +17,8 @@
 
 #include <NotificationManager.h>
 
+#include "EditorPreferences.h"
+
 #include "Project.h"
 #include "EditorWindow.h"
 
@@ -35,6 +37,7 @@ public:
 
     const EditorWindow &GetMainWindow(void) const;
 
+    const EditorPreferences &GetPreferences(void) const;
     Project &GetProject(void);
 
     ///////////////////////////////////////////////////////////////////////////
@@ -45,12 +48,18 @@ public:
 
     ursine::Notification PostNotification(const ursine::NotificationConfig &config);
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Projects
+    ///////////////////////////////////////////////////////////////////////////
+
+    void CreateNewProject(const std::string &name, const std::string &directory);
 private:
     struct
     {
         std::string uiEntryPoint;
 
         ursine::Vec2 windowSize;
+        ursine::uint32 windowFlags;
         
         void (Editor::*updateHandler)(EVENT_HANDLER(ursine::Application));
     } m_startupConfig;
@@ -61,6 +70,7 @@ private:
 
     EditorWindow m_mainWindow;
 
+    EditorPreferences m_preferences;
     Project m_project;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -69,6 +79,15 @@ private:
 
     void OnInitialize(void) override;
     void OnRemove(void) override;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Preferences
+    ///////////////////////////////////////////////////////////////////////////
+
+    void loadPreferences(void);
+    void writePreferences(void);
+
+    std::string findAvailableProject(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
     // Initialization
