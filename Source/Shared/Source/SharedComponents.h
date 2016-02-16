@@ -74,14 +74,14 @@
 ////     Camera Animation    ////
 /////////////////////////////////
 
-#include "Components/CameraAnimation/CameraAnimatorComponent.h"
-#include "Components/CameraAnimation/CameraAnimatorNodeComponent.h"
+#include "CameraAnimation/CameraAnimatorComponent.h"
+#include "CameraAnimation/CameraAnimatorNodeComponent.h"
 
 
 /////////////////////////////////
 ////     Spawning System     ////
 /////////////////////////////////
 
-#include "Components/SpawnerSystem/SpawnerGroupComponent.h"
-#include "Components/SpawnerSystem/SpawnerComponent.h"
-#include "Components/SpawnerSystem/SpawnPatternContainerComponent.h"
+#include "SpawnerSystem/SpawnerGroupComponent.h"
+#include "SpawnerSystem/SpawnerComponent.h"
+#include "SpawnerSystem/SpawnPatternContainerComponent.h"

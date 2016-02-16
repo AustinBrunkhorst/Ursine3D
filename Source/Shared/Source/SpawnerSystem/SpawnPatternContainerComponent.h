@@ -17,6 +17,8 @@
 
 #include "SpawnPattern.h"
 
+#include "LevelEvents.h"
+
 class SpawnPatternContainer : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -25,7 +27,8 @@ public:
 
     SpawnPatternContainer(void);
 
-    // TODO: LevelEvent levelEvent; // level event + sub level event
+    // The level event these spawn patterns are for
+    LevelEvents levelEvent;
 
     // Array of spawn patterns
     ursine::Array<SpawnPattern> spawnPatterns;

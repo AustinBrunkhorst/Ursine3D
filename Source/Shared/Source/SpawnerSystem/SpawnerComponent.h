@@ -15,16 +15,11 @@
 
 #include <Component.h>
 
-#include "AIArchetypes.h"
-
 class Spawner : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
 public:
-
-    // The enemy type
-    AIArchetype enemyType;
 
     // Button for adding a pattern (for a level + sub level event)
     EditorButton(
@@ -34,6 +29,4 @@ public:
 
     Spawner(void);
 
-private:
-
-} Meta(Enable);
+} Meta(Enable, HiddenInSelector, DisableComponentRemoval);
