@@ -29,6 +29,13 @@ struct HiddenInInspector : ursine::meta::MetaProperty
     META_OBJECT;
 };
 
+/** @brief Makes sure this component doesn't display in the "Add Component" dialog.
+*/
+struct HiddenInSelector : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};
+
 /** @brief Disable serialization of this object
  */
 struct DisableSerialization : ursine::meta::MetaProperty

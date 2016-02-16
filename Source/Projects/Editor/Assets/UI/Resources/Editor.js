@@ -1889,7 +1889,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		var db = ursine_editor_Editor.instance.componentDatabase;
 		return db.getComponentTypes().filter(function(type) {
 			var componentType = db.getComponentType(type);
-			var isHidden = Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInInspector);
+			var isHidden = Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInInspector) || Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInSelector);
 			return !entity.hasComponent(type) && !isHidden;
 		});
 	}
@@ -2449,6 +2449,7 @@ ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove = "ComponentArrayRem
 ursine_editor_windows_EntityInspector.m_smallWindowWidth = 245;
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
+ursine_native_Property.HiddenInSelector = "HiddenInSelector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
 Application.main();
