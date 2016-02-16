@@ -7,6 +7,7 @@ extern class ArrayItemContainer extends PolymerElement {
     var index : UInt;
     var opened : Bool;
 
+    var header : js.html.DOMElement;
     var container : js.html.DOMElement;
     var handler : FieldInspectionHandler;
 

@@ -627,6 +627,64 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     return CefV8Value::CreateBool( true );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+JSMethod(EntityHandler::componentFieldArraySwap)
+{
+    if (arguments.size( ) != 4)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+    auto fieldName = arguments[ 1 ]->GetStringValue( ).ToString( );
+    auto arrayIndex1 = static_cast<size_t>( arguments[ 2 ]->GetUIntValue( ) );
+    auto arrayIndex2 = static_cast<size_t>( arguments[ 3 ]->GetUIntValue( ) );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        JSThrow( "Unknown component type.", nullptr );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        JSThrow( "Invalid component type.", nullptr );
+
+    auto *component = entity->GetComponent( 
+        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
+    );
+
+    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+
+    auto field = componentType.GetField( fieldName );
+
+    if (!field.IsValid( ))
+        JSThrow( "Invalid field.", nullptr );
+
+    auto fieldType = field.GetType( );
+
+    if (!fieldType.IsArray( ))
+        JSThrow( "Field is not an array type.", nullptr );
+
+    auto fieldInstance = field.GetValue( instance );
+
+    auto arrayWrapper = fieldInstance.GetArray( );
+
+    auto value1 = arrayWrapper.GetValue( arrayIndex1 );
+    auto value2 = arrayWrapper.GetValue( arrayIndex2 );
+
+    arrayWrapper.SetValue( arrayIndex1, value2 );
+    arrayWrapper.SetValue( arrayIndex2, value1 );
+
+    return CefV8Value::CreateBool( true );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 JSMethod(EntityHandler::componentFieldArrayGetLength)
 {
     if (arguments.size( ) != 2)
