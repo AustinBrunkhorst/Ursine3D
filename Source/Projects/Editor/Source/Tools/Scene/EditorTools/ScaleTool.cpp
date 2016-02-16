@@ -263,16 +263,16 @@ void ScaleTool::renderAxis()
 
     if ( m_gizmo )
     {
-        auto gizTrans = m_gizmo->GetTransform();
+        auto gizTrans = m_gizmo->GetTransform( );
 
-        auto camVec = gizTrans->GetWorldPosition() -
-            m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
+        auto camVec = gizTrans->GetWorldPosition( ) -
+            m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );
 
-        float size = camVec.Length() * 0.15f;
+        float size = camVec.Length( ) * 0.15f;
 
-        auto position = gizTrans->GetWorldPosition();
+        auto position = gizTrans->GetWorldPosition( );
 
-        SVec3 xAxis = SVec3(size, 0, 0), yAxis = SVec3(0, size, 0), zAxis = SVec3(0, 0, size);
+        SVec3 xAxis = SVec3( size, 0, 0 ), yAxis = SVec3( 0, size, 0 ), zAxis = SVec3( 0, 0, size );
 
         if ( m_local )
         {
@@ -283,7 +283,7 @@ void ScaleTool::renderAxis()
 
         Color xColor = Color::Red, yColor = Color::Green, zColor = Color::Blue, mainColor = Color::White;
 
-        switch(m_axisType)
+        switch( m_axisType )
         {
         case 1:
             xColor = Color::Yellow;
@@ -301,15 +301,15 @@ void ScaleTool::renderAxis()
             break;
         }
 
-        drawer->DrawLine(position, position + xAxis, xColor, 0, true);
-        drawer->DrawLine(position, position + yAxis, yColor, 0, true);
-        drawer->DrawLine(position, position + zAxis, zColor, 0, true);
+        drawer->DrawLine( position, position + xAxis, xColor, 0, true );
+        drawer->DrawLine( position, position + yAxis, yColor, 0, true );
+        drawer->DrawLine( position, position + zAxis, zColor, 0, true );
 
-        drawer->DrawCube(position, size * 0.1f, mainColor, 0, true);
+        drawer->DrawCube( position, size * 0.1f, mainColor, 0, true );
 
-        drawer->DrawSphere(position + xAxis, size * 0.1f, xColor, 0, true);
-        drawer->DrawSphere(position + yAxis, size * 0.1f, yColor, 0, true);
-        drawer->DrawSphere(position + zAxis, size * 0.1f, zColor, 0, true);
+        drawer->DrawSphere( position + xAxis, size * 0.1f, xColor, 0, true );
+        drawer->DrawSphere( position + yAxis, size * 0.1f, yColor, 0, true );
+        drawer->DrawSphere( position + zAxis, size * 0.1f, zColor, 0, true );
     }
 }
 

@@ -245,22 +245,22 @@ void RotateTool::renderAxis()
 
     if ( m_gizmo )
     {
-        auto gizTrans = m_gizmo->GetTransform();
+        auto gizTrans = m_gizmo->GetTransform( );
 
-        auto camVec = gizTrans->GetWorldPosition() -
-            m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
+        auto camVec = gizTrans->GetWorldPosition( ) -
+            m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );
 
-        float size = (camVec.Length() * 0.18f) * 0.54f;
+        float size = (camVec.Length( ) * 0.18f) * 0.54f;
 
-        auto position = gizTrans->GetWorldPosition();
+        auto position = gizTrans->GetWorldPosition( );
 
-        SVec3 xAxis = SVec3(0, 1, 0), yAxis = SVec3(0, 0, 1), zAxis = SVec3(1, 0, 0);
+        SVec3 xAxis = SVec3( 0, 1, 0 ), yAxis = SVec3( 0, 0, 1 ), zAxis = SVec3( 1, 0, 0 );
 
         if ( m_local )
         {
-            xAxis = gizTrans->GetWorldRotation().Rotate(xAxis);
-            yAxis = gizTrans->GetWorldRotation().Rotate(yAxis);
-            zAxis = gizTrans->GetWorldRotation().Rotate(zAxis);
+            xAxis = gizTrans->GetWorldRotation( ).Rotate( xAxis );
+            yAxis = gizTrans->GetWorldRotation( ).Rotate( yAxis );
+            zAxis = gizTrans->GetWorldRotation( ).Rotate( zAxis );
         }
 
         Color xColor = Color::Red, yColor = Color::Green, zColor = Color::Blue;
@@ -280,23 +280,23 @@ void RotateTool::renderAxis()
             break;
         }
 
-        drawer->DrawCircle(position, xAxis, size, xColor, 0.0f, true);
-        drawer->DrawCircle(position, yAxis, size, yColor, 0.0f, true);
-        drawer->DrawCircle(position, zAxis, size, zColor, 0.0f, true);
+        drawer->DrawCircle( position, xAxis, size, xColor, 0.0f, true );
+        drawer->DrawCircle( position, yAxis, size, yColor, 0.0f, true );
+        drawer->DrawCircle( position, zAxis, size, zColor, 0.0f, true );
 
         // render horizon disk
-        auto camPos = m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
+        auto camPos = m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );
         auto viewVec = position - camPos;
-        float dist = viewVec.Length();
+        float dist = viewVec.Length( );
 
         viewVec /= dist;
 
-        float l = sqrtf(dist * dist - size * size);
-        float rPrime = (size * l) / dist;
-        float z = sqrtf(size * size - rPrime * rPrime);
+        float l = sqrtf( dist * dist - size * size );
+        float rPrime = ( size * l ) / dist;
+        float z = sqrtf( size * size - rPrime * rPrime );
 
         auto finalPoint = position - viewVec * z;
-        drawer->DrawCircle(finalPoint, viewVec, rPrime, Color::Gray, 0.0f, true);
+        drawer->DrawCircle( finalPoint, viewVec, rPrime, Color::Gray, 0.0f, true );
     }
 }
 

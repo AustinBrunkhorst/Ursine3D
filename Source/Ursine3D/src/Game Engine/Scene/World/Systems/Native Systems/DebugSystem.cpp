@@ -63,21 +63,24 @@ namespace ursine
         {
             SVec3 endPoint = start + direction * length;
             SVec3 u, v;
-            direction.GenerateOrthogonalVectors(u, v);
+            direction.GenerateOrthogonalVectors( u, v );
+
+            u.Normalize( );
+            v.Normalize( );
 
             SVec3 basePoint = endPoint - direction * length * 0.25f;
 
             // main line
-            DrawLine(start, endPoint, color, duration, overdraw);
+            DrawLine( start, endPoint, color, duration, overdraw );
 
             // circle
-            DrawCircle(basePoint, direction, length * 0.125f, color, duration, overdraw);
+            DrawCircle( basePoint, direction, length * 0.125f, color, duration, overdraw );
             
             // offset lines
-            DrawLine(endPoint, basePoint + u * length * 0.125f, color, duration, overdraw);
-            DrawLine(endPoint, basePoint - u * length * 0.125f, color, duration, overdraw);
-            DrawLine(endPoint, basePoint + v * length * 0.125f, color, duration, overdraw);
-            DrawLine(endPoint, basePoint - v * length * 0.125f, color, duration, overdraw);
+            DrawLine( endPoint, basePoint + u * length * 0.125f, color, duration, overdraw );
+            DrawLine( endPoint, basePoint - u * length * 0.125f, color, duration, overdraw );
+            DrawLine( endPoint, basePoint + v * length * 0.125f, color, duration, overdraw );
+            DrawLine( endPoint, basePoint - v * length * 0.125f, color, duration, overdraw );
         }
 
         void DebugSystem::DrawCube(const SVec3& center, float size, 

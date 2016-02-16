@@ -269,9 +269,61 @@ void TranslateTool::renderAxis()
             break;
         }
 
-        drawer->DrawRay(position, xAxis, size, xColor, 0, true);
-        drawer->DrawRay(position, yAxis, size, yColor, 0, true);
-        drawer->DrawRay(position, zAxis, size, zColor, 0, true);
+        // rays
+        drawer->DrawRay( position, xAxis, size, xColor, 0, true );
+        drawer->DrawRay( position, yAxis, size, yColor, 0, true );
+        drawer->DrawRay( position, zAxis, size, zColor, 0, true );
+
+        // two-axis movers
+        // xy
+        float twoAxisSize = size * 0.2f;
+
+        if ( m_axisType == 6 )
+        {
+            drawer->DrawLine( position + xAxis * twoAxisSize + yAxis * twoAxisSize,
+                xAxis * twoAxisSize + position, Color::Yellow, 0, true );
+            drawer->DrawLine( position + xAxis * twoAxisSize + yAxis * twoAxisSize,
+                yAxis * twoAxisSize + position, Color::Yellow, 0, true );
+        }
+        else
+        {
+            drawer->DrawLine( position + xAxis * twoAxisSize + yAxis * twoAxisSize,
+                xAxis * twoAxisSize + position, Color::Red, 0, true );
+            drawer->DrawLine( position + xAxis * twoAxisSize + yAxis * twoAxisSize,
+                yAxis * twoAxisSize + position, Color::Green, 0, true );
+        }
+
+        // zy
+        if ( m_axisType == 5 )
+        {
+            drawer->DrawLine( position + zAxis * twoAxisSize + yAxis * twoAxisSize,
+                zAxis * twoAxisSize + position, Color::Yellow, 0, true );
+            drawer->DrawLine( position + zAxis * twoAxisSize + yAxis * twoAxisSize,
+                yAxis * twoAxisSize + position, Color::Yellow, 0, true );
+        }
+        else
+        {
+            drawer->DrawLine( position + zAxis * twoAxisSize + yAxis * twoAxisSize,
+                zAxis * twoAxisSize + position, Color::Blue, 0, true );
+            drawer->DrawLine( position + zAxis * twoAxisSize + yAxis * twoAxisSize,
+                yAxis * twoAxisSize + position, Color::Green, 0, true );
+        }
+
+        // xz
+        if ( m_axisType == 4 )
+        {
+            drawer->DrawLine( position + xAxis * twoAxisSize + zAxis * twoAxisSize,
+                xAxis * twoAxisSize + position, Color::Yellow, 0, true );
+            drawer->DrawLine( position + xAxis * twoAxisSize + zAxis * twoAxisSize,
+                zAxis * twoAxisSize + position, Color::Yellow, 0, true );
+        }
+        else
+        {
+            drawer->DrawLine( position + xAxis * twoAxisSize + zAxis * twoAxisSize,
+                xAxis * twoAxisSize + position, Color::Red, 0, true );
+            drawer->DrawLine( position + xAxis * twoAxisSize + zAxis * twoAxisSize,
+                zAxis * twoAxisSize + position, Color::Blue, 0, true );
+        }
     }
 }
 

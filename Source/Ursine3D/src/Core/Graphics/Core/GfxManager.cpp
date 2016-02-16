@@ -493,13 +493,7 @@ namespace ursine
                     Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
 
                 dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
-            }
-
-            // emissive pass
-            // switch to no blending
-            PrepForLightPass(view, proj, currentCamera);
-            PrepForDirectionalLightPass(view, proj);
-            
+            }           
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
@@ -633,6 +627,18 @@ namespace ursine
             PrepForDirectionalLightPass(view, proj);
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT )
                 currentIndex++;
+
+            /////////////////////////////////////////////////////////
+            // overdraw pass for weird stuff
+            PrepFor3DModels(view, proj);
+            {
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+
+                while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
+                    Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            }
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
