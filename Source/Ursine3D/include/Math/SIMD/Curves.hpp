@@ -40,9 +40,16 @@ namespace ursine
         T0 = _mm_add_ps( T0, T2 );
 
         return SVec3( T0 );
+
 #else
 
+        float t2 = t * t;
+        float t3 = t * t2;
 
+        return ((-t3 + 2.0f * t2 - t) * p0 +
+                (3.0f * t3 - 5.0f * t2 + 2.0f) * p1 +
+                (-3.0f * t3 + 4.0f * t2 + t) * p2 +
+                (t3 - t2) * p3) * 0.5f;
 
 #endif
     }
