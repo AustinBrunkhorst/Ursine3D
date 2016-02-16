@@ -183,12 +183,12 @@ void parse(const po::variables_map &cmdLine)
         auto includes = 
             cmdLine.at( kSwitchCompilerIncludes ).as<std::string>( );
 
-		std::ifstream includesFile( includes );
+        std::ifstream includesFile( includes );
 
-		std::string include;
+        std::string include;
 
-		while (std::getline( includesFile, include ))
-			options.arguments.emplace_back( "-I"+ include );
+        while (std::getline( includesFile, include ))
+            options.arguments.emplace_back( "-I"+ include );
     }
 
     if (cmdLine.count( kSwitchCompilerDefines ))

@@ -22,8 +22,8 @@
 
 namespace DirectX
 {
-	// Forward Declaration
-	struct XMFLOAT3;
+    // Forward Declaration
+    struct XMFLOAT3;
 }
 
 #endif
@@ -44,22 +44,22 @@ class btVector3;
 
 namespace ursine
 {
-	// Forward declaration
-	class Vec2;
-	class Vec3;
-	class SVec4;
-	class Vec4;
-	class SMat4;
+    // Forward declaration
+    class Vec2;
+    class Vec3;
+    class SVec4;
+    class Vec4;
+    class SMat4;
 
-	ALIGNED16(class) SVec3
-	{
-		friend class Vec2;
-		friend class Vec3;
-		friend class SVec4;
-		friend class Vec4;
-		friend class SMat4;
+    ALIGNED16(class) SVec3
+    {
+        friend class Vec2;
+        friend class Vec3;
+        friend class SVec4;
+        friend class Vec4;
+        friend class SMat4;
 
-	public:
+    public:
         Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::X" ))
         EditorField(float x, X, SetX);
 
@@ -69,163 +69,167 @@ namespace ursine
         Meta(ExplicitGetter( "(float (ursine::SVec3::*)(void) const) &ursine::SVec3::Z" ))
         EditorField(float z, Z, SetZ);
 
-		// Constructors
+        // Constructors
         Meta(Enable)
-		SVec3(void);
-		SVec3(const SVec3 &value);
-		SVec3(const Vec3 &value);
-		explicit SVec3(float value);
-		SVec3(float X, float Y, float Z);
-		SVec3(const Vec2 &value, float Z);
-		explicit SVec3(const SVec4 &value);
-		explicit SVec3(const Vec4 &value);
+        SVec3(void);
+        SVec3(const SVec3 &value);
+        SVec3(const Vec3 &value);
+        explicit SVec3(float value);
+        SVec3(float X, float Y, float Z);
+        SVec3(const Vec2 &value, float Z);
+        explicit SVec3(const SVec4 &value);
+        explicit SVec3(const Vec4 &value);
+
+#ifdef USE_SSE
+
+        explicit SVec3(const SIMDvec &value);
+
+#endif
 
 #if defined(URSINE_GRAPHICS_DIRECTX)
 
-		explicit SVec3(const DirectX::XMFLOAT3 &vec);
+        explicit SVec3(const DirectX::XMFLOAT3 &vec);
 
-		DirectX::XMFLOAT3 ToD3D(void) const;
+        DirectX::XMFLOAT3 ToD3D(void) const;
 
 #endif
 
 #if defined(URSINE_DEPENDENCY_WWise)
 
-		explicit SVec3(const AkVector & vec);
+        explicit SVec3(const AkVector & vec);
 
-		AkVector ToWwise(void) const;
+        AkVector ToWwise(void) const;
 
 #endif
 
 #if defined(URSINE_DEPENDENCY_BulletPhysics)
 
-		explicit SVec3(const btVector3 &vec);
+        explicit SVec3(const btVector3 &vec);
 
-		btVector3 ToBullet(void) const;
+        btVector3 ToBullet(void) const;
 
 #endif
 
-		// Properties
-		static const SVec3 &Zero(void);
-		static const SVec3 &One(void);
-		static const SVec3 &UnitX(void);
-		static const SVec3 &UnitY(void);
-		static const SVec3 &UnitZ(void);
+        // Properties
+        static const SVec3 &Zero(void);
+        static const SVec3 &One(void);
+        static const SVec3 &UnitX(void);
+        static const SVec3 &UnitY(void);
+        static const SVec3 &UnitZ(void);
 
-		// Public Methods
-		void Clean(void); // sets all near zero elements to zero
+        // Public Methods
+        void Clean(void); // sets all near zero elements to zero
 
-		void Set(float X, float Y, float Z);
+        void Set(float X, float Y, float Z);
 
-		void Clamp(const SVec3 &min, const SVec3 &max);
-		static SVec3 Clamp(const SVec3 &value, const SVec3 &min, const SVec3 &max);
+        void Clamp(const SVec3 &min, const SVec3 &max);
+        static SVec3 Clamp(const SVec3 &value, const SVec3 &min, const SVec3 &max);
 
-		void Cross(const SVec3 &other);
-		static SVec3 Cross(const SVec3 &vec1, const SVec3 &vec2);
+        void Cross(const SVec3 &other);
+        static SVec3 Cross(const SVec3 &vec1, const SVec3 &vec2);
 
-		static float TripleProduct(const SVec3 &a, const SVec3 &b, const SVec3 &c);
+        static float TripleProduct(const SVec3 &a, const SVec3 &b, const SVec3 &c);
 
-		float Distance(const SVec3 &other) const;
-		static float Distance(const SVec3 &vec1, const SVec3 &vec2);
+        float Distance(const SVec3 &other) const;
+        static float Distance(const SVec3 &vec1, const SVec3 &vec2);
 
-		float DistanceSquared(const SVec3 &other) const;
-		static float DistanceSquared(const SVec3 &vec1, const SVec3 &vec2);
+        float DistanceSquared(const SVec3 &other) const;
+        static float DistanceSquared(const SVec3 &vec1, const SVec3 &vec2);
 
-		float Dot(const SVec3 &other) const;
-		static float Dot(const SVec3 &vec1, const SVec3 &vec2);
+        float Dot(const SVec3 &other) const;
+        static float Dot(const SVec3 &vec1, const SVec3 &vec2);
 
-		float Length(void) const;
-		static float Length(const SVec3 &vec);
+        float Length(void) const;
+        static float Length(const SVec3 &vec);
 
-		float LengthSquared(void) const;
-		static float LengthSquared(const SVec3 &vec);
+        float LengthSquared(void) const;
+        static float LengthSquared(const SVec3 &vec);
 
-		void Max(const SVec3 &other);
-		static SVec3 Max(const SVec3 &vec1, const SVec3 &vec2);
+        void Max(const SVec3 &other);
+        static SVec3 Max(const SVec3 &vec1, const SVec3 &vec2);
 
-		void Min(const SVec3 &other);
-		static SVec3 Min(const SVec3 &vec1, const SVec3 &vec2);
+        void Min(const SVec3 &other);
+        static SVec3 Min(const SVec3 &vec1, const SVec3 &vec2);
 
-		void Normalize(void);
-		static SVec3 Normalize(const SVec3 &vec);
+        void Normalize(void);
+        static SVec3 Normalize(const SVec3 &vec);
 
-		static void Orthonormalize(SVec3 &vec1, SVec3 &vec2, SVec3 &vec3);
+        static void Orthonormalize(SVec3 &vec1, SVec3 &vec2, SVec3 &vec3);
 
-		void Reflect(const SVec3 &normal);
-		static SVec3 Reflect(const SVec3 &vec, const SVec3 &normal);
+        void Reflect(const SVec3 &normal);
+        static SVec3 Reflect(const SVec3 &vec, const SVec3 &normal);
 
         void GenerateOrthogonalVectors(SVec3 &u, SVec3 &v);
         static void GenerateOrthogonalVectors(const SVec3 &inputVec, SVec3 &u, SVec3 &v);
 
-		// This vector must be normalized
-		void ProjectToNorm(const SVec3 &normal);
+        // This vector must be normalized
+        void ProjectToNorm(const SVec3 &normal);
 
-		// Vector must be normalized
-		static SVec3 ProjectToNorm(const SVec3 &vec, const SVec3 &normal);
+        // Vector must be normalized
+        static SVec3 ProjectToNorm(const SVec3 &vec, const SVec3 &normal);
 
-		std::string ToString(void) const;
+        std::string ToString(void) const;
 
-		// Accessors
-		float X(void) const;
-		float Y(void) const;
-		float Z(void) const;
+        // Accessors
+        float X(void) const;
+        float Y(void) const;
+        float Z(void) const;
 
-		float &X(void);
-		float &Y(void);
-		float &Z(void);
+        float &X(void);
+        float &Y(void);
+        float &Z(void);
 
         void SetX(float x);
         void SetY(float y);
         void SetZ(float z);
 
-		float operator[](uint index) const;
-		float &operator[](uint index);
+        float operator[](uint index) const;
+        float &operator[](uint index);
 
-		const float *GetFloatPtr(void) const;
+        const float *GetFloatPtr(void) const;
 
-		// Operators
-		bool operator==(const SVec3 &rhs) const;
-		bool operator!=(const SVec3 &rhs) const;
-		SVec3 operator+(const SVec3 &rhs) const;
-		SVec3 operator-(void) const;
-		SVec3 operator-(const SVec3 &rhs) const;
-		SVec3 operator*(const SVec3 &rhs) const;
-		SVec3 operator*(float rhs) const;
-		friend SVec3 operator*(float lhs, const SVec3 &rhs);
-		SVec3 operator/(const SVec3 &rhs) const;
-		SVec3 operator/(float rhs) const;
-		const SVec3 &operator=(const SVec3 &rhs);
-		const SVec3 &operator+=(const SVec3 &rhs);
-		const SVec3 &operator-=(const SVec3 &rhs);
-		const SVec3 &operator*=(const SVec3 &rhs);
-		const SVec3 &operator*=(float rhs);
-		const SVec3 &operator/=(const SVec3 &rhs);
-		const SVec3 &operator/=(float rhs);
+        // Operators
+        bool operator==(const SVec3 &rhs) const;
+        bool operator!=(const SVec3 &rhs) const;
+        SVec3 operator+(const SVec3 &rhs) const;
+        SVec3 operator-(void) const;
+        SVec3 operator-(const SVec3 &rhs) const;
+        SVec3 operator*(const SVec3 &rhs) const;
+        SVec3 operator*(float rhs) const;
+        friend SVec3 operator*(float lhs, const SVec3 &rhs);
+        SVec3 operator/(const SVec3 &rhs) const;
+        SVec3 operator/(float rhs) const;
+        const SVec3 &operator=(const SVec3 &rhs);
+        const SVec3 &operator+=(const SVec3 &rhs);
+        const SVec3 &operator-=(const SVec3 &rhs);
+        const SVec3 &operator*=(const SVec3 &rhs);
+        const SVec3 &operator*=(float rhs);
+        const SVec3 &operator/=(const SVec3 &rhs);
+        const SVec3 &operator/=(float rhs);
 
-		ALLOW_ALIGNED_ALLOC(16);
+        ALLOW_ALIGNED_ALLOC(16);
 
-	private:
+    private:
 
 #ifdef USE_SSE
 
-		union
-		{
-			SIMDvec m_128;
+        union
+        {
+            SIMDvec m_128;
 
-			struct
-			{
-				float m_x, m_y, m_z, m_w;
-			};
-		};
-
-		explicit SVec3(const SIMDvec &value);
+            struct
+            {
+                float m_x, m_y, m_z, m_w;
+            };
+        };
 
 #else
 
-		float m_x, m_y, m_z;
+        float m_x, m_y, m_z;
 
 #endif
 
-	} Meta(Enable, EnableArrayType, WhiteListMethods);
+    } Meta(Enable, EnableArrayType, WhiteListMethods);
 }
 
 #include "SVec3.hpp"

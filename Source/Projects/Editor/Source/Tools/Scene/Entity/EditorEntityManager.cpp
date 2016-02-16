@@ -91,7 +91,7 @@ void EditorEntityManager::SetWorld(ecs::World *world)
 
 void EditorEntityManager::RelayUIResetWorld(void)
 {
-	Json data;
+    Json data;
 
     m_project->GetUI( )->Message(
         UI_CMD_BROADCAST, 
@@ -200,8 +200,8 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
-	if (args->component == nullptr || args->entity == nullptr)
-		return;
+    if (args->component == nullptr || args->entity == nullptr)
+        return;
 
     auto component = 
         meta::Variant( args->component, meta::variant_policy::WrapObject( ) );
@@ -259,7 +259,7 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
             { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
             { "component", args->component->GetType( ).GetName( ) },
             { "field", args->field },
-			// note: false is to ensure no serialization hooks are called
+            // note: false is to ensure no serialization hooks are called
             { "value", args->value.GetType( ).SerializeJson( args->value, false ) }
         };
 

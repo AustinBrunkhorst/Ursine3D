@@ -13,6 +13,8 @@
 
 #include <FilterSystem.h>
 
+class CameraAnimator;
+
 class CameraAnimatorSystem : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
@@ -24,5 +26,9 @@ public:
 private:
     
     void Process(ursine::ecs::Entity *entity) override;
+
+    void smoothUpdate(CameraAnimator *animator);
+    
+    void linearUpdate(CameraAnimator *aniamtor);
 
 } Meta(Enable, AutoAddEntitySystem);

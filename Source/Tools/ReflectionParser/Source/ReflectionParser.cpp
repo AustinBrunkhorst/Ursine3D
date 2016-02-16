@@ -90,7 +90,7 @@ void ReflectionParser::Parse(void)
 
 #if defined(SYSTEM_INCLUDE_DIRECTORY)
 
-	arguments.emplace_back( "-I" SYSTEM_INCLUDE_DIRECTORY );
+    arguments.emplace_back( "-I" SYSTEM_INCLUDE_DIRECTORY );
 
 #endif
 

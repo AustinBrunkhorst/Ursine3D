@@ -17,6 +17,9 @@
 #include "CameraAnimatorNodeComponent.h"
 
 #include <CameraComponent.h>
+#include <Curves.h>
+#include <SystemManager.h>
+#include <DebugSystem.h>
 
 NATIVE_COMPONENT_DEFINITION( CameraAnimator );
 
@@ -27,15 +30,26 @@ CameraAnimator::CameraAnimator(void)
     : BaseComponent( )
     , m_camera( nullptr )
     , m_playing( false )
+    , m_smoothPath( false )
     , m_index( 0 )
     , m_time( 0.0f )
 {
-
 }
 
 CameraAnimator::~CameraAnimator(void)
 {
+}
 
+bool CameraAnimator::GetSmoothPath(void) const
+{
+    return m_smoothPath;
+}
+
+void CameraAnimator::SetSmoothPath(bool smooth)
+{
+    m_smoothPath = smooth;
+
+    Reset( );
 }
 
 void CameraAnimator::Play(void)
@@ -67,7 +81,7 @@ void CameraAnimator::Reset(void)
     m_nodes.clear( );
 }
 
-void CameraAnimator::updateAnimation(CameraAnimatorNode* node)
+void CameraAnimator::updateAnimation(CameraAnimatorNode *node)
 {
     if (!m_camera || !node)
         return;
@@ -79,7 +93,7 @@ void CameraAnimator::updateAnimation(CameraAnimatorNode* node)
     trans->SetWorldRotation( nodeTrans->GetWorldRotation( ) );
 }
 
-void CameraAnimator::updateAnimation(CameraAnimatorNode* node1, CameraAnimatorNode* node2, float t)
+void CameraAnimator::updateAnimation(CameraAnimatorNode *node1, CameraAnimatorNode *node2, float t)
 {
     if (!m_camera || !node1 || !node2)
         return;
@@ -96,6 +110,35 @@ void CameraAnimator::updateAnimation(CameraAnimatorNode* node1, CameraAnimatorNo
     trans->SetWorldRotation( 
         node1Trans->GetLocalRotation( )
         .Slerp( node2Trans->GetLocalRotation( ), t )
+    );
+}
+
+void CameraAnimator::updateAnimation(CameraAnimatorNode *node1, CameraAnimatorNode *node2,
+                                     CameraAnimatorNode *node3, CameraAnimatorNode *node4, float t)
+{
+    if (!m_camera || !node1 || !node2 || !node3 || !node4)
+        return;
+
+    auto trans = m_camera->GetOwner( )->GetTransform( );
+    
+    auto node1Trans = node1->GetOwner( )->GetTransform( );
+    auto node2Trans = node2->GetOwner( )->GetTransform( );
+    auto node3Trans = node3->GetOwner( )->GetTransform( );
+    auto node4Trans = node4->GetOwner( )->GetTransform( );
+
+    trans->SetWorldPosition(
+        ursine::Curves::CatmullRomSpline(
+            node1Trans->GetWorldPosition( ),
+            node2Trans->GetWorldPosition( ),
+            node3Trans->GetWorldPosition( ),
+            node4Trans->GetWorldPosition( ),
+            t
+        )
+    );
+
+    trans->SetWorldRotation( 
+        node2Trans->GetLocalRotation( )
+        .Slerp( node3Trans->GetLocalRotation( ), t )
     );
 }
 
@@ -139,6 +182,50 @@ void CameraAnimator::play(void)
 void CameraAnimator::reset(void)
 {
     Reset( );
+}
+
+void CameraAnimator::drawPath(void)
+{
+    getChildren( );
+
+    auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem( ursine::ecs::DebugSystem );
+
+    if (m_smoothPath)
+    {
+        for (int i = 0; i < m_nodes.size( ) - 1; ++i)
+        {
+            auto node0 = m_nodes[ i ]->GetOwner( )->GetTransform( )->GetWorldPosition( );
+            auto node1 = m_nodes[ i + 1 ]->GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+            auto before = i == 0 ? node0 : m_nodes[ i - 1 ]->GetOwner( )->GetTransform( )->GetWorldPosition( );
+            auto after = i + 2 >= m_nodes.size( ) ? node1 : m_nodes[ i + 2 ]->GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+            static const int precision = 20;
+            float t = 0.0f;
+            float step = 1.0f / precision;
+
+            for (int j = 0; j < precision; ++j)
+            {
+                auto p0 = Curves::CatmullRomSpline( before, node0, node1, after, t );
+
+                t += step;
+
+                auto p1 = Curves::CatmullRomSpline( before, node0, node1, after, t );
+
+                drawer->DrawLine( p0, p1, Color::Yellow, 3.0f );
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < m_nodes.size( ) - 1; ++i)
+        {
+            auto node0 = m_nodes[ i ]->GetOwner( )->GetTransform( )->GetWorldPosition( );
+            auto node1 = m_nodes[ i + 1 ]->GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+            drawer->DrawLine( node0, node1, Color::Yellow, 3.0f );
+        }
+    }
 }
 
 #endif

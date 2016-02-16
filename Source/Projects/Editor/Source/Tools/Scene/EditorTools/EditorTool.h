@@ -19,27 +19,27 @@
 class EditorTool
 {
 public:
-	EditorTool(Editor *editor, ursine::ecs::World *world);
+    EditorTool(Editor *editor, ursine::ecs::World *world);
 
-	virtual void OnEnable(ursine::ecs::EntityUniqueID selected) { }
-	virtual void OnDisable(void) { }
+    virtual void OnEnable(ursine::ecs::EntityUniqueID selected) { }
+    virtual void OnDisable(void) { }
 
-	virtual void OnSelect(ursine::ecs::Entity *selected) { }
-	virtual void OnDeselect(ursine::ecs::Entity *deselected) { }
+    virtual void OnSelect(ursine::ecs::Entity *selected) { }
+    virtual void OnDeselect(ursine::ecs::Entity *deselected) { }
 
-	virtual void OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager) { }
+    virtual void OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager) { }
 
-	virtual void OnMouseDown(const ursine::MouseButtonArgs &args) { }
-	virtual void OnMouseUp(const ursine::MouseButtonArgs &args) { }
+    virtual void OnMouseDown(const ursine::MouseButtonArgs &args) { }
+    virtual void OnMouseUp(const ursine::MouseButtonArgs &args) { }
 
-	virtual void OnMouseMove(const ursine::MouseMoveArgs &args) { }
+    virtual void OnMouseMove(const ursine::MouseMoveArgs &args) { }
 
-	virtual void OnMouseScroll(const ursine::MouseScrollArgs &args) { }
+    virtual void OnMouseScroll(const ursine::MouseScrollArgs &args) { }
 
-	virtual void OnKeyDown(const ursine::KeyboardKeyArgs &args) { }
-	virtual void OnKeyUp(const ursine::KeyboardKeyArgs &args) { }
+    virtual void OnKeyDown(const ursine::KeyboardKeyArgs &args) { }
+    virtual void OnKeyUp(const ursine::KeyboardKeyArgs &args) { }
 
 protected:
-	Editor *m_editor;
-	ursine::ecs::World *m_world;
+    Editor *m_editor;
+    ursine::ecs::World *m_world;
 };

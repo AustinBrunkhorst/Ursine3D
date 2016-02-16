@@ -16,7 +16,7 @@
 #include "LanguageType.h"
 
 LanguageType::LanguageType(
-	const Cursor &cursor, 
+    const Cursor &cursor, 
     const Namespace &currentNamespace
 )
     : m_metaData( cursor )

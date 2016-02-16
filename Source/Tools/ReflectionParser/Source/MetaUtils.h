@@ -24,14 +24,14 @@ namespace utils
     std::string GetQualifiedName(const CursorType &type);
 
     std::string GetQualifiedName(
-    	const std::string &displayName, 
-    	const Namespace &currentNamespace
-	);
+        const std::string &displayName, 
+        const Namespace &currentNamespace
+    );
 
     std::string GetQualifiedName(
-    	const Cursor &cursor, 
-    	const Namespace &currentNamespace
-	);
+        const Cursor &cursor, 
+        const Namespace &currentNamespace
+    );
 
     void LoadText(const std::string &filename, std::string &output);
     void WriteText(const std::string &filename, const std::string &text);

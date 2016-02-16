@@ -25,9 +25,9 @@ public:
     std::string GetNativeString(const std::string &key) const;
 
     void CompileTemplateData(
-    	TemplateData &data, 
-    	const ReflectionParser *context
-	) const;
+        TemplateData &data, 
+        const ReflectionParser *context
+    ) const;
 private:
     typedef std::pair<std::string, std::string> Property;
 
