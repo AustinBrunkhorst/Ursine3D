@@ -19,85 +19,85 @@
 #include <Application.h>
 
 Recording::Recording(void)
-	: m_playbackIndex( 0 )
+    : m_playbackIndex( 0 )
 {
-	
+    
 }
 
 void Recording::InitPlayback(void)
 {
-	m_live.clear( );
-	m_stopQueue.clear( );
-	m_playbackIndex = 0;
+    m_live.clear( );
+    m_stopQueue.clear( );
+    m_playbackIndex = 0;
 }
 
 void Recording::Play(ursine::uint64 timeMarker, ursine::ecs::Entity *receiver)
 {
-	if (receiver == nullptr)
-		return;
+    if (receiver == nullptr)
+        return;
 
-	// go through the stop queue and call stop on all commands
-	for (auto index : m_stopQueue)
-	{
-		m_recording[ index ]->StopExecute( receiver );
-	}
+    // go through the stop queue and call stop on all commands
+    for (auto index : m_stopQueue)
+    {
+        m_recording[ index ]->StopExecute( receiver );
+    }
 
-	m_stopQueue.clear( );
+    m_stopQueue.clear( );
 
-	// check the recording for new commands to add to the live list (setting duration timer to zero)
-	// this is based on the current time in the round based on their start times
-	for (int i = m_playbackIndex; i < m_recording.size( ); ++i)
-	{
-		auto command = m_recording[ i ];
+    // check the recording for new commands to add to the live list (setting duration timer to zero)
+    // this is based on the current time in the round based on their start times
+    for (int i = m_playbackIndex; i < m_recording.size( ); ++i)
+    {
+        auto command = m_recording[ i ];
 
-		// If this command has happened already
-		if (command->GetStartTime( ) <= timeMarker)
-		{
-			// Add it to live list
-			m_live.push_back( i );
+        // If this command has happened already
+        if (command->GetStartTime( ) <= timeMarker)
+        {
+            // Add it to live list
+            m_live.push_back( i );
 
-			// increment the playback index
-			++m_playbackIndex;
-		}
-		else
-		{
-			// Nothing beyond this point will be playing
-			break;
-		}
-	}
+            // increment the playback index
+            ++m_playbackIndex;
+        }
+        else
+        {
+            // Nothing beyond this point will be playing
+            break;
+        }
+    }
 
-	// go through the live list
-	// if the live item's duration is up, remove it
-	// else, call preexecute, and pass it to the command queue
-	for (size_t i = 0, n = m_live.size( ); i < n; ++i)
-	{
-		auto command = m_recording[ m_live[ i ] ];
-		auto endTime = command->GetStartTime( ) + command->GetDuration( );
+    // go through the live list
+    // if the live item's duration is up, remove it
+    // else, call preexecute, and pass it to the command queue
+    for (size_t i = 0, n = m_live.size( ); i < n; ++i)
+    {
+        auto command = m_recording[ m_live[ i ] ];
+        auto endTime = command->GetStartTime( ) + command->GetDuration( );
 
-		// call pre execute and pass it to the command queue
-		command->RecordedExecutionPrep( receiver, timeMarker );
+        // call pre execute and pass it to the command queue
+        command->RecordedExecutionPrep( receiver, timeMarker );
 
-		auto commandQueue = receiver->GetComponent<CommandQueue>();
+        auto commandQueue = receiver->GetComponent<CommandQueue>();
 
-		UAssert( commandQueue != nullptr, "Error: The receiver must have a PlayerCommandQueue component attached to it." );
-		
-		commandQueue->AddCommand( command );
+        UAssert( commandQueue != nullptr, "Error: The receiver must have a PlayerCommandQueue component attached to it." );
+        
+        commandQueue->AddCommand( command );
 
-		// If this command is finished, remove it
-		if (timeMarker >= endTime)
-		{
-			m_stopQueue.push_back( m_live[ i ] );
-			m_live.erase( m_live.begin( ) + i );
+        // If this command is finished, remove it
+        if (timeMarker >= endTime)
+        {
+            m_stopQueue.push_back( m_live[ i ] );
+            m_live.erase( m_live.begin( ) + i );
 
-			--i;
-			--n;
-		}
-	}
+            --i;
+            --n;
+        }
+    }
 }
 
 void Recording::Record(ursine::uint64 roundTime, RecordableCommandPtr command, ursine::ecs::Entity *receiver)
 {
-	if (receiver == nullptr)
+    if (receiver == nullptr)
         return;
 
     // check to see if the command is in the live list
@@ -105,17 +105,17 @@ void Recording::Record(ursine::uint64 roundTime, RecordableCommandPtr command, u
                 
     for (auto recordableCommand : m_live)
     {
-		auto &currentCommand = m_recording[ recordableCommand ];
+        auto &currentCommand = m_recording[ recordableCommand ];
         auto liveType = currentCommand->GetTypeID( );
 
         // If it's already in the live list
         if (newType == liveType)
         {
             // Update the duration
-			currentCommand->SetDuration( roundTime - static_cast<ursine::uint64>( currentCommand->GetStartTime( ) ) );
+            currentCommand->SetDuration( roundTime - static_cast<ursine::uint64>( currentCommand->GetStartTime( ) ) );
                         
             // Call the record function
-			currentCommand->Record( receiver, roundTime );
+            currentCommand->Record( receiver, roundTime );
 
             return;
         }
@@ -139,13 +139,13 @@ void Recording::Record(ursine::uint64 roundTime, RecordableCommandPtr command, u
 
 void Recording::UpdateRecording(ursine::uint64 roundTime, ursine::ecs::Entity *receiver)
 {
-	if (receiver == nullptr)
+    if (receiver == nullptr)
         return;
 
     // go through the stop queue and call stop on all commands
     for (auto recordableCommand : m_stopQueue)
     {
-		auto command = m_recording[ recordableCommand ];
+        auto command = m_recording[ recordableCommand ];
         command->StopExecute( receiver );
     }
 

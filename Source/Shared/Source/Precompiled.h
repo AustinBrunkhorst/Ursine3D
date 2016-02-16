@@ -59,6 +59,8 @@
 
 #include <UrsineMath.h>
 
+#include <Array.h>
+
 #include <TimeSpan.h>
 
 #include <TweenID.h>

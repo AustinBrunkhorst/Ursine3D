@@ -17,35 +17,35 @@
 
 class CameraAnimatorNode : public ursine::ecs::Component
 {
-	NATIVE_COMPONENT;
+    NATIVE_COMPONENT;
 
-	friend class CameraAnimator;
+    friend class CameraAnimator;
 
 public:
-	EditorField(
-		float transitionToTime,
-		GetTransitionToTime,
-		SetTransitionToTime
-	);
+    EditorField(
+        float transitionToTime,
+        GetTransitionToTime,
+        SetTransitionToTime
+    );
 
-	EditorField(
-		int order,
-		GetOrder,
-		SetOrder
-	);
+    EditorField(
+        int order,
+        GetOrder,
+        SetOrder
+    );
 
-	CameraAnimatorNode(void);
+    CameraAnimatorNode(void);
 
-	float GetTransitionToTime(void) const;
-	void SetTransitionToTime(float seconds);
+    float GetTransitionToTime(void) const;
+    void SetTransitionToTime(float seconds);
 
-	int GetOrder(void) const;
-	void SetOrder(int order);
+    int GetOrder(void) const;
+    void SetOrder(int order);
 
 private:
-	
-	float m_transitionSeconds;
+    
+    float m_transitionSeconds;
 
-	int m_order;
+    int m_order;
 
 } Meta(Enable);

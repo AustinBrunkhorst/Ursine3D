@@ -17,163 +17,163 @@ class SpawnPattern
 {
 public:
 
-	EditorField(
-		bool active,
-		GetActive,
-		SetActive
-	);
+    EditorField(
+        bool active,
+        GetActive,
+        SetActive
+    );
 
-	EditorField(
-		int totalEnemies,
-		GetTotalEnemies,
-		SetTotalEnemies
-	);
+    EditorField(
+        int totalEnemies,
+        GetTotalEnemies,
+        SetTotalEnemies
+    );
 
-	EditorField(
-		int maxNumberOfEnemies,
-		GetMaxNumberOfEnemies,
-		SetMaxNumberOfEnemies		
-	);
+    EditorField(
+        int maxNumberOfEnemies,
+        GetMaxNumberOfEnemies,
+        SetMaxNumberOfEnemies        
+    );
 
-	EditorField(
-		int minNumberOfEnemies,
-		GetMinNumberOfEnemies,
-		SetMinNumberOfEnemies
-	);
+    EditorField(
+        int minNumberOfEnemies,
+        GetMinNumberOfEnemies,
+        SetMinNumberOfEnemies
+    );
 
-	EditorField(
-		float singleSpawnCooldown,
-		GetSingleSpawnCooldown,
-		SetSingleSpawnCooldown
-	);
+    EditorField(
+        float singleSpawnCooldown,
+        GetSingleSpawnCooldown,
+        SetSingleSpawnCooldown
+    );
 
-	EditorField(
-		bool triggerNextPattern,
-		GetTriggerNextPattern,
-		SetTriggerNextPattern
-	);
+    EditorField(
+        bool triggerNextPattern,
+        GetTriggerNextPattern,
+        SetTriggerNextPattern
+    );
 
-	EditorField(
-		bool loopPattern,
-		GetLoopPattern,
-		SetLoopPattern
-	);
+    EditorField(
+        bool loopPattern,
+        GetLoopPattern,
+        SetLoopPattern
+    );
 
-	// Send Level - Event[checkbox w / field] – when active, the specified 
-	// level-event will be triggered when the pattern ends
-	/*TODO: EditorField(
-		LevelEvent endingLevelEvent,
-		GetEndingLevelEvent,
-		SetEndingLevelEvent
-	);*/
+    // Send Level - Event[checkbox w / field] – when active, the specified 
+    // level-event will be triggered when the pattern ends
+    /*TODO: EditorField(
+        LevelEvent endingLevelEvent,
+        GetEndingLevelEvent,
+        SetEndingLevelEvent
+    );*/
 
-	EditorField(
-		float spawnDuration,
-		GetSpawnDuration,
-		SetSpawnDuration
-	);
+    EditorField(
+        float spawnDuration,
+        GetSpawnDuration,
+        SetSpawnDuration
+    );
 
-	EditorField(
-		float spawnerBreakTime,
-		GetSpawnerBreakTime,
-		SetSpawnerBreakTime
-	);
+    EditorField(
+        float spawnerBreakTime,
+        GetSpawnerBreakTime,
+        SetSpawnerBreakTime
+    );
 
-	EditorField(
-		float spawnDistanceVariance,
-		GetSpawnDistanceVariance,
-		SetSpawnDistanceVariance
-	);
+    EditorField(
+        float spawnDistanceVariance,
+        GetSpawnDistanceVariance,
+        SetSpawnDistanceVariance
+    );
 
-	EditorField(
-		ursine::SVec3 direction,
-		GetSpawnDirection,
-		SetSpawnDirection
-	);
+    EditorField(
+        ursine::SVec3 direction,
+        GetSpawnDirection,
+        SetSpawnDirection
+    );
 
-	Meta(InputRange(0.0f, 360.0f, 0.1f))
-	EditorField(
-		float spawnAngleVariance,
-		GetSpawnAngleVariance,
-		SetSpawnAngleVariance
-	);
+    Meta(InputRange(0.0f, 360.0f, 0.1f))
+    EditorField(
+        float spawnAngleVariance,
+        GetSpawnAngleVariance,
+        SetSpawnAngleVariance
+    );
 
-	SpawnPattern(void);
+    SpawnPattern(void);
 
-	bool GetActive(void) const;
-	void SetActive(bool active);
+    bool GetActive(void) const;
+    void SetActive(bool active);
 
-	int GetTotalEnemies(void) const;
-	void SetTotalEnemies(bool total);
+    int GetTotalEnemies(void) const;
+    void SetTotalEnemies(int total);
 
-	int GetMaxNumberOfEnemies(void) const;
-	void SetMaxNumberOfEnemies(int max);
+    int GetMaxNumberOfEnemies(void) const;
+    void SetMaxNumberOfEnemies(int max);
 
-	int GetMinNumberOfEnemies(void) const;
-	void SetMinNumberOfEnemies(int min);
+    int GetMinNumberOfEnemies(void) const;
+    void SetMinNumberOfEnemies(int min);
 
-	float GetSingleSpawnCooldown(void) const;
-	void SetSingleSpawnCooldown(float cooldown);
+    float GetSingleSpawnCooldown(void) const;
+    void SetSingleSpawnCooldown(float cooldown);
 
-	bool GetTriggerNextPattern(void) const;
-	void SetTriggerNextPattern(bool flag);
+    bool GetTriggerNextPattern(void) const;
+    void SetTriggerNextPattern(bool flag);
 
-	bool GetLoopPattern(void) const;
-	void SetLoopPattern(bool loop);
+    bool GetLoopPattern(void) const;
+    void SetLoopPattern(bool loop);
 
-	float GetSpawnDuration(void) const;
-	void SetSpawnDuration(float duration);
+    float GetSpawnDuration(void) const;
+    void SetSpawnDuration(float duration);
 
-	float GetSpawnerBreakTime(void) const;
-	void SetSpawnerBreakTime(float breakTime);
+    float GetSpawnerBreakTime(void) const;
+    void SetSpawnerBreakTime(float breakTime);
 
-	float GetSpawnDistanceVariance(void) const;
-	void SetSpawnDistanceVariance(float variance);
+    float GetSpawnDistanceVariance(void) const;
+    void SetSpawnDistanceVariance(float variance);
 
-	const ursine::SVec3 &GetSpawnDirection(void) const;
-	void SetSpawnDirection(const ursine::SVec3 &direction);
+    const ursine::SVec3 &GetSpawnDirection(void) const;
+    void SetSpawnDirection(const ursine::SVec3 &direction);
 
-	float GetSpawnAngleVariance(void) const;
-	void SetSpawnAngleVariance(float variance);
+    float GetSpawnAngleVariance(void) const;
+    void SetSpawnAngleVariance(float variance);
 
 private:
 
-	// When checked, the pattern will be used by it's spawner
-	bool m_active;
+    // When checked, the pattern will be used by it's spawner
+    bool m_active;
 
-	// The number of enemies to be spawned in this pattern
-	int m_totalEnemies;
+    // The number of enemies to be spawned in this pattern
+    int m_totalEnemies;
 
-	// The maximum number of enemies which can be active at once
-	int m_maxNumberOfEnemies;
+    // The maximum number of enemies which can be active at once
+    int m_maxNumberOfEnemies;
 
-	// The minimum number of enemies which can be active at once
-	int m_minNumberOfEnemies;
+    // The minimum number of enemies which can be active at once
+    int m_minNumberOfEnemies;
 
-	// The cooldown time after spawning a single enemy
-	int m_singleSpawnCooldown;
+    // The cooldown time after spawning a single enemy
+    float m_singleSpawnCooldown;
 
-	// Whether this pattern ending automatically causes the next 
-	// pattern for the same sub-level event to begin
-	bool m_triggerNextPattern;
+    // Whether this pattern ending automatically causes the next 
+    // pattern for the same sub-level event to begin
+    bool m_triggerNextPattern;
 
-	// When checked, this pattern will restart when it ends
-	bool m_loopPattern;
+    // When checked, this pattern will restart when it ends
+    bool m_loopPattern;
 
-	// The duration for which this pattern lasts
-	float m_spawnDuration;
+    // The duration for which this pattern lasts
+    float m_spawnDuration;
 
-	// The amount of time the spawner pauses for after the pattern ends
-	float m_spawnerBreakTime;
+    // The amount of time the spawner pauses for after the pattern ends
+    float m_spawnerBreakTime;
 
-	// The distance from the spawner this pattern spawns
-	float m_spawnerDistanceVariance;
+    // The distance from the spawner this pattern spawns
+    float m_spawnerDistanceVariance;
 
-	// The direction this pattern will spawn in
-	ursine::SVec3 m_spawnDirection;
+    // The direction this pattern will spawn in
+    ursine::SVec3 m_spawnDirection;
 
-	// The variance in degrees which the direction can be rancomized
-	// from it's set value (above)
-	float m_spawnAngleVariance;
+    // The variance in degrees which the direction can be rancomized
+    // from it's set value (above)
+    float m_spawnAngleVariance;
 
 } Meta(Enable, EnableArrayType);

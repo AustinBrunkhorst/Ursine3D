@@ -77,3 +77,11 @@
 #include "Components/CameraAnimation/CameraAnimatorComponent.h"
 #include "Components/CameraAnimation/CameraAnimatorNodeComponent.h"
 
+
+/////////////////////////////////
+////     Spawning System     ////
+/////////////////////////////////
+
+#include "Components/SpawnerSystem/SpawnerGroupComponent.h"
+#include "Components/SpawnerSystem/SpawnerComponent.h"
+#include "Components/SpawnerSystem/SpawnPatternContainerComponent.h"

@@ -24,11 +24,11 @@ using namespace ursine;
 using namespace ecs;
 
 CameraAnimator::CameraAnimator(void)
-	: BaseComponent( )
-	, m_camera( nullptr )
-	, m_playing( false )
-	, m_index( 0 )
-	, m_time( 0.0f )
+    : BaseComponent( )
+    , m_camera( nullptr )
+    , m_playing( false )
+    , m_index( 0 )
+    , m_time( 0.0f )
 {
 
 }
@@ -40,105 +40,105 @@ CameraAnimator::~CameraAnimator(void)
 
 void CameraAnimator::Play(void)
 {
-	m_playing = true;
-	m_time = 0.0f;
-	m_index = 0;
+    m_playing = true;
+    m_time = 0.0f;
+    m_index = 0;
 
-	getChildren( );
-	m_camera = GetOwner( )->GetComponentInChildren<Camera>( );
+    getChildren( );
+    m_camera = GetOwner( )->GetComponentInChildren<Camera>( );
 
-	enableDeletionNodes( false );
+    enableDeletionNodes( false );
 }
 
 void CameraAnimator::Reset(void)
 {
-	m_index = 0;
-	m_playing = false;
-	m_time = 0.0f;
+    m_index = 0;
+    m_playing = false;
+    m_time = 0.0f;
 
-	getChildren( );
-	m_camera = GetOwner( )->GetComponentInChildren<Camera>( );
+    getChildren( );
+    m_camera = GetOwner( )->GetComponentInChildren<Camera>( );
 
-	if (m_nodes.size( ))
-		updateAnimation( m_nodes[ 0 ] );
+    if (m_nodes.size( ))
+        updateAnimation( m_nodes[ 0 ] );
 
-	enableDeletionNodes( true );
+    enableDeletionNodes( true );
 
-	m_nodes.clear( );
+    m_nodes.clear( );
 }
 
 void CameraAnimator::updateAnimation(CameraAnimatorNode* node)
 {
-	if (!m_camera || !node)
-		return;
+    if (!m_camera || !node)
+        return;
 
-	auto trans = m_camera->GetOwner( )->GetTransform( );
-	auto nodeTrans = node->GetOwner( )->GetTransform( );
+    auto trans = m_camera->GetOwner( )->GetTransform( );
+    auto nodeTrans = node->GetOwner( )->GetTransform( );
 
-	trans->SetWorldPosition( nodeTrans->GetWorldPosition( ) );
-	trans->SetWorldRotation( nodeTrans->GetWorldRotation( ) );
+    trans->SetWorldPosition( nodeTrans->GetWorldPosition( ) );
+    trans->SetWorldRotation( nodeTrans->GetWorldRotation( ) );
 }
 
 void CameraAnimator::updateAnimation(CameraAnimatorNode* node1, CameraAnimatorNode* node2, float t)
 {
-	if (!m_camera || !node1 || !node2)
-		return;
+    if (!m_camera || !node1 || !node2)
+        return;
 
-	auto trans = m_camera->GetOwner( )->GetTransform( );
-	auto node1Trans = node1->GetOwner( )->GetTransform( );
-	auto node2Trans = node2->GetOwner( )->GetTransform( );
+    auto trans = m_camera->GetOwner( )->GetTransform( );
+    auto node1Trans = node1->GetOwner( )->GetTransform( );
+    auto node2Trans = node2->GetOwner( )->GetTransform( );
 
-	trans->SetWorldPosition(
-		(1.0f - t) * node1Trans->GetWorldPosition( ) +
-		t * node2Trans->GetWorldPosition( )
-	);
+    trans->SetWorldPosition(
+        (1.0f - t) * node1Trans->GetWorldPosition( ) +
+        t * node2Trans->GetWorldPosition( )
+    );
 
-	trans->SetWorldRotation( 
-		node1Trans->GetLocalRotation( )
-		.Slerp( node2Trans->GetLocalRotation( ), t )
-	);
+    trans->SetWorldRotation( 
+        node1Trans->GetLocalRotation( )
+        .Slerp( node2Trans->GetLocalRotation( ), t )
+    );
 }
 
 void CameraAnimator::enableDeletionNodes(bool flag)
 {
-	for (auto *node : m_nodes)
-	{
-		node->GetOwner( )->EnableDeletion( flag );
-	}
+    for (auto *node : m_nodes)
+    {
+        node->GetOwner( )->EnableDeletion( flag );
+    }
 }
 
 void CameraAnimator::getChildren(void)
 {
-	auto nodes = GetOwner( )->GetComponentsInChildren<CameraAnimatorNode>( );
+    auto nodes = GetOwner( )->GetComponentsInChildren<CameraAnimatorNode>( );
 
-	m_nodes.clear( );
+    m_nodes.clear( );
 
-	for (auto node : nodes)
-	{
-		int i = 0;
-		bool found = false;
+    for (auto node : nodes)
+    {
+        int i = 0;
+        bool found = false;
 
-		for (; found == false && i < m_nodes.size( ); ++i)
-			if (m_nodes[ i ]->m_order > node->m_order)
-			{
-				found = true;
-				--i;
-			}
+        for (; found == false && i < m_nodes.size( ); ++i)
+            if (m_nodes[ i ]->m_order > node->m_order)
+            {
+                found = true;
+                --i;
+            }
 
-		m_nodes.insert( m_nodes.begin( ) + i, node );
-	}
+        m_nodes.insert( m_nodes.begin( ) + i, node );
+    }
 }
 
 #if defined(URSINE_WITH_EDITOR)
 
 void CameraAnimator::play(void)
 {
-	Play( );
+    Play( );
 }
 
 void CameraAnimator::reset(void)
 {
-	Reset( );
+    Reset( );
 }
 
 #endif

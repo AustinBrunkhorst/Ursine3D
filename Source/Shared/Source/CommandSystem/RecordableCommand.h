@@ -23,17 +23,17 @@ public:
     virtual void Record(ursine::ecs::Entity *receiver, const ursine::uint64 time) = 0;
     virtual void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const ursine::uint64 time) = 0;
 
-	virtual ursine::uint GetTypeID(void) = 0;
+    virtual ursine::uint GetTypeID(void) = 0;
 
     float GetStartTime(void) const;
-	void SetStartTime(ursine::uint64 startTime);
+    void SetStartTime(ursine::uint64 startTime);
 
     float GetDuration(void) const;
-	void SetDuration(ursine::uint64 duration);
+    void SetDuration(ursine::uint64 duration);
 
 protected:
     ursine::uint64 m_startTime;
     ursine::uint64 m_duration;
 
-	static ursine::uint GetID(void);
+    static ursine::uint GetID(void);
 };

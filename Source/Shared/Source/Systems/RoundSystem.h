@@ -23,8 +23,8 @@ enum RoundSystemEventType
     ROUND_START,
     // args say what team won
     MATCH_OVER,
-	// args say what player died
-	PLAYER_DIED,
+    // args say what player died
+    PLAYER_DIED,
     // this player took damage
     INPUT_PLAYER_DAMAGE_TAKEN
 };
@@ -40,19 +40,19 @@ public:
     struct RoundEventArgs : ursine::EventArgs
     {
         int team;
-		ursine::ecs::Entity *entity;
+        ursine::ecs::Entity *entity;
 
         RoundEventArgs(int team)
             : team(team)
-			, entity(nullptr){ }
+            , entity(nullptr){ }
 
-		RoundEventArgs(ursine::ecs::Entity *entity)
-			: team(0)
-			, entity(entity) {}
+        RoundEventArgs(ursine::ecs::Entity *entity)
+            : team(0)
+            , entity(entity) {}
 
-		RoundEventArgs(int team, ursine::ecs::Entity *entity)
-			: team(team)
-			, entity(entity) {}
+        RoundEventArgs(int team, ursine::ecs::Entity *entity)
+            : team(team)
+            , entity(entity) {}
     };
 
     RoundSystem(ursine::ecs::World *world);
@@ -62,10 +62,10 @@ public:
     int GetMaxRoundCount(void) const;
     void SetMaxRoundCount(int round);
 
-	void SendPlayerDiedMessage(ursine::ecs::Entity *died);
-	void SendPlayerDamageTaken(ursine::ecs::Entity *damaged);
+    void SendPlayerDiedMessage(ursine::ecs::Entity *died);
+    void SendPlayerDamageTaken(ursine::ecs::Entity *damaged);
 
-	void StartNewRound(int team);
+    void StartNewRound(int team);
 
 private:
     void OnInitialize(void) override;
