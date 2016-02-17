@@ -28,13 +28,13 @@ OpenDoorTrigger::OpenDoorTrigger(void) :
 OpenDoorTrigger::~OpenDoorTrigger(void)
 {
     GetOwner( )->GetWorld( )->Listener(this)
-        .Off(game::AREA_CLEAR, OpenDoorTrigger::OnAreaClear);
+        .Off(game::AREA_CLEAR, &OpenDoorTrigger::OnAreaClear);
 }
 
 void OpenDoorTrigger::OnInitialize(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
-        .On( game::AREA_CLEAR, OpenDoorTrigger::OnAreaClear );
+        .On( game::AREA_CLEAR, &OpenDoorTrigger::OnAreaClear );
 }
 
 void OpenDoorTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
