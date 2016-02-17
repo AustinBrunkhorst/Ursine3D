@@ -67,10 +67,10 @@ namespace ursine
 
             Meta(Enable)
             Waypoint(void);
-			//~Waypoint(void);
+            //~Waypoint(void);
 
             //Meta(Disable)
-			void OnInitialize(void) override;
+            void OnInitialize(void) override;
 
             ////////////////////////////////////////////////////////////////////
             // Editor Variables Get/Set

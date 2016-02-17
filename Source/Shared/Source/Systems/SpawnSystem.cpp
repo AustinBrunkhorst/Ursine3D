@@ -41,21 +41,21 @@ using namespace ecs;
 ENTITY_SYSTEM_DEFINITION( SpawnSystem );
 
 SpawnSystem::SpawnSystem(ursine::ecs::World* world) 
-	: EntitySystem(world)
-	, m_teams({ std::vector<TeamComponent *>(), std::vector<TeamComponent *>() })
+    : EntitySystem(world)
+    , m_teams({ std::vector<TeamComponent *>(), std::vector<TeamComponent *>() })
 {
 }
 
 void SpawnSystem::DespawnTeam(int team)
 {
-	auto &teamVec = m_teams[ team - 1 ];
+    auto &teamVec = m_teams[ team - 1 ];
 
-	for (auto &p : teamVec)
-	{
-		p->GetOwner( )->Delete( );
-	}
+    for (auto &p : teamVec)
+    {
+        p->GetOwner( )->Delete( );
+    }
 
-	teamVec.clear( );
+    teamVec.clear( );
 }
 
 struct doCompare
@@ -78,7 +78,7 @@ void SpawnSystem::OnInitialize(void)
 
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
         .On(ROUND_START, &SpawnSystem::onRoundStart)
-		.On(PLAYER_DIED, &SpawnSystem::onPlayerDied);
+        .On(PLAYER_DIED, &SpawnSystem::onPlayerDied);
 
 }
 
@@ -90,7 +90,7 @@ void SpawnSystem::OnRemove(void)
 
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
         .Off(ROUND_START, &SpawnSystem::onRoundStart)
-		.Off(PLAYER_DIED, &SpawnSystem::onPlayerDied);
+        .Off(PLAYER_DIED, &SpawnSystem::onPlayerDied);
 }
 
 void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
@@ -103,7 +103,7 @@ void SpawnSystem::onComponentAdded(EVENT_HANDLER(ursine::ecs:::World))
 
         int team = teamComp->GetTeamNumber();
 
-		m_teams[ team - 1 ].push_back( teamComp );
+        m_teams[ team - 1 ].push_back( teamComp );
     }
     else if (args->component->Is<Spawnpoint>())
     {
@@ -152,15 +152,15 @@ void SpawnSystem::onComponentRemoved(EVENT_HANDLER(ursine::ecs::World))
 void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
 {
     EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
-	
-	// Iterate through current team players, setting them to alive
-	for (auto playerList : m_teams)
-	{
-		int roundNum = 0;
-		for (auto player : playerList)
-		{
-			// Set health to 100
-			player->SetAlive();
+    
+    // Iterate through current team players, setting them to alive
+    for (auto playerList : m_teams)
+    {
+        int roundNum = 0;
+        for (auto player : playerList)
+        {
+            // Set health to 100
+            player->SetAlive();
 
             player->GetOwner( )->GetComponent<Health>( )->SetHealth( 100.0f );
 
@@ -173,16 +173,16 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
             auto teamColor = player->GetTeamNumber( ) == 1 ? Color::Blue : Color::Red;
             player->GetOwner( )->GetComponentInChildren<ecs::Model3D>( )->SetColor( teamColor );
 
-			auto transform = player->GetOwner( )->GetTransform( );
-			auto spawner = getSpawner( player->GetTeamNumber( ), ++roundNum );
+            auto transform = player->GetOwner( )->GetTransform( );
+            auto spawner = getSpawner( player->GetTeamNumber( ), ++roundNum );
 
-			// Set spawn point
-			transform->GetRoot( )->SetWorldPosition(
-				spawner->GetOwner( )->GetTransform( )->GetWorldPosition( )
-			);
+            // Set spawn point
+            transform->GetRoot( )->SetWorldPosition(
+                spawner->GetOwner( )->GetTransform( )->GetWorldPosition( )
+            );
 
-			// Set spawn rotation
-			transform->SetWorldRotation( SQuat( 0.0f, spawner->GetYRotationDegrees( ), 0.0f ) );
+            // Set spawn rotation
+            transform->SetWorldRotation( SQuat( 0.0f, spawner->GetYRotationDegrees( ), 0.0f ) );
 
             // Add back the rigidbody
             if (!player->GetOwner()->HasComponent<ecs::Rigidbody>())
@@ -198,22 +198,22 @@ void SpawnSystem::onRoundStart(EVENT_HANDLER(RoundSystem))
                 body->SetSleepToggle(false);
                 body->SetAwake();
             }
-		}
-	}
+        }
+    }
 
-	// Add a new player to each team for this current round (this is our current player entity that is the player)
-	SpawnPlayer( 1, args->team );
-	SpawnPlayer( 2, args->team );
+    // Add a new player to each team for this current round (this is our current player entity that is the player)
+    SpawnPlayer( 1, args->team );
+    SpawnPlayer( 2, args->team );
 
-	// Tell the recorder system that the round has started
-	auto recorder = m_world->GetEntitySystem( RecorderSystem );
+    // Tell the recorder system that the round has started
+    auto recorder = m_world->GetEntitySystem( RecorderSystem );
 
-	recorder->SetRoundStart( m_teams );
+    recorder->SetRoundStart( m_teams );
 }
 
 void SpawnSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
 {
-	EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
+    EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
     
     killPlayer( args->entity );
 
@@ -223,39 +223,39 @@ void SpawnSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
     animator->SetPlayerState(PlayerAnimation::Dead);
 
 
-	// see if the round ended due to whole team killed
-	auto team = args->entity->GetComponent<TeamComponent>( );
-	auto &teamVec = m_teams[ team->GetTeamNumber( ) - 1 ];
+    // see if the round ended due to whole team killed
+    auto team = args->entity->GetComponent<TeamComponent>( );
+    auto &teamVec = m_teams[ team->GetTeamNumber( ) - 1 ];
 
-	bool allDead = true;
-	for (auto &p : teamVec)
-	{
-		if (!p->IsDead( ))
-		{
-			allDead = false;
-			break;
-		}
-	}
+    bool allDead = true;
+    for (auto &p : teamVec)
+    {
+        if (!p->IsDead( ))
+        {
+            allDead = false;
+            break;
+        }
+    }
 
-	if (allDead)
-	{
+    if (allDead)
+    {
         // 'Kill' the winning team's main player
         auto winningTeam = team->GetTeamNumber( ) == 1 ? 2 : 1;
 
         killPlayer( m_teams[ winningTeam - 1 ].back( )->GetOwner( ) );
 
-		m_world->GetSystemManager( )->GetSystem<RoundSystem>( )
-			->StartNewRound( team->GetTeamNumber( ) );
-	}
+        m_world->GetSystemManager( )->GetSystem<RoundSystem>( )
+            ->StartNewRound( team->GetTeamNumber( ) );
+    }
 }
 
 void SpawnSystem::killPlayer(ursine::ecs::Entity* entity)
 {
     // set that player to dead
-	entity->GetComponent<TeamComponent>( )->SetDead( );
+    entity->GetComponent<TeamComponent>( )->SetDead( );
 
-	// remove the input component
-	entity->RemoveComponent<PlayerInput>( );
+    // remove the input component
+    entity->RemoveComponent<PlayerInput>( );
 
     // Set the command queue to stop recording
     auto commandQueue = entity->GetComponent<CommandQueue>( );
@@ -314,8 +314,8 @@ void SpawnSystem::SpawnPlayer(int team, int roundNum)
 
     // get spawn position to place the player at and actually spawn the player
     playerTransform->SetWorldPosition(
-		getSpawner(team, roundNum)->GetOwner( )->GetTransform( )->GetWorldPosition( )
-	);
+        getSpawner(team, roundNum)->GetOwner( )->GetTransform( )->GetWorldPosition( )
+    );
 
     // Set him to record
     playerTransform->GetOwner( )->GetComponent<CommandQueue>( )->SetRecording( true );

@@ -14,6 +14,7 @@
 #include "UrsinePrecompiled.h"
 #include "AnimationState.h"
 #include "AnimationBuilder.h"
+#include "Notification.h"
 
 namespace ursine
 {
@@ -73,7 +74,16 @@ namespace ursine
 		
 		Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
 		if (!targetAnimation)
+		{
+			NotificationConfig error;
+
+			error.type = NOTIFY_ERROR;
+			error.header = "Animation Doesn't exist";
+			error.message = "To add animation into the state, animation should exist in the Animation List";
+
+			EditorPostNotification(error);
 			return;
+		}
 
 		m_animation = targetAnimation;
 	}

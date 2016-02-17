@@ -19,13 +19,12 @@
 #include "AnimationState.h"
 #include "AnimationBuilder.h"
 #include "Array.h"
+#include "Model3DComponent.h"
 
 namespace ursine
 {
 	namespace ecs
 	{
-		typedef std::vector<AnimationState> AnimStateStream;
-
 		// not implemented yet
 		class AnimationClip
 		{
@@ -76,18 +75,82 @@ namespace ursine
 			ursine::AnimationState m_animationState;
 		};
 
+		class StateBlender
+		{
+		public:
+			EditorField(
+				std::string currentState,
+				GetcurrState,
+				SetcurrState
+				);
+
+			EditorField(
+				std::string futureState,
+				GetfutState,
+				SetfutState
+				);
+
+			//Slider
+			Meta(InputRange(0.0, 1.0, 0.01, "{{value.toPrecision( 2 )}}"))
+				EditorField(
+					float currtransPos,
+					GetcurrTransPos,
+					SetcurrTransPos
+					);
+
+			Meta(InputRange(0.0, 1.0, 0.01, "{{value.toPrecision( 2 )}}"))
+				EditorField(
+					float futtransPos,
+					GetfutTransPos,
+					SetfutTransPos
+					);
+
+			StateBlender(void);
+
+			const std::string &GetcurrState(void) const;
+			void SetcurrState(const std::string& cstate);
+
+			const std::string &GetfutState(void) const;
+			void SetfutState(const std::string& fstate);
+
+			const float &GetcurrTransPos(void) const;
+			void SetcurrTransPos(const float& tPos);
+
+			const float &GetfutTransPos(void) const;
+			void SetfutTransPos(const float& tPos);
+
+			const StateBlender *GetStateBlenderByNames(const std::string& currst, const std::string& futst);
+
+		private:
+			//name of current state
+			std::string m_currState;
+			//name of future state
+			std::string m_futState;
+			//time position to trans animation
+			float m_currtransPos;
+			float m_futtransPos;
+		} Meta(
+			Enable,
+			EnableArrayType,
+			DisplayName("State Blender"));
+
 		/////////////////////////////////////////////////////////////
 
 		class Animator : public Component
 		{
 			NATIVE_COMPONENT;
 
-		public:			
-			EditorField(
-				std::string stateName,
-				GetStateName,
-				SetStateName
+		public:
+			EditorButton(
+				ImportAnimation,
+				"Import Animation"
 				);
+
+			//EditorField(
+			//	std::string stateName,
+			//	GetStateName,
+			//	SetStateName
+			//	);
 
 			EditorField(
 				std::string currentState,
@@ -102,7 +165,7 @@ namespace ursine
 				);
 
 			EditorField(
-				std::string currentAnimation,
+				std::string animation,
 				GetAnimation,
 				SetAnimation
 				);
@@ -137,7 +200,6 @@ namespace ursine
 				SetTimeScalar
 				);
 
-		public:
 			Animator(void);
 			~Animator(void);
 
@@ -166,8 +228,6 @@ namespace ursine
 			float GetAnimationTimePosition() const;
 			void SetAnimationTimePosition(const float position);
 
-			// Add/Remove State ("State Name (ex Run)", "Asset Name (ex Run@Player.FBX)")
-			// start with adding/removing state
 			const std::string &GetCurrentState(void) const;
 			void SetCurrentState(const std::string &state);
 
@@ -180,15 +240,16 @@ namespace ursine
 			const std::string &GetAnimation(void) const;
 			void SetAnimation(const std::string &name);
 
-			// CrossFade ("State Name", transition time, ...)
-
 			// Array of animation states
-			ursine::Array<ursine::AnimationState> m_stateArray;
+			ursine::Array<ursine::AnimationState> StateArray;
+			// Array of state blender
+			ursine::Array<ursine::ecs::StateBlender> StateBlender;
+
+			static void recursClearChildren(const std::vector< Handle<Transform> > &children);
+			void clearChildren(void);
+			void importAnimation(void);
 
 		private:
-			//std::unordered_map<std::string, AnimationState> m_states;
-			// this will be changed to std::unordered_map<std::string, std::vector<AnimationState> > m_states;
-			// and will do blending not only between states, but inside of the state too.
 			bool m_playing;
 			bool m_looping;
 			bool m_debug;
@@ -198,7 +259,11 @@ namespace ursine
 			std::string m_futureStateName;
 			std::string m_animationName;
 			std::string m_stateName;
+			std::vector<Animation*> m_animlist;
 			
-		} Meta(Enable, DisplayName("Animator"));
+		} Meta(
+			Enable, 
+			RequiresComponents(typeof(ursine::ecs::Model3D)),
+			DisplayName("Animator"));
 	}
 }

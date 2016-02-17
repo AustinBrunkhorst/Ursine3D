@@ -16,7 +16,7 @@
 
 struct CritSpot : ursine::ecs::Component
 {
-	NATIVE_COMPONENT;
+    NATIVE_COMPONENT;
 public:
 
     CritSpot(void);

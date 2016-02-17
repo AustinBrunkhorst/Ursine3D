@@ -21,17 +21,17 @@ namespace ursine
 	{
 	public:
 		EditorField(
-			std::string name,
+			std::string stateName,
 			GetName,
 			SetName
-		);
-		
-		EditorField(
-			float timePosition,
-			GetTimePosition,
-			SetTimePosition
 			);
-		
+
+		//EditorField(
+		//	float timePosition,
+		//	GetTimePosition,
+		//	SetTimePosition
+		//	);
+
 		// how can I add multiple animations in animation state?
 		// how can I use combo box for this?
 		// Array<Animation> => no, in this case, we should edit
@@ -41,7 +41,6 @@ namespace ursine
 			SetAnimationName
 			);
 
-	public:
 		/** @brief constructor
 		*
 		*  @return Void.
@@ -98,6 +97,7 @@ namespace ursine
 	private:
 		//current runtime
 		std::string m_name;
+		//time position to play animation
 		float m_timePos;
 		std::string m_animname;
         //current animation
@@ -105,5 +105,5 @@ namespace ursine
 		////vector for animation name and animation itselfitself
 		//std::vector<std::string> m_animNameVec;
 		//std::vector<Animation> m_animVec;
-	} Meta(Enable, EnableArrayType,  DisplayName( "AnimationState" ));
+	} Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ));
 }

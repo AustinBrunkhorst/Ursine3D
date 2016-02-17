@@ -16,7 +16,7 @@
 
 namespace
 {
-	const std::string kJumpSound = "PLAYER_JUMP";
+    const std::string kJumpSound = "PLAYER_JUMP";
 }
 
 RECORDABLE_COMMAND_DEFINITION( JumpCommand );
@@ -30,10 +30,10 @@ void JumpCommand::Execute(ursine::ecs::Entity* receiver)
 {
     URSINE_TODO("possibly move jump sound out of command");
 
-	auto *emitter = receiver->GetComponent<ursine::ecs::AudioEmitter>();
+    auto *emitter = receiver->GetComponent<ursine::ecs::AudioEmitter>();
 
-	if (emitter)
-		emitter->AddSoundToPlayQueue(kJumpSound);
+    if (emitter)
+        emitter->AddSoundToPlayQueue(kJumpSound);
     
     receiver->Dispatch(game::JUMP_COMMAND, ursine::EventArgs::Empty);
 }

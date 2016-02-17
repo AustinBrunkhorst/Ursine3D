@@ -54,6 +54,7 @@ private:
 
 	ursine::ecs::Component::Handle<ursine::ecs::Model3D> m_axis;
 	ursine::Color m_axisOrigColor;
+    int m_axisType;
 
 	// Whether the user is holding down the snap to grid key or not
 	bool m_snapping;
@@ -82,6 +83,9 @@ private:
 	void enableAxis(void);
 	void disableAxis(void);
 	void updateAxis(void);
+
+    // render axis to screen
+    void renderAxis(void);
 
 	void updateHoverAxis(void);
 	void disableHover(void);

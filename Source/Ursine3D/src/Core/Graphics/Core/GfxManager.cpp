@@ -212,8 +212,8 @@ namespace ursine
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetMaterialslName());
 
                 drawCall.Model_ = modelManager->GetModelIDByName(current->GetModelName());
-                drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
                 drawCall.Overdraw_ = current->GetOverdraw();
+                drawCall.Shader_ = drawCall.Overdraw_ ? SHADER_OVERDRAW_MODEL : SHADER_DEFERRED_DEPTH;
             }
             break;
             case RENDERABLE_BILLBOARD2D:
@@ -429,19 +429,14 @@ namespace ursine
 
             dxCore->StartDebugEvent("GBuffer Pass");
             //render 3d models deferred
-            PrepForBillboard2D(view, proj, currentCamera);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
-                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
-            STAMP("Billboard Rendering");
 
             PrepFor3DModels(view, proj);
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Model Rendering");
-
-
             dxCore->EndDebugEvent();
 
+            /////////////////////////////////////////////////////////
             // LIGHT PASS
             dxCore->StartDebugEvent("Light Pass");
             PrepForLightPass(view, proj, currentCamera);
@@ -464,8 +459,8 @@ namespace ursine
                 RenderDirectionalLight(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Directional Light Rendering");
 
-            // emissive pass
-            // switch to no blending
+            /////////////////////////////////////////////////////////
+            // EMISSIVE
             shaderManager->BindShader(SHADER_EMISSIVE);
 
             // one fullscreen pass
@@ -474,6 +469,7 @@ namespace ursine
             dxCore->EndDebugEvent();
             STAMP("Emissive Pass");
 
+            /////////////////////////////////////////////////////////
             //debug 
             PrepFor3DModels(view, proj); // I don't think gets set properly
 
@@ -486,6 +482,18 @@ namespace ursine
 
             dxCore->EndDebugEvent();
             STAMP("Debug Pass");
+
+            /////////////////////////////////////////////////////////
+            // overdraw pass for weird stuff
+            PrepFor3DModels(view, proj);
+            {
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+
+                while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
+                    Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            }           
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
@@ -523,6 +531,11 @@ namespace ursine
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_PARTICLE )
                 RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Forward Particle Pass");
+
+            PrepForBillboard2D(view, proj, currentCamera);
+            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+            STAMP("Billboard Rendering");
 
             dxCore->EndDebugEvent();
 
@@ -576,11 +589,6 @@ namespace ursine
             int currentIndex = 0;
 
             dxCore->StartDebugEvent("Forward Pass");
-            //render 3d models deferred
-            PrepForBillboard2D(view, proj, currentCamera);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
-                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
-            STAMP("Billboard Rendering");
 
             // rendering models
             PrepFor3DModels(view, proj);
@@ -595,13 +603,12 @@ namespace ursine
                 bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
                 shaderManager->BindShader(SHADER_FORWARD);
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
             }
 
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Model Rendering");
-
-
             dxCore->EndDebugEvent();
 
             // LIGHT PASS
@@ -621,13 +628,22 @@ namespace ursine
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT )
                 currentIndex++;
 
+            /////////////////////////////////////////////////////////
+            // overdraw pass for weird stuff
+            PrepFor3DModels(view, proj);
+            {
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+
+                while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
+                    Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            }
+
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
             dxCore->StartDebugEvent("Final Pass");
             PrepForFinalOutput();
-            dxCore->GetDeviceContext()->PSSetShaderResources(1, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-
 
             dxCore->EndDebugEvent();
             STAMP("Main Screen Pass");
@@ -659,6 +675,12 @@ namespace ursine
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_PARTICLE )
                 RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Forward Particle Pass");
+
+            //render 3d models deferred
+            PrepForBillboard2D(view, proj, currentCamera);
+            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
+                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+            STAMP("Billboard Rendering");
 
             dxCore->EndDebugEvent();
 
@@ -716,12 +738,17 @@ namespace ursine
         // preparing for different stages /////////////////////////////////
         void GfxManager::PrepFor3DModels(const SMat4 &view, const SMat4 &proj)
         {
+            float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+            dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             shaderManager->BindShader(SHADER_DEFERRED_DEPTH);
             layoutManager->SetInputLayout(SHADER_DEFERRED_DEPTH);
 
             //set render type
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
 
             //map the sampler
             textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
@@ -730,6 +757,8 @@ namespace ursine
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
 
             bufferManager->MapCameraBuffer(view, proj);
+
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //TEMP
             URSINE_TODO("Remove this");
@@ -743,7 +772,7 @@ namespace ursine
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //deferred shading
-            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
 
             //set input
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -758,6 +787,8 @@ namespace ursine
             //bind shader 
             shaderManager->BindShader(SHADER_BILLBOARD2D);
             layoutManager->SetInputLayout(SHADER_BILLBOARD2D);
+
+            textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
 
             //set model
             modelManager->BindModel("Sprite");
@@ -977,11 +1008,6 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // map texture
             textureManager->MapTextureByID(handle.Material_);
-
-            if ( handle.Overdraw_ )
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
-            else
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //render
             unsigned count = modelManager->GetModelMeshCount(handle.Model_);
@@ -1330,6 +1356,7 @@ namespace ursine
             pointB.color.x = pl.GetColor().r;
             pointB.color.y = pl.GetColor().g;
             pointB.color.z = pl.GetColor().b;
+            
             bufferManager->MapBuffer<BUFFER_POINT_LIGHT>(&pointB, SHADERTYPE_PIXEL);
 
             //light transform
@@ -1380,11 +1407,12 @@ namespace ursine
             slb.intensity = pl.GetIntensity();
             slb.innerAngle = cosf((pl.GetSpotlightAngles().X() / 2.f) * (3.141596f / 180.0f));   //needs to be in radians
             slb.outerAngle = cosf((pl.GetSpotlightAngles().Y() / 2.f) * (3.141596f / 180.0f));
+            slb.lightSize = pl.GetRadius( );
 
             bufferManager->MapBuffer<BUFFER_SPOTLIGHT>(&slb, SHADERTYPE_PIXEL);
 
             //transform data  
-            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform() * SMat4(SVec3(0, -0.5, 0)));
+            bufferManager->MapTransformBuffer(pl.GetSpotlightTransform() * SMat4(SVec3(0, 0, 0.5f), SQuat(-90.0f, 0.0f, 0.0f), SVec3::One()));
 
             //what culling to use?
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);

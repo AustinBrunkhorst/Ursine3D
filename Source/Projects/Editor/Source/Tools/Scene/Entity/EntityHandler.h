@@ -19,7 +19,7 @@
 
 namespace ursine
 {
-	class Scene;
+    class Scene;
 }
 
 class EntityHandler : public ursine::NativeJSClass
@@ -52,6 +52,7 @@ public:
     JSMethod(componentFieldArrayUpdate);
     JSMethod(componentFieldArrayInsert);
     JSMethod(componentFieldArrayRemove);
+    JSMethod(componentFieldArraySwap);
     JSMethod(componentFieldArrayGetLength);
 
     JSMethod(componentButtonInvoke);
@@ -66,7 +67,7 @@ public:
     JSMethod(clone);
 
 private:
-	ursine::Scene::Handle m_scene;
+    ursine::Scene::Handle m_scene;
     ursine::ecs::EntityUniqueID m_handle;
     
     ursine::ecs::Entity *getEntity(void);  

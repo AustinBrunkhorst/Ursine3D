@@ -59,15 +59,15 @@ namespace ursine
 
             
             virtual void Initialize(void);
-			virtual void Remove(void);
+            virtual void Remove(void);
 
             // Setting the update type must happen before OnInitialize is called
             void SetUpdateType(WorldEventType updateType);
             WorldEventType GetUpdateType(void) const;
 
         private:
-			virtual void OnInitialize(void) override;
-			virtual void OnRemove(void) override;
+            virtual void OnInitialize(void) override;
+            virtual void OnRemove(void) override;
 
             EventHandlerPriority m_updatePriority;
             

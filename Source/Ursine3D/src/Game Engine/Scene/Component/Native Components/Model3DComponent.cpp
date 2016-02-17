@@ -20,6 +20,8 @@
 #include "ConvexDecompColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 #include "Notification.h"
+#include "ModelResource.h"
+#include "LvlHierarchy.h"
 
 namespace ursine
 {

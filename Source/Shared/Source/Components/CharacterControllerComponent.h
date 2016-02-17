@@ -17,10 +17,10 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		class SweptController;
-	}
+    namespace ecs
+    {
+        class SweptController;
+    }
 }
 
 class CharacterController : public ursine::ecs::Component
@@ -63,4 +63,4 @@ private:
     ursine::Vec2 m_lookDir;
 
 } Meta(Enable, DisplayName("CharacterController"), 
-	   RequiresComponents(typeof(ursine::ecs::SweptController)));
+       RequiresComponents(typeof(ursine::ecs::SweptController)));

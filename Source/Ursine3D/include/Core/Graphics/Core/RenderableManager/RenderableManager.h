@@ -40,6 +40,7 @@ namespace ursine
             template<typename T>
             T &GetRenderable(GfxHND handle)
             {
+                UAssert(false, "Tried to get an invalid type!");
                 return T();
             }
 
@@ -87,6 +88,17 @@ namespace ursine
                 return m_renderableParticleSystems[ render->Index_ ];
             }
 
+            template<>
+            SpriteText &GetRenderable<SpriteText>(GfxHND handle)
+            {
+                _RENDERABLEHND *render = HND_RENDER(handle);
+
+                UAssert(render->ID_ == ID_RENDERABLE, "Attempted to get renderable from non-valid handle!");
+                UAssert(render->Type_ == RENDERABLE_SPRITE_TEXT, "Attempted to use invalid handle to get a sprite text!");
+
+                return m_renderableSpriteText[ render->Index_ ];
+            }
+
         private:
             void CacheFrame(void);
 
@@ -102,6 +114,7 @@ namespace ursine
             std::vector<Billboard2D> m_renderableBillboards;
             std::vector<Light> m_renderableLights;
             std::vector<ParticleSystem> m_renderableParticleSystems;
+            std::vector<SpriteText> m_renderableSpriteText;
 
             //all the free handles
             std::vector<std::stack<unsigned>> m_handleList;

@@ -515,9 +515,98 @@ namespace ursine
         {
             return m_worldSpace;
         }
+
         void ParticleSystem::SetSystemSpace(const bool useWorldCoordinates)
         {
             m_worldSpace = useWorldCoordinates;
+        }
+
+        /////////////////////////////////////////////////////////////
+        // SPRITE TEXT //////////////////////////////////////////////
+        SpriteText::SpriteText(void)
+        {
+            Renderable::Initialize();
+            Initialize();
+        }
+
+        void SpriteText::Initialize(void)
+        {
+            m_size = 30.0f;
+            m_widthScalar = m_heightScalar = 1.0f;
+            m_position = SVec3( );
+            m_text = "Sprite Text";
+            m_ppu = 64.f;
+            m_alignment = ALIGN_LEFT;
+        }
+
+        float SpriteText::GetSize(void) const
+        {
+            return m_size;
+        }
+
+        void SpriteText::SetSize(float size)
+        {
+            m_size = size;
+        }
+
+        float SpriteText::GetWidth(void) const
+        {
+            return m_widthScalar;
+        }
+
+        void SpriteText::SetWidth(float size)
+        {
+            m_widthScalar = size;
+        }
+
+        float SpriteText::GetHeight(void) const
+        {
+            return m_heightScalar;
+        }
+
+        void SpriteText::SetHeight(float size)
+        {
+            m_heightScalar = size;
+        }
+
+        const SVec3& SpriteText::GetPosition(void) const
+        {
+            return m_position;
+        }
+
+        void SpriteText::SetPosition(const SVec3& position)
+        {
+            m_position = position;
+        }
+
+        const std::string& SpriteText::GetText(void) const
+        {
+            return m_text;
+        }
+
+        void SpriteText::SetText(const std::string& text)
+        {
+            m_text = text;
+        }
+
+        float SpriteText::GetPPU(void) const
+        {
+            return m_ppu;
+        }
+
+        void SpriteText::SetPPU(float ppu)
+        {
+            m_ppu = ppu;
+        }
+
+        SpriteText::Alignment SpriteText::GetAlignment(void) const
+        {
+            return m_alignment;
+        }
+
+        void SpriteText::SetAlignment(Alignment alignment)
+        {
+            m_alignment = alignment;
         }
     }
 }

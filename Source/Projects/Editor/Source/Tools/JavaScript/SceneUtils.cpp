@@ -123,7 +123,7 @@ JSFunction(SceneSave)
 
 JSFunction(ScenePlayStart)
 {
-    Timer::Create( 0 ).Completed( [] {
+    Application::Instance->ExecuteOnMainThread( [] {
         auto *editor = GetCoreSystem( Editor );
 
         editor->GetProject( )->SetPlayState( PS_PLAYING );
@@ -139,8 +139,8 @@ JSFunction(SceneSetPlayState)
 
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
-    Timer::Create( 0 ).Completed( [=] {
-    auto *editor = GetCoreSystem( Editor );
+    Application::Instance->ExecuteOnMainThread( [=] {
+		auto *editor = GetCoreSystem( Editor );
 
         editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
     } );
@@ -150,10 +150,10 @@ JSFunction(SceneSetPlayState)
 
 JSFunction(SceneStep)
 {
-     Timer::Create( 0 ).Completed( [=] {
-    auto *editor = GetCoreSystem( Editor );
+    Application::Instance->ExecuteOnMainThread( [=] {
+		auto *editor = GetCoreSystem( Editor );
 
-    editor->GetProject( )->GetScene( )->Step( );
+		editor->GetProject( )->GetScene( )->Step( );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -161,7 +161,7 @@ JSFunction(SceneStep)
 
 JSFunction(ScenePlayStop)
 {
-    Timer::Create( 0 ).Completed( [] {
+    Application::Instance->ExecuteOnMainThread( [] {
         auto *editor = GetCoreSystem( Editor );
 
         editor->GetProject( )->SetPlayState( PS_EDITOR );
@@ -203,10 +203,11 @@ namespace
 
         try
         {
-			Timer::Create(0).Completed( [=] {
 				ecs::WorldSerializer serializer;
+
 				auto world = serializer.Deserialize( file );
 
+            Application::Instance->ExecuteOnMainThread( [=] {
                 URSINE_TODO( "this is hacky and weirdly placed" );
                 world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
 

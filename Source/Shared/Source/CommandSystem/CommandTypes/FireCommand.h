@@ -15,7 +15,7 @@
 class FireCommand
     : public RecordableCommand
 {
-	RECORDABLE_COMMAND;
+    RECORDABLE_COMMAND;
 
 public:
     FireCommand(void);

@@ -63,6 +63,7 @@ namespace ursine
                 void SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view);
 
                 void SetDeferredTargets(ID3D11DepthStencilView *view);
+                void SetForwardTargets(ID3D11DepthStencilView *view);
 
                 RENDER_TARGETS CreateRT(const unsigned width, const unsigned height);
                 void DestroyRT(RENDER_TARGETS rt);
@@ -86,6 +87,9 @@ namespace ursine
                 ID3D11RenderTargetView **m_deferredRenderTargetView;
                 ID3D11ShaderResourceView **m_deferredShaderMap;
                 ID3D11Texture2D **m_deferredTextureMap;
+
+                // forward rendering
+                ID3D11RenderTargetView **m_forwardRenderTargetView;
 
                 //what target am I on?
                 RENDER_TARGETS m_currentTarget;

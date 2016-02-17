@@ -18,7 +18,7 @@
 
 class PlayerInput : public ursine::ecs::Component
 {
-	NATIVE_COMPONENT;
+    NATIVE_COMPONENT;
 
 public:
     PlayerInput(void);

@@ -274,5 +274,59 @@ namespace ursine
             bool m_useAdditive;
             bool m_worldSpace;
         };
+
+        /////////////////////////////////////////////////////////////
+        // SPRITE TEXT //////////////////////////////////////////////
+        class SpriteText : public Renderable
+        {
+        public:
+            enum Alignment
+            {
+                ALIGN_LEFT,
+                ALIGN_CENTER,
+                ALIGN_RIGHT,
+
+                ALIGN_COUNT
+            };
+
+        public:
+            SpriteText(void);
+            void Initialize(void);
+
+            float GetSize(void) const;
+            void SetSize(float size);
+
+            float GetWidth(void) const;
+            void SetWidth(float size);
+
+            float GetHeight(void) const;
+            void SetHeight(float size);
+
+            const SVec3 &GetPosition(void) const;
+            void SetPosition(const SVec3 &position);
+
+            const std::string &GetText(void) const;
+            void SetText(const std::string &text);
+
+            float GetPPU(void) const;
+            void SetPPU(float ppu);
+
+            Alignment GetAlignment(void) const;
+            void SetAlignment(Alignment alignment);
+
+        private:
+            float m_size;
+
+            float m_widthScalar;
+            float m_heightScalar;
+
+            SVec3 m_position;
+
+            std::string m_text;
+
+            float m_ppu;
+
+            Alignment m_alignment;
+        };
     }
 }

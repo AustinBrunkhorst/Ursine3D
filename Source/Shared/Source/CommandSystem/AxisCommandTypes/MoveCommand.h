@@ -15,7 +15,7 @@
 class MoveCommand
     : public RecordableAxisCommand
 {
-	RECORDABLE_COMMAND;
+    RECORDABLE_COMMAND;
 
 public:
     MoveCommand();

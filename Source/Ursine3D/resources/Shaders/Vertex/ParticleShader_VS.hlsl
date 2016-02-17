@@ -120,18 +120,17 @@ PixelInputType main(uint id : SV_VERTEXID)
     position.xy *= g_bufPosColor[ particleIndex ].scaleX / 2.0f;
 
     // rotate
-    position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[0]));
+    position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));
 
     // into world -> translate
     position = mul(position, (float3x3)InvProj) + g_bufPosColor[ particleIndex ].position + cameraPosition.xyz;
-    
+
     output.position = mul(float4(position, 1.0f), g_mInvView);
     output.position = mul(output.position, g_mWorldViewProj);
     output.color = (g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w) * color;
-    
-    return output;
-} 
 
+    return output;
+}
 
 //cbuffer CameraBuffer : register(b0)
 //{

@@ -20,14 +20,15 @@ namespace ursine
     {
         void RenderableManager::Initialize(void)
         {
-            m_currentRenderableModel3D.resize(MAX_RENDERABLES);
-            m_currentRenderableBillboards.resize(MAX_RENDERABLES);
-            m_currentRenderableLights.resize(MAX_RENDERABLES);
+            //m_currentRenderableModel3D.resize(MAX_RENDERABLES);
+            //m_currentRenderableBillboards.resize(MAX_RENDERABLES);
+            //m_currentRenderableLights.resize(MAX_RENDERABLES);
 
             m_renderableModel3D.resize(MAX_RENDERABLES);
             m_renderableBillboards.resize(MAX_RENDERABLES);
             m_renderableLights.resize(MAX_RENDERABLES);
             m_renderableParticleSystems.resize(MAX_RENDERABLES);
+            m_renderableSpriteText.resize(MAX_RENDERABLES);
 
             m_handleList.resize(RENDERABLE_TYPE_COUNT);
 
@@ -68,6 +69,10 @@ namespace ursine
                 m_renderableParticleSystems[ newRender->Index_ ].m_active = true;
                 m_renderableParticleSystems[ newRender->Index_ ].Initialize();
                 break;
+            case RENDERABLE_SPRITE_TEXT:
+                m_renderableSpriteText[ newRender->Index_ ].m_active = true;
+                m_renderableSpriteText[ newRender->Index_ ].Initialize();
+                break;
             default:
                 UAssert(false, "Tried to add an invalid renderable!");
             }
@@ -103,6 +108,10 @@ namespace ursine
             case RENDERABLE_PS:
                 UAssert(m_renderableParticleSystems[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
                 m_renderableParticleSystems[ rend->Index_ ].m_active = false;
+                break;
+            case RENDERABLE_SPRITE_TEXT:
+                UAssert(m_renderableSpriteText[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
+                m_renderableSpriteText[ rend->Index_ ].m_active = false;
                 break;
             default:
                 UAssert(false, "Attempted to destroy corrupted handle!");

@@ -18,14 +18,14 @@
 ENTITY_SYSTEM_DEFINITION(CommandQueueSystem);
 
 CommandQueueSystem::CommandQueueSystem(ursine::ecs::World* world)
-	: FilterSystem(world, ursine::ecs::Filter().All<CommandQueue>(), 68) {}
+    : FilterSystem(world, ursine::ecs::Filter().All<CommandQueue>(), 68) {}
 
 void CommandQueueSystem::Process(ursine::ecs::Entity* entity)
 {
-	auto *commandQueue = entity->GetComponent<CommandQueue>();
+    auto *commandQueue = entity->GetComponent<CommandQueue>();
 
-	UAssert(commandQueue != nullptr, "HEY THERE");
+    UAssert(commandQueue != nullptr, "HEY THERE");
 
-	commandQueue->Update();
+    commandQueue->Update();
 }
 

@@ -17,26 +17,24 @@
 
 enum StartRoomDirectorEvents
 {
-	PLAYERS_SPAWNED,
-	ELEVATOR_START,
-	ELEVATOR_END
+    PLAYERS_SPAWNED,
+    ELEVATOR_START,
+    ELEVATOR_END
 };
 
 class StartRoomDirectorSystem 
-	: public ursine::ecs::EntitySystem
-	, public ursine::EventDispatcher<StartRoomDirectorEvents>
+    : public ursine::ecs::EntitySystem
+    , public ursine::EventDispatcher<StartRoomDirectorEvents>
 {
-	ENTITY_SYSTEM;
+    ENTITY_SYSTEM;
 
 public:
-	StartRoomDirectorSystem(ursine::ecs::World *world);
+    StartRoomDirectorSystem(ursine::ecs::World *world);
 
 private:
-	void OnAfterLoad(void) override;
-	void OnRemove(void) override;
+    void OnAfterLoad(void) override;
+    void OnRemove(void) override;
 
     void onUpdate(EVENT_HANDLER(World));
-
-	bool m_init;
 
 } Meta(Enable);

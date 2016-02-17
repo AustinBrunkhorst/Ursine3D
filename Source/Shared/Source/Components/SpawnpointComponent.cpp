@@ -43,12 +43,12 @@ int Spawnpoint::GetRoundSpawnNumber() const
 
 float Spawnpoint::GetYRotationDegrees(void) const
 {
-	return m_yRotationDegrees;
+    return m_yRotationDegrees;
 }
 
 void Spawnpoint::SetYRotationDegrees(float degrees)
 {
-	m_yRotationDegrees = degrees;
+    m_yRotationDegrees = degrees;
 }
 
 void Spawnpoint::SetRoundSpawnNumber(int spawnNo)

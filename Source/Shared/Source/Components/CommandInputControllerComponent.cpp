@@ -48,12 +48,12 @@ void CommandInputController::SetKeyBoard(const bool useKeyBoard)
 {
     m_keyBoard = useKeyBoard;
 
-	if (m_keyBoard)
+    if (m_keyBoard)
         MapKeyboard( );
     else
         MapXboxContoller( );
 
-	MapCommandList( );
+    MapCommandList( );
 }
 
 void CommandInputController::OnInitialize(void)
@@ -233,13 +233,13 @@ void CommandInputController::MapKeyboard(void)
 
 void CommandInputController::MapCommandList(void)
 {
-	// clear all commands previously created
-	for (auto &command : m_commandList)
-		delete command;
+    // clear all commands previously created
+    for (auto &command : m_commandList)
+        delete command;
 
-	m_commandList.clear( );
+    m_commandList.clear( );
 
-	 m_commandList = {
+     m_commandList = {
         new ButtonActionCommand<JumpCommand>(
             m_jump,
             ButtonActionCommand<JumpCommand>::Interaction::Down

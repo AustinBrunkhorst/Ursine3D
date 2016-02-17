@@ -353,6 +353,7 @@ namespace ursine
             void DirectXCore::ClearDepthBuffers(void)
             {
                 m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
             }
 
             void DirectXCore::ClearSwapchain(void)
@@ -500,8 +501,6 @@ namespace ursine
 
             void DirectXCore::backendResizeDX(const int width, const int height)
             {
-                m_targetManager->ResizeDeferred(width, height);
-                m_targetManager->ResizeEngineTargets(width, height);
 
                 //swapchain
                 //set render target to null
@@ -511,7 +510,7 @@ namespace ursine
 
                 //release swapchain
                 m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView->Release();
-                m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView = nullptr;
+                m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView = nullptr;                
 
                 HRESULT hr;
 
@@ -530,6 +529,9 @@ namespace ursine
 
                 //depth stuff
                 m_depthStencilManager->Resize(width, height);
+                m_targetManager->ResizeDeferred(width, height);
+                m_targetManager->ResizeEngineTargets(width, height);
+
             }
         }
     }

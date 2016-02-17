@@ -31,15 +31,15 @@ namespace ursine
 
 				// mesh data	 
 				unsigned int	 mmeshCount;
-				std::vector<MeshInfo> mMeshInfoVec;
+				std::vector< MeshInfo > mMeshInfoVec;
 
 				// material data
 				unsigned int	mmaterialCount;
-				std::vector<MaterialInfo>	mMtrlInfoVec;
+				std::vector< MaterialInfo >	mMtrlInfoVec;
 
 				// skin data
 				unsigned int	mboneCount;
-				std::vector<BoneInfo>	mBoneInfoVec;
+				std::vector< BoneInfo >	mBoneInfoVec;
 
 				// animation data - this will store the list of animation which will be used to 
 				// save/load the result of editor
@@ -53,8 +53,8 @@ namespace ursine
 				// level info - hierarchy
 				unsigned int	mmeshlvlCount;
 				unsigned int	mriglvlCount;
-				std::vector<MeshInLvl> mMeshLvVec;
-				std::vector<RigInLvl> mRigLvVec;
+				std::vector< MeshInLvl > mMeshLvVec;
+				std::vector< RigInLvl > mRigLvVec;
 
 				/** @brief model information constructor
 				*

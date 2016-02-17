@@ -108,7 +108,7 @@ namespace ursine
                 UAssert(result == S_OK, "Failed to make depth stencil view! (Error '%s')", GetDXErrorMessage(result));
 
                 srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-                srvDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+                srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
                 srvDesc.Texture2D.MipLevels = 1;
                 srvDesc.Texture2D.MostDetailedMip = 0;
 

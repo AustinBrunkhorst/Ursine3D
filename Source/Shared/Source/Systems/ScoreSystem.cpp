@@ -24,12 +24,13 @@ using namespace ursine;
 
 ENTITY_SYSTEM_DEFINITION( ScoreSystem );
 
-ScoreSystem::ScoreSystem(ursine::ecs::World* world) : EntitySystem(world)
-                                                    , m_player1Kills( 0 )
-                                                    , m_player2Kills( 0 )
-                                                    , m_player1Wins( 0 )
-                                                    , m_player2Wins( 0 )
-                                                    , m_currRound( 1 )
+ScoreSystem::ScoreSystem(ursine::ecs::World* world) 
+    : EntitySystem(world)
+    , m_player1Kills( 0 )
+    , m_player2Kills( 0 )
+    , m_player1Wins( 0 )
+    , m_player2Wins( 0 )
+    , m_currRound( 1 )
 {
     return;
 }
@@ -62,14 +63,14 @@ void ScoreSystem::OnInitialize(void)
 {
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
         .On(ROUND_OVER, &ScoreSystem::onRoundOver)
-		.On(PLAYER_DIED, &ScoreSystem::onPlayerDied);
+        .On(PLAYER_DIED, &ScoreSystem::onPlayerDied);
 }
 
 void ScoreSystem::OnRemove()
 {
     m_world->GetEntitySystem(RoundSystem)->Listener(this)
         .Off(ROUND_OVER, &ScoreSystem::onRoundOver)
-		.Off(PLAYER_DIED, &ScoreSystem::onPlayerDied);
+        .Off(PLAYER_DIED, &ScoreSystem::onPlayerDied);
 }
 
 void ScoreSystem::onRoundOver(EVENT_HANDLER(RoundSystem))
@@ -92,10 +93,10 @@ void ScoreSystem::onRoundOver(EVENT_HANDLER(RoundSystem))
 
 void ScoreSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
 {
-	EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
+    EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
 
-	// get team of the schmuck who died
-	auto team = args->entity->GetComponent<TeamComponent>()->GetTeamNumber();
+    // get team of the schmuck who died
+    auto team = args->entity->GetComponent<TeamComponent>()->GetTeamNumber();
 
-	AddKill(team);
+    AddKill(team);
 }

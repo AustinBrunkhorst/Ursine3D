@@ -21,15 +21,15 @@ struct VertexInputType
 //output from geometry shader (goes to pixel shader)
 struct GSOutput
 {
-	float4 pos : SV_POSITION;
+    float4 pos : SV_POSITION;
   float4 color : COLOR;
 };
 
 //max number of vertices will be outputed
 [maxvertexcount(6)]
 void main(
-	point VertexInputType input[1] : SV_POSITION, //the input (what type of input, what the vertex looks like
-	inout TriangleStream< GSOutput > output       //output
+    point VertexInputType input[1] : SV_POSITION, //the input (what type of input, what the vertex looks like
+    inout TriangleStream< GSOutput > output       //output
 )
 {
   //calculate normal to the plane
