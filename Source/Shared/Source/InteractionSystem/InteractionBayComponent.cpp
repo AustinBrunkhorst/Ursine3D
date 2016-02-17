@@ -10,7 +10,7 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Precompiled.h>
-#include "InteractionBay.h"
+#include "InteractionBayComponent.h"
 #include "ComponentIncludes.h"
 #include "InteractableComponent.h"
 #include <CollisionEventArgs.h>

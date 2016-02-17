@@ -2,7 +2,7 @@
 
 #include "AIReasonerSystem.h"
 #include <Components/PlayerIdComponent.h>
-#include <Components/AI/WaypointComponent.h>
+#include <AI/WaypointComponent.h>
 #include <Components/ExplosionComponent.h>
 
 namespace ursine

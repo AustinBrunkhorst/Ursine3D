@@ -10,7 +10,7 @@
 #include "InteractableComponent.h"
 #include "WeaponPickup.h"
 #include <AnimatorComponent.h>
-#include <Components/WeaponLogic/FirePos.h>
+#include <FirePosComponent.h>
 
 using namespace ursine;
 

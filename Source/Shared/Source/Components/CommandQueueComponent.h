@@ -37,12 +37,7 @@ public:
 
     void OnInitialize(void) override;
 
-    void AddCommand(const std::shared_ptr<Command> &comman);
-
-    void SetRecording(const bool flag);
-    bool IsRecording(void) const;
-
-    void UseRecorder(const bool flag);
+    void AddCommand(const std::shared_ptr<Command> &command);
    
     void Update(void);
 
@@ -61,9 +56,6 @@ private:
 
     // any commands that have went off this frame
     bool m_nextCommandPool[ COMMAND_COUNT ];
-
-    bool m_useRecorder;
-    bool m_recording;
 
     void UpdatePools(void);
 

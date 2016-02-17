@@ -29,18 +29,6 @@ ElevatorLiftMover::ElevatorLiftMover(void)
 
 }
 
-ElevatorLiftMover::~ElevatorLiftMover(void)
-{
-    GetOwner( )->GetWorld( )->Listener(this)
-        .Off(game::AREA_CLEAR, &ElevatorLiftMover::StartMoving);
-}
-
-void ElevatorLiftMover::OnInitialize(void)
-{
-    GetOwner( )->GetWorld( )->Listener(this)
-        .On(game::AREA_CLEAR, &ElevatorLiftMover::StartMoving);
-}
-
 const SVec3& ElevatorLiftMover::GetStartPosition(void) const
 {
     return m_startPos;
@@ -81,11 +69,6 @@ void ElevatorLiftMover::StartMoving(void)
             trans, &Transform::SetLocalPosition, m_startPos, m_endPos,
             TimeSpan::FromSeconds( m_duration ), ease::QuadraticInOut
         );
-}
-
-void ElevatorLiftMover::StartMoving(EVENT_HANDLER(game::OPEN_DOOR))
-{
-    StartMoving( );
 }
 
 #if defined(URSINE_WITH_EDITOR)

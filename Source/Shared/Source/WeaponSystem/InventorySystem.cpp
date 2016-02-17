@@ -14,11 +14,11 @@
 #include "InventorySystem.h"
 #include "GameEvents.h"
 #include "InventoryComponent.h"
-#include <Components/WeaponLogic/Weapons/HitscanWeaponComponent.h>
+#include <HitscanWeaponComponent.h>
 #include "HitscanWeaponComponent.h"
 #include "AbstractWeapon.h"
 #include <AnimatorComponent.h>
-#include "FirePos.h"
+#include "FirePosComponent.h"
 
 
 ENTITY_SYSTEM_DEFINITION( InventorySystem ) ;

@@ -13,40 +13,61 @@
 
 #pragma once
 
-#include "Systems/CharacterControllerSystem.h"
-#include "Systems/CommandInputControllerSystem.h"
-#include "Systems/CommandQueueSystem.h"
 #include "Systems/CheatSystem.h"
 #include "Systems/SpawnSystem.h"
 #include "Systems/RoundSystem.h"
-#include "Systems/RecorderSystem.h"
-#include "Systems/RandomSlerpSystem.h"
-#include "Systems/PlayerAnimationSystem.h"
-#include "Systems/BaseWeaponSystem.h"
 #include "Systems/TimeDeathSystem.h"
-#include "Systems/ProjectileSystem.h"
 #include "Systems/ControlPointSystem.h"
-#include "Systems/InventorySystem.h"
-#include "Systems/InteractionBaySystem.h"
-
-#include "Systems/LevelLogic/StartRoomDirectorSystem.h"
-
-///////////////////////////////////////////////////////////////////////////////
-//AI
-///////////////////////////////////////////////////////////////////////////////
-
-#include "Systems/AI/AIReasonerSystem.h"
-#include "Systems/AI/AIControllerSystem.h"
-#include "Systems/AI/WaypointSystem.h"
 
 /////////////////////////////////
-////     Camera Animation    ////
+//    Character Controller     //
+/////////////////////////////////
+
+#include "CharacterController/CharacterControllerSystem.h"
+
+/////////////////////////////////
+//     Interaction System      //
+/////////////////////////////////
+
+#include "InteractionSystem/InteractionBaySystem.h"
+
+/////////////////////////////////
+//        Weapon System        //
+/////////////////////////////////
+
+#include "WeaponSystem/BaseWeaponSystem.h"
+#include "WeaponSystem/Projectiles/ProjectileSystem.h"
+#include "WeaponSystem/InventorySystem.h"
+
+/////////////////////////////////
+//        Command System       //
+/////////////////////////////////
+
+#include "CommandSystem/CommandInputControllerSystem.h"
+#include "CommandSystem/CommandQueueSystem.h"
+
+/////////////////////////////////
+//             AI              //
+/////////////////////////////////
+
+#include "AI/AIReasonerSystem.h"
+#include "AI/AIControllerSystem.h"
+#include "AI/WaypointSystem.h"
+
+/////////////////////////////////
+//       Camera Animation      //
 /////////////////////////////////
 
 #include "CameraAnimation/CameraAnimatorSystem.h"
 
 /////////////////////////////////
-////     Spawner System      ////
+//       Spawner System        //
 /////////////////////////////////
 
 #include "SpawnerSystem/SpawnerGroupSystem.h"
+
+/////////////////////////////////
+//       Level Events          //
+/////////////////////////////////
+
+#include "LevelEvents/Logic/StartRoomDirectorSystem.h"

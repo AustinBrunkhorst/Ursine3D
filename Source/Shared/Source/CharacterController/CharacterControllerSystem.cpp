@@ -18,7 +18,6 @@
 
 #include "RigidbodyComponent.h"
 
-#include "PlayerAnimationComponent.h"
 #include <CameraComponent.h>
 #include <SweptControllerComponent.h>
 
@@ -104,24 +103,6 @@ void CharacterControllerSystem::Process(Entity *entity)
     {
         swept->Jump( );
         controller->m_jump = false;
-    }
-
-    auto animator = entity->GetComponentInChildren<PlayerAnimation>( );
-
-    if (animator)
-    {
-        if (swept->GetJumping( ))
-        {
-            animator->SetPlayerState( PlayerAnimation::Jumping );
-        }
-        else if (accum.LengthSquared( ) > 0.2f)
-        {
-            animator->SetPlayerState( PlayerAnimation::Running );
-        }
-        else if (accum.LengthSquared( ) < 0.2f)
-        {
-            animator->SetPlayerState( PlayerAnimation::Idle );
-        }
     }
 
     swept->SetMovementDirection({ accum.X( ), 0.0f, accum.Z( ) });

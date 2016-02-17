@@ -14,7 +14,6 @@
 #pragma once
 
 #include <EntitySystem.h>
-#include "RoundSystem.h"
 
 class ScoreSystem : public ursine::ecs::EntitySystem
 {
@@ -33,10 +32,6 @@ private:
 
     void OnInitialize(void) override;
     void OnRemove(void) override;
-
-    void onRoundOver(EVENT_HANDLER(RoundSystem));
-
-    void onPlayerDied(EVENT_HANDLER(RoundSystem));
 
     int m_player1Kills;
     int m_player2Kills;

@@ -13,7 +13,6 @@
 #include "MoveCommand.h"
 #include <RigidbodyComponent.h>
 #include <CharacterControllerComponent.h>
-#include <PlayerAnimationComponent.h>
 
 RECORDABLE_COMMAND_DEFINITION( MoveCommand );
 
@@ -34,11 +33,6 @@ void MoveCommand::Execute(ursine::ecs::Entity* receiver)
     else
     {
         receiver->GetTransform( )->SetWorldPosition( m_position );
-
-        auto *animator = receiver->GetComponentInChildren<PlayerAnimation>( );
-
-        if (animator)
-            animator->SetPlayerState( PlayerAnimation::Running );
     }
 }
 

@@ -13,7 +13,7 @@
 #include "Precompiled.h"
 #include "InteractionBaySystem.h"
 #include "TransformComponent.h"
-#include "InteractionBay.h"
+#include "InteractionBayComponent.h"
 #include "InteractableComponent.h"
 #include "CommandQueueComponent.h"
 

@@ -61,42 +61,8 @@ int ScoreSystem::GetCurrentRound() const
 
 void ScoreSystem::OnInitialize(void)
 {
-    m_world->GetEntitySystem(RoundSystem)->Listener(this)
-        .On(ROUND_OVER, &ScoreSystem::onRoundOver)
-        .On(PLAYER_DIED, &ScoreSystem::onPlayerDied);
 }
 
 void ScoreSystem::OnRemove()
 {
-    m_world->GetEntitySystem(RoundSystem)->Listener(this)
-        .Off(ROUND_OVER, &ScoreSystem::onRoundOver)
-        .Off(PLAYER_DIED, &ScoreSystem::onPlayerDied);
-}
-
-void ScoreSystem::onRoundOver(EVENT_HANDLER(RoundSystem))
-{
-    EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
-
-    // this means team1 lost
-    if (args->team == 1)
-    {
-        ++m_player2Wins;
-    }
-    // this means team2 lost
-    else if (args->team == 2)
-    {
-        ++m_player1Wins;
-    }
-
-    ++m_currRound;
-}
-
-void ScoreSystem::onPlayerDied(EVENT_HANDLER(RoundSystem))
-{
-    EVENT_ATTRS(RoundSystem, RoundSystem::RoundEventArgs);
-
-    // get team of the schmuck who died
-    auto team = args->entity->GetComponent<TeamComponent>()->GetTeamNumber();
-
-    AddKill(team);
 }

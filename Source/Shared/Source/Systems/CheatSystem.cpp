@@ -15,7 +15,6 @@
 
 #include "CheatSystem.h"
 #include <WorldEvent.h>
-#include "SpawnSystem.h"
 #include <Core/CoreSystem.h>
 #include <Core/Input/Keyboard/KeyboardManager.h>
 #include <Game Engine/Scene/World/Managers/SystemManager.h>
@@ -45,10 +44,6 @@ void CheatSystem::OnRemove()
 void CheatSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
 {
     int killCheck = killTeamCheat();
-    if (killCheck > 0)
-    {
-        m_world->GetSystemManager()->GetSystem<SpawnSystem>()->DespawnTeam(killCheck);
-    }
 }
 
 int CheatSystem::killTeamCheat(void)

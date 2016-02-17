@@ -10,7 +10,7 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Precompiled.h>
-#include "FirePos.h"
+#include "FirePosComponent.h"
 #include "ComponentIncludes.h"
 
 NATIVE_COMPONENT_DEFINITION( FirePos ) ;

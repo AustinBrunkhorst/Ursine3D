@@ -14,7 +14,7 @@
 #include "ComponentIncludes.h"
 #include "CommandQueueComponent.h"
 #include "InventoryComponent.h"
-#include <Components/Interactables/InteractableComponent.h>
+#include "InteractableComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( WeaponPickup ) ;
 
