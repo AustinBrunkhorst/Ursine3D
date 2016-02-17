@@ -325,11 +325,11 @@ namespace ursine
         return vec - ( normal * k );
     }
 
-    INLINE void SVec3::GenerateOrthogonalVectors(SVec3 &u, SVec3 &v)
+    INLINE void SVec3::GenerateOrthogonalVectors(SVec3 &u, SVec3 &v) const
     {
-        Normalize();
-        u = SVec3::Cross(*this, *this == SVec3::UnitY() ? SVec3::UnitX() : SVec3::UnitY());
-        v = SVec3::Cross(*this, u);
+        auto normal = Normalize(*this);
+        u = SVec3::Cross(normal, normal == SVec3::UnitY() ? SVec3::UnitX() : SVec3::UnitY());
+        v = SVec3::Cross(normal, u);
     }
 
     INLINE void SVec3::GenerateOrthogonalVectors(const SVec3 &inputVec, SVec3 &u, SVec3 &v)

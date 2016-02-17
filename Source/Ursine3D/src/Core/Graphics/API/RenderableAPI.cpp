@@ -68,5 +68,10 @@ namespace ursine
         {
             delete m_privates;
         }
+
+        SpriteText& RenderableAPI::GetSpriteText(GfxHND& handle)
+        {
+            return m_privates->renderMgr->GetRenderable<SpriteText>(handle);
+        }
     }
 }

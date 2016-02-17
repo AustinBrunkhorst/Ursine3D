@@ -212,8 +212,8 @@ namespace ursine
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetMaterialslName());
 
                 drawCall.Model_ = modelManager->GetModelIDByName(current->GetModelName());
-                drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
                 drawCall.Overdraw_ = current->GetOverdraw();
+                drawCall.Shader_ = drawCall.Overdraw_ ? SHADER_OVERDRAW_MODEL : SHADER_DEFERRED_DEPTH;
             }
             break;
             case RENDERABLE_BILLBOARD2D:
@@ -434,10 +434,9 @@ namespace ursine
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Model Rendering");
-
-
             dxCore->EndDebugEvent();
 
+            /////////////////////////////////////////////////////////
             // LIGHT PASS
             dxCore->StartDebugEvent("Light Pass");
             PrepForLightPass(view, proj, currentCamera);
@@ -460,8 +459,8 @@ namespace ursine
                 RenderDirectionalLight(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Directional Light Rendering");
 
-            // emissive pass
-            // switch to no blending
+            /////////////////////////////////////////////////////////
+            // EMISSIVE
             shaderManager->BindShader(SHADER_EMISSIVE);
 
             // one fullscreen pass
@@ -470,6 +469,7 @@ namespace ursine
             dxCore->EndDebugEvent();
             STAMP("Emissive Pass");
 
+            /////////////////////////////////////////////////////////
             //debug 
             PrepFor3DModels(view, proj); // I don't think gets set properly
 
@@ -482,6 +482,18 @@ namespace ursine
 
             dxCore->EndDebugEvent();
             STAMP("Debug Pass");
+
+            /////////////////////////////////////////////////////////
+            // overdraw pass for weird stuff
+            PrepFor3DModels(view, proj);
+            {
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+
+                while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
+                    Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            }           
 
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
@@ -591,13 +603,12 @@ namespace ursine
                 bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
                 shaderManager->BindShader(SHADER_FORWARD);
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
             }
 
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
                 Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Model Rendering");
-
-
             dxCore->EndDebugEvent();
 
             // LIGHT PASS
@@ -617,13 +628,22 @@ namespace ursine
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT )
                 currentIndex++;
 
+            /////////////////////////////////////////////////////////
+            // overdraw pass for weird stuff
+            PrepFor3DModels(view, proj);
+            {
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+
+                while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
+                    Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            }
+
             /////////////////////////////////////////////////////////////////
             // RENDER MAIN //////////////////////////////////////////////////
             dxCore->StartDebugEvent("Final Pass");
             PrepForFinalOutput();
-            dxCore->GetDeviceContext()->PSSetShaderResources(1, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_COLOR)->ShaderMap);
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
-
 
             dxCore->EndDebugEvent();
             STAMP("Main Screen Pass");
@@ -737,6 +757,8 @@ namespace ursine
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
 
             bufferManager->MapCameraBuffer(view, proj);
+
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //TEMP
             URSINE_TODO("Remove this");
@@ -986,11 +1008,6 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // map texture
             textureManager->MapTextureByID(handle.Material_);
-
-            if ( handle.Overdraw_ )
-                dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
-            else
-                dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             //render
             unsigned count = modelManager->GetModelMeshCount(handle.Model_);

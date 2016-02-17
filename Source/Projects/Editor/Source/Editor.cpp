@@ -15,11 +15,11 @@
  
 #include "Editor.h" 
 #include "Project.h"      
- 
+  
 #include <Application.h>  
     
 #include <WindowManager.h>
-#include <UIManager.h> 
+#include <UIManager.h>   
   
 #include <Color.h> 
 #include <LightComponent.h> 

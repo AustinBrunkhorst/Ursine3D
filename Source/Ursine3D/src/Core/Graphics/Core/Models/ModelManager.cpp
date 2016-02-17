@@ -588,20 +588,20 @@ namespace ursine
 				// this is rely on how do we gonna load .jani file, so I won't do this
 				// until Austin finish array stuff.
 
-				/////////////////////////////////////////////////////////
-				// Let's test storing multi janis into one jdl /////////////////////////////////
-				std::string janiFileName("Assets/Animations/");
-				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Idle.jani");
-				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Run.jani");
-				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Jump.jani");
-				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Win.jani");
-				ufmt_model.maniNameVec.push_back(janiFileName + "Player_Die.jani");
-
-				ufmt_model.maniCount = static_cast<unsigned int>(ufmt_model.maniNameVec.size());
-				for (auto iter : ufmt_model.maniNameVec)
-				{
-					LoadAni(name, iter);
-				}
+				///////////////////////////////////////////////////////////
+				//// Let's test storing multi janis into one jdl /////////////////////////////////
+				//std::string janiFileName("Assets/Animations/");
+				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Idle.jani");
+				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Run.jani");
+				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Jump.jani");
+				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Win.jani");
+				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Die.jani");
+				//
+				//ufmt_model.maniCount = static_cast<unsigned int>(ufmt_model.maniNameVec.size());
+				//for (auto iter : ufmt_model.maniNameVec)
+				//{
+				//	LoadAni(name, iter);
+				//}
 
 				///////////////////////////////////////////////////////////////
 				// CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -748,9 +748,6 @@ namespace ursine
 
 		void ModelManager::LoadAni(std::string name, std::string fileName)
 		{
-			std::ifstream input;
-			std::vector<AnimationVertex> buffer;
-
 			HANDLE hFile_ani = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 			if (!hFile_ani)
 				return;

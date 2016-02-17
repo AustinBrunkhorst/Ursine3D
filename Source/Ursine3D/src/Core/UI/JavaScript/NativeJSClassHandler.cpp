@@ -54,6 +54,7 @@ namespace ursine
                     std::make_pair(
                         object->CreateFunction( methodName, m_prototypeHandler ),
                         method
+
                     )
                 )
             );
