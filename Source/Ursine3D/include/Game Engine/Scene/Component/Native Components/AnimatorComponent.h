@@ -189,11 +189,17 @@ namespace ursine
 				);
 
 			EditorField(
+				bool changeState,
+				IsStateChanging,
+				SetStateChanging
+				);
+
+			EditorField(
 				bool renderDebug,
 				IsDebug,
 				SetDebug
 				);
-
+			
 			EditorField(
 				float timeScalar,
 				GetTimeScalar,
@@ -216,9 +222,12 @@ namespace ursine
 			bool IsLooping(void) const;
 			void SetLooping(const bool isLooping);
 
+			bool IsStateChanging(void) const;
+			void SetStateChanging(const bool stateChange);
+
 			bool IsDebug(void) const;
 			void SetDebug(const bool useDebug);
-
+			
 			float GetTimeScalar(void) const;
 			void SetTimeScalar(const float scalar);
 
@@ -253,6 +262,7 @@ namespace ursine
 			bool m_playing;
 			bool m_looping;
 			bool m_debug;
+			bool m_changeState;
 			float m_speedScalar;
 			std::string m_Rig;
 			std::string m_currentStateName;
