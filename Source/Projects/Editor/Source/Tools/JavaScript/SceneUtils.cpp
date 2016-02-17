@@ -139,22 +139,22 @@ JSFunction(SceneSetPlayState)
 
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
-    Timer::Create( 0 ).Completed( [=] {
+    /*Application::Instance->ExecuteOnMainThread( [=] {
         auto *editor = GetCoreSystem( Editor );
 
-        //editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
-    } );
+        editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
+    } );*/
 
     return CefV8Value::CreateUndefined( );
 }
 
 JSFunction(SceneStep)
 {
-     Timer::Create( 0 ).Completed( [=] {
+    /*Application::Instance->ExecuteOnMainThread( [=] {
         auto *editor = GetCoreSystem( Editor );
 
-        //editor->GetProject( )->GetScene( )->Step( );
-    } );
+        editor->GetProject( )->GetScene( )->Step( );
+    } );*/
 
     return CefV8Value::CreateUndefined( );
 }
@@ -203,15 +203,16 @@ namespace
 
         try
         {
-			Timer::Create(0).Completed( [=] {
-				ecs::WorldSerializer serializer;
-				auto world = serializer.Deserialize( file );
+            ecs::WorldSerializer serializer;
 
+            auto world = serializer.Deserialize( file );
+
+            /*Application::Instance->ExecuteOnMainThread( [=] {
                 URSINE_TODO( "this is hacky and weirdly placed" );
                 world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
 
-				//editor->GetProject( )->SetActiveWorld( world );
-			} );
+                editor->GetProject( )->SetWorld( world );
+            } );*/
         }
         catch (const ecs::SerializationException &e)
         {

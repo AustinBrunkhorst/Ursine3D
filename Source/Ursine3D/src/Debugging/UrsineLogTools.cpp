@@ -39,35 +39,40 @@
     #define URSINE_DEBUG_BREAK()
 #endif
 
+namespace
+{
+    void displayCrashMessageBox(void)
+    {
+        if (ursine::logging::gExitCode == EXIT_SUCCESS)
+            return;
+
+        std::wstringstream message;
+
+        message << "Please contact a developer with the debug trace.";
+        message << "\n\n";
+        message << boost::filesystem::current_path( ) / WIDEN( URSINE_ERROR_LOG_FILE );
+
+    #ifdef PLATFORM_WINDOWS
+
+        MessageBoxW( nullptr, message.str( ).c_str( ), L"Unexpected Crash", MB_OK | MB_ICONERROR );
+
+    #else
+
+        URSINE_TODO( "Add messageboxes for this platform" );
+
+    #endif
+    }
+}
+
 namespace ursine
 {
     namespace logging
     {
-        int ExitCode = EXIT_SUCCESS;
+        int gExitCode = EXIT_SUCCESS;
 
-        static void displayCrashMessageBox(void)
-        {
-            if (ExitCode == EXIT_SUCCESS)
-                return;
+        Initializer gInitialzer;
 
-            std::wstringstream message;
-
-            message << "Please contact a developer with the debug trace.";
-            message << "\n\n";
-            message << boost::filesystem::current_path( ) / WIDEN( URSINE_ERROR_LOG_FILE );
-
-        #ifdef PLATFORM_WINDOWS
-
-            MessageBoxW( nullptr, message.str( ).c_str( ), L"Unexpected Crash", MB_OK | MB_ICONERROR );
-
-        #else
-
-            URSINE_TODO( "Add messageboxes for this platform" );
-
-        #endif
-        }
-
-        void Initialize(void)
+        Initializer::Initializer(void)
         {
         #if (URSINE_DISPLAY_CRASH_MESSAGEBOX)
 
@@ -199,7 +204,7 @@ namespace ursine
             URSINE_DEBUG_BREAK( );
 
             // make sure we show the message box
-            exit( ExitCode = EXIT_FAILURE );
+            exit( gExitCode = EXIT_FAILURE );
         }
 
         void OutputTime(FILE *handle)

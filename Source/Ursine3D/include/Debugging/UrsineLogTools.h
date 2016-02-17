@@ -98,9 +98,12 @@ namespace ursine
 {
     namespace logging
     {
-        extern int ExitCode;
+        extern int gExitCode;
 
-        void Initialize(void);
+        extern struct Initializer
+        {
+            Initializer(void);
+        } gInitializer;
 
         template<typename... Args>
         void Assert(URSINE_FFL_ARGS, URSINE_LOG_FORMATTED);
