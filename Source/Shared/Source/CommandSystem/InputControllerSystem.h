@@ -2,20 +2,26 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** RecordableAxisCommand.h
+** InputControllerSystem.h
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
 ** --------------------------------------------------------------------------*/
 
-#include "Precompiled.h"
+#pragma once
 
-#include "RecordableAxisCommand.h"
+#include <FilterSystem.h>
 
-RecordableAxisCommand::RecordableAxisCommand(const ursine::Vec2& axis)
-    : m_axis(axis) {}
-
-const ursine::Vec2& RecordableAxisCommand::GetAxis() const
+class InputControllerSystem 
+    : public ursine::ecs::FilterSystem
 {
-    return m_axis;
-}
+    ENTITY_SYSTEM;
+
+public:
+    InputControllerSystem(ursine::ecs::World *world);
+
+protected:
+
+    void Process(ursine::ecs::Entity *entity);
+
+} Meta(Enable);

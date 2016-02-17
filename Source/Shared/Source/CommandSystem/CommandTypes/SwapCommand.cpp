@@ -13,8 +13,6 @@
 #include "SwapCommand.h"
 #include "GameEvents.h"
 
-RECORDABLE_COMMAND_DEFINITION(SwapCommand);
-
 SwapCommand::SwapCommand( )
 {
     m_weight = 0;
@@ -27,19 +25,4 @@ void SwapCommand::Execute(ursine::ecs::Entity* receiver)
 
 void SwapCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-}
-
-void SwapCommand::StartRecording(ursine::ecs::Entity* receiver)
-{
-
-}
-
-void SwapCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-
-}
-
-void SwapCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-
 }

@@ -11,7 +11,7 @@
 #include "Precompiled.h"
 
 #include "CommandQueueSystem.h"
-#include <Components/CommandQueueComponent.h>
+#include <CommandQueueComponent.h>
 
 #include <SystemConfig.h>
 

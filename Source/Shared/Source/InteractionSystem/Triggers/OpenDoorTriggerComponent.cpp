@@ -10,7 +10,7 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Precompiled.h>
-#include "OpenDoorTrigger.h"
+#include "OpenDoorTriggerComponent.h"
 #include "CommandQueueComponent.h"
 #include "PlayerIdComponent.h"
 #include "GameEvents.h"

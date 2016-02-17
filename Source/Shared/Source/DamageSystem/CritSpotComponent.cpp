@@ -14,7 +14,7 @@
 #include "DamageOnCollideComponent.h"
 #include <EntityEvent.h>
 #include <CollisionEventArgs.h>
-#include <GameEvents/GameEvents.h>
+#include <GameEvents.h>
 
 NATIVE_COMPONENT_DEFINITION( CritSpot ) ;
 

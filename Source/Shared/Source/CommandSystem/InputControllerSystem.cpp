@@ -10,25 +10,25 @@
 
 #include "Precompiled.h"
 
-#include "CommandInputControllerSystem.h"
-#include "CommandInputControllerComponent.h"
-#include <Components/CommandQueueComponent.h>
+#include "InputControllerSystem.h"
+#include "InputControllerComponent.h"
+#include <CommandQueueComponent.h>
 #include <SystemConfig.h>
 
-ENTITY_SYSTEM_DEFINITION(CommandInputControllerSystem);
+ENTITY_SYSTEM_DEFINITION(InputControllerSystem);
 
 using namespace ursine;
 using namespace ursine::ecs;
 
-CommandInputControllerSystem::CommandInputControllerSystem(ursine::ecs::World* world) 
-    : FilterSystem( world, Filter( ).All<CommandInputController, CommandQueue>( ) )
+InputControllerSystem::InputControllerSystem(ursine::ecs::World* world) 
+    : FilterSystem( world, Filter( ).All<InputController, CommandQueue>( ) )
 {
 
 }
 
-void CommandInputControllerSystem::Process(ursine::ecs::Entity* entity)
+void InputControllerSystem::Process(ursine::ecs::Entity* entity)
 {
-    auto *commandInput = entity->GetComponent<CommandInputController>( );
+    auto *commandInput = entity->GetComponent<InputController>( );
     auto *commandQueue = entity->GetComponent<CommandQueue>( );
 
     auto &commandList = commandInput->GetCommandList( );

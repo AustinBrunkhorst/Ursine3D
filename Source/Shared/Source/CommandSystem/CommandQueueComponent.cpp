@@ -11,7 +11,6 @@
 #include "Precompiled.h"
 
 #include "CommandQueueComponent.h"
-#include "RecordableCommand.h"
 #include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION(CommandQueue);
@@ -86,7 +85,6 @@ bool CommandQueue::QueryCommand(const game::GameEvents commandEvent) const
 
     return m_commandPool[ index ];
 }
-
 
 #define ENUMERATE(eventName)    \
     void CommandQueue::On##eventName(EVENT_HANDLER(game::eventName))      \

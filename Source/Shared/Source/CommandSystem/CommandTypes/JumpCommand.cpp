@@ -19,8 +19,6 @@ namespace
     const std::string kJumpSound = "PLAYER_JUMP";
 }
 
-RECORDABLE_COMMAND_DEFINITION( JumpCommand );
-
 JumpCommand::JumpCommand(void)
 {
     m_weight = 5;
@@ -41,19 +39,4 @@ void JumpCommand::Execute(ursine::ecs::Entity* receiver)
 void JumpCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
 
-}
-
-void JumpCommand::StartRecording(ursine::ecs::Entity* receiver)
-{
-    
-}
-
-void JumpCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-    
-}
-
-void JumpCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-    
 }

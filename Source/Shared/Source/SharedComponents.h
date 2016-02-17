@@ -13,25 +13,34 @@
 
 #pragma once
 
-#include "Components/PlayerInputComponent.h"
-#include "Components/HealthComponent.h"
-#include "Components/CommandQueueComponent.h"
-#include "Components/CommandInputControllerComponent.h"
-#include "Components/TeamComponent.h"
-#include "Components/TimeDeathComponent.h"
-#include "Components/DamageOnCollideComponent.h"
-#include "Components/PlayerIdComponent.h"
-#include "Components/ControlPointComponent.h"
-#include "Components/WallComponent.h"
-#include "Components/CritSpotComponent.h"
-#include "Components/ForceComponent.h"
-#include "Components/ExplosionComponent.h"
-
 /////////////////////////////////
-//    Character Controller     //
+//        Health System        //
 /////////////////////////////////
 
-#include "CharacterController/CharacterControllerComponent.h"
+#include "HealthSystem/HealthComponent.h"
+#include "HealthSystem/WallComponent.h"
+
+/////////////////////////////////
+//        Miscelaneous         //
+/////////////////////////////////
+
+#include "Misc/ForceComponent.h"
+#include "Misc/TimeDeathComponent.h"
+
+/////////////////////////////////
+//        Player Logic         //
+/////////////////////////////////
+
+#include "PlayerLogic/PlayerIdComponent.h"
+#include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
+
+/////////////////////////////////
+//        Damage System        //
+/////////////////////////////////
+
+#include "DamageSystem/ExplosionComponent.h"
+#include "DamageSystem/CritSpotComponent.h"
+#include "DamageSystem/DamageOnCollideComponent.h"
 
 /////////////////////////////////
 //    Interaction System       //
@@ -40,6 +49,7 @@
 #include "InteractionSystem/InteractionBayComponent.h"
 #include "InteractionSystem/InteractableComponent.h"
 #include "InteractionSystem/Pickups/WeaponPickup.h"
+#include "InteractionSystem/Triggers/ControlPointComponent.h"
 
 /////////////////////////////////
 //        Weapon System        //
@@ -48,8 +58,8 @@
 #include "WeaponSystem/Weapons/BaseWeaponComponent.h"
 #include "WeaponSystem/Weapons/HitscanWeaponComponent.h"
 #include "WeaponSystem/AmmoPickUpComponent.h"
-#include "WeaponSystem/FirePosComponent.h"
-#include "WeaponSystem/InventoryComponent.h"
+#include "WeaponSystem/Weapons/FirePosComponent.h"
+#include "WeaponSystem/Inventory/InventoryComponent.h"
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
 
 /////////////////////////////////
@@ -65,7 +75,7 @@
 //       Level Logic           //
 /////////////////////////////////
 
-#include "LevelEvents/Logic/ElevatorLiftMoverComponent.h"
+#include "LevelManager/Logic/ElevatorLiftMoverComponent.h"
 
 /////////////////////////////////
 //       Camera Animation      //
@@ -82,3 +92,10 @@
 #include "SpawnerSystem/SpawnerGroupComponent.h"
 #include "SpawnerSystem/SpawnerComponent.h"
 #include "SpawnerSystem/SpawnPatternContainerComponent.h"
+
+/////////////////////////////////
+//       Command System        //
+/////////////////////////////////
+
+#include "CommandSystem/InputControllerComponent.h"
+#include "CommandSystem/CommandQueueComponent.h"

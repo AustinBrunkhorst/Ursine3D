@@ -2,7 +2,6 @@
 
 #include <EntityEvent.h>
 #include <EventArgs.h>
-#include "PickupEventArgs.h"
 
 class DamageOnCollide;
 
@@ -34,10 +33,6 @@ namespace game
 #define ENUMERATE(eventName) eventName,
 #include "CommandEvents.inl"
 #undef ENUMERATE
-
-        ////  Pickup Events  ////
-#include "PickupEvents.inl"
-
 
 
         GAME_EVENTS_END

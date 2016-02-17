@@ -10,7 +10,7 @@
 
 #include "Precompiled.h"
 
-#include "CommandInputControllerComponent.h"
+#include "InputControllerComponent.h"
 #include <CommandSystem/ActionCommands/ButtonActionCommand.h>
 #include <CommandSystem/ActionCommands/TwoAxisActionCommand.h>
 #include <CommandSystem/AxisCommandTypes/MoveCommand.h>
@@ -22,16 +22,16 @@
 #include <CommandSystem/CommandTypes/ReloadCommand.h>
 #include "PlayerIdComponent.h"
 
-NATIVE_COMPONENT_DEFINITION(CommandInputController);
+NATIVE_COMPONENT_DEFINITION(InputController);
 
-CommandInputController::CommandInputController(void)
+InputController::InputController(void)
     : BaseComponent( )
     , m_keyBoard( false )
 {
 
 }
 
-CommandInputController::~CommandInputController(void)
+InputController::~InputController(void)
 {
     for(auto &x : m_commandList)
     {
@@ -39,12 +39,12 @@ CommandInputController::~CommandInputController(void)
     }
 }
 
-bool CommandInputController::GetKeyBoard(void) const
+bool InputController::GetKeyBoard(void) const
 {
     return m_keyBoard;
 }
 
-void CommandInputController::SetKeyBoard(const bool useKeyBoard)
+void InputController::SetKeyBoard(const bool useKeyBoard)
 {
     m_keyBoard = useKeyBoard;
 
@@ -56,12 +56,12 @@ void CommandInputController::SetKeyBoard(const bool useKeyBoard)
     MapCommandList( );
 }
 
-void CommandInputController::OnInitialize(void)
+void InputController::OnInitialize(void)
 {
     SetKeyBoard( m_keyBoard );
 }
 
-void CommandInputController::MapXboxContoller( void )
+void InputController::MapXboxContoller( void )
 {
     PlayerID* idComp = GetOwner( )->GetComponent<PlayerID>( );
 
@@ -147,7 +147,7 @@ void CommandInputController::MapXboxContoller( void )
         );
 }
 
-void CommandInputController::MapKeyboard(void)
+void InputController::MapKeyboard(void)
 {
     PlayerID* idComp =  GetOwner( )->GetComponent<PlayerID>( );
 
@@ -231,7 +231,7 @@ void CommandInputController::MapKeyboard(void)
         );
 }
 
-void CommandInputController::MapCommandList(void)
+void InputController::MapCommandList(void)
 {
     // clear all commands previously created
     for (auto &command : m_commandList)
@@ -271,7 +271,7 @@ void CommandInputController::MapCommandList(void)
     };
 }
 
-std::vector<ActionCommandBase*> &CommandInputController::GetCommandList(void)
+std::vector<ActionCommandBase*> &InputController::GetCommandList(void)
 {
     return m_commandList;
 }

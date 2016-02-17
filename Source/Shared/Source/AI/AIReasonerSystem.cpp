@@ -1,9 +1,9 @@
 #include "Precompiled.h"
 
 #include "AIReasonerSystem.h"
-#include <Components/PlayerIdComponent.h>
+#include <PlayerIdComponent.h>
 #include <AI/WaypointComponent.h>
-#include <Components/ExplosionComponent.h>
+#include <ExplosionComponent.h>
 
 namespace ursine
 {

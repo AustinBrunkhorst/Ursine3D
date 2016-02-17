@@ -13,11 +13,12 @@
 
 #pragma once
 
-#include "Systems/CheatSystem.h"
-#include "Systems/SpawnSystem.h"
-#include "Systems/RoundSystem.h"
-#include "Systems/TimeDeathSystem.h"
-#include "Systems/ControlPointSystem.h"
+/////////////////////////////////
+//        Miscelaneous         //
+/////////////////////////////////
+
+#include "Misc/CheatSystem.h"
+#include "Misc/TimeDeathSystem.h"
 
 /////////////////////////////////
 //    Character Controller     //
@@ -30,20 +31,21 @@
 /////////////////////////////////
 
 #include "InteractionSystem/InteractionBaySystem.h"
+#include "InteractionSystem/Triggers/ControlPointSystem.h"
 
 /////////////////////////////////
 //        Weapon System        //
 /////////////////////////////////
 
-#include "WeaponSystem/BaseWeaponSystem.h"
+#include "WeaponSystem/Weapons/BaseWeaponSystem.h"
 #include "WeaponSystem/Projectiles/ProjectileSystem.h"
-#include "WeaponSystem/InventorySystem.h"
+#include "WeaponSystem/Inventory/InventorySystem.h"
 
 /////////////////////////////////
 //        Command System       //
 /////////////////////////////////
 
-#include "CommandSystem/CommandInputControllerSystem.h"
+#include "CommandSystem/InputControllerSystem.h"
 #include "CommandSystem/CommandQueueSystem.h"
 
 /////////////////////////////////
@@ -70,4 +72,4 @@
 //       Level Events          //
 /////////////////////////////////
 
-#include "LevelEvents/Logic/StartRoomDirectorSystem.h"
+#include "LevelManager/Logic/StartRoomDirectorSystem.h"

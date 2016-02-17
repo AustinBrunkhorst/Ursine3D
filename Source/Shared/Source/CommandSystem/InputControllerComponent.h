@@ -19,7 +19,7 @@
 // what input will we listen to?
 
 // main class for individual input controllers
-class CommandInputController
+class InputController
     : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -38,8 +38,8 @@ public:
     };
 
 public:
-    CommandInputController(void);
-    ~CommandInputController(void);
+    InputController(void);
+    ~InputController(void);
 
     void OnInitialize(void) override;
 
@@ -88,4 +88,4 @@ private:
 
     void MapCommandList(void);
 
-}Meta(Enable, DisplayName("CommandInputController"));
+}Meta(Enable, DisplayName("InputController"));

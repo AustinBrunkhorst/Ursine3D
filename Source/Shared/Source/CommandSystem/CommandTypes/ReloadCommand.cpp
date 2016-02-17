@@ -13,8 +13,6 @@
 #include "ReloadCommand.h"
 #include "GameEvents.h"
 
-RECORDABLE_COMMAND_DEFINITION(ReloadCommand);
-
 ReloadCommand::ReloadCommand( )
 {
     m_weight = 0;
@@ -27,19 +25,4 @@ void ReloadCommand::Execute(ursine::ecs::Entity* receiver)
 
 void ReloadCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-}
-
-void ReloadCommand::StartRecording(ursine::ecs::Entity* receiver)
-{
-
-}
-
-void ReloadCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-
-}
-
-void ReloadCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-
 }

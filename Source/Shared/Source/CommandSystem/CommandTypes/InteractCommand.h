@@ -11,21 +11,15 @@
 
 #pragma once
 
-#include "RecordableCommand.h"
+#include "Command.h"
 
 class InteractCommand
-    : public RecordableCommand
+    : public Command
 {
-    RECORDABLE_COMMAND;
-
 public:
     InteractCommand(void);
 
     void Execute(ursine::ecs::Entity *receiver) override;
     void StopExecute(ursine::ecs::Entity *receiver) override;
-
-    void StartRecording(ursine::ecs::Entity *receiver) override;
-    void Record(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
-    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
 
 };
