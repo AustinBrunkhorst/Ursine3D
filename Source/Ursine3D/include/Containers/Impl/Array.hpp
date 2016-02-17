@@ -295,6 +295,12 @@ namespace ursine
     }
 
     template<typename T>
+    bool Array<T>::Exists(const T &value) const
+    {
+        return Find( value ) != end( );
+    }
+
+    template<typename T>
     typename Array<T>::SizeType Array<T>::Size(void) const
     {
         return m_impl.size( );

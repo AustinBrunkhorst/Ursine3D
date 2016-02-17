@@ -1,4 +1,5 @@
-var gFileCallbackProjectLocation = 0;
+var gFileCallbackProjectLoad = 0;
+var gFileCallbackProjectLocation = 1;
 
 window.addEventListener( 'load', function() {
     var newProjectModal = document.querySelector( '#new-project-modal' );
@@ -8,6 +9,14 @@ window.addEventListener( 'load', function() {
 
     document.querySelector( '#actions .new' ).addEventListener( 'click', function() {
         newProjectModal.classList.add( 'active' );
+    } );
+
+    document.querySelector( '#actions .open' ).addEventListener( 'click', function() {
+        BrowseFile(
+            'Open Existing Project',
+            [ 'Project Files|.ursineproj' ],
+            gFileCallbackProjectLoad
+        );
     } );
 
     document.querySelector( '#btn-project-new-location-browse' ).addEventListener( 'click', function() {
@@ -26,11 +35,14 @@ window.addEventListener( 'load', function() {
     } );
 } );
 
-var gFileCallbacks = {
-    // new project folder
-    0: function(data) {
-        document.querySelector( '#project-new-location' ).value = data.file;
-    }
+var gFileCallbacks = { };
+
+gFileCallbacks[ gFileCallbackProjectLoad ] = function(data) {
+    LauncherProjectOpen( data.file );
+};
+
+gFileCallbacks[ gFileCallbackProjectLocation ] = function(data) {
+    document.querySelector( '#project-new-location' ).value = data.file;
 };
 
 function NativeBroadcast(target, message, data) {

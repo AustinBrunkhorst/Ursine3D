@@ -1,7 +1,7 @@
 #pragma once
 
+#include "ResourceData.h"
 #include "ResourceImportContext.h"
-#include "ResourceConfig.h"
 #include "FileSystem.h"
 
 namespace ursine
@@ -13,7 +13,7 @@ namespace ursine
             class ResourceImporter : public meta::Object
             {
             public:
-                virtual ResourceDataHandle Import(const fs::path &filename, const ResourceImportContext &context) = 0;
+                virtual ResourceData::Handle Import(const fs::path &filename, const ResourceImportContext &context);
             };
         }
     }

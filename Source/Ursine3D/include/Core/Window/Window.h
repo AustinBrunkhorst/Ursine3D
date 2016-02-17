@@ -31,6 +31,9 @@ namespace ursine
 
         ~Window(void);
 
+        void SetBordered(bool bordered);
+        void SetResizable(bool resizable);
+
         const Vec2 &GetSize(void) const;
         void SetSize(const Vec2 &size);
 

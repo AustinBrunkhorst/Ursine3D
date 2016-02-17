@@ -10,11 +10,18 @@ public:
 
     ResourceImporterConfig(const std::string &&extension, const ursine::meta::Type &defaultProcessor)
         : fileExtensions(ursine::Array<std::string> { move( extension ) } )
-        , defaultProcessor( defaultProcessor ) { }
+        , defaultProcessor( defaultProcessor )
+    {
+        ursine::utils::MakeLowerCase( fileExtensions[ 0 ] );
+    }
 
     ResourceImporterConfig(const std::initializer_list<std::string> &&extensions, const ursine::meta::Type &defaultProcessor)
         : fileExtensions( move( extensions ) )
-        , defaultProcessor( defaultProcessor ) { }
+        , defaultProcessor( defaultProcessor )
+    {
+        for (auto &extension : const_cast<ursine::Array<std::string>&>( fileExtensions ))
+            ursine::utils::MakeLowerCase( extension );
+    }
 };
 
 class ResourceProcessorConfig : public ursine::meta::MetaProperty

@@ -8,7 +8,7 @@ ProjectConfig ProjectConfig::CreateDefault(const std::string &title)
 
     config.title = title;
     config.buildDirectory = "Build";
-    config.buildDirectory = "Resources";
+    config.resourceDirectory = "Resources";
 
     return config;
 }

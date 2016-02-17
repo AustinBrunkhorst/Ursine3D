@@ -44,6 +44,29 @@ namespace ursine
         SDL_DestroyWindow( m_handle );
     }
 
+    void Window::SetBordered(bool bordered)
+    {
+        SDL_SetWindowBordered( m_handle, bordered ? SDL_TRUE : SDL_FALSE );
+    }
+
+    void Window::SetResizable(bool resizable)
+    {
+#if defined(PLATFORM_WINDOWS)
+
+        auto hwnd = static_cast<HWND>( GetPlatformHandle( ) );
+
+        auto styleFlags = GetWindowLong( hwnd, GWL_STYLE );
+
+        if (resizable)
+            utils::FlagSet( styleFlags, WS_SIZEBOX );
+        else
+            utils::FlagUnset( styleFlags, WS_SIZEBOX );
+
+        SetWindowLong( hwnd, GWL_STYLE, styleFlags );
+
+#endif
+    }
+
     const Vec2 &Window::GetSize(void) const
     {
         return m_size;

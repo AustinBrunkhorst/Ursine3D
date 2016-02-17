@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ResourceMetaData.h"
+#include "GUID.h"
 
 namespace ursine
 {
@@ -14,7 +15,7 @@ namespace ursine
                 typedef std::shared_ptr<ResourceItem> Handle;
 
             private:
-                std::string m_filename;
+                fs::path m_filename;
                 GUID m_guid;
                 ResourceMetaData m_metaData;
             };

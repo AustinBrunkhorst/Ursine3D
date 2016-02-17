@@ -49,13 +49,15 @@ void Project::initialize(const ProjectConfig &config)
 
     resource_pipeline::ResourcePipelineConfig resourceConfig;
 
-    resourceConfig.buildDirectory = config.buildDirectory;
+    resourceConfig.resourceDirectory = config.rootDirectory / config.resourceDirectory;
 
-    resourceConfig.resourceDirectory = config.resourceDirectory;
+    resourceConfig.buildDirectory = config.rootDirectory / config.buildDirectory;
     {
         // add the resource directory
-        resourceConfig.resourceDirectory /= kResourcesBuildDirectory;
+        resourceConfig.buildDirectory /= kResourcesBuildDirectory;
     }
 
     m_resourcePipeline.SetConfig( resourceConfig );
+
+    m_resourcePipeline.Build( );
 }

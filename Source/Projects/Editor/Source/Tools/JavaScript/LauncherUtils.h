@@ -26,3 +26,6 @@ JSFunction(BrowseFolder);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(LauncherProjectCreate);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(LauncherProjectOpen);

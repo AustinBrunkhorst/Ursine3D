@@ -1,5 +1,56 @@
+@import 'Config';
+
+@-webkit-keyframes logoAnimation {
+  0% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.65;
+    -webkit-transform: scale(0.90);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+  }
+}
+
 #wrapper {
-  position: absolute;
-  left: 50%;
-  top: 50%;
+  padding: 39px;
+  border: 2px solid $color-accent;
+}
+
+#logo {
+  margin: 0 auto;
+  display: block;
+  -webkit-animation-name: logoAnimation;
+  -webkit-animation-timing-function: ease;
+  -webkit-animation-duration: 700ms;
+  -webkit-animation-iteration-count: infinite;
+}
+
+#progress {
+  width: 100%;
+  height: 20px;
+  margin: 20px 0;
+  background: #2b2b2b;
+
+  span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: $color-accent;
+    transition: width 150ms ease;
+  }
+}
+
+#progress-text {
+  overflow: hidden;
+  height: 17px;
+  text-align: center;
+  color: #737373;
+  text-shadow: 0 1px 1px rgba(black, 0.75);
+  text-overflow: ellipsis;
 }

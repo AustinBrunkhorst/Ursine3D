@@ -105,3 +105,17 @@ JSFunction(LauncherProjectCreate)
 
 	return CefV8Value::CreateUndefined( );
 }
+
+JSFunction(LauncherProjectOpen)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto projectFile = arguments[ 0 ]->GetStringValue( );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->LoadProject( projectFile );
+
+	return CefV8Value::CreateUndefined( );
+}

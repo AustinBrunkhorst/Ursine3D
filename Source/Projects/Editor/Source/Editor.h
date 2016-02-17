@@ -53,6 +53,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////
 
     void CreateNewProject(const std::string &name, const std::string &directory);
+    void LoadProject(const std::string &filename);
 private:
     struct
     {
@@ -98,6 +99,14 @@ private:
     void initializeWindow(void);
     void initializeGraphics(void);
     void initializeUI(void);
+
+    void initializeProject(const std::string &filename);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Utilities
+    ///////////////////////////////////////////////////////////////////////////
+
+    void exitSplashScreen(void);
 
     ///////////////////////////////////////////////////////////////////////////
     // Event Handlers

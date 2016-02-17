@@ -83,6 +83,8 @@ namespace ursine
         Iterator Find(const T &value);
         ConstIterator Find(const T &value) const;
 
+        bool Exists(const T &value) const;
+
         SizeType Size(void) const;
 
     #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)

@@ -17,6 +17,16 @@ namespace ursine
 {
     namespace utils
     {
+        void MakeLowerCase(std::string &input)
+        {
+            transform( input.begin( ), input.end( ), input.begin( ), tolower );
+        }
+
+        void MakeUpperCase(std::string &input)
+        {
+            transform( input.begin( ), input.end( ), input.begin( ), toupper );
+        }
+
         void Join(const std::vector<std::string> &input, const std::string &joiner, std::string &output)
         {
             // nothing to join

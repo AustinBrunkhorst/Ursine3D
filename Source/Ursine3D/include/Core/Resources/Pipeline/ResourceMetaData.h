@@ -8,6 +8,7 @@ namespace ursine
         {
             struct ResourceMetaData
             {
+                meta::Type importer;
                 Json processorOptions;
             };
         }

@@ -29,6 +29,8 @@ public:
     ursine::Scene &GetScene(void);
 
 private:
+    friend class Editor;
+
     Project(const Project &rhs) = delete;
     Project &operator=(const Project &rhs) = delete;
 

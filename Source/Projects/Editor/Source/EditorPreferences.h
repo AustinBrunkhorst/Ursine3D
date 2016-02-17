@@ -5,7 +5,6 @@
 
 struct EditorPreferences
 {
-    bool windowMaximized;
     ursine::Vec2 windowLocation;
     ursine::Vec2 windowSize;
     

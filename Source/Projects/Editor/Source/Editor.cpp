@@ -110,6 +110,11 @@ void Editor::CreateNewProject(const std::string &name, const std::string &direct
 
     fs::WriteAllText( projectFileName.string( ), projectData.dump( true ) );
 
+    LoadProject( projectFileName.string( ) );
+}
+
+void Editor::LoadProject(const std::string &filename)
+{
 #if defined(PLATFORM_WINDOWS)
 
     SHELLEXECUTEINFO shExecInfo;
@@ -119,7 +124,7 @@ void Editor::CreateNewProject(const std::string &name, const std::string &direct
     std::string args;
 
     args += '"';
-    args += projectFileName.string( );
+    args += filename;
     args += '"';
 
     shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
@@ -148,24 +153,40 @@ void Editor::OnInitialize(void)
 
     auto projectFileName = findAvailableProject( );
 
-    // couldn't find a project, open the launcher
-    if (projectFileName.empty( ))
+    auto hasProject = !projectFileName.empty( );
+
+    // configure the splash screen
+    if (hasProject)
+    {
+        m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointSplash;
+        m_startupConfig.windowFlags = SDL_WINDOW_RESIZABLE;
+        m_startupConfig.windowSize = { 475, 275 };
+        m_startupConfig.updateHandler = &Editor::onEditorUpdate;
+    }
+    // couldn't find a project, configure the launcher
+    else
     {
         m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointLauncher;
         m_startupConfig.windowSize = { 660, 430 };
         m_startupConfig.windowFlags = 0;
         m_startupConfig.updateHandler = &Editor::onLauncherUpdate;
     }
-    // open the splash screen
-    else
-    {
-        m_startupConfig.uiEntryPoint = kEntryPointDir + kEntryPointSplash;
-        m_startupConfig.windowFlags = SDL_WINDOW_BORDERLESS;
-        m_startupConfig.windowSize = { 660, 430 };
-        m_startupConfig.updateHandler = &Editor::onEditorUpdate;
-    }
 
     startup( );
+
+    if (hasProject)
+    {
+        // this is a fix to a problem with SDL, only for the splash screen
+        m_mainWindow.m_window->SetBordered( false );
+        m_mainWindow.m_window->SetResizable( false );
+
+        initializeProject( projectFileName );
+    }
+
+    // eliminate flashy stuff
+    Timer::Create( 750 ).Completed( [=] {
+        m_mainWindow.m_window->Show( true );
+    } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -217,7 +238,6 @@ void Editor::writePreferences(void)
 
     m_preferences.windowSize = window->GetSize( );
     m_preferences.windowLocation = window->GetLocation( );
-    m_preferences.windowMaximized = window->IsMaximized( );
 
     auto prefsJson = meta::Type::SerializeJson<EditorPreferences>( m_preferences ).dump( true );
 
@@ -280,7 +300,6 @@ void Editor::initializeWindow(void)
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
     
     m_mainWindow.m_window->SetLocationCentered( );
-    m_mainWindow.m_window->Show( true );
     m_mainWindow.m_window->SetIcon( "Assets/Resources/Icon.png" );
 }
 
@@ -337,6 +356,61 @@ void Editor::initializeUI(void)
     } );
 
     m_notificationManager.SetUI( m_mainWindow.m_ui );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::initializeProject(const std::string &filename)
+{
+    std::string projectJsonText;
+
+    UAssert( fs::LoadAllText( filename, projectJsonText ),
+        "Unable to open project file."
+    );
+
+    std::string projectJsonError;
+
+    auto projectJson = Json::parse( projectJsonText, projectJsonError );
+
+    UAssert( projectJsonError.empty( ),
+        "Unable to parse project settings."
+    );
+
+    auto project = meta::Type::DeserializeJson<ProjectConfig>( projectJson );
+
+    project.rootDirectory = fs::path( filename ).parent_path( );
+
+    m_project.initialize( project );
+
+    auto &recentProjects = m_preferences.recentProjects;
+
+    // add it as a recent project if it doesn't already exist
+    if (recentProjects.Find( filename ) == recentProjects.end( ))
+        recentProjects.Push( filename );
+}
+
+void Editor::exitSplashScreen(void)
+{
+    auto window = m_mainWindow.m_window;
+
+    window->Show( false );
+    window->SetResizable( true );
+    window->SetBordered( true );
+    window->SetSize( m_preferences.windowSize );
+
+    if (m_preferences.windowLocation == kWindowLocationCentered)
+        window->SetLocationCentered( );
+    else
+        window->SetLocation( m_preferences.windowLocation );
+
+    m_mainWindow.m_ui->GetBrowser( )->GetMainFrame( )->LoadURL( 
+        kEntryPointDir + kEntryPointEditor 
+    );
+
+    // give the window time to adjust
+    Timer::Create( 700 ).Completed( [=] {
+        window->Show( true );
+    } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
