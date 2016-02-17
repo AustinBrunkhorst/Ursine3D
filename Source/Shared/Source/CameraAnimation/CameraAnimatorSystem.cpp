@@ -15,6 +15,7 @@
 
 #include "CameraAnimatorComponent.h"
 #include "CameraAnimatorNodeComponent.h"
+#include "CameraAnimatorFocusPointComponent.h"
 
 #include <Application.h>
 
@@ -41,6 +42,14 @@ void CameraAnimatorSystem::Process(Entity *entity)
     {
         animator->Reset( );
         return;
+    }
+
+    // Every frame get the focus point in the children of the camera animator
+    auto focus = entity->GetComponentInChildren<CameraAnimatorFocusPoint>( );
+
+    if (focus)
+    {
+        animator->m_focusPoint = focus->GetOwner( )->GetTransform( );
     }
 
     if (animator->m_smoothPath)

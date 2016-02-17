@@ -52,6 +52,16 @@ void CameraAnimator::SetSmoothPath(bool smooth)
     Reset( );
 }
 
+bool CameraAnimator::GetUseFocusPoint(void) const
+{
+    return m_useFocusPoint;
+}
+
+void CameraAnimator::SetUseFocusPoint(bool flag)
+{
+    m_useFocusPoint = flag;
+}
+
 void CameraAnimator::Play(void)
 {
     m_playing = true;
@@ -90,7 +100,14 @@ void CameraAnimator::updateAnimation(CameraAnimatorNode *node)
     auto nodeTrans = node->GetOwner( )->GetTransform( );
 
     trans->SetWorldPosition( nodeTrans->GetWorldPosition( ) );
-    trans->SetWorldRotation( nodeTrans->GetWorldRotation( ) );
+
+    if (m_useFocusPoint && m_focusPoint)
+    {
+        auto dir = m_focusPoint->GetWorldPosition( ) - trans->GetWorldPosition( );
+        trans->SetWorldRotation( SQuat::LookAt( dir ) );
+    }
+    else
+        trans->SetWorldRotation( nodeTrans->GetWorldRotation( ) );
 }
 
 void CameraAnimator::updateAnimation(CameraAnimatorNode *node1, CameraAnimatorNode *node2, float t)
@@ -107,10 +124,18 @@ void CameraAnimator::updateAnimation(CameraAnimatorNode *node1, CameraAnimatorNo
         t * node2Trans->GetWorldPosition( )
     );
 
-    trans->SetWorldRotation( 
-        node1Trans->GetLocalRotation( )
-        .Slerp( node2Trans->GetLocalRotation( ), t )
-    );
+    if (m_useFocusPoint && m_focusPoint)
+    {
+        auto dir = m_focusPoint->GetWorldPosition( ) - trans->GetWorldPosition( );
+        trans->SetWorldRotation( SQuat::LookAt( dir ) );
+    }
+    else
+    {
+        trans->SetWorldRotation( 
+            node1Trans->GetLocalRotation( )
+            .Slerp( node2Trans->GetLocalRotation( ), t )
+        );
+    }
 }
 
 void CameraAnimator::updateAnimation(CameraAnimatorNode *node1, CameraAnimatorNode *node2,
@@ -127,7 +152,7 @@ void CameraAnimator::updateAnimation(CameraAnimatorNode *node1, CameraAnimatorNo
     auto node4Trans = node4->GetOwner( )->GetTransform( );
 
     trans->SetWorldPosition(
-        ursine::Curves::CatmullRomSpline(
+        Curves::CatmullRomSpline(
             node1Trans->GetWorldPosition( ),
             node2Trans->GetWorldPosition( ),
             node3Trans->GetWorldPosition( ),
@@ -136,10 +161,18 @@ void CameraAnimator::updateAnimation(CameraAnimatorNode *node1, CameraAnimatorNo
         )
     );
 
-    trans->SetWorldRotation( 
-        node2Trans->GetLocalRotation( )
-        .Slerp( node3Trans->GetLocalRotation( ), t )
-    );
+    if (m_useFocusPoint && m_focusPoint)
+    {
+        auto dir = m_focusPoint->GetWorldPosition( ) - trans->GetWorldPosition( );
+        trans->SetWorldRotation( SQuat::LookAt( dir ) );
+    }
+    else
+    {
+        trans->SetWorldRotation( 
+            node2Trans->GetLocalRotation( )
+            .Slerp( node3Trans->GetLocalRotation( ), t )
+        );
+    }
 }
 
 void CameraAnimator::enableDeletionNodes(bool flag)

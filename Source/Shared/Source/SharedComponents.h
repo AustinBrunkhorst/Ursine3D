@@ -79,7 +79,7 @@
 
 #include "CameraAnimation/CameraAnimatorComponent.h"
 #include "CameraAnimation/CameraAnimatorNodeComponent.h"
-
+#include "CameraAnimation/CameraAnimatorFocusPointComponent.h"
 
 /////////////////////////////////
 ////     Spawning System     ////

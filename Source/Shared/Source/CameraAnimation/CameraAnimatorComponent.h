@@ -34,7 +34,7 @@ class CameraAnimator : public ursine::ecs::Component
 public:
     EditorButton(
         play,
-        "Play Animation"        
+        "Play Animation"
     );
 
     EditorButton(
@@ -53,11 +53,20 @@ public:
         SetSmoothPath
     );
 
+    EditorField(
+        bool useFocusPoint,
+        GetUseFocusPoint,
+        SetUseFocusPoint
+    );
+
     CameraAnimator(void);
     ~CameraAnimator(void);
 
     bool GetSmoothPath(void) const;
     void SetSmoothPath(bool smooth);
+
+    bool GetUseFocusPoint(void) const;
+    void SetUseFocusPoint(bool flag);
 
     void Play(void);
     void Reset(void);
@@ -78,11 +87,14 @@ private:
 
     void getChildren(void);
     
-    bool m_playing    : 1;
-    bool m_smoothPath : 1;
+    bool m_playing       : 1;
+    bool m_smoothPath    : 1;
+    bool m_useFocusPoint : 1;
 
     // The camera we're animating
     ursine::ecs::Camera *m_camera;
+
+    ursine::ecs::Transform *m_focusPoint;
 
     // The animation nodes
     std::vector<CameraAnimatorNode*> m_nodes;

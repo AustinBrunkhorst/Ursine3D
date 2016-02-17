@@ -20,15 +20,15 @@ class CameraAnimatorSystem : public ursine::ecs::FilterSystem
     ENTITY_SYSTEM;
 
 public:
-    
+
     CameraAnimatorSystem(ursine::ecs::World *world);
 
 private:
-    
+
     void Process(ursine::ecs::Entity *entity) override;
 
     void smoothUpdate(CameraAnimator *animator);
-    
+
     void linearUpdate(CameraAnimator *aniamtor);
 
 } Meta(Enable, AutoAddEntitySystem);

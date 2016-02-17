@@ -445,7 +445,7 @@ namespace ursine
             EntityEventArgs e(WORLD_ENTITY_REMOVED, entity);
 
             // we're removing man
-            entity->Dispatch(ENTITY_REMOVED, EventArgs::Empty);
+            entity->Dispatch( ENTITY_REMOVED, EventArgs::Empty );
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
