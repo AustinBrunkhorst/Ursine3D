@@ -13,14 +13,14 @@
 #include <FilterSystem.h>
 
 class CommandQueueSystem
-	: public ursine::ecs::FilterSystem
+    : public ursine::ecs::FilterSystem
 {
-	ENTITY_SYSTEM;
+    ENTITY_SYSTEM;
 
 public:
-	CommandQueueSystem(ursine::ecs::World *world);
+    CommandQueueSystem(ursine::ecs::World *world);
 
 protected:
-	void Process(ursine::ecs::Entity *entity) override;
+    void Process(ursine::ecs::Entity *entity) override;
 
 } Meta(Enable);

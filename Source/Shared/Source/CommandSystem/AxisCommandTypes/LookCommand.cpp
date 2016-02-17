@@ -19,11 +19,11 @@ RECORDABLE_COMMAND_DEFINITION( LookCommand );
 
 LookCommand::LookCommand() 
     : RecordableAxisCommand(ursine::Vec2(0,0))
-	, m_playback( false ) { }
+    , m_playback( false ) { }
 
 LookCommand::LookCommand(const ursine::Vec2& axis) 
     : RecordableAxisCommand(axis) 
-	, m_playback( false ) {}
+    , m_playback( false ) {}
 
 
 void LookCommand::Execute(ursine::ecs::Entity* receiver)

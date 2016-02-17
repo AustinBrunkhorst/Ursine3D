@@ -15,7 +15,7 @@
 class LookCommand
     : public RecordableAxisCommand
 {
-	RECORDABLE_COMMAND;
+    RECORDABLE_COMMAND;
 
 public:
     LookCommand(void);

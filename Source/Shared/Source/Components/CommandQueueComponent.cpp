@@ -77,8 +77,8 @@ void CommandQueue::Update(void)
 
     m_stopQueue.clear();
 
-	auto recordingSystem = GetOwner( )->GetWorld( )->GetEntitySystem( ursine::RecorderSystem );
-	auto entity = GetOwner( );
+    auto recordingSystem = GetOwner( )->GetWorld( )->GetEntitySystem( ursine::RecorderSystem );
+    auto entity = GetOwner( );
 
     while (m_commandQueue.size( ) > 0)
     {
@@ -89,12 +89,12 @@ void CommandQueue::Update(void)
 
         if (m_recording)
         {
-			auto recordable = std::dynamic_pointer_cast<RecordableCommand>( command );
+            auto recordable = std::dynamic_pointer_cast<RecordableCommand>( command );
 
-			if (recordable)
-			{
-				recordingSystem->RecordCommand( recordable, GetOwner( ) );
-			}
+            if (recordable)
+            {
+                recordingSystem->RecordCommand( recordable, GetOwner( ) );
+            }
         }
         else if (!m_useRecorder)
             m_stopQueue.push_back( command );

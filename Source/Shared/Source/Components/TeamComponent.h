@@ -33,13 +33,13 @@ public:
 
     void SetTeamNumber(int num);
 
-	void SetAlive(void);
-	void SetDead(void);
-	bool IsDead(void);
+    void SetAlive(void);
+    void SetDead(void);
+    bool IsDead(void);
 
 private:
     int m_teamNumber;
 
-	bool m_alive;
+    bool m_alive;
     
 } Meta(Enable, DisplayName("Team"));

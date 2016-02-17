@@ -36,19 +36,19 @@ CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
 void CharacterControllerSystem::Process(Entity *entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
-	auto *swept = entity->GetComponent<SweptController>( );
-	auto rotateSpeed = controller->GetRotateSpeed( );
+    auto *swept = entity->GetComponent<SweptController>( );
+    auto rotateSpeed = controller->GetRotateSpeed( );
 
     auto transform = entity->GetTransform( );
     auto rigidbody = entity->GetComponent<Rigidbody>( );
     
     auto lookDir = controller->GetLookDirection( );
     
-	auto child = transform->GetChild(0);
+    auto child = transform->GetChild(0);
     auto cam = transform->GetComponentInChildren<Camera>( );
 
-	// This is an immidiate fix, cause fuck eet. - Jordan
-	rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
+    // This is an immidiate fix, cause fuck eet. - Jordan
+    rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
     
     // Looking logic
     if (lookDir.LengthSquared( ) > 0.1f)

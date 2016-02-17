@@ -17,7 +17,7 @@
 #include <SystemManager.h>
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
-#include <Game Engine/Scene/World/Systems/Native Systems/DebugSystem.h>
+#include <DebugSystem.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -341,23 +341,23 @@ void RotateTool::updateHoverAxis(void)
 
         if ( name == "xAxis" )
         {
-            setDirectionVectors(SVec3::UnitX(), selected);
+			setDirectionVectors(SVec3::UnitX(), selected);
             m_axisType = 1;
         }
         else if ( name == "yAxis" )
         {
-            setDirectionVectors(SVec3::UnitY(), selected);
+			setDirectionVectors(SVec3::UnitY(), selected);
             m_axisType = 2;
         }
         else if ( name == "zAxis" )
         {
-            setDirectionVectors(SVec3::UnitZ(), selected);
+			setDirectionVectors(SVec3::UnitZ(), selected);
             m_axisType = 3;
         }
-        else
+		else
         {
             m_axisType = 0;
-            return;
+			return;
         }
 
 		auto model = entity->GetComponent<Model3D>( );

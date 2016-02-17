@@ -20,9 +20,9 @@ NATIVE_COMPONENT_DEFINITION(TeamComponent);
 using namespace ursine;
 
 TeamComponent::TeamComponent()
-	: BaseComponent()
+    : BaseComponent()
     , m_teamNumber(0)
-	, m_alive(true)
+    , m_alive(true)
 {
 }
 
@@ -38,15 +38,15 @@ void TeamComponent::SetTeamNumber(int num)
 
 void TeamComponent::SetAlive(void)
 {
-	m_alive = true;
+    m_alive = true;
 }
 
 void TeamComponent::SetDead(void)
 {
-	m_alive = false;
+    m_alive = false;
 }
 
 bool TeamComponent::IsDead(void)
 {
-	return !m_alive;
+    return !m_alive;
 }

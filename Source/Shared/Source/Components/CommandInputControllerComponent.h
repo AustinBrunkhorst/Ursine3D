@@ -86,6 +86,6 @@ private:
     void MapXboxContoller(void);
     void MapKeyboard(void);
 
-	void MapCommandList(void);
+    void MapCommandList(void);
 
 }Meta(Enable, DisplayName("CommandInputController"));

@@ -13,7 +13,7 @@ namespace ursine
             : BaseComponent( )
             , m_rigid( )
             , m_speed( 0.0f )
-			, m_enable( true )
+            , m_enable( true )
         {
         }
 
@@ -38,9 +38,9 @@ namespace ursine
 
         void AIMovementController::Update(void)
         {
-			if (!m_enable)
-				return;
-			
+            if (!m_enable)
+                return;
+            
             m_rigid = static_cast< Handle<Rigidbody> >( GetOwner( )->GetComponent<Rigidbody>( ) );
 
 
@@ -57,15 +57,15 @@ namespace ursine
             m_rigid->SetAngularVelocity( Vec3( oldV.X( ), lookangle, oldV.Z( ) ) );
         }
 
-		bool AIMovementController::GetEnable(void) const
-		{
-			return m_enable;
-		}
+        bool AIMovementController::GetEnable(void) const
+        {
+            return m_enable;
+        }
 
-		void AIMovementController::SetEnable(bool enable)
-		{
-			m_enable = enable;
-		}
+        void AIMovementController::SetEnable(bool enable)
+        {
+            m_enable = enable;
+        }
 
         float AIMovementController::GetSpeed(void) const
         {

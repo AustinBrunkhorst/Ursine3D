@@ -15,7 +15,7 @@
 class JumpCommand
     : public RecordableCommand
 {
-	RECORDABLE_COMMAND
+    RECORDABLE_COMMAND
 
 public:
     JumpCommand(void);

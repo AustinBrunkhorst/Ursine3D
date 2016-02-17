@@ -22,7 +22,7 @@ NATIVE_COMPONENT_DEFINITION( CharacterController );
 CharacterController::CharacterController(void)
     : BaseComponent( )
     , m_rotateSpeed( 4.0f )
-	, m_jump( false ) { }
+    , m_jump( false ) { }
 
 CharacterController::~CharacterController(void)
 {

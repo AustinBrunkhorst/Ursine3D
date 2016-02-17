@@ -17,54 +17,54 @@
 
 class ElevatorLiftMover : public ursine::ecs::Component
 {
-	NATIVE_COMPONENT;
+    NATIVE_COMPONENT;
 
 public:
-	EditorField(
-		ursine::SVec3 startPosition,
-		GetStartPosition,
-		SetStartPosition
-	);
+    EditorField(
+        ursine::SVec3 startPosition,
+        GetStartPosition,
+        SetStartPosition
+    );
 
-	EditorField(
-		ursine::SVec3 endPosition,
-		GetEndPosition,
-		SetEndPosition
-	);
+    EditorField(
+        ursine::SVec3 endPosition,
+        GetEndPosition,
+        SetEndPosition
+    );
 
-	EditorField(
-		float duration,
-		GetDuration,
-		SetDuration
-	);
+    EditorField(
+        float duration,
+        GetDuration,
+        SetDuration
+    );
 
-	EditorButton(
-		startMoving, "Start Moving"
-	);
+    EditorButton(
+        startMoving, "Start Moving"
+    );
 
-	EditorButton(
-		reset, "Reset"
-	);
+    EditorButton(
+        reset, "Reset"
+    );
 
-	ElevatorLiftMover(void);
+    ElevatorLiftMover(void);
 
-	const ursine::SVec3 &GetStartPosition(void) const;
-	void SetStartPosition(const ursine::SVec3 &startPosition);
+    const ursine::SVec3 &GetStartPosition(void) const;
+    void SetStartPosition(const ursine::SVec3 &startPosition);
 
-	const ursine::SVec3 &GetEndPosition(void) const;
-	void SetEndPosition(const ursine::SVec3 &endPosition);
+    const ursine::SVec3 &GetEndPosition(void) const;
+    void SetEndPosition(const ursine::SVec3 &endPosition);
 
-	float GetDuration(void) const;
-	void SetDuration(float duration);
+    float GetDuration(void) const;
+    void SetDuration(float duration);
 
-	void StartMoving(void);
+    void StartMoving(void);
 
 private:
-	ursine::SVec3 m_startPos;
-	ursine::SVec3 m_endPos;
+    ursine::SVec3 m_startPos;
+    ursine::SVec3 m_endPos;
 
-	float m_duration;
+    float m_duration;
 
-	ursine::TweenID m_tween;
+    ursine::TweenID m_tween;
 
 } Meta(Enable);

@@ -488,8 +488,8 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::
                 // get first object hit w/ health and apply damage
                 ursine::ecs::Entity& objHit = *m_world->GetEntityUnique(rayout.entity.front( ));
 
-				ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH"bullet.uatype");
-				e->GetTransform()->SetWorldPosition(rayout.hit[0]);
+                ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH"bullet.uatype");
+                e->GetTransform()->SetWorldPosition(rayout.hit[0]);
 
                 // if
                 if ( objHit.HasComponent<Health>( ) )

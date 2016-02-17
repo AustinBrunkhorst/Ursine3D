@@ -43,8 +43,8 @@ private:
     // spawn players when the round starts based off of round number
     void onRoundStart(EVENT_HANDLER(RoundSystem));
 
-	// when the players die, this gets called
-	void onPlayerDied(EVENT_HANDLER(RoundSystem));
+    // when the players die, this gets called
+    void onPlayerDied(EVENT_HANDLER(RoundSystem));
 
     void killPlayer(ursine::ecs::Entity *entity);
 
