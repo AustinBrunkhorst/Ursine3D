@@ -26,6 +26,14 @@ namespace ursine
             const SVec3 &p0, const SVec3 &p1, 
             const SVec3 &p2, const SVec3 &p3, float t
         );
+
+        // Prep the series of orientations for nested slerping.
+        // This functions checks for arc length greater than 90*
+        // and inverts the quaternion if that is the case, always ensuring
+        // the shortest path is taken when interpolating.
+        //static void NestedSlerpPrep(std::vector<SQuat> &orientations);
+
+        //static SQuat NestedSlerp(std::vector<SQuat> &orientations, float t);
     };
 }
 
