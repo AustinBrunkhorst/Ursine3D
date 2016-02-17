@@ -13,6 +13,7 @@
 #include "InteractionBay.h"
 #include "ComponentIncludes.h"
 #include "InteractableComponent.h"
+#include <CollisionEventArgs.h>
 
 
 NATIVE_COMPONENT_DEFINITION( InteractionBay ) ;
@@ -21,7 +22,8 @@ using namespace ursine;
 
 
 InteractionBay::InteractionBay(void) :
-    BaseComponent( )
+    BaseComponent( ),
+    m_prevInteractable(nullptr)
 {
 }
 

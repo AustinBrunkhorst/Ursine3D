@@ -114,8 +114,9 @@ void InventorySystem::ChangeCurrentWeapon(Inventory* inventory)
     {
         if ( !inventory->m_swap && inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded )
         {
-            // activate current weapon
-            inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded->Dispatch(game::DETACH_WEAPON, ursine::ecs::EntityEventArgs::Empty);
+            // detatch current weapon
+            game::WeaponDeactivationEventArgs args(inventory->GetOwner( ));
+            inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded->Dispatch(game::DETACH_WEAPON, &args);
         }
 
         // update previous
@@ -127,7 +128,7 @@ void InventorySystem::ChangeCurrentWeapon(Inventory* inventory)
  
 void InventorySystem::LoadWeapon(Inventory* inventory)
 {
-    Inventory::WeaponSlotInfo& weaponSlot = inventory->m_inventory[ inventory->m_currWeapon ];
+    WeaponSlotInfo& weaponSlot = inventory->m_inventory[ inventory->m_currWeapon ];
 
     // create weapon
     weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weaponSlot.m_weaponToLoad, "Weapoon" );

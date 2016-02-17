@@ -36,7 +36,7 @@ public:
     void SetPickupTime(const float time);
 
     EditorField(
-        WeaponType Weapon,
+        WeaponType WeaponType,
         GetWeaponType,
         SetWeaponType
     );
@@ -70,6 +70,8 @@ private:
     void Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
     void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
     void InteractionComplete(void);
+    void CheckForAmmo(const ursine::ecs::EntityUniqueID);
+
 
     // time it takes to pick up
     float m_pickupTime;

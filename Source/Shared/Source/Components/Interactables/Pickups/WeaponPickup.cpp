@@ -112,6 +112,9 @@ void WeaponPickup::StartInteraction(const CommandQueue* queue, ursine::ecs::Enti
     // get invetory
     m_inventories[ id ] = queue->GetOwner( )->GetComponent<Inventory>( );
 
+    //if ( CheckForAmmo( id ) )
+    //    return;
+
     // start time
     m_times[ id ] = ursine::Application::Instance->GetDeltaTime( );
 }
@@ -133,7 +136,7 @@ void WeaponPickup::Interact(const CommandQueue* queue, ursine::ecs::EntityUnique
         *time += ursine::Application::Instance->GetDeltaTime( );
 
         // swap weapons if the required time for pickup has been met
-        if ( *time > m_pickupTime )
+        if ( *time > m_pickupTime && !GetOwner()->IsDeleting() )
         {
             // change current weapon
             inventory->SetNewWeapon( m_weaponType, m_weaponToPickup, m_ammo, m_clipCount );
@@ -161,3 +164,17 @@ void WeaponPickup::InteractionComplete(void)
     GetOwner( )->Delete( );
 }
 
+void WeaponPickup::CheckForAmmo(const ursine::ecs::EntityUniqueID id)
+{
+    Inventory* inventory = &*m_inventories[ id ];
+
+    if ( inventory == nullptr )
+        return;
+
+    WeaponSlotInfo& weaponInfo = inventory->m_inventory[ inventory->m_currWeapon ];
+
+    if ( weaponInfo.m_weaponToLoad == m_weaponToPickup )
+    {
+       // if ( weaponInfo.m_weaponLoaded )
+    }
+}

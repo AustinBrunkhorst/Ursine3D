@@ -88,14 +88,17 @@ void InteractionBaySystem::onUpdate(EVENT_HANDLER(World))
     for ( auto it : m_interactionBays )
     {
         // grab current Interaction bay
-        bay = &*(it.second);
+        bay = it.second;
 
         // find closest interactable index to bay
         closestIndex = SortBayInteractables( bay->GetOwner( )->GetTransform( ), bay->m_transforms );
 
         // current bay is not contacting an interactables
         if ( closestIndex == -1 )
+        {
+            bay->m_prevInteractable = nullptr;
             continue;
+        }
         
         // update le bay and its interaction
         UpdateBay( bay, closestIndex );
@@ -110,7 +113,7 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex
     ursine::ecs::EntityUniqueID id = bay->GetOwner( )->GetUniqueID( );
 
     // get new current interactable
-    currInteractable = &*bay->m_interactables[ closestIndex ];
+    currInteractable = bay->m_interactables[ closestIndex ];
 
     // was a new interactable found
     if ( bay->m_prevInteractable != currInteractable )

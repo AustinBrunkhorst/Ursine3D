@@ -17,6 +17,9 @@
 #include <CommandSystem/AxisCommandTypes/LookCommand.h>
 #include <CommandSystem/CommandTypes/FireCommand.h>
 #include <CommandSystem/CommandTypes/JumpCommand.h>
+#include <CommandSystem/CommandTypes/InteractCommand.h>
+#include <CommandSystem/CommandTypes/SwapCommand.h>
+#include <CommandSystem/CommandTypes/ReloadCommand.h>
 #include "PlayerIdComponent.h"
 
 NATIVE_COMPONENT_DEFINITION(CommandInputController);
@@ -127,6 +130,16 @@ void CommandInputController::MapXboxContoller( void )
         PlayerAction::Xbox,
         PlayerAction::RightTrigger
         );
+    m_reload = PlayerAction(
+        idComp,
+        PlayerAction::Xbox,
+        PlayerAction::Action3
+        );
+    m_swap = PlayerAction(
+        idComp,
+        PlayerAction::Xbox,
+        PlayerAction::Action4
+        );
     m_jump = PlayerAction(
         idComp,
         PlayerAction::Xbox,
@@ -201,6 +214,16 @@ void CommandInputController::MapKeyboard(void)
         PlayerAction::Keyboard,
         PlayerAction::RightTrigger
         );
+    m_reload = PlayerAction(
+        idComp,
+        PlayerAction::Keyboard,
+        PlayerAction::Action3
+        );
+    m_swap = PlayerAction(
+        idComp,
+        PlayerAction::Keyboard,
+        PlayerAction::Action4
+        );
     m_jump = PlayerAction(
         idComp,
         PlayerAction::Keyboard,
@@ -229,6 +252,21 @@ void CommandInputController::MapCommandList(void)
         new ButtonActionCommand<FireCommand>(
             m_fire,
             ButtonActionCommand<FireCommand>::Interaction::Held
+        ),
+        
+        new ButtonActionCommand<InteractCommand>(
+            m_reload,
+            ButtonActionCommand<InteractCommand>::Interaction::Held
+        ),
+
+        new ButtonActionCommand<InteractCommand>(
+             m_reload,
+             ButtonActionCommand<InteractCommand>::Interaction::Up
+        ),
+
+        new ButtonActionCommand<SwapCommand>(
+            m_swap,
+            ButtonActionCommand<SwapCommand>::Interaction::Down
         )
     };
 }

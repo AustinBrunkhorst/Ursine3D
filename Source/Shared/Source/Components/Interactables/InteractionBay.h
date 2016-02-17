@@ -31,21 +31,28 @@ struct InteractionBay : ursine::ecs::Component
 {
     NATIVE_COMPONENT
 public:
-    typedef std::vector<Handle<Interactable>> InteractVec;
-    typedef std::vector<Handle<ursine::ecs::Transform>> TransVec;
+    Meta(Disable)
+    typedef std::vector<Interactable*> InteractVec;
+    Meta(Disable)
+    typedef std::vector<ursine::ecs::Transform*> TransVec;
 
+    Meta(Enable)
     InteractionBay(void);
     ~InteractionBay(void);
 
+    Meta(Enable)
     void OnInitialize(void) override;
-
+    Meta(Enable)
     void OnCollision(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
     void Clear(void);
 
+    Meta(Disable)
     InteractionBay::InteractVec m_interactables;
+    Meta(Disable)
     InteractionBay::TransVec m_transforms;
 
-    ursine::ecs::Component::Handle<Interactable> m_prevInteractable;
+    Meta(Disable)
+    Interactable* m_prevInteractable;
 
-} Meta(Enable, DisplayName("InteractionBay"));
+} Meta(Enable, WhiteListMethods, DisplayName("InteractionBay"));

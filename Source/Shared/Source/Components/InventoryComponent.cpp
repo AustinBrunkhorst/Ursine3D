@@ -22,7 +22,7 @@ using namespace ursine;
 namespace
 {
     // sets the archetype that is desired to load
-    bool SetWeaponSlot(Inventory::WeaponSlotInfo& weaponSlot, const std::string& weaponToLoad)
+    bool SetWeaponSlot(WeaponSlotInfo& weaponSlot, const std::string& weaponToLoad)
     {
         bool isValid = false;
 
@@ -49,7 +49,7 @@ namespace
   ////  WeaponSlotInfo Members  ////
   //////////////////////////////////
 
-Inventory::WeaponSlotInfo::WeaponSlotInfo(WeaponType index, const std::string& weapon) :
+WeaponSlotInfo::WeaponSlotInfo(WeaponType index, const std::string& weapon) :
     m_weaponSlotType( index ),
     m_weaponLoaded( nullptr ),
     m_weaponToLoad( weapon ),
@@ -83,11 +83,20 @@ Inventory::Inventory(void) :
 {
 }
 
+Inventory::~Inventory(void)
+{
+    GetOwner( )->Listener(this)
+        .Off(game::SWAP_COMMAND, &Inventory::TriggerSwapWeapons);
+}
+
 void Inventory::OnInitialize(void)
 {
     // default positions of camera and arm to current position
     m_cameraHandle = GetOwner( )->GetTransform( );
     m_armHandle = GetOwner( )->GetTransform( );
+
+    GetOwner( )->Listener(this)
+        .On(game::SWAP_COMMAND, &Inventory::TriggerSwapWeapons);
 }
 
 void Inventory::Init(void)
@@ -178,3 +187,107 @@ void Inventory::TriggerSwapWeapons(void* _sender, const ursine::EventArgs* _args
 {
     m_swap = true;
 }
+
+
+
+
+
+//
+///////////////////////////////
+//////  Inventory Members  ////
+///////////////////////////////
+//
+//Inventory2::Inventory2(void) :
+//    BaseComponent( ),
+//    m_currWeapon(PRIMARY_WEAPON),
+//    m_prevWeapon(PRIMARY_WEAPON),
+//    m_inventory{
+//    WeaponSlotInfo(SECONDARY_WEAPON),
+//    WeaponSlotInfo(PRIMARY_WEAPON,"HitscanWeapon.uatype"),
+//    WeaponSlotInfo(GOD_WEAPON)
+//},
+//m_swap(false),
+//m_newWeapon(true),
+//m_init(false)
+//{
+//}
+//
+//void Inventory2::OnInitialize(void)
+//{
+//
+//    // default positions of camera and arm to current position
+//    m_cameraHandle = GetOwner( )->GetTransform( );
+//    m_armHandle = GetOwner( )->GetTransform( );
+//}
+//
+//void Inventory2::Init(void)
+//{
+//    // try to get camera position
+//    ursine::ecs::Camera* cam = GetOwner( )->GetComponentInChildren<ursine::ecs::Camera>( );
+//
+//    if ( cam )
+//    {
+//        m_cameraHandle = cam->GetOwner( )->GetTransform( );
+//
+//        // try to get right arm position
+//        ursine::ecs::Entity* arm = cam->GetOwner( )->GetChildByName("RightArm");
+//
+//        if ( arm )
+//        {
+//            m_armHandle = arm->GetTransform( );
+//        }
+//    }
+//
+//}
+//
+//WeaponType Inventory2::GetStartWeapon(void) const
+//{
+//    return m_currWeapon;
+//}
+//
+//void Inventory2::SetStartWeapon(const WeaponType slot)
+//{
+//    m_currWeapon = slot;
+//}
+//
+//
+//const std::string& Inventory2::GetSecondaryWeapon( ) const
+//{
+//    return m_inventory[ SECONDARY_WEAPON ].m_weaponToLoad;
+//}
+//
+//void Inventory2::SetSecondaryWeapon(const std::string& archetype)
+//{
+//    if ( SetWeaponSlot(m_inventory[ SECONDARY_WEAPON ], archetype) )
+//        m_newWeapon = true;
+//}
+//
+//const std::string& Inventory2::GetPrimaryWeapon( ) const
+//{
+//    return m_inventory[ PRIMARY_WEAPON ].m_weaponToLoad;
+//}
+//
+//void Inventory2::SetPrimaryWeapon(const std::string& archetype)
+//{
+//    if ( SetWeaponSlot(m_inventory[ PRIMARY_WEAPON ], archetype) )
+//        m_newWeapon = true;
+//}
+//
+//
+//void Inventory2::SetNewWeapon(const WeaponType type, const std::string& weaponToLoad, int ammo, int clip)
+//{
+//    m_inventory[ type ].m_weaponToLoad = weaponToLoad;
+//    m_inventory[ type ].m_ammoCount = ammo;
+//    m_inventory[ type ].m_clipCount = clip;
+//    m_currWeapon = type;
+//
+//    m_newWeapon = true;
+//}
+//
+//void Inventory2::TriggerSwapWeapons(void* _sender, const ursine::EventArgs* _args)
+//{
+//    m_swap = true;
+//}
+//
+
+
