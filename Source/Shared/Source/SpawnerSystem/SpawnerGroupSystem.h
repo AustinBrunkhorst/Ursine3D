@@ -15,7 +15,9 @@
 
 #include <EntitySystem.h>
 
-class SpawnerGroupSystem : ursine::ecs::EntitySystem
+class SpawnerGroup;
+
+class SpawnerGroupSystem : public ursine::ecs::EntitySystem
 {
     ENTITY_SYSTEM;
 
@@ -28,10 +30,13 @@ private:
     void OnInitialize(void) override;
     void OnRemove(void) override;
 
+    void OnAfterLoad(void) override;
+
     void onUpdate(EVENT_HANDLER(World));
 
     void onComponentAdded(EVENT_HANDLER(World));
     void onComponentRemoved(EVENT_HANDLER(World));
 
-} Meta(Enable);
+    std::vector<SpawnerGroup*> m_spawnerGroups;
 
+} Meta(Enable, AutoAddEntitySystem);

@@ -17,9 +17,13 @@
 
 #include "AIArchetypes.h"
 
+class Spawner;
+
 class SpawnerGroup : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
+
+    friend class SpawnerGroupSystem;
 
 public:
 
@@ -44,7 +48,11 @@ private:
 
     AIArchetype m_enemyType;
 
-    // TODO: Check to see if storing an UniqueID is better (persists world load?)
-    std::unordered_map<AIArchetype, ursine::ecs::Entity*> m_spawners;
+    std::unordered_map<AIArchetype, Spawner *> m_spawners;
+
+    void addSpawner(Spawner *spawner);
+    void removeSpawner(Spawner *spawner);
+
+    bool haveSpawnerOfType(AIArchetype type);
 
 } Meta(Enable);

@@ -23,6 +23,11 @@ Spawner::Spawner(void)
 {
 }
 
+AIArchetype Spawner::GetEnemyType(void) const
+{
+    return m_enemyType;
+}
+
 #if defined(URSINE_WITH_EDITOR)
 
 void Spawner::createPattern(void)

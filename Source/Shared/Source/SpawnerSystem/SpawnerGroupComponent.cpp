@@ -14,6 +14,13 @@
 #include "Precompiled.h"
 
 #include "SpawnerGroupComponent.h"
+#include "SpawnerComponent.h"
+
+#include <Notification.h>
+
+NATIVE_COMPONENT_DEFINITION( SpawnerGroup );
+
+using namespace ursine;
 
 SpawnerGroup::SpawnerGroup(void)
     : BaseComponent( )
@@ -31,25 +38,91 @@ void SpawnerGroup::SetEnemyType(AIArchetype enemyType)
     m_enemyType = enemyType;
 }
 
+void SpawnerGroup::addSpawner(Spawner *spawner)
+{
+    UAssert( !haveSpawnerOfType( spawner->m_enemyType ), "Error: Why is this happening?" );
+
+    m_spawners[ spawner->m_enemyType ] = spawner;
+}
+
+void SpawnerGroup::removeSpawner(Spawner *spawner)
+{
+    UAssert( haveSpawnerOfType( spawner->m_enemyType ), "Error: Why is this happening?" );
+
+    m_spawners.erase( spawner->m_enemyType );
+}
+
+bool SpawnerGroup::haveSpawnerOfType(AIArchetype type)
+{
+    return m_spawners.find( type ) != m_spawners.end( );
+}
+
 #if defined(URSINE_WITH_EDITOR)
 
 void SpawnerGroup::createSpawner(void)
 {
     // Check to see if there are spawners that exist for this enemy type
     // If so send a notification
+    if (haveSpawnerOfType( m_enemyType ))
+    {
+        NotificationConfig config;
+
+        config.type = NOTIFY_INFO;
+        config.header = "Notice";
+        config.message = "This group already has a spawner of that enemy type.";
+        config.dismissible = true;
+        config.duration = TimeSpan::FromSeconds( 5.0f );
+
+        EditorPostNotification( config );
+
+        return;
+    }
 
     // Create a spawner object for the given enemy type
     // Store it in our map
+    auto entity = GetOwner( )->GetWorld( )->CreateEntity( );
 
+    // set the name
+    switch (m_enemyType)
+    {
+        case AIArchetype::Agile:
+        {
+            entity->SetName( "Spawner_Agile" );
+            break;
+        }
+        case AIArchetype::Bomber:
+        {
+            entity->SetName( "Spawner_Bomber" );
+            break;
+        }
+        case AIArchetype::Fodder:
+        {
+            entity->SetName( "Spawner_Fodder" );
+            break;
+        }
+        case AIArchetype::Nuker:
+        {
+            entity->SetName( "Spawner_Nuker" );
+            break;
+        }
+        case AIArchetype::Tank:
+        {
+            entity->SetName( "Spawner_Tank" );
+            break;
+        }
+    }
 
-    // IN SPAWN GROUP SYSTEM:
-    // - Listen for Component removed "Spawner".  If removed, make sure to
-    // remove it from it's coresponding spawnerGroupComponent.
-    // - In OnAfterWorldLoad check for all entites called spawnerGroup, and
-    // add all their children to their map.
+    auto spawner = entity->AddComponent<Spawner>( );
 
-    // IN ON REMOVE IN THIS COMPONENT:
-    // Delete all children.
+    spawner->m_enemyType = m_enemyType;
+
+    addSpawner( spawner );
+
+    auto entityTrans = entity->GetTransform( );
+
+    entityTrans->SetWorldPosition( SVec3::Zero( ) );
+
+    GetOwner( )->GetTransform( )->AddChildAlreadyInLocal( entityTrans );
 }
 
 #endif

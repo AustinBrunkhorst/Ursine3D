@@ -43,4 +43,10 @@
 ////     Camera Animation    ////
 /////////////////////////////////
 
-#include "Systems/CameraAnimation/CameraAnimatorSystem.h"
+#include "CameraAnimation/CameraAnimatorSystem.h"
+
+/////////////////////////////////
+////     Spawner System      ////
+/////////////////////////////////
+
+#include "SpawnerSystem/SpawnerGroupSystem.h"

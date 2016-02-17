@@ -15,9 +15,13 @@
 
 #include <Component.h>
 
+#include "AIArchetypes.h"
+
 class Spawner : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
+
+    friend class SpawnerGroup;
 
 public:
 
@@ -28,5 +32,11 @@ public:
     );
 
     Spawner(void);
+
+    AIArchetype GetEnemyType(void) const;
+
+private:
+
+    AIArchetype m_enemyType;
 
 } Meta(Enable, HiddenInSelector, DisableComponentRemoval);
