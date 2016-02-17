@@ -57,6 +57,15 @@ namespace ursine
             DrawCircle(center, SVec3::UnitZ( ), radius, color, duration, overdraw );
         }
 
+        void DebugSystem::DrawSphereFaded(const SVec3 &center, float radius, const SVec3 &cameraLook, 
+                                          const SVec3 &cameraPos, const Color &color, float duration, 
+                                          bool overdraw)
+        {
+            DrawCircleFaded(center, SVec3::UnitX(), radius, cameraLook, cameraPos, color, duration, overdraw);
+            DrawCircleFaded(center, SVec3::UnitY(), radius, cameraLook, cameraPos, color, duration, overdraw);
+            DrawCircleFaded(center, SVec3::UnitZ(), radius, cameraLook, cameraPos, color, duration, overdraw);
+        }
+
         void DebugSystem::DrawRay(const SVec3& start, const SVec3& direction, 
                                   float length, const Color& color, float duration, 
                                   bool overdraw)
@@ -68,19 +77,19 @@ namespace ursine
             u.Normalize( );
             v.Normalize( );
 
-            SVec3 basePoint = endPoint - direction * length * 0.25f;
+            SVec3 basePoint = endPoint - direction * length * 0.3f;
 
             // main line
             DrawLine( start, endPoint, color, duration, overdraw );
 
             // circle
-            DrawCircle( basePoint, direction, length * 0.125f, color, duration, overdraw );
+            DrawCircle( basePoint, direction, length * 0.07f, color, duration, overdraw );
             
             // offset lines
-            DrawLine( endPoint, basePoint + u * length * 0.125f, color, duration, overdraw );
-            DrawLine( endPoint, basePoint - u * length * 0.125f, color, duration, overdraw );
-            DrawLine( endPoint, basePoint + v * length * 0.125f, color, duration, overdraw );
-            DrawLine( endPoint, basePoint - v * length * 0.125f, color, duration, overdraw );
+            DrawLine( endPoint, basePoint + u * length * 0.07f, color, duration, overdraw );
+            DrawLine( endPoint, basePoint - u * length * 0.07f, color, duration, overdraw );
+            DrawLine( endPoint, basePoint + v * length * 0.07f, color, duration, overdraw );
+            DrawLine( endPoint, basePoint - v * length * 0.07f, color, duration, overdraw );
         }
 
         void DebugSystem::DrawCube(const SVec3& center, float size, 
@@ -144,6 +153,41 @@ namespace ursine
                 auto p2 = center + q2.Rotate( perpDir ) * radius;
 
                 DrawLine( p1, p2, color, duration, overdraw );
+            }
+        }
+
+        void DebugSystem::DrawCircleFaded(const SVec3 &center, const SVec3 &normal, float radius,
+                                          const SVec3 &cameraLook, const SVec3 &cameraPos, const Color &color, 
+                                          float duration, bool overdraw)
+        {
+            static const int resolution = 80;
+
+            auto normDir = SVec3::Normalize(normal);
+            auto perpDir = SVec3::Cross(normDir, normDir == SVec3::UnitY() ? SVec3::UnitX() : SVec3::UnitY());
+
+            perpDir.Normalize();
+
+            float theta = 0.0f;
+            float step = 360.0f / resolution;
+
+            for ( int i = 0; i < resolution; ++i )
+            {
+                SQuat q1(theta, normDir);
+
+                theta += step;
+
+                SQuat q2(theta, normDir);
+
+                auto p1 = center + q1.Rotate(perpDir) * radius;
+                auto p2 = center + q2.Rotate(perpDir) * radius;
+
+                auto camToPoint = p2 - center;
+                float dot = camToPoint.Dot(cameraLook);
+
+                if(dot < 0)
+                    DrawLine(p1, p2, color, duration, overdraw);
+                else
+                    DrawLine(p1, p2, Color(color.r * 0.2f, color.g * 0.2f, color.b * 0.2f, color.a * 0.2f), duration, overdraw);
             }
         }
 

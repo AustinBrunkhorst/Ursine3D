@@ -247,10 +247,15 @@ void RotateTool::renderAxis()
     {
         auto gizTrans = m_gizmo->GetTransform( );
 
-        auto camVec = gizTrans->GetWorldPosition( ) -
-            m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );
+        auto cameraPos = m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
 
-        float size = (camVec.Length( ) * 0.18f) * 0.54f;
+        auto camToGizmo = gizTrans->GetWorldPosition( ) -
+            cameraPos;
+        
+        auto lookDir = m_editorCameraSystem->GetEditorFocusPosition() - cameraPos;
+        lookDir.Normalize( );
+
+        float size = (camToGizmo.Length( ) * 0.18f) * 0.54f;
 
         auto position = gizTrans->GetWorldPosition( );
 
@@ -280,9 +285,9 @@ void RotateTool::renderAxis()
             break;
         }
 
-        drawer->DrawCircle( position, xAxis, size, xColor, 0.0f, true );
-        drawer->DrawCircle( position, yAxis, size, yColor, 0.0f, true );
-        drawer->DrawCircle( position, zAxis, size, zColor, 0.0f, true );
+        drawer->DrawCircleFaded( position, xAxis, size, lookDir, cameraPos, xColor, 0.0f, true );
+        drawer->DrawCircleFaded( position, yAxis, size, lookDir, cameraPos, yColor, 0.0f, true );
+        drawer->DrawCircleFaded( position, zAxis, size, lookDir, cameraPos, zColor, 0.0f, true );
 
         // render horizon disk
         auto camPos = m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );

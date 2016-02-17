@@ -19,10 +19,11 @@ namespace ursine
     {
         enum RENDERABLE_TYPE
         {
-            RENDERABLE_MODEL3D = 0,     //3d model
-            RENDERABLE_BILLBOARD2D,     //2D billboard
-            RENDERABLE_LIGHT,           //light
-            RENDERABLE_PS,              //particle system
+            RENDERABLE_MODEL3D = 0,     // 3d model
+            RENDERABLE_BILLBOARD2D,     // 2D billboard
+            RENDERABLE_LIGHT,           // light
+            RENDERABLE_PS,              // particle system
+            RENDERABLE_SPRITE_TEXT,      // sprite text
             RENDERABLE_TYPE_COUNT
         };
     }

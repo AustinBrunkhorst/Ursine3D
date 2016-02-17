@@ -47,6 +47,9 @@ namespace ursine
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
             void Uninitialize(void);
 
+            GfxHND CreateTexture(const std::string name, const std::string path, const unsigned width, const unsigned height);
+            GfxHND CreateTexture(const uint8_t *binaryData, size_t size, const std::string &name, const unsigned width, const unsigned height);
+
             void MapTextureByName(const std::string name, const unsigned int bufferIndex = 0);
             void MapTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
 
@@ -58,9 +61,6 @@ namespace ursine
             Texture *GetDynamicTexture(GfxHND &handle);
             void ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height);
             void DestroyDynamicTexture(GfxHND &handle);
-
-        private:
-            void TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height);
 
         private:
             ID3D11Device *m_device;

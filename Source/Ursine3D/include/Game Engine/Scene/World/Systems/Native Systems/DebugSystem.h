@@ -43,8 +43,16 @@ namespace ursine
             void DrawSphere(const SVec3 &center, float radius,
                             const Color &color, float duration, bool overdraw = false);
 
+            void DrawSphereFaded(const SVec3 &center, float radius, const SVec3 &cameraLook,
+                                 const SVec3 &cameraPos, const Color &color, float duration, 
+                                 bool overdraw = false);
+
             void DrawCircle(const SVec3 &center, const SVec3 &normal, float radius,
                             const Color &color, float duration, bool overdraw = false);
+
+            void DrawCircleFaded(const SVec3 &center, const SVec3 &normal, float radius,
+                                 const SVec3 &cameraLook, const SVec3 &cameraPos, const Color &color, 
+                                 float duration, bool overdraw = false);
 
             void DrawRay(const SVec3 &start, const SVec3 &direction, float length, 
                          const Color &color,float duration, bool overdraw = false);

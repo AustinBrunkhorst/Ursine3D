@@ -1,0 +1,140 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** ParticleColorAnimatorComponent.h
+**
+** Author:
+** - Matt Yan - m.yan@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
+#include "UrsinePrecompiled.h"
+
+#include "SpriteTextComponent.h"
+#include <Core/CoreSystem.h>
+#include <Core/Graphics/API/GfxAPI.h>
+
+namespace ursine
+{
+    namespace ecs
+    {
+        NATIVE_COMPONENT_DEFINITION(SpriteText);
+
+        SpriteText::SpriteText(void)
+            : BaseComponent( )
+            , m_spriteText( nullptr )
+            , m_base( nullptr )
+        {
+            auto *graphics = GetCoreSystem(graphics::GfxAPI);
+
+            m_base = new RenderableComponentBase(std::bind(&SpriteText::updateRenderer, this));
+
+            m_base->SetHandle(graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_SPRITE_TEXT));
+
+            // store a pointer to the model
+            m_spriteText = &graphics->RenderableMgr.GetSpriteText(m_base->GetHandle());
+
+            m_spriteText->SetRenderMask(0);
+        }
+
+        SpriteText::~SpriteText(void)
+        {
+            m_base->OnRemove(GetOwner());
+
+            m_spriteText->SetDebug(false);
+
+            GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable(m_base->GetHandle());
+
+            delete m_base;
+        }
+
+        void SpriteText::OnInitialize(void)
+        {
+            Component::OnInitialize();
+        }
+
+        float SpriteText::GetSize(void) const
+        {
+            return m_spriteText->GetSize( );
+        }
+
+        void SpriteText::SetSize(float size)
+        {
+            m_spriteText->SetSize( size );
+        }
+
+        float SpriteText::GetWidth(void) const
+        {
+            return m_spriteText->GetWidth( );
+        }
+
+        void SpriteText::SetWidth(float size)
+        {
+            m_spriteText->SetWidth( size );
+        }
+
+        float SpriteText::GetHeight(void) const
+        {
+            return m_spriteText->GetHeight( );
+        }
+
+        void SpriteText::SetHeight(float size)
+        {
+            m_spriteText->SetHeight( size );
+        }
+
+        const SVec3& SpriteText::GetPosition(void) const
+        {
+            return m_spriteText->GetPosition( );
+        }
+
+        void SpriteText::SetPosition(const SVec3& position)
+        {
+            m_spriteText->SetPosition( position );
+        }
+
+        const std::string& SpriteText::GetText(void) const
+        {
+            return m_spriteText->GetText( );
+        }
+
+        void SpriteText::SetText(const std::string& text)
+        {
+            m_spriteText->SetText( text );
+        }
+
+        float SpriteText::GetPPU(void) const
+        {
+            return m_spriteText->GetPPU( );
+        }
+
+        void SpriteText::SetPPU(float ppu)
+        {
+            m_spriteText->SetPPU( ppu );
+        }
+
+        TextAlignment SpriteText::GetAlignment(void) const
+        {
+            return static_cast<TextAlignment>(m_spriteText->GetAlignment( ));
+        }
+
+        void SpriteText::SetAlignment(TextAlignment alignment)
+        {
+            m_spriteText->SetAlignment( static_cast<graphics::SpriteText::Alignment>( alignment ) );
+        }
+
+        void SpriteText::updateRenderer()
+        {
+            auto *transform = GetOwner( )->GetTransform( );
+
+            // manually update our width and height
+            m_spriteText->SetWidth( transform->GetWorldScale().X() );
+            m_spriteText->SetHeight( transform->GetWorldScale().Y() );
+
+            m_spriteText->SetPosition( transform->GetWorldPosition( ) );
+        }
+    }
+}
