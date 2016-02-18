@@ -27,8 +27,10 @@ namespace ursine
 		StateBlender::StateBlender(void)
 			: m_currState("")
 			, m_futState("")
-			, m_currtransPos(0.f)
-			, m_futtransPos(1.f)
+			, m_currtransPos(1.f)
+			, m_futtransPos(0.f)
+			, m_currtransFrm(0)
+			, m_futtransFrm(0)
 		{}
 
 		const std::string &StateBlender::GetcurrState(void) const
@@ -51,24 +53,44 @@ namespace ursine
 			m_futState = fstate;
 		}
 
-		const float &StateBlender::GetcurrTransPos(void) const
+		const double &StateBlender::GetcurrTransPosRatio(void) const
 		{
 			return m_currtransPos;
 		}
 
-		void StateBlender::SetcurrTransPos(const float& tPos)
+		void StateBlender::SetcurrTransPosRatio(const double& tPos)
 		{
 			m_currtransPos = tPos;
 		}
 
-		const float &StateBlender::GetfutTransPos(void) const
+		const double &StateBlender::GetfutTransPosRatio(void) const
 		{
 			return m_futtransPos;
 		}
 
-		void StateBlender::SetfutTransPos(const float& tPos)
+		void StateBlender::SetfutTransPosRatio(const double& tPos)
 		{
-			m_futtransPos = 1.0f - m_currtransPos;
+			m_futtransPos = tPos;
+		}
+
+		const unsigned int &StateBlender::GetcurrTransFrm(void) const
+		{
+			return m_currtransFrm;
+		}
+
+		void StateBlender::SetcurrTransFrm(const unsigned int& tFrm)
+		{
+			m_currtransFrm = tFrm;
+		}
+
+		const unsigned int &StateBlender::GetfutTransFrm(void) const
+		{
+			return m_futtransFrm;
+		}
+
+		void StateBlender::SetfutTransFrm(const unsigned int& tFrm)
+		{
+			m_futtransFrm;
 		}
 
 		const StateBlender *StateBlender::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
@@ -77,7 +99,7 @@ namespace ursine
 				return this;
 			return nullptr;
 		}
-
+		
 		NATIVE_COMPONENT_DEFINITION(Animator);
 
 		Animator::Animator()
@@ -126,7 +148,7 @@ namespace ursine
 			// grab what we need
 			AnimationState *currentState = nullptr;
 			AnimationState *futureState = nullptr;
-			for (auto &x : StateArray)
+			for (auto &x : stArray)
 			{
 				if (x.GetName() == m_currentStateName)
 					currentState = &x;
@@ -148,7 +170,7 @@ namespace ursine
 				return;
 
 			// default transition time takes 1 sec this will be used as interpolation factor
-			static float transFactor = 0.0f;
+			static double transFactor = 0.0;
 			//// selected time of next animation which the blending will ends up
 			//float transTime = 1.0f;
 			if (nullptr != futureAnimation)
@@ -156,75 +178,14 @@ namespace ursine
 				if (futureAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
 					return;
 			}
+			else
+				transFactor = 0.0;
 
 			auto &matrixPalette = GetOwner()->GetComponent<Model3D>()->GetMatrixPalette();
 			std::vector<SMat4> tempVec(100);
 
-			// update time
-			if (m_playing)
-			{
-				// progressing animation in state
-				currentState->IncrementTimePosition(dt * m_speedScalar);
-				// if there is future animation
-				if (nullptr != futureAnimation && currentAnimation != futureAnimation)
-				{
-					// progress future animation too.
-					futureState->IncrementTimePosition(dt * m_speedScalar);
-
-					// blending = transfactor control X, mix two animation with interp method
-					// what do I need?
-					// curr transPos - blending starting time position of curr state anim
-					// fut transPos - blending end time position of future state anim
-					// trans time - time takes for blending
-					// to see this, curr->fut animation should be looped.
-					transFactor += dt * m_speedScalar;
-					if (transFactor > 1.0f)
-					{
-						transFactor = 1.0f;
-					}
-				}
-
-				unsigned keyframeCount1 = currentAnimation->GetRigKeyFrameCount();
-				auto &curr_firstFrame = currentAnimation->GetKeyframe(0, 0);
-				auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount1 - 1, 0);
-				
-				// if current state reached at the end of its frame
-				if (currentState->GetTimePosition() > curr_lastFrame.length)
-				{
-					// if we need to loop, go back to 0, maybe the first frame time?
-					if (m_looping)
-					{
-						// if there is future animation, 
-						// reset the time position and wait until future animation done
-						if (nullptr != futureAnimation)
-						{
-							unsigned keyframeCount2 = futureAnimation->GetRigKeyFrameCount();
-							auto &fut_firstFrame = futureAnimation->GetKeyframe(0, 0);
-							auto &fut_lastFrame = futureAnimation->GetKeyframe(keyframeCount2 - 1, 0);
-							if (futureState->GetTimePosition() > fut_lastFrame.length)
-							{
-								futureState->SetTimePosition(fut_firstFrame.length);
-								currentState->SetTimePosition(curr_firstFrame.length);
-								transFactor = 0.f;
-								if (m_changeState)
-								{
-									SetCurrentState(m_futureStateName);
-									SetFutureState("");
-									currentState = futureState;
-									futureState = nullptr;
-									currentAnimation = currentState->GetAnimation();
-								}
-							}
-						}
-						else
-							currentState->SetTimePosition(curr_firstFrame.length);
-					}
-					else
-					{
-						currentState->SetTimePosition(curr_lastFrame.length);
-					}
-				}
-			}
+			// blending / playing animation should take place in here
+			UpdateAnimation(currentState, currentAnimation, futureState, futureAnimation, dt, transFactor);
 
 			// generate the matrices
 			AnimationBuilder::GenerateAnimationData(
@@ -233,7 +194,7 @@ namespace ursine
 				rig,
 				matrixPalette,
 				tempVec,
-				transFactor
+				(float)transFactor
 				);
 
 			//////////////////////////////////////////////////////////////////
@@ -381,9 +342,9 @@ namespace ursine
 			// Create rig Hierarchy tree
 		}
 
-		float Animator::GetAnimationTimePosition() const
+		double Animator::GetAnimationTimePosition() const
 		{
-			for (auto &x : StateArray)
+			for (auto &x : stArray)
 			{
 				if (x.GetName() == m_currentStateName)
 					return x.GetTimePosition();
@@ -391,9 +352,9 @@ namespace ursine
 			return 0.0f;
 		}
 
-		void Animator::SetAnimationTimePosition(const float position)
+		void Animator::SetAnimationTimePosition(const double position)
 		{
-			for (auto &x : StateArray)
+			for (auto &x : stArray)
 			{
 				if (x.GetName() == m_currentStateName)
 				{
@@ -443,7 +404,6 @@ namespace ursine
 			if (children->size() > 0)
 			{
 				NotificationConfig config;
-
 				config.type = NOTIFY_WARNING;
 				config.header = "Warning";
 				config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
@@ -451,7 +411,6 @@ namespace ursine
 				config.duration = 0;
 
 				NotificationButton yes, no;
-
 				yes.text = "Yes";
 				yes.onClick = [=](Notification &notification) {
 					notification.Close();
@@ -462,14 +421,11 @@ namespace ursine
 						importAnimation();
 					});
 				};
-
 				no.text = "No";
 				no.onClick = [=](Notification &notification) {
 					notification.Close();
 				};
-
 				config.buttons = { yes, no };
-
 				EditorPostNotification(config);
 			}
 			else
@@ -509,7 +465,7 @@ namespace ursine
 			AniInfo ufmt_ani;
 			// Serialize in model and animation
 			UAssert(true == ufmt_ani.SerializeIn(hFile_ani), "Fail to serialize jani file.", janiFileName.c_str());
-			// need to execute AnimationBuilder::LoadAnimation here?
+
 			unsigned animationIndex = 0;
 			// Check if there is same animation already
 			const Animation* checker = AnimationBuilder::GetAnimationByName(m_animationName);
@@ -540,6 +496,146 @@ namespace ursine
 				auto *newEntity = world->CreateEntity(m_animationName.c_str());
 				alTrans->AddChild(newEntity->GetTransform());
 			}
+		}
+
+		void Animator::UpdateAnimation(AnimationState* currSt, const Animation* currAni,
+			AnimationState* futSt, const Animation* futAni, const float& dt, double& transFactor)
+		{
+			if (m_playing)
+			{
+				currSt->IncrementTimePosition(dt * m_speedScalar);
+				
+				/////////////////////////////////////////////////////
+				// this will be applied to all animations that state has
+				// const Animation *m_animation; will be changed as std::vector<Animation*>
+				/////////////////////////////////////////////////////
+				unsigned keyframeCount1 = currAni->GetRigKeyFrameCount();
+				auto &curr_firstFrame = currAni->GetKeyframe(0, 0);
+				auto &curr_lastFrame = currAni->GetKeyframe(keyframeCount1 - 1, 0);
+
+				static bool bBlending = false;
+				bool bFut = false;
+				if (futSt)
+				{
+					if (futAni)
+					{
+						transFactor += (double)(dt * m_speedScalar);
+						bFut = true;
+					}
+				}
+
+				// if current State is reached at the end
+				if (currSt->GetTimePosition() > curr_lastFrame.length)
+				{
+					// if there is future animation
+					// wait until the future state is done
+					if (bFut)
+					{
+						if (m_looping)
+							currSt->SetTimePosition(curr_firstFrame.length);
+						else
+							currSt->SetTimePosition(curr_lastFrame.length);
+					}
+					else
+					{
+						if (m_looping)
+							currSt->SetTimePosition(curr_firstFrame.length); 
+						else
+							currSt->SetTimePosition(curr_lastFrame.length);
+					}
+				}
+
+				// if there is future state and animation
+				if (bFut)
+				{
+					// need to check state blender
+					StateBlender* stb = GetStateBlenderByNames(currSt->GetName(), futSt->GetName());
+					if (stb)
+					{
+						SetTransFrame(*currAni, *currSt, *stb, stb->GetcurrTransPosRatio());
+
+						if (currSt->GetTimePosition() == stb->GetcurrTransPosRatio())
+							bBlending = true;
+
+						// Set Trans Frame by Transition Position - curr
+						if (bBlending)
+						{
+							// Set Trans Frame by Transition Position - fut
+							SetTransFrame(*futAni, *futSt, *stb, stb->GetfutTransPosRatio());
+
+							/////////////////////////////////////////////////////
+							// this will be applied to all animations that state has
+							// const Animation *m_animation; will be changed as std::vector<Animation*>
+							/////////////////////////////////////////////////////
+							futSt->IncrementTimePosition(dt * m_speedScalar);
+							unsigned keyframeCount2 = futAni->GetRigKeyFrameCount();
+							auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
+							auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
+
+							if (futSt->GetTimePosition() > fut_lastFrame.length)
+							{
+								bBlending = false;
+								transFactor = 0.0f;
+								if (m_looping)
+									futSt->SetTimePosition(stb->GetfutTransFrm());
+								else
+									futSt->SetTimePosition(fut_lastFrame.length);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// find the closest animation keyframe of the state, and set a transition position
+		void Animator::SetTransFrame(const Animation& anim, AnimationState& state, StateBlender& stb, const double& ratio)
+		{
+			unsigned keyframeCount = anim.GetRigKeyFrameCount();
+			auto &firstFrame = anim.GetKeyframe(0, 0);
+			auto &lastFrame = anim.GetKeyframe(keyframeCount - 1, 0);
+			auto totallength = lastFrame.length - firstFrame.length;
+			auto rate = 0.f;
+
+			unsigned int index = 0;
+			const AnimationKeyframe* closest = nullptr;
+			double diff = 1.0;
+			for (auto& x : anim.GetKeyframes(0))
+			{
+				double curr_rate = ratio - abs(totallength - x.length);
+				if (curr_rate / totallength < diff)
+				{
+					diff = curr_rate;
+					closest = &x;
+				}
+				++index;
+			}
+			stb.SetfutTransFrm(index);
+			state.SetTransPosition(closest->length);
+		}
+
+		StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
+		{
+			NotificationConfig config;
+			config.type = NOTIFY_WARNING;
+			config.header = "Warning";
+			config.message = "There is no matching State Blender in the list";
+			config.dismissible = false;
+			config.duration = 0;
+
+			if (currst == "" || futst == "")
+			{
+				EditorPostNotification(config);
+				return nullptr;
+			}
+
+			for (auto &x : stBlender)
+			{
+				if (nullptr != x.GetStateBlenderByNames(currst, futst))
+					return &x;
+			}
+
+			EditorPostNotification(config);
+			return nullptr;
 		}
 
 		// Question

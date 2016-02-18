@@ -580,29 +580,7 @@ namespace ursine
 				unsigned rigIndex = 0;
 				if (ufmt_model.mboneCount > 0)
 					rigIndex = AnimationBuilder::LoadBoneData(ufmt_model, name);
-
-				// 2. load animation - then where can i load animation info? 
-				// => need to build jani LoadAnimation Function
-				// if there is a name list in jdl, load every animations and renew the list
-				// the aniNames will be the file name of jani files.
-				// this is rely on how do we gonna load .jani file, so I won't do this
-				// until Austin finish array stuff.
-
-				///////////////////////////////////////////////////////////
-				//// Let's test storing multi janis into one jdl /////////////////////////////////
-				//std::string janiFileName("Assets/Animations/");
-				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Idle.jani");
-				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Run.jani");
-				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Jump.jani");
-				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Win.jani");
-				//ufmt_model.maniNameVec.push_back(janiFileName + "Player_Die.jani");
-				//
-				//ufmt_model.maniCount = static_cast<unsigned int>(ufmt_model.maniNameVec.size());
-				//for (auto iter : ufmt_model.maniNameVec)
-				//{
-				//	LoadAni(name, iter);
-				//}
-
+				
 				///////////////////////////////////////////////////////////////
 				// CREATE VERTEX BUFFER /////////////////////////////////////////
 				D3D11_BUFFER_DESC vertexBufferDesc;
@@ -745,26 +723,7 @@ namespace ursine
 
 			CloseHandle(hFile_model);
 		}
-
-		void ModelManager::LoadAni(std::string name, std::string fileName)
-		{
-			HANDLE hFile_ani = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-			if (!hFile_ani)
-				return;
-
-			ufmt_loader::AnimInfo ufmt_ani;
-
-			// Serialize in model and animation
-			ufmt_ani.SerializeIn(hFile_ani);
-			// need to execute AnimationBuilder::LoadAnimation here?
-			unsigned animationIndex = 0;
-			fs::path fName(fileName);
-			std::string aniName = fName.filename().string();
-			aniName = aniName.substr(0, aniName.rfind("."));
-			animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, aniName);
-			CloseHandle(hFile_ani);
-		}
-
+		
 		ID3D11Buffer *ModelManager::GetModelVert(std::string name, unsigned index)
 		{
 			if (m_modelArray[name] == nullptr)

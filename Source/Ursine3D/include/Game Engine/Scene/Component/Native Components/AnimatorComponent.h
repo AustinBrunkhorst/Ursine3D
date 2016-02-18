@@ -32,7 +32,6 @@ namespace ursine
 			enum MaskBlendMode
 			{
 				MASKBLEND_OVERRIDE = 0, // only override for now, can't blend multiple masks
-
 				MASKBLEND_COUNT
 			};
 
@@ -93,16 +92,16 @@ namespace ursine
 			//Slider
 			Meta(InputRange(0.0, 1.0, 0.01, "{{value.toPrecision( 2 )}}"))
 				EditorField(
-					float currtransPos,
-					GetcurrTransPos,
-					SetcurrTransPos
+					double currtransPos,
+					GetcurrTransPosRatio,
+					SetcurrTransPosRatio
 					);
 
 			Meta(InputRange(0.0, 1.0, 0.01, "{{value.toPrecision( 2 )}}"))
 				EditorField(
-					float futtransPos,
-					GetfutTransPos,
-					SetfutTransPos
+					double futtransPos,
+					GetfutTransPosRatio,
+					SetfutTransPosRatio
 					);
 
 			StateBlender(void);
@@ -113,22 +112,32 @@ namespace ursine
 			const std::string &GetfutState(void) const;
 			void SetfutState(const std::string& fstate);
 
-			const float &GetcurrTransPos(void) const;
-			void SetcurrTransPos(const float& tPos);
+			const double &GetcurrTransPosRatio(void) const;
+			void SetcurrTransPosRatio(const double& tPos);
 
-			const float &GetfutTransPos(void) const;
-			void SetfutTransPos(const float& tPos);
+			const double &GetfutTransPosRatio(void) const;
+			void SetfutTransPosRatio(const double& tPos);
+
+			const unsigned int &GetcurrTransFrm(void) const;
+			void SetcurrTransFrm(const unsigned int& tFrm);
+
+			const unsigned int &GetfutTransFrm(void) const;
+			void SetfutTransFrm(const unsigned int& tFrm);
 
 			const StateBlender *GetStateBlenderByNames(const std::string& currst, const std::string& futst);
-
+			
 		private:
-			//name of current state
+			// name of current state
 			std::string m_currState;
-			//name of future state
+			// name of future state
 			std::string m_futState;
-			//time position to trans animation
-			float m_currtransPos;
-			float m_futtransPos;
+			// time position to trans animation
+			// these transPos reperesents the position of the keyframe
+			double m_currtransPos;
+			double m_futtransPos;
+			// calculate the number of keyframe time, make it as 100% ration
+			unsigned int m_currtransFrm;
+			unsigned int m_futtransFrm;
 		} Meta(
 			Enable,
 			EnableArrayType,
@@ -145,12 +154,6 @@ namespace ursine
 				ImportAnimation,
 				"Import Animation"
 				);
-
-			//EditorField(
-			//	std::string stateName,
-			//	GetStateName,
-			//	SetStateName
-			//	);
 
 			EditorField(
 				std::string currentState,
@@ -234,8 +237,8 @@ namespace ursine
 			const std::string &GetRig(void) const;
 			void SetRig(const std::string &rig);
 			
-			float GetAnimationTimePosition() const;
-			void SetAnimationTimePosition(const float position);
+			double GetAnimationTimePosition() const;
+			void SetAnimationTimePosition(const double position);
 
 			const std::string &GetCurrentState(void) const;
 			void SetCurrentState(const std::string &state);
@@ -250,13 +253,23 @@ namespace ursine
 			void SetAnimation(const std::string &name);
 
 			// Array of animation states
-			ursine::Array<ursine::AnimationState> StateArray;
+			ursine::Array<ursine::AnimationState> stArray;
 			// Array of state blender
-			ursine::Array<ursine::ecs::StateBlender> StateBlender;
+			ursine::Array<ursine::ecs::StateBlender> stBlender;
 
 			static void recursClearChildren(const std::vector< Handle<Transform> > &children);
 			void clearChildren(void);
 			void importAnimation(void);
+
+			void UpdateAnimation(AnimationState* currSt, const Animation* currAni,
+				AnimationState* futSt, const Animation* futAni, const float& dt, double& transFactor);
+
+			void SetTransFrame(const Animation& anim, AnimationState& state, StateBlender& stb, const double& ratio);
+
+			StateBlender *GetStateBlenderByNames(const std::string& currst, const std::string& futst);
+			// save and load
+			// => save both Arrays
+			// => when load model, don't just laod these, but should also load the animation if it doesn't exist
 
 		private:
 			bool m_playing;

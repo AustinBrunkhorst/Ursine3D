@@ -54,7 +54,7 @@ namespace ursine
 		*
 		*  @return time (decimal) that the animation is at.
 		*/
-		float GetTimePosition(void) const;
+		double GetTimePosition(void) const;
 
 		/** @brief sets the animation position
 		*
@@ -63,7 +63,7 @@ namespace ursine
 		*  @param position where we want to go
 		*  @return Void.
 		*/
-		void SetTimePosition(const float position);
+		void SetTimePosition(const double position);
 
 		/** @brief Modifies the animation state by a delta
 		*
@@ -73,7 +73,7 @@ namespace ursine
 		*  @param dt change in animation position
 		*  @return Void.
 		*/
-		void IncrementTimePosition(const float dt);
+		void IncrementTimePosition(const double dt);
 
 		/** @brief gets the currently running animation
 		*
@@ -91,19 +91,21 @@ namespace ursine
 		const std::string &GetAnimationName(void) const;
 		void SetAnimationName(const std::string& name);
 
-		const Animation* GetAnimationByName(void) const;
+		const Animation *GetAnimationByName(void) const;
 		void SetAnimationByName(const std::string& name);
+
+		const double &GetTransPosition(void) const;
+		void SetTransPosition(const double& tPos);
 		
 	private:
 		//current runtime
 		std::string m_name;
 		//time position to play animation
-		float m_timePos;
+		double m_timePos;
 		std::string m_animname;
         //current animation
         const Animation *m_animation;
-		////vector for animation name and animation itselfitself
-		//std::vector<std::string> m_animNameVec;
-		//std::vector<Animation> m_animVec;
+		//time to start transitioning
+		double m_transPos;
 	} Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ));
 }

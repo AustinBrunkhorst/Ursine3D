@@ -36,7 +36,7 @@ namespace ursine
     )
 	{
 		// get the current time
-		float time = currentState->GetTimePosition();
+		float time = (float)currentState->GetTimePosition();
 		// get the currently running animation
 		auto currentAnimation = currentState->GetAnimation();
 		// get the total keyframes for this animation
@@ -78,7 +78,7 @@ namespace ursine
 		{
 			// get the future time
 			futAnimation = futureState->GetAnimation();
-			float fut_time = futureState->GetTimePosition();
+			float fut_time = (float)futureState->GetTimePosition();
 			if (futAnimation)
 			{
 				// get the total keyframes for future animation

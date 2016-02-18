@@ -21,6 +21,7 @@ namespace ursine
 	AnimationState::AnimationState()
 		: m_name("")
 		, m_timePos(0.0f)
+		, m_transPos(0.0f)
 		, m_animname("")
 		, m_animation(nullptr)
 	{}
@@ -35,17 +36,17 @@ namespace ursine
 		m_name = name;
 	}
 	
-	float AnimationState::GetTimePosition(void) const
+	double AnimationState::GetTimePosition(void) const
 	{
 		return m_timePos;
 	}
 
-	void AnimationState::SetTimePosition(const float position)
+	void AnimationState::SetTimePosition(const double position)
 	{
 		m_timePos = position;
 	}
 
-	void AnimationState::IncrementTimePosition(const float dt)
+	void AnimationState::IncrementTimePosition(const double dt)
 	{
 		m_timePos += dt;
 	}
@@ -103,5 +104,15 @@ namespace ursine
 			return;
 		}
 		m_animation = targetAnimation;
+	}
+
+	const double &AnimationState::GetTransPosition(void) const
+	{
+		return m_transPos;
+	}
+
+	void AnimationState::SetTransPosition(const double& tPos)
+	{
+		m_transPos = tPos;
 	}
 }
