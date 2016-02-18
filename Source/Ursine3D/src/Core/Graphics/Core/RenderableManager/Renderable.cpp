@@ -203,6 +203,16 @@ namespace ursine
             m_meshIndex = index;
         }
 
+        bool Model3D::GetShadowCaster(void) const
+        {
+            return m_shadowCaster;
+        }
+
+        void Model3D::SetShaderCaster(bool castShadow)
+        {
+            m_shadowCaster = castShadow;
+        }
+
 
         const char *Model3D::GetModelName(void)
         {

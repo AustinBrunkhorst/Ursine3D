@@ -36,6 +36,7 @@ namespace ursine
         {
             DEPTH_STENCIL_MAIN = 0,
             DEPTH_STENCIL_SHADOWMAP,
+            DEPTH_STENCIL_OVERDRAW,
 
             DEPTH_STENCIL_COUNT
         };

@@ -203,6 +203,16 @@ namespace ursine
             return m_model->GetMeshIndex( );
         }
 
+        bool Model3D::GetIsShadowCaster(void) const
+        {
+            return m_model->GetShadowCaster( );
+        }
+
+        void Model3D::SetIsShadowCaster(bool castShadows)
+        {
+            m_model->SetShaderCaster( castShadows );
+        }
+
         void Model3D::updateRenderer(void)
         {
             // update the renderer's

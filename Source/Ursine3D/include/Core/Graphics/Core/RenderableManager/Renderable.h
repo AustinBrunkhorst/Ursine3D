@@ -111,6 +111,9 @@ namespace ursine
             int GetMeshIndex(void) const;
             void SetMeshIndex(const int index);
 
+            bool GetShadowCaster(void) const;
+            void SetShaderCaster(bool castShadow);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -125,6 +128,8 @@ namespace ursine
 
             // for multimaps
             int m_meshIndex;
+
+            bool m_shadowCaster;
         };
 
         /////////////////////////////////////////////////////////////////

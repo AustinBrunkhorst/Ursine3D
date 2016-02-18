@@ -62,6 +62,9 @@ PS_GBUFFER_OUT main(PixelInputType input)
     float4 baseColor = float4(shaderTexture.Sample(SampleType, input.uv));
     float3 normal = input.normal.xyz;
 
+    if ( baseColor.w <= 0 )
+        discard;
+
     PS_GBUFFER_OUT buff = PackGBuffer(baseColor, normal, specularIntensity, specularPower, emissive);
 
 

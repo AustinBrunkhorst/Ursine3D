@@ -137,6 +137,25 @@ namespace ursine
             //Create the texture sampler state.
             result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_NO_FILTERING ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
+
+            // shadow sampler //////////////////////////////////////////////////
+            samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+            samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.MipLODBias = 0.0f;
+            samplerDesc.MaxAnisotropy = 0;
+            samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+            samplerDesc.BorderColor[ 0 ] = 1.0;
+            samplerDesc.BorderColor[ 1 ] = 1.0;
+            samplerDesc.BorderColor[ 2 ] = 1.0;
+            samplerDesc.BorderColor[ 3 ] = 1.0;
+            samplerDesc.MinLOD = 0;
+            samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+            //Create the texture sampler state.
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_SHADOW ]);
+            UAssert(result == S_OK, "Failed to make sampler state!");
         }
 
         void TextureManager::Uninitialize(void)

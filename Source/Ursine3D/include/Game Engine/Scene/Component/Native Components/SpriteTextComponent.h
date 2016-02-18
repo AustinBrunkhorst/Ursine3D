@@ -49,11 +49,12 @@ namespace ursine
                 SetText
             );
 
-            EditorField(
-                float pixelsPerUnit,
-                GetPPU,
-                SetPPU
-            );
+            // not ready for the world yet
+            //EditorField(
+            //    float pixelsPerUnit,
+            //    GetPPU,
+            //    SetPPU
+            //);
 
             EditorField(
                 TextAlignment alignment,

@@ -104,7 +104,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_UI, "UIShader");
                 shaderManager->LoadShader(SHADER_PRIMITIVE, "PrimitiveShader");
                 shaderManager->LoadShader(SHADER_POINT, "PointShader");
-                shaderManager->LoadShader(SHADER_SHADOW, "ShadowMap");
+                shaderManager->LoadShader(SHADER_SHADOW_PASS, "ShadowMapShader");
                 shaderManager->LoadShader(SHADER_BILLBOARD2D, "BillboardedSprite");
                 shaderManager->LoadShader(SHADER_PARTICLE, "ParticleShader");
                 shaderManager->LoadShader(SHADER_EMISSIVE, "EmissiveShader");
@@ -502,7 +502,7 @@ namespace ursine
             // overdraw pass for weird stuff
             PrepFor3DModels(view, proj);
             {
-                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW));
 
                 while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
                     Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
@@ -651,7 +651,7 @@ namespace ursine
             // overdraw pass for weird stuff
             PrepFor3DModels(view, proj);
             {
-                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW));
 
                 while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
                     Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
@@ -1467,8 +1467,18 @@ namespace ursine
             bufferManager->MapTransformBuffer(pl.GetSpotlightTransform() * SMat4(SVec3(0, 0, 0.5f), SQuat(-90.0f, 0.0f, 0.0f), SVec3::One()));
 
             //what culling to use?
-            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
 
+            // get vector from light to camera
+            SVec3 light2Cam = currentCamera.GetPosition( ) - lightPosition;
+            light2Cam.Normalize( );
+            float dotp = light2Cam.Dot(lightDirection);
+
+            // if camera is outside the cone, use this
+            if(dotp < cosf(slb.outerAngle) )
+                dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+            // else, use frontface culling
+            else
+                dxCore->SetRasterState(RASTER_STATE_SOLID_FRONTCULL);
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("lightCone")));
         }
 

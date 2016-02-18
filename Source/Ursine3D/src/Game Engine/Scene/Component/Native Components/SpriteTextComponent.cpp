@@ -149,6 +149,7 @@ namespace ursine
         void SpriteText::SetColor(const Color &color)
         {
             m_spriteText->SetColor( color );
+            NOTIFY_COMPONENT_CHANGED("textColor", color);
         }
 
         void SpriteText::updateRenderer()

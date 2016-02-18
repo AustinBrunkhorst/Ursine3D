@@ -38,6 +38,8 @@ namespace ursine
             SAMPLER_WRAP_TEX = 0,
             SAMPLER_NO_FILTERING,
 
+            SAMPLER_SHADOW,
+
             SAMPLER_COUNT
         };
     }
