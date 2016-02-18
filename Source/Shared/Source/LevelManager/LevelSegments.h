@@ -15,7 +15,7 @@
 
 #include <Meta.h>
 
-enum class LevelEvents
+enum class LevelSegments
 {
     Intro,
     BattleBowl1,

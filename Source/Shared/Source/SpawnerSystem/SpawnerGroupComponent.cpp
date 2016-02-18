@@ -17,6 +17,7 @@
 #include "SpawnerComponent.h"
 
 #include <Notification.h>
+#include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION( SpawnerGroup );
 
@@ -26,6 +27,18 @@ SpawnerGroup::SpawnerGroup(void)
     : BaseComponent( )
     , m_enemyType( AIArchetype::Agile )
 {
+}
+
+SpawnerGroup::~SpawnerGroup(void)
+{
+    GetOwner( )->GetWorld( )->GetEntitySystem( LevelManager )->Listener( this )
+        .Off( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+}
+
+void SpawnerGroup::OnInitialize(void)
+{
+    GetOwner( )->GetWorld( )->GetEntitySystem( LevelManager )->Listener( this )
+        .On( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 AIArchetype SpawnerGroup::GetEnemyType(void) const
@@ -55,6 +68,26 @@ void SpawnerGroup::removeSpawner(Spawner *spawner)
 bool SpawnerGroup::haveSpawnerOfType(AIArchetype type)
 {
     return m_spawners.find( type ) != m_spawners.end( );
+}
+
+void SpawnerGroup::update(void)
+{
+    // iterate through all spawners and update them
+    for (auto &spawnerPair : m_spawners)
+    {
+        spawnerPair.second->update( this );
+    }
+}
+
+void SpawnerGroup::onLevelSegmentChange(EVENT_HANDLER(LevelManager))
+{
+    EVENT_ATTRS(LevelManager, LevelSegmentChangeArgs);
+
+    // notify the spawners that the segment changed
+    for (auto &spawnerPair : m_spawners)
+    {
+        spawnerPair.second->onLevelSegmentChange( args->segment );
+    }
 }
 
 #if defined(URSINE_WITH_EDITOR)

@@ -13,9 +13,18 @@
 
 #pragma once
 
+#include "LevelSegments.h"
+
+class SpawnerGroup;
+class Spawner;
+class SpawnPatternContainer;
+
 class SpawnPattern
 {
 public:
+
+    Meta(MultiLineEditor)
+    std::string notes;
 
     EditorField(
         bool active,
@@ -27,6 +36,12 @@ public:
         int totalEnemies,
         GetTotalEnemies,
         SetTotalEnemies
+    );
+
+    EditorField(
+        float spawnDuration,
+        GetSpawnDuration,
+        SetSpawnDuration
     );
 
     EditorField(
@@ -48,6 +63,12 @@ public:
     );
 
     EditorField(
+        float spawnerBreakTime,
+        GetSpawnerBreakTime,
+        SetSpawnerBreakTime
+    );
+
+    EditorField(
         bool triggerNextPattern,
         GetTriggerNextPattern,
         SetTriggerNextPattern
@@ -59,24 +80,10 @@ public:
         SetLoopPattern
     );
 
-    // Send Level - Event[checkbox w / field] – when active, the specified 
-    // level-event will be triggered when the pattern ends
-    /*TODO: EditorField(
-        LevelEvent endingLevelEvent,
-        GetEndingLevelEvent,
-        SetEndingLevelEvent
-    );*/
-
-    EditorField(
-        float spawnDuration,
-        GetSpawnDuration,
-        SetSpawnDuration
-    );
-
-    EditorField(
-        float spawnerBreakTime,
-        GetSpawnerBreakTime,
-        SetSpawnerBreakTime
+   EditorField(
+        LevelSegments endingLevelSegmentTransition,
+        GetEndingSegmentTransition,
+        SetEndingSegmentTransition
     );
 
     EditorField(
@@ -106,6 +113,9 @@ public:
     int GetTotalEnemies(void) const;
     void SetTotalEnemies(int total);
 
+    float GetSpawnDuration(void) const;
+    void SetSpawnDuration(float duration);
+
     int GetMaxNumberOfEnemies(void) const;
     void SetMaxNumberOfEnemies(int max);
 
@@ -115,17 +125,17 @@ public:
     float GetSingleSpawnCooldown(void) const;
     void SetSingleSpawnCooldown(float cooldown);
 
+    float GetSpawnerBreakTime(void) const;
+    void SetSpawnerBreakTime(float breakTime);
+
     bool GetTriggerNextPattern(void) const;
     void SetTriggerNextPattern(bool flag);
 
     bool GetLoopPattern(void) const;
     void SetLoopPattern(bool loop);
 
-    float GetSpawnDuration(void) const;
-    void SetSpawnDuration(float duration);
-
-    float GetSpawnerBreakTime(void) const;
-    void SetSpawnerBreakTime(float breakTime);
+    LevelSegments GetEndingSegmentTransition(void) const;
+    void SetEndingSegmentTransition(LevelSegments segment);
 
     float GetSpawnDistanceVariance(void) const;
     void SetSpawnDistanceVariance(float variance);
@@ -136,44 +146,73 @@ public:
     float GetSpawnAngleVariance(void) const;
     void SetSpawnAngleVariance(float variance);
 
+    // Update this pattern
+    void Update(SpawnerGroup *group, Spawner *spawner, SpawnPatternContainer *container);
+
 private:
 
     // When checked, the pattern will be used by it's spawner
-    bool m_active;
-
-    // The number of enemies to be spawned in this pattern
-    int m_totalEnemies;
-
-    // The maximum number of enemies which can be active at once
-    int m_maxNumberOfEnemies;
-
-    // The minimum number of enemies which can be active at once
-    int m_minNumberOfEnemies;
-
-    // The cooldown time after spawning a single enemy
-    float m_singleSpawnCooldown;
+    bool m_active : 1; // CHECK
 
     // Whether this pattern ending automatically causes the next 
     // pattern for the same sub-level event to begin
-    bool m_triggerNextPattern;
+    bool m_triggerNextPattern : 1; // CHECK
 
     // When checked, this pattern will restart when it ends
-    bool m_loopPattern;
+    bool m_loopPattern : 1; // CHECK
+
+    // The segment to transition to once the pattern finishes
+    LevelSegments m_endingSegmentTransition; // CHECK
+
+    // The number of enemies to be spawned in this pattern
+    int m_totalEnemies; // CHECK
+
+    // The maximum number of enemies which can be active at once
+    int m_maxNumberOfEnemies; // CHECK
+
+    // The minimum number of enemies which can be active at once
+    int m_minNumberOfEnemies; // CHECK
+
+    // The cooldown time after spawning a single enemy
+    float m_singleSpawnCooldown; // CHECK
 
     // The duration for which this pattern lasts
-    float m_spawnDuration;
+    float m_spawnDuration; // CHECK
 
     // The amount of time the spawner pauses for after the pattern ends
     float m_spawnerBreakTime;
 
     // The distance from the spawner this pattern spawns
-    float m_spawnerDistanceVariance;
-
-    // The direction this pattern will spawn in
-    ursine::SVec3 m_spawnDirection;
+    float m_spawnDistanceVariance; // CHECK
 
     // The variance in degrees which the direction can be rancomized
     // from it's set value (above)
-    float m_spawnAngleVariance;
+    float m_spawnAngleVariance; // CHECK
+
+    // The direction this pattern will spawn in
+    ursine::SVec3 m_spawnDirection; // CHECK
+
+    ////////////////////////////////////////////////////
+    // Private section for update function
+    ////////////////////////////////////////////////////
+
+    // Number of alive and active enemies this pattern has spawned
+    int m_activeEnemies;
+
+    // Number of total enemies spawned by this pattern
+    int m_totalEnemiesSpawned;
+
+    // Timer letting us know how long it has been since we last spawned an enemy
+    float m_spawnTimer;
+
+    // Timer for breaking (after one loop)
+    float m_breakTimer;
+
+    // Flag letting us know if we're currently breaking
+    bool m_breaking;
+
+    void spawn(Spawner *spawner, SpawnPatternContainer *container);
+
+    void onEnemyDeath(EVENT_HANDLER(Entity));
 
 } Meta(Enable, EnableArrayType);

@@ -69,9 +69,10 @@ void SpawnerGroupSystem::OnAfterLoad(void)
 
 void SpawnerGroupSystem::onUpdate(EVENT_HANDLER(World))
 {
+    // Update all groups
     for (auto &group : m_spawnerGroups)
     {
-        // all that logic up in this bitch
+        group->update( );
     }
 }
 

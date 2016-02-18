@@ -16,12 +16,16 @@
 #include <Component.h>
 
 #include "AIArchetypes.h"
+#include "LevelSegments.h"
+
+class SpawnPatternContainer;
 
 class Spawner : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
     friend class SpawnerGroup;
+    friend class SpawnPattern;
 
 public:
 
@@ -38,5 +42,16 @@ public:
 private:
 
     AIArchetype m_enemyType;
+
+    // This vector contains all active patterns
+    std::vector<SpawnPatternContainer*> m_activePatterns;
+
+    void update(SpawnerGroup *group);
+
+    // This is called by the spawner group when the level manager changes
+    // the level segment
+    void onLevelSegmentChange(LevelSegments segment);
+
+    ursine::ecs::Entity *spawnEnemy(const ursine::SVec3 &worldPosition);
 
 } Meta(Enable, HiddenInSelector, DisableComponentRemoval);

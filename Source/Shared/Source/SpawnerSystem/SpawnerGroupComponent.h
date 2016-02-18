@@ -16,6 +16,7 @@
 #include <Component.h>
 
 #include "AIArchetypes.h"
+#include "LevelManagerSystem.h"
 
 class Spawner;
 
@@ -40,6 +41,7 @@ public:
     );
 
     SpawnerGroup(void);
+    ~SpawnerGroup(void);
 
     AIArchetype GetEnemyType(void) const;
     void SetEnemyType(AIArchetype enemyType);
@@ -50,9 +52,19 @@ private:
 
     std::unordered_map<AIArchetype, Spawner *> m_spawners;
 
+    // Connect to the level manager's events
+    void OnInitialize(void) override;
+
+    // Add or remove a spawner form my map
     void addSpawner(Spawner *spawner);
     void removeSpawner(Spawner *spawner);
 
+    // Check to see if we have a spawner of the given type
     bool haveSpawnerOfType(AIArchetype type);
+
+    // Update function (called via SpawnerGroupSystem)
+    void update(void);
+
+    void onLevelSegmentChange(EVENT_HANDLER(LevelManager));
 
 } Meta(Enable);

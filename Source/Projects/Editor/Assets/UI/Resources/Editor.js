@@ -1535,6 +1535,8 @@ var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = funct
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_string = new TextInputControl();
+	if(Object.prototype.hasOwnProperty.call(field.meta,ursine_native_Property.MultiLineEditor)) {
+	}
 	this.m_string.addEventListener("change",function() {
 		_g.notifyChanged(_g.m_field,_g.m_string.value);
 	});
@@ -2452,5 +2454,6 @@ ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 ursine_native_Property.HiddenInSelector = "HiddenInSelector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
+ursine_native_Property.MultiLineEditor = "MultiLineEditor";
 Application.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

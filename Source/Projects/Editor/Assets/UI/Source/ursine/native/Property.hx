@@ -6,4 +6,5 @@ class Property {
     public static var HiddenInSelector = "HiddenInSelector";
     public static var ForceEditorType = "ForceEditorType";
     public static var InputRange = "InputRange";
+    public static var MultiLineEditor = "MultiLineEditor";
 }

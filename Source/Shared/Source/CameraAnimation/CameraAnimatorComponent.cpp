@@ -33,6 +33,7 @@ CameraAnimator::CameraAnimator(void)
     , m_smoothPath( false )
     , m_index( 0 )
     , m_time( 0.0f )
+    , m_focusPoint( nullptr )
 {
 }
 

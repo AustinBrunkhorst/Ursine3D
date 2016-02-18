@@ -139,3 +139,10 @@ struct InputRange : ursine::meta::MetaProperty
         , step( step )
         , format( format ) { }
 };
+
+/** @brief Enables mutli-line editor support on string fields
+*/
+struct MultiLineEditor : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};
