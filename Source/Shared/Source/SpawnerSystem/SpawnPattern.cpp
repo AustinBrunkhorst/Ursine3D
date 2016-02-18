@@ -226,9 +226,6 @@ void SpawnPattern::Update(SpawnerGroup *group, Spawner *spawner, SpawnPatternCon
                 // Spawn an enemy
                 spawn( group, spawner, container );
             }
-
-            // Reset the spawn timer
-            m_spawnTimer = 0.0f;
         }
         // Else, wait to spawn some more
         else
@@ -269,6 +266,9 @@ void SpawnPattern::spawn(SpawnerGroup *group, Spawner *spawner, SpawnPatternCont
 
     ++m_activeEnemies;
     ++m_totalEnemiesSpawned;
+
+    // Reset the spawn timer
+    m_spawnTimer = 0.0f;
 
     entity->Listener( this )
         .On( game::ENEMY_DEATH, &SpawnPattern::onEnemyDeath );

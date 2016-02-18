@@ -40,4 +40,10 @@ public:
 
     void SegmentTransition(LevelSegments segment);
 
+private:
+
+    void OnInitialize(void) override;
+
+    void onUpdate(EVENT_HANDLER(World));
+
 } Meta(Enable, AutoAddEntitySystem);

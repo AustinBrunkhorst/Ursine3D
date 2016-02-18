@@ -24,12 +24,28 @@ using namespace ecs;
 
 Spawner::Spawner(void)
     : BaseComponent( )
+    , m_enemyType( AIArchetype::Fodder )
 {
 }
 
 AIArchetype Spawner::GetEnemyType(void) const
 {
     return m_enemyType;
+}
+
+void Spawner::OnSerialize(ursine::Json::object& output) const
+{
+    output[ "EnemyType" ] = Json( static_cast<int>( m_enemyType ) );
+}
+
+void Spawner::OnDeserialize(const ursine::Json& input)
+{
+    auto type = input[ "EnemyType" ];
+
+    if (type.is_null( ))
+        return;
+
+    m_enemyType = static_cast<AIArchetype>( type.int_value( ) );
 }
 
 void Spawner::update(SpawnerGroup* group)
@@ -88,12 +104,16 @@ Entity *Spawner::spawnEnemy(SpawnerGroup *group, const SVec3 &worldPosition)
             archetypeName = "Nuker";
             break;
         }
+        default:
+
+            UAssert( false, "What the fuck happened bru %d", m_enemyType );
+
     }
 
     auto world = GetOwner( )->GetWorld( );
 
     auto entity = world->CreateEntityFromArchetype(
-        WORLD_ARCHETYPE_PATH + archetypeName + ".uatype", archetypeName 
+        WORLD_ARCHETYPE_PATH + std::string( "AI/" ) + archetypeName + ".uatype", archetypeName
     );
 
     entity->GetTransform( )->SetWorldPosition( worldPosition );

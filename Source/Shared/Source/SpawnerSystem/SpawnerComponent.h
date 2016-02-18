@@ -40,6 +40,9 @@ public:
 
     AIArchetype GetEnemyType(void) const;
 
+    void OnSerialize(ursine::Json::object &output) const override;
+    void OnDeserialize(const ursine::Json &input) override;
+
 private:
 
     AIArchetype m_enemyType;

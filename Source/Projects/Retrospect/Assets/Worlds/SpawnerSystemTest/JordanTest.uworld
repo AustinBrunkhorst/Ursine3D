@@ -1,0 +1,577 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Light": {
+".uid": 6, 
+"color": {
+"a": 1, 
+"b": 0.5, 
+"g": 0.5, 
+"r": 0.5
+}, 
+"intensity": 1, 
+"radius": 40, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 5, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 60, 
+"z": 0
+}
+}
+}, 
+"name": "Global Light"
+}, {
+"children": [], 
+"components": {
+"Camera": {
+".uid": 11, 
+"active": true, 
+"farPlane": 2500, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 10, 
+"rotation": {
+"w": 0.94306415319442749, 
+"x": 0.32417073845863342, 
+"y": -0.070410050451755524, 
+"z": 0.024202888831496239
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 32.025558471679688, 
+"y": 168.13554382324219, 
+"z": -213.27783203125
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [], 
+"components": {
+"Camera": {
+".uid": 16, 
+"active": true, 
+"farPlane": 1000, 
+"fov": 60, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 15, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 3.5355339050292969, 
+"z": -85.779624938964844
+}
+}
+}, 
+"name": "Camera"
+}, {
+"children": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"SpawnPatternContainer": {
+".uid": 25, 
+"levelSegment": 0, 
+"spawnPatterns": [
+{
+"active": true, 
+"direction": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"endingLevelSegmentTransition": 5, 
+"loopPattern": false, 
+"maxNumberOfEnemies": 50, 
+"minNumberOfEnemies": 0, 
+"notes": "", 
+"singleSpawnCooldown": 1, 
+"spawnAngleVariance": 180, 
+"spawnDistanceVariance": 50, 
+"spawnDuration": 15, 
+"spawnerBreakTime": 1, 
+"totalEnemies": 50, 
+"triggerNextPattern": true
+}, {
+"active": true, 
+"direction": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"endingLevelSegmentTransition": 5, 
+"loopPattern": true, 
+"maxNumberOfEnemies": 20, 
+"minNumberOfEnemies": 20, 
+"notes": "", 
+"singleSpawnCooldown": 0.10000000149011612, 
+"spawnAngleVariance": 0, 
+"spawnDistanceVariance": 15, 
+"spawnDuration": 5, 
+"spawnerBreakTime": 1, 
+"totalEnemies": 20, 
+"triggerNextPattern": true
+}
+]
+}, 
+"Transform": {
+".uid": 24, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 19.054798126220703, 
+"y": 0, 
+"z": 25.774877548217773
+}
+}
+}, 
+"name": "NewPattern"
+}
+], 
+"components": {
+"Spawner": {
+".uid": 23, 
+"EnemyType": 4
+}, 
+"Transform": {
+".uid": 22, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Spawner_Agile"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"SpawnPatternContainer": {
+".uid": 29, 
+"levelSegment": 0, 
+"spawnPatterns": [
+{
+"active": true, 
+"direction": {
+"x": 1, 
+"y": 0, 
+"z": 0
+}, 
+"endingLevelSegmentTransition": 5, 
+"loopPattern": true, 
+"maxNumberOfEnemies": 10, 
+"minNumberOfEnemies": 1, 
+"notes": "", 
+"singleSpawnCooldown": 1, 
+"spawnAngleVariance": 0, 
+"spawnDistanceVariance": 15, 
+"spawnDuration": 10, 
+"spawnerBreakTime": 1, 
+"totalEnemies": 10, 
+"triggerNextPattern": true
+}
+]
+}, 
+"Transform": {
+".uid": 28, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "NewPattern"
+}
+], 
+"components": {
+"Spawner": {
+".uid": 27, 
+"EnemyType": 1
+}, 
+"Transform": {
+".uid": 26, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": -51.619029998779297
+}
+}
+}, 
+"name": "Spawner_Bomber"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"SpawnPatternContainer": {
+".uid": 33, 
+"levelSegment": 2, 
+"spawnPatterns": [
+{
+"active": true, 
+"direction": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}, 
+"endingLevelSegmentTransition": 5, 
+"loopPattern": true, 
+"maxNumberOfEnemies": 1, 
+"minNumberOfEnemies": 1, 
+"notes": "", 
+"singleSpawnCooldown": 1, 
+"spawnAngleVariance": 180, 
+"spawnDistanceVariance": 5, 
+"spawnDuration": 5, 
+"spawnerBreakTime": 1, 
+"totalEnemies": 1, 
+"triggerNextPattern": true
+}
+]
+}, 
+"Transform": {
+".uid": 32, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": -61.127967834472656
+}
+}
+}, 
+"name": "NewPattern"
+}
+], 
+"components": {
+"Spawner": {
+".uid": 31, 
+"EnemyType": 0
+}, 
+"Transform": {
+".uid": 30, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Spawner_Fodder"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"SpawnPatternContainer": {
+".uid": 37, 
+"levelSegment": 5, 
+"spawnPatterns": []
+}, 
+"Transform": {
+".uid": 36, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "NewPattern"
+}
+], 
+"components": {
+"Spawner": {
+".uid": 35, 
+"EnemyType": 2
+}, 
+"Transform": {
+".uid": 34, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Spawner_Nuker"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"SpawnPatternContainer": {
+".uid": 41, 
+"levelSegment": 5, 
+"spawnPatterns": []
+}, 
+"Transform": {
+".uid": 40, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "NewPattern"
+}
+], 
+"components": {
+"Spawner": {
+".uid": 39, 
+"EnemyType": 3
+}, 
+"Transform": {
+".uid": 38, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Spawner_Tank"
+}
+], 
+"components": {
+"SpawnerGroup": {
+".uid": 21, 
+"chooseEnemyType": 3
+}, 
+"Transform": {
+".uid": 20, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "SpawnGroup"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 3, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 4, 
+"systems": []
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}
