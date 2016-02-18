@@ -650,13 +650,17 @@ namespace ursine
 			auto rate = 0.f;
 
 			const AnimationKeyframe* closest = nullptr;
-			float diff = 1.0;
+			float cumul_length = 0.0f;
+			float diff = 1.0f;
+			// this wouldn't work properly unless keyframe length didn't recorded properly.
+			// then how can I get frame by ratio?
 			for (auto& x : state.GetAnimation()->GetKeyframes(0))
 			{
-				float curr_rate = ratio - abs(totallength - x.length);
-				if (curr_rate / totallength < diff)
+				cumul_length += x.length;
+				float curr_rate = cumul_length / totallength;
+				if (ratio - curr_rate < diff)
 				{
-					diff = curr_rate;
+					diff = ratio - curr_rate;
 					closest = &x;
 				}
 				++frameIndex;
