@@ -50,7 +50,7 @@ void CharacterControllerSystem::Process(Entity *entity)
     rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
     
     // Looking logic
-    if (lookDir.LengthSquared( ) > 0.1f)
+    if (lookDir.Length( ) > controller->m_deadZone)
     {
         auto lookAngle = lookDir * rotateSpeed;
 

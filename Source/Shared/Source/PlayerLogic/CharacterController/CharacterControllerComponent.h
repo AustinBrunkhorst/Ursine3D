@@ -39,8 +39,18 @@ public:
         SetRotateSpeed
     );
 
+	Meta(InputRange(0.0f, 1.0f, 0.01f))
+	EditorField(
+		float deadZone,
+		GetDeadZone,
+		SetDeadZone
+	);
+
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
+
+	float GetDeadZone(void) const;
+	void SetDeadZone(float deadZone);
 
     const ursine::Vec2 &GetMoveDirection(void) const;
     void SetMoveDirection(const ursine::Vec2 &moveDir);
@@ -57,6 +67,8 @@ private:
 
     float m_rotateSpeed;
     
+	float m_deadZone;
+
     bool m_jump;
 
     ursine::Vec2 m_moveDir;

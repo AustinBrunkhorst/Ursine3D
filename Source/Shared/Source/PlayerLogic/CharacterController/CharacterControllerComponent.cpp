@@ -22,7 +22,8 @@ NATIVE_COMPONENT_DEFINITION( CharacterController );
 CharacterController::CharacterController(void)
     : BaseComponent( )
     , m_rotateSpeed( 4.0f )
-    , m_jump( false ) { }
+    , m_jump( false )
+    , m_deadZone( 0.0f ) { }
 
 CharacterController::~CharacterController(void)
 {
@@ -42,6 +43,16 @@ void CharacterController::SetRotateSpeed(float rotateSpeed)
         return;
 
     m_rotateSpeed = rotateSpeed;
+}
+
+float CharacterController::GetDeadZone(void) const
+{
+	return m_deadZone;
+}
+
+void CharacterController::SetDeadZone(float deadZone)
+{
+	m_deadZone = deadZone;
 }
 
 const ursine::Vec2& CharacterController::GetMoveDirection(void) const
