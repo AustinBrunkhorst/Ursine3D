@@ -39,7 +39,7 @@ namespace ursine
             auto owner = GetOwner( );
 
             m_rigidbody.SetSimulation( 
-                &owner->GetWorld( )->GetEntitySystem( PhysicsSystem )->m_simulation 
+                &owner->GetWorld( )->GetEntitySystem<PhysicsSystem>( )->m_simulation 
             );
 
             m_rigidbody.SetUserID( owner->GetUniqueID( ) );

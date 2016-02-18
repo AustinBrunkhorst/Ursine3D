@@ -15,6 +15,7 @@
 
 #include "SpawnerComponent.h"
 #include "SpawnPatternContainerComponent.h"
+#include "SpawnerGroupComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( Spawner );
 
@@ -56,37 +57,51 @@ void Spawner::onLevelSegmentChange(LevelSegments segment)
     }
 }
 
-Entity *Spawner::spawnEnemy(const SVec3 &worldPosition)
+Entity *Spawner::spawnEnemy(SpawnerGroup *group, const SVec3 &worldPosition)
 {
-    // Spawn enemy at the given world position
-    // Subscribe to it's dead event so we can keep a counter
-    // Let the group know that a new enemy was spawned
+    std::string archetypeName;
 
     switch (m_enemyType)
     {
         case AIArchetype::Fodder:
         {
+            archetypeName = "Fodder";
             break;
         }
         case AIArchetype::Agile:
         {
+            archetypeName = "Agile";
             break;
         }
         case AIArchetype::Bomber:
         {
+            archetypeName = "Bomber";
             break;
         }
         case AIArchetype::Tank:
         {
+            archetypeName = "Tank";
             break;
         }
         case AIArchetype::Nuker:
         {
+            archetypeName = "Nuker";
             break;
         }
     }
 
-    return nullptr;
+    auto world = GetOwner( )->GetWorld( );
+
+    auto entity = world->CreateEntityFromArchetype(
+        WORLD_ARCHETYPE_PATH + archetypeName + ".uatype", archetypeName 
+    );
+
+    entity->GetTransform( )->SetWorldPosition( worldPosition );
+
+    // Subscribe to it's dead event so we can keep a counter
+    // Let the group know that a new enemy was spawned
+
+    return entity;
 }
 
 #if defined(URSINE_WITH_EDITOR)

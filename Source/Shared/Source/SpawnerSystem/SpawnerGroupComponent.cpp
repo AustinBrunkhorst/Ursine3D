@@ -31,13 +31,16 @@ SpawnerGroup::SpawnerGroup(void)
 
 SpawnerGroup::~SpawnerGroup(void)
 {
-    GetOwner( )->GetWorld( )->GetEntitySystem( LevelManager )->Listener( this )
-        .Off( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+    auto levelManager = GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( );
+
+    if (levelManager)
+        levelManager->Listener( this )
+            .Off( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 void SpawnerGroup::OnInitialize(void)
 {
-    GetOwner( )->GetWorld( )->GetEntitySystem( LevelManager )->Listener( this )
+    GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( )->Listener( this )
         .On( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 

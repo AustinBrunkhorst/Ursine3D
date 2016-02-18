@@ -211,7 +211,7 @@ private:
     // Flag letting us know if we're currently breaking
     bool m_breaking;
 
-    void spawn(Spawner *spawner, SpawnPatternContainer *container);
+    void spawn(SpawnerGroup *group, Spawner *spawner, SpawnPatternContainer *container);
 
     void onEnemyDeath(EVENT_HANDLER(Entity));
 

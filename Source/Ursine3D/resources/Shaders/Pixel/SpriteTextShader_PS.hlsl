@@ -13,10 +13,10 @@ struct PixelInputType
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-    float4 texColor = colorTexture.Sample(SampleType, input.uv);
+    float4 texColor = colorTexture.Sample( SampleType, input.uv );
 
-    if ( texColor.x <= 0 )
+    if (texColor.x <= 0)
         discard;
 
-    return float4(input.color.xyz * texColor.x, texColor.x);
+    return float4( input.color.xyz * texColor.x, texColor.x * input.color.w );
 }

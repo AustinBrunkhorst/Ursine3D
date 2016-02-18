@@ -348,7 +348,7 @@ HitscanWeaponSystem::HitscanWeaponSystem(ursine::ecs::World* world)
 
 void HitscanWeaponSystem::Initialize(void)
 {
-    m_physicsSystem = m_world->GetEntitySystem(PhysicsSystem);
+    m_physicsSystem = m_world->GetEntitySystem<PhysicsSystem>( );
 }
 
 void HitscanWeaponSystem::Enable(ursine::ecs::Entity *entity)

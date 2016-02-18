@@ -34,7 +34,7 @@ RotateTool::RotateTool(Editor *editor, World *world)
     , m_axisType( -1 )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
+	m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
 void RotateTool::OnEnable(EntityUniqueID selected)
@@ -241,7 +241,7 @@ void RotateTool::updateAxis(void)
 
 void RotateTool::renderAxis()
 {
-    auto drawer = m_world->GetEntitySystem(DebugSystem);
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
 
     if ( m_gizmo )
     {

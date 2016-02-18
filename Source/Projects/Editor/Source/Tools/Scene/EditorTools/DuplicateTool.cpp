@@ -25,8 +25,8 @@ DuplicateTool::DuplicateTool(Editor *editor, ursine::ecs::World *world)
     , m_origin( false )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
-    m_drawer = m_world->GetEntitySystem( DebugSystem );
-    m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
+    m_drawer = m_world->GetEntitySystem<DebugSystem>( );
+    m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
 void DuplicateTool::OnEnable(EntityUniqueID selected)

@@ -98,7 +98,7 @@ namespace ursine
 
             if (rigidbody)
             {
-                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                GetOwner( )->GetWorld( )->GetEntitySystem<PhysicsSystem>( )
                     ->ClearContacts( rigidbody );
 
                 rigidbody->SetAwake( );

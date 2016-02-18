@@ -242,7 +242,7 @@ namespace editor_commands
 
             auto *entity = world->CreateEntity( name );
 
-            auto *tools = world->GetEntitySystem( EditorToolSystem );
+            auto *tools = world->GetEntitySystem<EditorToolSystem>( );
 
             if (tools)
                 tools->ClearSelectedEntities( );

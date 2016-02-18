@@ -64,7 +64,7 @@ void SpawnPatternContainer::update(SpawnerGroup *group, Spawner *spawner)
         if (pattern.GetEndingSegmentTransition( ) != LevelSegments::Empty)
         {
             // Send an event
-            GetOwner( )->GetWorld( )->GetEntitySystem( LevelManager )
+            GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( )
                 ->SegmentTransition( pattern.GetEndingSegmentTransition( ) );
 
             // we're not breaking anymore

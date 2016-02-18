@@ -222,7 +222,7 @@ void CameraAnimator::drawPath(void)
 {
     getChildren( );
 
-    auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem( ursine::ecs::DebugSystem );
+    auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::DebugSystem>( );
 
     if (m_smoothPath)
     {

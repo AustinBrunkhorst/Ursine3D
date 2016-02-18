@@ -224,7 +224,7 @@ void SpawnPattern::Update(SpawnerGroup *group, Spawner *spawner, SpawnPatternCon
             while (m_activeEnemies < m_minNumberOfEnemies && m_totalEnemiesSpawned < m_totalEnemies)
             {
                 // Spawn an enemy
-                spawn( spawner, container );
+                spawn( group, spawner, container );
             }
 
             // Reset the spawn timer
@@ -239,18 +239,18 @@ void SpawnPattern::Update(SpawnerGroup *group, Spawner *spawner, SpawnPatternCon
             // Check to see if we should spawn something
             if (m_spawnTimer > m_singleSpawnCooldown)
             {
-                spawn( spawner, container );
+                spawn( group, spawner, container );
             }
         }
     }
 
 }
 
-void SpawnPattern::spawn(Spawner *spawner, SpawnPatternContainer *container)
+void SpawnPattern::spawn(SpawnerGroup *group, Spawner *spawner, SpawnPatternContainer *container)
 {
     // Get the origin
     auto origin = container->GetOwner( )->GetTransform( )->GetWorldPosition( );
-    
+
     // Calculate the offset
     auto perp = SVec3::Cross( 
         m_spawnDirection,
@@ -265,7 +265,7 @@ void SpawnPattern::spawn(Spawner *spawner, SpawnPatternContainer *container)
 
     auto offset = newDirection * math::Rand( 0.0f, m_spawnDistanceVariance );
 
-    auto *entity = spawner->spawnEnemy( origin + offset );
+    auto *entity = spawner->spawnEnemy( group, origin + offset );
 
     ++m_activeEnemies;
     ++m_totalEnemiesSpawned;

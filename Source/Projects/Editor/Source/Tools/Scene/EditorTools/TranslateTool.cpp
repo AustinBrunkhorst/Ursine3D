@@ -24,7 +24,7 @@ TranslateTool::TranslateTool(Editor* editor, ursine::ecs::World *world)
     , m_axisType( -1 )
 {
 	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
+	m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
 void TranslateTool::OnEnable(EntityUniqueID selected)
@@ -230,7 +230,7 @@ void TranslateTool::updateAxis(void)
 
 void TranslateTool::renderAxis()
 {
-    auto drawer = m_world->GetEntitySystem(DebugSystem);
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
 
     if ( m_gizmo )
     {

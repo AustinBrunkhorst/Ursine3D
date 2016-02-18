@@ -15,6 +15,13 @@ namespace ursine
 {
     namespace ecs
     {
-        
+        template<typename SystemType>
+        SystemType *World::GetEntitySystem(void)
+        {
+            if (m_systemManager)
+                return m_systemManager->GetSystem<SystemType>( );
+
+            return nullptr;
+        }
     }
 }

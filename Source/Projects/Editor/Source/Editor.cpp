@@ -23,7 +23,7 @@
   
 #include <Color.h> 
 #include <LightComponent.h> 
- 
+  
 using namespace ursine;
 
 namespace

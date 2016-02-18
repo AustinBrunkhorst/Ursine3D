@@ -39,4 +39,5 @@ public:
     LevelManager(ursine::ecs::World *world);
 
     void SegmentTransition(LevelSegments segment);
-};
+
+} Meta(Enable, AutoAddEntitySystem);

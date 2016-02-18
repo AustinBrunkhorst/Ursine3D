@@ -19,6 +19,7 @@
 #include "LevelSegments.h"
 
 class SpawnPatternContainer;
+class SpawnerGroup;
 
 class Spawner : public ursine::ecs::Component
 {
@@ -52,6 +53,6 @@ private:
     // the level segment
     void onLevelSegmentChange(LevelSegments segment);
 
-    ursine::ecs::Entity *spawnEnemy(const ursine::SVec3 &worldPosition);
+    ursine::ecs::Entity *spawnEnemy(SpawnerGroup *group, const ursine::SVec3 &worldPosition);
 
 } Meta(Enable, HiddenInSelector, DisableComponentRemoval);

@@ -37,7 +37,7 @@ void LightDebugDrawSystem::Process(Entity* entity)
 {
     auto light = entity->GetComponent<Light>( );
 
-    auto drawer = m_world->GetEntitySystem( DebugSystem );
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
 
     if (!drawer)
         return;
@@ -142,7 +142,7 @@ void CameraDebugDrawSystem::Process(Entity* entity)
         return;
 
     // debug draw this camera
-    auto drawer = m_world->GetEntitySystem( DebugSystem );
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
 
     if (!drawer)
         return;

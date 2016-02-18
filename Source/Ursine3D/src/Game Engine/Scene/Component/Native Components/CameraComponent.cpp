@@ -181,7 +181,7 @@ namespace ursine
 
             // notify rendersystem that I've changed
             if (!m_inEditorSelectionMode)
-                GetOwner( )->GetWorld( )->GetEntitySystem( RenderSystem )->SortCameraArray( );
+                GetOwner( )->GetWorld( )->GetEntitySystem<RenderSystem>( )->SortCameraArray( );
         }
 
         int Camera::GetSortLayer(void) const
@@ -303,7 +303,7 @@ namespace ursine
             if (!world->GetSystemManager( ))
                 return;
 
-            auto *renderSystem = world->GetEntitySystem( RenderSystem );
+            auto *renderSystem = world->GetEntitySystem<RenderSystem>( );
 
             if (renderSystem)
                 renderSystem->SortCameraArray( );

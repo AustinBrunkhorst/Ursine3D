@@ -169,7 +169,7 @@ namespace ursine
 
         void PhysicsSystem::OnInitialize(void)
         {
-            m_debugSystem = m_world->GetEntitySystem( DebugSystem );
+            m_debugSystem = m_world->GetEntitySystem<DebugSystem>( );
 
             m_world->Listener( this )
                 .On( WORLD_UPDATE, &PhysicsSystem::onUpdate, 100000 )
