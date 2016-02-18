@@ -12,9 +12,6 @@
 
 #include "PlayerTwoAxisAction.h"
 
-#include <PlayerInputComponent.h>
-
-
 PlayerTwoAxisAction::PlayerTwoAxisAction()
     : m_left()
     , m_right()

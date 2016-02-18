@@ -38,11 +38,11 @@ namespace ursine
             void SetUserID(int id);
             int GetUserID(void);
 
-			void SetUserPointer(void *ptr);
-			void *GetUserPointer(void);
+            void SetUserPointer(void *ptr);
+            void *GetUserPointer(void);
 
-			static Rigidbody *DownCast(BodyBase *body);
-			static const Rigidbody *DownCast(const BodyBase *body);
+            static Rigidbody *DownCast(BodyBase *body);
+            static const Rigidbody *DownCast(const BodyBase *body);
 
             void SetBodyFlag(BodyFlag bodyFlag);
             BodyFlag GetBodyFlag(void) const;
@@ -71,7 +71,7 @@ namespace ursine
             bool GetSleepToggle(void) const;
 
             void SetGravity(const SVec3 &gravity);
-			const SVec3 &GetGravity(void) const;
+            const SVec3 &GetGravity(void) const;
 
             void SetMass(float mass);
             float GetMass(void) const;
@@ -82,13 +82,13 @@ namespace ursine
             void SetAngularVelocity(const SVec3 &angularVelocity);
             SVec3 GetAngularVelocity(void) const;
 
-			void SetGhost(bool enable);
-			bool GetGhost(void) const;
+            void SetGhost(bool enable);
+            bool GetGhost(void) const;
 
-			void SetContinuousCollisionDetection(bool enable);
-			bool GetContinuousCollisionDetection(void) const;
+            void SetContinuousCollisionDetection(bool enable);
+            bool GetContinuousCollisionDetection(void) const;
 
-			void UpdateInertiaTensor(void);
+            void UpdateInertiaTensor(void);
 
             void AddForce(const SVec3 &force);
 
@@ -113,9 +113,9 @@ namespace ursine
 
             bool m_enableSleeping;
 
-			bool m_ghost;
+            bool m_ghost;
 
-			bool m_continuousCollisionDetection;
+            bool m_continuousCollisionDetection;
 
             Simulation *m_simulation;
 
@@ -134,7 +134,7 @@ namespace ursine
             
             void updateRotationFreeze(void);
 
-			void updateCCD(void);
+            void updateCCD(void);
         };
     }
 }

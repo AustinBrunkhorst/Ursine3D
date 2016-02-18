@@ -17,7 +17,7 @@
 #include <SystemManager.h>
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
-#include <Game Engine/Scene/World/Systems/Native Systems/DebugSystem.h>
+#include <DebugSystem.h>
 
 using namespace ursine;
 using namespace ecs;

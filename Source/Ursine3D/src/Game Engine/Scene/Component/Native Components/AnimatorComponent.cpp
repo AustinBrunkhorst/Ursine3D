@@ -28,7 +28,7 @@ namespace ursine
 			: m_currState("")
 			, m_futState("")
 			, m_currtransPos(0.f)
-			, m_futtransPos(0.f)
+			, m_futtransPos(1.f)
 		{}
 
 		const std::string &StateBlender::GetcurrState(void) const
@@ -59,7 +59,6 @@ namespace ursine
 		void StateBlender::SetcurrTransPos(const float& tPos)
 		{
 			m_currtransPos = tPos;
-			//NOTIFY_COMPONENT_CHANGED("currtransPos", m_currtransPos);
 		}
 
 		const float &StateBlender::GetfutTransPos(void) const
@@ -70,9 +69,8 @@ namespace ursine
 		void StateBlender::SetfutTransPos(const float& tPos)
 		{
 			m_futtransPos = 1.0f - m_currtransPos;
-			//NOTIFY_COMPONENT_CHANGED("futtransPos", m_futtransPos);
 		}
-		
+
 		const StateBlender *StateBlender::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
 		{
 			if (currst == m_currState && futst == m_futState)
@@ -87,6 +85,7 @@ namespace ursine
 			, m_playing(true)
 			, m_looping(true)
 			, m_debug(false)
+			, m_changeState(false)
 			, m_speedScalar(1.0f)
 			, m_Rig("")
 			, m_currentStateName("")
@@ -110,7 +109,7 @@ namespace ursine
 			{
 				x = SMat4::Identity();
 			}
-			
+
 			auto *gfx = GetCoreSystem(graphics::GfxAPI);
 			auto *world = GetOwner()->GetWorld();
 			auto *animListEntity = world->CreateEntity("Animation List");
@@ -124,7 +123,6 @@ namespace ursine
 #if defined(URSINE_WITH_EDITOR)
 			// Could update the situation of Blend Tree Entity here
 #endif
-
 			// grab what we need
 			AnimationState *currentState = nullptr;
 			AnimationState *futureState = nullptr;
@@ -135,44 +133,44 @@ namespace ursine
 				if (x.GetName() == m_futureStateName)
 					futureState = &x;
 			}
-			
+
 			if (!currentState)
 				return;
-			
-			const Animation *currentAnimation = (nullptr == currentState)? nullptr : currentState->GetAnimation();
-			const Animation *futrueAnimation = (nullptr == futureState)? nullptr : futureState->GetAnimation();
+
+			const Animation *currentAnimation = (nullptr == currentState) ? nullptr : currentState->GetAnimation();
+			const Animation *futureAnimation = (nullptr == futureState) ? nullptr : futureState->GetAnimation();
 			auto *rig = AnimationBuilder::GetAnimationRigByName(m_Rig);
-			
-			if ( nullptr == currentAnimation || nullptr == rig )
+
+			if (nullptr == currentAnimation || nullptr == rig)
 				return;
-			
+
 			if (currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
 				return;
-			
+
 			// default transition time takes 1 sec this will be used as interpolation factor
 			static float transFactor = 0.0f;
 			//// selected time of next animation which the blending will ends up
 			//float transTime = 1.0f;
-			if (nullptr != futrueAnimation)
+			if (nullptr != futureAnimation)
 			{
-				if (futrueAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
+				if (futureAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
 					return;
 			}
-			
+
 			auto &matrixPalette = GetOwner()->GetComponent<Model3D>()->GetMatrixPalette();
 			std::vector<SMat4> tempVec(100);
-			
+
 			// update time
 			if (m_playing)
 			{
-				unsigned keyframeCount = currentAnimation->GetRigKeyFrameCount();
-				auto &curr_firstFrame = currentAnimation->GetKeyframe(0, 0);
-				auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount - 1, 0);
-			
+				// progressing animation in state
 				currentState->IncrementTimePosition(dt * m_speedScalar);
-				if (nullptr != futrueAnimation && currentAnimation != futrueAnimation)
+				// if there is future animation
+				if (nullptr != futureAnimation && currentAnimation != futureAnimation)
 				{
+					// progress future animation too.
 					futureState->IncrementTimePosition(dt * m_speedScalar);
+
 					// blending = transfactor control X, mix two animation with interp method
 					// what do I need?
 					// curr transPos - blending starting time position of curr state anim
@@ -180,30 +178,54 @@ namespace ursine
 					// trans time - time takes for blending
 					// to see this, curr->fut animation should be looped.
 					transFactor += dt * m_speedScalar;
-					if (transFactor >= 1.0f)
+					if (transFactor > 1.0f)
 					{
-						// Change State name
-						SetCurrentState(m_futureStateName);
-						SetFutureState("");
-						// Change actual state too
-						currentState = futureState;
-						futureState = nullptr;
-						// reset transfactor 0
-						transFactor = 0.f;
+						transFactor = 1.0f;
 					}
 				}
-			
+
+				unsigned keyframeCount1 = currentAnimation->GetRigKeyFrameCount();
+				auto &curr_firstFrame = currentAnimation->GetKeyframe(0, 0);
+				auto &curr_lastFrame = currentAnimation->GetKeyframe(keyframeCount1 - 1, 0);
+				
 				// if current state reached at the end of its frame
 				if (currentState->GetTimePosition() > curr_lastFrame.length)
 				{
 					// if we need to loop, go back to 0, maybe the first frame time?
 					if (m_looping)
-						currentState->SetTimePosition(curr_firstFrame.length);
+					{
+						// if there is future animation, 
+						// reset the time position and wait until future animation done
+						if (nullptr != futureAnimation)
+						{
+							unsigned keyframeCount2 = futureAnimation->GetRigKeyFrameCount();
+							auto &fut_firstFrame = futureAnimation->GetKeyframe(0, 0);
+							auto &fut_lastFrame = futureAnimation->GetKeyframe(keyframeCount2 - 1, 0);
+							if (futureState->GetTimePosition() > fut_lastFrame.length)
+							{
+								futureState->SetTimePosition(fut_firstFrame.length);
+								currentState->SetTimePosition(curr_firstFrame.length);
+								transFactor = 0.f;
+								if (m_changeState)
+								{
+									SetCurrentState(m_futureStateName);
+									SetFutureState("");
+									currentState = futureState;
+									futureState = nullptr;
+									currentAnimation = currentState->GetAnimation();
+								}
+							}
+						}
+						else
+							currentState->SetTimePosition(curr_firstFrame.length);
+					}
 					else
+					{
 						currentState->SetTimePosition(curr_lastFrame.length);
+					}
 				}
 			}
-			
+
 			// generate the matrices
 			AnimationBuilder::GenerateAnimationData(
 				currentState,
@@ -305,6 +327,16 @@ namespace ursine
 		void Animator::SetLooping(const bool isLooping)
 		{
 			m_looping = isLooping;
+		}
+
+		bool Animator::IsStateChanging(void) const
+		{
+			return m_changeState;
+		}
+
+		void Animator::SetStateChanging(const bool stateChange)
+		{
+			m_changeState = stateChange;
 		}
 
 		bool Animator::IsDebug() const
@@ -513,7 +545,7 @@ namespace ursine
 		// Question
 		// I'm trying to add/remove entity by StateArray.
 		// Adding is not hard(Except naming), but how can I remove entity from the blending tree?
-		// how can I add/remove entity by updating Array?
+		// how can I add/remove entity when I add/remove Array?
 		// And how will you control BlendTree for all model?
 		// how can I save blendtree? -> by new file format
 	}

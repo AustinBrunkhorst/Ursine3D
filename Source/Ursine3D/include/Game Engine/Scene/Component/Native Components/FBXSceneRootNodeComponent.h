@@ -31,28 +31,28 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
-			friend class RenderSystem;
+            friend class RenderSystem;
 
         public:
 
-			EditorButton(
-				ImportScene,
-				"Import Scene"
-			);
+            EditorButton(
+                ImportScene,
+                "Import Scene"
+            );
 
-			EditorButton(
-				GenerateConvexHullForScene,
-				"Generate Convex Hull Colliders For Scene"
-			);
+            EditorButton(
+                GenerateConvexHullForScene,
+                "Generate Convex Hull Colliders For Scene"
+            );
 
-			EditorButton(
-				GenerateBvhTriangleMeshCollidersForScene,
-				"Generate BVH Triangle Mesh Colliders For Scene"
-			);
+            EditorButton(
+                GenerateBvhTriangleMeshCollidersForScene,
+                "Generate BVH Triangle Mesh Colliders For Scene"
+            );
 
             EditorField(
                 std::string sceneName,
-				GetSceneName,
+                GetSceneName,
                 SetSceneName
             );
 
@@ -68,16 +68,16 @@ namespace ursine
         private:
             std::string m_sceneName;
 
-			
-		#if defined(URSINE_WITH_EDITOR)
+            
+        #if defined(URSINE_WITH_EDITOR)
 
-			static void recursClearChildren(const std::vector< Handle<Transform> > &children);
-			void clearChildren(void);
-			void importScene(void);
+            static void recursClearChildren(const std::vector< Handle<Transform> > &children);
+            void clearChildren(void);
+            void importScene(void);
 
-			bool m_notificationPresent;
+            bool m_notificationPresent;
 
-		#endif
+        #endif
 
         } Meta(Enable, DisplayName("FBXSceneRootNode"));
     }

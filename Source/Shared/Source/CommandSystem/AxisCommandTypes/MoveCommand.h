@@ -10,13 +10,11 @@
 
 #pragma once
 
-#include "RecordableAxisCommand.h"
+#include "AxisCommand.h"
 
 class MoveCommand
-    : public RecordableAxisCommand
+    : public AxisCommand
 {
-	RECORDABLE_COMMAND;
-
 public:
     MoveCommand();
     MoveCommand(const ursine::Vec2 &axis);
@@ -24,12 +22,4 @@ public:
     void Execute(ursine::ecs::Entity *receiver) override;
     void StopExecute(ursine::ecs::Entity *receiver) override;
 
-    void StartRecording(ursine::ecs::Entity *receiver) override;
-    void Record(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
-    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
-
-private:
-    std::vector<ursine::SVec3> m_positionList;
-    bool m_playback = false;
-    ursine::SVec3 m_position;
 };

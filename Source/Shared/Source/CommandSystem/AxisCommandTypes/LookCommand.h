@@ -10,27 +10,15 @@
 
 #pragma once
 
-#include "RecordableAxisCommand.h"
+#include "AxisCommand.h"
 
 class LookCommand
-    : public RecordableAxisCommand
+    : public AxisCommand
 {
-	RECORDABLE_COMMAND;
-
 public:
     LookCommand(void);
     LookCommand(const ursine::Vec2 &axis);
 
     void Execute(ursine::ecs::Entity *receiver) override;
     void StopExecute(ursine::ecs::Entity *receiver) override;
-
-    void StartRecording(ursine::ecs::Entity *receiver) override;
-    void Record(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
-    void RecordedExecutionPrep(ursine::ecs::Entity *receiver, const ursine::uint64 time) override;
-
-private:
-    std::vector<ursine::SQuat> m_characterRot;
-    std::vector<ursine::SQuat> m_camRot;
-
-    bool m_playback;
 };

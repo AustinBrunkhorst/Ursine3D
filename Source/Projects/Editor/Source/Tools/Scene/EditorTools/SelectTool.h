@@ -16,21 +16,21 @@
 class SelectTool : public EditorTool
 {
 public:
-	SelectTool(Editor *editor, ursine::ecs::World *world);
-	~SelectTool(void);
+    SelectTool(Editor *editor, ursine::ecs::World *world);
+    ~SelectTool(void);
 
-	void OnMouseDown(const ursine::MouseButtonArgs &args) override;
+    void OnMouseDown(const ursine::MouseButtonArgs &args) override;
 
-	void OnSelect(ursine::ecs::Entity *selected) override;
+    void OnSelect(ursine::ecs::Entity *selected) override;
 
-	void OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager) override;
+    void OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager) override;
 
-	void unpickObject(void);
+    void unpickObject(void);
 
 private:
-	ursine::graphics::GfxAPI *m_graphics;
+    ursine::graphics::GfxAPI *m_graphics;
 
-	ursine::ecs::EntityUniqueID m_currentID;
+    ursine::ecs::EntityUniqueID m_currentID;
 
-	bool m_altDown;
+    bool m_altDown;
 };

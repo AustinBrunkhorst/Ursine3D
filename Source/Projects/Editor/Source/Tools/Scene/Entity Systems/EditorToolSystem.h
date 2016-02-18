@@ -21,55 +21,55 @@
 
 class EditorToolSystem : public ursine::ecs::EntitySystem
 {
-	ENTITY_SYSTEM;
+    ENTITY_SYSTEM;
 
 public:
-	EditorToolSystem(ursine::ecs::World *world);
-	~EditorToolSystem(void);
+    EditorToolSystem(ursine::ecs::World *world);
+    ~EditorToolSystem(void);
 
-	ursine::ecs::Entity *GetCurrentFocus(void);
+    ursine::ecs::Entity *GetCurrentFocus(void);
 
     void ClearSelectedEntities(void);
 
 private:
-	void OnAfterLoad(void) override;
-	void OnRemove(void) override;
+    void OnAfterLoad(void) override;
+    void OnRemove(void) override;
 
-	void onUpdate(EVENT_HANDLER(ursine::ecs::World));
+    void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
-	// When the mouse is pressed down
-	void onMouseDown(EVENT_HANDLER(ursine:MouseManager));
+    // When the mouse is pressed down
+    void onMouseDown(EVENT_HANDLER(ursine:MouseManager));
 
-	// When the mouse is released
-	void onMouseUp(EVENT_HANDLER(ursine::MouseManager));
+    // When the mouse is released
+    void onMouseUp(EVENT_HANDLER(ursine::MouseManager));
 
-	// When the mouse is moved
-	void onMouseMove(EVENT_HANDLER(ursine::MouseManager));
+    // When the mouse is moved
+    void onMouseMove(EVENT_HANDLER(ursine::MouseManager));
 
-	// When the mouse scrolls
-	void onMouseScroll(EVENT_HANDLER(ursine::MouseManager));
+    // When the mouse scrolls
+    void onMouseScroll(EVENT_HANDLER(ursine::MouseManager));
 
-	// When a key is pressed
-	void onKeyDown(EVENT_HANDLER(ursine::KeyboardManager));
+    // When a key is pressed
+    void onKeyDown(EVENT_HANDLER(ursine::KeyboardManager));
 
-	// When a key is released
-	void onKeyUp(EVENT_HANDLER(ursine::KeyboardManager));
+    // When a key is released
+    void onKeyUp(EVENT_HANDLER(ursine::KeyboardManager));
 
-	void onSelectedAdd(EVENT_HANDLER(ursine::ecs::World));
-	void onSelectedRemoved(EVENT_HANDLER(ursine::ecs::World));
+    void onSelectedAdd(EVENT_HANDLER(ursine::ecs::World));
+    void onSelectedRemoved(EVENT_HANDLER(ursine::ecs::World));
 
-	ursine::MouseManager *m_mouseManager;
-	ursine::KeyboardManager *m_keyboardManager;
+    ursine::MouseManager *m_mouseManager;
+    ursine::KeyboardManager *m_keyboardManager;
 
-	EditorCameraSystem *m_editorCameraSystem;
+    EditorCameraSystem *m_editorCameraSystem;
 
-	// current ID we're locked onto
-	ursine::ecs::EntityUniqueID m_currentSelected;
+    // current ID we're locked onto
+    ursine::ecs::EntityUniqueID m_currentSelected;
 
-	std::unordered_map<ursine::KeyboardKey, EditorTool*> m_tools;
+    std::unordered_map<ursine::KeyboardKey, EditorTool*> m_tools;
 
-	EditorTool *m_currentTool;
+    EditorTool *m_currentTool;
 
-	SelectTool *m_selectTool;
-	DuplicateTool *m_dupTool;
+    SelectTool *m_selectTool;
+    DuplicateTool *m_dupTool;
 } Meta(Enable, AutoAddEntitySystem);

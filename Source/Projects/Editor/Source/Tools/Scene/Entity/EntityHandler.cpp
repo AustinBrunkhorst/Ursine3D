@@ -319,15 +319,15 @@ JSMethod(EntityHandler::addComponent)
 
     componentTypeMask.set( componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ), true );
 
-	// have this run in the main thread
-	Application::Instance->ExecuteOnMainThread( [=] {
+    // have this run in the main thread
+    Application::Instance->ExecuteOnMainThread( [=] {
         if (!entity->HasComponent( componentTypeMask ))
         {
             auto instance = componentType.CreateDynamic( );
 
             entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
         }
-	} );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -355,10 +355,10 @@ JSMethod(EntityHandler::removeComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-	// Have this run in the main thread
-	Application::Instance->ExecuteOnMainThread( [=] {
-		entity->RemoveComponent( id );
-	} );
+    // Have this run in the main thread
+    Application::Instance->ExecuteOnMainThread( [=] {
+        entity->RemoveComponent( id );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -945,5 +945,5 @@ JSMethod(EntityHandler::clone)
 
 ecs::Entity *EntityHandler::getEntity(void)
 {
-	return m_scene->GetWorld( )->GetEntityUnique( m_handle );
+    return m_scene->GetWorld( )->GetEntityUnique( m_handle );
 }

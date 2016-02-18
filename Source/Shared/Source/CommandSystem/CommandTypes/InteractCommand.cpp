@@ -13,8 +13,6 @@
 #include "InteractCommand.h"
 #include "GameEvents.h"
 
-RECORDABLE_COMMAND_DEFINITION(InteractCommand);
-
 InteractCommand::InteractCommand( )
 {
     m_weight = 0;
@@ -27,19 +25,4 @@ void InteractCommand::Execute(ursine::ecs::Entity* receiver)
 
 void InteractCommand::StopExecute(ursine::ecs::Entity* receiver)
 {
-}
-
-void InteractCommand::StartRecording(ursine::ecs::Entity* receiver)
-{
-
-}
-
-void InteractCommand::Record(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-
-}
-
-void InteractCommand::RecordedExecutionPrep(ursine::ecs::Entity* receiver, const ursine::uint64 time)
-{
-
 }

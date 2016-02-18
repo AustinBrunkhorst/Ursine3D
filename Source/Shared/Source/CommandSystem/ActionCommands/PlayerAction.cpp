@@ -11,7 +11,7 @@
 #include "Precompiled.h"
 
 #include "PlayerAction.h"
-#include <Components/PlayerIdComponent.h>
+#include <PlayerIdComponent.h>
 #include <Core/CoreSystem.h>
 #include <Core/Input/Gamepad/GamepadManager.h>
 #include <Core/Input/Keyboard/KeyboardManager.h>
@@ -20,7 +20,7 @@
 #define Threshold 0.5f
 
 
-PlayerAction::PlayerAction( )
+PlayerAction::PlayerAction(void)
     : m_actionMode( ActionCount )
     , m_binding( BindingCount )
     , m_gamepadState( nullptr )
@@ -59,7 +59,7 @@ bool PlayerAction::PrepForInput(void)
     return true;
 }
 
-bool PlayerAction::WasPressed()
+bool PlayerAction::WasPressed(void)
 {    
     switch ( m_actionMode )
     {
@@ -74,7 +74,7 @@ bool PlayerAction::WasPressed()
     return false;
 }
 
-bool PlayerAction::IsPressed()
+bool PlayerAction::IsPressed(void)
 {
     switch ( m_actionMode )
     {
@@ -89,7 +89,7 @@ bool PlayerAction::IsPressed()
     return false;
 }
 
-bool PlayerAction::WasReleased( )
+bool PlayerAction::WasReleased(void)
 { 
     switch ( m_actionMode )
     {
@@ -104,7 +104,7 @@ bool PlayerAction::WasReleased( )
     return false;
 }
 
-bool PlayerAction::StickUp() 
+bool PlayerAction::StickUp(void)
 {
     if ( !PrepForInput( ) )
         return false;
@@ -122,7 +122,7 @@ bool PlayerAction::StickUp()
     }
 }
 
-bool PlayerAction::StickDown() 
+bool PlayerAction::StickDown(void)
 {
     if ( !PrepForInput( ) )
         return false;
@@ -140,7 +140,7 @@ bool PlayerAction::StickDown()
     }
 }
 
-bool PlayerAction::StickLeft() 
+bool PlayerAction::StickLeft(void)
 {
     if ( !PrepForInput( ) )
         return false;
@@ -158,7 +158,7 @@ bool PlayerAction::StickLeft()
     }
 }
 
-bool PlayerAction::StickRight() 
+bool PlayerAction::StickRight(void)
 {
     if ( !PrepForInput( ) )
         return false;

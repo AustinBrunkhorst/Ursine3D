@@ -25,7 +25,7 @@ public:
 
     void SetWorld(ursine::ecs::World *world);
 
-	void RelayUIResetWorld(void);
+    void RelayUIResetWorld(void);
 
 private:
     Project *m_project;

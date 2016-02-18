@@ -91,8 +91,8 @@ void Project::SetPlayState(ScenePlayState state)
 
 void Project::SetWorld(ecs::World *world)
 {
-	m_entityManager.SetWorld( world );
+    m_entityManager.SetWorld( world );
     m_scene->SetWorld( world );
 
-	m_entityManager.RelayUIResetWorld( );
+    m_entityManager.RelayUIResetWorld( );
 }
