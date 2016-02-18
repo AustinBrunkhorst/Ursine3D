@@ -212,9 +212,9 @@ namespace ursine
         m_isShown = show;
     }
 
-    void Window::SetIcon(const std::string &filename)
+    void Window::SetIcon(const std::string &fileName)
     {
-        auto surface = IMG_Load( filename.c_str( ) );
+        auto surface = IMG_Load( fileName.c_str( ) );
 
         SDL_SetWindowIcon( m_handle, surface );
 

@@ -2,21 +2,27 @@
 
 #include "Array.h"
 
+typedef std::initializer_list<std::string> ExtensionList;
+
 class ResourceImporterConfig : public ursine::meta::MetaProperty
 {
+    META_OBJECT;
+
 public:
     const ursine::Array<std::string> fileExtensions;
     const ursine::meta::Type defaultProcessor;
 
-    ResourceImporterConfig(const std::string &&extension, const ursine::meta::Type &defaultProcessor)
-        : fileExtensions(ursine::Array<std::string> { move( extension ) } )
+    ResourceImporterConfig(const std::string &extension, const ursine::meta::Type &defaultProcessor)
+        : fileExtensions(ursine::Array<std::string> { extension } )
         , defaultProcessor( defaultProcessor )
     {
-        ursine::utils::MakeLowerCase( fileExtensions[ 0 ] );
+        auto &extensions = const_cast<ursine::Array<std::string>&>( fileExtensions );
+
+        ursine::utils::MakeLowerCase( extensions[ 0 ] );
     }
 
-    ResourceImporterConfig(const std::initializer_list<std::string> &&extensions, const ursine::meta::Type &defaultProcessor)
-        : fileExtensions( move( extensions ) )
+    ResourceImporterConfig(const ExtensionList &extensions, const ursine::meta::Type &defaultProcessor)
+        : fileExtensions( extensions )
         , defaultProcessor( defaultProcessor )
     {
         for (auto &extension : const_cast<ursine::Array<std::string>&>( fileExtensions ))
@@ -26,6 +32,8 @@ public:
 
 class ResourceProcessorConfig : public ursine::meta::MetaProperty
 {
+    META_OBJECT;
+
 public:
     const ursine::meta::Type optionsType;
 

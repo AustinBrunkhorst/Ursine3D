@@ -76,11 +76,11 @@ namespace ursine
             return data;
         }
 
-        World *WorldSerializer::Deserialize(const std::string &filename) const
+        World *WorldSerializer::Deserialize(const std::string &fileName) const
         {
             std::string data;
 
-            if (!fs::LoadAllText( filename, data ))
+            if (!fs::LoadAllText( fileName, data ))
                 throw SerializationException( "Unable to read world file." );
 
             std::string jsonError;

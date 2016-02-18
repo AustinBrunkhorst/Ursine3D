@@ -3,6 +3,8 @@
 #include "ResourceData.h"
 #include "ResourceReference.h"
 
+#include "FileSystem.h"
+
 #include "GUID.h"
 
 namespace ursine
@@ -12,12 +14,23 @@ namespace ursine
         class ResourceManager
         {
         public:
-            template<typename ResourceType>
-            ResourceType *LoadReference(const ResourceReference &reference);
+            ResourceManager(void);
+            ~ResourceManager(void);
+
+            // Directory where built resources exist
+            void SetResourceDirectory(const fs::path &resourceDirectory);
+
+            ResourceReference CreateReference(const GUID &guid);
+            ResourceData::Handle LoadReference(const ResourceReference &reference);
 
         private:
-            std::unordered_map<std::string, ResourceData *> m_nameReference;
-            std::unordered_map<GUID, ResourceData *, GUIDHasher> m_database;
+            fs::path m_resourceDirectory;
+
+            std::unordered_map<GUID, ResourceData::Handle, GUIDHasher> m_database;
+
+            ResourceData::Handle loadResource(const GUID &guid);
+
+            fs::path getResourceFileName(const GUID &guid);
         };
     }
 }

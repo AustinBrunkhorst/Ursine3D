@@ -581,12 +581,22 @@ namespace ursine
                 return { instance.ToBool( ) };
             }
 
-            if (IsPrimitive( ) || IsEnum( ))
+            auto &meta = GetMeta( );
+            auto isEnum = IsEnum( );
+
+            // number, or non-associative enum
+            if (IsPrimitive( ) || (isEnum && meta.GetProperty<BitMaskEditor>( )))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
                     return { instance.ToDouble( ) };
  
                 return { instance.ToInt( ) };
+            }
+
+            // associative enum value
+            if (isEnum)
+            {
+                return GetEnum( ).GetKey( instance );
             }
 
             if (*this == typeof( std::string ))
@@ -648,7 +658,7 @@ namespace ursine
             }
 
             auto &meta = GetMeta( );
-            bool isEnum = IsEnum( );
+            auto isEnum = IsEnum( );
 
             // number, or non-associative enum
             if (IsPrimitive( ) || (isEnum && meta.GetProperty<BitMaskEditor>( )))

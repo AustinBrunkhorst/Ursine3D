@@ -14,10 +14,13 @@
 #pragma
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
 namespace ursine
 {
     typedef boost::uuids::uuid GUID;
     typedef boost::hash<GUID> GUIDHasher;
+    typedef boost::uuids::random_generator GUIDGenerator;
+    typedef boost::uuids::string_generator GUIDStringGenerator;
 }

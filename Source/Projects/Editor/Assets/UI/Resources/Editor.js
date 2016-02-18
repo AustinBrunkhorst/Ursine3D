@@ -734,7 +734,7 @@ var ursine_editor_menus_EntityMenu = function() { };
 $hxClasses["ursine.editor.menus.EntityMenu"] = ursine_editor_menus_EntityMenu;
 ursine_editor_menus_EntityMenu.__name__ = ["ursine","editor","menus","EntityMenu"];
 ursine_editor_menus_EntityMenu.doCreateEmpty = function() {
-	editor_commands_CreateEntity();
+	editor_commands_CreateEmptyEntity();
 };
 ursine_editor_menus_EntityMenu.doCreateFromArchetype = function() {
 	editor_commands_CreateEntityFromArchetype();

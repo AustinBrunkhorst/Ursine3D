@@ -58,7 +58,7 @@ namespace ursine
         bool IsShown(void) const;
         void Show(bool show);
 
-        void SetIcon(const std::string &filename);
+        void SetIcon(const std::string &fileName);
 
         int GetDisplayIndex(void) const;
 

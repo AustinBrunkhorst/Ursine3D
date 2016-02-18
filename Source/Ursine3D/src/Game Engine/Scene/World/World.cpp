@@ -100,11 +100,11 @@ namespace ursine
 		}
 
         Entity *World::CreateEntityFromArchetype(
-            const std::string &filename, 
+            const std::string &fileName, 
             const std::string &name
         )
         {
-            auto cache = m_archetypeCache.find( filename );
+            auto cache = m_archetypeCache.find( fileName );
 
             Entity *entity;
 
@@ -113,9 +113,9 @@ namespace ursine
                 std::string jsonData;
 
                 UAssert(
-                    fs::LoadAllText( filename, jsonData ),
+                    fs::LoadAllText( fileName, jsonData ),
                     "Failed to load archetype.\nfile: %s", 
-                    filename.c_str( )
+                    fileName.c_str( )
                 );
 
                 std::string jsonError;
@@ -126,10 +126,10 @@ namespace ursine
                     jsonError.empty( ),
                     "Failed to load archetype.\nJSON error: %s\nfile: %s",
                     jsonError.c_str( ),
-                    filename.c_str( )
+                    fileName.c_str( )
                 );
 
-                m_archetypeCache[ filename ] = data;
+                m_archetypeCache[ fileName ] = data;
 
                 entity = loadArchetype( data );
             }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 namespace ursine
 {
     namespace resources
@@ -13,6 +15,8 @@ namespace ursine
             ResourceReader &operator>>(T &output);
 
         private:
+            friend class ResourceFormatReader;
+
             std::ifstream m_stream;
         };
     }

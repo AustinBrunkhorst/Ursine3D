@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 namespace ursine
 {
     namespace resources
@@ -15,6 +17,8 @@ namespace ursine
                 ResourceWriter &operator<<(const T &value);
 
             private:
+                friend class ResourceFormatWriter;
+
                 std::ofstream m_stream;
             };
         }

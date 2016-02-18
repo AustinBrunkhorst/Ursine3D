@@ -17,9 +17,9 @@ namespace ursine
 {
     namespace fs
     {
-        bool LoadAllText(const std::string &filename, std::string &output)
+        bool LoadAllText(const std::string &fileName, std::string &output)
         {
-            std::ifstream input( filename );
+            std::ifstream input( fileName );
 
             if (!input)
                 return false;
@@ -43,9 +43,9 @@ namespace ursine
             return true;
         }
 
-        bool WriteAllText(const std::string &filename, const std::string &text)
+        bool WriteAllText(const std::string &fileName, const std::string &text)
         {
-            std::ofstream output( filename );
+            std::ofstream output( fileName );
 
             if (!output)
                 return false;
@@ -57,9 +57,9 @@ namespace ursine
             return true;
         }
 
-        std::string SafeFileName(const std::string &filename, char replacement)
+        std::string SafeFileName(const std::string &fileName, char replacement)
         {
-            auto sanitized = filename;
+            auto sanitized = fileName;
 
             std::string illegalChars = "\\/:?\"<>|";
 

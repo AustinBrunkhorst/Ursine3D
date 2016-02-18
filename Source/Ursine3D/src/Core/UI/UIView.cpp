@@ -150,15 +150,15 @@ namespace ursine
 
         SetConsoleColor( CC_TEXT_BRIGHT_YELLOW );
 
-        auto filename = fs::path( source ).filename( ).string( );
+        auto fileName = fs::path( source ).filename( ).string( );
 
-        if (!filename.empty( ))
+        if (!fileName.empty( ))
         {
             printf( "[" );
 
             SetConsoleColor( CC_TEXT_YELLOW );
 
-            printf( "%s", filename.c_str( ) );
+            printf( "%s", fileName.c_str( ) );
 
             SetConsoleColor( CC_TEXT_WHITE );
 

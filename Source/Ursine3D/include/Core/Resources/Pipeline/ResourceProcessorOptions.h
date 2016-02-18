@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Meta.h"
+
+#define RESOURCE_PROCESSOR_OPTIONS META_OBJECT
+
 namespace ursine
 {
     namespace resources

@@ -1,7 +1,10 @@
 #pragma once
 
 #include "ResourceProcessorContext.h"
-#include "ResourceConfig.h"
+#include "ResourcePipelineProperties.h"
+#include "ResourceData.h"
+
+#define RESOURCE_PROCESSOR META_OBJECT
 
 namespace ursine
 {
@@ -12,7 +15,12 @@ namespace ursine
             class ResourceProcessor : public meta::Object
             {
             public:
-                virtual ResourceDataHandle Process(ResourceDataHandle input, const ResourceProcessorContext &context) = 0;
+                typedef std::shared_ptr<ResourceProcessor> Handle;
+
+            private:
+                friend class ResourcePipelineManager;
+
+                virtual ResourceData::Handle Process(ResourceData::Handle input, const ResourceProcessorContext &context) = 0;
             };
         }
     }

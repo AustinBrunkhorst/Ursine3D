@@ -27,7 +27,7 @@ namespace ursine
             WorldSerializer(void);
 
             Json Serialize(World *world) const;
-            World *Deserialize(const std::string &filename) const;
+            World *Deserialize(const std::string &fileName) const;
             World *Deserialize(const Json &data) const;
         };
     }
