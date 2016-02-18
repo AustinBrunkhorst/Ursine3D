@@ -23,6 +23,7 @@
 #include "CameraComponent.h"
 #include "ParticleSystemComponent.h"
 #include "AnimatorComponent.h"
+#include "SpriteTextComponent.h"
 
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
@@ -118,6 +119,10 @@ namespace ursine
             {
                 addRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
             }
+            else if(component->Is<SpriteText>( ))
+            {
+                addRenderable(args->entity, static_cast<SpriteText*>(component)->m_base);
+            }
         }
 
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
@@ -156,9 +161,9 @@ namespace ursine
                     m_animators.erase( search );
             }
             else if (component->Is<ParticleSystem>( ))
-            {
                 removeRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
-            }
+            else if ( component->Is<SpriteText>() )
+                removeRenderable(args->entity, static_cast<SpriteText*>(component)->m_base);
         }
 
         void RenderSystem::onUpdate(EVENT_HANDLER(World))

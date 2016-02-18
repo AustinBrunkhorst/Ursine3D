@@ -23,11 +23,11 @@
   
 #include <Color.h> 
 #include <LightComponent.h> 
-
+ 
 using namespace ursine;
 
 namespace
-{
+{ 
     const auto kEditorEntryPoint = "file:///Assets/UI/Resources/Main.html";
 
     const auto kEditorClearColor = Color( 0xFF252526 );
@@ -38,40 +38,40 @@ namespace
 
 CORE_SYSTEM_DEFINITION( Editor );
  
-Editor::Editor(void)  
-    : m_graphics( nullptr )
+Editor::Editor(void)   
+    : m_graphics( nullptr ) 
     , m_mainWindow( { nullptr } )
     , m_project( nullptr ) { }
 
 Editor::~Editor(void) { } 
-
+    
 void Editor::OnInitialize(void)
-{
+{ 
     auto *app = Application::Instance;
-
-    app->Connect(
+     
+    app->Connect(    
         APP_UPDATE,
-        this,
-        &Editor::onAppUpdate 
+        this,  
+        &Editor::onAppUpdate  
     );
      
     auto *windowManager = GetCoreSystem( WindowManager );
-    auto *uiManager = GetCoreSystem( UIManager );
+    auto *uiManager = GetCoreSystem( UIManager );  
 
-    m_mainWindow.window = windowManager->AddWindow(
-        "Ursine3D Editor",
+    m_mainWindow.window = windowManager->AddWindow( 
+        "Ursine3D Editor", 
         { 0, 0 },
         { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
-        SDL_WINDOW_RESIZABLE
-    );
-
+        SDL_WINDOW_RESIZABLE 
+    ); 
+     
     m_mainWindow.window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
 
     m_mainWindow.window->Listener( this ) 
         .On( WINDOW_FOCUS_CHANGED, &Editor::onFocusChange ); 
      
-    m_mainWindow.window->SetLocationCentered( ); 
+    m_mainWindow.window->SetLocationCentered( );  
     m_mainWindow.window->Show( true );    
     m_mainWindow.window->SetIcon( "Assets/Resources/Icon.png" );
 

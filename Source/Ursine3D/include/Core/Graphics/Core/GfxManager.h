@@ -26,6 +26,7 @@
 #include "GfxUIManager.h"
 #include "DrawingManager.h"
 #include "GfxProfiler.h"
+#include "BitmapFont.h"
 
 #include <atomic>
 
@@ -130,6 +131,7 @@ namespace ursine
             void PrepForFinalOutput(void);
             void PrepForUI(void);
             void PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj);
+            void PrepForSpriteText(const SMat4 &view, const SMat4 &proj);
 
             //rendering funcs
             void Render3DModel(_DRAWHND handle, Camera &currentcamera );
@@ -141,6 +143,7 @@ namespace ursine
             void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
             void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
             void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
+            void RenderSpriteText(_DRAWHND handle, Camera &currentcamera);
 
             //privates members
         private:
@@ -160,6 +163,8 @@ namespace ursine
 
             std::vector<_DRAWHND> m_drawList;
             unsigned m_drawCount;
+
+            BitmapFont m_font;
 
             //temp
             std::list<GfxHND> m_viewportList;

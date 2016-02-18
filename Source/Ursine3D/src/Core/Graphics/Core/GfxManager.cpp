@@ -109,11 +109,10 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_PARTICLE, "ParticleShader");
                 shaderManager->LoadShader(SHADER_EMISSIVE, "EmissiveShader");
                 shaderManager->LoadShader(SHADER_FORWARD, "ForwardRenderer");
-
+                shaderManager->LoadShader(SHADER_SPRITE_TEXT, "SpriteTextShader");
+                
                 //load compute
                 shaderManager->LoadShader(SHADER_MOUSEPOSITION, "MouseTypeID");
-
-
             }
 
             LogMessage("Initialize Buffers", 1);
@@ -145,6 +144,12 @@ namespace ursine
             Invalidate();
 
             m_ready = true;
+
+            // load the font
+            std::string textPath = "Assets/Bitmap Fonts/MainFont.fnt";
+            m_font.Load(textPath);
+
+            textureManager->CreateTexture("Font", "Assets/Bitmap Fonts/"  + m_font.GetTextureFiles()[ 0 ], 512, 512);
         }
 
         void GfxManager::Uninitialize()
@@ -262,6 +267,16 @@ namespace ursine
                 drawCall.Shader_ = SHADER_PARTICLE;
             }
             break;
+            case RENDERABLE_SPRITE_TEXT:
+            {
+                SpriteText *current = &renderableManager->m_renderableSpriteText[ render->Index_ ];
+
+                drawCall.Index_ = render->Index_;
+                drawCall.Type_ = render->Type_;
+                drawCall.Overdraw_ = current->GetOverdraw();
+                drawCall.Shader_ = SHADER_SPRITE_TEXT;
+            }
+                break;
             default:
                 break;
             }
@@ -536,6 +551,10 @@ namespace ursine
             while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
                 Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
             STAMP("Billboard Rendering");
+
+            PrepForSpriteText(view, proj);
+            while ( m_drawList[ currentIndex ].Shader_ == SHADER_SPRITE_TEXT )
+                RenderSpriteText(m_drawList[ currentIndex++ ], currentCamera);
 
             dxCore->EndDebugEvent();
 
@@ -955,6 +974,39 @@ namespace ursine
             bufferManager->MapTransformBuffer(SMat4::Identity());
             dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
             bufferManager->MapCameraBuffer(view, proj);
+        }
+
+        void GfxManager::PrepForSpriteText(const SMat4& view, const SMat4& proj)
+        {
+            textureManager->MapTextureByName("Font");
+            shaderManager->BindShader(SHADER_SPRITE_TEXT);
+            layoutManager->SetInputLayout(SHADER_SPRITE_TEXT);
+            bufferManager->MapTransformBuffer(SMat4::Identity());
+
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            layoutManager->SetInputLayout(SHADER_COUNT);
+
+            // raster
+            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+
+            // rt
+            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
+
+            // blend and depth
+            dxCore->SetBlendState(BLEND_STATE_DEFAULT);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+
+            // set index buffer
+            modelManager->BindModel("ParticleIndices", 0, true);
+
+            //map inv view
+            InvProjBuffer ipb;
+            SMat4 temp = view;
+            temp.Transpose();
+            temp.Inverse();
+
+            ipb.invProj = temp.ToD3D();
+            bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_VERTEX);
         }
 
         // rendering //////////////////////////////////////////////////////
@@ -1509,6 +1561,172 @@ namespace ursine
                 //render
                 shaderManager->Render(indexCount);
             }
+        }
+
+        void GfxManager::RenderSpriteText(_DRAWHND handle, Camera& currentCamera)
+        {
+            SpriteText &spriteText = renderableManager->m_renderableSpriteText[ handle.Index_ ];
+
+            // quick culling stuff
+            if ( !spriteText.m_active )
+                return;
+            if ( currentCamera.CheckMask(spriteText.GetRenderMask()) )
+                return;
+
+            if ( spriteText.GetText().length() <= 0 )
+                return;
+
+            // map color data ///////////////////////////////////////
+            PointGeometryBuffer pgb;
+            
+            // set color
+            auto &color = spriteText.GetColor();
+            pgb.cameraUp.x = color.r;
+            pgb.cameraUp.y = color.g;
+            pgb.cameraUp.z = color.b;
+            pgb.cameraUp.w = color.a;
+
+            bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_VERTEX);
+
+            // map text data ////////////////////////////////////////
+            SpriteTextBuffer stb;
+            stb.worldPosition = spriteText.GetPosition( ).ToD3D( );
+            stb.offset = spriteText.GetSize();
+            stb.sizeScalar = DirectX::XMFLOAT2(spriteText.GetWidth() * spriteText.GetSize(), spriteText.GetHeight() * spriteText.GetSize());
+            stb.textureDimensions = DirectX::XMFLOAT2(
+                m_font.GetCommonData().textureDimensions.scaleW, 
+                m_font.GetCommonData().textureDimensions.scaleH
+            );
+
+            // change sampler
+            if ( spriteText.GetFilter() )
+                textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
+            else
+                textureManager->MapSamplerState(SAMPLER_NO_FILTERING);
+
+            /////////////////////////////////////////////////////////
+            // mapping glyph data
+            Vec2 cursor = Vec2(0, 0);   // "cursor" for text positions
+
+            GlyphBuffer gb;
+            auto &text = spriteText.GetText( );
+            auto &characterData = m_font.GetCharacterData( );
+            auto &commonData = m_font.GetCommonData( );
+
+            // offset data for calculating stuff
+            float distance = 0;
+            unsigned lineStartIndex = 0;
+
+            // for each glyph, determine position and stuff
+            for ( unsigned x = 0; x < text.length( ); ++x)
+            {
+                auto &currentCharacter = text[ x ];
+                auto &currentGlyph = gb.glyphData[ x ];
+
+                auto &currentCharData = characterData[ currentCharacter ];
+
+                // for newline characters
+                if(currentCharacter == '\n')
+                {
+                    // calculate the current offsets so we can center ourselves
+                    float lineOffset;
+
+                    switch ( spriteText.GetAlignment() )
+                    {
+                    case 1:
+                        lineOffset = (distance / commonData.textureDimensions.scaleW) * 0.5f;
+                        break;
+                    case 2:
+                        lineOffset = (distance / commonData.textureDimensions.scaleW);
+                        break;
+                    default:
+                        lineOffset = 0;
+                        break;
+                    }
+
+                    // add it to the current line's characters
+                    for ( unsigned y = lineStartIndex; y < x; ++y)
+                    {
+                        gb.glyphData[ y ].screenPosition.x -= lineOffset;
+                    }
+
+                    // reset the stats, don't include the current newline
+                    lineStartIndex = x + 1;
+                    distance = 0;
+
+                    // increment y
+                    cursor += Vec2(0, (commonData.lineHeight / commonData.textureDimensions.scaleH) * stb.sizeScalar.y);
+
+                    continue;
+                }
+
+                // First, advance cursor by the xoffset
+                cursor += Vec2(currentCharData.offset.x, 0);
+
+                // then, check if we need to kern
+                if ( x > 0 )
+                {   // grab kerning data for behind us. Check if we need to apply
+                    auto kerningData = characterData[ text[ x - 1 ] ].kerningMap.find(static_cast<int16_t>(currentCharacter));
+
+                    // if the last character has us
+                    if ( kerningData != characterData[ text[ x - 1 ] ].kerningMap.end() )
+                    {
+                        // add the kerning data to us
+                        cursor += Vec2(kerningData->second, 0);
+                    }
+                }
+
+                // "render", divide by size of the tex to scale to right size
+                currentGlyph.screenPosition = DirectX::XMFLOAT2((cursor.X()) / commonData.textureDimensions.scaleW, cursor.Y());
+
+                currentGlyph.buffer.x = spriteText.GetPPU();
+
+                // set glyph position in tex
+                currentGlyph.glyphPosition = DirectX::XMFLOAT2(
+                    currentCharData.textureCoordinates.x / commonData.textureDimensions.scaleW,
+                    currentCharData.textureCoordinates.y / commonData.textureDimensions.scaleH
+                );
+
+                // set glyph size
+                currentGlyph.glyphSize = DirectX::XMFLOAT2(
+                    currentCharData.textureDimensions.x / commonData.textureDimensions.scaleW,
+                    currentCharData.textureDimensions.y / commonData.textureDimensions.scaleH
+                );
+
+                cursor += Vec2(currentCharData.xadvance, 0);
+
+                distance = cursor.X( );
+            }
+
+            // perform final line adjustment
+            // calculate the current offsets so we can center ourselves
+            float lineOffset;
+
+            switch ( spriteText.GetAlignment() )
+            {
+            case 1:
+                lineOffset = (distance / commonData.textureDimensions.scaleW) * 0.5f;
+                break;
+            case 2:
+                lineOffset = (distance / commonData.textureDimensions.scaleW);
+                break;
+            default:
+                lineOffset = 0;
+                break;
+            }
+
+            // add it to the current line's characters
+            for ( unsigned y = lineStartIndex; y < text.length( ); ++y )
+            {
+                gb.glyphData[ y ].screenPosition.x -= lineOffset;
+            }
+
+            // DONE, map the data
+            bufferManager->MapBuffer<BUFFER_TEXTDATA>(&stb, SHADERTYPE_VERTEX, 7);
+            bufferManager->MapBuffer<BUFFER_GLYPHDATA>(&gb, SHADERTYPE_VERTEX, 10);
+
+            shaderManager->Render(6 * static_cast<unsigned>(text.length()));
+
         }
 
         void GfxManager::SetGameViewport(GfxHND vp)

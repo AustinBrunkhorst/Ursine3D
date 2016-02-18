@@ -537,6 +537,8 @@ namespace ursine
             m_text = "Sprite Text";
             m_ppu = 64.f;
             m_alignment = ALIGN_LEFT;
+            m_filter = true;
+            m_color = Color::White;
         }
 
         float SpriteText::GetSize(void) const
@@ -607,6 +609,24 @@ namespace ursine
         void SpriteText::SetAlignment(Alignment alignment)
         {
             m_alignment = alignment;
+        }
+
+        bool SpriteText::GetFilter(void) const
+        {
+            return m_filter;
+        }
+        void SpriteText::SetFilter(bool useFilter)
+        {
+            m_filter = useFilter;
+        }
+
+        const Color &SpriteText::GetColor(void) const
+        {
+            return m_color;
+        }
+        void SpriteText::SetColor(const Color &color)
+        {
+            m_color = color;
         }
     }
 }

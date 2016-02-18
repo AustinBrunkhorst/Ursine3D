@@ -32,28 +32,35 @@ namespace ursine
 
             m_base = new RenderableComponentBase(std::bind(&SpriteText::updateRenderer, this));
 
-            m_base->SetHandle(graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_SPRITE_TEXT));
+            m_base->SetHandle( graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_SPRITE_TEXT ) );
 
             // store a pointer to the model
-            m_spriteText = &graphics->RenderableMgr.GetSpriteText(m_base->GetHandle());
+            m_spriteText = &graphics->RenderableMgr.GetSpriteText( m_base->GetHandle( ) );
 
-            m_spriteText->SetRenderMask(0);
+            m_spriteText->SetRenderMask( 0 );
         }
 
         SpriteText::~SpriteText(void)
         {
-            m_base->OnRemove(GetOwner());
+            m_base->OnRemove( GetOwner( ) );
 
-            m_spriteText->SetDebug(false);
+            m_spriteText->SetDebug( false );
 
-            GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable(m_base->GetHandle());
+            GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
             delete m_base;
         }
 
         void SpriteText::OnInitialize(void)
         {
-            Component::OnInitialize();
+            Component::OnInitialize( );
+            
+            m_base->OnInitialize(GetOwner( ));
+
+            // set the unique id
+            m_spriteText->SetEntityUniqueID(GetOwner()->GetUniqueID( ));
+
+            updateRenderer( );
         }
 
         float SpriteText::GetSize(void) const
@@ -124,6 +131,24 @@ namespace ursine
         void SpriteText::SetAlignment(TextAlignment alignment)
         {
             m_spriteText->SetAlignment( static_cast<graphics::SpriteText::Alignment>( alignment ) );
+        }
+
+        bool SpriteText::GetFilter(void) const
+        {
+            return m_spriteText->GetFilter( );
+        }
+        void SpriteText::SetFilter(bool useFilter)
+        {
+            m_spriteText->SetFilter( useFilter );
+        }
+
+        const Color &SpriteText::GetColor(void) const
+        {
+            return m_spriteText->GetColor( );
+        }
+        void SpriteText::SetColor(const Color &color)
+        {
+            m_spriteText->SetColor( color );
         }
 
         void SpriteText::updateRenderer()

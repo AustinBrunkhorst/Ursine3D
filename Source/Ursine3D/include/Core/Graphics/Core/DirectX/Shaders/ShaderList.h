@@ -42,6 +42,7 @@ namespace ursine
             // forward pass on particles and billboards
             SHADER_PARTICLE,
             SHADER_BILLBOARD2D,
+            SHADER_SPRITE_TEXT,
 
             /////////////////////////////////////////////////////////
             // and past this is debug!

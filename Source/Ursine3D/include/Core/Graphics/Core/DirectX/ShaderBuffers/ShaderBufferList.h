@@ -46,6 +46,10 @@ namespace ursine
             BUFFER_MOUSEPOS,
             BUFFER_PARTICLEDATA,
 
+            // non-default
+            BUFFER_GLYPHDATA,   // 6
+            BUFFER_TEXTDATA,    // 7
+
             BUFFER_COUNT,
 
             //"virtual" buffer
@@ -155,6 +159,28 @@ namespace ursine
         struct ParticleBuffer
         {
             Particle_GPU data[ 1024 ];
+        };
+
+        struct Glyph
+        {
+            DirectX::XMFLOAT2 screenPosition;
+            DirectX::XMFLOAT2 glyphPosition;
+            DirectX::XMFLOAT2 glyphSize;
+            DirectX::XMFLOAT2 buffer;
+        };
+
+        struct GlyphBuffer
+        {
+            Glyph glyphData[ 1024 ];
+        };
+
+        struct SpriteTextBuffer
+        {
+            DirectX::XMFLOAT3 worldPosition;
+            float offset;
+
+            DirectX::XMFLOAT2 sizeScalar;
+            DirectX::XMFLOAT2 textureDimensions;
         };
     }
 }

@@ -314,11 +314,21 @@ namespace ursine
             Alignment GetAlignment(void) const;
             void SetAlignment(Alignment alignment);
 
+            bool GetFilter(void) const;
+            void SetFilter(bool useFilter);
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
+
         private:
             float m_size;
 
             float m_widthScalar;
             float m_heightScalar;
+
+            bool m_filter;
+
+            Color m_color;
 
             SVec3 m_position;
 

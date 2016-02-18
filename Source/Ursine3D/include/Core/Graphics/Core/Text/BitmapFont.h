@@ -20,27 +20,33 @@ private:
 class BitmapFont
 {
 public:
-	BitmapFont(const std::string textPath);
+    BitmapFont(void);
+
+    void Load(const std::string textPath);
 
     // acessor stuff for rendering
     const std::vector<std::string> &GetTextureFiles(void) const;
 
+    const std::vector<CharacterData> &GetCharacterData(void) const;
+
+    const CommonData &GetCommonData(void) const;
+
 private:
-	template<typename T>
-	T ReadData(int size)
-	{
-		if(m_input.is_open())
-		{
+    template<typename T>
+    T ReadData(int size)
+    {
+        if ( m_input.is_open() )
+        {
             char buffer[ 16 ];
             memset(buffer, 0, sizeof(char) * 16);
 
-			m_input.read(buffer, size);
+            m_input.read(buffer, size);
 
-			return *reinterpret_cast<T*>(buffer);
-		}
+            return *reinterpret_cast<T*>(buffer);
+        }
 
-		return T();
-	}
+        return T();
+    }
 
     // special case
     template<>
@@ -59,25 +65,22 @@ private:
         return 0;
     }
 
-	bool ValidateFile(void);
-	void ReadInfoData(int blockSize);
-	void ReadCommonData(int blockSize);
-	void ReadPageData(int blockSize);
+    bool ValidateFile(void);
+    void ReadInfoData(int blockSize);
+    void ReadCommonData(int blockSize);
+    void ReadPageData(int blockSize);
     void ReadCharacterData(int blockSize);
-	void ReadKerningData(int blockSize);
+    void ReadKerningData(int blockSize);
 
     unsigned GetBlockType(int &size);
 
     unsigned GetFileSize(const char* filename);
 
 private:
-	std::fstream                m_input;
+    std::fstream                m_input;
 
     InfoData                    m_infoData;
     CommonData                  m_commonData;
     std::vector<std::string>    m_pageData;
     std::vector<CharacterData>  m_characterData;
-
-    // first index is first, second index is second
-    std::vector<std::vector<int>> m_kerningPairs;
 };

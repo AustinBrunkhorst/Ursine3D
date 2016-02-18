@@ -61,6 +61,18 @@ namespace ursine
                 SetAlignment
             );
 
+            EditorField(
+                bool useFiltering,
+                GetFilter,
+                SetFilter
+            );
+
+            EditorField(
+                Color textColor,
+                GetColor,
+                SetColor
+            );
+
             SpriteText(void);
             ~SpriteText(void);
 
@@ -93,6 +105,12 @@ namespace ursine
 
             TextAlignment GetAlignment(void) const;
             void SetAlignment(TextAlignment alignment);
+
+            bool GetFilter(void) const;
+            void SetFilter(bool useFilter);
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
 
         private:
             graphics::SpriteText *m_spriteText;

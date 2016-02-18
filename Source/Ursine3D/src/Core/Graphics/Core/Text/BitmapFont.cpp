@@ -3,7 +3,11 @@
 #include "BitmapFont.h"
 #include <iostream>
 
-BitmapFont::BitmapFont(const std::string textPath)
+BitmapFont::BitmapFont(void)
+{
+}
+
+void BitmapFont::Load(const std::string textPath)
 {
     m_input.open(textPath, std::ios::binary | std::ios::in);
 
@@ -13,11 +17,10 @@ BitmapFont::BitmapFont(const std::string textPath)
         return;
     }
     std::cout << "Found '" << textPath << "'" << std::endl;
-
+    
     // get size of the file
     unsigned sizeOfFile = GetFileSize(textPath.c_str());
-
-
+    
     // make sure the file exists
     ValidateFile();
 
@@ -49,6 +52,16 @@ BitmapFont::BitmapFont(const std::string textPath)
 const std::vector<std::string>& BitmapFont::GetTextureFiles(void) const
 {
     return m_pageData;
+}
+
+const std::vector<CharacterData>& BitmapFont::GetCharacterData(void) const
+{
+    return m_characterData;
+}
+
+const CommonData & BitmapFont::GetCommonData(void) const
+{
+    return m_commonData;
 }
 
 bool BitmapFont::ValidateFile(void)
@@ -158,31 +171,30 @@ void BitmapFont::ReadCharacterData(int blockSize)
         m_characterData[ id ].page      = ReadData<uint32_t>(1);
         m_characterData[ id ].chnl      = ReadData<uint32_t>(1);
 
-        m_characterData[ id ].textureCoordinates.x = xPos / m_commonData.textureDimensions.scaleW;
-        m_characterData[ id ].textureCoordinates.y = yPos / m_commonData.textureDimensions.scaleH;
+        m_characterData[ id ].textureCoordinates.x = xPos;// / m_commonData.textureDimensions.scaleW;
+        m_characterData[ id ].textureCoordinates.y = yPos;// / m_commonData.textureDimensions.scaleH;
                          
-        m_characterData[ id ].textureDimensions.x = width / m_commonData.textureDimensions.scaleW;
-        m_characterData[ id ].textureDimensions.y = height / m_commonData.textureDimensions.scaleH;
+        m_characterData[ id ].textureDimensions.x = width;// / m_commonData.textureDimensions.scaleW;
+        m_characterData[ id ].textureDimensions.y = height;// / m_commonData.textureDimensions.scaleH;
     }
 }
 
 void BitmapFont::ReadKerningData(int blockSize)
 {
     // resize everything
-    m_kerningPairs.resize(m_characterData.size());
-    for ( auto &x : m_kerningPairs )
-        x.resize(m_characterData.size());
-
     unsigned kerningCount = blockSize / 10;
-
+        
     for ( unsigned x = 0; x < kerningCount; ++x )
     {
         unsigned first = ReadData<unsigned>(4);
         unsigned second = ReadData<unsigned>(4);
-
+        
         m_characterData[ first ].kerningMap.insert(
             std::pair<unsigned, 
-            int16_t>(second, ReadData<int16_t>(2))
+            int16_t>(
+                second, 
+                ReadData<int16_t>(2)
+            )
         );
     }
 }
