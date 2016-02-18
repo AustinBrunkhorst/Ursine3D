@@ -54,7 +54,7 @@ namespace ursine
 			// get the two current keyframes
 			const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
 			const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
-
+		
 			// check if the current keyframe set holds the time value between them
 			if (f1[0].length <= time && time < f2[0].length)
 			{
@@ -70,6 +70,10 @@ namespace ursine
 				break;
 			}
 		}
+
+		//std::vector < AnimationKeyframe > f1;
+		//std::vector < AnimationKeyframe > f2;
+		//currentState->GetFrameByTime(f1, f2, time);
 
 		// for the future animation
 		// get the future running animation

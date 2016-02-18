@@ -26,12 +26,6 @@ namespace ursine
 			SetName
 			);
 
-		//EditorField(
-		//	float timePosition,
-		//	GetTimePosition,
-		//	SetTimePosition
-		//	);
-
 		// how can I add multiple animations in animation state?
 		// how can I use combo box for this?
 		// Array<Animation> => no, in this case, we should edit
@@ -54,7 +48,7 @@ namespace ursine
 		*
 		*  @return time (decimal) that the animation is at.
 		*/
-		double GetTimePosition(void) const;
+		float GetTimePosition(void) const;
 
 		/** @brief sets the animation position
 		*
@@ -63,7 +57,7 @@ namespace ursine
 		*  @param position where we want to go
 		*  @return Void.
 		*/
-		void SetTimePosition(const double position);
+		void SetTimePosition(const float position);
 
 		/** @brief Modifies the animation state by a delta
 		*
@@ -73,7 +67,7 @@ namespace ursine
 		*  @param dt change in animation position
 		*  @return Void.
 		*/
-		void IncrementTimePosition(const double dt);
+		void IncrementTimePosition(const float dt);
 
 		/** @brief gets the currently running animation
 		*
@@ -94,18 +88,20 @@ namespace ursine
 		const Animation *GetAnimationByName(void) const;
 		void SetAnimationByName(const std::string& name);
 
-		const double &GetTransPosition(void) const;
-		void SetTransPosition(const double& tPos);
+		const float &GetTransPosition(void) const;
+		void SetTransPosition(const float& tPos);
+
+		//void GetFrameByTime(std::vector<AnimationKeyframe> &f1, std::vector<AnimationKeyframe> &f2, float time) const;
 		
 	private:
 		//current runtime
 		std::string m_name;
 		//time position to play animation
-		double m_timePos;
+		float m_timePos;
 		std::string m_animname;
         //current animation
         const Animation *m_animation;
 		//time to start transitioning
-		double m_transPos;
+		float m_transPos;
 	} Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ));
 }

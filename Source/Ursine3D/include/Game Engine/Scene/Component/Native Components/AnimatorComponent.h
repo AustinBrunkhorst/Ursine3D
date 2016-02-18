@@ -90,16 +90,16 @@ namespace ursine
 				);
 
 			//Slider
-			Meta(InputRange(0.0, 1.0, 0.01, "{{value.toPrecision( 2 )}}"))
+			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
 				EditorField(
-					double currtransPos,
+					float currtransPos,
 					GetcurrTransPosRatio,
 					SetcurrTransPosRatio
 					);
 
-			Meta(InputRange(0.0, 1.0, 0.01, "{{value.toPrecision( 2 )}}"))
+			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
 				EditorField(
-					double futtransPos,
+					float futtransPos,
 					GetfutTransPosRatio,
 					SetfutTransPosRatio
 					);
@@ -112,11 +112,11 @@ namespace ursine
 			const std::string &GetfutState(void) const;
 			void SetfutState(const std::string& fstate);
 
-			const double &GetcurrTransPosRatio(void) const;
-			void SetcurrTransPosRatio(const double& tPos);
+			const float &GetcurrTransPosRatio(void) const;
+			void SetcurrTransPosRatio(const float& tPos);
 
-			const double &GetfutTransPosRatio(void) const;
-			void SetfutTransPosRatio(const double& tPos);
+			const float &GetfutTransPosRatio(void) const;
+			void SetfutTransPosRatio(const float& tPos);
 
 			const unsigned int &GetcurrTransFrm(void) const;
 			void SetcurrTransFrm(const unsigned int& tFrm);
@@ -133,8 +133,8 @@ namespace ursine
 			std::string m_futState;
 			// time position to trans animation
 			// these transPos reperesents the position of the keyframe
-			double m_currtransPos;
-			double m_futtransPos;
+			float m_currtransPos;
+			float m_futtransPos;
 			// calculate the number of keyframe time, make it as 100% ration
 			unsigned int m_currtransFrm;
 			unsigned int m_futtransFrm;
@@ -237,8 +237,8 @@ namespace ursine
 			const std::string &GetRig(void) const;
 			void SetRig(const std::string &rig);
 			
-			double GetAnimationTimePosition() const;
-			void SetAnimationTimePosition(const double position);
+			float GetAnimationTimePosition() const;
+			void SetAnimationTimePosition(const float position);
 
 			const std::string &GetCurrentState(void) const;
 			void SetCurrentState(const std::string &state);
@@ -261,10 +261,10 @@ namespace ursine
 			void clearChildren(void);
 			void importAnimation(void);
 
-			void UpdateAnimation(AnimationState* currSt, const Animation* currAni,
-				AnimationState* futSt, const Animation* futAni, const float& dt, double& transFactor);
+			void UpdateState(AnimationState* currSt, const Animation* currAni,
+				AnimationState* futSt, const Animation* futAni, const float& dt, float& transFactor);
 
-			void SetTransFrame(const Animation& anim, AnimationState& state, StateBlender& stb, const double& ratio);
+			void SetTransFrame(AnimationState& state, unsigned int& frameIndex, const float& ratio);
 
 			StateBlender *GetStateBlenderByNames(const std::string& currst, const std::string& futst);
 			// save and load
