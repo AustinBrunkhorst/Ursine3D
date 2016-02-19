@@ -23,20 +23,20 @@ public:
     LevelSegments segment;
 };
 
-enum class LevelManagerEvents
+enum class LevelSegmentManagerEvents
 {
     SegmentChanged
 };
 
-class LevelManager 
+class LevelSegmentManager 
     : public ursine::ecs::EntitySystem
-    , public ursine::EventDispatcher<LevelManagerEvents>
+    , public ursine::EventDispatcher<LevelSegmentManagerEvents>
 {
     ENTITY_SYSTEM;
 
 public:
 
-    LevelManager(ursine::ecs::World *world);
+    LevelSegmentManager(ursine::ecs::World *world);
 
     void SegmentTransition(LevelSegments segment);
 

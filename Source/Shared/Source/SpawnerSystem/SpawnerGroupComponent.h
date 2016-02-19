@@ -16,7 +16,7 @@
 #include <Component.h>
 
 #include "AIArchetypes.h"
-#include "LevelManagerSystem.h"
+#include "LevelSegmentManager.h"
 
 class Spawner;
 
@@ -65,6 +65,6 @@ private:
     // Update function (called via SpawnerGroupSystem)
     void update(void);
 
-    void onLevelSegmentChange(EVENT_HANDLER(LevelManager));
+    void onLevelSegmentChange(EVENT_HANDLER(LevelSegmentManager));
 
 } Meta(Enable);
