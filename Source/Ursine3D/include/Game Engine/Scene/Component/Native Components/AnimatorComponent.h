@@ -90,6 +90,7 @@ namespace ursine
 				);
 
 			//Slider
+			// blending starting position of current state
 			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
 				EditorField(
 					float currtransPos,
@@ -97,6 +98,7 @@ namespace ursine
 					SetcurrTransPosRatio
 					);
 
+			// blending end position of future state
 			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
 				EditorField(
 					float futtransPos,
@@ -131,13 +133,17 @@ namespace ursine
 			std::string m_currState;
 			// name of future state
 			std::string m_futState;
-			// time position to trans animation
-			// these transPos reperesents the position of the keyframe
-			float m_currtransPos;
-			float m_futtransPos;
-			// calculate the number of keyframe time, make it as 100% ration
-			unsigned int m_currtransFrm;
-			unsigned int m_futtransFrm;
+			// these reperesent the position of the keyframe 
+			// ratio = 1 / total keyframe number.
+			// if there is 100 frames, ratio 0.01 represents the fist frame
+			float m_ctrnsRate;
+			float m_ftrnsRate;
+			// frame calculated by rates
+			unsigned int m_ctrnsFrm;
+			unsigned int m_ftrnsFrm;
+
+			//const AnimationState* m_cstState;
+			//const AnimationState* m_fstState;
 		} Meta(
 			Enable,
 			EnableArrayType,
@@ -208,7 +214,7 @@ namespace ursine
 				GetTimeScalar,
 				SetTimeScalar
 				);
-
+			
 			Animator(void);
 			~Animator(void);
 
@@ -264,12 +270,12 @@ namespace ursine
 			void UpdateState(AnimationState* currSt, const Animation* currAni,
 				AnimationState* futSt, const Animation* futAni, const float& dt, float& transFactor);
 
-			void SetTransFrame(AnimationState& state, unsigned int& frameIndex, const float& ratio);
+			void GetTransFrmByRatio(AnimationState& state, unsigned int& frameIndex, const float& ratio);
 
 			StateBlender *GetStateBlenderByNames(const std::string& currst, const std::string& futst);
 			// save and load
 			// => save both Arrays
-			// => when load model, don't just laod these, but should also load the animation if it doesn't exist
+			// => when load model, don't just load these, but should also load the animation if it doesn't exist
 
 		private:
 			bool m_playing;
