@@ -27,10 +27,12 @@ namespace ursine
 		StateBlender::StateBlender(void)
 			: m_currState("")
 			, m_futState("")
-			, m_currtransPos(1.f)
-			, m_futtransPos(0.f)
-			, m_currtransFrm(0)
-			, m_futtransFrm(0)
+			, m_ctrnsRate(1.f)
+			, m_ftrnsRate(0.f)
+			, m_ctrnsFrm(0)
+			, m_ftrnsFrm(0)
+			//, m_cstState(nullptr)
+			//, m_fstState(nullptr)
 		{}
 
 		const std::string &StateBlender::GetcurrState(void) const
@@ -55,42 +57,42 @@ namespace ursine
 
 		const float &StateBlender::GetcurrTransPosRatio(void) const
 		{
-			return m_currtransPos;
+			return m_ctrnsRate;
 		}
 
 		void StateBlender::SetcurrTransPosRatio(const float& tPos)
 		{
-			m_currtransPos = tPos;
+			m_ctrnsRate = tPos;
 		}
 
 		const float &StateBlender::GetfutTransPosRatio(void) const
 		{
-			return m_futtransPos;
+			return m_ftrnsRate;
 		}
 
 		void StateBlender::SetfutTransPosRatio(const float& tPos)
 		{
-			m_futtransPos = tPos;
+			m_ftrnsRate = tPos;
 		}
 
 		const unsigned int &StateBlender::GetcurrTransFrm(void) const
 		{
-			return m_currtransFrm;
+			return m_ctrnsFrm;
 		}
 
 		void StateBlender::SetcurrTransFrm(const unsigned int& tFrm)
 		{
-			m_currtransFrm = tFrm;
+			m_ctrnsFrm = tFrm;
 		}
 
 		const unsigned int &StateBlender::GetfutTransFrm(void) const
 		{
-			return m_futtransFrm;
+			return m_ftrnsFrm;
 		}
 
 		void StateBlender::SetfutTransFrm(const unsigned int& tFrm)
 		{
-			m_futtransFrm;
+			m_ftrnsFrm = tFrm;
 		}
 
 		const StateBlender *StateBlender::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
@@ -140,11 +142,6 @@ namespace ursine
 
 		void Animator::UpdateAnimation(const float dt)
 		{
-			URSINE_TODO("Try playing every animation states");
-
-#if defined(URSINE_WITH_EDITOR)
-			// Could update the situation of Blend Tree Entity here
-#endif
 			// grab what we need
 			AnimationState *currentState = nullptr;
 			AnimationState *futureState = nullptr;
@@ -562,21 +559,26 @@ namespace ursine
 								{
 									currSt->SetTimePosition(curr_firstFrame.length);
 									futSt->SetTimePosition(fut_firstFrame.length);
+									transFactor = 0.0f;
 								}
 								else
 								{
 									currSt->SetTimePosition(curr_lastFrame.length);
 									futSt->SetTimePosition(fut_lastFrame.length);
+									transFactor = 0.0f;
 								}
 							}
 						}
 					}
 					else
 					{
+						// To check if current state is reached at the same frame as state blender's
 						unsigned int curFrameIndex = 0;
-						SetTransFrame(*currSt, curFrameIndex, stb->GetcurrTransPosRatio());
-						stb->SetfutTransFrm(curFrameIndex);
+						GetTransFrmByRatio(*currSt, curFrameIndex, stb->GetcurrTransPosRatio());
+						stb->SetcurrTransFrm(curFrameIndex);
 
+						// Can't check actual frame's length since that keyframe could be dummy value.
+						// so we just check it by index.
 						unsigned index1 = 0, index2 = 0;
 						for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
 						{
@@ -591,7 +593,16 @@ namespace ursine
 						}
 						index2 = stb->GetcurrTransFrm();
 						if (index1 == index2)
+						{
+							// Set Trans Frame by Transition Position - fut
+							unsigned int futFrameIndex = 0;
+							GetTransFrmByRatio(*futSt, futFrameIndex, stb->GetfutTransPosRatio());
+							stb->SetfutTransFrm(futFrameIndex);
+							// Set future state's timeposition to chosen frame
+							futSt->SetTimePosition(futAni->GetKeyframe(stb->GetfutTransFrm(), 0).length);
+
 							bBlending = true;
+						}
 					
 						// Set Trans Frame by Transition Position - curr
 						if (bBlending)
@@ -601,12 +612,7 @@ namespace ursine
 							transFactor += dt * m_speedScalar;
 							if (transFactor > 1.0f)
 								transFactor = 1.0f;
-
-							// Set Trans Frame by Transition Position - fut
-							unsigned int futFrameIndex = 0;
-							SetTransFrame(*futSt, futFrameIndex, stb->GetfutTransPosRatio());
-							stb->SetfutTransFrm(futFrameIndex);
-					
+												
 							/////////////////////////////////////////////////////
 							// this will be applied to all animations that state has
 							// const Animation *m_animation; will be changed as std::vector<Animation*>
@@ -641,31 +647,16 @@ namespace ursine
 		}
 
 		// find the closest animation keyframe of the state, and set a transition position
-		void Animator::SetTransFrame(AnimationState& state, unsigned int& frameIndex, const float& ratio)
+		void Animator::GetTransFrmByRatio(AnimationState& state, unsigned int& frameIndex, const float& ratio)
 		{
 			unsigned keyframeCount = state.GetAnimation()->GetRigKeyFrameCount();
 			auto &firstFrame = state.GetAnimation()->GetKeyframe(0, 0);
 			auto &lastFrame = state.GetAnimation()->GetKeyframe(keyframeCount - 1, 0);
 			auto totallength = lastFrame.length - firstFrame.length;
-			auto rate = 0.f;
-
-			const AnimationKeyframe* closest = nullptr;
-			float cumul_length = 0.0f;
-			float diff = 1.0f;
-			// this wouldn't work properly unless keyframe length didn't recorded properly.
-			// then how can I get frame by ratio?
-			for (auto& x : state.GetAnimation()->GetKeyframes(0))
-			{
-				cumul_length += x.length;
-				float curr_rate = cumul_length / totallength;
-				if (ratio - curr_rate < diff)
-				{
-					diff = ratio - curr_rate;
-					closest = &x;
-				}
-				++frameIndex;
-			}
-			state.SetTransPosition(closest->length);
+			
+			auto delta = 1.0f / totallength;
+			frameIndex = static_cast<unsigned int>(roundf(ratio / delta));
+			const ursine::AnimationKeyframe& closest = state.GetAnimation()->GetKeyframe(frameIndex, 0);
 		}
 
 		StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)

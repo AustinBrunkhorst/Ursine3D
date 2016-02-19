@@ -83,7 +83,7 @@ namespace ursine
 				std::forward<Args>( args )...
 			);
         }
-
+		
         inline float Wrap(float in_val, float min, float max)
         {
             float range = max - min;
