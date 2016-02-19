@@ -29,5 +29,7 @@ namespace ursine
         bool WriteAllText(const std::string &fileName, const std::string &text);
 
         std::string SafeFileName(const std::string &fileName, char replacement);
+
+        path MakeRelativePath(const path &from, const path &to);
     }
 }

@@ -26,6 +26,7 @@ public:
 
     const ProjectConfig &GetConfig(void) const;
 
+    ursine::resources::pipeline::ResourcePipelineManager &GetResourcePipeline(void);
     ursine::Scene &GetScene(void);
 
 private:

@@ -1965,12 +1965,28 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 var ursine_editor_windows_ProjectBrowser = function() {
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Project";
+	this.window.classList.add("project-browser-window");
+	this.initElements();
+	this.initExplorer();
 };
 $hxClasses["ursine.editor.windows.ProjectBrowser"] = ursine_editor_windows_ProjectBrowser;
 ursine_editor_windows_ProjectBrowser.__name__ = ["ursine","editor","windows","ProjectBrowser"];
 ursine_editor_windows_ProjectBrowser.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHandler.prototype,{
-	__class__: ursine_editor_windows_ProjectBrowser
+	initElements: function() {
+		this.window.container.innerHTML = "\r\n            <div class=\"columns\">\r\n                <div class=\"left\"></div>\r\n                <div class=\"right>\r\n                    <div class=\"bread-crumbs\"></div>\r\n                    <div class=\"folder-contents\"></div>\r\n                </div>\r\n            </div>\r\n        ";
+	}
+	,initExplorer: function() {
+		this.m_explorer = new TreeViewControl();
+		this.m_explorer.setAsRoot(true);
+		this.m_explorer.enableModification = false;
+		this.m_explorer.classList.add("explorer");
+		var item = new TreeViewItemControl();
+		item.text = "Textures";
+		this.m_explorer.appendChild(item);
+		this.window.container.querySelector(".columns .left").appendChild(this.m_explorer);
+	}
+	,__class__: ursine_editor_windows_ProjectBrowser
 });
 var ursine_editor_windows_SceneOutline = function() {
 	this.m_selectedEntities = null;
@@ -1980,6 +1996,7 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.window.classList.add("scene-outline-window");
 	this.m_rootView = new TreeViewControl();
 	this.m_rootView.setAsRoot(true);
+	this.m_rootView.enableModification = true;
 	this.m_entityItems = new haxe_ds_IntMap();
 	this.m_selectedEntities = [];
 	this.window.container.appendChild(this.m_rootView);

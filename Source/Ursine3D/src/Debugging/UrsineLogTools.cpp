@@ -69,11 +69,15 @@ namespace ursine
     namespace logging
     {
         int gExitCode = EXIT_SUCCESS;
+        std::thread::id gMainThreadID;
 
         Initializer gInitialzer;
 
         Initializer::Initializer(void)
         {
+            // let's hope this is on the main thread
+            gMainThreadID = std::this_thread::get_id( );
+
         #if (URSINE_DISPLAY_CRASH_MESSAGEBOX)
 
             atexit( displayCrashMessageBox );
@@ -108,6 +112,7 @@ namespace ursine
             fprintf( handle, "%i\n\n", line );
 
             OutputStack( handle );
+            OutputThreadInfo( handle );
             OutputWDir( handle );
             OutputTime( handle );
 
@@ -185,6 +190,35 @@ namespace ursine
             SetConsoleColor( CC_TEXT_WHITE );
 
             fprintf( handle, "%s\n\n", boost::filesystem::current_path( ).string( ).c_str( ) );
+        }
+
+        void OutputThreadInfo(FILE *handle)
+        {
+            SetConsoleColor( CC_TEXT_YELLOW );
+
+            fprintf( handle, "Thread\n------\n\n" );
+
+            SetConsoleColor( CC_TEXT_WHITE );
+
+            fprintf( handle, "ID: " );
+
+            SetConsoleColor( CC_TEXT_BRIGHT_WHITE );
+
+            auto tid = std::this_thread::get_id( );
+
+            std::stringstream stream;
+
+            stream << tid;
+
+            fprintf( handle, "%s\n", stream.str( ).c_str( ) );
+
+            SetConsoleColor( CC_TEXT_WHITE );
+
+            fprintf( handle, "Main Thread: " );
+
+            SetConsoleColor( CC_TEXT_BRIGHT_WHITE );
+
+            fprintf( handle, "%s\n\n", tid == gMainThreadID ? "yes" : "no" );
         }
 
         void ExitError(void)

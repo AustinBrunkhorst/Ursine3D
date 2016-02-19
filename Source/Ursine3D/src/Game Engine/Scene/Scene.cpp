@@ -65,6 +65,11 @@ namespace ursine
         m_playState = state;
     }
 
+    resources::ResourceManager &Scene::GetResourceManager(void)
+    {
+        return m_resourceManager;
+    }
+
     void Scene::Step(void) const
     {
         if (m_activeWorld)

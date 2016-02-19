@@ -130,7 +130,7 @@ namespace ursine
             void clearDeletionQueue(void);
 
             Entity *loadArchetype(const Json &data);
-        } Meta(Enable, WhiteListMethods);
+        } Meta(Enable, EnablePtrType, WhiteListMethods);
     }
 }
 

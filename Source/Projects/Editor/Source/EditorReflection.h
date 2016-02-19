@@ -36,6 +36,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "Tools/JavaScript/LauncherUtils.h"
+#include "Tools/JavaScript/ProjectUtils.h"
+#include "Tools/JavaScript/FileUtils.h"
 #include "Tools/JavaScript/EditorCommands.h"
 #include "Tools/JavaScript/DebugUtils.h"
 #include "Tools/JavaScript/SceneUtils.h"

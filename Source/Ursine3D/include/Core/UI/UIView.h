@@ -14,6 +14,7 @@
 #pragma once
 
 #include "UIConfig.h"
+#include "UIViewEvent.h"
 
 #include "Window.h"
 
@@ -43,8 +44,10 @@ namespace ursine
     class MouseManager;
 
     class UIView 
-        : public CefClient
+        : public EventDispatcher<UIViewEventType>
+        , public CefClient
         , public CefDisplayHandler
+        , public CefLoadHandler
         , public UIRendererType
     {
     public:
@@ -61,7 +64,12 @@ namespace ursine
 
         bool IsValid(void) const;
 
-        void Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data);
+        void Message(
+            UIMessageCommand command, 
+            const std::string &target, 
+            const std::string &message, 
+            const Json &data
+        );
 
     private:
         friend class UIManager;
@@ -74,7 +82,11 @@ namespace ursine
         KeyboardManager *m_keyboardManager;
         MouseManager *m_mouseManager;
 
-        UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url);
+        UIView(
+            Window::Handle window, 
+            const CefBrowserSettings &settings, 
+            const std::string &url
+        );
 
         ////////////////////////////////////////////////////////////////////
         // Handler Getters
@@ -82,6 +94,7 @@ namespace ursine
 
         CefRefPtr<CefRenderHandler> GetRenderHandler(void) override;
         CefRefPtr<CefDisplayHandler> GetDisplayHandler(void) override;
+        CefRefPtr<CefLoadHandler> GetLoadHandler(void) override;
 
         ////////////////////////////////////////////////////////////////////
         // DisplayHandler Methods
@@ -90,12 +103,25 @@ namespace ursine
         bool OnConsoleMessage(CefRefPtr<CefBrowser> browser,
             const CefString &message,
             const CefString &source,
-            int line) override;
+            int line
+        ) override;
 
         void OnCursorChange(CefRefPtr<CefBrowser> browser,
             CefCursorHandle cursor,
             CursorType type,
-            const CefCursorInfo &customCursorInfo) override;
+            const CefCursorInfo &customCursorInfo
+        ) override;
+
+
+        ////////////////////////////////////////////////////////////////////
+        // LoadHandler Methods
+        ////////////////////////////////////////////////////////////////////
+
+        void OnLoadEnd(
+            CefRefPtr<CefBrowser> browser,
+            CefRefPtr<CefFrame> frame,
+            int httpStatusCode
+        );
 
         ////////////////////////////////////////////////////////////////////
         // Event Handlers

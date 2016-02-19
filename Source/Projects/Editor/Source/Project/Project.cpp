@@ -16,7 +16,7 @@
 #include "Project.h"
 #include "ResourcePipelineConfig.h"
 
-namespace resource_pipeline = ursine::resources::pipeline;
+namespace rp = ursine::resources::pipeline;
 
 namespace
 {
@@ -38,6 +38,11 @@ const ProjectConfig &Project::GetConfig(void) const
     return m_config;
 }
 
+rp::ResourcePipelineManager &Project::GetResourcePipeline(void)
+{
+    return m_resourcePipeline;
+}
+
 ursine::Scene &Project::GetScene(void)
 {
     return m_scene;
@@ -47,7 +52,7 @@ void Project::initialize(const ProjectConfig &config)
 {
     m_config = config;
 
-    resource_pipeline::ResourcePipelineConfig resourceConfig;
+    rp::ResourcePipelineConfig resourceConfig;
 
     resourceConfig.resourceDirectory = config.rootDirectory / config.resourceDirectory;
 
@@ -57,7 +62,9 @@ void Project::initialize(const ProjectConfig &config)
         resourceConfig.buildDirectory /= kResourcesBuildDirectory;
     }
 
-    m_resourcePipeline.SetConfig( resourceConfig );
+    m_scene.GetResourceManager( ).SetResourceDirectory(
+        resourceConfig.resourceDirectory
+    );
 
-    m_resourcePipeline.Build( );
+    m_resourcePipeline.SetConfig( resourceConfig );
 }

@@ -44,6 +44,11 @@ namespace ursine
         SDL_DestroyWindow( m_handle );
     }
 
+    void Window::SetTitle(const std::string &title)
+    {
+        SDL_SetWindowTitle( m_handle, title.c_str( ) );
+    }
+
     void Window::SetBordered(bool bordered)
     {
         SDL_SetWindowBordered( m_handle, bordered ? SDL_TRUE : SDL_FALSE );

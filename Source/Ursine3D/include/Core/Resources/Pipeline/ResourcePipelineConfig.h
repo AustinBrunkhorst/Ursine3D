@@ -19,4 +19,6 @@ namespace ursine
             };
         }
     }
+
+    namespace rp = resources::pipeline;
 }

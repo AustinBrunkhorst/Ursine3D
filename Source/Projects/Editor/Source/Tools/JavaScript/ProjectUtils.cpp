@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** LauncherUtils.h
+** ProjectUtils.cpp
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -11,15 +11,14 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#pragma once
+#include "Precompiled.h"
 
-#include <NativeJSFunction.h>
+#include "ProjectUtils.h"
+#include "Editor.h"
 
-Meta(Enable, ExposeJavaScript)
-JSFunction(GetEditorVersion);
+JSFunction(ProjectGetName)
+{
+    auto *editor = GetCoreSystem( Editor );
 
-Meta(Enable, ExposeJavaScript)
-JSFunction(LauncherProjectCreate);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(LauncherProjectOpen);
+	return CefV8Value::CreateString( editor->GetProject( ).GetConfig( ).title );
+}

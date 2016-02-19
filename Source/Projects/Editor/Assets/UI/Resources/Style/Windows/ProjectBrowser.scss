@@ -1,0 +1,29 @@
+@import '../Config';
+@import '../Utils';
+@import '../Icons';
+
+.project-browser-window {
+  .columns {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+
+    > div {
+      height: 100%;
+    }
+
+    .left {
+      flex: 0 0 auto;
+    }
+
+    .right {
+      flex: 1 1 100%;
+    }
+  }
+
+  .explorer {
+    width: 215px;
+    height: 100%;
+    border-right: 1px solid #3f3f46;
+  }
+}

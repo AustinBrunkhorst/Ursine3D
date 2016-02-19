@@ -17,6 +17,8 @@ namespace ursine
                 ResourceItem(const GUID &guid);
 
                 const GUID &GetGUID(void) const;
+
+                const fs::path &GetSourceFileName(void) const;
                 const fs::path &GetBuildFileName(void) const;
 
             private:

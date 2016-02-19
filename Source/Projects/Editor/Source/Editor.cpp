@@ -25,6 +25,8 @@
 
 using namespace ursine;
 
+namespace rp = resources::pipeline;
+
 namespace
 {
     const auto kWindowTitle = "Ursine3D Editor";
@@ -182,11 +184,6 @@ void Editor::OnInitialize(void)
 
         initializeProject( projectFileName );
     }
-
-    // eliminate flashy stuff
-    Timer::Create( 750 ).Completed( [=] {
-        m_mainWindow.m_window->Show( true );
-    } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -203,6 +200,8 @@ void Editor::OnRemove(void)
 
     m_mainWindow.m_window->Listener( this )
         .Off( WINDOW_RESIZE, &Editor::onMainWindowResize ); 
+
+    m_mainWindow.m_ui->Disconnect( UI_LOADED, this, &Editor::onUILoaded );
 
     m_mainWindow.m_ui->Close( );
     m_mainWindow.m_ui = nullptr;
@@ -349,6 +348,8 @@ void Editor::initializeUI(void)
         m_startupConfig.uiEntryPoint 
     );
 
+    m_mainWindow.m_ui->Connect( UI_LOADED, this, &Editor::onUILoaded );
+
     m_mainWindow.m_ui->SetViewport( {
         0, 0,
         static_cast<int>( m_startupConfig.windowSize.X( ) ), 
@@ -387,16 +388,27 @@ void Editor::initializeProject(const std::string &filename)
     // add it as a recent project if it doesn't already exist
     if (recentProjects.Find( filename ) == recentProjects.end( ))
         recentProjects.Push( filename );
+
+    auto &resourcePipeline = m_project.GetResourcePipeline( );
+
+    resourcePipeline.Listener( this )
+        .On( rp::RP_BUILD_RESOURCE_START, &Editor::onPipelinePreBuildItemStart )
+        .On( rp::RP_BUILD_COMPLETE, &Editor::onPipelinePreBuildComplete );
+
+    resourcePipeline.Build( );
 }
 
 void Editor::exitSplashScreen(void)
 {
     auto window = m_mainWindow.m_window;
 
+    // will be shown in onUILoaded( )
     window->Show( false );
     window->SetResizable( true );
     window->SetBordered( true );
     window->SetSize( m_preferences.windowSize );
+
+    window->SetTitle( "Ursine3D Editor - "+ m_project.GetConfig( ).title );
 
     if (m_preferences.windowLocation == kWindowLocationCentered)
         window->SetLocationCentered( );
@@ -406,15 +418,17 @@ void Editor::exitSplashScreen(void)
     m_mainWindow.m_ui->GetBrowser( )->GetMainFrame( )->LoadURL( 
         kEntryPointDir + kEntryPointEditor 
     );
-
-    // give the window time to adjust
-    Timer::Create( 700 ).Completed( [=] {
-        window->Show( true );
-    } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Event Handlers
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::onUILoaded(EVENT_HANDLER(ursine::UIView))
+{
+    m_mainWindow.m_window->Show( true );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void Editor::onLauncherUpdate(EVENT_HANDLER(Application))
@@ -450,4 +464,39 @@ void Editor::onMainWindowResize(EVENT_HANDLER(Window))
         0, 0,
         args->width, args->height
     } );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::onPipelinePreBuildItemStart(EVENT_HANDLER(rp::ResourcePipelineManager))
+{
+    EVENT_ATTRS(rp::ResourcePipelineManager, rp::ResourceBuildArgs);
+
+    auto fileName = fs::MakeRelativePath(
+        sender->GetConfig( ).resourceDirectory,
+        args->resource->GetSourceFileName( )
+    );
+
+    m_mainWindow.m_ui->Message( UI_CMD_BROADCAST, "ResourcePipeline", "preBuildItemStart", 
+        Json::object {
+            { "item", fileName.string( ) },
+            { "progress", args->progress }
+        } 
+    );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::onPipelinePreBuildComplete(EVENT_HANDLER(rp::ResourcePipelineManager))
+{
+    EVENT_ATTRS(rp::ResourcePipelineManager, EventArgs);
+
+    sender->Listener( this )
+        .Off( rp::RP_BUILD_RESOURCE_START, &Editor::onPipelinePreBuildItemStart )
+        .Off( rp::RP_BUILD_COMPLETE, &Editor::onPipelinePreBuildComplete );
+
+    m_mainWindow.m_ui->Message( UI_CMD_BROADCAST, "ResourcePipeline", "preBuildComplete", { } );
+
+    URSINE_TODO( "Application::PostMainThread" );
+    Timer::Create( 0 ).Completed( std::bind( &Editor::exitSplashScreen, this ) );
 }

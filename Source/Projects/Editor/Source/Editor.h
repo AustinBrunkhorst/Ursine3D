@@ -112,8 +112,13 @@ private:
     // Event Handlers
     ///////////////////////////////////////////////////////////////////////////
 
+    void onUILoaded(EVENT_HANDLER(ursine::UIView));
+
     void onLauncherUpdate(EVENT_HANDLER(ursine::Application));
     void onEditorUpdate(EVENT_HANDLER(ursine::Application));
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
+
+    void onPipelinePreBuildItemStart(EVENT_HANDLER(ursine::resources::pipeline::ResourcePipelineManager));
+    void onPipelinePreBuildComplete(EVENT_HANDLER(ursine::resources::pipeline::ResourcePipelineManager));
 } Meta(Enable, WhiteListMethods);

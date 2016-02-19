@@ -43,6 +43,8 @@ namespace ursine
         ScenePlayState GetPlayState(void) const;
         void SetPlayState(ScenePlayState state);
 
+        resources::ResourceManager &GetResourceManager(void);
+
         void Step(void) const;
 
         void Update(DeltaTime dt) const;

@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** LauncherUtils.h
+** FileUtils.h
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -16,10 +16,7 @@
 #include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(GetEditorVersion);
+JSFunction(BrowseFile);
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(LauncherProjectCreate);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(LauncherProjectOpen);
+JSFunction(BrowseFolder);

@@ -123,6 +123,7 @@ namespace ursine
         void OutputTime(FILE *handle);
         void OutputStack(FILE *handle);
         void OutputWDir(FILE *handle);
+        void OutputThreadInfo(FILE *handle);
 
         void ExitError(void);
     }

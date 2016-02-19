@@ -4,11 +4,5 @@
 
 namespace ursine
 {
-    namespace resources
-    {
-        namespace pipeline
-        {
 
-        }
-    }
 }

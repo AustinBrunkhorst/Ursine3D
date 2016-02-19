@@ -4,16 +4,10 @@
 
 namespace ursine
 {
-    namespace resources
-    {
-        namespace pipeline
-        {
-            TextureProcessor::TextureProcessor(void) { }
+    rp::TextureProcessor::TextureProcessor(void) { }
 
-            ResourceData::Handle TextureProcessor::Process(ResourceData::Handle input, const ResourceProcessorContext &context)
-            {
-                return input;
-            }
-        }
+    resources::ResourceData::Handle rp::TextureProcessor::Process(ResourceData::Handle input, const ResourceProcessorContext &context)
+    {
+        return input;
     }
 }

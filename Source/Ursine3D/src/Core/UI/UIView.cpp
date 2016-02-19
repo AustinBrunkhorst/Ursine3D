@@ -27,8 +27,13 @@
 
 namespace ursine
 {
-    UIView::UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url)
-        : m_window( window )
+    UIView::UIView(
+        Window::Handle window, 
+        const CefBrowserSettings &settings,
+        const std::string &url
+    )
+        : EventDispatcher( this )
+        , m_window( window )
     {
         CefWindowInfo info;
 
@@ -117,7 +122,12 @@ namespace ursine
         return m_browser != nullptr;
     }
 
-    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data)
+    void UIView::Message(
+        UIMessageCommand command, 
+        const std::string &target, 
+        const std::string &message, 
+        const Json &data
+    )
     {
         auto processMessage = CefProcessMessage::Create( target );
 
@@ -142,7 +152,17 @@ namespace ursine
         return this;
     }
 
-    bool UIView::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString &message, const CefString &source, int line)
+    CefRefPtr<CefLoadHandler> UIView::GetLoadHandler(void)
+    {
+        return this;
+    }
+
+    bool UIView::OnConsoleMessage(
+        CefRefPtr<CefBrowser> browser, 
+        const CefString &message, 
+        const CefString &source, 
+        int line
+    )
     {
         SetConsoleColor( CC_TEXT_BRIGHT_GREEN );
 
@@ -182,7 +202,12 @@ namespace ursine
         return false;
     }
 
-    void UIView::OnCursorChange(CefRefPtr<CefBrowser> browser, CefCursorHandle cursor, CursorType type, const CefCursorInfo &customCursorInfo)
+    void UIView::OnCursorChange(
+        CefRefPtr<CefBrowser> browser, 
+        CefCursorHandle cursor, 
+        CursorType type, 
+        const CefCursorInfo &customCursorInfo
+    )
     {
         auto handle = m_window->GetPlatformHandle( );
 
@@ -196,6 +221,15 @@ namespace ursine
 
         SetCursor( cursor );
 #endif
+    }
+
+    void UIView::OnLoadEnd(
+        CefRefPtr<CefBrowser> browser, 
+        CefRefPtr<CefFrame> frame, 
+        int httpStatusCode
+    )
+    {
+        Dispatch( UI_LOADED, EventArgs::Empty );
     }
 
     void UIView::onKeyboard(EVENT_HANDLER(KeyboardManager))

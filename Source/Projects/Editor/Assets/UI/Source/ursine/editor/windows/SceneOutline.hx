@@ -30,6 +30,7 @@ class SceneOutline extends WindowHandler {
         m_rootView = new TreeView( );
         {
             m_rootView.setAsRoot( true );
+            m_rootView.enableModification = true;
         }
 
         m_entityItems = new Map<UInt, TreeViewItem>( );

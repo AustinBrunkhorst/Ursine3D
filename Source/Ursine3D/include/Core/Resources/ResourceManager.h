@@ -28,6 +28,9 @@ namespace ursine
 
             std::unordered_map<GUID, ResourceData::Handle, GUIDHasher> m_database;
 
+            ResourceManager(const ResourceManager &rhs) = delete;
+            ResourceManager &operator=(const ResourceManager &rhs) = delete;
+
             ResourceData::Handle loadResource(const GUID &guid);
 
             fs::path getResourceFileName(const GUID &guid);

@@ -4,25 +4,24 @@
 
 namespace ursine 
 {
-    namespace resources
+    rp::ResourceItem::ResourceItem(const GUID &guid)
+        : m_guid( guid )
     {
-        namespace pipeline
-        {
-            ResourceItem::ResourceItem(const GUID &guid)
-                : m_guid( guid )
-            {
                 
-            }
+    }
 
-            const GUID &ResourceItem::GetGUID(void) const
-            {
-                return m_guid;
-            }
+    const GUID &rp::ResourceItem::GetGUID(void) const
+    {
+        return m_guid;
+    }
 
-            const fs::path& ResourceItem::GetBuildFileName(void) const
-            {
-                return m_buildFileName;
-            }
-        }
+    const fs::path &rp::ResourceItem::GetSourceFileName(void) const
+    {
+        return m_fileName;
+    }
+
+    const fs::path &rp::ResourceItem::GetBuildFileName(void) const
+    {
+        return m_buildFileName;
     }
 }

@@ -31,6 +31,8 @@ namespace ursine
 
         ~Window(void);
 
+        void SetTitle(const std::string &title);
+
         void SetBordered(bool bordered);
         void SetResizable(bool resizable);
 
