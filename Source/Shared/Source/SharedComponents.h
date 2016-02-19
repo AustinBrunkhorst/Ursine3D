@@ -71,6 +71,8 @@
 #include "AI/AIMovementControllerComponent.h"
 #include "AI/AIHordeReasoner.h"
 
+#include "EnemyDeathComponent.h"
+
 /////////////////////////////////
 //       Level Logic           //
 /////////////////////////////////

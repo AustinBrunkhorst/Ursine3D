@@ -52,6 +52,12 @@ void CharacterControllerSystem::Process(Entity *entity)
     // Looking logic
     if (lookDir.Length( ) > controller->m_deadZone)
     {
+        if (abs(lookDir.X( )) < controller->m_deadZoneSnap)
+            lookDir.X( ) = 0.0f;
+
+        if (abs(lookDir.Y( )) < controller->m_deadZoneSnap)
+            lookDir.Y( ) = 0.0f;
+
         auto lookAngle = lookDir * rotateSpeed;
 
         if ( cam )
