@@ -14,7 +14,14 @@
                     <div on-click="_onCrumbSelected">{{crumb}}</div>
                 </template>
                 </div>
-                <div id="folderContent"></div>
+                <div id="folderContent">
+                <template id="resourceRepeat" is="dom-repeat" items="{{directoryResources}}" as="resource">
+                    <div class="resource" ext$="{{resource.extension}}">
+                        <img class="thumbnail" src="{{resource.sourceFile}}" on-error="_onResourceThumbnailError">
+                        <div class="display-name">{{resource.displayName}}</div>
+                    </div>
+                </template>
+                </div>
             </div>
         </div>
     </template>
@@ -23,6 +30,10 @@
             is: "x-project-browser",
             properties: {
                 crumbs: {
+                    type: Array,
+                    value: [ ]
+                },
+                directoryResources: {
                     type: Array,
                     value: [ ]
                 }
@@ -73,6 +84,9 @@
 
                 this.browseDirectory( absCrumbs.join( '\\' ) );
             },
+            _onResourceThumbnailError: function(e) {
+                console.log( e.model );
+            },
 
             _buildTree: function(treeRoot) {
                 var viewRoot = this.$.folderTree;
@@ -104,6 +118,8 @@
                 var crumbs = this._createDirectoryCrumbs( relativeDir );
 
                 this.set( 'crumbs', crumbs );
+
+                this.set( 'directoryResources', entry.resources );
             },
             _selectDirectoryItem: function(item) {
                 if (this._lastSelectedTreeItem !== null)
