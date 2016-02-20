@@ -399,14 +399,32 @@ namespace ursine
 			m_stateName = state;
 		}
 
+#if defined(URSINE_WITH_EDITOR)
+
 		void Animator::ImportAnimation(void)
 		{
-			auto owner = GetOwner();
-			auto *children = owner->GetChildren();
-
-			if (children->size() > 0)
+			if (m_animationName.size( ) == 0)
 			{
 				NotificationConfig config;
+
+				config.type = NOTIFY_INFO;
+				config.header = "Error";
+				config.message = "Please type in the name of the animation.";
+				config.dismissible = true;
+				config.duration = TimeSpan::FromSeconds( 5.0f );
+
+				EditorPostNotification( config );
+
+				return;
+			}
+
+			auto owner = GetOwner( );
+			auto *children = owner->GetChildren( );
+
+			if (children->size( ) > 0)
+			{
+				NotificationConfig config;
+
 				config.type = NOTIFY_WARNING;
 				config.header = "Warning";
 				config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
@@ -414,31 +432,37 @@ namespace ursine
 				config.duration = 0;
 
 				NotificationButton yes, no;
+
 				yes.text = "Yes";
 				yes.onClick = [=](Notification &notification) {
-					notification.Close();
+					notification.Close( );
 
 					// Main thread operation
 					Timer::Create(0).Completed([=] {
-						clearChildren();
-						importAnimation();
+						clearChildren( );
+						importAnimation( );
 					});
 				};
+
 				no.text = "No";
 				no.onClick = [=](Notification &notification) {
-					notification.Close();
+					notification.Close( );
 				};
+
 				config.buttons = { yes, no };
-				EditorPostNotification(config);
+
+				EditorPostNotification( config );
 			}
 			else
 			{
 				// Main thread operation
 				Timer::Create(0).Completed([=] {
-					importAnimation();
+					importAnimation( );
 				});
 			}
 		}
+
+#endif
 
 		void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
 		{

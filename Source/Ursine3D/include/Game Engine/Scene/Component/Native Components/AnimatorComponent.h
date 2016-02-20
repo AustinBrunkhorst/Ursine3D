@@ -160,61 +160,61 @@ namespace ursine
 			EditorButton(
 				ImportAnimation,
 				"Import Animation"
-				);
+			);
 
 			EditorField(
 				std::string currentState,
 				GetCurrentState,
 				SetCurrentState
-				);
+			);
 
 			EditorField(
 				std::string futureState,
 				GetFutureState,
 				SetFutureState
-				);
+			);
 
 			EditorField(
 				std::string animation,
 				GetAnimation,
 				SetAnimation
-				);
+			);
 
 			EditorField(
 				std::string currentRig,
 				GetRig,
 				SetRig
-				);
+			);
 
 			EditorField(
 				bool loopAnimation,
 				IsLooping,
 				SetLooping
-				);
+			);
 
 			EditorField(
 				bool playAnimation,
 				IsPlaying,
 				SetPlaying
-				);
+			);
 
 			EditorField(
 				bool changeState,
 				IsStateChanging,
 				SetStateChanging
-				);
+			);
 
 			EditorField(
 				bool renderDebug,
 				IsDebug,
 				SetDebug
-				);
+			);
 			
 			EditorField(
 				float timeScalar,
 				GetTimeScalar,
 				SetTimeScalar
-				);
+			);
 			
 			Animator(void);
 			~Animator(void);
@@ -264,10 +264,6 @@ namespace ursine
 			// Array of state blender
 			ursine::Array<ursine::ecs::StateBlender> stBlender;
 
-			static void recursClearChildren(const std::vector< Handle<Transform> > &children);
-			void clearChildren(void);
-			void importAnimation(void);
-
 			void UpdateState(AnimationState* currSt, const Animation* currAni,
 				AnimationState* futSt, const Animation* futAni, const float& dt, float& transFactor);
 
@@ -290,6 +286,10 @@ namespace ursine
 			std::string m_animationName;
 			std::string m_stateName;
 			std::vector<Animation*> m_animlist;
+
+			static void recursClearChildren(const std::vector< Handle<Transform> > &children);
+			void clearChildren(void);
+			void importAnimation(void);
 			
 		} Meta(
 			Enable, 

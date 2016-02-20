@@ -77,6 +77,7 @@ namespace ursine
 		Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
 		if (!targetAnimation)
 		{
+#if defined(URSINE_WITH_EDITOR)
 			NotificationConfig error;
 
 			error.type = NOTIFY_ERROR;
@@ -84,6 +85,7 @@ namespace ursine
 			error.message = "To add animation into the state, animation should exist in the Animation List";
 
 			EditorPostNotification(error);
+#endif
 			return;
 		}
 
@@ -116,28 +118,4 @@ namespace ursine
 	{
 		m_transPos = tPos;
 	}
-
-	//void AnimationState::GetFrameByTime(std::vector<AnimationKeyframe> &f1, std::vector<AnimationKeyframe> &f2, float time) const
-	//{
-	//	if (m_animation)
-	//		return;
-	//
-	//	// determine the 2 current keyframes to use
-	//	// we assume that all frames exist, and that they were baked across all total keyframes
-	//	unsigned frameCount = m_animation->GetRigKeyFrameCount();
-	//	for (unsigned x = 0; x < frameCount - 1; ++x)
-	//	{
-	//		// get the two current keyframes
-	//		const std::vector<AnimationKeyframe> &frame1 = m_animation->GetKeyframes(x);
-	//		const std::vector<AnimationKeyframe> &frame2 = m_animation->GetKeyframes(x + 1);
-	//
-	//		// check if the current keyframe set holds the time value between them
-	//		if (frame1[0].length <= time && time < frame2[0].length)
-	//		{
-	//			f1 = frame1;
-	//			f2 = frame2;
-	//			break;
-	//		}
-	//	}
-	//}
 }
