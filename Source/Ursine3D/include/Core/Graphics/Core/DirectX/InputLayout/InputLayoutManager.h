@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -47,7 +47,7 @@ namespace ursine
                 void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, ShaderManager *shdrmgr);
                 void Uninitialize(void);
 
-                void SetInputLayout(const SHADER_TYPES type);
+                void SetInputLayout(const SHADER_LIST type);
 
                 void Invalidate(void);
             private:
@@ -57,7 +57,7 @@ namespace ursine
 
                 std::vector<ID3D11InputLayout *> m_layoutArray;
 
-                SHADER_TYPES m_currentState;
+                SHADER_LIST m_currentState;
             };
         }
     }

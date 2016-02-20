@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -37,7 +37,7 @@ namespace ursine
             void MapTextureByName(const std::string name, const unsigned int bufferIndex = 0);
             void MapTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
 
-            void MapSamplerState(const Sampler type, const unsigned bufferIndex = 0);
+            void MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex = 0);
 
             unsigned GetTextureIDByName(const std::string name);
 

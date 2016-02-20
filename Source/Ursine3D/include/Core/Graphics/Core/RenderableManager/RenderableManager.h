@@ -30,6 +30,7 @@ namespace ursine
         class RenderableManager
         {
             friend class GfxManager;
+            
         public:
             void Initialize();
             void Uninitialize();
@@ -97,6 +98,43 @@ namespace ursine
                 UAssert(render->Type_ == RENDERABLE_SPRITE_TEXT, "Attempted to use invalid handle to get a sprite text!");
 
                 return m_renderableSpriteText[ render->Index_ ];
+            }
+
+            template<typename T>
+            T &GetRenderableByID(unsigned id)
+            {
+                UAssert(false, "Tried to get an invalid type!");
+                return T();
+            }
+
+            template<>
+            Model3D &GetRenderableByID<Model3D>(unsigned id)
+            {
+                return m_renderableModel3D[ id ];
+            }
+
+            template<>
+            Billboard2D &GetRenderableByID<Billboard2D>(unsigned id)
+            {
+                return m_renderableBillboards[ id ];
+            }
+
+            template<>
+            Light &GetRenderableByID<Light>(unsigned id)
+            {
+                return m_renderableLights[ id ];
+            }
+
+            template<>
+            ParticleSystem &GetRenderableByID<ParticleSystem>(unsigned id)
+            {
+                return m_renderableParticleSystems[ id ];
+            }
+
+            template<>
+            SpriteText &GetRenderableByID<SpriteText>(unsigned id)
+            {
+                return m_renderableSpriteText[ id ];
             }
 
         private:

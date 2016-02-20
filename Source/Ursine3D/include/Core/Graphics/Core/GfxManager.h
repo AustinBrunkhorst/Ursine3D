@@ -36,6 +36,9 @@ namespace ursine
     {
         class GfxManager
         {
+            friend class RenderPass;
+            friend class GlobalShaderResource;
+
             //public methods
         public:
             void Initialize(GfxConfig &config);
@@ -132,6 +135,7 @@ namespace ursine
             void PrepForUI(void);
             void PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj);
             void PrepForSpriteText(const SMat4 &view, const SMat4 &proj);
+            void PrepForShadows(Light &light, const SMat4& view, const SMat4& proj);
 
             //rendering funcs
             void Render3DModel(_DRAWHND handle, Camera &currentcamera );

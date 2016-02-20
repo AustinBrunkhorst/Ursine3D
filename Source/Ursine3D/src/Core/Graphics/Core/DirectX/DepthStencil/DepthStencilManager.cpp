@@ -177,7 +177,10 @@ namespace ursine
 
             ID3D11DepthStencilView *DepthStencilManager::GetDepthStencilView(const DEPTH_STENCIL_LIST stencil)
             {
-                return m_depthStencilViewArray[ stencil ];
+                if( stencil != DEPTH_STENCIL_COUNT )
+                    return m_depthStencilViewArray[ stencil ];
+
+                return nullptr;
             }
 
             ID3D11ShaderResourceView *DepthStencilManager::GetDepthStencilSRV(const DEPTH_STENCIL_LIST stencil)

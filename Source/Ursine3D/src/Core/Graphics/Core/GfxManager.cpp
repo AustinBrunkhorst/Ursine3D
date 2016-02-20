@@ -12,15 +12,29 @@
 ** -------------------------------------------------------------------------*/
 
 #include "UrsinePrecompiled.h"
-#include "GfxManager.h"
 
-//@Matt
-#include "VertexDefinitions.h"
-#include <complex>
-#include "DepthStencilStateList.h"
 #include <d3d11.h>
+#include <complex>
+
+#include "GfxManager.h"
+#include "VertexDefinitions.h"
+#include "DepthStencilStateList.h"
 #include <Core/Graphics/Animation/Builder/AnimationState.h>
 #include <Core/Graphics/Animation/Builder/AnimationBuilder.h>
+
+// regular processors
+#include "Billboard2DProcessor.h"
+#include "DirectionalLightProcessor.h"
+#include "Model3DProcessor.h"
+#include "ParticleSystemProcessor.h"
+#include "PointLightProcessor.h"
+#include "SpotLightProcessor.h"
+#include "SpriteTextProcessor.h"
+
+#include "RenderPass.h"
+
+// special passes
+#include "LineRendererPass.h"
 
 static int tempID = -1;
 static HWND wHND = 0;
@@ -64,6 +78,10 @@ namespace ursine
             m_currentlyRendering = false;
             m_sceneActive = false;
             m_currentID = -1;
+
+            RenderPass::SetGfxMgr(this);
+            GraphicsEntityProcessor::SetGfxMgr(this);
+            GlobalShaderResource::SetGfxMgr(this);
 
             //writing log stuff
             LogMessage("GRAPHICS");
@@ -150,6 +168,34 @@ namespace ursine
             m_font.Load(textPath);
 
             textureManager->CreateTexture("Font", "Assets/Bitmap Fonts/"  + m_font.GetTextureFiles()[ 0 ], 512, 512);
+
+            // TEST SHIT
+            //RenderPass forwardPass("ForwardPass");
+
+            //GlobalCBuffer<CameraBuffer, BUFFER_CAMERA> viewBuffer(SHADER_SLOT_0, SHADERTYPE_VERTEX);
+
+            //GlobalGPUResource difuseTex(SHADER_SLOT_0, RESOURCE_INPUT_RT);
+            //difuseTex.Update(RENDER_TARGET_DEFERRED_COLOR);
+            //GlobalGPUResource specPow(SHADER_SLOT_1, RESOURCE_INPUT_RT);
+            //specPow.Update(RENDER_TARGET_DEFERRED_SPECPOW);
+            //GlobalGPUResource specInt(SHADER_SLOT_2, RESOURCE_INPUT_RT);
+            //specInt.Update(RENDER_TARGET_DEFERRED_SPECPOW);
+
+            //forwardPass.
+            //    Set({ RENDER_TARGET_SWAPCHAIN }).
+            //    Set(SHADER_BASIC).
+            //    Set(DEPTH_STENCIL_MAIN).
+            //    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+            //    Set(SAMPLER_STATE_WRAP_TEX).
+            //    Set(RASTER_STATE_SOLID_BACKCULL).
+            //    Set(BLEND_STATE_DEFAULT).
+            //    Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
+            //    Accepts(RENDERABLE_MODEL3D).
+            //    AddResource(&difuseTex).
+            //    AddResource(&specPow).
+            //    AddResource(&specInt).
+            //InitializePass();
+
         }
 
         void GfxManager::Uninitialize()
@@ -213,12 +259,12 @@ namespace ursine
                 Model3D *current = &renderableManager->m_renderableModel3D[ render->Index_ ];
 
                 drawCall.Index_ = render->Index_;
-                drawCall.Type_ = render->Type_;
                 drawCall.Material_ = textureManager->GetTextureIDByName(current->GetMaterialslName());
 
                 drawCall.Model_ = modelManager->GetModelIDByName(current->GetModelName());
                 drawCall.Overdraw_ = current->GetOverdraw();
                 drawCall.Shader_ = drawCall.Overdraw_ ? SHADER_OVERDRAW_MODEL : SHADER_DEFERRED_DEPTH;
+                drawCall.Type_ = drawCall.Overdraw_ ? RENDERABLE_OVERDRAW : render->Type_;
             }
             break;
             case RENDERABLE_BILLBOARD2D:
@@ -451,6 +497,9 @@ namespace ursine
             STAMP("Model Rendering");
             dxCore->EndDebugEvent();
 
+            // save current index for later
+            unsigned modelEnd = currentIndex;
+
             /////////////////////////////////////////////////////////
             // LIGHT PASS
             dxCore->StartDebugEvent("Light Pass");
@@ -567,9 +616,9 @@ namespace ursine
 
         void GfxManager::RenderScene_Forward(float dt, GfxHND camera)
         {
-            /////////////////////////////////////////////////////////////////
-            // PRE FRAME STUFF 
-            // init buffers for frame
+            ///////////////////////////////////////////////////////////////////
+            //// PRE FRAME STUFF 
+            //// init buffers for frame
             dxCore->ClearDeferredBuffers();
             dxCore->ClearDepthBuffers();
             dxCore->ClearDebugBuffer();
@@ -592,122 +641,315 @@ namespace ursine
             currentCamera.SetScreenDimensions(w, h);
             currentCamera.SetScreenPosition(gvp.TopLeftX, gvp.TopLeftY);
 
-            /////////////////////////////////////////////////////////////////
-            // gets the projection matrix and view matrix
-            SMat4 proj, view;
-            proj = currentCamera.GetProjMatrix();
-            view = currentCamera.GetViewMatrix();
+            // CREATE RENDER PIPELINE
+            RenderPass MainPipeline;
 
-            /////////////////////////////////////////////////////////////////
-            // SORT ALL DRAW CALLS
-            std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
+            // define the passes
+            RenderPass forwardPass("ForwardPass");
+            RenderPass billboardPass("BillboardPass");
+            LineRendererPass lineRenderPass(false);
+            LineRendererPass overdrawLinePass(true, "OverdrawLine");
+            RenderPass particlePass("ParticlePass");
+            RenderPass overdrawPass("overdrawPass");
 
-            /////////////////////////////////////////////////////////////////
-            // BEGIN RENDERING
-            //keep track of where we are 
-            int currentIndex = 0;
+            // create processors
+            auto *modelProcessor = new Model3DProcessor( );
+            auto *billboardPorcessor = new Billboard2DProcessor( );
+            auto *particleProcessor = new ParticleSystemProcessor( );
 
-            dxCore->StartDebugEvent("Forward Pass");
-
-            // rendering models
-            PrepFor3DModels(view, proj);
-            {
-                InvProjBuffer ipb;
-                SMat4 temp = view;
-                temp.Transpose();
-                temp.Inverse();
-
-                ipb.invProj = temp.ToD3D();
-                currentCamera.GetPlanes(ipb.nearPlane, ipb.farPlane);
-                bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
-
-                shaderManager->BindShader(SHADER_FORWARD);
-                dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
-            }
-
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
-                Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
-            STAMP("Model Rendering");
-            dxCore->EndDebugEvent();
-
-            // LIGHT PASS
-            dxCore->StartDebugEvent("Light Pass");
-            PrepForLightPass(view, proj, currentCamera);
-
-            //spot light pass
-            PrepForSpotlightPass(view, proj);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT )
-                currentIndex++;
-            //point light pass
-            PrepForPointLightPass(view, proj);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT )
-                currentIndex++;
-            //directional light pass
-            PrepForDirectionalLightPass(view, proj);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT )
-                currentIndex++;
+            // CREATE GLOBALS
+            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>                      viewBuffer(SHADERTYPE_VERTEX);
+            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>                      viewBufferGeom(SHADERTYPE_GEOMETRY);
+            GlobalCBuffer<PointGeometryBuffer, BUFFER_POINT_GEOM>           geomBuff(SHADERTYPE_GEOMETRY);
+            GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>                identity(SHADERTYPE_VERTEX);
+            GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>                   invView(SHADERTYPE_VERTEX);
+            
+            GlobalGPUResource spriteModel(SHADER_SLOT_0, RESOURCE_MODEL);
+            GlobalGPUResource particleModel(SHADER_SLOT_0, RESOURCE_MODEL);
 
             /////////////////////////////////////////////////////////
-            // overdraw pass for weird stuff
-            PrepFor3DModels(view, proj);
-            {
-                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW));
+            // FORWARD PASS
+            forwardPass.
+                Set( 
+                    { 
+                        RENDER_TARGET_SWAPCHAIN, 
+                        RENDER_TARGET_DEFERRED_NORMAL, 
+                        RENDER_TARGET_DEFERRED_SPECPOW 
+                    } 
+                ).
+                Set( SHADER_FORWARD ).
+                Set( DEPTH_STENCIL_MAIN ).
+                Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                Set( SAMPLER_STATE_WRAP_TEX ).
+                Set( RASTER_STATE_SOLID_BACKCULL ).
+                Set( BLEND_STATE_COUNT ).
+                Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
 
-                while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
-                    Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+                AddResource( &viewBuffer ).
 
-                dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
-            }
+                Accepts( RENDERABLE_MODEL3D ).
+                Processes( modelProcessor ).
+            InitializePass( );
 
-            /////////////////////////////////////////////////////////////////
-            // RENDER MAIN //////////////////////////////////////////////////
-            dxCore->StartDebugEvent("Final Pass");
-            PrepForFinalOutput();
+            /////////////////////////////////////////////////////////
+            // BILLBOARD PASS
+            billboardPass.
+                Set(
+                    {
+                        RENDER_TARGET_SWAPCHAIN,
+                        RENDER_TARGET_DEFERRED_NORMAL,
+                        RENDER_TARGET_DEFERRED_SPECPOW
+                    }
+                ).
+                Set( SHADER_BILLBOARD2D ).
+                Set( DEPTH_STENCIL_MAIN ).
+                Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                Set( SAMPLER_STATE_WRAP_TEX ).
+                Set( RASTER_STATE_SOLID_BACKCULL ).
+                Set( BLEND_STATE_COUNT ).
+                Set( DXCore::TOPOLOGY_POINT_LIST ).
 
-            dxCore->EndDebugEvent();
-            STAMP("Main Screen Pass");
+                AddResource( &viewBuffer ).
+                AddResource( &spriteModel ).
+                AddResource( &viewBufferGeom ).
+                AddResource( &geomBuff ).
 
-            /////////////////////////////////////////////////////////////////
-            //render primitive layer
-            PrepFor3DModels(view, proj); // I don't think gets set properly
+                Accepts( RENDERABLE_BILLBOARD2D ).
+                Processes( billboardPorcessor ).
+            InitializePass( );
 
-            dxCore->StartDebugEvent("Debug Pass");
-            PrepForDebugRender();
-            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
-            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
-            RenderDebugPoints(view, proj, currentCamera);
-            dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
-            RenderDebugLines(view, proj, currentCamera);
+            /////////////////////////////////////////////////////////
+            // LINE RENDER PASS
+            lineRenderPass.
+                Set( { RENDER_TARGET_SWAPCHAIN } ).
+                Set( SHADER_BASIC ).
+                Set( DEPTH_STENCIL_MAIN ).
+                Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                Set( SAMPLER_STATE_WRAP_TEX ).
+                Set( RASTER_STATE_LINE_RENDERING ).
+                Set( BLEND_STATE_COUNT ).
+                Set( DXCore::TOPOLOGY_LINE_LIST ).
 
-            dxCore->EndDebugEvent();
-            STAMP("Debug Pass");
+                AddResource(&identity).
+            InitializePass( );
 
-            //overdraw render
-            PrepForOverdrawDebugRender(view, proj);
-            dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
-            RenderDebugPoints(view, proj, currentCamera, true);
-            dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
-            RenderDebugLines(view, proj, currentCamera, true);
-            STAMP("Overdraw Pass");
+            overdrawLinePass.
+                Set( { RENDER_TARGET_SWAPCHAIN } ).
+                Set( SHADER_BASIC ).
+                Set( DEPTH_STENCIL_MAIN ).
+                Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
+                Set( SAMPLER_STATE_WRAP_TEX ).
+                Set( RASTER_STATE_LINE_RENDERING ).
+                Set( BLEND_STATE_COUNT ).
+                Set( DXCore::TOPOLOGY_LINE_LIST ).
 
-            PrepForParticleSystems(view, proj);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_PARTICLE )
-                RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
-            STAMP("Forward Particle Pass");
+                AddResource(&identity).
+            InitializePass();
 
-            //render 3d models deferred
-            PrepForBillboard2D(view, proj, currentCamera);
-            while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
-                Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
-            STAMP("Billboard Rendering");
+            /////////////////////////////////////////////////////////
+            // PARTICLE PASS
+            particlePass.
+                Set( { RENDER_TARGET_SWAPCHAIN } ).
+                Set( SHADER_PARTICLE ).
+                Set( DEPTH_STENCIL_MAIN ).
+                Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
+                Set( SAMPLER_STATE_WRAP_TEX ).
+                Set( RASTER_STATE_SOLID_NOCULL ).
+                Set( BLEND_STATE_ADDITIVE ).
+                Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
 
-            dxCore->EndDebugEvent();
+                AddResource( &viewBuffer ).
+                AddResource( &particleModel ).
+                AddResource( &invView ).
 
-            //clearing all buffers
-            textureManager->MapTextureByName("Wire");
-            textureManager->MapTextureByName("Wire", 1);
-            textureManager->MapTextureByName("Wire", 2);
-            textureManager->MapTextureByName("Wire", 3);
+                Accepts( RENDERABLE_PS ).
+                Processes( particleProcessor ).
+                OverrideLayout( SHADER_OVERRIDE ).
+            InitializePass( );
+
+            /////////////////////////////////////////////////////////
+            // OVERDRAW PASS
+            overdrawPass.
+                  Set( 
+                    { 
+                        RENDER_TARGET_DEFERRED_COLOR, 
+                        RENDER_TARGET_DEFERRED_NORMAL, 
+                        RENDER_TARGET_DEFERRED_SPECPOW 
+                    } 
+                ).
+                Set( SHADER_DEFERRED_DEPTH ).
+                Set( DEPTH_STENCIL_OVERDRAW ).
+                Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                Set( SAMPLER_STATE_WRAP_TEX ).
+                Set( RASTER_STATE_SOLID_BACKCULL ).
+                Set( BLEND_STATE_COUNT ).
+                Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                AddResource( &viewBuffer ).
+
+                Accepts( RENDERABLE_OVERDRAW ).
+                Processes( modelProcessor ).
+            InitializePass( );
+
+            /////////////////////////////////////////////////////////
+            // INIT PIPELINE
+            MainPipeline.
+                AddPrePass( &forwardPass ).
+                AddPrePass( &billboardPass ).
+                AddPrePass( &overdrawPass ).
+                AddPrePass( &lineRenderPass ).
+                AddPrePass( &overdrawLinePass ).
+                AddPrePass( &particlePass ).
+            InitializePass( );
+
+            /////////////////////////////////////////////////////////
+            // UPDATE GLOBAL RESOURCES
+            CameraBuffer cb;
+            PointGeometryBuffer pgb;
+            TransformBuffer tb;
+            invViewBuffer ipb;
+
+            cb.view = SMat4::Transpose( currentCamera.GetViewMatrix( ) ).ToD3D( );
+            cb.projection = SMat4::Transpose( currentCamera.GetProjMatrix( ) ).ToD3D( );
+
+            viewBuffer.Update( cb );
+            viewBufferGeom.Update( cb );
+            spriteModel.Update( modelManager->GetModelIDByName( "Sprite" ) );
+            particleModel.Update( modelManager->GetModelIDByName( "ParticleIndices" ) );
+
+            pgb.cameraPosition = SVec4( currentCamera.GetPosition( ), 1 ).ToD3D( );
+            pgb.cameraUp = SVec4( currentCamera.GetUp( ), 0 ).ToD3D( );
+            geomBuff.Update( pgb );
+
+            tb.transform = SMat4::Identity( ).ToD3D( );
+            identity.Update( tb );
+
+            SMat4 temp = currentCamera.GetViewMatrix( );
+            temp.Transpose( );
+            temp.Inverse( );
+            ipb.invView = temp.ToD3D( );
+            invView.Update( ipb, SHADER_SLOT_4 );
+
+            /////////////////////////////////////////////////////////
+            // EXECUTE RENDER CALL //////////////////////////////////
+            MainPipeline.Execute( currentCamera );
+
+            ///////////////////////////////////////////////////////////////////
+            //// gets the projection matrix and view matrix
+            //SMat4 proj, view;
+            //proj = currentCamera.GetProjMatrix();
+            //view = currentCamera.GetViewMatrix();
+
+            ///////////////////////////////////////////////////////////////////
+            //// SORT ALL DRAW CALLS
+            //std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
+
+            ///////////////////////////////////////////////////////////////////
+            //// BEGIN RENDERING
+            ////keep track of where we are 
+            //int currentIndex = 0;
+
+            //dxCore->StartDebugEvent("Forward Pass");
+
+            //// rendering models
+            // PrepFor3DModels(view, proj);
+            //{
+            //    invViewBuffer ipb;
+            //    SMat4 temp = view;
+            //    temp.Transpose();
+            //    temp.Inverse();
+
+            //    ipb.invView = temp.ToD3D();
+            //    currentCamera.GetPlanes(ipb.nearPlane, ipb.farPlane);
+            //    bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
+
+            //    shaderManager->BindShader(SHADER_FORWARD);
+                // dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            //}
+
+            //while ( m_drawList[ currentIndex ].Shader_ == SHADER_DEFERRED_DEPTH )
+            //    Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+            //STAMP("Model Rendering");
+            //dxCore->EndDebugEvent();
+
+            //// LIGHT PASS
+            //dxCore->StartDebugEvent("Light Pass");
+            //PrepForLightPass(view, proj, currentCamera);
+
+            ////spot light pass
+            //PrepForSpotlightPass(view, proj);
+            //while ( m_drawList[ currentIndex ].Shader_ == SHADER_SPOT_LIGHT )
+            //    currentIndex++;
+            ////point light pass
+            //PrepForPointLightPass(view, proj);
+            //while ( m_drawList[ currentIndex ].Shader_ == SHADER_POINT_LIGHT )
+            //    currentIndex++;
+            ////directional light pass
+            //PrepForDirectionalLightPass(view, proj);
+            //while ( m_drawList[ currentIndex ].Shader_ == SHADER_DIRECTIONAL_LIGHT )
+            //    currentIndex++;
+
+            ///////////////////////////////////////////////////////////
+            //// overdraw pass for weird stuff
+            //PrepFor3DModels(view, proj);
+            //{
+            //    dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW));
+
+            //    while ( m_drawList[ currentIndex ].Shader_ == SHADER_OVERDRAW_MODEL )
+            //        Render3DModel(m_drawList[ currentIndex++ ], currentCamera);
+
+            //    dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
+            //}
+
+            ///////////////////////////////////////////////////////////////////
+            //// RENDER MAIN //////////////////////////////////////////////////
+            //dxCore->StartDebugEvent("Final Pass");
+            //PrepForFinalOutput();
+
+            //dxCore->EndDebugEvent();
+            //STAMP("Main Screen Pass");
+
+            ///////////////////////////////////////////////////////////////////
+            ////render primitive layer
+            //PrepFor3DModels(view, proj); // I don't think gets set properly
+
+            //dxCore->StartDebugEvent("Debug Pass");
+            //PrepForDebugRender();
+            //dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
+            //dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            //RenderDebugPoints(view, proj, currentCamera);
+            //dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
+            //RenderDebugLines(view, proj, currentCamera);
+
+            //dxCore->EndDebugEvent();
+            //STAMP("Debug Pass");
+
+            ////overdraw render
+            //PrepForOverdrawDebugRender(view, proj);
+            //dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
+            //RenderDebugPoints(view, proj, currentCamera, true);
+            //dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
+            //RenderDebugLines(view, proj, currentCamera, true);
+            //STAMP("Overdraw Pass");
+
+            //PrepForParticleSystems(view, proj);
+            //while ( m_drawList[ currentIndex ].Shader_ == SHADER_PARTICLE )
+            //    RenderParticleSystem(m_drawList[ currentIndex++ ], currentCamera);
+            //STAMP("Forward Particle Pass");
+
+            ////render 3d models deferred
+            //PrepForBillboard2D(view, proj, currentCamera);
+            //while ( m_drawList[ currentIndex ].Shader_ == SHADER_BILLBOARD2D )
+            //    Render2DBillboard(m_drawList[ currentIndex++ ], currentCamera);
+            //STAMP("Billboard Rendering");
+
+            //dxCore->EndDebugEvent();
+
+            ////clearing all buffers
+            //textureManager->MapTextureByName("Wire");
+            //textureManager->MapTextureByName("Wire", 1);
+            //textureManager->MapTextureByName("Wire", 2);
+            //textureManager->MapTextureByName("Wire", 3);
         }
 
         void GfxManager::EndScene()
@@ -770,7 +1012,7 @@ namespace ursine
             dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
 
             //map the sampler
-            textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
+            textureManager->MapSamplerState(SAMPLER_STATE_WRAP_TEX);
 
             //set culling
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
@@ -779,9 +1021,7 @@ namespace ursine
 
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
-            //TEMP
             URSINE_TODO("Remove this");
-            bufferManager->MapCameraBuffer(view, proj, SHADERTYPE_GEOMETRY);
         }
 
         void GfxManager::PrepForBillboard2D(const SMat4& view, const SMat4& proj, Camera &currentCamera)
@@ -807,7 +1047,7 @@ namespace ursine
             shaderManager->BindShader(SHADER_BILLBOARD2D);
             layoutManager->SetInputLayout(SHADER_BILLBOARD2D);
 
-            textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
+            textureManager->MapSamplerState(SAMPLER_STATE_WRAP_TEX);
 
             //set model
             modelManager->BindModel("Sprite");
@@ -828,12 +1068,12 @@ namespace ursine
             bufferManager->MapCameraBuffer(view, proj);
 
             //map inv view
-            InvProjBuffer ipb;
+            invViewBuffer ipb;
             SMat4 temp = view;
             temp.Transpose();
             temp.Inverse();
 
-            ipb.invProj = temp.ToD3D();
+            ipb.invView = temp.ToD3D();
             bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_VERTEX);
 
             // bind shader
@@ -852,7 +1092,7 @@ namespace ursine
 #if defined(URSINE_WITH_EDITOR)
 
             //set states
-            dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, false);
+            dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, DEPTH_STENCIL_COUNT);
             dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
             dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -865,18 +1105,18 @@ namespace ursine
         void GfxManager::PrepForLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera)
         {
             //set states
-            dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, false);
+            dxCore->SetRenderTarget(RENDER_TARGET_LIGHTMAP, DEPTH_STENCIL_COUNT);
             dxCore->SetBlendState(BLEND_STATE_ADDITIVE);
             dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
             dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
             //map inv proj
-            InvProjBuffer ipb;
+            invViewBuffer ipb;
             SMat4 temp = proj;
             temp.Transpose();
             temp.Inverse();
 
-            ipb.invProj = temp.ToD3D();
+            ipb.invView = temp.ToD3D();
             currentCamera.GetPlanes(ipb.nearPlane, ipb.farPlane);
             bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_PIXEL);
 
@@ -959,7 +1199,7 @@ namespace ursine
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
             bufferManager->MapCameraBuffer(SMat4::Identity(), SMat4::Identity());
 
-            textureManager->MapSamplerState(SAMPLER_NO_FILTERING);
+            textureManager->MapSamplerState(SAMPLER_STATE_NO_FILTERING);
             shaderManager->BindShader(SHADER_UI);
             layoutManager->SetInputLayout(SHADER_UI);
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1) * trans);
@@ -990,23 +1230,83 @@ namespace ursine
             dxCore->SetRasterState(RASTER_STATE_SOLID_NOCULL);
 
             // rt
-            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
+            dxCore->GetRenderTargetMgr()->SetForwardTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_MAIN));
 
             // blend and depth
-            dxCore->SetBlendState(BLEND_STATE_DEFAULT);
+            dxCore->SetBlendState(BLEND_STATE_COUNT);
             dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
 
             // set index buffer
             modelManager->BindModel("ParticleIndices", 0, true);
 
             //map inv view
-            InvProjBuffer ipb;
+            invViewBuffer ipb;
             SMat4 temp = view;
             temp.Transpose();
             temp.Inverse();
 
-            ipb.invProj = temp.ToD3D();
+            ipb.invView = temp.ToD3D();
             bufferManager->MapBuffer<BUFFER_INV_PROJ>(&ipb, SHADERTYPE_VERTEX);
+        }
+
+        void GfxManager::PrepForShadows(Light& light, const SMat4& view, const SMat4& proj)
+        {
+            // bind proper depth target
+            dxCore->GetRenderTargetMgr()->SetDeferredTargets(dxCore->GetDepthMgr()->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP));
+
+            // bind shader. Should set pixel to null, allowing double-fast z pass
+            shaderManager->BindShader(SHADER_SHADOW_PASS);
+
+            // map special sampler
+            textureManager->MapSamplerState(SAMPLER_STATE_SHADOW);
+
+            // set blending
+            float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+            dxCore->GetDeviceContext()->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
+            dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+
+            // set culling
+            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            bufferManager->MapCameraBuffer(view, proj);
+
+            /////////////////////////////////////////////////////////
+            // calculate light view matrix
+            auto lightDir = light.GetDirection( );
+            SVec3 u, v;
+            lightDir.GenerateOrthogonalVectors( u, v );
+            u.Normalize( );
+            
+            // cross direction and normal
+            SVec3 xAxis = SVec3::Cross( lightDir, u );
+
+            // cross direction and ^^^
+            SVec3 yAxis = SVec3::Cross( lightDir, xAxis );
+
+            // light direction
+            SVec3 zAxis = lightDir;
+
+            // generate the matrix, then use to calculate the p values
+            SMat4 viewMatrix = SMat4::Identity( );
+            viewMatrix.SetColumn( 0, SVec4(xAxis, 0) );
+            viewMatrix.SetColumn( 1, SVec4(yAxis, 0) );
+            viewMatrix.SetColumn( 2, SVec4(zAxis, 0) );
+
+            SVec3 p = viewMatrix.TransformPoint( light.GetPosition( ) );
+            viewMatrix.SetColumn( 3, SVec4(p, 1.0f) );
+            
+            // calculate projection
+            SMat4 lightProjection = SMat4::Identity( );
+
+            float S = 1.0f / (tanf(light.GetSpotlightAngles( ).Y( ) / 2.0f));
+            lightProjection.SetColumn(0, SVec4(S, 0, 0, 0));
+            lightProjection.SetColumn(1, SVec4(0, S, 0, 0));
+            lightProjection.SetColumn(2, SVec4(0, 0, 0.90f, 1));
+            lightProjection.SetColumn(3, SVec4(0, 0, -light.GetRadius( ), 0));
+
+            // map
         }
 
         // rendering //////////////////////////////////////////////////////
@@ -1042,7 +1342,7 @@ namespace ursine
 
             //             16                8
             mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
-
+            
             // map buffer
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
@@ -1367,6 +1667,9 @@ namespace ursine
                 case RENDERABLE_BILLBOARD2D:
                     m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityUniqueID();
                     break;
+                case RENDERABLE_SPRITE_TEXT:
+                    m_currentID = renderableManager->m_renderableSpriteText[ index ].GetEntityUniqueID();
+                    break;
                 }
             }
             else
@@ -1598,6 +1901,18 @@ namespace ursine
 
             bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_VERTEX);
 
+            // map ID data
+            //map id data
+            MaterialDataBuffer mdb;
+
+            //set unique ID for this model
+            int overdrw = spriteText.GetOverdraw() == true ? 1 : 0;
+
+            mdb.emissive = 1.f;
+            //             16                8
+            mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
+            bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;
             stb.worldPosition = spriteText.GetPosition( ).ToD3D( );
@@ -1610,9 +1925,9 @@ namespace ursine
 
             // change sampler
             if ( spriteText.GetFilter() )
-                textureManager->MapSamplerState(SAMPLER_WRAP_TEX);
+                textureManager->MapSamplerState(SAMPLER_STATE_WRAP_TEX);
             else
-                textureManager->MapSamplerState(SAMPLER_NO_FILTERING);
+                textureManager->MapSamplerState(SAMPLER_STATE_NO_FILTERING);
 
             /////////////////////////////////////////////////////////
             // mapping glyph data

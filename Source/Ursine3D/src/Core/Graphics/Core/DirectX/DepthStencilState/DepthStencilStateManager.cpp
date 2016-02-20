@@ -262,6 +262,12 @@ namespace ursine
 
                 m_currentState = state;
 
+                if(state == DEPTH_STATE_COUNT)
+                {
+                    m_deviceContext->OMSetDepthStencilState(nullptr, 1);
+                    return;
+                }
+
                 m_deviceContext->OMSetDepthStencilState(m_depthStateArray[ state ], 1);
             }
 
