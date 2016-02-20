@@ -14,7 +14,7 @@
 #include "Precompiled.h"
 
 #include "SpawnPatternContainerComponent.h"
-#include "LevelManagerSystem.h"
+#include "LevelSegmentManager.h"
 
 #include <Application.h>
 #include <SystemManager.h>
@@ -64,7 +64,7 @@ void SpawnPatternContainer::update(SpawnerGroup *group, Spawner *spawner)
         if (pattern.GetEndingSegmentTransition( ) != LevelSegments::Empty)
         {
             // Send an event
-            GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( )
+            GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( )
                 ->SegmentTransition( pattern.GetEndingSegmentTransition( ) );
 
             // we're not breaking anymore

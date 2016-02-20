@@ -16,6 +16,8 @@
 #include "SpawnerGroupComponent.h"
 #include "SpawnerComponent.h"
 
+#include "LevelSegmentManager.h"
+
 #include <Notification.h>
 #include <SystemManager.h>
 
@@ -31,17 +33,17 @@ SpawnerGroup::SpawnerGroup(void)
 
 SpawnerGroup::~SpawnerGroup(void)
 {
-    auto levelManager = GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( );
+    auto levelManager = GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( );
 
     if (levelManager)
         levelManager->Listener( this )
-            .Off( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+            .Off( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 void SpawnerGroup::OnInitialize(void)
 {
-    GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( )->Listener( this )
-        .On( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+    GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( )->Listener( this )
+        .On( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 AIArchetype SpawnerGroup::GetEnemyType(void) const
@@ -82,9 +84,9 @@ void SpawnerGroup::update(void)
     }
 }
 
-void SpawnerGroup::onLevelSegmentChange(EVENT_HANDLER(LevelManager))
+void SpawnerGroup::onLevelSegmentChange(EVENT_HANDLER(LevelSegmentManager))
 {
-    EVENT_ATTRS(LevelManager, LevelSegmentChangeArgs);
+    EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
 
     // notify the spawners that the segment changed
     for (auto &spawnerPair : m_spawners)

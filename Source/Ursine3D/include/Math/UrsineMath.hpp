@@ -26,9 +26,9 @@ namespace ursine
         }
 
         template<typename T1, typename T2>
-        inline bool IsEqual(T1 a, T2 b)
+        inline bool IsEqual(T1 a, T2 b, float epsilon)
         {
-            return ((a >= b) ? (a - b) : (b - a)) < math::Epsilon;
+            return ((a >= b) ? (a - b) : (b - a)) < epsilon;
         }
 
         // for use on doubles and floats
