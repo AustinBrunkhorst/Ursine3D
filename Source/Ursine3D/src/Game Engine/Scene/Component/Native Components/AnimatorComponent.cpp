@@ -6,6 +6,7 @@
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
+** - Hyung Jun Park - park.hyungjun@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
@@ -101,6 +102,7 @@ namespace ursine
 				return this;
 			return nullptr;
 		}
+
 		
 		NATIVE_COMPONENT_DEFINITION(Animator);
 
@@ -136,8 +138,12 @@ namespace ursine
 
 			auto *gfx = GetCoreSystem(graphics::GfxAPI);
 			auto *world = GetOwner()->GetWorld();
-			auto *animListEntity = world->CreateEntity("Animation List");
-			auto *blendTreeEntity = world->CreateEntity("Blending Tree");
+			auto *animListEntity = world->GetEntityFromName("Animation List");
+			if(!animListEntity)
+				animListEntity = world->CreateEntity("Animation List");
+			auto *blendTreeEntity = world->GetEntityFromName("Blending Tree");
+			if(!blendTreeEntity)
+				blendTreeEntity = world->CreateEntity("Blending Tree");
 		}
 
 		void Animator::UpdateAnimation(const float dt)
@@ -337,8 +343,6 @@ namespace ursine
 		void Animator::SetRig(const std::string &rig)
 		{
 			m_Rig = rig;
-
-			// Create rig Hierarchy tree
 		}
 
 		float Animator::GetAnimationTimePosition() const
@@ -492,8 +496,12 @@ namespace ursine
 				auto *world = GetOwner()->GetWorld();
 				auto *animList = world->GetEntityFromName("Animation List");
 				auto *alTrans = animList->GetTransform();
-				auto *newEntity = world->CreateEntity(m_animationName.c_str());
-				alTrans->AddChild(newEntity->GetTransform());
+				auto *newEntity = world->GetEntityFromName(m_animationName.c_str());
+				if (!newEntity)
+				{
+					newEntity = world->CreateEntity(m_animationName.c_str());
+					alTrans->AddChild(newEntity->GetTransform());
+				}
 			}
 		}
 
@@ -512,7 +520,6 @@ namespace ursine
 				auto &curr_firstFrame = currAni->GetKeyframe(0, 0);
 				auto &curr_lastFrame = currAni->GetKeyframe(keyframeCount1 - 1, 0);
 
-				static bool bBlending = false;
 				bool bFut = false;
 				if (futSt)
 				{
@@ -521,16 +528,18 @@ namespace ursine
 				}
 
 				// if current State is reached at the end
-				if (currSt->GetTimePosition() > curr_lastFrame.length)
-				{
-					if (m_looping)
-						currSt->SetTimePosition(curr_firstFrame.length); 
-					else
-						currSt->SetTimePosition(curr_lastFrame.length);
-				}
-
 				// if there is future state and animation
-				if (bFut)
+				if (!bFut)
+				{
+					if (currSt->GetTimePosition() > curr_lastFrame.length)
+					{
+						if (m_looping)
+							currSt->SetTimePosition(curr_firstFrame.length);
+						else
+							currSt->SetTimePosition(curr_lastFrame.length);
+					}
+				}
+				else
 				{
 					// need to check state blender
 					StateBlender* stb = GetStateBlenderByNames(currSt->GetName(), futSt->GetName());
@@ -572,6 +581,13 @@ namespace ursine
 					}
 					else
 					{
+						bool bCurrEnd = false;
+						if (currSt->GetTimePosition() > curr_lastFrame.length)
+						{
+							currSt->SetTimePosition(curr_lastFrame.length);
+							bCurrEnd = true;
+						}
+
 						// To check if current state is reached at the same frame as state blender's
 						unsigned int curFrameIndex = 0;
 						GetTransFrmByRatio(*currSt, curFrameIndex, stb->GetcurrTransPosRatio());
@@ -580,31 +596,35 @@ namespace ursine
 						// Can't check actual frame's length since that keyframe could be dummy value.
 						// so we just check it by index.
 						unsigned index1 = 0, index2 = 0;
-						for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
+						static bool bBlending = false;
+						if (false == bBlending)
 						{
-							// get the two current keyframes
-							const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes(x);
-							const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes(x + 1);
-					
-							// check if the current keyframe set holds the time value between them
-							if (f1[0].length <= currSt->GetTimePosition() && currSt->GetTimePosition() < f2[0].length)
-								break;
-							++index1;
-						}
-						index2 = stb->GetcurrTransFrm();
-						if (index1 == index2)
-						{
-							// Set Trans Frame by Transition Position - fut
-							unsigned int futFrameIndex = 0;
-							GetTransFrmByRatio(*futSt, futFrameIndex, stb->GetfutTransPosRatio());
-							stb->SetfutTransFrm(futFrameIndex);
-							// Set future state's timeposition to chosen frame
-							futSt->SetTimePosition(futAni->GetKeyframe(stb->GetfutTransFrm(), 0).length);
+							for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
+							{
+								// get the two current keyframes
+								const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes(x);
+								const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes(x + 1);
 
-							bBlending = true;
+								// check if the current keyframe set holds the time value between them
+								if (f1[0].length <= currSt->GetTimePosition() && currSt->GetTimePosition() < f2[0].length)
+									break;
+								++index1;
+							}
+							index2 = stb->GetcurrTransFrm();
+							if (index1 == index2)
+							{
+								// Set Trans Frame by Transition Position - fut
+								unsigned int futFrameIndex = 0;
+								GetTransFrmByRatio(*futSt, futFrameIndex, stb->GetfutTransPosRatio());
+								stb->SetfutTransFrm(futFrameIndex);
+								// Set future state's timeposition to chosen frame
+								futSt->SetTimePosition(futAni->GetKeyframe(stb->GetfutTransFrm(), 0).length);
+								// confirm start blending
+								bBlending = true;
+							}
 						}
 					
-						// Set Trans Frame by Transition Position - curr
+						// if the blending is started
 						if (bBlending)
 						{
 							// if blending is true, start transitioning from this state to that state
@@ -635,10 +655,28 @@ namespace ursine
 								else
 								{
 									if (m_looping)
+									{
+										currSt->SetTimePosition(curr_firstFrame.length);
 										futSt->SetTimePosition(futAni->GetKeyframe(stb->GetfutTransFrm(), 0).length);
+									}
 									else
+									{
+										currSt->SetTimePosition(curr_lastFrame.length);
 										futSt->SetTimePosition(fut_lastFrame.length);
+									}
 								}
+							}
+						}
+						// if the blending didn't started
+						else
+						{
+							// if current state reached at the end
+							if (bCurrEnd)
+							{
+								if(m_looping)
+									currSt->SetTimePosition(curr_firstFrame.length);
+								else
+									currSt->SetTimePosition(curr_lastFrame.length);
 							}
 						}
 					}
@@ -655,8 +693,18 @@ namespace ursine
 			auto totallength = lastFrame.length - firstFrame.length;
 			
 			auto delta = 1.0f / totallength;
-			frameIndex = static_cast<unsigned int>(roundf(ratio / delta));
-			const ursine::AnimationKeyframe& closest = state.GetAnimation()->GetKeyframe(frameIndex, 0);
+			auto sec = ratio / delta; // if total 4 second anime, ratio 1 means the momemt of 4 sec
+
+			// find the closest frame
+			float diff = totallength;
+			for (unsigned int i = 0; i < state.GetAnimation()->GetRigKeyFrameCount(); ++i)
+			{
+				if (fabs(sec - state.GetAnimation()->GetKeyframe(i, 0).length) < diff)
+				{
+					diff = fabs(sec - state.GetAnimation()->GetKeyframe(i, 0).length);
+					frameIndex = i;
+				}
+			}
 		}
 
 		StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
