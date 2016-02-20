@@ -33,6 +33,7 @@ public:
     CharacterController(void);
     ~CharacterController(void);
 
+    Meta(InputRange(0.0f, 15.0f, 0.01f))
     EditorField(
         float rotateSpeed,
         GetRotateSpeed,

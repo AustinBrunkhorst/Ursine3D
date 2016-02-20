@@ -25,6 +25,7 @@ class SpawnerGroup : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
     friend class SpawnerGroupSystem;
+    friend class SpawnPattern;
 
 public:
 
@@ -46,9 +47,13 @@ public:
     AIArchetype GetEnemyType(void) const;
     void SetEnemyType(AIArchetype enemyType);
 
+    int GetActiveEnemiesCount(void) const;
+
 private:
 
     AIArchetype m_enemyType;
+
+    int m_activeEnemies;
 
     std::unordered_map<AIArchetype, Spawner *> m_spawners;
 

@@ -25,6 +25,8 @@ namespace ursine
             : m_currentState( nullptr )
             , m_startingState( true )
             , m_userData( nullptr )
+            , m_transitionFound( false )
+            , m_nextState( nullptr )
         {
         }
 
@@ -32,9 +34,10 @@ namespace ursine
             : m_currentState( nullptr )
             , m_startingState( true )
             , m_userData( userData )
+            , m_transitionFound( false )
+            , m_nextState( nullptr )
         {
         }
-
 
         void StateMachine::Update(void)
         {
@@ -54,19 +57,53 @@ namespace ursine
                 m_currentState->OnUpdate( this );
             }
 
-            // Check for valid transition
-            auto &transitions = m_currentState->m_transitions;
-
-            for (auto &transition : transitions)
+            // If we've already found a transition, and am waiting on a state to finish
+            if (m_transitionFound)
             {
-                if (transition->CanTransition( this ))
+                if (m_currentState->CanExit( ))
                 {
-                    // We have a valid transition, end the current and start the new
                     m_currentState->OnExit( this );
-
-                    m_currentState = transition->GetDestination( );
+                    
+                    m_currentState = m_nextState;
                     m_startingState = true;
+
+                    m_transitionFound = false;
+                    m_nextState = nullptr;
                 }
+            }
+            else
+            {
+                // Check for valid transition
+                auto &transitions = m_currentState->m_transitions;
+
+                for (auto &transition : transitions)
+                {
+                    if (transition->CanTransition( this ))
+                    {
+                        // We've found a valid transition.  Can the state exit?
+                        if (!m_currentState->CanExit( ))
+                        {
+                            m_transitionFound = true;
+                            m_nextState = transition->GetDestination( );
+                        }
+                        else
+                        {
+                            // We have a valid transition, end the current and start the new
+                            m_currentState->OnExit( this );
+
+                            m_currentState = transition->GetDestination( );
+                            m_startingState = true;
+                        }
+                    }
+                }
+            }
+
+            // unset all triggers
+            for (auto &triggerName : m_triggers)
+            {
+                auto *variant = getVariable( triggerName );
+
+                *variant = false;
             }
         }
 
@@ -96,6 +133,8 @@ namespace ursine
         void StateMachine::AddTrigger(const std::string &triggerName)
         {
             m_variables[ triggerName ] = false;
+
+            m_triggers.push_back( triggerName );
         }
 
         bool StateMachine::GetTrigger(const std::string &triggerName)
@@ -160,6 +199,20 @@ namespace ursine
             UAssert( variant->GetType( ) == typeof(int), "Error: The expected type is missmatched." );
 
             *variant = value;
+        }
+
+        void StateMachine::RemoveVariable(const std::string &variableName)
+        {
+            m_variables.erase( m_variables.find( variableName ) );
+
+            for (size_t i = 0; i < m_triggers.size( ); ++i)
+            {
+                if (m_triggers[ i ] == variableName)
+                {
+                    m_triggers.erase( m_triggers.begin( ) + i );
+                    return;
+                }
+            }
         }
 
         void *StateMachine::GetUserData(void)

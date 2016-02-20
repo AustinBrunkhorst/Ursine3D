@@ -40,12 +40,16 @@ public:
 
     AIArchetype GetEnemyType(void) const;
 
+    int GetActiveEnemiesCount(void) const;
+
     void OnSerialize(ursine::Json::object &output) const override;
     void OnDeserialize(const ursine::Json &input) override;
 
 private:
 
     AIArchetype m_enemyType;
+
+    int m_activeEnemies;
 
     // This vector contains all active patterns
     std::vector<SpawnPatternContainer*> m_activePatterns;
