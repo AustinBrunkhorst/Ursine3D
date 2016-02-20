@@ -1,0 +1,100 @@
+@import '../Config';
+@import '../Utils';
+@import '../Icons';
+
+:host {
+  .columns {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+
+    > div {
+      height: 100%;
+    }
+
+    .left {
+      flex: 0 0 auto;
+    }
+
+    .right {
+      flex: 1 1 100%;
+    }
+  }
+
+  #folderTree {
+    width: 215px;
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    border-right: 1px solid #3f3f46;
+  }
+
+  #breadCrumbs {
+    height: 25px;
+    padding-left: 10px;
+    background: #3f3f46;
+
+    div {
+      display: inline-block;
+      height: 25px;
+      line-height: 25px;
+      padding: 0 5px;
+      vertical-align: middle;
+      font-size: 13px;
+      color: #ebebeb;
+      cursor: pointer;
+      transition: background $duration-transition-btn ease, color $duration-transition-btn ease;
+
+      @include icon-half( $icon-half-chevron-right, 12px, 'after' );
+
+      &:after {
+        display: inline-block;
+        padding: 0 5px;
+        color: #6f6f6f;
+      }
+
+      &:hover {
+        color: white;
+        background: $color-accent;
+      }
+
+      &:not(:first-of-type) {
+        margin-left: -8px;
+      }
+
+      &:last-of-type {
+        font-weight: bold;
+        color: white;
+        pointer-events: none;
+
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+::content {
+  x-tree-view-item {
+    .text-content {
+      display: inline-block;
+
+      @include icon-half( $icon-half-folder-close, 15px );
+
+      &:before {
+        display: inline-block !important;
+        padding: 0 6px 0 4px;
+        color: desaturate($color-accent, 50%);
+      }
+    }
+
+    &.opened {
+      > .text {
+        .text-content {
+          @include icon-half( $icon-half-folder-open, 15px );
+        }
+      }
+    }
+  }
+}

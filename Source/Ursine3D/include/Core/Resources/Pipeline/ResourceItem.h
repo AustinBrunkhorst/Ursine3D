@@ -13,6 +13,7 @@ namespace ursine
             {
             public:
                 typedef std::shared_ptr<ResourceItem> Handle;
+                typedef std::vector<Handle> List;
 
                 ResourceItem(const GUID &guid);
 

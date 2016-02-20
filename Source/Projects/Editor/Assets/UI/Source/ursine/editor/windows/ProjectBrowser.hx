@@ -1,10 +1,9 @@
 package ursine.editor.windows;
 
-import ursine.controls.TreeView;
-import ursine.controls.TreeViewItem;
+import ursine.native.Extern;
 
 class ProjectBrowser extends WindowHandler {
-    var m_explorer : TreeView;
+    var m_browser : ursine.controls.ProjectBrowser;
 
     public function new() {
         super( );
@@ -12,37 +11,10 @@ class ProjectBrowser extends WindowHandler {
         window.heading = "Project";
         window.classList.add( 'project-browser-window' );
 
-        initElements( );
-        initExplorer( );
-    }
+        m_browser = new ursine.controls.ProjectBrowser(
+            Extern.ProjectGetResourceTree( )
+        );
 
-    private function initElements() {
-        window.container.innerHTML = '
-            <div class="columns">
-                <div class="left"></div>
-                <div class="right>
-                    <div class="bread-crumbs"></div>
-                    <div class="folder-contents"></div>
-                </div>
-            </div>
-        ';
-    }
-
-    private function initExplorer() {
-        m_explorer = new TreeView( );
-        {
-            m_explorer.setAsRoot( true );
-            m_explorer.enableModification = false;
-
-            m_explorer.classList.add( 'explorer' );
-        }
-
-        var item = new TreeViewItem( );
-
-        item.text = 'Textures';
-
-        m_explorer.appendChild( item );
-
-        window.container.querySelector( '.columns .left' ).appendChild( m_explorer );
+        window.container.appendChild( m_browser );
     }
 }

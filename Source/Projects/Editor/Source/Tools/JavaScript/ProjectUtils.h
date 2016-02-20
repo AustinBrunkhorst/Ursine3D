@@ -17,3 +17,6 @@
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectGetName);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectGetResourceTree);

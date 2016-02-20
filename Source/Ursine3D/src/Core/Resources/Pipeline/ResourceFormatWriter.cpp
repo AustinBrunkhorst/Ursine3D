@@ -11,7 +11,7 @@ namespace ursine
 
     }
 
-    void rp::ResourceFormatWriter::Write(ResourceData::Handle resource)
+    void rp::ResourceFormatWriter::Write(resources::ResourceData::Handle resource)
     {
         auto &stream = m_writer.m_stream;
 

@@ -6,7 +6,7 @@ namespace ursine
 {
     rp::TextureProcessor::TextureProcessor(void) { }
 
-    resources::ResourceData::Handle rp::TextureProcessor::Process(ResourceData::Handle input, const ResourceProcessorContext &context)
+    resources::ResourceData::Handle rp::TextureProcessor::Process(resources::ResourceData::Handle input, const ResourceProcessorContext &context)
     {
         return input;
     }

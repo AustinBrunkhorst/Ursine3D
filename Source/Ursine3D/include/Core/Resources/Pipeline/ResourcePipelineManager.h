@@ -23,6 +23,8 @@ namespace ursine
                 const ResourcePipelineConfig &GetConfig(void) const;
                 void SetConfig(const ResourcePipelineConfig &config);
 
+                ResourceDirectoryNode *GetRootResourceDirectory(void);
+
                 void Build(void);
 
                 void InvalidateResourceMeta(ResourceItem::Handle resource);
@@ -43,22 +45,22 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
 
                 // scans the resource directory and registers all assets
-                void registerResources(void);
-                
-                // stores this directory name
-                void registerDirectory(const fs::path &fileName);
+                void registerResources(
+                    ResourceDirectoryNode *directory, 
+                    const fs::path &directoryName
+                );
 
                 // determines how to handle a resource
-                void registerResource(const fs::path &fileName);
+                ResourceItem::Handle registerResource(const fs::path &fileName);
 
                 // imports an existing resource (with existing meta file)
-                void addExistingResource(
+                ResourceItem::Handle addExistingResource(
                     const fs::path &fileName, 
                     const fs::path &metaFileName
                 );
 
                 // imports a resource with default options and writes the meta file
-                void addDefaultResource(
+                ResourceItem::Handle addDefaultResource(
                     const fs::path &fileName, 
                     const fs::path &metaFileName
                 );

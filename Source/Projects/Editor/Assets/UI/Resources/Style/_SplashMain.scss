@@ -1,19 +1,11 @@
 @import 'Config';
 
-@-webkit-keyframes logoAnimation {
-  0% {
-    opacity: 1;
-    -webkit-transform: scale(1);
+@-webkit-keyframes cubeGridScaleDelay {
+  0%, 70%, 100% {
+    -webkit-transform: scale3D(1, 1, 1);
   }
-
-  50% {
-    opacity: 0.65;
-    -webkit-transform: scale(0.90);
-  }
-
-  100% {
-    opacity: 1;
-    -webkit-transform: scale(1);
+  35% {
+    -webkit-transform: scale3D(0, 0, 1);
   }
 }
 
@@ -22,13 +14,63 @@
   border: 2px solid $color-accent;
 }
 
-#logo {
+.loader {
+  width: 134px;
+  height: 130px;
   margin: 0 auto;
-  display: block;
-  -webkit-animation-name: logoAnimation;
-  -webkit-animation-timing-function: ease;
-  -webkit-animation-duration: 700ms;
-  -webkit-animation-iteration-count: infinite;
+
+  .cube {
+    width: 33.333%;
+    height: 33.333%;
+    background: url(Images/BearKingLogo.png) no-repeat;
+    float: left;
+    -webkit-animation: cubeGridScaleDelay 1.3s infinite ease-in-out;
+  }
+
+  .cube1 {
+    background-position: 0 0;
+    -webkit-animation-delay: 0.2s;
+  }
+
+  .cube2 {
+    background-position: 49.3% 0;
+    -webkit-animation-delay: 0.3s;
+  }
+
+  .cube3 {
+    background-position: 98.6% 0;
+    -webkit-animation-delay: 0.4s;
+  }
+
+  .cube4 {
+    background-position: 0 49.3%;
+    -webkit-animation-delay: 0.1s;
+  }
+
+  .cube5 {
+    background-position: 49.3% 49.3%;
+    -webkit-animation-delay: 0.2s;
+  }
+
+  .cube6 {
+    background-position: 98.6% 49.3%;
+    -webkit-animation-delay: 0.3s;
+  }
+
+  .cube7 {
+    background-position: 0 98.6%;
+    -webkit-animation-delay: 0s;
+  }
+
+  .cube8 {
+    background-position: 49.3% 98.6%;
+    -webkit-animation-delay: 0.1s;
+  }
+
+  .cube9 {
+    background-position: 98.6% 98.6%;
+    -webkit-animation-delay: 0.2s;
+  }
 }
 
 #project-name {

@@ -647,11 +647,9 @@ ursine_editor_NativeCanvasWindowHandler.__name__ = ["ursine","editor","NativeCan
 ursine_editor_NativeCanvasWindowHandler.__super__ = ursine_editor_WindowHandler;
 ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 	forwardEvent: function(e) {
-		this.m_nativeHandler.Event(e.type,e);
 	}
 	,onViewportInvalidated: function() {
 		var bounds = this.window.container.getBoundingClientRect();
-		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left, y : bounds.top, width : bounds.width, height : bounds.height});
 	}
 	,__class__: ursine_editor_NativeCanvasWindowHandler
 });
@@ -1966,27 +1964,14 @@ var ursine_editor_windows_ProjectBrowser = function() {
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Project";
 	this.window.classList.add("project-browser-window");
-	this.initElements();
-	this.initExplorer();
+	this.m_browser = new ProjectBrowserControl(ursine_native_Extern.ProjectGetResourceTree());
+	this.window.container.appendChild(this.m_browser);
 };
 $hxClasses["ursine.editor.windows.ProjectBrowser"] = ursine_editor_windows_ProjectBrowser;
 ursine_editor_windows_ProjectBrowser.__name__ = ["ursine","editor","windows","ProjectBrowser"];
 ursine_editor_windows_ProjectBrowser.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHandler.prototype,{
-	initElements: function() {
-		this.window.container.innerHTML = "\r\n            <div class=\"columns\">\r\n                <div class=\"left\"></div>\r\n                <div class=\"right>\r\n                    <div class=\"bread-crumbs\"></div>\r\n                    <div class=\"folder-contents\"></div>\r\n                </div>\r\n            </div>\r\n        ";
-	}
-	,initExplorer: function() {
-		this.m_explorer = new TreeViewControl();
-		this.m_explorer.setAsRoot(true);
-		this.m_explorer.enableModification = false;
-		this.m_explorer.classList.add("explorer");
-		var item = new TreeViewItemControl();
-		item.text = "Textures";
-		this.m_explorer.appendChild(item);
-		this.window.container.querySelector(".columns .left").appendChild(this.m_explorer);
-	}
-	,__class__: ursine_editor_windows_ProjectBrowser
+	__class__: ursine_editor_windows_ProjectBrowser
 });
 var ursine_editor_windows_SceneOutline = function() {
 	this.m_selectedEntities = null;
@@ -2309,6 +2294,9 @@ ursine_native_Extern.CreateEntity = function() {
 };
 ursine_native_Extern.GetNativeComponentDatabase = function() {
 	return GetNativeComponentDatabase();
+};
+ursine_native_Extern.ProjectGetResourceTree = function() {
+	return ProjectGetResourceTree();
 };
 ursine_native_Extern.SceneGetRootEntities = function() {
 	return SceneGetRootEntities();

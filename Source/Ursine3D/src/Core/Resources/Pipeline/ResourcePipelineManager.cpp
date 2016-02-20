@@ -55,6 +55,13 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
+    rp::ResourceDirectoryNode *rp::ResourcePipelineManager::GetRootResourceDirectory(void)
+    {
+        return m_rootDirectory;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
     void rp::ResourcePipelineManager::Build(void)
     {
         if (!is_directory( m_config.resourceDirectory ))
@@ -63,10 +70,12 @@ namespace ursine
         if (!is_directory( m_config.buildDirectory ))
             create_directories( m_config.buildDirectory );
 
-        registerResources( );
+        m_rootDirectory->m_path = m_config.resourceDirectory;
+
+        registerResources( m_rootDirectory, m_config.resourceDirectory );
 
         m_buildWorkerThread = std::thread( 
-            &ResourcePipelineManager::buildResources, 
+            &ResourcePipelineManager::buildResources,
             this 
         );
 
@@ -99,23 +108,37 @@ namespace ursine
     // Registration
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::registerResources(void)
+    void rp::ResourcePipelineManager::registerResources(
+        ResourceDirectoryNode *directory, 
+        const fs::path &directoryName
+    )
     {
-        typedef fs::recursive_directory_iterator ResourceIterator;
-
         try
         {
-            ResourceIterator it( m_config.resourceDirectory );
-            ResourceIterator itEnd;
+            fs::directory_iterator it( directoryName );
+            fs::directory_iterator itEnd;
 
             for (; it != itEnd; ++it)
             {
                 auto &entry = *it;
 
                 if (is_directory( entry ))
-                    registerDirectory( entry );
+                {
+                    auto *subDirectory = 
+                        new ResourceDirectoryNode( directory, entry );
+
+                    directory->m_subDirectories.push_back( subDirectory );
+
+                    registerResources( subDirectory, entry );
+                }
                 else
-                    registerResource( entry );
+                {
+                    auto resource = registerResource( entry );
+
+                    // we skipped over this
+                    if (resource != nullptr)
+                        directory->m_resources.push_back( resource );
+                }
             }
         }
         catch(fs::filesystem_error &e)
@@ -126,14 +149,9 @@ namespace ursine
         }
     }
 
-    void rp::ResourcePipelineManager::registerDirectory(const fs::path &directoryName)
-    {
-                
-    }
-
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::registerResource(const fs::path &fileName)
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(const fs::path &fileName)
     {
         auto metaFileName = fileName;
 
@@ -142,14 +160,14 @@ namespace ursine
 
         // this resource is already configured
         if (exists( metaFileName ))
-            addExistingResource( fileName, metaFileName );
-        else
-            addDefaultResource( fileName, metaFileName );
+            return addExistingResource( fileName, metaFileName );
+
+        return addDefaultResource( fileName, metaFileName );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::addExistingResource(
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::addExistingResource(
         const fs::path &fileName, 
         const fs::path &metaFileName
     )
@@ -212,11 +230,13 @@ namespace ursine
         resource->m_metaData.importer = importerType;
         resource->m_metaData.processor = processorType;
         resource->m_metaData.processorOptions = metaDataJson[ kMetaKeyProcessorOptions ];
+
+        return resource;
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::addDefaultResource(
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::addDefaultResource(
         const fs::path &fileName, 
         const fs::path &metaFileName
     )
@@ -252,7 +272,7 @@ namespace ursine
         URSINE_TODO( "Determine default behavior." );
         // importer does not exist, ignore it.
         if (!importerType.IsValid( ))
-            return;
+            return nullptr;
 
         UAssert( importerType.GetDynamicConstructor( ).IsValid( ),
             "Importer '%s' does not have a default dynamic constructor.",
@@ -303,6 +323,8 @@ namespace ursine
         }
 
         InvalidateResourceMeta( resource );
+
+        return resource;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -374,6 +396,8 @@ namespace ursine
         Dispatch( RP_BUILD_COMPLETE, EventArgs::Empty );
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
     void rp::ResourcePipelineManager::buildResource(ResourceItem::Handle resource)
     {
         auto &meta = resource->m_metaData;
@@ -404,6 +428,8 @@ namespace ursine
 
         formatWriter.Write( processData );
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     bool rp::ResourcePipelineManager::buildIsInvalidated(ResourceItem::Handle resource)
     {

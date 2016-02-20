@@ -1,0 +1,110 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="TreeView.html">
+
+<dom-module id="x-project-browser">
+    <link rel="import" type="css" href="../Style/Controls/ProjectBrowser.css">
+    <template>
+        <div class="columns">
+            <div class="left">
+                <x-tree-view id="folderTree"></x-tree-view>
+            </div>
+            <div class="right">
+                <div id="breadCrumbs">
+                <template id="crumbRepeat" is="dom-repeat" items="{{crumbs}}" as="crumb">
+                    <div on-click="_onCrumbSelected">{{crumb}}</div>
+                </template>
+                </div>
+                <div id="folderContent"></div>
+            </div>
+        </div>
+    </template>
+    <script>
+        var ProjectBrowserControl = Polymer({
+            is: "x-project-browser",
+            properties: {
+                crumbs: {
+                    type: Array,
+                    value: [ ]
+                }
+            },
+            factoryImpl: function(treeRoot) {
+                this._buildTree( treeRoot );
+
+                this._resources = treeRoot;
+            },
+            created: function() {
+                this._lastSelectedTreeItem = null;
+            },
+            attached: function() {
+                this.$.folderTree.setAsRoot( true );
+                this.$.folderTree.enableModification = false;
+            },
+
+            _onTreeItemClick: function(item) {
+                if (this._lastSelectedTreeItem !== null)
+                    this._lastSelectedTreeItem.selected = false;
+
+                item.selected = true;
+
+                this._lastSelectedTreeItem = item;
+
+                this._browseDirectory( item.directoryData );
+            },
+            _onTreeItemDblClick: function(item) {
+                item.opened = !item.opened;
+            },
+            _onCrumbSelected: function(e) {
+                // @@@TODO:
+                return;
+
+                var index = this.get( 'crumbs' ).length - e.model.__data__.index - 1;
+
+                var absCrumbs = this._createDirectoryCrumbs(
+                    this._lastSelectedTreeItem.directoryData.path
+                );
+
+                for (var i = 0; i < index; ++i)
+                    absCrumbs.pop( );
+
+                this._browseDirectory( absCrumbs.join( '/' ) );
+            },
+
+            _buildTree: function(treeRoot) {
+                var viewRoot = this.$.folderTree;
+
+                for (var i = 0; i < treeRoot.subDirectories.length; ++i)
+                    this._buildDirectory( treeRoot.subDirectories[ i ], viewRoot );
+            },
+            _buildDirectory: function(directory, parent) {
+                var item = new TreeViewItemControl( );
+
+                item.text = directory.displayName;
+
+                item.directoryData = directory;
+
+                item.textElement.addEventListener( 'click', this._onTreeItemClick.bind( this, item ) );
+                item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
+
+                parent.appendChild( item );
+
+                for (var i = 0; i < directory.subDirectories.length; ++i)
+                    this._buildDirectory( directory.subDirectories[ i ], item.child );
+            },
+            _browseDirectory: function(directory) {
+                var relativeDir = this._getRelativeResourceDirectory( directory.path );
+                var crumbs = this._createDirectoryCrumbs( relativeDir );
+
+                this.set( 'crumbs', crumbs );
+            },
+
+            _createDirectoryCrumbs: function(directory) {
+                return directory.split( /\/|\\/ );
+            },
+            _getRelativeResourceDirectory: function(directory) {
+                var basePathLength = this._resources.path.length;
+
+                return directory.substr( basePathLength + 1 );
+            }
+        });
+    </script>
+</dom-module>
