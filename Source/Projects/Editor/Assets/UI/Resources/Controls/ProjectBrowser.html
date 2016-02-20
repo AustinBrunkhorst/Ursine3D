@@ -28,9 +28,11 @@
                 }
             },
             factoryImpl: function(treeRoot) {
-                this._buildTree( treeRoot );
-
                 this._resources = treeRoot;
+                this._pathToResourceEntry = { };
+                this._pathToDirectoryItem = { };
+
+                this._buildTree( treeRoot );
             },
             created: function() {
                 this._lastSelectedTreeItem = null;
@@ -40,13 +42,19 @@
                 this.$.folderTree.enableModification = false;
             },
 
+            browseDirectory: function(directoryPath) {
+                var entry = this._pathToResourceEntry[ directoryPath ];
+
+                if (!entry)
+                    return;
+
+                this._browseDirectory( entry );
+
+                this._selectDirectoryItem( this._pathToDirectoryItem[ directoryPath ] );
+            },
+
             _onTreeItemClick: function(item) {
-                if (this._lastSelectedTreeItem !== null)
-                    this._lastSelectedTreeItem.selected = false;
-
-                item.selected = true;
-
-                this._lastSelectedTreeItem = item;
+                this._selectDirectoryItem( item );
 
                 this._browseDirectory( item.directoryData );
             },
@@ -54,9 +62,6 @@
                 item.opened = !item.opened;
             },
             _onCrumbSelected: function(e) {
-                // @@@TODO:
-                return;
-
                 var index = this.get( 'crumbs' ).length - e.model.__data__.index - 1;
 
                 var absCrumbs = this._createDirectoryCrumbs(
@@ -66,7 +71,7 @@
                 for (var i = 0; i < index; ++i)
                     absCrumbs.pop( );
 
-                this._browseDirectory( absCrumbs.join( '/' ) );
+                this.browseDirectory( absCrumbs.join( '\\' ) );
             },
 
             _buildTree: function(treeRoot) {
@@ -76,6 +81,8 @@
                     this._buildDirectory( treeRoot.subDirectories[ i ], viewRoot );
             },
             _buildDirectory: function(directory, parent) {
+                this._pathToResourceEntry[ directory.path ] = directory;
+
                 var item = new TreeViewItemControl( );
 
                 item.text = directory.displayName;
@@ -89,12 +96,22 @@
 
                 for (var i = 0; i < directory.subDirectories.length; ++i)
                     this._buildDirectory( directory.subDirectories[ i ], item.child );
+
+                this._pathToDirectoryItem[ directory.path ] = item;
             },
-            _browseDirectory: function(directory) {
-                var relativeDir = this._getRelativeResourceDirectory( directory.path );
+            _browseDirectory: function(entry) {
+                var relativeDir = this._getRelativeResourceDirectory( entry.path );
                 var crumbs = this._createDirectoryCrumbs( relativeDir );
 
                 this.set( 'crumbs', crumbs );
+            },
+            _selectDirectoryItem: function(item) {
+                if (this._lastSelectedTreeItem !== null)
+                    this._lastSelectedTreeItem.selected = false;
+
+                item.selected = true;
+
+                this._lastSelectedTreeItem = item;
             },
 
             _createDirectoryCrumbs: function(directory) {
