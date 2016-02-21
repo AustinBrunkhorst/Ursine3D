@@ -67,6 +67,11 @@ namespace ursine
             // set unique ID for this model
             int overdrw = model.GetOverdraw() == true ? 1 : 0;
 
+            unsigned type = handle.Type_;
+
+            if (type == RENDERABLE_OVERDRAW)
+                type = 3;
+
             //             16                8
             mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
 

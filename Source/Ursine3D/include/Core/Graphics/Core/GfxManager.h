@@ -102,6 +102,8 @@ namespace ursine
 
             GfxInfo *gfxInfo;
 
+            BitmapFont m_font;
+
             //thred stuff
         private:
             struct threadData
@@ -168,7 +170,7 @@ namespace ursine
             std::vector<_DRAWHND> m_drawList;
             unsigned m_drawCount;
 
-            BitmapFont m_font;
+            
 
             //temp
             std::list<GfxHND> m_viewportList;

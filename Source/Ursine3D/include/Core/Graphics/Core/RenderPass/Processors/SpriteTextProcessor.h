@@ -29,6 +29,8 @@ namespace ursine
              bool cullOperation(_DRAWHND, Camera &currentCamera) override;
              void prepOperation(_DRAWHND, SMat4 &view, SMat4 &proj, Camera &currentCamera) override;
              void renderOperation(_DRAWHND handle, Camera &currentCamera) override;
+
+             void mapSpriteTextBuffer(_DRAWHND handle);
         };
     }
 }

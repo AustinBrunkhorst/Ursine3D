@@ -15,7 +15,7 @@
  
 #include "Editor.h" 
 #include "Project.h"         
-  
+   
 #include <Application.h>   
     
 #include <WindowManager.h>

@@ -645,17 +645,19 @@ namespace ursine
             RenderPass MainPipeline;
 
             // define the passes
-            RenderPass forwardPass("ForwardPass");
-            RenderPass billboardPass("BillboardPass");
-            LineRendererPass lineRenderPass(false);
-            LineRendererPass overdrawLinePass(true, "OverdrawLine");
-            RenderPass particlePass("ParticlePass");
-            RenderPass overdrawPass("overdrawPass");
+            RenderPass forwardPass( "ForwardPass" );
+            RenderPass billboardPass( "BillboardPass" );
+            LineRendererPass lineRenderPass( false );
+            LineRendererPass overdrawLinePass( true, "OverdrawLine" );
+            RenderPass particlePass( "ParticlePass" );
+            RenderPass overdrawPass( "OverdrawPass" );
+            RenderPass textPass( "SpriteTextPass" );
 
             // create processors
             auto *modelProcessor = new Model3DProcessor( );
             auto *billboardPorcessor = new Billboard2DProcessor( );
             auto *particleProcessor = new ParticleSystemProcessor( );
+            auto *textProcessor = new SpriteTextProcessor( );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>                      viewBuffer(SHADERTYPE_VERTEX);
@@ -666,6 +668,7 @@ namespace ursine
             
             GlobalGPUResource spriteModel(SHADER_SLOT_0, RESOURCE_MODEL);
             GlobalGPUResource particleModel(SHADER_SLOT_0, RESOURCE_MODEL);
+            GlobalGPUResource fontTexture(SHADER_SLOT_0, RESOURCE_TEXTURE);
 
             /////////////////////////////////////////////////////////
             // FORWARD PASS
@@ -781,7 +784,7 @@ namespace ursine
                 Set( DEPTH_STENCIL_OVERDRAW ).
                 Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                 Set( SAMPLER_STATE_WRAP_TEX ).
-                Set( RASTER_STATE_SOLID_BACKCULL ).
+                Set( RASTER_STATE_SOLID_NOCULL ).
                 Set( BLEND_STATE_COUNT ).
                 Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
 
@@ -789,6 +792,34 @@ namespace ursine
 
                 Accepts( RENDERABLE_OVERDRAW ).
                 Processes( modelProcessor ).
+            InitializePass( );
+
+            /////////////////////////////////////////////////////////
+            // SPRITE TEXT PASS
+            textPass.
+                 Set(
+                    {
+                        RENDER_TARGET_SWAPCHAIN,
+                        RENDER_TARGET_DEFERRED_NORMAL,
+                        RENDER_TARGET_DEFERRED_SPECPOW
+                    }
+                ).
+                Set( SHADER_SPRITE_TEXT ).
+                Set( DEPTH_STENCIL_MAIN ).
+                Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                Set( SAMPLER_STATE_WRAP_TEX ).
+                Set( RASTER_STATE_SOLID_NOCULL ).
+                Set( BLEND_STATE_COUNT ).
+                Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                AddResource( &viewBuffer ).
+                AddResource( &particleModel ).
+                AddResource( &invView ).
+                AddResource( &fontTexture ).
+
+                Accepts( RENDERABLE_SPRITE_TEXT ).
+                Processes( textProcessor ).
+                OverrideLayout(SHADER_OVERRIDE).
             InitializePass( );
 
             /////////////////////////////////////////////////////////
@@ -800,6 +831,7 @@ namespace ursine
                 AddPrePass( &lineRenderPass ).
                 AddPrePass( &overdrawLinePass ).
                 AddPrePass( &particlePass ).
+                AddPrePass( &textPass ).
             InitializePass( );
 
             /////////////////////////////////////////////////////////
@@ -816,6 +848,7 @@ namespace ursine
             viewBufferGeom.Update( cb );
             spriteModel.Update( modelManager->GetModelIDByName( "Sprite" ) );
             particleModel.Update( modelManager->GetModelIDByName( "ParticleIndices" ) );
+            fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
 
             pgb.cameraPosition = SVec4( currentCamera.GetPosition( ), 1 ).ToD3D( );
             pgb.cameraUp = SVec4( currentCamera.GetUp( ), 0 ).ToD3D( );
@@ -1662,6 +1695,7 @@ namespace ursine
                 switch ( type )
                 {
                 case RENDERABLE_MODEL3D:
+                case 3: // work around for overdraw, since bitfield only holds 4 values
                     m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityUniqueID();
                     break;
                 case RENDERABLE_BILLBOARD2D:
