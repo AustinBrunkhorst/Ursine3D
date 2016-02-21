@@ -6,20 +6,20 @@ namespace ursine
     {
         namespace pipeline
         {
-            typedef std::unordered_map<std::string, meta::Type> TypeMap;
+            typedef std::pair<meta::Type, meta::Type> TypePair;
+            typedef std::unordered_map<std::string, TypePair> TypePairMap;
 
             ///////////////////////////////////////////////////////////////////
             // Extensions
             ///////////////////////////////////////////////////////////////////
 
-            extern const char * const kResourceWorldExtension;
+            extern const char * const kResourceTypeWorldExtension;
 
             ///////////////////////////////////////////////////////////////////
             // Utility Functions
             ///////////////////////////////////////////////////////////////////
 
-            const TypeMap &GetBuiltInResourceImporters(void);
-            const TypeMap &GetBuiltInResourceProcessors(void);
+            const TypePairMap &GetBuiltInResourceHandlers(void);
         }
     }
 }

@@ -8,6 +8,8 @@
 #include "ResourceFormatWriter.h"
 #include "ResourceFormatConfig.h"
 
+#include "BuiltInResourceConfig.h"
+
 using namespace std::chrono;
 
 namespace ursine 
@@ -251,23 +253,40 @@ namespace ursine
         utils::MakeLowerCase( extension );
 
         meta::Type importerType;
+        meta::Type processorType;
 
-        const ResourceImporterConfig *importerConfig = nullptr;
+        auto &builtInHandlers = GetBuiltInResourceHandlers( );
 
-        // find the first importer that declares this extension
-        for (auto &type : importerTypes)
+        auto handlerSearch = builtInHandlers.find( extension );
+
+        // this extension is a built in resource, use the explicitly defined
+        // importer and processor
+        if (handlerSearch != builtInHandlers.end( ))
         {
-            auto &meta = type.GetMeta( );
+            std::tie( importerType, processorType ) = handlerSearch->second;
+        }
+        else
+        {
+            const ResourceImporterConfig *importerConfig = nullptr;
 
-            auto *config = meta.GetProperty<ResourceImporterConfig>( );
-
-            if (config && config->fileExtensions.Exists( extension ))
+            // find the first importer that declares this extension
+            for (auto &type : importerTypes)
             {
-                importerType = type;
-                importerConfig = config;
+                auto &meta = type.GetMeta( );
 
-                break;
+                auto *config = meta.GetProperty<ResourceImporterConfig>();
+
+                if (config && config->fileExtensions.Exists( extension ))
+                {
+                    importerType = type;
+                    importerConfig = config;
+
+                    break;
+                }
             }
+
+            if (importerConfig)
+                processorType = importerConfig->defaultProcessor;
         }
 
         URSINE_TODO( "Determine default behavior." );
@@ -280,25 +299,22 @@ namespace ursine
             importerType.GetName( ).c_str( )
         );
 
-        auto resource = allocateResource( fileName, metaFileName );
-
-        resource->m_metaData.importer = importerType;
-
-        auto processor = importerConfig->defaultProcessor;
-
-        UAssert( processor.IsValid( ),
+        UAssert( processorType.IsValid( ),
             "Importer '%s' specified an invalid processor.",
             importerType.GetName( ).c_str( )
         );
 
-        UAssert( processor.GetDynamicConstructor( ).IsValid( ),
+        UAssert( processorType.GetDynamicConstructor( ).IsValid( ),
             "Processor '%s' does not have a default dynamic constructor.",
-            processor.GetName( ).c_str( )
+            processorType.GetName( ).c_str( )
         );
 
-        resource->m_metaData.processor = processor;
+        auto resource = allocateResource( fileName, metaFileName );
 
-        auto &processorMeta = processor.GetMeta( );
+        resource->m_metaData.importer = importerType;
+        resource->m_metaData.processor = processorType;
+
+        auto &processorMeta = processorType.GetMeta( );
 
         auto *processorConfig = processorMeta.GetProperty<ResourceProcessorConfig>( );
 
@@ -309,7 +325,7 @@ namespace ursine
 
             UAssert( optionsType.IsValid( ),
                 "Processor '%s' specified invalid options type.",
-                processor.GetName( ).c_str( )
+                processorType.GetName( ).c_str( )
             );
 
             auto defaultOptions = optionsType.Create( );

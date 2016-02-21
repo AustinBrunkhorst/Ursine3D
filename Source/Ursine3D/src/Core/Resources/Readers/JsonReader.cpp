@@ -1,22 +1,18 @@
 #include "UrsinePrecompiled.h"
 
-#include "TextureReader.h"
-#include "TextureData.h"
+#include "JsonReader.h"
+#include "JsonData.h"
 
 namespace ursine
 {
     namespace resources
     {
-        TextureReader::TextureReader(void) { }
+        JsonReader::JsonReader(void) { }
 
-        ResourceData::Handle TextureReader::Read(ResourceReader &input)
+        ResourceData::Handle JsonReader::Read(ResourceReader &input)
         {
-            char poopyTexture[12];
-
-            input.ReadBytes( poopyTexture, 12 );
-
             // TODO:
-            return std::make_shared<TextureData>( );
+            return std::make_shared<JsonData>( );
         }
     }
 }

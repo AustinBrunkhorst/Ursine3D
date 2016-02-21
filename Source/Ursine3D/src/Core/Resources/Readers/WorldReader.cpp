@@ -1,22 +1,18 @@
 #include "UrsinePrecompiled.h"
 
-#include "TextureReader.h"
-#include "TextureData.h"
+#include "WorldReader.h"
+#include "WorldData.h"
 
 namespace ursine
 {
     namespace resources
     {
-        TextureReader::TextureReader(void) { }
+        WorldReader::WorldReader(void) { }
 
-        ResourceData::Handle TextureReader::Read(ResourceReader &input)
+        ResourceData::Handle WorldReader::Read(ResourceReader &input)
         {
-            char poopyTexture[12];
-
-            input.ReadBytes( poopyTexture, 12 );
-
             // TODO:
-            return std::make_shared<TextureData>( );
+            return std::make_shared<WorldData>( );
         }
     }
 }

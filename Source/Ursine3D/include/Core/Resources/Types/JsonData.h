@@ -4,12 +4,12 @@ namespace ursine
 {
     namespace resources
     {
-        class TextureData : public ResourceData
+        class JsonData : public ResourceData
         {
             RESOURCE_DATA;
 
         public:
-            TextureData(void) = default;
+            JsonData(void) = default;
 
         private:
             void Write(pipeline::ResourceWriter &output) override;

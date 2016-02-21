@@ -2,25 +2,19 @@
 
 #include "BuiltInResourceConfig.h"
 
+#include "JsonImporter.h"
+#include "WorldProcessor.h"
+
 namespace ursine
 {
-    const char * const rp::kResourceWorldExtension = "uworld";
+    const char * const rp::kResourceTypeWorldExtension = "uworld";
 
-    const rp::TypeMap &rp::GetBuiltInResourceImporters(void)
+    const rp::TypePairMap &rp::GetBuiltInResourceHandlers(void)
     {
-        static TypeMap importers {
-            { kResourceWorldExtension, typeof( JsonImporter ) }
+        static TypePairMap handlers {
+            { kResourceTypeWorldExtension, { typeof( JsonImporter ), typeof( WorldProcessor ) } }
         };
 
-        return importers;
-    }
-
-    const rp::TypeMap &rp::GetBuiltInResourceProcessors(void)
-    {
-        static TypeMap processors {
-            { kResourceWorldExtension, typeof( WorldProcessor ) }
-        };
-
-        return processors;
+        return handlers;
     }
 }

@@ -4,12 +4,12 @@ namespace ursine
 {
     namespace resources
     {
-        class TextureReader : public ResourceTypeReader
+        class WorldReader : public ResourceTypeReader
         {
             RESOURCE_TYPE_READER;
 
         public:
-            TextureReader(void);
+            WorldReader(void);
 
         private:
             ResourceData::Handle Read(ResourceReader &input) override;

@@ -4,18 +4,18 @@ namespace ursine
 {
     namespace resources
     {
-        class TextureReader : public ResourceTypeReader
+        class JsonReader : public ResourceTypeReader
         {
             RESOURCE_TYPE_READER;
 
         public:
-            TextureReader(void);
+            JsonReader(void);
 
         private:
             ResourceData::Handle Read(ResourceReader &input) override;
         } Meta(
             Enable,
-            DisplayName( "TextureReader" )
+            DisplayName( "JsonReader" )
         );
     }
 }

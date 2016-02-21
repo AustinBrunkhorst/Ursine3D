@@ -1,12 +1,12 @@
 #include "UrsinePrecompiled.h"
 
-#include "TextureProcessor.h"
+#include "WorldProcessor.h"
 
 namespace ursine
 {
-    rp::TextureProcessor::TextureProcessor(void) { }
+    rp::WorldProcessor::WorldProcessor(void) { }
 
-    resources::ResourceData::Handle rp::TextureProcessor::Process(resources::ResourceData::Handle input, const ResourceProcessorContext &context)
+    resources::ResourceData::Handle rp::WorldProcessor::Process(resources::ResourceData::Handle input, const ResourceProcessorContext &context)
     {
         return input;
     }

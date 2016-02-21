@@ -21,7 +21,7 @@ namespace ursine
                 Enable,
                 DisplayName( "TextureProcessor" ),
                 ResourceProcessorConfig( 
-                    typeof( ursine::resources::pipeline::TextureProcessorOptions )
+                    typeof( ursine::rp::TextureProcessorOptions )
                 )
             );
         }

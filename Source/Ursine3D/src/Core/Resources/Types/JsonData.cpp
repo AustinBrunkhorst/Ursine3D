@@ -1,20 +1,20 @@
 #include "UrsinePrecompiled.h"
 
-#include "TextureData.h"
-#include "TextureReader.h"
+#include "JsonData.h"
+#include "JsonReader.h"
 
 namespace ursine
 {
     namespace resources
     {
-        void TextureData::Write(pipeline::ResourceWriter &output)
+        void JsonData::Write(pipeline::ResourceWriter &output)
         {
             output << "PoopyTexture";
         }
 
-        meta::Type TextureData::GetReaderType(void)
+        meta::Type JsonData::GetReaderType(void)
         {
-            return typeof( TextureReader );
+            return typeof( JsonReader );
         }
     }
 }
