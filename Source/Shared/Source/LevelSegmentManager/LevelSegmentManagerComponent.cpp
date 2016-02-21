@@ -12,28 +12,33 @@
 
 #include "Precompiled.h"
 
-#include "LevelSegmentManager.h"
+#include "LevelSegmentManagerComponent.h"
 
 #include <KeyboardManager.h>
 
-ENTITY_SYSTEM_DEFINITION( LevelSegmentManager );
+NATIVE_COMPONENT_DEFINITION( LevelSegmentManager );
 
 using namespace ursine;
 using namespace ecs;
 
-LevelSegmentManager::LevelSegmentManager(World *world)
-    : EntitySystem( world )
+LevelSegmentManager::LevelSegmentManager(void)
+    : BaseComponent( )
     , m_segment( LevelSegments::Empty )
 {
 }
 
 LevelSegmentManager::~LevelSegmentManager(void)
 {
-    m_world->Listener( this )
+    GetOwner( )->GetWorld( )->Listener( this )
         .Off( WORLD_UPDATE, &LevelSegmentManager::onUpdate );
 }
 
-void LevelSegmentManager::SegmentTransition(LevelSegments segment)
+LevelSegments LevelSegmentManager::GetCurrentSegment(void) const
+{
+    return m_segment;
+}
+
+void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
 {
     m_segment = segment;
 
@@ -44,10 +49,10 @@ void LevelSegmentManager::SegmentTransition(LevelSegments segment)
     Dispatch( LevelSegmentManagerEvents::SegmentChanged, &args );
 }
 
-void LevelSegmentManager::OnAfterLoad(void)
+void LevelSegmentManager::OnInitialize(void)
 {
     // subscribe to update
-    m_world->Listener( this )
+    GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &LevelSegmentManager::onUpdate );
 
     // add and initialize all segment logic

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <EntitySystem.h>
+#include <Component.h>
 #include <EventDispatcher.h>
 
 #include "LevelSegments.h"
@@ -30,17 +30,24 @@ enum class LevelSegmentManagerEvents
 };
 
 class LevelSegmentManager 
-    : public ursine::ecs::EntitySystem
+    : public ursine::ecs::Component
     , public ursine::EventDispatcher<LevelSegmentManagerEvents>
 {
-    ENTITY_SYSTEM;
+    NATIVE_COMPONENT;
 
 public:
 
-    LevelSegmentManager(ursine::ecs::World *world);
+    EditorField(
+        LevelSegments currentSegment,
+        GetCurrentSegment,
+        SetCurrentSegment
+    );
+
+    LevelSegmentManager(void);
     ~LevelSegmentManager(void);
 
-    void SegmentTransition(LevelSegments segment);
+    LevelSegments GetCurrentSegment(void) const;
+    void SetCurrentSegment(LevelSegments segment);
 
 private:
 
@@ -49,7 +56,7 @@ private:
 
     LevelSegments m_segment;
 
-    void OnAfterLoad(void) override;
+    void OnInitialize(void) override;
 
     void initTutorialLogic(void);
     
@@ -73,4 +80,4 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-} Meta(Enable, AutoAddEntitySystem);
+} Meta(Enable);

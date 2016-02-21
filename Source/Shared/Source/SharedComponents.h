@@ -77,6 +77,9 @@
 //       Level Logic           //
 /////////////////////////////////
 
+#include "LevelSegmentManager/LevelSegmentManagerComponent.h"
+#include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
+
 #include "LevelSegmentManager/SegmentLogic/Misc/ElevatorLiftMoverComponent.h"
 
 /////////////////////////////////
