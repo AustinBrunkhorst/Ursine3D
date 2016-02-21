@@ -1,5 +1,6 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
 <link rel="import" href="TreeView.html">
+<link rel="import" href="ContextMenu.html">
 
 <dom-module id="x-project-browser">
     <link rel="import" type="css" href="../Style/Controls/ProjectBrowser.css">
@@ -9,15 +10,25 @@
                 <x-tree-view id="folderTree"></x-tree-view>
             </div>
             <div class="right">
-                <div id="breadCrumbs">
-                <template id="crumbRepeat" is="dom-repeat" items="{{crumbs}}" as="crumb">
-                    <div on-click="_onCrumbSelected">{{crumb}}</div>
-                </template>
+                <div class="contents-toolbar">
+                    <div id="breadCrumbs">
+                    <template id="crumbRepeat" is="dom-repeat" items="{{crumbs}}" as="crumb">
+                        <div on-click="_onCrumbSelected">{{crumb}}</div>
+                    </template>
+                    </div>
                 </div>
                 <div id="folderContent">
+                <template id="folderRepeat" is="dom-repeat" items="{{directoryFolders}}" as="folder">
+                    <div class="resource" on-dblclick="_onFolderDblClick" on-contextmenu="_onFolderContextMenu">
+                        <div class="thumbnail folder"></div>
+                        <div class="display-name">{{folder.displayName}}</div>
+                    </div>
+                </template>
                 <template id="resourceRepeat" is="dom-repeat" items="{{directoryResources}}" as="resource">
-                    <div class="resource" ext$="{{resource.extension}}">
-                        <img class="thumbnail" src="{{resource.sourceFile}}" on-error="_onResourceThumbnailError">
+                    <div class="resource" on-contextmenu="_onResourceContextMenu">
+                        <div class="thumbnail" ext$="{{resource.extension}}">
+                            <img src="{{resource.sourceFile}}" on-error="_onResourceThumbnailError">
+                        </div>
                         <div class="display-name">{{resource.displayName}}</div>
                     </div>
                 </template>
@@ -30,6 +41,10 @@
             is: "x-project-browser",
             properties: {
                 crumbs: {
+                    type: Array,
+                    value: [ ]
+                },
+                directoryFolders: {
                     type: Array,
                     value: [ ]
                 },
@@ -72,6 +87,17 @@
             _onTreeItemDblClick: function(item) {
                 item.opened = !item.opened;
             },
+            _onTreeItemContextMenu: function(item, e) {
+                var menu = new ContextMenuControl( );
+
+                var showInExplorer = menu.addItem( 'Show In Explorer', function() {
+                    ProcessOpen( item.directoryData.path, false );
+                }.bind( this ) );
+
+                showInExplorer.icon = 'folder-closed';
+
+                menu.open( e.clientX, e.clientY );
+            },
             _onCrumbSelected: function(e) {
                 var index = this.get( 'crumbs' ).length - e.model.__data__.index - 1;
 
@@ -84,8 +110,55 @@
 
                 this.browseDirectory( absCrumbs.join( '\\' ) );
             },
+            _onFolderDblClick: function(e) {
+                var folder = e.model.folder;
+
+                this._selectDirectoryItem( this._pathToDirectoryItem[ folder.path ] );
+                this._browseDirectory( folder );
+            },
+            _onFolderContextMenu: function(e) {
+                var menu = new ContextMenuControl( );
+
+                var folder = e.model.folder;
+
+                var showInExplorer = menu.addItem( 'Show In Explorer', function() {
+                    ProcessOpen( this._getFileDirectory( folder.path ), false );
+                }.bind( this ) );
+
+                showInExplorer.icon = 'folder-closed';
+
+                menu.open( e.clientX, e.clientY );
+            },
+            _onResourceContextMenu: function(e) {
+                var menu = new ContextMenuControl( );
+
+                var resource = e.model.resource;
+
+                var showInExplorer = menu.addItem( 'Show In Explorer', function() {
+                    ProcessOpen( this._getFileDirectory( resource.sourceFile ), false );
+                }.bind( this ) );
+
+                showInExplorer.icon = 'folder-closed';
+
+                var open = menu.addItem( 'Open', function() {
+                    ProcessOpen( resource.sourceFile, false );
+                }.bind( this ) );
+
+                open.icon = 'open-file';
+
+                menu.open( e.clientX, e.clientY );
+            },
             _onResourceThumbnailError: function(e) {
-                console.log( e.model );
+                var img = e.srcElement;
+                var thumbnail = img.parentNode;
+
+                // not sure why this happens
+                if (!thumbnail)
+                    return;
+
+                thumbnail.removeChild( img );
+
+                thumbnail.classList.add( 'default' );
             },
 
             _buildTree: function(treeRoot) {
@@ -105,6 +178,7 @@
 
                 item.textElement.addEventListener( 'click', this._onTreeItemClick.bind( this, item ) );
                 item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
+                item.textElement.addEventListener( 'contextmenu', this._onTreeItemContextMenu.bind( this, item ) );
 
                 parent.appendChild( item );
 
@@ -119,6 +193,7 @@
 
                 this.set( 'crumbs', crumbs );
 
+                this.set( 'directoryFolders', entry.subDirectories );
                 this.set( 'directoryResources', entry.resources );
             },
             _selectDirectoryItem: function(item) {
@@ -134,6 +209,9 @@
 
             _createDirectoryCrumbs: function(directory) {
                 return directory.split( /\/|\\/ );
+            },
+            _getFileDirectory: function(filename) {
+                return this._createDirectoryCrumbs( filename ).slice( 0, -1 ).join( '\\' );
             },
             _getRelativeResourceDirectory: function(directory) {
                 var basePathLength = this._resources.path.length;

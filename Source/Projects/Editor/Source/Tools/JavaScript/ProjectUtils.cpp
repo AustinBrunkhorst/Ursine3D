@@ -81,7 +81,7 @@ namespace
 
         return Json::object {
             { "guid", to_string( resource->GetGUID( ) ) },
-            { "displayName", sourceFile.filename( ).string( ) },
+            { "displayName", change_extension( sourceFile.filename( ), "" ).string( ) },
             { "sourceFile", sourceFile.string( ) },
             { "extension", sourceFile.extension( ).string( ) }
         };

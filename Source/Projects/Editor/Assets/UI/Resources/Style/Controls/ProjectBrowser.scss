@@ -2,6 +2,8 @@
 @import '../Utils';
 @import '../Icons';
 
+$toolbar-height: 25px;
+
 :host {
   .columns {
     display: flex;
@@ -9,6 +11,7 @@
     height: 100%;
 
     > div {
+      position: relative;
       height: 100%;
     }
 
@@ -18,6 +21,7 @@
 
     .right {
       flex: 1 1 100%;
+      padding-top: $toolbar-height;
     }
   }
 
@@ -29,17 +33,23 @@
     border-right: 1px solid #3f3f46;
   }
 
+  .contents-toolbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: $toolbar-height;
+    line-height: $toolbar-height;
+    vertical-align: middle;
+  }
+
   #breadCrumbs {
-    height: 25px;
     padding-left: 10px;
     background: #3f3f46;
 
     div {
       display: inline-block;
-      height: 25px;
-      line-height: 25px;
       padding: 0 5px;
-      vertical-align: middle;
       font-size: 13px;
       color: #ebebeb;
       cursor: pointer;
@@ -75,21 +85,88 @@
   }
 
   #folderContent {
-    width: 100%;
-    max-width: 100%;
     overflow: auto;
+    height: 100%;
+    padding: 15px;
+    white-space: normal;
 
     .resource {
       display: inline-block;
+      max-width: 105px;
+      height: 90px;
+      margin-bottom: 10px;
+      vertical-align: top;
+      cursor: pointer;
+      transition: background $duration-transition-btn ease;
+
+      &:hover {
+        background: #5a5a5a;
+
+        .thumbnail {
+          opacity: 0.5;
+        }
+      }
 
       .thumbnail {
         width: 64px;
         height: 64px;
+        margin: 0 auto;
+        padding: 5px;
+        transition: opacity $duration-transition-btn ease;
 
         img {
+          display: block;
           max-width: 100%;
           max-height: 100%;
+          margin: 0 auto;
+          border: 1px solid #4f4f4f;
+          box-shadow: 2px 2px 2px rgba(black, 0.75);
         }
+
+        &.default {
+          position: relative;
+          color: desaturate($color-accent, 25%);
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+          
+          @include icon-regular( $icon-regular-file, 54px );
+
+          &:before {
+            margin-left: -2px;
+          }
+
+          &:after {
+            position: absolute;
+            overflow: hidden;
+            left: 12px;
+            bottom: 8px;
+            right: 0;
+            display: block;
+            content: attr(ext);
+            text-transform: uppercase;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(black, 0.95);
+            color: white;
+          }
+        }
+
+        &.folder {
+          position: relative;
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-folder-closed, 54px );
+        }
+      }
+
+      .display-name {
+        overflow: hidden;
+        margin-top: 8px;
+        padding: 0 5px 2px 5px;
+        color: #e7e7e7;
+        font-size: 12px;
+        text-shadow: 0 0 4px black;
+        text-overflow: ellipsis;
+        text-align: center;
       }
     }
   }

@@ -149,6 +149,14 @@ x-main-menu, x-context-menu {
       &.file-save {
         @include icon-half( $icon-half-floppy-save, $context-menu-icon-size );
       }
+
+      &.open-file {
+        @include icon-half( $icon-half-open-file, $context-menu-icon-size );
+      }
+
+      &.folder-closed {
+        @include icon-half( $icon-half-folder-close, $context-menu-icon-size );
+      }
     }
   }
 }
