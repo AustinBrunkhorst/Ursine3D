@@ -72,8 +72,10 @@ namespace ursine
             if (type == RENDERABLE_OVERDRAW)
                 type = 3;
 
+            type = type & 0x3;
+
             //             16                8
-            mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
+            mdb.id = (handle.Index_) | (type << 12) | (overdrw << 15) | (1 << 11);
 
             // map buffer
             m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
