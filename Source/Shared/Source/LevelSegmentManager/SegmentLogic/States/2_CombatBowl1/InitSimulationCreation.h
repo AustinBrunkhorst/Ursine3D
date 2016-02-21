@@ -1,0 +1,25 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** InitSimulationCreation.h
+**
+** Author:
+** - Jordan Ellis - j.ellis@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** -------------------------------------------------------------------------*/
+
+#pragma once
+
+#include "SegmentLogicState.h"
+
+class InitSimulationCreation : public SegmentLogicState
+{
+public:
+
+    void Enter(SegmentLogicStateMachine *machine) override;
+    void Update(SegmentLogicStateMachine *machine) override;
+    void Exit(SegmentLogicStateMachine *machine) override;
+};

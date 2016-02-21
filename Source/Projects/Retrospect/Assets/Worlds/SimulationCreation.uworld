@@ -1,0 +1,1451 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Light": {
+".uid": 6, 
+"color": {
+"a": 1, 
+"b": 0.5, 
+"g": 0.5, 
+"r": 0.5
+}, 
+"intensity": 1, 
+"radius": 40, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 5, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 60, 
+"z": 0
+}
+}
+}, 
+"name": "Global Light"
+}, {
+"children": [], 
+"components": {
+"Camera": {
+".uid": 11, 
+"active": true, 
+"farPlane": 2500, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 10, 
+"rotation": {
+"w": 0.55478793382644653, 
+"x": 0.37848988175392151, 
+"y": 0.61204874515533447, 
+"z": -0.41755476593971252
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -62.218818664550781, 
+"y": 159.57565307617188, 
+"z": -4.7728772163391113
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 17, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 18, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 16, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 20, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 21, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 19, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 23, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 24, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 22, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 26, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 27, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 25, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.558712005615234, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"Transform": {
+".uid": 15, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "SimulationStartParticleEffect"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 29, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 30, 
+"dimensions": {
+"x": 5, 
+"y": 1, 
+"z": 5
+}
+}, 
+"Transform": {
+".uid": 28, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 16.540599822998047, 
+"y": 1, 
+"z": 20.413938522338867
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Plane"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Animator": {
+".uid": 43, 
+"animation": "", 
+"changeState": false, 
+"currentRig": "Player", 
+"currentState": "Player_Idle", 
+"futureState": "", 
+"loopAnimation": true, 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 44, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.20000000298023224, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
+"renderMask": 2, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 42, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 5.2394866543181706e-06
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 53, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "RightArm"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 54, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "LeftArm"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"FirePos": {
+".uid": 86
+}, 
+"Transform": {
+".uid": 85, 
+"rotation": {
+"w": 1, 
+"x": -2.9683229513466358e-05, 
+"y": 6.2286853790283203e-05, 
+"z": 3.7670073652407154e-05
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -0.80000001192092896, 
+"y": 1.7999999523162842, 
+"z": 11.300000190734863
+}
+}
+}, 
+"name": "FirePos"
+}, {
+"children": [], 
+"components": {
+"Animator": {
+".uid": 88, 
+"animation": "", 
+"changeState": false, 
+"currentRig": "Gun_Idle", 
+"currentState": "", 
+"futureState": "", 
+"loopAnimation": true, 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 89, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Gun_Idle", 
+"renderMask": 32, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 87, 
+"rotation": {
+"w": -0.58084952831268311, 
+"x": -0.45220023393630981, 
+"y": -0.50849312543869019, 
+"z": 0.44672945141792297
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -20.5, 
+"y": -4, 
+"z": -5.5999999046325684
+}
+}
+}, 
+"name": "Model"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 83, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"HitscanWeapon": {
+".uid": 84, 
+"Accuracy": 0.5, 
+"AlwaysDraw": true, 
+"ArchetypeToShoot": "BaseBullet.uatype", 
+"ClipSize": 10, 
+"CritModifier": 1, 
+"Damage": 10, 
+"DamageInterval": 1, 
+"DebugDraw": false, 
+"DelBulletOnCollision": true, 
+"DrawDuration": 0.20000000298023224, 
+"FireCount": 4, 
+"FireRate": 0.20000000298023224, 
+"MaxAmmoCount": 2147483647, 
+"MaxRange": 1000, 
+"ProjectileSpeed": 10, 
+"RaycastType": 0, 
+"RecoilAngle": 10, 
+"ReloadTime": 1, 
+"SpawnOffset": {
+"x": 3, 
+"y": -2.2000000476837158, 
+"z": -2
+}, 
+"SpreadFactor": 100, 
+"WeaponTier": 2
+}, 
+"Transform": {
+".uid": 82, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 3, 
+"y": -2.2000000476837158, 
+"z": -2
+}
+}
+}, 
+"name": "Weapoon"
+}
+], 
+"components": {
+"Audio Listener 3D": {
+".uid": 48, 
+"testing": []
+}, 
+"Camera": {
+".uid": 49, 
+"active": true, 
+"farPlane": 1000, 
+"fov": 60, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 1, 
+"renderMask": 1042, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 0.5
+}
+}, 
+"Transform": {
+".uid": 47, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 24.188358306884766, 
+"z": 0
+}
+}
+}, 
+"name": "Camera"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 32, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"CharacterController": {
+".uid": 33, 
+"deadZone": 0, 
+"deadZoneSnap": 0, 
+"rotateSpeed": 10
+}, 
+"CommandQueue": {
+".uid": 34
+}, 
+"CylinderCollider": {
+".uid": 35, 
+"height": 30, 
+"radius": 5
+}, 
+"InputController": {
+".uid": 36, 
+"UseKeyboard": false
+}, 
+"InteractionBay": {
+".uid": 37
+}, 
+"Inventory": {
+".uid": 38, 
+"LastStand": "P1HitScanWeapon.uatype", 
+"MeleeWeapon": "", 
+"PrimaryWeapon": "", 
+"SecondaryWeapon": "", 
+"StartWeapon": 0, 
+"m_currWeapon": 0
+}, 
+"PlayerID": {
+".uid": 39, 
+"PlayerId": 0
+}, 
+"Rigidbody": {
+".uid": 40, 
+"bodyFlag": 2, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 6.1500000953674316, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"SweptController": {
+".uid": 41, 
+"active": true, 
+"airAcceleration": 30, 
+"airDeceleration": 40, 
+"forwardEvents": true, 
+"gravity": 160, 
+"groundAcceleration": 200, 
+"groundDeceleration": 300, 
+"groundSnapDistance": 8, 
+"jumpCancelFactor": 0.5, 
+"jumpSpeed": 100, 
+"maxCeilingSlope": 43.5, 
+"maxFallSpeed": 180, 
+"maxGroundSlope": 42, 
+"maxMoveSpeed": 100, 
+"worldUp": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}
+}, 
+"Transform": {
+".uid": 31, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 0.40000000596046448, 
+"y": 0.40000000596046448, 
+"z": 0.40000000596046448
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 10.894201278686523
+}
+}
+}, 
+"name": "Player1 Archetype"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 45, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 46, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 55, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 56, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 57, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 58, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 59, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 60, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Animator": {
+".uid": 72, 
+"animation": "", 
+"changeState": false, 
+"currentRig": "Player", 
+"currentState": "Player_Idle", 
+"futureState": "", 
+"loopAnimation": true, 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 73, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.20000000298023224, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
+"renderMask": 8, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 71, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 80, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "RightArm"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 81, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "LeftArm"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"FirePos": {
+".uid": 94
+}, 
+"Transform": {
+".uid": 93, 
+"rotation": {
+"w": 1, 
+"x": -2.9683229513466358e-05, 
+"y": 6.2286853790283203e-05, 
+"z": 3.7670073652407154e-05
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -0.80000001192092896, 
+"y": 1.7999999523162842, 
+"z": 11.300000190734863
+}
+}
+}, 
+"name": "FirePos"
+}, {
+"children": [], 
+"components": {
+"Animator": {
+".uid": 96, 
+"animation": "", 
+"changeState": false, 
+"currentRig": "Gun_Idle", 
+"currentState": "", 
+"futureState": "", 
+"loopAnimation": true, 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 97, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Gun_Idle", 
+"renderMask": 16, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 95, 
+"rotation": {
+"w": -0.58084952831268311, 
+"x": -0.45220023393630981, 
+"y": -0.50849312543869019, 
+"z": 0.44672945141792297
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -20.5, 
+"y": -4, 
+"z": -5.5999999046325684
+}
+}
+}, 
+"name": "Model"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 91, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"HitscanWeapon": {
+".uid": 92, 
+"Accuracy": 0.5, 
+"AlwaysDraw": true, 
+"ArchetypeToShoot": "BaseBullet.uatype", 
+"ClipSize": 10, 
+"CritModifier": 1, 
+"Damage": 1, 
+"DamageInterval": 1, 
+"DebugDraw": false, 
+"DelBulletOnCollision": true, 
+"DrawDuration": 0.20000000298023224, 
+"FireCount": 4, 
+"FireRate": 0.20000000298023224, 
+"MaxAmmoCount": 2147483647, 
+"MaxRange": 1000, 
+"ProjectileSpeed": 10, 
+"RaycastType": 0, 
+"RecoilAngle": 10, 
+"ReloadTime": 1, 
+"SpawnOffset": {
+"x": 3, 
+"y": -2.2000000476837158, 
+"z": -2
+}, 
+"SpreadFactor": 100, 
+"WeaponTier": 2
+}, 
+"Transform": {
+".uid": 90, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 3, 
+"y": -2.2000000476837158, 
+"z": -2
+}
+}
+}, 
+"name": "Weapoon"
+}
+], 
+"components": {
+"Audio Listener 3D": {
+".uid": 75, 
+"testing": []
+}, 
+"Camera": {
+".uid": 76, 
+"active": true, 
+"farPlane": 1000, 
+"fov": 60, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 1, 
+"renderMask": 1064, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0.5
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 0.5
+}
+}, 
+"Transform": {
+".uid": 74, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 24.188358306884766, 
+"z": 0
+}
+}
+}, 
+"name": "Camera"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 62, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"CharacterController": {
+".uid": 63, 
+"deadZone": 0, 
+"deadZoneSnap": 0, 
+"rotateSpeed": 10
+}, 
+"CommandQueue": {
+".uid": 64
+}, 
+"CylinderCollider": {
+".uid": 65, 
+"height": 30, 
+"radius": 5
+}, 
+"InputController": {
+".uid": 66, 
+"UseKeyboard": false
+}, 
+"Inventory": {
+".uid": 67, 
+"LastStand": "P2HitScanWeapon.uatype", 
+"MeleeWeapon": "", 
+"PrimaryWeapon": "", 
+"SecondaryWeapon": "", 
+"StartWeapon": 0, 
+"m_currWeapon": 0
+}, 
+"PlayerID": {
+".uid": 68, 
+"PlayerId": 1
+}, 
+"Rigidbody": {
+".uid": 69, 
+"bodyFlag": 2, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 6.1500000953674316, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"SweptController": {
+".uid": 70, 
+"active": true, 
+"airAcceleration": 30, 
+"airDeceleration": 40, 
+"forwardEvents": true, 
+"gravity": 160, 
+"groundAcceleration": 200, 
+"groundDeceleration": 300, 
+"groundSnapDistance": 8, 
+"jumpCancelFactor": 0.5, 
+"jumpSpeed": 100, 
+"maxCeilingSlope": 45, 
+"maxFallSpeed": 180, 
+"maxGroundSlope": 43, 
+"maxMoveSpeed": 100, 
+"worldUp": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}
+}, 
+"Transform": {
+".uid": 61, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.40000000596046448, 
+"y": 0.40000000596046448, 
+"z": 0.40000000596046448
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": -10.894200325012207
+}
+}
+}, 
+"name": "Player2 Archetype"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 3, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 4, 
+"systems": []
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}
