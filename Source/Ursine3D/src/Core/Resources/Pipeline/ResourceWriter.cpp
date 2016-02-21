@@ -14,6 +14,13 @@ namespace ursine
 
                 return *this;
             }
+
+            ResourceWriter &ResourceWriter::Seek(size_t offset)
+            {
+                m_stream.seekp( offset );
+
+                return *this;
+            }
         }
     }
 }

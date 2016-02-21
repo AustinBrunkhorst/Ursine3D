@@ -251,6 +251,7 @@ namespace ursine
         utils::MakeLowerCase( extension );
 
         meta::Type importerType;
+
         const ResourceImporterConfig *importerConfig = nullptr;
 
         // find the first importer that declares this extension

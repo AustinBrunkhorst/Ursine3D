@@ -9,7 +9,10 @@ namespace ursine
         class ResourceReader
         {
         public:
+            char ReadByte(void);
             size_t ReadBytes(char *output, size_t count);
+
+            ResourceReader &Seek(size_t offset);
 
             template<typename T>
             ResourceReader &operator>>(T &output);

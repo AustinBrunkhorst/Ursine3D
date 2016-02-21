@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 
 #include "ResourceFormatConfig.h"
+#include "ResourceFormatReader.h"
 
 namespace ursine 
 {
@@ -34,7 +35,15 @@ namespace ursine
 
         ResourceData::Handle ResourceManager::loadResource(const GUID &guid)
         {
-            return nullptr;
+            auto fileName = getResourceFileName( guid );
+
+            // build doesn't exist
+            if (!exists( fileName ))
+                return nullptr;
+
+            ResourceFormatReader reader;
+
+            return reader.Read( fileName );
         }
 
         fs::path ResourceManager::getResourceFileName(const GUID &guid)

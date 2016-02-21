@@ -1,28 +1,26 @@
 #include "ResourceImporter.h"
 
-#include "TextureProcessor.h"
-
 namespace ursine
 {
     namespace resources
     {
         namespace pipeline
         {
-            class TextureImporter : public ResourceImporter
+            class JsonImporter : public ResourceImporter
             {
                 RESOURCE_IMPORTER;
 
             public:
-                TextureImporter(void);
+                JsonImporter(void);
 
             private:
                 ResourceData::Handle Import(const fs::path &fileName, const ResourceImportContext &context) override;
             } Meta(
                 Enable,
-                DisplayName( "TextureImporter" ),
+                DisplayName( "JsonImporter" ),
                 ResourceImporterConfig( 
-                    ExtensionList { "png", "jpg", "jpeg", "dds" },
-                    typeof( ursine::rp::TextureProcessor )
+                    ExtensionList { "json" },
+                    typeof( ursine::rp::PassThroughProcessor )
                 )
             );
         }

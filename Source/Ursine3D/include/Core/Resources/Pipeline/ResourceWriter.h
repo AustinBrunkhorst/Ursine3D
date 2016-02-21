@@ -13,6 +13,8 @@ namespace ursine
             public:
                 ResourceWriter &WriteBytes(const char *bytes, size_t count);
 
+                ResourceWriter &Seek(size_t offset);
+
                 template<typename T>
                 ResourceWriter &operator<<(const T &value);
 

@@ -57,7 +57,7 @@ namespace ursine
             auto readerType = meta::Type::GetFromName( readerTypeName );
 
             UAssert( readerType.IsValid( ),
-                "Unknown resource reader '%s'.\nfile: %s",
+                "Unknown resource reader '%s'.\nresource: %s",
                 readerTypeName.c_str( ),
                 fileName.c_str( )
             );
@@ -65,7 +65,7 @@ namespace ursine
             auto readerTypeCtor = readerType.GetDynamicConstructor( );
 
             UAssert( readerTypeCtor.IsValid( ),
-                "Resource reader '%s' is missing a default dynamic constructor.\nfile: %s",
+                "Resource reader '%s' is missing a default dynamic constructor.\nresource: %s",
                 readerType.GetName( ).c_str( ),
                 fileName.c_str( )
             );
