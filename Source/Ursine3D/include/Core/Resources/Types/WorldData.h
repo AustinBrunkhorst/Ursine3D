@@ -1,19 +1,22 @@
 #include "ResourceData.h"
 
+#include "World.h"
+
 namespace ursine
 {
     namespace resources
     {
-        class JsonData : public ResourceData
+        class WorldData : public ResourceData
         {
             RESOURCE_DATA;
 
         public:
-            JsonData(const Json &data);
+            WorldData(const Json &worldJson);
 
-            const Json &GetData(void) const;
+            ecs::World::Handle GetData(void);
+
         private:
-            Json m_data;
+            ecs::World::Handle m_data;
 
             void Write(pipeline::ResourceWriter &output) override;
 

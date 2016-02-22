@@ -25,7 +25,7 @@
                     </div>
                 </template>
                 <template id="resourceRepeat" is="dom-repeat" items="{{directoryResources}}" as="resource">
-                    <div class="resource" on-contextmenu="_onResourceContextMenu">
+                    <div class="resource" on-dblclick="_onResourceDblClick" on-contextmenu="_onResourceContextMenu">
                         <div class="thumbnail" ext$="{{resource.extension}}">
                             <img src="{{resource.sourceFile}}" on-error="_onResourceThumbnailError">
                         </div>
@@ -129,6 +129,11 @@
 
                 menu.open( e.clientX, e.clientY );
             },
+            _onResourceDblClick: function(e) {
+                this.fire( 'resource-dblclick', {
+                    resource: e.model.resource
+                } );
+            },
             _onResourceContextMenu: function(e) {
                 var menu = new ContextMenuControl( );
 
@@ -146,6 +151,11 @@
 
                 open.icon = 'open-file';
 
+                this.fire( 'resource-contextmenu', {
+                    resource: e.model.resource,
+                    menu: menu
+                } );
+
                 menu.open( e.clientX, e.clientY );
             },
             _onResourceThumbnailError: function(e) {
@@ -155,8 +165,6 @@
                 // not sure why this happens
                 if (!thumbnail)
                     return;
-
-                thumbnail.removeChild( img );
 
                 thumbnail.classList.add( 'default' );
             },
@@ -188,12 +196,23 @@
                 this._pathToDirectoryItem[ directory.path ] = item;
             },
             _browseDirectory: function(entry) {
+                if (this._lastBrowsedDirectory === entry.path)
+                    return;
+
+                this._lastBrowsedDirectory = entry.path;
+
                 var relativeDir = this._getRelativeResourceDirectory( entry.path );
                 var crumbs = this._createDirectoryCrumbs( relativeDir );
 
                 this.set( 'crumbs', crumbs );
 
                 this.set( 'directoryFolders', entry.subDirectories );
+
+                var defaultedThumbnails = this.querySelectorAll( '.thumbnail.default' );
+
+                for (var i = 0; i < defaultedThumbnails.length; ++i)
+                    defaultedThumbnails[ i ].classList.remove( 'default' );
+
                 this.set( 'directoryResources', entry.resources );
             },
             _selectDirectoryItem: function(item) {

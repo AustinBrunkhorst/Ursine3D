@@ -20,10 +20,13 @@
 
 #include "Notification.h"
 
+#include "WorldData.h"
+
 namespace ursine
 {
     Scene::Scene(void)
-        : m_playState( PS_EDITOR )
+        : EventDispatcher( this )
+        , m_playState( PS_EDITOR )
         , m_viewport( 0 )
         , m_activeWorld( nullptr )
     {
@@ -40,9 +43,29 @@ namespace ursine
         return m_activeWorld.get( );
     }
 
-    void Scene::SetActiveWorld(ecs::World *world)
+    void Scene::SetActiveWorld(ecs::World::Handle world)
     {
-        m_activeWorld = ecs::World::Handle( world );
+        m_activeWorld = world;
+
+        SceneWorldChangedArgs e( nullptr );
+
+        Dispatch( SCENE_WORLD_CHANGED, &e );
+    }
+
+    bool Scene::SetActiveWorld(const resources::ResourceReference &reference)
+    {
+        auto *worldData = reference.Load<resources::WorldData>( reference );
+
+        if (!worldData)
+            return false;
+
+        m_activeWorld = worldData->GetData( );
+
+        SceneWorldChangedArgs e( &reference );
+
+        Dispatch( SCENE_WORLD_CHANGED, &e );
+
+        return true;
     }
 
     graphics::GfxHND Scene::GetViewport(void) const

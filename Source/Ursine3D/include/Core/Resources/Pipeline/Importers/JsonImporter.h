@@ -1,5 +1,7 @@
 #include "ResourceImporter.h"
 
+#include "PassThroughProcessor.h"
+
 namespace ursine
 {
     namespace resources

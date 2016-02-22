@@ -12,12 +12,14 @@ namespace ursine
         {
         public:
             template<typename ResourceType>
-            ResourceType *Load(const ResourceReference &reference);
+            ResourceType *Load(const ResourceReference &reference) const;
+
+            const GUID &GetGUID(void) const;
 
         private:
             friend class ResourceManager;
 
-            ResourceManager *m_manager;
+            mutable ResourceManager *m_manager;
             GUID m_resourceGUID;
 
             ResourceReference(ResourceManager *manager, const GUID &resourceGUID);

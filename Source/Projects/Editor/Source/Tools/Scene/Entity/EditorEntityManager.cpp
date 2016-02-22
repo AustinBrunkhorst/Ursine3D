@@ -36,7 +36,7 @@ namespace
     {
         namespace scene
         {
-            const auto Reset = "Reset";
+            const auto WorldChanged = "WorldChanged";
         }
 
         namespace entity
@@ -61,19 +61,19 @@ namespace
 
 EditorEntityManager::EditorEntityManager(Project *project)
     : m_project( project )
-    , m_world( nullptr )
+    , m_activeWorld( nullptr )
 {
 
 }
 
 EditorEntityManager::~EditorEntityManager(void)
 {
-    clearWorld( m_world );
+    clearWorld( m_activeWorld );
 }
 
 void EditorEntityManager::SetWorld(ecs::World *world)
 {
-    clearWorld( m_world );
+    clearWorld( m_activeWorld );
 
     world->Listener( this )
         .On( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
@@ -85,7 +85,7 @@ void EditorEntityManager::SetWorld(ecs::World *world)
         .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
         .On( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 
-    m_world = world;
+    m_activeWorld = world;
 }
 
 void EditorEntityManager::RelayUIResetWorld(void)
@@ -106,7 +106,7 @@ void EditorEntityManager::clearWorld(ecs::World *world)
     if (!world)
         return;
 
-    world->Listener( this )
+    m_activeWorld->Listener( this )
         .Off( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
         .Off( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
@@ -115,6 +115,16 @@ void EditorEntityManager::clearWorld(ecs::World *world)
         .Off( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
         .Off( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
+
+     world->Listener( this )
+        .On( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
+        .On( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
+        .On( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
+        .On( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
+        .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
+        .On( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
+        .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
+        .On( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 }
 
 void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))

@@ -17,6 +17,8 @@
 #include "ResourceManager.h"
 #include "GFXAPIDefines.h"
 
+#include "SceneEvent.h"
+
 namespace ursine
 {
     class GfxAPI;
@@ -28,14 +30,16 @@ namespace ursine
         PS_PAUSED
     };
 
-    class Scene
+    class Scene : public EventDispatcher<SceneEventType>
     {
     public:
         Scene(void);
         ~Scene(void);
 
         ecs::World *GetActiveWorld(void);
-        void SetActiveWorld(ecs::World *world);
+
+        void SetActiveWorld(ecs::World::Handle world);
+        bool SetActiveWorld(const resources::ResourceReference &reference);
 
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);

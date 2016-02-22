@@ -15,6 +15,6 @@ namespace ursine
             void Write(pipeline::ResourceWriter &output) override;
 
             meta::Type GetReaderType(void) override;
-        } Meta(Enable);
+        } Meta(Register);
     }
 }

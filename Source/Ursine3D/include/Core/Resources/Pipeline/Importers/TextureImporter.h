@@ -21,7 +21,11 @@ namespace ursine
                 Enable,
                 DisplayName( "TextureImporter" ),
                 ResourceImporterConfig( 
-                    ExtensionList { "png", "jpg", "jpeg", "dds" },
+                    ExtensionList { 
+                        "bmp", "gif", "jpeg", "lbm",
+                        "pcx", "png", "pnm", "tga",
+                        "tiff", "webp", "xcf", "xpm", "xv"
+                    },
                     typeof( ursine::rp::TextureProcessor )
                 )
             );

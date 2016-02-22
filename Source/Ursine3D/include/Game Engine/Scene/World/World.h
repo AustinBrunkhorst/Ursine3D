@@ -52,7 +52,7 @@ namespace ursine
 
             // Creates an entity from an archetype file
             Entity *CreateEntityFromArchetype(
-                const std::string &fileName, 
+                const std::string &fileName,
                 const std::string &name = "Entity"
             );
 

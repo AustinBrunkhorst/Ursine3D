@@ -42,7 +42,7 @@ class SceneOutline extends WindowHandler {
         resetScene( );
 
         Editor.instance.broadcastManager.getChannel( 'SceneManager' )
-            .on( 'Reset', resetScene );
+            .on( 'WorldChanged', resetScene );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
             .on( EntityEvent.EntityAdded, onEntityAdded )

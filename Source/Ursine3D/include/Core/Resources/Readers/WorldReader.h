@@ -15,7 +15,7 @@ namespace ursine
             ResourceData::Handle Read(ResourceReader &input) override;
         } Meta(
             Enable,
-            DisplayName( "TextureReader" )
+            DisplayName( "WorldReader" )
         );
     }
 }

@@ -18,6 +18,8 @@
 #include <ResourcePipelineManager.h>
 #include <Scene.h>
 
+#include "EditorEntityManager.h"
+
 class Project
 {
 public:
@@ -42,4 +44,6 @@ private:
     ursine::resources::pipeline::ResourcePipelineManager m_resourcePipeline;
 
     ursine::Scene m_scene;
+
+    EditorEntityManager m_entityManager;
 };

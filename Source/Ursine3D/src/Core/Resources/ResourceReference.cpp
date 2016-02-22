@@ -11,5 +11,10 @@ namespace ursine
         ResourceReference::ResourceReference(ResourceManager *manager, const GUID &resourceGUID)
             : m_manager( manager )
             , m_resourceGUID( resourceGUID ) { }
+
+        const GUID &ResourceReference::GetGUID(void) const
+        {
+            return m_resourceGUID;
+        }
     }
 }

@@ -23,13 +23,9 @@ public:
     EditorEntityManager(Project *project);
     ~EditorEntityManager(void);
 
-    void SetWorld(ursine::ecs::World *world);
-
-	void RelayUIResetWorld(void);
-
 private:
     Project *m_project;
-    ursine::ecs::World *m_world;
+    ursine::ecs::World *m_activeWorld;
 
     void clearWorld(ursine::ecs::World *world);
 

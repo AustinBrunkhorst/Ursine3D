@@ -144,17 +144,32 @@ $toolbar-height: 25px;
             content: attr(ext);
             text-transform: uppercase;
             font-weight: bold;
+            font-size: 12px;
             text-shadow: 0 1px 2px rgba(black, 0.95);
             color: white;
+          }
+
+          img {
+            display: none;
           }
         }
 
         &.folder {
-          position: relative;
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
           @include icon-regular( $icon-regular-folder-closed, 54px );
+        }
+
+        &[ext=".uworld"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-globe, 54px );
+
+          &:after {
+            display: none;
+          }
         }
       }
 

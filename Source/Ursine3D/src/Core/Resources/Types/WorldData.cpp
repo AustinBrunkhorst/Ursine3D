@@ -1,0 +1,48 @@
+#include "UrsinePrecompiled.h"
+
+#include "WorldData.h"
+#include "WorldReader.h"
+
+#include "WorldSerializer.h"
+
+namespace ursine
+{
+    namespace resources
+    {
+        WorldData::WorldData(const Json &worldJson)
+        {
+            ecs::WorldSerializer serializer;
+
+            try
+            {
+                m_data = ecs::World::Handle( serializer.Deserialize( worldJson ) );
+            }
+            catch (...)
+            {
+                m_data = nullptr;
+            }
+        }
+
+        ecs::World::Handle WorldData::GetData(void)
+        {
+            return m_data;
+        }
+
+        void WorldData::Write(pipeline::ResourceWriter &output)
+        {
+            ecs::WorldSerializer serializer;
+
+            auto json = serializer.Serialize( m_data.get( ) );
+
+            auto jsonString = json.dump( false );
+
+            output << static_cast<uint64>( jsonString.length( ) );
+            output << jsonString;
+        }
+
+        meta::Type WorldData::GetReaderType(void)
+        {
+            return typeof( WorldReader );
+        }
+    }
+}
