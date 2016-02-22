@@ -232,9 +232,9 @@ namespace ursine
             }
         }
 
-        void StateMachine::SetStartingState(State *startingState)
+        void StateMachine::SetInitialState(State *initialState)
         {
-            m_currentState = startingState;
+            m_currentState = initialState;
         }
 
         State *StateMachine::addState(State::Handle state)

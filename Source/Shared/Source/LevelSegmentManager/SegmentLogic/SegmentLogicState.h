@@ -21,11 +21,14 @@ class SegmentLogicState : public ursine::sm::State
 {
 public:
 
+    SegmentLogicState(const std::string &name)
+        : State( name ) { }
+
     void OnEnter(ursine::sm::StateMachine *machine) override final;
     void OnUpdate(ursine::sm::StateMachine *machine) override final;
     void OnExit(ursine::sm::StateMachine *machine) override final;
 
-    virtual void Enter(SegmentLogicStateMachine *machine) = 0;
-    virtual void Update(SegmentLogicStateMachine *machine) = 0;
-    virtual void Exit(SegmentLogicStateMachine *machine) = 0;
+    virtual void Enter(SegmentLogicStateMachine *machine) { };
+    virtual void Update(SegmentLogicStateMachine *machine) { };
+    virtual void Exit(SegmentLogicStateMachine *machine) { };
 };

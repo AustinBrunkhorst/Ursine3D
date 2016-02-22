@@ -32,6 +32,7 @@
 /////////////////////////////////
 
 #include "PlayerLogic/PlayerIdComponent.h"
+#include "PlayerLogic/PlayerSpawnPointComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 
 /////////////////////////////////
@@ -78,6 +79,8 @@
 /////////////////////////////////
 
 #include "LevelSegmentManager/LevelSegmentManagerComponent.h"
+
+#include "LevelSegmentManager/SegmentResources/UnloadResourceComponent.h"
 #include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
 
 #include "LevelSegmentManager/SegmentLogic/Misc/ElevatorLiftMoverComponent.h"

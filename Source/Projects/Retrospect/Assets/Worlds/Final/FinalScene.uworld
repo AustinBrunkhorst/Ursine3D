@@ -1,0 +1,121 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Camera": {
+".uid": 6, 
+"active": true, 
+"farPlane": 2500, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 5, 
+"rotation": {
+"w": 0.65191411972045898, 
+"x": 0.26779794692993164, 
+"y": -0.65622085332870483, 
+"z": 0.26956713199615479
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 70.0296630859375, 
+"y": 69.215705871582031, 
+"z": 0.46110916137695313
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [], 
+"components": {
+"LevelSegmentManager": {
+".uid": 11, 
+"currentSegment": 1
+}, 
+"Transform": {
+".uid": 10, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"TutorialResources": {
+".uid": 12, 
+"archetypesToLoad": [
+"Tutorial/TutorialRoom", "Tutorial/TutorialPlayer1Spawn", "Tutorial/TutorialPlayer2Spawn"
+]
+}
+}, 
+"name": "LevelSegmentManager"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 3, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 4, 
+"systems": []
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}

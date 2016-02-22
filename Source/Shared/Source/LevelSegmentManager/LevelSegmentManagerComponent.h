@@ -76,7 +76,7 @@ private:
     SegmentLogicStateMachine::Handle createSegmentLogic(const std::string &name, LevelSegments segment);
 
     // Add logic to a segment given a segment and a state machine already created
-    void addSegmentLogic(LevelSegments segment, SegmentLogicStateMachine::Handle logic);
+    void addSegmentLogic(SegmentLogicStateMachine::Handle logic, std::vector<LevelSegments> segments);
 
     void onUpdate(EVENT_HANDLER(World));
 

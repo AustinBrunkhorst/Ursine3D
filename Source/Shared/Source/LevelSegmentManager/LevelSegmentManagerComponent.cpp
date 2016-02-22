@@ -14,7 +14,10 @@
 
 #include "LevelSegmentManagerComponent.h"
 
-#include <KeyboardManager.h>
+#include "InitializeSegmentState.h"
+#include "SpawnPlayersState.h"
+
+#include "TutorialResourcesComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( LevelSegmentManager );
 
@@ -73,6 +76,36 @@ void LevelSegmentManager::OnInitialize(void)
 
 void LevelSegmentManager::initTutorialLogic(void)
 {
+    auto resources = GetOwner( )->GetComponent<TutorialResources>( );
+
+    // Create a state machine that initializes the scene
+    auto sm = std::make_shared<SegmentLogicStateMachine>( "Init Tutorial", this );
+
+    auto initState = sm->AddState<InitializeSegmentState>( 
+        "Init Tutorial", 
+        resources->archetypesToLoad, 
+        LevelSegments::CB1_SimulationStartCinematic
+    );
+
+    auto playerCreateState = sm->AddState<SpawnPlayersState>( "Init Players" );
+
+    initState->AddTransition<sm::Transition>( playerCreateState, "Go To Init Players" );
+
+    sm->SetInitialState( initState );
+
+    addSegmentLogic( sm, {
+        LevelSegments::Tut_OpeningCinematic,
+        LevelSegments::Tut_MovementTutorial,
+        LevelSegments::Tut_SoloTriggerTutorial,
+        LevelSegments::Tut_WeaponPickupTutorial,
+        LevelSegments::Tut_HipFireTutorial,
+        LevelSegments::Tut_AimFireTutorial,
+        LevelSegments::Tut_AmmoPickupTutorial,
+        LevelSegments::Tut_ShootMovingTargetsTutorial,
+        LevelSegments::Tut_ReviveTutorial,
+        LevelSegments::Tut_SimultaneousTriggerTutorial,
+        LevelSegments::Tut_SimulationCreationCinematic
+    } );
 }
 
 void LevelSegmentManager::initCombatBowl1Logic(void)
@@ -116,9 +149,10 @@ SegmentLogicStateMachine::Handle LevelSegmentManager::createSegmentLogic(const s
     return sm;
 }
 
-void LevelSegmentManager::addSegmentLogic(LevelSegments segment, SegmentLogicStateMachine::Handle logic)
+void LevelSegmentManager::addSegmentLogic(SegmentLogicStateMachine::Handle logic, std::vector<LevelSegments> segments)
 {
-    m_segmentLogic[ segment ].push_back( logic );
+    for (auto &segment : segments)
+        m_segmentLogic[ segment ].push_back( logic );
 }
 
 void LevelSegmentManager::onUpdate(EVENT_HANDLER(World))

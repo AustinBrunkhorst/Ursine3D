@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** SegmentLogicState.h
+** TransitionToCB1State.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,17 +13,12 @@
 
 #pragma once
 
-#include <Component.h>
-#include <Array.h>
+#include "SegmentLogicState.h"
 
-class TutorialResources : public ursine::ecs::Component
+class SimulationCreationCinematicState : public SegmentLogicState
 {
-    NATIVE_COMPONENT;
-
 public:
 
-    TutorialResources(void);
+    void Enter(SegmentLogicStateMachine *machine) override;
 
-    ursine::Array<std::string> archetypesToLoad;
-
-} Meta(Enable);
+};

@@ -65,7 +65,7 @@ namespace ursine
             void RemoveState(State *state);
 
             // Starting state;
-            void SetStartingState(State *startingState);
+            void SetInitialState(State *startingState);
 
         protected:
             // A map of global variables [name, value]

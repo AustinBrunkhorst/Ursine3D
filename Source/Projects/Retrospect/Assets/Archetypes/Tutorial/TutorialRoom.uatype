@@ -1,125 +1,10 @@
 {
-"entities": [
+"children": [
 {
 "children": [], 
 "components": {
-"Light": {
-".uid": 6, 
-"color": {
-"a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
-}, 
-"intensity": 1, 
-"radius": 500, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 5, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 60, 
-"z": 0
-}
-}
-}, 
-"name": "Global Light"
-}, {
-"children": [], 
-"components": {
-"Camera": {
-".uid": 11, 
-"active": true, 
-"farPlane": 2500, 
-"fov": 45, 
-"nearPlane": 0.10000000149011612, 
-"renderLayer": 0, 
-"renderMask": 0, 
-"renderMode": 1, 
-"viewportPosition": {
-"x": 0, 
-"y": 0
-}, 
-"viewportSize": {
-"x": 1, 
-"y": 1
-}
-}, 
-"Transform": {
-".uid": 10, 
-"rotation": {
-"w": 0.45888584852218628, 
-"x": 0.17153738439083099, 
-"y": 0.81659048795700073, 
-"z": -0.30525189638137817
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": -49.078952789306641, 
-"y": 105.00684356689453, 
-"z": -77.196395874023438
-}
-}
-}, 
-"name": "Editor Camera"
-}, {
-"children": [], 
-"components": {
-"LevelSegmentManager": {
-".uid": 129, 
-"currentSegment": 76
-}, 
-"Transform": {
-".uid": 127, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"TutorialResources": {
-".uid": 130, 
-"archetypesToLoad": []
-}
-}, 
-"name": "LevelSegmentManager"
-}, {
-"children": [], 
-"components": {
 "Body": {
-".uid": 359, 
+".uid": 18, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -129,7 +14,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 360, 
+".uid": 19, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -137,7 +22,7 @@
 }
 }, 
 "Model3D": {
-".uid": 591, 
+".uid": 20, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -154,7 +39,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 358, 
+".uid": 17, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0.70710676908493042, 
@@ -167,9 +52,9 @@
 "z": 300
 }, 
 "translation": {
-"x": 4.1221637725830078, 
-"y": 95.342491149902344, 
-"z": 115.51976013183594
+"x": 4.1221632957458496, 
+"y": 95.342483520507813, 
+"z": 115.51975250244141
 }
 }
 }, 
@@ -178,7 +63,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 779, 
+".uid": 22, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -188,7 +73,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 780, 
+".uid": 23, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -196,7 +81,7 @@
 }
 }, 
 "Model3D": {
-".uid": 781, 
+".uid": 24, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -213,7 +98,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 778, 
+".uid": 21, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -226,9 +111,9 @@
 "z": 300
 }, 
 "translation": {
-"x": 143.77543640136719, 
-"y": 93.403762817382813, 
-"z": -25.29345703125
+"x": 143.77542114257813, 
+"y": 93.403755187988281, 
+"z": -25.293455123901367
 }
 }
 }, 
@@ -237,7 +122,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 921, 
+".uid": 26, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -247,7 +132,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 922, 
+".uid": 27, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -255,7 +140,7 @@
 }
 }, 
 "Model3D": {
-".uid": 923, 
+".uid": 28, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -272,7 +157,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 920, 
+".uid": 25, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0.70710676908493042, 
@@ -285,9 +170,9 @@
 "z": 300
 }, 
 "translation": {
-"x": -1.7840375900268555, 
-"y": 96.195350646972656, 
-"z": -163.686767578125
+"x": -1.7840374708175659, 
+"y": 96.195343017578125, 
+"z": -163.68675231933594
 }
 }
 }, 
@@ -296,7 +181,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 1112, 
+".uid": 30, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -306,7 +191,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 1113, 
+".uid": 31, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -314,7 +199,7 @@
 }
 }, 
 "Model3D": {
-".uid": 1114, 
+".uid": 32, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -331,7 +216,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 1111, 
+".uid": 29, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -344,9 +229,9 @@
 "z": 300
 }, 
 "translation": {
-"x": -140.98713684082031, 
-"y": 93.403762817382813, 
-"z": -25.29345703125
+"x": -140.98712158203125, 
+"y": 93.403755187988281, 
+"z": -25.293455123901367
 }
 }
 }, 
@@ -355,7 +240,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 1313, 
+".uid": 34, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -365,7 +250,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 1314, 
+".uid": 35, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -373,7 +258,7 @@
 }
 }, 
 "Model3D": {
-".uid": 1315, 
+".uid": 36, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -390,7 +275,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 1312, 
+".uid": 33, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -403,9 +288,9 @@
 "z": 300
 }, 
 "translation": {
-"x": 4.0554704666137695, 
-"y": 230.21965026855469, 
-"z": -24.712856292724609
+"x": 4.0554699897766113, 
+"y": 230.21963500976563, 
+"z": -24.712854385375977
 }
 }
 }, 
@@ -414,7 +299,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 1436, 
+".uid": 38, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -424,7 +309,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 1437, 
+".uid": 39, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -432,7 +317,7 @@
 }
 }, 
 "Model3D": {
-".uid": 1438, 
+".uid": 40, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -449,7 +334,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 1435, 
+".uid": 37, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -462,9 +347,9 @@
 "z": 300
 }, 
 "translation": {
-"x": 4.05548095703125, 
-"y": -36.0079345703125, 
-"z": -20.831058502197266
+"x": 4.0554804801940918, 
+"y": -10.300000190734863, 
+"z": -20.831056594848633
 }
 }
 }, 
@@ -473,7 +358,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 1628, 
+".uid": 42, 
 "color": {
 "a": 1, 
 "b": 0.5, 
@@ -490,7 +375,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 1627, 
+".uid": 41, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0.70710676908493042, 
@@ -504,7 +389,7 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 60, 
+"y": 59.999996185302734, 
 "z": 0
 }
 }
@@ -514,7 +399,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 1661, 
+".uid": 47, 
 "color": {
 "a": 1, 
 "b": 0.5, 
@@ -531,12 +416,12 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 1660, 
+".uid": 46, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 1, 
-"y": -0, 
-"z": -0
+"y": 0, 
+"z": 0
 }, 
 "scale": {
 "x": 0.58947008848190308, 
@@ -545,7 +430,7 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 60, 
+"y": 59.999996185302734, 
 "z": 0
 }
 }
@@ -555,7 +440,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 1690, 
+".uid": 52, 
 "color": {
 "a": 1, 
 "b": 0.5, 
@@ -572,7 +457,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 1689, 
+".uid": 51, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": -0.70710676908493042, 
@@ -586,7 +471,7 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 60, 
+"y": 59.999996185302734, 
 "z": 0
 }
 }
@@ -596,7 +481,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 1700, 
+".uid": 57, 
 "color": {
 "a": 1, 
 "b": 0.5, 
@@ -613,7 +498,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 1699, 
+".uid": 56, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -627,7 +512,7 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 60, 
+"y": 59.999996185302734, 
 "z": 0
 }
 }
@@ -637,7 +522,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 1708, 
+".uid": 62, 
 "color": {
 "a": 1, 
 "b": 0.5, 
@@ -654,7 +539,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 1707, 
+".uid": 61, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -668,29 +553,58 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 60, 
+"y": 59.999996185302734, 
 "z": 0
 }
 }
 }, 
 "name": "Global Light  (2)"
-}
-], 
-"settings": {
+}, {
 "children": [], 
 "components": {
-"PhysicsSettings": {
-".uid": 3, 
-"enableDebugDraw": true, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
+"Light": {
+".uid": 67, 
+"color": {
+"a": 1, 
+"b": 0.5, 
+"g": 0.5, 
+"r": 0.5
 }, 
-"playmodeDebugDraw": false
+"intensity": 1, 
+"radius": 500, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
 }, 
 "Transform": {
-".uid": 2, 
+".uid": 66, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 59.999996185302734, 
+"z": 0
+}
+}
+}, 
+"name": "Global Light"
+}
+], 
+"components": {
+"Transform": {
+".uid": 16, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -707,13 +621,7 @@
 "y": 0, 
 "z": 0
 }
-}, 
-"WorldConfig": {
-".uid": 4, 
-"systems": []
 }
 }, 
-"name": "World Settings"
-}, 
-"v": "0.0"
+"v": "0.2submission"
 }
