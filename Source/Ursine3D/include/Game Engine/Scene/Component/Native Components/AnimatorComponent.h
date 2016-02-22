@@ -25,55 +25,8 @@
 namespace ursine
 {
 	namespace ecs
-	{
-		// not implemented yet
-		class AnimationClip
-		{
-		public:
-			enum MaskBlendMode
-			{
-				MASKBLEND_OVERRIDE = 0, // only override for now, can't blend multiple masks
-				MASKBLEND_COUNT
-			};
-
-		public:
-			const std::string &GetName(void) const;
-			void SetName(const std::string &name);
-
-			float GetStartTime(void) const;
-			void SetStartTime(const float startTime);
-
-			float GetEndTime(void) const;
-			void SetEndTime(const float endTime);
-
-			bool IsLooping(void);
-			bool SetLooping(const bool looping);
-
-			MaskBlendMode GetMaskBlendingMode(void) const;
-			void SetMaskBlendingMode(const MaskBlendMode mode);
-
-			ursine::AnimationState &GetAnimationState(void);
-			void SetAnimationState(const ursine::AnimationState &state);
-
-		private:
-			// name of this clip
-			std::string m_name;
-
-			// start time in the animation
-			float m_start;
-
-			// end time in the animation
-			float m_end;
-
-			// should we loop playing?
-			bool m_looping;
-
-			// how should we blend when applying multiple masks?
-			MaskBlendMode m_maskBlendMode;
-
-			// the animation state for this clip
-			ursine::AnimationState m_animationState;
-		};
+	{		
+		class Animator;
 
 		class StateBlender
 		{
@@ -143,8 +96,6 @@ namespace ursine
 			unsigned int m_ctrnsFrm;
 			unsigned int m_ftrnsFrm;
 
-			//const AnimationState* m_cstState;
-			//const AnimationState* m_fstState;
 		} Meta(
 			Enable,
 			EnableArrayType,
@@ -157,9 +108,16 @@ namespace ursine
 			NATIVE_COMPONENT;
 
 		public:
+
 			EditorButton(
 				ImportAnimation,
 				"Import Animation"
+			);
+
+			EditorField(
+				std::string StateMachineName,
+				GetStMachineName,
+				SetStMachineName
 			);
 
 			EditorField(
@@ -241,6 +199,9 @@ namespace ursine
 			float GetTimeScalar(void) const;
 			void SetTimeScalar(const float scalar);
 
+			const std::string &GetStMachineName(void) const;
+			void SetStMachineName(const std::string &stm);
+
 			const std::string &GetRig(void) const;
 			void SetRig(const std::string &rig);
 			
@@ -274,12 +235,16 @@ namespace ursine
 			// => save both Arrays
 			// => when load model, don't just load these, but should also load the animation if it doesn't exist
 
+			void OnSerialize(ursine::Json::object &output) const override;
+			void OnDeserialize(const ursine::Json &intput) override;
+
 		private:
 			bool m_playing;
 			bool m_looping;
 			bool m_debug;
 			bool m_changeState;
 			float m_speedScalar;
+			std::string m_StateMachineName;
 			std::string m_Rig;
 			std::string m_currentStateName;
 			std::string m_futureStateName;
@@ -295,5 +260,5 @@ namespace ursine
 			Enable, 
 			RequiresComponents(typeof(ursine::ecs::Model3D)),
 			DisplayName("Animator"));
-	}
+		}
 }

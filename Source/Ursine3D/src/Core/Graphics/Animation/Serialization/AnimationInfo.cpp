@@ -26,6 +26,12 @@ namespace ursine
 				keyframes.clear();
 			}
 
+			AnimInfo::AnimInfo() 
+				: name("")
+				, animCount(0)
+				, ISerialize() 
+			{}
+
 			AnimInfo::~AnimInfo()
 			{
 				ReleaseData();

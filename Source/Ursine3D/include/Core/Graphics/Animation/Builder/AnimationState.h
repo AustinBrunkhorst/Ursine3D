@@ -93,7 +93,6 @@ namespace ursine
 		void SetTransPosition(const float& tPos);
 		
 	private:
-		//current runtime
 		std::string m_name;
 		//time position to play animation
 		float m_timePos;

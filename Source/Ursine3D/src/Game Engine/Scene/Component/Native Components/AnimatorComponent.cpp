@@ -32,9 +32,8 @@ namespace ursine
 			, m_ftrnsRate(0.f)
 			, m_ctrnsFrm(0)
 			, m_ftrnsFrm(0)
-			//, m_cstState(nullptr)
-			//, m_fstState(nullptr)
-		{}
+		{
+		}
 
 		const std::string &StateBlender::GetcurrState(void) const
 		{
@@ -335,6 +334,16 @@ namespace ursine
 			m_animationName = name;
 		}
 
+		const std::string &Animator::GetStMachineName(void) const
+		{
+			return m_StateMachineName;
+		}
+
+		void Animator::SetStMachineName(const std::string &stm)
+		{
+			m_StateMachineName = stm;
+		}
+
 		const std::string &Animator::GetRig() const
 		{
 			return m_Rig;
@@ -427,7 +436,7 @@ namespace ursine
 
 				config.type = NOTIFY_WARNING;
 				config.header = "Warning";
-				config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
+				config.message = "This action will delete all of the Animation List's children. Continue?";
 				config.dismissible = false;
 				config.duration = 0;
 
@@ -734,6 +743,7 @@ namespace ursine
 		StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
 		{
 			NotificationConfig config;
+
 			config.type = NOTIFY_WARNING;
 			config.header = "Warning";
 			config.message = "There is no matching State Blender in the list";
@@ -742,7 +752,6 @@ namespace ursine
 
 			if (currst == "" || futst == "")
 			{
-				//EditorPostNotification(config);
 				return nullptr;
 			}
 
@@ -755,7 +764,6 @@ namespace ursine
 			//EditorPostNotification(config);
 			return nullptr;
 		}
-
 
 		// Question
 		// I'm trying to add/remove entity by StateArray.

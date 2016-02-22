@@ -31,7 +31,7 @@ bomber.8.0.mdl Bomber
 #romekolezyum.fbx remeko
 
 # Player Animations
-Player1_Idle.fbx Player1
+#Player1_Idle.fbx Player1
 #Player1_Die.fbx Player_Die
 #Player1_Jump.fbx Player_Jump
 #Player1_Run.fbx Player_Run
