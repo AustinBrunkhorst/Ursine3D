@@ -763,7 +763,14 @@ namespace ursine
                     return { value.int_value( ) };
 
                 // associative value
-                return GetEnum( ).GetValue( value.string_value( ) );
+                auto enumValue = GetEnum( ).GetValue( value.string_value( ) );
+
+                // make sure we can find the key
+                if (enumValue.IsValid( ))
+                    return enumValue;
+                
+                // use the default value as we couldn't find the key
+                return Create( );
             }
             else if (*this == typeof( std::string ))
             {

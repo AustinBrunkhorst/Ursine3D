@@ -120,8 +120,6 @@ void EditorCameraSystem::OnAfterLoad(void)
 
 void EditorCameraSystem::OnRemove(void)
 {
-    auto *mm = GetCoreSystem( MouseManager );
-
     GetCoreSystem( MouseManager )->Listener( this )
         .Off( MM_SCROLL, &EditorCameraSystem::onMouseScroll );
 

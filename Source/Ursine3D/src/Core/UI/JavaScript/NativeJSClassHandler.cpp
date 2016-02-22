@@ -34,7 +34,7 @@ namespace ursine
 
     void NativeJSClassHandler::Bind(CefRefPtr<CefV8Value> object)
     {
-        auto &className = m_classType.GetName( );
+        auto className = m_classType.GetName( );
 
         object->SetValue(
             className, 
@@ -48,20 +48,22 @@ namespace ursine
         {
             auto &methodName = method.GetName( );
 
-            m_prototypeHandler->methods.emplace(
-                std::make_pair(
-                    methodName,
-                    std::make_pair(
-                        object->CreateFunction( methodName, m_prototypeHandler ),
-                        method
-                    )
-                )
+            auto handler = object->CreateFunction( methodName, m_prototypeHandler );
+
+            auto result = m_prototypeHandler->methods.emplace(
+                make_pair( methodName, std::make_pair( handler, method ) )
             );
+
+            // if it already exists, update the handler
+            if (!result.second)
+                result.first->second.first = handler;
         }
     }
 
     void NativeJSClassHandler::UnBind(CefRefPtr<CefV8Value> object)
     {
+        object->DeleteValue( m_classType.GetName( ) );
+
         // release function handler instances
         for (auto &method : m_prototypeHandler->methods)
             method.second.first = nullptr;

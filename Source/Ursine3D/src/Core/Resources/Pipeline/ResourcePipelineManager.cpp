@@ -106,6 +106,16 @@ namespace ursine
         );
     }
 
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const GUID &guid)
+    {
+        auto search = m_database.find( guid );
+
+        if (search == m_database.end( ))
+            return nullptr;
+
+        return search->second;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Registration
     ///////////////////////////////////////////////////////////////////////////

@@ -35,13 +35,13 @@ namespace ursine
             UAssert( 
                 magicBytesRead == magicLength && 
                 memcmp( kResourceFormatMagic, magic, magicLength ) == 0,
-                "Invalid resource format magic.\nfile: %s",
+                "Invalid resource format magic.\nresource: %s",
                 fileName.c_str( )
             );
 
             // skip over the header padding
 
-            stream.seekg( kResourceFormatHeaderSize + 1 );
+            stream.seekg( kResourceFormatHeaderSize );
 
             /// read resource data
 

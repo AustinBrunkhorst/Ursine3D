@@ -65,7 +65,7 @@ namespace editor_commands
 
     JSFunction(CreateEntityFromArchetype)
     {
-        auto *world = GetCoreSystem( Editor )->GetProject( ).GetScene( ).GetActiveWorld( );
+        auto *world = GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
 
         CefRefPtr<UIFileDialogCallback> callback = 
             new UIFileDialogCallback( std::bind( &doLoadArchetype, world, _1, _2 ) );
@@ -243,7 +243,7 @@ namespace editor_commands
 
         ecs::World *getActiveWorld(void)
         {
-            return GetCoreSystem( Editor )->GetProject( ).GetScene( ).GetActiveWorld( );
+            return GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
         }
 
         ecs::Entity *createEntity(const std::string &name)

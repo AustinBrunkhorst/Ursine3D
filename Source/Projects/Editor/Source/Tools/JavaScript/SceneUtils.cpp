@@ -33,11 +33,6 @@ namespace
     void doOpenErrorLog(Notification &notification);
 }
 
-JSFunction(SceneCreateEmptyWorld)
-{
-    return CefV8Value::CreateBool( true );
-}
-
 JSFunction(SceneSaveWorld)
 {
     return CefV8Value::CreateBool( true );
@@ -183,7 +178,7 @@ namespace
     {
         auto *editor = GetCoreSystem( Editor );
 
-        return editor->GetProject( ).GetScene( );
+        return editor->GetProject( )->GetScene( );
     }
 
     ecs::World *getActiveWorld(void)

@@ -647,9 +647,11 @@ ursine_editor_NativeCanvasWindowHandler.__name__ = ["ursine","editor","NativeCan
 ursine_editor_NativeCanvasWindowHandler.__super__ = ursine_editor_WindowHandler;
 ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 	forwardEvent: function(e) {
+		this.m_nativeHandler.Event(e.type,e);
 	}
 	,onViewportInvalidated: function() {
 		var bounds = this.window.container.getBoundingClientRect();
+		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left, y : bounds.top, width : bounds.width, height : bounds.height});
 	}
 	,__class__: ursine_editor_NativeCanvasWindowHandler
 });
@@ -766,10 +768,14 @@ var ursine_editor_menus_FileMenu = function() { };
 $hxClasses["ursine.editor.menus.FileMenu"] = ursine_editor_menus_FileMenu;
 ursine_editor_menus_FileMenu.__name__ = ["ursine","editor","menus","FileMenu"];
 ursine_editor_menus_FileMenu.doNewWorld = function() {
-	ursine_native_Extern.SceneCreateEmptyWorld();
+	ursine_native_Extern.ProjectSetEmptyScene();
 };
 ursine_editor_menus_FileMenu.doSaveWorld = function() {
 	ursine_native_Extern.SceneSaveWorld();
+};
+ursine_editor_menus_FileMenu.doSaveWorldAs = function() {
+};
+ursine_editor_menus_FileMenu.doSaveProject = function() {
 };
 ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -2318,8 +2324,8 @@ ursine_native_Extern.GetNativeComponentDatabase = function() {
 ursine_native_Extern.ProjectGetResourceTree = function() {
 	return ProjectGetResourceTree();
 };
-ursine_native_Extern.SceneCreateEmptyWorld = function() {
-	return SceneCreateEmptyWorld();
+ursine_native_Extern.ProjectSetEmptyScene = function() {
+	return ProjectSetEmptyScene();
 };
 ursine_native_Extern.SceneSaveWorld = function() {
 	return SceneSaveWorld();
@@ -2442,7 +2448,7 @@ ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mou
 ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
-ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNewWorld : { mainMenuItem : ["File/New World",false,true]}, doSaveWorld : { mainMenuItem : ["File/Save World",false,false]}}};
+ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNewWorld : { mainMenuItem : ["File/New World",false,true]}, doSaveWorld : { mainMenuItem : ["File/Save World",false,false]}, doSaveWorldAs : { mainMenuItem : ["File/Save World As",false,false]}, doSaveProject : { mainMenuItem : ["File/Save Project",true,false]}}};
 ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";

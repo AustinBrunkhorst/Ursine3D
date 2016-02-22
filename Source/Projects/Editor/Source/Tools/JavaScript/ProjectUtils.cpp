@@ -28,13 +28,13 @@ JSFunction(ProjectGetName)
 {
     auto *editor = GetCoreSystem( Editor );
 
-	return CefV8Value::CreateString( editor->GetProject( ).GetConfig( ).title );
+	return CefV8Value::CreateString( editor->GetProject( )->GetConfig( ).title );
 }
 
 JSFunction(ProjectGetResourceTree)
 {
     auto *editor = GetCoreSystem( Editor );
-    auto *rootNode = editor->GetProject( ).GetResourcePipeline( ).GetRootResourceDirectory( );
+    auto *rootNode = editor->GetProject( )->GetResourcePipeline( ).GetRootResourceDirectory( );
 
     Json::object tree;
 
@@ -45,6 +45,15 @@ JSFunction(ProjectGetResourceTree)
     JsonSerializer::Deserialize( tree, object );
 
     return object;
+}
+
+JSFunction(ProjectSetEmptyScene)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->SetEmptyScene( );
+
+	return CefV8Value::CreateBool( true );
 }
 
 namespace
@@ -81,7 +90,7 @@ namespace
 
         return Json::object {
             { "guid", to_string( resource->GetGUID( ) ) },
-            { "displayName", change_extension( sourceFile.filename( ), "" ).string( ) },
+            { "displayName", resource->GetDisplayName( ) },
             { "sourceFile", sourceFile.string( ) },
             { "extension", sourceFile.extension( ).string( ) }
         };

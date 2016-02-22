@@ -12,7 +12,7 @@ namespace ursine
         {
         public:
             template<typename ResourceType>
-            ResourceType *Load(const ResourceReference &reference) const;
+            ResourceType *Load(bool ignoreCache = false) const;
 
             const GUID &GetGUID(void) const;
 

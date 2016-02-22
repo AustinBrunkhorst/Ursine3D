@@ -28,6 +28,8 @@ namespace ursine
                 void Build(void);
 
                 void InvalidateResourceMeta(ResourceItem::Handle resource);
+
+                ResourceItem::Handle GetItem(const GUID &guid);
             private:
                 ResourcePipelineConfig m_config;
 

@@ -21,7 +21,7 @@ namespace ursine
             void SetResourceDirectory(const fs::path &resourceDirectory);
 
             ResourceReference CreateReference(const GUID &guid);
-            ResourceData::Handle LoadReference(const ResourceReference &reference);
+            ResourceData::Handle LoadReference(const ResourceReference &reference, bool ignoreCache);
 
         private:
             fs::path m_resourceDirectory;
@@ -31,6 +31,7 @@ namespace ursine
             ResourceManager(const ResourceManager &rhs) = delete;
             ResourceManager &operator=(const ResourceManager &rhs) = delete;
 
+            ResourceData::Handle hardLoadResource(const GUID &guid);
             ResourceData::Handle loadResource(const GUID &guid);
 
             fs::path getResourceFileName(const GUID &guid);

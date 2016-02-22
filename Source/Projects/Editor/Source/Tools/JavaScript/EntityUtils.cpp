@@ -24,7 +24,7 @@ using namespace std::placeholders;
 
 JSFunction(CreateEntity)
 {
-    auto *world = GetCoreSystem( Editor )->GetProject( ).GetScene( ).GetActiveWorld( );
+    auto *world = GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
 
     auto *entity = world->CreateEntity( );
 

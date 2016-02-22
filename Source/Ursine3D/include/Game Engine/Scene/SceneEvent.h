@@ -10,11 +10,14 @@ namespace ursine
 
     struct SceneWorldChangedArgs : EventArgs
     {
+        ecs::World::Handle oldWorld;
+
         // if the world was set through a resource reference,
         // this will contain the resource, otherwise it will be null
         const resources::ResourceReference *reference;
 
-        SceneWorldChangedArgs(const resources::ResourceReference *reference)
-            : reference( reference ) { }
+        SceneWorldChangedArgs(ecs::World::Handle oldWorld, const resources::ResourceReference *reference)
+            : oldWorld( oldWorld )
+            , reference( reference ) { }
     };
 }

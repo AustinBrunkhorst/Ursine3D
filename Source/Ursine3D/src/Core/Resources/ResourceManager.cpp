@@ -22,15 +22,30 @@ namespace ursine
             return { this, guid };
         }
 
-        ResourceData::Handle ResourceManager::LoadReference(const ResourceReference &reference)
+        ResourceData::Handle ResourceManager::LoadReference(const ResourceReference &reference, bool ignoreCache)
         {
+            // if cache was ignored
+            if (ignoreCache)
+                return hardLoadResource( reference.m_resourceGUID );
+
             auto cache = m_database.find( reference.m_resourceGUID );
 
             // doesn't exist, attempt to hard load it
             if (cache == m_database.end( ))
-                return loadResource( reference.m_resourceGUID );
+                return hardLoadResource( reference.m_resourceGUID );
 
             return cache->second;
+        }
+
+        ResourceData::Handle ResourceManager::hardLoadResource(const GUID &guid)
+        {
+            auto resource = loadResource( guid );
+
+            // if it was loaded, cache it
+            if (resource)
+                m_database[ guid ] = resource;
+
+            return resource;
         }
 
         ResourceData::Handle ResourceManager::loadResource(const GUID &guid)

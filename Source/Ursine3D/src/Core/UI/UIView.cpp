@@ -129,6 +129,10 @@ namespace ursine
         const Json &data
     )
     {
+        // noop if the browser is currently loading
+        if (m_browser->IsLoading( ))
+            return;
+
         auto processMessage = CefProcessMessage::Create( target );
 
         auto args = processMessage->GetArgumentList( );

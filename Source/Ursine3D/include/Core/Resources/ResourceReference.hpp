@@ -3,11 +3,11 @@ namespace ursine
     namespace resources
     {
         template<typename ResourceType>
-        ResourceType *ResourceReference::Load(const ResourceReference &reference) const
+        ResourceType *ResourceReference::Load(bool ignoreCache /*= false */) const
         {
             static const auto expectedType = typeof( ResourceType );
 
-            auto data = m_manager->LoadReference( reference );
+            auto data = m_manager->LoadReference( *this, ignoreCache );
 
             // if it's null, simply also return null as well - behavior is defined
             // by the user when the resource can't be loaded

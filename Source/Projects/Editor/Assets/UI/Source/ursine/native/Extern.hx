@@ -21,8 +21,8 @@ class Extern {
         return untyped __js__( "ProjectGetResourceTree()" );
     }
 
-    public static function SceneCreateEmptyWorld() {
-        return untyped __js__( "SceneCreateEmptyWorld()" );
+    public static function ProjectSetEmptyScene() {
+        return untyped __js__( "ProjectSetEmptyScene()" );
     }
 
     public static function SceneSaveWorld() {

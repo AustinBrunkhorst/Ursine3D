@@ -10,5 +10,7 @@ struct EditorPreferences
     
     ursine::Array<std::string> recentProjects;
 
+    std::string lastOpenWorld;
+
     EditorPreferences(void) = default;
 } Meta(Enable);

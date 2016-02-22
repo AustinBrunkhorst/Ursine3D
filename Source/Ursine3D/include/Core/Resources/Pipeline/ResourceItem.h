@@ -22,6 +22,8 @@ namespace ursine
                 const fs::path &GetSourceFileName(void) const;
                 const fs::path &GetBuildFileName(void) const;
 
+                std::string GetDisplayName(void) const;
+
             private:
                 friend class ResourcePipelineManager;
 

@@ -69,8 +69,6 @@ namespace ursine
 
         for (auto &handler : m_nativeHandlers)
             handler->Bind( global );
-
-        std::cout << "context created" << std::endl;
     }
 
     void RenderProcessHandler::OnContextReleased(

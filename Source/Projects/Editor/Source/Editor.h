@@ -38,7 +38,7 @@ public:
     const EditorWindow &GetMainWindow(void) const;
 
     const EditorPreferences &GetPreferences(void) const;
-    Project &GetProject(void);
+    Project *GetProject(void);
 
     ///////////////////////////////////////////////////////////////////////////
     // Notifications
@@ -54,6 +54,7 @@ public:
 
     void CreateNewProject(const std::string &name, const std::string &directory);
     void LoadProject(const std::string &filename);
+
 private:
     struct
     {
@@ -72,7 +73,7 @@ private:
     EditorWindow m_mainWindow;
 
     EditorPreferences m_preferences;
-    Project m_project;
+    Project *m_project;
 
     ///////////////////////////////////////////////////////////////////////////
     // Core System
@@ -121,4 +122,6 @@ private:
 
     void onPipelinePreBuildItemStart(EVENT_HANDLER(ursine::resources::pipeline::ResourcePipelineManager));
     void onPipelinePreBuildComplete(EVENT_HANDLER(ursine::resources::pipeline::ResourcePipelineManager));
+
+    void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
 } Meta(Enable, WhiteListMethods);

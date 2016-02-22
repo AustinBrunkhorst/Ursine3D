@@ -50,38 +50,41 @@ void SceneView::onFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    // TODO:
-    /*auto *world = m_editor->GetProject( ).GetScene( ).GetActiveWorld( );
+    auto *world = m_editor->GetProject( )->GetScene( ).GetActiveWorld( );
+
+    if (!world)
+        return;
 
     auto focused = (args->name == event::Focus);
 
     if (world->HasEntitySystem( EditorCameraSystem ))
     {
         world->GetEntitySystem( EditorCameraSystem )->SetFocus( focused );
-    }*/
+    }
 }
 
 void SceneView::onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    // TODO:
-    /*auto world = m_editor->GetProject( )->GetScene( )->GetActiveWorld( );
+    auto *world = m_editor->GetProject( )->GetScene( ).GetActiveWorld( );
+
+    if (!world)
+        return;
 
     auto focused = (args->name == event::MouseOver);
 
     if (world->HasEntitySystem( EditorCameraSystem ))
     {
         world->GetEntitySystem( EditorCameraSystem )->SetMouseFocus( focused );
-    }*/
+    }
 }
 
 void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    // TODO:
-    /*auto scene = m_editor->GetProject( )->GetScene( );
+    auto &scene = m_editor->GetProject( )->GetScene( );
 
     auto x = static_cast<unsigned>(
         args->data->GetValue( "x" )->GetDoubleValue( )
@@ -101,7 +104,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
         )
     );
 
-    auto handle = scene->GetViewport( );
+    auto handle = scene.GetViewport( );
 
     auto &viewport =
         GetCoreSystem( graphics::GfxAPI )->ViewportMgr.GetViewport( handle );
@@ -122,5 +125,5 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
     if (width != oldWidth || height != oldHeight)
     {
         viewport.SetDimensions( width, height );
-    }*/
+    }
 }

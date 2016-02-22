@@ -188,23 +188,25 @@ $toolbar-height: 25px;
 }
 
 ::content {
-  x-tree-view-item {
-    .text-content {
-      display: inline-block;
+  #folderTree {
+    x-tree-view-item {
+      .text-content {
+        display: inline-block;
 
-      @include icon-half( $icon-half-folder-close, 15px );
+        @include icon-half( $icon-half-folder-close, 15px );
 
-      &:before {
-        display: inline-block !important;
-        padding: 0 6px 0 4px;
-        color: desaturate($color-accent, 50%);
+        &:before {
+          display: inline-block !important;
+          padding: 0 6px 0 4px;
+          color: desaturate($color-accent, 50%);
+        }
       }
-    }
 
-    &.opened {
-      > .text {
-        .text-content {
-          @include icon-half( $icon-half-folder-open, 15px );
+      &.opened {
+        > .text {
+          .text-content {
+            @include icon-half( $icon-half-folder-open, 15px );
+          }
         }
       }
     }

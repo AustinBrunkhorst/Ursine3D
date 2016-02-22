@@ -23,4 +23,5 @@ namespace ursine
     typedef boost::hash<GUID> GUIDHasher;
     typedef boost::uuids::random_generator GUIDGenerator;
     typedef boost::uuids::string_generator GUIDStringGenerator;
+    typedef boost::uuids::nil_generator GUIDNullGenerator;
 }

@@ -119,7 +119,7 @@ JSConstructor(EntityHandler)
         JSThrow( "Invalid constructor arguments." );
 
     m_handle = arguments[ 0 ]->GetUIntValue( );
-    m_scene = &GetCoreSystem( Editor )->GetProject( ).GetScene( );
+    m_scene = &GetCoreSystem( Editor )->GetProject( )->GetScene( );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

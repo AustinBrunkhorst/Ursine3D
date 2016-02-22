@@ -1,1 +1,1 @@
-:host{padding:2px;background:#333337;border:1px solid #3f3f46;color:#dcdcdc;outline:none}:host:hover,:host:focus{border:1px solid #d2ad35}
+:host{padding:2px;background:#333337;border:1px solid #3f3f46;color:#dcdcdc;outline:none;transition:border 175ms ease}:host:hover,:host:focus{border:1px solid #d2ad35}

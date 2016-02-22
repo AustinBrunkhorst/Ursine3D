@@ -45,23 +45,23 @@ namespace ursine
 
     void Scene::SetActiveWorld(ecs::World::Handle world)
     {
-        m_activeWorld = world;
+        SceneWorldChangedArgs e( m_activeWorld, nullptr );
 
-        SceneWorldChangedArgs e( nullptr );
+        m_activeWorld = world;
 
         Dispatch( SCENE_WORLD_CHANGED, &e );
     }
 
     bool Scene::SetActiveWorld(const resources::ResourceReference &reference)
     {
-        auto *worldData = reference.Load<resources::WorldData>( reference );
+        auto *worldData = reference.Load<resources::WorldData>( true );
 
         if (!worldData)
             return false;
 
-        m_activeWorld = worldData->GetData( );
+        SceneWorldChangedArgs e( m_activeWorld, &reference );
 
-        SceneWorldChangedArgs e( &reference );
+        m_activeWorld = worldData->GetData( );
 
         Dispatch( SCENE_WORLD_CHANGED, &e );
 

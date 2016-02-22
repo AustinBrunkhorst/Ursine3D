@@ -48,7 +48,8 @@ namespace
 CORE_SYSTEM_DEFINITION( Editor );
 
 Editor::Editor(void)
-    : m_graphics( nullptr ) { }
+    : m_graphics( nullptr )
+    , m_project( nullptr ) { }
 
 Editor::~Editor(void) { }
 
@@ -68,7 +69,7 @@ const EditorPreferences &Editor::GetPreferences(void) const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Project &Editor::GetProject(void)
+Project *Editor::GetProject(void)
 {
     return m_project;
 }
@@ -151,6 +152,11 @@ void Editor::LoadProject(const std::string &filename)
 
 void Editor::OnInitialize(void)
 {
+    m_project = new Project( );
+
+    m_project->GetScene( ).Listener( this )
+        .On( SCENE_WORLD_CHANGED, &Editor::onSceneWorldChanged );
+
     loadPreferences( );
 
     auto projectFileName = findAvailableProject( );
@@ -207,6 +213,13 @@ void Editor::OnRemove(void)
     m_mainWindow.m_ui = nullptr;
 
     m_mainWindow.m_window = nullptr;
+
+    m_project->GetScene( ).Listener( this )
+        .Off( SCENE_WORLD_CHANGED, &Editor::onSceneWorldChanged );
+
+    delete m_project;
+
+    m_project = nullptr;
 }
 
 void Editor::loadPreferences(void)
@@ -237,6 +250,8 @@ void Editor::writePreferences(void)
 
     m_preferences.windowSize = window->GetSize( );
     m_preferences.windowLocation = window->GetLocation( );
+
+    m_preferences.lastOpenWorld = to_string( m_project->GetLastOpenedWorld( ) );
 
     auto prefsJson = meta::Type::SerializeJson<EditorPreferences>( m_preferences ).dump( true );
 
@@ -332,7 +347,7 @@ void Editor::initializeGraphics(void)
 
     handle.SetPosition( 0, 0 );
 
-    m_project.GetScene( ).SetViewport( viewport );
+    m_project->GetScene( ).SetViewport( viewport );
 
     m_graphics->SetGameViewport( viewport );
 }
@@ -381,7 +396,7 @@ void Editor::initializeProject(const std::string &filename)
 
     project.rootDirectory = fs::path( filename ).parent_path( );
 
-    m_project.initialize( project );
+    m_project->initialize( project );
 
     auto &recentProjects = m_preferences.recentProjects;
 
@@ -389,7 +404,7 @@ void Editor::initializeProject(const std::string &filename)
     if (recentProjects.Find( filename ) == recentProjects.end( ))
         recentProjects.Push( filename );
 
-    auto &resourcePipeline = m_project.GetResourcePipeline( );
+    auto &resourcePipeline = m_project->GetResourcePipeline( );
 
     resourcePipeline.Listener( this )
         .On( rp::RP_BUILD_RESOURCE_START, &Editor::onPipelinePreBuildItemStart )
@@ -408,7 +423,7 @@ void Editor::exitSplashScreen(void)
     window->SetBordered( true );
     window->SetSize( m_preferences.windowSize );
 
-    window->SetTitle( "Ursine3D Editor - "+ m_project.GetConfig( ).title );
+    window->SetTitle( "Ursine3D Editor - "+ m_project->GetConfig( ).title );
 
     if (m_preferences.windowLocation == kWindowLocationCentered)
         window->SetLocationCentered( );
@@ -417,6 +432,19 @@ void Editor::exitSplashScreen(void)
 
     m_mainWindow.m_ui->GetBrowser( )->GetMainFrame( )->LoadURL( 
         kEntryPointDir + kEntryPointEditor 
+    );
+
+    ursine::GUID lastWorldGUID;
+
+    if (m_preferences.lastOpenWorld.empty( ))
+        lastWorldGUID = GUIDNullGenerator( )( );
+    else
+        lastWorldGUID = GUIDStringGenerator( )( m_preferences.lastOpenWorld );
+
+    auto &resourceManager = m_project->GetScene( ).GetResourceManager( );
+
+    m_project->initializeScene(
+        resourceManager.CreateReference( lastWorldGUID )
     );
 }
 
@@ -444,7 +472,7 @@ void Editor::onEditorUpdate(EVENT_HANDLER(Application))
 
     auto dt = sender->GetDeltaTime( );
 
-    auto &scene = m_project.GetScene( );
+    auto &scene = m_project->GetScene( );
 
     scene.Update( dt );
     scene.Render( );
@@ -499,4 +527,27 @@ void Editor::onPipelinePreBuildComplete(EVENT_HANDLER(rp::ResourcePipelineManage
 
     URSINE_TODO( "Application::PostMainThread" );
     Timer::Create( 0 ).Completed( std::bind( &Editor::exitSplashScreen, this ) );
+}
+
+void Editor::onSceneWorldChanged(EVENT_HANDLER(Scene))
+{
+    EVENT_ATTRS(Scene, SceneWorldChangedArgs);
+
+    auto windowTitle = "Ursine3D Editor - "+ m_project->GetConfig( ).title + " - ";
+
+    if (args->reference)
+    {
+        auto item = m_project->GetResourcePipeline( ).GetItem( args->reference->GetGUID( ) );
+
+        if (item)
+            windowTitle += item->GetDisplayName( );
+        else
+            windowTitle += "Unknown World";
+    }
+    else
+    {
+        windowTitle += "Untitled World";
+    }
+
+    m_mainWindow.m_window->SetTitle( windowTitle );
 }

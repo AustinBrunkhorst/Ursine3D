@@ -16,9 +16,6 @@
 #include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(SceneCreateEmptyWorld);
-
-Meta(Enable, ExposeJavaScript)
 JSFunction(SceneSaveWorld);
 
 Meta(Enable, ExposeJavaScript)

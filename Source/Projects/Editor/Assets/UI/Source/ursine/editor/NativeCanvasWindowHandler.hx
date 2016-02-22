@@ -27,18 +27,18 @@ class NativeCanvasWindowHandler extends WindowHandler {
     }
 
     private function forwardEvent(e : Event) {
-        //m_nativeHandler.Event( e.type, e );
+        m_nativeHandler.Event( e.type, e );
     }
 
     // TODO: make private after dock calls made
     public function onViewportInvalidated() {
         var bounds = window.container.getBoundingClientRect( );
 
-        /*m_nativeHandler.Event( 'viewportInvalidated', {
+        m_nativeHandler.Event( 'viewportInvalidated', {
             x: bounds.left,
             y: bounds.top,
             width: bounds.width,
             height: bounds.height
-        } );*/
+        } );
     }
 }

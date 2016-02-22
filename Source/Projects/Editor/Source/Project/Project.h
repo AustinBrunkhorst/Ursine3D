@@ -31,6 +31,10 @@ public:
     ursine::resources::pipeline::ResourcePipelineManager &GetResourcePipeline(void);
     ursine::Scene &GetScene(void);
 
+    void SetEmptyScene(void);
+
+    const ursine::GUID &GetLastOpenedWorld(void);
+
 private:
     friend class Editor;
 
@@ -39,11 +43,17 @@ private:
 
     void initialize(const ProjectConfig &config);
 
+    void initializeScene(const ursine::resources::ResourceReference &startingWorld);
+
+    void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
+
     ProjectConfig m_config;
 
-    ursine::resources::pipeline::ResourcePipelineManager m_resourcePipeline;
+    ursine::rp::ResourcePipelineManager m_resourcePipeline;
 
     ursine::Scene m_scene;
 
-    EditorEntityManager m_entityManager;
+    EditorEntityManager *m_entityManager;
+
+    ursine::GUID m_lastOpenedWorld;
 };

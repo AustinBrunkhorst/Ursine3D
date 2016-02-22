@@ -24,4 +24,9 @@ namespace ursine
     {
         return m_buildFileName;
     }
+
+    std::string resources::pipeline::ResourceItem::GetDisplayName(void) const
+    {
+        return change_extension( m_fileName.filename( ), "" ).string( );
+    }
 }
