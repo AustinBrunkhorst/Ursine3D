@@ -23,7 +23,7 @@ namespace ursine
         {
         public:
             FloatCondition(const std::string &variableName, Comparison comparison, 
-                           float value, float epsilon = 0.0001f);
+                           float value, float epsilon = math::Epsilon);
 
             bool GetCondition(StateMachine *stateMachine) override;
 

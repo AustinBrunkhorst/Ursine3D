@@ -28,6 +28,7 @@ using namespace ursine;
 SpawnerGroup::SpawnerGroup(void)
     : BaseComponent( )
     , m_enemyType( AIArchetype::Agile )
+    , m_activeEnemies( 0 )
 {
 }
 
@@ -54,6 +55,11 @@ AIArchetype SpawnerGroup::GetEnemyType(void) const
 void SpawnerGroup::SetEnemyType(AIArchetype enemyType)
 {
     m_enemyType = enemyType;
+}
+
+int SpawnerGroup::GetActiveEnemiesCount(void) const
+{
+    return m_activeEnemies;
 }
 
 void SpawnerGroup::addSpawner(Spawner *spawner)

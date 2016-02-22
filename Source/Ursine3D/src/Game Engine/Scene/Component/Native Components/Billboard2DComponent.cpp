@@ -69,5 +69,15 @@ namespace ursine
         {
             return m_billboard;
         }
+
+        ursine::ecs::RenderMask Billboard2D::GetRenderMask() const
+        {
+            return static_cast<RenderMask>( m_billboard->GetRenderMask( ) & 0xFFFFFFFF );
+        }
+
+        void Billboard2D::SetRenderMask(ursine::ecs::RenderMask mask)
+        {
+            m_billboard->SetRenderMask( static_cast<unsigned long long>( mask ) );
+        }
     }
 }

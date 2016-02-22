@@ -51,6 +51,9 @@ namespace ursine
             int GetInt(const std::string &intName);
             void SetInt(const std::string &intName, int value);
 
+            // Remove variable
+            void RemoveVariable(const std::string &variableName);
+
             // Get the user data
             void *GetUserData(void);
 
@@ -67,11 +70,15 @@ namespace ursine
         protected:
             // A map of global variables [name, value]
             std::unordered_map<std::string, meta::Variant> m_variables;
+            std::vector<std::string> m_triggers;
 
             std::vector<State::Handle> m_states;
 
             bool m_startingState;
             State *m_currentState;
+
+            bool m_transitionFound;
+            State *m_nextState;
 
             void *m_userData;
 

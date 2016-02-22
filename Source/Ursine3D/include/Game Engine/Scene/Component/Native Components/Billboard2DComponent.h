@@ -17,19 +17,27 @@
 #include "Renderable.h"
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
+#include "RenderMask.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Billboard2D 
+        class Billboard2D
             : public Component
         {
             NATIVE_COMPONENT;
 
-			friend class RenderSystem;
+            friend class RenderSystem;
 
         public:
+            Meta(BitMaskEditor)
+            EditorField(
+                ursine::ecs::RenderMask renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
             Billboard2D(void);
             ~Billboard2D(void);
 
@@ -38,6 +46,9 @@ namespace ursine
 
             //get/set model
             ursine::graphics::Billboard2D *GetBillboard(void);
+
+            ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
 
         private:
 
@@ -49,8 +60,8 @@ namespace ursine
 
             void updateRenderer(void);
 
-			RenderableComponentBase *m_base;
+            RenderableComponentBase *m_base;
 
-        } Meta(Enable, DisplayName("Billboard2D")); 
+        } Meta(Enable, DisplayName("Billboard2D"));
     }
 }
