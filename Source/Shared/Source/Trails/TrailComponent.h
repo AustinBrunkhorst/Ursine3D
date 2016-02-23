@@ -16,7 +16,7 @@
 #include <SVec3.h>
 #include <ParticleEmitterComponent.h>
 
-class HitscanTrailComponent : public ursine::ecs::Component
+class TrailComponent : public ursine::ecs::Component
 {
     NATIVE_COMPONENT
 public:
@@ -39,8 +39,8 @@ public:
         SetParticlesToSpawn
     );
 
-    HitscanTrailComponent(void);
-    ~HitscanTrailComponent(void);
+    TrailComponent(void);
+    ~TrailComponent(void);
 
     const float GetSpeed(void) const;
     void SetSpeed(const float speed);
@@ -80,4 +80,4 @@ public:
     Meta(Disable)
     int m_particlesToSpawn;
     
-} Meta(Enable, RequiresComponents(typeof(ursine::ecs::ParticleEmitter)), DisplayName("HitscanTrailComponent"));
+} Meta(Enable, RequiresComponents(typeof(ursine::ecs::ParticleEmitter)), DisplayName("TrailComponent"));

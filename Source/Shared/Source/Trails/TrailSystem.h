@@ -16,7 +16,7 @@
 ////  Predefines  ////
 //////////////////////
 
-class HitscanTrailComponent;
+class TrailComponent;
 
 namespace ursine
 {
@@ -47,9 +47,9 @@ protected:
 
 private:
 
-    void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, HitscanTrailComponent* const trail, float dt);
+    void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail, float dt);
 
-    std::unordered_map< ursine::ecs::EntityUniqueID, HitscanTrailComponent* > m_trails;
+    std::unordered_map< ursine::ecs::EntityUniqueID, TrailComponent* > m_trails;
     std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
     std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::ParticleEmitter* > m_particleEmitter;
 

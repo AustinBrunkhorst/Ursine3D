@@ -13,7 +13,7 @@
 #include "Precompiled.h"
 #include <Application.h>
 #include "TrailSystem.h"
-#include "HitscanTrailComponent.h"
+#include "TrailComponent.h"
 #include "ParticleEmitterComponent.h"
 
 ENTITY_SYSTEM_DEFINITION( TrailSystem ) ;
@@ -36,7 +36,7 @@ namespace
 ////////////////////////
 
 TrailSystem::TrailSystem(ursine::ecs::World* world)
-    : FilterSystem( world, Filter( ).One< HitscanTrailComponent >( ) )
+    : FilterSystem( world, Filter( ).One< TrailComponent >( ) )
 {
 }
 
@@ -47,7 +47,7 @@ void TrailSystem::Enable(ursine::ecs::Entity* entity)
 
     m_particleEmitter[ uniqueID ] = entity->GetComponent< ParticleEmitter >( );
     
-    m_trails[ uniqueID ] = entity->GetComponent< HitscanTrailComponent >( );
+    m_trails[ uniqueID ] = entity->GetComponent< TrailComponent >( );
 
     m_transforms[ uniqueID ] = entity->GetTransform( );
 }
@@ -71,7 +71,7 @@ void TrailSystem::onUpdate(EVENT_HANDLER(World))
 }
 
 
-void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, HitscanTrailComponent* const trail, float dt)
+void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail, float dt)
 {
     if ( trail->m_time > trail->m_timeToReachEnd )
     {
