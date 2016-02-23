@@ -24,6 +24,7 @@ namespace ursine
         class Transition
         {
             friend class State;
+            friend class StateMachine;
 
         public:
             typedef std::shared_ptr<Transition> Handle;

@@ -1,0 +1,2507 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 270, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 271, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 269, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 2000, 
+"y": 24.399999618530273, 
+"z": 2000
+}, 
+"translation": {
+"x": 378.048095703125, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Floor"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 273, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 274, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 272, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 50, 
+"y": 200, 
+"z": 600
+}, 
+"translation": {
+"x": 1069.595703125, 
+"y": 79.545852661132813, 
+"z": -212.79576110839844
+}
+}
+}, 
+"name": "StartRoomWall"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 276, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 277, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 275, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 50, 
+"y": 200, 
+"z": 600
+}, 
+"translation": {
+"x": 686.01531982421875, 
+"y": 79.545478820800781, 
+"z": 266.51840209960938
+}
+}
+}, 
+"name": "StartRoomWall Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 279, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 280, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 278, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": -0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 50, 
+"y": 200, 
+"z": 600
+}, 
+"translation": {
+"x": 1074.2587890625, 
+"y": 79.545211791992188, 
+"z": 220.38259887695313
+}
+}
+}, 
+"name": "StartRoomWall Copy Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 282, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 283, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 281, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": -0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 50, 
+"y": 200, 
+"z": 600
+}, 
+"translation": {
+"x": 688.20147705078125, 
+"y": 79.544906616210938, 
+"z": -270.00390625
+}
+}
+}, 
+"name": "StartRoomWall Copy Copy Copy"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 286, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 287, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 285, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 129.47236633300781, 
+"y": 30, 
+"z": 154.57281494140625
+}, 
+"translation": {
+"x": -14.24981689453125, 
+"y": -3, 
+"z": -8.0833892822265625
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 289, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 290, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 288, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 120, 
+"y": 30, 
+"z": 154.57281494140625
+}, 
+"translation": {
+"x": -45.35540771484375, 
+"y": -3, 
+"z": -4.66278076171875
+}
+}
+}, 
+"name": "Empty Entity Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 292, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 293, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 291, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 30, 
+"y": 30, 
+"z": 30
+}, 
+"translation": {
+"x": -20.11383056640625, 
+"y": -3, 
+"z": 73.977096557617188
+}
+}
+}, 
+"name": "Empty Entity Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 295, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 296, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 294, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 143.94984436035156, 
+"y": 104.78218078613281, 
+"z": 104.78218078613281
+}, 
+"translation": {
+"x": -108.783203125, 
+"y": -0.1671905517578125, 
+"z": -83.803497314453125
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 298, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 299, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 297, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 105.91519927978516, 
+"y": 104.78218078613281, 
+"z": 84.114913940429688
+}, 
+"translation": {
+"x": -175.11383056640625, 
+"y": -0.1671905517578125, 
+"z": -37.022903442382813
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 301, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 302, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 300, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 105.91519927978516, 
+"y": 104.78218078613281, 
+"z": 84.114913940429688
+}, 
+"translation": {
+"x": -62.655029296875, 
+"y": -0.1671905517578125, 
+"z": -151.894775390625
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 304, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 305, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 303, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 90, 
+"y": 55.351890563964844, 
+"z": 227.64410400390625
+}, 
+"translation": {
+"x": 35.04010009765625, 
+"y": 0, 
+"z": -107.8660888671875
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 307, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 308, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 306, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 108.17898559570313, 
+"y": 55.351890563964844, 
+"z": 60
+}, 
+"translation": {
+"x": 138.05474853515625, 
+"y": 0, 
+"z": -24.713516235351563
+}
+}
+}, 
+"name": "Box Copy"
+}
+], 
+"components": {
+"Transform": {
+".uid": 284, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 871.11383056640625, 
+"y": 18.667190551757813, 
+"z": -210.47709655761719
+}
+}
+}, 
+"name": "StartRoomPlatforms"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 311, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 312, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 310, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 129.47236633300781, 
+"y": 30, 
+"z": 154.57281494140625
+}, 
+"translation": {
+"x": -14.24981689453125, 
+"y": -3, 
+"z": -8.0833892822265625
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 314, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 315, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 313, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 120, 
+"y": 30, 
+"z": 154.57281494140625
+}, 
+"translation": {
+"x": -45.35540771484375, 
+"y": -3, 
+"z": -4.66278076171875
+}
+}
+}, 
+"name": "Empty Entity Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 317, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 318, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 316, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 30, 
+"y": 30, 
+"z": 30
+}, 
+"translation": {
+"x": -20.11383056640625, 
+"y": -3, 
+"z": 73.977096557617188
+}
+}
+}, 
+"name": "Empty Entity Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 320, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 321, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 319, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": -0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 146.44082641601563, 
+"y": 104.78218078613281, 
+"z": 104.78218078613281
+}, 
+"translation": {
+"x": 67.49359130859375, 
+"y": -0.1671905517578125, 
+"z": -84
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 323, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 324, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 322, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 105.91519927978516, 
+"y": 104.78218078613281, 
+"z": 84.114913940429688
+}, 
+"translation": {
+"x": 134.76861572265625, 
+"y": -0.1671905517578125, 
+"z": -38.018936157226563
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 326, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 327, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 325, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 105.91519927978516, 
+"y": 104.78218078613281, 
+"z": 84.114913940429688
+}, 
+"translation": {
+"x": 20.0709228515625, 
+"y": -0.1671905517578125, 
+"z": -151.89437866210938
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 329, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 330, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 328, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": -0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 90, 
+"y": 55.351890563964844, 
+"z": 227.64410400390625
+}, 
+"translation": {
+"x": -72.552490234375, 
+"y": 0, 
+"z": -107.55252075195313
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 332, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 333, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 331, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 108.17898559570313, 
+"y": 55.351890563964844, 
+"z": 60
+}, 
+"translation": {
+"x": -175.87060546875, 
+"y": 0, 
+"z": -26.14105224609375
+}
+}
+}, 
+"name": "Box Copy"
+}
+], 
+"components": {
+"Transform": {
+".uid": 309, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 833, 
+"y": 18.667190551757813, 
+"z": 210
+}
+}
+}, 
+"name": "StartRoomPlatforms Copy"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 336, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 337, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 335, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 225.832763671875, 
+"y": 200, 
+"z": 38.872859954833984
+}, 
+"translation": {
+"x": 1.692108154296875, 
+"y": 104.24405670166016, 
+"z": -63.999855041503906
+}
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 339, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 340, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 338, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 225.832763671875, 
+"y": 200, 
+"z": 38.872859954833984
+}, 
+"translation": {
+"x": 1.63043212890625, 
+"y": 103.99999237060547, 
+"z": 64.999992370605469
+}
+}
+}, 
+"name": "Box Copy"
+}
+], 
+"components": {
+"Transform": {
+".uid": 334, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 373.86956787109375, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "BossRoomHallway"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 343, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"CylinderCollider": {
+".uid": 344, 
+"height": 1, 
+"radius": 0.5
+}, 
+"Transform": {
+".uid": 342, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 23.24072265625, 
+"y": 70.431190490722656, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 29.465263366699219, 
+"z": -199.35371398925781
+}
+}
+}, 
+"name": "Cylinder"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 346, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"CylinderCollider": {
+".uid": 347, 
+"height": 1, 
+"radius": 0.5
+}, 
+"Transform": {
+".uid": 345, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 23.24072265625, 
+"y": 70.431190490722656, 
+"z": 1
+}, 
+"translation": {
+"x": 111.55612182617188, 
+"y": 29.465208053588867, 
+"z": -168.05377197265625
+}
+}
+}, 
+"name": "Cylinder"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 349, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"CylinderCollider": {
+".uid": 350, 
+"height": 1, 
+"radius": 0.5
+}, 
+"Transform": {
+".uid": 348, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 23.24072265625, 
+"y": 70.431190490722656, 
+"z": 1
+}, 
+"translation": {
+"x": 182.63510131835938, 
+"y": 29.465238571166992, 
+"z": -78.398155212402344
+}
+}
+}, 
+"name": "Cylinder"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 352, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"CylinderCollider": {
+".uid": 353, 
+"height": 1, 
+"radius": 0.5
+}, 
+"Transform": {
+".uid": 351, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 23.24072265625, 
+"y": 70.431190490722656, 
+"z": 1
+}, 
+"translation": {
+"x": 183.77166748046875, 
+"y": 29.465173721313477, 
+"z": 77.903839111328125
+}
+}
+}, 
+"name": "Cylinder"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 355, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"CylinderCollider": {
+".uid": 356, 
+"height": 1, 
+"radius": 0.5
+}, 
+"Transform": {
+".uid": 354, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 23.24072265625, 
+"y": 70.431190490722656, 
+"z": 1
+}, 
+"translation": {
+"x": 110.77168273925781, 
+"y": 29.465232849121094, 
+"z": 167.58760070800781
+}
+}
+}, 
+"name": "Cylinder"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 358, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"CylinderCollider": {
+".uid": 359, 
+"height": 1, 
+"radius": 0.5
+}, 
+"Transform": {
+".uid": 357, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 23.24072265625, 
+"y": 70.431190490722656, 
+"z": 1
+}, 
+"translation": {
+"x": -1.3771913051605225, 
+"y": 29.46525764465332, 
+"z": 198.62776184082031
+}
+}
+}, 
+"name": "Cylinder"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 361, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 362, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 360, 
+"rotation": {
+"w": 0.83350902795791626, 
+"x": 0.12873204052448273, 
+"y": 0.53100395202636719, 
+"z": -0.082011371850967407
+}, 
+"scale": {
+"x": 23.534912109375, 
+"y": 40, 
+"z": 71.68682861328125
+}, 
+"translation": {
+"x": -93.93536376953125, 
+"y": 0.2010759562253952, 
+"z": 216.14097595214844
+}
+}
+}, 
+"name": "Ramp"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 364, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 365, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 363, 
+"rotation": {
+"w": 0.90367251634597778, 
+"x": 0.06906495988368988, 
+"y": 0.42138946056365967, 
+"z": -0.032205525785684586
+}, 
+"scale": {
+"x": 29.514177322387695, 
+"y": 43.254119873046875, 
+"z": 65.150352478027344
+}, 
+"translation": {
+"x": -141.99124145507813, 
+"y": 10.789830207824707, 
+"z": 182.81211853027344
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 367, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 368, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 366, 
+"rotation": {
+"w": 0.93969273567199707, 
+"x": 1.9821859709168166e-09, 
+"y": 0.342020183801651, 
+"z": -5.4460116416521487e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 56.927951812744141, 
+"z": 65.150352478027344
+}, 
+"translation": {
+"x": -170.25941467285156, 
+"y": 10.78977108001709, 
+"z": 132.08969116210938
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 370, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 371, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 369, 
+"rotation": {
+"w": 0.97629600763320923, 
+"x": -1.2543812655252395e-09, 
+"y": 0.2164396196603775, 
+"z": -5.6581481722162152e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 56.927951812744141, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -203.37672424316406, 
+"y": 10.78977108001709, 
+"z": 86.300926208496094
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 373, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 374, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 372, 
+"rotation": {
+"w": 1, 
+"x": -2.7024977811151984e-09, 
+"y": -1.7281540075519109e-17, 
+"z": -6.3946545836301993e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 56.927951812744141, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -223.05354309082031, 
+"y": 10.78977108001709, 
+"z": 8.6978597640991211
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 376, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 377, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 375, 
+"rotation": {
+"w": 0.97629600763320923, 
+"x": -1.2543811545029371e-09, 
+"y": -0.2164396196603775, 
+"z": -6.8280030518508283e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 56.927951812744141, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -197.8773193359375, 
+"y": 10.789763450622559, 
+"z": -84.854400634765625
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 379, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 380, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 378, 
+"rotation": {
+"w": 0.97629600763320923, 
+"x": -1.2543811545029371e-09, 
+"y": -0.2164396196603775, 
+"z": -6.8280030518508283e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 56.927951812744141, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -225.03468322753906, 
+"y": 10.789763450622559, 
+"z": -32.236644744873047
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 382, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 383, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 381, 
+"rotation": {
+"w": 0.99155515432357788, 
+"x": 1.1507814701161578e-09, 
+"y": 0.12968607246875763, 
+"z": -6.8462262525770257e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 56.927951812744141, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -222.00994873046875, 
+"y": 10.789763450622559, 
+"z": 41.011882781982422
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 385, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 386, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 384, 
+"rotation": {
+"w": 0.95371699333190918, 
+"x": -1.8447074978666933e-09, 
+"y": -0.30070585012435913, 
+"z": -6.6926930664124029e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 56.927951812744141, 
+"z": 51.687873840332031
+}, 
+"translation": {
+"x": -166.55937194824219, 
+"y": 10.789763450622559, 
+"z": -136.83737182617188
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 388, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 389, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 387, 
+"rotation": {
+"w": 0.88418751955032349, 
+"x": -0.070715859532356262, 
+"y": -0.4602789580821991, 
+"z": -0.036812338978052139
+}, 
+"scale": {
+"x": 36.694713592529297, 
+"y": 56.927951812744141, 
+"z": 69.66033935546875
+}, 
+"translation": {
+"x": -147.75070190429688, 
+"y": 5.626317024230957, 
+"z": -188.10366821289063
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 391, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 392, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 390, 
+"rotation": {
+"w": 0.82285809516906738, 
+"x": -0.10103428363800049, 
+"y": -0.55502474308013916, 
+"z": -0.068148456513881683
+}, 
+"scale": {
+"x": 28.612987518310547, 
+"y": 57.976833343505859, 
+"z": 69.66033935546875
+}, 
+"translation": {
+"x": -103.28060150146484, 
+"y": -6.9370684623718262, 
+"z": -213.96063232421875
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 394, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 395, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 393, 
+"rotation": {
+"w": 0.97915387153625488, 
+"x": 1.6570997907194851e-09, 
+"y": 0.2031199187040329, 
+"z": -6.7415970583795115e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 120, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -263.451904296875, 
+"y": 91.148773193359375, 
+"z": 110.78425598144531
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 397, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 398, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 396, 
+"rotation": {
+"w": 0.99890881776809692, 
+"x": 5.7682114640300597e-10, 
+"y": 0.046686694025993347, 
+"z": -6.9182672923773225e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 120, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -284.06503295898438, 
+"y": 91.148765563964844, 
+"z": 47.417816162109375
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 400, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 401, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 399, 
+"rotation": {
+"w": 0.99912184476852417, 
+"x": -3.7558428589434811e-11, 
+"y": -0.041878312826156616, 
+"z": -6.942170838186712e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 120, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -284.34005737304688, 
+"y": 91.148765563964844, 
+"z": -47.362174987792969
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 403, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 404, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 402, 
+"rotation": {
+"w": 0.98510801792144775, 
+"x": -9.4337226919094519e-10, 
+"y": -0.17193159461021423, 
+"z": -6.8778773787414593e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 120, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -255.38681030273438, 
+"y": 91.148765563964844, 
+"z": -133.96070861816406
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 406, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 407, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 405, 
+"rotation": {
+"w": 0.92539513111114502, 
+"x": -2.3950716965259744e-09, 
+"y": -0.3790014386177063, 
+"z": -6.5160405959829859e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 120, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -208.019287109375, 
+"y": 91.148765563964844, 
+"z": -202.03941345214844
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 409, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 410, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 408, 
+"rotation": {
+"w": 0.8455234169960022, 
+"x": -3.4901841416967727e-09, 
+"y": -0.53393673896789551, 
+"z": -6.0011475788712687e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -123.81235504150391, 
+"y": 78.115554809570313, 
+"z": -256.92648315429688
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 412, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 413, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 411, 
+"rotation": {
+"w": 0.75333595275878906, 
+"x": -4.3716994468923076e-09, 
+"y": -0.65763455629348755, 
+"z": -5.3929043453138092e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 120.69076538085938
+}, 
+"translation": {
+"x": -20.32457160949707, 
+"y": 78.115547180175781, 
+"z": -289.62332153320313
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 415, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 416, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 414, 
+"rotation": {
+"w": 0.62769961357116699, 
+"x": 4.5457184683073137e-09, 
+"y": -0.77845567464828491, 
+"z": -7.5297599266832549e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 120.69076538085938
+}, 
+"translation": {
+"x": 63.584674835205078, 
+"y": 78.115547180175781, 
+"z": -279.23916625976563
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 418, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 419, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 417, 
+"rotation": {
+"w": 0.5207207202911377, 
+"x": 3.523998426402386e-09, 
+"y": -0.85372716188430786, 
+"z": -8.0586763928636174e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 120.69076538085938
+}, 
+"translation": {
+"x": 149.02685546875, 
+"y": 78.115562438964844, 
+"z": -247.9622802734375
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 421, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 422, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 420, 
+"rotation": {
+"w": 0.33999833464622498, 
+"x": 1.8460362127825647e-09, 
+"y": -0.94042617082595825, 
+"z": -8.5995912613157088e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 153.66847229003906
+}, 
+"translation": {
+"x": 236.63616943359375, 
+"y": 78.115592956542969, 
+"z": -164.37615966796875
+}
+}
+}, 
+"name": "Ramp Copy"
+}
+], 
+"components": {
+"Transform": {
+".uid": 341, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "BossRoomCollision"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 424, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 425, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 423, 
+"rotation": {
+"w": 0.3457588255405426, 
+"x": -6.4222187567963829e-09, 
+"y": -0.93832272291183472, 
+"z": -2.6363418115238346e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -221.29972839355469, 
+"y": 78.115531921386719, 
+"z": 180.81013488769531
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 427, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 428, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 426, 
+"rotation": {
+"w": 0.45392614603042603, 
+"x": -6.0667901813360459e-09, 
+"y": -0.89103859663009644, 
+"z": -3.3747977745690605e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 92.166351318359375
+}, 
+"translation": {
+"x": -164.10920715332031, 
+"y": 78.115531921386719, 
+"z": 236.48458862304688
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 430, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 431, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 429, 
+"rotation": {
+"w": 0.63841193914413452, 
+"x": -5.1782294008262397e-09, 
+"y": -0.76969397068023682, 
+"z": -4.6239732043318327e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 116.7073974609375
+}, 
+"translation": {
+"x": -77.586029052734375, 
+"y": 78.115531921386719, 
+"z": 273.96640014648438
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 433, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 434, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 432, 
+"rotation": {
+"w": 0.754036545753479, 
+"x": -4.3659511561600084e-09, 
+"y": -0.65683150291442871, 
+"z": -5.397561064768297e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 116.7073974609375
+}, 
+"translation": {
+"x": 13.555594444274902, 
+"y": 78.115531921386719, 
+"z": 287.38302612304688
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 436, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 437, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 435, 
+"rotation": {
+"w": 0.84068930149078369, 
+"x": -3.5439957635219344e-09, 
+"y": -0.54151672124862671, 
+"z": -5.9695306475759935e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 116.7073974609375
+}, 
+"translation": {
+"x": 120.66868591308594, 
+"y": 78.115516662597656, 
+"z": 258.04296875
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 439, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 440, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 438, 
+"rotation": {
+"w": 0.94821673631668091, 
+"x": -1.9634656123201921e-09, 
+"y": -0.31762236356735229, 
+"z": -6.6588294878044962e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 116.7073974609375
+}, 
+"translation": {
+"x": 197.84327697753906, 
+"y": 78.115516662597656, 
+"z": 216.2626953125
+}
+}
+}, 
+"name": "Ramp Copy"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 442, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 443, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 441, 
+"rotation": {
+"w": 0.98156267404556274, 
+"x": -1.0775162984089093e-09, 
+"y": -0.19113795459270477, 
+"z": -6.8581460510586112e-09
+}, 
+"scale": {
+"x": 67.428802490234375, 
+"y": 145.16555786132813, 
+"z": 116.7073974609375
+}, 
+"translation": {
+"x": 255.35417175292969, 
+"y": 78.115531921386719, 
+"z": 135.49261474609375
+}
+}
+}, 
+"name": "Ramp Copy"
+}
+], 
+"components": {
+"Transform": {
+".uid": 268, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

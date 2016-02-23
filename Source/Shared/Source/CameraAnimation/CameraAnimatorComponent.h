@@ -25,7 +25,14 @@ namespace ursine
     }
 }
 
-class CameraAnimator : public ursine::ecs::Component
+enum class CameraAnimatorEvent
+{
+    FinishedAnimating
+};
+
+class CameraAnimator 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<CameraAnimatorEvent>
 {
     NATIVE_COMPONENT;
 
@@ -86,7 +93,10 @@ private:
     void enableDeletionNodes(bool flag);
 
     void getChildren(void);
-    
+
+    // This is called when the animation completes
+    void finished(void);
+
     bool m_playing       : 1;
     bool m_smoothPath    : 1;
     bool m_useFocusPoint : 1;
