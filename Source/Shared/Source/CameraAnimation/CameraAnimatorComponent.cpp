@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** CameraAnimatorComponent.h
 **
@@ -33,6 +33,7 @@ CameraAnimator::CameraAnimator(void)
     , m_smoothPath( false )
     , m_index( 0 )
     , m_time( 0.0f )
+    , m_focusPoint( nullptr )
 {
 }
 
@@ -221,7 +222,7 @@ void CameraAnimator::drawPath(void)
 {
     getChildren( );
 
-    auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem( ursine::ecs::DebugSystem );
+    auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::DebugSystem>( );
 
     if (m_smoothPath)
     {

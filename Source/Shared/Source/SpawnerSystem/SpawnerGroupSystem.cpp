@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SpawnerGroupSystem.cpp
 **
@@ -69,9 +69,10 @@ void SpawnerGroupSystem::OnAfterLoad(void)
 
 void SpawnerGroupSystem::onUpdate(EVENT_HANDLER(World))
 {
+    // Update all groups
     for (auto &group : m_spawnerGroups)
     {
-        // all that logic up in this bitch
+        group->update( );
     }
 }
 

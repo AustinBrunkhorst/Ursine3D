@@ -6,6 +6,7 @@
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
+** - Hyung Jun Park - park.hyungjun@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
@@ -21,6 +22,7 @@ namespace ursine
 	AnimationState::AnimationState()
 		: m_name("")
 		, m_timePos(0.0f)
+		, m_transPos(0.0f)
 		, m_animname("")
 		, m_animation(nullptr)
 	{}
@@ -75,13 +77,15 @@ namespace ursine
 		Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
 		if (!targetAnimation)
 		{
+#if defined(URSINE_WITH_EDITOR)
 			NotificationConfig error;
 
 			error.type = NOTIFY_ERROR;
-			error.header = "Animation Doesn't exist";
+			error.header = "Animation doesn't exist";
 			error.message = "To add animation into the state, animation should exist in the Animation List";
 
 			EditorPostNotification(error);
+#endif
 			return;
 		}
 
@@ -103,5 +107,15 @@ namespace ursine
 			return;
 		}
 		m_animation = targetAnimation;
+	}
+
+	const float &AnimationState::GetTransPosition(void) const
+	{
+		return m_transPos;
+	}
+
+	void AnimationState::SetTransPosition(const float& tPos)
+	{
+		m_transPos = tPos;
 	}
 }

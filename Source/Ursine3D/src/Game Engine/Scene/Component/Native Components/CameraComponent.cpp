@@ -57,7 +57,7 @@ namespace ursine
 
             SetNearPlane( 0.1f );
             SetFarPlane( 1000.0f );
-			SetViewportSize( Vec2::One( ) );
+            SetViewportSize( Vec2::One( ) );
         }
 
         Camera::~Camera(void)
@@ -84,7 +84,7 @@ namespace ursine
             cam.SetPosition( trans->GetWorldPosition( ) );
             cam.SetLook( trans->GetForward( ) );
 
-			m_dirty = false;
+            m_dirty = false;
         }
 
         Vec2 Camera::GetViewportPosition(void) const
@@ -181,7 +181,7 @@ namespace ursine
 
             // notify rendersystem that I've changed
             if (!m_inEditorSelectionMode)
-                GetOwner( )->GetWorld( )->GetEntitySystem( RenderSystem )->SortCameraArray( );
+                GetOwner( )->GetWorld( )->GetEntitySystem<RenderSystem>( )->SortCameraArray( );
         }
 
         int Camera::GetSortLayer(void) const
@@ -219,7 +219,7 @@ namespace ursine
             return m_graphics->CameraMgr.GetCamera( m_handle ).GetProjMatrix( );
         }
 
-		RenderMask Camera::GetRenderMask(void) const
+        RenderMask Camera::GetRenderMask(void) const
         {
             return static_cast<RenderMask>( m_renderMask );
         }
@@ -228,10 +228,10 @@ namespace ursine
         {
             m_renderMask = static_cast<unsigned>( mask );
 
-            if (m_inEditorSelectionMode)
-				utils::FlagSet( m_renderMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
-			else
-				utils::FlagUnset( m_renderMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
+            if (m_inEditorSelectionMode || !m_isEditorCamera)
+                utils::FlagSet( m_renderMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
+            else
+                utils::FlagUnset( m_renderMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
 
             m_graphics->CameraMgr.GetCamera( m_handle ).SetMask( m_renderMask );
         }
@@ -269,6 +269,8 @@ namespace ursine
         void Camera::SetEditorCamera(bool editorCamera)
         {
             m_isEditorCamera = editorCamera;
+
+            SetRenderMask( static_cast<RenderMask>( m_renderMask ) );
         }
 
         void Camera::SetEditorSelectionMode(bool selected)
@@ -283,13 +285,11 @@ namespace ursine
 
             if (selected)
             {
-                auto excludeEditorToolMask = m_renderMask;
-
-                utils::FlagSet( excludeEditorToolMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
+                utils::FlagSet( m_renderMask, static_cast<unsigned>( RenderMask::MEditorTool ) );
 
                 camera.SetViewportPosition( kEditorSelectedLocation.X( ), kEditorSelectedLocation.Y( ) );
                 camera.SetDimensions( kEditorSelectedSize.X( ), kEditorSelectedSize.Y( ) );
-                camera.SetMask( static_cast<unsigned long long>( excludeEditorToolMask ) );
+                camera.SetMask( static_cast<unsigned long long>( m_renderMask ) );
             }
             else
             {
@@ -303,7 +303,7 @@ namespace ursine
             if (!world->GetSystemManager( ))
                 return;
 
-            auto *renderSystem = world->GetEntitySystem( RenderSystem );
+            auto *renderSystem = world->GetEntitySystem<RenderSystem>( );
 
             if (renderSystem)
                 renderSystem->SortCameraArray( );

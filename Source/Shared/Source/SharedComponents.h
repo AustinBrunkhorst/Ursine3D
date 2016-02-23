@@ -72,11 +72,13 @@
 #include "AI/AIMovementControllerComponent.h"
 #include "AI/AIHordeReasoner.h"
 
+#include "EnemyDeathComponent.h"
+
 /////////////////////////////////
 //       Level Logic           //
 /////////////////////////////////
 
-#include "LevelManager/Logic/ElevatorLiftMoverComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/ElevatorLiftMoverComponent.h"
 
 /////////////////////////////////
 //       Camera Animation      //

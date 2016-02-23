@@ -6474,7 +6474,7 @@
 }, {
 "type": "CommandQueueSystem"
 }, {
-"type": "CommandInputControllerSystem"
+"type": "InputControllerSystem"
 }, {
 "type": "TimeDeathSystem"
 }, {

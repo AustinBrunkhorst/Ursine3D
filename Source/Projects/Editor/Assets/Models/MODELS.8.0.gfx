@@ -31,15 +31,16 @@ bomber.8.0.mdl Bomber
 #romekolezyum.fbx remeko
 
 # Player Animations
-#Player_Idle.fbx Player
-#Player_Death.fbx Player_Death
-#Player_Die.fbx Player_Die
-#Player_Jump.fbx Player_Jump
-#Player_Run.fbx Player_Run
-#Player_Win.fbx Player_Win
+#Player1_Idle.fbx Player1
+#Player1_Die.fbx Player_Die
+#Player1_Jump.fbx Player_Jump
+#Player1_Run.fbx Player_Run
+#Player1_Win.fbx Player_Win
+#Player1_Straf_L.fbx Player_Straf_L
+#Player1_Straf_R.fbx Player_Straf_R
 
 # Gun Animations
-#Gun_Idle.fbx Gun_Idle
+Gun_Idle.fbx Gun_Idle
 #Gun_Jump.fbx Gun_Jump
 #Gun_Run.fbx Gun_Run
 #Gun_Shoot.fbx Gun_Shoot

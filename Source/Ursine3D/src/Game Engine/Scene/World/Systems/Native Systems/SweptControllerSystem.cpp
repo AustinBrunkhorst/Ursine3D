@@ -37,7 +37,7 @@ namespace ursine
 
 		void SweptControllerSystem::Initialize(void)
 		{
-			m_physics = m_world->GetEntitySystem( PhysicsSystem );
+			m_physics = m_world->GetEntitySystem<PhysicsSystem>( );
 		}
 
 		void SweptControllerSystem::Process(Entity* entity)

@@ -37,7 +37,7 @@ void LightDebugDrawSystem::Process(Entity* entity)
 {
     auto light = entity->GetComponent<Light>( );
 
-    auto drawer = m_world->GetEntitySystem( DebugSystem );
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
 
     if (!drawer)
         return;
@@ -87,7 +87,7 @@ void LightDebugDrawSystem::Process(Entity* entity)
             float height = transform->GetWorldScale( ).Z( );
 
             // from the size, we can determine the diameter of the circle at the bottom  
-            float radius = height * sinf( light->GetSpotlightAngles( ).Y( ) );
+            float radius = height * sinf( ((light->GetSpotlightAngles( ).Y( ) * math::PI) / 180.0f) / 2.0f );
 
             // get the light direction
             auto lightDir = light->GetDirection( );
@@ -101,15 +101,17 @@ void LightDebugDrawSystem::Process(Entity* entity)
             // calculate orthogonal vectors
             SVec3 u, v;
             lightDir.GenerateOrthogonalVectors(u, v);
+            u.Normalize( );
+            v.Normalize( );
 
             // render the bottom circle
             drawer->DrawCircle(bottomPos, lightDir, radius, Color::Gold, 0.0f);
 
             // render the side lines
-            drawer->DrawLine(lightPos, bottomPos + u, Color::Gold, 0.0f);
-            drawer->DrawLine(lightPos, bottomPos - u, Color::Gold, 0.0f);
-            drawer->DrawLine(lightPos, bottomPos + v, Color::Gold, 0.0f);
-            drawer->DrawLine(lightPos, bottomPos - v, Color::Gold, 0.0f);
+            drawer->DrawLine(lightPos, bottomPos + u * radius, Color::Gold, 0.0f);
+            drawer->DrawLine(lightPos, bottomPos - u * radius, Color::Gold, 0.0f);
+            drawer->DrawLine(lightPos, bottomPos + v * radius, Color::Gold, 0.0f);
+            drawer->DrawLine(lightPos, bottomPos - v * radius, Color::Gold, 0.0f);
 
             break;
         }
@@ -142,7 +144,7 @@ void CameraDebugDrawSystem::Process(Entity* entity)
         return;
 
     // debug draw this camera
-    auto drawer = m_world->GetEntitySystem( DebugSystem );
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
 
     if (!drawer)
         return;

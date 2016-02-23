@@ -6,6 +6,7 @@
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
+** - Hyung Jun Park - park.hyungjun@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
@@ -25,12 +26,6 @@ namespace ursine
 			GetName,
 			SetName
 			);
-
-		//EditorField(
-		//	float timePosition,
-		//	GetTimePosition,
-		//	SetTimePosition
-		//	);
 
 		// how can I add multiple animations in animation state?
 		// how can I use combo box for this?
@@ -91,19 +86,20 @@ namespace ursine
 		const std::string &GetAnimationName(void) const;
 		void SetAnimationName(const std::string& name);
 
-		const Animation* GetAnimationByName(void) const;
+		const Animation *GetAnimationByName(void) const;
 		void SetAnimationByName(const std::string& name);
+
+		const float &GetTransPosition(void) const;
+		void SetTransPosition(const float& tPos);
 		
 	private:
-		//current runtime
 		std::string m_name;
 		//time position to play animation
 		float m_timePos;
 		std::string m_animname;
         //current animation
         const Animation *m_animation;
-		////vector for animation name and animation itselfitself
-		//std::vector<std::string> m_animNameVec;
-		//std::vector<Animation> m_animVec;
+		//time to start transitioning
+		float m_transPos;
 	} Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ));
 }

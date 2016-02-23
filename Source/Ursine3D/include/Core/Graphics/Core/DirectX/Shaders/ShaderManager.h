@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -42,7 +42,7 @@ namespace ursine
         {
             struct Shader
             {
-                SHADER_TYPES type;
+                SHADER_LIST type;
 
                 ID3D11VertexShader          *vs;
                 ID3D11PixelShader           *ps;
@@ -84,13 +84,13 @@ namespace ursine
                 void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath = "");
                 void Uninitialize(void);
 
-                void BindShader(const SHADER_TYPES shader);
+                void BindShader(const SHADER_LIST shader);
 
-                void LoadShader(const SHADER_TYPES shader, const char *filename);
+                void LoadShader(const SHADER_LIST shader, const char *filename);
 
                 void Render(const unsigned vert_count);
 
-                Shader *GetShader(const SHADER_TYPES shader);
+                Shader *GetShader(const SHADER_LIST shader);
 
                 void Invalidate(void);
 
@@ -100,7 +100,7 @@ namespace ursine
                 ID3D11Device *m_device;
                 ID3D11DeviceContext *m_deviceContext;
 
-                SHADER_TYPES m_currentState;
+                SHADER_LIST m_currentState;
                 std::vector<Shader*> m_shaderArray;
             };
         }

@@ -183,9 +183,20 @@ namespace ursine
                 m_deviceContext = nullptr;
             }
 
-            void ShaderManager::BindShader(const SHADER_TYPES shader)
+            void ShaderManager::BindShader(const SHADER_LIST shader)
             {
                 m_currentState = shader;
+
+                if(m_currentState == SHADER_COUNT)
+                {
+                    m_deviceContext->VSSetShader(nullptr, nullptr, 0);
+                    m_deviceContext->PSSetShader(nullptr, nullptr, 0);
+                    m_deviceContext->HSSetShader(nullptr, nullptr, 0);
+                    m_deviceContext->DSSetShader(nullptr, nullptr, 0);
+                    m_deviceContext->GSSetShader(nullptr, nullptr, 0);
+                    m_deviceContext->CSSetShader(nullptr, nullptr, 0);
+                    return;
+                }
 
                 //if a given shader exists, bind it
                     //if it DOESN'T, we need to make sure that shader is removed from pipeline
@@ -225,10 +236,9 @@ namespace ursine
                     m_deviceContext->CSSetShader(m_shaderArray[ shader ]->cs, nullptr, 0);
                 else
                     m_deviceContext->CSSetShader(nullptr, nullptr, 0);
-                
             }
 
-            void ShaderManager::LoadShader(const SHADER_TYPES shader, const char *filename)
+            void ShaderManager::LoadShader(const SHADER_LIST shader, const char *filename)
             {
                 UAssert(m_shaderArray[ shader ] == nullptr, "Attempted to load shader twice");
                 m_shaderArray[ shader ] = new Shader;
@@ -268,7 +278,7 @@ namespace ursine
                 m_deviceContext->DrawIndexed(vert_count, 0, 0);
             }
 
-            Shader *ShaderManager::GetShader(const SHADER_TYPES shader)
+            Shader *ShaderManager::GetShader(const SHADER_LIST shader)
             {
                 return m_shaderArray[ shader ];
             }

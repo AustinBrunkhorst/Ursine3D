@@ -34,7 +34,7 @@ namespace ursine
         inline bool IsZero(T value);
 
         template<typename T1, typename T2>
-        inline bool IsEqual(T1 a, T2 b);
+        inline bool IsEqual(T1 a, T2 b, float epsion = math::Epsilon);
 
         template<typename T>
         inline bool IsFiniteNumber(T x);

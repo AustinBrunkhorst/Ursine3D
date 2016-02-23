@@ -50,37 +50,43 @@ void CharacterControllerSystem::Process(Entity *entity)
     rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
     
     // Looking logic
-    if (lookDir.LengthSquared( ) > 0.1f)
+    if (lookDir.Length( ) > controller->m_deadZone)
     {
+        if (abs(lookDir.X( )) < controller->m_deadZoneSnap)
+            lookDir.X( ) = 0.0f;
+
+        if (abs(lookDir.Y( )) < controller->m_deadZoneSnap)
+            lookDir.Y( ) = 0.0f;
+
         auto lookAngle = lookDir * rotateSpeed;
 
-        if ( cam )
+        if (cam)
         {
             auto camTrans = cam->GetOwner( )->GetTransform( );
 
             // is this actually doing what we want?
             auto look = camTrans->GetForward( );
 
-            if ( lookAngle.Y( ) < 0.0f )
+            if (lookAngle.Y( ) < 0.0f)
             {
                 // look down
-                if ( look.Y( ) > -0.75f )
+                if (look.Y( ) > -0.95f)
                 {
                     look = SQuat(-lookAngle.Y( ), camTrans->GetRight( )) * look;
 
-                    if ( look.Y( ) < -0.75 )
-                        look.Y( ) = -0.75;
+                    if (look.Y( ) < -0.95f)
+                        look.Y( ) = -0.95f;
                 }
             }
-            else if ( lookAngle.Y( ) > 0.0f )
+            else if (lookAngle.Y( ) > 0.0f)
             {
-                // look up
-                if ( look.Y( ) < 0.75f )
+                if (look.Y( ) < 0.95f)
                 {
+                    // look up
                     look = SQuat(-lookAngle.Y( ), camTrans->GetRight( )) * look;
 
-                    if ( look.Y( ) > 0.75 )
-                        look.Y( ) = 0.75;
+                    if (look.Y( ) > 0.95f)
+                        look.Y( ) = 0.95f;
                 }
             }
 

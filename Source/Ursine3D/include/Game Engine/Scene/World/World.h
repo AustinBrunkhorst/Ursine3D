@@ -95,6 +95,9 @@ namespace ursine
 
             SystemManager *GetSystemManager(void) const;
 
+            template<typename SystemType>
+            SystemType *GetEntitySystem(void);
+
             Screen *GetOwner(void) const;
             void SetOwner(Screen *owner);
 

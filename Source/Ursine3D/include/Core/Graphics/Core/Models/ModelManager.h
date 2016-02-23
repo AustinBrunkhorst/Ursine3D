@@ -50,14 +50,13 @@ namespace ursine
             void LoadModel(std::string name, std::string fileName);
 			void LoadModel_Fbx(std::string name, std::string fileName);
 			void LoadModel_Jdl(std::string name, std::string fileName); 
-			void LoadAni(std::string name, std::string fileName); // this will be used for animation builder
-
+			
             ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
             unsigned GetModelVertcount(std::string name, unsigned index = 0);
 			unsigned GetModelIndexcount(std::string name, unsigned index = 0);
 
             void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
-            void BindModel(unsigned ID, unsigned index = 0);
+            void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
 
             //manual binding
             template<typename T>

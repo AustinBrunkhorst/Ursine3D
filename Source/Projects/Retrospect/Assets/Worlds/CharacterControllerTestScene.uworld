@@ -6565,7 +6565,7 @@
 ".uid": 444, 
 "rotateSpeed": 10
 }, 
-"CommandInputController": {
+"InputController": {
 ".uid": 445, 
 "UseKeyboard": false
 }, 
@@ -6697,7 +6697,7 @@
 }, {
 "type": "CommandQueueSystem"
 }, {
-"type": "CommandInputControllerSystem"
+"type": "InputControllerSystem"
 }, {
 "type": "TimeDeathSystem"
 }, {

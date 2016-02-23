@@ -70,7 +70,7 @@ void EditorToolSystem::OnAfterLoad(void)
     m_mouseManager = GetCoreSystem( MouseManager );
     m_keyboardManager = GetCoreSystem( KeyboardManager );
 
-    m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
+    m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 
     m_mouseManager->Listener( this )
         .On( MM_BUTTON_DOWN, &EditorToolSystem::onMouseDown )

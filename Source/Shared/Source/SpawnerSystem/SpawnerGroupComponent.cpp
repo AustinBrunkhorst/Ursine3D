@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SpawnerGroupComponent.cpp
 **
@@ -16,7 +16,10 @@
 #include "SpawnerGroupComponent.h"
 #include "SpawnerComponent.h"
 
+#include "LevelSegmentManager.h"
+
 #include <Notification.h>
+#include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION( SpawnerGroup );
 
@@ -25,7 +28,23 @@ using namespace ursine;
 SpawnerGroup::SpawnerGroup(void)
     : BaseComponent( )
     , m_enemyType( AIArchetype::Agile )
+    , m_activeEnemies( 0 )
 {
+}
+
+SpawnerGroup::~SpawnerGroup(void)
+{
+    auto levelManager = GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( );
+
+    if (levelManager)
+        levelManager->Listener( this )
+            .Off( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+}
+
+void SpawnerGroup::OnInitialize(void)
+{
+    GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( )->Listener( this )
+        .On( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 AIArchetype SpawnerGroup::GetEnemyType(void) const
@@ -36,6 +55,11 @@ AIArchetype SpawnerGroup::GetEnemyType(void) const
 void SpawnerGroup::SetEnemyType(AIArchetype enemyType)
 {
     m_enemyType = enemyType;
+}
+
+int SpawnerGroup::GetActiveEnemiesCount(void) const
+{
+    return m_activeEnemies;
 }
 
 void SpawnerGroup::addSpawner(Spawner *spawner)
@@ -55,6 +79,26 @@ void SpawnerGroup::removeSpawner(Spawner *spawner)
 bool SpawnerGroup::haveSpawnerOfType(AIArchetype type)
 {
     return m_spawners.find( type ) != m_spawners.end( );
+}
+
+void SpawnerGroup::update(void)
+{
+    // iterate through all spawners and update them
+    for (auto &spawnerPair : m_spawners)
+    {
+        spawnerPair.second->update( this );
+    }
+}
+
+void SpawnerGroup::onLevelSegmentChange(EVENT_HANDLER(LevelSegmentManager))
+{
+    EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
+
+    // notify the spawners that the segment changed
+    for (auto &spawnerPair : m_spawners)
+    {
+        spawnerPair.second->onLevelSegmentChange( args->segment );
+    }
 }
 
 #if defined(URSINE_WITH_EDITOR)

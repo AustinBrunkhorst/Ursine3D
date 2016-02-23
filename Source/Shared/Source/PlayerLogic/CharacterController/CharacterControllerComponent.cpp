@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -22,7 +22,9 @@ NATIVE_COMPONENT_DEFINITION( CharacterController );
 CharacterController::CharacterController(void)
     : BaseComponent( )
     , m_rotateSpeed( 4.0f )
-    , m_jump( false ) { }
+    , m_jump( false )
+    , m_deadZone( 0.0f )
+    , m_deadZoneSnap( 0.0f ) { }
 
 CharacterController::~CharacterController(void)
 {
@@ -43,6 +45,26 @@ void CharacterController::SetRotateSpeed(float rotateSpeed)
         return;
 
     m_rotateSpeed = rotateSpeed;
+}
+
+float CharacterController::GetDeadZone(void) const
+{
+	return m_deadZone;
+}
+
+void CharacterController::SetDeadZone(float deadZone)
+{
+	m_deadZone = deadZone;
+}
+
+float CharacterController::GetDeadZoneSnap(void) const
+{
+    return m_deadZoneSnap;
+}
+
+void CharacterController::SetDeadZoneSnap(float snap)
+{
+    m_deadZoneSnap = snap;
 }
 
 const ursine::Vec2& CharacterController::GetMoveDirection(void) const

@@ -36,7 +36,7 @@ namespace ursine
     )
 	{
 		// get the current time
-		float time = currentState->GetTimePosition();
+		float time = (float)currentState->GetTimePosition();
 		// get the currently running animation
 		auto currentAnimation = currentState->GetAnimation();
 		// get the total keyframes for this animation
@@ -54,7 +54,7 @@ namespace ursine
 			// get the two current keyframes
 			const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
 			const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
-
+		
 			// check if the current keyframe set holds the time value between them
 			if (f1[0].length <= time && time < f2[0].length)
 			{
@@ -71,6 +71,10 @@ namespace ursine
 			}
 		}
 
+		//std::vector < AnimationKeyframe > f1;
+		//std::vector < AnimationKeyframe > f2;
+		//currentState->GetFrameByTime(f1, f2, time);
+
 		// for the future animation
 		// get the future running animation
 		const Animation* futAnimation = nullptr;
@@ -78,7 +82,7 @@ namespace ursine
 		{
 			// get the future time
 			futAnimation = futureState->GetAnimation();
-			float fut_time = futureState->GetTimePosition();
+			float fut_time = (float)futureState->GetTimePosition();
 			if (futAnimation)
 			{
 				// get the total keyframes for future animation

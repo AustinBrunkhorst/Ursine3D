@@ -190,7 +190,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
     // focus with f
     if (keyboardMgr->IsTriggeredDown( KEY_F ))
     {
-        auto selectorSystem = m_world->GetEntitySystem( EditorToolSystem );
+        auto selectorSystem = m_world->GetEntitySystem<EditorToolSystem>( );
         auto currentFocus = selectorSystem->GetCurrentFocus( );
 
         if (currentFocus != nullptr)

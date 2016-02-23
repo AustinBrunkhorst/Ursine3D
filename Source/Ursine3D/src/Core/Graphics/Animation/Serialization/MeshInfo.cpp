@@ -22,7 +22,11 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			MeshInfo::MeshInfo() :
-				meshVtxInfoCount(0), meshVtxIdxCount(0), mtrlCount(0), mtrlIndexCount(0), ISerialize("")
+				meshVtxInfoCount(0)
+				, meshVtxIdxCount(0)
+				, mtrlCount(0)
+				, mtrlIndexCount(0)
+				, ISerialize()
 			{
 			}
 

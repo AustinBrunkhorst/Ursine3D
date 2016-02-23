@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace graphics
     {
-        enum COMPUTE_BUFFER_LIST
+        enum COMPUTE_BUFFER_LIST : unsigned
         {
             COMPUTE_BUFFER_ID = 0,
             COMPUTE_BUFFER_ID_CPU,
@@ -28,7 +28,7 @@ namespace ursine
             COMPUTE_BUFFER_COUNT
         };
 
-        enum BUFFER_LIST
+        enum BUFFER_LIST : unsigned
         {
             BUFFER_CAMERA = 0,
             BUFFER_TRANSFORM,
@@ -74,9 +74,9 @@ namespace ursine
             DirectX::XMFLOAT4 lightPosition;
         };
 
-        struct InvProjBuffer
+        struct invViewBuffer
         {
-            DirectX::XMMATRIX invProj;
+            DirectX::XMMATRIX invView;
             float nearPlane;
             float farPlane;
         };
