@@ -120,8 +120,9 @@ private:
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
 
-    void onPipelinePreBuildItemStart(EVENT_HANDLER(ursine::resources::pipeline::ResourcePipelineManager));
-    void onPipelinePreBuildComplete(EVENT_HANDLER(ursine::resources::pipeline::ResourcePipelineManager));
+    void onPipelinePreBuildItemStart(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onPipelinePreBuildComplete(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
 
     void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
 } Meta(Enable, WhiteListMethods);

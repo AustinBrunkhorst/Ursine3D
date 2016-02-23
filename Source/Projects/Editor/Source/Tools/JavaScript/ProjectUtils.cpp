@@ -93,6 +93,8 @@ namespace
             { "type", resource->GetDataType( ).GetName( ) },
             { "displayName", resource->GetDisplayName( ) },
             { "sourceFile", sourceFile.string( ) },
+            { "hasPreview", resource->HasPreview( ) },
+            { "previewFile", resource->GetPreviewFileName( ).string( ) },
             { "extension", sourceFile.extension( ).string( ) }
         };
     }

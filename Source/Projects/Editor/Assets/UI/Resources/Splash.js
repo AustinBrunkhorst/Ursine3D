@@ -3,11 +3,15 @@ var gProgressText = null;
 
 var gBroadcastHandlers = {
     ResourcePipeline: {
-        preBuildItemStart: function (data) {
+        preBuildItemStart: function(data) {
             gProgressSpan.style.width = (data.progress * 100) + '%';
             gProgressText.innerHTML = 'Building '+ data.item;
         },
-        preBuildComplete: function (data) {
+        preBuildItemPreviewStart: function(data) {
+            gProgressSpan.style.width = (data.progress * 100) + '%';
+            gProgressText.innerHTML = 'Preview '+ data.item;
+        },
+        preBuildComplete: function(data) {
             gProgressSpan.style.width = '100%';
             gProgressText.innerHTML = 'Launching Editor';
         }

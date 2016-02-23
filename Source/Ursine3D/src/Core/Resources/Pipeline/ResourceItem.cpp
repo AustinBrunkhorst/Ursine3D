@@ -30,7 +30,17 @@ namespace ursine
         return m_buildFileName;
     }
 
-    std::string resources::pipeline::ResourceItem::GetDisplayName(void) const
+    bool rp::ResourceItem::HasPreview(void) const
+    {
+        return m_buildCache.hasPreview;
+    }
+
+    const fs::path &rp::ResourceItem::GetPreviewFileName(void) const
+    {
+        return m_buildPreviewFileName;
+    }
+
+    std::string rp::ResourceItem::GetDisplayName(void) const
     {
         return change_extension( m_fileName.filename( ), "" ).string( );
     }

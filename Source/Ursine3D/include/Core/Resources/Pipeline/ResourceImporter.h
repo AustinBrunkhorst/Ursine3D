@@ -22,6 +22,11 @@ namespace ursine
                 friend class ResourcePipelineManager;
 
                 virtual ResourceData::Handle Import(const fs::path &fileName, const ResourceImportContext &context) = 0;
+
+                virtual bool BuildPreview(const fs::path &outputFileName, const Vec2 &maxDimensions)
+                {
+                    return false;
+                }
             };
         }
     }

@@ -6,9 +6,11 @@ namespace ursine
     {
         namespace pipeline
         {
-            class ResourceImportContext
+            class ResourcePipelineManager;
+
+            struct ResourceImportContext
             {
-                
+                ResourcePipelineManager *pipeline;
             };
         }
     }

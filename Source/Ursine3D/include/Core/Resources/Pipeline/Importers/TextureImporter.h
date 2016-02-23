@@ -14,9 +14,14 @@ namespace ursine
 
             public:
                 TextureImporter(void);
+                ~TextureImporter(void);
 
             private:
+                SDL_Surface *m_inputSurface;
+
                 ResourceData::Handle Import(const fs::path &fileName, const ResourceImportContext &context) override;
+
+                bool BuildPreview(const fs::path &previewFileName, const Vec2 &maxDimension) override;
             } Meta(
                 Enable,
                 DisplayName( "TextureImporter" ),

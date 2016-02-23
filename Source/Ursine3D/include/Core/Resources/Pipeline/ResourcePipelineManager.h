@@ -6,6 +6,8 @@
 #include "ResourceDirectoryNode.h"
 #include "ResourceItem.h"
 
+#include "ResourceBuildContext.h"
+
 #include "GUID.h"
 
 namespace ursine
@@ -83,7 +85,9 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
 
                 void buildResources(void);
-                void buildResource(ResourceItem::Handle resource);
+
+                void buildResource(ResourceBuildContext &context);
+                void buildResourcePreview(ResourceBuildContext &context);
 
                 bool buildIsInvalidated(ResourceItem::Handle resource);
 
@@ -93,6 +97,7 @@ namespace ursine
 
                 // gets build file name for this resource
                 fs::path getResourceBuildFile(const GUID &guid) const;
+                fs::path getResourceBuildPreviewFile(const GUID &guid) const;
                 fs::path getResourceBuildCacheFile(const GUID &guid) const;
             };
         }

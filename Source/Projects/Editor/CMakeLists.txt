@@ -26,7 +26,7 @@ ursine_project(Editor
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
-    SYM_LINKS "Assets" 
+    SYM_LINKS "Assets" "Tools"
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META

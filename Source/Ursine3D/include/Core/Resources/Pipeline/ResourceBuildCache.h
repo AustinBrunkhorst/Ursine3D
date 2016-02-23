@@ -8,6 +8,9 @@ namespace ursine
         {
             struct ResourceBuildCache
             {
+                // Determines if this asset built a preview
+                bool hasPreview;
+
                 // Runtime type of the processed resource
                 meta::Type processedType;
 

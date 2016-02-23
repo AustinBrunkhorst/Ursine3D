@@ -14,6 +14,9 @@ namespace ursine
                 // Base directory to unmodified resources
                 fs::path resourceDirectory;
 
+                // Temporary directory where external processes can do things and things
+                fs::path tempDirectory;
+
                 // Directory where resources are built to
                 fs::path buildDirectory;
             };
