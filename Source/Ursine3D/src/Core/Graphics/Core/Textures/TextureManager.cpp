@@ -95,7 +95,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////////////
             // CREATING SAMPLER STATES //////////////////////////////////////
-            m_samplerStateList_.resize(SAMPLER_COUNT);
+            m_samplerStateList_.resize(SAMPLER_STATE_COUNT);
 
             HRESULT result;
             D3D11_SAMPLER_DESC samplerDesc;
@@ -116,7 +116,7 @@ namespace ursine
             samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
             //Create the texture sampler state.
-            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_WRAP_TEX ]);
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_WRAP_TEX ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
 
             // no sampling //////////////////////////////////////////////////
@@ -135,7 +135,7 @@ namespace ursine
             samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
             //Create the texture sampler state.
-            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_NO_FILTERING ]);
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_NO_FILTERING ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
 
             // shadow sampler //////////////////////////////////////////////////
@@ -154,7 +154,7 @@ namespace ursine
             samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
             //Create the texture sampler state.
-            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_SHADOW ]);
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_SHADOW ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
         }
 
@@ -173,7 +173,7 @@ namespace ursine
 
             m_textureList.clear();
 
-            for (int x = 0; x < SAMPLER_COUNT; ++x)
+            for (int x = 0; x < SAMPLER_STATE_COUNT; ++x)
             {
                 RELEASE_RESOURCE(m_samplerStateList_[ x ])
             }
@@ -282,8 +282,10 @@ namespace ursine
             m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_hashTextureList[ ID ]->m_shaderResource);
         }
 
-        void TextureManager::MapSamplerState(const Sampler type, const unsigned bufferIndex)
+        void TextureManager::MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex)
         {
+            if( type == SAMPLER_STATE_COUNT)
+                return;
             m_deviceContext->PSSetSamplers(bufferIndex, 1, &m_samplerStateList_[ type ]);
         }
 

@@ -17,7 +17,7 @@ namespace ursine
 {
     namespace graphics
     {
-        enum SHADER_TYPES
+        enum SHADER_LIST : unsigned
         {
             SHADER_BASIC = 0,
             SHADER_QUAD,
@@ -54,7 +54,9 @@ namespace ursine
             SHADER_POINT,
             SHADER_SHADOW_PASS,
 
-            SHADER_COUNT
+            SHADER_COUNT,
+
+            SHADER_OVERRIDE
         };
     }
 }
