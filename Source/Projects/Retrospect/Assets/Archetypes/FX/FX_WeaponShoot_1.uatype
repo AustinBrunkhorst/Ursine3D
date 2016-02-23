@@ -2,7 +2,7 @@
 "children": [], 
 "components": {
 "ParticleAnimator": {
-".uid": 62, 
+".uid": 68, 
 "dampening": 0, 
 "force": {
 "x": 0, 
@@ -12,68 +12,68 @@
 "growth": -0.5
 }, 
 "ParticleColorAnimator": {
-".uid": 63, 
+".uid": 69, 
 "color0": {
-"a": 0.47265625, 
-"b": 1, 
-"g": 0.15686275064945221, 
-"r": 0
+"a": 0.46875, 
+"b": 0.54117649793624878, 
+"g": 0.88627451658248901, 
+"r": 0.8593137264251709
 }, 
 "color1": {
 "a": 1, 
-"b": 0, 
-"g": 0.4453125, 
+"b": 0.0546875, 
+"g": 0.9852294921875, 
 "r": 1
 }, 
 "color2": {
 "a": 1, 
 "b": 0, 
-"g": 0, 
+"g": 0.515625, 
 "r": 1
 }, 
 "color3": {
 "a": 0.75, 
 "b": 0, 
-"g": 0.234375, 
+"g": 0.75, 
 "r": 1
 }, 
 "color4": {
 "a": 0, 
 "b": 0, 
-"g": 0.3046875, 
+"g": 0.30588236451148987, 
 "r": 1
 }
 }, 
 "ParticleEmitter": {
-".uid": 64, 
-"emitCount": 0, 
-"emitRate": 50, 
+".uid": 70, 
+"emitCount": 3, 
+"emitRate": 400, 
 "emitRateVariance": 0, 
 "emitterSize": {
+"x": 0.10000000149011612, 
+"y": 0.10000000149011612, 
+"z": 0.10000000149011612
+}, 
+"fill": 0, 
+"lifetime": 0.05000000074505806, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 0, 
+"size": 0.30000001192092896, 
+"sizeVariance": 0.20000000298023224, 
+"velocity": {
 "x": 0, 
 "y": 0, 
 "z": 0
 }, 
-"fill": 0, 
-"lifetime": 1, 
-"lifetimeVariance": 0.5, 
-"rotation": 0, 
-"rotationVariance": 3.1415927410125732, 
-"size": 2, 
-"sizeVariance": 0.40000000596046448, 
-"velocity": {
-"x": 0, 
-"y": 2.5, 
-"z": 0
-}, 
 "velocityVariance": {
 "x": 1, 
-"y": 3, 
+"y": 1, 
 "z": 1
 }
 }, 
 "ParticleSystem": {
-".uid": 65, 
+".uid": 71, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -82,15 +82,15 @@
 }, 
 "renderMask": 0, 
 "renderMode": 0, 
-"systemSpace": 0, 
+"systemSpace": 1, 
 "texture": "Laser"
 }, 
 "TimeDeath": {
-".uid": 66, 
-"TimeBeforeDeath": 3
+".uid": 72, 
+"TimeBeforeDeath": 0.60000002384185791
 }, 
 "Transform": {
-".uid": 61, 
+".uid": 67, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -103,7 +103,7 @@
 "z": 1
 }, 
 "translation": {
-"x": -22.060829162597656, 
+"x": 0, 
 "y": 0, 
 "z": 0
 }

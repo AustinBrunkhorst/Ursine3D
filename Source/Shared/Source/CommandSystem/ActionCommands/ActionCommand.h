@@ -10,20 +10,16 @@
 
 #pragma once
 
-#include <memory>
-
-#include "Command.h"
-#include <Core/CoreSystem.h>
-#include <Core/Input/Gamepad/GamepadManager.h>
-#include <Core/Input/Keyboard/KeyboardManager.h>
-#include <Core/Input/Mouse/MouseManager.h>
 
 class ActionCommandBase
 {
 public:
     virtual ~ActionCommandBase() {};
-    virtual bool Acting(void) { return false; };
-    virtual std::shared_ptr<Command> CreateCommand() { return std::shared_ptr<Command>(nullptr); }
+    
+    virtual void ProcessCommands(void) { };
+
+protected:
+    
 };
 
 template<typename T>
@@ -32,8 +28,7 @@ class ActionCommand
 {
 public:
     virtual ~ActionCommand();
-    virtual bool Acting(void) override;
-    virtual std::shared_ptr<Command> CreateCommand() override;
+    virtual bool Acting(void);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -46,10 +41,4 @@ template<typename T>
 bool ActionCommand<T>::Acting()
 {
     return false;
-}
-
-template<typename T>
-std::shared_ptr<Command> ActionCommand<T>::CreateCommand()
-{
-    return std::shared_ptr<Command>(nullptr);
 }

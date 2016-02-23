@@ -12,15 +12,13 @@
 
 #include "InputControllerComponent.h"
 #include <CommandSystem/ActionCommands/ButtonActionCommand.h>
-#include <CommandSystem/ActionCommands/TwoAxisActionCommand.h>
-#include <CommandSystem/AxisCommandTypes/MoveCommand.h>
-#include <CommandSystem/AxisCommandTypes/LookCommand.h>
-#include <CommandSystem/CommandTypes/FireCommand.h>
-#include <CommandSystem/CommandTypes/JumpCommand.h>
-#include <CommandSystem/CommandTypes/InteractCommand.h>
-#include <CommandSystem/CommandTypes/SwapCommand.h>
-#include <CommandSystem/CommandTypes/ReloadCommand.h>
 #include "PlayerIdComponent.h"
+
+#define HELD PlayerAction::Held
+#define RELEASED PlayerAction::Released
+#define TRIGGERED PlayerAction::Down
+#define UP PlayerAction::Up
+
 
 NATIVE_COMPONENT_DEFINITION(InputController);
 
@@ -33,10 +31,6 @@ InputController::InputController(void)
 
 InputController::~InputController(void)
 {
-    for(auto &x : m_commandList)
-    {
-        delete x;
-    }
 }
 
 bool InputController::GetKeyBoard(void) const
@@ -53,7 +47,9 @@ void InputController::SetKeyBoard(const bool useKeyBoard)
     else
         MapXboxContoller( );
 
-    MapCommandList( );
+    PlayerID* idComp = GetOwner( )->GetComponent<PlayerID>( );
+
+    MapCommandList( idComp );
 }
 
 void InputController::OnInitialize(void)
@@ -61,217 +57,80 @@ void InputController::OnInitialize(void)
     SetKeyBoard( m_keyBoard );
 }
 
-void InputController::MapXboxContoller( void )
+void InputController::MapXboxContoller(void)
 {
-    PlayerID* idComp = GetOwner( )->GetComponent<PlayerID>( );
-
-    
+    m_action.SetActionMode(PlayerAction::Xbox);
 
     /////////////////////////////////////////////////////////////////
     // this is all XBOX specific ////////////////////////////////////
-    m_moveForward = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::LeftStickUp
-        );
-    m_moveBack = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::LeftStickDown
-        );
-    m_moveLeft = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::LeftStickLeft
-        );
-    m_moveRight = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::LeftStickRight
-        );
+    m_moveForward = PlayerAction::LeftStickUp;
+    m_moveBack    = PlayerAction::LeftStickDown;
+    m_moveLeft    = PlayerAction::LeftStickLeft;
+    m_moveRight   = PlayerAction::LeftStickRight;
 
-    m_move = PlayerTwoAxisAction(
-        m_moveLeft,
-        m_moveRight,
-        m_moveForward,
-        m_moveBack
-        );
+    m_lookUp    = PlayerAction::RightStickUp;
+    m_lookDown  = PlayerAction::RightStickDown;
+    m_lookLeft  = PlayerAction::RightStickLeft;
+    m_lookRight = PlayerAction::RightStickRight;
 
-    m_lookUp = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::RightStickUp
-        );
-    m_lookDown = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::RightStickDown
-        );
-    m_lookLeft = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::RightStickLeft
-        );
-    m_lookRight = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::RightStickRight
-        );
-
-    m_look = PlayerTwoAxisAction(
-        m_lookLeft,
-        m_lookRight,
-        m_lookUp,
-        m_lookDown
-        );
-
-    m_fire = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::RightTrigger
-        );
-    m_reload = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::Action3
-        );
-    m_swap = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::Action4
-        );
-    m_jump = PlayerAction(
-        idComp,
-        PlayerAction::Xbox,
-        PlayerAction::Action1
-        );
+    m_pullTrigger = PlayerAction::RightTrigger;
+    m_reload      = PlayerAction::Action3;
+    m_swap        = PlayerAction::Action4;
+    m_jump        = PlayerAction::Action1;
 }
 
 void InputController::MapKeyboard(void)
 {
-    PlayerID* idComp =  GetOwner( )->GetComponent<PlayerID>( );
+    m_action.SetActionMode(PlayerAction::Keyboard);
 
     /////////////////////////////////////////////////////////////////
     // this is all XBOX specific ////////////////////////////////////
-    m_moveForward = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::KeyUp
-        );
-    m_moveBack = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::KeyDown
-        );
-    m_moveLeft = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::KeyLeft
-        );
-    m_moveRight = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::KeyRight
-        );
+    m_moveForward = PlayerAction::KeyUp;
+    m_moveBack    = PlayerAction::KeyDown;
+    m_moveLeft    = PlayerAction::KeyLeft;
+    m_moveRight   = PlayerAction::KeyRight;
+     
+    m_lookUp    = PlayerAction::MouseUp;
+    m_lookDown  = PlayerAction::MouseDown;
+    m_lookLeft  = PlayerAction::MouseLeft;
+    m_lookRight = PlayerAction::MouseRight;
 
-    m_move = PlayerTwoAxisAction(
-        m_moveLeft,
-        m_moveRight,
-        m_moveForward,
-        m_moveBack
-        );
-
-    m_lookUp = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::MouseUp
-        );
-    m_lookDown = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::MouseDown
-        );
-    m_lookLeft = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::MouseLeft
-        );
-    m_lookRight = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::MouseRight
-        );
-
-    m_look = PlayerTwoAxisAction(
-        m_lookLeft,
-        m_lookRight,
-        m_lookUp,
-        m_lookDown
-        );
-
-    m_fire = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::RightTrigger
-        );
-    m_reload = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::Action3
-        );
-    m_swap = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::Action4
-        );
-    m_jump = PlayerAction(
-        idComp,
-        PlayerAction::Keyboard,
-        PlayerAction::Action1
-        );
+    m_pullTrigger = PlayerAction::RightTrigger;
+    m_reload      = PlayerAction::Action3;
+    m_swap        = PlayerAction::Action4;
+    m_jump        = PlayerAction::Action1;
 }
 
-void InputController::MapCommandList(void)
+void InputController::MapCommandList(PlayerID* idComp)
 {
-    // clear all commands previously created
-    for (auto &command : m_commandList)
-        delete command;
+    Clear( );
 
-    m_commandList.clear( );
+    m_action.SetPlayerIDComp(idComp);
 
-     m_commandList = {
-        new ButtonActionCommand<JumpCommand>(
-            m_jump,
-            ButtonActionCommand<JumpCommand>::Interaction::Down
-        ),
+    ButtonActionCommand* actions = new ButtonActionCommand( &m_action, GetOwner( ) );
+    actions->AddActionCommand( Method( m_pullTrigger, HELD, gEvent::FIRE_START ) )
+        .AddActionCommand ( Method( m_pullTrigger, RELEASED, gEvent::FIRE_END ) )
+        .AddActionCommand( Method( m_reload, HELD, gEvent::INTERACT_COMMAND ) )
+        .AddActionCommand( Method( m_reload, RELEASED, gEvent::RELOAD_COMMAND ) )
+        .AddActionCommand( Method( m_jump, TRIGGERED, gEvent::JUMP_COMMAND ) )
+        .AddActionCommand( Method( m_swap, TRIGGERED, gEvent::SWAP_COMMAND ) );
 
-        new TwoAxisActionCommand<MoveCommand>( m_move ),
-
-        new TwoAxisActionCommand<LookCommand>( m_look ),
-
-        new ButtonActionCommand<FireCommand>(
-            m_fire,
-            ButtonActionCommand<FireCommand>::Interaction::Held
-        ),
-        
-        new ButtonActionCommand<InteractCommand>(
-            m_reload,
-            ButtonActionCommand<InteractCommand>::Interaction::Held
-        ),
-
-        new ButtonActionCommand<InteractCommand>(
-             m_reload,
-             ButtonActionCommand<InteractCommand>::Interaction::Up
-        ),
-
-        new ButtonActionCommand<SwapCommand>(
-            m_swap,
-            ButtonActionCommand<SwapCommand>::Interaction::Down
-        )
-    };
+    PlayerTwoAxisAction* axisActions = new PlayerTwoAxisAction( &m_action, GetOwner( ) );
+    axisActions->AddAxisBinding( AxisBinding( m_moveLeft, m_moveRight, m_moveForward, m_moveBack, gEvent::MOVEMENT_COMMAND ) )
+        .AddAxisBinding( AxisBinding( m_lookLeft, m_lookRight, m_lookUp, m_lookDown, gEvent::LOOK_COMMAND ) );
+    
+    m_actionList = { axisActions, actions };
 }
 
-std::vector<ActionCommandBase*> &InputController::GetCommandList(void)
+std::vector<ActionCommandBase*> &InputController::GetActionList(void)
 {
-    return m_commandList;
+    return m_actionList;
+}
+
+void InputController::Clear(void)
+{
+    for ( auto &action : m_actionList )
+        delete action;
+
+    m_actionList.clear( );
 }

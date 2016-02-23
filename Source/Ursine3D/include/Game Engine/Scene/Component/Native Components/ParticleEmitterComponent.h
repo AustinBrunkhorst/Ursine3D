@@ -170,11 +170,11 @@ namespace ursine
             const float GetFill(void) const;
             void SetFill(const float fill);
 
+            int spawnParticle(void);
+
         private:
             // temporary updating
             void onParticleUpdate(EVENT_HANDLER(Entity));
-
-            int spawnParticle(void);
 
             // parent component, this is kinda important
             Component::Handle<ParticleSystem> m_particleComponent;

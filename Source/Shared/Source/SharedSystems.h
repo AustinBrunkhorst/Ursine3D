@@ -40,6 +40,7 @@
 #include "WeaponSystem/Weapons/BaseWeaponSystem.h"
 #include "WeaponSystem/Projectiles/ProjectileSystem.h"
 #include "WeaponSystem/Inventory/InventorySystem.h"
+#include "WeaponSystem/Trails/TrailSystem.h"
 
 /////////////////////////////////
 //        Command System       //

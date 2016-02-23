@@ -130,11 +130,17 @@
         );                              \
                                         \
     EditorField(                        \
-        std::string ArchetypeToShoot,   \
-        GetArchetypeToShoot,            \
-        SetArchetypeToShoot             \
+        std::string FireParticle,       \
+        GetFireParticle,                \
+        SetFireParticle                 \
+        );                              \
+                                        \
+    EditorField(                        \
+        bool SemiAutomatic,             \
+        GetSemiAutomatic,               \
+        SetSemiAutomatic                \
         );
-  
+
 #define AbstractWeaponConnect( Obj )                            \
     GetOwner( )->Listener( this )                               \
         .On(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
@@ -248,8 +254,11 @@ public:
     Meta(Disable)
     ursine::ecs::Animator* m_animatorHandle;
 
-    // Archetype weapon should fire
-    std::string m_archetypeToShoot;
+    // Particle to spawn at tip of gun when shot
+    std::string m_fireParticle;
+
+    // is weapon a semi-automatic
+    bool m_semiAutomatic;
 
     // Is trigger being pulled
     Meta(Disable)
@@ -329,8 +338,11 @@ public:
     ursine::SVec3 GetSpawnOffset(void) const;
     void SetSpawnOffset(const ursine::SVec3& offset);
 
-    const std::string& GetArchetypeToShoot(void) const;
-    void SetArchetypeToShoot(const std::string &archetype);
+    const std::string& GetFireParticle(void) const;
+    void SetFireParticle(const std::string &archetype);
+
+    bool GetSemiAutomatic(void) const;
+    void SetSemiAutomatic(const bool semi);
 
     bool GetTriggerPulled(void) const;
 

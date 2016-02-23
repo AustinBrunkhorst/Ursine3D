@@ -27,6 +27,7 @@ CharacterController::CharacterController(void)
 CharacterController::~CharacterController(void)
 {
     GetOwner( )->Listener( this )
+        .Off(game::MOVEMENT_COMMAND, &CharacterController::SetMoveDirection)
         .Off( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
         .Off( game::JUMP_COMMAND, &CharacterController::Jump );
 }
@@ -67,8 +68,16 @@ void CharacterController::SetLookDirection(const ursine::Vec2& lookDir)
 void CharacterController::OnInitialize(void)
 {
     GetOwner( )->Listener(this)
+        .On( game::MOVEMENT_COMMAND, &CharacterController::SetMoveDirection)
         .On( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
         .On( game::JUMP_COMMAND, &CharacterController::Jump );
+}
+
+void CharacterController::SetMoveDirection(EVENT_HANDLER(game::LOOK_COMMAND))
+{
+    EVENT_ATTRS(ursine::ecs::Entity, game::MovementEventArgs);
+
+    m_moveDir = args->m_moveDir;
 }
 
 void CharacterController::SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND))

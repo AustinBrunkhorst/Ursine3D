@@ -16,10 +16,28 @@
 using namespace ursine;
 
 
+namespace
+{
+    // Helper to check if the archetype to shoot needs to have .uatype appended to it
+    void CheckArchetypeToShoot(std::string& archetype)
+    {
+        if ( archetype.find(".uatype") == std::string::npos )
+            archetype += ".uatype";
+
+        if ( archetype.find("FX/") == std::string::npos )
+            archetype = "FX/" + archetype;
+    }
+
+}; // unamed namespace
+
+
 AbstractHitscanWeapon::AbstractHitscanWeapon(void) :
     AbstractWeapon( ),
     m_raycastType( physics::RaycastType::RAYCAST_CLOSEST_HIT),
     m_drawDuration( 0.2f ),
+    m_spawnSemgennts( 0 ),
+    m_shotParticle( "FX/FX_bullet.uatype" ),
+    m_trailParticle( "FX/FX_Trail.uatype" ),
     m_alwaysDraw( false ),
     m_debug( false )
 {
@@ -43,6 +61,40 @@ float AbstractHitscanWeapon::GetDrawDuration( ) const
 void AbstractHitscanWeapon::SetDrawDuration(const float drawDuration)
 {
     m_drawDuration = drawDuration;
+}
+
+int AbstractHitscanWeapon::GetSpawnSegments(void) const
+{
+    return m_spawnSemgennts;
+}
+
+void AbstractHitscanWeapon::SetSpawnSegments(const int segments)
+{
+    m_spawnSemgennts = segments;
+}
+
+const std::string& AbstractHitscanWeapon::GetShotParticle( ) const
+{
+    return m_shotParticle;
+}
+
+void AbstractHitscanWeapon::SetShotParticle(const std::string& particleArchetype)
+{
+    m_shotParticle = particleArchetype;
+
+    CheckArchetypeToShoot(m_shotParticle);
+}
+
+const std::string& AbstractHitscanWeapon::GetTrailParticle( ) const
+{
+    return m_trailParticle;
+}
+
+void AbstractHitscanWeapon::SetTrailParticle(const std::string& particleArchetype)
+{
+    m_trailParticle = particleArchetype;
+
+    CheckArchetypeToShoot(m_trailParticle);
 }
 
 bool AbstractHitscanWeapon::GetAlwaysDraw( ) const

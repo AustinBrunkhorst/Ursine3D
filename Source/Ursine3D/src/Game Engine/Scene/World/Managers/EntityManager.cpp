@@ -331,14 +331,24 @@ namespace ursine
 
         Component *EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
         {
-            auto parentID = m_hierarchy.GetParent( entity );
+            const Entity* parent = entity;
+            Component* comp = nullptr;
 
-            if (parentID == -1)
-                return nullptr;
+            do
+            {
+                auto parentID = m_hierarchy.GetParent(parent);
 
-            auto parent = &m_cache[ parentID ];
+                if ( parentID == -1 )
+                    return nullptr;
 
-            return GetComponent( parent, id );
+                parent = &m_cache[ parentID ];
+                
+                comp = GetComponent(parent, id);
+
+            // was desired component found
+            } while ( comp == nullptr );
+
+            return comp;
         }
 
         ComponentVector EntityManager::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const

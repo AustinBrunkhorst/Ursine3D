@@ -196,7 +196,8 @@ namespace ursine
             EntitySystem::OnInitialize( );
 
             m_world->Listener(this)
-                .On(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate);
+                .On(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate)
+                .On( WORLD_UPDATE, &DebugSystem::onWorldUpdate );
         }
 
         void DebugSystem::OnRemove(void)
@@ -204,7 +205,8 @@ namespace ursine
             EntitySystem::OnRemove();
 
             m_world->Listener(this)
-                .Off(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate);
+                .Off(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate)
+                .Off( WORLD_UPDATE, &DebugSystem::onWorldUpdate );
         }
 
         void DebugSystem::onUpdate(EVENT_HANDLER(World))
@@ -223,6 +225,11 @@ namespace ursine
                 else
                     ++it;
             }
+        }
+
+        void DebugSystem::onWorldUpdate(EVENT_HANDLER(World))
+        {
+            m_requests.clear( );
         }
 
         void DebugSystem::LineRequest::Draw(graphics::DrawingAPI &draw)

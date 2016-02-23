@@ -1,53 +1,49 @@
 {
 "children": [], 
 "components": {
-"ParticleAnimator": {
-".uid": 62, 
-"dampening": 0, 
-"force": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"growth": -0.5
+"HitscanTrailComponent": {
+".uid": 106, 
+"ParticlesToSpawn": 2, 
+"Segments": 1000, 
+"Speed": 100
 }, 
 "ParticleColorAnimator": {
-".uid": 63, 
+".uid": 107, 
 "color0": {
-"a": 0.47265625, 
-"b": 1, 
-"g": 0.15686275064945221, 
-"r": 0
+"a": 0.75390625, 
+"b": 0.3265380859375, 
+"g": 0.78125, 
+"r": 0.74507975578308105
 }, 
 "color1": {
 "a": 1, 
-"b": 0, 
-"g": 0.4453125, 
+"b": 0.0546875, 
+"g": 0.9852294921875, 
 "r": 1
 }, 
 "color2": {
 "a": 1, 
 "b": 0, 
-"g": 0, 
+"g": 0.51372551918029785, 
 "r": 1
 }, 
 "color3": {
-"a": 0.75, 
+"a": 0.81640625, 
 "b": 0, 
-"g": 0.234375, 
+"g": 0.74901962280273438, 
 "r": 1
 }, 
 "color4": {
-"a": 0, 
+"a": 0.4609375, 
 "b": 0, 
-"g": 0.3046875, 
+"g": 0.60784316062927246, 
 "r": 1
 }
 }, 
 "ParticleEmitter": {
-".uid": 64, 
-"emitCount": 0, 
-"emitRate": 50, 
+".uid": 108, 
+"emitCount": 1, 
+"emitRate": 400, 
 "emitRateVariance": 0, 
 "emitterSize": {
 "x": 0, 
@@ -55,25 +51,25 @@
 "z": 0
 }, 
 "fill": 0, 
-"lifetime": 1, 
-"lifetimeVariance": 0.5, 
+"lifetime": 0.029999999329447746, 
+"lifetimeVariance": 0, 
 "rotation": 0, 
-"rotationVariance": 3.1415927410125732, 
-"size": 2, 
-"sizeVariance": 0.40000000596046448, 
+"rotationVariance": 0, 
+"size": 0.5, 
+"sizeVariance": 0.20000000298023224, 
 "velocity": {
 "x": 0, 
-"y": 2.5, 
+"y": 0, 
 "z": 0
 }, 
 "velocityVariance": {
-"x": 1, 
-"y": 3, 
-"z": 1
+"x": 0, 
+"y": 0, 
+"z": 0
 }
 }, 
 "ParticleSystem": {
-".uid": 65, 
+".uid": 109, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -85,12 +81,8 @@
 "systemSpace": 0, 
 "texture": "Laser"
 }, 
-"TimeDeath": {
-".uid": 66, 
-"TimeBeforeDeath": 3
-}, 
 "Transform": {
-".uid": 61, 
+".uid": 105, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -103,7 +95,7 @@
 "z": 1
 }, 
 "translation": {
-"x": -22.060829162597656, 
+"x": 0, 
 "y": 0, 
 "z": 0
 }

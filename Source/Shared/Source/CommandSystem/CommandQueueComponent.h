@@ -10,19 +10,9 @@
 #pragma once
 
 #include <Component.h>
-#include "Command.h"
-#include <queue>
 #include "GameEvents.h"
 
 
-
-struct CommandComparison
-{
-    bool operator()(const std::shared_ptr<Command> &c1, const std::shared_ptr<Command> &c2) const
-    {
-        return c1->GetWeight() < c2->GetWeight();
-    }
-};
 
 class CommandQueue
     : public ursine::ecs::Component
@@ -36,8 +26,6 @@ public:
     ~CommandQueue(void);
 
     void OnInitialize(void) override;
-
-    void AddCommand(const std::shared_ptr<Command> &command);
    
     void Update(void);
 
@@ -45,9 +33,6 @@ public:
     bool QueryCommand(const game::GameEvents commandEvent) const;
 
 private:
-    std::priority_queue<std::shared_ptr<Command>, std::vector<std::shared_ptr<Command>>, CommandComparison> m_commandQueue;
-    std::vector<std::shared_ptr<Command>> m_stopQueue;
-    
     static const int COMMAND_OFFSET = game::COMMAND_START + 1;
     static const int COMMAND_COUNT = game::COMMAND_END - COMMAND_OFFSET;
 
@@ -56,6 +41,7 @@ private:
 
     // any commands that have went off this frame
     bool m_nextCommandPool[ COMMAND_COUNT ];
+
 
     void UpdatePools(void);
 

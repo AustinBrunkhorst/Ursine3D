@@ -14,7 +14,16 @@
 #include <Component.h>
 #include <BoxColliderComponent.h>
 
+namespace ursine
+{
+    namespace physics
+    {
+        struct RaycastOutput;
+    } // physics namespace
+} // ursine namespace
+
 class Health;
+struct CritSpot;
 
 class DamageOnCollide : public ursine::ecs::Component
 {
@@ -52,6 +61,7 @@ public:
 
     void OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
+    void ApplyCritDamage(CritSpot* critComp);
     void ApplyDamage(Health* healthComp);
 
     // add an entity to the damage intervals so it can not be damaged by this object during 
@@ -112,6 +122,7 @@ public:
         );
 
 private:
+
     // damage to apply when triggered
     float m_damageToApply;
 
@@ -141,6 +152,11 @@ private:
     bool m_spawnOnDeath;
 
     void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
+    void GetSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
+
+    // spawn particle at collision point and parent to player
+    void SpawnCollisionParticle(ursine::ecs::Entity* other);
+
 
     Meta(Disable)
     bool DeleteOnCollision(void);
