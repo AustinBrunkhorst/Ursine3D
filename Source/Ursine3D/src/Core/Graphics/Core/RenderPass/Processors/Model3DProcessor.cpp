@@ -45,65 +45,79 @@ namespace ursine
 
         void Model3DProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            Model3D model = m_manager->renderableManager->GetRenderableByID<Model3D>(handle.Index_);
+            Model3D model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
             /////////////////////////////////////////////////////////
             // map color
-            Color c = model.GetColor();
+            Color c = model.GetColor( );
             PrimitiveColorBuffer pcb;
             pcb.color.x = c.r;
             pcb.color.y = c.g;
             pcb.color.z = c.b;
             pcb.color.w = c.a;
-            m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+            m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(
+                &pcb, 
+                SHADERTYPE_PIXEL
+            );
 
             /////////////////////////////////////////////////////////
             // material buffer 
             MaterialDataBuffer mdb;
 
             // get material data
-            model.GetMaterialData(mdb.emissive, mdb.specularPower, mdb.specularIntensity);
+            model.GetMaterialData(
+                mdb.emissive, 
+                mdb.specularPower, 
+                mdb.specularIntensity
+            );
 
             // set unique ID for this model
-            int overdrw = model.GetOverdraw() == true ? 1 : 0;
-
+            int overdrw = model.GetOverdraw( ) == true ? 1 : 0;
             unsigned type = handle.Type_;
-
             if (type == RENDERABLE_OVERDRAW)
                 type = 3;
-
             type = type & 0x3;
-
-            //             16                8
             mdb.id = (handle.Index_) | (type << 12) | (overdrw << 15) | (1 << 11);
 
             // map buffer
-            m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
+            m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(
+                &mdb, 
+                SHADERTYPE_PIXEL
+            );
 
             /////////////////////////////////////////////////////////
             // map matrix palette
             MatrixPalBuffer data;
 
             int index = 0;
-            for ( auto &x : model.GetMatrixPalette() )
+            for ( auto &x : model.GetMatrixPalette( ) )
             {
-                data.matPal.matPal[ index++ ] = x.ToD3D();
+                data.matPal.matPal[ index++ ] = x.ToD3D( );
             }
-            m_manager->bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(&data, SHADERTYPE_VERTEX);
+            m_manager->bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(
+                &data, 
+                SHADERTYPE_VERTEX
+            );
 
             /////////////////////////////////////////////////////////
             // map texture
-            m_manager->textureManager->MapTextureByID(handle.Material_);
+            m_manager->textureManager->MapTextureByID( handle.Material_ );
         }
 
         void Model3DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            Model3D model = m_manager->renderableManager->GetRenderableByID<Model3D>(handle.Index_);
+            Model3D model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
-            if ( model.GetMeshIndex() == -1 )
-                renderFullModel( handle, model.GetDebug( ) );
+            if (model.GetMeshIndex( ) == -1)
+                renderFullModel( 
+                    handle, 
+                    model.GetDebug( ) 
+                );
             else
-                renderSection( handle, model.GetDebug( ) );
+                renderSection( 
+                    handle, 
+                    model.GetDebug( ) 
+                );
         }
 
         void Model3DProcessor::renderFullModel(_DRAWHND handle, bool renderDebug)
@@ -113,7 +127,7 @@ namespace ursine
             auto *modelResource = m_manager->modelManager->GetModel( handle.Model_ );
 
             // main rendering
-            for ( unsigned x = 0; x < count; ++x )
+            for (unsigned x = 0; x < count; ++x)
             {
                 auto *mesh = modelResource->GetMesh( x );
 
@@ -128,34 +142,43 @@ namespace ursine
 
                 // render
                 m_manager->shaderManager->Render( 
-                    m_manager->modelManager->GetModelIndexcountByID( handle.Model_, x )
+                    m_manager->modelManager->GetModelIndexcountByID( 
+                        handle.Model_, 
+                        x 
+                    )
                 );
             }
 
             // rendering debug lines
             if(renderDebug)
             {
-                m_manager->dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
+                m_manager->dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
 
                 PrimitiveColorBuffer pcb;
                 pcb.color.x = 0.75f;
                 pcb.color.y = 0.75f;
                 pcb.color.z = 0.45f;
-                m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+                m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(
+                    &pcb, 
+                    SHADERTYPE_PIXEL
+                );
 
                 MaterialDataBuffer mdb;
                 mdb.emissive = 4;
                 mdb.specularPower = 0;
                 mdb.specularIntensity = 0;
-                m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
-                m_manager->textureManager->MapTextureByName("Blank");
+                m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(
+                    &mdb, 
+                    SHADERTYPE_PIXEL
+                );
+                m_manager->textureManager->MapTextureByName( "Blank" );
 
-                for ( unsigned x = 0; x < count; ++x )
+                for (unsigned x = 0; x < count; ++x)
                 {
-                    auto *mesh = modelResource->GetMesh(x);
+                    auto *mesh = modelResource->GetMesh( x );
 
                     // map transform
-                    m_manager->bufferManager->MapTransformBuffer(model.GetWorldMatrix());
+                    m_manager->bufferManager->MapTransformBuffer( model.GetWorldMatrix( ) );
 
                     // set model
                     m_manager->modelManager->BindModel(
@@ -165,7 +188,10 @@ namespace ursine
 
                     // render
                     m_manager->shaderManager->Render(
-                        m_manager->modelManager->GetModelIndexcountByID(handle.Model_, x)
+                        m_manager->modelManager->GetModelIndexcountByID(
+                            handle.Model_, 
+                            x
+                        )
                     );
                 }
             }

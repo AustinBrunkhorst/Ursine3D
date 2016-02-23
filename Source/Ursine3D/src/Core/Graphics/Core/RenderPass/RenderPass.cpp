@@ -44,6 +44,7 @@ namespace ursine
             , m_globalResources( )
             , m_passName( name )
             , m_explicitOverride( false )
+            , m_fullscreenPass( false )
         {
         }
 
@@ -72,18 +73,30 @@ namespace ursine
                 UAssert( m_processor != nullptr, "%s renders entities but had no processor!", m_passName.c_str( ) );
             }
 
-            // if we provide no passes and no special reason
-            if(m_prePasses.size( ) + m_postPasses.size( ) == 0 && m_explicitOverride == false)
+            // if we provide no passes and not fullscreen pass
+            if(m_prePasses.size( ) + m_postPasses.size( ) == 0 && m_fullscreenPass == false)
             {
                 // we better have an entity
-                UAssert( m_renderableMode != RENDERABLE_TYPE_COUNT, "Pass has no entities or pass to work with!" );
+                UAssert( m_renderableMode != RENDERABLE_TYPE_COUNT, "%s has no entities or pass to work with!", m_passName.c_str( ) );
             }
 
             // check for conflicts on bound global resource slots
             auto globalResourceSize = m_globalResources.size( );
             for(size_t x = 0; x < globalResourceSize; ++x)
                 for( size_t y = x + 1; y < globalResourceSize; ++y)
-                    UAssert( m_globalResources[x] != m_globalResources[y], "%s has conflicting global resources (indices %i, %i)", m_passName.c_str( ), x, y );
+                    UAssert( m_globalResources[x] != m_globalResources[y], "%s has conflicting global resources (Resource indices: %i, %i. Conflicting index: %i)", 
+                        m_passName.c_str( ), 
+                        x, 
+                        y,
+                        m_globalResources[ x ]->GetSlotIndex( ) 
+                    );
+
+            // if a fullscreen pass, we shouldn't have entities or whatever
+            if(m_fullscreenPass)
+            {
+                UAssert( m_processor == nullptr, "% was given a processor, but it is a fullscreen pass!", m_passName.c_str( ) );
+                UAssert( m_renderableMode == RENDERABLE_TYPE_COUNT, "%s was given an entity to process, but it is a fullscreen pass!", m_passName.c_str( ) );
+            }
             
             // make sure stuff isn't bound on input and output
 
@@ -193,6 +206,12 @@ namespace ursine
             return *this;
         }
 
+        RenderPass &RenderPass::IsFullscreenPass(bool isFullscreenPass)
+        {
+            m_fullscreenPass = isFullscreenPass;
+            return *this;
+        }
+
         void RenderPass::SetGfxMgr(GfxManager * mgr)
         {
             m_manager = mgr;
@@ -213,7 +232,7 @@ namespace ursine
         void RenderPass::executePass(Camera &currentCamera)
         {
             // check to see if this pass has stuff to do
-            if ( m_processor != nullptr )
+            if (m_processor != nullptr && m_fullscreenPass == false)
             {
                 // calculate our range
                 unsigned start = 0, end = 0;
@@ -232,13 +251,22 @@ namespace ursine
                 m_manager->dxCore->StartDebugEvent( m_passName );
 
                 // process
-                m_processor->Process( m_manager->m_drawList, currentCamera, start, end );
+                m_processor->Process( 
+                    m_manager->m_drawList, 
+                    currentCamera, 
+                    start, 
+                    end 
+                );
 
                 // end debug event
                 m_manager->dxCore->EndDebugEvent( );
 
                 // stamp this process
                 m_manager->gfxProfiler->Stamp( m_passName );
+            }
+            else if(m_fullscreenPass)
+            {
+                m_manager->shaderManager->Render( 6 );
             }
         }
 
@@ -291,7 +319,7 @@ namespace ursine
             dxCore->SetBlendState( m_blendState );
 
             // map topology
-            devCon->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(m_topology));;
+            devCon->IASetPrimitiveTopology( static_cast<D3D_PRIMITIVE_TOPOLOGY>(m_topology) );
         }
 
         void RenderPass::mapGlobals(void)

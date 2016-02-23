@@ -32,11 +32,11 @@ namespace ursine
             Billboard2D billboard = m_manager->renderableManager->GetRenderableByID<Billboard2D>(handle.Index_);
 
             // if inactive
-            if ( !billboard.GetActive() )
+            if ( !billboard.GetActive( ) )
                 return true;
 
             // if culed by camera mask
-            if ( currentCamera.CheckMask(billboard.GetRenderMask()) )
+            if ( currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
                 return true;
 
             // return false as in DO NOT CULL ME
@@ -49,7 +49,10 @@ namespace ursine
 
             // SPRITE DATA //////////////////////////////////////////
             BillboardSpriteBuffer bsb;
-            billboard.GetDimensions( bsb.width, bsb.height );
+            billboard.GetDimensions( 
+                bsb.width, 
+                bsb.height 
+            );
             m_manager->bufferManager->MapBuffer<BUFFER_BILLBOARDSPRITE>(
                 &bsb, 
                 SHADERTYPE_GEOMETRY
@@ -76,9 +79,7 @@ namespace ursine
 
             // set unique ID for this model /////////////////////////
             int overdrw = billboard.GetOverdraw( ) == true ? 1 : 0;
-
             mdb.emissive = 1.f;
-            //             16                8
             mdb.id = (handle.Index_) | (handle.Type_ << 12) | (overdrw << 15) | (1 << 11);
             m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(
                 &mdb, 
@@ -90,14 +91,14 @@ namespace ursine
 
             // set overdraw value ///////////////////////////////////
             if (handle.Overdraw_)
-                m_manager->dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);
+                m_manager->dxCore->SetDepthState( DEPTH_STATE_PASSDEPTH_WRITESTENCIL );
             else
-                m_manager->dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
+                m_manager->dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
         }
 
         void Billboard2DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            m_manager->shaderManager->Render(1);
+            m_manager->shaderManager->Render( 1 );
         }
     }
 }

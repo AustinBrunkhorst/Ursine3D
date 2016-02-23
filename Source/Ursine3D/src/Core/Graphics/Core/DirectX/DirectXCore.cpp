@@ -359,7 +359,7 @@ namespace ursine
 
             void DirectXCore::ClearSwapchain(void)
             {
-                float color[ 4 ] = { 0.15f, 0.15f, 0.15f, 1.0f };
+                float color[ 4 ] = { 0.15f, 0.15f, 0.15f, 1.0f }; 
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView, color);
             }
 

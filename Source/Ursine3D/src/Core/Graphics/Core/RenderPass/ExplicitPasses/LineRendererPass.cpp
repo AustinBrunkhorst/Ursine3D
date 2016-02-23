@@ -27,7 +27,7 @@ namespace ursine
             : RenderPass( passName )
             , m_debugRender( debugRender )
         {
-            m_explicitOverride = true;
+            m_fullscreenPass = true;
         }
 
         LineRendererPass::~LineRendererPass(void)
@@ -40,15 +40,27 @@ namespace ursine
             unsigned vertCount, indexCount;
 
             if(!m_debugRender)
-                m_manager->drawingManager->ConstructLineMesh(vertCount, indexCount, &mesh, &indices);
+                m_manager->drawingManager->ConstructLineMesh( 
+                    vertCount, 
+                    indexCount, 
+                    &mesh, &indices 
+                );
             else
-                m_manager->drawingManager->ConstructOverdrawLineMesh(vertCount, indexCount, &mesh, &indices);
+                m_manager->drawingManager->ConstructOverdrawLineMesh( 
+                    vertCount, 
+                    indexCount, 
+                    &mesh, 
+                    &indices 
+                );
 
             if(indexCount == 0)
                 return;
 
-            m_manager->modelManager->BindMesh<PrimitiveVertex>(mesh, indices);
-            m_manager->shaderManager->Render(indexCount);
+            m_manager->modelManager->BindMesh<PrimitiveVertex>(
+                mesh, 
+                indices
+            );
+            m_manager->shaderManager->Render( indexCount );
         }
     }
 }

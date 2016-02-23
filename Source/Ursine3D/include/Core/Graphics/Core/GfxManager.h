@@ -124,32 +124,11 @@ namespace ursine
             void RenderScene_Deferred(float dt, GfxHND viewport = -1);
 
             //preparing for rendering
-            void PrepFor3DModels(const SMat4 &view, const SMat4 &proj);
-            void PrepForBillboard2D(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
-            void PrepForParticleSystems(const SMat4 &view, const SMat4 &proj);
             void PrepForCompute(void);
-            void PrepForLightPass(const SMat4 &view, const SMat4 &proj, Camera &currentCamera);
-            void PrepForPointLightPass(const SMat4 &view, const SMat4 &proj);
-            void PrepForSpotlightPass(const SMat4 &view, const SMat4 &proj);
-            void PrepForDirectionalLightPass(const SMat4 &view, const SMat4 &proj);
-            void PrepForDebugRender(void);
-            void PrepForFinalOutput(void);
             void PrepForUI(void);
-            void PrepForOverdrawDebugRender(const SMat4 &view, const SMat4 &proj);
-            void PrepForSpriteText(const SMat4 &view, const SMat4 &proj);
-            void PrepForShadows(Light &light, const SMat4& view, const SMat4& proj);
 
             //rendering funcs
-            void Render3DModel(_DRAWHND handle, Camera &currentcamera );
-            void Render2DBillboard(_DRAWHND handle, Camera &currentCamera);
-            void RenderParticleSystem(_DRAWHND handle, Camera &currentCamera);
             void RenderComputeMousePos(void);
-            void RenderPointLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
-            void RenderSpotLight(_DRAWHND handle, Camera &currentCamera, SMat4 &proj);
-            void RenderDirectionalLight(_DRAWHND handle, Camera &currentcamera);
-            void RenderDebugPoints(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
-            void RenderDebugLines(const SMat4 &view, const SMat4 &proj, Camera &currentCamera, bool overdraw = false);
-            void RenderSpriteText(_DRAWHND handle, Camera &currentcamera);
 
             //privates members
         private:

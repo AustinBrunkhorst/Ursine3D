@@ -32,11 +32,11 @@ namespace ursine
             ParticleSystem particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>(handle.Index_);
 
             // if inactive
-            if ( !particleSystem.GetActive() )
+            if (!particleSystem.GetActive())
                 return true;
 
             // if culled by camera mask
-            if ( currentCamera.CheckMask( particleSystem.GetRenderMask( ) ) )
+            if (currentCamera.CheckMask( particleSystem.GetRenderMask( ) ))
                 return true;
 
             // return false as in DO NOT CULL ME
@@ -69,7 +69,10 @@ namespace ursine
             pgb.cameraUp.y = color.g;
             pgb.cameraUp.z = color.b;
             pgb.cameraUp.w = color.a;
-            m_manager->bufferManager->MapBuffer<BUFFER_POINT_GEOM>(&pgb, SHADERTYPE_VERTEX);
+            m_manager->bufferManager->MapBuffer<BUFFER_POINT_GEOM>(
+                &pgb, 
+                SHADERTYPE_VERTEX
+            );
 
             // SET TEXTURE //////////////////////////////////////////
             m_manager->textureManager->MapTextureByName( particleSystem.GetParticleTexture( ) );
@@ -79,34 +82,42 @@ namespace ursine
         {
             ParticleSystem particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>(handle.Index_);
             
-            if ( particleSystem.GetActiveParticleCount() > 0 )
+            if (particleSystem.GetActiveParticleCount() > 0)
             {
                 unsigned passCount;
-                if ( particleSystem.GetActiveParticleCount() > 1024 )
-                    passCount = (particleSystem.GetActiveParticleCount() / 1024) + 1;
+                if (particleSystem.GetActiveParticleCount() > 1024)
+                    passCount = (particleSystem.GetActiveParticleCount( ) / 1024) + 1;
                 else
                     passCount = 1;
 
-                if ( currentCamera.GetRenderMode() == ViewportRenderMode::VIEWPORT_RENDER_FORWARD )
+                if (currentCamera.GetRenderMode( ) == ViewportRenderMode::VIEWPORT_RENDER_FORWARD)
                     passCount = 1;
 
-                unsigned totalParticlesToRender = particleSystem.GetActiveParticleCount();
+                unsigned totalParticlesToRender = particleSystem.GetActiveParticleCount( );
 
-                for ( unsigned x = 0; x < passCount; ++x )
+                for (unsigned x = 0; x < passCount; ++x)
                 {
                     unsigned particlesInPass = 1024;
 
-                    if ( x == passCount - 1 )
-                        particlesInPass = particleSystem.GetActiveParticleCount() % 1024;
+                    if (x == passCount - 1)
+                        particlesInPass = particleSystem.GetActiveParticleCount( ) % 1024;
 
                     // bind particle data
                     ParticleBuffer pb;
-                    memcpy(&pb.data, &(particleSystem.GetGPUParticleData()[ x * 1024 ]), sizeof(Particle_GPU) * particlesInPass);
+                    memcpy(
+                        &pb.data, 
+                        &(particleSystem.GetGPUParticleData()[ x * 1024 ]), 
+                        sizeof(Particle_GPU) * particlesInPass
+                    );
 
-                    m_manager->bufferManager->MapBuffer<BUFFER_PARTICLEDATA>(&pb, SHADERTYPE_VERTEX, 13);
+                    m_manager->bufferManager->MapBuffer<BUFFER_PARTICLEDATA>(
+                        &pb, 
+                        SHADERTYPE_VERTEX, 
+                        13
+                    );
 
-                    if ( particlesInPass != 0 )
-                        m_manager->shaderManager->Render(6 * particlesInPass);
+                    if (particlesInPass != 0)
+                        m_manager->shaderManager->Render( 6 * particlesInPass );
 
                     // update particles left to render
                     totalParticlesToRender -= particlesInPass;

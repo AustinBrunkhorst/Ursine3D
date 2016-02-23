@@ -78,6 +78,11 @@ namespace ursine
                    (m_targetShader == rhs.m_targetShader);
         }
 
+        ShaderSlot GlobalShaderResource::GetSlotIndex() const
+        {
+            return m_slotIndex;
+        }
+
         void GlobalShaderResource::SetGfxMgr(GfxManager * mgr)
         {
             m_manager = mgr;

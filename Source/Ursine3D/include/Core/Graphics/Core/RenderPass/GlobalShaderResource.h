@@ -64,7 +64,7 @@ namespace ursine
             virtual ~GlobalShaderResource(void);
 
             bool operator=(const GlobalShaderResource &rhs) const;
-
+            ShaderSlot GetSlotIndex(void) const;
             static void SetGfxMgr(GfxManager *mgr);
 
         protected:

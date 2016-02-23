@@ -72,6 +72,7 @@ namespace ursine
             RenderPass &AddPostPass(RenderPass *newPass);                   // sub passes
 
             RenderPass &OverrideLayout(SHADER_LIST inputLayout);            // override the input layout
+            RenderPass &IsFullscreenPass(bool isFullscreenPass);            // sets as a fullscreen pass
 
             static void SetGfxMgr(GfxManager *mgr);                         // setting up mgr
 
@@ -146,6 +147,9 @@ namespace ursine
 
             // special override for explicit passes
             bool m_explicitOverride;
+
+            // is this a once-over fullscreen pass?
+            bool m_fullscreenPass;
         };
     }
 }

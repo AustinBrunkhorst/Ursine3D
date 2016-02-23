@@ -90,7 +90,6 @@ namespace ursine
         {
             SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>(handle.Index_);
 
-
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;
             stb.worldPosition = spriteText.GetPosition( ).ToD3D( );
@@ -103,7 +102,6 @@ namespace ursine
                 m_manager->m_font.GetCommonData( ).textureDimensions.scaleW,
                 m_manager->m_font.GetCommonData( ).textureDimensions.scaleH
             );
-
 
             /////////////////////////////////////////////////////////
             // mapping glyph data
@@ -135,7 +133,7 @@ namespace ursine
                     switch (spriteText.GetAlignment( ))
                     {
                     case 1:
-                        lineOffset = ( distance / commonData.textureDimensions.scaleW) * 0.5f;
+                        lineOffset = ( distance / commonData.textureDimensions.scaleW ) * 0.5f;
                         break;
                     case 2:
                         lineOffset = distance / commonData.textureDimensions.scaleW;
