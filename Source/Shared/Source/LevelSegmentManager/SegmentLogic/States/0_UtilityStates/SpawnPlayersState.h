@@ -19,8 +19,11 @@ class SpawnPlayersState : public SegmentLogicState
 {
 public:
 
-    SpawnPlayersState(void);
+    SpawnPlayersState(bool repositionIfPresent = false, bool turnOffCameras = false);
 
     void Enter(SegmentLogicStateMachine *machine) override;
 
+private:
+    bool m_repositionIfPresent;
+    bool m_turnOffCameras;
 };

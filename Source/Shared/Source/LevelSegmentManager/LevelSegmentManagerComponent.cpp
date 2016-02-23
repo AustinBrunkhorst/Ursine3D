@@ -16,8 +16,14 @@
 
 #include "InitializeSegmentState.h"
 #include "SpawnPlayersState.h"
+#include "PlayerViewportTweeningState.h"
+#include "LockPlayerCharacterControllerState.h"
+#include "ChangeSegmentState.h"
 
 #include "TutorialResourcesComponent.h"
+#include "CombatBowl1ResourcesComponent.h"
+
+#include <TimerCondition.h>
 
 NATIVE_COMPONENT_DEFINITION( LevelSegmentManager );
 
@@ -27,6 +33,8 @@ using namespace ecs;
 LevelSegmentManager::LevelSegmentManager(void)
     : BaseComponent( )
     , m_segment( LevelSegments::Empty )
+    , m_player1( nullptr )
+    , m_player2( nullptr )
 {
 }
 
@@ -39,6 +47,16 @@ LevelSegmentManager::~LevelSegmentManager(void)
 LevelSegments LevelSegmentManager::GetCurrentSegment(void) const
 {
     return m_segment;
+}
+
+Entity *LevelSegmentManager::GetPlayer1(void)
+{
+    return m_player1;
+}
+
+Entity *LevelSegmentManager::GetPlayer2(void)
+{
+    return m_player2;
 }
 
 void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
@@ -79,21 +97,39 @@ void LevelSegmentManager::initTutorialLogic(void)
     auto resources = GetOwner( )->GetComponent<TutorialResources>( );
 
     // Create a state machine that initializes the scene
-    auto sm = std::make_shared<SegmentLogicStateMachine>( "Init Tutorial", this );
+    auto stateM = std::make_shared<SegmentLogicStateMachine>( "Init Tutorial", this );
 
-    auto initState = sm->AddState<InitializeSegmentState>( 
-        "Init Tutorial", 
+    // Initial state for spawning the level
+    auto initState = stateM->AddState<InitializeSegmentState>(
         resources->archetypesToLoad, 
         LevelSegments::CB1_SimulationStartCinematic
     );
 
-    auto playerCreateState = sm->AddState<SpawnPlayersState>( "Init Players" );
+    // Next state for spawning the players
+    auto playerCreateState = stateM->AddState<SpawnPlayersState>( );
 
-    initState->AddTransition<sm::Transition>( playerCreateState, "Go To Init Players" );
+    initState->AddTransition( playerCreateState, "Go To Init Players" );
 
-    sm->SetInitialState( initState );
+    // Make sure the players have their character controller's locked
+    auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
 
-    addSegmentLogic( sm, {
+    playerCreateState->AddTransition( lockCCState, "Go To Locking Player Controller" );
+
+    // After players are spawned tween their viewports
+    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutUpDown, true );
+
+    auto timedTrans = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
+
+    timedTrans->AddCondition<sm::TimerCondition>( "", TimeSpan::FromSeconds( 7.0f ) );
+
+    // After the viewports tween out change the level segment
+    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
+
+    tweenState->AddTransition( changeSegState, "To Combat Bowl 1 Cinematic" );
+
+    stateM->SetInitialState( initState );
+
+    addSegmentLogic( stateM, {
         LevelSegments::Tut_OpeningCinematic,
         LevelSegments::Tut_MovementTutorial,
         LevelSegments::Tut_SoloTriggerTutorial,
@@ -110,6 +146,34 @@ void LevelSegmentManager::initTutorialLogic(void)
 
 void LevelSegmentManager::initCombatBowl1Logic(void)
 {
+    auto resources = GetOwner( )->GetComponent<CombatBowl1Resources>( );
+
+    // Create a state machine that initializes the scene
+    auto stateM = std::make_shared<SegmentLogicStateMachine>( "Init Combat Bowl", this );
+
+    // Initial state for spawning the level
+    auto initState = stateM->AddState<InitializeSegmentState>(
+        resources->archetypesToLoad,
+        LevelSegments::Empty
+    );
+
+    // Next state for spawning the players (reposition them if they are present)
+    auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
+
+    initState->AddTransition( playerCreateState, "Go To Init Players" );
+
+    stateM->SetInitialState( initState );
+
+    addSegmentLogic( stateM, {
+        LevelSegments::CB1_SimulationStartCinematic,
+        LevelSegments::CB1_WeaponSelection,
+        LevelSegments::CB1_ActivateSystems1,
+        LevelSegments::CB1_Combat1,
+        LevelSegments::CB1_Combat2,
+        LevelSegments::CB1_Combat3,
+        LevelSegments::CB1_Combat4,
+        LevelSegments::CB1_OpenConduitRoom
+    } );
 }
 
 void LevelSegmentManager::initConduitTutLogic(void)

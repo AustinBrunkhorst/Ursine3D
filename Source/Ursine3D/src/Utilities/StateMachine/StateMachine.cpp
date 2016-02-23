@@ -15,7 +15,8 @@
 
 #include "StateMachine.h"
 
-#include "Transition.h"
+#include <CoreSystem.h>
+#include <TimerManager.h>
 
 namespace ursine
 {
@@ -27,6 +28,7 @@ namespace ursine
             , m_userData( nullptr )
             , m_transitionFound( false )
             , m_nextState( nullptr )
+            , m_timers( GetCoreSystem( TimerManager ) )
         {
         }
 
@@ -218,6 +220,11 @@ namespace ursine
         void *StateMachine::GetUserData(void)
         {
             return m_userData;
+        }
+
+        LocalTimerManager *StateMachine::GetTimers(void)
+        {
+            return &m_timers;
         }
 
         void StateMachine::RemoveState(State *state)

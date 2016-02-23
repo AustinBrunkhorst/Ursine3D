@@ -4,7 +4,7 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 24, 
+".uid": 52, 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Player", 
@@ -18,7 +18,7 @@
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 25, 
+".uid": 53, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -35,7 +35,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 23, 
+".uid": 51, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -61,7 +61,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 34, 
+".uid": 62, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -85,7 +85,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 35, 
+".uid": 63, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -109,12 +109,12 @@
 ], 
 "components": {
 "Audio Listener 3D": {
-".uid": 29, 
+".uid": 55, 
 "testing": []
 }, 
 "Camera": {
-".uid": 30, 
-"active": true, 
+".uid": 56, 
+"active": false, 
 "farPlane": 1000, 
 "fov": 60, 
 "nearPlane": 0.10000000149011612, 
@@ -131,7 +131,7 @@
 }
 }, 
 "Transform": {
-".uid": 28, 
+".uid": 54, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -155,31 +155,33 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 14, 
+".uid": 42, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "CharacterController": {
-".uid": 15, 
+".uid": 43, 
 "deadZone": 0, 
 "deadZoneSnap": 0, 
+"lockLooking": false, 
+"lockMovement": false, 
 "rotateSpeed": 10
 }, 
 "CommandQueue": {
-".uid": 16
+".uid": 44
 }, 
 "CylinderCollider": {
-".uid": 17, 
+".uid": 45, 
 "height": 30, 
 "radius": 5
 }, 
 "InputController": {
-".uid": 18, 
+".uid": 46, 
 "UseKeyboard": false
 }, 
 "Inventory": {
-".uid": 19, 
+".uid": 47, 
 "LastStand": "P2HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 
@@ -188,11 +190,11 @@
 "m_currWeapon": 0
 }, 
 "PlayerID": {
-".uid": 20, 
+".uid": 48, 
 "PlayerId": 1
 }, 
 "Rigidbody": {
-".uid": 21, 
+".uid": 49, 
 "bodyFlag": 2, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -214,7 +216,7 @@
 "sleepToggle": true
 }, 
 "SweptController": {
-".uid": 22, 
+".uid": 50, 
 "active": true, 
 "airAcceleration": 30, 
 "airDeceleration": 40, 
@@ -236,7 +238,7 @@
 }
 }, 
 "Transform": {
-".uid": 13, 
+".uid": 41, 
 "rotation": {
 "w": 1, 
 "x": 0, 

@@ -15,36 +15,56 @@
 
 #include "SegmentLogicState.h"
 
-enum class ViewportTweenType
+namespace ViewportTweenType_enum
 {
-    SplitOutUpDown,
-    SplitInUpDown,
+    enum ViewportTweenType
+    {
+        SplitOutUpDown,
+        SplitInUpDown,
     
-    SplitOutRightLeft,
-    SplitInRightLeft,
+        SplitOutRightLeft,
+        SplitInRightLeft,
 
-    SplitOutLeftRight,
-    SplitInLeftRight,
+        SplitOutLeftRight,
+        SplitInLeftRight,
 
-    OutUp,
-    OutDown,
-    InUp,
-    InDown,
+        OutUp,
+        OutDown,
+        InUp,
+        InDown,
 
-    OutRight,
-    OutLeft,
-    InRight,
-    InLeft
-};
+        OutRight,
+        OutLeft,
+        InRight,
+        InLeft,
+
+        SqueezeInHorizontal,
+        SqueezeOutHorizontal,
+
+        SqueezeInVertical,
+        SqueezeOutVertical,
+
+        SqueezeIn,
+        SqueezeOut,
+
+        NUM
+    };
+}
+
+typedef ViewportTweenType_enum::ViewportTweenType ViewportTweenType;
 
 class PlayerViewportTweeningState : public SegmentLogicState
 {
 public:
-    PlayerViewportTweeningState(ViewportTweenType type);
+    PlayerViewportTweeningState(ViewportTweenType type, bool blocking = false);
+
+    bool CanExit(void) override { return !m_blocking; }
 
     void Enter(SegmentLogicStateMachine *machine) override;
 
 private:
     ViewportTweenType m_type;
+
+    bool m_blocking;
 
 };

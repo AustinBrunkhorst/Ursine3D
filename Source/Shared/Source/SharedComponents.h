@@ -82,6 +82,7 @@
 
 #include "LevelSegmentManager/SegmentResources/UnloadResourceComponent.h"
 #include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
+#include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
 
 #include "LevelSegmentManager/SegmentLogic/Misc/ElevatorLiftMoverComponent.h"
 
@@ -107,3 +108,9 @@
 
 #include "CommandSystem/InputControllerComponent.h"
 #include "CommandSystem/CommandQueueComponent.h"
+
+/////////////////////////////////
+//             FX              //
+/////////////////////////////////
+
+#include "FX/AnimateParticleResetComponent.h"

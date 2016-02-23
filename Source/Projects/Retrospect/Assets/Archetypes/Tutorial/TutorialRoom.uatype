@@ -4,7 +4,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 18, 
+".uid": 15, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -14,7 +14,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 19, 
+".uid": 16, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -22,66 +22,7 @@
 }
 }, 
 "Model3D": {
-".uid": 20, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 2, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 1, 
-"specularPower": 0
-}, 
-"Transform": {
 ".uid": 17, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0.70710676908493042, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 300, 
-"y": 20.749563217163086, 
-"z": 300
-}, 
-"translation": {
-"x": 4.1221632957458496, 
-"y": 95.342483520507813, 
-"z": 115.51975250244141
-}
-}
-}, 
-"name": "Plane"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 22, 
-"enableContactCallback": false, 
-"ghost": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 23, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"Model3D": {
-".uid": 24, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -89,416 +30,139 @@
 "g": 1, 
 "r": 1
 }, 
-"emissive": 2, 
+"emissive": 1.5, 
 "materialName": "Blank", 
 "meshIndex": -1, 
 "modelName": "Cube", 
 "renderMask": 0, 
 "specularIntensity": 1, 
+"specularPower": 165
+}, 
+"Transform": {
+".uid": 14, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1000, 
+"y": 1, 
+"z": 1000
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Floor"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 19, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
+"emissive": 3, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "HiRezSphere", 
+"renderMask": 0, 
+"specularIntensity": 0, 
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 21, 
+".uid": 18, 
 "rotation": {
-"w": 0.49999997019767761, 
-"x": 0.49999997019767761, 
-"y": 0.49999997019767761, 
-"z": -0.49999997019767761
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
 }, 
 "scale": {
-"x": 300, 
-"y": 20.749563217163086, 
-"z": 300
+"x": -300, 
+"y": -300, 
+"z": -300
 }, 
 "translation": {
-"x": 143.77542114257813, 
-"y": 93.403755187988281, 
-"z": -25.293455123901367
-}
-}
-}, 
-"name": "Plane"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 26, 
-"enableContactCallback": false, 
-"ghost": false, 
-"offset": {
 "x": 0, 
 "y": 0, 
 "z": 0
 }
-}, 
-"BoxCollider": {
-".uid": 27, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
 }
 }, 
-"Model3D": {
-".uid": 28, 
-"castsShadows": false, 
+"name": "Sphere"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 21, 
 "color": {
 "a": 1, 
 "b": 1, 
 "g": 1, 
 "r": 1
 }, 
-"emissive": 2, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
+"intensity": 1, 
+"radius": 1, 
 "renderMask": 0, 
-"specularIntensity": 1, 
-"specularPower": 0
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 20, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 26, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
 }, 
 "Transform": {
 ".uid": 25, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0.70710676908493042, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 300, 
-"y": 20.749563217163086, 
-"z": 300
-}, 
-"translation": {
-"x": -1.7840374708175659, 
-"y": 96.195343017578125, 
-"z": -163.68675231933594
-}
-}
-}, 
-"name": "Plane"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 30, 
-"enableContactCallback": false, 
-"ghost": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 31, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"Model3D": {
-".uid": 32, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 2, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 1, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 29, 
-"rotation": {
-"w": 0.49999997019767761, 
-"x": 0.49999997019767761, 
-"y": 0.49999997019767761, 
-"z": -0.49999997019767761
-}, 
-"scale": {
-"x": 300, 
-"y": 20.749563217163086, 
-"z": 300
-}, 
-"translation": {
-"x": -140.98712158203125, 
-"y": 93.403755187988281, 
-"z": -25.293455123901367
-}
-}
-}, 
-"name": "Plane (1)"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 34, 
-"enableContactCallback": false, 
-"ghost": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 35, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"Model3D": {
-".uid": 36, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 2, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 1, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 33, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 300, 
-"y": 20.749563217163086, 
-"z": 300
-}, 
-"translation": {
-"x": 4.0554699897766113, 
-"y": 230.21963500976563, 
-"z": -24.712854385375977
-}
-}
-}, 
-"name": "Plane"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 38, 
-"enableContactCallback": false, 
-"ghost": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 39, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"Model3D": {
-".uid": 40, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 2, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 1, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 37, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 300, 
-"y": 20.749563217163086, 
-"z": 300
-}, 
-"translation": {
-"x": 4.0554804801940918, 
-"y": -10.300000190734863, 
-"z": -20.831056594848633
-}
-}
-}, 
-"name": "Plane"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 42, 
-"color": {
-"a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
-}, 
-"intensity": 1, 
-"radius": 500, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 41, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0.70710676908493042, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 59.999996185302734, 
-"z": 0
-}
-}
-}, 
-"name": "Global Light (1)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 47, 
-"color": {
-"a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
-}, 
-"intensity": 1, 
-"radius": 500, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 46, 
-"rotation": {
-"w": -4.3711388286737929e-08, 
-"x": 1, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 59.999996185302734, 
-"z": 0
-}
-}
-}, 
-"name": "Global Light  (2)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 52, 
-"color": {
-"a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
-}, 
-"intensity": 1, 
-"radius": 500, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 51, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": -0.70710676908493042, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 59.999996185302734, 
-"z": 0
-}
-}
-}, 
-"name": "Global Light   (3)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 57, 
-"color": {
-"a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
-}, 
-"intensity": 1, 
-"radius": 500, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 56, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -512,25 +176,25 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 59.999996185302734, 
+"y": 35.355335235595703, 
 "z": 0
 }
 }
 }, 
-"name": "Global Light (1)"
+"name": "Directional Light (1)"
 }, {
 "children": [], 
 "components": {
 "Light": {
-".uid": 62, 
+".uid": 31, 
 "color": {
 "a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
+"b": 1, 
+"g": 1, 
+"r": 1
 }, 
 "intensity": 1, 
-"radius": 500, 
+"radius": 1, 
 "renderMask": 0, 
 "spotlightAngles": {
 "x": 15, 
@@ -539,11 +203,11 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 61, 
+".uid": 30, 
 "rotation": {
-"w": 0.70710676908493042, 
+"w": -4.3711388286737929e-08, 
 "x": 0, 
-"y": -0.70710676908493042, 
+"y": 1, 
 "z": 0
 }, 
 "scale": {
@@ -553,25 +217,25 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 59.999996185302734, 
+"y": 35.355335235595703, 
 "z": 0
 }
 }
 }, 
-"name": "Global Light  (2)"
+"name": "Directional Light  (2)"
 }, {
 "children": [], 
 "components": {
 "Light": {
-".uid": 67, 
+".uid": 36, 
 "color": {
 "a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
+"b": 1, 
+"g": 1, 
+"r": 1
 }, 
 "intensity": 1, 
-"radius": 500, 
+"radius": 1, 
 "renderMask": 0, 
 "spotlightAngles": {
 "x": 15, 
@@ -580,31 +244,72 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 66, 
+".uid": 35, 
 "rotation": {
-"w": 1, 
+"w": -0.70710676908493042, 
 "x": 0, 
+"y": 0.70710676908493042, 
+"z": -6.1817239327410789e-08
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light   (3)"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 41, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 150.26731872558594, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 50
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 40, 
+"rotation": {
+"w": 0.65427792072296143, 
+"x": 0.75625395774841309, 
 "y": 0, 
 "z": 0
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
+"x": 154.15058898925781, 
+"y": 154.15058898925781, 
+"z": 150.26731872558594
 }, 
 "translation": {
 "x": 0, 
-"y": 59.999996185302734, 
-"z": 0
+"y": 43.425643920898438, 
+"z": 9.0050439834594727
 }
 }
 }, 
-"name": "Global Light"
+"name": "Spot Light"
 }
 ], 
 "components": {
 "Transform": {
-".uid": 16, 
+".uid": 13, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -618,7 +323,7 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 0, 
+"y": 4.3852996896021068e-06, 
 "z": 0
 }
 }

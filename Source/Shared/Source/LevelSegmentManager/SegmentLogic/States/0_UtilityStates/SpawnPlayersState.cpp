@@ -20,11 +20,15 @@
 #include "PlayerIDComponent.h"
 #include "PlayerSpawnPointComponent.h"
 
+#include <CameraComponent.h>
+
 using namespace ursine;
 using namespace ecs;
 
-SpawnPlayersState::SpawnPlayersState(void)
+SpawnPlayersState::SpawnPlayersState(bool repositionIfPresent, bool turnOffCameras)
     : SegmentLogicState( "Spawn Players" )
+    , m_repositionIfPresent( repositionIfPresent )
+    , m_turnOffCameras( turnOffCameras )
 {
 }
 
@@ -34,20 +38,35 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
     auto world = segmentManager->GetOwner( )->GetWorld( );
 
     auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+    int index = 0;
 
-    if (players.size( ) == 0)
+    bool spawn = players.size( ) == 0;
+
+    auto spawnPoints = world->GetEntitiesFromFilter( Filter( ).All<PlayerSpawnPoint>( ) );
+
+    UAssert( spawnPoints.size( ) != 0, "Error: This state requires spawn points to be present in the level." );
+
+    for (auto &spawnPoint : spawnPoints)
     {
-        auto spawnPoints = world->GetEntitiesFromFilter( Filter( ).All<PlayerSpawnPoint>( ) );
+        auto point = spawnPoint->GetComponent<PlayerSpawnPoint>( );
+        Entity *player = spawn ? nullptr : players[ index++ ];
 
-        for (auto &spawnPoint : spawnPoints)
+        if (spawn)
         {
-            auto point = spawnPoint->GetComponent<PlayerSpawnPoint>( );
             auto archetype = point->GetPlayerArchetype( );
 
-            auto player = world->CreateEntityFromArchetype(
+            player = world->CreateEntityFromArchetype(
                 WORLD_ARCHETYPE_PATH + archetype + ".uatype", archetype
             );
 
+            if (player->GetComponent<PlayerID>( )->GetID( ) == 0)
+                segmentManager->m_player1 = player;
+            else
+                segmentManager->m_player2 = player;
+        }
+
+        if (spawn || m_repositionIfPresent)
+        {
             auto spawnTrans = spawnPoint->GetTransform( );
             auto playerTrans = player->GetTransform( );
 
@@ -59,5 +78,9 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
                 spawnTrans->GetWorldRotation( )
             );
         }
+
+        auto cam = player->GetComponentInChildren<Camera>( );
+
+        cam->SetActive( !m_turnOffCameras );
     }
 }

@@ -35,6 +35,8 @@ class LevelSegmentManager
 {
     NATIVE_COMPONENT;
 
+    friend class SpawnPlayersState;
+
 public:
 
     EditorField(
@@ -49,12 +51,19 @@ public:
     LevelSegments GetCurrentSegment(void) const;
     void SetCurrentSegment(LevelSegments segment);
 
+    Meta(Disable)
+    ursine::ecs::Entity *GetPlayer1(void);
+    Meta(Disable)
+    ursine::ecs::Entity *GetPlayer2(void);
+
 private:
 
     // All the state machines for the segments of gameplay
     std::vector<SegmentLogicStateMachine::Handle> m_segmentLogic[ LevelSegments::Empty ];
 
     LevelSegments m_segment;
+
+    ursine::ecs::Entity *m_player1, *m_player2;
 
     void OnInitialize(void) override;
 

@@ -17,6 +17,8 @@
 
 #include "Variant.h"
 
+#include <LocalTimerManager.h>
+
 #include <string>
 #include <unordered_map>
 
@@ -57,6 +59,9 @@ namespace ursine
             // Get the user data
             void *GetUserData(void);
 
+            // Get the local timer manager
+            LocalTimerManager *GetTimers(void);
+
             // Add state
             template<typename StateType, class... Args>
             StateType *AddState(Args&&... args);
@@ -73,6 +78,8 @@ namespace ursine
             std::vector<std::string> m_triggers;
 
             std::vector<State::Handle> m_states;
+
+            LocalTimerManager m_timers;
 
             bool m_startingState;
             State *m_currentState;
