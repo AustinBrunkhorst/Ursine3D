@@ -30,7 +30,7 @@
 #include <AnimatorComponent.h>
 #include "AudioEmitterComponent.h"
 #include <ParticleEmitterComponent.h>
-#include "../Trails/HitscanTrailComponent.h"
+#include "TrailComponent.h"
 #include "CritspotComponent.h"
 
 
@@ -557,9 +557,9 @@ void HitscanWeaponSystem::CreateTrail(AbstractHitscanWeapon& weapon, ursine::SVe
 
     // check if trail comp was present
     //   done after spawning of other particles because endpoint may change if crit spot was hit
-    if ( e->HasComponent< HitscanTrailComponent >( ) )
+    if ( e->HasComponent< TrailComponent >( ) )
     {
-        e->GetComponent< HitscanTrailComponent >( )->SetVecToEnd( trailEnd );
+        e->GetComponent< TrailComponent >( )->SetVecToEnd( trailEnd );
     }
 }
 

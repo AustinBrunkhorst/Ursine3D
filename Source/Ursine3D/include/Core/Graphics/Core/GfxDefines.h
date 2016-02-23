@@ -11,22 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      GfxDefines.h
-Module:         Graphics
-Purpose:        Gfx global defines
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include "GfxLogging.h"
@@ -56,7 +40,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define MAX_DRAW_OBJ            800019
 
 //max renderables of each type
-#define MAX_RENDERABLES         800019
+#define MAX_RENDERABLES         512
 
 //max draw calls for a single scene
 #define MAX_DRAW_CALLS          2048

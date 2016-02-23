@@ -61,7 +61,12 @@
 #include "WeaponSystem/Weapons/FirePosComponent.h"
 #include "WeaponSystem/Inventory/InventoryComponent.h"
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
-#include "WeaponSystem/Trails/HitscanTrailComponent.h"
+
+/////////////////////////////////
+//        Trails System        //
+/////////////////////////////////
+
+#include "Trails/TrailComponent.h"
 
 /////////////////////////////////
 //            AI               //

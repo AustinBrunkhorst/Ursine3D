@@ -308,7 +308,7 @@ void DamageOnCollide::SpawnCollisionParticle(ursine::ecs::Entity* other)
         rayin.end = pos = rayin.start + velocity;
 
         // get ray to edge of other object
-        GetOwner( )->GetWorld( )->GetEntitySystem(ursine::ecs::PhysicsSystem)->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
+        GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::PhysicsSystem>( )->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
 
         GetSpawnLocation(other->GetRoot( ), rayout, pos);
 

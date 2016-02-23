@@ -1,7 +1,7 @@
 {
 "children": [], 
 "components": {
-"HitscanTrailComponent": {
+"TrailComponent": {
 ".uid": 106, 
 "ParticlesToSpawn": 2, 
 "Segments": 1000, 

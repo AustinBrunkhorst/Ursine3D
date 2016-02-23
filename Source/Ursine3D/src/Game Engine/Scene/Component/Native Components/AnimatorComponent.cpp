@@ -740,7 +740,8 @@ namespace ursine
 			}
 		}
 
-		StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
+
+	    StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
 		{
 			NotificationConfig config;
 

@@ -18,7 +18,7 @@ NATIVE_COMPONENT_DEFINITION( TrailComponent ) ;
 using namespace ursine;
 
 
-TrailComponent::HitscanTrailComponent(void) :
+TrailComponent::TrailComponent(void) :
     BaseComponent( ),
     m_vecToEnd( ),
     m_speed( 100.0f ),
