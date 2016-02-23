@@ -131,10 +131,10 @@ namespace ursine
 
             void RenderTargetManager::SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view)
             {
-                if (m_currentTarget == target)
+                /*if (m_currentTarget == target)
                     return;
 
-                m_currentTarget = target;
+                m_currentTarget = target;*/
                 m_deviceContext->OMSetRenderTargets(1, &m_renderTargets[ target ]->RenderTargetView, view);
             }
 

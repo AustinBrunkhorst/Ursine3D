@@ -35,7 +35,7 @@ namespace ursine
                 for (unsigned x = 0; x < SHADER_COUNT; ++x)
                 {
                     m_layoutArray[ x ] = nullptr;
-                    Shader *current = shdrmgr->GetShader((SHADER_TYPES)x);
+                    Shader *current = shdrmgr->GetShader((SHADER_LIST)x);
 
                     if (current != nullptr && current->vs != nullptr && x != SHADER_DEFERRED_DEPTH)
                     {
@@ -53,7 +53,7 @@ namespace ursine
 				SKINNED_LAYOUT[3] = { "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 				SKINNED_LAYOUT[4] = { "BLENDINDICES", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 				
-				HRESULT hr = m_device->CreateInputLayout(SKINNED_LAYOUT, static_cast<UINT>(5), shdrmgr->GetShader((SHADER_TYPES)SHADER_DEFERRED_DEPTH)->rawData, shdrmgr->GetShader((SHADER_TYPES)SHADER_DEFERRED_DEPTH)->size, &m_layoutArray[SHADER_DEFERRED_DEPTH]);
+				HRESULT hr = m_device->CreateInputLayout(SKINNED_LAYOUT, static_cast<UINT>(5), shdrmgr->GetShader((SHADER_LIST)SHADER_DEFERRED_DEPTH)->rawData, shdrmgr->GetShader((SHADER_LIST)SHADER_DEFERRED_DEPTH)->size, &m_layoutArray[SHADER_DEFERRED_DEPTH]);
             }
 
             void InputLayoutManager::Uninitialize(void)
@@ -69,20 +69,20 @@ namespace ursine
                 m_deviceContext = nullptr;
             }
 
-            void InputLayoutManager::SetInputLayout(const SHADER_TYPES type)
+            void InputLayoutManager::SetInputLayout(const SHADER_LIST type)
             {
-                if ( type == SHADER_COUNT )
+                if ( m_currentState == type )
+                    return;
+
+                m_currentState = type;
+
+                if ( type >= SHADER_COUNT )
                 {
                     m_deviceContext->IASetInputLayout(nullptr);
                     return;
                 }
 
-                if (m_currentState == type)
-                    return;
-
                 UAssert(m_layoutArray[ type ] != nullptr, "No input found for type %i!", type);
-
-                m_currentState = type;
 
                 m_deviceContext->IASetInputLayout(m_layoutArray[ type ]);
             }

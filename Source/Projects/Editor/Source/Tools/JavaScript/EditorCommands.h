@@ -45,4 +45,10 @@ namespace editor_commands
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
     JSFunction(InspectEditorUI);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(CreateParticleSystem);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(CreateSpriteText);
 }

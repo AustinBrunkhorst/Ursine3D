@@ -29,7 +29,7 @@
 "emissive": 0.20000000298023224, 
 "materialName": "Blank", 
 "meshIndex": -1, 
-"modelName": "Player", 
+"modelName": "Player",
 "renderMask": 8, 
 "specularIntensity": 0, 
 "specularPower": 0
@@ -181,7 +181,7 @@
 "UseKeyboard": false
 }, 
 "Inventory": {
-".uid": 47, 
+".uid": 47,
 "LastStand": "P2HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 

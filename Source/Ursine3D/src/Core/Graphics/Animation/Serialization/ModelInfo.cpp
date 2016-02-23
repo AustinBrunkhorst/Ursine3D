@@ -25,9 +25,13 @@ namespace ursine
 		{
 			ModelInfo::ModelInfo()
 				:
-				mmeshCount(0), mmaterialCount(0), mboneCount(0),  maniCount(0), 
-				mmeshlvlCount(0), mriglvlCount(0),
-				ISerialize("")
+				mmeshCount(0)
+				, mmaterialCount(0)
+				, mboneCount(0)
+				, maniCount(0)
+				, mmeshlvlCount(0)
+				, mriglvlCount(0)
+				, ISerialize()
 			{
 			}
 

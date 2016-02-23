@@ -4,7 +4,7 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 26, 
+".uid": 456,
 "animation": "", 
 "changeState": false, 
 "currentRig": "Player", 
@@ -18,7 +18,7 @@
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 27, 
+".uid": 457, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -28,14 +28,14 @@
 }, 
 "emissive": 0.20000000298023224, 
 "materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Player", 
+"meshIndex": -1,
+"modelName": "Player",
 "renderMask": 2, 
 "specularIntensity": 0, 
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 25, 
+".uid": 455, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -61,7 +61,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 36, 
+".uid": 466, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -85,7 +85,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 37, 
+".uid": 467, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -118,8 +118,8 @@
 "farPlane": 1000, 
 "fov": 60, 
 "nearPlane": 0.10000000149011612, 
-"renderLayer": 1, 
-"renderMask": 1042, 
+"renderLayer": 1,
+"renderMask": 1042,
 "renderMode": 1, 
 "viewportPosition": {
 "x": 0, 
@@ -131,7 +131,7 @@
 }
 }, 
 "Transform": {
-".uid": 30, 
+".uid": 460, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -155,7 +155,7 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 15, 
+".uid": 445,
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
@@ -172,7 +172,7 @@
 ".uid": 17
 }, 
 "CylinderCollider": {
-".uid": 18, 
+".uid": 18,
 "height": 30, 
 "radius": 5
 }, 
@@ -184,7 +184,7 @@
 ".uid": 20
 }, 
 "Inventory": {
-".uid": 21, 
+".uid": 21,
 "LastStand": "P1HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 
@@ -197,7 +197,7 @@
 "PlayerId": 0
 }, 
 "Rigidbody": {
-".uid": 23, 
+".uid": 23,
 "bodyFlag": 2, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 

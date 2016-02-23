@@ -35,7 +35,7 @@ namespace ursine
 {
     namespace graphics
     {
-        enum SHADERTYPE
+        enum SHADERTYPE : unsigned
         {
             SHADERTYPE_VERTEX = 0,
             SHADERTYPE_PIXEL,
