@@ -1,7 +1,9 @@
 #pragma once
 
-#include "ResourceMetaData.h"
 #include "GUID.h"
+
+#include "ResourceMetaData.h"
+#include "ResourceBuildCache.h"
 
 namespace ursine
 {
@@ -19,6 +21,8 @@ namespace ursine
 
                 const GUID &GetGUID(void) const;
 
+                const meta::Type &GetDataType(void) const;
+
                 const fs::path &GetSourceFileName(void) const;
                 const fs::path &GetBuildFileName(void) const;
 
@@ -30,9 +34,12 @@ namespace ursine
                 fs::path m_fileName;
                 fs::path m_metaFileName;
                 fs::path m_buildFileName;
+                fs::path m_buildCacheFileName;
 
                 GUID m_guid;
+
                 ResourceMetaData m_metaData;
+                ResourceBuildCache m_buildCache;
             };
         }
     }

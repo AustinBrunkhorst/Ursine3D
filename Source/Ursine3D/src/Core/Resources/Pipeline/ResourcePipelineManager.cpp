@@ -17,12 +17,17 @@ namespace ursine
     namespace
     {
         const auto kMetaFileExtension = "meta";
+        const auto kCacheFileExtension = "cache";
 
         // meta file serialization is handled explicitly
         const auto kMetaKeyGUID = "guid";
         const auto kMetaKeyImporter = "importer";
         const auto kMetaKeyProcessor = "processor";
         const auto kMetaKeyProcessorOptions = "options";
+
+        // cache file serialization is handled explicitly
+        const auto kCacheKeyProcessedType = "processedType";
+        const auto kCacheKeyGeneratedResources = "generatedResources";
 
         const meta::Type::Set &getImporterTypes(void)
         {
@@ -102,9 +107,36 @@ namespace ursine
         UAssert( 
             fs::WriteAllText( resource->m_metaFileName.string( ), metaJsonString ),
             "Unable to write to resource meta data.\nfile: %s",
-            resource->m_metaFileName.string( )
+            resource->m_metaFileName.string( ).c_str( )
         );
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::InvalidateResourceCache(ResourceItem::Handle resource)
+    {
+        auto output = Json::object {
+            { kCacheKeyProcessedType, resource->m_buildCache.processedType.GetName( ) },
+        };
+
+        Json::array generatedResources;
+
+        for (auto &generated : resource->m_buildCache.generatedResources)
+            generatedResources.emplace_back( to_string( generated ) );
+
+        output[ kCacheKeyGeneratedResources ] = generatedResources;
+
+        auto cacheJsonString = Json( output ).dump( true );
+
+        URSINE_TODO( "Make recoverable." )
+        UAssert( 
+            fs::WriteAllText( resource->m_buildCacheFileName.string( ), cacheJsonString ),
+            "Unable to write to resource build cache.\nfile: %s",
+            resource->m_buildCacheFileName.string( ).c_str( )
+        );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const GUID &guid)
     {
@@ -197,7 +229,7 @@ namespace ursine
         auto metaDataJson = Json::parse( metaDataString, metaDataError );
 
         UAssert( metaDataError.empty( ),
-            "Unable to parse meta data resource.\nfile: %s\nerror: %s",
+            "Unable to parse resource meta data.\nfile: %s\nerror: %s",
             metaFileName.string( ).c_str( ),
             metaDataError.c_str( )
         );
@@ -232,7 +264,7 @@ namespace ursine
             processorName.c_str( )
         );
 
-        UAssert(processorType.GetDynamicConstructor( ).IsValid( ),
+        UAssert( processorType.GetDynamicConstructor( ).IsValid( ),
             "Processor '%s' does not have a default dynamic constructor.",
             processorType.GetName( ).c_str( )
         );
@@ -242,6 +274,8 @@ namespace ursine
         resource->m_metaData.importer = importerType;
         resource->m_metaData.processor = processorType;
         resource->m_metaData.processorOptions = metaDataJson[ kMetaKeyProcessorOptions ];
+
+        loadResourceBuildCache( resource );
 
         return resource;
     }
@@ -367,6 +401,7 @@ namespace ursine
         resource->m_fileName = fileName;
         resource->m_metaFileName = metaFileName;
         resource->m_buildFileName = getResourceBuildFile( guid );
+        resource->m_buildCacheFileName = getResourceBuildCacheFile( guid );
 
         auto insertion = m_database.insert( { resource->m_guid, resource } );
 
@@ -376,6 +411,66 @@ namespace ursine
         );
 
         return resource;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::loadResourceBuildCache(ResourceItem::Handle resource)
+    {
+        auto cacheFileName = getResourceBuildCacheFile( resource->m_guid );
+
+        // it's ok that the cache file doesn't exist - it just means this resource is 
+        // invalidated and we'll write the cache during build
+        if (!exists( cacheFileName ))
+            return;
+
+        std::string cacheError;
+        std::string cacheString;
+
+        URSINE_TODO( "Make all failures recoverable." );
+
+        UAssert( fs::LoadAllText( cacheFileName.string( ), cacheString ),
+            "Unable to load build cache file.\nfile: %s",
+            cacheFileName.string( ).c_str( )
+        );
+
+        auto cacheJson = Json::parse( cacheString, cacheError );
+
+        UAssert( cacheError.empty( ),
+            "Unable to parse build cache.\nfile: %s\nerror: %s",
+            cacheFileName.string( ).c_str( ),
+            cacheError.c_str( )
+        );
+
+        auto processedTypeName = cacheJson[ kCacheKeyProcessedType ].string_value( );
+        auto processedType = meta::Type::GetFromName( processedTypeName );
+
+        UAssert( processedType.IsValid( ),
+            "Invalid resource processed type '%s'.\nfile: %s",
+            processedTypeName.c_str( ),
+            cacheFileName.string( ).c_str( )
+        );
+
+        resource->m_buildCache.processedType = processedType;
+
+        auto generatedResourcesObj = cacheJson[ kCacheKeyGeneratedResources ];
+
+        UAssert( generatedResourcesObj.is_array( ),
+            "Build cache key '%s' expected to be array type.\nfile: %s",
+            cacheFileName.string( ).c_str( )
+        );
+
+        auto &generatedResources = resource->m_buildCache.generatedResources;
+
+        generatedResources.clear( );
+
+        // convert the string values in the json array to the array of GUIDs
+        for (auto &obj : generatedResourcesObj.array_items( ))
+        {
+            generatedResources.emplace_back(
+                GUIDStringGenerator( )( obj.string_value( ) )
+            );
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -451,9 +546,16 @@ namespace ursine
             "Processed data was null." 
         );
 
+        resource->m_buildCache.processedType = processData->GetType( );
+
+        URSINE_TODO( "Add generated resources to the cache here" );
+
         ResourceFormatWriter formatWriter( resource );
 
         formatWriter.Write( processData );
+
+        // write the cache
+        InvalidateResourceCache( resource );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -461,6 +563,9 @@ namespace ursine
     bool rp::ResourcePipelineManager::buildIsInvalidated(ResourceItem::Handle resource)
     {
         if (!exists( resource->m_buildFileName ))
+            return true;
+
+        if (!exists( resource->m_buildCacheFileName ))
             return true;
 
         // this shouldn't ever be the case
@@ -491,5 +596,14 @@ namespace ursine
         auto file = m_config.buildDirectory / to_string( guid );
 
         return file.replace_extension( kResourceFormatExtension );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    fs::path rp::ResourcePipelineManager::getResourceBuildCacheFile(const GUID &guid) const
+    {
+        auto file = m_config.buildDirectory / to_string( guid );
+
+        return file.replace_extension( kCacheFileExtension );
     }
 }

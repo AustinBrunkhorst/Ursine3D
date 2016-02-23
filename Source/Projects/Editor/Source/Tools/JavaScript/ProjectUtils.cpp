@@ -90,6 +90,7 @@ namespace
 
         return Json::object {
             { "guid", to_string( resource->GetGUID( ) ) },
+            { "type", resource->GetDataType( ).GetName( ) },
             { "displayName", resource->GetDisplayName( ) },
             { "sourceFile", sourceFile.string( ) },
             { "extension", sourceFile.extension( ).string( ) }

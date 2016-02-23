@@ -28,6 +28,7 @@ namespace ursine
                 void Build(void);
 
                 void InvalidateResourceMeta(ResourceItem::Handle resource);
+                void InvalidateResourceCache(ResourceItem::Handle resource);
 
                 ResourceItem::Handle GetItem(const GUID &guid);
             private:
@@ -74,6 +75,9 @@ namespace ursine
                     const GUID &guid = GUIDGenerator( )( )
                 );
 
+                // loads the build cache for this resource
+                void loadResourceBuildCache(ResourceItem::Handle resource);
+
                 ///////////////////////////////////////////////////////////////
                 // Building
                 ///////////////////////////////////////////////////////////////
@@ -89,6 +93,7 @@ namespace ursine
 
                 // gets build file name for this resource
                 fs::path getResourceBuildFile(const GUID &guid) const;
+                fs::path getResourceBuildCacheFile(const GUID &guid) const;
             };
         }
     }

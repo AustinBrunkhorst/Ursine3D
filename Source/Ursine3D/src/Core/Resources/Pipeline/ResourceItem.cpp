@@ -15,6 +15,11 @@ namespace ursine
         return m_guid;
     }
 
+    const meta::Type &rp::ResourceItem::GetDataType(void) const
+    {
+        return m_buildCache.processedType;
+    }
+
     const fs::path &rp::ResourceItem::GetSourceFileName(void) const
     {
         return m_fileName;
