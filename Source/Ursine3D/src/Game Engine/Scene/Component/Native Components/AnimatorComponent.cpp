@@ -113,8 +113,8 @@ namespace ursine
 			, m_changeState(false)
 			, m_speedScalar(1.0f)
 			, m_Rig("")
-			, m_currentStateName("")
-			, m_futureStateName("")
+			, m_curStName("")
+			, m_futStName("")
 			, m_animationName("")
 			, m_stateName("")
 			, m_animlist(0)
@@ -154,9 +154,9 @@ namespace ursine
 			{
 				if (x.GetName() == "")
 					continue;
-				if (x.GetName() == m_currentStateName)
+				if (x.GetName() == m_curStName)
 					currentState = &x;
-				if (x.GetName() == m_futureStateName)
+				if (x.GetName() == m_futStName)
 					futureState = &x;
 			}
 
@@ -333,17 +333,7 @@ namespace ursine
 		{
 			m_animationName = name;
 		}
-
-		const std::string &Animator::GetStMachineName(void) const
-		{
-			return m_StateMachineName;
-		}
-
-		void Animator::SetStMachineName(const std::string &stm)
-		{
-			m_StateMachineName = stm;
-		}
-
+		
 		const std::string &Animator::GetRig() const
 		{
 			return m_Rig;
@@ -358,7 +348,7 @@ namespace ursine
 		{
 			for (auto &x : stArray)
 			{
-				if (x.GetName() == m_currentStateName)
+				if (x.GetName() == m_curStName)
 					return x.GetTimePosition();
 			}
 			return 0.0f;
@@ -368,7 +358,7 @@ namespace ursine
 		{
 			for (auto &x : stArray)
 			{
-				if (x.GetName() == m_currentStateName)
+				if (x.GetName() == m_curStName)
 				{
 					x.SetTimePosition(position);
 					return;
@@ -378,26 +368,28 @@ namespace ursine
 
 		const std::string& Animator::GetCurrentState(void) const
 		{
-			return m_currentStateName;
+			return m_curStName;
 		}
 
 		void Animator::SetCurrentState(const std::string &state)
 		{
-			m_currentStateName = state;
-			NOTIFY_COMPONENT_CHANGED("currentState", m_currentStateName);
-		}
+			//if ("" != state && m_curStName != state)
+			//	m_futStName = state;
+			//else
+			//{
+			//	m_curStName = state;
+			//	NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
+			//}
 
-		const std::string &Animator::GetFutureState(void) const
-		{
-			return m_futureStateName;
+			if ("" == m_curStName)
+			{
+				m_curStName = state;
+				NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
+			}
+			else
+				m_futStName = state;
 		}
-
-		void Animator::SetFutureState(const std::string& name)
-		{
-			m_futureStateName = name;
-			NOTIFY_COMPONENT_CHANGED("futureState", m_futureStateName);
-		}
-
+		
 		const std::string& Animator::GetStateName(void) const
 		{
 			return m_stateName;
@@ -590,8 +582,11 @@ namespace ursine
 						{
 							if (m_changeState)
 							{
-								SetCurrentState(m_futureStateName);
-								SetFutureState("");
+								//SetCurrentState(m_futStName);
+								//SetFutureState("");
+								m_curStName = m_futStName;
+								m_futStName = "";
+								NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
 								currSt = futSt;
 								futSt = nullptr;
 							}
@@ -680,8 +675,11 @@ namespace ursine
 								transFactor = 0.0f;
 								if (m_changeState)
 								{
-									SetCurrentState(m_futureStateName);
-									SetFutureState("");
+									//SetCurrentState(m_futStName);
+									//SetFutureState("");
+									m_curStName = m_futStName;
+									m_futStName = "";
+									NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
 									currSt = futSt;
 									futSt = nullptr;
 								}
