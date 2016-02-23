@@ -19,11 +19,14 @@
 #include "PlayerViewportTweeningState.h"
 #include "LockPlayerCharacterControllerState.h"
 #include "ChangeSegmentState.h"
+#include "CombatBowl1IntroCinematicState.h"
 
 #include "TutorialResourcesComponent.h"
 #include "CombatBowl1ResourcesComponent.h"
 
 #include <TimerCondition.h>
+
+#include <iostream>
 
 NATIVE_COMPONENT_DEFINITION( LevelSegmentManager );
 
@@ -35,6 +38,7 @@ LevelSegmentManager::LevelSegmentManager(void)
     , m_segment( LevelSegments::Empty )
     , m_player1( nullptr )
     , m_player2( nullptr )
+    , m_enableDebugOutput( false )
 {
 }
 
@@ -49,16 +53,6 @@ LevelSegments LevelSegmentManager::GetCurrentSegment(void) const
     return m_segment;
 }
 
-Entity *LevelSegmentManager::GetPlayer1(void)
-{
-    return m_player1;
-}
-
-Entity *LevelSegmentManager::GetPlayer2(void)
-{
-    return m_player2;
-}
-
 void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
 {
     m_segment = segment;
@@ -68,6 +62,26 @@ void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
     args.segment = segment;
 
     Dispatch( LevelSegmentManagerEvents::SegmentChanged, &args );
+}
+
+bool LevelSegmentManager::GetEnableDebugOutput(void) const
+{
+    return m_enableDebugOutput;
+}
+
+void LevelSegmentManager::SetEnableDebugOutput(bool enable)
+{
+    m_enableDebugOutput = enable;
+}
+
+Entity *LevelSegmentManager::GetPlayer1(void)
+{
+    return m_player1;
+}
+
+Entity *LevelSegmentManager::GetPlayer2(void)
+{
+    return m_player2;
 }
 
 void LevelSegmentManager::OnInitialize(void)
@@ -162,6 +176,21 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
 
     initState->AddTransition( playerCreateState, "Go To Init Players" );
 
+    // Then start the cinematic
+    auto cinematicState = stateM->AddState<CombatBowl1IntroCinematicState>( );
+
+    playerCreateState->AddTransition( cinematicState, "Go To Start Cinematic" );
+
+    // After the cinematic is finshed (it's a blocking state), tween the viewports and unlock the players
+    auto viewportTween = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
+
+    cinematicState->AddTransition( viewportTween, "Go To Tween Viewports" );
+
+    // Then once they are tweened, unlock the players
+    auto unlockPlayers = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+
+    viewportTween->AddTransition( unlockPlayers, "Go To Unlock Player's Controllers" );
+
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
@@ -226,5 +255,18 @@ void LevelSegmentManager::onUpdate(EVENT_HANDLER(World))
 
     // Update all state machines
     for (auto &logic : m_segmentLogic[ m_segment ])
+    {
+        if (m_enableDebugOutput)
+            logic->EnableDebugOutput( &std::cout );
+        else
+            logic->DisableDebugOutput( );
+
+        if (m_enableDebugOutput)
+            std::cout << "LevelSegmentManager: Begin Updating \"" << logic->m_name << "\"" << std::endl;
+
         logic->Update( );
+
+        if (m_enableDebugOutput)
+            std::cout << "LevelSegmentManager: End Updating \"" << logic->m_name << "\"" << std::endl;
+    }
 }

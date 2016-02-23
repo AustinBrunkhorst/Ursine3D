@@ -45,11 +45,20 @@ public:
         SetCurrentSegment
     );
 
+    EditorField(
+        bool enableDebugOutput,
+        GetEnableDebugOutput,
+        SetEnableDebugOutput
+    );
+
     LevelSegmentManager(void);
     ~LevelSegmentManager(void);
 
     LevelSegments GetCurrentSegment(void) const;
     void SetCurrentSegment(LevelSegments segment);
+
+    bool GetEnableDebugOutput(void) const;
+    void SetEnableDebugOutput(bool enable);
 
     Meta(Disable)
     ursine::ecs::Entity *GetPlayer1(void);
@@ -64,6 +73,8 @@ private:
     LevelSegments m_segment;
 
     ursine::ecs::Entity *m_player1, *m_player2;
+
+    bool m_enableDebugOutput;
 
     void OnInitialize(void) override;
 

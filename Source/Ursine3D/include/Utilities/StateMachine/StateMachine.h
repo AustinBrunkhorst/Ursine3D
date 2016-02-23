@@ -36,6 +36,9 @@ namespace ursine
             // Update the state machine
             virtual void Update(void);
 
+            virtual void EnableDebugOutput(std::ostream *output);
+            virtual void DisableDebugOutput(void);
+
             // global variable manipulation
             void AddBool(const std::string &boolName, bool initValue);
             bool GetBool(const std::string &boolName);
@@ -89,9 +92,14 @@ namespace ursine
 
             void *m_userData;
 
+            bool m_enableDebugOutput;
+            std::ostream *m_output;
+
             State *addState(State::Handle state);
 
             meta::Variant *getVariable(const std::string &name);
+
+            void printDebugMessage(const std::string &message);
 
         };
     }

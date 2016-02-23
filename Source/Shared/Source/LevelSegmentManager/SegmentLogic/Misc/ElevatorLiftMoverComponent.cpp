@@ -71,6 +71,11 @@ void ElevatorLiftMover::StartMoving(void)
         );
 }
 
+void ElevatorLiftMover::GoToEndPosition(void)
+{
+    GetOwner( )->GetTransform( )->SetLocalPosition( m_endPos );
+}
+
 #if defined(URSINE_WITH_EDITOR)
 
 void ElevatorLiftMover::reset(void)
