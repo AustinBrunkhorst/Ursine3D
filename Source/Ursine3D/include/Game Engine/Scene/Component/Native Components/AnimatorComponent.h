@@ -235,8 +235,6 @@ namespace ursine
 			// => save both Arrays
 			// => when load model, don't just load these, but should also load the animation if it doesn't exist
 
-			void OnSerialize(ursine::Json::object &output) const override;
-			void OnDeserialize(const ursine::Json &intput) override;
 
 		private:
 			bool m_playing;

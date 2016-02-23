@@ -194,6 +194,8 @@ namespace ursine
                         )
                     );
                 }
+
+                m_manager->dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
             }
         }
 
@@ -214,7 +216,6 @@ namespace ursine
             // debug rendering
             if( renderDebug )
             {
-                m_manager->dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
                 m_manager->dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
                 PrimitiveColorBuffer pcb;
@@ -235,7 +236,6 @@ namespace ursine
                  m_manager->shaderManager->Render(m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex));
 
                  m_manager->dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
-                 m_manager->dxCore->SetDepthState(DEPTH_STATE_DEPTH_NOSTENCIL);
             }
         }
     }
