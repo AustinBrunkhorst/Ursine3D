@@ -149,7 +149,7 @@ namespace ursine
                     result = m_device->QueryInterface(
                         __uuidof(ID3D11Debug),
                         reinterpret_cast<void**>(&m_debugInterface)
-                        );
+                    );
 
                     UAssert( result == S_OK, "Failed to make debug interface! (Error '%s')", GetDXErrorMessage( result ) );
 
@@ -359,7 +359,7 @@ namespace ursine
 
             void DirectXCore::ClearSwapchain(void)
             {
-                float color[ 4 ] = { 0.15f, 0.15f, 0.15f, 1.0f };
+                float color[ 4 ] = { 0.15f, 0.15f, 0.15f, 1.0f }; 
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView, color);
             }
 
@@ -411,12 +411,9 @@ namespace ursine
             }
 
             //set target
-            void DirectXCore::SetRenderTarget(const RENDER_TARGETS rt, const bool useDepth)
+            void DirectXCore::SetRenderTarget(const RENDER_TARGETS rt, DEPTH_STENCIL_LIST depthTarget)
             {
-                if (useDepth)
-                    m_targetManager->SetRenderTarget(rt, m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN));
-                else
-                    m_targetManager->SetRenderTarget(rt, nullptr);
+                m_targetManager->SetRenderTarget(rt, m_depthStencilManager->GetDepthStencilView(depthTarget));
             }
 
             void DirectXCore::SetRasterState(const RASTER_STATES state)

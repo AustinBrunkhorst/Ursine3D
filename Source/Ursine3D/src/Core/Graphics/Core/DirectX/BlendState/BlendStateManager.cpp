@@ -122,7 +122,15 @@ namespace ursine
 
             void BlendStateManager::SetBlendState(const BLEND_STATES state)
             {
-                if (m_currentState == state)
+                if(state == BLEND_STATE_COUNT )
+                {
+                    m_currentState = state;
+                    float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+                    m_deviceContext->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
+                    return;
+                }
+
+                if ( m_currentState == state )
                     return;
 
                 m_currentState = state;
