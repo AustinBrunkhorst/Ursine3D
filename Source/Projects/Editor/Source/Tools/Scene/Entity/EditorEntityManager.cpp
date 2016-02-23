@@ -20,7 +20,6 @@
 #include "ComponentUtils.h"
 
 #include <SelectedComponent.h>
-#include <Timer.h>
 
 using namespace ursine;
 
