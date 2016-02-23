@@ -332,39 +332,45 @@ namespace ursine
 						// counts
 						newAD.clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
 
+						/////////////////////////////////////////////////////
+						// Push back dummy value should includes specific time, not default
+						// Should build keyframe vector which can cover the beginning and the end
+						// and then should cover all keyframe values with reasonable keyframe.
+						/////////////////////////////////////////////////////
+						URSINE_TODO("Jun! You should fix this!!!!");
 						j = 0;
-						for (auto iter2 = mModel->mAnimationData[i]->animations.begin();
-						iter2 != mModel->mAnimationData[i]->animations.end(); ++iter2, ++j)
+						for (auto iter : mModel->mAnimationData[i]->animations)
 						{
 							// storing animation clip's name
-							newAD.clipname = iter2->first.c_str();
+							newAD.clipname = iter.first.c_str();
 
 							// set keycount / keyframes
-							newAD.boneCount = static_cast<unsigned int>(iter2->second.boneAnim.size());
+							newAD.boneCount = static_cast<unsigned int>(iter.second.boneAnim.size());
 
 							// Unifying keyframes of each animation
 							unsigned int maxkfCount = 0;
-							for (k = 0; k < iter2->second.boneAnim.size(); ++k)
+							for (k = 0; k < iter.second.boneAnim.size(); ++k)
 							{
-								unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+								unsigned int kfCount = static_cast<unsigned int>(iter.second.boneAnim[k].keyFrames.size());
 								if (maxkfCount < kfCount)
 									maxkfCount = kfCount;
 							}
 
-							for (k = 0; k < iter2->second.boneAnim.size(); ++k)
+							for (k = 0; k < iter.second.boneAnim.size(); ++k)
 							{
 								ufmt_loader::KFrame newKF;
-								unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+								unsigned int kfCount = static_cast<unsigned int>(iter.second.boneAnim[k].keyFrames.size());
 								newKIs.push_back(maxkfCount);
 								for (l = 0; l < maxkfCount; ++l)
 								{
 									if (l < maxkfCount && l < kfCount)
-										newKF.push_back(iter2->second.boneAnim[k].keyFrames[l]);
+										newKF.push_back(iter.second.boneAnim[k].keyFrames[l]);
 									else if (l >= kfCount)
-										newKF.push_back(iter2->second.boneAnim[k].keyFrames[kfCount - 1]);
+										newKF.push_back(iter.second.boneAnim[k].keyFrames[kfCount - 1]);
 								}
 								newKFs.push_back(newKF);
 							}
+							++j;
 						}
 						newAD.keyIndices.push_back(newKIs);
 						newAD.keyframes.push_back(newKFs);
@@ -374,7 +380,6 @@ namespace ursine
 					}
 				}
 			}
-
 			return true;
 		}
 

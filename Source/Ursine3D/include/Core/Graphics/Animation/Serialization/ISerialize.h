@@ -25,7 +25,6 @@ namespace ursine
 			class ISerialize
 			{
 			private:
-				char* m_FileInfoName;
 			protected:
 			public:
 				/** @brief serializer constructor
@@ -34,7 +33,7 @@ namespace ursine
 				*
 				*  @return nothing
 				*/
-				ISerialize(const char* FileInfoName = "");
+				ISerialize();
 				/** @brief serializer destructor
 				*
 				*  this will destroy basic serializer

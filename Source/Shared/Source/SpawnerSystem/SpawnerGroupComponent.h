@@ -16,7 +16,7 @@
 #include <Component.h>
 
 #include "AIArchetypes.h"
-#include "LevelManagerSystem.h"
+#include "LevelSegmentManager.h"
 
 class Spawner;
 
@@ -25,6 +25,7 @@ class SpawnerGroup : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
     friend class SpawnerGroupSystem;
+    friend class SpawnPattern;
 
 public:
 
@@ -46,9 +47,13 @@ public:
     AIArchetype GetEnemyType(void) const;
     void SetEnemyType(AIArchetype enemyType);
 
+    int GetActiveEnemiesCount(void) const;
+
 private:
 
     AIArchetype m_enemyType;
+
+    int m_activeEnemies;
 
     std::unordered_map<AIArchetype, Spawner *> m_spawners;
 
@@ -65,6 +70,6 @@ private:
     // Update function (called via SpawnerGroupSystem)
     void update(void);
 
-    void onLevelSegmentChange(EVENT_HANDLER(LevelManager));
+    void onLevelSegmentChange(EVENT_HANDLER(LevelSegmentManager));
 
 } Meta(Enable);

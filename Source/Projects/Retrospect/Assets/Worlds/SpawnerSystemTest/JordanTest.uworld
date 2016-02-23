@@ -65,10 +65,10 @@
 "Transform": {
 ".uid": 10, 
 "rotation": {
-"w": 0.94306415319442749, 
-"x": 0.32417073845863342, 
-"y": -0.070410050451755524, 
-"z": 0.024202888831496239
+"w": 0.92586618661880493, 
+"x": 0.26957482099533081, 
+"y": 0.2542102038860321, 
+"z": -0.074015751481056213
 }, 
 "scale": {
 "x": 1, 
@@ -76,9 +76,9 @@
 "z": 1
 }, 
 "translation": {
-"x": 32.025558471679688, 
-"y": 168.13554382324219, 
-"z": -213.27783203125
+"x": -230.1612548828125, 
+"y": 310.52621459960938, 
+"z": -393.85061645507813
 }
 }
 }, 
@@ -132,46 +132,44 @@
 {
 "children": [], 
 "components": {
-"SpawnPatternContainer": {
+"Model3D": {
 ".uid": 25, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 0.203125, 
+"r": 0
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"SpawnPatternContainer": {
+".uid": 26, 
 "levelSegment": 0, 
 "spawnPatterns": [
 {
 "active": true, 
 "direction": {
 "x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"endingLevelSegmentTransition": 5, 
-"loopPattern": false, 
-"maxNumberOfEnemies": 50, 
-"minNumberOfEnemies": 0, 
-"notes": "", 
-"singleSpawnCooldown": 1, 
-"spawnAngleVariance": 180, 
-"spawnDistanceVariance": 50, 
-"spawnDuration": 15, 
-"spawnerBreakTime": 1, 
-"totalEnemies": 50, 
-"triggerNextPattern": true
-}, {
-"active": true, 
-"direction": {
-"x": 0, 
-"y": 1, 
+"y": 0, 
 "z": 0
 }, 
-"endingLevelSegmentTransition": 5, 
-"loopPattern": true, 
+"endingLevelSegmentTransition": 1, 
+"loopPattern": false, 
 "maxNumberOfEnemies": 20, 
-"minNumberOfEnemies": 20, 
+"minNumberOfEnemies": 0, 
 "notes": "", 
-"singleSpawnCooldown": 0.10000000149011612, 
-"spawnAngleVariance": 0, 
-"spawnDistanceVariance": 15, 
+"singleSpawnCooldown": 0, 
+"spawnAngleVariance": 10, 
+"spawnDistanceVariance": 20, 
 "spawnDuration": 5, 
-"spawnerBreakTime": 1, 
+"spawnerBreakTime": 10000, 
 "totalEnemies": 20, 
 "triggerNextPattern": true
 }
@@ -187,13 +185,13 @@
 }, 
 "scale": {
 "x": 1, 
-"y": 1, 
+"y": 100, 
 "z": 1
 }, 
 "translation": {
-"x": 19.054798126220703, 
+"x": -17.307109832763672, 
 "y": 0, 
-"z": 25.774877548217773
+"z": -11.003080368041992
 }
 }
 }, 
@@ -232,7 +230,7 @@
 "children": [], 
 "components": {
 "SpawnPatternContainer": {
-".uid": 29, 
+".uid": 30, 
 "levelSegment": 0, 
 "spawnPatterns": [
 {
@@ -258,7 +256,7 @@
 ]
 }, 
 "Transform": {
-".uid": 28, 
+".uid": 29, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -282,11 +280,11 @@
 ], 
 "components": {
 "Spawner": {
-".uid": 27, 
+".uid": 28, 
 "EnemyType": 1
 }, 
 "Transform": {
-".uid": 26, 
+".uid": 27, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -312,7 +310,7 @@
 "children": [], 
 "components": {
 "SpawnPatternContainer": {
-".uid": 33, 
+".uid": 34, 
 "levelSegment": 2, 
 "spawnPatterns": [
 {
@@ -338,7 +336,7 @@
 ]
 }, 
 "Transform": {
-".uid": 32, 
+".uid": 33, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -362,11 +360,11 @@
 ], 
 "components": {
 "Spawner": {
-".uid": 31, 
+".uid": 32, 
 "EnemyType": 0
 }, 
 "Transform": {
-".uid": 30, 
+".uid": 31, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -392,71 +390,33 @@
 "children": [], 
 "components": {
 "SpawnPatternContainer": {
-".uid": 37, 
-"levelSegment": 5, 
-"spawnPatterns": []
-}, 
-"Transform": {
-".uid": 36, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "NewPattern"
-}
-], 
-"components": {
-"Spawner": {
-".uid": 35, 
-"EnemyType": 2
-}, 
-"Transform": {
-".uid": 34, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Spawner_Nuker"
-}, {
-"children": [
+".uid": 38, 
+"levelSegment": 1, 
+"spawnPatterns": [
 {
-"children": [], 
-"components": {
-"SpawnPatternContainer": {
-".uid": 41, 
-"levelSegment": 5, 
-"spawnPatterns": []
+"active": true, 
+"direction": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}, 
+"endingLevelSegmentTransition": 5, 
+"loopPattern": true, 
+"maxNumberOfEnemies": 10, 
+"minNumberOfEnemies": 2, 
+"notes": "", 
+"singleSpawnCooldown": 100, 
+"spawnAngleVariance": 178.10000610351563, 
+"spawnDistanceVariance": 5, 
+"spawnDuration": 30, 
+"spawnerBreakTime": 10, 
+"totalEnemies": 5, 
+"triggerNextPattern": false
+}
+]
 }, 
 "Transform": {
-".uid": 40, 
+".uid": 37, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -480,11 +440,11 @@
 ], 
 "components": {
 "Spawner": {
-".uid": 39, 
+".uid": 36, 
 "EnemyType": 3
 }, 
 "Transform": {
-".uid": 38, 
+".uid": 35, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -532,6 +492,326 @@
 }
 }, 
 "name": "SpawnGroup"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 40, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 41, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 42, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 39, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1000, 
+"y": 1, 
+"z": 1000
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Plane"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Animator": {
+".uid": 55, 
+"animation": "", 
+"changeState": false, 
+"currentRig": "Player", 
+"currentState": "Player_Idle", 
+"futureState": "", 
+"loopAnimation": true, 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 56, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.20000000298023224, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
+"renderMask": 2, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 54, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 5.2394866543181706e-06
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 65, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "RightArm"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 66, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "LeftArm"
+}
+], 
+"components": {
+"Audio Listener 3D": {
+".uid": 60, 
+"testing": []
+}, 
+"Camera": {
+".uid": 61, 
+"active": true, 
+"farPlane": 1000, 
+"fov": 60, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 1, 
+"renderMask": 18, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 0.5
+}
+}, 
+"Transform": {
+".uid": 59, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 24.188358306884766, 
+"z": 0
+}
+}
+}, 
+"name": "Camera"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 44, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"CharacterController": {
+".uid": 45, 
+"deadZone": 0, 
+"deadZoneSnap": 0, 
+"rotateSpeed": 10
+}, 
+"CommandQueue": {
+".uid": 46
+}, 
+"CylinderCollider": {
+".uid": 47, 
+"height": 30, 
+"radius": 5
+}, 
+"InputController": {
+".uid": 48, 
+"UseKeyboard": false
+}, 
+"InteractionBay": {
+".uid": 49
+}, 
+"Inventory": {
+".uid": 50, 
+"LastStand": "P1HitScanWeapon.uatype", 
+"MeleeWeapon": "", 
+"PrimaryWeapon": "", 
+"SecondaryWeapon": "", 
+"StartWeapon": 0, 
+"m_currWeapon": 0
+}, 
+"PlayerID": {
+".uid": 51, 
+"PlayerId": 0
+}, 
+"Rigidbody": {
+".uid": 52, 
+"bodyFlag": 2, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 6.1500000953674316, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"SweptController": {
+".uid": 53, 
+"active": true, 
+"airAcceleration": 30, 
+"airDeceleration": 40, 
+"forwardEvents": true, 
+"gravity": 160, 
+"groundAcceleration": 200, 
+"groundDeceleration": 300, 
+"groundSnapDistance": 8, 
+"jumpCancelFactor": 0.5, 
+"jumpSpeed": 100, 
+"maxCeilingSlope": 43.5, 
+"maxFallSpeed": 180, 
+"maxGroundSlope": 42, 
+"maxMoveSpeed": 100, 
+"worldUp": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}
+}, 
+"Transform": {
+".uid": 43, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 0.40000000596046448, 
+"y": 0.40000000596046448, 
+"z": 0.40000000596046448
+}, 
+"translation": {
+"x": -33.391010284423828, 
+"y": 12.278072357177734, 
+"z": 0
+}
+}
+}, 
+"name": "Player1 Archetype"
 }
 ], 
 "settings": {
@@ -568,7 +848,15 @@
 }, 
 "WorldConfig": {
 ".uid": 4, 
-"systems": []
+"systems": [
+{
+"type": "CharacterControllerSystem"
+}, {
+"type": "InputControllerSystem"
+}, {
+"type": "CommandQueueSystem"
+}
+]
 }
 }, 
 "name": "World Settings"

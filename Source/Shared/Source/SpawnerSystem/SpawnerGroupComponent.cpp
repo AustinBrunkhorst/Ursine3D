@@ -16,6 +16,8 @@
 #include "SpawnerGroupComponent.h"
 #include "SpawnerComponent.h"
 
+#include "LevelSegmentManager.h"
+
 #include <Notification.h>
 #include <SystemManager.h>
 
@@ -26,22 +28,23 @@ using namespace ursine;
 SpawnerGroup::SpawnerGroup(void)
     : BaseComponent( )
     , m_enemyType( AIArchetype::Agile )
+    , m_activeEnemies( 0 )
 {
 }
 
 SpawnerGroup::~SpawnerGroup(void)
 {
-    auto levelManager = GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( );
+    auto levelManager = GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( );
 
     if (levelManager)
         levelManager->Listener( this )
-            .Off( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+            .Off( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 void SpawnerGroup::OnInitialize(void)
 {
-    GetOwner( )->GetWorld( )->GetEntitySystem<LevelManager>( )->Listener( this )
-        .On( LevelManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+    GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( )->Listener( this )
+        .On( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 AIArchetype SpawnerGroup::GetEnemyType(void) const
@@ -52,6 +55,11 @@ AIArchetype SpawnerGroup::GetEnemyType(void) const
 void SpawnerGroup::SetEnemyType(AIArchetype enemyType)
 {
     m_enemyType = enemyType;
+}
+
+int SpawnerGroup::GetActiveEnemiesCount(void) const
+{
+    return m_activeEnemies;
 }
 
 void SpawnerGroup::addSpawner(Spawner *spawner)
@@ -82,9 +90,9 @@ void SpawnerGroup::update(void)
     }
 }
 
-void SpawnerGroup::onLevelSegmentChange(EVENT_HANDLER(LevelManager))
+void SpawnerGroup::onLevelSegmentChange(EVENT_HANDLER(LevelSegmentManager))
 {
-    EVENT_ATTRS(LevelManager, LevelSegmentChangeArgs);
+    EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
 
     // notify the spawners that the segment changed
     for (auto &spawnerPair : m_spawners)

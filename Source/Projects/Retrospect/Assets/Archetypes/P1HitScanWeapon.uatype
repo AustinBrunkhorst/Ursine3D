@@ -4,10 +4,10 @@
 "children": [], 
 "components": {
 "FirePos": {
-".uid": 83
+".uid": 76
 }, 
 "Transform": {
-".uid": 77, 
+".uid": 75, 
 "rotation": {
 "w": 1, 
 "x": -2.9683229513466358e-05, 
@@ -31,20 +31,22 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 79, 
-"currentAnimation": "", 
+".uid": 78, 
+"animation": "", 
+"changeState": false, 
 "currentRig": "Gun_Idle", 
 "currentState": "", 
 "futureState": "", 
 "loopAnimation": true, 
-"m_stateArray": [], 
 "playAnimation": true, 
 "renderDebug": false, 
-"stateName": "", 
+"stArray": [], 
+"stBlender": [], 
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 80, 
+".uid": 79, 
+"castsShadows": false, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -60,7 +62,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 78, 
+".uid": 77, 
 "rotation": {
 "w": -0.58084952831268311, 
 "x": -0.45220023393630981, 
@@ -84,19 +86,19 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 75, 
+".uid": 73, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "HitscanWeapon": {
-".uid": 76, 
+".uid": 74, 
 "Accuracy": 0.5, 
 "AlwaysDraw": true, 
 "ArchetypeToShoot": "BaseBullet.uatype", 
 "ClipSize": 10, 
 "CritModifier": 1, 
-"Damage": 1, 
+"Damage": 10, 
 "DamageInterval": 1, 
 "DebugDraw": false, 
 "DelBulletOnCollision": true, 
@@ -118,7 +120,7 @@
 "WeaponTier": 2
 }, 
 "Transform": {
-".uid": 74, 
+".uid": 72, 
 "rotation": {
 "w": 1, 
 "x": 0, 

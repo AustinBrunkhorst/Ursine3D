@@ -25,12 +25,18 @@ using namespace ecs;
 Spawner::Spawner(void)
     : BaseComponent( )
     , m_enemyType( AIArchetype::Fodder )
+    , m_activeEnemies( 0 )
 {
 }
 
 AIArchetype Spawner::GetEnemyType(void) const
 {
     return m_enemyType;
+}
+
+int Spawner::GetActiveEnemiesCount(void) const
+{
+    return m_activeEnemies;
 }
 
 void Spawner::OnSerialize(ursine::Json::object& output) const
@@ -117,9 +123,6 @@ Entity *Spawner::spawnEnemy(SpawnerGroup *group, const SVec3 &worldPosition)
     );
 
     entity->GetTransform( )->SetWorldPosition( worldPosition );
-
-    // Subscribe to it's dead event so we can keep a counter
-    // Let the group know that a new enemy was spawned
 
     return entity;
 }

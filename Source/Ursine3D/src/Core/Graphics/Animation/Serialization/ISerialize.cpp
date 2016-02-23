@@ -21,7 +21,7 @@ namespace ursine
 	{
 		namespace ufmt_loader
 		{
-			ISerialize::ISerialize(const char* FileInfoName)
+			ISerialize::ISerialize()
 			{
 			}
 

@@ -45,6 +45,8 @@ SpawnPattern::SpawnPattern(void)
     , m_totalEnemiesSpawned( 0 )
     , m_breakTimer( 0.0f )
     , m_breaking( false )
+    , m_spawner( nullptr )
+    , m_group( nullptr )
 {
 }
 
@@ -245,6 +247,9 @@ void SpawnPattern::Update(SpawnerGroup *group, Spawner *spawner, SpawnPatternCon
 
 void SpawnPattern::spawn(SpawnerGroup *group, Spawner *spawner, SpawnPatternContainer *container)
 {
+    m_group = group;
+    m_spawner = spawner;
+
     // Get the origin
     auto origin = container->GetOwner( )->GetTransform( )->GetWorldPosition( );
 
@@ -265,6 +270,9 @@ void SpawnPattern::spawn(SpawnerGroup *group, Spawner *spawner, SpawnPatternCont
     auto *entity = spawner->spawnEnemy( group, origin + offset );
 
     ++m_activeEnemies;
+    ++spawner->m_activeEnemies;
+    ++group->m_activeEnemies;
+
     ++m_totalEnemiesSpawned;
 
     // Reset the spawn timer
@@ -277,4 +285,6 @@ void SpawnPattern::spawn(SpawnerGroup *group, Spawner *spawner, SpawnPatternCont
 void SpawnPattern::onEnemyDeath(EVENT_HANDLER(Entity))
 {
     --m_activeEnemies;
+    --m_spawner->m_activeEnemies;
+    --m_group->m_activeEnemies;
 }

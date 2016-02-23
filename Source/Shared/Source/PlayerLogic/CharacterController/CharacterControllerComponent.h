@@ -33,24 +33,35 @@ public:
     CharacterController(void);
     ~CharacterController(void);
 
+    Meta(InputRange(0.0f, 15.0f, 0.01f))
     EditorField(
         float rotateSpeed,
         GetRotateSpeed,
         SetRotateSpeed
     );
 
-	Meta(InputRange(0.0f, 1.0f, 0.01f))
-	EditorField(
-		float deadZone,
-		GetDeadZone,
-		SetDeadZone
-	);
+    Meta(InputRange(0.0f, 1.0f, 0.01f))
+    EditorField(
+        float deadZone,
+        GetDeadZone,
+        SetDeadZone
+    );
+
+    Meta(InputRange(0.0f, 1.0f, 0.01f))
+    EditorField(
+        float deadZoneSnap,
+        GetDeadZoneSnap,
+        SetDeadZoneSnap
+    );
 
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
 
-	float GetDeadZone(void) const;
-	void SetDeadZone(float deadZone);
+    float GetDeadZone(void) const;
+    void SetDeadZone(float deadZone);
+
+    float GetDeadZoneSnap(void) const;
+    void SetDeadZoneSnap(float snap);
 
     const ursine::Vec2 &GetMoveDirection(void) const;
     void SetMoveDirection(const ursine::Vec2 &moveDir);
@@ -67,7 +78,9 @@ private:
 
     float m_rotateSpeed;
     
-	float m_deadZone;
+    float m_deadZone;
+
+    float m_deadZoneSnap;
 
     bool m_jump;
 

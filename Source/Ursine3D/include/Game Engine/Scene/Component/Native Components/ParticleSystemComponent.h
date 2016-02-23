@@ -41,7 +41,7 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
-			friend class RenderSystem;
+            friend class RenderSystem;
 
         public:
             //EditorField(
@@ -123,7 +123,7 @@ namespace ursine
             RenderMode GetRenderMode(void) const;
             void SetRenderMode(const RenderMode &renderMode);
 
-			ursine::ecs::RenderMask GetRenderMask(void) const;
+            ursine::ecs::RenderMask GetRenderMask(void) const;
             void SetRenderMask(ursine::ecs::RenderMask mask);
 
         private:
@@ -135,7 +135,7 @@ namespace ursine
             // The graphics core API
             graphics::GfxAPI *m_graphics;
 
-			RenderableComponentBase *m_base;
+            RenderableComponentBase *m_base;
 
             // data for this component
             Color m_particleColor;
