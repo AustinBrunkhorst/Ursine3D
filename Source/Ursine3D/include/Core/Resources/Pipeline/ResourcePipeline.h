@@ -6,6 +6,7 @@
 
 #include "TextureImporter.h"
 #include "FBXImporter.h"
+#include "AnimationClipImporter.h"
 #include "JsonImporter.h"
 
 ///////////////////////////////////////////////////////////////////////////////

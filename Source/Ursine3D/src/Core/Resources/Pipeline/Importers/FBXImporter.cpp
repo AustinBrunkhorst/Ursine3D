@@ -11,6 +11,13 @@ namespace ursine
 
     resources::ResourceData::Handle rp::FBXImporter::Import(const ResourceImportContext &context)
     {
-        return nullptr;
+		// .../BossRoom.fbx
+		auto fileName = context.resource->GetSourceFileName( );
+
+		// read the file
+		// construct our model data
+		// output the animation clipdata resources
+
+        return std::make_shared<ModelData>( );
     }
 }
