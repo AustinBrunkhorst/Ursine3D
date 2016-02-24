@@ -91,7 +91,7 @@ namespace ursine
 			*  @param filename name of the fbx file
 			*  @return if success return true, else return false
 			*/
-			bool LoadFBX(const char* filename);
+			bool LoadFBX(const std::string &filename);
 
 			/** @brief fbx loader file processing scene function
 			*

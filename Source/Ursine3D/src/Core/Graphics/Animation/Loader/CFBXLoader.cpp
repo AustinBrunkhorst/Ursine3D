@@ -80,17 +80,14 @@ namespace ursine
 			}
 		}
 
-		bool CFBXLoader::LoadFBX(const char* filename)
+		bool CFBXLoader::LoadFBX(const std::string &filename)
 		{
-			if (!filename)
-				return false;
-
 			InitializeSdkObjects(mSdkManager, mScene);
 			if (!mSdkManager)
 				return false;
 
 			int lFileFormat = -1;
-			if (!mSdkManager->GetIOPluginRegistry()->DetectReaderFileFormat(filename, lFileFormat))
+			if (!mSdkManager->GetIOPluginRegistry()->DetectReaderFileFormat(filename.c_str( ), lFileFormat))
 			{
 				// Unrecognizable file format. Try to fall back to FbxImporter::eFBX_BINARY
 				lFileFormat = mSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription("FBX binary (*.fbx)");;
@@ -100,7 +97,7 @@ namespace ursine
 			mImporter = FbxImporter::Create(mSdkManager, "HJImporter");
 			if (!mImporter)
 				return false;
-			if (false == mImporter->Initialize(filename, lFileFormat, mSdkManager->GetIOSettings()))
+			if (false == mImporter->Initialize(filename.c_str( ), lFileFormat, mSdkManager->GetIOSettings()))
 				return false;
 			if (false == mImporter->Import(mScene))
 				return false;

@@ -20,6 +20,15 @@
 
 namespace ursine
 {
+    namespace resources
+    {
+        namespace pipeline
+        {
+            class ResourceReader;
+            class ResourceWriter;
+        }
+    }
+
 	namespace graphics
 	{
 		namespace ufmt_loader
@@ -96,7 +105,7 @@ namespace ursine
 				*  @param handle of the file
 				*  @return if succeed return true, else return false
 				*/
-				bool SerializeOut(HANDLE hFile);
+				bool SerializeOut(HANDLE output);
 			};
 		};
 	};

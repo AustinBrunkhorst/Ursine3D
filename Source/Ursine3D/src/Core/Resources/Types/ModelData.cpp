@@ -7,7 +7,10 @@ namespace ursine
 {
     namespace resources
     {
-        ModelData::ModelData(void) { }
+        ModelData::ModelData(graphics::ufmt_loader::ModelInfo *modelInfo)
+        {
+            // @@@TODO: give model info to graphics system, assign m_modelHandle
+        }
 
         ModelData::~ModelData(void) { }
 

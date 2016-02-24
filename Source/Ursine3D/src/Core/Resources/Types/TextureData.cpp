@@ -11,8 +11,7 @@ namespace ursine
     {
         TextureData::TextureData(void *bytes, size_t size, unsigned width, unsigned height)
         {
-            std::cout << "Hello world!" << std::endl;
-            m_textureHandle = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.CreateTexture(
+            m_textureHandle = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.CreateTexture(
                 reinterpret_cast<uint8_t*>(bytes), 
                 size, 
                 width, 
@@ -22,7 +21,7 @@ namespace ursine
 
         TextureData::~TextureData(void)
         {
-            GetCoreSystem(graphics::GfxAPI)->ResourceMgr.DestroyTexture( m_textureHandle );
+            GetCoreSystem( graphics::GfxAPI )->ResourceMgr.DestroyTexture( m_textureHandle );
         }
 
         graphics::GfxHND TextureData::GetTextureHandle() const
@@ -35,7 +34,7 @@ namespace ursine
             uint8_t *data;
             size_t size;
 
-            GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetBinaryInformation(
+            GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetBinaryInformation(
                 m_textureHandle, 
                 &data, 
                 size

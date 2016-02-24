@@ -3,6 +3,8 @@
 #include "FBXImporter.h"
 #include "ModelData.h"
 
+#include "CFBXLoader.h"
+
 namespace ursine
 {
     rp::FBXImporter::FBXImporter(void) { }
@@ -14,10 +16,15 @@ namespace ursine
 		// .../BossRoom.fbx
 		auto fileName = context.resource->GetSourceFileName( );
 
-		// read the file
-		// construct our model data
+        graphics::CFBXLoader importer;
+
+        UAssert( importer.LoadFBX( fileName.string( ) ),
+            "Unable to import FBX file.\nfile: %s",
+            fileName.string( ).c_str( )
+        );
+
 		// output the animation clipdata resources
 
-        return std::make_shared<ModelData>( );
+        return std::make_shared<ModelData>( importer.GetModelInfo( ) );
     }
 }
