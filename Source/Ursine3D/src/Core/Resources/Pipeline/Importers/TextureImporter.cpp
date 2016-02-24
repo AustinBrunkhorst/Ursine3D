@@ -3,94 +3,208 @@
 #include "TextureImporter.h"
 #include "TextureData.h"
 
-#include <SDL_image.h>
+#include "ResourcePipelineManager.h"
+
 #include <DirectXTex.h>
+
+using namespace ursine;
 
 namespace dx = DirectX;
 
+namespace
+{
+    const auto kTextureProcessorTool = "Tools\\TextureProcessor.exe";
+
+    fs::path getTempDirectory(const rp::ResourceImportContext &context);
+
+    bool runTexureProcessor(const std::vector<std::string> &arguments);
+}
+
 namespace ursine
 {
-    rp::TextureImporter::TextureImporter(void) { }
-
-    resources::ResourceData::Handle rp::TextureImporter::Import(const fs::path &fileName, const ResourceImportContext &context)
+    rp::TextureImporter::TextureImporter(void)
+        : m_importedWidth( 0 )
+        , m_importedHeight( 0 )
     {
-        auto *inputSurface = IMG_Load( fileName.string( ).c_str( ) );
-
-        URSINE_TODO( "Make all errors recoverable." );
-
-        UAssert( inputSurface != nullptr,
-            "Unable to load texture.\nerror: %s\nfile: %s",
-            IMG_GetError( ),
-            fileName.string( ).c_str( )
-        );
-
-        auto width = static_cast<unsigned>( inputSurface->w );
-        auto height = static_cast<unsigned>( inputSurface->h );
-
-        auto conversionFlags = 0;
-        auto targetDXFormat = DXGI_FORMAT_UNKNOWN;
-
-        auto bpp = inputSurface->format->BytesPerPixel;
-
-        switch (bpp)
-        {
-        // RGBA
-        case 4:
-        case 3:
-            conversionFlags = SDL_PIXELFORMAT_RGBA8888;
-            targetDXFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-            break;
-        default:
-            UError( "Unsupported texture format.\nfile: %s\nBPP: %i",
-                fileName.string( ).c_str( ),
-                bpp 
-            );
-        }
-
-        auto *format = SDL_AllocFormat( conversionFlags );
-
-        auto *convertedSurface = SDL_ConvertSurface( inputSurface, format, 0 );
-
-        UAssert( convertedSurface != nullptr,
-            "Unable to convert texture surface.\nerror: %s\nfile: %s",
-            SDL_GetError( ),
-            fileName.string( ).c_str( )
-        );
-
-        SDL_LockSurface( convertedSurface );
-
-        dx::Image dxImage;
         
-        dxImage.width = width;
-        dxImage.height = height;
-        dxImage.rowPitch = convertedSurface->pitch;
+    }
 
-        // ignored on 2D textures
-        dxImage.slicePitch = width * height * sizeof(uint8_t);
+    rp::TextureImporter::~TextureImporter(void)
+    {
+        
+    }
 
-        dxImage.format = targetDXFormat;
-        dxImage.pixels = static_cast<uint8_t*>( convertedSurface->pixels );
+    resources::ResourceData::Handle rp::TextureImporter::Import(const ResourceImportContext &context)
+    {
+        auto tempDirectory = getTempDirectory( context );
+        auto sourceFile = context.resource->GetSourceFileName( );
+        auto displayName = context.resource->GetDisplayName( );
 
-        dx::Blob outputBlob;
+        std::vector<std::string> ddsArgs {
+            "-nologo",
+            "-o \""+ tempDirectory.string( ) +"\"",
+            "-ft dds",
+            "\""+ sourceFile.string( ) +"\""
+        };
 
-        auto result = SaveToDDSMemory( dxImage, dx::DDS_FLAGS_NONE, outputBlob );
+        if (!exists( tempDirectory ))
+            create_directories( tempDirectory );
 
-        SDL_UnlockSurface( convertedSurface );
+        UAssert( runTexureProcessor( ddsArgs ),
+            "Unable to run texture processor for building DDS'."
+        );
+
+        auto ddsFile = change_extension( tempDirectory / displayName, "dds" );
+
+        std::ifstream stream( ddsFile.string( ), std::ios::binary );
+
+        UAssert( stream,
+            "Unable to load built DDS file.\nfile: %s",
+            ddsFile.string( ).c_str( )
+        );
+
+        stream.seekg( 0, std::ios::end );
+
+        auto fileSize = stream.tellg( );
+
+        auto buffer = new char[ fileSize ];
+
+        stream.seekg( 0, std::ios::beg );
+
+        stream.read( buffer, fileSize );
+
+        dx::TexMetadata meta;
+
+        auto result = GetMetadataFromDDSMemory( buffer, fileSize, dx::DDS_FLAGS_NONE, meta );
 
         UAssert( result == S_OK,
-            "Unable to convert texture to dds.\nfile: %s",
-            fileName.string( ).c_str( )
+            "Unable to get meta data from built DDS file.\nfile: %s",
+            ddsFile.string( ).c_str( )
         );
 
-        SDL_FreeFormat( format );
-        SDL_FreeSurface( inputSurface );
-        SDL_FreeSurface( convertedSurface );
+        stream.close( );
 
-        return std::make_shared<TextureData>( 
-            outputBlob.GetBufferPointer( ), 
-            outputBlob.GetBufferSize( ), 
-            width, 
-            height 
+        try
+        {
+            fs::remove( ddsFile );
+        } 
+        catch(...)
+        {
+            // do nothing
+        }
+
+        m_importedWidth = static_cast<unsigned>( meta.width );
+        m_importedHeight = static_cast<unsigned>( meta.height );
+
+        auto data = std::make_shared<TextureData>(
+            buffer,
+            fileSize, 
+            m_importedWidth, 
+            m_importedHeight
         );
+
+        delete[] buffer;
+
+        return data;
+    }
+
+    bool rp::TextureImporter::BuildPreview(const ResourceImportContext &context, const Vec2 &maxDimension)
+    {
+        auto maxOriginalComponent = math::Min( m_importedWidth, m_importedHeight );
+
+        auto maxComponent = math::Min( maxDimension.X( ), maxDimension.Y( ) );
+
+        auto sizeRatio = 1.0f;
+
+        if (maxOriginalComponent >= maxComponent)
+            sizeRatio = maxComponent / maxOriginalComponent;
+
+        auto previewWidth = static_cast<unsigned>( sizeRatio * m_importedWidth );
+        auto previewHeight = static_cast<unsigned>( sizeRatio * m_importedHeight );
+
+        auto tempDirectory = getTempDirectory( context );
+        auto sourceFile = context.resource->GetSourceFileName( );
+        auto previewFile = context.resource->GetPreviewFileName( );
+        auto displayName = context.resource->GetDisplayName( );
+
+        std::vector<std::string> previewArgs {
+            "-nologo",
+            "-o \""+ tempDirectory.string( ) +"\"",
+            "-ft png",
+            "-w "+ std::to_string( previewWidth ),
+            "-h "+ std::to_string( previewHeight ),
+            "\""+ sourceFile.string( ) +"\""
+        };
+
+        UAssert( runTexureProcessor( previewArgs ),
+            "Unable to run texture processor for building preview."
+        );
+
+        auto pngFile = change_extension( tempDirectory / displayName, "png" );
+
+        boost::system::error_code error;
+
+        copy_file( 
+            pngFile, 
+            previewFile, 
+            fs::copy_option::overwrite_if_exists, 
+            error 
+        );
+
+        UAssert( !error,
+            "Unable to copy built png to preview file.\nsource: %s\ntarget: %s",
+            pngFile.string().c_str( ),
+            previewFile.string( ).c_str( )
+        );
+
+        try
+        {
+            // don't need the temp directory any more
+            remove_all( tempDirectory );
+        } 
+        catch(...)
+        {
+            // do nothing
+        }
+
+        return true;
+    }
+}
+
+namespace
+{
+    fs::path getTempDirectory(const rp::ResourceImportContext &context)
+    {
+        return context.pipeline->GetConfig( ).tempDirectory / to_string( context.resource->GetGUID( ) );
+    }
+
+    bool runTexureProcessor(const std::vector<std::string> &arguments)
+    {
+        std::string argString;
+
+        utils::Join( arguments, " ", argString );
+
+        SHELLEXECUTEINFO shExecInfo;
+
+        shExecInfo.cbSize = sizeof( SHELLEXECUTEINFO );
+        shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+        shExecInfo.hwnd = nullptr;
+        shExecInfo.lpVerb = nullptr;
+        shExecInfo.lpFile = kTextureProcessorTool;
+        shExecInfo.lpParameters = argString.c_str( );
+        shExecInfo.lpDirectory = nullptr;
+        shExecInfo.nShow = SW_HIDE;
+        shExecInfo.hInstApp = nullptr;
+
+        auto result = ShellExecuteEx( &shExecInfo );
+
+        if (result != TRUE)
+            return false;
+
+        WaitForSingleObject( shExecInfo.hProcess, INFINITE );
+
+        CloseHandle( shExecInfo.hProcess );
+
+        return true;
     }
 }
