@@ -68,8 +68,8 @@ PixelInputType main(uint id : SV_VERTEXID)
 {
     PixelInputType output;
 
-    uint glyphIndex = id / 6;
-    uint vertexInQuad = id % 6;
+    uint glyphIndex = (id) / 6;
+    uint vertexInQuad = (id) % 6;
 
     // generate UV
     float2 uvStart = g_glyphData[ glyphIndex ].glyphPosition;

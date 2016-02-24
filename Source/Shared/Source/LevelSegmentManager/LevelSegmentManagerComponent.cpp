@@ -191,6 +191,11 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
 
     viewportTween->AddTransition( unlockPlayers, "Go To Unlock Player's Controllers" );
 
+    // Then change the segment to start the spawning
+    auto changeSegment = stateM->AddState<ChangeSegmentState>( LevelSegments::CB1_Combat1 );
+
+    unlockPlayers->AddTransition( changeSegment, "Go To Change Segment To Combat 1" );
+
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
