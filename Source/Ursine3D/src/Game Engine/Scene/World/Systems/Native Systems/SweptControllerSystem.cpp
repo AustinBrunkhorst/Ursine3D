@@ -296,7 +296,7 @@ namespace ursine
 						sweptVelocity += verticalSweep;
 					}
 					// Jumping upward into the ceiling.
-					else if (controller.m_grounded && ceiling && sweptVelocity.Dot( controller.m_worldUp ) > 0.0f)
+					else if (!controller.m_grounded && ceiling && sweptVelocity.Dot( controller.m_worldUp ) > 0.0f)
 					{
 						// Remove vertical velocity for sweep.
 						sweptVelocity -= SVec3::ProjectToNorm( sweptVelocity, controller.m_worldUp );

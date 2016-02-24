@@ -50,7 +50,7 @@ AbstractWeapon::AbstractWeapon(void) :
     m_recoilAngle(10),
     m_maxRange(10.0f),
     m_accuracy( 1.0f ),
-    m_spreadFactor( 1.0f ),
+    m_spread( -1.0f, 1.0f ),
     m_maxAmmoCount(0),
     m_clipSize(0),
     m_projFireCount(1),
@@ -241,12 +241,13 @@ void AbstractWeapon::SetAccuracy(const float accuracy)
 // Spread moefoe
 float AbstractWeapon::GetSpreadFactor(void) const
 {
-    return m_spreadFactor;
+    return m_spread.GetMax( );
 }
 
 void AbstractWeapon::SetSpreadFactor(const float spread)
 {
-    m_spreadFactor = spread;
+    m_spread.SetMax(spread);
+    m_spread.SetMin(-spread);
 }
 
 // Ammo Count

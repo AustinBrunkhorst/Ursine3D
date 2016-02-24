@@ -1,14 +1,8 @@
 {
 "children": [], 
 "components": {
-"TrailComponent": {
-".uid": 106, 
-"ParticlesToSpawn": 2, 
-"Segments": 1000, 
-"Speed": 100
-}, 
 "ParticleColorAnimator": {
-".uid": 107, 
+".uid": 304, 
 "color0": {
 "a": 0.75390625, 
 "b": 0.3265380859375, 
@@ -41,7 +35,7 @@
 }
 }, 
 "ParticleEmitter": {
-".uid": 108, 
+".uid": 305, 
 "emitCount": 1, 
 "emitRate": 400, 
 "emitRateVariance": 0, 
@@ -55,7 +49,7 @@
 "lifetimeVariance": 0, 
 "rotation": 0, 
 "rotationVariance": 0, 
-"size": 0.5, 
+"size": 1, 
 "sizeVariance": 0.20000000298023224, 
 "velocity": {
 "x": 0, 
@@ -69,7 +63,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 109, 
+".uid": 306, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -81,8 +75,14 @@
 "systemSpace": 0, 
 "texture": "Laser"
 }, 
+"TrailComponent": {
+".uid": 307, 
+"ParticlesToSpawn": 1, 
+"Segments": 200, 
+"Speed": 100
+}, 
 "Transform": {
-".uid": 105, 
+".uid": 303, 
 "rotation": {
 "w": 1, 
 "x": 0, 

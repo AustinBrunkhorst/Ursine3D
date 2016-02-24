@@ -47,18 +47,18 @@ namespace
 {
     const std::string kFireGun = "FIRE_GUN_HAND";
     const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
-
+    const ursine::Randomizer random;
     // Apply spread / accuracy to shooting
     float GetSpreadValue(const float spread, const float accuracy)
     {
-        return math::Rand(-spread, spread) * ( 1.0f - accuracy );
+        return spread * ( 1.0f - accuracy );
     }
 
     // Give projectiles velocity with spread
-    void ProjectileVelocity(const AbstractWeapon& weapon, ursine::ecs::Entity& proj, ursine::ecs::Transform& trans)
+    void ProjectileVelocity( AbstractWeapon& weapon, ursine::ecs::Entity& proj, ursine::ecs::Transform& trans)
     {
-        float x_spread = GetSpreadValue(weapon.m_spreadFactor, weapon.m_accuracy);
-        float y_spread = GetSpreadValue(weapon.m_spreadFactor, weapon.m_accuracy);
+        float x_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
+        float y_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
 
         // Get spray vecs
         ursine::SVec3 spray = trans.GetUp( ) * y_spread + trans.GetRight( ) * x_spread;
@@ -450,7 +450,7 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::
 {
     float x_spread; // x spread for proj
     float y_spread; // y spread for proj
-    SVec3 spray;    // spread vec to add to travel vec
+    SVec3 spray;    // spread vec to add to travel vecac
     SVec3 pos;      // position for weapon to shoot to
     physics::RaycastInput rayin;   // input for raycast check
     physics::RaycastOutput rayout; // output from raycast check
@@ -460,32 +460,14 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::
 
     for ( int i = 0; i < projectilesFired; ++i )
     {
-        x_spread = GetSpreadValue(weapon.m_spreadFactor, weapon.m_accuracy);
-        y_spread = GetSpreadValue(weapon.m_spreadFactor, weapon.m_accuracy);
+        x_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
+        y_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
 
         // Get spray vecs
         spray = weapon.m_camHandle->GetUp( ) * y_spread + weapon.m_camHandle->GetRight( ) * x_spread;
 
-        rayin.start = weapon.m_camHandle->GetWorldPosition( );
-        rayin.end = pos = rayin.start + weapon.m_camHandle->GetForward( ) * ( weapon.m_maxRange + EXTRA_DIST ) + spray;
-
-        // get ray to first wall / end of range from center of camera
-        m_physicsSystem->Raycast( rayin, rayout, physics::RAYCAST_ALL_HITS, false, weapon.m_drawDuration, weapon.m_alwaysDraw );
-
-        for ( auto it : rayout.entity )
-        {
-            entity = m_world->GetEntityUnique( it );
-
-            if ( entity->HasComponent<WallComponent>( ) )
-            {
-                pos = entity->GetTransform( )->GetWorldPosition( );
-                break;
-            }
-        }
-
-        // get ray cast from weapon
         rayin.start = weapon.m_firePosHandle->GetWorldPosition( );
-        rayin.end = pos;
+        rayin.end = weapon.m_camHandle->GetWorldPosition( ) + weapon.m_camHandle->GetForward( ) * ( weapon.m_maxRange + EXTRA_DIST ) + spray;
 
         if ( m_physicsSystem->Raycast( rayin, rayout, weapon.m_raycastType, weapon.m_debug, weapon.m_drawDuration, weapon.m_alwaysDraw ) )
         {

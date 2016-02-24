@@ -4,9 +4,8 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 83, 
-"StateArray": [], 
-"StateBlender": [], 
+".uid": 87, 
+"StateMachineName": "", 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Player", 
@@ -15,10 +14,13 @@
 "loopAnimation": true, 
 "playAnimation": true, 
 "renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 84, 
+".uid": 88, 
+"castsShadows": false, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -34,7 +36,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 82, 
+".uid": 86, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -60,7 +62,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 93, 
+".uid": 95, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -84,7 +86,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 94, 
+".uid": 96, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -108,17 +110,17 @@
 ], 
 "components": {
 "Audio Listener 3D": {
-".uid": 88, 
+".uid": 90, 
 "testing": []
 }, 
 "Camera": {
-".uid": 89, 
+".uid": 91, 
 "active": true, 
 "farPlane": 1000, 
 "fov": 60, 
 "nearPlane": 0.10000000149011612, 
 "renderLayer": 1, 
-"renderMask": 40, 
+"renderMask": 1064, 
 "renderMode": 1, 
 "viewportPosition": {
 "x": 0, 
@@ -130,7 +132,7 @@
 }
 }, 
 "Transform": {
-".uid": 87, 
+".uid": 89, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -154,29 +156,40 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 73, 
+".uid": 77, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "CharacterController": {
-".uid": 74, 
+".uid": 78, 
+"deadZone": 0, 
+"deadZoneSnap": 0, 
 "rotateSpeed": 10
 }, 
 "CommandQueue": {
-".uid": 75
+".uid": 79
 }, 
 "CylinderCollider": {
-".uid": 76, 
+".uid": 80, 
 "height": 30, 
 "radius": 5
 }, 
+"Health": {
+".uid": 305, 
+"ArchetypeToSpawnOnDeath": "FX/JordanFire.uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": true
+}, 
 "InputController": {
-".uid": 77, 
+".uid": 81, 
 "UseKeyboard": false
 }, 
+"InteractionBay": {
+".uid": 310
+}, 
 "Inventory": {
-".uid": 78, 
+".uid": 82, 
 "LastStand": "P2HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 
@@ -185,11 +198,11 @@
 "m_currWeapon": 0
 }, 
 "PlayerID": {
-".uid": 79, 
+".uid": 83, 
 "PlayerId": 1
 }, 
 "Rigidbody": {
-".uid": 80, 
+".uid": 84, 
 "bodyFlag": 2, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -211,7 +224,7 @@
 "sleepToggle": true
 }, 
 "SweptController": {
-".uid": 81, 
+".uid": 85, 
 "active": true, 
 "airAcceleration": 30, 
 "airDeceleration": 40, 
@@ -233,7 +246,7 @@
 }
 }, 
 "Transform": {
-".uid": 72, 
+".uid": 76, 
 "rotation": {
 "w": 1, 
 "x": 0, 

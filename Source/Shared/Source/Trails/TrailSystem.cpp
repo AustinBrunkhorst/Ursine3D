@@ -62,28 +62,21 @@ void TrailSystem::Disable(ursine::ecs::Entity* entity)
 
 void TrailSystem::onUpdate(EVENT_HANDLER(World))
 {
-    float dt = Application::Instance->GetDeltaTime( );
-
     for ( auto it : m_trails )
     {
-        UpdateTrail(it.first, it.second, dt);
+        UpdateTrail(it.first, it.second);
     }
 }
 
 
-void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail, float dt)
+void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail)
 {
-    if ( trail->m_time > trail->m_timeToReachEnd )
-    {
+    if ( trail->m_distToTravel <= trail->m_distTraveled )
         trail->GetOwner( )->Delete( );
-        return;
-    }
-
-    // update timer
-    trail->m_time += dt;
 
     // Calculate segment vec
     ursine::SVec3 segmentVec = trail->m_velocity * ( 1.0f / trail->m_segments );
+    float segDist = segmentVec.Length( );
 
     // grab particle emitter for emitting particles at segments
     ParticleEmitter* const emitter = m_particleEmitter[ id ];
@@ -94,8 +87,12 @@ void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* co
     ursine::SVec3 pos = transform->GetWorldPosition( );
 
     // emit particles at all segment positions
-    for ( int i = 1; i <= trail->m_segments; ++i )
+    for ( int i = 0; i < trail->m_segments && trail->m_distToTravel > trail->m_distTraveled; ++i, trail->m_distTraveled += segDist )
     {
+
+        if ( trail->m_distTraveled > trail->m_distToTravel )
+            break;
+
         pos += segmentVec;
         transform->SetWorldPosition( pos );
 

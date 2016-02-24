@@ -47,7 +47,7 @@ protected:
 
 private:
 
-    void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail, float dt);
+    void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail);
 
     std::unordered_map< ursine::ecs::EntityUniqueID, TrailComponent* > m_trails;
     std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;

@@ -63,16 +63,6 @@ void AbstractHitscanWeapon::SetDrawDuration(const float drawDuration)
     m_drawDuration = drawDuration;
 }
 
-int AbstractHitscanWeapon::GetSpawnSegments(void) const
-{
-    return m_spawnSemgennts;
-}
-
-void AbstractHitscanWeapon::SetSpawnSegments(const int segments)
-{
-    m_spawnSemgennts = segments;
-}
-
 const std::string& AbstractHitscanWeapon::GetShotParticle( ) const
 {
     return m_shotParticle;

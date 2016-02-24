@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "Randomizer.h"
+
 
 #define UNLIMITED_AMMO  MAXINT
 #define UNLIMITED_CLIP  MAXINT
@@ -218,9 +220,6 @@ public:
     // what is accuracy of gun
     float m_accuracy;
 
-    // what is the weapons spread factor for shooting
-    float m_spreadFactor;
-
     // How much ammo does weapon have
     int m_ammoCount;
 
@@ -253,6 +252,9 @@ public:
     // fire position Handle for shooting
     Meta(Disable)
     ursine::ecs::Animator* m_animatorHandle;
+
+    Meta(Disable)
+    ursine::Randomizer m_spread;
 
     // Particle to spawn at tip of gun when shot
     std::string m_fireParticle;

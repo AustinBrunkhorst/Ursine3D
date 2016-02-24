@@ -13,6 +13,8 @@
 #include "TrailComponent.h"
 #include "ComponentIncludes.h"
 
+#define MILLI_SEC 1000.0f
+
 NATIVE_COMPONENT_DEFINITION( TrailComponent ) ;
 
 using namespace ursine;
@@ -22,8 +24,8 @@ TrailComponent::TrailComponent(void) :
     BaseComponent( ),
     m_vecToEnd( ),
     m_speed( 100.0f ),
-    m_time( 0.0f ),
-    m_timeToReachEnd( 2.0f ),
+    m_distToTravel( 0.0f ),
+    m_distTraveled( 0.0f ),
     m_segments( 4 )
 {
 }
@@ -77,7 +79,7 @@ void TrailComponent::SetVecToEnd(ursine::SVec3 end)
     m_velocity = m_speed * ursine::SVec3::Normalize(m_vecToEnd);
 
     // calc time to reach end
-    m_timeToReachEnd = sqrt(m_vecToEnd.LengthSquared( ) / (m_velocity.LengthSquared( ) * 1000.0f) );
+    m_distToTravel = m_vecToEnd.Length( );
 }
 
 

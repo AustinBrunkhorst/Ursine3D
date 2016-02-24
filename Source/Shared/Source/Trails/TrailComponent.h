@@ -64,13 +64,14 @@ public:
     Meta(Disable)
     float m_speed;
 
-    // time that has be alive
+    // total distance to travel squared
     Meta(Disable)
-    float m_time;
+    float m_distToTravel;
 
-    // time to reach end
+    // distance traveled
+    //   - once traveled total dist squared delete obj
     Meta(Disable)
-    float m_timeToReachEnd;
+    float m_distTraveled;
 
     // number of segments between each step
     Meta(Disable)
