@@ -35,7 +35,7 @@ namespace ursine
 
         public:
             EditorButton(
-                ResetSpawnCount,
+                resetSpawnCount,
                 "Reset Spawn Count"
             );
 
@@ -171,6 +171,8 @@ namespace ursine
             void SetFill(const float fill);
 
             int spawnParticle(void);
+
+            void ResetSpawnCount(void);
 
         private:
             // temporary updating

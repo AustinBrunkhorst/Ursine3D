@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <EntitySystem.h>
+#include <Component.h>
 #include <EventDispatcher.h>
 
 #include "LevelSegments.h"
@@ -30,17 +30,40 @@ enum class LevelSegmentManagerEvents
 };
 
 class LevelSegmentManager 
-    : public ursine::ecs::EntitySystem
+    : public ursine::ecs::Component
     , public ursine::EventDispatcher<LevelSegmentManagerEvents>
 {
-    ENTITY_SYSTEM;
+    NATIVE_COMPONENT;
+
+    friend class SpawnPlayersState;
 
 public:
 
-    LevelSegmentManager(ursine::ecs::World *world);
+    EditorField(
+        LevelSegments currentSegment,
+        GetCurrentSegment,
+        SetCurrentSegment
+    );
+
+    EditorField(
+        bool enableDebugOutput,
+        GetEnableDebugOutput,
+        SetEnableDebugOutput
+    );
+
+    LevelSegmentManager(void);
     ~LevelSegmentManager(void);
 
-    void SegmentTransition(LevelSegments segment);
+    LevelSegments GetCurrentSegment(void) const;
+    void SetCurrentSegment(LevelSegments segment);
+
+    bool GetEnableDebugOutput(void) const;
+    void SetEnableDebugOutput(bool enable);
+
+    Meta(Disable)
+    ursine::ecs::Entity *GetPlayer1(void);
+    Meta(Disable)
+    ursine::ecs::Entity *GetPlayer2(void);
 
 private:
 
@@ -49,7 +72,11 @@ private:
 
     LevelSegments m_segment;
 
-    void OnAfterLoad(void) override;
+    ursine::ecs::Entity *m_player1, *m_player2;
+
+    bool m_enableDebugOutput;
+
+    void OnInitialize(void) override;
 
     void initTutorialLogic(void);
     
@@ -69,8 +96,8 @@ private:
     SegmentLogicStateMachine::Handle createSegmentLogic(const std::string &name, LevelSegments segment);
 
     // Add logic to a segment given a segment and a state machine already created
-    void addSegmentLogic(LevelSegments segment, SegmentLogicStateMachine::Handle logic);
+    void addSegmentLogic(SegmentLogicStateMachine::Handle logic, std::vector<LevelSegments> segments);
 
     void onUpdate(EVENT_HANDLER(World));
 
-} Meta(Enable, AutoAddEntitySystem);
+} Meta(Enable);

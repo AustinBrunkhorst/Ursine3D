@@ -46,19 +46,19 @@ namespace ursine
 			//Slider
 			// blending starting position of current state
 			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-				EditorField(
-					float currtransPos,
-					GetcurrTransPosRatio,
-					SetcurrTransPosRatio
-					);
+			EditorField(
+				float currtransPos,
+				GetcurrTransPosRatio,
+				SetcurrTransPosRatio
+				);
 
 			// blending end position of future state
 			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-				EditorField(
-					float futtransPos,
-					GetfutTransPosRatio,
-					SetfutTransPosRatio
-					);
+			EditorField(
+				float futtransPos,
+				GetfutTransPosRatio,
+				SetfutTransPosRatio
+				);
 
 			StateBlender(void);
 
@@ -115,21 +115,9 @@ namespace ursine
 			);
 
 			EditorField(
-				std::string StateMachineName,
-				GetStMachineName,
-				SetStMachineName
-			);
-
-			EditorField(
 				std::string currentState,
 				GetCurrentState,
 				SetCurrentState
-			);
-
-			EditorField(
-				std::string futureState,
-				GetFutureState,
-				SetFutureState
 			);
 
 			EditorField(
@@ -199,9 +187,6 @@ namespace ursine
 			float GetTimeScalar(void) const;
 			void SetTimeScalar(const float scalar);
 
-			const std::string &GetStMachineName(void) const;
-			void SetStMachineName(const std::string &stm);
-
 			const std::string &GetRig(void) const;
 			void SetRig(const std::string &rig);
 			
@@ -213,9 +198,6 @@ namespace ursine
 
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
-
-			const std::string &GetFutureState(void) const;
-			void SetFutureState(const std::string& name);
 
 			const std::string &GetAnimation(void) const;
 			void SetAnimation(const std::string &name);
@@ -234,17 +216,17 @@ namespace ursine
 			// save and load
 			// => save both Arrays
 			// => when load model, don't just load these, but should also load the animation if it doesn't exist
-
+			
 		private:
 			bool m_playing;
 			bool m_looping;
 			bool m_debug;
 			bool m_changeState;
 			float m_speedScalar;
-			std::string m_StateMachineName;
+			//std::string m_StateMachineName;
 			std::string m_Rig;
-			std::string m_currentStateName;
-			std::string m_futureStateName;
+			std::string m_curStName;
+			std::string m_futStName;
 			std::string m_animationName;
 			std::string m_stateName;
 			std::vector<Animation*> m_animlist;

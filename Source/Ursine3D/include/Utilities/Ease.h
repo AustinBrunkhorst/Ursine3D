@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <Meta.h>
+
 namespace ursine
 {
     namespace ease
@@ -52,8 +54,9 @@ namespace ursine
             BounceIn,
             BounceOut,
             BounceInOut,
+            Meta(Disable)
             EASE_COUNT
-        };
+        } Meta(Enable);
         
         Function GetFunction(Type type);
         Type GetType(Function function);

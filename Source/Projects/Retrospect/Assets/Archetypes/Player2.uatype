@@ -30,7 +30,7 @@
 "emissive": 0.20000000298023224, 
 "materialName": "Blank", 
 "meshIndex": -1, 
-"modelName": "Player", 
+"modelName": "Player",
 "renderMask": 8, 
 "specularIntensity": 0, 
 "specularPower": 0
@@ -114,8 +114,8 @@
 "testing": []
 }, 
 "Camera": {
-".uid": 91, 
-"active": true, 
+".uid": 56, 
+"active": false, 
 "farPlane": 1000, 
 "fov": 60, 
 "nearPlane": 0.10000000149011612, 
@@ -165,6 +165,8 @@
 ".uid": 78, 
 "deadZone": 0, 
 "deadZoneSnap": 0, 
+"lockLooking": false, 
+"lockMovement": false, 
 "rotateSpeed": 10
 }, 
 "CommandQueue": {

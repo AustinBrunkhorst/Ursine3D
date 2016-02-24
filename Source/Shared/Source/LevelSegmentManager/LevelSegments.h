@@ -30,9 +30,9 @@ namespace LevelSegments_enum
         Tut_ShootMovingTargetsTutorial,
         Tut_ReviveTutorial,
         Tut_SimultaneousTriggerTutorial,
+        Tut_SimulationCreationCinematic,
 
         // Combat Bowl 1
-        CB1_SimulationCreationCinematic,
         CB1_SimulationStartCinematic,
         CB1_WeaponSelection,
         CB1_ActivateSystems1,

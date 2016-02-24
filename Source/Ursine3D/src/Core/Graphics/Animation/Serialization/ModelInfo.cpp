@@ -28,7 +28,6 @@ namespace ursine
 				mmeshCount(0)
 				, mmaterialCount(0)
 				, mboneCount(0)
-				, maniCount(0)
 				, mmeshlvlCount(0)
 				, mriglvlCount(0)
 				, ISerialize()
@@ -45,7 +44,6 @@ namespace ursine
 				mMeshInfoVec.clear();
 				mMtrlInfoVec.clear();
 				mBoneInfoVec.clear();
-				maniNameVec.clear();
 				mMeshLvVec.clear();
 				mRigLvVec.clear();
 			}
@@ -62,7 +60,6 @@ namespace ursine
 					ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesRead, nullptr);
-					ReadFile(hFile, &maniCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 					ReadFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
 
@@ -75,12 +72,6 @@ namespace ursine
 					mBoneInfoVec.resize(mboneCount);
 					for (i = 0; i < mboneCount; ++i)
 						mBoneInfoVec[i].SerializeIn(hFile);
-					maniNameVec.resize(maniCount);
-					for (i = 0; i < maniCount; ++i)
-					{
-						ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-						maniNameVec[i] = tmp_name;
-					}
 					mMeshLvVec.resize(mmeshlvlCount);
 					for (i = 0; i < mmeshlvlCount; ++i)
 					{
@@ -107,7 +98,6 @@ namespace ursine
 					WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					WriteFile(hFile, &maniCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 					WriteFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
 
@@ -125,14 +115,6 @@ namespace ursine
 					{
 						for (auto iter : mBoneInfoVec)
 							iter.SerializeOut(hFile);
-					}
-					if (maniNameVec.size() > 0)
-					{
-						for (auto iter : maniNameVec)
-						{
-							lstrcpy(tmp_name, iter.c_str());
-							WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-						}
 					}
 					if (mMeshLvVec.size() > 0)
 					{

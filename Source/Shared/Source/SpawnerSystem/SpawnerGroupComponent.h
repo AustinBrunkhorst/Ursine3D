@@ -16,7 +16,7 @@
 #include <Component.h>
 
 #include "AIArchetypes.h"
-#include "LevelSegmentManager.h"
+#include "LevelSegmentManagerComponent.h"
 
 class Spawner;
 

@@ -59,6 +59,8 @@ public:
 
     void StartMoving(void);
 
+    void GoToEndPosition(void);
+
 private:
     ursine::SVec3 m_startPos;
     ursine::SVec3 m_endPos;

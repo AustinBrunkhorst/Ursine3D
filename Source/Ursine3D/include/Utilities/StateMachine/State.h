@@ -39,7 +39,7 @@ namespace ursine
             virtual bool CanExit(void) { return true; }
 
             // Add transition
-            template<typename TransitionType, class... Args>
+            template<typename TransitionType = Transition, class... Args>
             TransitionType *AddTransition(State *to, const std::string &transitionName, Args&&... args);
 
             // Remove transition
