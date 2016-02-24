@@ -397,7 +397,7 @@ namespace ursine
 				return;
 
 			ufmt_loader::ModelInfo* ufmt_model = fbx_model.GetModelInfo();
-			ufmt_loader::AnimInfo* ufmt_anim = fbx_model.GetAnimInfo();
+			//ufmt_loader::AnimInfo* ufmt_anim = fbx_model.GetAnimInfo();
 
 			/////////////////////////////////////////////////////////
 			// GENERATING BONE DATA /////////////////////////////////
@@ -407,13 +407,13 @@ namespace ursine
 			if (ufmt_model->mboneCount > 0)
 				rigIndex = AnimationBuilder::LoadBoneData(*ufmt_model, name);
 
-			// 2. load animation
-			unsigned animationIndex = 0;
-			if (nullptr != ufmt_anim)
-			{
-				if (ufmt_anim->animCount > 0)
-					animationIndex = AnimationBuilder::LoadAnimation(*ufmt_anim, name);
-			}
+			//// 2. load animation
+			//unsigned animationIndex = 0;
+			//if (nullptr != ufmt_anim)
+			//{
+			//	if (ufmt_anim->animCount > 0)
+			//		animationIndex = AnimationBuilder::LoadAnimation(*ufmt_anim, name);
+			//}
 
 			/////////////////////////////////////////////////////////////////
 			// CREATE VERTEX BUFFER /////////////////////////////////////////
