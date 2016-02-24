@@ -133,11 +133,16 @@ namespace ursine
             return GetOwner( )->GetTransform( )->GetWorldPosition( ) + offset;
         }
 
-        #if defined(URSINE_WITH_EDITOR)
-
         void ParticleEmitter::ResetSpawnCount(void)
         {
             m_spawnCount = 0;
+        }
+
+        #if defined(URSINE_WITH_EDITOR)
+
+        void ParticleEmitter::resetSpawnCount(void)
+        {
+            ResetSpawnCount( );
         }
 
         #endif

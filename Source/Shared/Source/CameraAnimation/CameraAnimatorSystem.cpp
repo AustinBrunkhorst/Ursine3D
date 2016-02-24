@@ -115,6 +115,10 @@ void CameraAnimatorSystem::smoothUpdate(CameraAnimator *animator)
 
     // interpolate between the two current nodes
     animator->updateAnimation( node1, node2, node3, node4, t );
+
+    // check to see if the animation finished
+    if (node4 == node3 && t >= 0.99f)
+        animator->finished( );
 }
 
 void CameraAnimatorSystem::linearUpdate(CameraAnimator *animator)
@@ -144,7 +148,7 @@ void CameraAnimatorSystem::linearUpdate(CameraAnimator *animator)
         if (animator->m_index >= animator->m_nodes.size( ) - 1)
         {
             animator->updateAnimation( animator->m_nodes.back( ) );
-            animator->m_playing = false;
+            animator->finished( );
             animator->m_time = 0.0f;
             animator->m_index = static_cast<int>( animator->m_nodes.size( ) - 1 );
             return;

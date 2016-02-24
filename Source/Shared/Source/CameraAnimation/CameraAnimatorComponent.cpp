@@ -206,6 +206,13 @@ void CameraAnimator::getChildren(void)
     }
 }
 
+void CameraAnimator::finished(void)
+{
+    m_playing = false;
+
+    Dispatch( CameraAnimatorEvent::FinishedAnimating, EventArgs::Empty );
+}
+
 #if defined(URSINE_WITH_EDITOR)
 
 void CameraAnimator::play(void)
