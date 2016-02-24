@@ -8,14 +8,17 @@ $max-header-width: 225px;
   flex-wrap: nowrap;
 
   #header {
+    overflow: hidden;
     display: block;
     flex: 1 1 $max-header-width;
     width: 35%;
     max-width: $max-header-width;
     margin: 5px 0;
-    padding-right: 3px;
+    padding: 0 3px 1px 0;
     color: #dcdcdc;
     font-size: 13px;
+    text-overflow: ellipsis;
+    cursor: default;
   }
 
   #container {

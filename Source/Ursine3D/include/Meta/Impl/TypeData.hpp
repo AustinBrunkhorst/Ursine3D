@@ -215,7 +215,7 @@ namespace ursine
             typedef GlobalGetter<FieldType, true> GlobalGetterType;
             typedef GlobalSetter<FieldType, true> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !getter ? nullptr : new GlobalGetterType(
@@ -224,12 +224,10 @@ namespace ursine
                 !setter ? nullptr : new GlobalSetterType(
                     reinterpret_cast<typename GlobalSetterType::Signature>( setter )
                 ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -240,19 +238,17 @@ namespace ursine
             typedef GlobalGetter<FieldType, true> GlobalGetterType;
             typedef GlobalSetter<FieldType, false> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !getter ? nullptr : new GlobalGetterType(
                     reinterpret_cast<typename GlobalGetterType::Signature>( getter )
                 ),
                 !fieldSetter ? nullptr : new GlobalSetterType( fieldSetter ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -263,19 +259,17 @@ namespace ursine
             typedef GlobalGetter<FieldType, false> GlobalGetterType;
             typedef GlobalSetter<FieldType, true> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !fieldGetter ? nullptr : new GlobalGetterType( fieldGetter ),
                 !setter ? nullptr : new GlobalSetterType(
                     reinterpret_cast<typename GlobalSetterType::Signature>( setter )
                 ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -286,17 +280,15 @@ namespace ursine
             typedef GlobalGetter<FieldType, false> GlobalGetterType;
             typedef GlobalSetter<FieldType, false> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !fieldGetter ? nullptr : new GlobalGetterType( fieldGetter ),
                 !fieldSetter ? nullptr : new GlobalSetterType( fieldSetter ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////

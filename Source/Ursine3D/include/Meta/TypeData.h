@@ -65,11 +65,7 @@ namespace ursine
             > dynamicConstructors;
 
             std::vector<Field> fields;
-
-            std::unordered_map<
-                std::string, 
-                Global
-            > staticFields;
+            std::vector<Global> staticFields;
 
             std::unordered_map<
                 std::string, 
@@ -216,6 +212,8 @@ namespace ursine
                 FieldType *fieldSetter,
                 const MetaManager::Initializer &meta
             );
+
+            const Global &GetStaticField(const std::string &name) const;
 
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////

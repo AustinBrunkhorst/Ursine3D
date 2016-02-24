@@ -2078,6 +2078,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
 		item.text = e.name;
+		ToolTip.bind(item.textContentElement,e.name);
 	}
 	,onEntityParentChanged: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
@@ -2160,6 +2161,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			var childIndex = ElementUtils.childIndex(item);
 			entity.setSiblingIndex(childIndex);
 		});
+		ToolTip.bind(item.textContentElement,entity.getName());
 		item.textContentElement.addEventListener("dblclick",function(e4) {
 			_g.startRenamingEntity(item);
 		});

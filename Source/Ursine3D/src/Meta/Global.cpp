@@ -39,6 +39,13 @@ namespace ursine
             , m_getter( getter )
             , m_setter( setter ) { }
 
+        const Global &Global::Invalid(void)
+        {
+            static Global global;
+
+            return global;
+        }
+
         bool Global::IsValid(void) const
         {
             return m_getter != nullptr;

@@ -96,6 +96,15 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
+        const Global &TypeData::GetStaticField(const std::string &name) const
+        {
+            for (auto &field : staticFields)
+                if (field.GetName( ) == name)
+                    return field;
+
+            return Global::Invalid( );
+        }
+
         const Method &TypeData::GetMethod(const std::string &name)
         {
             auto &base = methods[ name ];

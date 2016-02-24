@@ -521,21 +521,14 @@ namespace ursine
 
         std::vector<Global> Type::GetStaticFields(void) const
         {
-            std::vector<Global> fields;
-
-            auto &handle = database.types[ m_id ].staticFields;
-
-            for (auto &field : handle)
-                fields.emplace_back( field.second );
-
-            return fields;
+            return database.types[ m_id ].staticFields;
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         const Global &Type::GetStaticField(const std::string &name) const
         {
-            return database.types[ m_id ].staticFields[ name ];
+            return database.types[ m_id ].GetStaticField( name );
         }
 
         ///////////////////////////////////////////////////////////////////////
