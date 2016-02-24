@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "TextureImporter.h"
+#include "FBXImporter.h"
 #include "JsonImporter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,6 +22,12 @@
 
 #include "TextureData.h"
 #include "TextureReader.h"
+
+#include "ModelData.h"
+#include "ModelReader.h"
+
+#include "AnimationClipData.h"
+#include "AnimationClipReader.h"
 
 #include "JsonReader.h"
 #include "JsonData.h"

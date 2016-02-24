@@ -53,23 +53,23 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
     // if the object added was a selected component
     if (comp->Is<ecs::Light>( ))
     {
-        if ( !args->entity->HasComponent<EditorIcon>( ) )
-            args->entity->AddComponent<EditorIcon>( );
+        /*if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );*/
 
-        auto testReference = m_world->GetOwner()->GetResourceManager().CreateReference( GUIDStringGenerator()("11361b8e-1ca2-4754-a0d3-ab83f60adf22") );
-        auto *texHandle = testReference.Load<resources::TextureData>( );
+        //auto testReference = m_world->GetOwner()->GetResourceManager().CreateReference( GUIDStringGenerator()("11361b8e-1ca2-4754-a0d3-ab83f60adf22") );
+        //auto *texHandle = testReference.Load<resources::TextureData>( );
 
-        args->entity->GetComponent<EditorIcon>()->SetIcon( texHandle->GetTextureHandle() );
+        //args->entity->GetComponent<EditorIcon>()->SetIcon( texHandle->GetTextureHandle() );
     }
     else if (comp->Is<ecs::Camera>( ))
     {
-        if ( !args->entity->HasComponent<EditorIcon>( ) )
-            args->entity->AddComponent<EditorIcon>( );
+        /*if ( !args->entity->HasComponent<EditorIcon>( ) )
+            args->entity->AddComponent<EditorIcon>( );*/
 
-        auto testReference = m_world->GetOwner()->GetResourceManager().CreateReference(GUIDStringGenerator()("0dca7489-2a8d-4fb0-80be-3e2f3ce5c235"));
-        auto *texHandle = testReference.Load<resources::TextureData>();
+        //auto testReference = m_world->GetOwner()->GetResourceManager().CreateReference(GUIDStringGenerator()("0dca7489-2a8d-4fb0-80be-3e2f3ce5c235"));
+        //auto *texHandle = testReference.Load<resources::TextureData>();
 
-        args->entity->GetComponent<EditorIcon>()->SetIcon(texHandle->GetTextureHandle());
+        //args->entity->GetComponent<EditorIcon>()->SetIcon(texHandle->GetTextureHandle());
         
     }
 }
