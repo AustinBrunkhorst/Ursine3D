@@ -85,6 +85,17 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
+        const Field &TypeData::GetField(const std::string &name) const
+        {
+            for (auto &field : fields)
+                if (field.GetName( ) == name)
+                    return field;
+
+            return Field::Invalid( );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
         const Method &TypeData::GetMethod(const std::string &name)
         {
             auto &base = methods[ name ];

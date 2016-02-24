@@ -64,10 +64,7 @@ namespace ursine
                 Constructor
             > dynamicConstructors;
 
-            std::map<
-                std::string, 
-                Field
-            > fields;
+            std::vector<Field> fields;
 
             std::unordered_map<
                 std::string, 
@@ -179,6 +176,8 @@ namespace ursine
                 const MetaManager::Initializer &meta
             );
 
+            const Field &GetField(const std::string &name) const;
+
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
@@ -265,7 +264,7 @@ namespace ursine
             template<typename EnumType>
             void SetEnum(
                 const std::string &name, 
-                const typename EnumContainer<EnumType>::Table &table
+                const typename EnumContainer<EnumType>::Initializer &initalizer
             );
         };
     }
