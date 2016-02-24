@@ -83,29 +83,29 @@ namespace ursine
             void Initialize(void);
 
             const char *GetModelName(void);
-            void SetModel(std::string modelName);
+            void SetModelName(std::string modelName);
 
-            const char *GetMaterialslName(void);
-            void SetMaterial(std::string materialName);
+            GfxHND GetTextureHandle(void);
+            void SetTextureHandle(GfxHND handle);
 
+            void GetMaterialData(float &emiss, float &pow, float &intensity) const;
             void SetMaterialData(float emiss, float pow, float intensity);
-            void GetMaterialData(float &emiss, float &pow, float &intensity);
-
-			void SetEmissive(float emiss);
-			float GetEmissive(void) const;
-
-			void SetSpecularPower(float power);
-			float GetSpecularPower(void) const;
-
-			void SetSpecularIntensity(float intensity);
-			float GetSpecularIntensity(void) const;
-
-            void SetAnimationTime(const float time);
+            
+            float GetEmissive(void) const;
+            void SetEmissive(float emiss);
+            
+            float GetSpecularPower(void) const;
+            void SetSpecularPower(float power);
+            
+            float GetSpecularIntensity(void) const;
+            void SetSpecularIntensity(float intensity);
+            
             float &GetAnimationTime(void);
-
-            void SetColor(const Color color);
+            void SetAnimationTime(const float time);
+            
             const Color &GetColor() const;
-
+            void SetColor(const Color color);
+            
             std::vector<SMat4> &GetMatrixPalette(void);
 
             int GetMeshIndex(void) const;
@@ -117,10 +117,9 @@ namespace ursine
             float m_specIntensity;
             Color m_color;
             std::string m_modelResourceName;
-            std::string m_materialTextureName;
+            GfxHND m_textureHandle;
 
             float m_animationTime;
-
             std::vector<SMat4> m_matrixPalette;
 
             // for multimaps
@@ -146,7 +145,7 @@ namespace ursine
 
             void SetPosition(const ursine::SVec3 &position);
             const ursine::SVec3 &GetPosition(void) const;
-            
+
             void SetColor(const Color color);
             const Color &GetColor() const;
 
@@ -204,7 +203,7 @@ namespace ursine
             void SetSpotlightAngles(const float inner, const float outer);
 
             void SetSpotlightTransform(const SMat4 &transf);
-            const SMat4 &GetSpotlightTransform(void);
+            const SMat4 &GetSpotlightTransform(void) const;
 
         private:
             LightType m_type;

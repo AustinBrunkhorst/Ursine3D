@@ -209,7 +209,9 @@ namespace ursine
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
-                drawCall.Material_ = textureManager->GetTextureIDByName(current->GetMaterialslName());
+                
+                GfxHND texHandle = current->GetTextureHandle();
+                drawCall.Material_ = texHandle & 0xFFFF;
 
                 drawCall.Model_ = modelManager->GetModelIDByName(current->GetModelName());
                 drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
@@ -978,7 +980,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////
             // map texture
-            textureManager->MapTextureByID(handle.Material_);
+            textureManager->MapResourceTextureByID(handle.Material_);
 
             if ( handle.Overdraw_ )
                 dxCore->SetDepthState(DEPTH_STATE_PASSDEPTH_WRITESTENCIL);

@@ -67,10 +67,7 @@ namespace ursine
 
             // set the model if there is one
             if (m_modelName.size( ) > 0)
-                m_model->SetModel( m_modelName );
-
-            if (m_materialName.size( ) > 0)
-                m_model->SetMaterial( m_materialName );
+                m_model->SetModelName( m_modelName );
 
             updateRenderer( );
         }
@@ -84,7 +81,7 @@ namespace ursine
         {
             m_modelName = name;
 
-            m_model->SetModel( name );
+            m_model->SetModelName( name );
         }
 
         const std::string &Model3D::GetModelResourceName(void) const
@@ -101,7 +98,7 @@ namespace ursine
         {
             m_materialName = name;
 
-            m_model->SetMaterial( name );
+            // m_model->SetMaterial( name );
         }
 
         const std::string &Model3D::GetMaterial(void) const
