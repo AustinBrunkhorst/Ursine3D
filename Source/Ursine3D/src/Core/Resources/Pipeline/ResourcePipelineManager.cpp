@@ -556,7 +556,7 @@ namespace ursine
 
             buildEvent.type = RP_BUILD_RESOURCE_PREVIEW_START;
             buildEvent.resource = previewContext.resource;
-            buildEvent.progress = previewPercentage + (operationIndex / operationCount);
+            buildEvent.progress = previewPercentage + (1.0f - previewPercentage) * (operationIndex / operationCount);
 
             auto startTime = system_clock::now( );
 
@@ -598,7 +598,7 @@ namespace ursine
 
         URSINE_TODO( "Handle exception occurred during pipeline below." );
 
-        auto importData = context.importer->Import( resource->m_fileName, context.importContext );
+        auto importData = context.importer->Import( context.importContext );
         auto processData = context.processor->Process( importData, context.processorContext );
 
         UAssert( processData != nullptr,
@@ -619,13 +619,11 @@ namespace ursine
 
     void rp::ResourcePipelineManager::buildResourcePreview(ResourceBuildContext &context)
     {
-        auto &previewFileName = context.resource->m_buildPreviewFileName;
-
         // determine if the processor or importer built a preview.
         // take priority with the processor
         auto previewBuilt = 
-            context.processor->BuildPreview( previewFileName, kMaxPreviewDimensions ) ||
-             context.importer->BuildPreview( previewFileName, kMaxPreviewDimensions );
+            context.processor->BuildPreview( context.processorContext, kMaxPreviewDimensions ) ||
+             context.importer->BuildPreview( context.importContext, kMaxPreviewDimensions );
 
         context.resource->m_buildCache.hasPreview = previewBuilt;
     }

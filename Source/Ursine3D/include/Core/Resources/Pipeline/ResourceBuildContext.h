@@ -11,6 +11,8 @@ namespace ursine
         {
             struct ResourceBuildContext
             {
+                ResourcePipelineManager *pipeline;
+
                 ResourceItem::Handle resource;
 
                 ResourceImportContext importContext;
@@ -20,11 +22,10 @@ namespace ursine
                 ResourceProcessor::Handle processor;
 
                 ResourceBuildContext(ResourcePipelineManager *pipeline, ResourceItem::Handle resource)
-                    : resource( resource )
-                {
-                    importContext.pipeline = pipeline;
-                    processorContext.pipeline = pipeline;
-                }
+                    : pipeline( pipeline )
+                    , resource( resource )
+                    , importContext( pipeline, resource )
+                    , processorContext( pipeline, resource ) { }
             };
         }
     }

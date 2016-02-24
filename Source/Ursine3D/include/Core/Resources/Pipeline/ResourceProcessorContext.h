@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ResourceBuildStepContext.h"
+
 namespace ursine
 {
     namespace resources
@@ -8,9 +10,10 @@ namespace ursine
         {
             class ResourcePipelineManager;
 
-            struct ResourceProcessorContext
+            struct ResourceProcessorContext : ResourceBuildStepContext
             {
-                ResourcePipelineManager *pipeline;
+                ResourceProcessorContext(ResourcePipelineManager *pipeline, ResourceItem::Handle resource)
+                    : ResourceBuildStepContext( pipeline, resource ) { }
             };
         }
     }

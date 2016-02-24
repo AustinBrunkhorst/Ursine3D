@@ -22,7 +22,7 @@ namespace ursine
 
                 virtual ResourceData::Handle Process(ResourceData::Handle input, const ResourceProcessorContext &context) = 0;
 
-                virtual bool BuildPreview(const fs::path &outputFileName, const Vec2 &maxDimensions)
+                virtual bool BuildPreview(const ResourceProcessorContext &context, const Vec2 &maxDimensions)
                 {
                     return false;
                 }

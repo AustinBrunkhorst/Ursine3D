@@ -16,7 +16,7 @@ namespace ursine
                 JsonImporter(void);
 
             private:
-                ResourceData::Handle Import(const fs::path &fileName, const ResourceImportContext &context) override;
+                ResourceData::Handle Import(const ResourceImportContext &context) override;
             } Meta(
                 Enable,
                 DisplayName( "JsonImporter" ),

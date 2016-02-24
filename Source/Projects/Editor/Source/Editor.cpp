@@ -141,7 +141,11 @@ void Editor::LoadProject(const std::string &filename)
     shExecInfo.nShow = SW_NORMAL;
     shExecInfo.hInstApp = nullptr;
 
-    ShellExecuteEx( &shExecInfo );
+    UAssert( ShellExecuteEx( &shExecInfo ) == TRUE,
+        "Unable to spawn editor process."
+    );
+
+    CloseHandle( shExecInfo.hProcess );
 
 #endif
 
