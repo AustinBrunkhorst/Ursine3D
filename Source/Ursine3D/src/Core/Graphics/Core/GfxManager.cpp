@@ -222,8 +222,10 @@ namespace ursine
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
-                drawCall.Material_ = textureManager->GetTextureIDByName(current->GetTextureName());
 
+                GfxHND texHandle = current->GetTextureHandle( );
+                drawCall.Material_ = texHandle & 0xFFFF;
+                
                 drawCall.Shader_ = SHADER_BILLBOARD2D;
                 drawCall.Overdraw_ = current->GetOverdraw();
             }
@@ -1124,7 +1126,7 @@ namespace ursine
             bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
 
             //map texture
-            textureManager->MapTextureByID(handle.Material_);
+            textureManager->MapResourceTextureByID(handle.Material_);
 
             //set overdraw value
             if ( handle.Overdraw_ )

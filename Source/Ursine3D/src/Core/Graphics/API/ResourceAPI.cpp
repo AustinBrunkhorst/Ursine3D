@@ -38,17 +38,17 @@ namespace ursine
             return m_privates->textureMgr->GetTextureIDByName(name);
         }
 
-        GfxHND ResourceAPI::CreateTexture(const unsigned width, const unsigned height)
+        GfxHND ResourceAPI::CreateDynamicTexture(const unsigned width, const unsigned height)
         {
             return m_privates->textureMgr->CreateDynamicTexture(width, height);
         }
 
-        void ResourceAPI::ResizeTexture(GfxHND& handle, const unsigned width, const unsigned height)
+        void ResourceAPI::ResizeDynamicTexture(GfxHND& handle, const unsigned width, const unsigned height)
         {
             m_privates->textureMgr->ResizeDynamicTexture(handle, width, height);
         }
 
-        void ResourceAPI::DestroyTexture(GfxHND& handle)
+        void ResourceAPI::DestroyDynamicTexture(GfxHND& handle)
         {
             m_privates->textureMgr->DestroyDynamicTexture(handle);
         }
@@ -61,6 +61,31 @@ namespace ursine
         ModelResource * ResourceAPI::GetModelResource(const std::string & modelName)
         {
             return m_privates->modelMgr->GetModel(modelName);
+        }
+
+        GfxHND ResourceAPI::CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
+        {
+            return m_privates->textureMgr->CreateTexture( binaryData, binarySize, width, height);
+        }
+
+        void ResourceAPI::DestroyTexture(GfxHND &handle)
+        {
+            m_privates->textureMgr->DestroyTexture( handle );
+        }
+
+        void ResourceAPI::LoadTexture(GfxHND handle)
+        {
+            m_privates->textureMgr->LoadTexture( handle );
+        }
+
+        void ResourceAPI::UnloadTexture(GfxHND handle)
+        {
+            m_privates->textureMgr->UnloadTexture( handle );
+        }
+
+        void ResourceAPI::GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize)
+        {
+            m_privates->textureMgr->GetBinaryInformation( handle, dataPtr, binarySize );
         }
 
         void ResourceAPI::SetPrivates(void *priv, void *priv2)

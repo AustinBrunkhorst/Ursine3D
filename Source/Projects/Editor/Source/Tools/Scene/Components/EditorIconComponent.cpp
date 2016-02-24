@@ -38,6 +38,13 @@ void EditorIcon::SetIcon(const std::string &text)
     m_billboard->GetComponent<ecs::Billboard2D>( )->GetBillboard( )->SetTexture( text );
 }
 
+void EditorIcon::SetIcon(ursine::graphics::GfxHND handle)
+{
+    m_billboard->GetComponent<ecs::Billboard2D>( )->GetBillboard( )->SetTextureHandle( handle );
+    GetCoreSystem(graphics::GfxAPI)->ResourceMgr.LoadTexture(handle);
+
+}
+
 void EditorIcon::OnInitialize(void)
 {
     auto *owner = GetOwner( );

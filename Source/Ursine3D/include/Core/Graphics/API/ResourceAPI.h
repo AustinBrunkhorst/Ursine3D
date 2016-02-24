@@ -15,6 +15,7 @@
 
 #include "GFXAPIDefines.h"
 #include "ModelResource.h"
+#include "GUID.h"
 
 namespace ursine
 {
@@ -34,18 +35,27 @@ namespace ursine
             GfxHND GetTexHandle(const char *name);
 
             // create a texture of a given width/height, returns handle
-            GfxHND CreateTexture(const unsigned width, const unsigned height);
+            GfxHND CreateDynamicTexture(const unsigned width, const unsigned height);
 
             // resize a texture
-            void ResizeTexture(GfxHND &handle, const unsigned width, const unsigned height);
+            void ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height);
 
             // destroy a texture resource
-            void DestroyTexture(GfxHND &handle);
+            void DestroyDynamicTexture(GfxHND &handle);
 
             // get a model
             ModelResource *GetModelResource(const GfxHND &handle);
             ModelResource *GetModelResource(const std::string &modelName);
 
+            /////////////////////////////////////////////////////////
+            // NEW LOADING METHODS
+            GfxHND CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
+            void DestroyTexture(GfxHND &handle);
+
+            void LoadTexture(GfxHND handle);
+            void UnloadTexture(GfxHND handle);
+
+            void GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize);
 
         private:
             privData *m_privates;

@@ -2,52 +2,50 @@
 
 #include "TextureData.h"
 #include "TextureReader.h"
+#include <Core/CoreSystem.h>
+#include "GfxAPI.h"
 
 namespace ursine
 {
     namespace resources
     {
         TextureData::TextureData(void *bytes, size_t size, unsigned width, unsigned height)
-            : m_bytes( new uint8[ size ] )
-            , m_size( size )
-            , m_width( width )
-            , m_height( height )
         {
-            memcpy( m_bytes, bytes, size );
+            std::cout << "Hello world!" << std::endl;
+            m_textureHandle = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.CreateTexture(
+                reinterpret_cast<uint8_t*>(bytes), 
+                size, 
+                width, 
+                height
+            );
         }
 
         TextureData::~TextureData(void)
         {
-            delete[] m_bytes;
+            GetCoreSystem(graphics::GfxAPI)->ResourceMgr.DestroyTexture( m_textureHandle );
         }
 
-        uint8 *TextureData::GetBytes(void) const
+        graphics::GfxHND TextureData::GetTextureHandle() const
         {
-            return m_bytes;
-        }
-
-        size_t TextureData::GetSize(void) const
-        {
-            return m_size;
-        }
-
-        unsigned TextureData::GetWidth(void) const
-        {
-            return m_width;
-        }
-
-        unsigned TextureData::GetHeight(void) const
-        {
-            return m_height;
+            return m_textureHandle;
         }
 
         void TextureData::Write(pipeline::ResourceWriter &output)
         {
-            output << m_size;
+            uint8_t *data;
+            size_t size;
+
+            GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetBinaryInformation(
+                m_textureHandle, 
+                &data, 
+                size
+            );
+
+            output << size;
 
             output.WriteBytes( 
-                reinterpret_cast<char*>( m_bytes ), 
-                m_size 
+                reinterpret_cast<char*>(data),
+                size
             );
         }
 

@@ -36,13 +36,9 @@ namespace ursine
         {
         // RGBA
         case 4:
-            conversionFlags = SDL_PIXELFORMAT_RGB332;
-            targetDXFormat = DXGI_FORMAT_R8G8B8A8_UINT;
-            break;
-        // RGB
         case 3:
-            conversionFlags = SDL_PIXELFORMAT_RGBA4444;
-            targetDXFormat = DXGI_FORMAT_R32G32B32_UINT;
+            conversionFlags = SDL_PIXELFORMAT_RGBA8888;
+            targetDXFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
             break;
         default:
             UError( "Unsupported texture format.\nfile: %s\nBPP: %i",
@@ -61,6 +57,8 @@ namespace ursine
             fileName.string( ).c_str( )
         );
 
+        SDL_LockSurface( convertedSurface );
+
         dx::Image dxImage;
         
         dxImage.width = width;
@@ -68,14 +66,12 @@ namespace ursine
         dxImage.rowPitch = convertedSurface->pitch;
 
         // ignored on 2D textures
-        dxImage.slicePitch = 1;
+        dxImage.slicePitch = width * height * sizeof(uint8_t);
 
         dxImage.format = targetDXFormat;
         dxImage.pixels = static_cast<uint8_t*>( convertedSurface->pixels );
 
         dx::Blob outputBlob;
-
-        SDL_LockSurface( convertedSurface );
 
         auto result = SaveToDDSMemory( dxImage, dx::DDS_FLAGS_NONE, outputBlob );
 

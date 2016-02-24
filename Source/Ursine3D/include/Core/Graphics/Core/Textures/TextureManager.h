@@ -11,22 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      TextureManager.h
-Module:         Graphics
-Purpose:        class for managing textures
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include <vector>
@@ -59,8 +43,24 @@ namespace ursine
             void ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height);
             void DestroyDynamicTexture(GfxHND &handle);
 
+            // new methods
+            GfxHND CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
+            void DestroyTexture(GfxHND &handle);
+
+            void LoadTexture(GfxHND handle);
+            void UnloadTexture(GfxHND handle);
+
+            void GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize);
+
+            void MapResourceTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
+
+
         private:
             void TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height);
+
+            void LoadTextureToGPU(Texture &texture) const;
+
+            void InitalizeTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const;
 
         private:
             ID3D11Device *m_device;
@@ -73,6 +73,9 @@ namespace ursine
             std::map<std::string, unsigned int> m_lookupTextureList;
 
             std::vector<ID3D11SamplerState*> m_samplerStateList_;
+
+            // NEW STUFF
+            std::vector<Texture> m_textureCache;
         };
     }
 }

@@ -349,7 +349,114 @@ namespace ursine
             RELEASE_RESOURCE(m_hashTextureList[ id ]->m_texture2d);
 
             handle = 0;
-        }   
+        }
+
+        GfxHND TextureManager::CreateTexture(uint8_t * binaryData, size_t binarySize, unsigned width, unsigned height)
+        {
+            // if this texture already exists and we are updating it, release the prior resource, keep old ID
+            size_t internalID;
+
+            GfxHND handle;
+            _RESOURCEHND *id = HND_RSRCE(handle);
+
+            internalID = m_textureCache.size( );
+            m_textureCache.push_back( Texture( ) );
+
+            // load it up into CPU memory
+            InitalizeTexture(
+                binaryData, 
+                binarySize, 
+                width, 
+                height, 
+                m_textureCache[internalID]
+            );
+
+            // initialize handle
+            id->ID_ = SANITY_RESOURCE;
+            id->Type_ = ID_TEXTURE;
+            id->Index_ = static_cast<unsigned>( internalID );
+
+            return handle;
+        }
+
+        void TextureManager::DestroyTexture(GfxHND &handle)
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            Texture &texture = m_textureCache[ id ];
+            RELEASE_RESOURCE( texture.m_shaderResource );
+            RELEASE_RESOURCE( texture.m_texture2d );
+
+            delete[] texture.m_binaryData;
+            texture.m_binarySize = 0;
+            texture.m_width = 0;
+            texture.m_height = 0;
+            texture.m_internalID = 0;
+            texture.m_referenceCount = 0;
+
+            handle = 0;
+        }
+
+        void TextureManager::LoadTexture(GfxHND handle)
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            // if it doesn't exist on the GPU, load it up
+            if(m_textureCache[ id ].m_referenceCount == 0)
+                LoadTextureToGPU( m_textureCache[ id ] );
+
+            ++(m_textureCache[id].m_referenceCount);
+        }
+
+        void TextureManager::UnloadTexture(GfxHND handle)
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            --(m_textureCache[ id ].m_referenceCount);
+
+            // if out of references, free up the GPU
+            if(m_textureCache[ id ].m_referenceCount == 0)
+            {
+                RELEASE_RESOURCE( m_textureCache[id].m_shaderResource );
+                RELEASE_RESOURCE( m_textureCache[id].m_texture2d );
+            }
+        }
+
+        void TextureManager::GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize)
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            Texture &texture = m_textureCache[ id ];
+
+            *dataPtr = texture.m_binaryData;
+            binarySize = texture.m_binarySize;
+        }
+
+        void TextureManager::MapResourceTextureByID(const unsigned ID, const unsigned int bufferIndex)
+        {
+            UAssert( m_textureCache[ ID ].m_shaderResource != nullptr, "Texture was never loaded to GPU!" );
+            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ ID ].m_shaderResource);
+        }
 
         void TextureManager::TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height)
         {
@@ -384,6 +491,49 @@ namespace ursine
             m_textureList[ name ]->m_height = height;
             m_lookupTextureList[ name ] = m_textureCount;
             m_hashTextureList[ m_textureCount++ ] = m_textureList[ name ];
+        }
+
+        void TextureManager::LoadTextureToGPU(Texture &texture) const
+        {
+            HRESULT result;
+            D3D11_TEXTURE2D_DESC desc;
+
+            //width/height
+            desc.Width = texture.m_width;
+            desc.Height = texture.m_height;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.SampleDesc.Count = 2;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_IMMUTABLE;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = 0;
+            desc.MiscFlags = 0;
+
+            result = DirectX::CreateDDSTextureFromMemory(
+                m_device, 
+                texture.m_binaryData, 
+                texture.m_binarySize, 
+                nullptr, 
+                &texture.m_shaderResource
+            );
+
+            UAssert( result == S_OK, "Failed to load texture (%s)", DXCore::GetDXErrorMessage(result) );
+        }
+
+        void TextureManager::InitalizeTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const
+        {
+            texture.m_binaryData = new uint8_t[ binarySize ];
+            texture.m_binarySize = binarySize;
+            memcpy(texture.m_binaryData, binaryData, binarySize);
+
+            uint32_t dwMagicNumber = *(const uint32_t*)(binaryData);
+
+            UAssert(0x20534444 == dwMagicNumber, "Binary .dds file has mismatching magic number! (%u provided)", dwMagicNumber);
+
+            texture.m_width = width;
+            texture.m_height = height;
+            texture.m_referenceCount = 0;
         }
     }
 }

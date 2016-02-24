@@ -232,6 +232,7 @@ namespace ursine
             m_textureName = "Default";
             m_width = 1;
             m_height = 1;
+            m_textureHandle = 0;
         }
 
         const char *Billboard2D::GetTextureName(void)
@@ -242,6 +243,16 @@ namespace ursine
         void Billboard2D::SetTexture(std::string texName)
         {
             m_textureName = texName;
+        }
+
+        GfxHND Billboard2D::GetTextureHandle(void) const
+        {
+            return m_textureHandle;
+        }
+
+        void Billboard2D::SetTextureHandle(GfxHND handle)
+        {
+            m_textureHandle = handle;
         }
 
         void Billboard2D::SetDimensions(float width, float height)

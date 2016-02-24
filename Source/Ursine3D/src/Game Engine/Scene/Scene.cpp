@@ -49,6 +49,8 @@ namespace ursine
 
         m_activeWorld = world;
 
+        m_activeWorld->SetOwner( this );
+
         Dispatch( SCENE_WORLD_CHANGED, &e );
     }
 
@@ -62,6 +64,8 @@ namespace ursine
         SceneWorldChangedArgs e( m_activeWorld, &reference );
 
         m_activeWorld = worldData->GetData( );
+
+        m_activeWorld->SetOwner( this );
 
         Dispatch( SCENE_WORLD_CHANGED, &e );
 

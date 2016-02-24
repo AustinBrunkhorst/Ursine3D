@@ -63,6 +63,9 @@ void Project::SetEmptyScene(void)
 {
     auto world = std::make_shared<ecs::World>( );
 
+    // make sure there is an owner before creating entities
+    world->SetOwner( &m_scene );
+
     auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );

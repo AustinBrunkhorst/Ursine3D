@@ -1,4 +1,5 @@
 #include "ResourceData.h"
+#include "GfxAPIDefines.h"
 
 namespace ursine
 {
@@ -12,18 +13,10 @@ namespace ursine
             TextureData(void *bytes, size_t size, unsigned width, unsigned height);
             ~TextureData(void);
 
-            uint8 *GetBytes(void) const;
-            size_t GetSize(void) const;
-
-            unsigned GetWidth(void) const;
-            unsigned GetHeight(void) const;
+            graphics::GfxHND GetTextureHandle(void) const;
 
         private:
-            uint8 *m_bytes;
-            size_t m_size;
-
-            unsigned m_width;
-            unsigned m_height;
+            graphics::GfxHND m_textureHandle;
 
             void Write(pipeline::ResourceWriter &output) override;
 

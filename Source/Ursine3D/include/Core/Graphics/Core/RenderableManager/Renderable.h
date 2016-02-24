@@ -136,8 +136,10 @@ namespace ursine
             Billboard2D(void);
 
             const char *GetTextureName(void);
-
             void SetTexture(std::string texName);
+
+            GfxHND GetTextureHandle(void) const;
+            void SetTextureHandle(GfxHND handle);
 
             void SetDimensions(float width, float height);
             void GetDimensions(float &width, float &height);
@@ -155,6 +157,7 @@ namespace ursine
             ursine::SVec3 m_position;
             Color m_color;
             std::string m_textureName;
+            GfxHND m_textureHandle;
         };
 
         /////////////////////////////////////////////////////////////
