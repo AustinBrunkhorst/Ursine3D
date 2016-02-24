@@ -1153,11 +1153,11 @@ namespace ursine
 				FbxTakeInfo* takeInfo = mScene->GetTakeInfo(name);
 				FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
 				FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
-				ProcessAnimation(lAnimStack, start, mScene->GetRootNode());
+				ProcessAnimation(lAnimStack, start, end, mScene->GetRootNode());
 			}
 		}
 
-		void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxNode* pNode)
+		void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxTime end, FbxNode* pNode)
 		{
 			mAnimationFlag.second = true;
 			std::set< FbxTime > keyTimes;
@@ -1176,11 +1176,11 @@ namespace ursine
 			for (int i = 0; i < nbAnimLayers; ++i)
 			{
 				FbxAnimLayer* lAnimLayer = animStack->GetMember<FbxAnimLayer>(i);
-				ProcessAnimation(lAnimLayer, start, pNode, animClip);
+				ProcessAnimation(lAnimLayer, start, end, pNode, animClip);
 			}
 		}
 
-		void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
+		void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxTime end, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
 		{
 			FbxString lOutputString;
 			FbxNodeAttribute* attr = pNode->GetNodeAttribute();
@@ -1191,25 +1191,25 @@ namespace ursine
 				time.insert(start);
 
 				curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 
 				curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 
 				curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 
 				if (boneindex < animClip.boneAnim.size())
 					animClip.boneAnim[boneindex].keyFrames.resize(time.size());
@@ -1240,10 +1240,10 @@ namespace ursine
 
 			//go through all the children nodes and try to read there curves
 			for (int j = 0; j < pNode->GetChildCount(); ++j)
-				ProcessAnimation(animLayer, start, pNode->GetChild(j), animClip);
+				ProcessAnimation(animLayer, start, end, pNode->GetChild(j), animClip);
 		}
 
-		void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time)
+		void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime end)
 		{
 			if (!pCurve)
 				return;
@@ -1254,7 +1254,8 @@ namespace ursine
 			for (int i = 0; i < lKeyCount; ++i)
 			{
 				FbxAnimCurveKey key = pCurve->KeyGet(i);
-				time.insert(key.GetTime());
+				if(key.GetTime() <= end )
+					time.insert(key.GetTime());
 			}
 		}
 

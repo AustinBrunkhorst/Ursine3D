@@ -48,6 +48,8 @@ namespace ursine
                 m_modelArray[ name ] = new ModelResource();
                 auto *newMesh = new Mesh();
                 m_modelArray[ name ]->AddMesh(newMesh);
+				m_s2uTable["ParticleIndices"] = m_modelCount;
+				m_u2mTable[m_modelCount++] = m_modelArray[name];
 
                 unsigned indices[ 1024 * 6 ];
                 unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
