@@ -10,6 +10,8 @@
 
 #include "BuiltInResourceConfig.h"
 
+#include "ResourceBuildContext.h"
+
 using namespace std::chrono;
 
 namespace ursine 
@@ -17,12 +19,22 @@ namespace ursine
     namespace
     {
         const auto kMetaFileExtension = "meta";
+        const auto kPreviewFileExtension = "png";
+        const auto kCacheFileExtension = "cache";
 
         // meta file serialization is handled explicitly
         const auto kMetaKeyGUID = "guid";
         const auto kMetaKeyImporter = "importer";
         const auto kMetaKeyProcessor = "processor";
         const auto kMetaKeyProcessorOptions = "options";
+
+        // cache file serialization is handled explicitly
+        const auto kCacheKeyHasPreview = "hasPreview";
+        const auto kCacheKeyProcessedType = "processedType";
+        const auto kCacheKeyGeneratedResources = "generatedResources";
+
+        // maximum dimensions for a build preview
+        const auto kMaxPreviewDimensions = Vec2 { 128.0f, 128.0f };
 
         const meta::Type::Set &getImporterTypes(void)
         {
@@ -69,6 +81,9 @@ namespace ursine
         if (!is_directory( m_config.resourceDirectory ))
             create_directories( m_config.resourceDirectory );
 
+        if (!is_directory( m_config.tempDirectory ))
+            create_directories( m_config.tempDirectory );
+
         if (!is_directory( m_config.buildDirectory ))
             create_directories( m_config.buildDirectory );
 
@@ -102,9 +117,39 @@ namespace ursine
         UAssert( 
             fs::WriteAllText( resource->m_metaFileName.string( ), metaJsonString ),
             "Unable to write to resource meta data.\nfile: %s",
-            resource->m_metaFileName.string( )
+            resource->m_metaFileName.string( ).c_str( )
         );
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::InvalidateResourceCache(ResourceItem::Handle resource)
+    {
+        auto &cache = resource->m_buildCache;
+
+        auto output = Json::object {
+            { kCacheKeyHasPreview, cache.hasPreview },
+            { kCacheKeyProcessedType, cache.processedType.GetName( ) },
+        };
+
+        Json::array generatedResources;
+
+        for (auto &generated : cache.generatedResources)
+            generatedResources.emplace_back( to_string( generated ) );
+
+        output[ kCacheKeyGeneratedResources ] = generatedResources;
+
+        auto cacheJsonString = Json( output ).dump( true );
+
+        URSINE_TODO( "Make recoverable." )
+        UAssert( 
+            fs::WriteAllText( resource->m_buildCacheFileName.string( ), cacheJsonString ),
+            "Unable to write to resource build cache.\nfile: %s",
+            resource->m_buildCacheFileName.string( ).c_str( )
+        );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const GUID &guid)
     {
@@ -153,7 +198,7 @@ namespace ursine
                 }
             }
         }
-        catch(fs::filesystem_error &e)
+        catch (fs::filesystem_error &e)
         {
             UError( "Unable to iterate resource directory.\nerror: %s",
                 e.what( )
@@ -197,7 +242,7 @@ namespace ursine
         auto metaDataJson = Json::parse( metaDataString, metaDataError );
 
         UAssert( metaDataError.empty( ),
-            "Unable to parse meta data resource.\nfile: %s\nerror: %s",
+            "Unable to parse resource meta data.\nfile: %s\nerror: %s",
             metaFileName.string( ).c_str( ),
             metaDataError.c_str( )
         );
@@ -232,7 +277,7 @@ namespace ursine
             processorName.c_str( )
         );
 
-        UAssert(processorType.GetDynamicConstructor( ).IsValid( ),
+        UAssert( processorType.GetDynamicConstructor( ).IsValid( ),
             "Processor '%s' does not have a default dynamic constructor.",
             processorType.GetName( ).c_str( )
         );
@@ -242,6 +287,8 @@ namespace ursine
         resource->m_metaData.importer = importerType;
         resource->m_metaData.processor = processorType;
         resource->m_metaData.processorOptions = metaDataJson[ kMetaKeyProcessorOptions ];
+
+        loadResourceBuildCache( resource );
 
         return resource;
     }
@@ -367,6 +414,8 @@ namespace ursine
         resource->m_fileName = fileName;
         resource->m_metaFileName = metaFileName;
         resource->m_buildFileName = getResourceBuildFile( guid );
+        resource->m_buildPreviewFileName = getResourceBuildPreviewFile( guid );
+        resource->m_buildCacheFileName = getResourceBuildCacheFile( guid );
 
         auto insertion = m_database.insert( { resource->m_guid, resource } );
 
@@ -379,6 +428,74 @@ namespace ursine
     }
 
     ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::loadResourceBuildCache(ResourceItem::Handle resource)
+    {
+        auto cacheFileName = getResourceBuildCacheFile( resource->m_guid );
+
+        // it's ok that the cache file doesn't exist - it just means this resource is 
+        // invalidated and we'll write the cache during build
+        if (!exists( cacheFileName ))
+            return;
+
+        std::string cacheError;
+        std::string cacheString;
+
+        URSINE_TODO( "Make all failures recoverable." );
+
+        UAssert( fs::LoadAllText( cacheFileName.string( ), cacheString ),
+            "Unable to load build cache file.\nfile: %s",
+            cacheFileName.string( ).c_str( )
+        );
+
+        auto cacheJson = Json::parse( cacheString, cacheError );
+
+        UAssert( cacheError.empty( ),
+            "Unable to parse build cache.\nfile: %s\nerror: %s",
+            cacheFileName.string( ).c_str( ),
+            cacheError.c_str( )
+        );
+
+        resource->m_buildCache.hasPreview = 
+            cacheJson[ kCacheKeyHasPreview ].bool_value( );
+
+        auto processedTypeName = 
+            cacheJson[ kCacheKeyProcessedType ].string_value( );
+
+        auto processedType =
+            meta::Type::GetFromName( processedTypeName );
+
+        UAssert( processedType.IsValid( ),
+            "Invalid resource processed type '%s'.\nfile: %s",
+            processedTypeName.c_str( ),
+            cacheFileName.string( ).c_str( )
+        );
+
+        resource->m_buildCache.processedType = processedType;
+
+        auto generatedResourcesObj = 
+            cacheJson[ kCacheKeyGeneratedResources ];
+
+        UAssert( generatedResourcesObj.is_array( ),
+            "Build cache key '%s' expected to be array type.\nfile: %s",
+            cacheFileName.string( ).c_str( )
+        );
+
+        auto &generatedResources = 
+            resource->m_buildCache.generatedResources;
+
+        generatedResources.clear( );
+
+        // convert the string values in the json array to the array of GUIDs
+        for (auto &obj : generatedResourcesObj.array_items( ))
+        {
+            generatedResources.emplace_back(
+                GUIDStringGenerator( )( obj.string_value( ) )
+            );
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // Building
     ///////////////////////////////////////////////////////////////////////////
 
@@ -386,38 +503,79 @@ namespace ursine
     {
         ResourceBuildArgs buildEvent;
 
-        auto entryCount = static_cast<float>( m_database.size( ) );
-        auto entryIndex = 0.0f;
+        std::vector<ResourceBuildContext> buildContexts;
 
-        for (auto entry : m_database)
+        // collect invalidated items
+        for (auto &entry : m_database)
         {
-            // start with index 1
-            ++entryIndex;
-
             auto &item = entry.second;
 
             if (buildIsInvalidated( item ))
-            {
-                buildEvent.type = RP_BUILD_RESOURCE_START;
-                buildEvent.resource = item;
-                buildEvent.progress = entryIndex / entryCount;
+                buildContexts.emplace_back( this, item );
+        }
 
-                auto startTime = system_clock::now( );
+        // we don't know off hand what resources have previews, so just assume they
+        // take 20%
+        static const auto previewPercentage = 0.80f;
 
-                Dispatch( RP_BUILD_RESOURCE_START, &buildEvent );
+        auto operationCount = buildContexts.size( );
+        auto operationIndex = 0.0f;
 
-                buildResource( item );
+        // build pass
+        for (auto &buildContext : buildContexts)
+        {
+            ++operationIndex;
 
-                auto duration = system_clock::now( ) - startTime;
+            buildEvent.type = RP_BUILD_RESOURCE_START;
+            buildEvent.resource = buildContext.resource;
+            buildEvent.progress = previewPercentage * (operationIndex / operationCount);
 
-                buildEvent.type = RP_BUILD_RESOURCE_COMPLETE;
+            auto startTime = system_clock::now( );
 
-                buildEvent.buildDuration = static_cast<int>(
-                    duration_cast<milliseconds>( duration ).count( ) 
-                );
+            Dispatch( RP_BUILD_RESOURCE_START, &buildEvent );
 
-                Dispatch( RP_BUILD_RESOURCE_COMPLETE, &buildEvent );
-            }
+            buildResource( buildContext );
+
+            auto duration = system_clock::now( ) - startTime;
+
+            buildEvent.type = RP_BUILD_RESOURCE_COMPLETE;
+
+            buildEvent.operationDuration = static_cast<int>(
+                duration_cast<milliseconds>( duration ).count( ) 
+            );
+
+            Dispatch( RP_BUILD_RESOURCE_COMPLETE, &buildEvent );
+        }
+
+        operationIndex = 0.0f;
+
+        // build preview pass
+        for (auto &previewContext : buildContexts)
+        {
+            ++operationIndex;
+
+            buildEvent.type = RP_BUILD_RESOURCE_PREVIEW_START;
+            buildEvent.resource = previewContext.resource;
+            buildEvent.progress = previewPercentage + (1.0f - previewPercentage) * (operationIndex / operationCount);
+
+            auto startTime = system_clock::now( );
+
+            Dispatch( RP_BUILD_RESOURCE_PREVIEW_START, &buildEvent );
+
+            buildResourcePreview( previewContext );
+
+            // write the cache
+            InvalidateResourceCache( previewContext.resource );
+
+            auto duration = system_clock::now( ) - startTime;
+
+            buildEvent.type = RP_BUILD_RESOURCE_PREVIEW_COMPLETE;
+
+            buildEvent.operationDuration = static_cast<int>(
+                duration_cast<milliseconds>( duration ).count( ) 
+            );
+
+            Dispatch( RP_BUILD_RESOURCE_PREVIEW_COMPLETE, &buildEvent );
         }
 
         Dispatch( RP_BUILD_COMPLETE, EventArgs::Empty );
@@ -425,31 +583,32 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::buildResource(ResourceItem::Handle resource)
+    void rp::ResourcePipelineManager::buildResource(ResourceBuildContext &context)
     {
+        auto &resource = context.resource;
         auto &meta = resource->m_metaData;
 
-        auto importer = ResourceImporter::Handle( 
+        context.importer = ResourceImporter::Handle( 
             meta.importer.CreateDynamic( ).GetValue<ResourceImporter*>( ) 
         );
 
-        auto processor = ResourceProcessor::Handle( 
+        context.processor = ResourceProcessor::Handle( 
             meta.processor.CreateDynamic( ).GetValue<ResourceProcessor*>( )
         );
 
         URSINE_TODO( "Handle exception occurred during pipeline below." );
 
-        ResourceImportContext importContext;
-
-        auto importData = importer->Import( resource->m_fileName, importContext );
-
-        ResourceProcessorContext processContext;
-
-        auto processData = processor->Process( importData, processContext );
+        auto importData = context.importer->Import( context.importContext );
+        auto processData = context.processor->Process( importData, context.processorContext );
 
         UAssert( processData != nullptr,
             "Processed data was null." 
         );
+
+        resource->m_buildCache.hasPreview = false;
+        resource->m_buildCache.processedType = processData->GetType( );
+
+        URSINE_TODO( "Add generated resources to the cache here" );
 
         ResourceFormatWriter formatWriter( resource );
 
@@ -458,13 +617,30 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
+    void rp::ResourcePipelineManager::buildResourcePreview(ResourceBuildContext &context)
+    {
+        // determine if the processor or importer built a preview.
+        // take priority with the processor
+        auto previewBuilt = 
+            context.processor->BuildPreview( context.processorContext, kMaxPreviewDimensions ) ||
+             context.importer->BuildPreview( context.importContext, kMaxPreviewDimensions );
+
+        context.resource->m_buildCache.hasPreview = previewBuilt;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
     bool rp::ResourcePipelineManager::buildIsInvalidated(ResourceItem::Handle resource)
     {
-        if (!exists( resource->m_buildFileName ))
-            return true;
+        auto filesExist = exists( resource->m_buildFileName );
 
-        // this shouldn't ever be the case
-        if (!exists( resource->m_metaFileName ))
+        filesExist = filesExist && exists( resource->m_buildCacheFileName );
+
+        // this should always exist, but just in case
+        filesExist = filesExist && exists( resource->m_metaFileName);
+
+        // if any of the following files don't exist, this build is invalidated
+        if (!filesExist)
             return true;
 
         auto buildTime = last_write_time( resource->m_buildFileName );
@@ -491,5 +667,23 @@ namespace ursine
         auto file = m_config.buildDirectory / to_string( guid );
 
         return file.replace_extension( kResourceFormatExtension );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    fs::path rp::ResourcePipelineManager::getResourceBuildPreviewFile(const GUID &guid) const
+    {
+        auto file = m_config.buildDirectory / to_string( guid );
+
+        return file.replace_extension( kPreviewFileExtension );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    fs::path rp::ResourcePipelineManager::getResourceBuildCacheFile(const GUID &guid) const
+    {
+        auto file = m_config.buildDirectory / to_string( guid );
+
+        return file.replace_extension( kCacheFileExtension );
     }
 }

@@ -7,12 +7,14 @@ namespace ursine
 {
     rp::JsonImporter::JsonImporter(void) { }
 
-    resources::ResourceData::Handle rp::JsonImporter::Import(const fs::path &fileName, const ResourceImportContext &context)
+    resources::ResourceData::Handle rp::JsonImporter::Import(const ResourceImportContext &context)
     {
         std::string jsonError;
         std::string jsonText;
 
         URSINE_TODO( "use exceptions instead of assertions" );
+
+        auto fileName = context.resource->GetSourceFileName( );
 
         fs::LoadAllText( fileName.string( ), jsonText );
 

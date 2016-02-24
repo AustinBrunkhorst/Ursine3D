@@ -21,6 +21,11 @@ namespace ursine
                 friend class ResourcePipelineManager;
 
                 virtual ResourceData::Handle Process(ResourceData::Handle input, const ResourceProcessorContext &context) = 0;
+
+                virtual bool BuildPreview(const ResourceProcessorContext &context, const Vec2 &maxDimensions)
+                {
+                    return false;
+                }
             };
         }
     }

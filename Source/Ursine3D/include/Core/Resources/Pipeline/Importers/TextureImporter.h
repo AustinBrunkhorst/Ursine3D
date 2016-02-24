@@ -14,17 +14,23 @@ namespace ursine
 
             public:
                 TextureImporter(void);
+                ~TextureImporter(void);
 
             private:
-                ResourceData::Handle Import(const fs::path &fileName, const ResourceImportContext &context) override;
+                unsigned m_importedWidth;
+                unsigned m_importedHeight;
+
+                ResourceData::Handle Import(const ResourceImportContext &context) override;
+
+                bool BuildPreview(const ResourceImportContext &context, const Vec2 &maxDimension) override;
             } Meta(
                 Enable,
                 DisplayName( "TextureImporter" ),
                 ResourceImporterConfig( 
                     ExtensionList { 
-                        "bmp", "gif", "jpeg", "lbm",
-                        "pcx", "png", "pnm", "tga",
-                        "tiff", "webp", "xcf", "xpm", "xv"
+                        "bmp", "jpg", "jpeg", 
+                        "png", "dds", "tga", 
+                        "tif", "tiff", "wdp", "hdp"
                     },
                     typeof( ursine::rp::TextureProcessor )
                 )

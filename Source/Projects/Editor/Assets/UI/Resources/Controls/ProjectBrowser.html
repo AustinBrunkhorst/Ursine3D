@@ -26,8 +26,10 @@
                 </template>
                 <template id="resourceRepeat" is="dom-repeat" items="{{directoryResources}}" as="resource">
                     <div class="resource" on-dblclick="_onResourceDblClick" on-contextmenu="_onResourceContextMenu">
-                        <div class="thumbnail" ext$="{{resource.extension}}">
-                            <img src="{{resource.sourceFile}}" on-error="_onResourceThumbnailError">
+                        <div class="thumbnail" ext$="{{resource.extension}}" has-preview$="{{resource.hasPreview}}">
+                        <template is="dom-if" if="{{resource.hasPreview}}">
+                            <img src="{{resource.previewFile}}">
+                        </template>
                         </div>
                         <div class="display-name">{{resource.displayName}}</div>
                     </div>
@@ -158,16 +160,6 @@
 
                 menu.open( e.clientX, e.clientY );
             },
-            _onResourceThumbnailError: function(e) {
-                var img = e.srcElement;
-                var thumbnail = img.parentNode;
-
-                // not sure why this happens
-                if (!thumbnail)
-                    return;
-
-                thumbnail.classList.add( 'default' );
-            },
 
             _buildTree: function(treeRoot) {
                 var viewRoot = this.$.folderTree;
@@ -207,11 +199,6 @@
                 this.set( 'crumbs', crumbs );
 
                 this.set( 'directoryFolders', entry.subDirectories );
-
-                var defaultedThumbnails = this.querySelectorAll( '.thumbnail.default' );
-
-                for (var i = 0; i < defaultedThumbnails.length; ++i)
-                    defaultedThumbnails[ i ].classList.remove( 'default' );
 
                 this.set( 'directoryResources', entry.resources );
             },

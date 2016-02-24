@@ -25,6 +25,7 @@ using namespace ursine;
 
 namespace
 {
+    const auto kResourcesTempDirectory = "Temp";
     const auto kResourcesBuildDirectory = "Resources";
 }
 
@@ -94,6 +95,12 @@ void Project::initialize(const ProjectConfig &config)
     rp::ResourcePipelineConfig resourceConfig;
 
     resourceConfig.resourceDirectory = config.rootDirectory / config.resourceDirectory;
+
+    resourceConfig.tempDirectory = config.rootDirectory / config.buildDirectory;
+    {
+        // add the temp directory
+        resourceConfig.tempDirectory /= kResourcesTempDirectory;
+    }
 
     resourceConfig.buildDirectory = config.rootDirectory / config.buildDirectory;
     {

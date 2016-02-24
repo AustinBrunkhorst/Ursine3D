@@ -23,6 +23,8 @@
 #include <UIManager.h>
 #include <Timer.h>
 
+#include <ResourcePipelineManager.h>
+
 using namespace ursine;
 
 namespace rp = resources::pipeline;
@@ -139,7 +141,11 @@ void Editor::LoadProject(const std::string &filename)
     shExecInfo.nShow = SW_NORMAL;
     shExecInfo.hInstApp = nullptr;
 
-    ShellExecuteEx( &shExecInfo );
+    UAssert( ShellExecuteEx( &shExecInfo ) == TRUE,
+        "Unable to spawn editor process."
+    );
+
+    CloseHandle( shExecInfo.hProcess );
 
 #endif
 
@@ -408,6 +414,7 @@ void Editor::initializeProject(const std::string &filename)
 
     resourcePipeline.Listener( this )
         .On( rp::RP_BUILD_RESOURCE_START, &Editor::onPipelinePreBuildItemStart )
+        .On( rp::RP_BUILD_RESOURCE_PREVIEW_START, &Editor::onPipelinePreBuildItemPreviewStart )
         .On( rp::RP_BUILD_COMPLETE, &Editor::onPipelinePreBuildComplete );
 
     resourcePipeline.Build( );
@@ -513,6 +520,23 @@ void Editor::onPipelinePreBuildItemStart(EVENT_HANDLER(rp::ResourcePipelineManag
     );
 }
 
+void Editor::onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(rp::ResourcePipelineManager))
+{
+    EVENT_ATTRS(rp::ResourcePipelineManager, rp::ResourceBuildArgs);
+
+    auto fileName = fs::MakeRelativePath(
+        sender->GetConfig( ).resourceDirectory,
+        args->resource->GetSourceFileName( )
+    );
+
+    m_mainWindow.m_ui->Message( UI_CMD_BROADCAST, "ResourcePipeline", "preBuildItemPreviewStart", 
+        Json::object {
+            { "item", fileName.string( ) },
+            { "progress", args->progress }
+        } 
+    );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void Editor::onPipelinePreBuildComplete(EVENT_HANDLER(rp::ResourcePipelineManager))
@@ -521,6 +545,7 @@ void Editor::onPipelinePreBuildComplete(EVENT_HANDLER(rp::ResourcePipelineManage
 
     sender->Listener( this )
         .Off( rp::RP_BUILD_RESOURCE_START, &Editor::onPipelinePreBuildItemStart )
+        .Off( rp::RP_BUILD_RESOURCE_PREVIEW_START, &Editor::onPipelinePreBuildItemPreviewStart )
         .Off( rp::RP_BUILD_COMPLETE, &Editor::onPipelinePreBuildComplete );
 
     m_mainWindow.m_ui->Message( UI_CMD_BROADCAST, "ResourcePipeline", "preBuildComplete", { } );
