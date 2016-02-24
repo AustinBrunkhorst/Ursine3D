@@ -257,6 +257,8 @@ namespace ursine
 			*/
 			bool CheckScaling(FbxVector4 scale);
 
+			void SetPivotStateRecursive(FbxNode* pNode);
+
 			/** @brief fbx loader animation funciton
 			*
 			*  this will import animation data by searching whole fbx animation data
