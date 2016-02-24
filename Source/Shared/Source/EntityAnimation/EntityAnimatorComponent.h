@@ -51,7 +51,7 @@ class EntityAnimator
     friend class EntityAnimatorSystem;
 
 public:
-    // TODO: easing, draw path, broke
+    // TODO: easing, draw path, zero, linear
     
     EditorOnlyField(bool keyPosition);
     EditorOnlyField(bool keyScale);
