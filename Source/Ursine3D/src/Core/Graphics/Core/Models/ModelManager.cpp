@@ -263,10 +263,7 @@ namespace ursine
                 if ( tokens[ 0 ].find("8.0.mdl") != std::string::npos )
                     LoadModel(tokens[ 1 ], tokens[ 0 ]);
                 else if ( tokens[ 0 ].find(".fbx") != std::string::npos )
-                {
                     LoadModel_Fbx(tokens[ 1 ], tokens[ 0 ]);
-                    // need to store name of fbx file into jdl.gfx if there isn't
-                }
             }
             input.close();
         }
