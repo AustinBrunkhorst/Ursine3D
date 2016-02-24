@@ -8,6 +8,7 @@ PlantMonster.fbx PlantMonster
 Pipe_Bent.fbx PipeBent
 Pipe_Straight.fbx PipeStraight
 BaseModel.fbx Base
+HiRezSphere.fbx HiRezSphere
 
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
@@ -33,7 +34,7 @@ bomber.8.0.mdl Bomber
 # Player Animations
 #Player1_Idle.fbx Idle
 #Player1_Die.fbx Die
-Player1_Jump.fbx Jump
+#Player1_Jump.fbx Jump
 #Player1_Run.fbx Run
 #Player1_Win.fbx Win
 #Player1_Straf_L.fbx Straf_L
