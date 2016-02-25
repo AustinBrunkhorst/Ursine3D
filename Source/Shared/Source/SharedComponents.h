@@ -95,6 +95,13 @@
 #include "CameraAnimation/CameraAnimatorFocusPointComponent.h"
 
 /////////////////////////////////
+//       Entity Animation      //
+/////////////////////////////////
+
+#include "EntityAnimation/EntityAnimatorComponent.h"
+#include "EntityAnimation/EntityAnimatorGroupComponent.h"
+
+/////////////////////////////////
 //       Spawning System       //
 /////////////////////////////////
 

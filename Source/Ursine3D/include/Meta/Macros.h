@@ -20,9 +20,13 @@
 
         #define EditorButton(name, title) Meta(Enable, CreateButton(title)) void name(void);
 
+        #define EditorOnlyField(field) field
+
     #else
 
         #define EditorButton(name, title)
+
+        #define EditorOnlyField(field)
 
     #endif
 
@@ -45,9 +49,13 @@
 
         #define EditorButton(name, title) void name(void)
 
+        #define EditorOnlyField(field) field
+
     #else
 
         #define EditorButton(name, title)
+
+        #define EditorOnlyField(field)
 
     #endif
 
