@@ -14,6 +14,7 @@
 #include "Precompiled.h"
 
 #include "EntityAnimatorComponent.h"
+#include "EntityAnimatorFocusModifierComponent.h"
 
 #include <Curves.h>
 #include <Color.h>
@@ -138,11 +139,16 @@ void EntityAnimator::updateAnimation(int index)
     // set position
     trans->SetLocalPosition( getPosition( index ) );
 
-    // set rotation
-    trans->SetLocalRotation( getRotation( index ) );
-
     // set scale
     trans->SetLocalScale( getScale( index ) );
+
+    auto modifier = GetOwner( )->GetComponent<EntityAnimatorFocusModifier>( );
+
+    if (modifier)
+        return;
+
+    // set rotation
+    trans->SetLocalRotation( getRotation( index ) );
 }
 
 void EntityAnimator::updateAnimation(int index1, int index2, float t)
@@ -160,17 +166,22 @@ void EntityAnimator::updateAnimation(int index1, int index2, float t)
 
     trans->SetLocalPosition( (1.0f - t) * p1 + t * p2 );
 
-    // calculate rotation
-    auto r1 = getRotation( index1 );
-    auto r2 = getRotation( index2 );
-
-    trans->SetLocalRotation( r1.Slerp( r2, t ) );
-
     // calculate the scale
     auto s1 = getScale( index1 );
     auto s2 = getScale( index2 );
 
     trans->SetLocalScale( (1.0f - t) * s1 + t * s2 );
+
+    auto modifier = GetOwner( )->GetComponent<EntityAnimatorFocusModifier>( );
+
+    if (modifier)
+        return;
+
+    // calculate rotation
+    auto r1 = getRotation( index1 );
+    auto r2 = getRotation( index2 );
+
+    trans->SetLocalRotation( r1.Slerp( r2, t ) );
 }
 
 void EntityAnimator::updateAnimation(int index1, int index2, int index3, int index4, float t)
@@ -203,6 +214,11 @@ void EntityAnimator::updateAnimation(int index1, int index2, int index3, int ind
             s3, getScale( index4 ), t
         ) );
     }
+
+    auto modifier = GetOwner( )->GetComponent<EntityAnimatorFocusModifier>( );
+
+    if (modifier)
+        return;
 
     auto r2 = getRotation( index2 );
     auto r3 = getRotation( index3 );

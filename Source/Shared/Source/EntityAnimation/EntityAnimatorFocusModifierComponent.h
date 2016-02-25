@@ -15,6 +15,8 @@
 
 #include <Component.h>
 
+#include "EntityAnimatorComponent.h"
+
 class EntityAnimatorFocusModifier : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -41,4 +43,4 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-} Meta(Enable);
+} Meta(Enable, RequiresComponents(typeof(EntityAnimator)));
