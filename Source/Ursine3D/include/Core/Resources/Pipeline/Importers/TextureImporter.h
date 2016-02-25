@@ -20,7 +20,7 @@ namespace ursine
                 unsigned m_importedWidth;
                 unsigned m_importedHeight;
 
-                ResourceData::Handle Import(const ResourceImportContext &context) override;
+                ResourceData::Handle Import(ResourceImportContext &context) override;
 
                 bool BuildPreview(const ResourceImportContext &context, const Vec2 &maxDimension) override;
             } Meta(

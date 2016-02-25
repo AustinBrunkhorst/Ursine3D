@@ -9,7 +9,7 @@ namespace ursine
 
     rp::AnimationClipImporter::~AnimationClipImporter(void) { }
 
-    resources::ResourceData::Handle rp::AnimationClipImporter::Import(const ResourceImportContext &context)
+    resources::ResourceData::Handle rp::AnimationClipImporter::Import(ResourceImportContext &context)
     {
         return std::make_shared<AnimationClipData>( );
     }

@@ -16,10 +16,10 @@ namespace ursine
                 ResourceDirectoryNode(ResourceDirectoryNode *parent, const fs::path &path = "");
                 ~ResourceDirectoryNode(void);
 
-                const fs::path &GetPath(void);
+                const fs::path &GetPath(void) const;
 
-                const List &GetSubDirectories(void);
-                const ResourceItem::List &GetResources(void);
+                const List &GetSubDirectories(void) const;
+                const ResourceItem::List &GetResources(void) const;
 
             private:
                 friend class ResourcePipelineManager;

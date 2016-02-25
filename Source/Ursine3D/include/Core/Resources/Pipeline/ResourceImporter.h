@@ -20,7 +20,7 @@ namespace ursine
             private:
                 friend class ResourcePipelineManager;
 
-                virtual ResourceData::Handle Import(const ResourceImportContext &context) = 0;
+                virtual ResourceData::Handle Import(ResourceImportContext &context) = 0;
 
                 virtual bool BuildPreview(const ResourceImportContext &context, const Vec2 &maxDimensions)
                 {

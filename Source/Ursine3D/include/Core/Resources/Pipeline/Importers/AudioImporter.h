@@ -8,22 +8,27 @@ namespace ursine
     {
         namespace pipeline
         {
-            class AnimationClipImporter : public ResourceImporter
+            class AudioImporter : public ResourceImporter
             {
                 RESOURCE_IMPORTER;
 
             public:
-				AnimationClipImporter(void);
-                ~AnimationClipImporter(void);
+                AudioImporter(void);
+                ~AudioImporter(void);
 
             private:
                 ResourceData::Handle Import(ResourceImportContext &context) override;
             } Meta(
                 Enable,
-                DisplayName( "AnimationClipImporter" ),
+                DisplayName( "AudioImporter" ),
                 ResourceImporterConfig( 
-                    ExtensionList { "uanim" },
+                    ExtensionList { "uaudio" },
                     typeof( ursine::rp::PassThroughProcessor )
+                ),
+                ResourceSyncConfig(
+                    FileExclusionList {
+                        "testing"
+                    }
                 )
             );
         }

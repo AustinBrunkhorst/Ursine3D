@@ -74,6 +74,8 @@ namespace ursine
 
         T Pop(void);
 
+        void Clear(void);
+
         Reference GetValue(SizeType index);
         ConstReference GetValue(SizeType index) const;
 

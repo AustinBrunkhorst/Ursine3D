@@ -27,6 +27,7 @@ namespace ursine
         const auto kMetaKeyImporter = "importer";
         const auto kMetaKeyProcessor = "processor";
         const auto kMetaKeyProcessorOptions = "options";
+        const auto kMetaKeySyncExclude = "syncExclude";
 
         // cache file serialization is handled explicitly
         const auto kCacheKeyHasPreview = "hasPreview";
@@ -50,7 +51,14 @@ namespace ursine
         : EventDispatcher( this )
         , m_rootDirectory( new ResourceDirectoryNode( nullptr ) )
     {
-                
+        
+    }
+
+    rp::ResourcePipelineManager::~ResourcePipelineManager(void)
+    {
+        delete m_rootDirectory;
+
+        m_rootDirectory = nullptr;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -104,14 +112,26 @@ namespace ursine
 
     void rp::ResourcePipelineManager::InvalidateResourceMeta(ResourceItem::Handle resource)
     {
-        Json output = Json::object {
+        auto &metaData = resource->m_metaData;
+
+        auto output = Json::object {
             { kMetaKeyGUID, to_string( resource->m_guid ) },
-            { kMetaKeyImporter, resource->m_metaData.importer.GetName( ) },
-            { kMetaKeyProcessor, resource->m_metaData.processor.GetName( ) },
-            { kMetaKeyProcessorOptions, resource->m_metaData.processorOptions }
+            { kMetaKeyImporter, metaData.importer.GetName( ) },
+            { kMetaKeyProcessor, metaData.processor.GetName( ) },
+            { kMetaKeyProcessorOptions, metaData.processorOptions }
         };
 
-        auto metaJsonString = output.dump( true );
+        if (metaData.syncExcludeExpressions.Size( ) > 0)
+        {
+            Json::array syncExclude;
+
+            for (auto &expression : metaData.syncExcludeExpressions)
+                syncExclude.emplace_back( expression );
+
+            output[ kMetaKeySyncExclude ] = syncExclude;
+        }
+
+        auto metaJsonString = Json( output ).dump( true );
 
         URSINE_TODO( "Make recoverable." )
         UAssert( 
@@ -181,12 +201,23 @@ namespace ursine
 
                 if (is_directory( entry ))
                 {
-                    auto *subDirectory = 
-                        new ResourceDirectoryNode( directory, entry );
+                    if (isDirectoryResource( entry ))
+                    {
+                        auto resource = registerResource( entry );
 
-                    directory->m_subDirectories.push_back( subDirectory );
+                        // we skipped over this
+                        if (resource != nullptr)
+                            directory->m_resources.push_back( resource );
+                    } 
+                    else
+                    {
+                        auto *subDirectory = 
+                            new ResourceDirectoryNode( directory, entry );
 
-                    registerResources( subDirectory, entry );
+                        directory->m_subDirectories.push_back( subDirectory );
+
+                        registerResources( subDirectory, entry );
+                    }
                 }
                 else
                 {
@@ -208,7 +239,7 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(const fs::path &fileName)
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(const fs::path &fileName, bool isGenerated /*= false */)
     {
         auto metaFileName = fileName;
 
@@ -217,7 +248,7 @@ namespace ursine
 
         // this resource is already configured
         if (exists( metaFileName ))
-            return addExistingResource( fileName, metaFileName );
+            return addExistingResource( fileName, metaFileName, isGenerated );
 
         return addDefaultResource( fileName, metaFileName );
     }
@@ -226,7 +257,8 @@ namespace ursine
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::addExistingResource(
         const fs::path &fileName, 
-        const fs::path &metaFileName
+        const fs::path &metaFileName,
+        bool isGenerated /*= false */
     )
     {
         std::string metaDataError;
@@ -255,6 +287,16 @@ namespace ursine
 
         // load the guid from the string
         auto guid = GUIDStringGenerator( )( guidObject.string_value( ) );
+
+        if (isGenerated)
+        {
+            auto search = m_database.find( guid );
+
+            // if this item is generated and we've already registered it
+            // use it rather than creating a collision with GUIDs
+            if (search != m_database.end( ))
+                return search->second;
+        }
                 
         auto importerName = metaDataJson[ kMetaKeyImporter ].string_value( );
         auto importerType = meta::Type::GetFromName( importerName );
@@ -288,6 +330,18 @@ namespace ursine
         resource->m_metaData.processor = processorType;
         resource->m_metaData.processorOptions = metaDataJson[ kMetaKeyProcessorOptions ];
 
+        resource->m_metaData.syncExcludeExpressions.Clear( );
+
+        auto &syncData = metaDataJson[ kMetaKeySyncExclude ];
+
+        if (syncData.is_array( ))
+        {
+            for (auto &expression : syncData.array_items( ))
+            {
+                resource->m_metaData.syncExcludeExpressions.Push( expression.string_value( ) );
+            }
+        }
+
         loadResourceBuildCache( resource );
 
         return resource;
@@ -312,39 +366,7 @@ namespace ursine
         meta::Type importerType;
         meta::Type processorType;
 
-        auto &builtInHandlers = GetBuiltInResourceHandlers( );
-
-        auto handlerSearch = builtInHandlers.find( extension );
-
-        // this extension is a built in resource, use the explicitly defined
-        // importer and processor
-        if (handlerSearch != builtInHandlers.end( ))
-        {
-            std::tie( importerType, processorType ) = handlerSearch->second;
-        }
-        else
-        {
-            const ResourceImporterConfig *importerConfig = nullptr;
-
-            // find the first importer that declares this extension
-            for (auto &type : importerTypes)
-            {
-                auto &meta = type.GetMeta( );
-
-                auto *config = meta.GetProperty<ResourceImporterConfig>();
-
-                if (config && config->fileExtensions.Exists( extension ))
-                {
-                    importerType = type;
-                    importerConfig = config;
-
-                    break;
-                }
-            }
-
-            if (importerConfig)
-                processorType = importerConfig->defaultProcessor;
-        }
+        std::tie( importerType, processorType ) = detectResourceHandlers( fileName );
 
         URSINE_TODO( "Determine default behavior." );
         // importer does not exist, ignore it.
@@ -427,6 +449,58 @@ namespace ursine
         return resource;
     }
 
+    void rp::ResourcePipelineManager::insertResource(ResourceItem::Handle resource)
+    {
+        auto *currentNode = m_rootDirectory;
+
+        auto relativeDirectory = fs::MakeRelativePath( 
+            m_config.resourceDirectory,
+            resource->m_fileName.parent_path( )
+        );
+
+        auto currentPath = m_config.resourceDirectory;
+
+        // add all missing directory nodes if applicable
+        for (auto &directory : relativeDirectory)
+        {
+            currentPath /= directory;
+
+            const auto isDirectory = [&](const ResourceDirectoryNode *node)
+            {
+                return node->GetPath( ).stem( ) == directory;
+            };
+
+            auto &subDirs = currentNode->m_subDirectories;
+
+            auto search = std::find_if( subDirs.begin( ), subDirs.end( ), isDirectory );
+
+            // doesn't exist, construct it
+            if (search == subDirs.end( ))
+            {
+                auto *newNode = new ResourceDirectoryNode( currentNode, currentPath );
+
+                currentNode->m_subDirectories.emplace_back( newNode );
+
+                currentNode = newNode;
+            }
+            // already exists, just advance the node
+            else
+            {
+                currentNode = *search;
+            }
+        }
+
+        // currentNode will end up being the node where this resource belongs
+        currentNode->m_resources.emplace_back( resource );
+    }
+
+    bool rp::ResourcePipelineManager::isDirectoryResource(const fs::path &directory)
+    { 
+        auto handlers = detectResourceHandlers( directory );
+
+        return handlers.first.IsValid( ) && handlers.second.IsValid( );
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     void rp::ResourcePipelineManager::loadResourceBuildCache(ResourceItem::Handle resource)
@@ -503,7 +577,7 @@ namespace ursine
     {
         ResourceBuildArgs buildEvent;
 
-        std::vector<ResourceBuildContext> buildContexts;
+        std::list<ResourceBuildContext> buildContexts;
 
         // collect invalidated items
         for (auto &entry : m_database)
@@ -515,26 +589,31 @@ namespace ursine
         }
 
         // we don't know off hand what resources have previews, so just assume they
-        // take 20%
-        static const auto previewPercentage = 0.80f;
+        // take 30%
+        static const auto previewPercentage = 0.70f;
 
-        auto operationCount = buildContexts.size( );
         auto operationIndex = 0.0f;
 
+        auto it = buildContexts.begin( );
+
         // build pass
-        for (auto &buildContext : buildContexts)
+        while (it != buildContexts.end( ))
         {
             ++operationIndex;
 
+            auto &builtContext = *it;
+
             buildEvent.type = RP_BUILD_RESOURCE_START;
-            buildEvent.resource = buildContext.resource;
-            buildEvent.progress = previewPercentage * (operationIndex / operationCount);
+            buildEvent.resource = builtContext.resource;
+            buildEvent.progress = previewPercentage * (operationIndex / buildContexts.size( ));
 
             auto startTime = system_clock::now( );
 
             Dispatch( RP_BUILD_RESOURCE_START, &buildEvent );
 
-            buildResource( buildContext );
+            buildResource( builtContext );
+
+            addGeneratedResources( builtContext, buildContexts );
 
             auto duration = system_clock::now( ) - startTime;
 
@@ -545,6 +624,8 @@ namespace ursine
             );
 
             Dispatch( RP_BUILD_RESOURCE_COMPLETE, &buildEvent );
+
+            ++it;
         }
 
         operationIndex = 0.0f;
@@ -556,7 +637,7 @@ namespace ursine
 
             buildEvent.type = RP_BUILD_RESOURCE_PREVIEW_START;
             buildEvent.resource = previewContext.resource;
-            buildEvent.progress = previewPercentage + (1.0f - previewPercentage) * (operationIndex / operationCount);
+            buildEvent.progress = previewPercentage + (1.0f - previewPercentage) * (operationIndex / buildContexts.size( ));
 
             auto startTime = system_clock::now( );
 
@@ -588,7 +669,7 @@ namespace ursine
         auto &resource = context.resource;
         auto &meta = resource->m_metaData;
 
-        context.importer = ResourceImporter::Handle( 
+        context.importer = ResourceImporter::Handle(
             meta.importer.CreateDynamic( ).GetValue<ResourceImporter*>( ) 
         );
 
@@ -608,11 +689,56 @@ namespace ursine
         resource->m_buildCache.hasPreview = false;
         resource->m_buildCache.processedType = processData->GetType( );
 
-        URSINE_TODO( "Add generated resources to the cache here" );
-
         ResourceFormatWriter formatWriter( resource );
 
         formatWriter.Write( processData );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::addGeneratedResources(
+        ResourceBuildContext &context, 
+        std::list<ResourceBuildContext> &outGenerated
+    )
+    {
+        // collect generated resources in all passes
+        std::vector<fs::path> allGenerated;
+
+        auto &genImport = context.importContext.generatedResources;
+
+        allGenerated.insert( 
+            allGenerated.end( ), 
+            genImport.begin( ), 
+            genImport.end( ) 
+        );
+
+        auto &genProcess = context.processorContext.generatedResources;
+
+        allGenerated.insert( 
+            allGenerated.end( ), 
+            genProcess.begin( ), 
+            genProcess.end( ) 
+        );
+
+        for (auto &path : allGenerated)
+        {
+            auto resource = registerResource( path, true );
+
+            // don't care about this this resource
+            if (!resource)
+                continue;
+
+            resource->m_parent = context.resource;
+
+            insertResource( resource );
+
+            // add this generated resource to the input resource
+            context.resource->m_buildCache.generatedResources.emplace_back( 
+                resource->GetGUID( )
+            );
+
+            outGenerated.emplace_back( this, resource );
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -685,5 +811,51 @@ namespace ursine
         auto file = m_config.buildDirectory / to_string( guid );
 
         return file.replace_extension( kCacheFileExtension );
+    }
+
+    rp::TypePair rp::ResourcePipelineManager::detectResourceHandlers(const fs::path &path) const
+    {
+        auto &importerTypes = getImporterTypes( );
+        auto extension = path.extension( ).string( );
+
+        // remove period from extension
+        if (!extension.empty( ) && extension.front( ) == '.')
+            extension.erase( extension.begin( ) );
+
+        utils::MakeLowerCase( extension );
+
+        auto &builtInHandlers = GetBuiltInResourceHandlers( );
+
+        auto handlerSearch = builtInHandlers.find( extension );
+
+        // this extension is a built in resource, use the explicitly defined
+        // importer and processor
+        if (handlerSearch != builtInHandlers.end( ))
+            return handlerSearch->second;
+
+        TypePair handlers;
+
+        const ResourceImporterConfig *importerConfig = nullptr;
+
+        // find the first importer that declares this extension
+        for (auto &type : importerTypes)
+        {
+            auto &meta = type.GetMeta( );
+
+            auto *config = meta.GetProperty<ResourceImporterConfig>( );
+
+            if (config && config->fileExtensions.Exists( extension ))
+            {
+                handlers.first = type;
+                importerConfig = config;
+
+                break;
+            }
+        }
+
+        if (importerConfig)
+            handlers.second = importerConfig->defaultProcessor;
+
+        return handlers;
     }
 }

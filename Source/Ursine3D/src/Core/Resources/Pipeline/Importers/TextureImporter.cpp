@@ -34,7 +34,7 @@ namespace ursine
         
     }
 
-    resources::ResourceData::Handle rp::TextureImporter::Import(const ResourceImportContext &context)
+    resources::ResourceData::Handle rp::TextureImporter::Import(ResourceImportContext &context)
     {
         auto tempDirectory = getTempDirectory( context );
         auto sourceFile = context.resource->GetSourceFileName( );

@@ -11,7 +11,7 @@ namespace ursine
 
     rp::FBXImporter::~FBXImporter(void) { }
 
-    resources::ResourceData::Handle rp::FBXImporter::Import(const ResourceImportContext &context)
+    resources::ResourceData::Handle rp::FBXImporter::Import(ResourceImportContext &context)
     {
 		// .../BossRoom.fbx
 		auto fileName = context.resource->GetSourceFileName( );

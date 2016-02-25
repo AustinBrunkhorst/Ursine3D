@@ -18,6 +18,9 @@ namespace ursine
                 typedef std::vector<Handle> List;
 
                 ResourceItem(const GUID &guid);
+                ~ResourceItem(void);
+
+                Handle GetParent(void) const;
 
                 const GUID &GetGUID(void) const;
 
@@ -33,6 +36,8 @@ namespace ursine
 
             private:
                 friend class ResourcePipelineManager;
+
+                Handle m_parent;
 
                 fs::path m_fileName;
                 fs::path m_metaFileName;

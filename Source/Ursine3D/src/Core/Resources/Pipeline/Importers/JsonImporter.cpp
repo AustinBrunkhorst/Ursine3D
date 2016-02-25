@@ -7,7 +7,7 @@ namespace ursine
 {
     rp::JsonImporter::JsonImporter(void) { }
 
-    resources::ResourceData::Handle rp::JsonImporter::Import(const ResourceImportContext &context)
+    resources::ResourceData::Handle rp::JsonImporter::Import(ResourceImportContext &context)
     {
         std::string jsonError;
         std::string jsonText;
