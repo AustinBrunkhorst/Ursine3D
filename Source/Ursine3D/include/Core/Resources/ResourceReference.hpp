@@ -5,6 +5,10 @@ namespace ursine
         template<typename ResourceType>
         ResourceType *ResourceReference::Load(bool ignoreCache /*= false */) const
         {
+            // not valid, same behavior as unresolved asset
+            if (!IsValid( ))
+                return nullptr;
+
             static const auto expectedType = typeof( ResourceType );
 
             auto data = m_manager->LoadReference( *this, ignoreCache );

@@ -24,6 +24,7 @@ namespace ursine
         using namespace efsw;
         
         typedef std::vector<path> FileList;
+        typedef boost::hash<path> PathHasher;
 
         bool LoadAllText(const std::string &fileName, std::string &output);
         bool WriteAllText(const std::string &fileName, const std::string &text);

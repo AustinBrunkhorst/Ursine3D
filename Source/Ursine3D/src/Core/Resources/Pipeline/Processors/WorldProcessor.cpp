@@ -9,7 +9,7 @@ namespace ursine
 {
     rp::WorldProcessor::WorldProcessor(void) { }
 
-    resources::ResourceData::Handle rp::WorldProcessor::Process(resources::ResourceData::Handle input, const ResourceProcessorContext &context)
+    resources::ResourceData::Handle rp::WorldProcessor::Process(resources::ResourceData::Handle input, ResourceProcessorContext &context)
     {
         UAssert( input && input->GetType( ) == typeof( JsonData ),
             "Invalid input to world processor."

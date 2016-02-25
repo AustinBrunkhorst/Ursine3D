@@ -17,7 +17,7 @@ namespace ursine
                 ~AnimationClipImporter(void);
 
             private:
-                ResourceData::Handle Import(const ResourceImportContext &context) override;
+                ResourceData::Handle Import(ResourceImportContext &context) override;
             } Meta(
                 Enable,
                 DisplayName( "AnimationClipImporter" ),

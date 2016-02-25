@@ -255,6 +255,12 @@ namespace ursine
     }
 
     template<typename T>
+    void Array<T>::Clear(void)
+    {
+        m_impl.clear( );
+    }
+
+    template<typename T>
     typename Array<T>::Reference Array<T>::GetValue(SizeType index)
     {
         return m_impl[ index ];

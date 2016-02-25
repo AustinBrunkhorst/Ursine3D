@@ -60,6 +60,11 @@
                 this._pathToResourceEntry = { };
                 this._pathToDirectoryItem = { };
 
+                this._projectDirectory =
+                    this._createDirectoryCrumbs( this._resources.path )
+                        .slice( 0, -1 )
+                        .join( '\\' );
+
                 this._buildTree( treeRoot );
             },
             created: function() {
@@ -162,10 +167,7 @@
             },
 
             _buildTree: function(treeRoot) {
-                var viewRoot = this.$.folderTree;
-
-                for (var i = 0; i < treeRoot.subDirectories.length; ++i)
-                    this._buildDirectory( treeRoot.subDirectories[ i ], viewRoot );
+                this._buildDirectory( treeRoot, this.$.folderTree );
             },
             _buildDirectory: function(directory, parent) {
                 this._pathToResourceEntry[ directory.path ] = directory;
@@ -220,7 +222,7 @@
                 return this._createDirectoryCrumbs( filename ).slice( 0, -1 ).join( '\\' );
             },
             _getRelativeResourceDirectory: function(directory) {
-                var basePathLength = this._resources.path.length;
+                var basePathLength = this._projectDirectory.length;
 
                 return directory.substr( basePathLength + 1 );
             }

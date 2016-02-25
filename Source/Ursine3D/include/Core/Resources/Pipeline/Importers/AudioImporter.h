@@ -8,22 +8,27 @@ namespace ursine
     {
         namespace pipeline
         {
-            class FBXFileImporter : public ResourceImporter
+            class AudioImporter : public ResourceImporter
             {
                 RESOURCE_IMPORTER;
 
             public:
-                FBXFileImporter(void);
-                ~FBXFileImporter(void);
+                AudioImporter(void);
+                ~AudioImporter(void);
 
             private:
                 ResourceData::Handle Import(ResourceImportContext &context) override;
             } Meta(
                 Enable,
-                DisplayName( "FBXFileImporter" ),
+                DisplayName( "AudioImporter" ),
                 ResourceImporterConfig( 
-                    ExtensionList { "fbx" },
+                    ExtensionList { "uaudio" },
                     typeof( ursine::rp::PassThroughProcessor )
+                ),
+                ResourceSyncConfig(
+                    FileExclusionList {
+                        "testing"
+                    }
                 )
             );
         }

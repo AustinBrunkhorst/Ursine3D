@@ -7,6 +7,7 @@
 #include "TextureImporter.h"
 #include "FBXFileImporter.h"
 #include "AnimationClipImporter.h"
+#include "AudioImporter.h"
 #include "JsonImporter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,6 +30,9 @@
 
 #include "AnimationClipData.h"
 #include "AnimationClipReader.h"
+
+#include "AudioData.h"
+#include "AudioReader.h"
 
 #include "JsonReader.h"
 #include "JsonData.h"

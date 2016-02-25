@@ -173,6 +173,28 @@ $toolbar-height: 25px;
             display: none;
           }
         }
+
+        &[ext=".uaudio"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-playlist, 48px );
+
+          &:after {
+            display: none;
+          }
+        }
+
+        &[ext=".uaevent"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-volume-up, 54px );
+
+          &:after {
+            display: none;
+          }
+        }
       }
 
       .display-name {

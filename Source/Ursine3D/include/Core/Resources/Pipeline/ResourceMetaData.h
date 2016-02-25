@@ -16,6 +16,9 @@ namespace ursine
 
                 // Options used by the processor
                 Json processorOptions;
+
+                // Options used to dictate directory behavior
+                FileExclusionList syncExcludeExpressions;
             };
         }
     }

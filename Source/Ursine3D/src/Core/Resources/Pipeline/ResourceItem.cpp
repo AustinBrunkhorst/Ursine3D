@@ -2,12 +2,22 @@
 
 #include "ResourceItem.h"
 
+namespace
+{
+    int gTest = 0;
+}
+
 namespace ursine 
 {
     rp::ResourceItem::ResourceItem(const GUID &guid)
-        : m_guid( guid )
+        : m_parent( nullptr )
+        , m_guid( guid ) { }
+
+    rp::ResourceItem::~ResourceItem(void) { }
+
+    rp::ResourceItem::Handle rp::ResourceItem::GetParent(void) const
     {
-                
+        return m_parent;
     }
 
     const GUID &rp::ResourceItem::GetGUID(void) const
