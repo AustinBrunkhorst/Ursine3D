@@ -49,7 +49,6 @@ namespace ursine
                 SetRenderMode
             );
 
-
             EditorField(
                 Vec2 viewportPosition,
                 GetViewportPosition,

@@ -820,6 +820,12 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 	getNativeType: function(name) {
 		return this.m_typeDB.get(name);
 	}
+	,getEnumValue: function(enewm,key) {
+		var result = Lambda.find(enewm,function(entry) {
+			return entry.key == key;
+		});
+		if(result == null) return null; else return result.value;
+	}
 	,getComponentTypes: function() {
 		var keys = [];
 		var $it0 = this.m_db.keys();
@@ -1086,17 +1092,18 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		this.setType(e.value);
 	}
 	,initTypeToFields: function() {
-		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = database.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
-		var k = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
+		var k = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
 		var v = ["color","intensity","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
 		v;
-		var k1 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
+		var k1 = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
 		var v1 = ["color","intensity","radius","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k1] = v1;
 		v1;
-		var k2 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
+		var k2 = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
 		var v2 = ["color","intensity","spotlightAngles","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
 		v2;
@@ -1386,26 +1393,26 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		this.m_isEnum = true;
 		this.m_comboInput = new ComboInputControl();
 		this.m_enumValueOptions = new haxe_ds_StringMap();
-		var values = Reflect.fields(this.m_type.enumValue);
 		var _g1 = 0;
-		while(_g1 < values.length) {
-			var key = values[_g1];
+		var _g11 = this.m_type.enumValue;
+		while(_g1 < _g11.length) {
+			var entry = _g11[_g1];
 			++_g1;
 			var option;
 			var _this = window.document;
 			option = _this.createElement("option");
-			option.text = key;
-			option.value = Reflect.field(this.m_type.enumValue,key);
+			option.text = entry.key;
+			option.value = entry.value;
 			this.m_comboInput.appendChild(option);
 			{
-				this.m_enumValueOptions.set(key,option);
+				this.m_enumValueOptions.set(entry.key,option);
 				option;
 			}
 		}
 		this.m_isBitMaskEditor = Reflect.field(this.m_field.meta,"BitMaskEditor") != null;
 		if(this.m_isBitMaskEditor) {
 			this.m_comboInput.multiple = true;
-			this.m_comboInput.size = Std["int"](Math.min(10,values.length));
+			this.m_comboInput.size = Std["int"](Math.min(10,this.m_type.enumValue.length));
 		}
 		this.m_comboInput.addEventListener("change",function(e) {
 			_g.m_instance = _g.getEnumBitMaskValue();
@@ -1434,14 +1441,13 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		}
 	}
 	,loadEnumBitMaskValue: function(value) {
-		var values = Reflect.fields(this.m_type.enumValue);
 		var _g = 0;
-		while(_g < values.length) {
-			var key = values[_g];
+		var _g1 = this.m_type.enumValue;
+		while(_g < _g1.length) {
+			var entry = _g1[_g];
 			++_g;
-			var option = this.m_enumValueOptions.get(key);
-			var keyValue = Reflect.field(this.m_type.enumValue,key);
-			option.selected = (value & keyValue) == keyValue;
+			var option = this.m_enumValueOptions.get(entry.key);
+			option.selected = (value & entry.value) == entry.value;
 		}
 	}
 	,getEnumBitMaskValue: function() {
@@ -2072,6 +2078,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
 		item.text = e.name;
+		ToolTip.bind(item.textContentElement,e.name);
 	}
 	,onEntityParentChanged: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
@@ -2154,6 +2161,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			var childIndex = ElementUtils.childIndex(item);
 			entity.setSiblingIndex(childIndex);
 		});
+		ToolTip.bind(item.textContentElement,entity.getName());
 		item.textContentElement.addEventListener("dblclick",function(e4) {
 			_g.startRenamingEntity(item);
 		});
