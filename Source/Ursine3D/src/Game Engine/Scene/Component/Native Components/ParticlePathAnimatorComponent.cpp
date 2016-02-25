@@ -61,6 +61,12 @@ namespace ursine
         void ParticlePathAnimator::SetIsLooping(bool isLooping)
         {
             m_loopPath = isLooping;
+
+            auto *children = GetOwner()->GetChildren();
+            if (children->size() <= 3)
+                return;
+            updatePointArray( );
+            updateVectorArray( );
         }
 
         bool ParticlePathAnimator::GetDebugRender() const
@@ -125,8 +131,6 @@ namespace ursine
                 unsigned index = static_cast<unsigned>(lifeScale * m_stepCount);
 
                 // calculate where we are on the current interval
-                float scalar, intPart;
-                scalar = modf(lifeScale * 10.0f, &intPart);
                 Vec3 finalVec = m_vectorArray[ index ];
                 float finalScalar = timeScalar * (1.0f / cpuData[x].totalLifetime);
 
@@ -216,22 +220,7 @@ namespace ursine
 
                     Vec3 newPoint = getPoint(segment, newTime);
 
-                    if(segment == pointCount - 1)
-                    {
-                        // calculate this vector
-                        m_vectorArray[segment * curveStepCount + step] = newPoint - lastPoint;
-                    }
-                    else
-                    {
-                        m_vectorArray[segment * curveStepCount + step] = newPoint - lastPoint;
-                    }
-
-                    // if debug, render this as a segment
-                    if(m_renderCurve)
-                    {
-                        GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetColor(Color::Yellow);
-                        GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawLine( lastPoint, lastPoint + m_vectorArray[ segment * curveStepCount + step ]);
-                    }
+                    m_vectorArray[segment * curveStepCount + step] = newPoint - lastPoint;
 
                     // update last point
                     lastPoint = newPoint;
@@ -242,48 +231,64 @@ namespace ursine
 
         SVec3 ParticlePathAnimator::getPoint(unsigned index, float t)
         {
-            // very first, dupicate 0
-            if(index == 0)
+            if(!m_loopPath)
             {
-                return Curves::CatmullRomSpline(
-                    m_pointArray[ 0 ],
-                    m_pointArray[ 0 ],
-                    m_pointArray[ 1 ],
-                    m_pointArray[ 2 ],
-                    t
+                // very first, dupicate 0
+                if(index == 0)
+                {
+                    return Curves::CatmullRomSpline(
+                        m_pointArray[ 0 ],
+                        m_pointArray[ 0 ],
+                        m_pointArray[ 1 ],
+                        m_pointArray[ 2 ],
+                        t
                     );
-            }
-            // last node
-            else if(index == m_pointArray.size( ) - 1)
-            {
-                return Curves::CatmullRomSpline(
-                    m_pointArray[ index - 1 ],
-                    m_pointArray[ index ],
-                    m_pointArray[ index ],
-                    m_pointArray[ index ],
-                    t
+                }
+                // last node
+                else if(index == m_pointArray.size( ) - 1)
+                {
+                    return Curves::CatmullRomSpline(
+                        m_pointArray[ index - 1 ],
+                        m_pointArray[ index ],
+                        m_pointArray[ index ],
+                        m_pointArray[ index ],
+                        t
                     );
-            }
-            // second to last
-            else if(index >= m_pointArray.size( ) - 2)
-            {
-                return Curves::CatmullRomSpline(
-                    m_pointArray[ index - 1 ],
-                    m_pointArray[ index ],
-                    m_pointArray[ index + 1 ],
-                    m_pointArray[ index + 1 ],
-                    t
+                }
+                // second to last
+                else if(index >= m_pointArray.size( ) - 2)
+                {
+                    return Curves::CatmullRomSpline(
+                        m_pointArray[ index - 1 ],
+                        m_pointArray[ index ],
+                        m_pointArray[ index + 1 ],
+                        m_pointArray[ index + 1 ],
+                        t
                     );
-            }
+                }
             
-            // normal generation
-            return Curves::CatmullRomSpline(
-                m_pointArray[index - 1], 
-                m_pointArray[index], 
-                m_pointArray[index + 1], 
-                m_pointArray[index + 2], 
-                t
-            );
+                // normal generation
+                return Curves::CatmullRomSpline(
+                    m_pointArray[index - 1], 
+                    m_pointArray[index], 
+                    m_pointArray[index + 1], 
+                    m_pointArray[index + 2], 
+                    t
+                );
+            }
+            else
+            {
+                unsigned size = static_cast<unsigned>( m_pointArray.size( ) );
+
+                // normal generation
+                return Curves::CatmullRomSpline(
+                    m_pointArray[ (size + index - 1) % size ],
+                    m_pointArray[ (size + index) % size ],
+                    m_pointArray[ (size + index + 1) % size ],
+                    m_pointArray[ (size + index + 2) % size ],
+                    t
+                );
+            }
         }
     }
 }
