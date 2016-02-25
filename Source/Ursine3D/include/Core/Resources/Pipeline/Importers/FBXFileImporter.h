@@ -8,19 +8,19 @@ namespace ursine
     {
         namespace pipeline
         {
-            class FBXImporter : public ResourceImporter
+            class FBXFileImporter : public ResourceImporter
             {
                 RESOURCE_IMPORTER;
 
             public:
-                FBXImporter(void);
-                ~FBXImporter(void);
+                FBXFileImporter(void);
+                ~FBXFileImporter(void);
 
             private:
                 ResourceData::Handle Import(const ResourceImportContext &context) override;
             } Meta(
                 Enable,
-                DisplayName( "FBXImporter" ),
+                DisplayName( "FBXFileImporter" ),
                 ResourceImporterConfig( 
                     ExtensionList { "fbx" },
                     typeof( ursine::rp::PassThroughProcessor )

@@ -15,6 +15,7 @@
 
 #include "GFXAPIDefines.h"
 #include "ModelResource.h"
+#include "ModelInfo.h"
 #include "GUID.h"
 
 namespace ursine
@@ -33,6 +34,12 @@ namespace ursine
 
             // get texture handle
             GfxHND GetTexHandle(const char *name);
+
+			// create a model
+			GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
+
+			// destroy a model resource
+			void DestroyModel(GfxHND &handle);
 
             // create a texture of a given width/height, returns handle
             GfxHND CreateDynamicTexture(const unsigned width, const unsigned height);

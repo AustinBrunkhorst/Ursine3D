@@ -15,6 +15,8 @@ namespace ursine
             ModelData(graphics::ufmt_loader::ModelInfo *modelInfo);
             ~ModelData(void);
 
+			graphics::GfxHND GetModelHandle(void) const;
+
         private:
             graphics::GfxHND m_modelHandle;
 

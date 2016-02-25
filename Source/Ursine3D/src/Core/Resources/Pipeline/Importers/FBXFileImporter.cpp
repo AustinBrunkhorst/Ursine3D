@@ -1,20 +1,20 @@
 #include "UrsinePrecompiled.h"
 
-#include "FBXImporter.h"
+#include "FBXFileImporter.h"
 #include "ModelData.h"
 
 #include "CFBXLoader.h"
 
 namespace ursine
 {
-    rp::FBXImporter::FBXImporter(void) { }
+    rp::FBXFileImporter::FBXFileImporter(void) { }
 
-    rp::FBXImporter::~FBXImporter(void) { }
+    rp::FBXFileImporter::~FBXFileImporter(void) { }
 
-    resources::ResourceData::Handle rp::FBXImporter::Import(const ResourceImportContext &context)
+    resources::ResourceData::Handle rp::FBXFileImporter::Import(const ResourceImportContext &context)
     {
-		// .../BossRoom.fbx
-		auto fileName = context.resource->GetSourceFileName( );
+        // .../BossRoom.fbx
+        auto fileName = context.resource->GetSourceFileName( );
 
         graphics::CFBXLoader importer;
 
@@ -23,7 +23,7 @@ namespace ursine
             fileName.string( ).c_str( )
         );
 
-		// output the animation clipdata resources
+        // output the animation clipdata resources
 
         return std::make_shared<ModelData>( importer.GetModelInfo( ) );
     }

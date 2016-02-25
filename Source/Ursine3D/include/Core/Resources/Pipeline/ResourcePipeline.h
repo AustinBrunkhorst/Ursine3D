@@ -5,7 +5,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "TextureImporter.h"
-#include "FBXImporter.h"
+#include "FBXFileImporter.h"
 #include "AnimationClipImporter.h"
 #include "JsonImporter.h"
 
