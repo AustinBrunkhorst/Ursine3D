@@ -130,6 +130,9 @@ void EntityAnimator::SetPlayOnAwake(bool flag)
 
 void EntityAnimator::updateAnimation(int index)
 {
+    if (keyFrames.Size( ) == 0)
+        return;
+
     auto trans = GetOwner( )->GetTransform( );
 
     // set position
@@ -144,6 +147,9 @@ void EntityAnimator::updateAnimation(int index)
 
 void EntityAnimator::updateAnimation(int index1, int index2, float t)
 {
+    if (keyFrames.Size( ) == 0)
+        return;
+
     t = ease::GetFunction( keyFrames[ index2 ].ease )( t );
 
     auto trans = GetOwner( )->GetTransform( );
@@ -169,6 +175,9 @@ void EntityAnimator::updateAnimation(int index1, int index2, float t)
 
 void EntityAnimator::updateAnimation(int index1, int index2, int index3, int index4, float t)
 {
+    if (keyFrames.Size( ) == 0)
+        return;
+
     t = ease::GetFunction( keyFrames[ index3 ].ease )( t );
 
     auto trans = GetOwner( )->GetTransform( );
@@ -481,6 +490,7 @@ void EntityAnimator::stop(void)
 void EntityAnimator::drawPath(void)
 {
     auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem<DebugSystem>( );
+    auto parent = GetOwner( )->GetTransform( )->GetParent( );
 
     if (m_smoothPath)
     {
@@ -495,7 +505,7 @@ void EntityAnimator::drawPath(void)
             auto node1 = getPosition( i == max ? 0 : i + 1 );
             
             auto before = getPosition( i == 0 ? max : i - 1 );
-            auto after = getPosition( i == max ? 1 : i + 2 );
+            auto after = getPosition( i == max ? 1 : (i + 1 == max ? 0 : i + 2) );
 
             static const int precision = 20;
             float t = 0.0f;
@@ -508,6 +518,12 @@ void EntityAnimator::drawPath(void)
                 t += step;
 
                 auto p1 = Curves::CatmullRomSpline( before, node0, node1, after, t );
+
+                if (parent)
+                {
+                    p0 = parent->ToWorld( p0 );
+                    p1 = parent->ToWorld( p1 );
+                }
 
                 drawer->DrawLine( p0, p1, Color::Yellow, 10.0f );
             }

@@ -35,9 +35,9 @@
 "z": 1
 }, 
 "translation": {
-"x": -299.43319702148438, 
-"y": 172.18405151367188, 
-"z": 248.71580505371094
+"x": -335.718994140625, 
+"y": 188.76518249511719, 
+"z": 278.8555908203125
 }
 }
 }, 
@@ -48,12 +48,12 @@
 "CombatBowl1Resources": {
 ".uid": 11, 
 "archetypesToLoad": [
-"CombatBowl1/CombatBowl1Collision", "CombatBowl1/CombatBowl1HallwayFX", "CombatBowl1/CombatBowl1Level", "CombatBowl1/CombatBowl1Lights", "CombatBowl1/CombatBowlBossFX", "CombatBowl1/CombatBowl1SpawnGroup"
+"CombatBowl1/CombatBowl1Collision", "CombatBowl1/CombatBowl1HallwayFX", "CombatBowl1/CombatBowl1Level", "CombatBowl1/CombatBowl1Lights", "CombatBowl1/CombatBowlBossFX", "CombatBowl1/CombatBowl1SpawnGroup", "CombatBowl1/BossDoor"
 ]
 }, 
 "LevelSegmentManager": {
 ".uid": 12, 
-"currentSegment": 4, 
+"currentSegment": 11, 
 "enableDebugOutput": false
 }, 
 "Transform": {

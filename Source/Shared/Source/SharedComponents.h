@@ -100,6 +100,8 @@
 
 #include "EntityAnimation/EntityAnimatorComponent.h"
 #include "EntityAnimation/EntityAnimatorGroupComponent.h"
+#include "EntityAnimation/EntityAnimatorFocusPointComponent.h"
+#include "EntityAnimation/EntityAnimatorFocusModifierComponent.h"
 
 /////////////////////////////////
 //       Spawning System       //

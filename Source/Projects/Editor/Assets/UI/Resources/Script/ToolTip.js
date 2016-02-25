@@ -60,6 +60,8 @@ ToolTipItem.prototype.unbind = function() {
     this.element.removeEventListener( 'mouseover', this._enterHandler, true );
     this.element.removeEventListener( 'mouseout', this._leaveHandler, true );
     this.element.removeEventListener( 'mousemove', this._mouseMoveHandler, true );
+
+    this._close( );
 };
 
 ToolTipItem.prototype._open = function() {

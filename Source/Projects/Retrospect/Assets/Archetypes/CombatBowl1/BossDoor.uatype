@@ -1,0 +1,727 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 14, 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 29, 
+"position": {
+"x": 1, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 15, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 0.515472412109375, 
+"g": 0.515472412109375, 
+"r": 0.51953125
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": 0, 
+"modelName": "BossDoor", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 13, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder7"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 17, 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 29, 
+"position": {
+"x": -1.931891918182373, 
+"y": -9.223310826200759e-08, 
+"z": 1.5746772289276123
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.95643842220306396, 
+"x": 6.0024643033784741e-09, 
+"y": 0.29193440079689026, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 18, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": 1, 
+"modelName": "BossDoor", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 16, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder16"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 20, 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 29, 
+"position": {
+"x": 2.7000000476837158, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 21, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 1, 
+"materialName": "Blank", 
+"meshIndex": 2, 
+"modelName": "BossDoor", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 19, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder17"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 23, 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 29, 
+"position": {
+"x": -1.9881448745727539, 
+"y": -7.45450847716711e-08, 
+"z": -1.3383777141571045
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.95643830299377441, 
+"x": 0, 
+"y": -0.2919345498085022, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 24, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": 3, 
+"modelName": "BossDoor", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 22, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder18"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 26, 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 29, 
+"position": {
+"x": -2.5, 
+"y": 2.9802373546772287e-07, 
+"z": -5.9137807498221839e-16
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 27, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 1, 
+"materialName": "Blank", 
+"meshIndex": 4, 
+"modelName": "BossDoor", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 25, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder21"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 29, 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 29, 
+"position": {
+"x": -1.9949393272399902, 
+"y": -1.2510963642853312e-07, 
+"z": -2.6764922142028809
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.893760085105896, 
+"x": 0, 
+"y": -0.44854536652565002, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 30, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": 8, 
+"modelName": "BossDoor", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 28, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder22"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 32, 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 29, 
+"position": {
+"x": -2.0935382843017578, 
+"y": -7.0902098059377749e-07, 
+"z": 2.4413249492645264
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.89375948905944824, 
+"x": -2.5169747175368684e-08, 
+"y": 0.44854563474655151, 
+"z": 5.9604644775390625e-08
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 33, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": 9, 
+"modelName": "BossDoor", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 31, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder23"
+}
+], 
+"components": {
+"EntityAnimatorGroup": {
+".uid": 11
+}, 
+"FBXSceneRootNode": {
+".uid": 12, 
+"sceneName": "BossDoor"
+}, 
+"Transform": {
+".uid": 10, 
+"rotation": {
+"w": 0.70708763599395752, 
+"x": 0.0054895747452974319, 
+"y": -0.0080319792032241821, 
+"z": -0.70705926418304443
+}, 
+"scale": {
+"x": 15.307925224304199, 
+"y": 15.307925224304199, 
+"z": 15.307925224304199
+}, 
+"translation": {
+"x": 317.77383422851563, 
+"y": 14.232326507568359, 
+"z": 0.17419727146625519
+}
+}
+}, 
+"v": "0.2submission"
+}
