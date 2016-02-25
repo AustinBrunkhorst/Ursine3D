@@ -34,8 +34,8 @@ namespace ursine
             AnimationBuilder::InitializeStaticData();
             std::string fileText = filePath;
 
-            InitializeJdl(fileText);
-            InitializeModel(fileText);
+            //InitializeJdl(fileText);
+            //InitializeModel(fileText);
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
@@ -733,13 +733,13 @@ namespace ursine
 
         void ModelManager::InitializeModel(ufmt_loader::ModelInfo* modelInfo, ModelResource* modelresource)
         {
-            std::vector<AnimationVertex> buffer;
+            //std::vector<AnimationVertex> buffer;
 
             ///////////////////////////////////////////////////////////////
             // CREATE VERTEX BUFFER /////////////////////////////////////////
-            D3D11_BUFFER_DESC vertexBufferDesc;
-            D3D11_SUBRESOURCE_DATA vertexData;
-            HRESULT result;
+            //D3D11_BUFFER_DESC vertexBufferDesc;
+            //D3D11_SUBRESOURCE_DATA vertexData;
+            //HRESULT result;
 
             // for each mesh
             for (uint mesh_idx = 0; mesh_idx < modelInfo->mmeshCount; ++mesh_idx)
@@ -759,115 +759,113 @@ namespace ursine
                 newMesh->SetVertexCount(vertCount);
                 auto &meshVertArray = newMesh->GetRawVertices();
 
-                //Set up the description of the static vertex buffer.
-                vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
-                vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-                vertexBufferDesc.CPUAccessFlags = 0;
-                vertexBufferDesc.MiscFlags = 0;
-                vertexBufferDesc.StructureByteStride = 0;
-
-                //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
-                //can do this with skincount
-                buffer.resize(vertCount);
-                for (size_t i = 0; i < vertCount; ++i)
-                {
-                    // update raw verts for physics
-                    meshVertArray[i] = Vec3(
-                        currMesh->meshVtxInfos[i].pos.x,
-                        currMesh->meshVtxInfos[i].pos.y,
-                        currMesh->meshVtxInfos[i].pos.z
-                        );
-
-                    // transform these points from their global model space into their local space
-                    SVec4 tempPosition = SVec4(currMesh->meshVtxInfos[i].pos.x,
-                        currMesh->meshVtxInfos[i].pos.y,
-                        currMesh->meshVtxInfos[i].pos.z,
-                        1.0f
-                        );
-
-                    // Set data
-                    buffer[i].vPos = DirectX::XMFLOAT3(
-                        tempPosition.ToD3D().x,
-                        tempPosition.ToD3D().y,
-                        tempPosition.ToD3D().z
-                        );
-
-                    buffer[i].vNor = DirectX::XMFLOAT3(
-                        currMesh->meshVtxInfos[i].normal.x,
-                        currMesh->meshVtxInfos[i].normal.y,
-                        currMesh->meshVtxInfos[i].normal.z
-                        );
-                    buffer[i].vUv = DirectX::XMFLOAT2(
-                        currMesh->meshVtxInfos[i].uv.x,
-                        currMesh->meshVtxInfos[i].uv.y
-                        );
-
-                    if (modelInfo->mboneCount > 0)
-                    {
-                        buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
-                        buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
-                        buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
-                        buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
-                        buffer[i].vBIdx[0] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.x);
-                        buffer[i].vBIdx[1] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.y);
-                        buffer[i].vBIdx[2] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.z);
-                        buffer[i].vBIdx[3] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.w);
-                    }
-                    else
-                    {
-                        buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-                        buffer[i].vBIdx[0] = static_cast<BYTE>(0);
-                        buffer[i].vBIdx[1] = static_cast<BYTE>(0);
-                        buffer[i].vBIdx[2] = static_cast<BYTE>(0);
-                        buffer[i].vBIdx[3] = static_cast<BYTE>(0);
-                    }
-                }
-
-                //Give the subresource structure a pointer to the vertex data.
-                vertexData.pSysMem = &buffer[0];
-                vertexData.SysMemPitch = 0;
-                vertexData.SysMemSlicePitch = 0;
-
-                //Now create the vertex buffer.
-                if(m_device)
-                    result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
-                UAssert(result == S_OK, "Failed to make vertex buffer!");
+                ////Set up the description of the static vertex buffer.
+                //vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                //vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * vertCount;
+                //vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+                //vertexBufferDesc.CPUAccessFlags = 0;
+                //vertexBufferDesc.MiscFlags = 0;
+                //vertexBufferDesc.StructureByteStride = 0;
+                //
+                ////Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
+                ////can do this with skincount
+                //buffer.resize(vertCount);
+                //for (size_t i = 0; i < vertCount; ++i)
+                //{
+                //    // update raw verts for physics
+                //    meshVertArray[i] = Vec3(
+                //        currMesh->meshVtxInfos[i].pos.x,
+                //        currMesh->meshVtxInfos[i].pos.y,
+                //        currMesh->meshVtxInfos[i].pos.z
+                //        );
+                //
+                //    // transform these points from their global model space into their local space
+                //    SVec4 tempPosition = SVec4(currMesh->meshVtxInfos[i].pos.x,
+                //        currMesh->meshVtxInfos[i].pos.y,
+                //        currMesh->meshVtxInfos[i].pos.z,
+                //        1.0f
+                //        );
+                //
+                //    // Set data
+                //    buffer[i].vPos = DirectX::XMFLOAT3(
+                //        tempPosition.ToD3D().x,
+                //        tempPosition.ToD3D().y,
+                //        tempPosition.ToD3D().z
+                //        );
+                //
+                //    buffer[i].vNor = DirectX::XMFLOAT3(
+                //        currMesh->meshVtxInfos[i].normal.x,
+                //        currMesh->meshVtxInfos[i].normal.y,
+                //        currMesh->meshVtxInfos[i].normal.z
+                //        );
+                //    buffer[i].vUv = DirectX::XMFLOAT2(
+                //        currMesh->meshVtxInfos[i].uv.x,
+                //        currMesh->meshVtxInfos[i].uv.y
+                //        );
+                //
+                //    if (modelInfo->mboneCount > 0)
+                //    {
+                //        buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
+                //        buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
+                //        buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
+                //        buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
+                //        buffer[i].vBIdx[0] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.x);
+                //        buffer[i].vBIdx[1] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.y);
+                //        buffer[i].vBIdx[2] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.z);
+                //        buffer[i].vBIdx[3] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.w);
+                //    }
+                //    else
+                //    {
+                //        buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
+                //        buffer[i].vBIdx[0] = static_cast<BYTE>(0);
+                //        buffer[i].vBIdx[1] = static_cast<BYTE>(0);
+                //        buffer[i].vBIdx[2] = static_cast<BYTE>(0);
+                //        buffer[i].vBIdx[3] = static_cast<BYTE>(0);
+                //    }
+                //}
+                //
+                ////Give the subresource structure a pointer to the vertex data.
+                //vertexData.pSysMem = &buffer[0];
+                //vertexData.SysMemPitch = 0;
+                //vertexData.SysMemSlicePitch = 0;
+                //
+                ////Now create the vertex buffer.
+                //result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer());
+                //UAssert(result == S_OK, "Failed to make vertex buffer!");
                 newMesh->SetVertexCount(vertCount);
 
                 /////////////////////////////////////////////////////////////////
                 // CREATE INDEX BUFFER //////////////////////////////////////////
                 newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
 
-                auto &indexArray = newMesh->GetRawIndices();
-                for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
-                    indexArray[x] = currMesh->meshVtxIndices[x];
-
-                D3D11_BUFFER_DESC indexBufferDesc;
-                D3D11_SUBRESOURCE_DATA indexData;
-
-                //Set up the description of the static index buffer.
-                indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
-                indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-                indexBufferDesc.CPUAccessFlags = 0;
-                indexBufferDesc.MiscFlags = 0;
-                indexBufferDesc.StructureByteStride = 0;
-
-                //Give the subresource structure a pointer to the index data.
-                indexData.pSysMem = indexArray.data();
-                indexData.SysMemPitch = 0;
-                indexData.SysMemSlicePitch = 0;
-
-                //Create the index buffer.
-                if (m_device)
-                    result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
-                UAssert(result == S_OK, "Failed to make index buffer!");
+                //auto &indexArray = newMesh->GetRawIndices();
+                //for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
+                //    indexArray[x] = currMesh->meshVtxIndices[x];
+                //
+                //D3D11_BUFFER_DESC indexBufferDesc;
+                //D3D11_SUBRESOURCE_DATA indexData;
+                //
+                ////Set up the description of the static index buffer.
+                //indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                //indexBufferDesc.ByteWidth = sizeof(unsigned) * newMesh->GetIndexCount();
+                //indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+                //indexBufferDesc.CPUAccessFlags = 0;
+                //indexBufferDesc.MiscFlags = 0;
+                //indexBufferDesc.StructureByteStride = 0;
+                //
+                ////Give the subresource structure a pointer to the index data.
+                //indexData.pSysMem = indexArray.data();
+                //indexData.SysMemPitch = 0;
+                //indexData.SysMemSlicePitch = 0;
+                //
+                ////Create the index buffer.
+                //result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
+                //UAssert(result == S_OK, "Failed to make index buffer!");
                 modelresource->AddMesh(newMesh);
             }
 
-            //m_s2uTable[modelInfo->name] = m_modelCount;
-            //m_u2mTable[m_modelCount] = &modelresource;
+            //m_s2uTable[name] = m_modelCount;
+            //m_u2mTable[m_modelCount++] = m_modelArray[name];
 
             for (auto &x : modelInfo->mMeshLvVec)
                 modelresource->AddMesh2Tree(x);
@@ -886,18 +884,18 @@ namespace ursine
             
             internalID = m_modelCache.size();
             m_modelCache.push_back(new ModelResource());
+
+            ///////////////////////////////////////////////////////////
+            //// GENERATING BONE DATA /////////////////////////////////
+            //unsigned rigIndex = 0;
+            //if (modelInfo->mboneCount > 0)
+            //    rigIndex = AnimationBuilder::LoadBoneData(*modelInfo, modelInfo->name);
             
             // load it up into CPU memory
             InitializeModel(
                 modelInfo,
                 m_modelCache[internalID]
-                );
-            
-            /////////////////////////////////////////////////////////
-            // GENERATING BONE DATA /////////////////////////////////
-            unsigned rigIndex = 0;
-            if (modelInfo->mboneCount > 0)
-                rigIndex = AnimationBuilder::LoadBoneData(*modelInfo, modelInfo->name);
+                );            
             
             // initialize handle
             id->ID_ = SANITY_RESOURCE;

@@ -80,7 +80,7 @@ namespace ursine
             }
         }
 
-        bool CFBXLoader::LoadFBX(const std::string& filename)
+        bool CFBXLoader::LoadFBX(const std::string &filename)
         {
             InitializeSdkObjects(mSdkManager, mScene);
             if (!mSdkManager)
@@ -292,6 +292,7 @@ namespace ursine
                 for (i = 0; i < mModelInfo->mmeshlvlCount; ++i)
                 {
                     ufmt_loader::MeshInLvl newMLvl;
+                    lstrcpy(newMLvl.meshName, mModel->mMeshData[i]->name.c_str());
                     newMLvl.meshTM = mModel->mMeshData[i]->meshTM;
                     newMLvl.mParentIndex = mModel->mMeshData[i]->parentIndex;
                     mModelInfo->mMeshLvVec.push_back(newMLvl);
@@ -301,6 +302,7 @@ namespace ursine
                 for (i = 0; i < mModelInfo->mriglvlCount; ++i)
                 {
                     ufmt_loader::RigInLvl newRLvl;
+                    lstrcpy(newRLvl.boneName, mModelInfo->mBoneInfoVec[i].name.c_str());
                     newRLvl.mParentIndex = mModelInfo->mBoneInfoVec[i].mParentIndex;
                     mModelInfo->mRigLvVec.push_back(newRLvl);
                 }
@@ -327,39 +329,45 @@ namespace ursine
                         // counts
                         newAD.clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
 
+                        /////////////////////////////////////////////////////
+                        // Push back dummy value should includes specific time, not default
+                        // Should build keyframe vector which can cover the beginning and the end
+                        // and then should cover all keyframe values with reasonable keyframe.
+                        /////////////////////////////////////////////////////
+                        URSINE_TODO("Jun! You should fix this!!!!");
                         j = 0;
-                        for (auto iter2 = mModel->mAnimationData[i]->animations.begin();
-                        iter2 != mModel->mAnimationData[i]->animations.end(); ++iter2, ++j)
+                        for (auto iter : mModel->mAnimationData[i]->animations)
                         {
                             // storing animation clip's name
-                            newAD.clipname = iter2->first.c_str();
+                            newAD.clipname = iter.first.c_str();
 
                             // set keycount / keyframes
-                            newAD.boneCount = static_cast<unsigned int>(iter2->second.boneAnim.size());
+                            newAD.boneCount = static_cast<unsigned int>(iter.second.boneAnim.size());
 
                             // Unifying keyframes of each animation
                             unsigned int maxkfCount = 0;
-                            for (k = 0; k < iter2->second.boneAnim.size(); ++k)
+                            for (k = 0; k < iter.second.boneAnim.size(); ++k)
                             {
-                                unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+                                unsigned int kfCount = static_cast<unsigned int>(iter.second.boneAnim[k].keyFrames.size());
                                 if (maxkfCount < kfCount)
                                     maxkfCount = kfCount;
                             }
 
-                            for (k = 0; k < iter2->second.boneAnim.size(); ++k)
+                            for (k = 0; k < iter.second.boneAnim.size(); ++k)
                             {
                                 ufmt_loader::KFrame newKF;
-                                unsigned int kfCount = static_cast<unsigned int>(iter2->second.boneAnim[k].keyFrames.size());
+                                unsigned int kfCount = static_cast<unsigned int>(iter.second.boneAnim[k].keyFrames.size());
                                 newKIs.push_back(maxkfCount);
                                 for (l = 0; l < maxkfCount; ++l)
                                 {
                                     if (l < maxkfCount && l < kfCount)
-                                        newKF.push_back(iter2->second.boneAnim[k].keyFrames[l]);
+                                        newKF.push_back(iter.second.boneAnim[k].keyFrames[l]);
                                     else if (l >= kfCount)
-                                        newKF.push_back(iter2->second.boneAnim[k].keyFrames[kfCount - 1]);
+                                        newKF.push_back(iter.second.boneAnim[k].keyFrames[kfCount - 1]);
                                 }
                                 newKFs.push_back(newKF);
                             }
+                            ++j;
                         }
                         newAD.keyIndices.push_back(newKIs);
                         newAD.keyframes.push_back(newKFs);
@@ -369,7 +377,6 @@ namespace ursine
                     }
                 }
             }
-
             return true;
         }
 
@@ -516,9 +523,11 @@ namespace ursine
             if (mesh)
             {
                 FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
-                newMesh->name = mesh->GetName();
+                newMesh->name = pNode->GetName();
                 newMesh->mLayout = FBX_DATA::STATIC;
                 newMesh->parentIndex = inParentIndex;
+                if ("" == newMesh->name)
+                    newMesh->name = mModel->name;
 
                 FbxAMatrix  meshTransform;
                 int nodeIdx = 0;
@@ -667,6 +676,7 @@ namespace ursine
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
+                        UAssert(lPolygonSize == 3, "This model is not triangulated");
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
                             int lNormalIndex = 0;
@@ -727,6 +737,7 @@ namespace ursine
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); lPolygonIndex++)
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
+                        UAssert(lPolygonSize == 3, "This model is not triangulated");
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
                             int lTangentIndex = 0;
@@ -811,6 +822,7 @@ namespace ursine
                     {
                         // build the max index array that we need to pass into MakePoly
                         const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
+                        UAssert(lPolySize == 3, "This model is not triangulated");
                         for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
                         {
                             if (lPolyIndexCounter < lIndexCount)
@@ -1128,6 +1140,86 @@ namespace ursine
             return true;
         }
 
+        void CFBXLoader::SetPivotStateRecursive(FbxNode* pNode)
+        {
+            // From FbxNode.h
+            FbxVector4 lZero(0, 0, 0);
+            FbxVector4 lOne(1, 1, 1);
+            pNode->SetPivotState(FbxNode::eSourcePivot, FbxNode::ePivotActive);
+            pNode->SetPivotState(FbxNode::eDestinationPivot, FbxNode::ePivotActive);
+
+            EFbxRotationOrder lRotationOrder;
+            pNode->GetRotationOrder(FbxNode::eSourcePivot, lRotationOrder);
+            pNode->SetRotationOrder(FbxNode::eDestinationPivot, lRotationOrder);
+
+            //For cameras and lights (without targets) let's compensate the postrotation.
+            if (pNode->GetCamera() || pNode->GetLight())
+            {
+                if (!pNode->GetTarget())
+                {
+                    FbxVector4 lRV(90, 0, 0);
+                    if (pNode->GetCamera())
+                        lRV.Set(0, 90, 0);
+
+                    FbxVector4 prV = pNode->GetPostRotation(FbxNode::eSourcePivot);
+                    FbxAMatrix lSourceR;
+                    FbxAMatrix lR(lZero, lRV, lOne);
+                    FbxVector4 res = prV;
+
+                    // Rotation order don't affect post rotation, so just use the default XYZ order
+                    FbxRotationOrder rOrder;
+                    rOrder.V2M(lSourceR, res);
+
+                    lR = lSourceR * lR;
+                    rOrder.M2V(res, lR);
+                    prV = res;
+                    pNode->SetPostRotation(FbxNode::eSourcePivot, prV);
+                    pNode->SetRotationActive(true);
+                }
+
+                // Point light do not need to be adjusted (since they radiate in all the directions).
+                if (pNode->GetLight() && pNode->GetLight()->LightType.Get() == FbxLight::ePoint)
+                {
+                    pNode->SetPostRotation(FbxNode::eSourcePivot, FbxVector4(0, 0, 0, 0));
+                }
+            }
+            // apply Pre rotations only on bones / end of chains
+            if (pNode->GetNodeAttribute() && pNode->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton
+                || (pNode->GetMarker() && pNode->GetMarker()->GetType() == FbxMarker::eEffectorFK)
+                || (pNode->GetMarker() && pNode->GetMarker()->GetType() == FbxMarker::eEffectorIK))
+            {
+                if (pNode->GetRotationActive())
+                {
+                    pNode->SetPreRotation(FbxNode::eDestinationPivot, pNode->GetPreRotation(FbxNode::eSourcePivot));
+                }
+
+                // No pivots on bones
+                pNode->SetRotationPivot(FbxNode::eDestinationPivot, lZero);
+                pNode->SetScalingPivot(FbxNode::eDestinationPivot, lZero);
+                pNode->SetRotationOffset(FbxNode::eDestinationPivot, lZero);
+                pNode->SetScalingOffset(FbxNode::eDestinationPivot, lZero);
+            }
+            else
+            {
+                // any other type: no pre-rotation support but...
+                pNode->SetPreRotation(FbxNode::eDestinationPivot, lZero);
+
+                // support for rotation and scaling pivots.
+                pNode->SetRotationPivot(FbxNode::eDestinationPivot, pNode->GetRotationPivot(FbxNode::eSourcePivot));
+                pNode->SetScalingPivot(FbxNode::eDestinationPivot, pNode->GetScalingPivot(FbxNode::eSourcePivot));
+                // Rotation and scaling offset are supported
+                pNode->SetRotationOffset(FbxNode::eDestinationPivot, pNode->GetRotationOffset(FbxNode::eSourcePivot));
+                pNode->SetScalingOffset(FbxNode::eDestinationPivot, pNode->GetScalingOffset(FbxNode::eSourcePivot));
+                //
+                // If we don't "support" scaling pivots, we can simply do:
+                // pNode->SetRotationPivot(FbxNode::eDestinationPivot, lZero);
+                // pNode->SetScalingPivot(FbxNode::eDestinationPivot, lZero);
+            }
+
+            for (int i = 0; i < pNode->GetChildCount(); ++i)
+                SetPivotStateRecursive(pNode->GetChild(i));
+        }
+
         void CFBXLoader::ProcessAnimation()
         {
             int count = mScene->GetSrcObjectCount<FbxAnimStack>();
@@ -1138,11 +1230,18 @@ namespace ursine
                 FbxTakeInfo* takeInfo = mScene->GetTakeInfo(name);
                 FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
                 FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
-                ProcessAnimation(lAnimStack, start, mScene->GetRootNode());
+
+                //mScene->GetRootNode()->ResetPivotSet(FbxNode::eDestinationPivot);
+                //SetPivotStateRecursive(mScene->GetRootNode());
+                //mScene->GetRootNode()->ConvertPivotAnimationRecursive(lAnimStack, FbxNode::eDestinationPivot, 30.0f);
+
+                ProcessAnimation(lAnimStack, start, end, mScene->GetRootNode());
+
+                //mScene->GetRootNode()->ResetPivotSet(FbxNode::eSourcePivot);
             }
         }
 
-        void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxNode* pNode)
+        void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxTime end, FbxNode* pNode)
         {
             mAnimationFlag.second = true;
             std::set< FbxTime > keyTimes;
@@ -1161,11 +1260,11 @@ namespace ursine
             for (int i = 0; i < nbAnimLayers; ++i)
             {
                 FbxAnimLayer* lAnimLayer = animStack->GetMember<FbxAnimLayer>(i);
-                ProcessAnimation(lAnimLayer, start, pNode, animClip);
+                ProcessAnimation(lAnimLayer, start, end, pNode, animClip);
             }
         }
 
-        void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
+        void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxTime end, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
         {
             FbxString lOutputString;
             FbxNodeAttribute* attr = pNode->GetNodeAttribute();
@@ -1176,25 +1275,25 @@ namespace ursine
                 time.insert(start);
 
                 curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
                 curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
                 curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
 
                 curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
                 curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
                 curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
 
                 curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
                 curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
                 curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-                ProcessAnimation(curve, time);
+                ProcessAnimation(curve, time, end);
 
                 if (boneindex < animClip.boneAnim.size())
                     animClip.boneAnim[boneindex].keyFrames.resize(time.size());
@@ -1225,10 +1324,10 @@ namespace ursine
 
             //go through all the children nodes and try to read there curves
             for (int j = 0; j < pNode->GetChildCount(); ++j)
-                ProcessAnimation(animLayer, start, pNode->GetChild(j), animClip);
+                ProcessAnimation(animLayer, start, end, pNode->GetChild(j), animClip);
         }
 
-        void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time)
+        void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime end)
         {
             if (!pCurve)
                 return;
@@ -1239,7 +1338,8 @@ namespace ursine
             for (int i = 0; i < lKeyCount; ++i)
             {
                 FbxAnimCurveKey key = pCurve->KeyGet(i);
-                time.insert(key.GetTime());
+                if (key.GetTime() <= end)
+                    time.insert(key.GetTime());
             }
         }
 
@@ -1250,9 +1350,11 @@ namespace ursine
             if (mesh)
             {
                 FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
-                newMesh->name = mesh->GetName();
+                newMesh->name = pNode->GetName();
                 newMesh->mLayout = FBX_DATA::SKINNED;
                 newMesh->parentIndex = inParentIndex;
+                if ("" == newMesh->name)
+                    newMesh->mLayout = FBX_DATA::SKINNED;
 
                 int nodeIdx = 0;
                 FbxPose* targetFP = nullptr;

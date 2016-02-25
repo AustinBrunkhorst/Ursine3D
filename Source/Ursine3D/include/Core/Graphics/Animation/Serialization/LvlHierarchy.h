@@ -11,29 +11,32 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 #pragma once
+#include "ISerialize.h"
 #include "SMat4.h"
 
 namespace ursine
 {
-	namespace graphics
-	{
-		namespace ufmt_loader
-		{
-			// This structure contains hierarchy among meshes. This will makes easy to find it.
-			struct MeshInLvl
-			{
-				SMat4 meshTM;
-				int mParentIndex;
+    namespace graphics
+    {
+        namespace ufmt_loader
+        {
+            // This structure contains hierarchy among meshes. This will makes easy to find it.
+            struct MeshInLvl
+            {
+                char meshName[MAXTEXTLEN];
+                SMat4 meshTM;
+                int mParentIndex;
 
-				MeshInLvl() : mParentIndex(-1) {}
-			};
+                MeshInLvl() : meshName(""), mParentIndex(-1) {}
+            };
 
-			// This structure contains hierarchy among bones.
-			struct RigInLvl
-			{
-				int mParentIndex;
-				RigInLvl() : mParentIndex(-1) {}
-			};
-		}
-	}
+            // This structure contains hierarchy among bones.
+            struct RigInLvl
+            {
+                char boneName[MAXTEXTLEN];
+                int mParentIndex;
+                RigInLvl() : boneName(""), mParentIndex(-1) {}
+            };
+        }
+    }
 }
