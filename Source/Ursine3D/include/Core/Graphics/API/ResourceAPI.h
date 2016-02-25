@@ -35,12 +35,6 @@ namespace ursine
             // get texture handle
             GfxHND GetTexHandle(const char *name);
 
-			// create a model
-			GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
-
-			// destroy a model resource
-			void DestroyModel(GfxHND &handle);
-
             // create a texture of a given width/height, returns handle
             GfxHND CreateDynamicTexture(const unsigned width, const unsigned height);
 
@@ -64,6 +58,13 @@ namespace ursine
 
             void GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize);
 
+            // create a model
+            GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
+            void DestroyModel(GfxHND &handle);
+
+            void LoadModel(GfxHND handle);
+            void UnloadModel(GfxHND handle);
+            
         private:
             privData *m_privates;
 

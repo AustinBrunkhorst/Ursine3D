@@ -38,74 +38,82 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 namespace ursine
 {
-	namespace graphics
-	{
-		class ModelManager
-		{
-		public:
-			void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
-			void InitializeJdl(std::string fileText);
-			void InitializeModel(std::string fileText);
-			void Uninitialize();
+    namespace graphics
+    {
+        class ModelManager
+        {
+        public:
+            void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
+            void InitializeJdl(std::string fileText);
+            void InitializeModel(std::string fileText);
+            void Uninitialize();
 
-			void LoadModel(std::string name, std::string fileName);
-			void LoadModel_Fbx(std::string name, std::string fileName);
-			void LoadModel_Jdl(std::string name, std::string fileName);
-			void LoadAni(std::string name, std::string fileName); // this will be used for animation builder
+            void LoadModel(std::string name, std::string fileName);
+            void LoadModel_Fbx(std::string name, std::string fileName);
+            void LoadModel_Jdl(std::string name, std::string fileName);
+            void LoadAni(std::string name, std::string fileName); // this will be used for animation builder
 
-			void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
-			GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
-			void DestroyModel(GfxHND &handle);
+            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
 
-			ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
-			unsigned GetModelVertcount(std::string name, unsigned index = 0);
-			unsigned GetModelIndexcount(std::string name, unsigned index = 0);
+            // creating a model resource
+            GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
+            void DestroyModel(GfxHND &handle);
 
-			void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
-			void BindModel(unsigned ID, unsigned index = 0);
+            // loading/unloading model
+            void LoadModel(GfxHND handle);
+            void UnloadModel(GfxHND handle);
 
-			//manual binding
-			template<typename T>
-			void BindMesh(ID3D11Buffer *mesh, ID3D11Buffer *indices)
-			{
-				m_currentState = -1;
+            ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
+            unsigned GetModelVertcount(std::string name, unsigned index = 0);
+            unsigned GetModelIndexcount(std::string name, unsigned index = 0);
 
-				//map mesh
-				unsigned int strides = sizeof(T);
-				unsigned int offset = 0;
+            void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
+            void BindModel(unsigned ID, unsigned index = 0);
 
-				m_deviceContext->IASetVertexBuffers(0, 1, &mesh, &strides, &offset);
-				m_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);
-			}
+            //manual binding
+            template<typename T>
+            void BindMesh(ID3D11Buffer *mesh, ID3D11Buffer *indices)
+            {
+                m_currentState = -1;
 
-			unsigned GetModelIDByName(std::string name);
+                //map mesh
+                unsigned int strides = sizeof(T);
+                unsigned int offset = 0;
 
-			ID3D11Buffer *GetModelVertByID(unsigned ID, unsigned index = 0);
-			unsigned GetModelVertcountByID(unsigned ID, unsigned index = 0);
+                m_deviceContext->IASetVertexBuffers(0, 1, &mesh, &strides, &offset);
+                m_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);
+            }
 
-			unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
+            unsigned GetModelIDByName(std::string name);
 
-			unsigned GetModelMeshCount(unsigned ID);
+            ID3D11Buffer *GetModelVertByID(unsigned ID, unsigned index = 0);
+            unsigned GetModelVertcountByID(unsigned ID, unsigned index = 0);
 
-			void Invalidate();
+            unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
 
-			ModelResource *GetModel(const unsigned ID);
-			ModelResource *GetModel(const std::string &name);
+            unsigned GetModelMeshCount(unsigned ID);
 
-		private:
+            void Invalidate();
 
-			ID3D11Device *m_device;
-			ID3D11DeviceContext *m_deviceContext;
+            ModelResource *GetModel(const unsigned ID);
+            ModelResource *GetModel(const std::string &name);
 
-			std::map<std::string, ModelResource *> m_modelArray;
-			std::map<std::string, unsigned> m_s2uTable;
-			std::map<unsigned, ModelResource *> m_u2mTable;
-			std::vector<std::string> m_jdllist;
+        private:
+            void loadModelToGPU(ModelResource *model);
+            void unloadModelFromGPU(ModelResource *model);
 
-			unsigned m_modelCount;
-			unsigned m_currentState;
+            ID3D11Device *m_device;
+            ID3D11DeviceContext *m_deviceContext;
 
-			std::vector<ModelResource *> m_modelCache;
-		};
-	}
+            std::map<std::string, ModelResource *> m_modelArray;
+            std::map<std::string, unsigned> m_s2uTable;
+            std::map<unsigned, ModelResource *> m_u2mTable;
+            std::vector<std::string> m_jdllist;
+
+            unsigned m_modelCount;
+            unsigned m_currentState;
+
+            std::vector<ModelResource *> m_modelCache;
+        };
+    }
 }

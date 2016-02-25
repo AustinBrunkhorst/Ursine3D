@@ -54,7 +54,6 @@ namespace ursine
 
             void MapResourceTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
 
-
         private:
             void TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height);
 

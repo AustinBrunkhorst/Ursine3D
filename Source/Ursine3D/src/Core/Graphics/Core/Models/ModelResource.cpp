@@ -20,11 +20,12 @@ namespace ursine
     namespace graphics
     {
         ModelResource::ModelResource(void)
-            : m_rootNode(nullptr)
+            : m_rootNode( nullptr )
             , m_meshArray( )
             , m_meshMap( )
-			, m_meshHierarchy()
-			, m_rigHierarchy()
+			, m_meshHierarchy( )
+			, m_rigHierarchy( )
+            , m_onGPU( false ) 
         {
         }
 
@@ -78,11 +79,37 @@ namespace ursine
 		{
 			m_meshHierarchy.push_back(meshLvl);
 		}
-		
-		void ModelResource::AddRig2Tree(const ufmt_loader::RigInLvl& rigLvl)
+
+        void ModelResource::AddRig2Tree(const ufmt_loader::RigInLvl& rigLvl)
 		{
 			m_rigHierarchy.push_back(rigLvl);
 		}
+
+        void ModelResource::IncrementReference(void)
+        {
+            ++m_referenceCount;
+        }
+
+        void ModelResource::DecrementReference(void)
+        {
+            UAssert(m_referenceCount != 0, "Attempted to unload model that was already unloaded!");
+            --m_referenceCount;
+        }
+
+        bool ModelResource::HasNoReferences(void) const
+        {
+            return m_referenceCount == 0;
+        }
+
+        bool ModelResource::GetIsLoaded() const
+        {
+            return m_onGPU;
+        }
+
+        void ModelResource::SetIsLoaded(bool isOnGPU)
+        {
+            m_onGPU = isOnGPU;
+        }
 
 		//Mesh *ModelResource::GetAnimationMap(const std::string & name)
 		//{

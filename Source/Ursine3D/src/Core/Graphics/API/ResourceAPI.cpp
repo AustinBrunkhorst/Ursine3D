@@ -38,16 +38,6 @@ namespace ursine
             return m_privates->textureMgr->GetTextureIDByName(name);
         }
 
-        GfxHND ResourceAPI::CreateModel(graphics::ufmt_loader::ModelInfo *modelInfo)
-        {
-            return m_privates->modelMgr->CreateModel(modelInfo);
-        }
-
-        void ResourceAPI::DestroyModel(GfxHND &handle)
-        {
-            m_privates->modelMgr->DestroyModel(handle);
-        }
-
         GfxHND ResourceAPI::CreateDynamicTexture(const unsigned width, const unsigned height)
         {
             return m_privates->textureMgr->CreateDynamicTexture(width, height);
@@ -96,6 +86,24 @@ namespace ursine
         void ResourceAPI::GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize)
         {
             m_privates->textureMgr->GetBinaryInformation( handle, dataPtr, binarySize );
+        }
+
+        GfxHND ResourceAPI::CreateModel(graphics::ufmt_loader::ModelInfo *modelInfo)
+        {
+            return m_privates->modelMgr->CreateModel(modelInfo);
+        }
+
+        void ResourceAPI::DestroyModel(GfxHND &handle)
+        {
+            m_privates->modelMgr->DestroyModel(handle);
+        }
+
+        void ResourceAPI::LoadModel(GfxHND handle)
+        {
+        }
+
+        void ResourceAPI::UnloadModel(GfxHND handle)
+        {
         }
 
         void ResourceAPI::SetPrivates(void *priv, void *priv2)

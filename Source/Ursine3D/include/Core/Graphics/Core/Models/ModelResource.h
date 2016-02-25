@@ -50,6 +50,14 @@ namespace ursine
 			// add rig name for hierarchy tree
 			void AddRig2Tree(const ufmt_loader::RigInLvl& rigLvl);
 
+            void IncrementReference(void);
+            void DecrementReference(void);
+
+            bool HasNoReferences(void) const;
+
+            bool GetIsLoaded(void) const;
+            void SetIsLoaded(bool isOnGPU);
+
         private:
             // root mesh of this model
             Mesh *m_rootNode;
@@ -64,6 +72,10 @@ namespace ursine
 			std::vector<ufmt_loader::MeshInLvl> m_meshHierarchy;
 			// aray of all rig hierarchy
 			std::vector<ufmt_loader::RigInLvl> m_rigHierarchy;
+
+            unsigned m_referenceCount;
+
+            bool m_onGPU;
         };
     }
 }
