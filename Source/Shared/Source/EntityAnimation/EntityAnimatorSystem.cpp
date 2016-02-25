@@ -27,6 +27,12 @@ EntityAnimatorSystem::EntityAnimatorSystem(World *world)
     
 }
 
+void EntityAnimatorSystem::Initialize(void)
+{
+    m_world->Listener( this )
+        .On( WORLD_EDITOR_UPDATE, &FilterSystem::onUpdate );
+}
+
 void EntityAnimatorSystem::Process(Entity *entity)
 {
     auto animator = entity->GetComponent<EntityAnimator>( );
@@ -55,7 +61,7 @@ void EntityAnimatorSystem::smoothUpdate(EntityAnimator* animator)
 
     // incrment the time
     animator->m_time += dt;
-        
+
     // get the two current nodes
     auto node2 = animator->m_index;
     auto node3 = node2 == max - 1 ? 0 : animator->m_index + 1;
@@ -73,7 +79,7 @@ void EntityAnimatorSystem::smoothUpdate(EntityAnimator* animator)
         ++(animator->m_index);
 
         // if index == nodes.count - 1, and looping is turned off, playing is done
-        if (animator->m_index >= max && !animator->m_loop)
+        if (animator->m_index >= max - 1 && !animator->m_loop)
         {
             animator->updateAnimation( max - 1 );
             animator->finish( );
@@ -117,12 +123,14 @@ void EntityAnimatorSystem::linearUpdate(EntityAnimator* animator)
 {
     auto dt = Application::Instance->GetDeltaTime( );
 
+    auto max = static_cast<int>( animator->keyFrames.Size( ) );
+
     // incrment the time
     animator->m_time += dt;
         
     // get the two current nodes
     auto node1 = animator->m_index;
-    auto node2 = animator->m_index + 1;
+    auto node2 = node1 == max - 1 ? 0 : animator->m_index + 1;
 
     // calculate the t value (based on second node's time)
     auto t = animator->m_time / animator->keyFrames[ node2 ].delta;
@@ -136,23 +144,26 @@ void EntityAnimatorSystem::linearUpdate(EntityAnimator* animator)
         // increment index
         ++(animator->m_index);
 
-        auto max = static_cast<int>( animator->keyFrames.Size( ) ) - 1;
-
-        // if index == nodes.count - 1, playing is done
-        if (animator->m_index >= max)
+        // if index == nodes.count - 1, and looping is turned off, playing is done
+        if (animator->m_index >= max - 1 && !animator->m_loop)
         {
-            animator->updateAnimation( max );
+            animator->updateAnimation( max - 1 );
             animator->finish( );
             animator->m_time = 0.0f;
             animator->m_index = static_cast<int>( max );
             return;
         }
-
-        animator->m_time -= animator->keyFrames[ node2 ].delta;
+        else if (animator->m_index >= max && animator->m_loop)
+        {
+            animator->m_time = 0.0f;
+            animator->m_index = 0;
+        }
+        else
+            animator->m_time -= animator->keyFrames[ node2 ].delta;
 
         // set the two current nodes
         node1 = animator->m_index;
-        node2 = animator->m_index + 1;
+        node2 = node1 == max - 1 ? 0 : animator->m_index + 1;
     }
 
     // interpolate between the two current nodes

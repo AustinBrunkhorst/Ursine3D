@@ -16,6 +16,9 @@
 #include "EntityAnimatorComponent.h"
 
 #include <Curves.h>
+#include <Color.h>
+#include <DebugSystem.h>
+#include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION( EntityAnimator );
 
@@ -25,38 +28,75 @@ using namespace ecs;
 EntityAnimator::EntityAnimator(void)
     : BaseComponent( )
     , m_playing( false )
+    , m_pause( false )
     , m_smoothPath( false )
     , m_loop( false )
     , m_index( 0 )
     , m_time( 0.0f )
-    //, m_easingFunction( ease::Linear )
+    , m_playOnAwake( true )
 {
+// Initialize eitor only fields
+#if defined(URSINE_WITH_EDITOR)
+
+    keyPosition = true;
+    keyScale = true;
+    keyRotation = true;
+    delta = 1.0f;
+    ease = ease::Type::Linear;
+
+#endif
+}
+
+void EntityAnimator::OnInitialize(void)
+{
+    if (m_playOnAwake)
+        Play( );
 }
 
 void EntityAnimator::Play(void)
 {
     m_playing = true;
+
+    if (!m_loop)
+    {
+        if (m_index >= keyFrames.Size( ) - 1 || !m_pause)
+            JumpToStart( );
+    }
+
+    m_pause = false;
+}
+
+void EntityAnimator::Pause(void)
+{
+    m_playing = false;
+    m_pause = true;
+}
+
+void EntityAnimator::Stop(void)
+{
+    m_playing = false;
+
+    JumpToStart( );
 }
 
 void EntityAnimator::JumpToStart(void)
 {
-    updateAnimation( 0 );
+    m_index = 0;
+
+    updateAnimation( m_index );
+
+    m_time = 0.0f;
 }
 
 void EntityAnimator::JumpToEnd(void)
 {
-    updateAnimation( static_cast<int>( keyFrames.Size( ) ) - 1 );
-}
 
-/*ease::Function EntityAnimator::GetEasingFunction(void) const
-{
-    return m_easingFunction;
-}
+    m_index = static_cast<int>( keyFrames.Size( ) ) - 1;
+    
+    updateAnimation( m_index );
 
-void EntityAnimator::SetEasingFunction(ease::Function func)
-{
-    m_easingFunction = func;
-}*/
+    m_time = 0.0f;
+}
 
 bool EntityAnimator::GetLoopAnimation(void) const
 {
@@ -78,15 +118,25 @@ void EntityAnimator::SetSmoothPath(bool flag)
     m_smoothPath = flag;
 }
 
+bool EntityAnimator::GetPlayOnAwake(void) const
+{
+    return m_playOnAwake;
+}
+
+void EntityAnimator::SetPlayOnAwake(bool flag)
+{
+    m_playOnAwake = flag;
+}
+
 void EntityAnimator::updateAnimation(int index)
 {
     auto trans = GetOwner( )->GetTransform( );
 
     // set position
-    trans->SetWorldPosition( getPosition( index ) );
+    trans->SetLocalPosition( getPosition( index ) );
 
     // set rotation
-    trans->SetWorldRotation( getRotation( index ) );
+    trans->SetLocalRotation( getRotation( index ) );
 
     // set scale
     trans->SetLocalScale( getScale( index ) );
@@ -94,19 +144,21 @@ void EntityAnimator::updateAnimation(int index)
 
 void EntityAnimator::updateAnimation(int index1, int index2, float t)
 {
+    t = ease::GetFunction( keyFrames[ index2 ].ease )( t );
+
     auto trans = GetOwner( )->GetTransform( );
 
     // calculate position
     auto p1 = getPosition( index1 );
     auto p2 = getPosition( index2 );
 
-    trans->SetWorldPosition( (1.0f - t) * p1 + t * p2 );
+    trans->SetLocalPosition( (1.0f - t) * p1 + t * p2 );
 
     // calculate rotation
     auto r1 = getRotation( index1 );
     auto r2 = getRotation( index2 );
 
-    trans->SetWorldRotation( r1.Slerp( r2, t ) );
+    trans->SetLocalRotation( r1.Slerp( r2, t ) );
 
     // calculate the scale
     auto s1 = getScale( index1 );
@@ -117,21 +169,41 @@ void EntityAnimator::updateAnimation(int index1, int index2, float t)
 
 void EntityAnimator::updateAnimation(int index1, int index2, int index3, int index4, float t)
 {
+    t = ease::GetFunction( keyFrames[ index3 ].ease )( t );
+
     auto trans = GetOwner( )->GetTransform( );
 
-    trans->SetWorldPosition( Curves::CatmullRomSpline(
-        getPosition( index1 ), getPosition( index2 ),
-        getPosition( index3 ), getPosition( index4 ), t
-    ) );
+    auto p2 = getPosition( index2 );
+    auto p3 = getPosition( index3 );
 
-    trans->SetLocalScale( Curves::CatmullRomSpline(
-        getScale( index1 ), getScale( index2 ),
-        getScale( index3 ), getScale( index4 ), t
-    ) );
+    if (p2 != p3)
+    {
+        trans->SetLocalPosition( Curves::CatmullRomSpline(
+            getPosition( index1 ), p2,
+            p3, getPosition( index4 ), t
+        ) );
+    }
 
-    trans->SetWorldRotation( 
-        getRotation( index2 ).Slerp( getRotation( index3 ), t ) 
-    );
+    auto s2 = getScale( index2 );
+    auto s3 = getScale( index3 );
+
+    if (s2 != s3)
+    {
+        trans->SetLocalScale( Curves::CatmullRomSpline(
+            getScale( index1 ), s2,
+            s3, getScale( index4 ), t
+        ) );
+    }
+
+    auto r2 = getRotation( index2 );
+    auto r3 = getRotation( index3 );
+
+    if (r2 != r3)
+    {
+        trans->SetLocalRotation( 
+            getRotation( index2 ).Slerp( getRotation( index3 ), t ) 
+        );
+    }
 }
 
 SVec3 EntityAnimator::getPosition(int index)
@@ -139,7 +211,7 @@ SVec3 EntityAnimator::getPosition(int index)
     auto trans = GetOwner( )->GetTransform( );
 
     if (index > keyFrames.Size( ) || index < 0)
-        return trans->GetWorldPosition( );
+        return trans->GetLocalPosition( );
 
     if (keyFrames[ index ].positionKey)
         return keyFrames[ index ].position;
@@ -154,14 +226,16 @@ SVec3 EntityAnimator::getPosition(int index)
             if (m_loop)
                 lowBound = static_cast<int>( keyFrames.Size( ) ) - 1;
             else
-                return trans->GetWorldPosition( );
+                return trans->GetLocalPosition( );
         }
 
         if (lowBound == index)
-            return trans->GetWorldPosition( );
+            return trans->GetLocalPosition( );
 
         if (keyFrames[ lowBound ].positionKey)
             break;
+
+        --lowBound;
 
     } while (true);
 
@@ -182,6 +256,8 @@ SVec3 EntityAnimator::getPosition(int index)
 
         if (keyFrames[ highBound ].positionKey)
             break;
+
+        ++highBound;
 
     } while (true);
 
@@ -207,7 +283,7 @@ SQuat EntityAnimator::getRotation(int index)
     auto trans = GetOwner( )->GetTransform( );
 
     if (index > keyFrames.Size( ) || index < 0)
-        return trans->GetWorldRotation( );
+        return trans->GetLocalRotation( );
 
     if (keyFrames[ index ].rotationKey)
         return keyFrames[ index ].rotation;
@@ -222,14 +298,16 @@ SQuat EntityAnimator::getRotation(int index)
             if (m_loop)
                 lowBound = static_cast<int>( keyFrames.Size( ) ) - 1;
             else
-                return trans->GetWorldRotation( );
+                return trans->GetLocalRotation( );
         }
 
         if (lowBound == index)
-            return trans->GetWorldRotation( );
+            return trans->GetLocalRotation( );
 
         if (keyFrames[ lowBound ].rotationKey)
             break;
+
+        --lowBound;
 
     } while (true);
 
@@ -250,6 +328,8 @@ SQuat EntityAnimator::getRotation(int index)
 
         if (keyFrames[ highBound ].rotationKey)
             break;
+
+        ++highBound;
 
     } while (true);
 
@@ -299,6 +379,8 @@ SVec3 EntityAnimator::getScale(int index)
         if (keyFrames[ lowBound ].scaleKey)
             break;
 
+        --lowBound;
+
     } while (true);
 
     int highBound = index + 1;
@@ -318,6 +400,8 @@ SVec3 EntityAnimator::getScale(int index)
 
         if (keyFrames[ highBound ].scaleKey)
             break;
+
+        ++highBound;
 
     } while (true);
 
@@ -357,7 +441,7 @@ void EntityAnimator::KeyValues(void)
 
     if (keyPosition)
     {
-        key.position = trans->GetWorldPosition( );
+        key.position = trans->GetLocalPosition( );
         key.positionKey = true;
     }
     if (keyScale)
@@ -367,9 +451,12 @@ void EntityAnimator::KeyValues(void)
     }
     if (keyRotation)
     {
-        key.rotation = trans->GetWorldRotation( );
+        key.rotation = trans->GetLocalRotation( );
         key.rotationKey = true;
     }
+
+    key.ease = ease;
+    key.delta = delta;
 
     keyFrames.Push( 
         key
@@ -379,6 +466,68 @@ void EntityAnimator::KeyValues(void)
 void EntityAnimator::play(void)
 {
     Play( );
+}
+
+void EntityAnimator::pause(void)
+{
+    Pause( );
+}
+
+void EntityAnimator::stop(void)
+{
+    Stop( );
+}
+
+void EntityAnimator::drawPath(void)
+{
+    auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem<DebugSystem>( );
+
+    if (m_smoothPath)
+    {
+        for (int i = 0; i < keyFrames.Size( ); ++i)
+        {
+            auto max = static_cast<int>( keyFrames.Size( ) ) - 1;
+
+            if (!m_loop && i >= max)
+                continue;
+
+            auto node0 = getPosition( i );
+            auto node1 = getPosition( i == max ? 0 : i + 1 );
+            
+            auto before = getPosition( i == 0 ? max : i - 1 );
+            auto after = getPosition( i == max ? 1 : i + 2 );
+
+            static const int precision = 20;
+            float t = 0.0f;
+            float step = 1.0f / precision;
+
+            for (int j = 0; j < precision; ++j)
+            {
+                auto p0 = Curves::CatmullRomSpline( before, node0, node1, after, t );
+
+                t += step;
+
+                auto p1 = Curves::CatmullRomSpline( before, node0, node1, after, t );
+
+                drawer->DrawLine( p0, p1, Color::Yellow, 10.0f );
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < keyFrames.Size( ); ++i)
+        {
+            auto max = keyFrames.Size( ) - 1;
+
+            if (!m_loop && i >= max)
+                continue;
+
+            auto node0 = getPosition( i );
+            auto node1 = getPosition( i == max ? 0 : i + 1 );
+
+            drawer->DrawLine( node0, node1, Color::Yellow, 10.0f );
+        }
+    }
 }
 
 void EntityAnimator::jumpToStart(void)

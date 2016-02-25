@@ -99,6 +99,7 @@
 /////////////////////////////////
 
 #include "EntityAnimation/EntityAnimatorComponent.h"
+#include "EntityAnimation/EntityAnimatorGroupComponent.h"
 
 /////////////////////////////////
 //       Spawning System       //

@@ -23,7 +23,8 @@ struct EntityKeyFrame
         : delta( 0.0f )
         , positionKey( false )
         , scaleKey( false )
-        , rotationKey( false ) { }
+        , rotationKey( false )
+        , ease( ursine::ease::Type::Linear ) { }
 
     bool positionKey;
     bool scaleKey;
@@ -34,6 +35,8 @@ struct EntityKeyFrame
     ursine::SQuat rotation;
 
     float delta;
+
+    ursine::ease::Type ease;
 
 } Meta(Enable, EnableArrayType);
 
@@ -51,11 +54,13 @@ class EntityAnimator
     friend class EntityAnimatorSystem;
 
 public:
-    // TODO: easing, draw path, zero, linear
-    
+    // TODO: multi clips?
+
     EditorOnlyField(bool keyPosition);
     EditorOnlyField(bool keyScale);
     EditorOnlyField(bool keyRotation);
+    EditorOnlyField(float delta);
+    EditorOnlyField(ursine::ease::Type ease);
 
     EditorButton(
         KeyValues,
@@ -68,6 +73,21 @@ public:
     );
 
     EditorButton(
+        pause,
+        "Pause Animation"
+    );
+
+    EditorButton(
+        stop,
+        "Stop Animation"
+    );
+
+    EditorButton(
+        drawPath,
+        "Draw Path"
+    );
+
+    EditorButton(
         jumpToStart,
         "Jump To Start"
     );
@@ -76,12 +96,6 @@ public:
         jumpToEnd,
         "Jump To End"
     );
-
-    /*EditorField(
-        ursine::ease::Function easingFunction,
-        GetEasingFunction,
-        SetEasingFunction
-    );*/
 
     EditorField(
         bool loopAnimation,
@@ -95,21 +109,31 @@ public:
         SetSmoothPath
     );
 
+    EditorField(
+        bool playOnAwake,
+        GetPlayOnAwake,
+        SetPlayOnAwake
+    );
+
     EntityAnimator(void);
 
+    void OnInitialize(void) override;
+
     void Play(void);
+    void Pause(void);
+    void Stop(void);
 
     void JumpToStart(void);
     void JumpToEnd(void);
-
-    /*ursine::ease::Function GetEasingFunction(void) const;
-    void SetEasingFunction(ursine::ease::Function func);*/
 
     bool GetLoopAnimation(void) const;
     void SetLoopAnimation(bool flag);
 
     bool GetSmoothPath(void) const;
     void SetSmoothPath(bool flag);
+
+    bool GetPlayOnAwake(void) const;
+    void SetPlayOnAwake(bool flag);
 
     ursine::Array<EntityKeyFrame> keyFrames;
 
@@ -134,15 +158,15 @@ private:
     void finish(void);
 
     bool m_playing;
+    bool m_pause;
     bool m_smoothPath;
     bool m_loop;
+    bool m_playOnAwake;
 
     // Our current index marker
     int m_index;
 
     // The current time marker
     float m_time;
-
-    //ursine::ease::Function m_easingFunction;
 
 } Meta(Enable);

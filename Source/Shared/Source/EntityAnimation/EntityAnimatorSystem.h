@@ -25,6 +25,8 @@ public:
 
 private:
 
+    void Initialize(void) override;
+
     void Process(ursine::ecs::Entity *entity) override;
 
     void smoothUpdate(EntityAnimator *animator);
