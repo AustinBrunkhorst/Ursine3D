@@ -1,0 +1,237 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 20, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 21, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -26.542608261108398, 
+"y": 12.21107292175293, 
+"z": -16.766975402832031
+}
+}
+}, 
+"name": "Empty Entity (1)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 22, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 20.509443283081055, 
+"y": 11.308980941772461, 
+"z": -44.586044311523438
+}
+}
+}, 
+"name": "Empty Entity  (2)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 23, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 18.892507553100586, 
+"y": 29.650396347045898, 
+"z": 2.2873203754425049
+}
+}
+}, 
+"name": "Empty Entity   (3)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 24, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -20.478168487548828, 
+"y": 49.973167419433594, 
+"z": -2.0144553184509277
+}
+}
+}, 
+"name": "Empty Entity    (4)"
+}
+], 
+"components": {
+"ParticleAnimator": {
+".uid": 15, 
+"dampening": 0, 
+"force": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"growth": 0
+}, 
+"ParticleColorAnimator": {
+".uid": 16, 
+"color0": {
+"a": 0.5, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"color1": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"color2": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"color3": {
+"a": 0.75, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"color4": {
+"a": 0, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}
+}, 
+"ParticleEmitter": {
+".uid": 17, 
+"emitCount": 0, 
+"emitRate": 100, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"fill": 0, 
+"lifetime": 1, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1415927410125732, 
+"size": 1, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"ParticlePathAnimator": {
+".uid": 18, 
+"loopPath": false, 
+"renderCurve": true, 
+"stepCount": 100
+}, 
+"ParticleSystem": {
+".uid": 19, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Blank"
+}, 
+"Transform": {
+".uid": 14, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 27.019844055175781, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

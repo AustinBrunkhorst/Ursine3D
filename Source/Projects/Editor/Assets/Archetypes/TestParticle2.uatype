@@ -1,0 +1,334 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 27, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 28, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -24.357610702514648, 
+"y": 19.49555778503418, 
+"z": -17.420680999755859
+}
+}
+}, 
+"name": "Empty Entity (1)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 29, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -47.131584167480469, 
+"y": 53.663406372070313, 
+"z": 37.877460479736328
+}
+}
+}, 
+"name": "Empty Entity  (2)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 30, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -78.966194152832031, 
+"y": -19.230010986328125, 
+"z": 25.435581207275391
+}
+}
+}, 
+"name": "Empty Entity   (3)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 31, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -120.53072357177734, 
+"y": 2.9988059997558594, 
+"z": -12.449248313903809
+}
+}
+}, 
+"name": "Empty Entity    (4)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 32, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -146.99447631835938, 
+"y": 51.701309204101563, 
+"z": -13.813324928283691
+}
+}
+}, 
+"name": "Empty Entity (5)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 33, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -181.97996520996094, 
+"y": 18.978448867797852, 
+"z": 16.756965637207031
+}
+}
+}, 
+"name": "Empty Entity  (6)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 36, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -71.76434326171875, 
+"y": 8.7281227111816406, 
+"z": 13.183829307556152
+}
+}
+}, 
+"name": "Empty Entity (7)"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 82, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 23.863685607910156, 
+"y": 9.7990856170654297, 
+"z": 15.271897315979004
+}
+}
+}, 
+"name": "Empty Entity (8)"
+}
+], 
+"components": {
+"ParticleAnimator": {
+".uid": 22, 
+"dampening": 0, 
+"force": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"growth": 0
+}, 
+"ParticleColorAnimator": {
+".uid": 23, 
+"color0": {
+"a": 0, 
+"b": 0, 
+"g": 0, 
+"r": 1
+}, 
+"color1": {
+"a": 1, 
+"b": 1, 
+"g": 0.3671875, 
+"r": 0
+}, 
+"color2": {
+"a": 1, 
+"b": 0.765625, 
+"g": 1, 
+"r": 0
+}, 
+"color3": {
+"a": 0.99609375, 
+"b": 0, 
+"g": 0.42352941632270813, 
+"r": 1
+}, 
+"color4": {
+"a": 0, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}
+}, 
+"ParticleEmitter": {
+".uid": 24, 
+"emitCount": 0, 
+"emitRate": 20, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 20, 
+"z": 20
+}, 
+"fill": 0, 
+"lifetime": 10, 
+"lifetimeVariance": 2, 
+"rotation": 0, 
+"rotationVariance": 360, 
+"size": 20, 
+"sizeVariance": 10, 
+"velocity": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"ParticlePathAnimator": {
+".uid": 25, 
+"loopPath": false, 
+"renderCurve": false, 
+"stepCount": 100, 
+"strength": 2
+}, 
+"ParticleSystem": {
+".uid": 26, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 21, 
+"rotation": {
+"w": 0.99954849481582642, 
+"x": 0.017751630395650864, 
+"y": 0.017142549157142639, 
+"z": 0.017142549157142639
+}, 
+"scale": {
+"x": 2, 
+"y": 2, 
+"z": 2
+}, 
+"translation": {
+"x": 0, 
+"y": 17.686248779296875, 
+"z": 12.105545043945313
+}
+}
+}, 
+"v": "0.2submission"
+}
