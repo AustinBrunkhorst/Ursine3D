@@ -34,7 +34,6 @@ namespace ursine
                 , spec_mapCount(0)
                 , shineness(0)
                 , TransparencyFactor(0)
-                , ISerialize()
             {
             }
 
@@ -176,30 +175,30 @@ namespace ursine
                 return true;
             }
 
-            void MaterialInfo::SerializeIn(resources::ResourceReader &input)
+            void MaterialInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
                 std::string str;
-
+                
                 input >> stringSize;
                 str.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
-
+                
                 input.ReadBytes(reinterpret_cast<char*>(&ambitype), sizeof(unsigned int));
                 input.ReadBytes(reinterpret_cast<char*>(&difftype), sizeof(unsigned int));
                 input.ReadBytes(reinterpret_cast<char*>(&emistype), sizeof(unsigned int));
                 input.ReadBytes(reinterpret_cast<char*>(&spectype), sizeof(unsigned int));
-
+                
                 input.ReadBytes(reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4));
                 input.ReadBytes(reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4));
                 input.ReadBytes(reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4));
                 input.ReadBytes(reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4));
-
+                
                 input >> ambi_mapCount;
                 input >> diff_mapCount;
                 input >> emis_mapCount;
                 input >> spec_mapCount;
-
+                
                 unsigned int i = 0;
                 ambi_texNames.resize(ambi_mapCount);
                 for (i = 0; i < ambi_mapCount; ++i)
@@ -208,7 +207,7 @@ namespace ursine
                     str.resize(stringSize);
                     input.ReadBytes(&ambi_texNames[i][0], stringSize);
                 }
-
+                
                 diff_texNames.resize(diff_mapCount);
                 for (i = 0; i < diff_mapCount; ++i)
                 {
@@ -216,7 +215,7 @@ namespace ursine
                     str.resize(stringSize);
                     input.ReadBytes(&diff_texNames[i][0], stringSize);
                 }
-
+                
                 emis_texNames.resize(emis_mapCount);
                 for (i = 0; i < emis_mapCount; ++i)
                 {
@@ -224,7 +223,7 @@ namespace ursine
                     str.resize(stringSize);
                     input.ReadBytes(&emis_texNames[i][0], stringSize);
                 }
-
+                
                 spec_texNames.resize(spec_mapCount);
                 for (i = 0; i < spec_mapCount; ++i)
                 {
@@ -232,32 +231,32 @@ namespace ursine
                     str.resize(stringSize);
                     input.ReadBytes(&spec_texNames[i][0], stringSize);
                 }
-
+                
                 input >> shineness;
                 input >> TransparencyFactor;
             }
 
-            void MaterialInfo::SerializeOut(resources::pipeline::ResourceWriter &output)
+            void MaterialInfo::Write(resources::pipeline::ResourceWriter &output)
             {
                 output << name.size();
                 output << name;
-
+                
                 output << static_cast<unsigned int>(type); //unsigned int
                 output << static_cast<unsigned int>(ambitype);
                 output << static_cast<unsigned int>(difftype);
                 output << static_cast<unsigned int>(emistype);
                 output << static_cast<unsigned int>(spectype);
-
+                
                 output.WriteBytes(reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4));
                 output.WriteBytes(reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4));
                 output.WriteBytes(reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4));
                 output.WriteBytes(reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4));
-
+                
                 output << ambi_mapCount;
                 output << diff_mapCount;
                 output << emis_mapCount;
                 output << spec_mapCount;
-
+                
                 if (ambi_texNames.size() > 0)
                 {
                     for (auto &iter : ambi_texNames)
@@ -290,7 +289,7 @@ namespace ursine
                         output << iter;
                     }
                 }
-
+                
                 output << shineness;
                 output << TransparencyFactor;
             }

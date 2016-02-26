@@ -29,7 +29,6 @@ namespace ursine
             AnimInfo::AnimInfo()
                 : name("")
                 , animCount(0)
-                , ISerialize()
             {}
 
             AnimInfo::~AnimInfo()
@@ -114,11 +113,11 @@ namespace ursine
                 return true;
             }
 
-            void AnimInfo::SerializeIn(resources::ResourceReader &input)
+            void AnimInfo::Read(resources::ResourceReader &input)
             {
             }
 
-            void AnimInfo::SerializeOut(resources::pipeline::ResourceWriter &output)
+            void AnimInfo::Write(resources::pipeline::ResourceWriter &output)
             {
             }
         };

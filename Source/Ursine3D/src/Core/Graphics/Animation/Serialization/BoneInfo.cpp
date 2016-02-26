@@ -30,7 +30,6 @@ namespace ursine
                 , boneSpacePosition(0, 0, 0)
                 , boneSpaceRotation(0, 0, 0, 1)
                 , boneSpaceScaling(1, 1, 1)
-                , ISerialize()
             {
             }
 
@@ -81,37 +80,37 @@ namespace ursine
                 return true;
             }
 
-            void BoneInfo::SerializeIn(resources::ResourceReader &input)
+            void BoneInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
                 std::string str;
-
+                
                 input >> stringSize;
                 str.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
-
+                
                 input >> mParentIndex;
-
+                
                 input.ReadBytes(reinterpret_cast<char*>(&bindPosition), sizeof(pseudodx::XMFLOAT3));
                 input.ReadBytes(reinterpret_cast<char*>(&bindRotation), sizeof(pseudodx::XMFLOAT4));
                 input.ReadBytes(reinterpret_cast<char*>(&bindScaling), sizeof(pseudodx::XMFLOAT3));
-
+                
                 input.ReadBytes(reinterpret_cast<char*>(&boneSpacePosition), sizeof(pseudodx::XMFLOAT3));
                 input.ReadBytes(reinterpret_cast<char*>(&boneSpaceRotation), sizeof(pseudodx::XMFLOAT4));
                 input.ReadBytes(reinterpret_cast<char*>(&boneSpaceScaling), sizeof(pseudodx::XMFLOAT3));
             }
 
-            void BoneInfo::SerializeOut(resources::pipeline::ResourceWriter &output)
+            void BoneInfo::Write(resources::pipeline::ResourceWriter &output)
             {
                 output << name.size();
                 output << name;
-
+                
                 output << mParentIndex;
-
+                
                 output.WriteBytes(reinterpret_cast<char*>(&bindPosition), sizeof(pseudodx::XMFLOAT3));
                 output.WriteBytes(reinterpret_cast<char*>(&bindRotation), sizeof(pseudodx::XMFLOAT4));
                 output.WriteBytes(reinterpret_cast<char*>(&bindScaling), sizeof(pseudodx::XMFLOAT3));
-
+                
                 output.WriteBytes(reinterpret_cast<char*>(&boneSpacePosition), sizeof(pseudodx::XMFLOAT3));
                 output.WriteBytes(reinterpret_cast<char*>(&boneSpaceRotation), sizeof(pseudodx::XMFLOAT4));
                 output.WriteBytes(reinterpret_cast<char*>(&boneSpaceScaling), sizeof(pseudodx::XMFLOAT3));

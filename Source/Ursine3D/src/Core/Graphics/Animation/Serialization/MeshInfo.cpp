@@ -15,6 +15,7 @@
 
 #include "UrsinePrecompiled.h"
 #include "MeshInfo.h"
+
 namespace ursine
 {
     namespace graphics
@@ -26,7 +27,6 @@ namespace ursine
                 , meshVtxIdxCount(0)
                 , mtrlCount(0)
                 , mtrlIndexCount(0)
-                , ISerialize()
             {
             }
 
@@ -131,29 +131,29 @@ namespace ursine
                 return true;
             }
 
-            void MeshInfo::SerializeIn(resources::ResourceReader &input)
+            void MeshInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
                 std::string str;
-
+                
                 input >> stringSize;
                 str.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
-
+                
                 input >> meshVtxIdxCount;
                 input >> meshVtxIdxCount;
                 input >> mtrlCount;
                 input >> mtrlIndexCount;
-
+                
                 unsigned int i = 0;
                 meshVtxInfos.resize(meshVtxInfoCount);
                 for (i = 0; i < meshVtxInfoCount; ++i)
                     input.ReadBytes(reinterpret_cast<char*>(&meshVtxInfos[i]), sizeof(MeshVertex));
-
+                
                 meshVtxIndices.resize(meshVtxIdxCount);
                 for (i = 0; i < meshVtxIdxCount; ++i)
                     input >> meshVtxIndices[i];
-
+                
                 mtrlName.resize(mtrlCount);
                 for (i = 0; i < mtrlCount; ++i)
                 {
@@ -161,13 +161,13 @@ namespace ursine
                     str.resize(stringSize);
                     input.ReadBytes(reinterpret_cast<char*>(&mtrlName[i]), stringSize);
                 }
-
+                
                 materialIndices.resize(mtrlIndexCount);
                 for (i = 0; i < mtrlIndexCount; ++i)
                     input >> materialIndices[i];
             }
 
-            void MeshInfo::SerializeOut(resources::pipeline::ResourceWriter &output)
+            void MeshInfo::Write(resources::pipeline::ResourceWriter &output)
             {
                 output << name.size();
                 output << name;
@@ -175,7 +175,7 @@ namespace ursine
                 output << meshVtxIdxCount;
                 output << mtrlCount;
                 output << mtrlIndexCount;
-
+                
                 if (meshVtxInfos.size() > 0)
                 {
                     for (auto &iter : meshVtxInfos)

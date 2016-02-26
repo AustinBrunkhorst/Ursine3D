@@ -13,7 +13,6 @@
 
 #pragma once
 
-#include <string>
 #include "UrsinePrecompiled.h"
 #include "ModelInfo.h"
 
@@ -24,13 +23,11 @@ namespace ursine
         namespace ufmt_loader
         {
             ModelInfo::ModelInfo()
-                :
-                mmeshCount(0)
+                : mmeshCount(0)
                 , mmaterialCount(0)
                 , mboneCount(0)
                 , mmeshlvlCount(0)
                 , mriglvlCount(0)
-                , ISerialize()
             {
             }
 
@@ -126,45 +123,45 @@ namespace ursine
                 return true;
             }
 
-            void ModelInfo::SerializeIn(resources::ResourceReader &input)
+            void ModelInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
                 std::string str;
-
+                
                 input >> stringSize;
                 str.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
-
+                
                 input >> mmeshCount;
                 input >> mmaterialCount;
                 input >> mboneCount;
                 input >> mmeshlvlCount;
                 input >> mriglvlCount;
-
+                
                 unsigned int i = 0;
-
+                
                 mMeshInfoVec.resize(mmeshCount);
                 for (i = 0; i < mmeshCount; ++i)
-                    mMeshInfoVec[i].SerializeIn(input);
-
+                    mMeshInfoVec[i].Read(input);
+                
                 mMtrlInfoVec.resize(mmaterialCount);
                 for (i = 0; i < mmaterialCount; ++i)
-                    mMtrlInfoVec[i].SerializeIn(input);
-
+                    mMtrlInfoVec[i].Read(input);
+                
                 mBoneInfoVec.resize(mboneCount);
                 for (i = 0; i < mboneCount; ++i)
-                    mBoneInfoVec[i].SerializeIn(input);
-
+                    mBoneInfoVec[i].Read(input);
+                
                 mMeshLvVec.resize(mmeshlvlCount);
                 for (i = 0; i < mmeshlvlCount; ++i)
                     input.ReadBytes(reinterpret_cast<char*>(&mMeshLvVec[i]), sizeof(MeshInLvl));
-
+                
                 mRigLvVec.resize(mriglvlCount);
                 for (i = 0; i < mriglvlCount; ++i)
                     input.ReadBytes(reinterpret_cast<char*>(&mRigLvVec[i]), sizeof(RigInLvl));
             }
 
-            void ModelInfo::SerializeOut(resources::pipeline::ResourceWriter &output)
+            void ModelInfo::Write(resources::pipeline::ResourceWriter &output)
             {
                 output << name.size();
                 output << name;
@@ -173,21 +170,21 @@ namespace ursine
                 output << mboneCount;
                 output << mmeshlvlCount;
                 output << mriglvlCount;
-
+                
                 if (mMeshInfoVec.size() > 0)
                 {
                     for (auto &iter : mMeshInfoVec)
-                        iter.SerializeOut(output);
+                        iter.Write(output);
                 }
                 if (mMtrlInfoVec.size() > 0)
                 {
                     for (auto &iter : mMtrlInfoVec)
-                        iter.SerializeOut(output);
+                        iter.Write(output);
                 }
                 if (mBoneInfoVec.size() > 0)
                 {
                     for (auto &iter : mBoneInfoVec)
-                        iter.SerializeOut(output);
+                        iter.Write(output);
                 }
                 if (mMeshLvVec.size() > 0)
                 {
