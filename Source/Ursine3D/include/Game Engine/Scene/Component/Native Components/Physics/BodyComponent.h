@@ -70,6 +70,11 @@ namespace ursine
 
 			void onTransformChange(EVENT_HANDLER(Entity));
 
-        } Meta(Enable, DisplayName("Body"), DisableComponentRemoval);
+        } Meta(
+            Enable, 
+            DisplayName( "Body" )
+        ) EditorMeta(
+            DisableComponentRemoval
+        );
     }
 }

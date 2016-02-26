@@ -1,7 +1,8 @@
 var ToolTip = { };
 
 // delay in milliseconds to delay showing
-ToolTip.delay = 300;
+ToolTip.delay = 200;
+ToolTip.fadeDuration = 150;
 
 ToolTip._bound = { };
 ToolTip._nextID = 0;
@@ -35,6 +36,7 @@ function ToolTipItem(element, text) {
     this._enterHandler = this._onElementMouseEnter.bind( this );
     this._leaveHandler = this._onElementMouseLeave.bind( this );
     this._mouseMoveHandler = this._onElementMouseMove.bind( this );
+    this._removeHandler = this._onElementRemoved.bind( this );
 
     this._enterTimeout = null;
 
@@ -60,6 +62,8 @@ ToolTipItem.prototype.unbind = function() {
     this.element.removeEventListener( 'mouseover', this._enterHandler, true );
     this.element.removeEventListener( 'mouseout', this._leaveHandler, true );
     this.element.removeEventListener( 'mousemove', this._mouseMoveHandler, true );
+
+    this._close( );
 };
 
 ToolTipItem.prototype._open = function() {
@@ -71,15 +75,33 @@ ToolTipItem.prototype._open = function() {
 
     document.querySelector( '#tooltip-container' ).appendChild( this._ttElement );
 
+    var ttElement = this._ttElement;
+
+    // race condition
+    setTimeout(function() {
+        ttElement.classList.add( 'opened' );
+    }, 0 );
+
     this._updatePosition( );
+
+    document.body.addEventListener( 'DOMNodeRemoved', this._removeHandler, true );
 };
 
 ToolTipItem.prototype._close = function() {
     if (this._ttElement !== null) {
-        this._ttElement.parentNode.removeChild( this._ttElement );
+        this._ttElement.classList.remove( 'opened' );
+
+        var ttElement = this._ttElement;
+
+        setTimeout( function() {
+            if (ttElement.parentNode)
+                ttElement.parentNode.removeChild( ttElement );
+        }, ToolTip.fadeDuration );
 
         this._ttElement = null;
     }
+
+    document.body.removeEventListener( 'DOMNodeRemoved', this._removeHandler, true );
 };
 
 ToolTipItem.prototype._updatePosition = function() {
@@ -119,7 +141,11 @@ ToolTipItem.prototype._onElementMouseMove = function(e) {
     this._mouseX = e.clientX;
     this._mouseY = e.clientY;
 
-    if (this._ttElement !== null) {
+    if (this._ttElement !== null)
         this._updatePosition( );
-    }
+};
+
+ToolTipItem.prototype._onElementRemoved = function(e) {
+    if (e.target === this.element || e.target.contains( this.element ))
+        ToolTip.unbind( this.element );
 };

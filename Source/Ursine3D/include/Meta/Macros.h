@@ -16,11 +16,17 @@
 
     #define EditorField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
 
+    #define EditorAnnotate(annotation) EditorMeta(Annotation(annotation))
+
     #if defined(URSINE_WITH_EDITOR)
+
+        #define EditorMeta(...) __attribute__((annotate(#__VA_ARGS__)))
 
         #define EditorButton(name, title) Meta(Enable, CreateButton(title)) void name(void);
 
     #else
+
+        #define EditorMeta(...)
 
         #define EditorButton(name, title)
 
@@ -37,9 +43,11 @@
 
 #else 
 
-    #define Meta(...)
+    #define Meta(...) 
+    #define EditorMeta(...) 
 
     #define EditorField(expression, getter, setter)
+    #define EditorAnnotate(annotation)
 
     #if defined(URSINE_WITH_EDITOR)
 

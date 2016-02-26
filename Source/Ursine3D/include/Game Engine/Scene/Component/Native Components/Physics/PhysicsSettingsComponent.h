@@ -62,6 +62,6 @@ namespace ursine
 
             SVec3 m_gravity;
 
-        } Meta(Enable, DisplayName("PhysicsSettings"));
+        } Meta(Enable, DisplayName( "PhysicsSettings" ));
     }
 }

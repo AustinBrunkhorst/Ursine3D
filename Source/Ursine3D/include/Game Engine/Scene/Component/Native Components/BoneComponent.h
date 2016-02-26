@@ -32,6 +32,6 @@ namespace ursine
             void OnInitialize(void) override;
 
         private:
-        } Meta(Enable, DisplayName("Bone"));
+        } Meta(Enable, DisplayName( "Bone" ));
     }
 }
