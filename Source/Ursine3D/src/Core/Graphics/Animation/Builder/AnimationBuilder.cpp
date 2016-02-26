@@ -27,8 +27,8 @@ namespace ursine
     unsigned AnimationBuilder::m_animationCount;
 
 	void AnimationBuilder::GenerateAnimationData(
-        const AnimationState& animState,
-		const AnimationState &fut_animState,
+		const AnimationState *currentState,
+		const AnimationState *futureState,
         const AnimationRig* rig, 
         std::vector<SMat4>& outputMatPal,
         std::vector<SMat4> &outputBones,
@@ -36,9 +36,9 @@ namespace ursine
     )
 	{
 		// get the current time
-		float time = animState.GetTimePosition();
+		float time = (float)currentState->GetTimePosition();
 		// get the currently running animation
-		auto currentAnimation = animState.GetAnimation();
+		auto currentAnimation = currentState->GetAnimation();
 		// get the total keyframes for this animation
 		unsigned frameCount = currentAnimation->GetRigKeyFrameCount();
 		// get num of bones in this rig
@@ -54,7 +54,7 @@ namespace ursine
 			// get the two current keyframes
 			const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
 			const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
-
+		
 			// check if the current keyframe set holds the time value between them
 			if (f1[0].length <= time && time < f2[0].length)
 			{
@@ -66,47 +66,52 @@ namespace ursine
 					boneCount,
 					m_toParentTransforms
 					);
-
 				// kick out, we're done
 				break;
 			}
 		}
 
+		//std::vector < AnimationKeyframe > f1;
+		//std::vector < AnimationKeyframe > f2;
+		//currentState->GetFrameByTime(f1, f2, time);
+
 		// for the future animation
 		// get the future running animation
-		auto futAnimation = fut_animState.GetAnimation();
-		if (futAnimation)
+		const Animation* futAnimation = nullptr;
+		if (futureState)
 		{
 			// get the future time
-			float fut_time = 0.f;
-			// get the total keyframes for future animation
-			unsigned futframeCount = 0;
-			fut_time = fut_animState.GetTimePosition();
-			futframeCount = futAnimation->GetRigKeyFrameCount();
-			// make sure the rig bones match animation bones
-			if (boneCount != futAnimation->GetDesiredBoneCount())
-				return;
-
-			for (unsigned x = 0; x < futframeCount - 1; ++x)
+			futAnimation = futureState->GetAnimation();
+			float fut_time = (float)futureState->GetTimePosition();
+			if (futAnimation)
 			{
-				// get the two current keyframes
-				const std::vector<AnimationKeyframe> &f1 = futAnimation->GetKeyframes(x);
-				const std::vector<AnimationKeyframe> &f2 = futAnimation->GetKeyframes(x + 1);
+				// get the total keyframes for future animation
+				unsigned futframeCount = 0;
+				futframeCount = futAnimation->GetRigKeyFrameCount();
+				// make sure the rig bones match animation bones
+				if (boneCount != futAnimation->GetDesiredBoneCount())
+					return;
 
-				// check if the current keyframe set holds the time value between them
-				if (f1[0].length <= fut_time && fut_time < f2[0].length)
+				for (unsigned x = 0; x < futframeCount - 1; ++x)
 				{
-					// if it did, interpolate the two keyframes, save values, break out
-					interpolateRigKeyFrames(
-						f1,
-						f2,
-						fut_time,
-						boneCount,
-						m_toFutParentTransforms
-						);
+					// get the two current keyframes
+					const std::vector<AnimationKeyframe> &f1 = futAnimation->GetKeyframes(x);
+					const std::vector<AnimationKeyframe> &f2 = futAnimation->GetKeyframes(x + 1);
 
-					// kick out, we're done
-					break;
+					// check if the current keyframe set holds the time value between them
+					if (f1[0].length <= fut_time && fut_time < f2[0].length)
+					{
+						// if it did, interpolate the two keyframes, save values, break out
+						interpolateRigKeyFrames(
+							f1,
+							f2,
+							fut_time,
+							boneCount,
+							m_toFutParentTransforms
+							);
+						// kick out, we're done
+						break;
+					}
 				}
 			}
 		}
@@ -274,8 +279,7 @@ namespace ursine
         {
             // grab current node
             auto &node = modelData.mBoneInfoVec[ x ];
-
-            if ( node.mParentIndex == -1 )
+            if ( -1 == node.mParentIndex )
                 continue;
 
             // push index into parent's vector

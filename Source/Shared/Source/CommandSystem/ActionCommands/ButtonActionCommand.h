@@ -13,54 +13,41 @@
 #include "ActionCommand.h"
 #include "PlayerAction.h"
 
-template<typename T>
 class ButtonActionCommand
-    : public ActionCommand<T>
+    : public ActionCommandBase
 {
 public:
-    enum Interaction
+    Meta(Disable)
+    struct InteractionMethod
     {
-        Down,
-        Held,
-        Up
+        PlayerAction::InputBinding binding;
+        PlayerAction::Interaction interactionType;
+        game::GameEvents eventToSend;
+
+        InteractionMethod(void);
+        InteractionMethod(PlayerAction::InputBinding bind, PlayerAction::Interaction type, game::GameEvents commandEvent);
+        InteractionMethod(const InteractionMethod& rhs);
+
+        ~InteractionMethod(void);
     };
 
-public:
-    ButtonActionCommand(PlayerAction action, Interaction type);
+    typedef std::vector<InteractionMethod> Interactions;
 
-    bool Acting(void) override;
+    ButtonActionCommand(PlayerAction* action, ursine::ecs::Entity* owner);
+    ButtonActionCommand(PlayerAction* action, ursine::ecs::Entity* owner, Interactions& methods);
 
-    std::shared_ptr<Command> CreateCommand(void) override;
+    ButtonActionCommand& AddActionCommand(InteractionMethod&& interaction);
+
+    void ProcessCommands(void) override;
+
+protected:
+    bool Acting(const InteractionMethod& method);
 
 private:
-    PlayerAction m_action;
-    Interaction m_type;
+    PlayerAction* m_action;
+    ursine::ecs::Entity* m_owner;
+    Interactions m_interactionMethods;
+
 };
 
-/////////////////////////////////////////////////////////////////////
 
-template<typename T>
-ButtonActionCommand<T>::ButtonActionCommand(PlayerAction action, Interaction type)
-    : m_action(action)
-    , m_type(type) {}
-
-template<typename T>
-bool ButtonActionCommand<T>::Acting()
-{
-    switch(m_type)
-    {
-    case Down:
-        return m_action.WasPressed( );
-    case Held:
-        return m_action.IsPressed( );
-    default:
-        return m_action.WasReleased( );
-    }
-}
-
-// return a copy of our command
-template<typename T>
-std::shared_ptr<Command> ButtonActionCommand<T>::CreateCommand()
-{
-    return std::make_shared<T>();
-}

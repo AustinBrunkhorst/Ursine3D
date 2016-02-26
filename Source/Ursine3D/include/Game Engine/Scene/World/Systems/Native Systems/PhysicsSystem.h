@@ -39,8 +39,7 @@ namespace ursine
 
             bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
                          ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
-                         bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
-                         Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
+                         bool debugDraw = false, float drawDuration = 2.0f, Color color = Color::Blue, bool alwaysDrawLine = false);
 
 			bool Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
 					   ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);
@@ -50,6 +49,9 @@ namespace ursine
 
             void SetEnableDebugDraw(bool enable);
             bool GetEnableDebugDraw(void) const;
+
+			void SetPlaymodeDebugDraw(bool enable);
+			bool GetPlaymodeDebugDraw(void) const;
 
             void ClearContacts(Rigidbody *rigidbody);
 
@@ -62,6 +64,7 @@ namespace ursine
             DebugSystem *m_debugSystem;
 
             bool m_enableDebugDraw;
+			bool m_playmodeDebugDraw;
 
             std::vector<Rigidbody*> m_rigidbodies;
             std::vector<Body*> m_bodies;

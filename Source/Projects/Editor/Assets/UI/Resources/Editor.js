@@ -840,6 +840,12 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 	getNativeType: function(name) {
 		return this.m_typeDB.get(name);
 	}
+	,getEnumValue: function(enewm,key) {
+		var result = Lambda.find(enewm,function(entry) {
+			return entry.key == key;
+		});
+		if(result == null) return null; else return result.value;
+	}
 	,getComponentTypes: function() {
 		var keys = [];
 		var $it0 = this.m_db.keys();
@@ -1017,6 +1023,7 @@ var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(o
 	this.inspector = new FieldInspectorControl();
 	var prettyName = ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex.replace(field.name,"$1 ");
 	this.inspector.heading = prettyName.charAt(0).toUpperCase() + HxOverrides.substr(prettyName,1,null);
+	if(Object.prototype.hasOwnProperty.call(field.meta,ursine_native_Property.Annotation)) this.inspector.annotation = Reflect.field(field.meta,ursine_native_Property.Annotation).text;
 	this.arrayIndex = 0;
 };
 $hxClasses["ursine.editor.scene.component.inspectors.FieldInspectionHandler"] = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
@@ -1106,17 +1113,18 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		this.setType(e.value);
 	}
 	,initTypeToFields: function() {
-		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = ursine_editor_Editor.instance.componentDatabase.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
+		var database = ursine_editor_Editor.instance.componentDatabase;
+		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = database.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
-		var k = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
+		var k = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
 		var v = ["color","intensity","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
 		v;
-		var k1 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
+		var k1 = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
 		var v1 = ["color","intensity","radius","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k1] = v1;
 		v1;
-		var k2 = Reflect.field(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
+		var k2 = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
 		var v2 = ["color","intensity","spotlightAngles","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
 		v2;
@@ -1156,6 +1164,12 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		container.opened = true;
 		container.container.appendChild(handler.inspector);
 		container.handler = handler;
+		container.header.addEventListener("contextmenu",function(e) {
+			_g.openItemContextMenu(e,handler,container);
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+		});
 		container.addEventListener("item-removed",function() {
 			_g.m_owner.entity.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
 		});
@@ -1233,6 +1247,26 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		var database = ursine_editor_Editor.instance.componentDatabase;
 		var arrayType = database.getNativeType(this.m_type.arrayType);
 		return database.createFieldInspector(this,value,this.m_field,arrayType);
+	}
+	,openItemContextMenu: function(e,handler,container) {
+		var _g = this;
+		var menu = new ContextMenuControl();
+		var moveUp = menu.addItem("Move Up",function() {
+			_g.m_owner.entity.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex - 1);
+		});
+		moveUp.icon = "arrow-up";
+		moveUp.disabled = handler.arrayIndex == 0;
+		var moveDown = menu.addItem("Move Down",function() {
+			_g.m_owner.entity.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex + 1);
+		});
+		moveDown.icon = "arrow-down";
+		moveDown.disabled = handler.arrayIndex == this.m_arrayItems.length - 1;
+		menu.addSeparator();
+		var $delete = menu.addItem("Delete",function() {
+			_g.m_owner.entity.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
+		});
+		$delete.icon = "remove";
+		menu.open(e.clientX,e.clientY);
 	}
 	,onAddItemClicked: function(e) {
 		this.m_owner.entity.componentFieldArrayPush(this.m_owner.component.type,this.m_field.name,{ });
@@ -1380,26 +1414,26 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		this.m_isEnum = true;
 		this.m_comboInput = new ComboInputControl();
 		this.m_enumValueOptions = new haxe_ds_StringMap();
-		var values = Reflect.fields(this.m_type.enumValue);
 		var _g1 = 0;
-		while(_g1 < values.length) {
-			var key = values[_g1];
+		var _g11 = this.m_type.enumValue;
+		while(_g1 < _g11.length) {
+			var entry = _g11[_g1];
 			++_g1;
 			var option;
 			var _this = window.document;
 			option = _this.createElement("option");
-			option.text = key;
-			option.value = Reflect.field(this.m_type.enumValue,key);
+			option.text = entry.key;
+			option.value = entry.value;
 			this.m_comboInput.appendChild(option);
 			{
-				this.m_enumValueOptions.set(key,option);
+				this.m_enumValueOptions.set(entry.key,option);
 				option;
 			}
 		}
 		this.m_isBitMaskEditor = Reflect.field(this.m_field.meta,"BitMaskEditor") != null;
 		if(this.m_isBitMaskEditor) {
 			this.m_comboInput.multiple = true;
-			this.m_comboInput.size = Std["int"](Math.min(10,values.length));
+			this.m_comboInput.size = Std["int"](Math.min(10,this.m_type.enumValue.length));
 		}
 		this.m_comboInput.addEventListener("change",function(e) {
 			_g.m_instance = _g.getEnumBitMaskValue();
@@ -1428,14 +1462,13 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 		}
 	}
 	,loadEnumBitMaskValue: function(value) {
-		var values = Reflect.fields(this.m_type.enumValue);
 		var _g = 0;
-		while(_g < values.length) {
-			var key = values[_g];
+		var _g1 = this.m_type.enumValue;
+		while(_g < _g1.length) {
+			var entry = _g1[_g];
 			++_g;
-			var option = this.m_enumValueOptions.get(key);
-			var keyValue = Reflect.field(this.m_type.enumValue,key);
-			option.selected = (value & keyValue) == keyValue;
+			var option = this.m_enumValueOptions.get(entry.key);
+			option.selected = (value & entry.value) == entry.value;
 		}
 	}
 	,getEnumBitMaskValue: function() {
@@ -1558,6 +1591,8 @@ var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = funct
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
 	this.m_string = new TextInputControl();
+	if(Object.prototype.hasOwnProperty.call(field.meta,ursine_native_Property.MultiLineEditor)) {
+	}
 	this.m_string.addEventListener("change",function() {
 		_g.notifyChanged(_g.m_field,_g.m_string.value);
 	});
@@ -1738,6 +1773,9 @@ ursine_editor_scene_entity_Entity.prototype = {
 	,componentFieldArrayRemove: function(componentName,fieldName,index) {
 		this.m_handler.componentFieldArrayRemove(componentName,fieldName,index);
 	}
+	,componentFieldArraySwap: function(componentName,fieldName,index1,index2) {
+		this.m_handler.componentFieldArraySwap(componentName,fieldName,index1,index2);
+	}
 	,componentButtonInvoke: function(componentName,buttonName) {
 		this.m_handler.componentButtonInvoke(componentName,buttonName);
 	}
@@ -1909,7 +1947,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		var db = ursine_editor_Editor.instance.componentDatabase;
 		return db.getComponentTypes().filter(function(type) {
 			var componentType = db.getComponentType(type);
-			var isHidden = Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInInspector);
+			var isHidden = Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInInspector) || Object.prototype.hasOwnProperty.call(componentType.meta,ursine_native_Property.HiddenInSelector);
 			return !entity.hasComponent(type) && !isHidden;
 		});
 	}
@@ -2124,6 +2162,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
 		item.text = e.name;
+		ToolTip.bind(item.textContentElement,e.name);
 	}
 	,onEntityParentChanged: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
@@ -2206,6 +2245,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			var childIndex = ElementUtils.childIndex(item);
 			entity.setSiblingIndex(childIndex);
 		});
+		ToolTip.bind(item.textContentElement,entity.getName());
 		item.textContentElement.addEventListener("dblclick",function(e4) {
 			_g.startRenamingEntity(item);
 		});
@@ -2510,7 +2550,10 @@ ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove = "ComponentArrayRem
 ursine_editor_windows_EntityInspector.m_smallWindowWidth = 245;
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
+ursine_native_Property.HiddenInSelector = "HiddenInSelector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
+ursine_native_Property.MultiLineEditor = "MultiLineEditor";
+ursine_native_Property.Annotation = "Annotation";
 EditorMain.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

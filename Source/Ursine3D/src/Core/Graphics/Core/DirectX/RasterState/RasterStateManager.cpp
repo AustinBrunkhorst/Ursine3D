@@ -204,7 +204,12 @@ namespace ursine
 
                 m_currentState = state;
 
-                m_deviceContext->RSSetState(m_rasterStateArray[ state ]);
+                if ( state == RASTER_STATE_COUNT )
+                {
+                    m_currentState = RASTER_STATE_SOLID_BACKCULL;
+                }
+
+                m_deviceContext->RSSetState(m_rasterStateArray[ m_currentState ]);
             }
 
             void RasterStateManager::Invalidate(void)

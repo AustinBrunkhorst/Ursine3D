@@ -1,0 +1,105 @@
+{
+"children": [], 
+"components": {
+"ParticleColorAnimator": {
+".uid": 304, 
+"color0": {
+"a": 0.75390625, 
+"b": 0.3265380859375, 
+"g": 0.78125, 
+"r": 0.74507975578308105
+}, 
+"color1": {
+"a": 1, 
+"b": 0.0546875, 
+"g": 0.9852294921875, 
+"r": 1
+}, 
+"color2": {
+"a": 1, 
+"b": 0, 
+"g": 0.51372551918029785, 
+"r": 1
+}, 
+"color3": {
+"a": 0.81640625, 
+"b": 0, 
+"g": 0.74901962280273438, 
+"r": 1
+}, 
+"color4": {
+"a": 0.4609375, 
+"b": 0, 
+"g": 0.60784316062927246, 
+"r": 1
+}
+}, 
+"ParticleEmitter": {
+".uid": 305, 
+"emitCount": 1, 
+"emitRate": 400, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"fill": 0, 
+"lifetime": 0.029999999329447746, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 0, 
+"size": 1, 
+"sizeVariance": 0.20000000298023224, 
+"velocity": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"ParticleSystem": {
+".uid": 306, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Laser"
+}, 
+"TrailComponent": {
+".uid": 307, 
+"ParticlesToSpawn": 1, 
+"Segments": 200, 
+"Speed": 100
+}, 
+"Transform": {
+".uid": 303, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

@@ -17,14 +17,13 @@ namespace ursine
 {
     namespace graphics
     {
-        enum SHADER_TYPES
+        enum SHADER_LIST : unsigned
         {
             SHADER_BASIC = 0,
             SHADER_QUAD,
             SHADER_DIFFUSE,
             SHADER_NORMAL,
             SHADER_DEFFERED_TEXTURE,
-            SHADER_BILLBOARD2D,
             
             SHADER_DEFERRED_DEPTH,
             SHADER_DEFERRED_DEPTH_NORM,
@@ -37,22 +36,27 @@ namespace ursine
             SHADER_DIRECTIONAL_LIGHT,
             SHADER_EMISSIVE,
 
+            // needed for overdraw to work
+            SHADER_OVERDRAW_MODEL,
+
+            // forward pass on particles and billboards
+            SHADER_PARTICLE,
+            SHADER_BILLBOARD2D,
+            SHADER_SPRITE_TEXT,
+
             /////////////////////////////////////////////////////////
             // and past this is debug!
             SHADER_PRIMITIVE,
-
-            
+            SHADER_MOUSEPOSITION,
 
             //shaders not part of the regular pipeline
             SHADER_FORWARD,
             SHADER_POINT,
-            SHADER_SHADOW,
+            SHADER_SHADOW_PASS,
 
-            SHADER_MOUSEPOSITION,
+            SHADER_COUNT,
 
-            SHADER_PARTICLE,
-
-            SHADER_COUNT
+            SHADER_OVERRIDE
         };
     }
 }

@@ -19,7 +19,7 @@
 
 namespace ursine
 {
-	class Scene;
+    class Scene;
 }
 
 class EntityHandler : public ursine::NativeJSClass
@@ -52,6 +52,7 @@ public:
     JSMethod(componentFieldArrayUpdate);
     JSMethod(componentFieldArrayInsert);
     JSMethod(componentFieldArrayRemove);
+    JSMethod(componentFieldArraySwap);
     JSMethod(componentFieldArrayGetLength);
 
     JSMethod(componentButtonInvoke);

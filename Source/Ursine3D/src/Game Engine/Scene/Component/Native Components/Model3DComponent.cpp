@@ -20,6 +20,8 @@
 #include "ConvexDecompColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 #include "Notification.h"
+#include "ModelResource.h"
+#include "LvlHierarchy.h"
 
 namespace ursine
 {
@@ -196,6 +198,16 @@ namespace ursine
         int Model3D::GetMeshIndex(void) const
         {
             return m_model->GetMeshIndex( );
+        }
+
+        bool Model3D::GetIsShadowCaster(void) const
+        {
+            return m_model->GetShadowCaster( );
+        }
+
+        void Model3D::SetIsShadowCaster(bool castShadows)
+        {
+            m_model->SetShaderCaster( castShadows );
         }
 
         void Model3D::updateRenderer(void)

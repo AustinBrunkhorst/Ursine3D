@@ -57,14 +57,14 @@ PS_GBUFFER_OUT PackGBuffer(float4 BaseColor, float3 Normal, float
 
     // convert id into proper sizes
     int word1 = objID & 0xff;           //first 8 bits
-    int word2 = (objID >> 8) & 0xff;  //second 8 bits
+    int word2 = (objID >> 8) & 0xff;    //second 8 bits
      
                                       // Pack all the data into the GBuffer structure
     Out.ColorSpecInt = calculateColor(normalize(mul(Normal, (float3x3)(InvView)).xyz)) * BaseColor;
     Out.ColorSpecInt = saturate(1.0f - emissive) * Out.ColorSpecInt + emissive * BaseColor;
 
     // doesn't matter
-    Out.Normal = float4(0, 0, 0, 0);
+    Out.Normal = float4(0, 0, 1, 0);
     
     // set this
     Out.SpecPow = float4(0, word1 / 255.f, word2 / 255.f, SpecIntensity);

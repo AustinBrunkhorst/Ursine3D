@@ -55,7 +55,7 @@ namespace ursine
 				*
 				*  @return nothing
 				*/
-				AnimInfo() : name(""), animCount(0), ISerialize("") {}
+				AnimInfo();
 
 				/** @brief animation information destructor
 				*

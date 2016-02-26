@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -31,10 +31,13 @@ namespace ursine
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
             void Uninitialize(void);
 
+            GfxHND CreateTexture(const std::string name, const std::string path, const unsigned width, const unsigned height);
+            GfxHND CreateTexture(const uint8_t *binaryData, size_t size, const std::string &name, const unsigned width, const unsigned height);
+
             void MapTextureByName(const std::string name, const unsigned int bufferIndex = 0);
             void MapTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
 
-            void MapSamplerState(const Sampler type, const unsigned bufferIndex = 0);
+            void MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex = 0);
 
             unsigned GetTextureIDByName(const std::string name);
 
@@ -61,7 +64,6 @@ namespace ursine
 
             void InitalizeTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const;
 
-        private:
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;
 

@@ -1,0 +1,209 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Light": {
+".uid": 3, 
+"color": {
+"a": 1, 
+"b": 0.5, 
+"g": 0.5, 
+"r": 0.5
+}, 
+"intensity": 1, 
+"radius": 40, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 1, 
+"z": 0.58947008848190308
+}, 
+"translation": {
+"x": 0, 
+"y": 60, 
+"z": 0
+}
+}
+}, 
+"name": "Global Light"
+}, {
+"children": [], 
+"components": {
+"Camera": {
+".uid": 10, 
+"active": true, 
+"farPlane": 2500, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 9, 
+"rotation": {
+"w": 0.68274027109146118, 
+"x": 0.2598947286605835, 
+"y": 0.63820093870162964, 
+"z": -0.24294023215770721
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -126.96298980712891, 
+"y": 138.29876708984375, 
+"z": -8.5715885162353516
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 19, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 15, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 100, 
+"y": 1, 
+"z": 100
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Sphere"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 22, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 100, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 2
+}, 
+"Transform": {
+".uid": 20, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 58.947010040283203, 
+"y": 100, 
+"z": 58.947010040283203
+}, 
+"translation": {
+"x": 0, 
+"y": 25.00074577331543, 
+"z": 0
+}
+}
+}, 
+"name": "Spot Light"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 8, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 0, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 7, 
+"systems": []
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}

@@ -17,322 +17,403 @@
 #include <SystemManager.h>
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
+#include <DebugSystem.h>
 
 using namespace ursine;
 using namespace ecs;
 
 ScaleTool::ScaleTool(Editor *editor, ursine::ecs::World *world)
-	: EditorTool( editor, world )
-	, m_gizmo( nullptr )
-	, m_selected( -1 )
-	, m_dragging( false )
-	, m_snapping( false )
-	, m_local( false )
-	, m_deleteGizmo( false )
-	, m_hovering( false )
+    : EditorTool( editor, world )
+    , m_gizmo( nullptr )
+    , m_selected( -1 )
+    , m_dragging( false )
+    , m_snapping( false )
+    , m_local( false )
+    , m_deleteGizmo( false )
+    , m_hovering( false )
+    , m_axisType( -1 )
 {
-	m_graphics = GetCoreSystem( graphics::GfxAPI );
-	m_editorCameraSystem = m_world->GetEntitySystem( EditorCameraSystem );
+    m_graphics = GetCoreSystem( graphics::GfxAPI );
+    m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
 void ScaleTool::OnEnable(EntityUniqueID selected)
 {
-	m_selected = selected;
+    m_selected = selected;
 
-	if (m_selected != -1)
-		enableAxis( );
+    if (m_selected != -1)
+        enableAxis( );
 }
 
 void ScaleTool::OnDisable(void)
 {
-	m_selected = -1;
-	m_dragging = false;
-	m_snapping = false;
-	
-	disableAxis( );
+    m_selected = -1;
+    m_dragging = false;
+    m_snapping = false;
+    
+    disableAxis( );
 }
 
 void ScaleTool::OnSelect(Entity* entity)
 {
-	auto prevSelected = m_gizmo != nullptr;
-	
-	m_selected = entity->GetUniqueID( );
+    auto prevSelected = m_gizmo != nullptr;
+    
+    m_selected = entity->GetUniqueID( );
 
-	if (!prevSelected)
-		enableAxis( );
+    if (!prevSelected)
+        enableAxis( );
 
-	m_deleteGizmo = false;
+    m_deleteGizmo = false;
 }
 
 void ScaleTool::OnDeselect(Entity* entity)
 {
-	m_selected = -1;
-	
-	m_deleteGizmo = true;
+    m_selected = -1;
+    
+    m_deleteGizmo = true;
 }
 
 void ScaleTool::OnMouseDown(const MouseButtonArgs& args)
 {
-	if (m_hovering)
-		m_dragging = true;
+    if (m_hovering)
+        m_dragging = true;
 }
 
 void ScaleTool::OnMouseUp(const MouseButtonArgs& args)
 {
-	if (m_dragging)
-		m_dragging = false;
+    if (m_dragging)
+        m_dragging = false;
 }
 
 void ScaleTool::OnMouseMove(const MouseMoveArgs& args)
 {
-	if (m_dragging && m_selected != -1)
-	{
-		// Project the delta vector onto the screen direction vector
-		auto b = args.positionDelta;
-		auto &a = m_screenDir;
+    if (m_dragging && m_selected != -1)
+    {
+        // Project the delta vector onto the screen direction vector
+        auto b = args.positionDelta;
+        auto &a = m_screenDir;
 
-		// invert the Y
-		b.Y( ) = -b.Y( );
+        // invert the Y
+        b.Y( ) = -b.Y( );
 
-		float dot = a.Dot( b );
-		auto proj = ( dot / b.LengthSquared( ) ) * b;
-		auto dist = proj.Length( );
-		auto selected = m_world->GetEntityUnique( m_selected )->GetTransform( );
+        float dot = a.Dot( b );
+        auto proj = ( dot / b.LengthSquared( ) ) * b;
+        auto dist = proj.Length( );
+        auto selected = m_world->GetEntityUnique( m_selected )->GetTransform( );
 
-		if (dot < 0.0f)
-			dist = -dist;
-		
-		// Multiply by an arbitrary value so that it feels nice.
-		// Ideally we would convert the screen space to a world space distance
-		// and then apply it to the world space direction vector.
-		dist *= 0.5f;
+        if (dot < 0.0f)
+            dist = -dist;
+        
+        // Multiply by an arbitrary value so that it feels nice.
+        // Ideally we would convert the screen space to a world space distance
+        // and then apply it to the world space direction vector.
+        dist *= 0.5f;
 
-		auto modifier = m_worldDir * dist;
+        auto modifier = m_worldDir * dist;
 
-		if (m_local)
-			modifier = selected->GetWorldRotation( ).GetInverse( ) * modifier;
-		else
-			modifier = selected->GetWorldRotation( ) * modifier;
+        if (m_local)
+            modifier = selected->GetWorldRotation( ).GetInverse( ) * modifier;
+        else
+            modifier = selected->GetWorldRotation( ) * modifier;
 
-		if (m_uniform)
-		{
-			auto max = math::Max( modifier.X( ), modifier.Y( ), modifier.Z( ) );
-			auto min = math::Min( modifier.X( ), modifier.Y( ), modifier.Z( ) );
+        if (m_uniform)
+        {
+            auto max = math::Max( modifier.X( ), modifier.Y( ), modifier.Z( ) );
+            auto min = math::Min( modifier.X( ), modifier.Y( ), modifier.Z( ) );
 
-			if (abs( max ) > abs( min ))
-				modifier = SVec3( max );
-			else
-				modifier = SVec3( min );
-		}
+            if (abs( max ) > abs( min ))
+                modifier = SVec3( max );
+            else
+                modifier = SVec3( min );
+        }
 
-		auto newS = selected->GetLocalScale( ) + modifier;
+        auto newS = selected->GetLocalScale( ) + modifier;
 
-		if (m_snapping)
-		{
-			for (int i = 0; i < 3; ++i)
-			{
-				if (newS[ i ] > 0.0f)
-					newS[ i ] = float(int(newS[ i ] * 2.0f + 0.5f)) / 2.0f;
-				else
-					newS[ i ] = float(int(newS[ i ] * 2.0f - 0.5f)) / 2.0f;
-			}
+        if (m_snapping)
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if (newS[ i ] > 0.0f)
+                    newS[ i ] = float(int(newS[ i ] * 2.0f + 0.5f)) / 2.0f;
+                else
+                    newS[ i ] = float(int(newS[ i ] * 2.0f - 0.5f)) / 2.0f;
+            }
 
-			selected->SetLocalScale( newS );
-		}
-		else
-			selected->SetLocalScale( newS );
-	}
+            selected->SetLocalScale( newS );
+        }
+        else
+            selected->SetLocalScale( newS );
+    }
 }
 
 void ScaleTool::OnKeyDown(const KeyboardKeyArgs& args)
 {
-	if (args.key == KEY_SPACE)
-		m_local = !m_local;
+    if (args.key == KEY_G)
+        m_local = !m_local;
 
-	if (args.key == KEY_LCONTROL)
-		m_snapping = true;
+    if (args.key == KEY_LCONTROL)
+        m_snapping = true;
 
-	if (args.key == KEY_LMENU)
-		m_dragging = false;
+    if (args.key == KEY_LMENU)
+        m_dragging = false;
 }
 
 void ScaleTool::OnKeyUp(const KeyboardKeyArgs& args)
 {
-	if (args.key == KEY_CONTROL)
-		m_snapping = false;
+    if (args.key == KEY_CONTROL)
+        m_snapping = false;
 }
 
 void ScaleTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 {
-	if (m_deleteGizmo)
-	{
-		disableAxis( );
-		m_deleteGizmo = false;
-	}
+    if (m_deleteGizmo)
+    {
+        disableAxis( );
+        m_deleteGizmo = false;
+    }
 
-	m_altDown = kManager->IsDown( KEY_LMENU );
-	m_uniform = kManager->IsDown( KEY_LSHIFT );
+    m_altDown = kManager->IsDown( KEY_LMENU );
+    m_uniform = kManager->IsDown( KEY_LSHIFT );
 
-	updateAxis( );
+    updateAxis( );
 
-	if (!m_dragging)
-	{
-		updateHoverAxis( );
-	}
+    renderAxis( );
+
+    if (!m_dragging)
+    {
+        updateHoverAxis( );
+    }
 }
 
 void ScaleTool::setDirectionVectors(const SVec3& basisVector, Entity* selected)
 {
-	if (m_local)
-		m_worldDir = selected->GetTransform( )->GetWorldRotation( ) * basisVector;
-	else
-		m_worldDir = basisVector;
+    if (m_local)
+        m_worldDir = selected->GetTransform( )->GetWorldRotation( ) * basisVector;
+    else
+        m_worldDir = basisVector;
 
-	// Set the screen direction
-	auto cam = m_editorCameraSystem->GetEditorCamera( );
-	auto worldP = selected->GetTransform( )->GetWorldPosition( );
-	auto p1 = cam->WorldToScreen( worldP );
-	auto p2 = cam->WorldToScreen( worldP + m_worldDir );
-	
-	m_screenDir = p2 - p1;
-	m_screenDir.Normalize( );
+    // Set the screen direction
+    auto cam = m_editorCameraSystem->GetEditorCamera( );
+    auto worldP = selected->GetTransform( )->GetWorldPosition( );
+    auto p1 = cam->WorldToScreen( worldP );
+    auto p2 = cam->WorldToScreen( worldP + m_worldDir );
+    
+    m_screenDir = p2 - p1;
+    m_screenDir.Normalize( );
 }
 
 void ScaleTool::enableAxis(void)
 {
-	m_gizmo = m_world->CreateEntityFromArchetype( 
-		EDITOR_ARCHETYPE_PATH "EditorTools/ScaleGizmo.uatype",
-		"ScaleGizmo" 
-	);
+    m_gizmo = m_world->CreateEntityFromArchetype( 
+        EDITOR_ARCHETYPE_PATH "EditorTools/ScaleGizmo.uatype",
+        "ScaleGizmo" 
+    );
 
-	setEntitySerializationToggle( false, m_gizmo );
-	
-	// Make it invisible in the hiearchy
-	m_gizmo->SetVisibleInEditor( false );
+    setEntitySerializationToggle( false, m_gizmo );
+    
+    // Make it invisible in the hiearchy
+    m_gizmo->SetVisibleInEditor( false );
 
-	// Make all models draw over everything
-	for (auto &model : m_gizmo->GetComponentsInChildren<ecs::Model3D>( ))
-	{
-		model->SetOverdraw( true );
-		model->SetMaterialData( 4, 0, 0 );
-	}
+    // Make all models draw over everything
+    for (auto &model : m_gizmo->GetComponentsInChildren<ecs::Model3D>( ))
+    {
+        model->SetOverdraw( true );
+        model->SetMaterialData( 4, 0, 0 );
+    }
 }
 
 void ScaleTool::disableAxis(void)
 {
-	if (m_gizmo)
-	{
-		m_gizmo->Delete( );
-	}
+    if (m_gizmo)
+    {
+        m_gizmo->Delete( );
+    }
 
-	m_gizmo = nullptr;
-	m_axis = nullptr;
+    m_gizmo = nullptr;
+    m_axis = nullptr;
 }
 
 void ScaleTool::updateAxis(void)
 {
-	if (m_selected == -1 || m_gizmo == nullptr)
-		return;
+    if (m_selected == -1 || m_gizmo == nullptr)
+        return;
 
-	// update the size of the gizmo
-	auto gizTrans = m_gizmo->GetTransform( );
+    // update the size of the gizmo
+    auto gizTrans = m_gizmo->GetTransform( );
 
-	gizTrans->SetWorldScale( SVec3( m_editorCameraSystem->GetCamZoom( ) * 0.04f ) );
+    auto camVec = gizTrans->GetWorldPosition() -
+        m_editorCameraSystem->GetEditorCameraEntity()->GetTransform()->GetWorldPosition();
 
-	auto selected = m_world->GetEntityUnique( m_selected );
-	auto selTrans = selected->GetTransform( );
+    gizTrans->SetWorldScale( SVec3(camVec.Length() * 0.04f ) );
 
-	gizTrans->SetWorldPosition( selTrans->GetWorldPosition( ) );
+    auto selected = m_world->GetEntityUnique( m_selected );
+    auto selTrans = selected->GetTransform( );
 
-	if (m_local)
-		gizTrans->SetWorldRotation( selTrans->GetWorldRotation( ) );
-	else
-		gizTrans->SetLocalRotation( SQuat::Identity( ) );
+    gizTrans->SetWorldPosition( selTrans->GetWorldPosition( ) );
+
+    if (m_local)
+        gizTrans->SetWorldRotation( selTrans->GetWorldRotation( ) );
+    else
+        gizTrans->SetLocalRotation( SQuat::Identity( ) );
+}
+
+void ScaleTool::renderAxis()
+{
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
+
+    if ( m_gizmo )
+    {
+        auto gizTrans = m_gizmo->GetTransform( );
+
+        auto camVec = gizTrans->GetWorldPosition( ) -
+            m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );
+
+        float size = camVec.Length( ) * 0.15f;
+
+        auto position = gizTrans->GetWorldPosition( );
+
+        SVec3 xAxis = SVec3( size, 0, 0 ), yAxis = SVec3( 0, size, 0 ), zAxis = SVec3( 0, 0, size );
+
+        if ( m_local )
+        {
+            xAxis = gizTrans->GetWorldRotation().Rotate(xAxis);
+            yAxis = gizTrans->GetWorldRotation().Rotate(yAxis);
+            zAxis = gizTrans->GetWorldRotation().Rotate(zAxis);
+        }
+
+        Color xColor = Color::Red, yColor = Color::Green, zColor = Color::Blue, mainColor = Color::White;
+
+        switch( m_axisType )
+        {
+        case 1:
+            xColor = Color::Yellow;
+            break;
+        case 2:
+            yColor = Color::Yellow;
+            break;
+        case 3:
+            zColor = Color::Yellow;
+            break;
+        case 4:
+            mainColor = Color::Yellow;
+            break;
+        default:
+            break;
+        }
+
+        drawer->DrawLine( position, position + xAxis, xColor, 0, true );
+        drawer->DrawLine( position, position + yAxis, yColor, 0, true );
+        drawer->DrawLine( position, position + zAxis, zColor, 0, true );
+
+        drawer->DrawCube( position, size * 0.1f, mainColor, 0, true );
+
+        drawer->DrawSphere( position + xAxis, size * 0.1f, xColor, 0, true );
+        drawer->DrawSphere( position + yAxis, size * 0.1f, yColor, 0, true );
+        drawer->DrawSphere( position + zAxis, size * 0.1f, zColor, 0, true );
+    }
 }
 
 void ScaleTool::updateHoverAxis(void)
 {
-	// get the current entity ID the mouse is over
-	auto newID = m_graphics->GetMousedOverID( );
-	auto entity = m_world->GetEntityUnique( newID );
+    // get the current entity ID the mouse is over
+    auto newID = m_graphics->GetMousedOverID( );
+    auto entity = m_world->GetEntityUnique( newID );
 
-	if (!entity || m_altDown)
-	{
-		disableHover( );
-		return;
-	}
+    if (!entity || m_altDown)
+    {
+        disableHover( );
+        return;
+    }
 
-	auto entityTrans = entity->GetTransform( );
+    auto entityTrans = entity->GetTransform( );
 
-	auto root = entityTrans->GetRoot( );
+    auto root = entityTrans->GetRoot( );
 
-	if (!root)
-	{
-		disableHover( );
-		return;
-	}
+    if (!root)
+    {
+        disableHover( );
+        return;
+    }
 
-	auto rootName = root->GetOwner( )->GetName( );
+    auto rootName = root->GetOwner( )->GetName( );
 
-	// if we're clicking on ourselves, set the dragging flag,
-	// and the vector we're dragging on
-	if (rootName == "ScaleGizmo")
-	{
-		// Get the selected entity
-		auto selected = m_world->GetEntityUnique( m_selected );
+    // if we're clicking on ourselves, set the dragging flag,
+    // and the vector we're dragging on
+    if (rootName == "ScaleGizmo")
+    {
+        // Get the selected entity
+        auto selected = m_world->GetEntityUnique( m_selected );
 
-		// Get the gizmo's name (the models are under the parent named the axis' name)
-		auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );
+        // Get the gizmo's name (the models are under the parent named the axis' name)
+        auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );
 
-		if (name == "xAxis")
-			setDirectionVectors( SVec3::UnitX( ), selected );
-		else if (name == "yAxis")
-			setDirectionVectors( SVec3::UnitY( ), selected );
-		else if (name == "zAxis")
-			setDirectionVectors( SVec3::UnitZ( ), selected );
-		else if (name == "allAxis")
-			setDirectionVectors( SVec3( 1.0f, 1.0f, 1.0f ), selected );
+        if ( name == "xAxis" )
+        {
+            setDirectionVectors(SVec3::UnitX(), selected);
+            m_axisType = 1;
+        }
+        else if ( name == "yAxis" )
+        {
+            setDirectionVectors(SVec3::UnitY(), selected);
+            m_axisType = 2;
+        }
+        else if ( name == "zAxis" )
+        {
+            setDirectionVectors(SVec3::UnitZ(), selected);
+            m_axisType = 3;
+        }
+        else if(name == "allAxis")
+        {
+            m_axisType = 4;
+            setDirectionVectors(SVec3(1.0f, 1.0f, 1.0f), selected);
+        }
+        else
+        {
+            m_axisType = 0;
+            return;
+        }
 
-		auto model = entity->GetComponent<Model3D>( );
+        auto model = entity->GetComponent<Model3D>( );
 
-		if (!model)
-			return;
+        if (!model)
+            return;
 
-		// If we're hovering over a new axis
-		if (m_axis && entity != m_axis->GetOwner( ))
-			disableHover( );
+        // If we're hovering over a new axis
+        if (m_axis && entity != m_axis->GetOwner( ))
+            disableHover( );
 
-		// if the handle is null, store the original color
-		if (!m_axis)
-			m_axisOrigColor = model->GetColor( );
+        // if the handle is null, store the original color
+        if (!m_axis)
+            m_axisOrigColor = model->GetColor( );
 
-		// set the axis handle
-		m_axis = entity->GetComponent<Model3D>( );
+        // set the axis handle
+        m_axis = entity->GetComponent<Model3D>( );
 
-		// set the axis' color
-		m_axis->SetColor( Color::Yellow );
+        // set the axis' color
+        m_axis->SetColor( Color::Yellow );
 
-		m_hovering = true;
-	}
+        m_hovering = true;
+    }
 }
 
 void ScaleTool::disableHover(void)
 {
-	m_hovering = false;
-		
-	if (m_axis)
-	{
-		m_axis->SetColor( m_axisOrigColor );
-		m_axis = nullptr;
-	}
+    m_hovering = false;
+        
+    if (m_axis)
+    {
+        m_axis->SetColor( m_axisOrigColor );
+        m_axis = nullptr;
+        m_axisType = 0;
+    }
 }
 
 void ScaleTool::setEntitySerializationToggle(bool toggle, Entity* entity)
 {
-	for (auto child : entity->GetTransform( )->GetChildren( ))
-	{
-		setEntitySerializationToggle( toggle, child->GetOwner( ) );
-	}
+    for (auto child : entity->GetTransform( )->GetChildren( ))
+    {
+        setEntitySerializationToggle( toggle, child->GetOwner( ) );
+    }
 
-	entity->EnableSerialization( toggle );
+    entity->EnableSerialization( toggle );
 }

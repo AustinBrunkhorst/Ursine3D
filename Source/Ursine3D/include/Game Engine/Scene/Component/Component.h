@@ -18,6 +18,7 @@
 #include "ComponentConfig.h"
 #include "EventDispatcher.h"
 
+#include "Array.h"
 #include "ResourceReference.h"
 
 namespace ursine
@@ -25,7 +26,7 @@ namespace ursine
     namespace ecs
     {
         class Entity;
-		class Transform;
+        class Transform;
 
         class Component : public meta::Object
         {
@@ -57,43 +58,43 @@ namespace ursine
             template<class ComponentType>
             inline bool Is(void) const;
 
-			// Utility class for storing a reference to an entity's component.
-			// This is needed due to component pointers being invalidated, but entity
-			// pointers being reliable
-			template<class ComponentType>
-			class Handle
-			{
-			public:
-				Handle(void);
-				Handle(const Handle<ComponentType> &);
-				Handle(const ComponentType *);
-				~Handle(void);
+               // Utility class for storing a reference to an entity's component.
+               // This is needed due to component pointers being invalidated, but entity
+               // pointers being reliable
+               template<class ComponentType>
+               class Handle
+               {
+               public:
+                    Handle(void);
+                    Handle(const Handle<ComponentType> &);
+                    Handle(const ComponentType *);
+                    ~Handle(void);
 
-				ComponentType *Get(void);
-				const ComponentType *Get(void) const;
-				
-				// Assignment and Equivalency
-				const ComponentType *operator=(const ComponentType *rhs);
-				const Handle<ComponentType> &operator=(const Handle<ComponentType> &rhs);
-				bool operator==(const ComponentType *rhs) const;
-				bool operator==(const Handle<ComponentType> &rhs) const;
-                bool operator!=(const ComponentType *rhs) const;
-                bool operator!=(const Handle<ComponentType> &rhs) const;
+                    ComponentType *Get(void);
+                    const ComponentType *Get(void) const;
+                    
+                    // Assignment and Equivalency
+                    const ComponentType *operator=(const ComponentType *rhs);
+                    const Handle<ComponentType> &operator=(const Handle<ComponentType> &rhs);
+                    bool operator==(const ComponentType *rhs) const;
+                    bool operator==(const Handle<ComponentType> &rhs) const;
+                    bool operator!=(const ComponentType *rhs) const;
+                    bool operator!=(const Handle<ComponentType> &rhs) const;
 
-				// Checking for null
-				explicit operator bool(void) const;
+                    // Checking for null
+                    explicit operator bool(void) const;
 
-				// Dereference Operators
-				ComponentType &operator*(void);
-				const ComponentType &operator*(void) const;
-				ComponentType *operator->(void);
-				const ComponentType *operator->(void) const;
+                    // Dereference Operators
+                    ComponentType &operator*(void);
+                    const ComponentType &operator*(void) const;
+                    ComponentType *operator->(void);
+                    const ComponentType *operator->(void) const;
 
                 Entity *GetEntity(void) const;
 
-			private:
-				Entity *m_entity;
-			};
+               private:
+                    Entity *m_entity;
+               };
 
         private:
         #if defined(URSINE_WITH_EDITOR)

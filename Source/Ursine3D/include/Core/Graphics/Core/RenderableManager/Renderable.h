@@ -111,6 +111,9 @@ namespace ursine
             int GetMeshIndex(void) const;
             void SetMeshIndex(const int index);
 
+            bool GetShadowCaster(void) const;
+            void SetShaderCaster(bool castShadow);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -124,6 +127,8 @@ namespace ursine
 
             // for multimaps
             int m_meshIndex;
+
+            bool m_shadowCaster;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -275,6 +280,70 @@ namespace ursine
 
             bool m_useAdditive;
             bool m_worldSpace;
+        };
+
+        /////////////////////////////////////////////////////////////
+        // SPRITE TEXT //////////////////////////////////////////////
+        class SpriteText : public Renderable
+        {
+        public:
+            enum Alignment
+            {
+                ALIGN_LEFT,
+                ALIGN_CENTER,
+                ALIGN_RIGHT,
+
+                ALIGN_COUNT
+            };
+
+        public:
+            SpriteText(void);
+            void Initialize(void);
+
+            float GetSize(void) const;
+            void SetSize(float size);
+
+            float GetWidth(void) const;
+            void SetWidth(float size);
+
+            float GetHeight(void) const;
+            void SetHeight(float size);
+
+            const SVec3 &GetPosition(void) const;
+            void SetPosition(const SVec3 &position);
+
+            const std::string &GetText(void) const;
+            void SetText(const std::string &text);
+
+            float GetPPU(void) const;
+            void SetPPU(float ppu);
+
+            Alignment GetAlignment(void) const;
+            void SetAlignment(Alignment alignment);
+
+            bool GetFilter(void) const;
+            void SetFilter(bool useFilter);
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
+
+        private:
+            float m_size;
+
+            float m_widthScalar;
+            float m_heightScalar;
+
+            bool m_filter;
+
+            Color m_color;
+
+            SVec3 m_position;
+
+            std::string m_text;
+
+            float m_ppu;
+
+            Alignment m_alignment;
         };
     }
 }

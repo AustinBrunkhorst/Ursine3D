@@ -59,7 +59,7 @@ void SceneView::onFocusChanged(EVENT_HANDLER(NativeEditorTool))
 
     if (world->HasEntitySystem( EditorCameraSystem ))
     {
-        world->GetEntitySystem( EditorCameraSystem )->SetFocus( focused );
+        world->GetEntitySystem<EditorCameraSystem>( )->SetFocus( focused );
     }
 }
 
@@ -76,7 +76,7 @@ void SceneView::onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool))
 
     if (world->HasEntitySystem( EditorCameraSystem ))
     {
-        world->GetEntitySystem( EditorCameraSystem )->SetMouseFocus( focused );
+        world->GetEntitySystem<EditorCameraSystem>( )->SetMouseFocus( focused );
     }
 }
 

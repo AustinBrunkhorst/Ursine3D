@@ -1,0 +1,120 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 86, 
+"alignment": 1, 
+"size": 20, 
+"text": "Tank", 
+"textColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0.875
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 85, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0.42172014713287354, 
+"z": -0.13513374328613281
+}
+}
+}, 
+"name": "Empty Entity"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 81, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EnemyDeathComp": {
+".uid": 89
+}, 
+"Health": {
+".uid": 82, 
+"ArchetypeToSpawnOnDeath": ".uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": false
+}, 
+"Model3D": {
+".uid": 83, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 84, 
+"bodyFlag": 1, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 80, 
+"rotation": {
+"w": -0.59067237377166748, 
+"x": 0, 
+"y": -0.80691295862197876, 
+"z": 0
+}, 
+"scale": {
+"x": 18.964138031005859, 
+"y": 18.964138031005859, 
+"z": 18.964138031005859
+}, 
+"translation": {
+"x": 0, 
+"y": 22.472274780273438, 
+"z": -16.129880905151367
+}
+}
+}, 
+"v": "0.2submission"
+}

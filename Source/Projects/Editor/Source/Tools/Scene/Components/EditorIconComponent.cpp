@@ -49,15 +49,28 @@ void EditorIcon::OnInitialize(void)
 {
     auto *owner = GetOwner( );
 
-    m_billboard = owner->GetWorld( )->CreateEntity( );
-    GetOwner( )->GetTransform( )->AddChildAlreadyInLocal( m_billboard->GetTransform( ) );
-    m_billboard->EnableSerialization( false );
-    m_billboard->SetVisibleInEditor( false );
+    // look for the editor icon billboard and see if it's already there
+    auto child = owner->GetChildByName("EditorIconBillboard1234");
+
+    if (child)
+    {
+        m_billboard = child;
+    }
+    else
+    {
+        m_billboard = owner->GetWorld( )->CreateEntity( );
+        GetOwner( )->GetTransform( )->AddChildAlreadyInLocal( m_billboard->GetTransform( ) );
+        m_billboard->EnableSerialization( false );
+        m_billboard->SetVisibleInEditor( false );
+        m_billboard->SetName("EditorIconBillboard1234");
+        m_billboard->AddComponent<ecs::Billboard2D>( );
+    }
 
     auto *billboard = m_billboard
-        ->AddComponent<ecs::Billboard2D>( )
+        ->GetComponent<ecs::Billboard2D>( )
         ->GetBillboard( );
 
     billboard->SetDimensions( 50, 50 );
     billboard->SetEntityUniqueID( owner->GetUniqueID( ) );
+    m_billboard->GetComponent<ecs::Billboard2D>( )->SetRenderMask( ecs::RenderMask::MEditorTool );
 }

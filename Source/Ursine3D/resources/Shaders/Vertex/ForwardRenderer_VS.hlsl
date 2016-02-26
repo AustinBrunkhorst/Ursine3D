@@ -24,11 +24,11 @@ cbuffer MatrixStack : register(b12)
 
 struct VS_INPUT
 {
-    float3	Pos		: POSITION;
-    float3	Nor		: NORMAL;
-    float2	Tex		: TEXCOORD;
-    float4	BWeight : BLENDWEIGHT;
-    uint4	BIdx	: BLENDINDICES;
+    float3    Pos        : POSITION;
+    float3    Nor        : NORMAL;
+    float2    Tex        : TEXCOORD;
+    float4    BWeight : BLENDWEIGHT;
+    uint4    BIdx    : BLENDINDICES;
 };
 
 

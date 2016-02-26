@@ -76,7 +76,7 @@ namespace ursine
                 return;
             }
 
-			setDeletingTrue( );
+            setDeletingTrue( );
 
             m_world->queueEntityDeletion( this );
         }
@@ -157,35 +157,35 @@ namespace ursine
             return m_transform;
         }
 
-		const Entity *Entity::GetParent(void) const
+        const Entity *Entity::GetParent(void) const
         {
-	        auto parent = GetTransform( )->GetParent( );
+            auto parent = GetTransform( )->GetParent( );
 
-			if (parent)
-				return parent->GetOwner( );
-			else
-				return nullptr;
+            if (parent)
+                return parent->GetOwner( );
+            else
+                return nullptr;
         }
 
-		Entity *Entity::GetParent(void)
-		{
-			auto parent = GetTransform( )->GetParent( );
+        Entity *Entity::GetParent(void)
+        {
+            auto parent = GetTransform( )->GetParent( );
 
-			if (parent)
-				return parent->GetOwner( );
-			else
-				return nullptr;
-		}
+            if (parent)
+                return parent->GetOwner( );
+            else
+                return nullptr;
+        }
 
-		const Entity *Entity::GetRoot(void) const
-		{
-			return GetTransform( )->GetRoot( )->GetOwner( );
-		}
+        const Entity *Entity::GetRoot(void) const
+        {
+            return GetTransform( )->GetRoot( )->GetOwner( );
+        }
 
-		Entity *Entity::GetRoot(void)
-		{
-			return GetTransform( )->GetRoot( )->GetOwner( );
-		}
+        Entity *Entity::GetRoot(void)
+        {
+            return GetTransform( )->GetRoot( )->GetOwner( );
+        }
 
         ////////////////////////////////////////////////////////////////////////
         // Naming
@@ -250,9 +250,9 @@ namespace ursine
         }
 
         Component* Entity::GetComponentInChildren(ComponentTypeID id) const
-	    {
-			return m_world->m_entityManager->GetComponentInChildren( this, id );
-	    }
+        {
+            return m_world->m_entityManager->GetComponentInChildren( this, id );
+        }
 
         Entity* Entity::GetChildByName(const std::string& name) const
         {
@@ -273,20 +273,20 @@ namespace ursine
             return  nullptr;
         }
 
-	    Component* Entity::GetComponentInParent(ComponentTypeID id) const
-	    {
-			return m_world->m_entityManager->GetComponentInParent( this, id );
-	    }
+        Component* Entity::GetComponentInParent(ComponentTypeID id) const
+        {
+            return m_world->m_entityManager->GetComponentInParent( this, id );
+        }
 
-	    ComponentVector Entity::GetComponentsInChildren(ComponentTypeID id) const
-	    {
-			return m_world->m_entityManager->GetComponentsInChildren( this, id );
-	    }
+        ComponentVector Entity::GetComponentsInChildren(ComponentTypeID id) const
+        {
+            return m_world->m_entityManager->GetComponentsInChildren( this, id );
+        }
 
-	    ComponentVector Entity::GetComponentsInParents(ComponentTypeID id) const
-	    {
-			return m_world->m_entityManager->GetComponentsInParents( this, id );
-	    }
+        ComponentVector Entity::GetComponentsInParents(ComponentTypeID id) const
+        {
+            return m_world->m_entityManager->GetComponentsInParents( this, id );
+        }
 
         uint Entity::GetSiblingIndex(void) const
         {
@@ -357,12 +357,12 @@ namespace ursine
             m_visibleInEditor = true;
         }
 
-		void Entity::setDeletingTrue(void)
+        void Entity::setDeletingTrue(void)
         {
-			m_deleting = true;
+            m_deleting = true;
 
-			for (auto &child : GetTransform( )->GetChildren( ))
-				child->GetOwner( )->setDeletingTrue( );
+            for (auto &child : GetTransform( )->GetChildren( ))
+                child->GetOwner( )->setDeletingTrue( );
         }
     }
 }

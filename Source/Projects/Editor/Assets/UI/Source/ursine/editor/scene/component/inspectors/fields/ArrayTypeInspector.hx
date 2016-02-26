@@ -1,8 +1,10 @@
 package ursine.editor.scene.component.inspectors.fields;
 
-import ursine.controls.inspection.ArrayItemContainer;
+
 import ursine.controls.Button;
+import ursine.controls.ContextMenu;
 import ursine.controls.inspection.FieldInspector;
+import ursine.controls.inspection.ArrayItemContainer;
 
 import ursine.editor.scene.component.ComponentDatabase;
 
@@ -52,6 +54,14 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
         container.opened = true;
         container.container.appendChild( handler.inspector );
         container.handler = handler;
+
+        container.header.addEventListener( 'contextmenu', function(e) {
+            openItemContextMenu( e, handler, container );
+
+            e.preventDefault( );
+            e.stopPropagation( );
+            e.stopImmediatePropagation( );
+        } );
 
         container.addEventListener( 'item-removed', function() {
             m_owner.entity.componentFieldArrayRemove(
@@ -161,6 +171,48 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
         var arrayType = database.getNativeType( m_type.arrayType );
 
         return database.createFieldInspector( this, value, m_field, arrayType );
+    }
+
+    private function openItemContextMenu(e : js.html.MouseEvent, handler : FieldInspectionHandler, container : ArrayItemContainer) {
+        var menu = new ContextMenu( );
+
+        var moveUp = menu.addItem( 'Move Up', function() {
+            m_owner.entity.componentFieldArraySwap(
+                m_owner.component.type,
+                m_field.name,
+                handler.arrayIndex,
+                handler.arrayIndex - 1
+            );
+        } );
+
+        moveUp.icon = 'arrow-up';
+        moveUp.disabled = (handler.arrayIndex == 0);
+
+        var moveDown = menu.addItem( 'Move Down', function() {
+            m_owner.entity.componentFieldArraySwap(
+                m_owner.component.type,
+                m_field.name,
+                handler.arrayIndex,
+                handler.arrayIndex + 1
+            );
+        } );
+
+        moveDown.icon = 'arrow-down';
+        moveDown.disabled = (handler.arrayIndex == m_arrayItems.length - 1);
+
+        menu.addSeparator( );
+
+        var delete = menu.addItem( 'Delete', function() {
+            m_owner.entity.componentFieldArrayRemove(
+                m_owner.component.type,
+                m_field.name,
+                handler.arrayIndex
+            );
+        } );
+
+        delete.icon = 'remove';
+
+        menu.open( e.clientX, e.clientY );
     }
 
     private function onAddItemClicked(e : js.html.MouseEvent) {

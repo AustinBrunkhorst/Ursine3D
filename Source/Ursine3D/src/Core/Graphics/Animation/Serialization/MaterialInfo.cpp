@@ -21,15 +21,20 @@ namespace ursine
 		namespace ufmt_loader
 		{
 			MaterialInfo::MaterialInfo() :
-				type(FBX_DATA::FbxMaterial::Type_None),
-				ambitype(FBX_DATA::Material_Eles::Fac_None),
-				difftype(FBX_DATA::Material_Eles::Fac_None),
-				emistype(FBX_DATA::Material_Eles::Fac_None),
-				spectype(FBX_DATA::Material_Eles::Fac_None),
-				ambi_mcolor(0, 0, 0, 1), diff_mcolor(0, 0, 0, 1),
-				emis_mcolor(0, 0, 0, 1), spec_mcolor(0, 0, 0, 1),
-				ambi_mapCount(0), diff_mapCount(0), emis_mapCount(0), spec_mapCount(0),
-				shineness(0), TransparencyFactor(0)
+				type(FBX_DATA::FbxMaterial::Type_None)
+				, ambitype(FBX_DATA::Material_Eles::Fac_None)
+				, difftype(FBX_DATA::Material_Eles::Fac_None)
+				, emistype(FBX_DATA::Material_Eles::Fac_None)
+				, spectype(FBX_DATA::Material_Eles::Fac_None)
+				, ambi_mcolor(0, 0, 0, 1), diff_mcolor(0, 0, 0, 1)
+				, emis_mcolor(0, 0, 0, 1), spec_mcolor(0, 0, 0, 1)
+				, ambi_mapCount(0)
+				, diff_mapCount(0)
+				, emis_mapCount(0)
+				, spec_mapCount(0)
+				, shineness(0)
+				, TransparencyFactor(0)
+				, ISerialize()
 			{
 			}
 

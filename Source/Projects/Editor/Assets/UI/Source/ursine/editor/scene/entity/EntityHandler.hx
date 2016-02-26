@@ -30,6 +30,7 @@ extern class EntityHandler {
     function componentFieldArrayUpdate(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void;
     function componentFieldArrayInsert(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void;
     function componentFieldArrayRemove(componentName : String, fieldName : String, index : UInt) : Void;
+    function componentFieldArraySwap(componentName : String, fieldName : String, index1 : UInt, index2 : UInt) : Void;
     function componentFieldArrayGetLength(componentName : String, fieldName : String) : UInt;
 
     function componentButtonInvoke(componentName : String, buttonName : String) : Void;

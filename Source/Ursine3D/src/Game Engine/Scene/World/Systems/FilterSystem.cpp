@@ -66,7 +66,7 @@ namespace ursine
             Begin( );
 
             for (auto &entity : m_active)
-				Process( entity.second );
+                Process( entity.second );
 
             End( );
         }
@@ -85,7 +85,7 @@ namespace ursine
         {
             Disable( entity );
 
-			entity->unsetSystem( GetTypeMask( ) );
+            entity->unsetSystem( GetTypeMask( ) );
         }
 
         void FilterSystem::Enable(Entity *entity)
@@ -112,6 +112,16 @@ namespace ursine
             m_active.erase( search );
         }
 
+        void FilterSystem::Initialize(void)
+        {
+
+        }
+
+        void FilterSystem::Remove(void)
+        {
+            
+        }
+
         void FilterSystem::OnInitialize(void)
         {
             m_world->Listener( this )
@@ -120,19 +130,14 @@ namespace ursine
                 .On( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
                 .On( m_updateType, &FilterSystem::onUpdate, m_updatePriority );
 
-			auto entities = m_world->GetEntitiesFromFilter( m_filter );
+            auto entities = m_world->GetEntitiesFromFilter( m_filter );
 
-			for (auto e : entities)
-			{
-				Add( e );
-			}
+            for (auto e : entities)
+            {
+                Add( e );
+            }
 
             Initialize( );
-        }
-
-        void FilterSystem::Initialize(void)
-        {
-            
         }
 
         void FilterSystem::OnRemove(void)
@@ -142,6 +147,8 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &FilterSystem::onComponentChange )
                 .Off( WORLD_ENTITY_REMOVED, &FilterSystem::onEntityRemoved )
                 .Off( m_updateType, &FilterSystem::onUpdate );
+
+            Remove( );
         }
 
         void FilterSystem::SetUpdateType(WorldEventType updateType)

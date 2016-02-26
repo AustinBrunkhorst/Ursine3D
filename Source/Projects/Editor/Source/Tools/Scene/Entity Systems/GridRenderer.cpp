@@ -36,7 +36,7 @@ void GridRenderer::OnInitialize(void)
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
-    m_renderSystem = m_world->GetEntitySystem( ecs::RenderSystem );
+    m_renderSystem = m_world->GetEntitySystem<ecs::RenderSystem>( );
 
     m_renderSystem->Listener( this )
         .On( ecs::RENDER_HOOK_EDITOR, &GridRenderer::onRenderHook );
@@ -85,7 +85,7 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     int subSector = settings->GetSubDivisions( );
 
     //current center position of the grid
-    SVec3 pos = m_world->GetEntitySystem(EditorCameraSystem)->GetEditorFocusPosition( );
+    SVec3 pos = m_world->GetEntitySystem<EditorCameraSystem>( )->GetEditorFocusPosition( );
     float centerX = pos.X( );
     float centerZ = pos.Z( );
 

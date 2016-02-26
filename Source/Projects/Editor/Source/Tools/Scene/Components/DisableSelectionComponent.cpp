@@ -20,6 +20,6 @@ using namespace ursine;
 NATIVE_COMPONENT_DEFINITION( DisableSelection );
 
 DisableSelection::DisableSelection(void)
-	: BaseComponent( )
+    : BaseComponent( )
 {
 }

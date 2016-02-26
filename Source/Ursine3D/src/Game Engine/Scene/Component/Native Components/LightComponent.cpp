@@ -178,15 +178,19 @@ namespace ursine
             float outer = light.GetSpotlightAngles().Y() * 3.1415f / 180.f;
 
             SVec3 scale = trans->GetWorldScale();
-            scale.SetX(tanf(outer / 2.f) * scale.Y() * 2.2f); //arbitrary scalar to prevent artifacts from exact sizing
-            scale.SetZ(tanf(outer / 2.f) * scale.Y() * 2.2f);
+            scale.SetX(tanf(outer / 2.f) * scale.Z() * 2.2f); //arbitrary scalar to prevent artifacts from exact sizing
+            scale.SetY(tanf(outer / 2.f) * scale.Z() * 2.2f);
             trans->SetWorldScale(scale);
+
+            // get size for spotlight, if needed
+            if ( m_light->GetType() == graphics::Light::LIGHT_SPOTLIGHT )
+                m_light->SetRadius(scale.Z());
 
             //update transform for the spotlight
             light.SetSpotlightTransform(trans->GetLocalToWorldMatrix());
 
             //set our direction using our rotation 
-            SVec3 lightDir = SVec3(0, -1, 0);
+            SVec3 lightDir = SVec3(0, 0, 1);
             lightDir = trans->GetWorldRotation() * lightDir;
 
             light.SetDirection(lightDir);

@@ -43,14 +43,19 @@ namespace ursine
             {
                 std::string name = "ParticleIndices";
 
-                m_modelArray[name] = new ModelResource();
+                m_modelArray[ name ] = new ModelResource();
                 auto *newMesh = new Mesh();
-                m_modelArray[name]->AddMesh(newMesh);
+                m_modelArray[ name ]->AddMesh(newMesh);
+				m_s2uTable["ParticleIndices"] = m_modelCount;
+				m_u2mTable[m_modelCount++] = m_modelArray[name];
 
-                unsigned indices[1024 * 6];
+                unsigned indices[ 1024 * 6 ];
+                unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
 
-                for (int x = 0; x < 1024 * 6; ++x)
-                    indices[x] = x;
+                for ( int x = 0; x < 1024 * 6; ++x )
+                {
+                    indices[ x ] = x;
+                }
 
                 D3D11_BUFFER_DESC indexBufferDesc;
                 D3D11_SUBRESOURCE_DATA indexData;
@@ -78,36 +83,36 @@ namespace ursine
             std::vector<AnimationVertex> temp;
             temp.resize(6);
 
-            temp[0].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-            temp[0].vUv = DirectX::XMFLOAT2(1, 1);
-            temp[0].vNor = DirectX::XMFLOAT3(0, 0, 0);
+            temp[ 0 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
+            temp[ 0 ].vUv = DirectX::XMFLOAT2(1, 1);
+            temp[ 0 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[1].vPos = DirectX::XMFLOAT3(0.5, -0.5, 0.5);
-            temp[1].vUv = DirectX::XMFLOAT2(0, 1);
-            temp[1].vNor = DirectX::XMFLOAT3(0, 0, 0);
+            temp[ 1 ].vPos = DirectX::XMFLOAT3(0.5, -0.5, 0.5);
+            temp[ 1 ].vUv = DirectX::XMFLOAT2(0, 1);
+            temp[ 1 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[2].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-            temp[2].vUv = DirectX::XMFLOAT2(0, 0);
-            temp[2].vNor = DirectX::XMFLOAT3(0, 0, 0);
+            temp[ 2 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
+            temp[ 2 ].vUv = DirectX::XMFLOAT2(0, 0);
+            temp[ 2 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[3].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-            temp[3].vUv = DirectX::XMFLOAT2(0, 0);
-            temp[3].vNor = DirectX::XMFLOAT3(0, 0, 0);
+            temp[ 3 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
+            temp[ 3 ].vUv = DirectX::XMFLOAT2(0, 0);
+            temp[ 3 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[4].vPos = DirectX::XMFLOAT3(-0.5, 0.5, 0.5);
-            temp[4].vUv = DirectX::XMFLOAT2(1, 0);
-            temp[4].vNor = DirectX::XMFLOAT3(0, 0, 0);
+            temp[ 4 ].vPos = DirectX::XMFLOAT3(-0.5, 0.5, 0.5);
+            temp[ 4 ].vUv = DirectX::XMFLOAT2(1, 0);
+            temp[ 4 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
-            temp[5].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-            temp[5].vUv = DirectX::XMFLOAT2(1, 1);
-            temp[5].vNor = DirectX::XMFLOAT3(0, 0, 0);
+            temp[ 5 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
+            temp[ 5 ].vUv = DirectX::XMFLOAT2(1, 1);
+            temp[ 5 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
 
 
             std::string name = "internalQuad";
 
-            m_modelArray[name] = new ModelResource();
+            m_modelArray[ name ] = new ModelResource();
             auto *newMesh = new Mesh();
-            m_modelArray[name]->AddMesh(newMesh);
+            m_modelArray[ name ]->AddMesh(newMesh);
 
             D3D11_BUFFER_DESC vertexBufferDesc;
             D3D11_SUBRESOURCE_DATA vertexData;
@@ -122,7 +127,9 @@ namespace ursine
             vertexBufferDesc.StructureByteStride = 0;
 
             //Give the subresource structure a pointer to the vertex data.
-            vertexData.pSysMem = &temp[0];
+
+            vertexData.pSysMem = &temp[ 0 ];
+
             vertexData.SysMemPitch = 0;
             vertexData.SysMemSlicePitch = 0;
 
@@ -134,8 +141,8 @@ namespace ursine
             newMesh->SetIndexCount(6);
             auto &indexArray = newMesh->GetRawIndices();
 
-            for (unsigned x = 0; x < 6; ++x)
-                indexArray[x] = x;
+            for ( unsigned x = 0; x < 6; ++x )
+                indexArray[ x ] = x;
 
             D3D11_BUFFER_DESC indexBufferDesc;
             D3D11_SUBRESOURCE_DATA indexData;
@@ -157,14 +164,16 @@ namespace ursine
             result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
             UAssert(result == S_OK, "Failed to make index buffer!");
 
-            m_s2uTable[name] = m_modelCount;
-            m_u2mTable[m_modelCount] = m_modelArray[name];
+            m_s2uTable[ name ] = m_modelCount;
+            m_u2mTable[ m_modelCount ] = m_modelArray[ name ];
+
             ++m_modelCount;
         }
 
         void ModelManager::InitializeJdl(std::string fileText)
         {
-            char buffer[1024];
+            char buffer[ 1024 ];
+
             std::ifstream input;
 
             //loading jdl files first, then loading fbx
@@ -174,7 +183,8 @@ namespace ursine
             //because we don't have other method to load edited model by drag & drop or typing name of it.
             input.open(fileText + "JDLS.gfx", std::ios_base::in);
             UAssert(input.is_open(), "Failed to open file for jdl loading! ('%s')", fileText.c_str());
-            while (input.eof() == false)
+
+            while (input.eof( ) == false)
             {
                 //zero it out
                 memset(buffer, 0, sizeof(char) * 1024);
@@ -192,6 +202,7 @@ namespace ursine
 
                 //deal with data, chop it up by space
                 size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
+
                 while (pos != std::string::npos)
                 {
                     size_t end = data.find_first_of(" ", pos + 1);
@@ -201,27 +212,29 @@ namespace ursine
                 }
 
                 //0 is filename
-                tokens[0].insert(0, fileText);
-                tokens[1].erase(0, 1);
+                tokens[ 0 ].insert(0, fileText);
+                tokens[ 1 ].erase(0, 1);
                 //1 is name
 
                 //determine what loading format to use
-                m_jdllist.push_back(tokens[0]);
-                if (tokens[0].find(".jdl") != std::string::npos)
-                    LoadModel_Jdl(tokens[1], tokens[0]);
+                m_jdllist.push_back(tokens[ 0 ]);
+                if ( tokens[ 0 ].find(".jdl") != std::string::npos )
+                    LoadModel_Jdl(tokens[ 1 ], tokens[ 0 ]);
             }
             input.close();
         }
 
         void ModelManager::InitializeModel(std::string fileText)
         {
-            char buffer[1024];
+            char buffer[ 1024 ];
+
             std::ifstream input;
 
             //loading all models
             input.open(fileText + "MODELS.8.0.gfx", std::ios_base::in);
             UAssert(input.is_open(), "Failed to open file for model loading! ('%s')", fileText.c_str());
-            while (input.eof() == false)
+
+            while (input.eof( ) == false)
             {
                 //zero it out
                 memset(buffer, 0, sizeof(char) * 1024);
@@ -239,6 +252,7 @@ namespace ursine
 
                 //deal with data, chop it up by space
                 size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
+
                 while (pos != std::string::npos)
                 {
                     size_t end = data.find_first_of(" ", pos + 1);
@@ -248,18 +262,15 @@ namespace ursine
                 }
 
                 //0 is filename
-                tokens[0].insert(0, fileText);
-                tokens[1].erase(0, 1);
+                tokens[ 0 ].insert(0, fileText);
+                tokens[ 1 ].erase(0, 1);
                 //1 is name
 
                 //determine what loading format to use
-                if (tokens[0].find("8.0.mdl") != std::string::npos)
-                    LoadModel(tokens[1], tokens[0]);
-                else if (tokens[0].find(".fbx") != std::string::npos)
-                {
-                    LoadModel_Fbx(tokens[1], tokens[0]);
-                    // need to store name of fbx file into jdl.gfx if there isn't
-                }
+                if ( tokens[ 0 ].find("8.0.mdl") != std::string::npos )
+                    LoadModel(tokens[ 1 ], tokens[ 0 ]);
+                else if ( tokens[ 0 ].find(".fbx") != std::string::npos )
+                    LoadModel_Fbx(tokens[ 1 ], tokens[ 0 ]);
             }
             input.close();
         }
@@ -280,7 +291,7 @@ namespace ursine
 
         void ModelManager::LoadModel(std::string name, std::string fileName)
         {
-            UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+            UAssert(m_modelArray[ name ] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
             std::ifstream input;
             std::vector<DiffuseTextureVertex> buffer;
@@ -295,14 +306,16 @@ namespace ursine
 
             /////////////////////////////////////////////////////////////////
             // ALLOCATE MODEL ///////////////////////////////////////////////
-            m_modelArray[name] = new ModelResource();
+
+            m_modelArray[ name ] = new ModelResource();
             auto *newMesh = new Mesh();
             newMesh->SetName(name);
-            m_modelArray[name]->AddMesh(newMesh);
+            m_modelArray[ name ]->AddMesh(newMesh);
 
             /////////////////////////////////////////////////////////////////
             // LOAD FILE INTO MEMORY ////////////////////////////////////////
-            char size[32];
+            char size[ 32 ];
+
             input.getline(size, 32);
             unsigned vertCount = atoi(size);
 
@@ -314,19 +327,20 @@ namespace ursine
 
             buffer.resize(vertCount);
             realbuffer.resize(vertCount);
-            input.read((char*)&buffer[0], sizeof(DiffuseTextureVertex) * vertCount);
 
-            for (uint x = 0; x < vertCount; ++x)
+            input.read((char*)&buffer[ 0 ], sizeof(DiffuseTextureVertex) * vertCount);
+
+            for ( uint x = 0; x < vertCount; ++x )
             {
-                newMeshVertData[x] = Vec3(buffer[x].pos.x, buffer[x].pos.y, buffer[x].pos.z);
-                realbuffer[x].vPos = DirectX::XMFLOAT3(buffer[x].pos.x, buffer[x].pos.y, buffer[x].pos.z);
-                realbuffer[x].vNor = DirectX::XMFLOAT3(buffer[x].normal.x, buffer[x].normal.y, buffer[x].normal.z);
-                realbuffer[x].vUv = buffer[x].UV;
-                realbuffer[x].vBIdx[0] = 0;// = DirectX::XMINT4( 0, 0, 0, 0 );
-                realbuffer[x].vBIdx[1] = 0;
-                realbuffer[x].vBIdx[2] = 0;
-                realbuffer[x].vBIdx[3] = 0;
-                realbuffer[x].vBWeight = DirectX::XMFLOAT4(1, 0, 0, 0);
+                newMeshVertData[ x ] = Vec3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
+                realbuffer[ x ].vPos = DirectX::XMFLOAT3(buffer[ x ].pos.x, buffer[ x ].pos.y, buffer[ x ].pos.z);
+                realbuffer[ x ].vNor = DirectX::XMFLOAT3(buffer[ x ].normal.x, buffer[ x ].normal.y, buffer[ x ].normal.z);
+                realbuffer[ x ].vUv = buffer[ x ].UV;
+                realbuffer[ x ].vBIdx[ 0 ] = 0;// = DirectX::XMINT4( 0, 0, 0, 0 );
+                realbuffer[ x ].vBIdx[ 1 ] = 0;
+                realbuffer[ x ].vBIdx[ 2 ] = 0;
+                realbuffer[ x ].vBIdx[ 3 ] = 0;
+                realbuffer[ x ].vBWeight = DirectX::XMFLOAT4(1, 0, 0, 0);
             }
 
             /////////////////////////////////////////////////////////////////
@@ -344,7 +358,8 @@ namespace ursine
             vertexBufferDesc.StructureByteStride = 0;
 
             //Give the subresource structure a pointer to the vertex data.
-            vertexData.pSysMem = &realbuffer[0];
+
+            vertexData.pSysMem = &realbuffer[ 0 ];
             vertexData.SysMemPitch = 0;
             vertexData.SysMemSlicePitch = 0;
 
@@ -358,8 +373,8 @@ namespace ursine
 
             auto &indexArray = newMesh->GetRawIndices();
 
-            for (unsigned x = 0; x < vertCount; ++x)
-                indexArray[x] = x;
+            for ( unsigned x = 0; x < vertCount; ++x )
+                indexArray[ x ] = x;
 
             D3D11_BUFFER_DESC indexBufferDesc;
             D3D11_SUBRESOURCE_DATA indexData;
@@ -381,28 +396,37 @@ namespace ursine
             result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
             UAssert(result == S_OK, "Failed to make index buffer!");
 
-            m_s2uTable[name] = m_modelCount;
-            m_u2mTable[m_modelCount++] = m_modelArray[name];
+            m_s2uTable[ name ] = m_modelCount;
+            m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
         }
 
         void ModelManager::LoadModel_Fbx(std::string name, std::string fileName)
         {
-            UAssert(m_modelArray[name] == nullptr, "Model with name '%s' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+            UAssert(m_modelArray[ name ] == nullptr, "Model with name '%s' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
             std::vector<AnimationVertex> buffer;
             CFBXLoader fbx_model;
-            if (false == fbx_model.LoadFBX(fileName.c_str()))
+            if ( false == fbx_model.LoadFBX(fileName.c_str()) )
                 return;
 
             ufmt_loader::ModelInfo* ufmt_model = fbx_model.GetModelInfo();
+            ufmt_loader::AnimInfo* ufmt_anim = fbx_model.GetAnimInfo();
 
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
 
             // 1. load rig
             unsigned rigIndex = 0;
-            if (ufmt_model->mboneCount > 0)
+            if ( ufmt_model->mboneCount > 0 )
                 rigIndex = AnimationBuilder::LoadBoneData(*ufmt_model, name);
+
+            // 2. load animation
+            unsigned animationIndex = 0;
+            if ( nullptr != ufmt_anim )
+            {
+                if ( ufmt_anim->animCount > 0 )
+                    animationIndex = AnimationBuilder::LoadAnimation(*ufmt_anim, name);
+            }
 
             /////////////////////////////////////////////////////////////////
             // CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -428,6 +452,7 @@ namespace ursine
                 newMesh->SetName(currMesh->name);
 
                 uint vertCount = ufmt_model->mMeshInfoVec[mesh_idx].meshVtxInfoCount;
+
                 newMesh->SetVertexCount(vertCount);
                 auto &meshVertArray = newMesh->GetRawVertices();
 
@@ -442,54 +467,56 @@ namespace ursine
                 //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                 //can do this with skincount
                 buffer.resize(vertCount);
-                for (size_t i = 0; i < vertCount; ++i)
+
+                for ( size_t i = 0; i < vertCount; ++i )
                 {
                     // update raw verts for physics
-                    meshVertArray[i] = Vec3(
-                        currMesh->meshVtxInfos[i].pos.x,
-                        currMesh->meshVtxInfos[i].pos.y,
-                        currMesh->meshVtxInfos[i].pos.z
+                    meshVertArray[ i ] = Vec3(
+                        currMesh->meshVtxInfos[ i ].pos.x,
+                        currMesh->meshVtxInfos[ i ].pos.y,
+                        currMesh->meshVtxInfos[ i ].pos.z
                         );
 
                     // Set actual buffer data
-                    buffer[i].vPos = DirectX::XMFLOAT3(
-                        currMesh->meshVtxInfos[i].pos.x,
-                        currMesh->meshVtxInfos[i].pos.y,
-                        currMesh->meshVtxInfos[i].pos.z
+                    buffer[ i ].vPos = DirectX::XMFLOAT3(
+                        currMesh->meshVtxInfos[ i ].pos.x,
+                        currMesh->meshVtxInfos[ i ].pos.y,
+                        currMesh->meshVtxInfos[ i ].pos.z
                         );
-                    buffer[i].vNor = DirectX::XMFLOAT3(
-                        currMesh->meshVtxInfos[i].normal.x,
-                        currMesh->meshVtxInfos[i].normal.y,
-                        currMesh->meshVtxInfos[i].normal.z
+                    buffer[ i ].vNor = DirectX::XMFLOAT3(
+                        currMesh->meshVtxInfos[ i ].normal.x,
+                        currMesh->meshVtxInfos[ i ].normal.y,
+                        currMesh->meshVtxInfos[ i ].normal.z
                         );
-                    buffer[i].vUv = DirectX::XMFLOAT2(
-                        currMesh->meshVtxInfos[i].uv.x,
-                        currMesh->meshVtxInfos[i].uv.y
+                    buffer[ i ].vUv = DirectX::XMFLOAT2(
+                        currMesh->meshVtxInfos[ i ].uv.x,
+                        currMesh->meshVtxInfos[ i ].uv.y
                         );
 
-                    if (ufmt_model->mboneCount > 0)
+                    if ( ufmt_model->mboneCount > 0 )
                     {
-                        buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
-                        buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
-                        buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
-                        buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
-                        buffer[i].vBIdx[0] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.x);
-                        buffer[i].vBIdx[1] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.y);
-                        buffer[i].vBIdx[2] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.z);
-                        buffer[i].vBIdx[3] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.w);
+                        buffer[ i ].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.x);
+                        buffer[ i ].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.y);
+                        buffer[ i ].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.z);
+                        buffer[ i ].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.w);
+                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.x);
+                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.y);
+                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.z);
+                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.w);
                     }
                     else
                     {
-                        buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-                        buffer[i].vBIdx[0] = static_cast<BYTE>(0);
-                        buffer[i].vBIdx[1] = static_cast<BYTE>(0);
-                        buffer[i].vBIdx[2] = static_cast<BYTE>(0);
-                        buffer[i].vBIdx[3] = static_cast<BYTE>(0);
+                        buffer[ i ].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
+                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(0);
+                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(0);
+                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(0);
+                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(0);
                     }
                 }
 
                 //Give the subresource structure a pointer to the vertex data.
-                vertexData.pSysMem = &buffer[0];
+
+                vertexData.pSysMem = &buffer[ 0 ];
                 vertexData.SysMemPitch = 0;
                 vertexData.SysMemSlicePitch = 0;
 
@@ -503,8 +530,9 @@ namespace ursine
                 newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
 
                 auto &indexArray = newMesh->GetRawIndices();
-                for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
-                    indexArray[x] = currMesh->meshVtxIndices[x];
+
+                for ( unsigned x = 0; x < newMesh->GetIndexCount(); ++x )
+                    indexArray[ x ] = currMesh->meshVtxIndices[ x ];
 
                 D3D11_BUFFER_DESC indexBufferDesc;
                 D3D11_SUBRESOURCE_DATA indexData;
@@ -526,16 +554,17 @@ namespace ursine
                 result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
                 UAssert(result == S_OK, "Failed to make index buffer!");
 
-                m_s2uTable[name] = m_modelCount;
-                m_u2mTable[m_modelCount++] = m_modelArray[name];
-                m_modelArray[name]->AddMesh(newMesh);
+
+                m_s2uTable[ name ] = m_modelCount;
+                m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
+                m_modelArray[ name ]->AddMesh(newMesh);
             }
 
-            for (auto &x : ufmt_model->mMeshLvVec)
-                m_modelArray[name]->AddMesh2Tree(x);
+            for ( auto &x : ufmt_model->mMeshLvVec )
+                m_modelArray[ name ]->AddMesh2Tree(x);
 
-            for (auto &x : ufmt_model->mRigLvVec)
-                m_modelArray[name]->AddRig2Tree(x);
+            for ( auto &x : ufmt_model->mRigLvVec )
+                m_modelArray[ name ]->AddRig2Tree(x);
         }
 
         // how can i load animation with jdl format?
@@ -543,7 +572,7 @@ namespace ursine
         // for here, you can load jdl, and through the ani-count and ani-name vec to load animation info
         void ModelManager::LoadModel_Jdl(std::string name, std::string fileName)
         {
-            UAssert(m_modelArray[name] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
+            UAssert(m_modelArray[ name ] == nullptr, "Model with name '%' has already been loaded (new source file '%s')", name.c_str(), fileName.c_str());
 
             std::ifstream input;
             std::vector<AnimationVertex> buffer;
@@ -564,6 +593,7 @@ namespace ursine
 
                 // 1. load rig
                 unsigned rigIndex = 0;
+
                 if (ufmt_model.mboneCount > 0)
                     rigIndex = AnimationBuilder::LoadBoneData(ufmt_model, name);
 
@@ -583,9 +613,10 @@ namespace ursine
                     newMesh->SetID(mesh_idx);
 
                     /////////////////////////////////////////////////////////////////
-                    // ALLOCATE MODEL ///////////////////////////////////////////////                
+                    // ALLOCATE MODEL ///////////////////////////////////////////////				
 
-                    ufmt_loader::MeshInfo* currMesh = &ufmt_model.mMeshInfoVec[mesh_idx];
+                    ufmt_loader::MeshInfo* currMesh = &ufmt_model.mMeshInfoVec[ mesh_idx ];
+
 
                     newMesh->SetName(currMesh->name);
 
@@ -604,6 +635,7 @@ namespace ursine
                     //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                     //can do this with skincount
                     buffer.resize(vertCount);
+
                     for (size_t i = 0; i < vertCount; ++i)
                     {
                         // update raw verts for physics
@@ -621,45 +653,45 @@ namespace ursine
                             );
 
                         // Set data
-                        buffer[i].vPos = DirectX::XMFLOAT3(
+                        buffer[ i ].vPos = DirectX::XMFLOAT3(
                             tempPosition.ToD3D().x,
                             tempPosition.ToD3D().y,
                             tempPosition.ToD3D().z
                             );
 
-                        buffer[i].vNor = DirectX::XMFLOAT3(
-                            currMesh->meshVtxInfos[i].normal.x,
-                            currMesh->meshVtxInfos[i].normal.y,
-                            currMesh->meshVtxInfos[i].normal.z
+                        buffer[ i ].vNor = DirectX::XMFLOAT3(
+                            currMesh->meshVtxInfos[ i ].normal.x,
+                            currMesh->meshVtxInfos[ i ].normal.y,
+                            currMesh->meshVtxInfos[ i ].normal.z
                             );
-                        buffer[i].vUv = DirectX::XMFLOAT2(
-                            currMesh->meshVtxInfos[i].uv.x,
-                            currMesh->meshVtxInfos[i].uv.y
+                        buffer[ i ].vUv = DirectX::XMFLOAT2(
+                            currMesh->meshVtxInfos[ i ].uv.x,
+                            currMesh->meshVtxInfos[ i ].uv.y
                             );
 
-                        if (ufmt_model.mboneCount > 0)
+                        if ( ufmt_model.mboneCount > 0 )
                         {
-                            buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
-                            buffer[i].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.y);
-                            buffer[i].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.z);
-                            buffer[i].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.w);
-                            buffer[i].vBIdx[0] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.x);
-                            buffer[i].vBIdx[1] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.y);
-                            buffer[i].vBIdx[2] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.z);
-                            buffer[i].vBIdx[3] = static_cast<BYTE>(currMesh->meshVtxInfos[i].ctrlIndices.w);
+                            buffer[ i ].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.x);
+                            buffer[ i ].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.y);
+                            buffer[ i ].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.z);
+                            buffer[ i ].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.w);
+                            buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.x);
+                            buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.y);
+                            buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.z);
+                            buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.w);
                         }
                         else
                         {
-                            buffer[i].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-                            buffer[i].vBIdx[0] = static_cast<BYTE>(0);
-                            buffer[i].vBIdx[1] = static_cast<BYTE>(0);
-                            buffer[i].vBIdx[2] = static_cast<BYTE>(0);
-                            buffer[i].vBIdx[3] = static_cast<BYTE>(0);
+                            buffer[ i ].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
+                            buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(0);
+                            buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(0);
+                            buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(0);
+                            buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(0);
                         }
                     }
 
                     //Give the subresource structure a pointer to the vertex data.
-                    vertexData.pSysMem = &buffer[0];
+                    vertexData.pSysMem = &buffer[ 0 ];
                     vertexData.SysMemPitch = 0;
                     vertexData.SysMemSlicePitch = 0;
 
@@ -673,8 +705,9 @@ namespace ursine
                     newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
 
                     auto &indexArray = newMesh->GetRawIndices();
-                    for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
-                        indexArray[x] = currMesh->meshVtxIndices[x];
+
+                    for ( unsigned x = 0; x < newMesh->GetIndexCount(); ++x )
+                        indexArray[ x ] = currMesh->meshVtxIndices[ x ];
 
                     D3D11_BUFFER_DESC indexBufferDesc;
                     D3D11_SUBRESOURCE_DATA indexData;
@@ -695,17 +728,17 @@ namespace ursine
                     //Create the index buffer.
                     result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
                     UAssert(result == S_OK, "Failed to make index buffer!");
-                    m_modelArray[name]->AddMesh(newMesh);
+                    m_modelArray[ name ]->AddMesh(newMesh);
                 }
-                m_s2uTable[name] = m_modelCount;
-                m_u2mTable[m_modelCount++] = m_modelArray[name];
+                m_s2uTable[ name ] = m_modelCount;
+                m_u2mTable[ m_modelCount++ ] = m_modelArray[ name ];
             }
 
-            for (auto &x : ufmt_model.mMeshLvVec)
-                m_modelArray[name]->AddMesh2Tree(x);
+            for ( auto &x : ufmt_model.mMeshLvVec )
+                m_modelArray[ name ]->AddMesh2Tree(x);
 
-            for (auto &x : ufmt_model.mRigLvVec)
-                m_modelArray[name]->AddRig2Tree(x);
+            for ( auto &x : ufmt_model.mRigLvVec )
+                m_modelArray[ name ]->AddRig2Tree(x);
 
             CloseHandle(hFile_model);
         }
@@ -923,16 +956,16 @@ namespace ursine
 
         unsigned ModelManager::GetModelVertcount(std::string name, unsigned index)
         {
-            if (m_modelArray[name] == nullptr)
+            if ( m_modelArray[ name ] == nullptr )
                 return -1;
-            return m_modelArray[name]->GetMesh(index)->GetVertexCount();
+            return m_modelArray[ name ]->GetMesh(index)->GetVertexCount();
         }
 
         unsigned ModelManager::GetModelIndexcount(std::string name, unsigned index)
         {
-            if (m_modelArray[name] == nullptr)
+            if ( m_modelArray[ name ] == nullptr )
                 return -1;
-            return m_modelArray[name]->GetMesh(index)->GetIndexCount();
+            return m_modelArray[ name ]->GetMesh(index)->GetIndexCount();
         }
 
         void ModelManager::BindModel(std::string name, unsigned index, bool indexOnly)
@@ -950,26 +983,35 @@ namespace ursine
                 m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
                 m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-                m_currentState = m_s2uTable[name];
+                m_currentState = m_s2uTable[ name ];
             }
             else
             {
-                ModelResource *model = m_modelArray[name];
+                ModelResource *model = m_modelArray[ name ];
 
                 UAssert(model != nullptr, "Failed to bind model '%s'", name.c_str());
 
                 m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
                 m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-                m_currentState = m_s2uTable[name];
+                m_currentState = m_s2uTable[ name ];
             }
         }
 
-        void ModelManager::BindModel(unsigned ID, unsigned index)
+        void ModelManager::BindModel(unsigned ID, unsigned index, bool indexOnly)
         {
-            ModelResource *model = m_u2mTable[ID];
+            ModelResource *model = m_u2mTable[ ID ];
 
             UAssert(model != nullptr, "Failed to bind model ID:%i", ID);
+
+            if(m_s2uTable["ParticleIndices"] == ID)
+            {
+                m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+                m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+
+                m_currentState = ID;
+                return;
+            }
 
             //map mesh
             unsigned int strides = sizeof(AnimationVertex);
@@ -983,27 +1025,27 @@ namespace ursine
 
         unsigned ModelManager::GetModelIDByName(std::string name)
         {
-            return m_s2uTable[name];
+            return m_s2uTable[ name ];
         }
 
         ID3D11Buffer *ModelManager::GetModelVertByID(unsigned ID, unsigned index)
         {
-            return m_u2mTable[ID]->GetMesh(index)->GetVertexBuffer();
+            return m_u2mTable[ ID ]->GetMesh(index)->GetVertexBuffer();
         }
 
         unsigned ModelManager::GetModelVertcountByID(unsigned ID, unsigned index)
         {
-            return m_u2mTable[ID]->GetMesh(index)->GetVertexCount();
+            return m_u2mTable[ ID ]->GetMesh(index)->GetVertexCount();
         }
 
         unsigned ModelManager::GetModelIndexcountByID(unsigned ID, unsigned index)
         {
-            return m_u2mTable[ID]->GetMesh(index)->GetIndexCount();
+            return m_u2mTable[ ID ]->GetMesh(index)->GetIndexCount();
         }
 
         unsigned ModelManager::GetModelMeshCount(unsigned ID)
         {
-            return m_u2mTable[ID]->GetMeshCount();
+            return m_u2mTable[ ID ]->GetMeshCount();
         }
 
         void ModelManager::Invalidate()
@@ -1011,7 +1053,7 @@ namespace ursine
             m_currentState = -1;
         }
 
-        ModelResource * ModelManager::GetModel(const unsigned ID)
+        ModelResource *ModelManager::GetModel(const unsigned ID)
         {
             return m_u2mTable[ID];
         }

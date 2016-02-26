@@ -35,11 +35,9 @@ namespace ursine
 			m_physics = nullptr;
 		}
 
-		void SweptControllerSystem::OnInitialize(void)
+		void SweptControllerSystem::Initialize(void)
 		{
-			FilterSystem::OnInitialize( );
-
-			m_physics = m_world->GetEntitySystem( PhysicsSystem );
+			m_physics = m_world->GetEntitySystem<PhysicsSystem>( );
 		}
 
 		void SweptControllerSystem::Process(Entity* entity)
@@ -298,7 +296,7 @@ namespace ursine
 						sweptVelocity += verticalSweep;
 					}
 					// Jumping upward into the ceiling.
-					else if (controller.m_grounded && ceiling && sweptVelocity.Dot( controller.m_worldUp ) > 0.0f)
+					else if (!controller.m_grounded && ceiling && sweptVelocity.Dot( controller.m_worldUp ) > 0.0f)
 					{
 						// Remove vertical velocity for sweep.
 						sweptVelocity -= SVec3::ProjectToNorm( sweptVelocity, controller.m_worldUp );

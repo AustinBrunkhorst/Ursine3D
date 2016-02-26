@@ -30,6 +30,9 @@
                 'header.click': '_onHeaderClick',
                 'btnRemoveItem.click': '_onRemoveClick'
             },
+            get header() {
+                return this.$.header;
+            },
             get container() {
                 return this.$.container;
             },

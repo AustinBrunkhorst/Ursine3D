@@ -83,23 +83,25 @@ class LightInspector extends ComponentInspectionHandler {
     }
 
     private function initTypeToFields() {
-        m_lightTypeEnum = Editor.instance.componentDatabase.getNativeType( m_lightTypeName ).enumValue;
+        var database = Editor.instance.componentDatabase;
+
+        m_lightTypeEnum = database.getNativeType( m_lightTypeName ).enumValue;
         m_typeToFields = new Map<UInt, Array<String>>( );
 
-        m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
+        m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
             "color",
             "intensity",
             "renderMask"
         ];
 
-        m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypePoint ) ] = [
+        m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypePoint ) ] = [
             "color",
             "intensity",
             "radius",
             "renderMask"
         ];
 
-        m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeSpot ) ] = [
+        m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypeSpot ) ] = [
             "color",
             "intensity",
             "spotlightAngles",

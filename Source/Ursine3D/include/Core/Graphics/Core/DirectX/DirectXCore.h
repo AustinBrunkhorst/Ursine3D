@@ -44,6 +44,17 @@ namespace ursine
     {
         namespace DXCore
         {
+            enum PRIMITIVE_TOPOLOGY : unsigned
+            {
+                TOPOLOGY_LINE_LIST = D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
+                TOPOLOGY_LINE_STRIP = D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP,
+                TOPOLOGY_TRIANGLE_LIST = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+                TOPOLOGY_TRIANGLE_STRIP = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+                TOPOLOGY_POINT_LIST = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST,
+
+                TOPOLOGY_COUNT
+            };
+
             class DirectXCore
             {
             public:
@@ -73,7 +84,7 @@ namespace ursine
                 //set depth stencil
                 void SetDepthState(const DEPTH_STATES dt);
                 //set target
-                void SetRenderTarget(const RENDER_TARGETS rt, const bool useDepth = true);
+                void SetRenderTarget(const RENDER_TARGETS rt, DEPTH_STENCIL_LIST depthTarget = DEPTH_STENCIL_MAIN);
 
                 //set raster state
                 void SetRasterState(const RASTER_STATES state);

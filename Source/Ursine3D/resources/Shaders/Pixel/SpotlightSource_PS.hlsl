@@ -24,6 +24,8 @@ cbuffer SpotLightBuffer : register(b11)
     float innerAngle        : packoffset(c1.w);
     float3 diffuseColor     : packoffset(c2);
     float outerAngle        : packoffset(c2.w);
+    float3 falloffValues    : packoffset(c3);
+    float lightSize         : packoffset(c3.w);
 }
 
 //specular power range
@@ -109,31 +111,6 @@ SURFACE_DATA UnpackGBuffer(int2 location)
 
 float3 CalcPoint(float3 position, Material material)
 {
-    //float3 ToLight = -lightDirection.xyz;
-    //float3 ToEye = -position;
-    //float3 light2pos = (position - lightPosition);
-
-    //float distanceToLight = length(light2pos);
-
-    //light2pos /= distanceToLight;
-
-    //float attenuation = clamp(1.f / (1.f + 0.1f * distanceToLight), 0, 1);
-
-    //// Phong diffuse
-    //float NDotL = saturate(dot(ToLight, material.normal));
-    //float3 finalColor = diffuseColor.rgb * (intensity)* material.diffuseColor.xyz;
-
-    
-
-    ////spotlight atten
-    //float directionPosAngle = dot(light2pos, -ToLight);
-    //float spotlightFalloff = ((directionPosAngle)-outerAngle) / 
-    //    (innerAngle - outerAngle);
-
-    //finalColor *= NDotL * spotlightFalloff * attenuation;
-
-    //return finalColor + material.diffuseColor.xyz;
-
     float3 toLight = -lightDirection;
     float3 pixelToCamera = -position;
     float3 lightToPixel = (position - lightPosition);
@@ -151,6 +128,8 @@ float3 CalcPoint(float3 position, Material material)
     float angleAttenuation = (angleInCone - outerAngle) /
         (innerAngle - outerAngle);
 
+    float distAttenuation = saturate(1.0f - (distanceToPixel / lightSize));
+
     // Blinn specular
     pixelToCamera = normalize(pixelToCamera);
     float3 HalfWay = normalize(pixelToCamera + toLight);
@@ -163,13 +142,11 @@ float3 CalcPoint(float3 position, Material material)
     // calculate final light color
     float3 finalLightColor = (diffuseColor.rgb + specularValue * material.specIntensity);
 
-    // apply normal scalar
-    finalLightColor *= normalScalar * angleAttenuation;
+    // apply dotp, attenuation for distance and angle
+    finalLightColor *= normalScalar * angleAttenuation * distAttenuation;
 
     return finalLightColor;
 }
-
-
 
 float4 main(DS_OUTPUT In) : SV_TARGET
 {

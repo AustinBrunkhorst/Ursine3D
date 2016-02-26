@@ -1,0 +1,305 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 15, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 16, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 14, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 18, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 19, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 17, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"AnimateParticleReset": {
+".uid": 21, 
+"easeFunction": 0, 
+"endDuration": 0.10000000149011612, 
+"startDuration": 2, 
+"startOnAwake": true, 
+"stopOnComplete": false, 
+"timeToChange": 5
+}, 
+"ParticleEmitter": {
+".uid": 22, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 23, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 20, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"AnimateParticleReset": {
+".uid": 25, 
+"easeFunction": 0, 
+"endDuration": 0.10000000149011612, 
+"startDuration": 2, 
+"startOnAwake": true, 
+"stopOnComplete": false, 
+"timeToChange": 5
+}, 
+"ParticleEmitter": {
+".uid": 26, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1400001049041748, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 27, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 24, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.558712005615234, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"Transform": {
+".uid": 13, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}
