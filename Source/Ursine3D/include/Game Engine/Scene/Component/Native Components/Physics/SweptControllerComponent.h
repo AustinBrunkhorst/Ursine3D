@@ -69,7 +69,7 @@ namespace ursine
 
             // The percentage of upward velocity that should be removed
             // when a jump is cancelled.
-            Meta(InputRange(0.0f, 1.0f, 0.01f))
+            EditorMeta(InputRange(0.0f, 1.0f, 0.01f))
             EditorField(
                 float jumpCancelFactor,
                 GetJumpCancelFactor,
@@ -124,7 +124,7 @@ namespace ursine
             // Ground can be walked on and jumped off of.
             // A value of 0 means only flat surfaces are walkable.
             // A value near 90 means almost all surface are walkable.
-            Meta(InputRange(0.0f, 90.0f, 0.5f, "{{value.toFixed( 2 )}} deg"))
+            EditorMeta(InputRange(0.0f, 90.0f, 0.5f, "{{value.toFixed( 2 )}} deg"))
             EditorField(
                 float maxGroundSlope,
                 GetMaxGroundSlope,
@@ -135,7 +135,7 @@ namespace ursine
             // based upon the WorldUp vector.
             // Used to prevent collide and slide along a ceiling surface.
             // Stops upward velocity when jumping into the ceiling.
-            Meta(InputRange(0.0f, 90.0f, 0.5f, "{{value.toFixed( 2 )}} deg"))
+            EditorMeta(InputRange(0.0f, 90.0f, 0.5f, "{{value.toFixed( 2 )}} deg"))
             EditorField(
                 float maxCeilingSlope,
                 GetMaxCeilingSlope,
@@ -360,10 +360,7 @@ namespace ursine
 
             bool skipResolution(/*TODO: CollisionFilter a, CollisionFilter b*/);
 
-        } Meta(
-            Enable,
-            DisplayName("SweptController"), 
-            RequiresComponents(typeof(ursine::ecs::Rigidbody), typeof(ursine::ecs::CylinderCollider))
-        );
+        } Meta(Enable, DisplayName( "SweptController" )) 
+          EditorMeta(RequiresComponents( typeof( ursine::ecs::Rigidbody ), typeof( ursine::ecs::CylinderCollider ) ));
     }
 }

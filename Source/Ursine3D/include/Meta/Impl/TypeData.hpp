@@ -59,7 +59,7 @@ namespace ursine
                 "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
             );
 
-            Field field(
+            fields.emplace_back(
                 name,
                 typeof( FieldType ),
                 typeof( ClassType ),
@@ -67,9 +67,7 @@ namespace ursine
                 !methodSetter ? nullptr : new SetterType( methodSetter )
             );
 
-            field.m_meta = meta;
-
-            fields.emplace( name, field );
+            fields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -95,17 +93,15 @@ namespace ursine
                 "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
             );
 
-            Field field(
+            fields.emplace_back(
                 name,
                 typeof( FieldType ),
                 typeof( ClassType ),
                 !methodGetter ? nullptr : new GetterType( methodGetter ),
-                !methodSetter ? nullptr : new SetterType( methodSetter )
+                !methodSetter ? nullptr : new SetterType( methodSetter )    
             );
 
-            field.m_meta = meta;
-
-            fields.emplace( name, field );
+            fields.back( ).m_meta = meta;
         }
 
         template<typename ClassType, typename FieldType, typename GetterReturnType>
@@ -123,17 +119,15 @@ namespace ursine
                 "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
             );
 
-            Field field(
+            fields.emplace_back(
                 name,
                 typeof( FieldType ),
                 typeof( ClassType ),
                 !methodGetter ? nullptr : new GetterType( methodGetter ),
-                !fieldSetter ? nullptr : new FieldSetter<ClassType, FieldType, false>( fieldSetter )
+                !fieldSetter ? nullptr : new FieldSetter<ClassType, FieldType, false>( fieldSetter )   
             );
 
-            field.m_meta = meta;
-
-            fields.emplace( name, field );
+            fields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -153,17 +147,15 @@ namespace ursine
                 "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
             );
 
-            Field field(
+            fields.emplace_back(
                 name,
                 typeof( FieldType ),
                 typeof( ClassType ),
                 !methodGetter ? nullptr : new GetterType( methodGetter ),
-                !fieldSetter ? nullptr : new FieldSetter<ClassType, FieldType, false>( fieldSetter )
+                !fieldSetter ? nullptr : new FieldSetter<ClassType, FieldType, false>( fieldSetter )  
             );
 
-            field.m_meta = meta;
-
-            fields.emplace( name, field );
+            fields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -183,7 +175,7 @@ namespace ursine
                 "This results in undefined behavior! (Even if there exists a conversion constructor between the types)"
             );
 
-            Field field(
+            fields.emplace_back(
                 name,
                 typeof( FieldType ),
                 typeof( ClassType ),
@@ -191,9 +183,7 @@ namespace ursine
                 !methodSetter ? nullptr : new SetterType( methodSetter )
             );
 
-            field.m_meta = meta;
-
-            fields.emplace( name, field );
+            fields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -206,17 +196,15 @@ namespace ursine
             const MetaManager::Initializer &meta
         )
         {
-            Field field(
+            fields.emplace_back(
                 name,
                 typeof( FieldType ),
                 typeof( ClassType ),
                 !fieldGetter ? nullptr : new FieldGetter<ClassType, FieldType, false>( fieldGetter ),
-                !fieldSetter ? nullptr : new FieldSetter<ClassType, FieldType, false>( fieldSetter )
+                !fieldSetter ? nullptr : new FieldSetter<ClassType, FieldType, false>( fieldSetter ) 
             );
 
-            field.m_meta = meta;
-
-            fields.emplace( name, field );
+            fields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -227,7 +215,7 @@ namespace ursine
             typedef GlobalGetter<FieldType, true> GlobalGetterType;
             typedef GlobalSetter<FieldType, true> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !getter ? nullptr : new GlobalGetterType(
@@ -236,12 +224,10 @@ namespace ursine
                 !setter ? nullptr : new GlobalSetterType(
                     reinterpret_cast<typename GlobalSetterType::Signature>( setter )
                 ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -252,19 +238,17 @@ namespace ursine
             typedef GlobalGetter<FieldType, true> GlobalGetterType;
             typedef GlobalSetter<FieldType, false> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !getter ? nullptr : new GlobalGetterType(
                     reinterpret_cast<typename GlobalGetterType::Signature>( getter )
                 ),
                 !fieldSetter ? nullptr : new GlobalSetterType( fieldSetter ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -275,19 +259,17 @@ namespace ursine
             typedef GlobalGetter<FieldType, false> GlobalGetterType;
             typedef GlobalSetter<FieldType, true> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !fieldGetter ? nullptr : new GlobalGetterType( fieldGetter ),
                 !setter ? nullptr : new GlobalSetterType(
                     reinterpret_cast<typename GlobalSetterType::Signature>( setter )
                 ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -298,17 +280,15 @@ namespace ursine
             typedef GlobalGetter<FieldType, false> GlobalGetterType;
             typedef GlobalSetter<FieldType, false> GlobalSetterType;
 
-            Global global {
+            staticFields.emplace_back(
                 name,
                 typeof( FieldType ),
                 !fieldGetter ? nullptr : new GlobalGetterType( fieldGetter ),
                 !fieldSetter ? nullptr : new GlobalSetterType( fieldSetter ),
-                typeof( ClassType ),
-            };
+                typeof( ClassType )
+            );
 
-            global.m_meta = meta;
-
-            staticFields.emplace( name, global );
+            staticFields.back( ).m_meta = meta;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -359,10 +339,10 @@ namespace ursine
         template<typename EnumType>
         void TypeData::SetEnum(
             const std::string &name,
-            const typename EnumContainer<EnumType>::Table &table
+            const typename EnumContainer<EnumType>::Initializer &initializer
         )
         {
-            enumeration = new EnumContainer<EnumType>( name, table );
+            enumeration = new EnumContainer<EnumType>( name, initializer );
         }
     }
 }

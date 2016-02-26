@@ -33,7 +33,7 @@ namespace ursine
                 "Reduce Convex Hull"
             );
             
-            Meta(InputRange( 0, 5, 0.001 ))
+            EditorMeta(InputRange( 0, 5, 0.001 ))
 			EditorField(
 				float margin,
 				GetMargin,
@@ -64,6 +64,6 @@ namespace ursine
 
 			void onTransformChange(EVENT_HANDLER(Entity));
 
-		} Meta( Enable, DisplayName( "ConvexHullCollider" ) );
+		} Meta(Enable, DisplayName( "ConvexHullCollider" ));
 	}
 }

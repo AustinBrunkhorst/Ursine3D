@@ -19,6 +19,8 @@ class LevelSegmentManager;
 
 class SegmentLogicStateMachine : public ursine::sm::StateMachine
 {
+    friend class LevelSegmentManager;
+
 public:
     typedef std::shared_ptr<SegmentLogicStateMachine> Handle;
 

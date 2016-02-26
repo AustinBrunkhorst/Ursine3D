@@ -74,28 +74,22 @@ namespace ursine
                 SetColor
             );
 
+            Meta(Enable)
             SpriteText(void);
             ~SpriteText(void);
 
-            Meta(Disable)
             void OnInitialize(void) override;
 
             float GetSize(void) const;
             void SetSize(float size);
 
-            Meta(Disable)
             float GetWidth(void) const;
-            Meta(Disable)
             void SetWidth(float size);
 
-            Meta(Disable)
             float GetHeight(void) const;
-            Meta(Disable)
             void SetHeight(float size);
 
-            Meta(Disable)
             const SVec3 &GetPosition(void) const;
-            Meta(Disable)
             void SetPosition(const SVec3 &position);
 
             const std::string &GetText(void) const;
@@ -120,6 +114,6 @@ namespace ursine
 
             void updateRenderer(void);
 
-        } Meta(Enable, DisplayName("SpriteText"));
+        } Meta(Enable, WhiteListMethods, DisplayName( "SpriteText" ));
     }
 }

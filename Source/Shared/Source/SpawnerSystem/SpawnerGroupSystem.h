@@ -16,6 +16,7 @@
 #include <EntitySystem.h>
 
 class SpawnerGroup;
+class Spawner;
 
 class SpawnerGroupSystem : public ursine::ecs::EntitySystem
 {
@@ -36,6 +37,11 @@ private:
 
     void onComponentAdded(EVENT_HANDLER(World));
     void onComponentRemoved(EVENT_HANDLER(World));
+
+    void addSpawnerGroup(SpawnerGroup *group);
+    bool addSpawner(Spawner *spawner);
+
+    void onSpawnerParentChange(EVENT_HANDLER(Entity));
 
     std::vector<SpawnerGroup*> m_spawnerGroups;
 

@@ -1,12 +1,12 @@
 cbuffer CameraBuffer : register(b0)
 {
-    matrix g_mInvView;
+    matrix view;
     matrix projection;
 };
 
-cbuffer invProj : register(b4)
+cbuffer invView : register(b4)
 {
-    matrix InvProj;
+    matrix invView;
     float nearPlane;
     float farPlane;
 };
@@ -123,9 +123,9 @@ PixelInputType main(uint id : SV_VERTEXID)
     position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));
 
     // into world -> translate
-    position = mul(position, (float3x3)InvProj) + g_bufPosColor[ particleIndex ].position + cameraPosition.xyz;
+    position = mul(position, (float3x3)invView) + g_bufPosColor[ particleIndex ].position + cameraPosition.xyz;
 
-    output.position = mul(float4(position, 1.0f), g_mInvView);
+    output.position = mul(float4(position, 1.0f), view);
     output.position = mul(output.position, projection);
     output.color = (g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w) * color;
 
@@ -134,13 +134,13 @@ PixelInputType main(uint id : SV_VERTEXID)
 
 //cbuffer CameraBuffer : register(b0)
 //{
-//    matrix g_mInvView;
+//    matrix view;
 //    matrix projection;
 //};
 //
-//cbuffer invProj : register(b4)
+//cbuffer invView : register(b4)
 //{
-//    matrix InvProj;
+//    matrix invView;
 //    float nearPlane;
 //    float farPlane;
 //};
@@ -191,9 +191,9 @@ PixelInputType main(uint id : SV_VERTEXID)
 //    position.z = 0;
 //    position.xy *= g_bufPosColor[ particleIndex ].scaleX;
 //
-//    position = g_bufPosColor[ particleIndex ].position; // mul(position, (float3x3)g_mInvView) + g_bufPosColor[ particleIndex ].position
+//    position = g_bufPosColor[ particleIndex ].position; // mul(position, (float3x3)view) + g_bufPosColor[ particleIndex ].position
 //
-//    output.position = mul(float4(position, 1.0f), g_mInvView);
+//    output.position = mul(float4(position, 1.0f), view);
 //    output.position = mul(output.position, projection);
 //    output.color = g_bufPosColor[ particleIndex ].color;
 //

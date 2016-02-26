@@ -56,7 +56,7 @@ namespace ursine
 			unsigned GetModelIndexcount(std::string name, unsigned index = 0);
 
             void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
-            void BindModel(unsigned ID, unsigned index = 0);
+            void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
 
             //manual binding
             template<typename T>

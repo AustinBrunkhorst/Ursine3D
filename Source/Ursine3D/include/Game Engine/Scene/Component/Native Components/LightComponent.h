@@ -48,7 +48,7 @@ namespace ursine
                 SetColor
             );
 
-			Meta(BitMaskEditor)
+			EditorMeta(BitMaskEditor)
 			EditorField(
 				ursine::ecs::RenderMask renderMask,
 				GetRenderMask,

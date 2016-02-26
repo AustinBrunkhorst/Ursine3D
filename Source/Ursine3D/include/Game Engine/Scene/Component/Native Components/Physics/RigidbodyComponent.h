@@ -25,7 +25,7 @@ namespace ursine
             Dynamic = physics::BF_DYNAMIC,
             Static = physics::BF_STATIC,
             Kinematic = physics::BF_KINEMATIC
-        } Meta( Enable );
+        } Meta(Enable);
 
         class Rigidbody : public Component
         {

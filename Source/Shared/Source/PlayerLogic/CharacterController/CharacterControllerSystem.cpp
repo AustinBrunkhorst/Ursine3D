@@ -50,7 +50,7 @@ void CharacterControllerSystem::Process(Entity *entity)
     rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
     
     // Looking logic
-    if (lookDir.Length( ) > controller->m_deadZone)
+    if (lookDir.Length( ) > controller->m_deadZone && !controller->m_lockLooking)
     {
         if (abs(lookDir.X( )) < controller->m_deadZoneSnap)
             lookDir.X( ) = 0.0f;
@@ -96,23 +96,25 @@ void CharacterControllerSystem::Process(Entity *entity)
         transform->SetWorldRotation(
             transform->GetWorldRotation( ) *
             SQuat(0.0f, lookAngle.X( ), 0.0f)
-            );
+        );
     }
 
-    auto move = controller->GetMoveDirection( );
-
-    auto forward = transform->GetForward( ) * move.Y( );
-    auto strafe = transform->GetRight( ) * move.X( );
-    auto accum = forward + strafe;
-
-    if (controller->m_jump)
+    if (!controller->m_lockMovement)
     {
-        swept->Jump( );
-        controller->m_jump = false;
+        auto move = controller->GetMoveDirection( );
+
+        auto forward = transform->GetForward( ) * move.Y( );
+        auto strafe = transform->GetRight( ) * move.X( );
+        auto accum = forward + strafe;
+
+        if (controller->m_jump)
+        {
+            swept->Jump( );
+            controller->m_jump = false;
+        }
+
+        swept->SetMovementDirection({ accum.X( ), 0.0f, accum.Z( ) });
     }
-
-    swept->SetMovementDirection({ accum.X( ), 0.0f, accum.Z( ) });
-
     // Reset the look direction
     controller->SetLookDirection( Vec2::Zero( ) );
     controller->SetMoveDirection( Vec2::Zero( ) );

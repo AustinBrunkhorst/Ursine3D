@@ -20,19 +20,19 @@ namespace LevelSegments_enum
     enum LevelSegments
     {
         // Tutorial
-        Tut_OpeningCinematic,
-        Tut_MovementTutorial,
-        Tut_SoloTriggerTutorial,
-        Tut_WeaponPickupTutorial,
-        Tut_HipFireTutorial,
-        Tut_AimFireTutorial,
-        Tut_AmmoPickupTutorial,
-        Tut_ShootMovingTargetsTutorial,
-        Tut_ReviveTutorial,
-        Tut_SimultaneousTriggerTutorial,
+        Tut_OpeningCinematic, // Introduce players?  What about dome
+        Tut_MovementTutorial, // Tell the player to move to a position
+        Tut_SoloTriggerTutorial, // Accumulate trigger pad (particle effects)
+        Tut_WeaponPickupTutorial, // How to pickup weapons (weapon pickup + FX + button icon)
+        Tut_HipFireTutorial, // Shooting targets
+        Tut_AimFireTutorial, // Shooting targets
+        Tut_AmmoPickupTutorial, // Ammo pickups
+        Tut_ShootMovingTargetsTutorial, // Shooting moving targets
+        Tut_ReviveTutorial, // Revive mechanic (kill one player, have other revive the other)
+        Tut_SimultaneousTriggerTutorial, // SoloTrigger X 2
+        Tut_SimulationCreationCinematic, // Cinematic for simulation begin
 
         // Combat Bowl 1
-        CB1_SimulationCreationCinematic,
         CB1_SimulationStartCinematic,
         CB1_WeaponSelection,
         CB1_ActivateSystems1,

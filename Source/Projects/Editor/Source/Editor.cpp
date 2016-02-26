@@ -14,10 +14,10 @@
 #include "Precompiled.h"
  
 #include "Editor.h" 
-#include "Project.h"      
-  
-#include <Application.h>  
-    
+#include "Project.h"         
+   
+#include <Application.h>   
+       
 #include <WindowManager.h>
 #include <UIManager.h>   
   

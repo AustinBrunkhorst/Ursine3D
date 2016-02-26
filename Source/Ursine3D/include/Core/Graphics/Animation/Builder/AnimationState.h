@@ -91,11 +91,8 @@ namespace ursine
 
 		const float &GetTransPosition(void) const;
 		void SetTransPosition(const float& tPos);
-
-		//void GetFrameByTime(std::vector<AnimationKeyframe> &f1, std::vector<AnimationKeyframe> &f2, float time) const;
 		
 	private:
-		//current runtime
 		std::string m_name;
 		//time position to play animation
 		float m_timePos;
