@@ -29,7 +29,6 @@ namespace ursine
 			NATIVE_COMPONENT;
 
 		public:
-
             EditorMeta(InputRange( 0.0f, 100.0f, 1, "{{value}}%" ))
 			EditorField(
 				float Volume,
@@ -48,6 +47,11 @@ namespace ursine
 				GetMute,
 				SetMute
 			);
+
+            EditorResourceField(
+                int, 
+                testResource
+            );
 
             Meta(Enable)
 			AudioEmitter(void);

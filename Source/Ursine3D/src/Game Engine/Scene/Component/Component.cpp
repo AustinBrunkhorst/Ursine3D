@@ -2,6 +2,8 @@
 
 #include "Component.h"
 
+#include "Scene.h"
+
 namespace ursine
 {
     namespace ecs
@@ -10,14 +12,21 @@ namespace ursine
         {
         #if defined(URSINE_WITH_EDITOR)
 
+            static const auto resourceRefType = typeof( resources::ResourceReference );
+
             auto type = GetType( );
             auto fields = type.GetFields( );
 
             auto instance = ObjectVariant( this );
 
+            auto *resourceManager = &GetOwner( )->GetWorld( )->GetOwner( )->GetResourceManager( );
+
             for (auto &field : fields)
             {
-                if (field.GetType( ).IsArray( ))
+                auto fieldType = field.GetType( );
+
+                // array types
+                if (fieldType.IsArray( ))
                 {
                     auto fieldInstance = field.GetValue( instance );
 
@@ -42,6 +51,13 @@ namespace ursine
                     events.Connect<EventArgs>( AMODIFY_INSERT, onModification );
                     events.Connect<EventArgs>( AMODIFY_SET, onModification );
                     events.Connect<EventArgs>( AMODIFY_REMOVE, onModification );
+                }
+                // resource reference types
+                else if (fieldType == resourceRefType)
+                {
+                    auto &reference = field.GetValue( instance ).GetValue<resources::ResourceReference>( );
+
+                    reference.m_manager = resourceManager;
                 }
             }
 

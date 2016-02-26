@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ResourceReferenceEvent.h"
+
 #include "GUID.h"
 
 namespace ursine
@@ -8,13 +10,18 @@ namespace ursine
     {
         class ResourceManager;
 
-        class ResourceReference : public meta::Object
+        class ResourceReference
+            : public meta::Object
+            , public EventDispatcher<ResourceReferenceEventType>
         {
             META_OBJECT;
 
         public:
             Meta(Enable)
             ResourceReference(void);
+
+            ResourceReference(const ResourceReference &rhs);
+            ResourceReference &operator=(const ResourceReference &rhs);
 
             template<typename ResourceType>
             ResourceType *Load(bool ignoreCache = false) const;
@@ -25,7 +32,7 @@ namespace ursine
 
         private:
             friend class ResourceManager;
-            friend class Component;
+            friend class ecs::Component;
 
             mutable ResourceManager *m_manager;
             GUID m_resourceGUID;

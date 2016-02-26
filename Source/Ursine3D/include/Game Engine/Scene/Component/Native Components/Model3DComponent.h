@@ -59,11 +59,6 @@ namespace ursine
                 SetModelResourceName
             );
 
-            EditorResourceField(
-                ursine::resources::TextureData, 
-                model
-            );
-
             EditorField(
                 std::string materialName,
                 GetMaterial,
