@@ -17,6 +17,11 @@
 #include <CylinderColliderComponent.h>
 #include <SphereColliderComponent.h>
 #include <LightComponent.h>
+#include <SpriteTextComponent.h>
+#include <ParticleSystemComponent.h>
+#include <ParticleEmitterComponent.h>
+#include <ParticleAnimatorComponent.h>
+#include <ParticleColorAnimatorComponent.h>
 
 using namespace ursine;
 using namespace std::placeholders;
@@ -168,6 +173,25 @@ namespace editor_commands
         return CefV8Value::CreateUndefined( );
     }
 
+    JSFunction(CreateParticleSystem)
+    {
+        auto *entity = createEntity("Particle System");
+        entity->AddComponent<ecs::ParticleSystem>( );
+        entity->AddComponent<ecs::ParticleEmitter>( );
+        entity->AddComponent<ecs::ParticleAnimator>( );
+        entity->AddComponent<ecs::ParticleColorAnimator>( );
+        return CefV8Value::CreateUndefined();
+    }
+
+    JSFunction(CreateSpriteText)
+    {
+        auto *entity = createEntity("Sprite Text");
+        entity->AddComponent<ecs::SpriteText>( );
+
+        return CefV8Value::CreateUndefined();
+    }
+
+
     namespace
     {
         void doLoadArchetype(
@@ -252,7 +276,7 @@ namespace editor_commands
 
             auto *entity = world->CreateEntity( name );
 
-            auto *tools = world->GetEntitySystem( EditorToolSystem );
+            auto *tools = world->GetEntitySystem<EditorToolSystem>( );
 
             if (tools)
                 tools->ClearSelectedEntities( );

@@ -46,11 +46,16 @@ namespace ursine
                 m_modelArray[name] = new ModelResource();
                 auto *newMesh = new Mesh();
                 m_modelArray[name]->AddMesh(newMesh);
+                m_s2uTable["ParticleIndices"] = m_modelCount;
+                m_u2mTable[m_modelCount++] = m_modelArray[name];
 
                 unsigned indices[1024 * 6];
+                unsigned indexArray[6] = { 0, 1, 2, 1, 2, 3 };
 
                 for (int x = 0; x < 1024 * 6; ++x)
+                {
                     indices[x] = x;
+                }
 
                 D3D11_BUFFER_DESC indexBufferDesc;
                 D3D11_SUBRESOURCE_DATA indexData;
@@ -122,7 +127,9 @@ namespace ursine
             vertexBufferDesc.StructureByteStride = 0;
 
             //Give the subresource structure a pointer to the vertex data.
+
             vertexData.pSysMem = &temp[0];
+
             vertexData.SysMemPitch = 0;
             vertexData.SysMemSlicePitch = 0;
 
@@ -159,12 +166,14 @@ namespace ursine
 
             m_s2uTable[name] = m_modelCount;
             m_u2mTable[m_modelCount] = m_modelArray[name];
+
             ++m_modelCount;
         }
 
         void ModelManager::InitializeJdl(std::string fileText)
         {
             char buffer[1024];
+
             std::ifstream input;
 
             //loading jdl files first, then loading fbx
@@ -174,6 +183,7 @@ namespace ursine
             //because we don't have other method to load edited model by drag & drop or typing name of it.
             input.open(fileText + "JDLS.gfx", std::ios_base::in);
             UAssert(input.is_open(), "Failed to open file for jdl loading! ('%s')", fileText.c_str());
+
             while (input.eof() == false)
             {
                 //zero it out
@@ -192,6 +202,7 @@ namespace ursine
 
                 //deal with data, chop it up by space
                 size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
+
                 while (pos != std::string::npos)
                 {
                     size_t end = data.find_first_of(" ", pos + 1);
@@ -216,11 +227,13 @@ namespace ursine
         void ModelManager::InitializeModel(std::string fileText)
         {
             char buffer[1024];
+
             std::ifstream input;
 
             //loading all models
             input.open(fileText + "MODELS.8.0.gfx", std::ios_base::in);
             UAssert(input.is_open(), "Failed to open file for model loading! ('%s')", fileText.c_str());
+
             while (input.eof() == false)
             {
                 //zero it out
@@ -239,6 +252,7 @@ namespace ursine
 
                 //deal with data, chop it up by space
                 size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
+
                 while (pos != std::string::npos)
                 {
                     size_t end = data.find_first_of(" ", pos + 1);
@@ -256,10 +270,7 @@ namespace ursine
                 if (tokens[0].find("8.0.mdl") != std::string::npos)
                     LoadModel(tokens[1], tokens[0]);
                 else if (tokens[0].find(".fbx") != std::string::npos)
-                {
                     LoadModel_Fbx(tokens[1], tokens[0]);
-                    // need to store name of fbx file into jdl.gfx if there isn't
-                }
             }
             input.close();
         }
@@ -295,6 +306,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////////////
             // ALLOCATE MODEL ///////////////////////////////////////////////
+
             m_modelArray[name] = new ModelResource();
             auto *newMesh = new Mesh();
             newMesh->SetName(name);
@@ -303,6 +315,7 @@ namespace ursine
             /////////////////////////////////////////////////////////////////
             // LOAD FILE INTO MEMORY ////////////////////////////////////////
             char size[32];
+
             input.getline(size, 32);
             unsigned vertCount = atoi(size);
 
@@ -314,6 +327,7 @@ namespace ursine
 
             buffer.resize(vertCount);
             realbuffer.resize(vertCount);
+
             input.read((char*)&buffer[0], sizeof(DiffuseTextureVertex) * vertCount);
 
             for (uint x = 0; x < vertCount; ++x)
@@ -344,6 +358,7 @@ namespace ursine
             vertexBufferDesc.StructureByteStride = 0;
 
             //Give the subresource structure a pointer to the vertex data.
+
             vertexData.pSysMem = &realbuffer[0];
             vertexData.SysMemPitch = 0;
             vertexData.SysMemSlicePitch = 0;
@@ -395,6 +410,7 @@ namespace ursine
                 return;
 
             ufmt_loader::ModelInfo* ufmt_model = fbx_model.GetModelInfo();
+            ufmt_loader::AnimInfo* ufmt_anim = fbx_model.GetAnimInfo();
 
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
@@ -403,6 +419,14 @@ namespace ursine
             unsigned rigIndex = 0;
             if (ufmt_model->mboneCount > 0)
                 rigIndex = AnimationBuilder::LoadBoneData(*ufmt_model, name);
+
+            // 2. load animation
+            unsigned animationIndex = 0;
+            if (nullptr != ufmt_anim)
+            {
+                if (ufmt_anim->animCount > 0)
+                    animationIndex = AnimationBuilder::LoadAnimation(*ufmt_anim, name);
+            }
 
             /////////////////////////////////////////////////////////////////
             // CREATE VERTEX BUFFER /////////////////////////////////////////
@@ -428,6 +452,7 @@ namespace ursine
                 newMesh->SetName(currMesh->name);
 
                 uint vertCount = ufmt_model->mMeshInfoVec[mesh_idx].meshVtxInfoCount;
+
                 newMesh->SetVertexCount(vertCount);
                 auto &meshVertArray = newMesh->GetRawVertices();
 
@@ -442,6 +467,7 @@ namespace ursine
                 //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                 //can do this with skincount
                 buffer.resize(vertCount);
+
                 for (size_t i = 0; i < vertCount; ++i)
                 {
                     // update raw verts for physics
@@ -489,6 +515,7 @@ namespace ursine
                 }
 
                 //Give the subresource structure a pointer to the vertex data.
+
                 vertexData.pSysMem = &buffer[0];
                 vertexData.SysMemPitch = 0;
                 vertexData.SysMemSlicePitch = 0;
@@ -503,6 +530,7 @@ namespace ursine
                 newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
 
                 auto &indexArray = newMesh->GetRawIndices();
+
                 for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
                     indexArray[x] = currMesh->meshVtxIndices[x];
 
@@ -525,6 +553,7 @@ namespace ursine
                 //Create the index buffer.
                 result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
                 UAssert(result == S_OK, "Failed to make index buffer!");
+
 
                 m_s2uTable[name] = m_modelCount;
                 m_u2mTable[m_modelCount++] = m_modelArray[name];
@@ -564,6 +593,7 @@ namespace ursine
 
                 // 1. load rig
                 unsigned rigIndex = 0;
+
                 if (ufmt_model.mboneCount > 0)
                     rigIndex = AnimationBuilder::LoadBoneData(ufmt_model, name);
 
@@ -583,9 +613,10 @@ namespace ursine
                     newMesh->SetID(mesh_idx);
 
                     /////////////////////////////////////////////////////////////////
-                    // ALLOCATE MODEL ///////////////////////////////////////////////                
+                    // ALLOCATE MODEL ///////////////////////////////////////////////				
 
                     ufmt_loader::MeshInfo* currMesh = &ufmt_model.mMeshInfoVec[mesh_idx];
+
 
                     newMesh->SetName(currMesh->name);
 
@@ -604,6 +635,7 @@ namespace ursine
                     //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                     //can do this with skincount
                     buffer.resize(vertCount);
+
                     for (size_t i = 0; i < vertCount; ++i)
                     {
                         // update raw verts for physics
@@ -673,6 +705,7 @@ namespace ursine
                     newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
 
                     auto &indexArray = newMesh->GetRawIndices();
+
                     for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
                         indexArray[x] = currMesh->meshVtxIndices[x];
 
@@ -718,18 +751,18 @@ namespace ursine
                 // create a new mesh
                 Mesh *newMesh = new Mesh();
                 newMesh->SetID(mesh_idx);
-        
+
                 /////////////////////////////////////////////////////////////////
                 // ALLOCATE MODEL ///////////////////////////////////////////////                
-        
+
                 ufmt_loader::MeshInfo* currMesh = &modelInfo->mMeshInfoVec[mesh_idx];
-        
+
                 newMesh->SetName(currMesh->name);
-        
+
                 uint vertCount = currMesh->meshVtxInfoCount;
                 newMesh->SetVertexCount(vertCount);
                 auto &meshVertArray = newMesh->GetRawVertices();
-                
+
                 //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                 //can do this with skincount
                 std::vector<AnimationVertex> &buffer = newMesh->GetRawModelData();
@@ -742,7 +775,7 @@ namespace ursine
                         currMesh->meshVtxInfos[i].pos.y,
                         currMesh->meshVtxInfos[i].pos.z
                         );
-                
+
                     // transform these points from their global model space into their local space
                     SVec4 tempPosition = SVec4(
                         currMesh->meshVtxInfos[i].pos.x,
@@ -750,14 +783,14 @@ namespace ursine
                         currMesh->meshVtxInfos[i].pos.z,
                         1.0f
                         );
-                
+
                     // Set data
                     buffer[i].vPos = DirectX::XMFLOAT3(
                         tempPosition.ToD3D().x,
                         tempPosition.ToD3D().y,
                         tempPosition.ToD3D().z
                         );
-                
+
                     buffer[i].vNor = DirectX::XMFLOAT3(
                         currMesh->meshVtxInfos[i].normal.x,
                         currMesh->meshVtxInfos[i].normal.y,
@@ -767,7 +800,7 @@ namespace ursine
                         currMesh->meshVtxInfos[i].uv.x,
                         currMesh->meshVtxInfos[i].uv.y
                         );
-                
+
                     if (modelInfo->mboneCount > 0)
                     {
                         buffer[i].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[i].ctrlBlendWeights.x);
@@ -788,25 +821,25 @@ namespace ursine
                         buffer[i].vBIdx[3] = static_cast<BYTE>(0);
                     }
                 }
-                
+
                 newMesh->SetVertexCount(vertCount);
-        
+
                 /////////////////////////////////////////////////////////////////
                 // CREATE INDEX BUFFER //////////////////////////////////////////
                 newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
-        
+
                 auto &indexArray = newMesh->GetRawIndices();
                 for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
                     indexArray[x] = currMesh->meshVtxIndices[x];
-        
+
                 modelresource->AddMesh(newMesh);
             }
-        
+
             //m_s2uTable[name] = m_modelCount;
             //m_u2mTable[m_modelCount++] = m_modelArray[name];
-            m_s2uTable[ modelInfo->name ] = m_modelCount;
-            m_u2mTable[ m_modelCount++ ] = modelresource;
-        
+            m_s2uTable[modelInfo->name] = m_modelCount;
+            m_u2mTable[m_modelCount++] = modelresource;
+
             //for (auto &x : modelInfo->mMeshLvVec)
             //    modelresource->AddMesh2Tree(x);
             //
@@ -821,7 +854,7 @@ namespace ursine
 
             GfxHND handle;
             _RESOURCEHND *id = HND_RSRCE(handle);
-            
+
             internalID = m_modelCache.size();
             m_modelCache.push_back(new ModelResource());
             m_modelInfoCache.push_back(*modelInfo);
@@ -832,14 +865,14 @@ namespace ursine
             unsigned rigIndex = 0;
             if (modelInfo->mboneCount > 0)
                 rigIndex = AnimationBuilder::LoadBoneData(*modelInfo, modelInfo->name);
-            
+
             // load it up into CPU memory
             //InitializeModel(modelInfo);
             InitializeModel(
                 modelInfo,
                 m_modelCache[internalID]
-            );
-            
+                );
+
             // initialize handle
             id->ID_ = SANITY_RESOURCE;
             id->Type_ = ID_MODEL;
@@ -851,24 +884,24 @@ namespace ursine
         void ModelManager::DestroyModel(GfxHND &handle)
         {
             int id;
-            
+
             _RESOURCEHND *hnd = HND_RSRCE(handle);
             UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
             UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
-            
+
             id = hnd->Index_;
-            
+
             ModelResource *model = m_modelCache[id];
-            
+
             delete[] model->m_binaryData;
             model->m_binarySize = 0;
             model->m_referenceCount = 0;
-            
-            if (model->GetIsLoaded( ))
-                unloadModelFromGPU( model );
-            
+
+            if (model->GetIsLoaded())
+                unloadModelFromGPU(model);
+
             delete model;
-            
+
             handle = 0;
         }
 
@@ -878,13 +911,13 @@ namespace ursine
             _RESOURCEHND *hnd = HND_RSRCE(handle);
             UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
             UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
-            
+
             id = hnd->Index_;
-            
-            if(m_modelCache[ id ]->HasNoReferences( ))
-                loadModelToGPU( m_modelCache[ id ] );
-            
-            m_modelCache[ id ]->IncrementReference( );
+
+            if (m_modelCache[id]->HasNoReferences())
+                loadModelToGPU(m_modelCache[id]);
+
+            m_modelCache[id]->IncrementReference();
         }
 
         void ModelManager::UnloadModel(GfxHND handle)
@@ -893,16 +926,16 @@ namespace ursine
             _RESOURCEHND *hnd = HND_RSRCE(handle);
             UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
             UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
-            
+
             id = hnd->Index_;
-            
-            m_modelCache[ id ]->DecrementReference( );
-            
-            if (m_modelCache[ id ]->HasNoReferences())
-                unloadModelFromGPU(m_modelCache[ id ]);
+
+            m_modelCache[id]->DecrementReference();
+
+            if (m_modelCache[id]->HasNoReferences())
+                unloadModelFromGPU(m_modelCache[id]);
         }
 
-        ufmt_loader::ModelInfo ModelManager::GetModelInfo( GfxHND handle )
+        ufmt_loader::ModelInfo ModelManager::GetModelInfo(GfxHND handle)
         {
             int id;
             _RESOURCEHND *hnd = HND_RSRCE(handle);
@@ -965,11 +998,20 @@ namespace ursine
             }
         }
 
-        void ModelManager::BindModel(unsigned ID, unsigned index)
+        void ModelManager::BindModel(unsigned ID, unsigned index, bool indexOnly)
         {
             ModelResource *model = m_u2mTable[ID];
 
             UAssert(model != nullptr, "Failed to bind model ID:%i", ID);
+
+            if (m_s2uTable["ParticleIndices"] == ID)
+            {
+                m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+                m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+
+                m_currentState = ID;
+                return;
+            }
 
             //map mesh
             unsigned int strides = sizeof(AnimationVertex);
@@ -1011,7 +1053,7 @@ namespace ursine
             m_currentState = -1;
         }
 
-        ModelResource * ModelManager::GetModel(const unsigned ID)
+        ModelResource *ModelManager::GetModel(const unsigned ID)
         {
             return m_u2mTable[ID];
         }
@@ -1023,9 +1065,9 @@ namespace ursine
 
         void ModelManager::loadModelToGPU(ModelResource *model)
         {
-            auto &meshBuffer = model->GetMeshArray( );
+            auto &meshBuffer = model->GetMeshArray();
 
-            for(auto &mesh : meshBuffer)
+            for (auto &mesh : meshBuffer)
             {
                 D3D11_BUFFER_DESC vertexBufferDesc;
                 D3D11_SUBRESOURCE_DATA vertexData;
@@ -1033,20 +1075,20 @@ namespace ursine
 
                 //Set up the description of the static vertex buffer.
                 vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * mesh->GetVertexCount( );
+                vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * mesh->GetVertexCount();
                 vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
                 vertexBufferDesc.CPUAccessFlags = 0;
                 vertexBufferDesc.MiscFlags = 0;
                 vertexBufferDesc.StructureByteStride = 0;
 
                 //Give the subresource structure a pointer to the vertex data.
-                vertexData.pSysMem = mesh->GetRawModelData( ).data( );
+                vertexData.pSysMem = mesh->GetRawModelData().data();
                 vertexData.SysMemPitch = 0;
                 vertexData.SysMemSlicePitch = 0;
 
                 //Now create the vertex buffer.
                 result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &mesh->GetVertexBuffer());
-                UAssert(result == S_OK, "Failed to make vertex buffer! (%s)", DXCore::GetDXErrorMessage(result) );
+                UAssert(result == S_OK, "Failed to make vertex buffer! (%s)", DXCore::GetDXErrorMessage(result));
 
                 D3D11_BUFFER_DESC indexBufferDesc;
                 D3D11_SUBRESOURCE_DATA indexData;
@@ -1060,13 +1102,13 @@ namespace ursine
                 indexBufferDesc.StructureByteStride = 0;
 
                 //Give the subresource structure a pointer to the index data.
-                indexData.pSysMem = mesh->GetRawIndices( ).data( );
+                indexData.pSysMem = mesh->GetRawIndices().data();
                 indexData.SysMemPitch = 0;
                 indexData.SysMemSlicePitch = 0;
 
                 //Create the index buffer.
                 result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &mesh->GetIndexBuffer());
-                UAssert( result == S_OK, "Failed to make index buffer! (%s)", DXCore::GetDXErrorMessage(result) );
+                UAssert(result == S_OK, "Failed to make index buffer! (%s)", DXCore::GetDXErrorMessage(result));
             }
         }
 
@@ -1076,8 +1118,8 @@ namespace ursine
 
             for (auto &mesh : meshBuffer)
             {
-                RELEASE_RESOURCE( mesh->GetIndexBuffer( ) );
-                RELEASE_RESOURCE( mesh->GetVertexBuffer( ) );
+                RELEASE_RESOURCE(mesh->GetIndexBuffer());
+                RELEASE_RESOURCE(mesh->GetVertexBuffer());
             }
         }
     }

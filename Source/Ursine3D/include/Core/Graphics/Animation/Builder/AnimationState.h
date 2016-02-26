@@ -1,11 +1,12 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+** 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** AnimationState.h
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
+** - Hyung Jun Park - park.hyungjun@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
@@ -20,12 +21,29 @@ namespace ursine
     class AnimationState
     {
     public:
+        EditorField(
+            std::string stateName,
+            GetName,
+            SetName
+            );
+
+        // how can I add multiple animations in animation state?
+        // how can I use combo box for this?
+        // Array<Animation> => no, in this case, we should edit
+        EditorField(
+            std::string animName,
+            GetAnimationName,
+            SetAnimationName
+            );
+
         /** @brief constructor
         *
         *  @return Void.
         */
-		Meta(Enable)
         AnimationState(void);
+
+        const std::string &GetName(void) const;
+        void SetName(const std::string& name);
 
         /** @brief gets the time position of the current animation state
         *
@@ -56,24 +74,32 @@ namespace ursine
         *
         *  @return pointer to the animation
         */
-        const Animation *GetAnimation(void) const;
+        const Animation* GetAnimation(void) const;
 
         /** @brief changes the currently running animation
         *
         *  @param animation the animation to switch to
         *  @return Void.
         */
-        void SetAnimation(const Animation *animation);
+        void SetAnimation(Animation* animation);
 
-		const std::string &GetName(void) const;
-		void SetName(const std::string &name);
+        const std::string &GetAnimationName(void) const;
+        void SetAnimationName(const std::string& name);
+
+        const Animation *GetAnimationByName(void) const;
+        void SetAnimationByName(const std::string& name);
+
+        const float &GetTransPosition(void) const;
+        void SetTransPosition(const float& tPos);
 
     private:
-        //current runtime
+        std::string m_name;
+        //time position to play animation
         float m_timePos;
-		std::string m_name;
-
+        std::string m_animname;
         //current animation
         const Animation *m_animation;
-    } Meta(Enable, EnableArrayType, DisplayName( "AnimationState" ), WhiteListMethods);
+        //time to start transitioning
+        float m_transPos;
+    } Meta(Enable, EnableArrayType, DisplayName("AnimationState"));
 }

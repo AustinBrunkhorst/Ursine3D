@@ -22,15 +22,19 @@ namespace ursine
         namespace ufmt_loader
         {
             MeshInfo::MeshInfo() :
-                meshVtxInfoCount(0), meshVtxIdxCount(0), mtrlCount(0), mtrlIndexCount(0), ISerialize("")
+                meshVtxInfoCount(0)
+                , meshVtxIdxCount(0)
+                , mtrlCount(0)
+                , mtrlIndexCount(0)
+                , ISerialize()
             {
             }
-            
+
             MeshInfo::~MeshInfo()
             {
                 ReleaseData();
             }
-            
+
             void MeshInfo::ReleaseData()
             {
                 mtrlName.clear();
@@ -38,12 +42,12 @@ namespace ursine
                 meshVtxIndices.clear();
                 materialIndices.clear();
             }
-            
+
             bool MeshInfo::SerializeIn(HANDLE hFile)
             {
                 DWORD nBytesRead;
                 unsigned int i = 0;
-                
+
                 if (hFile != INVALID_HANDLE_VALUE)
                 {
                     char tmp_name[MAXTEXTLEN];
@@ -53,7 +57,7 @@ namespace ursine
                     ReadFile(hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesRead, nullptr);
                     ReadFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesRead, nullptr);
                     ReadFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    
+
                     meshVtxInfos.resize(meshVtxInfoCount);
                     for (i = 0; i < meshVtxInfoCount; ++i)
                     {
@@ -84,12 +88,12 @@ namespace ursine
                 }
                 return true;
             }
-            
+
             bool MeshInfo::SerializeOut(HANDLE hFile)
             {
                 DWORD nBytesWrite;
                 unsigned int i = 0;
-                
+
                 if (hFile != INVALID_HANDLE_VALUE)
                 {
                     char tmp_name[MAXTEXTLEN];
@@ -99,7 +103,7 @@ namespace ursine
                     WriteFile(hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesWrite, nullptr);
                     WriteFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
                     WriteFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    
+
                     if (meshVtxInfos.size() > 0)
                     {
                         for (auto iter : meshVtxInfos)
@@ -124,7 +128,7 @@ namespace ursine
                             WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
                     }
                 }
-                return true;                
+                return true;
             }
 
             void MeshInfo::SerializeIn(resources::ResourceReader &input)
@@ -140,11 +144,11 @@ namespace ursine
                 input >> meshVtxIdxCount;
                 input >> mtrlCount;
                 input >> mtrlIndexCount;
-                
+
                 unsigned int i = 0;
                 meshVtxInfos.resize(meshVtxInfoCount);
                 for (i = 0; i < meshVtxInfoCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>( &meshVtxInfos[i] ), sizeof(MeshVertex) );
+                    input.ReadBytes(reinterpret_cast<char*>(&meshVtxInfos[i]), sizeof(MeshVertex));
 
                 meshVtxIndices.resize(meshVtxIdxCount);
                 for (i = 0; i < meshVtxIdxCount; ++i)
@@ -155,9 +159,9 @@ namespace ursine
                 {
                     input >> stringSize;
                     str.resize(stringSize);
-                    input.ReadBytes(reinterpret_cast<char*>( &mtrlName[i]), stringSize);
+                    input.ReadBytes(reinterpret_cast<char*>(&mtrlName[i]), stringSize);
                 }
-                
+
                 materialIndices.resize(mtrlIndexCount);
                 for (i = 0; i < mtrlIndexCount; ++i)
                     input >> materialIndices[i];
@@ -175,7 +179,7 @@ namespace ursine
                 if (meshVtxInfos.size() > 0)
                 {
                     for (auto &iter : meshVtxInfos)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(MeshVertex) );
+                        output.WriteBytes(reinterpret_cast<char*>(&iter), sizeof(MeshVertex));
                 }
                 if (meshVtxIndices.size() > 0)
                 {

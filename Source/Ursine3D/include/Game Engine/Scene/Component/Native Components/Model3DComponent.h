@@ -19,6 +19,8 @@
 #include "RenderMask.h"
 #include "ModelResource.h"
 
+#include "TextureData.h"
+
 namespace ursine
 {
     namespace ecs
@@ -27,23 +29,23 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
-			friend class RenderSystem;
+            friend class RenderSystem;
 
         public:
             EditorButton(
-                GenerateConvexHull, 
+                GenerateConvexHull,
                 "Generate Convex Hull"
             );
-			
-			EditorButton(
-				GenerateBvhTriangleMeshCollider,
-				"Generate BVH Triangle Mesh Collider"
-			);
 
-			EditorButton(
-				GenerateConvexDecompCollider,
-				"Generate Convex Decomposition Collider"
-			);
+            EditorButton(
+                GenerateBvhTriangleMeshCollider,
+                "Generate BVH Triangle Mesh Collider"
+            );
+
+            EditorButton(
+                GenerateConvexDecompCollider,
+                "Generate Convex Decomposition Collider"
+            );
 
             EditorField(
                 Color color,
@@ -57,44 +59,54 @@ namespace ursine
                 SetModelResourceName
             );
 
+            EditorResourceField(
+                ursine::resources::TextureData, 
+                model
+            );
+
             EditorField(
                 std::string materialName,
                 GetMaterial,
                 SetMaterial
             );
 
-            Meta(BitMaskEditor)
+            EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
                 SetRenderMask
             );
 
-			EditorField(
-				float emissive,
-				GetEmissive,
-				SetEmissive
-			);
+            EditorField(
+                float emissive,
+                GetEmissive,
+                SetEmissive
+            );
 
-			EditorField(
-				float specularPower,
-				GetSpecularPower,
-				SetSpecularPower
-			);
+            EditorField(
+                float specularPower,
+                GetSpecularPower,
+                SetSpecularPower
+            );
 
-			EditorField(
-				float specularIntensity,
-				GetSpecularIntensity,
-				SetSpecularIntensity
-			);
+            EditorField(
+                float specularIntensity,
+                GetSpecularIntensity,
+                SetSpecularIntensity
+            );
 
+            EditorField(
+                bool castsShadows,
+                GetIsShadowCaster,
+                SetIsShadowCaster
+            );
+
+            Meta(Enable)
             Model3D(void);
             ~Model3D(void);
 
-            Meta(Disable)
             void OnInitialize(void) override;
 
-            Meta(Disable)
             std::vector<SMat4> &GetMatrixPalette(void);
 
             //get/set model name
@@ -102,9 +114,8 @@ namespace ursine
             const std::string &GetModelResourceName(void) const;
 
             // get the model resource to access the mesh
-            Meta(Disable)
             const graphics::ModelResource *GetModelResource(void) const;
-            
+
             void SetMaterial(const std::string &name);
             const std::string &GetMaterial(void) const;
 
@@ -112,15 +123,15 @@ namespace ursine
             void SetColor(const ursine::Color &color);
             const ursine::Color &GetColor(void);
 
-			//get/set material properties
-			float GetEmissive(void) const;
-			void SetEmissive(float emissive);
+            //get/set material properties
+            float GetEmissive(void) const;
+            void SetEmissive(float emissive);
 
-			float GetSpecularPower(void) const;
-			void SetSpecularPower(float power);
+            float GetSpecularPower(void) const;
+            void SetSpecularPower(float power);
 
-			float GetSpecularIntensity(void) const;
-			void SetSpecularIntensity(float intesnity);
+            float GetSpecularIntensity(void) const;
+            void SetSpecularIntensity(float intesnity);
 
             void SetOverdraw(bool flag);
             bool GetOverdraw(void) const;
@@ -129,33 +140,33 @@ namespace ursine
             void SetDebug(bool flag);
             bool GetDebug(void) const;
 
-			ursine::ecs::RenderMask GetRenderMask(void) const;
+            ursine::ecs::RenderMask GetRenderMask(void) const;
             void SetRenderMask(ursine::ecs::RenderMask mask);
 
             void SetMaterialData(float emiss, float pow, float intensity);
             void GetMaterialData(float &emiss, float &pow, float &intensity);
 
             void SetMeshIndex(const int index);
-			int GetMeshIndex(void) const;
+            int GetMeshIndex(void) const;
 
-			Meta(Disable)
-			void OnSerialize(Json::object &output) const override;
+            bool GetIsShadowCaster(void) const;
+            void SetIsShadowCaster(bool castShadows);
 
-			Meta(Disable)
-			void OnDeserialize(const Json &input) override;
+            void OnSerialize(Json::object &output) const override;
+            void OnDeserialize(const Json &input) override;
 
         private:
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;
 
-			RenderableComponentBase *m_base;
+            RenderableComponentBase *m_base;
 
             std::string m_modelName;
             std::string m_materialName;
 
             void updateRenderer(void);
 
-        } Meta(Enable, DisplayName( "Model3D" ));
+        } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }
 }

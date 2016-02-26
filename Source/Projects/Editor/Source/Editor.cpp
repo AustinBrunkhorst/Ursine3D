@@ -7,7 +7,7 @@
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
 **
-** Contributors:
+** Contributors: 
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
  

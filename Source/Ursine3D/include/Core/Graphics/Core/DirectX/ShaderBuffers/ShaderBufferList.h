@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace graphics
     {
-        enum COMPUTE_BUFFER_LIST
+        enum COMPUTE_BUFFER_LIST : unsigned
         {
             COMPUTE_BUFFER_ID = 0,
             COMPUTE_BUFFER_ID_CPU,
@@ -28,7 +28,7 @@ namespace ursine
             COMPUTE_BUFFER_COUNT
         };
 
-        enum BUFFER_LIST
+        enum BUFFER_LIST : unsigned
         {
             BUFFER_CAMERA = 0,
             BUFFER_TRANSFORM,
@@ -45,6 +45,10 @@ namespace ursine
             BUFFER_MATRIX_PAL,
             BUFFER_MOUSEPOS,
             BUFFER_PARTICLEDATA,
+
+            // non-default
+            BUFFER_GLYPHDATA,   // 6
+            BUFFER_TEXTDATA,    // 7
 
             BUFFER_COUNT,
 
@@ -70,9 +74,9 @@ namespace ursine
             DirectX::XMFLOAT4 lightPosition;
         };
 
-        struct InvProjBuffer
+        struct invViewBuffer
         {
-            DirectX::XMMATRIX invProj;
+            DirectX::XMMATRIX invView;
             float nearPlane;
             float farPlane;
         };
@@ -125,6 +129,8 @@ namespace ursine
             float innerAngle;
             DirectX::XMFLOAT3 diffuseColor;
             float outerAngle;
+            DirectX::XMFLOAT3 falloffValues;
+            float lightSize;
         };
 
         struct MatrixPalette
@@ -153,6 +159,28 @@ namespace ursine
         struct ParticleBuffer
         {
             Particle_GPU data[ 1024 ];
+        };
+
+        struct Glyph
+        {
+            DirectX::XMFLOAT2 screenPosition;
+            DirectX::XMFLOAT2 glyphPosition;
+            DirectX::XMFLOAT2 glyphSize;
+            DirectX::XMFLOAT2 buffer;
+        };
+
+        struct GlyphBuffer
+        {
+            Glyph glyphData[ 1024 ];
+        };
+
+        struct SpriteTextBuffer
+        {
+            DirectX::XMFLOAT3 worldPosition;
+            float offset;
+
+            DirectX::XMFLOAT2 sizeScalar;
+            DirectX::XMFLOAT2 textureDimensions;
         };
     }
 }

@@ -1,0 +1,81 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 60, 
+"alignment": 1, 
+"pixelsPerUnit": 64, 
+"size": 20, 
+"text": "Nuker", 
+"textColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0.875
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 59, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0.42172014713287354, 
+"z": -0.13513374328613281
+}
+}
+}, 
+"name": "Empty Entity"
+}
+], 
+"components": {
+"Model3D": {
+".uid": 58, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 57, 
+"rotation": {
+"w": -0.59067237377166748, 
+"x": 0, 
+"y": -0.80691295862197876, 
+"z": 0
+}, 
+"scale": {
+"x": 0.85919463634490967, 
+"y": 4.4472131729125977, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 2.4631333351135254, 
+"z": -4.0184993743896484
+}
+}
+}, 
+"v": "0.2submission"
+}

@@ -157,6 +157,14 @@ x-main-menu, x-context-menu {
       &.folder-closed {
         @include icon-half( $icon-half-folder-close, $context-menu-icon-size );
       }
+      
+      &.arrow-up {
+        @include icon-half( $icon-half-arrow-up, $context-menu-icon-size );
+      }
+
+      &.arrow-down {
+        @include icon-half( $icon-half-arrow-down, $context-menu-icon-size );
+      }
     }
   }
 }

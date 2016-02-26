@@ -16,9 +16,9 @@
 
 #include "AnimationRig.h"
 #include "Animation.h"
-#include "AnimationState.h"
 #include "BoneInfo.h"
 #include "AnimationInfo.h"
+#include "AnimationState.h"
 #include <unordered_map>
 
 namespace ursine
@@ -35,8 +35,8 @@ namespace ursine
         //given a Rig, State, and 2 vectors of matrices, generate matrix palette
 
         static void GenerateAnimationData(
-            const AnimationState &animState,
-            const AnimationState &fut_animState,
+            const AnimationState *currentState,
+            const AnimationState *futureState,
             const AnimationRig *rig,
             std::vector<SMat4> &outputMatPal,
             std::vector<SMat4> &outputBones,

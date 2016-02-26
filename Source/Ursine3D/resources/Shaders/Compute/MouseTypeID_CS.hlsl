@@ -32,7 +32,7 @@ void main()
 
     /////////////////////////////////////////////////////////////////
     // SEARCHING NEARBY TILES
-    int searchRadius = 40;
+    int searchRadius = 20;
 
     int xMin = mousePos.x - searchRadius;
     int xMax = mousePos.x + searchRadius;
@@ -59,7 +59,7 @@ void main()
         for (int x = xMin; x <= xMax; ++x)
         { 
             //read value from texture
-            float4 currVal = inputTexture.Load(int3(mouseX, mouseY, 0));// [mousePos.xy];
+            float4 currVal = inputTexture.Load(int3(x, y, 0));// [mousePos.xy];
             
             //convert to ID
             uint w1 = round(currVal.y * 255.f);

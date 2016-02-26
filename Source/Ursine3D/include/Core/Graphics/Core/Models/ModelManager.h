@@ -11,22 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      ModelManager.h
-Module:         Graphics
-Purpose:        Manager for handling all of the models
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include <map>
@@ -51,7 +35,7 @@ namespace ursine
             void LoadModel(std::string name, std::string fileName);
             void LoadModel_Fbx(std::string name, std::string fileName);
             void LoadModel_Jdl(std::string name, std::string fileName);
-           
+
             void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
 
             // creating a model resource
@@ -69,7 +53,7 @@ namespace ursine
             unsigned GetModelIndexcount(std::string name, unsigned index = 0);
 
             void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
-            void BindModel(unsigned ID, unsigned index = 0);
+            void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
 
             //manual binding
             template<typename T>

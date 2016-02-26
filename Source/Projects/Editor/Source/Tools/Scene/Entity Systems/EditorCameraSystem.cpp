@@ -17,6 +17,7 @@
 #include "EditorToolSystem.h"
 
 #include <CameraComponent.h>
+#include <SelectedComponent.h>
 
 #include <MouseManager.h>
 #include <KeyboardManager.h>
@@ -38,7 +39,10 @@ EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     , m_cameraEntity( nullptr )
     , m_camera( nullptr )
     , m_camZoom( 50.0f )
-    , m_camPos( SVec3( 0, 0, 0 ) ) { }
+    , m_camPos( SVec3( 0, 0, 0 ) )
+{
+
+}
 
 bool EditorCameraSystem::HasFocus(void) const
 {
@@ -94,7 +98,7 @@ void EditorCameraSystem::OnAfterLoad(void)
         m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
 
     m_cameraEntity->EnableDeletion( false );
-	m_cameraEntity->EnableSerialization( true );
+    m_cameraEntity->EnableSerialization( true );
 
     m_camera = m_cameraEntity->GetComponent<ecs::Camera>( );
 
@@ -183,7 +187,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
     // focus with f
     if (keyboardMgr->IsTriggeredDown( KEY_F ))
     {
-        auto selectorSystem = m_world->GetEntitySystem( EditorToolSystem );
+        auto selectorSystem = m_world->GetEntitySystem<EditorToolSystem>( );
         auto currentFocus = selectorSystem->GetCurrentFocus( );
 
         if (currentFocus != nullptr)

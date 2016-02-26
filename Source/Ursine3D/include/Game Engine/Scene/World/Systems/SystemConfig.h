@@ -30,9 +30,6 @@
 // Determines if the world has the given system type
 #define HasEntitySystem(systemType) GetSystemManager( )->HasSystem<systemType>( )
 
-// Gets the given entity system from the world
-#define GetEntitySystem(systemType) GetSystemManager( )->GetSystem<systemType>( )
-
 /** @brief Enables auto adding of an entity system
 */
 struct AutoAddEntitySystem : ursine::meta::MetaProperty

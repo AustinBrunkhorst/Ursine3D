@@ -11,7 +11,7 @@
 #include "Precompiled.h"
 
 #include "PlayerAction.h"
-#include <Components/PlayerIdComponent.h>
+#include <PlayerIdComponent.h>
 #include <Core/CoreSystem.h>
 #include <Core/Input/Gamepad/GamepadManager.h>
 #include <Core/Input/Keyboard/KeyboardManager.h>
@@ -19,29 +19,42 @@
 
 #define Threshold 0.5f
 
+ursine::GamepadManager*  PlayerAction::m_gamepadManager = nullptr;
+ursine::KeyboardManager* PlayerAction::m_keyboardManager = nullptr;
+ursine::MouseManager*    PlayerAction::m_mouseManager = nullptr;
 
-PlayerAction::PlayerAction( )
-    : m_actionMode( ActionCount )
-    , m_binding( BindingCount )
-    , m_gamepadState( nullptr )
-    , m_gamepadManager( GetCoreSystem(ursine::GamepadManager) )
-    , m_keyboardManager( GetCoreSystem(ursine::KeyboardManager) )
-    , m_mouseManager( GetCoreSystem(ursine::MouseManager) )
+
+PlayerAction::PlayerAction(void)
+    : m_actionMode( ActionCount ),
+    m_playerIDComp( nullptr ),
+    m_gamepadState(nullptr)
 {
-    
+    m_gamepadManager = GetCoreSystem( ursine::GamepadManager );
+    m_keyboardManager = GetCoreSystem( ursine::KeyboardManager );
+    m_mouseManager = GetCoreSystem( ursine::MouseManager );
 }
 
-PlayerAction::PlayerAction(PlayerID* idComp, const ActionMode action, const InputBinding binding)
-    : m_actionMode( action )
-    , m_binding( binding )
-    , m_playerIDComp( idComp )
-    , m_gamepadState( nullptr )
-    , m_gamepadManager(GetCoreSystem(ursine::GamepadManager))
-    , m_keyboardManager(GetCoreSystem(ursine::KeyboardManager))
-    , m_mouseManager(GetCoreSystem(ursine::MouseManager))
+PlayerAction::PlayerAction(PlayerID* idComp, ActionMode action) :
+    m_actionMode( action ),
+    m_playerIDComp( idComp ),
+    m_gamepadState( nullptr )
 {
-
+    m_gamepadManager = GetCoreSystem( ursine::GamepadManager );
+    m_keyboardManager = GetCoreSystem( ursine::KeyboardManager );
+    m_mouseManager = GetCoreSystem( ursine::MouseManager );
 }
+
+
+void PlayerAction::SetActionMode(ActionMode mode)
+{
+    m_actionMode = mode;
+}
+
+void PlayerAction::SetPlayerIDComp(PlayerID* idComp)
+{
+    m_playerIDComp = idComp;
+}
+
 
 bool PlayerAction::PrepForInput(void)
 {
@@ -59,14 +72,14 @@ bool PlayerAction::PrepForInput(void)
     return true;
 }
 
-bool PlayerAction::WasPressed()
+bool PlayerAction::WasPressed(const InputBinding binding)
 {    
     switch ( m_actionMode )
     {
     case Xbox:
-        return EvalXboxButtons(&ursine::GamepadState::IsButtonTriggeredDown);
+        return EvalXboxButtons(binding, &ursine::GamepadState::IsButtonTriggeredDown);
     case Keyboard:
-        return EvalKeyboardButtons(&ursine::KeyboardManager::IsTriggeredDown, &ursine::MouseManager::IsButtonTriggeredDown);
+        return EvalKeyboardButtons(binding, &ursine::KeyboardManager::IsTriggeredDown, &ursine::MouseManager::IsButtonTriggeredDown);
     default:
         break;
     }
@@ -74,14 +87,14 @@ bool PlayerAction::WasPressed()
     return false;
 }
 
-bool PlayerAction::IsPressed()
+bool PlayerAction::IsPressed(const InputBinding binding)
 {
     switch ( m_actionMode )
     {
     case Xbox:
-        return EvalXboxButtons(&ursine::GamepadState::IsButtonDown);
+        return EvalXboxButtons(binding, &ursine::GamepadState::IsButtonDown);
     case Keyboard:
-        return EvalKeyboardButtons(&ursine::KeyboardManager::IsDown, &ursine::MouseManager::IsButtonDown);
+        return EvalKeyboardButtons(binding, &ursine::KeyboardManager::IsDown, &ursine::MouseManager::IsButtonDown);
     default:
         break;
     }
@@ -89,14 +102,14 @@ bool PlayerAction::IsPressed()
     return false;
 }
 
-bool PlayerAction::WasReleased( )
+bool PlayerAction::WasReleased(const InputBinding binding)
 { 
     switch ( m_actionMode )
     {
     case Xbox:
-        return EvalXboxButtons(&ursine::GamepadState::IsButtonTriggeredUp);
+        return EvalXboxButtons(binding, &ursine::GamepadState::IsButtonTriggeredUp);
     case Keyboard:
-        return EvalKeyboardButtons(&ursine::KeyboardManager::IsTriggeredUp, &ursine::MouseManager::IsButtonTriggeredUp);
+        return EvalKeyboardButtons(binding, &ursine::KeyboardManager::IsTriggeredUp, &ursine::MouseManager::IsButtonTriggeredUp);
     default:
         break;
     }
@@ -104,12 +117,27 @@ bool PlayerAction::WasReleased( )
     return false;
 }
 
-bool PlayerAction::StickUp() 
+bool PlayerAction::IsUp(const InputBinding binding)
+{
+    switch ( m_actionMode )
+    {
+    case Xbox:
+        return EvalXboxButtons(binding, &ursine::GamepadState::IsButtonUp);
+    case Keyboard:
+        return EvalKeyboardButtons(binding, &ursine::KeyboardManager::IsTriggeredUp, &ursine::MouseManager::IsButtonUp);
+    default:
+        break;
+    }
+
+    return false;
+}
+
+bool PlayerAction::StickUp(const InputBinding binding)
 {
     if ( !PrepForInput( ) )
         return false;
 
-    switch ( m_binding )
+    switch ( binding )
     {
     case KeyUp:
         return m_keyboardManager->IsDown(ursine::KEY_W);
@@ -122,12 +150,12 @@ bool PlayerAction::StickUp()
     }
 }
 
-bool PlayerAction::StickDown() 
+bool PlayerAction::StickDown(const InputBinding binding)
 {
     if ( !PrepForInput( ) )
         return false;
 
-    switch ( m_binding )
+    switch ( binding )
     {
     case KeyDown:
         return m_keyboardManager->IsDown(ursine::KEY_S);
@@ -140,12 +168,12 @@ bool PlayerAction::StickDown()
     }
 }
 
-bool PlayerAction::StickLeft() 
+bool PlayerAction::StickLeft(const InputBinding binding)
 {
     if ( !PrepForInput( ) )
         return false;
 
-    switch ( m_binding )
+    switch ( binding )
     {
     case KeyLeft:
         return m_keyboardManager->IsDown(ursine::KEY_A);
@@ -158,12 +186,12 @@ bool PlayerAction::StickLeft()
     }
 }
 
-bool PlayerAction::StickRight() 
+bool PlayerAction::StickRight(const InputBinding binding)
 {
     if ( !PrepForInput( ) )
         return false;
 
-    switch ( m_binding )
+    switch ( binding )
     {
     case KeyRight:
         return m_keyboardManager->IsDown(ursine::KEY_D);
@@ -176,53 +204,53 @@ bool PlayerAction::StickRight()
     }
 }
 
-ursine::Vec2 PlayerAction::GetMouseVec(void) const
+void PlayerAction::GetMouseVec(ursine::Vec2& vecToSet) const
 {
-    ursine::Vec2 mouseVec = m_mouseManager->GetPositionDelta( );
-    mouseVec.Normalize( );
-    mouseVec.X( ) = -mouseVec.X( );
-    return mouseVec;
+    vecToSet = m_mouseManager->GetPositionDelta( );
+    vecToSet.Normalize( );
+    vecToSet.X( ) = -vecToSet.X( );
 }
 
-ursine::Vec2 PlayerAction::GetAxis(void)
+void PlayerAction::GetAxis(const InputBinding binding, ursine::Vec2& vecToSet)
 {
-    if ( !PrepForInput( ) )
-        return ursine::Vec2(0, 0);
+    vecToSet.Zero( );
 
-    switch ( m_binding )
+    if ( !PrepForInput( ) )
+        return;
+
+    switch ( binding )
     {
     case LeftStickLeft: case LeftStickDown: case LeftStickRight: case LeftStickUp:
-        return m_gamepadState->Sticks( ).Left( );
+        vecToSet = m_gamepadState->Sticks( ).Left( );
+        break;
     case RightStickLeft: case RightStickDown: case RightStickRight: case RightStickUp:
-        return m_gamepadState->Sticks( ).Right( );
+        vecToSet = m_gamepadState->Sticks( ).Right( );
+        break;
     case MouseUp: case MouseRight: case MouseLeft: case MouseDown:
-        return GetMouseVec( );
+        GetMouseVec(vecToSet);
+        break;
+    default:
+        // keyboard up
+        if ( m_keyboardManager->IsDown(ursine::KEY_W) )
+        {
+            vecToSet.SetY(vecToSet.Y( ) + 1.0f);
+        }
+        // keyboard down
+        if ( m_keyboardManager->IsDown(ursine::KEY_S) )
+        {
+            vecToSet.SetY(vecToSet.Y( ) - 1.0f);
+        }
+        // keyboard right
+        if ( m_keyboardManager->IsDown(ursine::KEY_D) )
+        {
+            vecToSet.SetX(vecToSet.X( ) + 1.0f);
+        }
+        // keyboard left
+        if ( m_keyboardManager->IsDown(ursine::KEY_A) )
+        {
+            vecToSet.SetX(vecToSet.X( ) - 1.0f);
+        }
     }
-
-    ursine::Vec2 vec(0, 0);
-    
-    // keyboard up
-    if ( m_keyboardManager->IsDown(ursine::KEY_W) )
-    {
-        vec.SetY( vec.Y( ) + 1.0f );
-    }
-    // keyboard down
-    if ( m_keyboardManager->IsDown(ursine::KEY_S) )
-    {
-        vec.SetY( vec.Y( ) - 1.0f );
-    }
-    // keyboard right
-    if ( m_keyboardManager->IsDown(ursine::KEY_D) )
-    {
-        vec.SetX( vec.X( ) + 1.0f );
-    }
-    // keyboard left
-    if ( m_keyboardManager->IsDown(ursine::KEY_A) )
-    {
-        vec.SetX( vec.X( ) - 1.0f );
-    }
-
-    return vec;
 }
 
 bool PlayerAction::operator==(const ActionMode& mode) const
@@ -230,12 +258,12 @@ bool PlayerAction::operator==(const ActionMode& mode) const
     return m_actionMode == mode;
 }
 
-bool PlayerAction::EvalXboxButtons(bool(ursine::GamepadState::*func)(ursine::GamepadButton, float) const )
+bool PlayerAction::EvalXboxButtons(const InputBinding binding, bool(ursine::GamepadState::*func)(ursine::GamepadButton, float) const )
 {        
     if ( !PrepForInput( ) )
         return false;
 
-    switch ( m_binding )
+    switch ( binding )
     {
     case Action1:
         return (m_gamepadState->*func)(ursine::GamepadButton::BTN_A, Threshold );
@@ -252,9 +280,9 @@ bool PlayerAction::EvalXboxButtons(bool(ursine::GamepadState::*func)(ursine::Gam
     }
 }
 
-bool PlayerAction::EvalKeyboardButtons(bool( ursine::KeyboardManager::*func )(ursine::KeyboardKey), bool( ursine::MouseManager::*mfunc )( ursine::MouseButton ) const ) const
+bool PlayerAction::EvalKeyboardButtons(const InputBinding binding, bool( ursine::KeyboardManager::*func )(ursine::KeyboardKey), bool( ursine::MouseManager::*mfunc )( ursine::MouseButton ) const ) const
 {
-    switch ( m_binding )
+    switch ( binding )
     {
     case Action1:
           return ( m_keyboardManager->*func )( ursine::KeyboardKey::KEY_SPACE );
@@ -263,15 +291,15 @@ bool PlayerAction::EvalKeyboardButtons(bool( ursine::KeyboardManager::*func )(ur
     case Action3:
         return ( m_keyboardManager->*func )( ursine::KeyboardKey::KEY_X );
     case RightTrigger: case LeftTrigger:
-        return EvalMouseButtons(mfunc);
+        return EvalMouseButtons(binding, mfunc);
     default:
         return ( m_keyboardManager->*func )( ursine::KeyboardKey::KEY_R );
     }
 }
 
-bool PlayerAction::EvalMouseButtons(bool( ursine::MouseManager::*func )( ursine::MouseButton ) const) const
+bool PlayerAction::EvalMouseButtons(const InputBinding binding, bool( ursine::MouseManager::*func )( ursine::MouseButton ) const) const
 {
-    switch( m_binding )
+    switch( binding )
     {
     case RightTrigger:
         return ( m_mouseManager->*func )( ursine::MouseButton::MBTN_LEFT );
@@ -281,3 +309,4 @@ bool PlayerAction::EvalMouseButtons(bool( ursine::MouseManager::*func )( ursine:
         return false;
     }
 }
+

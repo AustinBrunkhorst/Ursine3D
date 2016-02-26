@@ -201,7 +201,7 @@ namespace ursine
 
             addComponent( entity, component );
 
-            component->Initialize( );
+            component->initialize( );
 
             ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
 
@@ -331,14 +331,24 @@ namespace ursine
 
         Component *EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
         {
-            auto parentID = m_hierarchy.GetParent( entity );
+            const Entity* parent = entity;
+            Component* comp = nullptr;
 
-            if (parentID == -1)
-                return nullptr;
+            do
+            {
+                auto parentID = m_hierarchy.GetParent(parent);
 
-            auto parent = &m_cache[ parentID ];
+                if ( parentID == -1 )
+                    return nullptr;
 
-            return GetComponent( parent, id );
+                parent = &m_cache[ parentID ];
+                
+                comp = GetComponent(parent, id);
+
+            // was desired component found
+            } while ( comp == nullptr );
+
+            return comp;
         }
 
         ComponentVector EntityManager::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
@@ -445,7 +455,7 @@ namespace ursine
             EntityEventArgs e(WORLD_ENTITY_REMOVED, entity);
 
             // we're removing man
-            entity->Dispatch(ENTITY_REMOVED, EventArgs::Empty);
+            entity->Dispatch( ENTITY_REMOVED, EventArgs::Empty );
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
@@ -482,9 +492,13 @@ namespace ursine
             return m_events[ entity->m_id ];
         }
 
-        bool EntityManager::CompareComponents(const Component *a, const Component *b)
+        bool EntityManager::CompareComponentsAscending(const Component *a, const Component *b)
         {
-            // note: descending order
+            return a->m_uniqueID < b->m_uniqueID;
+        }
+
+        bool EntityManager::CompareComponentsDescending(const Component *a, const Component *b)
+        {
             return b->m_uniqueID < a->m_uniqueID;
         }
 
@@ -614,7 +628,7 @@ namespace ursine
                 {
                     auto *component = m_componentTypes[ i ][ id ];
 
-                    component->Initialize( );
+                    component->initialize( );
 
                     args.component = component;
 
@@ -641,7 +655,7 @@ namespace ursine
                 // the queue to remove (based on instance id)
                 // this is so components with dependencies are deleted in the correct order
                 if (entity->HasComponent( mask ))
-                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponents );
+                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponentsDescending );
             }
 
             auto const removeCount = toRemove.size( );

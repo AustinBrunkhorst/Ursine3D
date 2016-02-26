@@ -30,8 +30,8 @@ float rand_1_05( float2 uv )
 
 [maxvertexcount(3)]
 void main(
-	triangle PixelInputType input[3] : SV_POSITION,
-	inout TriangleStream< PixelInputType > output
+    triangle PixelInputType input[3] : SV_POSITION,
+    inout TriangleStream< PixelInputType > output
 )
 {
   float4 target = float4(4.5 + (sin( color.z * 10) * 3), 4.5 , -cos( color.z * 10 ) * 3 , 1);

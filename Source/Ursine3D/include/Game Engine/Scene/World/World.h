@@ -22,8 +22,6 @@
 #include <vector>
 #include <mutex>
 
-class ProjectTemp;
-
 namespace ursine
 {
     class Scene;
@@ -48,7 +46,7 @@ namespace ursine
             ~World(void);
 
             Entity *CreateEntity(const std::string &name = "Entity");
-			void queueEntityDeletion(Entity *entity);
+            void queueEntityDeletion(Entity *entity);
 
             // Creates an entity from an archetype file
             Entity *CreateEntityFromArchetype(
@@ -98,16 +96,18 @@ namespace ursine
             Scene *GetOwner(void) const;
             void SetOwner(Scene *owner);
 
+            template<typename SystemType>
+            SystemType *GetEntitySystem(void);
+
             void DispatchLoad(void);
         private:
             friend class Entity;
-			friend class ProjectTemp;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
             bool m_loaded;
 
-			std::mutex m_deletionMutex;
+            std::mutex m_deletionMutex;
             EntityVector m_deleted;
 
             Entity *m_settings;

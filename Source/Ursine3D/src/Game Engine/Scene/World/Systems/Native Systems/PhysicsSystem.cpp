@@ -36,7 +36,9 @@ namespace ursine
 
         PhysicsSystem::PhysicsSystem(World *world)
             : EntitySystem( world )
-			, m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
+            , m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
+            , m_enableDebugDraw( true )
+            , m_playmodeDebugDraw( false )
         {
             m_collisionShapes.One<
                 SphereCollider, 
@@ -44,12 +46,12 @@ namespace ursine
                 CylinderCollider,
                 CapsuleCollider,
                 ConeCollider,
-				ConvexHullCollider,
-				ConvexDecompCollider,
-				BvhTriangleMeshCollider
+                ConvexHullCollider,
+                ConvexDecompCollider,
+                BvhTriangleMeshCollider
             >( );
 
-			m_simulation.SetDebugDrawer( &m_debugDrawer );
+            m_simulation.SetDebugDrawer( &m_debugDrawer );
         }
 
         void PhysicsSystem::SetGravity(const SVec3& gravity)
@@ -75,15 +77,15 @@ namespace ursine
             if (m_enableDebugDraw)
             {
                 m_debugDrawer.setDebugMode(
-			        physics::DRAW_WIRE_FRAME |
-			        physics::DRAW_CONTACT_POINTS
-		        );
+                    physics::DRAW_WIRE_FRAME |
+                    physics::DRAW_CONTACT_POINTS
+                );
             }
             else
             {
                 m_debugDrawer.setDebugMode(
-			        physics::DRAW_NONE
-		        );
+                    physics::DRAW_NONE
+                );
             }
         }
 
@@ -92,16 +94,24 @@ namespace ursine
             return m_enableDebugDraw;
         }
 
+        void PhysicsSystem::SetPlaymodeDebugDraw(bool enable)
+        {
+            m_playmodeDebugDraw = enable;
+        }
+
+        bool PhysicsSystem::GetPlaymodeDebugDraw(void) const
+        {
+            return m_playmodeDebugDraw;
+        }
+
         void PhysicsSystem::ClearContacts(Rigidbody* rigidbody)
         {
             m_simulation.ClearContacts( rigidbody->m_rigidbody );
         }
 
-        bool PhysicsSystem::Raycast(const ursine::physics::RaycastInput& input, 
-                                    ursine::physics::RaycastOutput& output,
-                                    ursine::physics::RaycastType type, bool debug, float drawDuration, 
-                                    bool alwaysDrawLine, 
-                                    Color colorBegin, Color colorEnd )
+        bool PhysicsSystem::Raycast(const physics::RaycastInput& input, physics::RaycastOutput& output,
+                                    physics::RaycastType type, bool debug, float drawDuration, 
+                                    Color color, bool alwaysDrawLine)
         {
             bool result = m_simulation.Raycast( input, output, type );
 
@@ -116,7 +126,7 @@ namespace ursine
                     auto &norm = output.normal[ i ];
 
                     // Draw the ray to the hit
-                    m_debugSystem->DrawLine( start, hit, colorBegin, colorEnd, drawDuration );
+                    m_debugSystem->DrawLine( start, hit, color, drawDuration );
 
                     // Draw the normal
                     m_debugSystem->DrawLine( hit, hit + norm * 1.0f, Color::White, drawDuration );
@@ -127,39 +137,39 @@ namespace ursine
             }
             else if(debug && alwaysDrawLine)
             {
-                m_debugSystem->DrawLine( input.start, input.end, colorBegin, colorEnd, drawDuration );
+                m_debugSystem->DrawLine( input.start, input.end, color, drawDuration );
             }
 
             return result;
         }
 
-		bool PhysicsSystem::Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
-					              physics::SweepOutput &output, physics::SweepType type, bool sorted)
+        bool PhysicsSystem::Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
+                                  physics::SweepOutput &output, physics::SweepType type, bool sorted)
         {
-			if (velocity == SVec3::Zero( ) || dt == 0.0f)
-				return false;
+            if (velocity == SVec3::Zero( ) || dt == 0.0f)
+                return false;
 
-			auto *bodyBase = &body->m_rigidbody;
-	        auto *collider = bodyBase->GetCollider( );
+            auto *bodyBase = &body->m_rigidbody;
+            auto *collider = bodyBase->GetCollider( );
 
-			auto result = m_simulation.Sweep( collider, bodyBase, velocity, dt, output, type, sorted );
+            auto result = m_simulation.Sweep( collider, bodyBase, velocity, dt, output, type, sorted );
 
-			if (m_enableDebugDraw)
-			{
-				for (size_t i = 0, n = output.hit.size( ); i < n; ++i)
-				{
-					auto &hit = output.hit[ i ];
+            if (m_enableDebugDraw)
+            {
+                for (size_t i = 0, n = output.hit.size( ); i < n; ++i)
+                {
+                    auto &hit = output.hit[ i ];
 
-					m_debugSystem->DrawPoint( hit, 10.0f, Color::Pink, 0.2f );
-				}
-			}
+                    m_debugSystem->DrawPoint( hit, 10.0f, Color::Pink, 0.2f );
+                }
+            }
 
-			return result;
+            return result;
         }
 
         void PhysicsSystem::OnInitialize(void)
         {
-            m_debugSystem = m_world->GetEntitySystem( DebugSystem );
+            m_debugSystem = m_world->GetEntitySystem<DebugSystem>( );
 
             m_world->Listener( this )
                 .On( WORLD_UPDATE, &PhysicsSystem::onUpdate, 100000 )
@@ -194,19 +204,19 @@ namespace ursine
             if (!levelSettings->HasComponent<PhysicsSettings>( ))
                 levelSettings->AddComponent<PhysicsSettings>( );
 
-			auto physicsSettings = levelSettings->GetComponent<PhysicsSettings>( );
+            auto physicsSettings = levelSettings->GetComponent<PhysicsSettings>( );
 
-		#ifdef URSINE_WITH_EDITOR
+        #ifdef URSINE_WITH_EDITOR
 
-			physicsSettings->SetEnableDebugDraw( true );
-			SetEnableDebugDraw( true );
+            physicsSettings->SetEnableDebugDraw( true );
+            SetEnableDebugDraw( true );
 
-		#else
+        #else
 
-			physicsSettings->SetEnableDebugDraw( false );
-			SetEnableDebugDraw( false );
+            physicsSettings->SetEnableDebugDraw( false );
+            SetEnableDebugDraw( false );
 
-		#endif
+        #endif
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
@@ -216,10 +226,10 @@ namespace ursine
             auto &entity = args->entity;
             auto &component = args->component;
 
-			// If the user added a collider, remove the others that may exist
-			if (m_collisionShapes.Matches( entity ) && 
-				m_collisionShapes.Matches( component->GetTypeMask( ) ))
-				removeExistingCollider( entity, component->GetTypeID( ) );
+            // If the user added a collider, remove the others that may exist
+            if (m_collisionShapes.Matches( entity ) && 
+                m_collisionShapes.Matches( component->GetTypeMask( ) ))
+                removeExistingCollider( entity, component->GetTypeID( ) );
 
             if (component->Is<Rigidbody>( ))
             {
@@ -259,7 +269,7 @@ namespace ursine
                     &rigidbody->m_rigidbody
                 );
 
-                m_rigidbodies.push_back( reinterpret_cast<Rigidbody*>( const_cast<Component*>( args->component ) ) );
+                m_rigidbodies.push_back( rigidbody );
             }
             else if (component->Is<Body>( ))
             {
@@ -295,24 +305,24 @@ namespace ursine
 
                 addCollider( entity, &cone->m_coneCollider );
             }
-			else if (component->Is<ConvexHullCollider>( ))
-			{
-				auto *hull = entity->GetComponent<ConvexHullCollider>( );
+            else if (component->Is<ConvexHullCollider>( ))
+            {
+                auto *hull = entity->GetComponent<ConvexHullCollider>( );
 
-				addCollider( entity, &hull->m_convexHullCollider );
-			}
-			else if (component->Is<ConvexDecompCollider>( ))
-			{
-				auto *convex = entity->GetComponent<ConvexDecompCollider>( );
+                addCollider( entity, &hull->m_convexHullCollider );
+            }
+            else if (component->Is<ConvexDecompCollider>( ))
+            {
+                auto *convex = entity->GetComponent<ConvexDecompCollider>( );
 
-				addCollider( entity, &convex->m_convexDecompCollider );
-			}
-			else if (component->Is<BvhTriangleMeshCollider>( ))
-			{
-				auto *bvhMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
+                addCollider( entity, &convex->m_convexDecompCollider );
+            }
+            else if (component->Is<BvhTriangleMeshCollider>( ))
+            {
+                auto *bvhMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
 
-				addCollider( entity, &bvhMesh->m_bvhTriangleMeshCollider );
-			}
+                addCollider( entity, &bvhMesh->m_bvhTriangleMeshCollider );
+            }
             else if (component->Is<EmptyCollider>( ))
             {
                 auto *empty = entity->GetComponent<EmptyCollider>( );
@@ -390,8 +400,8 @@ namespace ursine
             }
             else if (m_collisionShapes.Matches( component->GetTypeMask( ) ))
             {
-				if (!entity->IsDeleting( ))
-					removeCollider( entity );
+                if (!entity->IsDeleting( ))
+                    removeCollider( entity );
             }
         }
 
@@ -411,8 +421,15 @@ namespace ursine
                 body->m_body.GetTransform( body->GetOwner( )->GetTransform( ) );
             }
 
-			// dispatch all collision events for this frame
-			m_simulation.DispatchCollisionEvents( );
+            // dispatch all collision events for this frame
+            m_simulation.DispatchCollisionEvents( );
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            if (m_playmodeDebugDraw)
+                m_simulation.DebugDrawSimulation( );
+
+        #endif
         }
 
     #if defined(URSINE_WITH_EDITOR)
@@ -483,15 +500,15 @@ namespace ursine
             }
         }
 
-		void PhysicsSystem::removeExistingCollider(Entity *entity, ComponentTypeID newCollider)
+        void PhysicsSystem::removeExistingCollider(Entity *entity, ComponentTypeID newCollider)
         {
-			for (auto *comp : entity->GetComponents( ))
-			{
-				auto compID = comp->GetTypeID( );
+            for (auto *comp : entity->GetComponents( ))
+            {
+                auto compID = comp->GetTypeID( );
 
-				if (compID != newCollider && m_collisionShapes.Matches( comp->GetTypeMask( ) ))
-					entity->RemoveComponent( compID );
-			}
+                if (compID != newCollider && m_collisionShapes.Matches( comp->GetTypeMask( ) ))
+                    entity->RemoveComponent( compID );
+            }
         }
     }
 }

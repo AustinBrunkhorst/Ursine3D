@@ -101,7 +101,7 @@ namespace
 
     Json::object inspectComponent(ecs::Component *component)
     {
-        meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+        auto instance = ObjectVariant( component );
 
         auto type = instance.GetType( );
 
@@ -213,6 +213,9 @@ JSMethod(EntityHandler::inspect)
 
     auto components = entity->GetComponents( );
 
+    // sort the components based on their instance ID
+    sort( components.begin( ), components.end( ), ecs::EntityManager::CompareComponentsAscending );
+
     Json::array componentArray;
 
     for (auto *component : components)
@@ -319,15 +322,15 @@ JSMethod(EntityHandler::addComponent)
 
     componentTypeMask.set( componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ), true );
 
-	// have this run in the main thread
-	Timer::Create( 0 ).Completed( [=] {
+    // have this run in the main thread
+    Application::Instance->ExecuteOnMainThread( [=] {
         if (!entity->HasComponent( componentTypeMask ))
         {
             auto instance = componentType.CreateDynamic( );
 
             entity->AddComponent( instance.GetValue<ecs::Component*>( ) );
         }
-	} );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -355,10 +358,10 @@ JSMethod(EntityHandler::removeComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-	// Have this run in the main thread
-	Timer::Create( 0 ).Completed( [=] {
-		entity->RemoveComponent( id );
-	} );
+    // Have this run in the main thread
+    Application::Instance->ExecuteOnMainThread( [=] {
+        entity->RemoveComponent( id );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -397,7 +400,7 @@ JSMethod(EntityHandler::componentSet)
 
     auto value = JsonSerializer::Serialize( arguments[ 1 ] );
 
-    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+    auto instance = ObjectVariant( component );
 
     componentType.DeserializeJson( instance, value );
 
@@ -436,7 +439,7 @@ JSMethod(EntityHandler::componentFieldUpdate)
 
     auto value = JsonSerializer::Serialize( arguments[ 2 ] );
 
-    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+    auto instance = ObjectVariant( component );
 
     auto field = componentType.GetField( fieldName );
 
@@ -504,7 +507,7 @@ JSMethod(EntityHandler::componentFieldArrayUpdate)
     if (!component)
         JSThrow( "Component doesn't exist.", nullptr );
 
-    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+    auto instance = ObjectVariant( component );
 
     auto field = componentType.GetField( fieldName );
 
@@ -639,6 +642,64 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     return CefV8Value::CreateBool( true );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+JSMethod(EntityHandler::componentFieldArraySwap)
+{
+    if (arguments.size( ) != 4)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto entity = getEntity( );
+
+    if (!entity)
+        return CefV8Value::CreateBool( false );
+
+    auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
+    auto fieldName = arguments[ 1 ]->GetStringValue( ).ToString( );
+    auto arrayIndex1 = static_cast<size_t>( arguments[ 2 ]->GetUIntValue( ) );
+    auto arrayIndex2 = static_cast<size_t>( arguments[ 3 ]->GetUIntValue( ) );
+
+    auto componentType = meta::Type::GetFromName( componentName );
+
+    if (!componentType.IsValid( ))
+        JSThrow( "Unknown component type.", nullptr );
+
+    auto &componentID = componentType.GetStaticField( "ComponentID" );
+
+    if (!componentID.IsValid( ))
+        JSThrow( "Invalid component type.", nullptr );
+
+    auto *component = entity->GetComponent( 
+        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
+    );
+
+    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+
+    auto field = componentType.GetField( fieldName );
+
+    if (!field.IsValid( ))
+        JSThrow( "Invalid field.", nullptr );
+
+    auto fieldType = field.GetType( );
+
+    if (!fieldType.IsArray( ))
+        JSThrow( "Field is not an array type.", nullptr );
+
+    auto fieldInstance = field.GetValue( instance );
+
+    auto arrayWrapper = fieldInstance.GetArray( );
+
+    auto value1 = arrayWrapper.GetValue( arrayIndex1 );
+    auto value2 = arrayWrapper.GetValue( arrayIndex2 );
+
+    arrayWrapper.SetValue( arrayIndex1, value2 );
+    arrayWrapper.SetValue( arrayIndex2, value1 );
+
+    return CefV8Value::CreateBool( true );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 JSMethod(EntityHandler::componentFieldArrayGetLength)
 {
     if (arguments.size( ) != 2)
@@ -669,7 +730,7 @@ JSMethod(EntityHandler::componentFieldArrayGetLength)
     if (!component)
         JSThrow( "Component doesn't exist.", nullptr );
 
-    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+    auto instance = ObjectVariant( component );
 
     auto field = componentType.GetField( fieldName );
 
@@ -719,7 +780,7 @@ JSMethod(EntityHandler::componentButtonInvoke)
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
-    meta::Variant instance { component, meta::variant_policy::WrapObject( ) };
+    auto instance = ObjectVariant( component );
 
     auto method = componentType.GetMethod( buttonName );
 

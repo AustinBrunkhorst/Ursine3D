@@ -41,7 +41,7 @@ namespace ursine
                 MakeBuffer<TransformBuffer>(BUFFER_TRANSFORM);
                 MakeBuffer<DirectionalLightBuffer>(BUFFER_DIRECTIONAL_LIGHT);
                 MakeBuffer<PointLightBuffer>(BUFFER_POINT_LIGHT);
-                MakeBuffer<InvProjBuffer>(BUFFER_INV_PROJ);
+                MakeBuffer<invViewBuffer>(BUFFER_INV_PROJ);
                 MakeBuffer<PrimitiveColorBuffer>(BUFFER_PRIM_COLOR);
                 MakeBuffer<PointGeometryBuffer>(BUFFER_POINT_GEOM);
                 MakeBuffer<BillboardSpriteBuffer>(BUFFER_BILLBOARDSPRITE);
@@ -52,6 +52,8 @@ namespace ursine
 				MakeBuffer<MatrixPalBuffer>(BUFFER_MATRIX_PAL);
                 MakeBuffer<MouseBuffer>(BUFFER_MOUSEPOS);
                 MakeBuffer<ParticleBuffer>(BUFFER_PARTICLEDATA);
+                MakeBuffer<GlyphBuffer>(BUFFER_GLYPHDATA);
+                MakeBuffer<SpriteTextBuffer>(BUFFER_TEXTDATA);
 
                 // COMPUTE SHADERS //////////////////////////////////
                 //GPU-readonly buffer that can only be written to by the CPU 

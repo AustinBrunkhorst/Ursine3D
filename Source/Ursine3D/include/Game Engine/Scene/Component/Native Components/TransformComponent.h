@@ -43,15 +43,15 @@ namespace ursine
                 SetLocalPosition
             );
 
-			EditorField( 
+            EditorField( 
                 SVec3 scale,
                 GetLocalScale,
                 SetLocalScale
             );
 
-            Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
-            Meta(EditorGetter( "GetLocalEulerEditor" ))
-            Meta(EditorSetter( "SetLocalEulerEditor" ))
+            EditorMeta(ForceEditorType( typeof( ursine::SVec3 ) ))
+            EditorMeta(EditorGetter( "GetLocalEulerEditor" ))
+            EditorMeta(EditorSetter( "SetLocalEulerEditor" ))
             EditorField( 
                 SQuat rotation,
                 GetLocalRotation,
@@ -150,9 +150,9 @@ namespace ursine
             // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
-			Handle<Transform> GetRoot(void) const;
+            Handle<Transform> GetRoot(void) const;
 
-			Handle<Transform> GetParent(void) const;
+            Handle<Transform> GetParent(void) const;
 
             // Check to see if this transform is a 
             // child (anywhere in the hierarchy) of the given parent
@@ -175,7 +175,7 @@ namespace ursine
 
             // Find child by their index in the list
             // If the index is too large, return nullptr
-			Handle<Transform> GetChild(uint index);
+            Handle<Transform> GetChild(uint index);
             const Handle<Transform> GetChild(uint index) const;
 
             const std::vector< Handle<Transform> > &GetChildren(void) const;
@@ -273,8 +273,8 @@ namespace ursine
             bool genericAddChild(Handle<Transform> child);
 
             void setParent(Handle<Transform> oldParent, Handle<Transform> newParent, bool removing = false);
-			
-			void setRoot(Handle<Transform> root);
+            
+            void setRoot(Handle<Transform> root);
 
         } Meta(
             Enable,

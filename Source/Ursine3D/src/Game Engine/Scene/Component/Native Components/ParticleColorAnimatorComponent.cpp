@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** ParticleColorAnimatorComponent.cpp
 **
@@ -118,27 +118,27 @@ namespace ursine
             for ( int x = 0; x < particleCount; ++x )
             {
                 // calculate the lifetime percentage of this particle
-                float percentage = (cpuData[ x ].totalLifetime - cpuData[ x ].lifeTime) / cpuData[ x ].totalLifetime;
+                float percentage = 1.0f - (cpuData[ x ].lifeTime / cpuData[ x ].totalLifetime);
                 Color finalColor;
 
-                if ( percentage > 0.75f )  // 0.8 - 1
+                if ( percentage > 0.75f )  
                 {
-                    float scalar = (percentage - 0.8f) / 0.25f;
+                    float scalar = (percentage - 0.75f) / 0.25f;
                     finalColor = interpolateColor(m_color3, m_color4, scalar);
                 }
-                else if ( percentage > 0.5f )  // 0.6 - 0.8
+                else if ( percentage > 0.5f )  
                 {
-                    float scalar = (percentage - 0.6f) / 0.25f;
+                    float scalar = (percentage - 0.50f) / 0.25f;
                     finalColor = interpolateColor(m_color2, m_color3, scalar);
                 }
-                else if ( percentage > 0.25f )  // 0.4 - 0.6
+                else if ( percentage > 0.25f )  
                 {
-                    float scalar = (percentage - 0.4f) / 0.25f;
+                    float scalar = (percentage - 0.25f) / 0.25f;
                     finalColor = interpolateColor(m_color1, m_color2, scalar);
                 }
-                else
+                else 
                 {
-                    float scalar = (percentage - 0.2f) / 0.25f;
+                    float scalar = (percentage) / 0.25f;
                     finalColor = interpolateColor(m_color0, m_color1, scalar);
                 }
 

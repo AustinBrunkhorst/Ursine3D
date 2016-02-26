@@ -131,14 +131,14 @@ namespace ursine
                 unsigned height = atoi(tokens[ 2 ].c_str());
 
 
-                TextureLoadBackend(tokens[ 1 ], tokens[ 0 ], width, height);
+                CreateTexture(tokens[ 1 ], tokens[ 0 ], width, height);
             }
 
             input.close();
 
             /////////////////////////////////////////////////////////////////
             // CREATING SAMPLER STATES //////////////////////////////////////
-            m_samplerStateList_.resize(SAMPLER_COUNT);
+            m_samplerStateList_.resize(SAMPLER_STATE_COUNT);
 
             HRESULT result;
             D3D11_SAMPLER_DESC samplerDesc;
@@ -159,7 +159,7 @@ namespace ursine
             samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
             //Create the texture sampler state.
-            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_WRAP_TEX ]);
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_WRAP_TEX ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
 
             // no sampling //////////////////////////////////////////////////
@@ -178,7 +178,26 @@ namespace ursine
             samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
             //Create the texture sampler state.
-            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_NO_FILTERING ]);
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_NO_FILTERING ]);
+            UAssert(result == S_OK, "Failed to make sampler state!");
+
+            // shadow sampler //////////////////////////////////////////////////
+            samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+            samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.MipLODBias = 0.0f;
+            samplerDesc.MaxAnisotropy = 0;
+            samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+            samplerDesc.BorderColor[ 0 ] = 1.0;
+            samplerDesc.BorderColor[ 1 ] = 1.0;
+            samplerDesc.BorderColor[ 2 ] = 1.0;
+            samplerDesc.BorderColor[ 3 ] = 1.0;
+            samplerDesc.MinLOD = 0;
+            samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+            //Create the texture sampler state.
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_SHADOW ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
         }
 
@@ -197,13 +216,100 @@ namespace ursine
 
             m_textureList.clear();
 
-            for (int x = 0; x < SAMPLER_COUNT; ++x)
+            for (int x = 0; x < SAMPLER_STATE_COUNT; ++x)
             {
                 RELEASE_RESOURCE(m_samplerStateList_[ x ])
             }
 
             m_device = nullptr;
             m_deviceContext = nullptr;
+        }
+
+
+        GfxHND TextureManager::CreateTexture(const std::string name, const std::string path, const unsigned width, const unsigned height)
+        {
+            HRESULT result;
+            D3D11_TEXTURE2D_DESC desc;
+
+            LogMessage("Texture: %s", 2, name.c_str());
+            LogMessage("Path: %s", 3, path.c_str());
+            LogMessage("Width: %i", 3, width);
+            LogMessage("Height: %i", 3, height);
+
+            //width/height
+            desc.Width = width;
+            desc.Height = height;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.SampleDesc.Count = 2;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_IMMUTABLE;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = 0;
+            desc.MiscFlags = 0;
+
+            m_textureList[ name ] = new Texture();
+
+            result = DirectX::CreateDDSTextureFromFile(m_device, strToWchart(path), nullptr, &m_textureList[ name ]->m_shaderResource);
+
+            UAssert(result != HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND), "Texture '%s' was not found!", path.c_str());
+            UAssert(result == S_OK, "Failed to load texture: '%s'", name.c_str());
+
+            m_textureList[ name ]->m_width = width;
+            m_textureList[ name ]->m_height = height;
+            m_lookupTextureList[ name ] = m_textureCount;
+            m_hashTextureList[ m_textureCount++ ] = m_textureList[ name ];
+
+            GfxHND handle;
+            _RESOURCEHND *id = HND_RSRCE(handle);
+
+            id->ID_ = SANITY_RESOURCE;
+            id->Type_ = ID_TEXTURE;
+            id->Index_ = m_textureCount++;
+
+            return handle;
+        }
+
+        GfxHND TextureManager::CreateTexture(const uint8_t* binaryData, size_t size, const std::string& name, const unsigned width, const unsigned height)
+        {
+            HRESULT result;
+            D3D11_TEXTURE2D_DESC desc;
+
+            LogMessage("Texture: %s", 2, name.c_str());
+            LogMessage("Width: %i", 3, width);
+            LogMessage("Height: %i", 3, height);
+
+            //width/height
+            desc.Width = width;
+            desc.Height = height;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.SampleDesc.Count = 2;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_IMMUTABLE;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = 0;
+            desc.MiscFlags = 0;
+
+            m_textureList[ name ] = new Texture();
+
+            result = DirectX::CreateDDSTextureFromMemory(m_device, binaryData, size, nullptr, &m_textureList[ name ]->m_shaderResource);
+
+            UAssert(result == S_OK, "Failed to load texture: '%s'", name.c_str());
+
+            m_textureList[ name ]->m_width = width;
+            m_textureList[ name ]->m_height = height;
+            m_lookupTextureList[ name ] = m_textureCount;
+            m_hashTextureList[ m_textureCount++ ] = m_textureList[ name ];
+
+            GfxHND handle;
+            _RESOURCEHND *id = HND_RSRCE(handle);
+
+            id->ID_ = SANITY_RESOURCE;
+            id->Type_ = ID_TEXTURE;
+            id->Index_ = m_textureCount++;
+
+            return handle;
         }
 
         void TextureManager::MapTextureByName(const std::string name, const unsigned int bufferIndex)
@@ -219,8 +325,10 @@ namespace ursine
             m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_hashTextureList[ ID ]->m_shaderResource);
         }
 
-        void TextureManager::MapSamplerState(const Sampler type, const unsigned bufferIndex)
+        void TextureManager::MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex)
         {
+            if( type == SAMPLER_STATE_COUNT)
+                return;
             m_deviceContext->PSSetSamplers(bufferIndex, 1, &m_samplerStateList_[ type ]);
         }
 

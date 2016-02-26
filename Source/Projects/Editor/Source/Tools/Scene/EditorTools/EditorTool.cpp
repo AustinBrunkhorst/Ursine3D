@@ -14,8 +14,8 @@
 #include "EditorTool.h"
 
 EditorTool::EditorTool(Editor *editor, ursine::ecs::World *world)
-	: m_editor( editor )
-	, m_world( world )
+    : m_editor( editor )
+    , m_world( world )
 {
-	
+    
 }

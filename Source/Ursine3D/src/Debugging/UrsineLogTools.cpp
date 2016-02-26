@@ -69,6 +69,7 @@ namespace ursine
     namespace logging
     {
         int gExitCode = EXIT_SUCCESS;
+
         std::thread::id gMainThreadID;
 
         Initializer gInitialzer;

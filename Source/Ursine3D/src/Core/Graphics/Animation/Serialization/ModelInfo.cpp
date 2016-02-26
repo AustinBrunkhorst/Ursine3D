@@ -38,7 +38,7 @@ namespace ursine
             {
                 ReleaseData();
             }
-            
+
             void ModelInfo::ReleaseData()
             {
                 mMeshInfoVec.clear();
@@ -115,12 +115,16 @@ namespace ursine
                     if (mMeshLvVec.size() > 0)
                     {
                         for (auto iter : mMeshLvVec)
+                        {
                             WriteFile(hFile, &iter, sizeof(MeshInLvl), &nBytesWrite, nullptr);
+                        }
                     }
                     if (mRigLvVec.size() > 0)
                     {
                         for (auto iter : mRigLvVec)
+                        {
                             WriteFile(hFile, &iter, sizeof(RigInLvl), &nBytesWrite, nullptr);
+                        }
                     }
                 }
                 return true;
@@ -132,7 +136,7 @@ namespace ursine
                 std::string str;
 
                 input >> stringSize;
-                str.resize( stringSize );
+                str.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
 
                 input >> mmeshCount;
@@ -157,11 +161,11 @@ namespace ursine
 
                 mMeshLvVec.resize(mmeshlvlCount);
                 for (i = 0; i < mmeshlvlCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>( &mMeshLvVec[ i ] ), sizeof(MeshInLvl) );
+                    input.ReadBytes(reinterpret_cast<char*>(&mMeshLvVec[i]), sizeof(MeshInLvl));
 
                 mRigLvVec.resize(mriglvlCount);
                 for (i = 0; i < mriglvlCount; ++i)
-                    input.ReadBytes(reinterpret_cast<char*>( &mRigLvVec[ i ] ), sizeof(RigInLvl));
+                    input.ReadBytes(reinterpret_cast<char*>(&mRigLvVec[i]), sizeof(RigInLvl));
             }
 
             void ModelInfo::SerializeOut(resources::pipeline::ResourceWriter &output)
@@ -179,7 +183,7 @@ namespace ursine
                     for (auto &iter : mMeshInfoVec)
                         iter.SerializeOut(output);
                 }
-                if(mMtrlInfoVec.size() > 0)
+                if (mMtrlInfoVec.size() > 0)
                 {
                     for (auto &iter : mMtrlInfoVec)
                         iter.SerializeOut(output);
@@ -192,12 +196,12 @@ namespace ursine
                 if (mMeshLvVec.size() > 0)
                 {
                     for (auto &iter : mMeshLvVec)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(MeshInLvl) );
+                        output.WriteBytes(reinterpret_cast<char*>(&iter), sizeof(MeshInLvl));
                 }
                 if (mRigLvVec.size() > 0)
                 {
                     for (auto &iter : mRigLvVec)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(RigInLvl) );
+                        output.WriteBytes(reinterpret_cast<char*>(&iter), sizeof(RigInLvl));
                 }
             }
         };

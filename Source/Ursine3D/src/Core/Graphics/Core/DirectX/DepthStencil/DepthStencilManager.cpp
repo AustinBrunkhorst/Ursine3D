@@ -90,7 +90,7 @@ namespace ursine
                 depthBufferDesc.SampleDesc.Count = 1;
                 depthBufferDesc.SampleDesc.Quality = 0;
                 depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                depthBufferDesc.BindFlags = D3D10_BIND_DEPTH_STENCIL | D3D10_BIND_SHADER_RESOURCE;
+                depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D10_BIND_SHADER_RESOURCE;
                 depthBufferDesc.CPUAccessFlags = 0;
                 depthBufferDesc.MiscFlags = 0;
 
@@ -108,11 +108,49 @@ namespace ursine
                 UAssert(result == S_OK, "Failed to make depth stencil view! (Error '%s')", GetDXErrorMessage(result));
 
                 srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-                srvDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+                srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
                 srvDesc.Texture2D.MipLevels = 1;
                 srvDesc.Texture2D.MostDetailedMip = 0;
 
                 result = m_device->CreateShaderResourceView(m_depthStencilTextureArray[ DEPTH_STENCIL_SHADOWMAP ], &srvDesc, &m_depthStencilResourceArray[ DEPTH_STENCIL_SHADOWMAP ]);
+                UAssert(result == S_OK, "Failed to make depth stencil shader resource view! (Error '%s')", GetDXErrorMessage(result));
+
+                /////////////////////////////////////////////////////////////////
+                // CREATING OVERDRAW BUFFER
+                ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+
+                //Set up the description of the depth buffer.
+                depthBufferDesc.Width = width;
+                depthBufferDesc.Height = height;
+                depthBufferDesc.MipLevels = 1;
+                depthBufferDesc.ArraySize = 1;
+                depthBufferDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+                depthBufferDesc.SampleDesc.Count = 1;
+                depthBufferDesc.SampleDesc.Quality = 0;
+                depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+                depthBufferDesc.BindFlags = D3D10_BIND_DEPTH_STENCIL | D3D10_BIND_SHADER_RESOURCE;
+                depthBufferDesc.CPUAccessFlags = 0;
+                depthBufferDesc.MiscFlags = 0;
+
+                //Create the texture for the depth buffer using the filled out description.
+                result = m_device->CreateTexture2D(&depthBufferDesc, nullptr, &m_depthStencilTextureArray[ DEPTH_STENCIL_OVERDRAW ]);
+                UAssert(result == S_OK, "Depth buffer texture failed! (Error '%s')", GetDXErrorMessage(result));
+
+                ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+
+                depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+                depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+                depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+                result = m_device->CreateDepthStencilView(m_depthStencilTextureArray[ DEPTH_STENCIL_OVERDRAW ], &depthStencilViewDesc, &m_depthStencilViewArray[ DEPTH_STENCIL_OVERDRAW ]);
+                UAssert(result == S_OK, "Failed to make depth stencil view! (Error '%s')", GetDXErrorMessage(result));
+
+                srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+                srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+                srvDesc.Texture2D.MipLevels = 1;
+                srvDesc.Texture2D.MostDetailedMip = 0;
+
+                result = m_device->CreateShaderResourceView(m_depthStencilTextureArray[ DEPTH_STENCIL_OVERDRAW ], &srvDesc, &m_depthStencilResourceArray[ DEPTH_STENCIL_OVERDRAW ]);
                 UAssert(result == S_OK, "Failed to make depth stencil shader resource view! (Error '%s')", GetDXErrorMessage(result));
             }
 
@@ -139,7 +177,10 @@ namespace ursine
 
             ID3D11DepthStencilView *DepthStencilManager::GetDepthStencilView(const DEPTH_STENCIL_LIST stencil)
             {
-                return m_depthStencilViewArray[ stencil ];
+                if( stencil != DEPTH_STENCIL_COUNT )
+                    return m_depthStencilViewArray[ stencil ];
+
+                return nullptr;
             }
 
             ID3D11ShaderResourceView *DepthStencilManager::GetDepthStencilSRV(const DEPTH_STENCIL_LIST stencil)

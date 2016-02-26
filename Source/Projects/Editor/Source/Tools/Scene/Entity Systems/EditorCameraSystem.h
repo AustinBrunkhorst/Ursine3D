@@ -13,9 +13,7 @@
 
 #pragma once
 
-#include <EntitySystem.h>
-
-#include <GfxAPI.h>
+#include <FilterSystem.h>
 
 namespace ursine
 {

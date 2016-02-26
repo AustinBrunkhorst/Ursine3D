@@ -15,14 +15,25 @@
     #define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
 
     #define EditorField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
+    #define EditorResourceField(resourceType, fieldName) Meta(Enable, ResourceType(typeof(resourceType))) ursine::resources::ResourceReference fieldName
+
+    #define EditorAnnotate(annotation) EditorMeta(Annotation(annotation))
 
     #if defined(URSINE_WITH_EDITOR)
 
+        #define EditorMeta(...) __attribute__((annotate(#__VA_ARGS__)))
+
         #define EditorButton(name, title) Meta(Enable, CreateButton(title)) void name(void);
+
+        #define EditorOnlyField(field) field
 
     #else
 
+        #define EditorMeta(...)
+
         #define EditorButton(name, title)
+
+        #define EditorOnlyField(field)
 
     #endif
 
@@ -37,17 +48,25 @@
 
 #else 
 
-    #define Meta(...)
+    #define Meta(...) 
+    #define EditorMeta(...) 
 
     #define EditorField(expression, getter, setter)
+    #define EditorResourceField(resourceType, fieldName) ursine::resources::ResourceReference fieldName
+
+    #define EditorAnnotate(annotation)
 
     #if defined(URSINE_WITH_EDITOR)
 
         #define EditorButton(name, title) void name(void)
 
+        #define EditorOnlyField(field) field
+
     #else
 
         #define EditorButton(name, title)
+
+        #define EditorOnlyField(field)
 
     #endif
 

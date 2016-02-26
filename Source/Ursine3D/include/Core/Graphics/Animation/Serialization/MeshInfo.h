@@ -15,7 +15,6 @@
 
 #include "ISerialize.h"
 #include "AnimationDef.h"
-#include "ResourceWriter.h"
 
 namespace ursine
 {

@@ -21,7 +21,7 @@ namespace ursine
 	{
         struct WorldEntitySystem
         {
-            Meta(ForceEditorType( "EntitySystemSelector" ))
+            EditorMeta(ForceEditorType( "EntitySystemSelector" ))
             std::string type;
 
             WorldEntitySystem(void) { }

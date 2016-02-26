@@ -144,6 +144,10 @@ class Entity implements IEventContainer {
         m_handler.componentFieldArrayRemove( componentName, fieldName, index );
     }
 
+    public function componentFieldArraySwap(componentName : String, fieldName : String, index1 : UInt, index2 : UInt) : Void {
+        m_handler.componentFieldArraySwap( componentName, fieldName, index1, index2 );
+    }
+
     public function componentButtonInvoke(componentName : String, buttonName : String) : Void {
         m_handler.componentButtonInvoke( componentName, buttonName );
     }

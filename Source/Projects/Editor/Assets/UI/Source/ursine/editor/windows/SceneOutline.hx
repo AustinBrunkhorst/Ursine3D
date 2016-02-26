@@ -150,6 +150,8 @@ class SceneOutline extends WindowHandler {
             return;
 
         item.text = e.name;
+
+        untyped ToolTip.bind( item.textContentElement, e.name );
     }
 
     private function onEntityParentChanged(e) {
@@ -287,6 +289,8 @@ class SceneOutline extends WindowHandler {
 
             entity.setSiblingIndex( childIndex );
         } );
+
+        untyped ToolTip.bind( item.textContentElement, entity.getName( ) );
 
         item.textContentElement.addEventListener( 'dblclick', function(e) {
             startRenamingEntity( item );

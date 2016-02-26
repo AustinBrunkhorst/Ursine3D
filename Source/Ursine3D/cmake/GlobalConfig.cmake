@@ -62,7 +62,7 @@ if (MSVC)
     ursine_add_compile_flags(
         "/W3" # warning level 3
         "/WX" # warnings as errors
-        "/Zm200" # increased compiler heap memory
+        "/Zm1000" # increased compiler heap memory
         "/bigobj" # increased object file size
     )
 

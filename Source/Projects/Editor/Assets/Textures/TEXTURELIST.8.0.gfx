@@ -8,12 +8,17 @@ normal1.DDS n1 256 256
 normal2.DDS n2 256 256
 normal3.DDS n3 256 256
 Blank.dds Blank 256 256
-Sun.dds Sun 256 256
-CameraIcon.dds CameraIcon 512 512
+
 #particles BB
 Smoke0.dds Smoke0 256 256
 Smoke1.dds Smoke1 256 256
 Smoke2.dds Smoke2 256 256
+
+#editor icons
+DirectionalLight.dds DirectionalLightIcon 512 512
+PointLight.dds PointLightIcon 512 512
+SpotLight.dds SpotLightIcon 574 574
+CameraIcon.dds CameraIcon 512 512
 
 FastSpark.dds Spark 128 128
 Twinkle.dds Twinkle 64 64
