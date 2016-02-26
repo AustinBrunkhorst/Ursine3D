@@ -21,6 +21,8 @@ class SpawnPatternContainer;
 
 class SpawnPattern
 {
+    friend class SpawnPatternContainer;
+
 public:
 
     Meta(MultiLineEditor)

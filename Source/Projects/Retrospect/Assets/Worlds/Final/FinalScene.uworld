@@ -45,6 +45,12 @@
 }, {
 "children": [], 
 "components": {
+"BossRoomResources": {
+".uid": 15, 
+"archetypesToLoad": [
+"BossRoom/BossRoomOpenCamera"
+]
+}, 
 "CombatBowl1Resources": {
 ".uid": 11, 
 "archetypesToLoad": [

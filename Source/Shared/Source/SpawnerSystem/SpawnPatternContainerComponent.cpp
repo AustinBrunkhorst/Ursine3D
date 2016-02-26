@@ -56,7 +56,9 @@ void SpawnPatternContainer::update(SpawnerGroup *group, Spawner *spawner)
     // Increment the timer and check to see if we're ready to move to the next pattern
     m_patternTimer += dt;
 
-    if (!pattern.GetLoopPattern( ) && m_patternTimer >= pattern.GetSpawnDuration( ))
+    if (!pattern.GetLoopPattern( ) && 
+        (m_patternTimer >= pattern.GetSpawnDuration( ) ||
+        (pattern.m_activeEnemies == 0 && pattern.m_totalEnemiesSpawned == pattern.m_totalEnemies)))
     {
         m_breaking = true;
 

@@ -37,7 +37,7 @@ namespace ursine
 
             // Add condition
             template<typename ConditionType, class... Args>
-            ConditionType *AddCondition(const std::string &variableName, Args&&... args);
+            ConditionType *AddCondition(Args&&... args);
 
             // Remove condition
             void RemoveCondition(Condition *condition);

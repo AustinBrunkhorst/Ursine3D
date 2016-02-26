@@ -6,8 +6,8 @@
 "children": [], 
 "components": {
 "Camera": {
-".uid": 21, 
-"active": true, 
+".uid": 22, 
+"active": false, 
 "farPlane": 1000, 
 "fov": 45, 
 "nearPlane": 0.10000000149011612, 
@@ -24,7 +24,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 22, 
+".uid": 23, 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -148,11 +148,11 @@
 "smoothPath": true
 }, 
 "EntityAnimatorFocusModifier": {
-".uid": 23, 
+".uid": 24, 
 "focusEntity": "FocusNode"
 }, 
 "Transform": {
-".uid": 20, 
+".uid": 21, 
 "rotation": {
 "w": 0.70396649837493896, 
 "x": 0.067113563418388367, 
@@ -176,10 +176,10 @@
 "children": [], 
 "components": {
 "EntityAnimatorFocusPoint": {
-".uid": 28
+".uid": 29
 }, 
 "Transform": {
-".uid": 27, 
+".uid": 28, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -203,7 +203,7 @@
 ], 
 "components": {
 "Transform": {
-".uid": 19, 
+".uid": 20, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -227,11 +227,11 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 30, 
+".uid": 31, 
 "playerArchetype": "Player1"
 }, 
 "Transform": {
-".uid": 29, 
+".uid": 30, 
 "rotation": {
 "w": 0.38268360495567322, 
 "x": 0, 
@@ -255,11 +255,11 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 32, 
+".uid": 33, 
 "playerArchetype": "Player2"
 }, 
 "Transform": {
-".uid": 31, 
+".uid": 32, 
 "rotation": {
 "w": 0.92045247554779053, 
 "x": 0, 
@@ -285,7 +285,7 @@
 "children": [], 
 "components": {
 "ParticleColorAnimator": {
-".uid": 35, 
+".uid": 36, 
 "color0": {
 "a": 0.41796875, 
 "b": 0.05438232421875, 
@@ -318,7 +318,7 @@
 }
 }, 
 "ParticleEmitter": {
-".uid": 36, 
+".uid": 37, 
 "emitCount": 0, 
 "emitRate": 600, 
 "emitRateVariance": 0, 
@@ -346,7 +346,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 37, 
+".uid": 38, 
 "color": {
 "a": 0, 
 "b": 0.64705884456634521, 
@@ -359,7 +359,7 @@
 "texture": "Smoke0"
 }, 
 "Transform": {
-".uid": 34, 
+".uid": 35, 
 "rotation": {
 "w": 0.77118664979934692, 
 "x": 0, 
@@ -383,7 +383,7 @@
 ], 
 "components": {
 "Transform": {
-".uid": 33, 
+".uid": 34, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -407,12 +407,12 @@
 ], 
 "components": {
 "CylinderCollider": {
-".uid": 15, 
+".uid": 16, 
 "height": 30, 
 "radius": 150
 }, 
 "EntityAnimator": {
-".uid": 16, 
+".uid": 17, 
 "delta": 16, 
 "ease": 0, 
 "keyFrames": [
@@ -470,7 +470,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 17, 
+".uid": 18, 
 "castsShadows": true, 
 "color": {
 "a": 1, 
@@ -487,7 +487,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 18, 
+".uid": 19, 
 "bodyFlag": 2, 
 "enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
@@ -509,7 +509,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 14, 
+".uid": 15, 
 "rotation": {
 "w": 1, 
 "x": 0, 

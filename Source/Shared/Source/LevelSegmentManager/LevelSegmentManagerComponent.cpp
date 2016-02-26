@@ -23,6 +23,7 @@
 
 #include "TutorialResourcesComponent.h"
 #include "CombatBowl1ResourcesComponent.h"
+#include "BossRoomResourcesComponent.h"
 
 #include <TimerCondition.h>
 
@@ -134,7 +135,7 @@ void LevelSegmentManager::initTutorialLogic(void)
 
     auto timedTrans = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
-    timedTrans->AddCondition<sm::TimerCondition>( "", TimeSpan::FromSeconds( 7.0f ) );
+    timedTrans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
 
     // After the viewports tween out change the level segment
     auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
@@ -236,6 +237,65 @@ void LevelSegmentManager::initCombatBowl4Logic(void)
 
 void LevelSegmentManager::initBossRoomLogic(void)
 {
+    auto resources = GetOwner( )->GetComponent<BossRoomResources>( );
+
+    // Spawn all boss room archetypes
+    auto initStateM = std::make_shared<SegmentLogicStateMachine>( "Init Boss Room", this );
+
+    // initial state for spawning the level
+    auto initState = initStateM->AddState<InitializeSegmentState>(
+        resources->archetypesToLoad,
+        LevelSegments::Empty
+    );
+
+    initStateM->SetInitialState( initState );
+
+    addSegmentLogic( initStateM, {
+        LevelSegments::CB4_OpenBossRoom,
+        LevelSegments::BossRoom_Platforming,
+        LevelSegments::BossRoom_Introduction,
+        LevelSegments::BossRoom_Phase1,
+        LevelSegments::BossRoom_Phase2,
+        LevelSegments::BossRoom_Phase3,
+        LevelSegments::BossRoom_Phase4,
+        LevelSegments::BossRoom_Phase5
+    } );
+
+    // initialize the boss room open cinematic logic
+    auto cinematicStateM = std::make_shared<SegmentLogicStateMachine>( "Boss Room Cinematic", this );
+
+    // Lock the players
+    auto lockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+
+    // Tween viewports
+    auto tweenViewports = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SqueezeIn, true );
+
+    lockPlayers->AddTransition( tweenViewports, "Go To Tween Viewports" );
+
+    // Switch to boss room cinematic
+    auto changeState = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Introduction );
+
+    tweenViewports->AddTransition( changeState, "Go To Change Segment To BossRoom_Introduction" );
+
+    // Wait for animation to finish, and then tween the viewports again
+    auto tweenBackViewports = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SqueezeOut, true );
+
+    auto timedTransition = changeState->AddTransition( tweenBackViewports, "Go To Tween In Viewports" );
+
+    timedTransition->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 15.0f ) );
+
+    // Switch to boss phase 1
+    auto changeToFinishState = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Phase1 );
+
+    tweenBackViewports->AddTransition( changeToFinishState, "Go To Finish State Phase1" );
+
+    cinematicStateM->SetInitialState( lockPlayers );
+
+    addSegmentLogic( cinematicStateM, {
+        LevelSegments::CB4_OpenBossRoom,
+        LevelSegments::BossRoom_Introduction
+    } );
+
 }
 
 SegmentLogicStateMachine::Handle LevelSegmentManager::createSegmentLogic(const std::string &name, LevelSegments segment)

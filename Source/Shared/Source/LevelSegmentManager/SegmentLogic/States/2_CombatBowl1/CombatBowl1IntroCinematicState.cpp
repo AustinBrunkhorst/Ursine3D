@@ -16,6 +16,8 @@
 #include "SegmentLogicStateIncludes.h"
 
 #include "EntityAnimatorComponent.h"
+#include "UnloadResourceComponent.h"
+#include <CameraComponent.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -51,6 +53,9 @@ void CombatBowl1IntroCinematicState::Enter(SegmentLogicStateMachine *machine)
         // Start the animation
         cameraAnimator->JumpToStart( );
         cameraAnimator->Play( );
+
+        cameraAnimator->GetOwner( )->AddComponent<UnloadResource>( segmentManager, LevelSegments::CB1_Combat1 );
+        cameraAnimator->GetOwner( )->GetComponent<Camera>( )->SetActive( true );
     }
 
     // Start the elevator

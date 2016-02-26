@@ -16,7 +16,7 @@
 "y": 0, 
 "z": 1
 }, 
-"endingLevelSegmentTransition": 70, 
+"endingLevelSegmentTransition": 68, 
 "loopPattern": false, 
 "maxNumberOfEnemies": 3, 
 "minNumberOfEnemies": 1, 
