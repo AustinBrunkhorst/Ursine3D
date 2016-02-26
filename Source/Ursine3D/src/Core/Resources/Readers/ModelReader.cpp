@@ -3,6 +3,7 @@
 #include "ModelReader.h"
 #include "ModelData.h"
 
+
 namespace ursine
 {
     namespace resources
@@ -11,7 +12,9 @@ namespace ursine
 
         ResourceData::Handle ModelReader::Read(ResourceReader &input)
         {
-            return nullptr;
+            m_modelInfo->SerializeIn(input);
+
+            return std::make_shared<ModelData>( m_modelInfo );
         }
     }
 }

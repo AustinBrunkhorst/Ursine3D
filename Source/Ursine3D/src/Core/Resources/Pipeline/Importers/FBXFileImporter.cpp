@@ -22,9 +22,9 @@ namespace ursine
             "Unable to import FBX file.\nfile: %s",
             fileName.string( ).c_str( )
         );
-
+        
         // output the animation clipdata resources
 
-        return std::make_shared<ModelData>( importer.GetModelInfo( ) );
+        return std::make_shared<ModelData>( importer.GetModelInfo() );
     }
 }

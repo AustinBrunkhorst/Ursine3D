@@ -26,12 +26,9 @@ namespace ursine
             TextureManager *textureMgr;
         };
 
-        //get model handle
-        GfxHND ResourceAPI::GetModelHandle(const char *name)
-        {
-            return m_privates->modelMgr->GetModelIDByName(name);
-        }
-
+        /////////////////////////////////////////////////////////
+        // TEXTURE
+        /////////////////////////////////////////////////////////
         //get texture handle
         GfxHND ResourceAPI::GetTexHandle(const char *name)
         {
@@ -52,17 +49,7 @@ namespace ursine
         {
             m_privates->textureMgr->DestroyDynamicTexture(handle);
         }
-
-        ModelResource *ResourceAPI::GetModelResource(const GfxHND & handle)
-        {
-            return m_privates->modelMgr->GetModel(static_cast<unsigned>(handle));
-        }
-
-        ModelResource * ResourceAPI::GetModelResource(const std::string & modelName)
-        {
-            return m_privates->modelMgr->GetModel(modelName);
-        }
-
+        
         GfxHND ResourceAPI::CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
         {
             return m_privates->textureMgr->CreateTexture( binaryData, binarySize, width, height);
@@ -88,6 +75,25 @@ namespace ursine
             m_privates->textureMgr->GetBinaryInformation( handle, dataPtr, binarySize );
         }
 
+        /////////////////////////////////////////////////////////
+        // MODEL
+        /////////////////////////////////////////////////////////
+        //get model handle
+        GfxHND ResourceAPI::GetModelHandle(const char *name)
+        {
+            return m_privates->modelMgr->GetModelIDByName(name);
+        }
+
+        ModelResource *ResourceAPI::GetModelResource(const GfxHND & handle)
+        {
+            return m_privates->modelMgr->GetModel(static_cast<unsigned>(handle));
+        }
+
+        ModelResource * ResourceAPI::GetModelResource(const std::string & modelName)
+        {
+            return m_privates->modelMgr->GetModel(modelName);
+        }
+
         GfxHND ResourceAPI::CreateModel(graphics::ufmt_loader::ModelInfo *modelInfo)
         {
             return m_privates->modelMgr->CreateModel(modelInfo);
@@ -100,10 +106,17 @@ namespace ursine
 
         void ResourceAPI::LoadModel(GfxHND handle)
         {
+            m_privates->modelMgr->LoadModel(handle);
         }
 
         void ResourceAPI::UnloadModel(GfxHND handle)
         {
+            m_privates->modelMgr->UnloadModel(handle);
+        }
+
+        ufmt_loader::ModelInfo ResourceAPI::GetModelInfo(const GfxHND &handle)
+        {
+            return m_privates->modelMgr->GetModelInfo( handle );
         }
 
         void ResourceAPI::SetPrivates(void *priv, void *priv2)
