@@ -15,6 +15,8 @@
 
 #include "ISerialize.h"
 #include "AnimationDef.h"
+#include "ResourceReader.h"
+#include "ResourceWriter.h"
 
 namespace ursine
 {
@@ -95,11 +97,11 @@ namespace ursine
                 virtual ~MeshInfo();
                 void ReleaseData();
 
-                virtual bool SerializeIn(HANDLE hFile);
-                virtual bool SerializeOut(HANDLE hFile);
+                bool SerializeIn(HANDLE hFile);
+                bool SerializeOut(HANDLE hFile);
 
-                virtual void SerializeIn(resources::ResourceReader &input);
-                virtual void SerializeOut(resources::pipeline::ResourceWriter &output);
+                void SerializeIn(resources::ResourceReader &input);
+                void SerializeOut(resources::pipeline::ResourceWriter &output);
             };
         };
     };

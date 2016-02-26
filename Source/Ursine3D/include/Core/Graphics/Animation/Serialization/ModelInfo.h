@@ -17,6 +17,8 @@
 #include "MaterialInfo.h"
 #include "BoneInfo.h"
 #include "LvlHierarchy.h"
+#include "ResourceReader.h"
+#include "ResourceWriter.h"
 
 namespace ursine
 {
@@ -78,7 +80,7 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                virtual bool SerializeIn(HANDLE hFile);
+                bool SerializeIn(HANDLE hFile);
 
                 /** @brief model information serialize out function
                 *
@@ -87,10 +89,10 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                virtual bool SerializeOut(HANDLE hFile);
+                bool SerializeOut(HANDLE hFile);
 
-                virtual void SerializeIn(resources::ResourceReader &input);
-                virtual void SerializeOut(resources::pipeline::ResourceWriter &output);
+                void SerializeIn(resources::ResourceReader &input);
+                void SerializeOut(resources::pipeline::ResourceWriter &output);
             };
         };
     };

@@ -115,16 +115,12 @@ namespace ursine
                     if (mMeshLvVec.size() > 0)
                     {
                         for (auto iter : mMeshLvVec)
-                        {
                             WriteFile(hFile, &iter, sizeof(MeshInLvl), &nBytesWrite, nullptr);
-                        }
                     }
                     if (mRigLvVec.size() > 0)
                     {
                         for (auto iter : mRigLvVec)
-                        {
                             WriteFile(hFile, &iter, sizeof(RigInLvl), &nBytesWrite, nullptr);
-                        }
                     }
                 }
                 return true;

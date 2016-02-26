@@ -14,8 +14,6 @@
 #pragma once
 
 #include <windows.h>
-#include "ResourceReader.h"
-#include "ResourceWriter.h"
 
 #define MAXTEXTLEN 256
 namespace ursine
@@ -60,9 +58,6 @@ namespace ursine
                 *  @return if succeed return true, else return false
                 */
                 virtual bool SerializeOut(HANDLE hFile) = 0;
-
-                virtual void SerializeIn(resources::ResourceReader &input) = 0;
-                virtual void SerializeOut(resources::pipeline::ResourceWriter &output) = 0;
             };
         };
     };
