@@ -35,7 +35,6 @@ AbstractHitscanWeapon::AbstractHitscanWeapon(void) :
     AbstractWeapon( ),
     m_raycastType( physics::RaycastType::RAYCAST_CLOSEST_HIT),
     m_drawDuration( 0.2f ),
-    m_spawnSemgennts( 0 ),
     m_shotParticle( "FX/FX_bullet.uatype" ),
     m_trailParticle( "FX/FX_Trail.uatype" ),
     m_alwaysDraw( false ),
