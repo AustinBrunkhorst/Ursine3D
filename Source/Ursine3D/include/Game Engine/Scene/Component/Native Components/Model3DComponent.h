@@ -19,6 +19,8 @@
 #include "RenderMask.h"
 #include "ModelResource.h"
 
+#include "TextureData.h"
+
 namespace ursine
 {
     namespace ecs
@@ -55,6 +57,11 @@ namespace ursine
                 std::string modelName,
                 GetModelResourceName,
                 SetModelResourceName
+            );
+
+            EditorResourceField(
+                ursine::resources::TextureData, 
+                model
             );
 
             EditorField(

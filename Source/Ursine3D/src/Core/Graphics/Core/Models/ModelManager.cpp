@@ -35,8 +35,8 @@ namespace ursine
             AnimationBuilder::InitializeStaticData();
             std::string fileText = filePath;
 
-            //InitializeJdl(fileText);
-            //InitializeModel(fileText);
+            InitializeJdl(fileText);
+            InitializeModel(fileText);
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER

@@ -18,6 +18,8 @@
 #include "ComponentConfig.h"
 #include "EventDispatcher.h"
 
+#include "ResourceReference.h"
+
 namespace ursine
 {
     namespace ecs
@@ -40,7 +42,7 @@ namespace ursine
 
             // Called when the component has been initialized and added to an entity
             // anything that derives can overload this to init their values
-            virtual void OnInitialize(void);
+            virtual void OnInitialize(void) { }
 
             // The type ID of this component
             inline ComponentTypeID GetTypeID(void) const;
@@ -102,7 +104,7 @@ namespace ursine
         #endif
 
             // Called when the component has been initialized and added to an entity
-            void Initialize(void);
+            void initialize(void);
 
             // component type id
             ComponentTypeID m_typeID;

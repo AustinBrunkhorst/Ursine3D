@@ -34,7 +34,7 @@ namespace ursine
 
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;
-        } Meta(Enable, WhiteListMethods);
+        } Meta(Enable, WhiteListMethods, DisplayName( "ResourceReference" ));
     }
 }
 

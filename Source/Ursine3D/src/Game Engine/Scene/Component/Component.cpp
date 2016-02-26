@@ -6,7 +6,7 @@ namespace ursine
 {
     namespace ecs
     {
-        void Component::Initialize(void)
+        void Component::initialize(void)
         {
         #if defined(URSINE_WITH_EDITOR)
 
@@ -52,18 +52,17 @@ namespace ursine
             OnInitialize( );
         }
 
-		template<>
-		Transform *Component::Handle<Transform>::operator->(void)
-		{
-			return m_entity->GetTransform( );
-		}
+        template<>
+        Transform *Component::Handle<Transform>::operator->(void)
+        {
+            return m_entity->GetTransform( );
+        }
 
-		template<>
-		const Transform *Component::Handle<Transform>::operator->(void) const
-		{
-			return m_entity->GetTransform( );
-		}
+        template<>
+        const Transform *Component::Handle<Transform>::operator->(void) const
+        {
+            return m_entity->GetTransform( );
+        }
 
-        void Component::OnInitialize(void) { }
     }
 }

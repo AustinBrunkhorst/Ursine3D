@@ -201,7 +201,7 @@ namespace ursine
 
             addComponent( entity, component );
 
-            component->Initialize( );
+            component->initialize( );
 
             ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
 
@@ -614,7 +614,7 @@ namespace ursine
                 {
                     auto *component = m_componentTypes[ i ][ id ];
 
-                    component->Initialize( );
+                    component->initialize( );
 
                     args.component = component;
 
