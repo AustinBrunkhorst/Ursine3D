@@ -35,6 +35,7 @@
 #include "ParticleAnimatorComponent.h"
 #include "ParticleAttractorComponent.h"
 #include "ParticleTwisterComponent.h"
+#include "ParticlePathAnimatorComponent.h"
 #include "SpriteTextComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** CameraAnimatorFocusPointComponent.cpp
+** EntityAnimatorFocusPoint.cpp
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,11 +13,11 @@
 
 #include "Precompiled.h"
 
-#include "CameraAnimatorFocusPointComponent.h"
+#include "EntityAnimatorFocusPointComponent.h"
 
-NATIVE_COMPONENT_DEFINITION( CameraAnimatorFocusPoint );
+NATIVE_COMPONENT_DEFINITION(EntityAnimatorFocusPoint);
 
-CameraAnimatorFocusPoint::CameraAnimatorFocusPoint(void)
+EntityAnimatorFocusPoint::EntityAnimatorFocusPoint(void)
     : BaseComponent( )
 {
 }

@@ -66,8 +66,8 @@ namespace ursine
             WorldEventType GetUpdateType(void) const;
 
         private:
-            virtual void OnInitialize(void) override;
-            virtual void OnRemove(void) override;
+            void OnInitialize(void) override final;
+            void OnRemove(void) override final;
 
             EventHandlerPriority m_updatePriority;
             

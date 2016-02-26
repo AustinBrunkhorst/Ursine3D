@@ -115,6 +115,7 @@ namespace ursine
             switch( m_resourceType )
             {
             case RESOURCE_MODEL:
+                m_manager->modelManager->Invalidate( );
                 m_manager->modelManager->BindModel( m_resourceID, m_slotIndex );
                 break;
             case RESOURCE_TEXTURE:
