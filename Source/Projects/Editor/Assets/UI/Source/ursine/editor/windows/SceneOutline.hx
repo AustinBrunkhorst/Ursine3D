@@ -132,8 +132,6 @@ class SceneOutline extends WindowHandler {
         if (item == null)
             return;
 
-        untyped ToolTip.unbind( item.textContentElement );
-
         // TODO: handle multi selection
         if (m_selectedEntities.indexOf( e.uniqueID ) != -1)
             selectEntity( null );

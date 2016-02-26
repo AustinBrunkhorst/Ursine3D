@@ -2071,7 +2071,6 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
-		ToolTip.unbind(item.textContentElement);
 		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
 		if(item.parentNode != null) item.parentNode.removeChild(item);
 		this.m_entityItems.remove(e.uniqueID);
