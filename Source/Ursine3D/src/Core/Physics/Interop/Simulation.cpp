@@ -21,6 +21,8 @@
 #include "Rigidbody.h"
 #include "RigidbodyComponent.h"
 
+#include "Ghost.h"
+
 #include "EntityEvent.h"
 
 namespace ursine
@@ -43,6 +45,10 @@ namespace ursine
             m_dynamicsWorld->setGravity({ 
                 gravity.X( ), gravity.Y( ), gravity.Z( ) 
             });
+
+            // Needed to enable the use of ghost objects
+            m_dynamicsWorld->getBroadphase( )->getOverlappingPairCache( )
+                ->setInternalGhostPairCallback( &m_ghostCallback );
 
         #endif
         }
@@ -111,6 +117,28 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             m_dynamicsWorld->removeCollisionObject( body );
+
+        #endif
+        }
+
+        void Simulation::AddGhost(Ghost* ghost)
+        {
+        #ifdef BULLET_PHYSICS
+
+            m_dynamicsWorld->addCollisionObject( 
+                ghost, 
+                btBroadphaseProxy::SensorTrigger,
+                btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger
+            );
+
+        #endif
+        }
+
+        void Simulation::RemoveGhost(Ghost* ghost)
+        {
+        #ifdef BULLET_PHYSICS
+
+            m_dynamicsWorld->removeCollisionObject( ghost );
 
         #endif
         }

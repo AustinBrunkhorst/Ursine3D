@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Body.h
+** Ghost.h
 **
 ** Author:
 ** - Jordan Ellis - contact@jordanellis.me
@@ -24,10 +24,10 @@ namespace ursine
 
     namespace physics
     {
-        class Body : public BodyBase
+        class Ghost : public GhostBase
         {
         public:
-            Body(void);
+            Ghost(void);
 
             void SetUserID(int id);
             int GetUserID(void);
@@ -35,15 +35,15 @@ namespace ursine
             void SetUserPointer(void *ptr);
             void *GetUserPointer(void);
 
-            static Body *DownCast(BodyBase *body);
-            static const Body *DownCast(const BodyBase *body);
+            static Ghost *DownCast(BodyBase *body);
+            static const Ghost *DownCast(const BodyBase *body);
 
             void SetTransform(ecs::Transform *transform);
             void GetTransform(ecs::Transform *transform);
 
             void SetCollider(ColliderBase *collider);
             ColliderBase *GetCollider(void);
-             
+
             void SetOffset(const SVec3 &offset);
             SVec3 GetOffset(void) const;
 
@@ -54,7 +54,7 @@ namespace ursine
 
         private:
             bool m_disableContactResponse;
-            
+
             SVec3 m_offset;
         };
     }

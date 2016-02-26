@@ -1,33 +1,30 @@
-﻿/* ----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------
 ** Team Bear King
-** © 2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Body.cpp
+** Ghost.cpp
 **
 ** Author:
-** - Jordan Ellis - j.ellis@digipen.edu
+** - Jordan Ellis - contact@jordanellis.me
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
-** --------------------------------------------------------------------------*/
+** -------------------------------------------------------------------------*/
 
 #include "UrsinePrecompiled.h"
 
-#include "Body.h"
-#include "TransformComponent.h"
+#include "Ghost.h"
 
 namespace ursine
 {
     namespace physics
     {
-        Body::Body(void)
-            : BodyBase( )
-            , m_disableContactResponse( false )
+        Ghost::Ghost(void)
         {
-            
+            SetDisableContactResponse( true );
         }
 
-        void Body::SetUserID(int id)
+        void Ghost::SetUserID(int id)
         {
         #ifdef BULLET_PHYSICS
 
@@ -36,7 +33,7 @@ namespace ursine
         #endif
         }
 
-        int Body::GetUserID(void)
+        int Ghost::GetUserID(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -45,7 +42,7 @@ namespace ursine
         #endif
         }
 
-        void Body::SetUserPointer(void* ptr)
+        void Ghost::SetUserPointer(void *ptr)
         {
         #ifdef BULLET_PHYSICS
 
@@ -54,7 +51,7 @@ namespace ursine
         #endif
         }
 
-        void *Body::GetUserPointer(void)
+        void *Ghost::GetUserPointer(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -63,46 +60,46 @@ namespace ursine
         #endif
         }
 
-        Body* Body::DownCast(BodyBase* body)
+        Ghost *Ghost::DownCast(BodyBase *body)
         {
         #ifdef BULLET_PHYSICS
 
-            if (!body || body->getInternalType( ) != BT_BODY)
+            if (!body || body->getInternalType( ) != BT_GHOST)
                 return nullptr;
 
-            return reinterpret_cast<Body*>( body );
+            return reinterpret_cast<Ghost*>( body );
 
         #endif
         }
 
-        const Body* Body::DownCast(const BodyBase* body)
+        const Ghost *Ghost::DownCast(const BodyBase *body)
         {
         #ifdef BULLET_PHYSICS
 
-            if (!body || body->getInternalType() != BT_BODY)
+            if (!body || body->getInternalType( ) != BT_GHOST)
                 return nullptr;
 
-            return reinterpret_cast<const Body*>( body );
+            return reinterpret_cast<const Ghost*>( body );
 
         #endif
         }
 
-        void Body::SetTransform(ecs::Transform* transform)
+        void Ghost::SetTransform(ecs::Transform *transform)
         {
         #ifdef BULLET_PHYSICS
 
             auto rot = transform->GetWorldRotation( );
             auto pos = transform->GetWorldPosition( ) + rot * m_offset;
             
-            setWorldTransform(btTransform(
+            setWorldTransform( btTransform(
                 btQuaternion( rot.X( ), rot.Y( ), rot.Z( ), rot.W( ) ),
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
-            ));
+            ) );
 
         #endif
         }
 
-        void Body::GetTransform(ecs::Transform* transform)
+        void Ghost::GetTransform(ecs::Transform *transform)
         {
         #ifdef BULLET_PHYSICS
 
@@ -121,7 +118,7 @@ namespace ursine
         #endif
         }
 
-        void Body::SetCollider(ColliderBase* collider)
+        void Ghost::SetCollider(ColliderBase *collider)
         {
         #ifdef BULLET_PHYSICS
 
@@ -130,7 +127,7 @@ namespace ursine
         #endif
         }
 
-        ColliderBase *Body::GetCollider(void)
+        ColliderBase *Ghost::GetCollider(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -139,17 +136,17 @@ namespace ursine
         #endif
         }
 
-        void Body::SetOffset(const SVec3 &offset)
+        void Ghost::SetOffset(const SVec3 &offset)
         {
             m_offset = offset;
         }
 
-        SVec3 Body::GetOffset(void) const
+        SVec3 Ghost::GetOffset(void) const
         {
             return m_offset;
         }
 
-        void Body::SetDisableContactResponse(bool disable)
+        void Ghost::SetDisableContactResponse(bool disable)
         {
             m_disableContactResponse = disable;
 
@@ -171,12 +168,12 @@ namespace ursine
             }
         }
 
-        bool Body::GetDisableContactResponse(void) const
+        bool Ghost::GetDisableContactResponse(void) const
         {
             return m_disableContactResponse;
         }
 
-        void Body::SetAwake(void)
+        void Ghost::SetAwake(void)
         {
         #ifdef BULLET_PHYSICS
 
