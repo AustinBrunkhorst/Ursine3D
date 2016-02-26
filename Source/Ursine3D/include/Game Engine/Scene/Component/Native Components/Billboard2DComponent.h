@@ -31,7 +31,8 @@ namespace ursine
             friend class RenderSystem;
 
         public:
-            Meta(BitMaskEditor)
+
+            EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
@@ -62,6 +63,6 @@ namespace ursine
 
             RenderableComponentBase *m_base;
 
-        } Meta(Enable, DisplayName("Billboard2D"));
+        } Meta(Enable, DisplayName( "Billboard2D" ));
     }
 }

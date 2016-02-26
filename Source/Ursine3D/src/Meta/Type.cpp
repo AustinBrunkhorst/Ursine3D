@@ -503,46 +503,32 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        std::vector<Field> Type::GetFields(void) const
+        const std::vector<Field> &Type::GetFields(void) const
         {
             URSINE_TODO( "recursively get base class fields" );
 
-            std::vector<Field> fields;
-
-            auto &handle = database.types[ m_id ].fields;
-
-            for (auto &field : handle)
-                fields.emplace_back( field.second );
-
-            return fields;
+            return database.types[ m_id ].fields;
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         const Field &Type::GetField(const std::string &name) const
         {
-            return database.types[ m_id ].fields[ name ];
+            return database.types[ m_id ].GetField( name );
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         std::vector<Global> Type::GetStaticFields(void) const
         {
-            std::vector<Global> fields;
-
-            auto &handle = database.types[ m_id ].staticFields;
-
-            for (auto &field : handle)
-                fields.emplace_back( field.second );
-
-            return fields;
+            return database.types[ m_id ].staticFields;
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         const Global &Type::GetStaticField(const std::string &name) const
         {
-            return database.types[ m_id ].staticFields[ name ];
+            return database.types[ m_id ].GetStaticField( name );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -600,9 +586,9 @@ namespace ursine
 
             for (auto &field : fields)
             {
-                auto value = field.second.GetValue( instance );
+                auto value = field.GetValue( instance );
 
-                object[ field.first ] = value.SerializeJson( );
+                object[ field.GetName( ) ] = value.SerializeJson( );
             }
 
 			if (invokeHook)
@@ -666,9 +652,9 @@ namespace ursine
 
             for (auto &field : fields)
             {
-                auto value = getterOverride( instance, field.second );
+                auto value = getterOverride( instance, field );
 
-                object[ field.first ] = value.SerializeJson( );
+                object[ field.GetName( ) ] = value.SerializeJson( );
             }
 
 			if (invokeHook)
@@ -761,7 +747,7 @@ namespace ursine
 
             for (auto &field : fields)
             {
-                auto fieldType = field.second.GetType( );
+                auto fieldType = field.GetType( );
 
                 UAssert( fieldType.IsValid( ),
                     "Unknown type for field '%s' in base type '%s'. Is this type reflected?",
@@ -769,11 +755,11 @@ namespace ursine
                     GetName( ).c_str( )
                 );
 
-				auto &fieldData = value[ field.first ];
+				auto &fieldData = value[ field.GetName( ) ];
 
 				if (!fieldData.is_null( ))
 				{
-					field.second.SetValue( instance, 
+					field.SetValue( instance, 
 						fieldType.DeserializeJson( fieldData )
 					);
 				}

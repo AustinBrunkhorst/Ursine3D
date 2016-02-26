@@ -13,7 +13,7 @@
 
 #include "SegmentLogicState.h"
 
-#include "CameraAnimatorComponent.h"
+#include "EntityAnimatorComponent.h"
 
 class CombatBowl1IntroCinematicState : public SegmentLogicState
 {
@@ -29,6 +29,6 @@ private:
 
     bool m_complete;
 
-    void onCameraAnimFinish(EVENT_HANDLER(CameraAnimator));
+    void onCameraAnimFinish(EVENT_HANDLER(EntityAnimator));
 
 };

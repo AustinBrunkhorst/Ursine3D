@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** CameraAnimatorFocusPointComponent.h
+** EntityAnimatorGroupComponent.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -15,11 +15,25 @@
 
 #include <Component.h>
 
-class CameraAnimatorFocusPoint : public ursine::ecs::Component
+class EntityAnimatorGroup : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
 public:
-    CameraAnimatorFocusPoint(void);
+
+    EditorButton(
+        playGroupAnimators,
+        "Play Group Animators"
+    );
+
+    EditorButton(
+        stopGroupAnimators,
+        "Stop Group Animators"
+    );
+
+    EntityAnimatorGroup(void);
+
+    void PlayGroupAnimators(void);
+    void StopGroupAnimators(void);
 
 } Meta(Enable);

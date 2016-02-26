@@ -1,0 +1,111 @@
+{
+"children": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"SpawnPatternContainer": {
+".uid": 19, 
+"levelSegment": 14, 
+"spawnPatterns": [
+{
+"active": true, 
+"direction": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}, 
+"endingLevelSegmentTransition": 70, 
+"loopPattern": false, 
+"maxNumberOfEnemies": 3, 
+"minNumberOfEnemies": 1, 
+"notes": "", 
+"singleSpawnCooldown": 1, 
+"spawnAngleVariance": 180, 
+"spawnDistanceVariance": 5, 
+"spawnDuration": 25, 
+"spawnerBreakTime": 1, 
+"totalEnemies": 10, 
+"triggerNextPattern": true
+}
+]
+}, 
+"Transform": {
+".uid": 18, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -38.62451171875, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "NewPattern"
+}
+], 
+"components": {
+"Spawner": {
+".uid": 17, 
+"EnemyType": 1
+}, 
+"Transform": {
+".uid": 16, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.010444641113281, 
+"z": 0
+}
+}
+}, 
+"name": "Spawner_Bomber"
+}
+], 
+"components": {
+"SpawnerGroup": {
+".uid": 15, 
+"chooseEnemyType": 1
+}, 
+"Transform": {
+".uid": 14, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 1154.46240234375, 
+"y": 42.939792633056641, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

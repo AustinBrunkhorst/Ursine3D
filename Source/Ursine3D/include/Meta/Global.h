@@ -37,6 +37,8 @@ namespace ursine
                 Type parentType = Type::Invalid
             );
 
+            static const Global &Invalid(void);
+
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
 

@@ -492,9 +492,13 @@ namespace ursine
             return m_events[ entity->m_id ];
         }
 
-        bool EntityManager::CompareComponents(const Component *a, const Component *b)
+        bool EntityManager::CompareComponentsAscending(const Component *a, const Component *b)
         {
-            // note: descending order
+            return a->m_uniqueID < b->m_uniqueID;
+        }
+
+        bool EntityManager::CompareComponentsDescending(const Component *a, const Component *b)
+        {
             return b->m_uniqueID < a->m_uniqueID;
         }
 
@@ -651,7 +655,7 @@ namespace ursine
                 // the queue to remove (based on instance id)
                 // this is so components with dependencies are deleted in the correct order
                 if (entity->HasComponent( mask ))
-                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponents );
+                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponentsDescending );
             }
 
             auto const removeCount = toRemove.size( );

@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** CameraAnimatorSystem.h
+** EntityAnimatorSystem.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,22 +13,23 @@
 
 #include <FilterSystem.h>
 
-class CameraAnimator;
+class EntityAnimator;
 
-class CameraAnimatorSystem : public ursine::ecs::FilterSystem
+class EntityAnimatorSystem : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
 
 public:
 
-    CameraAnimatorSystem(ursine::ecs::World *world);
+    EntityAnimatorSystem(ursine::ecs::World *world);
 
 private:
 
+    void Initialize(void) override;
+
     void Process(ursine::ecs::Entity *entity) override;
 
-    void smoothUpdate(CameraAnimator *animator);
+    void smoothUpdate(EntityAnimator *animator);
 
-    void linearUpdate(CameraAnimator *aniamtor);
-
+    void linearUpdate(EntityAnimator *animator);
 } Meta(Enable, AutoAddEntitySystem);

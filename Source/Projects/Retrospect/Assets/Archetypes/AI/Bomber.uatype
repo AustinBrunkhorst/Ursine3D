@@ -3,22 +3,25 @@
 {
 "children": [], 
 "components": {
-"SpriteText": {
-".uid": 322, 
-"alignment": 1, 
-"pixelsPerUnit": 64, 
-"size": 20, 
-"text": "Bomber", 
-"textColor": {
+"Model3D": {
+".uid": 22, 
+"castsShadows": false, 
+"color": {
 "a": 1, 
-"b": 0, 
-"g": 0, 
-"r": 0.875
+"b": 0.0317230224609375, 
+"g": 0.90234375, 
+"r": 0.26298165321350098
 }, 
-"useFiltering": true
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Bomber", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
 }, 
 "Transform": {
-".uid": 321, 
+".uid": 21, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -26,54 +29,91 @@
 "z": 0
 }, 
 "scale": {
-"x": 1.1638805866241455, 
-"y": 0.22485992312431335, 
-"z": 1
+"x": 0.10000000149011612, 
+"y": 0.10000000149011612, 
+"z": 0.10000000149011612
 }, 
 "translation": {
 "x": 0, 
-"y": 0.42172014713287354, 
-"z": -0.13513374328613281
+"y": -3, 
+"z": 0
 }
 }
 }, 
-"name": "Empty Entity"
+"name": "BoomlingModel"
 }
 ], 
 "components": {
-"Model3D": {
-".uid": 320, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
+"AIHordeReasoner": {
+".uid": 15, 
+"TypeOfEnemy": 2
 }, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
+"AIMovementController": {
+".uid": 16, 
+"Speed": 0.40000000596046448, 
+"enabled": false
+}, 
+"EnemyDeathComp": {
+".uid": 26
+}, 
+"Explosion": {
+".uid": 17, 
+"Damage": 25, 
+"DamageFalloffPercent": 0.5, 
+"DamagesEnemies": true, 
+"DamagesPlayers": true, 
+"ExplosionEffectArchetype": "FX_ExplosionBall.uatype", 
+"Radius": 30
+}, 
+"Health": {
+".uid": 18, 
+"ArchetypeToSpawnOnDeath": ".uatype", 
+"EntityHealth": 15, 
+"SpawnOnDeath": false
+}, 
+"Rigidbody": {
+".uid": 19, 
+"bodyFlag": 0, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": true, 
+"freezeXRotation": true, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 1, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": false
+}, 
+"SphereCollider": {
+".uid": 20, 
+"radius": 2
 }, 
 "Transform": {
-".uid": 319, 
+".uid": 14, 
 "rotation": {
-"w": -0.59067237377166748, 
+"w": 1, 
 "x": 0, 
-"y": -0.80691295862197876, 
+"y": 0, 
 "z": 0
 }, 
 "scale": {
-"x": 0.85919463634490967, 
-"y": 4.4472131729125977, 
-"z": 1
+"x": 5.7246685028076172, 
+"y": 5.7246685028076172, 
+"z": 5.7246685028076172
 }, 
 "translation": {
 "x": 0, 
-"y": 2.4631333351135254, 
-"z": 11.300626754760742
+"y": 0, 
+"z": 0
 }
 }
 }, 
