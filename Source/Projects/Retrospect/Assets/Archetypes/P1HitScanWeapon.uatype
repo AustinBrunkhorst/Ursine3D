@@ -4,10 +4,10 @@
 "children": [], 
 "components": {
 "FirePos": {
-".uid": 312
+".uid": 533
 }, 
 "Transform": {
-".uid": 311, 
+".uid": 532, 
 "rotation": {
 "w": 1, 
 "x": -2.9683229513466358e-05, 
@@ -31,13 +31,11 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 314, 
-"StateMachineName": "", 
+".uid": 535, 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Gun_Idle", 
 "currentState": "", 
-"futureState": "", 
 "loopAnimation": true, 
 "playAnimation": true, 
 "renderDebug": false, 
@@ -46,7 +44,7 @@
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 315, 
+".uid": 536, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -63,7 +61,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 313, 
+".uid": 534, 
 "rotation": {
 "w": -0.58084952831268311, 
 "x": -0.45220023393630981, 
@@ -87,45 +85,44 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 309, 
+".uid": 530, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "HitscanWeapon": {
-".uid": 310, 
+".uid": 531, 
 "Accuracy": 0.5, 
 "AlwaysDraw": true, 
-"ClipSize": 30, 
+"ClipSize": 500, 
 "CritModifier": 1, 
 "Damage": 1, 
 "DamageInterval": 1, 
 "DebugDraw": true, 
 "DelBulletOnCollision": true, 
 "DrawDuration": 0.20000000298023224, 
-"FireCount": 5, 
+"FireCount": 1, 
 "FireParticle": "FX/FX_WeaponShoot_1.uatype", 
-"FireRate": 0.30000001192092896, 
+"FireRate": 0.10000000149011612, 
 "MaxAmmoCount": 2147483647, 
 "MaxRange": 1000, 
 "ProjectileSpeed": 10, 
 "RaycastType": 0, 
 "RecoilAngle": 10, 
 "ReloadTime": 3, 
-"SemiAutomatic": true, 
+"SemiAutomatic": false, 
 "ShotParticle": "FX/FX_bullet.uatype", 
 "SpawnOffset": {
 "x": 3, 
 "y": -2.2000000476837158, 
 "z": -2
 }, 
-"SpawnSegments": 0, 
 "SpreadFactor": 100, 
 "TrailParticle": "FX/FX_Trail.uatype", 
 "WeaponTier": 2
 }, 
 "Transform": {
-".uid": 308, 
+".uid": 529, 
 "rotation": {
 "w": 1, 
 "x": 0, 

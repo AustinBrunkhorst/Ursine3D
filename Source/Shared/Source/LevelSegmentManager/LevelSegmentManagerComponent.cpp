@@ -20,6 +20,7 @@
 #include "LockPlayerCharacterControllerState.h"
 #include "ChangeSegmentState.h"
 #include "CombatBowl1IntroCinematicState.h"
+#include "BossRoomTopAnimationState.h"
 
 #include "TutorialResourcesComponent.h"
 #include "CombatBowl1ResourcesComponent.h"
@@ -277,17 +278,27 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
     tweenViewports->AddTransition( changeState, "Go To Change Segment To BossRoom_Introduction" );
 
+    // Start the top animation
+    auto topAnimating = cinematicStateM->AddState<BossRoomTopAnimationState>( );
+
+    changeState->AddTransition( topAnimating, "Go To Top Animationg" );
+
     // Wait for animation to finish, and then tween the viewports again
     auto tweenBackViewports = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SqueezeOut, true );
 
-    auto timedTransition = changeState->AddTransition( tweenBackViewports, "Go To Tween In Viewports" );
+    auto timedTransition = topAnimating->AddTransition( tweenBackViewports, "Go To Tween In Viewports" );
 
     timedTransition->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 15.0f ) );
+
+    // Unlcok the players
+    auto unlockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+
+    tweenBackViewports->AddTransition( unlockPlayers, "Go To Unlock Players" );
 
     // Switch to boss phase 1
     auto changeToFinishState = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Phase1 );
 
-    tweenBackViewports->AddTransition( changeToFinishState, "Go To Finish State Phase1" );
+    unlockPlayers->AddTransition( changeToFinishState, "Go To Finish State Phase1" );
 
     cinematicStateM->SetInitialState( lockPlayers );
 

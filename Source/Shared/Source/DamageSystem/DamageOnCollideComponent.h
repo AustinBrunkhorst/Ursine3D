@@ -13,6 +13,9 @@
 
 #include <Component.h>
 #include <BoxColliderComponent.h>
+#include <CollisionEventArgs.h>
+
+#include "DamageEvent.h"
 
 namespace ursine
 {
@@ -30,46 +33,6 @@ class DamageOnCollide : public ursine::ecs::Component
     NATIVE_COMPONENT;
 public:
 
-    DamageOnCollide( void );
-    ~DamageOnCollide( void );
-
-    void OnInitialize( void ) override;
-
-    float GetDamageToApply( void ) const;
-    void SetDamageToApply( const float damage );
-
-    float GetCritModifier( void ) const;
-    void SetCritModifier( const float modifier );
-
-    float GetDamageInterval( void ) const;
-    void SetDamageInterval( const float damageInterval );
-
-    const std::string& GetArchetypeOnDeath(void) const;
-    void SetArchetypeOnDeath(const std::string& objToSpawn);
-
-    const std::string& GetArchetypeOnHit(void) const;
-    void SetArchetypeOnHit(const std::string& objToSpawn);
-
-    bool GetDeleteOnCollision( void ) const;
-    void SetDeleteOnCollision( const bool state );
-
-    bool GetSpawnOnDeath(void) const;
-    void SetSpawnOnDeath(const bool state);
-
-    bool GetSpawnOnHit(void) const;
-    void SetSpawnOnHit(const bool state);
-
-    void OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
-
-    void ApplyCritDamage(CritSpot* critComp);
-    void ApplyDamage(Health* healthComp);
-
-    // add an entity to the damage intervals so it can not be damaged by this object during 
-    //   damage interval
-    void AddEntityToIntervals(ursine::ecs::EntityUniqueID uniqueID);
-
-    void DecrementDamageIntervalTimes( const float dt );
-
     ////////////////////////////////////////////////////////////////////
     // Expose data to editor
     ////////////////////////////////////////////////////////////////////
@@ -77,49 +40,80 @@ public:
         float DamageToApply,
         GetDamageToApply,
         SetDamageToApply
-        );
+    );
 
     EditorField(
         float CritModifier,
         GetCritModifier,
         SetCritModifier
-        );
+    );
 
     EditorField(
         std::string ArchetypeOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
-        );
+    );
 
     EditorField(
         std::string ArchetypeOnHit,
         GetArchetypeOnHit,
         SetArchetypeOnHit
-        );
+    );
 
     EditorField(
         float DamageInterval,
         GetDamageInterval,
         SetDamageInterval
-        );
+    );
 
     EditorField(
         bool DeleteOnCollision,
         GetDeleteOnCollision,
         SetDeleteOnCollision
-        );
+    );
 
     EditorField(
         bool SpawnOnDeath,
         GetSpawnOnDeath,
         SetSpawnOnDeath
-        );
+    );
 
     EditorField(
         bool SpawnOnHit,
         GetSpawnOnHit,
         SetSpawnOnHit
-        );
+    );
+
+    DamageOnCollide(void);
+    ~DamageOnCollide(void);
+
+    void OnInitialize(void) override;
+
+    float GetDamageToApply(void) const;
+    void SetDamageToApply(float damage);
+
+    float GetCritModifier(void) const;
+    void SetCritModifier(float modifier);
+
+    float GetDamageInterval(void) const;
+    void SetDamageInterval(float damageInterval);
+
+    const std::string& GetArchetypeOnDeath(void) const;
+    void SetArchetypeOnDeath(const std::string& objToSpawn);
+
+    const std::string& GetArchetypeOnHit(void) const;
+    void SetArchetypeOnHit(const std::string& objToSpawn);
+
+    bool GetDeleteOnCollision(void) const;
+    void SetDeleteOnCollision(bool state);
+
+    bool GetSpawnOnDeath(void) const;
+    void SetSpawnOnDeath(bool state);
+
+    bool GetSpawnOnHit(void) const;
+    void SetSpawnOnHit(bool state);
+
+    void DecrementDamageIntervalTimes(float dt);
 
 private:
 
@@ -151,17 +145,25 @@ private:
     bool m_spawnOnHit;
     bool m_spawnOnDeath;
 
-    void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
-    void GetSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
-
-    // spawn particle at collision point and parent to player
-    void SpawnCollisionParticle(ursine::ecs::Entity* other);
-
-
-    Meta(Disable)
-    bool DeleteOnCollision(void);
-
     // map of all objects hit
     std::unordered_map<ursine::ecs::EntityUniqueID, float> m_damageTimeMap;
+
+    void onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
+    void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
+
+    void getSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
+
+    // spawn particle at collision point and parent to player
+    void spawnCollisionParticle(ursine::ecs::Entity* other);
+
+    Meta(Disable)
+    bool deleteOnCollision(void);
+
+    typedef const std::vector<ursine::physics::Contact> & ContactsArg;
+
+    void applyCritDamage(CritSpot* critComp, ContactsArg contacts);
+    void applyDamage(Health* healthComp, ContactsArg contacts);
+
+    void sendDamageEvent(DamageEventArgs args);
 
 } Meta (Enable, DisplayName( "DamageOnCollide" ), RequiresComponents(typeof(ursine::ecs::BoxCollider)));

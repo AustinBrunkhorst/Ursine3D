@@ -75,13 +75,13 @@ void CombatBowl1IntroCinematicState::Enter(SegmentLogicStateMachine *machine)
     }
 }
 
-void CombatBowl1IntroCinematicState::onCameraAnimFinish(EVENT_HANDLER(CameraAnimator))
+void CombatBowl1IntroCinematicState::onCameraAnimFinish(EVENT_HANDLER(EntityAnimator))
 {
     EVENT_ATTRS(EntityAnimator, EventArgs);
 
     m_complete = true;
 
     // Unsuscribe TODO: Talk to austin about why this breaks
-    /*sender->Listener( this )
-        .Off( EntityAnimatorEvent::FinishedAnimating, &CombatBowl1IntroCinematicState::onCameraAnimFinish );*/
+    sender->Listener( this )
+        .Off( EntityAnimatorEvent::FinishedAnimating, &CombatBowl1IntroCinematicState::onCameraAnimFinish );
 }

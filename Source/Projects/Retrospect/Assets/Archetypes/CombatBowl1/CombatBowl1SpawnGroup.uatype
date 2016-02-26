@@ -24,7 +24,7 @@
 "singleSpawnCooldown": 1, 
 "spawnAngleVariance": 180, 
 "spawnDistanceVariance": 5, 
-"spawnDuration": 25, 
+"spawnDuration": 999999995904, 
 "spawnerBreakTime": 1, 
 "totalEnemies": 10, 
 "triggerNextPattern": true

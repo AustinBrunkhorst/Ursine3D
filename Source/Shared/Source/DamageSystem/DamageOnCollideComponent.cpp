@@ -21,12 +21,6 @@
 
 NATIVE_COMPONENT_DEFINITION( DamageOnCollide );
 
-namespace
-{
-
-}
-
-
 DamageOnCollide::DamageOnCollide( void )
     : BaseComponent( )
     , m_damageToApply( 1.0f )
@@ -40,88 +34,88 @@ DamageOnCollide::DamageOnCollide( void )
 {
 }
 
-DamageOnCollide::~DamageOnCollide( void )
+DamageOnCollide::~DamageOnCollide(void)
 {
     GetOwner( )->Listener(this)
-        .Off( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::OnDeath )
-        .Off( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::OnCollide );
+        .Off( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::onDeath )
+        .Off( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
 
     m_damageTimeMap.clear( );
 }
 
-void DamageOnCollide::OnInitialize( void )
+void DamageOnCollide::OnInitialize(void)
 {
     GetOwner( )->Listener( this )
-        .On( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::OnDeath )
-        .On( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::OnCollide );
+        .On( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::onDeath )
+        .On( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
 }
 
-float DamageOnCollide::GetDamageToApply( void ) const
+float DamageOnCollide::GetDamageToApply(void) const
 {
-    if ( m_deleted )
+    if (m_deleted)
         return 0.0f;
 
     return m_damageToApply;
 }
 
-void DamageOnCollide::SetDamageToApply( const float damage )
+void DamageOnCollide::SetDamageToApply(float damage)
 {
     m_damageToApply = damage;
 }
 
-float DamageOnCollide::GetCritModifier( void ) const
+float DamageOnCollide::GetCritModifier(void) const
 {
     return m_critModifier;
 }
 
-void DamageOnCollide::SetCritModifier( const float modifier )
+void DamageOnCollide::SetCritModifier(float modifier)
 {
     m_critModifier = modifier;
 }
 
-float DamageOnCollide::GetDamageInterval( void ) const
+float DamageOnCollide::GetDamageInterval(void) const
 {
     return m_damageInterval;
 }
 
-void DamageOnCollide::SetDamageInterval( const float damageInterval )
+void DamageOnCollide::SetDamageInterval(float damageInterval)
 {
     m_damageInterval = damageInterval;
 }
 
-const std::string& DamageOnCollide::GetArchetypeOnDeath(void) const
+const std::string &DamageOnCollide::GetArchetypeOnDeath(void) const
 {
     return m_objToSpawn;
 }
 
-void DamageOnCollide::SetArchetypeOnDeath(const std::string& objToSpawn)
+void DamageOnCollide::SetArchetypeOnDeath(const std::string &objToSpawn)
 {
     m_objToSpawn = objToSpawn;
 
-    if ( m_objToSpawn.find(".uatype") == std::string::npos )
+    if (m_objToSpawn.find(".uatype") == std::string::npos)
         m_objToSpawn += ".uatype";
 }
 
-const std::string& DamageOnCollide::GetArchetypeOnHit(void) const
+const std::string &DamageOnCollide::GetArchetypeOnHit(void) const
 {
     return m_objToSpawnOnHit;
 }
 
-void DamageOnCollide::SetArchetypeOnHit(const std::string& objToSpawn)
+void DamageOnCollide::SetArchetypeOnHit(const std::string &objToSpawn)
 {
     m_objToSpawnOnHit = objToSpawn;
 
-    if ( m_objToSpawnOnHit.find(".uatype") == std::string::npos )
+    if (m_objToSpawnOnHit.find(".uatype") == std::string::npos)
         m_objToSpawnOnHit += ".uatype";
 }
 
 
-bool DamageOnCollide::GetDeleteOnCollision( void ) const
+bool DamageOnCollide::GetDeleteOnCollision(void) const
 {
     return m_deleteOnCollision;
 }
 
-void DamageOnCollide::SetDeleteOnCollision( const bool state )
+void DamageOnCollide::SetDeleteOnCollision(bool state)
 {
     m_deleteOnCollision = state;
 }
@@ -131,7 +125,7 @@ bool DamageOnCollide::GetSpawnOnDeath(void) const
 {
     return m_spawnOnDeath;
 }
-void DamageOnCollide::SetSpawnOnDeath(const bool state)
+void DamageOnCollide::SetSpawnOnDeath(bool state)
 {
     m_spawnOnDeath = state;
 }
@@ -140,41 +134,45 @@ bool DamageOnCollide::GetSpawnOnHit(void) const
 {
     return m_spawnOnHit;
 }
-void DamageOnCollide::SetSpawnOnHit(const bool state)
+void DamageOnCollide::SetSpawnOnHit(bool state)
 {
     m_spawnOnHit = state;
 }
 
-void DamageOnCollide::OnCollide( EVENT_HANDLER( ursine::ecs::ENTITY_COLLISION_PERSISTED ) )
+void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
 {
     EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
 
-    if ( args->otherEntity->HasComponent< CritSpot >( ) )
+    if (args->otherEntity->HasComponent< CritSpot >( ))
     {
-        ApplyCritDamage( args->otherEntity->GetComponent< CritSpot >( ) );
+        applyCritDamage( args->otherEntity->GetComponent< CritSpot >( ), args->contacts );
     }
 
     // make sure that health comp was found and that we have not damaged obj recently
-    else if ( args->otherEntity->HasComponent< Health >( ) )
+    else if (args->otherEntity->HasComponent< Health >( ))
     {
-        ApplyDamage( args->otherEntity->GetComponent< Health >( ) );
+        applyDamage( args->otherEntity->GetComponent< Health >( ), args->contacts );
     }
 
 }
 
-
-void DamageOnCollide::ApplyCritDamage(CritSpot* critComp)
+void DamageOnCollide::applyCritDamage(CritSpot *critComp, ContactsArg contacts)
 {
-    if ( m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetUniqueID( ) ] != NULL )
+    if (m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetUniqueID( ) ] != NULL)
         return;
 
-    critComp->ApplyDamage( m_damageToApply * m_critModifier );
+    float damage = m_damageToApply * m_critModifier;
+    auto root = critComp->GetOwner( )->GetRoot( );
 
-    SpawnCollisionParticle( critComp->GetOwner( ) );
+    critComp->ApplyDamage( damage );
+
+    spawnCollisionParticle( critComp->GetOwner( ) );
+
+    sendDamageEvent( { damage, true, root, contacts[ 0 ].point } );
     
     // add other object to damage interval map 
     //   if not deleting due to collision
-    if ( !DeleteOnCollision( ) )
+    if (!deleteOnCollision( ))
     {
         m_damageTimeMap[ critComp->GetOwner( )->GetUniqueID( ) ] = m_damageInterval;
         m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetUniqueID( ) ] = m_damageInterval;
@@ -182,54 +180,46 @@ void DamageOnCollide::ApplyCritDamage(CritSpot* critComp)
 }
 
 
-void DamageOnCollide::ApplyDamage(Health* healthComp)
+void DamageOnCollide::applyDamage(Health *healthComp, ContactsArg contacts)
 {
-    if ( m_damageTimeMap[ healthComp->GetOwner( )->GetUniqueID( ) ] != NULL )
+    if (m_damageTimeMap[ healthComp->GetOwner( )->GetUniqueID( ) ] != NULL)
         return;
 
     // apply damage to object
     healthComp->DealDamage( m_damageToApply );
 
-    SpawnCollisionParticle( healthComp->GetOwner( ) );
+    spawnCollisionParticle( healthComp->GetOwner( ) );
+
+    sendDamageEvent( { m_damageToApply, false, healthComp->GetOwner( ), contacts[ 0 ].point } );
 
     // add other object to damage interval map 
     //   if not deleting due to collision
-    if ( !DeleteOnCollision( ) )
+    if (!deleteOnCollision( ))
     {
         m_damageTimeMap[ healthComp->GetOwner( )->GetUniqueID( ) ] = m_damageInterval;
     }
 }
 
-
-void DamageOnCollide::AddEntityToIntervals(ursine::ecs::EntityUniqueID uniqueID)
-{
-    if ( !DeleteOnCollision( ) )
-    {
-        m_damageTimeMap[ uniqueID ] = m_damageInterval;
-    }
-}
-
-
-void DamageOnCollide::DecrementDamageIntervalTimes( const float dt )
+void DamageOnCollide::DecrementDamageIntervalTimes(float dt)
 {
     // Container for removing times that have lasted full interval
     std::stack< int > idToRemove;
 
     // Decrement time intervals
-    for ( auto timeInterval : m_damageTimeMap )
+    for (auto timeInterval : m_damageTimeMap)
     {
         timeInterval.second -= dt;
         
         // move any times that have lasted full interval into
         //   container to be removed so damage may be applied again
-        if ( timeInterval.second <= 0 )
+        if (timeInterval.second <= 0)
         {
             idToRemove.push( timeInterval.first );
         }
     }
 
     // remove any intervals that have been on for full interval
-    while ( !idToRemove.empty( ) )
+    while (!idToRemove.empty( ))
     {
         auto id = idToRemove.top( );
 
@@ -241,10 +231,10 @@ void DamageOnCollide::DecrementDamageIntervalTimes( const float dt )
 }
 
 
-bool DamageOnCollide::DeleteOnCollision(void)
+bool DamageOnCollide::deleteOnCollision(void)
 {
     // delete this projectile if delete on collision flag is set
-    if ( m_deleteOnCollision )
+    if (m_deleteOnCollision)
     {
         GetOwner( )->Delete( );
         m_deleted = true;
@@ -254,9 +244,9 @@ bool DamageOnCollide::DeleteOnCollision(void)
 }
 
 
-void DamageOnCollide::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
+void DamageOnCollide::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if ( m_spawnOnDeath )
+    if (m_spawnOnDeath)
     {
         ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
 
@@ -265,16 +255,16 @@ void DamageOnCollide::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 }
 
 
-void DamageOnCollide::GetSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
+void DamageOnCollide::getSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
 {
     ursine::ecs::Entity* entity;
     size_t size = rayout.entity.size( );
 
-    for ( size_t i = 0; i <size; ++i )
+    for (size_t i = 0; i <size; ++i)
     {
         entity = GetOwner( )->GetWorld( )->GetEntityUnique( rayout.entity[ i ] );
 
-        if ( entity == other )
+        if (entity == other)
         {
             posToSet = rayout.hit[ i ];
             break;
@@ -283,9 +273,9 @@ void DamageOnCollide::GetSpawnLocation(ursine::ecs::Entity* other, ursine::physi
 }
 
 
-void DamageOnCollide::SpawnCollisionParticle(ursine::ecs::Entity* other)
+void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other)
 {
-    if ( m_spawnOnHit )
+    if (m_spawnOnHit)
     {
         ursine::physics::RaycastInput rayin;   // input for raycast check
         ursine::physics::RaycastOutput rayout; // output from raycast check
@@ -295,12 +285,12 @@ void DamageOnCollide::SpawnCollisionParticle(ursine::ecs::Entity* other)
 
         ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
 
-        ursine::SVec3 velocity = GetOwner( )->GetComponent< ursine::ecs::Rigidbody >( )->GetVelocity( ); // need for path of bullet
+        ursine::SVec3 velocity = GetOwner( )->GetComponent<ursine::ecs::Rigidbody>( )->GetVelocity( ); // need for path of bullet
 
 
         // is the owner of this component within the oject it is colliding with
         //   - if inside then we want to spawn particle behind the objects current position
-        if ( velocity.Dot( other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( ) ) <= 0 )
+        if (velocity.Dot( other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( ) ) <= 0)
             velocity = -velocity;
 
         // raycast info
@@ -310,7 +300,7 @@ void DamageOnCollide::SpawnCollisionParticle(ursine::ecs::Entity* other)
         // get ray to edge of other object
         GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::PhysicsSystem>( )->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
 
-        GetSpawnLocation(other->GetRoot( ), rayout, pos);
+        getSpawnLocation(other->GetRoot( ), rayout, pos);
 
         // create particle
         ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
@@ -319,5 +309,10 @@ void DamageOnCollide::SpawnCollisionParticle(ursine::ecs::Entity* other)
         // parent so that it follows objects and dies with object
         other->GetTransform( )->AddChild( obj->GetTransform( ) );
     }
+}
+
+void DamageOnCollide::sendDamageEvent(DamageEventArgs args)
+{
+    GetOwner( )->GetWorld( )->Dispatch( WORLD_DAMAGE_EVENT, &args );
 }
 

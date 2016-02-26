@@ -84,7 +84,7 @@ void EntityAnimatorSystem::smoothUpdate(EntityAnimator* animator)
             animator->updateAnimation( max - 1 );
             animator->finish( );
             animator->m_time = 0.0f;
-            animator->m_index = static_cast<int>( max );
+            animator->m_index = static_cast<int>( max - 1 );
             return;
         }
         else if (animator->m_index >= max && animator->m_loop)
@@ -150,7 +150,7 @@ void EntityAnimatorSystem::linearUpdate(EntityAnimator* animator)
             animator->updateAnimation( max - 1 );
             animator->finish( );
             animator->m_time = 0.0f;
-            animator->m_index = static_cast<int>( max );
+            animator->m_index = static_cast<int>( max - 1 );
             return;
         }
         else if (animator->m_index >= max && animator->m_loop)

@@ -20,6 +20,7 @@
 #include <Color.h>
 #include <DebugSystem.h>
 #include <SystemManager.h>
+#include <Notification.h>
 
 NATIVE_COMPONENT_DEFINITION( EntityAnimator );
 
@@ -28,6 +29,7 @@ using namespace ecs;
 
 EntityAnimator::EntityAnimator(void)
     : BaseComponent( )
+    , EventDispatcher( this )
     , m_playing( false )
     , m_pause( false )
     , m_smoothPath( false )
@@ -65,6 +67,21 @@ void EntityAnimator::Play(void)
     }
 
     m_pause = false;
+}
+
+void EntityAnimator::Play(const std::string &clipName)
+{
+    auto clips = GetOwner( )->GetComponentsInChildren<EntityAnimatorClip>( );
+
+    for (auto clip : clips)
+    {
+        if (clip->clipName == clipName)
+        {
+            keyFrames = clip->keyFrames;
+            Play( );
+            return;
+        }
+    }
 }
 
 void EntityAnimator::Pause(void)
@@ -127,6 +144,16 @@ bool EntityAnimator::GetPlayOnAwake(void) const
 void EntityAnimator::SetPlayOnAwake(bool flag)
 {
     m_playOnAwake = flag;
+}
+
+const std::string &EntityAnimator::GetAnimationClipName(void) const
+{
+    return m_clipName;
+}
+
+void EntityAnimator::SetAnimationClipName(const std::string &clipName)
+{
+    m_clipName = clipName;
 }
 
 void EntityAnimator::updateAnimation(int index)
@@ -226,7 +253,7 @@ void EntityAnimator::updateAnimation(int index1, int index2, int index3, int ind
     if (r2 != r3)
     {
         trans->SetLocalRotation( 
-            getRotation( index2 ).Slerp( getRotation( index3 ), t ) 
+            r2.Slerp( r3, t ) 
         );
     }
 }
@@ -455,6 +482,121 @@ void EntityAnimator::finish(void)
 }
 
 #if defined(URSINE_WITH_EDITOR)
+
+void EntityAnimator::saveAnimationClip(void)
+{
+    // check to see if there's a name
+    if (m_clipName.size( ) == 0)
+    {
+        NotificationConfig config;
+
+        config.type = NOTIFY_INFO;
+        config.header = "Notice";
+        config.message = "Please add a clip name in the field.";
+        config.dismissible = true;
+        config.duration = TimeSpan::FromSeconds( 5.0f );
+
+        EditorPostNotification( config );
+        return;
+    }
+
+    if (keyFrames.Size( ) == 0)
+    {
+        NotificationConfig config;
+
+        config.type = NOTIFY_INFO;
+        config.header = "Notice";
+        config.message = "Please add some key frames.";
+        config.dismissible = true;
+        config.duration = TimeSpan::FromSeconds(5.0f);
+
+        EditorPostNotification(config);
+        return;
+    }
+
+    // check to see if there's a child with the name
+    auto clips = GetOwner( )->GetComponentsInChildren<EntityAnimatorClip>( );
+
+    for (auto clip : clips)
+    {
+        // if so, ask if the user wants to overwrite it
+        if (clip->clipName == m_clipName)
+        {
+            NotificationConfig config;
+
+            config.type = NOTIFY_WARNING;
+            config.header = "Warning";
+            config.message = "This action will overwrite the existing animation clip. Continue?";
+            config.dismissible = false;
+            config.duration = 0;
+
+            NotificationButton yes, no;
+
+            yes.text = "Yes";
+            yes.onClick = [=] (Notification &notification) {
+                notification.Close( );
+
+                clip->keyFrames = keyFrames;
+            };
+
+            no.text = "No";
+            no.onClick = [=] (Notification &notification) {
+                notification.Close( );
+            };
+
+            config.buttons = { yes, no };
+
+            EditorPostNotification( config );
+
+            return;
+        }
+    }
+
+    // create dat shit
+    auto owner = GetOwner( );
+    auto entity = owner->GetWorld( )->CreateEntity( "Animation Clip: " + m_clipName );
+    auto clip = entity->AddComponent<EntityAnimatorClip>( );
+
+    clip->clipName = m_clipName;
+    clip->keyFrames = keyFrames;
+
+    owner->GetTransform( )->AddChildAlreadyInLocal( entity->GetTransform( ) );
+}
+
+void EntityAnimator::loadAnimationClip(void)
+{
+    // If there isn't a child with the name, notify the user
+    auto clips = GetOwner( )->GetComponentsInChildren<EntityAnimatorClip>( );
+
+    for (auto clip : clips)
+    {
+        if (clip->clipName == m_clipName)
+        {
+            keyFrames = clip->keyFrames;
+
+            NotificationConfig config;
+
+            config.type = NOTIFY_INFO;
+            config.header = "Notice";
+            config.message = "Animation clip loaded.";
+            config.dismissible = true;
+            config.duration = TimeSpan::FromSeconds(5.0f);
+
+            EditorPostNotification(config);
+            return;
+        }
+    }
+
+    NotificationConfig config;
+
+    config.type = NOTIFY_WARNING;
+    config.header = "Warning";
+    config.message = "An animation clip by the given name does not exist.";
+    config.dismissible = true;
+    config.duration = TimeSpan::FromSeconds(5.0f);
+
+    EditorPostNotification(config);
+}
 
 void EntityAnimator::KeyValues(void)
 {

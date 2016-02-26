@@ -35,9 +35,9 @@
 "z": 1
 }, 
 "translation": {
-"x": -372.00479125976563, 
-"y": 205.3463134765625, 
-"z": 308.995361328125
+"x": -408.29058837890625, 
+"y": 221.92744445800781, 
+"z": 339.1351318359375
 }
 }
 }, 
@@ -46,19 +46,20 @@
 "children": [], 
 "components": {
 "BossRoomResources": {
-".uid": 15, 
+".uid": 11, 
 "archetypesToLoad": [
 "BossRoom/BossRoomOpenCamera"
-]
+], 
+"bossTopEntityName": "BossRotatingTop"
 }, 
 "CombatBowl1Resources": {
-".uid": 11, 
+".uid": 12, 
 "archetypesToLoad": [
 "CombatBowl1/CombatBowl1Collision", "CombatBowl1/CombatBowl1HallwayFX", "CombatBowl1/CombatBowl1Level", "CombatBowl1/CombatBowl1Lights", "CombatBowl1/CombatBowlBossFX", "CombatBowl1/CombatBowl1SpawnGroup", "CombatBowl1/BossDoor", "CombatBowl1/CombatBowl1ElevatorLift"
 ]
 }, 
 "LevelSegmentManager": {
-".uid": 12, 
+".uid": 13, 
 "currentSegment": 11, 
 "enableDebugOutput": false
 }, 
@@ -82,7 +83,7 @@
 }
 }, 
 "TutorialResources": {
-".uid": 13, 
+".uid": 14, 
 "archetypesToLoad": [
 "Tutorial/TutorialRoom", "Tutorial/TutorialPlayer1Spawn", "Tutorial/TutorialPlayer2Spawn", "Tutorial/FX_SimulationStart"
 ]
