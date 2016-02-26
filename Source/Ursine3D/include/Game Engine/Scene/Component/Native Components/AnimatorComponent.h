@@ -243,7 +243,7 @@ namespace ursine
             WhiteListMethods, 
             DisplayName( "Animator" )
         ) EditorMeta(
-              RequiresComponents( typeof( ursine::ecs::Model3D ) )
+            RequiresComponents( typeof( ursine::ecs::Model3D ) )
         );
 	}
 }

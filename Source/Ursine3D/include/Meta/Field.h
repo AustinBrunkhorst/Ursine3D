@@ -47,6 +47,8 @@ namespace ursine
             const std::string &GetName(void) const;
 
             Variant GetValue(const Variant &instance) const;
+            Variant GetValueReference(const Variant &instance) const;
+
             bool SetValue(Variant &instance, const Variant &value) const;
             
         private:

@@ -38,8 +38,8 @@ namespace ursine
     namespace meta
     {
         template<typename T>
-        VariantContainer<T>::VariantContainer(const T &value)
-            : m_value( value )
+        VariantContainer<T>::VariantContainer(const NonRefType &value)
+            : m_value( const_cast<NonRefType&>( value ) )
         {
         
         }
@@ -47,8 +47,8 @@ namespace ursine
         ///////////////////////////////////////////////////////////////////////
 
         template<typename T>
-        VariantContainer<T>::VariantContainer(const T &&value)
-            : m_value( std::move( value ) )
+        VariantContainer<T>::VariantContainer(const NonRefType &&value)
+            : m_value( std::move( const_cast<NonRefType&&>( value ) ) )
         {
         
         }
@@ -121,6 +121,18 @@ namespace ursine
             return new VariantContainer<T>( m_value );
         }
 
+        template<typename T>
+        void VariantContainer<T>::OnSerialize(Json::object &output) const
+        {
+            onSerialize( output );
+        }
+
+        template<typename T>
+        void VariantContainer<T>::OnDeserialize(const Json &input)
+        { 
+            onDeserialize( input );
+        }
+
         ///////////////////////////////////////////////////////////////////////
 
         DEFAULT_TYPE_HANDLER_IMPL( int );
@@ -148,6 +160,54 @@ namespace ursine
         ) const
         {
             return std::to_string( m_value );
+        }
+
+        template<typename T>
+        template<typename U>
+        void VariantContainer<T>::onSerialize(
+            Json::object &output, 
+            typename std::enable_if<
+                !std::is_pointer<U>::value && std::is_base_of<Object, U>::value
+            >::type*
+        ) const
+        {
+            m_value.OnSerialize( output );
+        }
+        
+        template<typename T>
+        template<typename U>
+        void VariantContainer<T>::onSerialize(
+            Json::object &output,
+            typename std::enable_if<
+            std::is_pointer<U>::value || !std::is_base_of<Object, U>::value
+            >::type* = nullptr
+        ) const
+        {
+            // do nothing
+        }
+
+        template<typename T>
+        template<typename U>
+        void VariantContainer<T>::onDeserialize(
+            const Json &input,
+            typename std::enable_if<
+                !std::is_pointer<U>::value && std::is_base_of<Object, U>::value
+            >::type*
+        ) 
+        {
+            m_value.OnDeserialize( input );
+        }
+        
+        template<typename T>
+        template<typename U>
+        void VariantContainer<T>::onDeserialize(
+            const Json &input,
+            typename std::enable_if<
+                std::is_pointer<U>::value || !std::is_base_of<Object, U>::value
+            >::type* = nullptr
+        )
+        {
+            // do nothing
         }
     }
 }

@@ -14,6 +14,15 @@
 #pragma once
 
 #include <NativeJSFunction.h>
+#include <UIFileDialogCallback.h>
+
+void RunFileDialog(
+    CefBrowserHost::FileDialogMode mode, 
+    const std::string &title,
+    const ursine::fs::path &defaultPath,
+    const std::vector<CefString> &filters, 
+    ursine::UIFileDialogCallback::Callback callback
+);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(BrowseFile);

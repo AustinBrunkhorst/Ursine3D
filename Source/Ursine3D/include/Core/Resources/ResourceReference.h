@@ -30,6 +30,9 @@ namespace ursine
 
             const GUID &GetGUID(void) const;
 
+            void OnSerialize(Json::object &output) const override;
+            void OnDeserialize(const Json &input) override;
+
         private:
             friend class ResourceManager;
             friend class ecs::Component;
@@ -38,10 +41,11 @@ namespace ursine
             GUID m_resourceGUID;
 
             ResourceReference(ResourceManager *manager, const GUID &resourceGUID);
-
-            void OnSerialize(Json::object &output) const override;
-            void OnDeserialize(const Json &input) override;
-        } Meta(Enable, WhiteListMethods, DisplayName( "ResourceReference" ));
+        } Meta(
+            Enable, 
+            WhiteListMethods,
+            DisplayName( "ResourceReference" )
+        );
     }
 }
 

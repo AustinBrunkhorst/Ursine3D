@@ -11,13 +11,15 @@ namespace ursine
     {
         namespace pipeline
         {
+            class ResourcePipelineManager;
+
             class ResourceItem
             {
             public:
                 typedef std::shared_ptr<ResourceItem> Handle;
                 typedef std::vector<Handle> List;
 
-                ResourceItem(const GUID &guid);
+                ResourceItem(ResourcePipelineManager *manager, const GUID &guid);
                 ~ResourceItem(void);
 
                 Handle GetParent(void) const;
@@ -33,9 +35,12 @@ namespace ursine
                 const fs::path &GetPreviewFileName(void) const;
 
                 std::string GetDisplayName(void) const;
+                std::string GetRelativePathDisplayName(void) const;
 
             private:
                 friend class ResourcePipelineManager;
+
+                ResourcePipelineManager *m_manager;
 
                 Handle m_parent;
 

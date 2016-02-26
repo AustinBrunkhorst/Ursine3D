@@ -17,9 +17,11 @@ namespace ursine
             {
                 m_data = ecs::World::Handle( serializer.Deserialize( worldJson ) );
             }
-            catch (...)
+            catch (ecs::SerializationException &e)
             {
-                m_data = nullptr;
+                UError( "Unable to deserialize world.\nerror: %s", 
+                    e.GetError( ).c_str( ) 
+                );
             }
         }
 

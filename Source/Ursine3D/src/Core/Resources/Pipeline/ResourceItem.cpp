@@ -1,16 +1,13 @@
 #include "UrsinePrecompiled.h"
 
 #include "ResourceItem.h"
-
-namespace
-{
-    int gTest = 0;
-}
+#include "ResourcePipelineManager.h"
 
 namespace ursine 
 {
-    rp::ResourceItem::ResourceItem(const GUID &guid)
-        : m_parent( nullptr )
+    rp::ResourceItem::ResourceItem(ResourcePipelineManager *manager, const GUID &guid)
+        : m_manager( manager )
+        , m_parent( nullptr )
         , m_guid( guid ) { }
 
     rp::ResourceItem::~ResourceItem(void) { }
@@ -52,6 +49,16 @@ namespace ursine
 
     std::string rp::ResourceItem::GetDisplayName(void) const
     {
-        return change_extension( m_fileName.filename( ), "" ).string( );
+        return m_fileName.filename( ).stem( ).string( );
+    }
+
+    std::string rp::ResourceItem::GetRelativePathDisplayName(void) const
+    {
+        auto relative = fs::MakeRelativePath(
+            m_manager->GetConfig( ).resourceDirectory, 
+            m_fileName 
+        );
+
+        return change_extension( relative, "" ).string( );
     }
 }

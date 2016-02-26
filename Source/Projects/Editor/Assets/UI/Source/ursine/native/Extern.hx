@@ -21,12 +21,20 @@ class Extern {
         return untyped __js__( "ProjectGetResourceTree()" );
     }
 
+    public static function ProjectGetResourcesByType(type : String) {
+        return untyped __js__( "ProjectGetResourcesByType(type)" );
+    }
+
     public static function ProjectSetEmptyScene() {
         return untyped __js__( "ProjectSetEmptyScene()" );
     }
 
     public static function SceneSaveWorld() {
         return untyped __js__( "SceneSaveWorld()" );
+    }
+
+    public static function SceneSaveWorldAs() {
+        return untyped __js__( "SceneSaveWorldAs()" );
     }
 
     public static function SceneSetActiveWorld(guid : String) {

@@ -55,7 +55,7 @@ namespace ursine
                 // resource reference types
                 else if (fieldType == resourceRefType)
                 {
-                    auto &reference = field.GetValue( instance ).GetValue<resources::ResourceReference>( );
+                    auto &reference = field.GetValueReference( instance ).GetValue<resources::ResourceReference>( );
 
                     reference.m_manager = resourceManager;
                 }

@@ -774,8 +774,11 @@ ursine_editor_menus_FileMenu.doSaveWorld = function() {
 	ursine_native_Extern.SceneSaveWorld();
 };
 ursine_editor_menus_FileMenu.doSaveWorldAs = function() {
+	ursine_native_Extern.SceneSaveWorldAs();
 };
 ursine_editor_menus_FileMenu.doSaveProject = function() {
+	var notification = new NotificationControl(3,"Thanks for saving fella, but this doesn't do anything right now.","Save Project");
+	notification.show();
 };
 ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -1561,12 +1564,25 @@ ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.prototype =
 var ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector = function(owner,instance,field,type) {
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
+	var resourceType = Reflect.field(field.meta,ursine_native_Property.ResourceType);
+	if(resourceType == null) {
+		var error = new NotificationControl(2,"Field <strong class=\"highlight\">" + field.name + "</strong> missing meta property <strong class=\"highlight\">ResourceType<strong>","Error");
+		error.show();
+	} else this.m_resourceType = resourceType.typeName;
 	var _this = window.document;
 	this.m_displayText = _this.createElement("div");
-	this.m_displayText.classList.add("entity-system-selector");
+	this.m_displayText.classList.add("resource-reference");
 	this.m_displayText.addEventListener("click",function(e) {
-		var selector = new ItemSelectionPopupControl([]);
-		selector.addEventListener("item-selected",$bind(_g,_g.onEntitySystemSelected));
+		var resources = ursine_native_Extern.ProjectGetResourcesByType(_g.m_resourceType);
+		var items = [];
+		var _g2 = 0;
+		var _g1 = resources.length;
+		while(_g2 < _g1) {
+			var i = _g2++;
+			items.push(resources[i].relativePathDisplayName);
+		}
+		var selector = new ItemSelectionPopupControl(items);
+		selector.addEventListener("item-selected",$bind(_g,_g.onResourceSelected));
 		window.document.body.appendChild(selector);
 		selector.show(e.clientX,e.clientY);
 	});
@@ -1578,12 +1594,12 @@ ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__nam
 ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
 	updateValue: function(value) {
-		this.m_displayText.innerText = value;
-		this.m_displayText.classList.toggle("empty",value.length == 0);
+		console.log(value);
+		this.m_displayText.classList.toggle("invalid",value.resolved == false);
 		this.m_instance = value;
 	}
-	,onEntitySystemSelected: function(e) {
-		this.notifyChanged(this.m_field,e.detail.item);
+	,onResourceSelected: function(e) {
+		console.log(e.detail.item);
 	}
 	,__class__: ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector
 });
@@ -2393,11 +2409,17 @@ ursine_native_Extern.GetNativeComponentDatabase = function() {
 ursine_native_Extern.ProjectGetResourceTree = function() {
 	return ProjectGetResourceTree();
 };
+ursine_native_Extern.ProjectGetResourcesByType = function(type) {
+	return ProjectGetResourcesByType(type);
+};
 ursine_native_Extern.ProjectSetEmptyScene = function() {
 	return ProjectSetEmptyScene();
 };
 ursine_native_Extern.SceneSaveWorld = function() {
 	return SceneSaveWorld();
+};
+ursine_native_Extern.SceneSaveWorldAs = function() {
+	return SceneSaveWorldAs();
 };
 ursine_native_Extern.SceneSetActiveWorld = function(guid) {
 	return SceneSetActiveWorld(guid);
@@ -2534,6 +2556,7 @@ ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = {
 ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.__meta__ = { obj : { fieldInspector : ["EntitySystemSelector"]}};
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","unsigned int","float","double"]}};
 ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__meta__ = { obj : { fieldInspector : ["ResourceReference"]}};
+ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.m_nullGUID = "00000000-0000-0000-0000-00000000000";
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
 ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__meta__ = { obj : { fieldInspector : ["UNKNOWN"]}};
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4","ursine::SQuat"]}};
@@ -2555,5 +2578,6 @@ ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
 ursine_native_Property.MultiLineEditor = "MultiLineEditor";
 ursine_native_Property.Annotation = "Annotation";
+ursine_native_Property.ResourceType = "ResourceType";
 EditorMain.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

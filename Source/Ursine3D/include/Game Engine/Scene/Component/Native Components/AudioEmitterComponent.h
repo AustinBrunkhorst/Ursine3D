@@ -18,6 +18,8 @@
 #include "ListenerMasks.h"
 #include <queue>
 
+#include "WorldData.h"
+
 namespace ursine
 {
 	namespace ecs
@@ -49,7 +51,7 @@ namespace ursine
 			);
 
             EditorResourceField(
-                int, 
+                ursine::resources::WorldData, 
                 testResource
             );
 

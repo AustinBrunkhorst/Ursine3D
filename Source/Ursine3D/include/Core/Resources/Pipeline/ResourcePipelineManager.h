@@ -36,6 +36,7 @@ namespace ursine
                 void InvalidateResourceCache(ResourceItem::Handle resource);
 
                 ResourceItem::Handle GetItem(const GUID &guid);
+                ResourceItem::List GetItemsByType(const meta::Type &type);
             private:
                 ResourcePipelineConfig m_config;
 

@@ -105,9 +105,12 @@ namespace
 
         auto type = instance.GetType( );
 
+        // whether or not to force the serializtion hook
+        auto forceHook = component->GetType( ).GetMeta( ).GetProperty<ForceSerializationHook>( ) != nullptr;
+
         return Json::object {
             { "type", type.GetName( ) },
-            { "value", type.SerializeJson( instance, editorGetterOverride, false ) },
+            { "value", type.SerializeJson( instance, editorGetterOverride, forceHook ) },
             { "buttons", InspectComponentButtons( instance ) }
         };
     }
@@ -323,7 +326,7 @@ JSMethod(EntityHandler::addComponent)
     componentTypeMask.set( componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ), true );
 
     // have this run in the main thread
-    Application::Instance->ExecuteOnMainThread( [=] {
+    Application::PostMainThread( [=] {
         if (!entity->HasComponent( componentTypeMask ))
         {
             auto instance = componentType.CreateDynamic( );
@@ -359,7 +362,7 @@ JSMethod(EntityHandler::removeComponent)
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
     // Have this run in the main thread
-    Application::Instance->ExecuteOnMainThread( [=] {
+    Application::PostMainThread( [=] {
         entity->RemoveComponent( id );
     } );
 

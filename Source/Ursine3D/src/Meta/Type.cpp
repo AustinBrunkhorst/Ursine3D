@@ -598,7 +598,11 @@ namespace ursine
             {
                 auto value = field.GetValue( instance );
 
-                object[ field.GetName( ) ] = value.SerializeJson( );
+                auto json = value.SerializeJson( );
+
+                value.m_base->OnSerialize( const_cast<Json::object&>( json.object_items( ) ) );
+
+                object[ field.GetName( ) ] = json;
             }
 
 			if (invokeHook)
@@ -674,7 +678,11 @@ namespace ursine
             {
                 auto value = getterOverride( instance, field );
 
-                object[ field.GetName( ) ] = value.SerializeJson( );
+                auto json = value.SerializeJson( );
+
+                value.m_base->OnSerialize( const_cast<Json::object&>( json.object_items( ) ) );
+
+                object[ field.GetName( ) ] = json;
             }
 
 			if (invokeHook)
@@ -794,6 +802,10 @@ namespace ursine
 					field.SetValue( instance, 
 						fieldType.DeserializeJson( fieldData )
 					);
+
+                    auto fieldInstance = field.GetValue( instance );
+
+                    fieldInstance.m_base->OnDeserialize( fieldData );
 				}
             }
 

@@ -18,28 +18,54 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include "FileUtils.h"
+
 #include <SystemManager.h>
-#include <WorldConfigComponent.h>
-#include <SystemManager.h>
-#include <Timer.h>
+#include <WorldSerializer.h>
 
 using namespace ursine;
 
 namespace
 {
+    const ursine::GUID kNullGUID = GUIDNullGenerator( )( );
+
+    Project *getProject(void);
     Scene &getScene(void);
     ecs::World *getActiveWorld(void);
 
-    void doOpenErrorLog(Notification &notification);
+    void saveWorldAs(ecs::World *world, const fs::path &defaultPath);
+    void saveWorld(ecs::World *world, const fs::path &path);
 }
 
 JSFunction(SceneSaveWorld)
 {
+    auto *project = getProject( );
+    auto &lastOpened = project->GetLastOpenedWorld( );
+
+    auto item = project->GetResourcePipeline( ).GetItem( lastOpened );
+
+    auto *world = getActiveWorld( );
+
+    // empty world, we MUST save as
+    if (!item)
+        saveWorldAs( world, "" );
+    else
+        saveWorld( world, item->GetSourceFileName( ) );
+
     return CefV8Value::CreateBool( true );
 }
 
 JSFunction(SceneSaveWorldAs)
 {
+    auto *project = getProject( );
+    auto &lastOpened = project->GetLastOpenedWorld( );
+
+    auto item = project->GetResourcePipeline( ).GetItem( lastOpened );
+
+    auto *world = getActiveWorld( );
+
+    saveWorldAs( world, item ? item->GetSourceFileName( ).parent_path( ) : "" );
+
     return CefV8Value::CreateBool( true );
 }
 
@@ -105,7 +131,7 @@ JSFunction(SceneGetActiveEntities)
 
 JSFunction(ScenePlayStart)
 {
-    Timer::Create( 0 ).Completed( [] {
+    Application::PostMainThread( [] {
         auto &scene = getScene( );
 
         scene.SetPlayState( PS_PLAYING );
@@ -121,7 +147,7 @@ JSFunction(SceneSetPlayState)
 
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
-    Timer::Create( 0 ).Completed( [=] {
+    Application::PostMainThread( [=] {
         auto &scene = getScene( );
 
         scene.SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
@@ -132,7 +158,7 @@ JSFunction(SceneSetPlayState)
 
 JSFunction(SceneStep)
 {
-    Timer::Create( 0 ).Completed( [=] {
+    Application::PostMainThread( [=] {
         auto &scene = getScene( );
 
         scene.Step( );
@@ -143,7 +169,7 @@ JSFunction(SceneStep)
 
 JSFunction(ScenePlayStop)
 {
-    Timer::Create( 0 ).Completed( [] {
+    Application::PostMainThread( [] {
         auto &scene = getScene( );
 
         scene.SetPlayState( PS_EDITOR );
@@ -174,15 +200,43 @@ JSFunction(SceneGetEntitySystems)
 
 namespace
 {
-    Scene &getScene(void)
+    Project *getProject(void)
     {
         auto *editor = GetCoreSystem( Editor );
 
-        return editor->GetProject( )->GetScene( );
+        return editor->GetProject( );
+    }
+
+    Scene &getScene(void)
+    {
+        return getProject( )->GetScene( );
     }
 
     ecs::World *getActiveWorld(void)
     {
         return getScene( ).GetActiveWorld( );
+    }
+
+    void saveWorldAs(ecs::World *world, const fs::path &defaultPath)
+    {
+        auto mode = static_cast<cef_file_dialog_mode_t>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG );
+
+        RunFileDialog( mode, "Save World", defaultPath, { "World Files|.uworld" },
+            [=](int selectedFilter, const fs::FileList &files)
+            {
+                if (!files.empty( ))
+                    saveWorld( world, files[ 0 ] );
+            } 
+        );
+    }
+
+    void saveWorld(ecs::World *world, const fs::path &path)
+    {
+        auto data = ecs::WorldSerializer( ).Serialize( world );
+
+        UAssert( fs::WriteAllText( path.string( ), data.dump( true ) ),
+            "Unable to save world.\nfile: %s",
+            path.string( ).c_str( )
+        );
     }
 }

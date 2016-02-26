@@ -18,7 +18,7 @@ namespace ursine
             , m_manager( rhs.m_manager ) 
             , m_resourceGUID( rhs.m_resourceGUID )
         {
-            // TODO: test this
+            URSINE_TODO( "Test this" );
         }
 
         ResourceReference::ResourceReference(ResourceManager *manager, const GUID &resourceGUID)
@@ -28,6 +28,8 @@ namespace ursine
 
         ResourceReference &ResourceReference::operator=(const ResourceReference &rhs)
         {
+            m_manager = rhs.m_manager;
+
             if (rhs.m_resourceGUID != m_resourceGUID)
             {
                 m_resourceGUID = rhs.m_resourceGUID;
@@ -51,11 +53,19 @@ namespace ursine
         void ResourceReference::OnSerialize(Json::object &output) const
         {
             output[ "guid" ] = to_string( m_resourceGUID );
+            output[ "resolved" ] = false;
         }
 
         void ResourceReference::OnDeserialize(const Json &input)
         {
-            m_resourceGUID = GUIDStringGenerator( )( input[ "guid" ].string_value( ) );
+            try
+            {
+                m_resourceGUID = GUIDStringGenerator( )( input[ "guid" ].string_value( ) );
+            }
+            catch(...)
+            {
+                // do nothing
+            }
         }
     }
 }

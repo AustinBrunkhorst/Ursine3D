@@ -13,7 +13,7 @@
 
 #include "Precompiled.h"
 
-#include "LauncherUtils.h"
+#include "FileUtils.h"
 #include "Editor.h"
 
 #include <FileSystem.h>
@@ -53,17 +53,40 @@ namespace
         for (auto i = 0; i < filtersLength; ++i)
             filters.emplace_back( arguments[ 1 ]->GetValue( i )->GetStringValue( ) );
 
-        auto *editor = GetCoreSystem( Editor );
-
-        editor->GetMainWindow( ).GetUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
-            mode,
-            title,
-            "",
-            filters,
-            0,
-            callback
+        RunFileDialog(
+            mode, 
+            title, 
+            "", 
+            filters, 
+            std::bind( &doBrowseFileCallback, callbackID, _1, _2 ) 
         );
     }
+}
+
+void RunFileDialog(
+    CefBrowserHost::FileDialogMode mode,
+    const std::string &title,
+    const fs::path &defaultPath,
+    const std::vector<CefString> &filters,
+    UIFileDialogCallback::Callback callback
+)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    CefRefPtr<UIFileDialogCallback> callbackHandler = 
+        new UIFileDialogCallback( callback );
+
+    editor->GetMainWindow( ).GetUI( )
+        ->GetBrowser( )
+        ->GetHost( )
+        ->RunFileDialog(
+            mode,
+            title,
+            defaultPath.string( ),
+            filters,
+            0,
+            callbackHandler
+        );
 }
 
 JSFunction(BrowseFile)

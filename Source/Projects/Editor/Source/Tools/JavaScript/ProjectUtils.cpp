@@ -47,6 +47,29 @@ JSFunction(ProjectGetResourceTree)
     return object;
 }
 
+JSFunction(ProjectGetResourcesByType)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto typeName = arguments[ 0 ]->GetStringValue( ).ToString( );
+    auto type = meta::Type::GetFromName( typeName );
+
+    auto *editor = GetCoreSystem( Editor );
+    auto items = editor->GetProject( )->GetResourcePipeline( ).GetItemsByType( type );
+
+    Json::array itemsData;
+
+    for (auto &item : items)
+        itemsData.emplace_back( serializeResource( item ) );
+
+    CefRefPtr<CefV8Value> object;
+
+    JsonSerializer::Deserialize( itemsData, object );
+
+    return object;
+}
+
 JSFunction(ProjectSetEmptyScene)
 {
     auto *editor = GetCoreSystem( Editor );
@@ -92,6 +115,7 @@ namespace
             { "guid", to_string( resource->GetGUID( ) ) },
             { "type", resource->GetDataType( ).GetName( ) },
             { "displayName", resource->GetDisplayName( ) },
+            { "relativePathDisplayName", resource->GetRelativePathDisplayName( ) },
             { "sourceFile", sourceFile.string( ) },
             { "hasPreview", resource->HasPreview( ) },
             { "previewFile", resource->GetPreviewFileName( ).string( ) },

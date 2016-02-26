@@ -36,8 +36,10 @@ namespace ursine
         class VariantContainer : public VariantBase
         {
         public:
-            VariantContainer(const T &value);
-            VariantContainer(const T &&value);
+            typedef typename std::remove_reference<T>::type NonRefType;
+
+            VariantContainer(const NonRefType &value);
+            VariantContainer(const NonRefType &&value);
 
             Type GetType(void) const override;
 
@@ -51,6 +53,8 @@ namespace ursine
 
             VariantBase *Clone(void) const override;
 
+            void OnSerialize(Json::object &output) const override;
+            void OnDeserialize(const Json &input) override;
         private:
             friend class Variant;
 
@@ -75,7 +79,39 @@ namespace ursine
                 typename std::enable_if<                 
                     std::is_arithmetic<U>::value
                 >::type* = nullptr                       
-            ) const;                                           
+            ) const;             
+
+            template<typename U = T>
+            void onSerialize(
+                Json::object &output,
+                typename std::enable_if<
+                    !std::is_pointer<U>::value && std::is_base_of<Object, U>::value
+                >::type* = nullptr
+            ) const;
+
+            template<typename U = T>
+            void onSerialize(
+                Json::object &output,
+                typename std::enable_if<
+                    std::is_pointer<U>::value || !std::is_base_of<Object, U>::value
+                >::type* = nullptr
+            ) const;
+
+            template<typename U = T>
+            void onDeserialize(
+                const Json &input,
+                typename std::enable_if<
+                    !std::is_pointer<U>::value && std::is_base_of<Object, U>::value
+                >::type* = nullptr
+            );
+
+            template<typename U = T>
+            void onDeserialize(
+                const Json &input,
+                typename std::enable_if<
+                    std::is_pointer<U>::value || !std::is_base_of<Object, U>::value
+                >::type* = nullptr
+            );
         };
     }
 }

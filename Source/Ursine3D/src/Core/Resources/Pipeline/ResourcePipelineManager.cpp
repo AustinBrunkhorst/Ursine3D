@@ -181,6 +181,19 @@ namespace ursine
         return search->second;
     }
 
+    rp::ResourceItem::List rp::ResourcePipelineManager::GetItemsByType(const meta::Type &type)
+    {
+        ResourceItem::List matched;
+
+        for (auto &entry : m_database)
+        {
+            if (entry.second->m_buildCache.processedType == type)
+                matched.emplace_back( entry.second );
+        }
+
+        return matched;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Registration
     ///////////////////////////////////////////////////////////////////////////
@@ -431,7 +444,7 @@ namespace ursine
         const GUID &guid /*= GUIDGenerator( )( )*/
     )
     {
-        auto resource = std::make_shared<ResourceItem>( guid );
+        auto resource = std::make_shared<ResourceItem>( this, guid );
 
         resource->m_fileName = fileName;
         resource->m_metaFileName = metaFileName;

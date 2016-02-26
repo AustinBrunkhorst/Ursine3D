@@ -186,23 +186,22 @@ namespace ursine
         return m_platformEvents;
     }
 
-	void Application::ExecuteOnMainThread(MainThreadCallback callback)
+	void Application::PostMainThread(MainThreadCallback callback)
 	{
-		std::lock_guard<std::mutex> lock( m_mutex );
+		std::lock_guard<std::mutex> lock( Instance->m_mutex );
 
-		m_mainThreadCallbacks.push_back( callback );
+		Instance->m_mainThreadCallbacks.push_back( callback );
 	}
 
 	void Application::executeMainThreadCallbacks(void)
     {
-		// Make a copy of the vector
-		auto copy = m_mainThreadCallbacks;
+		decltype( m_mainThreadCallbacks ) copy;
 
 		// lock the vector
 		{
 			std::lock_guard<std::mutex> lock( m_mutex );
 
-			m_mainThreadCallbacks.clear( );
+            copy = std::move( m_mainThreadCallbacks );
 		}
 
 		// iterate through all callbacks and execute them

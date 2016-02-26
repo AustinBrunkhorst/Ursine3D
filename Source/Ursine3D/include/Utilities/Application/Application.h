@@ -59,7 +59,7 @@ namespace ursine
 
 		typedef std::function<void(void)> MainThreadCallback;
 
-		void ExecuteOnMainThread(MainThreadCallback callback);
+		static void PostMainThread(MainThreadCallback callback);
 
     protected:
         // determines if the application should continue updating
