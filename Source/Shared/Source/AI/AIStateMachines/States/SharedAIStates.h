@@ -4,6 +4,8 @@
 #include "Entity.h"
 #include "Vec3.h"
 
+#include <function.h>
+
 class AIStateMachine;
 
 namespace ursine
@@ -18,15 +20,17 @@ namespace ursine
             virtual void Enter(AIStateMachine *stateMachine) override;
             virtual void Update(AIStateMachine *stateMachine) override;
             virtual void Exit(AIStateMachine *stateMachine) override;
-
-            typedef void(WalkState::*targetDirectionfn)();
+            
+            //typedef std::_Binder<void, void (ursine::sm::WalkState::*)(const ursine::Vec3 &target), ursine::sm::WalkState *> targetDirectionfn;
         private:
+
             std::vector<ecs::Entity *> &getSurroundingActors(const ecs::Entity *actor);
 
-            void setTargetDirectionWaypoints(const Vec3 &target);
-            void setTargetDirectionMovement(const Vec3 &target);
+            void setTargetDirectionWaypoints(const SVec3 &target);
+            void setTargetDirectionMovement(const SVec3 &target);
 
-            targetDirectionfn setTargetDirection;
+            typedef std::function<void(const SVec3&)> setTargetDirectionFunc;
+            setTargetDirectionFunc setTargetDirection;
 
             float m_nearRadius;
         };

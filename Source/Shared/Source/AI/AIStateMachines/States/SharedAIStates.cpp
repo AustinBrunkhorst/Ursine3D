@@ -12,24 +12,28 @@ namespace ursine
 {
     namespace sm
     {
-        WalkState::WalkState(std::string name):AIState(name)
+        WalkState::WalkState(std::string name)
+            : AIState(name)
         {
             
         }
 
         void WalkState::Enter(AIStateMachine *stateMachine)
         {
+            using namespace std::placeholders;
+
             // first get the entity
             Entity *aiActor = stateMachine->GetEntity();
 
             //then check if we have a waypoint controller or not and set target function accordingly
             if (aiActor->HasComponent<WaypointAgent>())
             {
-                setTargetDirection = reinterpret_cast<targetDirectionfn>(setTargetDirectionWaypoints);
+                setTargetDirection = std::bind(&WalkState::setTargetDirectionWaypoints, this, _1);
+                
             }
             else
             {
-                setTargetDirection = reinterpret_cast<targetDirectionfn>(setTargetDirectionMovement);
+                setTargetDirection = std::bind(&WalkState::setTargetDirectionMovement, this, _1);
             }
         }
 
@@ -86,7 +90,7 @@ namespace ursine
             }
 
             // get the averages for facing and Coherasion
-            avgPos /= neighborhoodSize;
+            avgPos /= static_cast<float>( neighborhoodSize );
             //avgFacing /= neighborhoodSize;
 
             // now that we have the averages, we apply them
@@ -101,5 +105,14 @@ namespace ursine
 
         }
 
+        void WalkState::setTargetDirectionWaypoints(const SVec3& target)
+        {
+
+        }
+
+        void WalkState::setTargetDirectionMovement(const SVec3& target)
+        {
+
+        }
     }
 }
