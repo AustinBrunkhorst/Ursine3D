@@ -36,7 +36,7 @@ namespace ursine
             std::string fileText = filePath;
 
             //InitializeJdl(fileText);
-            //InitializeModel(fileText);
+            InitializeModel(fileText);
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
@@ -531,11 +531,11 @@ namespace ursine
                 m_modelArray[name]->AddMesh(newMesh);
             }
 
-            for (auto &x : ufmt_model->mMeshLvVec)
-                m_modelArray[name]->AddMesh2Tree(x);
-
-            for (auto &x : ufmt_model->mRigLvVec)
-                m_modelArray[name]->AddRig2Tree(x);
+            //for (auto &x : ufmt_model->mMeshLvVec)
+            //    m_modelArray[name]->AddMesh2Tree(x);
+            //
+            //for (auto &x : ufmt_model->mRigLvVec)
+            //    m_modelArray[name]->AddRig2Tree(x);
         }
 
         // how can i load animation with jdl format?
@@ -701,35 +701,13 @@ namespace ursine
                 m_u2mTable[m_modelCount++] = m_modelArray[name];
             }
 
-            for (auto &x : ufmt_model.mMeshLvVec)
-                m_modelArray[name]->AddMesh2Tree(x);
-
-            for (auto &x : ufmt_model.mRigLvVec)
-                m_modelArray[name]->AddRig2Tree(x);
+            //for (auto &x : ufmt_model.mMeshLvVec)
+            //    m_modelArray[name]->AddMesh2Tree(x);
+            //
+            //for (auto &x : ufmt_model.mRigLvVec)
+            //    m_modelArray[name]->AddRig2Tree(x);
 
             CloseHandle(hFile_model);
-        }
-
-        void ModelManager::LoadAni(std::string name, std::string fileName)
-        {
-            std::ifstream input;
-            std::vector<AnimationVertex> buffer;
-
-            HANDLE hFile_ani = CreateFile(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-            if (!hFile_ani)
-                return;
-
-            ufmt_loader::AnimInfo ufmt_ani;
-
-            // Serialize in model and animation
-            ufmt_ani.SerializeIn(hFile_ani);
-            // need to execute AnimationBuilder::LoadAnimation here?
-            unsigned animationIndex = 0;
-            fs::path fName(fileName);
-            std::string aniName = fName.filename().string();
-            aniName = aniName.substr(0, aniName.rfind("."));
-            animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, aniName);
-            CloseHandle(hFile_ani);
         }
 
         void ModelManager::InitializeModel(ufmt_loader::ModelInfo* modelInfo, ModelResource* modelresource)
@@ -740,14 +718,14 @@ namespace ursine
                 // create a new mesh
                 Mesh *newMesh = new Mesh();
                 newMesh->SetID(mesh_idx);
-
+        
                 /////////////////////////////////////////////////////////////////
                 // ALLOCATE MODEL ///////////////////////////////////////////////                
-
+        
                 ufmt_loader::MeshInfo* currMesh = &modelInfo->mMeshInfoVec[mesh_idx];
-
+        
                 newMesh->SetName(currMesh->name);
-
+        
                 uint vertCount = currMesh->meshVtxInfoCount;
                 newMesh->SetVertexCount(vertCount);
                 auto &meshVertArray = newMesh->GetRawVertices();
@@ -766,7 +744,8 @@ namespace ursine
                         );
                 
                     // transform these points from their global model space into their local space
-                    SVec4 tempPosition = SVec4(currMesh->meshVtxInfos[i].pos.x,
+                    SVec4 tempPosition = SVec4(
+                        currMesh->meshVtxInfos[i].pos.x,
                         currMesh->meshVtxInfos[i].pos.y,
                         currMesh->meshVtxInfos[i].pos.z,
                         1.0f
@@ -811,26 +790,28 @@ namespace ursine
                 }
                 
                 newMesh->SetVertexCount(vertCount);
-
+        
                 /////////////////////////////////////////////////////////////////
                 // CREATE INDEX BUFFER //////////////////////////////////////////
                 newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
-
+        
                 auto &indexArray = newMesh->GetRawIndices();
                 for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
                     indexArray[x] = currMesh->meshVtxIndices[x];
-
+        
                 modelresource->AddMesh(newMesh);
             }
-
+        
             //m_s2uTable[name] = m_modelCount;
             //m_u2mTable[m_modelCount++] = m_modelArray[name];
-
-            for (auto &x : modelInfo->mMeshLvVec)
-                modelresource->AddMesh2Tree(x);
-
-            for (auto &x : modelInfo->mRigLvVec)
-                modelresource->AddRig2Tree(x);
+            m_s2uTable[ modelInfo->name ] = m_modelCount;
+            m_u2mTable[ m_modelCount++ ] = modelresource;
+        
+            //for (auto &x : modelInfo->mMeshLvVec)
+            //    modelresource->AddMesh2Tree(x);
+            //
+            //for (auto &x : modelInfo->mRigLvVec)
+            //    modelresource->AddRig2Tree(x);
         }
 
         GfxHND ModelManager::CreateModel(ufmt_loader::ModelInfo *modelInfo)
@@ -843,18 +824,21 @@ namespace ursine
             
             internalID = m_modelCache.size();
             m_modelCache.push_back(new ModelResource());
+            m_modelInfoCache.push_back(*modelInfo);
 
-            ///////////////////////////////////////////////////////////
-            //// GENERATING BONE DATA /////////////////////////////////
-            //unsigned rigIndex = 0;
-            //if (modelInfo->mboneCount > 0)
-            //    rigIndex = AnimationBuilder::LoadBoneData(*modelInfo, modelInfo->name);
+            /////////////////////////////////////////////////////////
+            // GENERATING BONE DATA /////////////////////////////////
+            /////////////////////////////////////////////////////////
+            unsigned rigIndex = 0;
+            if (modelInfo->mboneCount > 0)
+                rigIndex = AnimationBuilder::LoadBoneData(*modelInfo, modelInfo->name);
             
             // load it up into CPU memory
+            //InitializeModel(modelInfo);
             InitializeModel(
                 modelInfo,
                 m_modelCache[internalID]
-            );            
+            );
             
             // initialize handle
             id->ID_ = SANITY_RESOURCE;
@@ -867,20 +851,24 @@ namespace ursine
         void ModelManager::DestroyModel(GfxHND &handle)
         {
             int id;
-
+            
             _RESOURCEHND *hnd = HND_RSRCE(handle);
             UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
             UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
-
+            
             id = hnd->Index_;
-
+            
             ModelResource *model = m_modelCache[id];
-
+            
+            delete[] model->m_binaryData;
+            model->m_binarySize = 0;
+            model->m_referenceCount = 0;
+            
             if (model->GetIsLoaded( ))
                 unloadModelFromGPU( model );
-
+            
             delete model;
-
+            
             handle = 0;
         }
 
@@ -890,12 +878,12 @@ namespace ursine
             _RESOURCEHND *hnd = HND_RSRCE(handle);
             UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
             UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
-
+            
             id = hnd->Index_;
-
+            
             if(m_modelCache[ id ]->HasNoReferences( ))
                 loadModelToGPU( m_modelCache[ id ] );
-
+            
             m_modelCache[ id ]->IncrementReference( );
         }
 
@@ -905,13 +893,25 @@ namespace ursine
             _RESOURCEHND *hnd = HND_RSRCE(handle);
             UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
             UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
+            
+            id = hnd->Index_;
+            
+            m_modelCache[ id ]->DecrementReference( );
+            
+            if (m_modelCache[ id ]->HasNoReferences())
+                unloadModelFromGPU(m_modelCache[ id ]);
+        }
+
+        ufmt_loader::ModelInfo ModelManager::GetModelInfo( GfxHND handle )
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
+            UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
 
             id = hnd->Index_;
 
-            m_modelCache[ id ]->DecrementReference( );
-
-            if (m_modelCache[ id ]->HasNoReferences())
-                unloadModelFromGPU(m_modelCache[ id ]);
+            return m_modelInfoCache[id];
         }
 
         ID3D11Buffer *ModelManager::GetModelVert(std::string name, unsigned index)

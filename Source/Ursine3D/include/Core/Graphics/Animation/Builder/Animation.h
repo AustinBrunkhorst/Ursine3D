@@ -43,25 +43,25 @@ namespace ursine
         *  @return Void.
         */
         void AddKeyframe(
-            const unsigned rigKeyIndex, 
-            const unsigned boneIndex, 
-            const SVec3 &trans, 
-            const SVec3 &scale, 
-            const SQuat &rot, 
+            const unsigned rigKeyIndex,
+            const unsigned boneIndex,
+            const SVec3 &trans,
+            const SVec3 &scale,
+            const SQuat &rot,
             const float runTime
-        );
+            );
 
         /** @brief sets values that initialize vectors
         *
-        *  @param rigKeyFrameCount # of rig keyframes in this 
+        *  @param rigKeyFrameCount # of rig keyframes in this
         *                          animation
         *  @param boneCount # of bones this animation will use
         *  @return Void.
         */
         void SetData(
-            const unsigned rigKeyFrameCount, 
+            const unsigned rigKeyFrameCount,
             const unsigned boneCount
-        );
+            );
 
         // gettors and setters //////////////////////////////////////
 
@@ -83,9 +83,9 @@ namespace ursine
         *  @return the requested keyframe.
         */
         const AnimationKeyframe &GetKeyframe(
-            const unsigned rigKeyframe, 
+            const unsigned rigKeyframe,
             const unsigned boneIndex
-        ) const;
+            ) const;
 
         unsigned GetRigKeyFrameCount(void) const;
 

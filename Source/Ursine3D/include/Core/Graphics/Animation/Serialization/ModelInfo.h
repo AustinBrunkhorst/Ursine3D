@@ -78,7 +78,7 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                bool SerializeIn(HANDLE hFile);
+                virtual bool SerializeIn(HANDLE hFile);
 
                 /** @brief model information serialize out function
                 *
@@ -87,7 +87,10 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                bool SerializeOut(HANDLE hFile);
+                virtual bool SerializeOut(HANDLE hFile);
+
+                virtual void SerializeIn(resources::ResourceReader &input);
+                virtual void SerializeOut(resources::pipeline::ResourceWriter &output);
             };
         };
     };

@@ -23,9 +23,11 @@
 
 namespace ursine
 {
-    namespace graphics{namespace ufmt_loader{
-        class ModelInfo;
-    }}
+    namespace graphics {
+        namespace ufmt_loader {
+            class ModelInfo;
+        }
+    }
 
     class AnimationBuilder
     {
@@ -33,18 +35,18 @@ namespace ursine
         //given a Rig, State, and 2 vectors of matrices, generate matrix palette
 
         static void GenerateAnimationData(
-            const AnimationState &animState, 
-			const AnimationState &fut_animState,
+            const AnimationState &animState,
+            const AnimationState &fut_animState,
             const AnimationRig *rig,
             std::vector<SMat4> &outputMatPal,
             std::vector<SMat4> &outputBones,
-			const float &transFactor
-        );
+            const float &transFactor
+            );
 
         /////////////////////////////////////////////////////////////
         // static stuff /////////////////////////////////////////////
         static void InitializeStaticData(void);
-        
+
         // getting an animation
         static Animation *GetAnimationByIndex(const unsigned index);
         static Animation *GetAnimationByName(const std::string &name);
@@ -75,13 +77,13 @@ namespace ursine
 
     private:
         // interpolate between 2 sets of keyframes
-        static void interpolateRigKeyFrames( 
-            const std::vector<AnimationKeyframe> &frame1, 
-            const std::vector<AnimationKeyframe> &frame2, 
-            const float time, 
+        static void interpolateRigKeyFrames(
+            const std::vector<AnimationKeyframe> &frame1,
+            const std::vector<AnimationKeyframe> &frame2,
+            const float time,
             const unsigned boneCount,
-            std::vector<SMat4> &finalTransform 
-        );
+            std::vector<SMat4> &finalTransform
+            );
 
         // add resources
         static unsigned addAnimation(void);
@@ -90,7 +92,7 @@ namespace ursine
         /** @brief recursively load a bone hierarchy
         *
         *  given an existing binary tree, this method will
-        *  generate the current bone, then instantiate 
+        *  generate the current bone, then instantiate
         *  this bone's children
         *
         *  @param hierarchy binary tree of children
@@ -104,9 +106,9 @@ namespace ursine
             std::vector<std::vector<unsigned>> &hierarchy,
             unsigned currentIndex,
             unsigned parentIndex,
-			const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
+            const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
             AnimationRig *rig
-        );
+            );
 
         static unsigned m_rigCount;
         static unsigned m_animationCount;
@@ -114,12 +116,12 @@ namespace ursine
         // all the data
         static std::vector<Animation> m_animationData;
         static std::vector<AnimationRig> m_animationRigData;
-        
+
         // lookup tables for stuff
         static std::unordered_map<std::string, Animation*> m_name2Animation;
         static std::unordered_map<std::string, AnimationRig*> m_name2Rig;
 
         static std::vector<SMat4> m_toParentTransforms;
-		static std::vector<SMat4> m_toFutParentTransforms;
+        static std::vector<SMat4> m_toFutParentTransforms;
     };
 }

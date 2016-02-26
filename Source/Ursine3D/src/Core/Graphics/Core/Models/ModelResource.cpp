@@ -23,9 +23,11 @@ namespace ursine
             : m_rootNode( nullptr )
             , m_meshArray( )
             , m_meshMap( )
-			, m_meshHierarchy( )
-			, m_rigHierarchy( )
+			//, m_meshHierarchy( )
+			//, m_rigHierarchy( )
             , m_onGPU( false ) 
+            , m_binaryData( nullptr )
+            , m_binarySize( 0 )
         {
         }
 
@@ -65,25 +67,25 @@ namespace ursine
             return m_meshArray;
         }
 
-		const std::vector<ufmt_loader::MeshInLvl> &ModelResource::GetMeshLvlArray(void) const
-		{
-			return m_meshHierarchy;
-		}
-		
-		const std::vector<ufmt_loader::RigInLvl> &ModelResource::GetRigLvlArray(void) const
-		{
-			return m_rigHierarchy;
-		}
-		
-		void ModelResource::AddMesh2Tree(const ufmt_loader::MeshInLvl& meshLvl)
-		{
-			m_meshHierarchy.push_back(meshLvl);
-		}
-
-        void ModelResource::AddRig2Tree(const ufmt_loader::RigInLvl& rigLvl)
-		{
-			m_rigHierarchy.push_back(rigLvl);
-		}
+		//const std::vector<ufmt_loader::MeshInLvl> &ModelResource::GetMeshLvlArray(void) const
+		//{
+		//	return m_meshHierarchy;
+		//}
+		//
+		//const std::vector<ufmt_loader::RigInLvl> &ModelResource::GetRigLvlArray(void) const
+		//{
+		//	return m_rigHierarchy;
+		//}
+		//
+		//void ModelResource::AddMesh2Tree(const ufmt_loader::MeshInLvl& meshLvl)
+		//{
+		//	m_meshHierarchy.push_back(meshLvl);
+		//}
+        //
+        //void ModelResource::AddRig2Tree(const ufmt_loader::RigInLvl& rigLvl)
+		//{
+		//	m_rigHierarchy.push_back(rigLvl);
+		//}
 
         void ModelResource::IncrementReference(void)
         {
@@ -111,9 +113,8 @@ namespace ursine
             m_onGPU = isOnGPU;
         }
 
-		//Mesh *ModelResource::GetAnimationMap(const std::string & name)
-		//{
-		//	return m_animMap[name];
-		//}
+        void ModelResource::BuildBinaryData(void) const
+        {
+        }
     }
 }

@@ -29,9 +29,9 @@ namespace ursine
             struct privData;
 
         public:
-            // get model handle
-            GfxHND GetModelHandle(const char *name);
-
+            /////////////////////////////////////////////////////////
+            // TEXTURE
+            /////////////////////////////////////////////////////////
             // get texture handle
             GfxHND GetTexHandle(const char *name);
 
@@ -43,11 +43,7 @@ namespace ursine
 
             // destroy a texture resource
             void DestroyDynamicTexture(GfxHND &handle);
-
-            // get a model
-            ModelResource *GetModelResource(const GfxHND &handle);
-            ModelResource *GetModelResource(const std::string &modelName);
-
+            
             /////////////////////////////////////////////////////////
             // NEW LOADING METHODS
             GfxHND CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
@@ -58,12 +54,23 @@ namespace ursine
 
             void GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize);
 
-            // create a model
+            /////////////////////////////////////////////////////////
+            // MODEL
+            /////////////////////////////////////////////////////////
+            // get model handle
+            GfxHND GetModelHandle(const char *name);
+
+            // get a model
+            ModelResource *GetModelResource(const GfxHND &handle);
+            ModelResource *GetModelResource(const std::string &modelName);
+
             GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
             void DestroyModel(GfxHND &handle);
 
             void LoadModel(GfxHND handle);
             void UnloadModel(GfxHND handle);
+
+            ufmt_loader::ModelInfo GetModelInfo(const GfxHND &handle);
             
         private:
             privData *m_privates;

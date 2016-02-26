@@ -17,13 +17,13 @@
 namespace ursine
 {
     AnimationBone::AnimationBone(void)
-        : m_name( "undefined" )
-        , m_translation( SVec3( ) )
-        , m_scale( SVec3( ) )
-        , m_rotation( SQuat( ) )
-        , m_boneID( -1 )
-        , m_parentID( -1 )
-        , m_parent( nullptr ) { }
+        : m_name("undefined")
+        , m_translation(SVec3())
+        , m_scale(SVec3())
+        , m_rotation(SQuat())
+        , m_boneID(-1)
+        , m_parentID(-1)
+        , m_parent(nullptr) { }
 
     void AnimationBone::InitializeBone(
         const std::string &name,
@@ -33,7 +33,7 @@ namespace ursine
         const unsigned boneID,
         const unsigned parentID,
         AnimationBone *parent
-    )
+        )
     {
         m_name = name;
         m_translation = trans;
@@ -44,7 +44,7 @@ namespace ursine
         m_parent = parent;
 
         if (m_parent != nullptr)
-            m_parent->AddChild( this );
+            m_parent->AddChild(this);
     }
 
     bool AnimationBone::IsRoot(void) const
@@ -54,7 +54,7 @@ namespace ursine
 
     void AnimationBone::AddChild(const AnimationBone *child)
     {
-        m_children.push_back( child );
+        m_children.push_back(child);
     }
 
     const std::string &AnimationBone::GetName(void) const
@@ -114,11 +114,11 @@ namespace ursine
 
     const AnimationBone *AnimationBone::GetChild(const unsigned childID) const
     {
-        return m_children[ childID ];
+        return m_children[childID];
     }
 
     unsigned AnimationBone::GetChildCount(void) const
     {
-        return static_cast<unsigned>( m_children.size( ) );
+        return static_cast<unsigned>(m_children.size());
     }
 }

@@ -17,17 +17,17 @@
 #include "ISerialize.h"
 namespace ursine
 {
-	namespace graphics
-	{
-		namespace ufmt_loader
-		{
-			ISerialize::ISerialize(const char* FileInfoName)
-			{
-			}
+    namespace graphics
+    {
+        namespace ufmt_loader
+        {
+            ISerialize::ISerialize(const char* FileInfoName)
+            {
+            }
 
-			ISerialize::~ISerialize()
-			{
-			}
-		};
-	};
+            ISerialize::~ISerialize()
+            {
+            }
+        };
+    };
 };

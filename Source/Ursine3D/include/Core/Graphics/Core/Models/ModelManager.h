@@ -51,8 +51,7 @@ namespace ursine
             void LoadModel(std::string name, std::string fileName);
             void LoadModel_Fbx(std::string name, std::string fileName);
             void LoadModel_Jdl(std::string name, std::string fileName);
-            void LoadAni(std::string name, std::string fileName); // this will be used for animation builder
-
+           
             void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
 
             // creating a model resource
@@ -62,6 +61,8 @@ namespace ursine
             // loading/unloading model
             void LoadModel(GfxHND handle);
             void UnloadModel(GfxHND handle);
+
+            ufmt_loader::ModelInfo GetModelInfo(GfxHND handle);
 
             ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
             unsigned GetModelVertcount(std::string name, unsigned index = 0);
@@ -113,7 +114,8 @@ namespace ursine
             unsigned m_modelCount;
             unsigned m_currentState;
 
-            std::vector<ModelResource *> m_modelCache;
+            std::vector< ModelResource * > m_modelCache;
+            std::vector< ufmt_loader::ModelInfo > m_modelInfoCache;
         };
     }
 }
