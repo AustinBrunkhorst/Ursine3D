@@ -152,6 +152,15 @@ void Editor::LoadProject(const std::string &filename)
     Application::Instance->Exit( );
 }
 
+void Editor::SetProjectStatus(const std::string &status)
+{
+    auto title = "Ursine3D Editor - "+ m_project->GetConfig( ).title + " - ";
+
+    title += status;
+
+    m_mainWindow.m_window->SetTitle( title );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Core System
 ///////////////////////////////////////////////////////////////////////////////
@@ -557,21 +566,17 @@ void Editor::onSceneWorldChanged(EVENT_HANDLER(Scene))
 {
     EVENT_ATTRS(Scene, SceneWorldChangedArgs);
 
-    auto windowTitle = "Ursine3D Editor - "+ m_project->GetConfig( ).title + " - ";
-
     if (args->reference)
     {
         auto item = m_project->GetResourcePipeline( ).GetItem( args->reference->GetGUID( ) );
 
         if (item)
-            windowTitle += item->GetDisplayName( );
+            SetProjectStatus( item->GetDisplayName( ) );
         else
-            windowTitle += "Unknown World";
+            SetProjectStatus( "Unknown World" );
     }
     else
     {
-        windowTitle += "Untitled World";
+        SetProjectStatus( "Untitled World" );
     }
-
-    m_mainWindow.m_window->SetTitle( windowTitle );
 }

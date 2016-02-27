@@ -18,9 +18,9 @@ namespace ursine
 { 
     namespace
     {
-        const auto kMetaFileExtension = "meta";
-        const auto kPreviewFileExtension = "png";
-        const auto kCacheFileExtension = "cache";
+        const auto kMetaFileExtension = ".meta";
+        const auto kPreviewFileExtension = ".png";
+        const auto kCacheFileExtension = ".cache";
 
         // meta file serialization is handled explicitly
         const auto kMetaKeyGUID = "guid";
@@ -52,7 +52,7 @@ namespace ursine
         , m_rootDirectory( new ResourceDirectoryNode( nullptr ) )
         , m_resourceDirectoryWatch( -1 )
     {
-        m_fileWatcher.watch( );
+        
     }
 
     rp::ResourcePipelineManager::~ResourcePipelineManager(void)
@@ -121,6 +121,8 @@ namespace ursine
             this, 
             true 
         );
+
+        m_fileWatcher.watch( );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -226,6 +228,13 @@ namespace ursine
         return matched;
     }
 
+    fs::path rp::ResourcePipelineManager::CreateTemporaryFileName(void)
+    {
+        auto guid = GUIDGenerator( )( );
+
+        return m_config.tempDirectory / to_string( guid );
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Registration
     ///////////////////////////////////////////////////////////////////////////
@@ -286,10 +295,14 @@ namespace ursine
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(const fs::path &fileName, bool isGenerated /*= false */)
     {
+        // ignore meta files
+        if (fileName.extension( ) == kMetaFileExtension)
+            return nullptr;
+
         auto metaFileName = fileName;
 
         // add the meta extension IN ADDITION to the existing extension
-        metaFileName.concat( std::string( "." ) + kMetaFileExtension );
+        metaFileName.concat( kMetaFileExtension );
 
         // this resource is already configured
         if (exists( metaFileName ))
@@ -491,6 +504,8 @@ namespace ursine
             "Resource GUID is not unique."
         );
 
+        m_pathToResource[ fileName ] = resource;
+
         return resource;
     }
 
@@ -646,19 +661,19 @@ namespace ursine
         {
             ++operationIndex;
 
-            auto &builtContext = *it;
+            auto &buildContext = *it;
 
             buildEvent.type = RP_BUILD_RESOURCE_START;
-            buildEvent.resource = builtContext.resource;
+            buildEvent.resource = buildContext.resource;
             buildEvent.progress = previewPercentage * (operationIndex / buildContexts.size( ));
 
             auto startTime = system_clock::now( );
 
             Dispatch( RP_BUILD_RESOURCE_START, &buildEvent );
 
-            buildResource( builtContext );
+            buildResource( buildContext );
 
-            addGeneratedResources( builtContext, buildContexts );
+            addGeneratedResources( buildContext, buildContexts );
 
             auto duration = system_clock::now( ) - startTime;
 
@@ -829,27 +844,136 @@ namespace ursine
         return false;
     }
 
+    void rp::ResourcePipelineManager::rebuildResource(ResourceItem::Handle resource)
+    {
+        ResourceBuildContext buildContext( this, resource );
+
+        // we don't care about generated resources because they will handled by the file
+        // watcher implicity
+        buildResource( buildContext );
+        buildResourcePreview( buildContext );
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // File Watching
     ///////////////////////////////////////////////////////////////////////////
 
     void rp::ResourcePipelineManager::handleFileAction(
-        fs::WatchID watchid,
-        const std::string &dir,
-        const std::string &filename,
+        fs::WatchID id,
+        const std::string &directory,
+        const std::string &fileName,
         fs::Action action,
-        std::string oldFilename
-        )
+        std::string oldFileName
+    )
     {
-        const char *names[] = { "Invalid", "Add", "Delete", "Modified", "Moved" };
+        switch(action)
+        {
+        case efsw::Actions::Add:
+            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Added" << std::endl;
+            break;
+        case efsw::Actions::Delete:
+            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Delete" << std::endl;
+            break;
+        case efsw::Actions::Modified:
+            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Modified" << std::endl;
+            break;
+        case efsw::Actions::Moved:
+                std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Moved from (" << oldFileName << ")" << std::endl;
+            break;
+        default:
+            std::cout << "Should never happen!" << std::endl;
+        }
 
-        std::cout << "=================" << std::endl;
-        std::cout << "dir: " << dir << std::endl;
-        std::cout << "filename: " << filename << std::endl;
-        std::cout << "action: " << names[ action ] << std::endl;
-        std::cout << "oldFileName: " << oldFilename << std::endl;
+        fs::path directoryPath = directory;
+        fs::path fileNamePath = fileName;
 
-        std::cout << std::endl;
+        auto absoluteFilePath = directoryPath / fileNamePath;
+
+        /*switch (action)
+        {
+        case efsw::Actions::Add:
+        {
+            auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, absoluteFilePath );
+            
+            if (handler.joinable( ))
+                handler.detach( );
+        }
+        break;
+        case efsw::Actions::Delete:
+        {
+            URSINE_TODO( "Resource deletion" );
+        }
+        break;
+        case efsw::Actions::Modified:
+        {
+            auto search = m_pathToResource.find( absoluteFilePath );
+
+            if (search != m_pathToResource.end( ))
+            {
+                auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
+                
+                if (handler.joinable( ))
+                    handler.detach( );
+            }
+        }
+        break;
+        case efsw::Actions::Moved:
+        {
+            URSINE_TODO( "Resource moving" );
+        }
+        break;
+        default:
+            break;
+        }*/
+    }
+
+    void rp::ResourcePipelineManager::onResourceAdded(const fs::path &fileName)
+    {
+        return;
+
+        std::lock_guard<std::mutex> lock( m_buildMutex );
+
+        auto resource = registerResource( fileName );
+
+        // we weren't interested in this
+        if (!resource)
+            return;
+
+        rebuildResource( resource );
+
+        Application::PostMainThread( [=](void)
+        {
+            ResourceChangeArgs e;
+
+            e.type = RP_RESOURCE_ADDED;
+            e.resource = resource;
+
+            Dispatch( RP_RESOURCE_ADDED, &e );
+        } );
+    }
+
+    void rp::ResourcePipelineManager::onResourceModified(ResourceItem::Handle resource)
+    {
+        return;
+
+        std::lock_guard<std::mutex> lock( m_buildMutex );
+
+        rebuildResource( resource );
+
+        Application::PostMainThread( [=](void)
+        {
+            ResourceChangeArgs e;
+
+            e.type = RP_RESOURCE_MODIFIED;
+            e.resource = resource;
+
+            Dispatch( RP_RESOURCE_MODIFIED, &e );
+        } );
+    }
+
+    void rp::ResourcePipelineManager::onResourceRemoved(ResourceItem::Handle resource)
+    {
+
     }
 
     ///////////////////////////////////////////////////////////////////////////

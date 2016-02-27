@@ -55,6 +55,8 @@ public:
     void CreateNewProject(const std::string &name, const std::string &directory);
     void LoadProject(const std::string &filename);
 
+    void SetProjectStatus(const std::string &status);
+
 private:
     struct
     {

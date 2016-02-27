@@ -25,6 +25,12 @@ namespace ursine
 
             bool ResourceExists(const GUID &guid) const;
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            // Reloads an asset from a build if already exists in the cache
+            void ReloadIfCached(const GUID &guid);
+
+        #endif
         private:
             fs::path m_resourceDirectory;
 

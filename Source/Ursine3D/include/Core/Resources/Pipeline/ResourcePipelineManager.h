@@ -42,11 +42,14 @@ namespace ursine
 
                 ResourceItem::Handle GetItem(const GUID &guid);
                 ResourceItem::List GetItemsByType(const meta::Type &type);
+
+                // Creates a unique file name in the configured temporary directory
+                fs::path CreateTemporaryFileName(void);
             private:
                 ResourcePipelineConfig m_config;
 
                 std::unordered_map<GUID, ResourceItem::Handle, GUIDHasher> m_database;
-                std::unordered_map<fs::path, ResourceDirectoryNode *, fs::PathHasher> m_pathToDirectoryNode;
+                std::unordered_map<fs::path, ResourceItem::Handle, fs::PathHasher> m_pathToResource;
 
                 ResourceDirectoryNode *m_rootDirectory;
 
@@ -54,6 +57,8 @@ namespace ursine
 
                 fs::FileWatcher m_fileWatcher;
                 fs::WatchID m_resourceDirectoryWatch;
+
+                std::mutex m_buildMutex;
 
                 ResourcePipelineManager(const ResourcePipelineManager &rhs) = delete;
                 ResourcePipelineManager &operator=(const ResourcePipelineManager &rhs) = delete;
@@ -117,6 +122,8 @@ namespace ursine
 
                 bool buildIsInvalidated(ResourceItem::Handle resource);
 
+                void rebuildResource(ResourceItem::Handle resource);
+
                 ///////////////////////////////////////////////////////////////
                 // File Watching
                 ///////////////////////////////////////////////////////////////
@@ -128,6 +135,10 @@ namespace ursine
                     fs::Action action,
                     std::string oldFilename = ""
                 ) override;
+
+                void onResourceAdded(const fs::path &fileName);
+                void onResourceModified(ResourceItem::Handle resource);
+                void onResourceRemoved(ResourceItem::Handle resource);
 
                 ///////////////////////////////////////////////////////////////
                 // Utilities

@@ -36,7 +36,18 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
 
                 // All operations in a build pass have completed
-                RP_BUILD_COMPLETE
+                RP_BUILD_COMPLETE,
+
+                ///////////////////////////////////////////////////////////////
+
+                // A new resource has been added via file watching
+                RP_RESOURCE_ADDED,
+
+                // An existing resource has been removed
+                RP_RESOURCE_REMOVED,
+                
+                // An existing resource has been modified via file watching
+                RP_RESOURCE_MODIFIED
             };
 
             struct ResourceBuildArgs : EventArgs
@@ -49,6 +60,14 @@ namespace ursine
                 float progress { 0.0f };
 
                 ResourceBuildArgs(void) = default;
+            };
+
+            struct ResourceChangeArgs : EventArgs
+            {
+                ResourcePipelineEventType type { RP_RESOURCE_ADDED };
+                ResourceItem::Handle resource { nullptr };
+
+                ResourceChangeArgs(void) = default;
             };
         }
     }

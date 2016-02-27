@@ -47,6 +47,9 @@ private:
 
     void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
 
+    void onResourceAdded(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onResourceModified(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+
     ProjectConfig m_config;
 
     ursine::rp::ResourcePipelineManager m_resourcePipeline;

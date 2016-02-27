@@ -37,6 +37,12 @@ namespace ursine
             return cache->second;
         }
 
+        void ResourceManager::ReloadIfCached(const GUID &guid)
+        {
+            if (m_database.find( guid ) != m_database.end( ))
+                hardLoadResource( guid );
+        }
+
         bool ResourceManager::ResourceExists(const GUID &guid) const
         {
             return m_database.find( guid ) != m_database.end( ) || exists( getResourceFileName( guid ) );
