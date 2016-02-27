@@ -496,6 +496,9 @@ namespace ursine
             currentCamera.SetScreenDimensions(w, h);
             currentCamera.SetScreenPosition(gvp.TopLeftX, gvp.TopLeftY);
 
+            // sort the handles
+            std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
+
             // CREATE RENDER PIPELINE
             RenderPass DeferredPipeline;
 
@@ -1002,6 +1005,9 @@ namespace ursine
             currentCamera.SetScreenDimensions(w, h);
             currentCamera.SetScreenPosition(gvp.TopLeftX, gvp.TopLeftY);
 
+            // sort the handles
+            std::sort(m_drawList.begin(), m_drawList.begin() + m_drawCount, sort);
+
             // CREATE RENDER PIPELINE
             RenderPass MainPipeline;
 
@@ -1017,10 +1023,10 @@ namespace ursine
             PointRendererPass overdrawPointPass( true, "OverdrawPoint" );
 
             // create processors
-            auto *modelProcessor = new Model3DProcessor( );
-            auto *billboardPorcessor = new Billboard2DProcessor( );
-            auto *particleProcessor = new ParticleSystemProcessor( );
-            auto *textProcessor = new SpriteTextProcessor( );
+            auto modelProcessor     = Model3DProcessor( );
+            auto billboardPorcessor = Billboard2DProcessor( );
+            auto particleProcessor  = ParticleSystemProcessor( );
+            auto textProcessor      = SpriteTextProcessor( );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>                      viewBuffer(SHADERTYPE_VERTEX);
@@ -1055,7 +1061,7 @@ namespace ursine
                     AddResource( &viewBuffer ).
 
                     Accepts( RENDERABLE_MODEL3D ).
-                    Processes( modelProcessor ).
+                    Processes( &modelProcessor ).
                 InitializePass( );
 
                 /////////////////////////////////////////////////////////
@@ -1082,7 +1088,7 @@ namespace ursine
                     AddResource( &geomBuff ).
 
                     Accepts( RENDERABLE_BILLBOARD2D ).
-                    Processes( billboardPorcessor ).
+                    Processes( &billboardPorcessor ).
                 InitializePass( );
 
                 /////////////////////////////////////////////////////////
@@ -1158,7 +1164,7 @@ namespace ursine
                     AddResource( &invView ).
 
                     Accepts( RENDERABLE_PS ).
-                    Processes( particleProcessor ).
+                    Processes( &particleProcessor ).
                     OverrideLayout( SHADER_OVERRIDE ).
                 InitializePass( );
 
@@ -1183,7 +1189,7 @@ namespace ursine
                     AddResource( &viewBuffer ).
 
                     Accepts( RENDERABLE_OVERDRAW ).
-                    Processes( modelProcessor ).
+                    Processes( &modelProcessor ).
                 InitializePass( );
 
                 /////////////////////////////////////////////////////////
@@ -1210,7 +1216,7 @@ namespace ursine
                     AddResource( &fontTexture ).
 
                     Accepts( RENDERABLE_SPRITE_TEXT ).
-                    Processes( textProcessor ).
+                    Processes( &textProcessor ).
                     OverrideLayout(SHADER_OVERRIDE).
                 InitializePass( );
 
@@ -1389,6 +1395,9 @@ namespace ursine
             int index = tempID & 0x7FF;
             int type = (tempID >> 12) & 0x3;
             int overdraw = (tempID >> 15) & 0x1;
+
+            if (index >= 512)
+                return;
 
             unsigned w, h;
             gfxInfo->GetDimensions(w, h);

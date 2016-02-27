@@ -54,6 +54,18 @@ public:
         SetDeadZoneSnap
     );
 
+    EditorField(
+        bool lockMovement,
+        GetLockMovement,
+        SetLockMovement
+    );
+
+    EditorField(
+        bool lockLooking,
+        GetLockLooking,
+        SetLockLooking
+    );
+
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
 
@@ -69,10 +81,17 @@ public:
     const ursine::Vec2 &GetLookDirection(void) const;
     void SetLookDirection(const ursine::Vec2 &lookDir);
 
+    bool GetLockMovement(void) const;
+    void SetLockMovement(bool flag);
+
+    bool GetLockLooking(void) const;
+    void SetLockLooking(bool flag);
+
     void OnInitialize(void) override;
 
 private:
 
+    void SetMoveDirection(EVENT_HANDLER(game::MOVEMENT_COMMAND));
     void SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND));
     void Jump(EVENT_HANDLER(game::JUMP_COMMAND));
 
@@ -83,6 +102,9 @@ private:
     float m_deadZoneSnap;
 
     bool m_jump;
+
+    bool m_lockMovement;
+    bool m_lockLooking;
 
     ursine::Vec2 m_moveDir;
     ursine::Vec2 m_lookDir;

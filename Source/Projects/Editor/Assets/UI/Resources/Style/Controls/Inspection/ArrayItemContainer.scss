@@ -72,8 +72,8 @@
       .field-container {
         padding-right: 0 !important;
 
-        input {
-          margin-bottom: 0 !important;
+        input[type=checkbox] {
+          margin-top: 0 !important;
         }
 
         > .color-preview {

@@ -1143,6 +1143,86 @@ namespace ursine
 			return true;
 		}
 
+		void CFBXLoader::SetPivotStateRecursive(FbxNode* pNode)
+		{
+			// From FbxNode.h
+			FbxVector4 lZero(0, 0, 0);
+			FbxVector4 lOne(1, 1, 1);
+			pNode->SetPivotState(FbxNode::eSourcePivot, FbxNode::ePivotActive);
+			pNode->SetPivotState(FbxNode::eDestinationPivot, FbxNode::ePivotActive);
+
+			EFbxRotationOrder lRotationOrder;
+			pNode->GetRotationOrder(FbxNode::eSourcePivot, lRotationOrder);
+			pNode->SetRotationOrder(FbxNode::eDestinationPivot, lRotationOrder);
+
+			//For cameras and lights (without targets) let's compensate the postrotation.
+			if (pNode->GetCamera() || pNode->GetLight())
+			{
+				if (!pNode->GetTarget())
+				{
+					FbxVector4 lRV(90, 0, 0);
+					if (pNode->GetCamera())
+						lRV.Set(0, 90, 0);
+
+					FbxVector4 prV = pNode->GetPostRotation(FbxNode::eSourcePivot);
+					FbxAMatrix lSourceR;
+					FbxAMatrix lR(lZero, lRV, lOne);
+					FbxVector4 res = prV;
+
+					// Rotation order don't affect post rotation, so just use the default XYZ order
+					FbxRotationOrder rOrder;
+					rOrder.V2M(lSourceR, res);
+
+					lR = lSourceR * lR;
+					rOrder.M2V(res, lR);
+					prV = res;
+					pNode->SetPostRotation(FbxNode::eSourcePivot, prV);
+					pNode->SetRotationActive(true);
+				}
+
+				// Point light do not need to be adjusted (since they radiate in all the directions).
+				if (pNode->GetLight() && pNode->GetLight()->LightType.Get() == FbxLight::ePoint)
+				{
+					pNode->SetPostRotation(FbxNode::eSourcePivot, FbxVector4(0, 0, 0, 0));
+				}
+			}
+			// apply Pre rotations only on bones / end of chains
+			if (pNode->GetNodeAttribute() && pNode->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton
+				|| (pNode->GetMarker() && pNode->GetMarker()->GetType() == FbxMarker::eEffectorFK)
+				|| (pNode->GetMarker() && pNode->GetMarker()->GetType() == FbxMarker::eEffectorIK))
+			{
+				if (pNode->GetRotationActive())
+				{
+					pNode->SetPreRotation(FbxNode::eDestinationPivot, pNode->GetPreRotation(FbxNode::eSourcePivot));
+				}
+
+				// No pivots on bones
+				pNode->SetRotationPivot(FbxNode::eDestinationPivot, lZero);
+				pNode->SetScalingPivot(FbxNode::eDestinationPivot, lZero);
+				pNode->SetRotationOffset(FbxNode::eDestinationPivot, lZero);
+				pNode->SetScalingOffset(FbxNode::eDestinationPivot, lZero);
+			}
+			else
+			{
+				// any other type: no pre-rotation support but...
+				pNode->SetPreRotation(FbxNode::eDestinationPivot, lZero);
+
+				// support for rotation and scaling pivots.
+				pNode->SetRotationPivot(FbxNode::eDestinationPivot, pNode->GetRotationPivot(FbxNode::eSourcePivot));
+				pNode->SetScalingPivot(FbxNode::eDestinationPivot, pNode->GetScalingPivot(FbxNode::eSourcePivot));
+				// Rotation and scaling offset are supported
+				pNode->SetRotationOffset(FbxNode::eDestinationPivot, pNode->GetRotationOffset(FbxNode::eSourcePivot));
+				pNode->SetScalingOffset(FbxNode::eDestinationPivot, pNode->GetScalingOffset(FbxNode::eSourcePivot));
+				//
+				// If we don't "support" scaling pivots, we can simply do:
+				// pNode->SetRotationPivot(FbxNode::eDestinationPivot, lZero);
+				// pNode->SetScalingPivot(FbxNode::eDestinationPivot, lZero);
+			}
+
+			for (int i = 0; i < pNode->GetChildCount(); ++i)
+				SetPivotStateRecursive(pNode->GetChild(i));
+		}
+
 		void CFBXLoader::ProcessAnimation()
 		{
 			int count = mScene->GetSrcObjectCount<FbxAnimStack>();
@@ -1153,11 +1233,18 @@ namespace ursine
 				FbxTakeInfo* takeInfo = mScene->GetTakeInfo(name);
 				FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
 				FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
-				ProcessAnimation(lAnimStack, start, mScene->GetRootNode());
+
+				//mScene->GetRootNode()->ResetPivotSet(FbxNode::eDestinationPivot);
+				//SetPivotStateRecursive(mScene->GetRootNode());
+				//mScene->GetRootNode()->ConvertPivotAnimationRecursive(lAnimStack, FbxNode::eDestinationPivot, 30.0f);
+
+				ProcessAnimation(lAnimStack, start, end, mScene->GetRootNode());
+
+				//mScene->GetRootNode()->ResetPivotSet(FbxNode::eSourcePivot);
 			}
 		}
 
-		void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxNode* pNode)
+		void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxTime end, FbxNode* pNode)
 		{
 			mAnimationFlag.second = true;
 			std::set< FbxTime > keyTimes;
@@ -1176,11 +1263,11 @@ namespace ursine
 			for (int i = 0; i < nbAnimLayers; ++i)
 			{
 				FbxAnimLayer* lAnimLayer = animStack->GetMember<FbxAnimLayer>(i);
-				ProcessAnimation(lAnimLayer, start, pNode, animClip);
+				ProcessAnimation(lAnimLayer, start, end, pNode, animClip);
 			}
 		}
 
-		void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
+		void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxTime end, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
 		{
 			FbxString lOutputString;
 			FbxNodeAttribute* attr = pNode->GetNodeAttribute();
@@ -1191,25 +1278,25 @@ namespace ursine
 				time.insert(start);
 
 				curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 
 				curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 
 				curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 				curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-				ProcessAnimation(curve, time);
+				ProcessAnimation(curve, time, end);
 
 				if (boneindex < animClip.boneAnim.size())
 					animClip.boneAnim[boneindex].keyFrames.resize(time.size());
@@ -1240,10 +1327,10 @@ namespace ursine
 
 			//go through all the children nodes and try to read there curves
 			for (int j = 0; j < pNode->GetChildCount(); ++j)
-				ProcessAnimation(animLayer, start, pNode->GetChild(j), animClip);
+				ProcessAnimation(animLayer, start, end, pNode->GetChild(j), animClip);
 		}
 
-		void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time)
+		void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime end)
 		{
 			if (!pCurve)
 				return;
@@ -1254,7 +1341,8 @@ namespace ursine
 			for (int i = 0; i < lKeyCount; ++i)
 			{
 				FbxAnimCurveKey key = pCurve->KeyGet(i);
-				time.insert(key.GetTime());
+				if(key.GetTime() <= end )
+					time.insert(key.GetTime());
 			}
 		}
 

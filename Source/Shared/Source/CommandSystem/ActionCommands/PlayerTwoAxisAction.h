@@ -12,33 +12,47 @@
 
 #include "PlayerAction.h"
 #include <Entity.h>
+#include "ActionCommand.h"
 
 
 class Command;
 
-class PlayerTwoAxisAction
-{
+class PlayerTwoAxisAction : public ActionCommandBase
+{   
 public:
-    enum ActionMode
-    {
-        Xbox,
-        Keyboard,
-
-        ActionCount
-    };
+    typedef PlayerAction::InputBinding Binding;
     
-public:
+    Meta(Disable)
+    struct AxisBinding
+    {
+        AxisBinding(Binding left, Binding right, Binding up, Binding down, game::GameEvents commandEvent);
+
+        AxisBinding(const AxisBinding& rhs);
+
+        PlayerAction::InputBinding m_left,
+                                   m_right,
+                                   m_up,
+                                   m_down;
+
+        game::GameEvents m_eventToSend;
+    };
+
     PlayerTwoAxisAction(void);
-    PlayerTwoAxisAction(const PlayerAction &leftAction, const PlayerAction &rightAction, const PlayerAction &upAction, const PlayerAction &downAction);
+    PlayerTwoAxisAction(PlayerAction* action, ursine::ecs::Entity* owner);
 
-    bool Acting(void);
+    PlayerTwoAxisAction& AddAxisBinding(AxisBinding& binding);
 
-    ursine::Vec2 GetAxis(void);
+    void ProcessCommands(void);
 
 private:
+    PlayerAction* m_action;
+    ursine::ecs::Entity* m_owner;
 
-    PlayerAction    m_left, 
-                    m_right, 
-                    m_up, 
-                    m_down;
+    std::vector<AxisBinding> m_axisBindings;
+
+    ursine::Vec2 m_axis;
+
+    bool Acting(AxisBinding& bindings);
+
 };
+

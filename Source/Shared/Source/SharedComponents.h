@@ -32,6 +32,7 @@
 /////////////////////////////////
 
 #include "PlayerLogic/PlayerIdComponent.h"
+#include "PlayerLogic/PlayerSpawnPointComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 
 /////////////////////////////////
@@ -63,6 +64,12 @@
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
 
 /////////////////////////////////
+//        Trails System        //
+/////////////////////////////////
+
+#include "Trails/TrailComponent.h"
+
+/////////////////////////////////
 //            AI               //
 /////////////////////////////////
 
@@ -77,15 +84,23 @@
 //       Level Logic           //
 /////////////////////////////////
 
-#include "LevelSegmentManager/SegmentLogic/Misc/ElevatorLiftMoverComponent.h"
+#include "LevelSegmentManager/LevelSegmentManagerComponent.h"
+
+#include "LevelSegmentManager/SegmentResources/UnloadResourceComponent.h"
+#include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
+#include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
+#include "LevelSegmentManager/SegmentResources/BossRoomResourcesComponent.h"
+
+#include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 
 /////////////////////////////////
-//       Camera Animation      //
+//       Entity Animation      //
 /////////////////////////////////
 
-#include "CameraAnimation/CameraAnimatorComponent.h"
-#include "CameraAnimation/CameraAnimatorNodeComponent.h"
-#include "CameraAnimation/CameraAnimatorFocusPointComponent.h"
+#include "EntityAnimation/EntityAnimatorComponent.h"
+#include "EntityAnimation/EntityAnimatorGroupComponent.h"
+#include "EntityAnimation/EntityAnimatorFocusPointComponent.h"
+#include "EntityAnimation/EntityAnimatorFocusModifierComponent.h"
 
 /////////////////////////////////
 //       Spawning System       //
@@ -101,3 +116,9 @@
 
 #include "CommandSystem/InputControllerComponent.h"
 #include "CommandSystem/CommandQueueComponent.h"
+
+/////////////////////////////////
+//             FX              //
+/////////////////////////////////
+
+#include "FX/AnimateParticleResetComponent.h"

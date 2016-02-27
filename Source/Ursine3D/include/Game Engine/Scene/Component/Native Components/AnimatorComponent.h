@@ -35,31 +35,32 @@ namespace ursine
 				std::string currentState,
 				GetcurrState,
 				SetcurrState
-				);
+			);
 
 			EditorField(
 				std::string futureState,
 				GetfutState,
 				SetfutState
-				);
+			);
 
 			//Slider
 			// blending starting position of current state
-			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-				EditorField(
-					float currtransPos,
-					GetcurrTransPosRatio,
-					SetcurrTransPosRatio
-					);
+			EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
+			EditorField(
+				float currtransPos,
+				GetcurrTransPosRatio,
+				SetcurrTransPosRatio
+			);
 
 			// blending end position of future state
-			Meta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-				EditorField(
-					float futtransPos,
-					GetfutTransPosRatio,
-					SetfutTransPosRatio
-					);
+			EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
+			EditorField(
+				float futtransPos,
+				GetfutTransPosRatio,
+				SetfutTransPosRatio
+			);
 
+            Meta(Enable)
 			StateBlender(void);
 
 			const std::string &GetcurrState(void) const;
@@ -98,8 +99,10 @@ namespace ursine
 
 		} Meta(
 			Enable,
+            WhiteListMethods,
 			EnableArrayType,
-			DisplayName("State Blender"));
+			DisplayName( "State Blender" )
+        );
 
 		/////////////////////////////////////////////////////////////
 
@@ -115,21 +118,9 @@ namespace ursine
 			);
 
 			EditorField(
-				std::string StateMachineName,
-				GetStMachineName,
-				SetStMachineName
-			);
-
-			EditorField(
 				std::string currentState,
 				GetCurrentState,
 				SetCurrentState
-			);
-
-			EditorField(
-				std::string futureState,
-				GetFutureState,
-				SetFutureState
 			);
 
 			EditorField(
@@ -174,10 +165,10 @@ namespace ursine
 				SetTimeScalar
 			);
 			
+            Meta(Enable)
 			Animator(void);
 			~Animator(void);
 
-			Meta(Disable)
 			void OnInitialize(void) override;
 
 			// stick this in a system
@@ -199,13 +190,10 @@ namespace ursine
 			float GetTimeScalar(void) const;
 			void SetTimeScalar(const float scalar);
 
-			const std::string &GetStMachineName(void) const;
-			void SetStMachineName(const std::string &stm);
-
 			const std::string &GetRig(void) const;
 			void SetRig(const std::string &rig);
 			
-			float GetAnimationTimePosition() const;
+			float GetAnimationTimePosition(void) const;
 			void SetAnimationTimePosition(const float position);
 
 			const std::string &GetCurrentState(void) const;
@@ -213,9 +201,6 @@ namespace ursine
 
 			const std::string &GetStateName(void) const;
 			void SetStateName(const std::string &state);
-
-			const std::string &GetFutureState(void) const;
-			void SetFutureState(const std::string& name);
 
 			const std::string &GetAnimation(void) const;
 			void SetAnimation(const std::string &name);
@@ -234,20 +219,17 @@ namespace ursine
 			// save and load
 			// => save both Arrays
 			// => when load model, don't just load these, but should also load the animation if it doesn't exist
-
-			void OnSerialize(ursine::Json::object &output) const override;
-			void OnDeserialize(const ursine::Json &intput) override;
-
+			
 		private:
 			bool m_playing;
 			bool m_looping;
 			bool m_debug;
 			bool m_changeState;
 			float m_speedScalar;
-			std::string m_StateMachineName;
+			//std::string m_StateMachineName;
 			std::string m_Rig;
-			std::string m_currentStateName;
-			std::string m_futureStateName;
+			std::string m_curStName;
+			std::string m_futStName;
 			std::string m_animationName;
 			std::string m_stateName;
 			std::vector<Animation*> m_animlist;
@@ -257,8 +239,11 @@ namespace ursine
 			void importAnimation(void);
 			
 		} Meta(
-			Enable, 
-			RequiresComponents(typeof(ursine::ecs::Model3D)),
-			DisplayName("Animator"));
-		}
+            Enable, 
+            WhiteListMethods, 
+            DisplayName( "Animator" )
+        ) EditorMeta(
+              RequiresComponents( typeof( ursine::ecs::Model3D ) )
+        );
+	}
 }

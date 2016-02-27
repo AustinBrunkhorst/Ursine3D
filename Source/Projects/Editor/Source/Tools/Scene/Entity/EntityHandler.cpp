@@ -213,6 +213,9 @@ JSMethod(EntityHandler::inspect)
 
     auto components = entity->GetComponents( );
 
+    // sort the components based on their instance ID
+    sort( components.begin( ), components.end( ), ecs::EntityManager::CompareComponentsAscending );
+
     Json::array componentArray;
 
     for (auto *component : components)

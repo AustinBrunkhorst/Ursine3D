@@ -404,7 +404,7 @@ namespace ursine
              *         assuming it's a class type.
              *  @return Set of fields for this type.
              */
-            std::vector<Field> GetFields(void) const;
+            const std::vector<Field> &GetFields(void) const;
 
             /** @brief Gets a specific field for this type.
              *  @param name Name of the field.

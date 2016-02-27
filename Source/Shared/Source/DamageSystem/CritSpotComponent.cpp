@@ -11,9 +11,6 @@
 
 #include <Precompiled.h>
 #include "CritSpotComponent.h"
-#include "DamageOnCollideComponent.h"
-#include <EntityEvent.h>
-#include <CollisionEventArgs.h>
 #include <GameEvents.h>
 
 NATIVE_COMPONENT_DEFINITION( CritSpot ) ;
@@ -26,34 +23,17 @@ CritSpot::CritSpot(void) :
 
 CritSpot::~CritSpot(void)
 {
-    GetOwner( )->Listener(this)
-        .Off(ursine::ecs::ENTITY_COLLISION_PERSISTED, &CritSpot::OnCollide);
 }
 
 void CritSpot::OnInitialize(void)
 {
-    GetOwner( )->Listener(this)
-        .Off(ursine::ecs::ENTITY_COLLISION_PERSISTED, &CritSpot::OnCollide);
 }
 
-void CritSpot::OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
+void CritSpot::ApplyDamage(float damage)
 {
-    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+    game::DamageEventArgs damageArgs(damage);
 
-    DamageOnCollide* damageComp = args->otherEntity->GetComponent<DamageOnCollide>( );
-
-    if ( damageComp )
-    {
-        // calculate damage with crit and if cr
-        float damage = damageComp->GetDamageToApply( );
-        damage *= damageComp->GetCritModifier( );
-
-        game::DamageEventArgs damageArgs(damage, damageComp);
-
-        // dispatch event for health comp
-        GetOwner( )->Dispatch(game::DAMAGE_EVENT, &damageArgs);
-
-        damageComp->AddEntityToIntervals( GetOwner( )->GetUniqueID( ) );
-    }
+    // dispatch event for health comp
+    GetOwner( )->GetRoot( )->Dispatch(game::DAMAGE_EVENT, &damageArgs);
 
 }

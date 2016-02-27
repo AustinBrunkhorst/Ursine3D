@@ -49,7 +49,6 @@ namespace ursine
                 SetRenderMode
             );
 
-
             EditorField(
                 Vec2 viewportPosition,
                 GetViewportPosition,
@@ -92,7 +91,7 @@ namespace ursine
                 SetRenderLayer
             );
 
-            Meta(BitMaskEditor)
+            EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,

@@ -15,7 +15,10 @@
 
 #include "StateMachine.h"
 
-#include "Transition.h"
+#include <CoreSystem.h>
+#include <TimerManager.h>
+
+#define DEBUG_OUTPUT(str) if (m_enableDebugOutput) printDebugMessage( str );
 
 namespace ursine
 {
@@ -27,16 +30,16 @@ namespace ursine
             , m_userData( nullptr )
             , m_transitionFound( false )
             , m_nextState( nullptr )
+            , m_timers( GetCoreSystem( TimerManager ) )
+            , m_enableDebugOutput( false )
+            , m_output( nullptr )
         {
         }
 
         StateMachine::StateMachine(void *userData)
-            : m_currentState( nullptr )
-            , m_startingState( true )
-            , m_userData( userData )
-            , m_transitionFound( false )
-            , m_nextState( nullptr )
+            : StateMachine( )
         {
+            m_userData = userData;
         }
 
         void StateMachine::Update(void)
@@ -46,30 +49,48 @@ namespace ursine
             // Update / Start the current state
             if (m_startingState)
             {
+                DEBUG_OUTPUT( "[Begin] OnEnter For State \"" + m_currentState->m_name + "\"" );
+
                 m_currentState->OnEnter( this );
                 m_startingState = false;
+
+                DEBUG_OUTPUT( "[End] OnEnter For State \"" + m_currentState->m_name + "\"" );
 
                 // Early out, assuring states go through all three states
                 return;
             }
             else
             {
+                DEBUG_OUTPUT( "[Begin] OnUpdate For State \"" + m_currentState->m_name + "\"" );
+
                 m_currentState->OnUpdate( this );
+
+                DEBUG_OUTPUT( "[End] OnUpdate For State \"" + m_currentState->m_name + "\"" );
             }
 
             // If we've already found a transition, and am waiting on a state to finish
             if (m_transitionFound)
             {
+                DEBUG_OUTPUT( "Transition Found Last Frame" );
+
                 if (m_currentState->CanExit( ))
                 {
+                    DEBUG_OUTPUT( "[Begin] OnExit For State \"" + m_currentState->m_name + "\"" );
+
                     m_currentState->OnExit( this );
-                    
+
+                    DEBUG_OUTPUT( "[End] OnExit For State \"" + m_currentState->m_name + "\"" );
+
+                    DEBUG_OUTPUT( "[" + m_currentState->m_name + " -> " + m_nextState->m_name + "]" );
+
                     m_currentState = m_nextState;
                     m_startingState = true;
 
                     m_transitionFound = false;
                     m_nextState = nullptr;
                 }
+                else
+                    DEBUG_OUTPUT( "State \"" + m_currentState->m_name + "\" Cannot Exit" );
             }
             else
             {
@@ -80,16 +101,26 @@ namespace ursine
                 {
                     if (transition->CanTransition( this ))
                     {
+                        DEBUG_OUTPUT( "Transition Found Named \"" + transition->m_name + "\"" );
+
                         // We've found a valid transition.  Can the state exit?
                         if (!m_currentState->CanExit( ))
                         {
+                            DEBUG_OUTPUT( "State \"" + m_currentState->m_name + "\" Cannot Exit" );
+
                             m_transitionFound = true;
                             m_nextState = transition->GetDestination( );
+
+                            DEBUG_OUTPUT( "Waiting To Transition To \"" + m_nextState->m_name + "\"" );
                         }
                         else
                         {
+                            DEBUG_OUTPUT( "[Begin] OnExit For State \"" + m_currentState->m_name + "\"" );
+
                             // We have a valid transition, end the current and start the new
                             m_currentState->OnExit( this );
+
+                            DEBUG_OUTPUT( "[End] OnExit For State \"" + m_currentState->m_name + "\"" );
 
                             m_currentState = transition->GetDestination( );
                             m_startingState = true;
@@ -107,6 +138,18 @@ namespace ursine
             }
         }
 
+        void StateMachine::EnableDebugOutput(std::ostream *output)
+        {
+            m_enableDebugOutput = true;
+            m_output = output;
+        }
+
+        void StateMachine::DisableDebugOutput(void)
+        {
+            m_enableDebugOutput = false;
+            m_output = nullptr;
+        }
+
         void StateMachine::AddBool(const std::string &boolName, bool initValue)
         {
             m_variables[ boolName ] = initValue;
@@ -118,6 +161,8 @@ namespace ursine
 
             UAssert( variant->GetType( ) == typeof(bool), "Error: The expected type is missmatched." );
 
+            DEBUG_OUTPUT( "Getting Bool \"" + boolName + "\" Of Value: " + ( variant->ToBool( ) ? "True" : "False" ) );
+
             return variant->ToBool( );
         }
 
@@ -126,6 +171,8 @@ namespace ursine
             auto variant = getVariable( boolName );
 
             UAssert( variant->GetType( ) == typeof(bool), "Error: The expected type is missmatched." );
+
+            DEBUG_OUTPUT( "Setting Bool \"" + boolName + "\" To Value: " + ( value ? "True" : "False" ) );
 
             *variant = value;
         }
@@ -143,6 +190,8 @@ namespace ursine
 
             UAssert( variant->GetType( ) == typeof(bool), "Error: The expected type is missmatched." );
 
+            DEBUG_OUTPUT( "Getting Trigger \"" + triggerName + "\" Of Value: " + ( variant->ToBool( ) ? "True" : "False" ) );
+
             return variant->ToBool( );
         }
 
@@ -151,6 +200,8 @@ namespace ursine
             auto variant = getVariable( triggerName );
 
             UAssert( variant->GetType( ) == typeof(bool), "Error: The expected type is missmatched." );
+
+            DEBUG_OUTPUT( "Setting Trigger \"" + triggerName + "\"" );
 
             *variant = true;
         }
@@ -166,6 +217,8 @@ namespace ursine
 
             UAssert( variant->GetType( ) == typeof(float), "Error: The expected type is missmatched." );
 
+            DEBUG_OUTPUT( "Getting Float \"" + floatName + "\" Of Value: " + std::to_string( variant->ToFloat( ) ) );
+
             return variant->ToFloat( );
         }
 
@@ -174,6 +227,8 @@ namespace ursine
             auto variant = getVariable( floatName );
 
             UAssert( variant->GetType( ) == typeof(float), "Error: The expected type is missmatched." );
+
+            DEBUG_OUTPUT( "Setting Float \"" + floatName + "\" To Value: " + std::to_string( value ) );
 
             *variant = value;
         }
@@ -189,6 +244,8 @@ namespace ursine
 
             UAssert( variant->GetType( ) == typeof(int), "Error: The expected type is missmatched." );
 
+            DEBUG_OUTPUT( "Getting Int \"" + intName + "\" Of Value: " + std::to_string( variant->ToInt( ) ) );
+
             return variant->ToInt( );
         }
 
@@ -197,6 +254,8 @@ namespace ursine
             auto variant = getVariable( intName );
 
             UAssert( variant->GetType( ) == typeof(int), "Error: The expected type is missmatched." );
+
+            DEBUG_OUTPUT( "Setting Int \"" + intName + "\" To Value: " + std::to_string( value ) );
 
             *variant = value;
         }
@@ -220,6 +279,11 @@ namespace ursine
             return m_userData;
         }
 
+        LocalTimerManager *StateMachine::GetTimers(void)
+        {
+            return &m_timers;
+        }
+
         void StateMachine::RemoveState(State *state)
         {
             for (size_t i = 0; i < m_states.size( ); ++i)
@@ -232,9 +296,9 @@ namespace ursine
             }
         }
 
-        void StateMachine::SetStartingState(State *startingState)
+        void StateMachine::SetInitialState(State *initialState)
         {
-            m_currentState = startingState;
+            m_currentState = initialState;
         }
 
         State *StateMachine::addState(State::Handle state)
@@ -251,6 +315,11 @@ namespace ursine
             UAssert( itr != m_variables.end( ), "Error: The variable named %s does not exist.", name.c_str( ) );
 
             return &m_variables[ name ];
+        }
+
+        void StateMachine::printDebugMessage(const std::string &message)
+        {
+            *m_output << "State Machine Message: " << message << std::endl;
         }
     }
 }

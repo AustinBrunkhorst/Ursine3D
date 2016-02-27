@@ -1,0 +1,147 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Camera": {
+".uid": 6, 
+"active": true, 
+"farPlane": 2500, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 5, 
+"rotation": {
+"w": 0.4188268780708313, 
+"x": 0.071468330919742584, 
+"y": 0.89235091209411621, 
+"z": -0.15227013826370239
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -408.29058837890625, 
+"y": 221.92744445800781, 
+"z": 339.1351318359375
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [], 
+"components": {
+"BossRoomResources": {
+".uid": 11, 
+"archetypesToLoad": [
+"BossRoom/BossRoomOpenCamera"
+], 
+"bossTopEntityName": "BossRotatingTop"
+}, 
+"CombatBowl1Resources": {
+".uid": 12, 
+"archetypesToLoad": [
+"CombatBowl1/CombatBowl1Collision", "CombatBowl1/CombatBowl1HallwayFX", "CombatBowl1/CombatBowl1Level", "CombatBowl1/CombatBowl1Lights", "CombatBowl1/CombatBowlBossFX", "CombatBowl1/CombatBowl1SpawnGroup", "CombatBowl1/BossDoor", "CombatBowl1/CombatBowl1ElevatorLift"
+]
+}, 
+"LevelSegmentManager": {
+".uid": 13, 
+"currentSegment": 11, 
+"enableDebugOutput": false
+}, 
+"Transform": {
+".uid": 10, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"TutorialResources": {
+".uid": 14, 
+"archetypesToLoad": [
+"Tutorial/TutorialRoom", "Tutorial/TutorialPlayer1Spawn", "Tutorial/TutorialPlayer2Spawn", "Tutorial/FX_SimulationStart"
+]
+}
+}, 
+"name": "LevelSegmentManager"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 3, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 4, 
+"systems": [
+{
+"type": "CharacterControllerSystem"
+}, {
+"type": "CheatSystem"
+}, {
+"type": "CommandQueueSystem"
+}, {
+"type": "InputControllerSystem"
+}, {
+"type": "ProjectileSystem"
+}
+]
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}

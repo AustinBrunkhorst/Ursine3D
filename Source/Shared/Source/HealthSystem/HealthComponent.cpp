@@ -103,23 +103,7 @@ void Health::OnInitialize(void)
     GetOwner( )->Listener(this)
         .On(ursine::ecs::ENTITY_REMOVED, &Health::OnDeath);
 
-    ConnectToAllCritSpots( );
-}
-
-void Health::ConnectToAllCritSpots(void)
-{
-    GetOwner( )->Listener(this).On( game::DAMAGE_EVENT, &Health::OnDamaged );
-
-    ursine::ecs::Entity* entity;
-    auto world = GetOwner( )->GetWorld( );
-    auto children = GetOwner( )->GetChildren( );
-
-
-    for ( auto it : *children )
-    {
-        entity = world->GetEntity( it );
-        entity->Listener(this).On(game::DAMAGE_EVENT, &Health::OnDamaged);
-    }
+    GetOwner( )->Listener(this).On(game::DAMAGE_EVENT, &Health::OnDamaged);
 }
 
 
@@ -128,8 +112,6 @@ void Health::OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT))
     EVENT_ATTRS(ursine::ecs::Entity, game::DamageEventArgs);
 
     DealDamage(args->m_damage);
-
-    args->m_damageComp->AddEntityToIntervals( GetOwner( )->GetUniqueID( ) );
 }
 
 

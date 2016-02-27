@@ -79,6 +79,6 @@ namespace ursine
 
         #endif
 
-        } Meta(Enable, DisplayName("FBXSceneRootNode"));
+        } Meta(Enable, DisplayName( "FBXSceneRootNode" ));
     }
 }

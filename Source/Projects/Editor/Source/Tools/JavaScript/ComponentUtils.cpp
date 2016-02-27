@@ -117,16 +117,19 @@ namespace
             auto &handle = type.GetEnum( );
             auto keys = handle.GetKeys( );
 
-            Json::object enumObj;
+            Json::array enumEntries;
 
             for (auto &key : keys)
             {
                 auto value = handle.GetValue( key );
 
-                enumObj[ key ] = value.SerializeJson( );
+                enumEntries.emplace_back( Json::object {
+                    { "key", key },
+                    { "value", value.SerializeJson( ) }
+                } );
             }
 
-            typeObj[ "enumValue" ] = enumObj;
+            typeObj[ "enumValue" ] = enumEntries;
         }
         else
         {
