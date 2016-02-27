@@ -20,6 +20,7 @@ namespace ursine
         {
             class ResourcePipelineManager
                 : public EventDispatcher<ResourcePipelineEventType>
+                , public fs::FileWatchListener
             {
             public:
                 ResourcePipelineManager(void);
@@ -31,6 +32,10 @@ namespace ursine
                 ResourceDirectoryNode *GetRootResourceDirectory(void);
 
                 void Build(void);
+
+                void WatchResourceDirectory(void);
+                void StopWatchingResourceDirectory(void);
+                bool IsWatchingResourceDirectory(void) const;
 
                 void InvalidateResourceMeta(ResourceItem::Handle resource);
                 void InvalidateResourceCache(ResourceItem::Handle resource);
@@ -46,6 +51,9 @@ namespace ursine
                 ResourceDirectoryNode *m_rootDirectory;
 
                 std::thread m_buildWorkerThread;
+
+                fs::FileWatcher m_fileWatcher;
+                fs::WatchID m_resourceDirectoryWatch;
 
                 ResourcePipelineManager(const ResourcePipelineManager &rhs) = delete;
                 ResourcePipelineManager &operator=(const ResourcePipelineManager &rhs) = delete;
@@ -108,6 +116,18 @@ namespace ursine
                 void buildResourcePreview(ResourceBuildContext &context);
 
                 bool buildIsInvalidated(ResourceItem::Handle resource);
+
+                ///////////////////////////////////////////////////////////////
+                // File Watching
+                ///////////////////////////////////////////////////////////////
+                
+                void handleFileAction(
+                    fs::WatchID watchid,
+                    const std::string &dir,
+                    const std::string &filename,
+                    fs::Action action,
+                    std::string oldFilename = ""
+                ) override;
 
                 ///////////////////////////////////////////////////////////////
                 // Utilities

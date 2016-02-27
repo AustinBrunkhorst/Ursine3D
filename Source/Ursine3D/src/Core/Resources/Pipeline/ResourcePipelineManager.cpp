@@ -50,8 +50,9 @@ namespace ursine
     rp::ResourcePipelineManager::ResourcePipelineManager(void)
         : EventDispatcher( this )
         , m_rootDirectory( new ResourceDirectoryNode( nullptr ) )
+        , m_resourceDirectoryWatch( -1 )
     {
-        
+        m_fileWatcher.watch( );
     }
 
     rp::ResourcePipelineManager::~ResourcePipelineManager(void)
@@ -106,6 +107,37 @@ namespace ursine
 
         if (m_buildWorkerThread.joinable( ))
             m_buildWorkerThread.detach( );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::WatchResourceDirectory(void)
+    {
+        if (IsWatchingResourceDirectory( ))
+            return;
+
+        m_resourceDirectoryWatch = m_fileWatcher.addWatch( 
+            m_config.resourceDirectory.string( ), 
+            this, 
+            true 
+        );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::StopWatchingResourceDirectory(void)
+    {
+        if (!IsWatchingResourceDirectory( ))
+            return;
+
+        m_fileWatcher.removeWatch( m_resourceDirectoryWatch );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    bool rp::ResourcePipelineManager::IsWatchingResourceDirectory(void) const
+    {
+        return m_resourceDirectoryWatch != -1;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -795,6 +827,29 @@ namespace ursine
                 
         // this puppy is all up to date
         return false;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // File Watching
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::handleFileAction(
+        fs::WatchID watchid,
+        const std::string &dir,
+        const std::string &filename,
+        fs::Action action,
+        std::string oldFilename
+        )
+    {
+        const char *names[] = { "Invalid", "Add", "Delete", "Modified", "Moved" };
+
+        std::cout << "=================" << std::endl;
+        std::cout << "dir: " << dir << std::endl;
+        std::cout << "filename: " << filename << std::endl;
+        std::cout << "action: " << names[ action ] << std::endl;
+        std::cout << "oldFileName: " << oldFilename << std::endl;
+
+        std::cout << std::endl;
     }
 
     ///////////////////////////////////////////////////////////////////////////

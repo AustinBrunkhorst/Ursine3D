@@ -550,8 +550,7 @@ void Editor::onPipelinePreBuildComplete(EVENT_HANDLER(rp::ResourcePipelineManage
 
     m_mainWindow.m_ui->Message( UI_CMD_BROADCAST, "ResourcePipeline", "preBuildComplete", { } );
 
-    URSINE_TODO( "Application::PostMainThread" );
-    Timer::Create( 0 ).Completed( std::bind( &Editor::exitSplashScreen, this ) );
+    Application::PostMainThread( std::bind( &Editor::exitSplashScreen, this ) );
 }
 
 void Editor::onSceneWorldChanged(EVENT_HANDLER(Scene))

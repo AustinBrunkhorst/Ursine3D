@@ -120,6 +120,8 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
         return SetEmptyScene( );
 
     m_scene.SetActiveWorld( startingWorld );
+
+    m_resourcePipeline.WatchResourceDirectory( );
 }
 
 void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))
