@@ -24,6 +24,8 @@
 
 namespace ursine
 {
+    class Scene;
+
     namespace ecs
     {
         class Entity;
@@ -39,13 +41,15 @@ namespace ursine
             inline explicit Component(ComponentTypeID typeID);
 
             Component(const Component &rhs) = default;
-            ~Component(void);
 
             Component &operator=(const Component &rhs) = default;
 
-            // Called when the component has been initialized and added to an entity
-            // anything that derives can overload this to init their values
+            // Called when all values have been initialized for this 
+            // component from serialization
             virtual void OnInitialize(void) { }
+
+            // Called when a new scene is prepared
+            virtual void OnSceneReady(Scene *scene) { }
 
             // The type ID of this component
             inline ComponentTypeID GetTypeID(void) const;
@@ -98,19 +102,14 @@ namespace ursine
                     Entity *m_entity;
                };
 
+        protected:
+            // determines if resources are available
+            bool resourcesAreAvailable(void) const;
+
+            template<typename ResourceType>
+            ResourceType *loadResource(const resources::ResourceReference &resource) const;
+
         private:
-        #if defined(URSINE_WITH_EDITOR)
-            // whether or not OnInitialize has been called on the base component type
-            bool m_baseInitialized;
-        #endif
-
-            bool m_hasResources;
-
-            // Called when the component has been initialized and added to an entity
-            void initialize(void);
-
-            void onSceneChanged(EVENT_HANDLER(World));
-
             // component type id
             ComponentTypeID m_typeID;
 
@@ -121,6 +120,10 @@ namespace ursine
 
             // entity that this component is attached to
             Entity *m_owner;
+
+            void onInitialize(void);
+            void onSceneReady(Scene *scene);
+            
         } Meta(WhiteListMethods);
     }
 }

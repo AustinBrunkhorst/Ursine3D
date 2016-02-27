@@ -1,3 +1,5 @@
+#pragma once
+
 /* ----------------------------------------------------------------------------
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -10,8 +12,6 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
-
-#pragma once
 
 #include "GfxConfig.h"
 #include "GfxAPIDefines.h"
@@ -30,7 +30,8 @@ namespace ursine
     {
         class GfxAPI : public core::CoreSystem
         {
-            CORE_SYSTEM
+            CORE_SYSTEM;
+
         private:
             struct privateData;
 

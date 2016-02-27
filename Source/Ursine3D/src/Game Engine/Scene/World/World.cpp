@@ -38,7 +38,6 @@ namespace ursine
     {
         World::World(void)
             : EventDispatcher( this )
-            , m_loaded( false )
             , m_settings( nullptr )
             , m_entityManager( nullptr )
             , m_systemManager( nullptr )
@@ -96,7 +95,7 @@ namespace ursine
 
 		void World::queueEntityDeletion(Entity *entity)
 		{
-			m_deleted.push_back(entity);
+			m_deleted.push_back( entity );
 		}
 
         Entity *World::CreateEntityFromArchetype(
@@ -223,28 +222,23 @@ namespace ursine
             return m_owner;
         }
 
-        void World::SetOwner(Scene *owner)
+        void World::setOwner(Scene *owner)
         {
+            UAssert( m_owner == nullptr,
+                "World owner already set."  
+            );
+
             m_owner = owner;
 
-            Dispatch( WORLD_OWNER_CHANGED, EventArgs::Empty );
-        }
-
-        void World::DispatchLoad(void)
-        {
             // make sure we have a the world configuration component
             if (!m_settings->HasComponent<WorldConfig>( ) )
                 m_settings->AddComponent<WorldConfig>( );
 
-            if (!m_loaded)
-            {
-                m_systemManager->onAfterLoad( );
-
-                m_loaded = true;
-            }
+            m_entityManager->initializeScene( );
+            m_systemManager->initializeScene( );
         }
 
-		void World::deleteEntity(Entity *entity)
+        void World::deleteEntity(Entity *entity)
 		{
 			m_nameManager->Remove( entity );
 			m_entityManager->Remove( entity );

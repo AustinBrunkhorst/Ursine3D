@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -73,7 +73,7 @@ namespace ursine
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
 
-        void RenderSystem::OnAfterLoad(void)
+        void RenderSystem::OnSceneReady(Scene *scene)
         {
             m_worldConfig = m_world->GetSettings( )->GetComponent<WorldConfig>( );
         }

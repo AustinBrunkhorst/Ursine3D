@@ -32,7 +32,6 @@ namespace ursine
             friend class RenderSystem;
 
         public:
-
             EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
@@ -40,36 +39,44 @@ namespace ursine
                 SetRenderMask
             );
 
-
             EditorResourceField(
                 ursine::resources::TextureData,
-                texture
+                texture,
+                GetTexture,
+                SetTexture
             );
 
+            Meta(Enable)
             Billboard2D(void);
             ~Billboard2D(void);
 
-            Meta(Disable)
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             //get/set model
-            ursine::graphics::Billboard2D *GetBillboard(void);
+            graphics::Billboard2D *GetBillboard(void);
 
-            ursine::ecs::RenderMask GetRenderMask(void) const;
-            void SetRenderMask(ursine::ecs::RenderMask mask);
+            RenderMask GetRenderMask(void) const;
+            void SetRenderMask(RenderMask mask);
+
+            const resources::ResourceReference &GetTexture(void) const;
+            void SetTexture(const resources::ResourceReference &texture);
 
         private:
-
-            // This model component's model in the renderer
-            graphics::Billboard2D *m_billboard;
-
-            // The graphics core API
             graphics::GfxAPI *m_graphics;
-
-            void updateRenderer(void);
+            graphics::Billboard2D *m_billboard;
 
             RenderableComponentBase *m_base;
 
-        } Meta(Enable, DisplayName( "Billboard2D" ));
+            resources::ResourceReference m_texture;
+
+            void updateRenderer(void);
+
+            void invalidateTexture(void);
+        } Meta(
+            Enable, 
+            WhiteListMethods, 
+            DisplayName( "Billboard2D" )
+        );
     }
 }

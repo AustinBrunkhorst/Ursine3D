@@ -32,7 +32,7 @@ public:
     void ClearSelectedEntities(void);
 
 private:
-    void OnAfterLoad(void) override;
+    void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));

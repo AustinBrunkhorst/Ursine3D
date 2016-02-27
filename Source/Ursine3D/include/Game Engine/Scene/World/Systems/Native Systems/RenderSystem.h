@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -53,6 +53,7 @@ namespace ursine
             ENTITY_SYSTEM;
 
         public:
+            Meta(Enable)
             RenderSystem(World *world);
             ~RenderSystem(void);
 
@@ -67,7 +68,7 @@ namespace ursine
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
-            void OnAfterLoad(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             // vector of cameras sorted based on their render layer (low to high)
             std::vector<Component::Handle<Camera>> m_cameras;
@@ -92,6 +93,6 @@ namespace ursine
 
             void addRenderable(Entity *entity, RenderableComponentBase *renderable);
             void removeRenderable(Entity *entity, RenderableComponentBase *renderable);
-        } Meta(Enable, AutoAddEntitySystem);
+        } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }
 }

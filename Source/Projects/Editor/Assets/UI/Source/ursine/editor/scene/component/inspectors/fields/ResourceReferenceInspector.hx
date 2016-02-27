@@ -56,7 +56,7 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
 
     public override function updateValue(value : ResourceReference) {
         var resource = Extern.ProjectGetResource( value.guid );
-
+        
         var valid = resource != null;
 
         m_displayText.innerText = valid ? resource.displayName : '';

@@ -88,7 +88,8 @@ namespace ursine
         {
             while (m_active.size( ) > 0)
             {
-                auto entity = m_active[ 0 ];
+                auto *entity = m_active[ 0 ];
+
                 Remove( entity );
             }
         }
@@ -201,7 +202,13 @@ namespace ursine
 
             addComponent( entity, component );
 
-            component->initialize( );
+            component->onInitialize( );
+
+            auto *scene = m_world->GetOwner( );
+
+            // determine if the scene is already configured
+            if (scene != nullptr)
+                component->onSceneReady( scene );
 
             ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
 
@@ -302,7 +309,7 @@ namespace ursine
             return m_hierarchy.GetChildren( entity );
         }
 
-        Component *EntityManager::GetComponentInChildren(const Entity* entity, ComponentTypeID id) const
+        Component *EntityManager::GetComponentInChildren(const Entity *entity, ComponentTypeID id) const
         {
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
@@ -329,26 +336,26 @@ namespace ursine
             return nullptr;
         }
 
-        Component *EntityManager::GetComponentInParent(const Entity* entity, ComponentTypeID id) const
+        Component *EntityManager::GetComponentInParent(const Entity *entity, ComponentTypeID id) const
         {
-            const Entity* parent = entity;
-            Component* comp = nullptr;
+            const auto *parent = entity;
+            Component *component = nullptr;
 
             do
             {
-                auto parentID = m_hierarchy.GetParent(parent);
+                auto parentID = m_hierarchy.GetParent( parent );
 
-                if ( parentID == -1 )
+                if (parentID == -1)
                     return nullptr;
 
                 parent = &m_cache[ parentID ];
                 
-                comp = GetComponent(parent, id);
+                component = GetComponent( parent, id );
 
             // was desired component found
-            } while ( comp == nullptr );
+            } while (component == nullptr);
 
-            return comp;
+            return component;
         }
 
         ComponentVector EntityManager::GetComponentsInChildren(const Entity* entity, ComponentTypeID id) const
@@ -452,10 +459,11 @@ namespace ursine
             for (auto child : entity->GetTransform( )->GetChildren( ))
                 BeforeRemove( child->GetOwner( ) );
 
-            EntityEventArgs e(WORLD_ENTITY_REMOVED, entity);
+            EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
 
             // we're removing man
             entity->Dispatch( ENTITY_REMOVED, EventArgs::Empty );
+
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
@@ -471,6 +479,7 @@ namespace ursine
             while (children->size( ) > 0)
             {
                 auto &child = ( *children )[ 0 ];
+
                 Remove( &m_cache[ child ] );
             }
 
@@ -505,6 +514,12 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////////
         // Private Methods
         ////////////////////////////////////////////////////////////////////////
+
+        void EntityManager::initializeScene(void)
+        {
+            for (auto *entity : m_active)
+                initializeComponentsForScene( entity );
+        }
 
         Entity *EntityManager::create(void)
         {
@@ -617,7 +632,6 @@ namespace ursine
 
             ComponentEventArgs args( WORLD_ENTITY_COMPONENT_ADDED, entity, nullptr );
 
-            // transform can be assumed to be the first component type
             for (uint32 i = 0; i < size; ++i)
             {
                 ComponentTypeMask mask;
@@ -628,11 +642,33 @@ namespace ursine
                 {
                     auto *component = m_componentTypes[ i ][ id ];
 
-                    component->initialize( );
+                    component->onInitialize( );
 
                     args.component = component;
 
                     m_world->Dispatch( WORLD_ENTITY_COMPONENT_ADDED, &args );
+                }
+            }
+        }
+
+        void EntityManager::initializeComponentsForScene(Entity *entity)
+        {
+            const auto size = m_componentTypes.size( );
+            const auto id = entity->m_id;
+
+            auto *scene = m_world->GetOwner( );
+
+            for (uint32 i = 0; i < size; ++i)
+            {
+                ComponentTypeMask mask;
+
+                mask.set( i, true );
+
+                if (entity->HasComponent( mask ))
+                {
+                    auto *component = m_componentTypes[ i ][ id ];
+
+                    component->onSceneReady( scene );
                 }
             }
         }

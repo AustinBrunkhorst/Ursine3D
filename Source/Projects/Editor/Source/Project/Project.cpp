@@ -64,9 +64,6 @@ void Project::SetEmptyScene(void)
 {
     auto world = std::make_shared<ecs::World>( );
 
-    // make sure there is an owner before creating entities
-    world->SetOwner( &m_scene );
-
     auto *univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
@@ -77,8 +74,6 @@ void Project::SetEmptyScene(void)
         component->SetRadius( 40.0f );
         component->SetColor( Color( 0.5f, 0.5f, 0.5f, 1.0f ) );
     }
-
-    world->DispatchLoad( );
 
     m_scene.SetActiveWorld( world );
 }
@@ -119,7 +114,7 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
 {
     m_entityManager = new EditorEntityManager( this );
 
-    auto world = startingWorld.Load<resources::WorldData>( );
+    auto world = startingWorld.Load<resources::WorldData>( m_scene.GetResourceManager( ) );
 
     if (!world)
         return SetEmptyScene( );

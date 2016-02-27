@@ -19,20 +19,20 @@ namespace ursine
 
         ResourceReference ResourceManager::CreateReference(const GUID &guid)
         {
-            return { this, guid };
+            return { guid };
         }
 
         ResourceData::Handle ResourceManager::LoadReference(const ResourceReference &reference, bool ignoreCache)
         {
             // if cache was ignored
             if (ignoreCache)
-                return hardLoadResource( reference.m_resourceGUID );
+                return hardLoadResource( reference.GetGUID( ) );
 
-            auto cache = m_database.find( reference.m_resourceGUID );
+            auto cache = m_database.find( reference.GetGUID( ) );
 
             // doesn't exist, attempt to hard load it
             if (cache == m_database.end( ))
-                return hardLoadResource( reference.m_resourceGUID );
+                return hardLoadResource( reference.GetGUID( ) );
 
             return cache->second;
         }

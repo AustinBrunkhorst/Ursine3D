@@ -27,9 +27,15 @@ ENTITY_SYSTEM_DEFINITION( EditorToolSystem );
 
 EditorToolSystem::EditorToolSystem(ecs::World *world)
     : EntitySystem( world )
+    , m_mouseManager( nullptr )
+    , m_keyboardManager( nullptr )
+    , m_editorCameraSystem( nullptr )
     , m_currentSelected( -1 )
     , m_currentTool( nullptr )
+    , m_selectTool( nullptr )
+    , m_dupTool( nullptr )
 {
+
 }
 
 EditorToolSystem::~EditorToolSystem(void)
@@ -52,7 +58,7 @@ void EditorToolSystem::ClearSelectedEntities(void)
         current->RemoveComponent<ecs::Selected>( );
 }
 
-void EditorToolSystem::OnAfterLoad(void)
+void EditorToolSystem::OnSceneReady(Scene *scene)
 {
     auto editor = GetCoreSystem( Editor );
 
@@ -91,19 +97,23 @@ void EditorToolSystem::OnAfterLoad(void)
 void EditorToolSystem::OnRemove(void)
 {
     for (auto &p : m_tools)
-    {
         delete p.second;
+
+    if (m_mouseManager != nullptr)
+    {
+        m_mouseManager->Listener( this )
+            .Off( MM_BUTTON_DOWN, &EditorToolSystem::onMouseDown )
+            .Off( MM_BUTTON_UP, &EditorToolSystem::onMouseUp )
+            .Off( MM_MOVE, &EditorToolSystem::onMouseMove )
+            .Off( MM_SCROLL, &EditorToolSystem::onMouseScroll );
     }
-
-    m_mouseManager->Listener( this )
-        .Off( MM_BUTTON_DOWN, &EditorToolSystem::onMouseDown )
-        .Off( MM_BUTTON_UP, &EditorToolSystem::onMouseUp )
-        .Off( MM_MOVE, &EditorToolSystem::onMouseMove )
-        .Off( MM_SCROLL, &EditorToolSystem::onMouseScroll );
-
-    m_keyboardManager->Listener( this )
-        .Off( KM_KEY_DOWN, &EditorToolSystem::onKeyDown )
-        .Off( KM_KEY_UP, &EditorToolSystem::onKeyUp );
+    
+    if (m_keyboardManager != nullptr)
+    {
+        m_keyboardManager->Listener( this )
+            .Off( KM_KEY_DOWN, &EditorToolSystem::onKeyDown )
+            .Off( KM_KEY_UP, &EditorToolSystem::onKeyUp );
+    }
 
     m_world->Listener( this )
         .Off( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorToolSystem::onUpdate )

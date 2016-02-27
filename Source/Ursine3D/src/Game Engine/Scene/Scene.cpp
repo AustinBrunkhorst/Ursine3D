@@ -49,14 +49,14 @@ namespace ursine
 
         m_activeWorld = world;
 
-        m_activeWorld->SetOwner( this );
+        m_activeWorld->setOwner( this );
 
         Dispatch( SCENE_WORLD_CHANGED, &e );
     }
 
     bool Scene::SetActiveWorld(const resources::ResourceReference &reference)
     {
-        auto *worldData = reference.Load<resources::WorldData>( true );
+        auto *worldData = reference.Load<resources::WorldData>( m_resourceManager, true );
 
         if (!worldData)
             return false;
@@ -65,7 +65,7 @@ namespace ursine
 
         m_activeWorld = worldData->GetData( );
 
-        m_activeWorld->SetOwner( this );
+        m_activeWorld->setOwner( this );
 
         Dispatch( SCENE_WORLD_CHANGED, &e );
 

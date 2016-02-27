@@ -165,6 +165,7 @@ namespace ursine
             static bool CompareComponentsDescending(const Component *a, const Component *b);
 
         private:
+            friend class World;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
@@ -198,6 +199,9 @@ namespace ursine
             // the hierarchy that all entities reside in
             Hierarchy m_hierarchy;
 
+            // initalizes all entities and their components
+            void initializeScene(void);
+
             // creates an empty entity and adds it to the world
             Entity *create(void);
 
@@ -211,8 +215,11 @@ namespace ursine
             // returns true if the component was removed
             void removeComponent(Entity *entity, ComponentTypeID id, bool dispatch = false);
 
-            // initializes all components after the Transform
+            // calls onInitialize on all components
             void initializeComponents(Entity *entity);
+
+            // calls onSceneReady on all components
+            void initializeComponentsForScene(Entity *entity);
 
             // removes and deconstructs all components from this entity
             void clearComponents(Entity *entity, bool dispatch = false);

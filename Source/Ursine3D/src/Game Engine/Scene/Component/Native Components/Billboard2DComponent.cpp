@@ -15,29 +15,23 @@
 #include "Billboard2DComponent.h"
 #include "CoreSystem.h"
 #include "GfxAPI.h"
-#include "EntityEvent.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(Billboard2D);
+        NATIVE_COMPONENT_DEFINITION( Billboard2D );
 
         Billboard2D::Billboard2D(void) 
-            : BaseComponent()
-            , m_billboard(nullptr)
+            : BaseComponent( )
+            , m_graphics( GetCoreSystem( graphics::GfxAPI ) )
+            , m_billboard( nullptr )
+            , m_base( new RenderableComponentBase( std::bind( &Billboard2D::updateRenderer, this ) ) )
         {
-            // store a pointer to the GfxAPI core system
-            m_graphics = GetCoreSystem(graphics::GfxAPI);
+            m_base->SetHandle( m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_BILLBOARD2D ) );
 
-			m_base = new RenderableComponentBase([=] {
-				updateRenderer( );
-			});
-
-            m_base->SetHandle( m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_BILLBOARD2D) );
-
-            // store a pointer to the model
-            m_billboard = &m_graphics->RenderableMgr.GetBillboard2D(m_base->GetHandle( ));
+            m_billboard = &m_graphics->RenderableMgr.GetBillboard2D( m_base->GetHandle( ) );
+            m_billboard->SetDimensions( 100.0f, 100.0f );
         } 
 
         Billboard2D::~Billboard2D(void)
@@ -47,67 +41,87 @@ namespace ursine
             m_graphics->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
             // release resource
-            if (m_billboard->GetTextureHandle() != 0)
+            if (m_billboard->GetTextureHandle( ) != 0)
             {
-                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadTexture(
-                    m_billboard->GetTextureHandle()
+                m_graphics->ResourceMgr.UnloadTexture(
+                    m_billboard->GetTextureHandle( )
                 );
             }
 
 			delete m_base;
         }
 
-        void Billboard2D::OnInitialize() 
+        void Billboard2D::OnInitialize(void) 
         {
-            m_base->OnInitialize( GetOwner( ) );
+            auto *owner = GetOwner( );
+
+            m_base->OnInitialize( owner );
 
             // set the unique id
-            m_billboard->SetEntityUniqueID(GetOwner()->GetUniqueID());
-
-            texture.Connect<EventArgs>( resources::RR_REFERENCED_RESOURCE_CHANGED,
-                [=](EVENT_HANDLER(resources::ResourceReference))
-                {
-                    auto data = texture.Load<resources::TextureData>( );
-
-                    if (data == nullptr)
-                    {
-                        // default
-                        m_billboard->SetTextureHandle( 0 );
-                    }
-                    else
-                    {
-                        // load with data->GetTextureHandle()
-                        auto handle = data->GetTextureHandle( );
-
-                        GetCoreSystem( graphics::GfxAPI )->ResourceMgr.LoadTexture( handle );
-                        m_billboard->SetTextureHandle( handle );
-                    }
-                }
-            );
+            m_billboard->SetEntityUniqueID( owner->GetUniqueID( ) );
         }
 
-        void Billboard2D::updateRenderer(void)
+        void Billboard2D::OnSceneReady(Scene *scene)
         {
-            auto trans = GetOwner()->GetTransform();
-            auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D( m_base->GetHandle( ) );
-
-            billboard.SetDimensions( 100.0f, 100.0f );
-            billboard.SetPosition(trans->GetWorldPosition());
+            invalidateTexture( );
         }
 
-        ursine::graphics::Billboard2D* Billboard2D::GetBillboard()
+        graphics::Billboard2D *Billboard2D::GetBillboard(void)
         {
             return m_billboard;
         }
 
-        ursine::ecs::RenderMask Billboard2D::GetRenderMask() const
+        RenderMask Billboard2D::GetRenderMask(void) const
         {
             return static_cast<RenderMask>( m_billboard->GetRenderMask( ) & 0xFFFFFFFF );
         }
 
-        void Billboard2D::SetRenderMask(ursine::ecs::RenderMask mask)
+        void Billboard2D::SetRenderMask(RenderMask mask)
         {
             m_billboard->SetRenderMask( static_cast<unsigned long long>( mask ) );
+        }
+
+        const resources::ResourceReference &Billboard2D::GetTexture(void) const
+        {
+            return m_texture;
+        }
+
+        void Billboard2D::SetTexture(const resources::ResourceReference &texture)
+        {
+            m_texture = texture;
+
+            if (!resourcesAreAvailable( ))
+                return;
+
+            invalidateTexture( );
+
+            NOTIFY_COMPONENT_CHANGED( "texture", m_texture );
+        }
+
+        void Billboard2D::updateRenderer(void)
+        {
+            auto trans = GetOwner( )->GetTransform( );
+
+            m_billboard->SetPosition( trans->GetWorldPosition( ) );
+        }
+
+        void Billboard2D::invalidateTexture(void)
+        {
+            auto data = loadResource<resources::TextureData>( m_texture );
+
+            if (data == nullptr)
+            {
+                // default
+                m_billboard->SetTextureHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetTextureHandle( );
+
+                m_graphics->ResourceMgr.LoadTexture( handle );
+
+                m_billboard->SetTextureHandle( handle );
+            }
         }
     }
 }

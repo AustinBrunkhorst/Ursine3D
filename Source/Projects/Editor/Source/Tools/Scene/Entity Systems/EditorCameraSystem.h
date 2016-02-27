@@ -60,7 +60,7 @@ private:
     ursine::TweenID m_focusTransition;
 
     void OnInitialize(void) override;
-    void OnAfterLoad(void) override;
+    void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
 
     // events

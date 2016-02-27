@@ -16,12 +16,8 @@ namespace ursine
     namespace ecs
     {
         Component::Component(ComponentTypeID typeID)
-            : m_typeID( typeID )
-            , m_owner( nullptr ) 
-        #if defined(URSINE_WITH_EDITOR)
-            , m_baseInitialized( false )
-        #endif
-            , m_hasResources( false )
+            : m_typeID( typeID ) 
+            , m_owner( nullptr )
         {
             m_typeMask.set( typeID, true );
         }
@@ -50,6 +46,18 @@ namespace ursine
             static const auto id = GetComponentID( ComponentType );
 
             return m_typeID == id;
+        }
+
+        template<typename ResourceType>
+        ResourceType *Component::loadResource(const resources::ResourceReference &resource) const
+        {
+            auto *scene = m_owner->GetWorld( )->GetOwner( );
+
+            UAssert( scene != nullptr,
+                "Resources aren't available."    
+            );
+
+            return resource.Load<ResourceType>( scene->GetResourceManager( ) );
         }
 
 	    template<class ComponentType>

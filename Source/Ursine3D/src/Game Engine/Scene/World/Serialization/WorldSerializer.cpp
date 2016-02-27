@@ -151,8 +151,6 @@ namespace ursine
                 );
             }
 
-            world->DispatchLoad( );
-
             return world;
         }
     }

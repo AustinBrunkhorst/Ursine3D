@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -88,7 +88,7 @@ void EditorCameraSystem::OnInitialize(void)
         .On( ecs::WorldEventType::WORLD_EDITOR_UPDATE, &EditorCameraSystem::onUpdate );
 }
 
-void EditorCameraSystem::OnAfterLoad(void)
+void EditorCameraSystem::OnSceneReady(Scene *scene)
 {
     auto *oldCamera = m_world->GetEntityFromName( kEditorCameraEntityName );
 
