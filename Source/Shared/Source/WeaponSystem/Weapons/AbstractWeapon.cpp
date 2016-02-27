@@ -14,12 +14,25 @@
 
 using namespace ursine;
 
+#define ARBITRARY_NUM 100.0f
+
 namespace
 {
     float clamp(float min, float max, float val)
     {
         return ( min > val ) ? min : ( ( max < val ) ? max : val );
     }
+
+    // Helper to check if the archetype to shoot needs to have .uatype appended to it
+    void CheckArchetypeToShoot(std::string& archetype)
+    {
+        if ( archetype.find(".uatype") == std::string::npos )
+            archetype += ".uatype";
+
+        if ( archetype.find("FX/") == std::string::npos )
+            archetype = "FX/" + archetype;
+    }
+
 }
 
 
@@ -37,7 +50,7 @@ AbstractWeapon::AbstractWeapon(void) :
     m_recoilAngle(10),
     m_maxRange(10.0f),
     m_accuracy( 1.0f ),
-    m_spreadFactor( 1.0f ),
+    m_spread( -1.0f, 1.0f ),
     m_maxAmmoCount(0),
     m_clipSize(0),
     m_projFireCount(1),
@@ -45,7 +58,8 @@ AbstractWeapon::AbstractWeapon(void) :
     m_spawnOffset( 0, 0, 0 ),
     m_camHandle(nullptr),
     m_firePosHandle(nullptr),
-    m_archetypeToShoot("BaseBullet"),
+    m_fireParticle( "FX/FX_WeaponShoot_1.uatype" ),
+    m_semiAutomatic(false),
     m_triggerPulled(false),
     m_active(true)
 {   
@@ -88,10 +102,6 @@ int AbstractWeapon::FireLogic(void)
     return 1;
 }
 
-///////////////////////////////
-////  Gettors and Settors  ////
-///////////////////////////////
-
 int AbstractWeapon::CanFire(void) const
 {
     // check fire timer
@@ -112,6 +122,11 @@ int AbstractWeapon::CanFire(void) const
 
     return CAN_FIRE;
 }
+
+
+///////////////////////////////
+////  Gettors and Settors  ////
+///////////////////////////////
 
 //// Damage
 float AbstractWeapon::GetDamageToApply(void) const
@@ -226,12 +241,13 @@ void AbstractWeapon::SetAccuracy(const float accuracy)
 // Spread moefoe
 float AbstractWeapon::GetSpreadFactor(void) const
 {
-    return m_spreadFactor;
+    return m_spread.GetMax( );
 }
 
 void AbstractWeapon::SetSpreadFactor(const float spread)
 {
-    m_spreadFactor = spread;
+    m_spread.SetMax(spread);
+    m_spread.SetMin(-spread);
 }
 
 // Ammo Count
@@ -312,18 +328,6 @@ void AbstractWeapon::SetProjFireCount(const int count)
 }
 
 
-// Archetype To Shoot
-const std::string& AbstractWeapon::GetArchetypeToShoot(void) const
-{
-    return m_archetypeToShoot;
-}
-
-// Helper to check if the archetype to shoot needs to have .uatype appended to it
-void CheckArchetypeToShoot(std::string& archetype)
-{
-    if ( archetype.find(".uatype") == std::string::npos )
-        archetype += ".uatype";
-}
 
 // weapon type
 WeaponType AbstractWeapon::GetWeaponType( ) const
@@ -360,12 +364,31 @@ void AbstractWeapon::SetSpawnOffset(const ursine::SVec3& offset)
 }
 
 
-void AbstractWeapon::SetArchetypeToShoot(const std::string& archetype)
+const std::string& AbstractWeapon::GetFireParticle( ) const
 {
-    m_archetypeToShoot = archetype;
-
-    CheckArchetypeToShoot(m_archetypeToShoot);
+    return m_fireParticle;
 }
+
+void AbstractWeapon::SetFireParticle(const std::string& archetype)
+{
+    m_fireParticle = archetype;
+
+    CheckArchetypeToShoot(m_fireParticle);
+}
+
+bool AbstractWeapon::GetSemiAutomatic(void) const
+{
+    return m_semiAutomatic;
+}
+
+void AbstractWeapon::SetSemiAutomatic(const bool semi)
+{
+    m_semiAutomatic = semi;
+
+    if ( semi && m_fireRate == 0 )
+        m_fireRate = ARBITRARY_NUM;
+}
+
 
 
 // Add ammo
@@ -398,6 +421,10 @@ void AbstractWeapon::TriggerPulled( EVENT_HANDLER( game::FIRE_START ) )
 void AbstractWeapon::TriggerReleased( EVENT_HANDLER( game::FIRE_END ) )
 {
     m_triggerPulled = false;
+
+    // reset fire timer to be able to shoot again
+    if ( m_semiAutomatic )
+        m_fireTimer = 0.0f;
 }
 
 

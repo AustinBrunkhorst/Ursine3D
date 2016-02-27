@@ -24,7 +24,7 @@ namespace ursine
         class TimerCondition : public Condition
         {
         public:
-            TimerCondition(const std::string &variableName, TimeSpan timeSpan);
+            TimerCondition(TimeSpan timeSpan);
 
             bool GetCondition(StateMachine *stateMachine) override;
 

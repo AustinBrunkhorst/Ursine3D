@@ -1003,6 +1003,7 @@ var ursine_editor_scene_component_inspectors_FieldInspectionHandler = function(o
 	this.inspector = new FieldInspectorControl();
 	var prettyName = ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex.replace(field.name,"$1 ");
 	this.inspector.heading = prettyName.charAt(0).toUpperCase() + HxOverrides.substr(prettyName,1,null);
+	if(Object.prototype.hasOwnProperty.call(field.meta,ursine_native_Property.Annotation)) this.inspector.annotation = Reflect.field(field.meta,ursine_native_Property.Annotation).text;
 	this.arrayIndex = 0;
 };
 $hxClasses["ursine.editor.scene.component.inspectors.FieldInspectionHandler"] = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
@@ -2070,7 +2071,6 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
-		ToolTip.unbind(item.textContentElement);
 		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
 		if(item.parentNode != null) item.parentNode.removeChild(item);
 		this.m_entityItems.remove(e.uniqueID);
@@ -2464,5 +2464,6 @@ ursine_native_Property.HiddenInSelector = "HiddenInSelector";
 ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
 ursine_native_Property.MultiLineEditor = "MultiLineEditor";
+ursine_native_Property.Annotation = "Annotation";
 Application.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

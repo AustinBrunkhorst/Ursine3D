@@ -41,34 +41,9 @@ void CommandQueue::OnInitialize(void)
         ;  // need delimitter to end connecting
 }
 
-void CommandQueue::AddCommand(const std::shared_ptr<Command> &command) 
-{
-    m_commandQueue.push(command);
-}
-
 void CommandQueue::Update(void)
 {
     UpdatePools( );
-
-    // call all stop executes
-    for ( auto &command : m_stopQueue )
-    {
-        command->StopExecute(GetOwner());
-    }
-
-    m_stopQueue.clear();
-
-    auto entity = GetOwner( );
-
-    while (m_commandQueue.size( ) > 0)
-    {
-        auto command = m_commandQueue.top( );
-        m_commandQueue.pop( );
-
-        command->Execute( entity );
-
-        m_stopQueue.push_back( command );
-    }
 }
 
 void CommandQueue::UpdatePools(void)
@@ -89,7 +64,7 @@ bool CommandQueue::QueryCommand(const game::GameEvents commandEvent) const
 #define ENUMERATE(eventName)    \
     void CommandQueue::On##eventName(EVENT_HANDLER(game::eventName))      \
     {                                                                     \
-        m_nextCommandPool[ game::eventName - COMMAND_OFFSET ] = true;    \
+        m_nextCommandPool[ game::eventName - COMMAND_OFFSET ] = true;     \
     }                                           
 
 #include "CommandEvents.inl"

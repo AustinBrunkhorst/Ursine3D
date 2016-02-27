@@ -63,7 +63,7 @@ namespace ursine
                 SetMaterial
             );
 
-            Meta(BitMaskEditor)
+            EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
@@ -94,22 +94,20 @@ namespace ursine
                 SetIsShadowCaster
             );
 
+            Meta(Enable)
             Model3D(void);
             ~Model3D(void);
 
-            Meta(Disable)
-                void OnInitialize(void) override;
+            void OnInitialize(void) override;
 
-            Meta(Disable)
-                std::vector<SMat4> &GetMatrixPalette(void);
+            std::vector<SMat4> &GetMatrixPalette(void);
 
             //get/set model name
             void SetModelResourceName(const std::string &name);
             const std::string &GetModelResourceName(void) const;
 
             // get the model resource to access the mesh
-            Meta(Disable)
-                const graphics::ModelResource *GetModelResource(void) const;
+            const graphics::ModelResource *GetModelResource(void) const;
 
             void SetMaterial(const std::string &name);
             const std::string &GetMaterial(void) const;
@@ -147,10 +145,7 @@ namespace ursine
             bool GetIsShadowCaster(void) const;
             void SetIsShadowCaster(bool castShadows);
 
-            Meta(Disable)
             void OnSerialize(Json::object &output) const override;
-
-            Meta(Disable)
             void OnDeserialize(const Json &input) override;
 
         private:
@@ -165,6 +160,6 @@ namespace ursine
 
             void updateRenderer(void);
 
-        } Meta(Enable, DisplayName("Model3D"));
+        } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }
 }

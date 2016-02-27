@@ -49,9 +49,9 @@ namespace ursine
                 SetLocalScale
             );
 
-            Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
-            Meta(EditorGetter( "GetLocalEulerEditor" ))
-            Meta(EditorSetter( "SetLocalEulerEditor" ))
+            EditorMeta(ForceEditorType( typeof( ursine::SVec3 ) ))
+            EditorMeta(EditorGetter( "GetLocalEulerEditor" ))
+            EditorMeta(EditorSetter( "SetLocalEulerEditor" ))
             EditorField( 
                 SQuat rotation,
                 GetLocalRotation,

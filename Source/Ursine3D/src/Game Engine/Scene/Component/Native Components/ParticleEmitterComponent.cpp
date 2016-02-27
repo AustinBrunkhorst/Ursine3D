@@ -312,6 +312,47 @@ namespace ursine
             m_zGenerator = Randomizer(m_fill * m_emitterSize.Z( ), m_emitterSize.Z( ));
         }
 
+        int ParticleEmitter::spawnParticle(void)
+        {
+            // create a particles
+            int newParticle = m_particleComponent->SpawnParticle( );
+
+            // check to see it was spawned properly
+            if ( newParticle != -1 )
+            {
+                // grab its info
+                auto &gpuData = m_particleComponent->GetGPUParticle(newParticle);
+                auto &cpuData = m_particleComponent->GetCPUParticle(newParticle);
+
+                auto &position = GeneratePosition( );
+                auto &color = m_particleComponent->GetColor( );
+
+                // set position
+                gpuData.position[ 0 ] = position.X( );
+                gpuData.position[ 1 ] = position.Y( );
+                gpuData.position[ 2 ] = position.Z( );
+
+                // set scale and rotation
+                gpuData.scaleX = gpuData.scaleY = GenerateScale( );
+                gpuData.rotation[ 0 ] = GenerateRotation( );
+
+                // set color
+                gpuData.color[ 0 ] = color.r;
+                gpuData.color[ 1 ] = color.g;
+                gpuData.color[ 2 ] = color.b;
+                gpuData.color[ 3 ] = color.a;
+
+                // set CPU data
+                cpuData.velocity = GenerateVelocity( );
+                cpuData.lifeTime = cpuData.totalLifetime = GenerateLifetime( );
+                cpuData.acceleration = SVec3(0.f, 0.f, 0.f);
+
+                ++m_spawnCount;
+            }
+
+            return newParticle;
+        }
+
         void ParticleEmitter::onParticleUpdate(EVENT_HANDLER(Entity))
         {
             float dt = Application::Instance->GetDeltaTime( );
@@ -356,46 +397,5 @@ namespace ursine
                 gpuData[ x ].position[ 2 ] += cpuData[ x ].velocity.Z( ) * dt;
             }                                                         
         }                                                             
-        int ParticleEmitter::spawnParticle(void)
-        {
-            // create a particles
-            int newParticle = m_particleComponent->SpawnParticle( );
-
-            // check to see it was spawned properly
-            if ( newParticle != -1 )
-            {
-                // grab its info
-                auto &gpuData = m_particleComponent->GetGPUParticle(newParticle);
-                auto &cpuData = m_particleComponent->GetCPUParticle(newParticle);
-
-                auto &position = GeneratePosition( );
-                auto &color = m_particleComponent->GetColor( );
-
-                // set position
-                gpuData.position[ 0 ] = position.X( );
-                gpuData.position[ 1 ] = position.Y( );
-                gpuData.position[ 2 ] = position.Z( );
-
-                // set scale and rotation
-                gpuData.scaleX = gpuData.scaleY = GenerateScale( );
-                gpuData.rotation[ 0 ] = GenerateRotation( );
-
-                // set color
-                gpuData.color[ 0 ] = color.r;
-                gpuData.color[ 1 ] = color.g;
-                gpuData.color[ 2 ] = color.b;
-                gpuData.color[ 3 ] = color.a;
-
-                // set CPU data
-                cpuData.velocity = GenerateVelocity( );
-                cpuData.lifeTime = cpuData.totalLifetime = GenerateLifetime( );
-                cpuData.acceleration = SVec3(0.f, 0.f, 0.f);
-                cpuData.roll = m_roll + m_rollRange.GetValue( );
-
-                ++m_spawnCount;
-            }
-
-            return newParticle;
-        }
     }
 }

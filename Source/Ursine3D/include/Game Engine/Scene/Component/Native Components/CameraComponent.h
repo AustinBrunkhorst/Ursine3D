@@ -91,7 +91,7 @@ namespace ursine
                 SetRenderLayer
             );
 
-            Meta(BitMaskEditor)
+            EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,

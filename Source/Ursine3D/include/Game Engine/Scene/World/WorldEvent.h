@@ -55,9 +55,12 @@ namespace ursine
             // A component's field has changed
             WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
             // A component's array field has been modified
-            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED
+            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED,
 
         #endif
+
+            // Starting index for events defined out of engine
+            WORLD_EVENT_USER
         };
 
         struct WorldEventArgs : EventArgs

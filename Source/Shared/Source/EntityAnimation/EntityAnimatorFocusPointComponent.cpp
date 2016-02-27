@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** EntityAnimatorFocusModifierComponent.cpp
+** EntityAnimatorFocusPoint.cpp
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,57 +13,11 @@
 
 #include "Precompiled.h"
 
-#include "EntityAnimatorFocusModifierComponent.h"
+#include "EntityAnimatorFocusPointComponent.h"
 
-NATIVE_COMPONENT_DEFINITION( EntityAnimatorFocusModifier );
+NATIVE_COMPONENT_DEFINITION(EntityAnimatorFocusPoint);
 
-EntityAnimatorFocusModifier::EntityAnimatorFocusModifier(void)
+EntityAnimatorFocusPoint::EntityAnimatorFocusPoint(void)
     : BaseComponent( )
-    , m_focusEntity( "" )
 {
-}
-
-EntityAnimatorFocusModifier::~EntityAnimatorFocusModifier(void)
-{
-    auto world = GetOwner( )->GetWorld( );
-
-    if (world)
-        world->Listener( this )
-            .Off( ursine::ecs::WORLD_UPDATE, &EntityAnimatorFocusModifier::onUpdate );
-}
-
-
-const std::string &EntityAnimatorFocusModifier::GetFocusEntity(void) const
-{
-    return m_focusEntity;
-}
-
-void EntityAnimatorFocusModifier::SetFocusEntity(const std::string &focus)
-{
-    m_focusEntity = focus;
-}
-
-void EntityAnimatorFocusModifier::OnInitialize(void)
-{
-    auto world = GetOwner( )->GetWorld( );
-
-    world->Listener( this )
-        .On( ursine::ecs::WORLD_UPDATE, &EntityAnimatorFocusModifier::onUpdate, 100 );
-}
-
-void EntityAnimatorFocusModifier::onUpdate(EVENT_HANDLER(World))
-{
-    auto world = GetOwner( )->GetWorld( );
-
-    if (!world)
-        return;
-
-    auto entity = world->GetEntityFromName( m_focusEntity );
-
-    if (!entity)
-        return;
-
-    auto pos = entity->GetTransform( )->GetWorldPosition( );
-
-    GetOwner( )->GetTransform( )->LookAt( pos );
 }

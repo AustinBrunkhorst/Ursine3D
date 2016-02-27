@@ -21,6 +21,12 @@ struct BaseWeapon : ursine::ecs::Component, AbstractWeapon
 
 public:
 
+    EditorField(
+        std::string ArchetypeToShoot,
+        GetArchetypeToShoot,
+        SetArchetypeToShoot
+    );
+
     AbstractWeaponFields( )
 
     BaseWeapon(void);
@@ -28,6 +34,13 @@ public:
 
     void OnInitialize(void) override;
 
+    const std::string& GetArchetypeToShoot(void) const;
+    void SetArchetypeToShoot(const std::string &archetype);
+
     void RemoveMySelf(void) override;
+
+
+    // Archetype weapon should fire
+    std::string m_archetypeToShoot;
 
 } Meta(Enable , DisplayName("ProjectileWeapon"));

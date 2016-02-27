@@ -51,10 +51,9 @@ namespace game
     struct DamageEventArgs : ursine::EventArgs
     {
         float m_damage;
-        DamageOnCollide* m_damageComp;
 
-        DamageEventArgs(float damage, DamageOnCollide* damageComp)
-            : m_damage(damage), m_damageComp(damageComp)
+        DamageEventArgs(float damage)
+            : m_damage(damage)
         { }
     };
 

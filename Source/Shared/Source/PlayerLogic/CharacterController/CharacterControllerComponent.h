@@ -91,6 +91,7 @@ public:
 
 private:
 
+    void SetMoveDirection(EVENT_HANDLER(game::MOVEMENT_COMMAND));
     void SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND));
     void Jump(EVENT_HANDLER(game::JUMP_COMMAND));
 

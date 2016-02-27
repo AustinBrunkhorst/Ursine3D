@@ -17,19 +17,30 @@
                     type: String,
                     notify: true,
                     observer: '_onHeadingChanged'
+                },
+                annotation: {
+                    type: String,
+                    value: '',
+                    notify: true,
+                    observer: '_onAnnotationChanged'
                 }
             },
             get container() {
                 return this.$.container;
             },
             attached: function() {
-                this.async( function() {
-                    ToolTip.bind( this.$.header, this.heading );
-                }.bind( this ) );
+                this.async( this._setToolTip.bind( this ) );
+            },
+
+            _setToolTip: function() {
+                ToolTip.bind( this.$.header, this.annotation.length ? this.annotation : this.heading );
             },
 
             _onHeadingChanged: function() {
-                ToolTip.bind( this.$.header, this.heading );
+                this._setToolTip( );
+            },
+            _onAnnotationChanged: function() {
+                this._setToolTip( );
             }
         });
     </script>
