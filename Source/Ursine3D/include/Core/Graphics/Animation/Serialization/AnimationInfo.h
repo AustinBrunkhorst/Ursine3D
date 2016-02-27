@@ -13,9 +13,8 @@
 
 #pragma once
 
-#include "AnimationDef.h"
 #include "ISerialize.h"
-#include "BoneInfo.h"
+#include "AnimationDef.h"
 #include "ResourceReader.h"
 #include "ResourceWriter.h"
 
@@ -30,6 +29,7 @@ namespace ursine
             typedef std::vector<FBX_DATA::KeyFrame> KFrame;
             typedef std::vector<KFrame> KFrames;
             typedef std::vector<KFrames> KFrms;
+
             // mesh of the model's animation data
             struct AnimData
             {
@@ -82,8 +82,8 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                bool SerializeIn(HANDLE hFile);
-
+                virtual bool SerializeIn(HANDLE hFile);
+                
                 /** @brief animation information serialize out function
                 *
                 *  this will write animation information
@@ -91,10 +91,10 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                bool SerializeOut(HANDLE hFile);
+                virtual bool SerializeOut(HANDLE hFile);
 
-                void SerializeIn(resources::ResourceReader &input);
-                void SerializeOut(resources::pipeline::ResourceWriter &output);
+                 void Read(resources::ResourceReader &input);
+                virtual void Write(resources::pipeline::ResourceWriter &output);
             };
         };
     };

@@ -83,8 +83,8 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                bool SerializeIn(HANDLE hFile);
-
+                virtual bool SerializeIn(HANDLE hFile);
+                
                 /** @brief material information serialize out function
                 *
                 *  this will write material information
@@ -92,10 +92,10 @@ namespace ursine
                 *  @param handle of the file
                 *  @return if succeed return true, else return false
                 */
-                bool SerializeOut(HANDLE hFile);
+                virtual bool SerializeOut(HANDLE hFile);
 
-                void SerializeIn(resources::ResourceReader &input);
-                void SerializeOut(resources::pipeline::ResourceWriter &output);
+                virtual void Read(resources::ResourceReader &input);
+                virtual void Write(resources::pipeline::ResourceWriter &output);
             };
         };
     };
