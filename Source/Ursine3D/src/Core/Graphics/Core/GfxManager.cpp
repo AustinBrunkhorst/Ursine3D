@@ -930,7 +930,7 @@ namespace ursine
                 PointGeometryBuffer pgb;
                 TransformBuffer tb;
                 invViewBuffer ivb;
-                ShadowProjectionBuffer spb;
+                //ShadowProjectionBuffer spb;
 
                 // viewBuffer(SHADERTYPE_VERTEX);
                 // viewBufferGeom(SHADERTYPE_GEOMETRY);
