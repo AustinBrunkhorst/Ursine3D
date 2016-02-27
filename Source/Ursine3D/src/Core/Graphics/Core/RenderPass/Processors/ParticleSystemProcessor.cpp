@@ -106,7 +106,7 @@ namespace ursine
                     ParticleBuffer pb;
                     memcpy(
                         &pb.data, 
-                        &(particleSystem.GetGPUParticleData()[ x * 1024 ]), 
+                        &(particleSystem.GetGPUParticleData( )[ x * 1024 ]), 
                         sizeof(Particle_GPU) * particlesInPass
                     );
 

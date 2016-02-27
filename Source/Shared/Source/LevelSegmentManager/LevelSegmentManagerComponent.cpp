@@ -208,7 +208,8 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
         LevelSegments::CB1_Combat2,
         LevelSegments::CB1_Combat3,
         LevelSegments::CB1_Combat4,
-        LevelSegments::CB1_OpenConduitRoom
+        LevelSegments::CB1_OpenConduitRoom,
+        LevelSegments::CB4_OpenBossRoom
     } );
 }
 
@@ -249,6 +250,11 @@ void LevelSegmentManager::initBossRoomLogic(void)
         LevelSegments::Empty
     );
 
+    // Next state for spawning the players (reposition them if they are present)
+    auto playerCreateState = initStateM->AddState<SpawnPlayersState>( false, true );
+
+    initState->AddTransition( playerCreateState, "Go To Init Players" );
+
     initStateM->SetInitialState( initState );
 
     addSegmentLogic( initStateM, {
@@ -265,8 +271,15 @@ void LevelSegmentManager::initBossRoomLogic(void)
     // initialize the boss room open cinematic logic
     auto cinematicStateM = std::make_shared<SegmentLogicStateMachine>( "Boss Room Cinematic", this );
 
+    // Create an empty state to give the players time to spawn
+    auto emptyState = cinematicStateM->AddState<SegmentLogicState>( "Empty State" );
+
     // Lock the players
     auto lockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+
+    auto trans = emptyState->AddTransition( lockPlayers, "Go To Lock Players" );
+
+    trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 0.1f ) );
 
     // Tween viewports
     auto tweenViewports = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SqueezeIn, true );
@@ -300,7 +313,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
     unlockPlayers->AddTransition( changeToFinishState, "Go To Finish State Phase1" );
 
-    cinematicStateM->SetInitialState( lockPlayers );
+    cinematicStateM->SetInitialState( emptyState );
 
     addSegmentLogic( cinematicStateM, {
         LevelSegments::CB4_OpenBossRoom,

@@ -313,7 +313,7 @@
 "ParticleEmitter": {
 ".uid": 17, 
 "emitCount": 0, 
-"emitRate": 50, 
+"emitRate": 40, 
 "emitRateVariance": 0, 
 "emitterSize": {
 "x": 30, 
@@ -321,7 +321,7 @@
 "z": 30
 }, 
 "fill": 0, 
-"lifetime": 30, 
+"lifetime": 20, 
 "lifetimeVariance": 10, 
 "rotation": 0, 
 "rotationVariance": 360, 

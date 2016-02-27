@@ -35,9 +35,9 @@
 "z": 1
 }, 
 "translation": {
-"x": -408.29058837890625, 
-"y": 221.92744445800781, 
-"z": 339.1351318359375
+"x": -444.57638549804688, 
+"y": 238.50857543945313, 
+"z": 369.27490234375
 }
 }
 }, 
@@ -48,7 +48,7 @@
 "BossRoomResources": {
 ".uid": 11, 
 "archetypesToLoad": [
-"BossRoom/BossRoomOpenCamera"
+"BossRoom/BossRoomOpenCamera", "BossRoom/PlayerBossSpawn"
 ], 
 "bossTopEntityName": "BossRotatingTop"
 }, 
