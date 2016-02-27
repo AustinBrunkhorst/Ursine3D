@@ -28,6 +28,7 @@ namespace ursine
             {
             public:
                 std::string name;
+
                 FBX_DATA::FbxMaterial::eMaterial_Type type;
                 FBX_DATA::Material_Eles::eMaterial_Fac ambitype;
                 FBX_DATA::Material_Eles::eMaterial_Fac difftype;

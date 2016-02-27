@@ -3,6 +3,9 @@
 #include "AnimationClipImporter.h"
 #include "AnimationClipData.h"
 
+#include "AnimationInfo.h"
+#include "CFBXLoader.h"
+
 namespace ursine
 {
     rp::AnimationClipImporter::AnimationClipImporter(void) { }
@@ -11,6 +14,24 @@ namespace ursine
 
     resources::ResourceData::Handle rp::AnimationClipImporter::Import(ResourceImportContext &context)
     {
-        return std::make_shared<AnimationClipData>( );
+        // how can I import .uanim file?        
+        fs::path fName(context.resource->GetSourceFileName());
+
+        auto clipFileName = fName.filename().string();
+                
+        ResourceReader clipReader(clipFileName);
+
+        //UAssert(clipReader.IsOpen(),
+        //    "Unable to write clip.\nfile: %s",
+        //    clipFileName.c_str()
+        //);
+
+        // create animation info
+        graphics::ufmt_loader::AnimInfo *animInfo = new graphics::ufmt_loader::AnimInfo();
+
+        // and read data from Resource Reader
+        animInfo->Read( clipReader );
+
+        return std::make_shared<AnimationClipData>( animInfo );
     }
 }

@@ -2,6 +2,9 @@
 
 #include "ResourceData.h"
 
+#include "GfxDefines.h"
+#include "AnimationInfo.h"
+
 namespace ursine
 {
     namespace resources
@@ -11,13 +14,19 @@ namespace ursine
             RESOURCE_DATA;
 
         public:
-            AnimationClipData(void);
-            ~AnimationClipData(void);
+            AnimationClipData();
+            AnimationClipData( graphics::ufmt_loader::AnimInfo *animeInfo );
+            ~AnimationClipData( void );
+
+            graphics::GfxHND GetAnimeHandle( void ) const;
+            void Writing( pipeline::ResourceWriter &output );
 
         private:
-            void Write(pipeline::ResourceWriter &output) override;
+            graphics::GfxHND m_animeHandle;
+
+            void Write( pipeline::ResourceWriter &output ) override;
 
             meta::Type GetReaderType(void) override;
-        } Meta(Register);
+        } Meta( Register );
     }
 }

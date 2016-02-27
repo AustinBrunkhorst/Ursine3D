@@ -114,9 +114,29 @@ namespace ursine
             m_privates->modelMgr->UnloadModel(handle);
         }
 
-        ufmt_loader::ModelInfo ResourceAPI::GetModelInfo(const GfxHND &handle)
+        ufmt_loader::ModelInfo *ResourceAPI::GetModelInfo(const GfxHND &handle)
         {
             return m_privates->modelMgr->GetModelInfo( handle );
+        }
+
+        GfxHND ResourceAPI::GetAnimeHandle(const char *name)
+        {
+            return m_privates->modelMgr->GetAnimeIDByName(name);
+        }
+
+        GfxHND ResourceAPI::CreateAnimation(ufmt_loader::AnimInfo *animeInfo)
+        {
+            return m_privates->modelMgr->CreateAnimation(animeInfo);
+        }
+
+        void ResourceAPI::DestroyAnimation(GfxHND &handle)
+        {
+            m_privates->modelMgr->DestroyAnimation(handle);
+        }
+
+        ufmt_loader::AnimInfo *ResourceAPI::GetAnimInfo(const GfxHND &handle)
+        {
+            return m_privates->modelMgr->GeAnimeInfo(handle);
         }
 
         void ResourceAPI::SetPrivates(void *priv, void *priv2)

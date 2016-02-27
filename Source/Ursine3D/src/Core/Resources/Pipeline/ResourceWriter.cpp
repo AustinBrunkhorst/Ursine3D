@@ -8,6 +8,17 @@ namespace ursine
     {
         namespace pipeline
         {
+            ResourceWriter::ResourceWriter(void)
+                : m_stream( )
+            {
+            }
+
+            ResourceWriter::ResourceWriter(const fs::path &output)
+                : m_stream( output.string( ) )
+            {
+
+            }
+
             ResourceWriter &ResourceWriter::WriteBytes(const char *bytes, size_t count)
             {
                 m_stream.write( bytes, count );
@@ -20,6 +31,11 @@ namespace ursine
                 m_stream.seekp( offset );
 
                 return *this;
+            }
+
+            bool ResourceWriter::IsOpen(void) const
+            {
+                return m_stream.is_open( );
             }
         }
     }

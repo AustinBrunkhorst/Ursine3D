@@ -37,6 +37,13 @@ namespace ursine
 
             void MeshInfo::ReleaseData()
             {
+                name = "";
+
+                meshVtxInfoCount = 0;
+                meshVtxIdxCount = 0;
+                mtrlCount = 0;
+                mtrlIndexCount = 0;
+
                 mtrlName.clear();
                 meshVtxInfos.clear();
                 meshVtxIndices.clear();

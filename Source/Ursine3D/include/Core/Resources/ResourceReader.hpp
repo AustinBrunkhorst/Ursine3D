@@ -3,9 +3,9 @@ namespace ursine
     namespace resources
     {
         template<typename T>
-        ResourceReader &ResourceReader::operator>>(T &output) 
+        ResourceReader &ResourceReader::operator>>(T &input) 
         {
-            m_stream >> output;
+            m_stream >> input;
 
             return *this;
         }

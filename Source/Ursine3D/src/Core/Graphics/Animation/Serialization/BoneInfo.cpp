@@ -40,6 +40,16 @@ namespace ursine
 
             void BoneInfo::ReleaseData()
             {
+                name = "";
+                mParentIndex = 0;
+
+                bindPosition = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
+                bindRotation = pseudodx::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
+                bindScaling = pseudodx::XMFLOAT3(1.f, 1.f, 1.f);
+
+                boneSpacePosition = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
+                boneSpaceRotation = pseudodx::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
+                boneSpaceScaling = pseudodx::XMFLOAT3(1.f, 1.f, 1.f);
             }
 
             bool BoneInfo::SerializeIn(HANDLE hFile)

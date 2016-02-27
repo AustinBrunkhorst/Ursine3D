@@ -18,6 +18,7 @@
 
 #include "ModelResource.h"
 #include "ModelInfo.h"
+#include "AnimationInfo.h"
 #include "GfxDefines.h"
 
 namespace ursine
@@ -46,7 +47,7 @@ namespace ursine
             void LoadModel(GfxHND handle);
             void UnloadModel(GfxHND handle);
 
-            ufmt_loader::ModelInfo GetModelInfo(GfxHND handle);
+            ufmt_loader::ModelInfo *GetModelInfo(GfxHND handle);
 
             ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
             unsigned GetModelVertcount(std::string name, unsigned index = 0);
@@ -83,6 +84,18 @@ namespace ursine
             ModelResource *GetModel(const unsigned ID);
             ModelResource *GetModel(const std::string &name);
 
+
+            // Animation
+            // creating a anime 
+            void InitializeAnimation(ufmt_loader::AnimInfo *animeInfo);
+
+            GfxHND CreateAnimation(ufmt_loader::AnimInfo *animeInfo);
+            void DestroyAnimation(GfxHND &handle);
+
+            ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
+
+            unsigned GetAnimeIDByName(std::string name);
+
         private:
             void loadModelToGPU(ModelResource *model);
             void unloadModelFromGPU(ModelResource *model);
@@ -90,16 +103,26 @@ namespace ursine
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;
 
-            std::map<std::string, ModelResource *> m_modelArray;
-            std::map<std::string, unsigned> m_s2uTable;
-            std::map<unsigned, ModelResource *> m_u2mTable;
-            std::vector<std::string> m_jdllist;
-
+            // model
             unsigned m_modelCount;
             unsigned m_currentState;
 
+            std::map< std::string, unsigned > m_s2uTable;
+            std::map <unsigned, ModelResource * > m_u2mTable;
+            std::map< std::string, ModelResource * > m_modelArray;
+            std::vector< std::string > m_jdllist;
+
             std::vector< ModelResource * > m_modelCache;
-            std::vector< ufmt_loader::ModelInfo > m_modelInfoCache;
+            std::vector< ufmt_loader::ModelInfo * > m_modelInfoCache;
+
+            // anime
+            unsigned m_animeCount;
+
+            std::map< std::string, unsigned > a_s2uTable;
+            std::map< unsigned, ufmt_loader::AnimInfo * > a_u2aTable;
+            std::map< std::string, ufmt_loader::AnimInfo * > m_animeArray;
+
+            std::vector< ufmt_loader::AnimInfo * > m_animeInfoCache;
         };
     }
 }
