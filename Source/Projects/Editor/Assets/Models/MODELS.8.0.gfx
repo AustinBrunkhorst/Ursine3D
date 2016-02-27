@@ -34,12 +34,12 @@ bomber.8.0.mdl Bomber
 
 # Player Animations
 Player1_Idle.fbx Player
-#Player1_Die.fbx Player_Die
-#Player1_Jump.fbx Player_Jump
-#Player1_Run.fbx Player_Run
-#Player1_Win.fbx Player_Win
-#Player1_Straf_L.fbx Player_Straf_L
-#Player1_Straf_R.fbx Player_Straf_R
+Player1_Die.fbx Player_Die
+Player1_Jump.fbx Player_Jump
+Player1_Run.fbx Player_Run
+Player1_Win.fbx Player_Win
+Player1_Straf_L.fbx Player_Straf_L
+Player1_Straf_R.fbx Player_Straf_R
 
 # Gun Animations
 Gun_Idle.fbx Gun_Idle
