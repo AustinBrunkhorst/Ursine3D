@@ -80,6 +80,11 @@ namespace ursine
             m_ghost.SetAwake( );
         }
 
+        void Ghost::GetOverlappingPairs(std::vector<physics::GhostOverlappingItem> &pairs)
+        {
+            m_ghost.GetOverlappingPairs( pairs );
+        }
+
         void Ghost::onTransformChange(EVENT_HANDLER(Entity))
         {
             m_ghost.SetTransform( GetOwner( )->GetTransform( ) );

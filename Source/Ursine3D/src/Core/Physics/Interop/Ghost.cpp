@@ -181,5 +181,29 @@ namespace ursine
 
         #endif
         }
+
+        void Ghost::GetOverlappingPairs(std::vector<GhostOverlappingItem> &pairs)
+        {
+        #ifdef BULLET_PHYSICS
+
+            auto &p = getOverlappingPairs( );
+
+            for (int i = 0; i < p.size( ); ++i)
+            {
+                auto *obj = p[ i ];
+                auto type = obj->getInternalType( );
+
+                if (type & BT_RIGID_BODY)
+                    pairs.emplace_back( BT_RIGID_BODY, obj->getUserPointer( ) );
+                else if (type & BT_GHOST)
+                    pairs.emplace_back( BT_GHOST, obj->getUserPointer( ) );
+                else if (type & BT_SOFT_BODY)
+                    pairs.emplace_back( BT_SOFT_BODY, obj->getUserPointer( ) );
+                else
+                    pairs.emplace_back( BT_BODY, obj->getUserPointer( ) );
+            }
+
+        #endif
+        }
     }
 }

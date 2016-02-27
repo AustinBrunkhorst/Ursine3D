@@ -62,6 +62,9 @@ namespace ursine
 
             void SetAwake(void);
 
+            Meta(Disable)
+            void GetOverlappingPairs(std::vector<physics::GhostOverlappingItem> &pairs);
+
         private:
             physics::Ghost m_ghost;
 

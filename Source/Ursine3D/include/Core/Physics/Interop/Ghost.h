@@ -20,10 +20,31 @@ namespace ursine
     namespace ecs
     {
         class Transform;
+        class Rigidbody;
+        class Ghost;
+        class Body;
     }
 
     namespace physics
     {
+        struct GhostOverlappingItem
+        {
+            GhostOverlappingItem(BodyType type, void *ptr)
+                : type( type )
+                , body( reinterpret_cast<ecs::Body*>( ptr ) ) { }
+
+            // Type of they overlapping object
+            BodyType type;
+
+            // The pointer to the component
+            union
+            {
+                ecs::Rigidbody *rigidbody;
+                ecs::Body *body;
+                ecs::Ghost *ghost;
+            };
+        };
+
         class Ghost : public GhostBase
         {
         public:
@@ -51,6 +72,8 @@ namespace ursine
             bool GetDisableContactResponse(void) const;
 
             void SetAwake(void);
+
+            void GetOverlappingPairs(std::vector<GhostOverlappingItem> &pairs);
 
         private:
             bool m_disableContactResponse;
