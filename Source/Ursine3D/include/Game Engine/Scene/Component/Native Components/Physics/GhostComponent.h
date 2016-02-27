@@ -1,8 +1,8 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** Â© 2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BodyComponent.h
+** GhostComponent.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -14,13 +14,13 @@
 #pragma once
 
 #include "Component.h"
-#include "Body.h"
+#include "Ghost.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Body : public Component
+        class Ghost : public Component
         {
             NATIVE_COMPONENT;
 
@@ -45,8 +45,8 @@ namespace ursine
                 SetEnableContactCallback
             );
 
-            Body(void);
-            ~Body(void);
+            Ghost(void);
+            ~Ghost(void);
 
             Meta(Disable)
             void OnInitialize(void) override;
@@ -62,19 +62,16 @@ namespace ursine
 
             void SetAwake(void);
 
+            Meta(Disable)
+            void GetOverlappingPairs(std::vector<physics::GhostOverlappingItem> &pairs);
+
         private:
-            physics::Body m_body;
+            physics::Ghost m_ghost;
 
             bool m_enableContactCallback;
 
             void onTransformChange(EVENT_HANDLER(Entity));
 
-        } Meta(
-            Enable, 
-            DisplayName( "Body" )
-        ) EditorMeta(
-            DisableComponentRemoval,
-            HiddenInSelector
-        );
+        } Meta( Enable, DisplayName( "Ghost" ) );
     }
 }
