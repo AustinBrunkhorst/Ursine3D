@@ -225,12 +225,34 @@ namespace ursine
 
         float ParticleEmitter::GetRotationRange(void) const
         {
-            return m_rotationRange.GetMax( );
+            return (m_rotationRange.GetMax( ) * 180.0f) / PI;
         }
+
         void ParticleEmitter::SetRotationRange(const float range)
         {
-            m_rotationRange.SetMax(range);
-            m_rotationRange.SetMin(-range);
+            m_rotationRange.SetMax((range * PI) / 180.0f);
+            m_rotationRange.SetMin(-(range * PI) / 180.0f);
+        }
+
+        float ParticleEmitter::GetRoll(void)
+        {
+            return (m_roll * 180.0f) / PI;
+        }
+
+        void ParticleEmitter::SetRoll(const float roll)
+        {
+            m_roll = (roll * PI) / 180.0f;;
+        }
+
+        float ParticleEmitter::GetRollRange(void) const
+        {
+            return (m_rollRange.GetMax() * 180.0f) / PI;
+        }
+
+        void ParticleEmitter::SetRollRange(const float range)
+        {
+            m_rollRange.SetMax((range * PI) / 180.0f);
+            m_rollRange.SetMin( -(range * PI) / 180.0f);
         }
 
         const SVec3 &ParticleEmitter::GetVelocity(void) const
@@ -326,6 +348,8 @@ namespace ursine
                     continue;
                 }
 
+                gpuData[x].rotation[0] -= cpuData[x].roll * dt;
+
                 // update position with velocity
                 gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;
                 gpuData[ x ].position[ 1 ] += cpuData[ x ].velocity.Y( ) * dt;
@@ -366,6 +390,7 @@ namespace ursine
                 cpuData.velocity = GenerateVelocity( );
                 cpuData.lifeTime = cpuData.totalLifetime = GenerateLifetime( );
                 cpuData.acceleration = SVec3(0.f, 0.f, 0.f);
+                cpuData.roll = m_roll + m_rollRange.GetValue( );
 
                 ++m_spawnCount;
             }

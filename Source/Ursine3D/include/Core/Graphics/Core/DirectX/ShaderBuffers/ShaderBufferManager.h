@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -156,13 +156,13 @@ namespace ursine
 
                 //create compute buffer
                 template<typename T>
-                void MakeComputeBuffer(const int count, const COMPUTE_BUFFER_LIST type, unsigned usageFlag, unsigned bindFlags, unsigned cpuAccess = 0x10000L, bool bufferStruct2D = true);
+                void MakeStructuredBuffer(const int count, const COMPUTE_BUFFER_LIST type, unsigned usageFlag, unsigned bindFlags, unsigned cpuAccess = 0x10000L, bool bufferStruct2D = true);
                 
                 //create SRV
-                void MakeComputeSRV(const int count, const COMPUTE_BUFFER_LIST type);
+                void MakeStructuredSRV(const int count, const COMPUTE_BUFFER_LIST type);
 
                 //create UAV
-                void MakeComputeUAV(const int count, const COMPUTE_BUFFER_LIST type);
+                void MakeStructuredUAV(const int count, const COMPUTE_BUFFER_LIST type);
 
                 //members
                 ID3D11Device *m_device;

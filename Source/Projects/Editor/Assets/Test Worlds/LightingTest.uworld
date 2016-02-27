@@ -12,31 +12,31 @@
 "r": 0.5
 }, 
 "intensity": 1, 
-"radius": 40, 
+"radius": 117.884033203125, 
 "renderMask": 0, 
 "spotlightAngles": {
 "x": 15, 
-"y": 30
+"y": 45
 }, 
-"type": 0
+"type": 2
 }, 
 "Transform": {
 ".uid": 2, 
 "rotation": {
-"w": 1, 
-"x": 0, 
+"w": 0.99352329969406128, 
+"x": 0.11362775415182114, 
 "y": 0, 
 "z": 0
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 1, 
-"z": 0.58947008848190308
+"x": 107.42063903808594, 
+"y": 107.42063903808594, 
+"z": 117.884033203125
 }, 
 "translation": {
 "x": 0, 
-"y": 60, 
-"z": 0
+"y": 27.844562530517578, 
+"z": -77.147743225097656
 }
 }
 }, 
@@ -47,6 +47,12 @@
 "Camera": {
 ".uid": 10, 
 "active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
 "farPlane": 2500, 
 "fov": 45, 
 "nearPlane": 0.10000000149011612, 
@@ -65,10 +71,10 @@
 "Transform": {
 ".uid": 9, 
 "rotation": {
-"w": 0.68274027109146118, 
-"x": 0.2598947286605835, 
-"y": 0.63820093870162964, 
-"z": -0.24294023215770721
+"w": 0.90010619163513184, 
+"x": 0.17052549123764038, 
+"y": -0.39390486478805542, 
+"z": 0.074625439941883087
 }, 
 "scale": {
 "x": 1, 
@@ -76,9 +82,9 @@
 "z": 1
 }, 
 "translation": {
-"x": -126.96298980712891, 
-"y": 138.29876708984375, 
-"z": -8.5715885162353516
+"x": 125.42732238769531, 
+"y": 84.106170654296875, 
+"z": -115.86127471923828
 }
 }
 }, 
@@ -86,8 +92,27 @@
 }, {
 "children": [], 
 "components": {
+"Body": {
+".uid": 17, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 16, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
 "Model3D": {
-".uid": 19, 
+".uid": 18, 
+"castsShadows": false, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -103,7 +128,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 15, 
+".uid": 14, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -122,29 +147,47 @@
 }
 }
 }, 
-"name": "Sphere"
+"name": "Box"
 }, {
 "children": [], 
 "components": {
-"Light": {
-".uid": 22, 
+"Body": {
+".uid": 43, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 44, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 45, 
+"castsShadows": false, 
 "color": {
 "a": 1, 
 "b": 1, 
 "g": 1, 
 "r": 1
 }, 
-"intensity": 1, 
-"radius": 100, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
 "renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 2
+"specularIntensity": 0, 
+"specularPower": 0
 }, 
 "Transform": {
-".uid": 20, 
+".uid": 42, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -152,18 +195,77 @@
 "z": 0
 }, 
 "scale": {
-"x": 58.947010040283203, 
-"y": 100, 
-"z": 58.947010040283203
+"x": 1, 
+"y": 1, 
+"z": 1
 }, 
 "translation": {
 "x": 0, 
-"y": 25.00074577331543, 
+"y": 3.5, 
 "z": 0
 }
 }
 }, 
-"name": "Spot Light"
+"name": "Box (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 73, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 74, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 75, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 72, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 20, 
+"y": 20, 
+"z": 20
+}, 
+"translation": {
+"x": -12.5, 
+"y": 20.5, 
+"z": -32.5
+}
+}
+}, 
+"name": "Box (1)"
 }
 ], 
 "settings": {

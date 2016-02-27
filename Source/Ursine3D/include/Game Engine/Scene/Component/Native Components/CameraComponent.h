@@ -98,6 +98,12 @@ namespace ursine
                 SetRenderMask
             );
 
+            EditorField(
+                Color clearColor,
+                GetClearColor,
+                SetClearColor
+            );
+
             Meta(Enable)
             Camera(void);
             ~Camera(void);
@@ -157,6 +163,8 @@ namespace ursine
             // if selected. Used by the editor
             void SetEditorSelectionMode(bool selected);
 
+            const Color &GetClearColor(void) const;
+            void SetClearColor(const Color &color);
         private:
             bool m_active;
             bool m_isEditorCamera;

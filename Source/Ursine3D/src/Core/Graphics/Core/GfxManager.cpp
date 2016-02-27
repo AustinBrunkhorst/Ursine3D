@@ -419,8 +419,8 @@ namespace ursine
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1));
 
             PrimitiveColorBuffer pcb;
-            //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
-            pcb.color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            auto color = cam.GetClearColor( );
+            pcb.color = DirectX::XMFLOAT4( color.r, color.g, color.b, color.a );
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
@@ -506,6 +506,7 @@ namespace ursine
             RenderPass          deferredPass( "DeferredPass" );
             RenderPass          spotlightPass( "SpotlightPass" );
             RenderPass          pointlightPass( "PointLightPass" );
+            RenderPass          shadowPass("ShadowPass");
             RenderPass          directionalLightPass( "DirectionalLightPass" );
             RenderPass          emissivePass( "EmissivePass" );
             LineRendererPass    lineRenderPass( false );
@@ -535,7 +536,8 @@ namespace ursine
             GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>        fullscreenTransform( SHADERTYPE_VERTEX );
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invView( SHADERTYPE_VERTEX );
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invProjection( SHADERTYPE_PIXEL );
-
+            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              shadowmapView( SHADERTYPE_VERTEX );
+            
             // input RTs
             GlobalGPUResource   depthInput( SHADER_SLOT_0, RESOURCE_INPUT_DEPTH );
             GlobalGPUResource   diffuseRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
@@ -543,6 +545,8 @@ namespace ursine
             GlobalGPUResource   specPowRT( SHADER_SLOT_3, RESOURCE_INPUT_RT );
             GlobalGPUResource   debugInput( SHADER_SLOT_0, RESOURCE_INPUT_RT );
             GlobalGPUResource   lightmapRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
+
+            GlobalGPUResource   shadowmapInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH, SHADERTYPE_VERTEX);
 
             // other resources
             GlobalGPUResource   spriteModel(SHADER_SLOT_0, RESOURCE_MODEL);
@@ -579,6 +583,27 @@ namespace ursine
                         Accepts( RENDERABLE_MODEL3D ).
                         Processes( &modelProcessor ).
                     InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
+                // SHADOW PASS
+                {
+                    shadowPass.
+                        Set( { } ).
+                        Set( SHADER_SHADOW_PASS ).
+                        Set( DEPTH_STENCIL_SHADOWMAP ).
+                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                        Set( SAMPLER_STATE_SHADOW ).
+                        Set( RASTER_STATE_SOLID_BACKCULL ).
+                        Set( BLEND_STATE_COUNT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &shadowmapView ).
+                        AddResource( &shadowmapInput ).
+
+                        Accepts( RENDERABLE_MODEL3D ).
+                        Processes( &modelProcessor ).
+                    InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
@@ -882,6 +907,7 @@ namespace ursine
             // CREATE PIPELINE
             DeferredPipeline.
                 AddPrePass( &deferredPass ).
+                //AddPrePass( &shadowPass ).
                 AddPrePass( &spotlightPass ).
                 AddPrePass( &pointlightPass ).
                 AddPrePass( &directionalLightPass ).
@@ -898,78 +924,148 @@ namespace ursine
 
             /////////////////////////////////////////////////////////
             // UPDATE RESOURCES
-            // CONSTANT BUFFERS//////////////////
-            CameraBuffer cb;
-            PointGeometryBuffer pgb;
-            TransformBuffer tb;
-            invViewBuffer ivb;
+            {
+                // CONSTANT BUFFERS//////////////////
+                CameraBuffer cb;
+                PointGeometryBuffer pgb;
+                TransformBuffer tb;
+                invViewBuffer ivb;
+                ShadowProjectionBuffer spb;
 
-            // viewBuffer(SHADERTYPE_VERTEX);
-            // viewBufferGeom(SHADERTYPE_GEOMETRY);
-            cb.view = SMat4::Transpose( currentCamera.GetViewMatrix( ) ).ToD3D( );
-            cb.projection = SMat4::Transpose( currentCamera.GetProjMatrix( ) ).ToD3D( );
-            viewBuffer.Update( cb );
-            viewBufferGeom.Update( cb );
+                // viewBuffer(SHADERTYPE_VERTEX);
+                // viewBufferGeom(SHADERTYPE_GEOMETRY);
+                cb.view = SMat4::Transpose( currentCamera.GetViewMatrix( ) ).ToD3D( );
+                cb.projection = SMat4::Transpose( currentCamera.GetProjMatrix( ) ).ToD3D( );
+                viewBuffer.Update( cb );
+                viewBufferGeom.Update( cb );
 
-            // viewIdentity(SHADERTYPE_VERTEX);
-            cb.view = SMat4::Identity( ).ToD3D( );
-            cb.projection = SMat4::Identity( ).ToD3D( );
-            viewIdentity.Update( cb );
+                // viewIdentity(SHADERTYPE_VERTEX);
+                cb.view = SMat4::Identity( ).ToD3D( );
+                cb.projection = SMat4::Identity( ).ToD3D( );
+                viewIdentity.Update( cb );
             
-            // spriteGeomBuff(SHADERTYPE_GEOMETRY);
-            pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
-            pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
-            spriteGeomBuff.Update(pgb);
+                // spriteGeomBuff(SHADERTYPE_GEOMETRY);
+                pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
+                pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
+                spriteGeomBuff.Update(pgb);
             
-            // identityTransform(SHADERTYPE_VERTEX);
-            tb.transform = SMat4::Identity( ).ToD3D( );
-            identityTransform.Update( tb );
+                // identityTransform(SHADERTYPE_VERTEX);
+                tb.transform = SMat4::Identity( ).ToD3D( );
+                identityTransform.Update( tb );
 
-            // fullscreenTransform(SHADERTYPE_VERTEX);
-            tb.transform = SMat4(-2, 2, 1).ToD3D( );
-            fullscreenTransform.Update( tb );
+                // fullscreenTransform(SHADERTYPE_VERTEX);
+                tb.transform = SMat4(-2, 2, 1).ToD3D( );
+                fullscreenTransform.Update( tb );
 
-            // invView( SHADERTYPE_VERTEX );
-            SMat4 temp = currentCamera.GetViewMatrix( );
-            temp.Transpose( );
-            temp.Inverse( );
-            ivb.invView = temp.ToD3D( );
-            invView.Update( ivb, SHADER_SLOT_4 );
+                // invView( SHADERTYPE_VERTEX );
+                SMat4 temp = currentCamera.GetViewMatrix( );
+                temp.Transpose( );
+                temp.Inverse( );
+                ivb.invView = temp.ToD3D( );
+                invView.Update( ivb, SHADER_SLOT_4 );
 
-            // invProjection( SHADERTYPE_PIXEL );
-            temp = currentCamera.GetProjMatrix( );
-            temp.Transpose( );
-            temp.Inverse( );
-            ivb.invView = temp.ToD3D( );
-            currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
-            invProjection.Update( ivb );
+                // invProjection( SHADERTYPE_PIXEL );
+                temp = currentCamera.GetProjMatrix( );
+                temp.Transpose( );
+                temp.Inverse( );
+                ivb.invView = temp.ToD3D( );
+                currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
+                invProjection.Update( ivb );
 
-            // TARGET INPUTS //////////////////
-            // input RTs
-            // depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
-            depthInput.Update( DEPTH_STENCIL_MAIN );
+                // shadowmapProj( SHADERTYPE_VERTEX, SHADER_SLOT_2 );
+                // gross hack to get the light
+                unsigned index = 0;
+                while( m_drawList[index].Type_ != RENDERABLE_LIGHT )
+                {
+                    ++index;
+                }
 
-            // diffuseRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
-            diffuseRT.Update( RENDER_TARGET_DEFERRED_COLOR );
+                while(m_drawList[ index ].Type_ == RENDERABLE_LIGHT)
+                {
+                    Light &light = renderableManager->m_renderableLights[ m_drawList[ index ].Index_ ];
 
-            // normalRT(SHADER_SLOT_2, RESOURCE_INPUT_RT);
-            normalRT.Update( RENDER_TARGET_DEFERRED_NORMAL );
+                    if (light.GetType() == Light::LIGHT_SPOTLIGHT)
+                        break;
 
-            // specPowRT(SHADER_SLOT_3, RESOURCE_INPUT_RT);
-            specPowRT.Update( RENDER_TARGET_DEFERRED_SPECPOW );
-            // debugInput(SHADER_SLOT_0, RESOURCE_INPUT_RT);
-            debugInput.Update( RENDER_TARGET_DEBUG );
+                    ++index;
+                }
 
-            // lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
-            lightmapRT.Update( RENDER_TARGET_LIGHTMAP );
+                // UPDATING SHADOW MAP
+                {
+                    Light &spotLight = renderableManager->m_renderableLights[ m_drawList[ index ].Index_ ];
+                    SMat4 ViewMatrix = currentCamera.GetViewMatrix( );
+                    SMat4 ProjectionMatrix = currentCamera.GetProjMatrix( );
 
-            // TEXTURES AND MODELS /////////////
-            lightConeModel.Update( modelManager->GetModelIDByName( "lightCone" ) );
-            lightSphereModel.Update( modelManager->GetModelIDByName( "Sphere" ) );
-            fullscreenModel.Update( modelManager->GetModelIDByName( "internalQuad" ) );
-            spriteModel.Update( modelManager->GetModelIDByName( "Sprite" ) );
-            particleModel.Update( modelManager->GetModelIDByName( "ParticleIndices") );
-            fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
+                    SVec3 u, v;
+                    SVec3 lightDir = spotLight.GetDirection( );
+                    lightDir.GenerateOrthogonalVectors(u, v);
+                    u.Normalize( );
+
+                    SMat4 lightView = SMat4::Identity( );
+                    SMat4 lightProjection = SMat4( );
+                    float farPlane = spotLight.GetRadius( );
+
+                    // GENERATING LIGHT VIEW
+                    SVec3 R = SVec3::Cross(lightDir, u);
+                    SVec3 U = SVec3::Cross(lightDir, R);
+                    SVec3 D = lightDir;
+
+                    lightView.SetColumn(0, SVec4(R.X(), R.Y(), R.Z(), 0));
+                    lightView.SetColumn(1, SVec4(U.X(), U.Y(), U.Z(), 0));
+                    lightView.SetColumn(2, SVec4(D.X(), D.Y(), D.Z(), 0));
+
+                    SVec3 P = lightView.TransformPoint(spotLight.GetPosition( ));
+                    lightView.SetColumn(3, SVec4(P.X(), P.Y(), P.Z(), 1.0f));
+
+                    lightProjection(0, 0) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
+                    lightProjection(1, 1) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
+                    lightProjection(2, 2) = farPlane / (farPlane - farPlane * 0.001f);
+                    lightProjection(3, 2) = -(farPlane / (farPlane - farPlane * 0.001f)) * (farPlane * 0.001f);
+                    lightProjection(2, 3) = 1.0f;
+                    lightProjection(3, 3) = 0.0f;
+
+                    auto eyePos = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4( spotLight.GetPosition( ).GetFloatPtr() ));
+                    auto look = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(spotLight.GetDirection().GetFloatPtr()));
+                    auto upDir = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(SVec4(0, 1, 0, 0).GetFloatPtr( )));
+
+                    lightView = SMat4(DirectX::XMMatrixLookToLH(eyePos, look ,upDir));
+                    lightProjection = SMat4(DirectX::XMMatrixPerspectiveFovLH(spotLight.GetSpotlightAngles().Y(), 1, farPlane * 0.001f, farPlane ));
+                    // map to GPU
+                    cb.view = SMat4::Transpose(lightView).ToD3D();
+                    cb.projection = SMat4::Transpose(lightProjection).ToD3D( );
+                    shadowmapView.Update( cb );
+                }
+
+                // TARGET INPUTS //////////////////
+                // input RTs
+                // depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
+                depthInput.Update( DEPTH_STENCIL_MAIN );
+
+                // diffuseRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
+                diffuseRT.Update( RENDER_TARGET_DEFERRED_COLOR );
+
+                // normalRT(SHADER_SLOT_2, RESOURCE_INPUT_RT);
+                normalRT.Update( RENDER_TARGET_DEFERRED_NORMAL );
+
+                // specPowRT(SHADER_SLOT_3, RESOURCE_INPUT_RT);
+                specPowRT.Update( RENDER_TARGET_DEFERRED_SPECPOW );
+                // debugInput(SHADER_SLOT_0, RESOURCE_INPUT_RT);
+                debugInput.Update( RENDER_TARGET_DEBUG );
+
+                // lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
+                lightmapRT.Update( RENDER_TARGET_LIGHTMAP );
+
+                // shadow map input
+                shadowmapInput.Update( DEPTH_STENCIL_MAIN );
+
+                // TEXTURES AND MODELS /////////////
+                lightConeModel.Update( modelManager->GetModelIDByName( "lightCone" ) );
+                lightSphereModel.Update( modelManager->GetModelIDByName( "Sphere" ) );
+                fullscreenModel.Update( modelManager->GetModelIDByName( "internalQuad" ) );
+                spriteModel.Update( modelManager->GetModelIDByName( "Sprite" ) );
+                particleModel.Update( modelManager->GetModelIDByName( "ParticleIndices") );
+                fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
+            }
 
             /////////////////////////////////////////////////////////
             // RENDER
