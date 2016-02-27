@@ -45,7 +45,7 @@ namespace ursine
 
         void Billboard2DProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            /*Billboard2D billboard = m_manager->renderableManager->GetRenderableByID<Billboard2D>( handle.Index_ );
+            Billboard2D billboard = m_manager->renderableManager->GetRenderableByID<Billboard2D>( handle.Index_ );
 
             // SPRITE DATA //////////////////////////////////////////
             BillboardSpriteBuffer bsb;
@@ -85,15 +85,15 @@ namespace ursine
                 &mdb, 
                 SHADERTYPE_PIXEL
             );
-*/
-            /*// map texture //////////////////////////////////////////
+
+            // map texture //////////////////////////////////////////
             m_manager->textureManager->MapTextureByID( handle.Material_ );
 
             // set overdraw value ///////////////////////////////////
             if (handle.Overdraw_)
                 m_manager->dxCore->SetDepthState( DEPTH_STATE_PASSDEPTH_WRITESTENCIL );
             else
-                m_manager->dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );*/
+                m_manager->dxCore->SetDepthState( DEPTH_STATE_DEPTH_NOSTENCIL );
         }
 
         void Billboard2DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
