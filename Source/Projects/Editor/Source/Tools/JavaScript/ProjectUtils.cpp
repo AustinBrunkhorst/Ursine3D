@@ -70,6 +70,31 @@ JSFunction(ProjectGetResourcesByType)
     return object;
 }
 
+JSFunction(ProjectGetResource)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    try
+    {
+        auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+        auto item = editor->GetProject( )->GetResourcePipeline( ).GetItem( guid );
+
+        CefRefPtr<CefV8Value> object;
+
+        JsonSerializer::Deserialize( serializeResource( item ), object );
+
+        return object;
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
+}
+
 JSFunction(ProjectSetEmptyScene)
 {
     auto *editor = GetCoreSystem( Editor );
@@ -109,6 +134,9 @@ namespace
 
     Json serializeResource(rp::ResourceItem::Handle resource)
     {
+        if (!resource)
+            return nullptr;
+
         auto &sourceFile = resource->GetSourceFileName( );
 
         return Json::object {

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ResourceProcessor.h"
 
 namespace ursine

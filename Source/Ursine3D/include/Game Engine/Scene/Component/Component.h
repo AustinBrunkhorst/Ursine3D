@@ -19,6 +19,7 @@
 #include "EventDispatcher.h"
 
 #include "Array.h"
+#include "ResourceManager.h"
 #include "ResourceReference.h"
 
 namespace ursine
@@ -38,6 +39,7 @@ namespace ursine
             inline explicit Component(ComponentTypeID typeID);
 
             Component(const Component &rhs) = default;
+            ~Component(void);
 
             Component &operator=(const Component &rhs) = default;
 
@@ -98,14 +100,16 @@ namespace ursine
 
         private:
         #if defined(URSINE_WITH_EDITOR)
-
             // whether or not OnInitialize has been called on the base component type
             bool m_baseInitialized;
-
         #endif
+
+            bool m_hasResources;
 
             // Called when the component has been initialized and added to an entity
             void initialize(void);
+
+            void onSceneChanged(EVENT_HANDLER(World));
 
             // component type id
             ComponentTypeID m_typeID;

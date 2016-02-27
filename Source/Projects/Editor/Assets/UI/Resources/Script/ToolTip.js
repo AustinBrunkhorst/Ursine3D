@@ -2,7 +2,7 @@ var ToolTip = { };
 
 // delay in milliseconds to delay showing
 ToolTip.delay = 200;
-ToolTip.fadeDuration = 150;
+ToolTip.fadeDuration = 125;
 
 ToolTip._bound = { };
 ToolTip._nextID = 0;
@@ -29,6 +29,18 @@ ToolTip.unbind = function(element) {
     }
 };
 
+ToolTip.unbindAll = function(element) {
+    for (var id in ToolTip._bound) {
+        var existing = ToolTip._bound[ id ];
+
+        if (existing instanceof ToolTipItem) {
+            existing.unbind( );
+        }
+    }
+
+    ToolTip._bound = [ ];
+};
+
 function ToolTipItem(element, text) {
     this.element = element;
     this.text = text;
@@ -45,9 +57,9 @@ function ToolTipItem(element, text) {
     this._mouseX = -9999;
     this._mouseY = -9999;
 
-    this.element.addEventListener( 'mouseover', this._enterHandler, true );
-    this.element.addEventListener( 'mouseout', this._leaveHandler, true );
-    this.element.addEventListener( 'mousemove', this._mouseMoveHandler, true );
+    this.element.addEventListener( 'mouseenter', this._enterHandler );
+    this.element.addEventListener( 'mouseleave', this._leaveHandler );
+    this.element.addEventListener( 'mousemove', this._mouseMoveHandler );
 }
 
 ToolTipItem.prototype.setText = function(text) {
@@ -59,9 +71,9 @@ ToolTipItem.prototype.setText = function(text) {
 };
 
 ToolTipItem.prototype.unbind = function() {
-    this.element.removeEventListener( 'mouseover', this._enterHandler, true );
-    this.element.removeEventListener( 'mouseout', this._leaveHandler, true );
-    this.element.removeEventListener( 'mousemove', this._mouseMoveHandler, true );
+    this.element.removeEventListener( 'mouseenter', this._enterHandler );
+    this.element.removeEventListener( 'mouseleave', this._leaveHandler );
+    this.element.removeEventListener( 'mousemove', this._mouseMoveHandler );
 
     this._close( );
 };
@@ -117,12 +129,15 @@ ToolTipItem.prototype._updatePosition = function() {
 };
 
 ToolTipItem.prototype._onElementMouseEnter = function(e) {
+    // already open
+    if (this._ttElement !== null)
+        return;
+
     this._mouseX = e.clientX;
     this._mouseY = e.clientY;
 
     this._enterTimeout = setTimeout( this._open.bind( this ), ToolTip.delay );
 
-    e.preventDefault( );
     e.stopPropagation( );
     e.stopImmediatePropagation( );
 };
@@ -132,7 +147,6 @@ ToolTipItem.prototype._onElementMouseLeave = function(e) {
 
     this._close( );
 
-    e.preventDefault( );
     e.stopPropagation( );
     e.stopImmediatePropagation( );
 };

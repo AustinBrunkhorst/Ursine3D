@@ -21,6 +21,7 @@ namespace ursine
         #if defined(URSINE_WITH_EDITOR)
             , m_baseInitialized( false )
         #endif
+            , m_hasResources( false )
         {
             m_typeMask.set( typeID, true );
         }

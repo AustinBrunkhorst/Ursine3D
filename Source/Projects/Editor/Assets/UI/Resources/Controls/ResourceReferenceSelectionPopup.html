@@ -1,29 +1,37 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
 <link rel="import" href="TextInput.html">
 
-<dom-module id="x-item-selection-popup">
-    <link rel="import" type="css" href="../Style/Controls/ItemSelectionPopup.css">
+<dom-module id="x-resource-reference-selection-popup">
+    <link rel="import" type="css" href="../Style/Controls/ResourceReferenceSelectionPopup.css">
     <template>
         <div id="header">
             <input is="x-text-input" id="filter" placeholder="Filter By Name..." />
             <div id="filter-icon"></div>
         </div>
         <ul id="items">
-        <template id="itemRepeat" is="dom-repeat" items="{{items}}" as="item">
-            <li on-click="_onItemSelected">{{item}}</li>
+        <template id="resourceRepeat" is="dom-repeat" items="{{resources}}" as="resource">
+            <li on-click="_onResourceSelected">
+                <div class="display-name">{{resource.displayName}}</div>
+                <div class="preview" has-thumbnail$="{{resource.hasPreview}}" resource-type$="{{resource.type}}">
+                <template is="dom-if" if="{{resource.hasPreview}}">
+                    <img src="{{resource.previewFile}}">
+                </template>
+                </div>
+            </li>
         </template>
         </ul>
     </template>
     <script>
-        var ItemSelectionPopupControl = Polymer({
-            is: "x-item-selection-popup",
+        var ResourceReferenceSelectionPopupControl = Polymer({
+            is: "x-resource-reference-selection-popup",
             hostAttributes: {
                 tabindex: -1
             },
             properties: {
-                items: {
+                resources: {
                     type: Array,
-                    value: [ ]
+                    value: [ ],
+                    observer: '_onResourcesChanged'
                 }
             },
             listeners: {
@@ -38,9 +46,9 @@
              */
             factoryImpl: function(items) {
                 // make sure it's sorted
-                this._rawItems = (items || [ ]).sort( );
+                this._rawResources = (items || [ ]);
 
-                this.set( 'items', this._rawItems );
+                this.set( 'resources', this._rawResources );
             },
             created: function() {
                 this._selectedIndex = -1;
@@ -73,6 +81,8 @@
                 }.bind( this ), 0 );
             },
             close: function() {
+                ToolTip.unbindAll( );
+
                 // already closing
                 if (this.classList.contains( 'closing' ))
                     return;
@@ -98,13 +108,13 @@
                     // down
                     case 40:
                         this._selectedIndex =
-                            Math.min( this.get( 'items' ).length - 1, this._selectedIndex + 1 );
+                            Math.min( this.get( 'resources' ).length - 1, this._selectedIndex + 1 );
 
                         this._onSelectedIndexChanged( );
                         break;
                     // return
                     case 13:
-                        this._selectSelectedType( );
+                        this._selectSelectedResource( );
                         break;
                 }
             },
@@ -123,28 +133,26 @@
                 var value = this.$.filter.value.toLowerCase( );
 
                 if (value.length) {
-                    output = this._rawItems
+                    output = this._rawResources
                     // filter items that don't contain this value
-                    .filter( function(item) {
-                        return item.toLowerCase( ).indexOf( value ) != -1;
-                    } )
-                    // sort based on where the name exists
-                    .sort( function(a, b) {
-                        return a.toLowerCase( ).indexOf( value ) -
-                               b.toLowerCase( ).indexOf( value );
+                    .filter( function(resource) {
+                        return resource.displayName.toLowerCase( ).indexOf( value ) != -1;
                     } );
                 } else {
-                    output = this._rawItems;
+                    output = this._rawResources;
                 }
 
                 this._selectedIndex = 0;
 
-                this.set( 'items', output );
+                this.set( 'resources', output );
 
                 this._onSelectedIndexChanged( );
             },
-            _onItemSelected: function(e) {
-                this._notifySelected( e.model.item );
+            _onResourceSelected: function(e) {
+                this._notifySelected( e.model.resource );
+            },
+            _onResourcesChanged: function() {
+                this.async( this._bindToolTips.bind( this ) );
             },
 
             _onSelectedIndexChanged: function() {
@@ -163,17 +171,36 @@
                 }
             },
 
-            _selectSelectedType: function() {
+            _bindToolTips: function() {
+                var items = this.$.items.querySelectorAll( 'li' );
+
+                for (var i = 0; i < items.length; ++i) {
+                    var item = items[ i ];
+
+                    var resource = this.$.resourceRepeat.modelForElement( item ).resource;
+
+                    var tooltip =
+                        '<div class="tt-resource-display-name">'+
+                            resource.relativePathDisplayName
+                        +'</div>';
+
+                    if (resource.hasPreview)
+                        tooltip += '<img class="tt-resource-preview" src="'+ resource.previewFile +'" />';
+
+                    ToolTip.bind( item, tooltip );
+                }
+            },
+            _selectSelectedResource: function() {
                 var selected = this.$.items.querySelector( 'li.selected' );
 
                 if (!selected)
                     return;
 
-                this._notifySelected( this.$.itemRepeat.modelForElement( selected ).item );
+                this._notifySelected( this.$.resourceRepeat.modelForElement( selected ).resource );
             },
-            _notifySelected: function(item) {
-                this.fire( 'item-selected', {
-                    item: item
+            _notifySelected: function(resource) {
+                this.fire( 'resource-selected', {
+                    resource: resource
                 } );
 
                 this.close( );

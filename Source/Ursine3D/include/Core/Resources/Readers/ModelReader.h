@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ResourceTypeReader.h"
 #include "ModelInfo.h"
 

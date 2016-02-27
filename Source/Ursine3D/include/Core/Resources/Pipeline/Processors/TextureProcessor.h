@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ResourceProcessor.h"
 
 #include "Options/TextureProcessorOptions.h"

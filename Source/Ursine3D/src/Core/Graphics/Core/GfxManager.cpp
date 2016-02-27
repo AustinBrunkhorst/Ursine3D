@@ -280,6 +280,8 @@ namespace ursine
 
                 GfxHND texHandle = current->GetTextureHandle( );
                 drawCall.Material_ = texHandle & 0xFFFF;
+
+                std::cout << drawCall.Material_ << std::endl;
                 
                 drawCall.Shader_ = SHADER_BILLBOARD2D;
                 drawCall.Overdraw_ = current->GetOverdraw();

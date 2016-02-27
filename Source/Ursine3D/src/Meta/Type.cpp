@@ -799,13 +799,11 @@ namespace ursine
 
 				if (!fieldData.is_null( ))
 				{
-					field.SetValue( instance, 
-						fieldType.DeserializeJson( fieldData )
-					);
+                    auto fieldValue = fieldType.DeserializeJson( fieldData );
 
-                    auto fieldInstance = field.GetValue( instance );
+                    fieldValue.m_base->OnDeserialize( fieldData );
 
-                    fieldInstance.m_base->OnDeserialize( fieldData );
+					field.SetValue( instance, fieldValue );
 				}
             }
 

@@ -23,6 +23,8 @@ namespace ursine
             ResourceReference CreateReference(const GUID &guid);
             ResourceData::Handle LoadReference(const ResourceReference &reference, bool ignoreCache);
 
+            bool ResourceExists(const GUID &guid) const;
+
         private:
             fs::path m_resourceDirectory;
 
@@ -34,7 +36,7 @@ namespace ursine
             ResourceData::Handle hardLoadResource(const GUID &guid);
             ResourceData::Handle loadResource(const GUID &guid);
 
-            fs::path getResourceFileName(const GUID &guid);
+            fs::path getResourceFileName(const GUID &guid) const;
         };
     }
 }

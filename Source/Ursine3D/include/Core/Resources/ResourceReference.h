@@ -12,7 +12,7 @@ namespace ursine
 
         class ResourceReference
             : public meta::Object
-            , public EventDispatcher<ResourceReferenceEventType>
+            , public EventDispatcher<ResourceReferenceEventType, LambdaHandler>
         {
             META_OBJECT;
 
@@ -37,10 +37,12 @@ namespace ursine
             friend class ResourceManager;
             friend class ecs::Component;
 
-            mutable ResourceManager *m_manager;
+            ResourceManager *m_manager;
             GUID m_resourceGUID;
 
             ResourceReference(ResourceManager *manager, const GUID &resourceGUID);
+
+            void setManager(ResourceManager *manager);
         } Meta(
             Enable, 
             WhiteListMethods,

@@ -37,6 +37,11 @@ namespace ursine
             return cache->second;
         }
 
+        bool ResourceManager::ResourceExists(const GUID &guid) const
+        {
+            return m_database.find( guid ) != m_database.end( ) || exists( getResourceFileName( guid ) );
+        }
+
         ResourceData::Handle ResourceManager::hardLoadResource(const GUID &guid)
         {
             auto resource = loadResource( guid );
@@ -61,7 +66,7 @@ namespace ursine
             return reader.Read( fileName );
         }
 
-        fs::path ResourceManager::getResourceFileName(const GUID &guid)
+        fs::path ResourceManager::getResourceFileName(const GUID &guid) const
         {
             auto fileName = m_resourceDirectory / to_string( guid );
 

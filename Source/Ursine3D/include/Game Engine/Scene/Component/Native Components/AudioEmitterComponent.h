@@ -18,8 +18,6 @@
 #include "ListenerMasks.h"
 #include <queue>
 
-#include "WorldData.h"
-
 namespace ursine
 {
 	namespace ecs
@@ -50,14 +48,8 @@ namespace ursine
 				SetMute
 			);
 
-            EditorResourceField(
-                ursine::resources::WorldData, 
-                testResource
-            );
-
             Meta(Enable)
 			AudioEmitter(void);
-			~AudioEmitter(void);
 
 			float GetVolume(void) const;
 			void SetVolume(float volume);
@@ -71,11 +63,9 @@ namespace ursine
 			std::string GetFrontSound(void);
 			void PopFrontSound(void);
 			bool SoundsEmpty(void);
-			void AddSoundToPlayQueue(std::string sound);
+			void AddSoundToPlayQueue(const std::string &sound);
 
 			ListenerIndex GetListeners(void);
-
-			void OnInitialize(void) override;
 
 		private:
 			bool m_loop;
@@ -85,7 +75,6 @@ namespace ursine
 			
 			// fire and forget
 			std::queue<std::string> m_soundsFAF;
-
 		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Emitter" ));
 	}
 }

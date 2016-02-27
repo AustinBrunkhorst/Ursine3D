@@ -25,6 +25,10 @@ class Extern {
         return untyped __js__( "ProjectGetResourcesByType(type)" );
     }
 
+    public static function ProjectGetResource(guid : String) {
+        return untyped __js__( "ProjectGetResource(guid)" );
+    }
+
     public static function ProjectSetEmptyScene() {
         return untyped __js__( "ProjectSetEmptyScene()" );
     }

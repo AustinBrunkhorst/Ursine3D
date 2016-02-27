@@ -118,7 +118,8 @@ namespace ursine
         template<typename T>
         VariantBase *VariantContainer<T>::Clone(void) const
         {
-            return new VariantContainer<T>( m_value );
+            // use the non reference type to ensure a copy is made
+            return new VariantContainer<NonRefType>( m_value );
         }
 
         template<typename T>

@@ -25,4 +25,7 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectGetResourcesByType);
 
 Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectGetResource);
+
+Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectSetEmptyScene);

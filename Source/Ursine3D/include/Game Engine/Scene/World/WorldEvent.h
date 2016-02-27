@@ -43,6 +43,9 @@ namespace ursine
             // A component has been removed from an entity
             WORLD_ENTITY_COMPONENT_REMOVED,
 
+            // The owning scene of this world has changed
+            WORLD_OWNER_CHANGED,
+
             // The screen that owns this world's focus state changed
             WORLD_SCREEN_FOCUS_CHANGED,
 

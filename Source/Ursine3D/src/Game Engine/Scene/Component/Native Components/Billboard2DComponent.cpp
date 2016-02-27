@@ -46,6 +46,14 @@ namespace ursine
 
             m_graphics->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
+            // release resource
+            if (m_billboard->GetTextureHandle() != 0)
+            {
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadTexture(
+                    m_billboard->GetTextureHandle()
+                );
+            }
+
 			delete m_base;
         }
 
@@ -55,6 +63,27 @@ namespace ursine
 
             // set the unique id
             m_billboard->SetEntityUniqueID(GetOwner()->GetUniqueID());
+
+            texture.Connect<EventArgs>( resources::RR_REFERENCED_RESOURCE_CHANGED,
+                [=](EVENT_HANDLER(resources::ResourceReference))
+                {
+                    auto data = texture.Load<resources::TextureData>( );
+
+                    if (data == nullptr)
+                    {
+                        // default
+                        m_billboard->SetTextureHandle( 0 );
+                    }
+                    else
+                    {
+                        // load with data->GetTextureHandle()
+                        auto handle = data->GetTextureHandle( );
+
+                        GetCoreSystem( graphics::GfxAPI )->ResourceMgr.LoadTexture( handle );
+                        m_billboard->SetTextureHandle( handle );
+                    }
+                }
+            );
         }
 
         void Billboard2D::updateRenderer(void)
@@ -62,6 +91,7 @@ namespace ursine
             auto trans = GetOwner()->GetTransform();
             auto &billboard = GetCoreSystem(graphics::GfxAPI)->RenderableMgr.GetBillboard2D( m_base->GetHandle( ) );
 
+            billboard.SetDimensions( 100.0f, 100.0f );
             billboard.SetPosition(trans->GetWorldPosition());
         }
 

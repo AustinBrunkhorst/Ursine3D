@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ResourceData.h"
 
 #include "GfxDefines.h"

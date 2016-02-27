@@ -226,6 +226,8 @@ namespace ursine
         void World::SetOwner(Scene *owner)
         {
             m_owner = owner;
+
+            Dispatch( WORLD_OWNER_CHANGED, EventArgs::Empty );
         }
 
         void World::DispatchLoad(void)

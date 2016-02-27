@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ResourceImporter.h"
 
 #include "PassThroughProcessor.h"

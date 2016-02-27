@@ -18,6 +18,7 @@
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
 #include "RenderMask.h"
+#include "TextureData.h"
 
 namespace ursine
 {
@@ -37,6 +38,12 @@ namespace ursine
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
                 SetRenderMask
+            );
+
+
+            EditorResourceField(
+                ursine::resources::TextureData,
+                texture
             );
 
             Billboard2D(void);

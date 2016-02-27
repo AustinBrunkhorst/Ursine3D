@@ -4,19 +4,16 @@ import ursine.native.Extern;
 import ursine.native.Property;
 
 import ursine.controls.Notification;
-import ursine.controls.ItemSelectionPopup;
+import ursine.controls.ResourceReferenceSelectionPopup;
 
 import ursine.editor.scene.component.ComponentDatabase;
 
 extern class ResourceReference {
     var guid : String;
-    var resolved : Bool;
 }
 
 @fieldInspector( "ResourceReference" )
 class ResourceReferenceInspector extends FieldInspectionHandler {
-    private static var m_nullGUID = '00000000-0000-0000-0000-00000000000';
-
     private var m_displayText : js.html.DivElement;
     private var m_resourceType : String;
 
@@ -43,14 +40,9 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
         m_displayText.addEventListener( 'click', function(e) {
             var resources : Array<Dynamic> = Extern.ProjectGetResourcesByType( m_resourceType );
 
-            var items = [ ];
+            var selector = new ResourceReferenceSelectionPopup( resources );
 
-            for (i in 0...resources.length)
-                items.push( resources[ i ].relativePathDisplayName );
-
-            var selector = new ItemSelectionPopup( cast items );
-
-            selector.addEventListener( 'item-selected', onResourceSelected );
+            selector.addEventListener( 'resource-selected', onResourceSelected );
 
             js.Browser.document.body.appendChild( selector );
 
@@ -63,16 +55,19 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
     }
 
     public override function updateValue(value : ResourceReference) {
-        trace( value );
+        var resource = Extern.ProjectGetResource( value.guid );
 
-        //m_displayText.innerText = value.guid;
-        m_displayText.classList.toggle( 'invalid', value.resolved == false );
+        var valid = resource != null;
+
+        m_displayText.innerText = valid ? resource.displayName : '';
+        m_displayText.classList.toggle( 'invalid', !valid );
 
         m_instance = value;
     }
 
     private function onResourceSelected(e) {
-        trace( e.detail.item );
-        //notifyChanged( m_field, e.detail.item );
+        notifyChanged( m_field, {
+            guid: e.detail.resource.guid
+        } );
     }
 }

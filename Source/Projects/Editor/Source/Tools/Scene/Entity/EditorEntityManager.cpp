@@ -277,22 +277,24 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 
     if (args->entity->HasComponent<ecs::Selected>( ))
     {
-    #if defined(CONFIG_DEBUG)
-        UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
+        auto componentType = args->component->GetType( );
+        auto field = componentType.GetField( args->field );
+
+        UAssert( field.IsValid( ),
             "Notifying change of unknown field.\n"
             "Component: %s\n"
             "Field: %s",
-            args->component->GetType( ).GetName( ).c_str( ),
+            componentType.GetName( ).c_str( ),
             args->field.c_str( )
         );
-    #endif
+
+        auto invokeHook = field.GetMeta( ).GetProperty<ForceSerializationHook>( ) != nullptr;
 
         Json message = Json::object {
             { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
-            { "component", args->component->GetType( ).GetName( ) },
+            { "component", componentType.GetName( ) },
             { "field", args->field },
-            // note: false is to ensure no serialization hooks are called
-            { "value", args->value.GetType( ).SerializeJson( args->value, false ) }
+            { "value", args->value.GetType( ).SerializeJson( args->value, invokeHook ) }
         };
 
         m_editor->GetMainWindow( ).GetUI( )->Message(

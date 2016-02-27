@@ -457,22 +457,25 @@ JSMethod(EntityHandler::componentFieldUpdate)
 
     auto valueToSet = fieldType.DeserializeJson( value );
 
-    if (editorSetter)
+    Application::PostMainThread( [=](void) mutable
     {
-        auto &setter = componentType.GetMethod( editorSetter->setter );
+        if (editorSetter)
+        {
+            auto &setter = componentType.GetMethod( editorSetter->setter );
 
-        UAssert( setter.IsValid( ), 
-            "Unknown editor setter '%s' on component type '%s'.",
-            editorSetter->setter.c_str( ),
-            componentType.GetName( ).c_str( )
-        );
+            UAssert( setter.IsValid( ), 
+                "Unknown editor setter '%s' on component type '%s'.",
+                editorSetter->setter.c_str( ),
+                componentType.GetName( ).c_str( )
+            );
 
-        meta::Field::SetValue( instance, valueToSet, setter );
-    }
-    else
-    {
-        field.SetValue( instance, valueToSet );
-    }
+            meta::Field::SetValue( instance, valueToSet, setter );
+        }
+        else
+        {
+            field.SetValue( instance, valueToSet );
+        }
+    } );
 
     return CefV8Value::CreateUndefined( );
 }
