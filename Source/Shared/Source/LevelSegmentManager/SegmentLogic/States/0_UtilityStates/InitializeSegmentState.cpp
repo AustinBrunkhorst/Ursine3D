@@ -17,11 +17,9 @@
 
 #include "SegmentLogicStateIncludes.h"
 
-#include "UnloadResourceComponent.h"
-
-InitializeSegmentState::InitializeSegmentState(const ursine::Array<std::string> &loadInArchetypes, LevelSegments unloadSegment)
+InitializeSegmentState::InitializeSegmentState(const std::string &loadInWorld, LevelSegments unloadSegment)
     : SegmentLogicState( "Initialize Segment State" )
-    , m_loadInArchetypes( loadInArchetypes )
+    , m_loadInWorld( loadInWorld )
     , m_unloadSegment( unloadSegment )
 {
 }
@@ -31,12 +29,5 @@ void InitializeSegmentState::Enter(SegmentLogicStateMachine *machine)
     auto segmentManager = machine->GetSegmentManager( );
     auto world = segmentManager->GetOwner( )->GetWorld( );
 
-    for (auto &archetype : m_loadInArchetypes)
-    {
-        auto e = world->CreateEntityFromArchetype(
-            WORLD_ARCHETYPE_PATH + archetype + ".uatype", archetype
-        );
-
-        e->AddComponent<UnloadResource>( segmentManager, m_unloadSegment );
-    }
+    world->MergeWorld( URSINE_PROJECTS_DIRECTORY + m_loadInWorld );
 }

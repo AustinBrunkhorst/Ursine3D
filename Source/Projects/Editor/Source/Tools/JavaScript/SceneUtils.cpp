@@ -203,9 +203,7 @@ namespace
 
         try
         {
-                ecs::WorldSerializer serializer;
-
-                auto world = serializer.Deserialize( file );
+            auto world = ecs::WorldSerializer::Deserialize( file );
 
             Application::Instance->ExecuteOnMainThread( [=] {
                 URSINE_TODO( "this is hacky and weirdly placed" );
@@ -244,9 +242,7 @@ namespace
         auto *editor = GetCoreSystem( Editor );
         auto world = editor->GetProject( )->GetScene( )->GetWorld( );
 
-        ecs::WorldSerializer serializer;
-
-        auto serialized = serializer.Serialize( world );
+        auto serialized = ecs::WorldSerializer::Serialize( world );
 
         auto path = files[ 0 ];
 

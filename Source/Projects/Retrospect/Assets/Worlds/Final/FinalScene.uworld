@@ -6,6 +6,12 @@
 "Camera": {
 ".uid": 6, 
 "active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
 "farPlane": 2500, 
 "fov": 45, 
 "nearPlane": 0.10000000149011612, 
@@ -35,9 +41,9 @@
 "z": 1
 }, 
 "translation": {
-"x": -444.57638549804688, 
-"y": 238.50857543945313, 
-"z": 369.27490234375
+"x": -553.433837890625, 
+"y": 288.251953125, 
+"z": 459.6942138671875
 }
 }
 }, 
@@ -50,13 +56,15 @@
 "archetypesToLoad": [
 "BossRoom/BossRoomOpenCamera", "BossRoom/PlayerBossSpawn"
 ], 
-"bossTopEntityName": "BossRotatingTop"
+"bossTopEntityName": "BossRotatingTop", 
+"worldToMerge": ""
 }, 
 "CombatBowl1Resources": {
 ".uid": 12, 
 "archetypesToLoad": [
 "CombatBowl1/CombatBowl1Collision", "CombatBowl1/CombatBowl1HallwayFX", "CombatBowl1/CombatBowl1Level", "CombatBowl1/CombatBowl1Lights", "CombatBowl1/CombatBowlBossFX", "CombatBowl1/CombatBowl1SpawnGroup", "CombatBowl1/BossDoor", "CombatBowl1/CombatBowl1ElevatorLift"
-]
+], 
+"worldToMerge": ""
 }, 
 "LevelSegmentManager": {
 ".uid": 13, 
@@ -86,7 +94,8 @@
 ".uid": 14, 
 "archetypesToLoad": [
 "Tutorial/TutorialRoom", "Tutorial/TutorialPlayer1Spawn", "Tutorial/TutorialPlayer2Spawn", "Tutorial/FX_SimulationStart"
-]
+], 
+"worldToMerge": "Retrospect/Assets/Worlds/Final/Tutorial/Tutorial.uworld"
 }
 }, 
 "name": "LevelSegmentManager"

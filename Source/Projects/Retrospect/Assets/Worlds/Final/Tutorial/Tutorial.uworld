@@ -1,0 +1,806 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Camera": {
+".uid": 6, 
+"active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
+"farPlane": 2500, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 5, 
+"rotation": {
+"w": 0.4188268780708313, 
+"x": 0.071468330919742584, 
+"y": 0.89235091209411621, 
+"z": -0.15227013826370239
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -480.8621826171875, 
+"y": 255.08970642089844, 
+"z": 399.4146728515625
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 19, 
+"playerArchetype": "Player1", 
+"spawnSegment": 76
+}, 
+"Transform": {
+".uid": 18, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": -5.6254787445068359
+}
+}
+}, 
+"name": "TutorialPlayer1Spawn Archetype"
+}, {
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 26, 
+"playerArchetype": "Player2", 
+"spawnSegment": 76
+}, 
+"Transform": {
+".uid": 25, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 5.6254801750183105
+}
+}
+}, 
+"name": "TutorialPlayer2Spawn Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 30, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 31, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 32, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 1.5, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 1, 
+"specularPower": 165
+}, 
+"Transform": {
+".uid": 29, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1000, 
+"y": 1, 
+"z": 1000
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Floor"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 34, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
+"emissive": 3, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "HiRezSphere", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 33, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": -300, 
+"y": -300, 
+"z": -300
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Sphere"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 36, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 35, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 43, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 42, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light (1)"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 48, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 47, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light  (2)"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 53, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 52, 
+"rotation": {
+"w": -0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": -6.1817239327410789e-08
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light   (3)"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 58, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 150.26731872558594, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 50
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 57, 
+"rotation": {
+"w": 0.65427792072296143, 
+"x": 0.75625395774841309, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 154.15058898925781, 
+"y": 154.15058898925781, 
+"z": 150.26731872558594
+}, 
+"translation": {
+"x": 0, 
+"y": 43.425643920898438, 
+"z": 9.0050439834594727
+}
+}
+}, 
+"name": "Spot Light"
+}
+], 
+"components": {
+"Transform": {
+".uid": 28, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 4.3852996896021068e-06, 
+"z": 0
+}
+}
+}, 
+"name": "TutorialRoom Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 65, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 66, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 64, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 68, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 69, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 67, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"AnimateParticleReset": {
+".uid": 71, 
+"easeFunction": 0, 
+"endDuration": 0.10000000149011612, 
+"startDuration": 2, 
+"startOnAwake": true, 
+"stopOnComplete": false, 
+"timeToChange": 5
+}, 
+"ParticleEmitter": {
+".uid": 72, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 5.5249234455231655e-37, 
+"rollVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 73, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 70, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"AnimateParticleReset": {
+".uid": 75, 
+"easeFunction": 0, 
+"endDuration": 0.10000000149011612, 
+"startDuration": 2, 
+"startOnAwake": true, 
+"stopOnComplete": false, 
+"timeToChange": 5
+}, 
+"ParticleEmitter": {
+".uid": 76, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 20, 
+"y": 0, 
+"z": 20
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 3.2097698692470762e-37, 
+"rollVariance": 0, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 77, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 74, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.558712005615234, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"Transform": {
+".uid": 63, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 3, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 4, 
+"systems": [
+{
+"type": "CharacterControllerSystem"
+}, {
+"type": "CheatSystem"
+}, {
+"type": "CommandQueueSystem"
+}, {
+"type": "InputControllerSystem"
+}, {
+"type": "ProjectileSystem"
+}
+]
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}
