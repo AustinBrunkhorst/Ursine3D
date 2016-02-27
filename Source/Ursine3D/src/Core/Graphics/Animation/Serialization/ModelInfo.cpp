@@ -38,6 +38,12 @@ namespace ursine
 
             void ModelInfo::ReleaseData()
             {
+                mmeshCount = 0;
+                mmaterialCount = 0;
+                mboneCount = 0;
+                mmeshlvlCount = 0;
+                mriglvlCount = 0;
+
                 mMeshInfoVec.clear();
                 mMtrlInfoVec.clear();
                 mBoneInfoVec.clear();

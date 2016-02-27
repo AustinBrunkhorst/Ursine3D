@@ -2,6 +2,7 @@
 
 #include "FBXFileImporter.h"
 #include "ModelData.h"
+#include "AnimationClipData.h"
 
 #include "CFBXLoader.h"
 
@@ -23,8 +24,31 @@ namespace ursine
             fileName.string( ).c_str( )
         );
         
-        // output the animation clipdata resources
+        auto sourceFileDirectory = fileName.parent_path( );
+        
+        auto animInfo = importer.GetAnimInfo();
+        
+        auto animclipdata = std::make_shared<AnimationClipData>( animInfo );
+        
+        // for(info in animInfo)
+        if(animInfo)
+        {
+            ursine::fs::path clipFileName = animInfo->name + ".uanim";
+        
+            auto clipPath = sourceFileDirectory / clipFileName;
+        
+            ResourceWriter clipWriter( clipPath );
+            
+            UAssert( clipWriter.IsOpen( ),
+                "Unable to write clip.\nfile: %s",
+                clipPath.string( ).c_str( )
+            );
+            
+            animclipdata->Writing( clipWriter );
+            
+            context.AddGeneratedResource( clipPath );
+        }
 
-        return std::make_shared<ModelData>( importer.GetModelInfo() );
+        return std::make_shared<ModelData>( importer.GetModelInfo( ) );
     }
 }

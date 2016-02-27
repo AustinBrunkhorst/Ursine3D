@@ -16,6 +16,7 @@
 #include "GFXAPIDefines.h"
 #include "ModelResource.h"
 #include "ModelInfo.h"
+#include "AnimationInfo.h"
 #include "GUID.h"
 
 namespace ursine
@@ -70,7 +71,25 @@ namespace ursine
             void LoadModel(GfxHND handle);
             void UnloadModel(GfxHND handle);
 
-            ufmt_loader::ModelInfo GetModelInfo(const GfxHND &handle);
+            ufmt_loader::ModelInfo *GetModelInfo(const GfxHND &handle);
+
+            /////////////////////////////////////////////////////////
+            // Animation
+            /////////////////////////////////////////////////////////
+            // get model handle
+            GfxHND GetAnimeHandle(const char *name);
+
+            //// get a model
+            //ModelResource *GetModelResource(const GfxHND &handle);
+            //ModelResource *GetModelResource(const std::string &modelName);
+
+            GfxHND CreateAnimation(ufmt_loader::AnimInfo *animeInfo);
+            void DestroyAnimation(GfxHND &handle);
+
+            //void LoadModel(GfxHND handle);
+            //void UnloadModel(GfxHND handle);
+
+            ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);
             
         private:
             privData *m_privates;

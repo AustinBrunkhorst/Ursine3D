@@ -93,7 +93,7 @@ namespace ursine
                 */
                 virtual bool SerializeOut(HANDLE hFile);
 
-                 void Read(resources::ResourceReader &input);
+                virtual void Read(resources::ResourceReader &input);
                 virtual void Write(resources::pipeline::ResourceWriter &output);
             };
         };

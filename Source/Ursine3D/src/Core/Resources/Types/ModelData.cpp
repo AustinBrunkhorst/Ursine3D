@@ -4,7 +4,6 @@
 #include "ModelReader.h"
 #include <Core/CoreSystem.h>
 #include "GfxAPI.h"
-#include "ModelResource.h"
 
 namespace ursine
 {
@@ -27,8 +26,8 @@ namespace ursine
 
         void ModelData::Write(pipeline::ResourceWriter &output)
         {            
-            graphics::ufmt_loader::ModelInfo modelInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelInfo(m_modelHandle);
-            modelInfo.Write(output);
+            graphics::ufmt_loader::ModelInfo *modelInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelInfo(m_modelHandle);
+            modelInfo->Write(output);
         }
 
         meta::Type ModelData::GetReaderType(void)

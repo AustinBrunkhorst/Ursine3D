@@ -44,10 +44,26 @@ namespace ursine
 
             void MaterialInfo::ReleaseData()
             {
+                name = "";
+
+                type = FBX_DATA::FbxMaterial::Type_None;
+                ambitype = FBX_DATA::Material_Eles::Fac_None;
+                difftype = FBX_DATA::Material_Eles::Fac_None;
+                emistype = FBX_DATA::Material_Eles::Fac_None;
+                spectype = FBX_DATA::Material_Eles::Fac_None;
+
+                ambi_mapCount = 0;
+                diff_mapCount = 0;
+                emis_mapCount = 0;
+                spec_mapCount = 0;
+
                 ambi_texNames.clear();
                 diff_texNames.clear();
                 emis_texNames.clear();
                 spec_texNames.clear();
+
+                shineness = 0.f;
+                TransparencyFactor = 0.f;
             }
 
             bool MaterialInfo::SerializeIn(HANDLE hFile)

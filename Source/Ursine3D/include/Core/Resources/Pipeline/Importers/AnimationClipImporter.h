@@ -15,19 +15,19 @@ namespace ursine
                 RESOURCE_IMPORTER;
 
             public:
-				AnimationClipImporter(void);
+                AnimationClipImporter(void);
                 ~AnimationClipImporter(void);
 
             private:
                 ResourceData::Handle Import(ResourceImportContext &context) override;
             } Meta(
                 Enable,
-                DisplayName( "AnimationClipImporter" ),
-                ResourceImporterConfig( 
-                    ExtensionList { "uanim" },
-                    typeof( ursine::rp::PassThroughProcessor )
-                )
-            );
+                DisplayName("AnimationClipImporter"),
+                ResourceImporterConfig(
+                    ExtensionList{ "uanim" },
+                    typeof(ursine::rp::PassThroughProcessor)
+                    )
+                );
         }
     }
 }

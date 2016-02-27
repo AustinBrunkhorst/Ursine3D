@@ -38,6 +38,10 @@ namespace ursine
 
             void AnimInfo::ReleaseData()
             {
+                name = "";
+
+                animCount = 0;
+
                 for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
                     (*iter).ReleaseData();
             }
@@ -46,7 +50,7 @@ namespace ursine
             {
                 DWORD nByteRead;
                 unsigned int i = 0, j = 0, k = 0, l = 0;
-                char tmp_name[MAXTEXTLEN];
+                char tmp_name[ MAXTEXTLEN ];
                 ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
                 name = tmp_name;
                 ReadFile(hFile, &animCount, sizeof(unsigned int), &nByteRead, nullptr);
@@ -60,17 +64,17 @@ namespace ursine
                     ReadFile(hFile, &iter->boneCount, sizeof(unsigned int), &nByteRead, nullptr);
                     iter->keyIndices.resize(iter->clipCount);
                     iter->keyframes.resize(iter->clipCount);
-                    for (j = 0; j < animDataArr[i].clipCount; ++j)
+                    for (j = 0; j < animDataArr[ i ].clipCount; ++j)
                     {
-                        iter->keyIndices[j].resize(iter->boneCount);
-                        iter->keyframes[j].resize(iter->boneCount);
+                        iter->keyIndices[ j ].resize(iter->boneCount);
+                        iter->keyframes[ j ].resize(iter->boneCount);
                         for (k = 0; k < iter->boneCount; ++k)
                         {
-                            ReadFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nByteRead, nullptr);
-                            iter->keyframes[j][k].resize(iter->keyIndices[j][k]);
-                            for (l = 0; l < iter->keyIndices[j][k]; ++l)
+                            ReadFile(hFile, &iter->keyIndices[ j ][ k ], sizeof(unsigned int), &nByteRead, nullptr);
+                            iter->keyframes[ j ][ k ].resize(iter->keyIndices[ j ][ k ]);
+                            for (l = 0; l < iter->keyIndices[ j ][ k ]; ++l)
                             {
-                                ReadFile(hFile, &iter->keyframes[j][k][l], sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
+                                ReadFile(hFile, &iter->keyframes[ j ][ k ][ l ], sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
                             }
                         }
                     }
@@ -85,7 +89,7 @@ namespace ursine
 
                 if (INVALID_HANDLE_VALUE != hFile)
                 {
-                    char tmp_name[MAXTEXTLEN];
+                    char tmp_name[ MAXTEXTLEN ];
                     lstrcpy(tmp_name, name.c_str());
                     WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
                     WriteFile(hFile, &animCount, sizeof(unsigned int), &nBytesWrite, nullptr);
@@ -100,10 +104,10 @@ namespace ursine
                         {
                             for (k = 0; k < iter->boneCount; ++k)
                             {
-                                WriteFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nBytesWrite, nullptr);
-                                for (l = 0; l < iter->keyIndices[j][k]; ++l)
+                                WriteFile(hFile, &iter->keyIndices[ j ][ k ], sizeof(unsigned int), &nBytesWrite, nullptr);
+                                for (l = 0; l < iter->keyIndices[ j ][ k ]; ++l)
                                 {
-                                    FBX_DATA::KeyFrame* currKF = &iter->keyframes[j][k][l];
+                                    FBX_DATA::KeyFrame* currKF = &iter->keyframes[ j ][ k ][ l ];
                                     WriteFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nBytesWrite, nullptr);
                                 }
                             }
@@ -115,10 +119,74 @@ namespace ursine
 
             void AnimInfo::Read(resources::ResourceReader &input)
             {
+                unsigned stringSize;
+                std::string str;
+
+                input >> stringSize;
+                str.resize(stringSize);
+                input.ReadBytes(&name[0], stringSize);
+
+                input >> animCount;
+                animDataArr.resize(animCount);
+
+                for (auto &iter : animDataArr)
+                {
+                    // serializing counts
+                    input >> stringSize;
+                    str.resize(stringSize);
+                    input.ReadBytes(&iter.clipname[0], stringSize);
+
+                    input >> iter.clipCount;
+                    input >> iter.boneCount;     
+
+                    iter.keyIndices.resize(iter.clipCount);
+                    iter.keyframes.resize(iter.clipCount);
+
+                    unsigned int i = 0, j = 0, k = 0;
+                    for (i = 0; i < iter.clipCount; ++i)
+                    {
+                        iter.keyIndices[ i ].resize(iter.boneCount);
+                        iter.keyframes[ i ].resize(iter.boneCount);
+
+                        for (j = 0; j < iter.boneCount; ++j)
+                        {
+                            input >> iter.keyIndices[ i ][ j ];
+                            iter.keyframes[ i ][ j ].resize( iter.keyIndices[ i ][ j ] );
+
+                            for (k = 0; k < iter.keyIndices[i][j]; ++k)
+                                input.ReadBytes( reinterpret_cast<char*>(&iter.keyframes[i][j][k]), sizeof(FBX_DATA::KeyFrame) );
+                        }
+                    }
+                }
             }
 
             void AnimInfo::Write(resources::pipeline::ResourceWriter &output)
             {
+                output << name.size();
+                output << name;
+
+                output << animCount;
+
+                for (auto &iter : animDataArr)
+                {
+                    // serializing counts
+                    output << iter.clipname.size();
+                    output << iter.clipname;
+
+                    output << iter.clipCount;
+                    output << iter.boneCount;
+
+                    unsigned int i = 0, j = 0, k = 0;
+                    for (i = 0; i < iter.clipCount; ++i)
+                    {
+                        for (j = 0; j < iter.boneCount; ++j)
+                        {
+                            output << iter.keyIndices[ i ][ j ];
+                            for (k = 0; k < iter.keyIndices[ i ][ j ]; ++k)
+                                output.WriteBytes( reinterpret_cast<char*>( &iter.keyframes[ i ][ j ][ k ] ), sizeof(FBX_DATA::KeyFrame) );
+                        }
+                    }
+                }
             }
         };
     };

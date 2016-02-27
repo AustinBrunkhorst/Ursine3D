@@ -6,6 +6,18 @@ namespace ursine
 {
     namespace resources
     {
+        ResourceReader::ResourceReader(void)
+            : m_stream()
+        {
+
+        }
+
+        ResourceReader::ResourceReader(const fs::path &input)
+            : m_stream(input.string() )
+        {
+
+        }
+
         char ResourceReader::ReadByte(void)
         {
             char byte;
@@ -15,9 +27,9 @@ namespace ursine
             return byte;
         }
 
-        size_t ResourceReader::ReadBytes(char *output, size_t count)
+        size_t ResourceReader::ReadBytes(char *input, size_t count)
         {
-            m_stream.read( output, count );
+            m_stream.read( input, count );
 
             return m_stream.gcount( );
         }
@@ -27,6 +39,11 @@ namespace ursine
             m_stream.seekg( offset );
 
             return *this;
+        }
+
+        bool ResourceReader::IsOpen(void) const
+        {
+            return m_stream.is_open();
         }
     }
 }
