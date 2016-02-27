@@ -26,14 +26,11 @@ namespace ursine
         
         auto sourceFileDirectory = fileName.parent_path( );
         
-        auto animInfo = importer.GetAnimInfo();
+        auto animInfo = importer.GetAnimInfo( );
         
-        auto animclipdata = std::make_shared<AnimationClipData>( animInfo );
-        
-        // for(info in animInfo)
-        if(animInfo)
+        if (animInfo)
         {
-            ursine::fs::path clipFileName = animInfo->name + ".uanim";
+            fs::path clipFileName = animInfo->name + ".uanim";
         
             auto clipPath = sourceFileDirectory / clipFileName;
         
@@ -44,6 +41,8 @@ namespace ursine
                 clipPath.string( ).c_str( )
             );
             
+            auto animclipdata = std::make_shared<AnimationClipData>( animInfo );
+
             animclipdata->Writing( clipWriter );
             
             context.AddGeneratedResource( clipPath );

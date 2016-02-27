@@ -7,13 +7,13 @@ namespace ursine
     namespace resources
     {
         ResourceReader::ResourceReader(void)
-            : m_stream()
+            : m_stream( )
         {
 
         }
 
         ResourceReader::ResourceReader(const fs::path &input)
-            : m_stream(input.string() )
+            : m_stream( input.string( ) )
         {
 
         }
@@ -43,7 +43,7 @@ namespace ursine
 
         bool ResourceReader::IsOpen(void) const
         {
-            return m_stream.is_open();
+            return m_stream.is_open( );
         }
     }
 }
