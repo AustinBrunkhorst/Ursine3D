@@ -17,12 +17,14 @@
 
 #include "LevelSegments.h"
 
+class LevelSegmentManager;
+
 class InitializeSegmentState : public SegmentLogicState
 {
 public:
 
     InitializeSegmentState(
-        const ursine::Array<std::string> &loadInArchetypes,
+        const std::string &loadInWorld,
         LevelSegments unloadSegment
     );
 
@@ -30,6 +32,10 @@ public:
 
 private:
 
-    ursine::Array<std::string> m_loadInArchetypes;
+    std::string m_loadInWorld;
     LevelSegments m_unloadSegment;
+
+    LevelSegmentManager *m_segmentManager;
+
+    void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
 };

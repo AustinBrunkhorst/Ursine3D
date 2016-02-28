@@ -117,7 +117,7 @@ void LevelSegmentManager::initTutorialLogic(void)
 
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
-        resources->archetypesToLoad, 
+        resources->worldToMerge, 
         LevelSegments::CB1_SimulationStartCinematic
     );
 
@@ -169,7 +169,7 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
 
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
-        resources->archetypesToLoad,
+        resources->worldToMerge,
         LevelSegments::Empty
     );
 
@@ -246,7 +246,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
     // initial state for spawning the level
     auto initState = initStateM->AddState<InitializeSegmentState>(
-        resources->archetypesToLoad,
+        resources->worldToMerge,
         LevelSegments::Empty
     );
 

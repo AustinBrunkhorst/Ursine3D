@@ -57,9 +57,9 @@ namespace ursine
         template<typename SystemType>
         SystemType *CoreSystem(void);
 
-		typedef std::function<void(void)> MainThreadCallback;
+        typedef std::function<void(void)> MainThreadCallback;
 
-		void ExecuteOnMainThread(MainThreadCallback callback);
+        void ExecuteOnMainThread(MainThreadCallback callback);
 
     protected:
         // determines if the application should continue updating
@@ -83,11 +83,11 @@ namespace ursine
 
         EventDispatcher<uint32> m_platformEvents;
 
-		std::mutex m_mutex;
+        std::mutex m_mutex;
 
-		std::vector<MainThreadCallback> m_mainThreadCallbacks;
+        std::vector<MainThreadCallback> m_mainThreadCallbacks;
 
-		void executeMainThreadCallbacks(void);
+        void executeMainThreadCallbacks(void);
     };
 }
 
