@@ -124,10 +124,14 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
 
     auto world = startingWorld.Load<resources::WorldData>( m_scene.GetResourceManager( ) );
 
-    if (!world)
-        return SetEmptyScene( );
-
-    m_scene.SetActiveWorld( startingWorld );
+    if (world)
+    {
+        m_scene.SetActiveWorld( startingWorld );
+    }
+    else
+    {
+        SetEmptyScene( );
+    }
 
     m_pipelineManager = new EditorResourcePipelineManager( this );
 

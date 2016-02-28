@@ -85,6 +85,51 @@
 
                 this._selectDirectoryItem( this._pathToDirectoryItem[ directoryPath ] );
             },
+            addResource: function(resourceData) {
+                var currentNode = this._resources;
+
+                var directories = this._createDirectoryCrumbs( resourceData.relativePathDisplayName );
+
+                // remove the file name
+                directories.pop( );
+
+                var currentPath = this._projectDirectory;
+
+                for (var i = 0; i < directories.length; ++i) {
+                    var directory = directories[ i ];
+
+                    currentPath += '\\'+ directory;
+
+                    var subDir = currentNode.subDirectories.find( function(inputDir, dir) {
+                        return this._createDirectoryCrumbs( dir.path ).pop( ) == inputDir;
+                    }.bind( this, directory ) );
+
+                    // exists, advance the node
+                    if (subDir) {
+                        currentNode = subDir;
+                    } else {
+                        var newNode = this._createDirectoryNode( currentPath );
+
+                        currentNode.subDirectories.push( newNode );
+
+                        var currentItem = this._pathToDirectoryItem[ currentNode.path ];
+
+                        currentItem.child.appendChild(
+                            this._createDirectoryTreeItem( newNode )
+                        );
+
+                        currentNode = newNode;
+                    }
+                }
+
+                currentNode.resources.push( resourceData );
+
+                // if this directory is open, refresh the contents
+                if (this._lastSelectedTreeItem && this._lastSelectedTreeItem.directoryData.path == currentNode.path) {
+                    this.set( 'directoryFolders', currentNode.subDirectories.slice( 0 ) );
+                    this.set( 'directoryResources', currentNode.resources.slice( 0 ) );
+                }
+            },
 
             _onTreeItemClick: function(item) {
                 this._selectDirectoryItem( item );
@@ -170,24 +215,12 @@
                 this._buildDirectory( treeRoot, this.$.folderTree );
             },
             _buildDirectory: function(directory, parent) {
-                this._pathToResourceEntry[ directory.path ] = directory;
-
-                var item = new TreeViewItemControl( );
-
-                item.text = directory.displayName;
-
-                item.directoryData = directory;
-
-                item.textElement.addEventListener( 'click', this._onTreeItemClick.bind( this, item ) );
-                item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
-                item.textElement.addEventListener( 'contextmenu', this._onTreeItemContextMenu.bind( this, item ) );
+                var item = this._createDirectoryTreeItem( directory );
 
                 parent.appendChild( item );
 
                 for (var i = 0; i < directory.subDirectories.length; ++i)
                     this._buildDirectory( directory.subDirectories[ i ], item.child );
-
-                this._pathToDirectoryItem[ directory.path ] = item;
             },
             _browseDirectory: function(entry) {
                 if (this._lastBrowsedDirectory === entry.path)
@@ -200,9 +233,9 @@
 
                 this.set( 'crumbs', crumbs );
 
-                this.set( 'directoryFolders', entry.subDirectories );
+                this.set( 'directoryFolders', entry.subDirectories.slice( 0 ) );
 
-                this.set( 'directoryResources', entry.resources );
+                this.set( 'directoryResources', entry.resources.slice( 0 ) );
             },
             _selectDirectoryItem: function(item) {
                 if (this._lastSelectedTreeItem !== null)
@@ -215,6 +248,30 @@
                 this._lastSelectedTreeItem = item;
             },
 
+            _createDirectoryTreeItem: function(directoryNode) {
+                var item = new TreeViewItemControl( );
+
+                item.text = directoryNode.displayName;
+
+                item.directoryData = directoryNode;
+
+                item.textElement.addEventListener( 'click', this._onTreeItemClick.bind( this, item ) );
+                item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
+                item.textElement.addEventListener( 'contextmenu', this._onTreeItemContextMenu.bind( this, item ) );
+
+                this._pathToResourceEntry[ directoryNode.path ] = directoryNode;
+                this._pathToDirectoryItem[ directoryNode.path ] = item;
+
+                return item;
+            },
+            _createDirectoryNode: function(path) {
+                return {
+                    path: path,
+                    displayName: this._createDirectoryCrumbs( path ).pop( ),
+                    subDirectories: [ ],
+                    resources: [ ]
+                };
+            },
             _createDirectoryCrumbs: function(directory) {
                 return directory.split( /\/|\\/ );
             },

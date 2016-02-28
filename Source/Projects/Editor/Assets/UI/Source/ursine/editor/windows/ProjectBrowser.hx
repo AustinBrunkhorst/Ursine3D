@@ -1,7 +1,9 @@
 package ursine.editor.windows;
 
-import ursine.controls.ContextMenu;
 import ursine.native.Extern;
+
+import ursine.controls.ContextMenu;
+import ursine.controls.Notification;
 
 extern class ResourceItem {
     var guid : String;
@@ -38,11 +40,24 @@ class ProjectBrowser extends WindowHandler {
     }
 
     private function onResourceAdded(data : Dynamic) {
-        trace( 'added ${data.guid}' );
+        var resource : ResourceItem = cast Extern.ProjectGetResource( data.guid );
+
+        if (resource == null)
+            throw 'Invalid resource added.';
+
+        m_browser.addResource( resource );
+
+        var notification = new Notification(
+            NotificationType.Info,
+            '<strong class="highlight">${resource.relativePathDisplayName}</div>',
+            'Resource Imported'
+        );
+
+        notification.show( );
     }
 
     private function onResourceModified(data : Dynamic) {
-        trace( 'modified ${data.guid}' );
+
     }
 
     private function onResourceDblClick(e : js.html.CustomEvent) {

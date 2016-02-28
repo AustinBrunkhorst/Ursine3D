@@ -823,7 +823,7 @@ namespace ursine
         filesExist = filesExist && exists( resource->m_buildCacheFileName );
 
         // this should always exist, but just in case
-        filesExist = filesExist && exists( resource->m_metaFileName);
+        filesExist = filesExist && exists( resource->m_metaFileName );
 
         // if any of the following files don't exist, this build is invalidated
         if (!filesExist)
@@ -880,6 +880,30 @@ namespace ursine
         break;
         case efsw::Actions::Modified:
         {
+            auto extension = absoluteFilePath.extension( ).string( );
+
+            utils::MakeLowerCase( extension );
+
+            // meta file modified
+            if (extension == kMetaFileExtension)
+            {
+                auto sourceFile = change_extension( absoluteFilePath, "" );
+
+                auto search = m_pathToResource.find( sourceFile );
+
+                // this resource doesn't exist
+                if (search == m_pathToResource.end( ))
+                    return;
+
+                // modify the resource this meta file represents
+                auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
+                
+                if (handler.joinable( ))
+                    handler.detach( );
+
+                return;
+            }
+
             auto search = m_pathToResource.find( absoluteFilePath );
 
             // if it doesn't exist, we're assuming it is added
@@ -890,6 +914,7 @@ namespace ursine
                 if (handler.joinable( ))
                     handler.detach( );
             }
+            // exists, so we'll modify it
             else
             {
                 auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
@@ -919,9 +944,11 @@ namespace ursine
         if (!resource)
             return;
 
+        insertResource( resource );
+
         rebuildResource( resource );
 
-        Application::PostMainThread( [=](void)
+        Application::PostMainThread( [=]
         {
             ResourceChangeArgs e;
 
@@ -938,7 +965,7 @@ namespace ursine
 
         rebuildResource( resource );
 
-        Application::PostMainThread( [=](void)
+        Application::PostMainThread( [=]
         {
             ResourceChangeArgs e;
 

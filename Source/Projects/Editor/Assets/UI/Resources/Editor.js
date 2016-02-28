@@ -2059,10 +2059,13 @@ ursine_editor_windows_ProjectBrowser.__name__ = ["ursine","editor","windows","Pr
 ursine_editor_windows_ProjectBrowser.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 	onResourceAdded: function(data) {
-		console.log("added " + Std.string(data.guid));
+		var resource = ursine_native_Extern.ProjectGetResource(data.guid);
+		if(resource == null) throw new js__$Boot_HaxeError("Invalid resource added.");
+		this.m_browser.addResource(resource);
+		var notification = new NotificationControl(3,"<strong class=\"highlight\">" + resource.relativePathDisplayName + "</div>","Resource Imported");
+		notification.show();
 	}
 	,onResourceModified: function(data) {
-		console.log("modified " + Std.string(data.guid));
 	}
 	,onResourceDblClick: function(e) {
 		var extension = e.detail.resource.extension.substr(1).toLowerCase();
