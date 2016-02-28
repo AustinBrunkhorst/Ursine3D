@@ -17,6 +17,8 @@
 
 #include "LevelSegments.h"
 
+class LevelSegmentManager;
+
 class InitializeSegmentState : public SegmentLogicState
 {
 public:
@@ -32,4 +34,8 @@ private:
 
     std::string m_loadInWorld;
     LevelSegments m_unloadSegment;
+
+    LevelSegmentManager *m_segmentManager;
+
+    void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
 };

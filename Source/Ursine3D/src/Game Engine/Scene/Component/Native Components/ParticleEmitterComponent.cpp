@@ -38,6 +38,8 @@ namespace ursine
             , m_sizeRange(0.0f, 0.0f)
             , m_rotation(0.0f)
             , m_rotationRange(-PI, PI)
+            , m_roll(0.0f)
+            , m_rollRange(-1.0f, 1.0f)
             , m_initialVelocity(0.0f, 0.0f, 0.0f)
             , m_xVelRange(-1.0f, 1.0f)
             , m_yVelRange(-1.0f, 1.0f)

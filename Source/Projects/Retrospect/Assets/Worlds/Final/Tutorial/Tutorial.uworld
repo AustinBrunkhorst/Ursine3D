@@ -3,61 +3,13 @@
 {
 "children": [], 
 "components": {
-"Camera": {
-".uid": 6, 
-"active": true, 
-"clearColor": {
-"a": 1, 
-"b": 0, 
-"g": 0, 
-"r": 0
-}, 
-"farPlane": 2500, 
-"fov": 45, 
-"nearPlane": 0.10000000149011612, 
-"renderLayer": 0, 
-"renderMask": 0, 
-"renderMode": 1, 
-"viewportPosition": {
-"x": 0, 
-"y": 0
-}, 
-"viewportSize": {
-"x": 1, 
-"y": 1
-}
-}, 
-"Transform": {
-".uid": 5, 
-"rotation": {
-"w": 0.4188268780708313, 
-"x": 0.071468330919742584, 
-"y": 0.89235091209411621, 
-"z": -0.15227013826370239
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": -480.8621826171875, 
-"y": 255.08970642089844, 
-"z": 399.4146728515625
-}
-}
-}, 
-"name": "Editor Camera"
-}, {
-"children": [], 
-"components": {
 "PlayerSpawnPoint": {
-".uid": 19, 
+".uid": 11, 
 "playerArchetype": "Player1", 
 "spawnSegment": 76
 }, 
 "Transform": {
-".uid": 18, 
+".uid": 10, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -81,12 +33,12 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 26, 
+".uid": 13, 
 "playerArchetype": "Player2", 
 "spawnSegment": 76
 }, 
 "Transform": {
-".uid": 25, 
+".uid": 12, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -112,7 +64,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 30, 
+".uid": 16, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -122,7 +74,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 31, 
+".uid": 17, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -130,7 +82,7 @@
 }
 }, 
 "Model3D": {
-".uid": 32, 
+".uid": 18, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -147,7 +99,7 @@
 "specularPower": 165
 }, 
 "Transform": {
-".uid": 29, 
+".uid": 15, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -171,7 +123,7 @@
 "children": [], 
 "components": {
 "Model3D": {
-".uid": 34, 
+".uid": 20, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -188,7 +140,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 33, 
+".uid": 19, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -212,7 +164,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 36, 
+".uid": 22, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -229,7 +181,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 35, 
+".uid": 21, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -253,7 +205,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 43, 
+".uid": 27, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -270,7 +222,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 42, 
+".uid": 26, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -294,7 +246,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 48, 
+".uid": 32, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -311,7 +263,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 47, 
+".uid": 31, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -335,7 +287,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 53, 
+".uid": 37, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -352,7 +304,7 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 52, 
+".uid": 36, 
 "rotation": {
 "w": -0.70710676908493042, 
 "x": 0, 
@@ -376,7 +328,7 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 58, 
+".uid": 42, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -393,7 +345,7 @@
 "type": 1
 }, 
 "Transform": {
-".uid": 57, 
+".uid": 41, 
 "rotation": {
 "w": 0.65427792072296143, 
 "x": 0.75625395774841309, 
@@ -417,7 +369,7 @@
 ], 
 "components": {
 "Transform": {
-".uid": 28, 
+".uid": 14, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -443,7 +395,7 @@
 "children": [], 
 "components": {
 "ParticleEmitter": {
-".uid": 65, 
+".uid": 48, 
 "emitCount": 0, 
 "emitRate": 1000, 
 "emitRateVariance": 0, 
@@ -473,7 +425,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 66, 
+".uid": 49, 
 "color": {
 "a": 1, 
 "b": 0.93359375, 
@@ -486,7 +438,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 64, 
+".uid": 47, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -510,7 +462,7 @@
 "children": [], 
 "components": {
 "ParticleEmitter": {
-".uid": 68, 
+".uid": 51, 
 "emitCount": 0, 
 "emitRate": 1000, 
 "emitRateVariance": 0, 
@@ -540,7 +492,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 69, 
+".uid": 52, 
 "color": {
 "a": 1, 
 "b": 0.890625, 
@@ -553,7 +505,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 67, 
+".uid": 50, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -577,7 +529,7 @@
 "children": [], 
 "components": {
 "AnimateParticleReset": {
-".uid": 71, 
+".uid": 54, 
 "easeFunction": 0, 
 "endDuration": 0.10000000149011612, 
 "startDuration": 2, 
@@ -586,7 +538,7 @@
 "timeToChange": 5
 }, 
 "ParticleEmitter": {
-".uid": 72, 
+".uid": 55, 
 "emitCount": 1000, 
 "emitRate": 200000, 
 "emitRateVariance": 0, 
@@ -616,7 +568,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 73, 
+".uid": 56, 
 "color": {
 "a": 1, 
 "b": 0.93359375, 
@@ -629,7 +581,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 70, 
+".uid": 53, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -653,7 +605,7 @@
 "children": [], 
 "components": {
 "AnimateParticleReset": {
-".uid": 75, 
+".uid": 58, 
 "easeFunction": 0, 
 "endDuration": 0.10000000149011612, 
 "startDuration": 2, 
@@ -662,7 +614,7 @@
 "timeToChange": 5
 }, 
 "ParticleEmitter": {
-".uid": 76, 
+".uid": 59, 
 "emitCount": 1000, 
 "emitRate": 200000, 
 "emitRateVariance": 0, 
@@ -692,7 +644,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 77, 
+".uid": 60, 
 "color": {
 "a": 1, 
 "b": 0.890625, 
@@ -705,7 +657,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 74, 
+".uid": 57, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -729,7 +681,7 @@
 ], 
 "components": {
 "Transform": {
-".uid": 63, 
+".uid": 46, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -796,6 +748,8 @@
 "type": "InputControllerSystem"
 }, {
 "type": "ProjectileSystem"
+}, {
+"type": "TrailSystem"
 }
 ]
 }

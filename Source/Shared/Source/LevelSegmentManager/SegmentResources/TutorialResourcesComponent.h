@@ -24,8 +24,6 @@ public:
 
     TutorialResources(void);
 
-    ursine::Array<std::string> archetypesToLoad;
-
     std::string worldToMerge;
 
 } Meta(Enable);

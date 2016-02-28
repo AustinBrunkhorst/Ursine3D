@@ -24,8 +24,6 @@ public:
 
     BossRoomResources(void);
 
-    ursine::Array<std::string> archetypesToLoad;
-
     std::string worldToMerge;
 
     std::string bossTopEntityName;

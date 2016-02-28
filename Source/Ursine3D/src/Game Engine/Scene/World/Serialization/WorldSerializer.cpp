@@ -199,10 +199,11 @@ namespace ursine
                 for (auto newSystem : newSystems.array_items( ))
                 {
                     auto found = false;
+                    auto systemType = newSystem[ "type" ].string_value( );
 
                     for (auto &currentSystem : currentSystems)
                     {
-                        if (currentSystem.type == newSystem.string_value( ))
+                        if (currentSystem.type == systemType)
                         {
                             found = true;
                             break;
@@ -214,7 +215,7 @@ namespace ursine
                     {
                         WorldEntitySystem system;
 
-                        system.type = newSystem.string_value( );
+                        system.type = systemType;
 
                         currentSystems.Push( system );
                     }
@@ -224,6 +225,7 @@ namespace ursine
                 config->SetSystems( currentSystems );
             }
 
+            // Add the world's entities to the existing world
             auto &entitiesData = worldData[ kKeyEntities ];
 
             if (!entitiesData.is_array( ))
