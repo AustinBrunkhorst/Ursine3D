@@ -470,7 +470,11 @@ void Editor::exitSplashScreen(void)
 
 void Editor::onUILoaded(EVENT_HANDLER(ursine::UIView))
 {
-    m_mainWindow.m_window->Show( true );
+    // ensure there is no flashing
+    Timer::Create( 500 ).Completed( [=]
+    {
+        m_mainWindow.m_window->Show( true );
+    } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

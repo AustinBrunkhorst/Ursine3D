@@ -2052,12 +2052,19 @@ var ursine_editor_windows_ProjectBrowser = function() {
 	this.m_browser.addEventListener("resource-dblclick",$bind(this,this.onResourceDblClick));
 	this.m_browser.addEventListener("resource-contextmenu",$bind(this,this.onResourceContextMenu));
 	this.window.container.appendChild(this.m_browser);
+	ursine_editor_Editor.instance.broadcastManager.getChannel("ResourcePipeline").on("ResourceAdded",$bind(this,this.onResourceAdded)).on("ResourceModified",$bind(this,this.onResourceModified));
 };
 $hxClasses["ursine.editor.windows.ProjectBrowser"] = ursine_editor_windows_ProjectBrowser;
 ursine_editor_windows_ProjectBrowser.__name__ = ["ursine","editor","windows","ProjectBrowser"];
 ursine_editor_windows_ProjectBrowser.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHandler.prototype,{
-	onResourceDblClick: function(e) {
+	onResourceAdded: function(data) {
+		console.log("added " + Std.string(data.guid));
+	}
+	,onResourceModified: function(data) {
+		console.log("modified " + Std.string(data.guid));
+	}
+	,onResourceDblClick: function(e) {
 		var extension = e.detail.resource.extension.substr(1).toLowerCase();
 		var handler = Reflect.field(this,"" + extension + "_DblClickHandler");
 		if(handler != null) handler(e);

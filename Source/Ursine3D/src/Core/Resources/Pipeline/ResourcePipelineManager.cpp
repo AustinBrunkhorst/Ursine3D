@@ -866,39 +866,13 @@ namespace ursine
         std::string oldFileName
     )
     {
-        switch(action)
-        {
-        case efsw::Actions::Add:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Added" << std::endl;
-            break;
-        case efsw::Actions::Delete:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Delete" << std::endl;
-            break;
-        case efsw::Actions::Modified:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Modified" << std::endl;
-            break;
-        case efsw::Actions::Moved:
-                std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Moved from (" << oldFileName << ")" << std::endl;
-            break;
-        default:
-            std::cout << "Should never happen!" << std::endl;
-        }
-
         fs::path directoryPath = directory;
         fs::path fileNamePath = fileName;
 
         auto absoluteFilePath = directoryPath / fileNamePath;
 
-        /*switch (action)
+        switch (action)
         {
-        case efsw::Actions::Add:
-        {
-            auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, absoluteFilePath );
-            
-            if (handler.joinable( ))
-                handler.detach( );
-        }
-        break;
         case efsw::Actions::Delete:
         {
             URSINE_TODO( "Resource deletion" );
@@ -908,7 +882,15 @@ namespace ursine
         {
             auto search = m_pathToResource.find( absoluteFilePath );
 
-            if (search != m_pathToResource.end( ))
+            // if it doesn't exist, we're assuming it is added
+            if (search == m_pathToResource.end( ))
+            {
+                auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, absoluteFilePath );
+            
+                if (handler.joinable( ))
+                    handler.detach( );
+            }
+            else
             {
                 auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
                 
@@ -924,13 +906,11 @@ namespace ursine
         break;
         default:
             break;
-        }*/
+        }
     }
 
     void rp::ResourcePipelineManager::onResourceAdded(const fs::path &fileName)
     {
-        return;
-
         std::lock_guard<std::mutex> lock( m_buildMutex );
 
         auto resource = registerResource( fileName );
@@ -954,8 +934,6 @@ namespace ursine
 
     void rp::ResourcePipelineManager::onResourceModified(ResourceItem::Handle resource)
     {
-        return;
-
         std::lock_guard<std::mutex> lock( m_buildMutex );
 
         rebuildResource( resource );

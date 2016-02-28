@@ -19,6 +19,7 @@
 #include <Scene.h>
 
 #include "EditorEntityManager.h"
+#include "EditorResourcePipelineManager.h"
 
 class Project
 {
@@ -47,7 +48,6 @@ private:
 
     void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
 
-    void onResourceAdded(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
     void onResourceModified(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
 
     ProjectConfig m_config;
@@ -57,6 +57,7 @@ private:
     ursine::Scene m_scene;
 
     EditorEntityManager *m_entityManager;
+    EditorResourcePipelineManager *m_pipelineManager;
 
     ursine::GUID m_lastOpenedWorld;
 };

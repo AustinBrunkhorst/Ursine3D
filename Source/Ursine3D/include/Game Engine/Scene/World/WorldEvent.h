@@ -27,12 +27,6 @@ namespace ursine
             // The world is being rendered
             WORLD_RENDER,
 
-            // Update event called specifically for editor systems
-            WORLD_EDITOR_UPDATE,
-
-            // Render event called specifically for editor systems
-            WORLD_EDITOR_RENDER,
-
             // An entity was created
             WORLD_ENTITY_ADDED,
             // An entity was removed
@@ -43,10 +37,12 @@ namespace ursine
             // A component has been removed from an entity
             WORLD_ENTITY_COMPONENT_REMOVED,
 
-            // The screen that owns this world's focus state changed
-            WORLD_SCREEN_FOCUS_CHANGED,
-
         #if defined(URSINE_WITH_EDITOR)
+
+            // Update event called specifically for editor systems
+            WORLD_EDITOR_UPDATE,
+            // Render event called specifically for editor systems
+            WORLD_EDITOR_RENDER,
 
             // An entity's name changed
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
@@ -55,7 +51,12 @@ namespace ursine
             // A component's field has changed
             WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
             // A component's array field has been modified
-            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED
+            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED,
+
+            /// Resources
+
+            // A resource has been rebuilt
+            WORLD_EDITOR_RESOURCE_MODIFIED
 
         #endif
         };
@@ -145,6 +146,14 @@ namespace ursine
                 : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
                 , modification( args )
                 , field( field ) { }
+        };
+
+        struct EditorWorldResourceModifiedArgs : EventArgs
+        {
+            GUID resourceGUID;
+
+            EditorWorldResourceModifiedArgs(const GUID &resourceGUID)
+                : resourceGUID( resourceGUID ) { }
         };
 
     #endif

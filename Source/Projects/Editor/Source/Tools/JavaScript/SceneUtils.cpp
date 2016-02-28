@@ -20,6 +20,8 @@
 
 #include "FileUtils.h"
 
+#include <FileDialog.h>
+
 #include <SystemManager.h>
 #include <WorldSerializer.h>
 
@@ -33,12 +35,14 @@ namespace
     Scene &getScene(void);
     ecs::World *getActiveWorld(void);
 
-    void saveWorldAs(ecs::World *world, const fs::path &defaultPath);
+    fs::path selectSavePath(const fs::path &defaultPath);
     void saveWorld(ecs::World *world, const fs::path &path);
 }
 
 JSFunction(SceneSaveWorld)
 {
+    auto *editor = GetCoreSystem( Editor );
+
     auto *project = getProject( );
     auto &lastOpened = project->GetLastOpenedWorld( );
 
@@ -48,9 +52,20 @@ JSFunction(SceneSaveWorld)
 
     // empty world, we MUST save as
     if (!item)
-        saveWorldAs( world, "" );
+    {
+        auto saveFileName = selectSavePath( "" );
+
+        if (!saveFileName.empty( ))
+        {
+            saveWorld( world, saveFileName );
+
+            editor->SetProjectStatus( saveFileName.stem( ).string( ) );
+        }
+    }
     else
+    {
         saveWorld( world, item->GetSourceFileName( ) );
+    }
 
     return CefV8Value::CreateBool( true );
 }
@@ -64,7 +79,12 @@ JSFunction(SceneSaveWorldAs)
 
     auto *world = getActiveWorld( );
 
-    saveWorldAs( world, item ? item->GetSourceFileName( ).parent_path( ) : "" );
+    auto saveFileName = selectSavePath( item ? item->GetSourceFileName( ) : "" );
+
+    if (!saveFileName.empty( ))
+    {
+        saveWorld( world, saveFileName );
+    }
 
     return CefV8Value::CreateBool( true );
 }
@@ -217,17 +237,24 @@ namespace
         return getScene( ).GetActiveWorld( );
     }
 
-    void saveWorldAs(ecs::World *world, const fs::path &defaultPath)
+    fs::path selectSavePath(const fs::path &defaultPath)
     {
-        auto mode = static_cast<cef_file_dialog_mode_t>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG );
+        fs::FileDialog saveDialog;
 
-        RunFileDialog( mode, "Save World", defaultPath, { "World Files|.uworld" },
-            [=](int selectedFilter, const fs::FileList &files)
-            {
-                if (!files.empty( ))
-                    saveWorld( world, files[ 0 ] );
-            } 
-        );
+        saveDialog.config.mode = fs::FDM_SAVE;
+        saveDialog.config.initialPath = defaultPath;
+        saveDialog.config.windowTitle = "Save World";
+        saveDialog.config.parentWindow = GetCoreSystem( Editor )->GetMainWindow( ).GetWindow( );
+        saveDialog.config.filters = {
+            { "World Files", { "*.uworld" } }
+        };
+
+        auto result = saveDialog.Open( );
+
+        if (result)
+            return result.selectedFiles[ 0 ];
+
+        return "";
     }
 
     void saveWorld(ecs::World *world, const fs::path &path)

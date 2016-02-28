@@ -31,13 +31,13 @@ namespace
 
 Project::Project(void)
     : m_entityManager( nullptr )
+    , m_pipelineManager( nullptr )
     , m_lastOpenedWorld( GUIDNullGenerator( )( ) )
 {
     m_scene.Listener( this )
         .On( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged );
 
     m_resourcePipeline.Listener( this )
-        .On( rp::RP_RESOURCE_ADDED, &Project::onResourceAdded )
         .On( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
 }
 
@@ -47,10 +47,10 @@ Project::~Project(void)
         .Off( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged );
 
     m_resourcePipeline.Listener( this )
-        .Off( rp::RP_RESOURCE_ADDED, &Project::onResourceAdded )
         .Off( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
 
     delete m_entityManager;
+    delete m_pipelineManager;
 }
 
 const ProjectConfig &Project::GetConfig(void) const
@@ -129,6 +129,8 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
 
     m_scene.SetActiveWorld( startingWorld );
 
+    m_pipelineManager = new EditorResourcePipelineManager( this );
+
     m_resourcePipeline.WatchResourceDirectory( );
 }
 
@@ -146,16 +148,18 @@ void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))
     }
 }
 
-void Project::onResourceAdded(EVENT_HANDLER(rp::ResourcePipelineManager))
-{
-    EVENT_ATTRS(rp::ResourcePipelineManager, rp::ResourceChangeArgs);
-
-    printf( "added: %s\n", args->resource->GetSourceFileName( ).string( ).c_str( ) );
-}
-
 void Project::onResourceModified(EVENT_HANDLER(rp::ResourcePipelineManager))
 {
     EVENT_ATTRS(rp::ResourcePipelineManager, rp::ResourceChangeArgs);
 
     m_scene.GetResourceManager( ).ReloadIfCached( args->resource->GetGUID( ) );
+
+    auto *world = m_scene.GetActiveWorld( );
+
+    if (world)
+    {
+        ecs::EditorWorldResourceModifiedArgs e( args->resource->GetGUID( ) );
+
+        world->Dispatch( ecs::WORLD_EDITOR_RESOURCE_MODIFIED, &e );
+    }
 }

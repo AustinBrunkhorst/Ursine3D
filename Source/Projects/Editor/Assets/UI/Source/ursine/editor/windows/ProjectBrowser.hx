@@ -5,8 +5,12 @@ import ursine.native.Extern;
 
 extern class ResourceItem {
     var guid : String;
+    var type : String;
     var displayName : String;
+    var relativePathDisplayName : String;
     var sourceFile : String;
+    var hasPreview : Bool;
+    var previewFile : String;
     var extension : String;
 }
 
@@ -27,6 +31,18 @@ class ProjectBrowser extends WindowHandler {
         m_browser.addEventListener( 'resource-contextmenu', onResourceContextMenu );
 
         window.container.appendChild( m_browser );
+
+        Editor.instance.broadcastManager.getChannel( 'ResourcePipeline' )
+            .on( 'ResourceAdded', onResourceAdded )
+            .on( 'ResourceModified', onResourceModified );
+    }
+
+    private function onResourceAdded(data : Dynamic) {
+        trace( 'added ${data.guid}' );
+    }
+
+    private function onResourceModified(data : Dynamic) {
+        trace( 'modified ${data.guid}' );
     }
 
     private function onResourceDblClick(e : js.html.CustomEvent) {
