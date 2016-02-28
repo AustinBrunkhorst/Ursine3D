@@ -24,6 +24,4 @@ public:
 
     void OnInitialize(void) override;
 
-    void ApplyDamage(float damage);
-
 } Meta(Enable, DisplayName("CritSpot"), RequiresComponents(typeof(ursine::ecs::BoxCollider)));

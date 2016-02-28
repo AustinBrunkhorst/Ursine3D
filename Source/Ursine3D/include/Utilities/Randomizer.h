@@ -33,7 +33,7 @@ namespace ursine
 
     private:
         std::uniform_real_distribution<float> m_distributor;
-        std::default_random_engine m_engine;
+        static std::default_random_engine m_engine;
     };
 
     extern template

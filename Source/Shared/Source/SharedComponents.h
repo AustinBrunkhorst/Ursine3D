@@ -26,6 +26,7 @@
 
 #include "Misc/ForceComponent.h"
 #include "Misc/TimeDeathComponent.h"
+#include "Misc/BuffComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //
@@ -42,6 +43,7 @@
 #include "DamageSystem/ExplosionComponent.h"
 #include "DamageSystem/CritSpotComponent.h"
 #include "DamageSystem/DamageOnCollideComponent.h"
+#include "DamageSystem/DamageTextComponent.h"
 
 /////////////////////////////////
 //    Interaction System       //
