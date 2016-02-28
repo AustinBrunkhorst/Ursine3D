@@ -1,0 +1,263 @@
+{
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 16, 
+"changeOnThisSegment": 70
+}, 
+"Camera": {
+".uid": 17, 
+"active": true, 
+"farPlane": 1000, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 1024, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 18, 
+"delta": 2, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 483.89987182617188, 
+"y": 42.731346130371094, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 483.89987182617188, 
+"y": 42.731346130371094, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": 278.89715576171875, 
+"y": 34.673160552978516, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 238.70785522460938, 
+"y": 87.407127380371094, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 211.46693420410156, 
+"y": 87.407127380371094, 
+"z": 85.337455749511719
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 96.383377075195313, 
+"y": 101.49486541748047, 
+"z": 181.24046325683594
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.24085387587547302, 
+"x": 0, 
+"y": -0.97056150436401367, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": -118.66352844238281, 
+"y": 101.49486541748047, 
+"z": 74.627738952636719
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.5982973575592041, 
+"x": 0, 
+"y": -0.80127447843551636, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": -24.074785232543945, 
+"y": 64.535087585449219, 
+"z": -21.717721939086914
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.5982973575592041, 
+"x": 0, 
+"y": -0.80127447843551636, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 596.0166015625, 
+"y": 64.535087585449219, 
+"z": -21.717721939086914
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"EntityAnimatorFocusModifier": {
+".uid": 19, 
+"focusEntity": "BossCameraFocusPoint"
+}, 
+"Transform": {
+".uid": 15, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 483.89987182617188, 
+"y": 42.731346130371094, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

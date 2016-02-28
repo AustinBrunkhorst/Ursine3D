@@ -68,6 +68,7 @@ namespace ursine
             void OnRemove(void) override;
 
             void onUpdate(EVENT_HANDLER(World));
+            void onWorldUpdate(EVENT_HANDLER(World));
 
             // We keep track of draw requests so that we can
             // persist them for a period of time

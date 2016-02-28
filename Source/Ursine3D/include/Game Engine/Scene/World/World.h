@@ -102,6 +102,9 @@ namespace ursine
             void SetOwner(Screen *owner);
 
             void DispatchLoad(void);
+
+            void MergeWorld(const std::string &filename);
+
         private:
             friend class Entity;
             friend class Project;

@@ -16,6 +16,8 @@
 #include "SegmentLogicStateIncludes.h"
 
 #include "EntityAnimatorComponent.h"
+#include "UnloadResourceComponent.h"
+#include <CameraComponent.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -32,7 +34,7 @@ void CombatBowl1IntroCinematicState::Enter(SegmentLogicStateMachine *machine)
     auto world = segmentManager->GetOwner( )->GetWorld( );
     auto cinematicRunning = segmentManager->GetCurrentSegment( ) == LevelSegments::CB1_SimulationStartCinematic;
 
-    auto elevator = world->GetEntityFromName( "CombatBowl1/CombatBowl1ElevatorLift" );
+    auto elevator = world->GetEntityFromName( "CombatBowl1ElevatorLift" );
 
     UAssert( elevator, "Error: Where's the elevator entity?" );
 
@@ -51,6 +53,9 @@ void CombatBowl1IntroCinematicState::Enter(SegmentLogicStateMachine *machine)
         // Start the animation
         cameraAnimator->JumpToStart( );
         cameraAnimator->Play( );
+
+        cameraAnimator->GetOwner( )->GetComponent<UnloadResource>( )->SetUnloadSegment( LevelSegments::CB1_Combat1 );
+        cameraAnimator->GetOwner( )->GetComponent<Camera>( )->SetActive( true );
     }
 
     // Start the elevator
@@ -70,13 +75,13 @@ void CombatBowl1IntroCinematicState::Enter(SegmentLogicStateMachine *machine)
     }
 }
 
-void CombatBowl1IntroCinematicState::onCameraAnimFinish(EVENT_HANDLER(CameraAnimator))
+void CombatBowl1IntroCinematicState::onCameraAnimFinish(EVENT_HANDLER(EntityAnimator))
 {
     EVENT_ATTRS(EntityAnimator, EventArgs);
 
     m_complete = true;
 
     // Unsuscribe TODO: Talk to austin about why this breaks
-    /*sender->Listener( this )
-        .Off( EntityAnimatorEvent::FinishedAnimating, &CombatBowl1IntroCinematicState::onCameraAnimFinish );*/
+    sender->Listener( this )
+        .Off( EntityAnimatorEvent::FinishedAnimating, &CombatBowl1IntroCinematicState::onCameraAnimFinish );
 }

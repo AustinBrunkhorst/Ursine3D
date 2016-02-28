@@ -16,7 +16,7 @@
 #include "WorldSerializer.h"
 #include "EntitySerializer.h"
 
-#include <NameManager.h>
+#include <WorldConfigComponent.h>
 
 namespace ursine
 {
@@ -31,12 +31,7 @@ namespace ursine
             const auto kVersion = "0.0";
         }
 
-        WorldSerializer::WorldSerializer(void)
-        {
-
-        }
-
-        Json WorldSerializer::Serialize(World *world) const
+        Json WorldSerializer::Serialize(World *world)
         {
             Json::object data;
 
@@ -76,7 +71,7 @@ namespace ursine
             return data;
         }
 
-        World *WorldSerializer::Deserialize(const std::string &filename) const
+        World *WorldSerializer::Deserialize(const std::string &filename)
         {
             std::string data;
 
@@ -100,7 +95,7 @@ namespace ursine
             return Deserialize( worldData );
         }
 
-        World *WorldSerializer::Deserialize(const Json &worldData) const
+        World *WorldSerializer::Deserialize(const Json &worldData)
         {
             auto &versionData = worldData[ kKeyVersion ];
 
@@ -154,6 +149,106 @@ namespace ursine
             world->DispatchLoad( );
 
             return world;
+        }
+
+        void WorldSerializer::MergeDeserialize(const std::string& filename, World* world)
+        {
+            std::string data;
+
+            if (!fs::LoadText( filename, data ))
+                throw SerializationException( "Unable to read world file." );
+
+            std::string jsonError;
+
+            auto worldData = Json::parse( data, jsonError );
+
+            if (!jsonError.empty( ))
+            {
+                std::stringstream error;
+
+                error << "Error parsing world. Error: ";
+                error << jsonError;
+
+                throw SerializationException( error.str( ) );
+            }
+
+            auto &versionData = worldData[ kKeyVersion ];
+
+            if (versionData.is_null( ))
+            {
+                throw SerializationException( 
+                    "World missing serialization version." 
+                );
+            }
+
+            auto version = versionData.string_value( ).c_str( );
+
+            EntitySerializer entitySerializer;
+
+            auto &settingsData = worldData[ kKeySettings ];
+
+            // merge the existing systems in the world config
+            if (!settingsData.is_null( ))
+            {
+                auto currentSettings = world->GetSettings( );
+                auto config = currentSettings->GetComponent<WorldConfig>( );
+                auto currentSystems = config->GetSystems( );
+
+                auto newSystems = settingsData[ "components" ][ "WorldConfig" ][ "systems" ];
+
+                for (auto newSystem : newSystems.array_items( ))
+                {
+                    auto found = false;
+                    auto systemType = newSystem[ "type" ].string_value( );
+
+                    for (auto &currentSystem : currentSystems)
+                    {
+                        if (currentSystem.type == systemType)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    // If the new system isn't found, add it to the current systems
+                    if (!found)
+                    {
+                        WorldEntitySystem system;
+
+                        system.type = systemType;
+
+                        currentSystems.Push( system );
+                    }
+                }
+
+                // assign the merged systems
+                config->SetSystems( currentSystems );
+            }
+
+            // Add the world's entities to the existing world
+            auto &entitiesData = worldData[ kKeyEntities ];
+
+            if (!entitiesData.is_array( ))
+            {
+                std::stringstream error;
+
+                error << "Expected '";
+                error << kKeyEntities; 
+                error << "' to be an array.";
+                
+                throw SerializationException( error.str( ) );
+            }
+
+            for (auto &entityData : entitiesData.array_items( ))
+            {
+                entitySerializer.Deserialize( 
+                    world, 
+                    entityData, 
+                    version 
+                );
+            }
+
+            world->DispatchLoad( );
         }
     }
 }

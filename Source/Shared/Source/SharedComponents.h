@@ -64,6 +64,12 @@
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
 
 /////////////////////////////////
+//        Trails System        //
+/////////////////////////////////
+
+#include "Trails/TrailComponent.h"
+
+/////////////////////////////////
 //            AI               //
 /////////////////////////////////
 
@@ -83,6 +89,7 @@
 #include "LevelSegmentManager/SegmentResources/UnloadResourceComponent.h"
 #include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
+#include "LevelSegmentManager/SegmentResources/BossRoomResourcesComponent.h"
 
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 

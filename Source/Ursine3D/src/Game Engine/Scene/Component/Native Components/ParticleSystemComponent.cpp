@@ -47,7 +47,11 @@ namespace ursine
 
         ParticleSystem::~ParticleSystem(void)
         {
+            m_base->OnRemove( GetOwner( ) );
+            m_particleSystem->SetDebug( false );
+            GetCoreSystem( graphics::GfxAPI )->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
+            delete m_base;
         }
 
         void ParticleSystem::OnInitialize(void)

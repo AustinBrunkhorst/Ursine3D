@@ -22,6 +22,11 @@ namespace ursine
         class Animator;
     } // ecs namespace
 
+    namespace physics
+    {
+        struct RaycastOutput;
+    } // physics namespace
+
 } // ursine namespace
 
 struct AbstractWeapon;
@@ -45,9 +50,9 @@ private:
 
     void EvaluateProjectileWeapons(const float dt);
 
-    void FireProjectileWeapon(AbstractWeapon& weapon, ursine::ecs::EntityUniqueID id);
+    void FireProjectileWeapon(BaseWeapon& weapon, ursine::ecs::EntityUniqueID id);
 
-    void CreateProjectiles(AbstractWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
+    void CreateProjectiles(BaseWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
     
     std::unordered_map < ursine::ecs::EntityUniqueID, BaseWeapon* > m_weapons;
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
@@ -77,6 +82,13 @@ private:
     void FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursine::ecs::EntityUniqueID id);
 
     void CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
+    void RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursine::physics::RaycastOutput& rayout, AbstractHitscanWeapon& weapon);
+
+    void GetSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
+    void SpawnCollisionParticle(ursine::SVec3& collisionPoint, ursine::SVec3& normalizeRaycastVec, ursine::ecs::Entity* other);
+
+    void CreateTrail(AbstractHitscanWeapon& weapon, ursine::SVec3& trailEnd);
+
 
     ursine::ecs::PhysicsSystem* m_physicsSystem;
 

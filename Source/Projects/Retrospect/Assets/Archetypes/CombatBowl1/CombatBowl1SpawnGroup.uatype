@@ -16,7 +16,7 @@
 "y": 0, 
 "z": 1
 }, 
-"endingLevelSegmentTransition": 70, 
+"endingLevelSegmentTransition": 68, 
 "loopPattern": false, 
 "maxNumberOfEnemies": 3, 
 "minNumberOfEnemies": 1, 
@@ -24,7 +24,7 @@
 "singleSpawnCooldown": 1, 
 "spawnAngleVariance": 180, 
 "spawnDistanceVariance": 5, 
-"spawnDuration": 25, 
+"spawnDuration": 999999995904, 
 "spawnerBreakTime": 1, 
 "totalEnemies": 10, 
 "triggerNextPattern": true

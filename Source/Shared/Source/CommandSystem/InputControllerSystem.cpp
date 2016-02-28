@@ -23,19 +23,16 @@ using namespace ursine::ecs;
 InputControllerSystem::InputControllerSystem(ursine::ecs::World* world) 
     : FilterSystem( world, Filter( ).All<InputController, CommandQueue>( ) )
 {
-
 }
 
 void InputControllerSystem::Process(ursine::ecs::Entity* entity)
 {
-    auto *commandInput = entity->GetComponent<InputController>( );
-    auto *commandQueue = entity->GetComponent<CommandQueue>( );
+    auto *inputController = entity->GetComponent<InputController>( );
 
-    auto &commandList = commandInput->GetCommandList( );
+    auto &actionList = inputController->GetActionList( );
 
-    for(auto &actionCommand : commandList)
+    for(auto &actionCommand : actionList)
     {
-        if ( actionCommand->Acting() )
-            commandQueue->AddCommand(actionCommand->CreateCommand());
+        actionCommand->ProcessCommands( );
     }
 }

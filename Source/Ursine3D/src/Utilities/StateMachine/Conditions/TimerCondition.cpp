@@ -21,7 +21,7 @@ namespace ursine
 {
     namespace sm
     {
-        TimerCondition::TimerCondition(const std::string &variableName, TimeSpan timeSpan)
+        TimerCondition::TimerCondition(TimeSpan timeSpan)
             : Condition( "NULL" )
             , m_timeSpan( timeSpan )
             , m_finished( false )

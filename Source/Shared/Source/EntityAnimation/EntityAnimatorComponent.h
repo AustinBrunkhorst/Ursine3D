@@ -17,28 +17,7 @@
 #include <SVec3.h>
 #include <Ease.h>
 
-struct EntityKeyFrame
-{
-    EntityKeyFrame(void)
-        : delta( 0.0f )
-        , positionKey( false )
-        , scaleKey( false )
-        , rotationKey( false )
-        , ease( ursine::ease::Type::Linear ) { }
-
-    bool positionKey;
-    bool scaleKey;
-    bool rotationKey;
-
-    ursine::SVec3 position;
-    ursine::SVec3 scale;
-    ursine::SQuat rotation;
-
-    float delta;
-
-    ursine::ease::Type ease;
-
-} Meta(Enable, EnableArrayType);
+#include "EntityAnimatorClipComponent.h"
 
 enum class EntityAnimatorEvent
 {
@@ -61,6 +40,22 @@ public:
     EditorOnlyField(bool keyRotation);
     EditorOnlyField(float delta);
     EditorOnlyField(ursine::ease::Type ease);
+
+    EditorField(
+        std::string animationClipName,
+        GetAnimationClipName,
+        SetAnimationClipName
+    );
+
+    EditorButton(
+        saveAnimationClip,
+        "Save This Animation Clip"
+    );
+
+    EditorButton(
+        loadAnimationClip,
+        "Load Animation By Name"
+    );
 
     EditorButton(
         KeyValues,
@@ -115,11 +110,14 @@ public:
         SetPlayOnAwake
     );
 
+    ursine::Array<EntityKeyFrame> keyFrames;
+
     EntityAnimator(void);
 
     void OnInitialize(void) override;
 
     void Play(void);
+    void Play(const std::string &clipName);
     void Pause(void);
     void Stop(void);
 
@@ -135,7 +133,8 @@ public:
     bool GetPlayOnAwake(void) const;
     void SetPlayOnAwake(bool flag);
 
-    ursine::Array<EntityKeyFrame> keyFrames;
+    const std::string &GetAnimationClipName(void) const;
+    void SetAnimationClipName(const std::string &clipName);
 
 private:
 
@@ -168,5 +167,7 @@ private:
 
     // The current time marker
     float m_time;
+
+    std::string m_clipName;
 
 } Meta(Enable);
