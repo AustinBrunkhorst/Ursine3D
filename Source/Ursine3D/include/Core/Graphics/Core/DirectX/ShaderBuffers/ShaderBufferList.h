@@ -45,6 +45,7 @@ namespace ursine
             BUFFER_MATRIX_PAL,
             BUFFER_MOUSEPOS,
             BUFFER_PARTICLEDATA,
+            BUFFER_SHADOWMAP,
 
             // non-default
             BUFFER_GLYPHDATA,   // 6
@@ -181,6 +182,11 @@ namespace ursine
 
             DirectX::XMFLOAT2 sizeScalar;
             DirectX::XMFLOAT2 textureDimensions;
+        };
+
+        struct ShadowProjectionBuffer
+        {
+            DirectX::XMMATRIX lightProjection;
         };
     }
 }

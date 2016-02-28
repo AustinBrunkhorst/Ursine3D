@@ -17,8 +17,8 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
+    namespace ecs
+    {
         struct WorldEntitySystem
         {
             EditorMeta(ForceEditorType( "EntitySystemSelector" ))
@@ -29,11 +29,11 @@ namespace ursine
 
         typedef ursine::Array<ursine::ecs::WorldEntitySystem> WorldSystemArray;
 
-		class WorldConfig : public Component
-		{
-			NATIVE_COMPONENT;
+        class WorldConfig : public Component
+        {
+            NATIVE_COMPONENT;
 
-		public:
+        public:
             EditorField(
                 WorldSystemArray systems,
                 GetSystems,
@@ -42,25 +42,25 @@ namespace ursine
 
             Meta(Enable)
             WorldConfig(void);
-			~WorldConfig(void);
+            ~WorldConfig(void);
 
             bool IsInEditorMode(void) const;
             void SetInEditorMode(bool inEditorMode);
 
             const WorldSystemArray &GetSystems(void) const;
             void SetSystems(const WorldSystemArray &systems);
-		private:
+        private:
             bool m_inEditorMode;
 
             WorldSystemArray m_systems;
 
             void OnInitialize(void) override;
 
-		} Meta(
+        } Meta(
             Enable, 
             WhiteListMethods, 
             DisableComponentRemoval, 
             DisplayName( "WorldConfig" )
         );
-	}
+    }
 }

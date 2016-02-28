@@ -70,8 +70,6 @@ int SpawnerGroup::GetActiveEnemiesCount(void) const
 
 void SpawnerGroup::addSpawner(Spawner *spawner)
 {
-    UAssert( !haveSpawnerOfType( spawner->m_enemyType ), "Error: Why is this happening?" );
-
     m_spawners[ spawner->m_enemyType ] = spawner;
 }
 

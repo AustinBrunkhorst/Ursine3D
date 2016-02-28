@@ -21,6 +21,7 @@
 #include "btBulletCollisionCommon.h"
 #include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
 #include "BulletWorldImporter/btWorldImporter.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 namespace ursine
 {
@@ -37,9 +38,9 @@ namespace ursine
         typedef btCapsuleShape CapsuleColliderBase;
         typedef btConeShape ConeColliderBase;
         typedef btEmptyShape EmptyColliderBase;
-		typedef btConvexHullShape ConvexHullColliderBase;
-		typedef btCompoundShape ConvexDecompColliderBase;
-		typedef btScaledBvhTriangleMeshShape BvhTriangleMeshColliderBase;
+        typedef btConvexHullShape ConvexHullColliderBase;
+        typedef btCompoundShape ConvexDecompColliderBase;
+        typedef btScaledBvhTriangleMeshShape BvhTriangleMeshColliderBase;
 
         // Collision Object
         typedef btCollisionObject BodyBase;
@@ -48,26 +49,29 @@ namespace ursine
         typedef btRigidBody RigidbodyBase;
         typedef btRigidBody::btRigidBodyConstructionInfo RigidbodyConstructionInfo;
 
+        // Ghost Object
+        typedef btPairCachingGhostObject GhostBase;
+
         // Motion state
         typedef btDefaultMotionState MotionStateBase;
 
-		// Manifold
-		typedef btPersistentManifold PersistentManifold;
+        // Manifold
+        typedef btPersistentManifold PersistentManifold;
 
-		enum BodyType
-		{
-			BT_BODY = btCollisionObject::CO_COLLISION_OBJECT,
-			BT_RIGID_BODY = btCollisionObject::CO_RIGID_BODY,
-			BT_GHOST = btCollisionObject::CO_GHOST_OBJECT,
-			BT_SOFT_BODY = btCollisionObject::CO_SOFT_BODY
-		};
+        enum BodyType
+        {
+            BT_BODY = btCollisionObject::CO_COLLISION_OBJECT,
+            BT_RIGID_BODY = btCollisionObject::CO_RIGID_BODY,
+            BT_GHOST = btCollisionObject::CO_GHOST_OBJECT,
+            BT_SOFT_BODY = btCollisionObject::CO_SOFT_BODY
+        };
 
-		enum BodyFlag
-		{
-			BF_DYNAMIC = 0,
-			BF_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
-			BF_STATIC = btRigidBody::CF_STATIC_OBJECT
-		};
+        enum BodyFlag
+        {
+            BF_DYNAMIC = 0,
+            BF_KINEMATIC = btRigidBody::CF_KINEMATIC_OBJECT,
+            BF_STATIC = btRigidBody::CF_STATIC_OBJECT
+        };
     }
 }
 

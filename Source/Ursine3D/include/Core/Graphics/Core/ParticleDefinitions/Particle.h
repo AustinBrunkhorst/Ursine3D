@@ -50,6 +50,8 @@ namespace ursine
 
             // in what direction is this particle accelerating?
             SVec3 acceleration;
+
+            float roll;
         };
     }
 }

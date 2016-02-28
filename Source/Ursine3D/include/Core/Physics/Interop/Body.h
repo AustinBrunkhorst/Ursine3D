@@ -24,38 +24,38 @@ namespace ursine
 
     namespace physics
     {
-        class Body : public virtual BodyBase
+        class Body : public BodyBase
         {
         public:
             Body(void);
 
-			void SetUserID(int id);
-			int GetUserID(void);
+            void SetUserID(int id);
+            int GetUserID(void);
 
-			void SetUserPointer(void *ptr);
-			void *GetUserPointer(void);
+            void SetUserPointer(void *ptr);
+            void *GetUserPointer(void);
 
-			static Body *DownCast(BodyBase *body);
-			static const Body *DownCast(const BodyBase *body);
+            static Body *DownCast(BodyBase *body);
+            static const Body *DownCast(const BodyBase *body);
 
             void SetTransform(ecs::Transform *transform);
             void GetTransform(ecs::Transform *transform);
 
             void SetCollider(ColliderBase *collider);
-			ColliderBase *GetCollider(void);
+            ColliderBase *GetCollider(void);
              
             void SetOffset(const SVec3 &offset);
             SVec3 GetOffset(void) const;
 
-			void SetGhost(bool enable);
-			bool GetGhost(void) const;
+            void SetDisableContactResponse(bool disable);
+            bool GetDisableContactResponse(void) const;
 
-			void SetAwake(void);
+            void SetAwake(void);
 
         private:
-			bool m_ghost;
-			
-			SVec3 m_offset;
+            bool m_disableContactResponse;
+            
+            SVec3 m_offset;
         };
     }
 }

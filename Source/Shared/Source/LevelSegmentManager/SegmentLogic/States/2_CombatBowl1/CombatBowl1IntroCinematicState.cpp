@@ -34,7 +34,7 @@ void CombatBowl1IntroCinematicState::Enter(SegmentLogicStateMachine *machine)
     auto world = segmentManager->GetOwner( )->GetWorld( );
     auto cinematicRunning = segmentManager->GetCurrentSegment( ) == LevelSegments::CB1_SimulationStartCinematic;
 
-    auto elevator = world->GetEntityFromName( "CombatBowl1/CombatBowl1ElevatorLift" );
+    auto elevator = world->GetEntityFromName( "CombatBowl1ElevatorLift" );
 
     UAssert( elevator, "Error: Where's the elevator entity?" );
 
@@ -54,7 +54,7 @@ void CombatBowl1IntroCinematicState::Enter(SegmentLogicStateMachine *machine)
         cameraAnimator->JumpToStart( );
         cameraAnimator->Play( );
 
-        cameraAnimator->GetOwner( )->AddComponent<UnloadResource>( segmentManager, LevelSegments::CB1_Combat1 );
+        cameraAnimator->GetOwner( )->GetComponent<UnloadResource>( )->SetUnloadSegment( LevelSegments::CB1_Combat1 );
         cameraAnimator->GetOwner( )->GetComponent<Camera>( )->SetActive( true );
     }
 
