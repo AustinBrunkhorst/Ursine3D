@@ -21,11 +21,6 @@ namespace ursine
                 
         ResourceReader clipReader(clipFileName);
 
-        //UAssert(clipReader.IsOpen(),
-        //    "Unable to write clip.\nfile: %s",
-        //    clipFileName.c_str()
-        //);
-
         // create animation info
         graphics::ufmt_loader::AnimInfo *animInfo = new graphics::ufmt_loader::AnimInfo();
 
