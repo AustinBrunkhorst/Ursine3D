@@ -95,6 +95,28 @@ JSFunction(ProjectGetResource)
     }
 }
 
+JSFunction(ProjectMakeEditorResource)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    try
+    {
+        auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+        if (editor->GetProject( )->CreateEditorResource( guid ))
+            utils::CopyToClipboard( to_string( guid ) );
+    }
+    catch (...)
+    {
+        // do nothing
+    }
+
+    return nullptr;
+}
+
 JSFunction(ProjectSetEmptyScene)
 {
     auto *editor = GetCoreSystem( Editor );

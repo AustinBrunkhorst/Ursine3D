@@ -16,10 +16,7 @@ namespace ursine
                 // A resource has begun building
                 RP_BUILD_RESOURCE_START,
 
-                // A resource has completed building unsucessfully
-                RP_BUILD_RESOURCE_FAIL,
-
-                // A resource has completed building sucessfully
+                // A resource has completed building (either sucessfully or not)
                 RP_BUILD_RESOURCE_COMPLETE,
 
                 ///////////////////////////////////////////////////////////////
@@ -27,10 +24,7 @@ namespace ursine
                 // A resource has begun building a preview
                 RP_BUILD_RESOURCE_PREVIEW_START,
 
-                // A resource has completed building a preview unsucessfully
-                RP_BUILD_RESOURCE_PREVIEW_FAIL,
-
-                // A resource has completed building a preview sucessfully
+                // A resource has completed building (either sucessfully or not)
                 RP_BUILD_RESOURCE_PREVIEW_COMPLETE,
 
                 ///////////////////////////////////////////////////////////////
@@ -55,6 +49,12 @@ namespace ursine
                 ResourcePipelineEventType type { RP_BUILD_RESOURCE_START };
                 ResourceItem::Handle resource { nullptr };
                 TimeSpan operationDuration { TimeSpan::FromSeconds( 0 ) };
+
+                // whether or not the build was sucessful
+                bool successful { false };
+
+                // Exception set if the build was not successful
+                AssertionException error;
 
                 // used when building on startup
                 float progress { 0.0f };

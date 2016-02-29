@@ -86,6 +86,30 @@ namespace ursine
         #endif
         }
 
+        void UncaughtAssertion(const AssertionException &exception)
+        {
+            auto &file = exception.GetFile( );
+            auto &function = exception.GetFunction( );
+            auto line = exception.GetLine( );
+            auto &message = exception.GetErrorMessage( );
+
+            static const auto format = "%s";
+
+        #if (URSINE_OUTPUT_CONSOLE)
+            Log( stdout, URSINE_UNCAUGHT_ASSERTION_LOG_HEADER, CC_TEXT_BRIGHT_RED, file, function, line, format, message.c_str( ) );
+        #endif
+
+        #if (URSINE_OUTPUT_FILE)
+            auto fileOut = fopen( URSINE_ERROR_LOG_FILE, "at" );
+
+            Log( fileOut, URSINE_UNCAUGHT_ASSERTION_LOG_HEADER, CC_TEXT_BRIGHT_RED, file, function, line, format, message.c_str( ) );
+
+            fclose( fileOut );
+        #endif
+
+            ExitError( );
+        }
+
         void OutputInfo(FILE *handle, URSINE_FFL_ARGS)
         {
             SetConsoleColor( CC_TEXT_GREEN );

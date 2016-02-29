@@ -12,6 +12,7 @@ namespace ursine
         namespace pipeline
         {
             class ResourcePipelineManager;
+            class ResourceDirectoryNode;
 
             class ResourceItem
             {
@@ -41,6 +42,7 @@ namespace ursine
                 friend class ResourcePipelineManager;
 
                 ResourcePipelineManager *m_manager;
+                ResourceDirectoryNode *m_directoryNode;
 
                 Handle m_parent;
 

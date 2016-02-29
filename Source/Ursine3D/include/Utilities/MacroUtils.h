@@ -56,3 +56,5 @@
 #define URSINE_TODO(text)
 
 #endif
+
+#define URSINE_UNUSED(variable) (void)(variable)

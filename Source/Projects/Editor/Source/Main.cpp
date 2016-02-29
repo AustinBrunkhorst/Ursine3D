@@ -24,13 +24,20 @@
 
 int main(int argc, char *argv[])
 {
-    MetaInitialize( META_MODULE_INITIALIZER );
+    try
+    {
+        MetaInitialize( META_MODULE_INITIALIZER );
 
-    UI_MAIN( argc, argv );
+        UI_MAIN( argc, argv );
 
-    ursine::Application app( argc, argv );
+        ursine::Application app( argc, argv );
 
-    app.Run( );
- 
+        app.Run( );
+    }
+    catch (ursine::AssertionException &e)
+    {
+        ursine::logging::UncaughtAssertion( e );
+    }
+
     return 0; 
 }

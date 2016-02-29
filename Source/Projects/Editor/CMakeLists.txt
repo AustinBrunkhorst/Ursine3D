@@ -5,6 +5,10 @@ set(EDITOR_VERSION "0.0alpha")
 add_definitions(
     # building with editor
     -DURSINE_WITH_EDITOR
+    # always output warnings
+    -DURSINE_OUTPUT_WARNINGS=1
+    # always output to console
+    -DURSINE_OUTPUT_CONSOLE=1
     -DEDITOR_VERSION="${EDITOR_VERSION}"
     # disable exceptions
     -D_HAS_EXCEPTIONS=0
@@ -26,7 +30,7 @@ ursine_project(Editor
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
-    SYM_LINKS "Assets" "Tools"
+    SYM_LINKS "Assets" "Resources" "Tools"
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META

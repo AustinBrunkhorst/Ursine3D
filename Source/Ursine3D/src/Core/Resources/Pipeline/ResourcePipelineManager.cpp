@@ -167,8 +167,7 @@ namespace ursine
 
         auto metaJsonString = Json( output ).dump( true );
 
-        URSINE_TODO( "Make recoverable." )
-        UAssert( 
+        UAssertCatchable( 
             fs::WriteAllText( resource->m_metaFileName.string( ), metaJsonString ),
             "Unable to write to resource meta data.\nfile: %s",
             resource->m_metaFileName.string( ).c_str( )
@@ -195,8 +194,7 @@ namespace ursine
 
         auto cacheJsonString = Json( output ).dump( true );
 
-        URSINE_TODO( "Make recoverable." )
-        UAssert( 
+        UAssertCatchable( 
             fs::WriteAllText( resource->m_buildCacheFileName.string( ), cacheJsonString ),
             "Unable to write to resource build cache.\nfile: %s",
             resource->m_buildCacheFileName.string( ).c_str( )
@@ -205,7 +203,7 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const GUID &guid)
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const GUID &guid) const
     {
         auto search = m_database.find( guid );
 
@@ -215,7 +213,7 @@ namespace ursine
         return search->second;
     }
 
-    rp::ResourceItem::List rp::ResourcePipelineManager::GetItemsByType(const meta::Type &type)
+    rp::ResourceItem::List rp::ResourcePipelineManager::GetItemsByType(const meta::Type &type) const
     {
         ResourceItem::List matched;
 
@@ -228,7 +226,7 @@ namespace ursine
         return matched;
     }
 
-    fs::path rp::ResourcePipelineManager::CreateTemporaryFileName(void)
+    fs::path rp::ResourcePipelineManager::CreateTemporaryFileName(void) const
     {
         auto guid = GUIDGenerator( )( );
 
@@ -251,17 +249,37 @@ namespace ursine
 
             for (; it != itEnd; ++it)
             {
-                auto &entry = *it;
+                auto &entry = it->path( );
 
                 if (is_directory( entry ))
                 {
                     if (isDirectoryResource( entry ))
                     {
-                        auto resource = registerResource( entry );
+                        ResourceItem::Handle resource;
+
+                        try
+                        {
+                            resource = registerResource( entry );
+                        }
+                        catch (AssertionException &e)
+                        {
+                            URSINE_UNUSED( e );
+
+                            UWarning( "Unable to register resource.\nresource: %s\nerror: %s", 
+                                entry.string( ).c_str( ),
+                                e.GetErrorMessage( ).c_str( )
+                            );
+
+                            resource = nullptr;
+                        }
 
                         // we skipped over this
                         if (resource != nullptr)
+                        {
                             directory->m_resources.push_back( resource );
+
+                            resource->m_directoryNode = directory;
+                        }
                     } 
                     else
                     {
@@ -275,11 +293,31 @@ namespace ursine
                 }
                 else
                 {
-                    auto resource = registerResource( entry );
+                    ResourceItem::Handle resource;
+
+                    try
+                    {
+                        resource = registerResource( entry );
+                    }
+                    catch (AssertionException &e)
+                    {
+                        URSINE_UNUSED( e );
+
+                        UWarning( "Unable to register resource.\nresource: %s\nerror: %s", 
+                            entry.string( ).c_str( ),
+                            e.GetErrorMessage( ).c_str( )
+                        );
+
+                        resource = nullptr;
+                    }
 
                     // we skipped over this
                     if (resource != nullptr)
-                        directory->m_resources.push_back( resource );
+                    {
+                         directory->m_resources.push_back( resource ); 
+
+                         resource->m_directoryNode = directory;
+                    }
                 }
             }
         }
@@ -322,16 +360,14 @@ namespace ursine
         std::string metaDataError;
         std::string metaDataString;
 
-        URSINE_TODO( "Make all failures recoverable." );
-
-        UAssert( fs::LoadAllText( metaFileName.string( ), metaDataString ),
+        UAssertCatchable( fs::LoadAllText( metaFileName.string( ), metaDataString ),
             "Unable to load resource meta file.\nfile: %s",
             metaFileName.string( ).c_str( )
         );
 
         auto metaDataJson = Json::parse( metaDataString, metaDataError );
 
-        UAssert( metaDataError.empty( ),
+        UAssertCatchable( metaDataError.empty( ),
             "Unable to parse resource meta data.\nfile: %s\nerror: %s",
             metaFileName.string( ).c_str( ),
             metaDataError.c_str( )
@@ -339,12 +375,23 @@ namespace ursine
 
         auto &guidObject = metaDataJson[ kMetaKeyGUID ];
 
-        UAssert( guidObject.is_string( ),
+        UAssertCatchable( guidObject.is_string( ),
             "GUID expected to be string type."
         );
 
-        // load the guid from the string
-        auto guid = GUIDStringGenerator( )( guidObject.string_value( ) );
+        GUID guid;
+
+        try
+        {
+            // load the guid from the string
+            guid = GUIDStringGenerator( )( guidObject.string_value( ) );
+        }
+        catch (...)
+        {
+            UAssertCatchable( false,
+                "Unable to parse GUID in meta file."    
+            );
+        }
 
         if (isGenerated)
         {
@@ -359,12 +406,12 @@ namespace ursine
         auto importerName = metaDataJson[ kMetaKeyImporter ].string_value( );
         auto importerType = meta::Type::GetFromName( importerName );
 
-        UAssert( importerType.IsValid( ),
+        UAssertCatchable( importerType.IsValid( ),
             "Invalid resource importer '%s'.",
             importerName.c_str( )
         );
 
-        UAssert( importerType.GetDynamicConstructor( ).IsValid( ),
+        UAssertCatchable( importerType.GetDynamicConstructor( ).IsValid( ),
             "Importer '%s' does not have a default dynamic constructor.",
             importerType.GetName( ).c_str( )
         );
@@ -372,18 +419,34 @@ namespace ursine
         auto processorName = metaDataJson[ kMetaKeyProcessor ].string_value( );
         auto processorType = meta::Type::GetFromName( processorName );
 
-        UAssert( processorType.IsValid( ),
+        UAssertCatchable( processorType.IsValid( ),
             "Invalid resource processor '%s'.",
             processorName.c_str( )
         );
 
-        UAssert( processorType.GetDynamicConstructor( ).IsValid( ),
+        UAssertCatchable( processorType.GetDynamicConstructor( ).IsValid( ),
             "Processor '%s' does not have a default dynamic constructor.",
             processorType.GetName( ).c_str( )
         );
 
-        auto resource = allocateResource( fileName, metaFileName, guid );
+        ResourceItem::Handle resource = nullptr;
 
+        try
+        {
+            resource = allocateResource( fileName, metaFileName, guid );
+        }
+        catch (AssertionException &e)
+        {
+            URSINE_UNUSED( e );
+
+            UWarning( "Unable to allocate resource.\nresource: %s\nerror: %s", 
+                fileName.string( ).c_str( ),
+                e.GetErrorMessage( ).c_str( )
+            );
+
+            return nullptr;
+        }
+        
         resource->m_metaData.importer = importerType;
         resource->m_metaData.processor = processorType;
         resource->m_metaData.processorOptions = metaDataJson[ kMetaKeyProcessorOptions ];
@@ -400,7 +463,23 @@ namespace ursine
             }
         }
 
-        loadResourceBuildCache( resource );
+        try
+        {
+            loadResourceBuildCache( resource );
+        }
+        catch (AssertionException &e)
+        {
+            URSINE_UNUSED( e );
+
+            UWarning( "Unable to load resource cache.\nresource: %s\nerror: %s", 
+                fileName.string( ).c_str( ),
+                e.GetErrorMessage( ).c_str( )
+            );
+
+            removeResource( resource );
+
+            return nullptr;
+        }
 
         return resource;
     }
@@ -426,27 +505,42 @@ namespace ursine
 
         std::tie( importerType, processorType ) = detectResourceHandlers( fileName );
 
-        URSINE_TODO( "Determine default behavior." );
         // importer does not exist, ignore it.
         if (!importerType.IsValid( ))
             return nullptr;
 
-        UAssert( importerType.GetDynamicConstructor( ).IsValid( ),
+        UAssertCatchable( importerType.GetDynamicConstructor( ).IsValid( ),
             "Importer '%s' does not have a default dynamic constructor.",
             importerType.GetName( ).c_str( )
         );
 
-        UAssert( processorType.IsValid( ),
+        UAssertCatchable( processorType.IsValid( ),
             "Importer '%s' specified an invalid processor.",
             importerType.GetName( ).c_str( )
         );
 
-        UAssert( processorType.GetDynamicConstructor( ).IsValid( ),
+        UAssertCatchable( processorType.GetDynamicConstructor( ).IsValid( ),
             "Processor '%s' does not have a default dynamic constructor.",
             processorType.GetName( ).c_str( )
         );
 
-        auto resource = allocateResource( fileName, metaFileName );
+        ResourceItem::Handle resource;
+
+        try
+        {
+            resource = allocateResource( fileName, metaFileName );
+        }
+        catch (AssertionException &e)
+        {
+            URSINE_UNUSED( e );
+
+            UWarning( "Unable to allocate resource.\nresource: %s\nerror: %s", 
+                fileName.string( ).c_str( ),
+                e.GetErrorMessage( ).c_str( )
+            );
+
+            return nullptr;
+        }
 
         resource->m_metaData.importer = importerType;
         resource->m_metaData.processor = processorType;
@@ -460,10 +554,15 @@ namespace ursine
         {
             auto optionsType = processorConfig->optionsType;
 
-            UAssert( optionsType.IsValid( ),
-                "Processor '%s' specified invalid options type.",
-                processorType.GetName( ).c_str( )
-            );
+            if (!optionsType.IsValid( ))
+            {
+                removeResource( resource );
+
+                UAssertCatchable( false,
+                    "Processor '%s' specified invalid options type.",
+                    processorType.GetName( ).c_str( )
+                );
+            }
 
             auto defaultOptions = optionsType.Create( );
 
@@ -476,7 +575,19 @@ namespace ursine
             resource->m_metaData.processorOptions = Json::object { };
         }
 
-        InvalidateResourceMeta( resource );
+        try
+        {
+            InvalidateResourceMeta( resource );
+        }
+        catch (AssertionException &e)
+        {
+            URSINE_UNUSED( e );
+
+            UWarning( "Unable to invalidate meta.\nresource: %s\nerror: %s", 
+                fileName.string( ).c_str( ),
+                e.GetErrorMessage( ).c_str( )
+            );
+        }
 
         return resource;
     }
@@ -499,8 +610,8 @@ namespace ursine
 
         auto insertion = m_database.insert( { resource->m_guid, resource } );
 
-        // This should never happen unless someone tampers with something
-        UAssert( insertion.second,
+        // this should never happen unless someone tampers with something
+        UAssertCatchable( insertion.second,
             "Resource GUID is not unique."
         );
 
@@ -552,6 +663,9 @@ namespace ursine
 
         // currentNode will end up being the node where this resource belongs
         currentNode->m_resources.emplace_back( resource );
+
+        // set the owning directory node
+        resource->m_directoryNode = currentNode;
     }
 
     bool rp::ResourcePipelineManager::isDirectoryResource(const fs::path &directory)
@@ -559,6 +673,77 @@ namespace ursine
         auto handlers = detectResourceHandlers( directory );
 
         return handlers.first.IsValid( ) && handlers.second.IsValid( );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::reloadResourceMeta(ResourceItem::Handle resource)
+    {
+        std::string metaDataError;
+        std::string metaDataString;
+
+        auto &metaFileName = resource->m_metaFileName;
+
+        UAssertCatchable( fs::LoadAllText( metaFileName.string( ), metaDataString ),
+            "Unable to load resource meta file.\nfile: %s",
+            metaFileName.string( ).c_str( )
+        );
+
+        auto metaDataJson = Json::parse( metaDataString, metaDataError );
+
+        UAssertCatchable( metaDataError.empty( ),
+            "Unable to parse resource meta data.\nfile: %s\nerror: %s",
+            metaFileName.string( ).c_str( ),
+            metaDataError.c_str( )
+        );
+
+        auto &guidObject = metaDataJson[ kMetaKeyGUID ];
+
+        UAssertCatchable( guidObject.is_string( ),
+            "GUID expected to be string type."
+        );
+        
+        auto importerName = metaDataJson[ kMetaKeyImporter ].string_value( );
+        auto importerType = meta::Type::GetFromName( importerName );
+
+        UAssertCatchable( importerType.IsValid( ),
+            "Invalid resource importer '%s'.",
+            importerName.c_str( )
+        );
+
+        UAssertCatchable( importerType.GetDynamicConstructor( ).IsValid( ),
+            "Importer '%s' does not have a default dynamic constructor.",
+            importerType.GetName( ).c_str( )
+        );
+
+        auto processorName = metaDataJson[ kMetaKeyProcessor ].string_value( );
+        auto processorType = meta::Type::GetFromName( processorName );
+
+        UAssertCatchable( processorType.IsValid( ),
+            "Invalid resource processor '%s'.",
+            processorName.c_str( )
+        );
+
+        UAssertCatchable( processorType.GetDynamicConstructor( ).IsValid( ),
+            "Processor '%s' does not have a default dynamic constructor.",
+            processorType.GetName( ).c_str( )
+        );
+        
+        resource->m_metaData.importer = importerType;
+        resource->m_metaData.processor = processorType;
+        resource->m_metaData.processorOptions = metaDataJson[ kMetaKeyProcessorOptions ];
+
+        resource->m_metaData.syncExcludeExpressions.Clear( );
+
+        auto &syncData = metaDataJson[ kMetaKeySyncExclude ];
+
+        if (syncData.is_array( ))
+        {
+            for (auto &expression : syncData.array_items( ))
+            {
+                resource->m_metaData.syncExcludeExpressions.Push( expression.string_value( ) );
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -575,16 +760,14 @@ namespace ursine
         std::string cacheError;
         std::string cacheString;
 
-        URSINE_TODO( "Make all failures recoverable." );
-
-        UAssert( fs::LoadAllText( cacheFileName.string( ), cacheString ),
+        UAssertCatchable( fs::LoadAllText( cacheFileName.string( ), cacheString ),
             "Unable to load build cache file.\nfile: %s",
             cacheFileName.string( ).c_str( )
         );
 
         auto cacheJson = Json::parse( cacheString, cacheError );
 
-        UAssert( cacheError.empty( ),
+        UAssertCatchable( cacheError.empty( ),
             "Unable to parse build cache.\nfile: %s\nerror: %s",
             cacheFileName.string( ).c_str( ),
             cacheError.c_str( )
@@ -599,7 +782,7 @@ namespace ursine
         auto processedType =
             meta::Type::GetFromName( processedTypeName );
 
-        UAssert( processedType.IsValid( ),
+        UAssertCatchable( processedType.IsValid( ),
             "Invalid resource processed type '%s'.\nfile: %s",
             processedTypeName.c_str( ),
             cacheFileName.string( ).c_str( )
@@ -610,7 +793,7 @@ namespace ursine
         auto generatedResourcesObj = 
             cacheJson[ kCacheKeyGeneratedResources ];
 
-        UAssert( generatedResourcesObj.is_array( ),
+        UAssertCatchable( generatedResourcesObj.is_array( ),
             "Build cache key '%s' expected to be array type.\nfile: %s",
             cacheFileName.string( ).c_str( )
         );
@@ -638,6 +821,7 @@ namespace ursine
         ResourceBuildArgs buildEvent;
 
         std::list<ResourceBuildContext> buildContexts;
+        std::vector<ResourceBuildContext*> failedContexts;
 
         // collect invalidated items
         for (auto &entry : m_database)
@@ -669,11 +853,27 @@ namespace ursine
 
             auto startTime = system_clock::now( );
 
-            Dispatch( RP_BUILD_RESOURCE_START, &buildEvent );
+            Dispatch( buildEvent.type, &buildEvent );
 
-            buildResource( buildContext );
+            buildEvent.successful = true;
 
-            addGeneratedResources( buildContext, buildContexts );
+            try
+            {
+                buildResource( buildContext );
+                addGeneratedResources( buildContext, buildContexts );
+            }
+            catch (AssertionException &e)
+            {
+                UWarning( "Error building resource.\nresource: %s\nerror: %s", 
+                    buildContext.resource->GetSourceFileName( ).string( ).c_str( ),
+                    e.GetErrorMessage( ).c_str( )
+                );
+
+                buildEvent.error = e;
+                buildEvent.successful = false;
+
+                failedContexts.emplace_back( &buildContext );
+            }
 
             auto duration = system_clock::now( ) - startTime;
 
@@ -683,7 +883,7 @@ namespace ursine
                 duration_cast<milliseconds>( duration ).count( ) 
             );
 
-            Dispatch( RP_BUILD_RESOURCE_COMPLETE, &buildEvent );
+            Dispatch( buildEvent.type, &buildEvent );
 
             ++it;
         }
@@ -701,12 +901,27 @@ namespace ursine
 
             auto startTime = system_clock::now( );
 
-            Dispatch( RP_BUILD_RESOURCE_PREVIEW_START, &buildEvent );
+            Dispatch( buildEvent.type, &buildEvent );
 
-            buildResourcePreview( previewContext );
+            buildEvent.successful = true;
 
-            // write the cache
-            InvalidateResourceCache( previewContext.resource );
+            try
+            {
+                buildResourcePreview( previewContext );
+
+                // write the cache
+                InvalidateResourceCache( previewContext.resource );
+            }
+            catch (AssertionException &e)
+            {
+                UWarning( "Error building resource preview.\nresource: %s\nerror: %s", 
+                    previewContext.resource->GetSourceFileName( ).string( ).c_str( ),
+                    e.GetErrorMessage( ).c_str( )
+                );
+
+                buildEvent.error = e;
+                buildEvent.successful = false;
+            }
 
             auto duration = system_clock::now( ) - startTime;
 
@@ -716,8 +931,11 @@ namespace ursine
                 duration_cast<milliseconds>( duration ).count( ) 
             );
 
-            Dispatch( RP_BUILD_RESOURCE_PREVIEW_COMPLETE, &buildEvent );
+            Dispatch( buildEvent.type, &buildEvent );
         }
+
+        for (auto *failedBuild : failedContexts)
+            removeResource( failedBuild->resource );
 
         Dispatch( RP_BUILD_COMPLETE, EventArgs::Empty );
     }
@@ -737,12 +955,10 @@ namespace ursine
             meta.processor.CreateDynamic( ).GetValue<ResourceProcessor*>( )
         );
 
-        URSINE_TODO( "Handle exception occurred during pipeline below." );
-
         auto importData = context.importer->Import( context.importContext );
         auto processData = context.processor->Process( importData, context.processorContext );
 
-        UAssert( processData != nullptr,
+        UAssertCatchable( processData != nullptr,
             "Processed data was null." 
         );
 
@@ -844,6 +1060,8 @@ namespace ursine
         return false;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
     void rp::ResourcePipelineManager::rebuildResource(ResourceItem::Handle resource)
     {
         ResourceBuildContext buildContext( this, resource );
@@ -852,6 +1070,31 @@ namespace ursine
         // watcher implicity
         buildResource( buildContext );
         buildResourcePreview( buildContext );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::removeResource(ResourceItem::Handle resource)
+    {
+        auto *directoryNode = resource->m_directoryNode;
+
+        // has it been inserted yet?
+        if (directoryNode)
+        {
+            auto search = std::find( 
+                directoryNode->m_resources.begin( ), 
+                directoryNode->m_resources.end( ),
+                resource 
+            );
+
+            // remove it from the node
+            if (search != directoryNode->m_resources.end( ))
+                directoryNode->m_resources.erase( search );
+        }
+
+        m_database.erase( resource->m_guid );
+
+        m_pathToResource.erase( resource->m_fileName );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -866,6 +1109,24 @@ namespace ursine
         std::string oldFileName
     )
     {
+        /*switch(action)
+        {
+        case efsw::Actions::Add:
+            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Added" << std::endl;
+            break;
+        case efsw::Actions::Delete:
+            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Delete" << std::endl;
+            break;
+        case efsw::Actions::Modified:
+            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Modified" << std::endl;
+            break;
+        case efsw::Actions::Moved:
+                std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Moved from (" << oldFileName << ")" << std::endl;
+            break;
+        default:
+            std::cout << "Should never happen!" << std::endl;
+        }*/
+
         fs::path directoryPath = directory;
         fs::path fileNamePath = fileName;
 
@@ -873,13 +1134,16 @@ namespace ursine
 
         switch (action)
         {
-        case efsw::Actions::Delete:
+        case fs::Actions::Delete:
         {
             URSINE_TODO( "Resource deletion" );
         }
         break;
-        case efsw::Actions::Modified:
+        case fs::Actions::Moved:
+        case fs::Actions::Modified:
         {
+            URSINE_TODO( "Directory resource modification." );
+
             auto extension = absoluteFilePath.extension( ).string( );
 
             utils::MakeLowerCase( extension );
@@ -924,11 +1188,6 @@ namespace ursine
             }
         }
         break;
-        case efsw::Actions::Moved:
-        {
-            URSINE_TODO( "Resource moving" );
-        }
-        break;
         default:
             break;
         }
@@ -938,15 +1197,44 @@ namespace ursine
     {
         std::lock_guard<std::mutex> lock( m_buildMutex );
 
-        auto resource = registerResource( fileName );
+        ResourceItem::Handle resource;
 
-        // we weren't interested in this
+        try
+        {
+            resource = registerResource( fileName );
+        }
+        catch (AssertionException &e)
+        {
+            URSINE_UNUSED( e );
+
+            UWarning( "Unable to add resource.\nresource: %s\nerror: %s", 
+                fileName.string( ).c_str( ),
+                e.GetErrorMessage( ).c_str( )
+            );
+
+            return;
+        }
+
+        // we weren't interested in this or something borked
         if (!resource)
             return;
 
-        insertResource( resource );
+        try
+        {
+            insertResource( resource );
+            rebuildResource( resource );
+        }
+        catch (AssertionException &e)
+        {
+            URSINE_UNUSED( e );
 
-        rebuildResource( resource );
+            UWarning( "Unable to add resource.\nresource: %s\nerror: %s", 
+                fileName.string( ).c_str( ),
+                e.GetErrorMessage( ).c_str( )
+            );
+
+            return;
+        }
 
         Application::PostMainThread( [=]
         {
@@ -963,7 +1251,34 @@ namespace ursine
     {
         std::lock_guard<std::mutex> lock( m_buildMutex );
 
-        rebuildResource( resource );
+        try
+        {
+            auto metaTime = last_write_time( resource->m_metaFileName );
+            auto sourceTime = last_write_time( resource->m_fileName );
+
+            // reload meta if it's invalidated
+            if (metaTime > sourceTime)
+                reloadResourceMeta( resource );
+
+            rebuildResource( resource );
+        }
+        catch (AssertionException &e)
+        {
+            URSINE_UNUSED( e );
+
+            UWarning( "Unable to rebuild resource.\nresource: %s\nerror: %s", 
+                resource->GetSourceFileName( ).string( ).c_str( ),
+                e.GetErrorMessage( ).c_str( )
+            );
+
+            return;
+        }
+        catch (...)
+        {
+            UWarning( "Unexpected exception while reloading resource.\nresource: %s", 
+                resource->GetSourceFileName( ).string( ).c_str( )
+            );
+        }
 
         Application::PostMainThread( [=]
         {

@@ -29,12 +29,16 @@ public:
 
     const ProjectConfig &GetConfig(void) const;
 
-    ursine::resources::pipeline::ResourcePipelineManager &GetResourcePipeline(void);
+    ursine::rp::ResourcePipelineManager &GetResourcePipeline(void);
+    ursine::resources::ResourceManager &GetBuiltInResourceManager(void);
+
     ursine::Scene &GetScene(void);
 
     void SetEmptyScene(void);
 
     const ursine::GUID &GetLastOpenedWorld(void);
+
+    bool CreateEditorResource(const ursine::GUID &resourceGUID) const;
 
 private:
     friend class Editor;
@@ -53,6 +57,7 @@ private:
     ProjectConfig m_config;
 
     ursine::rp::ResourcePipelineManager m_resourcePipeline;
+    ursine::resources::ResourceManager m_builtInResourceManager;
 
     ursine::Scene m_scene;
 

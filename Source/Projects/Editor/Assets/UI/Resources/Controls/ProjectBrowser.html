@@ -203,6 +203,14 @@
 
                 open.icon = 'open-file';
 
+                if (e.ctrlKey) {
+                    menu.addSeparator( );
+
+                    var makeEditorResource = menu.addItem( 'Make Editor Resource', function() {
+                        ProjectMakeEditorResource( resource.guid );
+                    }.bind( this ) );
+                }
+
                 this.fire( 'resource-contextmenu', {
                     resource: e.model.resource,
                     menu: menu

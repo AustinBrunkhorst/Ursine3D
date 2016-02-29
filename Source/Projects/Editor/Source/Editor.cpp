@@ -32,6 +32,7 @@ namespace rp = resources::pipeline;
 namespace
 {
     const auto kWindowTitle = "Ursine3D Editor";
+    const auto kWindowIcon = "Resources/Icon.png";
 
     const std::string kEntryPointDir = "file:///Assets/UI/Resources/";
 
@@ -329,7 +330,7 @@ void Editor::initializeWindow(void)
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
     
     m_mainWindow.m_window->SetLocationCentered( );
-    m_mainWindow.m_window->SetIcon( "Assets/Resources/Icon.png" );
+    m_mainWindow.m_window->SetIcon( kWindowIcon );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

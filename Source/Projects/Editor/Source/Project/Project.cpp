@@ -25,6 +25,8 @@ using namespace ursine;
 
 namespace
 {
+    const auto kBuiltInResourcesDirectory = "Resources/EditorTools";
+
     const auto kResourcesTempDirectory = "Temp";
     const auto kResourcesBuildDirectory = "Resources";
 }
@@ -39,6 +41,8 @@ Project::Project(void)
 
     m_resourcePipeline.Listener( this )
         .On( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
+
+    m_builtInResourceManager.SetResourceDirectory( kBuiltInResourcesDirectory );
 }
 
 Project::~Project(void)
@@ -61,6 +65,11 @@ const ProjectConfig &Project::GetConfig(void) const
 rp::ResourcePipelineManager &Project::GetResourcePipeline(void)
 {
     return m_resourcePipeline;
+}
+
+resources::ResourceManager &Project::GetBuiltInResourceManager(void)
+{
+    return m_builtInResourceManager;
 }
 
 Scene &Project::GetScene(void)
@@ -89,6 +98,30 @@ void Project::SetEmptyScene(void)
 const ursine::GUID &Project::GetLastOpenedWorld(void)
 {
     return m_lastOpenedWorld;
+}
+
+bool Project::CreateEditorResource(const ursine::GUID &resourceGUID) const
+{
+    try
+    {
+        auto resource = m_resourcePipeline.GetItem( resourceGUID );
+
+        if (!resource)
+            return false;
+
+        auto buildFile = resource->GetBuildFileName( );
+        auto targetFile = kBuiltInResourcesDirectory / buildFile.filename( );
+
+        boost::system::error_code e;
+
+        copy_file( buildFile, targetFile, fs::copy_option::overwrite_if_exists, e );
+
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
 }
 
 void Project::initialize(const ProjectConfig &config)

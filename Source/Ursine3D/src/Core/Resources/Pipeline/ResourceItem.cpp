@@ -7,6 +7,7 @@ namespace ursine
 {
     rp::ResourceItem::ResourceItem(ResourcePipelineManager *manager, const GUID &guid)
         : m_manager( manager )
+        , m_directoryNode( nullptr )
         , m_parent( nullptr )
         , m_guid( guid ) { }
 

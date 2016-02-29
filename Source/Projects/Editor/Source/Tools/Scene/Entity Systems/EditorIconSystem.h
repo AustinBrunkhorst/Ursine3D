@@ -32,6 +32,8 @@ public:
     EditorIconSystem(ursine::ecs::World *world);
 
 private:
+    ursine::resources::ResourceManager &m_toolResources;
+
     void OnInitialize(void) override;
     void OnRemove(void) override;
 

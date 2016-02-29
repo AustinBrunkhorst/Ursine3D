@@ -40,11 +40,11 @@ namespace ursine
                 void InvalidateResourceMeta(ResourceItem::Handle resource);
                 void InvalidateResourceCache(ResourceItem::Handle resource);
 
-                ResourceItem::Handle GetItem(const GUID &guid);
-                ResourceItem::List GetItemsByType(const meta::Type &type);
+                ResourceItem::Handle GetItem(const GUID &guid) const;
+                ResourceItem::List GetItemsByType(const meta::Type &type) const;
 
                 // Creates a unique file name in the configured temporary directory
-                fs::path CreateTemporaryFileName(void);
+                fs::path CreateTemporaryFileName(void) const;
             private:
                 ResourcePipelineConfig m_config;
 
@@ -102,6 +102,9 @@ namespace ursine
                 // determines if the given directory should be treated as a resource
                 bool isDirectoryResource(const fs::path &directory);
 
+                // reloads the meta data for this resource
+                void reloadResourceMeta(ResourceItem::Handle resource);
+
                 // loads the build cache for this resource
                 void loadResourceBuildCache(ResourceItem::Handle resource);
 
@@ -123,6 +126,9 @@ namespace ursine
                 bool buildIsInvalidated(ResourceItem::Handle resource);
 
                 void rebuildResource(ResourceItem::Handle resource);
+
+                // used when resources fail to build
+                void removeResource(ResourceItem::Handle resource);
 
                 ///////////////////////////////////////////////////////////////
                 // File Watching
