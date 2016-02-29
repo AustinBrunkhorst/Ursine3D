@@ -43,22 +43,22 @@ namespace ursine
             ~EntityManager(void);
 
             // Creates an entity with only a transform
-            Entity *Create(void);
+            EntityHandle Create(void);
 
             // Creates a clone of an entity
-            Entity *Clone(Entity *entity);
+            EntityHandle Clone(Entity *entity);
 
             // Gets all entities without a parent
             EntityVector GetRootEntities(void);
 
             // Gets all active entities
-            const EntityVector &GetActiveEntities(void) const;
+            EntityVector GetActiveEntities(void) const;
 
             // Gets all entities who match this filter
             EntityVector GetEntities(const Filter &aspect) const;
 
             // Finds an entity with the given handle
-            Entity *GetEntity(const EntityHandle &handle);
+            Entity *GetEntity(const EntityHandle &handle) const;
 
             // Called right when an entity is requested to be removed
             void BeforeRemove(Entity *entity);
@@ -171,22 +171,19 @@ namespace ursine
             std::array<ComponentVector, kMaxComponentCount> m_componentTypes;
 
             // inactive entities
-            std::vector<Entity *> m_inactive;
+            std::vector<EntityID> m_inactive;
 
             // active entities
-            std::vector<Entity *> m_active;
+            std::vector<EntityID> m_active;
 
             // all entities
-            std::deque<Entity> m_cache;
+            mutable std::vector<Entity> m_cache;
 
             // entity event handlers
             std::vector<Entity::EventDispatcher> m_events;
 
             // next available entity ID
             EntityID m_nextEntityID;
-
-            // next unique entity ID
-            EntityUniqueID m_nextEntityUID;
 
             // next unique component unique ID
             ComponentUniqueID m_nextComponentUID;
@@ -196,6 +193,10 @@ namespace ursine
 
             // initalizes all entities and their components
             void initializeScene(void);
+
+            EntityHandle createHandle(Entity *entity) const;
+
+            Entity *getEntity(EntityID id) const;
 
             // creates an empty entity and adds it to the world
             Entity *create(void);

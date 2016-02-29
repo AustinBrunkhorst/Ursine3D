@@ -17,7 +17,8 @@ namespace ursine
     {
         Component::Component(ComponentTypeID typeID)
             : m_typeID( typeID ) 
-            , m_owner( nullptr )
+            , m_uniqueID( 0 )
+            , m_owner( )
         {
             m_typeMask.set( typeID, true );
         }
@@ -32,9 +33,9 @@ namespace ursine
             return m_typeMask;
         }
 
-        Entity *Component::GetOwner(void) const
+        EntityHandle Component::GetOwner(void) const
         {
-            return m_owner;
+            return m_owner->m_world;
         }
 
 	    template<class ComponentType>
@@ -62,7 +63,7 @@ namespace ursine
 
 	    template<class ComponentType>
 		Component::Handle<ComponentType>::Handle(void)
-            : m_entity( nullptr ) { }
+            : m_entity( ) { }
 
 		template<class ComponentType>
 		Component::Handle<ComponentType>::Handle(const Handle<ComponentType> &other)
@@ -76,19 +77,19 @@ namespace ursine
                 m_entity = other->GetOwner( );
 
 				UAssert(
-					m_entity != nullptr, 
+					m_entity.IsValid( ), 
 					"If the owner of the component is null, you're probably constructing"
 					" this handle inside the component's constructor."
 				);
 			}
 			else
-				m_entity = nullptr;
+			    m_entity = EntityHandle::Invalid( );
 		}
 
 	    template<class ComponentType>
 		Component::Handle<ComponentType>::~Handle(void)
 		{
-			m_entity = nullptr;
+
 		}
 
 		template<class ComponentType>
@@ -114,7 +115,7 @@ namespace ursine
 			}
 			else
 			{
-				m_entity = nullptr;
+				m_entity = EntityHandle::Invalid( );
 
 				return nullptr;
 			}
@@ -132,7 +133,7 @@ namespace ursine
         bool Component::Handle<ComponentType>::operator==(const ComponentType *rhs) const
 		{
 			if (rhs == nullptr)
-				return m_entity == nullptr;
+				return m_entity.IsValid( );
 
             return m_entity == rhs->GetOwner( );
 		}
@@ -190,7 +191,7 @@ namespace ursine
 		}
 
         template<class ComponentType>
-        Entity *Component::Handle<ComponentType>::GetEntity(void) const
+        EntityHandle Component::Handle<ComponentType>::GetEntity(void) const
         {
             return m_entity;
         }

@@ -92,12 +92,12 @@ namespace ursine
 
             entity->SetName( name );
 
-            return { m_entityManager, entity };
+            return m_entityManager->createHandle( entity );
         }
 
 		void World::queueEntityDeletion(Entity *entity)
 		{
-			m_deleted.push_back( entity );
+			m_deleted.push_back( entity->m_id );
 		}
 
         EntityHandle World::CreateEntityFromArchetype(
@@ -142,12 +142,12 @@ namespace ursine
             if (entity)
                 entity->SetName( name );
 
-            return { m_entityManager, entity };
+            return m_entityManager->createHandle( entity );
         }
 
         EntityHandle World::GetEntityFromName(const std::string &name) const
         {
-            return { m_entityManager, m_nameManager->GetEntity( name ) };
+            return m_entityManager->createHandle( m_nameManager->GetEntity( name ) );
         }
 
         EntityVector World::GetRootEntities(void) const
@@ -155,7 +155,7 @@ namespace ursine
             return m_entityManager->GetRootEntities( );
         }
 
-        const EntityVector &World::GetActiveEntities(void) const
+        EntityVector World::GetActiveEntities(void) const
         {
             return m_entityManager->GetActiveEntities( );
         }

@@ -22,26 +22,6 @@ namespace ursine
 {
     namespace ecs
     {
-        const std::vector<EntityID> *Hierarchy::GetChildren(const Entity *entity) const
-        {
-            return m_nodes[ entity->m_id ].Children( );
-        }
-
-        EntityID Hierarchy::GetParent(const Entity *entity) const
-        {
-            return m_nodes[ entity->m_id ].Parent( );
-        }
-
-        EntityID Hierarchy::GetRoot(const Entity *entity) const
-        {
-            return m_nodes[ entity->m_id ].Root( );
-        }
-
-        const RootHierarchyNode &Hierarchy::GetRootNode(void) const
-        {
-            return m_root;
-        }
-
         void Hierarchy::AddEntity(Entity *entity)
         {
             auto id = entity->m_id;
@@ -79,16 +59,35 @@ namespace ursine
                 .Off( ENTITY_PARENT_CHANGED, &Hierarchy::parentChanged );
         }
 
-        uint Hierarchy::GetSiblingIndex(const Entity *entity) const
+        const std::vector<EntityID> *Hierarchy::GetChildren(EntityID entity) const
         {
-            auto ID = entity->m_id;
-            auto &children = *getSiblingArray( ID );
+            return m_nodes[ entity ].Children( );
+        }
+
+        EntityID Hierarchy::GetParent(EntityID entity) const
+        {
+            return m_nodes[ entity ].Parent( );
+        }
+
+        EntityID Hierarchy::GetRoot(EntityID entity) const
+        {
+            return m_nodes[ entity ].Root( );
+        }
+
+        const RootHierarchyNode &Hierarchy::GetRootNode(void) const
+        {
+            return m_root;
+        }
+
+        uint Hierarchy::GetSiblingIndex(EntityID entity) const
+        {
+            auto &children = *getSiblingArray( entity );
 
             int i = 0;
 
             for (auto &child : children)
             {
-                if (child == ID)
+                if (child == entity)
                     return i;
                 else
                     ++i;
@@ -101,24 +100,24 @@ namespace ursine
             return 0;
         }
 
-        void Hierarchy::SetAsFirstSibling(const Entity *entity)
+        void Hierarchy::SetAsFirstSibling(EntityID entity)
         {
             SetSiblingIndex( entity, 0 );
         }
 
-        void Hierarchy::SetSiblingIndex(const Entity *entity, uint index)
+        void Hierarchy::SetSiblingIndex(EntityID entity, uint index)
         {
-            auto ID = entity->m_id;
-            auto &children = *getSiblingArray( ID );
+            auto &children = *getSiblingArray( entity );
 
             UAssert( index < children.size( ), 
                 "This is an invalid index." 
             );
 
-            int i = 0;
+            auto i = 0;
+
             for (auto &child : children)
             {
-                if (child == ID)
+                if (child == entity)
                     break;
                 else
                     ++i;
@@ -129,11 +128,12 @@ namespace ursine
             );
 
             // walk from the old place to the new place, making sure all things are moved
-            int dir = static_cast<int>( index ) > i ? 1 : -1;
-            for (int j = i; j != index; j += dir)
+            auto dir = static_cast<int>( index ) > i ? 1 : -1;
+
+            for (auto j = i; j != index; j += dir)
             {
                 children[ j ] = children[ j + dir ];
-                children[ j + dir ] = ID;
+                children[ j + dir ] = entity;
             }
         }
 

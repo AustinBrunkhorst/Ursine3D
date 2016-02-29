@@ -27,6 +27,8 @@ namespace ursine
         public:
             EntityHandle(void);
 
+            static const EntityHandle &Invalid(void);
+
             operator bool(void) const;
 
             Entity *operator->(void) const;

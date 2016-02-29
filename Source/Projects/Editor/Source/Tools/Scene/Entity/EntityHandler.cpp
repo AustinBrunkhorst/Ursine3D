@@ -955,14 +955,12 @@ JSMethod(EntityHandler::saveAsArchetype)
 
 JSMethod(EntityHandler::clone)
 {
-    auto entity = getEntity( );
-
-    if (!entity)
+    if (!m_handle)
         return CefV8Value::CreateBool( false );
 
-    auto clone = entity->Clone( );
+    auto clone = m_handle->Clone( );
 
-    return CefV8Value::CreateUInt( clone->GetUniqueID( ) );
+    return CefV8Value::CreateUInt( clone->GetID( ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

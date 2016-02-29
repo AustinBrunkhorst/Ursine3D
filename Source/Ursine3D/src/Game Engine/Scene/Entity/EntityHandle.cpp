@@ -18,6 +18,13 @@ namespace ursine
             , m_version( entity->m_version )
             , m_manager( manager ) { }
 
+        const EntityHandle &EntityHandle::Invalid(void)
+        {
+            static EntityHandle invalid;
+
+            return invalid;
+        }
+
         EntityHandle::operator bool(void) const 
         {
             return IsValid( );

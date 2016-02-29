@@ -30,7 +30,7 @@ namespace ursine
             void Remove(Entity *entity);
 
             // Gets the first entity with this name
-            Entity *GetEntity(const std::string &name);
+            EntityHandle GetEntity(const std::string &name);
 
             // Gets all entities in this group
             const EntityVector &GetEntities(const std::string &name);

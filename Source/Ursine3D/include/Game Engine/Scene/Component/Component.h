@@ -58,7 +58,7 @@ namespace ursine
             inline ComponentTypeMask GetTypeMask(void) const;
 
             // Gets the owner of this component. Use it wisely
-            inline Entity *GetOwner(void) const;
+            inline EntityHandle GetOwner(void) const;
 
             // Determines if this component is of the specified type
             template<class ComponentType>
@@ -96,10 +96,10 @@ namespace ursine
                     ComponentType *operator->(void);
                     const ComponentType *operator->(void) const;
 
-                Entity *GetEntity(void) const;
+                EntityHandle GetEntity(void) const;
 
-               private:
-                    Entity *m_entity;
+                private:
+                    EntityHandle m_entity;
                };
 
         protected:
@@ -119,7 +119,7 @@ namespace ursine
             ComponentUniqueID m_uniqueID;
 
             // entity that this component is attached to
-            Entity *m_owner;
+            EntityHandle m_owner;
 
             void onInitialize(void);
             void onSceneReady(Scene *scene);

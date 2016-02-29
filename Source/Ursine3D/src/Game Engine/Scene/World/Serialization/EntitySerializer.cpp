@@ -75,7 +75,7 @@ namespace ursine
             return data;
         }
 
-        Entity *EntitySerializer::Deserialize(
+        EntityHandle EntitySerializer::Deserialize(
             World *world,
             const Json &data,
             const char *version
@@ -89,10 +89,10 @@ namespace ursine
 
             entityManager->dispatchCreated( entity );
 
-            return entity;
+            return entityManager->createHandle( entity );
         }
 
-        Entity *EntitySerializer::DeserializeArchetype(World *world, const Json &data) const
+        EntityHandle EntitySerializer::DeserializeArchetype(World *world, const Json &data) const
         {
             const char *version;
 
@@ -145,12 +145,12 @@ namespace ursine
 
             auto *entityManager = entity->m_world->m_entityManager;
 
-            auto &children = *entityManager->m_hierarchy.GetChildren( entity );
+            auto &children = *entityManager->m_hierarchy.GetChildren( entity->m_id );
 
             // serialize all children
             for (auto childID : children)
             {
-                auto *child = entityManager->GetEntity( childID );
+                auto *child = entityManager->getEntity( childID );
 
                 if (child->IsSerializationEnabled( ))
                     data.emplace_back( Serialize( child ) );

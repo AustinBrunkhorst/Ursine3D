@@ -79,7 +79,6 @@ namespace ursine
         EntityManager::EntityManager(World *world)
             : WorldManager( world )
             , m_nextEntityID( 0 )
-            , m_nextEntityUID( 0 )
             , m_nextComponentUID( 0 )
         {
             configureComponents( );
@@ -89,9 +88,9 @@ namespace ursine
         {
             while (m_active.size( ) > 0)
             {
-                auto *entity = m_active[ 0 ];
+                auto id = m_active[ 0 ];
 
-                Remove( entity );
+                Remove( getEntity( id ) );
             }
         }
 
@@ -99,7 +98,7 @@ namespace ursine
         // Public Methods
         ////////////////////////////////////////////////////////////////////////
 
-        Entity *EntityManager::Create(void)
+        EntityHandle EntityManager::Create(void)
         {
             auto entity = create( );
 
@@ -107,10 +106,10 @@ namespace ursine
 
             dispatchCreated( entity );
 
-            return entity;
+            return createHandle( entity );
         }
          
-        Entity *EntityManager::Clone(Entity *entity)
+        EntityHandle EntityManager::Clone(Entity *entity)
         {
             URSINE_TODO( "optimize by skipping the serialization step" );
 
@@ -128,14 +127,19 @@ namespace ursine
             EntityVector entities;
 
             for (auto child : children)
-                entities.emplace_back( GetEntity( child ) );
+                entities.emplace_back( getEntity( child ) );
 
             return entities;
         }
 
-        const EntityVector &EntityManager::GetActiveEntities(void) const
+        EntityVector EntityManager::GetActiveEntities(void) const
         {
-            return m_active;
+            EntityVector entities;
+
+            for (auto id : m_active)
+                entities.emplace_back( getEntity( id ) );
+
+            return entities;
         }
 
         void EntityManager::AddComponent(Entity *entity, Component *component)
@@ -211,7 +215,11 @@ namespace ursine
             if (scene != nullptr)
                 component->onSceneReady( scene );
 
-            ComponentEventArgs e( WORLD_ENTITY_COMPONENT_ADDED, entity, component );
+            ComponentEventArgs e( 
+                WORLD_ENTITY_COMPONENT_ADDED, 
+                createHandle( entity ), 
+                component 
+            );
 
             m_world->Dispatch( WORLD_ENTITY_COMPONENT_ADDED, &e );
         }
@@ -307,14 +315,14 @@ namespace ursine
 
         const std::vector<EntityID> *EntityManager::GetChildren(const Entity *entity) const
         {
-            return m_hierarchy.GetChildren( entity );
+            return m_hierarchy.GetChildren( entity->m_id );
         }
 
         Component *EntityManager::GetComponentInChildren(const Entity *entity, ComponentTypeID id) const
         {
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
-            childrenContainer.push( m_hierarchy.GetChildren( entity ) );
+            childrenContainer.push( m_hierarchy.GetChildren( entity->m_id ) );
 
             while (childrenContainer.size( ) > 0)
             {
@@ -328,7 +336,7 @@ namespace ursine
                     if (component)
                         return component;
 
-                    childrenContainer.push( m_hierarchy.GetChildren( childEntity )) ;
+                    childrenContainer.push( m_hierarchy.GetChildren( childEntity->m_id ) );
                 }
 
                 childrenContainer.pop( );
@@ -344,7 +352,7 @@ namespace ursine
 
             do
             {
-                auto parentID = m_hierarchy.GetParent( parent );
+                auto parentID = m_hierarchy.GetParent( parent->m_id );
 
                 if (parentID == -1)
                     return nullptr;
@@ -364,7 +372,7 @@ namespace ursine
             ComponentVector components;
             std::queue<const std::vector<EntityID>*> childrenContainer;
 
-            childrenContainer.push( m_hierarchy.GetChildren( entity ) );
+            childrenContainer.push( m_hierarchy.GetChildren( entity->m_id ) );
 
             while (childrenContainer.size( ) > 0)
             {
@@ -378,7 +386,7 @@ namespace ursine
                     if (component)
                         components.push_back( component );
 
-                    childrenContainer.push( m_hierarchy.GetChildren( childEntity ) );
+                    childrenContainer.push( m_hierarchy.GetChildren( child ) );
                 }
 
                 childrenContainer.pop( );
@@ -390,7 +398,8 @@ namespace ursine
         ComponentVector EntityManager::GetComponentsInParents(const Entity* entity, ComponentTypeID id) const
         {
             ComponentVector components;
-            auto parentID = m_hierarchy.GetParent( entity );
+
+            auto parentID = m_hierarchy.GetParent( entity->m_id );
 
             while (parentID != -1)
             {
@@ -401,7 +410,7 @@ namespace ursine
                 if (component)
                     components.push_back( component );
 
-                parentID = m_hierarchy.GetParent( parent );
+                parentID = m_hierarchy.GetParent( parent->m_id );
             }
 
             return components;
@@ -409,17 +418,17 @@ namespace ursine
 
         uint EntityManager::GetSiblingIndex(const Entity *entity) const
         {
-            return m_hierarchy.GetSiblingIndex( entity );
+            return m_hierarchy.GetSiblingIndex( entity->m_id );
         }
 
         void EntityManager::SetAsFirstSibling(const Entity *entity)
         {
-            m_hierarchy.SetAsFirstSibling( entity );
+            m_hierarchy.SetAsFirstSibling( entity->m_id );
         }
 
         void EntityManager::SetSiblingIndex(const Entity *entity, uint index)
         {
-            m_hierarchy.SetSiblingIndex( entity, index );
+            m_hierarchy.SetSiblingIndex( entity->m_id, index );
         }
          
         EntityVector EntityManager::GetEntities(const Filter &filter) const
@@ -428,22 +437,24 @@ namespace ursine
 
             for (uint i = 0; i < m_active.size( ); ++i)
             {
-                auto *entity = m_active[ i ];
+                auto *entity = getEntity( m_active[ i ] );
 
                 if (entity && filter.Matches( entity ))
-                    found.push_back( entity );
+                    found.push_back( createHandle( entity ) );
             }
 
             return found;
         }
 
-        Entity *EntityManager::GetEntity(const EntityHandle &handle)
+        Entity *EntityManager::GetEntity(const EntityHandle &handle) const
         {
             // out of bounds
             if (handle.m_id + 1u > m_cache.size( ))
                 return nullptr;
 
-            return &m_cache[ handle.m_id ];
+            auto &entity = m_cache[ handle.m_id ];
+
+            return entity.m_version == handle.m_version ? &entity : nullptr;
         }
 
         void EntityManager::BeforeRemove(Entity *entity)
@@ -452,7 +463,10 @@ namespace ursine
             for (auto child : entity->GetTransform( )->GetChildren( ))
                 BeforeRemove( child->GetOwner( ) );
 
-            EntityEventArgs e( WORLD_ENTITY_REMOVED, entity );
+            EntityEventArgs e( 
+                WORLD_ENTITY_REMOVED, 
+                createHandle( entity ) 
+            );
 
             // we're removing man
             entity->Dispatch( ENTITY_REMOVED, EventArgs::Empty );
@@ -466,8 +480,10 @@ namespace ursine
             if (!entity->IsActive( ))
                 return;
 
+            auto entityID = entity->m_id;
+
             // Remove the children before the parent is removed
-            auto children = m_hierarchy.GetChildren( entity );
+            auto children = m_hierarchy.GetChildren( entityID );
 
             while (children->size( ) > 0)
             {
@@ -482,9 +498,9 @@ namespace ursine
 
             entity->m_active = false;
 
-            m_active.erase( find( m_active.begin( ), m_active.end( ), entity ) );
+            m_active.erase( find( m_active.begin( ), m_active.end( ), entityID ) );
 
-            m_inactive.push_back( entity );
+            m_inactive.push_back( entityID );
         }
 
         Entity::EventDispatcher &EntityManager::GetEntityEvents(Entity *entity)
@@ -508,8 +524,18 @@ namespace ursine
 
         void EntityManager::initializeScene(void)
         {
-            for (auto *entity : m_active)
-                initializeComponentsForScene( entity );
+            for (auto id : m_active)
+                initializeComponentsForScene( getEntity( id ) );
+        }
+
+        EntityHandle EntityManager::createHandle(Entity *entity) const
+        {
+            return entity == nullptr ? EntityHandle { } : EntityHandle { this, entity };
+        }
+
+        Entity *EntityManager::getEntity(EntityID id) const
+        {
+            return &m_cache[ id ];
         }
 
         Entity *EntityManager::create(void)
@@ -529,7 +555,7 @@ namespace ursine
             // we can use the queue so just reset and pop the last one
             else
             {
-                entity = m_inactive.back( );
+                entity = getEntity( m_inactive.back( ) );
 
                 m_inactive.pop_back( );
 
@@ -538,7 +564,7 @@ namespace ursine
                 GetEntityEvents( entity ).ClearHandlers( );
             }
 
-            m_active.push_back( entity );
+            m_active.push_back( entity->m_id );
 
             m_hierarchy.AddEntity( entity );
 
@@ -547,15 +573,15 @@ namespace ursine
 
         void EntityManager::dispatchCreated(Entity *entity)
         {
-            EntityEventArgs e( WORLD_ENTITY_ADDED, entity );
+            EntityEventArgs e( WORLD_ENTITY_ADDED, createHandle( entity ) );
 
             m_world->Dispatch( WORLD_ENTITY_ADDED, &e );
 
-            auto &children = *m_hierarchy.GetChildren( entity );
+            auto &children = *m_hierarchy.GetChildren( entity->m_id );
 
             // dispatch children AFTER dispatching parent
             for (auto childID : children)
-                dispatchCreated( GetEntity( childID ) );
+                dispatchCreated( getEntity( childID ) );
         }
 
         void EntityManager::addComponent(Entity *entity, Component *component)
@@ -600,7 +626,12 @@ namespace ursine
 
             if (dispatch)
             {
-                ComponentRemovedEventArgs e( WORLD_ENTITY_COMPONENT_REMOVED, entity, component, oldMask );
+                ComponentRemovedEventArgs e( 
+                    WORLD_ENTITY_COMPONENT_REMOVED, 
+                    createHandle( entity ), 
+                    component, 
+                    oldMask 
+                );
 
                 m_world->Dispatch( WORLD_ENTITY_COMPONENT_REMOVED, &e );
             }
@@ -615,7 +646,11 @@ namespace ursine
             const auto size = m_componentTypes.size( );
             const auto id = entity->m_id;
 
-            ComponentEventArgs args( WORLD_ENTITY_COMPONENT_ADDED, entity, nullptr );
+            ComponentEventArgs args( 
+                WORLD_ENTITY_COMPONENT_ADDED, 
+                createHandle( entity ), 
+                nullptr 
+            );
 
             for (uint32 i = 0; i < size; ++i)
             {
@@ -683,7 +718,11 @@ namespace ursine
 
             if (dispatch)
             {
-                ComponentEventArgs args( WORLD_ENTITY_COMPONENT_REMOVED, entity, nullptr );
+                ComponentEventArgs args( 
+                    WORLD_ENTITY_COMPONENT_REMOVED, 
+                    createHandle( entity ), 
+                    nullptr 
+                );
 
                 for (uint32 i = 0; i < removeCount; ++i)
                 {

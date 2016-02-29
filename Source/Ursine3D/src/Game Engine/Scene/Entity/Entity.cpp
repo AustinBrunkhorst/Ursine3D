@@ -157,7 +157,7 @@ namespace ursine
             return nullptr;
         }
 
-        Entity *Entity::GetParent(void)
+        EntityHandle Entity::GetParent(void)
         {
             auto parent = GetTransform( )->GetParent( );
 
@@ -244,7 +244,7 @@ namespace ursine
             return m_world->m_entityManager->GetComponentInChildren( this, id );
         }
 
-        Entity *Entity::GetChildByName(const std::string &name) const
+        EntityHandle Entity::GetChildByName(const std::string &name) const
         {
             // get all children
             auto children = m_world->m_entityManager->GetChildren( this );

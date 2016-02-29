@@ -38,12 +38,12 @@ namespace ursine
             search->second = "";
         }
 
-        Entity *NameManager::GetEntity(const std::string &name)
+        EntityHandle NameManager::GetEntity(const std::string &name)
         {
             auto search = m_grouped.find( name );
 
             if (search == m_grouped.end( ) || search->second.empty( ))
-                return nullptr;
+                return EntityHandle::Invalid( );
 
             return search->second.front( );
         }

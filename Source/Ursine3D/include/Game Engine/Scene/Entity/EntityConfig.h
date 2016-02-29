@@ -21,12 +21,12 @@ namespace ursine
 {
     namespace ecs
     {
-        class Entity;
+        class EntityHandle;
 
         typedef uint32 EntityID;
         typedef uint32 EntityIDVersion;
 
-        typedef std::vector<Entity*> EntityVector;
+        typedef std::vector<EntityHandle> EntityVector;
         typedef std::vector<std::string> EntityGroupVector;
     }
 }

@@ -33,13 +33,13 @@ namespace ursine
             Json Serialize(Entity *entity) const;
             Json SerializeArchetype(Entity *entity) const;
 
-            Entity *Deserialize(
+            EntityHandle Deserialize(
                 World *world, 
                 const Json &data, 
                 const char *version = kSerializationVersion
             ) const;
 
-            Entity *DeserializeArchetype(
+            EntityHandle DeserializeArchetype(
                 World *world,
                 const Json &data
             ) const;
