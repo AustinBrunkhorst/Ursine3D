@@ -122,7 +122,7 @@ void LevelSegmentManager::initTutorialLogic(void)
     );
 
     // Next state for spawning the players
-    auto playerCreateState = stateM->AddState<SpawnPlayersState>( );
+    auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
 
     initState->AddTransition( playerCreateState, "Go To Init Players" );
 
@@ -132,28 +132,31 @@ void LevelSegmentManager::initTutorialLogic(void)
     playerCreateState->AddTransition( lockCCState, "Go To Locking Player Controller" );
 
     // After players are spawned tween their viewports
-    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutUpDown, true );
+    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
 
-    auto timedTrans = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
-
-    timedTrans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
+    lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
     // After the viewports tween out change the level segment
-    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
+    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_MovementTutorial );
 
-    tweenState->AddTransition( changeSegState, "To Combat Bowl 1 Cinematic" );
+    tweenState->AddTransition( changeSegState, "To Movement Tutorial" );
 
+	auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+
+	changeSegState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
+	
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
         LevelSegments::Tut_OpeningCinematic,
         LevelSegments::Tut_MovementTutorial,
-        LevelSegments::Tut_SoloTriggerTutorial,
+		LevelSegments::Tut_JumpTutorial,
         LevelSegments::Tut_WeaponPickupTutorial,
         LevelSegments::Tut_HipFireTutorial,
         LevelSegments::Tut_AimFireTutorial,
         LevelSegments::Tut_AmmoPickupTutorial,
         LevelSegments::Tut_ShootMovingTargetsTutorial,
+		LevelSegments::Tut_SoloTriggerTutorial,
         LevelSegments::Tut_ReviveTutorial,
         LevelSegments::Tut_SimultaneousTriggerTutorial,
         LevelSegments::Tut_SimulationCreationCinematic

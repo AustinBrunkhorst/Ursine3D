@@ -91,8 +91,6 @@
 #include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/BossRoomResourcesComponent.h"
 
-#include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
-
 /////////////////////////////////
 //       Entity Animation      //
 /////////////////////////////////
@@ -122,3 +120,10 @@
 /////////////////////////////////
 
 #include "FX/AnimateParticleResetComponent.h"
+
+/////////////////////////////////
+//             Misc            //
+/////////////////////////////////
+
+#include "Misc/AnimateTutorialTextComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
