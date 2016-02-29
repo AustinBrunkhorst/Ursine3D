@@ -21,10 +21,22 @@ class BossVineAI : public ursine::ecs::Component
 
 public:
 
+    EditorButton(
+        drawRange,
+        "Draw Range"
+    );
+
     EditorField(
         bool faceClosestPlayer,
         GetFaceClosestPlayer,
         SetFaceClosestPlayer
+    );
+
+    EditorMeta(InputRange(0.0f, 720.0f, 0.5f, "{{value.toFixed( 2 )}} deg/sec"))
+    EditorField(
+        float turnSpeed,
+        GetTurnSpeed,
+        SetTurnSpeed
     );
 
     EditorMeta(InputRange(0.0f, 360.0f, 0.5f, "{{value.toFixed( 2 )}} deg"))
@@ -64,6 +76,9 @@ public:
     bool GetFaceClosestPlayer(void) const;
     void SetFaceClosestPlayer(bool flag);
 
+    float GetTurnSpeed(void) const;
+    void SetTurnSpeed(float speed);
+
     float GetWhipAngle(void) const;
     void SetWhipAngle(float angle);
 
@@ -87,6 +102,7 @@ private:
 
     bool m_faceClosestPlayer;
 
+    float m_turnSpeed;
     float m_angle;
     float m_range;
     float m_duration;

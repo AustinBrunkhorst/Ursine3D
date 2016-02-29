@@ -15,15 +15,17 @@
 
 #include "BossVineState.h"
 
-class VineLookForInRanagePlayersState : public BossVineState
+class VineLookForInRangePlayersState : public BossVineState
 {
 public:
-    VineLookForInRanagePlayersState(void);
+    VineLookForInRangePlayersState(void);
 
     bool CanExit(void) override { return m_inRange; }
 
+    void Enter(BossVineStateMachine *machine) override;
     void Update(BossVineStateMachine *machine) override;
 
 private:
     bool m_inRange;
+    ursine::SVec3 m_originalForward;
 };

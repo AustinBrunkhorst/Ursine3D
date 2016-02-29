@@ -17,6 +17,9 @@
 #include "BossVineState.h"
 #include "VineLookForInRangePlayersState.h"
 
+#include <SystemManager.h>
+#include <DebugSystem.h>
+
 NATIVE_COMPONENT_DEFINITION( BossVineAI );
 
 using namespace ursine;
@@ -25,6 +28,7 @@ using namespace ecs;
 BossVineAI::BossVineAI(void)
     : BaseComponent( )
     , m_faceClosestPlayer( true )
+    , m_turnSpeed( 90.0f )
     , m_angle( 45.0f )
     , m_range( 5.0f )
     , m_duration( 0.5f )
@@ -48,6 +52,16 @@ bool BossVineAI::GetFaceClosestPlayer(void) const
 void BossVineAI::SetFaceClosestPlayer(bool flag)
 {
     m_faceClosestPlayer = flag;
+}
+
+float BossVineAI::GetTurnSpeed(void) const
+{
+    return m_turnSpeed;
+}
+
+void BossVineAI::SetTurnSpeed(float speed)
+{
+    m_turnSpeed = speed;
 }
 
 float BossVineAI::GetWhipRange(void) const
@@ -106,7 +120,7 @@ void BossVineAI::OnInitialize(void)
         .On( WORLD_UPDATE, &BossVineAI::onUpdate );
 
     // Setup the state machien
-    auto lookState = m_stateMachine.AddState<VineLookForInRanagePlayersState>( );
+    auto lookState = m_stateMachine.AddState<VineLookForInRangePlayersState>( );
 
     m_stateMachine.SetInitialState( lookState );
 }
@@ -116,3 +130,18 @@ void BossVineAI::onUpdate(EVENT_HANDLER(World))
     // update the state machine
     m_stateMachine.Update( );
 }
+
+#if defined(URSINE_WITH_EDITOR)
+
+void BossVineAI::drawRange(void)
+{
+    auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem<DebugSystem>( );
+
+    auto trans = GetOwner( )->GetTransform( );
+    auto center = trans->GetWorldPosition( );
+    auto normal = trans->GetUp( );
+
+    drawer->DrawCircle( center, normal, m_range, Color::Yellow, 5.0f, true );
+}
+
+#endif

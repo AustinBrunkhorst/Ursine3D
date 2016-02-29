@@ -22,17 +22,28 @@
 using namespace ursine;
 using namespace ecs;
 
-VineLookForInRanagePlayersState::VineLookForInRanagePlayersState(void)
+VineLookForInRangePlayersState::VineLookForInRangePlayersState(void)
     : BossVineState( "Vine Look For In Range Players" )
     , m_inRange( false )
 {
 }
 
-void VineLookForInRanagePlayersState::Update(BossVineStateMachine *machine)
+void VineLookForInRangePlayersState::Enter(BossVineStateMachine *machine)
+{
+    // save the original direction of the ai
+    auto ai = machine->GetAI( );
+    auto aiTrans = ai->GetOwner( )->GetTransform( );
+
+    m_originalForward = aiTrans->GetForward( );
+}
+
+void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
 {
     auto ai = machine->GetAI( );
+    auto aiOwner = ai->GetOwner( );
+    auto aiTrans=  aiOwner->GetTransform( );
     auto range = ai->GetWhipRange( );
-    auto world = ai->GetOwner( )->GetWorld( );
+    auto world = aiOwner->GetWorld( );
     auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
     auto closestDir = std::numeric_limits<float>( ).max( );
 
@@ -40,8 +51,9 @@ void VineLookForInRanagePlayersState::Update(BossVineStateMachine *machine)
 
     for (auto &playerID : players)
     {
-        auto dir = playerID->GetTransform( )->GetWorldPosition( ) - 
-                   ai->GetOwner( )->GetTransform( )->GetWorldPosition( );
+        auto playerTrans = playerID->GetTransform( );
+        auto dir = playerTrans->GetWorldPosition( ) - 
+                   aiTrans->GetWorldPosition( );
 
         if (range < 1.0f)
         {
@@ -52,7 +64,7 @@ void VineLookForInRanagePlayersState::Update(BossVineStateMachine *machine)
 
             if (len < closestDir)
             {
-                closestTrans = playerID->GetTransform( );
+                closestTrans = playerTrans;
                 closestDir = len;
             }
         }
@@ -65,16 +77,23 @@ void VineLookForInRanagePlayersState::Update(BossVineStateMachine *machine)
 
             if (len < closestDir)
             {
-                closestTrans = playerID->GetTransform( );
+                closestTrans = playerTrans;
                 closestDir = len;
             }
         }
-   }
+    }
 
-    if (ai->GetFaceClosestPlayer( ))
+    if (ai->GetFaceClosestPlayer( ) && m_inRange)
     {
-        ai->GetOwner( )->GetTransform( )->LookAt(
-            closestTrans->GetWorldPosition( )
-        );
+        auto aiPos = aiTrans->GetWorldPosition( );
+        auto lookAtPosition = closestTrans->GetWorldPosition( );
+        
+        lookAtPosition.Y( ) = aiPos.Y( );
+
+        aiTrans->LookAt( lookAtPosition, ai->GetTurnSpeed( ) );
+    }
+    else
+    {
+        aiTrans->LookAt( m_originalForward, ai->GetTurnSpeed( ) );
     }
 }
