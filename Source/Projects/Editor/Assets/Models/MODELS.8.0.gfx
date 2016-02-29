@@ -54,8 +54,8 @@ Player2_Straf_R.fbx Player2_Straf_R
 
 # Gun Animations
 Gun_Idle.fbx Gun_Idle
-#Gun_Jump.fbx Gun_Jump
-#Gun_Run.fbx Gun_Run
-#Gun_Shoot.fbx Gun_Shoot
+Gun_Jump.fbx Gun_Jump
+Gun_Run.fbx Gun_Run
+Gun_Shoot.fbx Gun_Shoot
 
 #Monkey.fbx Monkey

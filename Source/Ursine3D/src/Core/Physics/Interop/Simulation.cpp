@@ -458,6 +458,9 @@ namespace ursine
                 greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
             }
 
+            if (args.contacts.size( ) == 0)
+                return;
+
             thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
 
         #endif

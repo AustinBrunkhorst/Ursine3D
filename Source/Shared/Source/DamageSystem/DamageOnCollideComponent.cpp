@@ -143,11 +143,11 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
 {
     EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
 
-    if ( !m_deleted )
+    if (!m_deleted)
     {
         auto root = args->otherEntity->GetRoot( );
 
-        if ( !root && !root->HasComponent< Health >( ) && m_damageTimeMap[ root->GetUniqueID( ) ] != NULL )
+        if (!root->HasComponent< Health >( ) && m_damageTimeMap.find( root->GetUniqueID( ) ) == m_damageTimeMap.end( ))
             return;
 
         float damage = m_damageToApply;
@@ -227,7 +227,7 @@ void DamageOnCollide::deleteOnCollision(void)
 
 void DamageOnCollide::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if (m_spawnOnDeath)
+    if (m_spawnOnDeath && m_objToSpawn != ".uatype")
     {
         ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
 
@@ -286,12 +286,15 @@ void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool cr
             getSpawnLocation(other->GetRoot( ), rayout, pos);
         }
 
-        // create particle
-        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
-        obj->GetTransform( )->SetWorldPosition(pos);
+        if (m_objToSpawn != ".uatype")
+        {
+            // create particle
+            ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
+            obj->GetTransform( )->SetWorldPosition( pos );
 
-        // parent so that it follows objects and dies with object
-        other->GetTransform( )->AddChild(obj->GetTransform( ));
+            // parent so that it follows objects and dies with object
+            other->GetTransform( )->AddChild(obj->GetTransform( ));
+        }
 
     }
 }
