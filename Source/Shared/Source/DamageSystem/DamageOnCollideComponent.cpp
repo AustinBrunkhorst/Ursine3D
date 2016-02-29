@@ -188,7 +188,6 @@ void DamageOnCollide::applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3&
     }
 }
 
-#include <iostream>
 void DamageOnCollide::DecrementDamageIntervalTimes(float dt)
 {
     // Container for removing times that have lasted full interval
@@ -199,12 +198,10 @@ void DamageOnCollide::DecrementDamageIntervalTimes(float dt)
     {
         timeInterval.second -= dt;
         
-        std::cout << "In HEre" << std::endl;
         // move any times that have lasted full interval into
         //   container to be removed so damage may be applied again
         if (timeInterval.second <= 0.0f)
         {
-            std::cout << "HERE" << std::endl;
             idToRemove.push( timeInterval.first );
         }
     }
