@@ -458,6 +458,7 @@ namespace ursine
                 greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
             }
 
+            // This is an edge case
             if (args.contacts.size( ) == 0)
                 return;
 
