@@ -81,6 +81,8 @@
 
 #include "EnemyDeathComponent.h"
 
+#include "BossVineAIComponent.h"
+
 /////////////////////////////////
 //       Level Logic           //
 /////////////////////////////////
