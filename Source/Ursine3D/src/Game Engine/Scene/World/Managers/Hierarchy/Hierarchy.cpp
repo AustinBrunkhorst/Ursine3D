@@ -24,17 +24,17 @@ namespace ursine
     {
         const std::vector<EntityID> *Hierarchy::GetChildren(const Entity *entity) const
         {
-            return m_nodes[ entity->GetID( ) ].Children( );
+            return m_nodes[ entity->m_id ].Children( );
         }
 
         EntityID Hierarchy::GetParent(const Entity *entity) const
         {
-            return m_nodes[ entity->GetID( ) ].Parent( );
+            return m_nodes[ entity->m_id ].Parent( );
         }
 
         EntityID Hierarchy::GetRoot(const Entity *entity) const
         {
-            return m_nodes[ entity->GetID( ) ].Root( );
+            return m_nodes[ entity->m_id ].Root( );
         }
 
         const RootHierarchyNode &Hierarchy::GetRootNode(void) const
@@ -44,11 +44,11 @@ namespace ursine
 
         void Hierarchy::AddEntity(Entity *entity)
         {
-            auto id = entity->GetID( );
+            auto id = entity->m_id;
 
             // grow the array's size if needed
             if (id >= m_nodes.size( ))
-                m_nodes.emplace_back( entity->GetID( ) );
+                m_nodes.emplace_back( id );
 
             // Add it to the root
             m_root.AddChild( id );
@@ -60,7 +60,7 @@ namespace ursine
 
         void Hierarchy::RemoveEntity(Entity *entity)
         {
-            auto id = entity->GetID( );
+            auto id = entity->m_id;
             auto &entityNode = m_nodes[ id ];
 
             // Remove this entity from the parent
@@ -81,7 +81,7 @@ namespace ursine
 
         uint Hierarchy::GetSiblingIndex(const Entity *entity) const
         {
-            auto ID = entity->GetID( );
+            auto ID = entity->m_id;
             auto &children = *getSiblingArray( ID );
 
             int i = 0;
@@ -95,7 +95,8 @@ namespace ursine
             }
 
             UAssert( i == children.size( ), 
-                "This shouldn't happen. Something is wrong with the scene" );
+                "This shouldn't happen. Something is wrong with the scene" 
+            );
 
             return 0;
         }
@@ -105,13 +106,10 @@ namespace ursine
             SetSiblingIndex( entity, 0 );
         }
 
-#include <iostream>
         void Hierarchy::SetSiblingIndex(const Entity *entity, uint index)
         {
-            auto ID = entity->GetID( );
+            auto ID = entity->m_id;
             auto &children = *getSiblingArray( ID );
-
-            std::cout << entity->GetName( ) << std::endl;
 
             UAssert( index < children.size( ), 
                 "This is an invalid index." 
@@ -141,13 +139,13 @@ namespace ursine
 
         void Hierarchy::parentChanged(EVENT_HANDLER(Entity))
         {
-            EVENT_ATTRS( Entity, ParentChangedArgs );
+            EVENT_ATTRS(Entity, ParentChangedArgs);
 
-            auto entityID = sender->GetID( );
+            auto entityID = sender->m_id;
             auto &entityNode = m_nodes[ entityID ];
 
-            auto oldID = args->oldParent ? args->oldParent->GetID( ) : -1;
-            auto newID = args->newParent ? args->newParent->GetID( ) : -1;
+            auto oldID = args->oldParent ? args->oldParent->m_id : -1;
+            auto newID = args->newParent ? args->newParent->m_id : -1;
 
             if (oldID == newID)
                 return;

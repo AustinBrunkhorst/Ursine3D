@@ -17,12 +17,13 @@
 #include "ComponentConfig.h"
 #include "SystemConfig.h"
 
+#include "EntityHandle.h"
+
 #include "TransformComponent.h"
 
 #include "EventDispatcher.h"
 
 #include <string>
-#include <type_traits>
 
 namespace ursine
 {
@@ -44,13 +45,6 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
             // State/Identification
             ////////////////////////////////////////////////////////////////////
-
-            // Active ID
-            EntityID GetID(void) const;
-
-            // Unique ID (basically the total number of entities added to the 
-            // world when this entity was created)
-            EntityUniqueID GetUniqueID(void) const;
 
             // Determines if the entity is currently being deleted
             bool IsDeleting(void) const;
@@ -109,7 +103,7 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             // Creates a clone of this entity
-            Entity *Clone(void);
+            EntityHandle Clone(void);
 
             // Gets the local timer manager for this entity
             LocalTimerManager &GetTimers(void);
@@ -214,10 +208,10 @@ namespace ursine
             void SetSiblingIndex(uint index) const;
 
 			const Entity *GetParent(void) const;
-			Entity *GetParent(void);
+			EntityHandle GetParent(void);
 
 			const Entity *GetRoot(void) const;
-			Entity *GetRoot(void);
+			EntityHandle GetRoot(void);
 
             ////////////////////////////////////////////////////////////////////
             // Events
@@ -252,12 +246,14 @@ namespace ursine
         private:
             // entity manager needs to be able to construct entities
             friend class EntityManager;
+            friend class Hierarchy;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
             // access ids directly
             friend class NameManager;
             friend class UtilityManager;
+            friend class EntityHandle;
 
             // emplace_back access constructor
             friend class std::allocator<Entity>;
@@ -278,8 +274,8 @@ namespace ursine
             // active id in the entity manager
             EntityID m_id;
 
-            // unique id in the entity manager
-            EntityUniqueID m_uniqueID;
+            // current version of this entity
+            EntityIDVersion m_version;
 
             // world it's attached to
             World *m_world;

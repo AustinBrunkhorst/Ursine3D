@@ -27,6 +27,8 @@
 
 #include "WorldConfigComponent.h"
 
+#include "EntityHandle.h"
+
 namespace
 {
     const auto kWorldSettingsEntityName = "World Settings";
@@ -55,7 +57,7 @@ namespace ursine
             m_utilityManager->OnInitialize( );
 
             // ensure the settings entity is created before the system manager
-            m_settings = CreateEntity( kWorldSettingsEntityName );
+            m_settings = CreateEntity( kWorldSettingsEntityName ).Get( );
             m_settings->EnableDeletion( false );
             m_settings->EnableHierarchyChange( false );
 
@@ -80,17 +82,17 @@ namespace ursine
             delete m_entityManager;
             
             m_entityManager = nullptr;
-            
+
             m_settings = nullptr;
         }
 
-        Entity *World::CreateEntity(const std::string &name)
+        EntityHandle World::CreateEntity(const std::string &name)
         {
             auto entity = m_entityManager->Create( );
 
             entity->SetName( name );
 
-            return entity;
+            return { m_entityManager, entity };
         }
 
 		void World::queueEntityDeletion(Entity *entity)
@@ -98,7 +100,7 @@ namespace ursine
 			m_deleted.push_back( entity );
 		}
 
-        Entity *World::CreateEntityFromArchetype(
+        EntityHandle World::CreateEntityFromArchetype(
             const std::string &fileName, 
             const std::string &name
         )
@@ -140,27 +142,12 @@ namespace ursine
             if (entity)
                 entity->SetName( name );
 
-            return entity;
+            return { m_entityManager, entity };
         }
 
-        Entity *World::GetEntity(EntityID id) const
+        EntityHandle World::GetEntityFromName(const std::string &name) const
         {
-            return m_entityManager->GetEntity( id );
-        }
-
-        const std::string &World::GetEntityName(EntityUniqueID id) const
-        {
-            return m_nameManager->GetName( id );
-        }
-
-        Entity *World::GetEntityFromName(const std::string &name) const
-        {
-            return m_nameManager->GetEntity( name );
-        }
-
-        Entity *World::GetEntityUnique(EntityUniqueID uniqueID) const
-        {
-            return m_entityManager->GetEntityUnique( uniqueID );
+            return { m_entityManager, m_nameManager->GetEntity( name ) };
         }
 
         EntityVector World::GetRootEntities(void) const
@@ -207,9 +194,9 @@ namespace ursine
             Dispatch( WORLD_EDITOR_RENDER, EventArgs::Empty );
         }
 
-        Entity *World::GetSettings(void) const
+        EntityHandle World::GetSettings(void) const
         {
-            return m_settings;
+            return { m_entityManager, m_settings };
         }
 
         SystemManager *World::GetSystemManager(void) const

@@ -19,6 +19,7 @@
 #include "TransformComponent.h"
 #include "EntitySerializer.h"
 #include "EntityEvent.h"
+#include "EntityHandle.h"
 
 #include <queue>
 
@@ -436,21 +437,13 @@ namespace ursine
             return found;
         }
 
-        Entity *EntityManager::GetEntity(EntityID id)
+        Entity *EntityManager::GetEntity(const EntityHandle &handle)
         {
             // out of bounds
-            if (id + 1u > m_cache.size( ))
+            if (handle.m_id + 1u > m_cache.size( ))
                 return nullptr;
 
-            return &m_cache[ id ];
-        }
-
-        Entity *EntityManager::GetEntityUnique(EntityUniqueID id) const
-        {
-            auto found = m_unique.find( id );
-
-            // nullptr if not found
-            return (found == m_unique.end( )) ? nullptr : found->second;
+            return &m_cache[ handle.m_id ];
         }
 
         void EntityManager::BeforeRemove(Entity *entity)
@@ -491,8 +484,6 @@ namespace ursine
 
             m_active.erase( find( m_active.begin( ), m_active.end( ), entity ) );
 
-            m_unique.erase( entity->m_uniqueID );
-
             m_inactive.push_back( entity );
         }
 
@@ -525,8 +516,6 @@ namespace ursine
         {
             Entity *entity = nullptr;
 
-            EntityUniqueID uniqueID = m_nextEntityUID++;
-
             // we can't use the available queue
             if (m_inactive.empty( ))
             {
@@ -550,10 +539,6 @@ namespace ursine
             }
 
             m_active.push_back( entity );
-
-            entity->m_uniqueID = uniqueID;
-
-            m_unique[ uniqueID ] = entity;
 
             m_hierarchy.AddEntity( entity );
 

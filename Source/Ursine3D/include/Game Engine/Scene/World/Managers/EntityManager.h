@@ -34,6 +34,7 @@ namespace ursine
         class Component;
         class World;
         class Filter;
+        class EntityHandle;
 
         class EntityManager final : public WorldManager
         {
@@ -56,11 +57,8 @@ namespace ursine
             // Gets all entities who match this filter
             EntityVector GetEntities(const Filter &aspect) const;
 
-            // Finds an entity with the given id
-            Entity *GetEntity(EntityID id);
-
-            // Finds an entity with the given unique id
-            Entity *GetEntityUnique(EntityUniqueID id) const;
+            // Finds an entity with the given handle
+            Entity *GetEntity(const EntityHandle &handle);
 
             // Called right when an entity is requested to be removed
             void BeforeRemove(Entity *entity);
@@ -183,9 +181,6 @@ namespace ursine
 
             // entity event handlers
             std::vector<Entity::EventDispatcher> m_events;
-
-            // unique id to entity map
-            std::unordered_map<EntityUniqueID, Entity*> m_unique;
 
             // next available entity ID
             EntityID m_nextEntityID;

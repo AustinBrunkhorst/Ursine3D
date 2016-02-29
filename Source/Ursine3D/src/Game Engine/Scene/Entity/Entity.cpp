@@ -36,7 +36,7 @@ namespace ursine
         // Contructors
         ////////////////////////////////////////////////////////////////////////
 
-        Entity::Entity(World *world, EntityUniqueID id)
+        Entity::Entity(World *world, EntityID id)
             : m_active( true )
             , m_deleting( false )
             , m_deletionEnabled( true )
@@ -44,7 +44,7 @@ namespace ursine
             , m_serializationEnabled( true )
             , m_visibleInEditor( true )
             , m_id( id )
-            , m_uniqueID( 0 )
+            , m_version( 0 )
             , m_world( world )
             , m_transform( nullptr )
             , m_systemMask( 0 )
@@ -79,16 +79,6 @@ namespace ursine
             setDeletingTrue( );
 
             m_world->queueEntityDeletion( this );
-        }
-
-        EntityID Entity::GetID(void) const
-        {
-            return m_id;
-        }
-
-        EntityUniqueID Entity::GetUniqueID(void) const
-        {
-            return m_uniqueID;
         }
 
         bool Entity::IsDeleting(void) const
@@ -163,8 +153,8 @@ namespace ursine
 
             if (parent)
                 return parent->GetOwner( );
-            else
-                return nullptr;
+
+            return nullptr;
         }
 
         Entity *Entity::GetParent(void)
@@ -173,8 +163,8 @@ namespace ursine
 
             if (parent)
                 return parent->GetOwner( );
-            else
-                return nullptr;
+
+            return nullptr;
         }
 
         const Entity *Entity::GetRoot(void) const
@@ -205,7 +195,7 @@ namespace ursine
         // Utilities
         ////////////////////////////////////////////////////////////////////////
 
-        Entity *Entity::Clone(void)
+        EntityHandle Entity::Clone(void)
         {
             return m_world->m_entityManager->Clone( this );
         }
@@ -254,18 +244,18 @@ namespace ursine
             return m_world->m_entityManager->GetComponentInChildren( this, id );
         }
 
-        Entity* Entity::GetChildByName(const std::string& name) const
+        Entity *Entity::GetChildByName(const std::string &name) const
         {
             // get all children
             auto children = m_world->m_entityManager->GetChildren( this );
 
             // search for desired child
-            for ( auto childID : *children )
+            for (auto childID : *children)
             {
                 // check if names are same
-                if ( name == m_world->m_nameManager->GetName( childID ) )
+                if (name == m_world->m_nameManager->GetName( childID ))
                 {
-                    return  m_world->m_entityManager->GetEntity( childID );
+                    return m_world->m_entityManager->GetEntity( childID );
                 }
             }
 
@@ -355,6 +345,9 @@ namespace ursine
             m_hierarchyChangeEnabled = true;
             m_serializationEnabled = true;
             m_visibleInEditor = true;
+
+            // resetting implies we're resusing it
+            ++m_version;
         }
 
         void Entity::setDeletingTrue(void)

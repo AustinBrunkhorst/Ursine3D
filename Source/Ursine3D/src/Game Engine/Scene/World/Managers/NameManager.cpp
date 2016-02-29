@@ -27,14 +27,15 @@ namespace ursine
 
         void NameManager::Remove(Entity *entity)
         {
-            auto search = m_names.find( entity->m_uniqueID );
+            auto search = m_names.find( entity->m_id );
 
             if (search == m_names.end( ))
                 return;
 
             removeFromGroup( search->second, entity );
 
-            m_names.erase( search );
+            // reset the name
+            search->second = "";
         }
 
         Entity *NameManager::GetEntity(const std::string &name)
@@ -54,12 +55,7 @@ namespace ursine
 
         const std::string &NameManager::GetName(const Entity *entity)
         {
-            return m_names[ entity->m_uniqueID ];
-        }
-
-        const std::string &NameManager::GetName(const EntityUniqueID id)
-        {
-            return m_names[ id ];
+            return m_names[ entity->m_id ];
         }
 
         void NameManager::SetName(Entity *entity, const std::string &name)
@@ -81,12 +77,12 @@ namespace ursine
 
         void NameManager::setName(Entity *entity, const std::string &name)
         {
-            auto nameEntry = m_names.find( entity->m_uniqueID );
+            auto nameEntry = m_names.find( entity->m_id );
 
             // first time setting the name
             if (nameEntry == m_names.end( ))
             {
-                m_names[ entity->m_uniqueID ] = name;
+                m_names[ entity->m_id ] = name;
             }
             else
             {
@@ -104,10 +100,10 @@ namespace ursine
         {
             auto &group = m_grouped[ name ];
 
-			auto itr = find( group.begin( ), group.end( ), entity );
+			auto search = find( group.begin( ), group.end( ), entity );
 
-			if (itr != group.end( ))
-				group.erase( itr );
+			if (search != group.end( ))
+				group.erase( search );
         }
     }
 }

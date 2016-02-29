@@ -37,7 +37,6 @@ namespace ursine
 
             // Gets the name of a specific entity
             const std::string &GetName(const Entity *entity);
-            const std::string &GetName(const EntityUniqueID id);
             void SetName(Entity *entity, const std::string &name);
 
         private:
@@ -47,7 +46,7 @@ namespace ursine
             std::unordered_map<std::string, EntityVector> m_grouped;
 
             // entities mapped to specific names
-            std::unordered_map<EntityUniqueID, std::string> m_names;
+            std::unordered_map<EntityID, std::string> m_names;
 
             void setName(Entity *entity, const std::string &name);
             void removeFromGroup(const std::string &name, Entity *entity);

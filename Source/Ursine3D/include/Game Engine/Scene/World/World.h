@@ -45,25 +45,17 @@ namespace ursine
             World(void);
             ~World(void);
 
-            Entity *CreateEntity(const std::string &name = "Entity");
+            EntityHandle CreateEntity(const std::string &name = "Entity");
             void queueEntityDeletion(Entity *entity);
 
             // Creates an entity from an archetype file
-            Entity *CreateEntityFromArchetype(
+            EntityHandle CreateEntityFromArchetype(
                 const std::string &fileName,
                 const std::string &name = "Entity"
             );
 
-            // Gets an entity based on its active id
-            Entity *GetEntity(EntityUniqueID id) const;
-
-            const std::string &GetEntityName(EntityID id) const;
-
             // Gets an entity based its name (first entity with this name)
-            Entity *GetEntityFromName(const std::string &name) const;
-
-            // Gets an entity based on its unique id
-            Entity *GetEntityUnique(EntityUniqueID uniqueID) const;
+            EntityHandle GetEntityFromName(const std::string &name) const;
 
             // Gets entities without parents
             EntityVector GetRootEntities(void) const;
@@ -89,7 +81,7 @@ namespace ursine
             // Renders the world in editor mode
             void EditorRender(void);
 
-            Entity *GetSettings(void) const;
+            EntityHandle GetSettings(void) const;
 
             SystemManager *GetSystemManager(void) const;
 
