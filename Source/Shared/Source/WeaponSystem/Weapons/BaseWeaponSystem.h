@@ -29,9 +29,8 @@ namespace ursine
 
 } // ursine namespace
 
-struct AbstractWeapon;
+struct AbstractProjWeapon;
 struct AbstractHitscanWeapon;
-struct BaseWeapon;
 struct HitscanWeapon;
 
 class BaseWeaponSystem
@@ -50,11 +49,11 @@ private:
 
     void EvaluateProjectileWeapons(const float dt);
 
-    void FireProjectileWeapon(BaseWeapon& weapon, ursine::ecs::EntityUniqueID id);
+    void FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::ecs::EntityUniqueID id);
 
-    void CreateProjectiles(BaseWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
+    void CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
     
-    std::unordered_map < ursine::ecs::EntityUniqueID, BaseWeapon* > m_weapons;
+    std::unordered_map < ursine::ecs::EntityUniqueID, AbstractProjWeapon* > m_weapons;
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
     std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::AudioEmitter* > m_emitters;
 
@@ -88,7 +87,6 @@ private:
     void SpawnCollisionParticle(ursine::SVec3& collisionPoint, ursine::SVec3& normalizeRaycastVec, ursine::ecs::Entity* other);
 
     void CreateTrail(AbstractHitscanWeapon& weapon, ursine::SVec3& trailEnd);
-
 
     ursine::ecs::PhysicsSystem* m_physicsSystem;
 

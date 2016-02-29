@@ -23,15 +23,18 @@ enum DamageEvent
 class DamageEventArgs : public ursine::EventArgs
 {
 public:
-    DamageEventArgs(float damage, bool crit, ursine::ecs::Entity *entityHit, 
-                    const ursine::SVec3 &hitPosition)
+    DamageEventArgs(float damage, bool crit,
+                    const ursine::SVec3 &hitPosition,
+                    ursine::ecs::Entity *entityHit)
         : damage( damage )
         , crit( crit )
+        , hitPosition(hitPosition)
         , entityHit( entityHit )
-        , hitPosition( hitPosition ) { }
+        { }
 
     float damage;
     bool crit;
-    ursine::ecs::Entity *entityHit;
     ursine::SVec3 hitPosition;
+    ursine::ecs::Entity *entityHit;
+
 };

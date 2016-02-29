@@ -12,33 +12,27 @@
 
 #pragma once
 
-#include "AbstractWeapon.h"
+#include "AbstractProjWeapon.h"
 #include <Component.h>
 
-struct BaseWeapon : ursine::ecs::Component, AbstractWeapon
+struct BaseWeapon : ursine::ecs::Component, AbstractProjWeapon
 {
     NATIVE_COMPONENT
 
 public:
 
-    EditorField(
-        std::string ArchetypeToShoot,
-        GetArchetypeToShoot,
-        SetArchetypeToShoot
-    );
-
-    AbstractWeaponFields( )
+    PROJ_EDITOR_FIELDS( );
 
     BaseWeapon(void);
     ~BaseWeapon(void);
 
     void OnInitialize(void) override;
 
-    const std::string& GetArchetypeToShoot(void) const;
-    void SetArchetypeToShoot(const std::string &archetype);
-
+protected:
     void RemoveMySelf(void) override;
 
+    // projectile speed
+    float m_projSpeed;
 
     // Archetype weapon should fire
     std::string m_archetypeToShoot;

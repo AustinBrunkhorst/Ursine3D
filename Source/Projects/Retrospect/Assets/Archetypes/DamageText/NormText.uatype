@@ -1,0 +1,52 @@
+{
+"children": [], 
+"components": {
+"DamageText": {
+".uid": 300, 
+"TotalLifeTime": 1, 
+"Variance": {
+"x": 3, 
+"y": 3, 
+"z": 3
+}, 
+"Velocity": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SpriteText": {
+".uid": 301, 
+"alignment": 0, 
+"size": 12, 
+"text": "Sprite Text", 
+"textColor": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 299, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

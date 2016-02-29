@@ -143,60 +143,43 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
 {
     EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
 
-    if (args->otherEntity->HasComponent< CritSpot >( ))
+    if ( !m_deleted )
     {
-        applyCritDamage( args->otherEntity->GetComponent< CritSpot >( ), args->contacts );
+        auto root = args->otherEntity->GetRoot( );
+
+        if ( !root && !root->HasComponent< Health >( ) && m_damageTimeMap[ root->GetUniqueID( ) ] != NULL )
+            return;
+
+        float damage = m_damageToApply;
+        bool crit = false;
+
+        // does object have crit
+        if ( args->otherEntity->HasComponent< CritSpot >( ) )
+        {
+            crit = true;
+            damage *= m_critModifier;
+        }
+
+        applyDamage(root, args->contacts.front( ).point, damage, crit);
+
+        spawnCollisionParticle(args->otherEntity, crit);
     }
 
-    // make sure that health comp was found and that we have not damaged obj recently
-    else if (args->otherEntity->HasComponent< Health >( ))
-    {
-        applyDamage( args->otherEntity->GetComponent< Health >( ), args->contacts );
-    }
+    deleteOnCollision( );
 
 }
 
-void DamageOnCollide::applyCritDamage(CritSpot *critComp, ContactsArg contacts)
-{
-    if (m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetUniqueID( ) ] != NULL)
-        return;
+void DamageOnCollide::applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage, bool crit)
+{   
+    Health* healthComp = obj->GetComponent< Health >( );
 
-    float damage = m_damageToApply * m_critModifier;
-    auto root = critComp->GetOwner( )->GetRoot( );
-
-    critComp->ApplyDamage( damage );
-
-    spawnCollisionParticle( critComp->GetOwner( ) );
-
-    sendDamageEvent( { damage, true, root, contacts[ 0 ].point } );
-    
-    // add other object to damage interval map 
-    //   if not deleting due to collision
-    if (!deleteOnCollision( ))
-    {
-        m_damageTimeMap[ critComp->GetOwner( )->GetUniqueID( ) ] = m_damageInterval;
-        m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetUniqueID( ) ] = m_damageInterval;
-    }
-}
-
-
-void DamageOnCollide::applyDamage(Health *healthComp, ContactsArg contacts)
-{
-    if (m_damageTimeMap[ healthComp->GetOwner( )->GetUniqueID( ) ] != NULL)
-        return;
-
-    // apply damage to object
-    healthComp->DealDamage( m_damageToApply );
-
-    spawnCollisionParticle( healthComp->GetOwner( ) );
-
-    sendDamageEvent( { m_damageToApply, false, healthComp->GetOwner( ), contacts[ 0 ].point } );
+    healthComp->DealDamage(contact, damage, crit );
 
     // add other object to damage interval map 
     //   if not deleting due to collision
-    if (!deleteOnCollision( ))
+    if (!m_deleteOnCollision)
     {
-        m_damageTimeMap[ healthComp->GetOwner( )->GetUniqueID( ) ] = m_damageInterval;
+        m_damageTimeMap[ obj->GetUniqueID( ) ] = m_damageInterval;
     }
 }
 
@@ -231,7 +214,7 @@ void DamageOnCollide::DecrementDamageIntervalTimes(float dt)
 }
 
 
-bool DamageOnCollide::deleteOnCollision(void)
+void DamageOnCollide::deleteOnCollision(void)
 {
     // delete this projectile if delete on collision flag is set
     if (m_deleteOnCollision)
@@ -239,8 +222,6 @@ bool DamageOnCollide::deleteOnCollision(void)
         GetOwner( )->Delete( );
         m_deleted = true;
     }
-
-    return m_deleteOnCollision;
 }
 
 
@@ -273,46 +254,45 @@ void DamageOnCollide::getSpawnLocation(ursine::ecs::Entity* other, ursine::physi
 }
 
 
-void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other)
+void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool crit)
 {
-    //if (m_spawnOnHit)
-    //{
-    //    ursine::physics::RaycastInput rayin;   // input for raycast check
-    //    ursine::physics::RaycastOutput rayout; // output from raycast check
-    //
-    //    ursine::ecs::Transform* trans = GetOwner( )->GetTransform( );      // quick access to transform of owner
-    //    ursine::SVec3 pos = trans->GetWorldPosition( ); // position for weapon to shoot to
-    //
-    //    ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
-    //
-    //    ursine::SVec3 velocity = GetOwner( )->GetComponent<ursine::ecs::Rigidbody>( )->GetVelocity( ); // need for path of bullet
-    //
-    //
-    //    // is the owner of this component within the oject it is colliding with
-    //    //   - if inside then we want to spawn particle behind the objects current position
-    //    if (velocity.Dot( other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( ) ) <= 0)
-    //        velocity = -velocity;
-    //
-    //    // raycast info
-    //    rayin.start = trans->GetWorldPosition( );
-    //    rayin.end = pos = rayin.start + velocity;
-    //
-    //    // get ray to edge of other object
-    //    GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::PhysicsSystem>( )->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
-    //
-    //    getSpawnLocation(other->GetRoot( ), rayout, pos);
-    //
-    //    // create particle
-    //    ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
-    //    obj->GetTransform( )->SetWorldPosition( pos );
-    //
-    //    // parent so that it follows objects and dies with object
-    //    other->GetTransform( )->AddChild( obj->GetTransform( ) );
-    //}
-}
+    if (m_spawnOnHit)
+    {
+        ursine::ecs::Transform* trans = GetOwner( )->GetTransform( );      // quick access to transform of owner
+        ursine::SVec3 pos = trans->GetWorldPosition( ); // position for weapon to shoot to
 
-void DamageOnCollide::sendDamageEvent(DamageEventArgs args)
-{
-    GetOwner( )->GetWorld( )->Dispatch( WORLD_DAMAGE_EVENT, &args );
+        if ( crit )
+        {
+            ursine::physics::RaycastInput rayin;   // input for raycast check
+            ursine::physics::RaycastOutput rayout; // output from raycast check
+
+            ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
+
+            ursine::SVec3 velocity = GetOwner( )->GetComponent<ursine::ecs::Rigidbody>( )->GetVelocity( ); // need for path of bullet
+
+
+            // is the owner of this component within the oject it is colliding with
+            //   - if inside then we want to spawn particle behind the objects current position
+            if ( velocity.Dot(other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( )) <= 0 )
+                velocity = -velocity;
+
+            // raycast info
+            rayin.start = trans->GetWorldPosition( );
+            rayin.end = pos = rayin.start + velocity;
+
+            // get ray to edge of other object
+            GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::PhysicsSystem>( )->Raycast(rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false);
+
+            getSpawnLocation(other->GetRoot( ), rayout, pos);
+        }
+
+        // create particle
+        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
+        obj->GetTransform( )->SetWorldPosition(pos);
+
+        // parent so that it follows objects and dies with object
+        other->GetTransform( )->AddChild(obj->GetTransform( ));
+
+    }
 }
 

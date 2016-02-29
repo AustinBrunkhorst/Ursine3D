@@ -42,7 +42,6 @@ AbstractWeapon::AbstractWeapon(void) :
     m_critModifier(1.0f),
     m_damageInterval(1.0f),
     m_deleteOnCollision(false),
-    m_projSpeed( 10.0f ),
     m_fireRate(0.2f),
     m_fireTimer(0.0f),
     m_reloadTime(0.0f),
@@ -55,7 +54,6 @@ AbstractWeapon::AbstractWeapon(void) :
     m_clipSize(0),
     m_projFireCount(1),
     m_weaponType(PRIMARY_WEAPON),
-    m_spawnOffset( 0, 0, 0 ),
     m_camHandle(nullptr),
     m_firePosHandle(nullptr),
     m_fireParticle( "FX/FX_WeaponShoot_1.uatype" ),
@@ -162,16 +160,6 @@ void AbstractWeapon::SetDamageInterval(const float damageInterval)
 bool AbstractWeapon::GetDeleteOnCollision(void) const
 {
     return m_deleteOnCollision;
-}
-
-float AbstractWeapon::GetProjSpeed(void) const
-{
-    return m_projSpeed;
-}
-
-void AbstractWeapon::SetProjSpeed(const float speed)
-{
-    m_projSpeed = speed;
 }
 
 void AbstractWeapon::SetDeleteOnCollision(const bool state)
@@ -313,6 +301,7 @@ void AbstractWeapon::SetClipSize(const int size)
 
     else if ( m_clipCount > m_clipSize )
         m_clipCount = m_clipSize;
+
 }
 
 
@@ -338,29 +327,6 @@ WeaponType AbstractWeapon::GetWeaponType( ) const
 void AbstractWeapon::SetWeaponType(const WeaponType type)
 {
     m_weaponType = type;
-}
-
-
-// spawn offset
-ursine::SVec3 AbstractWeapon::GetSpawnOffset(void) const
-{
-    return m_spawnOffset;
-}
-
-void AbstractWeapon::SetSpawnOffset(const ursine::SVec3& offset)
-{
-    if ( m_owner )
-    {
-        ursine::ecs::Transform* trans = m_owner->GetTransform( );
-    
-        trans->SetLocalPosition(m_owner->GetTransform( )->GetLocalPosition( ) - ( trans->GetLocalRotation( ) * m_spawnOffset ));
-
-        m_spawnOffset = offset;
-
-        trans->SetLocalPosition(m_owner->GetTransform( )->GetLocalPosition( ) + ( trans->GetLocalRotation( ) * m_spawnOffset ));
-    }
-
-    m_spawnOffset = offset;
 }
 
 
@@ -449,10 +415,6 @@ void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
 
     // Grab camera handle for shooting
     m_camHandle = args->m_camHandle;
-
-    // Give access to spawn offset
-    args->m_spawnOffset = &m_spawnOffset;
-
 
     // Grab fire position child
     ursine::ecs::Entity* firePos = sender->GetComponentInChildren<FirePos>( )->GetOwner( );
