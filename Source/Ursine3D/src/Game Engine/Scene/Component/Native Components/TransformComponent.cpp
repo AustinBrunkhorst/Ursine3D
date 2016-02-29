@@ -51,10 +51,10 @@ namespace ursine
 
         void Transform::OnInitialize(void)
         {
-			if (!m_root)
-				m_root = this;
-			if (!m_parent)
-				m_parent = nullptr;
+            if (!m_root)
+                m_root = this;
+            if (!m_parent)
+                m_parent = nullptr;
 
             dispatchAndSetDirty( true, true, true );
         }
@@ -292,8 +292,8 @@ namespace ursine
                 return m_localRotation * quat;
         }
 
-		Component::Handle<Transform> Transform::GetRoot(void) const
-		{
+        Component::Handle<Transform> Transform::GetRoot(void) const
+        {
             return m_root;
         }
 
@@ -442,27 +442,27 @@ namespace ursine
             }
         }
 
-		Component *Transform::GetComponentInChildren(ComponentTypeID id) const
-		{
-			return GetOwner( )->GetComponentInChildren( id );
-		}
+        Component *Transform::GetComponentInChildren(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentInChildren( id );
+        }
 
-	    Component *Transform::GetComponentInParent(ComponentTypeID id) const
-	    {
-			return GetOwner( )->GetComponentInParent( id );
-	    }
+        Component *Transform::GetComponentInParent(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentInParent( id );
+        }
 
-	    ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const
-	    {
-			return GetOwner( )->GetComponentsInChildren( id );
-	    }
+        ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentsInChildren( id );
+        }
 
-	    ComponentVector Transform::GetComponentsInParents(ComponentTypeID id) const
-	    {
-			return GetOwner( )->GetComponentsInParents( id );
-	    }
+        ComponentVector Transform::GetComponentsInParents(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentsInParents( id );
+        }
 
-	    void Transform::copy(const Transform &transform)
+        void Transform::copy(const Transform &transform)
         {
             m_dirty = transform.m_dirty;
 
@@ -475,7 +475,7 @@ namespace ursine
 
             if (transform.m_parent)
             {
-				auto *p = const_cast<Transform*>( transform.m_parent.operator->( ) );
+                auto *p = const_cast<Transform*>( transform.m_parent.operator->( ) );
                 p->AddChild( this );
             }
             else
@@ -602,10 +602,10 @@ namespace ursine
 
             m_parent = newParent;
 
-			if (newParent)
-				setRoot( newParent->m_root );
-			else
-				setRoot( this );
+            if (newParent)
+                setRoot( newParent->m_root );
+            else
+                setRoot( this );
 
             // unsubscribe this entity from the old parent's events
             if (oldParent)
@@ -627,14 +627,14 @@ namespace ursine
             dispatchParentChange( oldParent, newParent );
         }
 
-		void Transform::setRoot(Handle<Transform> root)
+        void Transform::setRoot(Handle<Transform> root)
         {
-			m_root = root;
+            m_root = root;
 
-			for (auto &c : m_children)
-			{
-				c->setRoot( root );
-			}
+            for (auto &c : m_children)
+            {
+                c->setRoot( root );
+            }
         }
     }
 }

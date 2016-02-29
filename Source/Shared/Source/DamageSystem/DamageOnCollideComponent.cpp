@@ -275,40 +275,40 @@ void DamageOnCollide::getSpawnLocation(ursine::ecs::Entity* other, ursine::physi
 
 void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other)
 {
-    if (m_spawnOnHit)
-    {
-        ursine::physics::RaycastInput rayin;   // input for raycast check
-        ursine::physics::RaycastOutput rayout; // output from raycast check
-
-        ursine::ecs::Transform* trans = GetOwner( )->GetTransform( );      // quick access to transform of owner
-        ursine::SVec3 pos = trans->GetWorldPosition( ); // position for weapon to shoot to
-
-        ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
-
-        ursine::SVec3 velocity = GetOwner( )->GetComponent<ursine::ecs::Rigidbody>( )->GetVelocity( ); // need for path of bullet
-
-
-        // is the owner of this component within the oject it is colliding with
-        //   - if inside then we want to spawn particle behind the objects current position
-        if (velocity.Dot( other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( ) ) <= 0)
-            velocity = -velocity;
-
-        // raycast info
-        rayin.start = trans->GetWorldPosition( );
-        rayin.end = pos = rayin.start + velocity;
-
-        // get ray to edge of other object
-        GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::PhysicsSystem>( )->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
-
-        getSpawnLocation(other->GetRoot( ), rayout, pos);
-
-        // create particle
-        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
-        obj->GetTransform( )->SetWorldPosition( pos );
-
-        // parent so that it follows objects and dies with object
-        other->GetTransform( )->AddChild( obj->GetTransform( ) );
-    }
+    //if (m_spawnOnHit)
+    //{
+    //    ursine::physics::RaycastInput rayin;   // input for raycast check
+    //    ursine::physics::RaycastOutput rayout; // output from raycast check
+    //
+    //    ursine::ecs::Transform* trans = GetOwner( )->GetTransform( );      // quick access to transform of owner
+    //    ursine::SVec3 pos = trans->GetWorldPosition( ); // position for weapon to shoot to
+    //
+    //    ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
+    //
+    //    ursine::SVec3 velocity = GetOwner( )->GetComponent<ursine::ecs::Rigidbody>( )->GetVelocity( ); // need for path of bullet
+    //
+    //
+    //    // is the owner of this component within the oject it is colliding with
+    //    //   - if inside then we want to spawn particle behind the objects current position
+    //    if (velocity.Dot( other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( ) ) <= 0)
+    //        velocity = -velocity;
+    //
+    //    // raycast info
+    //    rayin.start = trans->GetWorldPosition( );
+    //    rayin.end = pos = rayin.start + velocity;
+    //
+    //    // get ray to edge of other object
+    //    GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::PhysicsSystem>( )->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
+    //
+    //    getSpawnLocation(other->GetRoot( ), rayout, pos);
+    //
+    //    // create particle
+    //    ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
+    //    obj->GetTransform( )->SetWorldPosition( pos );
+    //
+    //    // parent so that it follows objects and dies with object
+    //    other->GetTransform( )->AddChild( obj->GetTransform( ) );
+    //}
 }
 
 void DamageOnCollide::sendDamageEvent(DamageEventArgs args)
