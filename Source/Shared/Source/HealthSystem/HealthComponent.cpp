@@ -15,8 +15,8 @@
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
-#include "DamageOnCollideComponent.h"
 #include "AudioEmitterComponent.h"
+#include "CollisionEventArgs.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -77,7 +77,6 @@ void Health::SetSpawnOnDeath(const bool state)
     m_spawnOnDeath = state;
 }
 
-
 void Health::DealDamage(const float damage)
 {
     auto owner = GetOwner( );
@@ -96,24 +95,30 @@ void Health::DealDamage(const float damage)
        // emitter->AddSoundToPlayQueue(kTakeDamage);
 }
 
+
+void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit)
+{
+    DealDamage(damage);
+
+    sendDamageTextEvent(contactPoint, damage, crit);
+}
+
 void Health::OnInitialize(void)
 {
     m_maxHealth = m_health;
 
     GetOwner( )->Listener(this)
         .On(ursine::ecs::ENTITY_REMOVED, &Health::OnDeath);
-
-    GetOwner( )->Listener(this).On(game::DAMAGE_EVENT, &Health::OnDamaged);
 }
 
-
-void Health::OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT))
+void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit)
 {
-    EVENT_ATTRS(ursine::ecs::Entity, game::DamageEventArgs);
+    ursine::ecs::Entity* owner = GetOwner( );
 
-    DealDamage(args->m_damage);
+    game::DamageEventArgs dEvent(contact, owner, damage, crit);
+
+    owner->GetWorld( )->Dispatch(game::DAMAGE_TEXT_EVENT, &dEvent);
 }
-
 
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {

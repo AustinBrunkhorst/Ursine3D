@@ -29,11 +29,3 @@ void CritSpot::OnInitialize(void)
 {
 }
 
-void CritSpot::ApplyDamage(float damage)
-{
-    game::DamageEventArgs damageArgs(damage);
-
-    // dispatch event for health comp
-    GetOwner( )->GetRoot( )->Dispatch(game::DAMAGE_EVENT, &damageArgs);
-
-}

@@ -19,5 +19,6 @@ NATIVE_COMPONENT_DEFINITION( EntityAnimatorClip );
 
 EntityAnimatorClip::EntityAnimatorClip(void)
     : BaseComponent( )
+    , looping( false )
 {
 }

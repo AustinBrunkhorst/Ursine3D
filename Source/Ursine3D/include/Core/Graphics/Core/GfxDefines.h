@@ -40,7 +40,7 @@
 #define MAX_DRAW_OBJ            800019
 
 //max renderables of each type
-#define MAX_RENDERABLES         512
+#define MAX_RENDERABLES         512*2
 
 //max draw calls for a single scene
 #define MAX_DRAW_CALLS          2048
