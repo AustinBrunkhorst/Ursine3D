@@ -18,6 +18,7 @@
 #include <stack>
 #include <SVec3.h>
 #include <PhysicsSystem.h>
+#include <SweptControllerComponent.h>
 
 NATIVE_COMPONENT_DEFINITION( DamageOnCollide );
 
@@ -160,7 +161,7 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
         bool crit = false;
 
         // does object have crit
-        if ( args->otherEntity->HasComponent< CritSpot >( ) )
+        if (args->otherEntity->HasComponent<CritSpot>( ))
         {
             crit = true;
             damage *= m_critModifier;
