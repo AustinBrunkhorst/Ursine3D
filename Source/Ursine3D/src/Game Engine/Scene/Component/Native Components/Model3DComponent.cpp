@@ -32,8 +32,6 @@ namespace ursine
         Model3D::Model3D(void)
             : BaseComponent( )
             , m_model( nullptr )
-            , m_modelName( "Cube" )
-            , m_materialName( "Blank" )
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
@@ -66,46 +64,38 @@ namespace ursine
 
             // set the unique id
             m_model->SetEntityUniqueID( GetOwner( )->GetUniqueID( ) );
-
-            // set the model if there is one
-            if (m_modelName.size( ) > 0)
-                m_model->SetModelName( m_modelName );
-
+            
             updateRenderer( );
         }
 
-        std::vector<SMat4> &Model3D::GetMatrixPalette()
+        std::vector<SMat4> &Model3D::GetMatrixPalette(void)
         {
             return m_model->GetMatrixPalette( );
         }
 
-        void Model3D::SetModelResourceName(const std::string &name)
+        const resources::ResourceReference& Model3D::GetModel(void) const
         {
-            m_modelName = name;
-
-            m_model->SetModelName( name );
+            return m_modelResource;
         }
 
-        const std::string &Model3D::GetModelResourceName(void) const
+        void Model3D::SetModel(const resources::ResourceReference &model)
         {
-            return m_modelName;
+            
+        }
+
+        const resources::ResourceReference& Model3D::GetTexture(void) const
+        {
+            return m_textureResource;
+        }
+
+        void Model3D::SetTexture(const resources::ResourceReference &texture)
+        {
+            
         }
 
         const graphics::ModelResource *Model3D::GetModelResource(void) const
         {
-            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource( m_modelName );
-        }
-
-        void Model3D::SetMaterial(const std::string &name)
-        {
-            m_materialName = name;
-
-            // m_model->SetMaterial( name );
-        }
-
-        const std::string &Model3D::GetMaterial(void) const
-        {
-            return m_materialName;
+            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource( m_model->GetModelHandle( ) );
         }
 
         void Model3D::SetColor(const ursine::Color &color)
@@ -217,6 +207,44 @@ namespace ursine
             auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
+        }
+
+        void Model3D::invalidateModel(void)
+        {
+            auto data = loadResource<resources::ModelData>( m_modelResource );
+
+            if (data == nullptr)
+            {
+                // default
+                m_model->SetTextureHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetModelHandle( );
+
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.LoadModel( handle );
+
+                m_model->SetModelHandle( handle );
+            }
+        }
+
+        void Model3D::invalidateTexture(void)
+        {
+            auto data = loadResource<resources::TextureData>(m_textureResource);
+
+            if (data == nullptr)
+            {
+                // default
+                m_model->SetTextureHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetTextureHandle( );
+
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.LoadTexture( handle );
+
+                m_model->SetTextureHandle( handle );
+            }
         }
 
         void Model3D::OnSerialize(Json::object &output) const

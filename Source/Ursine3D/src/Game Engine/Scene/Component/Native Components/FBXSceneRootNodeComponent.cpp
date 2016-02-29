@@ -49,38 +49,38 @@ namespace ursine
 
         void FBXSceneRootNode::importScene(void)
         {
-            auto *gfx = GetCoreSystem( graphics::GfxAPI );
+            //auto *gfx = GetCoreSystem( graphics::GfxAPI );
 
-            auto *model = gfx->ResourceMgr.GetModelResource( m_sceneName );
+            //auto *model = gfx->ResourceMgr.GetModelResource( m_sceneName );
 
-            auto *world = GetOwner( )->GetWorld( );
+            //auto *world = GetOwner( )->GetWorld( );
 
-            auto *transform = GetOwner( )->GetTransform( );
+            //auto *transform = GetOwner( )->GetTransform( );
 
-            if (model != nullptr)
-            {
-                auto &meshVec = model->GetMeshArray( );
+            //if (model != nullptr)
+            //{
+            //    auto &meshVec = model->GetMeshArray( );
 
-                int childIndex = 0;
+            //    int childIndex = 0;
 
-                for (auto &x : meshVec)
-                {
-                    // Create an entity
-                    auto *newEntity = world->CreateEntity( x->GetName( ) );
+            //    for (auto &x : meshVec)
+            //    {
+            //        // Create an entity
+            //        auto *newEntity = world->CreateEntity( x->GetName( ) );
 
-                    // Add model3d
-                    auto *modelComp = newEntity->AddComponent<Model3D>( );
+            //        // Add model3d
+            //        auto *modelComp = newEntity->AddComponent<Model3D>( );
 
-                    // Set the mesh to this mesh
-                    modelComp->SetModelResourceName( m_sceneName );
+            //        // Set the mesh to this mesh
+            //        modelComp->SetModelResourceName( m_sceneName );
 
-                    // Set its mesh index
-                    modelComp->SetMeshIndex( childIndex++ );
+            //        // Set its mesh index
+            //        modelComp->SetMeshIndex( childIndex++ );
 
-                    // We need to grab the data from this... Well shit
-                    transform->AddChild( newEntity->GetTransform( ) );
-                }
-            }
+            //        // We need to grab the data from this... Well shit
+            //        transform->AddChild( newEntity->GetTransform( ) );
+            //    }
+            //}
         }
 
         void FBXSceneRootNode::recursClearChildren(const std::vector< Handle<Transform> > &children)

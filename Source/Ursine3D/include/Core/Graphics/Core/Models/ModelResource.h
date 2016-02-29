@@ -58,8 +58,6 @@ namespace ursine
             bool GetIsLoaded(void) const;
             void SetIsLoaded(bool isOnGPU);
 
-            void BuildBinaryData(void) const;
-
         private:
             // root mesh of this model
             Mesh *m_rootNode;
@@ -72,16 +70,13 @@ namespace ursine
 
             // array of all mesh hierarchy
             std::vector<ufmt_loader::MeshInLvl> m_meshHierarchy;
+
             // aray of all rig hierarchy
             std::vector<ufmt_loader::RigInLvl> m_rigHierarchy;
 
             bool m_onGPU;
 
-        public:
             unsigned m_referenceCount;
-
-            uint8_t *m_binaryData;
-            size_t m_binarySize;
         };
     }
 }

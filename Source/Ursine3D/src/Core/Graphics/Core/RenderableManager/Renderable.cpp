@@ -132,6 +132,16 @@ namespace ursine
             m_modelResourceName = modelName;
         }
 
+        GfxHND Model3D::GetModelHandle(void) const
+        {
+            return m_modelHandle;
+        }
+
+        void Model3D::SetModelHandle(GfxHND handle)
+        {
+            m_modelHandle = handle;
+        }
+
         GfxHND Model3D::GetTextureHandle()
         {
             return m_textureHandle;

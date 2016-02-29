@@ -135,7 +135,7 @@ namespace ursine
                 m_manager->bufferManager->MapTransformBuffer( model.GetWorldMatrix( ) );
 
                 // set model
-                m_manager->modelManager->BindModel( 
+                m_manager->modelManager->BindModel(
                     handle.Model_, 
                     x 
                 );
@@ -232,7 +232,11 @@ namespace ursine
                 m_manager->textureManager->MapTextureByName("Blank");
 
                 // set model
-                 m_manager->modelManager->BindModel(handle.Model_, meshIndex);
+                 m_manager->modelManager->BindModel(
+                     handle.Model_, 
+                     meshIndex
+                );
+
                  m_manager->shaderManager->Render(m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex));
 
                  m_manager->dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);

@@ -20,6 +20,7 @@
 #include "ModelResource.h"
 
 #include "TextureData.h"
+#include "ModelData.h"
 
 namespace ursine
 {
@@ -53,16 +54,18 @@ namespace ursine
                 SetColor
             );
 
-            EditorField(
-                std::string modelName,
-                GetModelResourceName,
-                SetModelResourceName
+            EditorResourceField(
+                ursine::resources::ModelData,
+                model,
+                GetModel,
+                SetModel
             );
 
-            EditorField(
-                std::string materialName,
-                GetMaterial,
-                SetMaterial
+            EditorResourceField(
+                ursine::resources::TextureData,
+                texture,
+                GetTexture,
+                SetTexture
             );
 
             EditorMeta(BitMaskEditor)
@@ -104,15 +107,14 @@ namespace ursine
 
             std::vector<SMat4> &GetMatrixPalette(void);
 
-            //get/set model name
-            void SetModelResourceName(const std::string &name);
-            const std::string &GetModelResourceName(void) const;
+            const resources::ResourceReference &GetModel(void) const;
+            void SetModel(const resources::ResourceReference &model);
+
+            const resources::ResourceReference &GetTexture(void) const;
+            void SetTexture(const resources::ResourceReference &texture);
 
             // get the model resource to access the mesh
             const graphics::ModelResource *GetModelResource(void) const;
-
-            void SetMaterial(const std::string &name);
-            const std::string &GetMaterial(void) const;
 
             //get/set color
             void SetColor(const ursine::Color &color);
@@ -156,11 +158,14 @@ namespace ursine
             graphics::Model3D *m_model;
 
             RenderableComponentBase *m_base;
-
-            std::string m_modelName;
-            std::string m_materialName;
+            
+            resources::ResourceReference m_modelResource;
+            resources::ResourceReference m_textureResource;
 
             void updateRenderer(void);
+
+            void invalidateTexture(void);
+            void invalidateModel(void);
 
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }
