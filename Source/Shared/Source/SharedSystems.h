@@ -85,3 +85,9 @@
 /////////////////////////////////
 
 #include "LevelSegmentManager/SegmentLogic/Misc/StartRoomDirectorSystem.h"
+
+/////////////////////////////////
+//       Damage System         //
+/////////////////////////////////
+#include "DamageSystem/DamageTextSystem.h"
+#include "DamageSystem/DamageOnCollideSystem.h"

@@ -60,13 +60,13 @@
         );                              \
                                         \
     EditorField(                        \
-        float ProjectileSpeed,          \
-        GetProjSpeed,                   \
-        SetProjSpeed                    \
+        bool SemiAutomatic,             \
+        GetSemiAutomatic,               \
+        SetSemiAutomatic                \
         );                              \
                                         \
     EditorField(                        \
-        float FireRate,                 \
+        float FireDelay,                \
         GetFireRate,                    \
         SetFireRate                     \
         );                              \
@@ -114,7 +114,7 @@
         );                              \
                                         \
     EditorField(                        \
-        int FireCount,                  \
+        int ProjectileFireCount,        \
         GetProjFireCount,               \
         SetProjFireCount                \
         );                              \
@@ -126,22 +126,11 @@
         );                              \
                                         \
     EditorField(                        \
-        ursine::SVec3 SpawnOffset,      \
-        GetSpawnOffset,                 \
-        SetSpawnOffset                  \
-        );                              \
-                                        \
-    EditorField(                        \
         std::string FireParticle,       \
         GetFireParticle,                \
         SetFireParticle                 \
         );                              \
-                                        \
-    EditorField(                        \
-        bool SemiAutomatic,             \
-        GetSemiAutomatic,               \
-        SetSemiAutomatic                \
-        );
+
 
 #define AbstractWeaponConnect( Obj )                            \
     GetOwner( )->Listener( this )                               \
@@ -196,9 +185,6 @@ public:
     // does projectile die on first collision
     bool m_deleteOnCollision;
 
-    // projectile speed
-    float m_projSpeed;
-
     // Rate at which bullets can be fired
     float m_fireRate;
 
@@ -237,9 +223,6 @@ public:
 
     // weapon type 
     WeaponType m_weaponType;
-
-    // what offset to add on activation
-    ursine::SVec3 m_spawnOffset;
 
     // Camera Handle for shooting
     Meta(Disable)
@@ -298,9 +281,6 @@ public:
     bool GetDeleteOnCollision(void) const;
     void SetDeleteOnCollision(const bool state);
 
-    float GetProjSpeed(void) const;
-    void SetProjSpeed(const float speed);
-
     float GetFireRate(void) const;
     void SetFireRate(const float rate);
 
@@ -336,9 +316,6 @@ public:
 
     WeaponType GetWeaponType(void) const;
     void SetWeaponType(const WeaponType type);
-
-    ursine::SVec3 GetSpawnOffset(void) const;
-    void SetSpawnOffset(const ursine::SVec3& offset);
 
     const std::string& GetFireParticle(void) const;
     void SetFireParticle(const std::string &archetype);
@@ -383,7 +360,6 @@ protected:
 
 
 #define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );  
-                                         //  AbstractWeaponConnect(Obj);
 
 
 

@@ -17,37 +17,37 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		class Entity;
-	}
+    namespace ecs
+    {
+        class Entity;
+    }
 
-	namespace physics
-	{
-		class Contact
-		{
-		public:
-			// Normal (from other to this) and point (in world coordinates) of contact
-			SVec3 normal, point;
+    namespace physics
+    {
+        class Contact
+        {
+        public:
+            // Normal (from other to this) and point (in world coordinates) of contact
+            SVec3 normal, point;
 
-			// The relative velocity between the body and this contact (treating it as
-			// if it were attached to the other object)
-			SVec3 relativeVelocity;
+            // The relative velocity between the body and this contact (treating it as
+            // if it were attached to the other object)
+            SVec3 relativeVelocity;
 
-			// The most recent applied impulse, to satisfy contact constraints by the constraint solver
-			float appliedImpulse;
+            // The most recent applied impulse, to satisfy contact constraints by the constraint solver
+            float appliedImpulse;
 
-			float penDistance;
+            float penDistance;
 
-			Contact(void);
-		};
+            Contact(void);
+        };
 
-		class CollisionEventArgs : public EventArgs
-		{
-		public:
-			std::vector<Contact> contacts;
-			
-			ecs::Entity *thisEntity, *otherEntity;
-		};
-	}
+        class CollisionEventArgs : public EventArgs
+        {
+        public:
+            std::vector<Contact> contacts;
+            
+            ecs::Entity *thisEntity, *otherEntity;
+        };
+    }
 }

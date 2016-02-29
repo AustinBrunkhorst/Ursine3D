@@ -154,16 +154,10 @@ private:
     void getSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
 
     // spawn particle at collision point and parent to player
-    void spawnCollisionParticle(ursine::ecs::Entity* other);
+    void spawnCollisionParticle(ursine::ecs::Entity* other, bool crit);
 
-    Meta(Disable)
-    bool deleteOnCollision(void);
+    void deleteOnCollision(void);
 
-    typedef const std::vector<ursine::physics::Contact> & ContactsArg;
-
-    void applyCritDamage(CritSpot* critComp, ContactsArg contacts);
-    void applyDamage(Health* healthComp, ContactsArg contacts);
-
-    void sendDamageEvent(DamageEventArgs args);
+    void applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage, bool crit);
 
 } Meta (Enable, DisplayName( "DamageOnCollide" ), RequiresComponents(typeof(ursine::ecs::BoxCollider)));

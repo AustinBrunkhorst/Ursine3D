@@ -65,10 +65,10 @@
 "Transform": {
 ".uid": 10, 
 "rotation": {
-"w": 0.26806202530860901, 
-"x": 0.044183909893035889, 
-"y": 0.94957536458969116, 
-"z": -0.15651583671569824
+"w": 0.71492594480514526, 
+"x": 0.19557219743728638, 
+"y": 0.64750140905380249, 
+"z": -0.17712783813476563
 }, 
 "scale": {
 "x": 1, 
@@ -76,9 +76,9 @@
 "z": 1
 }, 
 "translation": {
-"x": -124.33311462402344, 
-"y": 83.904525756835938, 
-"z": 168.37959289550781
+"x": -111.66725921630859, 
+"y": 44.521327972412109, 
+"z": -7.7665767669677734
 }
 }
 }, 
@@ -231,12 +231,10 @@
 "components": {
 "Animator": {
 ".uid": 42, 
-"StateMachineName": "", 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Player", 
 "currentState": "Player_Idle", 
-"futureState": "", 
 "loopAnimation": true, 
 "playAnimation": true, 
 "renderDebug": false, 
@@ -391,6 +389,8 @@
 ".uid": 31, 
 "deadZone": 0, 
 "deadZoneSnap": 0, 
+"lockLooking": false, 
+"lockMovement": false, 
 "rotateSpeed": 10
 }, 
 "CommandQueue": {
@@ -495,8 +495,56 @@
 }, {
 "children": [], 
 "components": {
+"Transform": {
+".uid": 44, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 45, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
 "BoxCollider": {
-".uid": 69, 
+".uid": 55, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -504,10 +552,10 @@
 }
 }, 
 "Interactable": {
-".uid": 70
+".uid": 56
 }, 
 "Model3D": {
-".uid": 71, 
+".uid": 57, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -524,7 +572,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 72, 
+".uid": 58, 
 "bodyFlag": 0, 
 "enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
@@ -546,7 +594,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 68, 
+".uid": 54, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0.38268345594406128, 
@@ -565,7 +613,7 @@
 }
 }, 
 "WeaponPickup": {
-".uid": 73, 
+".uid": 59, 
 "PickupTime": 0.5, 
 "Texture": "", 
 "Weapon": "P1HitTempWeapon.uatype", 
@@ -579,7 +627,7 @@
 "children": [], 
 "components": {
 "BoxCollider": {
-".uid": 80, 
+".uid": 66, 
 "dimensions": {
 "x": 27, 
 "y": 31, 
@@ -587,10 +635,10 @@
 }
 }, 
 "CritSpot": {
-".uid": 81
+".uid": 67
 }, 
 "Rigidbody": {
-".uid": 82, 
+".uid": 68, 
 "bodyFlag": 2, 
 "enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
@@ -612,7 +660,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 79, 
+".uid": 65, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -636,7 +684,7 @@
 ], 
 "components": {
 "BoxCollider": {
-".uid": 75, 
+".uid": 61, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -644,13 +692,13 @@
 }
 }, 
 "Health": {
-".uid": 76, 
+".uid": 62, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
 "EntityHealth": 10, 
 "SpawnOnDeath": true
 }, 
 "Model3D": {
-".uid": 77, 
+".uid": 63, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -667,7 +715,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 78, 
+".uid": 64, 
 "bodyFlag": 1, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -689,7 +737,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 74, 
+".uid": 60, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -715,13 +763,11 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 96, 
-"StateMachineName": "", 
+".uid": 82, 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Player", 
 "currentState": "Player_Idle", 
-"futureState": "", 
 "loopAnimation": true, 
 "playAnimation": true, 
 "renderDebug": false, 
@@ -730,7 +776,7 @@
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 97, 
+".uid": 83, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -747,7 +793,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 95, 
+".uid": 81, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -773,7 +819,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 104, 
+".uid": 90, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -797,7 +843,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 105, 
+".uid": 91, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -821,11 +867,11 @@
 ], 
 "components": {
 "Audio Listener 3D": {
-".uid": 99, 
+".uid": 85, 
 "testing": []
 }, 
 "Camera": {
-".uid": 100, 
+".uid": 86, 
 "active": true, 
 "farPlane": 1000, 
 "fov": 60, 
@@ -843,7 +889,7 @@
 }
 }, 
 "Transform": {
-".uid": 98, 
+".uid": 84, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -867,40 +913,42 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 84, 
+".uid": 70, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "CharacterController": {
-".uid": 85, 
+".uid": 71, 
 "deadZone": 0, 
 "deadZoneSnap": 0, 
+"lockLooking": false, 
+"lockMovement": false, 
 "rotateSpeed": 10
 }, 
 "CommandQueue": {
-".uid": 86
+".uid": 72
 }, 
 "CylinderCollider": {
-".uid": 87, 
+".uid": 73, 
 "height": 30, 
 "radius": 5
 }, 
 "Health": {
-".uid": 88, 
+".uid": 74, 
 "ArchetypeToSpawnOnDeath": "FX/JordanFire.uatype", 
 "EntityHealth": 100, 
 "SpawnOnDeath": true
 }, 
 "InputController": {
-".uid": 89, 
+".uid": 75, 
 "UseKeyboard": false
 }, 
 "InteractionBay": {
-".uid": 90
+".uid": 76
 }, 
 "Inventory": {
-".uid": 91, 
+".uid": 77, 
 "LastStand": "P2HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 
@@ -909,11 +957,11 @@
 "m_currWeapon": 0
 }, 
 "PlayerID": {
-".uid": 92, 
+".uid": 78, 
 "PlayerId": 1
 }, 
 "Rigidbody": {
-".uid": 93, 
+".uid": 79, 
 "bodyFlag": 2, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -935,7 +983,7 @@
 "sleepToggle": true
 }, 
 "SweptController": {
-".uid": 94, 
+".uid": 80, 
 "active": true, 
 "airAcceleration": 30, 
 "airDeceleration": 40, 
@@ -957,7 +1005,7 @@
 }
 }, 
 "Transform": {
-".uid": 83, 
+".uid": 69, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -972,7 +1020,7 @@
 "translation": {
 "x": 0, 
 "y": 0, 
-"z": 0
+"z": -34.5528564453125
 }
 }
 }, 
@@ -983,7 +1031,7 @@
 "children": [], 
 "components": {
 "BoxCollider": {
-".uid": 112, 
+".uid": 98, 
 "dimensions": {
 "x": 27, 
 "y": 31, 
@@ -991,10 +1039,10 @@
 }
 }, 
 "CritSpot": {
-".uid": 113
+".uid": 99
 }, 
 "Rigidbody": {
-".uid": 114, 
+".uid": 100, 
 "bodyFlag": 2, 
 "enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
@@ -1016,7 +1064,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 111, 
+".uid": 97, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1040,7 +1088,7 @@
 ], 
 "components": {
 "BoxCollider": {
-".uid": 107, 
+".uid": 93, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -1048,13 +1096,13 @@
 }
 }, 
 "Health": {
-".uid": 108, 
+".uid": 94, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
 "EntityHealth": 10, 
 "SpawnOnDeath": true
 }, 
 "Model3D": {
-".uid": 109, 
+".uid": 95, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -1071,9 +1119,68 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 110, 
+".uid": 96, 
 "bodyFlag": 1, 
 "enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 92, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": -5.3887133598327637, 
+"y": 16.431560516357422, 
+"z": -44.683578491210938
+}
+}
+}, 
+"name": "TestDummy Archetype (1)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 107, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 108
+}, 
+"Rigidbody": {
+".uid": 109, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
 "freezeXRotation": false, 
 "freezeYRotation": false, 
@@ -1101,38 +1208,56 @@
 "z": 0
 }, 
 "scale": {
-"x": 28.184953689575195, 
-"y": 31.156145095825195, 
-"z": 5.2248787879943848
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
 }, 
 "translation": {
-"x": -5.3887133598327637, 
-"y": 16.431560516357422, 
-"z": -44.683578491210938
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
 }
 }
 }, 
-"name": "TestDummy Archetype (1)"
-}, {
-"children": [
-{
-"children": [], 
+"name": "CritBox_V1 Archetype"
+}
+], 
 "components": {
 "BoxCollider": {
-".uid": 121, 
+".uid": 102, 
 "dimensions": {
-"x": 27, 
-"y": 31, 
-"z": 2
+"x": 1, 
+"y": 1, 
+"z": 1
 }
 }, 
-"CritSpot": {
-".uid": 122
+"Health": {
+".uid": 103, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 104, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 123, 
-"bodyFlag": 2, 
-"enableContactCallback": false, 
+".uid": 105, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
 "freezeXRotation": false, 
 "freezeYRotation": false, 
@@ -1152,7 +1277,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 120, 
+".uid": 101, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1160,56 +1285,38 @@
 "z": 0
 }, 
 "scale": {
-"x": 0.035479921847581863, 
-"y": 0.032096397131681442, 
-"z": 0.19139200448989868
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
 }, 
 "translation": {
-"x": -0.006781458854675293, 
-"y": 0.0062919259071350098, 
-"z": 0.47533512115478516
+"x": -5.3887133598327637, 
+"y": 16.431560516357422, 
+"z": 42.428276062011719
 }
 }
 }, 
-"name": "CritBox_V1 Archetype"
-}
-], 
+"name": "TestDummy Archetype  (2)"
+}, {
+"children": [
+{
+"children": [], 
 "components": {
 "BoxCollider": {
 ".uid": 116, 
 "dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
+"x": 27, 
+"y": 31, 
+"z": 2
 }
 }, 
-"Health": {
-".uid": 117, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 10, 
-"SpawnOnDeath": true
-}, 
-"Model3D": {
-".uid": 118, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
+"CritSpot": {
+".uid": 117
 }, 
 "Rigidbody": {
-".uid": 119, 
-"bodyFlag": 1, 
-"enableContactCallback": true, 
+".uid": 118, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
 "freezeXRotation": false, 
 "freezeYRotation": false, 
@@ -1237,38 +1344,56 @@
 "z": 0
 }, 
 "scale": {
-"x": 28.184953689575195, 
-"y": 31.156145095825195, 
-"z": 5.2248787879943848
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
 }, 
 "translation": {
-"x": -5.3887133598327637, 
-"y": 16.431560516357422, 
-"z": 42.428276062011719
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
 }
 }
 }, 
-"name": "TestDummy Archetype  (2)"
-}, {
-"children": [
-{
-"children": [], 
+"name": "CritBox_V1 Archetype"
+}
+], 
 "components": {
 "BoxCollider": {
-".uid": 130, 
+".uid": 111, 
 "dimensions": {
-"x": 27, 
-"y": 31, 
-"z": 2
+"x": 1, 
+"y": 1, 
+"z": 1
 }
 }, 
-"CritSpot": {
-".uid": 131
+"Health": {
+".uid": 112, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 113, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 132, 
-"bodyFlag": 2, 
-"enableContactCallback": false, 
+".uid": 114, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
 "freezeXRotation": false, 
 "freezeYRotation": false, 
@@ -1288,7 +1413,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 129, 
+".uid": 110, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1296,56 +1421,38 @@
 "z": 0
 }, 
 "scale": {
-"x": 0.035479921847581863, 
-"y": 0.032096397131681442, 
-"z": 0.19139200448989868
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
 }, 
 "translation": {
-"x": -0.006781458854675293, 
-"y": 0.0062919259071350098, 
-"z": 0.47533512115478516
+"x": -55.616100311279297, 
+"y": 16.431560516357422, 
+"z": 42.428276062011719
 }
 }
 }, 
-"name": "CritBox_V1 Archetype"
-}
-], 
+"name": "TestDummy Archetype   (3)"
+}, {
+"children": [
+{
+"children": [], 
 "components": {
 "BoxCollider": {
 ".uid": 125, 
 "dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
+"x": 27, 
+"y": 31, 
+"z": 2
 }
 }, 
-"Health": {
-".uid": 126, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 10, 
-"SpawnOnDeath": true
-}, 
-"Model3D": {
-".uid": 127, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
+"CritSpot": {
+".uid": 126
 }, 
 "Rigidbody": {
-".uid": 128, 
-"bodyFlag": 1, 
-"enableContactCallback": true, 
+".uid": 127, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
 "freezeXRotation": false, 
 "freezeYRotation": false, 
@@ -1373,65 +1480,6 @@
 "z": 0
 }, 
 "scale": {
-"x": 28.184953689575195, 
-"y": 31.156145095825195, 
-"z": 5.2248787879943848
-}, 
-"translation": {
-"x": -55.616100311279297, 
-"y": 16.431560516357422, 
-"z": 42.428276062011719
-}
-}
-}, 
-"name": "TestDummy Archetype   (3)"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 139, 
-"dimensions": {
-"x": 27, 
-"y": 31, 
-"z": 2
-}
-}, 
-"CritSpot": {
-".uid": 140
-}, 
-"Rigidbody": {
-".uid": 141, 
-"bodyFlag": 2, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"ghost": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
-"Transform": {
-".uid": 138, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
 "x": 0.035479921847581863, 
 "y": 0.032096397131681442, 
 "z": 0.19139200448989868
@@ -1448,7 +1496,7 @@
 ], 
 "components": {
 "BoxCollider": {
-".uid": 134, 
+".uid": 120, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -1456,13 +1504,13 @@
 }
 }, 
 "Health": {
-".uid": 135, 
+".uid": 121, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
 "EntityHealth": 10, 
 "SpawnOnDeath": true
 }, 
 "Model3D": {
-".uid": 136, 
+".uid": 122, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -1479,7 +1527,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 137, 
+".uid": 123, 
 "bodyFlag": 1, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -1501,7 +1549,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 133, 
+".uid": 119, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1527,7 +1575,7 @@
 "children": [], 
 "components": {
 "BoxCollider": {
-".uid": 148, 
+".uid": 134, 
 "dimensions": {
 "x": 27, 
 "y": 31, 
@@ -1535,10 +1583,10 @@
 }
 }, 
 "CritSpot": {
-".uid": 149
+".uid": 135
 }, 
 "Rigidbody": {
-".uid": 150, 
+".uid": 136, 
 "bodyFlag": 2, 
 "enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
@@ -1560,7 +1608,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 147, 
+".uid": 133, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1584,7 +1632,7 @@
 ], 
 "components": {
 "BoxCollider": {
-".uid": 143, 
+".uid": 129, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -1592,13 +1640,13 @@
 }
 }, 
 "Health": {
-".uid": 144, 
+".uid": 130, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
 "EntityHealth": 10, 
 "SpawnOnDeath": true
 }, 
 "Model3D": {
-".uid": 145, 
+".uid": 131, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -1615,7 +1663,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 146, 
+".uid": 132, 
 "bodyFlag": 1, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -1637,7 +1685,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 142, 
+".uid": 128, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1663,7 +1711,7 @@
 "children": [], 
 "components": {
 "BoxCollider": {
-".uid": 157, 
+".uid": 143, 
 "dimensions": {
 "x": 27, 
 "y": 31, 
@@ -1671,10 +1719,10 @@
 }
 }, 
 "CritSpot": {
-".uid": 158
+".uid": 144
 }, 
 "Rigidbody": {
-".uid": 159, 
+".uid": 145, 
 "bodyFlag": 2, 
 "enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
@@ -1696,7 +1744,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 156, 
+".uid": 142, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1720,7 +1768,7 @@
 ], 
 "components": {
 "BoxCollider": {
-".uid": 152, 
+".uid": 138, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -1728,13 +1776,13 @@
 }
 }, 
 "Health": {
-".uid": 153, 
+".uid": 139, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
 "EntityHealth": 10, 
 "SpawnOnDeath": true
 }, 
 "Model3D": {
-".uid": 154, 
+".uid": 140, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -1751,7 +1799,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 155, 
+".uid": 141, 
 "bodyFlag": 1, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -1773,7 +1821,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 151, 
+".uid": 137, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1799,7 +1847,7 @@
 "children": [], 
 "components": {
 "BoxCollider": {
-".uid": 166, 
+".uid": 152, 
 "dimensions": {
 "x": 27, 
 "y": 31, 
@@ -1807,10 +1855,10 @@
 }
 }, 
 "CritSpot": {
-".uid": 167
+".uid": 153
 }, 
 "Rigidbody": {
-".uid": 168, 
+".uid": 154, 
 "bodyFlag": 2, 
 "enableContactCallback": false, 
 "enableContinuousCollisionDetection": false, 
@@ -1832,7 +1880,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 165, 
+".uid": 151, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1856,7 +1904,7 @@
 ], 
 "components": {
 "BoxCollider": {
-".uid": 161, 
+".uid": 147, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -1864,13 +1912,13 @@
 }
 }, 
 "Health": {
-".uid": 162, 
+".uid": 148, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
 "EntityHealth": 10, 
 "SpawnOnDeath": true
 }, 
 "Model3D": {
-".uid": 163, 
+".uid": 149, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -1887,7 +1935,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 164, 
+".uid": 150, 
 "bodyFlag": 1, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -1909,7 +1957,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 160, 
+".uid": 146, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1933,7 +1981,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 170, 
+".uid": 156, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -1943,7 +1991,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 171, 
+".uid": 157, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -1951,7 +1999,7 @@
 }
 }, 
 "Model3D": {
-".uid": 172, 
+".uid": 158, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -1968,7 +2016,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 169, 
+".uid": 155, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1987,7 +2035,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 173
+".uid": 159
 }
 }, 
 "name": "Box"
@@ -1995,7 +2043,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 175, 
+".uid": 161, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2005,7 +2053,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 176, 
+".uid": 162, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2013,7 +2061,7 @@
 }
 }, 
 "Model3D": {
-".uid": 177, 
+".uid": 163, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2030,7 +2078,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 174, 
+".uid": 160, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2049,7 +2097,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 178
+".uid": 164
 }
 }, 
 "name": "Box (1)"
@@ -2057,7 +2105,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 180, 
+".uid": 166, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2067,7 +2115,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 181, 
+".uid": 167, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2075,7 +2123,7 @@
 }
 }, 
 "Model3D": {
-".uid": 182, 
+".uid": 168, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2092,7 +2140,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 179, 
+".uid": 165, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2111,7 +2159,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 183
+".uid": 169
 }
 }, 
 "name": "Box  (2)"
@@ -2119,7 +2167,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 185, 
+".uid": 171, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2129,7 +2177,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 186, 
+".uid": 172, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2137,7 +2185,7 @@
 }
 }, 
 "Model3D": {
-".uid": 187, 
+".uid": 173, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2154,7 +2202,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 184, 
+".uid": 170, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2173,7 +2221,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 188
+".uid": 174
 }
 }, 
 "name": "Box (1)"
@@ -2181,7 +2229,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 190, 
+".uid": 176, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2191,7 +2239,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 191, 
+".uid": 177, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2199,7 +2247,7 @@
 }
 }, 
 "Model3D": {
-".uid": 192, 
+".uid": 178, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2216,7 +2264,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 189, 
+".uid": 175, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2235,7 +2283,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 193
+".uid": 179
 }
 }, 
 "name": "Box (1)"
@@ -2243,7 +2291,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 195, 
+".uid": 181, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2253,7 +2301,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 196, 
+".uid": 182, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2261,7 +2309,7 @@
 }
 }, 
 "Model3D": {
-".uid": 197, 
+".uid": 183, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2278,7 +2326,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 194, 
+".uid": 180, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2297,7 +2345,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 198
+".uid": 184
 }
 }, 
 "name": "Box (1)"
@@ -2305,7 +2353,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 200, 
+".uid": 186, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2315,7 +2363,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 201, 
+".uid": 187, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2323,7 +2371,7 @@
 }
 }, 
 "Model3D": {
-".uid": 202, 
+".uid": 188, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2340,7 +2388,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 199, 
+".uid": 185, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2359,7 +2407,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 203
+".uid": 189
 }
 }, 
 "name": "Box (1)"
@@ -2367,7 +2415,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 205, 
+".uid": 191, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2377,7 +2425,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 206, 
+".uid": 192, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2385,7 +2433,7 @@
 }
 }, 
 "Model3D": {
-".uid": 207, 
+".uid": 193, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2402,7 +2450,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 204, 
+".uid": 190, 
 "rotation": {
 "w": 0.99983751773834229, 
 "x": 0, 
@@ -2421,7 +2469,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 208
+".uid": 194
 }
 }, 
 "name": "Box (1)"
@@ -2429,7 +2477,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 210, 
+".uid": 196, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2439,7 +2487,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 211, 
+".uid": 197, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2447,7 +2495,7 @@
 }
 }, 
 "Model3D": {
-".uid": 212, 
+".uid": 198, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2464,7 +2512,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 209, 
+".uid": 195, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2483,7 +2531,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 213
+".uid": 199
 }
 }, 
 "name": "Box  (2)"
@@ -2491,7 +2539,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 215, 
+".uid": 201, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2501,7 +2549,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 216, 
+".uid": 202, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2509,7 +2557,7 @@
 }
 }, 
 "Model3D": {
-".uid": 217, 
+".uid": 203, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2526,7 +2574,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 214, 
+".uid": 200, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2545,7 +2593,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 218
+".uid": 204
 }
 }, 
 "name": "Box  (2)"
@@ -2553,7 +2601,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 220, 
+".uid": 206, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2563,7 +2611,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 221, 
+".uid": 207, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2571,7 +2619,7 @@
 }
 }, 
 "Model3D": {
-".uid": 222, 
+".uid": 208, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2588,7 +2636,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 219, 
+".uid": 205, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2607,7 +2655,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 223
+".uid": 209
 }
 }, 
 "name": "Box  (2)"
@@ -2615,7 +2663,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 225, 
+".uid": 211, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2625,7 +2673,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 226, 
+".uid": 212, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2633,7 +2681,7 @@
 }
 }, 
 "Model3D": {
-".uid": 227, 
+".uid": 213, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2650,7 +2698,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 224, 
+".uid": 210, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2669,7 +2717,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 228
+".uid": 214
 }
 }, 
 "name": "Box  (2)"
@@ -2677,7 +2725,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 230, 
+".uid": 216, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2687,7 +2735,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 231, 
+".uid": 217, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2695,7 +2743,7 @@
 }
 }, 
 "Model3D": {
-".uid": 232, 
+".uid": 218, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2712,7 +2760,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 229, 
+".uid": 215, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2731,7 +2779,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 233
+".uid": 219
 }
 }, 
 "name": "Box  (2)"
@@ -2739,7 +2787,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 235, 
+".uid": 221, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2749,7 +2797,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 236, 
+".uid": 222, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2757,7 +2805,7 @@
 }
 }, 
 "Model3D": {
-".uid": 237, 
+".uid": 223, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2774,7 +2822,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 234, 
+".uid": 220, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2793,7 +2841,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 238
+".uid": 224
 }
 }, 
 "name": "Box  (2)"
@@ -2801,7 +2849,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 240, 
+".uid": 226, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2811,7 +2859,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 241, 
+".uid": 227, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2819,7 +2867,7 @@
 }
 }, 
 "Model3D": {
-".uid": 242, 
+".uid": 228, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2836,7 +2884,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 239, 
+".uid": 225, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2855,7 +2903,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 243
+".uid": 229
 }
 }, 
 "name": "Box  (2)"
@@ -2863,7 +2911,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 245, 
+".uid": 231, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2873,7 +2921,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 246, 
+".uid": 232, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2881,7 +2929,7 @@
 }
 }, 
 "Model3D": {
-".uid": 247, 
+".uid": 233, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2898,7 +2946,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 244, 
+".uid": 230, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2917,7 +2965,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 248
+".uid": 234
 }
 }, 
 "name": "Box  (2)"
@@ -2925,7 +2973,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 250, 
+".uid": 236, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2935,7 +2983,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 251, 
+".uid": 237, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2943,7 +2991,7 @@
 }
 }, 
 "Model3D": {
-".uid": 252, 
+".uid": 238, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -2960,7 +3008,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 249, 
+".uid": 235, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -2979,7 +3027,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 253
+".uid": 239
 }
 }, 
 "name": "Box  (2)"
@@ -2987,7 +3035,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 255, 
+".uid": 241, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -2997,7 +3045,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 256, 
+".uid": 242, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3005,7 +3053,7 @@
 }
 }, 
 "Model3D": {
-".uid": 257, 
+".uid": 243, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3022,7 +3070,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 254, 
+".uid": 240, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3041,7 +3089,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 258
+".uid": 244
 }
 }, 
 "name": "Box  (2)"
@@ -3049,7 +3097,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 260, 
+".uid": 246, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3059,7 +3107,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 261, 
+".uid": 247, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3067,7 +3115,7 @@
 }
 }, 
 "Model3D": {
-".uid": 262, 
+".uid": 248, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3084,7 +3132,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 259, 
+".uid": 245, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3103,7 +3151,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 263
+".uid": 249
 }
 }, 
 "name": "Box  (2)"
@@ -3111,7 +3159,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 265, 
+".uid": 251, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3121,7 +3169,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 266, 
+".uid": 252, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3129,7 +3177,7 @@
 }
 }, 
 "Model3D": {
-".uid": 267, 
+".uid": 253, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3146,7 +3194,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 264, 
+".uid": 250, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3165,7 +3213,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 268
+".uid": 254
 }
 }, 
 "name": "Box  (2)"
@@ -3173,7 +3221,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 270, 
+".uid": 256, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3183,7 +3231,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 271, 
+".uid": 257, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3191,7 +3239,7 @@
 }
 }, 
 "Model3D": {
-".uid": 272, 
+".uid": 258, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3208,7 +3256,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 269, 
+".uid": 255, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3227,7 +3275,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 273
+".uid": 259
 }
 }, 
 "name": "Box  (2)"
@@ -3235,7 +3283,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 275, 
+".uid": 261, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3245,7 +3293,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 276, 
+".uid": 262, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3253,7 +3301,7 @@
 }
 }, 
 "Model3D": {
-".uid": 277, 
+".uid": 263, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3270,7 +3318,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 274, 
+".uid": 260, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3289,7 +3337,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 278
+".uid": 264
 }
 }, 
 "name": "Box  (2)"
@@ -3297,7 +3345,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 280, 
+".uid": 266, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3307,7 +3355,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 281, 
+".uid": 267, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3315,7 +3363,7 @@
 }
 }, 
 "Model3D": {
-".uid": 282, 
+".uid": 268, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3332,7 +3380,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 279, 
+".uid": 265, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3351,7 +3399,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 283
+".uid": 269
 }
 }, 
 "name": "Box  (2)"
@@ -3359,7 +3407,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 285, 
+".uid": 271, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3369,7 +3417,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 286, 
+".uid": 272, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3377,7 +3425,7 @@
 }
 }, 
 "Model3D": {
-".uid": 287, 
+".uid": 273, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3394,7 +3442,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 284, 
+".uid": 270, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3413,7 +3461,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 288
+".uid": 274
 }
 }, 
 "name": "Box  (2)"
@@ -3421,7 +3469,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 290, 
+".uid": 276, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3431,7 +3479,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 291, 
+".uid": 277, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3439,7 +3487,7 @@
 }
 }, 
 "Model3D": {
-".uid": 292, 
+".uid": 278, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3456,7 +3504,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 289, 
+".uid": 275, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0, 
@@ -3475,7 +3523,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 293
+".uid": 279
 }
 }, 
 "name": "Box  (2)"
@@ -3483,7 +3531,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 295, 
+".uid": 281, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3493,7 +3541,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 296, 
+".uid": 282, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3501,7 +3549,7 @@
 }
 }, 
 "Model3D": {
-".uid": 297, 
+".uid": 283, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3518,7 +3566,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 294, 
+".uid": 280, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -3537,7 +3585,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 298
+".uid": 284
 }
 }, 
 "name": "Box   (3)"
@@ -3545,7 +3593,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 300, 
+".uid": 286, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3555,7 +3603,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 301, 
+".uid": 287, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3563,7 +3611,7 @@
 }
 }, 
 "Model3D": {
-".uid": 302, 
+".uid": 288, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3580,7 +3628,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 299, 
+".uid": 285, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -3599,7 +3647,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 303
+".uid": 289
 }
 }, 
 "name": "Box    (4)"
@@ -3607,7 +3655,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 305, 
+".uid": 291, 
 "enableContactCallback": false, 
 "ghost": false, 
 "offset": {
@@ -3617,7 +3665,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 306, 
+".uid": 292, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3625,7 +3673,7 @@
 }
 }, 
 "Model3D": {
-".uid": 307, 
+".uid": 293, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -3642,7 +3690,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 304, 
+".uid": 290, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -3661,7 +3709,7 @@
 }
 }, 
 "WallComponent": {
-".uid": 308
+".uid": 294
 }
 }, 
 "name": "Box   (3)"
@@ -3712,6 +3760,10 @@
 "type": "TimeDeathSystem"
 }, {
 "type": "TrailSystem"
+}, {
+"type": "DamageOnCollideSystem"
+}, {
+"type": "DamageTextSystem"
 }
 ]
 }

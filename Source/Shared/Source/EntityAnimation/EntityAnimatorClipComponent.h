@@ -47,6 +47,8 @@ public:
 
     std::string clipName;
 
+    bool looping;
+
     ursine::Array<EntityKeyFrame> keyFrames;
 
 } Meta(Enable, HiddenInSelector);
