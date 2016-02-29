@@ -2,7 +2,7 @@
 "children": [], 
 "components": {
 "ParticleColorAnimator": {
-".uid": 541, 
+".uid": 508, 
 "color0": {
 "a": 0.41796875, 
 "b": 0.05438232421875, 
@@ -35,7 +35,7 @@
 }
 }, 
 "ParticleEmitter": {
-".uid": 542, 
+".uid": 509, 
 "emitCount": 0, 
 "emitRate": 5, 
 "emitRateVariance": 0, 
@@ -65,7 +65,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 543, 
+".uid": 510, 
 "color": {
 "a": 0.96484375, 
 "b": 0.9921875, 
@@ -78,11 +78,11 @@
 "texture": "Smoke0"
 }, 
 "TimeDeath": {
-".uid": 570, 
-"TimeBeforeDeath": 5
+".uid": 511, 
+"TimeBeforeDeath": 100
 }, 
 "Transform": {
-".uid": 540, 
+".uid": 507, 
 "rotation": {
 "w": 0.77118664979934692, 
 "x": 0, 
