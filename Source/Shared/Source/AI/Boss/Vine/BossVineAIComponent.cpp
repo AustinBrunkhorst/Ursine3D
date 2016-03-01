@@ -17,6 +17,7 @@
 #include "BossVineState.h"
 #include "VineLookForInRangePlayersState.h"
 #include "VineWhipState.h"
+#include "VineUprootState.h"
 
 #include <FloatCondition.h>
 
@@ -178,11 +179,12 @@ void BossVineAI::OnInitialize(void)
     // Setup the state machine
     auto lookState = m_stateMachine.AddState<VineLookForInRangePlayersState>( );
     auto whipState = m_stateMachine.AddState<VineWhipState>( );
+    auto uprootState = m_stateMachine.AddState<VineUprootState>( );
 
     auto trans = lookState->AddTransition( whipState, "To Whip" );
     trans->AddCondition<sm::FloatCondition>( "Cooldown", sm::Comparison::LessThan, 0.0f );
 
-    whipState->AddTransition( lookState, "To Look" );
+    whipState->AddTransition( uprootState, "To Look" );
 
     m_stateMachine.SetInitialState( lookState );
 }

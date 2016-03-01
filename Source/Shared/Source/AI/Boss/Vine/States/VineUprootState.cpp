@@ -19,6 +19,10 @@
 #include "BossVineAIComponent.h"
 #include "EntityAnimatorComponent.h"
 
+#include <PhysicsSystem.h>
+#include <Application.h>
+#include <Entity.h>
+
 using namespace ursine;
 
 VineUprootState::VineUprootState(void)
@@ -42,6 +46,7 @@ void VineUprootState::Update(BossVineStateMachine *machine)
         return;
 
     auto ai = machine->GetAI( );
+    auto aiOwner = ai->GetOwner( );
     auto animator = ai->GetAnimator( );
 
     switch (m_state)
@@ -53,8 +58,27 @@ void VineUprootState::Update(BossVineStateMachine *machine)
         }
         case UprootState::Digging:
         {
+            UAssert( ai->GetTarget( ), "Error: There aren't players to target." );
+
+            auto aiTrans = aiOwner->GetTransform( );
+            auto aiPos = aiTrans->GetWorldPosition( );
+            auto dt = Application::Instance->GetDeltaTime( );
+
             // move towards the target in the x-z plane.
+            auto targetTrans = ai->GetTarget( )->GetTransform( );
+            auto lookAtPosition = targetTrans->GetWorldPosition( );
+
+            lookAtPosition.Y( ) = aiPos.Y( );
+
+            // Turn towards the target
+            aiTrans->LookAt( lookAtPosition, ai->GetDigTurnSpeed( ) );
+
             // raycast to find what the Y position should be
+            aiPos.Y( ) = findYPosition( aiOwner->GetWorld( ), aiOwner, aiPos );
+
+            // Move forward based on the dig speed
+            aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
+
             // when we first enter this state, tell a particle emitter to play
             // spawn spheres?
             break;
@@ -90,9 +114,58 @@ void VineUprootState::playAnimation(EntityAnimator *animator, const std::string 
         .On( EntityAnimatorEvent::FinishedAnimating, &VineUprootState::onAnimationFinished );
 }
 
+float VineUprootState::findYPosition(ecs::World* world, ecs::Entity *ai, const SVec3 &aiPosition)
+{
+    auto physics = world->GetEntitySystem<ecs::PhysicsSystem>( );
+
+    auto startPos = aiPosition - SVec3::UnitY( ) * 50.0f;
+    auto dir = SVec3::UnitY( ) * 1000.0f;
+
+    physics::RaycastInput input( startPos, dir );
+    physics::RaycastOutput output;
+
+    if (!physics->Raycast( input, output, physics::RAYCAST_ALL_HITS, true ))
+        return aiPosition.Y( );
+
+    auto lowestY = std::numeric_limits<float>( ).max( );
+    auto found = false;
+
+    // iterate through all output and find the closest hit (that isn't the AI)
+    for (int i = 0; i < output.entity.size( ); ++i)
+    {
+        auto hitEntity = world->GetEntityUnique( output.entity[ i ] );
+
+        // TODO make this dynamic
+        if (hitEntity == ai->GetRoot( ) || hitEntity->GetRoot( )->GetName( ) != "CombatBowl1Level")
+            continue;
+
+        auto hit = output.hit[ i ];
+
+        if (hit.Y( ) < lowestY)
+        {
+            lowestY = hit.Y( );
+            found = true;
+        }
+    }
+
+    if (found)
+        return lowestY;
+    else
+        return aiPosition.Y( );
+}
+
+
 void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
 {
     EVENT_ATTRS(EntityAnimator, ursine::ecs::EntityEventArgs);
+
+    switch (m_state)
+    {
+        case UprootState::Burrowing:
+        {
+            m_state = UprootState::Digging;
+        }
+    }
 
     m_animating = false;
 

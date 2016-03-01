@@ -44,5 +44,7 @@ private:
 
     void playAnimation(EntityAnimator *animator, const std::string &clip);
 
+    float findYPosition(ursine::ecs::World *world, ursine::ecs::Entity *ai, const ursine::SVec3 &aiPosition);
+
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };
