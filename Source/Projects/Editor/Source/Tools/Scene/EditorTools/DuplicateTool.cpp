@@ -140,7 +140,7 @@ void DuplicateTool::enableGizmo(void)
     m_gizmo->SetVisibleInEditor( false );
 
     // Make all models draw over everything
-    for (auto &model : m_gizmo->GetComponentsInChildren<ecs::Model3D>( ))
+    for (auto &model : m_gizmo->GetComponentsInChildren<Model3D>( ))
     {
         //model->SetOverdraw( true );
         model->SetMaterialData( 4, 0, 0 );

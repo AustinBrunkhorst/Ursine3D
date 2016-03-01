@@ -20,7 +20,6 @@
 
 #include "ComponentUtils.h"
 
-#include <Timer.h>
 #include <Meta.h>
 #include <ComponentConfig.h>
 
@@ -121,14 +120,15 @@ JSConstructor(EntityHandler)
     if (arguments.size( ) != 1)
         JSThrow( "Invalid constructor arguments." );
 
-    auto *world = GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
+    m_scene = &GetCoreSystem( Editor )->GetProject( )->GetScene( );
+    m_world = m_scene->GetActiveWorld( );
 
-    if (!world)
+    if (!m_world)
         JSThrow( "No active world." );
 
     auto id = arguments[ 0 ]->GetUIntValue( );
     
-    m_handle = world->GetEntityManager( )->GetEntityByID( id );
+    m_handle = m_world->GetEntityManager( )->GetEntityByID( id );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,28 +136,34 @@ JSConstructor(EntityHandler)
 
 JSMethod(EntityHandler::isValid)
 {
-    return CefV8Value::CreateBool( m_handle.IsValid( ) );
+    return CefV8Value::CreateBool( getHandle( ).IsValid( ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 JSMethod(EntityHandler::isRemovalEnabled)
 {
-    return CefV8Value::CreateBool( m_handle && m_handle->IsDeletionEnabled( ) );
+    auto &handle = getHandle( );
+
+    return CefV8Value::CreateBool( handle && handle->IsDeletionEnabled( ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 JSMethod(EntityHandler::isHierarchyChangeEnabled)
 {
-    return CefV8Value::CreateBool( m_handle && m_handle->IsHierarchyChangeEnabled( ) );
+    auto &handle = getHandle( );
+
+    return CefV8Value::CreateBool( handle && handle->IsHierarchyChangeEnabled( ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 JSMethod(EntityHandler::isVisibleInEditor)
 {
-    return CefV8Value::CreateBool( m_handle && m_handle->IsVisibleInEditor( ) );
+    auto &handle = getHandle( );
+
+    return CefV8Value::CreateBool( handle && handle->IsVisibleInEditor( ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -165,10 +171,12 @@ JSMethod(EntityHandler::isVisibleInEditor)
 
 JSMethod(EntityHandler::remove)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    m_handle->Delete( );
+    handle->Delete( );
 
     return CefV8Value::CreateBool( true );
 }
@@ -178,8 +186,10 @@ JSMethod(EntityHandler::remove)
 
 JSMethod(EntityHandler::getName)
 {
-    if (m_handle)
-        return CefV8Value::CreateString( m_handle->GetName( ) );
+    auto &handle = getHandle( );
+
+    if (handle)
+        return CefV8Value::CreateString( handle->GetName( ) );
 
     return CefV8Value::CreateBool( false );
 }
@@ -188,9 +198,11 @@ JSMethod(EntityHandler::getName)
 
 JSMethod(EntityHandler::setName)
 {
-    if (m_handle)
+    auto &handle = getHandle( );
+
+    if (handle)
     {
-        m_handle->SetName( arguments[ 0 ]->GetStringValue( ) );
+        handle->SetName( arguments[ 0 ]->GetStringValue( ) );
 
         return CefV8Value::CreateBool( true );
     }
@@ -203,10 +215,12 @@ JSMethod(EntityHandler::setName)
 
 JSMethod(EntityHandler::inspect)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto components = m_handle->GetComponents( );
+    auto components = handle->GetComponents( );
 
     // sort the components based on their instance ID
     sort( components.begin( ), components.end( ), ecs::EntityManager::CompareComponentsAscending );
@@ -230,7 +244,9 @@ JSMethod(EntityHandler::inspectComponent)
     if (arguments.size( ) != 1)
         JSThrow( "Invalid constructor arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -247,7 +263,7 @@ JSMethod(EntityHandler::inspectComponent)
 
     auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    auto component = m_handle->GetComponent( id );
+    auto component = handle->GetComponent( id );
 
     if (!component)
         return CefV8Value::CreateBool( false );
@@ -264,7 +280,9 @@ JSMethod(EntityHandler::inspectComponent)
 
 JSMethod(EntityHandler::hasComponent)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -285,14 +303,16 @@ JSMethod(EntityHandler::hasComponent)
 
     mask.set( id, true );
 
-    return CefV8Value::CreateBool( m_handle->HasComponent( mask ) );
+    return CefV8Value::CreateBool( handle->HasComponent( mask ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 JSMethod(EntityHandler::addComponent)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -313,11 +333,11 @@ JSMethod(EntityHandler::addComponent)
 
     // have this run in the main thread
     Application::PostMainThread( [=] {
-        if (!m_handle->HasComponent( componentTypeMask ))
+        if (!handle->HasComponent( componentTypeMask ))
         {
             auto instance = componentType.CreateDynamic( );
 
-            m_handle->AddComponent( instance.GetValue<ecs::Component*>( ) );
+            handle->AddComponent( instance.GetValue<ecs::Component*>( ) );
         }
     } );
 
@@ -328,7 +348,9 @@ JSMethod(EntityHandler::addComponent)
 
 JSMethod(EntityHandler::removeComponent)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -347,7 +369,7 @@ JSMethod(EntityHandler::removeComponent)
 
     // Have this run in the main thread
     Application::PostMainThread( [=] {
-        m_handle->RemoveComponent( id );
+        handle->RemoveComponent( id );
     } );
 
     return CefV8Value::CreateBool( true );
@@ -361,7 +383,9 @@ JSMethod(EntityHandler::componentSet)
     if (arguments.size( ) != 2)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -376,7 +400,7 @@ JSMethod(EntityHandler::componentSet)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -397,7 +421,9 @@ JSMethod(EntityHandler::componentFieldUpdate)
     if (arguments.size( ) != 3)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -413,7 +439,7 @@ JSMethod(EntityHandler::componentFieldUpdate)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -467,7 +493,9 @@ JSMethod(EntityHandler::componentFieldArrayUpdate)
     if (arguments.size( ) != 4)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -484,7 +512,7 @@ JSMethod(EntityHandler::componentFieldArrayUpdate)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -522,7 +550,9 @@ JSMethod(EntityHandler::componentFieldArrayInsert)
     if (arguments.size( ) != 4)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -539,7 +569,7 @@ JSMethod(EntityHandler::componentFieldArrayInsert)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -577,7 +607,9 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     if (arguments.size( ) != 3)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -594,7 +626,7 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -629,7 +661,9 @@ JSMethod(EntityHandler::componentFieldArraySwap)
     if (arguments.size( ) != 4)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -647,7 +681,7 @@ JSMethod(EntityHandler::componentFieldArraySwap)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -686,7 +720,9 @@ JSMethod(EntityHandler::componentFieldArrayGetLength)
     if (arguments.size( ) != 2)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -702,7 +738,7 @@ JSMethod(EntityHandler::componentFieldArrayGetLength)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -737,7 +773,9 @@ JSMethod(EntityHandler::componentButtonInvoke)
     if (arguments.size( ) != 2)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto componentName = arguments[ 0 ]->GetStringValue( ).ToString( );
@@ -753,7 +791,7 @@ JSMethod(EntityHandler::componentButtonInvoke)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = m_handle->GetComponent(
+    auto *component = handle->GetComponent(
         componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
     );
 
@@ -780,10 +818,12 @@ JSMethod(EntityHandler::componentButtonInvoke)
 
 JSMethod(EntityHandler::getChildren)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto &children = *m_handle->GetChildren( );
+    auto &children = *handle->GetChildren( );
 
     auto childrenArray = CefV8Value::CreateArray( 
         static_cast<int>( children.size( ) ) 
@@ -791,7 +831,7 @@ JSMethod(EntityHandler::getChildren)
 
     for (size_t i = 0; i < children.size( ); ++i)
     {
-        auto &child = m_handle->GetWorld( )->GetEntity( children[ i ] );
+        auto child = handle->GetWorld( )->GetEntity( children[ i ] );
 
         childrenArray->SetValue( static_cast<int>( i ), 
             CefV8Value::CreateUInt( child->GetID( ) ) 
@@ -805,10 +845,12 @@ JSMethod(EntityHandler::getChildren)
 
 JSMethod(EntityHandler::getParent)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto parent = m_handle->GetTransform( )->GetParent( );
+    auto parent = handle->GetTransform( )->GetParent( );
 
     if (!parent)
         return CefV8Value::CreateNull( );
@@ -823,10 +865,12 @@ JSMethod(EntityHandler::setParent)
     if (arguments.size( ) != 1)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto *transform = m_handle->GetTransform( );
+    auto *transform = handle->GetTransform( );
 
     auto targetParent = arguments[ 0 ];
 
@@ -840,7 +884,7 @@ JSMethod(EntityHandler::setParent)
     }
     else
     {
-        auto targetEntity = m_handle->GetWorld( )->GetEntity( targetParent->GetUIntValue( ) );
+        auto targetEntity = handle->GetWorld( )->GetEntity( targetParent->GetUIntValue( ) );
 
         if (!targetEntity)
             return CefV8Value::CreateBool( false );
@@ -855,10 +899,12 @@ JSMethod(EntityHandler::setParent)
 
 JSMethod(EntityHandler::getSiblingIndex)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto index = m_handle->GetTransform( )->GetSiblingIndex( );
+    auto index = handle->GetTransform( )->GetSiblingIndex( );
 
     return CefV8Value::CreateUInt( index );
 }
@@ -870,10 +916,12 @@ JSMethod(EntityHandler::setSiblingIndex)
     if (arguments.size( ) != 1)
         JSThrow( "Invalid arguments.", nullptr );
 
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    m_handle->GetTransform( )->SetSiblingIndex( 
+    handle->GetTransform( )->SetSiblingIndex( 
         arguments[ 0 ]->GetUIntValue( ) 
     );
 
@@ -885,13 +933,15 @@ JSMethod(EntityHandler::setSiblingIndex)
 
 JSMethod(EntityHandler::saveAsArchetype)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
     auto *editor = GetCoreSystem( Editor );
 
     CefRefPtr<UIFileDialogCallback> callback = 
-        new UIFileDialogCallback( std::bind( &doSaveArchetype, m_handle, _1, _2 ) );
+        new UIFileDialogCallback( std::bind( &doSaveArchetype, handle, _1, _2 ) );
 
     std::vector<CefString> filters {
         "Archetype Files|.uatype"
@@ -913,10 +963,23 @@ JSMethod(EntityHandler::saveAsArchetype)
 
 JSMethod(EntityHandler::clone)
 {
-    if (!m_handle)
+    auto &handle = getHandle( );
+
+    if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto clone = m_handle->Clone( );
+    auto clone = handle->Clone( );
 
     return CefV8Value::CreateUInt( clone->GetID( ) );
+}
+
+const ecs::EntityHandle &EntityHandler::getHandle(void)
+{
+    auto *activeWorld = m_scene->GetActiveWorld( );
+
+    // make sure the world is still valid
+    if (activeWorld != m_world)
+        return ecs::EntityHandle::Invalid( );
+
+    return m_handle;
 }

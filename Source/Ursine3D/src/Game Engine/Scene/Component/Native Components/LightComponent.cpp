@@ -153,7 +153,7 @@ namespace ursine
         {
             m_light->SetSpotlightAngles( angles );
 
-            NOTIFY_COMPONENT_CHANGED( "spotLightAngles", angles );
+            NOTIFY_COMPONENT_CHANGED( "spotlightAngles", angles );
         }
 
 		RenderMask Light::GetRenderMask(void) const

@@ -32,7 +32,10 @@ class DefaultFieldInspector extends FieldInspectionHandler implements IFieldInsp
             if (m_isBitMaskEditor) {
                 loadEnumBitMaskValue( value );
             } else {
-                m_comboInput.value = value;
+                m_comboInput.value = Editor.instance.componentDatabase.getEnumNumberValue(
+                    m_type.enumValue,
+                    value
+                );
             }
         } else if (m_arrayInspector != null) {
             m_arrayInspector.updateValue( value );

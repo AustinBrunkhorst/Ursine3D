@@ -82,7 +82,7 @@ EditorMain.initWindows = function() {
 	var column4 = row3.addColumn();
 	column4.style.width = "100%";
 	column4.appendChild(projectBrowser.window);
-	sceneView.onViewportInvalidated();
+	haxe_Timer.delay($bind(sceneView,sceneView.onViewportInvalidated),100);
 };
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
@@ -709,6 +709,7 @@ var ursine_editor_menus_DebugMenu = function() { };
 $hxClasses["ursine.editor.menus.DebugMenu"] = ursine_editor_menus_DebugMenu;
 ursine_editor_menus_DebugMenu.__name__ = ["ursine","editor","menus","DebugMenu"];
 ursine_editor_menus_DebugMenu.doEditorReload = function() {
+	window.location.reload(true);
 };
 ursine_editor_menus_DebugMenu.doEditorDebugTools = function() {
 	editor_commands_InspectEditorUI();
@@ -846,6 +847,13 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 	,getEnumValue: function(enewm,key) {
 		var result = Lambda.find(enewm,function(entry) {
 			return entry.key == key;
+		});
+		if(result == null) return null; else return result.value;
+	}
+	,getEnumNumberValue: function(enewm,value) {
+		if(!(typeof(value) == "string")) return value;
+		var result = Lambda.find(enewm,function(entry) {
+			return entry.key == value;
 		});
 		if(result == null) return null; else return result.value;
 	}
@@ -1097,7 +1105,9 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		var database = ursine_editor_Editor.instance.componentDatabase;
 		var componentType = database.getComponentType(this.component.type);
 		while(this.m_typeFields.length > 0) this.m_typeFields.pop().remove();
-		var fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[type];
+		var fields;
+		var key = database.getEnumNumberValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,type);
+		fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[key];
 		var _g = 0;
 		while(_g < fields.length) {
 			var fieldName = fields[_g];
@@ -1371,7 +1381,7 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 	updateValue: function(value) {
 		this.m_instance = value;
 		if(this.m_isEnum) {
-			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
+			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = ursine_editor_Editor.instance.componentDatabase.getEnumNumberValue(this.m_type.enumValue,value);
 		} else if(this.m_arrayInspector != null) this.m_arrayInspector.updateValue(value); else {
 			var _g = 0;
 			var _g1 = this.m_type.fields;

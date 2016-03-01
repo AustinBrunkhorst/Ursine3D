@@ -19,7 +19,7 @@
 namespace ursine
 {
     RenderableComponentBase::RenderableComponentBase(std::function<void(void)> updateCallback)
-        : dirty( false )
+        : dirty( true )
 		, m_handle( 0 )
         , m_updateRenderer( updateCallback ) { }
 

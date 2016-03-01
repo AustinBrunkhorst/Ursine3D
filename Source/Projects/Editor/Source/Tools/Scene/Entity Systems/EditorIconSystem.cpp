@@ -35,7 +35,7 @@ EditorIconSystem::EditorIconSystem(ecs::World *world)
     
 }
 
-void EditorIconSystem::OnInitialize(void)
+void EditorIconSystem::OnSceneReady(Scene *scene)
 {
     m_world->Listener( this )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd )

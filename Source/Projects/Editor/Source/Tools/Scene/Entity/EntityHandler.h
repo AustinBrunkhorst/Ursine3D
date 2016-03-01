@@ -67,5 +67,9 @@ public:
     JSMethod(clone);
 
 private:
+    const ursine::ecs::EntityHandle &getHandle(void);
+
+    ursine::Scene *m_scene;
+    ursine::ecs::World *m_world;
     ursine::ecs::EntityHandle m_handle;
 } Meta(Enable);

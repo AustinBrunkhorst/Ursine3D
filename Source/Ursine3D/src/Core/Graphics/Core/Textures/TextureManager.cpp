@@ -504,10 +504,6 @@ namespace ursine
 
         GfxHND TextureManager::CreateTexture(uint8_t * binaryData, size_t binarySize, unsigned width, unsigned height)
         {
-            static auto calls = 0;
-
-            std::cout << "calls: " << ++calls << std::endl;
-
             // if this texture already exists and we are updating it, release the prior resource, keep old ID
             size_t internalID;
 
