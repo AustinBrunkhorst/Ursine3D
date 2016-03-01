@@ -117,7 +117,7 @@ PixelInputType main(uint id : SV_VERTEXID)
     }
 
     // scale
-    position.xy *= g_bufPosColor[ particleIndex ].scaleX / 2.0f;
+    position.xy *= g_bufPosColor[ particleIndex ].scaleX * 0.5f;
 
     // rotate
     position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));

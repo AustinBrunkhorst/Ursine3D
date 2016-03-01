@@ -4,12 +4,12 @@
 
 NATIVE_COMPONENT_DEFINITION( BaseWeapon );
 
-using namespace ursine;
+
 
 
 BaseWeapon::BaseWeapon( void ) :
     BaseComponent( ),
-    AbstractWeapon( )
+    AbstractProjWeapon( )
 {
 }
 
@@ -22,6 +22,7 @@ void BaseWeapon::OnInitialize( void )
 {
     AbstractWeaponInit( BaseWeapon, GetOwner( ) );
 }
+
 
 void BaseWeapon::RemoveMySelf(void)
 {

@@ -20,14 +20,14 @@ namespace ursine
 {
     namespace physics
     {
-	    Body::Body(void)
+        Body::Body(void)
             : BodyBase( )
-			, m_ghost( false )
+            , m_disableContactResponse( false )
         {
             
         }
 
-		void Body::SetUserID(int id)
+        void Body::SetUserID(int id)
         {
         #ifdef BULLET_PHYSICS
 
@@ -36,7 +36,7 @@ namespace ursine
         #endif
         }
 
-	    int Body::GetUserID(void)
+        int Body::GetUserID(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -45,47 +45,47 @@ namespace ursine
         #endif
         }
 
-		void Body::SetUserPointer(void* ptr)
-		{
-		#ifdef BULLET_PHYSICS
+        void Body::SetUserPointer(void* ptr)
+        {
+        #ifdef BULLET_PHYSICS
 
-			setUserPointer( ptr );
+            setUserPointer( ptr );
 
-		#endif
-		}
+        #endif
+        }
 
-		void *Body::GetUserPointer(void)
-		{
-		#ifdef BULLET_PHYSICS
+        void *Body::GetUserPointer(void)
+        {
+        #ifdef BULLET_PHYSICS
 
-			return getUserPointer( );
+            return getUserPointer( );
 
-		#endif
-		}
+        #endif
+        }
 
-		Body* Body::DownCast(BodyBase* body)
-		{
-		#ifdef BULLET_PHYSICS
+        Body* Body::DownCast(BodyBase* body)
+        {
+        #ifdef BULLET_PHYSICS
 
-			if (!body || body->getInternalType( ) != BT_BODY)
-				return nullptr;
+            if (!body || body->getInternalType( ) != BT_BODY)
+                return nullptr;
 
-			return reinterpret_cast<Body*>( body );
+            return reinterpret_cast<Body*>( body );
 
-		#endif
-		}
+        #endif
+        }
 
-		const Body* Body::DownCast(const BodyBase* body)
-		{
-		#ifdef BULLET_PHYSICS
+        const Body* Body::DownCast(const BodyBase* body)
+        {
+        #ifdef BULLET_PHYSICS
 
-			if (!body || body->getInternalType() != BT_BODY)
-				return nullptr;
+            if (!body || body->getInternalType() != BT_BODY)
+                return nullptr;
 
-			return reinterpret_cast<const Body*>( body );
+            return reinterpret_cast<const Body*>( body );
 
-		#endif
-		}
+        #endif
+        }
 
         void Body::SetTransform(ecs::Transform* transform)
         {
@@ -123,66 +123,66 @@ namespace ursine
 
         void Body::SetCollider(ColliderBase* collider)
         {
-		#ifdef BULLET_PHYSICS
+        #ifdef BULLET_PHYSICS
 
             setCollisionShape( collider );
 
-		#endif
+        #endif
         }
 
-	    ColliderBase *Body::GetCollider(void)
-	    {
-		#ifdef BULLET_PHYSICS
+        ColliderBase *Body::GetCollider(void)
+        {
+        #ifdef BULLET_PHYSICS
 
-			return getCollisionShape( );
+            return getCollisionShape( );
 
-		#endif
-	    }
+        #endif
+        }
 
         void Body::SetOffset(const SVec3 &offset)
         {
             m_offset = offset;
         }
 
-	    void Body::SetGhost(bool enable)
-	    {
-			m_ghost = enable;
-
-			if (m_ghost)
-			{
-			#ifdef BULLET_PHYSICS
-
-				setCollisionFlags( getCollisionFlags( ) | CF_NO_CONTACT_RESPONSE );
-
-			#endif
-			}
-			else
-			{
-			#ifdef BULLET_PHYSICS
-
-				setCollisionFlags( getCollisionFlags( ) & ~CF_NO_CONTACT_RESPONSE );
-
-			#endif
-			}
-	    }
-
-	    bool Body::GetGhost(void) const
-	    {
-			return m_ghost;
-	    }
-
-	    void Body::SetAwake(void)
-	    {
-		#ifdef BULLET_PHYSICS
-
-			activate( );
-
-		#endif
-	    }
-
-	    SVec3 Body::GetOffset(void) const
+        SVec3 Body::GetOffset(void) const
         {
             return m_offset;
+        }
+
+        void Body::SetDisableContactResponse(bool disable)
+        {
+            m_disableContactResponse = disable;
+
+            if (m_disableContactResponse)
+            {
+            #ifdef BULLET_PHYSICS
+
+                setCollisionFlags( getCollisionFlags( ) | CF_NO_CONTACT_RESPONSE );
+
+            #endif
+            }
+            else
+            {
+            #ifdef BULLET_PHYSICS
+
+                setCollisionFlags( getCollisionFlags( ) & ~CF_NO_CONTACT_RESPONSE );
+
+            #endif
+            }
+        }
+
+        bool Body::GetDisableContactResponse(void) const
+        {
+            return m_disableContactResponse;
+        }
+
+        void Body::SetAwake(void)
+        {
+        #ifdef BULLET_PHYSICS
+
+            activate( );
+
+        #endif
         }
     }
 }

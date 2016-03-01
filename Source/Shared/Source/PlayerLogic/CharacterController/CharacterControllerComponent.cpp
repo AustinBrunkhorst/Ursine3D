@@ -24,11 +24,14 @@ CharacterController::CharacterController(void)
     , m_rotateSpeed( 4.0f )
     , m_jump( false )
     , m_deadZone( 0.0f )
-    , m_deadZoneSnap( 0.0f ) { }
+    , m_deadZoneSnap( 0.0f )
+    , m_lockMovement( false )
+    , m_lockLooking( false ) { }
 
 CharacterController::~CharacterController(void)
 {
     GetOwner( )->Listener( this )
+        .Off(game::MOVEMENT_COMMAND, &CharacterController::SetMoveDirection)
         .Off( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
         .Off( game::JUMP_COMMAND, &CharacterController::Jump );
 }
@@ -86,11 +89,39 @@ void CharacterController::SetLookDirection(const ursine::Vec2& lookDir)
     m_lookDir = lookDir;
 }
 
+bool CharacterController::GetLockMovement(void) const
+{
+    return m_lockMovement;
+}
+
+void CharacterController::SetLockMovement(bool flag)
+{
+    m_lockMovement = flag;
+}
+
+bool CharacterController::GetLockLooking(void) const
+{
+    return m_lockLooking;
+}
+
+void CharacterController::SetLockLooking(bool flag)
+{
+    m_lockLooking = flag;
+}
+
 void CharacterController::OnInitialize(void)
 {
     GetOwner( )->Listener(this)
+        .On( game::MOVEMENT_COMMAND, &CharacterController::SetMoveDirection)
         .On( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
         .On( game::JUMP_COMMAND, &CharacterController::Jump );
+}
+
+void CharacterController::SetMoveDirection(EVENT_HANDLER(game::LOOK_COMMAND))
+{
+    EVENT_ATTRS(ursine::ecs::Entity, game::MovementEventArgs);
+
+    m_moveDir = args->m_moveDir;
 }
 
 void CharacterController::SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND))

@@ -16,10 +16,10 @@ namespace ursine
     namespace sm
     {
         template<typename ConditionType, class... Args>
-        ConditionType *Transition::AddCondition(const std::string &variableName, Args&&... args)
+        ConditionType *Transition::AddCondition(Args&&... args)
         {
             auto condition = std::make_shared<ConditionType>(
-                variableName, std::forward<Args>( args )...
+                std::forward<Args>( args )...
             );
 
             m_conditions.push_back( condition );

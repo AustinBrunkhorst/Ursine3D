@@ -42,6 +42,12 @@
 #include "WeaponSystem/Inventory/InventorySystem.h"
 
 /////////////////////////////////
+//        Trails System        //
+/////////////////////////////////
+
+#include "Trails/TrailSystem.h"
+
+/////////////////////////////////
 //        Command System       //
 /////////////////////////////////
 
@@ -63,6 +69,12 @@
 #include "CameraAnimation/CameraAnimatorSystem.h"
 
 /////////////////////////////////
+//       Entity Animation      //
+/////////////////////////////////
+
+#include "EntityAnimation/EntityAnimatorSystem.h"
+
+/////////////////////////////////
 //       Spawner System        //
 /////////////////////////////////
 
@@ -73,3 +85,9 @@
 /////////////////////////////////
 
 #include "LevelSegmentManager/SegmentLogic/Misc/StartRoomDirectorSystem.h"
+
+/////////////////////////////////
+//       Damage System         //
+/////////////////////////////////
+#include "DamageSystem/DamageTextSystem.h"
+#include "DamageSystem/DamageOnCollideSystem.h"

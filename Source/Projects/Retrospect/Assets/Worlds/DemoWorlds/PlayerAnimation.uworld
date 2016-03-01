@@ -1,0 +1,342 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Light": {
+".uid": 3, 
+"color": {
+"a": 1, 
+"b": 0.5, 
+"g": 0.5, 
+"r": 0.5
+}, 
+"intensity": 1, 
+"radius": 40, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 60, 
+"z": 0
+}
+}
+}, 
+"name": "Global Light"
+}, {
+"children": [], 
+"components": {
+"Camera": {
+".uid": 10, 
+"active": true, 
+"farPlane": 2500, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 9, 
+"rotation": {
+"w": 0.89537698030471802, 
+"x": 0.24651414155960083, 
+"y": 0.35754790902137756, 
+"z": -0.098439693450927734
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -32.097747802734375, 
+"y": 39.970451354980469, 
+"z": -37.494651794433594
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [], 
+"components": {
+"Animator": {
+".uid": 17, 
+"animation": "Player_Run", 
+"changeState": false, 
+"currentRig": "Player", 
+"currentState": "Idle", 
+"loopAnimation": true, 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [
+{
+"animName": "Player", 
+"stateName": "Idle"
+}, {
+"animName": "Player_Die", 
+"stateName": "Die"
+}, {
+"animName": "Player_Jump", 
+"stateName": "Jump"
+}, {
+"animName": "Player_Run", 
+"stateName": "Run"
+}
+], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 16, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 14, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 20, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Player"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 21, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Player_Die"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 22, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Player_Jump"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 23, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Player_Run"
+}
+], 
+"components": {
+"Transform": {
+".uid": 18, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 19, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 8, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 0, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 7, 
+"systems": []
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}

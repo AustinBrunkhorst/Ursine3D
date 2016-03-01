@@ -49,7 +49,6 @@ namespace ursine
                 SetRenderMode
             );
 
-
             EditorField(
                 Vec2 viewportPosition,
                 GetViewportPosition,
@@ -92,11 +91,17 @@ namespace ursine
                 SetRenderLayer
             );
 
-            Meta(BitMaskEditor)
+            EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
                 SetRenderMask
+            );
+
+            EditorField(
+                Color clearColor,
+                GetClearColor,
+                SetClearColor
             );
 
             Meta(Enable)
@@ -158,6 +163,8 @@ namespace ursine
             // if selected. Used by the editor
             void SetEditorSelectionMode(bool selected);
 
+            const Color &GetClearColor(void) const;
+            void SetClearColor(const Color &color);
         private:
             bool m_active;
             bool m_isEditorCamera;

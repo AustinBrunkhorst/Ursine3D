@@ -16,7 +16,7 @@
 #include "SpawnerGroupComponent.h"
 #include "SpawnerComponent.h"
 
-#include "LevelSegmentManager.h"
+#include "LevelSegmentManagerComponent.h"
 
 #include <Notification.h>
 #include <SystemManager.h>
@@ -24,6 +24,7 @@
 NATIVE_COMPONENT_DEFINITION( SpawnerGroup );
 
 using namespace ursine;
+using namespace ecs;
 
 SpawnerGroup::SpawnerGroup(void)
     : BaseComponent( )
@@ -34,17 +35,22 @@ SpawnerGroup::SpawnerGroup(void)
 
 SpawnerGroup::~SpawnerGroup(void)
 {
-    auto levelManager = GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( );
+    auto levelManager = GetOwner( )->GetWorld( )
+        ->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
 
-    if (levelManager)
-        levelManager->Listener( this )
+    if (levelManager.size( ))
+        levelManager[ 0 ]->GetComponent<LevelSegmentManager>( )->Listener( this )
             .Off( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 void SpawnerGroup::OnInitialize(void)
 {
-    GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( )->Listener( this )
-        .On( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
+    auto levelManager = GetOwner( )->GetWorld( )
+        ->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+
+    if (levelManager.size( ))
+        levelManager[ 0 ]->GetComponent<LevelSegmentManager>( )->Listener( this )
+            .On( LevelSegmentManagerEvents::SegmentChanged, &SpawnerGroup::onLevelSegmentChange );
 }
 
 AIArchetype SpawnerGroup::GetEnemyType(void) const
@@ -64,8 +70,6 @@ int SpawnerGroup::GetActiveEnemiesCount(void) const
 
 void SpawnerGroup::addSpawner(Spawner *spawner)
 {
-    UAssert( !haveSpawnerOfType( spawner->m_enemyType ), "Error: Why is this happening?" );
-
     m_spawners[ spawner->m_enemyType ] = spawner;
 }
 

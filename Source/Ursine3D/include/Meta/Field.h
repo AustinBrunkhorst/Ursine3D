@@ -36,6 +36,8 @@ namespace ursine
                 FieldSetterBase *setter
             );
 
+            static const Field &Invalid(void);
+
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
 

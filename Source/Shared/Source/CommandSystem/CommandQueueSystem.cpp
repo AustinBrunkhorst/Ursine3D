@@ -12,13 +12,14 @@
 
 #include "CommandQueueSystem.h"
 #include <CommandQueueComponent.h>
+#include <InputControllerComponent.h>
 
 #include <SystemConfig.h>
 
 ENTITY_SYSTEM_DEFINITION(CommandQueueSystem);
 
 CommandQueueSystem::CommandQueueSystem(ursine::ecs::World* world)
-    : FilterSystem(world, ursine::ecs::Filter().All<CommandQueue>(), 68) {}
+    : FilterSystem(world, ursine::ecs::Filter().All<CommandQueue, InputController>(), 68) {}
 
 void CommandQueueSystem::Process(ursine::ecs::Entity* entity)
 {

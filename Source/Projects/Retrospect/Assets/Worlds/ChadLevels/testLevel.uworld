@@ -29,8 +29,8 @@
 "z": 0
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 1, 
+"x": 0.34747499227523804, 
+"y": 0.34747499227523804, 
 "z": 0.58947008848190308
 }, 
 "translation": {
@@ -65,10 +65,10 @@
 "Transform": {
 ".uid": 10, 
 "rotation": {
-"w": 0.78884518146514893, 
-"x": 0.20332318544387817, 
-"y": -0.56162965297698975, 
-"z": 0.14475886523723602
+"w": 0.71492594480514526, 
+"x": 0.19557219743728638, 
+"y": 0.64750140905380249, 
+"z": -0.17712783813476563
 }, 
 "scale": {
 "x": 1, 
@@ -76,9 +76,9 @@
 "z": 1
 }, 
 "translation": {
-"x": 88.035125732421875, 
-"y": 78.961593627929688, 
-"z": -68.773910522460938
+"x": -111.66725921630859, 
+"y": 44.521327972412109, 
+"z": -7.7665767669677734
 }
 }
 }, 
@@ -106,6 +106,7 @@
 }, 
 "Model3D": {
 ".uid": 18, 
+"castsShadows": true, 
 "color": {
 "a": 1, 
 "b": 0.389190673828125, 
@@ -170,8 +171,8 @@
 "z": 0
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 1, 
+"x": 0.34747499227523804, 
+"y": 0.34747499227523804, 
 "z": 0.58947008848190308
 }, 
 "translation": {
@@ -211,8 +212,8 @@
 "z": 0.68159061670303345
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 1, 
+"x": 0.34747499227523804, 
+"y": 0.34747499227523804, 
 "z": 0.58947008848190308
 }, 
 "translation": {
@@ -229,20 +230,21 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 41, 
-"currentAnimation": "", 
+".uid": 42, 
+"animation": "", 
+"changeState": false, 
 "currentRig": "Player", 
 "currentState": "Player_Idle", 
-"futureState": "", 
 "loopAnimation": true, 
-"m_stateArray": [], 
 "playAnimation": true, 
 "renderDebug": false, 
-"stateName": "", 
+"stArray": [], 
+"stBlender": [], 
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 42, 
+".uid": 43, 
+"castsShadows": false, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -258,7 +260,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 40, 
+".uid": 41, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -284,7 +286,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 49, 
+".uid": 52, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -308,7 +310,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 50, 
+".uid": 53, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -332,17 +334,17 @@
 ], 
 "components": {
 "Audio Listener 3D": {
-".uid": 44, 
+".uid": 47, 
 "testing": []
 }, 
 "Camera": {
-".uid": 45, 
+".uid": 48, 
 "active": true, 
 "farPlane": 1000, 
 "fov": 60, 
 "nearPlane": 0.10000000149011612, 
 "renderLayer": 1, 
-"renderMask": 18, 
+"renderMask": 1042, 
 "renderMode": 1, 
 "viewportPosition": {
 "x": 0, 
@@ -354,7 +356,7 @@
 }
 }, 
 "Transform": {
-".uid": 43, 
+".uid": 46, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -385,25 +387,35 @@
 }, 
 "CharacterController": {
 ".uid": 31, 
+"deadZone": 0, 
+"deadZoneSnap": 0, 
+"lockLooking": false, 
+"lockMovement": false, 
 "rotateSpeed": 10
 }, 
-"CommandInputController": {
-".uid": 32, 
-"UseKeyboard": false
-}, 
 "CommandQueue": {
-".uid": 33
+".uid": 32
 }, 
 "CylinderCollider": {
-".uid": 34, 
+".uid": 33, 
 "height": 30, 
 "radius": 5
 }, 
+"Health": {
+".uid": 34, 
+"ArchetypeToSpawnOnDeath": "FX/JordanFire.uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": true
+}, 
+"InputController": {
+".uid": 35, 
+"UseKeyboard": false
+}, 
 "InteractionBay": {
-".uid": 35
+".uid": 36
 }, 
 "Inventory": {
-".uid": 36, 
+".uid": 37, 
 "LastStand": "P1HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 
@@ -412,11 +424,11 @@
 "m_currWeapon": 0
 }, 
 "PlayerID": {
-".uid": 37, 
+".uid": 38, 
 "PlayerId": 0
 }, 
 "Rigidbody": {
-".uid": 38, 
+".uid": 39, 
 "bodyFlag": 2, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
@@ -438,7 +450,7 @@
 "sleepToggle": true
 }, 
 "SweptController": {
-".uid": 39, 
+".uid": 40, 
 "active": true, 
 "airAcceleration": 30, 
 "airDeceleration": 40, 
@@ -483,8 +495,56 @@
 }, {
 "children": [], 
 "components": {
+"Transform": {
+".uid": 44, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 45, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
 "BoxCollider": {
-".uid": 53, 
+".uid": 55, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -492,10 +552,11 @@
 }
 }, 
 "Interactable": {
-".uid": 54
+".uid": 56
 }, 
 "Model3D": {
-".uid": 55, 
+".uid": 57, 
+"castsShadows": false, 
 "color": {
 "a": 1, 
 "b": 0.15765380859375, 
@@ -533,7 +594,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 51, 
+".uid": 54, 
 "rotation": {
 "w": 0.92387950420379639, 
 "x": 0.38268345594406128, 
@@ -552,7 +613,7 @@
 }
 }, 
 "WeaponPickup": {
-".uid": 56, 
+".uid": 59, 
 "PickupTime": 0.5, 
 "Texture": "", 
 "Weapon": "P1HitTempWeapon.uatype", 
@@ -560,6 +621,3098 @@
 }
 }, 
 "name": "BaseWeaponPickup Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 66, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 67
+}, 
+"Rigidbody": {
+".uid": 68, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 65, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 61, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 62, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 63, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 64, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 60, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": -54.167598724365234, 
+"y": 16.431560516357422, 
+"z": -44.683578491210938
+}
+}
+}, 
+"name": "TestDummy Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Animator": {
+".uid": 82, 
+"animation": "", 
+"changeState": false, 
+"currentRig": "Player", 
+"currentState": "Player_Idle", 
+"loopAnimation": true, 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 83, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.20000000298023224, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
+"renderMask": 8, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 81, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 90, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "RightArm"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 91, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "LeftArm"
+}
+], 
+"components": {
+"Audio Listener 3D": {
+".uid": 85, 
+"testing": []
+}, 
+"Camera": {
+".uid": 86, 
+"active": true, 
+"farPlane": 1000, 
+"fov": 60, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 1, 
+"renderMask": 1064, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0.5
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 0.5
+}
+}, 
+"Transform": {
+".uid": 84, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 24.188358306884766, 
+"z": 0
+}
+}
+}, 
+"name": "Camera"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 70, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"CharacterController": {
+".uid": 71, 
+"deadZone": 0, 
+"deadZoneSnap": 0, 
+"lockLooking": false, 
+"lockMovement": false, 
+"rotateSpeed": 10
+}, 
+"CommandQueue": {
+".uid": 72
+}, 
+"CylinderCollider": {
+".uid": 73, 
+"height": 30, 
+"radius": 5
+}, 
+"Health": {
+".uid": 74, 
+"ArchetypeToSpawnOnDeath": "FX/JordanFire.uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": true
+}, 
+"InputController": {
+".uid": 75, 
+"UseKeyboard": false
+}, 
+"InteractionBay": {
+".uid": 76
+}, 
+"Inventory": {
+".uid": 77, 
+"LastStand": "P2HitScanWeapon.uatype", 
+"MeleeWeapon": "", 
+"PrimaryWeapon": "", 
+"SecondaryWeapon": "", 
+"StartWeapon": 0, 
+"m_currWeapon": 0
+}, 
+"PlayerID": {
+".uid": 78, 
+"PlayerId": 1
+}, 
+"Rigidbody": {
+".uid": 79, 
+"bodyFlag": 2, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 6.3000001907348633, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"SweptController": {
+".uid": 80, 
+"active": true, 
+"airAcceleration": 30, 
+"airDeceleration": 40, 
+"forwardEvents": true, 
+"gravity": 160, 
+"groundAcceleration": 200, 
+"groundDeceleration": 300, 
+"groundSnapDistance": 8, 
+"jumpCancelFactor": 0.5, 
+"jumpSpeed": 100, 
+"maxCeilingSlope": 45, 
+"maxFallSpeed": 180, 
+"maxGroundSlope": 43, 
+"maxMoveSpeed": 100, 
+"worldUp": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}
+}, 
+"Transform": {
+".uid": 69, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.40000000596046448, 
+"y": 0.40000000596046448, 
+"z": 0.40000000596046448
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": -34.5528564453125
+}
+}
+}, 
+"name": "Player2 Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 98, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 99
+}, 
+"Rigidbody": {
+".uid": 100, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 97, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 93, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 94, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 95, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 96, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 92, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": -5.3887133598327637, 
+"y": 16.431560516357422, 
+"z": -44.683578491210938
+}
+}
+}, 
+"name": "TestDummy Archetype (1)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 107, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 108
+}, 
+"Rigidbody": {
+".uid": 109, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 106, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 102, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 103, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 104, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 105, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 101, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": -5.3887133598327637, 
+"y": 16.431560516357422, 
+"z": 42.428276062011719
+}
+}
+}, 
+"name": "TestDummy Archetype  (2)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 116, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 117
+}, 
+"Rigidbody": {
+".uid": 118, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 115, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 111, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 112, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 113, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 114, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 110, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": -55.616100311279297, 
+"y": 16.431560516357422, 
+"z": 42.428276062011719
+}
+}
+}, 
+"name": "TestDummy Archetype   (3)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 125, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 126
+}, 
+"Rigidbody": {
+".uid": 127, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 124, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 120, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 121, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 122, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 123, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 119, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": -88.761390686035156, 
+"y": 16.431560516357422, 
+"z": 16.735107421875
+}
+}
+}, 
+"name": "TestDummy Archetype    (4)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 134, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 135
+}, 
+"Rigidbody": {
+".uid": 136, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 133, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 129, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 130, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 131, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 132, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 128, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": -88.761390686035156, 
+"y": 16.431560516357422, 
+"z": -18.177047729492188
+}
+}
+}, 
+"name": "TestDummy Archetype     (5)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 143, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 144
+}, 
+"Rigidbody": {
+".uid": 145, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 142, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 138, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 139, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 140, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 141, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 137, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": 16.416725158691406, 
+"y": 16.431560516357422, 
+"z": -18.177047729492188
+}
+}
+}, 
+"name": "TestDummy Archetype      (6)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 152, 
+"dimensions": {
+"x": 27, 
+"y": 31, 
+"z": 2
+}
+}, 
+"CritSpot": {
+".uid": 153
+}, 
+"Rigidbody": {
+".uid": 154, 
+"bodyFlag": 2, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 151, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.035479921847581863, 
+"y": 0.032096397131681442, 
+"z": 0.19139200448989868
+}, 
+"translation": {
+"x": -0.006781458854675293, 
+"y": 0.0062919259071350098, 
+"z": 0.47533512115478516
+}
+}
+}, 
+"name": "CritBox_V1 Archetype"
+}
+], 
+"components": {
+"BoxCollider": {
+".uid": 147, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Health": {
+".uid": 148, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 10, 
+"SpawnOnDeath": true
+}, 
+"Model3D": {
+".uid": 149, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 150, 
+"bodyFlag": 1, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"ghost": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 146, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 28.184953689575195, 
+"y": 31.156145095825195, 
+"z": 5.2248787879943848
+}, 
+"translation": {
+"x": 16.416725158691406, 
+"y": 16.431560516357422, 
+"z": 19.190242767333984
+}
+}
+}, 
+"name": "TestDummy Archetype       (7)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 156, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 157, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 158, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 155, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WallComponent": {
+".uid": 159
+}
+}, 
+"name": "Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 161, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 162, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 163, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 160, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": 34.086273193359375, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WallComponent": {
+".uid": 164
+}
+}, 
+"name": "Box (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 166, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 167, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 168, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 165, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 18.776079177856445, 
+"y": 4.5799236297607422, 
+"z": 20.874174118041992
+}, 
+"translation": {
+"x": -154.24697875976563, 
+"y": 33.135604858398438, 
+"z": 40.921993255615234
+}
+}, 
+"WallComponent": {
+".uid": 169
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 171, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 172, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 173, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 170, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -66.573219299316406, 
+"y": 0, 
+"z": -67.771011352539063
+}
+}, 
+"WallComponent": {
+".uid": 174
+}
+}, 
+"name": "Box (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 176, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 177, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 178, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 175, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -16.211143493652344, 
+"y": 0, 
+"z": -67.771011352539063
+}
+}, 
+"WallComponent": {
+".uid": 179
+}
+}, 
+"name": "Box (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 181, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 182, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 183, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 180, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -46.563369750976563, 
+"y": 0, 
+"z": 66.5634765625
+}
+}, 
+"WallComponent": {
+".uid": 184
+}
+}, 
+"name": "Box (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 186, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 187, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 188, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 185, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -13.697269439697266, 
+"y": 0, 
+"z": 66.5634765625
+}
+}, 
+"WallComponent": {
+".uid": 189
+}
+}, 
+"name": "Box (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 191, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 192, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 193, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 190, 
+"rotation": {
+"w": 0.99983751773834229, 
+"x": 0, 
+"y": -0.018072448670864105, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -115.54573059082031, 
+"y": 0, 
+"z": -1.0512293577194214
+}
+}, 
+"WallComponent": {
+".uid": 194
+}
+}, 
+"name": "Box (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 196, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 197, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 198, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 195, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -29.952079772949219, 
+"y": 18.459318161010742, 
+"z": 109.85855102539063
+}
+}, 
+"WallComponent": {
+".uid": 199
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 201, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 202, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 203, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 200, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -35.393203735351563, 
+"y": 18.459320068359375, 
+"z": -103.63892364501953
+}
+}, 
+"WallComponent": {
+".uid": 204
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 206, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 207, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 208, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 205, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -87.612228393554688, 
+"y": 18.459320068359375, 
+"z": -144.704833984375
+}
+}, 
+"WallComponent": {
+".uid": 209
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 211, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 212, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 213, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 210, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -11.351356506347656, 
+"y": 18.459320068359375, 
+"z": -139.14736938476563
+}
+}, 
+"WallComponent": {
+".uid": 214
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 216, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 217, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 218, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 215, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": 41.946678161621094, 
+"y": 18.459327697753906, 
+"z": 75.757850646972656
+}
+}, 
+"WallComponent": {
+".uid": 219
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 221, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 222, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 223, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 220, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": 38.07208251953125, 
+"y": 18.459327697753906, 
+"z": 141.43209838867188
+}
+}, 
+"WallComponent": {
+".uid": 224
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 226, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 227, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 228, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 225, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -78.60833740234375, 
+"y": 18.459327697753906, 
+"z": 149.43035888671875
+}
+}, 
+"WallComponent": {
+".uid": 229
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 231, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 232, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 233, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 230, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -120.01109313964844, 
+"y": 18.459327697753906, 
+"z": 88.188812255859375
+}
+}, 
+"WallComponent": {
+".uid": 234
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 236, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 237, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 238, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 235, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -123.26405334472656, 
+"y": 18.459320068359375, 
+"z": -78.863029479980469
+}
+}, 
+"WallComponent": {
+".uid": 239
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 241, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 242, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 243, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 240, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": 61.55218505859375, 
+"y": 18.459320068359375, 
+"z": -96.0576171875
+}
+}, 
+"WallComponent": {
+".uid": 244
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 246, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 247, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 248, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 245, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": 93.61212158203125, 
+"y": 18.459320068359375, 
+"z": -36.430717468261719
+}
+}, 
+"WallComponent": {
+".uid": 249
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 251, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 252, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 253, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 250, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -136.63665771484375, 
+"y": 18.459320068359375, 
+"z": 72.864593505859375
+}
+}, 
+"WallComponent": {
+".uid": 254
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 256, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 257, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 258, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 255, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -187.86398315429688, 
+"y": 18.459320068359375, 
+"z": 83.130622863769531
+}
+}, 
+"WallComponent": {
+".uid": 259
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 261, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 262, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 263, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 260, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -141.12506103515625, 
+"y": 18.459320068359375, 
+"z": 141.73419189453125
+}
+}, 
+"WallComponent": {
+".uid": 264
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 266, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 267, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 268, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 265, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": 139.22274780273438, 
+"y": 18.459320068359375, 
+"z": 47.633518218994141
+}
+}, 
+"WallComponent": {
+".uid": 269
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 271, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 272, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 273, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 270, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -29.1466064453125, 
+"y": 18.459320068359375, 
+"z": 54.648910522460938
+}
+}, 
+"WallComponent": {
+".uid": 274
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 276, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 277, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 278, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 275, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0, 
+"y": 0.38268345594406128, 
+"z": 0
+}, 
+"scale": {
+"x": 6.9905295372009277, 
+"y": 29.527128219604492, 
+"z": 40.20684814453125
+}, 
+"translation": {
+"x": -173.46319580078125, 
+"y": 18.459320068359375, 
+"z": -45.570945739746094
+}
+}, 
+"WallComponent": {
+".uid": 279
+}
+}, 
+"name": "Box  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 281, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 282, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 283, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 280, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 18.776079177856445, 
+"y": 4.5799236297607422, 
+"z": 20.874174118041992
+}, 
+"translation": {
+"x": -192.83290100097656, 
+"y": 46.988189697265625, 
+"z": 40.921993255615234
+}
+}, 
+"WallComponent": {
+".uid": 284
+}
+}, 
+"name": "Box   (3)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 286, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 287, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 288, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 285, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 18.776079177856445, 
+"y": 4.5799236297607422, 
+"z": 20.874174118041992
+}, 
+"translation": {
+"x": -192.83290100097656, 
+"y": 46.988189697265625, 
+"z": -0.98319768905639648
+}
+}, 
+"WallComponent": {
+".uid": 289
+}
+}, 
+"name": "Box    (4)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 291, 
+"enableContactCallback": false, 
+"ghost": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 292, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 293, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 290, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 18.776079177856445, 
+"y": 4.5799236297607422, 
+"z": 20.874174118041992
+}, 
+"translation": {
+"x": -154.24697875976563, 
+"y": 33.135604858398438, 
+"z": -4.7255377769470215
+}
+}, 
+"WallComponent": {
+".uid": 294
+}
+}, 
+"name": "Box   (3)"
 }
 ], 
 "settings": {
@@ -602,7 +3755,15 @@
 }, {
 "type": "CommandQueueSystem"
 }, {
-"type": "CommandInputControllerSystem"
+"type": "InputControllerSystem"
+}, {
+"type": "TimeDeathSystem"
+}, {
+"type": "TrailSystem"
+}, {
+"type": "DamageOnCollideSystem"
+}, {
+"type": "DamageTextSystem"
 }
 ]
 }

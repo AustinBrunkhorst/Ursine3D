@@ -17,6 +17,7 @@
 
 #include "SpawnerGroupComponent.h"
 #include "SpawnerComponent.h"
+#include "EntityEvent.h"
 
 ENTITY_SYSTEM_DEFINITION( SpawnerGroupSystem );
 
@@ -52,18 +53,7 @@ void SpawnerGroupSystem::OnAfterLoad(void)
     {
         // Add the spawner group to our internal array so we can update it
         auto group = entity->GetComponent<SpawnerGroup>( );
-        auto itr = std::find( m_spawnerGroups.begin( ), m_spawnerGroups.end( ), group );
-
-        if (itr == m_spawnerGroups.end( ))
-            m_spawnerGroups.push_back( group );
-
-        // Add all the group's children (Spawners) to itself
-        auto spawners = group->GetOwner( )->GetComponentsInChildren<Spawner>( );
-
-        for (auto spawner : spawners)
-        {
-            group->addSpawner( spawner );
-        }
+        addSpawnerGroup( group );
     }
 }
 
@@ -83,7 +73,13 @@ void SpawnerGroupSystem::onComponentAdded(EVENT_HANDLER(World))
     // If a spawner group component has been added, add it to our system
     if (args->component->Is<SpawnerGroup>( ))
     {
-        m_spawnerGroups.push_back( args->entity->GetComponent<SpawnerGroup>( ) );
+        addSpawnerGroup( args->entity->GetComponent<SpawnerGroup>( ) );
+    }
+    else if (args->component->Is<Spawner>( ))
+    {
+        if (!addSpawner( args->entity->GetComponent<Spawner>( ) ))
+            args->entity->Listener( this )
+                .On( ENTITY_PARENT_CHANGED, &SpawnerGroupSystem::onSpawnerParentChange );
     }
 }
 
@@ -127,5 +123,49 @@ void SpawnerGroupSystem::onComponentRemoved(EVENT_HANDLER(World))
                 group->removeSpawner( spawner );
             }
         }
+    }
+}
+
+void SpawnerGroupSystem::addSpawnerGroup(SpawnerGroup *group)
+{
+    auto itr = std::find( m_spawnerGroups.begin( ), m_spawnerGroups.end( ), group );
+
+    if (itr == m_spawnerGroups.end( ))
+        m_spawnerGroups.push_back( group );
+
+    // Add all the group's children (Spawners) to itself
+    auto spawners = group->GetOwner( )->GetComponentsInChildren<Spawner>( );
+
+    for (auto spawner : spawners)
+    {
+        group->addSpawner( spawner );
+    }
+}
+
+bool SpawnerGroupSystem::addSpawner(Spawner *spawner)
+{
+    auto group = spawner->GetOwner( )->GetComponentInParent<SpawnerGroup>( );
+
+    if (group)
+    {
+        group->addSpawner( spawner );
+    }
+    
+    return group != nullptr;
+}
+
+void SpawnerGroupSystem::onSpawnerParentChange(EVENT_HANDLER(Entity))
+{
+    EVENT_ATTRS(Entity, TransformChangedArgs);
+
+    auto spawner = sender->GetComponent<Spawner>( );
+    auto group = spawner->GetOwner( )->GetComponentInParent<SpawnerGroup>( );
+
+    if (group)
+    {
+        group->addSpawner( spawner );
+
+        sender->Listener( this )
+            .Off( ENTITY_PARENT_CHANGED, &SpawnerGroupSystem::onSpawnerParentChange );
     }
 }

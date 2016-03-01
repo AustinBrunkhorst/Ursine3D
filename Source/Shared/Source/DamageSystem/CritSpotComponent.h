@@ -24,6 +24,4 @@ public:
 
     void OnInitialize(void) override;
 
-    void OnCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
-
-} Meta(Enable, DisplayName("CritSpot"), RequiresComponents(typeof(ursine::ecs::BoxCollider)));
+} Meta(Enable, DisplayName("CritSpot"));

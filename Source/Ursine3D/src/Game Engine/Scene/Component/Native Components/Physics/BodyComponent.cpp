@@ -24,25 +24,25 @@ namespace ursine
 
         Body::Body(void)
             : BaseComponent( )
-			, m_enableContactCallback( false )
+            , m_enableContactCallback( false )
         {
             
         }
 
-		Body::~Body(void)
-		{
-			GetOwner( )->Listener( this )
+        Body::~Body(void)
+        {
+            GetOwner( )->Listener( this )
                 .Off( ENTITY_TRANSFORM_DIRTY, &Body::onTransformChange );
-		}
+        }
 
-		void Body::OnInitialize(void)
-		{
-			GetOwner( )->Listener( this )
+        void Body::OnInitialize(void)
+        {
+            GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Body::onTransformChange );
 
             m_body.SetUserID( GetOwner( )->GetUniqueID( ) );
-			m_body.SetUserPointer( this );
-		}
+            m_body.SetUserPointer( this );
+        }
 
         void Body::SetOffset(const SVec3 &offset)
         {
@@ -50,37 +50,37 @@ namespace ursine
             m_body.SetTransform( GetOwner( )->GetTransform( ) );
         }
 
-	    SVec3 Body::GetOffset(void) const
+        SVec3 Body::GetOffset(void) const
         {
             return m_body.GetOffset( );
         }
 
-		void Body::SetGhost(bool enable)
-		{
-			m_body.SetGhost( enable );
-		}
+        void Body::SetDisableContactResponse(bool disable)
+        {
+            m_body.SetDisableContactResponse( disable );
+        }
 
-	    bool Body::GetGhost(void) const
-		{
-			return m_body.GetGhost( );
-		}
+        bool Body::GetDisableContactResponse(void) const
+        {
+            return m_body.GetDisableContactResponse( );
+        }
 
-		void Body::SetEnableContactCallback(bool enable)
-		{
-			m_enableContactCallback = enable;
-		}
+        void Body::SetEnableContactCallback(bool enable)
+        {
+            m_enableContactCallback = enable;
+        }
 
-		bool Body::GetEnableContactCallback(void) const
-		{
-			return m_enableContactCallback;
-		}
+        bool Body::GetEnableContactCallback(void) const
+        {
+            return m_enableContactCallback;
+        }
 
-	    void Body::SetAwake(void)
-	    {
-			m_body.SetAwake( );
-	    }
+        void Body::SetAwake(void)
+        {
+            m_body.SetAwake( );
+        }
 
-	    void Body::onTransformChange(EVENT_HANDLER(Entity))
+        void Body::onTransformChange(EVENT_HANDLER(Entity))
         {
             m_body.SetTransform( GetOwner( )->GetTransform( ) );
         }

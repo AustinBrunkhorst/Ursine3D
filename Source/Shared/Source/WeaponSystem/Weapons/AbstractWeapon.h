@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "Randomizer.h"
+
 
 #define UNLIMITED_AMMO  MAXINT
 #define UNLIMITED_CLIP  MAXINT
@@ -58,13 +60,13 @@
         );                              \
                                         \
     EditorField(                        \
-        float ProjectileSpeed,          \
-        GetProjSpeed,                   \
-        SetProjSpeed                    \
+        bool SemiAutomatic,             \
+        GetSemiAutomatic,               \
+        SetSemiAutomatic                \
         );                              \
                                         \
     EditorField(                        \
-        float FireRate,                 \
+        float FireDelay,                \
         GetFireRate,                    \
         SetFireRate                     \
         );                              \
@@ -112,7 +114,7 @@
         );                              \
                                         \
     EditorField(                        \
-        int FireCount,                  \
+        int ProjectileFireCount,        \
         GetProjFireCount,               \
         SetProjFireCount                \
         );                              \
@@ -124,17 +126,12 @@
         );                              \
                                         \
     EditorField(                        \
-        ursine::SVec3 SpawnOffset,      \
-        GetSpawnOffset,                 \
-        SetSpawnOffset                  \
+        std::string FireParticle,       \
+        GetFireParticle,                \
+        SetFireParticle                 \
         );                              \
-                                        \
-    EditorField(                        \
-        std::string ArchetypeToShoot,   \
-        GetArchetypeToShoot,            \
-        SetArchetypeToShoot             \
-        );
-  
+
+
 #define AbstractWeaponConnect( Obj )                            \
     GetOwner( )->Listener( this )                               \
         .On(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
@@ -188,9 +185,6 @@ public:
     // does projectile die on first collision
     bool m_deleteOnCollision;
 
-    // projectile speed
-    float m_projSpeed;
-
     // Rate at which bullets can be fired
     float m_fireRate;
 
@@ -212,9 +206,6 @@ public:
     // what is accuracy of gun
     float m_accuracy;
 
-    // what is the weapons spread factor for shooting
-    float m_spreadFactor;
-
     // How much ammo does weapon have
     int m_ammoCount;
 
@@ -233,9 +224,6 @@ public:
     // weapon type 
     WeaponType m_weaponType;
 
-    // what offset to add on activation
-    ursine::SVec3 m_spawnOffset;
-
     // Camera Handle for shooting
     Meta(Disable)
     ursine::ecs::Transform* m_camHandle;
@@ -248,8 +236,14 @@ public:
     Meta(Disable)
     ursine::ecs::Animator* m_animatorHandle;
 
-    // Archetype weapon should fire
-    std::string m_archetypeToShoot;
+    Meta(Disable)
+    ursine::Randomizer m_spread;
+
+    // Particle to spawn at tip of gun when shot
+    std::string m_fireParticle;
+
+    // is weapon a semi-automatic
+    bool m_semiAutomatic;
 
     // Is trigger being pulled
     Meta(Disable)
@@ -287,9 +281,6 @@ public:
     bool GetDeleteOnCollision(void) const;
     void SetDeleteOnCollision(const bool state);
 
-    float GetProjSpeed(void) const;
-    void SetProjSpeed(const float speed);
-
     float GetFireRate(void) const;
     void SetFireRate(const float rate);
 
@@ -326,11 +317,11 @@ public:
     WeaponType GetWeaponType(void) const;
     void SetWeaponType(const WeaponType type);
 
-    ursine::SVec3 GetSpawnOffset(void) const;
-    void SetSpawnOffset(const ursine::SVec3& offset);
+    const std::string& GetFireParticle(void) const;
+    void SetFireParticle(const std::string &archetype);
 
-    const std::string& GetArchetypeToShoot(void) const;
-    void SetArchetypeToShoot(const std::string &archetype);
+    bool GetSemiAutomatic(void) const;
+    void SetSemiAutomatic(const bool semi);
 
     bool GetTriggerPulled(void) const;
 
@@ -369,7 +360,6 @@ protected:
 
 
 #define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );  
-                                         //  AbstractWeaponConnect(Obj);
 
 
 

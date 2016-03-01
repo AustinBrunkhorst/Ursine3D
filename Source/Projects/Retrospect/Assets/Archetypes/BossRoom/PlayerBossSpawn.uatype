@@ -1,0 +1,85 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 17, 
+"playerArchetype": "Player1", 
+"spawnSegment": 68
+}, 
+"Transform": {
+".uid": 16, 
+"rotation": {
+"w": 1.0000003576278687, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 30.209320068359375, 
+"y": 23, 
+"z": -25.293964385986328
+}
+}
+}, 
+"name": "Player1BossSpawn"
+}, {
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 19, 
+"playerArchetype": "Player2", 
+"spawnSegment": 68
+}, 
+"Transform": {
+".uid": 18, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.065325640141963959, 
+"y": 0.065325640141963959, 
+"z": 0.065325640141963959
+}, 
+"translation": {
+"x": 66.3363037109375, 
+"y": 23.85334587097168, 
+"z": 12.529571533203125
+}
+}
+}, 
+"name": "Player2BossSpawn"
+}
+], 
+"components": {
+"Transform": {
+".uid": 15, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 383.13372802734375, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

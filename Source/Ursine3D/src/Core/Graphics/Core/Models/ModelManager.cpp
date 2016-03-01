@@ -48,6 +48,8 @@ namespace ursine
                 m_modelArray[ name ] = new ModelResource();
                 auto *newMesh = new Mesh();
                 m_modelArray[ name ]->AddMesh(newMesh);
+				m_s2uTable["ParticleIndices"] = m_modelCount;
+				m_u2mTable[m_modelCount++] = m_modelArray[name];
 
                 unsigned indices[ 1024 * 6 ];
                 unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
@@ -261,10 +263,7 @@ namespace ursine
                 if ( tokens[ 0 ].find("8.0.mdl") != std::string::npos )
                     LoadModel(tokens[ 1 ], tokens[ 0 ]);
                 else if ( tokens[ 0 ].find(".fbx") != std::string::npos )
-                {
                     LoadModel_Fbx(tokens[ 1 ], tokens[ 0 ]);
-                    // need to store name of fbx file into jdl.gfx if there isn't
-                }
             }
             input.close();
         }

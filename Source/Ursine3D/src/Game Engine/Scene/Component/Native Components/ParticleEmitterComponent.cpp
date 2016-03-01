@@ -38,6 +38,8 @@ namespace ursine
             , m_sizeRange(0.0f, 0.0f)
             , m_rotation(0.0f)
             , m_rotationRange(-PI, PI)
+            , m_roll(0.0f)
+            , m_rollRange(-1.0f, 1.0f)
             , m_initialVelocity(0.0f, 0.0f, 0.0f)
             , m_xVelRange(-1.0f, 1.0f)
             , m_yVelRange(-1.0f, 1.0f)
@@ -133,11 +135,16 @@ namespace ursine
             return GetOwner( )->GetTransform( )->GetWorldPosition( ) + offset;
         }
 
-        #if defined(URSINE_WITH_EDITOR)
-
         void ParticleEmitter::ResetSpawnCount(void)
         {
             m_spawnCount = 0;
+        }
+
+        #if defined(URSINE_WITH_EDITOR)
+
+        void ParticleEmitter::resetSpawnCount(void)
+        {
+            ResetSpawnCount( );
         }
 
         #endif
@@ -220,12 +227,34 @@ namespace ursine
 
         float ParticleEmitter::GetRotationRange(void) const
         {
-            return m_rotationRange.GetMax( );
+            return (m_rotationRange.GetMax( ) * 180.0f) / PI;
         }
+
         void ParticleEmitter::SetRotationRange(const float range)
         {
-            m_rotationRange.SetMax(range);
-            m_rotationRange.SetMin(-range);
+            m_rotationRange.SetMax((range * PI) / 180.0f);
+            m_rotationRange.SetMin(-(range * PI) / 180.0f);
+        }
+
+        float ParticleEmitter::GetRoll(void)
+        {
+            return (m_roll * 180.0f) / PI;
+        }
+
+        void ParticleEmitter::SetRoll(const float roll)
+        {
+            m_roll = (roll * PI) / 180.0f;;
+        }
+
+        float ParticleEmitter::GetRollRange(void) const
+        {
+            return (m_rollRange.GetMax() * 180.0f) / PI;
+        }
+
+        void ParticleEmitter::SetRollRange(const float range)
+        {
+            m_rollRange.SetMax((range * PI) / 180.0f);
+            m_rollRange.SetMin( -(range * PI) / 180.0f);
         }
 
         const SVec3 &ParticleEmitter::GetVelocity(void) const
@@ -285,48 +314,6 @@ namespace ursine
             m_zGenerator = Randomizer(m_fill * m_emitterSize.Z( ), m_emitterSize.Z( ));
         }
 
-        void ParticleEmitter::onParticleUpdate(EVENT_HANDLER(Entity))
-        {
-            float dt = Application::Instance->GetDeltaTime( );
-
-            if ( (m_spawnCount < m_emitCount) || m_emitCount == 0 )
-            {
-                m_currentTime += dt;
-
-                // calculate time needed to spawn 1 particle
-                float spawnTime = 1.f / static_cast<float>(m_emitRate);
-
-                while ( m_currentTime >= spawnTime && ((m_spawnCount < m_emitCount) || m_emitCount == 0) )
-                {
-                    m_currentTime -= spawnTime;
-                    spawnParticle( );
-                }
-            }
-
-            auto &gpuData = m_particleComponent->GetGPUParticleData( );
-            auto &cpuData = m_particleComponent->GetCPUParticleData( );
-
-            // update ALL particles
-            int activeParticles = m_particleComponent->GetActiveParticleCount( );
-            for ( int x = 0; x < activeParticles; ++x )
-            {
-                // remove time from life
-                cpuData[ x ].lifeTime -= dt;
-
-                // destroy if dead
-                if ( cpuData[ x ].lifeTime <= 0 )
-                {
-                    m_particleComponent->DestroyParticle(x);
-                    --activeParticles;
-                    continue;
-                }
-
-                // update position with velocity
-                gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;
-                gpuData[ x ].position[ 1 ] += cpuData[ x ].velocity.Y( ) * dt;
-                gpuData[ x ].position[ 2 ] += cpuData[ x ].velocity.Z( ) * dt;
-            }                                                         
-        }                                                             
         int ParticleEmitter::spawnParticle(void)
         {
             // create a particles
@@ -367,5 +354,50 @@ namespace ursine
 
             return newParticle;
         }
+
+        void ParticleEmitter::onParticleUpdate(EVENT_HANDLER(Entity))
+        {
+            float dt = Application::Instance->GetDeltaTime( );
+
+            if ( (m_spawnCount < m_emitCount) || m_emitCount == 0 )
+            {
+                m_currentTime += dt;
+
+                // calculate time needed to spawn 1 particle
+                float spawnTime = 1.f / static_cast<float>(m_emitRate);
+
+                while ( m_currentTime >= spawnTime && ((m_spawnCount < m_emitCount) || m_emitCount == 0) )
+                {
+                    m_currentTime -= spawnTime;
+                    spawnParticle( );
+                }
+            }
+
+            auto &gpuData = m_particleComponent->GetGPUParticleData( );
+            auto &cpuData = m_particleComponent->GetCPUParticleData( );
+
+            // update ALL particles
+            int activeParticles = m_particleComponent->GetActiveParticleCount( );
+            for ( int x = 0; x < activeParticles; ++x )
+            {
+                // remove time from life
+                cpuData[ x ].lifeTime -= dt;
+
+                // destroy if dead
+                if ( cpuData[ x ].lifeTime <= 0 )
+                {
+                    m_particleComponent->DestroyParticle(x);
+                    --activeParticles;
+                    continue;
+                }
+
+                gpuData[x].rotation[0] -= cpuData[x].roll * dt;
+
+                // update position with velocity
+                gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;
+                gpuData[ x ].position[ 1 ] += cpuData[ x ].velocity.Y( ) * dt;
+                gpuData[ x ].position[ 2 ] += cpuData[ x ].velocity.Z( ) * dt;
+            }                                                         
+        }                                                             
     }
 }

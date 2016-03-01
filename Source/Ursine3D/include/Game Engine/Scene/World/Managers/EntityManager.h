@@ -161,7 +161,8 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             // predicate for comparing components based on unique ID
-            static bool CompareComponents(const Component *a, const Component *b);
+            static bool CompareComponentsAscending(const Component *a, const Component *b);
+            static bool CompareComponentsDescending(const Component *a, const Component *b);
 
         private:
             friend class WorldSerializer;

@@ -14,7 +14,7 @@
 #include "Precompiled.h"
 
 #include "SpawnPatternContainerComponent.h"
-#include "LevelSegmentManager.h"
+#include "LevelSegmentManagerComponent.h"
 
 #include <Application.h>
 #include <SystemManager.h>
@@ -56,16 +56,22 @@ void SpawnPatternContainer::update(SpawnerGroup *group, Spawner *spawner)
     // Increment the timer and check to see if we're ready to move to the next pattern
     m_patternTimer += dt;
 
-    if (!pattern.GetLoopPattern( ) && m_patternTimer >= pattern.GetSpawnDuration( ))
+    if (!pattern.GetLoopPattern( ) && 
+        (m_patternTimer >= pattern.GetSpawnDuration( ) ||
+        (pattern.m_activeEnemies == 0 && pattern.m_totalEnemiesSpawned == pattern.m_totalEnemies)))
     {
         m_breaking = true;
 
         // If the current pattern sends an event, send it
         if (pattern.GetEndingSegmentTransition( ) != LevelSegments::Empty)
         {
-            // Send an event
-            GetOwner( )->GetWorld( )->GetEntitySystem<LevelSegmentManager>( )
-                ->SegmentTransition( pattern.GetEndingSegmentTransition( ) );
+            // Set the current segment
+            auto levelManager = GetOwner( )->GetWorld( )
+                ->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+
+            if (levelManager.size( ))
+                levelManager[ 0 ]->GetComponent<LevelSegmentManager>( )
+                    ->SetCurrentSegment( pattern.GetEndingSegmentTransition( ) );
 
             // we're not breaking anymore
             m_breaking = false;

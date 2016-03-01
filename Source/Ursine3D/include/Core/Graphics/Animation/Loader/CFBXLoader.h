@@ -257,6 +257,8 @@ namespace ursine
 			*/
 			bool CheckScaling(FbxVector4 scale);
 
+			void SetPivotStateRecursive(FbxNode* pNode);
+
 			/** @brief fbx loader animation funciton
 			*
 			*  this will import animation data by searching whole fbx animation data
@@ -274,7 +276,7 @@ namespace ursine
 			*  @param end the end time
 			*  @return nothing
 			*/
-			void ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxNode* pNode);
+			void ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxTime end, FbxNode* pNode);
 
 			/** @brief fbx loader animation auxiliary funciton
 			*
@@ -286,7 +288,7 @@ namespace ursine
 			*  @param animData the reference of each animation clip
 			*  @return nothing
 			*/
-			void ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxNode* pNode, FBX_DATA::AnimationClip& animData);
+			void ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxTime end, FbxNode* pNode, FBX_DATA::AnimationClip& animData);
 
 			/** @brief fbx loader animation auxiliary funciton
 			*
@@ -296,7 +298,7 @@ namespace ursine
 			*  @param time the set of times in each animation curve
 			*  @return nothing
 			*/
-			void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time);
+			void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime end);
 
 			/** @brief fbx loader geometry funciton
 			*

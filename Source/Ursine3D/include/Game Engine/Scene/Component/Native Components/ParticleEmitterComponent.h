@@ -35,7 +35,7 @@ namespace ursine
 
         public:
             EditorButton(
-                ResetSpawnCount,
+                resetSpawnCount,
                 "Reset Spawn Count"
             );
 
@@ -91,6 +91,18 @@ namespace ursine
                 float rotationVariance,
                 GetRotationRange,
                 SetRotationRange
+            );
+
+            EditorField(
+                float roll,
+                GetRoll,
+                SetRoll
+            );
+
+            EditorField(
+                float rollVariance,
+                GetRollRange,
+                SetRollRange
             );
 
             EditorField(
@@ -158,6 +170,12 @@ namespace ursine
             float GetRotationRange(void) const;
             void SetRotationRange(const float range);
 
+            float GetRoll(void);
+            void SetRoll(const float roll);
+
+            float GetRollRange(void) const;
+            void SetRollRange(const float range);
+
             const SVec3 &GetVelocity(void) const;
             void SetVelocity(const SVec3 &velocity);
 
@@ -170,11 +188,13 @@ namespace ursine
             const float GetFill(void) const;
             void SetFill(const float fill);
 
+            int spawnParticle(void);
+
+            void ResetSpawnCount(void);
+
         private:
             // temporary updating
             void onParticleUpdate(EVENT_HANDLER(Entity));
-
-            int spawnParticle(void);
 
             // parent component, this is kinda important
             Component::Handle<ParticleSystem> m_particleComponent;
@@ -198,6 +218,10 @@ namespace ursine
             // rotation
             float m_rotation;
             Randomizer m_rotationRange;
+
+            // roll
+            float m_roll;
+            Randomizer m_rollRange;
 
             // velocity
             SVec3 m_initialVelocity;

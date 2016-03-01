@@ -14,6 +14,8 @@
 #include <CommandSystem/ActionCommands/PlayerAction.h>
 #include <CommandSystem/ActionCommands/PlayerTwoAxisAction.h>
 #include <CommandSystem/ActionCommands/ActionCommand.h>
+#include "ActionCommands/ButtonActionCommand.h"
+#include "PlayerIDComponent.h"
 
 // this needs to go in another header
 // what input will we listen to?
@@ -52,40 +54,45 @@ public:
     void SetKeyBoard(const bool useKeyBoard);
 
     Meta(Disable)
-    std::vector<ActionCommandBase*> &GetCommandList(void);
+    std::vector<ActionCommandBase*> &GetActionList(void);
 
 private:
-    // is user using keyboard
-    bool m_keyBoard;
+    typedef ButtonActionCommand::Interactions Interactions;
+    typedef ButtonActionCommand::InteractionMethod Method;
+    typedef PlayerTwoAxisAction::AxisBinding AxisBinding;
+    typedef game::GameEvents gEvent;
+    typedef PlayerAction::InputBinding Binding;
+
+    PlayerAction m_action;
 
     // action commands
-    std::vector<ActionCommandBase*> m_commandList;
+    std::vector<ActionCommandBase*> m_actionList;
 
     // all of our actions
-    PlayerAction    m_moveForward,
-                    m_moveBack, 
-                    m_moveLeft,
-                    m_moveRight;
-                 
-    PlayerTwoAxisAction m_move;
+    Binding m_moveForward,
+            m_moveBack, 
+            m_moveLeft,
+            m_moveRight;
 
-    PlayerAction    m_lookUp,
-                    m_lookDown,
-                    m_lookLeft,
-                    m_lookRight;
-
-    PlayerTwoAxisAction m_look;
+    Binding m_lookUp,
+            m_lookDown,
+            m_lookLeft,
+            m_lookRight;
 
     // weapon actions
-    PlayerAction    m_fire,
-                    m_reload,
-                    m_swap;
+    Binding m_pullTrigger,
+            m_reload,
+            m_swap,
+            m_jump;
 
-    PlayerAction m_jump;
+    // is user using keyboard
+    bool m_keyBoard;
 
     void MapXboxContoller(void);
     void MapKeyboard(void);
 
-    void MapCommandList(void);
+    void MapCommandList(PlayerID* idComp);
 
-}Meta(Enable, DisplayName("InputController"));
+    void Clear(void);
+
+}Meta(Enable, DisplayName("InputController"), RequiresComponents(typeof(PlayerID)));

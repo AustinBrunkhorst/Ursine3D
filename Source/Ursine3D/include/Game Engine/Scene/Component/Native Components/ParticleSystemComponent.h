@@ -44,12 +44,6 @@ namespace ursine
             friend class RenderSystem;
 
         public:
-            //EditorField(
-            //    LightType Type,
-            //    GetType,
-            //    SetType
-            //    );
-
             EditorField(
                 Color color,
                 GetColor,
@@ -74,17 +68,17 @@ namespace ursine
                 SetRenderMode
             );
 
-            Meta(BitMaskEditor)
+            EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
                 GetRenderMask,
                 SetRenderMask
             );
 
+            Meta(Enable)
             ParticleSystem(void);
             ~ParticleSystem(void);
 
-            Meta(Disable)
             void OnInitialize(void) override;
 
             // count
@@ -92,17 +86,11 @@ namespace ursine
             unsigned GetInactiveParticleCount(void) const;
 
             // gpu vector
-            Meta(Disable)
             std::vector<graphics::Particle_GPU> &GetGPUParticleData(void);
-
-            Meta(Disable)
             graphics::Particle_GPU &GetGPUParticle(const int index);
 
             // cpu vector
-            Meta(Disable)
             std::vector<graphics::Particle_CPU> &GetCPUParticleData(void);
-
-            Meta(Disable)
             graphics::Particle_CPU &GetCPUParticle(const int index);
 
             // generate particle, returns index
@@ -145,6 +133,6 @@ namespace ursine
             RenderMode m_renderMode;
 
             // color
-        } Meta(Enable, DisplayName("ParticleSystem"));
+        } Meta(Enable, WhiteListMethods, DisplayName( "ParticleSystem" ));
     }
 }

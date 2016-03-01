@@ -16,6 +16,7 @@
 #include "TransformComponent.h"
 #include "Entity.h"
 #include "EntityEvent.h"
+#include "Application.h"
 
 namespace ursine
 {
@@ -51,10 +52,10 @@ namespace ursine
 
         void Transform::OnInitialize(void)
         {
-			if (!m_root)
-				m_root = this;
-			if (!m_parent)
-				m_parent = nullptr;
+            if (!m_root)
+                m_root = this;
+            if (!m_parent)
+                m_parent = nullptr;
 
             dispatchAndSetDirty( true, true, true );
         }
@@ -192,6 +193,63 @@ namespace ursine
             SetWorldRotation( SQuat::LookAt( dir ) );
         }
 
+        void Transform::LookAt(const SVec3 &worldPosition, float degreesPerSecond)
+        {
+            if (Application::Instance)
+                LookAt( worldPosition, degreesPerSecond, Application::Instance->GetDeltaTime( ) );
+            else
+                LookAt( worldPosition, degreesPerSecond, 1.0f / 60.0f );
+        }
+
+        void Transform::LookAt(const SVec3 &worldPosition, float degreesPerSecond, float seconds)
+        {
+            float delta = degreesPerSecond * seconds;
+
+            if (delta == 0.0f)
+                return;
+
+            SVec3 dir = worldPosition - GetWorldPosition( );
+            SQuat destination = SQuat::LookAt( dir );
+            SQuat current = GetWorldRotation( );
+            auto angle = abs( current.GetAngle( destination ) );
+
+            if (angle == 0.0f)
+                return;
+
+            if (delta >= angle)
+                SetWorldRotation( destination );
+            else
+                SetWorldRotation( current.Slerp( destination, delta / angle ) );
+        }
+
+        void Transform::RotateWorld(const SVec3 &euler)
+        {
+            SQuat rot( euler.X( ), euler.Y( ), euler.Z( ) );
+
+            SetWorldRotation( rot * GetWorldRotation( ) );
+        }
+
+        void Transform::RotateWorld(const SVec3 &normal, float degrees)
+        {
+            SQuat rot( degrees, normal );
+
+            SetWorldRotation( rot * GetWorldRotation( ) );
+        }
+
+        void Transform::RotateLocal(const SVec3 &euler)
+        {
+            SQuat rot( euler.X( ), euler.Y( ), euler.Z( ) );
+
+            SetLocalRotation( rot * GetLocalRotation( ) );
+        }
+
+        void Transform::RotateLocal(const SVec3 &normal, float degrees)
+        {
+            SQuat rot( degrees, normal );
+
+            SetLocalRotation( rot * GetLocalRotation( ) );
+        }
+
         void Transform::SetLocalScale(const SVec3& scale)
         {
             auto oldScale = m_localScale;
@@ -292,8 +350,8 @@ namespace ursine
                 return m_localRotation * quat;
         }
 
-		Component::Handle<Transform> Transform::GetRoot(void) const
-		{
+        Component::Handle<Transform> Transform::GetRoot(void) const
+        {
             return m_root;
         }
 
@@ -442,27 +500,27 @@ namespace ursine
             }
         }
 
-		Component *Transform::GetComponentInChildren(ComponentTypeID id) const
-		{
-			return GetOwner( )->GetComponentInChildren( id );
-		}
+        Component *Transform::GetComponentInChildren(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentInChildren( id );
+        }
 
-	    Component *Transform::GetComponentInParent(ComponentTypeID id) const
-	    {
-			return GetOwner( )->GetComponentInParent( id );
-	    }
+        Component *Transform::GetComponentInParent(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentInParent( id );
+        }
 
-	    ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const
-	    {
-			return GetOwner( )->GetComponentsInChildren( id );
-	    }
+        ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentsInChildren( id );
+        }
 
-	    ComponentVector Transform::GetComponentsInParents(ComponentTypeID id) const
-	    {
-			return GetOwner( )->GetComponentsInParents( id );
-	    }
+        ComponentVector Transform::GetComponentsInParents(ComponentTypeID id) const
+        {
+            return GetOwner( )->GetComponentsInParents( id );
+        }
 
-	    void Transform::copy(const Transform &transform)
+        void Transform::copy(const Transform &transform)
         {
             m_dirty = transform.m_dirty;
 
@@ -475,7 +533,7 @@ namespace ursine
 
             if (transform.m_parent)
             {
-				auto *p = const_cast<Transform*>( transform.m_parent.operator->( ) );
+                auto *p = const_cast<Transform*>( transform.m_parent.operator->( ) );
                 p->AddChild( this );
             }
             else
@@ -602,10 +660,10 @@ namespace ursine
 
             m_parent = newParent;
 
-			if (newParent)
-				setRoot( newParent->m_root );
-			else
-				setRoot( this );
+            if (newParent)
+                setRoot( newParent->m_root );
+            else
+                setRoot( this );
 
             // unsubscribe this entity from the old parent's events
             if (oldParent)
@@ -627,14 +685,14 @@ namespace ursine
             dispatchParentChange( oldParent, newParent );
         }
 
-		void Transform::setRoot(Handle<Transform> root)
+        void Transform::setRoot(Handle<Transform> root)
         {
-			m_root = root;
+            m_root = root;
 
-			for (auto &c : m_children)
-			{
-				c->setRoot( root );
-			}
+            for (auto &c : m_children)
+            {
+                c->setRoot( root );
+            }
         }
     }
 }

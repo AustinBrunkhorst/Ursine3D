@@ -1,0 +1,29 @@
+{
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 75, 
+"playerArchetype": "Player1"
+}, 
+"Transform": {
+".uid": 73, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": -5.6254787445068359
+}
+}
+}, 
+"v": "0.2submission"
+}

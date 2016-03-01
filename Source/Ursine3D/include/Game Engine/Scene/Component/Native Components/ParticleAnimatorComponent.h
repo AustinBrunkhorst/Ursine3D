@@ -31,10 +31,10 @@ namespace ursine
 
         public:
             EditorField(
-                SVec3 force,
-                GetForce,
-                SetForce
-            );
+                float dampening,
+                GetDampening,
+                SetDampening
+                );
 
             EditorField(
                 float growth,
@@ -43,9 +43,15 @@ namespace ursine
             );
 
             EditorField(
-                float dampening,
-                GetDampening,
-                SetDampening
+                float torque,
+                GetTorque,
+                SetTorque
+            );
+
+            EditorField(
+                SVec3 force,
+                GetForce,
+                SetForce
             );
 
             ParticleAnimator(void);
@@ -60,6 +66,9 @@ namespace ursine
             float GetGrowth(void) const;
             void SetGrowth(const float growth);
 
+            float GetTorque(void) const;
+            void SetTorque(float torque);
+
             const SVec3 &GetForce(void) const;
             void SetForce(const SVec3 &force);
 
@@ -71,6 +80,7 @@ namespace ursine
 
             float m_dampeningConstant;
             float m_growth;
+            float m_torque;
 
             SVec3 m_force;
             SVec3 m_randomForce;

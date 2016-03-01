@@ -19,103 +19,131 @@
 
 namespace ursine
 {
-	AnimationState::AnimationState()
-		: m_name("")
-		, m_timePos(0.0f)
-		, m_transPos(0.0f)
-		, m_animname("")
-		, m_animation(nullptr)
-	{}
+    AnimationState::AnimationState()
+        : m_name("")
+        , m_looping(true)
+        , m_timePos(0.0f)
+        , m_transPos(0.0f)
+        , m_animname("")
+        , m_animation(nullptr)
+    {}
 
-	const std::string &AnimationState::GetName(void) const
-	{
-		return m_name;
-	}
+    bool AnimationState::IsLooping(void) const
+    {
+        return m_looping;
+    }
 
-	void AnimationState::SetName(const std::string& name)
-	{
-		m_name = name;
-	}
-	
-	float AnimationState::GetTimePosition(void) const
-	{
-		return m_timePos;
-	}
+    void AnimationState::SetLooping(const bool isLooping)
+    {
+        m_looping = isLooping;
+    }
 
-	void AnimationState::SetTimePosition(const float position)
-	{
-		m_timePos = position;
-	}
+    const std::string &AnimationState::GetName(void) const
+    {
+        return m_name;
+    }
 
-	void AnimationState::IncrementTimePosition(const float dt)
-	{
-		m_timePos += dt;
-	}
+    void AnimationState::SetName(const std::string& name)
+    {
+        m_name = name;
+    }
 
-	// change this to push_back or something that can handle multiple animations insdie
-	const Animation* AnimationState::GetAnimation(void) const
-	{
-		return m_animation;
-	}
+    float AnimationState::GetTimePosition(void) const
+    {
+        return m_timePos;
+    }
 
-	void AnimationState::SetAnimation(Animation* animation)
-	{
-		m_animation = animation;
-	}
+    void AnimationState::SetTimePosition(const float position)
+    {
+        m_timePos = position;
+    }
 
-	const std::string &AnimationState::GetAnimationName(void) const
-	{
-		return m_animname;
-	}
-	
-	void AnimationState::SetAnimationName(const std::string& name)
-	{
-		if ("" == name)
-			return;
-		m_animname = name;
-		
-		Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
-		if (!targetAnimation)
-		{
+    void AnimationState::IncrementTimePosition(const float dt)
+    {
+        m_timePos += dt;
+    }
+
+    // change this to push_back or something that can handle multiple animations insdie
+    const Animation* AnimationState::GetAnimation(void) const
+    {
+        return m_animation;
+    }
+
+    void AnimationState::SetAnimation(Animation* animation)
+    {
+        m_animation = animation;
+    }
+
+    const std::string &AnimationState::GetAnimationName(void) const
+    {
+        return m_animname;
+    }
+
+    void AnimationState::SetAnimationName(const std::string& name)
+    {
+        if ("" == name)
+            return;
+        m_animname = name;
+
+        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
+        if (!targetAnimation)
+        {
 #if defined(URSINE_WITH_EDITOR)
-			NotificationConfig error;
+            NotificationConfig error;
 
-			error.type = NOTIFY_ERROR;
-			error.header = "Animation doesn't exist";
-			error.message = "To add animation into the state, animation should exist in the Animation List";
+            error.type = NOTIFY_ERROR;
+            error.header = "Animation doesn't exist";
+            error.message = "To add animation into the state, animation should exist in the Animation List";
 
-			EditorPostNotification(error);
+            EditorPostNotification(error);
 #endif
-			return;
-		}
+            return;
+        }
 
-		m_animation = targetAnimation;
-	}
+        m_animation = targetAnimation;
+    }
 
-	// make this can handle multiple names of animation name
-	const Animation* AnimationState::GetAnimationByName(void) const
-	{
-		return m_animation;
-	}
+    // make this can handle multiple names of animation name
+    const Animation* AnimationState::GetAnimationByName(void) const
+    {
+        return m_animation;
+    }
 
-	void AnimationState::SetAnimationByName(const std::string& name)
-	{
-		Animation* targetAnimation = AnimationBuilder::GetAnimationByName(name);
-		if (!targetAnimation)
-		{
-			m_animation = nullptr;
-			return;
-		}
-		m_animation = targetAnimation;
-	}
+    void AnimationState::SetAnimationByName(const std::string& name)
+    {
+        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(name);
+        if (!targetAnimation)
+        {
+            m_animation = nullptr;
+            return;
+        }
+        m_animation = targetAnimation;
+    }
 
-	const float &AnimationState::GetTransPosition(void) const
-	{
-		return m_transPos;
-	}
+    const float &AnimationState::GetTransPosition(void) const
+    {
+        return m_transPos;
+    }
 
-	void AnimationState::SetTransPosition(const float& tPos)
-	{
-		m_transPos = tPos;
-	}
+    void AnimationState::SetTransPosition(const float& tPos)
+    {
+        m_transPos = tPos;
+    }
+    
+    void AnimationState::PlayingAnimation()//const float deltaTime)
+    {
+        //IncrementTimePosition(deltaTime);
+
+        unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount();
+        auto &curr_firstFrame = m_animation->GetKeyframe(0, 0);
+        auto &curr_lastFrame = m_animation->GetKeyframe(keyframeCount1 - 1, 0);
+
+        if (GetTimePosition() > curr_lastFrame.length)
+        {
+            if (IsLooping())
+                SetTimePosition(curr_firstFrame.length);
+            else
+                SetTimePosition(curr_lastFrame.length);
+        }
+    }
 }

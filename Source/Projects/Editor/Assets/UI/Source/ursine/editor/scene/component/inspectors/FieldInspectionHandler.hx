@@ -1,5 +1,6 @@
 package ursine.editor.scene.component.inspectors;
 
+import ursine.native.Property;
 import ursine.controls.inspection.FieldInspector;
 import ursine.editor.scene.component.ComponentDatabase;
 
@@ -29,6 +30,9 @@ class FieldInspectionHandler {
         var prettyName = m_fieldNameRegex.replace( field.name, '$1 ' );
 
         inspector.heading = prettyName.charAt( 0 ).toUpperCase( ) + prettyName.substr( 1 );
+
+        if (Reflect.hasField( field.meta, Property.Annotation ))
+            inspector.annotation = Reflect.field( field.meta, Property.Annotation ).text;
 
         arrayIndex = 0;
     }
