@@ -125,8 +125,8 @@ namespace ursine
                 input >> stringSize;
                 str.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
-
-                input >> animCount;
+                
+                input.ReadBytes( reinterpret_cast<char*>(&animCount), sizeof(unsigned int) );
                 animDataArr.resize(animCount);
 
                 for (auto &iter : animDataArr)
@@ -136,12 +136,12 @@ namespace ursine
                     str.resize(stringSize);
                     input.ReadBytes(&iter.clipname[0], stringSize);
 
-                    input >> iter.clipCount;
-                    input >> iter.boneCount;     
+                    input.ReadBytes( reinterpret_cast<char*>(&iter.clipCount), sizeof(unsigned int) );
+                    input.ReadBytes( reinterpret_cast<char*>(&iter.boneCount), sizeof(unsigned int) );
 
                     iter.keyIndices.resize(iter.clipCount);
                     iter.keyframes.resize(iter.clipCount);
-
+                    
                     unsigned int i = 0, j = 0, k = 0;
                     for (i = 0; i < iter.clipCount; ++i)
                     {
@@ -150,7 +150,7 @@ namespace ursine
 
                         for (j = 0; j < iter.boneCount; ++j)
                         {
-                            input >> iter.keyIndices[ i ][ j ];
+                            input.ReadBytes( reinterpret_cast<char*>(&iter.keyIndices[i][j]), sizeof(unsigned int) );
                             iter.keyframes[ i ][ j ].resize( iter.keyIndices[ i ][ j ] );
 
                             for (k = 0; k < iter.keyIndices[i][j]; ++k)
@@ -165,7 +165,7 @@ namespace ursine
                 output << name.size();
                 output << name;
 
-                output << animCount;
+                output.WriteBytes( reinterpret_cast<char*>(&animCount), sizeof(unsigned int) );
 
                 for (auto &iter : animDataArr)
                 {
@@ -173,15 +173,15 @@ namespace ursine
                     output << iter.clipname.size();
                     output << iter.clipname;
 
-                    output << iter.clipCount;
-                    output << iter.boneCount;
+                    output.WriteBytes( reinterpret_cast<char*>(&iter.clipCount), sizeof(unsigned int) );
+                    output.WriteBytes( reinterpret_cast<char*>(&iter.boneCount), sizeof(unsigned int) );
 
                     unsigned int i = 0, j = 0, k = 0;
                     for (i = 0; i < iter.clipCount; ++i)
                     {
                         for (j = 0; j < iter.boneCount; ++j)
                         {
-                            output << iter.keyIndices[ i ][ j ];
+                            output.WriteBytes( reinterpret_cast<char*>(&iter.keyIndices[i][j]), sizeof(unsigned int) );
                             for (k = 0; k < iter.keyIndices[ i ][ j ]; ++k)
                                 output.WriteBytes( reinterpret_cast<char*>( &iter.keyframes[ i ][ j ][ k ] ), sizeof(FBX_DATA::KeyFrame) );
                         }

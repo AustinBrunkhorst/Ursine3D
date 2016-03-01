@@ -36,9 +36,6 @@ namespace ursine
 
             AnimationBuilder::InitializeStaticData();
 
-            // InitializeJdl(fileText);
-            // InitializeModel(fileText);
-
             // default support the fullscreen quad
             m_modelCache.resize( INTERNAL_GEOMETRY_COUNT );
             m_modelInfoCache.resize( INTERNAL_GEOMETRY_COUNT );
@@ -174,8 +171,6 @@ namespace ursine
                 m_modelCache[ INTERNAL_CUBE ] = new ModelResource( );
                 auto *newMesh = new Mesh( );
                 m_modelCache[ INTERNAL_CUBE ]->AddMesh(newMesh);
-
-                
 
                 // add the vertices
                 // add the indices
