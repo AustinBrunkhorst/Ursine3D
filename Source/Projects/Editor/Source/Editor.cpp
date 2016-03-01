@@ -351,7 +351,7 @@ void Editor::initializeGraphics(void)
     gfxConfig.textureListPath = "Assets/Textures/";
     gfxConfig.windowWidth = static_cast<unsigned>( m_startupConfig.windowSize.X( ) );
     gfxConfig.windowHeight = static_cast<unsigned>( m_startupConfig.windowSize.Y( ) );
-    gfxConfig.enableDebugInfo = true;
+    gfxConfig.enableDebugInfo = false;
     gfxConfig.enableProfiling = false;
         
     m_graphics->StartGraphics( gfxConfig );

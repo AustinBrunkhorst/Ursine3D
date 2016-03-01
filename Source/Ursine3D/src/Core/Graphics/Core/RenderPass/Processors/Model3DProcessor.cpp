@@ -101,7 +101,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////
             // map texture
-            m_manager->textureManager->MapTextureByID( handle.Material_ );
+            m_manager->textureManager->MapResourceTextureByID( handle.Material_ );
         }
 
         void Model3DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)

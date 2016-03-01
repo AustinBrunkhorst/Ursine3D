@@ -971,7 +971,7 @@ namespace ursine
             lightConeModel.Update( 0 );
             lightSphereModel.Update( 0 );
             fullscreenModel.Update( INTERNAL_QUAD );
-            spriteModel.Update( 0 );
+            spriteModel.Update( INTERNAL_QUAD );
             particleModel.Update( INTERNAL_POINT_INDICES );
             fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
 

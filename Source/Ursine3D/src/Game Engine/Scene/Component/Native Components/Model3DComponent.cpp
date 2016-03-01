@@ -80,7 +80,14 @@ namespace ursine
 
         void Model3D::SetModel(const resources::ResourceReference &model)
         {
-            
+            m_modelResource = model;
+
+            if (!resourcesAreAvailable())
+                return;
+
+            invalidateModel();
+
+            NOTIFY_COMPONENT_CHANGED("model", m_modelResource);
         }
 
         const resources::ResourceReference& Model3D::GetTexture(void) const
@@ -90,7 +97,14 @@ namespace ursine
 
         void Model3D::SetTexture(const resources::ResourceReference &texture)
         {
-            
+            m_textureResource = texture;
+
+            if (!resourcesAreAvailable())
+                return;
+
+            invalidateTexture();
+
+            NOTIFY_COMPONENT_CHANGED("texture", m_textureResource);
         }
 
         const graphics::ModelResource *Model3D::GetModelResource(void) const

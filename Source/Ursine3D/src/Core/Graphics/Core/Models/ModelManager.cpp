@@ -40,7 +40,8 @@ namespace ursine
             // InitializeModel(fileText);
 
             // default support the fullscreen quad
-            m_modelCache.resize(INTERNAL_GEOMETRY_COUNT);
+            m_modelCache.resize( INTERNAL_GEOMETRY_COUNT );
+            m_modelInfoCache.resize( INTERNAL_GEOMETRY_COUNT );
             m_modelCount = INTERNAL_GEOMETRY_COUNT;
 
             /////////////////////////////////////////////////////////////////////////////
@@ -339,8 +340,8 @@ namespace ursine
             _RESOURCEHND *id = HND_RSRCE(handle);
 
             internalID = m_modelCache.size();
-            m_modelCache.push_back(new ModelResource());
-            m_modelInfoCache.push_back( new ufmt_loader::ModelInfo() );
+            m_modelCache.push_back( new ModelResource( ) );
+            m_modelInfoCache.push_back( new ufmt_loader::ModelInfo( ) );
             *(m_modelInfoCache[ internalID ]) = *modelInfo;
 
             /////////////////////////////////////////////////////////
