@@ -42,9 +42,6 @@ void VineWhipState::Update(BossVineStateMachine *machine)
 {
     static const float goToDuration = 0.5f;
 
-    if (m_animating)
-        return;
-
     auto ai = machine->GetAI( );
     auto aiTrans = ai->GetOwner( )->GetTransform( );
     auto animator = ai->GetAnimator( );

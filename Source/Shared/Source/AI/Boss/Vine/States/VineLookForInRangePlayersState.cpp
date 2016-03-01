@@ -84,6 +84,8 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
         }
     }
 
+    ai->SetTarget( closestTrans->GetOwner( ) );
+
     auto aiPos = aiTrans->GetWorldPosition( );
 
     if (ai->GetFaceClosestPlayer( ) && m_inRange)
@@ -92,10 +94,10 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
         
         lookAtPosition.Y( ) = aiPos.Y( );
 
-        aiTrans->LookAt( lookAtPosition, ai->GetTurnSpeed( ) );
+        aiTrans->LookAt( lookAtPosition, ai->GetWhipTurnSpeed( ) );
     }
     else
     {
-        aiTrans->LookAt( aiPos + m_originalForward, ai->GetTurnSpeed( ) );
+        aiTrans->LookAt( aiPos + m_originalForward, ai->GetWhipTurnSpeed( ) );
     }
 }
