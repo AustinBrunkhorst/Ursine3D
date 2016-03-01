@@ -194,33 +194,33 @@ namespace ursine
             void MaterialInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
-                std::string str;
                 
                 input >> stringSize;
-                str.resize(stringSize);
+                name.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
-                
-                input.ReadBytes(reinterpret_cast<char*>(&ambitype), sizeof(unsigned int));
-                input.ReadBytes(reinterpret_cast<char*>(&difftype), sizeof(unsigned int));
-                input.ReadBytes(reinterpret_cast<char*>(&emistype), sizeof(unsigned int));
-                input.ReadBytes(reinterpret_cast<char*>(&spectype), sizeof(unsigned int));
-                
-                input.ReadBytes(reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4));
-                input.ReadBytes(reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4));
-                input.ReadBytes(reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4));
-                input.ReadBytes(reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4));
-                
-                input >> ambi_mapCount;
-                input >> diff_mapCount;
-                input >> emis_mapCount;
-                input >> spec_mapCount;
+
+                input.ReadBytes( reinterpret_cast<char*>(&type)     , sizeof(unsigned int));
+                input.ReadBytes( reinterpret_cast<char*>(&ambitype) , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&difftype) , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&emistype) , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&spectype) , sizeof(unsigned int) );
+                                 
+                input.ReadBytes( reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4) );
+                input.ReadBytes( reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4) );
+                input.ReadBytes( reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4) );
+                input.ReadBytes( reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4) );
+                                 
+                input.ReadBytes( reinterpret_cast<char*>(&ambi_mapCount), sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&diff_mapCount), sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&emis_mapCount), sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&spec_mapCount), sizeof(unsigned int) );
                 
                 unsigned int i = 0;
                 ambi_texNames.resize(ambi_mapCount);
                 for (i = 0; i < ambi_mapCount; ++i)
                 {
                     input >> stringSize;
-                    str.resize(stringSize);
+                    ambi_texNames[i].resize(stringSize);
                     input.ReadBytes(&ambi_texNames[i][0], stringSize);
                 }
                 
@@ -228,7 +228,7 @@ namespace ursine
                 for (i = 0; i < diff_mapCount; ++i)
                 {
                     input >> stringSize;
-                    str.resize(stringSize);
+                    diff_texNames[i].resize(stringSize);
                     input.ReadBytes(&diff_texNames[i][0], stringSize);
                 }
                 
@@ -236,7 +236,7 @@ namespace ursine
                 for (i = 0; i < emis_mapCount; ++i)
                 {
                     input >> stringSize;
-                    str.resize(stringSize);
+                    emis_texNames[i].resize(stringSize);
                     input.ReadBytes(&emis_texNames[i][0], stringSize);
                 }
                 
@@ -244,12 +244,12 @@ namespace ursine
                 for (i = 0; i < spec_mapCount; ++i)
                 {
                     input >> stringSize;
-                    str.resize(stringSize);
+                    spec_texNames[i].resize(stringSize);
                     input.ReadBytes(&spec_texNames[i][0], stringSize);
                 }
                 
-                input >> shineness;
-                input >> TransparencyFactor;
+                input.ReadBytes( reinterpret_cast<char*>(&shineness), sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&TransparencyFactor), sizeof(unsigned int) );
             }
 
             void MaterialInfo::Write(resources::pipeline::ResourceWriter &output)
@@ -257,21 +257,21 @@ namespace ursine
                 output << name.size();
                 output << name;
                 
-                output << static_cast<unsigned int>(type); //unsigned int
-                output << static_cast<unsigned int>(ambitype);
-                output << static_cast<unsigned int>(difftype);
-                output << static_cast<unsigned int>(emistype);
-                output << static_cast<unsigned int>(spectype);
+                output.WriteBytes( reinterpret_cast<char*>(&type)       , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&ambitype)   , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&difftype)   , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&emistype)   , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&spectype)   , sizeof(unsigned int) );
                 
-                output.WriteBytes(reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes(reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes(reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes(reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4));
+                output.WriteBytes( reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4));
+                output.WriteBytes( reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4));
+                output.WriteBytes( reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4));
+                output.WriteBytes( reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4));
                 
-                output << ambi_mapCount;
-                output << diff_mapCount;
-                output << emis_mapCount;
-                output << spec_mapCount;
+                output.WriteBytes( reinterpret_cast<char*>(&ambi_mapCount), sizeof(unsigned int));
+                output.WriteBytes( reinterpret_cast<char*>(&diff_mapCount), sizeof(unsigned int));
+                output.WriteBytes( reinterpret_cast<char*>(&emis_mapCount), sizeof(unsigned int));
+                output.WriteBytes( reinterpret_cast<char*>(&spec_mapCount), sizeof(unsigned int));
                 
                 if (ambi_texNames.size() > 0)
                 {
@@ -281,6 +281,7 @@ namespace ursine
                         output << iter;
                     }
                 }
+                
                 if (diff_texNames.size() > 0)
                 {
                     for (auto &iter : diff_texNames)
@@ -289,6 +290,7 @@ namespace ursine
                         output << iter;
                     }
                 }
+                
                 if (emis_texNames.size() > 0)
                 {
                     for (auto &iter : emis_texNames)
@@ -297,6 +299,7 @@ namespace ursine
                         output << iter;
                     }
                 }
+                
                 if (spec_texNames.size() > 0)
                 {
                     for (auto &iter : spec_texNames)
@@ -306,8 +309,8 @@ namespace ursine
                     }
                 }
                 
-                output << shineness;
-                output << TransparencyFactor;
+                output.WriteBytes( reinterpret_cast<char*>(&shineness), sizeof(float) );
+                output.WriteBytes( reinterpret_cast<char*>(&TransparencyFactor), sizeof(float) );
             }
         };
     };

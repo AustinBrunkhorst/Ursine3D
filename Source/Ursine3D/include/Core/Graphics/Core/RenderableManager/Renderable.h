@@ -85,6 +85,9 @@ namespace ursine
             const char *GetModelName(void);
             void SetModelName(std::string modelName);
 
+            GfxHND GetModelHandle(void) const;
+            void SetModelHandle(GfxHND handle);
+
             GfxHND GetTextureHandle(void);
             void SetTextureHandle(GfxHND handle);
 
@@ -120,6 +123,8 @@ namespace ursine
             float m_specIntensity;
             Color m_color;
             std::string m_modelResourceName;
+
+            GfxHND m_modelHandle;
             GfxHND m_textureHandle;
 
             float m_animationTime;

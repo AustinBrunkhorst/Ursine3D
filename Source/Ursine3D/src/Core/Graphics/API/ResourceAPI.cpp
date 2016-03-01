@@ -78,21 +78,6 @@ namespace ursine
         /////////////////////////////////////////////////////////
         // MODEL
         /////////////////////////////////////////////////////////
-        //get model handle
-        GfxHND ResourceAPI::GetModelHandle(const char *name)
-        {
-            return m_privates->modelMgr->GetModelIDByName(name);
-        }
-
-        ModelResource *ResourceAPI::GetModelResource(const GfxHND & handle)
-        {
-            return m_privates->modelMgr->GetModel(static_cast<unsigned>(handle));
-        }
-
-        ModelResource * ResourceAPI::GetModelResource(const std::string & modelName)
-        {
-            return m_privates->modelMgr->GetModel(modelName);
-        }
 
         GfxHND ResourceAPI::CreateModel(graphics::ufmt_loader::ModelInfo *modelInfo)
         {
@@ -114,14 +99,14 @@ namespace ursine
             m_privates->modelMgr->UnloadModel(handle);
         }
 
+        ModelResource* ResourceAPI::GetModelResource(GfxHND handle)
+        {
+            return m_privates->modelMgr->GetModel( static_cast<unsigned>(handle & 0xFFFF) );
+        }
+
         ufmt_loader::ModelInfo *ResourceAPI::GetModelInfo(const GfxHND &handle)
         {
             return m_privates->modelMgr->GetModelInfo( handle );
-        }
-
-        GfxHND ResourceAPI::GetAnimeHandle(const char *name)
-        {
-            return m_privates->modelMgr->GetAnimeIDByName(name);
         }
 
         GfxHND ResourceAPI::CreateAnimation(ufmt_loader::AnimInfo *animeInfo)

@@ -15,7 +15,7 @@ namespace ursine
             ModelReader(void);
 
         private:
-            ursine::graphics::ufmt_loader::ModelInfo* m_modelInfo;
+            std::shared_ptr<graphics::ufmt_loader::ModelInfo> m_modelInfo;
             ResourceData::Handle Read(ResourceReader &input) override;
         } Meta(
             Enable,

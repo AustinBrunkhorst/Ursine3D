@@ -58,36 +58,27 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // MODEL
             /////////////////////////////////////////////////////////
-            // get model handle
-            GfxHND GetModelHandle(const char *name);
 
-            // get a model
-            ModelResource *GetModelResource(const GfxHND &handle);
-            ModelResource *GetModelResource(const std::string &modelName);
-
+            // create a model
             GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
             void DestroyModel(GfxHND &handle);
 
+            // load/unload from GPU
             void LoadModel(GfxHND handle);
             void UnloadModel(GfxHND handle);
 
+            // get model data
+            ModelResource *GetModelResource(GfxHND handle);
+
+            // get a model info
             ufmt_loader::ModelInfo *GetModelInfo(const GfxHND &handle);
 
             /////////////////////////////////////////////////////////
             // Animation
             /////////////////////////////////////////////////////////
-            // get model handle
-            GfxHND GetAnimeHandle(const char *name);
-
-            //// get a model
-            //ModelResource *GetModelResource(const GfxHND &handle);
-            //ModelResource *GetModelResource(const std::string &modelName);
 
             GfxHND CreateAnimation(ufmt_loader::AnimInfo *animeInfo);
             void DestroyAnimation(GfxHND &handle);
-
-            //void LoadModel(GfxHND handle);
-            //void UnloadModel(GfxHND handle);
 
             ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);
             

@@ -31,18 +31,15 @@ namespace ursine
 
         Model3D::Model3D(void)
             : BaseComponent( )
+            , m_graphics( GetCoreSystem( graphics::GfxAPI ) )
             , m_model( nullptr )
-            , m_modelName( "Cube" )
-            , m_materialName( "Blank" )
         {
-            auto *graphics = GetCoreSystem( graphics::GfxAPI );
-
             m_base = new RenderableComponentBase( std::bind( &Model3D::updateRenderer, this ) );
 
-            m_base->SetHandle( graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D ) );
+            m_base->SetHandle( m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D ) );
 
             // store a pointer to the model
-            m_model = &graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
+            m_model = &m_graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
             m_model->SetRenderMask( 0 );
         }
@@ -65,47 +62,54 @@ namespace ursine
             m_base->OnInitialize( owner );
 
             // set the unique id
-            m_model->SetEntityID( GetOwner( )->GetID( ) );
 
-            // set the model if there is one
-            if (m_modelName.size( ) > 0)
-                m_model->SetModelName( m_modelName );
+            m_model->SetEntityID( GetOwner( )->GetID( ) );
 
             updateRenderer( );
         }
 
-        std::vector<SMat4> &Model3D::GetMatrixPalette()
+        std::vector<SMat4> &Model3D::GetMatrixPalette(void)
         {
             return m_model->GetMatrixPalette( );
         }
 
-        void Model3D::SetModelResourceName(const std::string &name)
+        const resources::ResourceReference& Model3D::GetModel(void) const
         {
-            m_modelName = name;
-
-            m_model->SetModelName( name );
+            return m_modelResource;
         }
 
-        const std::string &Model3D::GetModelResourceName(void) const
+        void Model3D::SetModel(const resources::ResourceReference &model)
         {
-            return m_modelName;
+            m_modelResource = model;
+
+            if (!resourcesAreAvailable( ))
+                return;
+
+            invalidateModel( );
+
+            NOTIFY_COMPONENT_CHANGED( "model", m_modelResource );
+        }
+
+        const resources::ResourceReference& Model3D::GetTexture(void) const
+        {
+            return m_textureResource;
+        }
+
+        void Model3D::SetTexture(const resources::ResourceReference &texture)
+        {
+            m_textureResource = texture;
+
+            if (!resourcesAreAvailable( ))
+                return;
+
+            invalidateTexture( );
+
+            NOTIFY_COMPONENT_CHANGED( "texture", m_textureResource );
         }
 
         const graphics::ModelResource *Model3D::GetModelResource(void) const
         {
-            return GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelResource( m_modelName );
-        }
-
-        void Model3D::SetMaterial(const std::string &name)
-        {
-            m_materialName = name;
-
-            // m_model->SetMaterial( name );
-        }
-
-        const std::string &Model3D::GetMaterial(void) const
-        {
-            return m_materialName;
+            return m_graphics->ResourceMgr.GetModelResource( m_model->GetModelHandle( ) );
         }
 
         void Model3D::SetColor(const ursine::Color &color)
@@ -212,11 +216,48 @@ namespace ursine
 
         void Model3D::updateRenderer(void)
         {
-            // update the renderer's
             auto trans = GetOwner( )->GetTransform( );
-            auto &model = GetCoreSystem( graphics::GfxAPI )->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
+            auto &model = m_graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
             model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
+        }
+
+        void Model3D::invalidateModel(void)
+        {
+            auto data = loadResource<resources::ModelData>( m_modelResource );
+
+            if (data == nullptr)
+            {
+                // default
+                m_model->SetTextureHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetModelHandle( );
+
+                m_graphics->ResourceMgr.LoadModel( handle );
+
+                m_model->SetModelHandle( handle );
+            }
+        }
+
+        void Model3D::invalidateTexture(void)
+        {
+            auto data = loadResource<resources::TextureData>( m_textureResource );
+
+            if (data == nullptr)
+            {
+                // default
+                m_model->SetTextureHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetTextureHandle( );
+
+                m_graphics->ResourceMgr.LoadTexture( handle );
+
+                m_model->SetTextureHandle( handle );
+            }
         }
 
         void Model3D::OnSerialize(Json::object &output) const
@@ -229,13 +270,13 @@ namespace ursine
             SetMeshIndex( input[ "meshIndex" ].int_value( ) );
         }
 
-#if defined(URSINE_WITH_EDITOR)
+    #if defined(URSINE_WITH_EDITOR)
 
         void Model3D::GenerateConvexHull(void)
         {
             auto entity = GetOwner( );
 
-            Timer::Create( 0 ).Completed( [=]
+            Application::PostMainThread( [=]
             {
                 if (!entity->HasComponent<ConvexHullCollider>( ))
                     entity->AddComponent<ConvexHullCollider>( );
@@ -250,7 +291,7 @@ namespace ursine
         {
             auto entity = GetOwner( );
 
-            Timer::Create( 0 ).Completed( [=]
+            Application::PostMainThread( [=]
             {
                 if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
                     entity->AddComponent<BvhTriangleMeshCollider>( );
@@ -278,7 +319,7 @@ namespace ursine
         {
             auto entity = GetOwner( );
 
-            Timer::Create( 0 ).Completed( [=]
+            Application::PostMainThread( [=]
             {
                 if (!entity->HasComponent<ConvexDecompCollider>( ))
                     entity->AddComponent<ConvexDecompCollider>( );
@@ -289,6 +330,6 @@ namespace ursine
             } );
         }
 
-#endif
+    #endif
     }
 }

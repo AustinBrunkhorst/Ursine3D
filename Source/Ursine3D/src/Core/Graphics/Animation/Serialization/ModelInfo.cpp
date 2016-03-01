@@ -132,20 +132,19 @@ namespace ursine
             void ModelInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
-                std::string str;
                 
                 input >> stringSize;
-                str.resize(stringSize);
+                name.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
                 
-                input >> mmeshCount;
-                input >> mmaterialCount;
-                input >> mboneCount;
-                input >> mmeshlvlCount;
-                input >> mriglvlCount;
-                
+                input.ReadBytes( reinterpret_cast<char*>( &mmeshCount)      , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>( &mmaterialCount)  , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>( &mboneCount)      , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>( &mmeshlvlCount)   , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>( &mriglvlCount)    , sizeof(unsigned int) );
+
                 unsigned int i = 0;
-                
+
                 mMeshInfoVec.resize(mmeshCount);
                 for (i = 0; i < mmeshCount; ++i)
                     mMeshInfoVec[i].Read(input);
@@ -171,32 +170,37 @@ namespace ursine
             {
                 output << name.size();
                 output << name;
-                output << mmeshCount;
-                output << mmaterialCount;
-                output << mboneCount;
-                output << mmeshlvlCount;
-                output << mriglvlCount;
-                
+
+                output.WriteBytes( reinterpret_cast<char*>(&mmeshCount)     , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&mmaterialCount) , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&mboneCount)     , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&mmeshlvlCount)  , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&mriglvlCount)   , sizeof(unsigned int) );
+
                 if (mMeshInfoVec.size() > 0)
                 {
                     for (auto &iter : mMeshInfoVec)
                         iter.Write(output);
                 }
+                
                 if (mMtrlInfoVec.size() > 0)
                 {
                     for (auto &iter : mMtrlInfoVec)
                         iter.Write(output);
                 }
+                
                 if (mBoneInfoVec.size() > 0)
                 {
                     for (auto &iter : mBoneInfoVec)
                         iter.Write(output);
                 }
+                
                 if (mMeshLvVec.size() > 0)
                 {
                     for (auto &iter : mMeshLvVec)
                         output.WriteBytes(reinterpret_cast<char*>(&iter), sizeof(MeshInLvl));
                 }
+                
                 if (mRigLvVec.size() > 0)
                 {
                     for (auto &iter : mRigLvVec)

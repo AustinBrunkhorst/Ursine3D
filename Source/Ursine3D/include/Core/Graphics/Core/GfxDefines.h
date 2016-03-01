@@ -51,9 +51,19 @@
 #define ID_RENDERABLE 170
 #define ID_TEXTURE    113
 #define ID_MODEL      146
+#define ID_ANIMATION  213
 #define ID_CAMERA     123
 #define ID_VIEWPORT   42
 #define ID_UI         87
+
+// internal IDs for objects
+#define INTERNAL_CUBE               3
+#define INTERNAL_SPHERE             1
+#define INTERNAL_CONE               2
+#define INTERNAL_QUAD               0
+#define INTERNAL_POINT_INDICES      4
+
+#define INTERNAL_GEOMETRY_COUNT     5
 
 //sanity values
 #define SANITY_RESOURCE 73

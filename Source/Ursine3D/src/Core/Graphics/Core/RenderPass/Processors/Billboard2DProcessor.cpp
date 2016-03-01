@@ -87,7 +87,7 @@ namespace ursine
             );
 
             // map texture //////////////////////////////////////////
-            m_manager->textureManager->MapTextureByID( handle.Material_ );
+            m_manager->textureManager->MapResourceTextureByID( handle.Material_ );
 
             // set overdraw value ///////////////////////////////////
             if (handle.Overdraw_)
@@ -98,7 +98,7 @@ namespace ursine
 
         void Billboard2DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            //m_manager->shaderManager->Render( 1 );
+            m_manager->shaderManager->Render( 1 );
         }
     }
 }

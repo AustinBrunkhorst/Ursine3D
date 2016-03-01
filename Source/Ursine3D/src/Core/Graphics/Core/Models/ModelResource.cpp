@@ -26,8 +26,6 @@ namespace ursine
             , m_meshHierarchy()
             , m_rigHierarchy()
             , m_onGPU(false)
-            , m_binaryData(nullptr)
-            , m_binarySize(0)
         {
         }
 
@@ -111,10 +109,6 @@ namespace ursine
         void ModelResource::SetIsLoaded(bool isOnGPU)
         {
             m_onGPU = isOnGPU;
-        }
-
-        void ModelResource::BuildBinaryData(void) const
-        {
         }
     }
 }

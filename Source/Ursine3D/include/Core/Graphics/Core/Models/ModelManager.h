@@ -29,33 +29,12 @@ namespace ursine
         {
         public:
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
-            void InitializeJdl(std::string fileText);
-            void InitializeModel(std::string fileText);
             void Uninitialize();
 
-            void LoadModel(std::string name, std::string fileName);
-            void LoadModel_Fbx(std::string name, std::string fileName);
-            void LoadModel_Jdl(std::string name, std::string fileName);
-
-            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
-
-            // creating a model resource
-            GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
-            void DestroyModel(GfxHND &handle);
-
-            // loading/unloading model
-            void LoadModel(GfxHND handle);
-            void UnloadModel(GfxHND handle);
-
-            ufmt_loader::ModelInfo *GetModelInfo(GfxHND handle);
-
-            ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
-            unsigned GetModelVertcount(std::string name, unsigned index = 0);
-            unsigned GetModelIndexcount(std::string name, unsigned index = 0);
-
-            void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
+            // Some version of this needs to exist
             void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
 
+            // KEEP
             //manual binding
             template<typename T>
             void BindMesh(ID3D11Buffer *mesh, ID3D11Buffer *indices)
@@ -70,31 +49,50 @@ namespace ursine
                 m_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);
             }
 
-            unsigned GetModelIDByName(std::string name);
-
-            ID3D11Buffer *GetModelVertByID(unsigned ID, unsigned index = 0);
-            unsigned GetModelVertcountByID(unsigned ID, unsigned index = 0);
-
+            // KEEP
             unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
 
+            // KEEP
             unsigned GetModelMeshCount(unsigned ID);
 
+            // KEEP
             void Invalidate();
 
+            // KEPT
             ModelResource *GetModel(const unsigned ID);
-            ModelResource *GetModel(const std::string &name);
 
+
+            ///////////////////////////////////////////////////////////////////////////////////////
+            // KEPT
+            // this takes all info from modelInfo and loads it into a modelresource
+            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
+
+            // creating a model resource
+            GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
+            void DestroyModel(GfxHND &handle);
+
+            // loading/unloading model
+            void LoadModel(GfxHND handle);
+            void UnloadModel(GfxHND handle);
+            ufmt_loader::ModelInfo *GetModelInfo(GfxHND handle);
 
             // Animation
             // creating a anime 
-            void InitializeAnimation(ufmt_loader::AnimInfo *animeInfo);
-
             GfxHND CreateAnimation(ufmt_loader::AnimInfo *animeInfo);
             void DestroyAnimation(GfxHND &handle);
-
             ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
 
-            unsigned GetAnimeIDByName(std::string name);
+            /////////////////////////////////////////////////////////////////////////////////////////
+            // DELETED DATA
+            std::map< std::string, unsigned > m_s2uTable;
+            std::map <unsigned, ModelResource * > m_u2mTable;
+            std::map< std::string, ModelResource * > m_modelArray;
+            std::vector< std::string > m_jdllist;
+            std::map< std::string, unsigned > a_s2uTable;
+            std::map< unsigned, ufmt_loader::AnimInfo * > a_u2aTable;
+            std::map< std::string, ufmt_loader::AnimInfo * > m_animeArray;
+
+            // KEPT DATA //////////////////////////////////////////////////////
 
         private:
             void loadModelToGPU(ModelResource *model);
@@ -107,21 +105,11 @@ namespace ursine
             unsigned m_modelCount;
             unsigned m_currentState;
 
-            std::map< std::string, unsigned > m_s2uTable;
-            std::map <unsigned, ModelResource * > m_u2mTable;
-            std::map< std::string, ModelResource * > m_modelArray;
-            std::vector< std::string > m_jdllist;
-
             std::vector< ModelResource * > m_modelCache;
             std::vector< ufmt_loader::ModelInfo * > m_modelInfoCache;
 
             // anime
             unsigned m_animeCount;
-
-            std::map< std::string, unsigned > a_s2uTable;
-            std::map< unsigned, ufmt_loader::AnimInfo * > a_u2aTable;
-            std::map< std::string, ufmt_loader::AnimInfo * > m_animeArray;
-
             std::vector< ufmt_loader::AnimInfo * > m_animeInfoCache;
         };
     }

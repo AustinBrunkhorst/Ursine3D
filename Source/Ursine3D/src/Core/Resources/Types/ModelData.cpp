@@ -11,11 +11,11 @@ namespace ursine
     {
         ModelData::ModelData(graphics::ufmt_loader::ModelInfo *modelInfo)
         {
-            // @@@TODO: give model info to graphics system, assign m_modelHandle
             m_modelHandle = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.CreateModel( modelInfo );
         }
         
-        ModelData::~ModelData(void) { 
+        ModelData::~ModelData(void) 
+        { 
             GetCoreSystem( graphics::GfxAPI )->ResourceMgr.DestroyModel( m_modelHandle );
         }
         
@@ -25,7 +25,7 @@ namespace ursine
         }
 
         void ModelData::Write(pipeline::ResourceWriter &output)
-        {            
+        {
             graphics::ufmt_loader::ModelInfo *modelInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetModelInfo(m_modelHandle);
             modelInfo->Write(output);
         }

@@ -96,18 +96,18 @@ namespace ursine
                 std::string str;
                 
                 input >> stringSize;
-                str.resize(stringSize);
+                name.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
                 
-                input >> mParentIndex;
-                
-                input.ReadBytes(reinterpret_cast<char*>(&bindPosition), sizeof(pseudodx::XMFLOAT3));
-                input.ReadBytes(reinterpret_cast<char*>(&bindRotation), sizeof(pseudodx::XMFLOAT4));
-                input.ReadBytes(reinterpret_cast<char*>(&bindScaling), sizeof(pseudodx::XMFLOAT3));
-                
-                input.ReadBytes(reinterpret_cast<char*>(&boneSpacePosition), sizeof(pseudodx::XMFLOAT3));
-                input.ReadBytes(reinterpret_cast<char*>(&boneSpaceRotation), sizeof(pseudodx::XMFLOAT4));
-                input.ReadBytes(reinterpret_cast<char*>(&boneSpaceScaling), sizeof(pseudodx::XMFLOAT3));
+                input.ReadBytes( reinterpret_cast<char*>(&mParentIndex) , sizeof(unsigned int));
+                                 
+                input.ReadBytes( reinterpret_cast<char*>(&bindPosition) , sizeof(pseudodx::XMFLOAT3));
+                input.ReadBytes( reinterpret_cast<char*>(&bindRotation) , sizeof(pseudodx::XMFLOAT4));
+                input.ReadBytes( reinterpret_cast<char*>(&bindScaling)  , sizeof(pseudodx::XMFLOAT3));
+                                 
+                input.ReadBytes( reinterpret_cast<char*>(&boneSpacePosition) , sizeof(pseudodx::XMFLOAT3));
+                input.ReadBytes( reinterpret_cast<char*>(&boneSpaceRotation) , sizeof(pseudodx::XMFLOAT4));
+                input.ReadBytes( reinterpret_cast<char*>(&boneSpaceScaling)  , sizeof(pseudodx::XMFLOAT3));
             }
 
             void BoneInfo::Write(resources::pipeline::ResourceWriter &output)
@@ -115,15 +115,15 @@ namespace ursine
                 output << name.size();
                 output << name;
                 
-                output << mParentIndex;
+                output.WriteBytes(reinterpret_cast<char*>(&mParentIndex) , sizeof(unsigned int));
                 
-                output.WriteBytes(reinterpret_cast<char*>(&bindPosition), sizeof(pseudodx::XMFLOAT3));
-                output.WriteBytes(reinterpret_cast<char*>(&bindRotation), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes(reinterpret_cast<char*>(&bindScaling), sizeof(pseudodx::XMFLOAT3));
+                output.WriteBytes( reinterpret_cast<char*>(&bindPosition) , sizeof(pseudodx::XMFLOAT3));
+                output.WriteBytes( reinterpret_cast<char*>(&bindRotation) , sizeof(pseudodx::XMFLOAT4));
+                output.WriteBytes( reinterpret_cast<char*>(&bindScaling)  , sizeof(pseudodx::XMFLOAT3));
                 
-                output.WriteBytes(reinterpret_cast<char*>(&boneSpacePosition), sizeof(pseudodx::XMFLOAT3));
-                output.WriteBytes(reinterpret_cast<char*>(&boneSpaceRotation), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes(reinterpret_cast<char*>(&boneSpaceScaling), sizeof(pseudodx::XMFLOAT3));
+                output.WriteBytes( reinterpret_cast<char*>(&boneSpacePosition)  , sizeof(pseudodx::XMFLOAT3));
+                output.WriteBytes( reinterpret_cast<char*>(&boneSpaceRotation)  , sizeof(pseudodx::XMFLOAT4));
+                output.WriteBytes( reinterpret_cast<char*>(&boneSpaceScaling)   , sizeof(pseudodx::XMFLOAT3));
             }
         };
     };

@@ -116,11 +116,13 @@ namespace ursine
                         for (auto iter : meshVtxInfos)
                             WriteFile(hFile, &iter, sizeof(MeshVertex), &nBytesWrite, nullptr);
                     }
+
                     if (meshVtxIndices.size() > 0)
                     {
                         for (auto iter : meshVtxIndices)
                             WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
                     }
+
                     if (mtrlName.size() > 0)
                     {
                         for (auto iter : mtrlName)
@@ -129,6 +131,7 @@ namespace ursine
                             WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
                         }
                     }
+
                     if (materialIndices.size() > 0)
                     {
                         for (auto iter : materialIndices)
@@ -141,58 +144,61 @@ namespace ursine
             void MeshInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
-                std::string str;
                 
                 input >> stringSize;
-                str.resize(stringSize);
+                name.resize(stringSize);
                 input.ReadBytes(&name[0], stringSize);
-                
-                input >> meshVtxIdxCount;
-                input >> meshVtxIdxCount;
-                input >> mtrlCount;
-                input >> mtrlIndexCount;
-                
+
+                input.ReadBytes( reinterpret_cast<char*>(&meshVtxInfoCount)  , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&meshVtxIdxCount)   , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&mtrlCount)         , sizeof(unsigned int) );
+                input.ReadBytes( reinterpret_cast<char*>(&mtrlIndexCount)    , sizeof(unsigned int) );
+
                 unsigned int i = 0;
+
                 meshVtxInfos.resize(meshVtxInfoCount);
                 for (i = 0; i < meshVtxInfoCount; ++i)
-                    input.ReadBytes(reinterpret_cast<char*>(&meshVtxInfos[i]), sizeof(MeshVertex));
+                    input.ReadBytes( reinterpret_cast<char*>(&meshVtxInfos[i]), sizeof(MeshVertex) );
                 
                 meshVtxIndices.resize(meshVtxIdxCount);
                 for (i = 0; i < meshVtxIdxCount; ++i)
-                    input >> meshVtxIndices[i];
+                    input.ReadBytes( reinterpret_cast<char*>(&meshVtxIndices[i]), sizeof(unsigned int) );
                 
                 mtrlName.resize(mtrlCount);
                 for (i = 0; i < mtrlCount; ++i)
                 {
                     input >> stringSize;
-                    str.resize(stringSize);
-                    input.ReadBytes(reinterpret_cast<char*>(&mtrlName[i]), stringSize);
+                    mtrlName[i].resize(stringSize);
+                    input.ReadBytes( &mtrlName[i][0], stringSize);
                 }
                 
                 materialIndices.resize(mtrlIndexCount);
                 for (i = 0; i < mtrlIndexCount; ++i)
-                    input >> materialIndices[i];
+                    input.ReadBytes( reinterpret_cast<char*>(&materialIndices[i]), sizeof(unsigned int) );
             }
 
             void MeshInfo::Write(resources::pipeline::ResourceWriter &output)
             {
                 output << name.size();
                 output << name;
-                output << meshVtxInfoCount;
-                output << meshVtxIdxCount;
-                output << mtrlCount;
-                output << mtrlIndexCount;
                 
+                output.WriteBytes( reinterpret_cast<char*>(&meshVtxInfoCount)   , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&meshVtxIdxCount)    , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&mtrlCount)          , sizeof(unsigned int) );
+                output.WriteBytes( reinterpret_cast<char*>(&mtrlIndexCount)     , sizeof(unsigned int) );
+                                
                 if (meshVtxInfos.size() > 0)
                 {
                     for (auto &iter : meshVtxInfos)
-                        output.WriteBytes(reinterpret_cast<char*>(&iter), sizeof(MeshVertex));
+                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(MeshVertex) );
                 }
+                
                 if (meshVtxIndices.size() > 0)
                 {
                     for (auto &iter : meshVtxIndices)
-                        output << iter;
+                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(unsigned int) );
                 }
+                
                 if (mtrlName.size() > 0)
                 {
                     for (auto &iter : mtrlName)
@@ -201,10 +207,11 @@ namespace ursine
                         output << iter;
                     }
                 }
+                
                 if (materialIndices.size() > 0)
                 {
                     for (auto &iter : materialIndices)
-                        output << iter;
+                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(unsigned int) );
                 }
             }
         };

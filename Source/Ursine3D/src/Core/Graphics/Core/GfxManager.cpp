@@ -262,10 +262,9 @@ namespace ursine
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 
-                GfxHND texHandle = current->GetTextureHandle();
-                drawCall.Material_ = texHandle & 0xFFFF;
+                drawCall.Material_ = current->GetTextureHandle( ) & 0xFFFF;
 
-                drawCall.Model_ = modelManager->GetModelIDByName(current->GetModelName());
+                drawCall.Model_ = current->GetModelHandle( ) & 0xFFFF;
                 drawCall.Overdraw_ = current->GetOverdraw();
                 drawCall.Shader_ = drawCall.Overdraw_ ? SHADER_OVERDRAW_MODEL : SHADER_DEFERRED_DEPTH;
                 drawCall.Type_ = drawCall.Overdraw_ ? RENDERABLE_OVERDRAW : render->Type_;
@@ -416,7 +415,7 @@ namespace ursine
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN, DEPTH_STENCIL_COUNT);
             dxCore->SetBlendState(BLEND_STATE_DEFAULT);
 
-            modelManager->BindModel(modelManager->GetModelIDByName("internalQuad"));
+            modelManager->BindModel( INTERNAL_QUAD );
             shaderManager->BindShader(SHADER_PRIMITIVE);
             layoutManager->SetInputLayout(SHADER_PRIMITIVE);
 
@@ -428,7 +427,7 @@ namespace ursine
             pcb.color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
 
 
             /////////////////////////////////////////////////////////////////
@@ -969,11 +968,11 @@ namespace ursine
             lightmapRT.Update( RENDER_TARGET_LIGHTMAP );
 
             // TEXTURES AND MODELS /////////////
-            lightConeModel.Update( modelManager->GetModelIDByName( "lightCone" ) );
-            lightSphereModel.Update( modelManager->GetModelIDByName( "Sphere" ) );
-            fullscreenModel.Update( modelManager->GetModelIDByName( "internalQuad" ) );
-            spriteModel.Update( modelManager->GetModelIDByName( "Sprite" ) );
-            particleModel.Update( modelManager->GetModelIDByName( "ParticleIndices") );
+            lightConeModel.Update( 0 );
+            lightSphereModel.Update( 0 );
+            fullscreenModel.Update( INTERNAL_QUAD );
+            spriteModel.Update( INTERNAL_QUAD );
+            particleModel.Update( INTERNAL_POINT_INDICES );
             fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
 
             /////////////////////////////////////////////////////////
@@ -1252,8 +1251,8 @@ namespace ursine
 
             viewBuffer.Update( cb );
             viewBufferGeom.Update( cb );
-            spriteModel.Update( modelManager->GetModelIDByName( "Sprite" ) );
-            particleModel.Update( modelManager->GetModelIDByName( "ParticleIndices" ) );
+            spriteModel.Update( 0 );
+            particleModel.Update( INTERNAL_POINT_INDICES );
             fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
 
             pgb.cameraPosition = SVec4( currentCamera.GetPosition( ), 1 ).ToD3D( );
@@ -1349,7 +1348,7 @@ namespace ursine
             shaderManager->BindShader(SHADER_UI);
             layoutManager->SetInputLayout(SHADER_UI);
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1) * trans);
-            modelManager->BindModel(modelManager->GetModelIDByName("internalQuad"));
+            modelManager->BindModel( INTERNAL_QUAD );
         }
 
         void GfxManager::RenderComputeMousePos()
@@ -1475,7 +1474,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
         }
 
         void GfxManager::RenderDynamicTextureInViewport(GfxHND& texHandle, const float posX, const float posY, GfxHND& camera)
@@ -1536,7 +1535,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
         }
 
         void GfxManager::RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void* input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY)
@@ -1675,7 +1674,7 @@ namespace ursine
 
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(input)->ShaderMap);
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
         }
 
         void GfxManager::RenderUI_Main(RENDER_TARGETS input)
@@ -1695,7 +1694,7 @@ namespace ursine
 
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(input)->ShaderMap);
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
-            shaderManager->Render(modelManager->GetModelVertcountByID(modelManager->GetModelIDByName("internalQuad")));
+            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
         }
     }
 }
