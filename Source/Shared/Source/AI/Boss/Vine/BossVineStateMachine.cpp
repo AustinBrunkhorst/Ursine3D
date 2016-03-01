@@ -17,9 +17,26 @@
 
 #include "BossVineAIComponent.h"
 
+#include <Application.h>
+
+using namespace ursine;
+
 BossVineStateMachine::BossVineStateMachine(BossVineAI* ai)
     : m_ai( ai )
 {
+    AddFloat( "Cooldown", 0.0f );
+}
+
+void BossVineStateMachine::Update(void)
+{
+    auto cooldown = GetFloat( "Cooldown" );
+
+    if (cooldown >= 0.0f)
+        cooldown -= Application::Instance->GetDeltaTime( );
+
+    SetFloat( "Cooldown", cooldown );
+
+    StateMachine::Update( );
 }
 
 BossVineAI *BossVineStateMachine::GetAI(void)

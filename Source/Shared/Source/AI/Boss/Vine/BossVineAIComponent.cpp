@@ -16,6 +16,9 @@
 #include "BossVineStateMachine.h"
 #include "BossVineState.h"
 #include "VineLookForInRangePlayersState.h"
+#include "VineWhipState.h"
+
+#include <FloatCondition.h>
 
 #include <SystemManager.h>
 #include <DebugSystem.h>
@@ -35,6 +38,7 @@ BossVineAI::BossVineAI(void)
     , m_damage( 10.0f )
     , m_cooldown( 2.0f )
     , m_stateMachine( this )
+    , m_animator( nullptr )
 {
 }
 
@@ -114,13 +118,27 @@ void BossVineAI::SetWhipCooldown(float cooldown)
     m_cooldown = cooldown;
 }
 
+EntityAnimator *BossVineAI::GetAnimator(void)
+{
+    if (!m_animator)
+        m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
+
+    return m_animator;
+}
+
 void BossVineAI::OnInitialize(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &BossVineAI::onUpdate );
 
-    // Setup the state machien
+    // Setup the state machine
     auto lookState = m_stateMachine.AddState<VineLookForInRangePlayersState>( );
+    auto whipState = m_stateMachine.AddState<VineWhipState>( );
+
+    auto trans = lookState->AddTransition( whipState, "To Whip" );
+    trans->AddCondition<sm::FloatCondition>( "Cooldown", sm::Comparison::LessThan, 0.0f );
+
+    whipState->AddTransition( lookState, "To Look" );
 
     m_stateMachine.SetInitialState( lookState );
 }

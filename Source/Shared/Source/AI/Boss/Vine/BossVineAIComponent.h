@@ -15,6 +15,8 @@
 
 #include "BossVineStateMachine.h"
 
+#include "EntityAnimatorComponent.h"
+
 class BossVineAI : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -94,6 +96,8 @@ public:
     float GetWhipCooldown(void) const;
     void SetWhipCooldown(float cooldown);
 
+    EntityAnimator *GetAnimator(void);
+
 private:
 
     void OnInitialize(void) override;
@@ -110,4 +114,7 @@ private:
     float m_cooldown;
 
     BossVineStateMachine m_stateMachine;
+
+    EntityAnimator *m_animator;
+
 } Meta(Enable);

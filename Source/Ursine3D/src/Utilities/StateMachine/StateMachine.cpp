@@ -206,9 +206,9 @@ namespace ursine
             *variant = true;
         }
 
-        void StateMachine::AddFloat(const std::string &floatName, float initValue)
+        void StateMachine::AddFloat(const std::string &floatName, float floatValue)
         {
-            m_variables[ floatName ] = initValue;
+            m_variables[ floatName ] = floatValue;
         }
 
         float StateMachine::GetFloat(const std::string &floatName)

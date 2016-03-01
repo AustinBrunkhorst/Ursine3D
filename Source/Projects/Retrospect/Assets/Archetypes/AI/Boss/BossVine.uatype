@@ -1,0 +1,485 @@
+{
+"children": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"ApplyImpulseOnHit": {
+".uid": 507, 
+"effectSweptController": true, 
+"impulse": 10, 
+"localDirectionInfluence": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"worldDirectionInfluence": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 508, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"DamageOnCollide": {
+".uid": 509, 
+"ArchetypeOnDeath": ".uatype", 
+"ArchetypeOnHit": "FX/FX_VineHit.uatype", 
+"CritModifier": 2, 
+"DamageInterval": 0.5, 
+"DamageToApply": 1, 
+"DeleteOnCollision": false, 
+"SpawnOnDeath": false, 
+"SpawnOnHit": true
+}, 
+"Ghost": {
+".uid": 510, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"Model3D": {
+".uid": 511, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 506, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 3.079232931137085, 
+"y": 65.967842102050781, 
+"z": 3.8633723258972168
+}, 
+"translation": {
+"x": 1.7874717712402344, 
+"y": 33.262680053710938, 
+"z": 0
+}
+}
+}, 
+"name": "Collider"
+}, {
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 513, 
+"clipName": "Idle", 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 9, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 3, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.98408788442611694, 
+"x": 0.10996787250041962, 
+"y": 0.12197519838809967, 
+"z": -0.06782618910074234
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 9, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.98650902509689331, 
+"x": -0.098407164216041565, 
+"y": -0.083452552556991577, 
+"z": -0.10075604170560837
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 15, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.98261916637420654, 
+"x": -0.10600381344556808, 
+"y": 0.044490661472082138, 
+"z": 0.14575120806694031
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"looping": true
+}, 
+"Transform": {
+".uid": 512, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: Idle"
+}, {
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 515, 
+"clipName": "WhipIn", 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0.5, 
+"ease": 15, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.69999998807907104, 
+"x": 0.69999998807907104, 
+"y": 2.9802322387695313e-08, 
+"z": 2.9802322387695313e-08
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"looping": false
+}, 
+"Transform": {
+".uid": 514, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: WhipIn"
+}, {
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 517, 
+"clipName": "WhipOut", 
+"keyFrames": [
+{
+"delta": 0.5, 
+"ease": 15, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70019042491912842, 
+"x": 0.71398031711578369, 
+"y": 8.9406967163085938e-08, 
+"z": 5.9604644775390625e-08
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0.5, 
+"ease": 15, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"looping": false
+}, 
+"Transform": {
+".uid": 516, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: WhipOut"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 505, 
+"animationClipName": "WhipIn", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0.5, 
+"ease": 15, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.69999998807907104, 
+"x": 0.69999998807907104, 
+"y": 2.9802322387695313e-08, 
+"z": 2.9802322387695313e-08
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
+"Transform": {
+".uid": 504, 
+"rotation": {
+"w": 0.69999998807907104, 
+"x": 0.69999998807907104, 
+"y": 2.9802322387695313e-08, 
+"z": 2.9802322387695313e-08
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "VineAnimator"
+}
+], 
+"components": {
+"BossVineAI": {
+".uid": 502, 
+"faceClosestPlayer": true, 
+"turnSpeed": 75, 
+"whipAngle": 176.5, 
+"whipCooldown": 10, 
+"whipDamage": 10, 
+"whipDuration": 0.5, 
+"whipRange": 60
+}, 
+"Health": {
+".uid": 503, 
+"ArchetypeToSpawnOnDeath": ".uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": false
+}, 
+"Transform": {
+".uid": 501, 
+"rotation": {
+"w": -0.79337626695632935, 
+"x": 0, 
+"y": -0.60873264074325562, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 18.012805938720703, 
+"y": 26.425653457641602, 
+"z": 0.34223735332489014
+}
+}
+}, 
+"v": "0.2submission"
+}

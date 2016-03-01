@@ -24,6 +24,8 @@ public:
 
     BossVineStateMachine(BossVineAI *ai);
 
+    void Update(void) override;
+
     BossVineAI *GetAI(void);
 
 private:

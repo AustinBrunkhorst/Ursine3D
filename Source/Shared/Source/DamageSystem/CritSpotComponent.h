@@ -24,4 +24,4 @@ public:
 
     void OnInitialize(void) override;
 
-} Meta(Enable, DisplayName("CritSpot"), RequiresComponents(typeof(ursine::ecs::BoxCollider)));
+} Meta(Enable, DisplayName("CritSpot"));

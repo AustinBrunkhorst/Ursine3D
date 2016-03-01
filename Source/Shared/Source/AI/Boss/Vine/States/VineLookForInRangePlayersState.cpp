@@ -35,6 +35,9 @@ void VineLookForInRangePlayersState::Enter(BossVineStateMachine *machine)
     auto aiTrans = ai->GetOwner( )->GetTransform( );
 
     m_originalForward = aiTrans->GetForward( );
+
+    // animate the vine to be idle
+    ai->GetAnimator( )->Play( "Idle" );
 }
 
 void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
@@ -59,8 +62,7 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
         {
             auto len = dir.Length( );
 
-            if (len <= range)
-                m_inRange = true;
+            m_inRange = len <= range;
 
             if (len < closestDir)
             {
@@ -72,8 +74,7 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
         {
             auto len = dir.LengthSquared( );
 
-            if (dir.LengthSquared( ) <= range * range)
-                m_inRange = true;
+            m_inRange = len <= range * range;
 
             if (len < closestDir)
             {
@@ -83,9 +84,10 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
         }
     }
 
+    auto aiPos = aiTrans->GetWorldPosition( );
+
     if (ai->GetFaceClosestPlayer( ) && m_inRange)
     {
-        auto aiPos = aiTrans->GetWorldPosition( );
         auto lookAtPosition = closestTrans->GetWorldPosition( );
         
         lookAtPosition.Y( ) = aiPos.Y( );
@@ -94,6 +96,6 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
     }
     else
     {
-        aiTrans->LookAt( m_originalForward, ai->GetTurnSpeed( ) );
+        aiTrans->LookAt( aiPos + m_originalForward, ai->GetTurnSpeed( ) );
     }
 }

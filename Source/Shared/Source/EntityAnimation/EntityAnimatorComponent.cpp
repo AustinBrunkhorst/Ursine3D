@@ -78,6 +78,8 @@ void EntityAnimator::Play(const std::string &clipName)
         if (clip->clipName == clipName)
         {
             keyFrames = clip->keyFrames;
+            m_loop = clip->looping;
+            SetAnimationClipName( clip->clipName );
             Play( );
             return;
         }

@@ -211,7 +211,7 @@ namespace ursine
             SVec3 dir = worldPosition - GetWorldPosition( );
             SQuat destination = SQuat::LookAt( dir );
             SQuat current = GetWorldRotation( );
-            auto angle = current.GetAngle( destination );
+            auto angle = abs( current.GetAngle( destination ) );
 
             if (angle == 0.0f)
                 return;
