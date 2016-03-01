@@ -49,7 +49,7 @@ namespace ursine
             auto &settingsEntity = world->GetSettings( );
 
             data[ kKeySettings ] = 
-                entitySerializer.Serialize( settingsEntity.Get( ) );
+                entitySerializer.Serialize( settingsEntity );
 
             auto &rootEntities = *world->m_entityManager
                 ->m_hierarchy.GetRootNode( ).Children( );
@@ -60,7 +60,7 @@ namespace ursine
                 if (entityID == settingsEntity->m_id)
                     continue;
 
-                auto *entity = world->m_entityManager->getEntityByID( entityID );
+                auto entity = world->m_entityManager->GetEntityByID( entityID );
 
                 // only serialize if enabled
                 if (entity->IsSerializationEnabled( ))
@@ -123,7 +123,7 @@ namespace ursine
             if (!settingsData.is_null( ))
             {
                 entitySerializer.deserializeInstance(
-                    world->GetSettings( ).Get( ),
+                    world->GetSettings( ),
                     settingsData,
                     version
                 );

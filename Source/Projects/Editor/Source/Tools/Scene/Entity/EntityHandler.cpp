@@ -39,7 +39,7 @@ namespace
     }
 
     void doSaveArchetype(
-        ecs::Entity *entity, 
+        const ecs::EntityHandle &entity, 
         int selectedFilter, 
         const fs::FileList &files
     )
@@ -128,7 +128,7 @@ JSConstructor(EntityHandler)
 
     auto id = arguments[ 0 ]->GetUIntValue( );
     
-    m_handle = world->GetEntityManager( )->CreateHandle( id );
+    m_handle = world->GetEntityManager( )->GetEntityByID( id );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

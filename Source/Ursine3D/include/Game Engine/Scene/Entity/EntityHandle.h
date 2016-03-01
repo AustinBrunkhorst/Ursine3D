@@ -39,6 +39,7 @@ namespace ursine
             Entity *Get(void) const;
 
         private:
+            friend class Entity;
             friend class World;
             friend class EntityManager;
             friend struct std::hash<EntityHandle>;
@@ -47,7 +48,7 @@ namespace ursine
             EntityIDVersion m_version;
             const EntityManager *m_manager;
 
-            EntityHandle(const EntityManager *manager, Entity *entity);
+            EntityHandle(Entity *entity);
         };
     }
 }

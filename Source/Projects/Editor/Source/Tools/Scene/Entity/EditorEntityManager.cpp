@@ -142,7 +142,7 @@ void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) }
     };
 
     m_editor->GetMainWindow( ).GetUI( )->Message(
@@ -160,7 +160,7 @@ void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) }
     };
 
     m_editor->GetMainWindow( ).GetUI( )->Message(
@@ -178,7 +178,7 @@ void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
     EVENT_ATTRS(ecs::World, ecs::EditorEntityNameChangedArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
         { "name", args->newName },
     };
 
@@ -198,18 +198,18 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
 
     Json oldUniqueID, newUniqueID;
 
-    if (args->oldParent == nullptr)
+    if (!args->oldParent)
         oldUniqueID = nullptr;
     else
-        oldUniqueID = static_cast<int>( args->oldParent->GetUniqueID( ) );
+        oldUniqueID = static_cast<int>( args->oldParent->GetID( ) );
 
-    if (args->newParent == nullptr)
+    if (!args->newParent)
         newUniqueID = nullptr;
     else
-        newUniqueID = static_cast<int>( args->newParent->GetUniqueID( ) );
+        newUniqueID = static_cast<int>( args->newParent->GetID( ) );
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( sender->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( sender->GetID( ) ) },
         { "oldParent", oldUniqueID },
         { "newParent", newUniqueID }
     };
@@ -228,14 +228,14 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
-    if (args->component == nullptr || args->entity == nullptr)
+    if (args->component == nullptr || !args->entity)
         return;
 
     auto component = 
         meta::Variant( args->component, meta::variant_policy::WrapObject( ) );
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
         // note: false is to ensure no serialization hooks are called
         { "value", component.GetType( ).SerializeJson( component, false ) },
@@ -257,7 +257,7 @@ void EditorEntityManager::onComponentRemoved(EVENT_HANDLER(ecs::World))
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
     };
 
@@ -291,7 +291,7 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
         auto invokeHook = field.GetMeta( ).GetProperty<ForceSerializationHook>( ) != nullptr;
 
         Json message = Json::object {
-            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+            { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
             { "component", componentType.GetName( ) },
             { "field", args->field },
             { "value", args->value.GetType( ).SerializeJson( args->value, invokeHook ) }
@@ -325,7 +325,7 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
     #endif
 
         Json::object message = Json::object {
-            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+            { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
             { "component", args->component->GetType( ).GetName( ) },
             { "field", args->field },
             { "index", static_cast<int>( args->modification.index ) }

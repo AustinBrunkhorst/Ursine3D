@@ -13,14 +13,14 @@
 using namespace ursine;
 using namespace ecs;
 
-DuplicateTool::DuplicateTool(Editor *editor, ursine::ecs::World *world)
+DuplicateTool::DuplicateTool(Editor *editor, World *world)
     : EditorTool( editor, world )
-    , m_gizmo( nullptr )
-    , m_selected( -1 )
+    , m_gizmo( )
+    , m_selected( )
+    , m_plane( SVec3::Zero( ), SVec3::UnitX( ), SVec3::UnitZ( ) )
+    , m_planeType( PLANE_XZ )
     , m_snapping( false )
     , m_deleteGizmo( false )
-    , m_planeType( PLANE_XZ )
-    , m_plane( SVec3::Zero( ), SVec3::UnitX( ), SVec3::UnitZ( ) )
     , m_altDown( false )
     , m_origin( false )
 {
@@ -29,17 +29,17 @@ DuplicateTool::DuplicateTool(Editor *editor, ursine::ecs::World *world)
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
-void DuplicateTool::OnEnable(EntityUniqueID selected)
+void DuplicateTool::OnEnable(const EntityHandle &selected)
 {
     m_selected = selected;
 
-    if (m_selected != -1)
+    if (m_selected)
         enableGizmo( );
 }
 
 void DuplicateTool::OnDisable(void)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
     m_snapping = false;
 
     disableGizmo( );
@@ -47,7 +47,7 @@ void DuplicateTool::OnDisable(void)
 
 void DuplicateTool::OnSelect(const EntityHandle &entity)
 {
-    auto prevSelected = m_gizmo != nullptr;
+    auto prevSelected = m_gizmo.IsValid( );
 
     m_selected = entity;
 
@@ -57,7 +57,7 @@ void DuplicateTool::OnSelect(const EntityHandle &entity)
     m_deleteGizmo = false;
 }
 
-void DuplicateTool::OnDeselect(const ursine::ecs::EntityHandle &entity)
+void DuplicateTool::OnDeselect(const EntityHandle &entity)
 {
     m_selected = EntityHandle::Invalid( );
 
@@ -150,21 +150,18 @@ void DuplicateTool::enableGizmo(void)
 void DuplicateTool::disableGizmo(void)
 {
     if (m_gizmo)
-    {
         m_gizmo->Delete( );
-    }
 
-    m_gizmo = nullptr;
+    m_gizmo = EntityHandle::Invalid( );
 }
 
 void DuplicateTool::updateGizmo(MouseManager *mManager)
 {
-    if (m_selected == -1 || m_gizmo == nullptr)
+    if (!m_selected || !m_gizmo)
         return;
 
-    auto selected = m_world->GetEntityUnique( m_selected );
     auto gizTrans = m_gizmo->GetTransform( );
-    auto selTrans = selected->GetTransform( );
+    auto selTrans = m_selected->GetTransform( );
 
     auto p = m_origin ? SVec3::Zero( ) : selTrans->GetWorldPosition( );
 
@@ -220,7 +217,7 @@ void DuplicateTool::updateGizmo(MouseManager *mManager)
 
 void DuplicateTool::debugDraw(void)
 {
-    if (m_selected == -1)
+    if (!m_selected)
         return;
 
     SVec3 v[ 2 ];
@@ -228,13 +225,18 @@ void DuplicateTool::debugDraw(void)
     switch (m_planeType)
     {
     case PLANE_XZ:
-        v[ 0 ] = SVec3::UnitX( ); v[ 1 ] = SVec3::UnitZ( );
+        v[ 0 ] = SVec3::UnitX( ); 
+        v[ 1 ] = SVec3::UnitZ( );
         break;
     case PLANE_ZY:
-        v[ 0 ] = SVec3::UnitZ( ); v[ 1 ] = SVec3::UnitY( );
+        v[ 0 ] = SVec3::UnitZ( ); 
+        v[ 1 ] = SVec3::UnitY( );
         break;
     case PLANE_XY:
-        v[ 0 ] = SVec3::UnitX( ); v[ 1 ] = SVec3::UnitY( );
+        v[ 0 ] = SVec3::UnitX( ); 
+        v[ 1 ] = SVec3::UnitY( );
+        break;
+    default:
         break;
     }
 
@@ -262,12 +264,10 @@ void DuplicateTool::debugDraw(void)
     }
 }
 
-void DuplicateTool::setEntitySerializationToggle(bool toggle, Entity* entity)
+void DuplicateTool::setEntitySerializationToggle(bool toggle, const EntityHandle &entity)
 {
-    for (auto child : entity->GetTransform( )->GetChildren( ))
-    {
+    for (auto &child : entity->GetTransform( )->GetChildren( ))
         setEntitySerializationToggle( toggle, child->GetOwner( ) );
-    }
 
     entity->EnableSerialization( toggle );
 }

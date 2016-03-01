@@ -30,7 +30,7 @@ public:
     void OnInitialize(void) override;
 
 private:
-    ursine::ecs::Entity *m_billboard;
+    ursine::ecs::EntityHandle m_billboard;
 
 } Meta(
     Enable, 

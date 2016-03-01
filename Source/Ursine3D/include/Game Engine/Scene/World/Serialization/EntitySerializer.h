@@ -30,8 +30,8 @@ namespace ursine
         public:
             EntitySerializer(void);
 
-            Json Serialize(Entity *entity) const;
-            Json SerializeArchetype(Entity *entity) const;
+            Json Serialize(const EntityHandle &entity) const;
+            Json SerializeArchetype(const EntityHandle &entity) const;
 
             EntityHandle Deserialize(
                 World *world, 
@@ -47,17 +47,17 @@ namespace ursine
         private:
             friend class WorldSerializer;
 
-            Json serializeComponents(const Entity *entity) const;
-            Json serializeChildren(const Entity *entity) const;
+            Json serializeComponents(const EntityHandle &entity) const;
+            Json serializeChildren(const EntityHandle &entity) const;
 
             void deserializeInstance(
-                Entity *entity, 
+                const EntityHandle &entity,
                 const Json &data, 
                 const char *version
             ) const;
 
             Component *createComponent(const std::string &typeName) const;
-            void deserializeComponents(Entity *entity, const Json &data) const;
+            void deserializeComponents(const EntityHandle &entity, const Json &data) const;
             void deserializeComponent(Component *component, const Json &data) const;
         };
     }

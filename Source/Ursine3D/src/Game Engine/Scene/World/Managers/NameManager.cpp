@@ -45,7 +45,7 @@ namespace ursine
             if (search == m_grouped.end( ) || search->second.empty( ))
                 return EntityHandle::Invalid( );
 
-            return m_world->GetEntityManager( )->CreateHandle( search->second.front( ) );
+            return m_world->GetEntityManager( )->GetEntityByID( search->second.front( ) );
         }
 
         EntityHandleVector NameManager::GetEntities(const std::string &name) const
@@ -60,7 +60,7 @@ namespace ursine
                 return entities;
 
             for (auto id : search->second)
-                entities.emplace_back( entityManager->CreateHandle( id ) );
+                entities.emplace_back( entityManager->GetEntityByID( id ) );
 
             return entities;
         }
@@ -78,7 +78,7 @@ namespace ursine
 
             EditorEntityNameChangedArgs e( 
                 WORLD_EDITOR_ENTITY_NAME_CHANGED, 
-                m_world->GetEntityManager( )->CreateHandle( id ),
+                m_world->GetEntityManager( )->GetEntityByID( id ),
                 name 
             );
 

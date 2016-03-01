@@ -24,6 +24,7 @@ struct Interactable : ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
+    Meta(Enable)
     Interactable(void);
 
     // Called when object enters collider

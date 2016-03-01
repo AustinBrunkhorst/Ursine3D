@@ -186,7 +186,9 @@ namespace ursine
 
         EntityHandle Entity::Clone(void)
         {
-            return m_world->m_entityManager->Clone( this );
+            auto *entityManager = m_world->m_entityManager;
+
+            return entityManager->Clone( this );
         }
 
         LocalTimerManager &Entity::GetTimers(void)
@@ -248,7 +250,7 @@ namespace ursine
             {
                 // check if names are same
                 if (name == m_world->m_nameManager->GetName( childID ))
-                    return m_world->m_entityManager->CreateHandle( childID );
+                    return m_world->m_entityManager->GetEntityByID( childID );
             }
 
             return EntityHandle::Invalid( );

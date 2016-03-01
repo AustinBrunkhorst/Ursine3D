@@ -95,6 +95,7 @@ namespace ursine
 
         private:
             friend class Entity;
+            friend class EntityHandle;
             friend class WorldSerializer;
             friend class EntitySerializer;
             friend class Scene;

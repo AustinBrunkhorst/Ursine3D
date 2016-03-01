@@ -13,10 +13,10 @@ namespace ursine
             , m_version( 0 )
             , m_manager( nullptr ) { }
 
-        EntityHandle::EntityHandle(const EntityManager *manager, Entity *entity)
-            : m_id( entity->m_id )
-            , m_version( entity->m_version )
-            , m_manager( manager ) { }
+        EntityHandle::EntityHandle(Entity *entity)
+            : m_id( entity ? entity->m_id : 0 )
+            , m_version( entity ? entity->m_version : 0 )
+            , m_manager( entity ? entity->m_world->m_entityManager : nullptr ) { }
 
         EntityHandle::operator bool(void) const 
         {

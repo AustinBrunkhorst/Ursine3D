@@ -90,7 +90,7 @@ void EditorCameraSystem::OnInitialize(void)
 
 void EditorCameraSystem::OnSceneReady(Scene *scene)
 {
-    auto *oldCamera = m_world->GetEntityFromName( kEditorCameraEntityName );
+    auto oldCamera = m_world->GetEntityFromName( kEditorCameraEntityName );
 
     if (oldCamera)
         m_cameraEntity = oldCamera;
@@ -190,7 +190,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
         auto selectorSystem = m_world->GetEntitySystem<EditorToolSystem>( );
         auto currentFocus = selectorSystem->GetCurrentFocus( );
 
-        if (currentFocus != nullptr)
+        if (currentFocus)
         {
             auto transform = currentFocus->GetTransform( );
 

@@ -30,6 +30,7 @@ class DamageOnCollide : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
+    Meta(Enable)
     DamageOnCollide(void);
     ~DamageOnCollide(void);
 

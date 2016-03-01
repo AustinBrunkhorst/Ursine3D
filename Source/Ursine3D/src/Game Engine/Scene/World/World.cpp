@@ -229,7 +229,7 @@ namespace ursine
 
         void World::queueEntityDeletion(Entity *entity)
 		{
-			m_deleted.push_back( m_entityManager->createHandle( entity ) );
+			m_deleted.emplace_back( EntityHandle( entity ) );
 		}
 
         void World::deleteEntity(const EntityHandle &entity)

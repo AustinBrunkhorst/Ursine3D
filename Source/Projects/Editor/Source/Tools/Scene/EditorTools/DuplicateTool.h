@@ -42,7 +42,7 @@ private:
     ursine::ecs::DebugSystem *m_drawer;
 
     // visual representation of the 3 axis
-    ursine::ecs::Entity *m_gizmo;
+    ursine::ecs::EntityHandle m_gizmo;
 
     ursine::ecs::EntityHandle m_selected;
 
@@ -74,5 +74,5 @@ private:
 
     void debugDraw(void);
 
-    void setEntitySerializationToggle(bool toggle, ursine::ecs::Entity* entity);
+    void setEntitySerializationToggle(bool toggle, const ursine::ecs::EntityHandle &entity);
 };

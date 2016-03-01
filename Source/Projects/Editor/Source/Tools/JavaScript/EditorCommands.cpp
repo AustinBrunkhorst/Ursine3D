@@ -33,7 +33,7 @@ namespace editor_commands
         void doLoadArchetype(ecs::World *world, int selectedFilter, const fs::FileList &files);
 
         ecs::World *getActiveWorld(void);
-        ecs::Entity *createEntity(const std::string &name = "Empty Entity");
+        ecs::EntityHandle createEntity(const std::string &name = "Empty Entity");
     }
 
     JSFunction(GetEditorCommands)
@@ -175,20 +175,22 @@ namespace editor_commands
 
     JSFunction(CreateParticleSystem)
     {
-        auto *entity = createEntity("Particle System");
+        auto entity = createEntity( "Particle System" );
         entity->AddComponent<ecs::ParticleSystem>( );
         entity->AddComponent<ecs::ParticleEmitter>( );
         entity->AddComponent<ecs::ParticleAnimator>( );
         entity->AddComponent<ecs::ParticleColorAnimator>( );
-        return CefV8Value::CreateUndefined();
+
+        return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateSpriteText)
     {
-        auto *entity = createEntity("Sprite Text");
+        auto entity = createEntity( "Sprite Text" );
+
         entity->AddComponent<ecs::SpriteText>( );
 
-        return CefV8Value::CreateUndefined();
+        return CefV8Value::CreateUndefined( );
     }
 
 
@@ -270,11 +272,11 @@ namespace editor_commands
             return GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
         }
 
-        ecs::Entity *createEntity(const std::string &name)
+        ecs::EntityHandle createEntity(const std::string &name)
         {
             auto *world = getActiveWorld( );
 
-            auto *entity = world->CreateEntity( name );
+            auto entity = world->CreateEntity( name );
 
             auto *tools = world->GetEntitySystem<EditorToolSystem>( );
 

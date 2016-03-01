@@ -45,11 +45,8 @@ namespace ursine
             // Creates an entity with only a transform
             EntityHandle Create(void);
 
-            // Creates an entity handle from the given id
-            EntityHandle CreateHandle(EntityID id) const;
-
             // Creates a clone of an entity
-            EntityHandle Clone(Entity *entity);
+            EntityHandle Clone(const EntityHandle &entity);
 
             // Gets all entities without a parent
             EntityHandleVector GetRootEntities(void);
@@ -201,29 +198,28 @@ namespace ursine
             void initializeScene(void);
 
             Entity *getEntityByID(EntityID id) const;
-            EntityHandle createHandle(Entity *entity) const;
 
             // creates an empty entity and adds it to the world
-            Entity *create(void);
+            EntityHandle create(void);
 
             // dispatches the entity creation event with this entity
-            void dispatchCreated(Entity *entity);
+            void dispatchCreated(const EntityHandle &entity);
 
             // internal method for adding a component to the entity
-            void addComponent(Entity *entity, Component *component);
+            void addComponent(const EntityHandle &entity, Component *component);
 
             // internal method for removing a component from an entity
             // returns true if the component was removed
-            void removeComponent(Entity *entity, ComponentTypeID id, bool dispatch = false);
+            void removeComponent(const EntityHandle &entity, ComponentTypeID id, bool dispatch = false);
 
             // calls onInitialize on all components
-            void initializeComponents(Entity *entity);
+            void initializeComponents(const EntityHandle &entity);
 
             // calls onSceneReady on all components
-            void initializeComponentsForScene(Entity *entity);
+            void initializeComponentsForScene(const EntityHandle &entity);
 
             // removes and deconstructs all components from this entity
-            void clearComponents(Entity *entity, bool dispatch = false);
+            void clearComponents(const EntityHandle &entity, bool dispatch = false);
         };
     }
 }

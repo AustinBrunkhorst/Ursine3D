@@ -27,7 +27,7 @@ namespace ursine
 			ENTITY_SYSTEM;
 
 		public:
-			Meta(DisableNonDynamic)
+			Meta(Enable, DisableNonDynamic)
 			SweptControllerSystem(ursine::ecs::World *world);
 			~SweptControllerSystem(void);
 

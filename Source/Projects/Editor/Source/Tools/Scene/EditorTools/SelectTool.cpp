@@ -52,7 +52,9 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs &args)
     if (!newObj)
         return;
 
-    if (newID != m_currentEntity->GetID( ))
+    auto currentID = m_currentEntity ? m_currentEntity->GetID( ) : -1;
+
+    if (newID != currentID)
     {
         // Check to see if this object, or it's parents have the "DisableSelection" component
         auto disableComponents = newObj->GetComponentsInParents<DisableSelection>( );
