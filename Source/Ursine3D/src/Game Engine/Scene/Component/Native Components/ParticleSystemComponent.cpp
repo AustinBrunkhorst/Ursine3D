@@ -37,7 +37,7 @@ namespace ursine
 
             m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_PS));
 
-			m_base->m_dirty = true;
+			m_base->dirty = true;
 
             // store a pointer to the model
             m_particleSystem = &m_graphics->RenderableMgr.GetParticleSystem(m_base->GetHandle());
@@ -59,7 +59,7 @@ namespace ursine
             Component::OnInitialize( );
 
             // set the unique id
-            m_particleSystem->SetEntityUniqueID(GetOwner()->GetUniqueID());
+            m_particleSystem->SetEntityID( GetOwner( )->GetID( ) );
 
 			SetRenderMode( m_renderMode );
 			SetSystemSpace( m_systemSpace );
@@ -116,7 +116,7 @@ namespace ursine
 
             GetOwner()->Dispatch(ENTITY_PARTICLE_UPDATE, nullptr);
 
-			m_base->m_dirty = true;
+			m_base->dirty = true;
         }
 
         const Color &ParticleSystem::GetColor(void) const

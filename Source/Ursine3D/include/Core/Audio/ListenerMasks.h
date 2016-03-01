@@ -27,5 +27,5 @@ namespace ursine
         Six = 1 << 5u,
         Seven = 1 << 6u,
         Eight = 1 << 7u
-    } Meta(Enable);
+    } Meta(Enable, BitMaskEditor);
 }

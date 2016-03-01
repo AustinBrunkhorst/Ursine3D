@@ -120,7 +120,7 @@ JSFunction(SceneGetRootEntities)
     {
         ids->SetValue( 
             static_cast<int>( i ), 
-            CefV8Value::CreateUInt( root[ i ]->GetUniqueID( ) )
+            CefV8Value::CreateUInt( root[ i ]->GetID( ) )
         );
     }
 
@@ -134,7 +134,7 @@ JSFunction(SceneGetActiveEntities)
     if (!world)
         return CefV8Value::CreateArray( 0 );
 
-    auto &active = world->GetActiveEntities( );
+    auto active = world->GetActiveEntities( );
 
     auto ids = CefV8Value::CreateArray( static_cast<int>( active.size( ) ) );
 
@@ -142,7 +142,7 @@ JSFunction(SceneGetActiveEntities)
     {
         ids->SetValue( 
             static_cast<int>( i ), 
-            CefV8Value::CreateUInt( active[ i ]->GetUniqueID( ) )
+            CefV8Value::CreateUInt( active[ i ]->GetID( ) )
         );
     }
 

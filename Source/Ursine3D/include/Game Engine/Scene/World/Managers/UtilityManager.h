@@ -28,9 +28,6 @@ namespace ursine
 
         class UtilityManager final : public WorldManager
         {
-            std::unordered_map<EntityUniqueID, LocalTimerManager> m_timers;
-            std::unordered_map<EntityUniqueID, LocalTweenManager> m_tweens;
-
         public:
             UtilityManager(World *world);
             ~UtilityManager(void);
@@ -40,6 +37,10 @@ namespace ursine
 
             // Clears all utilities from this entity
             void Clear(Entity *entity);
+
+        private:
+            std::unordered_map<EntityID, LocalTimerManager> m_timers;
+            std::unordered_map<EntityID, LocalTweenManager> m_tweens;
         };
     }
 }

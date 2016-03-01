@@ -181,7 +181,7 @@ struct AbstractWeapon
 public:
     // who is my owner
     Meta(Disable)
-    ursine::ecs::Entity* m_owner;
+    ursine::ecs::EntityHandle m_owner;
 
     // damage to apply when triggered
     float m_damageToApply;
@@ -274,7 +274,7 @@ public:
     AbstractWeapon( );
     virtual ~AbstractWeapon( void );
 
-    void Initialize( ursine::ecs::Entity* owner );
+    void Initialize(const ursine::ecs::EntityHandle &owner);
 
     /////////////////////////////
     ////  Weapon Fire Logic  ////
@@ -384,12 +384,3 @@ protected:
 
 #define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );  
                                          //  AbstractWeaponConnect(Obj);
-
-
-
-
-
-
-
-
-

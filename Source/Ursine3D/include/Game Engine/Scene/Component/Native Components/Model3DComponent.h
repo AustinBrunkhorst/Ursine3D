@@ -24,6 +24,11 @@
 
 namespace ursine
 {
+    namespace graphics
+    {
+        class GfxAPI;
+    }
+
     namespace ecs
     {
         class Model3D : public Component
@@ -153,6 +158,7 @@ namespace ursine
             void OnDeserialize(const Json &input) override;
 
         private:
+            graphics::GfxAPI *m_graphics;
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;

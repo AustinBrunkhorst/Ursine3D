@@ -81,7 +81,7 @@ void Project::SetEmptyScene(void)
 {
     auto world = std::make_shared<ecs::World>( );
 
-    auto *univLight = world->CreateEntity( "Global Light" );
+    auto univLight = world->CreateEntity( "Global Light" );
     {
         auto *component = univLight->AddComponent<ecs::Light>( );
 

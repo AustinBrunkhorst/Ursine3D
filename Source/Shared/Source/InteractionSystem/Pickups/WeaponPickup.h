@@ -11,14 +11,15 @@
 **
 ** -------------------------------------------------------------------------*/
 
-
 #include <Component.h>
 #include "BaseInteraction.h"
 #include "AbstractWeapon.h"
 
 struct Inventory;
 
-struct WeaponPickup : ursine::ecs::Component, Interaction
+struct WeaponPickup 
+    : ursine::ecs::Component
+    , Interaction
 {
     NATIVE_COMPONENT
 public:
@@ -66,11 +67,11 @@ public:
 
 private:
     // interaction logic
-    void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
-    void Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
-    void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
+    void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityID id) override;
+    void Interact(const CommandQueue* queue, ursine::ecs::EntityID id) override;
+    void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityID id) override;
     void InteractionComplete(void);
-    void CheckForAmmo(const ursine::ecs::EntityUniqueID);
+    void CheckForAmmo(const ursine::ecs::EntityID);
 
 
     // time it takes to pick up
@@ -86,10 +87,10 @@ private:
     WeaponType m_weaponType;
 
     // how much time has button been held
-    std::unordered_map<ursine::ecs::EntityUniqueID, float> m_times;
+    std::unordered_map<ursine::ecs::EntityID, float> m_times;
 
     // inventory handles
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle< Inventory > >m_inventories;
+    std::unordered_map<ursine::ecs::EntityID, Handle<Inventory> >m_inventories;
 
     // Weapon the will be picked up on completed interaction
     std::string m_weaponToPickup;
@@ -98,5 +99,9 @@ private:
     std::string m_texture;
 
     void OnInitialize(void) override;
-} Meta(Enable, DisplayName("WeaponPickup"), RequiresComponents(typeof(Interactable)));
+} Meta(
+    Enable, 
+    DisplayName( "WeaponPickup" ), 
+    RequiresComponents( typeof( Interactable ) )
+);
 

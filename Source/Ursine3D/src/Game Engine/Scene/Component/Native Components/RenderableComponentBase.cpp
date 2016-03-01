@@ -18,17 +18,18 @@
 
 namespace ursine
 {
-    RenderableComponentBase::RenderableComponentBase(std::function<void(void)> UpdateRenderer)
-        : m_handle( 0 )
-		, m_updateRenderer( UpdateRenderer ) { }
+    RenderableComponentBase::RenderableComponentBase(std::function<void(void)> updateCallback)
+        : dirty( true )
+		, m_handle( 0 )
+        , m_updateRenderer( updateCallback ) { }
 
-    void RenderableComponentBase::OnInitialize(ecs::Entity* owner)
+    void RenderableComponentBase::OnInitialize(const ecs::EntityHandle &owner)
     {
         owner->Listener( this )
             .On( ecs::ENTITY_TRANSFORM_DIRTY, &RenderableComponentBase::onTransformChange );
     }
 
-    void RenderableComponentBase::OnRemove(ecs::Entity *owner)
+    void RenderableComponentBase::OnRemove(const ecs::EntityHandle &owner)
     {
         owner->Listener( this )
             .Off( ecs::ENTITY_TRANSFORM_DIRTY, &RenderableComponentBase::onTransformChange );
@@ -36,7 +37,7 @@ namespace ursine
 
     void RenderableComponentBase::onTransformChange(EVENT_HANDLER(ecs::Entity))
     {
-        m_dirty = true;
+        dirty = true;
     }
 
 	graphics::GfxHND &RenderableComponentBase::GetHandle(void)

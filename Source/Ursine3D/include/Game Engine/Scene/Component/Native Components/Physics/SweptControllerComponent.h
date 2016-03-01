@@ -330,12 +330,12 @@ namespace ursine
 
             // List of kinematic objects detected during the controller's update.
             // Copied to KinematicContacts at the end of the update.
-            std::vector<Entity*> m_kinematicPending;
+            std::vector<EntityHandle> m_kinematicPending;
 
             // List of kinematic objects that the character came into contact with.
             // Used to run sweep with the velocities of kinematic objects so that
             // the character can be moved by them.
-            std::vector<Entity*> m_kinematicContacts;
+            std::vector<EntityHandle> m_kinematicContacts;
 
             // TODO: This component dispatches:
             
@@ -355,7 +355,7 @@ namespace ursine
 
             // Adds kinematic objects to the list that will be resolved next update.
             // Does not add duplicate entries.
-            void addIfKinematic(Entity *entity);
+            void addIfKinematic(const EntityHandle &entity);
 
 
             bool skipResolution(/*TODO: CollisionFilter a, CollisionFilter b*/);

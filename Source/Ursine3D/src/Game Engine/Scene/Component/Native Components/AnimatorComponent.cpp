@@ -138,11 +138,11 @@ namespace ursine
             auto *gfx = GetCoreSystem(graphics::GfxAPI);
             auto *world = GetOwner()->GetWorld();
 
-            auto *animListEntity = world->GetEntityFromName("Animation List");
+            auto animListEntity = world->GetEntityFromName("Animation List");
             if (!animListEntity)
                 animListEntity = world->CreateEntity("Animation List");
 
-            auto *blendTreeEntity = world->GetEntityFromName("Blending Tree");
+            auto blendTreeEntity = world->GetEntityFromName("Blending Tree");
             if (!blendTreeEntity)
                 blendTreeEntity = world->CreateEntity("Blending Tree");
         }
@@ -512,9 +512,9 @@ namespace ursine
 
                 auto *gfx = GetCoreSystem(graphics::GfxAPI);
                 auto *world = GetOwner()->GetWorld();
-                auto *animList = world->GetEntityFromName("Animation List");
-                auto *alTrans = animList->GetTransform();
-                auto *newEntity = world->GetEntityFromName(m_animationName.c_str());
+                auto animList = world->GetEntityFromName("Animation List");
+                auto alTrans = animList->GetTransform();
+                auto newEntity = world->GetEntityFromName(m_animationName.c_str());
                 if (!newEntity)
                 {
                     newEntity = world->CreateEntity(m_animationName.c_str());

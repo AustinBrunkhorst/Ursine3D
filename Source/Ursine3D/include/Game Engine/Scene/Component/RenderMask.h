@@ -19,6 +19,6 @@ namespace ursine
             M9 = 1 << 9,
             Meta(Disable)
             MEditorTool = 1 << 10
-        } Meta(Enable);
+        } Meta(Enable, BitMaskEditor);
     }
 }

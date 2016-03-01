@@ -223,7 +223,7 @@ namespace ursine
         {
             EVENT_ATTRS(World, ComponentEventArgs);
 
-            auto &entity = args->entity;
+            auto *entity = args->entity.Get( );
             auto &component = args->component;
 
             // If the user added a collider, remove the others that may exist
@@ -335,7 +335,7 @@ namespace ursine
         {
             EVENT_ATTRS(World, ComponentRemovedEventArgs);
 
-            auto &entity = args->entity;
+            auto *entity = args->entity.Get( );
             auto &component = args->component;
             auto &oldTypeMask = args->oldTypeMask;
 

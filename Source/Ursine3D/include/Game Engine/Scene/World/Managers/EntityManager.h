@@ -34,6 +34,7 @@ namespace ursine
         class Component;
         class World;
         class Filter;
+        class EntityHandle;
 
         class EntityManager final : public WorldManager
         {
@@ -42,25 +43,25 @@ namespace ursine
             ~EntityManager(void);
 
             // Creates an entity with only a transform
-            Entity *Create(void);
+            EntityHandle Create(void);
 
             // Creates a clone of an entity
-            Entity *Clone(Entity *entity);
+            EntityHandle Clone(const EntityHandle &entity);
 
             // Gets all entities without a parent
-            EntityVector GetRootEntities(void);
+            EntityHandleVector GetRootEntities(void);
 
             // Gets all active entities
-            const EntityVector &GetActiveEntities(void) const;
+            EntityHandleVector GetActiveEntities(void) const;
 
             // Gets all entities who match this filter
-            EntityVector GetEntities(const Filter &aspect) const;
+            EntityHandleVector GetEntities(const Filter &aspect) const;
+
+            // Finds an entity with the given handle
+            Entity *GetEntity(const EntityHandle &handle) const;
 
             // Finds an entity with the given id
-            Entity *GetEntity(EntityID id);
-
-            // Finds an entity with the given unique id
-            Entity *GetEntityUnique(EntityUniqueID id) const;
+            EntityHandle GetEntityByID(EntityID id) const;
 
             // Called right when an entity is requested to be removed
             void BeforeRemove(Entity *entity);
@@ -173,25 +174,19 @@ namespace ursine
             std::array<ComponentVector, kMaxComponentCount> m_componentTypes;
 
             // inactive entities
-            std::vector<Entity *> m_inactive;
+            std::vector<EntityID> m_inactive;
 
             // active entities
-            std::vector<Entity *> m_active;
+            std::vector<EntityID> m_active;
 
             // all entities
-            std::deque<Entity> m_cache;
+            std::vector<Entity> m_cache;
 
             // entity event handlers
             std::vector<Entity::EventDispatcher> m_events;
 
-            // unique id to entity map
-            std::unordered_map<EntityUniqueID, Entity*> m_unique;
-
             // next available entity ID
             EntityID m_nextEntityID;
-
-            // next unique entity ID
-            EntityUniqueID m_nextEntityUID;
 
             // next unique component unique ID
             ComponentUniqueID m_nextComponentUID;
@@ -202,27 +197,29 @@ namespace ursine
             // initalizes all entities and their components
             void initializeScene(void);
 
+            Entity *getEntityByID(EntityID id) const;
+
             // creates an empty entity and adds it to the world
-            Entity *create(void);
+            EntityHandle create(void);
 
             // dispatches the entity creation event with this entity
-            void dispatchCreated(Entity *entity);
+            void dispatchCreated(const EntityHandle &entity);
 
             // internal method for adding a component to the entity
-            void addComponent(Entity *entity, Component *component);
+            void addComponent(const EntityHandle &entity, Component *component);
 
             // internal method for removing a component from an entity
             // returns true if the component was removed
-            void removeComponent(Entity *entity, ComponentTypeID id, bool dispatch = false);
+            void removeComponent(const EntityHandle &entity, ComponentTypeID id, bool dispatch = false);
 
             // calls onInitialize on all components
-            void initializeComponents(Entity *entity);
+            void initializeComponents(const EntityHandle &entity);
 
             // calls onSceneReady on all components
-            void initializeComponentsForScene(Entity *entity);
+            void initializeComponentsForScene(const EntityHandle &entity);
 
             // removes and deconstructs all components from this entity
-            void clearComponents(Entity *entity, bool dispatch = false);
+            void clearComponents(const EntityHandle &entity, bool dispatch = false);
         };
     }
 }

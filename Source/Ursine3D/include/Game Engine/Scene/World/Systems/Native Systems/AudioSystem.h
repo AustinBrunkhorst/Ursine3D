@@ -63,10 +63,10 @@ namespace ursine
 			static void SetTrigger(const std::string name, AkGameObjectID obj);
 
 		private:
-			AudioManager* m_audioMan;
+			AudioManager *m_audioMan;
 
-			std::unordered_map<EntityUniqueID, ursine::ecs::AudioEmitter*> m_emitters;
-			std::unordered_map<EntityUniqueID, ursine::ecs::AudioListener*> m_listeners;
+			std::unordered_map<EntityID, AudioEmitter*> m_emitters;
+			std::unordered_map<EntityID, AudioListener*> m_listeners;
 			std::unordered_map<std::string, AkBankID> m_banks;
 
 			AkGameObjectID m_nextEmptyID;

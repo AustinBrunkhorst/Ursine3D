@@ -60,6 +60,6 @@ private:
     // the level segment
     void onLevelSegmentChange(LevelSegments segment);
 
-    ursine::ecs::Entity *spawnEnemy(SpawnerGroup *group, const ursine::SVec3 &worldPosition);
+    ursine::ecs::EntityHandle spawnEnemy(SpawnerGroup *group, const ursine::SVec3 &worldPosition);
 
 } Meta(Enable, HiddenInSelector, DisableComponentRemoval);

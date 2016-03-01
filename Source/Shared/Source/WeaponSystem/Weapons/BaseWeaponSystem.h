@@ -26,7 +26,6 @@ namespace ursine
     {
         struct RaycastOutput;
     } // physics namespace
-
 } // ursine namespace
 
 struct AbstractWeapon;
@@ -40,26 +39,24 @@ class BaseWeaponSystem
     ENTITY_SYSTEM;
 
 public:
-    BaseWeaponSystem(ursine::ecs::World* world);
+    BaseWeaponSystem(ursine::ecs::World *world);
 
 protected:
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity *entity) override;
-    void Disable(ursine::ecs::Entity *entity) override;
-private:
+    void Enable(const ursine::ecs::EntityHandle &entity) override;
+    void Disable(const ursine::ecs::EntityHandle &entity) override;
 
+private:
     void EvaluateProjectileWeapons(const float dt);
 
-    void FireProjectileWeapon(BaseWeapon& weapon, ursine::ecs::EntityUniqueID id);
+    void FireProjectileWeapon(BaseWeapon &weapon, ursine::ecs::EntityID id);
 
-    void CreateProjectiles(BaseWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
-    
-    std::unordered_map < ursine::ecs::EntityUniqueID, BaseWeapon* > m_weapons;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::AudioEmitter* > m_emitters;
+    void CreateProjectiles(BaseWeapon &weapon, ursine::ecs::Transform &trans, const int projectilesFired);
 
+    std::unordered_map<ursine::ecs::EntityID, BaseWeapon*> m_weapons;
+    std::unordered_map<ursine::ecs::EntityID, ursine::ecs::Transform*> m_transforms;
+    std::unordered_map<ursine::ecs::EntityID, ursine::ecs::AudioEmitter*> m_emitters;
 } Meta(Enable, AutoAddEntitySystem);
-
 
 class HitscanWeaponSystem
     : public ursine::ecs::FilterSystem
@@ -67,34 +64,30 @@ class HitscanWeaponSystem
     ENTITY_SYSTEM;
 
 public:
-    HitscanWeaponSystem(ursine::ecs::World* world);
+    HitscanWeaponSystem(ursine::ecs::World *world);
 
 protected:
     void Initialize(void) override;
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity *entity) override;
-    void Disable(ursine::ecs::Entity *entity) override;
+    void Enable(const ursine::ecs::EntityHandle &entity) override;
+    void Disable(const ursine::ecs::EntityHandle &entity) override;
 
 private:
-
     void EvaluateHitscanWeapons(const float dt);
 
-    void FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursine::ecs::EntityUniqueID id);
+    void FireHitscanWeapon(AbstractHitscanWeapon &weapon, ursine::ecs::EntityID id);
 
-    void CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
-    void RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursine::physics::RaycastOutput& rayout, AbstractHitscanWeapon& weapon);
+    void CreateRaycasts(AbstractHitscanWeapon &weapon, ursine::ecs::Transform &trans, const int projectilesFired);
+    void RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursine::physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon);
 
-    void GetSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
-    void SpawnCollisionParticle(ursine::SVec3& collisionPoint, ursine::SVec3& normalizeRaycastVec, ursine::ecs::Entity* other);
+    void GetSpawnLocation(const ursine::ecs::EntityHandle &other, ursine::physics::RaycastOutput &rayout, ursine::SVec3 &posToSet);
+    void SpawnCollisionParticle(ursine::SVec3 &collisionPoint, ursine::SVec3 &normalizeRaycastVec, const ursine::ecs::EntityHandle &other);
 
-    void CreateTrail(AbstractHitscanWeapon& weapon, ursine::SVec3& trailEnd);
+    void CreateTrail(AbstractHitscanWeapon &weapon, ursine::SVec3 &trailEnd);
 
+    ursine::ecs::PhysicsSystem *m_physicsSystem;
 
-    ursine::ecs::PhysicsSystem* m_physicsSystem;
-
-    std::unordered_map < ursine::ecs::EntityUniqueID, HitscanWeapon* > m_weapons;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
-    std::unordered_map < ursine::ecs::EntityUniqueID, ursine::ecs::AudioEmitter* > m_emitters;
-
-
+    std::unordered_map<ursine::ecs::EntityID, HitscanWeapon*> m_weapons;
+    std::unordered_map<ursine::ecs::EntityID, ursine::ecs::Transform*> m_transforms;
+    std::unordered_map<ursine::ecs::EntityID, ursine::ecs::AudioEmitter*> m_emitters;
 } Meta(Enable, AutoAddEntitySystem);

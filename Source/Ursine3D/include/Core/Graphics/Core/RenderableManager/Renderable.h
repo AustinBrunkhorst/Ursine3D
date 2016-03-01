@@ -36,8 +36,8 @@ namespace ursine
         public:
             Renderable(void);
             void Initialize(void);
-            void SetEntityUniqueID(const ecs::EntityUniqueID id);
-            ecs::EntityUniqueID GetEntityUniqueID() const;
+            void SetEntityID(ecs::EntityID id);
+            ecs::EntityID GetEntityID(void) const;
             void SetOverdraw(bool draw);
             bool GetOverdraw() const;
 
@@ -51,7 +51,7 @@ namespace ursine
             void SetActive(const bool isActive);
 
         private:
-            ecs::EntityUniqueID m_entityID;
+            ecs::EntityID m_entityID;
             bool m_active;
             bool m_useOverdraw;
             bool m_useDebugRendering;

@@ -38,15 +38,15 @@ public:
     };
 
     PlayerTwoAxisAction(void);
-    PlayerTwoAxisAction(PlayerAction* action, ursine::ecs::Entity* owner);
+    PlayerTwoAxisAction(PlayerAction* action, const ursine::ecs::EntityHandle &owner);
 
     PlayerTwoAxisAction& AddAxisBinding(AxisBinding& binding);
 
     void ProcessCommands(void);
 
 private:
-    PlayerAction* m_action;
-    ursine::ecs::Entity* m_owner;
+    PlayerAction *m_action;
+    ursine::ecs::EntityHandle m_owner;
 
     std::vector<AxisBinding> m_axisBindings;
 
