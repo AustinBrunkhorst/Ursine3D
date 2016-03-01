@@ -26,7 +26,8 @@ namespace ursine
         typedef uint32 EntityID;
         typedef uint32 EntityIDVersion;
 
-        typedef std::vector<EntityHandle> EntityVector;
+        typedef std::vector<EntityHandle> EntityHandleVector;
+        typedef std::vector<EntityID> EntityIDVector;
         typedef std::vector<std::string> EntityGroupVector;
     }
 }

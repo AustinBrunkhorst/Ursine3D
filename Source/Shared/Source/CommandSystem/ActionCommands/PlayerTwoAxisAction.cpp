@@ -29,10 +29,10 @@ PlayerTwoAxisAction::AxisBinding::AxisBinding(const AxisBinding& rhs)
 
 PlayerTwoAxisAction::PlayerTwoAxisAction()
     : m_action( nullptr )
-    , m_owner( nullptr )
+    , m_owner( ursine::ecs::EntityHandle::Invalid( ) )
 { }
 
-PlayerTwoAxisAction::PlayerTwoAxisAction(PlayerAction* action, ursine::ecs::Entity* owner)
+PlayerTwoAxisAction::PlayerTwoAxisAction(PlayerAction *action, const ursine::ecs::EntityHandle &owner)
     : m_action( action )
     , m_owner( owner )
 {

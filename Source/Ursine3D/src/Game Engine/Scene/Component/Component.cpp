@@ -36,7 +36,7 @@ namespace ursine
                     {
                         EVENT_ATTRS(meta::Variant, ArrayModificationArgs);
 
-                        auto *owner = GetOwner( );
+                        auto &owner = GetOwner( );
                         
                         if (owner)
                         {

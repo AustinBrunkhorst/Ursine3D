@@ -84,7 +84,7 @@ namespace ursine
             cam.SetPosition( trans->GetWorldPosition( ) );
             cam.SetLook( trans->GetForward( ) );
 
-            m_dirty = false;
+            dirty = false;
         }
 
         Vec2 Camera::GetViewportPosition(void) const

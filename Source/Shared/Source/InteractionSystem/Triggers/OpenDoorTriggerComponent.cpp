@@ -15,12 +15,11 @@
 #include "PlayerIdComponent.h"
 #include "GameEvents.h"
 
-NATIVE_COMPONENT_DEFINITION(OpenDoorTrigger);
+NATIVE_COMPONENT_DEFINITION( OpenDoorTrigger );
 
-
-OpenDoorTrigger::OpenDoorTrigger(void) :
-    BaseComponent( ),
-    m_clear( false )
+OpenDoorTrigger::OpenDoorTrigger(void) 
+    : BaseComponent( )
+    , m_clear( false )
 {
     
 }
@@ -37,7 +36,7 @@ void OpenDoorTrigger::OnInitialize(void)
         .On( game::AREA_CLEAR, &OpenDoorTrigger::OnAreaClear );
 }
 
-void OpenDoorTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void OpenDoorTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityID id)
 {
     if ( queue->GetOwner( )->HasComponent<PlayerID>( ) && m_clear )
     {
@@ -46,7 +45,7 @@ void OpenDoorTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::E
     }
 }
 
-void OpenDoorTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void OpenDoorTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityID id)
 {
     if ( queue->GetOwner( )->HasComponent<PlayerID>( ) && m_clear )
     {
@@ -55,7 +54,7 @@ void OpenDoorTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityUni
     }
 }
 
-void OpenDoorTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void OpenDoorTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityID id)
 {
 }
 

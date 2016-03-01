@@ -112,7 +112,7 @@ namespace ursine
                                         const int destinationX, const int destinationY);
 
             // get current object that is moused over
-            ursine::ecs::EntityUniqueID GetMousedOverID(void);
+            ecs::EntityID GetMousedOverID(void);
 
             SVec3 GetMousedOverWorldPosition( const GfxHND &cameraHandle );
             

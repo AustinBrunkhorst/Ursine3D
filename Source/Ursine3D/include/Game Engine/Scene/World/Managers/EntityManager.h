@@ -45,20 +45,26 @@ namespace ursine
             // Creates an entity with only a transform
             EntityHandle Create(void);
 
+            // Creates an entity handle from the given id
+            EntityHandle CreateHandle(EntityID id) const;
+
             // Creates a clone of an entity
             EntityHandle Clone(Entity *entity);
 
             // Gets all entities without a parent
-            EntityVector GetRootEntities(void);
+            EntityHandleVector GetRootEntities(void);
 
             // Gets all active entities
-            EntityVector GetActiveEntities(void) const;
+            EntityHandleVector GetActiveEntities(void) const;
 
             // Gets all entities who match this filter
-            EntityVector GetEntities(const Filter &aspect) const;
+            EntityHandleVector GetEntities(const Filter &aspect) const;
 
             // Finds an entity with the given handle
             Entity *GetEntity(const EntityHandle &handle) const;
+
+            // Finds an entity with the given id
+            EntityHandle GetEntityByID(EntityID id) const;
 
             // Called right when an entity is requested to be removed
             void BeforeRemove(Entity *entity);
@@ -177,7 +183,7 @@ namespace ursine
             std::vector<EntityID> m_active;
 
             // all entities
-            mutable std::vector<Entity> m_cache;
+            std::vector<Entity> m_cache;
 
             // entity event handlers
             std::vector<Entity::EventDispatcher> m_events;
@@ -194,9 +200,8 @@ namespace ursine
             // initalizes all entities and their components
             void initializeScene(void);
 
+            Entity *getEntityByID(EntityID id) const;
             EntityHandle createHandle(Entity *entity) const;
-
-            Entity *getEntity(EntityID id) const;
 
             // creates an empty entity and adds it to the world
             Entity *create(void);

@@ -33,12 +33,12 @@ namespace ursine
             m_mask = 0;
         }
 
-        void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
+        void Renderable::SetEntityID(ecs::EntityID id)
         {
             m_entityID = id;
         }
 
-        ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
+        ecs::EntityID Renderable::GetEntityID() const
         {
             return m_entityID;
         }

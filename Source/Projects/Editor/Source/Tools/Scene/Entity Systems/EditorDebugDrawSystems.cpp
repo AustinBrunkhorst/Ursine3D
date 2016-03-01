@@ -33,7 +33,7 @@ LightDebugDrawSystem::LightDebugDrawSystem(World* world)
     SetUpdateType( WORLD_EDITOR_UPDATE );
 }
 
-void LightDebugDrawSystem::Process(Entity* entity)
+void LightDebugDrawSystem::Process(const EntityHandle &entity)
 {
     auto light = entity->GetComponent<Light>( );
 
@@ -136,7 +136,7 @@ CameraDebugDrawSystem::CameraDebugDrawSystem(World* world)
     SetUpdateType( WORLD_EDITOR_UPDATE );
 }
 
-void CameraDebugDrawSystem::Process(Entity* entity)
+void CameraDebugDrawSystem::Process(const EntityHandle &entity)
 {
     auto cam = entity->GetComponent<Camera>( );
 

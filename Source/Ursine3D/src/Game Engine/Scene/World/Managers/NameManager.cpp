@@ -25,48 +25,60 @@ namespace ursine
 
         NameManager::~NameManager(void) { }
 
-        void NameManager::Remove(Entity *entity)
+        void NameManager::Remove(EntityID id)
         {
-            auto search = m_names.find( entity->m_id );
+            auto search = m_names.find( id );
 
             if (search == m_names.end( ))
                 return;
 
-            removeFromGroup( search->second, entity );
+            removeFromGroup( search->second, id );
 
             // reset the name
             search->second = "";
         }
 
-        EntityHandle NameManager::GetEntity(const std::string &name)
+        EntityHandle NameManager::GetEntity(const std::string &name) const
         {
             auto search = m_grouped.find( name );
 
             if (search == m_grouped.end( ) || search->second.empty( ))
                 return EntityHandle::Invalid( );
 
-            return search->second.front( );
+            return m_world->GetEntityManager( )->CreateHandle( search->second.front( ) );
         }
 
-        const EntityVector &NameManager::GetEntities(const std::string &name)
+        EntityHandleVector NameManager::GetEntities(const std::string &name) const
         {
-            return m_grouped[ name ];
+            auto *entityManager = m_world->GetEntityManager( );
+
+            EntityHandleVector entities;
+
+            auto search = m_grouped.find( name );
+
+            if (search == m_grouped.end( ))
+                return entities;
+
+            for (auto id : search->second)
+                entities.emplace_back( entityManager->CreateHandle( id ) );
+
+            return entities;
         }
 
-        const std::string &NameManager::GetName(const Entity *entity)
+        const std::string &NameManager::GetName(EntityID id)
         {
-            return m_names[ entity->m_id ];
+            return m_names[ id ];
         }
 
-        void NameManager::SetName(Entity *entity, const std::string &name)
+        void NameManager::SetName(EntityID id, const std::string &name)
         {
-            setName( entity, name );
+            setName( id, name );
 
         #if defined(URSINE_WITH_EDITOR)
 
             EditorEntityNameChangedArgs e( 
                 WORLD_EDITOR_ENTITY_NAME_CHANGED, 
-                entity, 
+                m_world->GetEntityManager( )->CreateHandle( id ),
                 name 
             );
 
@@ -75,32 +87,32 @@ namespace ursine
         #endif
         }
 
-        void NameManager::setName(Entity *entity, const std::string &name)
+        void NameManager::setName(EntityID id, const std::string &name)
         {
-            auto nameEntry = m_names.find( entity->m_id );
+            auto nameEntry = m_names.find( id );
 
             // first time setting the name
             if (nameEntry == m_names.end( ))
             {
-                m_names[ entity->m_id ] = name;
+                m_names[ id ] = name;
             }
             else
             {
-                removeFromGroup( nameEntry->second, entity );
+                removeFromGroup( nameEntry->second, id );
 
                 // update name
                 nameEntry->second = name;
             }
 
             // add new grouped name
-            m_grouped[ name ].emplace_back( entity );
+            m_grouped[ name ].emplace_back( id );
         }
 
-        void NameManager::removeFromGroup(const std::string &name, Entity *entity)
+        void NameManager::removeFromGroup(const std::string &name, EntityID id)
         {
             auto &group = m_grouped[ name ];
 
-			auto search = find( group.begin( ), group.end( ), entity );
+			auto search = find( group.begin( ), group.end( ), id );
 
 			if (search != group.end( ))
 				group.erase( search );

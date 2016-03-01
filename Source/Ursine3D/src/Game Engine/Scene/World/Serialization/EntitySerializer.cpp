@@ -150,7 +150,7 @@ namespace ursine
             // serialize all children
             for (auto childID : children)
             {
-                auto *child = entityManager->getEntity( childID );
+                auto *child = entityManager->getEntityByID( childID );
 
                 if (child->IsSerializationEnabled( ))
                     data.emplace_back( Serialize( child ) );
@@ -170,7 +170,7 @@ namespace ursine
             if (name.is_string( ))
             {
                 entity->m_world->m_nameManager
-                    ->setName( entity, name.string_value( ) );
+                    ->setName( entity->m_id, name.string_value( ) );
             }
 
             auto *entityManager = entity->m_world->m_entityManager;

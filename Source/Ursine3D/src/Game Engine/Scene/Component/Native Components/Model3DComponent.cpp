@@ -60,12 +60,12 @@ namespace ursine
 
         void Model3D::OnInitialize(void)
         {
-            auto *owner = GetOwner( );
+            auto &owner = GetOwner( );
 
             m_base->OnInitialize( owner );
 
             // set the unique id
-            m_model->SetEntityUniqueID( GetOwner( )->GetUniqueID( ) );
+            m_model->SetEntityID( GetOwner( )->GetID( ) );
 
             // set the model if there is one
             if (m_modelName.size( ) > 0)

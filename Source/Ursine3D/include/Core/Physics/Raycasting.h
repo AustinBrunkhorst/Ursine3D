@@ -32,16 +32,18 @@ namespace ursine
             SVec3 start, end;
 
             RaycastInput(void)
-                : start( SVec3( ) ), end( SVec3( ) )  { }
+                : start( SVec3( ) )
+                , end( SVec3( ) )  { }
 
             RaycastInput(const SVec3 &start, const SVec3 &end)
-                : start( start ), end( end ) { }
+                : start( start )
+                , end( end ) { }
         };
         
         struct RaycastOutput
         {
             std::vector<SVec3> hit, normal;
-            std::vector<ecs::EntityUniqueID> entity;
+            std::vector<ecs::EntityID> entity;
         };
     }
 }

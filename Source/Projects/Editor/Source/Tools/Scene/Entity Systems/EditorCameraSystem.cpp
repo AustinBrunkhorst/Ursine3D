@@ -36,7 +36,7 @@ EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     : EntitySystem( world )
     , m_hasFocus( false )
     , m_hasMouseFocus( false )
-    , m_cameraEntity( nullptr )
+    , m_cameraEntity( )
     , m_camera( nullptr )
     , m_camZoom( 50.0f )
     , m_camPos( SVec3( 0, 0, 0 ) )
@@ -72,7 +72,7 @@ ecs::Camera *EditorCameraSystem::GetEditorCamera(void)
     return m_cameraEntity->GetComponent<ecs::Camera>( );
 }
 
-ursine::ecs::Entity* EditorCameraSystem::GetEditorCameraEntity(void)
+const ecs::EntityHandle &EditorCameraSystem::GetEditorCameraEntity(void)
 {
     return m_cameraEntity;
 }

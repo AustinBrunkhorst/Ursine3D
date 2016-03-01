@@ -27,11 +27,12 @@ namespace ursine
         public:
             EntityHandle(void);
 
-            static const EntityHandle &Invalid(void);
-
-            operator bool(void) const;
-
+            explicit operator bool(void) const;
+            bool operator==(const EntityHandle &rhs) const;
+            bool operator!=(const EntityHandle &rhs) const;
             Entity *operator->(void) const;
+
+            static const EntityHandle &Invalid(void);
 
             bool IsValid(void) const;
 
@@ -40,6 +41,7 @@ namespace ursine
         private:
             friend class World;
             friend class EntityManager;
+            friend struct std::hash<EntityHandle>;
 
             EntityID m_id;
             EntityIDVersion m_version;
@@ -49,3 +51,5 @@ namespace ursine
         };
     }
 }
+
+#include "EntityHandle.hpp"

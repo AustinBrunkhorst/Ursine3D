@@ -27,7 +27,6 @@ namespace ursine
 			ENTITY_SYSTEM;
 
 		public:
-
 			Meta(DisableNonDynamic)
 			SweptControllerSystem(ursine::ecs::World *world);
 			~SweptControllerSystem(void);
@@ -37,7 +36,7 @@ namespace ursine
 
 			void Initialize(void) override;
 
-			void Process(Entity *entity) override;
+			void Process(const EntityHandle &entity) override;
 
 			// Each frame update, sweepVelocity starts out as the intended movement of the controller (ControllerVelocity).
 			// As contact with other geometry is detected during interation, sweepVelocity is continually modified to
@@ -76,6 +75,6 @@ namespace ursine
 			// copies all entires over and clears old list for tracking next update.
 			static void updateKinematicList(SweptController &controller);
 
-		} Meta(Enable, AutoAddEntitySystem);
+		} Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
 	}
 }

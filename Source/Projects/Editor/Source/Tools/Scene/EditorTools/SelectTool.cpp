@@ -18,9 +18,8 @@
 #include <CoreSystem.h>
 #include <GfxAPI.h>
 
-SelectTool::SelectTool(Editor* editor, ursine::ecs::World *world)
+SelectTool::SelectTool(Editor *editor, ursine::ecs::World *world)
     : EditorTool( editor, world )
-    , m_currentID( -1 )
     , m_altDown( false )
 {
     m_graphics = GetCoreSystem( ursine::graphics::GfxAPI );
@@ -31,7 +30,7 @@ SelectTool::~SelectTool(void)
     m_world = nullptr;
 }
 
-void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
+void SelectTool::OnMouseDown(const ursine::MouseButtonArgs &args)
 {
     if (m_altDown)
         return;
@@ -40,21 +39,20 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
     auto newID = m_graphics->GetMousedOverID( );
     
     // Unpick the previous object if the user clicked off of an entity
-    if (newID == -1 && m_currentID != -1)
+    if (newID == -1 && m_currentEntity)
     {
         unpickObject( );
-        m_currentID = -1;
 
         return;
     }
 
     // grab the new object, add the component
-    auto newObj = m_world->GetEntityUnique( newID );
+    auto newObj = m_world->GetEntity( newID );
 
     if (!newObj)
         return;
 
-    if (newID != m_currentID)
+    if (newID != m_currentEntity->GetID( ))
     {
         // Check to see if this object, or it's parents have the "DisableSelection" component
         auto disableComponents = newObj->GetComponentsInParents<DisableSelection>( );
@@ -72,7 +70,7 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
         }
 
         // This pointer stores the entity that is to be selected
-        ursine::ecs::Entity *toSelect = newObj;
+        auto toSelect = newObj;
 
         // grab the new object's root, and see if it is selected
         auto rootObj = newObj->GetRoot( );
@@ -86,21 +84,19 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs& args)
 
         toSelect->AddComponent<ursine::ecs::Selected>( );
 
-        m_currentID = toSelect->GetUniqueID( );
+        m_currentEntity = toSelect;
     }
     else
     {
-        if (m_currentID != -1)
-            unpickObject( );
+        unpickObject( );
     }
 }
 
-void SelectTool::OnSelect(ursine::ecs::Entity* selected)
+void SelectTool::OnSelect(const ursine::ecs::EntityHandle &selected)
 {
-    if (m_currentID != -1)
-        unpickObject( );
+    unpickObject( );
 
-    m_currentID = selected->GetUniqueID( );
+    m_currentEntity = selected;
 }
 
 void SelectTool::OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager)
@@ -110,13 +106,11 @@ void SelectTool::OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManage
 
 void SelectTool::unpickObject(void)
 {
-    auto obj = m_world->GetEntityUnique( m_currentID );
-
-    //if it existed and it was selected, unselect
-    if (obj != nullptr && obj->HasComponent<ursine::ecs::Selected>( ))
+    // if it existed and it was selected, unselect
+    if (m_currentEntity && m_currentEntity->HasComponent<ursine::ecs::Selected>( ))
     {
-        obj->RemoveComponent<ursine::ecs::Selected>( );
+        m_currentEntity->RemoveComponent<ursine::ecs::Selected>( );
 
-        m_currentID = -1;
+        m_currentEntity = ursine::ecs::EntityHandle::Invalid( );
     }
 }

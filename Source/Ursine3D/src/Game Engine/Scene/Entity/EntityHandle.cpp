@@ -18,21 +18,35 @@ namespace ursine
             , m_version( entity->m_version )
             , m_manager( manager ) { }
 
-        const EntityHandle &EntityHandle::Invalid(void)
-        {
-            static EntityHandle invalid;
-
-            return invalid;
-        }
-
         EntityHandle::operator bool(void) const 
         {
             return IsValid( );
         }
 
+        bool EntityHandle::operator==(const EntityHandle &rhs) const
+        {
+            return m_version == rhs.m_version &&
+                   m_id == rhs.m_id &&
+                   m_manager == rhs.m_manager;
+        }
+
+        bool EntityHandle::operator!=(const EntityHandle &rhs) const
+        {
+            return !(m_version == rhs.m_version &&
+                     m_id == rhs.m_id &&
+                     m_manager == rhs.m_manager);
+        }
+
         Entity *EntityHandle::operator->(void) const 
         {
             return Get( );
+        }
+
+        const EntityHandle &EntityHandle::Invalid(void)
+        {
+            static EntityHandle invalid;
+
+            return invalid;
         }
 
         bool EntityHandle::IsValid(void) const

@@ -61,7 +61,7 @@ namespace ursine
 
         private:
             typedef std::vector<RenderableComponentBase *> RenderableVector;
-            typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
+            typedef std::unordered_map<EntityID, RenderableVector> RenderableMap;
 
             graphics::GfxAPI *m_graphics;
             Component::Handle<WorldConfig> m_worldConfig;
@@ -91,8 +91,8 @@ namespace ursine
             void renderObjects(void);
             void renderCamera(Component::Handle<Camera> camera, RenderHookArgs &args, RenderSystemEventType hook);
 
-            void addRenderable(Entity *entity, RenderableComponentBase *renderable);
-            void removeRenderable(Entity *entity, RenderableComponentBase *renderable);
+            void addRenderable(const EntityHandle &entity, RenderableComponentBase *renderable);
+            void removeRenderable(const EntityHandle &entity, RenderableComponentBase *renderable);
         } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }
 }

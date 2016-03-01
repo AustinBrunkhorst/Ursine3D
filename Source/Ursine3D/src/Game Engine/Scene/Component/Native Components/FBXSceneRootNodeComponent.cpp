@@ -66,7 +66,7 @@ namespace ursine
                 for (auto &x : meshVec)
                 {
                     // Create an entity
-                    auto *newEntity = world->CreateEntity( x->GetName( ) );
+                    auto newEntity = world->CreateEntity( x->GetName( ) );
 
                     // Add model3d
                     auto *modelComp = newEntity->AddComponent<Model3D>( );

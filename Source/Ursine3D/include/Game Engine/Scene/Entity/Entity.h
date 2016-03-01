@@ -42,9 +42,14 @@ namespace ursine
             typedef uint32 EventID;
             typedef EventDispatcher<EventID> EventDispatcher;
 
+            Entity(const Entity &&rhs);
+
             ////////////////////////////////////////////////////////////////////
             // State/Identification
             ////////////////////////////////////////////////////////////////////
+
+            // ID of this entity
+            EntityID GetID(void) const;
 
             // Determines if the entity is currently being deleted
             bool IsDeleting(void) const;
@@ -207,11 +212,8 @@ namespace ursine
             // Sets this entity's index in the parent's children list
             void SetSiblingIndex(uint index) const;
 
-			const Entity *GetParent(void) const;
-			EntityHandle GetParent(void);
-
-			const Entity *GetRoot(void) const;
-			EntityHandle GetRoot(void);
+            const EntityHandle &GetParent(void) const;
+            const EntityHandle &GetRoot(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Events
@@ -291,7 +293,6 @@ namespace ursine
 
             // disable copy and assign
             Entity(const Entity &rhs) = delete;
-            Entity(const Entity &&rhs) = delete;
             Entity &operator=(const Entity &rhs) = delete;
 
             Entity(World *world, EntityID id);

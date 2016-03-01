@@ -40,7 +40,6 @@ namespace ursine
     {
         World::World(void)
             : EventDispatcher( this )
-            , m_settings( nullptr )
             , m_entityManager( nullptr )
             , m_systemManager( nullptr )
             , m_nameManager( nullptr )
@@ -57,7 +56,7 @@ namespace ursine
             m_utilityManager->OnInitialize( );
 
             // ensure the settings entity is created before the system manager
-            m_settings = CreateEntity( kWorldSettingsEntityName ).Get( );
+            m_settings = CreateEntity( kWorldSettingsEntityName );
             m_settings->EnableDeletion( false );
             m_settings->EnableHierarchyChange( false );
 
@@ -82,8 +81,6 @@ namespace ursine
             delete m_entityManager;
             
             m_entityManager = nullptr;
-
-            m_settings = nullptr;
         }
 
         EntityHandle World::CreateEntity(const std::string &name)
@@ -92,13 +89,8 @@ namespace ursine
 
             entity->SetName( name );
 
-            return m_entityManager->createHandle( entity );
+            return entity;
         }
-
-		void World::queueEntityDeletion(Entity *entity)
-		{
-			m_deleted.push_back( entity->m_id );
-		}
 
         EntityHandle World::CreateEntityFromArchetype(
             const std::string &fileName, 
@@ -107,7 +99,7 @@ namespace ursine
         {
             auto cache = m_archetypeCache.find( fileName );
 
-            Entity *entity;
+            EntityHandle entity;
 
             if (cache == m_archetypeCache.end( ))
             {
@@ -142,30 +134,35 @@ namespace ursine
             if (entity)
                 entity->SetName( name );
 
-            return m_entityManager->createHandle( entity );
+            return entity;
+        }
+
+        EntityHandle World::GetEntity(EntityID id) const
+        {
+            return m_entityManager->GetEntityByID( id );
         }
 
         EntityHandle World::GetEntityFromName(const std::string &name) const
         {
-            return m_entityManager->createHandle( m_nameManager->GetEntity( name ) );
+            return m_nameManager->GetEntity( name );
         }
 
-        EntityVector World::GetRootEntities(void) const
+        EntityHandleVector World::GetRootEntities(void) const
         {
             return m_entityManager->GetRootEntities( );
         }
 
-        EntityVector World::GetActiveEntities(void) const
+        EntityHandleVector World::GetActiveEntities(void) const
         {
             return m_entityManager->GetActiveEntities( );
         }
 
-        const EntityVector &World::GetEntitiesFromName(const std::string &name) const
+        EntityHandleVector World::GetEntitiesFromName(const std::string &name) const
         {
             return m_nameManager->GetEntities( name );
         }
 
-        EntityVector World::GetEntitiesFromFilter(const Filter &filter) const
+        EntityHandleVector World::GetEntitiesFromFilter(const Filter &filter) const
         {
             return m_entityManager->GetEntities( filter );
         }
@@ -194,9 +191,14 @@ namespace ursine
             Dispatch( WORLD_EDITOR_RENDER, EventArgs::Empty );
         }
 
-        EntityHandle World::GetSettings(void) const
+        const EntityHandle &World::GetSettings(void) const
         {
-            return { m_entityManager, m_settings };
+            return m_settings;
+        }
+
+        EntityManager *World::GetEntityManager(void) const
+        {
+            return m_entityManager;
         }
 
         SystemManager *World::GetSystemManager(void) const
@@ -225,22 +227,27 @@ namespace ursine
             m_systemManager->initializeScene( );
         }
 
-        void World::deleteEntity(Entity *entity)
+        void World::queueEntityDeletion(Entity *entity)
 		{
-			m_nameManager->Remove( entity );
-			m_entityManager->Remove( entity );
+			m_deleted.push_back( m_entityManager->createHandle( entity ) );
+		}
+
+        void World::deleteEntity(const EntityHandle &entity)
+		{
+			m_nameManager->Remove( entity->GetID( ) );
+			m_entityManager->Remove( entity.Get( ) );
 		}
 				
         void World::clearDeletionQueue(void)
         {
 			std::lock_guard<std::mutex> lock( m_deletionMutex );
 
-			for (auto *entity : m_deleted)
-				m_entityManager->BeforeRemove( entity );
+			for (auto &entity : m_deleted)
+				m_entityManager->BeforeRemove( entity.Get( ) );
 
             while (m_deleted.size( ))
             {
-                auto entity = m_deleted.back( );
+                auto &entity = m_deleted.back( );
 
                 m_deleted.pop_back( );
 
@@ -248,7 +255,7 @@ namespace ursine
             }
         }
 
-        Entity *World::loadArchetype(const Json &data)
+        EntityHandle World::loadArchetype(const Json &data)
         {
             try
             {
@@ -261,7 +268,7 @@ namespace ursine
                     e.GetError( ).c_str( )
                 );
 
-                return nullptr;
+                return EntityHandle::Invalid( );
             }
         }
     }

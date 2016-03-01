@@ -24,7 +24,7 @@ public:
     LightDebugDrawSystem(ursine::ecs::World *world);
 
 private:
-    void Process(ursine::ecs::Entity *entity) override;
+    void Process(const ursine::ecs::EntityHandle &entity) override;
 
 } Meta(Enable, AutoAddEntitySystem);
 
@@ -37,6 +37,6 @@ public:
     CameraDebugDrawSystem(ursine::ecs::World *world);
 
 private:
-    void Process(ursine::ecs::Entity *entity) override;
+    void Process(const ursine::ecs::EntityHandle &entity) override;
 
 } Meta(Enable, AutoAddEntitySystem);

@@ -21,7 +21,7 @@ public:
 
     void OnMouseDown(const ursine::MouseButtonArgs &args) override;
 
-    void OnSelect(ursine::ecs::Entity *selected) override;
+    void OnSelect(const ursine::ecs::EntityHandle &selected) override;
 
     void OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager) override;
 
@@ -30,7 +30,7 @@ public:
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
-    ursine::ecs::EntityUniqueID m_currentID;
+    ursine::ecs::EntityHandle m_currentEntity;
 
     bool m_altDown;
 };

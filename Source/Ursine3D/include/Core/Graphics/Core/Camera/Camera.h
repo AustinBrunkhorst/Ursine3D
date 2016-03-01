@@ -115,7 +115,7 @@ namespace ursine
             unsigned long long m_cameraMask;
 
             // entity ID
-            ecs::EntityUniqueID m_entityID;
+            ecs::EntityID m_entityID;
 
             // field of view, near, var
             float m_fov;

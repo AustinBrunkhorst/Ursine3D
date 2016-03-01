@@ -37,7 +37,7 @@ namespace
 
 
 AbstractWeapon::AbstractWeapon(void) :
-    m_owner( nullptr ),
+    m_owner( ),
     m_damageToApply(1.0f),
     m_critModifier(1.0f),
     m_damageInterval(1.0f),
@@ -71,7 +71,7 @@ AbstractWeapon::~AbstractWeapon(void)
 {
 }
 
-void AbstractWeapon::Initialize(ursine::ecs::Entity* owner)
+void AbstractWeapon::Initialize(const ecs::EntityHandle &owner)
 {
     m_owner = owner;
 
@@ -455,7 +455,7 @@ void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
 
 
     // Grab fire position child
-    ursine::ecs::Entity* firePos = sender->GetComponentInChildren<FirePos>( )->GetOwner( );
+    auto firePos = sender->GetComponentInChildren<FirePos>( )->GetOwner( );
 
     // if the fire position was a child then grab transform for shooting
     if ( firePos )

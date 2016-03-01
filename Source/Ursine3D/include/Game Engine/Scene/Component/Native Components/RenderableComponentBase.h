@@ -14,7 +14,6 @@
 #pragma once
 
 #include "GFXAPIDefines.h"
-#include "EntityConfig.h"
 #include "EventDispatcher.h"
 
 namespace ursine
@@ -27,20 +26,19 @@ namespace ursine
     class RenderableComponentBase
     {
     public:
-        friend class ecs::RenderSystem;
+        // lets us know if we need to update the matrix in the renderer
+        bool dirty;
 
-        RenderableComponentBase(std::function<void(void)> UpdateRenderer);
+        RenderableComponentBase(std::function<void(void)> updateCallback);
 
-        void OnInitialize(ecs::Entity *owner);
-        void OnRemove(ecs::Entity *owner);
+        void OnInitialize(const ecs::EntityHandle &owner);
+        void OnRemove(const ecs::EntityHandle &owner);
 
 		graphics::GfxHND &GetHandle(void);
 		void SetHandle(const graphics::GfxHND &handle);
 
-		// lets us know if we need to update the matrix in the renderer
-        bool m_dirty;
-
     protected:
+        friend class ecs::RenderSystem;
 
         graphics::GfxHND m_handle;
 

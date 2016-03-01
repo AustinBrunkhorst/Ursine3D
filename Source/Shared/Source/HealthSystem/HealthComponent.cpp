@@ -37,7 +37,7 @@ Health::Health(void)
 Health::~Health(void)
 {
     GetOwner( )->Listener(this)
-        .Off(ursine::ecs::ENTITY_REMOVED, &Health::OnDeath);
+        .Off( ursine::ecs::ENTITY_REMOVED, &Health::OnDeath );
 }
 
 float Health::GetHealth(void) const
@@ -114,15 +114,12 @@ void Health::OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT))
     DealDamage(args->m_damage);
 }
 
-
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
     if ( m_spawnOnDeath )
     {
-        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
+        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
 
         obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
     }
 }
-
-

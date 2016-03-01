@@ -42,12 +42,11 @@ namespace ursine
 			Contact(void);
 		};
 
-		class CollisionEventArgs : public EventArgs
+		struct CollisionEventArgs : EventArgs
 		{
-		public:
 			std::vector<Contact> contacts;
 			
-			ecs::Entity *thisEntity, *otherEntity;
+			ecs::EntityHandle thisEntity, otherEntity;
 		};
 	}
 }

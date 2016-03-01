@@ -23,12 +23,12 @@ namespace ursine
             static_assert(std::is_base_of<Component, ComponentType>::value,
                 "The specified type is not a component!");
 
-#ifdef CONFIG_DEBUG
+        #if defined(CONFIG_DEBUG)
 
             UAssert( IsComponentRegistered( ComponentType ),
                 "Component type not registered." );
 
-#endif
+        #endif
 
             AddComponent( entity, static_cast<Component*>( component ) );
         }

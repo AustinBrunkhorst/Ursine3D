@@ -63,21 +63,21 @@ namespace ursine
 			if (args->component->Is<AudioEmitter>())
 			{
 				m_emitters.emplace(
-					args->entity->GetUniqueID(),
+					args->entity->GetID( ),
 					static_cast<AudioEmitter*>(const_cast<Component*>(args->component))
-					);
-				auto& handle = m_emitters[args->entity->GetUniqueID()]->m_handle;
+				);
+				auto& handle = m_emitters[args->entity->GetID()]->m_handle;
 				CreateAudioObject(handle);
-				AssignListener(handle, m_emitters[args->entity->GetUniqueID()]->GetListeners());
+				AssignListener(handle, m_emitters[args->entity->GetID()]->GetListeners());
 			}
 
 			else if (args->component->Is<AudioListener>())
 			{
 				m_listeners.emplace(
-					args->entity->GetUniqueID(),
+					args->entity->GetID(),
 					static_cast<AudioListener*>(const_cast<Component*>(args->component))
 					);
-				m_listeners[args->entity->GetUniqueID()]->SetListenerIndex(m_audioMan->GetListener());
+				m_listeners[args->entity->GetID()]->SetListenerIndex(m_audioMan->GetListener());
 			}
 		}
 
@@ -87,22 +87,22 @@ namespace ursine
 
 			if (args->component->Is<AudioEmitter>())
 			{
-				auto search = m_emitters.find(args->entity->GetUniqueID());
+				auto search = m_emitters.find(args->entity->GetID());
 
 				if (search != m_emitters.end())
 				{
-					DeleteAudioObject(m_emitters[args->entity->GetUniqueID()]->m_handle);
+					DeleteAudioObject(m_emitters[args->entity->GetID()]->m_handle);
 					m_emitters.erase(search);
 				}
 			}
 
 			else if (args->component->Is<AudioListener>())
 			{
-				auto search = m_listeners.find(args->entity->GetUniqueID());
+				auto search = m_listeners.find(args->entity->GetID());
 
 				if (search != m_listeners.end())
 				{
-					m_audioMan->FreeListener(m_listeners[args->entity->GetUniqueID()]->GetListenerIndex());
+					m_audioMan->FreeListener(m_listeners[args->entity->GetID()]->GetListenerIndex());
 					m_listeners.erase(search);
 				}
 					

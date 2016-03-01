@@ -21,11 +21,11 @@ class DuplicateTool : public EditorTool
 public:
     DuplicateTool(Editor *editor, ursine::ecs::World *world);
 
-    void OnEnable(ursine::ecs::EntityUniqueID selected) override;
+    void OnEnable(const ursine::ecs::EntityHandle &selected) override;
     void OnDisable(void) override;
 
-    void OnSelect(ursine::ecs::Entity *entity) override;
-    void OnDeselect(ursine::ecs::Entity *entity) override;
+    void OnSelect(const ursine::ecs::EntityHandle &entity) override;
+    void OnDeselect(const ursine::ecs::EntityHandle &entity) override;
 
     void OnMouseDown(const ursine::MouseButtonArgs &args) override;
 
@@ -44,7 +44,7 @@ private:
     // visual representation of the 3 axis
     ursine::ecs::Entity *m_gizmo;
 
-    ursine::ecs::EntityUniqueID m_selected;
+    ursine::ecs::EntityHandle m_selected;
 
     enum PlaneType
     {

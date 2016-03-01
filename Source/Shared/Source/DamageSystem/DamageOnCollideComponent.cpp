@@ -21,12 +21,6 @@
 
 NATIVE_COMPONENT_DEFINITION( DamageOnCollide );
 
-namespace
-{
-
-}
-
-
 DamageOnCollide::DamageOnCollide( void )
     : BaseComponent( )
     , m_damageToApply( 1.0f )
@@ -165,7 +159,7 @@ void DamageOnCollide::OnCollide( EVENT_HANDLER( ursine::ecs::ENTITY_COLLISION_PE
 
 void DamageOnCollide::ApplyCritDamage(CritSpot* critComp)
 {
-    if ( m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetUniqueID( ) ] != NULL )
+    if ( m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetID( ) ] != NULL )
         return;
 
     critComp->ApplyDamage( m_damageToApply * m_critModifier );
@@ -176,15 +170,15 @@ void DamageOnCollide::ApplyCritDamage(CritSpot* critComp)
     //   if not deleting due to collision
     if ( !DeleteOnCollision( ) )
     {
-        m_damageTimeMap[ critComp->GetOwner( )->GetUniqueID( ) ] = m_damageInterval;
-        m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetUniqueID( ) ] = m_damageInterval;
+        m_damageTimeMap[ critComp->GetOwner( )->GetID( ) ] = m_damageInterval;
+        m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetID( ) ] = m_damageInterval;
     }
 }
 
 
 void DamageOnCollide::ApplyDamage(Health* healthComp)
 {
-    if ( m_damageTimeMap[ healthComp->GetOwner( )->GetUniqueID( ) ] != NULL )
+    if ( m_damageTimeMap[ healthComp->GetOwner( )->GetID( ) ] != NULL )
         return;
 
     // apply damage to object
@@ -196,12 +190,12 @@ void DamageOnCollide::ApplyDamage(Health* healthComp)
     //   if not deleting due to collision
     if ( !DeleteOnCollision( ) )
     {
-        m_damageTimeMap[ healthComp->GetOwner( )->GetUniqueID( ) ] = m_damageInterval;
+        m_damageTimeMap[ healthComp->GetOwner( )->GetID( ) ] = m_damageInterval;
     }
 }
 
 
-void DamageOnCollide::AddEntityToIntervals(ursine::ecs::EntityUniqueID uniqueID)
+void DamageOnCollide::AddEntityToIntervals(ursine::ecs::EntityID uniqueID)
 {
     if ( !DeleteOnCollision( ) )
     {
@@ -254,36 +248,37 @@ bool DamageOnCollide::DeleteOnCollision(void)
 }
 
 
-void DamageOnCollide::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
+void DamageOnCollide::OnDeath(EVENT_HANDLER(ursine::ecs::Entity))
 {
     if ( m_spawnOnDeath )
     {
-        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
+        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
 
         obj->GetTransform( )->SetWorldPosition(GetOwner( )->GetTransform( )->GetWorldPosition( ));
     }
 }
 
 
-void DamageOnCollide::GetSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
+void DamageOnCollide::GetSpawnLocation(const ursine::ecs::EntityHandle &other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
 {
-    ursine::ecs::Entity* entity;
+    ursine::ecs::EntityHandle entity;
     size_t size = rayout.entity.size( );
 
-    for ( size_t i = 0; i <size; ++i )
+    for (size_t i = 0; i <size; ++i)
     {
-        entity = GetOwner( )->GetWorld( )->GetEntityUnique( rayout.entity[ i ] );
+        entity = GetOwner( )->GetWorld( )->GetEntity( rayout.entity[ i ] );
 
-        if ( entity == other )
+        if (entity == other)
         {
             posToSet = rayout.hit[ i ];
+
             break;
         }
     }
 }
 
 
-void DamageOnCollide::SpawnCollisionParticle(ursine::ecs::Entity* other)
+void DamageOnCollide::SpawnCollisionParticle(const ursine::ecs::EntityHandle &other)
 {
     if ( m_spawnOnHit )
     {
@@ -313,7 +308,8 @@ void DamageOnCollide::SpawnCollisionParticle(ursine::ecs::Entity* other)
         GetSpawnLocation(other->GetRoot( ), rayout, pos);
 
         // create particle
-        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
+        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
+
         obj->GetTransform( )->SetWorldPosition( pos );
 
         // parent so that it follows objects and dies with object

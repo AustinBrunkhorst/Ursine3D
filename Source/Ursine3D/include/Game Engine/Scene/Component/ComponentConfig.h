@@ -57,7 +57,7 @@
 #if defined(URSINE_WITH_EDITOR)
 
 #define NOTIFY_COMPONENT_CHANGED(displayName, value)                                                \
-    auto *__owner = GetOwner( );                                                                    \
+    auto &__owner = GetOwner( );                                                                    \
     if (__owner)                                                                                    \
     {                                                                                               \
         ursine::ecs::EditorComponentChangedArgs __e {                                               \

@@ -45,11 +45,11 @@ void DuplicateTool::OnDisable(void)
     disableGizmo( );
 }
 
-void DuplicateTool::OnSelect(Entity* entity)
+void DuplicateTool::OnSelect(const EntityHandle &entity)
 {
     auto prevSelected = m_gizmo != nullptr;
 
-    m_selected = entity->GetUniqueID( );
+    m_selected = entity;
 
     if (!prevSelected)
         enableGizmo( );
@@ -57,9 +57,9 @@ void DuplicateTool::OnSelect(Entity* entity)
     m_deleteGizmo = false;
 }
 
-void DuplicateTool::OnDeselect(Entity* entity)
+void DuplicateTool::OnDeselect(const ursine::ecs::EntityHandle &entity)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
 
     m_deleteGizmo = true;
 }
@@ -67,18 +67,16 @@ void DuplicateTool::OnDeselect(Entity* entity)
 void DuplicateTool::OnMouseDown(const MouseButtonArgs& args)
 {
     // place the object and set it to be the next selected (+ remove selected from previous
-    if (m_selected == -1 || args.button != MBTN_LEFT || m_altDown)
+    if (!m_selected || args.button != MBTN_LEFT || m_altDown)
         return;
 
-    auto selected = m_world->GetEntityUnique( m_selected );
+    auto clone = m_selected->Clone( );
 
-    auto clone = selected->Clone( );
-
-    selected->RemoveComponent<Selected>( );
+    m_selected->RemoveComponent<Selected>( );
 
     // Add the selected component
     clone->AddComponent<Selected>( );
-    m_selected = clone->GetUniqueID( );
+    m_selected = clone;
 
     // Set the position
     auto gizTrans = m_gizmo->GetTransform( );
@@ -87,7 +85,7 @@ void DuplicateTool::OnMouseDown(const MouseButtonArgs& args)
     cloneTrans->SetWorldPosition( gizTrans->GetWorldPosition( ) );
 
     // Set the name
-    clone->SetName( selected->GetName( ) );
+    clone->SetName( m_selected->GetName( ) );
 }
 
 void DuplicateTool::OnKeyDown(const KeyboardKeyArgs& args)

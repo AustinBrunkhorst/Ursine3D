@@ -20,14 +20,12 @@ class EntityAnimatorSystem : public ursine::ecs::FilterSystem
     ENTITY_SYSTEM;
 
 public:
-
     EntityAnimatorSystem(ursine::ecs::World *world);
 
 private:
-
     void Initialize(void) override;
 
-    void Process(ursine::ecs::Entity *entity) override;
+    void Process(const ursine::ecs::EntityHandle &entity) override;
 
     void smoothUpdate(EntityAnimator *animator);
 

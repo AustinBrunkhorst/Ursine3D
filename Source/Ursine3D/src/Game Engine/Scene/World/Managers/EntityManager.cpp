@@ -90,7 +90,7 @@ namespace ursine
             {
                 auto id = m_active[ 0 ];
 
-                Remove( getEntity( id ) );
+                Remove( getEntityByID( id ) );
             }
         }
 
@@ -108,6 +108,11 @@ namespace ursine
 
             return createHandle( entity );
         }
+
+        EntityHandle EntityManager::CreateHandle(EntityID id) const
+        {
+            return createHandle( getEntityByID( id ) );
+        }
          
         EntityHandle EntityManager::Clone(Entity *entity)
         {
@@ -120,24 +125,24 @@ namespace ursine
             return serializer.DeserializeArchetype( m_world, data );
         }
 
-        EntityVector EntityManager::GetRootEntities(void)
+        EntityHandleVector EntityManager::GetRootEntities(void)
         {
             auto &children = *m_hierarchy.GetRootNode( ).Children( );
 
-            EntityVector entities;
+            EntityHandleVector entities;
 
             for (auto child : children)
-                entities.emplace_back( getEntity( child ) );
+                entities.emplace_back( GetEntityByID( child ) );
 
             return entities;
         }
 
-        EntityVector EntityManager::GetActiveEntities(void) const
+        EntityHandleVector EntityManager::GetActiveEntities(void) const
         {
-            EntityVector entities;
+            EntityHandleVector entities;
 
             for (auto id : m_active)
-                entities.emplace_back( getEntity( id ) );
+                entities.emplace_back( GetEntityByID( id ) );
 
             return entities;
         }
@@ -193,7 +198,7 @@ namespace ursine
                         EditorPostNotification( error );
 
                         // this is so we can ensure dependencies in the deconstructor
-                        component->m_owner = entity;
+                        component->m_owner = createHandle( entity );
 
                         // we ain't want this guy
                         delete component;
@@ -431,13 +436,13 @@ namespace ursine
             m_hierarchy.SetSiblingIndex( entity->m_id, index );
         }
          
-        EntityVector EntityManager::GetEntities(const Filter &filter) const
+        EntityHandleVector EntityManager::GetEntities(const Filter &filter) const
         {
-            EntityVector found;
+            EntityHandleVector found;
 
             for (uint i = 0; i < m_active.size( ); ++i)
             {
-                auto *entity = getEntity( m_active[ i ] );
+                auto *entity = getEntityByID( m_active[ i ] );
 
                 if (entity && filter.Matches( entity ))
                     found.push_back( createHandle( entity ) );
@@ -448,24 +453,26 @@ namespace ursine
 
         Entity *EntityManager::GetEntity(const EntityHandle &handle) const
         {
-            // out of bounds
-            if (handle.m_id + 1u > m_cache.size( ))
-                return nullptr;
+            auto *entity = getEntityByID( handle.m_id );
 
-            auto &entity = m_cache[ handle.m_id ];
+            // mismatching versions mean this handle is invalid
+            return entity && entity->m_version == handle.m_version ? entity : nullptr;
+        }
 
-            return entity.m_version == handle.m_version ? &entity : nullptr;
+        EntityHandle EntityManager::GetEntityByID(EntityID id) const
+        {
+            return createHandle( getEntityByID( id ) );
         }
 
         void EntityManager::BeforeRemove(Entity *entity)
         {
             // for each child, remove it
             for (auto child : entity->GetTransform( )->GetChildren( ))
-                BeforeRemove( child->GetOwner( ) );
+                BeforeRemove( child->GetOwner( ).Get( ) );
 
             EntityEventArgs e( 
                 WORLD_ENTITY_REMOVED, 
-                createHandle( entity ) 
+                createHandle( entity )
             );
 
             // we're removing man
@@ -487,7 +494,7 @@ namespace ursine
 
             while (children->size( ) > 0)
             {
-                auto &child = ( *children )[ 0 ];
+                auto &child = (*children)[ 0 ];
 
                 Remove( &m_cache[ child ] );
             }
@@ -525,17 +532,20 @@ namespace ursine
         void EntityManager::initializeScene(void)
         {
             for (auto id : m_active)
-                initializeComponentsForScene( getEntity( id ) );
+                initializeComponentsForScene( getEntityByID( id ) );
+        }
+
+        Entity *EntityManager::getEntityByID(EntityID id) const
+        {
+            if (id + 1u > m_cache.size( ))
+                return nullptr;
+
+            return const_cast<Entity*>( &m_cache[ id ] );
         }
 
         EntityHandle EntityManager::createHandle(Entity *entity) const
         {
-            return entity == nullptr ? EntityHandle { } : EntityHandle { this, entity };
-        }
-
-        Entity *EntityManager::getEntity(EntityID id) const
-        {
-            return &m_cache[ id ];
+            return entity == nullptr ? EntityHandle::Invalid( ) : EntityHandle { this, entity };
         }
 
         Entity *EntityManager::create(void)
@@ -545,7 +555,7 @@ namespace ursine
             // we can't use the available queue
             if (m_inactive.empty( ))
             {
-                m_cache.emplace_back( m_world, m_nextEntityID++ );
+                m_cache.emplace_back( Entity { m_world, m_nextEntityID++ } );
 
                 entity = &m_cache.back( );
 
@@ -555,7 +565,7 @@ namespace ursine
             // we can use the queue so just reset and pop the last one
             else
             {
-                entity = getEntity( m_inactive.back( ) );
+                entity = getEntityByID( m_inactive.back( ) );
 
                 m_inactive.pop_back( );
 
@@ -581,7 +591,7 @@ namespace ursine
 
             // dispatch children AFTER dispatching parent
             for (auto childID : children)
-                dispatchCreated( getEntity( childID ) );
+                dispatchCreated( getEntityByID( childID ) );
         }
 
         void EntityManager::addComponent(Entity *entity, Component *component)
@@ -605,7 +615,7 @@ namespace ursine
             entity->setType( mask );
 
             component->m_uniqueID = m_nextComponentUID++;
-            component->m_owner = entity;
+            component->m_owner = createHandle( entity );
         }
 
         void EntityManager::removeComponent(Entity *entity, ComponentTypeID id, bool dispatch)

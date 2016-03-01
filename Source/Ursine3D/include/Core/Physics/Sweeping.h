@@ -31,7 +31,7 @@ namespace ursine
 		{
 			std::vector<SVec3> hit, normal;
 			std::vector<float> time;
-			std::vector<ecs::EntityUniqueID> entity;
+			std::vector<ecs::EntityID> entity;
 		};
 
 	#ifdef BULLET_PHYSICS
