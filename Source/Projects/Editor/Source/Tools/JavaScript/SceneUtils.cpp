@@ -18,10 +18,9 @@
 #include "Editor.h"
 #include "Project.h"
 
-#include "FileUtils.h"
-
 #include <FileDialog.h>
 
+#include <WorldConfigComponent.h>
 #include <SystemManager.h>
 #include <WorldSerializer.h>
 
@@ -102,6 +101,14 @@ JSFunction(SceneSetActiveWorld)
 
     scene.SetActiveWorld( reference );
 
+    auto *world = scene.GetActiveWorld( );
+
+    if (world)
+    {
+        URSINE_TODO( "this is hacky and weirdly placed" );
+        world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
+    }
+
     return CefV8Value::CreateBool( true );
 }
 
@@ -152,9 +159,7 @@ JSFunction(SceneGetActiveEntities)
 JSFunction(ScenePlayStart)
 {
     Application::PostMainThread( [] {
-        auto &scene = getScene( );
-
-        scene.SetPlayState( PS_PLAYING );
+        getProject( )->SetPlayState( PS_PLAYING );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -168,9 +173,7 @@ JSFunction(SceneSetPlayState)
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
     Application::PostMainThread( [=] {
-        auto &scene = getScene( );
-
-        scene.SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
+        getProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -190,9 +193,7 @@ JSFunction(SceneStep)
 JSFunction(ScenePlayStop)
 {
     Application::PostMainThread( [] {
-        auto &scene = getScene( );
-
-        scene.SetPlayState( PS_EDITOR );
+        getProject( )->SetPlayState( PS_EDITOR );
     } );
 
     return CefV8Value::CreateUndefined( );

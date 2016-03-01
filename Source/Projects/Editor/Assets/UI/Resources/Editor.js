@@ -582,16 +582,16 @@ ursine_editor_Editor.prototype = {
 			ursine_native_Extern.ScenePlayStart();
 		});
 		btnToggle.addEventListener("click",function() {
-			var paused = toolsContainer.classList.contains("paused");
-			toolsContainer.classList.toggle("paused",!paused);
-			ursine_native_Extern.SceneSetPlayState(!paused);
+			var playing = !toolsContainer.classList.contains("paused");
+			toolsContainer.classList.toggle("paused",playing);
+			ursine_native_Extern.SceneSetPlayState(!playing);
 		});
 		btnStep.addEventListener("click",function() {
 			if(btnStep.classList.contains("disabled")) return;
 			ursine_native_Extern.SceneStep();
 		});
 		btnStop.addEventListener("click",function() {
-			toolsContainer.classList.remove("running");
+			toolsContainer.classList.remove("running","paused");
 			ursine_native_Extern.ScenePlayStop();
 		});
 	}

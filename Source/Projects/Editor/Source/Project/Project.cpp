@@ -16,9 +16,11 @@
 #include "Project.h"
 #include "ResourcePipelineConfig.h"
 
+#include <WorldSerializer.h>
 #include <WorldData.h>
 
 #include <LightComponent.h>
+#include <WorldConfigComponent.h>
 #include <Color.h>
 
 using namespace ursine;
@@ -77,6 +79,51 @@ Scene &Project::GetScene(void)
     return m_scene;
 }
 
+ScenePlayState Project::GetPlayState(void) const
+{
+    return m_scene.GetPlayState( );
+}
+
+void Project::SetPlayState(ScenePlayState state)
+{
+    auto lastState = m_scene.GetPlayState( );
+
+    m_scene.SetPlayState( state );
+
+    if (lastState == PS_EDITOR && (state == PS_PLAYING || state == PS_PAUSED))
+    {
+        ecs::WorldSerializer serializer;
+
+        auto *oldWorld = m_scene.GetActiveWorld( );
+
+        m_worldCache = serializer.Serialize( oldWorld );
+
+        auto *playWorld = serializer.Deserialize( m_worldCache );
+
+        playWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( false );
+
+        m_scene.SetActiveWorld( ecs::World::Handle( playWorld ) );
+
+        m_scene.LoadConfiguredSystems( );
+    }
+    else if((lastState == PS_PLAYING || lastState == PS_PAUSED) && state == PS_EDITOR)
+    {
+        ecs::WorldSerializer serializer;
+
+        auto *cachedWorld = serializer.Deserialize( m_worldCache );
+
+        m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
+
+        cachedWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
+    } 
+    else
+    {
+        m_scene.GetActiveWorld( )->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( 
+            state == PS_PAUSED 
+        );
+    }
+}
+
 void Project::SetEmptyScene(void)
 {
     auto world = std::make_shared<ecs::World>( );
@@ -93,6 +140,8 @@ void Project::SetEmptyScene(void)
     }
 
     m_scene.SetActiveWorld( world );
+
+    world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
 }
 
 const ursine::GUID &Project::GetLastOpenedWorld(void)

@@ -34,6 +34,9 @@ public:
 
     ursine::Scene &GetScene(void);
 
+    ursine::ScenePlayState GetPlayState(void) const;
+    void SetPlayState(ursine::ScenePlayState state);
+
     void SetEmptyScene(void);
 
     const ursine::GUID &GetLastOpenedWorld(void);
@@ -60,6 +63,7 @@ private:
     ursine::resources::ResourceManager m_builtInResourceManager;
 
     ursine::Scene m_scene;
+    ursine::Json m_worldCache;
 
     EditorEntityManager *m_entityManager;
     EditorResourcePipelineManager *m_pipelineManager;
