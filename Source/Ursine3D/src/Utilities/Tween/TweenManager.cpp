@@ -34,7 +34,7 @@ namespace ursine
     {
 		std::lock_guard<std::mutex> lock( m_mutex );
 
-        if (group + 1u <= m_groups.size( ))
+        if (group < m_groups.size( ))
             m_groups[ group ] = true;
     }
 
@@ -42,7 +42,7 @@ namespace ursine
     {
 		std::lock_guard<std::mutex> lock( m_mutex );
 
-        if (group + 1u <= m_groups.size( ))
+        if (group < m_groups.size( ))
             m_groups[ group ] = false;
     }
 
@@ -89,7 +89,7 @@ namespace ursine
 
 		std::lock_guard<std::mutex> lock( m_mutex );
 
-        if (group + 1u > m_groups.size( ))
+        if (group >= m_groups.size( ))
             m_groups.resize( group + 1u, false );
 
         m_tweens.emplace( std::make_pair( id, Tween( group ) ) );

@@ -5,6 +5,7 @@ ToolTip.delay = 200;
 ToolTip.fadeDuration = 125;
 
 ToolTip._bound = { };
+ToolTip._open = [ ];
 ToolTip._nextID = 0;
 
 ToolTip.bind = function(element, text) {
@@ -79,6 +80,12 @@ ToolTipItem.prototype.unbind = function() {
 };
 
 ToolTipItem.prototype._open = function() {
+    // close all other tooltips
+    for (var i = 0; i < ToolTip._open.length; ++i)
+        ToolTip._open[ i ]._close( );
+
+    ToolTip._open = [ ];
+
     this._ttElement = document.createElement( 'div' );
 
     this._ttElement.classList.add( 'tooltip' );
@@ -97,6 +104,8 @@ ToolTipItem.prototype._open = function() {
     this._updatePosition( );
 
     document.body.addEventListener( 'DOMNodeRemoved', this._removeHandler, true );
+
+    ToolTip._open.push( this );
 };
 
 ToolTipItem.prototype._close = function() {

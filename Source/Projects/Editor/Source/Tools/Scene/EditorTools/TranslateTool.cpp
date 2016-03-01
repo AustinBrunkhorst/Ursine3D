@@ -357,6 +357,7 @@ void TranslateTool::updateHoverAxis(void)
         if (!m_selected)
         {
             m_deleteGizmo = true;
+            m_selected = EntityHandle::Invalid( );
 
             return;
         }

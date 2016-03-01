@@ -64,10 +64,10 @@ namespace ursine
             EntityHandle GetEntityByID(EntityID id) const;
 
             // Called right when an entity is requested to be removed
-            void BeforeRemove(Entity *entity);
+            void BeforeRemove(const EntityHandle &entity);
 
             // Removes the given entity from the world
-            void Remove(Entity *entity);
+            void Remove(const EntityHandle &entity);
 
             ////////////////////////////////////////////////////////////////////
             // Components
@@ -75,17 +75,17 @@ namespace ursine
 
             // Adds a component to the entity [type safe]
             template<class ComponentType>
-            void AddComponent(Entity *entity, ComponentType *component);
+            void AddComponent(const EntityHandle &entity, ComponentType *component);
 
             // Adds a component to the entity [non type safe]
-            void AddComponent(Entity *entity, Component *component);
+            void AddComponent(const EntityHandle &entity, Component *component);
 
             // Removes a component from the entity [type safe]
             template<class ComponentType>
-            void RemoveComponent(Entity *entity);
+            void RemoveComponent(const EntityHandle &entity);
 
             // Removes a component from the entity [non type safe]
-            void RemoveComponent(Entity *entity, ComponentTypeID id);
+            void RemoveComponent(const EntityHandle &entity, ComponentTypeID id);
 
             // Gets an entity's component of the specified type (type safe)
             // nullptr if it doesn't exist.

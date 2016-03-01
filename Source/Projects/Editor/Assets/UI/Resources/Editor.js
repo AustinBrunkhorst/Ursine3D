@@ -2394,6 +2394,7 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 		});
 		this.m_selector.addEventListener("closed",$bind(this,this.clearCommandSelector));
 		haxe_Timer.delay(function() {
+			if(_g.m_selector == null) return;
 			window.document.body.appendChild(_g.m_selector);
 			var bounds = _g.window.container.getBoundingClientRect();
 			_g.m_selector.show(bounds.left + (bounds.width - 225) * 0.5,bounds.height * 0.35);

@@ -13,6 +13,39 @@ namespace ursine
             , m_version( 0 )
             , m_manager( nullptr ) { }
 
+        EntityHandle::EntityHandle(const EntityHandle &rhs)
+            : m_id( rhs.m_id )
+            , m_version( rhs.m_version )
+            , m_manager( rhs.m_manager )
+        {
+        }
+
+        EntityHandle::EntityHandle(const EntityHandle &&rhs)
+            : m_id( std::move( rhs.m_id ) )
+            , m_version( std::move( rhs.m_version ) )
+            , m_manager( std::move( rhs.m_manager ) )
+        {
+
+        }
+
+        EntityHandle &EntityHandle::operator=(const EntityHandle &rhs)
+        {
+            m_id = rhs.m_id;
+            m_version = rhs.m_version;
+            m_manager = rhs.m_manager;
+
+            return *this;
+        }
+
+        EntityHandle &EntityHandle::operator=(const EntityHandle &&rhs)
+        {
+            m_id = std::move( rhs.m_id );
+            m_version = std::move( rhs.m_version );
+            m_manager = std::move( rhs.m_manager );
+
+            return *this;
+        }
+
         EntityHandle::EntityHandle(Entity *entity)
             : m_id( entity ? entity->m_id : 0 )
             , m_version( entity ? entity->m_version : 0 )

@@ -22,7 +22,7 @@ namespace ursine
 {
     namespace ecs
     {
-        void Hierarchy::AddEntity(Entity *entity)
+        void Hierarchy::AddEntity(const EntityHandle &entity)
         {
             auto id = entity->m_id;
 
@@ -38,7 +38,7 @@ namespace ursine
                 .On( ENTITY_PARENT_CHANGED, &Hierarchy::parentChanged );
         }
 
-        void Hierarchy::RemoveEntity(Entity *entity)
+        void Hierarchy::RemoveEntity(const EntityHandle &entity)
         {
             auto id = entity->m_id;
             auto &entityNode = m_nodes[ id ];

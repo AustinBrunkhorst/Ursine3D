@@ -24,8 +24,8 @@ namespace ursine
         class Hierarchy
         {
         public:
-            void AddEntity(Entity *entity);
-            void RemoveEntity(Entity *entity);
+            void AddEntity(const EntityHandle &entity);
+            void RemoveEntity(const EntityHandle &entity);
 
             const std::vector<EntityID> *GetChildren(EntityID entity) const;
       

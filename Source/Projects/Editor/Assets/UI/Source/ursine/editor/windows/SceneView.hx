@@ -65,6 +65,9 @@ class SceneView extends NativeCanvasWindowHandler {
 
         // delay so that the spacebar doesn't effect the input
         haxe.Timer.delay(function() {
+            if (m_selector == null)
+                return;
+
             js.Browser.document.body.appendChild( m_selector );
 
             var bounds = window.container.getBoundingClientRect( );

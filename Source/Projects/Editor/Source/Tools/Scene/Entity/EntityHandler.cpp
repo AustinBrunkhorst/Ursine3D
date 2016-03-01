@@ -24,7 +24,7 @@
 #include <ComponentConfig.h>
 
 #include <FileSystem.h>
-#include <UIFileDialogCallback.h>
+#include <FileDialog.h>
 #include <EntitySerializer.h>
 
 using namespace ursine;
@@ -940,21 +940,19 @@ JSMethod(EntityHandler::saveAsArchetype)
 
     auto *editor = GetCoreSystem( Editor );
 
-    CefRefPtr<UIFileDialogCallback> callback = 
-        new UIFileDialogCallback( std::bind( &doSaveArchetype, handle, _1, _2 ) );
+     fs::FileDialog saveDialog;
 
-    std::vector<CefString> filters {
-        "Archetype Files|.uatype"
+    saveDialog.config.mode = fs::FDM_SAVE;
+    saveDialog.config.initialPath = "";
+    saveDialog.config.windowTitle = "Save Archetype";
+    saveDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
+    saveDialog.config.filters = {
+        { "Archetype Files", { "*.uatype" } }
     };
 
-    editor->GetMainWindow( ).GetUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
-        static_cast<CefBrowserHost::FileDialogMode>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG ),
-        "Save Archetype",
-        "",
-        filters,
-        0,
-        callback
-    );
+    auto result = saveDialog.Open( );
+
+    doSaveArchetype( handle, result.selectedFilterIndex, result.selectedFiles );
 
     return CefV8Value::CreateBool( true );
 }

@@ -26,6 +26,10 @@ namespace ursine
         {
         public:
             EntityHandle(void);
+            EntityHandle(const EntityHandle &rhs);
+            EntityHandle(const EntityHandle &&rhs);
+            EntityHandle &operator=(const EntityHandle &rhs);
+            EntityHandle &operator=(const EntityHandle &&rhs);
 
             explicit operator bool(void) const;
             bool operator==(const EntityHandle &rhs) const;

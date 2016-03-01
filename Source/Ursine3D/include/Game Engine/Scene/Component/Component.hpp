@@ -88,7 +88,10 @@ namespace ursine
         }
 
         template<class ComponentType>
-        Component::Handle<ComponentType>::~Handle(void) { }
+        Component::Handle<ComponentType>::~Handle(void)
+        {
+            m_entity = EntityHandle::Invalid( );
+        }
 
         template<class ComponentType>
         ComponentType *Component::Handle<ComponentType>::Get(void)
@@ -129,7 +132,7 @@ namespace ursine
         bool Component::Handle<ComponentType>::operator==(const ComponentType *rhs) const
         {
             if (rhs == nullptr)
-                return m_entity.IsValid( );
+                return m_entity == EntityHandle::Invalid( );
 
             return m_entity == rhs->GetOwner( );
         }

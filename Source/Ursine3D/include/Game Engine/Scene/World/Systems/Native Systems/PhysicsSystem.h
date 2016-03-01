@@ -79,8 +79,8 @@ namespace ursine
 
             void onUpdate(EVENT_HANDLER(World));
 
-            void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
-            void removeCollider(Entity *entity);
+            void addCollider(const EntityHandle &entity, physics::ColliderBase *collider, bool emptyCollider = false);
+            void removeCollider(const EntityHandle &entity);
 
     #if defined(URSINE_WITH_EDITOR)
 
@@ -88,7 +88,7 @@ namespace ursine
 
     #endif
 
-            void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
+            void removeExistingCollider(const EntityHandle &entity, ComponentTypeID newCollider);
 
         } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }

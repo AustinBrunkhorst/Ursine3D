@@ -142,7 +142,7 @@ namespace ursine
             return entities;
         }
 
-        void EntityManager::AddComponent(Entity *entity, Component *component)
+        void EntityManager::AddComponent(const EntityHandle &entity, Component *component)
         {
             UAssert( !entity->HasComponent( component->GetTypeMask( ) ),
                 "Component already exists: %s",
@@ -224,7 +224,7 @@ namespace ursine
             m_world->Dispatch( WORLD_ENTITY_COMPONENT_ADDED, &e );
         }
 
-        void EntityManager::RemoveComponent(Entity *entity, ComponentTypeID id)
+        void EntityManager::RemoveComponent(const EntityHandle &entity, ComponentTypeID id)
         {
         #if defined(CONFIG_DEBUG)
 
@@ -239,11 +239,18 @@ namespace ursine
 
             mask.set( id, true );
 
+            // the entity doesn't have this component
             if (!entity->HasComponent( mask ))
                 return;
 
-            auto removedType = m_componentTypes[ id ][ entity->m_id ]->GetType( );
-            auto components = GetComponents( entity );
+            auto *instance = m_componentTypes[ id ][ entity->m_id ];
+
+            // the component removed elsewhere
+            if (!instance)
+                return;
+
+            auto removedType = instance->GetType( );
+            auto components = GetComponents( entity.Get( ) );
 
             for (auto *component : components)
             {
@@ -459,7 +466,7 @@ namespace ursine
             return getEntityByID( id );
         }
 
-        void EntityManager::BeforeRemove(Entity *entity)
+        void EntityManager::BeforeRemove(const EntityHandle &entity)
         {
             // for each child, remove it
             for (auto child : entity->GetTransform( )->GetChildren( ))
@@ -476,7 +483,7 @@ namespace ursine
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
-        void EntityManager::Remove(Entity *entity)
+        void EntityManager::Remove(const EntityHandle &entity)
         {
             // not active, so we don't want to delete him
             if (!entity->IsActive( ))
@@ -532,7 +539,7 @@ namespace ursine
 
         Entity *EntityManager::getEntityByID(EntityID id) const
         {
-            if (id + 1u > m_cache.size( ))
+            if (id >= m_cache.size( ))
                 return nullptr;
 
             return const_cast<Entity*>( &m_cache[ id ] );
@@ -593,7 +600,7 @@ namespace ursine
             const auto entityID = entity->m_id;
 
             // entity ids are zero based
-            if (entityID + 1u > components.size( ))
+            if (entityID >= components.size( ))
                 components.resize( (entityID + 1u) * 2 );
 
             components[ entityID ] = component;
