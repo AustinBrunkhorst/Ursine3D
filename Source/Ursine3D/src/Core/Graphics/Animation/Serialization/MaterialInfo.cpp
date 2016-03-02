@@ -20,29 +20,27 @@ namespace ursine
     {
         namespace ufmt_loader
         {
-            MaterialInfo::MaterialInfo() :
-                type(FBX_DATA::FbxMaterial::Type_None)
-                , ambitype(FBX_DATA::Material_Eles::Fac_None)
-                , difftype(FBX_DATA::Material_Eles::Fac_None)
-                , emistype(FBX_DATA::Material_Eles::Fac_None)
-                , spectype(FBX_DATA::Material_Eles::Fac_None)
-                , ambi_mcolor(0, 0, 0, 1), diff_mcolor(0, 0, 0, 1)
-                , emis_mcolor(0, 0, 0, 1), spec_mcolor(0, 0, 0, 1)
-                , ambi_mapCount(0)
-                , diff_mapCount(0)
-                , emis_mapCount(0)
-                , spec_mapCount(0)
-                , shineness(0)
-                , TransparencyFactor(0)
+            MaterialInfo::MaterialInfo(void) 
+                : type( FBX_DATA::FbxMaterial::Type_None )
+                , ambitype( FBX_DATA::Material_Eles::Fac_None )
+                , difftype( FBX_DATA::Material_Eles::Fac_None )
+                , emistype( FBX_DATA::Material_Eles::Fac_None )
+                , spectype( FBX_DATA::Material_Eles::Fac_None )
+                , ambi_mcolor( 0, 0, 0, 1 ), diff_mcolor( 0, 0, 0, 1 )
+                , emis_mcolor( 0, 0, 0, 1 ), spec_mcolor( 0, 0, 0, 1 )
+                , ambi_mapCount( 0 )
+                , diff_mapCount( 0 )
+                , emis_mapCount( 0 )
+                , spec_mapCount( 0 )
+                , shineness( 0 )
+                , TransparencyFactor( 0 ) { }
+
+            MaterialInfo::~MaterialInfo(void)
             {
+                ReleaseData( );
             }
 
-            MaterialInfo::~MaterialInfo()
-            {
-                ReleaseData();
-            }
-
-            void MaterialInfo::ReleaseData()
+            void MaterialInfo::ReleaseData(void)
             {
                 name = "";
 
@@ -57,135 +55,107 @@ namespace ursine
                 emis_mapCount = 0;
                 spec_mapCount = 0;
 
-                ambi_texNames.clear();
-                diff_texNames.clear();
-                emis_texNames.clear();
-                spec_texNames.clear();
+                ambi_texNames.clear( );
+                diff_texNames.clear( );
+                emis_texNames.clear( );
+                spec_texNames.clear( );
 
                 shineness = 0.f;
                 TransparencyFactor = 0.f;
             }
-            
+
             void MaterialInfo::Read(resources::ResourceReader &input)
             {
-                unsigned stringSize;
-                
-                input >> stringSize;
-                name.resize(stringSize);
-                input.ReadBytes(&name[0], stringSize);
-
-                input.ReadBytes( reinterpret_cast<char*>(&type)     , sizeof(unsigned int));
-                input.ReadBytes( reinterpret_cast<char*>(&ambitype) , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&difftype) , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&emistype) , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&spectype) , sizeof(unsigned int) );
-                                 
-                input.ReadBytes( reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4) );
-                input.ReadBytes( reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4) );
-                input.ReadBytes( reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4) );
-                input.ReadBytes( reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4) );
-                                 
-                input.ReadBytes( reinterpret_cast<char*>(&ambi_mapCount), sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&diff_mapCount), sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&emis_mapCount), sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&spec_mapCount), sizeof(unsigned int) );
-                
+                input.ReadString( name );
+                                          
+                input.Read( type );
+                input.Read( ambitype );
+                input.Read( difftype );
+                input.Read( emistype );
+                input.Read( spectype );
+                                          
+                input.Read( ambi_mcolor );
+                input.Read( diff_mcolor );
+                input.Read( emis_mcolor );
+                input.Read( spec_mcolor );
+                                          
+                input.Read( ambi_mapCount );
+                input.Read( diff_mapCount );
+                input.Read( emis_mapCount );
+                input.Read( spec_mapCount );
+                 
                 unsigned int i = 0;
-                ambi_texNames.resize(ambi_mapCount);
+
+                ambi_texNames.resize( ambi_mapCount );
+
                 for (i = 0; i < ambi_mapCount; ++i)
-                {
-                    input >> stringSize;
-                    ambi_texNames[i].resize(stringSize);
-                    input.ReadBytes(&ambi_texNames[i][0], stringSize);
-                }
-                
-                diff_texNames.resize(diff_mapCount);
+                    input.ReadString( ambi_texNames[ i ] );
+
+                diff_texNames.resize( diff_mapCount );
+
                 for (i = 0; i < diff_mapCount; ++i)
-                {
-                    input >> stringSize;
-                    diff_texNames[i].resize(stringSize);
-                    input.ReadBytes(&diff_texNames[i][0], stringSize);
-                }
-                
-                emis_texNames.resize(emis_mapCount);
+                    input.ReadString( diff_texNames[ i ] );
+
+                emis_texNames.resize( emis_mapCount );
+
                 for (i = 0; i < emis_mapCount; ++i)
-                {
-                    input >> stringSize;
-                    emis_texNames[i].resize(stringSize);
-                    input.ReadBytes(&emis_texNames[i][0], stringSize);
-                }
-                
-                spec_texNames.resize(spec_mapCount);
+                    input.ReadString( emis_texNames[ i ] );
+
+                spec_texNames.resize( spec_mapCount );
+
                 for (i = 0; i < spec_mapCount; ++i)
-                {
-                    input >> stringSize;
-                    spec_texNames[i].resize(stringSize);
-                    input.ReadBytes(&spec_texNames[i][0], stringSize);
-                }
-                
-                input.ReadBytes( reinterpret_cast<char*>(&shineness), sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&TransparencyFactor), sizeof(unsigned int) );
+                    input.ReadString( spec_texNames[ i ] );
+
+                input.Read( shineness );
+                input.Read( TransparencyFactor );
             }
 
             void MaterialInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output << name.size();
-                output << name;
-                
-                output.WriteBytes( reinterpret_cast<char*>(&type)       , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&ambitype)   , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&difftype)   , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&emistype)   , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&spectype)   , sizeof(unsigned int) );
-                
-                output.WriteBytes( reinterpret_cast<char*>(&ambi_mcolor), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes( reinterpret_cast<char*>(&diff_mcolor), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes( reinterpret_cast<char*>(&emis_mcolor), sizeof(pseudodx::XMFLOAT4));
-                output.WriteBytes( reinterpret_cast<char*>(&spec_mcolor), sizeof(pseudodx::XMFLOAT4));
-                
-                output.WriteBytes( reinterpret_cast<char*>(&ambi_mapCount), sizeof(unsigned int));
-                output.WriteBytes( reinterpret_cast<char*>(&diff_mapCount), sizeof(unsigned int));
-                output.WriteBytes( reinterpret_cast<char*>(&emis_mapCount), sizeof(unsigned int));
-                output.WriteBytes( reinterpret_cast<char*>(&spec_mapCount), sizeof(unsigned int));
-                
-                if (ambi_texNames.size() > 0)
+                output.WriteString( name );
+
+                output.Write( type );
+                output.Write( ambitype );
+                output.Write( difftype );
+                output.Write( emistype );
+                output.Write( spectype );
+
+                output.Write( ambi_mcolor );
+                output.Write( diff_mcolor );
+                output.Write( emis_mcolor );
+                output.Write( spec_mcolor );
+
+                output.Write( ambi_mapCount );
+                output.Write( diff_mapCount );
+                output.Write( emis_mapCount );
+                output.Write( spec_mapCount );
+                           
+                if (ambi_texNames.size( ) > 0)
                 {
                     for (auto &iter : ambi_texNames)
-                    {
-                        output << iter.size();
-                        output << iter;
-                    }
+                        output.WriteString( iter );
                 }
-                
-                if (diff_texNames.size() > 0)
+
+                if (diff_texNames.size( ) > 0)
                 {
                     for (auto &iter : diff_texNames)
-                    {
-                        output << iter.size();
-                        output << iter;
-                    }
+                        output.WriteString( iter );
                 }
-                
-                if (emis_texNames.size() > 0)
+
+                if (emis_texNames.size( ) > 0)
                 {
                     for (auto &iter : emis_texNames)
-                    {
-                        output << iter.size();
-                        output << iter;
-                    }
+                        output.WriteString( iter );
                 }
-                
-                if (spec_texNames.size() > 0)
+
+                if (spec_texNames.size( ) > 0)
                 {
                     for (auto &iter : spec_texNames)
-                    {
-                        output << iter.size();
-                        output << iter;
-                    }
+                        output.WriteString( iter );
                 }
-                
-                output.WriteBytes( reinterpret_cast<char*>(&shineness), sizeof(float) );
-                output.WriteBytes( reinterpret_cast<char*>(&TransparencyFactor), sizeof(float) );
+
+                output.Write( shineness );
+                output.Write( TransparencyFactor );
             }
         };
     };

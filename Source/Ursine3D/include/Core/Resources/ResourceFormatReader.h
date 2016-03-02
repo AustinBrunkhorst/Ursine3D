@@ -15,7 +15,7 @@ namespace ursine
             ResourceData::Handle Read(const fs::path &resourceFile);
 
         private:
-            ResourceReader m_reader;
+            ResourceData::Handle read(ResourceReader &reader);
         };
     }
 }

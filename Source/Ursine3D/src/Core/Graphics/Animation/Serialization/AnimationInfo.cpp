@@ -29,7 +29,6 @@ namespace ursine
             AnimInfo::AnimInfo()
                 : name("")
                 , animCount(0)
-                , animDataArr(0)
             {}
 
             AnimInfo::~AnimInfo()
@@ -49,43 +48,41 @@ namespace ursine
 
             void AnimInfo::Read(resources::ResourceReader &input)
             {
-                unsigned stringSize;
-
-                input >> stringSize;
-                name.resize(stringSize);
-                input.ReadBytes(&name[0], stringSize);
+                input.ReadString( name );
                 
-                input.ReadBytes( reinterpret_cast<char*>(&animCount), sizeof(unsigned int) );
-                animDataArr.resize(animCount);
+                input.Read( animCount );
 
-                for (auto &iter : animDataArr)
+                animDataArr.resize( animCount );
+
+                for (auto &animation : animDataArr)
                 {
-                    // serializing counts
-                    input >> stringSize;
-                    iter.clipname.resize(stringSize);
-                    input.ReadBytes(&iter.clipname[0], stringSize);
-                
-                    input.ReadBytes( reinterpret_cast<char*>(&iter.clipCount), sizeof(unsigned int) );
-                    input.ReadBytes( reinterpret_cast<char*>(&iter.boneCount), sizeof(unsigned int) );
-                
-                    iter.keyIndices.resize(iter.clipCount);
-                    iter.keyframes.resize(iter.clipCount);
-                
-                    unsigned int i = 0, j = 0, k = 0;
-                    for (i = 0; i < iter.clipCount; ++i)
-                    {
-                        iter.keyIndices[ i ].resize(iter.boneCount);
-                        iter.keyframes[ i ].resize(iter.boneCount);
+                    input.ReadString( animation.clipname );
+
+                    input.Read( animation.clipCount );
+                    input.Read( animation.boneCount );
+
+                    animation.keyIndices.resize( animation.clipCount );
+                    animation.keyframes.resize( animation.clipCount );
                     
-                        for (j = 0; j < iter.boneCount; ++j)
+                    unsigned int i = 0, j = 0;
+
+                    for (i = 0; i < animation.clipCount; ++i)
+                    {
+                        animation.keyIndices[ i ].resize( animation.boneCount );
+                        animation.keyframes[ i ].resize( animation.boneCount );
+
+                        for (j = 0; j < animation.boneCount; ++j)
                         {
-                            input.ReadBytes( reinterpret_cast <char*>(&iter.keyIndices[ i ][ j ]), sizeof(unsigned int) );
+                            auto &boneIndicies = animation.keyIndices[ i ][ j ];
 
-                            auto indicies = iter.keyIndices[ i ][ j ];
+                            input.Read( boneIndicies );
 
-                            iter.keyframes[i][j].resize( indicies );
-                            
-                            input.ReadBytes( reinterpret_cast<char*>(&iter.keyframes[ i ][ j ][ 0 ]), sizeof( FBX_DATA::KeyFrame ) * indicies );
+                            animation.keyframes[ i ][ j ].resize( boneIndicies );
+
+                            input.ReadBytes( 
+                                &animation.keyframes[ i ][ j ][ 0 ], 
+                                sizeof( FBX_DATA::KeyFrame ) * boneIndicies 
+                            );
                         }
                     }
                 }
@@ -93,30 +90,31 @@ namespace ursine
 
             void AnimInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output << (unsigned)name.size();
-                output << name;
+                output.WriteString( name );
 
-                output.WriteBytes( reinterpret_cast<char*>(&animCount), sizeof(unsigned int) );
+                output.Write( animCount );
 
-                for (auto &iter : animDataArr)
+                for (auto &animation : animDataArr)
                 {
-                    // serializing counts
-                    output << (unsigned)iter.clipname.size();
-                    output << iter.clipname;
+                    output.WriteString( animation.clipname );
 
-                    output.WriteBytes( reinterpret_cast<char*>(&iter.clipCount), sizeof(unsigned int) );
-                    output.WriteBytes( reinterpret_cast<char*>(&iter.boneCount), sizeof(unsigned int) );
+                    output.Write( animation.clipCount );
+                    output.Write( animation.boneCount );
 
-                    unsigned int i = 0, j = 0, k = 0;
-                    for (i = 0; i < iter.clipCount; ++i)
+                    unsigned int i = 0, j = 0;
+
+                    for (i = 0; i < animation.clipCount; ++i)
                     {
-                        for (j = 0; j < iter.boneCount; ++j)
+                        for (j = 0; j < animation.boneCount; ++j)
                         {
-                            auto indicies = iter.keyIndices[i][j];
+                            auto boneIndicies = animation.keyIndices[ i ][ j ];
 
-                            output.WriteBytes( reinterpret_cast<char*>(&indicies), sizeof(unsigned int) );
+                            output.Write( boneIndicies );
 
-                            output.WriteBytes(reinterpret_cast<char*>(&iter.keyframes[i][j][0]), sizeof(FBX_DATA::KeyFrame) * indicies);
+                            output.WriteBytes( 
+                                &animation.keyframes[ i ][ j ][ 0 ], 
+                                sizeof( FBX_DATA::KeyFrame ) * boneIndicies 
+                            );
                         }
                     }
                 }

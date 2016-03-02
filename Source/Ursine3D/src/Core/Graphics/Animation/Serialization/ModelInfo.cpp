@@ -22,18 +22,16 @@ namespace ursine
     {
         namespace ufmt_loader
         {
-            ModelInfo::ModelInfo()
-                : mmeshCount(0)
-                , mmaterialCount(0)
-                , mboneCount(0)
-                , mmeshlvlCount(0)
-                , mriglvlCount(0)
-            {
-            }
+            ModelInfo::ModelInfo(void)
+                : mmeshCount( 0 )
+                , mmaterialCount( 0 )
+                , mboneCount( 0 )
+                , mmeshlvlCount( 0 )
+                , mriglvlCount( 0 ) { }
 
             ModelInfo::~ModelInfo()
             {
-                ReleaseData();
+                ReleaseData( );
             }
 
             void ModelInfo::ReleaseData()
@@ -44,108 +42,108 @@ namespace ursine
                 mmeshlvlCount = 0;
                 mriglvlCount = 0;
 
-                mMeshInfoVec.clear();
-                mMtrlInfoVec.clear();
-                mBoneInfoVec.clear();
-                mMeshLvVec.clear();
-                mRigLvVec.clear();
+                mMeshInfoVec.clear( );
+                mMtrlInfoVec.clear( );
+                mBoneInfoVec.clear( );
+                mMeshLvVec.clear( );
+                mRigLvVec.clear( );
             }
-            
+
             void ModelInfo::Read(resources::ResourceReader &input)
             {
-                unsigned stringSize;
-                
-                input >> stringSize;
-                name.resize(stringSize);
-                input.ReadBytes(&name[0], stringSize);
-                
-                input.ReadBytes( reinterpret_cast<char*>( &mmeshCount)      , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>( &mmaterialCount)  , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>( &mboneCount)      , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>( &mmeshlvlCount)   , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>( &mriglvlCount)    , sizeof(unsigned int) );
+                input.ReadString( name );
 
-                unsigned int i = 0;
+                input.Read( mmeshCount );
+                input.Read( mmaterialCount );
+                input.Read( mboneCount );
+                input.Read( mmeshlvlCount );
+                input.Read( mriglvlCount );
 
-                mMeshInfoVec.resize(mmeshCount);
+                unsigned i = 0;
+
+                mMeshInfoVec.resize( mmeshCount );
+
                 for (i = 0; i < mmeshCount; ++i)
-                    mMeshInfoVec[i].Read(input);
-                
-                mMtrlInfoVec.resize(mmaterialCount);
+                    mMeshInfoVec[ i ].Read( input );
+
+                mMtrlInfoVec.resize( mmaterialCount );
+
                 for (i = 0; i < mmaterialCount; ++i)
-                    mMtrlInfoVec[i].Read(input);
-                
-                mBoneInfoVec.resize(mboneCount);
+                    mMtrlInfoVec[ i ].Read( input );
+
+                mBoneInfoVec.resize( mboneCount );
+
                 for (i = 0; i < mboneCount; ++i)
-                    mBoneInfoVec[i].Read(input);
-                
-                mMeshLvVec.resize(mmeshlvlCount);
+                    mBoneInfoVec[ i ].Read( input );
+
+                mMeshLvVec.resize( mmeshlvlCount );
+
                 for (i = 0; i < mmeshlvlCount; ++i)
                 {
-                    input >> stringSize;
-                    mMeshLvVec[i].meshName.resize(stringSize);
-                    input.ReadBytes( &mMeshLvVec[i].meshName[0], stringSize);
-                    input.ReadBytes( reinterpret_cast<char*>(&mMeshLvVec[i].meshTM), sizeof(SMat4) );
-                    input.ReadBytes( reinterpret_cast<char*>(&mMeshLvVec[i].mParentIndex), sizeof(unsigned int));
+                    auto &mesh = mMeshLvVec[ i ];
+
+                    input.ReadString( mesh.meshName );
+
+                    input.Read( mesh.meshTM );
+                    input.Read( mesh.mParentIndex );
                 }
-                
-                mRigLvVec.resize(mriglvlCount);
+                    
+                mRigLvVec.resize( mriglvlCount );
+
                 for (i = 0; i < mriglvlCount; ++i)
                 {
-                    input >> stringSize;
-                    mRigLvVec[i].boneName.resize(stringSize);
-                    input.ReadBytes( &mRigLvVec[i].boneName[0], stringSize);
-                    input.ReadBytes( reinterpret_cast<char*>(&mRigLvVec[i].mParentIndex), sizeof(unsigned int));
+                    auto &rig = mRigLvVec[ i ];
+
+                    input.ReadString( rig.boneName );
+
+                    input.Read( rig.mParentIndex );
                 }
             }
 
             void ModelInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output << name.size();
-                output << name;
+                output.WriteString( name );
 
-                output.WriteBytes( reinterpret_cast<char*>(&mmeshCount)     , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mmaterialCount) , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mboneCount)     , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mmeshlvlCount)  , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mriglvlCount)   , sizeof(unsigned int) );
+                output.Write( mmeshCount );
+                output.Write( mmaterialCount );
+                output.Write( mboneCount );
+                output.Write( mmeshlvlCount );
+                output.Write( mriglvlCount );
 
-                if (mMeshInfoVec.size() > 0)
+                if (mMeshInfoVec.size( ) > 0)
                 {
                     for (auto &iter : mMeshInfoVec)
-                        iter.Write(output);
+                        iter.Write( output );
                 }
-                
-                if (mMtrlInfoVec.size() > 0)
+
+                if (mMtrlInfoVec.size( ) > 0)
                 {
                     for (auto &iter : mMtrlInfoVec)
-                        iter.Write(output);
+                        iter.Write( output );
                 }
-                
-                if (mBoneInfoVec.size() > 0)
+
+                if (mBoneInfoVec.size( ) > 0)
                 {
                     for (auto &iter : mBoneInfoVec)
-                        iter.Write(output);
+                        iter.Write( output );
                 }
-                
-                if (mMeshLvVec.size() > 0)
+
+                if (mMeshLvVec.size( ) > 0)
                 {
                     for (auto &iter : mMeshLvVec)
                     {
-                        output << iter.meshName.size();
-                        output << iter.meshName;
-                        output.WriteBytes( reinterpret_cast<char*>(&iter.meshTM), sizeof(SMat4) );
-                        output.WriteBytes( reinterpret_cast<char*>(&iter.mParentIndex), sizeof(unsigned int) );
+                        output.WriteString( iter.meshName );
+                        output.Write( iter.meshTM );
+                        output.Write( iter.mParentIndex );
                     }
                 }
-                
-                if (mRigLvVec.size() > 0)
+
+                if (mRigLvVec.size( ) > 0)
                 {
                     for (auto &iter : mRigLvVec)
                     {
-                        output << iter.boneName.size();
-                        output << iter.boneName;
-                        output.WriteBytes( reinterpret_cast<char*>(&iter.mParentIndex), sizeof(unsigned int) );
+                        output.WriteString( iter.boneName );
+                        output.Write( iter.mParentIndex );
                     }
                 }
             }

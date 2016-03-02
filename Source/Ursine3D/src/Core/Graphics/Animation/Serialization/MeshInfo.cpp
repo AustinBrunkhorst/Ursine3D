@@ -22,20 +22,18 @@ namespace ursine
     {
         namespace ufmt_loader
         {
-            MeshInfo::MeshInfo() :
-                meshVtxInfoCount(0)
-                , meshVtxIdxCount(0)
-                , mtrlCount(0)
-                , mtrlIndexCount(0)
+            MeshInfo::MeshInfo(void) 
+                : meshVtxInfoCount( 0 )
+                , meshVtxIdxCount( 0 )
+                , mtrlCount( 0 )
+                , mtrlIndexCount( 0 ) { }
+
+            MeshInfo::~MeshInfo(void)
             {
+                ReleaseData( );
             }
 
-            MeshInfo::~MeshInfo()
-            {
-                ReleaseData();
-            }
-
-            void MeshInfo::ReleaseData()
+            void MeshInfo::ReleaseData(void)
             {
                 name = "";
 
@@ -44,83 +42,75 @@ namespace ursine
                 mtrlCount = 0;
                 mtrlIndexCount = 0;
 
-                mtrlName.clear();
-                meshVtxInfos.clear();
-                meshVtxIndices.clear();
-                materialIndices.clear();
+                mtrlName.clear( );
+                meshVtxInfos.clear( );
+                meshVtxIndices.clear( );
+                materialIndices.clear( );
             }
 
             void MeshInfo::Read(resources::ResourceReader &input)
             {
-                unsigned stringSize;
-                
-                input >> stringSize;
-                name.resize(stringSize);
-                input.ReadBytes(&name[0], stringSize);
+                input.ReadString( name );
 
-                input.ReadBytes( reinterpret_cast<char*>(&meshVtxInfoCount)  , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&meshVtxIdxCount)   , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&mtrlCount)         , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&mtrlIndexCount)    , sizeof(unsigned int) );
+                input.Read( meshVtxInfoCount );
+                input.Read( meshVtxIdxCount );
+                input.Read( mtrlCount );
+                input.Read( mtrlIndexCount );
 
                 unsigned int i = 0;
 
-                meshVtxInfos.resize(meshVtxInfoCount);
+                meshVtxInfos.resize( meshVtxInfoCount );
+
                 for (i = 0; i < meshVtxInfoCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>(&meshVtxInfos[i]), sizeof(MeshVertex) );
-                
-                meshVtxIndices.resize(meshVtxIdxCount);
+                    input.Read( meshVtxInfos[ i ] );
+
+                meshVtxIndices.resize( meshVtxIdxCount );
+
                 for (i = 0; i < meshVtxIdxCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>(&meshVtxIndices[i]), sizeof(unsigned int) );
-                
-                mtrlName.resize(mtrlCount);
+                    input.Read( meshVtxIndices[ i ] );
+
+                mtrlName.resize( mtrlCount );
+
                 for (i = 0; i < mtrlCount; ++i)
-                {
-                    input >> stringSize;
-                    mtrlName[i].resize(stringSize);
-                    input.ReadBytes( &mtrlName[i][0], stringSize);
-                }
-                
-                materialIndices.resize(mtrlIndexCount);
+                    input.ReadString( mtrlName[ i ] );
+
+                materialIndices.resize( mtrlIndexCount );
+
                 for (i = 0; i < mtrlIndexCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>(&materialIndices[i]), sizeof(unsigned int) );
+                    input.Read( materialIndices[ i ] );
             }
 
             void MeshInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output << name.size();
-                output << name;
-                
-                output.WriteBytes( reinterpret_cast<char*>(&meshVtxInfoCount)   , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&meshVtxIdxCount)    , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mtrlCount)          , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mtrlIndexCount)     , sizeof(unsigned int) );
-                                
-                if (meshVtxInfos.size() > 0)
+                output.WriteString( name );
+
+                output.Write( meshVtxInfoCount );
+                output.Write( meshVtxIdxCount );
+                output.Write( mtrlCount );
+                output.Write( mtrlIndexCount );
+
+                if (meshVtxInfos.size( ) > 0)
                 {
                     for (auto &iter : meshVtxInfos)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(MeshVertex) );
+                        output.Write( iter );
                 }
-                
-                if (meshVtxIndices.size() > 0)
+
+                if (meshVtxIndices.size( ) > 0)
                 {
                     for (auto &iter : meshVtxIndices)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(unsigned int) );
+                        output.Write( iter );
                 }
-                
-                if (mtrlName.size() > 0)
+
+                if (mtrlName.size( ) > 0)
                 {
                     for (auto &iter : mtrlName)
-                    {
-                        output << iter.size();
-                        output << iter;
-                    }
+                        output.WriteString( iter );
                 }
-                
-                if (materialIndices.size() > 0)
+
+                if (materialIndices.size( ) > 0)
                 {
                     for (auto &iter : materialIndices)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(unsigned int) );
+                        output.Write( &iter );
                 }
             }
         };

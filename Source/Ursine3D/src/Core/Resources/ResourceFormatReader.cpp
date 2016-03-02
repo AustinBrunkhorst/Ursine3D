@@ -12,71 +12,72 @@ namespace ursine
 
         ResourceData::Handle ResourceFormatReader::Read(const fs::path &resourceFile)
         {
-            auto &stream = m_reader.m_stream;
-
             auto fileName = resourceFile.string( );
 
-            stream.open( fileName, std::ios::binary );
+            auto stream = std::make_shared<std::ifstream>( );
 
-            URSINE_TODO( "Make recoverable." );
-            UAssert( stream.is_open( ),
+            stream->open( fileName, std::ios::binary );
+
+            UAssertCatchable( stream->is_open( ),
                 "Unble to open resource build file.\nfile: %s",
                 fileName.c_str( )
             );
 
+            ResourceReader reader;
+
+            reader.m_stream = stream;
+
+            auto resource = read( reader );
+
+            stream->close( );
+
+            return resource;
+        }
+
+        ResourceData::Handle ResourceFormatReader::read(ResourceReader &reader)
+        {
             /// read header
 
             static const auto magicLength = sizeof( kResourceFormatMagic );
 
             char magic[ magicLength ];
 
-            auto magicBytesRead = m_reader.ReadBytes( magic, magicLength );
+            auto magicBytesRead = reader.ReadBytes( magic, magicLength );
 
-            UAssert( 
+            UAssertCatchable( 
                 magicBytesRead == magicLength && 
                 memcmp( kResourceFormatMagic, magic, magicLength ) == 0,
-                "Invalid resource format magic.\nresource: %s",
-                fileName.c_str( )
+                "Invalid resource format magic."
             );
 
             // skip over the header padding
-
-            stream.seekg( kResourceFormatHeaderSize );
+            reader.Seek( kResourceFormatHeaderSize );
 
             /// read resource data
 
-            unsigned readerTypeNameSize;
             std::string readerTypeName;
 
-            m_reader >> readerTypeNameSize;
-
-            readerTypeName.resize( readerTypeNameSize );
-
-            m_reader.ReadBytes( &readerTypeName[ 0 ], readerTypeNameSize );
+            reader.ReadString( readerTypeName );
 
             auto readerType = meta::Type::GetFromName( readerTypeName );
 
-            UAssert( readerType.IsValid( ),
-                "Unknown resource reader '%s'.\nresource: %s",
-                readerTypeName.c_str( ),
-                fileName.c_str( )
+            UAssertCatchable( readerType.IsValid( ),
+                "Unknown resource reader '%s'.",
+                readerTypeName.c_str( )
             );
 
             auto readerTypeCtor = readerType.GetDynamicConstructor( );
 
-            UAssert( readerTypeCtor.IsValid( ),
-                "Resource reader '%s' is missing a default dynamic constructor.\nresource: %s",
-                readerType.GetName( ).c_str( ),
-                fileName.c_str( )
+            UAssertCatchable( readerTypeCtor.IsValid( ),
+                "Resource reader '%s' is missing a default dynamic constructor.",
+                readerType.GetName( ).c_str( )
             );
 
-            auto reader = ResourceTypeReader::Handle(
+            auto typeReader = ResourceTypeReader::Handle(
                 readerTypeCtor.Invoke( ).GetValue<ResourceTypeReader*>( ) 
             );
 
-            auto resource = reader->Read( m_reader );
-
-            stream.close( );
+            auto resource = typeReader->Read( reader );
 
             return resource;
         }

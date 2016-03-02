@@ -97,8 +97,8 @@ namespace ursine
                 virtual ~MeshInfo();
                 void ReleaseData();
 
-                virtual void Read(resources::ResourceReader &input);
-                virtual void Write(resources::pipeline::ResourceWriter &output);
+                void Read(resources::ResourceReader &input) override;
+                void Write(resources::pipeline::ResourceWriter &output) override;
             };
         };
     };

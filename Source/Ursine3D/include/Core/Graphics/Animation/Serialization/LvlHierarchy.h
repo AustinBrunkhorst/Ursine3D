@@ -10,7 +10,9 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
+
 #pragma once
+
 #include "ISerialize.h"
 #include "SMat4.h"
 
@@ -27,7 +29,9 @@ namespace ursine
                 SMat4 meshTM;
                 int mParentIndex;
 
-                MeshInLvl() : meshName(""), mParentIndex(-1) {}
+                MeshInLvl(void) 
+                    : meshName( "" )
+                    , mParentIndex( -1 ) { }
             };
 
             // This structure contains hierarchy among bones.
@@ -35,7 +39,10 @@ namespace ursine
             {
                 std::string boneName;
                 int mParentIndex;
-                RigInLvl() : boneName(""), mParentIndex(-1) {}
+
+                RigInLvl(void) 
+                    : boneName( "" )
+                    , mParentIndex( -1 ) { }
             };
         }
     }

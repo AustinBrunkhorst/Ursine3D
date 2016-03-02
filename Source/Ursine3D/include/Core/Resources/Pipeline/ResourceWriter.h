@@ -15,12 +15,13 @@ namespace ursine
                 ResourceWriter(void);
                 ResourceWriter(const fs::path &output);
 
-                ResourceWriter &WriteBytes(const char *bytes, size_t count);
+                ResourceWriter &WriteBytes(const void *bytes, size_t count);
+                ResourceWriter &WriteString(const std::string &output);
 
                 ResourceWriter &Seek(size_t offset);
 
                 template<typename T>
-                ResourceWriter &operator<<(const T &value);
+                ResourceWriter &Write(const T &value);
 
                 bool IsOpen(void) const;
 
