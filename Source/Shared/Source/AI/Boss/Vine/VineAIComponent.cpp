@@ -203,6 +203,10 @@ void VineAI::SetTarget(Entity *target)
 
 void VineAI::OnInitialize(void)
 {
+    // it spawns, comes up from ground, and is able to whip.
+    // A vine can then be set to be a uproot vine.  That would mean that it would
+    // go and chase a target.
+
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &VineAI::onUpdate );
 
