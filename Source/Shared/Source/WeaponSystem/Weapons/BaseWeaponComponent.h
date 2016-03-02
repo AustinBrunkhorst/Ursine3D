@@ -31,10 +31,4 @@ public:
 protected:
     void RemoveMySelf(void) override;
 
-    // projectile speed
-    float m_projSpeed;
-
-    // Archetype weapon should fire
-    std::string m_archetypeToShoot;
-
 } Meta(Enable , DisplayName("ProjectileWeapon"));

@@ -39,12 +39,12 @@ void BossSeedshotState::Update(BossAIStateMachine *machine)
 
     if (m_timer >= 2.0f)
     {
-        auto seedshot = machine->GetBoss( )->GetSeedshotEntity( );
+        auto bossEntity = machine->GetBoss( )->GetOwner( );
 
         if (!m_on)
-            seedshot->Dispatch( game::FIRE_START, EventArgs::Empty );
+            bossEntity->Dispatch( game::FIRE_START, EventArgs::Empty );
         else
-            seedshot->Dispatch( game::FIRE_END, EventArgs::Empty );
+            bossEntity->Dispatch( game::FIRE_END, EventArgs::Empty );
 
         m_timer = 0.0f;
     }

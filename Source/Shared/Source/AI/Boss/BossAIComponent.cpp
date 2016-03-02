@@ -15,6 +15,10 @@
 
 #include "BossSeedshotState.h"
 
+#include "EntityEvent.h"
+
+#include "GameEvents.h"
+
 NATIVE_COMPONENT_DEFINITION( BossAI );
 
 using namespace ursine;
@@ -25,6 +29,14 @@ BossAI::BossAI(void)
     , m_stateMachine( this )
     , m_seedshotEntity( "" )
 {
+}
+
+void BossAI::onHierachyConstructed(EVENT_HANDLER(ursine::ecs::ENTITY_HIERARCHY_SERIALIZED))
+{
+    // get seed shot so we can activate weapon
+    //   has to be done this way due to inheritance
+    game::WeaponActivationEventArgs args( GetOwner( ) );
+    GetSeedshotEntity( )->Dispatch( game::ACTIVATE_WEAPON, &args );
 }
 
 const std::string &BossAI::GetSeedshotEntityName(void) const
@@ -46,6 +58,9 @@ void BossAI::OnInitialize(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &BossAI::onUpdate );
+
+    GetOwner( )->Listener(this)
+        .On( ursine::ecs::ENTITY_HIERARCHY_SERIALIZED, &BossAI::onHierachyConstructed );
 
     auto seedshot = m_stateMachine.AddState<BossSeedshotState>( );
 

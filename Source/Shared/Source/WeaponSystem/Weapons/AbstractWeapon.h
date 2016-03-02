@@ -260,6 +260,20 @@ public:
     void Initialize( ursine::ecs::Entity* owner );
 
     /////////////////////////////
+    //// Weapon Setup Logic  ////
+    /////////////////////////////
+
+    // Activate Weapon for use
+    void ActivateWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whatToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip);
+
+    // Detatch weapon from parent and turn into interactable
+    void DetachWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whatToConnect);
+
+    // Deactivate Weapon for use
+    void DeactivateWeapon(ursine::ecs::Entity* whatToDisconnect, int& saveAmmo, int& saveClip);
+
+
+    /////////////////////////////
     ////  Weapon Fire Logic  ////
     /////////////////////////////
     virtual int FireLogic(void);
@@ -335,17 +349,11 @@ protected:
     // Weapon's trigger was released
     void TriggerReleased(EVENT_HANDLER(game::FIRE_END));
 
-    // Activate Weapon for use
-    void ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON));
-
-    // Detatch weapon from parent and turn into interactable
-    void DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON));
-
-    // Deactivate Weapon for use
-    void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
-
-
     bool AddAmmo(const int ammo);
+
+    void ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON));
+    void DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON));
+    void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
 
     void PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 

@@ -37,7 +37,7 @@ public:
 private:
 
     void OnInitialize(void) override;
-
+    void onHierachyConstructed(EVENT_HANDLER(ENTITY_HIERARCHY_SERIALIZED));
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
     std::string m_seedshotEntity;
