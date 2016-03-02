@@ -177,133 +177,133 @@ namespace ursine
                 m_modelCache[ INTERNAL_QUAD ]->SetIsLoaded( true );
             }
 
+            /////////////////////////////////////////////////////////////////////////////////
+            ////// GENERATING INTERNAL CUBE
+            //{
+            //    m_modelCache[ INTERNAL_CUBE ] = new ModelResource( );
+            //
+            //    // write to file
+            //    // write to file
+            //    HANDLE fileHandle = CreateFile(
+            //        "TEMP_CUBE",
+            //        GENERIC_READ | GENERIC_WRITE,
+            //        FILE_SHARE_READ,
+            //        nullptr,
+            //        CREATE_ALWAYS,
+            //        FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+            //        nullptr
+            //    );
+            //
+            //    WriteFile(
+            //        fileHandle, 
+            //        graphics_resources::kCubeJdl,
+            //        2938,
+            //        nullptr,
+            //        nullptr
+            //    );
+            //
+            //    auto returnVal = SetFilePointer(
+            //        fileHandle,
+            //        0,
+            //        nullptr,
+            //        FILE_BEGIN
+            //    );
+            //
+            //    // load into modelInfo
+            //    ufmt_loader::ModelInfo modelInfo;
+            //    modelInfo.SerializeIn( fileHandle );
+            //
+            //    // load into model
+            //   InitializeModel(&modelInfo, *m_modelCache[ INTERNAL_CUBE ]);
+            //   loadModelToGPU( m_modelCache[ INTERNAL_CUBE ] );
+            //   CloseHandle( fileHandle );
+            //}
+            //
             ///////////////////////////////////////////////////////////////////////////////
-            //// GENERATING INTERNAL CUBE
-            {
-                m_modelCache[ INTERNAL_CUBE ] = new ModelResource( );
-
-                // write to file
-                // write to file
-                HANDLE fileHandle = CreateFile(
-                    "TEMP_CUBE",
-                    GENERIC_READ | GENERIC_WRITE,
-                    FILE_SHARE_READ,
-                    nullptr,
-                    CREATE_ALWAYS,
-                    FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
-                    nullptr
-                );
-
-                WriteFile(
-                    fileHandle, 
-                    graphics_resources::kCubeJdl,
-                    2938,
-                    nullptr,
-                    nullptr
-                );
-
-                auto returnVal = SetFilePointer(
-                    fileHandle,
-                    0,
-                    nullptr,
-                    FILE_BEGIN
-                );
-
-                // load into modelInfo
-                ufmt_loader::ModelInfo modelInfo;
-                modelInfo.SerializeIn( fileHandle );
-
-                // load into model
-               InitializeModel(&modelInfo, m_modelCache[ INTERNAL_CUBE ]);
-               loadModelToGPU( m_modelCache[ INTERNAL_CUBE ] );
-               CloseHandle( fileHandle );
-            }
-
-            /////////////////////////////////////////////////////////////////////////////
-            // GENERATING INTERNAL SPHERE
-            {
-                m_modelCache[ INTERNAL_SPHERE ] = new ModelResource( );
-
-                // write to file
-                HANDLE fileHandle = CreateFile(
-                    "TEMP_SPHERE",
-                    GENERIC_READ | GENERIC_WRITE,
-                    FILE_SHARE_READ,
-                    nullptr,
-                    CREATE_ALWAYS,
-                    FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
-                    nullptr
-                );
-
-                WriteFile(
-                    fileHandle, 
-                    graphics_resources::kSphereJdl,
-                    40906,
-                    nullptr,
-                    nullptr
-                );
-
-                auto returnVal = SetFilePointer(
-                    fileHandle,
-                    0,
-                    nullptr,
-                    FILE_BEGIN
-                );
-
-
-                // load into modelInfo
-                ufmt_loader::ModelInfo modelInfo;
-                modelInfo.SerializeIn( fileHandle );
-
-                // load into model
-               InitializeModel(&modelInfo, m_modelCache[ INTERNAL_SPHERE ]);
-               loadModelToGPU(m_modelCache[ INTERNAL_SPHERE ]);
-
-               CloseHandle( fileHandle );
-            }
-
-            /////////////////////////////////////////////////////////////////////////////
-            // GENERATING INTERNAL CONE
-            {
-                m_modelCache[ INTERNAL_CONE ] = new ModelResource( );
-
-                // write to file
-                HANDLE fileHandle = CreateFile(
-                    "TEMP_CONE",
-                    GENERIC_READ | GENERIC_WRITE,
-                    FILE_SHARE_READ,
-                    nullptr,
-                    CREATE_ALWAYS,
-                    FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
-                    nullptr
-                );
-
-                WriteFile(
-                    fileHandle,
-                    graphics_resources::kConeJdl,
-                    5490,
-                    nullptr,
-                    nullptr
-                );
-
-                auto returnVal = SetFilePointer(
-                    fileHandle,
-                    0,
-                    nullptr,
-                    FILE_BEGIN
-                );
-
-
-                // load into modelInfo
-                ufmt_loader::ModelInfo modelInfo;
-                modelInfo.SerializeIn(fileHandle);
-
-
-                // load into model
-                InitializeModel( &modelInfo, m_modelCache[ INTERNAL_CONE ] );
-                loadModelToGPU(m_modelCache[ INTERNAL_CONE ]);
-                CloseHandle( fileHandle );
-            }
+            //// GENERATING INTERNAL SPHERE
+            //{
+            //    m_modelCache[ INTERNAL_SPHERE ] = new ModelResource( );
+            //
+            //    // write to file
+            //    HANDLE fileHandle = CreateFile(
+            //        "TEMP_SPHERE",
+            //        GENERIC_READ | GENERIC_WRITE,
+            //        FILE_SHARE_READ,
+            //        nullptr,
+            //        CREATE_ALWAYS,
+            //        FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+            //        nullptr
+            //    );
+            //
+            //    WriteFile(
+            //        fileHandle, 
+            //        graphics_resources::kSphereJdl,
+            //        40906,
+            //        nullptr,
+            //        nullptr
+            //    );
+            //
+            //    auto returnVal = SetFilePointer(
+            //        fileHandle,
+            //        0,
+            //        nullptr,
+            //        FILE_BEGIN
+            //    );
+            //
+            //
+            //    // load into modelInfo
+            //    ufmt_loader::ModelInfo modelInfo;
+            //    modelInfo.SerializeIn( fileHandle );
+            //
+            //    // load into model
+            //   InitializeModel(&modelInfo, *m_modelCache[ INTERNAL_SPHERE ]);
+            //   loadModelToGPU(m_modelCache[ INTERNAL_SPHERE ]);
+            //
+            //   CloseHandle( fileHandle );
+            //}
+            //
+            ///////////////////////////////////////////////////////////////////////////////
+            //// GENERATING INTERNAL CONE
+            //{
+            //    m_modelCache[ INTERNAL_CONE ] = new ModelResource( );
+            //
+            //    // write to file
+            //    HANDLE fileHandle = CreateFile(
+            //        "TEMP_CONE",
+            //        GENERIC_READ | GENERIC_WRITE,
+            //        FILE_SHARE_READ,
+            //        nullptr,
+            //        CREATE_ALWAYS,
+            //        FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+            //        nullptr
+            //    );
+            //
+            //    WriteFile(
+            //        fileHandle,
+            //        graphics_resources::kConeJdl,
+            //        5490,
+            //        nullptr,
+            //        nullptr
+            //    );
+            //
+            //    auto returnVal = SetFilePointer(
+            //        fileHandle,
+            //        0,
+            //        nullptr,
+            //        FILE_BEGIN
+            //    );
+            //
+            //
+            //    // load into modelInfo
+            //    ufmt_loader::ModelInfo modelInfo;
+            //    modelInfo.SerializeIn(fileHandle);
+            //
+            //
+            //    // load into model
+            //    InitializeModel( &modelInfo, *m_modelCache[ INTERNAL_CONE ] );
+            //    loadModelToGPU(m_modelCache[ INTERNAL_CONE ]);
+            //    CloseHandle( fileHandle );
+            //}
         }
 
         void ModelManager::Uninitialize()

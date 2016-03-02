@@ -75,6 +75,24 @@ namespace ursine
                 */
                 void ReleaseData();
 
+                /** @brief animation information serialize in function
+                *
+                *  this will read animation information
+                *
+                *  @param handle of the file
+                *  @return if succeed return true, else return false
+                */
+                virtual bool SerializeIn(HANDLE hFile);
+
+                /** @brief animation information serialize out function
+                *
+                *  this will write animation information
+                *
+                *  @param handle of the file
+                *  @return if succeed return true, else return false
+                */
+                virtual bool SerializeOut(HANDLE hFile);
+
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;
             };
