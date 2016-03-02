@@ -22,20 +22,18 @@ namespace ursine
     {
         namespace ufmt_loader
         {
-            MeshInfo::MeshInfo() :
-                meshVtxInfoCount(0)
-                , meshVtxIdxCount(0)
-                , mtrlCount(0)
-                , mtrlIndexCount(0)
+            MeshInfo::MeshInfo(void) 
+                : meshVtxInfoCount( 0 )
+                , meshVtxIdxCount( 0 )
+                , mtrlCount( 0 )
+                , mtrlIndexCount( 0 ) { }
+
+            MeshInfo::~MeshInfo(void)
             {
+                ReleaseData( );
             }
 
-            MeshInfo::~MeshInfo()
-            {
-                ReleaseData();
-            }
-
-            void MeshInfo::ReleaseData()
+            void MeshInfo::ReleaseData(void)
             {
                 name = "";
 
@@ -44,10 +42,10 @@ namespace ursine
                 mtrlCount = 0;
                 mtrlIndexCount = 0;
 
-                mtrlName.clear();
-                meshVtxInfos.clear();
-                meshVtxIndices.clear();
-                materialIndices.clear();
+                mtrlName.clear( );
+                meshVtxInfos.clear( );
+                meshVtxIndices.clear( );
+                materialIndices.clear( );
             }
 
             bool MeshInfo::SerializeIn(HANDLE hFile)
@@ -58,39 +56,39 @@ namespace ursine
                 if (hFile != INVALID_HANDLE_VALUE)
                 {
                     char tmp_name[MAXTEXTLEN];
-                    ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
+                    ReadFile( hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr );
                     name = tmp_name;
-                    ReadFile(hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    ReadFile(hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    ReadFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    ReadFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesRead, nullptr);
+                    ReadFile( hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesRead, nullptr );
+                    ReadFile( hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesRead, nullptr );
+                    ReadFile( hFile, &mtrlCount, sizeof(unsigned int), &nBytesRead, nullptr );
+                    ReadFile( hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesRead, nullptr );
 
-                    meshVtxInfos.resize(meshVtxInfoCount);
+                    meshVtxInfos.resize( meshVtxInfoCount );
                     for (i = 0; i < meshVtxInfoCount; ++i)
                     {
                         MeshVertex newMV;
-                        ReadFile(hFile, &newMV, sizeof(MeshVertex), &nBytesRead, nullptr);
-                        meshVtxInfos[i] = newMV;
+                        ReadFile( hFile, &newMV, sizeof(MeshVertex), &nBytesRead, nullptr );
+                        meshVtxInfos[ i ] = newMV;
                     }
-                    meshVtxIndices.resize(meshVtxIdxCount);
+                    meshVtxIndices.resize( meshVtxIdxCount );
                     for (i = 0; i < meshVtxIdxCount; ++i)
                     {
                         unsigned int mvi;
-                        ReadFile(hFile, &mvi, sizeof(unsigned int), &nBytesRead, nullptr);
-                        meshVtxIndices[i] = mvi;
+                        ReadFile( hFile, &mvi, sizeof(unsigned int), &nBytesRead, nullptr );
+                        meshVtxIndices[ i ] = mvi;
                     }
-                    mtrlName.resize(mtrlCount);
+                    mtrlName.resize( mtrlCount );
                     for (i = 0; i < mtrlCount; ++i)
                     {
-                        ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-                        mtrlName[i] = tmp_name;
+                        ReadFile( hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr );
+                        mtrlName[ i ] = tmp_name;
                     }
-                    materialIndices.resize(mtrlIndexCount);
+                    materialIndices.resize( mtrlIndexCount );
                     for (i = 0; i < mtrlIndexCount; ++i)
                     {
                         unsigned int mi;
-                        ReadFile(hFile, &mi, sizeof(unsigned int), &nBytesRead, nullptr);
-                        materialIndices[i] = mi;
+                        ReadFile( hFile, &mi, sizeof(unsigned int), &nBytesRead, nullptr );
+                        materialIndices[ i ] = mi;
                     }
                 }
                 return true;
@@ -104,38 +102,38 @@ namespace ursine
                 if (hFile != INVALID_HANDLE_VALUE)
                 {
                     char tmp_name[MAXTEXTLEN];
-                    lstrcpy(tmp_name, name.c_str());
-                    WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-                    WriteFile(hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    WriteFile(hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    WriteFile(hFile, &mtrlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    WriteFile(hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesWrite, nullptr);
+                    lstrcpy( tmp_name, name.c_str( ) );
+                    WriteFile( hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr );
+                    WriteFile( hFile, &meshVtxInfoCount, sizeof(unsigned int), &nBytesWrite, nullptr );
+                    WriteFile( hFile, &meshVtxIdxCount, sizeof(unsigned int), &nBytesWrite, nullptr );
+                    WriteFile( hFile, &mtrlCount, sizeof(unsigned int), &nBytesWrite, nullptr );
+                    WriteFile( hFile, &mtrlIndexCount, sizeof(unsigned int), &nBytesWrite, nullptr );
 
-                    if (meshVtxInfos.size() > 0)
+                    if (meshVtxInfos.size( ) > 0)
                     {
                         for (auto iter : meshVtxInfos)
-                            WriteFile(hFile, &iter, sizeof(MeshVertex), &nBytesWrite, nullptr);
+                            WriteFile( hFile, &iter, sizeof(MeshVertex), &nBytesWrite, nullptr );
                     }
 
-                    if (meshVtxIndices.size() > 0)
+                    if (meshVtxIndices.size( ) > 0)
                     {
                         for (auto iter : meshVtxIndices)
-                            WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
+                            WriteFile( hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr );
                     }
 
-                    if (mtrlName.size() > 0)
+                    if (mtrlName.size( ) > 0)
                     {
                         for (auto iter : mtrlName)
                         {
-                            lstrcpy(tmp_name, iter.c_str());
-                            WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
+                            lstrcpy( tmp_name, iter.c_str( ) );
+                            WriteFile( hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr );
                         }
                     }
 
-                    if (materialIndices.size() > 0)
+                    if (materialIndices.size( ) > 0)
                     {
                         for (auto iter : materialIndices)
-                            WriteFile(hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr);
+                            WriteFile( hFile, &iter, sizeof(unsigned int), &nBytesWrite, nullptr );
                     }
                 }
                 return true;
@@ -143,75 +141,67 @@ namespace ursine
 
             void MeshInfo::Read(resources::ResourceReader &input)
             {
-                unsigned stringSize;
-                
-                input >> stringSize;
-                name.resize(stringSize);
-                input.ReadBytes(&name[0], stringSize);
+                input.ReadString( name );
 
-                input.ReadBytes( reinterpret_cast<char*>(&meshVtxInfoCount)  , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&meshVtxIdxCount)   , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&mtrlCount)         , sizeof(unsigned int) );
-                input.ReadBytes( reinterpret_cast<char*>(&mtrlIndexCount)    , sizeof(unsigned int) );
+                input.Read( meshVtxInfoCount );
+                input.Read( meshVtxIdxCount );
+                input.Read( mtrlCount );
+                input.Read( mtrlIndexCount );
 
                 unsigned int i = 0;
 
-                meshVtxInfos.resize(meshVtxInfoCount);
+                meshVtxInfos.resize( meshVtxInfoCount );
+
                 for (i = 0; i < meshVtxInfoCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>(&meshVtxInfos[i]), sizeof(MeshVertex) );
-                
-                meshVtxIndices.resize(meshVtxIdxCount);
+                    input.Read( meshVtxInfos[ i ] );
+
+                meshVtxIndices.resize( meshVtxIdxCount );
+
                 for (i = 0; i < meshVtxIdxCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>(&meshVtxIndices[i]), sizeof(unsigned int) );
-                
-                mtrlName.resize(mtrlCount);
+                    input.Read( meshVtxIndices[ i ] );
+
+                mtrlName.resize( mtrlCount );
+
                 for (i = 0; i < mtrlCount; ++i)
-                {
-                    input >> stringSize;
-                    mtrlName[i].resize(stringSize);
-                    input.ReadBytes( &mtrlName[i][0], stringSize);
-                }
-                
-                materialIndices.resize(mtrlIndexCount);
+                    input.ReadString( mtrlName[ i ] );
+
+                materialIndices.resize( mtrlIndexCount );
+
                 for (i = 0; i < mtrlIndexCount; ++i)
-                    input.ReadBytes( reinterpret_cast<char*>(&materialIndices[i]), sizeof(unsigned int) );
+                    input.Read( materialIndices[ i ] );
             }
 
             void MeshInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output << name.size();
-                output << name;
-                
-                output.WriteBytes( reinterpret_cast<char*>(&meshVtxInfoCount)   , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&meshVtxIdxCount)    , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mtrlCount)          , sizeof(unsigned int) );
-                output.WriteBytes( reinterpret_cast<char*>(&mtrlIndexCount)     , sizeof(unsigned int) );
-                                
-                if (meshVtxInfos.size() > 0)
+                output.WriteString( name );
+
+                output.Write( meshVtxInfoCount );
+                output.Write( meshVtxIdxCount );
+                output.Write( mtrlCount );
+                output.Write( mtrlIndexCount );
+
+                if (meshVtxInfos.size( ) > 0)
                 {
                     for (auto &iter : meshVtxInfos)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(MeshVertex) );
+                        output.Write( iter );
                 }
-                
-                if (meshVtxIndices.size() > 0)
+
+                if (meshVtxIndices.size( ) > 0)
                 {
                     for (auto &iter : meshVtxIndices)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(unsigned int) );
+                        output.Write( iter );
                 }
-                
-                if (mtrlName.size() > 0)
+
+                if (mtrlName.size( ) > 0)
                 {
                     for (auto &iter : mtrlName)
-                    {
-                        output << iter.size();
-                        output << iter;
-                    }
+                        output.WriteString( iter );
                 }
-                
-                if (materialIndices.size() > 0)
+
+                if (materialIndices.size( ) > 0)
                 {
                     for (auto &iter : materialIndices)
-                        output.WriteBytes( reinterpret_cast<char*>(&iter), sizeof(unsigned int) );
+                        output.Write( &iter );
                 }
             }
         };

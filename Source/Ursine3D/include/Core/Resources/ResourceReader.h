@@ -1,7 +1,8 @@
 #pragma once
 
-#include <fstream>
 #include "FileSystem.h"
+
+#include <istream>
 
 namespace ursine
 {
@@ -11,22 +12,29 @@ namespace ursine
         {
         public:
             ResourceReader(void);
+
+            // Reads from memory
+            ResourceReader(const void *buffer, size_t size);
+
+            // Reads from a file
             ResourceReader(const fs::path &input);
 
             char ReadByte(void);
-            size_t ReadBytes(char *input, size_t count);
+            size_t ReadBytes(void *input, size_t count);
 
-            ResourceReader &Seek(size_t offset);
+            ResourceReader &ReadString(std::string &input);
 
             template<typename T>
-            ResourceReader &operator>>(T &input);
+            ResourceReader &Read(T &input);
+
+            ResourceReader &Seek(size_t offset);
 
             bool IsOpen(void) const;
 
         private:
             friend class ResourceFormatReader;
 
-            std::ifstream m_stream;
+            std::shared_ptr<std::istream> m_stream;
         };
     }
 }

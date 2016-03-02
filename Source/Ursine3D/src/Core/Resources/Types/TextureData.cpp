@@ -40,10 +40,10 @@ namespace ursine
                 size
             );
 
-            output << size;
+            output.Write( size );
 
             output.WriteBytes( 
-                reinterpret_cast<char*>(data),
+                reinterpret_cast<char*>( data ),
                 size
             );
         }

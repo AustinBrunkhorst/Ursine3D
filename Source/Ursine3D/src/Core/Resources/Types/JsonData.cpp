@@ -19,8 +19,7 @@ namespace ursine
         {
             auto jsonString = m_data.dump( false );
 
-            output << static_cast<uint64>( jsonString.length( ) );
-            output << jsonString;
+            output.WriteString( jsonString );
         }
 
         meta::Type JsonData::GetReaderType(void)

@@ -10,7 +10,9 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
+
 #pragma once
+
 #include "ISerialize.h"
 #include "SMat4.h"
 
@@ -23,19 +25,24 @@ namespace ursine
             // This structure contains hierarchy among meshes. This will makes easy to find it.
             struct MeshInLvl
             {
-                char meshName[MAXTEXTLEN];
+                std::string meshName;
                 SMat4 meshTM;
                 int mParentIndex;
 
-                MeshInLvl() : meshName(""), mParentIndex(-1) {}
+                MeshInLvl(void) 
+                    : meshName( "" )
+                    , mParentIndex( -1 ) { }
             };
 
             // This structure contains hierarchy among bones.
             struct RigInLvl
             {
-                char boneName[MAXTEXTLEN];
+                std::string boneName;
                 int mParentIndex;
-                RigInLvl() : boneName(""), mParentIndex(-1) {}
+
+                RigInLvl(void) 
+                    : boneName( "" )
+                    , mParentIndex( -1 ) { }
             };
         }
     }

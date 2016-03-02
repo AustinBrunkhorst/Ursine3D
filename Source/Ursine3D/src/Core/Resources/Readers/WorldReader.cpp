@@ -11,14 +11,9 @@ namespace ursine
 
         ResourceData::Handle WorldReader::Read(ResourceReader &input)
         {
-            uint64 jsonLength;
             std::string jsonString;
 
-            input >> jsonLength;
-
-            jsonString.resize( static_cast<size_t>( jsonLength ) );
-
-            input.ReadBytes( &jsonString[ 0 ], jsonLength );
+            input.ReadString( jsonString );
 
             std::string jsonError;
 

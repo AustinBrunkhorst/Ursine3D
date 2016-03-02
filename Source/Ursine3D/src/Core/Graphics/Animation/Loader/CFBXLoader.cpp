@@ -292,7 +292,7 @@ namespace ursine
                 for (i = 0; i < mModelInfo->mmeshlvlCount; ++i)
                 {
                     ufmt_loader::MeshInLvl newMLvl;
-                    lstrcpy(newMLvl.meshName, mModel->mMeshData[i]->name.c_str());
+                    newMLvl.meshName = mModel->mMeshData[i]->name;
                     newMLvl.meshTM = mModel->mMeshData[i]->meshTM;
                     newMLvl.mParentIndex = mModel->mMeshData[i]->parentIndex;
                     mModelInfo->mMeshLvVec.push_back(newMLvl);
@@ -302,7 +302,7 @@ namespace ursine
                 for (i = 0; i < mModelInfo->mriglvlCount; ++i)
                 {
                     ufmt_loader::RigInLvl newRLvl;
-                    lstrcpy(newRLvl.boneName, mModelInfo->mBoneInfoVec[i].name.c_str());
+                    newRLvl.boneName = mModelInfo->mBoneInfoVec[i].name;
                     newRLvl.mParentIndex = mModelInfo->mBoneInfoVec[i].mParentIndex;
                     mModelInfo->mRigLvVec.push_back(newRLvl);
                 }

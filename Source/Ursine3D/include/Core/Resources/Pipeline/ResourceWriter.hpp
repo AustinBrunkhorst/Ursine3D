@@ -5,9 +5,12 @@ namespace ursine
         namespace pipeline
         {
             template<typename T>
-            ResourceWriter &ResourceWriter::operator<<(const T &value) 
+            ResourceWriter &ResourceWriter::Write(const T &value) 
             {
-                m_stream << value;
+                WriteBytes( 
+                    reinterpret_cast<const char*>( std::addressof( value ) ), 
+                    sizeof( T ) 
+                );
 
                 return *this;
             }
