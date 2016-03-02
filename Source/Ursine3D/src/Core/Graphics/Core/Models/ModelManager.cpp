@@ -193,29 +193,29 @@ namespace ursine
                     FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
                     nullptr
                 );
-            
-                auto writeResult = WriteFile(
-                    fileHandle, 
+
+                WriteFile(
+                    fileHandle,
                     graphics_resources::kCubeJdl,
                     2938,
                     nullptr,
                     nullptr
                 );
-            
+
                 auto returnVal = SetFilePointer(
                     fileHandle,
                     0,
                     nullptr,
                     FILE_BEGIN
                 );
-            
+
                 // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
-                modelInfo.SerializeIn( fileHandle );
-            
+                modelInfo.SerializeIn(fileHandle);
+
                 // load into model
-               InitializeModel(&modelInfo, *m_modelCache[ INTERNAL_CUBE ]);
-               loadModelToGPU( m_modelCache[ INTERNAL_CUBE ] );
+                InitializeModel(&modelInfo, *m_modelCache[INTERNAL_CUBE]);
+                loadModelToGPU(m_modelCache[INTERNAL_CUBE]);
                CloseHandle( fileHandle );
             }
             
@@ -249,8 +249,7 @@ namespace ursine
                     nullptr,
                     FILE_BEGIN
                 );
-            
-            
+
                 // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
                 modelInfo.SerializeIn( fileHandle );
@@ -292,13 +291,11 @@ namespace ursine
                     nullptr,
                     FILE_BEGIN
                 );
-            
-            
+
                 // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
                 modelInfo.SerializeIn(fileHandle);
-            
-            
+
                 // load into model
                 InitializeModel( &modelInfo, *m_modelCache[ INTERNAL_CONE ] );
                 loadModelToGPU(m_modelCache[ INTERNAL_CONE ]);
