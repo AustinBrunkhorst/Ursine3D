@@ -20,19 +20,21 @@ namespace ursine
     namespace graphics
     {
         ModelResource::ModelResource(void)
-            : m_rootNode(nullptr)
-            , m_meshArray()
-            , m_meshMap()
-            , m_meshHierarchy()
-            , m_rigHierarchy()
-            , m_onGPU(false)
+            : m_rootNode( nullptr )
+            , m_meshArray( )
+            , m_meshMap( )
+            , m_meshHierarchy( )
+            , m_rigHierarchy( )
+            , m_onGPU( false )
+            , m_referenceCount( 0 )
         {
         }
 
         ModelResource::~ModelResource(void)
         {
-            for (auto *x : m_meshArray)
-                delete x;
+            if( m_meshArray.size() > 0 )
+                for (auto *x : m_meshArray)
+                    delete x;
         }
 
         void ModelResource::AddMesh(Mesh *newMesh)
