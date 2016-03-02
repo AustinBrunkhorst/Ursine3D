@@ -20,10 +20,24 @@
 #include "CFBXLoader.h"
 #include "DXErrorHandling.h"
 
+#include "InternalResourceByteCode.h"
+
 namespace ursine
 {
     namespace graphics
     {
+        ModelManager::ModelManager()
+            : m_device( nullptr )
+            , m_deviceContext( nullptr )
+            , m_modelCount( INTERNAL_GEOMETRY_COUNT )
+            , m_currentState( -1 )
+            , m_modelCache( { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr } )
+            , m_modelInfoCache( { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr } )
+            , m_animeCount( 0 )
+            , m_animeInfoCache( { } )
+        {
+        }
+
         void ModelManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath)
         {
             m_device = device;
@@ -35,11 +49,6 @@ namespace ursine
             m_animeCount = 0;
 
             AnimationBuilder::InitializeStaticData();
-
-            // default support the fullscreen quad
-            m_modelCache.resize( INTERNAL_GEOMETRY_COUNT );
-            m_modelInfoCache.resize( INTERNAL_GEOMETRY_COUNT );
-            m_modelCount = INTERNAL_GEOMETRY_COUNT;
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
@@ -170,13 +179,16 @@ namespace ursine
             {
                 m_modelCache[ INTERNAL_CUBE ] = new ModelResource( );
                 auto *newMesh = new Mesh( );
-                m_modelCache[ INTERNAL_CUBE ]->AddMesh(newMesh);
+                m_modelCache[ INTERNAL_CUBE ]->AddMesh( newMesh );
 
-                // add the vertices
-                // add the indices
+                // load into modelInfo
+                ufmt_loader::ModelInfo modelInfo;
 
-                // generate vert buffer
-                // generate index buffer
+                // load into model
+              /*  InitializeModel(
+                    &modelInfo, 
+                    m_modelCache[ INTERNAL_CUBE ]
+                );*/
             }
 
             /////////////////////////////////////////////////////////////////////////////
@@ -186,11 +198,13 @@ namespace ursine
                 auto *newMesh = new Mesh( );
                 m_modelCache[ INTERNAL_SPHERE ]->AddMesh(newMesh);
 
-                // add the vertices
-                // add the indices
+                graphics_resources::kSphereJdl;
 
-                // generate vert buffer
-                // generate index buffer
+                // somehow load into modelInfo
+                ufmt_loader::ModelInfo modelInfo;
+
+                // load into model
+               // InitializeModel(&modelInfo, m_modelCache[ INTERNAL_SPHERE ]);
             }
 
             /////////////////////////////////////////////////////////////////////////////
@@ -200,11 +214,13 @@ namespace ursine
                 auto *newMesh = new Mesh( );
                 m_modelCache[ INTERNAL_CONE ]->AddMesh(newMesh);
 
-                // add the vertices
-                // add the indices
+                graphics_resources::kConeJdl;
 
-                // generate vert buffer
-                // generate index buffer
+                // somehow load into modelInfo
+                ufmt_loader::ModelInfo modelInfo;
+
+                // load into model
+                // InitializeModel( &modelInfo, m_modelCache[ INTERNAL_CONE ] );
             }
         }
 
