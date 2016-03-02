@@ -553,10 +553,16 @@ namespace ursine
         {
             int id;
             _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
-            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            if(handle != 0)
+            {
+                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+                UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+            }
 
             id = hnd->Index_;
+            if(id == 0)
+                return;
 
             --(m_textureCache[ id ].m_referenceCount);
 
@@ -585,7 +591,7 @@ namespace ursine
 
         void TextureManager::MapResourceTextureByID(const unsigned ID, const unsigned int bufferIndex)
         {
-            if(ID >= m_textureCache.size( ) - 1 || m_textureCache[ ID ].m_shaderResource == nullptr)
+            if(ID >= m_textureCache.size( ) || m_textureCache[ ID ].m_shaderResource == nullptr)
             {
                 m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ 0 ].m_shaderResource);
                 return;
