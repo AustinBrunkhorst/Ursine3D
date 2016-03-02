@@ -257,6 +257,7 @@ namespace ursine
             float GetAirTraction(void) const;
             void SetAirTraction(float airTraction);
 
+            void AddImpulse(const SVec3 &impulse);
 
         private:
             bool m_active;

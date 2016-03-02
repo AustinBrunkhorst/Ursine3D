@@ -518,11 +518,12 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursi
     }
 
     // if object has health
-    else if ( objHit->GetRoot( )->HasComponent<Health>( ) )
+    if ( objHit->GetRoot( )->HasComponent<Health>( ) )
     {
-        objHit->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
+        objHit->GetRoot( )->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
 
-        objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+        if (!crit)
+            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
     }
 
 

@@ -121,4 +121,9 @@ namespace ursine
     {
         return static_cast<unsigned>( m_children.size( ) );
     }
+
+    const std::vector<const AnimationBone *> &AnimationBone::GetChildren(void) const
+    {
+        return m_children;
+    }
 }

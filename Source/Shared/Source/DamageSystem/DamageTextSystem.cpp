@@ -114,8 +114,9 @@ void DamageTextSystem::createDamageText(const game::DamageEventArgs* args)
 
     // set sprite text to damage done 
     SpriteText* textComp = damageText->GetComponent< SpriteText >( );
-    int damage = args->damage;
-    textComp->SetText(std::to_string(damage));
+
+    textComp->SetText(std::to_string(static_cast<int>(args->damage)));
+    textComp->SetOverdraw( true );
 
     // generate the damage text velocity and start alpha
     DamageText* damageTextComp = damageText->GetComponent< DamageText >( );

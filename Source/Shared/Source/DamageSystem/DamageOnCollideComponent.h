@@ -12,10 +12,6 @@
 #pragma once
 
 #include <Component.h>
-#include <BoxColliderComponent.h>
-#include <CollisionEventArgs.h>
-
-#include "DamageEvent.h"
 
 namespace ursine
 {
@@ -160,4 +156,4 @@ private:
 
     void applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage, bool crit);
 
-} Meta (Enable, DisplayName( "DamageOnCollide" ), RequiresComponents(typeof(ursine::ecs::BoxCollider)));
+} Meta (Enable, DisplayName( "DamageOnCollide" ));

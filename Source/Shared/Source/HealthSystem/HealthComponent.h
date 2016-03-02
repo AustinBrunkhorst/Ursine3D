@@ -88,4 +88,4 @@ private:
 
     bool m_spawnOnDeath;
 
-} Meta(Enable, WhiteListMethods, DisplayName( "Health" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ));
+} Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

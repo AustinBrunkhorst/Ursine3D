@@ -4,10 +4,10 @@
 "children": [], 
 "components": {
 "FirePos": {
-".uid": 301
+".uid": 526
 }, 
 "Transform": {
-".uid": 300, 
+".uid": 525, 
 "rotation": {
 "w": 1, 
 "x": -2.9683229513466358e-05, 
@@ -31,12 +31,11 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 303, 
+".uid": 528, 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Gun_Idle", 
 "currentState": "", 
-"loopAnimation": true, 
 "playAnimation": true, 
 "renderDebug": false, 
 "stArray": [], 
@@ -44,24 +43,24 @@
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 304, 
+".uid": 529, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
-"b": 1, 
+"b": 0.953125, 
 "g": 1, 
-"r": 1
+"r": 0
 }, 
-"emissive": 0.44999998807907104, 
+"emissive": 0, 
 "materialName": "Blank", 
 "meshIndex": -1, 
 "modelName": "Gun_Idle", 
 "renderMask": 32, 
-"specularIntensity": 0, 
-"specularPower": 0
+"specularIntensity": 1, 
+"specularPower": 100
 }, 
 "Transform": {
-".uid": 302, 
+".uid": 527, 
 "rotation": {
 "w": -0.58084952831268311, 
 "x": -0.45220023393630981, 
@@ -85,13 +84,13 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 298, 
+".uid": 523, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "HitscanWeapon": {
-".uid": 299, 
+".uid": 524, 
 "Accuracy": 0.5, 
 "AlwaysDraw": true, 
 "ClipSize": 500, 
@@ -116,7 +115,7 @@
 "WeaponTier": 2
 }, 
 "Transform": {
-".uid": 297, 
+".uid": 522, 
 "rotation": {
 "w": 1, 
 "x": 0, 

@@ -18,8 +18,12 @@
 #include <stack>
 #include <SVec3.h>
 #include <PhysicsSystem.h>
+#include <SweptControllerComponent.h>
 
 NATIVE_COMPONENT_DEFINITION( DamageOnCollide );
+
+using namespace ursine;
+using namespace ecs;
 
 DamageOnCollide::DamageOnCollide( void )
     : BaseComponent( )
@@ -143,18 +147,21 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
 {
     EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
 
-    if ( !m_deleted )
+    if (!m_deleted)
     {
         auto root = args->otherEntity->GetRoot( );
 
-        if ( !root && !root->HasComponent< Health >( ) && m_damageTimeMap[ root->GetUniqueID( ) ] != NULL )
+        if (!root->HasComponent<Health>( ))
+            return;
+
+        if (m_damageTimeMap.find( root->GetUniqueID( ) ) != m_damageTimeMap.end( ))
             return;
 
         float damage = m_damageToApply;
         bool crit = false;
 
         // does object have crit
-        if ( args->otherEntity->HasComponent< CritSpot >( ) )
+        if (args->otherEntity->HasComponent<CritSpot>( ))
         {
             crit = true;
             damage *= m_critModifier;
@@ -166,7 +173,6 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
     }
 
     deleteOnCollision( );
-
 }
 
 void DamageOnCollide::applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage, bool crit)
@@ -189,13 +195,13 @@ void DamageOnCollide::DecrementDamageIntervalTimes(float dt)
     std::stack< int > idToRemove;
 
     // Decrement time intervals
-    for (auto timeInterval : m_damageTimeMap)
+    for (auto &timeInterval : m_damageTimeMap)
     {
         timeInterval.second -= dt;
         
         // move any times that have lasted full interval into
         //   container to be removed so damage may be applied again
-        if (timeInterval.second <= 0)
+        if (timeInterval.second <= 0.0f)
         {
             idToRemove.push( timeInterval.first );
         }
@@ -227,7 +233,7 @@ void DamageOnCollide::deleteOnCollision(void)
 
 void DamageOnCollide::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if (m_spawnOnDeath)
+    if (m_spawnOnDeath && m_objToSpawn != ".uatype")
     {
         ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
 
@@ -258,17 +264,28 @@ void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool cr
 {
     if (m_spawnOnHit)
     {
-        ursine::ecs::Transform* trans = GetOwner( )->GetTransform( );      // quick access to transform of owner
-        ursine::SVec3 pos = trans->GetWorldPosition( ); // position for weapon to shoot to
+        // quick access to transform of owner
+        Transform* trans = GetOwner( )->GetTransform( );
 
-        if ( crit )
+        // position for weapon to shoot to
+        SVec3 pos = trans->GetWorldPosition( );
+
+        if (crit)
         {
-            ursine::physics::RaycastInput rayin;   // input for raycast check
-            ursine::physics::RaycastOutput rayout; // output from raycast check
+            // input for raycast check
+            physics::RaycastInput rayin;
+            
+            // output from raycast check
+            physics::RaycastOutput rayout;
 
-            ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
+            // for all objects be checked against
+            Entity* entity = nullptr;
 
-            ursine::SVec3 velocity = GetOwner( )->GetComponent<ursine::ecs::Rigidbody>( )->GetVelocity( ); // need for path of bullet
+            SVec3 velocity;
+            
+            // need for path of bullet
+            if (GetOwner( )->HasComponent<Rigidbody>( ))
+                velocity = GetOwner( )->GetComponent<Rigidbody>( )->GetVelocity( );
 
 
             // is the owner of this component within the oject it is colliding with
@@ -281,18 +298,20 @@ void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool cr
             rayin.end = pos = rayin.start + velocity;
 
             // get ray to edge of other object
-            GetOwner( )->GetWorld( )->GetEntitySystem<ursine::ecs::PhysicsSystem>( )->Raycast(rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false);
+            GetOwner( )->GetWorld( )->GetEntitySystem<PhysicsSystem>( )->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS, false, 1.0f, false);
 
             getSpawnLocation(other->GetRoot( ), rayout, pos);
         }
 
-        // create particle
-        ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
-        obj->GetTransform( )->SetWorldPosition(pos);
+        if (m_objToSpawnOnHit != ".uatype")
+        {
+            // create particle
+            ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawnOnHit);
+            obj->GetTransform( )->SetWorldPosition( pos );
 
-        // parent so that it follows objects and dies with object
-        other->GetTransform( )->AddChild(obj->GetTransform( ));
-
+            // parent so that it follows objects and dies with object
+            other->GetTransform( )->AddChild(obj->GetTransform( ));
+        }
     }
 }
 

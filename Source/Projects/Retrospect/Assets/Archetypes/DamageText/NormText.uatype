@@ -2,7 +2,7 @@
 "children": [], 
 "components": {
 "DamageText": {
-".uid": 300, 
+".uid": 509, 
 "TotalLifeTime": 1, 
 "Variance": {
 "x": 3, 
@@ -16,9 +16,9 @@
 }
 }, 
 "SpriteText": {
-".uid": 301, 
-"alignment": 0, 
-"size": 12, 
+".uid": 510, 
+"alignment": 1, 
+"size": 50, 
 "text": "Sprite Text", 
 "textColor": {
 "a": 1, 
@@ -29,7 +29,7 @@
 "useFiltering": true
 }, 
 "Transform": {
-".uid": 299, 
+".uid": 508, 
 "rotation": {
 "w": 1, 
 "x": 0, 

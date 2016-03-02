@@ -33,12 +33,12 @@ namespace ursine
         //given a Rig, State, and 2 vectors of matrices, generate matrix palette
 
         static void GenerateAnimationData(
-			const AnimationState *currentState,
-			const AnimationState *futureState,
-            const AnimationRig *rig,
+            const AnimationState *currentState,
+            const AnimationState *futureState,
+            AnimationRig *rig,
             std::vector<SMat4> &outputMatPal,
             std::vector<SMat4> &outputBones,
-			const float &transFactor
+            const float &transFactor
         );
 
         /////////////////////////////////////////////////////////////
@@ -80,7 +80,8 @@ namespace ursine
             const std::vector<AnimationKeyframe> &frame2, 
             const float time, 
             const unsigned boneCount,
-            std::vector<SMat4> &finalTransform 
+            std::vector<SMat4> &finalTransform,
+            AnimationRig *rig
         );
 
         // add resources
@@ -104,7 +105,7 @@ namespace ursine
             std::vector<std::vector<unsigned>> &hierarchy,
             unsigned currentIndex,
             unsigned parentIndex,
-			const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
+            const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
             AnimationRig *rig
         );
 
@@ -120,6 +121,6 @@ namespace ursine
         static std::unordered_map<std::string, AnimationRig*> m_name2Rig;
 
         static std::vector<SMat4> m_toParentTransforms;
-		static std::vector<SMat4> m_toFutParentTransforms;
+        static std::vector<SMat4> m_toFutParentTransforms;
     };
 }

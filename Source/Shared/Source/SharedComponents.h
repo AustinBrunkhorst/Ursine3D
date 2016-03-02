@@ -26,7 +26,6 @@
 
 #include "Misc/ForceComponent.h"
 #include "Misc/TimeDeathComponent.h"
-#include "Misc/BuffComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //
@@ -82,6 +81,8 @@
 
 #include "EnemyDeathComponent.h"
 
+#include "BossVineAIComponent.h"
+
 /////////////////////////////////
 //       Level Logic           //
 /////////////////////////////////
@@ -124,3 +125,9 @@
 /////////////////////////////////
 
 #include "FX/AnimateParticleResetComponent.h"
+
+/////////////////////////////////
+//           Physics           //
+/////////////////////////////////
+
+#include "Physics/ApplyImpulseOnHitComponent.h"
