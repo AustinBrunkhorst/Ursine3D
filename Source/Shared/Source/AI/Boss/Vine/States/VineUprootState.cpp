@@ -15,11 +15,11 @@
 
 #include "VineUprootState.h"
 
+#include "VineStateUtils.h"
 #include "VineAIStateMachine.h"
 #include "VineAIComponent.h"
 #include "EntityAnimatorComponent.h"
 
-#include <PhysicsSystem.h>
 #include <Application.h>
 #include <Entity.h>
 #include <ParticleEmitterComponent.h>
@@ -78,7 +78,7 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             aiTrans->LookAt( lookAtPosition, ai->GetDigTurnSpeed( ) );
 
             // raycast to find what the Y position should be
-            aiPos.Y( ) = findYPosition( ai, aiPos );
+            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
 
             // Move forward based on the dig speed
             aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
@@ -89,7 +89,7 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             emitter->GetComponent<ecs::ParticleEmitter>( )->SetEmitRate( 200 );
 
             // Check to see if we've reached a valid distance
-            if (closeToTarget( ai ))
+            if (VineStateUtils::AtTarget( ai, ai->GetUprootDistance( ) ))
             {
                 m_state = UprootState::UprootDelay;
                 m_delayTimer = ai->GetUprootDelay( );
@@ -131,6 +131,9 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             m_originalDimensions = boxCollider->GetDimensions( );
             boxCollider->SetDimensions( ai->GetColliderSize( ) );
 
+            // We've successfully pursued our target
+            machine->SetBool( VineAIStateMachine::PursueTarget, false );
+
             break;
         }
     }
@@ -152,76 +155,6 @@ void VineUprootState::playAnimation(EntityAnimator *animator, const std::string 
 
     animator->Listener( this )
         .On( EntityAnimatorEvent::FinishedAnimating, &VineUprootState::onAnimationFinished );
-}
-
-float VineUprootState::findYPosition(VineAI *ai, const SVec3 &aiPosition)
-{
-    auto aiOwner = ai->GetOwner( );
-    auto world = aiOwner->GetWorld( );
-    auto physics = world->GetEntitySystem<ecs::PhysicsSystem>( );
-
-    auto startPos = aiPosition - SVec3::UnitY( ) * 50.0f;
-    auto dir = SVec3::UnitY( ) * 1000.0f;
-
-    physics::RaycastInput input( startPos, dir );
-    physics::RaycastOutput output;
-
-    if (!physics->Raycast( input, output, physics::RAYCAST_ALL_HITS, true ))
-        return aiPosition.Y( );
-
-    auto lowestY = std::numeric_limits<float>( ).max( );
-    auto found = false;
-
-    // iterate through all output and find the closest hit (that isn't the AI)
-    for (int i = 0; i < output.entity.size( ); ++i)
-    {
-        auto hitEntity = world->GetEntityUnique( output.entity[ i ] );
-
-        // make sure we're not checking for ourselves, and entities
-        // we don't care about
-        auto collisionItr = std::find(
-            ai->collisionList.begin( ), 
-            ai->collisionList.end( ),
-            hitEntity->GetRoot( )->GetName( ) 
-        );
-
-        auto ignoreItr = std::find(
-            ai->ignoreList.begin( ),
-            ai->ignoreList.end( ),
-            hitEntity->GetName( )
-        );
-
-        if (hitEntity == aiOwner->GetRoot( ) ||
-            collisionItr == ai->collisionList.end( ) ||
-            ignoreItr != ai->ignoreList.end( ))
-            continue;
-
-        auto hit = output.hit[ i ];
-
-        if (hit.Y( ) < lowestY)
-        {
-            lowestY = hit.Y( );
-            found = true;
-        }
-    }
-
-    if (found)
-        return lowestY;
-    else
-        return aiPosition.Y( );
-}
-
-bool VineUprootState::closeToTarget(VineAI *ai)
-{
-    auto targetTrans = ai->GetTarget( )->GetTransform( );
-    auto aiTrans = ai->GetOwner( )->GetTransform( );
-
-    float dist = SVec3::Distance( 
-        targetTrans->GetWorldPosition( ), 
-        aiTrans->GetWorldPosition( ) 
-    );
-
-    return dist <= ai->GetUprootDistance( );
 }
 
 void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))

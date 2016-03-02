@@ -14,9 +14,11 @@
 #include "VineAIComponent.h"
 
 #include "VineAIStateMachine.h"
+#include "VineSpawnState.h"
 #include "VineLookForInRangePlayersState.h"
 #include "VineWhipState.h"
 #include "VineUprootState.h"
+#include "VineGoHomeState.h"
 
 #include <FloatCondition.h>
 #include <BoolCondition.h>
@@ -201,20 +203,45 @@ void VineAI::SetTarget(Entity *target)
     m_target = target;
 }
 
+void VineAI::SetHomeLocation(const SVec3 &homeLocation)
+{
+    m_homeLocation = homeLocation;
+}
+
+const SVec3 &VineAI::GetHomeLocation(void) const
+{
+    return m_homeLocation;
+}
+
+void VineAI::GoToHomeLocation(void)
+{
+    m_stateMachine.SetBool( VineAIStateMachine::GoHome, true );
+}
+
+void VineAI::PursueTarget(void)
+{
+    m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, true );
+}
+
 void VineAI::OnInitialize(void)
 {
-    // it spawns, comes up from ground, and is able to whip.
-    // A vine can then be set to be a uproot vine.  That would mean that it would
-    // go and chase a target.
+    // TO TEST:
+    // - spawning animation (should come up from nothing)
+    // - tell it to pursue enemy, and tell it to come back home
 
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &VineAI::onUpdate );
 
     // Setup the state machine
+    auto spawnState = m_stateMachine.AddState<VineSpawnState>( );
     auto lookState = m_stateMachine.AddState<VineLookForInRangePlayersState>( );
     auto whipState = m_stateMachine.AddState<VineWhipState>( );
     auto uprootState = m_stateMachine.AddState<VineUprootState>( );
+    auto goHomeState = m_stateMachine.AddState<VineGoHomeState>( );
 
+    spawnState->AddTransition( lookState, "To Look" );
+
+    // Setup the transition to the Whip ability
     auto trans = lookState->AddTransition( whipState, "To Whip" );
 
     // The cooldown must be up
@@ -235,19 +262,40 @@ void VineAI::OnInitialize(void)
 
     whipState->AddTransition( lookState, "To Look" );
 
+    // Setup the transition to the uproot ability
     trans = lookState->AddTransition( uprootState, "To Uproot" );
 
+    // The cooldown must be up
     trans->AddCondition<sm::FloatCondition>(
         VineAIStateMachine::UprootCooldown,
         sm::Comparison::LessThan, 0.0f
     );
 
+    // We must be set to pursue our target
+    trans->AddCondition<sm::BoolCondition>(
+        VineAIStateMachine::PursueTarget,
+        true
+    );
+
     uprootState->AddTransition( lookState, "To Look" );
 
-    m_stateMachine.SetInitialState( lookState );
+    // Setup the transition to the back to home state
+    trans = lookState->AddTransition( goHomeState, "To Home" );
+
+    // We must be set to go back home
+    trans->AddCondition<sm::BoolCondition>(
+        VineAIStateMachine::GoHome,
+        true
+    );
+
+    goHomeState->AddTransition( lookState, "To Look" );
+
+    m_stateMachine.SetInitialState( spawnState );
 
     GetOwner( )->Listener( this )
         .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
+
+    m_homeLocation = GetOwner( )->GetTransform( )->GetWorldPosition( );
 }
 
 void VineAI::onUpdate(EVENT_HANDLER(World))

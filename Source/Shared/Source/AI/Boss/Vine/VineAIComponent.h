@@ -162,6 +162,14 @@ public:
     ursine::ecs::Entity *GetTarget(void);
     void SetTarget(ursine::ecs::Entity *target);
 
+    void SetHomeLocation(const ursine::SVec3 &homeLocation);
+    const ursine::SVec3 &GetHomeLocation(void) const;
+
+    // Tell the vine to go back to it's home location
+    void GoToHomeLocation(void);
+
+    void PursueTarget(void);
+
 private:
 
     void OnInitialize(void) override;
@@ -184,6 +192,8 @@ private:
     float m_uprootDelay;
     float m_uprootCooldown;
     ursine::SVec3 m_colliderSize;
+
+    ursine::SVec3 m_homeLocation;
 
     std::string m_digParticleEmitterName;
 

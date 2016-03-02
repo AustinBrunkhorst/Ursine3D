@@ -27,6 +27,9 @@ const std::string VineAIStateMachine::UprootCooldown = "UprootCooldown";
 const std::string VineAIStateMachine::InRange = "InRange";
 const std::string VineAIStateMachine::InView = "InView";
 
+const std::string VineAIStateMachine::GoHome = "GoHome";
+const std::string VineAIStateMachine::PursueTarget = "PursueTarget";
+
 VineAIStateMachine::VineAIStateMachine(VineAI* ai)
     : m_ai( ai )
 {
@@ -34,6 +37,8 @@ VineAIStateMachine::VineAIStateMachine(VineAI* ai)
     AddFloat( UprootCooldown, 0.0f );
     AddBool( InRange, false );
     AddBool( InView, false );
+    AddBool( GoHome, false );
+    AddBool( PursueTarget, false );
 }
 
 void VineAIStateMachine::Update(void)
