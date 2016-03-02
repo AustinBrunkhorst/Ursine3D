@@ -69,7 +69,7 @@ namespace ursine
                     input.ReadBytes( reinterpret_cast<char*>(&iter.boneCount), sizeof(unsigned int) );
                 
                     iter.keyIndices.resize(iter.clipCount);
-                    iter.keyframes.resize(iter.clipCount);                    
+                    iter.keyframes.resize(iter.clipCount);
                 
                     unsigned int i = 0, j = 0, k = 0;
                     for (i = 0; i < iter.clipCount; ++i)
@@ -81,10 +81,11 @@ namespace ursine
                         {
                             input.ReadBytes( reinterpret_cast <char*>(&iter.keyIndices[ i ][ j ]), sizeof(unsigned int) );
 
-                            iter.keyframes[i][j].resize(iter.keyIndices[i][j]);
+                            auto indicies = iter.keyIndices[ i ][ j ];
 
-                            for (k = 0; k < iter.keyIndices[i][j]; ++k)
-                                input.ReadBytes( reinterpret_cast<char*>(&iter.keyframes[ i ][ j ][ k ]), sizeof(FBX_DATA::KeyFrame) );
+                            iter.keyframes[i][j].resize( indicies );
+                            
+                            input.ReadBytes( reinterpret_cast<char*>(&iter.keyframes[ i ][ j ][ 0 ]), sizeof( FBX_DATA::KeyFrame ) * indicies );
                         }
                     }
                 }
@@ -92,7 +93,7 @@ namespace ursine
 
             void AnimInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output << name.size();
+                output << (unsigned)name.size();
                 output << name;
 
                 output.WriteBytes( reinterpret_cast<char*>(&animCount), sizeof(unsigned int) );
@@ -100,7 +101,7 @@ namespace ursine
                 for (auto &iter : animDataArr)
                 {
                     // serializing counts
-                    output << iter.clipname.size();
+                    output << (unsigned)iter.clipname.size();
                     output << iter.clipname;
 
                     output.WriteBytes( reinterpret_cast<char*>(&iter.clipCount), sizeof(unsigned int) );
@@ -111,10 +112,11 @@ namespace ursine
                     {
                         for (j = 0; j < iter.boneCount; ++j)
                         {
-                            output.WriteBytes( reinterpret_cast<char*>(&iter.keyIndices[ i ][ j ]), sizeof(unsigned int) );
+                            auto indicies = iter.keyIndices[i][j];
 
-                            for (k = 0; k < iter.keyIndices[i][j]; ++k)
-                                output.WriteBytes( reinterpret_cast<char*>(&iter.keyframes[ i ][ j ][ k ]), sizeof(FBX_DATA::KeyFrame) );
+                            output.WriteBytes( reinterpret_cast<char*>(&indicies), sizeof(unsigned int) );
+
+                            output.WriteBytes(reinterpret_cast<char*>(&iter.keyframes[i][j][0]), sizeof(FBX_DATA::KeyFrame) * indicies);
                         }
                     }
                 }

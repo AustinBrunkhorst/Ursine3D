@@ -22,10 +22,10 @@ namespace ursine
                 ResourceData::Handle Import(ResourceImportContext &context) override;
             } Meta(
                 Enable,
-                DisplayName("AnimationClipImporter"),
+                DisplayName( "AnimationClipImporter" ),
                 ResourceImporterConfig(
-                    ExtensionList{ "uanim" },
-                    typeof(ursine::rp::PassThroughProcessor)
+                    ExtensionList { "uanim" },
+                        typeof( ursine::rp::PassThroughProcessor )
                     )
                 );
         }
