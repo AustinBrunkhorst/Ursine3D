@@ -20,12 +20,13 @@ class VineLookForInRangePlayersState : public BossVineState
 public:
     VineLookForInRangePlayersState(void);
 
-    bool CanExit(void) override { return m_inRange; }
+    bool CanExit(void) override { return m_inRange && m_inView; }
 
     void Enter(BossVineStateMachine *machine) override;
     void Update(BossVineStateMachine *machine) override;
 
 private:
     bool m_inRange;
+    bool m_inView;
     ursine::SVec3 m_originalForward;
 };

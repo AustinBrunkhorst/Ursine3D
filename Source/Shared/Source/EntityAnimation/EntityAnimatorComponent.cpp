@@ -80,6 +80,7 @@ void EntityAnimator::Play(const std::string &clipName)
             keyFrames = clip->keyFrames;
             m_loop = clip->looping;
             SetAnimationClipName( clip->clipName );
+            JumpToStart( );
             Play( );
             return;
         }
