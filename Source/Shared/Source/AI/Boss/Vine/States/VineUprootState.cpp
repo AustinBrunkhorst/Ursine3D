@@ -22,6 +22,8 @@
 #include <PhysicsSystem.h>
 #include <Application.h>
 #include <Entity.h>
+#include <ParticleEmitterComponent.h>
+#include <Model3DComponent.h>
 
 using namespace ursine;
 
@@ -29,6 +31,7 @@ VineUprootState::VineUprootState(void)
     : BossVineState( "Uproot State" )
     , m_finished( false )
     , m_animating( false )
+    , m_delayTimer( 0.0f )
     , m_state( UprootState::Burrowing )
 {
 }
@@ -74,26 +77,54 @@ void VineUprootState::Update(BossVineStateMachine *machine)
             aiTrans->LookAt( lookAtPosition, ai->GetDigTurnSpeed( ) );
 
             // raycast to find what the Y position should be
-            aiPos.Y( ) = findYPosition( aiOwner->GetWorld( ), aiOwner, aiPos );
+            aiPos.Y( ) = findYPosition( ai, aiPos );
 
             // Move forward based on the dig speed
             aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
 
-            // when we first enter this state, tell a particle emitter to play
-            // spawn spheres?
+            // Tell the particle emitter to play
+            auto emitter = aiOwner->GetChildByName( ai->GetDigParticleEmitterName( ) );
+
+            emitter->GetComponent<ecs::ParticleEmitter>( )->SetEmitRate( 200 );
+
+            // Check to see if we've reached a valid distance
+            if (closeToTarget( ai ))
+            {
+                m_state = UprootState::UprootDelay;
+                m_delayTimer = ai->GetUprootDelay( );
+            }
+
             break;
         }
         case UprootState::UprootDelay:
         {
             // When in this state, tell a particle emitter to amp up
+            auto emitter = aiOwner->GetChildByName( ai->GetDigParticleEmitterName( ) );
+            auto particleEmitter = emitter->GetComponent<ecs::ParticleEmitter>( );
+
+            particleEmitter->SetVelocityRange( SVec3( 5.0f, 20.0f, 5.0f ) );
 
             // decrement a timer
+            m_delayTimer -= Application::Instance->GetDeltaTime( );
+
             // switch to uproot when timer is up
+            if (m_delayTimer <= 0.0f)
+            {
+                particleEmitter->SetEmitRate( 0 );
+                m_state = UprootState::Uprooting;
+            }
+
             break;
         }
         case UprootState::Uprooting:
         {
             playAnimation( animator, "Uproot" );
+
+            auto models = aiOwner->GetComponentsInChildren<ecs::Model3D>( );
+
+            for (auto &model : models)
+                model->SetActive( true );
+
             break;
         }
     }
@@ -114,8 +145,10 @@ void VineUprootState::playAnimation(EntityAnimator *animator, const std::string 
         .On( EntityAnimatorEvent::FinishedAnimating, &VineUprootState::onAnimationFinished );
 }
 
-float VineUprootState::findYPosition(ecs::World* world, ecs::Entity *ai, const SVec3 &aiPosition)
+float VineUprootState::findYPosition(BossVineAI *ai, const SVec3 &aiPosition)
 {
+    auto aiOwner = ai->GetOwner( );
+    auto world = aiOwner->GetWorld( );
     auto physics = world->GetEntitySystem<ecs::PhysicsSystem>( );
 
     auto startPos = aiPosition - SVec3::UnitY( ) * 50.0f;
@@ -135,8 +168,23 @@ float VineUprootState::findYPosition(ecs::World* world, ecs::Entity *ai, const S
     {
         auto hitEntity = world->GetEntityUnique( output.entity[ i ] );
 
-        // TODO make this dynamic
-        if (hitEntity == ai->GetRoot( ) || hitEntity->GetRoot( )->GetName( ) != "CombatBowl1Level")
+        // make sure we're not checking for ourselves, and entities
+        // we don't care about
+        auto collisionItr = std::find(
+            ai->collisionList.begin( ), 
+            ai->collisionList.end( ),
+            hitEntity->GetRoot( )->GetName( ) 
+        );
+
+        auto ignoreItr = std::find(
+            ai->ignoreList.begin( ),
+            ai->ignoreList.end( ),
+            hitEntity->GetName( )
+        );
+
+        if (hitEntity == aiOwner->GetRoot( ) ||
+            collisionItr == ai->collisionList.end( ) ||
+            ignoreItr != ai->ignoreList.end( ))
             continue;
 
         auto hit = output.hit[ i ];
@@ -154,6 +202,18 @@ float VineUprootState::findYPosition(ecs::World* world, ecs::Entity *ai, const S
         return aiPosition.Y( );
 }
 
+bool VineUprootState::closeToTarget(BossVineAI *ai)
+{
+    auto targetTrans = ai->GetTarget( )->GetTransform( );
+    auto aiTrans = ai->GetOwner( )->GetTransform( );
+
+    float dist = SVec3::Distance( 
+        targetTrans->GetWorldPosition( ), 
+        aiTrans->GetWorldPosition( ) 
+    );
+
+    return dist <= ai->GetUprootDistance( );
+}
 
 void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
 {
@@ -163,7 +223,20 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
     {
         case UprootState::Burrowing:
         {
+            // tell all models to turn themselves off
+            auto models = sender->GetOwner( )->GetComponentsInChildren<ecs::Model3D>( );
+
+            for (auto &model : models)
+                model->SetActive( false );
+
             m_state = UprootState::Digging;
+            break;
+        }
+        case UprootState::Uprooting:
+        {
+            m_finished = true;
+
+            break;
         }
     }
 

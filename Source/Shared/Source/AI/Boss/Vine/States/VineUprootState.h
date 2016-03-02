@@ -16,6 +16,7 @@
 #include "BossVineState.h"
 
 class EntityAnimator;
+class BossVineAI;
 
 class VineUprootState : public BossVineState
 {
@@ -42,9 +43,13 @@ private:
 
     UprootState m_state;
 
+    float m_delayTimer;
+
     void playAnimation(EntityAnimator *animator, const std::string &clip);
 
-    float findYPosition(ursine::ecs::World *world, ursine::ecs::Entity *ai, const ursine::SVec3 &aiPosition);
+    float findYPosition(BossVineAI *ai, const ursine::SVec3 &aiPosition);
+
+    bool closeToTarget(BossVineAI *ai);
 
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };

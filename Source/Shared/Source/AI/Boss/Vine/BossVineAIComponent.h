@@ -80,6 +80,18 @@ public:
     );
 
     EditorField(
+        std::string digParticleEmitterName,
+        GetDigParticleEmitterName,
+        SetDigParticleEmitterName
+    );
+
+    EditorField(
+        float uprootDistance,
+        GetUprootDistance,
+        SetUprootDistance
+    );
+
+    EditorField(
         float uprootDelay,
         GetUprootDelay,
         SetUprootDelay
@@ -90,6 +102,12 @@ public:
         GetColliderSize,
         SetColliderSize
     );
+    
+    EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
+    ursine::Array<std::string> collisionList;
+
+    EditorMeta(Annotation("List of entities we're ignoring collision with (used for uproot)."))
+    ursine::Array<std::string> ignoreList;
 
     BossVineAI(void);
     ~BossVineAI(void);
@@ -118,6 +136,12 @@ public:
     float GetDigTurnSpeed(void) const;
     void SetDigTurnSpeed(float turnSpeed);
 
+    const std::string &GetDigParticleEmitterName(void) const;
+    void SetDigParticleEmitterName(const std::string &name);
+
+    float GetUprootDistance(void) const;
+    void SetUprootDistance(float distance);
+
     float GetUprootDelay(void) const;
     void SetUprootDelay(float delay);
 
@@ -135,6 +159,8 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
+    void onChildrenSerialized(EVENT_HANDLER(ursine::ecs::Entity));
+
     bool m_faceClosestPlayer;
 
     float m_whipTurnSpeed;
@@ -145,8 +171,11 @@ private:
 
     float m_digSpeed;
     float m_digTurnSpeed;
+    float m_uprootDistance;
     float m_uprootDelay;
     ursine::SVec3 m_colliderSize;
+
+    std::string m_digParticleEmitterName;
 
     BossVineStateMachine m_stateMachine;
 

@@ -23,6 +23,7 @@
 
 #include <SystemManager.h>
 #include <DebugSystem.h>
+#include <EntityEvent.h>
 
 NATIVE_COMPONENT_DEFINITION( BossVineAI );
 
@@ -39,6 +40,7 @@ BossVineAI::BossVineAI(void)
     , m_whipCooldown( 2.0f )
     , m_digSpeed( 2.0f )
     , m_digTurnSpeed( 2.0f )
+    , m_uprootDistance( 2.0f )
     , m_uprootDelay( 2.0f )
     , m_colliderSize( 1.0f, 1.0f, 1.0f )
     , m_stateMachine( this )
@@ -133,6 +135,26 @@ void BossVineAI::SetDigTurnSpeed(float turnSpeed)
     m_digTurnSpeed = turnSpeed;
 }
 
+const std::string &BossVineAI::GetDigParticleEmitterName(void) const
+{
+    return m_digParticleEmitterName;
+}
+
+void BossVineAI::SetDigParticleEmitterName(const std::string &name)
+{
+    m_digParticleEmitterName = name;
+}
+
+float BossVineAI::GetUprootDistance(void) const
+{
+    return m_uprootDistance;
+}
+
+void BossVineAI::SetUprootDistance(float distance)
+{
+    m_uprootDistance = distance;
+}
+
 float BossVineAI::GetUprootDelay(void) const
 {
     return m_uprootDelay;
@@ -155,9 +177,6 @@ void BossVineAI::SetColliderSize(const SVec3 &colliderSize)
 
 EntityAnimator *BossVineAI::GetAnimator(void)
 {
-    if (!m_animator)
-        m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
-
     return m_animator;
 }
 
@@ -186,13 +205,26 @@ void BossVineAI::OnInitialize(void)
 
     whipState->AddTransition( uprootState, "To Look" );
 
+    uprootState->AddTransition( lookState, "To Look" );
+
     m_stateMachine.SetInitialState( lookState );
+
+    GetOwner( )->Listener( this )
+        .On( ENTITY_HIERARCHY_SERIALIZED, &BossVineAI::onChildrenSerialized );
 }
 
 void BossVineAI::onUpdate(EVENT_HANDLER(World))
 {
     // update the state machine
     m_stateMachine.Update( );
+}
+
+void BossVineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
+{
+    m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
+
+    GetOwner( )->Listener( this )
+        .Off( ENTITY_HIERARCHY_SERIALIZED, &BossVineAI::onChildrenSerialized );
 }
 
 #if defined(URSINE_WITH_EDITOR)
