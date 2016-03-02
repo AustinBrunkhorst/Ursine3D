@@ -138,11 +138,11 @@ namespace ursine
             auto *gfx = GetCoreSystem(graphics::GfxAPI);
             auto *world = GetOwner()->GetWorld();
 
-            auto *animListEntity = world->GetEntityFromName("Animation List");
+            auto animListEntity = world->GetEntityFromName("Animation List");
             if (!animListEntity)
                 animListEntity = world->CreateEntity("Animation List");
 
-            auto *blendTreeEntity = world->GetEntityFromName("Blending Tree");
+            auto blendTreeEntity = world->GetEntityFromName("Blending Tree");
             if (!blendTreeEntity)
                 blendTreeEntity = world->CreateEntity("Blending Tree");
         }
@@ -394,7 +394,7 @@ namespace ursine
             else
             {
                 auto handle = data->GetAnimeHandle();
-                
+
                 m_animationName = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle)->name;
             }
         }
@@ -424,7 +424,7 @@ namespace ursine
         {
             m_stateName = state;
         }
-        
+
         void Animator::UpdateState(AnimationState* currSt, const Animation* currAni,
             AnimationState* futSt, const Animation* futAni, const float& dt, float& transFactor)
         {
@@ -781,7 +781,7 @@ namespace ursine
             {
                 // add to animlist
                 m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
-
+            
                 auto *gfx = GetCoreSystem(graphics::GfxAPI);
                 auto *world = GetOwner()->GetWorld();
                 auto *animList = world->GetEntityFromName("Animation List");
