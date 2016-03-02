@@ -76,14 +76,6 @@ namespace ursine
             */
             bool ReadyToExport();
 
-            /** @brief fbx loader export function
-            *
-            *  this will export custom file datastructure from fbx
-            *
-            *  @return if success return true, else return false
-            */
-            bool CustomFileExport();
-
             /** @brief fbx loader file loading function
             *
             *  this will import data from fbx file, and saving it into the data structure

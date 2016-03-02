@@ -20,12 +20,13 @@ namespace ursine
     namespace graphics
     {
         ModelResource::ModelResource(void)
-            : m_rootNode(nullptr)
-            , m_meshArray()
-            , m_meshMap()
-            , m_meshHierarchy()
-            , m_rigHierarchy()
-            , m_onGPU(false)
+            : m_rootNode( nullptr )
+            , m_meshArray( )
+            , m_meshMap( )
+            , m_meshHierarchy( )
+            , m_rigHierarchy( )
+            , m_onGPU( false )
+            , m_referenceCount( 0 )
         {
         }
 
@@ -94,6 +95,11 @@ namespace ursine
         {
             UAssert(m_referenceCount != 0, "Attempted to unload model that was already unloaded!");
             --m_referenceCount;
+        }
+
+        void ModelResource::NoReference(void)
+        {
+            m_referenceCount = 0;
         }
 
         bool ModelResource::HasNoReferences(void) const

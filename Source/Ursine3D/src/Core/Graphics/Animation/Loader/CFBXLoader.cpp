@@ -121,7 +121,6 @@ namespace ursine
 
             // Export FBX model as custom file format
             ReadyToExport();
-            //CustomFileExport();
 
             return true;
         }
@@ -357,6 +356,7 @@ namespace ursine
                             {
                                 ufmt_loader::KFrame newKF;
                                 unsigned int kfCount = static_cast<unsigned int>(iter.second.boneAnim[k].keyFrames.size());
+
                                 newKIs.push_back(maxkfCount);
                                 for (l = 0; l < maxkfCount; ++l)
                                 {
@@ -376,42 +376,6 @@ namespace ursine
                         mAnimInfo->animDataArr.push_back(newAD);
                     }
                 }
-            }
-            return true;
-        }
-
-        bool CFBXLoader::CustomFileExport()
-        {
-            if (nullptr == mModelInfo || nullptr == mAnimInfo)
-                return false;
-
-            // set name for the custom file format and store it into Output folder
-            std::string _filePath("Assets/");
-            std::string jdlFile = _filePath + "Models/" + mModelInfo->name;
-            std::string janiFile = _filePath + "Animations/" + mModelInfo->name;
-            jdlFile += ".jdl";
-            janiFile += ".jani";
-
-            HANDLE hFile;
-            if (mModelInfo)
-            {
-                hFile = CreateFile(jdlFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-                if (!mModelInfo->SerializeOut(hFile))
-                {
-                    MessageBox(nullptr, "Jdl Export Failed!", "", MB_OK);
-                    return false;
-                }
-                CloseHandle(hFile);
-            }
-            if (mAnimInfo)
-            {
-                hFile = CreateFile(janiFile.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-                if (!mAnimInfo->SerializeOut(hFile))
-                {
-                    MessageBox(nullptr, "Jani Export Failed!", "", MB_OK);
-                    return false;
-                }
-                CloseHandle(hFile);
             }
             return true;
         }

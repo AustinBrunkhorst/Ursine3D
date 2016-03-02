@@ -19,7 +19,7 @@ namespace ursine
 
         auto clipFileName = fName.filename().string();
                 
-        ResourceReader clipReader(clipFileName);
+        ResourceReader clipReader(fName);// clipFileName);
 
         // create animation info
         graphics::ufmt_loader::AnimInfo *animInfo = new graphics::ufmt_loader::AnimInfo();

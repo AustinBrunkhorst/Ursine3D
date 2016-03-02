@@ -28,6 +28,8 @@ namespace ursine
         class ModelManager
         {
         public:
+            ModelManager(void);
+
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
             void Uninitialize();
 
@@ -65,7 +67,7 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////////////////////////
             // KEPT
             // this takes all info from modelInfo and loads it into a modelresource
-            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
+            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource& modelresource);
 
             // creating a model resource
             GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);

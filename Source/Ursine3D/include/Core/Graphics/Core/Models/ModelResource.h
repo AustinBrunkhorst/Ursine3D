@@ -52,6 +52,7 @@ namespace ursine
 
             void IncrementReference(void);
             void DecrementReference(void);
+            void NoReference(void);
 
             bool HasNoReferences(void) const;
 
