@@ -69,7 +69,22 @@ namespace ursine
 
             ResourceFormatReader reader;
 
-            return reader.Read( fileName );
+            try
+            {
+                return reader.Read( fileName );
+            }
+            catch (AssertionException &e)
+            {
+                UWarning( "Failed to load resource '%s'.\nerror: %s\nfunction: %s\nfile: %s\nline: %i",
+                    to_string( guid ).c_str( ),
+                    e.GetErrorMessage( ).c_str( ),
+                    e.GetFunction( ).c_str( ),
+                    e.GetFile( ).c_str( ),
+                    e.GetLine( )
+                );
+
+                return nullptr;
+            }
         }
 
         fs::path ResourceManager::getResourceFileName(const GUID &guid) const
