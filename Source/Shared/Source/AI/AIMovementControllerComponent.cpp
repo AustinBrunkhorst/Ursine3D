@@ -17,12 +17,12 @@ namespace ursine
         {
         }
 
-        void AIMovementController::SetTargetDirection(const Vec3& dir)
+        void AIMovementController::SetTargetDirection(const SVec3& dir)
         {
             m_targetDir = Vec3( dir.X( ), 0, dir.Z( ) );
         }
 
-        void AIMovementController::SettargetDirection(const Vec2& dir)
+        void AIMovementController::SetTargetDirection(const Vec2& dir)
         {
             m_targetDir = Vec3( dir.X( ), 0, dir.Y( ) );
 

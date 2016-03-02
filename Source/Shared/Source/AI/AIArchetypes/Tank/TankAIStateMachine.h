@@ -5,23 +5,15 @@ namespace ursine
 {
     namespace sm
     {
-        class TankStateMachine : public AIStateMachine
+        class TankAIStateMachine : public AIStateMachine
         {
         public:
-            TankStateMachine(ecs::Entity *aiActor);
+            TankAIStateMachine(ecs::Entity *aiActor);
 
         private:
 
 
 
-        };
-
-        class TankWalkState : public AIState
-        {
-        public:
-            virtual void Enter(AIStateMachine *);
-            virtual void Update(AIStateMachine *);
-            virtual void Exit(AIStateMachine *);
         };
 
         class TankThwompState : public AIState

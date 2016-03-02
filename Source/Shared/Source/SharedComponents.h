@@ -83,6 +83,8 @@
 
 #include "BossVineAIComponent.h"
 
+#include "FodderAIComponent.h"
+
 /////////////////////////////////
 //       Level Logic           //
 /////////////////////////////////

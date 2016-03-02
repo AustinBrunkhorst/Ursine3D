@@ -5,10 +5,14 @@ namespace ursine
 {
     namespace sm
     {
-        AIStateMachine::AIStateMachine(ecs::Entity *aiActor): StateMachine(nullptr)
-                                                            , m_actorEntity(aiActor)
+        AIStateMachine::AIStateMachine(void): StateMachine( )
+                                            , m_actorEntity(nullptr)
         {
-            
+        }
+
+        void AIStateMachine::Initialize(ecs::Entity* actor)
+        {
+            m_actorEntity = actor;
         }
 
         ecs::Entity* AIStateMachine::GetEntity() const
