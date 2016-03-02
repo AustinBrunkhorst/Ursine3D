@@ -97,9 +97,6 @@ namespace ursine
                 virtual ~MeshInfo();
                 void ReleaseData();
 
-                virtual bool SerializeIn(HANDLE hFile);
-                virtual bool SerializeOut(HANDLE hFile);
-
                 virtual void Read(resources::ResourceReader &input);
                 virtual void Write(resources::pipeline::ResourceWriter &output);
             };

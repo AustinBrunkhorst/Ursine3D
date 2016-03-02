@@ -50,85 +50,7 @@ namespace ursine
                 mMeshLvVec.clear();
                 mRigLvVec.clear();
             }
-
-            bool ModelInfo::SerializeIn(HANDLE hFile)
-            {
-                DWORD nBytesRead;
-                unsigned int i = 0;
-                if (INVALID_HANDLE_VALUE != hFile)
-                {
-                    char tmp_name[MAXTEXTLEN];
-                    ReadFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesRead, nullptr);
-                    name = tmp_name;
-                    ReadFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    ReadFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    ReadFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    ReadFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
-                    ReadFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesRead, nullptr);
-
-                    mMeshInfoVec.resize(mmeshCount);
-                    for (i = 0; i < mmeshCount; ++i)
-                        mMeshInfoVec[i].SerializeIn(hFile);
-                    mMtrlInfoVec.resize(mmaterialCount);
-                    for (i = 0; i < mmaterialCount; ++i)
-                        mMtrlInfoVec[i].SerializeIn(hFile);
-                    mBoneInfoVec.resize(mboneCount);
-                    for (i = 0; i < mboneCount; ++i)
-                        mBoneInfoVec[i].SerializeIn(hFile);
-                    mMeshLvVec.resize(mmeshlvlCount);
-                    for (i = 0; i < mmeshlvlCount; ++i)
-                        ReadFile(hFile, &mMeshLvVec[i], sizeof(MeshInLvl), &nBytesRead, nullptr);
-                    mRigLvVec.resize(mriglvlCount);
-                    for (i = 0; i < mriglvlCount; ++i)
-                        ReadFile(hFile, &mRigLvVec[i], sizeof(RigInLvl), &nBytesRead, nullptr);
-                }
-                return true;
-            }
-
-            bool ModelInfo::SerializeOut(HANDLE hFile)
-            {
-                DWORD nBytesWrite;
-                unsigned int i = 0;
-                if (INVALID_HANDLE_VALUE != hFile)
-                {
-                    char tmp_name[MAXTEXTLEN];
-                    lstrcpy(tmp_name, name.c_str());
-                    WriteFile(hFile, tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-                    WriteFile(hFile, &mmeshCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    WriteFile(hFile, &mmaterialCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    WriteFile(hFile, &mboneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    WriteFile(hFile, &mmeshlvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-                    WriteFile(hFile, &mriglvlCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-
-                    if (mMeshInfoVec.size() > 0)
-                    {
-                        for (auto iter : mMeshInfoVec)
-                            iter.SerializeOut(hFile);
-                    }
-                    if (mMtrlInfoVec.size() > 0)
-                    {
-                        for (auto iter : mMtrlInfoVec)
-                            iter.SerializeOut(hFile);
-                    }
-                    if (mBoneInfoVec.size() > 0)
-                    {
-                        for (auto iter : mBoneInfoVec)
-                            iter.SerializeOut(hFile);
-                    }
-                    if (mMeshLvVec.size() > 0)
-                    {
-                        for (auto iter : mMeshLvVec)
-                            WriteFile(hFile, &iter, sizeof(MeshInLvl), &nBytesWrite, nullptr);
-                    }
-                    if (mRigLvVec.size() > 0)
-                    {
-                        for (auto iter : mRigLvVec)
-                            WriteFile(hFile, &iter, sizeof(RigInLvl), &nBytesWrite, nullptr);
-                    }
-                }
-                return true;
-            }
-
+            
             void ModelInfo::Read(resources::ResourceReader &input)
             {
                 unsigned stringSize;
@@ -159,11 +81,22 @@ namespace ursine
                 
                 mMeshLvVec.resize(mmeshlvlCount);
                 for (i = 0; i < mmeshlvlCount; ++i)
-                    input.ReadBytes(reinterpret_cast<char*>(&mMeshLvVec[i]), sizeof(MeshInLvl));
+                {
+                    input >> stringSize;
+                    mMeshLvVec[i].meshName.resize(stringSize);
+                    input.ReadBytes( &mMeshLvVec[i].meshName[0], stringSize);
+                    input.ReadBytes( reinterpret_cast<char*>(&mMeshLvVec[i].meshTM), sizeof(SMat4) );
+                    input.ReadBytes( reinterpret_cast<char*>(&mMeshLvVec[i].mParentIndex), sizeof(unsigned int));
+                }
                 
                 mRigLvVec.resize(mriglvlCount);
                 for (i = 0; i < mriglvlCount; ++i)
-                    input.ReadBytes(reinterpret_cast<char*>(&mRigLvVec[i]), sizeof(RigInLvl));
+                {
+                    input >> stringSize;
+                    mRigLvVec[i].boneName.resize(stringSize);
+                    input.ReadBytes( &mRigLvVec[i].boneName[0], stringSize);
+                    input.ReadBytes( reinterpret_cast<char*>(&mRigLvVec[i].mParentIndex), sizeof(unsigned int));
+                }
             }
 
             void ModelInfo::Write(resources::pipeline::ResourceWriter &output)
@@ -198,13 +131,22 @@ namespace ursine
                 if (mMeshLvVec.size() > 0)
                 {
                     for (auto &iter : mMeshLvVec)
-                        output.WriteBytes(reinterpret_cast<char*>(&iter), sizeof(MeshInLvl));
+                    {
+                        output << iter.meshName.size();
+                        output << iter.meshName;
+                        output.WriteBytes( reinterpret_cast<char*>(&iter.meshTM), sizeof(SMat4) );
+                        output.WriteBytes( reinterpret_cast<char*>(&iter.mParentIndex), sizeof(unsigned int) );
+                    }
                 }
                 
                 if (mRigLvVec.size() > 0)
                 {
                     for (auto &iter : mRigLvVec)
-                        output.WriteBytes(reinterpret_cast<char*>(&iter), sizeof(RigInLvl));
+                    {
+                        output << iter.boneName.size();
+                        output << iter.boneName;
+                        output.WriteBytes( reinterpret_cast<char*>(&iter.mParentIndex), sizeof(unsigned int) );
+                    }
                 }
             }
         };

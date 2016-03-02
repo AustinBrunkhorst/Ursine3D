@@ -65,7 +65,7 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////////////////////////
             // KEPT
             // this takes all info from modelInfo and loads it into a modelresource
-            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource* modelresource);
+            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource& modelresource);
 
             // creating a model resource
             GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);

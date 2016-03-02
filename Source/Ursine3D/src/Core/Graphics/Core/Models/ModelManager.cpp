@@ -227,7 +227,7 @@ namespace ursine
             m_deviceContext = nullptr;
         }
 
-        void ModelManager::InitializeModel(ufmt_loader::ModelInfo* modelInfo, ModelResource* modelresource)
+        void ModelManager::InitializeModel(ufmt_loader::ModelInfo* modelInfo, ModelResource &modelresource)
         {
             // for each mesh
             for (uint mesh_idx = 0; mesh_idx < modelInfo->mmeshCount; ++mesh_idx)
@@ -235,18 +235,18 @@ namespace ursine
                 // create a new mesh
                 Mesh *newMesh = new Mesh();
                 newMesh->SetID(mesh_idx);
-
+                
                 /////////////////////////////////////////////////////////////////
                 // ALLOCATE MODEL ///////////////////////////////////////////////                
-
+                
                 ufmt_loader::MeshInfo* currMesh = &modelInfo->mMeshInfoVec[ mesh_idx ];
-
+                
                 newMesh->SetName(currMesh->name);
-
+                
                 uint vertCount = currMesh->meshVtxInfoCount;
                 newMesh->SetVertexCount(vertCount);
                 auto &meshVertArray = newMesh->GetRawVertices();
-
+                
                 //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                 //can do this with skincount
                 std::vector<AnimationVertex> &buffer = newMesh->GetRawModelData();
@@ -259,7 +259,7 @@ namespace ursine
                         currMesh->meshVtxInfos[ i ].pos.y,
                         currMesh->meshVtxInfos[ i ].pos.z
                         );
-
+                
                     // transform these points from their global model space into their local space
                     SVec4 tempPosition = SVec4(
                         currMesh->meshVtxInfos[ i ].pos.x,
@@ -267,14 +267,14 @@ namespace ursine
                         currMesh->meshVtxInfos[ i ].pos.z,
                         1.0f
                         );
-
+                
                     // Set data
                     buffer[ i ].vPos = DirectX::XMFLOAT3(
                         tempPosition.ToD3D().x,
                         tempPosition.ToD3D().y,
                         tempPosition.ToD3D().z
                         );
-
+                
                     buffer[ i ].vNor = DirectX::XMFLOAT3(
                         currMesh->meshVtxInfos[ i ].normal.x,
                         currMesh->meshVtxInfos[ i ].normal.y,
@@ -284,7 +284,7 @@ namespace ursine
                         currMesh->meshVtxInfos[ i ].uv.x,
                         currMesh->meshVtxInfos[ i ].uv.y
                         );
-
+                
                     if (modelInfo->mboneCount > 0)
                     {
                         buffer[ i ].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.x);
@@ -305,25 +305,25 @@ namespace ursine
                         buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(0);
                     }
                 }
-
+                
                 newMesh->SetVertexCount(vertCount);
-
+                
                 /////////////////////////////////////////////////////////////////
                 // CREATE INDEX BUFFER //////////////////////////////////////////
                 newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
-
+                
                 auto &indexArray = newMesh->GetRawIndices();
                 for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
                     indexArray[ x ] = currMesh->meshVtxIndices[ x ];
-
-                modelresource->AddMesh(newMesh);
+                
+                modelresource.AddMesh(newMesh);
             }
 
-            for (auto &x : modelInfo->mMeshLvVec)
-                modelresource->AddMesh2Tree(x);
-            
-            for (auto &x : modelInfo->mRigLvVec)
-                modelresource->AddRig2Tree(x);
+            //for (auto &x : modelInfo->mMeshLvVec)
+            //    modelresource.AddMesh2Tree(x);
+            //
+            //for (auto &x : modelInfo->mRigLvVec)
+            //    modelresource.AddRig2Tree(x);
         }
 
         GfxHND ModelManager::CreateModel(ufmt_loader::ModelInfo *modelInfo)
@@ -349,7 +349,7 @@ namespace ursine
             // load it up into CPU memory
             InitializeModel(
                 modelInfo,
-                m_modelCache[ internalID ]
+                *m_modelCache[ internalID ]
             );
 
             // initialize handle
@@ -376,6 +376,7 @@ namespace ursine
             if (model->GetIsLoaded())
                 unloadModelFromGPU(model);
 
+            model->NoReference();
             delete model;
             delete modelInfo;
 
@@ -561,13 +562,6 @@ namespace ursine
             id = hnd->Index_;
 
             ufmt_loader::AnimInfo *animeInfo = m_animeInfoCache[ id ];
-            
-            //delete[  ] anime->m_binaryData;
-            //model->m_binarySize = 0;
-            //model->m_referenceCount = 0;
-            //
-            //if (model->GetIsLoaded())
-            //    unloadModelFromGPU(model);
             
             delete animeInfo;
 
