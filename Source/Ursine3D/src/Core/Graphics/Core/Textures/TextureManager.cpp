@@ -537,10 +537,17 @@ namespace ursine
         {
             int id;
             _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
-            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            if (handle != 0)
+            {
+                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get texture with invalid handle!");
+                UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get texture with handle of invalid type!");
+            }
 
             id = hnd->Index_;
+
+            if (id == 0)
+                return;
 
             // if it doesn't exist on the GPU, load it up
             if(m_textureCache[ id ].m_referenceCount == 0)
@@ -556,8 +563,8 @@ namespace ursine
 
             if(handle != 0)
             {
-                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
-                UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get texture with invalid handle!");
+                UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get texture with handle of invalid type!");
             }
 
             id = hnd->Index_;
