@@ -110,4 +110,7 @@ void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)
         aiTrans->LookAt( aiPos + m_originalForward, ai->GetWhipTurnSpeed( ) );
         m_inView = false;
     }
+
+    machine->SetBool( VineAIStateMachine::InRange, m_inRange );
+    machine->SetBool( VineAIStateMachine::InView, m_inView );
 }

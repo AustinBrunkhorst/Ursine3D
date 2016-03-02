@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** VineLookForInRangePlayersState.h
+** VineStateUtils.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,18 +13,16 @@
 
 #pragma once
 
-#include "VineAIState.h"
+#include "VineAIComponent.h"
 
-class VineLookForInRangePlayersState : public VineAIState
+class VineStateUtils
 {
 public:
-    VineLookForInRangePlayersState(void);
 
-    void Enter(VineAIStateMachine *machine) override;
-    void Update(VineAIStateMachine *machine) override;
+    // Find the Y position the vine should be at using raycasting
+    static float FindYPosition(VineAI *ai, const ursine::SVec3 &aiPosition);
 
-private:
-    bool m_inRange;
-    bool m_inView;
-    ursine::SVec3 m_originalForward;
+    // Determine if we're at our target
+    static bool AtTarget(VineAI *ai, float distance);
+
 };

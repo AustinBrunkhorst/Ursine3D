@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** VineLookForInRangePlayersState.h
+** VineSpawnState.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -15,16 +15,19 @@
 
 #include "VineAIState.h"
 
-class VineLookForInRangePlayersState : public VineAIState
+class EntityAnimator;
+
+class VineSpawnState : public VineAIState
 {
 public:
-    VineLookForInRangePlayersState(void);
+    VineSpawnState(void);
+
+    bool CanExit(void) override { return m_finished; }
 
     void Enter(VineAIStateMachine *machine) override;
-    void Update(VineAIStateMachine *machine) override;
 
 private:
-    bool m_inRange;
-    bool m_inView;
-    ursine::SVec3 m_originalForward;
+    bool m_finished;
+
+    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };

@@ -42,6 +42,9 @@ void VineWhipState::Update(VineAIStateMachine *machine)
 {
     static const float goToDuration = 0.5f;
 
+    if (m_finished)
+        return;
+
     auto ai = machine->GetAI( );
     auto aiTrans = ai->GetOwner( )->GetTransform( );
     auto animator = ai->GetAnimator( );
@@ -129,7 +132,10 @@ void VineWhipState::Update(VineAIStateMachine *machine)
 
 void VineWhipState::Exit(VineAIStateMachine *machine)
 {
-    machine->SetFloat( "Cooldown", machine->GetAI( )->GetWhipCooldown( ) );
+    machine->SetFloat( 
+        VineAIStateMachine::WhipCooldown,
+        machine->GetAI( )->GetWhipCooldown( )
+    );
 }
 
 void VineWhipState::playAnimation(EntityAnimator *animator, const std::string &clip)

@@ -45,11 +45,9 @@ private:
 
     float m_delayTimer;
 
+    ursine::SVec3 m_originalDimensions;
+
     void playAnimation(EntityAnimator *animator, const std::string &clip);
-
-    float findYPosition(VineAI *ai, const ursine::SVec3 &aiPosition);
-
-    bool closeToTarget(VineAI *ai);
 
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };
